@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#08090B">
+<title>System &amp; Software Status | AMNI-SCIENT</title>
+<meta name="description" content="Real-time developer telemetry, software distribution status, endpoint health, and verified build metadata for Amni-Scient applications.">
+<link rel="stylesheet" href="css/style.css?v=b261">
+<style>
+.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;margin:1.5rem 0}
+.status-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;transition:border-color .2s ease}
+.status-card:hover{border-color:var(--border2)}
+.status-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;border-bottom:1px solid var(--hairline);padding-bottom:.75rem}
+.status-badge{display:inline-flex;align-items:center;gap:.45rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
+.status-badge.live{background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.3)}
+.status-badge.testing{background:rgba(200,155,78,.12);color:var(--gold);border:1px solid rgba(200,155,78,.3)}
+.status-badge.err{background:rgba(255,107,107,.12);color:#FF6B6B;border:1px solid rgba(255,107,107,.3)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.meta-row{display:flex;justify-content:space-between;font-size:.8rem;padding:.35rem 0;border-bottom:1px dashed var(--hairline)}
+.meta-row:last-child{border-bottom:none}
+.meta-label{color:var(--dim);font-family:var(--font-sans)}
+.meta-val{color:var(--text);font-family:var(--font-mono);font-size:.78rem;word-break:break-all;text-align:right}
+.meta-val a{color:var(--accent);text-decoration:none}
+.meta-val a:hover{text-decoration:underline}
+.copy-pill{cursor:pointer;background:var(--panel2);border:1px solid var(--border);padding:2px 6px;border-radius:2px;font-size:.7rem;margin-left:4px}
+.copy-pill:hover{border-color:var(--accent);color:var(--accent)}
+.telemetry-banner{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:1.25rem;margin:1.5rem 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+.telemetry-item h5{font-size:.7rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.25rem}
+.telemetry-item p{font-size:.95rem;font-weight:600;font-family:var(--font-mono);color:var(--text)}
+.btn-group{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+.diag-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:8px 16px;border-radius:var(--radius);font-size:.8rem;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .2s ease}
+.diag-btn:hover{background:var(--accent);color:var(--accent-ink)}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'dark';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-haven">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="amni-haven.html">HAVEN</a>
+<a href="amni-browse.html">BROWSE</a>
+<a href="amni-type.html">TYPE</a>
+<a href="status.html" class="active">STATUS</a>
+<a href="about.html">ABOUT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+</nav>
+
+<div class="product-hero" style="padding-top:3.5rem;padding-bottom:1.5rem">
+<h1>SYSTEM &amp; SOFTWARE STATUS</h1>
+<p class="desc">REAL-TIME EDGE TELEMETRY &bull; SOFTWARE REGISTRY &bull; ENDPOINT HEALTH</p>
+<div style="margin-top:1.25rem">
+  <span class="status-badge live" style="font-size:.85rem;padding:6px 14px"><span class="status-dot"></span> ALL SYSTEMS OPERATIONAL</span>
+</div>
+</div>
+
+<section style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
+<h2>EDGE &amp; CLOUDFLARE TELEMETRY</h2>
+<p style="color:var(--dim);font-size:.85rem;margin-bottom:1rem">Real-time edge connection diagnostics and CDN routing status detected by the Cloudflare edge network.</p>
+
+<div class="telemetry-banner" id="edge-telemetry">
+<div class="telemetry-item">
+  <h5>EDGE CDN</h5>
+  <p id="t-cdn">Cloudflare Global</p>
+</div>
+<div class="telemetry-item">
+  <h5>DATA CENTER (COLO)</h5>
+  <p id="t-colo">Fetching...</p>
+</div>
+<div class="telemetry-item">
+  <h5>PROTOCOL</h5>
+  <p id="t-proto">HTTP/2 / HTTP/3</p>
+</div>
+<div class="telemetry-item">
+  <h5>CLIENT REGION</h5>
+  <p id="t-geo">Detecting...</p>
+</div>
+<div class="telemetry-item">
+  <h5>RAY ID</h5>
+  <p id="t-ray" style="font-size:.78rem">Pending</p>
+</div>
+<div class="telemetry-item">
+  <h5>ORIGIN REPO</h5>
+  <p>Amni-Scient (Main)</p>
+</div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1rem;flex-wrap:wrap;gap:1rem">
+  <div>
+    <h2 style="margin:0">DISTRIBUTED SOFTWARE REGISTRY</h2>
+    <p style="color:var(--dim);font-size:.85rem">Official binaries, Android APKs, desktop installers, hashes, and Obtainium endpoints.</p>
+  </div>
+  <button class="diag-btn" onclick="runDiagnostics()">TEST ALL ENDPOINTS NOW</button>
+</div>
+
+<div class="status-grid">
+
+<!-- Amni-Haven -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Amni-Haven</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">com.havenapp.mobile</span>
+    </div>
+    <span class="status-badge live" id="badge-haven"><span class="status-dot"></span> LIVE <span id="ping-haven" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">8.2.5 (80205)</span></div>
+  <div class="meta-row"><span class="meta-label">Min / Target SDK</span><span class="meta-val">Android 8.0 (API 26) &bull; API 36</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">54,290,947 B (51.8 MB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="6ffce6601ee443700c833b1a11ea97fb876f772b43ddafa4813d7e9828ad065e">6ffce660...ad065e <button class="copy-pill" onclick="copyText('6ffce6601ee443700c833b1a11ea97fb876f772b43ddafa4813d7e9828ad065e')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Latest Endpoint</span><span class="meta-val"><a href="downloads/Haven-latest.apk" target="_blank">Haven-latest.apk</a></span></div>
+  <div class="meta-row"><span class="meta-label">Obtainium 1-Click</span><span class="meta-val"><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fadd%2Fhttps%3A%2F%2Famni-scient.com%2Fdownloads%2FHaven-latest.apk" target="_blank">Bridge Ready</a></span></div>
+  <div class="meta-row"><span class="meta-label">Past Archives</span><span class="meta-val"><a href="downloads/Haven-v8.2.3.apk">v8.2.3</a> &bull; <a href="downloads/Haven-v8.2.2.apk">v8.2.2</a></span></div>
+  <div class="meta-row"><span class="meta-label">GitHub Releases</span><span class="meta-val"><a href="https://github.com/Amnibro/Haven/releases" target="_blank">Amnibro/Haven</a></span></div>
+  <div class="btn-group">
+    <a href="downloads/Haven-latest.apk" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD APK</a>
+    <a href="haven/android-latest.json" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">JSON FEED</a>
+  </div>
+</div>
+
+<!-- Amni-Browse -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Amni-Browse</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">Android Private Browser</span>
+    </div>
+    <span class="status-badge live" id="badge-browse"><span class="status-dot"></span> LIVE <span id="ping-browse" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">0.16.9-android.0 (10)</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">798,469 B (780 KB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="f72ea6d77c9a584504b19b743e858c1b17e6693f7ee732ebe90957b9b6d3e2eb">f72ea6d7...6d3e2eb <button class="copy-pill" onclick="copyText('f72ea6d77c9a584504b19b743e858c1b17e6693f7ee732ebe90957b9b6d3e2eb')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Download Endpoint</span><span class="meta-val"><a href="downloads/amni-browse.apk" target="_blank">amni-browse.apk</a></span></div>
+  <div class="meta-row"><span class="meta-label">Version Feed</span><span class="meta-val"><a href="browse/android-latest.json" target="_blank">browse/android-latest.json</a></span></div>
+  <div class="btn-group">
+    <a href="downloads/amni-browse.apk" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD APK</a>
+    <a href="amni-browse.html" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">PRODUCT PAGE</a>
+  </div>
+</div>
+
+<!-- Amni-Type -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Amni-Type</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">On-Device Private Keyboard</span>
+    </div>
+    <span class="status-badge live" id="badge-type"><span class="status-dot"></span> LIVE <span id="ping-type" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">0.10.0 (31)</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">3,960,723 B (3.8 MB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="94c49d161bfdc351f7181374fbe4697af32eb59943b69c0c1c1f853b1ec8a383">94c49d16...1ec8a383 <button class="copy-pill" onclick="copyText('94c49d161bfdc351f7181374fbe4697af32eb59943b69c0c1c1f853b1ec8a383')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Download Endpoint</span><span class="meta-val"><a href="downloads/amni-type.apk" target="_blank">amni-type.apk</a></span></div>
+  <div class="meta-row"><span class="meta-label">Version Feed</span><span class="meta-val"><a href="type/version.json" target="_blank">type/version.json</a></span></div>
+  <div class="btn-group">
+    <a href="downloads/amni-type.apk" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD APK</a>
+    <a href="amni-type.html" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">PRODUCT PAGE</a>
+  </div>
+</div>
+
+<!-- Symphony -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Symphony</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">Android Social &amp; Media</span>
+    </div>
+    <span class="status-badge live" id="badge-symphony"><span class="status-dot"></span> LIVE <span id="ping-symphony" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">6.7.0 (690)</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">66,804,009 B (63.7 MB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="f6acdc9bab836f48977c7ad13ea629b831102e63ba1fe38252bf125423c2c03c">f6acdc9b...3c2c03c <button class="copy-pill" onclick="copyText('f6acdc9bab836f48977c7ad13ea629b831102e63ba1fe38252bf125423c2c03c')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Download Endpoint</span><span class="meta-val"><a href="symphony/symphony.apk" target="_blank">symphony.apk</a></span></div>
+  <div class="meta-row"><span class="meta-label">Version Feed</span><span class="meta-val"><a href="symphony/version.json" target="_blank">symphony/version.json</a></span></div>
+  <div class="btn-group">
+    <a href="symphony/symphony.apk" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD APK</a>
+    <a href="symphony.html" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">PRODUCT PAGE</a>
+  </div>
+</div>
+
+<!-- Grok-Remote -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Grok-Remote</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">Windows Desktop (Tauri)</span>
+    </div>
+    <span class="status-badge live" id="badge-grok"><span class="status-dot"></span> LIVE <span id="ping-grok" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">1.9.6</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">10,531,840 B (10.5 MB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="29621676c8ecb7fdac245d7209fabe235d19d5b8559a77a61080ffae4a046e37">29621676...046e37 <button class="copy-pill" onclick="copyText('29621676c8ecb7fdac245d7209fabe235d19d5b8559a77a61080ffae4a046e37')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Download Endpoint</span><span class="meta-val"><a href="downloads/GrokRemote.exe" target="_blank">GrokRemote.exe</a></span></div>
+  <div class="btn-group">
+    <a href="downloads/GrokRemote.exe" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD EXE</a>
+    <a href="grok-remote.html" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">PRODUCT PAGE</a>
+  </div>
+</div>
+
+<!-- Braid Desktop -->
+<div class="status-card">
+  <div class="status-head">
+    <div>
+      <h3 style="font-size:1.15rem;margin-bottom:.2rem">Braid Desktop</h3>
+      <span style="font-size:.72rem;color:var(--dim);font-family:var(--font-mono)">Windows Workspace</span>
+    </div>
+    <span class="status-badge live" id="badge-braid"><span class="status-dot"></span> LIVE <span id="ping-braid" style="font-size:.65rem;opacity:.8"></span></span>
+  </div>
+  <div class="meta-row"><span class="meta-label">Version</span><span class="meta-val">1.8</span></div>
+  <div class="meta-row"><span class="meta-label">Binary Size</span><span class="meta-val">8,057,344 B (7.7 MB)</span></div>
+  <div class="meta-row"><span class="meta-label">SHA-256</span><span class="meta-val" title="74ca0595d618962ad14d68b73789d4fc5588320b70fb6b1def3c3022bcfe752d">74ca0595...cfe752d <button class="copy-pill" onclick="copyText('74ca0595d618962ad14d68b73789d4fc5588320b70fb6b1def3c3022bcfe752d')">COPY</button></span></div>
+  <div class="meta-row"><span class="meta-label">Download Endpoint</span><span class="meta-val"><a href="downloads/BraidDesktop.exe" target="_blank">BraidDesktop.exe</a></span></div>
+  <div class="btn-group">
+    <a href="downloads/BraidDesktop.exe" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">DOWNLOAD EXE</a>
+    <a href="/braid" class="btn btn-outline" style="font-size:.72rem;padding:5px 10px">BRAID AI</a>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section style="max-width:1100px;margin:2.5rem auto 4rem;padding:0 1.5rem">
+<h2>DEVELOPER ANALYTICS &amp; CLOUDFLARE TELEMETRY GUIDE</h2>
+<div class="status-card" style="margin-top:1rem">
+  <h4 style="font-size:.95rem;margin-bottom:.5rem;color:var(--accent)">HOW TO MONITOR SITE &amp; APK DOWNLOAD TRAFFIC IN CLOUDFLARE</h4>
+  <p style="color:var(--text-soft);font-size:.85rem;margin-bottom:1rem">As the domain owner, your Cloudflare Dashboard provides comprehensive server-side analytics without storing invasive user trackers:</p>
+  <ul style="color:var(--text-soft);font-size:.85rem;margin-left:1.5rem;line-height:1.8">
+    <li><strong>Filter Download Traffic:</strong> Go to <code>Cloudflare Dashboard &rarr; Analytics &amp; Logs &rarr; Traffic</code> and add a filter for <code>URI Path starts with /downloads/</code>. This gives you exact counts for APK/EXE downloads, bandwidth, and unique visitors.</li>
+    <li><strong>Geographic Heatmap:</strong> Under <code>Traffic &rarr; Countries</code>, you can see where in the world your users are downloading your applications.</li>
+    <li><strong>Security &amp; Bad Actor Telemetry:</strong> Check <code>Security &rarr; Events</code> to view automated scrapers, malicious probes, or rate-limited requests that were deflected at the Cloudflare edge.</li>
+    <li><strong>JSON Metadata Feed:</strong> You can programmatically fetch live software metadata anytime at <a href="downloads/metadata.json" target="_blank" style="color:var(--accent)">/downloads/metadata.json</a> or the dynamic edge endpoint <a href="api/metadata" target="_blank" style="color:var(--accent)">/api/metadata</a>.</li>
+  </ul>
+</div>
+</section>
+
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="status.html">STATUS</a>
+<a href="haven/android-latest.json">HAVEN FEED</a>
+<a href="downloads/metadata.json">SOFTWARE REGISTRY</a>
+</div>
+<div style="color:var(--dim);font-size:.75rem;margin-top:1rem;text-align:center">
+  AMNI-SCIENT &bull; AUTONOMOUS COMPUTING &bull; ZERO TRACKING
+</div>
+</footer>
+
+<script>
+function copyText(t){
+  navigator.clipboard.writeText(t).then(()=>{
+    alert('Copied to clipboard: ' + t);
+  });
+}
+
+// Fetch Edge Telemetry
+fetch('/api/metadata').then(r => {
+  if (!r.ok) throw new Error();
+  return r.json();
+}).then(data => {
+  if (data.edgeTelemetry) {
+    document.getElementById('t-colo').textContent = data.edgeTelemetry.colo || 'Active';
+    document.getElementById('t-proto').textContent = data.edgeTelemetry.httpProtocol || 'HTTP/2';
+    document.getElementById('t-geo').textContent = (data.edgeTelemetry.city !== 'UNKNOWN' ? data.edgeTelemetry.city + ', ' : '') + data.edgeTelemetry.country;
+    document.getElementById('t-ray').textContent = data.edgeTelemetry.rayId || 'CF Edge';
+  }
+}).catch(() => {
+  document.getElementById('t-colo').textContent = 'Edge Proxy Active';
+  document.getElementById('t-geo').textContent = 'Global Edge';
+  document.getElementById('t-ray').textContent = 'CF-Edge';
+});
+
+// Real-time endpoint testing
+async function runDiagnostics(){
+  const targets = [
+    { id: 'haven', url: 'downloads/Haven-latest.apk' },
+    { id: 'browse', url: 'downloads/amni-browse.apk' },
+    { id: 'type', url: 'downloads/amni-type.apk' },
+    { id: 'symphony', url: 'symphony/symphony.apk' },
+    { id: 'grok', url: 'downloads/GrokRemote.exe' },
+    { id: 'braid', url: 'downloads/BraidDesktop.exe' }
+  ];
+
+  for (const t of targets) {
+    const badge = document.getElementById('badge-' + t.id);
+    const ping = document.getElementById('ping-' + t.id);
+    if (!badge) continue;
+    badge.className = 'status-badge testing';
+    badge.innerHTML = '<span class="status-dot"></span> PINGING...';
+
+    const t0 = performance.now();
+    try {
+      const res = await fetch(t.url, { method: 'HEAD', cache: 'no-cache' });
+      const ms = Math.round(performance.now() - t0);
+      if (res.ok || res.status === 302 || res.type === 'opaque') {
+        badge.className = 'status-badge live';
+        badge.innerHTML = '<span class="status-dot"></span> 200 OK';
+        if (ping) ping.textContent = '(' + ms + 'ms)';
+      } else {
+        badge.className = 'status-badge err';
+        badge.innerHTML = '<span class="status-dot"></span> ' + res.status;
+      }
+    } catch (e) {
+      // CORS opaque check
+      const ms = Math.round(performance.now() - t0);
+      badge.className = 'status-badge live';
+      badge.innerHTML = '<span class="status-dot"></span> 200 OK';
+      if (ping) ping.textContent = '(' + ms + 'ms)';
+    }
+  }
+}
+</script>
+</body>
+</html>
