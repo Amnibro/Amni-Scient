@@ -12,7 +12,7 @@
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;})();
 (function(){
 var p=location.pathname.replace(/\/+$/,'');
-var known=['braid','about','faq','privacy','terms','research','licensing','index','amni-ai','amni-browse','amni-calc','amni-code','amni-connect','amni-core','amni-crypt','amni-explore','amni-haven','amni-learn','amni-life','amni-llm','amni-prayer','amni-type','amni-weather','amnitex-overview','braid-welcome','braid-topup','multi-ai-chat','compare-ai-answers','symphony','software-status'];
+var known=['braid','about','faq','privacy','terms','research','licensing','index','amni-ai','amni-browse','amni-calc','amni-code','amni-connect','amni-core','amni-crypt','amni-explore','amni-haven','amni-learn','amni-life','amni-llm','amni-prayer','amni-type','amni-weather','amnitex-overview','braid-welcome','braid-topup','multi-ai-chat','compare-ai-answers','symphony'];
 var slug=p.replace(/^\//,'').toLowerCase();
 if(known.indexOf(slug)>=0){location.replace('/'+slug+'.html'+location.search+location.hash);}
 })();
