@@ -157,7 +157,7 @@ pacman -S --needed --noconfirm --noprogressbar --overwrite '*' "${CORE_PKGS[@]}"
 # 8. Full system upgrade
 log "Performing complete system upgrade..."
 if [[ -x /usr/lib/amni-os/amni-upgrade ]]; then
-  /usr/lib/amni-os/amni-upgrade --overwrite '*' || pacman -Syu --noconfirm --noprogressbar --overwrite '*' || true
+  /usr/lib/amni-os/amni-upgrade || pacman -Syu --noconfirm --noprogressbar --overwrite '*' || true
 else
   pacman -Syu --noconfirm --noprogressbar --overwrite '*' || true
 fi
