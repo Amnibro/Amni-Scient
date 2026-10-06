@@ -24,6 +24,11 @@ Quaternius Easy Enemy pack (CC0, itch page; thin limbs read poorly at our scale)
 Animated Robot / three.js RobotExpressive (CC0 per the three.js README; faceted style clashed
 with the rounded set and it lacks fall/land/hurt clips).
 
+Mirewood Bog (realm 2) adds no third-party sources: its whole kit (`mire_*`, `decal_oil_sheen`),
+the tyrant `boss_miremaw`, the enemies `foe_bog_leech` and `foe_bog_midge` and the NPC `npc_bog_newt`
+are original procedural models and rigs from `tools/revamp_art/a_mire.py` and `a_mire_chars.py`.
+The `glade_grass_blade_tall` backdrop props it reuses are procedural too.
+
 ## Textures (tileable PBR sets, all restyled: painterly abstraction, palette ramp, rebuilt normal/AO/roughness)
 
 | Set | Source | URL | License |
@@ -43,11 +48,11 @@ with the rounded set and it lacks fall/land/hurt clips).
 
 ## Shellshore Cove (realm 3)
 
-Every Shellshore asset is original procedural work from `tools/revamp_art/a_shore.py` (sandcastle kit, toys, hat, flip-flop, bottle, shells, sponge, grotto, windbreak, backdrop props), `b_shore.py` (tide-pool and cove rocks, ground cover, `decal_sand_trail`) and `c_shore.py` (procedurally rigged `foe_sand_crab`, `foe_jelly_drifter`, `npc_hermit_crab` and the tyrant `boss_krakkle`). No third-party models or textures were added for this realm.
+Every Shellshore asset is original procedural work from `tools/revamp_art/a_shore.py` (sandcastle kit, toys, hat, flip-flop, bottle, shells, sponge, grotto, windbreak, backdrop props), `b_shore.py` (tide-pool and cove rocks, ground cover, `decal_sand_trail`) and `c_shore.py` (procedurally rigged `foe_sand_crab`, `foe_jelly_drifter`, `npc_hermit_crab` and the tyrant `boss_krakkle`) and `d_shore.py` (polish kit: strandline clusters, twigs, sea rocket, crab burrows, sand pies, toy moulds, toy boat, bottle cap, lighthouse, sailboat, buoy, glow anemones, stalactites, the glass `shore_jelly_bell`, the rigged `critter_gull` and the ripple, footprint, tide-line and shell-grit decals). KRAKKLE's sounds are synthesized in code (`crates/bk-game/src/realms/krakkle_sfx.rs`). No third-party models or textures were added for this realm.
 
 ## Canopy Reach (realm 4)
 
-Every Canopy Reach asset (`canopy_*`, `boss_thornwing`, `foe_leaf_mantis`, `foe_vine_snapper`, `npc_pip_snail`, `decal_snail_trail`, `decal_soil_spill`) is generated from scratch by `tools/revamp_art/a_canopy.py` and `a_canopy_chars.py` with the shared sculpt helpers; no third-party models or textures are used. Terrain reuses the existing CC0 texture sets (soil, moss, grass, rock) and the glade sky.
+Every Canopy Reach asset (`canopy_*`, `boss_thornwing`, `foe_leaf_mantis`, `foe_vine_snapper`, `npc_pip_snail`, `decal_snail_trail`, `decal_soil_spill`) is generated from scratch by `tools/revamp_art/a_canopy.py`, `a_canopy_green.py` (greenhouse dressing: spider plants, pothos, succulents, seedling flat, slatted bench, misting riser, roof frame, fernlet and wood-sorrel ground cover) and `a_canopy_chars.py` with the shared sculpt helpers; no third-party models or textures are used. THORNWING's cues (`thorn_*`) are synthesized at load by `crates/bk-game/src/realms/thorn_audio.rs`; no recorded sounds. Terrain reuses the existing CC0 texture sets (soil, moss, grass, rock) and the glade sky.
 
 ## Sky / IBL (Poly Haven HDRIs, CC0)
 
