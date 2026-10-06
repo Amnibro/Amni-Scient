@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#0B1210">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="pkg/amni-v2_bg.wasm?v=56e7c91019" as="fetch" type="application/wasm" crossorigin>
-<link rel="modulepreload" href="pkg/amni-v2.js?v=8ebf2e7046">
+<link rel="preload" href="pkg/amni-v2_bg.wasm?v=9cd5e04c51" as="fetch" type="application/wasm" crossorigin>
+<link rel="modulepreload" href="pkg/amni-v2.js?v=6cb40bc168">
 <style>
 @font-face{font-family:"Fredoka";src:url("fonts/fredoka-var.woff2") format("woff2");font-weight:300 700;font-display:swap}
 :root{--bg:#0B1210;--panel:#121B18;--line:#24332D;--text:#EEF3EC;--soft:#A9B8AE;--dim:#6E8076;--accent:#F2C14E;--leaf:#7CC57A;--frost:#9FD3F2;--err:#FF7A6B}
@@ -70,7 +70,7 @@ body.playing #overlay{display:none}
 <b><kbd>Esc</kbd></b><span>Pause and settings</span>
 <b>Gamepad</b><span>Supported (A jump, X attack, Y interact, B dash)</span>
 </div>
-<div class="foot"><a href="revamp/CREDITS.md?v=b9bd6c8690" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build f7d4aa6</span></div>
+<div class="foot"><a href="revamp/CREDITS.md?v=c39eac9b85" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build 1ce9cdc</span></div>
 </div>
 </div>
 </div>
@@ -139,8 +139,8 @@ btn.addEventListener('click', async () => {
   }
   statusEl.textContent = (q.get('backend') === 'gl' ? 'WebGL2' : 'WebGPU') + ': downloading the engine...';
   try {
-    const { default: init } = await import('./pkg/amni-v2.js?v=8ebf2e7046');
-    const resp = fetch('pkg/amni-v2_bg.wasm?v=56e7c91019').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
+    const { default: init } = await import('./pkg/amni-v2.js?v=6cb40bc168');
+    const resp = fetch('pkg/amni-v2_bg.wasm?v=9cd5e04c51').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
     await init({ module_or_path: resp }).catch((e) => { if (!String(e).includes('control flow')) throw e; });
   } catch (e) {
     if (!String(e).includes('control flow')) return fail('Could not start', '<p>' + String(e).slice(0, 220) + '</p><p>Check the connection and retry. A hard refresh (Ctrl+Shift+R) clears stale engine files.</p>');

@@ -39,6 +39,15 @@ with the rounded set and it lacks fall/land/hurt clips).
 | frosted_wood | procedural (painted grain + seams + frost ferns) | - | original |
 | sugar | procedural (periodic Voronoi crystal facets) | - | original |
 | cocoa | procedural (warped liquid + foam bubbles) | - | original |
+| sand, macro_beach | procedural (periodic wind ripples, grain, shell-grit specks; anti-tiling map) | - | original |
+
+## Shellshore Cove (realm 3)
+
+Every Shellshore asset is original procedural work from `tools/revamp_art/a_shore.py` (sandcastle kit, toys, hat, flip-flop, bottle, shells, sponge, grotto, windbreak, backdrop props), `b_shore.py` (tide-pool and cove rocks, ground cover, `decal_sand_trail`) and `c_shore.py` (procedurally rigged `foe_sand_crab`, `foe_jelly_drifter`, `npc_hermit_crab` and the tyrant `boss_krakkle`). No third-party models or textures were added for this realm.
+
+## Canopy Reach (realm 4)
+
+Every Canopy Reach asset (`canopy_*`, `boss_thornwing`, `foe_leaf_mantis`, `foe_vine_snapper`, `npc_pip_snail`, `decal_snail_trail`, `decal_soil_spill`) is generated from scratch by `tools/revamp_art/a_canopy.py` and `a_canopy_chars.py` with the shared sculpt helpers; no third-party models or textures are used. Terrain reuses the existing CC0 texture sets (soil, moss, grass, rock) and the glade sky.
 
 ## Sky / IBL (Poly Haven HDRIs, CC0)
 
