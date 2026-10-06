@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amni: Revamp preview | Amni-Scient</title>
+<meta name="description" content="Amni revamp preview: a bolt-sized robot explores Dewdrop Glade and Frostwick Sill, a terrarium-scale collect-a-thon running in the browser on WebGPU with a WebGL2 fallback.">
+<meta name="theme-color" content="#0B1210">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="pkg/amni-v2_bg.wasm?v=c3efa95f89" as="fetch" type="application/wasm" crossorigin>
+<link rel="modulepreload" href="pkg/amni-v2.js?v=2440226850">
+<style>
+@font-face{font-family:"Fredoka";src:url("fonts/fredoka-var.woff2") format("woff2");font-weight:300 700;font-display:swap}
+:root{--bg:#0B1210;--panel:#121B18;--line:#24332D;--text:#EEF3EC;--soft:#A9B8AE;--dim:#6E8076;--accent:#F2C14E;--leaf:#7CC57A;--frost:#9FD3F2;--err:#FF7A6B}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:"Fredoka",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+#stage{position:fixed;inset:0;background:radial-gradient(120% 90% at 50% 10%,#1C2B24 0%,var(--bg) 60%)}
+#amni-game{position:absolute;inset:0}
+#amni-game canvas{display:block;width:100%;height:100%;outline:none;touch-action:none}
+#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;background:radial-gradient(120% 90% at 50% 0%,rgba(124,197,122,.10),rgba(11,18,16,.96) 55%)}
+.card{width:min(560px,100%);background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:18px;padding:28px 24px 20px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+h1{margin:0;font-size:clamp(2rem,6vw,2.8rem);font-weight:650;letter-spacing:.01em;line-height:1}
+h1 span{color:var(--accent)}
+.tag{margin:.5rem 0 1.2rem;color:var(--soft);font-size:1rem;line-height:1.45}
+.pill{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);border:1px solid rgba(124,197,122,.35);border-radius:99px;padding:.18rem .6rem;margin-bottom:.9rem}
+button{font:inherit;cursor:pointer}
+#playBtn{width:100%;padding:.9rem 1rem;border:0;border-radius:12px;background:linear-gradient(180deg,#FFD873,var(--accent));color:#2A1D02;font-size:1.25rem;font-weight:650;letter-spacing:.04em;box-shadow:0 6px 0 #B98A22}
+#playBtn:active{transform:translateY(3px);box-shadow:0 3px 0 #B98A22}
+#playBtn:disabled{filter:saturate(.4) brightness(.8);cursor:progress}
+#load{margin-top:1rem;display:none}
+#bar{height:10px;border-radius:99px;background:#0A100E;border:1px solid var(--line);overflow:hidden}
+#loadBarFill{height:100%;width:0;background:linear-gradient(90deg,var(--leaf),var(--accent));transition:width .25s ease}
+#status{margin-top:.55rem;font-size:.92rem;color:var(--soft);min-height:1.3em}
+#meta{font-size:.78rem;color:var(--dim);margin-top:.2rem;min-height:1.1em}
+.controls{margin-top:1.2rem;display:grid;grid-template-columns:auto 1fr;gap:.35rem .9rem;font-size:.9rem;color:var(--soft)}
+.controls b{color:var(--text);font-weight:600;white-space:nowrap}
+kbd{font:inherit;font-size:.78rem;background:#0A100E;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:.05rem .4rem;color:var(--text)}
+.foot{margin-top:1.1rem;padding-top:.8rem;border-top:1px solid var(--line);font-size:.78rem;color:var(--dim);display:flex;flex-wrap:wrap;gap:.4rem 1rem}
+.foot a{color:var(--frost);text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.err{margin-top:1rem;border:1px solid rgba(255,122,107,.4);background:rgba(255,122,107,.08);border-radius:12px;padding:.8rem 1rem;color:var(--text);font-size:.92rem;line-height:1.45}
+.err h3{margin:0 0 .3rem;color:var(--err);font-size:1rem}
+#hud{position:absolute;top:10px;right:10px;display:none;gap:8px}
+#hud button{background:rgba(10,16,14,.7);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.35rem .7rem;font-size:.8rem}
+body.playing #hud{display:flex}
+body.playing #overlay{display:none}
+@media (max-width:480px){.card{padding:22px 16px 16px}.controls{font-size:.84rem}}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="amni-game"></div>
+<div id="hud"><button type="button" id="fsBtn">Fullscreen</button></div>
+<div id="overlay">
+<div class="card">
+<div class="pill">Revamp preview</div>
+<h1>Amni <span>&middot;</span> Dewdrop Glade</h1>
+<p class="tag">A bolt-sized robot in a terrarium world. Explore the hub, gather pebbles and canvases, then slide across the frosty windowsill of Frostwick.</p>
+<button type="button" id="playBtn">Play</button>
+<div id="load"><div id="bar"><div id="loadBarFill"></div></div><div id="status"></div><div id="meta"></div></div>
+<div id="errBox"></div>
+<div class="controls">
+<b><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></b><span>Move</span>
+<b>Mouse / <kbd>&larr;</kbd><kbd>&rarr;</kbd></b><span>Camera (click the game to capture the mouse)</span>
+<b><kbd>Space</kbd></b><span>Jump, press again in the air to double-jump</span>
+<b><kbd>Shift</kbd></b><span>Dash</span>
+<b><kbd>F</kbd> / <kbd>E</kbd></b><span>Attack / talk and interact</span>
+<b><kbd>C</kbd> or <kbd>Ctrl</kbd></b><span>Crouch, ground pound, and Frost Slide while running</span>
+<b><kbd>Esc</kbd></b><span>Pause and settings</span>
+<b>Gamepad</b><span>Supported (A jump, X attack, Y interact, B dash)</span>
+</div>
+<div class="foot"><a href="revamp/CREDITS.md?v=b9bd6c8690" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build fbeddb7</span></div>
+</div>
+</div>
+</div>
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const btn = $('playBtn'), fill = $('loadBarFill'), statusEl = $('status'), meta = $('meta');
+const P = { wasm: 0, wasmTotal: 1, crit: 0, critTotal: 1, rust: 0, shown: 0, t0: 0 };
+let B = { files: {}, music: '../music/' };
+const fmt = (n) => (n / 1048576).toFixed(1) + ' MB';
+const paint = () => {
+  const f = Math.max(Math.min(P.wasm / P.wasmTotal, 1) * 0.22 + Math.min(P.crit / P.critTotal, 1) * 0.58, P.rust >= 0.8 ? P.rust : 0);
+  P.shown = Math.max(P.shown, Math.min(f, 1));
+  fill.style.width = (P.shown * 100).toFixed(1) + '%';
+  meta.textContent = P.rust >= 0.8 ? '' : fmt(P.wasm + P.crit) + ' of ' + fmt(P.wasmTotal + P.critTotal);
+};
+const count = (body, key) => body.pipeThrough(new TransformStream({ transform(chunk, c) { P[key] += chunk.byteLength; paint(); c.enqueue(chunk); } }));
+window.amniStatus = (msg) => { statusEl.textContent = msg; };
+window.amniProgress = (f) => { P.rust = Math.max(P.rust, f); paint(); };
+window.amniFetch = (path) => {
+  const e = B.files[path];
+  const url = path.startsWith('music/') ? B.music + path.slice(6) : path + (e && e.gz ? '.gz' : '') + (e ? '?v=' + e.v : '');
+  return fetch(url).then(async (r) => {
+    if (!r.ok || !r.body) return r;
+    const body = e && e.c ? count(r.body, 'crit') : r.body;
+    if (!(e && e.gz)) return new Response(body, { status: 200 });
+    const buf = new Uint8Array(await new Response(body).arrayBuffer());
+    return buf[0] === 0x1f && buf[1] === 0x8b ? new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))) : new Response(buf);
+  });
+};
+const fail = (title, body) => {
+  $('errBox').innerHTML = '<div class="err"><h3>' + title + '</h3>' + body + '</div>';
+  btn.disabled = false; btn.textContent = 'Retry';
+};
+const gpuReport = async () => {
+  if (!navigator.gpu) return 'none';
+  try { return (await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' })) ? 'webgpu' : 'none'; } catch (e) { return 'none'; }
+};
+const hasGl2 = () => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch (e) { return false; } };
+const armCanvas = () => {
+  const c = document.querySelector('#amni-game canvas');
+  if (!c) return;
+  c.setAttribute('tabindex', '0');
+  c.focus();
+  c.addEventListener('mousedown', () => { if (!document.pointerLockElement && !matchMedia('(pointer: coarse)').matches) { try { c.requestPointerLock({ unadjustedMovement: true })?.catch?.(() => c.requestPointerLock()); } catch (e) {} } });
+  ['touchstart', 'touchmove', 'gesturestart'].forEach((ev) => c.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
+};
+$('fsBtn').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : $('stage').requestFullscreen?.());
+document.addEventListener('fullscreenchange', () => { $('fsBtn').textContent = document.fullscreenElement ? 'Exit full' : 'Fullscreen'; });
+let started = false;
+btn.addEventListener('click', async () => {
+  if (started) { location.reload(); return; }
+  started = true;
+  btn.disabled = true; btn.textContent = 'Starting'; $('load').style.display = 'block'; $('errBox').innerHTML = '';
+  P.t0 = performance.now();
+  if (typeof DecompressionStream === 'undefined') return fail('Browser too old', '<p>This preview needs a browser from 2023 or later (Chrome, Edge, Firefox or Safari 16.4+).</p>');
+  try { B = await fetch('bundle.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => r.json()); } catch (e) {}
+  B.music = B.music || '../music/';
+  P.critTotal = Math.max(1, Object.values(B.files).reduce((s, f) => s + (f.c ? f.n : 0), 0));
+  const w = B.files['pkg/amni-v2_bg.wasm'];
+  P.wasmTotal = w ? w.raw : 11e6;
+  const q = new URLSearchParams(location.search);
+  const api = await gpuReport();
+  if (api === 'none' && !q.has('backend')) {
+    if (!hasGl2()) return fail('No GPU access', '<p>This browser offers neither WebGPU nor WebGL2. Try a current Chrome, Edge, Firefox or Safari with hardware acceleration on.</p>');
+    q.set('backend', 'gl'); history.replaceState(null, '', '?' + q.toString());
+  }
+  statusEl.textContent = (q.get('backend') === 'gl' ? 'WebGL2' : 'WebGPU') + ': downloading the engine...';
+  try {
+    const { default: init } = await import('./pkg/amni-v2.js?v=2440226850');
+    const resp = fetch('pkg/amni-v2_bg.wasm?v=c3efa95f89').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
+    await init({ module_or_path: resp }).catch((e) => { if (!String(e).includes('control flow')) throw e; });
+  } catch (e) {
+    if (!String(e).includes('control flow')) return fail('Could not start', '<p>' + String(e).slice(0, 220) + '</p><p>Check the connection and retry. A hard refresh (Ctrl+Shift+R) clears stale engine files.</p>');
+  }
+  const host = $('amni-game');
+  const t = performance.now();
+  while (host.dataset.ready !== '1') {
+    if (performance.now() - t > 120000) return fail('The world took too long', '<p>The download or the GPU stalled. Retry, or add <code>?backend=gl</code> to the address to use WebGL2.</p>');
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  P.rust = 1; paint();
+  window.__amniReadyMs = performance.now() - P.t0;
+  document.body.classList.add('playing');
+  armCanvas();
+});
+if (new URLSearchParams(location.search).has('autoplay')) btn.click();
+</script>
+</body>
+</html>
