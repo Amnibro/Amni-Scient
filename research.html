@@ -124,8 +124,8 @@
 <div class="research-card">
 <div class="rc-tag">SPECTRAL ANALYSIS</div>
 <h3>THE REFFELT CONSTANT</h3>
-<p>A digit-string fingerprint of an optimizer&rsquo;s winning configurations. Take the smooth modes of a k-NN graph Laplacian over those winners, scale each by a per-dimension sensitivity weight, and you get one digit per retained mode. The scale is still picked by hand, it doesn&rsquo;t fit the flag thresholds yet, and the walk-forward claim isn&rsquo;t measured. The page tells you which is which.</p>
-<div class="rc-eq">&real;&#8198;<sub>j</sub> = clamp(&lfloor;800 &middot; &lambda;<sub>j</sub> &middot; causal<sub>j</sub>&rfloor; + 1, 1, 8)</div>
+<p>One digit per parameter, read off the smooth modes of a k-NN graph Laplacian over evaluated configurations. Version 2 fixes the math, ships as published NumPy code, and is measured on synthetic benchmarks: on an optimizer&rsquo;s winners it separates the knobs that matter from the distractors with AUC 0.96, ahead of simple baselines in most settings. On random samples it&rsquo;s level with them. No real-data run yet.</p>
+<div class="rc-eq">r<sub>d</sub> = D&middot;w<sub>d</sub> &nbsp;;&nbsp; &real;&#8198;<sub>d</sub> = 0 if r<sub>d</sub> &lt; 1, else min(9, 5 + &lfloor;log<sub>2</sub> r<sub>d</sub>&rfloor;)</div>
 <div class="rc-apps">
 <span>NEURAL ARCHITECTURE SEARCH</span>
 <span>HYPERPARAMETER OPTIMIZATION</span>
@@ -136,8 +136,8 @@
 <div class="research-card">
 <div class="rc-tag">MANIFOLD TOPOLOGY</div>
 <h3>EIGENSTRETCH TENSOR</h3>
-<p>A drift monitor for parameter searches. It recomputes the Reffelt constant at each checkpoint, using trajectory similarity (Wasserstein-1 on equity curves) instead of parameter distance, and checks drift against a four-condition checklist. The thresholds are starting values, and I haven&rsquo;t logged lead time yet.</p>
-<div class="rc-eq">L<sub>norm</sub> = I &minus; D<sup>&minus;&frac12;</sup>AD<sup>&minus;&frac12;</sup> &nbsp;&rarr;&nbsp; SVD &nbsp;&rarr;&nbsp; causal<sub>d</sub> = |&part;&psi;/&part;x<sub>d</sub>|</div>
+<p>A drift monitor for parameter searches. It recomputes the Reffelt v2 weights at each checkpoint on a Wasserstein-1 graph over equity curves, with published code and a simulated regime-change benchmark. It picks out which knob took over better than score-based tests, but it moves about 500 bars after the score drops, not before, and it can&rsquo;t see an optimum that flips. Synthetic only.</p>
+<div class="rc-eq">L<sub>norm</sub> = I &minus; D<sup>&minus;&frac12;</sup>AD<sup>&minus;&frac12;</sup> &nbsp;&rarr;&nbsp; 16 smallest modes &nbsp;&rarr;&nbsp; stretch<sub>d</sub> &prop; &xi;(x<sub>d</sub>, &#349;)</div>
 <div class="rc-apps">
 <span>AI MODEL STABILITY</span>
 <span>TRAINING REGIME MONITORING</span>

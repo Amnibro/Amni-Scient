@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>Eigenstretch Tensor — Watching a Parameter Search Drift | AMNI-SCIENT Research</title>
-<meta name="description" content="The Eigenstretch Tensor: a way to watch the sensitivity pattern of a parameter search drift. At each checkpoint I recompute per-dimension stretch weights and a digit string from a trajectory-similarity graph Laplacian.">
+<meta name="description" content="The Eigenstretch Tensor v2: per-parameter stretch weights from a Wasserstein-1 curve graph Laplacian, recomputed at each checkpoint of a search. Published code and a simulated regime-change benchmark against Page-Hinkley baselines.">
 <meta name="keywords" content="eigenstretch tensor,manifold analysis,graph laplacian,overfitting detection,regime change,spectral topology">
 <meta property="og:title" content="Eigenstretch Tensor — AMNI-SCIENT Research">
 <meta property="og:description" content="A monitor for drift in the sensitivity pattern of a parameter search, recomputed at each checkpoint. Working notes by Anthony Reffelt.">
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://amni-scient.com/research/eigenstretch-tensor">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/eigenstretch-tensor">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Eigenstretch Tensor","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Per-dimension stretch weights and a digit string from a trajectory-similarity graph Laplacian, recomputed at each checkpoint of a parameter search.","url":"https://amni-scient.com/research/eigenstretch-tensor","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Eigenstretch Tensor","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Per-dimension stretch weights and a digit string from a trajectory-similarity graph Laplacian, recomputed at each checkpoint of a parameter search.","url":"https://amni-scient.com/research/eigenstretch-tensor","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-10-05"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -88,160 +88,227 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; EIGENSTRETCH TENSOR</div>
 <h1>EIGENSTRETCH TENSOR</h1>
-<p class="subtitle">CAUSAL-TOPOLOGICAL FINGERPRINT OF PARAMETER MANIFOLDS</p>
-<p class="tagline">A monitor for drift in the sensitivity pattern of a parameter search, recomputed at every checkpoint so I can see when it starts to move.</p>
+<p class="subtitle">CAUSAL-TOPOLOGICAL FINGERPRINT OF PARAMETER MANIFOLDS &middot; VERSION 2</p>
+<p class="tagline">A monitor for drift in the sensitivity pattern of a parameter search, recomputed at every checkpoint so I can see when it starts to move. Now with fixed math, published code, and a measured answer to whether it warns early.</p>
 </section>
 <section>
 <h2>ABSTRACT</h2>
 <div class="prose">
-<p>I wanted a way to notice when the score surface of a parameter search changes shape while the search is still running. So I took the Reffelt Constant, the single-snapshot digit string from its own page, and recomputed it at every checkpoint. That's the <strong style="color:var(--text)">Eigenstretch Tensor</strong>. When the digit pattern shifts between checkpoints, I read that as the score surface changing shape, and I use it as a flag to go look at the run. Quick honesty note on the name: it's older than the math. What I actually compute is a vector of per-dimension stretch weights and a digit string, not a tensor.</p>
-<p style="margin-top:1.2rem">The other difference from the Reffelt page is the graph. Here it's built from equity-curve similarity, where an equity curve is the running P&amp;L of a strategy. I compare the whole output curve of one configuration to the whole output curve of another with an approximate Wasserstein-1 distance. So two configurations with very different parameter values still sit next to each other if they behave the same. That's the whole point: I want the graph to follow what the configurations do, not where they are.</p>
+<p>I wanted a way to notice when the score surface of a parameter search changes shape while the search is still running. So I took the per-parameter weights from the <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a> and recomputed them at every checkpoint. That's the <strong style="color:var(--text)">Eigenstretch Tensor</strong>. When the weights shift between checkpoints, I read that as the score surface changing shape, and I use it as a flag to go look at the run. Quick honesty note on the name: it's older than the math. What I actually compute is a vector of per-parameter stretch weights and a digit string, not a tensor.</p>
+<p style="margin-top:1.2rem">The other difference from the Reffelt page is the graph. Here it's built from equity-curve similarity, where an equity curve is the running P&amp;L of a strategy. I compare the whole output curve of one configuration with the whole output curve of another using the Wasserstein-1 distance. So two configurations with very different parameter values still sit next to each other if they behave the same.</p>
+<p style="margin-top:1.2rem">For years I believed the digits jumped shortly before the score dropped. I'd never logged it. Now I've tested it on simulated searches with a known regime change, and the answer is no: in my simulation the stretch vector moves after the score drops, not before. What it does do is say <em>which</em> knob took over, which a score monitor can't.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Here's where this stands before you dig in. The Laplacian and its eigendecomposition are standard, and I cite them below. The trajectory graph, the stretch weights and the digit encoding are my construction, and the 800 scale, the mode-to-dimension pairing and the 0.9 and 0.7 correlation thresholds you'll meet below are all hand-picked. Both charts on this page draw hand-set numbers so you can see the shapes; neither one runs a decomposition. There's an older implementation on disk, unpublished, and it doesn't match this page yet; How to Reproduce has the differences. And the lead time between a digit spike and a score drop? I think I saw it in my old optimizer runs, but I kept no logs, so it's an anecdote and there's no measured number on this page.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> Here's where this stands. The Laplacian and its eigensolver are standard. The curve graph, the stretch vector and the drift statistic are my construction, now fixed and published as <a href="code/eigenstretch.py" style="color:var(--accent)">eigenstretch.py</a> (NumPy only; it imports the Reffelt code). Every number below comes from <a href="eigenstretch_results.json" style="color:var(--accent)">eigenstretch_results.json</a>: simulated searches with a regime change at a known bar, 30 runs per scenario, 40 more stationary runs to set the threshold. When the knob that matters swaps, the stretch vector separates changed runs from unchanged ones better than the score-based baselines I tried (ROC AUC 0.86 against 0.75 for a Page-Hinkley test on live performance). But it's late, about 500 bars after the score drops, it's noisy at a strict false-alarm budget, and it can't see an optimum that moves while the same knob stays in charge. The old 0.9 and 0.7 thresholds fired on every run, changed or not. All of it is synthetic; I couldn't find my old optimizer logs, so there's no real-data run.</div></div>
+<section>
+<h2>WHAT CHANGED FROM V1</h2>
+<div class="prose">
+<p>v1 was a script on my disk that didn't match this page. v2 is the page, in code. Here's what moved:</p>
+<ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
+<li><strong style="color:var(--text)">Eigensolver.</strong> v1 took the 16 largest singular values of the raw k-NN adjacency matrix. Singular values also pick up strongly negative eigenvalues, whose modes are the opposite of smooth. v2 takes the 16 smallest nonzero eigenpairs of the normalized Laplacian, the same solver as the Reffelt page.</li>
+<li><strong style="color:var(--text)">Distance.</strong> v1 used plain L1 between z-scored curves, unsorted. v2 uses the 1-D Wasserstein-1 distance the page always described: sort each curve's values, then average the absolute differences.</li>
+<li><strong style="color:var(--text)">Edge weights.</strong> v1 left every edge at weight 1. v2 uses E1 below, with score similarity.</li>
+<li><strong style="color:var(--text)">What gets compared.</strong> v1 correlated the eigenvalues with a frozen day-one reference. v2 compares the per-parameter stretch vector, which is the thing that can say <em>which</em> knob changed.</li>
+<li><strong style="color:var(--text)">Thresholds.</strong> The hand-picked 0.9 and 0.7 are gone. The alarm threshold is now calibrated on stationary runs to a 5% false-alarm rate, and the page shows the whole trade-off curve.</li>
+<li><strong style="color:var(--text)">Digits.</strong> Same rule as Reffelt v2: one digit per parameter, 0 below average, 5 to 9 on a doubling scale above it. The 800 scale and the j mod D pairing are gone.</li>
+</ul>
+</div>
+</section>
 <section>
 <h2>CONSTRUCTION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; ELITE ARCHIVE SELECTION</h4>
-<p>From the population of evaluated configurations I keep the top N by fitness score. That keeps the spectral analysis on the region of parameter space I care about: the neighborhood of the best configurations. N=4096 is what my unpublished implementation uses. Nothing is published yet, so treat every constant on this page as a design choice.</p>
+<p>At each checkpoint, the search re-scores every configuration it has evaluated on the latest window of data and keeps the top N. That keeps the analysis on the part of the space I care about. N = 768 in the benchmark below; my old code used 4,096.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; WASSERSTEIN k-NN GRAPH</h4>
-<p>Next I build a sparse k-nearest-neighbor graph over the archive with k=64 (a design choice), using an approximate Wasserstein-1 distance between output curves. For W<sub>1</sub> I use the one-dimensional form: sort the values of each curve, then take the L1 distance between the two sorted cumulative curves. That's exact for 1-D distributions, and it's the building block of sliced Wasserstein (Rabin, Peyr&eacute;, Delon &amp; Bernot, <em>SSVM</em> 2011). My current code cuts a corner here: it takes plain L1 between the cumulative curves, unsorted, and leaves every edge at weight 1. On this page, edge weights also carry score similarity:</p>
+<p>Each configuration in the archive has an output curve over the window: for a strategy, its equity curve. For any two curves I take the one-dimensional Wasserstein-1 distance. With equal-length curves it's exact and cheap: sort each curve's values and average the absolute differences (it's also the building block of sliced Wasserstein; Rabin, Peyr&eacute;, Delon &amp; Bernot, <em>SSVM</em> 2011). I divide all distances by their median so &epsilon; has no units, then connect each configuration to its 32 nearest curves:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION E1 &mdash; TRAJECTORY SIMILARITY</div>
-$$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{W_1(\text{traj}_i, \text{traj}_j) + \epsilon}$$
+$$W_1(a, b) = \frac{1}{T}\sum_{t=1}^{T}\left|a_{(t)} - b_{(t)}\right|, \qquad w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{W_1(\text{curve}_i, \text{curve}_j)/\operatorname{median}(W_1) + \epsilon}$$
 </div>
-<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the archive, and &epsilon; is a small constant I would set to keep the denominator away from zero. Why W<sub>1</sub>? It compares the whole shape of two curves. Plain L2 on the samples also sees every point, but it punishes a time shift hard. W<sub>1</sub> doesn't.</p>
+<p>a<sub>(t)</sub> is the t-th smallest value of curve a, &sigma;<sub>s</sub> is the score standard deviation, &epsilon; = 0.1. Why W<sub>1</sub>? It compares the whole distribution of two curves and doesn't punish a time shift the way L2 on the raw samples does. So two configurations with very different parameters still sit next to each other if they behave the same. That's the point: the graph follows what the configurations do, not where they are.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 3 &mdash; LAPLACIAN EIGENDECOMPOSITION</h4>
-<p>From that graph I form the symmetric normalized Laplacian and take a rank-16 basis, where 16 is a design choice. The modes I want are the ones with the smallest nonzero eigenvalues, because those vary slowly across the graph.</p>
+<p>From that graph I form the symmetric normalized Laplacian and keep the 16 smallest nonzero eigenpairs, the smooth end:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION E2 &mdash; SPECTRAL BASIS EXTRACTION</div>
-$$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2}, \qquad L_{\text{norm}}\psi_j = \lambda_j \psi_j, \qquad j = 1 \ldots 16$$
+<div class="eq-label">EQUATION E2 &mdash; SPECTRAL BASIS</div>
+$$L_{\text{norm}} = I - D^{-1/2}AD^{-1/2}, \qquad L_{\text{norm}}\psi_j = \lambda_j \psi_j, \qquad 0 < \lambda_1 \le \cdots \le \lambda_{16}$$
 </div>
-<p>Here's the snag. My current code doesn't do this step as written. It runs a truncated SVD (scipy's svds with the LOBPCG solver; the code comments call it a randomized SVD) on the raw k-NN adjacency matrix, not the Laplacian, and keeps the 16 largest singular values. On a near-regular graph the top of the adjacency spectrum lines up with the smooth end of the Laplacian, but singular values also pick up strongly negative eigenvalues, and those modes are the opposite of smooth. That's a known inconsistency I still have to fix. The right call is a shift-invert or a partial eigensolver on the small end of the Laplacian.</p>
 </div>
 <div class="derivation-step">
-<h4>STEP 4 &mdash; PER-DIMENSION GRADIENT SENSITIVITY</h4>
-<p>Now the part that ties the modes back to the parameters. For each parameter dimension d I sort the archive by that coordinate, take the finite difference of each eigenvector's entries between consecutive configurations in that order, and average the absolute value over the archive. &pi;<sub>d</sub> is the sorting permutation:</p>
+<h4>STEP 4 &mdash; THE STRETCH VECTOR</h4>
+<p>Now the part that ties the curve graph back to the parameters. This graph isn't built over parameters, so the Reffelt page's winners' reading, which reads the geometry of where winners sit in parameter space, doesn't apply. What does apply is its unbiased reading: smooth the score over the curve graph, then ask how much the smoothed score depends on each parameter, with Chatterjee's &xi; along each parameter's sort order:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION E3 &mdash; CAUSAL CONTRIBUTION VECTOR</div>
-$$g_{j,d} = \frac{1}{N-1}\sum_{i=1}^{N-1}\left|\psi_j(\pi_d(i+1)) - \psi_j(\pi_d(i))\right|, \qquad \text{causal}_d = \frac{\sum_j g_{j,d}}{\sum_{d'} \sum_j g_{j,d'}}$$
+<div class="eq-label">EQUATION E3 &mdash; STRETCH VECTOR</div>
+$$\hat s = \sum_{j=1}^{16} c_j D^{-1/2}\psi_j,\quad c_j = \psi_j^{\top}D^{1/2}(s - \bar s_D), \qquad \text{stretch}_d = \frac{\max(\xi(x_d, \hat s), 0)}{\sum_{d'} \max(\xi(x_{d'}, \hat s), 0)}$$
 </div>
-<p>The result is a vector with D entries that sum to one. Each entry says how much the smooth modes stretch along that parameter axis. That vector is the thing I keep and compare between checkpoints!</p>
+<p>The result has D entries that sum to one. Each entry says how much the score, as the curve graph sees it, depends on that parameter. That vector is the thing I keep and compare between checkpoints! The digit string is the same encoding as Reffelt v2 (R5 there), one digit per parameter.</p>
 </div>
 <div class="derivation-step">
-<h4>STEP 5 &mdash; DIGIT ENCODING</h4>
-<p>Last, I squash it into digits so I can eyeball it. Digit j is eigenvalue j times a causal weight, scaled by 800, plus one, clamped to 1 through 8. A product over 1.0 prints as 9 so I can spot saturation, and a product under 0.01 prints as 0. Two of those choices are guesses. Right now I pair mode j with dimension j mod D, which is a placeholder; the pairing isn't justified yet. And the 800 is a hand-picked scale, same as on the Reffelt page, with the same flaw: for any product of 0.01 or more, 800 &times; product + 1 is already 9 or more, so every digit between the two flags prints as 8. The code doesn't use this rule at all yet; How to Reproduce says what it does instead.</p>
+<h4>STEP 5 &mdash; DRIFT STATISTIC</h4>
+<p>I average the stretch vectors of the first four checkpoints into a reference, then at every checkpoint after that compute one minus the correlation with it. I also tried a two-window version that compares the mean of the last three checkpoints with the three before them, so a slow drift doesn't build up against a stale reference:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION E4 &mdash; EIGENSTRETCH DIGITS</div>
-$$d_j = \operatorname{clamp}\left(\left\lfloor 800 \cdot \lambda_j \cdot \text{causal}_{j \bmod D} \right\rfloor + 1,\; 1,\; 8\right), \qquad d_j = 9 \text{ if } \lambda_j \text{causal}_{j \bmod D} > 1.0, \qquad d_j = 0 \text{ if } \lambda_j \text{causal}_{j \bmod D} < 0.01$$
+<div class="eq-label">EQUATION E4 &mdash; DRIFT</div>
+$$\delta_t = 1 - \operatorname{corr}\left(\text{stretch}_t,\ \tfrac{1}{4}\sum_{u=1}^{4}\text{stretch}_u\right), \qquad \delta^{(2)}_t = 1 - \operatorname{corr}\left(\overline{\text{stretch}}_{t-2..t},\ \overline{\text{stretch}}_{t-5..t-3}\right)$$
 </div>
-<p>The output is a 16-digit string using digits 0 to 9, with 0 and 9 reserved as flags.</p>
+<p>An alarm fires the first time the statistic crosses a threshold h. I set h from 40 stationary calibration runs so that 5% of them would have raised an alarm anywhere in the monitored span, then tested on 30 fresh runs per scenario.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>RELATIONSHIP TO REFFELT CONSTANT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>This page and the Reffelt Constant page use the same graph Laplacian and the same stretch weights. The difference is what goes into the graph and how often I compute it:</p>
+<p>Same Laplacian, same solver, same digit rule. The difference is what goes into the graph and how often I compute it:</p>
 <table class="validity-table" style="margin-top:1rem">
 <thead><tr><th>ASPECT</th><th>REFFELT CONSTANT</th><th>EIGENSTRETCH TENSOR</th></tr></thead>
 <tbody>
-<tr><td style="color:var(--text)">Purpose</td><td>Ground state identification</td><td>Dynamic monitoring</td></tr>
-<tr><td style="color:var(--text)">Input</td><td>Score-weighted parameter vectors</td><td>Trajectory-similar elite archive</td></tr>
-<tr><td style="color:var(--text)">Distance metric</td><td>Euclidean + score similarity</td><td>Wasserstein-1 + score similarity</td></tr>
+<tr><td style="color:var(--text)">Purpose</td><td>Which knobs to freeze</td><td>Drift in which knobs matter</td></tr>
+<tr><td style="color:var(--text)">Graph over</td><td>Normalized parameter vectors</td><td>Output curves of the elite archive</td></tr>
+<tr><td style="color:var(--text)">Distance</td><td>Euclidean + score similarity</td><td>Wasserstein-1 + score similarity</td></tr>
+<tr><td style="color:var(--text)">Reading</td><td>Winners' (default) or unbiased</td><td>Unbiased (the graph isn't over parameters)</td></tr>
 <tr><td style="color:var(--text)">Usage</td><td>Once, after a search</td><td>Recomputed at each checkpoint</td></tr>
-<tr><td style="color:var(--text)">Diagnostic</td><td>Which dimensions to freeze</td><td>Drift in the sensitivity pattern</td></tr>
+<tr><td style="color:var(--text)">Measured on</td><td>5 test functions, D = 10 to 50</td><td>Simulated strategy searches with a known change</td></tr>
 </tbody>
 </table>
 </div>
 </section>
 <section>
+<h2>WHAT I MEASURED</h2>
+<div class="prose">
+<p>I needed searches where I know exactly when and how the score surface changes, so I simulated them. A strategy has 10 parameters. Four of them set its exposure to three market factors: one knob sets the exposure to factor 1 (the trend), two knobs together set the exposure to factor 2, and one sets factor 3. The other six do nothing. Each configuration's equity curve is its exposures times the factor returns, plus its own noise. Score is the Sharpe ratio over the last 400 bars.</p>
+<p style="margin-top:1rem">The search is a small evolution strategy. Every 100 bars it re-scores everything it has seen on the latest window, keeps the top 768 as the archive, computes the stretch vector, and breeds 64 new configurations from the top 32 (plus 16 random ones). 3,000 bars, 27 checkpoints, the first 4 used as the reference. Four scenarios, all with the change at bar 1700:</p>
+<ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
+<li><strong style="color:var(--text)">Control.</strong> Factor 1 pays the whole time. Nothing changes.</li>
+<li><strong style="color:var(--text)">Swap.</strong> At bar 1700 the payoff jumps from factor 1 to factor 2. The knob that matters changes.</li>
+<li><strong style="color:var(--text)">Ramp.</strong> The same move, spread over 800 bars.</li>
+<li><strong style="color:var(--text)">Flip.</strong> Factor 1 still drives everything, but its sign flips. The best value of the same knob moves to the other end.</li>
+</ul>
+<p style="margin-top:1rem">Each scenario gets 30 runs on seeds 0 to 29, and a run shares its seed with its control twin, so the two are identical up to bar 1700. 40 more control runs (seeds 10000 to 10039) set the alarm thresholds. The baselines watch the score instead of the weights: a Page-Hinkley test for a drop in the elite's in-sample score, and the same test on live performance, meaning how the top 16 configurations do over the next 100 bars after they're picked. That second one is what I'd actually watch with money on the line, and it's the honest yardstick for &ldquo;early warning&rdquo;.</p>
+</div>
+<div style="max-width:800px;margin:1.5rem auto 0">
+<table class="validity-table" id="es-table">
+<thead><tr><th>DETECTOR</th><th>FALSE ALARMS (CONTROL)</th><th>SWAP</th><th>RAMP</th><th>FLIP</th></tr></thead>
+<tbody><tr><td colspan="5">Loading eigenstretch_results.json&hellip;</td></tr></tbody>
+</table>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7">Each scenario cell: share of the 30 runs detected within 1,000 bars of the change (first alarm, none before it) &middot; median delay in bars &middot; ROC AUC. The threshold is set so 5% of the 40 calibration controls alarm anywhere between bar 800 and 3000; the first column is what that threshold does on the 30 test controls. Drawn from the JSON.</p>
+</div>
+<div class="prose" style="margin-top:1.5rem">
+<p><strong style="color:var(--text)">The stretch vector sees the swap.</strong> On average it's unmistakable. At bar 1700, the trend knob carries 0.52 of the stretch vector and the two new knobs 0.13. Three hundred bars after the swap it's 0.12 and 0.42, and by bar 2200 the new pair holds 0.55. Over the 1,000 bars after the change, it separates changed runs from their unchanged twins better than anything else I tried: ROC AUC 0.86 for the swap and 0.84 for the ramp, against 0.75 and 0.76 for Page-Hinkley on live performance and 0.67 and 0.73 on the in-sample score. The two-window version scores 0.84 and 0.74.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">But it's late.</strong> The live score drops first: the top configurations' next-100-bar Sharpe falls from 1.02 to 0.24 right after the swap, so on average the drop is visible by bar 1800 (bar 2000 for the ramp). At the calibrated threshold the stretch vector caught 11 of 30 swaps with a median delay of 600 bars (quartiles 350 to 650), every one of them after the drop; median lead &minus;500 bars. On the ramp, 1 of its 8 alarms came before the drop. So the early warning I remembered didn't show up here. My best explanation: the weights are computed on a 400-bar window, so they can't move until the new regime fills a good part of it, while live performance feels it in the first 100 bars.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">And it's noisy at a strict budget.</strong> A single checkpoint's stretch vector wobbles a lot, so to keep false alarms near 5% the threshold ends up at a correlation of &minus;0.26 with the reference. That's why only 37% of swaps are caught, while 13% of the test controls still alarm (the calibration set allowed 5%; 30 test runs is a small sample). The two-window version cuts the test-control false alarms to 3%, but catches only 23% of swaps. The score baselines don't do better at this budget: neither Page-Hinkley test caught a single swap or ramp, because their own false alarms from bad-luck stretches set a high bar.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">It can't see a flip.</strong> When the same knob stays in charge and only its best value moves, the weights barely change: ROC AUC 0.56, close to a coin. Page-Hinkley on live performance gets 0.92 there, and even the old v1 monitor gets 0.77. That's the split in one line: the stretch vector tracks <em>which</em> knob matters, the score tracks <em>whether</em> things got worse, and you want both.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">The old numbers.</strong> With the hand-picked rules from v1 of this page, a correlation below 0.9 or 0.7 with the reference, every single run alarmed, controls included. The old script's own check (eigenvalue correlation below 0.9) never fired in any run, change or not. Its eigenvalues barely move, and its window ROC AUC on the swap is 0.59.</p>
+</div>
+<div style="max-width:800px;margin:0 auto">
+<div class="viz-section">
+<h4>DRIFT STATISTIC BY CHECKPOINT</h4>
+<div class="viz-controls">
+<label>DETECTOR:</label>
+<select id="es-det" onchange="esDrift()"><option value="eigenstretch_v2" selected>Eigenstretch v2 (frozen reference)</option><option value="eigenstretch_v2_two_window">Eigenstretch v2 (two windows)</option><option value="holographic_v1">v1 (adjacency singular values)</option><option value="page_hinkley_elite_score">Page-Hinkley, in-sample elite score</option><option value="page_hinkley_live_oos">Page-Hinkley, live out-of-sample</option></select>
+</div>
+<div class="viz-canvas-wrap"><canvas id="es-drift"></canvas></div>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7;margin-top:.75rem">Mean over 30 runs per scenario. The control line climbs too: as the search converges, the archive bunches up along the trend knob and its weight slides from 0.72 to 0.36 with nothing changing in the market. That slow drift against a frozen reference is part of why the threshold has to sit so high.</p>
+</div>
+<div class="viz-section">
+<h4>WHICH KNOB THE STRETCH VECTOR POINTS AT</h4>
+<div class="viz-canvas-wrap"><canvas id="es-share"></canvas></div>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7;margin-top:.75rem">Share of the stretch vector on the trend knob and on the two knobs that take over after a swap. Mean over 30 runs. This is the part a score monitor can't give you.</p>
+</div>
+<div class="viz-section">
+<h4>ROC, 1,000 BARS AFTER THE CHANGE</h4>
+<div class="viz-controls">
+<label>SCENARIO:</label>
+<select id="es-sc" onchange="esRoc()"><option value="swap" selected>Swap</option><option value="ramp">Ramp</option><option value="flip">Flip</option></select>
+</div>
+<div class="viz-canvas-wrap" style="max-width:520px"><canvas id="es-roc"></canvas></div>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7;margin-top:.75rem">Each point is one threshold. Up: share of changed runs with an alarm between bar 1700 and 2700. Right: share of their unchanged twins with an alarm in the same bars. This is the threshold sweep that replaces the hand-picked 0.9 and 0.7.</p>
+</div>
+<div class="viz-section">
+<h4>ONE RUN'S DIGITS</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Swap scenario, seed 0, every other checkpoint. One digit per parameter, same rule as Reffelt v2: 0 below average, 5 to 9 on a doubling scale. Gold: the trend knob. Green: the two knobs that take over at bar 1700.</p>
+<table class="validity-table" id="es-example"><thead><tr><th>BAR</th><th>DIGITS (PARAMETERS 0 TO 9)</th></tr></thead><tbody></tbody></table>
+</div>
+</div>
+</section>
+<section>
 <h2>DIAGNOSTIC SIGNALS</h2>
 <div style="max-width:800px;margin:0 auto">
-<p class="prose" style="margin-bottom:1.5rem">So what do I actually look for? These are the four conditions I check at each checkpoint. Treat them as a checklist I wrote for myself, not as validated detectors.</p>
+<p class="prose" style="margin-bottom:1.5rem">These are the four conditions I wrote down to check at each checkpoint, with what I now know about each.</p>
 <div class="card-grid">
 <div class="card">
 <h3>OVERFITTING</h3>
-<p>This is what the monitor is meant to catch: digits climbing toward 8 and 9 shortly before the out-of-sample score drops. I think I saw that in my old optimizer runs, but I kept no logs, so it's an anecdote, and I'm not quoting a lead time.</p>
+<p>Digits climbing shortly before the out-of-sample score drops. Not tested: my simulation has regime changes, not overfitting. And in the regime changes I did test, the weights moved after the score, not before.</p>
 </div>
 <div class="card">
 <h3>REGIME CHANGE</h3>
-<p>If the digit pattern changes a lot between checkpoints, say from "84417588" to "35621844", I read that as the score surface having changed shape and the old best configurations no longer sitting in the same basin. I don't yet have a threshold for how much change counts, because I haven't measured how much the digits wander on their own.</p>
+<p>Measured. When the knob that matters swaps, the stretch vector shows it clearly on average and points at the new knobs, but late and noisily per run. When only the optimum moves, it doesn't see it.</p>
 </div>
 <div class="card">
 <h3>DIMENSIONAL COLLAPSE</h3>
-<p>If several digits drop to 1 at once, the smooth modes have stopped moving along those dimensions. During a search, that's what convergence looks like. After a search, on a deployed model, it would mean the model is losing sensitivity. I haven't tested that case.</p>
+<p>Seen in every control run: as the search converges, weight drains from the knob the archive has settled on. During a search that's convergence, not a problem, but it drifts any frozen reference. On a deployed model it's untested.</p>
 </div>
 <div class="card">
 <h3>REFERENCE CORRELATION</h3>
-<p>I freeze a reference stretch vector at the start and take the correlation between it and the current one at each checkpoint. Above 0.9, I do nothing. Below 0.7, I recompute the reference and look at the run. Both numbers are starting values I picked, not tuned.</p>
+<p>The 0.9 and 0.7 rules fired on every run. A threshold calibrated on stationary runs replaces them, and the ROC chart above shows the trade-off at every other threshold.</p>
 </div>
 </div>
 </div>
 </section>
 <section>
-<h2>INTERACTIVE EXPLORER</h2>
-<div style="max-width:800px;margin:0 auto">
-<div class="viz-section">
-<h4>EIGENVALUE SCREE PLOT</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Want to see what an elbow looks like? Bars are 16 hand-set values, the line is their running share of the total, and NOISE jitters the values. It's a hand-drawn scree curve with noise added, not a real decomposition.</p>
-<div class="viz-controls">
-<label>NOISE:</label>
-<input type="range" id="es-noise" min="0" max="100" value="20" style="width:80px" oninput="esGenerate()">
-<button onclick="esGenerate()">REGENERATE</button>
-</div>
-<div class="viz-canvas-wrap"><canvas id="es-scree-chart"></canvas></div>
-</div>
-<div class="viz-section" style="margin-top:1.5rem">
-<h4>DIAGNOSTIC SIGNAL MONITOR</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">The four axes are the checklist above. Each button loads a set of numbers I typed in to show what that condition might look like against the dashed baseline. These are hand-set example values; nothing here is computed from data.</p>
-<div class="viz-controls">
-<button onclick="esDiagHealthy()">HEALTHY STATE</button>
-<button onclick="esDiagOverfit()">OVERFITTING</button>
-<button onclick="esDiagCollapse()">COLLAPSE</button>
-<button onclick="esDiagDrift()">REGIME DRIFT</button>
-</div>
-<div class="viz-canvas-wrap" style="max-width:400px"><canvas id="es-radar-chart"></canvas></div>
-</div>
-</div>
-</section>
-<section>
-<h2>RELATED WORK</h2>
+<h2>LIMITS</h2>
 <div class="prose">
-<p>The job this page is trying to do, flagging a change in a stream of checkpoints, already has established tools. ADWIN (Bifet &amp; Gavald&agrave;, <em>SDM</em> 2007) keeps an adaptive window and flags when the two halves disagree. The Page-Hinkley test is a cumulative-sum test for a shift in the mean. For the overfitting case specifically, Prechelt's early-stopping criteria (&ldquo;Early Stopping, But When?&rdquo;, 1998) are the standard baseline. I haven't run any of them against the digits yet, and until I do, I can't say the digits add anything.</p>
-</div>
-</section>
-<section>
-<h2>THINGS I'D LIKE TO TRY</h2>
-<div style="max-width:800px;margin:0 auto">
-<p class="prose" style="margin-bottom:1.5rem">This is where I want to take it next. Fair warning: none of these have been run. I've used the digits on my own optimizer runs and nowhere else.</p>
-<div class="app-card">
-<h4>TRAINING STABILITY</h4>
-<p>I'd like to compute the stretch vector at checkpoint intervals during a training run. Does a digit spike line up with a learning-rate problem or with the start of overfitting? Does a digit collapse line up with mode collapse in a generative model? If it does, it could feed an early-stopping rule. Untested.</p>
-</div>
-<div class="app-card">
-<h4>HYPERPARAMETER SWEEPS</h4>
-<p>Across a set of training runs with varied hyperparameters, the stretch vector should say which settings the quality depends on. One detail matters here: the digit string has 16 digits, one per mode, while the stretch vector has one entry per hyperparameter. So it's the vector, not the string, that would tell a team what to freeze. I haven't run this on anyone's sweep.</p>
-</div>
-<div class="app-card">
-<h4>DRIFT ON A DEPLOYED MODEL</h4>
-<p>Same drift monitor, after the search is over. On a deployed model, the idea would be to compare the current stretch vector against the one from training time and flag divergence. I haven't tried it on a deployed model, and I don't know how it compares with watching prediction confidence.</p>
-</div>
-<div class="app-card">
-<h4>HARDWARE STRESS ENVELOPES</h4>
-<p>Run parameterized stress tests over clock, thermal, memory bandwidth and cache settings, compute the stretch vector over the results, and see whether the high-weight axes match the axes the hardware is actually bottlenecked on. Untested idea.</p>
-</div>
+<ul style="margin:0 0 0 1.2rem;line-height:1.9">
+<li>Everything is simulated, with one market model, one search, 10 parameters and 768-configuration archives. My old BTC, ETH and SOL optimizer runs aren't on this machine, so there's no real-data number.</li>
+<li>The lead-time result depends on the 400-bar window and the 100-bar checkpoint spacing. A shorter window might move the weights sooner, and I haven't swept it.</li>
+<li>30 test runs per scenario is enough for the big differences on this page and not for small ones. The 13% control false-alarm rate against a 5% target is the kind of gap that sample size allows.</li>
+<li>I didn't run ADWIN, and my Page-Hinkley tests use the plain running mean with no tolerance term. A tuned score monitor would likely do better than mine.</li>
+<li>The calibrated threshold is specific to this simulation. On a new system you'd need your own stationary runs, or a stretch of history you trust, to set it.</li>
+</ul>
 </div>
 </section>
 <section>
 <h2>HOW TO REPRODUCE</h2>
 <div class="prose">
-<p>Bad news first: nothing is published. There is an older implementation on disk, holographic_stretch.py in a private repo, and it isn't this page's pipeline yet. It keeps the top 4,096 configurations, builds a 64-NN graph from plain L1 between equity curves with unit edge weights, takes a truncated SVD of that adjacency matrix (16 largest singular values), projects finite-difference backtest gradients onto each mode (proxy gradients when it has no price data), and prints &lfloor;8 &times; value / frozen reference max&rfloor; + 1 clipped to 1 through 9, with one check: the eigenvalues' correlation with a frozen reference, flagged below 0.9. I have no saved runs of it. So every number on this page is a design choice until a linked script says otherwise, and the two charts above are the only runnable pieces here, both drawing hand-set values. Good news: you can rebuild the pipeline from the text. Keep the top N configurations by score, compute the 1-D W<sub>1</sub> distance between every pair of output curves, build the k-NN graph with the E1 weights, form the symmetric normalized Laplacian, take the 16 smallest nonzero eigenpairs, compute the sorted finite-difference weights from E3, and encode with E4. Then repeat at each checkpoint and compare the stretch vectors. Just know that the 800 scale, the j mod D pairing, and the 0.9 and 0.7 thresholds are the places where you'd be copying my guesses.</p>
+<p>Grab <a href="code/eigenstretch.py" style="color:var(--accent)">eigenstretch.py</a> and <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a> into one folder. NumPy is the only dependency.</p>
+<div class="eq-block">
+<div class="eq-label">COMMANDS</div>
+<pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
+python3 eigenstretch.py bench --seeds 30 --cal 40 --jobs 10   # writes ../eigenstretch_results.json, about 40 minutes on 10 cores
+python3 eigenstretch.py check                                  # recomputes every metric from the per-run traces in the JSON
+python3 eigenstretch.py demo --kind swap --seed 0              # one run, digits and drift at each checkpoint</pre>
+</div>
+<p>Everything is seeded, so a rerun gives the same JSON apart from the date and the runtime. The JSON keeps the drift statistics, live scores and stretch shares of all 160 runs, so you can check my evaluation without rerunning the simulation. The older private script is retired; its monitor is reproduced inside the benchmark as the v1 detector.</p>
+</div>
+</section>
+<section>
+<h2>RELATED WORK</h2>
+<div class="prose">
+<p>The job this page does, flagging a change in a stream of checkpoints, has established tools. The Page-Hinkley test (Page, <em>Biometrika</em> 41, 1954) is a cumulative-sum test for a shift in the mean, and I ran it on two score streams as the baseline. ADWIN (Bifet &amp; Gavald&agrave;, <em>SDM</em> 2007) keeps an adaptive window and flags when its two halves disagree; my two-window statistic borrows that idea crudely, and I haven't run ADWIN itself. For overfitting specifically, Prechelt's early-stopping criteria (&ldquo;Early Stopping, But When?&rdquo;, 1998) are the standard baseline, still untested here. The stretch vector itself rests on Chatterjee's rank correlation (<em>J. Amer. Statist. Assoc.</em> 116, 2021) and on the graph-Laplacian machinery cited on the Reffelt page.</p>
+</div>
+</section>
+<section>
+<h2>THINGS I'D LIKE TO TRY</h2>
+<div style="max-width:800px;margin:0 auto">
+<p class="prose" style="margin-bottom:1.5rem">Where I want to take it next. None of these have been run.</p>
+<div class="app-card">
+<h4>PAIR IT WITH A SCORE MONITOR</h4>
+<p>The results say the two signals are complementary: the score says something broke, the stretch vector says which knob took over. The obvious next test is a combined rule, alarm on the score, then read the weights, and whether that re-targets the search faster than restarting it.</p>
+</div>
+<div class="app-card">
+<h4>SHORTER WINDOWS</h4>
+<p>If the lag comes from the 400-bar window, a shorter one should cut it, at the price of noisier weights. I want the curve of lead time against window length before I give up on early warning entirely.</p>
+</div>
+<div class="app-card">
+<h4>TRAINING RUNS</h4>
+<p>Compute the stretch vector at checkpoints across a set of training runs with varied hyperparameters. Does it shift when a learning-rate problem starts? Untested.</p>
+</div>
+<div class="app-card">
+<h4>DRIFT ON A DEPLOYED MODEL</h4>
+<p>Compare the current stretch vector with the one from training time and flag divergence. I don't know how that compares with watching prediction confidence, and given the lag above I'd expect it to be slow.</p>
+</div>
 </div>
 </section>
 <section>
@@ -250,7 +317,7 @@ $$d_j = \operatorname{clamp}\left(\left\lfloor 800 \cdot \lambda_j \cdot \text{c
 <div class="card-grid">
 <div class="card">
 <h3><a href="reffelt-constant.html" style="color:var(--accent);text-decoration:none">&larr; REFFELT CONSTANT</a></h3>
-<p>The single-snapshot version of the same digits, with a Euclidean graph over normalized parameters and the derivation of the stretch weights.</p>
+<p>The single-snapshot version: the same Laplacian over parameters instead of curves, the two readings of its modes, the digit rule, and its own benchmark against sensitivity baselines.</p>
 </div>
 <div class="card">
 <h3><a href="holographic-membrane.html" style="color:var(--accent);text-decoration:none">HOLOGRAPHIC MEMBRANE &rarr;</a></h3>
@@ -274,32 +341,31 @@ $$d_j = \operatorname{clamp}\left(\left\lfloor 800 \cdot \lambda_j \cdot \text{c
 </footer>
 <script>
 (function(){
-var screeChart=null,radarChart=null;
 function gi(id){return document.getElementById(id)}
-window.esGenerate=function(){
-var noise=parseInt(gi('es-noise').value)/100,evs=[],cum=[];
-var base=[0.42,0.28,0.12,0.06,0.03,0.02,0.015,0.012,0.008,0.006,0.005,0.004,0.003,0.002,0.001,0.001];
-for(var i=0;i<16;i++) evs.push(Math.max(0.0005,base[i]*(1+(Math.random()-0.5)*noise*2)));
-evs.sort(function(a,b){return b-a});
-var total=evs.reduce(function(a,b){return a+b},0),running=0;
-for(var i=0;i<16;i++){running+=evs[i]/total;cum.push(running);}
-var labels=[];for(var i=0;i<16;i++) labels.push('\u03BB'+(i+1));
-var ctx=gi('es-scree-chart');
-if(screeChart) screeChart.destroy();
-var colors=evs.map(function(v,i){return cum[i]<=0.95?'rgba(100,200,255,0.6)':'rgba(100,200,255,0.2)'});
-screeChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Eigenvalue',data:evs,backgroundColor:colors,borderColor:colors.map(function(c){return c.replace(/[\d.]+\)$/,'1)');}),borderWidth:1,yAxisID:'y'},{label:'Cumulative Variance',data:cum,type:'line',borderColor:'rgba(255,150,50,1)',backgroundColor:'rgba(255,150,50,0.1)',fill:true,yAxisID:'y1',pointRadius:3,tension:.3}]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}},annotation:{}},scales:{y:{beginAtZero:true,title:{display:true,text:'Eigenvalue',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},y1:{position:'right',min:0,max:1.05,title:{display:true,text:'Cumulative Variance',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{drawOnChartArea:false},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},x:{ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}},grid:{color:'rgba(255,255,255,.05)'}}}}});
-}
-function setRadar(vals,label){
-var ctx=gi('es-radar-chart');
-if(radarChart) radarChart.destroy();
-radarChart=new Chart(ctx,{type:'radar',data:{labels:['Overfitting\nRisk','Regime\nStability','Dimensional\nHealth','Reference\nCorrelation'],datasets:[{label:label,data:vals,backgroundColor:'rgba(100,200,255,0.2)',borderColor:'rgba(100,200,255,1)',borderWidth:2,pointBackgroundColor:'rgba(100,200,255,1)',pointRadius:4},{label:'Healthy Baseline',data:[0.1,0.95,0.9,0.95],backgroundColor:'rgba(100,255,150,0.08)',borderColor:'rgba(100,255,150,0.4)',borderWidth:1,borderDash:[4,4],pointRadius:0}]},options:{responsive:true,plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}},scales:{r:{min:0,max:1,ticks:{stepSize:0.2,color:'#666',backdropColor:'transparent',font:{family:"'JetBrains Mono'",size:8}},grid:{color:'rgba(255,255,255,.1)'},angleLines:{color:'rgba(255,255,255,.1)'},pointLabels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}}}});
-}
-window.esDiagHealthy=function(){setRadar([0.1,0.95,0.9,0.95],'Healthy');}
-window.esDiagOverfit=function(){setRadar([0.85,0.7,0.6,0.55],'Overfitting');}
-window.esDiagCollapse=function(){setRadar([0.3,0.5,0.15,0.4],'Collapse');}
-window.esDiagDrift=function(){setRadar([0.5,0.2,0.7,0.3],'Regime Drift');}
-esGenerate();
-esDiagHealthy();
+var TK={color:'#888',font:{family:"'JetBrains Mono'",size:9}},GR={color:'rgba(128,128,128,.12)'},LG={labels:{color:'#999',boxWidth:12,font:{family:"'JetBrains Mono'",size:10}}},AR=window.innerWidth<600?.75:2;
+var DET={eigenstretch_v2:'Eigenstretch v2 (frozen reference)',eigenstretch_v2_two_window:'Eigenstretch v2 (two windows)',holographic_v1:'v1 (adjacency singular values)',page_hinkley_elite_score:'Page-Hinkley, in-sample elite score',page_hinkley_live_oos:'Page-Hinkley, live out-of-sample score'};
+var DCOL={eigenstretch_v2:'rgba(200,155,78,.95)',eigenstretch_v2_two_window:'rgba(80,160,115,.9)',holographic_v1:'rgba(181,70,47,.85)',page_hinkley_elite_score:'rgba(58,110,165,.9)',page_hinkley_live_oos:'rgba(150,105,185,.9)'};
+var SC={control:'No change (control)',swap:'Swap at bar 1700',ramp:'Ramp from bar 1700',flip:'Flip at bar 1700'};
+var SCOL={control:'rgba(120,118,112,.8)',swap:'rgba(200,155,78,.95)',ramp:'rgba(80,160,115,.9)',flip:'rgba(58,110,165,.9)'};
+var E=null,c1=null,c2=null,c3=null;
+function pct(x){return x==null?'&ndash;':Math.round(100*x)+'%'}
+function table(){var D=E.evaluation.detectors,b='';Object.keys(DET).forEach(function(k){var s=D[k].scenarios,r=D[k].roc;b+='<tr><td style="color:var(--text)">'+DET[k]+'</td><td>'+pct(s.control.false_alarm_rate)+'</td>';['swap','ramp','flip'].forEach(function(q){b+='<td>'+pct(s[q].detection_rate)+' &middot; '+(s[q].delay_median==null?'&ndash;':Math.round(s[q].delay_median))+' &middot; '+r[q].auc.toFixed(2)+'</td>'});b+='</tr>'});gi('es-table').querySelector('tbody').innerHTML=b}
+function xy(ts,v){return ts.map(function(t,i){return{x:t,y:v[i]}})}
+window.esDrift=function(){if(!E)return;var k=gi('es-det').value,ev=E.evaluation,ts=ev.checkpoints,h=ev.detectors[k].threshold_calibrated,ds=[],mx=0;
+Object.keys(SC).forEach(function(q){var v=ev.mean_statistic_curves[q][k];v.forEach(function(y){mx=Math.max(mx,y)});ds.push({label:SC[q],data:xy(ts,v),borderColor:SCOL[q],backgroundColor:SCOL[q],showLine:true,pointRadius:2,borderWidth:2,tension:.2})});
+mx=Math.max(mx,h)*1.08;ds.push({label:'Calibrated threshold (5% false alarms)',data:[{x:ts[0],y:h},{x:ts[ts.length-1],y:h}],borderColor:'rgba(181,70,47,.9)',borderDash:[6,4],showLine:true,pointRadius:0,borderWidth:1.5});
+ds.push({label:'Change',data:[{x:ev.change_time,y:0},{x:ev.change_time,y:mx}],borderColor:'rgba(128,128,128,.6)',borderDash:[2,3],showLine:true,pointRadius:0,borderWidth:1});
+if(c1)c1.destroy();c1=new Chart(gi('es-drift'),{type:'scatter',data:{datasets:ds},options:{responsive:true,aspectRatio:AR,plugins:{legend:LG},scales:{x:{min:ts[0],max:ts[ts.length-1],title:{display:true,text:'Bar (checkpoint every 100)',color:'#888',font:TK.font},ticks:TK,grid:GR},y:{min:0,max:mx,title:{display:true,text:'Statistic, mean of 30 runs',color:'#888',font:TK.font},ticks:TK,grid:GR}}}})};
+window.esRoc=function(){if(!E)return;var q=gi('es-sc').value,D=E.evaluation.detectors,ds=[];
+Object.keys(DET).forEach(function(k){var p=D[k].roc[q].points.map(function(a){return{x:a[0],y:a[1]}});ds.push({label:DET[k]+' (AUC '+D[k].roc[q].auc.toFixed(2)+')',data:p,borderColor:DCOL[k],backgroundColor:DCOL[k],showLine:true,pointRadius:1.5,borderWidth:2})});
+ds.push({label:'Chance',data:[{x:0,y:0},{x:1,y:1}],borderColor:'rgba(128,128,128,.5)',borderDash:[3,3],showLine:true,pointRadius:0,borderWidth:1});
+if(c2)c2.destroy();c2=new Chart(gi('es-roc'),{type:'scatter',data:{datasets:ds},options:{responsive:true,aspectRatio:window.innerWidth<600?.75:1.3,plugins:{legend:LG},scales:{x:{min:0,max:1,title:{display:true,text:'Share of control runs with an alarm in the same window',color:'#888',font:TK.font},ticks:TK,grid:GR},y:{min:0,max:1,title:{display:true,text:'Detected within 1,000 bars',color:'#888',font:TK.font},ticks:TK,grid:GR}}}})};
+function share(){var ev=E.evaluation,ts=ev.checkpoints,S=ev.stretch_weight_share,ds=[];
+[['swap','weight_on_trend_dim','Swap: weight on the old trend knob',SCOL.swap,[]],['swap','weight_on_new_dims','Swap: weight on the two new knobs',SCOL.swap,[6,4]],['control','weight_on_trend_dim','Control: weight on the trend knob',SCOL.control,[]],['control','weight_on_new_dims','Control: weight on the two other knobs',SCOL.control,[6,4]]].forEach(function(a){ds.push({label:a[2],data:xy(ts,S[a[0]][a[1]]),borderColor:a[3],backgroundColor:a[3],borderDash:a[4],showLine:true,pointRadius:1.5,borderWidth:2,tension:.2})});
+ds.push({label:'Change',data:[{x:ev.change_time,y:0},{x:ev.change_time,y:1}],borderColor:'rgba(128,128,128,.6)',borderDash:[2,3],showLine:true,pointRadius:0,borderWidth:1});
+c3=new Chart(gi('es-share'),{type:'scatter',data:{datasets:ds},options:{responsive:true,aspectRatio:AR,plugins:{legend:LG},scales:{x:{min:ts[0],max:ts[ts.length-1],title:{display:true,text:'Bar',color:'#888',font:TK.font},ticks:TK,grid:GR},y:{min:0,max:1,title:{display:true,text:'Share of the stretch vector, mean of 30 runs',color:'#888',font:TK.font},ticks:TK,grid:GR}}}})}
+function example(){var x=E.example_run,ts=E.evaluation.checkpoints,b='';x.digits.forEach(function(d,i){if(i%2===0||ts[i]===E.evaluation.change_time)b+='<tr><td style="color:var(--text)">'+ts[i]+(ts[i]===E.evaluation.change_time?' (change)':'')+'</td><td style="font-family:\'JetBrains Mono\',monospace;letter-spacing:3px;color:var(--text)">'+d.split('').map(function(c,j){return j===x.active[0]?'<span style="color:#c89b4e;text-decoration:underline">'+c+'</span>':(j===x.active[1]||j===x.active[2])?'<span style="color:#50a073;text-decoration:underline">'+c+'</span>':c}).join('')+'</td></tr>'});gi('es-example').querySelector('tbody').innerHTML=b}
+fetch('eigenstretch_results.json').then(function(r){return r.json()}).then(function(j){E=j;table();esDrift();esRoc();share();example()}).catch(function(){gi('es-table').querySelector('tbody').innerHTML='<tr><td colspan="5">Could not load eigenstretch_results.json.</td></tr>'});
 })();
 </script>
 </body>

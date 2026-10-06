@@ -6,15 +6,15 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>The Reffelt Constant — Spectral Fingerprinting of Parameter Spaces | AMNI-SCIENT Research</title>
-<meta name="description" content="The Reffelt Constant: a short digit string I use to see which dimensions of a parameter space the score depends on. It fingerprints the low-eigenvalue subspace of a graph Laplacian built over evaluated configurations, weighted by finite-difference sensitivity per dimension.">
-<meta name="keywords" content="reffelt constant,spectral fingerprinting,eigenvalue decomposition,graph laplacian,parameter optimization,dimensionality reduction">
+<meta name="description" content="The Reffelt Constant v2: one digit per parameter, read off the low-eigenvalue modes of a graph Laplacian over evaluated configurations. Published code and a synthetic benchmark against Sobol', Spearman, Chatterjee xi and permutation baselines.">
+<meta name="keywords" content="reffelt constant,spectral fingerprinting,graph laplacian,sensitivity analysis,parameter importance,chatterjee xi,sobol indices">
 <meta property="og:title" content="The Reffelt Constant — AMNI-SCIENT Research">
 <meta property="og:description" content="A digit-string spectral fingerprint of high-dimensional parameter spaces. Working notes by Anthony Reffelt.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amni-scient.com/research/reffelt-constant">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/reffelt-constant">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"The Reffelt Constant","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"A digit-string spectral fingerprint of the low-eigenvalue subspace of a graph Laplacian built over evaluated parameter configurations.","url":"https://amni-scient.com/research/reffelt-constant","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-09-09"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"The Reffelt Constant","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"A digit-string spectral fingerprint of the low-eigenvalue subspace of a graph Laplacian built over evaluated parameter configurations.","url":"https://amni-scient.com/research/reffelt-constant","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2025-01-01","dateModified":"2026-10-05"}</script>
 <link rel="stylesheet" href="../css/style.css?v=b260">
 <script>
 window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
@@ -92,185 +92,247 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <section class="hero" style="min-height:auto;padding:8rem 2rem 3rem">
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; THE REFFELT CONSTANT</div>
 <h1>THE REFFELT CONSTANT</h1>
-<p class="subtitle">SPECTRAL FINGERPRINTING OF HIGH-DIMENSIONAL PARAMETER SPACES</p>
-<p class="tagline">A digit-string encoding of the low-eigenvalue subspace of a graph Laplacian, weighted by per-dimension sensitivity, so I can see which knobs are worth tuning.</p>
+<p class="subtitle">SPECTRAL FINGERPRINTING OF HIGH-DIMENSIONAL PARAMETER SPACES &middot; VERSION 2</p>
+<p class="tagline">One digit per parameter, read off the low-eigenvalue modes of a graph built over evaluated configurations, so I can see which knobs are worth tuning. Now with fixed math, published code and measured results.</p>
 </section>
 <section>
 <h2>ABSTRACT</h2>
 <div class="prose">
-<p>Here's the problem. You've got a D-dimensional parameter space, a pile of evaluated configurations, and no clear idea which knobs the score actually cares about. The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is my attempt at a quick read on that: a short digit string I compute from those configurations. I build a graph over them, take the low-eigenvalue modes of its normalized Laplacian, weight each mode by how much it moves along each parameter axis, and print one digit per retained mode. Then I read the string to see which dimensions the score depends on and which ones I can freeze.</p>
+<p>Here's the problem. You've got a D-dimensional parameter space, a pile of evaluated configurations, and no clear idea which knobs the score actually cares about. The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is my quick read on that: a digit string with one digit per parameter. I build a graph over the configurations, take the smooth, low-eigenvalue modes of its normalized Laplacian, and ask how those modes move along each parameter axis. A 0 says &ldquo;this knob matters less than average, freeze it&rdquo;. A 5 to 9 says it matters, on a doubling scale.</p>
+<p style="margin-top:1.2rem">This is version 2. Version 1 had hand-picked constants and had never been run against anything. I fixed the math, published the code, and measured it on test functions where I know the right answer. The short version: on an optimizer's winners, v2 ranks the knobs that matter above the ones that don't almost every time, and it beats the simple baselines I tried in most settings. On a plain random sample it needs its other reading and ends up level with those baselines, not ahead.</p>
 <p style="margin-top:1.2rem">One word you'll run into further down: ground state. When I say it on this page, I mean the low-eigenvalue subspace of the Laplacian. It's an analogy to a physical ground state, and it stops there: there's no temperature and no partition function in the math.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Before the math, here's where this stands. The graph, the normalized Laplacian and the eigendecomposition are standard spectral graph theory, and I cite the sources as they come up. The digit encoding and the causal weights are my own construction, and the 800 scale, the mode-to-dimension pairing, and the 0.01 and 1.0 thresholds are hand-picked placeholders that don't fit together yet (Step 5 explains). There's an older implementation on disk, unpublished, that differs from this page in places; How to Reproduce lists them. The only thing that runs on this page is the digit encoder in the explorer, which takes eigenvalues and weights you type in; it doesn't build a graph. And none of the application ideas further down have been measured.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> Here's where this stands. The graph, the normalized Laplacian and the eigensolver are standard spectral graph theory. The two readings of the modes and the digit scale are my construction, now written down and fixed (Steps 4 and 5). The code is published as <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a> (NumPy only), and every number on this page comes from <a href="reffelt_results.json" style="color:var(--accent)">reffelt_results.json</a>: 5 test functions, 10 to 50 parameters, two ways of sampling, 10 seeds each. On winners' archives, v2 separates the knobs that matter from the ones that don't with an AUC of 0.96 &plusmn; 0.03 across 15 settings; the best simple baseline, a binned first-order Sobol' index, gets 0.90 &plusmn; 0.13. On random samples v2 gets 0.79 &plusmn; 0.09, level with the baselines, and wins only 1 setting out of 15. All of it is synthetic. I couldn't find my old optimizer outputs on disk, so there's no real-data number yet, and the application ideas at the bottom are still untested.</div></div>
+<section>
+<h2>WHAT CHANGED FROM V1</h2>
+<div class="prose">
+<p>Short version, so you can compare with what was here before:</p>
+<ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
+<li><strong style="color:var(--text)">The weight was upside down, and right by accident.</strong> v1 averaged |&Delta;&psi;| along each coordinate's sort order. That's a roughness: it's big when a mode <em>ignores</em> the coordinate. The page said the opposite. On random samples, v1 ranked the important knobs below the unimportant ones (AUC 0.26 &plusmn; 0.08, worse than a coin). On winners' archives it worked (0.82 &plusmn; 0.11), for a reason I hadn't written down: among winners, the smooth modes run along the knobs the winners are free to vary, so roughness marks the knobs that are pinned. v2 keeps that reading on purpose, names it, and adds the other one for random samples.</li>
+<li><strong style="color:var(--text)">Eigensolver.</strong> v1 took the smallest singular values with scipy's svds and kept the zero mode. v2 takes the smallest eigenpairs of L<sub>norm</sub> (dense eigh up to 3,000 points, shift-invert Lanczos above that) and skips one zero mode per connected component.</li>
+<li><strong style="color:var(--text)">Basis.</strong> When several eigenvalues are nearly equal, the individual eigenvectors aren't well defined; only the space they span is. v2 measures steps in the whole 16-mode embedding with a Euclidean norm, which doesn't change under rotations inside that space. I found this the hard way: my first v2 averaged a per-mode statistic, and its digits changed between two eigensolvers on the same data.</li>
+<li><strong style="color:var(--text)">Pairing.</strong> Gone. v1 paired mode j with dimension j. v2 prints one digit per parameter, in parameter order.</li>
+<li><strong style="color:var(--text)">Scale.</strong> The 800 and the 0.01 and 1.0 thresholds are gone. A digit is now log<sub>2</sub> of the weight relative to the uniform weight 1/D, so it means the same thing in any D.</li>
+</ul>
+</div>
+</section>
 <section>
 <h2>CORE DERIVATION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; SCORE-WEIGHTED GRAPH CONSTRUCTION</h4>
-<p>I start with N evaluated parameter vectors <strong style="color:var(--text)">p<sub>i</sub> &isin; &reals;<sup>D</sup></strong> and their fitness scores s<sub>i</sub>. First I rescale every coordinate to [0,1], so the distance d(p<sub>i</sub>,p<sub>j</sub>) is a plain Euclidean distance between normalized points and &epsilon; has no units to worry about. Then I build a k-nearest-neighbor graph, with k = 32 in my code, and weight each edge by distance and by score similarity:</p>
+<p>I start with N evaluated parameter vectors <strong style="color:var(--text)">p<sub>i</sub> &isin; &reals;<sup>D</sup></strong> and their scores s<sub>i</sub>, higher is better. First I rescale every coordinate to [0,1] with its min and max over the archive, so d(p<sub>i</sub>,p<sub>j</sub>) is a plain Euclidean distance and &epsilon; has no units. Then I build a k-nearest-neighbor graph, k = 32, and weight each edge by distance and by score similarity:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R1 &mdash; GRAPH WEIGHT</div>
 $$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{d(p_i, p_j) + \epsilon}$$
 </div>
-<p>&sigma;<sub>s</sub> is the standard deviation of the scores across the population, and &epsilon; = 0.1 keeps the denominator away from zero. Two points that sit close together and score about the same get a heavy edge. Two points that sit close together but score very differently get a light one. That's the trick: the graph follows the score surface, not only the geometry.</p>
+<p>&sigma;<sub>s</sub> is the standard deviation of the scores, and &epsilon; = 0.1. An edge exists if either point is among the other's 32 nearest neighbors, which keeps the matrix symmetric. Two points that sit close together and score about the same get a heavy edge. One thing I measured and didn't expect: on winners' archives the score term doesn't help. With every edge weight set to 1, v2 scored 0.98 &plusmn; 0.03 instead of 0.96 &plusmn; 0.03. The selection that made the archive already did the work. I've kept R1 as written so the construction stays the one I describe, and the unit-weight run is in the JSON.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; NORMALIZED GRAPH LAPLACIAN</h4>
-<p>This step is standard; see Chung, <em>Spectral Graph Theory</em> (1997) and von Luxburg, &ldquo;A tutorial on spectral clustering,&rdquo; <em>Stat. Comput.</em> 17 (2007). From the adjacency matrix A with weights w<sub>ij</sub> and degree matrix D = diag(&Sigma;<sub>j</sub>w<sub>ij</sub>), I compute the symmetric normalized Laplacian:</p>
+<p>This step is standard; see Chung, <em>Spectral Graph Theory</em> (1997) and von Luxburg, &ldquo;A tutorial on spectral clustering,&rdquo; <em>Stat. Comput.</em> 17 (2007). From the adjacency matrix A with weights w<sub>ij</sub> and degree matrix D = diag(&Sigma;<sub>j</sub>w<sub>ij</sub>):</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R2 &mdash; NORMALIZED LAPLACIAN</div>
 $$L_{\text{norm}} = I - D^{-1/2} A D^{-1/2}$$
 </div>
-<p>The eigenvalues of L<sub>norm</sub> lie in [0, 2]. Small eigenvalues belong to modes that vary slowly across the graph: that's the global structure I'm after. Large eigenvalues belong to modes that flip sign between neighbors: that's local noise.</p>
+<p>The eigenvalues lie in [0, 2]. Small eigenvalues belong to modes that vary slowly across the graph: that's the global structure I'm after. Large eigenvalues belong to modes that flip sign between neighbors: local noise.</p>
 </div>
 <div class="derivation-step">
-<h4>STEP 3 &mdash; SPECTRAL DECOMPOSITION</h4>
-<p>Now keep the k smallest nonzero eigenvalues of L<sub>norm</sub> and their eigenvectors. Those are the smooth modes.</p>
+<h4>STEP 3 &mdash; SPECTRAL EMBEDDING</h4>
+<p>I keep the m = 16 smallest nonzero eigenpairs, skipping one zero eigenvalue for each connected piece of the graph. Up to 3,000 points that's a dense symmetric eigensolver; above that, shift-invert Lanczos just below zero. Each configuration then gets a point in a 16-dimensional embedding, using the random-walk form of the eigenvectors (Belkin &amp; Niyogi 2003):</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION R3 &mdash; SPECTRAL BASIS</div>
-$$L_{\text{norm}} \psi_j = \lambda_j \psi_j, \qquad 0 < \lambda_1 \le \lambda_2 \le \cdots \le \lambda_k$$
+<div class="eq-label">EQUATION R3 &mdash; EMBEDDING</div>
+$$L_{\text{norm}} \psi_j = \lambda_j \psi_j, \quad 0 < \lambda_1 \le \cdots \le \lambda_{16}, \qquad f_j = D^{-1/2}\psi_j, \qquad F_i = \big(f_1(i), \ldots, f_{16}(i)\big)$$
 </div>
-<p>Each &psi;<sub>j</sub> is a vector with one entry per configuration in the archive. (The explorer further down skips this step: it takes eigenvalues you type in, so there's no sort order to worry about there.)</p>
 </div>
 <div class="derivation-step">
-<h4>STEP 4 &mdash; CAUSAL GRADIENT SENSITIVITY</h4>
-<p>Here's the snag: &psi;<sub>j</sub> lives on graph nodes, so there's no derivative along a coordinate axis to take directly. For each dimension d, I do this instead: sort the archive by coordinate d, take the finite difference of the &psi;<sub>j</sub> entries between consecutive configurations in that ordering, and average the absolute value. Then I sum that over the k modes and normalize across dimensions so the weights add to one:</p>
+<h4>STEP 4 &mdash; TWO READINGS OF THE SAME MODES</h4>
+<p>Here's the part v1 got tangled. The smooth modes mean different things depending on where the archive came from, so v2 asks you which kind you have.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">Winners' archive (the default).</strong> This is what an optimizer hands you: the top configurations of a search. Sort the archive by coordinate d, walk along that order, and measure how far each step moves in the embedding. Compare that with the average distance between two random configurations. I call the result the freedom of dimension d:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION R4 &mdash; CAUSAL WEIGHTS</div>
-$$g_{j,d} = \frac{1}{N-1}\sum_{i=1}^{N-1}\left|\psi_j(\pi_d(i+1)) - \psi_j(\pi_d(i))\right|, \qquad \text{causal}_d = \frac{\sum_j g_{j,d}}{\sum_{d'} \sum_j g_{j,d'}}$$
+<div class="eq-label">EQUATION R4 &mdash; FREEDOM (WINNERS' READING)</div>
+$$M_d = 1 - \frac{\frac{1}{N-1}\sum_{i=1}^{N-1}\lVert F_{\pi_d(i+1)} - F_{\pi_d(i)} \rVert}{\frac{1}{N(N-1)}\sum_{a \ne b}\lVert F_a - F_b \rVert}, \qquad w_d \propto \frac{1}{\max(M_d, \sigma_0)}$$
 </div>
-<p>&pi;<sub>d</sub> is the permutation that sorts the archive by coordinate d. A dimension with a large weight is one the smooth modes move along. A dimension with a weight near zero is one they ignore, and that's the one I freeze. One loose end, though: this gives me one weight per dimension d, while the digit in Step 5 is indexed by mode j. Pairing mode j with dimension j is a placeholder; I haven't worked out a justified pairing yet.</p>
+<p>&pi;<sub>d</sub> sorts the archive by coordinate d. This is v1's finite difference along the sort order, with the norm taken across all 16 modes at once and divided by its value for a random order. M<sub>d</sub> near 0 means the embedding jumps around as d changes: the winners are pinned along d, so d matters. M<sub>d</sub> well above 0 means the embedding moves smoothly with d: the winners roam freely along d, so it doesn't matter much. &sigma;<sub>0</sub> is the spread of M<sub>d</sub> under a random order (the standard deviation of the pair distances, over their mean, over &radic;(N&minus;1)), so a freedom below the noise floor counts as the noise floor.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">Unbiased sample.</strong> If the archive is a random or space-filling sample, its geometry says nothing; only the score does. So I smooth the score on the graph by projecting it onto the 16 modes, and measure how much the smoothed score depends on each coordinate with Chatterjee's rank correlation &xi; (<em>JASA</em> 116, 2021):</p>
+<div class="eq-block">
+<div class="eq-label">EQUATION R4&prime; &mdash; DEPENDENCE (UNBIASED READING)</div>
+$$\hat s = \sum_{j=1}^{16} c_j f_j,\quad c_j = \psi_j^{\top} D^{1/2}(s - \bar s_D), \qquad \xi_d = 1 - \frac{N\sum_{i=1}^{N-1}\left|r_{\pi_d(i+1)} - r_{\pi_d(i)}\right|}{2\sum_{i=1}^{N} l_i (N - l_i)}, \qquad w_d \propto \max(\xi_d, 0)$$
+</div>
+<p>r<sub>i</sub> counts the points with &#349; &le; &#349;<sub>i</sub>, l<sub>i</sub> counts the points with &#349; &ge; &#349;<sub>i</sub>, and &#349;<sub>D</sub> is the degree-weighted mean score. It's the same sorted finite difference again, on ranks: 0 means no relation, 1 means the smoothed score is a function of x<sub>d</sub>. The projection uses the whole 16-mode space, so it doesn't care how the solver picked the basis inside it.</p>
+<p style="margin-top:1rem">Pick the wrong reading and the ranking flips. The winners' reading on random samples scored 0.27 &plusmn; 0.08; the unbiased reading on winners scored 0.52 &plusmn; 0.13. That's the biggest practical caveat on this page.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 5 &mdash; DIGIT ENCODING</h4>
-<p>Last step! I take the eigenvalue of mode j and multiply it by the causal weight of dimension j. I scale that product by 800, add one, and clamp to 1 through 8. A product under 0.01 gets a 0 and a product over 1.0 gets a 9, so dead and saturated dimensions jump out at a glance. About that 800: it's a scale I picked by hand, it isn't derived from anything, and it doesn't fit the flags as written. For any product of 0.01 or more, 800 &times; product + 1 is already 9 or more, so every digit between the two flags prints as 8. Try it in the explorer. My older code uses the same 800 but flags 9 above 0.01, so its digits 1 to 8 cover products up to 0.01, and it never prints 0. Picking one consistent rule is on my list.</p>
+<p>Last step! The weights sum to one, so the uniform weight is 1/D. I compare each weight with that and print the comparison on a doubling scale:</p>
 <div class="eq-block">
-<div class="eq-label">EQUATION R5 &mdash; THE REFFELT CONSTANT</div>
-$$\Re_j = \operatorname{clamp}\left(\lfloor 800 \cdot \lambda_j \cdot \text{causal}_j \rfloor + 1,\; 1,\; 8\right), \qquad \Re_j = 0 \text{ if } \lambda_j \text{causal}_j < 0.01, \qquad \Re_j = 9 \text{ if } \lambda_j \text{causal}_j > 1.0$$
+<div class="eq-label">EQUATION R5 &mdash; THE REFFELT CONSTANT, V2</div>
+$$r_d = D\,w_d, \qquad \Re_d = \begin{cases} 0, & r_d < 1 \\ \min\left(9,\; 5 + \lfloor \log_2 r_d \rfloor\right), & r_d \ge 1 \end{cases}$$
 </div>
-<p>In code: <code style="color:var(--text);font-size:.8rem">p = abs(eigenvalue * causal_weight); digit = 0 if p &lt; 0.01 else 9 if p &gt; 1.0 else min(8, max(1, int(800 * p) + 1))</code></p>
+<p>In code: <code style="color:var(--text);font-size:.8rem">r = D * w; digit = 0 if r &lt; 1 else min(9, 5 + floor(log2(r)))</code>. Why 0 for anything below average? My first rule was a significance test, and on my development seeds it froze about half of the knobs that mattered. &ldquo;Below average&rdquo; is scale-free, needs no tuning, and kept 0.89 of the active knobs while freezing 0.90 of the distractors on winners' archives. Its catch: it always freezes something, even when every knob matters equally.</p>
 </div>
 </div>
 </section>
 <section>
-<h2>VALIDITY RULES</h2>
+<h2>READING THE DIGITS</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">Two digit values are reserved as flags. Both thresholds apply to the raw product &lambda;<sub>j</sub> &times; causal<sub>j</sub>, before the 800 scale:</p>
 <table class="validity-table">
-<thead><tr><th>DIGIT VALUE</th><th>CONDITION</th><th>WHAT I DO</th></tr></thead>
+<thead><tr><th>DIGIT</th><th>WEIGHT VS AVERAGE (1/D)</th><th>WHAT I DO</th></tr></thead>
 <tbody>
-<tr><td style="color:var(--text);font-weight:700">1 &ndash; 8</td><td>0.01 &le; product &le; 1.0</td><td>Keep the dimension in the search</td></tr>
-<tr><td style="color:#ff4444;font-weight:700">0</td><td>product &lt; 0.01</td><td>The smooth modes don't move along this dimension. Freeze it.</td></tr>
-<tr><td style="color:#ff4444;font-weight:700">9</td><td>product &gt; 1.0</td><td>The product is off the scale. I rescale or resample and recompute.</td></tr>
+<tr><td style="color:#ff4444;font-weight:700">0</td><td>below average</td><td>Freeze candidate: fix it at its best-seen value</td></tr>
+<tr><td style="color:var(--text);font-weight:700">5</td><td>1&times; to 2&times;</td><td>Keep tuning</td></tr>
+<tr><td style="color:var(--text);font-weight:700">6</td><td>2&times; to 4&times;</td><td>Keep tuning</td></tr>
+<tr><td style="color:var(--text);font-weight:700">7</td><td>4&times; to 8&times;</td><td>Tune first</td></tr>
+<tr><td style="color:var(--text);font-weight:700">8</td><td>8&times; to 16&times;</td><td>Tune first</td></tr>
+<tr><td style="color:var(--text);font-weight:700">9</td><td>16&times; or more (needs D &ge; 16)</td><td>Tune first</td></tr>
 </tbody>
 </table>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">I call a constant valid when it has no 0 and no 9. That's a convention I use, not a law. When a 0 shows up, I read it as a dimension I haven't sampled enough or one that doesn't matter. When a 9 shows up, I read it as a product that has outgrown the hand-picked 800 scale. And remember the catch from Step 5: with these thresholds, the 1 to 8 row only ever prints 8.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-top:1rem">Digits 1 to 4 don't appear, because anything below average prints 0. v1's &ldquo;valid when there's no 0 and no 9&rdquo; rule is retired: in v2 a 0 is an answer, not an error, and a 9 is just a knob that carries a lot of the weight. How steady are the digits? I drew a second archive from the same problem with a different seed and compared the strings position by position. On winners' archives 75% of the digits matched, and the average change was about one digit. Most of the flips are between 0 and 5, right at the average line. Read single digits near that line loosely.</p>
 </div>
 </section>
 <section>
 <h2>OUTPUT STRUCTURE</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Here's the record the computation returns. The string has k digits, one per retained mode:</p>
+<p>Here's the record <code style="color:var(--text);font-size:.8rem">reffelt()</code> returns:</p>
 <div class="eq-block">
 <div class="eq-label">RESULT SCHEMA</div>
 <pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
-constant:              str              &larr; the &real; string, k digits (e.g. "84417588")
-eigenvalues:           List[float]      &larr; the k smallest nonzero eigenvalues (&lambda;<sub>1</sub>...&lambda;<sub>k</sub>)
-causal_weights:        List[float]      &larr; per-dimension weight, D entries, sum=1
-effective_dim:         int              &larr; D minus the count of dimensions I froze
-ground_state_params:   Dict[str,float]  &larr; best-seen values for the frozen dimensions
-free_params:           List[str]        &larr; dimensions I keep tuning
-frozen_params:         Dict[str,float]  &larr; dimensions I fixed
-compression_ratio:     float            &larr; D / effective_dim
-walk_forward_degradation: float         &larr; placeholder, not measured yet</pre>
+constant:        str          &larr; the &real; string, one digit per parameter (e.g. "0050560500")
+reading:         str          &larr; "elite" (winners) or "unbiased" (random sample)
+causal_weights:  List[float]  &larr; w_d, D entries, sum = 1
+freedom / xi:    List[float]  &larr; M_d (elite) or &xi;_d (unbiased)
+keep:            List[bool]   &larr; digit &ne; 0
+eigenvalues:     List[float]  &larr; the 16 smallest nonzero &lambda;_j
+mode_energy:     List[float]  &larr; share of the score's smooth part in each mode
+lowpass_r2:      float        &larr; how much of the score the 16 modes carry
+zero_modes:      int          &larr; connected components skipped</pre>
 </div>
+<p>The v1 fields for frozen values, compression ratio and walk-forward degradation are gone from the core. Freezing at best-seen values is one line on top of <code style="color:var(--text);font-size:.8rem">keep</code>, and walk-forward is still unmeasured.</p>
 </div>
 </section>
 <section>
-<h2>PROPERTIES</h2>
-<div style="max-width:800px;margin:0 auto">
-<div class="card-grid">
-<div class="card">
-<h3>DIGIT ENCODING</h3>
-<p>The digits run 0 to 9, with 0 and 9 reserved as flags. Why digits? I can read them off a log line and say them out loud.</p>
+<h2>WHAT I MEASURED</h2>
+<div class="prose">
+<p>I needed problems where I know the right answer, so I used synthetic ones. Five test functions, each hiding a few active parameters at random positions among 10, 20 or 50: an additive mix (5 active, including two non-monotone terms), the Sobol' G-function (4 active), Ishigami (3 active, with one that only acts through an interaction), a pure interaction with zero main effects (4 active), and a ridge along a random direction inside 4 active dimensions. Noise is 20% of the function's standard deviation, plus one 100% run at D = 20. Ground truth is the total-effect Sobol' index from 4,096 Monte Carlo samples per parameter.</p>
+<p style="margin-top:1rem">Two ways to fill the archive, 512 configurations each. <strong style="color:var(--text)">Winners:</strong> a simple evolution strategy runs for 2,176 evaluations and I keep the top 512, which is what an optimizer leaves behind. <strong style="color:var(--text)">Random:</strong> 512 uniform samples. Each setting gets 10 seeds (0 to 9); I designed v2 on seeds 1000 to 1003 and didn't use those here.</p>
+<p style="margin-top:1rem">Baselines: |Spearman| of each parameter with the score; Chatterjee's &xi; of each parameter with the raw score; a binned first-order Sobol' index (16 quantile bins, the given-data estimate of Var E[s|x<sub>d</sub>] / Var s); and permutation importance from a k-nearest-neighbor regressor. scikit-learn isn't installed on this machine, so there's no random forest or fANOVA, and I'm saying so instead of guessing. The main score is AUC: the chance a randomly picked active parameter outranks a randomly picked distractor. 0.5 is a coin flip, 1 is perfect.</p>
 </div>
-<div class="card">
-<h3>LENGTH</h3>
-<p>One digit per retained mode, so the length is k from Step 3, and I choose k. Length alone says nothing about how many dimensions matter; for that, count the 0 digits. The explorer's DIMENSIONS control sets the same k.</p>
+<div style="max-width:800px;margin:1.5rem auto 0">
+<table class="validity-table" id="rc-pooled">
+<thead><tr><th>METHOD</th><th>WINNERS' ARCHIVE</th><th>RANDOM SAMPLE</th></tr></thead>
+<tbody><tr><td colspan="3">Loading reffelt_results.json&hellip;</td></tr></tbody>
+</table>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7">Mean AUC &plusmn; standard deviation across the 15 settings (5 functions &times; D = 10, 20, 50) at 20% noise; each setting is itself a mean over 10 seeds. &ldquo;v2&rdquo; uses the reading that matches the archive. Drawn from the JSON.</p>
+<div class="viz-section">
+<h4>AUC BY TEST FUNCTION</h4>
+<div class="viz-controls">
+<label>ARCHIVE:</label>
+<select id="rr-sampler" onchange="rrDraw()"><option value="elite" selected>Winners</option><option value="random">Random</option></select>
+<label>PARAMETERS:</label>
+<select id="rr-dim" onchange="rrDraw()"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option></select>
+<label>NOISE:</label>
+<select id="rr-noise" onchange="rrDraw()"><option value="0.2" selected>20%</option><option value="1">100% (D = 20 only)</option></select>
 </div>
-<div class="card">
-<h3>REGIME DIAGNOSTIC</h3>
-<p>If the digit pattern changes between two archives from the same system, I'd read that as the score surface having changed shape. But I haven't tested how often the digits change on their own from sampling noise, so I don't know yet how big a change is meaningful.</p>
-</div>
-<div class="card">
-<h3>WALK-FORWARD STABILITY</h3>
-<p>Not measured yet. When I do measure it, the dataset and the script will be linked here.</p>
+<div class="viz-canvas-wrap"><canvas id="rr-chart"></canvas></div>
+<p style="color:var(--dim);font-size:.75rem;line-height:1.7;margin-top:.75rem">Bars are the mean over 10 seeds; hover for the spread.</p>
 </div>
 </div>
+<div class="prose" style="margin-top:1.5rem">
+<p><strong style="color:var(--text)">Where v2 wins.</strong> Winners' archives. It beat every baseline outright in 9 of 15 settings and was within 0.02 of the best in 14 of 15. Its worst setting was 0.90; every baseline dropped below 0.70 somewhere. The clearest gap is the ridge, where the active parameters only matter in combination: v2 scored 0.90 to 0.96, the best baseline (|Spearman|) 0.79 to 0.88, and the binned Sobol' index 0.63 to 0.70. At 100% noise v2 still beat the best baseline on three of the five functions (additive 0.85 vs 0.68, Ishigami 0.95 vs 0.89, ridge 0.85 vs 0.58).</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">Where it loses.</strong> On winners' archives, the binned Sobol' index edged it out in the other 6 settings, by 0.002 to 0.025: the G-function at D = 10 and 50, Ishigami at all three sizes, and the pure interaction at D = 50. At 100% noise it also won on the G-function (0.84 vs 0.78) and the pure interaction (0.82 vs 0.78). On random samples v2 is a fair method and nothing more: 0.79 against 0.80 to 0.82 for &xi;, the binned Sobol' index and kNN permutation, and it won 1 setting of 15. If the archive is random, use the simplest baseline and save the eigensolver. The pure interaction on random samples is the sharpest loss: only kNN permutation found it (0.98 to 1.00 against v2's 0.60 to 0.73), because every rank method here looks at one parameter at a time.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">Ranking inside the active set.</strong> The Spearman correlation between v2's weights and the true total-effect indices, over all D parameters, is only 0.47 &plusmn; 0.20 on winners. v2 separates active from inactive well; it's much weaker at ordering the active ones among themselves. Don't read 7 versus 6 as a reliable ranking.</p>
 </div>
 </section>
 <section>
 <h2>INTERACTIVE EXPLORER</h2>
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
-<h4>REFFELT DIGIT ENCODER</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This is the one piece you can actually play with! Pick k, the number of digits, with DIMENSIONS. Type in eigenvalues and causal weights, or hit RANDOMIZE, and the encoder prints the digits using Eq. R5: clamp(&lfloor;800 &times; &lambda;<sub>j</sub> &times; causal<sub>j</sub>&rfloor; + 1, 1, 8), with a product under 0.01 printing 0 and a product over 1.0 printing 9. The weights are renormalized to sum to one before encoding. With the thresholds as written, everything between the flags prints 8 (see Step 5). Keep in mind it's the encoder only: nothing here builds a graph or decomposes a Laplacian.</p>
-<div id="reffelt-encoder">
+<h4>REFFELT V2, RUNNING IN YOUR BROWSER</h4>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This is the real encoder, ported line for line from the Python and checked against it on the same data. It draws a small archive from one of the test functions (the winners come from a smaller evolution strategy than the benchmark: 768 evaluations), builds the graph, diagonalizes the Laplacian with Jacobi rotations, and prints the digits. The true active parameters are underlined. Try the wrong reading on purpose and watch the ranking flip. Or paste your own CSV: one row per configuration, parameter columns first, score last, a header row, up to 400 rows. It all stays in your browser. 200 points take well under a second; 400 take a few. One honest note: this small version is noisier than the 512-point benchmark. Over 12 seeds at 10 parameters and 200 points, v2 averaged 0.80 to 0.90 AUC across the five functions, and Ishigami is the one where plain &xi; of the raw score does better here (0.83 against 0.80).</p>
 <div class="viz-controls">
-<label>DIMENSIONS:</label>
-<select id="rc-dims" onchange="rcUpdateInputs()">
-<option value="4">4</option><option value="6">6</option><option value="8" selected>8</option><option value="10">10</option><option value="12">12</option><option value="15">15</option>
-</select>
-<button onclick="rcRandomize()">RANDOMIZE</button>
-<button onclick="rcCompute()">COMPUTE &real;</button>
+<label>FUNCTION:</label>
+<select id="rx-fn"><option value="additive" selected>Additive</option><option value="sobol_g">Sobol' G</option><option value="ishigami">Ishigami</option><option value="interaction">Interaction</option><option value="ridge">Ridge</option></select>
+<label>PARAMETERS:</label>
+<select id="rx-d"><option>6</option><option>8</option><option selected>10</option><option>12</option><option>16</option><option>20</option></select>
+<label>POINTS:</label>
+<select id="rx-n"><option>100</option><option selected>200</option><option>300</option></select>
 </div>
-<div id="rc-inputs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem;margin-bottom:.5rem"></div>
-<div class="viz-result" id="rc-output" style="display:none"></div>
+<div class="viz-controls">
+<label>ARCHIVE:</label>
+<select id="rx-how"><option value="elite" selected>Winners</option><option value="random">Random</option></select>
+<label>READING:</label>
+<select id="rx-rd"><option value="match" selected>Match archive</option><option value="elite">Winners</option><option value="unbiased">Unbiased</option></select>
+<label>NOISE:</label>
+<select id="rx-noise"><option value="0.2" selected>20%</option><option value="1">100%</option></select>
+<label>SEED:</label>
+<input type="number" id="rx-seed" value="1" min="0" style="width:70px">
+<button onclick="rxRun(false)">RUN</button>
+</div>
+<details style="margin:.5rem 0 1rem;color:var(--dim);font-size:.8rem"><summary style="cursor:pointer;letter-spacing:1px">PASTE YOUR OWN CSV</summary><textarea id="rx-csv" rows="6" style="width:100%;margin-top:.5rem;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.5rem;border-radius:4px" placeholder="lr,depth,dropout,score&#10;0.01,4,0.1,0.82&#10;..."></textarea><div class="viz-controls" style="margin-top:.5rem"><button onclick="rxRun(true)">RUN ON PASTED DATA</button><span style="font-size:.75rem">Uses the READING selector; &ldquo;match&rdquo; means winners.</span></div></details>
+<div class="viz-result" id="rx-out" style="display:none"></div>
+<div class="viz-canvas-wrap" style="margin-top:1rem"><canvas id="rx-chart"></canvas></div>
 </div>
 </div>
-<div class="viz-section" style="margin-top:1.5rem">
-<h4>EIGENVALUE SPECTRUM</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Press COMPUTE and this plots the values from the encoder above. Bar height is the eigenvalue you entered, bar opacity is the causal weight, and the line is the weight on the right axis.</p>
-<div class="viz-canvas-wrap"><canvas id="rc-spectrum-chart"></canvas></div>
-</div>
+</section>
+<section>
+<h2>LIMITS</h2>
+<div class="prose">
+<p>The numbers above are honest, but they're narrow, so here's what they don't cover:</p>
+<ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
+<li>Everything is synthetic. My old optimizer runs on BTC, ETH and SOL aren't on this machine anymore, so I have no real-archive result.</li>
+<li>The winners all came from one simple evolution strategy. CMA-ES, a genetic algorithm or TPE leave archives with different shapes, and the winners' reading depends on that shape. I haven't tested them.</li>
+<li>You have to say which kind of archive you have. The wrong reading inverts the ranking, and v2 can't tell the two apart on its own.</li>
+<li>The 0 rule is relative. It always freezes something, and about one digit in four changes between two archives from the same problem.</li>
+<li>It finds which knobs matter, not their order: Spearman against the true indices is 0.47 on winners.</li>
+<li>The score term in R1 didn't help on winners. I kept it for continuity; unit weights did as well or slightly better.</li>
+<li>N = 512 throughout, and 16 modes. I haven't swept either. Walk-forward stability, the original v1 promise, is still unmeasured.</li>
+</ul>
 </div>
 </section>
 <section>
 <h2>HOW TO REPRODUCE</h2>
 <div class="prose">
-<p>Straight answer first: nothing is published. There is an older implementation on disk, reffelt_constant.py in a private repo. It follows R1 to R4 closely (k = 32, &epsilon; = 0.1, up to 8 modes, and causal weights averaged over the modes and normalized to sum to one), with three differences: it takes the smallest singular values of the normalized Laplacian with scipy's svds, which keeps the zero mode instead of skipping it; it pairs mode j with dimension j mod D; and its encoder flags 9 above a product of 0.01 and never prints 0. I have no published run of it. The digit encoder in the explorer above is the one runnable piece here, and it starts from eigenvalues and weights you supply; every other number here is a design choice until a linked script says otherwise. So if you want to rebuild the pipeline, you'll be working from the text: normalize the coordinates, build a k-NN graph with the R1 weights, form the symmetric normalized Laplacian, take the k smallest nonzero eigenpairs, compute the sorted finite-difference weights from R4, and encode with R5. The 800 scale and the mode-to-dimension pairing are the two places where you'd be copying my guesses.</p>
+<p>Good news: this one you can run. Grab <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a>; it needs only NumPy (SciPy is used above 3,000 points if it's there). Then:</p>
+<div class="eq-block">
+<div class="eq-label">COMMANDS</div>
+<pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
+python3 reffelt_constant.py bench --seeds 10        # writes ../reffelt_results.json, about 5 minutes on 2 cores
+python3 reffelt_constant.py run my_archive.csv       # winners' reading, last column is the score
+python3 reffelt_constant.py run my_sample.csv --reading unbiased --v1</pre>
+</div>
+<p>The benchmark is seeded end to end, so a rerun gives the same JSON apart from the date and the runtime. The JSON holds every setting's per-seed AUCs, the freeze and retest numbers, and one example string per setting next to its true active set. The older private implementation is retired; the <code style="color:var(--text);font-size:.8rem">--v1</code> flag reproduces its encoder so you can compare.</p>
 </div>
 </section>
 <section>
 <h2>RELATED WORK</h2>
 <div class="prose">
-<p>The graph and the Laplacian are the same objects as in Laplacian eigenmaps (Belkin &amp; Niyogi, <em>Neural Computation</em> 15, 2003) and diffusion maps (Coifman &amp; Lafon, <em>Appl. Comput. Harmon. Anal.</em> 21, 2006), and both keep the low-eigenvalue modes for the same reason I do. The per-dimension weights in R4 are a crude sensitivity measure. The established tools for that job are Sobol indices, the Morris method and, for hyperparameter importance specifically, fANOVA (Hutter, Hoos &amp; Leyton-Brown, <em>ICML</em> 2014). I haven't compared my weights against any of them yet.</p>
+<p>The graph and the embedding are the same objects as in Laplacian eigenmaps (Belkin &amp; Niyogi, <em>Neural Computation</em> 15, 2003) and diffusion maps (Coifman &amp; Lafon, <em>Appl. Comput. Harmon. Anal.</em> 21, 2006). Scoring each feature by how smooth it is on a graph goes back to the Laplacian score (He, Cai &amp; Niyogi, <em>NIPS</em> 2005); I tried its linear form, and it failed on the G-function and the pure interaction, which is why R4 uses distances in the embedding instead. The &xi; in R4&prime; is Chatterjee's coefficient (<em>J. Amer. Statist. Assoc.</em> 116, 2021). The ground truth is the total-effect Sobol' index with the Jansen estimator (Saltelli et al., <em>Comput. Phys. Commun.</em> 181, 2010), and the binned baseline is a given-data first-order estimate in the spirit of Plischke, Borgonovo &amp; Smith (<em>Eur. J. Oper. Res.</em> 226, 2013). The winners' reading, that the near-optimal set stretches along unimportant directions and is pinned along important ones, is the same picture as parameter sloppiness (Gutenkunst et al., <em>PLoS Comput. Biol.</em> 3, 2007). For hyperparameter importance specifically, fANOVA (Hutter, Hoos &amp; Leyton-Brown, <em>ICML</em> 2014) is the comparison I still owe.</p>
 </div>
 </section>
 <section>
 <h2>THINGS I'D LIKE TO TRY</h2>
 <div style="max-width:800px;margin:0 auto">
-<p class="prose" style="margin-bottom:1.5rem">So what's next? These are the places I think the constant could earn its keep, written down so I remember to test them. None of them have been run.</p>
+<p class="prose" style="margin-bottom:1.5rem">So what's next? These are written down so I remember to test them. Only the first one has a number behind it, and it's the synthetic one above.</p>
 <div class="app-card">
 <h4>HYPERPARAMETER OPTIMIZATION</h4>
-<p>The most basic one. Compute the constant after an initial exploration phase, freeze the dimensions with 0 digits at their best-seen values, and spend the rest of the budget on the dimensions that print high digits. I expect this to cut evaluations, but I haven't run the comparison. No number until I do.</p>
+<p>The basic one, and now the one with the best footing: the winners' reading works on an optimizer's own archive. The test I want: run a search, compute the constant, freeze the 0 digits at their best-seen values, spend the rest of the budget on the others, and count the evaluations saved against a search that never freezes. Not run yet.</p>
+</div>
+<div class="app-card">
+<h4>A REAL ARCHIVE</h4>
+<p>Rebuild my trend-strategy optimizer's winner set, or any real tuning log with a known answer, and see whether the 0.96 survives contact with real archives. That's the result that would actually matter.</p>
 </div>
 <div class="app-card">
 <h4>NEURAL ARCHITECTURE SEARCH</h4>
-<p>Same move, bigger space. An architecture search space has a lot of knobs, and after a first sweep I'd like to know which ones the score depends on. The plan: compute the constant on the sweep, freeze the dimensions that print a 0, and see whether the next sweep finds the same architectures with fewer evaluations. I haven't run this.</p>
+<p>Same move, bigger space: compute the constant on a first sweep, freeze the 0 digits, and see whether the next sweep finds the same architectures with fewer evaluations. I haven't run this.</p>
 </div>
 <div class="app-card">
 <h4>TRAINING DIAGNOSTICS</h4>
-<p>I'd like to compute the constant at checkpoints across a set of training runs with varied hyperparameters and watch which digits move as training goes on. If the pattern shifts before a run goes bad, that's useful! Whether it does is untested.</p>
+<p>Compute the constant at checkpoints across a set of training runs and watch which digits move. The Eigenstretch page does this for a running search on simulated data; on training runs it's untested.</p>
 </div>
 <div class="app-card">
-<h4>WORKLOAD FINGERPRINTING</h4>
-<p>I'd like to compute the constant on per-node resource traces and see whether two workloads that print the same string behave the same when I move them between machines. First thing to check: whether the string is stable enough to use as a key at all. I don't know yet.</p>
-</div>
-<div class="app-card">
-<h4>MOLECULAR DESCRIPTOR SCREENING</h4>
-<p>QSAR descriptor spaces are wide, and most of the descriptors are correlated. I'd like to compute the constant over a descriptor set with binding affinity as the score and see how many dimensions survive. I don't have a number for that.</p>
+<h4>WORKLOAD FINGERPRINTING AND DESCRIPTOR SCREENING</h4>
+<p>Two wide spaces where I'd like to see how many dimensions survive: per-node resource traces, and QSAR descriptor sets with binding affinity as the score. With one digit in four flipping between archives, the string isn't stable enough to use as a lookup key, so these would have to use the weights. No numbers yet.</p>
 </div>
 </div>
 </section>
@@ -280,11 +342,11 @@ walk_forward_degradation: float         &larr; placeholder, not measured yet</pr
 <div class="card-grid">
 <div class="card">
 <h3><a href="eigenstretch-tensor.html" style="color:var(--accent);text-decoration:none">EIGENSTRETCH TENSOR &rarr;</a></h3>
-<p>The same digits recomputed at each checkpoint of a parameter search, with a trajectory-based graph, to watch for drift in the sensitivity pattern.</p>
+<p>The unbiased reading recomputed at every checkpoint of a running search, on a graph built from output curves instead of parameters, and measured as a drift monitor on simulated searches with a known regime change.</p>
 </div>
 <div class="card">
 <h3><a href="ground-state-kernel.html" style="color:var(--accent);text-decoration:none">GROUND STATE KERNEL &rarr;</a></h3>
-<p>Where I'd like to use the constant to check how many dimensions a search space keeps after freezing. Whether that number is small in general is a question I want to answer, not a result.</p>
+<p>An SVD over my optimizer's winners. It's a separate, linear tool, and its digit encoding is not this one. Checking how many dimensions it keeps against v2's 0 digits on the same archive is a test I'd like to run.</p>
 </div>
 </div>
 </div>
@@ -303,46 +365,89 @@ walk_forward_degradation: float         &larr; placeholder, not measured yet</pr
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 <script>
+var RC=(function(){
+function rng(seed){var a=seed>>>0;return function(){a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){return Math.sqrt(-2*Math.log(1-r()))*Math.cos(2*Math.PI*r())}
+function pick(D,m,r){var a=[];for(var i=0;i<D;i++)a.push(i);for(i=0;i<m;i++){var j=i+Math.floor(r()*(D-i)),t=a[i];a[i]=a[j];a[j]=t}return a.slice(0,m)}
+function problem(name,D,r){var m={additive:5,sobol_g:4,ishigami:3,interaction:4,ridge:4}[name],a=pick(D,m,r),P=Math.PI,f,v;
+if(name==='additive')f=function(x){return(2*x[a[0]]-1)+.8*Math.sin(2*P*x[a[1]])+.6*(2*Math.pow(2*x[a[2]]-1,2)-1)+.4*Math.abs(4*x[a[3]]-2)+.2*(2*x[a[4]]-1)};
+else if(name==='sobol_g'){var c=[];for(var i=0;i<D;i++)c.push(99);[0,1,4.5,9].forEach(function(q,i){c[a[i]]=q});f=function(x){var p=1;for(var i=0;i<D;i++)p*=(Math.abs(4*x[i]-2)+c[i])/(1+c[i]);return p}}
+else if(name==='ishigami')f=function(x){var u=function(i){return 2*P*x[a[i]]-P};return Math.sin(u(0))+7*Math.pow(Math.sin(u(1)),2)+.1*Math.pow(u(2),4)*Math.sin(u(0))};
+else if(name==='interaction')f=function(x){return(2*x[a[0]]-1)*(2*x[a[1]]-1)+.7*(2*x[a[2]]-1)*(2*x[a[3]]-1)};
+else{v=[gauss(r),gauss(r),gauss(r),gauss(r)];var nv=Math.hypot.apply(null,v);v=v.map(function(q){return q/nv});f=function(x){var u=0;for(var i=0;i<4;i++)u+=(x[a[i]]-.5)*v[i];return Math.sin(3*u)+2*u*u}}
+return{f:f,active:a}}
+function unif(D,r){var x=[];for(var i=0;i<D;i++)x.push(r());return x}
+function sample(pr,D,r,how,noise,n){var t=[];for(var i=0;i<2000;i++)t.push(pr.f(unif(D,r)));var sd=std(t),y=function(x){return pr.f(x)+noise*sd*gauss(r)},X=[],s=[];
+if(how==='random'){for(i=0;i<n;i++){var x=unif(D,r);X.push(x);s.push(y(x))}return{X:X,s:s}}
+for(i=0;i<128;i++){x=unif(D,r);X.push(x);s.push(y(x))}
+for(var g=0;g<10;g++){var o=order(s,true).slice(0,16),sg=.2*Math.pow(.25,g/9);for(i=0;i<64;i++){var p=X[o[Math.floor(r()*16)]];x=p.map(function(q){var z=Math.abs(q+sg*gauss(r));return 1-Math.abs(1-z)});X.push(x);s.push(y(x))}}
+var k=order(s,true).slice(0,n);return{X:k.map(function(i){return X[i]}),s:k.map(function(i){return s[i]})}}
+function order(v,desc){return v.map(function(_,i){return i}).sort(function(a,b){return desc?v[b]-v[a]||a-b:v[a]-v[b]||a-b})}
+function mean(v){return v.reduce(function(a,b){return a+b},0)/v.length}
+function std(v){var m=mean(v);return Math.sqrt(mean(v.map(function(q){return(q-m)*(q-m)})))}
+function eig(A,n){var V=new Float64Array(n*n),i,k,p,q;for(i=0;i<n;i++)V[i*n+i]=1;
+for(var sw=0;sw<60;sw++){var off=0;for(p=0;p<n;p++)for(q=p+1;q<n;q++)off+=A[p*n+q]*A[p*n+q];if(off<1e-24)break;
+for(p=0;p<n-1;p++)for(q=p+1;q<n;q++){var apq=A[p*n+q];if(Math.abs(apq)<1e-300)continue;var th=(A[q*n+q]-A[p*n+p])/(2*apq),t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c,x,y;
+for(k=0;k<n;k++){x=A[k*n+p];y=A[k*n+q];A[k*n+p]=c*x-s*y;A[k*n+q]=s*x+c*y}
+for(k=0;k<n;k++){x=A[p*n+k];y=A[q*n+k];A[p*n+k]=c*x-s*y;A[q*n+k]=s*x+c*y}
+for(k=0;k<n;k++){x=V[k*n+p];y=V[k*n+q];V[k*n+p]=c*x-s*y;V[k*n+q]=s*x+c*y}}}
+var val=[];for(i=0;i<n;i++)val.push(A[i*n+i]);return{val:val,vec:V}}
+function xi(x,y){var n=x.length,o=order(x,false),ys=y.slice().sort(function(a,b){return a-b}),lo=function(v){var a=0,b=n;while(a<b){var m=a+b>>1;if(ys[m]<v)a=m+1;else b=m}return a},hi=function(v){var a=0,b=n;while(a<b){var m=a+b>>1;if(ys[m]<=v)a=m+1;else b=m}return a},R=y.map(hi),den=0,num=0;
+y.forEach(function(v){var l=n-lo(v);den+=l*(n-l)});for(var i=0;i+1<n;i++)num+=Math.abs(R[o[i+1]]-R[o[i]]);return den>0?1-n*num/(2*den):0}
+function reffelt(X,s,reading,k,m){var n=X.length,D=X[0].length,lo=[],hi=[],i,j,d;k=Math.min(k||32,n-1);m=m||16;
+for(d=0;d<D;d++){lo.push(Infinity);hi.push(-Infinity);for(i=0;i<n;i++){lo[d]=Math.min(lo[d],X[i][d]);hi[d]=Math.max(hi[d],X[i][d])}}
+var Z=X.map(function(x){return x.map(function(v,d){return hi[d]>lo[d]?(v-lo[d])/(hi[d]-lo[d]):0})}),sg=std(s)||1,A=new Float64Array(n*n);
+for(i=0;i<n;i++){var dd=[];for(j=0;j<n;j++)if(j!==i){var e=0;for(d=0;d<D;d++)e+=(Z[i][d]-Z[j][d])*(Z[i][d]-Z[j][d]);dd.push([Math.sqrt(e),j])}dd.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
+for(var t=0;t<k;t++){j=dd[t][1];var w=Math.exp(-Math.abs(s[i]-s[j])/sg)/(dd[t][0]+.1);if(w>A[i*n+j])A[i*n+j]=w;if(w>A[j*n+i])A[j*n+i]=w}}
+var deg=[],di=[];for(i=0;i<n;i++){var q=0;for(j=0;j<n;j++)q+=A[i*n+j];deg.push(q);di.push(1/Math.sqrt(Math.max(q,1e-300)))}
+var L=new Float64Array(n*n);for(i=0;i<n;i++)for(j=0;j<n;j++)L[i*n+j]=(i===j?1:0)-di[i]*A[i*n+j]*di[j];
+var E=eig(L,n),o=order(E.val,false).filter(function(i){return E.val[i]>=1e-9}).slice(0,m),sd=0,sw=0;for(i=0;i<n;i++){sd+=deg[i]*s[i];sw+=deg[i]}
+var st=s.map(function(v,i){return Math.sqrt(deg[i])*(v-sd/sw)}),sh=new Array(n).fill(0),lam=[];
+o.forEach(function(c){var cf=0;for(i=0;i<n;i++)cf+=E.vec[i*n+c]*st[i];for(i=0;i<n;i++)sh[i]+=cf*E.vec[i*n+c]*di[i];lam.push(E.val[c])});
+var g=[],s0=Math.sqrt(2/(5*n)),cols=[],wt,keep;for(d=0;d<D;d++)cols.push(X.map(function(x){return x[d]}));
+if(reading==='unbiased'){var gs=0;for(d=0;d<D;d++){g.push(xi(cols[d],sh));gs+=Math.max(g[d],0)}wt=g.map(function(v){return gs>0?Math.max(v,0)/gs:1/D})}
+else{var fs=[],sm=0,sq=0,np=0;for(i=0;i<n;i++)fs.push(o.map(function(c){return E.vec[i*n+c]*di[i]}));var dst=function(a,b){var e=0;for(var q=0;q<a.length;q++)e+=(a[q]-b[q])*(a[q]-b[q]);return Math.sqrt(e)};
+for(i=0;i<n;i++)for(j=0;j<n;j++)if(i!==j){var e=dst(fs[i],fs[j]);sm+=e;sq+=e*e;np++}var mu=sm/np;s0=Math.sqrt(Math.max(sq/np-mu*mu,0))/mu/Math.sqrt(n-1);var is=0;
+for(d=0;d<D;d++){var od=order(cols[d],false),tt=0;for(i=0;i+1<n;i++)tt+=dst(fs[od[i]],fs[od[i+1]]);g.push(1-tt/(n-1)/mu);is+=1/Math.max(g[d],s0)}
+wt=g.map(function(v){return 1/Math.max(v,s0)/is})}
+keep=wt.map(function(v){return D*v>=1-1e-9});var dig=wt.map(function(v,d){if(!keep[d])return 0;var r=D*v;return r>0?Math.min(9,Math.max(1,5+Math.floor(Math.log2(r)))):1});
+var raw=[];for(d=0;d<D;d++)raw.push(Math.max(0,xi(X.map(function(x){return x[d]}),s)));var rs=raw.reduce(function(a,b){return a+b},0);
+return{digits:dig,weights:wt,xi:g,keep:keep,eigenvalues:lam,rawXi:raw.map(function(v){return rs>0?v/rs:1/D})}}
+function auc(w,act){var pos=[],neg=[],s=0;w.forEach(function(v,i){(act.indexOf(i)>=0?pos:neg).push(v)});pos.forEach(function(p){neg.forEach(function(q){s+=p>q?1:p===q?.5:0})});return pos.length&&neg.length?s/(pos.length*neg.length):NaN}
+return{rng:rng,problem:problem,sample:sample,reffelt:reffelt,auc:auc}})();
 (function(){
-var dims=8,eigenvals=[],causals=[],specChart=null;
 function gi(id){return document.getElementById(id)}
-function rcUI(){
-var c=gi('rc-inputs'),h='';
-for(var i=0;i<dims;i++) h+='<div style="display:flex;flex-direction:column;gap:.2rem"><label style="color:var(--dim);font-size:.6rem;letter-spacing:1px">DIM '+(i+1)+'</label><input type="number" step="0.01" min="0" max="2" value="'+(eigenvals[i]||0).toFixed(2)+'" id="rc-ev-'+i+'" style="width:100%" placeholder="&lambda;"><input type="number" step="0.01" min="0" max="1" value="'+(causals[i]||0).toFixed(2)+'" id="rc-cw-'+i+'" style="width:100%" placeholder="w"></div>';
-c.innerHTML=h;
-}
-window.rcUpdateInputs=function(){dims=parseInt(gi('rc-dims').value);eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.5+.1);causals.push(Math.random());}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
-window.rcRandomize=function(){eigenvals=[];causals=[];for(var i=0;i<dims;i++){eigenvals.push(Math.random()*1.8+.05);causals.push(Math.random());}var s=causals.reduce(function(a,b){return a+b},0);causals=causals.map(function(v){return v/s});rcUI();}
-window.rcCompute=function(){
-for(var i=0;i<dims;i++){eigenvals[i]=parseFloat(gi('rc-ev-'+i).value)||0;causals[i]=parseFloat(gi('rc-cw-'+i).value)||0;}
-var cs=causals.reduce(function(a,b){return a+b},0);
-if(cs>0) causals=causals.map(function(v){return v/cs});
-var digits=[],html='<div style="font-size:.6rem;letter-spacing:1px;color:var(--dim);margin-bottom:.5rem">THE REFFELT CONSTANT</div>';
-for(var i=0;i<dims;i++){
-var p=Math.abs(eigenvals[i]*causals[i]),raw=800*p+1,d=Math.min(8,Math.max(1,Math.floor(raw)));
-if(p<0.01) d=0;
-if(p>1.0) d=9;
-var cls=d===0?'digit-dead':d===9?'digit-sat':'digit-valid';
-digits.push(d);
-html+='<span class="digit '+cls+'">'+d+'</span>';
-}
-var valid=digits.every(function(d){return d>=1&&d<=8});
-html+='<div style="font-size:.7rem;margin-top:.5rem;color:'+(valid?'var(--accent)':'#ff4444')+'">'+(valid?'VALID &mdash; All digits in [1,8]':'INVALID &mdash; Contains '+(digits.indexOf(0)>=0?'dead (0)':'')+' '+(digits.indexOf(9)>=0?'saturated (9)':'')+ ' dimensions')+'</div>';
-var out=gi('rc-output');out.innerHTML=html;out.style.display='block';
-rcChart(digits);
-}
-function rcChart(digits){
-var labels=[],evData=[],cwData=[],bgColors=[],bdrColors=[];
-for(var i=0;i<dims;i++){
-labels.push('D'+(i+1));evData.push(eigenvals[i]);cwData.push(causals[i]);
-var c=digits[i]===0?'rgba(255,68,68,':digits[i]===9?'rgba(255,200,0,':'rgba(100,200,255,';
-bgColors.push(c+(0.3+causals[i]*0.7)+')');bdrColors.push(c+'1)');
-}
-var ctx=gi('rc-spectrum-chart');
-if(specChart) specChart.destroy();
-specChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Eigenvalue (\u03BB)',data:evData,backgroundColor:bgColors,borderColor:bdrColors,borderWidth:1},{label:'Causal Weight',data:cwData,backgroundColor:'rgba(255,150,50,0.4)',borderColor:'rgba(255,150,50,1)',borderWidth:1,type:'line',yAxisID:'y1',pointRadius:4,tension:.3}]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#aaa',font:{family:"'JetBrains Mono'",size:10}}}},scales:{y:{beginAtZero:true,title:{display:true,text:'Eigenvalue',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},y1:{position:'right',beginAtZero:true,max:1,title:{display:true,text:'Causal Weight',color:'#888',font:{family:"'JetBrains Mono'",size:10}},grid:{drawOnChartArea:false},ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}}},x:{ticks:{color:'#888',font:{family:"'JetBrains Mono'",size:9}},grid:{color:'rgba(255,255,255,.05)'}}}}});
-}
-window.rcUpdateInputs();
+var TK={color:'#888',font:{family:"'JetBrains Mono'",size:9}},GR={color:'rgba(128,128,128,.12)'},LG={labels:{color:'#999',boxWidth:12,font:{family:"'JetBrains Mono'",size:10}}},AR=window.innerWidth<600?.75:2;
+var NAMES={reffelt_v2:'Reffelt v2',reffelt_v1:'Reffelt v1',sobol1_binned:"Binned Sobol' S1",abs_spearman:'|Spearman|',chatterjee_xi_raw_score:'ξ of raw score',knn_permutation:'kNN permutation'};
+var COLS={reffelt_v2:'rgba(200,155,78,.9)',reffelt_v1:'rgba(181,70,47,.75)',sobol1_binned:'rgba(58,110,165,.8)',abs_spearman:'rgba(120,118,112,.7)',chatterjee_xi_raw_score:'rgba(80,160,115,.8)',knn_permutation:'rgba(150,105,185,.8)'};
+var FN={additive:'Additive',sobol_g:"Sobol' G",ishigami:'Ishigami',interaction:'Interaction',ridge:'Ridge'};
+var R=null,rrChart=null,rxChart=null;
+function key(m,h){return m==='reffelt_v2'?(h==='elite'?'reffelt_v2_elite':'reffelt_v2_unbiased'):m}
+function fmt(x){return x.mean.toFixed(2)+' &plusmn; '+x.sd.toFixed(2)}
+function table(){var b='',P=R.pooled;Object.keys(NAMES).forEach(function(m){b+='<tr><td style="color:var(--text)">'+NAMES[m]+'</td><td>'+fmt(P.elite[key(m,'elite')].auc)+'</td><td>'+fmt(P.random[key(m,'random')].auc)+'</td></tr>'});
+b+='<tr><td style="color:var(--text)">v2, wrong reading</td><td>'+fmt(P.elite.reffelt_v2_unbiased.auc)+'</td><td>'+fmt(P.random.reffelt_v2_elite.auc)+'</td></tr>';
+b+='<tr><td style="color:var(--text)">v2 winners, unit edge weights</td><td>'+fmt(P.elite.reffelt_v2_elite_unitgraph.auc)+'</td><td>'+fmt(P.random.reffelt_v2_elite_unitgraph.auc)+'</td></tr>';
+gi('rc-pooled').querySelector('tbody').innerHTML=b}
+window.rrDraw=function(){if(!R)return;var h=gi('rr-sampler').value,nz=parseFloat(gi('rr-noise').value),D=nz>0.5?20:parseInt(gi('rr-dim').value);if(nz>0.5)gi('rr-dim').value='20';
+var cs=Object.keys(FN).map(function(f){return R.cells.filter(function(c){return c.function===f&&c.D===D&&c.sampler===h&&Math.abs(c.noise-nz)<1e-9})[0]});
+var ds=Object.keys(NAMES).map(function(m){return{label:NAMES[m],data:cs.map(function(c){return c.metrics[key(m,h)].auc.mean}),sd:cs.map(function(c){return c.metrics[key(m,h)].auc.sd}),backgroundColor:COLS[m],borderWidth:0}});
+if(rrChart)rrChart.destroy();
+rrChart=new Chart(gi('rr-chart'),{type:'bar',data:{labels:Object.keys(FN).map(function(f){return FN[f]}),datasets:ds},options:{responsive:true,aspectRatio:AR,plugins:{legend:LG,tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.raw.toFixed(3)+' ± '+c.dataset.sd[c.dataIndex].toFixed(3)+' (10 seeds)'}}}},scales:{y:{min:0,max:1,title:{display:true,text:'AUC (0.5 = coin flip)',color:'#888',font:TK.font},ticks:TK,grid:GR},x:{ticks:TK,grid:GR}}}})};
+fetch('reffelt_results.json').then(function(r){return r.json()}).then(function(j){R=j;table();rrDraw()}).catch(function(){gi('rc-pooled').querySelector('tbody').innerHTML='<tr><td colspan="3">Could not load reffelt_results.json.</td></tr>'});
+function parseCSV(txt){var L=txt.trim().split(/\r?\n/).filter(function(l){return l.trim()}),hd=L[0].split(/[,;\t]/).map(function(x){return x.trim()}),X=[],s=[];
+L.slice(1,401).forEach(function(l){var v=l.split(/[,;\t]/).map(parseFloat);if(v.length===hd.length&&v.every(isFinite)){X.push(v.slice(0,-1));s.push(v[v.length-1])}});return{names:hd.slice(0,-1),X:X,s:s}}
+window.rxRun=function(pasted){var out=gi('rx-out');out.style.display='block';out.innerHTML='Computing&hellip;';setTimeout(function(){
+var rd=gi('rx-rd').value,how=gi('rx-how').value,X,s,names,act=null,info='';
+if(pasted){var P=parseCSV(gi('rx-csv').value);if(P.X.length<20||P.names.length<2){out.innerHTML='Need a header row, at least 2 parameter columns plus a score column, and 20+ numeric rows.';return}X=P.X;s=P.s;names=P.names;rd=rd==='match'?'elite':rd;info=X.length+' pasted rows, '+names.length+' parameters, '+(rd==='elite'?"winners'":'unbiased')+' reading'}
+else{var D=parseInt(gi('rx-d').value),n=parseInt(gi('rx-n').value),r=RC.rng(parseInt(gi('rx-seed').value)||0),pr=RC.problem(gi('rx-fn').value,D,r),S=RC.sample(pr,D,r,how,parseFloat(gi('rx-noise').value),n);X=S.X;s=S.s;act=pr.active;rd=rd==='match'?(how==='elite'?'elite':'unbiased'):rd;names=[];for(var i=0;i<D;i++)names.push('x'+i);info=n+' points, '+(how==='elite'?'winners of a small ES':'random sample')+', '+(rd==='elite'?"winners'":'unbiased')+' reading'}
+var t0=performance.now(),Q=RC.reffelt(X,s,rd),ms=Math.round(performance.now()-t0);
+var h='<div style="font-size:.6rem;letter-spacing:1px;color:var(--dim);margin-bottom:.5rem">THE REFFELT CONSTANT, V2 &middot; '+info+' &middot; '+ms+' ms</div>';
+Q.digits.forEach(function(d,i){var on=act&&act.indexOf(i)>=0;h+='<span class="digit '+(d===0?'digit-dead':'digit-valid')+'" title="'+names[i]+': weight '+Q.weights[i].toFixed(3)+'" style="'+(on?'text-decoration:underline;text-underline-offset:4px':'')+'">'+d+'</span>'});
+if(act){var a2=RC.auc(Q.weights,act),a3=RC.auc(Q.rawXi,act);h+='<div style="font-size:.7rem;margin-top:.6rem;letter-spacing:1px;color:var(--dim)">Active (underlined): '+act.slice().sort(function(a,b){return a-b}).map(function(i){return names[i]}).join(', ')+' &middot; AUC this run: v2 '+a2.toFixed(2)+', &xi; of raw score '+a3.toFixed(2)+'</div>'}
+else h+='<div style="font-size:.7rem;margin-top:.6rem;letter-spacing:1px;color:var(--dim)">'+names.map(function(nm,i){return nm+' '+Q.digits[i]}).join(' &middot; ')+'</div>';
+out.innerHTML=h;if(rxChart)rxChart.destroy();
+rxChart=new Chart(gi('rx-chart'),{type:'bar',data:{labels:names,datasets:[{label:'v2 weight w_d',data:Q.weights,backgroundColor:Q.weights.map(function(_,i){return act?(act.indexOf(i)>=0?'rgba(200,155,78,.9)':'rgba(120,118,112,.45)'):'rgba(200,155,78,.8)'}),borderWidth:0},{label:'average 1/D (digit 0 below)',data:names.map(function(){return 1/names.length}),type:'line',borderColor:'rgba(181,70,47,.9)',borderDash:[5,4],pointRadius:0,borderWidth:1.5}]},options:{responsive:true,aspectRatio:AR,plugins:{legend:LG},scales:{y:{beginAtZero:true,ticks:TK,grid:GR,title:{display:true,text:'Weight',color:'#888',font:TK.font}},x:{ticks:TK,grid:GR}}}})},30)};
+rxRun(false);
 })();
 </script>
 </body>
