@@ -71,7 +71,7 @@ figure.rfig figcaption{font-size:.75rem;color:var(--dim);line-height:1.6;margin-
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; NAVIER&ndash;STOKES</div>
 <h1>NAVIER&ndash;STOKES: A COHERENCE PATH</h1>
 <p class="subtitle">A PROPOSED ROUTE TO THE UNFORCED REGULARITY PROBLEM</p>
-<p class="tagline">Where I think the proof lives, what I managed to close around it, and the one piece I could not.</p>
+<p class="tagline">Where the proposed proof lives, what's closed around it, and the one piece still open.</p>
 <div class="status-strip">
 <span class="open">Clay A&ndash;D: open</span>
 <span>3 lemmas peer-closed</span>
@@ -86,7 +86,7 @@ figure.rfig figcaption{font-size:.75rem;color:var(--dim);line-height:1.6;margin-
 <section>
 <h2>WHAT THIS IS</h2>
 <div class="prose">
-<p>I'm Anthony Reffelt. Over July 2026 I ran a research program on the 3D Navier&ndash;Stokes regularity problem, and this page is where that work stands right now. It is <strong>not a proof</strong> of the Millennium problem. The header of every document in the underlying ledger says the same thing.</p>
+<p>I'm Anthony Reffelt. Over July 2026 I ran a research program on the 3D Navier&ndash;Stokes regularity problem, and this page shows its current state. It is <strong>not a proof</strong> of the Millennium problem, and every document in the underlying ledger carries the same header.</p>
 <p>The setup: two AI systems set against each other. One proposed, the other attacked, and I directed. Every numerical claim was registered before the run. Every claim was labeled LOCAL, CONDITIONAL or NUM, and never Clay until it earned a peer-closed mark. Every retraction stayed in the log.</p>
 <p>If you can break anything here, I want to hear it. My address is at the bottom.</p>
 </div>
@@ -96,7 +96,7 @@ figure.rfig figcaption{font-size:.75rem;color:var(--dim);line-height:1.6;margin-
 <h2>WHAT THE PROBLEM ACTUALLY ASKS</h2>
 <div class="prose">
 <p>Fefferman's official statement has four options. A and B: show that every smooth, divergence-free, finite-energy starting velocity on \(\mathbb{R}^3\) or \(\mathbb{T}^3\), with no external force, gives a smooth solution for all time. C and D: find one smooth starting velocity and one smooth, bounded-energy force \(f(x,t)\) for which the solution breaks down in finite time. The force in C and D is part of the official wording. This program went after A and B, and its blowup search stayed in the unforced case.</p>
-<p>That split is why I'm posting now. The problem is suddenly in the news. Tristan Buckmaster and Levent Alp&ouml;ge have put out Lean-verified finite-time blowup with smooth forcing for 3D Euler, and OpenAI has announced an internal proof of forced Navier&ndash;Stokes blowup along Fefferman's options C and D. If that proof holds up under review, the prize is settled through the forced breakdown statements. The unforced question, options A and B, stays open on its own terms, and that's the question this page is about. I'd rather have my route on the table, gap and all, than sit on it.</p>
+<p>That split is why this is posted now. The problem is in the news. Tristan Buckmaster and Levent Alp&ouml;ge have put out Lean-verified finite-time blowup with smooth forcing for 3D Euler, and OpenAI has announced an internal proof of forced Navier&ndash;Stokes blowup along Fefferman's options C and D. If that proof holds up under review, the prize is settled through the forced breakdown statements. The unforced question, options A and B, stays open on its own terms, and that's the question this page is about. Here's the route, with its gap stated.</p>
 <p>How do you tell whether a solution stays smooth? The test everyone uses is Beale&ndash;Kato&ndash;Majda. A solution stays smooth exactly as long as the vorticity \(\omega=\nabla\times u\) stays integrable in time:</p>
 <div class="eq-block"><div class="eq-label">BKM criterion</div>
 \[ \int_0^T \|\omega(t)\|_{L^\infty}\,dt < \infty . \]
@@ -166,7 +166,7 @@ The short version. The Euler blowup that is actually proven (Luo&ndash;Hou, Chen
 <div class="eq-block"><div class="eq-label">A profile-independent brake</div>
 \[ (\nabla^2 p)_{12}\;\to\;-\tfrac14\,\omega_1\omega_2 . \]
 </div>
-<p>That's exactly the coefficient that cancels the frame-chase term in the strain evolution on a coherent tube. The first-order correction \([p''-p'/\rho]/(2|\omega|^2)\) vanishes on the axis and goes negative off it, which predicts a number slightly under 1/4. The fits land there: on tilted tubes in triaxial strain, across a fourfold amplitude range, the fitted coefficient came out between 0.243 and 0.246. So on coherent cores the pressure holds its own structure in place, \(\dot S_{12}\approx 0\), and the alignment there is the eigenframe being dragged along rather than chased. What's still assumed: a slender tube and a near-steady core. Those are named, not buried.</p>
+<p>That's exactly the coefficient that cancels the frame-chase term in the strain evolution on a coherent tube. The first-order correction \([p''-p'/\rho]/(2|\omega|^2)\) vanishes on the axis and goes negative off it, which predicts a number slightly under 1/4. The fits land there: on tilted tubes in triaxial strain, across a fourfold amplitude range, the fitted coefficient came out between 0.243 and 0.246. So on coherent cores the pressure holds its own structure in place, \(\dot S_{12}\approx 0\), and the alignment there is the eigenframe being dragged along rather than chased. What's still assumed: a slender tube and a near-steady core.</p>
 </div>
 </div>
 </section>
@@ -204,10 +204,10 @@ The short version. The Euler blowup that is actually proven (Luo&ndash;Hou, Chen
 <tr><td>Stretching efficiency \(\rho\)</td><td>0.12 to 0.26, against 0.816 allowed by the Mohr disk</td><td>Real flows use a fraction of the stretching they're allowed.</td></tr>
 <tr><td>Turning rate \(\tau\)</td><td>40% of the Mohr budget</td><td>Consistent with the frame being dragged on cores.</td></tr>
 <tr><td>Coherence coefficient</td><td>0.243 to 0.246 against the derived 1/4</td><td>Lemma 7 holds on tubes within 3%.</td></tr>
-<tr><td>Weak-brake corner fraction across a fourfold Reynolds change</td><td>flat, about \(Re^{-0.01}\)</td><td>The set where the brake is weak doesn't shrink with Reynolds number. This is the bad news for the route.</td></tr>
+<tr><td>Weak-brake corner fraction across a fourfold Reynolds change</td><td>flat, about \(Re^{-0.01}\)</td><td>The set where the brake is weak doesn't shrink with Reynolds number. This counts against the route.</td></tr>
 <tr><td>Kerr-type coherent tail, followed in time</td><td>persists at 15.8&times; baseline overlap, then dissolves by 64% while production rises</td><td>A transient wearing away in place, not a singular set being built.</td></tr>
 </table>
-<p>One result was withdrawn in public after it failed out of sample: an early claim that growth rate contracts the helix. The pre-registration caught it, and that's exactly its job. It stays in the record because the method is the point.</p>
+<p>Withdrawn in public: an early claim that growth rate contracts the helix, which failed out of sample. Pre-registration caught it, and it stays in the record.</p>
 </div>
 </section>
 
@@ -249,7 +249,7 @@ The short version. The Euler blowup that is actually proven (Luo&ndash;Hou, Chen
 <figure class="rfig"><img src="../assets/research/ns-rung-e1.svg" alt="E1: log ratio of growth rate to damping at rungs 1 to 4 for seven dissipation exponents; only alpha = 1/6432 stays above zero at every rung" loading="lazy"><figcaption>E1. Their amplitude law with dissipation added, along the published schedule. A curve above the dashed line means that rung still amplifies. Only \(\alpha=1/(32Q)\) survives every rung; Navier&ndash;Stokes, \(\alpha=1\), is gone at rung two.</figcaption></figure>
 <p>The box probe puts a small vorticity layer at wavenumber \(\lambda\) on the stagnation strain of a Taylor&ndash;Green flow in the real equations at \(64^3\) and measures its growth rate against \(S-\nu\lambda^{2}\). Sign and ordering held: the growth flips sign near \(\lambda\approx12\) at \(\nu=4\times10^{-3}\) against a predicted 14.5, and stays positive through \(\lambda=16\) at \(\nu=10^{-3}\). The absolute level failed the registered 10% tolerance: measured rates sit 0.2 to 0.25 below the prediction at every \(\lambda\) and \(\nu\), and drop further as the strain compresses the layer. On the real equations the layer never gets the full stagnation strain, so the rung is at least as hard as the ODE says.</p>
 <figure class="rfig"><img src="../assets/research/ns-rung-e2.svg" alt="E2: measured amplitude growth rate of a vorticity layer versus wavenumber at two viscosities, with the predicted S minus nu lambda squared as dashed lines" loading="lazy"><figcaption>E2. Dashed lines are the rung prediction \(S_{\mathrm{env}}-\nu\lambda^{2}\). Filled markers are the measured rate over the first half of the window, open markers the second half. The sign change and the ordering in \(\nu\) match; the level sits below.</figcaption></figure>
-<p>The \(96^3\) follow-up, with a divergence-free layer and a frozen-background control, is in: full and frozen rates agree to two decimals at every wavenumber, so the deficit is intrinsic to a localized layer on a background with vorticity gradients at its width, which is outside the affine class. At \(\nu=10^{-3}\) the growth changes sign between \(\lambda=20\) and 24 where the affine prediction stays positive through 28. A viscous-decay calibration with no background reproduces \(-\nu(\lambda^2+\tfrac32\sigma^{-2})\) within 0.03, so the measurement is honest to that level. The rung condition holds as an upper bound everywhere, with room. Still to come: the force budget \(J\) on their solutions once released.</p>
+<p>The \(96^3\) follow-up, with a divergence-free layer and a frozen-background control, is in: full and frozen rates agree to two decimals at every wavenumber, so the deficit is intrinsic to a localized layer on a background with vorticity gradients at its width, which is outside the affine class. At \(\nu=10^{-3}\) the growth changes sign between \(\lambda=20\) and 24 where the affine prediction stays positive through 28. A viscous-decay calibration with no background reproduces \(-\nu(\lambda^2+\tfrac32\sigma^{-2})\) within 0.03, so the measurement is calibrated to that level. The rung condition holds as an upper bound everywhere, with room. Still to come: the force budget \(J\) on their solutions once released.</p>
 <div class="note-cta"><a href="../downloads/research/reffelt-ns-forcing-gap-note-v1.2.pdf" class="btn btn-primary">READ THE NOTE (PDF, 7 PAGES) &rarr;</a><span style="font-size:.8rem;color:var(--dim)">Research note v1.2: two propositions about their ansatz class, the force budget, the correspondence with the July program, and three registered probes. Deposited with source, scripts and raw results: <a href="https://doi.org/10.6084/m9.figshare.33472285">doi:10.6084/m9.figshare.33472285</a>.</span></div>
 </div>
 </div>
@@ -279,7 +279,7 @@ The short version. The Euler blowup that is actually proven (Luo&ndash;Hou, Chen
 <li>A proof of any of Fefferman's four options.</li>
 <li>Lemmas 1 to 3 are peer-closed. Lemmas 4 to 6 are derived but haven't been through a peer protocol. Lemma 7 is derived through second order under slender-tube and near-steady assumptions that are still open. The braid ceiling is conditional on Burgers slaving.</li>
 <li>The numerics live at \(\nu\ge 0.002\) on a periodic box. Nothing here extrapolates to zero viscosity, and the flat corner fraction across Reynolds number counts against an easy version of the route.</li>
-<li>The gap is stated, not closed. Every "last piece" I chased moved the full difficulty back into D1 to D4.</li>
+<li>The gap is stated, not closed. Every "last piece" tried so far moves the full difficulty back into D1 to D4.</li>
 </ul>
 </div>
 </section>

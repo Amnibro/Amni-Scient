@@ -11,11 +11,11 @@ image: /assets/explore/og-explore.png
 
 # Updates now live on amni-scient.com
 
-Until now, the homepage was the only place that said anything shipped. You had to scroll tiles and guess. That's a lousy way to follow a studio with this many tools! So here's the log: [/blog](/blog/).
+A studio with this many tools needs one place that says what shipped. Here it is: [/blog](/blog/).
 
-Each post says what I built and why I bothered. Same deal as the product pages: if it has a limit, I'll tell you the limit. File-shuffling stays off this page, and I won't post every commit. I don't read other people's noise either.
+Each post covers what I built, why, and where its limits are, same as the product pages. File-shuffling stays off this page, and so does every individual commit.
 
-Already using Calc, Braid, or Learn? This is how you see what changed without hunting through GitHub. Found the site from a link? This is how you can tell I'm still here.
+Already using Calc, Braid, or Learn? This is how you see what changed without hunting through GitHub. Found the site from a link? This is where every new release shows up.
 
 Want it in your reader? There's [RSS](/blog/rss.xml).
 

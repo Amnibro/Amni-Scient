@@ -10,7 +10,7 @@ cta_label: Amni-Connect
 
 # Amni-Connect installers for Windows and Linux
 
-I used to send people to GitHub and hope they picked the right file. Not anymore! The Connect page now has Windows Setup, a Linux AppImage, .deb, and .rpm.
+Pick your file and go! The Connect page now has Windows Setup, a Linux AppImage, .deb, and .rpm.
 
 Here's how it works. Install it on the machine you want to control. The viewer is any browser, phone included, with a room code. Video, audio, and input stay on the WebRTC path. The signaling server never sees frames or keystrokes, and I don't keep logs.
 

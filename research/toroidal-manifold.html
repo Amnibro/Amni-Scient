@@ -100,10 +100,10 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>The <strong style="color:var(--text)">Toroidal Manifold</strong> is how I plot the state of anything that works on fixed-width binary words. Each word gets an angle &theta; from its two halves, a radius r from its bit density, and a second angle &phi; from nibble parities. A sequence of words becomes a path on a torus, so you can watch a process move.</p>
-<p style="margin-top:1.2rem">The part I care about most is the <strong style="color:var(--text)">hourglass pinch</strong> at r = 0.5, where half the bits are set. A well-mixed word sits near there, so that's where paths crowd together. The hourglass map (T3 below) stretches that band out so I can tell them apart. I also define a tent-shaped weight B<sub>&theta;</sub> that peaks at the pinch. I call it a field on this page, but it's just a weight.</p>
+<p style="margin-top:1.2rem">The part I care about most is the <strong style="color:var(--text)">hourglass pinch</strong> at r = 0.5, where half the bits are set. A well-mixed word sits near there, so that's where paths crowd together. The hourglass map (T3 below) stretches that band out so I can tell them apart. I also define a tent-shaped weight B<sub>&theta;</sub> that peaks at the pinch. It's a weight, not a physical field.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Quick reality check before the definitions. T1 to T8 are coordinate definitions and a few weights I chose, not derivations; the only thing that follows from something else is the torus embedding in T5, which is textbook. The two Chart.js plots further down are computed live from T3 and T6; the wireframe torus is a display with a made-up path. I haven't measured how many words collide on the surface, how well the 16-digit address separates trajectories, or whether any of the applications hold. Outside this page, I've used these coordinates in my SHA-256 round-state scripts (unpublished, in a private repo) and in the <a href="millennium_sim/PROOF_FORMATION.md" style="color:var(--accent)">proof-formation notes</a> in the millennium sim folder.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Design choices: T1 to T8 are coordinate definitions and a few chosen weights, not derivations; the one borrowed result is the torus embedding in T5, which is textbook. Live: the two Chart.js plots further down, computed from T3 and T6. Display only: the wireframe torus, with a made-up path. Not measured: how many words collide on the surface, how well the 16-digit address separates trajectories, and whether any of the applications hold. Used elsewhere: my SHA-256 round-state scripts (unpublished, in a private repo) and the <a href="millennium_sim/PROOF_FORMATION.md" style="color:var(--accent)">proof-formation notes</a> in the millennium sim folder.</div></div>
 <section>
 <h2>COORDINATE SYSTEM</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
@@ -150,14 +150,14 @@ $$\phi_i = \frac{\operatorname{nibble\_parities}(w_i)}{2^{N_{\text{nibbles}}} - 
 <div class="eq-label">EQUATION T5 &mdash; TORUS SURFACE</div>
 $$x = (R + r\cos\phi)\cos\theta \qquad y = (R + r\cos\phi)\sin\theta \qquad z = r\sin\phi$$
 </div>
-<p>R = 2 is a display choice; any R &gt; 1 keeps the surface from self-intersecting. This puts every word somewhere on a torus of tube radius r inside R = 2. One catch: it isn't one-to-one. Different words can land on the same spot, and I haven't measured how often.</p>
+<p>R = 2 is a display choice; any R &gt; 1 keeps the surface from self-intersecting. This puts every word somewhere on a torus of tube radius r inside R = 2. The map isn't one-to-one: different words can land on the same spot. Collision rate: not measured yet.</p>
 </div>
 </div>
 </section>
 <section>
 <h2>PINCH WEIGHT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Now, how close does a state sit to the pinch? I use B<sub>&theta;</sub> as a weight for that. It's just a tent function: 1 at r = 0.5, 0 at the ends, linear between. I call it a field, but there's no Maxwell behind it.</p>
+<p>Now, how close does a state sit to the pinch? I use B<sub>&theta;</sub> as a weight for that. It's just a tent function: 1 at r = 0.5, 0 at the ends, linear between. It's a weight, with no Maxwell behind it.</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T6 &mdash; PINCH WEIGHT</div>
 $$B_\theta = 1 - 2|r - 0.5|$$
@@ -172,7 +172,7 @@ $$\Phi = \sum_{t=1}^{T} B_\theta(t)\, d\theta(t)$$
 <div class="eq-label">EQUATION T8 &mdash; ENERGY FUNCTIONAL</div>
 $$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\pi}\right)^2$$
 </div>
-<p>E is smallest when every state has r = 0.5 and &phi; = 0, the pinch equator. My conjecture is that well-mixed processes drift toward low E. I haven't tested it on anything beyond a few hash traces, and if I call that drift "thermodynamic", it's a loose word for it.</p>
+<p>E is smallest when every state has r = 0.5 and &phi; = 0, the pinch equator. Conjecture: well-mixed processes drift toward low E. Tried so far on a few hash traces only. "Thermodynamic" is a loose label for that drift.</p>
 </div>
 </section>
 <section>
@@ -217,8 +217,8 @@ $$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\p
 </tr>
 </tbody>
 </table>
-<p>In the table, &theta;&#772; and r&#772; (and the &Sigma;&theta; and Var(r) next to them) are taken over the words of the final state, dots are first differences per step, t<sub>entry</sub> is the first step with |r &minus; 0.5| &lt; 0.05, &Delta;t is the number of steps spent inside that band out of T total, and &Delta;&theta; is the angle turned while inside it. The scale constants (9, 100, 5, 50, 10, 8) are ones I picked; they aren't derived. The min(8, &middot;) clips are what make each digit a base-9 digit, and my code applies every one of them; all the inputs are non-negative, so each digit lands in 0 to 8.</p>
-<p style="margin-top:1.2rem">The honest gap: how many candidates each level returns, and how much the next level narrows it, is not measured. I don't know yet whether the fine digits separate individual trajectories.</p>
+<p>In the table, &theta;&#772; and r&#772; (and the &Sigma;&theta; and Var(r) next to them) are taken over the words of the final state, dots are first differences per step, t<sub>entry</sub> is the first step with |r &minus; 0.5| &lt; 0.05, &Delta;t is the number of steps spent inside that band out of T total, and &Delta;&theta; is the angle turned while inside it. The scale constants (9, 100, 5, 50, 10, 8) are picked, not derived. The min(8, &middot;) clips are what make each digit a base-9 digit, and my code applies every one of them; all the inputs are non-negative, so each digit lands in 0 to 8.</p>
+<p style="margin-top:1.2rem">Not measured yet: how many candidates each level returns, how much the next level narrows it, and whether the fine digits separate individual trajectories.</p>
 </div>
 </section>
 <section>
@@ -229,7 +229,7 @@ $$E = \frac{1}{2}\sum_i (r_i - 0.5)^2 + \frac{1}{2}\sum_i \left(\frac{\phi_i}{\p
 <div class="eq-label">EQUATION T9 &mdash; RESONANCE FIELD</div>
 $$\text{Resonance}(p) = \sum_{a=1}^{M} w_a \exp\!\left(-\frac{\|p - c_a\|^2}{2\sigma^2}\right) \qquad \sigma = 5.0$$
 </div>
-<p>Here M is the number of cluster centers across all views, c<sub>a</sub> is the a-th center in torus coordinates (&theta;, r&#771;, &phi;), and w<sub>a</sub> is the fraction of trajectories in that cluster. &sigma; = 5.0 is a bandwidth I picked; it isn't derived and it's large next to the coordinate ranges, so the field is smooth. Points where several views put a center nearby score high, and I call those <strong style="color:var(--text)">resonant nodes</strong>. Whether they mean anything beyond "the clusterings agree here" is untested. T10 is the per-view average of the same idea:</p>
+<p>Here M is the number of cluster centers across all views, c<sub>a</sub> is the a-th center in torus coordinates (&theta;, r&#771;, &phi;), and w<sub>a</sub> is the fraction of trajectories in that cluster. &sigma; = 5.0 is a picked bandwidth, not derived, and it's large next to the coordinate ranges, so the field is smooth. Points where several views put a center nearby score high, and I call those <strong style="color:var(--text)">resonant nodes</strong>. Whether they mean anything beyond "the clusterings agree here" is untested. T10 is the per-view average of the same idea:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION T10 &mdash; INTERFERENCE FIELD</div>
 $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\right)$$
@@ -242,7 +242,7 @@ $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\rig
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>3D TORUS WITH TRAJECTORY</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Press START to spin a wireframe torus (R = 2, tube 0.8) with a made-up sample path, and use the SPEED slider to set how fast. One known bug: gold marks the poloidal angle &plusmn;90&deg;, not r = 0.5. I'll fix the highlight. The two plots below are different: they're computed live from T3 and T6 as written above, and the &alpha; slider feeds T3.</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">Press START to spin a wireframe torus (R = 2, tube 0.8) with a made-up sample path, and use the SPEED slider to set how fast. Known bug: gold marks the poloidal angle &plusmn;90&deg;, not r = 0.5. Highlight fix pending. The two plots below are different: they're computed live from T3 and T6 as written above, and the &alpha; slider feeds T3.</p>
 <div class="viz-controls">
 <button id="tm-toggle" onclick="tmToggle()">START</button>
 <button onclick="tmReset()">RESET</button>
@@ -268,26 +268,26 @@ $$I(p) = \frac{1}{M}\sum_{v=1}^{M} \exp\!\left(-\frac{d_v(p)^2}{2\sigma_v^2}\rig
 <section>
 <h2>WHERE I'D LIKE TO TRY IT</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">So where could this go? Here's where I'd like to point it next. All of it is conjecture: I haven't run the coordinates on any of these problems past a few hash traces, and each card says what I'd expect to see, not what I've seen.</p>
+<p style="color:var(--dim);font-size:.9rem;line-height:1.9;margin-bottom:1.5rem">Here's where I want to point it next. All of it is conjecture: the coordinates haven't run on any of these problems past a few hash traces, and each card states an expected result, not an observed one.</p>
 <div class="app-card">
 <h4>&#128300; HASH ROUND STATES</h4>
-<p>Hash rounds are rotations, XORs and additions on fixed-width words, so the round states plot straight onto the torus. I think a weakly mixing round would show up as a path that lingers away from r = 0.5, and that the 16-digit code could work as a compact fingerprint of a hash's behaviour. I haven't tested either against a known-weak hash, so I can't say the plot shows anything a bit-level test wouldn't.</p>
+<p>Hash rounds are rotations, XORs and additions on fixed-width words, so the round states plot straight onto the torus. Expected: a weakly mixing round shows up as a path that lingers away from r = 0.5, and the 16-digit code could work as a compact fingerprint of a hash's behaviour. Neither is tested against a known-weak hash, so there's no evidence yet that the plot shows anything a bit-level test wouldn't.</p>
 </div>
 <div class="app-card">
 <h4>&#128421; MULTI-RESOLUTION INDEX</h4>
-<p>The four-group code is a multi-resolution key, and 9<sup>4</sup> = 6561 coarse buckets is a plausible first partition for a vector index. I haven't tested it against any vector database, and the address space of 9<sup>16</sup> &asymp; 1.85 &times; 10<sup>15</sup> says nothing about how many trajectories actually land in distinct codes.</p>
+<p>The four-group code is a multi-resolution key, and 9<sup>4</sup> = 6561 coarse buckets is a plausible first partition for a vector index. Untested against any vector database, and the address space of 9<sup>16</sup> &asymp; 1.85 &times; 10<sup>15</sup> says nothing about how many trajectories actually land in distinct codes.</p>
 </div>
 <div class="app-card">
 <h4>&#9883; QUBIT-LIKE WORDS</h4>
-<p>I'd like to see whether a bit-string encoding of a small circuit's classical shadow gives readable paths here, with &theta; playing the role of a rotation and &phi; a relative phase. r is a bit density, not an amplitude, so this is only an analogy about the shape of the coordinates. I haven't tested it.</p>
+<p>The question: whether a bit-string encoding of a small circuit's classical shadow gives readable paths here, with &theta; playing the role of a rotation and &phi; a relative phase. r is a bit density, not an amplitude, so this is only an analogy about the shape of the coordinates. Untested.</p>
 </div>
 <div class="app-card">
 <h4>&#128293; TOKAMAK COORDINATES</h4>
-<p>A tokamak lives on a physical torus, so the coordinate names line up: toroidal angle, normalized flux coordinate, poloidal angle. The physics doesn't line up the same way. The magnetic axis is at flux coordinate 0, not 0.5, and the safety factor q &asymp; rB<sub>&phi;</sub>/(RB<sub>&theta;</sub>) (Wesson, <em>Tokamaks</em>, 4th ed., sec. 3.4) involves the real toroidal and poloidal fields, which my tent function B<sub>&theta;</sub> isn't. What I'd like to test is whether the hierarchical code can label diagnostic time series by mode; I haven't tried it.</p>
+<p>A tokamak lives on a physical torus, so the coordinate names line up: toroidal angle, normalized flux coordinate, poloidal angle. The physics doesn't line up the same way. The magnetic axis is at flux coordinate 0, not 0.5, and the safety factor q &asymp; rB<sub>&phi;</sub>/(RB<sub>&theta;</sub>) (Wesson, <em>Tokamaks</em>, 4th ed., sec. 3.4) involves the real toroidal and poloidal fields, which my tent function B<sub>&theta;</sub> isn't. The test I want: whether the hierarchical code can label diagnostic time series by mode. Not tried yet.</p>
 </div>
 <div class="app-card">
 <h4>&#127760; ORBITAL SLOTS</h4>
-<p>Right ascension, altitude and argument of perigee also parametrize a torus, so a constellation could be plotted the same way. I'd like to see whether the resonance sum in T9 picks out slots where coverage, link geometry and ground visibility overlap. I haven't tested it, and B<sub>&theta;</sub> says nothing about orbital stability.</p>
+<p>Right ascension, altitude and argument of perigee also parametrize a torus, so a constellation could be plotted the same way. The question: whether the resonance sum in T9 picks out slots where coverage, link geometry and ground visibility overlap. Untested. B<sub>&theta;</sub> says nothing about orbital stability.</p>
 </div>
 </div>
 </section>

@@ -135,7 +135,7 @@
 <h3>WHAT I BUILT</h3>
 <p>So I built AmniTex Railgun. It splits those weights with an approach based on <span class="highlight">abstract algebra</span>, a branch of pure mathematics.</p>
 <p>Instead of rounding numbers and hoping for the best, Railgun keeps a tiny 1-bit index on the GPU and the rest on NVMe, and the round trip is <span class="highlight">exact</span>.</p>
-<p>What you get: the resident part of a 7B model is <span class="highlight">0.88 GB</span> (worked out from the 1.21 GB I measured for a 9B model). And when you need the original weights back? They come back <span class="highlight">perfectly</span>. Not approximately. Perfectly. The catch: the NVMe residual is 1.75&times; the fp16 size today, so the total store is bigger, and running on the 1-bit tier alone is lossy, with quality I haven&rsquo;t measured yet.</p>
+<p>What you get: the resident part of a 7B model is <span class="highlight">0.88 GB</span> (worked out from the 1.21 GB I measured for a 9B model). And when you need the original weights back? They come back <span class="highlight">perfectly</span>. Not approximately. Perfectly. Limits: the NVMe residual is 1.75&times; the fp16 size today, so the total store is bigger. Running on the 1-bit tier alone is lossy, and its quality isn&rsquo;t measured yet.</p>
 </div>
 </div>
 </section>
@@ -212,7 +212,7 @@
 <div class="explain-card">
 <div class="step-n">AI COMPANIES</div>
 <h4>Fit More Models per GPU</h4>
-<p>A 1-bit resident tier could let one card hold several models. On paper that&rsquo;s up to 4&times; fewer GPUs for the same load. I&rsquo;ve allocated three 9B tiers on one 16 GB card, but I haven&rsquo;t measured serving under load.</p>
+<p>A 1-bit resident tier could let one card hold several models. On paper that&rsquo;s up to 4&times; fewer GPUs for the same load. Measured: three 9B tiers allocated on one 16 GB card. Not measured yet: serving under load.</p>
 </div>
 <div class="explain-card">
 <div class="step-n">RESEARCHERS</div>
@@ -222,7 +222,7 @@
 <div class="explain-card">
 <div class="step-n">EDGE / MOBILE</div>
 <h4>AI on Consumer Hardware</h4>
-<p>A 7B model&rsquo;s 1-bit tier is 0.88 GB, small enough for laptop-class VRAM. I haven&rsquo;t run it on a laptop or phone, and my 9B run on the 1-bit tier did 1.5 tokens a second, so fast isn&rsquo;t a word I&rsquo;ve earned yet.</p>
+<p>A 7B model&rsquo;s 1-bit tier is 0.88 GB, small enough for laptop-class VRAM. Not run on a laptop or phone yet. Measured speed: a 9B model on the 1-bit tier does 1.5 tokens a second.</p>
 </div>
 </div>
 </section>
@@ -233,7 +233,7 @@
 <div class="explain-grid">
 <div class="explain-card"><h3>Verify-after-write</h3><p>Every learned fact is written to each memory store Adam has attached, then immediately recalled to confirm it landed. If the read-back doesn&rsquo;t match, the exact-lookup copy is rolled back and the write is reported as not stored.</p></div>
 <div class="explain-card"><h3>Anti-pattern suppression</h3><p>A wrong answer you&rsquo;ve corrected goes into a suppression set kept in a ledger file. Every recall tier skips a stored answer that matches it, and it never federates to other instances. It&rsquo;s an exact-text match after case and spacing are normalized, so it blocks that answer, not every way of phrasing the same mistake.</p></div>
-<div class="explain-card"><h3>Grounding on rewording</h3><p>Corrected facts return instantly from an exact lookup. Ask a reworded question and a close enough match is injected as authoritative grounding. That steers the model hard, but it&rsquo;s an instruction, not a filter, so I don&rsquo;t promise the same error can never come back.</p></div>
+<div class="explain-card"><h3>Grounding on rewording</h3><p>Corrected facts return instantly from an exact lookup. Ask a reworded question and a close enough match is injected as authoritative grounding. That steers the model hard, but it&rsquo;s an instruction, not a filter, so it doesn&rsquo;t guarantee the same error never comes back.</p></div>
 </div>
 </section>
 

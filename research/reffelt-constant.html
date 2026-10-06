@@ -93,25 +93,25 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; THE REFFELT CONSTANT</div>
 <h1>THE REFFELT CONSTANT</h1>
 <p class="subtitle">SPECTRAL FINGERPRINTING OF HIGH-DIMENSIONAL PARAMETER SPACES &middot; VERSION 2</p>
-<p class="tagline">One digit per parameter, read off the low-eigenvalue modes of a graph built over evaluated configurations, so I can see which knobs are worth tuning. Now with fixed math, published code and measured results.</p>
+<p class="tagline">One digit per parameter, read off the low-eigenvalue modes of a graph built over evaluated configurations, so I can see which knobs are worth tuning. It ships with fixed math, published code and measured results.</p>
 </section>
 <section>
 <h2>ABSTRACT</h2>
 <div class="prose">
 <p>Here's the problem. You've got a D-dimensional parameter space, a pile of evaluated configurations, and no clear idea which knobs the score actually cares about. The <strong style="color:var(--text)">Reffelt Constant (&real;)</strong> is my quick read on that: a digit string with one digit per parameter. I build a graph over the configurations, take the smooth, low-eigenvalue modes of its normalized Laplacian, and ask how those modes move along each parameter axis. A 0 says &ldquo;this knob matters less than average, freeze it&rdquo;. A 5 to 9 says it matters, on a doubling scale.</p>
-<p style="margin-top:1.2rem">This is version 2. Version 1 had hand-picked constants and had never been run against anything. I fixed the math, published the code, and measured it on test functions where I know the right answer. The short version: on an optimizer's winners, v2 ranks the knobs that matter above the ones that don't almost every time, and it beats the simple baselines I tried in most settings. On a plain random sample it needs its other reading and ends up level with those baselines, not ahead.</p>
+<p style="margin-top:1.2rem">This is version 2. It replaces version 1's hand-picked, never-tested constants with fixed math, published code, and measurements on test functions with a known right answer. The short version: on an optimizer's winners, v2 ranks the knobs that matter above the ones that don't almost every time, and it beats the simple baselines I tried in most settings. On a plain random sample it needs its other reading and ends up level with those baselines, not ahead.</p>
 <p style="margin-top:1.2rem">One word you'll run into further down: ground state. When I say it on this page, I mean the low-eigenvalue subspace of the Laplacian. It's an analogy to a physical ground state, and it stops there: there's no temperature and no partition function in the math.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> Here's where this stands. The graph, the normalized Laplacian and the eigensolver are standard spectral graph theory. The two readings of the modes and the digit scale are my construction, now written down and fixed (Steps 4 and 5). The code is published as <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a> (NumPy only), and every number on this page comes from <a href="reffelt_results.json" style="color:var(--accent)">reffelt_results.json</a>: 5 test functions, 10 to 50 parameters, two ways of sampling, 10 seeds each. On winners' archives, v2 separates the knobs that matter from the ones that don't with an AUC of 0.96 &plusmn; 0.03 across 15 settings; the best simple baseline, a binned first-order Sobol' index, gets 0.90 &plusmn; 0.13. On random samples v2 gets 0.79 &plusmn; 0.09, level with the baselines, and wins only 1 setting out of 15. All of it is synthetic. I couldn't find my old optimizer outputs on disk, so there's no real-data number yet, and the application ideas at the bottom are still untested.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> The graph, the normalized Laplacian and the eigensolver are standard spectral graph theory. The two readings of the modes and the digit scale are my construction, now written down and fixed (Steps 4 and 5). The code is published as <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a> (NumPy only), and every number on this page comes from <a href="reffelt_results.json" style="color:var(--accent)">reffelt_results.json</a>: 5 test functions, 10 to 50 parameters, two ways of sampling, 10 seeds each. On winners' archives, v2 separates the knobs that matter from the ones that don't with an AUC of 0.96 &plusmn; 0.03 across 15 settings; the best simple baseline, a binned first-order Sobol' index, gets 0.90 &plusmn; 0.13. On random samples v2 gets 0.79 &plusmn; 0.09, level with the baselines, and wins only 1 setting out of 15. All of it is synthetic. Not measured yet: real archives (the original optimizer outputs aren't on disk) and the application ideas at the bottom.</div></div>
 <section>
 <h2>WHAT CHANGED FROM V1</h2>
 <div class="prose">
-<p>Short version, so you can compare with what was here before:</p>
+<p>What moved, for comparison with the previous version:</p>
 <ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
-<li><strong style="color:var(--text)">The weight was upside down, and right by accident.</strong> v1 averaged |&Delta;&psi;| along each coordinate's sort order. That's a roughness: it's big when a mode <em>ignores</em> the coordinate. The page said the opposite. On random samples, v1 ranked the important knobs below the unimportant ones (AUC 0.26 &plusmn; 0.08, worse than a coin). On winners' archives it worked (0.82 &plusmn; 0.11), for a reason I hadn't written down: among winners, the smooth modes run along the knobs the winners are free to vary, so roughness marks the knobs that are pinned. v2 keeps that reading on purpose, names it, and adds the other one for random samples.</li>
+<li><strong style="color:var(--text)">The old weight measured roughness.</strong> v1 averaged |&Delta;&psi;| along each coordinate's sort order. That's a roughness: it's big when a mode <em>ignores</em> the coordinate. The old page described the opposite. On random samples, v1 ranked the important knobs below the unimportant ones (AUC 0.26 &plusmn; 0.08, worse than a coin). On winners' archives it worked (0.82 &plusmn; 0.11), for a specific reason: among winners, the smooth modes run along the knobs the winners are free to vary, so roughness marks the knobs that are pinned. v2 keeps that reading on purpose, names it, and adds the other one for random samples.</li>
 <li><strong style="color:var(--text)">Eigensolver.</strong> v1 took the smallest singular values with scipy's svds and kept the zero mode. v2 takes the smallest eigenpairs of L<sub>norm</sub> (dense eigh up to 3,000 points, shift-invert Lanczos above that) and skips one zero mode per connected component.</li>
-<li><strong style="color:var(--text)">Basis.</strong> When several eigenvalues are nearly equal, the individual eigenvectors aren't well defined; only the space they span is. v2 measures steps in the whole 16-mode embedding with a Euclidean norm, which doesn't change under rotations inside that space. I found this the hard way: my first v2 averaged a per-mode statistic, and its digits changed between two eigensolvers on the same data.</li>
+<li><strong style="color:var(--text)">Basis.</strong> When several eigenvalues are nearly equal, the individual eigenvectors aren't well defined; only the space they span is. v2 measures steps in the whole 16-mode embedding with a Euclidean norm, which doesn't change under rotations inside that space. A per-mode statistic fails here: an early draft that averaged one changed its digits between two eigensolvers on the same data.</li>
 <li><strong style="color:var(--text)">Pairing.</strong> Gone. v1 paired mode j with dimension j. v2 prints one digit per parameter, in parameter order.</li>
 <li><strong style="color:var(--text)">Scale.</strong> The 800 and the 0.01 and 1.0 thresholds are gone. A digit is now log<sub>2</sub> of the weight relative to the uniform weight 1/D, so it means the same thing in any D.</li>
 </ul>
@@ -127,7 +127,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="eq-label">EQUATION R1 &mdash; GRAPH WEIGHT</div>
 $$w_{ij} = \frac{\exp\left(-\frac{|s_i - s_j|}{\sigma_s}\right)}{d(p_i, p_j) + \epsilon}$$
 </div>
-<p>&sigma;<sub>s</sub> is the standard deviation of the scores, and &epsilon; = 0.1. An edge exists if either point is among the other's 32 nearest neighbors, which keeps the matrix symmetric. Two points that sit close together and score about the same get a heavy edge. One thing I measured and didn't expect: on winners' archives the score term doesn't help. With every edge weight set to 1, v2 scored 0.98 &plusmn; 0.03 instead of 0.96 &plusmn; 0.03. The selection that made the archive already did the work. I've kept R1 as written so the construction stays the one I describe, and the unit-weight run is in the JSON.</p>
+<p>&sigma;<sub>s</sub> is the standard deviation of the scores, and &epsilon; = 0.1. An edge exists if either point is among the other's 32 nearest neighbors, which keeps the matrix symmetric. Two points that sit close together and score about the same get a heavy edge. Measured: on winners' archives the score term doesn't help. With every edge weight set to 1, v2 scored 0.98 &plusmn; 0.03 instead of 0.96 &plusmn; 0.03. The selection that made the archive already did the work. I've kept R1 as written so the construction stays the one I describe, and the unit-weight run is in the JSON.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; NORMALIZED GRAPH LAPLACIAN</h4>
@@ -148,7 +148,7 @@ $$L_{\text{norm}} \psi_j = \lambda_j \psi_j, \quad 0 < \lambda_1 \le \cdots \le 
 </div>
 <div class="derivation-step">
 <h4>STEP 4 &mdash; TWO READINGS OF THE SAME MODES</h4>
-<p>Here's the part v1 got tangled. The smooth modes mean different things depending on where the archive came from, so v2 asks you which kind you have.</p>
+<p>v1 blended this step; v2 splits it. The smooth modes mean different things depending on where the archive came from, so v2 asks you which kind you have.</p>
 <p style="margin-top:1rem"><strong style="color:var(--text)">Winners' archive (the default).</strong> This is what an optimizer hands you: the top configurations of a search. Sort the archive by coordinate d, walk along that order, and measure how far each step moves in the embedding. Compare that with the average distance between two random configurations. I call the result the freedom of dimension d:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION R4 &mdash; FREEDOM (WINNERS' READING)</div>
@@ -170,7 +170,7 @@ $$\hat s = \sum_{j=1}^{16} c_j f_j,\quad c_j = \psi_j^{\top} D^{1/2}(s - \bar s_
 <div class="eq-label">EQUATION R5 &mdash; THE REFFELT CONSTANT, V2</div>
 $$r_d = D\,w_d, \qquad \Re_d = \begin{cases} 0, & r_d < 1 \\ \min\left(9,\; 5 + \lfloor \log_2 r_d \rfloor\right), & r_d \ge 1 \end{cases}$$
 </div>
-<p>In code: <code style="color:var(--text);font-size:.8rem">r = D * w; digit = 0 if r &lt; 1 else min(9, 5 + floor(log2(r)))</code>. Why 0 for anything below average? My first rule was a significance test, and on my development seeds it froze about half of the knobs that mattered. &ldquo;Below average&rdquo; is scale-free, needs no tuning, and kept 0.89 of the active knobs while freezing 0.90 of the distractors on winners' archives. Its catch: it always freezes something, even when every knob matters equally.</p>
+<p>In code: <code style="color:var(--text);font-size:.8rem">r = D * w; digit = 0 if r &lt; 1 else min(9, 5 + floor(log2(r)))</code>. Why 0 for anything below average? A significance test, tried first on the development seeds, froze about half of the knobs that mattered. &ldquo;Below average&rdquo; is scale-free, needs no tuning, and kept 0.89 of the active knobs while freezing 0.90 of the distractors on winners' archives. Its catch: it always freezes something, even when every knob matters equally.</p>
 </div>
 </div>
 </section>
@@ -216,7 +216,7 @@ zero_modes:      int          &larr; connected components skipped</pre>
 <div class="prose">
 <p>I needed problems where I know the right answer, so I used synthetic ones. Five test functions, each hiding a few active parameters at random positions among 10, 20 or 50: an additive mix (5 active, including two non-monotone terms), the Sobol' G-function (4 active), Ishigami (3 active, with one that only acts through an interaction), a pure interaction with zero main effects (4 active), and a ridge along a random direction inside 4 active dimensions. Noise is 20% of the function's standard deviation, plus one 100% run at D = 20. Ground truth is the total-effect Sobol' index from 4,096 Monte Carlo samples per parameter.</p>
 <p style="margin-top:1rem">Two ways to fill the archive, 512 configurations each. <strong style="color:var(--text)">Winners:</strong> a simple evolution strategy runs for 2,176 evaluations and I keep the top 512, which is what an optimizer leaves behind. <strong style="color:var(--text)">Random:</strong> 512 uniform samples. Each setting gets 10 seeds (0 to 9); I designed v2 on seeds 1000 to 1003 and didn't use those here.</p>
-<p style="margin-top:1rem">Baselines: |Spearman| of each parameter with the score; Chatterjee's &xi; of each parameter with the raw score; a binned first-order Sobol' index (16 quantile bins, the given-data estimate of Var E[s|x<sub>d</sub>] / Var s); and permutation importance from a k-nearest-neighbor regressor. scikit-learn isn't installed on this machine, so there's no random forest or fANOVA, and I'm saying so instead of guessing. The main score is AUC: the chance a randomly picked active parameter outranks a randomly picked distractor. 0.5 is a coin flip, 1 is perfect.</p>
+<p style="margin-top:1rem">Baselines: |Spearman| of each parameter with the score; Chatterjee's &xi; of each parameter with the raw score; a binned first-order Sobol' index (16 quantile bins, the given-data estimate of Var E[s|x<sub>d</sub>] / Var s); and permutation importance from a k-nearest-neighbor regressor. scikit-learn isn't installed on this machine, so random forest and fANOVA aren't in the comparison. The main score is AUC: the chance a randomly picked active parameter outranks a randomly picked distractor. 0.5 is a coin flip, 1 is perfect.</p>
 </div>
 <div style="max-width:800px;margin:1.5rem auto 0">
 <table class="validity-table" id="rc-pooled">
@@ -249,7 +249,7 @@ zero_modes:      int          &larr; connected components skipped</pre>
 <div style="max-width:800px;margin:0 auto">
 <div class="viz-section">
 <h4>REFFELT V2, RUNNING IN YOUR BROWSER</h4>
-<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This is the real encoder, ported line for line from the Python and checked against it on the same data. It draws a small archive from one of the test functions (the winners come from a smaller evolution strategy than the benchmark: 768 evaluations), builds the graph, diagonalizes the Laplacian with Jacobi rotations, and prints the digits. The true active parameters are underlined. Try the wrong reading on purpose and watch the ranking flip. Or paste your own CSV: one row per configuration, parameter columns first, score last, a header row, up to 400 rows. It all stays in your browser. 200 points take well under a second; 400 take a few. One honest note: this small version is noisier than the 512-point benchmark. Over 12 seeds at 10 parameters and 200 points, v2 averaged 0.80 to 0.90 AUC across the five functions, and Ishigami is the one where plain &xi; of the raw score does better here (0.83 against 0.80).</p>
+<p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">This is the real encoder, ported line for line from the Python and checked against it on the same data. It draws a small archive from one of the test functions (the winners come from a smaller evolution strategy than the benchmark: 768 evaluations), builds the graph, diagonalizes the Laplacian with Jacobi rotations, and prints the digits. The true active parameters are underlined. Try the wrong reading on purpose and watch the ranking flip. Or paste your own CSV: one row per configuration, parameter columns first, score last, a header row, up to 400 rows. It all stays in your browser. 200 points take well under a second; 400 take a few. This small version is noisier than the 512-point benchmark. Over 12 seeds at 10 parameters and 200 points, v2 averaged 0.80 to 0.90 AUC across the five functions, and Ishigami is the one where plain &xi; of the raw score does better here (0.83 against 0.80).</p>
 <div class="viz-controls">
 <label>FUNCTION:</label>
 <select id="rx-fn"><option value="additive" selected>Additive</option><option value="sobol_g">Sobol' G</option><option value="ishigami">Ishigami</option><option value="interaction">Interaction</option><option value="ridge">Ridge</option></select>
@@ -278,22 +278,22 @@ zero_modes:      int          &larr; connected components skipped</pre>
 <section>
 <h2>LIMITS</h2>
 <div class="prose">
-<p>The numbers above are honest, but they're narrow, so here's what they don't cover:</p>
+<p>Scope of the numbers above:</p>
 <ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
-<li>Everything is synthetic. My old optimizer runs on BTC, ETH and SOL aren't on this machine anymore, so I have no real-archive result.</li>
-<li>The winners all came from one simple evolution strategy. CMA-ES, a genetic algorithm or TPE leave archives with different shapes, and the winners' reading depends on that shape. I haven't tested them.</li>
+<li>Everything is synthetic. No real-archive result yet: the BTC, ETH and SOL optimizer runs aren't on this machine.</li>
+<li>The winners all came from one simple evolution strategy. CMA-ES, a genetic algorithm or TPE leave archives with different shapes, and the winners' reading depends on that shape. Untested.</li>
 <li>You have to say which kind of archive you have. The wrong reading inverts the ranking, and v2 can't tell the two apart on its own.</li>
 <li>The 0 rule is relative. It always freezes something, and about one digit in four changes between two archives from the same problem.</li>
 <li>It finds which knobs matter, not their order: Spearman against the true indices is 0.47 on winners.</li>
 <li>The score term in R1 didn't help on winners. I kept it for continuity; unit weights did as well or slightly better.</li>
-<li>N = 512 throughout, and 16 modes. I haven't swept either. Walk-forward stability, the original v1 promise, is still unmeasured.</li>
+<li>N = 512 throughout, and 16 modes. Neither is swept yet. Walk-forward stability, the original v1 promise, is still unmeasured.</li>
 </ul>
 </div>
 </section>
 <section>
 <h2>HOW TO REPRODUCE</h2>
 <div class="prose">
-<p>Good news: this one you can run. Grab <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a>; it needs only NumPy (SciPy is used above 3,000 points if it's there). Then:</p>
+<p>Run it yourself. Grab <a href="code/reffelt_constant.py" style="color:var(--accent)">reffelt_constant.py</a>; it needs only NumPy (SciPy is used above 3,000 points if it's there). Then:</p>
 <div class="eq-block">
 <div class="eq-label">COMMANDS</div>
 <pre style="color:var(--text);font-size:.8rem;line-height:1.8;margin:0">
@@ -307,13 +307,13 @@ python3 reffelt_constant.py run my_sample.csv --reading unbiased --v1</pre>
 <section>
 <h2>RELATED WORK</h2>
 <div class="prose">
-<p>The graph and the embedding are the same objects as in Laplacian eigenmaps (Belkin &amp; Niyogi, <em>Neural Computation</em> 15, 2003) and diffusion maps (Coifman &amp; Lafon, <em>Appl. Comput. Harmon. Anal.</em> 21, 2006). Scoring each feature by how smooth it is on a graph goes back to the Laplacian score (He, Cai &amp; Niyogi, <em>NIPS</em> 2005); I tried its linear form, and it failed on the G-function and the pure interaction, which is why R4 uses distances in the embedding instead. The &xi; in R4&prime; is Chatterjee's coefficient (<em>J. Amer. Statist. Assoc.</em> 116, 2021). The ground truth is the total-effect Sobol' index with the Jansen estimator (Saltelli et al., <em>Comput. Phys. Commun.</em> 181, 2010), and the binned baseline is a given-data first-order estimate in the spirit of Plischke, Borgonovo &amp; Smith (<em>Eur. J. Oper. Res.</em> 226, 2013). The winners' reading, that the near-optimal set stretches along unimportant directions and is pinned along important ones, is the same picture as parameter sloppiness (Gutenkunst et al., <em>PLoS Comput. Biol.</em> 3, 2007). For hyperparameter importance specifically, fANOVA (Hutter, Hoos &amp; Leyton-Brown, <em>ICML</em> 2014) is the comparison I still owe.</p>
+<p>The graph and the embedding are the same objects as in Laplacian eigenmaps (Belkin &amp; Niyogi, <em>Neural Computation</em> 15, 2003) and diffusion maps (Coifman &amp; Lafon, <em>Appl. Comput. Harmon. Anal.</em> 21, 2006). Scoring each feature by how smooth it is on a graph goes back to the Laplacian score (He, Cai &amp; Niyogi, <em>NIPS</em> 2005); I tried its linear form, and it failed on the G-function and the pure interaction, which is why R4 uses distances in the embedding instead. The &xi; in R4&prime; is Chatterjee's coefficient (<em>J. Amer. Statist. Assoc.</em> 116, 2021). The ground truth is the total-effect Sobol' index with the Jansen estimator (Saltelli et al., <em>Comput. Phys. Commun.</em> 181, 2010), and the binned baseline is a given-data first-order estimate in the spirit of Plischke, Borgonovo &amp; Smith (<em>Eur. J. Oper. Res.</em> 226, 2013). The winners' reading, that the near-optimal set stretches along unimportant directions and is pinned along important ones, is the same picture as parameter sloppiness (Gutenkunst et al., <em>PLoS Comput. Biol.</em> 3, 2007). For hyperparameter importance specifically, fANOVA (Hutter, Hoos &amp; Leyton-Brown, <em>ICML</em> 2014) is the next comparison to run.</p>
 </div>
 </section>
 <section>
 <h2>THINGS I'D LIKE TO TRY</h2>
 <div style="max-width:800px;margin:0 auto">
-<p class="prose" style="margin-bottom:1.5rem">So what's next? These are written down so I remember to test them. Only the first one has a number behind it, and it's the synthetic one above.</p>
+<p class="prose" style="margin-bottom:1.5rem">Next tests. Only the first one has a number behind it, and it's the synthetic one above.</p>
 <div class="app-card">
 <h4>HYPERPARAMETER OPTIMIZATION</h4>
 <p>The basic one, and now the one with the best footing: the winners' reading works on an optimizer's own archive. The test I want: run a search, compute the constant, freeze the 0 digits at their best-seen values, spend the rest of the budget on the others, and count the evaluations saved against a search that never freezes. Not run yet.</p>
@@ -324,7 +324,7 @@ python3 reffelt_constant.py run my_sample.csv --reading unbiased --v1</pre>
 </div>
 <div class="app-card">
 <h4>NEURAL ARCHITECTURE SEARCH</h4>
-<p>Same move, bigger space: compute the constant on a first sweep, freeze the 0 digits, and see whether the next sweep finds the same architectures with fewer evaluations. I haven't run this.</p>
+<p>Same move, bigger space: compute the constant on a first sweep, freeze the 0 digits, and see whether the next sweep finds the same architectures with fewer evaluations. Not run yet.</p>
 </div>
 <div class="app-card">
 <h4>TRAINING DIAGNOSTICS</h4>

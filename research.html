@@ -9,7 +9,7 @@
 <meta name="description" content="Math I built to solve real computing problems: spectral fingerprinting, holographic tensor fields, toroidal manifold geometry, turbulence closure and GPU membrane dynamics. Each page says what&rsquo;s measured and what isn&rsquo;t.">
 <meta name="keywords" content="reffelt constant,eigenstretch tensor,holographic membrane,toroidal manifold,spectral analysis,mathematical research,amni-scient">
 <meta property="og:title" content="Research &mdash; AMNI-SCIENT">
-<meta property="og:description" content="My original math frameworks, honestly labelled: Reffelt Constant, Eigenstretch Tensor, Holographic Membrane, Toroidal Manifold, and more.">
+<meta property="og:description" content="My original math frameworks, each labelled measured or open: Reffelt Constant, Eigenstretch Tensor, Holographic Membrane, Toroidal Manifold, and more.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/research">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
@@ -102,7 +102,7 @@
 <h2>OVERVIEW</h2>
 <div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>Every framework here started as a fix for one specific problem I kept hitting: high-dimensional optimization, the geometry of cryptographic state spaces, momentum that evolves under turbulence closure. Then the math kept reaching well past the problem that started it, so I wrote it up.</p>
-<p style="margin-top:1.2rem">All of it is <strong style="color:var(--text)">my own work</strong>: some derivation, a lot of definitions and hand-picked constants, and code that&rsquo;s mostly still unpublished. Each page puts the equations next to where I think they apply, in AI, datacenter optimization, physics simulation and cryptographic analysis. Where I have benchmarks, they&rsquo;re on the page. Where I don&rsquo;t, the page says so, and every card below tells you up front which parts are measured and which are still open.</p>
+<p style="margin-top:1.2rem">All of it is <strong style="color:var(--text)">my own work</strong>: mostly definitions and hand-picked constants, some derivation, and code that&rsquo;s mostly unpublished so far. Each page puts the equations next to where I expect them to apply, in AI, datacenter optimization, physics simulation and cryptographic analysis. Benchmarks are on the page wherever they exist, and every card below marks up front which parts are measured and which are still open.</p>
 <p style="margin-top:1.2rem">Pick one and dive in! You get the full derivation, the key equations, visualizations and applications.</p>
 </div>
 </section>
@@ -112,7 +112,7 @@
 <div class="research-card">
 <div class="rc-tag">FLUID DYNAMICS &bull; CLAY PROBLEM</div>
 <h3>NAVIER&ndash;STOKES: A COHERENCE PATH</h3>
-<p>My proposed route to the unforced Millennium problem. Three peer-closed lemmas fence it in, and the derived ones around them say any proof has to be dynamical and scale-covariant, and has to live on the direction coherence of vorticity where it&rsquo;s stretched. Since the 2026 forced-blowup work, I also state the question as a forcing gap, with a viscous rung condition and registered probes. The open piece is named right on the page. It&rsquo;s not a proof. Research note deposited with DOI 10.6084/m9.figshare.33472285.</p>
+<p>My proposed route to the unforced Millennium problem. Three peer-closed lemmas fence it in, and the derived ones around them say any proof has to be dynamical and scale-covariant, and has to live on the direction coherence of vorticity where it&rsquo;s stretched. Since the 2026 forced-blowup work, I also state the question as a forcing gap, with a viscous rung condition and registered probes. The open piece is named right on the page. Status: a proposal, not a proof. Research note deposited with DOI 10.6084/m9.figshare.33472285.</p>
 <div class="rc-eq">&tau;<sup>2</sup> &le; (&lambda;<sub>1</sub>&minus;&alpha;)(&alpha;&minus;&lambda;<sub>3</sub>) &nbsp;&middot;&nbsp; |&nabla;u| &le; (6/&pi;)&thinsp;&Gamma;/d<sup>3</sup> &nbsp;&middot;&nbsp; (&nabla;<sup>2</sup>p)<sub>12</sub> &rarr; &minus;&omega;<sub>1</sub>&omega;<sub>2</sub>/4</div>
 <div class="rc-apps">
 <span>GLOBAL REGULARITY</span>
@@ -124,7 +124,7 @@
 <div class="research-card">
 <div class="rc-tag">SPECTRAL ANALYSIS</div>
 <h3>THE REFFELT CONSTANT</h3>
-<p>One digit per parameter, read off the smooth modes of a k-NN graph Laplacian over evaluated configurations. Version 2 fixes the math, ships as published NumPy code, and is measured on synthetic benchmarks: on an optimizer&rsquo;s winners it separates the knobs that matter from the distractors with AUC 0.96, ahead of simple baselines in most settings. On random samples it&rsquo;s level with them. No real-data run yet.</p>
+<p>One digit per parameter, read off the smooth modes of a k-NN graph Laplacian over evaluated configurations. Version 2 corrects the original math, ships as published NumPy code, and is measured on synthetic benchmarks: on an optimizer&rsquo;s winners it separates the knobs that matter from the distractors with AUC 0.96, ahead of simple baselines in most settings. On random samples it&rsquo;s level with them. No real-data run yet.</p>
 <div class="rc-eq">r<sub>d</sub> = D&middot;w<sub>d</sub> &nbsp;;&nbsp; &real;&#8198;<sub>d</sub> = 0 if r<sub>d</sub> &lt; 1, else min(9, 5 + &lfloor;log<sub>2</sub> r<sub>d</sub>&rfloor;)</div>
 <div class="rc-apps">
 <span>NEURAL ARCHITECTURE SEARCH</span>
@@ -148,7 +148,7 @@
 <div class="research-card">
 <div class="rc-tag">GPU-ACCELERATED DYNAMICS</div>
 <h3>HOLOGRAPHIC RESISTANCE MEMBRANE</h3>
-<p>I build a friction field from the local variance of a stretch map, push particles through it with an optional steering force, then bin them into a density map. The weights are picked by eye. There&rsquo;s a live demo on the page and a small NumPy reference script, but no benchmarks and no validation against real outcomes yet.</p>
+<p>I build a friction field from the local variance of a stretch map, push particles through it with an optional steering force, then bin them into a density map. The weights are hand-tuned. You get a live demo and a small NumPy reference script. Not benchmarked or validated against real outcomes yet.</p>
 <div class="rc-eq">F = &minus;&nabla;R &middot; 5.0 + F<sub>steering</sub> &nbsp;;&nbsp; v = v + F&middot;dt &nbsp;;&nbsp; x = x + v&middot;dt</div>
 <div class="rc-apps">
 <span>GPU LOAD BALANCING</span>
@@ -172,7 +172,7 @@
 <div class="research-card">
 <div class="rc-tag">TURBULENCE CLOSURE &bull; REGULARITY PROOF</div>
 <h3>MASTER MOMENTUM EQUATION</h3>
-<p>Twelve equations for price momentum, written down in December 2025 from trading variables I&rsquo;d used since 2019, closed into one momentum PDE with an eddy-viscosity term. Outside review in July 2026 broke my regularity argument in three places. The corrected v2: a Z^{5/2} bound stands for an amended closure, the Bakry&ndash;&Eacute;mery step is a heuristic, and the spatial transfer is open. The errata sit right in the page.</p>
+<p>Twelve equations for price momentum, written down in December 2025 from trading variables I&rsquo;d used since 2019, closed into one momentum PDE with an eddy-viscosity term. v2 fixes three gaps found by outside review in July 2026: a Z^{5/2} bound holds for an amended closure, the Bakry&ndash;&Eacute;mery step is a heuristic, and the spatial transfer is open. Errata are on the page.</p>
 <div class="rc-eq">dv/dt = F<sub>PID</sub>/m + v(&part;v/&part;p) &minus; s&middot;c &minus; &part;R<sub>eff</sub>/&part;p</div>
 <div class="rc-apps">
 <span>TURBULENCE MODELING</span>
@@ -185,7 +185,7 @@
 <div class="research-card">
 <div class="rc-tag">DIMENSIONALITY REDUCTION</div>
 <h3>GROUND STATE KERNEL</h3>
-<p>SVD over the winning parameter sets from my trading-bot optimizer. One strategy family collapsed from 15 parameters to 2 components, with 95.6% of score-weighted variance! The other family stayed at about 7D. The page has the method, that one result (from my run notes; the output file wasn&rsquo;t kept), and labels on which charts are illustrations.</p>
+<p>SVD over the winning parameter sets from my trading-bot optimizer. One strategy family collapsed from 15 parameters to 2 components, with 95.6% of score-weighted variance! The other family stayed at about 7D. The page has the method, that one result (source: run notes; raw output not retained), and labels on which charts are illustrations.</p>
 <div class="rc-eq">15D &rarr; SVD &rarr; k &isin; [0.3, 3.5], regime &isin; {0,1}</div>
 <div class="rc-apps">
 <span>TRANSFER LEARNING</span>
@@ -197,7 +197,7 @@
 <div class="research-card" style="border-color:rgba(0,210,211,.4)">
 <div class="rc-tag">QUANTIZATION &bull; FINITE FIELD &bull; WEIGHT COMPRESSION</div>
 <h3>GF(17) QUANTIZATION STRATEGIES</h3>
-<p>Five codecs that quantize neural-net weights with GF(17) arithmetic, including a distribution-adaptive membrane codec and a progressive four-layer container that gets fp16 back exactly at 16 bits per element. Every number so far is on synthetic 896&times;896 tensors on CPU. No real-weight or perplexity runs yet, and the page says so.</p>
+<p>Five codecs that quantize neural-net weights with GF(17) arithmetic, including a distribution-adaptive membrane codec and a progressive four-layer container that gets fp16 back exactly at 16 bits per element. Every number is on synthetic 896&times;896 tensors on CPU. Not run yet: real weights, perplexity.</p>
 <div class="rc-eq">17<sup>4</sup> = 83,521 &ge; 2<sup>16</sup> &nbsp;&rarr;&nbsp; 4 GF(17) digits per fp16 &nbsp;&rarr;&nbsp; ATRP 4b&times;4L exact</div>
 <div class="rc-apps">
 <span>LLM WEIGHT COMPRESSION</span>
@@ -210,7 +210,7 @@
 <div class="research-card" style="border-color:rgba(231,76,60,.5)">
 <div class="rc-tag">QUANTIZATION &bull; VRAM/SSD TIERED &bull; SUB-2-BIT ROUTING</div>
 <h3>AMNITEX RAILGUN</h3>
-<p>Shrinks what a model keeps in VRAM: a 1-bit routing index stays on the GPU (1.21 GB for a 9B model, a 16&times; smaller resident footprint) and the exact fp16 residual goes to NVMe. As stored, that residual is 1.75&times; the original, so the total gets bigger, not smaller. Bit-exact full-model recovery is measured on a 0.5B model (byte-identical greedy decode). 1-bit-tier quality isn&rsquo;t yet. The economics are one labelled set of assumptions.</p>
+<p>Shrinks what a model keeps in VRAM: a 1-bit routing index stays on the GPU (1.21 GB for a 9B model, a 16&times; smaller resident footprint) and the exact fp16 residual goes to NVMe. As stored, that residual is 1.75&times; the original, so the total gets bigger, not smaller. Bit-exact full-model recovery is measured on a 0.5B model (byte-identical greedy decode). Not measured yet: 1-bit-tier quality. The economics are one labelled set of assumptions.</p>
 <div class="rc-eq">w &rarr; Lloyd(k) &rarr; R[1&ndash;2b VRAM] + G[GF17 SSD] + B[8b SSD] + A[fp16 SSD]</div>
 <div class="rc-apps">
 <span>DATACENTER GPU SAVINGS</span>

@@ -100,11 +100,11 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <h2>ABSTRACT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <p>The <strong style="color:var(--text)">Universal Ground State Kernel</strong> is what I named the answer I got for one strategy family: the winning configurations weren't spread through the full parameter space. They huddled on a <strong style="color:var(--text)">two-dimensional manifold</strong>: a continuous scaling factor k &isin; [0.3, 3.5], which acts as a volatility scale, and a regime bit &isin; {0, 1}, which switches between trend and reversal.</p>
-<p style="margin-top:1.2rem">The method is an SVD of a score-weighted parameter matrix, plus a loading analysis to sort parameters into ones that move the top components and ones I can freeze. The one clean case was the trend family, run through a 15-column parameter vector: two singular values carried 95.6%, which takes 15 parameters to 2 components. The mean-reversion family didn't do that. It came out about 7D, with the regime bit as its main axis. And despite the "universal" in the name, I don't have evidence this holds outside my own optimizer.</p>
-<p style="margin-top:1.2rem"><strong style="color:var(--text)">Data:</strong> strategy family AMR/AGS (trend-following) and ANC (mean-reversion); the elite set is every configuration my optimizer had saved with profit per day above $1, across whatever tickers and timeframes were in those files (I didn't keep the count or the breakdown); run date Nov 30 2025. BTC/USD, ETH/USD and SOL/USD on 15-minute bars are what the follow-up 2D backtest uses. The 95.6% and the 7D come from my notes in the kernel script's header; I didn't keep the run's output file. The script header credits Anthony Reffelt with Grok 4.1 assistance.</p>
+<p style="margin-top:1.2rem">The method is an SVD of a score-weighted parameter matrix, plus a loading analysis to sort parameters into ones that move the top components and ones I can freeze. The one clean case was the trend family, run through a 15-column parameter vector: two singular values carried 95.6%, which takes 15 parameters to 2 components. The mean-reversion family didn't do that. It came out about 7D, with the regime bit as its main axis. Scope: measured in my own optimizer only. The "universal" in the name is the hypothesis, not a result.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Data:</strong> strategy family AMR/AGS (trend-following) and ANC (mean-reversion); the elite set is every configuration my optimizer had saved with profit per day above $1, across whatever tickers and timeframes were in those files (count and breakdown not recorded); run date Nov 30 2025. BTC/USD, ETH/USD and SOL/USD on 15-minute bars are what the follow-up 2D backtest uses. Source for the 95.6% and the 7D: my notes in the kernel script's header. The run's output file wasn't saved. The script header credits Anthony Reffelt with Grok 4.1 assistance.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Here's what's solid and what isn't. The SVD method (G1 to G6 below) is derived on this page and matches universal_reffelt_meta_optimizer.py. The 95.6% figure is from a Nov 30 2025 run over the winners my optimizer had saved, for the trend family in a 15-parameter vector; the mean-reversion family came out about 7D. Both numbers are recorded in the kernel script's header, not in a saved output file. The three charts are illustrations with made-up numbers. The GP-plus-Thompson meta-optimizer is a plan, the applications are conjecture, and the digit encoding in G7 disagrees with the code.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Derived and matching universal_reffelt_meta_optimizer.py: the SVD method (G1 to G6 below). Measured: 95.6% for the trend family in a 15-parameter vector, from a Nov 30 2025 run over the winners my optimizer had saved; the mean-reversion family came out about 7D. Both numbers are recorded in the kernel script's header, not in a saved output file. Illustrations: the three charts, with made-up numbers. Planned: the GP-plus-Thompson meta-optimizer. Conjecture: the applications. Open issue: the digit encoding in G7 disagrees with the code.</div></div>
 <section>
 <h2>DERIVATION</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
@@ -142,7 +142,7 @@ $$\lambda_j = \frac{\sigma_j^2}{\sum_i \sigma_i^2} \qquad d_{\text{eff}} = \min\
 </div>
 <div class="derivation-step">
 <h4>STEP G4 &mdash; CAUSAL WEIGHT ANALYSIS</h4>
-<p>Now I sort parameters by how much they load on the leading components. A confession first: the weight formula on the earlier version of this page was not well defined (it integrated over a dummy variable with an integrand in another, and called a singular vector an eigenfunction). What the code actually computes is:</p>
+<p>Now I sort parameters by how much they load on the leading components. This replaces the earlier page's weight formula, which wasn't well defined (it integrated over a dummy variable with an integrand in another, and called a singular vector an eigenfunction). The code computes:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION G5 &mdash; CAUSAL WEIGHTS (AS IN THE CODE)</div>
 $$w_d = \frac{\sum_{i \le K} |V_{d,i}|\,\sigma_i^2}{\sum_{d'} \sum_{i \le K} |V_{d',i}|\,\sigma_i^2}$$
@@ -156,7 +156,7 @@ $$w_d = \frac{\sum_{i \le K} |V_{d,i}|\,\sigma_i^2}{\sum_{d'} \sum_{i \le K} |V_
 <div class="eq-label">EQUATION G6 &mdash; GROUND STATE</div>
 $$p_i^* = \begin{cases}\text{free} & \text{if } w_i \geq w_{\text{threshold}} \\ \operatorname{median}_{\text{top-5\%}}(p_i) & \text{otherwise (frozen)}\end{cases}$$
 </div>
-<p>Frozen values are the weighted median over the winner set, with weights s<sub>i</sub> (the same score weights as G2). The "top 5%" in G6 is how I first wrote it; the code takes the weighted median over all winners it loaded, and I've left the formula so the difference is visible.</p>
+<p>Frozen values are the weighted median over the winner set, with weights s<sub>i</sub> (the same score weights as G2). G6 writes the median over the "top 5%"; the code takes the weighted median over all winners it loaded. The formula stays as written so the difference is visible.</p>
 </div>
 </div>
 </section>
@@ -174,13 +174,13 @@ $$p_i^* = \begin{cases}\text{free} & \text{if } w_i \geq w_{\text{threshold}} \\
 <div class="eq-label">THE GROUND STATE</div>
 $$\mathcal{G} = \{(k, \; \text{regime}) \;:\; k \in [0.3, 3.5], \;\text{regime} \in \{0, 1\}\}$$
 </div>
-<p>In the trend family, every other parameter is <strong style="color:var(--text)">frozen</strong> at a constant from the analysis: the score-weighted median of the winners, with weights s<sub>i</sub>. One catch: I haven't run a perturbation test on the frozen values, so "insensitive" is a guess until I do.</p>
+<p>In the trend family, every other parameter is <strong style="color:var(--text)">frozen</strong> at a constant from the analysis: the score-weighted median of the winners, with weights s<sub>i</sub>. Not tested yet: a perturbation test on the frozen values. Until it runs, "insensitive" is an assumption.</p>
 </div>
 </section>
 <section>
 <h2>PARAMETER FREEZE MAP</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Here's the freeze map for the 15-parameter trend strategy. Read the stars carefully: rows marked * are placeholders I haven't backed with a run; the code derives threshold_buy from k and never uses ext_lower/ext_upper. None of the causal weight numbers in the last column come from a saved run; they're the shape I expect, not output.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Here's the freeze map for the 15-parameter trend strategy. Rows marked * are placeholders, not backed by a run. The code derives threshold_buy from k and never uses ext_lower/ext_upper. The causal weights in the last column show the expected shape; none come from a saved run.</p>
 <table class="freeze-table">
 <thead><tr><th>PARAMETER</th><th>RANGE</th><th>GROUND STATE</th><th>STATUS</th><th>CAUSAL WEIGHT*</th></tr></thead>
 <tbody>
@@ -212,18 +212,18 @@ $$\text{window} = \lfloor 8 + 8k \rfloor \qquad \text{target} = \lfloor 4 + 4k \
 <section>
 <h2>REFFELT CONSTANT AS FINGERPRINT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>The singular values can be packed into a digit string, the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>). Heads up: there are two encodings floating around, and they disagree. Here's the version on this page:</p>
+<p>The singular values can be packed into a digit string, the Reffelt Constant (see <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a>). Two encodings exist, and they disagree. This page uses:</p>
 <div class="eq-block">
 <div class="eq-label">EQUATION G7 &mdash; REFFELT DIGIT ENCODING (PAGE VERSION, NOT THE CODE)</div>
 $$\text{ℜ}_j = \begin{cases}9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ \lfloor 80\lambda_j \rfloor & 0.01 \leq \lambda_j < 0.12 \\ 0 & \lambda_j < 0.01 \;\text{(dead)}\end{cases}$$
 </div>
-<p>Under this version a 9 means a component carrying most of the variance and a 0 means a dead one. So the string my Nov 30 run printed, &real; = 99100000, reads as two saturated components and the rest dead. The meta-optimizer's compute_reffelt_constant does the same thing (&lfloor;80&lambda;<sub>j</sub>&rfloor; clamped to [0, 8], 9 above 0.12), even though its docstring says &times;10. The kernel script doesn't. Its version (8 &minus; 10&middot;var(k) for each regime, then min(8, max(1, &lfloor;16&middot;separation&rfloor;)) for the third digit) produces a different string from the same run. That's the inconsistency I have to clean up: pick one and delete the other.</p>
+<p>Under this version a 9 means a component carrying most of the variance and a 0 means a dead one. So the string my Nov 30 run printed, &real; = 99100000, reads as two saturated components and the rest dead. The meta-optimizer's compute_reffelt_constant does the same thing (&lfloor;80&lambda;<sub>j</sub>&rfloor; clamped to [0, 8], 9 above 0.12), even though its docstring says &times;10. The kernel script uses a different version (8 &minus; 10&middot;var(k) for each regime, then min(8, max(1, &lfloor;16&middot;separation&rfloor;)) for the third digit), which produces a different string from the same run. Next step: keep one encoding and delete the other.</p>
 </div>
 </section>
 <section>
 <h2>ILLUSTRATIONS</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">These charts are here so you can see the shape I'm describing, and they use made-up numbers. The real scree values live in universal_reffelt_meta_optimizer.py output, which I haven't published yet. The regenerate button reshuffles the made-up numbers; it doesn't run anything.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">These charts show the shape I'm describing, using made-up numbers. The real scree values live in universal_reffelt_meta_optimizer.py output, which isn't published yet. The regenerate button reshuffles the made-up numbers; it doesn't run anything.</p>
 <div class="viz-section">
 <h4>SCREE PLOT, ILLUSTRATIVE</h4>
 <p style="color:var(--dim);font-size:.8rem;line-height:1.7;margin-bottom:1rem">What a 15-to-2 collapse looks like on a scree plot: a steep drop after the second singular value, with the cumulative curve crossing 0.95 there (Eq. G4). The bar heights here are typed in by hand.</p>
@@ -249,7 +249,7 @@ $$\text{ℜ}_j = \begin{cases}9 & \lambda_j \geq 0.12 \;\text{(saturated)} \\ \l
 <section>
 <h2>META-OPTIMIZER</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>With the ground state in hand, the search is only two-dimensional. Right now it's a plain grid: optimize_universal_ground_state tries 100 values of k from 0.3 to 3.5 times two regimes, 200 backtests per ticker; the script's main loop runs a coarser 20 &times; 2 sweep from 0.5 to 2.5. A GP-plus-Thompson version is what I want to build next. It isn't written yet.</p>
+<p>With the ground state in hand, the search is only two-dimensional. Right now it's a plain grid: optimize_universal_ground_state tries 100 values of k from 0.3 to 3.5 times two regimes, 200 backtests per ticker; the script's main loop runs a coarser 20 &times; 2 sweep from 0.5 to 2.5. Next build: a GP-plus-Thompson version. Not written yet.</p>
 <div class="derivation-step">
 <h4>PLANNED: GAUSSIAN PROCESS OVER k</h4>
 <p>The plan is a GP regression from (k, regime) to score, with Expected Improvement picking the next k (Jones, Schonlau &amp; Welch, "Efficient global optimization of expensive black-box functions", J. Global Optim. 13, 1998):</p>
@@ -263,32 +263,32 @@ $$\text{EI}(k) = \mathbb{E}\left[\max(f(k) - f^*, 0)\right] = (\mu(k) - f^*)\Phi
 <h4>PLANNED: THOMPSON SAMPLING OVER THE REGIME BIT</h4>
 <p>For the {0, 1} choice I'd keep a Beta posterior per regime and sample it each round (Thompson, "On the likelihood that one unknown probability exceeds another in view of the evidence of two samples", Biometrika 25, 1933). Also not written.</p>
 </div>
-<p>Would a GP version get there in fewer backtests than the grid? That's something I'd have to measure once it exists.</p>
+<p>To measure once it exists: whether a GP version gets there in fewer backtests than the grid.</p>
 </div>
 </section>
 <section>
-<h2>CONJECTURES I HAVEN'T TESTED</h2>
+<h2>UNTESTED CONJECTURES</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">This is where my head goes next. Each of these is a place the same SVD might say something. To be plain about it: I have one measured case, in my own optimizer, and nothing beyond it.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">This is where I want to point it next. Each card is a place the same SVD might say something. Measured so far: one case, in my own optimizer. Everything below is untested.</p>
 <div class="app-card">
 <h4>FINE-TUNING</h4>
-<p>If this held for neural nets it would be one reason LoRA works (Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models", 2021); I haven't tested that.</p>
+<p>If this held for neural nets it would be one reason LoRA works (Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models", 2021). Untested.</p>
 </div>
 <div class="app-card">
 <h4>PRUNING</h4>
-<p>A loading-based freeze criterion might beat magnitude pruning on some nets; I haven't pruned anything with it.</p>
+<p>A loading-based freeze criterion might beat magnitude pruning on some nets. Not tried on any net yet.</p>
 </div>
 <div class="app-card">
 <h4>HYPERPARAMETER SEARCH</h4>
-<p>The recipe (collect scored configs, SVD, freeze low loaders, search the rest) could transfer to other domains; my only run is the trading one above.</p>
+<p>The recipe (collect scored configs, SVD, freeze low loaders, search the rest) could transfer to other domains. The only run so far is the trading one above.</p>
 </div>
 <div class="app-card">
 <h4>ARCHITECTURE SEARCH</h4>
-<p>If a few macro choices carried most of the variance it would rhyme with &mu;P (Yang et al., "Tensor Programs V", 2022) and Chinchilla (Hoffmann et al., "Training Compute-Optimal Large Language Models", 2022); I haven't run the SVD on any architecture sweep.</p>
+<p>If a few macro choices carried most of the variance it would rhyme with &mu;P (Yang et al., "Tensor Programs V", 2022) and Chinchilla (Hoffmann et al., "Training Compute-Optimal Large Language Models", 2022). No architecture sweep has gone through the SVD yet.</p>
 </div>
 <div class="app-card">
 <h4>VARIATIONAL QUANTUM CIRCUITS</h4>
-<p>Freezing low-loading rotation angles might shrink the landscape enough to matter for barren plateaus (McClean et al., "Barren plateaus in quantum neural network training landscapes", Nat. Commun. 9, 2018); that's a guess, with no circuit behind it.</p>
+<p>Freezing low-loading rotation angles might shrink the landscape enough to matter for barren plateaus (McClean et al., "Barren plateaus in quantum neural network training landscapes", Nat. Commun. 9, 2018). Conjecture; no circuit tested.</p>
 </div>
 </div>
 </section>

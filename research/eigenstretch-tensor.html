@@ -89,21 +89,21 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div class="breadcrumb"><a href="../research.html">RESEARCH</a> &nbsp;/&nbsp; EIGENSTRETCH TENSOR</div>
 <h1>EIGENSTRETCH TENSOR</h1>
 <p class="subtitle">CAUSAL-TOPOLOGICAL FINGERPRINT OF PARAMETER MANIFOLDS &middot; VERSION 2</p>
-<p class="tagline">A monitor for drift in the sensitivity pattern of a parameter search, recomputed at every checkpoint so I can see when it starts to move. Now with fixed math, published code, and a measured answer to whether it warns early.</p>
+<p class="tagline">A monitor for drift in the sensitivity pattern of a parameter search, recomputed at every checkpoint so I can see when it starts to move. It ships with fixed math, published code, and a measured answer to whether it warns early.</p>
 </section>
 <section>
 <h2>ABSTRACT</h2>
 <div class="prose">
-<p>I wanted a way to notice when the score surface of a parameter search changes shape while the search is still running. So I took the per-parameter weights from the <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a> and recomputed them at every checkpoint. That's the <strong style="color:var(--text)">Eigenstretch Tensor</strong>. When the weights shift between checkpoints, I read that as the score surface changing shape, and I use it as a flag to go look at the run. Quick honesty note on the name: it's older than the math. What I actually compute is a vector of per-parameter stretch weights and a digit string, not a tensor.</p>
+<p>I wanted a way to notice when the score surface of a parameter search changes shape while the search is still running. So I took the per-parameter weights from the <a href="reffelt-constant.html" style="color:var(--accent)">Reffelt Constant</a> and recomputed them at every checkpoint. That's the <strong style="color:var(--text)">Eigenstretch Tensor</strong>. When the weights shift between checkpoints, I read that as the score surface changing shape, and I use it as a flag to go look at the run. The name predates the math: what it computes is a vector of per-parameter stretch weights and a digit string, not a tensor.</p>
 <p style="margin-top:1.2rem">The other difference from the Reffelt page is the graph. Here it's built from equity-curve similarity, where an equity curve is the running P&amp;L of a strategy. I compare the whole output curve of one configuration with the whole output curve of another using the Wasserstein-1 distance. So two configurations with very different parameter values still sit next to each other if they behave the same.</p>
-<p style="margin-top:1.2rem">For years I believed the digits jumped shortly before the score dropped. I'd never logged it. Now I've tested it on simulated searches with a known regime change, and the answer is no: in my simulation the stretch vector moves after the score drops, not before. What it does do is say <em>which</em> knob took over, which a score monitor can't.</p>
+<p style="margin-top:1.2rem">Measured on simulated searches with a known regime change: the stretch vector moves after the score drops, not before. What it adds is <em>which</em> knob took over, something a score monitor can't tell you. That's its job: a score monitor says something broke, the stretch vector says where.</p>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> Here's where this stands. The Laplacian and its eigensolver are standard. The curve graph, the stretch vector and the drift statistic are my construction, now fixed and published as <a href="code/eigenstretch.py" style="color:var(--accent)">eigenstretch.py</a> (NumPy only; it imports the Reffelt code). Every number below comes from <a href="eigenstretch_results.json" style="color:var(--accent)">eigenstretch_results.json</a>: simulated searches with a regime change at a known bar, 30 runs per scenario, 40 more stationary runs to set the threshold. When the knob that matters swaps, the stretch vector separates changed runs from unchanged ones better than the score-based baselines I tried (ROC AUC 0.86 against 0.75 for a Page-Hinkley test on live performance). But it's late, about 500 bars after the score drops, it's noisy at a strict false-alarm budget, and it can't see an optimum that moves while the same knob stays in charge. The old 0.9 and 0.7 thresholds fired on every run, changed or not. All of it is synthetic; I couldn't find my old optimizer logs, so there's no real-data run.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-10-05.</strong> The Laplacian and its eigensolver are standard. The curve graph, the stretch vector and the drift statistic are my construction, now fixed and published as <a href="code/eigenstretch.py" style="color:var(--accent)">eigenstretch.py</a> (NumPy only; it imports the Reffelt code). Every number below comes from <a href="eigenstretch_results.json" style="color:var(--accent)">eigenstretch_results.json</a>: simulated searches with a regime change at a known bar, 30 runs per scenario, 40 more stationary runs to set the threshold. When the knob that matters swaps, the stretch vector separates changed runs from unchanged ones better than the score-based baselines (ROC AUC 0.86 against 0.75 for a Page-Hinkley test on live performance). Limits: it fires late, about 500 bars after the score drops; it's noisy at a strict false-alarm budget; and it can't see an optimum that moves while the same knob stays in charge. The old 0.9 and 0.7 thresholds fired on every run, changed or not. All results are synthetic. Not measured yet: a real-data run (the original optimizer logs aren't on this machine).</div></div>
 <section>
 <h2>WHAT CHANGED FROM V1</h2>
 <div class="prose">
-<p>v1 was a script on my disk that didn't match this page. v2 is the page, in code. Here's what moved:</p>
+<p>v1 was a private script that diverged from this page; v2 is the page, in code. What moved:</p>
 <ul style="margin:1rem 0 0 1.2rem;line-height:1.9">
 <li><strong style="color:var(--text)">Eigensolver.</strong> v1 took the 16 largest singular values of the raw k-NN adjacency matrix. Singular values also pick up strongly negative eigenvalues, whose modes are the opposite of smooth. v2 takes the 16 smallest nonzero eigenpairs of the normalized Laplacian, the same solver as the Reffelt page.</li>
 <li><strong style="color:var(--text)">Distance.</strong> v1 used plain L1 between z-scored curves, unsorted. v2 uses the 1-D Wasserstein-1 distance the page always described: sort each curve's values, then average the absolute differences.</li>
@@ -119,7 +119,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
 <div class="derivation-step">
 <h4>STEP 1 &mdash; ELITE ARCHIVE SELECTION</h4>
-<p>At each checkpoint, the search re-scores every configuration it has evaluated on the latest window of data and keeps the top N. That keeps the analysis on the part of the space I care about. N = 768 in the benchmark below; my old code used 4,096.</p>
+<p>At each checkpoint, the search re-scores every configuration it has evaluated on the latest window of data and keeps the top N. That keeps the analysis on the part of the space I care about. N = 768 in the benchmark below; the earlier code used 4,096.</p>
 </div>
 <div class="derivation-step">
 <h4>STEP 2 &mdash; WASSERSTEIN k-NN GRAPH</h4>
@@ -186,7 +186,7 @@ $$\delta_t = 1 - \operatorname{corr}\left(\text{stretch}_t,\ \tfrac{1}{4}\sum_{u
 <li><strong style="color:var(--text)">Ramp.</strong> The same move, spread over 800 bars.</li>
 <li><strong style="color:var(--text)">Flip.</strong> Factor 1 still drives everything, but its sign flips. The best value of the same knob moves to the other end.</li>
 </ul>
-<p style="margin-top:1rem">Each scenario gets 30 runs on seeds 0 to 29, and a run shares its seed with its control twin, so the two are identical up to bar 1700. 40 more control runs (seeds 10000 to 10039) set the alarm thresholds. The baselines watch the score instead of the weights: a Page-Hinkley test for a drop in the elite's in-sample score, and the same test on live performance, meaning how the top 16 configurations do over the next 100 bars after they're picked. That second one is what I'd actually watch with money on the line, and it's the honest yardstick for &ldquo;early warning&rdquo;.</p>
+<p style="margin-top:1rem">Each scenario gets 30 runs on seeds 0 to 29, and a run shares its seed with its control twin, so the two are identical up to bar 1700. 40 more control runs (seeds 10000 to 10039) set the alarm thresholds. The baselines watch the score instead of the weights: a Page-Hinkley test for a drop in the elite's in-sample score, and the same test on live performance, meaning how the top 16 configurations do over the next 100 bars after they're picked. That second one is what I'd watch with money on the line, and it's the right yardstick for &ldquo;early warning&rdquo;.</p>
 </div>
 <div style="max-width:800px;margin:1.5rem auto 0">
 <table class="validity-table" id="es-table">
@@ -196,8 +196,8 @@ $$\delta_t = 1 - \operatorname{corr}\left(\text{stretch}_t,\ \tfrac{1}{4}\sum_{u
 <p style="color:var(--dim);font-size:.75rem;line-height:1.7">Each scenario cell: share of the 30 runs detected within 1,000 bars of the change (first alarm, none before it) &middot; median delay in bars &middot; ROC AUC. The threshold is set so 5% of the 40 calibration controls alarm anywhere between bar 800 and 3000; the first column is what that threshold does on the 30 test controls. Drawn from the JSON.</p>
 </div>
 <div class="prose" style="margin-top:1.5rem">
-<p><strong style="color:var(--text)">The stretch vector sees the swap.</strong> On average it's unmistakable. At bar 1700, the trend knob carries 0.52 of the stretch vector and the two new knobs 0.13. Three hundred bars after the swap it's 0.12 and 0.42, and by bar 2200 the new pair holds 0.55. Over the 1,000 bars after the change, it separates changed runs from their unchanged twins better than anything else I tried: ROC AUC 0.86 for the swap and 0.84 for the ramp, against 0.75 and 0.76 for Page-Hinkley on live performance and 0.67 and 0.73 on the in-sample score. The two-window version scores 0.84 and 0.74.</p>
-<p style="margin-top:1rem"><strong style="color:var(--text)">But it's late.</strong> The live score drops first: the top configurations' next-100-bar Sharpe falls from 1.02 to 0.24 right after the swap, so on average the drop is visible by bar 1800 (bar 2000 for the ramp). At the calibrated threshold the stretch vector caught 11 of 30 swaps with a median delay of 600 bars (quartiles 350 to 650), every one of them after the drop; median lead &minus;500 bars. On the ramp, 1 of its 8 alarms came before the drop. So the early warning I remembered didn't show up here. My best explanation: the weights are computed on a 400-bar window, so they can't move until the new regime fills a good part of it, while live performance feels it in the first 100 bars.</p>
+<p><strong style="color:var(--text)">The stretch vector sees the swap.</strong> On average it's unmistakable. At bar 1700, the trend knob carries 0.52 of the stretch vector and the two new knobs 0.13. Three hundred bars after the swap it's 0.12 and 0.42, and by bar 2200 the new pair holds 0.55. Over the 1,000 bars after the change, it separates changed runs from their unchanged twins better than every baseline here: ROC AUC 0.86 for the swap and 0.84 for the ramp, against 0.75 and 0.76 for Page-Hinkley on live performance and 0.67 and 0.73 on the in-sample score. The two-window version scores 0.84 and 0.74.</p>
+<p style="margin-top:1rem"><strong style="color:var(--text)">But it's late.</strong> The live score drops first: the top configurations' next-100-bar Sharpe falls from 1.02 to 0.24 right after the swap, so on average the drop is visible by bar 1800 (bar 2000 for the ramp). At the calibrated threshold the stretch vector caught 11 of 30 swaps with a median delay of 600 bars (quartiles 350 to 650), every one of them after the drop; median lead &minus;500 bars. On the ramp, 1 of its 8 alarms came before the drop. So this setup gives no early warning. The likely cause: the weights are computed on a 400-bar window, so they can't move until the new regime fills a good part of it, while live performance feels it in the first 100 bars.</p>
 <p style="margin-top:1rem"><strong style="color:var(--text)">And it's noisy at a strict budget.</strong> A single checkpoint's stretch vector wobbles a lot, so to keep false alarms near 5% the threshold ends up at a correlation of &minus;0.26 with the reference. That's why only 37% of swaps are caught, while 13% of the test controls still alarm (the calibration set allowed 5%; 30 test runs is a small sample). The two-window version cuts the test-control false alarms to 3%, but catches only 23% of swaps. The score baselines don't do better at this budget: neither Page-Hinkley test caught a single swap or ramp, because their own false alarms from bad-luck stretches set a high bar.</p>
 <p style="margin-top:1rem"><strong style="color:var(--text)">It can't see a flip.</strong> When the same knob stays in charge and only its best value moves, the weights barely change: ROC AUC 0.56, close to a coin. Page-Hinkley on live performance gets 0.92 there, and even the old v1 monitor gets 0.77. That's the split in one line: the stretch vector tracks <em>which</em> knob matters, the score tracks <em>whether</em> things got worse, and you want both.</p>
 <p style="margin-top:1rem"><strong style="color:var(--text)">The old numbers.</strong> With the hand-picked rules from v1 of this page, a correlation below 0.9 or 0.7 with the reference, every single run alarmed, controls included. The old script's own check (eigenvalue correlation below 0.9) never fired in any run, change or not. Its eigenvalues barely move, and its window ROC AUC on the swap is 0.59.</p>
@@ -236,7 +236,7 @@ $$\delta_t = 1 - \operatorname{corr}\left(\text{stretch}_t,\ \tfrac{1}{4}\sum_{u
 <section>
 <h2>DIAGNOSTIC SIGNALS</h2>
 <div style="max-width:800px;margin:0 auto">
-<p class="prose" style="margin-bottom:1.5rem">These are the four conditions I wrote down to check at each checkpoint, with what I now know about each.</p>
+<p class="prose" style="margin-bottom:1.5rem">The four conditions checked at each checkpoint, and the status of each.</p>
 <div class="card-grid">
 <div class="card">
 <h3>OVERFITTING</h3>
@@ -261,10 +261,10 @@ $$\delta_t = 1 - \operatorname{corr}\left(\text{stretch}_t,\ \tfrac{1}{4}\sum_{u
 <h2>LIMITS</h2>
 <div class="prose">
 <ul style="margin:0 0 0 1.2rem;line-height:1.9">
-<li>Everything is simulated, with one market model, one search, 10 parameters and 768-configuration archives. My old BTC, ETH and SOL optimizer runs aren't on this machine, so there's no real-data number.</li>
-<li>The lead-time result depends on the 400-bar window and the 100-bar checkpoint spacing. A shorter window might move the weights sooner, and I haven't swept it.</li>
+<li>Everything is simulated, with one market model, one search, 10 parameters and 768-configuration archives. No real-data number yet: the BTC, ETH and SOL optimizer runs aren't on this machine.</li>
+<li>The lead-time result depends on the 400-bar window and the 100-bar checkpoint spacing. A shorter window might move the weights sooner; the sweep is next.</li>
 <li>30 test runs per scenario is enough for the big differences on this page and not for small ones. The 13% control false-alarm rate against a 5% target is the kind of gap that sample size allows.</li>
-<li>I didn't run ADWIN, and my Page-Hinkley tests use the plain running mean with no tolerance term. A tuned score monitor would likely do better than mine.</li>
+<li>ADWIN isn't in the comparison, and the Page-Hinkley tests use the plain running mean with no tolerance term. A tuned score monitor would likely do better.</li>
 <li>The calibrated threshold is specific to this simulation. On a new system you'd need your own stationary runs, or a stretch of history you trust, to set it.</li>
 </ul>
 </div>
@@ -286,7 +286,7 @@ python3 eigenstretch.py demo --kind swap --seed 0              # one run, digits
 <section>
 <h2>RELATED WORK</h2>
 <div class="prose">
-<p>The job this page does, flagging a change in a stream of checkpoints, has established tools. The Page-Hinkley test (Page, <em>Biometrika</em> 41, 1954) is a cumulative-sum test for a shift in the mean, and I ran it on two score streams as the baseline. ADWIN (Bifet &amp; Gavald&agrave;, <em>SDM</em> 2007) keeps an adaptive window and flags when its two halves disagree; my two-window statistic borrows that idea crudely, and I haven't run ADWIN itself. For overfitting specifically, Prechelt's early-stopping criteria (&ldquo;Early Stopping, But When?&rdquo;, 1998) are the standard baseline, still untested here. The stretch vector itself rests on Chatterjee's rank correlation (<em>J. Amer. Statist. Assoc.</em> 116, 2021) and on the graph-Laplacian machinery cited on the Reffelt page.</p>
+<p>The job this page does, flagging a change in a stream of checkpoints, has established tools. The Page-Hinkley test (Page, <em>Biometrika</em> 41, 1954) is a cumulative-sum test for a shift in the mean, and I ran it on two score streams as the baseline. ADWIN (Bifet &amp; Gavald&agrave;, <em>SDM</em> 2007) keeps an adaptive window and flags when its two halves disagree; my two-window statistic is a simple version of that idea, and ADWIN itself isn't run here. For overfitting specifically, Prechelt's early-stopping criteria (&ldquo;Early Stopping, But When?&rdquo;, 1998) are the standard baseline, still untested here. The stretch vector itself rests on Chatterjee's rank correlation (<em>J. Amer. Statist. Assoc.</em> 116, 2021) and on the graph-Laplacian machinery cited on the Reffelt page.</p>
 </div>
 </section>
 <section>
@@ -299,7 +299,7 @@ python3 eigenstretch.py demo --kind swap --seed 0              # one run, digits
 </div>
 <div class="app-card">
 <h4>SHORTER WINDOWS</h4>
-<p>If the lag comes from the 400-bar window, a shorter one should cut it, at the price of noisier weights. I want the curve of lead time against window length before I give up on early warning entirely.</p>
+<p>If the lag comes from the 400-bar window, a shorter one should cut it, at the price of noisier weights. The next measurement is lead time against window length, which settles whether early warning is reachable at all.</p>
 </div>
 <div class="app-card">
 <h4>TRAINING RUNS</h4>
@@ -307,7 +307,7 @@ python3 eigenstretch.py demo --kind swap --seed 0              # one run, digits
 </div>
 <div class="app-card">
 <h4>DRIFT ON A DEPLOYED MODEL</h4>
-<p>Compare the current stretch vector with the one from training time and flag divergence. I don't know how that compares with watching prediction confidence, and given the lag above I'd expect it to be slow.</p>
+<p>Compare the current stretch vector with the one from training time and flag divergence. Not yet compared with watching prediction confidence, and given the lag above, expect it to be slow.</p>
 </div>
 </div>
 </section>

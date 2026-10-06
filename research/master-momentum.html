@@ -116,7 +116,7 @@ window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$
 </div>
 </div>
 </section>
-<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Before you dig in, here's where it stands. The twelve equations and the closure check (every variable in Eq. 12 traces back to p(t)) are derived on this page. Nothing here is measured against flow data or market data. I also tried to prove the system stays regular. That argument was reviewed from outside in July 2026 and three steps failed. The current v2 proves a Z<sup>5/2</sup> dissipation bound for an amended closure (Eq. 11&prime;), the Bakry-&Eacute;mery curvature step is a heuristic, and the spatial transfer is open. The applications near the end are directions I haven't tested.</div></div>
+<div class="prose"><div class="callout"><strong>Status, 2026-09-09.</strong> Derived here: the twelve equations and the closure check (every variable in Eq. 12 traces back to p(t)). Not measured yet: anything against flow data or market data. Regularity: the first argument went through outside review in July 2026 and three steps failed. The current v2 proves a Z<sup>5/2</sup> dissipation bound for an amended closure (Eq. 11&prime;), the Bakry-&Eacute;mery curvature step is a heuristic, and the spatial transfer is open. Untested: the applications near the end.</div></div>
 <section>
 <h2>THE 12 EQUATIONS</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
@@ -171,7 +171,7 @@ $$c(t) = \frac{\partial^2 p}{\partial t^2}$$
 <p>The second derivative of the state field. Curvature tracks the trajectory speeding up or slowing down, and it does two jobs: turbulence indicator, and a damping term in the master equation.</p>
 </div>
 <h3 style="color:var(--accent);font-size:.75rem;letter-spacing:3px;margin:2.5rem 0 1.5rem">LAYER 3 &mdash; EDDY VISCOSITY</h3>
-<p style="margin-bottom:1.5rem">This layer turns the variables above into an eddy viscosity. One piece is borrowed and the rest is mine. The final relation (Eq. 10) is the algebraic &nu;<sub>t</sub> = C<sub>&mu;</sub>k&sup2;/&epsilon; from Launder &amp; Spalding (1974). The k and &epsilon; that feed it (Eqs. 8 and 9) are my own definitions, not the k-&epsilon; transport equations, and I haven't validated them against any flow data.</p>
+<p style="margin-bottom:1.5rem">This layer turns the variables above into an eddy viscosity. One piece is borrowed and the rest is mine. The final relation (Eq. 10) is the algebraic &nu;<sub>t</sub> = C<sub>&mu;</sub>k&sup2;/&epsilon; from Launder &amp; Spalding (1974). The k and &epsilon; that feed it (Eqs. 8 and 9) are my own definitions, not the k-&epsilon; transport equations. They are not validated against flow data yet.</p>
 <div class="derivation-step">
 <h4>EQUATION 7 &mdash; STATIC HOLOGRAPHIC RESISTANCE</h4>
 <div class="eq-block">
@@ -186,7 +186,7 @@ $$R_0(p, \ell)$$
 <div class="eq-label">EQ. 8</div>
 $$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}, \qquad \mathbf{M}_{\text{grid}} := m\,v$$
 </div>
-<p>My turbulent kinetic energy analogue is non-smoothness (1 &minus; s) times the divergence of the momentum field M<sub>grid</sub> = m&middot;v. In sim.cpp that divergence is the one-step difference m<sub>i</sub>v<sub>i</sub> &minus; m<sub>i&minus;1</sub>v<sub>i&minus;1</sub>, clamped at zero. Laminar stretches (s near 1) give k near zero. The proof page uses a simpler pair, k = (1&minus;s)|v| with a corrected &epsilon;, to get the closed form in Stage 1 below; the two are not the same definition, and I say so there.</p>
+<p>My turbulent kinetic energy analogue is non-smoothness (1 &minus; s) times the divergence of the momentum field M<sub>grid</sub> = m&middot;v. In sim.cpp that divergence is the one-step difference m<sub>i</sub>v<sub>i</sub> &minus; m<sub>i&minus;1</sub>v<sub>i&minus;1</sub>, clamped at zero. Laminar stretches (s near 1) give k near zero. The proof page uses a simpler pair, k = (1&minus;s)|v| with a corrected &epsilon;, to get the closed form in Stage 1 below; the two are different definitions, and the proof page notes it.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 9 &mdash; ENERGY DISSIPATION RATE</h4>
@@ -194,7 +194,7 @@ $$k(p, \ell) = (1 - s) \cdot \nabla \cdot \mathbf{M}_{\text{grid}}, \qquad \math
 <div class="eq-label">EQ. 9</div>
 $$\varepsilon(p, \ell) = c \cdot \frac{1 - s}{s} \cdot \frac{1}{\ell}$$
 </div>
-<p>My dissipation analogue combines curvature c, the ratio (1&minus;s)/s, and the inverse scale 1/&ell;. The shape is meant to echo an energy cascade from large to small scales. That's the intent; I haven't checked it against a Kolmogorov spectrum or any measured dissipation.</p>
+<p>My dissipation analogue combines curvature c, the ratio (1&minus;s)/s, and the inverse scale 1/&ell;. The shape is meant to echo an energy cascade from large to small scales. Not checked yet against a Kolmogorov spectrum or any measured dissipation.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 10 &mdash; EDDY VISCOSITY</h4>
@@ -202,7 +202,7 @@ $$\varepsilon(p, \ell) = c \cdot \frac{1 - s}{s} \cdot \frac{1}{\ell}$$
 <div class="eq-label">EQ. 10</div>
 $$\nu_t(p, \ell) = C_\mu \frac{k^2}{\varepsilon} \qquad C_\mu = 0.09$$
 </div>
-<p>The algebraic eddy viscosity relation with the constant C<sub>&mu;</sub> = 0.09 from Launder &amp; Spalding, "The numerical computation of turbulent flows", Comp. Meth. Appl. Mech. Eng. 3 (1974) 269-289. I took the constant from CFD; nothing on this page justifies it for this system.</p>
+<p>The algebraic eddy viscosity relation with the constant C<sub>&mu;</sub> = 0.09 from Launder &amp; Spalding, "The numerical computation of turbulent flows", Comp. Meth. Appl. Mech. Eng. 3 (1974) 269-289. The constant comes from CFD; this page doesn't justify it for this system.</p>
 </div>
 <div class="derivation-step">
 <h4>EQUATION 11 &mdash; DYNAMIC RESISTANCE</h4>
@@ -284,8 +284,8 @@ $$\frac{dv}{dt} = \frac{F_{\text{PID}}}{m} + v\frac{\partial v}{\partial p} - s 
 <section>
 <h2>REGULARITY ARGUMENT</h2>
 <div style="max-width:800px;margin:0 auto;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>I tried to prove global regularity for this closed system. It didn't survive as written: outside review in July 2026 found three errors in the first version, and I've kept them on the proof page. The current v2 argument proves a Z<sup>5/2</sup> dissipation bound and a continuation ladder for an amended closure (Eq. 11&prime;). The Bakry-&Eacute;mery step is now a heuristic, not a proof, and the spatial transfer is open. This says nothing about constant-viscosity Navier-Stokes.</p>
-<p style="margin-top:1rem">The six stages below are the v1 argument as I first wrote it. I've left the mathematics in place and marked each step that v2 retracted, so you can see what failed and where. The v2 status per step: spatial Hessian transfer open, weighted Poincar&eacute; a conjecture, Ric<sub>BE</sub> &gt; 0 a heuristic, the s<sub>min</sub> bootstrap retired, and the dissipation exponent Z<sup>5/2</sup> rather than Z&sup2;.</p>
+<p>Global regularity for this closed system is not proved. Outside review in July 2026 found three errors in the first version; the proof page lists them. The current v2 argument proves a Z<sup>5/2</sup> dissipation bound and a continuation ladder for an amended closure (Eq. 11&prime;). The Bakry-&Eacute;mery step is a heuristic, not a proof, and the spatial transfer is open. This says nothing about constant-viscosity Navier-Stokes.</p>
+<p style="margin-top:1rem">The six stages below are the v1 argument, mathematics intact, with each step v2 retracted marked in place. The v2 status per step: spatial Hessian transfer open, weighted Poincar&eacute; a conjecture, Ric<sub>BE</sub> &gt; 0 a heuristic, the s<sub>min</sub> bootstrap retired, and the dissipation exponent Z<sup>5/2</sup> rather than Z&sup2;.</p>
 <div style="margin-top:2rem;">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:var(--accent);color:var(--bg);padding:1rem 2rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:2px;text-decoration:none;font-weight:bold;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(var(--accent-rgb,100,200,255),0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">PROOF PAGE (V2, WITH ERRATA) &rarr;</a>
 </div>
@@ -348,13 +348,13 @@ $$\nu_t = C_\mu(1-s)(s+\delta)|v| \geq \underbrace{C_\mu(1-s_{\max})(s_{\min}+\d
 
 <div class="proof-stage" data-stage="STAGE 3 &mdash; BAKRY-&Eacute;MERY CURVATURE">
 <h4>PARAMETER MANIFOLD GEOMETRY</h4>
-<p class="retracted">Retracted July 2026, see proof page. v2 keeps this as a heuristic only; the claim that &kappa; &gt; 0 is attained is wrong, since the second entry 1/v&sup2; goes to 0 as v grows, so the infimum is 0.</p>
+<p class="retracted">Retracted July 2026, see proof page. v2 keeps this as a heuristic only; the claim that &kappa; &gt; 0 is attained is false, since the second entry 1/v&sup2; goes to 0 as v grows, so the infimum is 0.</p>
 <p>Define the potential \(\Phi(s,|v|) = -\ln\nu_t\) on the parameter manifold \(\mathcal{M}\). The Hessian of &Phi; gives the <strong style="color:var(--text)">Bakry-&Eacute;mery curvature tensor</strong> (Bakry &amp; &Eacute;mery, "Diffusions hypercontractives", S&eacute;minaire de probabilit&eacute;s XIX, 1985):</p>
 <div class="eq-block">
 <div class="eq-label">BAKRY-&Eacute;MERY RICCI TENSOR</div>
 $$\operatorname{Ric}_{\text{BE}} = \operatorname{Hess}(-\ln\nu_t) = \operatorname{diag}\!\left(\frac{1}{(1-s)^2}+\frac{1}{(s+\delta)^2},\;\frac{1}{v^2}\right) > 0$$
 </div>
-<p>Both diagonal entries are positive on the interior of \(\mathcal{M}\), so the tensor is pointwise positive. That's as far as it goes: v1 claimed a uniform lower bound \(\kappa = \inf_{\mathcal{M}}\lambda_{\min}(\operatorname{Ric}_{\text{BE}}) > 0\) is attained. It isn't. The 1/v&sup2; entry has infimum 0 on an unbounded velocity range, so there is no uniform &kappa;, and everything downstream that needed one falls with it.</p>
+<p>Both diagonal entries are positive on the interior of \(\mathcal{M}\), so the tensor is pointwise positive. v1 claimed a uniform lower bound \(\kappa = \inf_{\mathcal{M}}\lambda_{\min}(\operatorname{Ric}_{\text{BE}}) > 0\) is attained. It is not: the 1/v&sup2; entry has infimum 0 on an unbounded velocity range, so there is no uniform &kappa;, and everything downstream that needed one falls with it.</p>
 </div>
 
 <div class="proof-stage" data-stage="STAGE 4 &mdash; WASSERSTEIN-RICCI TRANSFER">
@@ -369,7 +369,7 @@ $$\operatorname{Ric}_{\text{BE}} \geq \kappa > 0 \;\;\Longleftrightarrow\;\; \ka
 <div class="eq-label">HWI INEQUALITY (OTTO-VILLANI 2000)</div>
 $$H(\rho\|\mu) \leq W_2(\rho,\mu)\sqrt{I(\rho\|\mu)} - \frac{\kappa}{2}W_2(\rho,\mu)^2$$
 </div>
-<p>Optimizing over W<sub>2</sub> would give a <strong style="color:var(--text)">log-Sobolev inequality</strong>, hence a <strong style="color:var(--text)">weighted Poincar&eacute; inequality</strong> on the parameter manifold, if the uniform &kappa; from Stage 3 existed. v1 then used the chain rule to move it to the spatial domain; that step is the one review rejected, and it is where I'm stuck:</p>
+<p>Optimizing over W<sub>2</sub> would give a <strong style="color:var(--text)">log-Sobolev inequality</strong>, hence a <strong style="color:var(--text)">weighted Poincar&eacute; inequality</strong> on the parameter manifold, if the uniform &kappa; from Stage 3 existed. v1 then used the chain rule to move it to the spatial domain; review rejected that step, and it is open:</p>
 <div class="eq-block">
 <div class="eq-label">SPATIAL TRANSFER (CHAIN RULE)</div>
 $$\int|\nabla v|^2\nu_t\,dx \geq \kappa_{\text{eff}}\int|v-\bar{v}|^2\nu_t\,dx, \qquad \kappa_{\text{eff}} = \kappa \cdot \sigma_{\min}(\nabla_x(s,|v|))^2$$
@@ -394,7 +394,7 @@ $$Z(t) \leq \max\!\left(Z(0),\;\frac{C_1}{\gamma' s_{\min}}\right) < \infty \qqu
 
 <div class="proof-stage" data-stage="STAGE 6 &mdash; GLOBAL CONTINUATION">
 <h4>BOOTSTRAP TO GLOBAL EXISTENCE</h4>
-<p class="retracted">Retracted July 2026, see proof page (erratum E2: the Morrey claim in Step 2 is wrong; the s<sub>min</sub> bootstrap is retired). v2 has a continuation ladder for Eq. 11&prime; that doesn't use s<sub>min</sub>.</p>
+<p class="retracted">Retracted July 2026, see proof page (erratum E2: the Morrey claim in Step 2 is false; the s<sub>min</sub> bootstrap is retired). v2 has a continuation ladder for Eq. 11&prime; that doesn't use s<sub>min</sub>.</p>
 <p>v1 tried to close with a continuation bootstrap:</p>
 <div class="derivation-step" style="border-color:var(--dim)">
 <h4>STEP 1</h4>
@@ -419,8 +419,8 @@ $$Z(t) \leq \max\!\left(Z(0),\;\frac{C_1}{\gamma' s_{\min}}\right) < \infty \qqu
 </div>
 
 <div class="theorem-box">
-<h4>WHAT V1 CLAIMED, AND WHAT V2 ACTUALLY HAS</h4>
-<p class="retracted">The theorem below is the v1 statement. It is retracted (July 2026). I keep it here so the record is visible.</p>
+<h4>WHAT V1 CLAIMED, AND WHAT V2 HAS</h4>
+<p class="retracted">The theorem below is the v1 statement. It is retracted (July 2026) and stays here for reference.</p>
 <p>v1: Let \((v, s, \nu_t, R_{\text{eff}})\) solve the 12-equation closure on \(\mathbb{T}^3\) with smooth initial data and \(s(0) \in (0,1]\). Then the solution exists for all time and</p>
 $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 <p style="margin-top:1rem;color:var(--dim);font-size:.85rem">v2, what is proved: a Z<sup>5/2</sup> dissipation bound and a continuation ladder for the amended closure Eq. 11&prime;. What is not proved: global regularity for the system on this page. The Bakry-&Eacute;mery curvature is a heuristic, the weighted Poincar&eacute; inequality is a conjecture, and the spatial transfer is open.</p>
@@ -428,12 +428,12 @@ $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 
 <div style="margin-top:2rem;padding:1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px">
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin-bottom:1rem">SCOPE</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Everything in this section is about the <strong style="color:var(--text)">Master Momentum system</strong> with its variable &nu;<sub>t</sub>. Constant-viscosity Navier-Stokes is a different equation and remains a Millennium Prize Problem; nothing here touches it. The reason the variable case looked tractable is that &nu;<sub>t</sub> grows with |v|, which adds dissipation the constant case lacks. Whether that is enough is exactly what's still open.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Everything in this section is about the <strong style="color:var(--text)">Master Momentum system</strong> with its variable &nu;<sub>t</sub>. Constant-viscosity Navier-Stokes is a different equation and remains a Millennium Prize Problem; nothing here touches it. The variable case differs because &nu;<sub>t</sub> grows with |v|, which adds dissipation the constant case lacks. Whether that is enough is open.</p>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7;margin-top:.75rem">The step-by-step algebra, the three errata, and the v2 argument are on the proof page. PROOF_FORMATION.md in millennium_sim is the working draft behind it.</p>
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">HOW TO REPRODUCE</h4>
 <p style="color:var(--dim);font-size:.85rem;line-height:1.7">The solver is millennium_sim/sim.cpp (one function, step_master_equation, compiled with Emscripten for the solver page). It implements Eqs. 1-12 with shortcuts: one-bar |&Delta;p| for &sigma;<sub>ATR</sub>; F<sub>PID</sub> = 0.5, so no Hilbert signal; s from the last two velocity samples, clamped at 0; &epsilon; = max(0.01, |c|(1&minus;s)/s) with s floored at 0.05 and no 1/&ell; factor; and R<sub>eff</sub> = R<sub>0</sub> + &nu;<sub>t</sub> with the input field R<sub>0</sub> in place of &gamma;<sub>0</sub>. The argument is in millennium_sim/PROOF_FORMATION.md and the v2 proof page, millennium_sim/navier-stokes-proof.html. The original equations are in REFFELT_MASTER_EQUATIONS.md in a private repo of mine.</p>
 <h4 style="color:var(--accent);font-size:.75rem;letter-spacing:2px;margin:1.5rem 0 1rem">WHAT ISN'T MEASURED</h4>
-<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Nothing on this page has been checked against flow data, and nothing on this page has been checked against market data either. The solver runs; I haven't compared its output to a DNS result, a wind tunnel, or a backtest. C<sub>&mu;</sub> = 0.09 is borrowed, not fitted. The k and &epsilon; definitions are mine and untested.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.7">Nothing on this page is checked against flow data or market data yet. The solver runs; its output is not yet compared to a DNS result, a wind tunnel, or a backtest. C<sub>&mu;</sub> = 0.09 is borrowed, not fitted. The k and &epsilon; definitions are mine and untested.</p>
 <div style="margin-top:1.5rem">
 <a href="millennium_sim/navier-stokes-proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">FULL INTERACTIVE PROOF &rarr;</a>
 <a href="millennium_sim/curvature_proof.html" style="display:inline-block;background:transparent;color:var(--accent);padding:.75rem 1.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:2px;text-decoration:none;font-weight:bold;border:1px solid var(--accent);transition:all 0.2s;margin-left:.75rem" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">CURVATURE EXPLORER &rarr;</a>
@@ -443,24 +443,24 @@ $$\sup_{t \geq 0} \|\nabla v(t)\|_{L^2}^2 < \infty$$
 </div>
 </section>
 <section>
-<h2>DIRECTIONS I HAVEN'T TESTED</h2>
+<h2>UNTESTED DIRECTIONS</h2>
 <div style="max-width:800px;margin:0 auto">
-<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Where I'd love to point this next. Each of these is a mapping I'd like to try. None of them has a run behind it.</p>
+<p style="color:var(--dim);font-size:.85rem;line-height:1.9;margin-bottom:1rem">Where I'd love to point this next. Each of these is a proposed mapping. None of them has a run behind it yet.</p>
 <div class="app-card">
 <h4>WEATHER</h4>
-<p>If s can tell laminar from turbulent air the way it tells quiet from noisy price, Eq. 12 might serve as a closure in a toy atmospheric model; I haven't tried it against any NWP scheme.</p>
+<p>If s can tell laminar from turbulent air the way it tells quiet from noisy price, Eq. 12 might serve as a closure in a toy atmospheric model; untested against any NWP scheme.</p>
 </div>
 <div class="app-card">
 <h4>DATACENTER AIRFLOW</h4>
-<p>With p as temperature, v as heat flux and F<sub>PID</sub> as the HVAC loop, the system could be a cheap thermal predictor; I haven't compared it to a single CFD run.</p>
+<p>With p as temperature, v as heat flux and F<sub>PID</sub> as the HVAC loop, the system could be a cheap thermal predictor; not yet compared to a single CFD run.</p>
 </div>
 <div class="app-card">
 <h4>WING BOUNDARY LAYERS</h4>
-<p>The s term looks like a transition switch and R<sub>0</sub> could carry the geometry; I haven't put it next to any boundary-layer data.</p>
+<p>The s term looks like a transition switch and R<sub>0</sub> could carry the geometry; not yet put next to any boundary-layer data.</p>
 </div>
 <div class="app-card">
 <h4>TRAINING DYNAMICS</h4>
-<p>With p as parameters, m as the inverse gradient variance (like Adam's second moment) and c as curvature, Eq. 12 could be read as a schedule; I haven't trained anything with it.</p>
+<p>With p as parameters, m as the inverse gradient variance (like Adam's second moment) and c as curvature, Eq. 12 could be read as a schedule; nothing has been trained with it yet.</p>
 </div>
 <div class="app-card">
 <h4>CRACK PROPAGATION</h4>

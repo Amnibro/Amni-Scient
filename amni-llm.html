@@ -205,10 +205,10 @@
 </section>
 
 <section>
-<h2>HONEST STACK</h2>
+<h2>STACK AND LIMITS</h2>
 <div style="max-width:800px;margin:0 0;line-height:1.85;color:var(--dim);font-size:.88rem">
-<p>Credit where it&rsquo;s due: the transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port).</p>
-<p style="margin-top:1.2rem">Performance, honestly: per-token throughput is lower than MLC's WebGPU stack, because llama.cpp WASM hasn't shipped mature WebGPU support yet. For interactive chat with small models you&rsquo;ll barely notice. For high-throughput production workloads where MLC supports the model you need, MLC is still faster.</p>
+<p>Engine: the transformer math runs through <a href="https://github.com/ngxson/wllama" target="_blank" rel="noopener" style="color:#a8f">wllama</a> (MIT-licensed llama.cpp WASM port).</p>
+<p style="margin-top:1.2rem">Performance: per-token throughput is lower than MLC's WebGPU stack, because llama.cpp WASM doesn't have mature WebGPU support yet. For interactive chat with small models you&rsquo;ll barely notice. For high-throughput production workloads where MLC supports the model you need, MLC is still faster.</p>
 <p style="margin-top:1.2rem">Memory: in-browser models are bounded by the browser's allocator. Mobile browsers cap around 1 GB. Desktop typically allows 2-4 GB without cross-origin isolation, and more with it. The good news: Amni-LLM ships a service worker that enables COOP/COEP headers on static hosts (GitHub Pages, etc.), so SharedArrayBuffer becomes available and multi-thread WASM with larger memory works.</p>
 </div>
 </section>

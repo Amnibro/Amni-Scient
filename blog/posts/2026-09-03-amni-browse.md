@@ -16,4 +16,4 @@ Android is 0.16.9 on the system WebView, Android 8+. It's private by default, wi
 
 Windows is 0.13.0, a small zip, with our chrome on Chromium/WebView2. You get our own frame, tab groups, pinned tabs, private tabs, find, a request-level ad and tracker shield, DNT and Global Privacy Control, and DoH. Just unzip it, or use the one-click Setup if you want it pinned to Start Menu and Desktop.
 
-One thing that's not ready: the Servo desktop build is still experimental, GitHub only.
+Not on the product page: the Servo desktop build. It's experimental and GitHub only.

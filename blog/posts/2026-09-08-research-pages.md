@@ -3,16 +3,16 @@ title: Research pages say what the proofs say
 date: 2026-09-08
 slug: research-pages
 product: Research
-summary: The research pages were claiming more than the numbers on them, so I went through all eight.
+summary: All eight research pages now carry a status strip and tag every equation by what backs it.
 cta: /research.html
 cta_label: Research
 ---
 
 # Research pages say what the proofs say
 
-Each page now has a status strip, and pages that had no implementation say so.
+Each page now has a status strip, and pages without an implementation are labeled that way.
 
-Inside, equations are tagged by what backs them: measured, a constant I picked, a conjecture, or untested. The railgun and quantization writeups drop the marketing numbers that weren't in the proofs.
+Inside, equations are tagged by what backs them: measured, a constant I picked, a conjecture, or untested. The railgun and quantization writeups now quote only numbers that appear in the proofs.
 
 And the math actually renders now! MathJax is on, so the TeX shows up as real equations.
 

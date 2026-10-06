@@ -17,7 +17,7 @@ Four of the chairs were still marked "soon." Not anymore! ChatGPT, Copilot, Curs
 
 Blind parallel answers are six tabs with extra steps, so I built sequential mode. Each seat reads what the last one said before it answers. Want them all at once, side by side? You can still do that too.
 
-Braid doesn't sell you tokens. It drives the CLIs you're already signed into, on the subscriptions you already have. Open beta is $10/month, teams are quote-by-email, and the site matches that now because I fixed it.
+Braid doesn't sell you tokens. It drives the CLIs you're already signed into, on the subscriptions you already have. Open beta is $10/month, teams are quote-by-email, and the pricing on the site matches.
 
 Could you roll your own table? Sure. The bill shows up in tokens and evenings, and I already paid it.
 
