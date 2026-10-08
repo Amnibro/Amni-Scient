@@ -4,11 +4,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError } from './est-math.js'
 const LS = 'amnifloor.cfg.v1', LSP = 'amnifloor.prices.v1'
 const defCfg = { mode: 'rect', w: 12, d: 12, polygon: null, material: 'lvp', pattern: 'straight', plank_w_in: 6, plank_l_in: 48, box_sqft: 24, waste_pct: 0, doorways: 2 }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], material: ['lvp', 'laminate', 'hardwood', 'tile', 'carpet'], pattern: ['straight', 'brick', 'diagonal', 'herringbone'] })
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = (() => { try { return Object.fromEntries(Object.entries(JSON.parse(localStorage.getItem(LSP)) || {}).map(([k, v]) => [k, parsePrice(v)]).filter(([, v]) => v != null)) } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { lvp: ['#c8a25a', 'LVP'], laminate: ['#d7b27a', 'Laminate'], hardwood: ['#9c5a2a', 'Hardwood'], tile: ['#cfcabc', 'Tile'], carpet: ['#9a9488', 'Carpet'] }
@@ -124,18 +125,18 @@ const renderGuide = () => {
     ['✅ Finish', [tile ? 'Let thinset cure, then grout + wipe haze; seal grout (and stone) after it cures.' : 'Vacuum, pull spacers, check for hollow/loose spots + movement.', 'Floors rarely need a permit — keep the install receipt + lot number for the warranty.']],
   ]
   const tools = ['Tapping block + pull bar + 1/4" spacers', 'Miter / table / track saw', 'Jamb (undercut) saw', 'Jigsaw + multi-tool (notches)', 'Utility knife (LVP/carpet)', 'Tape, square + chalk line', 'Rubber mallet', 'Knee pads', 'Moisture meter (slabs)'].concat(tile ? ['Notched trowel + wet saw', 'Grout float + sponge + mixing paddle'] : [])
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const cost = priceBom(out.bom, price).th
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro install sequence for your <b>${c.area_ft2.toFixed(0)} ft² ${mat}</b> floor (${c.boxes} boxes). Tick as you go. Pair with sheets FL-1 (layout) + FL-2 (details).</div>`
     + chk
     + guideList('🔍 Notes', ['Flooring rarely needs a building permit — but moisture + flatness make or break it.', 'Floating floors must stay floating: keep the gap, never pin them down at trim or transitions.', 'Save a few planks/tiles for future repairs.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in flooring + underlayment/trim (Home Depot catalog) — edit prices on the Materials tab.</div></div>`
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in flooring + underlayment/trim (Home Depot catalog) — edit prices on the Materials tab.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const FLOOR_PPSF = { lvp: 2.6, laminate: 2.1, hardwood: 6.5, tile: 4.5, carpet: 2.8 }
 const FLOOR_LABOR = { lvp: [1, 2.5], laminate: [1, 2], hardwood: [3, 6], tile: [5, 10], carpet: [1, 2] }
-const allInBanner = (matTotal, area, loR, hiR, cols, diy) => `<tr><td colspan="${cols || 6}" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${matTotal.toFixed(0)}</b> + typical install labor <b>$${(area * loR).toFixed(0)}–$${(area * hiR).toFixed(0)}</b> (${area.toFixed(0)} ft² × $${loR}–$${hiR}/ft²) = <b style="color:var(--ok)">$${(matTotal + area * loR).toFixed(0)}–$${(matTotal + area * hiR).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">${diy || 'DIY it yourself → labor is $0 (the materials number)'}. Labor is a rough regional guide — get local quotes for a firm bid.</div></div></td></tr>`
+const allInBanner = (matTotal, area, loR, hiR, cols, diy) => `<tr><td colspan="${cols || 6}" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>${money(matTotal, 0)}</b> + typical install labor <b>${money((area * loR), 0)}–${money((area * hiR), 0)}</b> (${area.toFixed(0)} ft² × $${loR}–$${hiR}/ft²) = <b style="color:var(--ok)">${money((matTotal + area * loR), 0)}–${money((matTotal + area * hiR), 0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">${diy || 'DIY it yourself → labor is $0 (the materials number)'}. Labor is a rough regional guide — get local quotes for a firm bid.</div></div></td></tr>`
 const FLOOR_Q = { lvp: ['luxury vinyl plank flooring', 'lvp flooring'], laminate: ['laminate flooring', 'laminate flooring'], hardwood: ['solid hardwood flooring', 'hardwood flooring'], tile: ['ceramic floor tile', 'floor tile'], carpet: ['carpet by the roll', 'carpet'] }
 const floorUnit = store => +(((FLOOR_PPSF[cfg.material] || FLOOR_PPSF.lvp) * (+cfg.box_sqft || 24)) * (store === 'lowes' ? 1.04 : 1)).toFixed(2)
 const floorQ = store => (FLOOR_Q[cfg.material] || FLOOR_Q.lvp)[store === 'hd' ? 0 : 1]
@@ -144,23 +145,21 @@ const renderMat = () => {
   if (!out) return
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.boxes}`, 'boxes'], [`${c.order_ft2.toFixed(0)} ft²`, `order (+${c.waste_pct}% waste)`], [`${c.area_ft2.toFixed(0)} ft²`, 'floor area'], [`${c.trim_lin_ft.toFixed(0)} lf`, 'trim/molding'], [`${c.transitions}`, 'transitions']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
+  const pb = priceBom(out.bom, price), th = pb.th, tl = pb.tl
+  const rows = pb.rows.map(({ it, ph, pl, lh, ll }) => {
     const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
     const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
     const hq = it.id === 'floor' ? floorQ('hd') : cat.hdq, lq = it.id === 'floor' ? floorQ('lowes') : cat.lq
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', hq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
+    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', hq)}</td><td>${lh != null ? money(lh) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', lq)}</td><td>${ll != null ? money(ll) : '—'}</td></tr>`
   }).join('')
   const [loR, hiR] = FLOOR_LABOR[cfg.material] || FLOOR_LABOR.lvp
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>${allInBanner(th, c.area_ft2, loR, hiR)}`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">${money(th)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">${money(tl)}</td></tr>${allInBanner(th, c.area_ft2, loR, hiR)}`
+  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parsePrice(i.value); v == null ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
   const filled = []
   const norm = text.toLowerCase()
-  for (const it of out.bom) {
+  for (const it of out ? out.bom : []) {
     const c = catalog[it.id]
     if (!c) continue
     const toks = (store === 'hd' ? c.hdq : c.lq).toLowerCase().split(/\s+/).filter(t => t.length > 1)
@@ -199,8 +198,8 @@ const fitCam = () => {
   cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  try { out = callCore(cfg) } catch (e) { out = { error: e.message } }
+  if (out.error) { const msg = coreError(out.error); out = null; $('#warns').innerHTML = `<div class="warn">${msg}</div>`; $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = `<tr><td style="color:var(--warn)">No estimate yet. ${msg}</td></tr>`; return }
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
@@ -294,7 +293,7 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
+  const bind = (id, key, num = true) => { const el = $(id); num && el.type === 'number' && (cfg[key] = fitNum(cfg[key], el, defCfg[key])); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? el.type === 'number' ? fitNum(el.value, el, cfg[key]) : +el.value : el.value; el.value = cfg[key]; recompute() } }
   bind('#w', 'w'); bind('#d', 'd'); bind('#material', 'material', false); bind('#pattern', 'pattern', false); bind('#plankw', 'plank_w_in'); bind('#plankl', 'plank_l_in'); bind('#boxsqft', 'box_sqft'); bind('#waste', 'waste_pct'); bind('#doorways', 'doorways'); bind('#house', 'house_edge')
   document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
     cfg.mode = b.dataset.v
@@ -316,11 +315,12 @@ const initUI = () => {
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
+    if (!out) return
+    const csv = bomCsv(out.bom, price)
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'floor-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `floor-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'floor-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { if (!out) return; ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `floor-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'floor-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
@@ -370,9 +370,10 @@ function maybePlanBanner() {
   const side = document.querySelector('#side'); if (!side) return
   const b = document.createElement('button')
   b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--acc2);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
-  b.textContent = '🏠 Use my house plan (' + (+plan.area_ft2 || 0).toFixed(0) + ' ft²)'
+  const net = +plan.net_area || 0
+  b.textContent = '🏠 Use my house plan (' + (+plan.area_ft2 || 0).toFixed(0) + ' ft² footprint)'
   side.insertBefore(b, side.firstChild)
-  b.onclick = () => { applyPoly(plan.polygon); b.textContent = '✓ Using your house plan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+  b.onclick = () => { applyPoly(plan.polygon); b.textContent = net ? `✓ Using the house footprint. Your rooms total ${net.toFixed(0)} ft² net, so trim this to the rooms you are actually flooring.` : '✓ Using your house plan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
 }
 maybeScanBanner()
 maybePlanBanner()

@@ -4,11 +4,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, studBom, studSpec, toCents } from '../floor/est-math.js'
 const LS = 'amniframe.cfg.v1', LSP = 'amniframe.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, wall_height_ft: 8, spacing: 16, stud_size: '2x4', doors: 2, windows: 6, door_w: 3, window_w: 3, double_top_plate: true, sheathing: true, house_edge: 0 }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], stud_size: ['2x4', '2x6'], spacing: ['16', '24', '12', '19.2'] })
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = (() => { try { return Object.fromEntries(Object.entries(JSON.parse(localStorage.getItem(LSP)) || {}).map(([k, v]) => [k, parsePrice(v)]).filter(([, v]) => v != null)) } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { '2x4': ['#e0c187', '2x4 stud'], '2x6': ['#caa46a', '2x6 stud'] }
@@ -148,37 +149,35 @@ const renderGuide = () => {
     ['✅ Fire-block + inspection', ['Fire-block stud bays at 10 ft max and at every floor/ceiling line.', 'Pass rough plumbing/electrical/mechanical FIRST, then call the framing inspection.', 'Nothing gets covered (insulation/drywall) until framing passes.']],
   ]
   const tools = ['Framing nailer + compressor (or 22 oz framing hammer)', 'Circular saw + sharp blade', 'Speed square + framing square', 'Chalk line', '4-ft level + plumb / post level', 'Tape (25 ft) + pencil', 'Sledge / dead-blow (tip + nudge walls)', 'Pry bar + cat’s paw', 'String line for straightening plates', 'Temp brace stock + screws', 'Ladders + sawhorses']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const cost = priceBom(out.bom, price).th
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro framing sequence for ~<b>${c.wall_length_ft.toFixed(0)} lf of ${cfg.stud_size} wall</b> at ${cfg.wall_height_ft} ft. Tick as you go. Pair with sheets FR-1 (elevation) + FR-2 (details).</div>`
     + chk
     + guideList('🔍 Inspections', ['Rough <b>plumbing / electrical / mechanical</b> must pass before the framing inspection.', 'Framing inspection covers: nailing, headers, straps/hold-downs, fire-blocking, bracing.', 'Keep the stamped plans + a tape on site — the inspector spot-checks dimensions.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in lumber + hardware (Home Depot catalog) — edit prices on the Materials tab. Labor for framing typically adds $4-9/ft² of wall.</div></div>`
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in lumber + hardware (Home Depot catalog) — edit prices on the Materials tab. Hired framing labor typically adds $2–$4 per ft² of footprint (see the Materials tab).</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
-const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
+const price = (id, store) => priceEdits[`${id}.${store}`] ?? (catalog[id]?.[store] == null ? null : /^stud6?$/.test(id) ? toCents(catalog[id][store] * studSpec(+cfg.wall_height_ft).f) / 100 : catalog[id][store])
 const renderMat = () => {
   if (!out) return
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.studs}`, 'studs'], [`${c.plate_boards}`, 'plate boards'], [`${c.sheathing_sheets}`, 'OSB 4x8'], [`${c.wall_length_ft.toFixed(0)} lf`, 'wall'], [`${c.openings}`, 'openings']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
+  const pb = priceBom(out.bom, price), th = pb.th, tl = pb.tl
+  const rows = pb.rows.map(({ it, ph, pl, lh, ll }) => {
     const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
     const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
+    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${lh != null ? money(lh) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${ll != null ? money(ll) : '—'}</td></tr>`
   }).join('')
   const fa = (() => { const p = polyOf(cfg); return Math.abs(p.reduce((s, q, i) => { const r = p[(i + 1) % p.length]; return s + (q[0] * r[1] - r[0] * q[1]) }, 0)) / 2 })()
-  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${th.toFixed(0)}</b> + typical framing labor <b>$${(fa * 2).toFixed(0)}–$${(fa * 4).toFixed(0)}</b> (${fa.toFixed(0)} ft² × $2–$4/ft²) = <b style="color:var(--ok)">$${(th + fa * 2).toFixed(0)}–$${(th + fa * 4).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>${allIn}`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>${money(th, 0)}</b> + typical framing labor <b>${money((fa * 2), 0)}–${money((fa * 4), 0)}</b> (${fa.toFixed(0)} ft² × $2–$4/ft²) = <b style="color:var(--ok)">${money((th + fa * 2), 0)}–${money((th + fa * 4), 0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">${money(th)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">${money(tl)}</td></tr>${allIn}`
+  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parsePrice(i.value); v == null ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
   const filled = []
   const norm = text.toLowerCase()
-  for (const it of out.bom) {
+  for (const it of out ? out.bom : []) {
     const c = catalog[it.id]
     if (!c) continue
     const toks = (store === 'hd' ? c.hdq : c.lq).toLowerCase().split(/\s+/).filter(t => t.length > 1)
@@ -217,8 +216,9 @@ const fitCam = () => {
   cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  try { out = callCore(cfg) } catch (e) { out = { error: e.message } }
+  if (out.error) { const msg = coreError(out.error); out = null; $('#warns').innerHTML = `<div class="warn">${msg}</div>`; $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = `<tr><td style="color:var(--warn)">No estimate yet. ${msg}</td></tr>`; return }
+  out.bom = studBom(out.bom, cfg.wall_height_ft)
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
@@ -298,7 +298,7 @@ $('#tuse').onclick = async () => {
   cfg.house_edge = +sel.value
   siteSnap = { ...(window.__siteMapOn && MV ? await mapPlanSnapshot(MV, tc.width, tc.height, T.poly, T.pxPerFt) : cropForPlan(T.img || tc, tc.width, tc.height, T.poly, T.pxPerFt)), address: window.__siteMapOn ? (window.__siteAddr || '') : '', northUp: !!window.__siteMapOn }
   recompute()
-  tStatus(`Outline applied: ${out && out.calc ? out.calc.area_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
+  tStatus(`Outline applied: ${out && out.calc ? out.calc.footprint_ft2.toFixed(0) : '?'} ft². 3D has your imagery as the ground — and a SITE PLAN was added to 2D Plans for the permit packet.`)
 }
 const buildFinishes = () => {
   const sw = $('#finishes'); sw.innerHTML = ''
@@ -312,7 +312,7 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
+  const bind = (id, key, num = true) => { const el = $(id); num && el.type === 'number' && (cfg[key] = fitNum(cfg[key], el, defCfg[key])); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? el.type === 'number' ? fitNum(el.value, el, cfg[key]) : +el.value : el.value; el.value = cfg[key]; recompute() } }
   bind('#w', 'w'); bind('#d', 'd'); bind('#height', 'wall_height_ft'); bind('#spacing', 'spacing', false); bind('#doors', 'doors'); bind('#windows', 'windows'); bind('#doorw', 'door_w'); bind('#windoww', 'window_w'); bind('#house', 'house_edge')
   $('#dbltop').checked = !!cfg.double_top_plate
   $('#dbltop').onchange = e => { cfg.double_top_plate = e.target.checked; recompute() }
@@ -338,11 +338,12 @@ const initUI = () => {
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
+    if (!out) return
+    const csv = bomCsv(out.bom, price)
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'frame-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `frame-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'frame-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { if (!out) return; ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `frame-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'frame-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
