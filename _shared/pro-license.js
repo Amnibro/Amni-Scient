@@ -26,8 +26,9 @@
     if (signatureOk && ent && ent.product === 'construct-pro' && Number.isFinite(ent.exp) && typeof ent.status === 'string') {
       if (now < ent.exp) return { ok: true, kind: recheckFailed ? 'offline' : 'pro' }
     }
-    if (ps && Number.isFinite(ps.trialStart) && now >= ps.trialStart && now < ps.trialStart + TRIAL_MS) {
-      return { ok: true, kind: 'trial', days: Math.max(0, Math.ceil((ps.trialStart + TRIAL_MS - now) / 864e5)) }
+    const t = ps && Number.isFinite(ps.seen) ? Math.max(now, Math.min(ps.seen, ps.trialStart + TRIAL_MS)) : now
+    if (ps && Number.isFinite(ps.trialStart) && t >= ps.trialStart && t < ps.trialStart + TRIAL_MS) {
+      return { ok: true, kind: 'trial', days: Math.max(1, Math.ceil((ps.trialStart + TRIAL_MS - t) / 864e5)) }
     }
     return { ok: false, kind: 'locked', days: 0 }
   }

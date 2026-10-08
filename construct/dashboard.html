@@ -34,7 +34,7 @@ h1{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.01em}
 .btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
 .btn.sm{min-height:36px;padding:0 12px;font-size:13px;box-shadow:none}
 .btn.del{color:var(--bad);min-width:36px;padding:0 10px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:8px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
 .tile .n{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
 .tile .l{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
@@ -66,7 +66,7 @@ select.st-sent{color:var(--sent)}select.st-accepted{color:var(--ok)}select.st-de
 .gate .actions{justify-content:center;margin-top:18px}
 .note{color:var(--mut);font-size:13px;margin-top:28px;line-height:1.6}
 .soon{font-size:13.5px;color:var(--mut);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:14px}
-@media(max-width:720px){.hbar{padding:6px 12px}.nav a,.nav button{padding:0 9px}.wrap{padding:18px 16px 40px}h1{font-size:22px}
+@media(max-width:720px){.tile{padding:12px}.tile .n{font-size:19px}.hbar{padding:6px 12px}.nav a,.nav button{padding:0 9px}.wrap{padding:18px 16px 40px}h1{font-size:22px}
 .stack thead{display:none}.stack,.stack tbody,.stack tr,.stack td{display:block;width:100%}.stack tr{padding:10px 14px;border-bottom:1px solid var(--line)}.stack tr:last-child{border-bottom:0}.stack td{border:0;padding:3px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right}.stack td::before{content:attr(data-l);color:var(--mut);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-align:left}.stack td.r{white-space:normal}.stack td.first{font-weight:700;font-size:15px}.stack td.first::before{display:none}.actions .btn{flex:1}}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
@@ -75,7 +75,7 @@ select.st-sent{color:var(--sent)}select.st-accepted{color:var(--ok)}select.st-de
 <body>
 <header><div class="hbar"><a class="brand" href="./">💼 <span>Construct Pro</span></a><span class="sp"></span><nav class="nav" aria-label="Dashboard"><a href="./">Estimators</a><a href="pro.html">Pricing</a><a href="mailto:amnibro7@gmail.com?subject=Amni-Construct%20suggestion">Feedback</a><button type="button" id="theme" aria-label="Switch colour theme">Dark</button></nav></div></header>
 <main class="wrap">
-<div class="title"><div><h1 id="h1">Dashboard</h1><span class="chip" id="chip" hidden></span></div><div class="actions"><button type="button" class="btn" id="exp">⬇ Export backup</button><button type="button" class="btn" id="imp">⬆ Restore from backup</button></div></div>
+<div class="title"><div><h1 id="h1">Dashboard</h1><span class="chip" id="chip" hidden></span></div><div class="actions"><button type="button" class="btn" id="exp">⬇ Export backup</button><button type="button" class="btn" id="imp">⬆ Restore backup</button></div></div>
 <input type="file" id="impf" accept="application/json,.json" hidden>
 <section id="gate" class="gate" hidden></section>
 <section id="app" hidden>
@@ -124,6 +124,7 @@ const openProject=p=>{if(!MOD[p.mod]||!isObj(p.data))return;const same=Object.ke
 const render=()=>{
 const qs=g(QK),pj=g(PJ),cl=g(CK),sum=s=>qs.filter(q=>q.status===s).reduce((a,q)=>a+(+q.total||0),0),cnt=s=>qs.filter(q=>q.status===s).length,decided=cnt('accepted')+cnt('declined')
 $('start').innerHTML=qs.length||pj.length||cl.length?'':`<div class="start"><h2>Get your first quote out</h2><p>Three steps, about five minutes. Your quotes, clients and saved jobs collect here.</p><ol class="steps"><li><b>1</b><span>Open an estimator and size the job. The materials list prices itself.</span></li><li><b>2</b><span>Tap 💼 Pro. Add your company, logo and licence # once.</span></li><li><b>3</b><span>Add labor and markup, then generate the branded quote. It lands here as a draft.</span></li></ol>${trades()}</div>`
+$('tiles').hidden=!(qs.length||pj.length||cl.length)
 $('tiles').innerHTML=`<div class="tile"><div class="n">${money(sum('sent'))}</div><div class="l">Out for signature</div><div class="s">${cnt('sent')} quote${cnt('sent')===1?'':'s'} sent</div></div><div class="tile"><div class="n">${money(sum('accepted'))}</div><div class="l">Won</div><div class="s">${cnt('accepted')} accepted${decided?` · ${Math.round(cnt('accepted')/decided*100)}% win rate`:''}</div></div><div class="tile"><div class="n">${cnt('draft')}</div><div class="l">Drafts</div><div class="s">${qs.length} quote${qs.length===1?'':'s'} in total</div></div><div class="tile"><div class="n">${cl.length}</div><div class="l">Clients</div><div class="s">${pj.length} saved project${pj.length===1?'':'s'}</div></div>`
 $('quotes').innerHTML=qs.length?`<div class="card"><table class="stack"><thead><tr><th>Quote #</th><th>Date</th><th>Trade</th><th>Client</th><th>Status</th><th class="r">Total</th><th></th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td class="first mono">${esc(q.qn)}</td><td data-l="Date">${new Date(+q.ts||0).toLocaleDateString()}</td><td data-l="Trade"><span class="tag">${esc(MOD[q.mod]||q.mod)}</span></td><td data-l="Client">${esc(q.client)||'—'}</td><td data-l="Status"><select data-qi="${i}" class="st-${esc(q.status)}" aria-label="Status of ${esc(q.qn)}">${STATUSES.map(s=>`<option value="${s}"${s===q.status?' selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select></td><td class="r" data-l="Total"><b>${money(q.total)}</b></td><td class="r" data-l=""><button type="button" class="btn sm del" data-qdel="${i}" aria-label="Delete quote ${esc(q.qn)}">✕</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No quotes yet. In any estimator, tap 💼 Pro and generate a branded quote. It shows up here as a draft so you can track it.</div>'
 $('projects').innerHTML=pj.length?`<div class="card"><table class="stack"><thead><tr><th>Project</th><th>Trade</th><th>Client</th><th>Saved</th><th></th></tr></thead><tbody>${pj.map((p,i)=>`<tr><td class="first">${esc(p.name)}</td><td data-l="Trade"><span class="tag">${esc(MOD[p.mod]||p.mod)}</span></td><td data-l="Client">${esc(p.client)||'—'}</td><td data-l="Saved">${new Date(+p.ts||0).toLocaleDateString()}</td><td class="r" data-l=""><button type="button" class="btn sm" data-popen="${i}">Open</button> <button type="button" class="btn sm del" data-pdel="${i}" aria-label="Delete project ${esc(p.name)}">✕</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No saved projects. In the 💼 Pro panel, “Save design + quote as a project” keeps each job separate.</div>'

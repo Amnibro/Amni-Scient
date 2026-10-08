@@ -57,8 +57,8 @@ test('FAQPage JSON-LD matches the visible questions', () => {
 test('claim page uses the in-app copy and has no analytics', () => {
   assert.match(claim, /You're in\. Here's your key\./)
   assert.match(claim, /I have a key/)
-  assert.match(claim, /Stripe hasn't confirmed the payment yet/)
-  assert.match(claim, /I can't find a paid checkout/)
+  assert.match(claim, /Checking the payment with Stripe/)
+  assert.match(claim, /I can't match this checkout to a paid order/)
   assert.equal(claim.includes('googletagmanager') || claim.includes('gtag('), false)
   assert.match(claim, /noindex/)
 })

@@ -65,7 +65,7 @@ test('WebCrypto and the tweetnacl fallback agree, and a flipped signature fails'
   assert.equal(await verifyEntitlement(ent, sig, jwk, key), true)
   assert.equal(await verifyEntitlement(ent, sig, jwk, key, { forceNacl: true, nacl }), true)
   assert.equal(await verifyEntitlement(ent, sig, jwk, 'AMNI-PRO-99999-99999'), false)
-  const bad = sig.slice(0, -1) + (sig.endsWith('A') ? 'B' : 'A')
+  const bad = sig.slice(0, 10) + (sig[10] === 'A' ? 'B' : 'A') + sig.slice(11)
   assert.equal(await verifyEntitlement(ent, bad, jwk, key), false)
 })
 
