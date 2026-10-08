@@ -1,0 +1,5 @@
+import { setDB } from './parts.js';
+import { optimize, paretoCheck } from './optimize.js';
+import { optimizePlacement } from './place.js';
+const ready = fetch(new URL('../data/parts.json', import.meta.url)).then(r => r.json()).then(setDB);
+self.onmessage = async e => { await ready; const { id, kind, d, opts } = e.data; try { const out = kind === 'check' ? paretoCheck(d, opts) : kind === 'place' ? optimizePlacement(d, opts) : (o => { if (!opts || opts.place === false) return o; self.postMessage({ id, progress: { gen: o.gens, gens: o.gens, evals: o.evals, feasible: 0, stage: 'placement' } }); const pl = optimizePlacement(o.best, {}); return { ...o, best: pl.d, placement: { applied: pl.applied, before: pl.before, after: pl.after } }; })(optimize(d, { ...opts, onProgress: p => self.postMessage({ id, progress: p }) })); kind === 'opt' && delete out.res; self.postMessage({ id, done: JSON.parse(JSON.stringify(out)) }); } catch (err) { self.postMessage({ id, error: String(err && err.stack || err) }); } };
