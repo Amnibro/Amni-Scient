@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError } from './est-math.js'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError } from '../_shared/est-math.js?v=e1'
 const LS = 'amnifloor.cfg.v1', LSP = 'amnifloor.prices.v1'
 const defCfg = { mode: 'rect', w: 12, d: 12, polygon: null, material: 'lvp', pattern: 'straight', plank_w_in: 6, plank_l_in: 48, box_sqft: 24, waste_pct: 0, doorways: 2 }
 let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], material: ['lvp', 'laminate', 'hardwood', 'tile', 'carpet'], pattern: ['straight', 'brick', 'diagonal', 'herringbone'] })

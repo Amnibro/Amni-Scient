@@ -5,7 +5,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=127'
-import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPatio } from '../deck/estimate-math.js?v=1'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPatio } from '../_shared/est-math.js?v=e1'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
 const okPoly = p => Array.isArray(p) && p.length >= 3 && p.every(q => Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1]))

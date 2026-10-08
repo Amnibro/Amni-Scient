@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixGarden } from '../deck/estimate-math.js?v=1'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixGarden } from '../_shared/est-math.js?v=e1'
 const LS = 'amnigarden.cfg.v1', LSP = 'amnigarden.prices.v1'
 const defCfg = { soil_depth_in: 10, beds: [
   { name: 'Tomatoes', plant: 'tomato', w_ft: 4, l_ft: 8, spacing_in: 0 },

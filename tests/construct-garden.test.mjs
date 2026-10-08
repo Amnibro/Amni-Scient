@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { loadCore, catalog, priceOf } from './construct-deck-wasm.mjs'
-import { fixGarden, totals, halfUp, DIRECT_SOW } from '../deck/estimate-math.js'
+import { fixGarden, totals, halfUp, DIRECT_SOW } from '../_shared/est-math.js'
 const build = await loadCore('garden'), price = priceOf(catalog('garden'))
 const bed = (plant, w = 4, l = 8) => ({ name: plant, plant, w_ft: w, l_ft: l, spacing_in: 0 })
 const run = (beds, soil_depth_in = 10) => fixGarden(build({ beds, soil_depth_in, issue_date: '2026-10-07' }))

@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { loadCore, catalog, priceOf } from './construct-deck-wasm.mjs'
-import { money, cents, parsePrice, clampNum, lineTotal, totals, materialsCSV, sanitizeDeck, localize, missNote } from '../deck/estimate-math.js'
+import { money, cents, parsePrice, clampNum, lineTotal, totals, materialsCSV, sanitizeDeck, localize, missNote } from '../_shared/est-math.js'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'footing', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const build = await loadCore('deck'), cat = catalog('deck'), price = priceOf(cat)
 const run = c => build({ ...c, polygon: c.mode === 'poly' ? c.polygon : [], house_edge: c.house_edge ?? -1, issue_date: '2026-10-07' })

@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, rectHip } from '../floor/est-math.js'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, rectHip } from '../_shared/est-math.js?v=e1'
 const LS = 'amniroof.cfg.v1', LSP = 'amniroof.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, pitch: 6, material: 'arch', roof_type: 'gable', overhang_in: 12, house_edge: 0 }
 let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], material: ['arch', '3tab', 'metal', 'synthetic'], roof_type: ['gable', 'hip'] })

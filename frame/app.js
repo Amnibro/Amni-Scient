@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, studBom, studSpec, toCents } from '../floor/est-math.js'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, studBom, studSpec, cents } from '../_shared/est-math.js?v=e1'
 const LS = 'amniframe.cfg.v1', LSP = 'amniframe.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, wall_height_ft: 8, spacing: 16, stud_size: '2x4', doors: 2, windows: 6, door_w: 3, window_w: 3, double_top_plate: true, sheathing: true, house_edge: 0 }
 let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], stud_size: ['2x4', '2x6'], spacing: ['16', '24', '12', '19.2'] })
@@ -158,7 +158,7 @@ const renderGuide = () => {
     + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in lumber + hardware (Home Depot catalog) — edit prices on the Materials tab. Hired framing labor typically adds $2–$4 per ft² of footprint (see the Materials tab).</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
-const price = (id, store) => priceEdits[`${id}.${store}`] ?? (catalog[id]?.[store] == null ? null : /^stud6?$/.test(id) ? toCents(catalog[id][store] * studSpec(+cfg.wall_height_ft).f) / 100 : catalog[id][store])
+const price = (id, store) => priceEdits[`${id}.${store}`] ?? (catalog[id]?.[store] == null ? null : /^stud6?$/.test(id) ? cents(catalog[id][store] * studSpec(+cfg.wall_height_ft).f) / 100 : catalog[id][store])
 const renderMat = () => {
   if (!out) return
   const c = out.calc

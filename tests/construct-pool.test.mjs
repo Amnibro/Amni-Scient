@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { loadCore, catalog, priceOf, rect } from './construct-deck-wasm.mjs'
-import { fixPool, totals } from '../deck/estimate-math.js'
+import { fixPool, totals } from '../_shared/est-math.js'
 const build = await loadCore('pool'), price = priceOf(catalog('pool'))
 const base = { polygon: rect(16, 32), shallow_in: 36, deep_in: 72, kind: 'inground', finish: 'liner', heater: false, temp_rise: 20, house_edge: 0, issue_date: '2026-10-07' }
 const run = x => { const c = { ...base, ...x }; return fixPool(build(c), c.kind) }

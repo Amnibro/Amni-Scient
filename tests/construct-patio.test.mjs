@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { loadCore, catalog, priceOf, rect } from './construct-deck-wasm.mjs'
-import { fixPatio, totals, lineTotal, materialsCSV } from '../deck/estimate-math.js'
+import { fixPatio, totals, lineTotal, materialsCSV } from '../_shared/est-math.js'
 const build = await loadCore('patio'), cat = catalog('patio'), price = priceOf(cat)
 const base = { polygon: rect(14, 12), thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false, issue_date: '2026-10-07' }
 const run = x => fixPatio(build({ ...base, ...x }))

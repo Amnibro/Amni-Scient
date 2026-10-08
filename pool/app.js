@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPool } from '../deck/estimate-math.js?v=1'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPool } from '../_shared/est-math.js?v=e1'
 const LS = 'amnipool.cfg.v1', LSP = 'amnipool.prices.v1'
 const defCfg = { mode: 'rect', w: 16, d: 32, polygon: null, shallow_in: 36, deep_in: 72, kind: 'inground', finish: 'liner', heater: false, temp_rise: 20, house_edge: 0 }
 const okPoly = p => Array.isArray(p) && p.length >= 3 && p.every(q => Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1]))

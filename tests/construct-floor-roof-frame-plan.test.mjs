@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { money, parsePrice, priceBom, bomCsv, csv, fitNum, sanitizeCfg, coreError, hvacSize, studSpec, studBom, sanitizeRooms, escXml, unXml, toCents, rectHip } from '../floor/est-math.js'
+import { money, parsePrice, priceBom, bomCsv, csv, fitNum, sanitizeCfg, coreError, hvacSize, studSpec, studBom, sanitizeRooms, escXml, unXml, cents, rectHip } from '../_shared/est-math.js'
 const root = fileURLToPath(new URL('..', import.meta.url))
 const core = async t => { const { instance } = await WebAssembly.instantiate(readFileSync(`${root}${t}/${t}_core.wasm`), {}), { alloc, dealloc, build, memory } = instance.exports; return o => { const b = new TextEncoder().encode(JSON.stringify({ issue_date: '2026-10-07', ...o })), p = alloc(b.length); new Uint8Array(memory.buffer, p, b.length).set(b); const rp = build(p, b.length), len = new DataView(memory.buffer).getUint32(rp, true), r = JSON.parse(new TextDecoder().decode(new Uint8Array(memory.buffer, rp + 4, len))); dealloc(p, b.length); dealloc(rp, len + 4); return r } }
 const rect = (w, d) => [[0, 0], [w, 0], [w, d], [0, d]]
@@ -13,7 +13,7 @@ test('money shows thousands separators and cents', () => {
   assert.equal(money(1234567.891), '$1,234,567.89')
   assert.equal(money(4599.5, 0), '$4,600')
   assert.equal(money(1.005), '$1.01')
-  assert.equal(money(NaN), '$0.00')
+  assert.equal(money(NaN), '—')
 })
 test('typed prices keep commas and dollar signs instead of collapsing to the first digit', () => {
   assert.equal(parseFloat('1,299.00'), 1)
@@ -27,7 +27,7 @@ test('typed prices keep commas and dollar signs instead of collapsing to the fir
 test('totals are the sum of the rounded line totals shown', () => {
   const bom = [{ id: 'a', qty: 3 }, { id: 'b', qty: 7 }, { id: 'c', qty: 1 }], p = { a: 0.335, b: 1.115, c: null }
   const r = priceBom(bom, id => p[id])
-  assert.equal(r.th, r.rows.reduce((s, x) => s + toCents(x.lh ?? 0), 0) / 100)
+  assert.equal(r.th, r.rows.reduce((s, x) => s + cents(x.lh ?? 0), 0) / 100)
   assert.equal(r.rows[2].lh, null)
   assert.equal(money(r.th), '$8.82')
   assert.equal((1.115 * 7).toFixed(2), '7.80')
@@ -73,7 +73,7 @@ test('roof: 40x30 gable at 6:12 prices to the cent with separators', async () =>
   assert.ok(Math.abs(r.calc.slope_factor - Math.hypot(12, 6) / 12) < 1e-6)
   assert.ok(r.calc.bundles >= Math.ceil(r.calc.squares * 3))
   const pb = priceBom(r.bom, (id, s) => c[id]?.[s] ?? null)
-  assert.equal(pb.th, r.bom.reduce((s, it) => s + toCents(c[it.id].hd * it.qty), 0) / 100)
+  assert.equal(pb.th, r.bom.reduce((s, it) => s + cents(c[it.id].hd * it.qty), 0) / 100)
   assert.match(money(pb.th), /^\$\d{1,3}(,\d{3})*\.\d{2}$/)
 })
 test('frame: 10 ft walls call for 116-5/8 studs priced above the 8 ft precut', async () => {
