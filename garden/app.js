@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixGarden } from '../deck/estimate-math.js?v=1'
 const LS = 'amnigarden.cfg.v1', LSP = 'amnigarden.prices.v1'
 const defCfg = { soil_depth_in: 10, beds: [
   { name: 'Tomatoes', plant: 'tomato', w_ft: 4, l_ft: 8, spacing_in: 0 },
@@ -10,9 +11,11 @@ const defCfg = { soil_depth_in: 10, beds: [
   { name: 'Carrots & roots', plant: 'carrot', w_ft: 3, l_ft: 6, spacing_in: 0 },
   { name: 'Beans', plant: 'bean', w_ft: 4, l_ft: 8, spacing_in: 0 },
 ] }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const PLANTS = ['tomato', 'pepper', 'lettuce', 'carrot', 'bean', 'cucumber', 'squash', 'kale', 'onion', 'garlic', 'herb', 'strawberry', 'flower']
+const cleanBed = (b, i) => ({ name: String(b?.name ?? `Bed ${i + 1}`).slice(0, 60), plant: PLANTS.includes(b?.plant) ? b.plant : 'tomato', w_ft: clampNum(b?.w_ft, 1, 20, 4), l_ft: clampNum(b?.l_ft, 1, 60, 8), spacing_in: clampNum(b?.spacing_in, 0, 48, 0) })
+let cfg = (() => { const m = readJSON(LS, {}), c = { ...structuredClone(defCfg), ...(isObj(m) ? m : {}) }; c.beds = Array.isArray(c.beds) ? c.beds.filter(isObj).map(cleanBed) : structuredClone(defCfg.beds); c.soil_depth_in = clampNum(c.soil_depth_in, 4, 36, 10); return c })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = loadPrices(LSP)
 let catalog = {}
 const $ = s => document.querySelector(s)
 const wasm = await WebAssembly.instantiateStreaming(fetch('garden_core.wasm?v=1'))
@@ -118,7 +121,7 @@ const renderWarns = () => {
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'PLANT' ? ' info' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
 }
 const G_LS = 'amnigarden.guide.v1'
-let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+let gChk = isObj(readJSON(G_LS, {})) ? readJSON(G_LS, {}) : {}
 const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
 const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
 const renderGuide = () => {
@@ -127,31 +130,30 @@ const renderGuide = () => {
   const phases = [
     ['🧭 Plan + site the beds', ['Pick a spot with 6-8 h of sun, near a water source, on fairly level ground.', 'Lay out your beds here; keep them ≤4 ft wide so you can reach the middle from either side.', 'Raised beds usually need no permit — check setbacks for anything over ~6 ft (sheds/greenhouses) + any HOA rules.']],
     ['🔨 Build the bed frames  (sheet GD-2, detail 1)', ['Cut 2x10 ground-contact (or cedar) boards to length; screw corners with brackets, check square + level.', 'Set on the ground over cardboard or landscape fabric to smother weeds; add a gravel base if drainage is poor.']],
-    ['🪱 Fill + prep the soil', [`Fill ~${c.soil_depth_in.toFixed(0)}" deep with a mix near 60% topsoil / 30% compost / 10% aeration — about ${c.soil_yd3.toFixed(1)} yd³ soil + ${c.compost_yd3.toFixed(1)} yd³ compost.`, 'Water it in and let it settle a day; top up + rake level before planting.']],
+    ['🪱 Fill + prep the soil', [`Fill ~${c.soil_depth_in.toFixed(0)}" deep with about 2/3 topsoil and 1/3 compost: ${c.soil_yd3.toFixed(1)} yd³ of bed, so buy ~${c.soil_buy ?? c.soil_yd3.toFixed(1)} yd³ soil + ${c.compost_buy ?? c.compost_yd3.toFixed(1)} yd³ compost (includes 10% for settling).`, 'Water it in and let it settle a day; top up + rake level before planting.']],
     ['🌱 Plant by spacing  (sheet GD-1 + GD-2, detail 2)', ['Transplant warm crops after your last frost; direct-sow cool crops earlier (see the Garden Notes schedule).', 'Follow the spacing on GD-1; put the tallest plants on the north side so they don’t shade the rest.', 'Add a trellis for tomatoes, cukes, beans + peas.']],
     ['💧 Mulch + water  (sheet GD-2, detail 4)', [`Lay drip lines down each row (~${c.drip_ft.toFixed(0)} ft total) on a timer; water deep + early.`, 'Mulch 2-3" to hold moisture and block weeds.']],
     ['🧺 Tend + harvest', ['Weed weekly, side-dress heavy feeders, and scout for pests early.', 'Succession-sow greens every 2-3 wk; plant fall crops 8-10 wk before first frost; harvest often to keep plants producing.']],
   ]
   const tools = ['Cordless drill + driver bits', 'Circular or hand saw', 'Speed square + tape', 'Level', 'Wheelbarrow', 'Garden rake + hoe', 'Trowel + transplanter', 'Gloves', 'Hose / watering can', 'Drip kit + scissors']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const cost = totals(out.bom || [], price).hd
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A season plan for your <b>${c.bed_count} beds / ${c.total_area.toFixed(0)} ft² / ${c.total_plants} plants</b>. Tick as you go. Pair with sheets GD-1 (layout) + GD-2 (details).</div>`
     + chk
     + guideList('🌤️ Notes', ['Most vegetables need <b>6-8 h of full sun</b> — site beds accordingly.', 'Raised beds usually need <b>no permit</b>; check setbacks + HOA for structures.', 'Drip + mulch cut watering dramatically; water deeply, not daily.', 'Rotate plant families each year + feed heavy feeders (tomatoes, squash, corn).'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in lumber, soil, compost + drip (Home Depot catalog) — edit prices on the Materials tab. Seedlings + seed are extra.</div></div>`
-  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in lumber, soil, compost + drip (Home Depot catalog) — edit prices on the Materials tab. Seedlings + seed are extra.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; writeJSON(G_LS, gChk); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
   if (!out) return
   const c = out.calc
-  $('#mat-summary').innerHTML = [[`${c.bed_count}`, 'beds'], [`${c.total_area.toFixed(0)} ft²`, 'growing'], [`${c.total_plants}`, 'plants'], [`${c.soil_yd3.toFixed(1)} yd³`, 'soil'], [`${c.drip_ft.toFixed(0)} lf`, 'drip']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  const tot = store => out.bom.reduce((s, it) => { const p = price(it.id, store); return s + (p != null ? p * it.qty : 0) }, 0)
-  const row = it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}" placeholder="—"></td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}" placeholder="—"></td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>` }
-  const th = tot('hd'), tl = tot('lowes')
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD each</th><th>HD total</th><th>Lowes each</th><th>Lowes total</th></tr>` + out.bom.map(row).join('') + `<tr><td colspan="3" class="tot">Total</td><td class="tot ${th && (!tl || th <= tl) ? 'best' : ''}">${th ? '$' + th.toFixed(0) : '—'}</td><td></td><td class="tot ${tl && (!th || tl < th) ? 'best' : ''}">${tl ? '$' + tl.toFixed(0) : '—'}</td></tr>`
-  $('#mat-table').querySelectorAll('input[data-id]').forEach(el => el.onchange = () => { const v = parseFloat(el.value); const key = `${el.dataset.id}.${el.dataset.store}`; if (v > 0) priceEdits[key] = v; else delete priceEdits[key]; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  $('#mat-summary').innerHTML = [[`${c.bed_count}`, 'beds'], [`${c.total_area.toFixed(0)} ft²`, 'growing'], [`${c.total_plants}`, 'plants'], [`${c.soil_yd3.toFixed(1)} yd³`, 'bed fill'], [`${c.drip_ft.toFixed(0)} lf`, 'drip']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
+  const t = totals(out.bom, price)
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD each</th><th>HD total</th><th>Lowes each</th><th>Lowes total</th></tr>${out.bom.map(it => priceRow(it, price, catalog[it.id])).join('')}${totRow('Total', t)}`
+  $('#mat-summary').insertAdjacentHTML('beforeend', missNote(t))
+  bindPrices($('#mat-table'), priceEdits, () => writeJSON(LSP, priceEdits), renderMat)
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -171,11 +173,10 @@ const parsePaste = (text, store) => {
     }
     if (best) { priceEdits[`${it.id}.${store}`] = best.p; filled.push(it.id) }
   }
-  localStorage.setItem(LSP, JSON.stringify(priceEdits))
+  writeJSON(LSP, priceEdits)
   return filled
 }
-const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
-const PLANTS = ['tomato', 'pepper', 'lettuce', 'carrot', 'bean', 'cucumber', 'squash', 'kale', 'onion', 'garlic', 'herb', 'strawberry', 'flower']
+const persist = () => writeJSON(LS, cfg)
 const fld = 'background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:3px 6px'
 const renderBedList = () => {
   const wrap = $('#bedlist'); if (!wrap) return
@@ -195,14 +196,14 @@ const renderBedList = () => {
         <span style="color:var(--mut);font-size:11px">in</span>
       </div>`
     div.querySelector('select').value = bd.plant
-    div.querySelectorAll('[data-k]').forEach(el => el.onchange = () => { const k = el.dataset.k; bd[k] = (k === 'name' || k === 'plant') ? el.value : (parseFloat(el.value) || 0); persist(); recompute() })
+    div.querySelectorAll('[data-k]').forEach(el => el.onchange = () => { const k = el.dataset.k; bd[k] = (k === 'name' || k === 'plant') ? el.value : clampNum(el.value, k === 'spacing_in' ? 0 : 1, k === 'w_ft' ? 20 : k === 'l_ft' ? 60 : 48, bd[k]); k !== 'name' && k !== 'plant' && (el.value = k === 'spacing_in' && !bd[k] ? '' : bd[k]); persist(); recompute() })
     div.querySelector('.rm').onclick = () => { cfg.beds.splice(i, 1); renderBedList(); persist(); recompute() }
     wrap.appendChild(div)
   })
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; persist(); return }
+  out = fixGarden(callCore(cfg))
+  if (out.error) { $('#warns').innerHTML = `<div class="warn">⚠ ${out.error}</div>`; $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = `<tr><td style="color:var(--mut)">${cfg.beds.length ? 'Fix the bed sizes on the left and the materials list comes back.' : 'No beds yet. Tap “+ Add bed” on the left to start the materials list.'}</td></tr>`; persist(); return }
   persist(); rebuild3D()
   const fw = out.calc.footprint_w, fd = out.calc.footprint_d, s = Math.max(fw, fd, 12)
   controls.target.set(fw / 2, 0, -fd / 2)
@@ -210,9 +211,9 @@ const recompute = () => {
   renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 const initUI = () => {
-  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = +el.value; persist(); recompute() } }
+  const bind = (id, key, min, max) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = clampNum(el.value, min, max, cfg[key]); el.value = cfg[key]; persist(); recompute() } }
   renderBedList()
-  bind('#soil-depth', 'soil_depth_in')
+  bind('#soil-depth', 'soil_depth_in', 4, 36)
   $('#addbed').onclick = () => { cfg.beds.push({ name: 'Bed ' + (cfg.beds.length + 1), plant: 'tomato', w_ft: 4, l_ft: 8, spacing_in: 0 }); renderBedList(); persist(); recompute() }
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t))
@@ -222,11 +223,8 @@ const initUI = () => {
   $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} HD prices` : 'no prices matched — copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} Lowes prices` : 'no prices matched — copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 8).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
-  $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
-  $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
-    Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'garden-beds.csv' }).click()
-  }
+  $('#reset-prices').onclick = () => { priceEdits = {}; try { localStorage.removeItem(LSP) } catch {} renderMat() }
+  $('#export-csv').onclick = () => out && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([materialsCSV(out.bom, price)], { type: 'text/csv;charset=utf-8' })), download: 'garden-beds.csv' }).click()
   $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `garden-${k}.svg` }); a.click() }) }
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }

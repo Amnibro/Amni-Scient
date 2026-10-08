@@ -4,11 +4,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=270'
+import { money, toNum, clampNum, lineTotal, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, sanitizeDeck, localize, loadPrices, bindPrices } from './estimate-math.js?v=1'
 const LS = 'amnideck.cfg.v2', LSP = 'amnideck.prices.v1'
 const defCfg = { length: 12, depth: 8, height: 16, spacing: 16, decking: 'pt', attach: 'ledger', foundation: 'footing', joist: '2x8', fascia: false, skirting: false, stain: 'redwood', house: 'cream', mode: 'rect', polygon: null, house_edge: 0, stairs: [{ side: 'front', width: 48, offset: -1 }], railing: { front: false, left: false, right: false, style: 'wood' }, door: { pos: -1, width: 60, rise: 7, panels: 2, count: 1 } }
 const migrate = c => { const m = !c ? null : (Array.isArray(c.stairs) ? c : { ...c, stain: c.stain || 'redwood', door: c.door || { pos: -1, width: 60, rise: 7 }, stairs: c.stairs?.enabled ? [{ side: c.stairs.side, width: c.stairs.width, offset: c.stairs.offset }] : [] }); return m && m.attach === 'ledger' && (m.foundation === 'pier' || m.foundation === 'deckblock') ? { ...m, foundation: 'footing' } : m }
-let cfg = migrate(JSON.parse(localStorage.getItem(LS) || localStorage.getItem('amnideck.cfg.v1') || 'null')) || structuredClone(defCfg)
-let priceEdits = JSON.parse(localStorage.getItem(LSP) || '{}')
+let cfg = sanitizeDeck(migrate(readJSON(LS, null) || readJSON('amnideck.cfg.v1', null)), defCfg)
+let priceEdits = loadPrices(LSP)
 let catalog = {}, core = null, out = null
 const $ = s => document.querySelector(s)
 const wasmReady = fetch('deck_core.wasm?v=285').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b, {})).then(w => core = w.instance.exports)
@@ -286,32 +287,23 @@ const link = (id, store) => {
   const q = encodeURIComponent(c ? (store === 'hd' ? c.hdq : c.lq) : (out.bom.find(b => b.id === id)?.desc || id))
   return store === 'hd' ? `https://www.homedepot.com/s/${q}` : `https://www.lowes.com/search?searchTerm=${q}`
 }
-const money = x => x == null ? '—' : `$${x.toFixed(2)}`
 const renderMat = (flashIds = []) => {
-  let thd = 0, tlo = 0
+  const t = totals(out.bom, price), thd = t.hd, tlo = t.lowes, best = t.best === 'hd' ? 'Home Depot' : "Lowe's", bt = t[t.best]
   const rows = out.bom.map(it => {
     const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (thd += ph * it.qty)
-    pl != null && (tlo += pl * it.qty)
     const fl = s => flashIds.includes(`${it.id}.${s}`) ? ' class="flash"' : ''
     return `<tr><td>${it.desc}</td><td><b>${it.qty}</b></td>
-      <td><input${fl('hd')} data-id="${it.id}" data-st="hd" value="${ph ?? ''}"></td><td>${money(ph != null ? ph * it.qty : null)}</td><td><a href="${link(it.id, 'hd')}" target="_blank">HD ↗</a></td>
-      <td><input${fl('lowes')} data-id="${it.id}" data-st="lowes" value="${pl ?? ''}"></td><td>${money(pl != null ? pl * it.qty : null)}</td><td><a href="${link(it.id, 'lowes')}" target="_blank">Lowes ↗</a></td></tr>`
+      <td><input${fl('hd')} inputmode="decimal" aria-label="Home Depot price each, ${it.desc}" placeholder="price" data-id="${it.id}" data-st="hd" value="${ph ?? ''}"></td><td>${money(lineTotal(ph, it.qty))}</td><td><a href="${link(it.id, 'hd')}" target="_blank" rel="noopener">HD ↗</a></td>
+      <td><input${fl('lowes')} inputmode="decimal" aria-label="Lowe's price each, ${it.desc}" placeholder="price" data-id="${it.id}" data-st="lowes" value="${pl ?? ''}"></td><td>${money(lineTotal(pl, it.qty))}</td><td><a href="${link(it.id, 'lowes')}" target="_blank" rel="noopener">Lowes ↗</a></td></tr>`
   }).join('')
-  const best = thd <= tlo ? 'Home Depot' : "Lowe's"
-  const A = out.calc.area, allIn = `<tr><td colspan="8" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${thd.toFixed(0)}</b> + typical build labor <b>$${(A * 10).toFixed(0)}–$${(A * 25).toFixed(0)}</b> (${A.toFixed(0)} ft² × $10–$25/ft²) = <b style="color:var(--ok)">$${(thd + A * 10).toFixed(0)}–$${(thd + A * 25).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
+  const A = out.calc.area, allIn = `<tr><td colspan="8" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>${money(bt, 0)}</b> (${best}) + typical build labor <b>${money(A * 10, 0)}–${money(A * 25, 0)}</b> (${A.toFixed(0)} ft² × $10–$25/ft²) = <b style="color:var(--ok)">${money(bt + A * 10, 0)}–${money(bt + A * 25, 0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
   $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $/ea</th><th>HD total</th><th></th><th>Lowes $/ea</th><th>Lowes total</th><th></th></tr>${rows}
-    <tr><td class="tot">TOTAL</td><td></td><td></td><td class="tot ${thd <= tlo ? 'best' : ''}">${money(thd)}</td><td></td><td></td><td class="tot ${tlo < thd ? 'best' : ''}">${money(tlo)}</td><td></td></tr>${allIn}`
-  $('#mat-summary').innerHTML = `<div class="chip"><b>${money(Math.min(thd, tlo))}</b><span>best total (${best})</span></div>
+    <tr><td class="tot">TOTAL</td><td></td><td></td><td class="tot ${t.best === 'hd' ? 'best' : ''}">${money(thd)}</td><td></td><td></td><td class="tot ${t.best === 'lowes' ? 'best' : ''}">${money(tlo)}</td><td></td></tr>${allIn}`
+  $('#mat-summary').innerHTML = `<div class="chip"><b>${money(bt)}</b><span>best total (${best})</span></div>
     <div class="chip"><b>${out.calc.area.toFixed(0)} sq ft</b><span>deck area</span></div>
     <div class="chip"><b>${out.bom.reduce((a, b) => a + b.qty, 0)}</b><span>total pieces</span></div>
-    <div class="chip"><b>${money(Math.abs(thd - tlo))}</b><span>spread between stores</span></div>`
-  document.querySelectorAll('#mat-table input').forEach(inp => inp.onchange = () => {
-    const v = parseFloat(inp.value)
-    isNaN(v) ? delete priceEdits[`${inp.dataset.id}.${inp.dataset.st}`] : priceEdits[`${inp.dataset.id}.${inp.dataset.st}`] = v
-    localStorage.setItem(LSP, JSON.stringify(priceEdits))
-    renderMat()
-  })
+    <div class="chip"><b>${money(Math.abs(thd - tlo))}</b><span>spread between stores</span></div>${missNote(t)}`
+  bindPrices($('#mat-table'), priceEdits, () => writeJSON(LSP, priceEdits), renderMat)
   renderTools()
 }
 const renderCuts = () => {
@@ -348,7 +340,7 @@ const renderTools = () => {
     + `<tr><td class="tot">MUST-HAVE KIT</td><td></td><td class="tot">${money(kit)}</td><td></td></tr>`
 }
 const GUIDE_LS = 'amnideck.guide.v1'
-let guideChecked = JSON.parse(localStorage.getItem(GUIDE_LS) || '{}')
+let guideChecked = isObj(readJSON(GUIDE_LS, {})) ? readJSON(GUIDE_LS, {}) : {}
 const renderGuide = () => {
   const led = cfg.attach === 'ledger', fnd = cfg.foundation || 'footing', comp = cfg.decking === 'comp', cc = out.calc
   const rl = cfg.railing || {}, hasRail = rl.front || rl.left || rl.right || cfg.height > 30
@@ -356,7 +348,7 @@ const renderGuide = () => {
   const beamPly = (cfg.joist || '2x8').replace('2x', '')
   const phases = []
   phases.push(['📋 Before you lift a finger', [
-    'Permit IN HAND first — don\'t dig or buy lumber until the City issues it. Note your inspection schedule (Cohoes wants 48-hr notice).',
+    'Permit IN HAND first — don\'t dig or buy lumber until the building department issues it. Note the inspection schedule and how much notice they want (48 hours is common).',
     'Call 811 (free, dial 8-1-1) 2–3 business days before digging — they mark buried gas/electric/cable. Skipping it is illegal and dangerous.',
     'Open the 2D Plans tab → 🖨️ Print all plans. That sheet set (S-1…S-6) is your bible on site — keep it in a zip bag.',
     'Read your sketches once, end to end, so nothing surprises you mid-build.'
@@ -382,7 +374,7 @@ const renderGuide = () => {
     `At each of the ${nf} spots, clear a ~16×16" pad down to firm soil (that\'s what "16×16" on S-1 means — the pad, not a paver).`,
     'Add ~4" of paver-base gravel, tamp dead flat.',
     'Set a concrete deck pier block (the heavy notched block, NOT a thin paver) on the gravel. Level all blocks to each other.',
-    'Many low decks still get a footing inspection here — confirm with Cohoes before you bury anything.'
+    'Many low decks still get a footing inspection — confirm with your building department before you bury anything.'
   ]])
   if (led) phases.push(['🏠 Ledger board  (sheet S-5 — nail this; water rots houses)', [
     'Snap a level line for the top of the ledger (deck surface sits ~1.5" above the joist top).',
@@ -427,14 +419,14 @@ const renderGuide = () => {
   let grand = 0
   const shop = phaseOrder.filter(p => byPhase[p]).map(p => {
     let sub = 0
-    const rows = byPhase[p].map(it => { const ea = price(it.id, 'hd'), tot = ea != null ? ea * it.qty : null; if (tot != null) sub += tot; return `<li style="justify-content:space-between"><span>${it.desc} ×${it.qty}</span><b style="font-weight:600;color:var(--mut)">${money(tot)}</b></li>` }).join('')
-    grand += sub
+    const rows = byPhase[p].map(it => { const ea = price(it.id, 'hd'), tot = lineTotal(ea, it.qty); if (tot != null) sub = Math.round((sub + tot) * 100) / 100; return `<li style="justify-content:space-between"><span>${it.desc} ×${it.qty}</span><b style="font-weight:600;color:var(--mut)">${money(tot)}</b></li>` }).join('')
+    grand = Math.round((grand + sub) * 100) / 100
     return `<div class="guide-sec"><h2>${p}<span style="float:right;color:var(--ok)">${money(sub)}</span></h2><ul>${rows}</ul></div>`
   }).join('')
   const infoSec = (title, items) => `<div class="guide-sec"><h2>${title}</h2><ul>${items.map(i => `<li style="display:list-item;border:none;padding:3px 0;margin-left:18px;list-style:disc">${i}</li>`).join('')}</ul></div>`
   const gravelBags = out.bom.find(b => b.id === 'gravel-05')?.qty || 0, concBags = out.bom.find(b => b.id === 'concrete-60')?.qty || 0
   let digHtml = ''
-  if (fnd === 'footing') { const cuftPer = Math.PI * (4 / 12) ** 2 * 4; digHtml = infoSec('🏛️ Pier schedule — what the permit office needs', [`<b>${nf} poured concrete piers</b> · <b>8" diameter</b> · <b>48" deep</b> (below the ~48" Cohoes frost line) · ~<b>${nf > 1 ? (cfg.length / (nf - 1)).toFixed(1) : cfg.length}' on-center</b> along the outer beam line. <span style="color:#e0b341">Pier blocks are NOT allowed.</span>`, `Each hole: 48" deep × 8" tube form, 4" gravel in the bottom, galvanized standoff post-base set in the wet top.`, `Concrete per hole: π×(4")²×48" ≈ <b>${cuftPer.toFixed(2)} cu ft</b> ≈ ${(cuftPer / 0.45).toFixed(1)} × 60-lb bags → round to <b>4/hole</b>.`, `Total: <b>${concBags} × 60-lb bags</b> (a 60-lb bag ≈ 0.45 cu ft mixed; a little spare is normal).`, `Gravel base: 4" in each hole bottom — <b>${gravelBags} × 0.5 cu ft</b>.`, `Mix it stiff (not soupy) and rod out air pockets as you fill.`]) }
+  if (fnd === 'footing') { const cuftPer = Math.PI * (4 / 12) ** 2 * 4; digHtml = infoSec('🏛️ Pier schedule — what the permit office needs', [`<b>${nf} poured concrete piers</b> · <b>8" diameter</b> · <b>48" deep</b> (sized for a ~48" frost line; go to your local frost depth if it is deeper) · ~<b>${nf > 1 ? (cfg.length / (nf - 1)).toFixed(1) : cfg.length}' on-center</b> along the outer beam line. <span style="color:#e0b341">Most building departments reject pier blocks for an attached deck.</span>`, `Each hole: 48" deep × 8" tube form, 4" gravel in the bottom, galvanized standoff post-base set in the wet top.`, `Concrete per hole: π×(4")²×48" ≈ <b>${cuftPer.toFixed(2)} cu ft</b> ≈ ${(cuftPer / 0.45).toFixed(1)} × 60-lb bags → round to <b>4/hole</b>.`, `Total: <b>${concBags} × 60-lb bags</b> (a 60-lb bag ≈ 0.45 cu ft mixed; a little spare is normal).`, `Gravel base: 4" in each hole bottom — <b>${gravelBags} × 0.5 cu ft</b>.`, `Mix it stiff (not soupy) and rod out air pockets as you fill.`]) }
   else if (fnd === 'pier') digHtml = infoSec('📏 Dig & gravel math (pier blocks)', [`Pads: <b>${nf}</b> — clear each ~<b>16"×16"</b> down to firm soil.`, `Gravel base: ~4" per pad — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete to mix — the precast block IS the footing. Just level all ${nf} to each other.`])
   else digHtml = infoSec('📏 Dig & gravel math (deck blocks)', [`Blocks: <b>${nf}</b> on ~4" tamped gravel each — <b>${gravelBags} × 0.5 cu ft</b>.`, `No concrete. Dead-level every block — that\'s what keeps the whole frame flat.`])
   const inspSecs = [
@@ -450,7 +442,7 @@ const renderGuide = () => {
     + `<div class="tools-grid">${toolCol('Must-have', must)}${toolCol('Makes life WAY easier (rent/borrow)', easier)}${toolCol('Nice to have', nice)}</div>`
     + `<h3 style="color:var(--acc);text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin:18px 0 10px">🛒 Shopping list by build phase</h3><div class="guide-intro">Buy each phase's pile when you reach it — no giant overwhelming heap up front. Home Depot estimates from the Materials tab; grand total ≈ <b style="color:var(--ok)">${money(grand)}</b>. (Lumber for treads/rails rides under Framing since it's the same boards.)</div>`
     + shop
-  $('#guide-body').querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { guideChecked[el.dataset.gk] = el.checked; localStorage.setItem(GUIDE_LS, JSON.stringify(guideChecked)); el.closest('li').classList.toggle('done', el.checked) })
+  $('#guide-body').querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { guideChecked[el.dataset.gk] = el.checked; writeJSON(GUIDE_LS, guideChecked); el.closest('li').classList.toggle('done', el.checked) })
 }
 const ICONS = { WARN: ['⚠️', 'warn'], OK: ['✅', 'ok'], INFO: ['ℹ️', 'info'], CUT: ['✂️', 'info'], HOUSE: ['🏠', 'info'], FROST: ['🥶', 'warn'], PERMIT: ['📋', 'warn'], FOUNDATION: ['🧱', 'ok'] }
 const SPANS = { '2x6': { 12: 10, 16: 9, 24: 7 }, '2x8': { 12: 13, 16: 12, 24: 10 }, '2x10': { 12: 16, 16: 15, 24: 13 } }
@@ -458,7 +450,7 @@ const renderWarns = () => {
   const base = out.warnings.map(w => {
     const [tag, ...rest] = w.split('|')
     const [icon, cls] = ICONS[tag] || ['•', 'info']
-    return `<div class="warn ${cls}">${icon} ${rest.join('|') || tag}</div>`
+    return `<div class="warn ${cls}">${icon} ${localize(rest.join('|') || tag)}</div>`
   }).join('')
   const allow = (SPANS[cfg.joist] || {})[cfg.spacing], dep = +cfg.depth
   const span = allow ? (dep > allow
@@ -487,15 +479,16 @@ const renderStairList = () => {
       <div class="row"><label>Position (in, -1=center)</label><input type="number" data-k="offset" min="-1" step="1" value="${Math.round(st.offset)}"></div>`
     div.querySelector('select').value = st.side
     div.querySelectorAll('[data-k]').forEach(el => el.onchange = () => {
-      const v = el.dataset.k === 'side' ? el.value : parseFloat(el.value)
-      st[el.dataset.k] = v
+      const k = el.dataset.k
+      st[k] = k === 'side' ? el.value : k === 'width' ? clampNum(el.value, 36, 96, st.width) : clampNum(el.value, -1, 480, st.offset)
+      k !== 'side' && (el.value = k === 'width' ? st.width : Math.round(st.offset))
       recompute()
     })
     div.querySelector('.rm').onclick = () => { cfg.stairs.splice(i, 1); renderStairList(); recompute() }
     wrap.appendChild(div)
   })
 }
-const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
+const persist = () => writeJSON(LS, cfg)
 const recompute = (full = true) => {
   out = callCore(cfg)
   if (out.error) { console.error(out.error); return }
@@ -503,7 +496,7 @@ const recompute = (full = true) => {
   rebuild3D()
   full && (renderPlans(), renderMat(), renderCuts(), renderGuide(), renderWarns(), updatePermits())
   const _fw = document.getElementById('fnd-warn')
-  if (_fw) { const f = cfg.foundation || 'footing'; if (f === 'pier' || f === 'deckblock') { _fw.style.display = 'block'; _fw.innerHTML = '⚠ <b>' + (f === 'pier' ? 'Pier blocks' : 'Floating deck blocks') + ' are not accepted for a permitted deck</b> in many jurisdictions — the City of Cohoes, NY explicitly disallows them. For a permit, switch to <b>Poured concrete piers</b>; the app then sizes them to frost depth and lists the diameter, depth &amp; spacing the inspector needs.' } else { _fw.style.display = 'none' } }
+  if (_fw) { const f = cfg.foundation || 'footing'; if (f === 'pier' || f === 'deckblock') { _fw.style.display = 'block'; _fw.innerHTML = '⚠ <b>' + (f === 'pier' ? 'Pier blocks' : 'Floating deck blocks') + ' are not accepted for a permitted deck</b> in many jurisdictions, especially under a ledger-attached deck. For a permit, switch to <b>Poured concrete piers</b>; the app then sizes them to frost depth and lists the diameter, depth &amp; spacing the inspector needs.' } else { _fw.style.display = 'none' } }
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -530,7 +523,7 @@ const parsePaste = (text, store) => {
   return filled
 }
 const initUI = () => {
-  const bindNum = (id, get, set) => { const el = $(id); el.value = get(); el.oninput = () => { const v = parseFloat(el.value); !isNaN(v) && (set(v), recompute()) } }
+  const bindNum = (id, get, set, min = -Infinity, max = Infinity) => { const el = $(id); el.value = get(); el.oninput = () => { const v = toNum(el.value); Number.isFinite(v) && v >= min && v <= max && (set(v), recompute()) }; el.onchange = () => { set(clampNum(el.value, min, max, get())); el.value = get(); recompute() } }
   const bindSel = (id, get, set) => { const el = $(id); el.value = get(); el.onchange = () => { set(el.value); recompute() } }
   const bindChk = (id, get, set) => { const el = $(id); el.checked = get(); el.onchange = () => { set(el.checked); recompute() } }
   const bindSeg = (id, get, set) => {
@@ -539,9 +532,9 @@ const initUI = () => {
     seg.querySelectorAll('button').forEach(b => b.onclick = () => { set(b.dataset.v); sync(); recompute() })
     sync()
   }
-  bindNum('#length', () => cfg.length, v => cfg.length = Math.max(4, v))
-  bindNum('#depth', () => cfg.depth, v => cfg.depth = Math.max(4, v))
-  bindNum('#height', () => cfg.height, v => cfg.height = Math.max(8, v))
+  bindNum('#length', () => cfg.length, v => cfg.length = v, 4, 40)
+  bindNum('#depth', () => cfg.depth, v => cfg.depth = v, 4, 20)
+  bindNum('#height', () => cfg.height, v => cfg.height = v, 8, 96)
   bindSel('#spacing', () => String(cfg.spacing), v => cfg.spacing = parseFloat(v))
   bindSel('#attach', () => cfg.attach, v => cfg.attach = v)
   bindSel('#foundation', () => cfg.foundation || 'footing', v => cfg.foundation = v)
@@ -568,12 +561,12 @@ const initUI = () => {
   window.__deckApplyMode = applyMode
   document.querySelectorAll('#mode button').forEach(b => b.onclick = () => { cfg.mode = b.dataset.v; applyMode(); recompute() })
   applyMode()
-  bindNum('#dr_pos', () => cfg.door.pos, v => cfg.door.pos = v)
-  bindNum('#dr_w', () => cfg.door.width, v => cfg.door.width = Math.max(30, v))
-  bindNum('#dr_rise', () => cfg.door.rise, v => cfg.door.rise = Math.max(0, v))
-  bindNum('#dr_panels', () => cfg.door.panels || 2, v => cfg.door.panels = Math.max(1, Math.min(4, v)))
-  bindNum('#dr_count', () => cfg.door.count || 1, v => cfg.door.count = Math.max(1, Math.min(3, v)))
-  bindNum('#dr_gap', () => cfg.door.gap || 0, v => cfg.door.gap = Math.max(0, v))
+  bindNum('#dr_pos', () => cfg.door.pos, v => cfg.door.pos = v, -1, 40)
+  bindNum('#dr_w', () => cfg.door.width, v => cfg.door.width = v, 30, 96)
+  bindNum('#dr_rise', () => cfg.door.rise, v => cfg.door.rise = v, 0, 24)
+  bindNum('#dr_panels', () => cfg.door.panels || 2, v => cfg.door.panels = Math.round(v), 1, 4)
+  bindNum('#dr_count', () => cfg.door.count || 1, v => cfg.door.count = Math.round(v), 1, 3)
+  bindNum('#dr_gap', () => cfg.door.gap || 0, v => cfg.door.gap = v, 0, 60)
   bindChk('#rl_f', () => cfg.railing.front, v => cfg.railing.front = v)
   bindChk('#rl_l', () => cfg.railing.left, v => cfg.railing.left = v)
   bindChk('#rl_r', () => cfg.railing.right, v => cfg.railing.right = v)
@@ -605,16 +598,9 @@ const initUI = () => {
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
     if (t.dataset.pane === 'draw') mountDraw()
   })
-  $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
+  $('#reset-prices').onclick = () => { priceEdits = {}; try { localStorage.removeItem(LSP) } catch {} renderMat() }
   $('#print-guide').onclick = () => { const w = window.open('', '_blank'); w.document.write(`<title>Deck Build Guide</title><style>body{font:14px/1.5 system-ui,Segoe UI,sans-serif;padding:26px;max-width:780px;margin:auto;color:#111}h2{font-size:15px;margin:16px 0 4px;color:#b9761a}h3{margin:18px 0 8px}.guide-intro{color:#555;margin-bottom:14px}.guide-sec{break-inside:avoid;margin-bottom:10px}ul{margin:0 0 8px 0}.guide-sec>ul{list-style:none;padding-left:0}.guide-sec>ul li:before{content:"☐  "}.tools-grid ul{list-style:disc;padding-left:20px}li{margin:3px 0}</style>` + $('#guide-body').innerHTML); w.document.close(); w.focus(); setTimeout(() => w.print(), 200) }
-  $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => {
-      const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-      return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}`
-    })].join('\n')
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'deck-materials.csv' })
-    a.click()
-  }
+  $('#export-csv').onclick = () => Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([materialsCSV(out.bom, price)], { type: 'text/csv;charset=utf-8' })), download: 'deck-materials.csv' }).click()
   $('#dl-svg').onclick = () => {
     ;['framing', 'decking', 'elevation', 'stringer', 'ledger', 'connections'].forEach(k => {
       const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `deck-${k}.svg` })
@@ -629,7 +615,7 @@ const initUI = () => {
       const text = await navigator.clipboard.readText()
       if (!text || text.length < 40) { st.textContent = 'clipboard looks empty — copy the store page first (Ctrl+A, Ctrl+C)'; return }
       const filled = parsePaste(text, store)
-      localStorage.setItem(LSP, JSON.stringify(priceEdits))
+      writeJSON(LSP, priceEdits)
       renderMat(filled)
       st.textContent = filled.length ? `matched ${filled.length} price${filled.length > 1 ? 's' : ''} from your paste ✔` : 'no matches in that paste — try the product/cart page with items visible'
     } catch { st.textContent = 'clipboard blocked — click the page first, then retry' }
@@ -637,22 +623,6 @@ const initUI = () => {
   $('#paste-hd').onclick = pasteFor('hd')
   $('#paste-lowes').onclick = pasteFor('lowes')
   $('#open-all-hd').onclick = () => out.bom.slice(0, 12).forEach((it, i) => setTimeout(() => window.open(link(it.id, 'hd'), '_blank'), i * 250))
-  $('#live-prices').onclick = async () => {
-    const st = $('#pstatus')
-    st.textContent = 'trying auto-fetch…'
-    let got = 0
-    for (const it of out.bom) {
-      for (const store of ['hd', 'lowes']) {
-        try {
-          const r = await fetch(`/price?url=${encodeURIComponent(link(it.id, store))}`)
-          if (r.ok) { const j = await r.json(); if (j.price) { priceEdits[`${it.id}.${store}`] = j.price; got++ } }
-        } catch {}
-      }
-    }
-    localStorage.setItem(LSP, JSON.stringify(priceEdits))
-    renderMat()
-    st.textContent = got ? `auto-fetched ${got} prices` : 'stores blocked it (they always do) — use the paste buttons, they work every time'
-  }
 }
 let photoPlane = null
 let MV = null

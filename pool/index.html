@@ -31,6 +31,7 @@ main{flex:1;display:flex;min-height:0}
 .seg button{flex:1;padding:6px 4px;background:var(--bg);color:var(--mut);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:12px}
 .seg button.on{color:#111;background:var(--acc);border-color:var(--acc);font-weight:600}
 .swatches{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}
+#side .swatches{row-gap:22px}
 .sw{width:38px;height:30px;border-radius:7px;border:2px solid var(--line);cursor:pointer;position:relative}
 .sw.on{border-color:var(--acc);box-shadow:0 0 0 2px rgba(143,168,184,.35)}
 .sw span{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--mut);white-space:nowrap}
@@ -132,7 +133,7 @@ td a{color:var(--acc2);text-decoration:none}
     <button class="addbtn" id="loc-detect">📍 Use my location</button>
     <div style="font-size:11px;color:var(--mut);margin:4px 0" id="loc-status"></div>
     <div class="row"><label>State</label><select id="loc-state"></select></div>
-    <div class="row"><label>City / town</label><input type="text" id="loc-city" placeholder="e.g. Troy"></div>
+    <div class="row"><label>City / town</label><input type="text" id="loc-city" placeholder="e.g. Springfield"></div>
     <div id="permit-info" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
     <div id="warns"></div>
   </div>
@@ -177,8 +178,8 @@ td a{color:var(--acc2);text-decoration:none}
     <div class="pane" id="pane-mat">
       <div class="summary" id="mat-summary"></div>
       <div class="pastebox">
-        <h4>📋 Live prices, the way that actually works</h4>
-        <p>Stores block robots — but not you. Open a store link below, press <b>Ctrl+A</b> then <b>Ctrl+C</b> on the store page, come back and click a paste button. Every price found is matched automatically.</p>
+        <h4>📋 Update prices from your store</h4>
+        <p>Catalog prices are mid-2026 estimates. To use your store's prices, open a store link below, select all and copy the page (<b>Ctrl+A</b>, <b>Ctrl+C</b>; on a phone, Select all then Copy), then tap a paste button. Matching prices fill in automatically, and you can type any price into the table. Prices save on this device.</p>
         <button class="btn acc" id="paste-hd">📥 Paste → Home Depot prices</button>
         <button class="btn acc" id="paste-lowes">📥 Paste → Lowe's prices</button>
         <button class="btn" id="open-all-hd">↗ Open all HD links</button>

@@ -5,11 +5,13 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
 import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
 import { initAutoDetect } from './autodetect.js?v=127'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPatio } from '../deck/estimate-math.js?v=1'
 const LS = 'amnipatio.cfg.v1', LSP = 'amnipatio.prices.v1'
 const defCfg = { mode: 'rect', w: 14, d: 12, polygon: null, thickness_in: 4, base_in: 4, reinforce: 'mesh', finish: 'plain', turndown: { enabled: false, depth_in: 12, width_in: 8 }, vehicle: false, joint_max_ft: 0, house_edge: 0, border: false, sleeves: false }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const okPoly = p => Array.isArray(p) && p.length >= 3 && p.every(q => Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1]))
+let cfg = (() => { const m = readJSON(LS, {}), c = { ...structuredClone(defCfg), ...(isObj(m) ? m : {}) }; c.turndown = { ...defCfg.turndown, ...(isObj(c.turndown) ? c.turndown : {}) }; c.w = clampNum(c.w, 4, 60, 14); c.d = clampNum(c.d, 4, 60, 12); c.thickness_in = [4, 5, 6].includes(+c.thickness_in) ? +c.thickness_in : 4; c.base_in = [0, 4, 6].includes(+c.base_in) ? +c.base_in : 4; c.joint_max_ft = clampNum(c.joint_max_ft, 0, 15, 0); c.house_edge = Number.isInteger(+c.house_edge) ? +c.house_edge : 0; c.polygon = okPoly(c.polygon) ? c.polygon : null; c.mode = c.mode === 'poly' && c.polygon ? 'poly' : 'rect'; return c })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = loadPrices(LSP)
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { plain: ['#b9b9b9', 'Broom gray'], smooth: ['#cfcfcf', 'Smooth'], charcoal: ['#6e6e72', 'Charcoal'], terracotta: ['#b46a4a', 'Terracotta'], sandstone: ['#c9b08a', 'Sandstone'], slate: ['#7d8088', 'Stamped slate'], aggregate: ['#9b9484', 'Exposed agg.'], pavers: ['#b89a7a', 'Pavers'], herringbone: ['#a4543f', 'Brick herring.'], cobble: ['#8d8d92', 'Cobblestone'], flagstone: ['#a89884', 'Flagstone'], mosaic: ['#7aa7b8', 'Mosaic tile'] }
@@ -206,18 +208,12 @@ const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store
 const renderMat = () => {
   if (!out) return
   const c = out.calc
-  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ft²`, 'slab area'], [`${c.order_yd3.toFixed(2)} yd³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('') + '<div style="flex-basis:100%;font-size:12px;color:var(--mut);margin-top:2px">Concrete-to-order includes a waste allowance — add ~10% for uneven subgrade + spillage, and order a touch extra rather than run short mid-pour.</div>'
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
-    const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
-    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
-  }).join('')
-  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${th.toFixed(0)}</b> + typical install labor <b>$${(c.area_ft2 * 6).toFixed(0)}–$${(c.area_ft2 * 15).toFixed(0)}</b> (${c.area_ft2.toFixed(0)} ft² × $6–$15/ft²) = <b style="color:var(--ok)">$${(th + c.area_ft2 * 6).toFixed(0)}–$${(th + c.area_ft2 * 15).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>${allIn}`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  $('#mat-summary').innerHTML = [[`${c.area_ft2.toFixed(0)} ft²`, 'slab area'], [`${c.order_yd3.toFixed(2)} yd³`, 'concrete to order'], [`${c.bags80}`, '80 lb bags (DIY alt)'], [`${c.gravel_tons.toFixed(1)} t`, 'gravel base'], [`${c.panels}`, 'joint panels']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('') + '<div style="flex-basis:100%;font-size:12px;color:var(--mut);margin-top:2px">Concrete-to-order already includes about 7% waste and rounds up to the next ¼ yd³. Add more only if the subgrade is uneven.</div>'
+  const items = out.bom.filter(it => !it.alt), alts = out.bom.filter(it => it.alt), t = totals(items, price), bt = t[t.best]
+  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>${money(bt, 0)}</b> (${t.best === 'hd' ? 'Home Depot' : "Lowe's"}) + typical install labor <b>${money(c.area_ft2 * 6, 0)}–${money(c.area_ft2 * 15, 0)}</b> (${c.area_ft2.toFixed(0)} ft² × $6–$15/ft²) = <b style="color:var(--ok)">${money(bt + c.area_ft2 * 6, 0)}–${money(bt + c.area_ft2 * 15, 0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Hire it out and labor typically adds this range; DIY and it's near $0. Rough regional guide — get local quotes.</div></div></td></tr>`
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${items.map(it => priceRow(it, price, catalog[it.id])).join('')}${totRow('TOTALS', t)}${alts.length ? `<tr><td colspan="6" style="padding-top:14px;color:var(--mut);font-size:12px">Small pour or no truck access? Bagged mix instead of ready-mix (not in the totals above):</td></tr>${alts.map(it => priceRow(it, price, catalog[it.id])).join('')}` : ''}${allIn}`
+  $('#mat-summary').insertAdjacentHTML('beforeend', missNote(t))
+  bindPrices($('#mat-table'), priceEdits, () => writeJSON(LSP, priceEdits), renderMat)
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -237,10 +233,10 @@ const parsePaste = (text, store) => {
     }
     if (best) { priceEdits[`${it.id}.${store}`] = best.p; filled.push(it.id) }
   }
-  localStorage.setItem(LSP, JSON.stringify(priceEdits))
+  writeJSON(LSP, priceEdits)
   return filled
 }
-const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
+const persist = () => writeJSON(LS, cfg)
 let lastFit = ''
 const fitCam = () => {
   const poly = polyOf(cfg)
@@ -261,8 +257,8 @@ const fitCam = () => {
   cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  out = fixPatio(callCore(cfg))
+  if (out.error) { $('#warns').innerHTML = `<div class="warn">⚠ ${out.error}. Fix the size or outline and the estimate updates.</div>`; return }
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); updatePermits()
 }
 let MV = null
@@ -356,8 +352,8 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
-  bind('#w', 'w'); bind('#d', 'd'); bind('#t', 'thickness_in'); bind('#base', 'base_in'); bind('#reinf', 'reinforce', false); bind('#jspace', 'joint_max_ft'); bind('#house', 'house_edge')
+  const bind = (id, key, num = true, min = -Infinity, max = Infinity) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? clampNum(el.value, min, max, cfg[key]) : el.value; el.value = cfg[key]; recompute() } }
+  bind('#w', 'w', true, 4, 60); bind('#d', 'd', true, 4, 60); bind('#t', 'thickness_in'); bind('#base', 'base_in'); bind('#reinf', 'reinforce', false); bind('#jspace', 'joint_max_ft', true, 0, 15); bind('#house', 'house_edge')
   $('#vehicle').checked = cfg.vehicle
   $('#vehicle').onchange = e => { cfg.vehicle = e.target.checked; recompute() }
   $('#td').checked = cfg.turndown.enabled
@@ -384,12 +380,8 @@ const initUI = () => {
   $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} HD prices` : 'no prices matched — copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} Lowes prices` : 'no prices matched — copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
-  $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
-  $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'patio-materials.csv' })
-    a.click()
-  }
+  $('#reset-prices').onclick = () => { priceEdits = {}; try { localStorage.removeItem(LSP) } catch {} renderMat() }
+  $('#export-csv').onclick = () => out && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([materialsCSV(out.bom.filter(it => !it.alt), price, out.bom.filter(it => it.alt))], { type: 'text/csv;charset=utf-8' })), download: 'patio-materials.csv' }).click()
   $('#dl-svg').onclick = () => { ['layout', 'section', 'formwork', 'joints'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `patio-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'patio-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
