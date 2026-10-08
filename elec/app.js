@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o5'
-import { makeElecTrade, fixElecOut } from './elec-rules.js?v=r2'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=cp1'
+import { mountSketch } from './sketch-canvas.js?v=cp1'
+import { makeElecTrade, fixElecOut } from './elec-rules.js?v=cp1'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
 const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
 const LIM = { sqft: [200, 12000], bedrooms: [0, 12], bathrooms: [0, 10], electric_range: [0, 3], electric_dryer: [0, 3], hvac_amps: [0, 60] }
@@ -247,7 +247,7 @@ const seedScene = () => {
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
 async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: elecTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()

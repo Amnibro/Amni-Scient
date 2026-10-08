@@ -1,10 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=cp1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError } from '../_shared/est-math.js?v=e1'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError } from '../_shared/est-math.js?v=cp1'
 const LS = 'amnifloor.cfg.v1', LSP = 'amnifloor.prices.v1'
 const defCfg = { mode: 'rect', w: 12, d: 12, polygon: null, material: 'lvp', pattern: 'straight', plank_w_in: 6, plank_l_in: 48, box_sqft: 24, waste_pct: 0, doorways: 2 }
 let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], material: ['lvp', 'laminate', 'hardwood', 'tile', 'carpet'], pattern: ['straight', 'brick', 'diagonal', 'herringbone'] })
@@ -325,7 +325,7 @@ const initUI = () => {
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
 }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()

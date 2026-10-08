@@ -1,7 +1,7 @@
-import { initPermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun, usd, storeTotals, validScene } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o5'
-import { makeHvacTrade } from './hvac-rules.js?v=r2'
+import { initPermits } from './codes.js?v=cp1'
+import { emptyScene, addNode, addRun, usd, storeTotals, validScene } from './sketch.js?v=cp1'
+import { mountSketch } from './sketch-canvas.js?v=cp1'
+import { makeHvacTrade } from './hvac-rules.js?v=cp1'
 const $ = s => document.querySelector(s)
 const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v2'
 let catalog = {}, lastEv = null
@@ -77,7 +77,7 @@ const seedScene = () => {
 }
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} }, onEvaluate: ev => { lastEv = ev; renderMat(); renderPlans(); renderGuide() } }) }
 
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 seedScene()
 setupSketch()
 renderMat()

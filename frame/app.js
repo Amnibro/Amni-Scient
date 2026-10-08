@@ -1,10 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=cp1'
 import { initAutoDetect } from './autodetect.js?v=1'
-import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, studBom, studSpec, cents } from '../_shared/est-math.js?v=e1'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, studBom, studSpec, cents } from '../_shared/est-math.js?v=cp1'
 const LS = 'amniframe.cfg.v1', LSP = 'amniframe.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, wall_height_ft: 8, spacing: 16, stud_size: '2x4', doors: 2, windows: 6, door_w: 3, window_w: 3, double_top_plate: true, sheathing: true, house_edge: 0 }
 let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], stud_size: ['2x4', '2x6'], spacing: ['16', '24', '12', '19.2'] })
@@ -348,7 +348,7 @@ const initUI = () => {
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
 }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()

@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { fitNum, sanitizeCfg, sanitizeRooms, coreError, hvacSize, csv, escXml, unXml } from '../_shared/est-math.js?v=e1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { fitNum, sanitizeCfg, sanitizeRooms, coreError, hvacSize, csv, escXml, unXml } from '../_shared/est-math.js?v=cp1'
 const LS = 'amniplan.cfg.v1'
 const defCfg = { w: 40, d: 30, house_edge: 0, rooms: [{ name: 'Living', kind: 'living', w: 18, d: 14 }, { name: 'Kitchen', kind: 'kitchen', w: 13, d: 12 }, { name: 'Bed 1', kind: 'bedroom', w: 13, d: 12 }, { name: 'Bed 2', kind: 'bedroom', w: 12, d: 11 }, { name: 'Bath', kind: 'bath', w: 8, d: 6 }, { name: 'Bath 2', kind: 'bath', w: 7, d: 5 }, { name: 'Laundry', kind: 'laundry', w: 7, d: 6 }] }
 const KINDS = ['bedroom', 'bath', 'kitchen', 'living', 'dining', 'laundry', 'garage', 'hall', 'office', 'other']

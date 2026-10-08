@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=o2'
-import { mountSketch } from './sketch-canvas.js?v=o5'
-import { makePlumbTrade } from './plumb-rules.js?v=trap2'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=cp1'
+import { mountSketch } from './sketch-canvas.js?v=cp1'
+import { makePlumbTrade } from './plumb-rules.js?v=cp1'
 const LS = 'amniplumb.cfg.v1', LSP = 'amniplumb.prices.v1'
 const defCfg = { w: 40, d: 30, toilets: 2, lavs: 2, tubs: 1, showers: 1, kitchen_sinks: 1, dishwashers: 1, washers: 1, water_heater: true, pipe_material: 'pex' }
 const LIM = { toilets: [0, 20], lavs: [0, 20], tubs: [0, 10], showers: [0, 10], kitchen_sinks: [0, 6], dishwashers: [0, 4], washers: [0, 4], w: [12, 400], d: [10, 400] }
@@ -266,7 +266,7 @@ const seedScene = () => {
 function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
 async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); view3d.setSupply(cfg.pipe_material); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog: skCatalog, store: 'hd', supplyMaterial: cfg.pipe_material, onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()

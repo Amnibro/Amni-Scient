@@ -1,6 +1,6 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
-import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents, usd, cents } from './sketch.js?v=o2'
+import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents, usd, cents } from './sketch.js?v=cp1'
 import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
 const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
