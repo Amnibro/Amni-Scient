@@ -90,7 +90,7 @@
   function row() { var r = node('div', null, 'claim-row'); for (var i = 0; i < arguments.length; i++) r.appendChild(arguments[i]); return r }
   function paint() { state.replaceChildren.apply(state, [kicker()].concat([].slice.call(arguments))) }
   function intro() {
-    var p = node('p', 'After you pay, Stripe sends you back to this page and your licence key appears here. This visit has no checkout attached, so there is no key to show.')
+    var p = node('p', 'After you pay, Stripe sends you back to this page and your license key appears here. This visit has no checkout attached, so there is no key to show.')
     var lost = node('p'); lost.append('Bought Pro and lost your key? Email ', link(MAIL, mail('Lost Construct Pro key')), ' from the address on your Stripe receipt and I will resend it.')
     var soon = node('p', buyOpen ? 'Not a customer yet? The 14-day trial needs no card. Start it from the 💼 Pro tab in any estimator.' : 'Checkout opens soon. Until then, the 14-day trial runs with no card from the 💼 Pro tab in any estimator.')
     paint(node('h1', 'Your Pro key appears here after checkout'), p, lost, soon, row(link('See what Pro includes', 'pro.html', 'cta-big'), link('Open an estimator', '../deck/', 'cta-big cta-ghost')))
@@ -111,7 +111,7 @@
       try { ps = JSON.parse(localStorage.getItem('amni.pro.v1')) || {} } catch (e) {}
       if (!ps || typeof ps !== 'object' || Array.isArray(ps)) ps = {}
       ps.key = r.key; ps.ent = r.entitlement; ps.sig = r.signature
-      try { localStorage.setItem('amni.pro.v1', JSON.stringify(ps)) } catch (e) { status.className = 'claim-status bad'; status.textContent = "This browser couldn't save the licence. Paste the key into the 💼 Pro tab instead."; return }
+      try { localStorage.setItem('amni.pro.v1', JSON.stringify(ps)) } catch (e) { status.className = 'claim-status bad'; status.textContent = "This browser couldn't save the license. Paste the key into the 💼 Pro tab instead."; return }
       status.className = 'claim-status ok'; status.textContent = 'Pro is on in this browser.'
       btn.replaceWith(link('Open an estimator', '../deck/', 'cta-big'))
     })
@@ -127,12 +127,12 @@
     var list = document.createElement('ol')
     ;['Open any estimator (deck, roof, electrical and the rest).', 'Tap 💼 Pro, then Unlock Pro, then I have a key.', 'Paste the key. One key covers ' + devices + ' devices, so do the same on your phone or tablet.'].forEach(function (line) { list.appendChild(node('li', line)) })
     var help = node('p'); help.append('Lost key or questions: ', link(MAIL, mail('Construct Pro key')), '.')
-    paint(node('h1', "You're in. Here's your key."), box, node('p', "Save it somewhere you'll find it. Stripe's receipt doesn't include it."), row(on), status, node('p', 'On another device:'), list, node('p', 'Cancel any time from the "Manage subscription" link on your Stripe receipt. Pro stays on until the end of the period you paid for.'), help, node('p', 'Your quotes and clients never leave your device. This page only asked Stripe and my licence server for your key.', 'fine'))
+    paint(node('h1', "You're in. Here's your key."), box, node('p', "Save it somewhere you'll find it. Stripe's receipt doesn't include it."), row(on), status, node('p', 'On another device:'), list, node('p', 'Cancel any time from the "Manage subscription" link on your Stripe receipt. Pro stays on until the end of the period you paid for.'), help, node('p', 'Your quotes and clients never leave your device. This page only asked Stripe and my license server for your key.', 'fine'))
   }
   if (!sid) { intro(); return }
   if (!/^cs_[A-Za-z0-9_]{8,255}$/.test(sid)) { fail("That checkout link isn't complete", 'The address is missing part of the checkout reference, so I can\'t look up the payment.'); return }
   var base = window.AMNI_LICENSE_URL || ''
-  if (!/^https:\/\//i.test(base)) { fail("I can't fetch your key on this page yet", "The licence server isn't connected to the site yet. Your payment is safe and nothing is lost."); return }
+  if (!/^https:\/\//i.test(base)) { fail("I can't fetch your key on this page yet", "The license server isn't connected to the site yet. Your payment is safe and nothing is lost."); return }
   var started = Date.now()
   function poll() {
     fetch(base.replace(/\/$/, '') + '/claim?session_id=' + encodeURIComponent(sid), { cache: 'no-store' })
@@ -145,7 +145,7 @@
       })
       .catch(function () {
         if (Date.now() - started < 60000) setTimeout(poll, 2500)
-        else fail("I couldn't reach the licence server", 'Leave this page open and reload it in a minute. Your payment is unaffected.')
+        else fail("I couldn't reach the license server", 'Leave this page open and reload it in a minute. Your payment is unaffected.')
       })
   }
   poll()
