@@ -102,7 +102,7 @@
 <div class="sum" id="sum">Tick at least one model to see your split.</div>
 </div>
 <div class="actions">
-<button class="btn btn-primary" id="pay" disabled>PAY WITH STRIPE</button>
+<button class="btn btn-primary" id="pay" disabled>TOP-UPS COMING SOON</button>
 <a class="btn btn-outline" href="/braid#pricing">SEE SUBSCRIPTIONS</a>
 </div>
 <div class="err" id="err"></div>
@@ -122,8 +122,6 @@
 </footer>
 <script>
 (function(){
-var API="https://braid-license.amnibro7.workers.dev";
-var STRIPE_TOPUP="https://buy.stripe.com/28E28kgOUc1ycNt1kH3cc03";
 var P={
  claude:{label:"Claude",hue:"#C96442",mtok:6.00},
  openai:{label:"OpenAI",hue:"#10A37F",mtok:5.00},
@@ -214,31 +212,8 @@ function sync(typedKey){
  var L=P[q.lim].label;
  $("sum").innerHTML='You put <b>'+fmtUsd(q.net)+'</b> on the table. If every prompt fans to all <b>'+ks.length+'</b> seats, the room answers ≈<b>'+q.room.toLocaleString()+'</b> full exchanges — <b style="color:'+P[q.lim].hue+'">'+esc(L)+'</b> runs dry first.'+
   (q.room<q.balanced?' A cost-balanced split would reach ≈'+q.balanced.toLocaleString()+'.':' That is already the balanced split.');
- $("pay").disabled=!(ST.budget>=1&&ks.length);
 }
 $("budget").oninput=function(e){ST.budget=Math.max(0,+e.target.value||0);sync()};
-$("pay").onclick=async function(){
- var err=$("err");err.className="err";err.textContent="";
- var ks=enabled();
- if(!(ST.budget>=1)||!ks.length)return;
- $("pay").disabled=true;$("pay").textContent="OPENING STRIPE…";
- try{
-  var r=await fetch(API+"/checkout/topup",{method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({amount:ST.budget,providers:ST.pct})});
-  var j=await r.json().catch(function(){return{}});
-  if(r.ok&&j&&j.url){location.href=j.url;return}
-  // Worker not deployed yet, or transient error: fall back to hosted Payment Link.
-  // Amount is re-confirmed on Stripe; your split is kept in this tab for after you return.
-  try{sessionStorage.setItem("braid_topup_split",JSON.stringify({amount:ST.budget,providers:ST.pct,ts:Date.now()}))}catch(e){}
-  location.href=STRIPE_TOPUP;
-  return;
- }catch(e){
-  try{sessionStorage.setItem("braid_topup_split",JSON.stringify({amount:ST.budget,providers:ST.pct,ts:Date.now()}))}catch(x){}
-  location.href=STRIPE_TOPUP;
-  return;
- }
- $("pay").disabled=false;$("pay").textContent="PAY WITH STRIPE";
-};
 build();
 })();
 </script>
