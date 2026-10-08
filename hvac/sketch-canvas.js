@@ -62,7 +62,7 @@ export function mountSketch(container, opts) {
 
   container.innerHTML = ''
   container.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start'
-  if (!document.getElementById('sk-responsive')) { const st = document.createElement('style'); st.id = 'sk-responsive'; st.textContent = '@media(max-width:820px){.sk-read{flex-basis:100%!important;max-width:none!important}.sk-bar,.sk-strip{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:5px;scrollbar-width:none}.sk-bar::-webkit-scrollbar,.sk-strip::-webkit-scrollbar{display:none}.sk-bar>*,.sk-strip>*{flex:0 0 auto}}'; document.head.appendChild(st) }
+  if (!document.getElementById('sk-responsive')) { const st = document.createElement('style'); st.id = 'sk-responsive'; st.textContent = '@media(max-width:820px){.sk-read{flex-basis:100%!important;max-width:none!important}.sk-bar,.sk-strip{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:5px;padding-right:32px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}.sk-bar::-webkit-scrollbar,.sk-strip::-webkit-scrollbar{display:none}.sk-bar>*,.sk-strip>*{flex:0 0 auto}}'; document.head.appendChild(st) }
   const left = document.createElement('div'); left.className = 'sk-left'; left.style.cssText = 'flex:1 1 340px;min-width:0'
   const bar = document.createElement('div'); bar.className = 'sk-bar'; bar.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;align-items:center'
   left.appendChild(bar)
