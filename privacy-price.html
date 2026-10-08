@@ -17,13 +17,15 @@ table{width:100%;border-collapse:collapse;font-size:.95rem}
 th,td{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:600}
 a{color:var(--accent)}
+h3{font-size:1.05rem;margin:24px 0 6px}
 </style>
 </head>
 <body>
 <main>
 <h1>Amni-Price Privacy Policy</h1>
-<p class="muted">App: Amni-Price for Android (package com.amniscient.price). Effective: October 5, 2026 (updated for community prices). Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
+<p class="muted">Apps: Amni-Price for Android (package com.amniscient.price) and Amni-Price for iPhone and iPad (bundle ID com.amniscient.price). Effective: October 8, 2026 (added the iOS app). Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
 <p>Amni-Price records the prices you scan so you can compare stores. It has no accounts, no ads, no analytics of our own and no tracking or advertising SDKs. We run no server for it: your prices, stores, shopping list and location stay on your phone. Amni-Price is open source under the GPL-3.0 at <a href="https://github.com/Amnibro/Amni-Price">github.com/Amnibro/Amni-Price</a>, so anyone can check what it does. This policy explains the little that does leave your phone, to whom, and why.</p>
+<p>The sections from "What is sent, and where" to "Permissions" describe the Android app. The iPhone and iPad app is described in <a href="#ios">Amni-Price for iOS</a>. "Children", "Your choices" and "Changes" apply to both.</p>
 
 <h2>What is sent, and where</h2>
 <table>
@@ -49,20 +51,45 @@ a{color:var(--accent)}
 <li><strong>Internet and network state</strong>: map tiles, community price downloads when you ask for them, and the ML Kit diagnostics described above (Google Play build only).</li>
 </ul>
 
+<h2 id="ios">Amni-Price for iOS (iPhone and iPad)</h2>
+<p>The iOS app does the same job as the Android app with Apple's built-in frameworks. It has no accounts, no ads, no in-app purchases, no analytics, no crash reporting and no tracking or advertising SDKs, and it sends no device or advertising ID. We run no server for it. It does not use Google ML Kit or OpenStreetMap map tiles. Its App Store privacy label is <strong>Data Not Collected</strong>, and its privacy manifest declares no collected data and no tracking.</p>
+<h3>What is sent, and where</h3>
+<table>
+<tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
+<tr><td>The map area on screen, and your IP address as part of the request</td><td>Apple, through Apple Maps (MapKit), only while a map is open</td><td>Draw the price map and the store location picker</td><td>Governed by <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a></td></tr>
+<tr><td>When you pin a store where you are, or pick a spot on the map without a name: those coordinates</td><td>Apple's geocoding service (Core Location)</td><td>Look up the town or area name shown next to the store</td><td>Governed by <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a></td></tr>
+<tr><td>Only if you tap <em>Download community prices</em> in Settings: a request for the tile index and for the 2° map tiles (about 200 km across) that cover the radius you chose, the app's name and version in the request header, and your IP address as part of the request</td><td>GitHub (github.com), which hosts the <a href="https://github.com/Amnibro/amni-price-data">Amni-Price price tiles</a></td><td>Download prices other shoppers shared with Open Prices for stores near you. The center point is your current location if you allow it, otherwise a store you pinned; it is used on the device to pick the tiles and is never sent. Nothing is uploaded</td><td>Governed by <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>; GitHub sees your IP address and the rough region you asked for</td></tr>
+</table>
+<h3>On your device only</h3>
+<ul>
+<li><strong>Camera.</strong> Shelf tags, barcodes, receipts and menus are read on the device with Apple's VisionKit and Vision frameworks. Images are not saved or uploaded.</li>
+<li><strong>Photos.</strong> If you pick a receipt photo or screenshot, iOS's photo picker hands the app only the picture you chose. The app reads it on the device and does not copy it. The app has no access to the rest of your photo library.</li>
+<li><strong>Prices, products, stores, shopping list and community prices</strong> are stored in a file in the app's private storage, and settings in the app's preferences. <em>Settings › Erase all data</em>, <em>Remove community prices</em> or deleting the app removes them.</li>
+<li><strong>Location</strong> is optional and asked for only when you use a feature that needs it. It is used to pin a store where you are, show distances to stores, suggest the store you are in and pick the community price area. Apart from the geocoding lookup above, your position is stored only as saved store locations on your device. The app does not use location in the background.</li>
+<li><strong>Sharing and export.</strong> "Share prices" and CSV export hand text or a file to the app you choose in the iOS share sheet. Nothing is shared unless you do it.</li>
+<li><strong>Backups.</strong> If you use iCloud Backup or back up your device to a computer, iOS may include the app's data in that backup; we never see it.</li>
+</ul>
+<h3>Permissions</h3>
+<ul>
+<li><strong>Camera</strong>: scan shelf tags, barcodes, receipts and menus.</li>
+<li><strong>Location While Using the App</strong> (optional): pin stores, distances, "You're at this store?" suggestions and the community price area. The app works without it.</li>
+<li>No photo library permission is requested; the iOS photo picker is used instead.</li>
+</ul>
+
 <h2>Children</h2>
 <p>Amni-Price is a shopping tool meant for adults. It is not directed at children under 13, and we do not knowingly collect data from children.</p>
 
 <h2>Your choices</h2>
 <ul>
-<li>Deny or revoke camera or location permission at any time in Android settings.</li>
-<li>Delete your data by clearing the app's storage or uninstalling it.</li>
+<li>Deny or revoke camera or location permission at any time in Android settings, or in the iOS Settings app.</li>
+<li>Delete your data by clearing the app's storage or uninstalling it. On iOS, use <em>Settings › Erase all data</em> in the app or delete the app.</li>
 <li>Because we hold no data about you, there is nothing for us to look up or delete. Questions: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</li>
 </ul>
 
 <h2>Changes</h2>
 <p>If this policy changes, we will update the effective date above and, for material changes, tell you in the app.</p>
 
-<p class="muted">Map data © OpenStreetMap contributors. Community prices © Open Food Facts contributors (Open Prices), ODbL 1.0.</p>
+<p class="muted">Map data on Android © OpenStreetMap contributors; on iOS, maps by Apple Maps. Community prices © Open Food Facts contributors (Open Prices), ODbL 1.0.</p>
 </main>
 </body>
 </html>

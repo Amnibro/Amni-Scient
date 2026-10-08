@@ -17,13 +17,15 @@ table{width:100%;border-collapse:collapse;font-size:.95rem}
 th,td{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:600}
 a{color:var(--accent)}
+h3{font-size:1.05rem;margin:24px 0 6px}
 </style>
 </head>
 <body>
 <main>
 <h1>Amni-Map Privacy Policy</h1>
-<p class="muted">App: Amni-Map for Android (package com.amniscient.map). Effective: September 30, 2026. Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
+<p class="muted">Apps: Amni-Map for Android (package com.amniscient.map) and Amni-Map for iPhone and iPad (bundle ID com.amniscient.map). Effective: October 8, 2026 (added the iOS app). Publisher: Amniscient, LLC. Contact: <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a>.</p>
 <p>Amni-Map is a navigation app. It has no accounts, no ads, no analytics, no crash reporting and no tracking or advertising SDKs. It does not collect your name, email, phone number or contacts, and neither the app nor any library inside it sends a device ID or advertising ID. This policy explains what the app sends, to whom, and why.</p>
+<p>The sections from "Location" to "Permissions" describe the Android app. The iPhone and iPad app is described in <a href="#ios">Amni-Map for iOS</a>. "Children", "Your choices", "Security" and "Changes" apply to both.</p>
 
 <h2>Location</h2>
 <p>Amni-Map uses your phone's location while the app is open and while a trip you started is running (shown by the "Amni-Map is guiding you" notification). It does not use location in the background at any other time, and it never shares your location with other apps on your phone.</p>
@@ -67,6 +69,39 @@ a{color:var(--accent)}
 <li><strong>Google Play billing</strong>: buying and restoring Pro.</li>
 </ul>
 
+<h2 id="ios">Amni-Map for iOS (iPhone and iPad)</h2>
+<p>The iOS app has no accounts, no ads, no in-app purchases, no analytics, no crash reporting and no tracking or advertising SDKs. It contains no Google code, and neither the app nor the MapLibre map library inside it sends a device ID or advertising ID. It uses the same Amni-Map gateway as the Android app, and the gateway handles its requests the same way: no request logs, no IP addresses stored, and the caching and retention described in the table above.</p>
+<h3>Location</h3>
+<p>Amni-Map asks only for <strong>While Using the App</strong> location permission; it never asks for "Always". While a trip you started is running, iOS keeps sending the app location updates with the screen off or in another app, so spoken guidance continues, and iOS shows the blue location indicator while it does. When the trip ends, the app stops using location in the background. Spoken turn prompts use the background audio mode only to play while you navigate. The app never shares your location with other apps on your device.</p>
+<h3>What is sent, and where</h3>
+<table>
+<tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
+<tr><td>Trip start (your position), stops, destination, and your avoid-highways and avoid-tolls choices</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes.</td></tr>
+<tr><td>Search text and your exact position (to rank places near you first), and positions to name the town, street or dropped pin near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results and place names</td><td>Not stored</td></tr>
+<tr><td>Map questions with coordinates: the speed limit where you are, speed cameras along your route, nearby gas, coffee, food and other places, and place details such as opening hours</td><td>Gateway, then public Overpass servers (and Nominatim for place details)</td><td>Speed limits, camera alerts, nearby places, opening hours</td><td>The gateway caches the public answer for up to a day; nothing about you</td></tr>
+<tr><td>For driving routes (not walking): traffic area numbers (city-sized squares) along the route, used for arrival times and faster-route offers. With <em>Live traffic</em> on (on by default; switch in Menu and in trip options), also traffic tile numbers along your route for the colored overlay</td><td>Gateway, which asks TomTom for traffic tiles and incidents and reads public traffic feeds. TomTom and those feeds see the gateway, not you or your device</td><td>Traffic colors, incidents and delays</td><td>Shared cache of the public answers for a few minutes; nothing about you</td></tr>
+<tr><td>Your position, to load road reports near you</td><td>Gateway</td><td>Show reports from other drivers</td><td>Not stored</td></tr>
+<tr><td>Road reports you post (kind, place, time and a random report ID) and your votes on reports</td><td>Gateway</td><td>Show other drivers what is on the road</td><td>As in the Android table: shown until they expire, no identity attached</td></tr>
+<tr><td>Feedback you type (up to 2,000 characters)</td><td>Gateway</td><td>Improve the app</td><td>Your words, the app version with "iOS", and the day</td></tr>
+<tr><td>Map tiles for the area on screen</td><td>Directly to OpenFreeMap (map tiles, styles and fonts), Amazon Web Services (terrain for hillshade), NASA GIBS and the U.S. Geological Survey (Orbit and Topo styles). Sentinel-2 imagery comes through the gateway</td><td>Draw the map</td><td>Governed by those providers; they see your IP address and the map area</td></tr>
+</table>
+<p>The iOS app does not have the Android app's "Help map traffic" speed upload, tester codes, copilot, music map, voice search, Android Auto or Pro subscription, so none of the data those features use is collected on iOS. It does not use the microphone or the camera.</p>
+<h3>On your device only</h3>
+<ul>
+<li>Home, Work, saved places, recent searches and settings are kept in the app's preferences. Up to four saved places also appear as Home Screen quick actions.</li>
+<li>Saved routes: routes you navigate (up to the 60 most recent) are saved in the app's private storage so they open instantly and work offline. They are never uploaded. Clear them, and recent searches, in Menu › Privacy &amp; data.</li>
+<li>Spoken directions use Apple's built-in speech synthesizer on the device.</li>
+<li>If you share your arrival time, the app hands the destination name, arrival time and an openstreetmap.org link for the destination to the app you choose in the iOS share sheet. "Report missing" opens openstreetmap.org in Safari at your position so you can leave a map note there, under the <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap Foundation privacy policy</a>. Phone numbers and websites of places open in the Phone app or Safari.</li>
+<li>Deleting the app removes all of this. If you use iCloud Backup or back up your device to a computer, iOS may include the app's preferences and saved routes in that backup; we never see it.</li>
+</ul>
+<h3>Permissions</h3>
+<ul>
+<li><strong>Location While Using the App</strong>: your position on the map, routes from where you are, search near you, speed limits and turn-by-turn guidance.</li>
+<li><strong>Background location and audio</strong> (iOS background modes, not a separate permission): used only while a trip you started is running, to keep guidance and spoken prompts going.</li>
+</ul>
+<h3>App Store privacy label</h3>
+<p>Data collected, none of it linked to you and none used for tracking, all for app functionality: precise location (route points, search and lookup positions, traffic areas and report locations), search history (search text sent to find places), other user content (road reports and votes) and customer support (feedback text). Data used to track you: none.</p>
+
 <h2>Children</h2>
 <p>Amni-Map is a driving app meant for adults. It is not directed at children under 13, and we do not knowingly collect data from children.</p>
 
@@ -74,8 +109,9 @@ a{color:var(--accent)}
 <ul>
 <li>Turn off "Help map traffic" in Menu › Privacy &amp; data to stop sending speed data.</li>
 <li>Clear saved routes and recent searches in Menu › Privacy &amp; data.</li>
-<li>"Remove my reports" in the report sheet hides your reports on your phone. Reports already shared stay visible to others until they expire.</li>
-<li>Deny or revoke location permission at any time in Android settings (navigation will not work from your position).</li>
+<li>On iOS, turn off <em>Live traffic</em> in the menu to stop loading the traffic overlay tiles.</li>
+<li>"Remove my reports" in the report sheet (Android) hides your reports on your phone. Reports already shared stay visible to others until they expire.</li>
+<li>Deny or revoke location permission at any time in Android settings or the iOS Settings app (navigation will not work from your position).</li>
 <li>Because nothing we store is linked to you, we cannot look up "your" data. If you have a question or want something removed, write to <a href="mailto:amnibro7@gmail.com">amnibro7@gmail.com</a> with the time and place of a report and we will delete it.</li>
 </ul>
 
@@ -85,7 +121,7 @@ a{color:var(--accent)}
 <h2>Changes</h2>
 <p>If this policy changes, we will update the effective date above and, for material changes, tell you in the app.</p>
 
-<p class="muted">Map data © OpenStreetMap contributors. Imagery and topo maps: USGS The National Map. Full credits are in the app under Menu › About › Map data and credits.</p>
+<p class="muted">Map data © OpenStreetMap contributors, available under the Open Database License (ODbL 1.0). Map tiles: OpenFreeMap © OpenMapTiles. Imagery and topo maps: USGS The National Map. Traffic © TomTom. Full credits are in the app under Menu › About › Map data and credits.</p>
 </main>
 </body>
 </html>
