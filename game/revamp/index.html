@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#0B1210">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="pkg/amni-v2_bg.wasm?v=2865d694dd" as="fetch" type="application/wasm" crossorigin>
-<link rel="modulepreload" href="pkg/amni-v2.js?v=1368231d58">
+<link rel="preload" href="pkg/amni-v2_bg.wasm?v=848dd62eb9" as="fetch" type="application/wasm" crossorigin>
+<link rel="modulepreload" href="pkg/amni-v2.js?v=c9b41339c3">
 <style>
 @font-face{font-family:"Fredoka";src:url("fonts/fredoka-var.woff2") format("woff2");font-weight:300 700;font-display:swap}
 :root{--bg:#0B1210;--panel:#121B18;--line:#24332D;--text:#EEF3EC;--soft:#A9B8AE;--dim:#6E8076;--accent:#F2C14E;--leaf:#7CC57A;--frost:#9FD3F2;--err:#FF7A6B}
@@ -70,7 +70,7 @@ body.playing #overlay{display:none}
 <b><kbd>Esc</kbd></b><span>Pause and settings</span>
 <b>Gamepad</b><span>Supported (A jump, X attack, Y interact, B dash)</span>
 </div>
-<div class="foot"><a href="revamp/CREDITS.md?v=fb2d7b8b1a" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build e309af4</span></div>
+<div class="foot"><a href="revamp/CREDITS.md?v=34405d070d" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build ee12138</span></div>
 </div>
 </div>
 </div>
@@ -89,6 +89,7 @@ const paint = () => {
 const count = (body, key) => body.pipeThrough(new TransformStream({ transform(chunk, c) { P[key] += chunk.byteLength; paint(); c.enqueue(chunk); } }));
 window.amniStatus = (msg) => { statusEl.textContent = msg; };
 window.amniProgress = (f) => { P.rust = Math.max(P.rust, f); paint(); };
+window.amniCanPrefetch = () => { const c = navigator.connection; return !(c && (c.saveData || /2g|3g/.test(c.effectiveType || ''))); };
 window.amniFetch = (path) => {
   const e = B.files[path];
   const url = path.startsWith('music/') ? B.music + path.slice(6) : path + (e && e.gz ? '.gz' : '') + (e ? '?v=' + e.v : '');
@@ -139,8 +140,8 @@ btn.addEventListener('click', async () => {
   }
   statusEl.textContent = (q.get('backend') === 'gl' ? 'WebGL2' : 'WebGPU') + ': downloading the engine...';
   try {
-    const { default: init } = await import('./pkg/amni-v2.js?v=1368231d58');
-    const resp = fetch('pkg/amni-v2_bg.wasm?v=2865d694dd').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
+    const { default: init } = await import('./pkg/amni-v2.js?v=c9b41339c3');
+    const resp = fetch('pkg/amni-v2_bg.wasm?v=848dd62eb9').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
     await init({ module_or_path: resp }).catch((e) => { if (!String(e).includes('control flow')) throw e; });
   } catch (e) {
     if (!String(e).includes('control flow')) return fail('Could not start', '<p>' + String(e).slice(0, 220) + '</p><p>Check the connection and retry. A hard refresh (Ctrl+Shift+R) clears stale engine files.</p>');

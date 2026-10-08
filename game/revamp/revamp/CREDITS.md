@@ -54,6 +54,10 @@ Every Shellshore asset is original procedural work from `tools/revamp_art/a_shor
 
 Every Canopy Reach asset (`canopy_*`, `boss_thornwing`, `foe_leaf_mantis`, `foe_vine_snapper`, `npc_pip_snail`, `decal_snail_trail`, `decal_soil_spill`) is generated from scratch by `tools/revamp_art/a_canopy.py`, `a_canopy_green.py` (greenhouse dressing: spider plants, pothos, succulents, seedling flat, slatted bench, misting riser, roof frame, fernlet and wood-sorrel ground cover) and `a_canopy_chars.py` with the shared sculpt helpers; no third-party models or textures are used. THORNWING's cues (`thorn_*`) are synthesized at load by `crates/bk-game/src/realms/thorn_audio.rs`; no recorded sounds. Terrain reuses the existing CC0 texture sets (soil, moss, grass, rock) and the glade sky.
 
+## Ember Hearth (realm 7)
+
+Every Ember Hearth environment asset (`ember_*` structures, rocks and ground cover, `decal_soot_smudge`, `decal_scorch`, `decal_ash_scuff`, `decal_cricket_tracks`) is generated from scratch by `tools/revamp_art/a_ember.py` with the shared sculpt helpers; the `ash` and `brick` texture sets are fully procedural (`tools/revamp_art/textures.py`). No third-party models or textures are used.
+
 ## Sky / IBL (Poly Haven HDRIs, CC0)
 
 | Realm | File in repo | Reference only (not committed) |
@@ -71,3 +75,11 @@ Every Canopy Reach asset (`canopy_*`, `boss_thornwing`, `foe_leaf_mantis`, `foe_
 
 Blender 4.5 LTS (GPL, used as a tool only), KTX-Software 4.4 (Apache-2.0), glTF-Transform CLI
 (MIT), NumPy/SciPy/OpenCV. Tool licenses do not apply to the generated assets.
+
+## Hearthwood Den (realm 5)
+
+Every Hearthwood Den asset (`den_*`, `boss_gnawfather`, `foe_dust_bunny`, `foe_tin_soldier`, `npc_bobbin_moth`, `decal_mouse_prints`, `decal_crayon_scribble`, `decal_dust_smear`) is generated from scratch by `tools/revamp_art/a_den.py`, `b_den.py` and `a_den_chars.py` with the shared sculpt helpers. The `floorboard`, `rug`, `rug_cream` and `rug_navy` texture sets are procedural (`tools/revamp_art/textures.py`). No third-party models or textures are used; the sky reuses the existing CC0 glade HDRI.
+
+## Sunken Grotto (realm 6)
+
+Every Sunken Grotto asset (`grotto_*`, `boss_pearlfang`, `foe_diving_beetle`, `foe_bubble_tadpole`, `npc_cadde_caddis`, `decal_caustics`, `decal_algae_stain`, `decal_silt_trail`) is generated from scratch by `tools/revamp_art/a_grotto.py` and `a_grotto_chars.py` with the shared sculpt helpers; no third-party models or textures are used. The basin walls use the shared CC0 rock texture set through the `rock_*` swatches, the terrain reuses the existing CC0 sets (rock, sand, moss), and the garden backdrop reuses glade and canopy kit pieces.
