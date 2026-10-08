@@ -22,7 +22,6 @@
 <link rel="canonical" href="https://amni-scient.com/game/v2/">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css?v=b261">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -230,36 +229,6 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:1.7r
   </section>
 </div>
 <p class="page-updated">Last updated <time datetime="2026-09-27">September 27, 2026</time></p>
-<aside class="site-ad-banner game-ad" aria-label="Sponsored">
-<span class="ad-note">Sponsored</span>
-<ins class="adsbygoogle" style="display:block;min-width:250px;min-height:90px" data-ad-client="ca-pub-8345487545441889" data-ad-slot="1720203631" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>
-(function(){
-  function initGameAd(){
-    var ins = document.querySelector('.site-ad-banner.game-ad ins.adsbygoogle');
-    if (!ins || ins.dataset.adStatus || ins.getAttribute('data-adsbygoogle-status')) return;
-    if (ins.offsetWidth >= 250) {
-      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-    } else {
-      var fired = false;
-      var retry = function(){
-        if (fired) return;
-        if (ins.offsetWidth >= 250) {
-          fired = true;
-          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-          window.removeEventListener('resize', retry);
-        }
-      };
-      window.addEventListener('load', retry, { once: true });
-      window.addEventListener('resize', retry, { passive: true });
-    }
-  }
-  if (document.readyState === 'complete') initGameAd();
-  else window.addEventListener('DOMContentLoaded', initGameAd);
-})();
-</script>
-</aside>
-
 <footer class="game-foot">
   <div class="footer-links">
     <a href="/about.html">ABOUT</a>
