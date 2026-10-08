@@ -1,6 +1,6 @@
 // Interactive SVG canvas layer over the shared sketch engine core.
 // Framework-free. mountSketch(container, {scene, trade, catalog, store, onChange}) -> controller.
-import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents } from './sketch.js?v=o2'
+import { addNode, addRun, removeNode, nodeById, runPoints, runLengthFt, evaluate, snapToWall, realComponents, usd, cents } from './sketch.js?v=o2'
 import { computeHomography, roomHomography, calibrateRoom, applyH, invert3 } from './perspective.js'
 const CEIL_FT = 8
 const CAL_STEPS = ['the bottom corner where the two walls meet the floor', 'the bottom corner at the far end of the LEFT wall', 'the bottom corner at the far end of the RIGHT wall', 'the ceiling corner straight above your 1st tap', 'the top corner above your LEFT-wall tap', 'the top corner above your RIGHT-wall tap']
@@ -12,9 +12,9 @@ export function bomCsv(ev, opts) {
   const esc = c => /[",\n]/.test('' + c) ? '"' + ('' + c).replace(/"/g, '""') + '"' : '' + c
   const rows = [['Item', 'Qty', 'Unit', 'Unit price', 'Line cost']]
   for (const l of ev.quote.lines) rows.push([l.name + (l.note ? ' (' + l.note + ')' : ''), l.qty, l.unitName || '', (l.unitPrice || 0).toFixed(2), l.cost.toFixed(2)])
-  const labor = opts.laborPct ? ev.quote.total * opts.laborPct / 100 : 0
+  const labor = opts.laborPct > 0 ? cents(ev.quote.total * opts.laborPct / 100) : 0
   if (labor) rows.push(['Labor / markup (' + opts.laborPct + '%)', '', '', '', labor.toFixed(2)])
-  rows.push(['TOTAL', '', '', '', (ev.quote.total + labor).toFixed(2)])
+  rows.push(['TOTAL', '', '', '', cents(ev.quote.total + labor).toFixed(2)])
   const rco = opts.realComponents
   if (rco && rco.items.length) {
     rows.push(['']); rows.push(['REAL COMPONENTS / CUT LIST (estimate)', '', '', '', ''])
@@ -322,7 +322,7 @@ export function mountSketch(container, opts) {
     const ev = evaluate(scene, trade, catalog, store())
     try { window.__sketchBOM = ev } catch (e) {}
     if (opts.onEvaluate) opts.onEvaluate(ev)
-    const laborPct = +laborI.value || 0, labor = ev.quote.total * laborPct / 100, grand = ev.quote.total + labor
+    const laborPct = Math.max(0, +laborI.value || 0), labor = cents(ev.quote.total * laborPct / 100), grand = cents(ev.quote.total + labor)
     let h = '<div style="font-weight:700;color:var(--acc);margin-bottom:8px">📐 Live readout</div>'
     h += '<table style="width:100%;font-size:12px;margin-bottom:6px">'
     let any = false
@@ -330,14 +330,14 @@ export function mountSketch(container, opts) {
     if (!any) h += '<tr><td style="color:var(--mut)">no runs yet</td></tr>'
     h += '</table>'
     h += '<div style="font-weight:600;margin:10px 0 4px">Materials &amp; quote</div><table style="width:100%;font-size:12px">'
-    for (const l of ev.quote.lines) h += `<tr><td style="color:var(--mut)">${l.name}${l.note ? ' <span style="opacity:.55">(' + l.note + ')</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${l.qty} ${l.unitName || ''}</td><td style="text-align:right">$${l.cost.toFixed(0)}</td></tr>`
-    if (labor) { h += `<tr><td style="color:var(--mut)">Materials subtotal</td><td></td><td style="text-align:right">$${ev.quote.total.toFixed(0)}</td></tr>`; h += `<tr><td style="color:var(--mut)">Labor / markup (${laborPct}%)</td><td></td><td style="text-align:right">$${labor.toFixed(0)}</td></tr>` }
-    h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">$${grand.toFixed(0)}</b></td></tr></table>`
+    for (const l of ev.quote.lines) h += `<tr><td style="color:var(--mut)">${l.name}${l.note ? ' <span style="opacity:.55">(' + l.note + ')</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${l.qty} ${l.unitName || ''}</td><td style="text-align:right">${usd(l.cost)}</td></tr>`
+    if (labor) { h += `<tr><td style="color:var(--mut)">Materials subtotal</td><td></td><td style="text-align:right">${usd(ev.quote.total)}</td></tr>`; h += `<tr><td style="color:var(--mut)">Labor / markup (${laborPct}%)</td><td></td><td style="text-align:right">${usd(labor)}</td></tr>` }
+    h += `<tr style="border-top:1px solid var(--line)"><td><b>Estimated quote</b></td><td></td><td style="text-align:right"><b style="color:var(--ok)">${usd(grand)}</b></td></tr></table>`
     const rco = realComponents(scene, trade, catalog, store())
     if (rco.items.length) {
       h += '<div style="font-weight:600;margin:12px 0 4px">🧾 Real components <span style="opacity:.5;font-size:10px">cut list · est.</span></div><table style="width:100%;font-size:12px">'
-      for (const it of rco.items) h += `<tr><td style="color:var(--mut)">${it.qty}× ${it.name}${it.note ? ' <span style="opacity:.5">· ' + it.note + '</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${it.cost ? '$' + it.cost.toFixed(0) : '—'}</td></tr>`
-      h += `<tr style="border-top:1px solid var(--line)"><td style="color:var(--mut)">parts subtotal</td><td style="text-align:right">$${rco.total.toFixed(0)}</td></tr></table>`
+      for (const it of rco.items) h += `<tr><td style="color:var(--mut)">${it.qty}× ${it.name}${it.note ? ' <span style="opacity:.5">· ' + it.note + '</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${it.cost ? usd(it.cost) : '—'}</td></tr>`
+      h += `<tr style="border-top:1px solid var(--line)"><td style="color:var(--mut)">parts subtotal</td><td style="text-align:right">${usd(rco.total)}</td></tr></table>`
     }
     const fails = ev.checks.filter(c => c.level === 'fail'), warns = ev.checks.filter(c => c.level === 'warn'), oks = ev.checks.filter(c => c.level === 'ok')
     const mute = s => s.replace(/\s*\[([^\]]+)\]/g, ' <span style="opacity:.4;font-size:9px">[$1]</span>')

@@ -1,11 +1,11 @@
 import { initPermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
+import { emptyScene, addNode, addRun, usd, storeTotals, validScene } from './sketch.js?v=o2'
 import { mountSketch } from './sketch-canvas.js?v=o5'
 import { makeHvacTrade } from './hvac-rules.js?v=r2'
 const $ = s => document.querySelector(s)
 const LSP = 'amnihvac.prices.v1', SK_LS = 'amnihvac.sketch.v2'
 let catalog = {}, lastEv = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch (e) { return {} } })()
+let priceEdits = (() => { try { const p = JSON.parse(localStorage.getItem(LSP)); return p && typeof p === 'object' ? p : {} } catch (e) { return {} } })()
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t)); document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === `pane-${t.dataset.pane}`)); if (t.dataset.pane === '3d') mount3DView() })
 
 $('#best-body').innerHTML = `
@@ -23,16 +23,15 @@ const price = (key, store) => { const k = `${key}.${store}`; return priceEdits[k
 function renderMat() {
   const host = $('#mat-body'); if (!host) return
   if (!lastEv || !lastEv.bom.length) { host.innerHTML = '<p style="color:var(--mut);font-size:13px">Draw a duct layout on the ✏️ Layout tab — your priced materials list builds itself here.</p>'; return }
-  let hd = 0, lo = 0
-  const rows = lastEv.bom.map(it => {
-    const c = catalog[it.key] || {}, ph = +price(it.key, 'hd') || 0, pl = +price(it.key, 'lowes') || 0; hd += ph * it.qty; lo += pl * it.qty
+  const t = storeTotals(lastEv.bom, (k, st) => { const v = +price(k, st); return Number.isFinite(v) && v >= 0 ? v : null }), miss = n => n ? ` <span style="font-size:11px;color:var(--warn);font-weight:400">${n} unpriced</span>` : ''
+  const rows = t.rows.map(({ it, lh, ll }) => {
+    const c = catalog[it.key] || {}
     const hl = c.hdq ? `<a href="https://www.homedepot.com/s/${encodeURIComponent(c.hdq)}" target="_blank" rel="noopener">HD</a>` : ''
-    const ll = c.lq ? ` · <a href="https://www.lowes.com/search?searchTerm=${encodeURIComponent(c.lq)}" target="_blank" rel="noopener">Lowe's</a>` : ''
-    return `<tr><td>${c.name || it.key}${it.note ? ` <span style="color:var(--mut)">(${it.note})</span>` : ''}</td><td>${it.qty} ${it.unit || ''}</td><td>$${(ph * it.qty).toFixed(2)}</td><td>$${(pl * it.qty).toFixed(2)}</td><td style="font-size:12px">${hl}${ll}</td></tr>`
+    const lk = c.lq ? ` · <a href="https://www.lowes.com/search?searchTerm=${encodeURIComponent(c.lq)}" target="_blank" rel="noopener">Lowe's</a>` : ''
+    return `<tr><td>${c.name || it.key}${it.note ? ` <span style="color:var(--mut)">(${it.note})</span>` : ''}</td><td>${it.qty} ${it.unit || ''}</td><td>${lh != null ? usd(lh) : '—'}</td><td>${ll != null ? usd(ll) : '—'}</td><td style="font-size:12px">${hl}${lk}</td></tr>`
   }).join('')
-  host.innerHTML = `<table><tr><th>Item</th><th>Qty</th><th>Home Depot</th><th>Lowe's</th><th>Search</th></tr>${rows}<tr style="border-top:2px solid var(--line)"><td><b>Estimated total</b></td><td></td><td><b class="tot best">$${hd.toFixed(2)}</b></td><td><b>$${lo.toFixed(2)}</b></td><td></td></tr></table>`
+  host.innerHTML = `<table><tr><th>Item</th><th>Qty</th><th>Home Depot</th><th>Lowe's</th><th>Search</th></tr>${rows}<tr style="border-top:2px solid var(--line)"><td><b>Estimated total</b></td><td></td><td><b class="tot ${t.best === 'hd' ? 'best' : ''}">${usd(t.th)}</b>${miss(t.mh)}</td><td><b class="tot ${t.best === 'lowes' ? 'best' : ''}">${usd(t.tl)}</b>${miss(t.ml)}</td><td></td></tr></table>`
 }
-
 const G_LS = 'amnihvac.guide.v1'
 let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch (e) { return {} } })()
 const GUIDE = [
@@ -64,7 +63,7 @@ function renderPlans() {
 let view3d = null
 async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: hvacTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 const hvacTrade = makeHvacTrade()
-let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (validScene(s)) return s } catch (e) {} return emptyScene(24) })()
 const seedScene = () => {
   if (sketchScene.nodes.length) return
   const sc = sketchScene, sp = sc.scalePxPerFt = 24, W = 30, D = 24
@@ -89,7 +88,8 @@ function maybePlanBanner() {
   let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}
   if (!plan || Date.now() - (plan.ts || 0) > 86400000) return
   const side = document.querySelector('#side'); if (!side) return
-  const area = +plan.net_area || +plan.area_ft2 || 0, tons = Math.max(1, Math.round(area / 500 * 2) / 2), cfm = Math.round(tons * 400)
+  const area = +plan.net_area || +plan.area_ft2 || 0; if (!(area > 0)) return
+  const tons = Math.max(1, Math.round(area / 500 * 2) / 2), cfm = Math.round(tons * 400)
   const b = document.createElement('div')
   b.style.cssText = 'padding:9px 11px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc2);color:var(--ink);border-radius:8px;font-size:12px;line-height:1.5'
   b.innerHTML = '🏠 <b>From your house plan:</b> ~' + area.toFixed(0) + ' ft² ≈ <b>' + tons + ' tons</b> ≈ <b>' + cfm + ' CFM</b>. Size the air handler + total supply to match (rule of thumb — confirm with a Manual J).'

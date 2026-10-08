@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
+import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=o2'
 import { mountSketch } from './sketch-canvas.js?v=o5'
 import { makePlumbTrade } from './plumb-rules.js?v=trap2'
 const LS = 'amniplumb.cfg.v1', LSP = 'amniplumb.prices.v1'
 const defCfg = { w: 40, d: 30, toilets: 2, lavs: 2, tubs: 1, showers: 1, kitchen_sinks: 1, dishwashers: 1, washers: 1, water_heater: true, pipe_material: 'pex' }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const LIM = { toilets: [0, 20], lavs: [0, 20], tubs: [0, 10], showers: [0, 10], kitchen_sinks: [0, 6], dishwashers: [0, 4], washers: [0, 4], w: [12, 400], d: [10, 400] }
+const sane = c => { for (const k in LIM) { const v = c[k] === '' || c[k] == null ? NaN : Math.round(+c[k]); c[k] = Number.isFinite(v) ? Math.min(LIM[k][1], Math.max(LIM[k][0], v)) : defCfg[k] } c.pipe_material = ['pex', 'copper', 'cpvc'].includes(c.pipe_material) ? c.pipe_material : 'pex'; return c }
+let cfg = (() => { try { return sane({ ...defCfg, ...JSON.parse(localStorage.getItem(LS)) }) } catch { return { ...defCfg } } })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = (() => { try { const p = JSON.parse(localStorage.getItem(LSP)); return p && typeof p === 'object' ? Object.fromEntries(Object.entries(p).filter(([, v]) => Number.isFinite(v) && v >= 0)) : {} } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { pex: ['#c23a3a', 'PEX'], copper: ['#b87333', 'Copper'], cpvc: ['#d8c9a8', 'CPVC'] }
@@ -129,13 +131,13 @@ const renderGuide = () => {
     ['✅ Final', ['Fill the system, run every fixture, and check EACH joint for weeps.', 'Confirm traps hold a seal and nothing drains slow; then the final inspection.']],
   ]
   const tools = [`${mat === 'COPPER' ? 'Torch + flux + solder' : mat === 'CPVC' ? 'CPVC cement + primer' : 'PEX crimp or expander tool + rings'}`, 'PVC/ABS cement + primer (DWV)', 'Tubing cutter + ratchet PVC cutter', 'Hacksaw / mini-hacksaw', 'Right-angle drill + auger/hole-saw (joists)', 'Torpedo + 2-ft level (slope)', 'Channel-locks + basin wrench', 'Plumber’s putty + thread tape', 'Test balls / caps + gauge', 'Tape, marker, deburr tool']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost = cents(cost + p * it.qty) })
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro rough-to-finish sequence for your <b>${c.total_fixtures}-fixture</b> system (${mat}, ${c.building_drain_in}" drain). Tick as you go. Pair with sheets P-1 (riser) + P-2 (details).</div>`
     + chk
     + guideList('🔍 Inspections', ['<b>Rough-in</b>: DWV + supply pressure test, with pipe exposed — call before you close walls.', '<b>Final</b>: fixtures set, traps sealed, water heater T&P + pan, no leaks.', 'Gas water-heater venting + any sewer/septic tie-in usually need a licensed plumber.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in pipe, fittings + fixtures hardware (Home Depot catalog) — edit prices on the Materials tab. Fixtures + the water heater are extra.</div></div>`
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${usd(cost, 0)}</b> in pipe, fittings, valves${cfg.water_heater ? ' and the water heater' : ''} (Home Depot catalog) — edit prices on the Materials tab. The fixtures themselves (toilets, sinks, tubs) are extra.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const renderBest = () => {
@@ -149,26 +151,19 @@ const renderBest = () => {
     + guideList('🔥 Water heater', ['Cold in / hot out; full-port shutoff on cold. T&P relief piped to within 6" of the floor — never valved or capped.', 'Drain pan with a piped drain on any upper floor or finished space; expansion tank on closed systems.', 'Gas units need correct venting + combustion air; tankless need gas-line + venting sizing. Get a pro for gas.'])
     + guideList('🧰 Pipe materials', ['PEX — flexible, freeze-tolerant, fewest joints, fast (crimp/expansion). Great for DIY repipes; keep off direct sun + 18" from the WH for the first run.', 'Copper — durable + heat-proof but soldered + pricey. CPVC — cheap, but brittle when cold + needs solvent cement.', 'Protect any pipe through studs/plates with a steel nail plate (or keep it 1-1/4" back from the edge).'])
     + guideList('❄️ Protect + test', ['In cold climates keep supply lines OUT of exterior-wall cavities; insulate + heat-tape vulnerable runs.', 'Pressure-test before close-in: a 10-ft water column on the DWV, air or water on the supply — hold per code.', 'A licensed plumber is usually required for the gas water-heater + any sewer/septic/water-main tie-in.'])
-  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive layout — coming next</div><div style="font-size:13px;color:var(--ink)">A drag-and-drop fixture layout (drop a WC/lav/tub into a room → auto DWV + supply riser) is the next upgrade. For now, use the <b>Quick build</b> presets in the sidebar to assemble your fixtures and the P-1 riser + P-2 details on the 2D Plans tab.</div></div>`
+  if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive fixture layout — it's live</div><div style="font-size:13px;color:var(--ink)">The <b>Layout</b> tab is a drag-and-drop designer: drop fixtures, run supply and drain lines, and it checks trap-to-vent distance, drain capacity in DFU and toilet drain size as you go, with a priced parts list. Start from a template and adjust.</div></div>`
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
-  if (!out) return
+  if (!out) { $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = '<tr><td style="color:var(--mut)">Add at least one fixture in the sidebar to build the materials list.</td></tr>'; return }
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.total_fixtures}`, 'fixtures'], [`${c.demand_gpm}`, 'GPM demand'], [`${c.main_supply_in}"`, 'main supply'], [`${c.building_drain_in}"`, 'building drain'], [`${c.traps}`, 'P-traps']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
-    const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
-    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
-  }).join('')
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  $('#mat-table').innerHTML = matTableHTML(out.bom, price, catalog)
+  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value), k = `${i.dataset.id}.${i.dataset.store}`; Number.isFinite(v) && v >= 0 ? priceEdits[k] = cents(v) : delete priceEdits[k]; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
   const filled = []
+  if (!out) return filled
   const norm = text.toLowerCase()
   for (const it of out.bom) {
     const c = catalog[it.id]
@@ -179,8 +174,8 @@ const parsePaste = (text, store) => {
     while (idx !== -1) {
       const win = norm.slice(Math.max(0, idx - 160), idx + 360)
       const hits = toks.filter(t => win.includes(t)).length
-      const pm = win.match(/\$\s?(\d{1,4})\.(\d{2})/)
-      if (pm && hits >= Math.min(2, toks.length)) { const p = parseFloat(`${pm[1]}.${pm[2]}`); if (p > 0.2 && p < 5000 && (!best || hits > best.hits)) best = { p, hits } }
+      const p = parseStorePrice(win)
+      if (p != null && hits >= Math.min(2, toks.length)) { if (p > 0.2 && p < 5000 && (!best || hits > best.hits)) best = { p, hits } }
       idx = norm.indexOf(prim, idx + 1)
     }
     if (best) { priceEdits[`${it.id}.${store}`] = best.p; filled.push(it.id) }
@@ -190,7 +185,7 @@ const parsePaste = (text, store) => {
 }
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
 const FIX = { toilets: '#toilets', lavs: '#lavs', tubs: '#tubs', showers: '#showers', kitchen_sinks: '#ksinks', dishwashers: '#dishwashers', washers: '#washers' }
-const syncInputs = () => { for (const [k, id] of Object.entries(FIX)) { const el = $(id); if (el) el.value = cfg[k] } }
+const syncInputs = () => { for (const [k, id] of Object.entries(FIX)) { const el = $(id); if (el) el.value = cfg[k] } const wh = $('#wheater'); if (wh) wh.checked = !!cfg.water_heater }
 const PRESETS = {
   fullbath: { label: '➕ Full bath', add: { toilets: 1, lavs: 1, tubs: 1 } },
   threeq: { label: '➕ ¾ bath', add: { toilets: 1, lavs: 1, showers: 1 } },
@@ -200,8 +195,10 @@ const PRESETS = {
   laundry: { label: '➕ Laundry', add: { washers: 1 } },
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  sane(cfg); syncInputs()
+  const r = callCore(cfg)
+  out = r.error ? null : r
+  if (!out) { $('#warns').innerHTML = `<div class="warn">${r.error === 'add at least one fixture to size the system' ? 'Add at least one fixture (toilet, sink, tub, shower, washer or dishwasher) to size the system.' : r.error}</div>`; rebuild3D(); renderMat(); persist(); return }
   persist(); rebuild3D(); renderPlans(); renderMat(); renderWarns(); renderGuide(); renderBest(); updatePermits()
 }
 const buildFinishes = () => {
@@ -216,7 +213,7 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = +el.value; recompute() } }
+  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = el.value.trim() === '' ? cfg[key] : +el.value; recompute() } }
   for (const [k, id] of Object.entries(FIX)) bind(id, k)
   $('#wheater').checked = !!cfg.water_heater
   $('#wheater').onchange = e => { cfg.water_heater = e.target.checked; recompute() }
@@ -239,16 +236,18 @@ const initUI = () => {
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
+    if (!out) return
+    const csv = matCsv(out.bom, price)
     Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'plumb-materials.csv' }).click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }) }
+  $('#dl-svg').onclick = () => { out && ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plumb-${k}.svg` }); a.click() }) }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
 const SK_LS = 'amniplumb.sketch.v2'
 const plumbTrade = makePlumbTrade()
-let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (validScene(s)) return s } catch (e) {} return emptyScene(24) })()
+const skCatalog = new Proxy({}, { get: (_, k) => catalog[k] && { ...catalog[k], hd: price(k, 'hd'), lowes: price(k, 'lowes') } })
 const seedScene = () => {
   if (sketchScene.nodes.length) return
   const sc = sketchScene, sp = sc.scalePxPerFt = 24
@@ -264,9 +263,9 @@ const seedScene = () => {
   place('vent', W - 1, 1)
   try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
 }
-function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
+function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: plumbTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
-async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); view3d.setSupply(cfg.pipe_material); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog, store: 'hd', supplyMaterial: cfg.pipe_material, onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
+async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); view3d.setSupply(cfg.pipe_material); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: plumbTrade, catalog: skCatalog, store: 'hd', supplyMaterial: cfg.pipe_material, onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()

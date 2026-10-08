@@ -22,4 +22,4 @@ const csv2 = bomCsv(ev, { laborPct: 25 }) // +4 labor -> 20
 check('csv labor 25% -> total 20', csv2.includes('20.00') && csv2.toLowerCase().includes('labor'))
 let allok = true
 for (const [n, ok] of results) { if (!ok) allok = false; console.log((ok ? 'ok  ' : 'FAIL') + ' ' + n) }
-console.log('VERDICT:', allok ? 'PASS' : 'FAIL')
+console.log('VERDICT:', allok ? 'PASS' : 'FAIL'); process.exitCode = allok ? 0 : 1

@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { emptyScene, addNode, addRun } from './sketch.js?v=o2'
+import { emptyScene, addNode, addRun, usd, cents, validScene, matTableHTML, matCsv, parseStorePrice } from './sketch.js?v=o2'
 import { mountSketch } from './sketch-canvas.js?v=o5'
-import { makeElecTrade } from './elec-rules.js?v=r2'
+import { makeElecTrade, fixElecOut } from './elec-rules.js?v=r2'
 const LS = 'amnielec.cfg.v1', LSP = 'amnielec.prices.v1'
 const defCfg = { sqft: 1800, bedrooms: 3, bathrooms: 2, has_laundry: true, electric_range: 1, electric_dryer: 1, water_heater_elec: true, dishwasher: true, disposal: true, microwave: true, hvac_amps: 30 }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const LIM = { sqft: [200, 12000], bedrooms: [0, 12], bathrooms: [0, 10], electric_range: [0, 3], electric_dryer: [0, 3], hvac_amps: [0, 60] }
+const sane = c => { for (const k in LIM) { const v = c[k] === '' || c[k] == null ? NaN : Math.round(+c[k]); c[k] = Number.isFinite(v) ? Math.min(LIM[k][1], Math.max(LIM[k][0], v)) : defCfg[k] } return c }
+let cfg = (() => { try { return sane({ ...defCfg, ...JSON.parse(localStorage.getItem(LS)) }) } catch { return { ...defCfg } } })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = (() => { try { const p = JSON.parse(localStorage.getItem(LSP)); return p && typeof p === 'object' ? Object.fromEntries(Object.entries(p).filter(([, v]) => Number.isFinite(v) && v >= 0)) : {} } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
 const wasm = await WebAssembly.instantiateStreaming(fetch('elec_core.wasm?v=2'))
@@ -117,13 +119,13 @@ const renderGuide = () => {
     ['✅ Final + energize', ['Torque-check terminations to spec; test every circuit + the AFCI/GFCI test buttons.', 'Final inspection, then the utility connects the meter. Never work it hot.']],
   ]
   const tools = ["Lineman's pliers + diagonal cutters", 'Wire strippers (10-18 AWG)', 'Non-contact tester + multimeter', 'Insulated screwdrivers + nut driver', 'Right-angle drill + auger bit', 'Fish tape', 'Cable stapler + nail plates', 'Torpedo level', 'NM cable ripper', 'Torque screwdriver', 'Circuit labels + marker']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost = cents(cost + p * it.qty) })
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro rough-to-final sequence for your <b>${c.service_size_a} A / ${c.total_circuits}-circuit</b> service. Tick as you go. Pair with sheets E-1 (panel schedule) + E-2 (details). <b style="color:var(--warn)">Mains/panel + tie-in: hire a licensed electrician.</b></div>`
     + chk
     + guideList('🔍 Inspections', ['<b>Rough-in</b>: with walls open — box fill, support, protection, grounding/bonding.', '<b>Final</b>: devices, covers, GFCI/AFCI test, smoke/CO, panel labeled.', 'The service, panel, and meter tie-in are licensed-electrician + utility work.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in panel, breakers, wire + devices (Home Depot catalog) — edit prices on the Materials tab. Permit + electrician labor are separate.</div></div>`
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${usd(cost, 0)}</b> in panel, breakers, wire + devices (Home Depot catalog) — edit prices on the Materials tab. Permit + electrician labor are separate.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const renderBest = () => {
@@ -135,28 +137,21 @@ const renderBest = () => {
     + guideList('🛡️ GFCI (210.8) + AFCI (210.12)', ['GFCI: kitchens, baths, laundry, garages, outdoors, crawlspaces/unfinished basements, and within 6 ft of any sink/tub/shower.', 'AFCI: nearly all 120V 15/20A circuits in living areas (bedrooms, living, kitchen, laundry…).', 'Where both apply, use a dual-function AFCI/GFCI breaker or device. All receptacles tamper-resistant (406.12).'])
     + guideList('📏 Device heights + box fill', ['Receptacles ~12-16" to center; wall switches ~48"; kitchen-counter receptacles ~44" (above the backsplash).', 'Count box fill per 314.16 — conductors, devices, clamps + grounds; oversize the box rather than cram it.', 'Leave 6" of free conductor past the box face; support cable within 8" of a box and every 4-1/2 ft.'])
     + guideList('🔋 Panel + service (110.26, 408)', ['Working clearance at the panel: 36" deep, 30" wide, 6 ft 6 in high — clear, nothing stored in front.', 'Label every breaker (408.4); 200 A is the common new-home service; size per the load calc.', 'Smoke + CO alarms interconnected + on a protected circuit (R314/R315).'])
-    + guideList('🧵 Wire gauge × ampacity (Cu, 75°C)', ['15A→14 AWG · 20A→12 · 30A→10 · 40A→8 · 50A→6 · 100A→#3 · 200A→2/0 (or 4/0 Al).', 'Derate for conduit fill + ambient temperature; a 100A subfeed is typically #4 Cu / #2 Al.', 'Match the breaker to the SMALLEST wire on the circuit — never protect 14 AWG with a 20A breaker.'])
+    + guideList('🧵 Wire gauge × ampacity (Cu, 75°C)', ['15A→14 AWG · 20A→12 · 30A→10 · 40A→8 · 50A→6 (NM cable uses its 60°C column) · 100A→#3 Cu / #1 Al.', 'Dwelling service or main feeder only (310.12): 100A→#4 Cu / #2 Al, 200A→2/0 Cu / 4/0 Al. A 100A subpanel feeder is NOT a main feeder: use #3 Cu / #1 Al. Derate for conduit fill + ambient temperature.', 'Match the breaker to the SMALLEST wire on the circuit — never protect 14 AWG with a 20A breaker.'])
     + guideList('⏚ Grounding + bonding (250)', ['Grounding electrode system: two ground rods 6 ft apart (+ a Ufer/concrete-encased electrode where available).', 'Main bonding jumper ties neutral to ground at the SERVICE ONLY.', 'Subpanels keep neutral + ground SEPARATE on a 4-wire feeder; bond the gas + water piping.'])
   if (c) body.innerHTML += `<div style="${SEC}"><div style="${GH}">📐 Interactive device layout — it's live</div><div style="font-size:13px;color:var(--ink)">The <b>✏️ Layout</b> tab is a full drag-and-drop designer: drop devices, wire circuits from the panel, and it derives every circuit with NEC load/GFCI/AFCI/voltage-drop checks, live wire badges, and a priced BOM. Start from a 🧩 template and tune from there.</div></div>`
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
-  if (!out) return
+  if (!out) { $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = '<tr><td style="color:var(--mut)">Enter the house size and loads in the sidebar to build the materials list.</td></tr>'; return }
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.service_size_a} A`, 'service'], [`${c.total_circuits}`, 'circuits'], [`${(c.total_demand_va / 1000).toFixed(1)} kVA`, 'demand'], [`${c.receptacles}`, 'receptacles'], [`${c.lights}`, 'fixtures']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
-    const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
-    const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
-  }).join('')
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  $('#mat-table').innerHTML = matTableHTML(out.bom, price, catalog)
+  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value), k = `${i.dataset.id}.${i.dataset.store}`; Number.isFinite(v) && v >= 0 ? priceEdits[k] = cents(v) : delete priceEdits[k]; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
   const filled = []
+  if (!out) return filled
   const norm = text.toLowerCase()
   for (const it of out.bom) {
     const c = catalog[it.id]
@@ -167,8 +162,8 @@ const parsePaste = (text, store) => {
     while (idx !== -1) {
       const win = norm.slice(Math.max(0, idx - 160), idx + 360)
       const hits = toks.filter(t => win.includes(t)).length
-      const pm = win.match(/\$\s?(\d{1,4})\.(\d{2})/)
-      if (pm && hits >= Math.min(2, toks.length)) { const p = parseFloat(`${pm[1]}.${pm[2]}`); if (p > 0.2 && p < 5000 && (!best || hits > best.hits)) best = { p, hits } }
+      const p = parseStorePrice(win)
+      if (p != null && hits >= Math.min(2, toks.length)) { if (p > 0.2 && p < 5000 && (!best || hits > best.hits)) best = { p, hits } }
       idx = norm.indexOf(prim, idx + 1)
     }
     if (best) { priceEdits[`${it.id}.${store}`] = best.p; filled.push(it.id) }
@@ -179,7 +174,7 @@ const parsePaste = (text, store) => {
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
 const NUMF = { bedrooms: '#bedrooms', bathrooms: '#bathrooms', electric_range: '#range', electric_dryer: '#dryer', hvac_amps: '#hvac' }
 const CHKF = { has_laundry: '#laundry', water_heater_elec: '#whelec', dishwasher: '#dw', disposal: '#disp', microwave: '#mw' }
-const syncInputs = () => { for (const [k, id] of Object.entries(NUMF)) { const e = $(id); if (e) e.value = cfg[k] } for (const [k, id] of Object.entries(CHKF)) { const e = $(id); if (e) e.checked = !!cfg[k] } }
+const syncInputs = () => { const sq = $('#sqft'); if (sq) sq.value = cfg.sqft; for (const [k, id] of Object.entries(NUMF)) { const e = $(id); if (e) e.value = cfg[k] } for (const [k, id] of Object.entries(CHKF)) { const e = $(id); if (e) e.checked = !!cfg[k] } }
 const PRESETS = {
   bedroom: { label: '➕ Bedroom', add: { bedrooms: 1 } },
   bath: { label: '➕ Bathroom', add: { bathrooms: 1 } },
@@ -189,12 +184,14 @@ const PRESETS = {
   hvac: { label: '➕ HVAC 30A', add: { hvac_amps: 30 } },
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  sane(cfg); syncInputs()
+  const r = callCore(cfg)
+  out = r.error ? null : fixElecOut(r, cfg)
+  if (!out) { $('#warns').innerHTML = `<div class="warn">${r.error}</div>`; renderMat(); return }
   persist(); rebuild3D(); renderPlans(); renderMat(); renderWarns(); renderGuide(); renderBest(); updatePermits()
 }
 const initUI = () => {
-  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = +el.value; recompute() } }
+  const bind = (id, key) => { const el = $(id); if (!el) return; el.value = cfg[key]; el.onchange = () => { cfg[key] = el.value.trim() === '' ? cfg[key] : +el.value; recompute() } }
   bind('#sqft', 'sqft')
   for (const [k, id] of Object.entries(NUMF)) bind(id, k)
   const chk = (id, key) => { const el = $(id); if (!el) return; el.checked = !!cfg[key]; el.onchange = e => { cfg[key] = e.target.checked; recompute() } }
@@ -218,15 +215,17 @@ const initUI = () => {
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
+    if (!out) return
+    const csv = matCsv(out.bom, price)
     Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'elec-materials.csv' }).click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }) }
+  $('#dl-svg').onclick = () => { out && ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `elec-${k}.svg` }); a.click() }) }
   initPermits(() => ({ ...cfg, height: 0, attach: 'free', length: 0, depth: 0 }), () => out)
 }
 const SK_LS = 'amnielec.sketch.v2'
 const elecTrade = makeElecTrade()
-let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (s && s.nodes) return s } catch (e) {} return emptyScene(24) })()
+let sketchScene = (() => { try { const s = JSON.parse(localStorage.getItem(SK_LS)); if (validScene(s)) return s } catch (e) {} return emptyScene(24) })()
+const skCatalog = new Proxy({}, { get: (_, k) => catalog[k] && { ...catalog[k], hd: price(k, 'hd'), lowes: price(k, 'lowes') } })
 const seedScene = () => {
   if (!out || !out.calc || sketchScene.nodes.length) return
   const sc = sketchScene, sp = sc.scalePxPerFt = 24
@@ -245,9 +244,9 @@ const seedScene = () => {
   for (const [n, type, wire] of appl) for (let j = 0; j < n; j++) { const id = place(type, Math.min(W - 2, ax), D - 3); addRun(sc, wire, panel, id); ax += 3.4 }
   try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {}
 }
-function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
+function setupSketch() { const host = $('#sketch-host'); if (!host) return; mountSketch(host, { scene: sketchScene, trade: elecTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) }
 let view3d = null
-async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: elecTrade, catalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
+async function mount3DView() { const host = $('#sketch3d-host'); if (!host) return; if (view3d) { view3d.rebuild(); return } try { const m = await import('./sketch-3d.js?v=m8'); view3d = m.mount3D(host, { scene: sketchScene, trade: elecTrade, catalog: skCatalog, store: 'hd', onChange: sc => { try { localStorage.setItem(SK_LS, JSON.stringify(sc)) } catch (e) {} } }) } catch (e) { host.innerHTML = '<div style="padding:20px;color:#9aa0aa">3D sim unavailable</div>' } }
 catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
@@ -264,7 +263,7 @@ function maybeScanBanner() {
   b.style.cssText = 'display:block;width:100%;padding:9px;margin-bottom:12px;background:var(--bg);border:1px dashed var(--acc);color:var(--acc);border-radius:8px;cursor:pointer;font-weight:600;font-size:13px'
   b.textContent = '\u{1F4D0} Use my scan area (' + scan.area_ft2 + ' ft²)'
   side.insertBefore(b, side.firstChild)
-  b.onclick = () => { cfg.sqft = Math.round(scan.area_ft2); const e = document.querySelector('#sqft'); if (e) e.value = cfg.sqft; recompute(); b.textContent = '✓ Using ' + cfg.sqft + ' ft² from your scan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
+  b.onclick = () => { cfg.sqft = Math.round(scan.area_ft2); recompute(); b.textContent = '✓ Using ' + cfg.sqft + ' ft² from your scan'; b.style.color = 'var(--ok)'; b.style.borderColor = 'var(--ok)' }
 }
 function maybePlanBanner() {
   let plan; try { plan = JSON.parse(localStorage.getItem('amni_construct_plan')) } catch (e) {}

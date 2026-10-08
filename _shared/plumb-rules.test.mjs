@@ -19,4 +19,4 @@ const results = [], check = (n, ok) => results.push([n, ok])
 
 let allok = true
 for (const [n, ok] of results) { if (!ok) allok = false; console.log((ok ? 'ok  ' : 'FAIL') + ' ' + n) }
-console.log('VERDICT:', allok ? 'PASS' : 'FAIL')
+console.log('VERDICT:', allok ? 'PASS' : 'FAIL'); process.exitCode = allok ? 0 : 1

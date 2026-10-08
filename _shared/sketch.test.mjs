@@ -42,4 +42,4 @@ pass.push(['orphan detected', evaluate(s2, tradeElec, catalog).checks[0].level =
 let allok = true
 for (const [name, ok] of pass) { if (!ok) allok = false; console.log((ok ? 'ok  ' : 'FAIL') + ' ' + name) }
 console.log('measured: ' + totFt.toFixed(1) + ' ft nm142, quote $' + ev.quote.total.toFixed(2))
-console.log('VERDICT:', allok ? 'PASS' : 'FAIL')
+console.log('VERDICT:', allok ? 'PASS' : 'FAIL'); process.exitCode = allok ? 0 : 1
