@@ -3,104 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Pro Dashboard — Quotes, Projects & Clients | Amni-Construct</title>
+<title>Pro Dashboard · Quotes, Projects & Clients | Amni-Construct</title>
 <meta name="robots" content="noindex">
+<script>(()=>{let t='';try{t=localStorage.getItem('amni-theme')||''}catch{}document.documentElement.dataset.theme=t==='dark'||t==='light'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'})()</script>
 <style>
-:root{--bg:#0B0D10;--panel:#111418;--ink:#E7E4DC;--mut:#8E959E;--line:#20242B;--acc:#C89B4E;--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
+:root{--bg:#F4F3EF;--panel:#FFFFFF;--panel2:#F8F7F4;--ink:#1B1F24;--mut:#5E6670;--line:#E2E0DA;--acc:#A8721F;--acc-ink:#FFFFFF;--ok:#2F7D3E;--sent:#1F6F8B;--bad:#B2423F;--shadow:0 1px 2px rgba(20,22,26,.06),0 6px 20px -14px rgba(20,22,26,.25);--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+[data-theme=dark]{--bg:#0B0D10;--panel:#121519;--panel2:#171B20;--ink:#E7E4DC;--mut:#959CA5;--line:#252A31;--acc:#D3A253;--acc-ink:#14100A;--ok:#7FD18A;--sent:#6CC0D8;--bad:#E07C78;--shadow:none}
 *{box-sizing:border-box}
 html,body{overscroll-behavior-y:none}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 'Segoe UI',system-ui,sans-serif}
-header{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line)}
-header b{color:var(--acc);letter-spacing:.05em}
-header a{color:var(--mut);text-decoration:none;font-size:12px}
-header a:hover{color:var(--acc)}
-header .sp{flex:1}
-.wrap{max-width:1080px;margin:0 auto;padding:22px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:26px}
-.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-.tile .n{font-size:22px;font-weight:700;color:var(--acc)}
-.tile .l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
-h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:26px 0 10px;display:flex;align-items:center;gap:10px}
-h2::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,181,101,.3),transparent)}
-table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);padding:9px 12px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
-td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.045)}
-tr:last-child td{border-bottom:none}
-td:last-child,th:last-child{text-align:right}
-select{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font:inherit;font-size:11.5px;padding:4px 6px}
-select.st-draft{color:var(--mut)}select.st-sent{color:#6cc0d8}select.st-accepted{color:#7fd18a}select.st-declined{color:#c96b6b}
-.btn{display:inline-block;font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid rgba(232,181,101,.5);background:none;color:var(--acc);cursor:pointer;text-decoration:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--acc)}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hbar{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:8px 14px;padding:10px 20px;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:.02em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;min-height:44px}
+.brand span{color:var(--acc)}
+.sp{flex:1}
+.nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.nav a,.nav button{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:var(--mut);text-decoration:none;font:inherit;font-size:14px;background:none;border:0;cursor:pointer}
+.nav a:hover,.nav button:hover{color:var(--ink);background:var(--panel2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 48px}
+.title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.01em}
+.chip{display:inline-flex;align-items:center;font-size:12px;font-weight:600;letter-spacing:.04em;border-radius:99px;padding:3px 10px;border:1px solid var(--line);color:var(--mut);margin-top:6px}
+.chip.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.chip.trial{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 45%,transparent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;font:600 14px/1 var(--sans);padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none;box-shadow:var(--shadow)}
 .btn:hover{border-color:var(--acc)}
-.btn.red{border-color:rgba(201,107,107,.4);color:#c96b6b}
-.empty{color:var(--mut);font-size:12.5px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:18px;text-align:center}
-#gate{max-width:460px;margin:80px auto;text-align:center;background:var(--panel);border:1px solid rgba(232,181,101,.4);border-radius:14px;padding:34px}
-#gate h1{color:var(--acc);font-size:20px;margin:0 0 8px}
-#gate p{color:var(--mut);font-size:13px;line-height:1.7}
-#gate a{display:inline-block;margin-top:10px;background:var(--acc);color:#14100a;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none}
-.mod-chip{display:inline-block;font-size:10px;letter-spacing:.05em;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--mut)}
-@media(max-width:700px){.wrap{padding:12px}td,th{padding:7px 8px}}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:13px;box-shadow:none}
+.btn.del{color:var(--bad);min-width:36px;padding:0 10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:8px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.tile .n{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.tile .l{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.tile .s{font-size:12.5px;color:var(--mut)}
+h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:30px 0 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel2);font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.r{text-align:right;white-space:nowrap}
+.mono{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:13px}
+select{min-height:36px;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--ink);font:inherit;font-size:13px;padding:0 8px}
+select.st-sent{color:var(--sent)}select.st-accepted{color:var(--ok)}select.st-declined{color:var(--bad)}select.st-draft{color:var(--mut)}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 9px;color:var(--mut);white-space:nowrap}
+.empty{color:var(--mut);font-size:14px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:18px;text-align:center}
+.start{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:8px}
+.start h2{margin:0 0 4px;color:var(--ink);font-size:17px;letter-spacing:0;text-transform:none}
+.start p{margin:0 0 14px;color:var(--mut)}
+.steps{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.steps li{display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.steps b{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc);font-size:13px}
+.trades{display:flex;flex-wrap:wrap;gap:8px}
+.trades a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:99px;color:var(--ink);text-decoration:none;font-size:14px;background:var(--panel2)}
+.trades a:hover{border-color:var(--acc)}
+.gate{max-width:560px;margin:56px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:32px 28px;box-shadow:var(--shadow)}
+.gate h1{margin-bottom:10px}
+.gate p{color:var(--mut);margin:0 0 14px}
+.gate .actions{justify-content:center;margin-top:18px}
+.note{color:var(--mut);font-size:13px;margin-top:28px;line-height:1.6}
+.soon{font-size:13.5px;color:var(--mut);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:14px}
+@media(max-width:720px){.hbar{padding:6px 12px}.nav a,.nav button{padding:0 9px}.wrap{padding:18px 16px 40px}h1{font-size:22px}
+.stack thead{display:none}.stack,.stack tbody,.stack tr,.stack td{display:block;width:100%}.stack tr{padding:10px 14px;border-bottom:1px solid var(--line)}.stack tr:last-child{border-bottom:0}.stack td{border:0;padding:3px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right}.stack td::before{content:attr(data-l);color:var(--mut);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-align:left}.stack td.r{white-space:normal}.stack td.first{font-weight:700;font-size:15px}.stack td.first::before{display:none}.actions .btn{flex:1}}
 </style>
-<link rel="stylesheet" href="/assets/app-brand.css?v=1">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#e0954a">
+<meta name="theme-color" content="#C89B4E">
 </head>
 <body>
-<header><b>💼 PRO DASHBOARD</b><span class="sp"></span><a href="#" id="exp">⬇ Export backup</a><a href="#" id="imp">⬆ Import</a><a href="mailto:amnibro7@gmail.com?subject=Amni-Construct%20suggestion">💡 Suggest</a><a href="./">← Construct hub</a><a href="pro.html">Pricing</a><input type="file" id="impf" accept="application/json" style="display:none"></header>
-<div id="gate" style="display:none"><h1>💼 Pro Dashboard</h1><p>Your quote pipeline, saved projects and clients live here — part of Amni-Construct Pro. Start a free 14-day trial from the 💼 Pro tab in any estimator.</p><a href="../deck/">Open an estimator →</a><p style="margin-top:16px;font-size:12px"><a href="#" id="imp2" style="color:var(--acc);background:none;box-shadow:none;padding:0;font-weight:400">Restore from a backup file</a></p></div>
-<div class="wrap" id="app" style="display:none">
+<header><div class="hbar"><a class="brand" href="./">💼 <span>Construct Pro</span></a><span class="sp"></span><nav class="nav" aria-label="Dashboard"><a href="./">Estimators</a><a href="pro.html">Pricing</a><a href="mailto:amnibro7@gmail.com?subject=Amni-Construct%20suggestion">Feedback</a><button type="button" id="theme" aria-label="Switch colour theme">Dark</button></nav></div></header>
+<main class="wrap">
+<div class="title"><div><h1 id="h1">Dashboard</h1><span class="chip" id="chip" hidden></span></div><div class="actions"><button type="button" class="btn" id="exp">⬇ Export backup</button><button type="button" class="btn" id="imp">⬆ Restore from backup</button></div></div>
+<input type="file" id="impf" accept="application/json,.json" hidden>
+<section id="gate" class="gate" hidden></section>
+<section id="app" hidden>
+<div id="start"></div>
 <div class="tiles" id="tiles"></div>
 <h2>Quotes</h2><div id="quotes"></div>
 <h2>Saved projects</h2><div id="projects"></div>
 <h2>Clients</h2><div id="clients"></div>
-<p style="color:var(--mut);font-size:11px;margin-top:26px">Everything on this page lives in this browser's local storage — nothing is uploaded. Use ⬇ Export backup regularly (top bar) — it saves every design, quote, client and setting to one file you control.</p>
-</div>
+<p class="note">Everything here lives in this browser on this device. Nothing is uploaded. Export a backup now and then: it saves every design, price list, quote, client and setting to one file you keep. Restoring adds the backup's quotes, clients and projects to what's here and keeps this device's licence.</p>
+</section>
+</main>
 <script src="../_shared/pro-config.js?v=c2"></script>
 <script src="../_shared/pro-license.js?v=1"></script>
+<script src="../_shared/share-import.js?v=s3"></script>
+<script src="../_shared/pro.js?v=p8"></script>
 <script>
 (()=>{
-const g=k=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}}
-const PS=(()=>{try{return JSON.parse(localStorage.getItem('amni.pro.v1'))||{}}catch{return{}}})()
-const trialOk=()=>PS.trialStart&&Date.now()<PS.trialStart+14*864e5
-const paidOk=async()=>{
-  if(!PS.ent||!PS.sig||!PS.key||!window.AmniProLicense||!window.AMNI_LICENSE_PUBKEY)return false
-  let pub=null
-  try{pub=JSON.parse(window.AMNI_LICENSE_PUBKEY)}catch(e){return false}
-  const ok=await window.AmniProLicense.verifyEntitlement(PS.ent,PS.sig,pub,PS.key)
-  return !!(ok&&Date.now()<PS.ent.exp)
-}
-const expData=()=>{const data={};Object.keys(localStorage).filter(k=>k.startsWith('amni')).forEach(k=>data[k]=localStorage.getItem(k));const b=new Blob([JSON.stringify({v:1,app:'amni-construct-pro',ts:Date.now(),data})],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amni-construct-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
-window.__amniImport=txt=>{let j;try{j=JSON.parse(txt)}catch{return alert('That file is not a valid backup.')}if(!j||!j.data||typeof j.data!=='object')return alert('That file is not an Amni-Construct backup.');const n=Object.keys(j.data).length;if(!confirm('Restore '+n+' entries from '+new Date(j.ts||0).toLocaleDateString()+'? This overwrites matching data in this browser.'))return;Object.entries(j.data).forEach(([k,v])=>localStorage.setItem(k,String(v)));location.reload()}
-const impf=document.getElementById('impf')
-impf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>window.__amniImport(r.result);r.readAsText(f);impf.value=''})
-document.getElementById('exp').addEventListener('click',e=>{e.preventDefault();expData()})
-document.getElementById('imp').addEventListener('click',e=>{e.preventDefault();impf.click()})
-const i2=document.getElementById('imp2');i2&&i2.addEventListener('click',e=>{e.preventDefault();impf.click()})
+const A=window.AmniProQuote,L=window.AmniProLicense,SH=window.AmniShareImport,$=id=>document.getElementById(id)
+const esc=A.esc,money=A.money,isObj=v=>!!v&&typeof v==='object'&&!Array.isArray(v)
+const g=k=>{try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v.filter(isObj):[]}catch{return[]}}
+const PS=(()=>{try{const v=JSON.parse(localStorage.getItem('amni.pro.v1'));return isObj(v)?v:{}}catch{return{}}})()
+const MOD={deck:'Deck',patio:'Patio',pool:'Pool',floor:'Flooring',roof:'Roofing',frame:'Framing',plumb:'Plumbing',elec:'Electrical',hvac:'HVAC',plan:'Whole-house',garden:'Garden'}
+const QK='amni.pro.quotes.v1',PJ='amni.pro.projects.v1',CK='amni.pro.clients.v1',STATUSES=['draft','sent','accepted','declined']
+const th=$('theme'),paintTheme=()=>th.textContent=document.documentElement.dataset.theme==='dark'?'Light':'Dark'
+th.onclick=()=>{const n=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=n;try{localStorage.setItem('amni-theme',n)}catch{}paintTheme()}
+paintTheme()
+const set=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{alert("This browser's storage is full, so that change was not saved. Export a backup, then delete old projects.");return false}}
+const download=(name,obj)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(obj)],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+const snapshot=()=>{const data={};Object.keys(localStorage).filter(k=>k.startsWith('amni')&&k!==A.DEVICE_LS).forEach(k=>data[k]=localStorage.getItem(k));return{v:1,app:'amni-construct-pro',ts:Date.now(),data}}
+const expData=tag=>download('amni-construct-'+(tag||'backup')+'-'+new Date().toISOString().slice(0,10)+'.json',snapshot())
+const importText=txt=>{let j;try{j=JSON.parse(txt)}catch{return alert("That file isn't a backup. Pick the .json file you exported from this dashboard.")}const entries=A.backupEntries(j);if(!entries.length)return alert("That file doesn't contain any Amni-Construct data, so nothing was changed.");const{out,n}=A.mergeBackup(k=>localStorage.getItem(k),entries),when=isObj(j)&&Number.isFinite(j.ts)?new Date(j.ts).toLocaleDateString():'an unknown date';if(!Object.keys(out).length)return alert("That backup couldn't be read, so nothing was changed.");if(!confirm(`Restore the backup from ${when}?\n\nAdds ${n.quotes} quote(s), ${n.clients} client(s) and ${n.projects} project(s) you don't already have.\nReplaces the designs, price lists and settings open in this browser with the backup's (${n.other} item(s)).\nKeeps this device's licence and trial.\n\nA copy of what's here now downloads first, in case you want it back.`))return;expData('before-restore');const prior=new Map();try{Object.keys(out).forEach(k=>prior.set(k,localStorage.getItem(k)));Object.entries(out).forEach(([k,v])=>localStorage.setItem(k,v))}catch{prior.forEach((v,k)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch{}});return alert("This browser ran out of storage, so the restore was undone and nothing changed.")}setTimeout(()=>location.reload(),600)}
+const impf=$('impf')
+impf.addEventListener('change',e=>{const f=e.target.files[0];impf.value='';if(!f)return;if(f.size>25e6)return alert('That file is too large to be a Construct backup.');const r=new FileReader();r.onload=()=>importText(String(r.result));r.readAsText(f)})
+$('exp').onclick=()=>expData()
+$('imp').onclick=()=>impf.click()
+const access=async()=>{let ok=false;try{const raw=window.AMNI_LICENSE_PUBKEY,pub=raw?(typeof raw==='string'?JSON.parse(raw):raw):null;ok=!!(L&&PS.key&&PS.ent&&PS.sig&&pub&&await L.verifyEntitlement(PS.ent,PS.sig,pub,PS.key))}catch{}return L?L.access(PS,Date.now(),ok,false):{ok:false,kind:'locked'}}
+const trades=()=>`<div class="trades">${Object.entries(MOD).map(([k,v])=>`<a href="../${k}/">${v}</a>`).join('')}</div>`
+const soon=()=>/^https:\/\//i.test(window.AMNI_BUY_URL||'')?`<a class="btn pri" href="${esc(window.AMNI_BUY_URL)}">Buy Pro: $19/mo</a>`:`<p class="soon"><b>Checkout opens soon.</b> <a href="mailto:amnibro7@gmail.com?subject=${encodeURIComponent('Construct Pro: tell me when checkout opens')}">Email me</a> and I'll send the link the day it opens.</p>`
 const openDash=async()=>{
-  if(!(trialOk()||await paidOk())){document.getElementById('gate').style.display='block';return}
-  document.getElementById('app').style.display='block'
-  render()
-}
-const money=n=>'$'+(+n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-const MOD={deck:'Deck',patio:'Patio',pool:'Pool',floor:'Floor',roof:'Roof',frame:'Frame',plumb:'Plumb',elec:'Elec',hvac:'HVAC',plan:'Plan',garden:'Garden'}
-const QK='amni.pro.quotes.v1',PJ='amni.pro.projects.v1',CK='amni.pro.clients.v1'
-const STATUSES=['draft','sent','accepted','declined']
+const st=await access(),chip=$('chip')
+if(!st.ok){const ended=Number.isFinite(PS.trialStart),has=g(QK).length+g(PJ).length+g(CK).length;$('h1').textContent='Pro dashboard';$('gate').hidden=false;$('gate').innerHTML=ended?`<h1>Your trial has ended</h1><p>Nothing was deleted.${has?' Your quotes, clients and projects are still in this browser.':''} Export a backup any time with the button above. Enter your licence key from the 💼 Pro tab in any estimator to unlock this page again.</p>${soon()}<div class="actions"><a class="btn" href="../deck/">Open an estimator</a></div>`:`<h1>Your quotes, clients and saved jobs</h1><p>This page fills in once you use Construct Pro. Start the free 14-day trial from the 💼 Pro tab in any estimator. No card, no account.</p><div class="actions"><a class="btn pri" href="../deck/">Open the deck estimator</a><a class="btn" href="pro.html">What Pro includes</a></div><p style="margin-top:18px">Or pick a trade:</p>${trades()}`;return}
+chip.hidden=false;chip.className='chip '+(st.kind==='trial'?'trial':'ok');chip.textContent=st.kind==='trial'?`Trial · ${st.days} day${st.days===1?'':'s'} left`:'Pro'
+$('app').hidden=false
+render()}
+const openProject=p=>{if(!MOD[p.mod]||!isObj(p.data))return;const same=Object.keys(p.data).every(k=>localStorage.getItem(k)===p.data[k]);if(!same&&!confirm(`Open "${p.name}"? It replaces the ${MOD[p.mod].toLowerCase()} design and quote open in that estimator now.`))return;let h;try{h=SH?SH.encodePayload(p.data):btoa(unescape(encodeURIComponent(JSON.stringify(p.data))))}catch(e){return alert(e.message||'That project is too large to open.')}isObj(p.quote)&&set('amni.pro.q.'+p.mod+'.v1',JSON.stringify(p.quote));location.href='../'+p.mod+'/#share='+h}
 const render=()=>{
-const qs=g(QK),pj=g(PJ),cl=g(CK)
-const sum=st=>qs.filter(q=>q.status===st).reduce((a,q)=>a+(+q.total||0),0)
-document.getElementById('tiles').innerHTML=`
-<div class="tile"><div class="n">${qs.length}</div><div class="l">Quotes</div></div>
-<div class="tile"><div class="n">${money(sum('sent'))}</div><div class="l">Out for signature</div></div>
-<div class="tile"><div class="n">${money(sum('accepted'))}</div><div class="l">Won</div></div>
-<div class="tile"><div class="n">${pj.length}</div><div class="l">Saved projects</div></div>
-<div class="tile"><div class="n">${cl.length}</div><div class="l">Clients</div></div>`
-document.getElementById('quotes').innerHTML=qs.length?`<table><thead><tr><th>Quote #</th><th>Date</th><th>Trade</th><th>Client</th><th>Status</th><th>Total</th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td>${esc(q.qn)}</td><td>${new Date(q.ts).toLocaleDateString()}</td><td><span class="mod-chip">${MOD[q.mod]||q.mod}</span></td><td>${esc(q.client)||'—'}</td><td><select data-qi="${i}" class="st-${q.status}">${STATUSES.map(s=>`<option${s===q.status?' selected':''}>${s}</option>`).join('')}</select></td><td>${money(q.total)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No quotes yet — open any estimator, hit 💼 Pro, and generate your first branded quote.</div>'
-document.getElementById('projects').innerHTML=pj.length?`<table><thead><tr><th>Project</th><th>Trade</th><th>Client</th><th>Saved</th><th></th></tr></thead><tbody>${pj.map(p=>`<tr><td>${esc(p.name)}</td><td><span class="mod-chip">${MOD[p.mod]||p.mod}</span></td><td>${esc(p.client)||'—'}</td><td>${new Date(p.ts).toLocaleDateString()}</td><td><a class="btn" href="../${p.mod}/#share=${btoa(unescape(encodeURIComponent(JSON.stringify(p.data))))}">Open</a> <button class="btn red" data-pdel="${p.id}">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No saved projects — design something and hit 💾 in the Pro drawer.</div>'
-const qByCl=n=>qs.filter(q=>q.client===n)
-document.getElementById('clients').innerHTML=cl.length?`<table><thead><tr><th>Client</th><th>Contact</th><th>Quotes</th><th>Value</th></tr></thead><tbody>${cl.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc([c.addr,c.contact].filter(Boolean).join(' · '))}</td><td>${qByCl(c.name).length}</td><td>${money(qByCl(c.name).reduce((a,q)=>a+(+q.total||0),0))}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No saved clients — save one from the Client &amp; project section of the Pro drawer.</div>'
-document.querySelectorAll('select[data-qi]').forEach(s=>s.addEventListener('change',()=>{const list=g(QK);list[+s.dataset.qi].status=s.value;localStorage.setItem(QK,JSON.stringify(list));render()}))
-document.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{localStorage.setItem(PJ,JSON.stringify(g(PJ).filter(x=>x.id!==b.dataset.pdel)));render()})
-}
+const qs=g(QK),pj=g(PJ),cl=g(CK),sum=s=>qs.filter(q=>q.status===s).reduce((a,q)=>a+(+q.total||0),0),cnt=s=>qs.filter(q=>q.status===s).length,decided=cnt('accepted')+cnt('declined')
+$('start').innerHTML=qs.length||pj.length||cl.length?'':`<div class="start"><h2>Get your first quote out</h2><p>Three steps, about five minutes. Your quotes, clients and saved jobs collect here.</p><ol class="steps"><li><b>1</b><span>Open an estimator and size the job. The materials list prices itself.</span></li><li><b>2</b><span>Tap 💼 Pro. Add your company, logo and licence # once.</span></li><li><b>3</b><span>Add labor and markup, then generate the branded quote. It lands here as a draft.</span></li></ol>${trades()}</div>`
+$('tiles').innerHTML=`<div class="tile"><div class="n">${money(sum('sent'))}</div><div class="l">Out for signature</div><div class="s">${cnt('sent')} quote${cnt('sent')===1?'':'s'} sent</div></div><div class="tile"><div class="n">${money(sum('accepted'))}</div><div class="l">Won</div><div class="s">${cnt('accepted')} accepted${decided?` · ${Math.round(cnt('accepted')/decided*100)}% win rate`:''}</div></div><div class="tile"><div class="n">${cnt('draft')}</div><div class="l">Drafts</div><div class="s">${qs.length} quote${qs.length===1?'':'s'} in total</div></div><div class="tile"><div class="n">${cl.length}</div><div class="l">Clients</div><div class="s">${pj.length} saved project${pj.length===1?'':'s'}</div></div>`
+$('quotes').innerHTML=qs.length?`<div class="card"><table class="stack"><thead><tr><th>Quote #</th><th>Date</th><th>Trade</th><th>Client</th><th>Status</th><th class="r">Total</th><th></th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td class="first mono">${esc(q.qn)}</td><td data-l="Date">${new Date(+q.ts||0).toLocaleDateString()}</td><td data-l="Trade"><span class="tag">${esc(MOD[q.mod]||q.mod)}</span></td><td data-l="Client">${esc(q.client)||'—'}</td><td data-l="Status"><select data-qi="${i}" class="st-${esc(q.status)}" aria-label="Status of ${esc(q.qn)}">${STATUSES.map(s=>`<option value="${s}"${s===q.status?' selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select></td><td class="r" data-l="Total"><b>${money(q.total)}</b></td><td class="r" data-l=""><button type="button" class="btn sm del" data-qdel="${i}" aria-label="Delete quote ${esc(q.qn)}">✕</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No quotes yet. In any estimator, tap 💼 Pro and generate a branded quote. It shows up here as a draft so you can track it.</div>'
+$('projects').innerHTML=pj.length?`<div class="card"><table class="stack"><thead><tr><th>Project</th><th>Trade</th><th>Client</th><th>Saved</th><th></th></tr></thead><tbody>${pj.map((p,i)=>`<tr><td class="first">${esc(p.name)}</td><td data-l="Trade"><span class="tag">${esc(MOD[p.mod]||p.mod)}</span></td><td data-l="Client">${esc(p.client)||'—'}</td><td data-l="Saved">${new Date(+p.ts||0).toLocaleDateString()}</td><td class="r" data-l=""><button type="button" class="btn sm" data-popen="${i}">Open</button> <button type="button" class="btn sm del" data-pdel="${i}" aria-label="Delete project ${esc(p.name)}">✕</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No saved projects. In the 💼 Pro panel, “Save design + quote as a project” keeps each job separate.</div>'
+const qBy=n=>qs.filter(q=>String(q.client||'').trim().toLowerCase()===String(n||'').trim().toLowerCase())
+$('clients').innerHTML=cl.length?`<div class="card"><table class="stack"><thead><tr><th>Client</th><th>Contact</th><th class="r">Quotes</th><th class="r">Won</th></tr></thead><tbody>${cl.map(c=>`<tr><td class="first">${esc(c.name)}</td><td data-l="Contact">${esc([c.addr,c.contact].filter(Boolean).join(' · '))||'—'}</td><td class="r" data-l="Quotes">${qBy(c.name).length}</td><td class="r" data-l="Won">${money(qBy(c.name).filter(q=>q.status==='accepted').reduce((a,q)=>a+(+q.total||0),0))}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No saved clients. Use “Save client for reuse” in the 💼 Pro panel and they autofill on the next quote.</div>'
+document.querySelectorAll('select[data-qi]').forEach(s=>s.addEventListener('change',()=>{const list=g(QK),q=list[+s.dataset.qi];q&&(q.status=s.value,set(QK,JSON.stringify(list)));render()}))
+document.querySelectorAll('[data-qdel]').forEach(b=>b.onclick=()=>{const list=g(QK),q=list[+b.dataset.qdel];q&&confirm(`Delete quote ${q.qn} from the dashboard? This can't be undone.`)&&(list.splice(+b.dataset.qdel,1),set(QK,JSON.stringify(list)));render()})
+document.querySelectorAll('[data-popen]').forEach(b=>b.onclick=()=>{const p=g(PJ)[+b.dataset.popen];p&&openProject(p)})
+document.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{const list=g(PJ),p=list[+b.dataset.pdel];p&&confirm(`Delete the saved project "${p.name}"? This can't be undone.`)&&(list.splice(+b.dataset.pdel,1),set(PJ,JSON.stringify(list)));render()})}
 openDash()
 })()
 </script>
