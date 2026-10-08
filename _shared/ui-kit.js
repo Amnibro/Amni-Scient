@@ -111,7 +111,7 @@ $('#uk-share').addEventListener('click', e => {
   if (!api) return toast('Sharing is unavailable right now.')
   let d, encoded
   try {
-    d = api.collectShareData(mod, localStorage)
+    d = api.homeownerShareData(mod, localStorage)
     if (!Object.keys(d).length) return toast('Nothing to share yet — tweak your design first!')
     encoded = api.encodePayload(d)
   } catch (error) {

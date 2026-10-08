@@ -346,7 +346,7 @@ S('pro-snap').onclick = () => { const cv = document.querySelector('#view canvas'
 S('pro-show').onclick = () => {
   if (!isPro()) return (paintGate(), gate.classList.add('on'))
   let d
-  try { d = shareApi.stripShowcasePrices(collectDesign()) } catch (error) { return alert(error.message || 'This design cannot be shared safely.') }
+  try { d = shareApi.homeownerShareData(mod, localStorage) } catch (error) { return alert(error.message || 'This design cannot be shared safely.') }
   if (!Object.keys(d).length) return alert('Design something first — the showcase link carries the whole design.')
   d['amni.showcase.brand'] = JSON.stringify({ n: PS.co.name, p: PS.co.phone, w: PS.co.web, m: mod, ts: Date.now() })
   let u
