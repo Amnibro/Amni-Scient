@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Amni-Construct Pro — Contractor Quotes, Permits & Showcases | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Construct Pro turns the free estimators into a contractor tool: branded client quotes with your rates and markup, permit-ready plan packets, project showcases. 14-day free trial.">
-<meta property="og:title" content="Amni-Construct Pro — the contractor layer">
-<meta property="og:description" content="Branded quotes, your labor rates and markup, permit packets. Free 14-day trial, no card.">
+<title>Amni-Construct Pro | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Construct Pro is $19 a month: branded quotes, permit packets, and 3D showcase links. 14-day trial, no card. Your quotes stay in the browser.">
+<meta property="og:title" content="Amni-Construct Pro">
+<meta property="og:description" content="Branded quotes, permit packets, and 3D showcase links. $19 a month, 14-day trial, no card.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/construct/pro.html">
 <link rel="canonical" href="https://amni-scient.com/construct/pro.html">
@@ -14,35 +14,43 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Where is my data stored?","acceptedAnswer":{"@type":"Answer","text":"In your browser's local storage on that device. Company profile, clients, quotes, projects. Nothing goes to my server. The one exception is checkout: Stripe handles the payment, and the licence server sees your key and a hashed device id so it can count devices. It never sees a quote."}},
+{"@type":"Question","name":"What happens when the trial ends?","acceptedAnswer":{"@type":"Answer","text":"The free estimators keep working exactly as before. Your Pro data stays on the device. It unlocks again the moment you enter a key."}},
+{"@type":"Question","name":"I bought it. Where's my key?","acceptedAnswer":{"@type":"Answer","text":"On the page Stripe sends you to right after paying. Copy it somewhere safe. Open any estimator → 💼 Pro → Enter key. Lost it? Email me from the address on your Stripe receipt and I'll resend it."}},
+{"@type":"Question","name":"Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"The estimators run in the browser. Activating a key needs a connection once. After that, Pro keeps working offline for up to 7 days between checks."}},
+{"@type":"Question","name":"Can I use it for my whole crew?","acceptedAnswer":{"@type":"Answer","text":"One licence covers one contractor on up to 3 devices. Need more? Email me and I'll set up a multi-seat invoice."}},
+{"@type":"Question","name":"Is there an Android app?","acceptedAnswer":{"@type":"Answer","text":"In progress. Web first, then Android."}}
+]}
+</script>
 <style>
 .crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
 html,body{overscroll-behavior-y:none}
 .crumbs a{color:var(--dim)}
-.pro-wrap{max-width:960px;margin:0 auto;padding:0 1.5rem}
-.pro-hero{text-align:center;padding:3rem 0 2rem}
+.pro-wrap{max-width:760px;margin:0 auto;padding:0 1.5rem 3rem}
+.pro-hero{padding:2.5rem 0 1rem}
 .pro-hero h1{font-size:2rem;letter-spacing:.06em;margin:0}
 .pro-hero h1 span{color:#e8b565}
-.pro-hero p{color:var(--dim);max-width:620px;margin:1rem auto;line-height:1.7}
+.pro-hero p{color:var(--dim);max-width:640px;line-height:1.7}
 .badge{display:inline-block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#e8b565;border:1px solid rgba(232,181,101,.5);border-radius:99px;padding:.3rem .9rem;margin-bottom:1rem}
-.feat3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:2rem 0}
-.feat{background:linear-gradient(180deg,rgba(232,181,101,.05),transparent);border:1px solid rgba(232,181,101,.22);border-radius:10px;padding:1.4rem}
-.feat h3{margin:0 0 .5rem;color:#e8b565;font-size:1rem}
-.feat p{color:var(--dim);font-size:.85rem;line-height:1.7;margin:0}
-.feat .soon{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border,rgba(255,255,255,.15));border-radius:99px;padding:.15rem .5rem;margin-left:.4rem;vertical-align:2px}
-.price-card{max-width:420px;margin:2.5rem auto;text-align:center;border:1px solid rgba(232,181,101,.45);border-radius:14px;padding:2rem;background:linear-gradient(180deg,rgba(232,181,101,.08),rgba(232,181,101,.02))}
-.price-card .amt{font-size:3rem;font-weight:700;color:#e8b565}
+.cta-row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin:1.2rem 0 .4rem}
+.cta-big{display:inline-block;background:#e8b565;color:#14100a;font-weight:700;padding:.85rem 1.4rem;border-radius:9px;text-decoration:none;font-size:.95rem}
+.cta-sub{display:block;margin-top:.35rem;font-size:.8rem;color:var(--dim)}
+.feat{border-top:1px solid var(--border,rgba(255,255,255,.1));padding:1.1rem 0}
+.feat h2,.block h2{color:#e8b565;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase;margin:2rem 0 .8rem}
+.feat h3{margin:0 0 .35rem;font-size:1rem}
+.feat p,.block p,.block li{color:var(--dim);font-size:.92rem;line-height:1.7}
+.block ul{padding-left:1.1rem}
+.block li{margin:.45rem 0}
+table.quote{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+table.quote th,table.quote td{text-align:left;padding:.45rem .4rem;border-bottom:1px solid var(--border,rgba(255,255,255,.1))}
+table.quote td:last-child,table.quote th:last-child{text-align:right}
+.price-card{margin:1.5rem 0;border:1px solid rgba(232,181,101,.45);border-radius:14px;padding:1.4rem 1.5rem}
+.price-card .amt{font-size:2.4rem;font-weight:700;color:#e8b565}
 .price-card .amt small{font-size:1rem;color:var(--dim);font-weight:400}
-.price-card ul{list-style:none;padding:0;margin:1.2rem 0;text-align:left}
-.price-card li{padding:.35rem 0;font-size:.88rem;color:var(--text)}
-.price-card li::before{content:'✓ ';color:#e8b565;font-weight:700}
-.cta-big{display:inline-block;background:#e8b565;color:#14100a;font-weight:700;padding:.85rem 2rem;border-radius:9px;text-decoration:none;font-size:.95rem;box-shadow:0 0 18px rgba(232,181,101,.35)}
-.cta-sub{display:block;margin-top:.8rem;font-size:.75rem;color:var(--dim)}
-.how{margin:3rem 0}
-.how h2{color:#e8b565;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
-.how ol{color:var(--text);line-height:2;font-size:.92rem}
-.pro-faq{margin:3rem 0}
-.pro-faq h2{color:#e8b565;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
-.pro-faq details{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:6px;margin-bottom:.6rem;background:rgba(255,255,255,.015)}
+.fine{color:var(--dim);font-size:.8rem;margin-top:2rem}
+.pro-faq details{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:6px;margin-bottom:.6rem}
 .pro-faq summary{cursor:pointer;padding:.8rem 1rem;font-size:.9rem}
 .pro-faq div{padding:0 1rem 1rem;color:var(--dim);font-size:.86rem;line-height:1.7}
 </style>
@@ -67,46 +75,76 @@ html,body{overscroll-behavior-y:none}
 <p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; Pro</p>
 <div class="pro-wrap">
 <div class="pro-hero">
-<span class="badge">💼 For contractors</span>
+<span class="badge">For contractors · $19/month</span>
 <h1>AMNI-CONSTRUCT <span>PRO</span></h1>
-<p>The free estimators price the materials. Pro turns them into <b>client-ready business documents</b>: branded quotes with your labor rates and markup, permit-ready plan packets, and polished project showcases — all in your browser, on any device, with nothing uploaded anywhere.</p>
-<a class="cta-big" href="../deck/">Start your free 14-day trial →</a>
-<span class="cta-sub">Open any estimator → 💼 Pro tab → Start trial. No card, no account.</span>
+<p>The free estimators price the materials. Pro turns that into the paper you hand a homeowner: a quote with your logo, your license number, your labor rates and your markup, plus a permit packet built from the same drawings.</p>
+<p>It runs in the browser on your phone or laptop. Nothing gets uploaded. Your company profile, clients and quotes stay in that browser, and you can export a backup file any time.</p>
+<div class="cta-row">
+<a class="cta-big" href="../deck/">Start the 14-day trial</a>
+<a class="cta-big" id="buy-btn" hidden>Buy Pro: $19/mo</a>
 </div>
-<div class="feat3">
-<div class="feat"><h3>🧾 Branded quotes</h3><p>Your logo, license number and terms on a print-ready quote. Set labor lines, materials markup, overhead and tax — the design's live bill of materials flows straight in, itemized quantities included, retail prices hidden from the client.</p></div>
-<div class="feat"><h3>📋 Permit packets</h3><p>One click builds a submittal packet: cover sheet with owner, contractor, parcel and declared valuation — stapled to the real plan sheets the estimator drew. Print, sign, submit.</p></div>
-<div class="feat"><h3>🏗️ Project showcases</h3><p>Send clients a live, interactive 3D link of their project — branded with your company name — instead of a flat sketch. Snapshot the 3D view straight into the quote, too.</p></div>
-<div class="feat"><h3>👥 Clients & projects</h3><p>A client book with autofill, named project saves per client, and a pipeline dashboard — quotes by status, dollars won — across all eleven trades.</p></div>
-<div class="feat"><h3>📱 Works everywhere</h3><p>Phone, tablet, desktop — same tool, same data. Android app on the roadmap. Everything stays on your device: no uploads, no account, no lock-in.</p></div>
-<div class="feat"><h3>🔒 Yours forever</h3><p>All eleven DIY estimators stay free for everyone, forever. Pro is the business layer on top — cancel anytime and your data stays on your device.</p></div>
+<span class="cta-sub">No card, no account.</span>
+<span class="cta-sub" id="buy-note">Checkout is opening soon.</span>
 </div>
-<div class="price-card">
-<div class="amt">$19<small>/month</small></div>
+
+<h2 style="color:#e8b565;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase;margin:2rem 0 .4rem">What Pro adds</h2>
+<div class="feat"><h3>Branded quotes.</h3><p>Your logo, license number and terms on a print-ready quote. Labor lines are hours × rate. Then materials markup, overhead, discount, tax and deposit. The design's bill of materials flows in itemized. The client sees your price, not the store price.</p></div>
+<div class="feat"><h3>Permit packet.</h3><p>One click builds a cover sheet (owner, contractor, parcel, declared valuation) and staples it to the plan sheets the estimator already drew. For a deck that's framing, decking, stringer template, and ledger and connection details.</p></div>
+<div class="feat"><h3>3D showcase link.</h3><p>Send the homeowner a link that opens their project in 3D with your company name on it. The whole design rides inside the link itself, so I don't store it anywhere. The link does not include your unit-price table.</p></div>
+<div class="feat"><h3>Clients and pipeline.</h3><p>A client book with autofill, named projects per client, and a dashboard of quotes by status and dollars won. Works across all 11 trades: deck, patio, pool, floor, roof, framing, plumbing, electrical, HVAC, garden and plan.</p></div>
+<div class="feat"><h3>Backup.</h3><p>Export everything to one file. Restore it on another device or after clearing the browser.</p></div>
+
+<div class="block">
+<h2>One quote, worked</h2>
+<p>A 12 × 16 ft deck. The estimator prices the materials at <b>$4,200</b>.</p>
+<table class="quote">
+<thead><tr><th>Line</th><th>Math</th><th>Amount</th></tr></thead>
+<tbody>
+<tr><td>Materials + 15% markup</td><td>4,200 × 1.15</td><td>$4,830.00</td></tr>
+<tr><td>Labor: 2 people × 24 h at $75/h</td><td>48 × 75</td><td>$3,600.00</td></tr>
+<tr><td>Overhead</td><td>flat</td><td>$250.00</td></tr>
+<tr><td><b>Subtotal</b></td><td></td><td><b>$8,680.00</b></td></tr>
+<tr><td>Tax at 6%</td><td>8,680 × 0.06</td><td>$520.80</td></tr>
+<tr><td><b>Total</b></td><td></td><td><b>$9,200.80</b></td></tr>
+<tr><td>50% deposit on acceptance</td><td></td><td>$4,600.40</td></tr>
+</tbody>
+</table>
+<p>The $4,200 and the rates are example numbers. Pro uses yours.</p>
+<p>One limit: tax applies to the whole subtotal in this version. If your state taxes materials and not labor, set tax to 0 and add it as its own line.</p>
+</div>
+
+<div class="block">
+<h2>What it doesn't do</h2>
 <ul>
-<li>All 11 trade estimators, Pro-unlocked</li>
-<li>Unlimited branded quotes</li>
-<li>Permit packets, 3D showcases &amp; pipeline dashboard</li>
-<li>Priority feature requests</li>
+<li><b>It isn't an engineer's stamp.</b> Span checks and local code notes are guidance. Your building department decides, and some jobs need a licensed engineer. The permit packet is your drawings and your submission.</li>
+<li><b>No sync.</b> Data lives in the browser you used. Moving to another device means export, then import. Clear the browser without a backup and it's gone. I can't recover it, because I never had it.</li>
+<li><b>No card payments or e-signatures inside the app.</b> Print it, PDF it, sign it the way you do now.</li>
+<li><b>Prices are what you enter or paste.</b> Paste a Home Depot or Lowe's product page and the materials list fills in. There's no live price feed.</li>
+<li><b>Android app isn't out yet.</b> The web version works on phones today.</li>
 </ul>
-<a class="cta-big" id="buy-btn" href="../deck/">Start free trial →</a>
-<span class="cta-sub" id="buy-note">Checkout is opening soon — the 14-day trial needs no card today.</span>
 </div>
-<div class="how">
-<h2>How it works</h2>
-<ol>
-<li>Open any estimator (deck, roof, electrical…) and design the project — or trace it from a satellite photo.</li>
-<li>Hit the <b>💼 Pro</b> tab: enter your company once, set your rates, add labor lines.</li>
-<li>Generate the quote — a print-ready, branded PDF your client signs. Done before the other guy calls back.</li>
-</ol>
+
+<!-- TODO(anthony): annual price, refund window, and device cap are suggestions. Confirm the constants in _shared/pro-config.js (AMNI_PRO_ANNUAL_USD, AMNI_PRO_REFUND_DAYS, AMNI_PRO_MAX_DEVICES) before relying on this page. -->
+<div class="price-card" id="pro-price">
+<div class="amt">$19<small>/month</small></div>
+<p><b>$19/month.</b> <span id="pro-annual">Or $190/year, two months free.</span> Cancel any time from the link on your Stripe receipt. Pro stays on until the end of the period you paid for.</p>
+<p id="pro-refund">The first payment is refundable within 30 days. Email me.</p>
+<p id="pro-devices">Each licence works on up to 3 devices: your phone, a tablet, and the office laptop.</p>
+<p>The 11 estimators, the 3D designers, the plans and the cost guides stay free for everyone, whether or not you ever buy Pro.</p>
+<a class="cta-big" id="buy-btn-2" hidden>Buy Pro: $19/mo</a>
+<span class="cta-sub" id="buy-note-2">Checkout is opening soon. The 14-day trial needs no card today.</span>
 </div>
+
 <div class="pro-faq">
-<h2>Questions</h2>
-<details><summary>Where is my data stored?</summary><div>On your device, full stop. Company profile, clients, quotes — everything lives in your browser's local storage. Nothing is uploaded to us, ever. One-click Export backup (and restore) lives on your <a href="dashboard.html" style="color:#e8b565">Pro Dashboard</a> — back up to a file you control.</div></details>
-<details><summary>Do the free tools stay free?</summary><div>Yes — every estimator, the 3D designers, plans, materials pricing and guides stay free for everyone. Pro adds the contractor business layer: branding, rates, quotes, packets, showcases.</div></details>
-<details><summary>What happens when my trial ends?</summary><div>The free estimators keep working exactly as before. Your Pro data stays on your device and unlocks again the moment you subscribe.</div></details>
-<details><summary>Is there an Android app?</summary><div>In development — web first, then Android. The web tool already works well on phones and tablets.</div></details>
+<h2 style="color:#e8b565;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase">Questions</h2>
+<details><summary>Where is my data stored?</summary><div>In your browser's local storage on that device. Company profile, clients, quotes, projects. Nothing goes to my server. The one exception is checkout: Stripe handles the payment, and the licence server sees your key and a hashed device id so it can count devices. It never sees a quote.</div></details>
+<details><summary>What happens when the trial ends?</summary><div>The free estimators keep working exactly as before. Your Pro data stays on the device. It unlocks again the moment you enter a key.</div></details>
+<details><summary>I bought it. Where's my key?</summary><div>On the page Stripe sends you to right after paying. Copy it somewhere safe. Open any estimator → 💼 Pro → Enter key. Lost it? Email me from the address on your Stripe receipt and I'll resend it.</div></details>
+<details><summary>Does it work offline?</summary><div>The estimators run in the browser. Activating a key needs a connection once. After that, Pro keeps working offline for up to 7 days between checks.</div></details>
+<details><summary>Can I use it for my whole crew?</summary><div>One licence covers one contractor on up to 3 devices. Need more? Email me and I'll set up a multi-seat invoice.</div></details>
+<details><summary>Is there an Android app?</summary><div>In progress. Web first, then Android.</div></details>
 </div>
+<p class="fine">Amni-Construct is a design and estimating aid. Verify dimensions, spans, codes and permit requirements with your local building department. See <a href="../terms.html#construct-pro">Terms</a>.</p>
 </div>
 <footer>
 <div class="footer-links">
@@ -119,8 +157,29 @@ html,body{overscroll-behavior-y:none}
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="../_shared/pro-config.js?v=c1"></script>
-<script>window.AMNI_BUY_URL&&(document.getElementById('buy-btn').href=window.AMNI_BUY_URL,document.getElementById('buy-btn').textContent='Subscribe — $19/mo →',document.getElementById('buy-note').textContent='Secure checkout · cancel anytime · license key by email')</script>
+<script src="../_shared/pro-config.js?v=c2"></script>
+<script>
+(function () {
+  function arm(id, noteId, emptyNote, filledNote) {
+    var el = document.getElementById(id)
+    var note = document.getElementById(noteId)
+    var url = window.AMNI_BUY_URL || ''
+    if (!el) return
+    if (/^https:\/\//i.test(url)) {
+      el.hidden = false
+      el.href = url
+      if (note && filledNote) note.textContent = filledNote
+    } else {
+      el.hidden = true
+      if (note) note.textContent = emptyNote
+    }
+  }
+  arm('buy-btn', 'buy-note', 'Checkout is opening soon.', 'Cancel any time from the link on your Stripe receipt.')
+  arm('buy-btn-2', 'buy-note-2', 'Checkout is opening soon. The 14-day trial needs no card today.', 'Cancel any time from the link on your Stripe receipt.')
+  var annual = document.getElementById('pro-annual')
+  if (annual && !(window.AMNI_PRO_ANNUAL_USD > 0)) annual.hidden = true
+})()
+</script>
 <script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>

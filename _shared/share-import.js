@@ -389,6 +389,17 @@
     return data
   }
 
+  // Showcase links drop unit-price tables. Saved projects call collectShareData and keep them.
+  function stripShowcasePrices(data) {
+    if (!isPlainObject(data)) fail('invalid-shape', 'The shared design must be a data object.')
+    const out = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (/\.prices\.v\d+$/.test(key)) continue
+      out[key] = value
+    }
+    return out
+  }
+
   return Object.freeze({
     MAX_FRAGMENT_LENGTH,
     MAX_DECODED_BYTES,
@@ -399,6 +410,7 @@
     decodePayload,
     encodePayload,
     restoreFromLocation,
+    stripShowcasePrices,
     validatePayload
   })
 })

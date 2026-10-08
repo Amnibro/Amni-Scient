@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Your Construct Pro key | AMNI-SCIENT</title>
+<link rel="canonical" href="https://amni-scient.com/construct/claim.html">
+<link rel="stylesheet" href="../css/style.css?v=b260">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+.crumbs a{color:var(--dim)}
+.pro-wrap{max-width:760px;margin:0 auto;padding:0 1.5rem 3rem}
+.pro-hero h1{font-size:2rem;letter-spacing:.04em;margin:1.5rem 0 .6rem}
+.pro-hero p,ol{color:var(--dim);line-height:1.7;font-size:.95rem}
+.keybox{margin:1.2rem 0;padding:1rem 1.1rem;border:1px solid rgba(232,181,101,.45);border-radius:12px;background:rgba(232,181,101,.06)}
+.keyval{font:600 1.25rem/1.4 ui-monospace,monospace;letter-spacing:.04em;word-break:break-all}
+.cta-big{display:inline-block;background:#e8b565;color:#14100a;font-weight:700;padding:.7rem 1.2rem;border-radius:9px;border:none;cursor:pointer;font-size:.9rem;margin-top:.7rem}
+.err{color:#c96b6b}
+.fine{color:var(--dim);font-size:.8rem;margin-top:2rem}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e0954a">
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; <a href="pro.html">Pro</a> &rsaquo; Key</p>
+<div class="pro-wrap">
+<div class="pro-hero" id="state">
+<h1>Fetching your key…</h1>
+<p id="lead">Stripe hasn't confirmed the payment yet. This page will retry for a minute. Leave it open.</p>
+</div>
+</div>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../construct/">AMNI-CONSTRUCT</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script src="../_shared/pro-config.js?v=c2"></script>
+<script>
+(function () {
+  var state = document.getElementById('state')
+  var sid = new URLSearchParams(location.search).get('session_id') || ''
+  function node(tag, text) {
+    var el = document.createElement(tag)
+    if (text != null) el.textContent = text
+    return el
+  }
+  function fail(msg) {
+    state.replaceChildren(node('h1', "I can't find a paid checkout for this link."), node('p', msg))
+    var mail = node('p')
+    var a = node('a', 'amnibro7@gmail.com')
+    a.href = 'mailto:amnibro7@gmail.com?subject=' + encodeURIComponent('Construct Pro key ' + sid)
+    mail.append(a)
+    state.appendChild(mail)
+  }
+  function show(key) {
+    var h = node('h1', "You're in. Here's your key.")
+    var box = node('div')
+    box.className = 'keybox'
+    var val = node('div', key)
+    val.className = 'keyval'
+    val.id = 'pro-key-value'
+    var copy = node('button', 'Copy')
+    copy.className = 'cta-big'
+    copy.type = 'button'
+    copy.onclick = function () {
+      var done = function () { copy.textContent = 'Copied' }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(key).then(done, done)
+      else done()
+    }
+    box.append(val, copy)
+    var save = node('p', "Save it somewhere you'll find it. The receipt from Stripe doesn't include it.")
+    var how = node('p', 'To turn on Pro:')
+    var list = document.createElement('ol')
+    ;['Open any estimator (deck, roof, electrical…).', 'Tap 💼 Pro → I have a key.', 'Paste the key. Done. Do the same on your phone or tablet. One key covers 3 devices.'].forEach(function (line) { list.appendChild(node('li', line)) })
+    var cancel = node('p', 'Cancel any time with the "Manage subscription" link on your Stripe receipt. Pro stays on until the end of the paid period.')
+    var help = node('p')
+    var a = node('a', 'amnibro7@gmail.com')
+    a.href = 'mailto:amnibro7@gmail.com?subject=Construct%20Pro%20key'
+    help.append('Questions or a lost key: ', a)
+    var fine = node('p', "Your quotes and clients never leave your device. This page talked to Stripe and my licence server to fetch your key, and that's all.")
+    fine.className = 'fine'
+    state.replaceChildren(h, box, save, how, list, cancel, help, fine)
+  }
+  if (!/^cs_[A-Za-z0-9_]{8,255}$/.test(sid)) {
+    fail('This page is the one Stripe sends you to after paying.')
+    return
+  }
+  var base = window.AMNI_LICENSE_URL || ''
+  if (!/^https:\/\//i.test(base)) {
+    fail('The licence server is not connected on this site yet.')
+    return
+  }
+  var started = Date.now()
+  function poll() {
+    fetch(base.replace(/\/$/, '') + '/claim?session_id=' + encodeURIComponent(sid), { cache: 'no-store' })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j } }) })
+      .then(function (r) {
+        if (r.status === 200 && r.body && r.body.key) { show(r.body.key); return }
+        if ((r.status === 202 || (r.body && r.body.pending)) && Date.now() - started < 60000) { setTimeout(poll, 2000); return }
+        fail('If you were charged, email me the receipt and I\'ll sort it out.')
+      })
+      .catch(function () {
+        if (Date.now() - started < 60000) setTimeout(poll, 2500)
+        else fail('I could not reach the licence server. Leave this page open and reload it in a minute. Your payment is unaffected.')
+      })
+  }
+  poll()
+})()
+</script>
+</body>
+</html>

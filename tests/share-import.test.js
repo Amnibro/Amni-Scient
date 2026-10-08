@@ -5,8 +5,10 @@ const {
   MAX_FRAGMENT_LENGTH,
   MODULE_KEY_ALLOWLISTS,
   collectShareData,
+  decodePayload,
   encodePayload,
   restoreFromLocation,
+  stripShowcasePrices,
   validatePayload
 } = globalThis.AmniShareImport
 
@@ -196,4 +198,25 @@ test('share collection uses the same allowlist and validation', () => {
   assert.deepEqual(collectShareData('deck', storage), {
     'amnideck.cfg.v2': '{"length":12}'
   })
+})
+
+test('showcase payload drops price tables and saved collection keeps them', () => {
+  const storage = memoryStorage({
+    'amnideck.cfg.v2': JSON.stringify({ length: 12, stairs: [], railing: { front: false } }),
+    'amnideck.prices.v1': JSON.stringify({ 'board.hd': 12.5, 'joist.lowes': 8 }),
+    'amnideck.guide.v1': JSON.stringify({ ledger: true }),
+    'amni.pro.v1': '{"key":"secret"}'
+  })
+  const saved = collectShareData('deck', storage)
+  assert.equal(saved['amnideck.prices.v1'], JSON.stringify({ 'board.hd': 12.5, 'joist.lowes': 8 }))
+  const showcase = stripShowcasePrices(saved)
+  assert.equal(saved['amnideck.prices.v1'].includes('12.5'), true)
+  assert.equal('amnideck.prices.v1' in showcase, false)
+  assert.equal(Object.keys(showcase).some(key => /\.prices\.v\d+$/.test(key) || key.toLowerCase().includes('prices')), false)
+  const decoded = decodePayload(encodePayload(showcase, btoaImpl), atobImpl)
+  assert.equal(Object.keys(decoded).some(key => /\.prices\.v\d+$/.test(key)), false)
+  assert.equal(JSON.stringify(decoded).includes('prices'), false)
+  assert.equal(JSON.stringify(decoded).includes('12.5'), false)
+  assert.equal(decoded['amnideck.cfg.v2'].includes('"length":12'), true)
+  assert.equal(decoded['amnideck.guide.v1'], JSON.stringify({ ledger: true }))
 })
