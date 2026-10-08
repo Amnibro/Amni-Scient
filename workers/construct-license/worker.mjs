@@ -5,11 +5,13 @@ import {
   canonicalEntitlement,
   entitlementExp,
   idOf,
+  invoiceSubscription,
   isConstructSession,
   maxDevices,
   mintKey,
   normalizeStatus,
   nowMs,
+  periodEndSec,
   safeEqual,
   sessionPaid,
   sha256Hex,
@@ -73,12 +75,12 @@ async function periodEndMs(env, session) {
   const subId = idOf(session.subscription)
   if (!subId) return nowMs(env) + 32 * 24 * 60 * 60 * 1000
   if (!validSubscriptionId(subId)) throw new Error('bad subscription')
-  if (session.subscription && typeof session.subscription === 'object' && session.subscription.current_period_end) {
-    return session.subscription.current_period_end * 1000
+  if (session.subscription && typeof session.subscription === 'object' && periodEndSec(session.subscription)) {
+    return periodEndSec(session.subscription) * 1000
   }
   const sub = await stripeGet(env, '/v1/subscriptions/' + subId)
-  if (!sub || !sub.current_period_end) throw new Error('no period')
-  return sub.current_period_end * 1000
+  if (!periodEndSec(sub)) throw new Error('no period')
+  return periodEndSec(sub) * 1000
 }
 
 async function putRecord(env, record) {
@@ -122,7 +124,7 @@ async function updateSubscription(env, sub) {
   const record = await readKey(env, key)
   if (!record) return
   if (sub.status) record.status = normalizeStatus(sub.status)
-  if (sub.current_period_end) record.period_end = sub.current_period_end * 1000
+  if (periodEndSec(sub)) record.period_end = periodEndSec(sub) * 1000
   await env.LICENSES.put('key:' + record.key, JSON.stringify(record))
 }
 
@@ -147,7 +149,7 @@ async function handleWebhook(request, env) {
     return json(200, { ok: true })
   }
   if (event.type === 'invoice.payment_failed') {
-    const subId = idOf(object.subscription)
+    const subId = invoiceSubscription(object)
     if (validSubscriptionId(subId)) await updateSubscription(env, { id: subId, status: 'past_due' })
     return json(200, { ok: true })
   }

@@ -270,3 +270,28 @@ test('admin reissue mints a key and reset clears devices', async () => {
   assert.equal(reset.status, 200)
   assert.deepEqual(JSON.parse(await env.LICENSES.get('key:' + body.key)).devices, [])
 })
+test('2025+ Stripe API shapes: period end on subscription items, renewal extends access, invoice parent links the sub', async () => {
+  const started = Date.UTC(2026, 9, 8)
+  let clock = started
+  const { env } = await signingEnv({ now: () => clock })
+  const state = stripeState(started)
+  const sub = state.subs.sub_construct01
+  delete sub.current_period_end
+  sub.items = { data: [{ id: 'si_1', current_period_end: Math.floor((started + 30 * DAY) / 1000) }] }
+  const restore = installFetch(state)
+  try {
+    const claimed = await (await worker.fetch(new Request('https://construct-license.test/claim?session_id=cs_test_construct01', { headers: { Origin: 'https://amni-scient.com' } }), env)).json()
+    assert.equal(claimed.ok, true)
+    assert.equal((await activate(env, claimed.key, device(1))).status, 200)
+    sub.items.data[0].current_period_end = Math.floor((started + 61 * DAY) / 1000)
+    assert.equal((await postWebhook(env, { id: 'evt_renew', type: 'customer.subscription.updated', data: { object: sub } })).status, 200)
+    clock = started + 45 * DAY
+    const renewed = await activate(env, claimed.key, device(1))
+    assert.equal(renewed.status, 200)
+    const failed = await postWebhook(env, { id: 'evt_fail', type: 'invoice.payment_failed', data: { object: { id: 'in_1', parent: { subscription_details: { subscription: 'sub_construct01' } } } } })
+    assert.equal(failed.status, 200)
+    assert.equal(JSON.parse(env.LICENSES.m.get('key:' + claimed.key)).status, 'past_due')
+  } finally {
+    restore()
+  }
+})

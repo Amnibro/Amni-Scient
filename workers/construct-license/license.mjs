@@ -54,6 +54,15 @@ export function maxDevices(env) {
   return Number.isFinite(n) && n >= 1 && n <= 100 ? n : 3
 }
 
+export function periodEndSec(sub) {
+  if (!sub || typeof sub !== 'object') return 0
+  const items = sub.items && Array.isArray(sub.items.data) ? sub.items.data : []
+  return Math.max(Number(sub.current_period_end) || 0, ...items.map(item => Number(item && item.current_period_end) || 0))
+}
+export function invoiceSubscription(invoice) {
+  const parent = invoice && invoice.parent && invoice.parent.subscription_details
+  return idOf((invoice && invoice.subscription) || (parent && parent.subscription))
+}
 export function idOf(value) {
   if (!value) return ''
   if (typeof value === 'string') return value
