@@ -252,7 +252,10 @@ def _wcorr(x, y, w) -> float:
     ww = _wsum(w)
     xc = np.asarray(x, dtype=float) - np.sum(ww * x)
     yc = np.asarray(y, dtype=float) - np.sum(ww * y)
-    return float(np.sum(ww * xc * yc) / np.sqrt(np.sum(ww * xc * xc) * np.sum(ww * yc * yc)))
+    denom = np.sqrt(np.sum(ww * xc * xc) * np.sum(ww * yc * yc))
+    if not np.isfinite(denom) or denom <= 0:
+        return float("nan")
+    return float(np.sum(ww * xc * yc) / denom)
 
 
 def _wz(x, w) -> np.ndarray:
@@ -371,6 +374,278 @@ def state_window_correlations(frames: dict[str, pd.DataFrame] | None = None) -> 
     out = pd.DataFrame(rows)
     out.to_csv(RESULTS / "state_window_correlations.csv", index=False)
     return out
+
+
+# Marijuana score grid. Exposure ends, then the NAEP score is measured later.
+MJ_LAGS = (0, 2, 4, 6, 8, 10)
+MJ_NAEP_YEARS = (2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2022, 2024)
+MJ_MEASURES = (
+    ("mj", "MRJMON", "Past month"),
+    ("mrjyr", "MRJYR", "Past year"),
+)
+MJ_WINDOW_DEFS = (
+    ("current", "Current", 0),
+    ("y1", "Past 1 year", 1),
+    ("y5", "5-year mean", 5),
+    ("y15", "15-year mean", 15),
+)
+MJ_OUTCOMES = (
+    ("math4", "Grade 4 math", 4),
+    ("read4", "Grade 4 reading", 4),
+    ("comp4", "Grade 4 composite", 4),
+    ("math8", "Grade 8 math", 8),
+    ("read8", "Grade 8 reading", 8),
+    ("comp8", "Grade 8 composite", 8),
+)
+# Within-year population-weighted z-scores. Composites are already the mean of those z-scores.
+MJ_SCORE_COL = {
+    "math4": "math4_z",
+    "read4": "reading4_z",
+    "comp4": "comp4",
+    "math8": "math8_z",
+    "read8": "reading8_z",
+    "comp8": "comp8",
+}
+
+
+def _window_years(end: int, kind: str) -> tuple[int, ...] | None:
+    """Years of pools in the window that ends at `end`. None when the break cuts it."""
+    if kind == "current":
+        years = (end,)
+    elif kind == "y1":
+        years = (end - 1,)
+    elif kind == "y5":
+        years = tuple(range(end - 4, end + 1))
+    elif kind == "y15":
+        years = tuple(range(end - 14, end + 1))
+    else:
+        return None
+    if any(y in (2020, 2021) for y in years):
+        return None
+    if any(y <= 2019 for y in years) and any(y >= 2022 for y in years):
+        return None
+    return years
+
+
+def _pool_lookup(nsduh: pd.DataFrame, code: str) -> tuple[pd.Series, pd.Series, pd.Series]:
+    sub = nsduh[nsduh["outcome"] == code].copy()
+    sub["year"] = sub["year"].astype(int)
+    state = sub[sub["geo"] != "US"].set_index(["geo", "year"])["pct"]
+    nat = sub[sub["geo"] == "US"].set_index("year")["pct"]
+    pop = sub[sub["geo"] != "US"].set_index(["geo", "year"])["pop"]
+    return state, nat, pop
+
+
+def _mean_from(series: pd.Series, key_years: list[tuple]) -> float | None:
+    vals = []
+    for key in key_years:
+        if key not in series.index:
+            return None
+        val = series.loc[key]
+        if isinstance(val, pd.Series):
+            val = val.iloc[0]
+        if not np.isfinite(val):
+            return None
+        vals.append(float(val))
+    return float(np.mean(vals))
+
+
+def _weighted_pair(x, y, w, controls: np.ndarray | None) -> tuple[float, int, float, int]:
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    w = np.asarray(w, dtype=float)
+    r = _wcorr(x, y, w)
+    n = int(len(x))
+    if controls is None or len(x) < 8:
+        return r, n, float("nan"), 0
+    keep = np.isfinite(controls).all(axis=1)
+    if int(keep.sum()) < 8:
+        return r, n, float("nan"), 0
+    try:
+        C = sm.add_constant(controls[keep], has_constant="add")
+        wp = w[keep]
+        xr = sm.WLS(x[keep], C, weights=wp).fit().resid
+        yr = sm.WLS(y[keep], C, weights=wp).fit().resid
+        return r, n, _wcorr(xr, yr, wp), int(keep.sum())
+    except (ValueError, np.linalg.LinAlgError):
+        return r, n, float("nan"), int(keep.sum())
+
+
+def marijuana_score_correlations(frames: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
+    """State-year correlations of marijuana windows with later NAEP scores, plus the cohort and ICAR rows."""
+    frames = frames or load_frames()
+    nsduh = frames["nsduh"]
+    naep = frames["naep"]
+    naep = naep[(naep["year"].isin(MJ_NAEP_YEARS)) & (~naep["geo"].isin(["NP", "NT"]))].copy()
+    naep["year"] = naep["year"].astype(int)
+    wide = None
+    for subject, grade, _label, _color in NAEP_SUBJECTS:
+        col = f"{subject}{grade}"
+        piece = naep[(naep["subject"] == subject) & (naep["grade"] == grade)][["geo", "year", "score"]].rename(
+            columns={"score": col}
+        )
+        wide = piece if wide is None else wide.merge(piece, on=["geo", "year"], how="outer")
+    controls = _state_controls().set_index("geo")
+    lookups = {code: _pool_lookup(nsduh, code) for _key, code, _lab in MJ_MEASURES}
+    # Population ages 12+ from the past-month file, which covers every NAEP year in the grid.
+    pop = lookups["MRJMON"][2]
+    wide["pop"] = [float(pop.loc[(g, y)]) if (g, y) in pop.index else np.nan for g, y in zip(wide["geo"], wide["year"])]
+    wide = wide.dropna(subset=["pop"])
+    for col in ("math4", "math8", "reading4", "reading8"):
+        wide[col + "_z"] = np.nan
+    for _year, g in wide.groupby("year"):
+        w = g["pop"].to_numpy(dtype=float)
+        for col in ("math4", "math8", "reading4", "reading8"):
+            mask = g[col].notna()
+            if int(mask.sum()) < 10:
+                continue
+            z = np.full(len(g), np.nan)
+            z[mask.to_numpy()] = _wz(g.loc[mask, col].to_numpy(dtype=float), w[mask.to_numpy()])
+            wide.loc[g.index, col + "_z"] = z
+    wide["comp4"] = wide[["math4_z", "reading4_z"]].mean(axis=1, skipna=False)
+    wide["comp8"] = wide[["math8_z", "reading8_z"]].mean(axis=1, skipna=False)
+    ctrl_cols = ["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]
+
+    def controls_for(geos: list[str]) -> np.ndarray:
+        rows = []
+        for geo in geos:
+            if geo in controls.index:
+                rows.append(controls.loc[geo, ctrl_cols].to_numpy(dtype=float))
+            else:
+                rows.append(np.full(4, np.nan))
+        return np.vstack(rows)
+
+    rows = []
+
+    def add_row(**rec):
+        rows.append(rec)
+
+    for key, code, label in MJ_MEASURES:
+        state_pct, nat_pct, _pop = lookups[code]
+        for wkey, wlabel, _span in MJ_WINDOW_DEFS:
+            for lag in MJ_LAGS:
+                bag: dict[str, list] = {name: [] for name, _lab, _g in MJ_OUTCOMES}
+                geos: list[str] = []
+                weights: list[float] = []
+                exposures: list[float] = []
+                for rec in wide.itertuples(index=False):
+                    years = _window_years(int(rec.year) - lag, wkey)
+                    if years is None:
+                        continue
+                    exposure = _mean_from(state_pct, [(rec.geo, y) for y in years])
+                    if exposure is None:
+                        continue
+                    exposures.append(exposure)
+                    geos.append(rec.geo)
+                    weights.append(float(rec.pop))
+                    for name, _olab, _grade in MJ_OUTCOMES:
+                        bag[name].append(getattr(rec, MJ_SCORE_COL[name]))
+                if len(exposures) < 20:
+                    continue
+                C = controls_for(geos)
+                x = np.asarray(exposures, dtype=float)
+                w = np.asarray(weights, dtype=float)
+                for name, olabel, _grade in MJ_OUTCOMES:
+                    y = np.asarray(bag[name], dtype=float)
+                    ok = np.isfinite(y) & np.isfinite(x) & np.isfinite(w)
+                    if int(ok.sum()) < 20:
+                        continue
+                    r, n, pr, pn = _weighted_pair(x[ok], y[ok], w[ok], C[ok])
+                    add_row(
+                        kind="panel",
+                        measure=key,
+                        measure_label=label,
+                        window=wkey,
+                        window_label=wlabel,
+                        lag=lag,
+                        outcome=name,
+                        outcome_label=olabel,
+                        r=r,
+                        n=n,
+                        partial_r=pr,
+                        partial_n=pn,
+                        n_states=int(len(set(np.asarray(geos)[ok]))),
+                    )
+        # Grade-8 students tested in t were born about t−14. Adult use from t−14 through t−9.
+        for name, olabel, grade in MJ_OUTCOMES:
+            if grade != 8:
+                continue
+            exposures, geos, weights, scores = [], [], [], []
+            for rec in wide.itertuples(index=False):
+                years = tuple(range(int(rec.year) - 14, int(rec.year) - 8))
+                if _window_years_raw_ok(years) is False:
+                    continue
+                exposure = _mean_from(state_pct, [(rec.geo, y) for y in years])
+                score = getattr(rec, MJ_SCORE_COL[name])
+                if exposure is None or not np.isfinite(score):
+                    continue
+                exposures.append(exposure)
+                geos.append(rec.geo)
+                weights.append(float(rec.pop))
+                scores.append(float(score))
+            if len(exposures) < 20:
+                continue
+            r, n, pr, pn = _weighted_pair(
+                np.asarray(exposures), np.asarray(scores), np.asarray(weights), controls_for(geos)
+            )
+            add_row(
+                kind="cohort",
+                measure=key,
+                measure_label=label,
+                window="cohort",
+                window_label="Birth to age 5",
+                lag="",
+                outcome=name,
+                outcome_label=olabel,
+                r=r,
+                n=n,
+                partial_r=pr,
+                partial_n=pn,
+                n_states=int(len(set(geos))),
+            )
+        # National line: published ICAR35 slope, −0.023 SD per year, 2006–2018.
+        for wkey, wlabel, _span in MJ_WINDOW_DEFS:
+            for lag in MJ_LAGS:
+                xs, ys = [], []
+                for index_year in range(2006, 2019):
+                    end = index_year - lag
+                    years = _window_years(end, wkey)
+                    if years is None:
+                        continue
+                    exposure = _mean_from(nat_pct, list(years))
+                    if exposure is None:
+                        continue
+                    xs.append(exposure)
+                    ys.append(-0.023 * (index_year - 2006))
+                if len(xs) < 6:
+                    continue
+                r = _wcorr(xs, ys, np.ones(len(xs)))
+                add_row(
+                    kind="icar",
+                    measure=key,
+                    measure_label=label,
+                    window=wkey,
+                    window_label=wlabel,
+                    lag=lag,
+                    outcome="icar",
+                    outcome_label="ICAR35 line",
+                    r=r,
+                    n=int(len(xs)),
+                    partial_r=float("nan"),
+                    partial_n=0,
+                    n_states=1,
+                )
+    out = pd.DataFrame(rows)
+    out.to_csv(RESULTS / "marijuana_score_correlations.csv", index=False)
+    return out
+
+
+def _window_years_raw_ok(years: tuple[int, ...]) -> bool:
+    if any(y in (2020, 2021) for y in years):
+        return False
+    if any(y <= 2019 for y in years) and any(y >= 2022 for y in years):
+        return False
+    return True
 
 
 def _segments(df: pd.DataFrame, codes: list[str]) -> list[list[tuple[int, float, str]]]:

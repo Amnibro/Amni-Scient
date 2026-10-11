@@ -58,6 +58,13 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .heat-table td.heat{text-align:center;min-width:5.4rem;padding:.38rem .3rem;line-height:1.15;white-space:nowrap}
 .heat-table .hv{display:block;font-size:.95rem;font-weight:800;font-variant-numeric:tabular-nums}
 .heat-table .hn,.heat-table .hs{display:block;margin-top:.12rem;font-size:.68rem;font-weight:650;font-variant-numeric:tabular-nums}
+.mj-panel{display:none}
+.mj-panel.on{display:block}
+.mj-block{margin:1rem 0 0}
+.mj-block h3{margin:.2rem 0 .3rem;font-size:1.02rem}
+details.secondary-block{margin:1.5rem 0 1.8rem;max-width:860px}
+details.secondary-block summary{cursor:pointer;font-weight:750;color:var(--text)}
+details.secondary-block[open] summary{margin-bottom:.7rem}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -1204,6 +1211,239 @@ def group_table(groups: dict) -> str:
     return "\n".join(lines)
 
 
+def _lag_when(lag) -> str:
+    lag = int(lag)
+    if lag == 0:
+        return "in the year the exposure window ends"
+    return f"{lag} years after the exposure window ends"
+
+
+def _heat_td(rec, partial_known: bool) -> str:
+    if rec is None:
+        return (
+            '<td class="heat heat-empty" style="background:#F6F0E4;color:#120C03">'
+            '<span class="hv">—</span><span class="hn"></span><span class="hs"></span></td>'
+        )
+    rgb_r = _corr_rgb(rec.r)
+    fill_r = "#{:02X}{:02X}{:02X}".format(*rgb_r)
+    ink_r = _corr_ink(rgb_r)
+    r_txt = num(rec.r, 2, sign=True)
+    n_txt = str(int(rec.n))
+    if partial_known and np.isfinite(rec.partial_r):
+        rgb_p = _corr_rgb(rec.partial_r)
+        fill_p = "#{:02X}{:02X}{:02X}".format(*rgb_p)
+        ink_p = _corr_ink(rgb_p)
+        p_txt = num(rec.partial_r, 2, sign=True)
+        pn = str(int(rec.partial_n))
+        secondary = f"partial {p_txt}"
+    else:
+        fill_p, ink_p, p_txt, pn = "#F6F0E4", "#120C03", "", ""
+        secondary = "partial —"
+    return (
+        f'<td class="heat" style="background:{fill_r};color:{ink_r}" '
+        f'data-r="{r_txt}" data-p="{p_txt}" data-nr="{n_txt}" data-np="{pn}" '
+        f'data-fill-r="{fill_r}" data-ink-r="{ink_r}" data-fill-p="{fill_p}" data-ink-p="{ink_p}">'
+        f'<span class="hv">{r_txt}</span><span class="hn">n={n_txt}</span><span class="hs">{secondary}</span></td>'
+    )
+
+
+def _mj_index(table):
+    by = {}
+    for rec in table.itertuples(index=False):
+        lag = rec.lag
+        if lag == "" or (isinstance(lag, float) and not np.isfinite(lag)):
+            lag = ""
+        else:
+            lag = int(lag)
+        by[(rec.kind, rec.measure, rec.window, lag, rec.outcome)] = rec
+    return by
+
+
+def mj_corr_section(table) -> str:
+    from over_time import MJ_LAGS, MJ_MEASURES, MJ_OUTCOMES, MJ_WINDOW_DEFS
+
+    by = _mj_index(table)
+    panel = table[table["kind"] == "panel"].copy()
+    cohort = table[table["kind"] == "cohort"].copy()
+    icar = table[table["kind"] == "icar"].copy()
+    neg = panel.loc[panel["r"].idxmin()]
+    pos = panel.loc[panel["r"].idxmax()]
+    ptop = panel.loc[panel["partial_r"].abs().idxmax()]
+    default = str(panel.loc[panel["r"].abs().idxmax(), "outcome"])
+    cpos = cohort.loc[cohort["r"].idxmax()]
+    cneg = cohort.loc[cohort["partial_r"].idxmin()]
+    ineg = icar.loc[icar["r"].idxmin()]
+    ipos = icar.loc[icar["r"].idxmax()]
+
+    def window_bit(label: str) -> str:
+        text = str(label).lower()
+        return text if text == "current" else f"the {text}"
+
+    def cell_phrase(rec, value, n):
+        return (
+            f"{esc(rec.measure_label)} marijuana, {esc(window_bit(rec.window_label))}, "
+            f"with {esc(rec.outcome_label)} {_lag_when(rec.lag)}: "
+            f"<strong>{num(value, 2, sign=True)}</strong> (n={int(n)})"
+        )
+
+    lead = (
+        f"The most negative correlation is {cell_phrase(neg, neg.r, neg.n)}. "
+        f"The partial correlation in that cell is <strong>{num(neg.partial_r, 2, sign=True)}</strong> (n={int(neg.partial_n)}). "
+        f"The strongest positive correlation is {cell_phrase(pos, pos.r, pos.n)}."
+    )
+    if (pos.measure, pos.window, pos.lag, pos.outcome) != (neg.measure, neg.window, neg.lag, neg.outcome):
+        lead += f" Its partial correlation is <strong>{num(pos.partial_r, 2, sign=True)}</strong> (n={int(pos.partial_n)})."
+    if (ptop.measure, ptop.window, int(ptop.lag), ptop.outcome) != (neg.measure, neg.window, int(neg.lag), neg.outcome):
+        lead += " The strongest partial correlation is " + cell_phrase(ptop, ptop.partial_r, ptop.partial_n) + "."
+    cohort_line = (
+        f"Grade 8 students tested in year t were born about t−14. Adult {esc(cpos.measure_label.lower())} marijuana "
+        f"in that state, from t−14 through t−9, lines up with {esc(cpos.outcome_label)} at "
+        f"<strong>{num(cpos.r, 2, sign=True)}</strong> (n={int(cpos.n)}). "
+        f"The partial correlation of {esc(cneg.measure_label.lower())} marijuana in that window with {esc(cneg.outcome_label)} is "
+        f"<strong>{num(cneg.partial_r, 2, sign=True)}</strong> (n={int(cneg.partial_n)})."
+    )
+    icar_line = (
+        f"National {esc(ineg.measure_label.lower())} marijuana, {esc(window_bit(ineg.window_label))}, "
+        f"{_lag_when(ineg.lag)}, correlates with the published ICAR35 line at "
+        f"<strong>{num(ineg.r, 2, sign=True)}</strong> (n={int(ineg.n)} years). "
+        f"{esc(ipos.measure_label)} marijuana, {esc(window_bit(ipos.window_label))}, {_lag_when(ipos.lag)}, correlates at "
+        f"<strong>{num(ipos.r, 2, sign=True)}</strong> (n={int(ipos.n)} years)."
+    )
+
+    def window_table(kind, outcome, table_id):
+        rows = []
+        for mkey, _code, mlabel in MJ_MEASURES:
+            for i, (wkey, wlabel, _span) in enumerate(MJ_WINDOW_DEFS):
+                span = f' rowspan="{len(MJ_WINDOW_DEFS)}"' if i == 0 else ""
+                measure_cell = f'<td class="rowhead"{span}>{esc(mlabel)}</td>' if i == 0 else ""
+                cells = "".join(
+                    _heat_td(by.get((kind, mkey, wkey, int(lag), outcome)), kind != "icar") for lag in MJ_LAGS
+                )
+                rows.append(
+                    f"<tr>{measure_cell}<td class=\"rowhead\">{esc(wlabel)}</td>{cells}</tr>"
+                )
+        heads = "".join(f"<th>{int(lag)}</th>" for lag in MJ_LAGS)
+        return (
+            f'<div class="table-scroll"><table class="cmp heat-table" id="{table_id}">'
+            f"<thead><tr><th class=\"rowhead\">Marijuana</th><th class=\"rowhead\">Window</th>{heads}</tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody></table></div>"
+        )
+
+    panels = []
+    switches = []
+    for okey, olabel, _grade in MJ_OUTCOMES:
+        on = okey == default
+        switches.append(
+            f'<button type="button" class="{"btn btn-primary" if on else "btn btn-outline"}" '
+            f'data-outcome="{okey}" aria-pressed="{"true" if on else "false"}">{esc(olabel)}</button>'
+        )
+        panels.append(
+            f'<div class="mj-panel{" on" if on else ""}" data-outcome="{okey}">'
+            f"<h3>{esc(olabel)}</h3>"
+            f'<p class="fine">Columns are the score measured this many years after the exposure window ends.</p>'
+            f"{window_table('panel', okey, 'mj-table-' + okey)}</div>"
+        )
+    cohort_heads = "".join(f"<th>{esc(label)}</th>" for key, label, grade in MJ_OUTCOMES if grade == 8)
+    cohort_rows = []
+    for mkey, _code, mlabel in MJ_MEASURES:
+        cells = "".join(
+            _heat_td(by.get(("cohort", mkey, "cohort", "", okey)), True)
+            for okey, _label, grade in MJ_OUTCOMES
+            if grade == 8
+        )
+        cohort_rows.append(f'<tr><td class="rowhead">{esc(mlabel)}</td>{cells}</tr>')
+    cohort_table = (
+        '<div class="table-scroll"><table class="cmp heat-table" id="mj-cohort">'
+        f'<thead><tr><th class="rowhead">Marijuana</th>{cohort_heads}</tr></thead>'
+        f"<tbody>{''.join(cohort_rows)}</tbody></table></div>"
+    )
+    icar_table = window_table("icar", "icar", "mj-icar")
+    script = """
+<script>
+(function(){
+  var root = document.getElementById('mj-corr');
+  if (!root) return;
+  var modeButtons = root.querySelectorAll('button[data-mode]');
+  var outcomeButtons = root.querySelectorAll('button[data-outcome]');
+  function paint(mode){
+    modeButtons.forEach(function(b){
+      var on = b.getAttribute('data-mode') === mode;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var primary = mode === 'partial' ? 'p' : 'r';
+    var secondary = mode === 'partial' ? 'r' : 'p';
+    var secondaryName = mode === 'partial' ? 'r' : 'partial';
+    root.querySelectorAll('td.heat').forEach(function(td){
+      if (td.classList.contains('heat-empty')) return;
+      var val = td.getAttribute('data-' + primary);
+      if (!val) {
+        td.style.background = '#F6F0E4';
+        td.style.color = '#120C03';
+        td.querySelector('.hv').textContent = '—';
+        td.querySelector('.hn').textContent = '';
+        td.querySelector('.hs').textContent = secondaryName + ' ' + (td.getAttribute('data-' + secondary) || '—');
+        return;
+      }
+      td.style.background = td.getAttribute('data-fill-' + primary);
+      td.style.color = td.getAttribute('data-ink-' + primary);
+      var nAttr = primary === 'p' ? 'data-np' : 'data-nr';
+      td.querySelector('.hv').textContent = val;
+      td.querySelector('.hn').textContent = 'n=' + td.getAttribute(nAttr);
+      var other = td.getAttribute('data-' + secondary);
+      td.querySelector('.hs').textContent = secondaryName + ' ' + (other || '—');
+    });
+  }
+  function show(name){
+    outcomeButtons.forEach(function(b){
+      var on = b.getAttribute('data-outcome') === name;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    root.querySelectorAll('.mj-panel').forEach(function(panel){
+      panel.classList.toggle('on', panel.getAttribute('data-outcome') === name);
+    });
+  }
+  modeButtons.forEach(function(b){
+    b.addEventListener('click', function(){ paint(b.getAttribute('data-mode')); });
+  });
+  outcomeButtons.forEach(function(b){
+    b.addEventListener('click', function(){ show(b.getAttribute('data-outcome')); });
+  });
+})();
+</script>
+"""
+    return f"""
+<h2 id="correlations">Marijuana and test scores</h2>
+<p>{lead}</p>
+<p>{cohort_line}</p>
+<p>{icar_line} The line is −0.023 SD per year from 2006 through 2018, the published Table 1 slope drawn as a straight line. Yearly ICAR means are not in the paper. Partial r is not identified on that national series, because the controls are state attributes.</p>
+<p>Brown is positive. Blue is negative. Cream is near zero. The large number is the correlation selected below. The small number is the other one. n on the state tables is state-years for the large number. An em dash is a window the series does not cover.</p>
+<div id="mj-corr">
+<div class="corr-switch">
+{''.join(switches)}
+</div>
+<div class="corr-switch">
+<button type="button" class="btn btn-primary" data-mode="r" aria-pressed="true">Pearson r</button>
+<button type="button" class="btn btn-outline" data-mode="partial" aria-pressed="false">Partial r</button>
+</div>
+{''.join(panels)}
+<div class="mj-block">
+<h3>Birth to age 5</h3>
+<p>Adult use, ages 12 or older, in the state where the grade 8 students were tested. The window is pool end years t−14 through t−9.</p>
+{cohort_table}
+</div>
+<div class="mj-block">
+<h3>National ICAR35 line</h3>
+<p>n is years. In the partial view these cells are an em dash.</p>
+{icar_table}
+</div>
+<p class="fine">A window is dropped when it asks for a 2020 or 2021 pool or would average an interview-mode pool with a web-mode pool; NAEP years 2003 through 2024 all stay in the score.</p>
+<p class="fine">Current is the pool ending when the exposure window ends. Past 1 year is the pool ending the year before that. At a lag of 0, current is the pool in the NAEP year. The 5-year and 15-year rows are the mean of the published overlapping two-year pools whose end years fall in that span. A window is also dropped when a pool inside it was not published, including the missing 2002 estimate. Scores are population-weighted z-scores within each NAEP year. Each grade’s composite is the mean of that grade’s mathematics and reading z-scores. Weights are the ages-12-or-older population in the NAEP year. Partial r residualizes the exposure and the score on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, the vote-weighted region means, which do not change over time. Median household income is not in the region file. Alaska and Hawaii are absent from that file. CSV: <a href="nsduh-vote-ecological/results/marijuana_score_correlations.csv">marijuana_score_correlations.csv</a>.</p>
+</div>
+""" + script
+
+
 def window_corr_section(table) -> str:
     from over_time import WINDOW_OUTCOMES
 
@@ -1287,7 +1527,7 @@ def window_corr_section(table) -> str:
 </script>
 """
     return f"""
-<h2 id="correlations">State correlations</h2>
+<h3>State correlations</h3>
 <p>{lead}</p>
 <p>Brown is positive. Blue is negative. Cream is near zero. The large number is the correlation selected below. The small number is the other one. n is the state count for the large number.</p>
 <div id="window-corr">
@@ -1447,8 +1687,9 @@ def main():
     heroin = groups["heroin_alone"]
     gchart = group_chart(groups)
     gtab_group = group_table(groups)
-    from over_time import section_html, state_window_correlations
+    from over_time import marijuana_score_correlations, section_html, state_window_correlations
 
+    mj_html = mj_corr_section(marijuana_score_correlations())
     window_html = window_corr_section(state_window_correlations())
 
     ot_html = section_html()
@@ -1584,6 +1825,7 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/state_window_correlations.csv" download>State correlation CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/marijuana_score_correlations.csv" download>Marijuana score CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
@@ -1661,7 +1903,11 @@ body.pp .hero h1{{max-width:22ch}}
 </div>
 <p class="fine">Each region enters once per substance. The outcome is repeated, so the clustered standard error groups rows by region. Substance indicators absorb the level of each rate. The group indicator itself is collinear with those indicators, so the test is the interaction of the rate with group B. Controls are log density, percent ages 18–25, and percent ages 12–17, centered at their vote-weighted means. Weights are two-party votes. N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
 
+{mj_html}
+<details class="secondary-block">
+<summary>All substances at the 2019 scores and the 2020 vote</summary>
 {window_html}
+</details>
 
 <h2 id="users">Users and non-users</h2>
 <p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong> (interval {num(g_alc['user_lo'], 1)}–{num(g_alc['user_hi'], 1)}). Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong> (interval {num(g_alc['nonuser_lo'], 1)}–{num(g_alc['nonuser_hi'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users (interval {num(by_term['binge']['user_lo'], 1)}–{num(by_term['binge']['user_hi'], 1)}) and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users (interval {num(by_term['binge']['nonuser_lo'], 1)}–{num(by_term['binge']['nonuser_hi'], 1)}).</p>
@@ -1777,7 +2023,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
 <p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The ICAR35 figure beside that chart is Table 1 in Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>: −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
-<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>. The state correlation table is <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>.</p>
+<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>. The state correlation table is <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>. The marijuana score grid is <a href="nsduh-vote-ecological/results/marijuana_score_correlations.csv">marijuana_score_correlations.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>
