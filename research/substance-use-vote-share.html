@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Substance use and the 2024 vote | AMNI-SCIENT Research</title>
+<meta name="description" content="Vote-weighted regressions of 2021–2023 NSDUH substate substance-use rates on 2024 Democratic two-party share across 382 regions, plus a combined index, laboratory results, and OpenSecrets industry contributions.">
+<meta name="keywords" content="NSDUH,marijuana,alcohol,cigarettes,opioid,2024 presidential vote,ecological regression,OpenSecrets,Anthony Reffelt">
+<meta property="og:title" content="Substance use and the 2024 vote — AMNI-SCIENT Research">
+<meta property="og:description" content="NSDUH substate rates and 2024 Democratic two-party share. Measured vote results, laboratory results, and industry contributions, labeled separately.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/substance-use-vote-share">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Substance use and the 2024 vote">
+<meta name="twitter:description" content="382 NSDUH regions. Marijuana +1.13 points of vote share per point of past-month use. Cigarettes −0.97.">
+<link rel="canonical" href="https://amni-scient.com/research/substance-use-vote-share">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Substance use and the 2024 vote","headline":"NSDUH substate substance use and 2024 Democratic two-party vote share","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Area-level associations of NSDUH 2021–2023 substate substance-use rates with 2024 Democratic two-party vote share, a combined use index, laboratory suggestibility results, and OpenSecrets industry contributions.","url":"https://amni-scient.com/research/substance-use-vote-share","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-10-11","dateModified":"2026-10-11"}</script>
+<link rel="stylesheet" href="../css/style.css?v=b261">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.note-wrap{max-width:none;width:100%;margin:0;padding:.4rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1240px)/2)) 3.5rem}
+.note-wrap p:not(.axis-name),.note-wrap h2,.note-wrap .src,.note-wrap li{max-width:42rem}
+.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name{max-width:860px}
+.crumb{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
+.crumb a{color:var(--accent)}
+.hero .crumb{position:relative;z-index:1;margin:0 0 .55rem;order:-2}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 1.6rem}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1rem .95rem}
+.stat .k{display:block;font-size:.62rem;font-weight:700;font-stretch:80%;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.stat .v{display:block;margin-top:.3rem;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat .s{display:block;margin-top:.4rem;font-size:.8rem;color:var(--text-soft);line-height:1.35}
+.stat.lead{border-color:color-mix(in srgb,var(--accent) 50%,var(--border));background:linear-gradient(180deg,var(--accent-dim),var(--panel) 48%)}
+.stat.lead .v{color:var(--accent)}
+.note-wrap h2{text-align:left;margin:2.2rem 0 .6rem;font-size:1.25rem}
+.note-wrap p,.note-wrap li{color:var(--text-soft);font-size:.95rem;line-height:1.65}
+.note-wrap ul,.note-wrap ol{max-width:42rem;padding-left:1.2rem;margin:.4rem 0 1rem}
+.note-wrap a:not(.btn),.src a:not(.btn),.data-top a:not(.btn){color:var(--accent)}
+.note-wrap strong{color:var(--text)}
+.fine{font-size:.8rem;color:var(--dim)}
+.chart-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.4rem .4rem .2rem;margin:.7rem 0 .4rem}
+.chart{width:100%;height:auto;display:block}
+.chart .grid{stroke:var(--border);stroke-dasharray:3 4}
+.chart .axis{stroke:var(--border2)}
+.chart .tick{fill:var(--text-soft);font-size:11px;font-family:var(--font-sans,Archivo,sans-serif)}
+.chart .whisk{stroke:var(--text);stroke-width:1.5}
+.chart .band{fill:var(--accent);fill-opacity:.18}
+.chart .line{fill:none;stroke:var(--accent);stroke-width:2.4}
+.chart .dot{fill:var(--panel);stroke:var(--text);stroke-width:2}
+.chart .mark{stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:2 3}
+.chart .marklab{fill:var(--accent);font-size:10px;font-family:var(--font-sans,Archivo,sans-serif);letter-spacing:.04em}
+.axis-name{display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 .4rem .2rem}
+table.cmp{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);font-size:.82rem;margin:.8rem 0}
+table.cmp th,table.cmp td{padding:.45rem .55rem;text-align:right;border-bottom:1px solid var(--border)}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+table.cmp th{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);background:var(--panel2)}
+table.cmp tr:last-child td{border-bottom:0}
+table.cmp tr.hot td{background:var(--accent-dim);color:var(--text);font-weight:650}
+.src{margin-top:1.6rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.82rem;color:var(--dim)}
+.data-top{padding-top:0}
+.data-top h2{text-align:left;font-size:1.15rem;letter-spacing:.08em}
+.dl-row{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0 1.2rem}
+.dl-row .btn{text-decoration:none}
+.cite{max-width:42rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.7;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1.2rem;color:var(--text);margin:0}
+.hero .tagline{max-width:42rem}
+body.pp .hero h1{max-width:22ch}
+.cap{max-width:42rem}
+
+a.btn,button.btn{text-decoration:none}
+a.btn::before,button.btn::before{display:none}
+a.btn.btn-primary,button.btn.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+a.btn.btn-primary:hover,a.btn.btn-primary:focus,a.btn.btn-primary:focus-visible,
+button.btn.btn-primary:hover,button.btn.btn-primary:focus,button.btn.btn-primary:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+a.btn.btn-outline,button.btn.btn-outline{background:var(--panel);border-color:var(--text);color:var(--text)}
+a.btn.btn-outline:hover,a.btn.btn-outline:focus,a.btn.btn-outline:focus-visible,
+button.btn.btn-outline:hover,button.btn.btn-outline:focus,button.btn.btn-outline:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.theme-toggle{background:var(--panel);border-color:var(--border2);color:var(--text)}
+button.theme-toggle:hover,button.theme-toggle:focus,button.theme-toggle:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.nav-dd-trigger,button.nav-dd-trigger:hover,button.nav-dd-trigger:focus,button.nav-dd-trigger:focus-visible{color:var(--text)}
+.support-cta .support-link{background:var(--panel);border-color:var(--border2);color:var(--text)}
+.support-cta .support-link strong{color:var(--text)}
+.support-cta .support-link:hover,.support-cta .support-link:focus,.support-cta .support-link:focus-visible,
+.support-cta .support-link:hover strong,.support-cta .support-link:focus strong,.support-cta .support-link:focus-visible strong{background:var(--text);color:var(--bg);border-color:var(--text)}
+footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.kofi-link:focus-visible{color:var(--text)!important}
+.legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;max-width:860px;margin:.2rem 0 .8rem}
+.legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
+.legend i{width:14px;height:3px;border-radius:1px;display:inline-block}
+
+@media(max-width:720px){
+  .stats{grid-template-columns:1fr}
+  table.cmp{font-size:.72rem}
+  table.cmp th,table.cmp td{padding:.35rem .3rem}
+  .axis-name{flex-direction:column;align-items:flex-start;gap:.25rem}
+}
+</style>
+</head>
+<body class="pp">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="../amni-calc.html">CALCULATORS</a>
+<a href="../amni-learn.html">LEARN</a>
+<a href="../research.html" class="active">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="../amni-ai.html">AMNI-AI</a>
+<a href="../amni-llm.html">AMNI-LLM</a>
+<a href="../amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="../amni-os.html">AMNI-OS</a>
+<a href="../amni-core.html">AMNI-CORE</a>
+<a href="../amni-browse.html">AMNI-BROWSE</a>
+<a href="../amni-connect.html">AMNI-CONNECT</a>
+<a href="../grok-remote.html">GROK-REMOTE</a>
+<a href="../amni-mail.html">AMNI-MAIL</a>
+<a href="../amni-space.html">AMNI-SPACE</a>
+<a href="../amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="../amni-phone.html">AMNI-PHONE</a>
+<a href="../amni-type.html">AMNI-TYPE</a>
+<a href="../amni-price.html">AMNI-PRICE</a>
+<a href="../amni-haven.html">AMNI-HAVEN</a>
+<a href="../amni-hedgedoc.html">HEDGEDOC</a>
+<a href="../symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="../amni-calc.html">AMNI-CALC</a>
+<a href="../amni-learn.html">AMNI-LEARN</a>
+<a href="../amni-explore.html">AMNI-EXPLORE</a>
+<a href="../amni-weather.html">AMNI-WEATHER</a>
+<a href="../game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="../amni-life.html">AMNI-LIFE</a>
+<a href="../amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero">
+<p class="crumb"><a href="../research.html">Research</a> / Substance use and the 2024 vote</p>
+<h1>Substance use and the 2024 vote</h1>
+<p class="subtitle">NSDUH substate rates · one regression</p>
+<p class="tagline">The lowest fifth of regions on past-month marijuana use cast 41.9% of its two-party vote for the Democrat. The highest fifth cast 60.0%. Cigarettes run the other way: 58.8% in the lowest fifth, 32.1% in the highest. Alcohol runs with marijuana: 37.7% to 59.6%.</p>
+</section>
+<main class="note-wrap">
+<div class="data-top">
+<h2>Data and method</h2>
+<div class="dl-row">
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/region_level.csv" download>Region CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/results.json" download>Results JSON</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/extended.json" download>Extended JSON</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/quintiles.csv" download>Quintiles CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/state_level.csv" download>State CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_donations.csv" download>Donations CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/substate_outcomes_212223.csv" download>NSDUH outcomes CSV</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/run_regression.py" download>Regression script</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/fit_extended.py" download>Substance fit</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
+</div>
+<p>I joined SAMHSA’s 2021–2023 NSDUH substate small-area estimates to 2024 presidential votes reallocated to ZCTAs by the land-cover method (Harvard Dataverse 10.7910/DVN/Z8TSH3), with ACS 2019–2023 age and education and Census 2020 ZCTA internal points. The unit is the substate region. N = 382 regions, 30,389 ZCTAs, 150.1 million allocated two-party votes. Weights are two-party votes. Standard errors are HC1. The specified model is the rate, log population density, percent ages 18–25, and percent ages 12–17. Ages 12–14 are three-fifths of the ACS 10–14 band, and age 25 is one-fifth of the 25–29 band. Replacing those with ages 15–17 and 18–24 leaves the marijuana slope at 1.12.</p>
+<p>Alaska and Hawaii have no rows in the vote file. The shapefile has 393 regions. Nebraska is in it: five regions, FIPS 31, polygons between 104°W and 95°W. The file’s state name on those rows says New Jersey. One New Jersey region, Southern, FIPS 34, is labeled New York. State indicators use the FIPS code. The estimation sample is 49 jurisdictions: 48 states plus the District of Columbia.</p>
+<p>The NSDUH rates are small-area estimates. I applied no errors-in-variables correction. No public file links one person’s use to that person’s ballot. Density’s correlation with Democratic two-party share is 0.73. Bachelor’s share is 0.71. The slope that remains after density and age is the residual association of the rate.</p>
+<p>Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are not in the substate file. Those six are past-year rates, and heroin is ages 18 or older. There is no separate heavy-drinking field. Binge alcohol in the past month is the intensity measure SAMHSA published. Nicotine vaping is not its own outcome. Tobacco product use in the past month is the tobacco field. Fentanyl, inhalants, LSD, PCP, and crack are not separate substate rates. The file also carries mental-illness, suicide, and perceived-risk outcomes. I left those out of the vote regression. Substance-use disorder rates are in the second table. They are disorder prevalence, not use.</p>
+<p>The combined index is the sum of eight vote-weighted z-scores: past-month marijuana, past-month alcohol, past-month cigarettes, past-month illicit drugs other than marijuana, past-year cocaine, past-year opioid misuse, past-year methamphetamine, and past-year hallucinogens. A region at the vote-weighted mean on every rate scores 0. One standard deviation above on all eight scores 8. I left out rates that repeat another rate: illicit drugs including marijuana, tobacco products including cigarettes, binge alcohol, pain-reliever misuse inside opioid misuse, past-year marijuana, heroin at ages 18 or older, and the underage rates.</p>
+<p>The laboratory chart is laboratory data. The potency curves are predictions. OpenSecrets industry totals were retrieved 2026-10-11 from the Internet Archive capture of 2026-07-16, after the live pages returned HTTP 403. Party percentages are OpenSecrets’ shares of contributions to candidates and parties. Outside spending is in the total and is left out of the party split. I did not re-sum raw FEC itemized filings.</p>
+<p class="cite">Reffelt, A. (2026). <em>Substance use and the 2024 vote.</em> AMNI-SCIENT Research. https://amni-scient.com/research/substance-use-vote-share</p>
+</div>
+
+<div class="stats">
+<div class="stat lead"><span class="k">Marijuana, lowest fifth to highest</span><span class="v">+18.1</span><span class="s">points of Democratic two-party share, 41.9% to 60.0%. Measured.</span></div>
+<div class="stat"><span class="k">Cigarettes, lowest fifth to highest</span><span class="v">−26.7</span><span class="s">points, 58.8% to 32.1%. Measured.</span></div>
+<div class="stat"><span class="k">After density and age</span><span class="v">+1.13</span><span class="s">marijuana, vote-share points per point of past-month use. SE 0.13.</span></div>
+</div>
+
+<h2>Each rate</h2>
+<p>Vote-weighted fifths. The vertical axis is the 2024 Democratic vote divided by Democratic plus Republican votes. Each line is one NSDUH rate, cut into its own fifths.</p>
+<div class="chart-card"><svg viewBox="0 0 720 360" role="img" class="chart">
+<line x1="54" y1="308.7" x2="704" y2="308.7" class="grid"/>
+<text x="46" y="312.7" text-anchor="end" class="tick">30</text>
+<line x1="54" y1="232.2" x2="704" y2="232.2" class="grid"/>
+<text x="46" y="236.2" text-anchor="end" class="tick">40</text>
+<line x1="54" y1="155.7" x2="704" y2="155.7" class="grid"/>
+<text x="46" y="159.7" text-anchor="end" class="tick">50</text>
+<line x1="54" y1="79.2" x2="704" y2="79.2" class="grid"/>
+<text x="46" y="83.2" text-anchor="end" class="tick">60</text>
+<line x1="54" y1="18" x2="54" y2="324" class="axis"/>
+<line x1="54" y1="324" x2="704" y2="324" class="axis"/>
+<text x="54.0" y="346" text-anchor="middle" class="tick">1</text>
+<text x="216.5" y="346" text-anchor="middle" class="tick">2</text>
+<text x="379.0" y="346" text-anchor="middle" class="tick">3</text>
+<text x="541.5" y="346" text-anchor="middle" class="tick">4</text>
+<text x="704.0" y="346" text-anchor="middle" class="tick">5</text>
+<polyline points="54.0,218.0 216.5,190.1 379.0,167.3 541.5,127.5 704.0,79.5" fill="none" stroke="#16A34A" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="218.0" r="3.2" fill="#16A34A"/>
+<circle cx="216.5" cy="190.1" r="3.2" fill="#16A34A"/>
+<circle cx="379.0" cy="167.3" r="3.2" fill="#16A34A"/>
+<circle cx="541.5" cy="127.5" r="3.2" fill="#16A34A"/>
+<circle cx="704.0" cy="79.5" r="3.2" fill="#16A34A"/>
+<polyline points="54.0,249.5 216.5,195.8 379.0,153.8 541.5,141.1 704.0,82.2" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="249.5" r="3.2" fill="#2563EB"/>
+<circle cx="216.5" cy="195.8" r="3.2" fill="#2563EB"/>
+<circle cx="379.0" cy="153.8" r="3.2" fill="#2563EB"/>
+<circle cx="541.5" cy="141.1" r="3.2" fill="#2563EB"/>
+<circle cx="704.0" cy="82.2" r="3.2" fill="#2563EB"/>
+<polyline points="54.0,210.4 216.5,165.2 379.0,164.9 541.5,126.5 704.0,133.3" fill="none" stroke="#0891B2" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="210.4" r="3.2" fill="#0891B2"/>
+<circle cx="216.5" cy="165.2" r="3.2" fill="#0891B2"/>
+<circle cx="379.0" cy="164.9" r="3.2" fill="#0891B2"/>
+<circle cx="541.5" cy="126.5" r="3.2" fill="#0891B2"/>
+<circle cx="704.0" cy="133.3" r="3.2" fill="#0891B2"/>
+<polyline points="54.0,88.1 216.5,138.8 379.0,197.4 541.5,196.3 704.0,292.3" fill="none" stroke="#E11D48" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="88.1" r="3.2" fill="#E11D48"/>
+<circle cx="216.5" cy="138.8" r="3.2" fill="#E11D48"/>
+<circle cx="379.0" cy="197.4" r="3.2" fill="#E11D48"/>
+<circle cx="541.5" cy="196.3" r="3.2" fill="#E11D48"/>
+<circle cx="704.0" cy="292.3" r="3.2" fill="#E11D48"/>
+<polyline points="54.0,84.7 216.5,134.0 379.0,193.2 541.5,212.5 704.0,295.7" fill="none" stroke="#D97706" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="84.7" r="3.2" fill="#D97706"/>
+<circle cx="216.5" cy="134.0" r="3.2" fill="#D97706"/>
+<circle cx="379.0" cy="193.2" r="3.2" fill="#D97706"/>
+<circle cx="541.5" cy="212.5" r="3.2" fill="#D97706"/>
+<circle cx="704.0" cy="295.7" r="3.2" fill="#D97706"/>
+<polyline points="54.0,180.3 216.5,179.8 379.0,187.7 541.5,134.7 704.0,108.3" fill="none" stroke="#7C3AED" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="180.3" r="3.2" fill="#7C3AED"/>
+<circle cx="216.5" cy="179.8" r="3.2" fill="#7C3AED"/>
+<circle cx="379.0" cy="187.7" r="3.2" fill="#7C3AED"/>
+<circle cx="541.5" cy="134.7" r="3.2" fill="#7C3AED"/>
+<circle cx="704.0" cy="108.3" r="3.2" fill="#7C3AED"/>
+<polyline points="54.0,197.6 216.5,205.8 379.0,188.1 541.5,129.5 704.0,64.1" fill="none" stroke="#EA580C" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="197.6" r="3.2" fill="#EA580C"/>
+<circle cx="216.5" cy="205.8" r="3.2" fill="#EA580C"/>
+<circle cx="379.0" cy="188.1" r="3.2" fill="#EA580C"/>
+<circle cx="541.5" cy="129.5" r="3.2" fill="#EA580C"/>
+<circle cx="704.0" cy="64.1" r="3.2" fill="#EA580C"/>
+<polyline points="54.0,149.1 216.5,147.6 379.0,163.5 541.5,168.6 704.0,184.9" fill="none" stroke="#0D9488" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="149.1" r="3.2" fill="#0D9488"/>
+<circle cx="216.5" cy="147.6" r="3.2" fill="#0D9488"/>
+<circle cx="379.0" cy="163.5" r="3.2" fill="#0D9488"/>
+<circle cx="541.5" cy="168.6" r="3.2" fill="#0D9488"/>
+<circle cx="704.0" cy="184.9" r="3.2" fill="#0D9488"/>
+<polyline points="54.0,137.3 216.5,144.0 379.0,153.5 541.5,184.3 704.0,206.8" fill="none" stroke="#65A30D" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="137.3" r="3.2" fill="#65A30D"/>
+<circle cx="216.5" cy="144.0" r="3.2" fill="#65A30D"/>
+<circle cx="379.0" cy="153.5" r="3.2" fill="#65A30D"/>
+<circle cx="541.5" cy="184.3" r="3.2" fill="#65A30D"/>
+<circle cx="704.0" cy="206.8" r="3.2" fill="#65A30D"/>
+<polyline points="54.0,100.8 216.5,153.2 379.0,152.9 541.5,226.6 704.0,245.9" fill="none" stroke="#DB2777" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="100.8" r="3.2" fill="#DB2777"/>
+<circle cx="216.5" cy="153.2" r="3.2" fill="#DB2777"/>
+<circle cx="379.0" cy="152.9" r="3.2" fill="#DB2777"/>
+<circle cx="541.5" cy="226.6" r="3.2" fill="#DB2777"/>
+<circle cx="704.0" cy="245.9" r="3.2" fill="#DB2777"/>
+<polyline points="54.0,209.8 216.5,205.5 379.0,174.6 541.5,129.5 704.0,69.6" fill="none" stroke="#4F46E5" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="209.8" r="3.2" fill="#4F46E5"/>
+<circle cx="216.5" cy="205.5" r="3.2" fill="#4F46E5"/>
+<circle cx="379.0" cy="174.6" r="3.2" fill="#4F46E5"/>
+<circle cx="541.5" cy="129.5" r="3.2" fill="#4F46E5"/>
+<circle cx="704.0" cy="69.6" r="3.2" fill="#4F46E5"/>
+<polyline points="54.0,213.0 216.5,161.6 379.0,153.3 541.5,139.7 704.0,128.7" fill="none" stroke="#78716C" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="54.0" cy="213.0" r="3.2" fill="#78716C"/>
+<circle cx="216.5" cy="161.6" r="3.2" fill="#78716C"/>
+<circle cx="379.0" cy="153.3" r="3.2" fill="#78716C"/>
+<circle cx="541.5" cy="139.7" r="3.2" fill="#78716C"/>
+<circle cx="704.0" cy="128.7" r="3.2" fill="#78716C"/>
+</svg></div>
+<p class="axis-name"><span>Y · Democratic two-party share, %</span><span>X · Quintile of that rate, low to high</span></p>
+<div class="legend"><span><i style="background:#16A34A"></i>Marijuana, past month</span><span><i style="background:#2563EB"></i>Alcohol, past month</span><span><i style="background:#0891B2"></i>Binge alcohol, past month</span><span><i style="background:#E11D48"></i>Cigarettes, past month</span><span><i style="background:#D97706"></i>Tobacco products, past month</span><span><i style="background:#7C3AED"></i>Illicit drugs other than marijuana, past month</span><span><i style="background:#EA580C"></i>Cocaine, past year</span><span><i style="background:#0D9488"></i>Opioid misuse, past year</span><span><i style="background:#65A30D"></i>Pain reliever misuse, past year</span><span><i style="background:#DB2777"></i>Methamphetamine, past year</span><span><i style="background:#4F46E5"></i>Hallucinogens, past year</span><span><i style="background:#78716C"></i>Heroin, past year, ages 18+</span></div>
+<p class="fine cap">Measured. The unit is the substate region. 382 regions.</p>
+<p>After log density and age, one point of past-month marijuana use lines up with <strong>+1.13</strong> points of Democratic two-party share (SE 0.13). One point of past-month cigarettes lines up with <strong>−0.97</strong> (SE 0.16). Past-month alcohol is <strong>+0.66</strong> (SE 0.09). Past-month tobacco products are <strong>−0.82</strong> (SE 0.14).</p>
+<p>A point of cocaine is a large coefficient because the regional rate only moves about half a point: <strong>+7.76</strong> per point of past-year cocaine use (SE 1.13), which is <strong>+3.90</strong> points of share per weighted standard deviation. Hallucinogens are <strong>+4.77</strong> per SD. Opioid misuse is <strong>−0.59</strong> per SD (SE 0.61). Methamphetamine is <strong>−1.21</strong> per SD.</p>
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>Per SD</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
+<tbody>
+<tr><td>Past-month marijuana</td><td>+1.13</td><td>0.13</td><td>+4.51</td><td>+0.99</td><td>0.26</td><td><0.001</td></tr>
+<tr><td>Past-month alcohol</td><td>+0.66</td><td>0.09</td><td>+4.04</td><td>+0.52</td><td>0.12</td><td><0.001</td></tr>
+<tr><td>Past-month binge alcohol</td><td>+0.68</td><td>0.23</td><td>+1.86</td><td>+0.87</td><td>0.35</td><td>0.003</td></tr>
+<tr><td>Past-month cigarettes</td><td>−0.97</td><td>0.16</td><td>−4.12</td><td>−0.70</td><td>0.19</td><td><0.001</td></tr>
+<tr><td>Past-month tobacco products</td><td>−0.82</td><td>0.14</td><td>−4.37</td><td>−0.68</td><td>0.17</td><td><0.001</td></tr>
+<tr><td>Past-month illicit drugs other than marijuana</td><td>+2.59</td><td>0.97</td><td>+1.69</td><td>+0.04</td><td>1.30</td><td>0.007</td></tr>
+<tr><td>Past-month illicit drugs</td><td>+1.14</td><td>0.13</td><td>+4.65</td><td>+0.92</td><td>0.26</td><td><0.001</td></tr>
+<tr><td>Past-year cocaine</td><td>+7.76</td><td>1.13</td><td>+3.90</td><td>+2.96</td><td>2.34</td><td><0.001</td></tr>
+<tr><td>Past-year hallucinogens</td><td>+4.06</td><td>0.47</td><td>+4.77</td><td>+2.87</td><td>1.01</td><td><0.001</td></tr>
+<tr><td>Past-year heroin</td><td>+8.52</td><td>3.48</td><td>+1.26</td><td>+12.94</td><td>5.64</td><td>0.015</td></tr>
+<tr><td>Past-year methamphetamine</td><td>−3.02</td><td>1.54</td><td>−1.21</td><td>−10.49</td><td>2.07</td><td>0.050</td></tr>
+<tr><td>Past-year opioid misuse</td><td>−1.12</td><td>1.16</td><td>−0.59</td><td>+3.39</td><td>1.53</td><td>0.335</td></tr>
+<tr><td>Past-year pain reliever misuse</td><td>−2.33</td><td>1.24</td><td>−1.15</td><td>+2.69</td><td>1.87</td><td>0.061</td></tr>
+<tr><td>Past-year marijuana</td><td>+1.00</td><td>0.11</td><td>+4.89</td><td>+0.95</td><td>0.20</td><td><0.001</td></tr>
+<tr><td>Past-month underage alcohol</td><td>+0.87</td><td>0.20</td><td>+2.76</td><td>+0.43</td><td>0.31</td><td><0.001</td></tr>
+<tr><td>Past-month underage binge alcohol</td><td>+0.71</td><td>0.36</td><td>+1.40</td><td>−0.23</td><td>0.53</td><td>0.047</td></tr>
+<tr><td>Past-month underage cigarettes</td><td>+0.27</td><td>0.56</td><td>+0.28</td><td>−0.91</td><td>0.66</td><td>0.635</td></tr>
+<tr><td>Past-month underage tobacco products</td><td>−0.19</td><td>0.42</td><td>−0.27</td><td>−0.50</td><td>0.44</td><td>0.655</td></tr>
+</tbody>
+</table>
+<p class="fine">Per point: percentage points of Democratic two-party share per percentage point of the rate, with log density and age. Per SD: the same slope times the vote-weighted standard deviation of the rate. State FE adds state indicators. p is for the density-and-age slope. N = 382. HC1.</p>
+<p>Marijuana on its own, before density and age, is 1.48 (SE 0.20). Adding a bachelor’s degree leaves 1.09 (SE 0.11). State indicators leave 0.99 (SE 0.26). State indicators and a bachelor’s degree leave 1.14 (SE 0.24). The areal vote allocation leaves 1.14 (SE 0.13). Entered with alcohol alone, marijuana is 0.96 (SE 0.13) and alcohol is 0.49 (SE 0.08).</p>
+
+<h2>Disorder prevalence</h2>
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>Per SD</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
+<tbody>
+<tr><td>Past-year substance use disorder</td><td>+1.58</td><td>0.22</td><td>+3.89</td><td>+1.18</td><td>0.32</td><td><0.001</td></tr>
+<tr><td>Past-year drug use disorder</td><td>+1.76</td><td>0.29</td><td>+3.19</td><td>+1.41</td><td>0.44</td><td><0.001</td></tr>
+<tr><td>Past-year opioid use disorder</td><td>−3.25</td><td>1.28</td><td>−1.44</td><td>+0.30</td><td>1.68</td><td>0.011</td></tr>
+<tr><td>Past-year pain reliever use disorder</td><td>−5.24</td><td>1.25</td><td>−2.45</td><td>−2.23</td><td>1.66</td><td><0.001</td></tr>
+<tr><td>Past-year alcohol use disorder</td><td>+2.95</td><td>0.35</td><td>+4.51</td><td>+2.21</td><td>0.49</td><td><0.001</td></tr>
+<tr><td>Past-year underage alcohol use disorder</td><td>+1.47</td><td>0.53</td><td>+1.63</td><td>+0.15</td><td>0.70</td><td>0.006</td></tr>
+</tbody>
+</table>
+<p class="fine">Same specification. These rows are past-year disorder prevalence.</p>
+
+<h2>Eight rates together</h2>
+<p>The joint model puts the eight index rates in one regression with log density and age. Weighted R² is 0.77. With state indicators it is 0.86.</p>
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
+<tbody>
+<tr><td>Past-month marijuana</td><td>+0.87</td><td>0.15</td><td>+0.94</td><td>0.26</td><td><0.001</td></tr>
+<tr><td>Past-month alcohol</td><td>+0.26</td><td>0.10</td><td>+0.18</td><td>0.14</td><td>0.007</td></tr>
+<tr><td>Past-month cigarettes</td><td>−1.13</td><td>0.17</td><td>−0.91</td><td>0.22</td><td><0.001</td></tr>
+<tr><td>Past-month illicit drugs other than marijuana</td><td>+1.70</td><td>1.17</td><td>−0.58</td><td>1.27</td><td>0.147</td></tr>
+<tr><td>Past-year cocaine</td><td>+2.50</td><td>1.60</td><td>+1.70</td><td>2.63</td><td>0.120</td></tr>
+<tr><td>Past-year opioid misuse</td><td>+5.13</td><td>1.28</td><td>+8.01</td><td>1.59</td><td><0.001</td></tr>
+<tr><td>Past-year methamphetamine</td><td>−8.09</td><td>1.71</td><td>−12.49</td><td>2.14</td><td><0.001</td></tr>
+<tr><td>Past-year hallucinogens</td><td>+0.58</td><td>0.73</td><td>+0.47</td><td>1.01</td><td>0.424</td></tr>
+</tbody>
+</table>
+<p class="fine">Each row is that rate’s coefficient with the other seven rates, log density, and age in the same model.</p>
+
+<h2>Combined index</h2>
+<p>One SD of the sum lines up with <strong>+2.66</strong> points of Democratic two-party share (SE 0.57). The correlation of the sum with the vote is 0.23. The first principal component of the same eight z-scores correlates 0.91 with the sum. Its cigarette loading is -0.04. One SD of the component lines up with <strong>+4.74</strong> points of share (SE 0.55). The component’s correlation with the vote is 0.51. It accounts for 40% of the weighted covariance of the eight z-scores.</p>
+<p>Inside the same state, one point of the sum lines up with <strong>+0.26</strong> points of share (SE 0.19). Between states, with log density, the slope is <strong>+0.81</strong> (SE 0.28, 49 jurisdictions). Between states, the sum alone is +0.61 (SE 0.32). The sum’s correlation with log density is 0.01.</p>
+<h2>Combined index and the state</h2>
+<p>Each point is a state, or the District of Columbia. The area of the point is two-party votes. The horizontal axis is the vote-weighted mean of the sum inside that jurisdiction.</p>
+<div class="chart-card"><svg viewBox="0 0 720 320" role="img" class="chart">
+<line x1="54" y1="284.0" x2="704" y2="284.0" class="grid"/>
+<text x="46" y="288.0" text-anchor="end" class="tick">20</text>
+<line x1="54" y1="195.3" x2="704" y2="195.3" class="grid"/>
+<text x="46" y="199.3" text-anchor="end" class="tick">40</text>
+<line x1="54" y1="106.7" x2="704" y2="106.7" class="grid"/>
+<text x="46" y="110.7" text-anchor="end" class="tick">60</text>
+<line x1="54" y1="18.0" x2="704" y2="18.0" class="grid"/>
+<text x="46" y="22.0" text-anchor="end" class="tick">80</text>
+<line x1="54" y1="18" x2="54" y2="284" class="axis"/>
+<line x1="54" y1="284" x2="704" y2="284" class="axis"/>
+<text x="64.2" y="306" text-anchor="middle" class="tick">-8</text>
+<text x="198.6" y="306" text-anchor="middle" class="tick">-4</text>
+<text x="332.9" y="306" text-anchor="middle" class="tick">0</text>
+<text x="467.3" y="306" text-anchor="middle" class="tick">4</text>
+<text x="601.7" y="306" text-anchor="middle" class="tick">8</text>
+<circle cx="315.4" cy="219.4" r="5.7" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="437.2" cy="163.6" r="6.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="356.4" cy="220.5" r="4.9" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="388.1" cy="104.9" r="10.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="546.8" cy="125.9" r="6.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="295.9" cy="118.3" r="5.4" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="368.6" cy="118.2" r="4.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="670.4" cy="-41.0" r="4.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="183.7" cy="180.3" r="8.8" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="362.7" cy="155.9" r="7.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="297.8" cy="233.7" r="4.7" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="363.7" cy="126.3" r="7.2" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="287.7" cy="193.8" r="6.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="341.7" cy="180.7" r="5.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="246.0" cy="187.2" r="5.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="425.8" cy="219.7" r="5.6" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="555.8" cy="200.4" r="5.5" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="488.2" cy="135.3" r="4.6" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="252.8" cy="85.5" r="6.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="362.8" cy="93.6" r="6.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="310.2" cy="154.1" r="7.2" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="305.7" cy="141.3" r="6.2" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="275.8" cy="202.3" r="5.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="432.7" cy="192.3" r="6.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="469.8" cy="196.4" r="4.4" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="213.9" cy="196.7" r="4.7" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="594.6" cy="157.7" r="5.2" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="349.1" cy="144.7" r="4.6" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="175.8" cy="138.0" r="6.6" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="611.9" cy="136.9" r="4.7" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="352.5" cy="122.9" r="8.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="221.9" cy="158.4" r="7.2" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="261.1" cy="233.6" r="4.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="418.8" cy="176.0" r="7.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="405.0" cy="260.0" r="4.8" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="660.5" cy="118.8" r="5.6" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="346.2" cy="154.8" r="7.7" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="477.2" cy="119.7" r="4.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="328.9" cy="191.2" r="5.8" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="294.7" cy="217.0" r="4.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="436.0" cy="217.8" r="6.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="170.0" cy="181.7" r="9.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="87.6" cy="201.2" r="5.1" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="614.0" cy="76.3" r="4.0" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="241.4" cy="137.8" r="6.8" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="426.5" cy="108.9" r="6.5" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="444.7" cy="245.1" r="4.5" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="291.0" cy="152.9" r="6.3" fill="#2563EB" fill-opacity="0.75"/>
+<circle cx="300.0" cy="254.6" r="3.9" fill="#2563EB" fill-opacity="0.75"/>
+</svg></div>
+<p class="axis-name"><span>Y · Democratic two-party share, %</span><span>X · Combined index, state mean</span></p>
+<p class="fine cap">Measured. State means of the substate-region index.</p>
+<p>The next chart is the same sum after subtracting each state’s vote-weighted mean. The vertical axis is the region’s Democratic share minus the state’s, in percentage points. Fifths are fifths of that within-state index.</p>
+<div class="chart-card"><svg viewBox="0 0 720 280" role="img" class="chart">
+<line x1="54" y1="244.0" x2="704" y2="244.0" class="grid"/>
+<text x="46" y="248.0" text-anchor="end" class="tick">-4</text>
+<line x1="54" y1="198.8" x2="704" y2="198.8" class="grid"/>
+<text x="46" y="202.8" text-anchor="end" class="tick">-2</text>
+<line x1="54" y1="153.6" x2="704" y2="153.6" class="grid"/>
+<text x="46" y="157.6" text-anchor="end" class="tick">0</text>
+<line x1="54" y1="108.4" x2="704" y2="108.4" class="grid"/>
+<text x="46" y="112.4" text-anchor="end" class="tick">2</text>
+<line x1="54" y1="63.2" x2="704" y2="63.2" class="grid"/>
+<text x="46" y="67.2" text-anchor="end" class="tick">4</text>
+<line x1="54" y1="18.0" x2="704" y2="18.0" class="grid"/>
+<text x="46" y="22.0" text-anchor="end" class="tick">6</text>
+<line x1="54" y1="18" x2="54" y2="244" class="axis"/>
+<line x1="54" y1="244" x2="704" y2="244" class="axis"/>
+<text x="54.0" y="266" text-anchor="middle" class="tick">1</text>
+<text x="216.5" y="266" text-anchor="middle" class="tick">2</text>
+<text x="379.0" y="266" text-anchor="middle" class="tick">3</text>
+<text x="541.5" y="266" text-anchor="middle" class="tick">4</text>
+<text x="704.0" y="266" text-anchor="middle" class="tick">5</text>
+<line x1="54" y1="153.6" x2="704" y2="153.6" class="axis"/>
+<polyline points="54.0,160.3 216.5,164.2 379.0,200.0 541.5,162.0 704.0,62.7" fill="none" stroke="#7C3AED" stroke-width="2.4"/>
+<circle cx="54.0" cy="160.3" r="4" fill="#7C3AED"/>
+<circle cx="216.5" cy="164.2" r="4" fill="#7C3AED"/>
+<circle cx="379.0" cy="200.0" r="4" fill="#7C3AED"/>
+<circle cx="541.5" cy="162.0" r="4" fill="#7C3AED"/>
+<circle cx="704.0" cy="62.7" r="4" fill="#7C3AED"/>
+</svg></div>
+<p class="axis-name"><span>Y · Democratic share minus the state mean, points</span><span>X · Within-state quintile of the index</span></p>
+<p class="fine cap">Measured. The unit is the substate region, demeaned by state.</p>
+
+<h2>Combined index and density</h2>
+<p>Fifths of regional log density. The index in those fifths is +1.57, +1.44, -0.28, -1.27, +0.56. Democratic share in the same fifths runs from 34.7% to 63.8%.</p>
+<div class="chart-card"><svg viewBox="0 0 720 280" role="img" class="chart">
+<line x1="54" y1="206.3" x2="704" y2="206.3" class="grid"/>
+<text x="46" y="210.3" text-anchor="end" class="tick">-2</text>
+<line x1="54" y1="168.7" x2="704" y2="168.7" class="grid"/>
+<text x="46" y="172.7" text-anchor="end" class="tick">-1</text>
+<line x1="54" y1="131.0" x2="704" y2="131.0" class="grid"/>
+<text x="46" y="135.0" text-anchor="end" class="tick">0</text>
+<line x1="54" y1="93.3" x2="704" y2="93.3" class="grid"/>
+<text x="46" y="97.3" text-anchor="end" class="tick">1</text>
+<line x1="54" y1="55.7" x2="704" y2="55.7" class="grid"/>
+<text x="46" y="59.7" text-anchor="end" class="tick">2</text>
+<line x1="54" y1="18" x2="54" y2="244" class="axis"/>
+<line x1="54" y1="244" x2="704" y2="244" class="axis"/>
+<text x="54.0" y="266" text-anchor="middle" class="tick">9/km²</text>
+<text x="216.5" y="266" text-anchor="middle" class="tick">31/km²</text>
+<text x="379.0" y="266" text-anchor="middle" class="tick">68/km²</text>
+<text x="541.5" y="266" text-anchor="middle" class="tick">214/km²</text>
+<text x="704.0" y="266" text-anchor="middle" class="tick">1242/km²</text>
+<line x1="54" y1="131.0" x2="704" y2="131.0" class="axis"/>
+<polyline points="54.0,72.0 216.5,76.6 379.0,141.5 541.5,178.7 704.0,110.0" fill="none" stroke="#2563EB" stroke-width="2.4"/>
+<circle cx="54.0" cy="72.0" r="4" fill="#2563EB"/>
+<text x="54.0" y="62.0" text-anchor="middle" class="tick">+1.57</text>
+<circle cx="216.5" cy="76.6" r="4" fill="#2563EB"/>
+<text x="216.5" y="66.6" text-anchor="middle" class="tick">+1.44</text>
+<circle cx="379.0" cy="141.5" r="4" fill="#2563EB"/>
+<text x="379.0" y="131.5" text-anchor="middle" class="tick">-0.28</text>
+<circle cx="541.5" cy="178.7" r="4" fill="#2563EB"/>
+<text x="541.5" y="168.7" text-anchor="middle" class="tick">-1.27</text>
+<circle cx="704.0" cy="110.0" r="4" fill="#2563EB"/>
+<text x="704.0" y="100.0" text-anchor="middle" class="tick">+0.56</text>
+</svg></div>
+<p class="axis-name"><span>Y · Combined index</span><span>X · People per km², vote-weighted mean of the fifth</span></p>
+<p class="fine cap">Measured. The unit is the substate region.</p>
+
+<h2>Laboratory results</h2>
+<p>Kloft and colleagues (PNAS, 2020) vaporized 300 μg of THC per kilogram. On the immediate test, a suggested false detail in the eyewitness scene was accepted <strong>19%</strong> of the time after THC (SE 0.04) and <strong>8%</strong> after placebo (SE 0.02). Related-word false alarms were <strong>42%</strong> (SE 0.03) and <strong>27%</strong> (SE 0.03). Gawrylowicz and colleagues (Psychopharmacology, 2017) gave alcohol in the lab after a filmed crime and before the misleading narrative. The marginal mean proportion of misled responses was <strong>0.25</strong> after alcohol (95% CI 0.196 to 0.300), <strong>0.22</strong> in the reverse-placebo arm (0.174 to 0.276), and <strong>0.319</strong> with no alcohol (0.266 to 0.371).</p>
+<div class="chart-card"><svg viewBox="0 0 720 320" role="img" class="chart">
+<line x1="54" y1="258.0" x2="704" y2="258.0" class="grid"/>
+<text x="46" y="262.0" text-anchor="end" class="tick">0</text>
+<line x1="54" y1="216.2" x2="704" y2="216.2" class="grid"/>
+<text x="46" y="220.2" text-anchor="end" class="tick">10</text>
+<line x1="54" y1="174.4" x2="704" y2="174.4" class="grid"/>
+<text x="46" y="178.4" text-anchor="end" class="tick">20</text>
+<line x1="54" y1="132.5" x2="704" y2="132.5" class="grid"/>
+<text x="46" y="136.5" text-anchor="end" class="tick">30</text>
+<line x1="54" y1="90.7" x2="704" y2="90.7" class="grid"/>
+<text x="46" y="94.7" text-anchor="end" class="tick">40</text>
+<line x1="54" y1="48.9" x2="704" y2="48.9" class="grid"/>
+<text x="46" y="52.9" text-anchor="end" class="tick">50</text>
+<line x1="54" y1="28" x2="54" y2="258" class="axis"/>
+<line x1="54" y1="258" x2="704" y2="258" class="axis"/>
+<text x="162.3" y="278" text-anchor="middle" class="tick">Kloft eyewitness</text>
+<text x="162.3" y="290" text-anchor="middle" class="tick">suggested detail</text>
+<rect x="122.3" y="224.5" width="36.0" height="33.5" fill="#78716C"/>
+<line x1="140.3" y1="232.9" x2="140.3" y2="216.2" class="whisk"/>
+<text x="140.3" y="304" text-anchor="middle" class="tick">Placebo</text>
+<rect x="166.3" y="178.5" width="36.0" height="79.5" fill="#16A34A"/>
+<line x1="184.3" y1="195.3" x2="184.3" y2="161.8" class="whisk"/>
+<text x="184.3" y="304" text-anchor="middle" class="tick">THC</text>
+<text x="379.0" y="278" text-anchor="middle" class="tick">Kloft related</text>
+<text x="379.0" y="290" text-anchor="middle" class="tick">false alarms</text>
+<rect x="339.0" y="145.1" width="36.0" height="112.9" fill="#78716C"/>
+<line x1="357.0" y1="157.6" x2="357.0" y2="132.5" class="whisk"/>
+<text x="357.0" y="304" text-anchor="middle" class="tick">Placebo</text>
+<rect x="383.0" y="82.4" width="36.0" height="175.6" fill="#16A34A"/>
+<line x1="401.0" y1="94.9" x2="401.0" y2="69.8" class="whisk"/>
+<text x="401.0" y="304" text-anchor="middle" class="tick">THC</text>
+<text x="595.7" y="278" text-anchor="middle" class="tick">Gawrylowicz</text>
+<text x="595.7" y="290" text-anchor="middle" class="tick">misled responses</text>
+<rect x="533.7" y="153.5" width="36.0" height="104.5" fill="#78716C"/>
+<line x1="551.7" y1="176.0" x2="551.7" y2="130.9" class="whisk"/>
+<text x="551.7" y="304" text-anchor="middle" class="tick">Alcohol</text>
+<rect x="577.7" y="166.0" width="36.0" height="92.0" fill="#16A34A"/>
+<line x1="595.7" y1="189.4" x2="595.7" y2="142.6" class="whisk"/>
+<text x="595.7" y="304" text-anchor="middle" class="tick">Reverse</text>
+<rect x="621.7" y="124.6" width="36.0" height="133.4" fill="#2563EB"/>
+<line x1="639.7" y1="146.8" x2="639.7" y2="102.4" class="whisk"/>
+<text x="639.7" y="304" text-anchor="middle" class="tick">No</text>
+</svg></div>
+<p class="axis-name"><span>Y · Percent</span><span>Whiskers · Kloft, 1 SE in percentage points. Gawrylowicz, half the published 95% CI.</span></p>
+<p class="fine cap">Laboratory data, not vote data. Kloft et al. 2020, immediate test, THC versus placebo. Gawrylowicz et al. 2017, alcohol, reverse placebo, and no alcohol.</p>
+
+<h2>Suggestibility, predicted from the lab dose</h2>
+<p>Accepting a detail that was planted, and reporting it as remembered, is the lab measure of suggestibility. That is the recorded piece of what people mean by being led into a false account. Kloft and colleagues (PNAS, 2020) vaporized <strong>300 μg of THC per kilogram</strong>, about <strong>21 mg</strong> at 70 kg. While still intoxicated, volunteers accepted a suggested false detail in an eyewitness scene <strong>19% of the time</strong> (SE 0.04). On placebo the same people accepted it <strong>8% of the time</strong> (SE 0.02). Cohen’s d for that contrast is 0.62. Related-word false alarms in the same session moved from 27% to 42% (d = 0.58).</p>
+<p>The x-axis is flower potency. The lab dose is placed at <strong>14% THC</strong>: half a gram of flower at that potency, with 30% of the THC inhaled, delivers 21 mg. That is an ordinary modern session, not a 1995 joint. The curve is linear on the logit between the placebo and that dose. Past the lab dose, the band adds a further 35% uncertainty on the extra climb, because nobody has rerun this test at concentrate strength. Dots are the measured means. Whiskers are their published standard errors, times 1.96.</p>
+<div class="chart-card"><svg viewBox="0 0 680 320" role="img" class="chart">
+<line x1="58" y1="280.0" x2="666" y2="280.0" class="grid"/>
+<text x="50" y="284.0" text-anchor="end" class="tick">0</text>
+<line x1="58" y1="228.4" x2="666" y2="228.4" class="grid"/>
+<text x="50" y="232.4" text-anchor="end" class="tick">10</text>
+<line x1="58" y1="176.8" x2="666" y2="176.8" class="grid"/>
+<text x="50" y="180.8" text-anchor="end" class="tick">20</text>
+<line x1="58" y1="125.2" x2="666" y2="125.2" class="grid"/>
+<text x="50" y="129.2" text-anchor="end" class="tick">30</text>
+<line x1="58" y1="73.6" x2="666" y2="73.6" class="grid"/>
+<text x="50" y="77.6" text-anchor="end" class="tick">40</text>
+<line x1="58" y1="22.0" x2="666" y2="22.0" class="grid"/>
+<text x="50" y="26.0" text-anchor="end" class="tick">50</text>
+<line x1="58" y1="22" x2="58" y2="280" class="axis"/>
+<line x1="58" y1="280" x2="666" y2="280" class="axis"/>
+<line x1="167.4" y1="22" x2="167.4" y2="280" class="mark"/>
+<text x="167.4" y="16" text-anchor="middle" class="marklab">1995</text>
+<line x1="444.9" y1="22" x2="444.9" y2="280" class="mark"/>
+<text x="444.9" y="16" text-anchor="middle" class="marklab">lab</text>
+<line x1="504.1" y1="22" x2="504.1" y2="280" class="mark"/>
+<text x="504.1" y="16" text-anchor="middle" class="marklab">2022</text>
+<polygon points="58.0,218.5 63.1,218.0 68.1,217.6 73.2,217.1 78.3,216.7 83.3,216.2 88.4,215.7 93.5,215.2 98.5,214.7 103.6,214.2 108.7,213.7 113.7,213.2 118.8,212.7 123.9,212.2 128.9,211.6 134.0,211.1 139.1,210.5 144.1,210.0 149.2,209.4 154.3,208.8 159.3,208.2 164.4,207.6 169.5,207.0 174.5,206.3 179.6,205.7 184.7,205.0 189.7,204.4 194.8,203.7 199.9,203.0 204.9,202.2 210.0,201.5 215.1,200.7 220.1,200.0 225.2,199.2 230.3,198.3 235.3,197.5 240.4,196.7 245.5,195.8 250.5,194.9 255.6,194.0 260.7,193.0 265.7,192.1 270.8,191.1 275.9,190.1 280.9,189.0 286.0,188.0 291.1,186.9 296.1,185.8 301.2,184.6 306.3,183.5 311.3,182.3 316.4,181.1 321.5,179.8 326.5,178.6 331.6,177.3 336.7,176.0 341.7,174.6 346.8,173.2 351.9,171.8 356.9,170.4 362.0,169.0 367.1,167.5 372.1,166.0 377.2,164.5 382.3,162.9 387.3,161.3 392.4,159.7 397.5,158.1 402.5,156.4 407.6,154.7 412.7,153.0 417.7,151.3 422.8,149.5 427.9,147.7 432.9,145.9 438.0,144.1 443.1,142.2 448.1,140.3 453.2,138.4 458.3,136.4 463.3,134.4 468.4,132.4 473.5,130.3 478.5,128.2 483.6,126.0 488.7,123.8 493.7,121.6 498.8,119.4 503.9,117.1 508.9,114.8 514.0,112.4 519.1,110.1 524.1,107.6 529.2,105.2 534.3,102.7 539.3,100.2 544.4,97.7 549.5,95.1 554.5,92.5 559.6,89.9 564.7,87.2 569.7,84.6 574.8,81.8 579.9,79.1 584.9,76.3 590.0,73.5 595.1,70.7 600.1,67.9 605.2,65.0 610.3,62.1 615.3,59.2 620.4,56.2 625.5,53.2 630.5,50.2 635.6,47.2 640.7,44.2 645.7,41.1 650.8,38.0 655.9,34.9 660.9,31.7 666.0,28.6 666.0,229.5 660.9,229.1 655.9,228.7 650.8,228.3 645.7,228.0 640.7,227.6 635.6,227.2 630.5,226.9 625.5,226.6 620.4,226.2 615.3,225.9 610.3,225.6 605.2,225.3 600.1,225.0 595.1,224.7 590.0,224.4 584.9,224.2 579.9,223.9 574.8,223.7 569.7,223.4 564.7,223.2 559.6,223.0 554.5,222.8 549.5,222.6 544.4,222.5 539.3,222.3 534.3,222.2 529.2,222.1 524.1,222.0 519.1,221.9 514.0,221.8 508.9,221.7 503.9,221.7 498.8,221.6 493.7,221.6 488.7,221.6 483.6,221.6 478.5,221.7 473.5,221.7 468.4,221.8 463.3,221.9 458.3,222.0 453.2,222.2 448.1,222.3 443.1,222.5 438.0,222.7 432.9,222.9 427.9,223.1 422.8,223.3 417.7,223.5 412.7,223.7 407.6,223.9 402.5,224.2 397.5,224.5 392.4,224.7 387.3,225.0 382.3,225.3 377.2,225.6 372.1,225.9 367.1,226.2 362.0,226.5 356.9,226.9 351.9,227.2 346.8,227.6 341.7,227.9 336.7,228.3 331.6,228.7 326.5,229.1 321.5,229.5 316.4,230.0 311.3,230.4 306.3,230.8 301.2,231.3 296.1,231.8 291.1,232.2 286.0,232.7 280.9,233.2 275.9,233.7 270.8,234.3 265.7,234.8 260.7,235.3 255.6,235.9 250.5,236.4 245.5,237.0 240.4,237.5 235.3,238.1 230.3,238.7 225.2,239.3 220.1,239.9 215.1,240.5 210.0,241.1 204.9,241.7 199.9,242.3 194.8,242.9 189.7,243.5 184.7,244.1 179.6,244.7 174.5,245.4 169.5,246.0 164.4,246.6 159.3,247.2 154.3,247.8 149.2,248.5 144.1,249.1 139.1,249.7 134.0,250.3 128.9,250.9 123.9,251.5 118.8,252.1 113.7,252.7 108.7,253.3 103.6,253.9 98.5,254.5 93.5,255.0 88.4,255.6 83.3,256.2 78.3,256.7 73.2,257.3 68.1,257.9 63.1,258.4 58.0,258.9" class="band"/>
+<polyline points="58.0,238.7 63.1,238.2 68.1,237.7 73.2,237.2 78.3,236.7 83.3,236.2 88.4,235.7 93.5,235.1 98.5,234.6 103.6,234.1 108.7,233.5 113.7,233.0 118.8,232.4 123.9,231.8 128.9,231.3 134.0,230.7 139.1,230.1 144.1,229.5 149.2,228.9 154.3,228.3 159.3,227.7 164.4,227.1 169.5,226.5 174.5,225.8 179.6,225.2 184.7,224.6 189.7,223.9 194.8,223.3 199.9,222.6 204.9,222.0 210.0,221.3 215.1,220.6 220.1,219.9 225.2,219.2 230.3,218.5 235.3,217.8 240.4,217.1 245.5,216.4 250.5,215.6 255.6,214.9 260.7,214.2 265.7,213.4 270.8,212.7 275.9,211.9 280.9,211.1 286.0,210.3 291.1,209.6 296.1,208.8 301.2,208.0 306.3,207.2 311.3,206.3 316.4,205.5 321.5,204.7 326.5,203.8 331.6,203.0 336.7,202.1 341.7,201.3 346.8,200.4 351.9,199.5 356.9,198.6 362.0,197.7 367.1,196.8 372.1,195.9 377.2,195.0 382.3,194.1 387.3,193.2 392.4,192.2 397.5,191.3 402.5,190.3 407.6,189.3 412.7,188.4 417.7,187.4 422.8,186.4 427.9,185.4 432.9,184.4 438.0,183.4 443.1,182.3 448.1,181.3 453.2,180.3 458.3,179.2 463.3,178.2 468.4,177.1 473.5,176.0 478.5,174.9 483.6,173.8 488.7,172.7 493.7,171.6 498.8,170.5 503.9,169.4 508.9,168.3 514.0,167.1 519.1,166.0 524.1,164.8 529.2,163.6 534.3,162.5 539.3,161.3 544.4,160.1 549.5,158.9 554.5,157.7 559.6,156.5 564.7,155.2 569.7,154.0 574.8,152.8 579.9,151.5 584.9,150.3 590.0,149.0 595.1,147.7 600.1,146.4 605.2,145.1 610.3,143.8 615.3,142.5 620.4,141.2 625.5,139.9 630.5,138.6 635.6,137.2 640.7,135.9 645.7,134.5 650.8,133.2 655.9,131.8 660.9,130.4 666.0,129.0" class="line"/>
+<line x1="58.0" y1="258.9" x2="58.0" y2="218.5" class="whisk"/>
+<circle cx="58.0" cy="238.7" r="4.5" class="dot"/>
+<line x1="444.9" y1="222.4" x2="444.9" y2="141.5" class="whisk"/>
+<circle cx="444.9" cy="182.0" r="4.5" class="dot"/>
+<text x="58.0" y="296" text-anchor="middle" class="tick">0</text>
+<text x="168.5" y="296" text-anchor="middle" class="tick">4</text>
+<text x="279.1" y="296" text-anchor="middle" class="tick">8</text>
+<text x="389.6" y="296" text-anchor="middle" class="tick">12</text>
+<text x="500.2" y="296" text-anchor="middle" class="tick">16</text>
+<text x="610.7" y="296" text-anchor="middle" class="tick">20</text>
+</svg></div>
+<p class="axis-name"><span>Y · suggested false details accepted, %</span><span>X · THC in the flower, %</span></p>
+<table class="cmp">
+<thead><tr><th>Potency</th><th>What it is</th><th>Acceptance</th><th>95% band</th></tr></thead>
+<tbody>
+<tr><td>4.0%</td><td>DEA seized flower, 1995</td><td>10%</td><td>6 – 14</td></tr>
+<tr class="hot"><td>14%</td><td>Kloft dose, measured</td><td>19%</td><td>11 – 27</td></tr>
+<tr><td>16.1%</td><td>DEA seized flower, 2022, predicted</td><td>21%</td><td>11 – 32</td></tr>
+</tbody>
+</table>
+<p class="fine">The jump that is already measured, 8% to 19%, is the large one. Carrying the same curve from 1995 flower to a current seized average adds a few more points, and the band gets wider because 16% sits just past the lab anchor. A concentrate session is farther out than this axis goes, and the error there is larger still.</p>
+
+<h2>IQ, predicted from study potency</h2>
+<p>Meier and colleagues (PNAS, 2012) followed the Dunedin birth cohort. The most persistent adolescent-onset cannabis users lost <strong>8 IQ points</strong> from childhood to age 38. The broader persistent-dependence group lost about 6. The study did not assay THC. Those people were using between the late 1980s and 2010. DEA-seized flower over 1995–2010 averaged <strong>7.1% THC</strong>. That is the study rate used here.</p>
+<p>The prediction multiplies the 8-point loss by the ratio of potency to 7.1%. Sampling error on the anchor is taken as 2.5 points, which is a within-group SD of about 12 IQ points divided by the square root of 23, the size of that adolescent-onset group. Past 7.1%, the band adds a 50% uncertainty on the extra loss, because the cohort never compared potencies. The dot is the measured 8. The rest of the curve is the scale-up.</p>
+<div class="chart-card"><svg viewBox="0 0 680 320" role="img" class="chart">
+<line x1="58" y1="280.0" x2="666" y2="280.0" class="grid"/>
+<text x="50" y="284.0" text-anchor="end" class="tick">0</text>
+<line x1="58" y1="215.5" x2="666" y2="215.5" class="grid"/>
+<text x="50" y="219.5" text-anchor="end" class="tick">10</text>
+<line x1="58" y1="151.0" x2="666" y2="151.0" class="grid"/>
+<text x="50" y="155.0" text-anchor="end" class="tick">20</text>
+<line x1="58" y1="86.5" x2="666" y2="86.5" class="grid"/>
+<text x="50" y="90.5" text-anchor="end" class="tick">30</text>
+<line x1="58" y1="22.0" x2="666" y2="22.0" class="grid"/>
+<text x="50" y="26.0" text-anchor="end" class="tick">40</text>
+<line x1="58" y1="22" x2="58" y2="280" class="axis"/>
+<line x1="58" y1="280" x2="666" y2="280" class="axis"/>
+<line x1="273.3" y1="22" x2="273.3" y2="280" class="mark"/>
+<text x="273.3" y="16" text-anchor="middle" class="marklab">study</text>
+<line x1="548.7" y1="22" x2="548.7" y2="280" class="mark"/>
+<text x="548.7" y="16" text-anchor="middle" class="marklab">2022</text>
+<polygon points="58.0,280.0 63.1,278.0 68.1,276.1 73.2,274.1 78.3,272.2 83.3,270.2 88.4,268.3 93.5,266.3 98.5,264.3 103.6,262.4 108.7,260.4 113.7,258.5 118.8,256.5 123.9,254.5 128.9,252.6 134.0,250.6 139.1,248.7 144.1,246.7 149.2,244.8 154.3,242.8 159.3,240.8 164.4,238.9 169.5,236.9 174.5,235.0 179.6,233.0 184.7,231.1 189.7,229.1 194.8,227.1 199.9,225.2 204.9,223.2 210.0,221.3 215.1,219.3 220.1,217.3 225.2,215.4 230.3,213.4 235.3,211.5 240.4,209.5 245.5,207.6 250.5,205.6 255.6,203.6 260.7,201.7 265.7,199.7 270.8,197.8 275.9,195.8 280.9,193.8 286.0,191.8 291.1,189.7 296.1,187.6 301.2,185.4 306.3,183.3 311.3,181.1 316.4,178.8 321.5,176.6 326.5,174.3 331.6,172.0 336.7,169.7 341.7,167.4 346.8,165.0 351.9,162.7 356.9,160.3 362.0,157.9 367.1,155.5 372.1,153.1 377.2,150.7 382.3,148.3 387.3,145.8 392.4,143.4 397.5,140.9 402.5,138.5 407.6,136.0 412.7,133.5 417.7,131.0 422.8,128.6 427.9,126.1 432.9,123.6 438.0,121.1 443.1,118.6 448.1,116.1 453.2,113.5 458.3,111.0 463.3,108.5 468.4,106.0 473.5,103.4 478.5,100.9 483.6,98.4 488.7,95.8 493.7,93.3 498.8,90.8 503.9,88.2 508.9,85.7 514.0,83.1 519.1,80.6 524.1,78.0 529.2,75.5 534.3,72.9 539.3,70.3 544.4,67.8 549.5,65.2 554.5,62.7 559.6,60.1 564.7,57.5 569.7,55.0 574.8,52.4 579.9,49.8 584.9,47.3 590.0,44.7 595.1,42.1 600.1,39.5 605.2,37.0 610.3,34.4 615.3,31.8 620.4,29.2 625.5,26.6 630.5,24.1 635.6,23.3 640.7,23.3 645.7,23.3 650.8,23.3 655.9,23.3 660.9,23.3 666.0,23.3 666.0,262.6 660.9,262.5 655.9,262.3 650.8,262.2 645.7,262.0 640.7,261.8 635.6,261.7 630.5,261.5 625.5,261.4 620.4,261.2 615.3,261.1 610.3,260.9 605.2,260.8 600.1,260.6 595.1,260.5 590.0,260.3 584.9,260.2 579.9,260.1 574.8,259.9 569.7,259.8 564.7,259.6 559.6,259.5 554.5,259.4 549.5,259.2 544.4,259.1 539.3,259.0 534.3,258.8 529.2,258.7 524.1,258.6 519.1,258.5 514.0,258.3 508.9,258.2 503.9,258.1 498.8,258.0 493.7,257.9 488.7,257.7 483.6,257.6 478.5,257.5 473.5,257.4 468.4,257.3 463.3,257.2 458.3,257.1 453.2,257.1 448.1,257.0 443.1,256.9 438.0,256.8 432.9,256.7 427.9,256.7 422.8,256.6 417.7,256.5 412.7,256.5 407.6,256.5 402.5,256.4 397.5,256.4 392.4,256.4 387.3,256.3 382.3,256.3 377.2,256.3 372.1,256.3 367.1,256.4 362.0,256.4 356.9,256.4 351.9,256.5 346.8,256.6 341.7,256.6 336.7,256.7 331.6,256.9 326.5,257.0 321.5,257.2 316.4,257.3 311.3,257.5 306.3,257.8 301.2,258.0 296.1,258.3 291.1,258.6 286.0,259.0 280.9,259.3 275.9,259.8 270.8,260.2 265.7,260.7 260.7,261.2 255.6,261.7 250.5,262.1 245.5,262.6 240.4,263.1 235.3,263.5 230.3,264.0 225.2,264.5 220.1,264.9 215.1,265.4 210.0,265.9 204.9,266.4 199.9,266.8 194.8,267.3 189.7,267.8 184.7,268.2 179.6,268.7 174.5,269.2 169.5,269.6 164.4,270.1 159.3,270.6 154.3,271.1 149.2,271.5 144.1,272.0 139.1,272.5 134.0,272.9 128.9,273.4 123.9,273.9 118.8,274.4 113.7,274.8 108.7,275.3 103.6,275.8 98.5,276.2 93.5,276.7 88.4,277.2 83.3,277.6 78.3,278.1 73.2,278.6 68.1,279.1 63.1,279.5 58.0,280.0" class="band"/>
+<polyline points="58.0,280.0 63.1,278.8 68.1,277.6 73.2,276.4 78.3,275.1 83.3,273.9 88.4,272.7 93.5,271.5 98.5,270.3 103.6,269.1 108.7,267.9 113.7,266.6 118.8,265.4 123.9,264.2 128.9,263.0 134.0,261.8 139.1,260.6 144.1,259.4 149.2,258.1 154.3,256.9 159.3,255.7 164.4,254.5 169.5,253.3 174.5,252.1 179.6,250.9 184.7,249.6 189.7,248.4 194.8,247.2 199.9,246.0 204.9,244.8 210.0,243.6 215.1,242.4 220.1,241.1 225.2,239.9 230.3,238.7 235.3,237.5 240.4,236.3 245.5,235.1 250.5,233.9 255.6,232.6 260.7,231.4 265.7,230.2 270.8,229.0 275.9,227.8 280.9,226.6 286.0,225.4 291.1,224.1 296.1,222.9 301.2,221.7 306.3,220.5 311.3,219.3 316.4,218.1 321.5,216.9 326.5,215.6 331.6,214.4 336.7,213.2 341.7,212.0 346.8,210.8 351.9,209.6 356.9,208.4 362.0,207.2 367.1,205.9 372.1,204.7 377.2,203.5 382.3,202.3 387.3,201.1 392.4,199.9 397.5,198.7 402.5,197.4 407.6,196.2 412.7,195.0 417.7,193.8 422.8,192.6 427.9,191.4 432.9,190.2 438.0,188.9 443.1,187.7 448.1,186.5 453.2,185.3 458.3,184.1 463.3,182.9 468.4,181.7 473.5,180.4 478.5,179.2 483.6,178.0 488.7,176.8 493.7,175.6 498.8,174.4 503.9,173.2 508.9,171.9 514.0,170.7 519.1,169.5 524.1,168.3 529.2,167.1 534.3,165.9 539.3,164.7 544.4,163.4 549.5,162.2 554.5,161.0 559.6,159.8 564.7,158.6 569.7,157.4 574.8,156.2 579.9,154.9 584.9,153.7 590.0,152.5 595.1,151.3 600.1,150.1 605.2,148.9 610.3,147.7 615.3,146.4 620.4,145.2 625.5,144.0 630.5,142.8 635.6,141.6 640.7,140.4 645.7,139.2 650.8,137.9 655.9,136.7 660.9,135.5 666.0,134.3" class="line"/>
+<line x1="273.3" y1="260.0" x2="273.3" y2="196.8" class="whisk"/>
+<circle cx="273.3" cy="228.4" r="4.5" class="dot"/>
+<text x="58.0" y="296" text-anchor="middle" class="tick">0</text>
+<text x="179.6" y="296" text-anchor="middle" class="tick">4</text>
+<text x="301.2" y="296" text-anchor="middle" class="tick">8</text>
+<text x="422.8" y="296" text-anchor="middle" class="tick">12</text>
+<text x="544.4" y="296" text-anchor="middle" class="tick">16</text>
+<text x="666.0" y="296" text-anchor="middle" class="tick">20</text>
+</svg></div>
+<p class="axis-name"><span>Y · IQ points lost</span><span>X · THC in the flower, %</span></p>
+<table class="cmp">
+<thead><tr><th>Case</th><th>THC</th><th>IQ points lost</th><th>95% band</th><th>Kind</th></tr></thead>
+<tbody>
+<tr class="hot"><td>Study rate</td><td>7.1%</td><td>8</td><td>3 – 13</td><td>Measured</td></tr>
+<tr><td>1995 seized</td><td>4.0%</td><td>4.5</td><td>2 – 7</td><td>Scaled</td></tr>
+<tr><td>2014 seized</td><td>11.9%</td><td>13</td><td>4 – 23</td><td>Scaled</td></tr>
+<tr class="hot"><td>2022 seized</td><td>16.1%</td><td>18</td><td>3 – 33</td><td>Predicted</td></tr>
+</tbody>
+</table>
+<p>The center of the current-rate prediction is <strong>18 points</strong>, a little more than double the published 8. The band runs from 3 to 33. The width is real: potency was not a variable in Dunedin, so the scale-up is a prediction. The center of that prediction is not a small effect. The same scaling applied to the broader 6-point persistent group lands near <strong>13 points</strong> at 16.1% THC.</p>
+
+
+
+<h2>Published studies</h2>
+<p>Kloft, Otgaar, Blokland, Monds, Toennes, Loftus, and Ramaekers, PNAS 2020, <a href="https://doi.org/10.1073/pnas.1920162117">10.1073/pnas.1920162117</a>. Double-blind, placebo-controlled, 64 volunteers. Immediate eyewitness suggested-detail acceptance, 19% on THC and 8% on placebo.</p>
+<p>Meier, Caspi, Ambler, Harrington, Houts, Keefe, McDonald, Ward, Poulton, and Moffitt, PNAS 2012, <a href="https://doi.org/10.1073/pnas.1206820109">10.1073/pnas.1206820109</a>. Dunedin birth cohort. Adolescent-onset persistent cannabis users lost 8 IQ points from childhood to age 38.</p>
+<p>Topiwala, Allan, Valkanova, and colleagues, BMJ 2017, <a href="https://doi.org/10.1136/bmj.j2353">10.1136/bmj.j2353</a>. Whitehall II imaging. More than 30 units of alcohol a week, odds ratio 5.8 for hippocampal atrophy versus abstainers (95% CI 1.8 to 18.6). Fourteen to 21 units a week, odds ratio 3.4 for right hippocampal atrophy (1.4 to 8.1). Lexical fluency declined faster above 7 units a week.</p>
+<p>Sabia, Elbaz, Dugravot, Head, Shipley, Hagger-Johnson, Kivimaki, and Singh-Manoux, Archives of General Psychiatry 2012, <a href="https://doi.org/10.1001/archgenpsychiatry.2011.2016">10.1001/archgenpsychiatry.2011.2016</a>. Whitehall II. In men, current smokers’ extra 10-year decline in global cognition was −0.09 SD versus never smokers (95% CI −0.15 to −0.03).</p>
+<p>Gawrylowicz, Ridley, Albery, Barnoth, and Young, Psychopharmacology 2017, <a href="https://doi.org/10.1007/s00213-017-4564-2">10.1007/s00213-017-4564-2</a>. Alcohol after the witnessed event, before the misinformation. The no-alcohol arm reported more misled responses than the alcohol and reverse-placebo arms.</p>
+<p>Assefi and Garry, Psychological Science 2003, <a href="https://doi.org/10.1111/1467-9280.01422">10.1111/1467-9280.01422</a>. Everyone drank tonic. People told the drink was vodka were more swayed by misleading postevent information than people told it was tonic, F(1, 115) = 4.20.</p>
+<p>Van Oorsouw, Merckelbach, and Smeets, Applied Cognitive Psychology 2015, <a href="https://doi.org/10.1002/acp.3129">10.1002/acp.3129</a>. Field study in bars, not a placebo arm. Mean BAC about 0.01%, 0.06%, and 0.16%. Severely intoxicated participants went along with suggestive cues more than sober participants.</p>
+<p>Flowe, Humphries, Takarangi, Zelek, Karoğlu, Gabbert, and Hope, Applied Cognitive Psychology 2019, <a href="https://doi.org/10.1002/acp.3531">10.1002/acp.3531</a>. Alcohol versus tonic, crossed with what people were told they drank. People told they had alcohol reported fewer correct details. The paper reports they were no more likely to report misleading information.</p>
+<p>Kannan and Veazie, Preventive Medicine 2018, <a href="https://doi.org/10.1016/j.ypmed.2018.06.011">10.1016/j.ypmed.2018.06.011</a>. Annenberg National Health Communication Survey, 2005–2012. Democrats and liberals had higher odds of cigarette smoking and excessive drinking than Republicans and conservatives.</p>
+<p>Denham, International Journal of Drug Policy 2019, <a href="https://doi.org/10.1016/j.drugpo.2019.06.007">10.1016/j.drugpo.2019.06.007</a>. General Social Survey, 1986–2016. Party affiliation became a consistent predictor of support for marijuana legalization after 2004. That paper is about legalization attitudes.</p>
+
+<h2>Industry contributions</h2>
+<p>OpenSecrets totals, cycles 2016 through 2024. In 2024, beer, wine, and liquor gave <strong>$27.4 million</strong>, of which <strong>$10.3 million</strong> went to Democrats and <strong>$9.0 million</strong> to Republicans. Tobacco’s 2024 total was <strong>$36.7 million</strong>, with <strong>27.64%</strong> of candidate and party money to Democrats and <strong>71.41%</strong> to Republicans. Pharmaceuticals and health products: <strong>$86.5 million</strong>, <strong>60.04%</strong> to Democrats. Marijuana: <strong>$969,606</strong>, <strong>61.40%</strong> to Democrats and <strong>35.12%</strong> to Republicans.</p>
+<p class="fine">Gray is the cycle total. Blue is dollars to Democratic candidates and parties. Red is dollars to Republican candidates and parties. Each industry has its own vertical scale. The total includes outside spending. The party bars do not.</p>
+<div class="legend"><span><i style="background:#64748B;height:10px"></i>Total</span><span><i style="background:#2563EB;height:10px"></i>To Democrats</span><span><i style="background:#DC2626;height:10px"></i>To Republicans</span></div><div class="chart-card"><svg viewBox="0 0 720 168" role="img" class="chart">
+<text x="78" y="14" class="tick">Beer, Wine & Liquor</text>
+<line x1="78" y1="140.0" x2="708" y2="140.0" class="axis"/>
+<rect x="117.0" y="54.3" width="14" height="85.7" fill="#64748B"/>
+<rect x="134.0" y="104.0" width="14" height="36.0" fill="#2563EB"/>
+<rect x="151.0" y="100.8" width="14" height="39.2" fill="#DC2626"/>
+<text x="141.0" y="160" text-anchor="middle" class="tick">2016</text>
+<rect x="243.0" y="71.9" width="14" height="68.1" fill="#64748B"/>
+<rect x="260.0" y="109.2" width="14" height="30.8" fill="#2563EB"/>
+<rect x="277.0" y="107.5" width="14" height="32.5" fill="#DC2626"/>
+<text x="267.0" y="160" text-anchor="middle" class="tick">2018</text>
+<rect x="369.0" y="37.4" width="14" height="102.6" fill="#64748B"/>
+<rect x="386.0" y="94.6" width="14" height="45.4" fill="#2563EB"/>
+<rect x="403.0" y="100.7" width="14" height="39.3" fill="#DC2626"/>
+<text x="393.0" y="160" text-anchor="middle" class="tick">2020</text>
+<rect x="495.0" y="69.4" width="14" height="70.6" fill="#64748B"/>
+<rect x="512.0" y="111.6" width="14" height="28.4" fill="#2563EB"/>
+<rect x="529.0" y="111.1" width="14" height="28.9" fill="#DC2626"/>
+<text x="519.0" y="160" text-anchor="middle" class="tick">2022</text>
+<rect x="621.0" y="41.7" width="14" height="98.3" fill="#64748B"/>
+<rect x="638.0" y="103.2" width="14" height="36.8" fill="#2563EB"/>
+<rect x="655.0" y="107.7" width="14" height="32.3" fill="#DC2626"/>
+<text x="645.0" y="160" text-anchor="middle" class="tick">2024</text>
+</svg></div>
+<div class="chart-card"><svg viewBox="0 0 720 168" role="img" class="chart">
+<text x="78" y="14" class="tick">Tobacco</text>
+<line x1="78" y1="140.0" x2="708" y2="140.0" class="axis"/>
+<rect x="117.0" y="124.9" width="14" height="15.1" fill="#64748B"/>
+<rect x="134.0" y="138.2" width="14" height="1.8" fill="#2563EB"/>
+<rect x="151.0" y="131.2" width="14" height="8.8" fill="#DC2626"/>
+<text x="141.0" y="160" text-anchor="middle" class="tick">2016</text>
+<rect x="243.0" y="123.6" width="14" height="16.4" fill="#64748B"/>
+<rect x="260.0" y="137.9" width="14" height="2.1" fill="#2563EB"/>
+<rect x="277.0" y="132.7" width="14" height="7.3" fill="#DC2626"/>
+<text x="267.0" y="160" text-anchor="middle" class="tick">2018</text>
+<rect x="369.0" y="116.0" width="14" height="24.0" fill="#64748B"/>
+<rect x="386.0" y="136.5" width="14" height="3.5" fill="#2563EB"/>
+<rect x="403.0" y="132.2" width="14" height="7.8" fill="#DC2626"/>
+<text x="393.0" y="160" text-anchor="middle" class="tick">2020</text>
+<rect x="495.0" y="117.0" width="14" height="23.0" fill="#64748B"/>
+<rect x="512.0" y="137.6" width="14" height="2.4" fill="#2563EB"/>
+<rect x="529.0" y="135.2" width="14" height="4.8" fill="#DC2626"/>
+<text x="519.0" y="160" text-anchor="middle" class="tick">2022</text>
+<rect x="621.0" y="37.4" width="14" height="102.6" fill="#64748B"/>
+<rect x="638.0" y="136.0" width="14" height="4.0" fill="#2563EB"/>
+<rect x="655.0" y="129.8" width="14" height="10.2" fill="#DC2626"/>
+<text x="645.0" y="160" text-anchor="middle" class="tick">2024</text>
+</svg></div>
+<div class="chart-card"><svg viewBox="0 0 720 168" role="img" class="chart">
+<text x="78" y="14" class="tick">Pharmaceuticals / Health Products</text>
+<line x1="78" y1="140.0" x2="708" y2="140.0" class="axis"/>
+<rect x="117.0" y="72.9" width="14" height="67.1" fill="#64748B"/>
+<rect x="134.0" y="117.5" width="14" height="22.5" fill="#2563EB"/>
+<rect x="151.0" y="115.4" width="14" height="24.6" fill="#DC2626"/>
+<text x="141.0" y="160" text-anchor="middle" class="tick">2016</text>
+<rect x="243.0" y="93.3" width="14" height="46.7" fill="#64748B"/>
+<rect x="260.0" y="119.1" width="14" height="20.9" fill="#2563EB"/>
+<rect x="277.0" y="119.5" width="14" height="20.5" fill="#DC2626"/>
+<text x="267.0" y="160" text-anchor="middle" class="tick">2018</text>
+<rect x="369.0" y="37.4" width="14" height="102.6" fill="#64748B"/>
+<rect x="386.0" y="89.2" width="14" height="50.8" fill="#2563EB"/>
+<rect x="403.0" y="109.9" width="14" height="30.1" fill="#DC2626"/>
+<text x="393.0" y="160" text-anchor="middle" class="tick">2020</text>
+<rect x="495.0" y="90.6" width="14" height="49.4" fill="#64748B"/>
+<rect x="512.0" y="115.4" width="14" height="24.6" fill="#2563EB"/>
+<rect x="529.0" y="123.4" width="14" height="16.6" fill="#DC2626"/>
+<text x="519.0" y="160" text-anchor="middle" class="tick">2022</text>
+<rect x="621.0" y="54.2" width="14" height="85.8" fill="#64748B"/>
+<rect x="638.0" y="99.4" width="14" height="40.6" fill="#2563EB"/>
+<rect x="655.0" y="113.5" width="14" height="26.5" fill="#DC2626"/>
+<text x="645.0" y="160" text-anchor="middle" class="tick">2024</text>
+</svg></div>
+<div class="chart-card"><svg viewBox="0 0 720 168" role="img" class="chart">
+<text x="78" y="14" class="tick">Marijuana</text>
+<line x1="78" y1="140.0" x2="708" y2="140.0" class="axis"/>
+<rect x="117.0" y="115.1" width="14" height="24.9" fill="#64748B"/>
+<rect x="134.0" y="126.4" width="14" height="13.6" fill="#2563EB"/>
+<rect x="151.0" y="128.9" width="14" height="11.1" fill="#DC2626"/>
+<text x="141.0" y="160" text-anchor="middle" class="tick">2016</text>
+<rect x="243.0" y="75.6" width="14" height="64.4" fill="#64748B"/>
+<rect x="260.0" y="121.6" width="14" height="18.4" fill="#2563EB"/>
+<rect x="277.0" y="113.6" width="14" height="26.4" fill="#DC2626"/>
+<text x="267.0" y="160" text-anchor="middle" class="tick">2018</text>
+<rect x="369.0" y="70.1" width="14" height="69.9" fill="#64748B"/>
+<rect x="386.0" y="85.6" width="14" height="54.4" fill="#2563EB"/>
+<rect x="403.0" y="125.8" width="14" height="14.2" fill="#DC2626"/>
+<text x="393.0" y="160" text-anchor="middle" class="tick">2020</text>
+<rect x="495.0" y="78.2" width="14" height="61.8" fill="#64748B"/>
+<rect x="512.0" y="92.9" width="14" height="47.1" fill="#2563EB"/>
+<rect x="529.0" y="125.5" width="14" height="14.5" fill="#DC2626"/>
+<text x="519.0" y="160" text-anchor="middle" class="tick">2022</text>
+<rect x="621.0" y="37.4" width="14" height="102.6" fill="#64748B"/>
+<rect x="638.0" y="116.8" width="14" height="23.2" fill="#2563EB"/>
+<rect x="655.0" y="126.7" width="14" height="13.3" fill="#DC2626"/>
+<text x="645.0" y="160" text-anchor="middle" class="tick">2024</text>
+</svg></div>
+<p class="fine cap">OpenSecrets industry totals, retrieved 2026-10-11 from the archive capture of 2026-07-16. Codes N02, A02, H04, and N09.</p>
+<div class="chart-card"><svg viewBox="0 0 720 300" role="img" class="chart">
+<line x1="54" y1="264.0" x2="704" y2="264.0" class="grid"/>
+<text x="46" y="268.0" text-anchor="end" class="tick">0</text>
+<line x1="54" y1="202.5" x2="704" y2="202.5" class="grid"/>
+<text x="46" y="206.5" text-anchor="end" class="tick">25</text>
+<line x1="54" y1="141.0" x2="704" y2="141.0" class="grid"/>
+<text x="46" y="145.0" text-anchor="end" class="tick">50</text>
+<line x1="54" y1="79.5" x2="704" y2="79.5" class="grid"/>
+<text x="46" y="83.5" text-anchor="end" class="tick">75</text>
+<line x1="54" y1="18.0" x2="704" y2="18.0" class="grid"/>
+<text x="46" y="22.0" text-anchor="end" class="tick">100</text>
+<line x1="54" y1="18" x2="54" y2="264" class="axis"/>
+<line x1="54" y1="264" x2="704" y2="264" class="axis"/>
+<text x="54.0" y="286" text-anchor="middle" class="tick">2016</text>
+<text x="216.5" y="286" text-anchor="middle" class="tick">2018</text>
+<text x="379.0" y="286" text-anchor="middle" class="tick">2020</text>
+<text x="541.5" y="286" text-anchor="middle" class="tick">2022</text>
+<text x="704.0" y="286" text-anchor="middle" class="tick">2024</text>
+<polyline points="54.0,146.3 216.5,144.3 379.0,132.4 541.5,142.4 704.0,134.4" fill="none" stroke="#2563EB" stroke-width="2.4"/>
+<circle cx="54.0" cy="146.3" r="3.2" fill="#2563EB"/>
+<circle cx="216.5" cy="144.3" r="3.2" fill="#2563EB"/>
+<circle cx="379.0" cy="132.4" r="3.2" fill="#2563EB"/>
+<circle cx="541.5" cy="142.4" r="3.2" fill="#2563EB"/>
+<circle cx="704.0" cy="134.4" r="3.2" fill="#2563EB"/>
+<polyline points="54.0,222.8 216.5,208.5 379.0,188.0 541.5,181.7 704.0,196.0" fill="none" stroke="#D97706" stroke-width="2.4"/>
+<circle cx="54.0" cy="222.8" r="3.2" fill="#D97706"/>
+<circle cx="216.5" cy="208.5" r="3.2" fill="#D97706"/>
+<circle cx="379.0" cy="188.0" r="3.2" fill="#D97706"/>
+<circle cx="541.5" cy="181.7" r="3.2" fill="#D97706"/>
+<circle cx="704.0" cy="196.0" r="3.2" fill="#D97706"/>
+<polyline points="54.0,146.7 216.5,140.1 379.0,110.1 541.5,117.6 704.0,116.3" fill="none" stroke="#7C3AED" stroke-width="2.4"/>
+<circle cx="54.0" cy="146.7" r="3.2" fill="#7C3AED"/>
+<circle cx="216.5" cy="140.1" r="3.2" fill="#7C3AED"/>
+<circle cx="379.0" cy="110.1" r="3.2" fill="#7C3AED"/>
+<circle cx="541.5" cy="117.6" r="3.2" fill="#7C3AED"/>
+<circle cx="704.0" cy="116.3" r="3.2" fill="#7C3AED"/>
+<polyline points="54.0,129.8 216.5,163.1 379.0,69.1 541.5,76.2 704.0,113.0" fill="none" stroke="#16A34A" stroke-width="2.4"/>
+<circle cx="54.0" cy="129.8" r="3.2" fill="#16A34A"/>
+<circle cx="216.5" cy="163.1" r="3.2" fill="#16A34A"/>
+<circle cx="379.0" cy="69.1" r="3.2" fill="#16A34A"/>
+<circle cx="541.5" cy="76.2" r="3.2" fill="#16A34A"/>
+<circle cx="704.0" cy="113.0" r="3.2" fill="#16A34A"/>
+</svg></div>
+<div class="legend"><span><i style="background:#2563EB"></i>Beer, Wine & Liquor, percent to Democrats</span><span><i style="background:#D97706"></i>Tobacco, percent to Democrats</span><span><i style="background:#7C3AED"></i>Pharmaceuticals / Health Products, percent to Democrats</span><span><i style="background:#16A34A"></i>Marijuana, percent to Democrats</span></div>
+<p class="axis-name"><span>Y · Published percent of candidate and party money to Democrats</span><span>X · Election cycle</span></p>
+<p class="fine cap">The published Democratic and Republican percentages need not sum to 100. Outside spending is excluded from this split.</p>
+
+<h2>Vote share and the donation split</h2>
+<p>Left side, the density-and-age slope in points of Democratic two-party share per weighted standard deviation of the rate. Right side, the 2024 OpenSecrets split for the matching industry. Blue is the percent to Democrats. Red is the percent to Republicans. The opioid row uses Pharmaceuticals / Health Products, OpenSecrets code H04.</p>
+<div class="chart-card"><svg viewBox="0 0 720 280" role="img" class="chart">
+<text x="188" y="18" text-anchor="middle" class="tick">Vote share, points per 1 SD</text>
+<text x="520" y="18" text-anchor="middle" class="tick">2024 party split, percent</text>
+<line x1="360" y1="28" x2="360" y2="268" class="axis"/>
+<line x1="188.0" y1="32" x2="188.0" y2="250" class="grid"/>
+<text x="94.7" y="266" text-anchor="middle" class="tick">-4</text>
+<text x="188.0" y="266" text-anchor="middle" class="tick">+0</text>
+<text x="281.3" y="266" text-anchor="middle" class="tick">+4</text>
+<text x="410.0" y="266" text-anchor="middle" class="tick">0</text>
+<text x="550.0" y="266" text-anchor="middle" class="tick">50</text>
+<text x="690.0" y="266" text-anchor="middle" class="tick">100</text>
+<text x="8" y="34" class="tick">Marijuana</text>
+<rect x="188.0" y="40" width="105.3" height="16" fill="#2563EB"/>
+<text x="301.3" y="52" text-anchor="start" class="tick">+4.51</text>
+<rect x="410.0" y="38" width="171.9" height="8" fill="#2563EB"/>
+<rect x="410.0" y="50" width="98.3" height="8" fill="#DC2626"/>
+<text x="587.9" y="52" class="tick">61 / 35</text>
+<text x="8" y="86" class="tick">Alcohol</text>
+<rect x="188.0" y="92" width="94.3" height="16" fill="#2563EB"/>
+<text x="290.3" y="104" text-anchor="start" class="tick">+4.04</text>
+<rect x="410.0" y="90" width="147.6" height="8" fill="#2563EB"/>
+<rect x="410.0" y="102" width="129.8" height="8" fill="#DC2626"/>
+<text x="563.6" y="104" class="tick">53 / 46</text>
+<text x="8" y="138" class="tick">Cigarettes</text>
+<rect x="91.8" y="144" width="96.2" height="16" fill="#2563EB"/>
+<text x="83.8" y="156" text-anchor="end" class="tick">-4.12</text>
+<rect x="410.0" y="142" width="77.4" height="8" fill="#2563EB"/>
+<rect x="410.0" y="154" width="199.9" height="8" fill="#DC2626"/>
+<text x="615.9" y="156" class="tick">28 / 71</text>
+<text x="8" y="190" class="tick">Opioid misuse</text>
+<rect x="174.2" y="196" width="13.8" height="16" fill="#2563EB"/>
+<text x="166.2" y="208" text-anchor="end" class="tick">-0.59</text>
+<rect x="410.0" y="194" width="168.1" height="8" fill="#2563EB"/>
+<rect x="410.0" y="206" width="109.8" height="8" fill="#DC2626"/>
+<text x="584.1" y="208" class="tick">60 / 39</text>
+</svg></div>
+<p class="fine cap">This figure shows co-occurrence of area-level use with area-level vote share, and the published split of industry contributions to candidates and parties. It does not show intent, coordination, a deliberate strategy, or that substance use changes any individual’s vote.</p>
+
+<div class="src">
+<p>Vote join: NSDUH 2021–2023 substate small-area estimates, SAMHSA shapefile SubstateRegionData212223, and 2024 presidential votes reallocated to ZCTAs by land cover, Harvard Dataverse 10.7910/DVN/Z8TSH3, with age and education from the ACS 2019–2023 5-year file. Alaska and Hawaii are absent from the vote file.</p>
+<p>Shapefile outcome list: <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt56951/2023-sae-sub-region-shape-file/2023-sae-sub-region-shape-file.htm">SAMHSA, 2021–2023 substate region shapefile description</a>. Thirty-nine outcomes. Use rates and disorder rates entered above are the ones in that list.</p>
+<p>Suggestibility and IQ: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Meier et al., PNAS 2012, 10.1073/pnas.1206820109. Potency series: NIDA / University of Mississippi analyses of DEA-seized cannabis, 1995–2022. The vote regression, the Kloft rates, the Gawrylowicz rates, and the Dunedin 8-point loss are measured. The two potency curves are predictions.</p>
+<p>Contributions: OpenSecrets industry totals for Beer, Wine &amp; Liquor (N02), Tobacco (A02), Pharmaceuticals / Health Products (H04), and Marijuana (N09). Archive capture 2026-07-16, retrieved 2026-10-11. Underlying reports are Federal Election Commission filings as coded by OpenSecrets. CSV: <a href="nsduh-vote-ecological/results/industry_donations.csv">industry_donations.csv</a>.</p>
+<p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
+</div>
+</main>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

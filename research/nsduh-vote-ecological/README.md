@@ -1,11 +1,8 @@
-# Area-level association: past-month marijuana use and 2024 Democratic vote share
+# Area-level association: substance use and 2024 Democratic vote share
 
-Pages on this site:
+The combined study page is [research/substance-use-vote-share.html](../substance-use-vote-share.html) (`https://amni-scient.com/research/substance-use-vote-share`). The earlier marijuana and alcohol notes redirect there.
 
-- Past-month marijuana use, suggestibility, and IQ: [research/eighteen-points.html](../eighteen-points.html)
-- Past-month alcohol use: [research/past-month-alcohol-vote-share.html](../past-month-alcohol-vote-share.html)
-
-Committed files in this directory: `run_regression.py`, `results/region_level.csv` (columns include `mj` and `alc`), and `results/results.json` (marijuana models, plus `region_alcohol`, `region_mj_and_alcohol`, `zcta_alcohol_cluster`, and `zcta_mj_and_alcohol_cluster`).
+Committed files in this directory: `run_regression.py`, `fit_extended.py`, `render_page.py`, `industry_donations_source.py`, `data/substate_outcomes_212223.csv`, `results/region_level.csv`, `results/results.json`, `results/extended.json`, `results/quintiles.csv`, `results/state_level.csv`, and `results/industry_donations.csv`.
 
 This is the ecological regression requested at the end of the uploaded Grok thread. It joins public 2021–2023 NSDUH substate estimates to 2024 presidential votes reallocated to ZIP Code Tabulation Areas, with census age structure and density as controls.
 
@@ -65,7 +62,7 @@ Region-level sums are the preferred regression. The use rate does not vary insid
 
 ## Coverage
 
-The 2024 ZCTA vote file used here has no Alaska or Hawaii rows (highest ZCTA is 99403). Nebraska's six mapped substate regions are in the NSDUH tables but not in the SAMHSA shapefile that was joined, so Nebraska's ZCTAs (about 0.6% of two-party votes in the file) are omitted. The estimation sample is 48 jurisdictions: 47 states plus the District of Columbia.
+The 2024 ZCTA vote file used here has no Alaska or Hawaii rows (highest ZCTA is 99403), so those two states drop out. Nebraska is in the shapefile: five regions, FIPS 31, polygon bounds about lon −104 to −95 and lat 40 to 43. The DBF `ST_NAME` on those polygons is “New Jersey”. Southern New Jersey (`Southern_34`, FIPS 34, about lon −75.6 to −74) is labeled `ST_NAME` “New York”. State fixed effects use `st_fips`, so Nebraska and New Jersey stay separate. `fit_extended.py` writes `st_name` from the FIPS code before it saves the CSVs. The estimation sample is 49 FIPS codes: 48 states plus the District of Columbia. DC (FIPS 11) has 8 regions. The joined file has 382 regions, 30,389 ZCTAs, and 150.1 million two-party votes.
 
 ## Limits of the coefficient
 
@@ -77,11 +74,29 @@ The 2024 ZCTA vote file used here has no Alaska or Hawaii rows (highest ZCTA is 
 
 ## Suggestibility and IQ, scaled from study potency
 
-Those curves are on the research page `eighteen-points.html`, written for `research/eighteen-points.html` on amni-scient.com. They are predictions, labeled as such, and they are not vote-probability coefficients.
+Those curves are on the combined study page, labeled as predictions.
 
 Suggestibility uses Kloft et al. (PNAS 2020): immediate acceptance of a planted eyewitness detail was 19% after 300 μg/kg THC (SE 0.04) and 8% on placebo (SE 0.02). That dose is placed at 14% flower THC under a 70 kg body weight, a 0.5 g session, and a 30% inhaled yield. The curve is linear on the logit between placebo and that dose. Past 14%, the band adds 35% extra uncertainty on the further climb. At 16.1% THC (2022 seized flower) the center is 21% acceptance, with a 95% band of 11–32.
 
 Cognitive decline uses Meier et al. (PNAS 2012): adolescent-onset persistent users lost 8 IQ points. The study did not measure potency. DEA-seized flower averaged 7.1% THC over 1995–2010, and the loss is scaled linearly with potency. Sampling error on the anchor is taken as 2.5 points (within-group SD about 12, n = 23); that standard error is an assumption, not a published figure. Past 7.1%, the band adds 50% uncertainty on the extra loss. At 16.1% THC the center is 18 points, with a 95% band of 3–33. The band overlaps effects smaller than the published 8.
+
+## Other NSDUH substate rates
+
+`fit_extended.py` merges the SAMHSA 2021–2023 substate DBF onto the committed 382-row region file and refits the same vote-weighted specification (log density, percent 18–25, percent 12–17, HC1). Run that path with:
+
+```bash
+python3 research/nsduh-vote-ecological/run_regression.py --from-committed
+```
+
+Outcomes entered as use rates: past-month marijuana (`MRJMON`), alcohol (`ALCMON`), binge alcohol (`BNGDRK`), cigarettes (`CIGMON`), tobacco products (`TOBMON`), and illicit drugs other than marijuana (`IEMMON`); past-year cocaine (`COCYR`), hallucinogens (`HALLUYR`), methamphetamine (`METAMYR`), opioid misuse (`OPINMYR`), and pain-reliever misuse (`PNRNMYR`); past-year marijuana (`MRJYR`); past-year heroin ages 18+ (`HERYR`); underage 12–20 past-month alcohol, binge, cigarettes, and tobacco. Illicit drugs including marijuana (`ILLMON`) is fit and kept out of the index because it nests marijuana. Disorder rates are in a second table: `UD5IAAN`, `UD5ILAN`, `UD5OPAN`, `UD5PRAN`, `UDYR5AL`, `UUDYALC`.
+
+The combined index is the sum of vote-weighted z-scores of marijuana, alcohol, cigarettes, illicit-other-than-marijuana, cocaine, opioid misuse, methamphetamine, and hallucinogens. Mean 0 when every rate is at its vote-weighted mean. The first principal component of those same z-scores is the check in `extended.json`. Nested or overlapping rates stay out of the sum: illicit-including-marijuana, tobacco products, binge, pain-reliever misuse, past-year marijuana, heroin (18+), and the underage repeats.
+
+SAMHSA does not publish these as substate rates: past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, or pain-reliever misuse (those six are past-year, and heroin is 18+); a separate heavy-drinking field (binge is the intensity measure); nicotine vaping as its own outcome (`TOBMON` is tobacco products); fentanyl, inhalants, LSD, PCP, or crack as separate rates. Mental illness, suicide, and perceived-risk fields are in the shapefile and are left out of the vote regression.
+
+## Industry contributions
+
+`industry_donations_source.py` writes `results/industry_donations.csv`. Rows are OpenSecrets industry totals for 2016–2024, codes N02 Beer/Wine/Liquor, A02 Tobacco, H04 Pharmaceuticals/Health Products, and N09 Marijuana. Live OpenSecrets returned HTTP 403 on 2026-10-11. The figures are from the Internet Archive capture `20260716031036` (captured 2026-07-16) of `https://www.opensecrets.org/industries/totals`. Party percentages are OpenSecrets shares of contributions to candidates and parties. Outside money is in the total and is excluded from the party split. This file does not re-sum raw FEC itemized filings.
 
 ## Reproduce
 
@@ -90,4 +105,11 @@ export ECO_DATA=/tmp/eco
 python3 research/nsduh-vote-ecological/run_regression.py
 ```
 
-`ECO_DATA` must already contain the downloaded inputs used by `run_regression.py`: the NSDUH shapefile, the 2020 ZCTA gazetteer, the filtered ACS B01001 and B15003 ZCTA extracts, and the two 2024 ZCTA vote files. Source URLs are in the script header comments. Fitted objects are written to `$ECO_DATA/out/`. The committed copies are `research/nsduh-vote-ecological/results/region_level.csv` and `research/nsduh-vote-ecological/results/results.json`.
+`ECO_DATA` must already contain the downloaded inputs used by `run_regression.py`: the NSDUH shapefile, the 2020 ZCTA gazetteer, the filtered ACS B01001 and B15003 ZCTA extracts, and the two 2024 ZCTA vote files. Source URLs are in the script header comments. Fitted objects are written to `$ECO_DATA/out/`. The full `main()` calls `extend_results` after the region file is built. Without those inputs, refit from the committed region file:
+
+```bash
+python3 research/nsduh-vote-ecological/run_regression.py --from-committed
+python3 research/nsduh-vote-ecological/render_page.py
+```
+
+The page generator also rewrites `results/industry_donations.csv`.

@@ -34,6 +34,22 @@
 .research-card .rc-apps span{font-size:.6rem;letter-spacing:1px;padding:2px 8px;border:1px solid var(--border);border-radius:3px;color:var(--dim)}
 .research-card .btn{font-size:.75rem;padding:.5rem 1.2rem}
 .eq-highlight{color:var(--accent);font-weight:700}
+a.btn,button.btn{text-decoration:none}
+a.btn::before,button.btn::before{display:none}
+a.btn.btn-primary,button.btn.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+a.btn.btn-primary:hover,a.btn.btn-primary:focus,a.btn.btn-primary:focus-visible,
+button.btn.btn-primary:hover,button.btn.btn-primary:focus,button.btn.btn-primary:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+a.btn.btn-outline,button.btn.btn-outline{background:var(--panel);border-color:var(--text);color:var(--text)}
+a.btn.btn-outline:hover,a.btn.btn-outline:focus,a.btn.btn-outline:focus-visible,
+button.btn.btn-outline:hover,button.btn.btn-outline:focus,button.btn.btn-outline:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.theme-toggle{background:var(--panel);border-color:var(--border2);color:var(--text)}
+button.theme-toggle:hover,button.theme-toggle:focus,button.theme-toggle:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.nav-dd-trigger,button.nav-dd-trigger:hover,button.nav-dd-trigger:focus,button.nav-dd-trigger:focus-visible{color:var(--text)}
+.support-cta .support-link{background:var(--panel);border-color:var(--border2);color:var(--text)}
+.support-cta .support-link strong{color:var(--text)}
+.support-cta .support-link:hover,.support-cta .support-link:focus,.support-cta .support-link:focus-visible,
+.support-cta .support-link:hover strong,.support-cta .support-link:focus strong,.support-cta .support-link:focus-visible strong{background:var(--text);color:var(--bg);border-color:var(--text)}
+footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.kofi-link:focus-visible{color:var(--text)!important}
 </style>
 </head>
 <body class="pp">
@@ -106,38 +122,6 @@
 <p>Every framework here started as a fix for one specific problem I kept hitting: high-dimensional optimization, the geometry of cryptographic state spaces, momentum that evolves under turbulence closure. Then the math kept reaching well past the problem that started it, so I wrote it up.</p>
 <p style="margin-top:1.2rem">All of it is <strong style="color:var(--text)">my own work</strong>: mostly definitions and hand-picked constants, some derivation, and code that&rsquo;s mostly unpublished so far. Each page puts the equations next to where I expect them to apply, in AI, datacenter optimization, physics simulation and cryptographic analysis. Benchmarks are on the page wherever they exist, and every card below marks up front which parts are measured and which are still open.</p>
 <p style="margin-top:1.2rem">Pick one and dive in! You get the full derivation, the key equations, visualizations and applications.</p>
-</div>
-</section>
-<section id="area-level">
-<h2>AREA-LEVEL ASSOCIATIONS</h2>
-<div style="max-width:800px;margin:0 0 1.4rem;line-height:1.9;color:var(--dim);font-size:.9rem">
-<p>Two notes from one ecological regression of 2021–2023 NSDUH substate past-month use on 2024 Democratic two-party vote share. Each page has the CSV, the JSON, the script, a methods line, and a citation. These are area-level associations, not individual effects. Alaska, Hawaii, and Nebraska are missing from the join.</p>
-</div>
-<div class="research-grid">
-<div class="research-card">
-<div class="rc-tag">NSDUH &bull; 2024 VOTE SHARE &bull; MARIJUANA</div>
-<h3>PAST-MONTH MARIJUANA USE AND 2024 VOTE SHARE</h3>
-<p>Vote-weighted fifths of 382 regions run from 41.9% to 60.0% Democratic two-party share as past-month marijuana use rises. After log density and age, the slope is 1.13 vote-share points per point of use (SE 0.13). The note also scales the Kloft suggestibility result and the Meier IQ result from study potency to 2022 seized flower. Those curves are labeled as predictions.</p>
-<div class="rc-eq">+1.13 vote-share points per point of past-month marijuana use</div>
-<div class="rc-apps">
-<span>MEASURED REGRESSION</span>
-<span>PREDICTED CURVES LABELED</span>
-<span>382 REGIONS</span>
-</div>
-<a href="research/eighteen-points.html" class="btn btn-primary">READ THE NOTE &rarr;</a>
-</div>
-<div class="research-card">
-<div class="rc-tag">NSDUH &bull; 2024 VOTE SHARE &bull; ALCOHOL / ETHANOL</div>
-<h3>PAST-MONTH ALCOHOL USE AND 2024 VOTE SHARE</h3>
-<p>Same regions and the same density and age controls. Past-month alcohol use has a coefficient of 0.66 vote-share points per percentage point of use (SE 0.09). Alcohol’s regional spread is wider (weighted SD 6.1 versus 4.0 for marijuana), so the standardized associations are similar in size. Entered together, marijuana is 0.96 (SE 0.13) and alcohol is 0.49 (SE 0.08).</p>
-<div class="rc-eq">+0.66 vote-share points per point of past-month alcohol use</div>
-<div class="rc-apps">
-<span>SAME SAMPLE</span>
-<span>JOINT MODEL IN THE NOTE</span>
-<span>382 REGIONS</span>
-</div>
-<a href="research/past-month-alcohol-vote-share.html" class="btn btn-primary">READ THE NOTE &rarr;</a>
-</div>
 </div>
 </section>
 <section>
@@ -253,6 +237,26 @@
 <span>LOSSLESS RECOVERY</span>
 </div>
 <a href="research/amnitex-railgun.html" class="btn btn-primary">EXPLORE FRAMEWORK &rarr;</a>
+</div>
+</div>
+</section>
+<section id="area-level">
+<h2>AREA-LEVEL ASSOCIATIONS</h2>
+<div style="max-width:800px;margin:0 0 1.4rem;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>One study from the ecological regression of 2021&ndash;2023 NSDUH substate use on 2024 Democratic two-party vote share. The page has the CSVs, the JSON, the scripts, a methods line, and a citation. The unit is the substate region.</p>
+</div>
+<div class="research-grid">
+<div class="research-card">
+<div class="rc-tag">NSDUH &bull; 2024 VOTE SHARE</div>
+<h3>SUBSTANCE USE AND THE 2024 VOTE</h3>
+<p>Vote-weighted fifths of 382 regions run from 41.9% to 60.0% Democratic two-party share as past-month marijuana use rises, and from 58.8% to 32.1% as past-month cigarette use rises. After log density and age, marijuana is +1.13 vote-share points per point of use (SE 0.13), cigarettes are &minus;0.97 (SE 0.16), and alcohol is +0.66 (SE 0.09).</p>
+<div class="rc-eq">+1.13 marijuana &nbsp;&middot;&nbsp; &minus;0.97 cigarettes &nbsp;&middot;&nbsp; +0.66 alcohol</div>
+<div class="rc-apps">
+<span>MEASURED REGRESSION</span>
+<span>LAB RESULTS LABELED</span>
+<span>382 REGIONS</span>
+</div>
+<a href="research/substance-use-vote-share.html" class="btn btn-primary">READ THE STUDY &rarr;</a>
 </div>
 </div>
 </section>
