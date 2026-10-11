@@ -48,6 +48,7 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;max-width:860px;margin:.2rem 0 .8rem}
 .legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
 .legend i{width:14px;height:3px;border-radius:1px;display:inline-block}
+.legend.naep i{width:22px;height:8px;border-radius:2px}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -1051,6 +1052,223 @@ def child_section() -> str:
 """
 
 
+CORR_LABELS = {
+    "dem2": "Democratic share",
+    "ln_dens": "Log density",
+    "pct_18_25": "Ages 18–25",
+    "pct_12_17": "Ages 12–17",
+    "pct_ba": "Bachelor's",
+    "mj": "Marijuana",
+    "hal": "Hallucinogens",
+    "alc": "Alcohol",
+    "coc": "Cocaine",
+    "opin": "Opioid misuse",
+    "pnr": "Pain relievers",
+    "met": "Methamphetamine",
+    "her": "Heroin",
+    "binge": "Binge alcohol",
+    "iem": "Other illicit",
+    "ill": "Illicit drugs",
+    "mrjyr": "Marijuana, year",
+    "ualc": "Underage alcohol",
+    "ubinge": "Underage binge",
+}
+
+
+def _corr_rgb(r: float) -> tuple[int, int, int]:
+    t = min(1.0, abs(float(r)))
+    cream = (246, 240, 228)
+    end = (138, 99, 24) if r >= 0 else (30, 64, 175)
+    return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
+
+
+def _corr_ink(rgb: tuple[int, int, int]) -> str:
+    def lin(c: int) -> float:
+        x = c / 255.0
+        return x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4
+
+    L = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
+    return "#120C03" if L > 0.42 else "#FFFFFF"
+
+
+def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, ...], title: str) -> str:
+    n = len(rows)
+    row_h = 40
+    top, bottom = 28, 34
+    left, plot_w, right = 188, 420, 72
+    width = left + plot_w + right
+    height = top + n * row_h + bottom
+
+    def X(v):
+        return left + (float(v) - lo) / (hi - lo) * plot_w
+
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" id="{svg_id}">']
+    parts.append(f'<text x="{left}" y="16" class="tick">{esc(title)}</text>')
+    for t in ticks:
+        parts.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
+        parts.append(f'<text x="{X(t):.1f}" y="{height - 12}" text-anchor="middle" class="tick">{t}</text>')
+    parts.append(f'<line x1="{X(0):.1f}" y1="{top}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
+    for i, (label, term, color) in enumerate(rows):
+        y = top + i * row_h + 16
+        if i == 3:
+            parts.append(f'<line x1="8" y1="{y - 20:.1f}" x2="{width - 8}" y2="{y - 20:.1f}" class="grid"/>')
+        parts.append(f'<text x="8" y="{y + 4:.1f}" class="lab">{esc(label)}</text>')
+        x0, x1 = X(term["lo"]), X(term["hi"])
+        parts.append(f'<line x1="{min(x0, x1):.1f}" y1="{y:.1f}" x2="{max(x0, x1):.1f}" y2="{y:.1f}" stroke="{color}" stroke-width="2.4"/>')
+        parts.append(f'<line x1="{x0:.1f}" y1="{y - 5:.1f}" x2="{x0:.1f}" y2="{y + 5:.1f}" stroke="{color}" stroke-width="2"/>')
+        parts.append(f'<line x1="{x1:.1f}" y1="{y - 5:.1f}" x2="{x1:.1f}" y2="{y + 5:.1f}" stroke="{color}" stroke-width="2"/>')
+        parts.append(f'<circle cx="{X(term["coef"]):.1f}" cy="{y:.1f}" r="5.5" fill="{color}"/>')
+        parts.append(
+            f'<text x="{left + plot_w + 8}" y="{y + 4:.1f}" style="fill:{color};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{num(term["coef"], 2, sign=True)}</text>'
+        )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def group_chart(groups: dict) -> str:
+    omit = groups["heroin_omitted"]["terms"]
+    inn = groups["heroin_in_b"]["terms"]
+    heroin = groups["heroin_alone"]
+
+    def pack(term, clustered=True):
+        if clustered:
+            return {"coef": term["coef"], "lo": term["lo_cluster"], "hi": term["hi_cluster"]}
+        return {"coef": term["coef"], "lo": term["lo"], "hi": term["hi"]}
+
+    pooled = [
+        ("Group A", pack(omit["A"]), "#16A34A"),
+        ("Group B", pack(omit["B"]), "#0D9488"),
+        ("B − A", pack(omit["diff"]), "#8A6318"),
+        ("Group A, heroin in B", pack(inn["A"]), "#16A34A"),
+        ("Group B, heroin in B", pack(inn["B"]), "#0D9488"),
+        ("B − A, heroin in B", pack(inn["diff"]), "#8A6318"),
+    ]
+    alone = [("Heroin alone", pack(heroin, clustered=False), "#78716C")]
+    return (
+        _slope_svg("group-slopes", pooled, -6, 2, (-6, -4, -2, 0, 2), "Groups, clustered 95% intervals")
+        + _slope_svg("heroin-slope", alone, -2, 18, (0, 4, 8, 12, 16), "Heroin alone, HC1 interval, separate scale")
+    )
+
+
+def group_table(groups: dict) -> str:
+    omit = groups["heroin_omitted"]
+    inn = groups["heroin_in_b"]
+    heroin = groups["heroin_alone"]
+    specs = [
+        ("Heroin omitted", omit, ("A", "Group A"), ("B", "Group B"), ("diff", "B − A")),
+        ("Heroin in group B", inn, ("A", "Group A"), ("B", "Group B"), ("diff", "B − A")),
+    ]
+    lines = []
+    for title, block, *terms in specs:
+        for key, name in terms:
+            t = block["terms"][key]
+            lines.append(
+                "<tr>"
+                f"<td>{esc(title)}</td><td>{esc(name)}</td>"
+                f"<td>{num(t['coef'], 2, sign=True)}</td>"
+                f"<td>{num(t['se_cluster'])}</td>"
+                f"<td>{num(t['lo_cluster'], 2, sign=True)} to {num(t['hi_cluster'], 2, sign=True)}</td>"
+                f"<td>{num(t['se_hc1'])}</td>"
+                f"<td>{num(t['p_cluster'], 3) if t['p_cluster'] >= 0.001 else '&lt;0.001'}</td>"
+                "</tr>"
+            )
+    lines.append(
+        "<tr>"
+        "<td>Heroin alone</td><td>Heroin</td>"
+        f"<td>{num(heroin['coef'], 2, sign=True)}</td>"
+        "<td></td><td></td>"
+        f"<td>{num(heroin['se_hc1'])}</td>"
+        f"<td>{num(heroin['p_hc1'], 3) if heroin['p_hc1'] >= 0.001 else '&lt;0.001'}</td>"
+        "</tr>"
+    )
+    return "\n".join(lines)
+
+
+def correlation_heatmap(study: dict) -> str:
+    keys = study["keys"]
+    matrix = study["matrix"]
+    n = len(keys)
+    cell = 36
+    left, top = 138, 148
+    width = left + n * cell + 16
+    height = top + n * cell + 28
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" id="corr-matrix">']
+    for i, key in enumerate(keys):
+        label = CORR_LABELS.get(key, key)
+        x = left + i * cell + 2
+        y = top - 8
+        parts.append(
+            f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="start" transform="rotate(-58 {x:.1f} {y:.1f})" class="tick">{esc(label)}</text>'
+        )
+        parts.append(
+            f'<text x="{left - 8}" y="{top + i * cell + cell / 2 + 3:.1f}" text-anchor="end" class="tick">{esc(label)}</text>'
+        )
+    for i in range(n):
+        for j in range(n):
+            r = float(matrix[i][j])
+            rgb = _corr_rgb(r)
+            fill = "#{:02X}{:02X}{:02X}".format(*rgb)
+            ink = _corr_ink(rgb)
+            x = left + j * cell
+            y = top + i * cell
+            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{cell - 1}" height="{cell - 1}" fill="{fill}"/>')
+            parts.append(
+                f'<text x="{x + (cell - 1) / 2:.1f}" y="{y + cell / 2 + 3:.1f}" text-anchor="middle" style="fill:{ink};font-size:9px;font-family:Archivo,sans-serif">{num(r, 2)}</text>'
+            )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def partial_chart(study: dict) -> str:
+    order = ["mj", "hal", "alc", "coc", "opin", "pnr", "met", "her", "binge", "iem", "ill", "mrjyr", "ualc", "ubinge"]
+    by = {row["term"]: row for row in study["partials"]}
+    rows = [by[key] for key in order]
+    n = len(rows)
+    row_h = 28
+    top, bottom = 16, 28
+    left, plot_w, right = 148, 460, 64
+    lo, hi = -0.15, 0.65
+    width = left + plot_w + right
+    height = top + n * row_h + bottom
+
+    def X(v):
+        return left + (float(v) - lo) / (hi - lo) * plot_w
+
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" id="partial-bars">']
+    parts.append(f'<line x1="{X(0):.1f}" y1="{top}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
+    for t in (-0.0, 0.2, 0.4, 0.6):
+        parts.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
+        parts.append(f'<text x="{X(t):.1f}" y="{height - 8}" text-anchor="middle" class="tick">{t:.1f}</text>')
+    for i, row in enumerate(rows):
+        y = top + i * row_h + 8
+        r = float(row["partial_r"])
+        color = "#8A6318" if r >= 0 else "#1E40AF"
+        x0, x1 = X(0), X(r)
+        parts.append(f'<text x="6" y="{y + 4:.1f}" class="lab">{esc(CORR_LABELS.get(row["term"], row["term"]))}</text>')
+        parts.append(f'<line x1="{min(x0, x1):.1f}" y1="{y:.1f}" x2="{max(x0, x1):.1f}" y2="{y:.1f}" stroke="{color}" stroke-width="8" stroke-linecap="butt"/>')
+        parts.append(
+            f'<text x="{max(x0, x1) + 6:.1f}" y="{y + 4:.1f}" style="fill:{color};font-size:11px;font-weight:700;font-family:Archivo,sans-serif">{num(r, 2, sign=True)}</text>'
+        )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def partial_table(study: dict) -> str:
+    order = ["mj", "hal", "alc", "coc", "opin", "pnr", "met", "her", "binge", "iem", "ill", "mrjyr", "ualc", "ubinge"]
+    by = {row["term"]: row for row in study["partials"]}
+    lines = []
+    for key in order:
+        row = by[key]
+        lines.append(
+            "<tr>"
+            f"<td>{esc(row['label'])}</td>"
+            f"<td>{num(row['weighted_r'], 2, sign=True)}</td>"
+            f"<td>{num(row['partial_r'], 2, sign=True)}</td>"
+            "</tr>"
+        )
+    return "\n".join(lines)
+
+
 def potency_html():
     return (HERE / "fragments" / "potency.html").read_text()
 
@@ -1098,6 +1316,18 @@ def main():
     mj_total = dget("Marijuana", "total")
     n_joint = len(ext["joint"]["terms"])
     low_s, high_s = contour_sum[0], contour_sum[2]
+    groups = ext["groups"]
+    study = ext["correlation_matrix"]
+    omit = groups["heroin_omitted"]["terms"]
+    inn = groups["heroin_in_b"]["terms"]
+    heroin = groups["heroin_alone"]
+    gchart = group_chart(groups)
+    gtab_group = group_table(groups)
+    heat = correlation_heatmap(study)
+    pchart_corr = partial_chart(study)
+    ptab_corr = partial_table(study)
+    partial_of = {row["term"]: row for row in study["partials"]}
+    dens_r = study["matrix"][study["keys"].index("dem2")][study["keys"].index("ln_dens")]
     from over_time import section_html
 
     ot_html = section_html()
@@ -1132,11 +1362,13 @@ def main():
 .note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid,.note-wrap .contour-grid{{max-width:860px}}
 .note-wrap .slope-card p{{max-width:none}}
 .table-scroll{{overflow-x:auto;max-width:100%}}
+.heat-wrap{{max-width:860px}}
 .table-scroll table.cmp{{min-width:680px}}
 .crumb{{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}}
 .crumb a{{color:var(--accent)}}
 .hero .crumb{{position:relative;z-index:1;margin:0 0 .55rem;order:-2}}
 .stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 1.6rem}}
+.stats.one{{grid-template-columns:minmax(0,32rem);margin:0.6rem 0 1rem}}
 .stat{{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1rem .95rem}}
 .stat .k{{display:block;font-size:.62rem;font-weight:700;font-stretch:80%;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}}
 .stat .v{{display:block;margin-top:.3rem;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;line-height:1}}
@@ -1229,6 +1461,9 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/lag_specs.csv" download>Lag specifications CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_medical.csv" download>Medical dates CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/correlation_matrix.csv" download>Correlation matrix CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/partial_correlations.csv" download>Partial correlations CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
@@ -1286,6 +1521,42 @@ body.pp .hero h1{{max-width:22ch}}
 </tbody>
 </table>
 <p class="fine">Each row is that rate’s coefficient with the other {n_joint - 1} rates, log density, and age in the same model.</p>
+
+<h2 id="groups">Perception and the vote slope</h2>
+<p>Group A’s common slope is <strong>{num(omit['A']['coef'], 2, sign=True)}</strong> points of Democratic two-party share per point of the rate (clustered SE {num(omit['A']['se_cluster'])}). Group B’s is <strong>{num(omit['B']['coef'], 2, sign=True)}</strong> (SE {num(omit['B']['se_cluster'])}). The difference, group B minus group A, is <strong>{num(omit['diff']['coef'], 2, sign=True)}</strong> (SE {num(omit['diff']['se_cluster'])}).</p>
+<p>Putting heroin in group B leaves group A at <strong>{num(inn['A']['coef'], 2, sign=True)}</strong> (SE {num(inn['A']['se_cluster'])}) and moves group B to <strong>{num(inn['B']['coef'], 2, sign=True)}</strong> (SE {num(inn['B']['se_cluster'])}). That difference is <strong>{num(inn['diff']['coef'], 2, sign=True)}</strong> (SE {num(inn['diff']['se_cluster'])}). Heroin on its own, with the same density and age controls, is <strong>{num(heroin['coef'], 2, sign=True)}</strong> per point (HC1 SE {num(heroin['se_hc1'])}). Its correlation with log density is <strong>{num(groups['heroin_density_corr'], 2, sign=True)}</strong>.</p>
+<p>Group A is marijuana, hallucinogens, alcohol, and cocaine. Marijuana: Kloft and colleagues vaporized 300 μg of THC per kilogram, and a suggested false detail was accepted 19% of the time versus 8% on placebo. Hallucinogens are serotonin 5-HT2A agonists that alter perception (Nichols, Pharmacological Reviews, 2016, <a href="https://doi.org/10.1124/pr.115.011478">10.1124/pr.115.011478</a>). LSD raised Creative Imagination Scale ratings versus placebo (Carhart-Harris and colleagues, Psychopharmacology, 2015, <a href="https://doi.org/10.1007/s00213-014-3714-z">10.1007/s00213-014-3714-z</a>). Alcohol: people told the drink was vodka were more swayed by misleading information (Assefi and Garry, 2003), and severely intoxicated participants went along with suggestive cues more than sober participants (van Oorsouw, Merckelbach, and Smeets, 2015). Cocaine blocks the dopamine transporter. At 0.3–0.6 mg/kg intravenous, 60–77% of transporter sites were occupied and the reported high tracked that occupancy (Volkow and colleagues, Nature, 1997, <a href="https://doi.org/10.1038/386827a0">10.1038/386827a0</a>).</p>
+<p>Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Opioid misuse and pain-reliever misuse are mu-opioid agonists. Agonists at that receptor produce analgesia and sedation (Pathan and Williams, British Journal of Pain, 2012, <a href="https://doi.org/10.1177/2049463712438493">10.1177/2049463712438493</a>). Methamphetamine is a monoamine releaser. At 5–30 mg the acute effects are arousal, positive mood, and cardiac stimulation (Cruickshank and Dyer, Addiction, 2009, <a href="https://doi.org/10.1111/j.1360-0443.2009.02564.x">10.1111/j.1360-0443.2009.02564.x</a>). It sits in group B because that profile is stimulant arousal. Heroin is a mu-opioid agonist in the same class, and the two pooled fits report it both ways.</p>
+<p>Green is group A. Teal is group B. Brown is the difference. The lower chart is heroin alone, drawn on its own scale. Whiskers are 95% intervals, clustered by region for the pooled rows and HC1 for heroin alone.</p>
+<div class="chart-card" id="group-chart">{gchart}</div>
+<p class="axis-name"><span>Y · Specification</span><span>X · Points of Democratic share per point of the rate</span></p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Pool</th><th>Term</th><th>Slope</th><th>Clustered SE</th><th>Clustered 95% CI</th><th>HC1 SE</th><th>p</th></tr></thead>
+<tbody>
+{gtab_group}
+</tbody>
+</table>
+</div>
+<p class="fine">Each region enters once per substance. The outcome is repeated, so the clustered standard error groups rows by region. Substance indicators absorb the level of each rate. The group indicator itself is collinear with those indicators, so the test is the interaction of the rate with group B. Controls are log density, percent ages 18–25, and percent ages 12–17, centered at their vote-weighted means. Weights are two-party votes. N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
+
+<h2 id="correlations">Correlations</h2>
+<p>Vote-weighted, past-year cocaine and Democratic share correlate at <strong>{num(partial_of['coc']['weighted_r'], 2, sign=True)}</strong>. Methamphetamine correlates at <strong>{num(partial_of['met']['weighted_r'], 2, sign=True)}</strong>. Log density correlates with Democratic share at <strong>{num(dens_r, 2)}</strong>. After log density, the two age shares, and bachelor’s share, marijuana’s partial correlation is <strong>{num(partial_of['mj']['partial_r'], 2, sign=True)}</strong>, cocaine’s is <strong>{num(partial_of['coc']['partial_r'], 2, sign=True)}</strong>, and hallucinogens’ is <strong>{num(partial_of['hal']['partial_r'], 2, sign=True)}</strong>. Methamphetamine’s partial correlation is <strong>{num(partial_of['met']['partial_r'], 2, sign=True)}</strong>.</p>
+<p>Each cell is the vote-weighted correlation. Gold is positive. Blue is negative. The number is the correlation.</p>
+<div class="table-scroll heat-wrap" id="corr-heatmap">{heat}</div>
+<p class="axis-name"><span>Gold · Positive</span><span>Blue · Negative</span></p>
+<p>The bars are partial correlations with Democratic share. Both the rate and the share are residualized on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, then correlated with the same vote weights.</p>
+<div class="chart-card" id="partial-chart">{pchart_corr}</div>
+<p class="axis-name"><span>Y · Rate</span><span>X · Partial correlation with Democratic share</span></p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Weighted r</th><th>Partial r</th></tr></thead>
+<tbody>
+{ptab_corr}
+</tbody>
+</table>
+</div>
+<p class="fine">Median household income is not in the region file. The ACS extract used here is age and bachelor’s attainment, so income stays out of the matrix. 382 regions. Weights are two-party votes. CSVs: <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
 
 <h2 id="users">Users and non-users</h2>
 <p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong> (interval {num(g_alc['user_lo'], 1)}–{num(g_alc['user_hi'], 1)}). Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong> (interval {num(g_alc['nonuser_lo'], 1)}–{num(g_alc['nonuser_hi'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users (interval {num(by_term['binge']['user_lo'], 1)}–{num(by_term['binge']['user_hi'], 1)}) and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users (interval {num(by_term['binge']['nonuser_lo'], 1)}–{num(by_term['binge']['nonuser_hi'], 1)}).</p>
@@ -1400,7 +1671,8 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Federal lobbying: OpenSecrets calculations from the Senate Office of Public Records, calendar 2024, January through December. Retrieved 2026-10-11. Marijuana <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N09">N09</a> $5,248,000. Beer, wine, and liquor <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N02">N02</a> $29,893,357. Pharmaceuticals and health products <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=H04">H04</a> $391,572,500. Cresco Labs in-house LD-2 expenses, lda.gov filings for 2024 Q1–Q4, sum to the $1,150,000 client line. Client lines: <a href="nsduh-vote-ecological/results/industry_lobbying_clients_2024.csv">industry_lobbying_clients_2024.csv</a>.</p>
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
-<p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The national cognitive line is Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>, Table 1 mean ICAR35 slope. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
+<p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The ICAR35 figure beside that chart is Table 1 in Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>: −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
+<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSVs: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>, <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>

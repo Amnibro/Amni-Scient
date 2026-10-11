@@ -6,8 +6,8 @@ The national line is the National row in the same files, ages 12 or older.
 NAEP figures are NCES composite means for all students, public schools at
 the state level and national public for the U.S. line. Presidential
 two-party share is Democratic votes divided by Democratic plus Republican
-votes. The cognitive national line is the published ICAR35 slope from
-Dworak, Revelle, and Condon (2023), not a digitized yearly series.
+votes. The ICAR35 result is the published Table 1 slope, stated beside
+the NAEP chart. The paper does not print a year-by-year mean series.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ FD_MEASURES = ["mj", "mrjyr", "alc", "coc"]
 FD_EARLY = "2009-2010"
 FD_LATE = "2018-2019"
 NAEP_SUBJECTS = [
-    ("math", 4, "Mathematics, grade 4", "#C89B4E"),
+    ("math", 4, "Mathematics, grade 4", "#8A6318"),
     ("math", 8, "Mathematics, grade 8", "#EA580C"),
     ("reading", 4, "Reading, grade 4", "#2563EB"),
     ("reading", 8, "Reading, grade 8", "#7C3AED"),
@@ -321,8 +321,10 @@ def _num(x, d=2, sign=False):
     return ("−" if n < 0 else "") + body
 
 
-def _frame(w, h, x0, x1, y0, y1, xticks, yticks, y_right=None):
-    left, right, top, bottom = 46, 46 if y_right else 16, 16, 28
+def _frame(w, h, x0, x1, y0, y1, xticks, yticks, y_right=None, right=None):
+    left, top, bottom = 46, 16, 28
+    if right is None:
+        right = 46 if y_right else 16
     pw, ph = w - left - right, h - top - bottom
 
     def X(v):
@@ -419,36 +421,39 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame) -> str:
 def cognition_chart(naep: pd.DataFrame) -> str:
     nat = naep[naep["geo"] == "NP"]
     y0, y1 = 205, 295
-    # Dworak axis, SD from the 2006 anchor. Right side.
     parts, X, Y, left, top, ph, w, right = _frame(
-        860, 300, 1996, 2025, y0, y1, (1998, 2004, 2010, 2016, 2022), (210, 230, 250, 270, 290), y_right=(-0.30, 0.05, (0, -0.1, -0.2, -0.3))
+        860, 320, 1996, 2024.8, y0, y1, (1998, 2004, 2010, 2016, 2022), (210, 230, 250, 270, 290), right=118
     )
-    lo, hi = -0.30, 0.05
-
-    def Yd(v):
-        return top + (hi - float(v)) / (hi - lo) * ph
-
-    for subj, grade, lab, col in NAEP_SUBJECTS:
+    shorts = {
+        ("math", 4): "Math 4",
+        ("math", 8): "Math 8",
+        ("reading", 4): "Reading 4",
+        ("reading", 8): "Reading 8",
+    }
+    ends = []
+    for subj, grade, _lab, col in NAEP_SUBJECTS:
         pts = nat[(nat["subject"] == subj) & (nat["grade"] == grade)].sort_values("year")
-        _polyline(parts, X, Y, list(zip(pts["year"].astype(int), pts["score"])), col)
-    years = np.arange(2006, 2019)
-    band = []
-    for y in years:
-        band.append(f"{X(y):.1f},{Yd(-0.011 * (y - 2006)):.1f}")
-    for y in years[::-1]:
-        band.append(f"{X(y):.1f},{Yd(-0.035 * (y - 2006)):.1f}")
-    parts.append(f'<polygon points="{" ".join(band)}" fill="#C89B4E" fill-opacity="0.35"/>')
-    _polyline(parts, X, lambda v: Yd(v), [(int(y), -0.023 * (y - 2006)) for y in years], "#8A6318")
+        series = list(zip(pts["year"].astype(int), pts["score"].astype(float)))
+        _polyline(parts, X, Y, series, col)
+        year, val = series[-1]
+        ends.append([Y(val), shorts[(subj, grade)], col, year])
+    ends.sort(key=lambda row: row[0])
+    for i in range(1, len(ends)):
+        if ends[i][0] - ends[i - 1][0] < 14:
+            ends[i][0] = ends[i - 1][0] + 14
+    for yy, short, col, year in ends:
+        parts.append(
+            f'<text x="{X(year) + 8:.1f}" y="{yy + 4:.1f}" style="fill:{col};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{_esc(short)}</text>'
+        )
     parts.append("</svg>")
     legend = "".join(
         f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for _s, _g, lab, col in NAEP_SUBJECTS
     )
-    legend += '<span><i style="background:#8A6318"></i>ICAR35 slope, −0.023 SD/year</span>'
     return (
-        f'<p class="slope-k">NAEP national public, and the published ICAR35 slope</p>'
-        f'<div class="legend">{legend}</div><div class="chart-card">{"".join(parts)}</div>'
-        f'<p class="axis-name"><span>Left · NAEP composite, national public</span>'
-        f'<span>Right · ICAR35, SD from 2006</span></p>'
+        '<p class="slope-k">NAEP national public, mathematics and reading</p>'
+        f'<div class="legend naep">{legend}</div>'
+        f'<div class="chart-card" id="naep-chart">{"".join(parts)}</div>'
+        '<p class="axis-name"><span>Y · NAEP composite, national public</span><span>X · Year</span></p>'
     )
 
 
@@ -888,7 +893,11 @@ def section_html(frames: dict | None = None) -> str:
 {use_charts(frames['nsduh'], frames['legal'])}
 <p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. Gold ticks are years when a state legalized adult-use cannabis: { _esc(legal_line) }.</p>
 {cognition_chart(frames['naep'])}
-<p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. The gold line is the Table 1 mean slope for the ICAR35 composite, ages 18 to 60, adjusted for education and gender: −0.023 SD per year from 2006 to 2018, 95% interval −0.035 to −0.011. The band is that interval on the slope. The line is the published slope, anchored at zero in 2006. Dworak, Revelle, and Condon, Intelligence, 2023, 10.1016/j.intell.2023.101734.</p>
+<p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. Mathematics grade 4 is brown. Mathematics grade 8 is orange. Reading grade 4 is blue. Reading grade 8 is purple. The gold band is the 2020–2021 web-mode break on the calendar, the same band as the use charts.</p>
+<div class="stats one" id="icar-stat">
+<div class="stat lead"><span class="k">ICAR35, Table 1</span><span class="v">−0.023</span><span class="s">SD per year, ages 18 to 60, 2006–2018, adjusted for education and gender. 95% interval −0.035 to −0.011.</span></div>
+</div>
+<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes that slope. Figure 1 draws yearly means by education level and does not print them as numbers. The supplementary tables are slopes and sample counts. The OSF node <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> is the preregistration. Those means stay off the NAEP chart.</p>
 {vote_chart(frames['vote'])}
 <p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100.</p>
 <h2>Fifty states, first difference</h2>

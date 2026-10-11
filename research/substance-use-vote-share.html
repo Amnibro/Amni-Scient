@@ -27,11 +27,13 @@
 .note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid,.note-wrap .contour-grid{max-width:860px}
 .note-wrap .slope-card p{max-width:none}
 .table-scroll{overflow-x:auto;max-width:100%}
+.heat-wrap{max-width:860px}
 .table-scroll table.cmp{min-width:680px}
 .crumb{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
 .crumb a{color:var(--accent)}
 .hero .crumb{position:relative;z-index:1;margin:0 0 .55rem;order:-2}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 1.6rem}
+.stats.one{grid-template-columns:minmax(0,32rem);margin:0.6rem 0 1rem}
 .stat{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1rem .95rem}
 .stat .k{display:block;font-size:.62rem;font-weight:700;font-stretch:80%;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .stat .v{display:block;margin-top:.3rem;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;line-height:1}
@@ -96,6 +98,7 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;max-width:860px;margin:.2rem 0 .8rem}
 .legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
 .legend i{width:14px;height:3px;border-radius:1px;display:inline-block}
+.legend.naep i{width:22px;height:8px;border-radius:2px}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -207,6 +210,9 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/lag_specs.csv" download>Lag specifications CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_medical.csv" download>Medical dates CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/correlation_matrix.csv" download>Correlation matrix CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/partial_correlations.csv" download>Partial correlations CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
@@ -4239,6 +4245,943 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 </table>
 <p class="fine">Each row is that rate’s coefficient with the other 6 rates, log density, and age in the same model.</p>
 
+<h2 id="groups">Perception and the vote slope</h2>
+<p>Group A’s common slope is <strong>+0.76</strong> points of Democratic two-party share per point of the rate (clustered SE 0.08). Group B’s is <strong>−2.04</strong> (SE 1.03). The difference, group B minus group A, is <strong>−2.80</strong> (SE 1.04).</p>
+<p>Putting heroin in group B leaves group A at <strong>+0.75</strong> (SE 0.08) and moves group B to <strong>−1.65</strong> (SE 1.02). That difference is <strong>−2.39</strong> (SE 1.03). Heroin on its own, with the same density and age controls, is <strong>+8.52</strong> per point (HC1 SE 3.48). Its correlation with log density is <strong>+0.24</strong>.</p>
+<p>Group A is marijuana, hallucinogens, alcohol, and cocaine. Marijuana: Kloft and colleagues vaporized 300 μg of THC per kilogram, and a suggested false detail was accepted 19% of the time versus 8% on placebo. Hallucinogens are serotonin 5-HT2A agonists that alter perception (Nichols, Pharmacological Reviews, 2016, <a href="https://doi.org/10.1124/pr.115.011478">10.1124/pr.115.011478</a>). LSD raised Creative Imagination Scale ratings versus placebo (Carhart-Harris and colleagues, Psychopharmacology, 2015, <a href="https://doi.org/10.1007/s00213-014-3714-z">10.1007/s00213-014-3714-z</a>). Alcohol: people told the drink was vodka were more swayed by misleading information (Assefi and Garry, 2003), and severely intoxicated participants went along with suggestive cues more than sober participants (van Oorsouw, Merckelbach, and Smeets, 2015). Cocaine blocks the dopamine transporter. At 0.3–0.6 mg/kg intravenous, 60–77% of transporter sites were occupied and the reported high tracked that occupancy (Volkow and colleagues, Nature, 1997, <a href="https://doi.org/10.1038/386827a0">10.1038/386827a0</a>).</p>
+<p>Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Opioid misuse and pain-reliever misuse are mu-opioid agonists. Agonists at that receptor produce analgesia and sedation (Pathan and Williams, British Journal of Pain, 2012, <a href="https://doi.org/10.1177/2049463712438493">10.1177/2049463712438493</a>). Methamphetamine is a monoamine releaser. At 5–30 mg the acute effects are arousal, positive mood, and cardiac stimulation (Cruickshank and Dyer, Addiction, 2009, <a href="https://doi.org/10.1111/j.1360-0443.2009.02564.x">10.1111/j.1360-0443.2009.02564.x</a>). It sits in group B because that profile is stimulant arousal. Heroin is a mu-opioid agonist in the same class, and the two pooled fits report it both ways.</p>
+<p>Green is group A. Teal is group B. Brown is the difference. Gray is heroin alone. Whiskers are 95% intervals, clustered by region for the pooled rows and HC1 for heroin alone.</p>
+<div class="chart-card" id="group-chart"><svg viewBox="0 0 680 302" role="img" class="chart" id="group-slopes">
+<text x="188" y="16" class="tick">Groups, clustered 95% intervals</text>
+<line x1="188.0" y1="28" x2="188.0" y2="268" class="grid"/>
+<text x="188.0" y="290" text-anchor="middle" class="tick">-6</text>
+<line x1="293.0" y1="28" x2="293.0" y2="268" class="grid"/>
+<text x="293.0" y="290" text-anchor="middle" class="tick">-4</text>
+<line x1="398.0" y1="28" x2="398.0" y2="268" class="grid"/>
+<text x="398.0" y="290" text-anchor="middle" class="tick">-2</text>
+<line x1="503.0" y1="28" x2="503.0" y2="268" class="grid"/>
+<text x="503.0" y="290" text-anchor="middle" class="tick">0</text>
+<line x1="608.0" y1="28" x2="608.0" y2="268" class="grid"/>
+<text x="608.0" y="290" text-anchor="middle" class="tick">2</text>
+<line x1="503.0" y1="28" x2="503.0" y2="268" class="axis"/>
+<text x="8" y="48.0" class="lab">Group A</text>
+<line x1="534.8" y1="44.0" x2="550.8" y2="44.0" stroke="#16A34A" stroke-width="2.4"/>
+<line x1="534.8" y1="39.0" x2="534.8" y2="49.0" stroke="#16A34A" stroke-width="2"/>
+<line x1="550.8" y1="39.0" x2="550.8" y2="49.0" stroke="#16A34A" stroke-width="2"/>
+<circle cx="542.8" cy="44.0" r="5.5" fill="#16A34A"/>
+<text x="616" y="48.0" style="fill:#16A34A;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">+0.76</text>
+<text x="8" y="88.0" class="lab">Group B</text>
+<line x1="290.4" y1="84.0" x2="501.6" y2="84.0" stroke="#0D9488" stroke-width="2.4"/>
+<line x1="290.4" y1="79.0" x2="290.4" y2="89.0" stroke="#0D9488" stroke-width="2"/>
+<line x1="501.6" y1="79.0" x2="501.6" y2="89.0" stroke="#0D9488" stroke-width="2"/>
+<circle cx="396.0" cy="84.0" r="5.5" fill="#0D9488"/>
+<text x="616" y="88.0" style="fill:#0D9488;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">−2.04</text>
+<text x="8" y="128.0" class="lab">B − A</text>
+<line x1="249.1" y1="124.0" x2="463.2" y2="124.0" stroke="#8A6318" stroke-width="2.4"/>
+<line x1="249.1" y1="119.0" x2="249.1" y2="129.0" stroke="#8A6318" stroke-width="2"/>
+<line x1="463.2" y1="119.0" x2="463.2" y2="129.0" stroke="#8A6318" stroke-width="2"/>
+<circle cx="356.2" cy="124.0" r="5.5" fill="#8A6318"/>
+<text x="616" y="128.0" style="fill:#8A6318;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">−2.80</text>
+<line x1="8" y1="144.0" x2="672" y2="144.0" class="grid"/>
+<text x="8" y="168.0" class="lab">Group A, heroin in B</text>
+<line x1="534.3" y1="164.0" x2="550.1" y2="164.0" stroke="#16A34A" stroke-width="2.4"/>
+<line x1="534.3" y1="159.0" x2="534.3" y2="169.0" stroke="#16A34A" stroke-width="2"/>
+<line x1="550.1" y1="159.0" x2="550.1" y2="169.0" stroke="#16A34A" stroke-width="2"/>
+<circle cx="542.2" cy="164.0" r="5.5" fill="#16A34A"/>
+<text x="616" y="168.0" style="fill:#16A34A;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">+0.75</text>
+<text x="8" y="208.0" class="lab">Group B, heroin in B</text>
+<line x1="311.9" y1="204.0" x2="521.3" y2="204.0" stroke="#0D9488" stroke-width="2.4"/>
+<line x1="311.9" y1="199.0" x2="311.9" y2="209.0" stroke="#0D9488" stroke-width="2"/>
+<line x1="521.3" y1="199.0" x2="521.3" y2="209.0" stroke="#0D9488" stroke-width="2"/>
+<circle cx="416.6" cy="204.0" r="5.5" fill="#0D9488"/>
+<text x="616" y="208.0" style="fill:#0D9488;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">−1.65</text>
+<text x="8" y="248.0" class="lab">B − A, heroin in B</text>
+<line x1="271.4" y1="244.0" x2="483.4" y2="244.0" stroke="#8A6318" stroke-width="2.4"/>
+<line x1="271.4" y1="239.0" x2="271.4" y2="249.0" stroke="#8A6318" stroke-width="2"/>
+<line x1="483.4" y1="239.0" x2="483.4" y2="249.0" stroke="#8A6318" stroke-width="2"/>
+<circle cx="377.4" cy="244.0" r="5.5" fill="#8A6318"/>
+<text x="616" y="248.0" style="fill:#8A6318;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">−2.39</text>
+</svg><svg viewBox="0 0 680 102" role="img" class="chart" id="heroin-slope">
+<text x="188" y="16" class="tick">Heroin alone, HC1 interval, separate scale</text>
+<line x1="230.0" y1="28" x2="230.0" y2="68" class="grid"/>
+<text x="230.0" y="90" text-anchor="middle" class="tick">0</text>
+<line x1="314.0" y1="28" x2="314.0" y2="68" class="grid"/>
+<text x="314.0" y="90" text-anchor="middle" class="tick">4</text>
+<line x1="398.0" y1="28" x2="398.0" y2="68" class="grid"/>
+<text x="398.0" y="90" text-anchor="middle" class="tick">8</text>
+<line x1="482.0" y1="28" x2="482.0" y2="68" class="grid"/>
+<text x="482.0" y="90" text-anchor="middle" class="tick">12</text>
+<line x1="566.0" y1="28" x2="566.0" y2="68" class="grid"/>
+<text x="566.0" y="90" text-anchor="middle" class="tick">16</text>
+<line x1="230.0" y1="28" x2="230.0" y2="68" class="axis"/>
+<text x="8" y="48.0" class="lab">Heroin alone</text>
+<line x1="265.4" y1="44.0" x2="552.2" y2="44.0" stroke="#78716C" stroke-width="2.4"/>
+<line x1="265.4" y1="39.0" x2="265.4" y2="49.0" stroke="#78716C" stroke-width="2"/>
+<line x1="552.2" y1="39.0" x2="552.2" y2="49.0" stroke="#78716C" stroke-width="2"/>
+<circle cx="408.8" cy="44.0" r="5.5" fill="#78716C"/>
+<text x="616" y="48.0" style="fill:#78716C;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">+8.52</text>
+</svg></div>
+<p class="axis-name"><span>Y · Specification</span><span>X · Points of Democratic share per point of the rate</span></p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Pool</th><th>Term</th><th>Slope</th><th>Clustered SE</th><th>Clustered 95% CI</th><th>HC1 SE</th><th>p</th></tr></thead>
+<tbody>
+<tr><td>Heroin omitted</td><td>Group A</td><td>+0.76</td><td>0.08</td><td>+0.61 to +0.91</td><td>0.07</td><td>&lt;0.001</td></tr>
+<tr><td>Heroin omitted</td><td>Group B</td><td>−2.04</td><td>1.03</td><td>−4.05 to −0.03</td><td>0.73</td><td>0.047</td></tr>
+<tr><td>Heroin omitted</td><td>B − A</td><td>−2.80</td><td>1.04</td><td>−4.84 to −0.76</td><td>0.73</td><td>0.007</td></tr>
+<tr><td>Heroin in group B</td><td>Group A</td><td>+0.75</td><td>0.08</td><td>+0.60 to +0.90</td><td>0.07</td><td>&lt;0.001</td></tr>
+<tr><td>Heroin in group B</td><td>Group B</td><td>−1.65</td><td>1.02</td><td>−3.64 to +0.35</td><td>0.71</td><td>0.106</td></tr>
+<tr><td>Heroin in group B</td><td>B − A</td><td>−2.39</td><td>1.03</td><td>−4.41 to −0.37</td><td>0.72</td><td>0.020</td></tr>
+<tr><td>Heroin alone</td><td>Heroin</td><td>+8.52</td><td></td><td></td><td>3.48</td><td>0.015</td></tr>
+</tbody>
+</table>
+</div>
+<p class="fine">Each region enters once per substance. The outcome is repeated, so the clustered standard error groups rows by region. Substance indicators absorb the level of each rate. The group indicator itself is collinear with those indicators, so the test is the interaction of the rate with group B. Controls are log density, percent ages 18–25, and percent ages 12–17, centered at their vote-weighted means. Weights are two-party votes. N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
+
+<h2 id="correlations">Correlations</h2>
+<p>Vote-weighted, past-year cocaine and Democratic share correlate at <strong>+0.52</strong>. Methamphetamine correlates at <strong>−0.47</strong>. Log density correlates with Democratic share at <strong>0.73</strong>. After log density, the two age shares, and bachelor’s share, marijuana’s partial correlation is <strong>+0.48</strong>, cocaine’s is <strong>+0.43</strong>, and hallucinogens’ is <strong>+0.42</strong>. Methamphetamine’s partial correlation is <strong>+0.04</strong>.</p>
+<p>Each cell is the vote-weighted correlation. Gold is positive. Blue is negative. The number is the correlation.</p>
+<div class="table-scroll heat-wrap" id="corr-heatmap"><svg viewBox="0 0 838 860" role="img" class="chart" id="corr-matrix">
+<text x="140.0" y="140.0" text-anchor="start" transform="rotate(-58 140.0 140.0)" class="tick">Democratic share</text>
+<text x="130" y="169.0" text-anchor="end" class="tick">Democratic share</text>
+<text x="176.0" y="140.0" text-anchor="start" transform="rotate(-58 176.0 140.0)" class="tick">Log density</text>
+<text x="130" y="205.0" text-anchor="end" class="tick">Log density</text>
+<text x="212.0" y="140.0" text-anchor="start" transform="rotate(-58 212.0 140.0)" class="tick">Ages 18–25</text>
+<text x="130" y="241.0" text-anchor="end" class="tick">Ages 18–25</text>
+<text x="248.0" y="140.0" text-anchor="start" transform="rotate(-58 248.0 140.0)" class="tick">Ages 12–17</text>
+<text x="130" y="277.0" text-anchor="end" class="tick">Ages 12–17</text>
+<text x="284.0" y="140.0" text-anchor="start" transform="rotate(-58 284.0 140.0)" class="tick">Bachelor's</text>
+<text x="130" y="313.0" text-anchor="end" class="tick">Bachelor's</text>
+<text x="320.0" y="140.0" text-anchor="start" transform="rotate(-58 320.0 140.0)" class="tick">Marijuana</text>
+<text x="130" y="349.0" text-anchor="end" class="tick">Marijuana</text>
+<text x="356.0" y="140.0" text-anchor="start" transform="rotate(-58 356.0 140.0)" class="tick">Hallucinogens</text>
+<text x="130" y="385.0" text-anchor="end" class="tick">Hallucinogens</text>
+<text x="392.0" y="140.0" text-anchor="start" transform="rotate(-58 392.0 140.0)" class="tick">Alcohol</text>
+<text x="130" y="421.0" text-anchor="end" class="tick">Alcohol</text>
+<text x="428.0" y="140.0" text-anchor="start" transform="rotate(-58 428.0 140.0)" class="tick">Cocaine</text>
+<text x="130" y="457.0" text-anchor="end" class="tick">Cocaine</text>
+<text x="464.0" y="140.0" text-anchor="start" transform="rotate(-58 464.0 140.0)" class="tick">Opioid misuse</text>
+<text x="130" y="493.0" text-anchor="end" class="tick">Opioid misuse</text>
+<text x="500.0" y="140.0" text-anchor="start" transform="rotate(-58 500.0 140.0)" class="tick">Pain relievers</text>
+<text x="130" y="529.0" text-anchor="end" class="tick">Pain relievers</text>
+<text x="536.0" y="140.0" text-anchor="start" transform="rotate(-58 536.0 140.0)" class="tick">Methamphetamine</text>
+<text x="130" y="565.0" text-anchor="end" class="tick">Methamphetamine</text>
+<text x="572.0" y="140.0" text-anchor="start" transform="rotate(-58 572.0 140.0)" class="tick">Heroin</text>
+<text x="130" y="601.0" text-anchor="end" class="tick">Heroin</text>
+<text x="608.0" y="140.0" text-anchor="start" transform="rotate(-58 608.0 140.0)" class="tick">Binge alcohol</text>
+<text x="130" y="637.0" text-anchor="end" class="tick">Binge alcohol</text>
+<text x="644.0" y="140.0" text-anchor="start" transform="rotate(-58 644.0 140.0)" class="tick">Other illicit</text>
+<text x="130" y="673.0" text-anchor="end" class="tick">Other illicit</text>
+<text x="680.0" y="140.0" text-anchor="start" transform="rotate(-58 680.0 140.0)" class="tick">Illicit drugs</text>
+<text x="130" y="709.0" text-anchor="end" class="tick">Illicit drugs</text>
+<text x="716.0" y="140.0" text-anchor="start" transform="rotate(-58 716.0 140.0)" class="tick">Marijuana, year</text>
+<text x="130" y="745.0" text-anchor="end" class="tick">Marijuana, year</text>
+<text x="752.0" y="140.0" text-anchor="start" transform="rotate(-58 752.0 140.0)" class="tick">Underage alcohol</text>
+<text x="130" y="781.0" text-anchor="end" class="tick">Underage alcohol</text>
+<text x="788.0" y="140.0" text-anchor="start" transform="rotate(-58 788.0 140.0)" class="tick">Underage binge</text>
+<text x="130" y="817.0" text-anchor="end" class="tick">Underage binge</text>
+<rect x="138.0" y="148.0" width="35" height="35" fill="#8A6318"/>
+<text x="155.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="174.0" y="148.0" width="35" height="35" fill="#A7894E"/>
+<text x="191.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.73</text>
+<rect x="210.0" y="148.0" width="35" height="35" fill="#F4EDE0"/>
+<text x="227.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="246.0" y="148.0" width="35" height="35" fill="#B6BBD4"/>
+<text x="263.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.30</text>
+<rect x="282.0" y="148.0" width="35" height="35" fill="#A98C53"/>
+<text x="299.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.71</text>
+<rect x="318.0" y="148.0" width="35" height="35" fill="#C9B58F"/>
+<text x="335.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.42</text>
+<rect x="354.0" y="148.0" width="35" height="35" fill="#BEA77B"/>
+<text x="371.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.52</text>
+<rect x="390.0" y="148.0" width="35" height="35" fill="#C2AD83"/>
+<text x="407.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.48</text>
+<rect x="426.0" y="148.0" width="35" height="35" fill="#BEA67A"/>
+<text x="443.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.52</text>
+<rect x="462.0" y="148.0" width="35" height="35" fill="#E0DEDF"/>
+<text x="479.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.10</text>
+<rect x="498.0" y="148.0" width="35" height="35" fill="#BEC3D6"/>
+<text x="515.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.26</text>
+<rect x="534.0" y="148.0" width="35" height="35" fill="#909DCB"/>
+<text x="551.5" y="169.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.47</text>
+<rect x="570.0" y="148.0" width="35" height="35" fill="#DBCCB1"/>
+<text x="587.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="606.0" y="148.0" width="35" height="35" fill="#D8C9AC"/>
+<text x="623.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="642.0" y="148.0" width="35" height="35" fill="#D3C2A1"/>
+<text x="659.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="678.0" y="148.0" width="35" height="35" fill="#C6B28A"/>
+<text x="695.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.44</text>
+<rect x="714.0" y="148.0" width="35" height="35" fill="#C1AB80"/>
+<text x="731.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.49</text>
+<rect x="750.0" y="148.0" width="35" height="35" fill="#E1D5BC"/>
+<text x="767.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.19</text>
+<rect x="786.0" y="148.0" width="35" height="35" fill="#F4EEE1"/>
+<text x="803.5" y="169.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="138.0" y="184.0" width="35" height="35" fill="#A7894E"/>
+<text x="155.5" y="205.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.73</text>
+<rect x="174.0" y="184.0" width="35" height="35" fill="#8A6318"/>
+<text x="191.5" y="205.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="210.0" y="184.0" width="35" height="35" fill="#D2D3DB"/>
+<text x="227.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="246.0" y="184.0" width="35" height="35" fill="#C3C7D8"/>
+<text x="263.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.24</text>
+<rect x="282.0" y="184.0" width="35" height="35" fill="#B59B69"/>
+<text x="299.5" y="205.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.61</text>
+<rect x="318.0" y="184.0" width="35" height="35" fill="#E8DECA"/>
+<text x="335.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="354.0" y="184.0" width="35" height="35" fill="#DBCDB1"/>
+<text x="371.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="390.0" y="184.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="407.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="426.0" y="184.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="443.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="462.0" y="184.0" width="35" height="35" fill="#E2DFDF"/>
+<text x="479.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.09</text>
+<rect x="498.0" y="184.0" width="35" height="35" fill="#C1C5D7"/>
+<text x="515.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.24</text>
+<rect x="534.0" y="184.0" width="35" height="35" fill="#8392C8"/>
+<text x="551.5" y="205.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.53</text>
+<rect x="570.0" y="184.0" width="35" height="35" fill="#DCCEB3"/>
+<text x="587.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.24</text>
+<rect x="606.0" y="184.0" width="35" height="35" fill="#E7DDC8"/>
+<text x="623.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="642.0" y="184.0" width="35" height="35" fill="#DDCFB5"/>
+<text x="659.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.23</text>
+<rect x="678.0" y="184.0" width="35" height="35" fill="#E6DBC5"/>
+<text x="695.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.15</text>
+<rect x="714.0" y="184.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="731.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="750.0" y="184.0" width="35" height="35" fill="#E8E4E0"/>
+<text x="767.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="786.0" y="184.0" width="35" height="35" fill="#C7CAD8"/>
+<text x="803.5" y="205.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.22</text>
+<rect x="138.0" y="220.0" width="35" height="35" fill="#F4EDE0"/>
+<text x="155.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="174.0" y="220.0" width="35" height="35" fill="#D2D3DB"/>
+<text x="191.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="210.0" y="220.0" width="35" height="35" fill="#8A6318"/>
+<text x="227.5" y="241.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="246.0" y="220.0" width="35" height="35" fill="#E7DDC9"/>
+<text x="263.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="282.0" y="220.0" width="35" height="35" fill="#F5F0E4"/>
+<text x="299.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.00</text>
+<rect x="318.0" y="220.0" width="35" height="35" fill="#F4EFE4"/>
+<text x="335.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="354.0" y="220.0" width="35" height="35" fill="#E1D5BD"/>
+<text x="371.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.19</text>
+<rect x="390.0" y="220.0" width="35" height="35" fill="#D8D8DD"/>
+<text x="407.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.14</text>
+<rect x="426.0" y="220.0" width="35" height="35" fill="#E0D3BB"/>
+<text x="443.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="462.0" y="220.0" width="35" height="35" fill="#E5DAC4"/>
+<text x="479.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.16</text>
+<rect x="498.0" y="220.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="515.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="534.0" y="220.0" width="35" height="35" fill="#F0EBE2"/>
+<text x="551.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.03</text>
+<rect x="570.0" y="220.0" width="35" height="35" fill="#D6D6DC"/>
+<text x="587.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.15</text>
+<rect x="606.0" y="220.0" width="35" height="35" fill="#EAE0CD"/>
+<text x="623.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.11</text>
+<rect x="642.0" y="220.0" width="35" height="35" fill="#F4EFE4"/>
+<text x="659.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="678.0" y="220.0" width="35" height="35" fill="#F5EFE3"/>
+<text x="695.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.01</text>
+<rect x="714.0" y="220.0" width="35" height="35" fill="#F1EADB"/>
+<text x="731.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="750.0" y="220.0" width="35" height="35" fill="#CEBC99"/>
+<text x="767.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.37</text>
+<rect x="786.0" y="220.0" width="35" height="35" fill="#CBB893"/>
+<text x="803.5" y="241.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="138.0" y="256.0" width="35" height="35" fill="#B6BBD4"/>
+<text x="155.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.30</text>
+<rect x="174.0" y="256.0" width="35" height="35" fill="#C3C7D8"/>
+<text x="191.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.24</text>
+<rect x="210.0" y="256.0" width="35" height="35" fill="#E7DDC9"/>
+<text x="227.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="246.0" y="256.0" width="35" height="35" fill="#8A6318"/>
+<text x="263.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="282.0" y="256.0" width="35" height="35" fill="#B2B9D3"/>
+<text x="299.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.31</text>
+<rect x="318.0" y="256.0" width="35" height="35" fill="#9DA7CE"/>
+<text x="335.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.41</text>
+<rect x="354.0" y="256.0" width="35" height="35" fill="#99A4CD"/>
+<text x="371.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="390.0" y="256.0" width="35" height="35" fill="#8A98CA"/>
+<text x="407.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.50</text>
+<rect x="426.0" y="256.0" width="35" height="35" fill="#94A1CC"/>
+<text x="443.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.45</text>
+<rect x="462.0" y="256.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="479.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="498.0" y="256.0" width="35" height="35" fill="#E2D6BF"/>
+<text x="515.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="534.0" y="256.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="551.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="570.0" y="256.0" width="35" height="35" fill="#D9D9DD"/>
+<text x="587.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.13</text>
+<rect x="606.0" y="256.0" width="35" height="35" fill="#BEC3D6"/>
+<text x="623.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.26</text>
+<rect x="642.0" y="256.0" width="35" height="35" fill="#98A3CD"/>
+<text x="659.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.44</text>
+<rect x="678.0" y="256.0" width="35" height="35" fill="#99A4CD"/>
+<text x="695.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="714.0" y="256.0" width="35" height="35" fill="#9CA7CE"/>
+<text x="731.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.42</text>
+<rect x="750.0" y="256.0" width="35" height="35" fill="#95A1CC"/>
+<text x="767.5" y="277.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.45</text>
+<rect x="786.0" y="256.0" width="35" height="35" fill="#B4BBD4"/>
+<text x="803.5" y="277.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.30</text>
+<rect x="138.0" y="292.0" width="35" height="35" fill="#A98C53"/>
+<text x="155.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.71</text>
+<rect x="174.0" y="292.0" width="35" height="35" fill="#B59B69"/>
+<text x="191.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.61</text>
+<rect x="210.0" y="292.0" width="35" height="35" fill="#F5F0E4"/>
+<text x="227.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.00</text>
+<rect x="246.0" y="292.0" width="35" height="35" fill="#B2B9D3"/>
+<text x="263.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.31</text>
+<rect x="282.0" y="292.0" width="35" height="35" fill="#8A6318"/>
+<text x="299.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="318.0" y="292.0" width="35" height="35" fill="#E2D6BF"/>
+<text x="335.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="354.0" y="292.0" width="35" height="35" fill="#CFBD9B"/>
+<text x="371.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.36</text>
+<rect x="390.0" y="292.0" width="35" height="35" fill="#B19662"/>
+<text x="407.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.64</text>
+<rect x="426.0" y="292.0" width="35" height="35" fill="#DACCB0"/>
+<text x="443.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.26</text>
+<rect x="462.0" y="292.0" width="35" height="35" fill="#AFB6D3"/>
+<text x="479.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.33</text>
+<rect x="498.0" y="292.0" width="35" height="35" fill="#9CA6CE"/>
+<text x="515.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.42</text>
+<rect x="534.0" y="292.0" width="35" height="35" fill="#8191C7"/>
+<text x="551.5" y="313.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.54</text>
+<rect x="570.0" y="292.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="587.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="606.0" y="292.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="623.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="642.0" y="292.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="659.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="678.0" y="292.0" width="35" height="35" fill="#E0D4BB"/>
+<text x="695.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="714.0" y="292.0" width="35" height="35" fill="#D8C9AC"/>
+<text x="731.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="750.0" y="292.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="767.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="786.0" y="292.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="803.5" y="313.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="138.0" y="328.0" width="35" height="35" fill="#C9B58F"/>
+<text x="155.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.42</text>
+<rect x="174.0" y="328.0" width="35" height="35" fill="#E8DECA"/>
+<text x="191.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="210.0" y="328.0" width="35" height="35" fill="#F4EFE4"/>
+<text x="227.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="246.0" y="328.0" width="35" height="35" fill="#9DA7CE"/>
+<text x="263.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.41</text>
+<rect x="282.0" y="328.0" width="35" height="35" fill="#E2D6BF"/>
+<text x="299.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="318.0" y="328.0" width="35" height="35" fill="#8A6318"/>
+<text x="335.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="354.0" y="328.0" width="35" height="35" fill="#AF935E"/>
+<text x="371.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.66</text>
+<rect x="390.0" y="328.0" width="35" height="35" fill="#CBB792"/>
+<text x="407.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="426.0" y="328.0" width="35" height="35" fill="#B79D6C"/>
+<text x="443.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.59</text>
+<rect x="462.0" y="328.0" width="35" height="35" fill="#F3ECDF"/>
+<text x="479.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="498.0" y="328.0" width="35" height="35" fill="#E8E4E0"/>
+<text x="515.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="534.0" y="328.0" width="35" height="35" fill="#E9DFCC"/>
+<text x="551.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="570.0" y="328.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="587.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="606.0" y="328.0" width="35" height="35" fill="#D3C2A2"/>
+<text x="623.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.32</text>
+<rect x="642.0" y="328.0" width="35" height="35" fill="#C0AA7F"/>
+<text x="659.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.50</text>
+<rect x="678.0" y="328.0" width="35" height="35" fill="#8B651A"/>
+<text x="695.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.99</text>
+<rect x="714.0" y="328.0" width="35" height="35" fill="#8E681F"/>
+<text x="731.5" y="349.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.96</text>
+<rect x="750.0" y="328.0" width="35" height="35" fill="#C9B690"/>
+<text x="767.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.41</text>
+<rect x="786.0" y="328.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="803.5" y="349.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="138.0" y="364.0" width="35" height="35" fill="#BEA77B"/>
+<text x="155.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.52</text>
+<rect x="174.0" y="364.0" width="35" height="35" fill="#DBCDB1"/>
+<text x="191.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="210.0" y="364.0" width="35" height="35" fill="#E1D5BD"/>
+<text x="227.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.19</text>
+<rect x="246.0" y="364.0" width="35" height="35" fill="#99A4CD"/>
+<text x="263.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="282.0" y="364.0" width="35" height="35" fill="#CFBD9B"/>
+<text x="299.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.36</text>
+<rect x="318.0" y="364.0" width="35" height="35" fill="#AF935E"/>
+<text x="335.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.66</text>
+<rect x="354.0" y="364.0" width="35" height="35" fill="#8A6318"/>
+<text x="371.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="390.0" y="364.0" width="35" height="35" fill="#D0BF9D"/>
+<text x="407.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.35</text>
+<rect x="426.0" y="364.0" width="35" height="35" fill="#A08042"/>
+<text x="443.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.80</text>
+<rect x="462.0" y="364.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="479.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="498.0" y="364.0" width="35" height="35" fill="#F2EADC"/>
+<text x="515.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="534.0" y="364.0" width="35" height="35" fill="#E8DECA"/>
+<text x="551.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="570.0" y="364.0" width="35" height="35" fill="#F1E9DA"/>
+<text x="587.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.05</text>
+<rect x="606.0" y="364.0" width="35" height="35" fill="#D9CAAD"/>
+<text x="623.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="642.0" y="364.0" width="35" height="35" fill="#AB8E57"/>
+<text x="659.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.69</text>
+<rect x="678.0" y="364.0" width="35" height="35" fill="#AC8F57"/>
+<text x="695.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.69</text>
+<rect x="714.0" y="364.0" width="35" height="35" fill="#A98B52"/>
+<text x="731.5" y="385.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.71</text>
+<rect x="750.0" y="364.0" width="35" height="35" fill="#CDBB97"/>
+<text x="767.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.38</text>
+<rect x="786.0" y="364.0" width="35" height="35" fill="#DBCCB0"/>
+<text x="803.5" y="385.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="138.0" y="400.0" width="35" height="35" fill="#C2AD83"/>
+<text x="155.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.48</text>
+<rect x="174.0" y="400.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="191.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="210.0" y="400.0" width="35" height="35" fill="#D8D8DD"/>
+<text x="227.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.14</text>
+<rect x="246.0" y="400.0" width="35" height="35" fill="#8A98CA"/>
+<text x="263.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.50</text>
+<rect x="282.0" y="400.0" width="35" height="35" fill="#B19662"/>
+<text x="299.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.64</text>
+<rect x="318.0" y="400.0" width="35" height="35" fill="#CBB792"/>
+<text x="335.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="354.0" y="400.0" width="35" height="35" fill="#D0BF9D"/>
+<text x="371.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.35</text>
+<rect x="390.0" y="400.0" width="35" height="35" fill="#8A6318"/>
+<text x="407.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="426.0" y="400.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="443.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.30</text>
+<rect x="462.0" y="400.0" width="35" height="35" fill="#99A4CD"/>
+<text x="479.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="498.0" y="400.0" width="35" height="35" fill="#8F9CCB"/>
+<text x="515.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.48</text>
+<rect x="534.0" y="400.0" width="35" height="35" fill="#A2ACCF"/>
+<text x="551.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.39</text>
+<rect x="570.0" y="400.0" width="35" height="35" fill="#EBE1CE"/>
+<text x="587.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.11</text>
+<rect x="606.0" y="400.0" width="35" height="35" fill="#B19561"/>
+<text x="623.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.64</text>
+<rect x="642.0" y="400.0" width="35" height="35" fill="#E5D9C3"/>
+<text x="659.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.16</text>
+<rect x="678.0" y="400.0" width="35" height="35" fill="#C9B58E"/>
+<text x="695.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.42</text>
+<rect x="714.0" y="400.0" width="35" height="35" fill="#C4AE85"/>
+<text x="731.5" y="421.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.46</text>
+<rect x="750.0" y="400.0" width="35" height="35" fill="#B0945F"/>
+<text x="767.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.65</text>
+<rect x="786.0" y="400.0" width="35" height="35" fill="#C0A97D"/>
+<text x="803.5" y="421.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.50</text>
+<rect x="138.0" y="436.0" width="35" height="35" fill="#BEA67A"/>
+<text x="155.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.52</text>
+<rect x="174.0" y="436.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="191.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="210.0" y="436.0" width="35" height="35" fill="#E0D3BB"/>
+<text x="227.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="246.0" y="436.0" width="35" height="35" fill="#94A1CC"/>
+<text x="263.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.45</text>
+<rect x="282.0" y="436.0" width="35" height="35" fill="#DACCB0"/>
+<text x="299.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.26</text>
+<rect x="318.0" y="436.0" width="35" height="35" fill="#B79D6C"/>
+<text x="335.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.59</text>
+<rect x="354.0" y="436.0" width="35" height="35" fill="#A08042"/>
+<text x="371.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.80</text>
+<rect x="390.0" y="436.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="407.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.30</text>
+<rect x="426.0" y="436.0" width="35" height="35" fill="#8A6318"/>
+<text x="443.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="462.0" y="436.0" width="35" height="35" fill="#E3D7C0"/>
+<text x="479.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="498.0" y="436.0" width="35" height="35" fill="#EFE7D7"/>
+<text x="515.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="534.0" y="436.0" width="35" height="35" fill="#F2EBDC"/>
+<text x="551.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="570.0" y="436.0" width="35" height="35" fill="#EDE4D3"/>
+<text x="587.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.08</text>
+<rect x="606.0" y="436.0" width="35" height="35" fill="#C9B690"/>
+<text x="623.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.41</text>
+<rect x="642.0" y="436.0" width="35" height="35" fill="#A5864B"/>
+<text x="659.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.75</text>
+<rect x="678.0" y="436.0" width="35" height="35" fill="#B29763"/>
+<text x="695.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.63</text>
+<rect x="714.0" y="436.0" width="35" height="35" fill="#B29764"/>
+<text x="731.5" y="457.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.63</text>
+<rect x="750.0" y="436.0" width="35" height="35" fill="#CDBA96"/>
+<text x="767.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.38</text>
+<rect x="786.0" y="436.0" width="35" height="35" fill="#D1C09F"/>
+<text x="803.5" y="457.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="138.0" y="472.0" width="35" height="35" fill="#E0DEDF"/>
+<text x="155.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.10</text>
+<rect x="174.0" y="472.0" width="35" height="35" fill="#E2DFDF"/>
+<text x="191.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.09</text>
+<rect x="210.0" y="472.0" width="35" height="35" fill="#E5DAC4"/>
+<text x="227.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.16</text>
+<rect x="246.0" y="472.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="263.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="282.0" y="472.0" width="35" height="35" fill="#AFB6D3"/>
+<text x="299.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.33</text>
+<rect x="318.0" y="472.0" width="35" height="35" fill="#F3ECDF"/>
+<text x="335.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="354.0" y="472.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="371.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="390.0" y="472.0" width="35" height="35" fill="#99A4CD"/>
+<text x="407.5" y="493.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="426.0" y="472.0" width="35" height="35" fill="#E3D7C0"/>
+<text x="443.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="462.0" y="472.0" width="35" height="35" fill="#8A6318"/>
+<text x="479.5" y="493.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="498.0" y="472.0" width="35" height="35" fill="#906B24"/>
+<text x="515.5" y="493.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.94</text>
+<rect x="534.0" y="472.0" width="35" height="35" fill="#C2AC82"/>
+<text x="551.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.48</text>
+<rect x="570.0" y="472.0" width="35" height="35" fill="#E0D3BA"/>
+<text x="587.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.21</text>
+<rect x="606.0" y="472.0" width="35" height="35" fill="#F3EDE3"/>
+<text x="623.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="642.0" y="472.0" width="35" height="35" fill="#CAB792"/>
+<text x="659.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="678.0" y="472.0" width="35" height="35" fill="#EFE7D7"/>
+<text x="695.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="714.0" y="472.0" width="35" height="35" fill="#F2EBDD"/>
+<text x="731.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.03</text>
+<rect x="750.0" y="472.0" width="35" height="35" fill="#BABFD5"/>
+<text x="767.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.28</text>
+<rect x="786.0" y="472.0" width="35" height="35" fill="#CDCEDA"/>
+<text x="803.5" y="493.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.19</text>
+<rect x="138.0" y="508.0" width="35" height="35" fill="#BEC3D6"/>
+<text x="155.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.26</text>
+<rect x="174.0" y="508.0" width="35" height="35" fill="#C1C5D7"/>
+<text x="191.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.24</text>
+<rect x="210.0" y="508.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="227.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="246.0" y="508.0" width="35" height="35" fill="#E2D6BF"/>
+<text x="263.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.18</text>
+<rect x="282.0" y="508.0" width="35" height="35" fill="#9CA6CE"/>
+<text x="299.5" y="529.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.42</text>
+<rect x="318.0" y="508.0" width="35" height="35" fill="#E8E4E0"/>
+<text x="335.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="354.0" y="508.0" width="35" height="35" fill="#F2EADC"/>
+<text x="371.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="390.0" y="508.0" width="35" height="35" fill="#8F9CCB"/>
+<text x="407.5" y="529.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.48</text>
+<rect x="426.0" y="508.0" width="35" height="35" fill="#EFE7D7"/>
+<text x="443.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="462.0" y="508.0" width="35" height="35" fill="#906B24"/>
+<text x="479.5" y="529.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.94</text>
+<rect x="498.0" y="508.0" width="35" height="35" fill="#8A6318"/>
+<text x="515.5" y="529.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="534.0" y="508.0" width="35" height="35" fill="#BDA678"/>
+<text x="551.5" y="529.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.53</text>
+<rect x="570.0" y="508.0" width="35" height="35" fill="#EEE6D5"/>
+<text x="587.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="606.0" y="508.0" width="35" height="35" fill="#E2E0DF"/>
+<text x="623.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.09</text>
+<rect x="642.0" y="508.0" width="35" height="35" fill="#D5C5A5"/>
+<text x="659.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="678.0" y="508.0" width="35" height="35" fill="#EEEAE2"/>
+<text x="695.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.03</text>
+<rect x="714.0" y="508.0" width="35" height="35" fill="#E7E4E0"/>
+<text x="731.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="750.0" y="508.0" width="35" height="35" fill="#B0B7D3"/>
+<text x="767.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.33</text>
+<rect x="786.0" y="508.0" width="35" height="35" fill="#CBCDD9"/>
+<text x="803.5" y="529.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.20</text>
+<rect x="138.0" y="544.0" width="35" height="35" fill="#909DCB"/>
+<text x="155.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.47</text>
+<rect x="174.0" y="544.0" width="35" height="35" fill="#8392C8"/>
+<text x="191.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.53</text>
+<rect x="210.0" y="544.0" width="35" height="35" fill="#F0EBE2"/>
+<text x="227.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.03</text>
+<rect x="246.0" y="544.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="263.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="282.0" y="544.0" width="35" height="35" fill="#8191C7"/>
+<text x="299.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.54</text>
+<rect x="318.0" y="544.0" width="35" height="35" fill="#E9DFCC"/>
+<text x="335.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="354.0" y="544.0" width="35" height="35" fill="#E8DECA"/>
+<text x="371.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="390.0" y="544.0" width="35" height="35" fill="#A2ACCF"/>
+<text x="407.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.39</text>
+<rect x="426.0" y="544.0" width="35" height="35" fill="#F2EBDC"/>
+<text x="443.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="462.0" y="544.0" width="35" height="35" fill="#C2AC82"/>
+<text x="479.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.48</text>
+<rect x="498.0" y="544.0" width="35" height="35" fill="#BDA678"/>
+<text x="515.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.53</text>
+<rect x="534.0" y="544.0" width="35" height="35" fill="#8A6318"/>
+<text x="551.5" y="565.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="570.0" y="544.0" width="35" height="35" fill="#E6E3E0"/>
+<text x="587.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.08</text>
+<rect x="606.0" y="544.0" width="35" height="35" fill="#D1D2DB"/>
+<text x="623.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="642.0" y="544.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="659.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="678.0" y="544.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="695.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="714.0" y="544.0" width="35" height="35" fill="#EEE6D5"/>
+<text x="731.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="750.0" y="544.0" width="35" height="35" fill="#D2D2DB"/>
+<text x="767.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="786.0" y="544.0" width="35" height="35" fill="#E7E4E0"/>
+<text x="803.5" y="565.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="138.0" y="580.0" width="35" height="35" fill="#DBCCB1"/>
+<text x="155.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="174.0" y="580.0" width="35" height="35" fill="#DCCEB3"/>
+<text x="191.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.24</text>
+<rect x="210.0" y="580.0" width="35" height="35" fill="#D6D6DC"/>
+<text x="227.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.15</text>
+<rect x="246.0" y="580.0" width="35" height="35" fill="#D9D9DD"/>
+<text x="263.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.13</text>
+<rect x="282.0" y="580.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="299.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="318.0" y="580.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="335.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="354.0" y="580.0" width="35" height="35" fill="#F1E9DA"/>
+<text x="371.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.05</text>
+<rect x="390.0" y="580.0" width="35" height="35" fill="#EBE1CE"/>
+<text x="407.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.11</text>
+<rect x="426.0" y="580.0" width="35" height="35" fill="#EDE4D3"/>
+<text x="443.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.08</text>
+<rect x="462.0" y="580.0" width="35" height="35" fill="#E0D3BA"/>
+<text x="479.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.21</text>
+<rect x="498.0" y="580.0" width="35" height="35" fill="#EEE6D5"/>
+<text x="515.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="534.0" y="580.0" width="35" height="35" fill="#E6E3E0"/>
+<text x="551.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.08</text>
+<rect x="570.0" y="580.0" width="35" height="35" fill="#8A6318"/>
+<text x="587.5" y="601.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="606.0" y="580.0" width="35" height="35" fill="#F0E8D8"/>
+<text x="623.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.06</text>
+<rect x="642.0" y="580.0" width="35" height="35" fill="#DBCDB1"/>
+<text x="659.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="678.0" y="580.0" width="35" height="35" fill="#E7DCC7"/>
+<text x="695.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="714.0" y="580.0" width="35" height="35" fill="#E7DDC8"/>
+<text x="731.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="750.0" y="580.0" width="35" height="35" fill="#F5EFE3"/>
+<text x="767.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.00</text>
+<rect x="786.0" y="580.0" width="35" height="35" fill="#F1ECE3"/>
+<text x="803.5" y="601.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.02</text>
+<rect x="138.0" y="616.0" width="35" height="35" fill="#D8C9AC"/>
+<text x="155.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="174.0" y="616.0" width="35" height="35" fill="#E7DDC8"/>
+<text x="191.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="210.0" y="616.0" width="35" height="35" fill="#EAE0CD"/>
+<text x="227.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.11</text>
+<rect x="246.0" y="616.0" width="35" height="35" fill="#BEC3D6"/>
+<text x="263.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.26</text>
+<rect x="282.0" y="616.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="299.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="318.0" y="616.0" width="35" height="35" fill="#D3C2A2"/>
+<text x="335.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.32</text>
+<rect x="354.0" y="616.0" width="35" height="35" fill="#D9CAAD"/>
+<text x="371.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="390.0" y="616.0" width="35" height="35" fill="#B19561"/>
+<text x="407.5" y="637.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.64</text>
+<rect x="426.0" y="616.0" width="35" height="35" fill="#C9B690"/>
+<text x="443.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.41</text>
+<rect x="462.0" y="616.0" width="35" height="35" fill="#F3EDE3"/>
+<text x="479.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="498.0" y="616.0" width="35" height="35" fill="#E2E0DF"/>
+<text x="515.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.09</text>
+<rect x="534.0" y="616.0" width="35" height="35" fill="#D1D2DB"/>
+<text x="551.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="570.0" y="616.0" width="35" height="35" fill="#F0E8D8"/>
+<text x="587.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.06</text>
+<rect x="606.0" y="616.0" width="35" height="35" fill="#8A6318"/>
+<text x="623.5" y="637.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="642.0" y="616.0" width="35" height="35" fill="#DFD2B9"/>
+<text x="659.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.21</text>
+<rect x="678.0" y="616.0" width="35" height="35" fill="#D1C09F"/>
+<text x="695.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="714.0" y="616.0" width="35" height="35" fill="#CFBD9B"/>
+<text x="731.5" y="637.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.36</text>
+<rect x="750.0" y="616.0" width="35" height="35" fill="#B59B69"/>
+<text x="767.5" y="637.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.60</text>
+<rect x="786.0" y="616.0" width="35" height="35" fill="#AE925D"/>
+<text x="803.5" y="637.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.66</text>
+<rect x="138.0" y="652.0" width="35" height="35" fill="#D3C2A1"/>
+<text x="155.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="174.0" y="652.0" width="35" height="35" fill="#DDCFB5"/>
+<text x="191.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.23</text>
+<rect x="210.0" y="652.0" width="35" height="35" fill="#F4EFE4"/>
+<text x="227.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.01</text>
+<rect x="246.0" y="652.0" width="35" height="35" fill="#98A3CD"/>
+<text x="263.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.44</text>
+<rect x="282.0" y="652.0" width="35" height="35" fill="#E8DDC9"/>
+<text x="299.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="318.0" y="652.0" width="35" height="35" fill="#C0AA7F"/>
+<text x="335.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.50</text>
+<rect x="354.0" y="652.0" width="35" height="35" fill="#AB8E57"/>
+<text x="371.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.69</text>
+<rect x="390.0" y="652.0" width="35" height="35" fill="#E5D9C3"/>
+<text x="407.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.16</text>
+<rect x="426.0" y="652.0" width="35" height="35" fill="#A5864B"/>
+<text x="443.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.75</text>
+<rect x="462.0" y="652.0" width="35" height="35" fill="#CAB792"/>
+<text x="479.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="498.0" y="652.0" width="35" height="35" fill="#D5C5A5"/>
+<text x="515.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="534.0" y="652.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="551.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="570.0" y="652.0" width="35" height="35" fill="#DBCDB1"/>
+<text x="587.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="606.0" y="652.0" width="35" height="35" fill="#DFD2B9"/>
+<text x="623.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.21</text>
+<rect x="642.0" y="652.0" width="35" height="35" fill="#8A6318"/>
+<text x="659.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="678.0" y="652.0" width="35" height="35" fill="#B9A070"/>
+<text x="695.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.57</text>
+<rect x="714.0" y="652.0" width="35" height="35" fill="#BDA679"/>
+<text x="731.5" y="673.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.53</text>
+<rect x="750.0" y="652.0" width="35" height="35" fill="#E4D8C1"/>
+<text x="767.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.17</text>
+<rect x="786.0" y="652.0" width="35" height="35" fill="#E8DECA"/>
+<text x="803.5" y="673.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="138.0" y="688.0" width="35" height="35" fill="#C6B28A"/>
+<text x="155.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.44</text>
+<rect x="174.0" y="688.0" width="35" height="35" fill="#E6DBC5"/>
+<text x="191.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.15</text>
+<rect x="210.0" y="688.0" width="35" height="35" fill="#F5EFE3"/>
+<text x="227.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.01</text>
+<rect x="246.0" y="688.0" width="35" height="35" fill="#99A4CD"/>
+<text x="263.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.43</text>
+<rect x="282.0" y="688.0" width="35" height="35" fill="#E0D4BB"/>
+<text x="299.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="318.0" y="688.0" width="35" height="35" fill="#8B651A"/>
+<text x="335.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.99</text>
+<rect x="354.0" y="688.0" width="35" height="35" fill="#AC8F57"/>
+<text x="371.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.69</text>
+<rect x="390.0" y="688.0" width="35" height="35" fill="#C9B58E"/>
+<text x="407.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.42</text>
+<rect x="426.0" y="688.0" width="35" height="35" fill="#B29763"/>
+<text x="443.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.63</text>
+<rect x="462.0" y="688.0" width="35" height="35" fill="#EFE7D7"/>
+<text x="479.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="498.0" y="688.0" width="35" height="35" fill="#EEEAE2"/>
+<text x="515.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.03</text>
+<rect x="534.0" y="688.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="551.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="570.0" y="688.0" width="35" height="35" fill="#E7DCC7"/>
+<text x="587.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="606.0" y="688.0" width="35" height="35" fill="#D1C09F"/>
+<text x="623.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="642.0" y="688.0" width="35" height="35" fill="#B9A070"/>
+<text x="659.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.57</text>
+<rect x="678.0" y="688.0" width="35" height="35" fill="#8A6318"/>
+<text x="695.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="714.0" y="688.0" width="35" height="35" fill="#8D671E"/>
+<text x="731.5" y="709.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.97</text>
+<rect x="750.0" y="688.0" width="35" height="35" fill="#C7B38C"/>
+<text x="767.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.43</text>
+<rect x="786.0" y="688.0" width="35" height="35" fill="#D4C3A3"/>
+<text x="803.5" y="709.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.32</text>
+<rect x="138.0" y="724.0" width="35" height="35" fill="#C1AB80"/>
+<text x="155.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.49</text>
+<rect x="174.0" y="724.0" width="35" height="35" fill="#E1D4BC"/>
+<text x="191.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.20</text>
+<rect x="210.0" y="724.0" width="35" height="35" fill="#F1EADB"/>
+<text x="227.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.04</text>
+<rect x="246.0" y="724.0" width="35" height="35" fill="#9CA7CE"/>
+<text x="263.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.42</text>
+<rect x="282.0" y="724.0" width="35" height="35" fill="#D8C9AC"/>
+<text x="299.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.27</text>
+<rect x="318.0" y="724.0" width="35" height="35" fill="#8E681F"/>
+<text x="335.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.96</text>
+<rect x="354.0" y="724.0" width="35" height="35" fill="#A98B52"/>
+<text x="371.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.71</text>
+<rect x="390.0" y="724.0" width="35" height="35" fill="#C4AE85"/>
+<text x="407.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.46</text>
+<rect x="426.0" y="724.0" width="35" height="35" fill="#B29764"/>
+<text x="443.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.63</text>
+<rect x="462.0" y="724.0" width="35" height="35" fill="#F2EBDD"/>
+<text x="479.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.03</text>
+<rect x="498.0" y="724.0" width="35" height="35" fill="#E7E4E0"/>
+<text x="515.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="534.0" y="724.0" width="35" height="35" fill="#EEE6D5"/>
+<text x="551.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.07</text>
+<rect x="570.0" y="724.0" width="35" height="35" fill="#E7DDC8"/>
+<text x="587.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.14</text>
+<rect x="606.0" y="724.0" width="35" height="35" fill="#CFBD9B"/>
+<text x="623.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.36</text>
+<rect x="642.0" y="724.0" width="35" height="35" fill="#BDA679"/>
+<text x="659.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.53</text>
+<rect x="678.0" y="724.0" width="35" height="35" fill="#8D671E"/>
+<text x="695.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.97</text>
+<rect x="714.0" y="724.0" width="35" height="35" fill="#8A6318"/>
+<text x="731.5" y="745.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="750.0" y="724.0" width="35" height="35" fill="#C5AF87"/>
+<text x="767.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.46</text>
+<rect x="786.0" y="724.0" width="35" height="35" fill="#D3C2A2"/>
+<text x="803.5" y="745.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="138.0" y="760.0" width="35" height="35" fill="#E1D5BC"/>
+<text x="155.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.19</text>
+<rect x="174.0" y="760.0" width="35" height="35" fill="#E8E4E0"/>
+<text x="191.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="210.0" y="760.0" width="35" height="35" fill="#CEBC99"/>
+<text x="227.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.37</text>
+<rect x="246.0" y="760.0" width="35" height="35" fill="#95A1CC"/>
+<text x="263.5" y="781.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">−0.45</text>
+<rect x="282.0" y="760.0" width="35" height="35" fill="#D2C1A0"/>
+<text x="299.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="318.0" y="760.0" width="35" height="35" fill="#C9B690"/>
+<text x="335.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.41</text>
+<rect x="354.0" y="760.0" width="35" height="35" fill="#CDBB97"/>
+<text x="371.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.38</text>
+<rect x="390.0" y="760.0" width="35" height="35" fill="#B0945F"/>
+<text x="407.5" y="781.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.65</text>
+<rect x="426.0" y="760.0" width="35" height="35" fill="#CDBA96"/>
+<text x="443.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.38</text>
+<rect x="462.0" y="760.0" width="35" height="35" fill="#BABFD5"/>
+<text x="479.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.28</text>
+<rect x="498.0" y="760.0" width="35" height="35" fill="#B0B7D3"/>
+<text x="515.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.33</text>
+<rect x="534.0" y="760.0" width="35" height="35" fill="#D2D2DB"/>
+<text x="551.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.17</text>
+<rect x="570.0" y="760.0" width="35" height="35" fill="#F5EFE3"/>
+<text x="587.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.00</text>
+<rect x="606.0" y="760.0" width="35" height="35" fill="#B59B69"/>
+<text x="623.5" y="781.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.60</text>
+<rect x="642.0" y="760.0" width="35" height="35" fill="#E4D8C1"/>
+<text x="659.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.17</text>
+<rect x="678.0" y="760.0" width="35" height="35" fill="#C7B38C"/>
+<text x="695.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.43</text>
+<rect x="714.0" y="760.0" width="35" height="35" fill="#C5AF87"/>
+<text x="731.5" y="781.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.46</text>
+<rect x="750.0" y="760.0" width="35" height="35" fill="#8A6318"/>
+<text x="767.5" y="781.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+<rect x="786.0" y="760.0" width="35" height="35" fill="#936F2A"/>
+<text x="803.5" y="781.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.91</text>
+<rect x="138.0" y="796.0" width="35" height="35" fill="#F4EEE1"/>
+<text x="155.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.02</text>
+<rect x="174.0" y="796.0" width="35" height="35" fill="#C7CAD8"/>
+<text x="191.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.22</text>
+<rect x="210.0" y="796.0" width="35" height="35" fill="#CBB893"/>
+<text x="227.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.40</text>
+<rect x="246.0" y="796.0" width="35" height="35" fill="#B4BBD4"/>
+<text x="263.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.30</text>
+<rect x="282.0" y="796.0" width="35" height="35" fill="#E9DFCB"/>
+<text x="299.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.12</text>
+<rect x="318.0" y="796.0" width="35" height="35" fill="#D5C5A6"/>
+<text x="335.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.31</text>
+<rect x="354.0" y="796.0" width="35" height="35" fill="#DBCCB0"/>
+<text x="371.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.25</text>
+<rect x="390.0" y="796.0" width="35" height="35" fill="#C0A97D"/>
+<text x="407.5" y="817.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.50</text>
+<rect x="426.0" y="796.0" width="35" height="35" fill="#D1C09F"/>
+<text x="443.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.34</text>
+<rect x="462.0" y="796.0" width="35" height="35" fill="#CDCEDA"/>
+<text x="479.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.19</text>
+<rect x="498.0" y="796.0" width="35" height="35" fill="#CBCDD9"/>
+<text x="515.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.20</text>
+<rect x="534.0" y="796.0" width="35" height="35" fill="#E7E4E0"/>
+<text x="551.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.07</text>
+<rect x="570.0" y="796.0" width="35" height="35" fill="#F1ECE3"/>
+<text x="587.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">−0.02</text>
+<rect x="606.0" y="796.0" width="35" height="35" fill="#AE925D"/>
+<text x="623.5" y="817.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.66</text>
+<rect x="642.0" y="796.0" width="35" height="35" fill="#E8DECA"/>
+<text x="659.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.13</text>
+<rect x="678.0" y="796.0" width="35" height="35" fill="#D4C3A3"/>
+<text x="695.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.32</text>
+<rect x="714.0" y="796.0" width="35" height="35" fill="#D3C2A2"/>
+<text x="731.5" y="817.0" text-anchor="middle" style="fill:#120C03;font-size:9px;font-family:Archivo,sans-serif">0.33</text>
+<rect x="750.0" y="796.0" width="35" height="35" fill="#936F2A"/>
+<text x="767.5" y="817.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">0.91</text>
+<rect x="786.0" y="796.0" width="35" height="35" fill="#8A6318"/>
+<text x="803.5" y="817.0" text-anchor="middle" style="fill:#FFFFFF;font-size:9px;font-family:Archivo,sans-serif">1.00</text>
+</svg></div>
+<p class="axis-name"><span>Gold · Positive</span><span>Blue · Negative</span></p>
+<p>The bars are partial correlations with Democratic share. Both the rate and the share are residualized on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, then correlated with the same vote weights.</p>
+<div class="chart-card" id="partial-chart"><svg viewBox="0 0 672 436" role="img" class="chart" id="partial-bars">
+<line x1="234.2" y1="16" x2="234.2" y2="408" class="axis"/>
+<line x1="234.2" y1="16" x2="234.2" y2="408" class="grid"/>
+<text x="234.2" y="428" text-anchor="middle" class="tick">-0.0</text>
+<line x1="349.2" y1="16" x2="349.2" y2="408" class="grid"/>
+<text x="349.2" y="428" text-anchor="middle" class="tick">0.2</text>
+<line x1="464.2" y1="16" x2="464.2" y2="408" class="grid"/>
+<text x="464.2" y="428" text-anchor="middle" class="tick">0.4</text>
+<line x1="579.2" y1="16" x2="579.2" y2="408" class="grid"/>
+<text x="579.2" y="428" text-anchor="middle" class="tick">0.6</text>
+<text x="6" y="28.0" class="lab">Marijuana</text>
+<line x1="234.2" y1="24.0" x2="510.7" y2="24.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="516.7" y="28.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.48</text>
+<text x="6" y="56.0" class="lab">Hallucinogens</text>
+<line x1="234.2" y1="52.0" x2="473.6" y2="52.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="479.6" y="56.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.42</text>
+<text x="6" y="84.0" class="lab">Alcohol</text>
+<line x1="234.2" y1="80.0" x2="320.6" y2="80.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="326.6" y="84.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.15</text>
+<text x="6" y="112.0" class="lab">Cocaine</text>
+<line x1="234.2" y1="108.0" x2="479.6" y2="108.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="485.6" y="112.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.43</text>
+<text x="6" y="140.0" class="lab">Opioid misuse</text>
+<line x1="234.2" y1="136.0" x2="301.9" y2="136.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="307.9" y="140.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.12</text>
+<text x="6" y="168.0" class="lab">Pain relievers</text>
+<line x1="234.2" y1="164.0" x2="259.3" y2="164.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="265.3" y="168.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.04</text>
+<text x="6" y="196.0" class="lab">Methamphetamine</text>
+<line x1="234.2" y1="192.0" x2="255.5" y2="192.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="261.5" y="196.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.04</text>
+<text x="6" y="224.0" class="lab">Heroin</text>
+<line x1="234.2" y1="220.0" x2="299.9" y2="220.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="305.9" y="224.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.11</text>
+<text x="6" y="252.0" class="lab">Binge alcohol</text>
+<line x1="234.2" y1="248.0" x2="337.3" y2="248.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="343.3" y="252.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.18</text>
+<text x="6" y="280.0" class="lab">Other illicit</text>
+<line x1="234.2" y1="276.0" x2="376.8" y2="276.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="382.8" y="280.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.25</text>
+<text x="6" y="308.0" class="lab">Illicit drugs</text>
+<line x1="234.2" y1="304.0" x2="516.0" y2="304.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="522.0" y="308.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.49</text>
+<text x="6" y="336.0" class="lab">Marijuana, year</text>
+<line x1="234.2" y1="332.0" x2="513.3" y2="332.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="519.3" y="336.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.49</text>
+<text x="6" y="364.0" class="lab">Underage alcohol</text>
+<line x1="234.2" y1="360.0" x2="270.8" y2="360.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="276.8" y="364.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.06</text>
+<text x="6" y="392.0" class="lab">Underage binge</text>
+<line x1="234.2" y1="388.0" x2="248.6" y2="388.0" stroke="#8A6318" stroke-width="8" stroke-linecap="butt"/>
+<text x="254.6" y="392.0" style="fill:#8A6318;font-size:11px;font-weight:700;font-family:Archivo,sans-serif">+0.02</text>
+</svg></div>
+<p class="axis-name"><span>Y · Rate</span><span>X · Partial correlation with Democratic share</span></p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Weighted r</th><th>Partial r</th></tr></thead>
+<tbody>
+<tr><td>Past-month marijuana</td><td>+0.42</td><td>+0.48</td></tr>
+<tr><td>Past-year hallucinogens</td><td>+0.52</td><td>+0.42</td></tr>
+<tr><td>Past-month alcohol</td><td>+0.48</td><td>+0.15</td></tr>
+<tr><td>Past-year cocaine</td><td>+0.52</td><td>+0.43</td></tr>
+<tr><td>Past-year opioid misuse</td><td>−0.10</td><td>+0.12</td></tr>
+<tr><td>Past-year pain reliever misuse</td><td>−0.26</td><td>+0.04</td></tr>
+<tr><td>Past-year methamphetamine</td><td>−0.47</td><td>+0.04</td></tr>
+<tr><td>Past-year heroin</td><td>+0.25</td><td>+0.11</td></tr>
+<tr><td>Past-month binge alcohol</td><td>+0.27</td><td>+0.18</td></tr>
+<tr><td>Past-month illicit drugs other than marijuana</td><td>+0.33</td><td>+0.25</td></tr>
+<tr><td>Past-month illicit drugs</td><td>+0.44</td><td>+0.49</td></tr>
+<tr><td>Past-year marijuana</td><td>+0.49</td><td>+0.49</td></tr>
+<tr><td>Past-month underage alcohol</td><td>+0.19</td><td>+0.06</td></tr>
+<tr><td>Past-month underage binge alcohol</td><td>+0.02</td><td>+0.02</td></tr>
+</tbody>
+</table>
+</div>
+<p class="fine">Median household income is not in the region file. The ACS extract used here is age and bachelor’s attainment, so income stays out of the matrix. 382 regions. Weights are two-party votes. CSVs: <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
+
 <h2 id="users">Users and non-users</h2>
 <p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>83.3%</strong> (interval 74.2–92.0). Among people who did not, it is <strong>17.3%</strong> (interval 9.1–25.8). The majority ratio is <strong>1.12</strong>. Binge alcohol is <strong>86.9%</strong> among users (interval 62.5–99.8) and <strong>39.0%</strong> among non-users (interval 34.7–46.4).</p>
 <p>At the 10th percentile of regional past-month marijuana use, 9.8%, the fitted Democratic share is <strong>43.7%</strong>. At the 90th percentile, 20.1%, it is <strong>55.4%</strong>. Both rates sit inside the observed range, 6.2% to 28.3%. Vote-weighted past-month marijuana use is 16.22% where Democrats took the majority and 13.36% where Republicans did, a ratio of <strong>1.21</strong>.</p>
@@ -4808,8 +5751,12 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 <p class="slope-k">Past-month marijuana, past-year marijuana, alcohol, and binge</p><div class="legend"><span><i style="background:#16A34A"></i>Marijuana, past month</span><span><i style="background:#15803D"></i>Marijuana, past year</span><span><i style="background:#2563EB"></i>Alcohol, past month</span><span><i style="background:#0891B2"></i>Binge alcohol, past month</span></div><div class="chart-card"><svg viewBox="0 0 860 300" role="img" class="chart"><rect x="690.5" y="16" width="30.7" height="256" fill="#C89B4E" fill-opacity="0.28"/><text x="705.9" y="28" text-anchor="middle" class="tick">2020–21</text><line x1="46" y1="272.0" x2="844.0" y2="272.0" class="grid"/><text x="40" y="275.0" text-anchor="end" class="tick">0</text><line x1="46" y1="186.7" x2="844.0" y2="186.7" class="grid"/><text x="40" y="189.7" text-anchor="end" class="tick">20</text><line x1="46" y1="101.3" x2="844.0" y2="101.3" class="grid"/><text x="40" y="104.3" text-anchor="end" class="tick">40</text><line x1="46" y1="16.0" x2="844.0" y2="16.0" class="grid"/><text x="40" y="19.0" text-anchor="end" class="tick">60</text><text x="138.1" y="292" text-anchor="middle" class="tick">2002</text><text x="322.2" y="292" text-anchor="middle" class="tick">2008</text><text x="506.4" y="292" text-anchor="middle" class="tick">2014</text><text x="690.5" y="292" text-anchor="middle" class="tick">2020</text><text x="813.3" y="292" text-anchor="middle" class="tick">2024</text><line x1="46" y1="16" x2="46" y2="272" class="axis"/><line x1="46" y1="272" x2="844" y2="272" class="axis"/><line x1="445.0" y1="264" x2="445.0" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="506.4" y1="264" x2="506.4" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="567.8" y1="264" x2="567.8" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="598.5" y1="264" x2="598.5" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="629.2" y1="264" x2="629.2" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="690.5" y1="264" x2="690.5" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="721.2" y1="264" x2="721.2" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="751.9" y1="264" x2="751.9" y2="272" stroke="#8A6318" stroke-width="2"/><line x1="782.6" y1="264" x2="782.6" y2="272" stroke="#8A6318" stroke-width="2"/><polyline points="76.7,251.5 107.4,250.3 168.8,245.6 199.5,245.9 230.2,246.2 260.8,246.3 291.5,246.7 322.2,246.5 352.9,244.7 383.6,243.1 414.3,242.6 445.0,241.6 475.7,240.4 506.4,238.0 537.1,236.4 567.8,235.3 598.5,232.6 629.2,230.1 659.8,225.9" fill="none" stroke="#16A34A" stroke-width="2.2"/><circle cx="76.7" cy="251.5" r="2.3" fill="#16A34A"/><circle cx="107.4" cy="250.3" r="2.3" fill="#16A34A"/><circle cx="168.8" cy="245.6" r="2.3" fill="#16A34A"/><circle cx="199.5" cy="245.9" r="2.3" fill="#16A34A"/><circle cx="230.2" cy="246.2" r="2.3" fill="#16A34A"/><circle cx="260.8" cy="246.3" r="2.3" fill="#16A34A"/><circle cx="291.5" cy="246.7" r="2.3" fill="#16A34A"/><circle cx="322.2" cy="246.5" r="2.3" fill="#16A34A"/><circle cx="352.9" cy="244.7" r="2.3" fill="#16A34A"/><circle cx="383.6" cy="243.1" r="2.3" fill="#16A34A"/><circle cx="414.3" cy="242.6" r="2.3" fill="#16A34A"/><circle cx="445.0" cy="241.6" r="2.3" fill="#16A34A"/><circle cx="475.7" cy="240.4" r="2.3" fill="#16A34A"/><circle cx="506.4" cy="238.0" r="2.3" fill="#16A34A"/><circle cx="537.1" cy="236.4" r="2.3" fill="#16A34A"/><circle cx="567.8" cy="235.3" r="2.3" fill="#16A34A"/><circle cx="598.5" cy="232.6" r="2.3" fill="#16A34A"/><circle cx="629.2" cy="230.1" r="2.3" fill="#16A34A"/><circle cx="659.8" cy="225.9" r="2.3" fill="#16A34A"/><polyline points="751.9,211.8 782.6,207.1 813.3,206.4" fill="none" stroke="#16A34A" stroke-width="2.2"/><circle cx="751.9" cy="211.8" r="2.3" fill="#16A34A"/><circle cx="782.6" cy="207.1" r="2.3" fill="#16A34A"/><circle cx="813.3" cy="206.4" r="2.3" fill="#16A34A"/><polyline points="168.8,226.0 199.5,226.8 230.2,227.2 260.8,227.7 291.5,228.3 322.2,228.3 352.9,225.6 383.6,223.0 414.3,223.0 445.0,221.5 475.7,219.4 506.4,216.9 537.1,215.0 567.8,213.5 598.5,210.1 629.2,206.0 659.8,200.7" fill="none" stroke="#15803D" stroke-width="2.2" stroke-dasharray="5 3"/><circle cx="168.8" cy="226.0" r="2.3" fill="#15803D"/><circle cx="199.5" cy="226.8" r="2.3" fill="#15803D"/><circle cx="230.2" cy="227.2" r="2.3" fill="#15803D"/><circle cx="260.8" cy="227.7" r="2.3" fill="#15803D"/><circle cx="291.5" cy="228.3" r="2.3" fill="#15803D"/><circle cx="322.2" cy="228.3" r="2.3" fill="#15803D"/><circle cx="352.9" cy="225.6" r="2.3" fill="#15803D"/><circle cx="383.6" cy="223.0" r="2.3" fill="#15803D"/><circle cx="414.3" cy="223.0" r="2.3" fill="#15803D"/><circle cx="445.0" cy="221.5" r="2.3" fill="#15803D"/><circle cx="475.7" cy="219.4" r="2.3" fill="#15803D"/><circle cx="506.4" cy="216.9" r="2.3" fill="#15803D"/><circle cx="537.1" cy="215.0" r="2.3" fill="#15803D"/><circle cx="567.8" cy="213.5" r="2.3" fill="#15803D"/><circle cx="598.5" cy="210.1" r="2.3" fill="#15803D"/><circle cx="629.2" cy="206.0" r="2.3" fill="#15803D"/><circle cx="659.8" cy="200.7" r="2.3" fill="#15803D"/><polyline points="751.9,184.6 782.6,178.6 813.3,178.0" fill="none" stroke="#15803D" stroke-width="2.2" stroke-dasharray="5 3"/><circle cx="751.9" cy="184.6" r="2.3" fill="#15803D"/><circle cx="782.6" cy="178.6" r="2.3" fill="#15803D"/><circle cx="813.3" cy="178.0" r="2.3" fill="#15803D"/><polyline points="76.7,74.7 107.4,69.0 168.8,56.5 199.5,58.0 230.2,54.2 260.8,52.8 291.5,54.1 322.2,52.7 352.9,51.3 383.6,50.8 414.3,51.8 445.0,50.4 475.7,49.6 506.4,48.3 537.1,49.4 567.8,53.5 598.5,53.5 629.2,52.8 659.8,54.7" fill="none" stroke="#2563EB" stroke-width="2.2"/><circle cx="76.7" cy="74.7" r="2.3" fill="#2563EB"/><circle cx="107.4" cy="69.0" r="2.3" fill="#2563EB"/><circle cx="168.8" cy="56.5" r="2.3" fill="#2563EB"/><circle cx="199.5" cy="58.0" r="2.3" fill="#2563EB"/><circle cx="230.2" cy="54.2" r="2.3" fill="#2563EB"/><circle cx="260.8" cy="52.8" r="2.3" fill="#2563EB"/><circle cx="291.5" cy="54.1" r="2.3" fill="#2563EB"/><circle cx="322.2" cy="52.7" r="2.3" fill="#2563EB"/><circle cx="352.9" cy="51.3" r="2.3" fill="#2563EB"/><circle cx="383.6" cy="50.8" r="2.3" fill="#2563EB"/><circle cx="414.3" cy="51.8" r="2.3" fill="#2563EB"/><circle cx="445.0" cy="50.4" r="2.3" fill="#2563EB"/><circle cx="475.7" cy="49.6" r="2.3" fill="#2563EB"/><circle cx="506.4" cy="48.3" r="2.3" fill="#2563EB"/><circle cx="537.1" cy="49.4" r="2.3" fill="#2563EB"/><circle cx="567.8" cy="53.5" r="2.3" fill="#2563EB"/><circle cx="598.5" cy="53.5" r="2.3" fill="#2563EB"/><circle cx="629.2" cy="52.8" r="2.3" fill="#2563EB"/><circle cx="659.8" cy="54.7" r="2.3" fill="#2563EB"/><polyline points="751.9,67.0 782.6,66.6 813.3,71.2" fill="none" stroke="#2563EB" stroke-width="2.2"/><circle cx="751.9" cy="67.0" r="2.3" fill="#2563EB"/><circle cx="782.6" cy="66.6" r="2.3" fill="#2563EB"/><circle cx="813.3" cy="71.2" r="2.3" fill="#2563EB"/><polyline points="76.7,184.9 107.4,184.2 168.8,174.9 199.5,175.2 230.2,175.1 260.8,174.5 291.5,173.0 322.2,172.4 352.9,171.6 383.6,172.2 414.3,175.0 445.0,174.7 475.7,174.2 506.4,174.1" fill="none" stroke="#0891B2" stroke-width="2.2"/><circle cx="76.7" cy="184.9" r="2.3" fill="#0891B2"/><circle cx="107.4" cy="184.2" r="2.3" fill="#0891B2"/><circle cx="168.8" cy="174.9" r="2.3" fill="#0891B2"/><circle cx="199.5" cy="175.2" r="2.3" fill="#0891B2"/><circle cx="230.2" cy="175.1" r="2.3" fill="#0891B2"/><circle cx="260.8" cy="174.5" r="2.3" fill="#0891B2"/><circle cx="291.5" cy="173.0" r="2.3" fill="#0891B2"/><circle cx="322.2" cy="172.4" r="2.3" fill="#0891B2"/><circle cx="352.9" cy="171.6" r="2.3" fill="#0891B2"/><circle cx="383.6" cy="172.2" r="2.3" fill="#0891B2"/><circle cx="414.3" cy="175.0" r="2.3" fill="#0891B2"/><circle cx="445.0" cy="174.7" r="2.3" fill="#0891B2"/><circle cx="475.7" cy="174.2" r="2.3" fill="#0891B2"/><circle cx="506.4" cy="174.1" r="2.3" fill="#0891B2"/><polyline points="567.8,167.1 598.5,168.0 629.2,167.5 659.8,168.7" fill="none" stroke="#0891B2" stroke-width="2.2"/><circle cx="567.8" cy="167.1" r="2.3" fill="#0891B2"/><circle cx="598.5" cy="168.0" r="2.3" fill="#0891B2"/><circle cx="629.2" cy="167.5" r="2.3" fill="#0891B2"/><circle cx="659.8" cy="168.7" r="2.3" fill="#0891B2"/><polyline points="751.9,179.5 782.6,179.5 813.3,183.0" fill="none" stroke="#0891B2" stroke-width="2.2"/><circle cx="751.9" cy="179.5" r="2.3" fill="#0891B2"/><circle cx="782.6" cy="179.5" r="2.3" fill="#0891B2"/><circle cx="813.3" cy="183.0" r="2.3" fill="#0891B2"/></svg></div><p class="axis-name"><span>Y · Percent, ages 12+</span><span>X · Later year of the two-year pool</span></p>
 <p class="slope-k">Cocaine, heroin, and the other state estimates</p><div class="legend"><span><i style="background:#EA580C"></i>Cocaine, past year</span><span><i style="background:#78716C"></i>Heroin, past year</span><span><i style="background:#7C3AED"></i>Illicit drugs other than marijuana, past month</span><span><i style="background:#DB2777"></i>Methamphetamine, past year</span><span><i style="background:#4F46E5"></i>Hallucinogens, past year</span><span><i style="background:#65A30D"></i>Pain reliever misuse, past year</span><span><i style="background:#0D9488"></i>Opioid misuse, past year</span></div><div class="chart-card"><svg viewBox="0 0 860 300" role="img" class="chart"><rect x="690.5" y="16" width="30.7" height="256" fill="#C89B4E" fill-opacity="0.28"/><text x="705.9" y="28" text-anchor="middle" class="tick">2020–21</text><line x1="46" y1="272.0" x2="844.0" y2="272.0" class="grid"/><text x="40" y="275.0" text-anchor="end" class="tick">0</text><line x1="46" y1="186.7" x2="844.0" y2="186.7" class="grid"/><text x="40" y="189.7" text-anchor="end" class="tick">4</text><line x1="46" y1="101.3" x2="844.0" y2="101.3" class="grid"/><text x="40" y="104.3" text-anchor="end" class="tick">8</text><line x1="46" y1="16.0" x2="844.0" y2="16.0" class="grid"/><text x="40" y="19.0" text-anchor="end" class="tick">12</text><text x="138.1" y="292" text-anchor="middle" class="tick">2002</text><text x="322.2" y="292" text-anchor="middle" class="tick">2008</text><text x="506.4" y="292" text-anchor="middle" class="tick">2014</text><text x="690.5" y="292" text-anchor="middle" class="tick">2020</text><text x="813.3" y="292" text-anchor="middle" class="tick">2024</text><line x1="46" y1="16" x2="46" y2="272" class="axis"/><line x1="46" y1="272" x2="844" y2="272" class="axis"/><polyline points="76.7,236.9 107.4,235.8 168.8,218.7 199.5,220.4 230.2,222.7 260.8,221.4 291.5,220.9 322.2,224.7 352.9,229.1 383.6,232.6 414.3,237.4 445.0,236.9 475.7,235.9 506.4,236.7 537.1,234.4 567.8,232.7 598.5,228.6 629.2,227.2 659.8,229.3" fill="none" stroke="#EA580C" stroke-width="2.2"/><circle cx="76.7" cy="236.9" r="2.3" fill="#EA580C"/><circle cx="107.4" cy="235.8" r="2.3" fill="#EA580C"/><circle cx="168.8" cy="218.7" r="2.3" fill="#EA580C"/><circle cx="199.5" cy="220.4" r="2.3" fill="#EA580C"/><circle cx="230.2" cy="222.7" r="2.3" fill="#EA580C"/><circle cx="260.8" cy="221.4" r="2.3" fill="#EA580C"/><circle cx="291.5" cy="220.9" r="2.3" fill="#EA580C"/><circle cx="322.2" cy="224.7" r="2.3" fill="#EA580C"/><circle cx="352.9" cy="229.1" r="2.3" fill="#EA580C"/><circle cx="383.6" cy="232.6" r="2.3" fill="#EA580C"/><circle cx="414.3" cy="237.4" r="2.3" fill="#EA580C"/><circle cx="445.0" cy="236.9" r="2.3" fill="#EA580C"/><circle cx="475.7" cy="235.9" r="2.3" fill="#EA580C"/><circle cx="506.4" cy="236.7" r="2.3" fill="#EA580C"/><circle cx="537.1" cy="234.4" r="2.3" fill="#EA580C"/><circle cx="567.8" cy="232.7" r="2.3" fill="#EA580C"/><circle cx="598.5" cy="228.6" r="2.3" fill="#EA580C"/><circle cx="629.2" cy="227.2" r="2.3" fill="#EA580C"/><circle cx="659.8" cy="229.3" r="2.3" fill="#EA580C"/><polyline points="751.9,233.9 782.6,233.2 813.3,237.4" fill="none" stroke="#EA580C" stroke-width="2.2"/><circle cx="751.9" cy="233.9" r="2.3" fill="#EA580C"/><circle cx="782.6" cy="233.2" r="2.3" fill="#EA580C"/><circle cx="813.3" cy="237.4" r="2.3" fill="#EA580C"/><polyline points="506.4,265.6 537.1,265.0 567.8,264.9 598.5,264.8 629.2,265.4 659.8,266.0" fill="none" stroke="#78716C" stroke-width="2.2"/><circle cx="506.4" cy="265.6" r="2.3" fill="#78716C"/><circle cx="537.1" cy="265.0" r="2.3" fill="#78716C"/><circle cx="567.8" cy="264.9" r="2.3" fill="#78716C"/><circle cx="598.5" cy="264.8" r="2.3" fill="#78716C"/><circle cx="629.2" cy="265.4" r="2.3" fill="#78716C"/><circle cx="659.8" cy="266.0" r="2.3" fill="#78716C"/><polyline points="76.7,215.1 107.4,211.2 168.8,192.5 199.5,195.7 230.2,196.1 260.8,191.0 291.5,190.3 322.2,195.5 352.9,196.5 383.6,195.1 414.3,201.4 445.0,202.3 475.7,200.3 506.4,201.7" fill="none" stroke="#7C3AED" stroke-width="2.2"/><circle cx="76.7" cy="215.1" r="2.3" fill="#7C3AED"/><circle cx="107.4" cy="211.2" r="2.3" fill="#7C3AED"/><circle cx="168.8" cy="192.5" r="2.3" fill="#7C3AED"/><circle cx="199.5" cy="195.7" r="2.3" fill="#7C3AED"/><circle cx="230.2" cy="196.1" r="2.3" fill="#7C3AED"/><circle cx="260.8" cy="191.0" r="2.3" fill="#7C3AED"/><circle cx="291.5" cy="190.3" r="2.3" fill="#7C3AED"/><circle cx="322.2" cy="195.5" r="2.3" fill="#7C3AED"/><circle cx="352.9" cy="196.5" r="2.3" fill="#7C3AED"/><circle cx="383.6" cy="195.1" r="2.3" fill="#7C3AED"/><circle cx="414.3" cy="201.4" r="2.3" fill="#7C3AED"/><circle cx="445.0" cy="202.3" r="2.3" fill="#7C3AED"/><circle cx="475.7" cy="200.3" r="2.3" fill="#7C3AED"/><circle cx="506.4" cy="201.7" r="2.3" fill="#7C3AED"/><polyline points="567.8,199.0 598.5,200.0 629.2,201.6 659.8,201.3" fill="none" stroke="#7C3AED" stroke-width="2.2"/><circle cx="567.8" cy="199.0" r="2.3" fill="#7C3AED"/><circle cx="598.5" cy="200.0" r="2.3" fill="#7C3AED"/><circle cx="629.2" cy="201.6" r="2.3" fill="#7C3AED"/><circle cx="659.8" cy="201.3" r="2.3" fill="#7C3AED"/><polyline points="751.9,201.1 782.6,201.2" fill="none" stroke="#7C3AED" stroke-width="2.2"/><circle cx="751.9" cy="201.1" r="2.3" fill="#7C3AED"/><circle cx="782.6" cy="201.2" r="2.3" fill="#7C3AED"/><polyline points="567.8,259.7 598.5,260.1 629.2,258.3 659.8,257.0" fill="none" stroke="#DB2777" stroke-width="2.2"/><circle cx="567.8" cy="259.7" r="2.3" fill="#DB2777"/><circle cx="598.5" cy="260.1" r="2.3" fill="#DB2777"/><circle cx="629.2" cy="258.3" r="2.3" fill="#DB2777"/><circle cx="659.8" cy="257.0" r="2.3" fill="#DB2777"/><polyline points="751.9,251.7 782.6,251.9 813.3,253.3" fill="none" stroke="#DB2777" stroke-width="2.2"/><circle cx="751.9" cy="251.7" r="2.3" fill="#DB2777"/><circle cx="782.6" cy="251.9" r="2.3" fill="#DB2777"/><circle cx="813.3" cy="253.3" r="2.3" fill="#DB2777"/><polyline points="751.9,210.9 782.6,206.7 813.3,200.3" fill="none" stroke="#4F46E5" stroke-width="2.2"/><circle cx="751.9" cy="210.9" r="2.3" fill="#4F46E5"/><circle cx="782.6" cy="206.7" r="2.3" fill="#4F46E5"/><circle cx="813.3" cy="200.3" r="2.3" fill="#4F46E5"/><polyline points="168.8,169.8 199.5,169.7 230.2,170.3 260.8,165.3 291.5,163.3 322.2,167.3 352.9,168.4 383.6,167.8 414.3,175.1 445.0,174.6 475.7,175.8 506.4,185.4" fill="none" stroke="#65A30D" stroke-width="2.2"/><circle cx="168.8" cy="169.8" r="2.3" fill="#65A30D"/><circle cx="199.5" cy="169.7" r="2.3" fill="#65A30D"/><circle cx="230.2" cy="170.3" r="2.3" fill="#65A30D"/><circle cx="260.8" cy="165.3" r="2.3" fill="#65A30D"/><circle cx="291.5" cy="163.3" r="2.3" fill="#65A30D"/><circle cx="322.2" cy="167.3" r="2.3" fill="#65A30D"/><circle cx="352.9" cy="168.4" r="2.3" fill="#65A30D"/><circle cx="383.6" cy="167.8" r="2.3" fill="#65A30D"/><circle cx="414.3" cy="175.1" r="2.3" fill="#65A30D"/><circle cx="445.0" cy="174.6" r="2.3" fill="#65A30D"/><circle cx="475.7" cy="175.8" r="2.3" fill="#65A30D"/><circle cx="506.4" cy="185.4" r="2.3" fill="#65A30D"/><polyline points="567.8,176.8 598.5,183.0 629.2,189.8 659.8,195.6" fill="none" stroke="#65A30D" stroke-width="2.2"/><circle cx="567.8" cy="176.8" r="2.3" fill="#65A30D"/><circle cx="598.5" cy="183.0" r="2.3" fill="#65A30D"/><circle cx="629.2" cy="189.8" r="2.3" fill="#65A30D"/><circle cx="659.8" cy="195.6" r="2.3" fill="#65A30D"/><polyline points="751.9,206.2 782.6,207.7" fill="none" stroke="#65A30D" stroke-width="2.2"/><circle cx="751.9" cy="206.2" r="2.3" fill="#65A30D"/><circle cx="782.6" cy="207.7" r="2.3" fill="#65A30D"/><polyline points="751.9,202.4 782.6,204.8 813.3,211.1" fill="none" stroke="#0D9488" stroke-width="2.2"/><circle cx="751.9" cy="202.4" r="2.3" fill="#0D9488"/><circle cx="782.6" cy="204.8" r="2.3" fill="#0D9488"/><circle cx="813.3" cy="211.1" r="2.3" fill="#0D9488"/></svg></div><p class="axis-name"><span>Y · Percent, ages 12+</span><span>X · Later year of the two-year pool</span></p>
 <p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. Gold ticks are years when a state legalized adult-use cannabis: 2012 CO WA; 2014 AK OR DC; 2016 CA MA NV; 2017 ME; 2018 VT MI; 2020 IL AZ MT NJ; 2021 CT NM NY VA; 2022 RI; 2023 DE MD MN MO OH.</p>
-<p class="slope-k">NAEP national public, and the published ICAR35 slope</p><div class="legend"><span><i style="background:#C89B4E"></i>Mathematics, grade 4</span><span><i style="background:#EA580C"></i>Mathematics, grade 8</span><span><i style="background:#2563EB"></i>Reading, grade 4</span><span><i style="background:#7C3AED"></i>Reading, grade 8</span><span><i style="background:#8A6318"></i>ICAR35 slope, −0.023 SD/year</span></div><div class="chart-card"><svg viewBox="0 0 860 300" role="img" class="chart"><rect x="681.6" y="16" width="26.5" height="256" fill="#C89B4E" fill-opacity="0.28"/><text x="694.8" y="28" text-anchor="middle" class="tick">2020–21</text><line x1="46" y1="257.8" x2="814.0" y2="257.8" class="grid"/><text x="40" y="260.8" text-anchor="end" class="tick">210</text><line x1="46" y1="200.9" x2="814.0" y2="200.9" class="grid"/><text x="40" y="203.9" text-anchor="end" class="tick">230</text><line x1="46" y1="144.0" x2="814.0" y2="144.0" class="grid"/><text x="40" y="147.0" text-anchor="end" class="tick">250</text><line x1="46" y1="87.1" x2="814.0" y2="87.1" class="grid"/><text x="40" y="90.1" text-anchor="end" class="tick">270</text><line x1="46" y1="30.2" x2="814.0" y2="30.2" class="grid"/><text x="40" y="33.2" text-anchor="end" class="tick">290</text><text x="820" y="55.6" class="tick">0</text><text x="820" y="128.7" class="tick">-0.1</text><text x="820" y="201.9" class="tick">-0.2</text><text x="820" y="275.0" class="tick">-0.3</text><text x="99.0" y="292" text-anchor="middle" class="tick">1998</text><text x="257.9" y="292" text-anchor="middle" class="tick">2004</text><text x="416.8" y="292" text-anchor="middle" class="tick">2010</text><text x="575.7" y="292" text-anchor="middle" class="tick">2016</text><text x="734.6" y="292" text-anchor="middle" class="tick">2022</text><line x1="46" y1="16" x2="46" y2="272" class="axis"/><line x1="46" y1="272" x2="814" y2="272" class="axis"/><polyline points="46.0,223.5 151.9,217.4 231.4,189.6 284.3,180.7 337.3,175.1 390.3,175.0 443.2,172.1 496.2,169.1 549.2,172.9 602.1,174.8 655.1,172.4 734.6,187.1 787.5,180.1" fill="none" stroke="#C89B4E" stroke-width="2.2"/><circle cx="46.0" cy="223.5" r="2.3" fill="#C89B4E"/><circle cx="151.9" cy="217.4" r="2.3" fill="#C89B4E"/><circle cx="231.4" cy="189.6" r="2.3" fill="#C89B4E"/><circle cx="284.3" cy="180.7" r="2.3" fill="#C89B4E"/><circle cx="337.3" cy="175.1" r="2.3" fill="#C89B4E"/><circle cx="390.3" cy="175.0" r="2.3" fill="#C89B4E"/><circle cx="443.2" cy="172.1" r="2.3" fill="#C89B4E"/><circle cx="496.2" cy="169.1" r="2.3" fill="#C89B4E"/><circle cx="549.2" cy="172.9" r="2.3" fill="#C89B4E"/><circle cx="602.1" cy="174.8" r="2.3" fill="#C89B4E"/><circle cx="655.1" cy="172.4" r="2.3" fill="#C89B4E"/><circle cx="734.6" cy="187.1" r="2.3" fill="#C89B4E"/><circle cx="787.5" cy="180.1" r="2.3" fill="#C89B4E"/><polyline points="46.0,90.5 151.9,81.9 231.4,69.7 284.3,65.7 337.3,58.2 390.3,53.9 443.2,50.9 496.2,48.4 549.2,55.0 602.1,53.1 655.1,55.9 734.6,78.2 787.5,80.8" fill="none" stroke="#EA580C" stroke-width="2.2"/><circle cx="46.0" cy="90.5" r="2.3" fill="#EA580C"/><circle cx="151.9" cy="81.9" r="2.3" fill="#EA580C"/><circle cx="231.4" cy="69.7" r="2.3" fill="#EA580C"/><circle cx="284.3" cy="65.7" r="2.3" fill="#EA580C"/><circle cx="337.3" cy="58.2" r="2.3" fill="#EA580C"/><circle cx="390.3" cy="53.9" r="2.3" fill="#EA580C"/><circle cx="443.2" cy="50.9" r="2.3" fill="#EA580C"/><circle cx="496.2" cy="48.4" r="2.3" fill="#EA580C"/><circle cx="549.2" cy="55.0" r="2.3" fill="#EA580C"/><circle cx="602.1" cy="53.1" r="2.3" fill="#EA580C"/><circle cx="655.1" cy="55.9" r="2.3" fill="#EA580C"/><circle cx="734.6" cy="78.2" r="2.3" fill="#EA580C"/><circle cx="787.5" cy="80.8" r="2.3" fill="#EA580C"/><polyline points="99.0,249.8 204.9,238.4 231.4,239.4 284.3,237.0 337.3,230.3 390.3,230.5 443.2,229.3 496.2,227.4 549.2,225.5 602.1,227.0 655.1,230.9 734.6,240.4 787.5,245.6" fill="none" stroke="#2563EB" stroke-width="2.2"/><circle cx="99.0" cy="249.8" r="2.3" fill="#2563EB"/><circle cx="204.9" cy="238.4" r="2.3" fill="#2563EB"/><circle cx="231.4" cy="239.4" r="2.3" fill="#2563EB"/><circle cx="284.3" cy="237.0" r="2.3" fill="#2563EB"/><circle cx="337.3" cy="230.3" r="2.3" fill="#2563EB"/><circle cx="390.3" cy="230.5" r="2.3" fill="#2563EB"/><circle cx="443.2" cy="229.3" r="2.3" fill="#2563EB"/><circle cx="496.2" cy="227.4" r="2.3" fill="#2563EB"/><circle cx="549.2" cy="225.5" r="2.3" fill="#2563EB"/><circle cx="602.1" cy="227.0" r="2.3" fill="#2563EB"/><circle cx="655.1" cy="230.9" r="2.3" fill="#2563EB"/><circle cx="734.6" cy="240.4" r="2.3" fill="#2563EB"/><circle cx="787.5" cy="245.6" r="2.3" fill="#2563EB"/><polyline points="99.0,113.7 204.9,107.7 231.4,111.8 284.3,114.4 337.3,112.7 390.3,109.0 443.2,105.3 496.2,98.4 549.2,104.2 602.1,100.4 655.1,109.9 734.6,118.1 787.5,125.0" fill="none" stroke="#7C3AED" stroke-width="2.2"/><circle cx="99.0" cy="113.7" r="2.3" fill="#7C3AED"/><circle cx="204.9" cy="107.7" r="2.3" fill="#7C3AED"/><circle cx="231.4" cy="111.8" r="2.3" fill="#7C3AED"/><circle cx="284.3" cy="114.4" r="2.3" fill="#7C3AED"/><circle cx="337.3" cy="112.7" r="2.3" fill="#7C3AED"/><circle cx="390.3" cy="109.0" r="2.3" fill="#7C3AED"/><circle cx="443.2" cy="105.3" r="2.3" fill="#7C3AED"/><circle cx="496.2" cy="98.4" r="2.3" fill="#7C3AED"/><circle cx="549.2" cy="104.2" r="2.3" fill="#7C3AED"/><circle cx="602.1" cy="100.4" r="2.3" fill="#7C3AED"/><circle cx="655.1" cy="109.9" r="2.3" fill="#7C3AED"/><circle cx="734.6" cy="118.1" r="2.3" fill="#7C3AED"/><circle cx="787.5" cy="125.0" r="2.3" fill="#7C3AED"/><polygon points="310.8,52.6 337.3,60.6 363.8,68.7 390.3,76.7 416.8,84.8 443.2,92.8 469.7,100.8 496.2,108.9 522.7,116.9 549.2,125.0 575.7,133.0 602.1,141.1 628.6,149.1 628.6,359.8 602.1,334.2 575.7,308.6 549.2,283.0 522.7,257.4 496.2,231.8 469.7,206.2 443.2,180.6 416.8,155.0 390.3,129.4 363.8,103.8 337.3,78.2 310.8,52.6" fill="#C89B4E" fill-opacity="0.35"/><polyline points="310.8,52.6 337.3,69.4 363.8,86.2 390.3,103.0 416.8,119.9 443.2,136.7 469.7,153.5 496.2,170.3 522.7,187.2 549.2,204.0 575.7,220.8 602.1,237.6 628.6,254.4" fill="none" stroke="#8A6318" stroke-width="2.2"/><circle cx="310.8" cy="52.6" r="2.3" fill="#8A6318"/><circle cx="337.3" cy="69.4" r="2.3" fill="#8A6318"/><circle cx="363.8" cy="86.2" r="2.3" fill="#8A6318"/><circle cx="390.3" cy="103.0" r="2.3" fill="#8A6318"/><circle cx="416.8" cy="119.9" r="2.3" fill="#8A6318"/><circle cx="443.2" cy="136.7" r="2.3" fill="#8A6318"/><circle cx="469.7" cy="153.5" r="2.3" fill="#8A6318"/><circle cx="496.2" cy="170.3" r="2.3" fill="#8A6318"/><circle cx="522.7" cy="187.2" r="2.3" fill="#8A6318"/><circle cx="549.2" cy="204.0" r="2.3" fill="#8A6318"/><circle cx="575.7" cy="220.8" r="2.3" fill="#8A6318"/><circle cx="602.1" cy="237.6" r="2.3" fill="#8A6318"/><circle cx="628.6" cy="254.4" r="2.3" fill="#8A6318"/></svg></div><p class="axis-name"><span>Left · NAEP composite, national public</span><span>Right · ICAR35, SD from 2006</span></p>
-<p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. The gold line is the Table 1 mean slope for the ICAR35 composite, ages 18 to 60, adjusted for education and gender: −0.023 SD per year from 2006 to 2018, 95% interval −0.035 to −0.011. The band is that interval on the slope. The line is the published slope, anchored at zero in 2006. Dworak, Revelle, and Condon, Intelligence, 2023, 10.1016/j.intell.2023.101734.</p>
+<p class="slope-k">NAEP national public, mathematics and reading</p><div class="legend naep"><span><i style="background:#8A6318"></i>Mathematics, grade 4</span><span><i style="background:#EA580C"></i>Mathematics, grade 8</span><span><i style="background:#2563EB"></i>Reading, grade 4</span><span><i style="background:#7C3AED"></i>Reading, grade 8</span></div><div class="chart-card" id="naep-chart"><svg viewBox="0 0 860 320" role="img" class="chart"><rect x="626.0" y="16" width="24.2" height="276" fill="#C89B4E" fill-opacity="0.28"/><text x="638.1" y="28" text-anchor="middle" class="tick">2020–21</text><line x1="46" y1="276.7" x2="742.0" y2="276.7" class="grid"/><text x="40" y="279.7" text-anchor="end" class="tick">210</text><line x1="46" y1="215.3" x2="742.0" y2="215.3" class="grid"/><text x="40" y="218.3" text-anchor="end" class="tick">230</text><line x1="46" y1="154.0" x2="742.0" y2="154.0" class="grid"/><text x="40" y="157.0" text-anchor="end" class="tick">250</text><line x1="46" y1="92.7" x2="742.0" y2="92.7" class="grid"/><text x="40" y="95.7" text-anchor="end" class="tick">270</text><line x1="46" y1="31.3" x2="742.0" y2="31.3" class="grid"/><text x="40" y="34.3" text-anchor="end" class="tick">290</text><text x="94.3" y="312" text-anchor="middle" class="tick">1998</text><text x="239.3" y="312" text-anchor="middle" class="tick">2004</text><text x="384.3" y="312" text-anchor="middle" class="tick">2010</text><text x="529.3" y="312" text-anchor="middle" class="tick">2016</text><text x="674.3" y="312" text-anchor="middle" class="tick">2022</text><line x1="46" y1="16" x2="46" y2="292" class="axis"/><line x1="46" y1="292" x2="742" y2="292" class="axis"/><polyline points="46.0,239.8 142.7,233.1 215.2,203.2 263.5,193.6 311.8,187.5 360.2,187.4 408.5,184.3 456.8,181.0 505.2,185.1 553.5,187.2 601.8,184.7 674.3,200.4 722.7,192.9" fill="none" stroke="#8A6318" stroke-width="2.2"/><circle cx="46.0" cy="239.8" r="2.3" fill="#8A6318"/><circle cx="142.7" cy="233.1" r="2.3" fill="#8A6318"/><circle cx="215.2" cy="203.2" r="2.3" fill="#8A6318"/><circle cx="263.5" cy="193.6" r="2.3" fill="#8A6318"/><circle cx="311.8" cy="187.5" r="2.3" fill="#8A6318"/><circle cx="360.2" cy="187.4" r="2.3" fill="#8A6318"/><circle cx="408.5" cy="184.3" r="2.3" fill="#8A6318"/><circle cx="456.8" cy="181.0" r="2.3" fill="#8A6318"/><circle cx="505.2" cy="185.1" r="2.3" fill="#8A6318"/><circle cx="553.5" cy="187.2" r="2.3" fill="#8A6318"/><circle cx="601.8" cy="184.7" r="2.3" fill="#8A6318"/><circle cx="674.3" cy="200.4" r="2.3" fill="#8A6318"/><circle cx="722.7" cy="192.9" r="2.3" fill="#8A6318"/><polyline points="46.0,96.4 142.7,87.1 215.2,73.9 263.5,69.6 311.8,61.5 360.2,56.9 408.5,53.6 456.8,50.9 505.2,58.1 553.5,56.0 601.8,59.0 674.3,83.1 722.7,85.8" fill="none" stroke="#EA580C" stroke-width="2.2"/><circle cx="46.0" cy="96.4" r="2.3" fill="#EA580C"/><circle cx="142.7" cy="87.1" r="2.3" fill="#EA580C"/><circle cx="215.2" cy="73.9" r="2.3" fill="#EA580C"/><circle cx="263.5" cy="69.6" r="2.3" fill="#EA580C"/><circle cx="311.8" cy="61.5" r="2.3" fill="#EA580C"/><circle cx="360.2" cy="56.9" r="2.3" fill="#EA580C"/><circle cx="408.5" cy="53.6" r="2.3" fill="#EA580C"/><circle cx="456.8" cy="50.9" r="2.3" fill="#EA580C"/><circle cx="505.2" cy="58.1" r="2.3" fill="#EA580C"/><circle cx="553.5" cy="56.0" r="2.3" fill="#EA580C"/><circle cx="601.8" cy="59.0" r="2.3" fill="#EA580C"/><circle cx="674.3" cy="83.1" r="2.3" fill="#EA580C"/><circle cx="722.7" cy="85.8" r="2.3" fill="#EA580C"/><polyline points="94.3,268.0 191.0,255.8 215.2,256.9 263.5,254.3 311.8,247.1 360.2,247.2 408.5,245.9 456.8,243.9 505.2,241.8 553.5,243.5 601.8,247.7 674.3,257.9 722.7,263.6" fill="none" stroke="#2563EB" stroke-width="2.2"/><circle cx="94.3" cy="268.0" r="2.3" fill="#2563EB"/><circle cx="191.0" cy="255.8" r="2.3" fill="#2563EB"/><circle cx="215.2" cy="256.9" r="2.3" fill="#2563EB"/><circle cx="263.5" cy="254.3" r="2.3" fill="#2563EB"/><circle cx="311.8" cy="247.1" r="2.3" fill="#2563EB"/><circle cx="360.2" cy="247.2" r="2.3" fill="#2563EB"/><circle cx="408.5" cy="245.9" r="2.3" fill="#2563EB"/><circle cx="456.8" cy="243.9" r="2.3" fill="#2563EB"/><circle cx="505.2" cy="241.8" r="2.3" fill="#2563EB"/><circle cx="553.5" cy="243.5" r="2.3" fill="#2563EB"/><circle cx="601.8" cy="247.7" r="2.3" fill="#2563EB"/><circle cx="674.3" cy="257.9" r="2.3" fill="#2563EB"/><circle cx="722.7" cy="263.6" r="2.3" fill="#2563EB"/><polyline points="94.3,121.3 191.0,114.9 215.2,119.2 263.5,122.1 311.8,120.2 360.2,116.3 408.5,112.3 456.8,104.9 505.2,111.1 553.5,107.0 601.8,117.2 674.3,126.1 722.7,133.6" fill="none" stroke="#7C3AED" stroke-width="2.2"/><circle cx="94.3" cy="121.3" r="2.3" fill="#7C3AED"/><circle cx="191.0" cy="114.9" r="2.3" fill="#7C3AED"/><circle cx="215.2" cy="119.2" r="2.3" fill="#7C3AED"/><circle cx="263.5" cy="122.1" r="2.3" fill="#7C3AED"/><circle cx="311.8" cy="120.2" r="2.3" fill="#7C3AED"/><circle cx="360.2" cy="116.3" r="2.3" fill="#7C3AED"/><circle cx="408.5" cy="112.3" r="2.3" fill="#7C3AED"/><circle cx="456.8" cy="104.9" r="2.3" fill="#7C3AED"/><circle cx="505.2" cy="111.1" r="2.3" fill="#7C3AED"/><circle cx="553.5" cy="107.0" r="2.3" fill="#7C3AED"/><circle cx="601.8" cy="117.2" r="2.3" fill="#7C3AED"/><circle cx="674.3" cy="126.1" r="2.3" fill="#7C3AED"/><circle cx="722.7" cy="133.6" r="2.3" fill="#7C3AED"/><text x="730.7" y="89.8" style="fill:#EA580C;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">Math 8</text><text x="730.7" y="137.6" style="fill:#7C3AED;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">Reading 8</text><text x="730.7" y="196.9" style="fill:#8A6318;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">Math 4</text><text x="730.7" y="267.6" style="fill:#2563EB;font-size:12px;font-weight:700;font-family:Archivo,sans-serif">Reading 4</text></svg></div><p class="axis-name"><span>Y · NAEP composite, national public</span><span>X · Year</span></p>
+<p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. Mathematics grade 4 is brown. Mathematics grade 8 is orange. Reading grade 4 is blue. Reading grade 8 is purple. The gold band is the 2020–2021 web-mode break on the calendar, the same band as the use charts.</p>
+<div class="stats one" id="icar-stat">
+<div class="stat lead"><span class="k">ICAR35, Table 1</span><span class="v">−0.023</span><span class="s">SD per year, ages 18 to 60, 2006–2018, adjusted for education and gender. 95% interval −0.035 to −0.011.</span></div>
+</div>
+<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes that slope. Figure 1 draws yearly means by education level and does not print them as numbers. The supplementary tables are slopes and sample counts. The OSF node <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> is the preregistration. Those means stay off the NAEP chart.</p>
 <p class="slope-k">Democratic two-party share of the national popular vote</p><div class="chart-card"><svg viewBox="0 0 860 280" role="img" class="chart"><rect x="644.5" y="16" width="33.2" height="236" fill="#C89B4E" fill-opacity="0.28"/><text x="661.1" y="28" text-anchor="middle" class="tick">2020–21</text><line x1="46" y1="252.0" x2="844.0" y2="252.0" class="grid"/><text x="40" y="255.0" text-anchor="end" class="tick">0</text><line x1="46" y1="193.0" x2="844.0" y2="193.0" class="grid"/><text x="40" y="196.0" text-anchor="end" class="tick">25</text><line x1="46" y1="134.0" x2="844.0" y2="134.0" class="grid"/><text x="40" y="137.0" text-anchor="end" class="tick">50</text><line x1="46" y1="75.0" x2="844.0" y2="75.0" class="grid"/><text x="40" y="78.0" text-anchor="end" class="tick">75</text><line x1="46" y1="16.0" x2="844.0" y2="16.0" class="grid"/><text x="40" y="19.0" text-anchor="end" class="tick">100</text><text x="112.5" y="272" text-anchor="middle" class="tick">2004</text><text x="245.5" y="272" text-anchor="middle" class="tick">2008</text><text x="378.5" y="272" text-anchor="middle" class="tick">2012</text><text x="511.5" y="272" text-anchor="middle" class="tick">2016</text><text x="644.5" y="272" text-anchor="middle" class="tick">2020</text><text x="777.5" y="272" text-anchor="middle" class="tick">2024</text><line x1="46" y1="16" x2="46" y2="252" class="axis"/><line x1="46" y1="252" x2="844" y2="252" class="axis"/><polyline points="112.5,136.9 245.5,125.1 378.5,129.3 511.5,131.3 644.5,128.6 777.5,135.8" fill="none" stroke="#8A6318" stroke-width="2.2"/><circle cx="112.5" cy="136.9" r="2.3" fill="#8A6318"/><circle cx="245.5" cy="125.1" r="2.3" fill="#8A6318"/><circle cx="378.5" cy="129.3" r="2.3" fill="#8A6318"/><circle cx="511.5" cy="131.3" r="2.3" fill="#8A6318"/><circle cx="644.5" cy="128.6" r="2.3" fill="#8A6318"/><circle cx="777.5" cy="135.8" r="2.3" fill="#8A6318"/><text x="112.5" y="128.9" text-anchor="middle" class="lab">48.8</text><text x="245.5" y="117.1" text-anchor="middle" class="lab">53.8</text><text x="378.5" y="121.3" text-anchor="middle" class="lab">52.0</text><text x="511.5" y="123.3" text-anchor="middle" class="lab">51.2</text><text x="644.5" y="120.6" text-anchor="middle" class="lab">52.3</text><text x="777.5" y="127.8" text-anchor="middle" class="lab">49.2</text></svg></div><p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Presidential election</span></p>
 <p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100.</p>
 <h2>Fifty states, first difference</h2>
@@ -5966,7 +6913,8 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 <p>Federal lobbying: OpenSecrets calculations from the Senate Office of Public Records, calendar 2024, January through December. Retrieved 2026-10-11. Marijuana <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N09">N09</a> $5,248,000. Beer, wine, and liquor <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N02">N02</a> $29,893,357. Pharmaceuticals and health products <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=H04">H04</a> $391,572,500. Cresco Labs in-house LD-2 expenses, lda.gov filings for 2024 Q1–Q4, sum to the $1,150,000 client line. Client lines: <a href="nsduh-vote-ecological/results/industry_lobbying_clients_2024.csv">industry_lobbying_clients_2024.csv</a>.</p>
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
-<p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The national cognitive line is Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>, Table 1 mean ICAR35 slope. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
+<p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The ICAR35 figure beside that chart is Table 1 in Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>: −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
+<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSVs: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>, <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>

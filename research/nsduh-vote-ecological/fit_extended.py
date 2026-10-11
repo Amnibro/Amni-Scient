@@ -384,6 +384,228 @@ FIPS_NAME = {
 }
 
 
+# Acute perception or suggestibility: marijuana, hallucinogens, alcohol, cocaine.
+# Mu-opioid sedation, plus methamphetamine as a stimulant without that profile.
+GROUP_A = ("mj", "hal", "alc", "coc")
+GROUP_B = ("opin", "pnr", "met")
+CORR_KEYS = [
+    "dem2",
+    "ln_dens",
+    "pct_18_25",
+    "pct_12_17",
+    "pct_ba",
+    "mj",
+    "hal",
+    "alc",
+    "coc",
+    "opin",
+    "pnr",
+    "met",
+    "her",
+    "binge",
+    "iem",
+    "ill",
+    "mrjyr",
+    "ualc",
+    "ubinge",
+]
+PARTIAL_CONTROLS = ["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]
+
+
+def _combo(res, weights: dict) -> dict:
+    names = list(res.params.index)
+    g = np.zeros(len(names))
+    for key, value in weights.items():
+        g[names.index(key)] = value
+    b = np.asarray(res.params, dtype=float)
+    V = np.asarray(res.cov_params(), dtype=float)
+    est = float(g @ b) * 100.0
+    se = float(np.sqrt(max(0.0, float(g @ V @ g)))) * 100.0
+    z = est / se if se > 0 else float("nan")
+    from math import erfc
+
+    p = float(erfc(abs(z) / np.sqrt(2.0))) if se > 0 else float("nan")
+    return {
+        "coef": est,
+        "se": se,
+        "lo": est - 1.96 * se,
+        "hi": est + 1.96 * se,
+        "p": p,
+    }
+
+
+def _stack_fit(reg: pd.DataFrame, substances: tuple[str, ...], group_b: set[str], centers: dict) -> dict:
+    import statsmodels.api as sm
+
+    pieces = []
+    for col in substances:
+        block = pd.DataFrame(
+            {
+                "reg_id": reg["reg_id"].astype(str).to_numpy(),
+                "dem2": reg["dem2"].to_numpy(dtype=float),
+                "rate": reg[col].to_numpy(dtype=float),
+                "rate_x_b": reg[col].to_numpy(dtype=float) * (1.0 if col in group_b else 0.0),
+                "substance": col,
+                "two_party": reg["two_party"].to_numpy(dtype=float),
+            }
+        )
+        for name, center in centers.items():
+            block[name] = reg[name].to_numpy(dtype=float) - center
+        pieces.append(block)
+    df = pd.concat(pieces, ignore_index=True)
+    dummies = pd.get_dummies(df["substance"], prefix="s", drop_first=True, dtype=float)
+    design = pd.concat(
+        [df[["rate", "rate_x_b", *CONTROLS]].reset_index(drop=True), dummies.reset_index(drop=True)],
+        axis=1,
+    )
+    y = df["dem2"].to_numpy(dtype=float)
+    X = sm.add_constant(design, has_constant="add")
+    w = df["two_party"].to_numpy(dtype=float)
+    model = sm.WLS(y, X, weights=w)
+    hc1 = model.fit(cov_type="HC1")
+    clustered = model.fit(cov_type="cluster", cov_kwds={"groups": df["reg_id"].to_numpy()})
+    rank = int(np.linalg.matrix_rank(np.asarray(X, dtype=float)))
+    if rank < X.shape[1]:
+        raise RuntimeError(f"stacked design rank {rank} < {X.shape[1]}")
+
+    def side(res, key: str) -> dict:
+        if key == "A":
+            weights = {"rate": 1.0}
+        elif key == "B":
+            weights = {"rate": 1.0, "rate_x_b": 1.0}
+        else:
+            weights = {"rate_x_b": 1.0}
+        return _combo(res, weights)
+
+    out = {"n_rows": int(hc1.nobs), "n_regions": int(reg["reg_id"].nunique()), "r2": float(hc1.rsquared), "terms": {}}
+    for key in ("A", "B", "diff"):
+        c_cl = side(clustered, key)
+        c_hc = side(hc1, key)
+        out["terms"][key] = {
+            "coef": c_cl["coef"],
+            "se_cluster": c_cl["se"],
+            "lo_cluster": c_cl["lo"],
+            "hi_cluster": c_cl["hi"],
+            "p_cluster": c_cl["p"],
+            "se_hc1": c_hc["se"],
+            "lo_hc1": c_hc["lo"],
+            "hi_hc1": c_hc["hi"],
+            "p_hc1": c_hc["p"],
+        }
+    return out
+
+
+def group_slopes(reg: pd.DataFrame) -> dict:
+    import statsmodels.api as sm
+
+    w = reg["two_party"].to_numpy(dtype=float)
+    centers = {name: wmean(reg[name], w) for name in CONTROLS}
+    omitted = _stack_fit(reg, GROUP_A + GROUP_B, set(GROUP_B), centers)
+    with_heroin = _stack_fit(reg, GROUP_A + GROUP_B + ("her",), set(GROUP_B) | {"her"}, centers)
+    y = reg["dem2"].to_numpy(dtype=float)
+    X = np.column_stack(
+        [
+            np.ones(len(reg)),
+            reg["her"].to_numpy(dtype=float),
+            *[(reg[name] - centers[name]).to_numpy(dtype=float) for name in CONTROLS],
+        ]
+    )
+    alone = sm.WLS(y, X, weights=w).fit(cov_type="HC1")
+    coef = float(alone.params[1]) * 100.0
+    se = float(alone.bse[1]) * 100.0
+    return {
+        "group_a": list(GROUP_A),
+        "group_b": list(GROUP_B),
+        "heroin_omitted": omitted,
+        "heroin_in_b": with_heroin,
+        "heroin_alone": {
+            "coef": coef,
+            "se_hc1": se,
+            "lo": coef - 1.96 * se,
+            "hi": coef + 1.96 * se,
+            "p_hc1": float(alone.pvalues[1]),
+            "n": int(alone.nobs),
+        },
+        "heroin_density_corr": wcorr(reg["her"], reg["ln_dens"], w),
+    }
+
+
+def correlation_study(reg: pd.DataFrame) -> dict:
+    import statsmodels.api as sm
+
+    w = reg["two_party"].to_numpy(dtype=float)
+    keys = list(CORR_KEYS)
+    matrix = []
+    for left in keys:
+        row = []
+        for right in keys:
+            row.append(1.0 if left == right else wcorr(reg[left], reg[right], w))
+        matrix.append(row)
+    substances = [row[0] for row in rr.USE_RATES]
+    C = sm.add_constant(reg[PARTIAL_CONTROLS].astype(float), has_constant="add")
+    y_resid = sm.WLS(reg["dem2"].to_numpy(dtype=float), C, weights=w).fit().resid
+    partials = []
+    for col in substances:
+        x_resid = sm.WLS(reg[col].to_numpy(dtype=float), C, weights=w).fit().resid
+        partials.append(
+            {
+                "term": col,
+                "label": _label(col),
+                "weighted_r": wcorr(reg[col], reg["dem2"], w),
+                "partial_r": wcorr(x_resid, y_resid, w),
+            }
+        )
+    return {
+        "keys": keys,
+        "matrix": matrix,
+        "partials": partials,
+        "controls": list(PARTIAL_CONTROLS),
+        "income": None,
+    }
+
+
+def _write_group_csvs(payload: dict, out_dir: Path) -> None:
+    rows = []
+    labels = {
+        "heroin_omitted": "Heroin omitted",
+        "heroin_in_b": "Heroin in group B",
+    }
+    term_names = {"A": "Group A", "B": "Group B", "diff": "B minus A"}
+    groups = payload["groups"]
+    for spec, title in labels.items():
+        block = groups[spec]
+        for key, name in term_names.items():
+            term = block["terms"][key]
+            rows.append({"spec": title, "term": name, "n_rows": block["n_rows"], "r2": block["r2"], **term})
+    heroin = groups["heroin_alone"]
+    rows.append(
+        {
+            "spec": "Heroin alone",
+            "term": "Heroin",
+            "n_rows": heroin["n"],
+            "r2": "",
+            "coef": heroin["coef"],
+            "se_cluster": "",
+            "lo_cluster": "",
+            "hi_cluster": "",
+            "p_cluster": "",
+            "se_hc1": heroin["se_hc1"],
+            "lo_hc1": heroin["lo"],
+            "hi_hc1": heroin["hi"],
+            "p_hc1": heroin["p_hc1"],
+        }
+    )
+    pd.DataFrame(rows).to_csv(out_dir / "group_slopes.csv", index=False)
+    study = payload["correlation_matrix"]
+    long_rows = []
+    keys = study["keys"]
+    for i, left in enumerate(keys):
+        for j, right in enumerate(keys):
+            long_rows.append({"var_a": left, "var_b": right, "weighted_r": study["matrix"][i][j]})
+    pd.DataFrame(long_rows).to_csv(out_dir / "correlation_matrix.csv", index=False)
+    pd.DataFrame(study["partials"]).to_csv(out_dir / "partial_correlations.csv", index=False)
+
+
 def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     reg = reg.copy()
     reg["st_fips"] = reg["st_fips"].astype(str).str.zfill(2)
@@ -453,6 +675,8 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
             "rows": goodman,
         },
         "correlations_dem2": correlations,
+        "groups": group_slopes(reg),
+        "correlation_matrix": correlation_study(reg),
         "chart_quintiles": q_rows,
         "not_at_substate": [
             "Past-month cocaine. The substate file has past-year cocaine (COCYR) only.",
@@ -470,6 +694,7 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     (out_dir / "extended.json").write_text(json.dumps(payload, indent=2))
     pd.DataFrame(q_rows).to_csv(out_dir / "quintiles.csv", index=False)
     pd.DataFrame(goodman).to_csv(out_dir / "user_nonuser.csv", index=False)
+    _write_group_csvs(payload, out_dir)
     between.to_csv(out_dir / "state_level.csv", index=False)
     keep = [
         "reg_id",
