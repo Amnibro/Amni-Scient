@@ -11,8 +11,9 @@ Specified model, each rate alone: rate + log density + percent ages 18-25
 
 Joint model: the non-nested rates in INDEX_COLS, same controls.
 
-Combined index: sum of the vote-weighted z-scores of INDEX_COLS.
-PC1 of those z-scores is stored as a check.
+King ecological inference: Democratic two-party share among users and
+non-users from a bivariate normal truncated to the unit square, with
+Duncan–Davis bounds as the tomography segment for each region.
 """
 
 from __future__ import annotations
@@ -103,51 +104,204 @@ def wcorr(x, y, w) -> float:
     return float(np.average(xz * yz, weights=w))
 
 
-def add_combined(reg: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
-    w = reg["two_party"].to_numpy(dtype=float)
-    zcols = []
-    moments = {}
-    for c in rr.INDEX_COLS:
-        mu = wmean(reg[c], w)
-        sd = wsd(reg[c], w)
-        z = (reg[c].to_numpy(dtype=float) - mu) / sd
-        reg[f"z_{c}"] = z
-        zcols.append(z)
-        moments[c] = {"vote_weighted_mean": mu, "vote_weighted_sd": sd, **_meta(c)}
-    Z = np.column_stack(zcols)
-    reg["combined"] = Z.sum(axis=1)
-    wc = w / w.sum()
-    cov = (Z * wc[:, None]).T @ Z
-    evals, evecs = np.linalg.eigh(cov)
-    order = np.argsort(evals)[::-1]
-    loading = evecs[:, order[0]].copy()
-    if float(np.mean(loading)) < 0:
-        loading = -loading
-    reg["combined_pc1"] = Z @ loading
-    n_index = len(rr.INDEX_COLS)
-    info = {
-        "definition": (
-            f"Sum of vote-weighted z-scores of {n_index} non-nested substance-use rates: "
-            + ", ".join(rr.INDEX_COLS)
-            + ". Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. "
-            "A region at the vote-weighted mean on every rate scores 0. "
-            f"One standard deviation above the mean on every rate scores {n_index}."
-        ),
-        "members": moments,
-        "excluded_from_index": {
-            "ill": "Past-month illicit drug use includes marijuana.",
-            "binge": "Past-month binge alcohol is the heavy-drinking part of alcohol use, not a second substance.",
-            "pnr": "Past-year pain reliever misuse is inside past-year opioid misuse.",
-            "mrjyr": "Past-year marijuana repeats past-month marijuana.",
-            "her": "Past-year heroin is published for ages 18 or older, not 12 or older.",
-            "ualc": "Underage alcohol repeats alcohol on ages 12–20.",
-            "ubinge": "Underage binge repeats binge alcohol on ages 12–20.",
-        },
-        "pc1_loadings": {c: float(v) for c, v in zip(rr.INDEX_COLS, loading)},
-        "pc1_variance_share": float(evals[order[0]] / evals.sum()),
-        "corr_sum_vs_pc1": wcorr(reg["combined"], reg["combined_pc1"], w),
+def _duncan_davis(x: np.ndarray, t: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    t = np.clip(t, 1e-6, 1 - 1e-6)
+    lo = np.maximum(0.0, (x - (1.0 - t)) / t)
+    hi = np.minimum(1.0, x / t)
+    lo = np.minimum(lo, 1.0)
+    hi = np.maximum(hi, 0.0)
+    swap = lo > hi
+    return np.where(swap, hi, lo), np.where(swap, lo, hi)
+
+
+def _trunc_shares(mean: np.ndarray, cov: np.ndarray) -> dict:
+    """Mean and central 95% of a normal restricted to the unit square.
+
+    The unrestricted mean is the Goodman split. Restricting the HC1 sampling
+    distribution to [0, 1] x [0, 1] is the bounded Goodman estimate.
+    """
+    from scipy.stats import multivariate_normal
+
+    grid = np.linspace(0.002, 0.998, 180)
+    bw, bb = np.meshgrid(grid, grid, indexing="ij")
+    pts = np.column_stack([bw.ravel(), bb.ravel()])
+    rv = multivariate_normal(mean=mean, cov=cov, allow_singular=True)
+    logp = rv.logpdf(pts)
+    logp -= np.max(logp)
+    weight = np.exp(logp)
+    weight /= weight.sum()
+
+    def pack(values: np.ndarray) -> tuple[float, float, float, float]:
+        mu = float(np.sum(weight * values))
+        var = float(np.sum(weight * (values - mu) ** 2))
+        order = np.argsort(values)
+        c = np.cumsum(weight[order])
+        lo = float(values[order][min(len(values) - 1, int(np.searchsorted(c, 0.025)))])
+        hi = float(values[order][min(len(values) - 1, int(np.searchsorted(c, 0.975)))])
+        return mu, var, lo, hi
+
+    non, non_var, non_lo, non_hi = pack(pts[:, 0])
+    user, user_var, user_lo, user_hi = pack(pts[:, 1])
+    return {
+        "nonuser": non,
+        "nonuser_var": non_var,
+        "nonuser_lo": non_lo,
+        "nonuser_hi": non_hi,
+        "user": user,
+        "user_var": user_var,
+        "user_lo": user_lo,
+        "user_hi": user_hi,
+        "edge": float(weight[pts[:, 1] > 0.95].sum()),
     }
-    return reg, info
+
+
+def _within_percentiles(reg: pd.DataFrame, col: str, w: np.ndarray, centered: np.ndarray) -> dict:
+    """Democratic share at the 10th and 90th percentiles of observed use.
+
+    Same vote-weighted regression as the ecological split, controls at their
+    vote-weighted means, read inside the observed rates.
+    """
+    import statsmodels.api as sm
+
+    rate = reg[col].to_numpy(dtype=float)
+    y = reg["dem2"].to_numpy(dtype=float) * 100.0
+    order = np.argsort(rate)
+    v = rate[order]
+    ww = w[order]
+    cw = np.cumsum(ww)
+    total = float(ww.sum())
+
+    def q(prob: float) -> float:
+        return float(v[min(len(v) - 1, int(np.searchsorted(cw, prob * total, side="left")))])
+
+    p10, p90 = q(0.10), q(0.90)
+    use = rate / 100.0
+    res = sm.WLS(y, np.column_stack([np.ones(len(reg)), use, centered]), weights=w).fit(cov_type="HC1")
+    b = np.asarray(res.params, dtype=float)
+    V = np.asarray(res.cov_params(), dtype=float)
+
+    def pred(pct: float) -> tuple[float, float]:
+        gvec = np.zeros(len(b))
+        gvec[0] = 1.0
+        gvec[1] = pct / 100.0
+        est = float(gvec @ b)
+        se = float(np.sqrt(max(0.0, gvec @ V @ gvec)))
+        return est, se
+
+    s10, e10 = pred(p10)
+    s90, e90 = pred(p90)
+    return {
+        "p10_use": p10,
+        "p90_use": p90,
+        "p10_share": s10,
+        "p10_se": e10,
+        "p10_lo": s10 - 1.96 * e10,
+        "p10_hi": s10 + 1.96 * e10,
+        "p90_share": s90,
+        "p90_se": e90,
+        "p90_lo": s90 - 1.96 * e90,
+        "p90_hi": s90 + 1.96 * e90,
+    }
+
+
+def bounded_rows(reg: pd.DataFrame) -> list[dict]:
+    """Bounded Goodman splits, plus shares at the 10th and 90th use percentiles.
+
+    Precinct-level King maximum likelihood piles onto 0 or 100 when the
+    Duncan–Davis bounds on the user share span the whole unit interval, which
+    is what a low, narrow rate does. The split used here is the vote-weighted
+    Goodman regression on the use rate, log density, and age, with the HC1
+    sampling distribution restricted to the unit square. A rate stays on the
+    users chart when that restricted interval sits inside 0–100 and is not
+    piled on the boundary. The others stay on the slope panels.
+    """
+    import statsmodels.api as sm
+
+    w = reg["two_party"].to_numpy(dtype=float)
+    y = reg["dem2"].to_numpy(dtype=float)
+    dem = y > 0.5
+    rep = ~dem
+    ctrl = reg[["ln_dens", "pct_18_25", "pct_12_17"]].to_numpy(dtype=float)
+    centered = ctrl - np.array([wmean(ctrl[:, i], w) for i in range(ctrl.shape[1])])
+    rows = []
+    for col in rr.CHART_COLS:
+        t = reg[col].to_numpy(dtype=float) / 100.0
+        res = sm.WLS(y, np.column_stack([np.ones(len(reg)), t, centered]), weights=w).fit(cov_type="HC1")
+        b = np.asarray(res.params, dtype=float)
+        V = np.asarray(res.cov_params(), dtype=float)
+        mean = np.array([b[0], b[0] + b[1]])
+        jac = np.array([[1.0, 0.0], [1.0, 1.0]])
+        cov = jac @ V[:2, :2] @ jac.T
+        cov = cov + np.eye(2) * 1e-10
+        fit = _trunc_shares(mean, cov)
+        lo_b, hi_b = _duncan_davis(y, t)
+        width = float(np.average(hi_b - lo_b, weights=w))
+        non = fit["nonuser"] * 100.0
+        user = fit["user"] * 100.0
+        non_lo, non_hi = fit["nonuser_lo"] * 100.0, fit["nonuser_hi"] * 100.0
+        user_lo, user_hi = fit["user_lo"] * 100.0, fit["user_hi"] * 100.0
+        non_se = float(np.sqrt(fit["nonuser_var"]) * 100.0)
+        user_se = float(np.sqrt(fit["user_var"]) * 100.0)
+        mean_use = float(np.average(reg[col].to_numpy(dtype=float), weights=w))
+        user_width = user_hi - user_lo
+        non_width = non_hi - non_lo
+        stable = (
+            fit["edge"] < 0.30
+            and 5.0 <= non <= 95.0
+            and 5.0 <= user <= 95.0
+            and user_width <= 45.0
+            and non_width <= 25.0
+            and non_lo >= 0.0
+            and user_hi <= 100.0
+        )
+        reason = ""
+        if not stable:
+            reason = (
+                "Duncan–Davis bounds on the user share run essentially from 0 to 100, "
+                "and the bounded split piles on that edge or spans too wide an interval. "
+                "The rate stays on the slope panels and in the within-data percentile companion."
+            )
+        dem_rate = wmean(reg.loc[dem, col], w[dem])
+        rep_rate = wmean(reg.loc[rep, col], w[rep])
+        pct = _within_percentiles(reg, col, w, centered)
+        rows.append(
+            {
+                "term": col,
+                "label": _label(col),
+                "stable": stable,
+                "drop_reason": reason,
+                "nonuser_share": non,
+                "nonuser_se": non_se,
+                "nonuser_lo": non_lo,
+                "nonuser_hi": non_hi,
+                "user_share": user,
+                "user_se": user_se,
+                "user_lo": user_lo,
+                "user_hi": user_hi,
+                "bound_width_user": width,
+                "edge_mass": fit["edge"],
+                "mean_use": mean_use,
+                "dem_majority_rate": dem_rate,
+                "rep_majority_rate": rep_rate,
+                "ratio": dem_rate / rep_rate,
+                "n_dem_regions": int(dem.sum()),
+                "n_rep_regions": int(rep.sum()),
+                "observed_min": float(reg[col].min()),
+                "observed_max": float(reg[col].max()),
+                **pct,
+            }
+        )
+        print(
+            col,
+            "stable" if stable else "drop",
+            f"non {non:.1f} [{non_lo:.1f},{non_hi:.1f}]",
+            f"user {user:.1f} [{user_lo:.1f},{user_hi:.1f}]",
+            f"edge {fit['edge']:.2f}",
+            f"p10 {pct['p10_use']:.2f}->{pct['p10_share']:.1f}",
+            f"p90 {pct['p90_use']:.2f}->{pct['p90_share']:.1f}",
+            flush=True,
+        )
+    return rows
 
 
 def coef_pack(result: dict, name: str, scale_sd: float | None = None) -> dict:
@@ -156,7 +310,7 @@ def coef_pack(result: dict, name: str, scale_sd: float | None = None) -> dict:
         raise KeyError(name)
     out = {
         "term": name,
-        "label": _label(name) if name in {r[0] for r in rr.USE_RATES + rr.DISORDER_RATES} or name == "combined" else name,
+        "label": _label(name) if name in {r[0] for r in rr.USE_RATES + rr.DISORDER_RATES} else name,
         "pp_per_pp": rr.pp(t["coef"]),
         "se_pp": rr.pp(t["se"]),
         "p": t["p"],
@@ -195,26 +349,6 @@ def quintiles(reg: pd.DataFrame, col: str) -> list[dict]:
     return rows
 
 
-def density_bins(reg: pd.DataFrame) -> list[dict]:
-    work = reg[["two_party", "dem2", "combined", "ln_dens"]].copy()
-    work["q"] = pd.qcut(work["ln_dens"], 5, labels=False, duplicates="drop")
-    rows = []
-    for q, g in work.groupby("q"):
-        w = g["two_party"]
-        rows.append(
-            {
-                "quintile": int(q) + 1,
-                "n_regions": int(len(g)),
-                "ln_dens": wmean(g["ln_dens"], w),
-                "people_per_km2": float(np.exp(wmean(g["ln_dens"], w))),
-                "combined": wmean(g["combined"], w),
-                "dem2": wmean(g["dem2"], w),
-                "two_party": float(w.sum()),
-            }
-        )
-    return rows
-
-
 def state_table(reg: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for st, g in reg.groupby("st_fips"):
@@ -225,23 +359,12 @@ def state_table(reg: pd.DataFrame) -> pd.DataFrame:
                 "st_name": g["st_name"].iloc[0],
                 "n_regions": int(len(g)),
                 "dem2": wmean(g["dem2"], w),
-                "combined": wmean(g["combined"], w),
                 "ln_dens": wmean(g["ln_dens"], w),
                 "two_party": float(w.sum()),
-                **{c: wmean(g[c], w) for c in rr.INDEX_COLS},
+                **{c: wmean(g[c], w) for c in rr.CHART_COLS},
             }
         )
     return pd.DataFrame(rows)
-
-
-def within_frame(reg: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
-    out = reg.copy()
-    for st, idx in reg.groupby("st_fips").groups.items():
-        g = reg.loc[idx]
-        w = g["two_party"]
-        for c in cols:
-            out.loc[idx, c] = g[c] - wmean(g[c], w)
-    return out
 
 
 # Census FIPS names. The 2021–2023 shapefile mislabels Nebraska (FIPS 31)
@@ -261,16 +384,240 @@ FIPS_NAME = {
 }
 
 
+# Acute perception or suggestibility: marijuana, hallucinogens, alcohol, cocaine.
+# Mu-opioid sedation, plus methamphetamine as a stimulant without that profile.
+GROUP_A = ("mj", "hal", "alc", "coc")
+GROUP_B = ("opin", "pnr", "met")
+CORR_KEYS = [
+    "dem2",
+    "ln_dens",
+    "pct_18_25",
+    "pct_12_17",
+    "pct_ba",
+    "mj",
+    "hal",
+    "alc",
+    "coc",
+    "opin",
+    "pnr",
+    "met",
+    "her",
+    "binge",
+    "iem",
+    "ill",
+    "mrjyr",
+    "ualc",
+    "ubinge",
+]
+PARTIAL_CONTROLS = ["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]
+
+
+def _combo(res, weights: dict) -> dict:
+    names = list(res.params.index)
+    g = np.zeros(len(names))
+    for key, value in weights.items():
+        g[names.index(key)] = value
+    b = np.asarray(res.params, dtype=float)
+    V = np.asarray(res.cov_params(), dtype=float)
+    est = float(g @ b) * 100.0
+    se = float(np.sqrt(max(0.0, float(g @ V @ g)))) * 100.0
+    z = est / se if se > 0 else float("nan")
+    from math import erfc
+
+    p = float(erfc(abs(z) / np.sqrt(2.0))) if se > 0 else float("nan")
+    return {
+        "coef": est,
+        "se": se,
+        "lo": est - 1.96 * se,
+        "hi": est + 1.96 * se,
+        "p": p,
+    }
+
+
+def _stack_fit(reg: pd.DataFrame, substances: tuple[str, ...], group_b: set[str], centers: dict) -> dict:
+    import statsmodels.api as sm
+
+    pieces = []
+    for col in substances:
+        block = pd.DataFrame(
+            {
+                "reg_id": reg["reg_id"].astype(str).to_numpy(),
+                "dem2": reg["dem2"].to_numpy(dtype=float),
+                "rate": reg[col].to_numpy(dtype=float),
+                "rate_x_b": reg[col].to_numpy(dtype=float) * (1.0 if col in group_b else 0.0),
+                "substance": col,
+                "two_party": reg["two_party"].to_numpy(dtype=float),
+            }
+        )
+        for name, center in centers.items():
+            block[name] = reg[name].to_numpy(dtype=float) - center
+        pieces.append(block)
+    df = pd.concat(pieces, ignore_index=True)
+    dummies = pd.get_dummies(df["substance"], prefix="s", drop_first=True, dtype=float)
+    design = pd.concat(
+        [df[["rate", "rate_x_b", *CONTROLS]].reset_index(drop=True), dummies.reset_index(drop=True)],
+        axis=1,
+    )
+    y = df["dem2"].to_numpy(dtype=float)
+    X = sm.add_constant(design, has_constant="add")
+    w = df["two_party"].to_numpy(dtype=float)
+    model = sm.WLS(y, X, weights=w)
+    hc1 = model.fit(cov_type="HC1")
+    clustered = model.fit(cov_type="cluster", cov_kwds={"groups": df["reg_id"].to_numpy()})
+    rank = int(np.linalg.matrix_rank(np.asarray(X, dtype=float)))
+    if rank < X.shape[1]:
+        raise RuntimeError(f"stacked design rank {rank} < {X.shape[1]}")
+
+    def side(res, key: str) -> dict:
+        if key == "A":
+            weights = {"rate": 1.0}
+        elif key == "B":
+            weights = {"rate": 1.0, "rate_x_b": 1.0}
+        else:
+            weights = {"rate_x_b": 1.0}
+        return _combo(res, weights)
+
+    out = {"n_rows": int(hc1.nobs), "n_regions": int(reg["reg_id"].nunique()), "r2": float(hc1.rsquared), "terms": {}}
+    for key in ("A", "B", "diff"):
+        c_cl = side(clustered, key)
+        c_hc = side(hc1, key)
+        out["terms"][key] = {
+            "coef": c_cl["coef"],
+            "se_cluster": c_cl["se"],
+            "lo_cluster": c_cl["lo"],
+            "hi_cluster": c_cl["hi"],
+            "p_cluster": c_cl["p"],
+            "se_hc1": c_hc["se"],
+            "lo_hc1": c_hc["lo"],
+            "hi_hc1": c_hc["hi"],
+            "p_hc1": c_hc["p"],
+        }
+    return out
+
+
+def group_slopes(reg: pd.DataFrame) -> dict:
+    import statsmodels.api as sm
+
+    w = reg["two_party"].to_numpy(dtype=float)
+    centers = {name: wmean(reg[name], w) for name in CONTROLS}
+    omitted = _stack_fit(reg, GROUP_A + GROUP_B, set(GROUP_B), centers)
+    with_heroin = _stack_fit(reg, GROUP_A + GROUP_B + ("her",), set(GROUP_B) | {"her"}, centers)
+    y = reg["dem2"].to_numpy(dtype=float)
+    X = np.column_stack(
+        [
+            np.ones(len(reg)),
+            reg["her"].to_numpy(dtype=float),
+            *[(reg[name] - centers[name]).to_numpy(dtype=float) for name in CONTROLS],
+        ]
+    )
+    alone = sm.WLS(y, X, weights=w).fit(cov_type="HC1")
+    coef = float(alone.params[1]) * 100.0
+    se = float(alone.bse[1]) * 100.0
+    return {
+        "group_a": list(GROUP_A),
+        "group_b": list(GROUP_B),
+        "heroin_omitted": omitted,
+        "heroin_in_b": with_heroin,
+        "heroin_alone": {
+            "coef": coef,
+            "se_hc1": se,
+            "lo": coef - 1.96 * se,
+            "hi": coef + 1.96 * se,
+            "p_hc1": float(alone.pvalues[1]),
+            "n": int(alone.nobs),
+        },
+        "heroin_density_corr": wcorr(reg["her"], reg["ln_dens"], w),
+    }
+
+
+def correlation_study(reg: pd.DataFrame) -> dict:
+    import statsmodels.api as sm
+
+    w = reg["two_party"].to_numpy(dtype=float)
+    keys = list(CORR_KEYS)
+    matrix = []
+    for left in keys:
+        row = []
+        for right in keys:
+            row.append(1.0 if left == right else wcorr(reg[left], reg[right], w))
+        matrix.append(row)
+    substances = [row[0] for row in rr.USE_RATES]
+    C = sm.add_constant(reg[PARTIAL_CONTROLS].astype(float), has_constant="add")
+    y_resid = sm.WLS(reg["dem2"].to_numpy(dtype=float), C, weights=w).fit().resid
+    partials = []
+    for col in substances:
+        x_resid = sm.WLS(reg[col].to_numpy(dtype=float), C, weights=w).fit().resid
+        partials.append(
+            {
+                "term": col,
+                "label": _label(col),
+                "weighted_r": wcorr(reg[col], reg["dem2"], w),
+                "partial_r": wcorr(x_resid, y_resid, w),
+            }
+        )
+    return {
+        "keys": keys,
+        "matrix": matrix,
+        "partials": partials,
+        "controls": list(PARTIAL_CONTROLS),
+        "income": None,
+    }
+
+
+def _write_group_csvs(payload: dict, out_dir: Path) -> None:
+    rows = []
+    labels = {
+        "heroin_omitted": "Heroin omitted",
+        "heroin_in_b": "Heroin in group B",
+    }
+    term_names = {"A": "Group A", "B": "Group B", "diff": "B minus A"}
+    groups = payload["groups"]
+    for spec, title in labels.items():
+        block = groups[spec]
+        for key, name in term_names.items():
+            term = block["terms"][key]
+            rows.append({"spec": title, "term": name, "n_rows": block["n_rows"], "r2": block["r2"], **term})
+    heroin = groups["heroin_alone"]
+    rows.append(
+        {
+            "spec": "Heroin alone",
+            "term": "Heroin",
+            "n_rows": heroin["n"],
+            "r2": "",
+            "coef": heroin["coef"],
+            "se_cluster": "",
+            "lo_cluster": "",
+            "hi_cluster": "",
+            "p_cluster": "",
+            "se_hc1": heroin["se_hc1"],
+            "lo_hc1": heroin["lo"],
+            "hi_hc1": heroin["hi"],
+            "p_hc1": heroin["p_hc1"],
+        }
+    )
+    pd.DataFrame(rows).to_csv(out_dir / "group_slopes.csv", index=False)
+    study = payload["correlation_matrix"]
+    long_rows = []
+    keys = study["keys"]
+    for i, left in enumerate(keys):
+        for j, right in enumerate(keys):
+            long_rows.append({"var_a": left, "var_b": right, "weighted_r": study["matrix"][i][j]})
+    pd.DataFrame(long_rows).to_csv(out_dir / "correlation_matrix.csv", index=False)
+    pd.DataFrame(study["partials"]).to_csv(out_dir / "partial_correlations.csv", index=False)
+
+
 def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     reg = reg.copy()
     reg["st_fips"] = reg["st_fips"].astype(str).str.zfill(2)
     reg["st_name"] = reg["st_fips"].map(FIPS_NAME).fillna(reg["st_name"])
-    reg, index_info = add_combined(reg)
+    drop_extra = [c for c in reg.columns if c == "combined" or c == "combined_pc1" or c.startswith("z_")]
+    if drop_extra:
+        reg = reg.drop(columns=drop_extra)
     w = reg["two_party"].to_numpy(dtype=float)
     measures = [r[0] for r in rr.USE_RATES + rr.DISORDER_RATES]
 
     alone = {}
-    for col in measures + ["combined", "combined_pc1"]:
+    for col in measures:
         sd = wsd(reg[col], w)
         spec = [col] + CONTROLS
         fit = rr.fit_wls(reg, spec, None)
@@ -297,60 +644,39 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         joint_pack["terms"][col]["state_fe_se_pp"] = coef_pack(joint_fe, col, sd)["se_pp"]
         joint_pack["terms"][col]["state_fe_p"] = coef_pack(joint_fe, col, sd)["p"]
 
-    # Within-state: demean by the vote-weighted state mean, then the same controls.
-    within_cols = ["dem2", "combined", "ln_dens", "pct_18_25", "pct_12_17"]
-    within = within_frame(reg, within_cols)
-    within_fit = rr.fit_wls(within, ["combined"] + CONTROLS, None)
     between = state_table(reg)
-    between_fit = rr.fit_wls(between, ["combined", "ln_dens"], None)
-    # Between sample has no age split stored at a different grain; age is omitted
-    # at state level so the between slope is combined + log density only.
-    between_age = state_table(reg)
-    # state_table does not carry age. Refit between on combined alone and with density.
-    between_only = rr.fit_wls(between, ["combined"], None)
-
+    goodman = bounded_rows(reg)
     q_rows = []
     for col in rr.CHART_COLS:
         q_rows.extend(quintiles(reg, col))
-    q_rows.extend(quintiles(reg, "combined"))
-    dens = density_bins(reg)
-
-    # Within-state quintiles of the demeaned index, for the within chart.
-    wq = within.copy()
-    wq["q"] = pd.qcut(wq["combined"], 5, labels=False, duplicates="drop")
-    within_bins = []
-    for q, g in wq.groupby("q"):
-        ww = g["two_party"]
-        within_bins.append(
-            {
-                "quintile": int(q) + 1,
-                "n_regions": int(len(g)),
-                "combined_within": wmean(g["combined"], ww),
-                "dem2_within": wmean(g["dem2"], ww),
-            }
-        )
 
     correlations = {
         col: wcorr(reg[col], reg["dem2"], w)
-        for col in measures + ["combined", "combined_pc1", "ln_dens", "pct_ba"]
+        for col in measures + ["ln_dens", "pct_ba"]
     }
 
     payload = {
-        "index": index_info,
         "alone": alone,
         "joint": joint_pack,
-        "combined_vs_state": {
-            "within_specified": coef_pack(within_fit, "combined", wsd(reg["combined"], w)),
-            "between_with_log_density": coef_pack(between_fit, "combined", wsd(between["combined"], between["two_party"])),
-            "between_alone": coef_pack(between_only, "combined", wsd(between["combined"], between["two_party"])),
-            "n_states": int(len(between)),
-            "within_bins": within_bins,
-        },
-        "combined_vs_density": {
-            "corr": wcorr(reg["combined"], reg["ln_dens"], w),
-            "bins": dens,
+        "goodman": {
+            "method": (
+                "Bounded Goodman. Vote-weighted WLS of Democratic two-party share on "
+                "the use rate as a proportion, log density, percent ages 18–25, and "
+                "percent ages 12–17, controls centered at their vote-weighted means. "
+                "The non-user share is the intercept and the user share is the intercept "
+                "plus the slope. The HC1 sampling distribution of that pair is restricted "
+                "to the unit square, which is the bounded Goodman estimate. A rate is "
+                "omitted from the users chart when Duncan–Davis bounds on the user share "
+                "span essentially 0–100 and the restricted estimate piles on that edge "
+                "or the interval is too wide. The percentile companion reads the same "
+                "regression at the vote-weighted 10th and 90th percentiles of the "
+                "observed regional rate."
+            ),
+            "rows": goodman,
         },
         "correlations_dem2": correlations,
+        "groups": group_slopes(reg),
+        "correlation_matrix": correlation_study(reg),
         "chart_quintiles": q_rows,
         "not_at_substate": [
             "Past-month cocaine. The substate file has past-year cocaine (COCYR) only.",
@@ -367,6 +693,8 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "extended.json").write_text(json.dumps(payload, indent=2))
     pd.DataFrame(q_rows).to_csv(out_dir / "quintiles.csv", index=False)
+    pd.DataFrame(goodman).to_csv(out_dir / "user_nonuser.csv", index=False)
+    _write_group_csvs(payload, out_dir)
     between.to_csv(out_dir / "state_level.csv", index=False)
     keep = [
         "reg_id",
@@ -384,8 +712,6 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         "pct_15_17",
         "pct_ba",
         *measures,
-        "combined",
-        "combined_pc1",
     ]
     reg[keep].to_csv(out_dir / "region_level.csv", index=False)
     return payload
@@ -428,7 +754,8 @@ def main_committed() -> None:
     (RESULTS / "results.json").write_text(json.dumps(old, indent=2))
     print("marijuana specified", round(mj["pp_per_pp"], 3), "se", round(mj["se_pp"], 3))
     print("alcohol specified", round(alc["pp_per_pp"], 3), "se", round(alc["se_pp"], 3))
-    print("combined per sd", round(payload["alone"]["combined"]["pp_per_sd"], 3))
+    g = payload["goodman"]["rows"][0]
+    print("marijuana nonuser", round(g["nonuser_share"], 1), "user", round(g["user_share"], 1))
     print("wrote", RESULTS)
 
 

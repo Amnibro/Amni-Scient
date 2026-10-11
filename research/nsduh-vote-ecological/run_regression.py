@@ -46,7 +46,7 @@ OUT.mkdir(exist_ok=True)
 # NSDUH 2021-2023 substate outcomes that are substance-use rates.
 # short, shapefile field, label, age group, window.
 # Nested or age-restricted rates stay in the alone models. They are
-# not in the joint model or the combined index. See fit_extended.py.
+# not in the joint model. See fit_extended.py.
 USE_RATES = [
     ("mj", "MRJMON", "Past-month marijuana", "12+", "month"),
     ("alc", "ALCMON", "Past-month alcohol", "12+", "month"),
@@ -75,6 +75,7 @@ DISORDER_RATES = [
 # binge is the heavy-drinking slice of alcohol. pnr is inside opioid misuse.
 # mrjyr repeats marijuana. her is ages 18+, not 12+. Underage rates repeat
 # the same substances on ages 12–20.
+# Non-nested rates entered together. Nested rates stay in the alone models.
 INDEX_COLS = ["mj", "alc", "iem", "coc", "opin", "met", "hal"]
 CHART_COLS = ["mj", "alc", "binge", "iem", "coc", "opin", "pnr", "met", "hal", "her"]
 
