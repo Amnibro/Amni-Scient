@@ -49,6 +49,8 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
 .legend i{width:14px;height:3px;border-radius:1px;display:inline-block}
 .legend.naep i{width:22px;height:8px;border-radius:2px}
+.legend i.open{background:transparent;border:2px solid var(--text);width:8px;height:8px;box-sizing:border-box}
+#law-table th{cursor:pointer}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -1464,6 +1466,7 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/correlation_matrix.csv" download>Correlation matrix CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/partial_correlations.csv" download>Partial correlations CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>

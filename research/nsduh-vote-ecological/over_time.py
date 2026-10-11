@@ -321,8 +321,38 @@ def _num(x, d=2, sign=False):
     return ("−" if n < 0 else "") + body
 
 
-def _frame(w, h, x0, x1, y0, y1, xticks, yticks, y_right=None, right=None):
-    left, top, bottom = 46, 16, 28
+PARTY_COLOR = {
+    "D": "#2563EB",
+    "R": "#DC2626",
+    "initiative": "#78716C",
+    "mixed": "#7C3AED",
+    "agency": "#C89B4E",
+    "unrecorded": "#8A6318",
+}
+
+
+def load_acts() -> list[dict]:
+    path = DATA / "legislative_acts.csv"
+    rows = []
+    import csv
+
+    for rec in csv.DictReader(path.open()):
+        year = int(rec["date"][:4])
+        month = int(rec["date"][5:7])
+        day = int(rec["date"][8:10])
+        if rec["precision"] == "day":
+            x = year + (month - 1) / 12 + (day - 1) / 365
+        else:
+            x = year + 0.45
+        rec["x"] = x
+        rec["year"] = year
+        rows.append(rec)
+    rows.sort(key=lambda r: (r["date"], r["jurisdiction"], r["bill"]))
+    return rows
+
+
+def _frame(w, h, x0, x1, y0, y1, xticks, yticks, y_right=None, right=None, top_extra=0):
+    left, top, bottom = 46, 16 + top_extra, 28
     if right is None:
         right = 46 if y_right else 16
     pw, ph = w - left - right, h - top - bottom
@@ -373,7 +403,51 @@ def _polyline(parts, X, Y, pts, color, dash=False, ymap=None):
         parts.append(f'<circle cx="{X(year):.1f}" cy="{yy:.1f}" r="2.3" fill="{color}"/>')
 
 
-def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame) -> str:
+def _law_marks(parts, X, acts: list[dict], x0: float, x1: float) -> None:
+    """Party-colored markers in the top band. Open squares are tighter access."""
+    shown = [a for a in acts if x0 <= a["x"] <= x1]
+    buckets: dict[int, list[dict]] = {}
+    for act in shown:
+        buckets.setdefault(int(act["year"]), []).append(act)
+    for year, group in buckets.items():
+        group = sorted(group, key=lambda a: (a["direction"] != "tighten", a["bill"]))
+        draw = group[:8]
+        for i, act in enumerate(draw):
+            col = i % 4
+            row = i // 4
+            n_in_row = min(4, len(draw) - row * 4)
+            cx = X(year + 0.45) + (col - (n_in_row - 1) / 2) * 7
+            cy = 8 + row * 11
+            color = PARTY_COLOR.get(act["sponsor_party"], "#8A6318")
+            tip = _esc(f"{act['date'][:4] if act['precision']=='year' else act['date']} {act['jurisdiction']} {act['bill']}. {act['direction']}.")
+            if act["direction"] == "tighten":
+                parts.append(
+                    f'<rect x="{cx - 3.2:.1f}" y="{cy - 3.2:.1f}" width="6.4" height="6.4" fill="none" stroke="{color}" stroke-width="1.6"><title>{tip}</title></rect>'
+                )
+            else:
+                parts.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="3.2" fill="{color}" stroke="var(--bg)" stroke-width="0.6"><title>{tip}</title></circle>')
+        extra = len(group) - len(draw)
+        if extra:
+            parts.append(
+                f'<text x="{X(year + 0.45) + 16:.1f}" y="14" class="tick">+{extra}</text>'
+            )
+
+
+def law_legend() -> str:
+    return (
+        '<div class="legend law">'
+        '<span><i style="background:#2563EB"></i>Democratic sponsor</span>'
+        '<span><i style="background:#DC2626"></i>Republican sponsor</span>'
+        '<span><i style="background:#78716C"></i>Citizen initiative</span>'
+        '<span><i style="background:#7C3AED"></i>Bipartisan sponsors</span>'
+        '<span><i style="background:#C89B4E"></i>Agency or department</span>'
+        '<span><i style="background:#8A6318"></i>Legislature, sponsor not in the source</span>'
+        '<span><i class="open"></i>Open square · tighter access</span>'
+        "</div>"
+    )
+
+
+def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None = None) -> str:
     nat = nsduh[nsduh["geo"] == "US"]
     blocks = [
         (
@@ -395,34 +469,34 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame) -> str:
     ]
     by_key = {k: (lab, col, codes, dash) for k, lab, col, codes, dash in SERIES}
     cards = []
-    for title, keys, y0, y1, yticks, marks in blocks:
-        parts, X, Y, left, top, ph, w, right = _frame(860, 300, 1999, 2025, y0, y1, (2002, 2008, 2014, 2020, 2024), yticks)
-        if marks:
-            for year, g in legal.groupby("year"):
-                parts.append(
-                    f'<line x1="{X(year):.1f}" y1="{top + ph - 8}" x2="{X(year):.1f}" y2="{top + ph}" stroke="#8A6318" stroke-width="2"/>'
-                )
+    for i, (title, keys, y0, y1, yticks, _marks) in enumerate(blocks):
+        parts, X, Y, left, top, ph, w, right = _frame(
+            860, 332, 1996, 2027.2, y0, y1, (1998, 2004, 2010, 2016, 2022, 2026), yticks, top_extra=28
+        )
         for key in keys:
             lab, col, codes, dash = by_key[key]
             for seg in _segments(nat[nat["outcome"].isin(codes)], codes):
                 _polyline(parts, X, Y, [(a, b) for a, b, _p in seg], col, dash=dash)
+        if acts:
+            _law_marks(parts, X, acts, 1996, 2027.2)
         parts.append("</svg>")
         legend = "".join(
             f'<span><i style="background:{by_key[k][1]}"></i>{_esc(by_key[k][0])}</span>' for k in keys
         )
         cards.append(
             f'<p class="slope-k">{_esc(title)}</p><div class="legend">{legend}</div>'
-            f'<div class="chart-card">{"".join(parts)}</div>'
+            + (law_legend() if i == 0 else "")
+            + f'<div class="chart-card"{ " id=\"use-law-chart\"" if i == 0 else ""}>{"".join(parts)}</div>'
             f'<p class="axis-name"><span>Y · Percent, ages 12+</span><span>X · Later year of the two-year pool</span></p>'
         )
     return "\n".join(cards)
 
 
-def cognition_chart(naep: pd.DataFrame) -> str:
+def cognition_chart(naep: pd.DataFrame, acts: list[dict] | None = None) -> str:
     nat = naep[naep["geo"] == "NP"]
     y0, y1 = 205, 295
     parts, X, Y, left, top, ph, w, right = _frame(
-        860, 320, 1996, 2024.8, y0, y1, (1998, 2004, 2010, 2016, 2022), (210, 230, 250, 270, 290), right=118
+        860, 352, 1996, 2027.2, y0, y1, (1998, 2004, 2010, 2016, 2022, 2026), (210, 230, 250, 270, 290), right=28, top_extra=28
     )
     shorts = {
         ("math", 4): "Math 4",
@@ -445,6 +519,8 @@ def cognition_chart(naep: pd.DataFrame) -> str:
         parts.append(
             f'<text x="{X(year) + 8:.1f}" y="{yy + 4:.1f}" style="fill:{col};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{_esc(short)}</text>'
         )
+    if acts:
+        _law_marks(parts, X, acts, 1996, 2027.2)
     parts.append("</svg>")
     legend = "".join(
         f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for _s, _g, lab, col in NAEP_SUBJECTS
@@ -457,14 +533,16 @@ def cognition_chart(naep: pd.DataFrame) -> str:
     )
 
 
-def vote_chart(vote: pd.DataFrame) -> str:
+def vote_chart(vote: pd.DataFrame, acts: list[dict] | None = None) -> str:
     nat_rows = []
     for year, g in vote.groupby("year"):
         dem = g["dem"].sum()
         rep = g["rep"].sum()
         nat_rows.append((int(year), 100 * dem / (dem + rep)))
-    parts, X, Y, *_rest = _frame(860, 280, 2002, 2026, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100))
+    parts, X, Y, *_rest = _frame(860, 312, 2002, 2027.2, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100), top_extra=28)
     _polyline(parts, X, Y, nat_rows, "#8A6318")
+    if acts:
+        _law_marks(parts, X, acts, 2002, 2027.2)
     for year, val in nat_rows:
         parts.append(
             f'<text x="{X(year):.1f}" y="{Y(val) - 8:.1f}" text-anchor="middle" class="lab">{val:.1f}</text>'
@@ -870,6 +948,92 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
 """
 
 
+def _party_label(code: str) -> str:
+    return {
+        "D": "Democratic",
+        "R": "Republican",
+        "initiative": "Citizen initiative",
+        "mixed": "Bipartisan",
+        "agency": "Agency",
+        "unrecorded": "Not in the source",
+    }.get(code, code)
+
+
+def law_section(acts: list[dict]) -> str:
+    body = []
+    for act in acts:
+        when = act["date"] if act["precision"] == "day" else act["date"][:4]
+        direction = "Tighter access" if act["direction"] == "tighten" else "Easier access"
+        sponsor = act["sponsors"] or "—"
+        signer = act["signer"] or "—"
+        if act["signer_party"] in ("D", "R"):
+            signer = f"{signer} ({act['signer_party']})"
+        vote = act["vote"] or "—"
+        committee = act["committee"]
+        passed = act["passage"]
+        if passed == "citizen initiative" and committee:
+            passed = f"Citizen initiative. {committee}"
+        elif passed == "citizen initiative":
+            passed = "Citizen initiative"
+        body.append(
+            "<tr>"
+            f'<td data-sort="{_esc(act["date"])}">{_esc(when)}</td>'
+            f"<td>{_esc(act['jurisdiction'])}</td>"
+            f"<td>{_esc(act['substance'])}</td>"
+            f'<td data-sort="{_esc(act["direction"])}">{direction}</td>'
+            f"<td>{_esc(passed)}</td>"
+            f"<td>{_esc(act['bill'])}</td>"
+            f"<td>{_esc(sponsor)}</td>"
+            f"<td>{_esc(_party_label(act['sponsor_party']))}</td>"
+            f"<td>{_esc(signer)}</td>"
+            f"<td>{_esc(vote)}</td>"
+            "</tr>"
+        )
+    n_tight = sum(1 for a in acts if a["direction"] == "tighten")
+    n_init = sum(1 for a in acts if a["passage"] == "citizen initiative")
+    script = """
+<script>
+(function(){
+  var table = document.getElementById('law-table');
+  if (!table) return;
+  var headers = table.querySelectorAll('th');
+  headers.forEach(function(th, i){
+    th.addEventListener('click', function(){
+      var tbody = table.tBodies[0];
+      var rows = Array.prototype.slice.call(tbody.rows);
+      var dir = th.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+      headers.forEach(function(h){ h.removeAttribute('data-dir'); });
+      th.setAttribute('data-dir', dir);
+      rows.sort(function(a, b){
+        var x = (a.cells[i].getAttribute('data-sort') || a.cells[i].textContent).toLowerCase();
+        var y = (b.cells[i].getAttribute('data-sort') || b.cells[i].textContent).toLowerCase();
+        if (x < y) return dir === 'asc' ? -1 : 1;
+        if (x > y) return dir === 'asc' ? 1 : -1;
+        return 0;
+      });
+      rows.forEach(function(r){ tbody.appendChild(r); });
+    });
+  });
+})();
+</script>
+"""
+    return f"""
+<h2 id="laws">Laws on the timeline</h2>
+<p>The markers are {len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the January 4, 2018 Sessions memorandum, and Oregon HB 4002, signed April 1, 2024. Filled circles made the substance easier to obtain or less criminal. Open squares tightened access. Color is the sponsor’s party. Initiatives have no sponsoring party.</p>
+<p>Click a column heading to sort the table.</p>
+<div class="table-scroll">
+<table class="cmp" id="law-table">
+<thead><tr><th>Date</th><th>Jurisdiction</th><th>Substance</th><th>Direction</th><th>How it passed</th><th>Bill</th><th>Sponsor</th><th>Sponsor party</th><th>Signed by</th><th>Vote</th></tr></thead>
+<tbody>
+{''.join(body)}
+</tbody>
+</table>
+</div>
+<p class="fine">State medical and adult-use rows are the comprehensive programs in NCSL, State Medical Cannabis Laws, updated September 2, 2026. A year with no day is the NCSL year, placed at mid-year on the chart. Sponsor, party, and the roll call are filled when Congress.gov, the House Clerk, the Senate, a legislature journal, Ballotpedia, or the enrolled act records them. A cell that says “Not in the source” is a blank in that record. Citizen initiatives are labeled with the vote and the sponsoring committee when Ballotpedia records them. Territories on the NCSL table are not in this file. CSV: <a href="nsduh-vote-ecological/data/legislative_acts.csv">legislative_acts.csv</a>.</p>
+{script}
+"""
+
+
 def section_html(frames: dict | None = None) -> str:
     frames = frames or load_frames()
     panel, fits = state_changes(frames)
@@ -883,23 +1047,22 @@ def section_html(frames: dict | None = None) -> str:
     mj = nat[(nat["geo"] == "US") & (nat["outcome"] == "MRJMON")].sort_values("year")
     pre = mj[mj["year"] <= 2019].iloc[-1]
     post = mj[mj["year"] >= 2021].iloc[-1]
-    legal_line = "; ".join(
-        f"{int(year)} {' '.join(g['geo'].tolist())}" for year, g in frames["legal"].groupby("year")
-    )
+    acts = load_acts()
     return f"""
 <h2 id="over-time">Use, scores, and the vote over time</h2>
 <p>National past-month marijuana, ages 12 or older, is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. The gold band is the 2020–2021 web-mode break. Lines stop at that band. From 2009–2010 to 2018–2019, one point of additional past-month marijuana use lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> points of grade-8 mathematics (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic two-party share (SE {_num(mj_v['se'])}).</p>
 <p>Alcohol’s first difference over the same window is <strong>{_num(alc_n['coef'], sign=True)}</strong> NAEP grade-8 mathematics points per point of past-month use (SE {_num(alc_n['se'])}) and <strong>{_num(alc_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(alc_v['se'])}). Grade-4 mathematics is <strong>{_num(fit_of[('alc', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-month alcohol (SE {_num(fit_of[('alc', 'naep_math4')]['se'])}) and <strong>{_num(fit_of[('mrjyr', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-year marijuana (SE {_num(fit_of[('mrjyr', 'naep_math4')]['se'])}).</p>
-{use_charts(frames['nsduh'], frames['legal'])}
-<p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. Gold ticks are years when a state legalized adult-use cannabis: { _esc(legal_line) }.</p>
-{cognition_chart(frames['naep'])}
+{use_charts(frames['nsduh'], frames['legal'], acts)}
+<p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. The markers along the top are laws. Filled circles eased access. Open squares tightened it. Color is the sponsor’s party, stone is a citizen initiative, and brown is a legislature whose sponsor is not in the source.</p>
+{cognition_chart(frames['naep'], acts)}
 <p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. Mathematics grade 4 is brown. Mathematics grade 8 is orange. Reading grade 4 is blue. Reading grade 8 is purple. The gold band is the 2020–2021 web-mode break on the calendar, the same band as the use charts.</p>
 <div class="stats one" id="icar-stat">
 <div class="stat lead"><span class="k">ICAR35, Table 1</span><span class="v">−0.023</span><span class="s">SD per year, ages 18 to 60, 2006–2018, adjusted for education and gender. 95% interval −0.035 to −0.011.</span></div>
 </div>
 <p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes that slope. Figure 1 draws yearly means by education level and does not print them as numbers. The supplementary tables are slopes and sample counts. The OSF node <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> is the preregistration. Those means stay off the NAEP chart.</p>
-{vote_chart(frames['vote'])}
-<p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100.</p>
+{vote_chart(frames['vote'], acts)}
+<p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100. The same law markers sit on this chart.</p>
+{law_section(acts)}
 <h2>Fifty states, first difference</h2>
 <p>Each point is a state or the District of Columbia. The change in use is the 2018–2019 small-area estimate minus the 2009–2010 estimate, in percentage points, ages 12 or older. The NAEP change is the 2019 state mean minus the 2009 state mean. The vote change is the 2020 Democratic two-party share minus the 2008 share, in percentage points. The line is weighted least squares. Weights are the average of 2008 and 2020 two-party votes. Standard errors are HC1. With two periods, this first difference is the state fixed-effects estimator.</p>
 {change_panel(panel, fits)}
