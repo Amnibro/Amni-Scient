@@ -51,8 +51,6 @@ USE_RATES = [
     ("mj", "MRJMON", "Past-month marijuana", "12+", "month"),
     ("alc", "ALCMON", "Past-month alcohol", "12+", "month"),
     ("binge", "BNGDRK", "Past-month binge alcohol", "12+", "month"),
-    ("cig", "CIGMON", "Past-month cigarettes", "12+", "month"),
-    ("tob", "TOBMON", "Past-month tobacco products", "12+", "month"),
     ("iem", "IEMMON", "Past-month illicit drugs other than marijuana", "12+", "month"),
     ("ill", "ILLMON", "Past-month illicit drugs", "12+", "month"),
     ("coc", "COCYR", "Past-year cocaine", "12+", "year"),
@@ -64,8 +62,6 @@ USE_RATES = [
     ("mrjyr", "MRJYR", "Past-year marijuana", "12+", "year"),
     ("ualc", "UALCMON", "Past-month underage alcohol", "12–20", "month"),
     ("ubinge", "UBNGDRK", "Past-month underage binge alcohol", "12–20", "month"),
-    ("ucig", "UCIGMON", "Past-month underage cigarettes", "12–20", "month"),
-    ("utob", "UTOBMON", "Past-month underage tobacco products", "12–20", "month"),
 ]
 DISORDER_RATES = [
     ("sud", "UD5IAAN", "Past-year substance use disorder", "12+"),
@@ -75,12 +71,12 @@ DISORDER_RATES = [
     ("aud", "UDYR5AL", "Past-year alcohol use disorder", "12+"),
     ("uaud", "UUDYALC", "Past-year underage alcohol use disorder", "12–20"),
 ]
-# Non-nested use rates. ill contains marijuana. tob contains cigarettes.
+# Non-nested use rates. ill contains marijuana.
 # binge is the heavy-drinking slice of alcohol. pnr is inside opioid misuse.
 # mrjyr repeats marijuana. her is ages 18+, not 12+. Underage rates repeat
 # the same substances on ages 12–20.
-INDEX_COLS = ["mj", "alc", "cig", "iem", "coc", "opin", "met", "hal"]
-CHART_COLS = ["mj", "alc", "binge", "cig", "tob", "iem", "coc", "opin", "pnr", "met", "hal", "her"]
+INDEX_COLS = ["mj", "alc", "iem", "coc", "opin", "met", "hal"]
+CHART_COLS = ["mj", "alc", "binge", "iem", "coc", "opin", "pnr", "met", "hal", "her"]
 
 
 def e_index(k: int) -> int:

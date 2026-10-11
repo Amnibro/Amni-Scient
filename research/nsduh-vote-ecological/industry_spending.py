@@ -37,14 +37,12 @@ RETRIEVED = "2026-10-11"
 FEDERAL = [
     # industry, code, total, dem, rep, pct_dem, pct_rep
     ("Beer, Wine & Liquor", "N02", "27431159", "10260545", "9026205", "52.70", "46.36"),
-    ("Tobacco", "A02", "36653972", "1416762", "3660732", "27.64", "71.41"),
     ("Pharmaceuticals / Health Products", "H04", "86521633", "40910749", "26710284", "60.04", "39.20"),
     ("Marijuana", "N09", "969606", "219379", "125482", "61.40", "35.12"),
 ]
 
 LOBBYING = [
     ("Beer, Wine & Liquor", "N02", "29893357", 37),
-    ("Tobacco", "A02", "32389841", 24),
     ("Pharmaceuticals / Health Products", "H04", "391572500", 665),
     ("Marijuana", "N09", "5248000", 22),
 ]

@@ -76,6 +76,10 @@ def load_outcomes(dbf: Path | None = None) -> pd.DataFrame:
         raise FileNotFoundError(csv_path)
     out = pd.read_csv(csv_path, dtype={"reg_id": str, "st_fips": str, "sr_name": str})
     out["st_fips"] = out["st_fips"].str.zfill(2)
+    extra = [c for c in ("cig", "tob", "ucig", "utob") if c in out.columns]
+    if extra:
+        out = out.drop(columns=extra)
+        out.to_csv(csv_path, index=False)
     return out
 
 
@@ -120,26 +124,24 @@ def add_combined(reg: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     if float(np.mean(loading)) < 0:
         loading = -loading
     reg["combined_pc1"] = Z @ loading
+    n_index = len(rr.INDEX_COLS)
     info = {
         "definition": (
-            "Sum of vote-weighted z-scores of eight non-nested substance-use rates: "
+            f"Sum of vote-weighted z-scores of {n_index} non-nested substance-use rates: "
             + ", ".join(rr.INDEX_COLS)
             + ". Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. "
             "A region at the vote-weighted mean on every rate scores 0. "
-            "One standard deviation above the mean on every rate scores 8."
+            f"One standard deviation above the mean on every rate scores {n_index}."
         ),
         "members": moments,
         "excluded_from_index": {
             "ill": "Past-month illicit drug use includes marijuana.",
-            "tob": "Past-month tobacco product use includes cigarettes.",
             "binge": "Past-month binge alcohol is the heavy-drinking part of alcohol use, not a second substance.",
             "pnr": "Past-year pain reliever misuse is inside past-year opioid misuse.",
             "mrjyr": "Past-year marijuana repeats past-month marijuana.",
             "her": "Past-year heroin is published for ages 18 or older, not 12 or older.",
             "ualc": "Underage alcohol repeats alcohol on ages 12–20.",
             "ubinge": "Underage binge repeats binge alcohol on ages 12–20.",
-            "ucig": "Underage cigarettes repeat cigarettes on ages 12–20.",
-            "utob": "Underage tobacco repeats tobacco products on ages 12–20.",
         },
         "pc1_loadings": {c: float(v) for c, v in zip(rr.INDEX_COLS, loading)},
         "pc1_variance_share": float(evals[order[0]] / evals.sum()),
@@ -358,7 +360,6 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
             "Past-month opioid misuse. The substate file has past-year opioid misuse (OPINMYR).",
             "Past-month pain reliever misuse. The substate file has past-year pain reliever misuse (PNRNMYR).",
             "Heavy alcohol use as its own field. Binge alcohol in the past month (BNGDRK) is the intensity measure SAMHSA published. There is no separate heavy-drinking column.",
-            "Nicotine vaping as its own rate. Tobacco product use in the past month (TOBMON) is the tobacco field. A separate vaping outcome is not among the 39.",
             "Fentanyl, inhalants, LSD, PCP, and crack as their own substate rates. They are not among the 39 outcomes.",
         ],
     }
@@ -397,7 +398,7 @@ def main_committed() -> None:
     reg["st_fips"] = reg["st_fips"].str.zfill(2)
     # Drop previously merged rate columns so the shapefile values replace them.
     rate_cols = [r[0] for r in rr.USE_RATES + rr.DISORDER_RATES]
-    drop = [c for c in rate_cols if c in reg.columns]
+    drop = [c for c in rate_cols + ["cig", "tob", "ucig", "utob"] if c in reg.columns]
     base_check = reg[["reg_id", "mj", "alc"]].copy()
     reg = reg.drop(columns=[c for c in drop if c != "reg_id"])
     merged = reg.merge(outcomes.drop(columns=["st_fips", "st_name", "sr_name"]), on="reg_id", how="left", indicator=True)

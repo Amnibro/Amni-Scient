@@ -1,6 +1,6 @@
 {
   "index": {
-    "definition": "Sum of vote-weighted z-scores of eight non-nested substance-use rates: mj, alc, cig, iem, coc, opin, met, hal. Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. A region at the vote-weighted mean on every rate scores 0. One standard deviation above the mean on every rate scores 8.",
+    "definition": "Sum of vote-weighted z-scores of 7 non-nested substance-use rates: mj, alc, iem, coc, opin, met, hal. Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. A region at the vote-weighted mean on every rate scores 0. One standard deviation above the mean on every rate scores 7.",
     "members": {
       "mj": {
         "vote_weighted_mean": 14.606685421026487,
@@ -16,15 +16,6 @@
         "vote_weighted_sd": 6.127178798304622,
         "field": "ALCMON",
         "label": "Past-month alcohol",
-        "age": "12+",
-        "window": "month",
-        "kind": "use"
-      },
-      "cig": {
-        "vote_weighted_mean": 14.8168828418153,
-        "vote_weighted_sd": 4.235336214962599,
-        "field": "CIGMON",
-        "label": "Past-month cigarettes",
         "age": "12+",
         "window": "month",
         "kind": "use"
@@ -77,28 +68,24 @@
     },
     "excluded_from_index": {
       "ill": "Past-month illicit drug use includes marijuana.",
-      "tob": "Past-month tobacco product use includes cigarettes.",
       "binge": "Past-month binge alcohol is the heavy-drinking part of alcohol use, not a second substance.",
       "pnr": "Past-year pain reliever misuse is inside past-year opioid misuse.",
       "mrjyr": "Past-year marijuana repeats past-month marijuana.",
       "her": "Past-year heroin is published for ages 18 or older, not 12 or older.",
       "ualc": "Underage alcohol repeats alcohol on ages 12\u201320.",
-      "ubinge": "Underage binge repeats binge alcohol on ages 12\u201320.",
-      "ucig": "Underage cigarettes repeat cigarettes on ages 12\u201320.",
-      "utob": "Underage tobacco repeats tobacco products on ages 12\u201320."
+      "ubinge": "Underage binge repeats binge alcohol on ages 12\u201320."
     },
     "pc1_loadings": {
-      "mj": 0.4341538038219548,
-      "alc": 0.22196511237724992,
-      "cig": -0.04037418171349602,
-      "iem": 0.47518101855496453,
-      "coc": 0.4989986071776061,
-      "opin": 0.1300204072273765,
-      "met": 0.1111257665260717,
-      "hal": 0.5065185448959829
+      "mj": 0.4328295656071961,
+      "alc": 0.20867783010563223,
+      "iem": 0.4806685561654253,
+      "coc": 0.4973886957214995,
+      "opin": 0.14609057230662373,
+      "met": 0.12747333878936612,
+      "hal": 0.5030730040680148
     },
-    "pc1_variance_share": 0.4037636474643031,
-    "corr_sum_vs_pc1": 0.912010689682801
+    "pc1_variance_share": 0.4610627968050344,
+    "corr_sum_vs_pc1": 0.9774669232001183
   },
   "alone": {
     "mj": {
@@ -166,50 +153,6 @@
       "state_fe_pp_per_sd": 2.3870188050341064,
       "state_fe_r2": 0.7814712364577683,
       "corr_dem2": 0.27364323662786083
-    },
-    "cig": {
-      "term": "cig",
-      "label": "Past-month cigarettes",
-      "pp_per_pp": -0.9733538034572333,
-      "se_pp": 0.1604606181740444,
-      "p": 1.3113668785139253e-09,
-      "ci95_pp": [
-        -1.2878508360153935,
-        -0.6588567708990731
-      ],
-      "n": 382,
-      "r2": 0.6357199350798514,
-      "pp_per_sd": -4.122480613754008,
-      "se_per_sd": 0.679604667227816,
-      "vote_weighted_sd": 4.235336214962599,
-      "state_fe_pp_per_pp": -0.6950910518230228,
-      "state_fe_se_pp": 0.18794079292166263,
-      "state_fe_p": 0.00021691358435837416,
-      "state_fe_pp_per_sd": -2.943944304482493,
-      "state_fe_r2": 0.7859764771356549,
-      "corr_dem2": -0.6128583046669406
-    },
-    "tob": {
-      "term": "tob",
-      "label": "Past-month tobacco products",
-      "pp_per_pp": -0.8244107828282211,
-      "se_pp": 0.1351325785962363,
-      "p": 1.05568478392984e-09,
-      "ci95_pp": [
-        -1.0892657700148725,
-        -0.5595557956415698
-      ],
-      "n": 382,
-      "r2": 0.6403019629083289,
-      "pp_per_sd": -4.3721367124603505,
-      "se_per_sd": 0.7166549980134658,
-      "vote_weighted_sd": 5.303347316081083,
-      "state_fe_pp_per_pp": -0.6838520615750779,
-      "state_fe_se_pp": 0.16756319583560025,
-      "state_fe_p": 4.4811666395740986e-05,
-      "state_fe_pp_per_sd": -3.6267049953507047,
-      "state_fe_r2": 0.7886253709434699,
-      "corr_dem2": -0.6307004974535544
     },
     "iem": {
       "term": "iem",
@@ -453,50 +396,6 @@
       "state_fe_r2": 0.7732627261750689,
       "corr_dem2": 0.016061188986223805
     },
-    "ucig": {
-      "term": "ucig",
-      "label": "Past-month underage cigarettes",
-      "pp_per_pp": 0.26797150013032744,
-      "se_pp": 0.5646331611586175,
-      "p": 0.6350763967459592,
-      "ci95_pp": [
-        -0.8386891602175629,
-        1.374632160478218
-      ],
-      "n": 382,
-      "r2": 0.5801281017875863,
-      "pp_per_sd": 0.28289876457111235,
-      "se_per_sd": 0.5960858660341428,
-      "vote_weighted_sd": 1.0557046717039873,
-      "state_fe_pp_per_pp": -0.9105505945115494,
-      "state_fe_se_pp": 0.6608114100503649,
-      "state_fe_p": 0.16822549571478307,
-      "state_fe_pp_per_sd": -0.9612725164486857,
-      "state_fe_r2": 0.7745384623353184,
-      "corr_dem2": -0.1724610381050282
-    },
-    "utob": {
-      "term": "utob",
-      "label": "Past-month underage tobacco products",
-      "pp_per_pp": -0.18966192458588602,
-      "se_pp": 0.4245769803048984,
-      "p": 0.6550859204116098,
-      "ci95_pp": [
-        -1.0218175146482589,
-        0.6424936654764868
-      ],
-      "n": 382,
-      "r2": 0.5801124569445439,
-      "pp_per_sd": -0.26864025275062325,
-      "se_per_sd": 0.6013777807551159,
-      "vote_weighted_sd": 1.4164163594626653,
-      "state_fe_pp_per_pp": -0.5032849136887518,
-      "state_fe_se_pp": 0.4358339483036197,
-      "state_fe_p": 0.24818749637829884,
-      "state_fe_pp_per_sd": -0.7128609852195036,
-      "state_fe_r2": 0.7742223124479783,
-      "corr_dem2": -0.20204725058288825
-    },
     "sud": {
       "term": "sud",
       "label": "Past-year substance use disorder",
@@ -632,204 +531,185 @@
     "combined": {
       "term": "combined",
       "label": "combined",
-      "pp_per_pp": 0.5769516787653196,
-      "se_pp": 0.124682474068413,
-      "p": 3.7034229233254925e-06,
+      "pp_per_pp": 0.8306760297886226,
+      "se_pp": 0.12428813812920936,
+      "p": 2.3334981065952837e-11,
       "ci95_pp": [
-        0.33257852008788086,
-        0.8213248374427582
+        0.5870757553498328,
+        1.0742763042274124
       ],
       "n": 382,
-      "r2": 0.6081947521861126,
-      "pp_per_sd": 2.6577631965647837,
-      "se_per_sd": 0.574357442801482,
-      "vote_weighted_sd": 4.6065611634104515,
-      "state_fe_pp_per_pp": 0.2589700705418789,
-      "state_fe_se_pp": 0.2047226267469596,
-      "state_fe_p": 0.20587842358237662,
-      "state_fe_pp_per_sd": 1.1929614694438846,
-      "state_fe_r2": 0.7753072467289306,
-      "corr_dem2": 0.23316733801370926
+      "r2": 0.6319255235196125,
+      "pp_per_sd": 3.658322732257034,
+      "se_per_sd": 0.5473687752657197,
+      "vote_weighted_sd": 4.404030694358601,
+      "state_fe_pp_per_pp": 0.49511539344555533,
+      "state_fe_se_pp": 0.23234467044568083,
+      "state_fe_p": 0.033093077896363024,
+      "state_fe_pp_per_sd": 2.1805033899836612,
+      "state_fe_r2": 0.7794822886688525,
+      "corr_dem2": 0.3830486264997247
     },
     "combined_pc1": {
       "term": "combined_pc1",
       "label": "combined_pc1",
-      "pp_per_pp": 2.63982574142785,
-      "se_pp": 0.3034303068437136,
-      "p": 3.3205701732568326e-18,
+      "pp_per_pp": 2.5102692352670153,
+      "se_pp": 0.30282635719429546,
+      "p": 1.1375662682197626e-16,
       "ci95_pp": [
-        2.045113268196234,
-        3.234538214659466
+        1.9167404815967342,
+        3.1037979889372966
       ],
       "n": 382,
-      "r2": 0.6571969867095768,
-      "pp_per_sd": 4.744428001474549,
-      "se_per_sd": 0.5453402554922678,
-      "vote_weighted_sd": 1.7972504499135404,
-      "state_fe_pp_per_pp": 1.6108548493844101,
-      "state_fe_se_pp": 0.6302391265800247,
-      "state_fe_p": 0.010590067448418656,
-      "state_fe_pp_per_sd": 2.8951096028015395,
-      "state_fe_r2": 0.7823217501196023,
-      "corr_dem2": 0.5136085235366901
+      "r2": 0.6510821056785518,
+      "pp_per_sd": 4.509717773719622,
+      "se_per_sd": 0.5440298539310333,
+      "vote_weighted_sd": 1.7965076057827425,
+      "state_fe_pp_per_pp": 1.462357756535943,
+      "state_fe_se_pp": 0.6181657305576372,
+      "state_fe_p": 0.01799892273681295,
+      "state_fe_pp_per_sd": 2.6271368319922095,
+      "state_fe_r2": 0.7810297606457186,
+      "corr_dem2": 0.49055981345988015
     }
   },
   "joint": {
     "n": 382,
-    "r2": 0.7738564388276935,
-    "state_fe_r2": 0.8574820562398751,
+    "r2": 0.7401025867227672,
+    "state_fe_r2": 0.8481826612564383,
     "terms": {
       "mj": {
         "term": "mj",
         "label": "Past-month marijuana",
-        "pp_per_pp": 0.8672851901554569,
-        "se_pp": 0.1469660832871615,
-        "p": 3.607340858432467e-09,
+        "pp_per_pp": 0.6080654506173119,
+        "se_pp": 0.15126360183792473,
+        "p": 5.822138317575893e-05,
         "ci95_pp": [
-          0.5792369599637064,
-          1.1553334203472074
+          0.31159423884317267,
+          0.9045366623914509
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 3.449669225509629,
-        "se_per_sd": 0.5845647780732095,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": 2.418610044193417,
+        "se_per_sd": 0.601658368115912,
         "vote_weighted_sd": 3.977548867047172,
-        "state_fe_pp_per_pp": 0.9378148658783417,
-        "state_fe_se_pp": 0.26220315622290574,
-        "state_fe_p": 0.00034799546632077917
+        "state_fe_pp_per_pp": 0.5551989579171805,
+        "state_fe_se_pp": 0.25368347752220854,
+        "state_fe_p": 0.028629568170098905
       },
       "alc": {
         "term": "alc",
         "label": "Past-month alcohol",
-        "pp_per_pp": 0.26068239628069534,
-        "se_pp": 0.0959161830823457,
-        "p": 0.006571466264480302,
+        "pp_per_pp": 0.33207901478232743,
+        "se_pp": 0.09640255345773002,
+        "p": 0.0005716685355207454,
         "ci95_pp": [
-          0.07269013190474775,
-          0.44867466065664285
+          0.1431334819874793,
+          0.5210245475771755
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 1.5972476515823202,
-        "se_per_sd": 0.5876956033964531,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": 2.034707498736164,
+        "se_per_sd": 0.5906756816486314,
         "vote_weighted_sd": 6.127178798304622,
-        "state_fe_pp_per_pp": 0.17913289492982207,
-        "state_fe_se_pp": 0.14451009352858182,
-        "state_fe_p": 0.2151280336556015
-      },
-      "cig": {
-        "term": "cig",
-        "label": "Past-month cigarettes",
-        "pp_per_pp": -1.1293038233084152,
-        "se_pp": 0.1673334414436843,
-        "p": 1.4904900421716884e-11,
-        "ci95_pp": [
-          -1.4572713419471786,
-          -0.8013363046696519
-        ],
-        "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": -4.782981380553855,
-        "se_per_sd": 0.7087133845207596,
-        "vote_weighted_sd": 4.235336214962599,
-        "state_fe_pp_per_pp": -0.9064128158774181,
-        "state_fe_se_pp": 0.219672291376222,
-        "state_fe_p": 3.687992137986227e-05
+        "state_fe_pp_per_pp": 0.44473476611233836,
+        "state_fe_se_pp": 0.13317414675864903,
+        "state_fe_p": 0.000839300248361583
       },
       "iem": {
         "term": "iem",
         "label": "Past-month illicit drugs other than marijuana",
-        "pp_per_pp": 1.6955151702122786,
-        "se_pp": 1.1682931719790564,
-        "p": 0.14670318140651273,
+        "pp_per_pp": -0.3322000415199841,
+        "se_pp": 1.1972235692638655,
+        "p": 0.7814151227698624,
         "ci95_pp": [
-          -0.5942973702507314,
-          3.9853277106752882
+          -2.6787151187196554,
+          2.0143150356796866
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 1.1059178657669333,
-        "se_per_sd": 0.7620316904527582,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": -0.21668102260593206,
+        "se_per_sd": 0.7809018508518539,
         "vote_weighted_sd": 0.6522606728599617,
-        "state_fe_pp_per_pp": -0.5828781406269157,
-        "state_fe_se_pp": 1.2710436703562864,
-        "state_fe_p": 0.6465341434270233
+        "state_fe_pp_per_pp": -1.5091274609523253,
+        "state_fe_se_pp": 1.3229872114134271,
+        "state_fe_p": 0.2539960612721539
       },
       "coc": {
         "term": "coc",
         "label": "Past-year cocaine",
-        "pp_per_pp": 2.496613076369726,
-        "se_pp": 1.6040993507524817,
-        "p": 0.11961406493028759,
+        "pp_per_pp": 1.6699954348193782,
+        "se_pp": 1.7701154119482947,
+        "p": 0.3454565411806101,
         "ci95_pp": [
-          -0.6473638787292214,
-          5.640590031468673
+          -1.7993670210785608,
+          5.139357890717317
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 1.255124399578483,
-        "se_per_sd": 0.8064302208194013,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": 0.8395582147932615,
+        "se_per_sd": 0.8898916154187468,
         "vote_weighted_sd": 0.5027308442217782,
-        "state_fe_pp_per_pp": 1.7049070948667644,
-        "state_fe_se_pp": 2.630469553962176,
-        "state_fe_p": 0.5168957425966042
+        "state_fe_pp_per_pp": 0.47370290496915335,
+        "state_fe_se_pp": 2.6358707217210937,
+        "state_fe_p": 0.8573770918303667
       },
       "opin": {
         "term": "opin",
         "label": "Past-year opioid misuse",
-        "pp_per_pp": 5.125215983646499,
-        "se_pp": 1.2805005963726133,
-        "p": 6.2674112798399e-05,
+        "pp_per_pp": 1.8361133504803755,
+        "se_pp": 1.3416354942947664,
+        "p": 0.17113576402468134,
         "ci95_pp": [
-          2.615480932574117,
-          7.634951034718881
+          -0.7934438987179597,
+          4.4656705996787105
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 2.694915619684184,
-        "se_per_sd": 0.673306465364657,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": 0.9654560048803426,
+        "se_per_sd": 0.7054521138297953,
         "vote_weighted_sd": 0.5258150345825621,
-        "state_fe_pp_per_pp": 8.012650126294139,
-        "state_fe_se_pp": 1.5944399587874498,
-        "state_fe_p": 5.024638434612918e-07
+        "state_fe_pp_per_pp": 8.02194598539803,
+        "state_fe_se_pp": 1.6132485229946611,
+        "state_fe_p": 6.60806597840376e-07
       },
       "met": {
         "term": "met",
         "label": "Past-year methamphetamine",
-        "pp_per_pp": -8.086700826576912,
-        "se_pp": 1.706080489108423,
-        "p": 2.137928489644096e-06,
+        "pp_per_pp": -8.803327193454367,
+        "se_pp": 1.8088266270425706,
+        "p": 1.1337855675093759e-06,
         "ci95_pp": [
-          -11.430557139955901,
-          -4.742844513197923
+          -12.34856223673487,
+          -5.258092150173863
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": -3.2532991516834726,
-        "se_per_sd": 0.6863602755871492,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": -3.5415996590763386,
+        "se_per_sd": 0.7276952934823777,
         "vote_weighted_sd": 0.4023024001322662,
-        "state_fe_pp_per_pp": -12.49403052531502,
-        "state_fe_se_pp": 2.1384970948658872,
-        "state_fe_p": 5.144322537091264e-09
+        "state_fe_pp_per_pp": -14.395902543017474,
+        "state_fe_se_pp": 2.1962962353712117,
+        "state_fe_p": 5.578113604931416e-11
       },
       "hal": {
         "term": "hal",
         "label": "Past-year hallucinogens",
-        "pp_per_pp": 0.5803400664424615,
-        "se_pp": 0.725659040633234,
-        "p": 0.42386025033535635,
+        "pp_per_pp": 3.1538133169754166,
+        "se_pp": 0.7528242233703851,
+        "p": 2.7980514069249815e-05,
         "ci95_pp": [
-          -0.841925518254565,
-          2.0026056511394876
+          1.6783049524801246,
+          4.629321681470708
         ],
         "n": 382,
-        "r2": 0.7738564388276935,
-        "pp_per_sd": 0.6825778923555602,
-        "se_per_sd": 0.8534975390559213,
+        "r2": 0.7401025867227672,
+        "pp_per_sd": 3.709416894098613,
+        "se_per_sd": 0.8854483800375625,
         "vote_weighted_sd": 1.1761688220836208,
-        "state_fe_pp_per_pp": 0.4682460340206797,
-        "state_fe_se_pp": 1.0118644887801014,
-        "state_fe_p": 0.6435395064638968
+        "state_fe_pp_per_pp": 1.320687881835401,
+        "state_fe_se_pp": 1.0442179459327028,
+        "state_fe_p": 0.20595641533765874
       }
     }
   },
@@ -837,94 +717,94 @@
     "within_specified": {
       "term": "combined",
       "label": "combined",
-      "pp_per_pp": 0.2589700705418765,
-      "se_pp": 0.19124633408747593,
-      "p": 0.17569878924277804,
+      "pp_per_pp": 0.49511539344554956,
+      "se_pp": 0.21705009931521535,
+      "p": 0.022541872752277033,
       "ci95_pp": [
-        -0.1158658564448912,
-        0.6338059975286442
+        0.06970501594688559,
+        0.9205257709442135
       ],
       "n": 382,
-      "r2": 0.6402112253697617,
-      "pp_per_sd": 1.1929614694438733,
-      "se_per_sd": 0.880987935251987,
-      "vote_weighted_sd": 4.6065611634104515
+      "r2": 0.6468965020497006,
+      "pp_per_sd": 2.180503389983636,
+      "se_per_sd": 0.9558952995977913,
+      "vote_weighted_sd": 4.404030694358601
     },
     "between_with_log_density": {
       "term": "combined",
       "label": "combined",
-      "pp_per_pp": 0.8057767153419721,
-      "se_pp": 0.27551300796343087,
-      "p": 0.003448535036369585,
+      "pp_per_pp": 1.0281683302519364,
+      "se_pp": 0.24619129051547764,
+      "p": 2.9629089392234775e-05,
       "ci95_pp": [
-        0.26578114246135054,
-        1.3457722882225938
+        0.545642267534163,
+        1.51069439296971
       ],
       "n": 49,
-      "r2": 0.560683045649663,
-      "pp_per_sd": 2.6994879470758195,
-      "se_per_sd": 0.923015061243412,
-      "vote_weighted_sd": 3.350168720040706
+      "r2": 0.6129763732749296,
+      "pp_per_sd": 3.334037695250511,
+      "se_per_sd": 0.798323600008031,
+      "vote_weighted_sd": 3.2426963534595132
     },
     "between_alone": {
       "term": "combined",
       "label": "combined",
-      "pp_per_pp": 0.6120209676349068,
-      "se_pp": 0.3245870765743185,
-      "p": 0.05935736354360725,
+      "pp_per_pp": 1.0682179316708986,
+      "se_pp": 0.32761810711116157,
+      "p": 0.0011119311369650144,
       "ci95_pp": [
-        -0.024158012297902185,
-        1.248199947567716
+        0.42609824104983607,
+        1.710337622291961
       ],
       "n": 49,
-      "r2": 0.05631694175688551,
-      "pp_per_sd": 2.05037350177951,
-      "se_per_sd": 1.0874214708687393,
-      "vote_weighted_sd": 3.350168720040706
+      "r2": 0.16073312781017157,
+      "pp_per_sd": 3.4639063917292865,
+      "se_per_sd": 1.0623660412566718,
+      "vote_weighted_sd": 3.2426963534595132
     },
     "n_states": 49,
     "within_bins": [
       {
         "quintile": 1,
         "n_regions": 77,
-        "combined_within": -3.5265575185406255,
-        "dem2_within": -0.0029673897580390378
+        "combined_within": -3.4891626940944516,
+        "dem2_within": -0.022536906931944302
       },
       {
         "quintile": 2,
         "n_regions": 76,
-        "combined_within": -1.2541381622486967,
-        "dem2_within": -0.004697899430006911
+        "combined_within": -1.2747269115064281,
+        "dem2_within": -0.025930394379492964
       },
       {
         "quintile": 3,
         "n_regions": 76,
-        "combined_within": -0.09565687370731886,
-        "dem2_within": -0.020521688802299858
+        "combined_within": -0.28820229020546334,
+        "dem2_within": -0.012776995638537096
       },
       {
         "quintile": 4,
         "n_regions": 76,
-        "combined_within": 1.390556000968386,
-        "dem2_within": -0.003719227814169158
+        "combined_within": 0.9180018042328848,
+        "dem2_within": -0.0007202427540465261
       },
       {
         "quintile": 5,
         "n_regions": 77,
-        "combined_within": 5.18113819756041,
-        "dem2_within": 0.04023764392251953
+        "combined_within": 4.532073088008836,
+        "dem2_within": 0.0706863270484729
       }
     ]
   },
   "combined_vs_density": {
-    "corr": 0.009535981184581021,
+    "corr": 0.14051312402155505,
     "bins": [
       {
         "quintile": 1,
         "n_regions": 77,
         "ln_dens": 2.154870018267311,
         "people_per_km2": 8.626768783735868,
-        "combined": 1.5675284352575685,
+        "combined": 0.7798361559335807,
         "dem2": 0.34679293379622306,
         "two_party": 10274969.805691306
       },
@@ -933,7 +813,7 @@
         "n_regions": 76,
         "ln_dens": 3.425745229087588,
         "people_per_km2": 30.745548793375736,
-        "combined": 1.4434981484845792,
+        "combined": 0.40913732311827317,
         "dem2": 0.37705638237598876,
         "two_party": 22409505.853362605
       },
@@ -942,7 +822,7 @@
         "n_regions": 76,
         "ln_dens": 4.212972919898499,
         "people_per_km2": 67.55708335986239,
-        "combined": -0.2793553735452274,
+        "combined": -0.6424011755353991,
         "dem2": 0.43077525825374735,
         "two_party": 32350682.58776145
       },
@@ -951,7 +831,7 @@
         "n_regions": 76,
         "ln_dens": 5.367010855154471,
         "people_per_km2": 214.2215704135855,
-        "combined": -1.2670198852928996,
+        "combined": -0.9155270027909441,
         "dem2": 0.5058644441233653,
         "two_party": 47604574.34152026
       },
@@ -960,7 +840,7 @@
         "n_regions": 77,
         "ln_dens": 7.124314172523343,
         "people_per_km2": 1241.796216976992,
-        "combined": 0.5581387652535804,
+        "combined": 1.2601260104549596,
         "dem2": 0.637866762765835,
         "two_party": 37443899.42391125
       }
@@ -970,8 +850,6 @@
     "mj": 0.41620821220331694,
     "alc": 0.47774988238566496,
     "binge": 0.27364323662786083,
-    "cig": -0.6128583046669406,
-    "tob": -0.6307004974535544,
     "iem": 0.326130450807496,
     "ill": 0.4405441274982257,
     "coc": 0.5216823184338741,
@@ -983,16 +861,14 @@
     "mrjyr": 0.4898172685809212,
     "ualc": 0.19428191271994494,
     "ubinge": 0.016061188986223805,
-    "ucig": -0.1724610381050282,
-    "utob": -0.20204725058288825,
     "sud": 0.32442375435674403,
     "dud": 0.2826061197361401,
     "oud": -0.31360907943523425,
     "prud": -0.47488090197650146,
     "aud": 0.4641428300961277,
     "uaud": -0.11907985941029171,
-    "combined": 0.23316733801370926,
-    "combined_pc1": 0.5136085235366901,
+    "combined": 0.3830486264997247,
+    "combined_pc1": 0.49055981345988015,
     "ln_dens": 0.7339267348173755,
     "pct_ba": 0.7088637682179497
   },
@@ -1191,136 +1067,6 @@
       "ln_dens": 5.159720571805195,
       "pct_ba": 37.300089178828884,
       "two_party": 23726902.1443457
-    },
-    {
-      "measure": "cig",
-      "label": "Past-month cigarettes",
-      "quintile": 1,
-      "n_regions": 77,
-      "use_min": 6.33,
-      "use_max": 12.18,
-      "mean_use": 9.922442309780653,
-      "dem2": 0.588305048353505,
-      "ln_dens": 6.2011390688161185,
-      "pct_ba": 43.2944951150033,
-      "two_party": 42907526.45905707
-    },
-    {
-      "measure": "cig",
-      "label": "Past-month cigarettes",
-      "quintile": 2,
-      "n_regions": 76,
-      "use_min": 12.24,
-      "use_max": 15.26,
-      "mean_use": 13.71267869417538,
-      "dem2": 0.5220579452425745,
-      "ln_dens": 5.3175907973500935,
-      "pct_ba": 37.6569356077632,
-      "two_party": 39477227.05251007
-    },
-    {
-      "measure": "cig",
-      "label": "Past-month cigarettes",
-      "quintile": 3,
-      "n_regions": 76,
-      "use_min": 15.3,
-      "use_max": 17.27,
-      "mean_use": 16.250170671276884,
-      "dem2": 0.4455367905244079,
-      "ln_dens": 4.357068667892224,
-      "pct_ba": 31.145378044234054,
-      "two_party": 27640676.896149386
-    },
-    {
-      "measure": "cig",
-      "label": "Past-month cigarettes",
-      "quintile": 4,
-      "n_regions": 76,
-      "use_min": 17.28,
-      "use_max": 19.73,
-      "mean_use": 18.32072774603691,
-      "dem2": 0.4469735311476583,
-      "ln_dens": 4.401019509411435,
-      "pct_ba": 28.930722819720717,
-      "two_party": 22863510.564371146
-    },
-    {
-      "measure": "cig",
-      "label": "Past-month cigarettes",
-      "quintile": 5,
-      "n_regions": 77,
-      "use_min": 19.85,
-      "use_max": 31.83,
-      "mean_use": 22.602542577699925,
-      "dem2": 0.32149756120134965,
-      "ln_dens": 3.5130053225194318,
-      "pct_ba": 23.928956246458,
-      "two_party": 17194691.040159207
-    },
-    {
-      "measure": "tob",
-      "label": "Past-month tobacco products",
-      "quintile": 1,
-      "n_regions": 77,
-      "use_min": 7.68,
-      "use_max": 15.51,
-      "mean_use": 12.45859039063746,
-      "dem2": 0.5928576599831518,
-      "ln_dens": 6.309848307275297,
-      "pct_ba": 43.01727689685654,
-      "two_party": 42568951.490073115
-    },
-    {
-      "measure": "tob",
-      "label": "Past-month tobacco products",
-      "quintile": 2,
-      "n_regions": 76,
-      "use_min": 15.56,
-      "use_max": 19.21,
-      "mean_use": 17.44884971157318,
-      "dem2": 0.5283971121258014,
-      "ln_dens": 5.288558758215338,
-      "pct_ba": 37.47882731482213,
-      "two_party": 40783398.12607882
-    },
-    {
-      "measure": "tob",
-      "label": "Past-month tobacco products",
-      "quintile": 3,
-      "n_regions": 76,
-      "use_min": 19.22,
-      "use_max": 21.81,
-      "mean_use": 20.597413574923348,
-      "dem2": 0.45099638937126113,
-      "ln_dens": 4.441048596696876,
-      "pct_ba": 31.782509889286047,
-      "two_party": 27487610.227676526
-    },
-    {
-      "measure": "tob",
-      "label": "Past-month tobacco products",
-      "quintile": 4,
-      "n_regions": 76,
-      "use_min": 21.83,
-      "use_max": 24.98,
-      "mean_use": 23.254726727877596,
-      "dem2": 0.42572290306377103,
-      "ln_dens": 4.134960833482287,
-      "pct_ba": 28.446225935728815,
-      "two_party": 21067143.285587262
-    },
-    {
-      "measure": "tob",
-      "label": "Past-month tobacco products",
-      "quintile": 5,
-      "n_regions": 77,
-      "use_min": 25.13,
-      "use_max": 38.21,
-      "mean_use": 28.158957465084022,
-      "dem2": 0.31698852614555756,
-      "ln_dens": 3.520185497375308,
-      "pct_ba": 24.505176516966376,
-      "two_party": 18176528.882831153
     },
     {
       "measure": "iem",
@@ -1782,65 +1528,65 @@
       "label": "combined",
       "quintile": 1,
       "n_regions": 77,
-      "use_min": -13.743344164291846,
-      "use_max": -2.679759758025318,
-      "mean_use": -4.939593119198539,
-      "dem2": 0.4830066579615487,
-      "ln_dens": 5.420557500517327,
-      "pct_ba": 37.6006851952679,
-      "two_party": 44035861.80915317
+      "use_min": -11.7395167439721,
+      "use_max": -2.9032828868402816,
+      "mean_use": -4.773938525252235,
+      "dem2": 0.4657032762618971,
+      "ln_dens": 5.233303731025596,
+      "pct_ba": 35.873128839734036,
+      "two_party": 39824402.036879465
     },
     {
       "measure": "combined",
       "label": "combined",
       "quintile": 2,
       "n_regions": 76,
-      "use_min": -2.662092323422261,
-      "use_max": -0.4688667569577397,
-      "mean_use": -1.4528406399363247,
-      "dem2": 0.44836977952712675,
-      "ln_dens": 4.53685387262772,
-      "pct_ba": 32.85531512081225,
-      "two_party": 28806275.570774604
+      "use_min": -2.902229648676353,
+      "use_max": -0.8533228290586243,
+      "mean_use": -1.7934292576672324,
+      "dem2": 0.4311057367602297,
+      "ln_dens": 4.58556233349717,
+      "pct_ba": 33.0174576606613,
+      "two_party": 27223945.49182276
     },
     {
       "measure": "combined",
       "label": "combined",
       "quintile": 3,
       "n_regions": 76,
-      "use_min": -0.45725905758455343,
-      "use_max": 1.939396636395216,
-      "mean_use": 0.6754670817227847,
-      "dem2": 0.4876245986938696,
-      "ln_dens": 4.908371307813896,
-      "pct_ba": 33.61157616223611,
-      "two_party": 30461293.718139116
+      "use_min": -0.8471318923249997,
+      "use_max": 1.1465931579273752,
+      "mean_use": -0.021364872676194652,
+      "dem2": 0.4624972064611122,
+      "ln_dens": 4.762244419712317,
+      "pct_ba": 32.80703831177279,
+      "two_party": 29766078.90299959
     },
     {
       "measure": "combined",
       "label": "combined",
       "quintile": 4,
       "n_regions": 76,
-      "use_min": 1.9779101021088277,
-      "use_max": 4.118717564713213,
-      "mean_use": 2.8961671670488394,
-      "dem2": 0.5079561800677473,
-      "ln_dens": 4.806159304927358,
-      "pct_ba": 33.99875827687168,
-      "two_party": 25976253.252589073
+      "use_min": 1.1534343079348672,
+      "use_max": 3.9895541594297628,
+      "mean_use": 2.389109531922867,
+      "dem2": 0.5212600985407649,
+      "ln_dens": 4.917867049867426,
+      "pct_ba": 34.983776460862096,
+      "two_party": 31403490.083778705
     },
     {
       "measure": "combined",
       "label": "combined",
       "quintile": 5,
       "n_regions": 77,
-      "use_min": 4.15825678461343,
-      "use_max": 23.2430769186723,
-      "mean_use": 7.862113360364217,
-      "dem2": 0.5614576640239467,
-      "ln_dens": 5.465754336242146,
-      "pct_ba": 36.95495895268265,
-      "two_party": 20803947.66159091
+      "use_min": 4.010304830647572,
+      "use_max": 23.811363052205753,
+      "mean_use": 7.525618747693502,
+      "dem2": 0.6172045899765204,
+      "ln_dens": 5.854717141800639,
+      "pct_ba": 40.035203906814004,
+      "two_party": 21865715.496766366
     }
   ],
   "not_at_substate": [
@@ -1851,7 +1597,6 @@
     "Past-month opioid misuse. The substate file has past-year opioid misuse (OPINMYR).",
     "Past-month pain reliever misuse. The substate file has past-year pain reliever misuse (PNRNMYR).",
     "Heavy alcohol use as its own field. Binge alcohol in the past month (BNGDRK) is the intensity measure SAMHSA published. There is no separate heavy-drinking column.",
-    "Nicotine vaping as its own rate. Tobacco product use in the past month (TOBMON) is the tobacco field. A separate vaping outcome is not among the 39.",
     "Fentanyl, inhalants, LSD, PCP, and crack as their own substate rates. They are not among the 39 outcomes."
   ]
 }
