@@ -43,6 +43,41 @@ VOTE_AR = ROOT / "zcta2024_areal.tab"
 OUT = ROOT / "out"
 OUT.mkdir(exist_ok=True)
 
+# NSDUH 2021-2023 substate outcomes that are substance-use rates.
+# short, shapefile field, label, age group, window.
+# Nested or age-restricted rates stay in the alone models. They are
+# not in the joint model or the combined index. See fit_extended.py.
+USE_RATES = [
+    ("mj", "MRJMON", "Past-month marijuana", "12+", "month"),
+    ("alc", "ALCMON", "Past-month alcohol", "12+", "month"),
+    ("binge", "BNGDRK", "Past-month binge alcohol", "12+", "month"),
+    ("iem", "IEMMON", "Past-month illicit drugs other than marijuana", "12+", "month"),
+    ("ill", "ILLMON", "Past-month illicit drugs", "12+", "month"),
+    ("coc", "COCYR", "Past-year cocaine", "12+", "year"),
+    ("hal", "HALLUYR", "Past-year hallucinogens", "12+", "year"),
+    ("her", "HERYR", "Past-year heroin", "18+", "year"),
+    ("met", "METAMYR", "Past-year methamphetamine", "12+", "year"),
+    ("opin", "OPINMYR", "Past-year opioid misuse", "12+", "year"),
+    ("pnr", "PNRNMYR", "Past-year pain reliever misuse", "12+", "year"),
+    ("mrjyr", "MRJYR", "Past-year marijuana", "12+", "year"),
+    ("ualc", "UALCMON", "Past-month underage alcohol", "12–20", "month"),
+    ("ubinge", "UBNGDRK", "Past-month underage binge alcohol", "12–20", "month"),
+]
+DISORDER_RATES = [
+    ("sud", "UD5IAAN", "Past-year substance use disorder", "12+"),
+    ("dud", "UD5ILAN", "Past-year drug use disorder", "12+"),
+    ("oud", "UD5OPAN", "Past-year opioid use disorder", "12+"),
+    ("prud", "UD5PRAN", "Past-year pain reliever use disorder", "12+"),
+    ("aud", "UDYR5AL", "Past-year alcohol use disorder", "12+"),
+    ("uaud", "UUDYALC", "Past-year underage alcohol use disorder", "12–20"),
+]
+# Non-nested use rates. ill contains marijuana.
+# binge is the heavy-drinking slice of alcohol. pnr is inside opioid misuse.
+# mrjyr repeats marijuana. her is ages 18+, not 12+. Underage rates repeat
+# the same substances on ages 12–20.
+INDEX_COLS = ["mj", "alc", "iem", "coc", "opin", "met", "hal"]
+CHART_COLS = ["mj", "alc", "binge", "iem", "coc", "opin", "pnr", "met", "hal", "her"]
+
 
 def e_index(k: int) -> int:
     """Column index of estimate E00k in a table-based ACS file (GEO_ID at 0)."""
@@ -72,6 +107,10 @@ def load_regions():
                 "alc": float(rec["ALCMON"]),
             }
         )
+        for short, field, *_rest in USE_RATES:
+            rows[-1][short] = float(rec[field])
+        for short, field, *_rest in DISORDER_RATES:
+            rows[-1][short] = float(rec[field])
     return geoms, pd.DataFrame(rows)
 
 
@@ -279,6 +318,8 @@ def aggregate_regions(df: pd.DataFrame) -> pd.DataFrame:
                 "sr_name": g["sr_name"].iloc[0],
                 "mj": float(g["mj"].iloc[0]),
                 "alc": float(g["alc"].iloc[0]),
+                **{short: float(g[short].iloc[0]) for short, *_rest in USE_RATES},
+                **{short: float(g[short].iloc[0]) for short, *_rest in DISORDER_RATES},
                 "dem2": g["votes_dem"].sum() / two,
                 "two_party": two,
                 "pop": pop,
@@ -425,7 +466,17 @@ def main():
         ]
     ].to_csv(OUT / "zcta_level.csv", index=False)
     print(json.dumps({"descriptives": desc, "headline": summary}, indent=2))
+    from fit_extended import extend_results
+
+    extend_results(reg, OUT)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if "--from-committed" in sys.argv:
+        from fit_extended import main_committed
+
+        main_committed()
+    else:
+        main()
