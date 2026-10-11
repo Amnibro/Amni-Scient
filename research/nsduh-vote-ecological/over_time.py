@@ -213,6 +213,166 @@ def load_frames() -> dict[str, pd.DataFrame]:
     }
 
 
+# One outcome year for the state correlation table. 2019 is the latest NAEP
+# year whose preceding 15 end-years are all interview-mode pools.
+WINDOW_OUTCOME_YEAR = 2019
+WINDOW_VOTE_YEAR = 2020
+WINDOW_MEASURES = [
+    ("mj", "MRJMON", "Marijuana, past month"),
+    ("mrjyr", "MRJYR", "Marijuana, past year"),
+    ("alc", "ALCMON", "Alcohol, past month"),
+    ("binge", "BNGDRK", "Binge alcohol, past month"),
+    ("coc", "COCYR", "Cocaine, past year"),
+    ("her", "HERYR", "Heroin, past year"),
+    ("iem", "ILLEMMON", "Illicit drugs other than marijuana, past month"),
+    ("met", "METHAMYR", "Methamphetamine, past year"),
+    ("pnr", "PNRNMYR", "Pain reliever misuse, past year"),
+]
+WINDOW_SPECS = [
+    ("pool", "2018–2019", tuple(range(2019, 2020))),
+    ("y5", "5-year mean", tuple(range(2015, 2020))),
+    ("y15", "15-year mean", tuple(range(2005, 2020))),
+]
+WINDOW_OUTCOMES = [
+    ("math4", "Math 4"),
+    ("math8", "Math 8"),
+    ("read4", "Reading 4"),
+    ("read8", "Reading 8"),
+    ("composite", "Composite"),
+    ("dem2", "Democratic share"),
+]
+
+
+def _wsum(w: np.ndarray) -> np.ndarray:
+    w = np.asarray(w, dtype=float)
+    return w / np.sum(w)
+
+
+def _wcorr(x, y, w) -> float:
+    ww = _wsum(w)
+    xc = np.asarray(x, dtype=float) - np.sum(ww * x)
+    yc = np.asarray(y, dtype=float) - np.sum(ww * y)
+    return float(np.sum(ww * xc * yc) / np.sqrt(np.sum(ww * xc * xc) * np.sum(ww * yc * yc)))
+
+
+def _wz(x, w) -> np.ndarray:
+    ww = _wsum(w)
+    x = np.asarray(x, dtype=float)
+    m = np.sum(ww * x)
+    sd = np.sqrt(np.sum(ww * (x - m) ** 2))
+    return (x - m) / sd
+
+
+def _state_controls() -> pd.DataFrame:
+    """Vote-weighted region means. Alaska and Hawaii are absent from the region file."""
+    reg = pd.read_csv(RESULTS / "region_level.csv")
+    rows = []
+    for name, g in reg.groupby("st_name"):
+        w = g["two_party"].to_numpy(dtype=float)
+        ww = _wsum(w)
+        rows.append(
+            {
+                "geo": POSTAL[name],
+                "ln_dens": float(np.sum(ww * g["ln_dens"].to_numpy(dtype=float))),
+                "pct_18_25": float(np.sum(ww * g["pct_18_25"].to_numpy(dtype=float))),
+                "pct_12_17": float(np.sum(ww * g["pct_12_17"].to_numpy(dtype=float))),
+                "pct_ba": float(np.sum(ww * g["pct_ba"].to_numpy(dtype=float))),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _exposure_mean(nsduh: pd.DataFrame, code: str, years: tuple[int, ...]) -> pd.Series | None:
+    sub = nsduh[(nsduh["geo"] != "US") & (nsduh["outcome"] == code)].copy()
+    sub["year"] = sub["year"].astype(int)
+    sub = sub[sub["year"].isin(years)]
+    counts = sub.groupby("geo")["year"].nunique()
+    if counts.empty or int(counts.min()) < len(years) or set(sub["year"].unique()) != set(years):
+        return None
+    if int(counts.max()) != len(years):
+        return None
+    return sub.groupby("geo")["pct"].mean()
+
+
+def state_window_correlations(frames: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
+    """Vote-weighted state correlations of three exposure windows with 2019 scores and the 2020 vote."""
+    frames = frames or load_frames()
+    nsduh = frames["nsduh"]
+    naep = frames["naep"]
+    naep = naep[(naep["year"] == WINDOW_OUTCOME_YEAR) & (~naep["geo"].isin(["NP", "NT"]))].copy()
+    wide = None
+    for subject, grade, _label, _color in NAEP_SUBJECTS:
+        col = f"{subject}{grade}"
+        piece = naep[(naep["subject"] == subject) & (naep["grade"] == grade)][["geo", "score"]].rename(columns={"score": col})
+        wide = piece if wide is None else wide.merge(piece, on="geo", how="inner")
+    vote = frames["vote"]
+    vote = vote[vote["year"] == WINDOW_VOTE_YEAR][["geo", "dem2", "two_party"]]
+    base = wide.merge(vote, on="geo", how="inner")
+    controls = _state_controls()
+    base = base.merge(controls, on="geo", how="left")
+    score_cols = ["math4", "math8", "reading4", "reading8"]
+    rows = []
+    for key, code, label in WINDOW_MEASURES:
+        for window, window_label, years in WINDOW_SPECS:
+            exposure = _exposure_mean(nsduh, code, years)
+            if exposure is None:
+                continue
+            panel = base.merge(exposure.rename("exposure"), left_on="geo", right_index=True, how="inner")
+            panel = panel.dropna(subset=["exposure", "two_party", *score_cols, "dem2"])
+            w = panel["two_party"].to_numpy(dtype=float)
+            for col in score_cols:
+                panel[col + "_z"] = _wz(panel[col], w)
+            panel["composite"] = panel[[c + "_z" for c in score_cols]].mean(axis=1)
+            partial = panel.dropna(subset=["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]).copy()
+            wp = partial["two_party"].to_numpy(dtype=float)
+            for col in score_cols:
+                partial[col + "_z"] = _wz(partial[col], wp)
+            partial["composite"] = partial[[c + "_z" for c in score_cols]].mean(axis=1)
+            C = sm.add_constant(
+                partial[["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]].to_numpy(dtype=float),
+                has_constant="add",
+            )
+            x_resid = sm.WLS(partial["exposure"].to_numpy(dtype=float), C, weights=wp).fit().resid
+            outcomes = {
+                "math4": panel["math4_z"],
+                "math8": panel["math8_z"],
+                "read4": panel["reading4_z"],
+                "read8": panel["reading8_z"],
+                "composite": panel["composite"],
+                "dem2": panel["dem2"],
+            }
+            partial_y = {
+                "math4": partial["math4_z"],
+                "math8": partial["math8_z"],
+                "read4": partial["reading4_z"],
+                "read8": partial["reading8_z"],
+                "composite": partial["composite"],
+                "dem2": partial["dem2"],
+            }
+            for okey, olabel in WINDOW_OUTCOMES:
+                y_resid = sm.WLS(partial_y[okey].to_numpy(dtype=float), C, weights=wp).fit().resid
+                rows.append(
+                    {
+                        "substance": key,
+                        "substance_label": label,
+                        "window": window,
+                        "window_label": window_label,
+                        "outcome": okey,
+                        "outcome_label": olabel,
+                        "r": _wcorr(panel["exposure"], outcomes[okey], w),
+                        "n": int(len(panel)),
+                        "partial_r": _wcorr(x_resid, y_resid, wp),
+                        "partial_n": int(len(partial)),
+                        "outcome_year": WINDOW_OUTCOME_YEAR,
+                        "vote_year": WINDOW_VOTE_YEAR,
+                        "weight": "2020 two-party votes",
+                    }
+                )
+    out = pd.DataFrame(rows)
+    out.to_csv(RESULTS / "state_window_correlations.csv", index=False)
+    return out
+
+
 def _segments(df: pd.DataFrame, codes: list[str]) -> list[list[tuple[int, float, str]]]:
     """Points as (end year, percent, pool label), split on gaps and new codes."""
     sub = df[df["outcome"].isin(codes)].sort_values("year")
@@ -894,8 +1054,6 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
     if specs.empty:
         return ""
     chart = _lag_chart(specs)
-    focus = specs[specs["use"].isin(["mj", "alc"])]
-    others = specs[~specs["use"].isin(["mj", "alc"]) & specs["family"].isin(["lag", "cumulative", "legalization"])]
     # Lead with marijuana grade-8 math and the vote at lag 0 and lag 8.
     def grab(use, outcome, term):
         hit = specs[(specs["use"] == use) & (specs["outcome"] == outcome) & (specs["spec"] == f"lag_{term}") & (specs["term"] == f"lag_{term}")]
@@ -930,21 +1088,10 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
     return f"""
 <h2 id="lags">Cumulative and delayed exposure</h2>
 <p>{lead}</p>
-<p>Grade-4 students in the testing year are about 9 or 10 years old, so use ten years earlier lines up with the birth year. Grade-8 students are about 13 or 14, so use ten years earlier is about age 4 and use fourteen years earlier is the closer prenatal window. Those longer lags are in the table.</p>
-<p>Each point is a separate regression of the outcome on use at that lag, with state and year fixed effects. The whisker is one standard error, clustered by state. Green is past-month marijuana. Blue is past-month alcohol. The horizontal line is zero.</p>
+<p>Each point is a separate regression of the outcome on use at that lag, with state and year fixed effects. The whisker is one standard error, clustered by state. Green is past-month marijuana. Blue is past-month alcohol. The horizontal line is zero. The correlation table is the between-state correlation of the level of use. This chart is the within-state slope.</p>
 {chart}
 <p class="axis-name"><span>Y · Points of the outcome per point of use</span><span>X · Lag, years</span></p>
-<p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. A sum is the window length times the mean of the two-year pools whose end year falls in the prior window. Years since medical or adult-use legalization are zero until the statute year. Medical years are the comprehensive-program statute years in NCSL, State Medical Cannabis Laws, updated September 2, 2026. Low-THC programs are not coded as medical legalization. Adult-use years are the same list as the timeline.</p>
-<div class="table-scroll">
-<table class="cmp">
-<thead><tr><th>Use</th><th>Outcome</th><th>Specification</th><th>Term</th><th>Coefficient</th><th>SE</th><th>N</th><th>States</th></tr></thead>
-<tbody>
-{_lag_table(focus, None, None)}
-{_lag_table(others, None, None)}
-</tbody>
-</table>
-</div>
-<p class="fine">State and year fixed effects. Standard errors are clustered by state. A lag term is use that many years before the outcome. The distributed specification enters lags 0, 2, 4, 6, and 8 together. Cumulative terms are percentage-point-years. Legalization terms are years since the statute. The full grid is <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
+<p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. Lags of 10, 12, and 14 years, the distributed lag, and the legalization rows are in <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
 """
 
 

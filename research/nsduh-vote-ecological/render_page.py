@@ -51,6 +51,13 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend.naep i{width:22px;height:8px;border-radius:2px}
 .legend i.open{background:transparent;border:2px solid var(--text);width:8px;height:8px;box-sizing:border-box}
 #law-table th{cursor:pointer}
+.corr-switch{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .7rem}
+.heat-table{border-collapse:separate;border-spacing:3px;width:max-content;max-width:100%}
+.heat-table th{font-size:.72rem;text-align:center;white-space:nowrap}
+.heat-table th.rowhead,.heat-table td.rowhead{text-align:left;white-space:nowrap;background:transparent;color:var(--text);font-weight:650}
+.heat-table td.heat{text-align:center;min-width:5.4rem;padding:.38rem .3rem;line-height:1.15;white-space:nowrap}
+.heat-table .hv{display:block;font-size:.95rem;font-weight:800;font-variant-numeric:tabular-nums}
+.heat-table .hn,.heat-table .hs{display:block;margin-top:.12rem;font-size:.68rem;font-weight:650;font-variant-numeric:tabular-nums}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -1077,20 +1084,31 @@ CORR_LABELS = {
 }
 
 
-def _corr_rgb(r: float) -> tuple[int, int, int]:
-    t = min(1.0, abs(float(r)))
-    cream = (246, 240, 228)
-    end = (138, 99, 24) if r >= 0 else (30, 64, 175)
-    return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
-
-
-def _corr_ink(rgb: tuple[int, int, int]) -> str:
+def _rel_l(rgb: tuple[int, int, int]) -> float:
     def lin(c: int) -> float:
         x = c / 255.0
         return x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4
 
-    L = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
-    return "#120C03" if L > 0.42 else "#FFFFFF"
+    return 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
+
+
+def _contrast(bg: tuple[int, int, int], fg: tuple[int, int, int]) -> float:
+    lighter, darker = sorted((_rel_l(bg), _rel_l(fg)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def _corr_rgb(r: float) -> tuple[int, int, int]:
+    """Cream to brown or blue, stopped where #120C03 stays at 4.8:1."""
+    t = min(1.0, abs(float(r)))
+    cream = (246, 240, 228)
+    end = (155, 122, 57) if r >= 0 else (103, 124, 193)
+    return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
+
+
+def _corr_ink(rgb: tuple[int, int, int]) -> str:
+    dark = (18, 12, 3)
+    white = (255, 255, 255)
+    return "#120C03" if _contrast(rgb, dark) >= _contrast(rgb, white) else "#FFFFFF"
 
 
 def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, ...], title: str) -> str:
@@ -1184,6 +1202,111 @@ def group_table(groups: dict) -> str:
         "</tr>"
     )
     return "\n".join(lines)
+
+
+def window_corr_section(table) -> str:
+    from over_time import WINDOW_OUTCOMES
+
+    outcomes = list(WINDOW_OUTCOMES)
+    keys = []
+    for rec in table.itertuples(index=False):
+        key = (rec.substance, rec.window, rec.substance_label, rec.window_label)
+        if key not in keys:
+            keys.append(key)
+    by = {(rec.substance, rec.window, rec.outcome): rec for rec in table.itertuples(index=False)}
+    top = table.loc[table["r"].abs().idxmax()]
+    ptop = table.loc[table["partial_r"].abs().idxmax()]
+    lead = (
+        f"The strongest Pearson correlation is {esc(top.substance_label)}, {esc(top.window_label)}, "
+        f"with {esc(top.outcome_label)}: <strong>{num(top.r, 2, sign=True)}</strong> (n={int(top.n)}). "
+        f"The partial correlation in that cell is <strong>{num(top.partial_r, 2, sign=True)}</strong> (n={int(top.partial_n)})."
+    )
+    if (ptop.substance, ptop.window, ptop.outcome) != (top.substance, top.window, top.outcome):
+        lead += (
+            f" The strongest partial correlation is {esc(ptop.substance_label)}, {esc(ptop.window_label)}, "
+            f"with {esc(ptop.outcome_label)}: <strong>{num(ptop.partial_r, 2, sign=True)}</strong> (n={int(ptop.partial_n)})."
+        )
+    body = []
+    for substance, window, slabel, wlabel in keys:
+        cells = []
+        for okey, _olabel in outcomes:
+            rec = by[(substance, window, okey)]
+            rgb_r = _corr_rgb(rec.r)
+            rgb_p = _corr_rgb(rec.partial_r)
+            fill_r = "#{:02X}{:02X}{:02X}".format(*rgb_r)
+            fill_p = "#{:02X}{:02X}{:02X}".format(*rgb_p)
+            ink_r = _corr_ink(rgb_r)
+            ink_p = _corr_ink(rgb_p)
+            cells.append(
+                f'<td class="heat" style="background:{fill_r};color:{ink_r}" '
+                f'data-r="{num(rec.r, 2, sign=True)}" data-p="{num(rec.partial_r, 2, sign=True)}" '
+                f'data-nr="{int(rec.n)}" data-np="{int(rec.partial_n)}" '
+                f'data-fill-r="{fill_r}" data-ink-r="{ink_r}" data-fill-p="{fill_p}" data-ink-p="{ink_p}">'
+                f'<span class="hv">{num(rec.r, 2, sign=True)}</span>'
+                f'<span class="hn">n={int(rec.n)}</span>'
+                f'<span class="hs">partial {num(rec.partial_r, 2, sign=True)}</span></td>'
+            )
+        body.append(
+            "<tr>"
+            f'<td class="rowhead">{esc(slabel)}</td>'
+            f'<td class="rowhead">{esc(wlabel)}</td>'
+            + "".join(cells)
+            + "</tr>"
+        )
+    heads = "".join(f"<th>{esc(label)}</th>" for _key, label in outcomes)
+    n_r = int(table["n"].mode().iloc[0])
+    n_p = int(table["partial_n"].mode().iloc[0])
+    script = """
+<script>
+(function(){
+  var root = document.getElementById('window-corr');
+  if (!root) return;
+  var buttons = root.querySelectorAll('button[data-mode]');
+  function paint(mode){
+    buttons.forEach(function(b){
+      var on = b.getAttribute('data-mode') === mode;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var primary = mode === 'partial' ? 'p' : 'r';
+    var secondary = mode === 'partial' ? 'r' : 'p';
+    var secondaryName = mode === 'partial' ? 'r' : 'partial';
+    root.querySelectorAll('td.heat').forEach(function(td){
+      td.style.background = td.getAttribute('data-fill-' + primary);
+      td.style.color = td.getAttribute('data-ink-' + primary);
+      var nAttr = primary === 'p' ? 'data-np' : 'data-nr';
+      td.querySelector('.hv').textContent = td.getAttribute('data-' + primary);
+      td.querySelector('.hn').textContent = 'n=' + td.getAttribute(nAttr);
+      td.querySelector('.hs').textContent = secondaryName + ' ' + td.getAttribute('data-' + secondary);
+    });
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ paint(b.getAttribute('data-mode')); });
+  });
+})();
+</script>
+"""
+    return f"""
+<h2 id="correlations">State correlations</h2>
+<p>{lead}</p>
+<p>Brown is positive. Blue is negative. Cream is near zero. The large number is the correlation selected below. The small number is the other one. n is the state count for the large number.</p>
+<div id="window-corr">
+<div class="corr-switch">
+<button type="button" class="btn btn-primary" data-mode="r" aria-pressed="true">Pearson r</button>
+<button type="button" class="btn btn-outline" data-mode="partial" aria-pressed="false">Partial r</button>
+</div>
+<div class="table-scroll">
+<table class="cmp heat-table" id="window-corr-table">
+<thead><tr><th class="rowhead">Substance</th><th class="rowhead">Window</th>{heads}</tr></thead>
+<tbody>
+{''.join(body)}
+</tbody>
+</table>
+</div>
+</div>
+<p class="fine">The outcome year is 2019, the latest NAEP year with a full 15-year run of interview-mode pools: the 15-year row is the mean of end years 2005–2019, the 5-year row is the mean of end years 2015–2019, and the latest-pool row is the 2018–2019 estimate, with the 2019–2020 pool absent and the 2021–2024 web-mode pools left out.</p>
+<p class="fine">Scores are vote-weighted z-scores of the 2019 state means. The composite is the mean of those four z-scores. Democratic share is the 2020 two-party share. Weights are 2020 two-party votes. Partial r residualizes the exposure and the outcome on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, the vote-weighted region means. Median household income is not in the region file. Alaska and Hawaii are absent from that file, so partial r uses {n_p} states and Pearson r uses {n_r}. Hallucinogens and opioid misuse begin in the web-mode pools and are off this table. Binge alcohol, illicit drugs other than marijuana, methamphetamine, and pain-reliever misuse have four pre-break pools on the current questionnaire, so only the 2018–2019 row is filled. Heroin’s series starts in 2013–2014, so the 15-year row is omitted. CSV: <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>.</p>
+""" + script
 
 
 def correlation_heatmap(study: dict) -> str:
@@ -1319,18 +1442,14 @@ def main():
     n_joint = len(ext["joint"]["terms"])
     low_s, high_s = contour_sum[0], contour_sum[2]
     groups = ext["groups"]
-    study = ext["correlation_matrix"]
     omit = groups["heroin_omitted"]["terms"]
     inn = groups["heroin_in_b"]["terms"]
     heroin = groups["heroin_alone"]
     gchart = group_chart(groups)
     gtab_group = group_table(groups)
-    heat = correlation_heatmap(study)
-    pchart_corr = partial_chart(study)
-    ptab_corr = partial_table(study)
-    partial_of = {row["term"]: row for row in study["partials"]}
-    dens_r = study["matrix"][study["keys"].index("dem2")][study["keys"].index("ln_dens")]
-    from over_time import section_html
+    from over_time import section_html, state_window_correlations
+
+    window_html = window_corr_section(state_window_correlations())
 
     ot_html = section_html()
     mj_line, alc_line = line_fits["mj"], line_fits["alc"]
@@ -1464,8 +1583,7 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_medical.csv" download>Medical dates CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
-<a class="btn btn-primary" href="nsduh-vote-ecological/results/correlation_matrix.csv" download>Correlation matrix CSV</a>
-<a class="btn btn-primary" href="nsduh-vote-ecological/results/partial_correlations.csv" download>Partial correlations CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/state_window_correlations.csv" download>State correlation CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
@@ -1543,23 +1661,7 @@ body.pp .hero h1{{max-width:22ch}}
 </div>
 <p class="fine">Each region enters once per substance. The outcome is repeated, so the clustered standard error groups rows by region. Substance indicators absorb the level of each rate. The group indicator itself is collinear with those indicators, so the test is the interaction of the rate with group B. Controls are log density, percent ages 18–25, and percent ages 12–17, centered at their vote-weighted means. Weights are two-party votes. N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
 
-<h2 id="correlations">Correlations</h2>
-<p>Vote-weighted, past-year cocaine and Democratic share correlate at <strong>{num(partial_of['coc']['weighted_r'], 2, sign=True)}</strong>. Methamphetamine correlates at <strong>{num(partial_of['met']['weighted_r'], 2, sign=True)}</strong>. Log density correlates with Democratic share at <strong>{num(dens_r, 2)}</strong>. After log density, the two age shares, and bachelor’s share, marijuana’s partial correlation is <strong>{num(partial_of['mj']['partial_r'], 2, sign=True)}</strong>, cocaine’s is <strong>{num(partial_of['coc']['partial_r'], 2, sign=True)}</strong>, and hallucinogens’ is <strong>{num(partial_of['hal']['partial_r'], 2, sign=True)}</strong>. Methamphetamine’s partial correlation is <strong>{num(partial_of['met']['partial_r'], 2, sign=True)}</strong>.</p>
-<p>Each cell is the vote-weighted correlation. Gold is positive. Blue is negative. The number is the correlation.</p>
-<div class="table-scroll heat-wrap" id="corr-heatmap">{heat}</div>
-<p class="axis-name"><span>Gold · Positive</span><span>Blue · Negative</span></p>
-<p>The bars are partial correlations with Democratic share. Both the rate and the share are residualized on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, then correlated with the same vote weights.</p>
-<div class="chart-card" id="partial-chart">{pchart_corr}</div>
-<p class="axis-name"><span>Y · Rate</span><span>X · Partial correlation with Democratic share</span></p>
-<div class="table-scroll">
-<table class="cmp">
-<thead><tr><th>Rate</th><th>Weighted r</th><th>Partial r</th></tr></thead>
-<tbody>
-{ptab_corr}
-</tbody>
-</table>
-</div>
-<p class="fine">Median household income is not in the region file. The ACS extract used here is age and bachelor’s attainment, so income stays out of the matrix. 382 regions. Weights are two-party votes. CSVs: <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
+{window_html}
 
 <h2 id="users">Users and non-users</h2>
 <p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong> (interval {num(g_alc['user_lo'], 1)}–{num(g_alc['user_hi'], 1)}). Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong> (interval {num(g_alc['nonuser_lo'], 1)}–{num(g_alc['nonuser_hi'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users (interval {num(by_term['binge']['user_lo'], 1)}–{num(by_term['binge']['user_hi'], 1)}) and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users (interval {num(by_term['binge']['nonuser_lo'], 1)}–{num(by_term['binge']['nonuser_hi'], 1)}).</p>
@@ -1675,7 +1777,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
 <p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The ICAR35 figure beside that chart is Table 1 in Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>: −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
-<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSVs: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>, <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
+<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>. The state correlation table is <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>
