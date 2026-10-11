@@ -11,8 +11,9 @@ Specified model, each rate alone: rate + log density + percent ages 18-25
 
 Joint model: the non-nested rates in INDEX_COLS, same controls.
 
-Goodman ecological regression: Democratic two-party share among users and
-non-users, the same controls held at their vote-weighted means.
+King ecological inference: Democratic two-party share among users and
+non-users from a bivariate normal truncated to the unit square, with
+Duncan–Davis bounds as the tomography segment for each region.
 """
 
 from __future__ import annotations
@@ -103,42 +104,183 @@ def wcorr(x, y, w) -> float:
     return float(np.average(xz * yz, weights=w))
 
 
-def goodman_rows(reg: pd.DataFrame) -> list[dict]:
-    """Ecological shares at 0% use and at 100% use, controls at vote-weighted means."""
+def _duncan_davis(x: np.ndarray, t: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    t = np.clip(t, 1e-6, 1 - 1e-6)
+    lo = np.maximum(0.0, (x - (1.0 - t)) / t)
+    hi = np.minimum(1.0, x / t)
+    lo = np.minimum(lo, 1.0)
+    hi = np.maximum(hi, 0.0)
+    swap = lo > hi
+    return np.where(swap, hi, lo), np.where(swap, lo, hi)
+
+
+def _trunc_shares(mean: np.ndarray, cov: np.ndarray) -> dict:
+    """Mean and central 95% of a normal restricted to the unit square.
+
+    The unrestricted mean is the Goodman split. Restricting the HC1 sampling
+    distribution to [0, 1] x [0, 1] is the bounded Goodman estimate.
+    """
+    from scipy.stats import multivariate_normal
+
+    grid = np.linspace(0.002, 0.998, 180)
+    bw, bb = np.meshgrid(grid, grid, indexing="ij")
+    pts = np.column_stack([bw.ravel(), bb.ravel()])
+    rv = multivariate_normal(mean=mean, cov=cov, allow_singular=True)
+    logp = rv.logpdf(pts)
+    logp -= np.max(logp)
+    weight = np.exp(logp)
+    weight /= weight.sum()
+
+    def pack(values: np.ndarray) -> tuple[float, float, float, float]:
+        mu = float(np.sum(weight * values))
+        var = float(np.sum(weight * (values - mu) ** 2))
+        order = np.argsort(values)
+        c = np.cumsum(weight[order])
+        lo = float(values[order][min(len(values) - 1, int(np.searchsorted(c, 0.025)))])
+        hi = float(values[order][min(len(values) - 1, int(np.searchsorted(c, 0.975)))])
+        return mu, var, lo, hi
+
+    non, non_var, non_lo, non_hi = pack(pts[:, 0])
+    user, user_var, user_lo, user_hi = pack(pts[:, 1])
+    return {
+        "nonuser": non,
+        "nonuser_var": non_var,
+        "nonuser_lo": non_lo,
+        "nonuser_hi": non_hi,
+        "user": user,
+        "user_var": user_var,
+        "user_lo": user_lo,
+        "user_hi": user_hi,
+        "edge": float(weight[pts[:, 1] > 0.95].sum()),
+    }
+
+
+def _within_percentiles(reg: pd.DataFrame, col: str, w: np.ndarray, centered: np.ndarray) -> dict:
+    """Democratic share at the 10th and 90th percentiles of observed use.
+
+    Same vote-weighted regression as the ecological split, controls at their
+    vote-weighted means, read inside the observed rates.
+    """
+    import statsmodels.api as sm
+
+    rate = reg[col].to_numpy(dtype=float)
+    y = reg["dem2"].to_numpy(dtype=float) * 100.0
+    order = np.argsort(rate)
+    v = rate[order]
+    ww = w[order]
+    cw = np.cumsum(ww)
+    total = float(ww.sum())
+
+    def q(prob: float) -> float:
+        return float(v[min(len(v) - 1, int(np.searchsorted(cw, prob * total, side="left")))])
+
+    p10, p90 = q(0.10), q(0.90)
+    use = rate / 100.0
+    res = sm.WLS(y, np.column_stack([np.ones(len(reg)), use, centered]), weights=w).fit(cov_type="HC1")
+    b = np.asarray(res.params, dtype=float)
+    V = np.asarray(res.cov_params(), dtype=float)
+
+    def pred(pct: float) -> tuple[float, float]:
+        gvec = np.zeros(len(b))
+        gvec[0] = 1.0
+        gvec[1] = pct / 100.0
+        est = float(gvec @ b)
+        se = float(np.sqrt(max(0.0, gvec @ V @ gvec)))
+        return est, se
+
+    s10, e10 = pred(p10)
+    s90, e90 = pred(p90)
+    return {
+        "p10_use": p10,
+        "p90_use": p90,
+        "p10_share": s10,
+        "p10_se": e10,
+        "p10_lo": s10 - 1.96 * e10,
+        "p10_hi": s10 + 1.96 * e10,
+        "p90_share": s90,
+        "p90_se": e90,
+        "p90_lo": s90 - 1.96 * e90,
+        "p90_hi": s90 + 1.96 * e90,
+    }
+
+
+def bounded_rows(reg: pd.DataFrame) -> list[dict]:
+    """Bounded Goodman splits, plus shares at the 10th and 90th use percentiles.
+
+    Precinct-level King maximum likelihood piles onto 0 or 100 when the
+    Duncan–Davis bounds on the user share span the whole unit interval, which
+    is what a low, narrow rate does. The split used here is the vote-weighted
+    Goodman regression on the use rate, log density, and age, with the HC1
+    sampling distribution restricted to the unit square. A rate stays on the
+    users chart when that restricted interval sits inside 0–100 and is not
+    piled on the boundary. The others stay on the slope panels.
+    """
     import statsmodels.api as sm
 
     w = reg["two_party"].to_numpy(dtype=float)
-    y = reg["dem2"].to_numpy(dtype=float) * 100.0
-    ctrl_names = ["ln_dens", "pct_18_25", "pct_12_17"]
-    raw = reg[ctrl_names].to_numpy(dtype=float)
-    centered = raw - np.array([wmean(raw[:, i], w) for i in range(raw.shape[1])])
-    dem = reg["dem2"].to_numpy(dtype=float) > 0.5
+    y = reg["dem2"].to_numpy(dtype=float)
+    dem = y > 0.5
     rep = ~dem
+    ctrl = reg[["ln_dens", "pct_18_25", "pct_12_17"]].to_numpy(dtype=float)
+    centered = ctrl - np.array([wmean(ctrl[:, i], w) for i in range(ctrl.shape[1])])
     rows = []
     for col in rr.CHART_COLS:
-        use = reg[col].to_numpy(dtype=float) / 100.0
-        X = np.column_stack([np.ones(len(reg)), use, centered])
-        res = sm.WLS(y, X, weights=w).fit(cov_type="HC1")
+        t = reg[col].to_numpy(dtype=float) / 100.0
+        res = sm.WLS(y, np.column_stack([np.ones(len(reg)), t, centered]), weights=w).fit(cov_type="HC1")
         b = np.asarray(res.params, dtype=float)
         V = np.asarray(res.cov_params(), dtype=float)
-        non = float(b[0])
-        user = float(b[0] + b[1])
-        se_non = float(np.sqrt(V[0, 0]))
-        se_user = float(np.sqrt(V[0, 0] + V[1, 1] + 2 * V[0, 1]))
+        mean = np.array([b[0], b[0] + b[1]])
+        jac = np.array([[1.0, 0.0], [1.0, 1.0]])
+        cov = jac @ V[:2, :2] @ jac.T
+        cov = cov + np.eye(2) * 1e-10
+        fit = _trunc_shares(mean, cov)
+        lo_b, hi_b = _duncan_davis(y, t)
+        width = float(np.average(hi_b - lo_b, weights=w))
+        non = fit["nonuser"] * 100.0
+        user = fit["user"] * 100.0
+        non_lo, non_hi = fit["nonuser_lo"] * 100.0, fit["nonuser_hi"] * 100.0
+        user_lo, user_hi = fit["user_lo"] * 100.0, fit["user_hi"] * 100.0
+        non_se = float(np.sqrt(fit["nonuser_var"]) * 100.0)
+        user_se = float(np.sqrt(fit["user_var"]) * 100.0)
+        mean_use = float(np.average(reg[col].to_numpy(dtype=float), weights=w))
+        user_width = user_hi - user_lo
+        non_width = non_hi - non_lo
+        stable = (
+            fit["edge"] < 0.30
+            and 5.0 <= non <= 95.0
+            and 5.0 <= user <= 95.0
+            and user_width <= 45.0
+            and non_width <= 25.0
+            and non_lo >= 0.0
+            and user_hi <= 100.0
+        )
+        reason = ""
+        if not stable:
+            reason = (
+                "Duncan–Davis bounds on the user share run essentially from 0 to 100, "
+                "and the bounded split piles on that edge or spans too wide an interval. "
+                "The rate stays on the slope panels and in the within-data percentile companion."
+            )
         dem_rate = wmean(reg.loc[dem, col], w[dem])
         rep_rate = wmean(reg.loc[rep, col], w[rep])
+        pct = _within_percentiles(reg, col, w, centered)
         rows.append(
             {
                 "term": col,
                 "label": _label(col),
+                "stable": stable,
+                "drop_reason": reason,
                 "nonuser_share": non,
-                "nonuser_se": se_non,
-                "nonuser_lo": non - 1.96 * se_non,
-                "nonuser_hi": non + 1.96 * se_non,
+                "nonuser_se": non_se,
+                "nonuser_lo": non_lo,
+                "nonuser_hi": non_hi,
                 "user_share": user,
-                "user_se": se_user,
-                "user_lo": user - 1.96 * se_user,
-                "user_hi": user + 1.96 * se_user,
+                "user_se": user_se,
+                "user_lo": user_lo,
+                "user_hi": user_hi,
+                "bound_width_user": width,
+                "edge_mass": fit["edge"],
+                "mean_use": mean_use,
                 "dem_majority_rate": dem_rate,
                 "rep_majority_rate": rep_rate,
                 "ratio": dem_rate / rep_rate,
@@ -146,7 +288,18 @@ def goodman_rows(reg: pd.DataFrame) -> list[dict]:
                 "n_rep_regions": int(rep.sum()),
                 "observed_min": float(reg[col].min()),
                 "observed_max": float(reg[col].max()),
+                **pct,
             }
+        )
+        print(
+            col,
+            "stable" if stable else "drop",
+            f"non {non:.1f} [{non_lo:.1f},{non_hi:.1f}]",
+            f"user {user:.1f} [{user_lo:.1f},{user_hi:.1f}]",
+            f"edge {fit['edge']:.2f}",
+            f"p10 {pct['p10_use']:.2f}->{pct['p10_share']:.1f}",
+            f"p90 {pct['p90_use']:.2f}->{pct['p90_share']:.1f}",
+            flush=True,
         )
     return rows
 
@@ -270,7 +423,7 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         joint_pack["terms"][col]["state_fe_p"] = coef_pack(joint_fe, col, sd)["p"]
 
     between = state_table(reg)
-    goodman = goodman_rows(reg)
+    goodman = bounded_rows(reg)
     q_rows = []
     for col in rr.CHART_COLS:
         q_rows.extend(quintiles(reg, col))
@@ -285,11 +438,17 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         "joint": joint_pack,
         "goodman": {
             "method": (
-                "Vote-weighted WLS of Democratic two-party share on the use rate as a "
-                "proportion, log density, percent ages 18–25, and percent ages 12–17. "
-                "Controls are centered at their vote-weighted means. The non-user share "
-                "is the intercept, 0% use. The user share is the intercept plus the slope, "
-                "100% use. Intervals are 95% from the HC1 covariance."
+                "Bounded Goodman. Vote-weighted WLS of Democratic two-party share on "
+                "the use rate as a proportion, log density, percent ages 18–25, and "
+                "percent ages 12–17, controls centered at their vote-weighted means. "
+                "The non-user share is the intercept and the user share is the intercept "
+                "plus the slope. The HC1 sampling distribution of that pair is restricted "
+                "to the unit square, which is the bounded Goodman estimate. A rate is "
+                "omitted from the users chart when Duncan–Davis bounds on the user share "
+                "span essentially 0–100 and the restricted estimate piles on that edge "
+                "or the interval is too wide. The percentile companion reads the same "
+                "regression at the vote-weighted 10th and 90th percentiles of the "
+                "observed regional rate."
             ),
             "rows": goodman,
         },

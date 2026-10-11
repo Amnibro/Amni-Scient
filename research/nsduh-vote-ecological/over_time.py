@@ -537,6 +537,334 @@ def coef_table(fits: list[dict]) -> str:
     return "\n".join(rows)
 
 
+# Comprehensive medical programs. Year is the statute year NCSL prints.
+# Low-THC programs are not in this list. Retrieved 2026-10-11 from
+# NCSL, State Medical Cannabis Laws, updated September 2, 2026.
+MEDICAL_YEAR = {
+    "AL": 2021, "AK": 1998, "AZ": 2010, "AR": 2016, "CA": 1996, "CO": 2000,
+    "CT": 2012, "DE": 2011, "DC": 2010, "FL": 2016, "GA": 2026, "HI": 2000,
+    "IL": 2013, "KY": 2023, "LA": 2017, "ME": 1999, "MD": 2014, "MA": 2012,
+    "MI": 2008, "MN": 2014, "MS": 2022, "MO": 2018, "MT": 2004, "NE": 2024,
+    "NV": 2000, "NH": 2013, "NJ": 2010, "NM": 2007, "NY": 2014, "ND": 2016,
+    "OH": 2016, "OK": 2018, "OR": 1998, "PA": 2016, "RI": 2007, "SD": 2020,
+    "TX": 2025, "UT": 2018, "VT": 2004, "VA": 2020, "WA": 1998, "WV": 2017,
+}
+LAGS = (0, 2, 4, 6, 8, 10, 12, 14)
+CHART_LAGS = (0, 2, 4, 6, 8)
+
+
+def _code_map() -> dict[str, tuple[str, str, str]]:
+    out = {}
+    for key, label, _color, codes, _dash in SERIES:
+        for code in codes:
+            segment = code if code in BREAK_CODES else key
+            out[code] = (key, label, segment)
+    return out
+
+
+def _use_state(nsduh: pd.DataFrame) -> pd.DataFrame:
+    mapped = _code_map()
+    st = nsduh[nsduh["geo"].isin(POSTAL.values())].copy()
+    st["year"] = st["year"].astype(int)
+    st["series"] = st["outcome"].map(lambda c: mapped.get(c, (None, None, None))[0])
+    st["use_label"] = st["outcome"].map(lambda c: mapped.get(c, (None, None, None))[1])
+    st["segment"] = st["outcome"].map(lambda c: mapped.get(c, (None, None, None))[2])
+    st = st.dropna(subset=["series"])
+    return st[["geo", "year", "series", "use_label", "segment", "pct"]]
+
+
+def _twoway(df: pd.DataFrame, xnames: list[str]) -> list[dict] | None:
+    d = df.dropna(subset=["y", *xnames, "geo", "year"]).copy()
+    d["year"] = d["year"].astype(int)
+    if d["geo"].nunique() < 20 or d["year"].nunique() < 3 or len(d) < 80:
+        return None
+    y = d["y"].to_numpy(dtype=float)
+    xc = d[xnames].to_numpy(dtype=float)
+    if np.any(xc.std(axis=0) < 1e-8):
+        return None
+    states = pd.get_dummies(d["geo"], drop_first=True, dtype=float)
+    years = pd.get_dummies(d["year"], drop_first=True, dtype=float)
+    extra = np.column_stack([states.to_numpy(), years.to_numpy()])
+    keep_extra = extra.std(axis=0) > 1e-8
+    X = sm.add_constant(np.column_stack([xc, extra[:, keep_extra]]), has_constant="add")
+    try:
+        res = sm.OLS(y, X).fit(cov_type="cluster", cov_kwds={"groups": d["geo"].to_numpy()})
+    except (ValueError, np.linalg.LinAlgError):
+        return None
+    rows = []
+    for i, name in enumerate(xnames):
+        rows.append(
+            {
+                "term": name,
+                "coef": float(res.params[i + 1]),
+                "se": float(res.bse[i + 1]),
+                "p": float(res.pvalues[i + 1]),
+                "n": int(res.nobs),
+                "n_states": int(d["geo"].nunique()),
+                "n_years": int(d["year"].nunique()),
+            }
+        )
+    return rows
+
+
+def lag_fits(frames: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """State and year fixed effects of scores and vote share on delayed use."""
+    use = _use_state(frames["nsduh"])
+    legal = {str(r.geo): int(r.year) for r in frames["legal"].itertuples(index=False)}
+    med_rows = [{"geo": g, "year": y, "kind": "medical", "source": "NCSL State Medical Cannabis Laws, updated September 2, 2026"} for g, y in sorted(MEDICAL_YEAR.items())]
+    pd.DataFrame(med_rows).to_csv(DATA / "cannabis_medical.csv", index=False)
+    outcomes = []
+    naep = frames["naep"]
+    naep = naep[naep["geo"].isin(set(POSTAL.values()))]
+    for subject, grade, label, _color in NAEP_SUBJECTS:
+        sub = naep[(naep["subject"] == subject) & (naep["grade"] == grade)][["geo", "year", "score"]].copy()
+        sub["year"] = sub["year"].astype(int)
+        sub = sub.rename(columns={"score": "y"})
+        outcomes.append((f"naep_{subject}{grade}", label, sub))
+    vote = frames["vote"]
+    vote = vote[vote["geo"].isin(set(POSTAL.values()))][["geo", "year", "dem2"]].copy()
+    vote["year"] = vote["year"].astype(int)
+    vote["y"] = vote["dem2"] * 100.0
+    outcomes.append(("vote", "Democratic two-party share", vote[["geo", "year", "y"]]))
+
+    specs = []
+    series_keys = use.groupby(["series", "segment", "use_label"], as_index=False).size()
+    for rec in series_keys.itertuples(index=False):
+        u = use[(use["series"] == rec.series) & (use["segment"] == rec.segment)][["geo", "year", "pct"]]
+        wide_lags = {}
+        for k in LAGS:
+            shifted = u.rename(columns={"year": "uyear", "pct": f"lag_{k}"})
+            shifted["year"] = shifted["uyear"] + k
+            wide_lags[k] = shifted[["geo", "year", f"lag_{k}"]]
+        for okey, olabel, odf in outcomes:
+            base = odf.merge(wide_lags[0], on=["geo", "year"], how="left")
+            for k in LAGS:
+                if k == 0:
+                    continue
+                base = base.merge(wide_lags[k], on=["geo", "year"], how="left")
+            # Drop a lag when the use year sits on the other side of the 2021 break.
+            for k in LAGS:
+                use_year = base["year"] - k
+                ok = ((base["year"] <= 2020) & (use_year <= 2019)) | ((base["year"] >= 2022) & (use_year >= 2022))
+                base.loc[~ok, f"lag_{k}"] = np.nan
+            base["years_medical"] = [
+                0.0 if (MEDICAL_YEAR.get(g) is None or int(y) < MEDICAL_YEAR[g]) else float(int(y) - MEDICAL_YEAR[g])
+                for g, y in zip(base["geo"], base["year"])
+            ]
+            base["years_recreational"] = [
+                0.0 if (legal.get(g) is None or int(y) < legal[g]) else float(int(y) - legal[g])
+                for g, y in zip(base["geo"], base["year"])
+            ]
+            # Cumulative exposure: window length times the mean of pools in the prior window.
+            u_idx = u.set_index(["geo", "year"])["pct"]
+
+            def cum_value(geo: str, year: int, window: int) -> float:
+                years = range(int(year) - window, int(year))
+                if int(year) <= 2020:
+                    years = [t for t in years if t <= 2019]
+                else:
+                    years = [t for t in years if t >= 2022]
+                vals = []
+                for t in years:
+                    key = (geo, t)
+                    if key in u_idx.index:
+                        vals.append(float(u_idx.loc[key]))
+                need = 3 if window == 5 else 5
+                if len(vals) < need:
+                    return np.nan
+                return float(window * np.mean(vals))
+
+            pairs = list(zip(base["geo"], base["year"]))
+            base["cum_5"] = [cum_value(g, y, 5) for g, y in pairs]
+            base["cum_10"] = [cum_value(g, y, 10) for g, y in pairs]
+            pre = base[base["year"] <= 2020]
+            jobs = [("lag", f"lag_{k}", [f"lag_{k}"]) for k in LAGS]
+            jobs.append(("distributed", "distributed", [f"lag_{k}" for k in CHART_LAGS]))
+            jobs.append(("cumulative", "cum_5", ["cum_5"]))
+            jobs.append(("cumulative", "cum_10", ["cum_10"]))
+            jobs.append(("legalization", "years_medical", ["years_medical"]))
+            jobs.append(("legalization", "years_recreational", ["years_recreational"]))
+            jobs.append(("legalization", "years_both", ["years_medical", "years_recreational"]))
+            for family, spec, cols in jobs:
+                fitted = _twoway(pre, cols)
+                if not fitted:
+                    continue
+                for row in fitted:
+                    specs.append(
+                        {
+                            "use": rec.series,
+                            "use_label": rec.use_label,
+                            "segment": rec.segment,
+                            "outcome": okey,
+                            "outcome_label": olabel,
+                            "family": family,
+                            "spec": spec,
+                            "sample": "through 2020, use through 2019",
+                            **row,
+                        }
+                    )
+    out = pd.DataFrame(specs)
+    out.to_csv(RESULTS / "lag_specs.csv", index=False)
+    return out
+
+
+def _lag_chart(specs: pd.DataFrame) -> str:
+    """Coefficient against lag for marijuana and alcohol, one panel per outcome."""
+    outcomes = [
+        ("naep_math4", "Grade 4 math"),
+        ("naep_math8", "Grade 8 math"),
+        ("naep_reading4", "Grade 4 reading"),
+        ("naep_reading8", "Grade 8 reading"),
+        ("vote", "Democratic share"),
+    ]
+    colors = {"mj": "#16A34A", "alc": "#2563EB"}
+    cards = []
+    for okey, title in outcomes:
+        sub = specs[(specs["outcome"] == okey) & (specs["family"] == "lag") & (specs["use"].isin(["mj", "alc"]))]
+        sub = sub[sub["segment"] == sub["use"]]
+        if sub.empty:
+            continue
+        lags = list(CHART_LAGS)
+        ys = []
+        for lag in lags:
+            for substance in ("mj", "alc"):
+                hit = sub[(sub["use"] == substance) & (sub["term"] == f"lag_{lag}")]
+                if len(hit):
+                    coef = float(hit.iloc[0]["coef"])
+                    se = float(hit.iloc[0]["se"])
+                    ys.extend((coef - se, coef + se))
+        if not ys:
+            continue
+        y_pad = max(0.05, (max(ys) - min(ys)) * 0.35)
+        y0, y1 = min(ys) - y_pad, max(ys) + y_pad
+        if y0 < 0 < y1:
+            pass
+        left, right, top, bottom = 46, 8, 16, 22
+        plot_w, plot_h = 168, 120
+        w, h = left + plot_w + right, top + plot_h + bottom
+
+        def X(v, _lags=lags):
+            return left + (v - _lags[0]) / (_lags[-1] - _lags[0]) * plot_w
+
+        def Y(v):
+            return top + (y1 - v) / (y1 - y0) * plot_h
+
+        parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
+        parts.append(f'<line x1="{left}" y1="{Y(0):.1f}" x2="{left + plot_w}" y2="{Y(0):.1f}" class="grid"/>')
+        for lag in lags:
+            parts.append(f'<text x="{X(lag):.1f}" y="{h - 6}" text-anchor="middle" class="tick">{lag}</text>')
+        def tick(v):
+            body = f"{abs(v):.2f}"
+            return ("−" + body) if v < 0 else body
+
+        parts.append(f'<text x="{left - 4}" y="{Y(y1) + 9:.1f}" text-anchor="end" class="tick">{tick(y1)}</text>')
+        parts.append(f'<text x="{left - 4}" y="{Y(y0):.1f}" text-anchor="end" class="tick">{tick(y0)}</text>')
+        for substance in ("mj", "alc"):
+            pts = []
+            for lag in lags:
+                hit = sub[(sub["use"] == substance) & (sub["term"] == f"lag_{lag}")]
+                if hit.empty:
+                    continue
+                coef = float(hit.iloc[0]["coef"])
+                se = float(hit.iloc[0]["se"])
+                pts.append((lag, coef, se))
+            if len(pts) >= 2:
+                path = " ".join(f"{X(lag):.1f},{Y(coef):.1f}" for lag, coef, _se in pts)
+                parts.append(f'<polyline points="{path}" fill="none" stroke="{colors[substance]}" stroke-width="2.2"/>')
+            for lag, coef, se in pts:
+                parts.append(
+                    f'<line x1="{X(lag):.1f}" y1="{Y(coef - se):.1f}" x2="{X(lag):.1f}" y2="{Y(coef + se):.1f}" stroke="{colors[substance]}" stroke-width="1.4"/>'
+                )
+                parts.append(f'<circle cx="{X(lag):.1f}" cy="{Y(coef):.1f}" r="3.2" fill="{colors[substance]}"/>')
+        parts.append("</svg>")
+        cards.append(f'<div class="slope-card"><p class="slope-k">{_esc(title)}</p>{"".join(parts)}</div>')
+    return '<div class="slope-grid">' + "".join(cards) + "</div>"
+
+
+def _lag_table(specs: pd.DataFrame, uses: list[str] | None, families: list[str] | None) -> str:
+    sub = specs
+    if uses is not None:
+        sub = sub[sub["use"].isin(uses)]
+    if families is not None:
+        sub = sub[sub["family"].isin(families)]
+    # One row per reported coefficient. Distributed-lag terms stay.
+    rows = []
+    sub = sub.sort_values(["use", "outcome", "family", "spec", "term"])
+    for rec in sub.itertuples(index=False):
+        rows.append(
+            "<tr>"
+            f"<td>{_esc(rec.use_label)}</td>"
+            f"<td>{_esc(rec.outcome_label)}</td>"
+            f"<td>{_esc(rec.family)}</td>"
+            f"<td>{_esc(rec.term)}</td>"
+            f"<td>{_num(rec.coef, sign=True)}</td>"
+            f"<td>{_num(rec.se)}</td>"
+            f"<td>{rec.n}</td>"
+            f"<td>{rec.n_states}</td>"
+            "</tr>"
+        )
+    return "\n".join(rows)
+
+
+def lag_section(frames: dict[str, pd.DataFrame]) -> str:
+    specs = lag_fits(frames)
+    if specs.empty:
+        return ""
+    chart = _lag_chart(specs)
+    focus = specs[specs["use"].isin(["mj", "alc"])]
+    others = specs[~specs["use"].isin(["mj", "alc"]) & specs["family"].isin(["lag", "cumulative", "legalization"])]
+    # Lead with marijuana grade-8 math and the vote at lag 0 and lag 8.
+    def grab(use, outcome, term):
+        hit = specs[(specs["use"] == use) & (specs["outcome"] == outcome) & (specs["spec"] == f"lag_{term}") & (specs["term"] == f"lag_{term}")]
+        return None if hit.empty else hit.iloc[0]
+
+    m0 = grab("mj", "naep_math8", 0)
+    m8 = grab("mj", "naep_math8", 8)
+    v0 = grab("mj", "vote", 0)
+    v8 = grab("mj", "vote", 8)
+    a0 = grab("alc", "naep_math8", 0)
+    a8 = grab("alc", "naep_math8", 8)
+    c5 = specs[(specs["use"] == "mj") & (specs["outcome"] == "naep_math8") & (specs["term"] == "cum_5")]
+    c10 = specs[(specs["use"] == "mj") & (specs["outcome"] == "naep_math8") & (specs["term"] == "cum_10")]
+    bits = []
+    if m0 is not None and m8 is not None:
+        bits.append(
+            f"Past-month marijuana and grade-8 mathematics: <strong>{_num(m0.coef, sign=True)}</strong> points per point of use at a lag of 0 years (SE {_num(m0.se)}) and <strong>{_num(m8.coef, sign=True)}</strong> at a lag of 8 years (SE {_num(m8.se)})."
+        )
+    if v0 is not None and v8 is not None:
+        bits.append(
+            f"The same lags on Democratic two-party share are <strong>{_num(v0.coef, sign=True)}</strong> (SE {_num(v0.se)}) and <strong>{_num(v8.coef, sign=True)}</strong> (SE {_num(v8.se)})."
+        )
+    if a0 is not None and a8 is not None:
+        bits.append(
+            f"Past-month alcohol and grade-8 mathematics: <strong>{_num(a0.coef, sign=True)}</strong> at lag 0 (SE {_num(a0.se)}) and <strong>{_num(a8.coef, sign=True)}</strong> at lag 8 (SE {_num(a8.se)})."
+        )
+    if len(c5) and len(c10):
+        bits.append(
+            f"A five-year sum of past-month marijuana lines up with <strong>{_num(c5.iloc[0].coef, sign=True)}</strong> grade-8 mathematics points per percentage-point-year (SE {_num(c5.iloc[0].se)}). The ten-year sum is <strong>{_num(c10.iloc[0].coef, sign=True)}</strong> (SE {_num(c10.iloc[0].se)})."
+        )
+    lead = " ".join(bits)
+    return f"""
+<h2 id="lags">Cumulative and delayed exposure</h2>
+<p>{lead}</p>
+<p>Grade-4 students in the testing year are about 9 or 10 years old, so use ten years earlier lines up with the birth year. Grade-8 students are about 13 or 14, so use ten years earlier is about age 4 and use fourteen years earlier is the closer prenatal window. Those longer lags are in the table.</p>
+<p>Each point is a separate regression of the outcome on use at that lag, with state and year fixed effects. The whisker is one standard error, clustered by state. Green is past-month marijuana. Blue is past-month alcohol. The horizontal line is zero.</p>
+{chart}
+<p class="axis-name"><span>Y · Points of the outcome per point of use</span><span>X · Lag, years</span></p>
+<p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. A sum is the window length times the mean of the two-year pools whose end year falls in the prior window. Years since medical or adult-use legalization are zero until the statute year. Medical years are the comprehensive-program statute years in NCSL, State Medical Cannabis Laws, updated September 2, 2026. Low-THC programs are not coded as medical legalization. Adult-use years are the same list as the timeline.</p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Use</th><th>Outcome</th><th>Specification</th><th>Term</th><th>Coefficient</th><th>SE</th><th>N</th><th>States</th></tr></thead>
+<tbody>
+{_lag_table(focus, None, None)}
+{_lag_table(others, None, None)}
+</tbody>
+</table>
+</div>
+<p class="fine">State and year fixed effects. Standard errors are clustered by state. A lag term is use that many years before the outcome. The distributed specification enters lags 0, 2, 4, 6, and 8 together. Cumulative terms are percentage-point-years. Legalization terms are years since the statute. The full grid is <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
+"""
+
+
 def section_html(frames: dict | None = None) -> str:
     frames = frames or load_frames()
     panel, fits = state_changes(frames)
@@ -577,6 +905,7 @@ def section_html(frames: dict | None = None) -> str:
 </table>
 </div>
 <p class="fine">Percentage points of the outcome per percentage point of use. NAEP rows are score points. The vote row is points of Democratic two-party share. Window for use: 2009–2010 to 2018–2019. NAEP: 2009 to 2019. Vote: 2008 to 2020.</p>
+{lag_section(frames)}
 """
 
 

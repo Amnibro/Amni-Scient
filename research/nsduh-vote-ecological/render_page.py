@@ -250,12 +250,12 @@ def share_color(share):
 
 
 def dumbbell_chart(rows):
-    """0–100 ecological shares. Estimates outside that span sit in a gutter."""
-    n = len(rows)
-    row_h = 34
+    """Bounded user and non-user shares on a 0–100 axis."""
+    n = max(1, len(rows))
+    row_h = 46
     top, bottom = 36, 32
-    left, plot_w = 132, 400
-    width = left + plot_w + 168
+    left, plot_w = 132, 420
+    width = left + plot_w + 88
     height = top + n * row_h + bottom
 
     def X(v):
@@ -263,7 +263,49 @@ def dumbbell_chart(rows):
 
     parts = [
         f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">',
-        f'<text x="{left + plot_w + 16}" y="16" class="tick">100% use</text>',
+        f'<text x="{left + plot_w + 12}" y="16" class="tick">Users</text>',
+        f'<text x="{width - 8}" y="16" text-anchor="end" class="tick">Ratio</text>',
+    ]
+    for t in (0, 50, 100):
+        parts.append(f'<line x1="{X(t):.1f}" y1="{top - 8}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
+        parts.append(f'<text x="{X(t):.1f}" y="{height - 10}" text-anchor="middle" class="tick">{t}</text>')
+    parts.append(f'<line x1="{X(0):.1f}" y1="{height - bottom}" x2="{X(100):.1f}" y2="{height - bottom}" class="axis"/>')
+    for i, row in enumerate(rows):
+        y = top + i * row_h + 16
+        non = float(row["nonuser_share"])
+        user = float(row["user_share"])
+        nx, ux = X(non), X(user)
+        parts.append(f'<text x="6" y="{y + 4:.1f}" class="lab">{esc(DUMB_LABEL.get(row["term"], row["term"]))}</text>')
+        parts.append(f'<line x1="{nx:.1f}" y1="{y:.1f}" x2="{ux:.1f}" y2="{y:.1f}" class="link"/>')
+        parts.append(
+            f'<line x1="{X(row["nonuser_lo"]):.1f}" y1="{y:.1f}" x2="{X(row["nonuser_hi"]):.1f}" y2="{y:.1f}" class="whisk"/>'
+        )
+        parts.append(
+            f'<line x1="{X(row["user_lo"]):.1f}" y1="{y:.1f}" x2="{X(row["user_hi"]):.1f}" y2="{y:.1f}" class="whisk"/>'
+        )
+        parts.append(f'<circle cx="{nx:.1f}" cy="{y:.1f}" r="5.5" class="dot"/>')
+        parts.append(f'<circle cx="{ux:.1f}" cy="{y:.1f}" r="5.5" class="user"/>')
+        parts.append(f'<text x="{left + plot_w + 12}" y="{y + 4:.1f}" class="lab">{num(user, 1)}</text>')
+        parts.append(f'<text x="{width - 8}" y="{y + 4:.1f}" text-anchor="end" class="lab">{float(row["ratio"]):.2f}×</text>')
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def percentile_chart(rows):
+    """Predicted share at the 10th and 90th percentiles of observed use."""
+    n = len(rows)
+    row_h = 32
+    top, bottom = 36, 28
+    left, plot_w = 132, 420
+    width = left + plot_w + 72
+    height = top + n * row_h + bottom
+
+    def X(v):
+        return left + min(100.0, max(0.0, float(v))) / 100.0 * plot_w
+
+    parts = [
+        f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">',
+        f'<text x="{X(0):.1f}" y="16" class="tick">10th</text>',
         f'<text x="{width - 8}" y="16" text-anchor="end" class="tick">Ratio</text>',
     ]
     for t in (0, 50, 100):
@@ -272,28 +314,17 @@ def dumbbell_chart(rows):
     parts.append(f'<line x1="{X(0):.1f}" y1="{height - bottom}" x2="{X(100):.1f}" y2="{height - bottom}" class="axis"/>')
     for i, row in enumerate(rows):
         y = top + i * row_h + row_h / 2
-        non = float(row["nonuser_share"])
-        user = float(row["user_share"])
-        nx = X(min(100.0, max(0.0, non)))
-        if user > 100:
-            ux = X(100) + 14
-        elif user < 0:
-            ux = X(0) - 14
-        else:
-            ux = X(user)
+        a, b = float(row["p10_share"]), float(row["p90_share"])
         parts.append(f'<text x="6" y="{y + 4:.1f}" class="lab">{esc(DUMB_LABEL.get(row["term"], row["term"]))}</text>')
+        parts.append(f'<line x1="{X(a):.1f}" y1="{y:.1f}" x2="{X(b):.1f}" y2="{y:.1f}" class="link"/>')
         parts.append(
-            f'<line x1="{nx:.1f}" y1="{y:.1f}" x2="{ux:.1f}" y2="{y:.1f}" class="link"/>'
+            f'<line x1="{X(row["p10_lo"]):.1f}" y1="{y:.1f}" x2="{X(row["p10_hi"]):.1f}" y2="{y:.1f}" class="whisk"/>'
         )
-        lo, hi = float(row["nonuser_lo"]), float(row["nonuser_hi"])
-        if 0 <= lo and hi <= 100:
-            parts.append(f'<line x1="{X(lo):.1f}" y1="{y:.1f}" x2="{X(hi):.1f}" y2="{y:.1f}" class="whisk"/>')
-        ulo, uhi = float(row["user_lo"]), float(row["user_hi"])
-        if 0 <= user <= 100 and 0 <= ulo and uhi <= 100:
-            parts.append(f'<line x1="{X(ulo):.1f}" y1="{y:.1f}" x2="{X(uhi):.1f}" y2="{y:.1f}" class="whisk"/>')
-        parts.append(f'<circle cx="{nx:.1f}" cy="{y:.1f}" r="5" class="dot"/>')
-        parts.append(f'<circle cx="{ux:.1f}" cy="{y:.1f}" r="5" class="user"/>')
-        parts.append(f'<text x="{left + plot_w + 16}" y="{y + 4:.1f}" class="lab">{num(user, 1)}</text>')
+        parts.append(
+            f'<line x1="{X(row["p90_lo"]):.1f}" y1="{y:.1f}" x2="{X(row["p90_hi"]):.1f}" y2="{y:.1f}" class="whisk"/>'
+        )
+        parts.append(f'<circle cx="{X(a):.1f}" cy="{y:.1f}" r="4.5" class="dot"/>')
+        parts.append(f'<circle cx="{X(b):.1f}" cy="{y:.1f}" r="4.5" class="user"/>')
         parts.append(f'<text x="{width - 8}" y="{y + 4:.1f}" text-anchor="end" class="lab">{float(row["ratio"]):.2f}×</text>')
     parts.append("</svg>")
     return "\n".join(parts)
@@ -311,6 +342,24 @@ def goodman_table(rows):
             f"<td>{num(row['user_lo'], 1)}–{num(row['user_hi'], 1)}</td>"
             f"<td>{num(row['dem_majority_rate'], 2)}</td>"
             f"<td>{num(row['rep_majority_rate'], 2)}</td>"
+            f"<td>{float(row['ratio']):.2f}×</td>"
+            "</tr>"
+        )
+    return "\n".join(body)
+
+
+def percentile_table(rows):
+    body = []
+    for row in rows:
+        body.append(
+            "<tr>"
+            f"<td>{esc(row['label'])}</td>"
+            f"<td>{num(row['p10_use'], 2)}</td>"
+            f"<td>{num(row['p10_share'], 1)}</td>"
+            f"<td>{num(row['p10_lo'], 1)}–{num(row['p10_hi'], 1)}</td>"
+            f"<td>{num(row['p90_use'], 2)}</td>"
+            f"<td>{num(row['p90_share'], 1)}</td>"
+            f"<td>{num(row['p90_lo'], 1)}–{num(row['p90_hi'], 1)}</td>"
             f"<td>{float(row['ratio']):.2f}×</td>"
             "</tr>"
         )
@@ -459,7 +508,13 @@ def _share_legend():
     ticks = []
     for v in (10, 30, 50, 70, 90):
         x = (v - 10) / 80 * width
-        ticks.append(f'<text x="{x:.1f}" y="28" text-anchor="middle" fill="#120C03" font-size="11" font-family="Archivo,sans-serif">{v}</text>')
+        if v == 10:
+            anchor, x = "start", 2
+        elif v == 90:
+            anchor, x = "end", width - 2
+        else:
+            anchor = "middle"
+        ticks.append(f'<text x="{x:.1f}" y="28" text-anchor="{anchor}" fill="#120C03" font-size="11" font-family="Archivo,sans-serif">{v}</text>')
     return (
         f'<svg viewBox="0 0 {width} 36" role="img" class="chart" style="background:#F6F0E4;border-radius:4px;margin-top:8px">'
         + "".join(rects) + "".join(ticks) + "</svg>"
@@ -768,6 +823,234 @@ def joint_table(joint):
     return "\n".join(rows)
 
 
+# Published contrasts, standard-deviation units. Paul intervals are the published
+# unstandardized interval times that row's published β/b. IQ rows are the
+# published IQ-point difference divided by 15.
+CHILD_EFFECTS = [
+    {
+        "study": "Paul et al. 2021",
+        "doi": "10.1001/jamapsychiatry.2020.2902",
+        "sample": "ABCD, 11,249 children, mean age 9.9",
+        "exposure": "Prenatal cannabis, after knowledge vs none",
+        "kind": "prenatal cannabis",
+        "outcome": "NIH Toolbox cognition, unadjusted",
+        "effect": -0.061,
+        "lo": -5.1 * (0.061 / 3.89),
+        "hi": -2.7 * (0.061 / 3.89),
+        "iq": None,
+        "note": "β −0.061; b −3.89 (−5.1 to −2.7)",
+    },
+    {
+        "study": "Paul et al. 2021",
+        "doi": "10.1001/jamapsychiatry.2020.2902",
+        "sample": "ABCD, 11,249 children, mean age 9.9",
+        "exposure": "Prenatal cannabis, before knowledge vs none",
+        "kind": "prenatal cannabis",
+        "outcome": "NIH Toolbox cognition, unadjusted",
+        "effect": -0.022,
+        "lo": -1.9 * (0.022 / 1.06),
+        "hi": -0.17 * (0.022 / 1.06),
+        "iq": None,
+        "note": "β −0.022; b −1.06 (−1.9 to −0.17)",
+    },
+    {
+        "study": "Paul et al. 2021",
+        "doi": "10.1001/jamapsychiatry.2020.2902",
+        "sample": "ABCD, 8,000 children with covariates",
+        "exposure": "Prenatal cannabis, after knowledge vs none",
+        "kind": "prenatal cannabis",
+        "outcome": "NIH Toolbox cognition, adjusted",
+        "effect": -0.011,
+        "lo": -2.3 * (0.011 / 0.817),
+        "hi": 0.65 * (0.011 / 0.817),
+        "iq": None,
+        "note": "β −0.011; b −0.817 (−2.3 to 0.65)",
+    },
+    {
+        "study": "Paul et al. 2021",
+        "doi": "10.1001/jamapsychiatry.2020.2902",
+        "sample": "ABCD, 8,000 children with covariates",
+        "exposure": "Prenatal cannabis, before knowledge vs none",
+        "kind": "prenatal cannabis",
+        "outcome": "NIH Toolbox cognition, adjusted",
+        "effect": 0.019,
+        "lo": -0.02 * (0.019 / 0.907),
+        "hi": 1.8 * (0.019 / 0.907),
+        "iq": None,
+        "note": "β 0.019; b 0.907 (−0.02 to 1.8)",
+    },
+    {
+        "study": "Paul et al. 2021",
+        "doi": "10.1001/jamapsychiatry.2020.2902",
+        "sample": "ABCD, 8,000 children with covariates",
+        "exposure": "Prenatal cannabis, after vs before knowledge",
+        "kind": "prenatal cannabis",
+        "outcome": "NIH Toolbox cognition, adjusted",
+        "effect": -0.023,
+        "lo": -3.4 * (0.023 / 1.72),
+        "hi": -0.06 * (0.023 / 1.72),
+        "iq": None,
+        "note": "β −0.023; b −1.72 (−3.4 to −0.06)",
+    },
+    {
+        "study": "Flak et al. 2014",
+        "doi": "10.1111/acer.12214",
+        "sample": "8 studies, about 10,000 children, 6 months to 14 years",
+        "exposure": "Prenatal alcohol, any binge vs none",
+        "kind": "prenatal alcohol",
+        "outcome": "Cognition, Cohen's d",
+        "effect": -0.13,
+        "lo": -0.21,
+        "hi": -0.05,
+        "iq": None,
+        "note": "Cohen's d −0.13 (−0.21 to −0.05)",
+    },
+    {
+        "study": "Flak et al. 2014",
+        "doi": "10.1111/acer.12214",
+        "sample": "Cohort studies in the same meta-analysis",
+        "exposure": "Prenatal alcohol, mild to moderate vs none",
+        "kind": "prenatal alcohol",
+        "outcome": "Cognition, Cohen's d",
+        "effect": 0.04,
+        "lo": 0.00,
+        "hi": 0.08,
+        "iq": None,
+        "note": "Cohen's d 0.04 (0.00 to 0.08)",
+    },
+    {
+        "study": "Yang and Kramer 2012",
+        "doi": "10.1093/ije/dys071",
+        "sample": "Belarus PROBIT, 11,305 children, age 6.5, WASI",
+        "exposure": "Household, father weekly moderate drinking vs light",
+        "kind": "household alcohol",
+        "outcome": "Full-scale IQ",
+        "effect": -1.6 / 15,
+        "lo": -2.5 / 15,
+        "hi": -0.9 / 15,
+        "iq": -1.6,
+        "note": "−1.6 IQ points (−2.5 to −0.9)",
+    },
+    {
+        "study": "Yang and Kramer 2012",
+        "doi": "10.1093/ije/dys071",
+        "sample": "Belarus PROBIT, 11,305 children, age 6.5, WASI",
+        "exposure": "Household, father weekly heavy drinking vs light",
+        "kind": "household alcohol",
+        "outcome": "Full-scale IQ",
+        "effect": -2.5 / 15,
+        "lo": -3.4 / 15,
+        "hi": -1.6 / 15,
+        "iq": -2.5,
+        "note": "−2.5 IQ points (−3.4 to −1.6)",
+    },
+    {
+        "study": "Raman, Prasad, and Appaya 2010",
+        "doi": "10.4103/0019-5545.74313",
+        "sample": "India, 32 children, ages 5–9, Malin’s scale",
+        "exposure": "Household, alcohol-dependent father vs not",
+        "kind": "household alcohol",
+        "outcome": "Full-scale IQ, difference of published means",
+        "effect": (96.14 - 105.1) / 15,
+        "lo": None,
+        "hi": None,
+        "iq": 96.14 - 105.1,
+        "note": "Means 96.14 vs 105.1. No interval published.",
+    },
+]
+
+
+def _child_lines(row) -> tuple[str, str]:
+    outcome = row["outcome"].lower()
+    tag = ""
+    if "unadjusted" in outcome:
+        tag = ", unadjusted"
+    elif "adjusted" in outcome:
+        tag = ", adjusted"
+    return row["study"] + tag, row["sample"] + " · " + row["exposure"]
+
+
+def child_chart(rows) -> str:
+    n = len(rows)
+    row_h = 46
+    right, top, bottom = 22, 18, 24
+    plot_w = 280
+    labels = [_child_lines(row) for row in rows]
+    # 11px labels measure about 4.9px per character in Archivo. Pad so the longest line stays inside the viewBox.
+    left = int(max(len(line) * 5.15 for pair in labels for line in pair)) + 18
+    width = left + plot_w + right
+    height = top + n * row_h + bottom
+    x0, x1 = -0.75, 0.20
+    colors = {
+        "prenatal cannabis": "#16A34A",
+        "prenatal alcohol": "#2563EB",
+        "household alcohol": "#8A6318",
+    }
+
+    def X(v):
+        return left + (float(v) - x0) / (x1 - x0) * plot_w
+
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">']
+    parts.append(f'<line x1="{X(0):.1f}" y1="{top - 4}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
+    for t in (-0.6, -0.4, -0.2, 0, 0.2):
+        parts.append(f'<line x1="{X(t):.1f}" y1="{top - 2}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
+        parts.append(f'<text x="{X(t):.1f}" y="{height - 6}" text-anchor="middle" class="tick">{t:.1f}</text>')
+    for i, row in enumerate(rows):
+        y = top + i * row_h + row_h / 2
+        color = colors[row["kind"]]
+        study, detail = labels[i]
+        parts.append(f'<text x="{left - 10}" y="{y - 2:.1f}" text-anchor="end" class="lab">{esc(study)}</text>')
+        parts.append(f'<text x="{left - 10}" y="{y + 12:.1f}" text-anchor="end" class="tick">{esc(detail)}</text>')
+        if row["lo"] is not None:
+            parts.append(
+                f'<line x1="{X(row["lo"]):.1f}" y1="{y:.1f}" x2="{X(row["hi"]):.1f}" y2="{y:.1f}" stroke="{color}" stroke-width="1.6"/>'
+            )
+        parts.append(f'<circle cx="{X(row["effect"]):.1f}" cy="{y:.1f}" r="4.5" fill="{color}"/>')
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def child_table(rows) -> str:
+    body = []
+    for row in rows:
+        interval = "—" if row["lo"] is None else f"{row['lo']:.3f} to {row['hi']:.3f}"
+        body.append(
+            "<tr>"
+            f"<td>{esc(row['study'])}</td>"
+            f"<td>{esc(row['sample'])}</td>"
+            f"<td>{esc(row['exposure'])}</td>"
+            f"<td>{esc(row['outcome'])}</td>"
+            f"<td>{row['effect']:.3f}</td>"
+            f"<td>{interval}</td>"
+            "</tr>"
+        )
+    return "\n".join(body)
+
+
+def child_section() -> str:
+    import pandas as pd
+
+    pd.DataFrame(CHILD_EFFECTS).to_csv(RESULTS / "child_exposure.csv", index=False)
+    return f"""
+<h2 id="children">Children in homes where parents use</h2>
+<p>In the ABCD baseline, children whose mothers reported cannabis use after learning they were pregnant scored <strong>81.7</strong> on the NIH Toolbox cognition composite (SD 8.6). Children with no prenatal cannabis exposure scored <strong>86.5</strong> (SD 9.1). The unadjusted standardized difference is <strong>−0.061</strong>. With the published covariates, that contrast is <strong>−0.011</strong> (interval on the unstandardized composite, −2.3 to 0.65). The covariate-adjusted contrast that stays negative is after knowledge versus only before knowledge, <strong>−0.023</strong>.</p>
+<p>Binge prenatal alcohol, pooled across 8 studies and about 10,000 children, is Cohen’s d <strong>−0.13</strong> (interval −0.21 to −0.05). Mild-to-moderate prenatal alcohol in the same meta-analysis is d <strong>+0.04</strong> (0.00 to 0.08). In Belarus, weekly moderate paternal drinking lines up with <strong>−1.6</strong> full-scale IQ points (interval −2.5 to −0.9), and weekly heavy drinking with <strong>−2.5</strong> (−3.4 to −1.6). In the Indian case-control of 32 children, full-scale means are 96.14 in the alcohol-dependent-father group and 105.1 in the comparison group.</p>
+<p>The Pittsburgh MHPCD cohort reports the direction without a point difference in the papers cited here. Goldschmidt, Richardson, Willford, and Day, 2008, <a href="https://doi.org/10.1097/CHI.0b013e318160b3f0">10.1097/CHI.0b013e318160b3f0</a>: 648 children at age 6, heavy marijuana use of one or more joints a day in the second trimester associated with lower Stanford-Binet composite, short-term memory, and quantitative scores. Goldschmidt, Richardson, Cornelius, and Day, 2004, <a href="https://doi.org/10.1016/j.ntt.2004.04.003">10.1016/j.ntt.2004.04.003</a>: at age 10, one or more joints a day in the first trimester predicted lower reading and spelling on the Wide Range Achievement Test. Goldschmidt, Richardson, Willford, Severtson, and Day, 2012, <a href="https://doi.org/10.1016/j.ntt.2011.08.009">10.1016/j.ntt.2011.08.009</a>: at age 14, prenatal marijuana exposure was negatively related to the WIAT composite and reading in 524 youths. In the Ottawa OPPS, Fried, Watkinson, and Gray, 1998, <a href="https://doi.org/10.1016/s0892-0362(97)00091-3">10.1016/s0892-0362(97)00091-3</a>: at ages 9 to 12, prenatal marijuana was not associated with WISC global intelligence and was negatively associated with executive-function tasks. Generation R, El Marroun and colleagues, 2009, <a href="https://doi.org/10.1097/CHI.0b013e3181bfa8ee">10.1097/CHI.0b013e3181bfa8ee</a>, reports fetal growth. It does not report a child IQ contrast, so it is not on the chart. Baranger and colleagues, 2022, <a href="https://doi.org/10.1001/jamapediatrics.2022.3191">10.1001/jamapediatrics.2022.3191</a>, follows the ABCD prenatal groups into early adolescence on psychopathology scales, not a cognitive composite.</p>
+<div class="chart-card" id="child-chart">{child_chart(CHILD_EFFECTS)}</div>
+<p class="axis-name"><span>Y · Published contrast</span><span>X · Standard deviations, exposed minus unexposed</span></p>
+<p class="fine cap">Green is prenatal cannabis. Blue is prenatal alcohol. Gold is household alcohol. The vertical line is zero. ABCD microdata are in the NIMH Data Archive under controlled access and are not used here. IQ-point results are the published points divided by 15. For Paul and colleagues, the whisker is the published unstandardized interval scaled by that row’s published β divided by its published b. Raman and colleagues publish means and no interval.</p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Study</th><th>Sample</th><th>Exposure</th><th>Outcome</th><th>SD</th><th>Interval</th></tr></thead>
+<tbody>
+{child_table(CHILD_EFFECTS)}
+</tbody>
+</table>
+</div>
+<p class="fine">Paul et al., JAMA Psychiatry, 2021, <a href="https://doi.org/10.1001/jamapsychiatry.2020.2902">10.1001/jamapsychiatry.2020.2902</a>. Flak et al., Alcoholism: Clinical and Experimental Research, 2014, <a href="https://doi.org/10.1111/acer.12214">10.1111/acer.12214</a>. Yang and Kramer, International Journal of Epidemiology, 2012, <a href="https://doi.org/10.1093/ije/dys071">10.1093/ije/dys071</a>. Raman, Prasad, and Appaya, Indian Journal of Psychiatry, 2010, <a href="https://doi.org/10.4103/0019-5545.74313">10.4103/0019-5545.74313</a>. CSV: <a href="nsduh-vote-ecological/results/child_exposure.csv">child_exposure.csv</a>.</p>
+"""
+
+
 def potency_html():
     return (HERE / "fragments" / "potency.html").read_text()
 
@@ -790,8 +1073,14 @@ def main():
     panels, line_fits = rate_panels(regions)
     dens, _dens_a, dens_b, dens_se = density_chart(regions)
     goodman = ext["goodman"]["rows"]
-    dumb = dumbbell_chart(goodman)
-    gtab = goodman_table(goodman)
+    stable_rows = [r for r in goodman if r.get("stable") in (True, "True", "true")]
+    dropped_rows = [r for r in goodman if r not in stable_rows]
+    dumb = dumbbell_chart(stable_rows)
+    gtab = goodman_table(stable_rows)
+    pchart = percentile_chart(goodman)
+    ptab = percentile_table(goodman)
+    drop_labels = [DUMB_LABEL.get(r["term"], r["term"]) for r in dropped_rows]
+    drop_names = ", ".join(drop_labels[:-1]) + ", and " + drop_labels[-1] if len(drop_labels) > 1 else (drop_labels[0] if drop_labels else "")
     contour, contour_sum = contour_panels(regions)
     by_term = {r["term"]: r for r in goodman}
     g_mj, g_alc = by_term["mj"], by_term["alc"]
@@ -911,7 +1200,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="crumb"><a href="../research.html">Research</a> / Substance use and the 2024 vote</p>
 <h1>Substance use and the 2024 vote</h1>
 <p class="subtitle">NSDUH substate rates · one regression</p>
-<p class="tagline">One point of past-month marijuana use lines up with {num(mj_line['slope'], sign=True)} points of Democratic two-party share on the vote-weighted fit. Alcohol’s fit is {num(alc_line['slope'], sign=True)} per point. After log density and age, marijuana is {num(alone['mj']['pp_per_pp'], sign=True)} and alcohol is {num(alone['alc']['pp_per_pp'], sign=True)}. At 0% marijuana use the ecological share is {num(g_mj['nonuser_share'], 1)}%. At 100% use it is {num(g_mj['user_share'], 1)}%.</p>
+<p class="tagline">One point of past-month marijuana use lines up with {num(mj_line['slope'], sign=True)} points of Democratic two-party share on the vote-weighted fit. Alcohol’s fit is {num(alc_line['slope'], sign=True)} per point. After log density and age, marijuana is {num(alone['mj']['pp_per_pp'], sign=True)} and alcohol is {num(alone['alc']['pp_per_pp'], sign=True)}. At the 10th percentile of regional marijuana use the fitted share is {num(g_mj['p10_share'], 1)}%. At the 90th it is {num(g_mj['p90_share'], 1)}%.</p>
 </section>
 <main class="note-wrap">
 <div class="data-top">
@@ -937,6 +1226,9 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/president_twoparty.csv" download>Presidential vote CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_adult_use.csv" download>Adult-use dates CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/state_changes.csv" download>State changes CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/lag_specs.csv" download>Lag specifications CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_medical.csv" download>Medical dates CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
@@ -945,7 +1237,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Alaska and Hawaii have no rows in the vote file. The shapefile has 393 regions. Nebraska is in it: five regions, FIPS 31, polygons between 104°W and 95°W. The file’s state name on those rows says New Jersey. One New Jersey region, Southern, FIPS 34, is labeled New York. State indicators use the FIPS code. The estimation sample is 49 jurisdictions: 48 states plus the District of Columbia.</p>
 <p>The NSDUH rates are small-area estimates. I applied no errors-in-variables correction. No public file links one person’s use to that person’s ballot. Density’s correlation with Democratic two-party share is 0.73. Bachelor’s share is 0.71. The slope that remains after density and age is the residual association of the rate.</p>
 <p>Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are not in the substate file. Those six are past-year rates, and heroin is ages 18 or older. There is no separate heavy-drinking field. Binge alcohol in the past month is the intensity measure SAMHSA published. Fentanyl, inhalants, LSD, PCP, and crack are not separate substate rates. The file also carries mental-illness, suicide, and perceived-risk outcomes. I left those out of the vote regression. Substance-use disorder rates are in the second table. They are disorder prevalence, not use.</p>
-<p>The user and non-user shares are a vote-weighted regression of Democratic two-party share on the use rate, log density, and age, read at 0% use and at 100% use, with density and age held at their vote-weighted means. Regional rates lie inside that span, so the figure at 100% use is the slope carried out to a region of all users. Democratic-majority regions are those with Democratic two-party share above 50%. The ratio is the vote-weighted use rate there divided by the rate where Republicans took the majority.</p>
+<p>The user and non-user shares are a vote-weighted regression of Democratic two-party share on the use rate, log density, and age, with density and age held at their vote-weighted means. The sampling distribution of the two shares is restricted to 0–100. A rate whose Duncan–Davis bounds on the user share run from 0 to 100, and whose restricted estimate piles on that edge, stays off that chart. The companion reads the same regression at the 10th and 90th percentiles of the observed regional rate. Democratic-majority regions are those with Democratic two-party share above 50%. The ratio is the vote-weighted use rate there divided by the rate where Republicans took the majority.</p>
 <p>The laboratory chart is laboratory data. The potency curves are predictions. Federal contribution totals are OpenSecrets industry codes N02, H04, and N09. The 2024 cycle is January 1, 2023 through December 31, 2024. I rechecked the live N09 page on 2026-10-11. It shows $969,606. OpenSecrets dates that cycle’s FEC release February 6, 2025. Party percentages are the published shares of contributions to candidates and parties. Outside spending is in the total and out of the party split. Federal lobbying is OpenSecrets’ calendar-2024 total from Senate Office of Public Records filings, January through December. State ballot figures are committee totals compiled by Ballotpedia from state filings, retrieved 2026-10-11. Ballot measures have no party. FEC employer and PAC totals for named cannabis companies sit beside the industry total. They are separate filings.</p>
 <p class="cite">Reffelt, A. (2026). <em>Substance use and the 2024 vote.</em> AMNI-SCIENT Research. https://amni-scient.com/research/substance-use-vote-share</p>
 </div>
@@ -996,12 +1288,13 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine">Each row is that rate’s coefficient with the other {n_joint - 1} rates, log density, and age in the same model.</p>
 
 <h2 id="users">Users and non-users</h2>
-<p>At 0% past-month marijuana use, the ecological estimate of Democratic two-party share is <strong>{num(g_mj['nonuser_share'], 1)}%</strong> (SE {num(g_mj['nonuser_se'], 1)}). At 100% use it is <strong>{num(g_mj['user_share'], 1)}%</strong> (SE {num(g_mj['user_se'], 1)}). Observed regional marijuana rates run from {num(g_mj['observed_min'], 1)}% to {num(g_mj['observed_max'], 1)}%, so {num(g_mj['user_share'], 1)}% is the slope carried to a region of all users. Vote-weighted past-month marijuana use is {num(g_mj['dem_majority_rate'], 2)}% where Democrats took the majority and {num(g_mj['rep_majority_rate'], 2)}% where Republicans did, a ratio of <strong>{g_mj['ratio']:.2f}</strong>.</p>
-<p>Alcohol sits on the 0–100 scale: <strong>{num(g_alc['nonuser_share'], 1)}%</strong> at no past-month use (SE {num(g_alc['nonuser_se'], 1)}) and <strong>{num(g_alc['user_share'], 1)}%</strong> at 100% use (SE {num(g_alc['user_se'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>.</p>
-<p>Open circles are the 0% use estimate. Filled circles are the 100% use estimate. A circle past the axis is an estimate outside 0–100, and the number in the column is that estimate. Whiskers are the 95% interval when the whole interval sits inside 0–100. The ratio column is use in Democratic-majority regions divided by use in Republican-majority regions.</p>
+<p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong> (interval {num(g_alc['user_lo'], 1)}–{num(g_alc['user_hi'], 1)}). Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong> (interval {num(g_alc['nonuser_lo'], 1)}–{num(g_alc['nonuser_hi'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users (interval {num(by_term['binge']['user_lo'], 1)}–{num(by_term['binge']['user_hi'], 1)}) and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users (interval {num(by_term['binge']['nonuser_lo'], 1)}–{num(by_term['binge']['nonuser_hi'], 1)}).</p>
+<p>At the 10th percentile of regional past-month marijuana use, {num(g_mj['p10_use'], 1)}%, the fitted Democratic share is <strong>{num(g_mj['p10_share'], 1)}%</strong>. At the 90th percentile, {num(g_mj['p90_use'], 1)}%, it is <strong>{num(g_mj['p90_share'], 1)}%</strong>. Both rates sit inside the observed range, {num(g_mj['observed_min'], 1)}% to {num(g_mj['observed_max'], 1)}%. Vote-weighted past-month marijuana use is {num(g_mj['dem_majority_rate'], 2)}% where Democrats took the majority and {num(g_mj['rep_majority_rate'], 2)}% where Republicans did, a ratio of <strong>{g_mj['ratio']:.2f}</strong>.</p>
+<p>{drop_names} are off the users chart. Duncan–Davis bounds on the user share for those rates run from 0 to 100, and the restricted split piles on that edge or the interval spans most of the scale. Those rates stay on the slope panels and in the percentile chart below.</p>
+<p>Open circles are non-users. Filled circles are users. Whiskers are the central 95% of the vote-weighted regression’s sampling distribution after it is restricted to 0–100. The ratio column is use in Democratic-majority regions divided by use in Republican-majority regions.</p>
 <div class="chart-card" id="users-chart">{dumb}</div>
 <p class="axis-name"><span>Y · Substance</span><span>X · Democratic two-party share, 0–100%</span></p>
-<p class="fine cap">Measured. Ecological estimates from the vote-weighted regression with log density and age, read at 0% use and at 100% use. 382 regions. {g_mj['n_dem_regions']} Democratic-majority regions, {g_mj['n_rep_regions']} Republican-majority regions.</p>
+<p class="fine cap">Measured. Bounded Goodman estimates from the vote-weighted regression with log density and age. 382 regions. {g_mj['n_dem_regions']} Democratic-majority regions, {g_mj['n_rep_regions']} Republican-majority regions.</p>
 <div class="table-scroll">
 <table class="cmp">
 <thead><tr><th>Rate</th><th>Non-users</th><th>95% CI</th><th>Users</th><th>95% CI</th><th>Dem. maj.</th><th>Rep. maj.</th><th>Ratio</th></tr></thead>
@@ -1010,7 +1303,20 @@ body.pp .hero h1{{max-width:22ch}}
 </tbody>
 </table>
 </div>
-<p class="fine">Shares are percentage points of Democratic two-party vote. Intervals are 95% from the HC1 covariance. Dem. maj. and Rep. maj. are vote-weighted use rates, in percent, in regions above and at or below 50% Democratic two-party share.</p>
+<p class="fine">Shares are percentage points of Democratic two-party vote, inside 0–100. Dem. maj. and Rep. maj. are vote-weighted use rates, in percent, in regions above and at or below 50% Democratic two-party share.</p>
+<h2 id="percentiles">Inside the observed rates</h2>
+<p>Each line below is the same regression, read at the vote-weighted 10th and 90th percentiles of that rate. Nothing is extended to 0% use or to 100% use. Open circles are the 10th percentile. Filled circles are the 90th.</p>
+<div class="chart-card" id="percentile-chart">{pchart}</div>
+<p class="axis-name"><span>Y · Substance</span><span>X · Predicted Democratic two-party share, 0–100%</span></p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Use, 10th</th><th>Share</th><th>95% CI</th><th>Use, 90th</th><th>Share</th><th>95% CI</th><th>Ratio</th></tr></thead>
+<tbody>
+{ptab}
+</tbody>
+</table>
+</div>
+<p class="fine">Use is the vote-weighted percentile of the regional rate, in percent. Share is the fitted Democratic two-party share at that rate, with log density and age at their vote-weighted means. Intervals are 95% from the HC1 covariance. The ratio column is the same majority-use ratio as the table above.</p>
 
 <h2 id="contour">Marijuana, alcohol, and the vote</h2>
 <p>In the high-density tercile the fitted Democratic share runs from <strong>{high_s['share_min']:.0f}%</strong> to <strong>{high_s['share_max']:.0f}%</strong>. In the low-density tercile it runs from <strong>{low_s['share_min']:.0f}%</strong> to <strong>{low_s['share_max']:.0f}%</strong>. The corner at zero marijuana and zero alcohol is the non-user baseline. The fill stops at the convex hull of the regions in that panel, so the corner stays open.</p>
@@ -1026,6 +1332,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
 
 {ot_html}
+{child_section()}
 
 <h2>Laboratory results</h2>
 <p>Kloft and colleagues (PNAS, 2020) vaporized 300 μg of THC per kilogram. On the immediate test, a suggested false detail in the eyewitness scene was accepted <strong>19%</strong> of the time after THC (SE 0.04) and <strong>8%</strong> after placebo (SE 0.02). Related-word false alarms were <strong>42%</strong> (SE 0.03) and <strong>27%</strong> (SE 0.03). Gawrylowicz and colleagues (Psychopharmacology, 2017) gave alcohol in the lab after a filmed crime and before the misleading narrative. The marginal mean proportion of misled responses was <strong>0.25</strong> after alcohol (95% CI 0.196 to 0.300), <strong>0.22</strong> in the reverse-placebo arm (0.174 to 0.276), and <strong>0.319</strong> with no alcohol (0.266 to 0.371).</p>
