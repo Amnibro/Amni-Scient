@@ -78,14 +78,40 @@ if (menuButton && sidePanel) {
     menuButton.focus()
   })
 }
+const crumb = $('header .crumb')
+crumb && [...crumb.childNodes].forEach((n, i, all) => { const p = all[i - 1]; p && n.nodeType === 1 && p.nodeType === 1 ? crumb.insertBefore(document.createTextNode(' · '), n) : p && p.nodeType === 1 && n.nodeType === 3 && !/^\s/.test(n.nodeValue) && (n.nodeValue = ' — ' + n.nodeValue) })
+const touch = matchMedia('(pointer:coarse)').matches || navigator.maxTouchPoints > 0
+const hud = $('#hud')
+hud && touch && (hud.innerHTML = hud.innerHTML.replace('wheel = zoom', 'pinch = zoom').replace('right-drag = pan', 'two-finger drag = pan').replace('double-tap or shift = rotate', 'double-tap = rotate'))
+const c3 = $('#c3d'), hudOff = () => hud && hud.classList.add('uk-fade')
+hud && (setTimeout(hudOff, 9000), c3 && c3.addEventListener('pointerdown', () => setTimeout(hudOff, 2500), { once: true }))
+const tabBar = tabs.length ? tabs[0].parentNode : null
+const edges = () => tabBar && (tabBar.classList.toggle('uk-more-l', tabBar.scrollLeft > 4), tabBar.classList.toggle('uk-more-r', tabBar.scrollLeft + tabBar.clientWidth < tabBar.scrollWidth - 4))
+tabBar && (tabBar.addEventListener('scroll', edges, { passive: true }), addEventListener('resize', edges), edges(), tabs.forEach(t => t.addEventListener('click', () => { t.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); setTimeout(edges, 350) })))
+addEventListener('beforeprint', () => { const on = document.querySelector('.pane.on'), id = on ? on.id.replace('pane-', '') : ''; document.body.dataset.ukPrint = /^(mat|cuts|best|guide)$/.test(id) ? id : 'plans' })
+addEventListener('afterprint', () => delete document.body.dataset.ukPrint)
 const matTab = tabs.find(t => t.dataset.pane === 'mat')
+const money = (n, c) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: c ? 2 : 0, maximumFractionDigits: c ? 2 : 0 })
+const commas = s => s.replace(/\$(\d{4,})(\.\d+)?(?![\d,])/g, (m, a, b) => '$' + (+a).toLocaleString('en-US') + (b || ''))
 const readTot = () => {
   if (!matHost) return ''
-  const t = matHost.querySelector('.tot.best') || matHost.querySelector('.tot')
-  if (t && /\$\s*[\d,.]+/.test(t.textContent)) return t.textContent.trim().replace(/\.00$/, '')
-  const m = (matHost.textContent.match(/\$[\d,]+(?:\.\d{2})?/g) || []).map(x => +x.replace(/[$,]/g, ''))
-  return m.length ? '$' + Math.max(...m).toLocaleString(undefined, { maximumFractionDigits: 0 }) : ''
+  const t = matHost.querySelector('.tot.best') || matHost.querySelector('.tot'), v = t && (t.textContent.match(/\$\s*([\d,]+(?:\.\d+)?)/) || [])[1]
+  const m = v ? [+v.replace(/,/g, '')] : (matHost.textContent.match(/\$[\d,]+(?:\.\d{2})?/g) || []).map(x => +x.replace(/[$,]/g, ''))
+  return !m.length || !isFinite(Math.max(...m)) ? '' : v ? money(m[0], m[0] % 1 > 0.004) : money(Math.max(...m), false)
 }
+const matPane = $('#pane-mat')
+const fixMoney = root => { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); for (let n = w.nextNode(); n; n = w.nextNode()) { const v = /\$\d{4}/.test(n.nodeValue) ? commas(n.nodeValue) : n.nodeValue; v !== n.nodeValue && (n.nodeValue = v) } }
+const role = h => /^(item|material)/.test(h) ? 'item' : /^qty|quantity/.test(h) ? 'qty' : /^(hd|home depot)/.test(h) ? (/total/.test(h) ? 'hdt' : 'hd') : /^lowe/.test(h) ? (/total/.test(h) ? 'lwt' : 'lw') : ''
+const cardify = () => document.querySelectorAll('#pane-mat table').forEach(tb => {
+  const hr = tb.rows[0], base = hr ? [...hr.cells].map(c => role(c.textContent.trim().toLowerCase())) : [], roles = base.map((r, i) => r || (/^hd/.test(base[i - 1]) ? 'hdl' : /^lw/.test(base[i - 1]) ? 'lwl' : 'x'))
+  const ok = ['item', 'hd', 'hdt', 'lw', 'lwt'].every(r => roles.includes(r))
+  tb.classList.toggle('uk-mc', ok)
+  ok && [...tb.rows].forEach((r, ri) => { let ci = 0; const cs = [...r.cells]; r.classList.toggle('uk-mc-h', ri === 0); r.classList.toggle('uk-mc-full', cs.length === 1 && cs[0].colSpan > 1); cs.forEach(c => { c.dataset.r = roles[ci] || 'x'; ci += c.colSpan || 1 }) })
+})
+let mqBusy = false
+const matSync = () => { if (mqBusy || !matPane) return; mqBusy = true; fixMoney(matPane); cardify(); mqObs.takeRecords(); mqBusy = false }
+const mqObs = new MutationObserver(matSync)
+matPane && (mqObs.observe(matPane, { childList: true, subtree: true, characterData: true }), matSync())
 const pill = document.createElement('div')
 pill.id = 'uk-quote'
 pill.innerHTML = '<span class="uk-qlab">Live<br>estimate</span><b></b><button id="uk-share" title="Copy a shareable link to this exact design">🔗</button>'
@@ -111,7 +137,7 @@ $('#uk-share').addEventListener('click', e => {
   if (!api) return toast('Sharing is unavailable right now.')
   let d, encoded
   try {
-    d = api.collectShareData(mod, localStorage)
+    d = api.homeownerShareData(mod, localStorage)
     if (!Object.keys(d).length) return toast('Nothing to share yet — tweak your design first!')
     encoded = api.encodePayload(d)
   } catch (error) {

@@ -1,25 +1,26 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-const LS = 'amniplan.cfg.v1', LSP = 'amniplan.prices.v1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { fitNum, sanitizeCfg, sanitizeRooms, coreError, hvacSize, csv, escXml, unXml } from '../_shared/est-math.js?v=cp1'
+const LS = 'amniplan.cfg.v1'
 const defCfg = { w: 40, d: 30, house_edge: 0, rooms: [{ name: 'Living', kind: 'living', w: 18, d: 14 }, { name: 'Kitchen', kind: 'kitchen', w: 13, d: 12 }, { name: 'Bed 1', kind: 'bedroom', w: 13, d: 12 }, { name: 'Bed 2', kind: 'bedroom', w: 12, d: 11 }, { name: 'Bath', kind: 'bath', w: 8, d: 6 }, { name: 'Bath 2', kind: 'bath', w: 7, d: 5 }, { name: 'Laundry', kind: 'laundry', w: 7, d: 6 }] }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const KINDS = ['bedroom', 'bath', 'kitchen', 'living', 'dining', 'laundry', 'garage', 'hall', 'office', 'other']
+let cfg = (() => { let r = null; try { r = JSON.parse(localStorage.getItem(LS)) } catch {} const o = sanitizeCfg(r, defCfg); o.rooms = sanitizeRooms(o.rooms, KINDS, defCfg.rooms); o.roomPos = o.roomPos && typeof o.roomPos === 'object' && !Array.isArray(o.roomPos) ? o.roomPos : {}; return o })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
-let catalog = {}
 const $ = s => document.querySelector(s)
 const wasm = await WebAssembly.instantiateStreaming(fetch('plan_core.wasm?v=2'))
 const { alloc, dealloc, build, memory } = wasm.instance.exports
 const enc = new TextEncoder(), dec = new TextDecoder()
 const callCore = c => {
-  const payload = enc.encode(JSON.stringify({ rooms: (c.rooms || []).map(r => ({ name: r.name || '', kind: r.kind || 'other', w: +r.w || 10, d: +r.d || 10 })), issue_date: new Date().toLocaleDateString('en-CA') }))
+  const payload = enc.encode(JSON.stringify({ rooms: (c.rooms || []).map(r => ({ name: escXml(r.name || ''), kind: r.kind || 'other', w: +r.w || 10, d: +r.d || 10 })), issue_date: new Date().toLocaleDateString('en-CA') }))
   const p = alloc(payload.length)
   new Uint8Array(memory.buffer, p, payload.length).set(payload)
   const rp = build(p, payload.length)
   const len = new DataView(memory.buffer).getUint32(rp, true)
   const res = JSON.parse(dec.decode(new Uint8Array(memory.buffer, rp + 4, len)))
   dealloc(p, payload.length); dealloc(rp, len + 4)
+  ;(res.rooms || []).forEach(r => r.name = unXml(r.name))
   return res
 }
 const mkTex = (rep, draw) => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; draw(cv.getContext('2d')); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); return t }
@@ -128,7 +129,6 @@ const renderGuide = () => {
     + `<div style="${SEC}"><div style="${GH}">💵 Cost</div><div style="font-size:13px;color:var(--ink)">This planner doesn't price materials — open each <b>trade app</b> (Floor, Roof, Frame, Plumb, Elec, Deck, Patio, Pool, Garden) for its own live Home-Depot estimate, then add labor + permits + design fees.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
-const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
 const renderMat = () => {
   if (!out) return
   const c = out.calc
@@ -139,7 +139,7 @@ const renderMat = () => {
     ['🔩 Frame', 'frame', `~${c.perimeter.toFixed(0)} lf of exterior wall to frame`],
     ['🚿 Plumb', 'plumb', `${c.toilets} WC, ${c.lavs + c.kitchen_sinks} sinks, ${c.showers} bath, ${c.washers} laundry`],
     ['⚡ Elec', 'elec', `${c.total_area.toFixed(0)} ft², ${c.bedrooms} bed / ${c.baths} bath -> size service`],
-    ['🌡️ HVAC', 'hvac', `~${Math.max(1, Math.round(c.total_area / 500 * 2) / 2)} tons / ${Math.round(Math.max(1, c.total_area / 500 * 2) / 2 * 400)} CFM for ${c.total_area.toFixed(0)} ft²`],
+    ['🌡️ HVAC', 'hvac', `~${hvacSize(c.total_area).tons} tons / ${hvacSize(c.total_area).cfm} CFM for ${c.total_area.toFixed(0)} ft² (rule of thumb; size it with a Manual J)`],
     ['🛠️ Deck', 'deck', 'add a deck off this plan'],
     ['🧱 Patio', 'patio', 'add a patio / walkway'],
     ['🏊 Pool', 'pool', 'size a pool for the yard'],
@@ -150,7 +150,6 @@ const renderMat = () => {
   $('#mat-table').querySelectorAll('a[href^="../"]').forEach(a => a.onclick = () => { try { localStorage.setItem('amni_construct_plan', JSON.stringify(payload)) } catch (e) {} })
 }
 const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
-const KINDS = ['bedroom', 'bath', 'kitchen', 'living', 'dining', 'laundry', 'garage', 'hall', 'office', 'other']
 const fld = 'background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:3px 6px'
 const renderRoomList = () => {
   const wrap = $('#roomlist'); if (!wrap) return
@@ -167,14 +166,14 @@ const renderRoomList = () => {
         <input type="number" data-k="d" min="3" max="80" value="${rm.d}" title="depth (ft)" style="width:46px;${fld}">
       </div>`
     div.querySelector('select').value = rm.kind
-    div.querySelectorAll('[data-k]').forEach(el => el.onchange = () => { const k = el.dataset.k; rm[k] = (k === 'name' || k === 'kind') ? el.value : parseFloat(el.value); persist(); recompute() })
+    div.querySelectorAll('[data-k]').forEach(el => el.onchange = () => { const k = el.dataset.k; rm[k] = k === 'name' || k === 'kind' ? el.value : fitNum(el.value, el, rm[k]); el.value = rm[k]; persist(); recompute() })
     div.querySelector('.rm').onclick = () => { cfg.rooms.splice(i, 1); renderRoomList(); persist(); recompute() }
     wrap.appendChild(div)
   })
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; persist(); return }
+  try { out = callCore(cfg) } catch (e) { out = { error: e.message } }
+  if (out.error) { const msg = coreError(out.error); out = null; $('#warns').innerHTML = `<div class="warn">${msg}</div>`; $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = `<tr><td style="color:var(--warn)">${msg}</td></tr>`; persist(); return }
   cfg.w = out.calc.footprint_w; cfg.d = out.calc.footprint_d
   persist(); rebuild3D()
   const fw = out.calc.footprint_w, fd = out.calc.footprint_d, s = Math.max(fw, fd, 12)
@@ -191,14 +190,13 @@ const initUI = () => {
     $('#hud').style.display = t.dataset.pane === '3d' ? 'block' : 'none'
   })
   const on = (id, fn) => { const el = $(id); el && (el.onclick = fn) }
-  on('#dl-svg', () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plan-${k}.svg` }); a.click() }) })
+  on('#dl-svg', () => { if (!out) return; ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `plan-${k}.svg` }); a.click() }) })
   on('#export-csv', () => {
     const rows = [['Room', 'Kind', 'W (ft)', 'D (ft)', 'Area (ft²)'], ...cfg.rooms.map(r => [r.name || r.kind, r.kind, r.w, r.d, (r.w * r.d).toFixed(0)])]
-    Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([rows.map(r => r.join(',')).join('\n')], { type: 'text/csv' })), download: 'plan-rooms.csv' }).click()
+    Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv(rows)], { type: 'text/csv' })), download: 'plan-rooms.csv' }).click()
   })
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
 }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 recompute()

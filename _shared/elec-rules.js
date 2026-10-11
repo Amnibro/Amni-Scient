@@ -1,5 +1,5 @@
 // Amni-Elec trade rules for the draw-it layout tool. Pure logic (node-testable).
-import { neighbors, reachableFrom, runLengthFt } from './sketch.js'
+import { neighbors, reachableFrom, runLengthFt, addNode, addRun } from './sketch.js'
 
 export const ELEC_PALETTE = [
   { type: 'panel', label: 'Panel', glyph: '🔲', color: '#e8c33d', dims: [1.2, 2.6], shape: 'panel', height: 3.5 },
@@ -23,8 +23,8 @@ export const ELEC_RUNTYPES = [
 const RUN = { nm142: { gauge: 14, amps: 15, v: 120, R: 3.14, roll: 250 }, nm122: { gauge: 12, amps: 20, v: 120, R: 1.98, roll: 250 }, nm103: { gauge: 10, amps: 30, v: 240, R: 1.24, roll: 25 }, nm63: { gauge: 6, amps: 50, v: 240, R: 0.491, roll: 25 } }
 const DEV = { recept: { va: 180 }, gfci: { va: 180, isGfci: true }, light: { va: 100 }, switch: { va: 0 }, dishwasher: { va: 1500, ded: true }, microwave: { va: 1500, ded: true }, range: { va: 8000, ded: true }, dryer: { va: 5000, ded: true }, waterheater: { va: 4500, ded: true }, hvac: { va: 3600, ded: true }, panel: { va: 0 } }
 const GFCI_ROOMS = new Set(['kitchen', 'bath', 'garage', 'outdoor', 'laundry', 'crawl'])
-const AFCI_ROOMS = new Set(['bedroom', 'living', 'hall', 'dining'])
-const ROOMS = ['general', 'kitchen', 'bath', 'bedroom', 'living', 'garage', 'outdoor', 'laundry', 'dining']
+const AFCI_ROOMS = new Set(['bedroom', 'living', 'hall', 'dining', 'kitchen', 'laundry'])
+const ROOMS = ['general', 'kitchen', 'bath', 'bedroom', 'living', 'dining', 'hall', 'laundry', 'garage', 'outdoor']
 const ROOMED = new Set(['recept', 'gfci', 'light'])
 const labelOf = n => (ELEC_PALETTE.find(p => p.type === n.type) || { label: n.type }).label
 
@@ -81,7 +81,7 @@ export function bomElec(scene, m) {
   if (m.nodeCounts.light) o.push({ key: 'fixture', qty: m.nodeCounts.light, unit: 'ea' })
   const { circuits } = elecCircuits(scene)
   let plain = 0, gf = 0, af = 0
-  for (const c of circuits) { const devs = c.members.filter(n => n.type !== 'panel'); const hasG = devs.some(n => (DEV[n.type] || {}).isGfci); const needG = devs.some(n => n.props && GFCI_ROOMS.has(n.props.room)) && !hasG; const needA = devs.some(n => n.props && AFCI_ROOMS.has(n.props.room)); needA ? af++ : needG ? gf++ : plain++ }
+  for (const c of circuits) { const devs = c.members.filter(n => n.type !== 'panel'); const hasG = devs.some(n => (DEV[n.type] || {}).isGfci); const needG = devs.some(n => n.props && GFCI_ROOMS.has(n.props.room)) && !hasG; const needA = devs.some(n => n.props && AFCI_ROOMS.has(n.props.room)); needA ? af++ : needG || plain++; needG && gf++ }
   if (plain) o.push({ key: 'breaker', qty: plain, unit: 'ea' })
   if (af) o.push({ key: 'afci', qty: af, unit: 'ea' })
   if (gf) o.push({ key: 'gfci', qty: gf, unit: 'ea' })
@@ -91,12 +91,42 @@ export function bomElec(scene, m) {
   return o
 }
 
+const SVC = a => a <= 80 ? 100 : a <= 104 ? 125 : a <= 120 ? 150 : a <= 160 ? 200 : 400
+const MAINW = { 100: '#4 Cu / #2 Al', 125: '#2 Cu / #1/0 Al', 150: '#1 Cu / 2/0 Al', 200: '2/0 Cu / 4/0 Al', 400: '400 kcmil Cu / 600 kcmil Al' }
+const cnt = v => Math.max(0, Math.floor(+v || 0))
+export const rangeDemandVA = n => (n = cnt(n)) ? (n <= 5 ? 5 + 3 * n : 15 + n) * 1000 : 0
+export function fixElecOut(out, cfg) {
+  if (!out || !out.calc) return out
+  const c = out.calc, nr = cnt(cfg.electric_range), va = Math.round(c.total_demand_va - nr * 8000 + rangeDemandVA(nr)), amps = va / 240, svc = SVC(amps), mw = MAINW[svc], A = Math.round(amps)
+  const twoPole = nr + cnt(cfg.electric_dryer) + (cfg.water_heater_elec ? 1 : 0) + (cnt(cfg.hvac_amps) > 0 ? 1 : 0), onePole = Math.max(0, c.total_circuits - c.gen_circuits - twoPole)
+  Object.assign(c, { total_demand_va: va, service_amps: amps, service_size_a: svc })
+  const big = 'Calculated load exceeds a 200 A service', ws = out.warnings.filter(w => !w.includes(big))
+  ws[0] = ws[0].replace(/: \d+ VA total demand \(NEC 220 std method\) = \d+ A -> \d+ A service\./, ': ' + va + ' VA total demand (NEC 220 std method) = ' + A + ' A -> ' + svc + ' A service.')
+  out.warnings = ws.map(w => w.replace(/~.+? for a \d+ A service;/, '~' + mw + ' for a ' + svc + ' A service;'))
+  amps > 160 && out.warnings.splice(out.warnings.length - 1, 0, 'WARN|' + big + ' - re-run with the optional method (NEC 220.82) or step up the service; confirm with the utility.')
+  out.bom = out.bom.flatMap(b => b.id === 'panel' ? [{ ...b, desc: svc + ' A main breaker load center' }] : b.id === 'se' ? [{ ...b, desc: 'Service-entrance feeder (' + mw + ')' }] : b.id === 'breaker' ? [{ ...b, desc: 'Single-pole breakers (dedicated 120 V circuits)', qty: onePole }, { id: 'breaker2', desc: '2-pole breakers (240 V range, dryer, water heater, AC)', qty: twoPole }].filter(x => x.qty > 0) : [b])
+  const sv = s => s.replace(/MAIN \d+ A</, 'MAIN ' + svc + ' A<').replace(/TOTAL DEMAND: \d+ VA/, 'TOTAL DEMAND: ' + va + ' VA').replace(/= \d+ A -> \d+ A SERVICE/, '= ' + A + ' A -> ' + svc + ' A SERVICE').replace(/\d+ A SERVICE \/ (\d+) CIRCUITS \/ \d+ VA/, svc + ' A SERVICE / $1 CIRCUITS / ' + va + ' VA').replace(/\b\d+ A service, (\d+) circuits</, svc + ' A service, $1 circuits<').replace('#3 (4/0 Al)', '#3 Cu / #1 Al').replace('2/0 (4/0 Al)', '2/0 Cu / 4/0 Al svc')
+  out.svgs = out.svgs && { layout: sv(out.svgs.layout || ''), details: sv(out.svgs.details || '') }
+  return out
+}
+export function elecRunBadges(scene) {
+  const { circuits } = elecCircuits(scene), out = {}
+  circuits.forEach((c, i) => { for (const r of c.runs) { const ra = (RUN[r.type] || RUN.nm142).amps; out[r.id] = { txt: 'ckt ' + (i + 1) + ' · ' + ra + 'A', warn: ra < c.breaker.amps } } })
+  return out
+}
+const TP = sc => { const sp = sc.scalePxPerFt || 24; return (type, fx, fz, props) => addNode(sc, type, fx * sp, fz * sp, { fx, fz, rot: 0, ...(props || {}) }) }
+export const ELEC_TEMPLATES = [
+  { name: '🍳 Kitchen rough-in — 2 SA circuits + appliances', build(sc) { sc.floorCal = sc.floorCal || { w: 14, d: 12 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const g1 = P('gfci', 3.5, 0.6, { room: 'kitchen' }), g2 = P('gfci', 6.5, 0.6, { room: 'kitchen' }), g3 = P('gfci', 9.5, 0.6, { room: 'kitchen' }), g4 = P('gfci', 12.5, 0.6, { room: 'kitchen' }); addRun(sc, 'nm122', pn, g1); addRun(sc, 'nm122', g1, g2); addRun(sc, 'nm122', pn, g3); addRun(sc, 'nm122', g3, g4); const dw = P('dishwasher', 4.5, 3), mw = P('microwave', 7.5, 2.8), rg = P('range', 11, 3.2); addRun(sc, 'nm122', pn, dw); addRun(sc, 'nm122', pn, mw); addRun(sc, 'nm63', pn, rg); const sw = P('switch', 1.9, 0.6), l1 = P('light', 5, 7), l2 = P('light', 9, 7); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, l1); addRun(sc, 'nm142', l1, l2) } },
+  { name: '🛏️ Bedroom circuit — AFCI receptacle ring', build(sc) { sc.floorCal = sc.floorCal || { w: 13, d: 11 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const pts = [[4, 0.6], [9, 0.6], [12.4, 4], [12.4, 8], [8, 10.4], [3, 10.4]]; let prev = pn; const ids = pts.map(([x, z]) => P('recept', x, z, { room: 'bedroom' })); for (const id of ids) { addRun(sc, 'nm142', prev, id); prev = id } const sw = P('switch', 1.6, 0.6, { room: 'bedroom' }), lt = P('light', 6.5, 5.5, { room: 'bedroom' }); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, lt) } },
+  { name: '🛁 Bathroom — 20A GFCI + light/switch', build(sc) { sc.floorCal = sc.floorCal || { w: 9, d: 8 }; const P = TP(sc); const pn = P('panel', 0.8, 0.8); const gf = P('gfci', 5, 0.6, { room: 'bath' }); addRun(sc, 'nm122', pn, gf); const sw = P('switch', 2.2, 0.6), lt = P('light', 4.5, 4); addRun(sc, 'nm142', pn, sw); addRun(sc, 'nm142', sw, lt) } },
+]
 export function makeElecTrade() {
   return {
-    name: 'elec', palette: ELEC_PALETTE, runTypes: ELEC_RUNTYPES, bom: bomElec, validate: validateElec,
-    stock: { nm142: { len: 250, key: 'nm142', est: 89, unitName: '14/2 roll' }, nm122: { len: 250, key: 'nm122', est: 119, unitName: '12/2 roll' }, nm103: { len: 125, key: 'nm103', est: 119, unitName: '10/3 roll' }, nm63: { len: 125, key: 'nm63', est: 169, unitName: '6/3 roll' } },
+    name: 'elec', palette: ELEC_PALETTE, runTypes: ELEC_RUNTYPES, bom: bomElec, validate: validateElec, runBadges: elecRunBadges, templates: ELEC_TEMPLATES,
+    stock: { nm142: { len: 250, key: 'nm142', est: 89, unitName: '14/2 roll' }, nm122: { len: 250, key: 'nm122', est: 119, unitName: '12/2 roll' }, nm103: { len: 25, key: 'nm103', est: 44, unitName: '10/3 coil' }, nm63: { len: 25, key: 'nm63', est: 89, unitName: '6/3 coil' } },
     fittings: { bend: 'Device / outlet box', branch: 'Junction box', elbowKey: 'box', teeKey: 'box' },
     onNodeActivate: n => { if (!ROOMED.has(n.type)) return false; const i = ROOMS.indexOf((n.props && n.props.room) || 'general'); n.props.room = ROOMS[(i + 1) % ROOMS.length]; return true },
+    props: n => ROOMED.has(n.type) ? [{ key: 'room', label: 'room', def: 'general', opts: ROOMS.map(r => [r, r]) }] : null,
     nodeLabel: n => { const p = ELEC_PALETTE.find(z => z.type === n.type), lab = p ? p.label : n.type, r = n.props && n.props.room; return r && r !== 'general' ? lab + ' · ' + r : lab },
   }
 }

@@ -3,6 +3,25 @@
 // Each trade module supplies a config: { palette, runTypes, bom(scene,m), validate(scene,m) }.
 // Pure functions (no DOM) so they are node-verifiable; the SVG canvas layer wraps these.
 
+export const cents = v => (v = Number.isFinite(+v) ? +v : 0, Math.sign(v) * Math.round(+(Math.abs(v).toFixed(8) + 'e2')) / 100 || 0)
+export const usd = (v, d = 2) => (+v < 0 ? '−$' : '$') + Math.abs(cents(v)).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+export const validScene = s => !!(s && Array.isArray(s.nodes) && Array.isArray(s.runs) && s.nodes.every(n => n && typeof n.id === 'string' && Number.isFinite(+n.x) && Number.isFinite(+n.y)) && s.runs.every(r => r && typeof r.a === 'string' && typeof r.b === 'string'))
+export function storeTotals(bom, price) {
+  let th = 0, tl = 0, mh = 0, ml = 0
+  const rows = (bom || []).map(it => { const ph = price(it.id ?? it.key, 'hd'), pl = price(it.id ?? it.key, 'lowes'), lh = ph != null ? cents(ph * it.qty) : null, ll = pl != null ? cents(pl * it.qty) : null; lh != null ? th = cents(th + lh) : mh++; ll != null ? tl = cents(tl + ll) : ml++; return { it, ph, pl, lh, ll } })
+  return { rows, th, tl, mh, ml, best: (mh === ml ? th <= tl : !mh) ? 'hd' : 'lowes' }
+}
+const storeLink = (store, q) => q ? `<a href="${store === 'hd' ? 'https://www.homedepot.com/s/' : 'https://www.lowes.com/search?searchTerm='}${encodeURIComponent(q)}" target="_blank" rel="noopener" aria-label="Search ${store === 'hd' ? 'Home Depot' : 'Lowe\'s'}">↗</a>` : ''
+export function matTableHTML(bom, price, catalog) {
+  const t = storeTotals(bom, price), miss = n => n ? ` <span class="unpriced" style="font-size:11px;color:var(--warn);font-weight:400">${n} unpriced</span>` : ''
+  const rows = t.rows.map(({ it, ph, pl, lh, ll }) => { const cat = (catalog || {})[it.id] || {}; return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" inputmode="decimal" aria-label="Home Depot unit price" value="${ph ?? ''}"> ${storeLink('hd', cat.hdq)}</td><td>${lh != null ? usd(lh) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" inputmode="decimal" aria-label="Lowe's unit price" value="${pl ?? ''}"> ${storeLink('lowes', cat.lq)}</td><td>${ll != null ? usd(ll) : '—'}</td></tr>` }).join('')
+  return `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowe's $</th><th>Lowe's total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${t.best === 'hd' ? 'best' : ''}">${usd(t.th)}${miss(t.mh)}</td><td></td><td class="tot ${t.best === 'lowes' ? 'best' : ''}">${usd(t.tl)}${miss(t.ml)}</td></tr>`
+}
+export function matCsv(bom, price) {
+  const q = v => /[",\n]/.test('' + v) ? '"' + ('' + v).replace(/"/g, '""') + '"' : '' + v, t = storeTotals(bom, price), f = v => v != null ? v.toFixed(2) : ''
+  return [['Item', 'Qty', 'HD each', 'HD total', "Lowe's each", "Lowe's total"], ...t.rows.map(({ it, ph, pl, lh, ll }) => [it.desc, it.qty, f(ph), f(lh), f(pl), f(ll)]), ['TOTAL', '', '', t.th.toFixed(2), '', t.tl.toFixed(2)]].map(r => r.map(q).join(',')).join('\n')
+}
+export const parseStorePrice = win => { const m = win.match(/\$\s?(\d{1,3}(?:,\d{3})+|\d{1,5})\.(\d{2})/); return m ? parseFloat(m[1].replace(/,/g, '') + '.' + m[2]) : null }
 export function emptyScene(scalePxPerFt = 24) { return { nodes: [], runs: [], scalePxPerFt, seq: 1 } }
 export function addNode(scene, type, x, y, props) { const id = 'n' + (scene.seq++); scene.nodes.push({ id, type, x, y, props: props || {} }); return id }
 export function addRun(scene, type, a, b, waypoints) { const id = 'r' + (scene.seq++); scene.runs.push({ id, type, a, b, waypoints: waypoints || [] }); return id }
@@ -75,8 +94,8 @@ export function reachableFrom(scene, startId) {
 export function priceBOM(bom, catalog, store) {
   store = store || 'hd'; let total = 0
   const lines = bom.filter(it => it.qty > 0).map(it => {
-    const c = catalog[it.key] || {}, unit = +c[store] || 0, cost = unit * it.qty
-    total += cost
+    const c = catalog[it.key] || {}, unit = Math.max(0, +c[store] || 0), cost = cents(unit * it.qty)
+    total = cents(total + cost)
     return { key: it.key, name: c.name || it.key, qty: it.qty, unitName: it.unit || '', unitPrice: unit, cost, note: it.note || '' }
   })
   return { lines, total }
@@ -108,7 +127,7 @@ export function flowDownstream(run, scene, m, sinkTypes) {
 export function realComponents(scene, trade, catalog, store) {
   catalog = catalog || {}; store = store || 'hd'
   const m = measure(scene), stock = trade.stock || {}, fit = trade.fittings || {}, def = { elbow: 2.2, tee: 4.5, coupling: 1.6 }
-  const price = (key, fb) => { const c = key && catalog[key]; return (c && +c[store]) || fb || 0 }
+  const price = (key, fb) => { const c = key && catalog[key]; return Math.max(0, (c && +c[store]) || fb || 0) }
   const items = [], runsByType = {}
   for (const r of scene.runs) (runsByType[r.type] = runsByType[r.type] || []).push(runLengthFt(r, scene))
   for (const type of Object.keys(m.byRunType)) {
@@ -116,20 +135,20 @@ export function realComponents(scene, trade, catalog, store) {
     const stockLen = st.len || (/^(sup|nm|wire|pex|r1)/.test(type) ? 100 : 10)
     const lenFt = m.byRunType[type], sticks = Math.max(1, Math.ceil(lenFt / stockLen))
     const cuts = (runsByType[type] || []).map(x => Math.round(x * 10) / 10), each = price(st.key, st.est || (stockLen >= 100 ? 40 : 12))
-    items.push({ qty: sticks, name: rt.label + ' · ' + stockLen + 'ft ' + (st.unitName || 'stock'), unit: stockLen >= 100 ? 'coil' : 'stick', each, cost: each * sticks, note: Math.round(lenFt) + ' ft · cuts ' + cuts.map(c => c + "'").join(', ') })
+    items.push({ qty: sticks, name: rt.label + ' · ' + stockLen + 'ft ' + (st.unitName || 'stock'), unit: stockLen >= 100 ? 'coil' : 'stick', each, cost: cents(each * sticks), note: Math.round(lenFt) + ' ft · cuts ' + cuts.map(c => c + "'").join(', ') })
     const coup = Math.max(0, sticks - (runsByType[type] || []).length)
-    if (coup > 0) { const e = price(st.couplingKey || stock.fittingKey, def.coupling); items.push({ qty: coup, name: rt.label + ' coupling', unit: 'ea', each: e, cost: e * coup }) }
+    if (coup > 0) { const e = price(st.couplingKey || stock.fittingKey, def.coupling); items.push({ qty: coup, name: rt.label + ' coupling', unit: 'ea', each: e, cost: cents(e * coup) }) }
   }
   let leaves = 0, tees = 0
   for (const n of scene.nodes) { const d = m.deg[n.id] || 0; if (d === 1) leaves++; if (d > 2) tees += d - 2 }
   const elbows = m.elbows + leaves
   if (!trade.noFittings) {
-    if (elbows > 0) { const e = price(fit.elbowKey || stock.fittingKey, def.elbow); items.push({ qty: elbows, name: fit.bend || 'Elbow (90°)', unit: 'ea', each: e, cost: e * elbows, note: m.elbows + ' bend(s) + ' + leaves + ' end drop(s)' }) }
-    if (tees > 0) { const e = price(fit.teeKey || stock.fittingKey, def.tee); items.push({ qty: tees, name: fit.branch || 'Tee / branch', unit: 'ea', each: e, cost: e * tees }) }
+    if (elbows > 0) { const e = price(fit.elbowKey || stock.fittingKey, def.elbow); items.push({ qty: elbows, name: fit.bend || 'Elbow (90°)', unit: 'ea', each: e, cost: cents(e * elbows), note: m.elbows + ' bend(s) + ' + leaves + ' end drop(s)' }) }
+    if (tees > 0) { const e = price(fit.teeKey || stock.fittingKey, def.tee); items.push({ qty: tees, name: fit.branch || 'Tee / branch', unit: 'ea', each: e, cost: cents(e * tees) }) }
   }
   for (const type of Object.keys(m.nodeCounts)) {
     const p = (trade.palette || []).find(z => z.type === type), key = stock.fixtures && stock.fixtures[type], e = price(key, 0)
-    items.push({ qty: m.nodeCounts[type], name: (p ? p.label : type), unit: 'ea', each: e, cost: e * m.nodeCounts[type], note: e ? '' : 'price varies' })
+    items.push({ qty: m.nodeCounts[type], name: (p ? p.label : type), unit: 'ea', each: e, cost: cents(e * m.nodeCounts[type]), note: e ? '' : 'price varies' })
   }
-  return { items, total: items.reduce((s, it) => s + (it.cost || 0), 0) }
+  return { items, total: cents(items.reduce((s, it) => s + (it.cost || 0), 0)) }
 }

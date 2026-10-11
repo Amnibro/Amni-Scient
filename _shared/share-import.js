@@ -389,6 +389,22 @@
     return data
   }
 
+  // Links a contractor sends drop unit-price tables. Saved projects and backups
+  // call collectShareData and keep them.
+  function stripSharePrices(data) {
+    if (!isPlainObject(data)) fail('invalid-shape', 'The shared design must be a data object.')
+    const out = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (/\.prices\.v\d+$/.test(key)) continue
+      out[key] = value
+    }
+    return out
+  }
+
+  function homeownerShareData(moduleName, storage) {
+    return stripSharePrices(collectShareData(moduleName, storage))
+  }
+
   return Object.freeze({
     MAX_FRAGMENT_LENGTH,
     MAX_DECODED_BYTES,
@@ -398,7 +414,9 @@
     collectShareData,
     decodePayload,
     encodePayload,
+    homeownerShareData,
     restoreFromLocation,
+    stripSharePrices,
     validatePayload
   })
 })
