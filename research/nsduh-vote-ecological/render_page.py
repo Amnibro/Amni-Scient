@@ -7,6 +7,9 @@ import csv
 import json
 from pathlib import Path
 
+import numpy as np
+import statsmodels.api as sm
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RESULTS = HERE / "results"
@@ -45,6 +48,12 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;max-width:860px;margin:.2rem 0 .8rem}
 .legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
 .legend i{width:14px;height:3px;border-radius:1px;display:inline-block}
+.slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
+.slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
+.slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
+.slope-k i{width:14px;height:3px;border-radius:1px;display:inline-block;flex:none}
+.slope-v{margin:.2rem 0 .15rem;font-size:1.45rem;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--text)}
+.slope-v span{display:block;margin-top:.28rem;font-size:.68rem;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);line-height:1.35}
 """
 
 
@@ -85,109 +94,136 @@ def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;")
 
 
-def svg_frame(w, h, y0, y1, ticks, xlabels, ylab_x=46):
-    left, right, top, bottom = 54, 16, 18, 36
-    pw, ph = w - left - right, h - top - bottom
+def _span_ticks(lo, hi, step):
+    start = np.ceil((lo - 1e-9) / step) * step
+    ticks = []
+    v = float(start)
+    while v <= hi + 1e-9:
+        ticks.append(int(round(v)))
+        v += step
+    return ticks
 
-    def X(i, n):
-        if n == 1:
-            return left + pw / 2
-        return left + i / (n - 1) * pw
+
+def fit_share(rows, xkey):
+    """Vote-weighted WLS of Democratic two-party share (percent) on xkey. HC1 slope SE."""
+    x = np.array([float(r[xkey]) for r in rows], dtype=float)
+    y = np.array([float(r["dem2"]) * 100 for r in rows], dtype=float)
+    w = np.array([float(r["two_party"]) for r in rows], dtype=float)
+    res = sm.WLS(y, sm.add_constant(x), weights=w).fit(cov_type="HC1")
+    return float(res.params[0]), float(res.params[1]), float(res.bse[1]), x, y, w
+
+
+def _clip_line(a, b, x_lo, x_hi, y_lo, y_hi):
+    pts = []
+
+    def push(x, y):
+        if x_lo - 1e-6 <= x <= x_hi + 1e-6 and y_lo - 1e-6 <= y <= y_hi + 1e-6:
+            p = (min(x_hi, max(x_lo, x)), min(y_hi, max(y_lo, y)))
+            if not any(abs(p[0] - q[0]) < 1e-6 and abs(p[1] - q[1]) < 1e-6 for q in pts):
+                pts.append(p)
+
+    for x in (x_lo, x_hi):
+        push(x, a + b * x)
+    if abs(b) > 1e-12:
+        for y in (y_lo, y_hi):
+            push((y - a) / b, y)
+    if len(pts) < 2:
+        return None
+    pts.sort()
+    return pts[0], pts[-1]
+
+
+def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=False, opacity=0.34, r0=1.35, r1=5.0):
+    left, right, top, bottom = 48, 14, 12, 28
+    plot = None
+    if square:
+        plot = 248
+        left, right, top, bottom = 36, 8, 8, 24
+        w = left + plot + right
+        h = top + plot + bottom
+        pw = ph = plot
+    else:
+        w, h = 720, 360
+        pw, ph = w - left - right, h - top - bottom
+    def X(v):
+        return left + (float(v) - x0) / (x1 - x0) * pw
 
     def Y(v):
-        return top + (y1 - v) / (y1 - y0) * ph
+        return top + (y1 - float(v)) / (y1 - y0) * ph
 
     parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
-    for t in ticks:
-        y = Y(t)
-        parts.append(f'<line x1="{left}" y1="{y:.1f}" x2="{w-right}" y2="{y:.1f}" class="grid"/>')
-        parts.append(f'<text x="{left-8}" y="{y+4:.1f}" text-anchor="end" class="tick">{t:g}</text>')
-    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h-bottom}" class="axis"/>')
-    parts.append(f'<line x1="{left}" y1="{h-bottom}" x2="{w-right}" y2="{h-bottom}" class="axis"/>')
-    for i, lab in enumerate(xlabels):
-        parts.append(f'<text x="{X(i, len(xlabels)):.1f}" y="{h-14}" text-anchor="middle" class="tick">{lab}</text>')
-    return parts, X, Y, left, h - bottom
-
-
-def line_chart(quintiles):
-    by = {}
-    for row in quintiles:
-        by.setdefault(row["measure"], []).append(row)
-    parts, X, Y, left, base = svg_frame(720, 360, 28, 68, [30, 40, 50, 60], ["1", "2", "3", "4", "5"])
-    for key, _label, color in CHART:
-        rows = sorted(by[key], key=lambda r: int(r["quintile"]))
-        pts = " ".join(f"{X(int(r['quintile'])-1, 5):.1f},{Y(float(r['dem2'])*100):.1f}" for r in rows)
-        parts.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2.4" stroke-linejoin="round"/>')
-        for r in rows:
-            parts.append(
-                f'<circle cx="{X(int(r["quintile"])-1, 5):.1f}" cy="{Y(float(r["dem2"])*100):.1f}" r="3.2" fill="{color}"/>'
-            )
-    parts.append("</svg>")
-    legend = '<div class="legend">' + "".join(
-        f'<span><i style="background:{color}"></i>{label}</span>' for _k, label, color in CHART
-    ) + "</div>"
-    return "\n".join(parts), legend
-
-
-def density_chart(bins):
-    labels = [f"{b['people_per_km2']:.0f}/km²" for b in bins]
-    vals = [b["combined"] for b in bins]
-    parts, X, Y, left, base = svg_frame(720, 280, -3, 3, [-2, -1, 0, 1, 2], labels)
-    # zero line
-    parts.append(f'<line x1="54" y1="{Y(0):.1f}" x2="704" y2="{Y(0):.1f}" class="axis"/>')
-    pts = " ".join(f"{X(i, 5):.1f},{Y(v):.1f}" for i, v in enumerate(vals))
-    parts.append(f'<polyline points="{pts}" fill="none" stroke="#2563EB" stroke-width="2.4"/>')
-    for i, v in enumerate(vals):
-        parts.append(f'<circle cx="{X(i, 5):.1f}" cy="{Y(v):.1f}" r="4" fill="#2563EB"/>')
-        parts.append(f'<text x="{X(i, 5):.1f}" y="{Y(v)-10:.1f}" text-anchor="middle" class="tick">{v:+.2f}</text>')
+    for t in yticks:
+        parts.append(f'<line x1="{left}" y1="{Y(t):.1f}" x2="{w - right:.1f}" y2="{Y(t):.1f}" class="grid"/>')
+        parts.append(f'<text x="{left - 6}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{t:g}</text>')
+    for t in xticks:
+        anchor = "start" if t == xticks[0] else ("end" if t == xticks[-1] else "middle")
+        parts.append(f'<text x="{X(t):.1f}" y="{h - 8}" text-anchor="{anchor}" class="tick">{t:g}</text>')
+    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h - bottom}" class="axis"/>')
+    parts.append(f'<line x1="{left}" y1="{h - bottom}" x2="{w - right}" y2="{h - bottom}" class="axis"/>')
+    m = float(max(wts))
+    order = np.argsort(np.asarray(wts))
+    for i in order:
+        rad = r0 + r1 * (float(wts[i]) / m) ** 0.5
+        parts.append(
+            f'<circle cx="{X(xs[i]):.1f}" cy="{Y(ys[i]):.1f}" r="{rad:.2f}" fill="{color}" fill-opacity="{opacity}"/>'
+        )
+    seg = _clip_line(a, b, float(np.min(xs)), float(np.max(xs)), y0, y1)
+    if seg:
+        (x_a, y_a), (x_b, y_b) = seg
+        parts.append(
+            f'<line x1="{X(x_a):.1f}" y1="{Y(y_a):.1f}" x2="{X(x_b):.1f}" y2="{Y(y_b):.1f}" stroke="{color}" stroke-width="2.4"/>'
+        )
     parts.append("</svg>")
     return "\n".join(parts)
 
 
-def within_chart(bins):
-    labels = [str(b["quintile"]) for b in bins]
-    vals = [b["dem2_within"] * 100 for b in bins]
-    parts, X, Y, left, base = svg_frame(720, 280, -4, 8, [-4, -2, 0, 2, 4, 6, 8], labels)
-    parts.append(f'<line x1="54" y1="{Y(0):.1f}" x2="704" y2="{Y(0):.1f}" class="axis"/>')
-    pts = " ".join(f"{X(i, 5):.1f},{Y(v):.1f}" for i, v in enumerate(vals))
-    parts.append(f'<polyline points="{pts}" fill="none" stroke="#7C3AED" stroke-width="2.4"/>')
-    for i, v in enumerate(vals):
-        parts.append(f'<circle cx="{X(i, 5):.1f}" cy="{Y(v):.1f}" r="4" fill="#7C3AED"/>')
-    parts.append("</svg>")
-    return "\n".join(parts)
+def rate_panels(regions):
+    cards = []
+    fits = {}
+    for key, label, color in CHART:
+        a, b, se, x, y, w = fit_share(regions, key)
+        fits[key] = {"intercept": a, "slope": b, "se": se}
+        svg = _scatter(
+            x, y, w, color,
+            0, 100, 0, 100,
+            (0, 50, 100), (0, 50, 100),
+            a, b, square=True,
+        )
+        cards.append(
+            "<div class=\"slope-card\">"
+            f'<p class="slope-k"><i style="background:{color}"></i>{esc(label)}</p>'
+            f'<p class="slope-v">{num(b, sign=True)}<span>points of share per point of use · SE {num(se)}</span></p>'
+            f"{svg}</div>"
+        )
+    return '<div class="slope-grid">' + "".join(cards) + "</div>", fits
+
+
+def index_region_chart(regions):
+    a, b, se, x, y, w = fit_share(regions, "combined")
+    pad = 1
+    x0, x1 = float(np.min(x)) - pad, float(np.max(x)) + pad
+    ticks = _span_ticks(x0, x1, 4)
+    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, ticks, (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6)
+    return svg, a, b, se
+
+
+def density_chart(regions):
+    a, b, se, x, y, w = fit_share(regions, "ln_dens")
+    x0, x1 = 0, 11
+    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, (0, 2, 4, 6, 8, 10), (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6)
+    return svg, a, b, se
 
 
 def between_chart(states):
-    xs = [float(r["combined"]) for r in states]
-    ys = [float(r["dem2"]) * 100 for r in states]
-    wts = [float(r["two_party"]) for r in states]
-    wmin, wmax = min(xs) - 1, max(xs) + 1
-    # map x ourselves
-    w, h = 720, 320
-    left, right, top, bottom = 54, 16, 18, 36
-    pw, ph = w - left - right, h - top - bottom
-    y0, y1 = 20, 80
-
-    def X(v):
-        return left + (v - wmin) / (wmax - wmin) * pw
-
-    def Y(v):
-        return top + (y1 - v) / (y1 - y0) * ph
-
-    parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
-    for t in (20, 40, 60, 80):
-        parts.append(f'<line x1="{left}" y1="{Y(t):.1f}" x2="{w-right}" y2="{Y(t):.1f}" class="grid"/>')
-        parts.append(f'<text x="{left-8}" y="{Y(t)+4:.1f}" text-anchor="end" class="tick">{t}</text>')
-    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h-bottom}" class="axis"/>')
-    parts.append(f'<line x1="{left}" y1="{h-bottom}" x2="{w-right}" y2="{h-bottom}" class="axis"/>')
-    for v in range(int(wmin), int(wmax) + 1, 4):
-        parts.append(f'<text x="{X(v):.1f}" y="{h-14}" text-anchor="middle" class="tick">{v}</text>')
-    m = max(wts)
-    for x, y, wt in zip(xs, ys, wts):
-        r = 3 + 7 * (wt / m) ** 0.5
-        parts.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{r:.1f}" fill="#2563EB" fill-opacity="0.75"/>')
-    parts.append("</svg>")
-    return "\n".join(parts)
+    a, b, se, x, y, w = fit_share(states, "combined")
+    pad = 1
+    x0, x1 = float(np.min(x)) - pad, float(np.max(x)) + pad
+    ticks = _span_ticks(x0, x1, 2)
+    svg = _scatter(
+        x, y, w, "#2563EB", x0, x1, 0, 100, ticks, (0, 25, 50, 75, 100), a, b,
+        opacity=0.62, r0=3.0, r1=8.0,
+    )
+    return svg, a, b, se
 
 
 def lab_chart():
@@ -501,8 +537,8 @@ def nav():
 
 def main():
     ext = json.loads((RESULTS / "extended.json").read_text())
-    quint = list(csv.DictReader((RESULTS / "quintiles.csv").open()))
     states = list(csv.DictReader((RESULTS / "state_level.csv").open()))
+    regions = list(csv.DictReader((RESULTS / "region_level.csv").open()))
     from industry_donations_source import records, write_csv
     from industry_spending import category_rows, write_outputs
 
@@ -511,10 +547,10 @@ def main():
     donations = records()
     spending = category_rows()
     alone = ext["alone"]
-    lines, legend = line_chart(quint)
-    dens = density_chart(ext["combined_vs_density"]["bins"])
-    within = within_chart(ext["combined_vs_state"]["within_bins"])
-    between = between_chart(states)
+    panels, line_fits = rate_panels(regions)
+    dens, _dens_a, dens_b, dens_se = density_chart(regions)
+    index_svg, _index_a, index_b, index_se = index_region_chart(regions)
+    between = between_chart(states)[0]
     parties, party_legend = party_lines(donations)
     cats = category_chart(spending)
     spend_rows = spending_table(spending)
@@ -532,13 +568,8 @@ def main():
     beer_total, beer_dem, beer_rep = dget("Beer, Wine & Liquor", "total"), dget("Beer, Wine & Liquor", "to_democrats"), dget("Beer, Wine & Liquor", "to_republicans")
     pharma_total = dget("Pharmaceuticals / Health Products", "total")
     mj_total = dget("Marijuana", "total")
-    mj_q = [r for r in quint if r["measure"] == "mj"]
-    alc_q = [r for r in quint if r["measure"] == "alc"]
     n_index = len(ext["joint"]["terms"])
-
-    def qdem(rows, q):
-        r = next(x for x in rows if int(x["quintile"]) == q)
-        return float(r["dem2"]) * 100
+    mj_line, alc_line = line_fits["mj"], line_fits["alc"]
 
     html = f"""<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -566,7 +597,8 @@ def main():
 <style>
 .note-wrap{{max-width:none;width:100%;margin:0;padding:.4rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1240px)/2)) 3.5rem}}
 .note-wrap p:not(.axis-name),.note-wrap h2,.note-wrap .src,.note-wrap li{{max-width:42rem}}
-.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name{{max-width:860px}}
+.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid{{max-width:860px}}
+.note-wrap .slope-card p{{max-width:none}}
 .crumb{{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}}
 .crumb a{{color:var(--accent)}}
 .hero .crumb{{position:relative;z-index:1;margin:0 0 .55rem;order:-2}}
@@ -618,6 +650,7 @@ body.pp .hero h1{{max-width:22ch}}
   table.cmp{{font-size:.72rem}}
   table.cmp th,table.cmp td{{padding:.35rem .3rem}}
   .axis-name{{flex-direction:column;align-items:flex-start;gap:.25rem}}
+  .slope-grid{{grid-template-columns:1fr}}
 }}
 </style>
 </head>
@@ -629,7 +662,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="crumb"><a href="../research.html">Research</a> / Substance use and the 2024 vote</p>
 <h1>Substance use and the 2024 vote</h1>
 <p class="subtitle">NSDUH substate rates · one regression</p>
-<p class="tagline">The lowest fifth of regions on past-month marijuana use cast {qdem(mj_q,1):.1f}% of its two-party vote for the Democrat. The highest fifth cast {qdem(mj_q,5):.1f}%. Alcohol runs the same direction: {qdem(alc_q,1):.1f}% in the lowest fifth, {qdem(alc_q,5):.1f}% in the highest.</p>
+<p class="tagline">One point of past-month marijuana use lines up with {num(mj_line['slope'], sign=True)} points of Democratic two-party share on the vote-weighted fit. Alcohol’s fit is {num(alc_line['slope'], sign=True)} per point. After log density and age, marijuana is {num(alone['mj']['pp_per_pp'], sign=True)} and alcohol is {num(alone['alc']['pp_per_pp'], sign=True)}.</p>
 </section>
 <main class="note-wrap">
 <div class="data-top">
@@ -662,17 +695,20 @@ body.pp .hero h1{{max-width:22ch}}
 </div>
 
 <div class="stats">
-<div class="stat lead"><span class="k">Marijuana, lowest fifth to highest</span><span class="v">+18.1</span><span class="s">points of Democratic two-party share, {qdem(mj_q,1):.1f}% to {qdem(mj_q,5):.1f}%. Measured.</span></div>
-<div class="stat"><span class="k">Alcohol, lowest fifth to highest</span><span class="v">{qdem(alc_q,5) - qdem(alc_q,1):+.1f}</span><span class="s">points, {qdem(alc_q,1):.1f}% to {qdem(alc_q,5):.1f}%. Measured.</span></div>
+<div class="stat lead"><span class="k">Marijuana, vote-weighted fit</span><span class="v">{num(mj_line['slope'], sign=True)}</span><span class="s">points of Democratic two-party share per point of past-month use. SE {num(mj_line['se'])}. Measured.</span></div>
+<div class="stat"><span class="k">Alcohol, vote-weighted fit</span><span class="v">{num(alc_line['slope'], sign=True)}</span><span class="s">points of share per point of past-month use. SE {num(alc_line['se'])}. Measured.</span></div>
 <div class="stat"><span class="k">After density and age</span><span class="v">{num(alone['mj']['pp_per_pp'], sign=True)}</span><span class="s">marijuana, vote-share points per point of past-month use. SE {num(alone['mj']['se_pp'])}.</span></div>
 </div>
 
 <h2>Each rate</h2>
-<p>Vote-weighted fifths. The vertical axis is the 2024 Democratic vote divided by Democratic plus Republican votes. Each line is one NSDUH rate, cut into its own fifths.</p>
-<div class="chart-card">{lines}</div>
-<p class="axis-name"><span>Y · Democratic two-party share, %</span><span>X · Quintile of that rate, low to high</span></p>
-{legend}
-<p class="fine cap">Measured. The unit is the substate region. 382 regions.</p>
+<p>Each point is one substate region. The area of the point is two-party votes. The vertical axis is the 2024 Democratic vote divided by Democratic plus Republican votes, from 0 to 100. The horizontal axis is that NSDUH rate, in percent, on the same 0 to 100 scale. The line is the vote-weighted fit of share on the rate. Its slope is points of share per point of use.</p>
+{panels}
+<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · NSDUH rate, 0–100%</span></p>
+<p class="fine cap">Measured. The unit is the substate region. 382 regions. Both axes are percentage points on the same scale, so the angle of the line is the slope. The line runs from the lowest regional rate to the highest.</p>
+
+<h2>Rate of change</h2>
+<p>SAMHSA withdrew the 2018–2020 substate estimates. Web interviews in late 2020 changed answers relative to the in-person interviews of 2018 and 2019, and the agency took that three-year pool down. The 2016–2018 substate shapefile is still published. The 2021 methodology guide sets 2021 as the baseline for NSDUH estimates after the move to web and in-person collection. States also redraw substate regions between cycles. The 2021–2023 file is one pooled period. The line on each panel is the rate of change in this cross-section: points of 2024 Democratic two-party share per point of the 2021–2023 rate.</p>
+<p class="src">2018–2020 withdrawal: <a href="https://www.samhsa.gov/data/data-we-collect/nsduh-national-survey-drug-use-and-health/substate-releases/2018-2020">SAMHSA substate releases, 2018–2020</a>. 2021 baseline: <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt39464/2021NSDUHsaeMethodology111022/2021NSDUHsaeMethodology111022.htm">2021 NSDUH small-area estimation methodology</a>. 2016–2018 file: <a href="https://www.samhsa.gov/data/report/2016-2018-nsduh-substate-region-shapefile">2016–2018 substate region shapefile</a>.</p>
 <p>After log density and age, one point of past-month marijuana use lines up with <strong>{num(alone['mj']['pp_per_pp'], sign=True)}</strong> points of Democratic two-party share (SE {num(alone['mj']['se_pp'])}). Past-month alcohol is <strong>{num(alone['alc']['pp_per_pp'], sign=True)}</strong> (SE {num(alone['alc']['se_pp'])}).</p>
 <p>A point of cocaine is a large coefficient because the regional rate only moves about half a point: <strong>{num(alone['coc']['pp_per_pp'], sign=True)}</strong> per point of past-year cocaine use (SE {num(alone['coc']['se_pp'])}), which is <strong>{num(alone['coc']['pp_per_sd'], sign=True)}</strong> points of share per weighted standard deviation. Hallucinogens are <strong>{num(alone['hal']['pp_per_sd'], sign=True)}</strong> per SD. Opioid misuse is <strong>{num(alone['opin']['pp_per_sd'], sign=True)}</strong> per SD (SE {num(alone['opin']['se_per_sd'])}). Methamphetamine is <strong>{num(alone['met']['pp_per_sd'], sign=True)}</strong> per SD.</p>
 <table class="cmp">
@@ -706,21 +742,23 @@ body.pp .hero h1{{max-width:22ch}}
 <h2>Combined index</h2>
 <p>One SD of the sum lines up with <strong>{num(c['pp_per_sd'], sign=True)}</strong> points of Democratic two-party share (SE {num(c['se_per_sd'])}). The correlation of the sum with the vote is {ext['correlations_dem2']['combined']:.2f}. The first principal component of the same {n_index} z-scores correlates {ext['index']['corr_sum_vs_pc1']:.2f} with the sum. One SD of the component lines up with <strong>{num(pc['pp_per_sd'], sign=True)}</strong> points of share (SE {num(pc['se_per_sd'])}). The component’s correlation with the vote is {ext['correlations_dem2']['combined_pc1']:.2f}. It accounts for {ext['index']['pc1_variance_share']*100:.0f}% of the weighted covariance of the {n_index} z-scores.</p>
 <p>Inside the same state, one point of the sum lines up with <strong>{num(within_c['pp_per_pp'], sign=True)}</strong> points of share (SE {num(within_c['se_pp'])}). Between states, with log density, the slope is <strong>{num(between_c['pp_per_pp'], sign=True)}</strong> (SE {num(between_c['se_pp'])}, {ext['combined_vs_state']['n_states']} jurisdictions). Between states, the sum alone is {num(between_a['pp_per_pp'], sign=True)} (SE {num(between_a['se_pp'])}). The sum’s correlation with log density is {ext['combined_vs_density']['corr']:.2f}.</p>
-<h2>Combined index and the state</h2>
-<p>Each point is a state, or the District of Columbia. The area of the point is two-party votes. The horizontal axis is the vote-weighted mean of the sum inside that jurisdiction.</p>
-<div class="chart-card">{between}</div>
-<p class="axis-name"><span>Y · Democratic two-party share, %</span><span>X · Combined index, state mean</span></p>
-<p class="fine cap">Measured. State means of the substate-region index.</p>
-<p>The next chart is the same sum after subtracting each state’s vote-weighted mean. The vertical axis is the region’s Democratic share minus the state’s, in percentage points. Fifths are fifths of that within-state index.</p>
-<div class="chart-card">{within}</div>
-<p class="axis-name"><span>Y · Democratic share minus the state mean, points</span><span>X · Within-state quintile of the index</span></p>
-<p class="fine cap">Measured. The unit is the substate region, demeaned by state.</p>
+<h2>Combined index and the region</h2>
+<p>Each point is a substate region. The area of the point is two-party votes. The line is the vote-weighted fit of Democratic two-party share on the index, with no other controls: <strong>{num(index_b, sign=True)}</strong> points of share per index point (SE {num(index_se)}).</p>
+<div class="chart-card">{index_svg}</div>
+<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Combined index</span></p>
+<p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
 
-<h2>Combined index and density</h2>
-<p>Fifths of regional log density. The index in those fifths is {ext['combined_vs_density']['bins'][0]['combined']:+.2f}, {ext['combined_vs_density']['bins'][1]['combined']:+.2f}, {ext['combined_vs_density']['bins'][2]['combined']:+.2f}, {ext['combined_vs_density']['bins'][3]['combined']:+.2f}, {ext['combined_vs_density']['bins'][4]['combined']:+.2f}. Democratic share in the same fifths runs from {ext['combined_vs_density']['bins'][0]['dem2']*100:.1f}% to {ext['combined_vs_density']['bins'][4]['dem2']*100:.1f}%.</p>
+<h2>Combined index and the state</h2>
+<p>Each point is a state, or the District of Columbia. The area of the point is two-party votes. The horizontal axis is the vote-weighted mean of the sum inside that jurisdiction. The line is the vote-weighted fit of share on that state mean: <strong>{num(between_a['pp_per_pp'], sign=True)}</strong> points per index point (SE {num(between_a['se_pp'])}).</p>
+<div class="chart-card">{between}</div>
+<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Combined index, state mean</span></p>
+<p class="fine cap">Measured. State means of the substate-region index. The vertical axis runs from 0 to 100.</p>
+
+<h2>Democratic share and density</h2>
+<p>Each point is a substate region. The area of the point is two-party votes. The line is the vote-weighted fit of Democratic two-party share on log population density: <strong>{num(dens_b, sign=True)}</strong> points of share per log point (SE {num(dens_se)}).</p>
 <div class="chart-card">{dens}</div>
-<p class="axis-name"><span>Y · Combined index</span><span>X · People per km², vote-weighted mean of the fifth</span></p>
-<p class="fine cap">Measured. The unit is the substate region.</p>
+<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Log population density, people per km²</span></p>
+<p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
 
 <h2>Laboratory results</h2>
 <p>Kloft and colleagues (PNAS, 2020) vaporized 300 μg of THC per kilogram. On the immediate test, a suggested false detail in the eyewitness scene was accepted <strong>19%</strong> of the time after THC (SE 0.04) and <strong>8%</strong> after placebo (SE 0.02). Related-word false alarms were <strong>42%</strong> (SE 0.03) and <strong>27%</strong> (SE 0.03). Gawrylowicz and colleagues (Psychopharmacology, 2017) gave alcohol in the lab after a filmed crime and before the misleading narrative. The marginal mean proportion of misled responses was <strong>0.25</strong> after alcohol (95% CI 0.196 to 0.300), <strong>0.22</strong> in the reverse-placebo arm (0.174 to 0.276), and <strong>0.319</strong> with no alcohol (0.266 to 0.371).</p>

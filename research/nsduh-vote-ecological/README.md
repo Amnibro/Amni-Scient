@@ -49,6 +49,10 @@ Vote-weighted quintiles of regional past-month use, and the vote-weighted Democr
 
 Vote-weighted correlations with Democratic two-party share: log density 0.73, bachelor's share 0.71, past-month alcohol 0.48, past-month marijuana 0.42.
 
+The study page draws each rate as region points on a 0–100 Democratic-share axis against the rate itself on a 0–100 axis, with one vote-weighted line. The same 0–100 share axis is on the combined-index charts and the density chart. The quintile table above is a bin summary. The line on the page is the vote-weighted fit with no other controls: marijuana +1.48 (SE 0.20), alcohol +1.10 (SE 0.11).
+
+SAMHSA withdrew the 2018–2020 substate estimates (web interviews in late 2020 versus in-person interviews in 2018 and 2019). The 2016–2018 shapefile is still published. The 2021 small-area guide sets 2021 as the NSDUH baseline after multimode collection, and states redraw substate regions between cycles. The 2021–2023 file is one pooled period, so the page has no consumption change to set against the 2016–2024 or 2020–2024 vote swing. The fitted line is the rate of change in this cross-section.
+
 Past-month alcohol, in the same density and age specification, has a coefficient of 0.66 vote-share points per percentage point of alcohol use (SE 0.09). Alcohol's regional spread is wider (weighted SD 6.1 points versus 4.0 for marijuana), so the two standardized associations are similar in size. Entered together, marijuana is 0.96 (SE 0.13) and alcohol is 0.49 (SE 0.08).
 
 ## What was joined
