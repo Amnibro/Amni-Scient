@@ -74,6 +74,19 @@ def money(n):
     return f"${n:,.0f}"
 
 
+def dollars(n):
+    from decimal import Decimal
+
+    d = Decimal(str(n))
+    if d == d.to_integral():
+        return f"${d:,.0f}"
+    return f"${d:,.2f}"
+
+
+def esc(s):
+    return str(s).replace("&", "&amp;").replace("<", "&lt;")
+
+
 def svg_frame(w, h, y0, y1, ticks, xlabels, ylab_x=46):
     left, right, top, bottom = 54, 16, 18, 36
     pw, ph = w - left - right, h - top - bottom
@@ -312,6 +325,93 @@ def party_lines(rows):
     return "\n".join(parts), legend
 
 
+def category_chart(rows):
+    order = [
+        "Beer, Wine & Liquor",
+        "Tobacco",
+        "Pharmaceuticals / Health Products",
+        "Marijuana",
+    ]
+    cat_order = ["Federal contributions", "Federal lobbying", "State ballot support"]
+    colors = {
+        "Federal contributions": "#64748B",
+        "Federal lobbying": "#0F766E",
+        "State ballot support": "#16A34A",
+    }
+    panels = []
+    w = 720
+    bar_x = 200
+    bar_max = 210
+    for ind in order:
+        sub = [r for r in rows if r["industry"] == ind and r["category"] in cat_order]
+        sub.sort(key=lambda r: cat_order.index(r["category"]))
+        ymax = max(float(r["amount"]) for r in sub)
+        row_h = 40
+        top = 28
+        h = top + len(sub) * row_h + 10
+        parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
+        parts.append(f'<text x="8" y="16" class="tick">{esc(ind)}</text>')
+        for i, r in enumerate(sub):
+            y = top + i * row_h
+            amt = float(r["amount"])
+            bw = 0 if ymax == 0 else amt / ymax * bar_max
+            if amt > 0:
+                bw = max(bw, 2)
+            parts.append(f'<text x="8" y="{y + 18}" class="tick">{esc(r["category"])}</text>')
+            parts.append(
+                f'<rect x="{bar_x}" y="{y + 6}" width="{bw:.1f}" height="16" fill="{colors[r["category"]]}"/>'
+            )
+            if r["category"] == "Federal contributions":
+                party = f'{float(r["pct_democrats"]):.2f}% D / {float(r["pct_republicans"]):.2f}% R'
+            else:
+                party = "no party"
+            label = f"{dollars(r['amount'])} · {party}"
+            parts.append(f'<text x="{bar_x + bw + 8:.1f}" y="{y + 18}" class="tick">{esc(label)}</text>')
+        parts.append("</svg>")
+        panels.append("\n".join(parts))
+    legend = (
+        '<div class="legend">'
+        '<span><i style="background:#64748B;height:10px"></i>Federal contributions, party split of candidate and party money</span>'
+        '<span><i style="background:#0F766E;height:10px"></i>Federal lobbying, no party</span>'
+        '<span><i style="background:#16A34A;height:10px"></i>State ballot support, no party</span>'
+        "</div>"
+    )
+    return legend + "\n" + "\n".join(f'<div class="chart-card">{p}</div>' for p in panels)
+
+
+def spending_table(rows):
+    body = []
+    for r in rows:
+        body.append(
+            "<tr>"
+            f"<td>{esc(r['industry'])}</td>"
+            f"<td>{esc(r['category'])}</td>"
+            f'<td class="num">{dollars(r["amount"])}</td>'
+            f"<td>{esc(r['party'])}</td>"
+            "</tr>"
+        )
+    return "\n".join(body)
+
+
+def ballot_table():
+    from industry_spending import BALLOT
+
+    body = []
+    for r in BALLOT:
+        if r["counted"] != "yes":
+            continue
+        body.append(
+            "<tr>"
+            f"<td>{esc(r['state'])}</td>"
+            f"<td>{esc(r['measure'])}</td>"
+            f"<td>{esc(r['committee'])}</td>"
+            f'<td class="num">{dollars(r["total"])}</td>'
+            f"<td>no party</td>"
+            "</tr>"
+        )
+    return "\n".join(body)
+
+
 def compare_chart(alone, rows):
     # Four paired rows.
     vote = [
@@ -399,21 +499,11 @@ def joint_table(joint):
 
 
 def potency_html():
-    text = (ROOT / "research" / "eighteen-points.html").read_text()
-    start = text.index("<h2>Suggestibility</h2>")
-    end = text.index("<h2>For X</h2>")
-    block = text[start:end]
-    block = block.replace("<h2>Suggestibility</h2>", "<h2>Suggestibility, predicted from the lab dose</h2>", 1)
-    block = block.replace(
-        "<h2>Cognitive decline, study potency versus current potency</h2>",
-        "<h2>IQ, predicted from study potency</h2>",
-        1,
-    )
-    return block
+    return (HERE / "fragments" / "potency.html").read_text()
 
 
 def nav():
-    return (ROOT / "research" / "past-month-alcohol-vote-share.html").read_text().split("<nav>", 1)[1].split("</nav>", 1)[0]
+    return (HERE / "fragments" / "nav.html").read_text().strip()
 
 
 def main():
@@ -421,15 +511,21 @@ def main():
     quint = list(csv.DictReader((RESULTS / "quintiles.csv").open()))
     states = list(csv.DictReader((RESULTS / "state_level.csv").open()))
     from industry_donations_source import records, write_csv
+    from industry_spending import category_rows, write_outputs
 
     write_csv(RESULTS / "industry_donations.csv")
+    write_outputs(RESULTS)
     donations = records()
+    spending = category_rows()
     alone = ext["alone"]
     lines, legend = line_chart(quint)
     dens = density_chart(ext["combined_vs_density"]["bins"])
     within = within_chart(ext["combined_vs_state"]["within_bins"])
     between = between_chart(states)
     parties, party_legend = party_lines(donations)
+    cats = category_chart(spending)
+    spend_rows = spending_table(spending)
+    ballot_rows_html = ballot_table()
     use_keys = ["mj", "alc", "binge", "cig", "tob", "iem", "ill", "coc", "hal", "her", "met", "opin", "pnr", "mrjyr", "ualc", "ubinge", "ucig", "utob"]
     dis_keys = ["sud", "dud", "oud", "prud", "aud", "uaud"]
     c = alone["combined"]
@@ -459,7 +555,7 @@ def main():
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Substance use and the 2024 vote | AMNI-SCIENT Research</title>
-<meta name="description" content="Vote-weighted regressions of 2021–2023 NSDUH substate substance-use rates on 2024 Democratic two-party share across 382 regions, plus a combined index, laboratory results, and OpenSecrets industry contributions.">
+<meta name="description" content="Vote-weighted regressions of 2021–2023 NSDUH substate substance-use rates on 2024 Democratic two-party share across 382 regions, plus a combined index, laboratory results, and industry contributions, lobbying, and state ballot spending.">
 <meta name="keywords" content="NSDUH,marijuana,alcohol,cigarettes,opioid,2024 presidential vote,ecological regression,OpenSecrets,Anthony Reffelt">
 <meta property="og:title" content="Substance use and the 2024 vote — AMNI-SCIENT Research">
 <meta property="og:description" content="NSDUH substate rates and 2024 Democratic two-party share. Measured vote results, laboratory results, and industry contributions, labeled separately.">
@@ -513,6 +609,8 @@ table.cmp th:first-child,table.cmp td:first-child{{text-align:left}}
 table.cmp th{{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);background:var(--panel2)}}
 table.cmp tr:last-child td{{border-bottom:0}}
 table.cmp tr.hot td{{background:var(--accent-dim);color:var(--text);font-weight:650}}
+table.spend th,table.spend td{{text-align:left}}
+table.spend td.num,table.spend th.num{{text-align:right;white-space:nowrap}}
 .src{{margin-top:1.6rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.82rem;color:var(--dim)}}
 .data-top{{padding-top:0}}
 .data-top h2{{text-align:left;font-size:1.15rem;letter-spacing:.08em}}
@@ -550,10 +648,16 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/extended.json" download>Extended JSON</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/quintiles.csv" download>Quintiles CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/state_level.csv" download>State CSV</a>
-<a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_donations.csv" download>Donations CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_donations.csv" download>Federal contributions CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_spending_2024.csv" download>2024 spending CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv" download>Ballot CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_lobbying_clients_2024.csv" download>Lobbying clients CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv" download>FEC employers CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv" download>FEC PACs CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/substate_outcomes_212223.csv" download>NSDUH outcomes CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/run_regression.py" download>Regression script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/fit_extended.py" download>Substance fit</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
 </div>
 <p>I joined SAMHSA’s 2021–2023 NSDUH substate small-area estimates to 2024 presidential votes reallocated to ZCTAs by the land-cover method (Harvard Dataverse 10.7910/DVN/Z8TSH3), with ACS 2019–2023 age and education and Census 2020 ZCTA internal points. The unit is the substate region. N = 382 regions, 30,389 ZCTAs, 150.1 million allocated two-party votes. Weights are two-party votes. Standard errors are HC1. The specified model is the rate, log population density, percent ages 18–25, and percent ages 12–17. Ages 12–14 are three-fifths of the ACS 10–14 band, and age 25 is one-fifth of the 25–29 band. Replacing those with ages 15–17 and 18–24 leaves the marijuana slope at 1.12.</p>
@@ -561,7 +665,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p>The NSDUH rates are small-area estimates. I applied no errors-in-variables correction. No public file links one person’s use to that person’s ballot. Density’s correlation with Democratic two-party share is 0.73. Bachelor’s share is 0.71. The slope that remains after density and age is the residual association of the rate.</p>
 <p>Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are not in the substate file. Those six are past-year rates, and heroin is ages 18 or older. There is no separate heavy-drinking field. Binge alcohol in the past month is the intensity measure SAMHSA published. Nicotine vaping is not its own outcome. Tobacco product use in the past month is the tobacco field. Fentanyl, inhalants, LSD, PCP, and crack are not separate substate rates. The file also carries mental-illness, suicide, and perceived-risk outcomes. I left those out of the vote regression. Substance-use disorder rates are in the second table. They are disorder prevalence, not use.</p>
 <p>The combined index is the sum of eight vote-weighted z-scores: past-month marijuana, past-month alcohol, past-month cigarettes, past-month illicit drugs other than marijuana, past-year cocaine, past-year opioid misuse, past-year methamphetamine, and past-year hallucinogens. A region at the vote-weighted mean on every rate scores 0. One standard deviation above on all eight scores 8. I left out rates that repeat another rate: illicit drugs including marijuana, tobacco products including cigarettes, binge alcohol, pain-reliever misuse inside opioid misuse, past-year marijuana, heroin at ages 18 or older, and the underage rates.</p>
-<p>The laboratory chart is laboratory data. The potency curves are predictions. OpenSecrets industry totals were retrieved 2026-10-11 from the Internet Archive capture of 2026-07-16, after the live pages returned HTTP 403. Party percentages are OpenSecrets’ shares of contributions to candidates and parties. Outside spending is in the total and is left out of the party split. I did not re-sum raw FEC itemized filings.</p>
+<p>The laboratory chart is laboratory data. The potency curves are predictions. Federal contribution totals are OpenSecrets industry codes N02, A02, H04, and N09. The 2024 cycle is January 1, 2023 through December 31, 2024. I rechecked the live N09 page on 2026-10-11. It shows $969,606. OpenSecrets dates that cycle’s FEC release February 6, 2025. Party percentages are the published shares of contributions to candidates and parties. Outside spending is in the total and out of the party split. Federal lobbying is OpenSecrets’ calendar-2024 total from Senate Office of Public Records filings, January through December. State ballot figures are committee totals compiled by Ballotpedia from state filings, retrieved 2026-10-11. Ballot measures have no party. FEC employer and PAC totals for named cannabis companies sit beside the industry total. They are separate filings.</p>
 <p class="cite">Reffelt, A. (2026). <em>Substance use and the 2024 vote.</em> AMNI-SCIENT Research. https://amni-scient.com/research/substance-use-vote-share</p>
 </div>
 
@@ -646,8 +750,33 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Kannan and Veazie, Preventive Medicine 2018, <a href="https://doi.org/10.1016/j.ypmed.2018.06.011">10.1016/j.ypmed.2018.06.011</a>. Annenberg National Health Communication Survey, 2005–2012. Democrats and liberals had higher odds of cigarette smoking and excessive drinking than Republicans and conservatives.</p>
 <p>Denham, International Journal of Drug Policy 2019, <a href="https://doi.org/10.1016/j.drugpo.2019.06.007">10.1016/j.drugpo.2019.06.007</a>. General Social Survey, 1986–2016. Party affiliation became a consistent predictor of support for marijuana legalization after 2004. That paper is about legalization attitudes.</p>
 
-<h2>Industry contributions</h2>
-<p>OpenSecrets totals, cycles 2016 through 2024. In 2024, beer, wine, and liquor gave <strong>{money(beer_total)}</strong>, of which <strong>{money(beer_dem)}</strong> went to Democrats and <strong>{money(beer_rep)}</strong> to Republicans. Tobacco’s 2024 total was <strong>{money(tob_total)}</strong>, with <strong>27.64%</strong> of candidate and party money to Democrats and <strong>71.41%</strong> to Republicans. Pharmaceuticals and health products: <strong>{money(pharma_total)}</strong>, <strong>60.04%</strong> to Democrats. Marijuana: <strong>{money(mj_total)}</strong>, <strong>61.40%</strong> to Democrats and <strong>35.12%</strong> to Republicans.</p>
+<h2>Industry money in 2024</h2>
+<p>Cannabis money in 2024 is three filings. State ballot support committees reported <strong>$157,512,674.46</strong>. Federal lobbying coded to marijuana was <strong>$5,248,000</strong>. Federal contributions coded to marijuana, OpenSecrets N09, were <strong>$969,606</strong>.</p>
+<p>Florida Amendment 3 is <strong>$153,787,032.89</strong> of the ballot total, through Smart &amp; Safe Florida, Division of Elections account 83475. Trulieve gave that committee <strong>$144,592,173.61</strong>, of which $143,775,000 was cash and $817,173.61 was in kind. Verano Holdings gave $3,509,470. Curaleaf gave $3,000,000. Green Thumb Industries gave $2,259,470. Those four donors are $153,361,113.61. The rest of the committee total is $425,919.28. Ballotpedia processed reports through December 31, 2024.</p>
+<p>The other support committees are Nebraskans for Medical Marijuana, <strong>$1,624,863.21</strong>, counted once for Initiatives 437 and 438; New Economic Frontier in North Dakota, <strong>$519,558.50</strong>; and South Dakota’s two support committees, <strong>$1,581,219.86</strong>. Ballot measures have no party.</p>
+<p>Federal lobbying for marijuana is the calendar year 2024. Twenty-one client lines sum to $5,248,000. OpenSecrets’ client count on that profile is 22. Cresco Labs is the largest line, $1,150,000. Its in-house LD-2 expenses are $420,000, $400,000, $160,000, and $170,000 across the four quarters, the same $1,150,000. Brownstein Hyatt, Putala Strategies, and Crowell &amp; Moring reported $660,000 of income on that client. That income stays out of the client line.</p>
+<p>The N09 contribution total is the full federal cycle, January 1, 2023 through December 31, 2024. The live OpenSecrets page on 2026-10-11 shows the same $969,606. OpenSecrets dates the FEC release February 6, 2025. Of contributions to candidates and parties, <strong>61.40%</strong> went to Democrats and <strong>35.12%</strong> to Republicans. Individuals were $245,993. PACs were $65,500. Soft and outside money was $658,113.</p>
+<p>Beer, wine, and liquor: federal contributions <strong>$27,431,159</strong> (52.70% Democrats / 46.36% Republicans) and lobbying <strong>$29,893,357</strong>. Tobacco: federal contributions <strong>$36,653,972</strong> (27.64% / 71.41%) and lobbying <strong>$32,389,841</strong>. Pharmaceuticals and health products: federal contributions <strong>$86,521,633</strong> (60.04% / 39.20%) and lobbying <strong>$391,572,500</strong>. Lobbying has no party. The ballot row is the cannabis measures.</p>
+<p class="fine">Each industry has its own horizontal scale. The party percentages on the federal bar are OpenSecrets’ shares of contributions to candidates and parties. Outside money is in the federal total and out of that split.</p>
+{cats}
+<table class="cmp spend">
+<thead><tr><th>Industry</th><th>Category</th><th class="num">Amount</th><th>Party</th></tr></thead>
+<tbody>
+{spend_rows}
+</tbody>
+</table>
+<table class="cmp spend">
+<thead><tr><th>State</th><th>Measure</th><th>Support committee</th><th class="num">Contributions</th><th>Party</th></tr></thead>
+<tbody>
+{ballot_rows_html}
+</tbody>
+</table>
+<p class="fine cap">Support committees only. Nebraska’s two initiatives share one committee, so $1,624,863.21 is one row. Retrieved 2026-10-11.</p>
+<p>Opposition stays out of the support total. Florida opposition is $33,610,084.06: Keep Florida Clean $24,990,394.10, Florida Freedom Fund $8,615,889.96, and Floridians Against Recreational Marijuana $3,800. Florida Freedom Fund also registered against Amendment 4. South Dakota opposition is $505,833.63. Nebraska and North Dakota opposition are $0. Transparency USA’s 2024-election-cycle view of account 83475, stamped through December 31, 2024, lists $133,786,908, including $125,099,656.52 from Trulieve. The bar uses Ballotpedia’s committee total through that date. The Division of Elections contribution search returned HTTP 502 on 2026-10-11. The committee page for account 83475 is up.</p>
+<p>FEC schedule A by employer, cycle 2024, retrieved 2026-10-11. Included strings for Trulieve, Curaleaf, Green Thumb Industries, Verano, Cresco Labs, Ayr Wellness, Tilray, Canopy Growth, the Marijuana Policy Project, the National Cannabis Industry Association, and the National Cannabis Roundtable sum to <strong>$277,316.66</strong>. Ayrloom returned no rows. Those gifts go to committees, including a company’s own PAC, so they sit beside the OpenSecrets total. Three PACs’ contributions to federal candidates: Canopy Growth USA, C00771592, $37,500, termination report, coverage through August 31, 2023; Cronos USA, C00764571, $23,500, year-end 2024; Dutchie, C00849398, $15,500, year-end 2024. The FEC sum is <strong>$76,500</strong>. OpenSecrets’ marijuana PAC-to-candidate page is <strong>$68,500</strong>, $19,000 to Democrats and $49,500 to Republicans. National Cannabis Industry Association PAC, C00528026, reported $0 to federal candidates and $8,000 in receipts, year-end 2024. Name search returned no federal committee for Trulieve, Curaleaf, Green Thumb, Verano, Cresco, Ayr Wellness, Ayrloom, Tilray, or the US Cannabis Council. The Council’s lobbying line is $580,000. Marijuana Policy Project PAC, C00389882, returned HTTP 404 on the totals endpoint. Employer strings for the Marijuana Policy Project sum to $2,052.</p>
+
+<h2>Federal contributions by cycle</h2>
+<p>OpenSecrets totals, cycles 2016 through 2024. These bars are federal contributions. The 2024 marijuana total on this chart is the $969,606 line above. In 2024, beer, wine, and liquor gave <strong>{money(beer_total)}</strong>, of which <strong>{money(beer_dem)}</strong> went to Democrats and <strong>{money(beer_rep)}</strong> to Republicans. Tobacco’s 2024 total was <strong>{money(tob_total)}</strong>, with <strong>27.64%</strong> of candidate and party money to Democrats and <strong>71.41%</strong> to Republicans. Pharmaceuticals and health products: <strong>{money(pharma_total)}</strong>, <strong>60.04%</strong> to Democrats. Marijuana: <strong>{money(mj_total)}</strong>, <strong>61.40%</strong> to Democrats and <strong>35.12%</strong> to Republicans.</p>
 <p class="fine">Gray is the cycle total. Blue is dollars to Democratic candidates and parties. Red is dollars to Republican candidates and parties. Each industry has its own vertical scale. The total includes outside spending. The party bars do not.</p>
 {donation_totals(donations)}
 <p class="fine cap">OpenSecrets industry totals, retrieved 2026-10-11 from the archive capture of 2026-07-16. Codes N02, A02, H04, and N09.</p>
@@ -657,7 +786,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine cap">The published Democratic and Republican percentages need not sum to 100. Outside spending is excluded from this split.</p>
 
 <h2>Vote share and the donation split</h2>
-<p>Left side, the density-and-age slope in points of Democratic two-party share per weighted standard deviation of the rate. Right side, the 2024 OpenSecrets split for the matching industry. Blue is the percent to Democrats. Red is the percent to Republicans. The opioid row uses Pharmaceuticals / Health Products, OpenSecrets code H04.</p>
+<p>Left side, the density-and-age slope in points of Democratic two-party share per weighted standard deviation of the rate. Right side, the 2024 OpenSecrets split of federal contributions to candidates and parties. Blue is the percent to Democrats. Red is the percent to Republicans. The opioid row uses Pharmaceuticals / Health Products, OpenSecrets code H04. State ballot committees have no party. That money is in the category chart above.</p>
 <div class="chart-card">{compare_chart(alone, donations)}</div>
 <p class="fine cap">This figure shows co-occurrence of area-level use with area-level vote share, and the published split of industry contributions to candidates and parties. It does not show intent, coordination, a deliberate strategy, or that substance use changes any individual’s vote.</p>
 
@@ -665,7 +794,10 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Vote join: NSDUH 2021–2023 substate small-area estimates, SAMHSA shapefile SubstateRegionData212223, and 2024 presidential votes reallocated to ZCTAs by land cover, Harvard Dataverse 10.7910/DVN/Z8TSH3, with age and education from the ACS 2019–2023 5-year file. Alaska and Hawaii are absent from the vote file.</p>
 <p>Shapefile outcome list: <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt56951/2023-sae-sub-region-shape-file/2023-sae-sub-region-shape-file.htm">SAMHSA, 2021–2023 substate region shapefile description</a>. Thirty-nine outcomes. Use rates and disorder rates entered above are the ones in that list.</p>
 <p>Suggestibility and IQ: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Meier et al., PNAS 2012, 10.1073/pnas.1206820109. Potency series: NIDA / University of Mississippi analyses of DEA-seized cannabis, 1995–2022. The vote regression, the Kloft rates, the Gawrylowicz rates, and the Dunedin 8-point loss are measured. The two potency curves are predictions.</p>
-<p>Contributions: OpenSecrets industry totals for Beer, Wine &amp; Liquor (N02), Tobacco (A02), Pharmaceuticals / Health Products (H04), and Marijuana (N09). Archive capture 2026-07-16, retrieved 2026-10-11. Underlying reports are Federal Election Commission filings as coded by OpenSecrets. CSV: <a href="nsduh-vote-ecological/results/industry_donations.csv">industry_donations.csv</a>.</p>
+<p>Federal contributions: OpenSecrets industry totals for Beer, Wine &amp; Liquor (N02), Tobacco (A02), Pharmaceuticals / Health Products (H04), and Marijuana (N09). Archive capture 2026-07-16, and the live N09 page, both read 2026-10-11. The 2024 cycle is January 1, 2023 through December 31, 2024. FEC release dated February 6, 2025. CSV: <a href="nsduh-vote-ecological/results/industry_donations.csv">industry_donations.csv</a>.</p>
+<p>Federal lobbying: OpenSecrets calculations from the Senate Office of Public Records, calendar 2024, January through December. Retrieved 2026-10-11. Marijuana <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N09">N09</a> $5,248,000. Beer, wine, and liquor <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N02">N02</a> $29,893,357. Tobacco <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=A02">A02</a> $32,389,841. Pharmaceuticals and health products <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=H04">H04</a> $391,572,500. Cresco Labs in-house LD-2 expenses, lda.gov filings for 2024 Q1–Q4, sum to the $1,150,000 client line. Client lines: <a href="nsduh-vote-ecological/results/industry_lobbying_clients_2024.csv">industry_lobbying_clients_2024.csv</a>.</p>
+<p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
+<p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>

@@ -1,16 +1,19 @@
-"""OpenSecrets industry totals, cycles 2016–2024.
+"""OpenSecrets federal industry contribution totals, cycles 2016–2024.
 
-Live pages returned HTTP 403 (Cloudflare) on 2026-10-11. The rows below are
-the Totals-by-Election-Cycle table from the Internet Archive capture
-20260716031036 of each OpenSecrets industry totals page, retrieved that day.
+The rows are the Totals-by-Election-Cycle table. Live OpenSecrets returned
+HTTP 403 on a direct fetch on 2026-10-11, so the first copy came from
+Internet Archive capture 20260716031036 (captured 2026-07-16). The live N09
+page, read again on 2026-10-11, shows the same 2024 row: $969,606. That
+cycle is January 1, 2023 through December 31, 2024. OpenSecrets dates the
+underlying FEC release February 6, 2025.
 
 Party percentages are OpenSecrets' published shares of contributions to
 candidates and parties. Outside spending is included in `total` and is
 excluded from the party split, which is why the two party percentages need
 not sum to 100.
 
-This script does not re-sum raw FEC itemized filings. OpenSecrets codes
-those filings into industries.
+These rows are federal contributions coded to the industry. Lobbying and
+state ballot committees are in industry_spending.py.
 """
 
 from __future__ import annotations

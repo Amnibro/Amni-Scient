@@ -2,7 +2,7 @@
 
 The combined study page is [research/substance-use-vote-share.html](../substance-use-vote-share.html) (`https://amni-scient.com/research/substance-use-vote-share`). The earlier marijuana and alcohol notes redirect there.
 
-Committed files in this directory: `run_regression.py`, `fit_extended.py`, `render_page.py`, `industry_donations_source.py`, `data/substate_outcomes_212223.csv`, `results/region_level.csv`, `results/results.json`, `results/extended.json`, `results/quintiles.csv`, `results/state_level.csv`, and `results/industry_donations.csv`.
+Committed files in this directory: `run_regression.py`, `fit_extended.py`, `render_page.py`, `industry_donations_source.py`, `industry_spending.py`, `data/substate_outcomes_212223.csv`, `data/fec_by_employer_2024.json`, `results/region_level.csv`, `results/results.json`, `results/extended.json`, `results/quintiles.csv`, `results/state_level.csv`, `results/industry_donations.csv`, `results/industry_spending_2024.csv`, `results/cannabis_ballot_2024.csv`, `results/industry_lobbying_clients_2024.csv`, `results/cannabis_fec_employers_2024.csv`, and `results/cannabis_fec_pacs_2024.csv`.
 
 This is the ecological regression requested at the end of the uploaded Grok thread. It joins public 2021–2023 NSDUH substate estimates to 2024 presidential votes reallocated to ZIP Code Tabulation Areas, with census age structure and density as controls.
 
@@ -94,9 +94,15 @@ The combined index is the sum of vote-weighted z-scores of marijuana, alcohol, c
 
 SAMHSA does not publish these as substate rates: past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, or pain-reliever misuse (those six are past-year, and heroin is 18+); a separate heavy-drinking field (binge is the intensity measure); nicotine vaping as its own outcome (`TOBMON` is tobacco products); fentanyl, inhalants, LSD, PCP, or crack as separate rates. Mental illness, suicide, and perceived-risk fields are in the shapefile and are left out of the vote regression.
 
-## Industry contributions
+## Industry money
 
-`industry_donations_source.py` writes `results/industry_donations.csv`. Rows are OpenSecrets industry totals for 2016–2024, codes N02 Beer/Wine/Liquor, A02 Tobacco, H04 Pharmaceuticals/Health Products, and N09 Marijuana. Live OpenSecrets returned HTTP 403 on 2026-10-11. The figures are from the Internet Archive capture `20260716031036` (captured 2026-07-16) of `https://www.opensecrets.org/industries/totals`. Party percentages are OpenSecrets shares of contributions to candidates and parties. Outside money is in the total and is excluded from the party split. This file does not re-sum raw FEC itemized filings.
+`industry_donations_source.py` writes `results/industry_donations.csv`. Rows are OpenSecrets federal contribution totals for 2016–2024, codes N02 Beer/Wine/Liquor, A02 Tobacco, H04 Pharmaceuticals/Health Products, and N09 Marijuana. A direct fetch of the live site returned HTTP 403 on 2026-10-11. The cycle table was taken from Internet Archive capture `20260716031036` (captured 2026-07-16). The live N09 page, read the same day, shows the same 2024 row: $969,606. That cycle is January 1, 2023 through December 31, 2024. OpenSecrets dates the underlying FEC release February 6, 2025. Party percentages are shares of contributions to candidates and parties. Outside money is in the total and is excluded from the party split.
+
+`industry_spending.py` writes the 2024 category file and the detail files. Federal lobbying is OpenSecrets’ calendar-2024 total from Senate Office of Public Records filings (January through December): N09 $5,248,000, N02 $29,893,357, A02 $32,389,841, H04 $391,572,500. Lobbying has no party. Cresco Labs’ four 2024 in-house LD-2 expense reports sum to $1,150,000, the OpenSecrets client line. Outside-firm income on that client is not added.
+
+State ballot support for the 2024 cannabis measures is $157,512,674.46, with no party. Florida Amendment 3, Smart & Safe Florida, account 83475, is $153,787,032.89 of that (reports through December 31, 2024). Trulieve’s gifts to that committee are $144,592,173.61. Nebraska Initiatives 437 and 438 share one committee and are counted once. Opposition committees are in `cannabis_ballot_2024.csv` and out of the support total.
+
+FEC schedule A by_employer totals for the included cannabis employer strings sum to $277,316.66. Those gifts go to committees, including company PACs, so they are not added to the OpenSecrets industry total. Canopy, Cronos, and Dutchie PACs’ FEC contributions to federal candidates sum to $76,500. OpenSecrets’ PAC-to-candidate page for N09 is $68,500.
 
 ## Reproduce
 
