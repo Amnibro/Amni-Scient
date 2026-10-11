@@ -1,92 +1,4 @@
 {
-  "index": {
-    "definition": "Sum of vote-weighted z-scores of 7 non-nested substance-use rates: mj, alc, iem, coc, opin, met, hal. Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. A region at the vote-weighted mean on every rate scores 0. One standard deviation above the mean on every rate scores 7.",
-    "members": {
-      "mj": {
-        "vote_weighted_mean": 14.606685421026487,
-        "vote_weighted_sd": 3.977548867047172,
-        "field": "MRJMON",
-        "label": "Past-month marijuana",
-        "age": "12+",
-        "window": "month",
-        "kind": "use"
-      },
-      "alc": {
-        "vote_weighted_mean": 48.36544152531283,
-        "vote_weighted_sd": 6.127178798304622,
-        "field": "ALCMON",
-        "label": "Past-month alcohol",
-        "age": "12+",
-        "window": "month",
-        "kind": "use"
-      },
-      "iem": {
-        "vote_weighted_mean": 3.289021785760502,
-        "vote_weighted_sd": 0.6522606728599617,
-        "field": "IEMMON",
-        "label": "Past-month illicit drugs other than marijuana",
-        "age": "12+",
-        "window": "month",
-        "kind": "use"
-      },
-      "coc": {
-        "vote_weighted_mean": 1.7651198658076097,
-        "vote_weighted_sd": 0.5027308442217782,
-        "field": "COCYR",
-        "label": "Past-year cocaine",
-        "age": "12+",
-        "window": "year",
-        "kind": "use"
-      },
-      "opin": {
-        "vote_weighted_mean": 3.1940378054948373,
-        "vote_weighted_sd": 0.5258150345825621,
-        "field": "OPINMYR",
-        "label": "Past-year opioid misuse",
-        "age": "12+",
-        "window": "year",
-        "kind": "use"
-      },
-      "met": {
-        "vote_weighted_mean": 0.9370164452604848,
-        "vote_weighted_sd": 0.4023024001322662,
-        "field": "METAMYR",
-        "label": "Past-year methamphetamine",
-        "age": "12+",
-        "window": "year",
-        "kind": "use"
-      },
-      "hal": {
-        "vote_weighted_mean": 2.9239664119448703,
-        "vote_weighted_sd": 1.1761688220836208,
-        "field": "HALLUYR",
-        "label": "Past-year hallucinogens",
-        "age": "12+",
-        "window": "year",
-        "kind": "use"
-      }
-    },
-    "excluded_from_index": {
-      "ill": "Past-month illicit drug use includes marijuana.",
-      "binge": "Past-month binge alcohol is the heavy-drinking part of alcohol use, not a second substance.",
-      "pnr": "Past-year pain reliever misuse is inside past-year opioid misuse.",
-      "mrjyr": "Past-year marijuana repeats past-month marijuana.",
-      "her": "Past-year heroin is published for ages 18 or older, not 12 or older.",
-      "ualc": "Underage alcohol repeats alcohol on ages 12\u201320.",
-      "ubinge": "Underage binge repeats binge alcohol on ages 12\u201320."
-    },
-    "pc1_loadings": {
-      "mj": 0.4328295656071961,
-      "alc": 0.20867783010563223,
-      "iem": 0.4806685561654253,
-      "coc": 0.4973886957214995,
-      "opin": 0.14609057230662373,
-      "met": 0.12747333878936612,
-      "hal": 0.5030730040680148
-    },
-    "pc1_variance_share": 0.4610627968050344,
-    "corr_sum_vs_pc1": 0.9774669232001183
-  },
   "alone": {
     "mj": {
       "term": "mj",
@@ -527,50 +439,6 @@
       "state_fe_pp_per_sd": 0.16697140712015815,
       "state_fe_r2": 0.7731472359505198,
       "corr_dem2": -0.11907985941029171
-    },
-    "combined": {
-      "term": "combined",
-      "label": "combined",
-      "pp_per_pp": 0.8306760297886226,
-      "se_pp": 0.12428813812920936,
-      "p": 2.3334981065952837e-11,
-      "ci95_pp": [
-        0.5870757553498328,
-        1.0742763042274124
-      ],
-      "n": 382,
-      "r2": 0.6319255235196125,
-      "pp_per_sd": 3.658322732257034,
-      "se_per_sd": 0.5473687752657197,
-      "vote_weighted_sd": 4.404030694358601,
-      "state_fe_pp_per_pp": 0.49511539344555533,
-      "state_fe_se_pp": 0.23234467044568083,
-      "state_fe_p": 0.033093077896363024,
-      "state_fe_pp_per_sd": 2.1805033899836612,
-      "state_fe_r2": 0.7794822886688525,
-      "corr_dem2": 0.3830486264997247
-    },
-    "combined_pc1": {
-      "term": "combined_pc1",
-      "label": "combined_pc1",
-      "pp_per_pp": 2.5102692352670153,
-      "se_pp": 0.30282635719429546,
-      "p": 1.1375662682197626e-16,
-      "ci95_pp": [
-        1.9167404815967342,
-        3.1037979889372966
-      ],
-      "n": 382,
-      "r2": 0.6510821056785518,
-      "pp_per_sd": 4.509717773719622,
-      "se_per_sd": 0.5440298539310333,
-      "vote_weighted_sd": 1.7965076057827425,
-      "state_fe_pp_per_pp": 1.462357756535943,
-      "state_fe_se_pp": 0.6181657305576372,
-      "state_fe_p": 0.01799892273681295,
-      "state_fe_pp_per_sd": 2.6271368319922095,
-      "state_fe_r2": 0.7810297606457186,
-      "corr_dem2": 0.49055981345988015
     }
   },
   "joint": {
@@ -713,136 +581,198 @@
       }
     }
   },
-  "combined_vs_state": {
-    "within_specified": {
-      "term": "combined",
-      "label": "combined",
-      "pp_per_pp": 0.49511539344554956,
-      "se_pp": 0.21705009931521535,
-      "p": 0.022541872752277033,
-      "ci95_pp": [
-        0.06970501594688559,
-        0.9205257709442135
-      ],
-      "n": 382,
-      "r2": 0.6468965020497006,
-      "pp_per_sd": 2.180503389983636,
-      "se_per_sd": 0.9558952995977913,
-      "vote_weighted_sd": 4.404030694358601
-    },
-    "between_with_log_density": {
-      "term": "combined",
-      "label": "combined",
-      "pp_per_pp": 1.0281683302519364,
-      "se_pp": 0.24619129051547764,
-      "p": 2.9629089392234775e-05,
-      "ci95_pp": [
-        0.545642267534163,
-        1.51069439296971
-      ],
-      "n": 49,
-      "r2": 0.6129763732749296,
-      "pp_per_sd": 3.334037695250511,
-      "se_per_sd": 0.798323600008031,
-      "vote_weighted_sd": 3.2426963534595132
-    },
-    "between_alone": {
-      "term": "combined",
-      "label": "combined",
-      "pp_per_pp": 1.0682179316708986,
-      "se_pp": 0.32761810711116157,
-      "p": 0.0011119311369650144,
-      "ci95_pp": [
-        0.42609824104983607,
-        1.710337622291961
-      ],
-      "n": 49,
-      "r2": 0.16073312781017157,
-      "pp_per_sd": 3.4639063917292865,
-      "se_per_sd": 1.0623660412566718,
-      "vote_weighted_sd": 3.2426963534595132
-    },
-    "n_states": 49,
-    "within_bins": [
+  "goodman": {
+    "method": "Vote-weighted WLS of Democratic two-party share on the use rate as a proportion, log density, percent ages 18\u201325, and percent ages 12\u201317. Controls are centered at their vote-weighted means. The non-user share is the intercept, 0% use. The user share is the intercept plus the slope, 100% use. Intervals are 95% from the HC1 covariance.",
+    "rows": [
       {
-        "quintile": 1,
-        "n_regions": 77,
-        "combined_within": -3.4891626940944516,
-        "dem2_within": -0.022536906931944302
+        "term": "mj",
+        "label": "Past-month marijuana",
+        "nonuser_share": 32.67494878078068,
+        "nonuser_se": 2.1222475264294465,
+        "nonuser_lo": 28.515343628978968,
+        "nonuser_hi": 36.834553932582395,
+        "user_share": 146.1429785200409,
+        "user_se": 11.408214209234794,
+        "user_lo": 123.78287866994071,
+        "user_hi": 168.5030783701411,
+        "dem_majority_rate": 16.224668074105523,
+        "rep_majority_rate": 13.356607434155098,
+        "ratio": 1.2147297249012732,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 6.16,
+        "observed_max": 28.3
       },
       {
-        "quintile": 2,
-        "n_regions": 76,
-        "combined_within": -1.2747269115064281,
-        "dem2_within": -0.025930394379492964
+        "term": "alc",
+        "label": "Past-month alcohol",
+        "nonuser_share": 17.346995114905976,
+        "nonuser_se": 4.279756383197423,
+        "nonuser_lo": 8.958672603839027,
+        "nonuser_hi": 25.735317625972925,
+        "user_share": 83.30705009885331,
+        "user_se": 4.558805594744205,
+        "user_lo": 74.37179113315467,
+        "user_hi": 92.24230906455195,
+        "dem_majority_rate": 51.46230330353287,
+        "rep_majority_rate": 45.97275905126461,
+        "ratio": 1.1194086316670013,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 19.25,
+        "observed_max": 73.55
       },
       {
-        "quintile": 3,
-        "n_regions": 76,
-        "combined_within": -0.28820229020546334,
-        "dem2_within": -0.012776995638537096
+        "term": "binge",
+        "label": "Past-month binge alcohol",
+        "nonuser_share": 34.3951551957168,
+        "nonuser_se": 5.192522580674718,
+        "nonuser_lo": 24.21781093759435,
+        "nonuser_hi": 44.57249945383924,
+        "user_share": 102.717271916068,
+        "user_se": 17.667514570726357,
+        "user_lo": 68.08894335744435,
+        "user_hi": 137.34560047469165,
+        "dem_majority_rate": 22.32396683516915,
+        "rep_majority_rate": 21.290072962784162,
+        "ratio": 1.0485622512516641,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 10.08,
+        "observed_max": 39.94
       },
       {
-        "quintile": 4,
-        "n_regions": 76,
-        "combined_within": 0.9180018042328848,
-        "dem2_within": -0.0007202427540465261
+        "term": "iem",
+        "label": "Past-month illicit drugs other than marijuana",
+        "nonuser_share": 40.72277323691305,
+        "nonuser_se": 3.2127239821558256,
+        "nonuser_lo": 34.425834231887634,
+        "nonuser_hi": 47.019712241938464,
+        "user_share": 299.9516338735625,
+        "user_se": 93.36388211898068,
+        "user_lo": 116.95842492036039,
+        "user_hi": 482.94484282676467,
+        "dem_majority_rate": 3.495865357821323,
+        "rep_majority_rate": 3.1292112985052682,
+        "ratio": 1.1171713969878592,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 2.17,
+        "observed_max": 6.67
       },
       {
-        "quintile": 5,
-        "n_regions": 77,
-        "combined_within": 4.532073088008836,
-        "dem2_within": 0.0706863270484729
-      }
-    ]
-  },
-  "combined_vs_density": {
-    "corr": 0.14051312402155505,
-    "bins": [
-      {
-        "quintile": 1,
-        "n_regions": 77,
-        "ln_dens": 2.154870018267311,
-        "people_per_km2": 8.626768783735868,
-        "combined": 0.7798361559335807,
-        "dem2": 0.34679293379622306,
-        "two_party": 10274969.805691306
+        "term": "coc",
+        "label": "Past-year cocaine",
+        "nonuser_share": 35.5518334008663,
+        "nonuser_se": 2.1264904287098036,
+        "nonuser_lo": 31.383912160595084,
+        "nonuser_hi": 39.71975464113751,
+        "user_share": 811.5350288026116,
+        "user_se": 110.476575339348,
+        "user_lo": 595.0009411374895,
+        "user_hi": 1028.0691164677337,
+        "dem_majority_rate": 1.9872960214871898,
+        "rep_majority_rate": 1.5934631914333717,
+        "ratio": 1.2471552729746789,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 1.02,
+        "observed_max": 4.82
       },
       {
-        "quintile": 2,
-        "n_regions": 76,
-        "ln_dens": 3.425745229087588,
-        "people_per_km2": 30.745548793375736,
-        "combined": 0.40913732311827317,
-        "dem2": 0.37705638237598876,
-        "two_party": 22409505.853362605
+        "term": "opin",
+        "label": "Past-year opioid misuse",
+        "nonuser_share": 52.83519069004311,
+        "nonuser_se": 3.833683479556699,
+        "nonuser_lo": 45.32117107011199,
+        "nonuser_hi": 60.34921030997424,
+        "user_share": -59.44662844316178,
+        "user_se": 112.70029215627441,
+        "user_lo": -280.33920106945965,
+        "user_hi": 161.44594418313608,
+        "dem_majority_rate": 3.130998756980287,
+        "rep_majority_rate": 3.2427427324057625,
+        "ratio": 0.9655402896107722,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 2.32,
+        "observed_max": 5.33
       },
       {
-        "quintile": 3,
-        "n_regions": 76,
-        "ln_dens": 4.212972919898499,
-        "people_per_km2": 67.55708335986239,
-        "combined": -0.6424011755353991,
-        "dem2": 0.43077525825374735,
-        "two_party": 32350682.58776145
+        "term": "pnr",
+        "label": "Past-year pain reliever misuse",
+        "nonuser_share": 56.32778927593592,
+        "nonuser_se": 3.845080576322274,
+        "nonuser_lo": 48.79143134634426,
+        "nonuser_hi": 63.86414720552758,
+        "user_share": -176.27072694334504,
+        "user_se": 120.4252376415191,
+        "user_lo": -412.3041927207225,
+        "user_hi": 59.762738834032405,
+        "dem_majority_rate": 2.923076076831383,
+        "rep_majority_rate": 3.13637864386619,
+        "ratio": 0.9319908112969835,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 2.14,
+        "observed_max": 4.85
       },
       {
-        "quintile": 4,
-        "n_regions": 76,
-        "ln_dens": 5.367010855154471,
-        "people_per_km2": 214.2215704135855,
-        "combined": -0.9155270027909441,
-        "dem2": 0.5058644441233653,
-        "two_party": 47604574.34152026
+        "term": "met",
+        "label": "Past-year methamphetamine",
+        "nonuser_share": 52.0765185292326,
+        "nonuser_se": 1.5635200970698564,
+        "nonuser_lo": 49.01201913897568,
+        "nonuser_hi": 55.14101791948952,
+        "user_share": -249.69530258488857,
+        "user_se": 152.2522347818153,
+        "user_lo": -548.1096827572466,
+        "user_hi": 48.71907758746943,
+        "dem_majority_rate": 0.7559907363156898,
+        "rep_majority_rate": 1.0768796591083176,
+        "ratio": 0.7020197010143812,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 0.29,
+        "observed_max": 3.25
       },
       {
-        "quintile": 5,
-        "n_regions": 77,
-        "ln_dens": 7.124314172523343,
-        "people_per_km2": 1241.796216976992,
-        "combined": 1.2601260104549596,
-        "dem2": 0.637866762765835,
-        "two_party": 37443899.42391125
+        "term": "hal",
+        "label": "Past-year hallucinogens",
+        "nonuser_share": 37.380441749457724,
+        "nonuser_se": 1.4563087555785266,
+        "nonuser_lo": 34.526076588523814,
+        "nonuser_hi": 40.23480691039163,
+        "user_share": 443.281998630859,
+        "user_se": 45.33853067106225,
+        "user_lo": 354.41847851557696,
+        "user_hi": 532.145518746141,
+        "dem_majority_rate": 3.4578324444791493,
+        "rep_majority_rate": 2.5114934018421673,
+        "ratio": 1.376803316282992,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 1.31,
+        "observed_max": 10.01
+      },
+      {
+        "term": "her",
+        "label": "Past-year heroin",
+        "nonuser_share": 46.135076859246745,
+        "nonuser_se": 1.484292326772637,
+        "nonuser_lo": 43.225863898772374,
+        "nonuser_hi": 49.044289819721115,
+        "user_share": 897.7364948592658,
+        "user_se": 346.99473153884804,
+        "user_lo": 217.62682104312364,
+        "user_hi": 1577.846168675408,
+        "dem_majority_rate": 0.41002486717092385,
+        "rep_majority_rate": 0.3313464643592454,
+        "ratio": 1.2374505578739945,
+        "n_dem_regions": 142,
+        "n_rep_regions": 240,
+        "observed_min": 0.17,
+        "observed_max": 1.84
       }
     ]
   },
@@ -867,8 +797,6 @@
     "prud": -0.47488090197650146,
     "aud": 0.4641428300961277,
     "uaud": -0.11907985941029171,
-    "combined": 0.3830486264997247,
-    "combined_pc1": 0.49055981345988015,
     "ln_dens": 0.7339267348173755,
     "pct_ba": 0.7088637682179497
   },
@@ -1522,71 +1450,6 @@
       "ln_dens": 5.420750238778475,
       "pct_ba": 39.289799696652,
       "two_party": 22776703.483738873
-    },
-    {
-      "measure": "combined",
-      "label": "combined",
-      "quintile": 1,
-      "n_regions": 77,
-      "use_min": -11.7395167439721,
-      "use_max": -2.9032828868402816,
-      "mean_use": -4.773938525252235,
-      "dem2": 0.4657032762618971,
-      "ln_dens": 5.233303731025596,
-      "pct_ba": 35.873128839734036,
-      "two_party": 39824402.036879465
-    },
-    {
-      "measure": "combined",
-      "label": "combined",
-      "quintile": 2,
-      "n_regions": 76,
-      "use_min": -2.902229648676353,
-      "use_max": -0.8533228290586243,
-      "mean_use": -1.7934292576672324,
-      "dem2": 0.4311057367602297,
-      "ln_dens": 4.58556233349717,
-      "pct_ba": 33.0174576606613,
-      "two_party": 27223945.49182276
-    },
-    {
-      "measure": "combined",
-      "label": "combined",
-      "quintile": 3,
-      "n_regions": 76,
-      "use_min": -0.8471318923249997,
-      "use_max": 1.1465931579273752,
-      "mean_use": -0.021364872676194652,
-      "dem2": 0.4624972064611122,
-      "ln_dens": 4.762244419712317,
-      "pct_ba": 32.80703831177279,
-      "two_party": 29766078.90299959
-    },
-    {
-      "measure": "combined",
-      "label": "combined",
-      "quintile": 4,
-      "n_regions": 76,
-      "use_min": 1.1534343079348672,
-      "use_max": 3.9895541594297628,
-      "mean_use": 2.389109531922867,
-      "dem2": 0.5212600985407649,
-      "ln_dens": 4.917867049867426,
-      "pct_ba": 34.983776460862096,
-      "two_party": 31403490.083778705
-    },
-    {
-      "measure": "combined",
-      "label": "combined",
-      "quintile": 5,
-      "n_regions": 77,
-      "use_min": 4.010304830647572,
-      "use_max": 23.811363052205753,
-      "mean_use": 7.525618747693502,
-      "dem2": 0.6172045899765204,
-      "ln_dens": 5.854717141800639,
-      "pct_ba": 40.035203906814004,
-      "two_party": 21865715.496766366
     }
   ],
   "not_at_substate": [

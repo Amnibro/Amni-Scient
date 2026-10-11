@@ -54,6 +54,10 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .slope-k i{width:14px;height:3px;border-radius:1px;display:inline-block;flex:none}
 .slope-v{margin:.2rem 0 .15rem;font-size:1.45rem;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--text)}
 .slope-v span{display:block;margin-top:.28rem;font-size:.68rem;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);line-height:1.35}
+.contour-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:860px;margin:.4rem 0 .2rem}
+.contour-card{background:#F6F0E4;border:1px solid #E4D9C8;border-radius:4px;padding:.45rem .4rem .25rem}
+.contour-card p{max-width:none;margin:0 0 .2rem;font-size:.74rem;font-weight:700;color:#120C03;line-height:1.3}
+.contour-card .chart .tick{fill:#120C03}
 """
 
 
@@ -198,15 +202,6 @@ def rate_panels(regions):
     return '<div class="slope-grid">' + "".join(cards) + "</div>", fits
 
 
-def index_region_chart(regions):
-    a, b, se, x, y, w = fit_share(regions, "combined")
-    pad = 1
-    x0, x1 = float(np.min(x)) - pad, float(np.max(x)) + pad
-    ticks = _span_ticks(x0, x1, 4)
-    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, ticks, (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6)
-    return svg, a, b, se
-
-
 def density_chart(regions):
     a, b, se, x, y, w = fit_share(regions, "ln_dens")
     x0, x1 = 0, 11
@@ -214,16 +209,262 @@ def density_chart(regions):
     return svg, a, b, se
 
 
-def between_chart(states):
-    a, b, se, x, y, w = fit_share(states, "combined")
-    pad = 1
-    x0, x1 = float(np.min(x)) - pad, float(np.max(x)) + pad
-    ticks = _span_ticks(x0, x1, 2)
-    svg = _scatter(
-        x, y, w, "#2563EB", x0, x1, 0, 100, ticks, (0, 25, 50, 75, 100), a, b,
-        opacity=0.62, r0=3.0, r1=8.0,
+DUMB_LABEL = {
+    "mj": "Marijuana",
+    "alc": "Alcohol",
+    "binge": "Binge alcohol",
+    "iem": "Other illicit",
+    "coc": "Cocaine",
+    "opin": "Opioid misuse",
+    "pnr": "Pain relievers",
+    "met": "Methamphetamine",
+    "hal": "Hallucinogens",
+    "her": "Heroin, 18+",
+}
+
+
+def _mix(c1, c2, t):
+    t = max(0.0, min(1.0, float(t)))
+    def rgb(c):
+        return int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+    r1, g1, b1 = rgb(c1)
+    r2, g2, b2 = rgb(c2)
+    return "#{:02X}{:02X}{:02X}".format(
+        int(round(r1 + (r2 - r1) * t)),
+        int(round(g1 + (g2 - g1) * t)),
+        int(round(b1 + (b2 - b1) * t)),
     )
-    return svg, a, b, se
+
+
+def share_color(share):
+    """Diverging scale, 10 to 90, midpoint 50. Ink, paper, gold, deep gold."""
+    t = (float(share) - 10.0) / 80.0
+    t = max(0.0, min(1.0, t))
+    ink, paper, gold, deep = "#120C03", "#F6F0E4", "#C89B4E", "#8A6318"
+    if t <= 0.5:
+        return _mix(ink, paper, t / 0.5)
+    u = (t - 0.5) / 0.5
+    if u <= 0.55:
+        return _mix(paper, gold, u / 0.55)
+    return _mix(gold, deep, (u - 0.55) / 0.45)
+
+
+def dumbbell_chart(rows):
+    """0–100 ecological shares. Estimates outside that span sit in a gutter."""
+    n = len(rows)
+    row_h = 34
+    top, bottom = 36, 32
+    left, plot_w = 132, 400
+    width = left + plot_w + 168
+    height = top + n * row_h + bottom
+
+    def X(v):
+        return left + float(v) / 100.0 * plot_w
+
+    parts = [
+        f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">',
+        f'<text x="{left + plot_w + 16}" y="16" class="tick">100% use</text>',
+        f'<text x="{width - 8}" y="16" text-anchor="end" class="tick">Ratio</text>',
+    ]
+    for t in (0, 50, 100):
+        parts.append(f'<line x1="{X(t):.1f}" y1="{top - 8}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
+        parts.append(f'<text x="{X(t):.1f}" y="{height - 10}" text-anchor="middle" class="tick">{t}</text>')
+    parts.append(f'<line x1="{X(0):.1f}" y1="{height - bottom}" x2="{X(100):.1f}" y2="{height - bottom}" class="axis"/>')
+    for i, row in enumerate(rows):
+        y = top + i * row_h + row_h / 2
+        non = float(row["nonuser_share"])
+        user = float(row["user_share"])
+        nx = X(min(100.0, max(0.0, non)))
+        if user > 100:
+            ux = X(100) + 14
+        elif user < 0:
+            ux = X(0) - 14
+        else:
+            ux = X(user)
+        parts.append(f'<text x="6" y="{y + 4:.1f}" class="lab">{esc(DUMB_LABEL.get(row["term"], row["term"]))}</text>')
+        parts.append(
+            f'<line x1="{nx:.1f}" y1="{y:.1f}" x2="{ux:.1f}" y2="{y:.1f}" class="link"/>'
+        )
+        lo, hi = float(row["nonuser_lo"]), float(row["nonuser_hi"])
+        if 0 <= lo and hi <= 100:
+            parts.append(f'<line x1="{X(lo):.1f}" y1="{y:.1f}" x2="{X(hi):.1f}" y2="{y:.1f}" class="whisk"/>')
+        ulo, uhi = float(row["user_lo"]), float(row["user_hi"])
+        if 0 <= user <= 100 and 0 <= ulo and uhi <= 100:
+            parts.append(f'<line x1="{X(ulo):.1f}" y1="{y:.1f}" x2="{X(uhi):.1f}" y2="{y:.1f}" class="whisk"/>')
+        parts.append(f'<circle cx="{nx:.1f}" cy="{y:.1f}" r="5" class="dot"/>')
+        parts.append(f'<circle cx="{ux:.1f}" cy="{y:.1f}" r="5" class="user"/>')
+        parts.append(f'<text x="{left + plot_w + 16}" y="{y + 4:.1f}" class="lab">{num(user, 1)}</text>')
+        parts.append(f'<text x="{width - 8}" y="{y + 4:.1f}" text-anchor="end" class="lab">{float(row["ratio"]):.2f}×</text>')
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def goodman_table(rows):
+    body = []
+    for row in rows:
+        body.append(
+            "<tr>"
+            f"<td>{esc(row['label'])}</td>"
+            f"<td>{num(row['nonuser_share'], 1)}</td>"
+            f"<td>{num(row['nonuser_lo'], 1)}–{num(row['nonuser_hi'], 1)}</td>"
+            f"<td>{num(row['user_share'], 1)}</td>"
+            f"<td>{num(row['user_lo'], 1)}–{num(row['user_hi'], 1)}</td>"
+            f"<td>{num(row['dem_majority_rate'], 2)}</td>"
+            f"<td>{num(row['rep_majority_rate'], 2)}</td>"
+            f"<td>{float(row['ratio']):.2f}×</td>"
+            "</tr>"
+        )
+    return "\n".join(body)
+
+
+def _wquantile(values, weights, q):
+    order = np.argsort(values)
+    v = np.asarray(values, dtype=float)[order]
+    w = np.asarray(weights, dtype=float)[order]
+    cw = np.cumsum(w)
+    return float(v[min(len(v) - 1, int(np.searchsorted(cw, q * w.sum(), side="left")))])
+
+
+def _local_surface(x, y, z, w, gx, gy, span=0.45, min_n=12):
+    sx = float(np.std(x)) or 1.0
+    sy = float(np.std(y)) or 1.0
+    dx = (gx[:, None] - x[None, :]) / sx
+    dy = (gy[:, None] - y[None, :]) / sy
+    dist = np.hypot(dx, dy)
+    out = np.full(gx.shape[0], np.nan)
+    target = span * float(w.sum())
+    for i in range(gx.shape[0]):
+        order = np.argsort(dist[i])
+        cw = np.cumsum(w[order])
+        k = int(np.searchsorted(cw, target)) + 1
+        k = max(min_n, min(len(x), k))
+        sel = order[:k]
+        dmax = dist[i, sel[-1]]
+        if dmax <= 1e-9:
+            out[i] = float(np.average(z[sel], weights=w[sel]))
+            continue
+        u = dist[i, sel] / dmax
+        tri = np.clip(1.0 - u ** 3, 0.0, None) ** 3
+        ww = w[sel] * tri
+        if float(ww.sum()) <= 0 or int(np.count_nonzero(ww)) < min_n:
+            continue
+        design = np.column_stack([np.ones(k), x[sel] - gx[i], y[sel] - gy[i]])
+        sw = np.sqrt(ww)
+        beta = np.linalg.lstsq(design * sw[:, None], z[sel] * sw, rcond=None)[0]
+        out[i] = float(beta[0])
+    return out
+
+
+def contour_panels(regions):
+    """Marijuana × alcohol surface of Democratic share, by density tercile."""
+    mj = np.array([float(r["mj"]) for r in regions])
+    alc = np.array([float(r["alc"]) for r in regions])
+    share = np.array([float(r["dem2"]) * 100 for r in regions])
+    ln = np.array([float(r["ln_dens"]) for r in regions])
+    w = np.array([float(r["two_party"]) for r in regions])
+    c1 = _wquantile(ln, w, 1 / 3)
+    c2 = _wquantile(ln, w, 2 / 3)
+    bands = [
+        ("Low density", ln <= c1, 0.0, c1),
+        ("Medium density", (ln > c1) & (ln <= c2), c1, c2),
+        ("High density", ln > c2, c2, None),
+    ]
+    summaries = []
+    for title, mask, lo, hi in bands:
+        summaries.append(
+            {
+                "title": title,
+                "ln_lo": float(lo),
+                "ln_hi": None if hi is None else float(hi),
+                "people_lo": float(np.exp(lo)),
+                "people_hi": None if hi is None else float(np.exp(hi)),
+                "n": int(mask.sum()),
+                "votes": float(w[mask].sum()),
+            }
+        )
+    return _contour_svgs(summaries, bands, mj, alc, share, w)
+
+
+def _contour_svgs(summaries, bands, mj, alc, share, w):
+    from scipy.spatial import ConvexHull
+
+    x0, x1, y0, y1 = 0.0, 36.0, 0.0, 80.0
+    nx, ny = 28, 36
+    xs = np.linspace(x0, x1, nx)
+    ys = np.linspace(y0, y1, ny)
+    cards = []
+    for (title, mask, _lo, _hi), s in zip(bands, summaries):
+        x, y, z, ww = mj[mask], alc[mask], share[mask], w[mask]
+        hull = ConvexHull(np.column_stack([x, y]))
+        eq = hull.equations
+        flat_x, flat_y = np.meshgrid(xs, ys, indexing="xy")
+        flat_x, flat_y = flat_x.ravel(), flat_y.ravel()
+        inside = np.all(eq[:, 0] * flat_x[:, None] + eq[:, 1] * flat_y[:, None] + eq[:, 2] <= 1e-8, axis=1)
+        pred = np.full(flat_x.shape, np.nan)
+        pred[inside] = _local_surface(x, y, z, ww, flat_x[inside], flat_y[inside])
+        finite = pred[np.isfinite(pred)]
+        s["share_min"] = float(np.min(finite))
+        s["share_max"] = float(np.max(finite))
+        pw, ph = 210, 250
+        left, right, top, bottom = 32, 8, 8, 22
+        W, H = left + pw + right, top + ph + bottom
+
+        def X(v, left=left, pw=pw):
+            return left + (float(v) - x0) / (x1 - x0) * pw
+
+        def Y(v, top=top, ph=ph):
+            return top + (y1 - float(v)) / (y1 - y0) * ph
+
+        parts = [f'<svg viewBox="0 0 {W} {H}" role="img" class="chart">']
+        parts.append(f'<rect x="0" y="0" width="{W}" height="{H}" fill="#F6F0E4"/>')
+        cell_w = (X(xs[1]) - X(xs[0]))
+        cell_h = (Y(ys[0]) - Y(ys[1]))
+        for j in range(ny):
+            for i in range(nx):
+                val = pred[j * nx + i]
+                if not np.isfinite(val):
+                    continue
+                parts.append(
+                    f'<rect x="{X(xs[i]) - cell_w / 2:.2f}" y="{Y(ys[j]) - cell_h / 2:.2f}" '
+                    f'width="{cell_w + 0.35:.2f}" height="{cell_h + 0.35:.2f}" fill="{share_color(val)}"/>'
+                )
+        for t in (0, 10, 20, 30):
+            parts.append(f'<text x="{X(t):.1f}" y="{H - 6}" text-anchor="middle" class="tick">{t}</text>')
+        for t in (0, 20, 40, 60, 80):
+            parts.append(f'<text x="{left - 4}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{t}</text>')
+        parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{H - bottom}" stroke="#120C03" stroke-width="1"/>')
+        parts.append(f'<line x1="{left}" y1="{H - bottom}" x2="{W - right}" y2="{H - bottom}" stroke="#120C03" stroke-width="1"/>')
+        parts.append(f'<text x="{X(1.2):.1f}" y="{Y(7):.1f}" class="tick" font-weight="700">Non-users</text>')
+        parts.append("</svg>")
+        if s["people_hi"] is None:
+            dens = f"above {s['people_lo']:.0f} people/km²"
+        else:
+            # first band starts at the sample minimum, labeled from the cut
+            dens = f"up to {s['people_hi']:.0f} people/km²" if s["title"].startswith("Low") else f"{s['people_lo']:.0f}–{s['people_hi']:.0f} people/km²"
+        cards.append(
+            f'<div class="contour-card"><p>{esc(title)}</p>'
+            f'<p style="font-weight:500;font-size:.68rem;letter-spacing:.02em">{esc(dens)} · {s["share_min"]:.0f}–{s["share_max"]:.0f}% share</p>'
+            f'{"".join(parts)}</div>'
+        )
+    legend = _share_legend()
+    return '<div class="contour-grid" id="contour-panels">' + "".join(cards) + "</div>" + legend, summaries
+
+
+def _share_legend():
+    stops = [share_color(v) for v in np.linspace(10, 90, 48)]
+    rects = []
+    width = 720
+    for i, col in enumerate(stops):
+        rects.append(f'<rect x="{i * (width / 48):.2f}" y="0" width="{width / 48 + 0.4:.2f}" height="14" fill="{col}"/>')
+    ticks = []
+    for v in (10, 30, 50, 70, 90):
+        x = (v - 10) / 80 * width
+        ticks.append(f'<text x="{x:.1f}" y="28" text-anchor="middle" fill="#120C03" font-size="11" font-family="Archivo,sans-serif">{v}</text>')
+    return (
+        f'<svg viewBox="0 0 {width} 36" role="img" class="chart" style="background:#F6F0E4;border-radius:4px;margin-top:8px">'
+        + "".join(rects) + "".join(ticks) + "</svg>"
+        '<p class="axis-name"><span>Color · Democratic two-party share. 50 is the midpoint. Ink is below 50. Gold is above 50.</span></p>'
+    )
 
 
 def lab_chart():
@@ -537,7 +778,6 @@ def nav():
 
 def main():
     ext = json.loads((RESULTS / "extended.json").read_text())
-    states = list(csv.DictReader((RESULTS / "state_level.csv").open()))
     regions = list(csv.DictReader((RESULTS / "region_level.csv").open()))
     from industry_donations_source import records, write_csv
     from industry_spending import category_rows, write_outputs
@@ -549,26 +789,29 @@ def main():
     alone = ext["alone"]
     panels, line_fits = rate_panels(regions)
     dens, _dens_a, dens_b, dens_se = density_chart(regions)
-    index_svg, _index_a, index_b, index_se = index_region_chart(regions)
-    between = between_chart(states)[0]
+    goodman = ext["goodman"]["rows"]
+    dumb = dumbbell_chart(goodman)
+    gtab = goodman_table(goodman)
+    contour, contour_sum = contour_panels(regions)
+    by_term = {r["term"]: r for r in goodman}
+    g_mj, g_alc = by_term["mj"], by_term["alc"]
     parties, party_legend = party_lines(donations)
     cats = category_chart(spending)
     spend_rows = spending_table(spending)
     ballot_rows_html = ballot_table()
     use_keys = ["mj", "alc", "binge", "iem", "ill", "coc", "hal", "her", "met", "opin", "pnr", "mrjyr", "ualc", "ubinge"]
     dis_keys = ["sud", "dud", "oud", "prud", "aud", "uaud"]
-    c = alone["combined"]
-    pc = alone["combined_pc1"]
-    within_c = ext["combined_vs_state"]["within_specified"]
-    between_c = ext["combined_vs_state"]["between_with_log_density"]
-    between_a = ext["combined_vs_state"]["between_alone"]
     def dget(industry, field):
         return next(r[field] for r in donations if r["industry"] == industry and int(r["cycle"]) == 2024)
 
     beer_total, beer_dem, beer_rep = dget("Beer, Wine & Liquor", "total"), dget("Beer, Wine & Liquor", "to_democrats"), dget("Beer, Wine & Liquor", "to_republicans")
     pharma_total = dget("Pharmaceuticals / Health Products", "total")
     mj_total = dget("Marijuana", "total")
-    n_index = len(ext["joint"]["terms"])
+    n_joint = len(ext["joint"]["terms"])
+    low_s, high_s = contour_sum[0], contour_sum[2]
+    from over_time import section_html
+
+    ot_html = section_html()
     mj_line, alc_line = line_fits["mj"], line_fits["alc"]
 
     html = f"""<!DOCTYPE html>
@@ -578,7 +821,7 @@ def main():
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Substance use and the 2024 vote | AMNI-SCIENT Research</title>
-<meta name="description" content="Vote-weighted regressions of 2021–2023 NSDUH substate substance-use rates on 2024 Democratic two-party share across 382 regions, plus a combined index, laboratory results, and industry contributions, lobbying, and state ballot spending.">
+<meta name="description" content="Vote-weighted regressions of 2021–2023 NSDUH substate substance-use rates on 2024 Democratic two-party share across 382 regions, ecological user and non-user shares, laboratory results, and industry contributions, lobbying, and state ballot spending.">
 <meta name="keywords" content="NSDUH,marijuana,alcohol,opioid,2024 presidential vote,ecological regression,OpenSecrets,Anthony Reffelt">
 <meta property="og:title" content="Substance use and the 2024 vote — AMNI-SCIENT Research">
 <meta property="og:description" content="NSDUH substate rates and 2024 Democratic two-party share. Measured vote results, laboratory results, and industry contributions, labeled separately.">
@@ -589,7 +832,7 @@ def main():
 <meta name="twitter:title" content="Substance use and the 2024 vote">
 <meta name="twitter:description" content="382 NSDUH regions. Marijuana +1.13 points of vote share per point of past-month use. Alcohol +0.66.">
 <link rel="canonical" href="https://amni-scient.com/research/substance-use-vote-share">
-<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Substance use and the 2024 vote","headline":"NSDUH substate substance use and 2024 Democratic two-party vote share","author":{{"@type":"Person","name":"Anthony Reffelt"}},"description":"Area-level associations of NSDUH 2021–2023 substate substance-use rates with 2024 Democratic two-party vote share, a combined use index, laboratory suggestibility results, and OpenSecrets industry contributions.","url":"https://amni-scient.com/research/substance-use-vote-share","publisher":{{"@type":"Organization","name":"AMNI-SCIENT"}},"datePublished":"2026-10-11","dateModified":"2026-10-11"}}</script>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Substance use and the 2024 vote","headline":"NSDUH substate substance use and 2024 Democratic two-party vote share","author":{{"@type":"Person","name":"Anthony Reffelt"}},"description":"Area-level associations of NSDUH 2021–2023 substate substance-use rates with 2024 Democratic two-party vote share, ecological user and non-user shares, laboratory suggestibility results, and OpenSecrets industry contributions.","url":"https://amni-scient.com/research/substance-use-vote-share","publisher":{{"@type":"Organization","name":"AMNI-SCIENT"}},"datePublished":"2026-10-11","dateModified":"2026-10-11"}}</script>
 <link rel="stylesheet" href="../css/style.css?v=b261">
 <script>
 (function(){{var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){{var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){{var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();}};}})();
@@ -597,8 +840,10 @@ def main():
 <style>
 .note-wrap{{max-width:none;width:100%;margin:0;padding:.4rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1240px)/2)) 3.5rem}}
 .note-wrap p:not(.axis-name),.note-wrap h2,.note-wrap .src,.note-wrap li{{max-width:42rem}}
-.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid{{max-width:860px}}
+.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid,.note-wrap .contour-grid{{max-width:860px}}
 .note-wrap .slope-card p{{max-width:none}}
+.table-scroll{{overflow-x:auto;max-width:100%}}
+.table-scroll table.cmp{{min-width:680px}}
 .crumb{{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}}
 .crumb a{{color:var(--accent)}}
 .hero .crumb{{position:relative;z-index:1;margin:0 0 .55rem;order:-2}}
@@ -624,6 +869,9 @@ def main():
 .chart .band{{fill:var(--accent);fill-opacity:.18}}
 .chart .line{{fill:none;stroke:var(--accent);stroke-width:2.4}}
 .chart .dot{{fill:var(--panel);stroke:var(--text);stroke-width:2}}
+.chart .user{{fill:var(--accent);stroke:var(--accent)}}
+.chart .link{{stroke:var(--accent);stroke-width:2}}
+.chart .lab{{fill:var(--text);font-size:12px;font-family:var(--font-sans,Archivo,sans-serif)}}
 .chart .mark{{stroke:var(--accent);stroke-opacity:.45;stroke-dasharray:2 3}}
 .chart .marklab{{fill:var(--accent);font-size:10px;font-family:var(--font-sans,Archivo,sans-serif);letter-spacing:.04em}}
 .axis-name{{display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 .4rem .2rem}}
@@ -651,6 +899,7 @@ body.pp .hero h1{{max-width:22ch}}
   table.cmp th,table.cmp td{{padding:.35rem .3rem}}
   .axis-name{{flex-direction:column;align-items:flex-start;gap:.25rem}}
   .slope-grid{{grid-template-columns:1fr}}
+  .contour-grid{{grid-template-columns:1fr}}
 }}
 </style>
 </head>
@@ -662,7 +911,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="crumb"><a href="../research.html">Research</a> / Substance use and the 2024 vote</p>
 <h1>Substance use and the 2024 vote</h1>
 <p class="subtitle">NSDUH substate rates · one regression</p>
-<p class="tagline">One point of past-month marijuana use lines up with {num(mj_line['slope'], sign=True)} points of Democratic two-party share on the vote-weighted fit. Alcohol’s fit is {num(alc_line['slope'], sign=True)} per point. After log density and age, marijuana is {num(alone['mj']['pp_per_pp'], sign=True)} and alcohol is {num(alone['alc']['pp_per_pp'], sign=True)}.</p>
+<p class="tagline">One point of past-month marijuana use lines up with {num(mj_line['slope'], sign=True)} points of Democratic two-party share on the vote-weighted fit. Alcohol’s fit is {num(alc_line['slope'], sign=True)} per point. After log density and age, marijuana is {num(alone['mj']['pp_per_pp'], sign=True)} and alcohol is {num(alone['alc']['pp_per_pp'], sign=True)}. At 0% marijuana use the ecological share is {num(g_mj['nonuser_share'], 1)}%. At 100% use it is {num(g_mj['user_share'], 1)}%.</p>
 </section>
 <main class="note-wrap">
 <div class="data-top">
@@ -672,6 +921,7 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/results.json" download>Results JSON</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/extended.json" download>Extended JSON</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/quintiles.csv" download>Quintiles CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/user_nonuser.csv" download>Users and non-users CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/state_level.csv" download>State CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_donations.csv" download>Federal contributions CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/industry_spending_2024.csv" download>2024 spending CSV</a>
@@ -682,6 +932,12 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/substate_outcomes_212223.csv" download>NSDUH outcomes CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/run_regression.py" download>Regression script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/fit_extended.py" download>Substance fit</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/nsduh_sae_long.csv" download>NSDUH state series CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/naep_scores.csv" download>NAEP scores CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/president_twoparty.csv" download>Presidential vote CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_adult_use.csv" download>Adult-use dates CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/state_changes.csv" download>State changes CSV</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
 </div>
@@ -689,7 +945,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Alaska and Hawaii have no rows in the vote file. The shapefile has 393 regions. Nebraska is in it: five regions, FIPS 31, polygons between 104°W and 95°W. The file’s state name on those rows says New Jersey. One New Jersey region, Southern, FIPS 34, is labeled New York. State indicators use the FIPS code. The estimation sample is 49 jurisdictions: 48 states plus the District of Columbia.</p>
 <p>The NSDUH rates are small-area estimates. I applied no errors-in-variables correction. No public file links one person’s use to that person’s ballot. Density’s correlation with Democratic two-party share is 0.73. Bachelor’s share is 0.71. The slope that remains after density and age is the residual association of the rate.</p>
 <p>Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are not in the substate file. Those six are past-year rates, and heroin is ages 18 or older. There is no separate heavy-drinking field. Binge alcohol in the past month is the intensity measure SAMHSA published. Fentanyl, inhalants, LSD, PCP, and crack are not separate substate rates. The file also carries mental-illness, suicide, and perceived-risk outcomes. I left those out of the vote regression. Substance-use disorder rates are in the second table. They are disorder prevalence, not use.</p>
-<p>The combined index is the sum of {n_index} vote-weighted z-scores: past-month marijuana, past-month alcohol, past-month illicit drugs other than marijuana, past-year cocaine, past-year opioid misuse, past-year methamphetamine, and past-year hallucinogens. A region at the vote-weighted mean on every rate scores 0. One standard deviation above on all {n_index} scores {n_index}. I left out rates that repeat another rate: illicit drugs including marijuana, binge alcohol, pain-reliever misuse inside opioid misuse, past-year marijuana, heroin at ages 18 or older, and the underage alcohol rates.</p>
+<p>The user and non-user shares are a vote-weighted regression of Democratic two-party share on the use rate, log density, and age, read at 0% use and at 100% use, with density and age held at their vote-weighted means. Regional rates lie inside that span, so the figure at 100% use is the slope carried out to a region of all users. Democratic-majority regions are those with Democratic two-party share above 50%. The ratio is the vote-weighted use rate there divided by the rate where Republicans took the majority.</p>
 <p>The laboratory chart is laboratory data. The potency curves are predictions. Federal contribution totals are OpenSecrets industry codes N02, H04, and N09. The 2024 cycle is January 1, 2023 through December 31, 2024. I rechecked the live N09 page on 2026-10-11. It shows $969,606. OpenSecrets dates that cycle’s FEC release February 6, 2025. Party percentages are the published shares of contributions to candidates and parties. Outside spending is in the total and out of the party split. Federal lobbying is OpenSecrets’ calendar-2024 total from Senate Office of Public Records filings, January through December. State ballot figures are committee totals compiled by Ballotpedia from state filings, retrieved 2026-10-11. Ballot measures have no party. FEC employer and PAC totals for named cannabis companies sit beside the industry total. They are separate filings.</p>
 <p class="cite">Reffelt, A. (2026). <em>Substance use and the 2024 vote.</em> AMNI-SCIENT Research. https://amni-scient.com/research/substance-use-vote-share</p>
 </div>
@@ -729,36 +985,47 @@ body.pp .hero h1{{max-width:22ch}}
 </table>
 <p class="fine">Same specification. These rows are past-year disorder prevalence.</p>
 
-<h2>{n_index} rates together</h2>
-<p>The joint model puts the {n_index} index rates in one regression with log density and age. Weighted R² is {ext['joint']['r2']:.2f}. With state indicators it is {ext['joint']['state_fe_r2']:.2f}.</p>
+<h2>Seven rates together</h2>
+<p>The joint model enters the {n_joint} non-nested rates in one regression with log density and age: past-month marijuana, past-month alcohol, past-month illicit drugs other than marijuana, past-year cocaine, past-year opioid misuse, past-year methamphetamine, and past-year hallucinogens. Weighted R² is {ext['joint']['r2']:.2f}. With state indicators it is {ext['joint']['state_fe_r2']:.2f}.</p>
 <table class="cmp">
 <thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
 <tbody>
 {joint_table(ext['joint'])}
 </tbody>
 </table>
-<p class="fine">Each row is that rate’s coefficient with the other {n_index - 1} rates, log density, and age in the same model.</p>
+<p class="fine">Each row is that rate’s coefficient with the other {n_joint - 1} rates, log density, and age in the same model.</p>
 
-<h2>Combined index</h2>
-<p>One SD of the sum lines up with <strong>{num(c['pp_per_sd'], sign=True)}</strong> points of Democratic two-party share (SE {num(c['se_per_sd'])}). The correlation of the sum with the vote is {ext['correlations_dem2']['combined']:.2f}. The first principal component of the same {n_index} z-scores correlates {ext['index']['corr_sum_vs_pc1']:.2f} with the sum. One SD of the component lines up with <strong>{num(pc['pp_per_sd'], sign=True)}</strong> points of share (SE {num(pc['se_per_sd'])}). The component’s correlation with the vote is {ext['correlations_dem2']['combined_pc1']:.2f}. It accounts for {ext['index']['pc1_variance_share']*100:.0f}% of the weighted covariance of the {n_index} z-scores.</p>
-<p>Inside the same state, one point of the sum lines up with <strong>{num(within_c['pp_per_pp'], sign=True)}</strong> points of share (SE {num(within_c['se_pp'])}). Between states, with log density, the slope is <strong>{num(between_c['pp_per_pp'], sign=True)}</strong> (SE {num(between_c['se_pp'])}, {ext['combined_vs_state']['n_states']} jurisdictions). Between states, the sum alone is {num(between_a['pp_per_pp'], sign=True)} (SE {num(between_a['se_pp'])}). The sum’s correlation with log density is {ext['combined_vs_density']['corr']:.2f}.</p>
-<h2>Combined index and the region</h2>
-<p>Each point is a substate region. The area of the point is two-party votes. The line is the vote-weighted fit of Democratic two-party share on the index, with no other controls: <strong>{num(index_b, sign=True)}</strong> points of share per index point (SE {num(index_se)}).</p>
-<div class="chart-card">{index_svg}</div>
-<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Combined index</span></p>
-<p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
+<h2 id="users">Users and non-users</h2>
+<p>At 0% past-month marijuana use, the ecological estimate of Democratic two-party share is <strong>{num(g_mj['nonuser_share'], 1)}%</strong> (SE {num(g_mj['nonuser_se'], 1)}). At 100% use it is <strong>{num(g_mj['user_share'], 1)}%</strong> (SE {num(g_mj['user_se'], 1)}). Observed regional marijuana rates run from {num(g_mj['observed_min'], 1)}% to {num(g_mj['observed_max'], 1)}%, so {num(g_mj['user_share'], 1)}% is the slope carried to a region of all users. Vote-weighted past-month marijuana use is {num(g_mj['dem_majority_rate'], 2)}% where Democrats took the majority and {num(g_mj['rep_majority_rate'], 2)}% where Republicans did, a ratio of <strong>{g_mj['ratio']:.2f}</strong>.</p>
+<p>Alcohol sits on the 0–100 scale: <strong>{num(g_alc['nonuser_share'], 1)}%</strong> at no past-month use (SE {num(g_alc['nonuser_se'], 1)}) and <strong>{num(g_alc['user_share'], 1)}%</strong> at 100% use (SE {num(g_alc['user_se'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>.</p>
+<p>Open circles are the 0% use estimate. Filled circles are the 100% use estimate. A circle past the axis is an estimate outside 0–100, and the number in the column is that estimate. Whiskers are the 95% interval when the whole interval sits inside 0–100. The ratio column is use in Democratic-majority regions divided by use in Republican-majority regions.</p>
+<div class="chart-card" id="users-chart">{dumb}</div>
+<p class="axis-name"><span>Y · Substance</span><span>X · Democratic two-party share, 0–100%</span></p>
+<p class="fine cap">Measured. Ecological estimates from the vote-weighted regression with log density and age, read at 0% use and at 100% use. 382 regions. {g_mj['n_dem_regions']} Democratic-majority regions, {g_mj['n_rep_regions']} Republican-majority regions.</p>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Rate</th><th>Non-users</th><th>95% CI</th><th>Users</th><th>95% CI</th><th>Dem. maj.</th><th>Rep. maj.</th><th>Ratio</th></tr></thead>
+<tbody>
+{gtab}
+</tbody>
+</table>
+</div>
+<p class="fine">Shares are percentage points of Democratic two-party vote. Intervals are 95% from the HC1 covariance. Dem. maj. and Rep. maj. are vote-weighted use rates, in percent, in regions above and at or below 50% Democratic two-party share.</p>
 
-<h2>Combined index and the state</h2>
-<p>Each point is a state, or the District of Columbia. The area of the point is two-party votes. The horizontal axis is the vote-weighted mean of the sum inside that jurisdiction. The line is the vote-weighted fit of share on that state mean: <strong>{num(between_a['pp_per_pp'], sign=True)}</strong> points per index point (SE {num(between_a['se_pp'])}).</p>
-<div class="chart-card">{between}</div>
-<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Combined index, state mean</span></p>
-<p class="fine cap">Measured. State means of the substate-region index. The vertical axis runs from 0 to 100.</p>
+<h2 id="contour">Marijuana, alcohol, and the vote</h2>
+<p>In the high-density tercile the fitted Democratic share runs from <strong>{high_s['share_min']:.0f}%</strong> to <strong>{high_s['share_max']:.0f}%</strong>. In the low-density tercile it runs from <strong>{low_s['share_min']:.0f}%</strong> to <strong>{low_s['share_max']:.0f}%</strong>. The corner at zero marijuana and zero alcohol is the non-user baseline. The fill stops at the convex hull of the regions in that panel, so the corner stays open.</p>
+<p>Each panel is a vote-weighted local linear fit of Democratic two-party share on past-month marijuana and past-month alcohol. The kernel is tricube. The span is 45% of the panel’s two-party votes, with at least 12 regions. Low, medium, and high are vote-weighted terciles of log population density.</p>
+{contour}
+<p class="axis-name"><span>Y · Past-month alcohol, %</span><span>X · Past-month marijuana, %</span></p>
+<p class="fine cap">Measured. 382 regions. The color is Democratic two-party share. Gold is above 50. Ink is below 50.</p>
 
 <h2>Democratic share and density</h2>
 <p>Each point is a substate region. The area of the point is two-party votes. The line is the vote-weighted fit of Democratic two-party share on log population density: <strong>{num(dens_b, sign=True)}</strong> points of share per log point (SE {num(dens_se)}).</p>
 <div class="chart-card">{dens}</div>
 <p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Log population density, people per km²</span></p>
 <p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
+
+{ot_html}
 
 <h2>Laboratory results</h2>
 <p>Kloft and colleagues (PNAS, 2020) vaporized 300 μg of THC per kilogram. On the immediate test, a suggested false detail in the eyewitness scene was accepted <strong>19%</strong> of the time after THC (SE 0.04) and <strong>8%</strong> after placebo (SE 0.02). Related-word false alarms were <strong>42%</strong> (SE 0.03) and <strong>27%</strong> (SE 0.03). Gawrylowicz and colleagues (Psychopharmacology, 2017) gave alcohol in the lab after a filmed crime and before the misleading narrative. The marginal mean proportion of misled responses was <strong>0.25</strong> after alcohol (95% CI 0.196 to 0.300), <strong>0.22</strong> in the reverse-placebo arm (0.174 to 0.276), and <strong>0.319</strong> with no alcohol (0.266 to 0.371).</p>
@@ -826,7 +1093,8 @@ body.pp .hero h1{{max-width:22ch}}
 <p>Federal lobbying: OpenSecrets calculations from the Senate Office of Public Records, calendar 2024, January through December. Retrieved 2026-10-11. Marijuana <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N09">N09</a> $5,248,000. Beer, wine, and liquor <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=N02">N02</a> $29,893,357. Pharmaceuticals and health products <a href="https://www.opensecrets.org/federal-lobbying/industries/summary?cycle=2024&amp;id=H04">H04</a> $391,572,500. Cresco Labs in-house LD-2 expenses, lda.gov filings for 2024 Q1–Q4, sum to the $1,150,000 client line. Client lines: <a href="nsduh-vote-ecological/results/industry_lobbying_clients_2024.csv">industry_lobbying_clients_2024.csv</a>.</p>
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
-<p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
+<p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The national cognitive line is Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>, Table 1 mean ICAR35 slope. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
+<p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
 </main>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>

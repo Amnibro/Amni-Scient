@@ -11,8 +11,8 @@ Specified model, each rate alone: rate + log density + percent ages 18-25
 
 Joint model: the non-nested rates in INDEX_COLS, same controls.
 
-Combined index: sum of the vote-weighted z-scores of INDEX_COLS.
-PC1 of those z-scores is stored as a check.
+Goodman ecological regression: Democratic two-party share among users and
+non-users, the same controls held at their vote-weighted means.
 """
 
 from __future__ import annotations
@@ -103,51 +103,52 @@ def wcorr(x, y, w) -> float:
     return float(np.average(xz * yz, weights=w))
 
 
-def add_combined(reg: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+def goodman_rows(reg: pd.DataFrame) -> list[dict]:
+    """Ecological shares at 0% use and at 100% use, controls at vote-weighted means."""
+    import statsmodels.api as sm
+
     w = reg["two_party"].to_numpy(dtype=float)
-    zcols = []
-    moments = {}
-    for c in rr.INDEX_COLS:
-        mu = wmean(reg[c], w)
-        sd = wsd(reg[c], w)
-        z = (reg[c].to_numpy(dtype=float) - mu) / sd
-        reg[f"z_{c}"] = z
-        zcols.append(z)
-        moments[c] = {"vote_weighted_mean": mu, "vote_weighted_sd": sd, **_meta(c)}
-    Z = np.column_stack(zcols)
-    reg["combined"] = Z.sum(axis=1)
-    wc = w / w.sum()
-    cov = (Z * wc[:, None]).T @ Z
-    evals, evecs = np.linalg.eigh(cov)
-    order = np.argsort(evals)[::-1]
-    loading = evecs[:, order[0]].copy()
-    if float(np.mean(loading)) < 0:
-        loading = -loading
-    reg["combined_pc1"] = Z @ loading
-    n_index = len(rr.INDEX_COLS)
-    info = {
-        "definition": (
-            f"Sum of vote-weighted z-scores of {n_index} non-nested substance-use rates: "
-            + ", ".join(rr.INDEX_COLS)
-            + ". Each z-score uses the vote-weighted mean and the vote-weighted standard deviation. "
-            "A region at the vote-weighted mean on every rate scores 0. "
-            f"One standard deviation above the mean on every rate scores {n_index}."
-        ),
-        "members": moments,
-        "excluded_from_index": {
-            "ill": "Past-month illicit drug use includes marijuana.",
-            "binge": "Past-month binge alcohol is the heavy-drinking part of alcohol use, not a second substance.",
-            "pnr": "Past-year pain reliever misuse is inside past-year opioid misuse.",
-            "mrjyr": "Past-year marijuana repeats past-month marijuana.",
-            "her": "Past-year heroin is published for ages 18 or older, not 12 or older.",
-            "ualc": "Underage alcohol repeats alcohol on ages 12–20.",
-            "ubinge": "Underage binge repeats binge alcohol on ages 12–20.",
-        },
-        "pc1_loadings": {c: float(v) for c, v in zip(rr.INDEX_COLS, loading)},
-        "pc1_variance_share": float(evals[order[0]] / evals.sum()),
-        "corr_sum_vs_pc1": wcorr(reg["combined"], reg["combined_pc1"], w),
-    }
-    return reg, info
+    y = reg["dem2"].to_numpy(dtype=float) * 100.0
+    ctrl_names = ["ln_dens", "pct_18_25", "pct_12_17"]
+    raw = reg[ctrl_names].to_numpy(dtype=float)
+    centered = raw - np.array([wmean(raw[:, i], w) for i in range(raw.shape[1])])
+    dem = reg["dem2"].to_numpy(dtype=float) > 0.5
+    rep = ~dem
+    rows = []
+    for col in rr.CHART_COLS:
+        use = reg[col].to_numpy(dtype=float) / 100.0
+        X = np.column_stack([np.ones(len(reg)), use, centered])
+        res = sm.WLS(y, X, weights=w).fit(cov_type="HC1")
+        b = np.asarray(res.params, dtype=float)
+        V = np.asarray(res.cov_params(), dtype=float)
+        non = float(b[0])
+        user = float(b[0] + b[1])
+        se_non = float(np.sqrt(V[0, 0]))
+        se_user = float(np.sqrt(V[0, 0] + V[1, 1] + 2 * V[0, 1]))
+        dem_rate = wmean(reg.loc[dem, col], w[dem])
+        rep_rate = wmean(reg.loc[rep, col], w[rep])
+        rows.append(
+            {
+                "term": col,
+                "label": _label(col),
+                "nonuser_share": non,
+                "nonuser_se": se_non,
+                "nonuser_lo": non - 1.96 * se_non,
+                "nonuser_hi": non + 1.96 * se_non,
+                "user_share": user,
+                "user_se": se_user,
+                "user_lo": user - 1.96 * se_user,
+                "user_hi": user + 1.96 * se_user,
+                "dem_majority_rate": dem_rate,
+                "rep_majority_rate": rep_rate,
+                "ratio": dem_rate / rep_rate,
+                "n_dem_regions": int(dem.sum()),
+                "n_rep_regions": int(rep.sum()),
+                "observed_min": float(reg[col].min()),
+                "observed_max": float(reg[col].max()),
+            }
+        )
+    return rows
 
 
 def coef_pack(result: dict, name: str, scale_sd: float | None = None) -> dict:
@@ -156,7 +157,7 @@ def coef_pack(result: dict, name: str, scale_sd: float | None = None) -> dict:
         raise KeyError(name)
     out = {
         "term": name,
-        "label": _label(name) if name in {r[0] for r in rr.USE_RATES + rr.DISORDER_RATES} or name == "combined" else name,
+        "label": _label(name) if name in {r[0] for r in rr.USE_RATES + rr.DISORDER_RATES} else name,
         "pp_per_pp": rr.pp(t["coef"]),
         "se_pp": rr.pp(t["se"]),
         "p": t["p"],
@@ -195,26 +196,6 @@ def quintiles(reg: pd.DataFrame, col: str) -> list[dict]:
     return rows
 
 
-def density_bins(reg: pd.DataFrame) -> list[dict]:
-    work = reg[["two_party", "dem2", "combined", "ln_dens"]].copy()
-    work["q"] = pd.qcut(work["ln_dens"], 5, labels=False, duplicates="drop")
-    rows = []
-    for q, g in work.groupby("q"):
-        w = g["two_party"]
-        rows.append(
-            {
-                "quintile": int(q) + 1,
-                "n_regions": int(len(g)),
-                "ln_dens": wmean(g["ln_dens"], w),
-                "people_per_km2": float(np.exp(wmean(g["ln_dens"], w))),
-                "combined": wmean(g["combined"], w),
-                "dem2": wmean(g["dem2"], w),
-                "two_party": float(w.sum()),
-            }
-        )
-    return rows
-
-
 def state_table(reg: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for st, g in reg.groupby("st_fips"):
@@ -225,23 +206,12 @@ def state_table(reg: pd.DataFrame) -> pd.DataFrame:
                 "st_name": g["st_name"].iloc[0],
                 "n_regions": int(len(g)),
                 "dem2": wmean(g["dem2"], w),
-                "combined": wmean(g["combined"], w),
                 "ln_dens": wmean(g["ln_dens"], w),
                 "two_party": float(w.sum()),
-                **{c: wmean(g[c], w) for c in rr.INDEX_COLS},
+                **{c: wmean(g[c], w) for c in rr.CHART_COLS},
             }
         )
     return pd.DataFrame(rows)
-
-
-def within_frame(reg: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
-    out = reg.copy()
-    for st, idx in reg.groupby("st_fips").groups.items():
-        g = reg.loc[idx]
-        w = g["two_party"]
-        for c in cols:
-            out.loc[idx, c] = g[c] - wmean(g[c], w)
-    return out
 
 
 # Census FIPS names. The 2021–2023 shapefile mislabels Nebraska (FIPS 31)
@@ -265,12 +235,14 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     reg = reg.copy()
     reg["st_fips"] = reg["st_fips"].astype(str).str.zfill(2)
     reg["st_name"] = reg["st_fips"].map(FIPS_NAME).fillna(reg["st_name"])
-    reg, index_info = add_combined(reg)
+    drop_extra = [c for c in reg.columns if c == "combined" or c == "combined_pc1" or c.startswith("z_")]
+    if drop_extra:
+        reg = reg.drop(columns=drop_extra)
     w = reg["two_party"].to_numpy(dtype=float)
     measures = [r[0] for r in rr.USE_RATES + rr.DISORDER_RATES]
 
     alone = {}
-    for col in measures + ["combined", "combined_pc1"]:
+    for col in measures:
         sd = wsd(reg[col], w)
         spec = [col] + CONTROLS
         fit = rr.fit_wls(reg, spec, None)
@@ -297,58 +269,29 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         joint_pack["terms"][col]["state_fe_se_pp"] = coef_pack(joint_fe, col, sd)["se_pp"]
         joint_pack["terms"][col]["state_fe_p"] = coef_pack(joint_fe, col, sd)["p"]
 
-    # Within-state: demean by the vote-weighted state mean, then the same controls.
-    within_cols = ["dem2", "combined", "ln_dens", "pct_18_25", "pct_12_17"]
-    within = within_frame(reg, within_cols)
-    within_fit = rr.fit_wls(within, ["combined"] + CONTROLS, None)
     between = state_table(reg)
-    between_fit = rr.fit_wls(between, ["combined", "ln_dens"], None)
-    # Between sample has no age split stored at a different grain; age is omitted
-    # at state level so the between slope is combined + log density only.
-    between_age = state_table(reg)
-    # state_table does not carry age. Refit between on combined alone and with density.
-    between_only = rr.fit_wls(between, ["combined"], None)
-
+    goodman = goodman_rows(reg)
     q_rows = []
     for col in rr.CHART_COLS:
         q_rows.extend(quintiles(reg, col))
-    q_rows.extend(quintiles(reg, "combined"))
-    dens = density_bins(reg)
-
-    # Within-state quintiles of the demeaned index, for the within chart.
-    wq = within.copy()
-    wq["q"] = pd.qcut(wq["combined"], 5, labels=False, duplicates="drop")
-    within_bins = []
-    for q, g in wq.groupby("q"):
-        ww = g["two_party"]
-        within_bins.append(
-            {
-                "quintile": int(q) + 1,
-                "n_regions": int(len(g)),
-                "combined_within": wmean(g["combined"], ww),
-                "dem2_within": wmean(g["dem2"], ww),
-            }
-        )
 
     correlations = {
         col: wcorr(reg[col], reg["dem2"], w)
-        for col in measures + ["combined", "combined_pc1", "ln_dens", "pct_ba"]
+        for col in measures + ["ln_dens", "pct_ba"]
     }
 
     payload = {
-        "index": index_info,
         "alone": alone,
         "joint": joint_pack,
-        "combined_vs_state": {
-            "within_specified": coef_pack(within_fit, "combined", wsd(reg["combined"], w)),
-            "between_with_log_density": coef_pack(between_fit, "combined", wsd(between["combined"], between["two_party"])),
-            "between_alone": coef_pack(between_only, "combined", wsd(between["combined"], between["two_party"])),
-            "n_states": int(len(between)),
-            "within_bins": within_bins,
-        },
-        "combined_vs_density": {
-            "corr": wcorr(reg["combined"], reg["ln_dens"], w),
-            "bins": dens,
+        "goodman": {
+            "method": (
+                "Vote-weighted WLS of Democratic two-party share on the use rate as a "
+                "proportion, log density, percent ages 18–25, and percent ages 12–17. "
+                "Controls are centered at their vote-weighted means. The non-user share "
+                "is the intercept, 0% use. The user share is the intercept plus the slope, "
+                "100% use. Intervals are 95% from the HC1 covariance."
+            ),
+            "rows": goodman,
         },
         "correlations_dem2": correlations,
         "chart_quintiles": q_rows,
@@ -367,6 +310,7 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "extended.json").write_text(json.dumps(payload, indent=2))
     pd.DataFrame(q_rows).to_csv(out_dir / "quintiles.csv", index=False)
+    pd.DataFrame(goodman).to_csv(out_dir / "user_nonuser.csv", index=False)
     between.to_csv(out_dir / "state_level.csv", index=False)
     keep = [
         "reg_id",
@@ -384,8 +328,6 @@ def extend_results(reg: pd.DataFrame, out_dir: Path) -> dict:
         "pct_15_17",
         "pct_ba",
         *measures,
-        "combined",
-        "combined_pc1",
     ]
     reg[keep].to_csv(out_dir / "region_level.csv", index=False)
     return payload
@@ -428,7 +370,8 @@ def main_committed() -> None:
     (RESULTS / "results.json").write_text(json.dumps(old, indent=2))
     print("marijuana specified", round(mj["pp_per_pp"], 3), "se", round(mj["se_pp"], 3))
     print("alcohol specified", round(alc["pp_per_pp"], 3), "se", round(alc["se_pp"], 3))
-    print("combined per sd", round(payload["alone"]["combined"]["pp_per_sd"], 3))
+    g = payload["goodman"]["rows"][0]
+    print("marijuana nonuser", round(g["nonuser_share"], 1), "user", round(g["user_share"], 1))
     print("wrote", RESULTS)
 
 
