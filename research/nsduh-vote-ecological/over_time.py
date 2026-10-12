@@ -865,8 +865,8 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None
             "Cocaine, heroin, and the other state estimates",
             ["coc", "her", "iem", "met", "hal", "pnr", "opin"],
             0,
-            12,
-            (0, 4, 8, 12),
+            6,
+            (0, 2, 4, 6),
             False,
         ),
     ]
