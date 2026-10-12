@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -51,6 +52,25 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend.naep i{width:22px;height:8px;border-radius:2px}
 .legend i.open{background:transparent;border:2px solid var(--text);width:8px;height:8px;box-sizing:border-box}
 #law-table th{cursor:pointer}
+.corr-switch{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .7rem}
+.heat-table{border-collapse:separate;border-spacing:3px;width:max-content;max-width:100%}
+.heat-table th{font-size:.72rem;text-align:center;white-space:nowrap}
+.heat-table th.rowhead,.heat-table td.rowhead{text-align:left;white-space:nowrap;background:transparent;color:var(--text);font-weight:650}
+.heat-table td.heat{text-align:center;min-width:5.4rem;padding:.38rem .3rem;line-height:1.15;white-space:nowrap}
+.heat-table .hv{display:block;font-size:.95rem;font-weight:800;font-variant-numeric:tabular-nums}
+.heat-table .hn,.heat-table .hs{display:block;margin-top:.12rem;font-size:.68rem;font-weight:650;font-variant-numeric:tabular-nums}
+.mj-panel{display:none}
+.mj-panel.on{display:block}
+.r-set{display:none}
+.r-set.on{display:block}
+.r-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
+.r-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.45rem .4rem .15rem}
+.r-card h3{margin:0 0 .1rem;font-size:.78rem;font-weight:750;color:var(--text)}
+.r-card .chart{width:100%}
+details.secondary-block,details.methods-block{margin:1.5rem 0 1.8rem;max-width:860px}
+details.secondary-block summary,details.methods-block summary{cursor:pointer;font-weight:750;color:var(--text);font-size:1.05rem}
+details.secondary-block[open] summary,details.methods-block[open] summary{margin-bottom:.7rem}
+details.methods-block{max-width:42rem}
 .slope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:860px;margin:.4rem 0 .6rem}
 .slope-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem .55rem .35rem}
 .slope-k{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--text);line-height:1.3}
@@ -1036,12 +1056,10 @@ def child_section() -> str:
     pd.DataFrame(CHILD_EFFECTS).to_csv(RESULTS / "child_exposure.csv", index=False)
     return f"""
 <h2 id="children">Children in homes where parents use</h2>
-<p>In the ABCD baseline, children whose mothers reported cannabis use after learning they were pregnant scored <strong>81.7</strong> on the NIH Toolbox cognition composite (SD 8.6). Children with no prenatal cannabis exposure scored <strong>86.5</strong> (SD 9.1). The unadjusted standardized difference is <strong>−0.061</strong>. With the published covariates, that contrast is <strong>−0.011</strong> (interval on the unstandardized composite, −2.3 to 0.65). The covariate-adjusted contrast that stays negative is after knowledge versus only before knowledge, <strong>−0.023</strong>.</p>
-<p>Binge prenatal alcohol, pooled across 8 studies and about 10,000 children, is Cohen’s d <strong>−0.13</strong> (interval −0.21 to −0.05). Mild-to-moderate prenatal alcohol in the same meta-analysis is d <strong>+0.04</strong> (0.00 to 0.08). In Belarus, weekly moderate paternal drinking lines up with <strong>−1.6</strong> full-scale IQ points (interval −2.5 to −0.9), and weekly heavy drinking with <strong>−2.5</strong> (−3.4 to −1.6). In the Indian case-control of 32 children, full-scale means are 96.14 in the alcohol-dependent-father group and 105.1 in the comparison group.</p>
-<p>The Pittsburgh MHPCD cohort reports the direction without a point difference in the papers cited here. Goldschmidt, Richardson, Willford, and Day, 2008, <a href="https://doi.org/10.1097/CHI.0b013e318160b3f0">10.1097/CHI.0b013e318160b3f0</a>: 648 children at age 6, heavy marijuana use of one or more joints a day in the second trimester associated with lower Stanford-Binet composite, short-term memory, and quantitative scores. Goldschmidt, Richardson, Cornelius, and Day, 2004, <a href="https://doi.org/10.1016/j.ntt.2004.04.003">10.1016/j.ntt.2004.04.003</a>: at age 10, one or more joints a day in the first trimester predicted lower reading and spelling on the Wide Range Achievement Test. Goldschmidt, Richardson, Willford, Severtson, and Day, 2012, <a href="https://doi.org/10.1016/j.ntt.2011.08.009">10.1016/j.ntt.2011.08.009</a>: at age 14, prenatal marijuana exposure was negatively related to the WIAT composite and reading in 524 youths. In the Ottawa OPPS, Fried, Watkinson, and Gray, 1998, <a href="https://doi.org/10.1016/s0892-0362(97)00091-3">10.1016/s0892-0362(97)00091-3</a>: at ages 9 to 12, prenatal marijuana was not associated with WISC global intelligence and was negatively associated with executive-function tasks. Generation R, El Marroun and colleagues, 2009, <a href="https://doi.org/10.1097/CHI.0b013e3181bfa8ee">10.1097/CHI.0b013e3181bfa8ee</a>, reports fetal growth. It does not report a child IQ contrast, so it is not on the chart. Baranger and colleagues, 2022, <a href="https://doi.org/10.1001/jamapediatrics.2022.3191">10.1001/jamapediatrics.2022.3191</a>, follows the ABCD prenatal groups into early adolescence on psychopathology scales, not a cognitive composite.</p>
+<p>Children whose mothers reported cannabis use after learning they were pregnant scored <strong>81.7</strong> on the NIH Toolbox. Children with no prenatal cannabis exposure scored <strong>86.5</strong>. Binge prenatal alcohol is Cohen’s d <strong>−0.13</strong>.</p>
 <div class="chart-card" id="child-chart">{child_chart(CHILD_EFFECTS)}</div>
 <p class="axis-name"><span>Y · Published contrast</span><span>X · Standard deviations, exposed minus unexposed</span></p>
-<p class="fine cap">Green is prenatal cannabis. Blue is prenatal alcohol. Gold is household alcohol. The vertical line is zero. ABCD microdata are in the NIMH Data Archive under controlled access and are not used here. IQ-point results are the published points divided by 15. For Paul and colleagues, the whisker is the published unstandardized interval scaled by that row’s published β divided by its published b. Raman and colleagues publish means and no interval.</p>
+<p class="fine cap">Green is prenatal cannabis. Blue is prenatal alcohol. Gold is household alcohol. The vertical line is zero.</p>
 <div class="table-scroll">
 <table class="cmp">
 <thead><tr><th>Study</th><th>Sample</th><th>Exposure</th><th>Outcome</th><th>SD</th><th>Interval</th></tr></thead>
@@ -1077,20 +1095,31 @@ CORR_LABELS = {
 }
 
 
-def _corr_rgb(r: float) -> tuple[int, int, int]:
-    t = min(1.0, abs(float(r)))
-    cream = (246, 240, 228)
-    end = (138, 99, 24) if r >= 0 else (30, 64, 175)
-    return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
-
-
-def _corr_ink(rgb: tuple[int, int, int]) -> str:
+def _rel_l(rgb: tuple[int, int, int]) -> float:
     def lin(c: int) -> float:
         x = c / 255.0
         return x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4
 
-    L = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
-    return "#120C03" if L > 0.42 else "#FFFFFF"
+    return 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
+
+
+def _contrast(bg: tuple[int, int, int], fg: tuple[int, int, int]) -> float:
+    lighter, darker = sorted((_rel_l(bg), _rel_l(fg)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def _corr_rgb(r: float) -> tuple[int, int, int]:
+    """Cream to brown or blue, stopped where #120C03 stays at 4.8:1."""
+    t = min(1.0, abs(float(r)))
+    cream = (246, 240, 228)
+    end = (155, 122, 57) if r >= 0 else (103, 124, 193)
+    return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
+
+
+def _corr_ink(rgb: tuple[int, int, int]) -> str:
+    dark = (18, 12, 3)
+    white = (255, 255, 255)
+    return "#120C03" if _contrast(rgb, dark) >= _contrast(rgb, white) else "#FFFFFF"
 
 
 def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, ...], title: str) -> str:
@@ -1184,6 +1213,474 @@ def group_table(groups: dict) -> str:
         "</tr>"
     )
     return "\n".join(lines)
+
+
+def _lag_when(lag) -> str:
+    lag = int(lag)
+    if lag == 0:
+        return "in the year the exposure window ends"
+    return f"{lag} years after the exposure window ends"
+
+
+def _heat_td(rec, partial_known: bool) -> str:
+    if rec is None:
+        return (
+            '<td class="heat heat-empty" style="background:#F6F0E4;color:#120C03">'
+            '<span class="hv">—</span><span class="hn"></span><span class="hs"></span></td>'
+        )
+    rgb_r = _corr_rgb(rec.r)
+    fill_r = "#{:02X}{:02X}{:02X}".format(*rgb_r)
+    ink_r = _corr_ink(rgb_r)
+    r_txt = num(rec.r, 2, sign=True)
+    n_txt = str(int(rec.n))
+    if partial_known and np.isfinite(rec.partial_r):
+        rgb_p = _corr_rgb(rec.partial_r)
+        fill_p = "#{:02X}{:02X}{:02X}".format(*rgb_p)
+        ink_p = _corr_ink(rgb_p)
+        p_txt = num(rec.partial_r, 2, sign=True)
+        pn = str(int(rec.partial_n))
+        secondary = f"partial {p_txt}"
+    else:
+        fill_p, ink_p, p_txt, pn = "#F6F0E4", "#120C03", "", ""
+        secondary = "partial —"
+    return (
+        f'<td class="heat" style="background:{fill_r};color:{ink_r}" '
+        f'data-r="{r_txt}" data-p="{p_txt}" data-nr="{n_txt}" data-np="{pn}" '
+        f'data-fill-r="{fill_r}" data-ink-r="{ink_r}" data-fill-p="{fill_p}" data-ink-p="{ink_p}">'
+        f'<span class="hv">{r_txt}</span><span class="hn">n={n_txt}</span><span class="hs">{secondary}</span></td>'
+    )
+
+
+def _mj_index(table):
+    by = {}
+    for rec in table.itertuples(index=False):
+        lag = rec.lag
+        if lag == "" or (isinstance(lag, float) and not np.isfinite(lag)):
+            lag = ""
+        else:
+            lag = int(lag)
+        by[(rec.kind, rec.measure, rec.window, lag, rec.outcome)] = rec
+    return by
+
+
+def _ytick(v: float) -> str:
+    if abs(v) < 1e-9:
+        return "0"
+    av = abs(v)
+    if abs(av * 10 - round(av * 10)) < 1e-6:
+        body = f"{av:.1f}"
+    else:
+        body = f"{av:.2f}".rstrip("0").rstrip(".")
+    return ("+" if v > 0 else "−") + body
+
+
+def _sym_limit(values: list[float]) -> float:
+    """Shared symmetric half-range: pad the largest |value| and round up to a tenth."""
+    finite = [abs(float(v)) for v in values if np.isfinite(v)]
+    m = max(finite) if finite else 0.2
+    padded = m + max(0.08, m * 0.2)
+    lim = math.ceil(padded * 10 - 1e-9) / 10
+    return float(min(1.0, max(0.2, lim)))
+
+
+def _sym_ticks(lim: float) -> list[float]:
+    half = round(lim / 2, 2)
+    return [-lim, -half, 0.0, half, lim]
+
+
+def _line_svg(series, x_of, y_of, x_labels, ticks, width, height, left, bottom) -> str:
+    """series: (color, list of (x, y, tip) or None). One solid line, the partial correlation."""
+    right, top = 14, 18
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">']
+    plot_r = height - bottom
+    for tick in ticks:
+        y = y_of(tick)
+        parts.append(f'<line x1="{left}" y1="{y:.1f}" x2="{width - right}" y2="{y:.1f}" class="grid"/>')
+        parts.append(f'<text x="{left - 6}" y="{y + 3:.1f}" text-anchor="end" class="tick">{_ytick(tick)}</text>')
+    zy = y_of(0)
+    parts.append(f'<line x1="{left}" y1="{zy:.1f}" x2="{width - right}" y2="{zy:.1f}" class="axis" stroke-width="1.6"/>')
+    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{plot_r}" class="axis"/>')
+    for x, label in x_labels:
+        parts.append(f'<text x="{x_of(x):.1f}" y="{height - 8}" text-anchor="middle" class="tick">{esc(label)}</text>')
+
+    for color, pts in series:
+        cur: list[tuple[float, float, str]] = []
+
+        def flush(cur=cur, color=color):
+            if len(cur) >= 2:
+                coords = " ".join(f"{x_of(x):.1f},{y_of(y):.1f}" for x, y, _tip in cur)
+                parts.append(
+                    f'<polyline points="{coords}" fill="none" stroke="{color}" stroke-width="2.2" stroke-linejoin="round"/>'
+                )
+            for x, y, tip in cur:
+                parts.append(
+                    f'<circle cx="{x_of(x):.1f}" cy="{y_of(y):.1f}" r="3" fill="{color}"><title>{esc(tip)}</title></circle>'
+                )
+
+        for item in pts:
+            if item is None:
+                flush(cur)
+                cur = []
+            else:
+                cur.append(item)
+        flush(cur)
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+MJ_LINE_COLORS = (
+    ("current", "#8A6318", "Current"),
+    ("y1", "#0D9488", "Past 1 year"),
+    ("y5", "#2563EB", "5-year mean"),
+    ("y15", "#EA580C", "15-year mean"),
+)
+
+
+def _y_of(lim: float, height: int, bottom: int):
+    top = 18
+
+    def y_of(r):
+        return top + (lim - r) / (2 * lim) * (height - bottom - top)
+
+    return y_of
+
+
+def _panel_svg(by, measure: str, outcome: str, lim: float) -> str:
+    width, height, left, bottom = 400, 196, 46, 28
+    y_of = _y_of(lim, height, bottom)
+
+    def x_of(lag):
+        return left + (lag / 10) * (width - left - 14)
+
+    series = []
+    for wkey, color, wlabel in MJ_LINE_COLORS:
+        pts = []
+        for lag in (0, 2, 4, 6, 8, 10):
+            rec = by.get(("panel", measure, wkey, lag, outcome))
+            if rec is None or not np.isfinite(getattr(rec, "partial_r", float("nan"))):
+                pts.append(None)
+                continue
+            tip = (
+                f"{wlabel}, {lag} years. Partial r {num(rec.partial_r, 2, sign=True)}, n={int(rec.partial_n)}."
+            )
+            pts.append((lag, float(rec.partial_r), tip))
+        series.append((color, pts))
+    labels = [(lag, str(lag)) for lag in (0, 2, 4, 6, 8, 10)]
+    return _line_svg(series, x_of, y_of, labels, _sym_ticks(lim), width, height, left, bottom)
+
+
+def _cohort_svg(by, lim: float) -> str:
+    width, height, left, bottom = 640, 210, 46, 32
+    outcomes = [("math8", "Math"), ("read8", "Reading"), ("comp8", "Composite")]
+    colors = {"mj": "#16A34A", "mrjyr": "#8A6318"}
+    labels_m = {"mj": "Past month", "mrjyr": "Past year"}
+    y_of = _y_of(lim, height, bottom)
+
+    def x_of(i):
+        return left + (i / 2) * (width - left - 14)
+
+    series = []
+    for mkey, color in colors.items():
+        pts = []
+        for i, (okey, olabel) in enumerate(outcomes):
+            rec = by.get(("cohort", mkey, "cohort", "", okey))
+            if rec is None or not np.isfinite(getattr(rec, "partial_r", float("nan"))):
+                pts.append(None)
+                continue
+            tip = (
+                f"{labels_m[mkey]}, grade 8 {olabel.lower()}, birth to age 5. "
+                f"Partial r {num(rec.partial_r, 2, sign=True)}, n={int(rec.partial_n)}."
+            )
+            pts.append((i, float(rec.partial_r), tip))
+        series.append((color, pts))
+    labels = [(i, lab) for i, (_k, lab) in enumerate(outcomes)]
+    return _line_svg(series, x_of, y_of, labels, _sym_ticks(lim), width, height, left, bottom)
+
+
+def mj_corr_section(table) -> str:
+    from over_time import MJ_LAGS, MJ_MEASURES, MJ_OUTCOMES, MJ_WINDOW_DEFS
+
+    by = _mj_index(table)
+    panel = table[table["kind"] == "panel"].copy()
+    cohort = table[table["kind"] == "cohort"].copy()
+    pneg = panel.loc[panel["partial_r"].idxmin()]
+    ppos = panel.loc[panel["partial_r"].idxmax()]
+    cneg = cohort.loc[cohort["partial_r"].idxmin()]
+    limits = {}
+    for mkey, _code, _mlabel in MJ_MEASURES:
+        vals = panel.loc[panel["measure"] == mkey, "partial_r"].tolist()
+        limits[mkey] = _sym_limit(vals)
+    cohort_lim = _sym_limit(cohort["partial_r"].tolist())
+    chart_outcomes = (
+        ("math4", "Grade 4 math"),
+        ("read4", "Grade 4 reading"),
+        ("math8", "Grade 8 math"),
+        ("read8", "Grade 8 reading"),
+        ("comp4", "Grade 4 composite"),
+        ("comp8", "Grade 8 composite"),
+    )
+    sets = []
+    for mkey, _code, mlabel in MJ_MEASURES:
+        cards = []
+        for okey, olabel in chart_outcomes:
+            cards.append(f'<div class="r-card"><h3>{esc(olabel)}</h3>{_panel_svg(by, mkey, okey, limits[mkey])}</div>')
+        on = mkey == "mrjyr"
+        sets.append(
+            f'<div class="r-set{" on" if on else ""}" data-measure="{mkey}">'
+            f'<div class="r-grid">{"".join(cards)}</div></div>'
+        )
+    switches = []
+    for mkey, _code, mlabel in MJ_MEASURES:
+        on = mkey == "mrjyr"
+        switches.append(
+            f'<button type="button" class="{"btn btn-primary" if on else "btn btn-outline"}" '
+            f'data-measure="{mkey}" aria-pressed="{"true" if on else "false"}">{esc(mlabel)}</button>'
+        )
+    legend = "".join(
+        f'<span><i style="background:{color}"></i>{esc(label)}</span>' for _k, color, label in MJ_LINE_COLORS
+    )
+
+    def heat_table(outcome, table_id):
+        rows = []
+        for mkey, _code, mlabel in MJ_MEASURES:
+            for i, (wkey, wlabel, _span) in enumerate(MJ_WINDOW_DEFS):
+                span = f' rowspan="{len(MJ_WINDOW_DEFS)}"' if i == 0 else ""
+                measure_cell = f'<td class="rowhead"{span}>{esc(mlabel)}</td>' if i == 0 else ""
+                cells = "".join(
+                    _heat_td(by.get(("panel", mkey, wkey, int(lag), outcome)), True) for lag in MJ_LAGS
+                )
+                rows.append(f"<tr>{measure_cell}<td class=\"rowhead\">{esc(wlabel)}</td>{cells}</tr>")
+        heads = "".join(f"<th>{int(lag)}</th>" for lag in MJ_LAGS)
+        return (
+            f'<div class="table-scroll"><table class="cmp heat-table" id="{table_id}">'
+            f"<thead><tr><th class=\"rowhead\">Marijuana</th><th class=\"rowhead\">Window</th>{heads}</tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody></table></div>"
+        )
+
+    heat_switches = []
+    heat_panels = []
+    for okey, olabel, _grade in MJ_OUTCOMES:
+        on = okey == "math4"
+        heat_switches.append(
+            f'<button type="button" class="{"btn btn-primary" if on else "btn btn-outline"}" '
+            f'data-outcome="{okey}" aria-pressed="{"true" if on else "false"}">{esc(olabel)}</button>'
+        )
+        heat_panels.append(
+            f'<div class="mj-panel{" on" if on else ""}" data-outcome="{okey}">{heat_table(okey, "mj-table-" + okey)}</div>'
+        )
+    cohort_heads = "".join(f"<th>{esc(label)}</th>" for key, label, grade in MJ_OUTCOMES if grade == 8)
+    cohort_rows = []
+    for mkey, _code, mlabel in MJ_MEASURES:
+        cells = "".join(
+            _heat_td(by.get(("cohort", mkey, "cohort", "", okey)), True)
+            for okey, _label, grade in MJ_OUTCOMES
+            if grade == 8
+        )
+        cohort_rows.append(f'<tr><td class="rowhead">{esc(mlabel)}</td>{cells}</tr>')
+    cohort_table = (
+        '<div class="table-scroll"><table class="cmp heat-table" id="mj-cohort">'
+        f'<thead><tr><th class="rowhead">Marijuana</th>{cohort_heads}</tr></thead>'
+        f"<tbody>{''.join(cohort_rows)}</tbody></table></div>"
+    )
+    script = """
+<script>
+(function(){
+  var root = document.getElementById('mj-corr');
+  if (!root) return;
+  var measureButtons = root.querySelectorAll('button[data-measure]');
+  measureButtons.forEach(function(b){
+    b.addEventListener('click', function(){
+      var name = b.getAttribute('data-measure');
+      measureButtons.forEach(function(btn){
+        var on = btn.getAttribute('data-measure') === name;
+        btn.className = on ? 'btn btn-primary' : 'btn btn-outline';
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      root.querySelectorAll('.r-set').forEach(function(panel){
+        panel.classList.toggle('on', panel.getAttribute('data-measure') === name);
+      });
+    });
+  });
+  var heat = document.getElementById('mj-heat');
+  if (!heat) return;
+  var modeButtons = heat.querySelectorAll('button[data-mode]');
+  var outcomeButtons = heat.querySelectorAll('button[data-outcome]');
+  function paint(mode){
+    modeButtons.forEach(function(b){
+      var on = b.getAttribute('data-mode') === mode;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var primary = mode === 'partial' ? 'p' : 'r';
+    var secondary = mode === 'partial' ? 'r' : 'p';
+    var secondaryName = mode === 'partial' ? 'r' : 'partial';
+    heat.querySelectorAll('td.heat').forEach(function(td){
+      if (td.classList.contains('heat-empty')) return;
+      td.style.background = td.getAttribute('data-fill-' + primary);
+      td.style.color = td.getAttribute('data-ink-' + primary);
+      var nAttr = primary === 'p' ? 'data-np' : 'data-nr';
+      td.querySelector('.hv').textContent = td.getAttribute('data-' + primary);
+      td.querySelector('.hn').textContent = 'n=' + td.getAttribute(nAttr);
+      td.querySelector('.hs').textContent = secondaryName + ' ' + td.getAttribute('data-' + secondary);
+    });
+  }
+  function show(name){
+    outcomeButtons.forEach(function(b){
+      var on = b.getAttribute('data-outcome') === name;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    heat.querySelectorAll('.mj-panel').forEach(function(panel){
+      panel.classList.toggle('on', panel.getAttribute('data-outcome') === name);
+    });
+  }
+  modeButtons.forEach(function(b){
+    b.addEventListener('click', function(){ paint(b.getAttribute('data-mode')); });
+  });
+  outcomeButtons.forEach(function(b){
+    b.addEventListener('click', function(){ show(b.getAttribute('data-outcome')); });
+  });
+})();
+</script>
+"""
+    return f"""
+<h2 id="correlations">Marijuana and test scores</h2>
+<p>The lines are partial correlations, holding log density, age, and education. The most negative is {esc(str(pneg.measure_label).lower())} marijuana, the {esc(str(pneg.window_label).lower())}, with {esc(str(pneg.outcome_label).lower())} {_lag_when(pneg.lag)}: <strong>{num(pneg.partial_r, 2, sign=True)}</strong> (n={int(pneg.partial_n)}). The strongest positive partial correlation is {esc(str(ppos.measure_label).lower())} marijuana, the {esc(str(ppos.window_label).lower())}, with {esc(str(ppos.outcome_label).lower())} {_lag_when(ppos.lag)}: <strong>{num(ppos.partial_r, 2, sign=True)}</strong> (n={int(ppos.partial_n)}).</p>
+<div id="mj-corr">
+<div class="corr-switch">
+{''.join(switches)}
+</div>
+<div class="legend">{legend}</div>
+{''.join(sets)}
+<p class="axis-name"><span>Y · Partial r</span><span>X · Years after the exposure window ends</span></p>
+<div class="r-card" id="mj-cohort-chart">
+<h3>Birth to age 5, grade 8</h3>
+{_cohort_svg(by, cohort_lim)}
+</div>
+<p>The partial correlation of {esc(str(cneg.measure_label).lower())} marijuana from birth to about age 5 with {esc(str(cneg.outcome_label).lower())} is <strong>{num(cneg.partial_r, 2, sign=True)}</strong> (n={int(cneg.partial_n)}). Green is past month. Gold is past year.</p>
+<p class="axis-name"><span>Y · Partial r</span><span>X · Grade 8 score</span></p>
+<details class="secondary-block">
+<summary>Correlation table</summary>
+<div id="mj-heat">
+<div class="corr-switch">
+{''.join(heat_switches)}
+</div>
+<div class="corr-switch">
+<button type="button" class="btn btn-primary" data-mode="r" aria-pressed="true">Pearson r</button>
+<button type="button" class="btn btn-outline" data-mode="partial" aria-pressed="false">Partial r</button>
+</div>
+{''.join(heat_panels)}
+<h3>Birth to age 5</h3>
+{cohort_table}
+</div>
+</details>
+</div>
+""" + script
+
+
+def window_corr_section(table) -> str:
+    from over_time import WINDOW_OUTCOMES
+
+    outcomes = list(WINDOW_OUTCOMES)
+    keys = []
+    for rec in table.itertuples(index=False):
+        key = (rec.substance, rec.window, rec.substance_label, rec.window_label)
+        if key not in keys:
+            keys.append(key)
+    by = {(rec.substance, rec.window, rec.outcome): rec for rec in table.itertuples(index=False)}
+    top = table.loc[table["r"].abs().idxmax()]
+    ptop = table.loc[table["partial_r"].abs().idxmax()]
+    lead = (
+        f"The strongest Pearson correlation is {esc(top.substance_label)}, {esc(top.window_label)}, "
+        f"with {esc(top.outcome_label)}: <strong>{num(top.r, 2, sign=True)}</strong> (n={int(top.n)}). "
+        f"The partial correlation in that cell is <strong>{num(top.partial_r, 2, sign=True)}</strong> (n={int(top.partial_n)})."
+    )
+    if (ptop.substance, ptop.window, ptop.outcome) != (top.substance, top.window, top.outcome):
+        lead += (
+            f" The strongest partial correlation is {esc(ptop.substance_label)}, {esc(ptop.window_label)}, "
+            f"with {esc(ptop.outcome_label)}: <strong>{num(ptop.partial_r, 2, sign=True)}</strong> (n={int(ptop.partial_n)})."
+        )
+    body = []
+    for substance, window, slabel, wlabel in keys:
+        cells = []
+        for okey, _olabel in outcomes:
+            rec = by[(substance, window, okey)]
+            rgb_r = _corr_rgb(rec.r)
+            rgb_p = _corr_rgb(rec.partial_r)
+            fill_r = "#{:02X}{:02X}{:02X}".format(*rgb_r)
+            fill_p = "#{:02X}{:02X}{:02X}".format(*rgb_p)
+            ink_r = _corr_ink(rgb_r)
+            ink_p = _corr_ink(rgb_p)
+            cells.append(
+                f'<td class="heat" style="background:{fill_r};color:{ink_r}" '
+                f'data-r="{num(rec.r, 2, sign=True)}" data-p="{num(rec.partial_r, 2, sign=True)}" '
+                f'data-nr="{int(rec.n)}" data-np="{int(rec.partial_n)}" '
+                f'data-fill-r="{fill_r}" data-ink-r="{ink_r}" data-fill-p="{fill_p}" data-ink-p="{ink_p}">'
+                f'<span class="hv">{num(rec.r, 2, sign=True)}</span>'
+                f'<span class="hn">n={int(rec.n)}</span>'
+                f'<span class="hs">partial {num(rec.partial_r, 2, sign=True)}</span></td>'
+            )
+        body.append(
+            "<tr>"
+            f'<td class="rowhead">{esc(slabel)}</td>'
+            f'<td class="rowhead">{esc(wlabel)}</td>'
+            + "".join(cells)
+            + "</tr>"
+        )
+    heads = "".join(f"<th>{esc(label)}</th>" for _key, label in outcomes)
+    n_r = int(table["n"].mode().iloc[0])
+    n_p = int(table["partial_n"].mode().iloc[0])
+    script = """
+<script>
+(function(){
+  var root = document.getElementById('window-corr');
+  if (!root) return;
+  var buttons = root.querySelectorAll('button[data-mode]');
+  function paint(mode){
+    buttons.forEach(function(b){
+      var on = b.getAttribute('data-mode') === mode;
+      b.className = on ? 'btn btn-primary' : 'btn btn-outline';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var primary = mode === 'partial' ? 'p' : 'r';
+    var secondary = mode === 'partial' ? 'r' : 'p';
+    var secondaryName = mode === 'partial' ? 'r' : 'partial';
+    root.querySelectorAll('td.heat').forEach(function(td){
+      td.style.background = td.getAttribute('data-fill-' + primary);
+      td.style.color = td.getAttribute('data-ink-' + primary);
+      var nAttr = primary === 'p' ? 'data-np' : 'data-nr';
+      td.querySelector('.hv').textContent = td.getAttribute('data-' + primary);
+      td.querySelector('.hn').textContent = 'n=' + td.getAttribute(nAttr);
+      td.querySelector('.hs').textContent = secondaryName + ' ' + td.getAttribute('data-' + secondary);
+    });
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ paint(b.getAttribute('data-mode')); });
+  });
+})();
+</script>
+"""
+    return f"""
+<h3>State correlations</h3>
+<p>{lead}</p>
+<p>Brown is positive. Blue is negative. Cream is near zero. The large number is the correlation selected below. The small number is the other one. n is the state count for the large number.</p>
+<div id="window-corr">
+<div class="corr-switch">
+<button type="button" class="btn btn-primary" data-mode="r" aria-pressed="true">Pearson r</button>
+<button type="button" class="btn btn-outline" data-mode="partial" aria-pressed="false">Partial r</button>
+</div>
+<div class="table-scroll">
+<table class="cmp heat-table" id="window-corr-table">
+<thead><tr><th class="rowhead">Substance</th><th class="rowhead">Window</th>{heads}</tr></thead>
+<tbody>
+{''.join(body)}
+</tbody>
+</table>
+</div>
+</div>
+<p class="fine">The outcome year is 2019, the latest NAEP year with a full 15-year run of interview-mode pools: the 15-year row is the mean of end years 2005–2019, the 5-year row is the mean of end years 2015–2019, and the latest-pool row is the 2018–2019 estimate, with the 2019–2020 pool absent and the 2021–2024 web-mode pools left out.</p>
+<p class="fine">Scores are vote-weighted z-scores of the 2019 state means. The composite is the mean of those four z-scores. Democratic share is the 2020 two-party share. Weights are 2020 two-party votes. Partial r residualizes the exposure and the outcome on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, the vote-weighted region means. Median household income is not in the region file. Alaska and Hawaii are absent from that file, so partial r uses {n_p} states and Pearson r uses {n_r}. Hallucinogens and opioid misuse begin in the web-mode pools and are off this table. Binge alcohol, illicit drugs other than marijuana, methamphetamine, and pain-reliever misuse have four pre-break pools on the current questionnaire, so only the 2018–2019 row is filled. Heroin’s series starts in 2013–2014, so the 15-year row is omitted. CSV: <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>.</p>
+""" + script
 
 
 def correlation_heatmap(study: dict) -> str:
@@ -1319,18 +1816,15 @@ def main():
     n_joint = len(ext["joint"]["terms"])
     low_s, high_s = contour_sum[0], contour_sum[2]
     groups = ext["groups"]
-    study = ext["correlation_matrix"]
     omit = groups["heroin_omitted"]["terms"]
     inn = groups["heroin_in_b"]["terms"]
     heroin = groups["heroin_alone"]
     gchart = group_chart(groups)
     gtab_group = group_table(groups)
-    heat = correlation_heatmap(study)
-    pchart_corr = partial_chart(study)
-    ptab_corr = partial_table(study)
-    partial_of = {row["term"]: row for row in study["partials"]}
-    dens_r = study["matrix"][study["keys"].index("dem2")][study["keys"].index("ln_dens")]
-    from over_time import section_html
+    from over_time import marijuana_score_correlations, section_html, state_window_correlations
+
+    mj_html = mj_corr_section(marijuana_score_correlations())
+    window_html = window_corr_section(state_window_correlations())
 
     ot_html = section_html()
     mj_line, alc_line = line_fits["mj"], line_fits["alc"]
@@ -1361,7 +1855,7 @@ def main():
 <style>
 .note-wrap{{max-width:none;width:100%;margin:0;padding:.4rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1240px)/2)) 3.5rem}}
 .note-wrap p:not(.axis-name),.note-wrap h2,.note-wrap .src,.note-wrap li{{max-width:42rem}}
-.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid,.note-wrap .contour-grid{{max-width:860px}}
+.note-wrap .stats,.note-wrap table.cmp,.note-wrap .chart-card,.note-wrap .legend,.note-wrap .axis-name,.note-wrap .slope-grid,.note-wrap .contour-grid,.note-wrap .r-grid{{max-width:860px}}
 .note-wrap .slope-card p{{max-width:none}}
 .table-scroll{{overflow-x:auto;max-width:100%}}
 .heat-wrap{{max-width:860px}}
@@ -1423,6 +1917,7 @@ body.pp .hero h1{{max-width:22ch}}
   .axis-name{{flex-direction:column;align-items:flex-start;gap:.25rem}}
   .slope-grid{{grid-template-columns:1fr}}
   .contour-grid{{grid-template-columns:1fr}}
+  .r-grid{{grid-template-columns:1fr}}
 }}
 </style>
 </head>
@@ -1464,19 +1959,14 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/cannabis_medical.csv" download>Medical dates CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/child_exposure.csv" download>Child exposure CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/group_slopes.csv" download>Group slopes CSV</a>
-<a class="btn btn-primary" href="nsduh-vote-ecological/results/correlation_matrix.csv" download>Correlation matrix CSV</a>
-<a class="btn btn-primary" href="nsduh-vote-ecological/results/partial_correlations.csv" download>Partial correlations CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/state_window_correlations.csv" download>State correlation CSV</a>
+<a class="btn btn-primary" href="nsduh-vote-ecological/results/marijuana_score_correlations.csv" download>Marijuana score CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
 </div>
-<p>I joined SAMHSA’s 2021–2023 NSDUH substate small-area estimates to 2024 presidential votes reallocated to ZCTAs by the land-cover method (Harvard Dataverse 10.7910/DVN/Z8TSH3), with ACS 2019–2023 age and education and Census 2020 ZCTA internal points. The unit is the substate region. N = 382 regions, 30,389 ZCTAs, 150.1 million allocated two-party votes. Weights are two-party votes. Standard errors are HC1. The specified model is the rate, log population density, percent ages 18–25, and percent ages 12–17. Ages 12–14 are three-fifths of the ACS 10–14 band, and age 25 is one-fifth of the 25–29 band. Replacing those with ages 15–17 and 18–24 leaves the marijuana slope at 1.12.</p>
-<p>Alaska and Hawaii have no rows in the vote file. The shapefile has 393 regions. Nebraska is in it: five regions, FIPS 31, polygons between 104°W and 95°W. The file’s state name on those rows says New Jersey. One New Jersey region, Southern, FIPS 34, is labeled New York. State indicators use the FIPS code. The estimation sample is 49 jurisdictions: 48 states plus the District of Columbia.</p>
-<p>The NSDUH rates are small-area estimates. I applied no errors-in-variables correction. No public file links one person’s use to that person’s ballot. Density’s correlation with Democratic two-party share is 0.73. Bachelor’s share is 0.71. The slope that remains after density and age is the residual association of the rate.</p>
-<p>Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are not in the substate file. Those six are past-year rates, and heroin is ages 18 or older. There is no separate heavy-drinking field. Binge alcohol in the past month is the intensity measure SAMHSA published. Fentanyl, inhalants, LSD, PCP, and crack are not separate substate rates. The file also carries mental-illness, suicide, and perceived-risk outcomes. I left those out of the vote regression. Substance-use disorder rates are in the second table. They are disorder prevalence, not use.</p>
-<p>The user and non-user shares are a vote-weighted regression of Democratic two-party share on the use rate, log density, and age, with density and age held at their vote-weighted means. The sampling distribution of the two shares is restricted to 0–100. A rate whose Duncan–Davis bounds on the user share run from 0 to 100, and whose restricted estimate piles on that edge, stays off that chart. The companion reads the same regression at the 10th and 90th percentiles of the observed regional rate. Democratic-majority regions are those with Democratic two-party share above 50%. The ratio is the vote-weighted use rate there divided by the rate where Republicans took the majority.</p>
-<p>The laboratory chart is laboratory data. The potency curves are predictions. Federal contribution totals are OpenSecrets industry codes N02, H04, and N09. The 2024 cycle is January 1, 2023 through December 31, 2024. I rechecked the live N09 page on 2026-10-11. It shows $969,606. OpenSecrets dates that cycle’s FEC release February 6, 2025. Party percentages are the published shares of contributions to candidates and parties. Outside spending is in the total and out of the party split. Federal lobbying is OpenSecrets’ calendar-2024 total from Senate Office of Public Records filings, January through December. State ballot figures are committee totals compiled by Ballotpedia from state filings, retrieved 2026-10-11. Ballot measures have no party. FEC employer and PAC totals for named cannabis companies sit beside the industry total. They are separate filings.</p>
+<p>N = 382 regions, 30,389 ZCTAs, and 150.1 million two-party votes. After log density and age, marijuana is <strong>{num(alone['mj']['pp_per_pp'], sign=True)}</strong> points of Democratic share per point of past-month use (SE {num(alone['mj']['se_pp'])}).</p>
 <p class="cite">Reffelt, A. (2026). <em>Substance use and the 2024 vote.</em> AMNI-SCIENT Research. https://amni-scient.com/research/substance-use-vote-share</p>
 </div>
 
@@ -1487,24 +1977,32 @@ body.pp .hero h1{{max-width:22ch}}
 </div>
 
 <h2>Each rate</h2>
-<p>Each point is one substate region. The area of the point is two-party votes. The vertical axis is the 2024 Democratic vote divided by Democratic plus Republican votes, from 0 to 100. The horizontal axis is that NSDUH rate, in percent, on the same 0 to 100 scale. The line is the vote-weighted fit of share on the rate. Its slope is points of share per point of use.</p>
+<p>Each point is one of 382 regions. The line is points of 2024 Democratic two-party share per point of that rate.</p>
 {panels}
 <p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · NSDUH rate, 0–100%</span></p>
 <p class="fine cap">Measured. The unit is the substate region. 382 regions. Both axes are percentage points on the same scale, so the angle of the line is the slope. The line runs from the lowest regional rate to the highest.</p>
 
 <h2>Rate of change</h2>
-<p>SAMHSA withdrew the 2018–2020 substate estimates. Web interviews in late 2020 changed answers relative to the in-person interviews of 2018 and 2019, and the agency took that three-year pool down. The 2016–2018 substate shapefile is still published. The 2021 methodology guide sets 2021 as the baseline for NSDUH estimates after the move to web and in-person collection. States also redraw substate regions between cycles. The 2021–2023 file is one pooled period. The line on each panel is the rate of change in this cross-section: points of 2024 Democratic two-party share per point of the 2021–2023 rate.</p>
-<p class="src">2018–2020 withdrawal: <a href="https://www.samhsa.gov/data/data-we-collect/nsduh-national-survey-drug-use-and-health/substate-releases/2018-2020">SAMHSA substate releases, 2018–2020</a>. 2021 baseline: <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt39464/2021NSDUHsaeMethodology111022/2021NSDUHsaeMethodology111022.htm">2021 NSDUH small-area estimation methodology</a>. 2016–2018 file: <a href="https://www.samhsa.gov/data/report/2016-2018-nsduh-substate-region-shapefile">2016–2018 substate region shapefile</a>.</p>
 <p>After log density and age, one point of past-month marijuana use lines up with <strong>{num(alone['mj']['pp_per_pp'], sign=True)}</strong> points of Democratic two-party share (SE {num(alone['mj']['se_pp'])}). Past-month alcohol is <strong>{num(alone['alc']['pp_per_pp'], sign=True)}</strong> (SE {num(alone['alc']['se_pp'])}).</p>
-<p>A point of cocaine is a large coefficient because the regional rate only moves about half a point: <strong>{num(alone['coc']['pp_per_pp'], sign=True)}</strong> per point of past-year cocaine use (SE {num(alone['coc']['se_pp'])}), which is <strong>{num(alone['coc']['pp_per_sd'], sign=True)}</strong> points of share per weighted standard deviation. Hallucinogens are <strong>{num(alone['hal']['pp_per_sd'], sign=True)}</strong> per SD. Opioid misuse is <strong>{num(alone['opin']['pp_per_sd'], sign=True)}</strong> per SD (SE {num(alone['opin']['se_per_sd'])}). Methamphetamine is <strong>{num(alone['met']['pp_per_sd'], sign=True)}</strong> per SD.</p>
 <table class="cmp">
 <thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>Per SD</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
 <tbody>
 {coef_table(alone, use_keys)}
 </tbody>
 </table>
-<p class="fine">Per point: percentage points of Democratic two-party share per percentage point of the rate, with log density and age. Per SD: the same slope times the vote-weighted standard deviation of the rate. State FE adds state indicators. p is for the density-and-age slope. N = 382. HC1.</p>
-<p>Marijuana on its own, before density and age, is 1.48 (SE 0.20). Adding a bachelor’s degree leaves 1.09 (SE 0.11). State indicators leave 0.99 (SE 0.26). State indicators and a bachelor’s degree leave 1.14 (SE 0.24). The areal vote allocation leaves 1.14 (SE 0.13). Entered with alcohol alone, marijuana is 0.96 (SE 0.13) and alcohol is 0.49 (SE 0.08).</p>
+<p class="fine">Per point: percentage points of Democratic two-party share per percentage point of the rate, with log density and age. N = 382. HC1.</p>
+<table class="cmp">
+<thead><tr><th>Marijuana specification</th><th>Slope</th><th>SE</th><th>Alcohol</th><th>SE</th></tr></thead>
+<tbody>
+<tr><td>Before density and age</td><td>+1.48</td><td>0.20</td><td></td><td></td></tr>
+<tr><td>Bachelor’s share added</td><td>+1.09</td><td>0.11</td><td></td><td></td></tr>
+<tr><td>State indicators</td><td>+0.99</td><td>0.26</td><td></td><td></td></tr>
+<tr><td>State indicators and bachelor’s share</td><td>+1.14</td><td>0.24</td><td></td><td></td></tr>
+<tr><td>Areal vote allocation</td><td>+1.14</td><td>0.13</td><td></td><td></td></tr>
+<tr><td>With alcohol alone</td><td>+0.96</td><td>0.13</td><td>+0.49</td><td>0.08</td></tr>
+<tr><td>Ages 15–17 and 18–24</td><td>+1.12</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
 
 <h2>Disorder prevalence</h2>
 <table class="cmp">
@@ -1516,7 +2014,7 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine">Same specification. These rows are past-year disorder prevalence.</p>
 
 <h2>Seven rates together</h2>
-<p>The joint model enters the {n_joint} non-nested rates in one regression with log density and age: past-month marijuana, past-month alcohol, past-month illicit drugs other than marijuana, past-year cocaine, past-year opioid misuse, past-year methamphetamine, and past-year hallucinogens. Weighted R² is {ext['joint']['r2']:.2f}. With state indicators it is {ext['joint']['state_fe_r2']:.2f}.</p>
+<p>Seven rates in one model with log density and age. Weighted R² is <strong>{ext['joint']['r2']:.2f}</strong>. With state indicators it is <strong>{ext['joint']['state_fe_r2']:.2f}</strong>.</p>
 <table class="cmp">
 <thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
 <tbody>
@@ -1527,10 +2025,8 @@ body.pp .hero h1{{max-width:22ch}}
 
 <h2 id="groups">Perception and the vote slope</h2>
 <p>Group A’s common slope is <strong>{num(omit['A']['coef'], 2, sign=True)}</strong> points of Democratic two-party share per point of the rate (clustered SE {num(omit['A']['se_cluster'])}). Group B’s is <strong>{num(omit['B']['coef'], 2, sign=True)}</strong> (SE {num(omit['B']['se_cluster'])}). The difference, group B minus group A, is <strong>{num(omit['diff']['coef'], 2, sign=True)}</strong> (SE {num(omit['diff']['se_cluster'])}).</p>
-<p>Putting heroin in group B leaves group A at <strong>{num(inn['A']['coef'], 2, sign=True)}</strong> (SE {num(inn['A']['se_cluster'])}) and moves group B to <strong>{num(inn['B']['coef'], 2, sign=True)}</strong> (SE {num(inn['B']['se_cluster'])}). That difference is <strong>{num(inn['diff']['coef'], 2, sign=True)}</strong> (SE {num(inn['diff']['se_cluster'])}). Heroin on its own, with the same density and age controls, is <strong>{num(heroin['coef'], 2, sign=True)}</strong> per point (HC1 SE {num(heroin['se_hc1'])}). Its correlation with log density is <strong>{num(groups['heroin_density_corr'], 2, sign=True)}</strong>.</p>
-<p>Group A is marijuana, hallucinogens, alcohol, and cocaine. Marijuana: Kloft and colleagues vaporized 300 μg of THC per kilogram, and a suggested false detail was accepted 19% of the time versus 8% on placebo. Hallucinogens are serotonin 5-HT2A agonists that alter perception (Nichols, Pharmacological Reviews, 2016, <a href="https://doi.org/10.1124/pr.115.011478">10.1124/pr.115.011478</a>). LSD raised Creative Imagination Scale ratings versus placebo (Carhart-Harris and colleagues, Psychopharmacology, 2015, <a href="https://doi.org/10.1007/s00213-014-3714-z">10.1007/s00213-014-3714-z</a>). Alcohol: people told the drink was vodka were more swayed by misleading information (Assefi and Garry, 2003), and severely intoxicated participants went along with suggestive cues more than sober participants (van Oorsouw, Merckelbach, and Smeets, 2015). Cocaine blocks the dopamine transporter. At 0.3–0.6 mg/kg intravenous, 60–77% of transporter sites were occupied and the reported high tracked that occupancy (Volkow and colleagues, Nature, 1997, <a href="https://doi.org/10.1038/386827a0">10.1038/386827a0</a>).</p>
-<p>Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Opioid misuse and pain-reliever misuse are mu-opioid agonists. Agonists at that receptor produce analgesia and sedation (Pathan and Williams, British Journal of Pain, 2012, <a href="https://doi.org/10.1177/2049463712438493">10.1177/2049463712438493</a>). Methamphetamine is a monoamine releaser. At 5–30 mg the acute effects are arousal, positive mood, and cardiac stimulation (Cruickshank and Dyer, Addiction, 2009, <a href="https://doi.org/10.1111/j.1360-0443.2009.02564.x">10.1111/j.1360-0443.2009.02564.x</a>). It sits in group B because that profile is stimulant arousal. Heroin is a mu-opioid agonist in the same class, and the two pooled fits report it both ways.</p>
-<p>Green is group A. Teal is group B. Brown is the difference. The lower chart is heroin alone, drawn on its own scale. Whiskers are 95% intervals, clustered by region for the pooled rows and HC1 for heroin alone.</p>
+<p>With heroin in group B the difference is <strong>{num(inn['diff']['coef'], 2, sign=True)}</strong> (SE {num(inn['diff']['se_cluster'])}). Heroin alone is <strong>{num(heroin['coef'], 2, sign=True)}</strong> per point (HC1 SE {num(heroin['se_hc1'])}).</p>
+<p>Green is group A. Teal is group B. Brown is the difference.</p>
 <div class="chart-card" id="group-chart">{gchart}</div>
 <p class="axis-name"><span>Y · Specification</span><span>X · Points of Democratic share per point of the rate</span></p>
 <div class="table-scroll">
@@ -1541,31 +2037,17 @@ body.pp .hero h1{{max-width:22ch}}
 </tbody>
 </table>
 </div>
-<p class="fine">Each region enters once per substance. The outcome is repeated, so the clustered standard error groups rows by region. Substance indicators absorb the level of each rate. The group indicator itself is collinear with those indicators, so the test is the interaction of the rate with group B. Controls are log density, percent ages 18–25, and percent ages 12–17, centered at their vote-weighted means. Weights are two-party votes. N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
+<p class="fine">N = 382 regions. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>.</p>
 
-<h2 id="correlations">Correlations</h2>
-<p>Vote-weighted, past-year cocaine and Democratic share correlate at <strong>{num(partial_of['coc']['weighted_r'], 2, sign=True)}</strong>. Methamphetamine correlates at <strong>{num(partial_of['met']['weighted_r'], 2, sign=True)}</strong>. Log density correlates with Democratic share at <strong>{num(dens_r, 2)}</strong>. After log density, the two age shares, and bachelor’s share, marijuana’s partial correlation is <strong>{num(partial_of['mj']['partial_r'], 2, sign=True)}</strong>, cocaine’s is <strong>{num(partial_of['coc']['partial_r'], 2, sign=True)}</strong>, and hallucinogens’ is <strong>{num(partial_of['hal']['partial_r'], 2, sign=True)}</strong>. Methamphetamine’s partial correlation is <strong>{num(partial_of['met']['partial_r'], 2, sign=True)}</strong>.</p>
-<p>Each cell is the vote-weighted correlation. Gold is positive. Blue is negative. The number is the correlation.</p>
-<div class="table-scroll heat-wrap" id="corr-heatmap">{heat}</div>
-<p class="axis-name"><span>Gold · Positive</span><span>Blue · Negative</span></p>
-<p>The bars are partial correlations with Democratic share. Both the rate and the share are residualized on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share, then correlated with the same vote weights.</p>
-<div class="chart-card" id="partial-chart">{pchart_corr}</div>
-<p class="axis-name"><span>Y · Rate</span><span>X · Partial correlation with Democratic share</span></p>
-<div class="table-scroll">
-<table class="cmp">
-<thead><tr><th>Rate</th><th>Weighted r</th><th>Partial r</th></tr></thead>
-<tbody>
-{ptab_corr}
-</tbody>
-</table>
-</div>
-<p class="fine">Median household income is not in the region file. The ACS extract used here is age and bachelor’s attainment, so income stays out of the matrix. 382 regions. Weights are two-party votes. CSVs: <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
+{mj_html}
+<details class="secondary-block">
+<summary>All substances at the 2019 scores and the 2020 vote</summary>
+{window_html}
+</details>
 
 <h2 id="users">Users and non-users</h2>
-<p>Among people who drank in the past month, the bounded estimate of Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong> (interval {num(g_alc['user_lo'], 1)}–{num(g_alc['user_hi'], 1)}). Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong> (interval {num(g_alc['nonuser_lo'], 1)}–{num(g_alc['nonuser_hi'], 1)}). The majority ratio is <strong>{g_alc['ratio']:.2f}</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users (interval {num(by_term['binge']['user_lo'], 1)}–{num(by_term['binge']['user_hi'], 1)}) and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users (interval {num(by_term['binge']['nonuser_lo'], 1)}–{num(by_term['binge']['nonuser_hi'], 1)}).</p>
-<p>At the 10th percentile of regional past-month marijuana use, {num(g_mj['p10_use'], 1)}%, the fitted Democratic share is <strong>{num(g_mj['p10_share'], 1)}%</strong>. At the 90th percentile, {num(g_mj['p90_use'], 1)}%, it is <strong>{num(g_mj['p90_share'], 1)}%</strong>. Both rates sit inside the observed range, {num(g_mj['observed_min'], 1)}% to {num(g_mj['observed_max'], 1)}%. Vote-weighted past-month marijuana use is {num(g_mj['dem_majority_rate'], 2)}% where Democrats took the majority and {num(g_mj['rep_majority_rate'], 2)}% where Republicans did, a ratio of <strong>{g_mj['ratio']:.2f}</strong>.</p>
-<p>{drop_names} are off the users chart. Duncan–Davis bounds on the user share for those rates run from 0 to 100, and the restricted split piles on that edge or the interval spans most of the scale. Those rates stay on the slope panels and in the percentile chart below.</p>
-<p>Open circles are non-users. Filled circles are users. Whiskers are the central 95% of the vote-weighted regression’s sampling distribution after it is restricted to 0–100. The ratio column is use in Democratic-majority regions divided by use in Republican-majority regions.</p>
+<p>Among people who drank in the past month, Democratic two-party share is <strong>{num(g_alc['user_share'], 1)}%</strong>. Among people who did not, it is <strong>{num(g_alc['nonuser_share'], 1)}%</strong>. Binge alcohol is <strong>{num(by_term['binge']['user_share'], 1)}%</strong> among users and <strong>{num(by_term['binge']['nonuser_share'], 1)}%</strong> among non-users.</p>
+<p>Open circles are non-users. Filled circles are users.</p>
 <div class="chart-card" id="users-chart">{dumb}</div>
 <p class="axis-name"><span>Y · Substance</span><span>X · Democratic two-party share, 0–100%</span></p>
 <p class="fine cap">Measured. Bounded Goodman estimates from the vote-weighted regression with log density and age. 382 regions. {g_mj['n_dem_regions']} Democratic-majority regions, {g_mj['n_rep_regions']} Republican-majority regions.</p>
@@ -1579,7 +2061,7 @@ body.pp .hero h1{{max-width:22ch}}
 </div>
 <p class="fine">Shares are percentage points of Democratic two-party vote, inside 0–100. Dem. maj. and Rep. maj. are vote-weighted use rates, in percent, in regions above and at or below 50% Democratic two-party share.</p>
 <h2 id="percentiles">Inside the observed rates</h2>
-<p>Each line below is the same regression, read at the vote-weighted 10th and 90th percentiles of that rate. Nothing is extended to 0% use or to 100% use. Open circles are the 10th percentile. Filled circles are the 90th.</p>
+<p>At the 10th percentile of regional past-month marijuana use the fitted Democratic share is <strong>{num(g_mj['p10_share'], 1)}%</strong>. At the 90th it is <strong>{num(g_mj['p90_share'], 1)}%</strong>. Open circles are the 10th percentile. Filled circles are the 90th.</p>
 <div class="chart-card" id="percentile-chart">{pchart}</div>
 <p class="axis-name"><span>Y · Substance</span><span>X · Predicted Democratic two-party share, 0–100%</span></p>
 <div class="table-scroll">
@@ -1593,14 +2075,13 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine">Use is the vote-weighted percentile of the regional rate, in percent. Share is the fitted Democratic two-party share at that rate, with log density and age at their vote-weighted means. Intervals are 95% from the HC1 covariance. The ratio column is the same majority-use ratio as the table above.</p>
 
 <h2 id="contour">Marijuana, alcohol, and the vote</h2>
-<p>In the high-density tercile the fitted Democratic share runs from <strong>{high_s['share_min']:.0f}%</strong> to <strong>{high_s['share_max']:.0f}%</strong>. In the low-density tercile it runs from <strong>{low_s['share_min']:.0f}%</strong> to <strong>{low_s['share_max']:.0f}%</strong>. The corner at zero marijuana and zero alcohol is the non-user baseline. The fill stops at the convex hull of the regions in that panel, so the corner stays open.</p>
-<p>Each panel is a vote-weighted local linear fit of Democratic two-party share on past-month marijuana and past-month alcohol. The kernel is tricube. The span is 45% of the panel’s two-party votes, with at least 12 regions. Low, medium, and high are vote-weighted terciles of log population density.</p>
+<p>In the high-density tercile the fitted Democratic share runs from <strong>{high_s['share_min']:.0f}%</strong> to <strong>{high_s['share_max']:.0f}%</strong>. In the low-density tercile it runs from <strong>{low_s['share_min']:.0f}%</strong> to <strong>{low_s['share_max']:.0f}%</strong>.</p>
 {contour}
 <p class="axis-name"><span>Y · Past-month alcohol, %</span><span>X · Past-month marijuana, %</span></p>
 <p class="fine cap">Measured. 382 regions. The color is Democratic two-party share. Gold is above 50. Ink is below 50.</p>
 
 <h2>Democratic share and density</h2>
-<p>Each point is a substate region. The area of the point is two-party votes. The line is the vote-weighted fit of Democratic two-party share on log population density: <strong>{num(dens_b, sign=True)}</strong> points of share per log point (SE {num(dens_se)}).</p>
+<p>Democratic two-party share rises <strong>{num(dens_b, sign=True)}</strong> points per log point of population density (SE {num(dens_se)}). The correlation is 0.73. Bachelor’s share correlates at 0.71.</p>
 <div class="chart-card">{dens}</div>
 <p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Log population density, people per km²</span></p>
 <p class="fine cap">Measured. The unit is the substate region. The vertical axis runs from 0 to 100.</p>
@@ -1609,7 +2090,7 @@ body.pp .hero h1{{max-width:22ch}}
 {child_section()}
 
 <h2>Laboratory results</h2>
-<p>Kloft and colleagues (PNAS, 2020) vaporized 300 μg of THC per kilogram. On the immediate test, a suggested false detail in the eyewitness scene was accepted <strong>19%</strong> of the time after THC (SE 0.04) and <strong>8%</strong> after placebo (SE 0.02). Related-word false alarms were <strong>42%</strong> (SE 0.03) and <strong>27%</strong> (SE 0.03). Gawrylowicz and colleagues (Psychopharmacology, 2017) gave alcohol in the lab after a filmed crime and before the misleading narrative. The marginal mean proportion of misled responses was <strong>0.25</strong> after alcohol (95% CI 0.196 to 0.300), <strong>0.22</strong> in the reverse-placebo arm (0.174 to 0.276), and <strong>0.319</strong> with no alcohol (0.266 to 0.371).</p>
+<p>A suggested false detail was accepted <strong>19%</strong> of the time after THC and <strong>8%</strong> after placebo. Related-word false alarms were <strong>42%</strong> and <strong>27%</strong>. Misled responses were <strong>0.25</strong> after alcohol and <strong>0.319</strong> with no alcohol.</p>
 <div class="chart-card">{lab_chart()}</div>
 <p class="axis-name"><span>Y · Percent</span><span>Whiskers · Kloft, 1 SE in percentage points. Gawrylowicz, half the published 95% CI.</span></p>
 <p class="fine cap">Laboratory data, not vote data. Kloft et al. 2020, immediate test, THC versus placebo. Gawrylowicz et al. 2017, alcohol, reverse placebo, and no alcohol.</p>
@@ -1617,22 +2098,23 @@ body.pp .hero h1{{max-width:22ch}}
 {potency_html()}
 
 <h2>Published studies</h2>
-<p>Kloft, Otgaar, Blokland, Monds, Toennes, Loftus, and Ramaekers, PNAS 2020, <a href="https://doi.org/10.1073/pnas.1920162117">10.1073/pnas.1920162117</a>. Double-blind, placebo-controlled, 64 volunteers. Immediate eyewitness suggested-detail acceptance, 19% on THC and 8% on placebo.</p>
-<p>Meier, Caspi, Ambler, Harrington, Houts, Keefe, McDonald, Ward, Poulton, and Moffitt, PNAS 2012, <a href="https://doi.org/10.1073/pnas.1206820109">10.1073/pnas.1206820109</a>. Dunedin birth cohort. Adolescent-onset persistent cannabis users lost 8 IQ points from childhood to age 38.</p>
-<p>Topiwala, Allan, Valkanova, and colleagues, BMJ 2017, <a href="https://doi.org/10.1136/bmj.j2353">10.1136/bmj.j2353</a>. Whitehall II imaging. More than 30 units of alcohol a week, odds ratio 5.8 for hippocampal atrophy versus abstainers (95% CI 1.8 to 18.6). Fourteen to 21 units a week, odds ratio 3.4 for right hippocampal atrophy (1.4 to 8.1). Lexical fluency declined faster above 7 units a week.</p>
-<p>Gawrylowicz, Ridley, Albery, Barnoth, and Young, Psychopharmacology 2017, <a href="https://doi.org/10.1007/s00213-017-4564-2">10.1007/s00213-017-4564-2</a>. Alcohol after the witnessed event, before the misinformation. The no-alcohol arm reported more misled responses than the alcohol and reverse-placebo arms.</p>
-<p>Assefi and Garry, Psychological Science 2003, <a href="https://doi.org/10.1111/1467-9280.01422">10.1111/1467-9280.01422</a>. Everyone drank tonic. People told the drink was vodka were more swayed by misleading postevent information than people told it was tonic, F(1, 115) = 4.20.</p>
-<p>Van Oorsouw, Merckelbach, and Smeets, Applied Cognitive Psychology 2015, <a href="https://doi.org/10.1002/acp.3129">10.1002/acp.3129</a>. Field study in bars, not a placebo arm. Mean BAC about 0.01%, 0.06%, and 0.16%. Severely intoxicated participants went along with suggestive cues more than sober participants.</p>
-<p>Flowe, Humphries, Takarangi, Zelek, Karoğlu, Gabbert, and Hope, Applied Cognitive Psychology 2019, <a href="https://doi.org/10.1002/acp.3531">10.1002/acp.3531</a>. Alcohol versus tonic, crossed with what people were told they drank. People told they had alcohol reported fewer correct details. The paper reports they were no more likely to report misleading information.</p>
-<p>Denham, International Journal of Drug Policy 2019, <a href="https://doi.org/10.1016/j.drugpo.2019.06.007">10.1016/j.drugpo.2019.06.007</a>. General Social Survey, 1986–2016. Party affiliation became a consistent predictor of support for marijuana legalization after 2004. That paper is about legalization attitudes.</p>
+<p>The laboratory chart is the Kloft contrast. The IQ chart is the Dunedin 8-point loss. The other published numbers sit in this table.</p>
+<table class="cmp">
+<thead><tr><th>Study</th><th>Result</th><th>DOI</th></tr></thead>
+<tbody>
+<tr><td>Kloft et al. 2020</td><td>Suggested detail 19% on THC, 8% on placebo</td><td><a href="https://doi.org/10.1073/pnas.1920162117">10.1073/pnas.1920162117</a></td></tr>
+<tr><td>Meier et al. 2012</td><td>8 IQ points lost, adolescent-onset persistent cannabis, Dunedin</td><td><a href="https://doi.org/10.1073/pnas.1206820109">10.1073/pnas.1206820109</a></td></tr>
+<tr><td>Topiwala et al. 2017</td><td>Odds ratio 5.8 for hippocampal atrophy above 30 units a week (1.8 to 18.6); 3.4 for 14–21 units (1.4 to 8.1)</td><td><a href="https://doi.org/10.1136/bmj.j2353">10.1136/bmj.j2353</a></td></tr>
+<tr><td>Gawrylowicz et al. 2017</td><td>Misled responses 0.319 with no alcohol, 0.25 after alcohol, 0.22 reverse placebo</td><td><a href="https://doi.org/10.1007/s00213-017-4564-2">10.1007/s00213-017-4564-2</a></td></tr>
+<tr><td>Assefi and Garry 2003</td><td>Told-vodka versus told-tonic, F(1, 115) = 4.20</td><td><a href="https://doi.org/10.1111/1467-9280.01422">10.1111/1467-9280.01422</a></td></tr>
+<tr><td>Van Oorsouw et al. 2015</td><td>Mean BAC about 0.01%, 0.06%, and 0.16%</td><td><a href="https://doi.org/10.1002/acp.3129">10.1002/acp.3129</a></td></tr>
+<tr><td>Flowe et al. 2019</td><td>People told they had alcohol reported fewer correct details</td><td><a href="https://doi.org/10.1002/acp.3531">10.1002/acp.3531</a></td></tr>
+<tr><td>Denham 2019</td><td>Party affiliation predicted marijuana-legalization support after 2004</td><td><a href="https://doi.org/10.1016/j.drugpo.2019.06.007">10.1016/j.drugpo.2019.06.007</a></td></tr>
+</tbody>
+</table>
 
 <h2>Industry money in 2024</h2>
-<p>Cannabis money in 2024 is three filings. State ballot support committees reported <strong>$157,512,674.46</strong>. Federal lobbying coded to marijuana was <strong>$5,248,000</strong>. Federal contributions coded to marijuana, OpenSecrets N09, were <strong>$969,606</strong>.</p>
-<p>Florida Amendment 3 is <strong>$153,787,032.89</strong> of the ballot total, through Smart &amp; Safe Florida, Division of Elections account 83475. Trulieve gave that committee <strong>$144,592,173.61</strong>, of which $143,775,000 was cash and $817,173.61 was in kind. Verano Holdings gave $3,509,470. Curaleaf gave $3,000,000. Green Thumb Industries gave $2,259,470. Those four donors are $153,361,113.61. The rest of the committee total is $425,919.28. Ballotpedia processed reports through December 31, 2024.</p>
-<p>The other support committees are Nebraskans for Medical Marijuana, <strong>$1,624,863.21</strong>, counted once for Initiatives 437 and 438; New Economic Frontier in North Dakota, <strong>$519,558.50</strong>; and South Dakota’s two support committees, <strong>$1,581,219.86</strong>. Ballot measures have no party.</p>
-<p>Federal lobbying for marijuana is the calendar year 2024. Twenty-one client lines sum to $5,248,000. OpenSecrets’ client count on that profile is 22. Cresco Labs is the largest line, $1,150,000. Its in-house LD-2 expenses are $420,000, $400,000, $160,000, and $170,000 across the four quarters, the same $1,150,000. Brownstein Hyatt, Putala Strategies, and Crowell &amp; Moring reported $660,000 of income on that client. That income stays out of the client line.</p>
-<p>The N09 contribution total is the full federal cycle, January 1, 2023 through December 31, 2024. The live OpenSecrets page on 2026-10-11 shows the same $969,606. OpenSecrets dates the FEC release February 6, 2025. Of contributions to candidates and parties, <strong>61.40%</strong> went to Democrats and <strong>35.12%</strong> to Republicans. Individuals were $245,993. PACs were $65,500. Soft and outside money was $658,113.</p>
-<p>Beer, wine, and liquor: federal contributions <strong>$27,431,159</strong> (52.70% Democrats / 46.36% Republicans) and lobbying <strong>$29,893,357</strong>. Pharmaceuticals and health products: federal contributions <strong>$86,521,633</strong> (60.04% / 39.20%) and lobbying <strong>$391,572,500</strong>. Lobbying has no party. The ballot row is the cannabis measures.</p>
+<p>Cannabis money in 2024 is three filings: state ballot support <strong>$157,512,674.46</strong>, federal lobbying <strong>$5,248,000</strong>, and federal contributions <strong>$969,606</strong>. Of N09 money to candidates and parties, <strong>61.40%</strong> went to Democrats.</p>
 <p class="fine">Each industry has its own horizontal scale. The party percentages on the federal bar are OpenSecrets’ shares of contributions to candidates and parties. Outside money is in the federal total and out of that split.</p>
 {cats}
 <table class="cmp spend">
@@ -1648,11 +2130,10 @@ body.pp .hero h1{{max-width:22ch}}
 </tbody>
 </table>
 <p class="fine cap">Support committees only. Nebraska’s two initiatives share one committee, so $1,624,863.21 is one row. Retrieved 2026-10-11.</p>
-<p>Opposition stays out of the support total. Florida opposition is $33,610,084.06: Keep Florida Clean $24,990,394.10, Florida Freedom Fund $8,615,889.96, and Floridians Against Recreational Marijuana $3,800. Florida Freedom Fund also registered against Amendment 4. South Dakota opposition is $505,833.63. Nebraska and North Dakota opposition are $0. Transparency USA’s 2024-election-cycle view of account 83475, stamped through December 31, 2024, lists $133,786,908, including $125,099,656.52 from Trulieve. The bar uses Ballotpedia’s committee total through that date. The Division of Elections contribution search returned HTTP 502 on 2026-10-11. The committee page for account 83475 is up.</p>
-<p>FEC schedule A by employer, cycle 2024, retrieved 2026-10-11. Included strings for Trulieve, Curaleaf, Green Thumb Industries, Verano, Cresco Labs, Ayr Wellness, Tilray, Canopy Growth, the Marijuana Policy Project, the National Cannabis Industry Association, and the National Cannabis Roundtable sum to <strong>$277,316.66</strong>. Ayrloom returned no rows. Those gifts go to committees, including a company’s own PAC, so they sit beside the OpenSecrets total. Three PACs’ contributions to federal candidates: Canopy Growth USA, C00771592, $37,500, termination report, coverage through August 31, 2023; Cronos USA, C00764571, $23,500, year-end 2024; Dutchie, C00849398, $15,500, year-end 2024. The FEC sum is <strong>$76,500</strong>. OpenSecrets’ marijuana PAC-to-candidate page is <strong>$68,500</strong>, $19,000 to Democrats and $49,500 to Republicans. National Cannabis Industry Association PAC, C00528026, reported $0 to federal candidates and $8,000 in receipts, year-end 2024. Name search returned no federal committee for Trulieve, Curaleaf, Green Thumb, Verano, Cresco, Ayr Wellness, Ayrloom, Tilray, or the US Cannabis Council. The Council’s lobbying line is $580,000. Marijuana Policy Project PAC, C00389882, returned HTTP 404 on the totals endpoint. Employer strings for the Marijuana Policy Project sum to $2,052.</p>
+<p>Named donors, opposition committees, and the FEC comparison are in the ballot, lobbying, and FEC downloads. Florida opposition sums to $33,610,084.06. Employer strings for the named cannabis firms sum to <strong>$277,316.66</strong>. Three PACs gave federal candidates <strong>$76,500</strong>.</p>
 
 <h2>Federal contributions by cycle</h2>
-<p>OpenSecrets totals, cycles 2016 through 2024. These bars are federal contributions. The 2024 marijuana total on this chart is the $969,606 line above. In 2024, beer, wine, and liquor gave <strong>{money(beer_total)}</strong>, of which <strong>{money(beer_dem)}</strong> went to Democrats and <strong>{money(beer_rep)}</strong> to Republicans. Pharmaceuticals and health products: <strong>{money(pharma_total)}</strong>, <strong>60.04%</strong> to Democrats. Marijuana: <strong>{money(mj_total)}</strong>, <strong>61.40%</strong> to Democrats and <strong>35.12%</strong> to Republicans.</p>
+<p>In 2024, beer, wine, and liquor gave <strong>{money(beer_total)}</strong>. Pharmaceuticals and health products gave <strong>{money(pharma_total)}</strong>. Marijuana gave <strong>{money(mj_total)}</strong>, with <strong>61.40%</strong> of candidate and party money to Democrats.</p>
 <p class="fine">Gray is the cycle total. Blue is dollars to Democratic candidates and parties. Red is dollars to Republican candidates and parties. Each industry has its own vertical scale. The total includes outside spending. The party bars do not.</p>
 {donation_totals(donations)}
 <p class="fine cap">OpenSecrets industry totals, retrieved 2026-10-11 from the archive capture of 2026-07-16. Codes N02, H04, and N09.</p>
@@ -1662,11 +2143,23 @@ body.pp .hero h1{{max-width:22ch}}
 <p class="fine cap">The published Democratic and Republican percentages need not sum to 100. Outside spending is excluded from this split.</p>
 
 <h2>Vote share and the donation split</h2>
-<p>Left side, the density-and-age slope in points of Democratic two-party share per weighted standard deviation of the rate. Right side, the 2024 OpenSecrets split of federal contributions to candidates and parties. Blue is the percent to Democrats. Red is the percent to Republicans. The opioid row uses Pharmaceuticals / Health Products, OpenSecrets code H04. State ballot committees have no party. That money is in the category chart above.</p>
+<p>Left, points of Democratic share per weighted standard deviation of the rate. Right, the 2024 split of federal contributions to candidates and parties. Blue is Democrats. Red is Republicans.</p>
 <div class="chart-card">{compare_chart(alone, donations)}</div>
 <p class="fine cap">This figure shows co-occurrence of area-level use with area-level vote share, and the published split of industry contributions to candidates and parties. It does not show intent, coordination, a deliberate strategy, or that substance use changes any individual’s vote.</p>
 
+<details class="methods-block" id="methods">
+<summary>Methods</summary>
 <div class="src">
+<p>I joined SAMHSA’s 2021–2023 NSDUH substate small-area estimates to 2024 presidential votes reallocated to ZCTAs by the land-cover method (Harvard Dataverse 10.7910/DVN/Z8TSH3), with ACS 2019–2023 age and education and Census 2020 ZCTA internal points. The unit is the substate region. Weights are two-party votes. Standard errors are HC1. The specified model is the rate, log population density, percent ages 18–25, and percent ages 12–17. Ages 12–14 are three-fifths of the ACS 10–14 band, and age 25 is one-fifth of the 25–29 band.</p>
+<p>Alaska and Hawaii have no rows in the vote file. The shapefile has 393 regions. Nebraska is in it: five regions, FIPS 31. The file’s state name on those rows says New Jersey. One New Jersey region, Southern, FIPS 34, is labeled New York. State indicators use the FIPS code. The estimation sample is 49 jurisdictions: 48 states plus the District of Columbia.</p>
+<p>The NSDUH rates are small-area estimates. No public file links one person’s use to that person’s ballot. The slope that remains after density and age is the residual association of the rate. Past-month cocaine, heroin, methamphetamine, hallucinogens, opioid misuse, and pain-reliever misuse are past-year rates in this file, and heroin is ages 18 or older. Binge alcohol is the intensity measure SAMHSA published. Mental-illness, suicide, and perceived-risk outcomes stay out of the vote regression.</p>
+<p>SAMHSA withdrew the 2018–2020 substate estimates. The 2021 methodology guide sets 2021 as the baseline after the move to web and in-person collection. The 2021–2023 file is one pooled period. <a href="https://www.samhsa.gov/data/data-we-collect/nsduh-national-survey-drug-use-and-health/substate-releases/2018-2020">2018–2020 withdrawal</a>. <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt39464/2021NSDUHsaeMethodology111022/2021NSDUHsaeMethodology111022.htm">2021 methodology</a>.</p>
+<p>User and non-user shares are the vote-weighted regression of Democratic two-party share on the rate, log density, and age, with density and age held at their vote-weighted means, then restricted to 0–100. A rate whose Duncan–Davis bounds run from 0 to 100 stays off that chart and remains on the slope panels. The contour is a vote-weighted local linear fit, tricube kernel, span 45% of the panel’s two-party votes, at least 12 regions. Low, medium, and high are vote-weighted terciles of log density.</p>
+<p>Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Each region enters once per substance. The test is the interaction of the rate with group B. Controls are log density and the two age shares, centered at their vote-weighted means. Marijuana: Kloft and colleagues, 300 μg of THC per kilogram, suggested false detail 19% versus 8% on placebo. Hallucinogens: Nichols, Pharmacological Reviews, 2016, <a href="https://doi.org/10.1124/pr.115.011478">10.1124/pr.115.011478</a>. LSD: Carhart-Harris and colleagues, Psychopharmacology, 2015, <a href="https://doi.org/10.1007/s00213-014-3714-z">10.1007/s00213-014-3714-z</a>. Alcohol expectancy: Assefi and Garry, 2003; van Oorsouw, Merckelbach, and Smeets, 2015. Cocaine: Volkow and colleagues, Nature, 1997, <a href="https://doi.org/10.1038/386827a0">10.1038/386827a0</a>, 60–77% of dopamine transporter sites occupied at 0.3–0.6 mg/kg intravenous. Opioids: Pathan and Williams, British Journal of Pain, 2012, <a href="https://doi.org/10.1177/2049463712438493">10.1177/2049463712438493</a>. Methamphetamine: Cruickshank and Dyer, Addiction, 2009, <a href="https://doi.org/10.1111/j.1360-0443.2009.02564.x">10.1111/j.1360-0443.2009.02564.x</a>, arousal at 5–30 mg.</p>
+<p>A marijuana window is dropped when it asks for a 2020 or 2021 pool or would average an interview-mode pool with a web-mode pool. NAEP years 2003 through 2024 stay in the score. Current is the pool ending when the exposure window ends. Past 1 year is the pool ending the year before that. At a lag of 0, current is the pool in the NAEP year. The 5-year and 15-year lines are means of the published overlapping two-year pools in that span. Scores are population-weighted z-scores within each NAEP year. Each grade’s composite is the mean of that grade’s mathematics and reading z-scores. Weights are the ages-12-or-older population in the NAEP year. Partial r residualizes the exposure and the score on log density, percent ages 18–25, percent ages 12–17, and bachelor’s share. Those controls do not change over time. Median household income is not in the region file. Alaska and Hawaii are absent from it. The birth-to-age-5 line is adult state use, ages 12 or older, over pool end years t−14 through t−9 for grade 8 students tested in year t. CSV: <a href="nsduh-vote-ecological/results/marijuana_score_correlations.csv">marijuana_score_correlations.csv</a>.</p>
+<p>The suggestibility curve is linear on the logit between placebo and the Kloft dose, placed at 14% THC: half a gram of flower, 30% of the THC inhaled, 21 mg. Past that dose the band adds 35% uncertainty on the extra climb. The IQ curve multiplies the 8-point Dunedin loss by potency divided by 7.1%. Sampling error on the anchor is 2.5 points. Past 7.1% the band adds 50% uncertainty on the extra loss. Dots are measured. The rest of each curve is a prediction.</p>
+<p>Child contrasts that publish a point difference are on the chart, in standard deviations. IQ-point results are the published points divided by 15. ABCD microdata are not used. Pittsburgh, Ottawa, and Generation R state a direction and do not state a point difference, so they are not on the chart. Paul et al., <a href="https://doi.org/10.1001/jamapsychiatry.2020.2902">10.1001/jamapsychiatry.2020.2902</a>. Flak et al., <a href="https://doi.org/10.1111/acer.12214">10.1111/acer.12214</a>. Yang and Kramer, <a href="https://doi.org/10.1093/ije/dys071">10.1093/ije/dys071</a>. Raman, Prasad, and Appaya, <a href="https://doi.org/10.4103/0019-5545.74313">10.4103/0019-5545.74313</a>.</p>
+<p>Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Those means stay off the NAEP chart. The ICAR figure on this page is that published slope, not a correlation of use with a line drawn from it.</p>
 <p>Vote join: NSDUH 2021–2023 substate small-area estimates, SAMHSA shapefile SubstateRegionData212223, and 2024 presidential votes reallocated to ZCTAs by land cover, Harvard Dataverse 10.7910/DVN/Z8TSH3, with age and education from the ACS 2019–2023 5-year file. Alaska and Hawaii are absent from the vote file.</p>
 <p>Shapefile outcome list: <a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt56951/2023-sae-sub-region-shape-file/2023-sae-sub-region-shape-file.htm">SAMHSA, 2021–2023 substate region shapefile description</a>. Thirty-nine outcomes. Use rates and disorder rates entered above are the ones in that list.</p>
 <p>Suggestibility and IQ: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Meier et al., PNAS 2012, 10.1073/pnas.1206820109. Potency series: NIDA / University of Mississippi analyses of DEA-seized cannabis, 1995–2022. The vote regression, the Kloft rates, the Gawrylowicz rates, and the Dunedin 8-point loss are measured. The two potency curves are predictions.</p>
@@ -1675,9 +2168,10 @@ body.pp .hero h1{{max-width:22ch}}
 <p>State ballot support: Ballotpedia’s compilation of state reports, retrieved 2026-10-11. Florida Amendment 3, Smart &amp; Safe Florida, account 83475, reports through December 31, 2024, <a href="https://ballotpedia.org/Florida_Amendment_3,_Marijuana_Legalization_Initiative_(2024)">Ballotpedia</a>, committee page <a href="https://dos.elections.myflorida.com/committees/ComDetail.asp?account=83475">dos.elections.myflorida.com</a>. Nebraska Initiatives 437 and 438, Nebraskans for Medical Marijuana, reports through January 14, 2025. North Dakota Initiated Measure 5, New Economic Frontier, reports through January 31, 2025. South Dakota Initiated Measure 29, reports through December 31, 2024. CSV: <a href="nsduh-vote-ecological/results/cannabis_ballot_2024.csv">cannabis_ballot_2024.csv</a>. Category totals: <a href="nsduh-vote-ecological/results/industry_spending_2024.csv">industry_spending_2024.csv</a>.</p>
 <p>FEC comparison, retrieved 2026-10-11: schedule A by employer, cycle 2024, and committee totals for C00771592, C00764571, C00849398, and C00528026. OpenSecrets marijuana PAC-to-candidate page, 2023–2024, $68,500. CSVs: <a href="nsduh-vote-ecological/results/cannabis_fec_employers_2024.csv">cannabis_fec_employers_2024.csv</a>, <a href="nsduh-vote-ecological/results/cannabis_fec_pacs_2024.csv">cannabis_fec_pacs_2024.csv</a>.</p>
 <p>Use, scores, and the vote over time. NSDUH state and national small-area estimates, ages 12 or older, two-year pools from 1999–2000 through 2018–2019 and from 2021–2022 through 2023–2024: <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_99_19_state_saes_final.sas7bdat">1999–2019 SAE file</a> and <a href="https://www.samhsa.gov/data/sites/default/files/NSDUH_files/SAE/state_saes_final_2124.sas7bdat">2021–2024 SAE file</a>, retrieved 2026-10-11. The 2019–2020 pool was not produced. The gold band is the 2021 web-mode break. NAEP composite means, mathematics and reading, grades 4 and 8, all students: NCES Data Service, national public and state public, retrieved 2026-10-11. The service returned state mathematics from 1996 and state reading from 1998. The ICAR35 figure beside that chart is Table 1 in Dworak, Revelle, and Condon, Intelligence 98 (2023) 101734, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>: −0.023 SD per year. Figure 1 draws yearly means by education and does not print them. The supplement and <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> do not print them either. Presidential two-party share, 2004–2020: MIT Election Data and Science Lab, U.S. President 1976–2020, Harvard Dataverse <a href="https://doi.org/10.7910/DVN/42MVDX">10.7910/DVN/42MVDX</a>, file version 20210113. The 2024 rows use the same columns, file version 2025-11-20, retrieved 2026-10-11: Kamala D. Harris 75,017,613 and Donald J. Trump 77,302,580. Adult-use years: Council of State Governments, Book of the States, table 7.22, November 2023, and NCSL, Cannabis Overview, updated June 20, 2024, for Vermont and Delaware.</p>
-<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSVs: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>, <a href="nsduh-vote-ecological/results/correlation_matrix.csv">correlation_matrix.csv</a>, <a href="nsduh-vote-ecological/results/partial_correlations.csv">partial_correlations.csv</a>.</p>
+<p>Group slopes and correlations. Group A is marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Heroin is estimated omitted and inside group B. Pharmacology: Kloft et al., PNAS 2020, 10.1073/pnas.1920162117. Nichols, Pharmacological Reviews 2016, 10.1124/pr.115.011478. Carhart-Harris et al., Psychopharmacology 2015, 10.1007/s00213-014-3714-z. Volkow et al., Nature 1997, 10.1038/386827a0. Pathan and Williams, British Journal of Pain 2012, 10.1177/2049463712438493. Cruickshank and Dyer, Addiction 2009, 10.1111/j.1360-0443.2009.02564.x. CSV: <a href="nsduh-vote-ecological/results/group_slopes.csv">group_slopes.csv</a>. The state correlation table is <a href="nsduh-vote-ecological/results/state_window_correlations.csv">state_window_correlations.csv</a>. The marijuana score grid is <a href="nsduh-vote-ecological/results/marijuana_score_correlations.csv">marijuana_score_correlations.csv</a>.</p>
 <p>Files: <a href="nsduh-vote-ecological/results/region_level.csv">region_level.csv</a>, <a href="nsduh-vote-ecological/results/results.json">results.json</a>, <a href="nsduh-vote-ecological/results/extended.json">extended.json</a>, <a href="nsduh-vote-ecological/results/quintiles.csv">quintiles.csv</a>, <a href="nsduh-vote-ecological/results/user_nonuser.csv">user_nonuser.csv</a>, <a href="nsduh-vote-ecological/results/state_level.csv">state_level.csv</a>, <a href="nsduh-vote-ecological/data/nsduh_sae_long.csv">nsduh_sae_long.csv</a>, <a href="nsduh-vote-ecological/data/naep_scores.csv">naep_scores.csv</a>, <a href="nsduh-vote-ecological/data/president_twoparty.csv">president_twoparty.csv</a>, <a href="nsduh-vote-ecological/data/cannabis_adult_use.csv">cannabis_adult_use.csv</a>, <a href="nsduh-vote-ecological/results/state_changes.csv">state_changes.csv</a>, <a href="nsduh-vote-ecological/over_time.py">over_time.py</a>, <a href="nsduh-vote-ecological/data/substate_outcomes_212223.csv">substate_outcomes_212223.csv</a>, <a href="nsduh-vote-ecological/run_regression.py">run_regression.py</a>, <a href="nsduh-vote-ecological/fit_extended.py">fit_extended.py</a>, <a href="nsduh-vote-ecological/README.md">method note</a>.</p>
 </div>
+</details>
 </main>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>

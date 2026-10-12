@@ -213,6 +213,409 @@ def load_frames() -> dict[str, pd.DataFrame]:
     }
 
 
+# One outcome year for the state correlation table. 2019 is the latest NAEP
+# year whose preceding 15 end-years are all interview-mode pools.
+WINDOW_OUTCOME_YEAR = 2019
+WINDOW_VOTE_YEAR = 2020
+WINDOW_MEASURES = [
+    ("mj", "MRJMON", "Marijuana, past month"),
+    ("mrjyr", "MRJYR", "Marijuana, past year"),
+    ("alc", "ALCMON", "Alcohol, past month"),
+    ("binge", "BNGDRK", "Binge alcohol, past month"),
+    ("coc", "COCYR", "Cocaine, past year"),
+    ("her", "HERYR", "Heroin, past year"),
+    ("iem", "ILLEMMON", "Illicit drugs other than marijuana, past month"),
+    ("met", "METHAMYR", "Methamphetamine, past year"),
+    ("pnr", "PNRNMYR", "Pain reliever misuse, past year"),
+]
+WINDOW_SPECS = [
+    ("pool", "2018–2019", tuple(range(2019, 2020))),
+    ("y5", "5-year mean", tuple(range(2015, 2020))),
+    ("y15", "15-year mean", tuple(range(2005, 2020))),
+]
+WINDOW_OUTCOMES = [
+    ("math4", "Math 4"),
+    ("math8", "Math 8"),
+    ("read4", "Reading 4"),
+    ("read8", "Reading 8"),
+    ("composite", "Composite"),
+    ("dem2", "Democratic share"),
+]
+
+
+def _wsum(w: np.ndarray) -> np.ndarray:
+    w = np.asarray(w, dtype=float)
+    return w / np.sum(w)
+
+
+def _wcorr(x, y, w) -> float:
+    ww = _wsum(w)
+    xc = np.asarray(x, dtype=float) - np.sum(ww * x)
+    yc = np.asarray(y, dtype=float) - np.sum(ww * y)
+    denom = np.sqrt(np.sum(ww * xc * xc) * np.sum(ww * yc * yc))
+    if not np.isfinite(denom) or denom <= 0:
+        return float("nan")
+    return float(np.sum(ww * xc * yc) / denom)
+
+
+def _wz(x, w) -> np.ndarray:
+    ww = _wsum(w)
+    x = np.asarray(x, dtype=float)
+    m = np.sum(ww * x)
+    sd = np.sqrt(np.sum(ww * (x - m) ** 2))
+    return (x - m) / sd
+
+
+def _state_controls() -> pd.DataFrame:
+    """Vote-weighted region means. Alaska and Hawaii are absent from the region file."""
+    reg = pd.read_csv(RESULTS / "region_level.csv")
+    rows = []
+    for name, g in reg.groupby("st_name"):
+        w = g["two_party"].to_numpy(dtype=float)
+        ww = _wsum(w)
+        rows.append(
+            {
+                "geo": POSTAL[name],
+                "ln_dens": float(np.sum(ww * g["ln_dens"].to_numpy(dtype=float))),
+                "pct_18_25": float(np.sum(ww * g["pct_18_25"].to_numpy(dtype=float))),
+                "pct_12_17": float(np.sum(ww * g["pct_12_17"].to_numpy(dtype=float))),
+                "pct_ba": float(np.sum(ww * g["pct_ba"].to_numpy(dtype=float))),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _exposure_mean(nsduh: pd.DataFrame, code: str, years: tuple[int, ...]) -> pd.Series | None:
+    sub = nsduh[(nsduh["geo"] != "US") & (nsduh["outcome"] == code)].copy()
+    sub["year"] = sub["year"].astype(int)
+    sub = sub[sub["year"].isin(years)]
+    counts = sub.groupby("geo")["year"].nunique()
+    if counts.empty or int(counts.min()) < len(years) or set(sub["year"].unique()) != set(years):
+        return None
+    if int(counts.max()) != len(years):
+        return None
+    return sub.groupby("geo")["pct"].mean()
+
+
+def state_window_correlations(frames: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
+    """Vote-weighted state correlations of three exposure windows with 2019 scores and the 2020 vote."""
+    frames = frames or load_frames()
+    nsduh = frames["nsduh"]
+    naep = frames["naep"]
+    naep = naep[(naep["year"] == WINDOW_OUTCOME_YEAR) & (~naep["geo"].isin(["NP", "NT"]))].copy()
+    wide = None
+    for subject, grade, _label, _color in NAEP_SUBJECTS:
+        col = f"{subject}{grade}"
+        piece = naep[(naep["subject"] == subject) & (naep["grade"] == grade)][["geo", "score"]].rename(columns={"score": col})
+        wide = piece if wide is None else wide.merge(piece, on="geo", how="inner")
+    vote = frames["vote"]
+    vote = vote[vote["year"] == WINDOW_VOTE_YEAR][["geo", "dem2", "two_party"]]
+    base = wide.merge(vote, on="geo", how="inner")
+    controls = _state_controls()
+    base = base.merge(controls, on="geo", how="left")
+    score_cols = ["math4", "math8", "reading4", "reading8"]
+    rows = []
+    for key, code, label in WINDOW_MEASURES:
+        for window, window_label, years in WINDOW_SPECS:
+            exposure = _exposure_mean(nsduh, code, years)
+            if exposure is None:
+                continue
+            panel = base.merge(exposure.rename("exposure"), left_on="geo", right_index=True, how="inner")
+            panel = panel.dropna(subset=["exposure", "two_party", *score_cols, "dem2"])
+            w = panel["two_party"].to_numpy(dtype=float)
+            for col in score_cols:
+                panel[col + "_z"] = _wz(panel[col], w)
+            panel["composite"] = panel[[c + "_z" for c in score_cols]].mean(axis=1)
+            partial = panel.dropna(subset=["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]).copy()
+            wp = partial["two_party"].to_numpy(dtype=float)
+            for col in score_cols:
+                partial[col + "_z"] = _wz(partial[col], wp)
+            partial["composite"] = partial[[c + "_z" for c in score_cols]].mean(axis=1)
+            C = sm.add_constant(
+                partial[["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]].to_numpy(dtype=float),
+                has_constant="add",
+            )
+            x_resid = sm.WLS(partial["exposure"].to_numpy(dtype=float), C, weights=wp).fit().resid
+            outcomes = {
+                "math4": panel["math4_z"],
+                "math8": panel["math8_z"],
+                "read4": panel["reading4_z"],
+                "read8": panel["reading8_z"],
+                "composite": panel["composite"],
+                "dem2": panel["dem2"],
+            }
+            partial_y = {
+                "math4": partial["math4_z"],
+                "math8": partial["math8_z"],
+                "read4": partial["reading4_z"],
+                "read8": partial["reading8_z"],
+                "composite": partial["composite"],
+                "dem2": partial["dem2"],
+            }
+            for okey, olabel in WINDOW_OUTCOMES:
+                y_resid = sm.WLS(partial_y[okey].to_numpy(dtype=float), C, weights=wp).fit().resid
+                rows.append(
+                    {
+                        "substance": key,
+                        "substance_label": label,
+                        "window": window,
+                        "window_label": window_label,
+                        "outcome": okey,
+                        "outcome_label": olabel,
+                        "r": _wcorr(panel["exposure"], outcomes[okey], w),
+                        "n": int(len(panel)),
+                        "partial_r": _wcorr(x_resid, y_resid, wp),
+                        "partial_n": int(len(partial)),
+                        "outcome_year": WINDOW_OUTCOME_YEAR,
+                        "vote_year": WINDOW_VOTE_YEAR,
+                        "weight": "2020 two-party votes",
+                    }
+                )
+    out = pd.DataFrame(rows)
+    out.to_csv(RESULTS / "state_window_correlations.csv", index=False)
+    return out
+
+
+# Marijuana score grid. Exposure ends, then the NAEP score is measured later.
+MJ_LAGS = (0, 2, 4, 6, 8, 10)
+MJ_NAEP_YEARS = (2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2022, 2024)
+MJ_MEASURES = (
+    ("mj", "MRJMON", "Past month"),
+    ("mrjyr", "MRJYR", "Past year"),
+)
+MJ_WINDOW_DEFS = (
+    ("current", "Current", 0),
+    ("y1", "Past 1 year", 1),
+    ("y5", "5-year mean", 5),
+    ("y15", "15-year mean", 15),
+)
+MJ_OUTCOMES = (
+    ("math4", "Grade 4 math", 4),
+    ("read4", "Grade 4 reading", 4),
+    ("comp4", "Grade 4 composite", 4),
+    ("math8", "Grade 8 math", 8),
+    ("read8", "Grade 8 reading", 8),
+    ("comp8", "Grade 8 composite", 8),
+)
+# Within-year population-weighted z-scores. Composites are already the mean of those z-scores.
+MJ_SCORE_COL = {
+    "math4": "math4_z",
+    "read4": "reading4_z",
+    "comp4": "comp4",
+    "math8": "math8_z",
+    "read8": "reading8_z",
+    "comp8": "comp8",
+}
+
+
+def _window_years(end: int, kind: str) -> tuple[int, ...] | None:
+    """Years of pools in the window that ends at `end`. None when the break cuts it."""
+    if kind == "current":
+        years = (end,)
+    elif kind == "y1":
+        years = (end - 1,)
+    elif kind == "y5":
+        years = tuple(range(end - 4, end + 1))
+    elif kind == "y15":
+        years = tuple(range(end - 14, end + 1))
+    else:
+        return None
+    if any(y in (2020, 2021) for y in years):
+        return None
+    if any(y <= 2019 for y in years) and any(y >= 2022 for y in years):
+        return None
+    return years
+
+
+def _pool_lookup(nsduh: pd.DataFrame, code: str) -> tuple[pd.Series, pd.Series, pd.Series]:
+    sub = nsduh[nsduh["outcome"] == code].copy()
+    sub["year"] = sub["year"].astype(int)
+    state = sub[sub["geo"] != "US"].set_index(["geo", "year"])["pct"]
+    nat = sub[sub["geo"] == "US"].set_index("year")["pct"]
+    pop = sub[sub["geo"] != "US"].set_index(["geo", "year"])["pop"]
+    return state, nat, pop
+
+
+def _mean_from(series: pd.Series, key_years: list[tuple]) -> float | None:
+    vals = []
+    for key in key_years:
+        if key not in series.index:
+            return None
+        val = series.loc[key]
+        if isinstance(val, pd.Series):
+            val = val.iloc[0]
+        if not np.isfinite(val):
+            return None
+        vals.append(float(val))
+    return float(np.mean(vals))
+
+
+def _weighted_pair(x, y, w, controls: np.ndarray | None) -> tuple[float, int, float, int]:
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    w = np.asarray(w, dtype=float)
+    r = _wcorr(x, y, w)
+    n = int(len(x))
+    if controls is None or len(x) < 8:
+        return r, n, float("nan"), 0
+    keep = np.isfinite(controls).all(axis=1)
+    if int(keep.sum()) < 8:
+        return r, n, float("nan"), 0
+    try:
+        C = sm.add_constant(controls[keep], has_constant="add")
+        wp = w[keep]
+        xr = sm.WLS(x[keep], C, weights=wp).fit().resid
+        yr = sm.WLS(y[keep], C, weights=wp).fit().resid
+        return r, n, _wcorr(xr, yr, wp), int(keep.sum())
+    except (ValueError, np.linalg.LinAlgError):
+        return r, n, float("nan"), int(keep.sum())
+
+
+def marijuana_score_correlations(frames: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
+    """State-year correlations of marijuana windows with later NAEP scores, plus the cohort and ICAR rows."""
+    frames = frames or load_frames()
+    nsduh = frames["nsduh"]
+    naep = frames["naep"]
+    naep = naep[(naep["year"].isin(MJ_NAEP_YEARS)) & (~naep["geo"].isin(["NP", "NT"]))].copy()
+    naep["year"] = naep["year"].astype(int)
+    wide = None
+    for subject, grade, _label, _color in NAEP_SUBJECTS:
+        col = f"{subject}{grade}"
+        piece = naep[(naep["subject"] == subject) & (naep["grade"] == grade)][["geo", "year", "score"]].rename(
+            columns={"score": col}
+        )
+        wide = piece if wide is None else wide.merge(piece, on=["geo", "year"], how="outer")
+    controls = _state_controls().set_index("geo")
+    lookups = {code: _pool_lookup(nsduh, code) for _key, code, _lab in MJ_MEASURES}
+    # Population ages 12+ from the past-month file, which covers every NAEP year in the grid.
+    pop = lookups["MRJMON"][2]
+    wide["pop"] = [float(pop.loc[(g, y)]) if (g, y) in pop.index else np.nan for g, y in zip(wide["geo"], wide["year"])]
+    wide = wide.dropna(subset=["pop"])
+    for col in ("math4", "math8", "reading4", "reading8"):
+        wide[col + "_z"] = np.nan
+    for _year, g in wide.groupby("year"):
+        w = g["pop"].to_numpy(dtype=float)
+        for col in ("math4", "math8", "reading4", "reading8"):
+            mask = g[col].notna()
+            if int(mask.sum()) < 10:
+                continue
+            z = np.full(len(g), np.nan)
+            z[mask.to_numpy()] = _wz(g.loc[mask, col].to_numpy(dtype=float), w[mask.to_numpy()])
+            wide.loc[g.index, col + "_z"] = z
+    wide["comp4"] = wide[["math4_z", "reading4_z"]].mean(axis=1, skipna=False)
+    wide["comp8"] = wide[["math8_z", "reading8_z"]].mean(axis=1, skipna=False)
+    ctrl_cols = ["ln_dens", "pct_18_25", "pct_12_17", "pct_ba"]
+
+    def controls_for(geos: list[str]) -> np.ndarray:
+        rows = []
+        for geo in geos:
+            if geo in controls.index:
+                rows.append(controls.loc[geo, ctrl_cols].to_numpy(dtype=float))
+            else:
+                rows.append(np.full(4, np.nan))
+        return np.vstack(rows)
+
+    rows = []
+
+    def add_row(**rec):
+        rows.append(rec)
+
+    for key, code, label in MJ_MEASURES:
+        state_pct, nat_pct, _pop = lookups[code]
+        for wkey, wlabel, _span in MJ_WINDOW_DEFS:
+            for lag in MJ_LAGS:
+                bag: dict[str, list] = {name: [] for name, _lab, _g in MJ_OUTCOMES}
+                geos: list[str] = []
+                weights: list[float] = []
+                exposures: list[float] = []
+                for rec in wide.itertuples(index=False):
+                    years = _window_years(int(rec.year) - lag, wkey)
+                    if years is None:
+                        continue
+                    exposure = _mean_from(state_pct, [(rec.geo, y) for y in years])
+                    if exposure is None:
+                        continue
+                    exposures.append(exposure)
+                    geos.append(rec.geo)
+                    weights.append(float(rec.pop))
+                    for name, _olab, _grade in MJ_OUTCOMES:
+                        bag[name].append(getattr(rec, MJ_SCORE_COL[name]))
+                if len(exposures) < 20:
+                    continue
+                C = controls_for(geos)
+                x = np.asarray(exposures, dtype=float)
+                w = np.asarray(weights, dtype=float)
+                for name, olabel, _grade in MJ_OUTCOMES:
+                    y = np.asarray(bag[name], dtype=float)
+                    ok = np.isfinite(y) & np.isfinite(x) & np.isfinite(w)
+                    if int(ok.sum()) < 20:
+                        continue
+                    r, n, pr, pn = _weighted_pair(x[ok], y[ok], w[ok], C[ok])
+                    add_row(
+                        kind="panel",
+                        measure=key,
+                        measure_label=label,
+                        window=wkey,
+                        window_label=wlabel,
+                        lag=lag,
+                        outcome=name,
+                        outcome_label=olabel,
+                        r=r,
+                        n=n,
+                        partial_r=pr,
+                        partial_n=pn,
+                        n_states=int(len(set(np.asarray(geos)[ok]))),
+                    )
+        # Grade-8 students tested in t were born about t−14. Adult use from t−14 through t−9.
+        for name, olabel, grade in MJ_OUTCOMES:
+            if grade != 8:
+                continue
+            exposures, geos, weights, scores = [], [], [], []
+            for rec in wide.itertuples(index=False):
+                years = tuple(range(int(rec.year) - 14, int(rec.year) - 8))
+                if _window_years_raw_ok(years) is False:
+                    continue
+                exposure = _mean_from(state_pct, [(rec.geo, y) for y in years])
+                score = getattr(rec, MJ_SCORE_COL[name])
+                if exposure is None or not np.isfinite(score):
+                    continue
+                exposures.append(exposure)
+                geos.append(rec.geo)
+                weights.append(float(rec.pop))
+                scores.append(float(score))
+            if len(exposures) < 20:
+                continue
+            r, n, pr, pn = _weighted_pair(
+                np.asarray(exposures), np.asarray(scores), np.asarray(weights), controls_for(geos)
+            )
+            add_row(
+                kind="cohort",
+                measure=key,
+                measure_label=label,
+                window="cohort",
+                window_label="Birth to age 5",
+                lag="",
+                outcome=name,
+                outcome_label=olabel,
+                r=r,
+                n=n,
+                partial_r=pr,
+                partial_n=pn,
+                n_states=int(len(set(geos))),
+            )
+    out = pd.DataFrame(rows)
+    out.to_csv(RESULTS / "marijuana_score_correlations.csv", index=False)
+    return out
+
+
+def _window_years_raw_ok(years: tuple[int, ...]) -> bool:
+    if any(y in (2020, 2021) for y in years):
+        return False
+    if any(y <= 2019 for y in years) and any(y >= 2022 for y in years):
+        return False
+    return True
+
+
 def _segments(df: pd.DataFrame, codes: list[str]) -> list[list[tuple[int, float, str]]]:
     """Points as (end year, percent, pool label), split on gaps and new codes."""
     sub = df[df["outcome"].isin(codes)].sort_values("year")
@@ -462,8 +865,8 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None
             "Cocaine, heroin, and the other state estimates",
             ["coc", "her", "iem", "met", "hal", "pnr", "opin"],
             0,
-            12,
-            (0, 4, 8, 12),
+            6,
+            (0, 2, 4, 6),
             False,
         ),
     ]
@@ -894,8 +1297,6 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
     if specs.empty:
         return ""
     chart = _lag_chart(specs)
-    focus = specs[specs["use"].isin(["mj", "alc"])]
-    others = specs[~specs["use"].isin(["mj", "alc"]) & specs["family"].isin(["lag", "cumulative", "legalization"])]
     # Lead with marijuana grade-8 math and the vote at lag 0 and lag 8.
     def grab(use, outcome, term):
         hit = specs[(specs["use"] == use) & (specs["outcome"] == outcome) & (specs["spec"] == f"lag_{term}") & (specs["term"] == f"lag_{term}")]
@@ -926,25 +1327,16 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
         bits.append(
             f"A five-year sum of past-month marijuana lines up with <strong>{_num(c5.iloc[0].coef, sign=True)}</strong> grade-8 mathematics points per percentage-point-year (SE {_num(c5.iloc[0].se)}). The ten-year sum is <strong>{_num(c10.iloc[0].coef, sign=True)}</strong> (SE {_num(c10.iloc[0].se)})."
         )
-    lead = " ".join(bits)
+    lead = " ".join(bits[:2])
+    extra = " ".join(bits[2:])
     return f"""
 <h2 id="lags">Cumulative and delayed exposure</h2>
 <p>{lead}</p>
-<p>Grade-4 students in the testing year are about 9 or 10 years old, so use ten years earlier lines up with the birth year. Grade-8 students are about 13 or 14, so use ten years earlier is about age 4 and use fourteen years earlier is the closer prenatal window. Those longer lags are in the table.</p>
-<p>Each point is a separate regression of the outcome on use at that lag, with state and year fixed effects. The whisker is one standard error, clustered by state. Green is past-month marijuana. Blue is past-month alcohol. The horizontal line is zero.</p>
+<p>{extra}</p>
+<p>Green is past-month marijuana. Blue is past-month alcohol. This chart is the within-state slope.</p>
 {chart}
 <p class="axis-name"><span>Y · Points of the outcome per point of use</span><span>X · Lag, years</span></p>
-<p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. A sum is the window length times the mean of the two-year pools whose end year falls in the prior window. Years since medical or adult-use legalization are zero until the statute year. Medical years are the comprehensive-program statute years in NCSL, State Medical Cannabis Laws, updated September 2, 2026. Low-THC programs are not coded as medical legalization. Adult-use years are the same list as the timeline.</p>
-<div class="table-scroll">
-<table class="cmp">
-<thead><tr><th>Use</th><th>Outcome</th><th>Specification</th><th>Term</th><th>Coefficient</th><th>SE</th><th>N</th><th>States</th></tr></thead>
-<tbody>
-{_lag_table(focus, None, None)}
-{_lag_table(others, None, None)}
-</tbody>
-</table>
-</div>
-<p class="fine">State and year fixed effects. Standard errors are clustered by state. A lag term is use that many years before the outcome. The distributed specification enters lags 0, 2, 4, 6, and 8 together. Cumulative terms are percentage-point-years. Legalization terms are years since the statute. The full grid is <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
+<p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. Lags of 10, 12, and 14 years, the distributed lag, and the legalization rows are in <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
 """
 
 
@@ -1019,8 +1411,7 @@ def law_section(acts: list[dict]) -> str:
 """
     return f"""
 <h2 id="laws">Laws on the timeline</h2>
-<p>The markers are {len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the January 4, 2018 Sessions memorandum, and Oregon HB 4002, signed April 1, 2024. Filled circles made the substance easier to obtain or less criminal. Open squares tightened access. Color is the sponsor’s party. Initiatives have no sponsoring party.</p>
-<p>Click a column heading to sort the table.</p>
+<p>{len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the Sessions memorandum on January 4, 2018, and Oregon HB 4002 on April 1, 2024. Click a column heading to sort.</p>
 <div class="table-scroll">
 <table class="cmp" id="law-table">
 <thead><tr><th>Date</th><th>Jurisdiction</th><th>Substance</th><th>Direction</th><th>How it passed</th><th>Bill</th><th>Sponsor</th><th>Sponsor party</th><th>Signed by</th><th>Vote</th></tr></thead>
@@ -1029,7 +1420,7 @@ def law_section(acts: list[dict]) -> str:
 </tbody>
 </table>
 </div>
-<p class="fine">State medical and adult-use rows are the comprehensive programs in NCSL, State Medical Cannabis Laws, updated September 2, 2026. A year with no day is the NCSL year, placed at mid-year on the chart. Sponsor, party, and the roll call are filled when Congress.gov, the House Clerk, the Senate, a legislature journal, Ballotpedia, or the enrolled act records them. A cell that says “Not in the source” is a blank in that record. Citizen initiatives are labeled with the vote and the sponsoring committee when Ballotpedia records them. Territories on the NCSL table are not in this file. CSV: <a href="nsduh-vote-ecological/data/legislative_acts.csv">legislative_acts.csv</a>.</p>
+<p class="fine">CSV: <a href="nsduh-vote-ecological/data/legislative_acts.csv">legislative_acts.csv</a>.</p>
 {script}
 """
 
@@ -1050,8 +1441,7 @@ def section_html(frames: dict | None = None) -> str:
     acts = load_acts()
     return f"""
 <h2 id="over-time">Use, scores, and the vote over time</h2>
-<p>National past-month marijuana, ages 12 or older, is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. The gold band is the 2020–2021 web-mode break. Lines stop at that band. From 2009–2010 to 2018–2019, one point of additional past-month marijuana use lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> points of grade-8 mathematics (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic two-party share (SE {_num(mj_v['se'])}).</p>
-<p>Alcohol’s first difference over the same window is <strong>{_num(alc_n['coef'], sign=True)}</strong> NAEP grade-8 mathematics points per point of past-month use (SE {_num(alc_n['se'])}) and <strong>{_num(alc_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(alc_v['se'])}). Grade-4 mathematics is <strong>{_num(fit_of[('alc', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-month alcohol (SE {_num(fit_of[('alc', 'naep_math4')]['se'])}) and <strong>{_num(fit_of[('mrjyr', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-year marijuana (SE {_num(fit_of[('mrjyr', 'naep_math4')]['se'])}).</p>
+<p>National past-month marijuana is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. From 2009–2010 to 2018–2019, one more point of past-month marijuana lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}).</p>
 {use_charts(frames['nsduh'], frames['legal'], acts)}
 <p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. The markers along the top are laws. Filled circles eased access. Open squares tightened it. Color is the sponsor’s party, stone is a citizen initiative, and brown is a legislature whose sponsor is not in the source.</p>
 {cognition_chart(frames['naep'], acts)}
@@ -1059,12 +1449,12 @@ def section_html(frames: dict | None = None) -> str:
 <div class="stats one" id="icar-stat">
 <div class="stat lead"><span class="k">ICAR35, Table 1</span><span class="v">−0.023</span><span class="s">SD per year, ages 18 to 60, 2006–2018, adjusted for education and gender. 95% interval −0.035 to −0.011.</span></div>
 </div>
-<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes that slope. Figure 1 draws yearly means by education level and does not print them as numbers. The supplementary tables are slopes and sample counts. The OSF node <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> is the preregistration. Those means stay off the NAEP chart.</p>
+<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, Table 1, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>.</p>
 {vote_chart(frames['vote'], acts)}
 <p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100. The same law markers sit on this chart.</p>
 {law_section(acts)}
 <h2>Fifty states, first difference</h2>
-<p>Each point is a state or the District of Columbia. The change in use is the 2018–2019 small-area estimate minus the 2009–2010 estimate, in percentage points, ages 12 or older. The NAEP change is the 2019 state mean minus the 2009 state mean. The vote change is the 2020 Democratic two-party share minus the 2008 share, in percentage points. The line is weighted least squares. Weights are the average of 2008 and 2020 two-party votes. Standard errors are HC1. With two periods, this first difference is the state fixed-effects estimator.</p>
+<p>One point of additional past-month marijuana, 2009–2010 to 2018–2019, lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(mj_v['se'])}).</p>
 {change_panel(panel, fits)}
 <p class="axis-name"><span>Y · Change in the score or in Democratic share</span><span>X · Change in the use rate, percentage points</span></p>
 <p class="fine cap">The 2009–2010 and 2018–2019 pools both sit before the 2021 web-mode break. Binge alcohol, methamphetamine, pain-reliever misuse, and illicit drugs other than marijuana are not the same series across the 2015 questionnaire redesign, so they stay on the timeline and out of this difference.</p>
