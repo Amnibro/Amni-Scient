@@ -731,6 +731,7 @@ PARTY_COLOR = {
     "mixed": "#7C3AED",
     "agency": "#C89B4E",
     "unrecorded": "#8A6318",
+    "committee": "#0D9488",
 }
 
 
@@ -844,7 +845,7 @@ def law_legend() -> str:
         '<span><i style="background:#78716C"></i>Citizen initiative</span>'
         '<span><i style="background:#7C3AED"></i>Bipartisan sponsors</span>'
         '<span><i style="background:#C89B4E"></i>Agency or department</span>'
-        '<span><i style="background:#8A6318"></i>Legislature, sponsor not in the source</span>'
+        '<span><i style="background:#0D9488"></i>Committee bill</span>'
         '<span><i class="open"></i>Open square · tighter access</span>'
         "</div>"
     )
@@ -937,24 +938,25 @@ def cognition_chart(naep: pd.DataFrame, acts: list[dict] | None = None) -> str:
 
 
 def vote_chart(vote: pd.DataFrame, acts: list[dict] | None = None) -> str:
-    nat_rows = []
-    for year, g in vote.groupby("year"):
-        dem = g["dem"].sum()
-        rep = g["rep"].sum()
-        nat_rows.append((int(year), 100 * dem / (dem + rep)))
-    parts, X, Y, *_rest = _frame(860, 312, 2002, 2027.2, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100), top_extra=28)
-    _polyline(parts, X, Y, nat_rows, "#8A6318")
+    from key_charts import legal_years
+    legal = legal_years()
+    groups = [("All states and DC", "#8A6318", lambda g: True), (f"{len(legal) - 1} adult-use states and DC", "#16A34A", lambda g: g in legal), (f"{51 - len(legal)} other states", "#78716C", lambda g: g not in legal)]
+    lines = [(lab, col, [(int(y), 100 * g.loc[g["geo"].map(f), "dem"].sum() / (g.loc[g["geo"].map(f), "dem"].sum() + g.loc[g["geo"].map(f), "rep"].sum())) for y, g in vote.groupby("year")]) for lab, col, f in groups]
+    parts, X, Y, *_rest = _frame(860, 332, 2002, 2027.2, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100), right=150, top_extra=28)
+    [_polyline(parts, X, Y, pts, col) for _lab, col, pts in lines]
     if acts:
         _law_marks(parts, X, acts, 2002, 2027.2)
-    for year, val in nat_rows:
-        parts.append(
-            f'<text x="{X(year):.1f}" y="{Y(val) - 8:.1f}" text-anchor="middle" class="lab">{val:.1f}</text>'
-        )
+    parts += [f'<text x="{X(year):.1f}" y="{Y(val) + (-8 if i == 1 else 18):.1f}" text-anchor="middle" class="lab" style="fill:{col}">{val:.1f}</text>' for i, (_lab, col, pts) in enumerate(lines) if i for year, val in pts]
+    parts += [f'<text x="{X(2024) + 30:.1f}" y="{Y(pts[-1][1]) + 4 + (-6 if i == 1 else 6 if i == 0 else 0):.1f}" style="fill:{col};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{_esc(lab)}</text>' for i, (lab, col, pts) in enumerate(lines)]
+    gap = [(a[0], a[1] - b[1]) for a, b in zip(lines[1][2], lines[2][2])]
     parts.append("</svg>")
+    legend = "".join(f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for lab, col, _p in lines)
     return (
-        '<p class="slope-k">Democratic two-party share of the national popular vote</p>'
+        '<p class="slope-k">Democratic two-party share of the presidential vote</p>'
+        f'<div class="legend">{legend}</div>'
         f'<div class="chart-card">{"".join(parts)}</div>'
         '<p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · Presidential election</span></p>'
+        f'<p class="fine cap">Gap between the adult-use group and the other states: {gap[0][1]:.1f} points in {gap[0][0]}, {gap[-1][1]:.1f} in {gap[-1][0]}. Group membership is legal adult use by 2024, held fixed across years.</p>'
     )
 
 
@@ -1348,6 +1350,7 @@ def _party_label(code: str) -> str:
         "mixed": "Bipartisan",
         "agency": "Agency",
         "unrecorded": "Not in the source",
+        "committee": "Committee bill",
     }.get(code, code)
 
 
@@ -1378,6 +1381,7 @@ def law_section(acts: list[dict]) -> str:
             f"<td>{_esc(sponsor)}</td>"
             f"<td>{_esc(_party_label(act['sponsor_party']))}</td>"
             f"<td>{_esc(signer)}</td>"
+            f"<td>{_esc(act.get('legislature_control') or '—')}</td>"
             f"<td>{_esc(vote)}</td>"
             "</tr>"
         )
@@ -1414,7 +1418,7 @@ def law_section(acts: list[dict]) -> str:
 <p>{len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the Sessions memorandum on January 4, 2018, and Oregon HB 4002 on April 1, 2024. Click a column heading to sort.</p>
 <div class="table-scroll">
 <table class="cmp" id="law-table">
-<thead><tr><th>Date</th><th>Jurisdiction</th><th>Substance</th><th>Direction</th><th>How it passed</th><th>Bill</th><th>Sponsor</th><th>Sponsor party</th><th>Signed by</th><th>Vote</th></tr></thead>
+<thead><tr><th>Date</th><th>Jurisdiction</th><th>Substance</th><th>Direction</th><th>How it passed</th><th>Bill</th><th>Sponsor</th><th>Sponsor party</th><th>Signed by</th><th>Legislature</th><th>Vote</th></tr></thead>
 <tbody>
 {''.join(body)}
 </tbody>
@@ -1443,7 +1447,7 @@ def section_html(frames: dict | None = None) -> str:
 <h2 id="over-time">Use, scores, and the vote over time</h2>
 <p>National past-month marijuana is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. From 2009–2010 to 2018–2019, one more point of past-month marijuana lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}).</p>
 {use_charts(frames['nsduh'], frames['legal'], acts)}
-<p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. The markers along the top are laws. Filled circles eased access. Open squares tightened it. Color is the sponsor’s party, stone is a citizen initiative, and brown is a legislature whose sponsor is not in the source.</p>
+<p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. The markers along the top are laws. Filled circles eased access. Open squares tightened it. Color is the sponsor’s party, stone is a citizen initiative and teal is a committee bill.</p>
 {cognition_chart(frames['naep'], acts)}
 <p class="fine cap">NAEP composite means, all students, national public schools, NCES Data Service, retrieved 2026-10-11. Mathematics grade 4 is brown. Mathematics grade 8 is orange. Reading grade 4 is blue. Reading grade 8 is purple. The gold band is the 2020–2021 web-mode break on the calendar, the same band as the use charts.</p>
 <div class="stats one" id="icar-stat">
@@ -1453,7 +1457,7 @@ def section_html(frames: dict | None = None) -> str:
 {vote_chart(frames['vote'], acts)}
 <p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100. The same law markers sit on this chart.</p>
 {law_section(acts)}
-<h2>Fifty states, first difference</h2>
+<h2 id="fd">Fifty states, first difference</h2>
 <p>One point of additional past-month marijuana, 2009–2010 to 2018–2019, lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(mj_v['se'])}).</p>
 {change_panel(panel, fits)}
 <p class="axis-name"><span>Y · Change in the score or in Democratic share</span><span>X · Change in the use rate, percentage points</span></p>

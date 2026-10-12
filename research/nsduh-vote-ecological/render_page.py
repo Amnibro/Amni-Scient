@@ -52,6 +52,9 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .legend.naep i{width:22px;height:8px;border-radius:2px}
 .legend i.open{background:transparent;border:2px solid var(--text);width:8px;height:8px;box-sizing:border-box}
 #law-table th{cursor:pointer}
+.table-scroll table#law-table{min-width:1180px}
+#law-table td:last-child{min-width:15rem;text-align:left}
+#law-table td:nth-child(5){min-width:7rem}
 .corr-switch{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .7rem}
 .heat-table{border-collapse:separate;border-spacing:3px;width:max-content;max-width:100%}
 .heat-table th{font-size:.72rem;text-align:center;white-space:nowrap}
@@ -1822,6 +1825,8 @@ def main():
     gchart = group_chart(groups)
     gtab_group = group_table(groups)
     from over_time import marijuana_score_correlations, section_html, state_window_correlations
+    import key_charts
+    key_html = key_charts.section_html()
 
     mj_html = mj_corr_section(marijuana_score_correlations())
     window_html = window_corr_section(state_window_correlations())
@@ -1910,6 +1915,7 @@ table.spend td.num,table.spend th.num{{text-align:right;white-space:nowrap}}
 body.pp .hero h1{{max-width:22ch}}
 .cap{{max-width:42rem}}
 {BTN_CSS}
+{key_charts.CSS}
 @media(max-width:720px){{
   .stats{{grid-template-columns:1fr}}
   table.cmp{{font-size:.72rem}}
@@ -1963,6 +1969,7 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/results/marijuana_score_correlations.csv" download>Marijuana score CSV</a>
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/key_charts.py" download>Summary charts script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
 </div>
@@ -1975,14 +1982,14 @@ body.pp .hero h1{{max-width:22ch}}
 <div class="stat"><span class="k">Alcohol, vote-weighted fit</span><span class="v">{num(alc_line['slope'], sign=True)}</span><span class="s">points of share per point of past-month use. SE {num(alc_line['se'])}. Measured.</span></div>
 <div class="stat"><span class="k">After density and age</span><span class="v">{num(alone['mj']['pp_per_pp'], sign=True)}</span><span class="s">marijuana, vote-share points per point of past-month use. SE {num(alone['mj']['se_pp'])}.</span></div>
 </div>
-
+{key_html}
 <h2>Each rate</h2>
 <p>Each point is one of 382 regions. The line is points of 2024 Democratic two-party share per point of that rate.</p>
 {panels}
 <p class="axis-name"><span>Y · Democratic two-party share, 0–100%</span><span>X · NSDUH rate, 0–100%</span></p>
 <p class="fine cap">Measured. The unit is the substate region. 382 regions. Both axes are percentage points on the same scale, so the angle of the line is the slope. The line runs from the lowest regional rate to the highest.</p>
 
-<h2>Rate of change</h2>
+<h2 id="rate-of-change">Rate of change</h2>
 <p>After log density and age, one point of past-month marijuana use lines up with <strong>{num(alone['mj']['pp_per_pp'], sign=True)}</strong> points of Democratic two-party share (SE {num(alone['mj']['se_pp'])}). Past-month alcohol is <strong>{num(alone['alc']['pp_per_pp'], sign=True)}</strong> (SE {num(alone['alc']['se_pp'])}).</p>
 <table class="cmp">
 <thead><tr><th>Rate</th><th>Per point</th><th>SE</th><th>Per SD</th><th>State FE</th><th>SE</th><th>p</th></tr></thead>
