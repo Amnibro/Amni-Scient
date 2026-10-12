@@ -98,7 +98,7 @@
 <h1>AMNI-CRYPT</h1>
 <p class="desc">8192-BIT BLOCKS &bull; 16-ROUND SPN &bull; SHADOW TEXTURE PROTOCOL</p>
 <div class="cta-row" style=" margin-top:2rem; margin-bottom:1rem;">
-<button class="btn btn-primary" onclick="openBeta('crypt')">REQUEST BETA ACCESS</button>
+<a href="https://play.google.com/apps/testing/com.amnicrypt" target="_blank" rel="noopener" class="btn btn-primary">JOIN THE BETA ON GOOGLE PLAY</a>
 </div>
 </div>
 <div class="ptile">
@@ -233,10 +233,11 @@
 </section>
 <section>
 <h2>GET AMNI-CRYPT</h2>
-<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">It&rsquo;s in <strong style="color:var(--accent)">closed beta</strong> on Google Play right now. Request access and I&rsquo;ll add you to the testing list!</p>
+<p style="color:var(--dim);margin-bottom:.5rem;font-size:.9rem">It&rsquo;s in <strong style="color:var(--accent)">beta</strong> on Google Play right now, and anyone can join. <a href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">Join the Amni-Scient testers group</a> with the Google account on your phone, then tap <em>Become a tester</em> on the Play test page.</p>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:2rem">Free &bull; All encryption features included &bull; Premium removes ads</p>
 <div class="cta-row" style="">
-<button class="btn btn-primary" onclick="openBeta('crypt')">REQUEST BETA ACCESS &mdash; AMNI-CRYPT</button>
+<a href="https://play.google.com/apps/testing/com.amnicrypt" target="_blank" rel="noopener" class="btn btn-primary">JOIN THE BETA ON GOOGLE PLAY</a>
+<a href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener" class="btn btn-outline">JOIN THE TESTERS GROUP</a>
 <a href="privacy-crypt.html" class="btn btn-outline">PRIVACY POLICY</a>
 </div>
 <p style="color:var(--dim);font-size:.7rem;margin-top:1.5rem">Android 7.0+ (API 24) &bull; ~22 MB &bull; No root required</p>
@@ -253,17 +254,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<div id="beta-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center">
-<div style="background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:2.5rem;max-width:480px;width:90%;position:relative">
-<button onclick="closeBeta()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;font-family:var(--font)">&times;</button>
-<p style="font-size:.7rem;letter-spacing:2px;color:var(--dim);margin-bottom:.5rem">CLOSED BETA</p>
-<h3 id="beta-title" style="color:var(--accent);letter-spacing:2px;font-size:1.3rem;margin-bottom:.75rem"></h3>
-<p style="color:var(--dim);font-size:.82rem;line-height:1.7;margin-bottom:1.75rem">Enter your email and we'll add you to the Google Play closed beta testing list. Expect an invite within a few days.</p>
-<input id="beta-email" type="email" placeholder="your@email.com" style="width:100%;background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:.75rem 1rem;color:var(--text);font-family:var(--font);font-size:.9rem;outline:none;margin-bottom:1rem;box-sizing:border-box" onfocus="this.style.borderColor=getComputedStyle(document.body).getPropertyValue('--accent')" onblur="this.style.borderColor=''">
-<div id="beta-err" style="color:#ff4444;font-size:.75rem;margin-bottom:.75rem;display:none">Please enter a valid email address.</div>
-<button onclick="submitBeta()" class="btn btn-primary" style="width:100%">SEND REQUEST</button>
-</div>
-</div>
 <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
 <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
 <img id="lightbox-img" src="" alt="">
@@ -271,30 +261,7 @@
 <script>
 function openLightbox(src,alt){const lb=document.getElementById('lightbox');document.getElementById('lightbox-img').src=src;document.getElementById('lightbox-img').alt=alt;lb.classList.add('open');document.body.style.overflow='hidden';}
 function closeLightbox(e){if(e&&e.target===document.getElementById('lightbox-img'))return;document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
-function openBeta(app){
-const titles={haven:'AMNI-HAVEN BETA',crypt:'AMNI-CRYPT BETA'};
-document.getElementById('beta-title').textContent=titles[app]||'BETA ACCESS';
-document.getElementById('beta-modal').style.display='flex';
-document.getElementById('beta-email').value='';
-document.getElementById('beta-err').style.display='none';
-document.getElementById('beta-email').focus();
-}
-function closeBeta(){
-document.getElementById('beta-modal').style.display='none';
-}
-function submitBeta(){
-const e=document.getElementById('beta-email').value.trim();
-const err=document.getElementById('beta-err');
-if(!e||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';return;}
-err.style.display='none';
-const title=document.getElementById('beta-title').textContent;
-const sub=encodeURIComponent('Beta Access Request &mdash; '+title);
-const body=encodeURIComponent('Hi,\n\nPlease add me to the '+title+' closed beta on Google Play.\n\nMy email: '+e+'\n\nThanks!');
-window.location.href='mailto:amnibro7@gmail.com?subject='+sub+'&body='+body;
-closeBeta();
-}
-document.getElementById('beta-modal').addEventListener('click',function(ev){if(ev.target===this)closeBeta();});
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeBeta();closeLightbox();}});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeLightbox();});
 </script>
 </body>
 </html>
