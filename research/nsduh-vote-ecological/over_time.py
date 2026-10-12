@@ -1234,12 +1234,13 @@ def _lag_chart(specs: pd.DataFrame) -> str:
         left, right, top, bottom = 46, 8, 16, 34
         plot_w, plot_h = 168, 120
         w, h = left + plot_w + right, top + plot_h + bottom
-        X = lambda v, _lags=lags: left + (v - _lags[0]) / (_lags[-1] - _lags[0]) * plot_w
+        X = lambda v, _lags=lags: left + (v - _lags[0] + 1) / (_lags[-1] - _lags[0] + 2) * plot_w
         Y = lambda v: top + (y1 - v) / (y1 - y0) * plot_h
         parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
         parts += [f'<line x1="{left}" y1="{Y(t):.1f}" x2="{left + plot_w}" y2="{Y(t):.1f}" class="{"axis" if t == 0 else "grid"}"/><text x="{left - 4}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{_num(t, 1 if t % 1 else 0, sign=True) if t else "0"}</text>' for t in yt]
         parts += [f'<text x="{X(lag):.1f}" y="{top + plot_h + 13}" text-anchor="middle" class="tick">{lag}</text>' for lag in lags]
-        parts.append(f'<text x="{left + plot_w / 2}" y="{h - 3}" text-anchor="middle" class="axt">Years between use and outcome</text>')
+        parts.append(f'<text x="{left + plot_w / 2}" y="{h - 3}" text-anchor="middle" class="axt">Lag tested, years (separate fits)</text>')
+        parts += [f'<line x1="{(X(a) + X(b)) / 2:.1f}" y1="{top}" x2="{(X(a) + X(b)) / 2:.1f}" y2="{top + plot_h}" class="grid" stroke-dasharray="1 3"/>' for a, b in zip(lags, lags[1:])]
         for substance in ("mj", "alc"):
             pts = []
             for lag in lags:
@@ -1249,17 +1250,13 @@ def _lag_chart(specs: pd.DataFrame) -> str:
                 coef = float(hit.iloc[0]["coef"])
                 se = float(hit.iloc[0]["se"])
                 pts.append((lag, coef, se))
-            if len(pts) >= 2:
-                path = " ".join(f"{X(lag):.1f},{Y(coef):.1f}" for lag, coef, _se in pts)
-                parts.append(f'<polyline points="{path}" fill="none" stroke="{colors[substance]}" stroke-width="2.2"/>')
+            dx = -5 if substance == "mj" else 5
             for lag, coef, se in pts:
-                parts.append(
-                    f'<line x1="{X(lag):.1f}" y1="{Y(coef - se):.1f}" x2="{X(lag):.1f}" y2="{Y(coef + se):.1f}" stroke="{colors[substance]}" stroke-width="1.4"/>'
-                )
-                parts.append(f'<circle cx="{X(lag):.1f}" cy="{Y(coef):.1f}" r="3.2" fill="{colors[substance]}"/>')
+                parts.append(f'<line x1="{X(lag) + dx:.1f}" y1="{Y(coef - se):.1f}" x2="{X(lag) + dx:.1f}" y2="{Y(coef + se):.1f}" stroke="{colors[substance]}" stroke-width="1.6"/>')
+                parts.append(f'<circle cx="{X(lag) + dx:.1f}" cy="{Y(coef):.1f}" r="3.4" fill="{colors[substance]}"/>')
         parts.append("</svg>")
         cards.append(f'<div class="slope-card"><p class="slope-k">{_esc(title)}</p>{"".join(parts)}</div>')
-    return '<div class="legend"><span><i style="background:#16A34A"></i>Marijuana, past month</span><span><i style="background:#2563EB"></i>Alcohol, past month</span><span>Whiskers ±1 SE · above 0 = higher score or Democratic share</span></div><div class="slope-grid">' + "".join(cards) + "</div>"
+    return '<div class="legend"><span><i style="background:#16A34A"></i>Marijuana, past month</span><span><i style="background:#2563EB"></i>Alcohol, past month</span><span>Whiskers ±1 SE · above 0 = higher score or Democratic share · each dot is its own regression, not a point in time</span></div><div class="slope-grid">' + "".join(cards) + "</div>"
 
 
 def _lag_table(specs: pd.DataFrame, uses: list[str] | None, families: list[str] | None) -> str:
@@ -1328,7 +1325,7 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
 <h2 id="lags">Cumulative and delayed exposure</h2>
 <p>{lead}</p>
 <p>{extra}</p>
-<p>Green is past-month marijuana. Blue is past-month alcohol. This chart is the within-state slope.</p>
+<p class="not-trend"><strong>These are not trends over time.</strong> Each dot is a separate within-state regression: the outcome against marijuana or alcohol use measured that many years earlier. Reading left to right compares lags; it does not follow a state through time. Green is past-month marijuana, blue is past-month alcohol.</p>
 {chart}
 <p class="axis-name"><span>Y · Points of the outcome per point of use</span><span>X · Lag, years</span></p>
 <p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. Lags of 10, 12, and 14 years, the distributed lag, and the legalization rows are in <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
