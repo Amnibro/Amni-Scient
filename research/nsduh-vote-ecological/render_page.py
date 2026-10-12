@@ -10,6 +10,7 @@ from pathlib import Path
 
 import numpy as np
 import statsmodels.api as sm
+from key_charts import _dual
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -169,7 +170,7 @@ def _clip_line(a, b, x_lo, x_hi, y_lo, y_hi):
 def _nice(hi, n=4):
     step = next(s for s in (0.5, 1, 2, 2.5, 5, 10, 20, 25, 50) if hi / s <= n)
     return float(np.ceil(hi / step) * step), step
-def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=False, opacity=0.34, r0=1.35, r1=5.0, labels=None):
+def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=False, opacity=0.34, r0=1.35, r1=5.0, labels=None, size=(720, 360)):
     left, right, top, bottom = 48, 14, 12, 28
     plot = None
     if square:
@@ -179,7 +180,7 @@ def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=Fa
         h = top + plot + bottom
         pw = ph = plot
     else:
-        w, h = 720, 360
+        w, h = size
         pw, ph = w - left - right, h - top - bottom
     left, bottom = (left + 14, bottom + 16) if labels else (left, bottom)
     w, h = (w + 14, h + 16) if labels else (w, h)
@@ -239,7 +240,8 @@ def rate_panels(regions):
 def density_chart(regions):
     a, b, se, x, y, w = fit_share(regions, "ln_dens")
     x0, x1 = 0, 11
-    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, (0, 2, 4, 6, 8, 10), (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6, labels=("Population density, log of people per km² (rural ← → urban)", "Democratic share, %"))
+    sc = lambda m=False: _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, (0, 2, 4, 6, 8, 10), (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=(3.4 if m else 4.6), labels=("Log density (rural → urban)" if m else "Population density, log of people per km² (rural ← → urban)", "Democratic share, %"), size=(386, 300) if m else (720, 360))
+    svg = _dual(sc)
     return svg, a, b, se
 
 
@@ -283,12 +285,12 @@ def share_color(share):
     return _mix(gold, deep, (u - 0.55) / 0.45)
 
 
-def dumbbell_chart(rows):
+def dumbbell_chart(rows, m=False):
     """Bounded user and non-user shares on a 0–100 axis."""
     n = max(1, len(rows))
     row_h = 46
     top, bottom = 36, 32
-    left, plot_w = 132, 420
+    left, plot_w = (104, 196) if m else (132, 420)
     width = left + plot_w + 88
     height = top + n * row_h + bottom
 
@@ -325,12 +327,12 @@ def dumbbell_chart(rows):
     return "\n".join(parts)
 
 
-def percentile_chart(rows):
+def percentile_chart(rows, m=False):
     """Predicted share at the 10th and 90th percentiles of observed use."""
     n = len(rows)
     row_h = 32
     top, bottom = 36, 28
-    left, plot_w = 132, 420
+    left, plot_w = (124, 210) if m else (132, 420)
     width = left + plot_w + 72
     height = top + n * row_h + bottom
 
@@ -533,10 +535,10 @@ def _contour_svgs(summaries, bands, mj, alc, share, w):
     return '<div class="contour-grid" id="contour-panels">' + "".join(cards) + "</div>" + legend, summaries
 
 
-def _share_legend():
+def _share_legend(m=False):
     stops = [share_color(v) for v in np.linspace(10, 90, 48)]
     rects = []
-    width = 720
+    width = 380 if m else 720
     for i, col in enumerate(stops):
         rects.append(f'<rect x="{i * (width / 48):.2f}" y="0" width="{width / 48 + 0.4:.2f}" height="14" fill="{col}"/>')
     ticks = []
@@ -551,12 +553,12 @@ def _share_legend():
         ticks.append(f'<text x="{x:.1f}" y="28" text-anchor="{anchor}" fill="#120C03" font-size="11" font-family="Archivo,sans-serif">{v}</text>')
     return (
         f'<svg viewBox="0 0 {width} 36" role="img" class="chart" style="background:#F6F0E4;border-radius:4px;margin-top:8px">'
-        + "".join(rects) + "".join(ticks) + "</svg>"
+        + "".join(rects) + "".join(ticks) + "</svg>" if m else _dual(lambda m=False: _share_legend(m) if m else f'<svg viewBox="0 0 {width} 36" role="img" class="chart" style="background:#F6F0E4;border-radius:4px;margin-top:8px">' + "".join(rects) + "".join(ticks) + "</svg>") +
         '<p class="axis-name"><span>Color · Democratic two-party share. 50 is the midpoint. Ink is below 50. Gold is above 50.</span></p>'
     )
 
 
-def lab_chart():
+def lab_chart(m=False):
     # Groups of bars. Values are percents. Errors are percentage points (1 SE), except Gawrylowicz uses the published CI half-width.
     groups = [
         ("Kloft eyewitness\nsuggested detail", [("Placebo", 8, 2.0), ("THC", 19, 4.0)]),
@@ -565,8 +567,8 @@ def lab_chart():
     ]
     # Gawrylowicz CIs: alcohol .196-.300 so half width from .25 is .054 -> 5.4 pp. Use 5.4, 4.6, 5.3
     groups[2] = ("Gawrylowicz\nmisled responses", [("Alcohol", 25.0, 5.4), ("Reverse placebo", 22.0, 5.6), ("No alcohol", 31.9, 5.3)])
-    w, h = 720, 320
-    left, right, top, bottom = 54, 16, 28, 62
+    w, h = (400, 320) if m else (720, 320)
+    left, right, top, bottom = (34, 6, 28, 62) if m else (54, 16, 28, 62)
     y0, y1 = 0, 55
     ph = h - top - bottom
     pw = w - left - right
@@ -597,12 +599,12 @@ def lab_chart():
             parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{base-y:.1f}" fill="{colors[name]}"/>')
             parts.append(f'<line x1="{x+bw/2:.1f}" y1="{Y(val-err):.1f}" x2="{x+bw/2:.1f}" y2="{Y(val+err):.1f}" class="whisk"/>')
             parts.append(f'<text x="{x+bw/2:.1f}" y="{Y(val+err) - 5:.1f}" text-anchor="middle" class="lab" style="font-weight:700">{val:g}%</text>')
-            parts.append(f'<text x="{x+bw/2:.1f}" y="{h-16}" text-anchor="middle" class="tick">{"Rev. placebo" if name == "Reverse placebo" else name}</text>')
+            parts.append(f'<text x="{x+bw/2:.1f}" y="{h-16}" text-anchor="middle" class="tick">{({"Reverse placebo": "Rev.", "No alcohol": "None", "Placebo": "Plac."}.get(name, name) if m else "Rev. placebo" if name == "Reverse placebo" else name)}</text>')
     parts.append("</svg>")
     return "\n".join(parts)
 
 
-def donation_totals(rows):
+def donation_totals(rows, m=False):
     industries = []
     for r in rows:
         if r["industry"] not in industries:
@@ -610,12 +612,12 @@ def donation_totals(rows):
     colors = {"total": "#2563EB", "to_democrats": "#1D4ED8", "to_republicans": "#E11D48"}
     # Actually dem blue and rep red is a convention readers expect for this chart. Keep it literal.
     panels = []
-    w, h = 720, 168
+    w, h = (400, 168) if m else (720, 168)
     for ind in industries:
         sub = [r for r in rows if r["industry"] == ind]
         sub = sorted(sub, key=lambda r: int(r["cycle"]))
         ymax = max(float(r["total"]) for r in sub) * 1.15
-        left, right, top, bottom = 78, 12, 22, 28
+        left, right, top, bottom = (8, 4, 22, 28) if m else (78, 12, 22, 28)
         pw, ph = w - left - right, h - top - bottom
         n = len(sub)
         slot = pw / n
@@ -645,11 +647,12 @@ def donation_totals(rows):
             parts.append(f'<text x="{left + i*slot + slot/2:.1f}" y="{h-8}" text-anchor="middle" class="tick">{r["cycle"]}</text>')
         parts.append("</svg>")
         panels.append("\n".join(parts))
-    legend = '<div class="legend"><span><i style="background:#64748B;height:10px"></i>Total</span><span><i style="background:#2563EB;height:10px"></i>To Democrats</span><span><i style="background:#DC2626;height:10px"></i>To Republicans</span></div>'
-    return legend + "\n".join(f'<div class="chart-card">{p}</div>' for p in panels)
+    return panels
+def donation_html(rows):
+    return '<div class="legend"><span><i style="background:#64748B;height:10px"></i>Total</span><span><i style="background:#2563EB;height:10px"></i>To Democrats</span><span><i style="background:#DC2626;height:10px"></i>To Republicans</span></div>' + "".join(f'<div class="chart-card"><div class="vd">{d}</div><div class="vm">{mm}</div></div>' for d, mm in zip(donation_totals(rows), donation_totals(rows, True)))
 
 
-def party_lines(rows):
+def party_lines(rows, m=False):
     industries = []
     for r in rows:
         if r["industry"] not in industries:
@@ -660,8 +663,8 @@ def party_lines(rows):
         "Marijuana": "#16A34A",
     }
     cycles = [2016, 2018, 2020, 2022, 2024]
-    w, h = 720, 300
-    left, right, top, bottom = 54, 190, 18, 36
+    w, h = (400, 300) if m else (720, 300)
+    left, right, top, bottom = (34, 104, 18, 36) if m else (54, 190, 18, 36)
     pw, ph = w - left - right, h - top - bottom
 
     def X(i):
@@ -682,7 +685,7 @@ def party_lines(rows):
     last = -1e9
     for yy, ind, v in sorted((Y(float(r["pct_democrats"])), r["industry"], float(r["pct_democrats"])) for r in rows if int(r["cycle"]) == cycles[-1]):
         last = max(yy, last + 14)
-        parts.append(f'<text x="{X(4) + 10:.1f}" y="{last + 4:.1f}" class="lab" style="fill:{colors[ind]};font-size:11px;font-weight:700">{"Pharma" if ind.startswith("Pharma") else "Alcohol" if ind.startswith("Beer") else ind}, {v:.0f}% to Dems</text>')
+        parts.append(f'<text x="{X(4) + 10:.1f}" y="{last + 4:.1f}" class="lab" style="fill:{colors[ind]};font-size:11px;font-weight:700">{"Pharma" if ind.startswith("Pharma") else "Alcohol" if ind.startswith("Beer") else ind}{" " if m else ", "}{v:.0f}%{"" if m else " to Dems"}</text>')
     for ind in industries:
         sub = {int(r["cycle"]): r for r in rows if r["industry"] == ind}
         pts = " ".join(f"{X(i):.1f},{Y(float(sub[c]['pct_democrats'])):.1f}" for i, c in enumerate(cycles))
@@ -696,7 +699,7 @@ def party_lines(rows):
     return "\n".join(parts), legend
 
 
-def category_chart(rows):
+def category_chart(rows, m=False):
     order = [
         "Beer, Wine & Liquor",
         "Pharmaceuticals / Health Products",
@@ -709,14 +712,14 @@ def category_chart(rows):
         "State ballot support": "#16A34A",
     }
     panels = []
-    w = 720
-    bar_x = 200
-    bar_max = 210
+    w = 400 if m else 720
+    bar_x = 8 if m else 200
+    bar_max = 300 if m else 210
     for ind in order:
         sub = [r for r in rows if r["industry"] == ind and r["category"] in cat_order]
         sub.sort(key=lambda r: cat_order.index(r["category"]))
         ymax = max(float(r["amount"]) for r in sub)
-        row_h = 40
+        row_h = 52 if m else 40
         top = 28
         h = top + len(sub) * row_h + 10
         parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
@@ -727,16 +730,16 @@ def category_chart(rows):
             bw = 0 if ymax == 0 else amt / ymax * bar_max
             if amt > 0:
                 bw = max(bw, 2)
-            parts.append(f'<text x="8" y="{y + 18}" class="tick">{esc(r["category"])}</text>')
+            parts += [] if m else [f'<text x="8" y="{y + 18}" class="tick">{esc(r["category"])}</text>']
             parts.append(
-                f'<rect x="{bar_x}" y="{y + 6}" width="{bw:.1f}" height="16" fill="{colors[r["category"]]}"/>'
+                f'<rect x="{bar_x}" y="{y + (24 if m else 6)}" width="{bw:.1f}" height="16" fill="{colors[r["category"]]}"/>'
             )
             if r["category"] == "Federal contributions":
                 party = f'{float(r["pct_democrats"]):.2f}% D / {float(r["pct_republicans"]):.2f}% R'
             else:
                 party = "no party"
             label = f"{dollars(r['amount'])} · {party}"
-            parts.append(f'<text x="{bar_x + bw + 8:.1f}" y="{y + 18}" class="tick">{esc(label)}</text>')
+            parts.append(f'<text x="8" y="{y + 16}" class="tick">{esc(r["category"])} · <tspan style="font-weight:700">{esc(label)}</tspan></text>' if m else f'<text x="{bar_x + bw + 8:.1f}" y="{y + 18}" class="tick">{esc(label)}</text>')
         parts.append("</svg>")
         panels.append("\n".join(parts))
     legend = (
@@ -746,7 +749,7 @@ def category_chart(rows):
         '<span><i style="background:#16A34A;height:10px"></i>State ballot support, no party</span>'
         "</div>"
     )
-    return legend + "\n" + "\n".join(f'<div class="chart-card">{p}</div>' for p in panels)
+    return panels if m else legend + "\n" + "\n".join(f'<div class="chart-card"><div class="vd">{p}</div><div class="vm">{q}</div></div>' for p, q in zip(panels, category_chart(rows, True)))
 
 
 def spending_table(rows):
@@ -782,7 +785,7 @@ def ballot_table():
     return "\n".join(body)
 
 
-def compare_chart(alone, rows):
+def compare_chart(alone, rows, m=False):
     vote = [
         ("Marijuana", alone["mj"]["pp_per_sd"]),
         ("Alcohol", alone["alc"]["pp_per_sd"]),
@@ -794,27 +797,28 @@ def compare_chart(alone, rows):
         "Opioid misuse": "Pharmaceuticals / Health Products",
     }
     y2024 = {r["industry"]: r for r in rows if int(r["cycle"]) == 2024}
-    w, h = 720, 280
+    w, h = (400, 440) if m else (720, 280)
+    cv, sv, p0, pw, dy, oy = (200, 150, 110, 210, 220, 0) if m else (188, 140, 410, 280, 0, 0)
     parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
-    parts.append('<text x="188" y="18" text-anchor="middle" class="tick">Vote share, points per 1 SD</text>')
-    parts.append('<text x="520" y="18" text-anchor="middle" class="tick">2024 party split, percent</text>')
-    parts.append('<line x1="360" y1="28" x2="360" y2="268" class="axis"/>')
+    parts.append(f'<text x="{8 if m else 188}" y="18" text-anchor="{"start" if m else "middle"}" class="tick">Vote share, points per 1 SD</text>')
+    parts.append(f'<text x="{8 if m else 520}" y="{18 + dy}" text-anchor="{"start" if m else "middle"}" class="tick">2024 party split, percent</text>')
+    parts += [f'<line x1="8" y1="{dy}" x2="{w - 8}" y2="{dy}" class="axis"/>'] if m else ['<line x1="360" y1="28" x2="360" y2="268" class="axis"/>']
     # vote axis -6 to +6 centered at x=188
     def XV(v):
-        return 188 + v / 6 * 140
+        return cv + v / 6 * sv
 
-    parts.append(f'<line x1="{XV(0):.1f}" y1="32" x2="{XV(0):.1f}" y2="250" class="grid"/>')
+    parts.append(f'<line x1="{XV(0):.1f}" y1="32" x2="{XV(0):.1f}" y2="{190 if m else 250}" class="grid"/>')
     for t in (-4, 0, 4):
-        parts.append(f'<text x="{XV(t):.1f}" y="266" text-anchor="middle" class="tick">{t:+d}</text>')
+        parts.append(f'<text x="{XV(t):.1f}" y="{206 if m else 266}" text-anchor="middle" class="tick">{t:+d}</text>')
     # party axis 0-100 at x=430 to 680
     def XP(v):
-        return 410 + v / 100 * 280
+        return p0 + v / 100 * pw
 
     for t in (0, 50, 100):
-        parts.append(f'<text x="{XP(t):.1f}" y="266" text-anchor="middle" class="tick">{t}</text>')
+        parts.append(f'<text x="{XP(t):.1f}" y="{h - 14 if m else 266}" text-anchor="middle" class="tick">{t}</text>')
     for i, (name, val) in enumerate(vote):
-        y = 70 + i * 60
-        parts.append(f'<text x="8" y="{y-14}" class="tick">{name}</text>')
+        y, yp = (62 + i * 50, 62 + i * 50 + dy) if m else (70 + i * 60, 70 + i * 60)
+        parts += [f'<text x="8" y="{y + 4}" class="tick">{name}</text>', f'<text x="8" y="{yp + 4}" class="tick">{name}</text>'] if m else [f'<text x="8" y="{y-14}" class="tick">{name}</text>']
         x0, x1 = XV(0), XV(val)
         parts.append(f'<rect x="{min(x0,x1):.1f}" y="{y-8}" width="{abs(x1-x0):.1f}" height="16" fill="#2563EB"/>')
         anchor = "start" if val >= 0 else "end"
@@ -824,9 +828,9 @@ def compare_chart(alone, rows):
         )
         rec = y2024[ind_of[name]]
         pdm, prep = float(rec["pct_democrats"]), float(rec["pct_republicans"])
-        parts.append(f'<rect x="{XP(0):.1f}" y="{y-10}" width="{(XP(pdm)-XP(0)):.1f}" height="8" fill="#2563EB"/>')
-        parts.append(f'<rect x="{XP(0):.1f}" y="{y+2}" width="{(XP(prep)-XP(0)):.1f}" height="8" fill="#DC2626"/>')
-        parts.append(f'<text x="{XP(max(pdm, prep))+6:.1f}" y="{y+4}" class="tick">{pdm:.0f} / {prep:.0f}</text>')
+        parts.append(f'<rect x="{XP(0):.1f}" y="{yp-10}" width="{(XP(pdm)-XP(0)):.1f}" height="8" fill="#2563EB"/>')
+        parts.append(f'<rect x="{XP(0):.1f}" y="{yp+2}" width="{(XP(prep)-XP(0)):.1f}" height="8" fill="#DC2626"/>')
+        parts.append(f'<text x="{XP(max(pdm, prep))+6:.1f}" y="{yp+4}" class="tick">{pdm:.0f} / {prep:.0f}</text>')
     parts.append("</svg>")
     return "\n".join(parts)
 
@@ -1012,14 +1016,14 @@ def _child_lines(row) -> tuple[str, str]:
     return row["study"] + tag, row["sample"] + " · " + row["exposure"]
 
 
-def child_chart(rows) -> str:
+def child_chart(rows, m=False) -> str:
     n = len(rows)
-    row_h = 46
-    right, top, bottom = 22, 34, 24
-    plot_w = 280
+    row_h = 66 if m else 46
+    right, top, bottom = (16, 52, 24) if m else (22, 34, 24)
+    plot_w = 376 if m else 280
     labels = [_child_lines(row) for row in rows]
     # 11px labels measure about 4.9px per character in Archivo. Pad so the longest line stays inside the viewBox.
-    left = int(max(len(line) * 5.15 for pair in labels for line in pair)) + 18
+    left = 8 if m else int(max(len(line) * 5.15 for pair in labels for line in pair)) + 18
     width = left + plot_w + right
     height = top + n * row_h + bottom
     x0, x1 = -0.75, 0.20
@@ -1035,16 +1039,15 @@ def child_chart(rows) -> str:
     parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">']
     parts.append(f'<line x1="{X(0):.1f}" y1="{top - 4}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
     parts += [f'<text x="{X(0) - 5:.1f}" y="14" text-anchor="end" class="marklab">← EXPOSED CHILDREN SCORE LOWER</text>', f'<text x="{X(0) + 5:.1f}" y="14" class="marklab">HIGHER →</text>']
-    parts += [f'<circle cx="{12 + k * 118}" cy="{height - 10}" r="4" fill="{c}"/><text x="{19 + k * 118}" y="{height - 6}" class="tick">{n}</text>' for k, (n, c) in enumerate((("Prenatal cannabis", "#16A34A"), ("Prenatal alcohol", "#2563EB"), ("Home alcohol", "#8A6318")))]
+    parts += [f'<circle cx="{12 + k * 118}" cy="{30 if m else height - 10}" r="4" fill="{c}"/><text x="{19 + k * 118}" y="{34 if m else height - 6}" class="tick">{n}</text>' for k, (n, c) in enumerate((("Prenatal cannabis", "#16A34A"), ("Prenatal alcohol", "#2563EB"), ("Home alcohol", "#8A6318")))]
     for t in (-0.6, -0.4, -0.2, 0, 0.2):
         parts.append(f'<line x1="{X(t):.1f}" y1="{top - 2}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
         parts.append(f'<text x="{X(t):.1f}" y="{height - 6}" text-anchor="middle" class="tick">{t:.1f}</text>')
     for i, row in enumerate(rows):
-        y = top + i * row_h + row_h / 2
+        y = top + i * row_h + (52 if m else row_h / 2)
         color = colors[row["kind"]]
         study, detail = labels[i]
-        parts.append(f'<text x="{left - 10}" y="{y - 2:.1f}" text-anchor="end" class="lab">{esc(study)}</text>')
-        parts.append(f'<text x="{left - 10}" y="{y + 12:.1f}" text-anchor="end" class="tick">{esc(detail)}</text>')
+        parts += [f'<text x="8" y="{y - 40:.1f}" class="lab" style="font-weight:700">{esc(study)}</text>'] + [f'<text x="8" y="{y - 27 + k * 12:.1f}" class="tick">{esc(d)}</text>' for k, d in enumerate(detail.split(" · ", 1))] if m else [f'<text x="{left - 10}" y="{y - 2:.1f}" text-anchor="end" class="lab">{esc(study)}</text>', f'<text x="{left - 10}" y="{y + 12:.1f}" text-anchor="end" class="tick">{esc(detail)}</text>']
         if row["lo"] is not None:
             parts.append(
                 f'<line x1="{X(row["lo"]):.1f}" y1="{y:.1f}" x2="{X(row["hi"]):.1f}" y2="{y:.1f}" stroke="{color}" stroke-width="1.6"/>'
@@ -1078,7 +1081,7 @@ def child_section() -> str:
     return f"""
 <h2 id="children">Children in homes where parents use</h2>
 <p>Children whose mothers reported cannabis use after learning they were pregnant scored <strong>81.7</strong> on the NIH Toolbox. Children with no prenatal cannabis exposure scored <strong>86.5</strong>. Binge prenatal alcohol is Cohen’s d <strong>−0.13</strong>.</p>
-<div class="chart-card" id="child-chart">{child_chart(CHILD_EFFECTS)}</div>
+<div class="chart-card" id="child-chart">{_dual(child_chart, CHILD_EFFECTS)}</div>
 <p class="axis-name"><span>Y · Published contrast</span><span>X · Standard deviations, exposed minus unexposed</span></p>
 <p class="fine cap">Green is prenatal cannabis. Blue is prenatal alcohol. Gold is household alcohol. The vertical line is zero.</p>
 <div class="table-scroll">
@@ -1143,11 +1146,11 @@ def _corr_ink(rgb: tuple[int, int, int]) -> str:
     return "#120C03" if _contrast(rgb, dark) >= _contrast(rgb, white) else "#FFFFFF"
 
 
-def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, ...], title: str) -> str:
+def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, ...], title: str, m=False) -> str:
     n = len(rows)
     row_h = 40
     top, bottom = 28, 34
-    left, plot_w, right = 188, 420, 72
+    (left, plot_w, right), svg_id = ((150, 176, 54), svg_id + "-m") if m else ((188, 420, 72), svg_id)
     width = left + plot_w + right
     height = top + n * row_h + bottom
 
@@ -1155,12 +1158,12 @@ def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, 
         return left + (float(v) - lo) / (hi - lo) * plot_w
 
     parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" id="{svg_id}">']
-    parts.append(f'<text x="8" y="16" class="tick">{esc(title)}</text>')
+    parts += [] if m and lo < -3 < 0 < hi else [f'<text x="8" y="16" class="tick">{esc(title)}</text>']
     for t in ticks:
         parts.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
         parts.append(f'<text x="{X(t):.1f}" y="{height - 12}" text-anchor="middle" class="tick">{t}</text>')
     parts.append(f'<line x1="{X(0):.1f}" y1="{top}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
-    parts += [f'<text x="{X(0) - 6:.1f}" y="16" text-anchor="end" class="marklab" style="fill:#DC2626">← USE HIGHER IN REPUBLICAN AREAS</text>', f'<text x="{X(0) + 6:.1f}" y="16" class="marklab" style="fill:#2563EB">IN DEMOCRATIC AREAS →</text>'] if lo < -3 < 0 < hi else []
+    parts += [f'<text x="{X(0) - 6:.1f}" y="16" text-anchor="end" class="marklab" style="fill:#DC2626">{"← REP. AREAS" if m else "← USE HIGHER IN REPUBLICAN AREAS"}</text>', f'<text x="{X(0) + 6:.1f}" y="16" class="marklab" style="fill:#2563EB">{"DEM. →" if m else "IN DEMOCRATIC AREAS →"}</text>'] if lo < -3 < 0 < hi else []
     for i, (label, term, color) in enumerate(rows):
         y = top + i * row_h + 16
         if i == 3:
@@ -1178,7 +1181,7 @@ def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, 
     return "\n".join(parts)
 
 
-def group_chart(groups: dict) -> str:
+def group_chart(groups: dict, m=False) -> str:
     omit = groups["heroin_omitted"]["terms"]
     inn = groups["heroin_in_b"]["terms"]
     heroin = groups["heroin_alone"]
@@ -1198,8 +1201,8 @@ def group_chart(groups: dict) -> str:
     ]
     alone = [("Heroin alone", pack(heroin, clustered=False), "#78716C")]
     return (
-        _slope_svg("group-slopes", pooled, -6, 2, (-6, -4, -2, 0, 2), "Groups, clustered 95% intervals")
-        + _slope_svg("heroin-slope", alone, -2, 18, (0, 4, 8, 12, 16), "Heroin alone, HC1 interval, separate scale")
+        _slope_svg("group-slopes", pooled, -6, 2, (-6, -4, -2, 0, 2), "Groups, clustered 95% intervals", m)
+        + _slope_svg("heroin-slope", alone, -2, 18, (0, 4, 8, 12, 16), "Heroin alone, HC1 interval, separate scale", m)
     )
 
 
@@ -1336,15 +1339,15 @@ def _panel_svg(by, measure: str, outcome: str, lim: float) -> str:
     return "".join(parts)
 
 
-def _cohort_svg(by, lim: float) -> str:
+def _cohort_svg(by, lim: float, m=False) -> str:
     outcomes, colors, labels_m = [("math8", "Math"), ("read8", "Reading"), ("comp8", "Composite")], {"mj": "#16A34A", "mrjyr": "#8A6318"}, {"mj": "Past month", "mrjyr": "Past year"}
-    width, left, right, top, row = 720, 150, 60, 30, 22
+    width, left, right, top, row = (400, 112, 44, 30, 22) if m else (720, 150, 60, 30, 22)
     rows = [(o, ol, m, by.get(("cohort", m, "cohort", "", o))) for o, ol in outcomes for m in colors]
     height = top + len(rows) * row + 3 * 10 + 30
     X = lambda v: left + (v + lim) / (2 * lim) * (width - left - right)
     parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" aria-label="Partial correlation of early-childhood marijuana exposure with grade 8 scores">']
     parts += [f'<line x1="{X(t):.1f}" y1="{top - 6}" x2="{X(t):.1f}" y2="{height - 26}" class="{"axis" if t == 0 else "grid"}"/><text x="{X(t):.1f}" y="{height - 10}" text-anchor="middle" class="tick">{_ytick(t)}</text>' for t in _sym_ticks(lim)]
-    parts += [f'<text x="{X(0) - 6:.1f}" y="14" text-anchor="end" class="marklab">← MORE USE, LOWER SCORES</text>', f'<text x="{X(0) + 6:.1f}" y="14" class="marklab">MORE USE, HIGHER SCORES →</text>']
+    parts += [f'<text x="{X(0) - 6:.1f}" y="14" text-anchor="end" class="marklab">{"← LOWER SCORES" if m else "← MORE USE, LOWER SCORES"}</text>', f'<text x="{X(0) + 6:.1f}" y="14" class="marklab">{"HIGHER →" if m else "MORE USE, HIGHER SCORES →"}</text>']
     for i, (o, ol, m, rec) in enumerate(rows):
         y = top + i * row + (i // 2) * 10
         r = float(getattr(rec, "partial_r", float("nan"))) if rec is not None else float("nan")
@@ -1510,7 +1513,7 @@ def mj_corr_section(table) -> str:
 <p class="axis-name"><span>Rows · How marijuana use was measured</span><span>Columns · Years between use and score</span></p>
 <div class="chart-card" id="mj-cohort-chart">
 <h3>Birth to age 5, grade 8</h3>
-{_cohort_svg(by, cohort_lim)}
+{_dual(_cohort_svg, by, cohort_lim)}
 </div>
 <p>The partial correlation of {esc(str(cneg.measure_label).lower())} marijuana from birth to about age 5 with {esc(str(cneg.outcome_label).lower())} is <strong>{num(cneg.partial_r, 2, sign=True)}</strong> (n={int(cneg.partial_n)}). Green is past month. Gold is past year.</p>
 <p class="axis-name"><span>Y · Grade 8 score</span><span>X · Partial r</span></p>
@@ -1747,16 +1750,16 @@ def main():
     goodman = ext["goodman"]["rows"]
     stable_rows = [r for r in goodman if r.get("stable") in (True, "True", "true")]
     dropped_rows = [r for r in goodman if r not in stable_rows]
-    dumb = dumbbell_chart(stable_rows)
+    dumb = _dual(dumbbell_chart, stable_rows)
     gtab = goodman_table(stable_rows)
-    pchart = percentile_chart(goodman)
+    pchart = _dual(percentile_chart, goodman)
     ptab = percentile_table(goodman)
     drop_labels = [DUMB_LABEL.get(r["term"], r["term"]) for r in dropped_rows]
     drop_names = ", ".join(drop_labels[:-1]) + ", and " + drop_labels[-1] if len(drop_labels) > 1 else (drop_labels[0] if drop_labels else "")
     contour, contour_sum = contour_panels(regions)
     by_term = {r["term"]: r for r in goodman}
     g_mj, g_alc = by_term["mj"], by_term["alc"]
-    parties, party_legend = party_lines(donations)
+    parties, party_legend = _dual(lambda m=False: party_lines(donations, m)[0]), party_lines(donations)[1]
     cats = category_chart(spending)
     spend_rows = spending_table(spending)
     ballot_rows_html = ballot_table()
@@ -1774,7 +1777,7 @@ def main():
     omit = groups["heroin_omitted"]["terms"]
     inn = groups["heroin_in_b"]["terms"]
     heroin = groups["heroin_alone"]
-    gchart = group_chart(groups)
+    gchart = _dual(group_chart, groups)
     gtab_group = group_table(groups)
     from over_time import marijuana_score_correlations, section_html, state_window_correlations
     import key_charts, psych_charts
@@ -2052,7 +2055,7 @@ body.pp .hero h1{{max-width:22ch}}
 
 <h2>Laboratory results</h2>
 <p>A suggested false detail was accepted <strong>19%</strong> of the time after THC and <strong>8%</strong> after placebo. Related-word false alarms were <strong>42%</strong> and <strong>27%</strong>. Misled responses were <strong>0.25</strong> after alcohol and <strong>0.319</strong> with no alcohol.</p>
-<div class="chart-card">{lab_chart()}</div>
+<div class="chart-card">{_dual(lab_chart)}</div>
 <p class="axis-name"><span>Y · Percent of responses</span></p>
 <p class="fine">Whiskers: Kloft, 1 SE in percentage points. Gawrylowicz, half the published 95% CI.</p>
 <p class="fine cap">Laboratory data, not vote data. Kloft et al. 2020, immediate test, THC versus placebo. Gawrylowicz et al. 2017, alcohol, reverse placebo, and no alcohol.</p>
@@ -2098,7 +2101,7 @@ body.pp .hero h1{{max-width:22ch}}
 <h2>Federal contributions by cycle</h2>
 <p>In 2024, beer, wine, and liquor gave <strong>{money(beer_total)}</strong>. Pharmaceuticals and health products gave <strong>{money(pharma_total)}</strong>. Marijuana gave <strong>{money(mj_total)}</strong>, with <strong>61.40%</strong> of candidate and party money to Democrats.</p>
 <p class="fine">Gray is the cycle total. Blue is dollars to Democratic candidates and parties. Red is dollars to Republican candidates and parties. Each industry has its own vertical scale. The total includes outside spending. The party bars do not.</p>
-{donation_totals(donations)}
+{donation_html(donations)}
 <p class="fine cap">OpenSecrets industry totals, retrieved 2026-10-11 from the archive capture of 2026-07-16. Codes N02, H04, and N09.</p>
 <div class="chart-card">{parties}</div>
 {party_legend}
@@ -2107,7 +2110,7 @@ body.pp .hero h1{{max-width:22ch}}
 
 <h2>Vote share and the donation split</h2>
 <p>Left, points of Democratic share per weighted standard deviation of the rate. Right, the 2024 split of federal contributions to candidates and parties. Blue is Democrats. Red is Republicans.</p>
-<div class="chart-card">{compare_chart(alone, donations)}</div>
+<div class="chart-card">{_dual(compare_chart, alone, donations)}</div>
 <p class="fine cap">This figure shows co-occurrence of area-level use with area-level vote share, and the published split of industry contributions to candidates and parties. It does not show intent, coordination, a deliberate strategy, or that substance use changes any individual’s vote.</p>
 
 <details class="methods-block" id="methods">
