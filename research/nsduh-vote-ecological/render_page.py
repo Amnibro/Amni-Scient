@@ -70,6 +70,8 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 .r-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.45rem .4rem .15rem}
 .r-card h3{margin:0 0 .1rem;font-size:.78rem;font-weight:750;color:var(--text)}
 .r-card .chart{width:100%}
+.not-trend{border-left:3px solid var(--accent);padding:.45rem .7rem;background:var(--panel)}
+.corr-scale i{width:18px!important;height:12px!important;border-radius:2px!important}
 details.secondary-block,details.methods-block{margin:1.5rem 0 1.8rem;max-width:860px}
 details.secondary-block summary,details.methods-block summary{cursor:pointer;font-weight:750;color:var(--text);font-size:1.05rem}
 details.secondary-block[open] summary,details.methods-block[open] summary{margin-bottom:.7rem}
@@ -1129,9 +1131,9 @@ def _contrast(bg: tuple[int, int, int], fg: tuple[int, int, int]) -> float:
 
 def _corr_rgb(r: float) -> tuple[int, int, int]:
     """Cream to brown or blue, stopped where #120C03 stays at 4.8:1."""
-    t = min(1.0, abs(float(r)))
+    t = min(1.0, abs(float(r)) / 0.6)
     cream = (246, 240, 228)
-    end = (155, 122, 57) if r >= 0 else (103, 124, 193)
+    end = (155, 122, 57) if r >= 0 else (196, 84, 72)
     return tuple(int(round(cream[i] + (end[i] - cream[i]) * t)) for i in range(3))
 
 
@@ -1308,46 +1310,6 @@ def _sym_ticks(lim: float) -> list[float]:
     return [-lim, -half, 0.0, half, lim]
 
 
-def _line_svg(series, x_of, y_of, x_labels, ticks, width, height, left, bottom) -> str:
-    """series: (color, list of (x, y, tip) or None). One solid line, the partial correlation."""
-    right, top = 14, 18
-    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">']
-    plot_r = height - bottom
-    for tick in ticks:
-        y = y_of(tick)
-        parts.append(f'<line x1="{left}" y1="{y:.1f}" x2="{width - right}" y2="{y:.1f}" class="grid"/>')
-        parts.append(f'<text x="{left - 6}" y="{y + 3:.1f}" text-anchor="end" class="tick">{_ytick(tick)}</text>')
-    zy = y_of(0)
-    parts.append(f'<line x1="{left}" y1="{zy:.1f}" x2="{width - right}" y2="{zy:.1f}" class="axis" stroke-width="1.6"/>')
-    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{plot_r}" class="axis"/>')
-    for x, label in x_labels:
-        parts.append(f'<text x="{x_of(x):.1f}" y="{height - 8}" text-anchor="middle" class="tick">{esc(label)}</text>')
-
-    for color, pts in series:
-        cur: list[tuple[float, float, str]] = []
-
-        def flush(cur=cur, color=color):
-            if len(cur) >= 2:
-                coords = " ".join(f"{x_of(x):.1f},{y_of(y):.1f}" for x, y, _tip in cur)
-                parts.append(
-                    f'<polyline points="{coords}" fill="none" stroke="{color}" stroke-width="2.2" stroke-linejoin="round"/>'
-                )
-            for x, y, tip in cur:
-                parts.append(
-                    f'<circle cx="{x_of(x):.1f}" cy="{y_of(y):.1f}" r="3" fill="{color}"><title>{esc(tip)}</title></circle>'
-                )
-
-        for item in pts:
-            if item is None:
-                flush(cur)
-                cur = []
-            else:
-                cur.append(item)
-        flush(cur)
-    parts.append("</svg>")
-    return "\n".join(parts)
-
-
 MJ_LINE_COLORS = (
     ("current", "#8A6318", "Current"),
     ("y1", "#0D9488", "Past 1 year"),
@@ -1356,37 +1318,22 @@ MJ_LINE_COLORS = (
 )
 
 
-def _y_of(lim: float, height: int, bottom: int):
-    top = 18
-
-    def y_of(r):
-        return top + (lim - r) / (2 * lim) * (height - bottom - top)
-
-    return y_of
-
-
 def _panel_svg(by, measure: str, outcome: str, lim: float) -> str:
-    width, height, left, bottom = 400, 196, 46, 28
-    y_of = _y_of(lim, height, bottom)
-
-    def x_of(lag):
-        return left + (lag / 10) * (width - left - 14)
-
-    series = []
-    for wkey, color, wlabel in MJ_LINE_COLORS:
-        pts = []
-        for lag in (0, 2, 4, 6, 8, 10):
+    lags, left, top, cw, ch = (0, 2, 4, 6, 8, 10), 92, 34, 51, 30
+    width, height = left + len(lags) * cw + 4, top + len(MJ_LINE_COLORS) * ch + 4
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">', f'<text x="{left}" y="11" class="axt">Score measured this many years after the use →</text>']
+    parts += [f'<text x="{left + (j + 0.5) * cw:.1f}" y="27" text-anchor="middle" class="tick">{"same yr" if lag == 0 else f"+{lag} yr"}</text>' for j, lag in enumerate(lags)]
+    for i, (wkey, _color, wlabel) in enumerate(MJ_LINE_COLORS):
+        y = top + i * ch
+        parts.append(f'<text x="{left - 6}" y="{y + ch / 2 + 4:.1f}" text-anchor="end" class="tick">{esc(wlabel)}</text>')
+        for j, lag in enumerate(lags):
             rec = by.get(("panel", measure, wkey, lag, outcome))
-            if rec is None or not np.isfinite(getattr(rec, "partial_r", float("nan"))):
-                pts.append(None)
-                continue
-            tip = (
-                f"{wlabel}, {lag} years. Partial r {num(rec.partial_r, 2, sign=True)}, n={int(rec.partial_n)}."
-            )
-            pts.append((lag, float(rec.partial_r), tip))
-        series.append((color, pts))
-    labels = [(lag, str(lag)) for lag in (0, 2, 4, 6, 8, 10)]
-    return _line_svg(series, x_of, y_of, labels, _sym_ticks(lim), width, height, left, bottom)
+            r = float(getattr(rec, "partial_r", float("nan"))) if rec is not None else float("nan")
+            rgb = _corr_rgb(r) if np.isfinite(r) else (238, 234, 226)
+            parts.append(f'<rect x="{left + j * cw + 1:.1f}" y="{y + 1}" width="{cw - 2}" height="{ch - 2}" rx="2" fill="rgb{rgb}"><title>{esc(wlabel)}, {lag} years later. Partial r {num(r, 2, sign=True) if np.isfinite(r) else "n/a"}{f", n={int(rec.partial_n)}" if rec is not None and np.isfinite(r) else ""}.</title></rect>')
+            parts.append(f'<text x="{left + (j + 0.5) * cw:.1f}" y="{y + ch / 2 + 4:.1f}" text-anchor="middle" style="fill:{_corr_ink(rgb)};font-size:11px;font-weight:700;font-family:Archivo,sans-serif">{_ytick(round(r, 2)) if np.isfinite(r) else "–"}</text>')
+    parts.append("</svg>")
+    return "".join(parts)
 
 
 def _cohort_svg(by, lim: float) -> str:
@@ -1445,9 +1392,6 @@ def mj_corr_section(table) -> str:
             f'<button type="button" class="{"btn btn-primary" if on else "btn btn-outline"}" '
             f'data-measure="{mkey}" aria-pressed="{"true" if on else "false"}">{esc(mlabel)}</button>'
         )
-    legend = "".join(
-        f'<span><i style="background:{color}"></i>{esc(label)}</span>' for _k, color, label in MJ_LINE_COLORS
-    )
 
     def heat_table(outcome, table_id):
         rows = []
@@ -1554,15 +1498,16 @@ def mj_corr_section(table) -> str:
 """
     return f"""
 <h2 id="correlations">Marijuana and test scores</h2>
-<p>The lines are partial correlations, holding log density, age, and education. The most negative is {esc(str(pneg.measure_label).lower())} marijuana, the {esc(str(pneg.window_label).lower())}, with {esc(str(pneg.outcome_label).lower())} {_lag_when(pneg.lag)}: <strong>{num(pneg.partial_r, 2, sign=True)}</strong> (n={int(pneg.partial_n)}). The strongest positive partial correlation is {esc(str(ppos.measure_label).lower())} marijuana, the {esc(str(ppos.window_label).lower())}, with {esc(str(ppos.outcome_label).lower())} {_lag_when(ppos.lag)}: <strong>{num(ppos.partial_r, 2, sign=True)}</strong> (n={int(ppos.partial_n)}).</p>
-<p><strong>In plain terms:</strong> below 0 means states with more marijuana use have lower scores, after holding density, age, and education equal. Almost every line in math and grade 4 reading sits below 0, and the longest exposure windows sit lowest. Grade 8 reading is near 0.</p>
+<p class="not-trend"><strong>These are not trends over time.</strong> Each colored cell is one correlation across states: does a state with more marijuana use have lower scores? Moving right only changes how many years after the use the scores were measured. Red cells mean more use goes with lower scores. Brown cells mean higher scores. Darker is stronger; 0 is no relationship.</p>
+<p>The cells are partial correlations, holding log density, age, and education. The most negative is {esc(str(pneg.measure_label).lower())} marijuana, the {esc(str(pneg.window_label).lower())}, with {esc(str(pneg.outcome_label).lower())} {_lag_when(pneg.lag)}: <strong>{num(pneg.partial_r, 2, sign=True)}</strong> (n={int(pneg.partial_n)}). The strongest positive partial correlation is {esc(str(ppos.measure_label).lower())} marijuana, the {esc(str(ppos.window_label).lower())}, with {esc(str(ppos.outcome_label).lower())} {_lag_when(ppos.lag)}: <strong>{num(ppos.partial_r, 2, sign=True)}</strong> (n={int(ppos.partial_n)}).</p>
+<p><strong>In plain terms:</strong> almost every cell in math and grade 4 reading is red, so states with more marijuana use have lower scores after density, age, and education are held equal. The 15-year mean rows are darkest. Grade 8 reading is near 0.</p>
 <div id="mj-corr">
 <div class="corr-switch">
 {''.join(switches)}
 </div>
-<div class="legend">{legend}</div>
+<div class="legend corr-scale"><span><i style="background:rgb{_corr_rgb(-0.6)}"></i>−0.6 more use, lower scores</span><span><i style="background:rgb{_corr_rgb(-0.3)}"></i>−0.3</span><span><i style="background:rgb{_corr_rgb(0)};border:1px solid var(--border)"></i>0 none</span><span><i style="background:rgb{_corr_rgb(0.3)}"></i>+0.3 more use, higher scores</span></div>
 {''.join(sets)}
-<p class="axis-name"><span>Y · Partial r</span><span>X · Years after the exposure window ends</span></p>
+<p class="axis-name"><span>Rows · How marijuana use was measured</span><span>Columns · Years between use and score</span></p>
 <div class="chart-card" id="mj-cohort-chart">
 <h3>Birth to age 5, grade 8</h3>
 {_cohort_svg(by, cohort_lim)}
