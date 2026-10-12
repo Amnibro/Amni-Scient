@@ -807,6 +807,9 @@ def _polyline(parts, X, Y, pts, color, dash=False, ymap=None):
         parts.append(f'<circle cx="{X(year):.1f}" cy="{yy:.1f}" r="2.3" fill="{color}"/>')
 
 
+def _vdm(d, mob):
+    return f'<div class="vd">{d}</div><div class="vm">{mob}<p class="fine">Law markers show on wider screens.</p></div>'
+MSHORT = {"mj": "MJ month", "mrjyr": "MJ year", "iem": "Other illicit", "pnr": "Pain pills"}
 SHORT = {"mj": "Marijuana, month", "mrjyr": "Marijuana, year", "alc": "Alcohol", "binge": "Binge", "coc": "Cocaine", "her": "Heroin", "iem": "Other illicit", "met": "Meth", "hal": "Hallucinogens", "pnr": "Pain relievers", "opin": "Opioids"}
 def _end_labels(parts, items, gap=12):
     items, last, xe = sorted(items, key=lambda t: t[1]), -1e9, max([t[0] for t in items] or [0])
@@ -880,22 +883,21 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None
     ]
     by_key = {k: (lab, col, codes, dash) for k, lab, col, codes, dash in SERIES}
     cards = []
-    for i, (title, keys, y0, y1, yticks, _marks) in enumerate(blocks):
-        parts, X, Y, left, top, ph, w, right = _frame(
-            860, 332, 1996, 2031, y0, y1, (1998, 2004, 2010, 2016, 2022), yticks, top_extra=28
-        )
+    def draw(keys, y0, y1, yticks, m=False):
+        parts, X, Y, left, top, ph, w, right = _frame(400, 300, 1998, 2036, y0, y1, (2000, 2010, 2020), yticks, right=6) if m else _frame(860, 332, 1996, 2031, y0, y1, (1998, 2004, 2010, 2016, 2022), yticks, top_extra=28)
         ends = []
         for key in keys:
             lab, col, codes, dash = by_key[key]
             segs = _segments(nat[nat["outcome"].isin(codes)], codes)
             for seg in segs:
                 _polyline(parts, X, Y, [(a, b) for a, b, _p in seg], col, dash=dash)
-            ends += [(X(segs[-1][-1][0]) + 6, Y(segs[-1][-1][1]), f"{SHORT[key]} {segs[-1][-1][1]:.1f}%", col)] if segs else []
+            ends += [(X(segs[-1][-1][0]) + 6, Y(segs[-1][-1][1]), f"{MSHORT.get(key, SHORT[key]) if m else SHORT[key]} {segs[-1][-1][1]:.1f}%", col)] if segs else []
             parts += [f'<text x="{X(segs[0][0][0]):.1f}" y="{Y(segs[0][0][1]) + 16:.1f}" class="marklab" style="fill:{col};font-weight:700">{segs[0][0][1]:.1f}% in {segs[0][0][0]}</text>'] if key == "mj" and segs else []
         _end_labels(parts, ends)
-        if acts:
-            _law_marks(parts, X, acts, 1996, 2026)
-        parts.append("</svg>")
+        [_law_marks(parts, X, acts, 1996, 2026) for _ in [0] if acts and not m]
+        return "".join(parts) + "</svg>"
+    for i, (title, keys, y0, y1, yticks, _marks) in enumerate(blocks):
+        parts = [_vdm(draw(keys, y0, y1, yticks), draw(keys, y0, y1, yticks, True))]
         legend = "".join(
             f'<span><i style="background:{by_key[k][1]}"></i>{_esc(by_key[k][0])}</span>' for k in keys
         )
@@ -911,8 +913,10 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None
 
 def cognition_chart(naep: pd.DataFrame, acts: list[dict] | None = None) -> str:
     nat = naep[naep["geo"] == "NP"]
+    return _vdm(_cognition(nat, acts), _cognition(nat, None, True)).join(('<p class="slope-k">NAEP national public, mathematics and reading</p><div class="legend naep">' + "".join(f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for _s, _g, lab, col in NAEP_SUBJECTS) + '</div><div class="chart-card" id="naep-chart">', '</div><p class="axis-name"><span>Y · NAEP composite, national public</span><span>X · Year</span></p>'))
+def _cognition(nat, acts, m=False):
     y0, y1 = 205, 295
-    parts, X, Y, left, top, ph, w, right = _frame(
+    parts, X, Y, left, top, ph, w, right = _frame(400, 320, 1998, 2031, y0, y1, (2000, 2010, 2020), (210, 230, 250, 270, 290), right=6) if m else _frame(
         860, 352, 1996, 2027.2, y0, y1, (1998, 2004, 2010, 2016, 2022, 2026), (210, 230, 250, 270, 290), right=28, top_extra=28
     )
     shorts = {
@@ -938,16 +942,7 @@ def cognition_chart(naep: pd.DataFrame, acts: list[dict] | None = None) -> str:
         )
     if acts:
         _law_marks(parts, X, acts, 1996, 2027.2)
-    parts.append("</svg>")
-    legend = "".join(
-        f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for _s, _g, lab, col in NAEP_SUBJECTS
-    )
-    return (
-        '<p class="slope-k">NAEP national public, mathematics and reading</p>'
-        f'<div class="legend naep">{legend}</div>'
-        f'<div class="chart-card" id="naep-chart">{"".join(parts)}</div>'
-        '<p class="axis-name"><span>Y · NAEP composite, national public</span><span>X · Year</span></p>'
-    )
+    return "".join(parts) + "</svg>"
 
 
 def vote_chart(vote: pd.DataFrame, acts: list[dict] | None = None) -> str:
@@ -955,14 +950,15 @@ def vote_chart(vote: pd.DataFrame, acts: list[dict] | None = None) -> str:
     legal = legal_years()
     groups = [("All states and DC", "#8A6318", lambda g: True), (f"{len(legal) - 1} adult-use states and DC", "#16A34A", lambda g: g in legal), (f"{51 - len(legal)} other states", "#78716C", lambda g: g not in legal)]
     lines = [(lab, col, [(int(y), 100 * g.loc[g["geo"].map(f), "dem"].sum() / (g.loc[g["geo"].map(f), "dem"].sum() + g.loc[g["geo"].map(f), "rep"].sum())) for y, g in vote.groupby("year")]) for lab, col, f in groups]
-    parts, X, Y, *_rest = _frame(860, 332, 2002, 2027.2, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100), right=150, top_extra=28)
-    [_polyline(parts, X, Y, pts, col) for _lab, col, pts in lines]
-    if acts:
-        _law_marks(parts, X, acts, 2002, 2027.2)
-    parts += [f'<text x="{X(year):.1f}" y="{Y(val) + (-8 if i == 1 else 18):.1f}" text-anchor="middle" class="lab" style="fill:{col}">{val:.1f}</text>' for i, (_lab, col, pts) in enumerate(lines) if i for year, val in pts]
-    parts += [f'<text x="{X(2024) + 30:.1f}" y="{Y(pts[-1][1]) + 4 + (-6 if i == 1 else 6 if i == 0 else 0):.1f}" style="fill:{col};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{_esc(lab)}</text>' for i, (lab, col, pts) in enumerate(lines)]
+    def draw(m=False):
+        parts, X, Y, *_rest = _frame(400, 300, 2002, 2032, 0, 100, (2004, 2012, 2020), (0, 25, 50, 75, 100), right=6) if m else _frame(860, 332, 2002, 2027.2, 0, 100, (2004, 2008, 2012, 2016, 2020, 2024), (0, 25, 50, 75, 100), right=150, top_extra=28)
+        [_polyline(parts, X, Y, pts, col) for _lab, col, pts in lines]
+        [_law_marks(parts, X, acts, 2002, 2027.2) for _ in [0] if acts and not m]
+        parts += [f'<text x="{X(year):.1f}" y="{Y(val) + (-8 if i == 1 else 18):.1f}" text-anchor="middle" class="lab" style="fill:{col}">{val:.1f}</text>' for i, (_lab, col, pts) in enumerate(lines) if i for year, val in pts if not m or year in (2004, 2024)]
+        parts += [f'<text x="{X(2024) + (12 if m else 30):.1f}" y="{Y(pts[-1][1]) + 4 + (-6 if i == 1 else 6 if i == 0 else 0):.1f}" style="fill:{col};font-size:12px;font-weight:700;font-family:Archivo,sans-serif">{_esc(("All", "Adult-use", "Other")[i] if m else lab)}</text>' for i, (lab, col, pts) in enumerate(lines)]
+        return "".join(parts) + "</svg>"
     gap = [(a[0], a[1] - b[1]) for a, b in zip(lines[1][2], lines[2][2])]
-    parts.append("</svg>")
+    parts = [_vdm(draw(), draw(True))]
     legend = "".join(f'<span><i style="background:{col}"></i>{_esc(lab)}</span>' for lab, col, _p in lines)
     return (
         '<p class="slope-k">Democratic two-party share of the presidential vote</p>'
