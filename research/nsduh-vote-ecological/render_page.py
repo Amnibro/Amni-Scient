@@ -80,6 +80,7 @@ details.methods-block{max-width:42rem}
 .slope-k i{width:14px;height:3px;border-radius:1px;display:inline-block;flex:none}
 .slope-v{margin:.2rem 0 .15rem;font-size:1.45rem;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--text)}
 .slope-v span{display:block;margin-top:.28rem;font-size:.68rem;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);line-height:1.35}
+.slope-say{margin:.1rem 0 .35rem;font-size:.78rem;line-height:1.4;color:var(--text)}
 .contour-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:860px;margin:.4rem 0 .2rem}
 .contour-card{background:#F6F0E4;border:1px solid #E4D9C8;border-radius:4px;padding:.45rem .4rem .25rem}
 .contour-card p{max-width:none;margin:0 0 .2rem;font-size:.74rem;font-weight:700;color:#120C03;line-height:1.3}
@@ -163,7 +164,10 @@ def _clip_line(a, b, x_lo, x_hi, y_lo, y_hi):
     return pts[0], pts[-1]
 
 
-def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=False, opacity=0.34, r0=1.35, r1=5.0):
+def _nice(hi, n=4):
+    step = next(s for s in (0.5, 1, 2, 2.5, 5, 10, 20, 25, 50) if hi / s <= n)
+    return float(np.ceil(hi / step) * step), step
+def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=False, opacity=0.34, r0=1.35, r1=5.0, labels=None):
     left, right, top, bottom = 48, 14, 12, 28
     plot = None
     if square:
@@ -175,6 +179,8 @@ def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=Fa
     else:
         w, h = 720, 360
         pw, ph = w - left - right, h - top - bottom
+    left, bottom = (left + 14, bottom + 16) if labels else (left, bottom)
+    w, h = (w + 14, h + 16) if labels else (w, h)
     def X(v):
         return left + (float(v) - x0) / (x1 - x0) * pw
 
@@ -182,12 +188,13 @@ def _scatter(xs, ys, wts, color, x0, x1, y0, y1, xticks, yticks, a, b, square=Fa
         return top + (y1 - float(v)) / (y1 - y0) * ph
 
     parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
+    parts += [f'<text x="{left + pw / 2:.1f}" y="{h - 4}" text-anchor="middle" class="axt">{esc(labels[0])}</text>', f'<text transform="translate(12 {top + ph / 2:.1f}) rotate(-90)" text-anchor="middle" class="axt">{esc(labels[1])}</text>'] if labels else []
     for t in yticks:
         parts.append(f'<line x1="{left}" y1="{Y(t):.1f}" x2="{w - right:.1f}" y2="{Y(t):.1f}" class="grid"/>')
         parts.append(f'<text x="{left - 6}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{t:g}</text>')
     for t in xticks:
         anchor = "start" if t == xticks[0] else ("end" if t == xticks[-1] else "middle")
-        parts.append(f'<text x="{X(t):.1f}" y="{h - 8}" text-anchor="{anchor}" class="tick">{t:g}</text>')
+        parts.append(f'<text x="{X(t):.1f}" y="{h - (24 if labels else 8)}" text-anchor="{anchor}" class="tick">{t:g}</text>')
     parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h - bottom}" class="axis"/>')
     parts.append(f'<line x1="{left}" y1="{h - bottom}" x2="{w - right}" y2="{h - bottom}" class="axis"/>')
     m = float(max(wts))
@@ -213,16 +220,15 @@ def rate_panels(regions):
     for key, label, color in CHART:
         a, b, se, x, y, w = fit_share(regions, key)
         fits[key] = {"intercept": a, "slope": b, "se": se}
-        svg = _scatter(
-            x, y, w, color,
-            0, 100, 0, 100,
-            (0, 50, 100), (0, 50, 100),
-            a, b, square=True,
-        )
+        top, step = _nice(float(np.max(x)))
+        lo, hi = np.percentile(x, [10, 90])
+        svg = _scatter(x, y, w, color, 0, top, 0, 100, tuple(np.arange(0, top + step / 2, step)), (0, 25, 50, 75, 100), a, b, square=True, labels=("% of people 12+ using", "Democratic share, %"))
+        gap = b * (hi - lo)
         cards.append(
             "<div class=\"slope-card\">"
             f'<p class="slope-k"><i style="background:{color}"></i>{esc(label)}</p>'
             f'<p class="slope-v">{num(b, sign=True)}<span>points of share per point of use · SE {num(se)}</span></p>'
+            f'<p class="slope-say">Heaviest-use tenth of regions ({num(hi, 1)}%+) vs lightest ({num(lo, 1)}% or less): the line is <b>{num(gap, 1, sign=True)} points</b> {"more" if gap >= 0 else "less"} Democratic.</p>'
             f"{svg}</div>"
         )
     return '<div class="slope-grid">' + "".join(cards) + "</div>", fits
@@ -231,7 +237,7 @@ def rate_panels(regions):
 def density_chart(regions):
     a, b, se, x, y, w = fit_share(regions, "ln_dens")
     x0, x1 = 0, 11
-    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, (0, 2, 4, 6, 8, 10), (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6)
+    svg = _scatter(x, y, w, "#2563EB", x0, x1, 0, 100, (0, 2, 4, 6, 8, 10), (0, 25, 50, 75, 100), a, b, opacity=0.32, r0=1.2, r1=4.6, labels=("Population density, log of people per km² (rural ← → urban)", "Democratic share, %"))
     return svg, a, b, se
 
 
@@ -572,11 +578,11 @@ def lab_chart():
         parts.append(f'<text x="{left-8}" y="{Y(t)+4:.1f}" text-anchor="end" class="tick">{t}</text>')
     parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h-bottom}" class="axis"/>')
     parts.append(f'<line x1="{left}" y1="{h-bottom}" x2="{w-right}" y2="{h-bottom}" class="axis"/>')
-    colors = ["#78716C", "#16A34A", "#2563EB"]
+    colors = {"Placebo": "#A8A29E", "THC": "#16A34A", "Alcohol": "#2563EB", "Reverse placebo": "#93C5FD", "No alcohol": "#A8A29E"}
     n_g = len(groups)
     slot = pw / n_g
     for gi, (title, bars) in enumerate(groups):
-        bw = min(36, (slot - 24) / len(bars))
+        bw = min(52, (slot - 24) / len(bars))
         block = len(bars) * bw + (len(bars) - 1) * 8
         x0 = left + gi * slot + (slot - block) / 2
         cx = left + gi * slot + slot / 2
@@ -586,9 +592,10 @@ def lab_chart():
             x = x0 + bi * (bw + 8)
             y = Y(val)
             base = Y(0)
-            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{base-y:.1f}" fill="{colors[bi % 3]}"/>')
+            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{base-y:.1f}" fill="{colors[name]}"/>')
             parts.append(f'<line x1="{x+bw/2:.1f}" y1="{Y(val-err):.1f}" x2="{x+bw/2:.1f}" y2="{Y(val+err):.1f}" class="whisk"/>')
-            parts.append(f'<text x="{x+bw/2:.1f}" y="{h-16}" text-anchor="middle" class="tick">{name.split()[0]}</text>')
+            parts.append(f'<text x="{x+bw/2:.1f}" y="{Y(val+err) - 5:.1f}" text-anchor="middle" class="lab" style="font-weight:700">{val:g}%</text>')
+            parts.append(f'<text x="{x+bw/2:.1f}" y="{h-16}" text-anchor="middle" class="tick">{"Rev. placebo" if name == "Reverse placebo" else name}</text>')
     parts.append("</svg>")
     return "\n".join(parts)
 
@@ -631,6 +638,8 @@ def donation_totals(rows):
                 x = x0 + j * (bw + 3)
                 y = Y(v)
                 parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw}" height="{max(0, base-y):.1f}" fill="{col}"/>')
+            t = float(r["total"])
+            parts.append(f'<text x="{x0 + bw / 2:.1f}" y="{Y(t) - 4:.1f}" text-anchor="middle" class="lab" style="font-size:10px;font-weight:700">{f"${t / 1e6:.1f}M" if t >= 1e6 else f"${t / 1e3:.0f}K"}</text>')
             parts.append(f'<text x="{left + i*slot + slot/2:.1f}" y="{h-8}" text-anchor="middle" class="tick">{r["cycle"]}</text>')
         parts.append("</svg>")
         panels.append("\n".join(parts))
@@ -650,7 +659,7 @@ def party_lines(rows):
     }
     cycles = [2016, 2018, 2020, 2022, 2024]
     w, h = 720, 300
-    left, right, top, bottom = 54, 16, 18, 36
+    left, right, top, bottom = 54, 190, 18, 36
     pw, ph = w - left - right, h - top - bottom
 
     def X(i):
@@ -667,6 +676,11 @@ def party_lines(rows):
     parts.append(f'<line x1="{left}" y1="{h-bottom}" x2="{w-right}" y2="{h-bottom}" class="axis"/>')
     for i, c in enumerate(cycles):
         parts.append(f'<text x="{X(i):.1f}" y="{h-14}" text-anchor="middle" class="tick">{c}</text>')
+    parts.append(f'<line x1="{left}" y1="{Y(50):.1f}" x2="{w-right}" y2="{Y(50):.1f}" class="mark"/><text x="{X(4) - 4:.1f}" y="{Y(50) + 14:.1f}" text-anchor="end" class="marklab">50% = EVEN SPLIT</text>')
+    last = -1e9
+    for yy, ind, v in sorted((Y(float(r["pct_democrats"])), r["industry"], float(r["pct_democrats"])) for r in rows if int(r["cycle"]) == cycles[-1]):
+        last = max(yy, last + 14)
+        parts.append(f'<text x="{X(4) + 10:.1f}" y="{last + 4:.1f}" class="lab" style="fill:{colors[ind]};font-size:11px;font-weight:700">{"Pharma" if ind.startswith("Pharma") else "Alcohol" if ind.startswith("Beer") else ind}, {v:.0f}% to Dems</text>')
     for ind in industries:
         sub = {int(r["cycle"]): r for r in rows if r["industry"] == ind}
         pts = " ".join(f"{X(i):.1f},{Y(float(sub[c]['pct_democrats'])):.1f}" for i, c in enumerate(cycles))
@@ -999,7 +1013,7 @@ def _child_lines(row) -> tuple[str, str]:
 def child_chart(rows) -> str:
     n = len(rows)
     row_h = 46
-    right, top, bottom = 22, 18, 24
+    right, top, bottom = 22, 34, 24
     plot_w = 280
     labels = [_child_lines(row) for row in rows]
     # 11px labels measure about 4.9px per character in Archivo. Pad so the longest line stays inside the viewBox.
@@ -1018,6 +1032,8 @@ def child_chart(rows) -> str:
 
     parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart">']
     parts.append(f'<line x1="{X(0):.1f}" y1="{top - 4}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
+    parts += [f'<text x="{X(0) - 5:.1f}" y="14" text-anchor="end" class="marklab">← EXPOSED CHILDREN SCORE LOWER</text>', f'<text x="{X(0) + 5:.1f}" y="14" class="marklab">HIGHER →</text>']
+    parts += [f'<circle cx="{12 + k * 118}" cy="{height - 10}" r="4" fill="{c}"/><text x="{19 + k * 118}" y="{height - 6}" class="tick">{n}</text>' for k, (n, c) in enumerate((("Prenatal cannabis", "#16A34A"), ("Prenatal alcohol", "#2563EB"), ("Home alcohol", "#8A6318")))]
     for t in (-0.6, -0.4, -0.2, 0, 0.2):
         parts.append(f'<line x1="{X(t):.1f}" y1="{top - 2}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
         parts.append(f'<text x="{X(t):.1f}" y="{height - 6}" text-anchor="middle" class="tick">{t:.1f}</text>')
@@ -1137,11 +1153,12 @@ def _slope_svg(svg_id: str, rows: list, lo: float, hi: float, ticks: tuple[int, 
         return left + (float(v) - lo) / (hi - lo) * plot_w
 
     parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" id="{svg_id}">']
-    parts.append(f'<text x="{left}" y="16" class="tick">{esc(title)}</text>')
+    parts.append(f'<text x="8" y="16" class="tick">{esc(title)}</text>')
     for t in ticks:
         parts.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{height - bottom}" class="grid"/>')
         parts.append(f'<text x="{X(t):.1f}" y="{height - 12}" text-anchor="middle" class="tick">{t}</text>')
     parts.append(f'<line x1="{X(0):.1f}" y1="{top}" x2="{X(0):.1f}" y2="{height - bottom}" class="axis"/>')
+    parts += [f'<text x="{X(0) - 6:.1f}" y="16" text-anchor="end" class="marklab" style="fill:#DC2626">← USE HIGHER IN REPUBLICAN AREAS</text>', f'<text x="{X(0) + 6:.1f}" y="16" class="marklab" style="fill:#2563EB">IN DEMOCRATIC AREAS →</text>'] if lo < -3 < 0 < hi else []
     for i, (label, term, color) in enumerate(rows):
         y = top + i * row_h + 16
         if i == 3:
@@ -1170,12 +1187,12 @@ def group_chart(groups: dict) -> str:
         return {"coef": term["coef"], "lo": term["lo"], "hi": term["hi"]}
 
     pooled = [
-        ("Group A", pack(omit["A"]), "#16A34A"),
-        ("Group B", pack(omit["B"]), "#0D9488"),
-        ("B − A", pack(omit["diff"]), "#8A6318"),
-        ("Group A, heroin in B", pack(inn["A"]), "#16A34A"),
-        ("Group B, heroin in B", pack(inn["B"]), "#0D9488"),
-        ("B − A, heroin in B", pack(inn["diff"]), "#8A6318"),
+        ("A · perception-altering", pack(omit["A"]), "#16A34A"),
+        ("B · opioids, pills, meth", pack(omit["B"]), "#0D9488"),
+        ("Gap, B minus A", pack(omit["diff"]), "#8A6318"),
+        ("A, heroin counted in B", pack(inn["A"]), "#16A34A"),
+        ("B, with heroin", pack(inn["B"]), "#0D9488"),
+        ("Gap, with heroin", pack(inn["diff"]), "#8A6318"),
     ]
     alone = [("Heroin alone", pack(heroin, clustered=False), "#78716C")]
     return (
@@ -1373,31 +1390,20 @@ def _panel_svg(by, measure: str, outcome: str, lim: float) -> str:
 
 
 def _cohort_svg(by, lim: float) -> str:
-    width, height, left, bottom = 640, 210, 46, 32
-    outcomes = [("math8", "Math"), ("read8", "Reading"), ("comp8", "Composite")]
-    colors = {"mj": "#16A34A", "mrjyr": "#8A6318"}
-    labels_m = {"mj": "Past month", "mrjyr": "Past year"}
-    y_of = _y_of(lim, height, bottom)
-
-    def x_of(i):
-        return left + (i / 2) * (width - left - 14)
-
-    series = []
-    for mkey, color in colors.items():
-        pts = []
-        for i, (okey, olabel) in enumerate(outcomes):
-            rec = by.get(("cohort", mkey, "cohort", "", okey))
-            if rec is None or not np.isfinite(getattr(rec, "partial_r", float("nan"))):
-                pts.append(None)
-                continue
-            tip = (
-                f"{labels_m[mkey]}, grade 8 {olabel.lower()}, birth to age 5. "
-                f"Partial r {num(rec.partial_r, 2, sign=True)}, n={int(rec.partial_n)}."
-            )
-            pts.append((i, float(rec.partial_r), tip))
-        series.append((color, pts))
-    labels = [(i, lab) for i, (_k, lab) in enumerate(outcomes)]
-    return _line_svg(series, x_of, y_of, labels, _sym_ticks(lim), width, height, left, bottom)
+    outcomes, colors, labels_m = [("math8", "Math"), ("read8", "Reading"), ("comp8", "Composite")], {"mj": "#16A34A", "mrjyr": "#8A6318"}, {"mj": "Past month", "mrjyr": "Past year"}
+    width, left, right, top, row = 720, 150, 60, 30, 22
+    rows = [(o, ol, m, by.get(("cohort", m, "cohort", "", o))) for o, ol in outcomes for m in colors]
+    height = top + len(rows) * row + 3 * 10 + 30
+    X = lambda v: left + (v + lim) / (2 * lim) * (width - left - right)
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" class="chart" aria-label="Partial correlation of early-childhood marijuana exposure with grade 8 scores">']
+    parts += [f'<line x1="{X(t):.1f}" y1="{top - 6}" x2="{X(t):.1f}" y2="{height - 26}" class="{"axis" if t == 0 else "grid"}"/><text x="{X(t):.1f}" y="{height - 10}" text-anchor="middle" class="tick">{_ytick(t)}</text>' for t in _sym_ticks(lim)]
+    parts += [f'<text x="{X(0) - 6:.1f}" y="14" text-anchor="end" class="marklab">← MORE USE, LOWER SCORES</text>', f'<text x="{X(0) + 6:.1f}" y="14" class="marklab">MORE USE, HIGHER SCORES →</text>']
+    for i, (o, ol, m, rec) in enumerate(rows):
+        y = top + i * row + (i // 2) * 10
+        r = float(getattr(rec, "partial_r", float("nan"))) if rec is not None else float("nan")
+        parts += [f'<text x="8" y="{y + 12:.1f}" class="lab">{esc(ol) if i % 2 == 0 else ""}</text><text x="{left - 8}" y="{y + 12:.1f}" text-anchor="end" class="tick">{labels_m[m]}</text>'] + ([f'<rect x="{min(X(0), X(r)):.1f}" y="{y + 2:.1f}" width="{abs(X(r) - X(0)):.1f}" height="{row - 6}" fill="{colors[m]}"><title>{labels_m[m]}, grade 8 {ol.lower()}, n={int(rec.partial_n)}</title></rect><text x="{X(r) + (-5 if r < 0 else 5):.1f}" y="{y + 13:.1f}" text-anchor="{"end" if r < 0 else "start"}" class="lab" style="font-weight:700">{_ytick(round(r, 2))}</text>'] if np.isfinite(r) else [])
+    parts.append("</svg>")
+    return "".join(parts)
 
 
 def mj_corr_section(table) -> str:
@@ -1549,6 +1555,7 @@ def mj_corr_section(table) -> str:
     return f"""
 <h2 id="correlations">Marijuana and test scores</h2>
 <p>The lines are partial correlations, holding log density, age, and education. The most negative is {esc(str(pneg.measure_label).lower())} marijuana, the {esc(str(pneg.window_label).lower())}, with {esc(str(pneg.outcome_label).lower())} {_lag_when(pneg.lag)}: <strong>{num(pneg.partial_r, 2, sign=True)}</strong> (n={int(pneg.partial_n)}). The strongest positive partial correlation is {esc(str(ppos.measure_label).lower())} marijuana, the {esc(str(ppos.window_label).lower())}, with {esc(str(ppos.outcome_label).lower())} {_lag_when(ppos.lag)}: <strong>{num(ppos.partial_r, 2, sign=True)}</strong> (n={int(ppos.partial_n)}).</p>
+<p><strong>In plain terms:</strong> below 0 means states with more marijuana use have lower scores, after holding density, age, and education equal. Almost every line in math and grade 4 reading sits below 0, and the longest exposure windows sit lowest. Grade 8 reading is near 0.</p>
 <div id="mj-corr">
 <div class="corr-switch">
 {''.join(switches)}
@@ -1556,12 +1563,12 @@ def mj_corr_section(table) -> str:
 <div class="legend">{legend}</div>
 {''.join(sets)}
 <p class="axis-name"><span>Y · Partial r</span><span>X · Years after the exposure window ends</span></p>
-<div class="r-card" id="mj-cohort-chart">
+<div class="chart-card" id="mj-cohort-chart">
 <h3>Birth to age 5, grade 8</h3>
 {_cohort_svg(by, cohort_lim)}
 </div>
 <p>The partial correlation of {esc(str(cneg.measure_label).lower())} marijuana from birth to about age 5 with {esc(str(cneg.outcome_label).lower())} is <strong>{num(cneg.partial_r, 2, sign=True)}</strong> (n={int(cneg.partial_n)}). Green is past month. Gold is past year.</p>
-<p class="axis-name"><span>Y · Partial r</span><span>X · Grade 8 score</span></p>
+<p class="axis-name"><span>Y · Grade 8 score</span><span>X · Partial r</span></p>
 <details class="secondary-block">
 <summary>Correlation table</summary>
 <div id="mj-heat">
@@ -1825,8 +1832,8 @@ def main():
     gchart = group_chart(groups)
     gtab_group = group_table(groups)
     from over_time import marijuana_score_correlations, section_html, state_window_correlations
-    import key_charts
-    key_html = key_charts.section_html()
+    import key_charts, psych_charts
+    key_html, psych_html = key_charts.section_html(), psych_charts.section_html()
 
     mj_html = mj_corr_section(marijuana_score_correlations())
     window_html = window_corr_section(state_window_correlations())
@@ -1970,6 +1977,8 @@ body.pp .hero h1{{max-width:22ch}}
 <a class="btn btn-primary" href="nsduh-vote-ecological/data/legislative_acts.csv" download>Legislative timeline CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/over_time.py" download>Over-time script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/key_charts.py" download>Summary charts script</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/psych_charts.py" download>Psychosis charts script</a>
+<a class="btn btn-outline" href="nsduh-vote-ecological/data/psych_anger_studies.csv" download>Psychosis and anger studies CSV</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/industry_spending.py" download>Spending script</a>
 <a class="btn btn-outline" href="nsduh-vote-ecological/README.md">Full method</a>
 </div>
@@ -2033,7 +2042,7 @@ body.pp .hero h1{{max-width:22ch}}
 <h2 id="groups">Perception and the vote slope</h2>
 <p>Group A’s common slope is <strong>{num(omit['A']['coef'], 2, sign=True)}</strong> points of Democratic two-party share per point of the rate (clustered SE {num(omit['A']['se_cluster'])}). Group B’s is <strong>{num(omit['B']['coef'], 2, sign=True)}</strong> (SE {num(omit['B']['se_cluster'])}). The difference, group B minus group A, is <strong>{num(omit['diff']['coef'], 2, sign=True)}</strong> (SE {num(omit['diff']['se_cluster'])}).</p>
 <p>With heroin in group B the difference is <strong>{num(inn['diff']['coef'], 2, sign=True)}</strong> (SE {num(inn['diff']['se_cluster'])}). Heroin alone is <strong>{num(heroin['coef'], 2, sign=True)}</strong> per point (HC1 SE {num(heroin['se_hc1'])}).</p>
-<p>Green is group A. Teal is group B. Brown is the difference.</p>
+<p><strong>In plain terms:</strong> group A is the four substances that alter perception or raise suggestibility in the lab: marijuana, hallucinogens, alcohol, and cocaine. Group B is opioid misuse, pain-reliever misuse, and methamphetamine. Where group A use is higher, the Democratic share is higher. Where group B use is higher, it is not. Green is group A, teal is group B, brown is the gap between them, and a bar that crosses 0 is not distinguishable from no relationship.</p>
 <div class="chart-card" id="group-chart">{gchart}</div>
 <p class="axis-name"><span>Y · Specification</span><span>X · Points of Democratic share per point of the rate</span></p>
 <div class="table-scroll">
@@ -2099,10 +2108,12 @@ body.pp .hero h1{{max-width:22ch}}
 <h2>Laboratory results</h2>
 <p>A suggested false detail was accepted <strong>19%</strong> of the time after THC and <strong>8%</strong> after placebo. Related-word false alarms were <strong>42%</strong> and <strong>27%</strong>. Misled responses were <strong>0.25</strong> after alcohol and <strong>0.319</strong> with no alcohol.</p>
 <div class="chart-card">{lab_chart()}</div>
-<p class="axis-name"><span>Y · Percent</span><span>Whiskers · Kloft, 1 SE in percentage points. Gawrylowicz, half the published 95% CI.</span></p>
+<p class="axis-name"><span>Y · Percent of responses</span></p>
+<p class="fine">Whiskers: Kloft, 1 SE in percentage points. Gawrylowicz, half the published 95% CI.</p>
 <p class="fine cap">Laboratory data, not vote data. Kloft et al. 2020, immediate test, THC versus placebo. Gawrylowicz et al. 2017, alcohol, reverse placebo, and no alcohol.</p>
 
 {potency_html()}
+{psych_html}
 
 <h2>Published studies</h2>
 <p>The laboratory chart is the Kloft contrast. The IQ chart is the Dunedin 8-point loss. The other published numbers sit in this table.</p>

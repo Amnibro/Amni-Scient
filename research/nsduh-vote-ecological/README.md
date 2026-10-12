@@ -2,7 +2,7 @@
 
 The combined study page is [research/substance-use-vote-share.html](../substance-use-vote-share.html) (`https://amni-scient.com/research/substance-use-vote-share`). The earlier marijuana and alcohol notes redirect there.
 
-Committed files in this directory: `run_regression.py`, `fit_extended.py`, `render_page.py`, `over_time.py`, `key_charts.py`, `industry_donations_source.py`, `industry_spending.py`, `data/substate_outcomes_212223.csv`, `data/nsduh_sae_long.csv`, `data/naep_scores.csv`, `data/president_twoparty.csv`, `data/cannabis_adult_use.csv`, `data/fec_by_employer_2024.json`, `results/region_level.csv`, `results/results.json`, `results/extended.json`, `results/quintiles.csv`, `results/user_nonuser.csv`, `results/state_level.csv`, `results/state_changes.csv`, `results/over_time.json`, `results/industry_donations.csv`, `results/industry_spending_2024.csv`, `results/cannabis_ballot_2024.csv`, `results/industry_lobbying_clients_2024.csv`, `results/cannabis_fec_employers_2024.csv`, and `results/cannabis_fec_pacs_2024.csv`.
+Committed files in this directory: `run_regression.py`, `fit_extended.py`, `render_page.py`, `over_time.py`, `key_charts.py`, `psych_charts.py`, `data/psych_anger_studies.csv`, `industry_donations_source.py`, `industry_spending.py`, `data/substate_outcomes_212223.csv`, `data/nsduh_sae_long.csv`, `data/naep_scores.csv`, `data/president_twoparty.csv`, `data/cannabis_adult_use.csv`, `data/fec_by_employer_2024.json`, `results/region_level.csv`, `results/results.json`, `results/extended.json`, `results/quintiles.csv`, `results/user_nonuser.csv`, `results/state_level.csv`, `results/state_changes.csv`, `results/over_time.json`, `results/industry_donations.csv`, `results/industry_spending_2024.csv`, `results/cannabis_ballot_2024.csv`, `results/industry_lobbying_clients_2024.csv`, `results/cannabis_fec_employers_2024.csv`, and `results/cannabis_fec_pacs_2024.csv`.
 
 This is the ecological regression requested at the end of the uploaded Grok thread. It joins public 2021–2023 NSDUH substate estimates to 2024 presidential votes reallocated to ZIP Code Tabulation Areas, with census age structure and density as controls.
 
@@ -124,7 +124,7 @@ The lag table in `results/lag_specs.csv` is state and year fixed effects, standa
 
 `results/child_exposure.csv` is the published child-cognition contrasts drawn on the page, in standard deviations. ABCD microdata are in the NIMH Data Archive under controlled access and are not used. IQ-point results are the published points divided by 15. Paul and colleagues, JAMA Psychiatry, 2021, 10.1001/jamapsychiatry.2020.2902: unadjusted cognition β −0.061 after knowledge of pregnancy versus none, and −0.011 after covariates. Flak and colleagues, 2014, 10.1111/acer.12214: binge prenatal alcohol, Cohen’s d −0.13. Yang and Kramer, 2012, 10.1093/ije/dys071: −1.6 and −2.5 full-scale IQ points for weekly moderate and heavy paternal drinking. Raman, Prasad, and Appaya, 2010, 10.4103/0019-5545.74313: full-scale means 96.14 versus 105.1. The Pittsburgh, Ottawa, and Generation R papers cited on the page state a direction and do not state a point difference, so they are not on the chart.
 
-## The study in seven charts
+## The study in eight charts
 
 `key_charts.py` draws the summary section near the top of the page from the committed files.
 
@@ -135,6 +135,13 @@ The lag table in `results/lag_specs.csv` is state and year fixed effects, standa
 5. Event study. For each adult-use jurisdiction, state Democratic two-party share minus the national share, differenced from its value at the presidential election in or before its legalization year. Points are means across jurisdictions with 95% intervals; the count of jurisdictions at each offset is printed.
 6. House passage votes on federal bills in `data/legislative_acts.csv` with a party split: share of each party's members voting yes, members not voting excluded. The two MORE Act passages (H.R. 3884, roll call 235, December 4, 2020; H.R. 3617, roll call 107, April 1, 2022) were added from the House Clerk.
 7. Laws in force that eased access, by who enacted them: voters (citizen initiative), the signer's party, law without signature or veto override, or not yet recorded. Federal bills that did not become law are excluded.
+8. State legislator votes on enacted bills, share voting yes by party.
+
+The detailed charts below the summary label their axes in words, scale each scatter to its data, print values on bars and line ends, and mark which side of zero means higher scores or a higher Democratic share.
+
+## Psychosis, dependence, and anger
+
+`psych_charts.py` draws this section from `data/psych_anger_studies.csv`. Each row is one published number with its interval, comparison, population, citation, DOI, and the sentence or table it was read from. Numbers were checked against the abstract or full text in October 2026. Two values are not single published estimates: Denmark since 2010 is drawn at 7%, the midpoint of the published 6–8%, and Danish men 21–30 is drawn at 27.5% for the stated "as high as 25–30%" with no interval. For the NSDUH 2012 rows (chart `teens`), `value` is past-month marijuana use among teens who did the behavior and `baseline` among those who did not; the table does not show which came first. Population-attributable fractions assume the association is causal. The US whole-population studies of legalization (Elser 2023, Matthay 2021) are null at 95%; they are on the chart with the significant Colorado and Ontario results.
 
 ## Industry money
 
