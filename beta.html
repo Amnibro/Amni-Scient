@@ -50,6 +50,7 @@
 .b-app h3{font-size:1.02rem;font-weight:700;font-stretch:var(--w-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin:.1rem 0 .3rem}
 .b-app h3 a{color:inherit}
 .b-app h3 a:hover{color:var(--accent)}
+.b-app p.b-note{font-size:.8rem;margin-top:.55rem;color:var(--text-soft)}
 .b-app p{color:var(--text-soft);font-size:.9rem;line-height:1.55}
 .b-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin:.8rem 0 0;padding:0;list-style:none}
 .b-pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.66rem;font-weight:650;font-stretch:var(--w-cond);letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;border:1px solid var(--border2);border-radius:2px;color:var(--text-soft)}
@@ -202,7 +203,7 @@
 </header>
 <section id="apps" aria-labelledby="apps-h">
 <h2 id="apps-h">The apps</h2>
-<p class="b-intro">Seven apps are in testing, and you can join every one of them right now. On iPhone, three have a public TestFlight beta. On Android, all seven are open on Google Play.</p>
+<p class="b-intro">Seven apps are in testing, and you can join every one of them right now. On iPhone, three have a public TestFlight beta. On Android, five are open on Google Play, and Amni-Chat and Amni-Map install from an APK while Google finishes reviewing them.</p>
 <div class="b-panel b-group"><h3>On Android, two taps</h3><ol><li><a href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener"><strong>Join the Amni-Scient testers group</strong></a> with the Google account on your phone. You only do this once, and it covers every app.</li><li>Tap <em>Join on Google Play</em> next to any app below, then <em>Become a tester</em>, and install it from the Play Store.</li></ol><a class="btn btn-primary b-sm" href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">Join the testers group</a></div>
 <div class="b-apps">
 <article class="b-app" id="app-chat">
@@ -210,9 +211,10 @@
 <div>
 <h3>Amni-Chat</h3>
 <p>A private messenger with voice and video calls and linked devices, built to keep your conversations yours.</p>
-<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill on">Android: open now</li></ul>
+<ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill on">Android: APK now</li></ul>
+<p class="b-note">Google is still reviewing the Play test, so for now the Android app installs from an APK. It&rsquo;s signed by Google Play, so once the test opens, Play updates it like any other app.</p>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="https://play.google.com/apps/testing/com.amniscient.chat" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="downloads/amni-chat-beta.apk" download="Amni-Chat.apk">Download Android APK</a></div>
 </article>
 <article class="b-app" id="app-learn">
 <img src="assets/beta/learn.webp" width="60" height="60" alt="" loading="lazy">
@@ -237,9 +239,10 @@
 <div>
 <h3>Amni-Map</h3>
 <p>Maps and turn-by-turn directions with voice search and saved routes. No account, no ads, no analytics.</p>
-<ul class="b-pills"><li class="b-pill on">Android: open now</li><li class="b-pill off">iPhone: later</li></ul>
+<ul class="b-pills"><li class="b-pill on">Android: APK now</li><li class="b-pill off">iPhone: later</li></ul>
+<p class="b-note">Google is still reviewing the Play test, so for now the Android app installs from an APK. It&rsquo;s signed by Google Play, so once the test opens, Play updates it like any other app.</p>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://play.google.com/apps/testing/com.amniscient.map" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="downloads/amni-map-beta.apk" download="Amni-Map.apk">Download Android APK</a></div>
 </article>
 <article class="b-app" id="app-crypt">
 <img src="assets/beta/crypt.webp" width="60" height="60" alt="" loading="lazy">
@@ -446,11 +449,11 @@
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
 <script>
-(()=>{const W='https://amni-beta.amni-map-gateway.workers.dev/signup',A={chat:['Amni-Chat','https://play.google.com/apps/testing/com.amniscient.chat','PUQxysvc'],learn:['Amni-Learn','https://play.google.com/apps/testing/com.amnilearn.mobile','gnWxJTFg'],type:['Amni-Type','https://play.google.com/apps/testing/ai.amni.type','yTvRRNSE'],map:['Amni-Map','https://play.google.com/apps/testing/com.amniscient.map'],crypt:['Amni-Crypt','https://play.google.com/apps/testing/com.amnicrypt'],contaigion:['ContAIgion','https://play.google.com/apps/testing/com.amni.contaigion'],humainity:['HumAInity','https://play.google.com/apps/testing/com.amni.humainity']},f=document.getElementById('beta-form'),g=id=>document.getElementById(id),em=g('bf-email'),hd=g('bf-handle'),cs=g('bf-consent'),st=g('bf-status'),sb=g('bf-submit'),done=g('beta-done'),E=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/,H=/^[\p{L}\p{N} ._'-]{0,40}$/u,hint={android:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.',iphone:'Any email you check. Amni-Chat, Amni-Learn and Amni-Type are already open on TestFlight above.',both:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.'},MSG={invalid_email:['bf-email-err','Enter a valid email address.'],invalid_apps:['bf-apps-err','Pick at least one app.'],invalid_handle:['bf-handle-err','Use up to 40 letters, numbers, spaces or . _ \' -'],consent_required:['bf-consent-err','Please tick the box to continue.']};
+(()=>{const W='https://amni-beta.amni-map-gateway.workers.dev/signup',A={chat:['Amni-Chat','downloads/amni-chat-beta.apk','PUQxysvc'],learn:['Amni-Learn','https://play.google.com/apps/testing/com.amnilearn.mobile','gnWxJTFg'],type:['Amni-Type','https://play.google.com/apps/testing/ai.amni.type','yTvRRNSE'],map:['Amni-Map','downloads/amni-map-beta.apk'],crypt:['Amni-Crypt','https://play.google.com/apps/testing/com.amnicrypt'],contaigion:['ContAIgion','https://play.google.com/apps/testing/com.amni.contaigion'],humainity:['HumAInity','https://play.google.com/apps/testing/com.amni.humainity']},f=document.getElementById('beta-form'),g=id=>document.getElementById(id),em=g('bf-email'),hd=g('bf-handle'),cs=g('bf-consent'),st=g('bf-status'),sb=g('bf-submit'),done=g('beta-done'),E=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/,H=/^[\p{L}\p{N} ._'-]{0,40}$/u,hint={android:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.',iphone:'Any email you check. Amni-Chat, Amni-Learn and Amni-Type are already open on TestFlight above.',both:'Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.'},MSG={invalid_email:['bf-email-err','Enter a valid email address.'],invalid_apps:['bf-apps-err','Pick at least one app.'],invalid_handle:['bf-handle-err','Use up to 40 letters, numbers, spaces or . _ \' -'],consent_required:['bf-consent-err','Please tick the box to continue.']};
 const apps=()=>[...f.querySelectorAll('input[name=apps]:checked')].map(i=>i.value),dev=()=>f.querySelector('input[name=device]:checked').value,show=(id,m)=>{const p=g(id),i=id==='bf-apps-err'?null:g(id.replace('-err',''));p.textContent=m||'';p.hidden=!m;i&&i.setAttribute('aria-invalid',m?'true':'false')};
 const check=()=>{const e=em.value.trim(),h=hd.value.trim(),r=[['bf-email-err',!e?'Enter your email address.':!E.test(e)||e.length>254?'That doesn’t look like an email address.':''],['bf-apps-err',apps().length?'':'Pick at least one app.'],['bf-handle-err',H.test(h)?'':MSG.invalid_handle[1]],['bf-consent-err',cs.checked?'':'Please tick the box to continue.']];r.forEach(([id,m])=>show(id,m));const bad=r.find(([,m])=>m);bad&&({'bf-email-err':em,'bf-apps-err':f.querySelector('input[name=apps]'),'bf-handle-err':hd,'bf-consent-err':cs})[bad[0]].focus();return!bad};
 const li=(k,href,label)=>{const l=document.createElement('li'),i=document.createElement('img'),s=document.createElement('strong'),a=document.createElement('a');i.src='assets/beta/'+k+'.webp';i.width=i.height=32;i.alt='';s.textContent=A[k][0];a.href=href;a.target='_blank';a.rel='noopener';a.className='btn btn-outline b-sm';a.textContent=label;l.append(i,s,a);return l};
-const finish=(ap,d,e)=>{const pl=d!=='iphone'?ap:[],tf=d!=='android'?ap.filter(k=>A[k][2]):[];g('beta-done-email').textContent=e;g('beta-done-links').replaceChildren(...pl.map(k=>li(k,A[k][1],'Google Play test')));g('beta-done-tflinks').replaceChildren(...tf.map(k=>li(k,'https://testflight.apple.com/join/'+A[k][2],'TestFlight')));g('beta-done-play').hidden=!pl.length;g('beta-done-tf').hidden=!tf.length;g('beta-done-msg').textContent=d==='iphone'?'Thank you! I’ll use your email to let you know about iPhone betas for the apps you picked.':'Thank you! I add testers by hand, usually within a day.';f.hidden=true;done.hidden=false;g('beta-done-h').focus()};
+const finish=(ap,d,e)=>{const pl=d!=='iphone'?ap:[],tf=d!=='android'?ap.filter(k=>A[k][2]):[];g('beta-done-email').textContent=e;g('beta-done-links').replaceChildren(...pl.map(k=>li(k,A[k][1],A[k][1].endsWith('.apk')?'Download APK':'Google Play test')));g('beta-done-tflinks').replaceChildren(...tf.map(k=>li(k,'https://testflight.apple.com/join/'+A[k][2],'TestFlight')));g('beta-done-play').hidden=!pl.length;g('beta-done-tf').hidden=!tf.length;g('beta-done-msg').textContent=d==='iphone'?'Thank you! I’ll use your email to let you know about iPhone betas for the apps you picked.':'Thank you! I add testers by hand, usually within a day.';f.hidden=true;done.hidden=false;g('beta-done-h').focus()};
 f.addEventListener('change',e=>{e.target.name==='device'&&(g('bf-email-hint').textContent=hint[dev()]);e.target.name==='apps'&&apps().length&&show('bf-apps-err','');e.target===cs&&cs.checked&&show('bf-consent-err','')});
 document.querySelectorAll('a[data-app]').forEach(a=>a.addEventListener('click',()=>{f.querySelector('input[name=apps][value='+a.dataset.app+']').checked=true;done.hidden||(done.hidden=true,f.hidden=false);setTimeout(()=>em.focus({preventScroll:true}),350)}));
 g('beta-again').addEventListener('click',()=>{f.reset();done.hidden=true;f.hidden=false;st.textContent='';setTimeout(()=>em.focus({preventScroll:true}),50)});
