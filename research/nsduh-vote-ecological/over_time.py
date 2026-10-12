@@ -603,38 +603,6 @@ def marijuana_score_correlations(frames: dict[str, pd.DataFrame] | None = None) 
                 partial_n=pn,
                 n_states=int(len(set(geos))),
             )
-        # National line: published ICAR35 slope, −0.023 SD per year, 2006–2018.
-        for wkey, wlabel, _span in MJ_WINDOW_DEFS:
-            for lag in MJ_LAGS:
-                xs, ys = [], []
-                for index_year in range(2006, 2019):
-                    end = index_year - lag
-                    years = _window_years(end, wkey)
-                    if years is None:
-                        continue
-                    exposure = _mean_from(nat_pct, list(years))
-                    if exposure is None:
-                        continue
-                    xs.append(exposure)
-                    ys.append(-0.023 * (index_year - 2006))
-                if len(xs) < 6:
-                    continue
-                r = _wcorr(xs, ys, np.ones(len(xs)))
-                add_row(
-                    kind="icar",
-                    measure=key,
-                    measure_label=label,
-                    window=wkey,
-                    window_label=wlabel,
-                    lag=lag,
-                    outcome="icar",
-                    outcome_label="ICAR35 line",
-                    r=r,
-                    n=int(len(xs)),
-                    partial_r=float("nan"),
-                    partial_n=0,
-                    n_states=1,
-                )
     out = pd.DataFrame(rows)
     out.to_csv(RESULTS / "marijuana_score_correlations.csv", index=False)
     return out
@@ -1359,11 +1327,13 @@ def lag_section(frames: dict[str, pd.DataFrame]) -> str:
         bits.append(
             f"A five-year sum of past-month marijuana lines up with <strong>{_num(c5.iloc[0].coef, sign=True)}</strong> grade-8 mathematics points per percentage-point-year (SE {_num(c5.iloc[0].se)}). The ten-year sum is <strong>{_num(c10.iloc[0].coef, sign=True)}</strong> (SE {_num(c10.iloc[0].se)})."
         )
-    lead = " ".join(bits)
+    lead = " ".join(bits[:2])
+    extra = " ".join(bits[2:])
     return f"""
 <h2 id="lags">Cumulative and delayed exposure</h2>
 <p>{lead}</p>
-<p>Each point is a separate regression of the outcome on use at that lag, with state and year fixed effects. The whisker is one standard error, clustered by state. Green is past-month marijuana. Blue is past-month alcohol. The horizontal line is zero. The correlation table is the between-state correlation of the level of use. This chart is the within-state slope.</p>
+<p>{extra}</p>
+<p>Green is past-month marijuana. Blue is past-month alcohol. This chart is the within-state slope.</p>
 {chart}
 <p class="axis-name"><span>Y · Points of the outcome per point of use</span><span>X · Lag, years</span></p>
 <p class="fine cap">Outcome years run through 2020. Every use year in a row is from 2019 or earlier, so the 2021 web-mode break stays out of the slope. Lags of 10, 12, and 14 years, the distributed lag, and the legalization rows are in <a href="nsduh-vote-ecological/results/lag_specs.csv">lag_specs.csv</a>.</p>
@@ -1441,8 +1411,7 @@ def law_section(acts: list[dict]) -> str:
 """
     return f"""
 <h2 id="laws">Laws on the timeline</h2>
-<p>The markers are {len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the January 4, 2018 Sessions memorandum, and Oregon HB 4002, signed April 1, 2024. Filled circles made the substance easier to obtain or less criminal. Open squares tightened access. Color is the sponsor’s party. Initiatives have no sponsoring party.</p>
-<p>Click a column heading to sort the table.</p>
+<p>{len(acts)} acts. {n_init} are citizen initiatives. {n_tight} tightened access: the Sessions memorandum on January 4, 2018, and Oregon HB 4002 on April 1, 2024. Click a column heading to sort.</p>
 <div class="table-scroll">
 <table class="cmp" id="law-table">
 <thead><tr><th>Date</th><th>Jurisdiction</th><th>Substance</th><th>Direction</th><th>How it passed</th><th>Bill</th><th>Sponsor</th><th>Sponsor party</th><th>Signed by</th><th>Vote</th></tr></thead>
@@ -1451,7 +1420,7 @@ def law_section(acts: list[dict]) -> str:
 </tbody>
 </table>
 </div>
-<p class="fine">State medical and adult-use rows are the comprehensive programs in NCSL, State Medical Cannabis Laws, updated September 2, 2026. A year with no day is the NCSL year, placed at mid-year on the chart. Sponsor, party, and the roll call are filled when Congress.gov, the House Clerk, the Senate, a legislature journal, Ballotpedia, or the enrolled act records them. A cell that says “Not in the source” is a blank in that record. Citizen initiatives are labeled with the vote and the sponsoring committee when Ballotpedia records them. Territories on the NCSL table are not in this file. CSV: <a href="nsduh-vote-ecological/data/legislative_acts.csv">legislative_acts.csv</a>.</p>
+<p class="fine">CSV: <a href="nsduh-vote-ecological/data/legislative_acts.csv">legislative_acts.csv</a>.</p>
 {script}
 """
 
@@ -1472,8 +1441,7 @@ def section_html(frames: dict | None = None) -> str:
     acts = load_acts()
     return f"""
 <h2 id="over-time">Use, scores, and the vote over time</h2>
-<p>National past-month marijuana, ages 12 or older, is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. The gold band is the 2020–2021 web-mode break. Lines stop at that band. From 2009–2010 to 2018–2019, one point of additional past-month marijuana use lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> points of grade-8 mathematics (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic two-party share (SE {_num(mj_v['se'])}).</p>
-<p>Alcohol’s first difference over the same window is <strong>{_num(alc_n['coef'], sign=True)}</strong> NAEP grade-8 mathematics points per point of past-month use (SE {_num(alc_n['se'])}) and <strong>{_num(alc_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(alc_v['se'])}). Grade-4 mathematics is <strong>{_num(fit_of[('alc', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-month alcohol (SE {_num(fit_of[('alc', 'naep_math4')]['se'])}) and <strong>{_num(fit_of[('mrjyr', 'naep_math4')]['coef'], sign=True)}</strong> per point of past-year marijuana (SE {_num(fit_of[('mrjyr', 'naep_math4')]['se'])}).</p>
+<p>National past-month marijuana is <strong>{pre['pct']:.1f}%</strong> in the {pre['pyearnm']} pool and <strong>{post['pct']:.1f}%</strong> in the {post['pyearnm']} pool. From 2009–2010 to 2018–2019, one more point of past-month marijuana lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}).</p>
 {use_charts(frames['nsduh'], frames['legal'], acts)}
 <p class="fine cap">Measured. SAMHSA small-area estimates, ages 12 or older. The point is the later year of a two-year pool. Binge alcohol, illicit drugs other than marijuana, and pain-reliever misuse change code in 2015 and are drawn as separate segments. The 2010–2011 point is the updated estimate. The markers along the top are laws. Filled circles eased access. Open squares tightened it. Color is the sponsor’s party, stone is a citizen initiative, and brown is a legislature whose sponsor is not in the source.</p>
 {cognition_chart(frames['naep'], acts)}
@@ -1481,12 +1449,12 @@ def section_html(frames: dict | None = None) -> str:
 <div class="stats one" id="icar-stat">
 <div class="stat lead"><span class="k">ICAR35, Table 1</span><span class="v">−0.023</span><span class="s">SD per year, ages 18 to 60, 2006–2018, adjusted for education and gender. 95% interval −0.035 to −0.011.</span></div>
 </div>
-<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>. Table 1 publishes that slope. Figure 1 draws yearly means by education level and does not print them as numbers. The supplementary tables are slopes and sample counts. The OSF node <a href="https://osf.io/kmgx8">osf.io/kmgx8</a> is the preregistration. Those means stay off the NAEP chart.</p>
+<p class="fine">Dworak, Revelle, and Condon, Intelligence, 2023, Table 1, <a href="https://doi.org/10.1016/j.intell.2023.101734">10.1016/j.intell.2023.101734</a>.</p>
 {vote_chart(frames['vote'], acts)}
 <p class="fine cap">Democratic votes divided by Democratic plus Republican votes, summed across the 50 states and the District of Columbia. Elections 2004 through 2024. The vertical axis runs from 0 to 100. The same law markers sit on this chart.</p>
 {law_section(acts)}
 <h2>Fifty states, first difference</h2>
-<p>Each point is a state or the District of Columbia. The change in use is the 2018–2019 small-area estimate minus the 2009–2010 estimate, in percentage points, ages 12 or older. The NAEP change is the 2019 state mean minus the 2009 state mean. The vote change is the 2020 Democratic two-party share minus the 2008 share, in percentage points. The line is weighted least squares. Weights are the average of 2008 and 2020 two-party votes. Standard errors are HC1. With two periods, this first difference is the state fixed-effects estimator.</p>
+<p>One point of additional past-month marijuana, 2009–2010 to 2018–2019, lines up with <strong>{_num(mj_n['coef'], sign=True)}</strong> grade-8 mathematics points (SE {_num(mj_n['se'])}) and <strong>{_num(mj_v['coef'], sign=True)}</strong> points of Democratic share (SE {_num(mj_v['se'])}).</p>
 {change_panel(panel, fits)}
 <p class="axis-name"><span>Y · Change in the score or in Democratic share</span><span>X · Change in the use rate, percentage points</span></p>
 <p class="fine cap">The 2009–2010 and 2018–2019 pools both sit before the 2021 web-mode break. Binge alcohol, methamphetamine, pain-reliever misuse, and illicit drugs other than marijuana are not the same series across the 2015 questionnaire redesign, so they stay on the timeline and out of this difference.</p>
