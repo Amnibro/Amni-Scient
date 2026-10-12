@@ -807,6 +807,13 @@ def _polyline(parts, X, Y, pts, color, dash=False, ymap=None):
         parts.append(f'<circle cx="{X(year):.1f}" cy="{yy:.1f}" r="2.3" fill="{color}"/>')
 
 
+SHORT = {"mj": "Marijuana, month", "mrjyr": "Marijuana, year", "alc": "Alcohol", "binge": "Binge", "coc": "Cocaine", "her": "Heroin", "iem": "Other illicit", "met": "Meth", "hal": "Hallucinogens", "pnr": "Pain relievers", "opin": "Opioids"}
+def _end_labels(parts, items, gap=12):
+    items, last, xe = sorted(items, key=lambda t: t[1]), -1e9, max([t[0] for t in items] or [0])
+    for _x, y, text, color in items:
+        x = xe
+        last = max(y, last + gap)
+        parts.append(f'<text x="{x:.1f}" y="{last + 3.5:.1f}" class="marklab" style="fill:{color}">{_esc(text)}</text>')
 def _law_marks(parts, X, acts: list[dict], x0: float, x1: float) -> None:
     """Party-colored markers in the top band. Open squares are tighter access."""
     shown = [a for a in acts if x0 <= a["x"] <= x1]
@@ -875,20 +882,26 @@ def use_charts(nsduh: pd.DataFrame, legal: pd.DataFrame, acts: list[dict] | None
     cards = []
     for i, (title, keys, y0, y1, yticks, _marks) in enumerate(blocks):
         parts, X, Y, left, top, ph, w, right = _frame(
-            860, 332, 1996, 2027.2, y0, y1, (1998, 2004, 2010, 2016, 2022, 2026), yticks, top_extra=28
+            860, 332, 1996, 2031, y0, y1, (1998, 2004, 2010, 2016, 2022), yticks, top_extra=28
         )
+        ends = []
         for key in keys:
             lab, col, codes, dash = by_key[key]
-            for seg in _segments(nat[nat["outcome"].isin(codes)], codes):
+            segs = _segments(nat[nat["outcome"].isin(codes)], codes)
+            for seg in segs:
                 _polyline(parts, X, Y, [(a, b) for a, b, _p in seg], col, dash=dash)
+            ends += [(X(segs[-1][-1][0]) + 6, Y(segs[-1][-1][1]), f"{SHORT[key]} {segs[-1][-1][1]:.1f}%", col)] if segs else []
+            parts += [f'<text x="{X(segs[0][0][0]):.1f}" y="{Y(segs[0][0][1]) + 16:.1f}" class="marklab" style="fill:{col};font-weight:700">{segs[0][0][1]:.1f}% in {segs[0][0][0]}</text>'] if key == "mj" and segs else []
+        _end_labels(parts, ends)
         if acts:
-            _law_marks(parts, X, acts, 1996, 2027.2)
+            _law_marks(parts, X, acts, 1996, 2026)
         parts.append("</svg>")
         legend = "".join(
             f'<span><i style="background:{by_key[k][1]}"></i>{_esc(by_key[k][0])}</span>' for k in keys
         )
         cards.append(
-            f'<p class="slope-k">{_esc(title)}</p><div class="legend">{legend}</div>'
+            (f'<h3 class="kf-h">Past-month marijuana use rose from {mjs[0][0][1]:.1f}% in {mjs[0][0][0]} to {mjs[-1][-1][1]:.1f}% in {mjs[-1][-1][0]}, {mjs[-1][-1][1] / mjs[0][0][1]:.1f} times as high, while alcohol use did not rise</h3>' if i == 0 and (mjs := _segments(nat[nat["outcome"].isin(by_key["mj"][2])], by_key["mj"][2])) else "")
+            + f'<p class="slope-k">{_esc(title)}</p><div class="legend">{legend}</div>'
             + (law_legend() if i == 0 else "")
             + f'<div class="chart-card"{ " id=\"use-law-chart\"" if i == 0 else ""}>{"".join(parts)}</div>'
             f'<p class="axis-name"><span>Y · Percent, ages 12+</span><span>X · Later year of the two-year pool</span></p>'
@@ -960,33 +973,26 @@ def vote_chart(vote: pd.DataFrame, acts: list[dict] | None = None) -> str:
     )
 
 
-def _scatter(xs, ys, wts, color, a, b):
-    x0, x1 = float(np.min(xs)) - 1, float(np.max(xs)) + 1
-    y0, y1 = float(np.min(ys)) - 1, float(np.max(ys)) + 1
-    left, right, top, bottom = 36, 10, 8, 22
+def _ticks(lo, hi, n=4):
+    step = next(t for t in (0.5, 1, 2, 2.5, 5, 10, 20) if (hi - lo) / t <= n)
+    return [round(v, 2) for v in np.arange(np.floor(lo / step) * step, np.ceil(hi / step) * step + step / 2, step)]
+def _scatter(xs, ys, wts, color, a, b, xlab="", ylab=""):
+    xt, yt = _ticks(float(np.min(xs)) - 0.3, float(np.max(xs)) + 0.3), _ticks(float(np.min(ys)) - 0.5, float(np.max(ys)) + 0.5)
+    x0, x1, y0, y1 = xt[0], xt[-1], yt[0], yt[-1]
+    left, right, top, bottom = 50, 10, 8, 38
     pw = ph = 200
     w, h = left + pw + right, top + ph + bottom
-
-    def X(v):
-        return left + (float(v) - x0) / (x1 - x0) * pw
-
-    def Y(v):
-        return top + (y1 - float(v)) / (y1 - y0) * ph
-
+    X = lambda v: left + (float(v) - x0) / (x1 - x0) * pw
+    Y = lambda v: top + (y1 - float(v)) / (y1 - y0) * ph
     parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
-    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h - bottom}" class="axis"/>')
-    parts.append(f'<line x1="{left}" y1="{h - bottom}" x2="{w - right}" y2="{h - bottom}" class="axis"/>')
+    parts += [f'<line x1="{left}" y1="{Y(t):.1f}" x2="{left + pw}" y2="{Y(t):.1f}" class="{"axis" if t == 0 else "grid"}"/><text x="{left - 5}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{_num(t, 1 if t % 1 else 0, sign=True) if t else "0"}</text>' for t in yt]
+    parts += [f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{top + ph}" class="{"axis" if t == 0 else "grid"}"/><text x="{X(t):.1f}" y="{top + ph + 13}" text-anchor="middle" class="tick">{_num(t, 1 if t % 1 else 0, sign=True) if t else "0"}</text>' for t in xt]
+    parts += [f'<text x="{left + pw / 2}" y="{h - 3}" text-anchor="middle" class="axt">{_esc(xlab)}</text>', f'<text transform="translate(11 {top + ph / 2}) rotate(-90)" text-anchor="middle" class="axt">{_esc(ylab)}</text>']
     m = float(np.max(wts))
-    for x, y, wt in zip(xs, ys, wts):
-        rad = 2.2 + 4.5 * (float(wt) / m) ** 0.5
-        parts.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{rad:.2f}" fill="{color}" fill-opacity="0.75"/>')
-    parts.append(
-        f'<line x1="{X(x0):.1f}" y1="{Y(a + b * x0):.1f}" x2="{X(x1):.1f}" y2="{Y(a + b * x1):.1f}" stroke="{color}" stroke-width="2.2"/>'
-    )
+    parts += [f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{2.2 + 4.5 * (float(wt) / m) ** 0.5:.2f}" fill="{color}" fill-opacity="0.6"/>' for x, y, wt in zip(xs, ys, wts)]
+    parts.append(f'<line x1="{X(x0):.1f}" y1="{Y(a + b * x0):.1f}" x2="{X(x1):.1f}" y2="{Y(a + b * x1):.1f}" stroke="{color}" stroke-width="2.2"/>')
     parts.append("</svg>")
     return "".join(parts)
-
-
 def change_panel(panel: pd.DataFrame, fits: list[dict]) -> str:
     want = {("mj", "naep_math8"), ("alc", "naep_math8"), ("coc", "naep_math8"), ("mrjyr", "naep_math8"),
             ("mj", "vote"), ("alc", "vote"), ("coc", "vote"), ("mrjyr", "vote")}
@@ -1000,7 +1006,7 @@ def change_panel(panel: pd.DataFrame, fits: list[dict]) -> str:
         ycol = "d_naep_math8" if outcome == "naep_math8" else "dvote"
         block = panel.dropna(subset=[f"d_{key}", ycol])
         yname = "NAEP math, grade 8" if outcome == "naep_math8" else "Democratic share"
-        svg = _scatter(block[f"d_{key}"], block[ycol], block["w"], colors[key], f["intercept"], f["coef"])
+        svg = _scatter(block[f"d_{key}"], block[ycol], block["w"], colors[key], f["intercept"], f["coef"], f"Change in % using, {FD_EARLY[5:]}→{FD_LATE[5:]}", "Change in math score, 2009→2019" if outcome == "naep_math8" else "Change in Dem. share, 2008→2020")
         cards.append(
             '<div class="slope-card">'
             f'<p class="slope-k"><i style="background:{colors[key]}"></i>{_esc(labels[key])} → {_esc(yname)}</p>'
@@ -1223,30 +1229,17 @@ def _lag_chart(specs: pd.DataFrame) -> str:
                     ys.extend((coef - se, coef + se))
         if not ys:
             continue
-        y_pad = max(0.05, (max(ys) - min(ys)) * 0.35)
-        y0, y1 = min(ys) - y_pad, max(ys) + y_pad
-        if y0 < 0 < y1:
-            pass
-        left, right, top, bottom = 46, 8, 16, 22
+        yt = _ticks(min(ys + [0]), max(ys + [0]), 5)
+        y0, y1 = yt[0], yt[-1]
+        left, right, top, bottom = 46, 8, 16, 34
         plot_w, plot_h = 168, 120
         w, h = left + plot_w + right, top + plot_h + bottom
-
-        def X(v, _lags=lags):
-            return left + (v - _lags[0]) / (_lags[-1] - _lags[0]) * plot_w
-
-        def Y(v):
-            return top + (y1 - v) / (y1 - y0) * plot_h
-
+        X = lambda v, _lags=lags: left + (v - _lags[0]) / (_lags[-1] - _lags[0]) * plot_w
+        Y = lambda v: top + (y1 - v) / (y1 - y0) * plot_h
         parts = [f'<svg viewBox="0 0 {w} {h}" role="img" class="chart">']
-        parts.append(f'<line x1="{left}" y1="{Y(0):.1f}" x2="{left + plot_w}" y2="{Y(0):.1f}" class="grid"/>')
-        for lag in lags:
-            parts.append(f'<text x="{X(lag):.1f}" y="{h - 6}" text-anchor="middle" class="tick">{lag}</text>')
-        def tick(v):
-            body = f"{abs(v):.2f}"
-            return ("−" + body) if v < 0 else body
-
-        parts.append(f'<text x="{left - 4}" y="{Y(y1) + 9:.1f}" text-anchor="end" class="tick">{tick(y1)}</text>')
-        parts.append(f'<text x="{left - 4}" y="{Y(y0):.1f}" text-anchor="end" class="tick">{tick(y0)}</text>')
+        parts += [f'<line x1="{left}" y1="{Y(t):.1f}" x2="{left + plot_w}" y2="{Y(t):.1f}" class="{"axis" if t == 0 else "grid"}"/><text x="{left - 4}" y="{Y(t) + 3:.1f}" text-anchor="end" class="tick">{_num(t, 1 if t % 1 else 0, sign=True) if t else "0"}</text>' for t in yt]
+        parts += [f'<text x="{X(lag):.1f}" y="{top + plot_h + 13}" text-anchor="middle" class="tick">{lag}</text>' for lag in lags]
+        parts.append(f'<text x="{left + plot_w / 2}" y="{h - 3}" text-anchor="middle" class="axt">Years between use and outcome</text>')
         for substance in ("mj", "alc"):
             pts = []
             for lag in lags:
@@ -1266,7 +1259,7 @@ def _lag_chart(specs: pd.DataFrame) -> str:
                 parts.append(f'<circle cx="{X(lag):.1f}" cy="{Y(coef):.1f}" r="3.2" fill="{colors[substance]}"/>')
         parts.append("</svg>")
         cards.append(f'<div class="slope-card"><p class="slope-k">{_esc(title)}</p>{"".join(parts)}</div>')
-    return '<div class="slope-grid">' + "".join(cards) + "</div>"
+    return '<div class="legend"><span><i style="background:#16A34A"></i>Marijuana, past month</span><span><i style="background:#2563EB"></i>Alcohol, past month</span><span>Whiskers ±1 SE · above 0 = higher score or Democratic share</span></div><div class="slope-grid">' + "".join(cards) + "</div>"
 
 
 def _lag_table(specs: pd.DataFrame, uses: list[str] | None, families: list[str] | None) -> str:
