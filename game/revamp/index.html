@@ -3,13 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Amni: Revamp preview | Amni-Scient</title>
-<meta name="description" content="Amni revamp preview: a bolt-sized robot explores Dewdrop Glade and Frostwick Sill, a terrarium-scale collect-a-thon running in the browser on WebGPU with a WebGL2 fallback.">
+<title>Amni | Amni-Scient</title>
+<meta name="description" content="Amni: a bolt-sized robot brings color back to a terrarium world. Explore Dewdrop Glade and seven realms, beat their tyrants and paint the world whole. A 3D collect-a-thon platformer that runs in the browser on WebGPU with a WebGL2 fallback.">
 <meta name="theme-color" content="#0B1210">
-<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amni-scient.com/game/revamp/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Amni | Amni-Scient">
+<meta property="og:description" content="A bolt-sized robot, a terrarium world and seven realms to paint back to life. Plays in the browser, no install.">
+<meta property="og:url" content="https://amni-scient.com/game/revamp/">
+<meta property="og:image" content="https://amni-scient.com/assets/game/tile-revamp-shellshore.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://amni-scient.com/assets/game/tile-revamp-shellshore.jpg">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="pkg/amni-v2_bg.wasm?v=848dd62eb9" as="fetch" type="application/wasm" crossorigin>
-<link rel="modulepreload" href="pkg/amni-v2.js?v=c9b41339c3">
+<link rel="preload" href="pkg/amni-v2_bg.wasm?v=cad372b090" as="fetch" type="application/wasm" crossorigin>
+<link rel="modulepreload" href="pkg/amni-v2.js?v=22abae1e96">
 <style>
 @font-face{font-family:"Fredoka";src:url("fonts/fredoka-var.woff2") format("woff2");font-weight:300 700;font-display:swap}
 :root{--bg:#0B1210;--panel:#121B18;--line:#24332D;--text:#EEF3EC;--soft:#A9B8AE;--dim:#6E8076;--accent:#F2C14E;--leaf:#7CC57A;--frost:#9FD3F2;--err:#FF7A6B}
@@ -54,9 +61,9 @@ body.playing #overlay{display:none}
 <div id="hud"><button type="button" id="fsBtn">Fullscreen</button></div>
 <div id="overlay">
 <div class="card">
-<div class="pill">Revamp preview</div>
+<div class="pill">Plays in the browser</div>
 <h1>Amni <span>&middot;</span> Dewdrop Glade</h1>
-<p class="tag">A bolt-sized robot in a terrarium world. Explore the hub, gather pebbles and canvases, then slide across the frosty windowsill of Frostwick.</p>
+<p class="tag">A bolt-sized robot in a terrarium world. Explore the hub, gather pebbles and canvases, and open the doors to seven realms, from the frosty windowsill of Frostwick to the roaring grate of Ember Hearth.</p>
 <button type="button" id="playBtn">Play</button>
 <div id="load"><div id="bar"><div id="loadBarFill"></div></div><div id="status"></div><div id="meta"></div></div>
 <div id="errBox"></div>
@@ -66,11 +73,11 @@ body.playing #overlay{display:none}
 <b><kbd>Space</kbd></b><span>Jump, press again in the air to double-jump</span>
 <b><kbd>Shift</kbd></b><span>Dash</span>
 <b><kbd>F</kbd> / <kbd>E</kbd></b><span>Attack / talk and interact</span>
-<b><kbd>C</kbd> or <kbd>Ctrl</kbd></b><span>Crouch, ground pound, and Frost Slide while running</span>
+<b><kbd>C</kbd></b><span>Crouch, ground pound, dive, and Frost Slide while running</span>
 <b><kbd>Esc</kbd></b><span>Pause and settings</span>
 <b>Gamepad</b><span>Supported (A jump, X attack, Y interact, B dash)</span>
 </div>
-<div class="foot"><a href="revamp/CREDITS.md?v=34405d070d" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build ee12138</span></div>
+<div class="foot"><a href="revamp/CREDITS.md?v=34405d070d" target="_blank" rel="noopener">Art credits (CC0)</a><a href="../music/CREDITS.md" target="_blank" rel="noopener">Music credits</a><a href="licenses/Fredoka-OFL.txt" target="_blank" rel="noopener">Fredoka font license (OFL 1.1)</a><a href="/game/v2/">Classic v2</a><span id="ver">build e633f56</span></div>
 </div>
 </div>
 </div>
@@ -119,7 +126,10 @@ const armCanvas = () => {
   ['touchstart', 'touchmove', 'gesturestart'].forEach((ev) => c.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
 };
 $('fsBtn').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : $('stage').requestFullscreen?.());
-document.addEventListener('fullscreenchange', () => { $('fsBtn').textContent = document.fullscreenElement ? 'Exit full' : 'Fullscreen'; });
+document.addEventListener('fullscreenchange', () => { $('fsBtn').textContent = document.fullscreenElement ? 'Exit full' : 'Fullscreen'; try { document.fullscreenElement ? navigator.keyboard?.lock?.()?.catch?.(() => {}) : navigator.keyboard?.unlock?.(); } catch (e) {} });
+const playing = () => document.body.classList.contains('playing');
+window.addEventListener('keydown', (e) => { if (playing() && (e.ctrlKey || e.metaKey || e.altKey)) e.preventDefault(); }, { capture: true });
+window.addEventListener('beforeunload', (e) => { if (playing()) { e.preventDefault(); e.returnValue = ''; } });
 let started = false;
 btn.addEventListener('click', async () => {
   if (started) { location.reload(); return; }
@@ -140,8 +150,8 @@ btn.addEventListener('click', async () => {
   }
   statusEl.textContent = (q.get('backend') === 'gl' ? 'WebGL2' : 'WebGPU') + ': downloading the engine...';
   try {
-    const { default: init } = await import('./pkg/amni-v2.js?v=c9b41339c3');
-    const resp = fetch('pkg/amni-v2_bg.wasm?v=848dd62eb9').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
+    const { default: init } = await import('./pkg/amni-v2.js?v=22abae1e96');
+    const resp = fetch('pkg/amni-v2_bg.wasm?v=cad372b090').then((r) => new Response(count(r.body, 'wasm'), { headers: { 'Content-Type': 'application/wasm' } }));
     await init({ module_or_path: resp }).catch((e) => { if (!String(e).includes('control flow')) throw e; });
   } catch (e) {
     if (!String(e).includes('control flow')) return fail('Could not start', '<p>' + String(e).slice(0, 220) + '</p><p>Check the connection and retry. A hard refresh (Ctrl+Shift+R) clears stale engine files.</p>');
