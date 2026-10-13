@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=cp1'
 import { initAutoDetect } from './autodetect.js?v=1'
+import { money, clampNum, totals, missNote, materialsCSV, readJSON, writeJSON, isObj, loadPrices, priceRow, totRow, bindPrices, fixPool } from '../_shared/est-math.js?v=cp1'
 const LS = 'amnipool.cfg.v1', LSP = 'amnipool.prices.v1'
 const defCfg = { mode: 'rect', w: 16, d: 32, polygon: null, shallow_in: 36, deep_in: 72, kind: 'inground', finish: 'liner', heater: false, temp_rise: 20, house_edge: 0 }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+const okPoly = p => Array.isArray(p) && p.length >= 3 && p.every(q => Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1]))
+let cfg = (() => { const m = readJSON(LS, {}), c = { ...defCfg, ...(isObj(m) ? m : {}) }; c.w = clampNum(c.w, 4, 60, 16); c.d = clampNum(c.d, 4, 60, 32); c.shallow_in = clampNum(c.shallow_in, 24, 60, 36); c.deep_in = clampNum(c.deep_in, c.shallow_in, 120, Math.max(72, c.shallow_in)); c.temp_rise = clampNum(c.temp_rise, 5, 40, 20); c.kind = c.kind === 'above' ? 'above' : 'inground'; c.house_edge = Number.isInteger(+c.house_edge) ? +c.house_edge : 0; c.polygon = okPoly(c.polygon) ? c.polygon : null; c.mode = c.mode === 'poly' && c.polygon ? 'poly' : 'rect'; return c })()
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = loadPrices(LSP)
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { liner: ['#2f9bd6', 'Blue liner'], plaster: ['#bfe3ef', 'White plaster'], fiberglass: ['#3fb6c9', 'Fiberglass'], tile: ['#1f7fae', 'Tile'], vinyl: ['#3aa0d8', 'Vinyl'] }
@@ -163,7 +165,7 @@ const renderWarns = () => {
   for (const s of out.warnings) { const [tag, txt] = s.includes('|') ? s.split('|') : ['INFO', s]; const d = document.createElement('div'); d.className = 'warn' + (tag === 'OK' ? ' ok' : tag === 'INFO' ? ' info' : ''); d.textContent = txt; w.appendChild(d) }
 }
 const G_LS = 'amnipool.guide.v1'
-let gChk = (() => { try { return JSON.parse(localStorage.getItem(G_LS)) || {} } catch { return {} } })()
+let gChk = isObj(readJSON(G_LS, {})) ? readJSON(G_LS, {}) : {}
 const SEC = 'background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px', GH = 'font-size:15px;color:var(--acc);margin-bottom:6px;font-weight:600'
 const guideList = (title, items) => `<div style="${SEC}"><div style="${GH}">${title}</div><ul style="list-style:disc;padding-left:20px;font-size:13px;line-height:1.7;color:var(--ink)">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>`
 const renderGuide = () => {
@@ -179,29 +181,26 @@ const renderGuide = () => {
     ['🚧 Barrier + final  (sheet PL-3, detail 4)', ['Install the 48" barrier + self-closing / self-latching gate (latch 54" AFG, opens out, 4" sphere rule).', 'Add alarms / a safety cover where required; pass the barrier + final inspection BEFORE anyone swims.']],
   ]
   const tools = ['Laser level / transit', ig ? 'Excavator + skid steer (rental) + shovels' : 'Hand level + tamper + rake', 'PVC cutter + primer/cement', 'Channel-locks + pipe wrench', 'Torpedo + 4-ft level', '#8 bond wire + lug + crimper', 'Garden hose(s) for fill', 'Test kit + brush + vacuum', 'Shop vac / submersible pump']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null && !BIG.has(it.id)) cost += p * it.qty })
+  const cost = totals((out.bom || []).filter(it => !BIG.has(it.id)), price).hd
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A build sequence for your <b>${c.gallons.toLocaleString()}-gal ${ig ? 'in-ground' : 'above-ground'}</b> pool. Tick as you go. Pair with sheets PL-1 (plan), PL-2 (section) + PL-3 (details). <b style="color:var(--warn)">Bonding, the gas heater + shell work usually need licensed pros.</b></div>`
     + chk
     + guideList('🔍 Inspections', ['<b>Excavation / steel</b> before concrete (in-ground).', '<b>Bonding</b> + electrical rough before backfill.', '<b>Barrier + final</b> — gate, alarms, dual drains — before first use.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in materials/equipment (Home Depot catalog) — edit prices on the Materials tab. Excavation, gunite/liner + labor are the big extras.</div></div>`
-  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in materials/equipment (Home Depot catalog) — edit prices on the Materials tab. Excavation, gunite/liner + labor are the big extras.</div></div>`
+  body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; writeJSON(G_LS, gChk); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
-const BIG = new Set(['shell', 'wallkit', 'haul'])
+const BIG = new Set(['shell', 'wallkit', 'haul', 'rebar'])
 const renderMat = () => {
   if (!out) return
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.gallons.toLocaleString()}`, 'gallons'], [`${c.turnover_gpm.toFixed(0)} gpm`, 'turnover (8 h)'], [`${c.pump_hp} hp`, 'pump'], [`${c.filter_sqft} ft²`, 'filter'], [`${c.excavation_yd3.toFixed(1)} yd³`, 'excavation']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('')
-  const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-  const rowFor = it => { const cat = catalog[it.id] || {}, ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return { ph, pl, html: `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>` } }
-  let thM = 0, tlM = 0, thB = 0, tlB = 0, matRows = '', bigRows = ''
-  for (const it of out.bom) { const r = rowFor(it); if (BIG.has(it.id)) { r.ph != null && (thB += r.ph * it.qty); r.pl != null && (tlB += r.pl * it.qty); bigRows += r.html } else { r.ph != null && (thM += r.ph * it.qty); r.pl != null && (tlM += r.pl * it.qty); matRows += r.html } }
-  const subRow = (label, a, b, style) => `<tr><td class="tot" style="${style || ''}">${label}</td><td></td><td></td><td class="tot ${style ? '' : (a <= b ? 'best' : '')}" style="${style || ''}">$${a.toFixed(2)}</td><td></td><td class="tot ${style ? '' : (b < a ? 'best' : '')}" style="${style || ''}">$${b.toFixed(2)}</td></tr>`
-  const bigBlock = bigRows ? `<tr><td colspan="6" style="padding-top:16px;color:var(--warn);font-weight:600">🏗️ Big-ticket / contractor — regional, get 2–3 local bids</td></tr>${bigRows}<tr><td colspan="6" style="color:var(--mut);font-size:12px;padding:4px 10px 8px">Shell/excavation vary hugely by construction — vinyl-liner kit ~$8–15k · fiberglass ~$20–40k · gunite ~$30–60k installed. The line prices are placeholders; get local bids.</td></tr>${subRow('Big-ticket subtotal', thB, tlB, 'color:var(--warn)')}` : ''
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${matRows}${subRow('🛒 Shoppable materials + equipment', thM, tlM)}${bigBlock}${subRow('≈ Ballpark all-in', thM + thB, tlM + tlB, 'color:var(--ink);border-top:2px solid var(--line)')}`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  const mats = out.bom.filter(it => !BIG.has(it.id)), big = out.bom.filter(it => BIG.has(it.id)), tM = totals(mats, price), tB = totals(big, price), tA = totals(out.bom, price), row = it => priceRow(it, price, catalog[it.id])
+  const bigBlock = big.length ? `<tr><td colspan="6" style="padding-top:16px;color:var(--warn);font-weight:600">🏗️ Big-ticket / contractor — regional, get 2–3 local bids</td></tr>${big.map(row).join('')}<tr><td colspan="6" style="color:var(--mut);font-size:12px;padding:4px 10px 8px">Shell/excavation vary hugely by construction — vinyl-liner kit ~$8–15k · fiberglass ~$20–40k · gunite ~$30–60k installed. The line prices are placeholders; get local bids.</td></tr>${totRow('Big-ticket subtotal', tB, 'color:var(--warn)')}` : ''
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${mats.map(row).join('')}${totRow('🛒 Shoppable materials + equipment', tM)}${bigBlock}${totRow('≈ Ballpark all-in', tA, 'color:var(--ink);border-top:2px solid var(--line)')}`
+  $('#mat-summary').insertAdjacentHTML('beforeend', missNote(tA))
+  bindPrices($('#mat-table'), priceEdits, () => writeJSON(LSP, priceEdits), renderMat)
 }
 const parsePaste = (text, store) => {
   const filled = []
@@ -221,10 +220,10 @@ const parsePaste = (text, store) => {
     }
     if (best) { priceEdits[`${it.id}.${store}`] = best.p; filled.push(it.id) }
   }
-  localStorage.setItem(LSP, JSON.stringify(priceEdits))
+  writeJSON(LSP, priceEdits)
   return filled
 }
-const persist = () => localStorage.setItem(LS, JSON.stringify(cfg))
+const persist = () => writeJSON(LS, cfg)
 let lastFit = ''
 const fitCam = () => {
   const poly = polyOf(cfg)
@@ -245,8 +244,8 @@ const fitCam = () => {
   cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  out = fixPool(callCore(cfg), cfg.kind)
+  if (out.error) { $('#warns').innerHTML = `<div class="warn">⚠ ${out.error}. Fix the size or outline and the estimate updates.</div>`; return }
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
@@ -340,8 +339,8 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
-  bind('#w', 'w'); bind('#d', 'd'); bind('#shallow', 'shallow_in'); bind('#deep', 'deep_in'); bind('#kind', 'kind', false); bind('#temprise', 'temp_rise'); bind('#house', 'house_edge')
+  const bind = (id, key, num = true, min = -Infinity, max = Infinity) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? clampNum(el.value, typeof min === 'function' ? min() : min, max, cfg[key]) : el.value; el.value = cfg[key]; key === 'shallow_in' && cfg.deep_in < cfg.shallow_in && (cfg.deep_in = cfg.shallow_in, $('#deep').value = cfg.deep_in); recompute() } }
+  bind('#w', 'w', true, 4, 60); bind('#d', 'd', true, 4, 60); bind('#shallow', 'shallow_in', true, 24, 60); bind('#deep', 'deep_in', true, () => cfg.shallow_in, 120); bind('#kind', 'kind', false); bind('#temprise', 'temp_rise', true, 5, 40); bind('#house', 'house_edge')
   $('#heater').checked = !!cfg.heater
   $('#heater').onchange = e => { cfg.heater = e.target.checked; recompute() }
   document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
@@ -362,18 +361,14 @@ const initUI = () => {
   $('#paste-hd').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'hd'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} HD prices` : 'no prices matched — copy the whole store page (Ctrl+A, Ctrl+C)'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#paste-lowes').onclick = async () => { try { const txt = await navigator.clipboard.readText(); const f = parsePaste(txt, 'lowes'); $('#pstatus').textContent = f.length ? `✅ filled ${f.length} Lowes prices` : 'no prices matched — copy the whole store page'; renderMat() } catch { $('#pstatus').textContent = 'clipboard blocked — click the page first' } }
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
-  $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
-  $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'pool-materials.csv' })
-    a.click()
-  }
+  $('#reset-prices').onclick = () => { priceEdits = {}; try { localStorage.removeItem(LSP) } catch {} renderMat() }
+  $('#export-csv').onclick = () => out && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([materialsCSV(out.bom, price)], { type: 'text/csv;charset=utf-8' })), download: 'pool-materials.csv' }).click()
   $('#dl-svg').onclick = () => { ['layout', 'section', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `pool-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'pool-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
 }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()

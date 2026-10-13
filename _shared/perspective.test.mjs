@@ -31,4 +31,4 @@ const area = Math.abs((toilet[1][0] - toilet[0][0]) * (toilet[2][1] - toilet[0][
 check('fixture footprint projects to a real quad', area > 50 && toilet.every(p => isFinite(p[0])))
 let allok = true
 for (const [n, ok] of results) { if (!ok) allok = false; console.log((ok ? 'ok  ' : 'FAIL') + ' ' + n) }
-console.log('VERDICT:', allok ? 'PASS' : 'FAIL')
+console.log('VERDICT:', allok ? 'PASS' : 'FAIL'); process.exitCode = allok ? 0 : 1

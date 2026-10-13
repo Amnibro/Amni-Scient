@@ -1,12 +1,17 @@
 const test = require('node:test')
 const assert = require('node:assert/strict')
+const fs = require('node:fs')
+const path = require('node:path')
 require('../_shared/share-import.js')
 const {
   MAX_FRAGMENT_LENGTH,
   MODULE_KEY_ALLOWLISTS,
   collectShareData,
+  decodePayload,
   encodePayload,
+  homeownerShareData,
   restoreFromLocation,
+  stripSharePrices,
   validatePayload
 } = globalThis.AmniShareImport
 
@@ -196,4 +201,41 @@ test('share collection uses the same allowlist and validation', () => {
   assert.deepEqual(collectShareData('deck', storage), {
     'amnideck.cfg.v2': '{"length":12}'
   })
+})
+
+test('share links drop price tables and saved collection keeps them', () => {
+  const storage = memoryStorage({
+    'amnideck.cfg.v2': JSON.stringify({ length: 12, stairs: [], railing: { front: false } }),
+    'amnideck.prices.v1': JSON.stringify({ 'board.hd': 12.5, 'joist.lowes': 8 }),
+    'amnideck.guide.v1': JSON.stringify({ ledger: true }),
+    'amni.pro.v1': '{"key":"secret"}'
+  })
+  const saved = collectShareData('deck', storage)
+  assert.equal(saved['amnideck.prices.v1'], JSON.stringify({ 'board.hd': 12.5, 'joist.lowes': 8 }))
+  const sent = homeownerShareData('deck', storage)
+  assert.equal(saved['amnideck.prices.v1'].includes('12.5'), true)
+  assert.deepEqual(sent, stripSharePrices(saved))
+  assert.equal('amnideck.prices.v1' in sent, false)
+  assert.equal(Object.keys(sent).some(key => /\.prices\.v\d+$/.test(key) || key.toLowerCase().includes('prices')), false)
+  const decoded = decodePayload(encodePayload(sent, btoaImpl), atobImpl)
+  assert.equal(Object.keys(decoded).some(key => /\.prices\.v\d+$/.test(key)), false)
+  assert.equal(JSON.stringify(decoded).includes('prices'), false)
+  assert.equal(JSON.stringify(decoded).includes('12.5'), false)
+  assert.equal(decoded['amnideck.cfg.v2'].includes('"length":12'), true)
+  assert.equal(decoded['amnideck.guide.v1'], JSON.stringify({ ledger: true }))
+
+  const read = name => fs.readFileSync(path.join(__dirname, '../_shared', name), 'utf8')
+  const kit = read('ui-kit.js')
+  const shareHandler = kit.slice(kit.indexOf("$('#uk-share').addEventListener"), kit.indexOf("const ck = "))
+  assert.ok(shareHandler.includes('homeownerShareData('))
+  assert.ok(shareHandler.indexOf('homeownerShareData(') < shareHandler.indexOf('encodePayload('))
+  assert.equal(shareHandler.includes('collectShareData('), false)
+
+  const pro = read('pro.js')
+  const showcase = pro.slice(pro.indexOf("S('pro-show').onclick"), pro.indexOf('const brand = '))
+  assert.ok(showcase.includes('homeownerShareData('))
+  assert.ok(showcase.indexOf('homeownerShareData(') < showcase.indexOf('encodeDesign('))
+  const save = pro.slice(pro.indexOf("S('pro-proj-save').onclick"), pro.indexOf("S('pro-permit').onclick"))
+  assert.ok(save.includes('collectDesign()'))
+  assert.equal(save.includes('homeownerShareData('), false)
 })

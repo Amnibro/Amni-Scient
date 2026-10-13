@@ -23,14 +23,14 @@ export const PLUMB_RUNTYPES = [
   { type: 'dwv4', label: 'Drain 4"', color: '#e07b4a' },
 ]
 const FIX = {
-  lav: { dfu: 1, wsfu: 1, arm: 'dwv15', label: 'Lavatory' },
-  sink: { dfu: 2, wsfu: 2, arm: 'dwv15', label: 'Kitchen sink' },
-  toilet: { dfu: 3, wsfu: 3, arm: 'dwv3', label: 'Toilet', isWC: true },
-  tub: { dfu: 2, wsfu: 2, arm: 'dwv15', label: 'Tub' },
-  shower: { dfu: 2, wsfu: 2, arm: 'dwv2', label: 'Shower' },
-  washer: { dfu: 2, wsfu: 2, arm: 'dwv2', label: 'Washer' },
-  hosebibb: { dfu: 0, wsfu: 2.5, label: 'Hose bibb', supplyOnly: true },
-  waterheater: { dfu: 0, wsfu: 0, label: 'Water heater', supplyOnly: true },
+  lav: { dfu: 1, wsfu: 1, stops: 2, arm: 'dwv15', label: 'Lavatory' },
+  sink: { dfu: 2, wsfu: 1.4, stops: 2, arm: 'dwv15', label: 'Kitchen sink' },
+  toilet: { dfu: 3, wsfu: 2.2, stops: 1, arm: 'dwv3', label: 'Toilet', isWC: true },
+  tub: { dfu: 2, wsfu: 1.4, stops: 0, arm: 'dwv15', label: 'Tub' },
+  shower: { dfu: 2, wsfu: 1.4, stops: 0, arm: 'dwv2', label: 'Shower' },
+  washer: { dfu: 2, wsfu: 1.4, stops: 2, arm: 'dwv2', label: 'Washer' },
+  hosebibb: { dfu: 0, wsfu: 2.5, stops: 1, label: 'Hose bibb', supplyOnly: true },
+  waterheater: { dfu: 0, wsfu: 0, stops: 1, label: 'Water heater', supplyOnly: true },
 }
 const DWV_CAP = { dwv15: 3, dwv2: 6, dwv3: 20, dwv4: 160 }
 const TRAP_ARM = { dwv15: 6, dwv2: 8, dwv3: 12, dwv4: 16 }
@@ -67,7 +67,7 @@ export function validatePlumb(scene, m) {
   }
   for (const r of dwvRuns(scene)) { const dfu = runDFU[r.id] || 0, cap = DWV_CAP[r.type] || 0; if (dfu > cap) checks.push({ level: 'fail', msg: sizeName(r.type) + ' drain carries ' + dfu + ' DFU — exceeds its ' + cap + '-DFU capacity, upsize it [IPC Table 710.1(2)]' }) }
   if (mains.length && dwvRuns(scene).length && !cleanouts.length) checks.push({ level: 'warn', msg: 'No cleanout placed — required at the building drain and on long/abrupt runs [IPC 708]' })
-  const wsfu = scene.nodes.reduce((s, n) => s + ((FIX[n.type] || {}).wsfu || 0), 0)
+  const wsfu = Math.round(scene.nodes.reduce((s, n) => s + ((FIX[n.type] || {}).wsfu || 0), 0) * 10) / 10
   if (wsfu) checks.push({ level: 'ok', msg: 'Total supply demand ~' + wsfu + ' WSFU — size the meter/main accordingly [IPC App E]' })
   if (dwvRuns(scene).length) checks.push({ level: 'ok', msg: 'Slope drains ¼"/ft (3"+ may use ⅛"/ft) [IPC 704.1]' })
   return checks
@@ -76,10 +76,10 @@ export function validatePlumb(scene, m) {
 export function bomPlumb(scene, m) {
   const o = [], ft = {}
   for (const r of scene.runs) ft[r.type] = (ft[r.type] || 0) + runLengthFt(r, scene)
-  const supKey = { sup12: 'pex', sup34: 'pex34' }, dwvKey = { dwv15: 'vent', dwv2: 'vent', dwv3: 'dwv3', dwv4: 'dwv4' }
+  const supKey = { sup12: 'pex', sup34: 'pex34' }, dwvKey = { dwv15: 'dwv15', dwv2: 'vent', dwv3: 'dwv3', dwv4: 'dwv4' }
   for (const k in ft) { if (supKey[k]) o.push({ key: supKey[k], qty: Math.ceil(ft[k] / 100), unit: 'coil', note: Math.round(ft[k]) + ' ft' }); else if (dwvKey[k]) o.push({ key: dwvKey[k], qty: Math.ceil(ft[k] / 10), unit: '10ft', note: Math.round(ft[k]) + ' ft' }) }
   const fixtures = scene.nodes.filter(n => FIX[n.type] && !FIX[n.type].supplyOnly); if (fixtures.length) o.push({ key: 'trap', qty: fixtures.length, unit: 'ea' })
-  const stops = scene.nodes.filter(n => FIX[n.type]).reduce((s, n) => s + (FIX[n.type].supplyOnly ? 1 : 2), 0); if (stops) o.push({ key: 'stop', qty: stops, unit: 'ea' })
+  const stops = scene.nodes.reduce((s, n) => s + ((FIX[n.type] || {}).stops || 0), 0); if (stops) o.push({ key: 'stop', qty: stops, unit: 'ea' })
   if (m.nodeCounts.waterheater) o.push({ key: 'heater', qty: m.nodeCounts.waterheater, unit: 'ea' })
   const fittings = (m.elbows || 0) + (m.branches || 0) + scene.runs.length; if (fittings) o.push({ key: 'fitting', qty: fittings, unit: 'ea' })
   if (m.nodeCounts.cleanout) o.push({ key: 'cleanout', qty: m.nodeCounts.cleanout, unit: 'ea' })
@@ -106,7 +106,7 @@ export function makePlumbTrade() {
   return {
     name: 'plumb', palette: PLUMB_PALETTE, runTypes: PLUMB_RUNTYPES, bom: bomPlumb, validate: validatePlumb, runBadges: plumbRunBadges, templates: PLUMB_TEMPLATES,
     trapTypes: ['lav', 'sink', 'shower', 'tub', 'washer'], ventTypes: ['vent'],
-    stock: { sup12: { len: 100, key: 'pex', unitName: 'PEX coil' }, sup34: { len: 100, key: 'pex34', unitName: 'PEX coil' }, dwv15: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv2: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv3: { len: 10, key: 'dwv3', unitName: 'PVC stick' }, dwv4: { len: 10, key: 'dwv4', unitName: 'PVC stick' }, fittingKey: 'fitting', fixtures: { waterheater: 'heater', cleanout: 'cleanout' } },
+    stock: { sup12: { len: 100, key: 'pex', unitName: 'PEX coil' }, sup34: { len: 100, key: 'pex34', unitName: 'PEX coil' }, dwv15: { len: 10, key: 'dwv15', unitName: 'PVC stick' }, dwv2: { len: 10, key: 'vent', unitName: 'PVC stick' }, dwv3: { len: 10, key: 'dwv3', unitName: 'PVC stick' }, dwv4: { len: 10, key: 'dwv4', unitName: 'PVC stick' }, fittingKey: 'fitting', fixtures: { waterheater: 'heater', cleanout: 'cleanout' } },
     fittings: { bend: 'Elbow (90°)', branch: 'Tee / wye', elbowKey: 'fitting', teeKey: 'fitting' },
     nodeLabel: n => { const p = PLUMB_PALETTE.find(z => z.type === n.type); return p ? p.label : n.type },
   }

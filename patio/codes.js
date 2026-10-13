@@ -14,12 +14,13 @@ const lk = (url, txt) => `<a href="${url}" target="_blank" rel="noopener" style=
 const num = (c, k, d = 0) => { const v = c && c[k]; return v == null || isNaN(+v) ? d : +v }
 const TRADES = {
   deck(cfg, out, frost, rows) {
-    const h = num(cfg, 'height'), area = num(cfg, 'length') * num(cfg, 'depth'), led = cfg.attach === 'ledger'
+    const h = num(cfg, 'height'), area = Math.round(out?.calc?.area ?? num(cfg, 'length') * num(cfg, 'depth')), led = cfg.attach === 'ledger', known = !!ST[loc.st]
     const risers = out?.calc?.risers ?? 0, riser = out?.calc?.riser ?? ''
     led ? rows.push(box('', `Ledger-attached: a permit is required nearly everywhere${frost >= 30 ? `, and footings typically must bear below frost (~${frost}")` : ''}. Flash the ledger (IRC R507.9.1.3); deck blocks on grade are usually only OK freestanding.`)) : (area <= 200 && h < 30 ? rows.push(box('ok', `Freestanding, ${area} ft² ≤ 200 and under 30" high: often permit-EXEMPT (IRC R105.2(1)) if it doesn't serve the exit door — confirm with ${loc.city || 'your town'}.`)) : rows.push(box('', `Freestanding but ${area > 200 ? 'over 200 ft²' : '30"+ high'} — expect a permit.`)))
     rows.push(box(h >= 30 ? '' : 'ok', h >= 30 ? `Deck ${h}" above grade: guards REQUIRED — 36" min, 4" sphere rule (IRC R312).` : `Deck ${h}" above grade (<30"): guards optional per IRC R312 — many towns still want them.`))
     risers > 0 && rows.push(box('info', `Stairs: ${risers} risers @ ${esc(riser)} (IRC R311.7, max 7-3/4" rise). ${risers >= 4 ? 'A graspable handrail 34-38" is required (4+ risers).' : 'Under 4 risers: handrail optional most places.'}`))
     rows.push(box('info', `Connections: ledger lags/LedgerLOK to the rim (R507.9), joists in hangers, posts on footings R507.3 / R403, lateral-load anchors R507.9.2. See the 2D detail sheets.`))
+    known && cfg.foundation !== 'pier' && cfg.foundation !== 'deckblock' && (frost > 48 ? rows.push(box('', `Frost depth here is ~${frost}", deeper than the 48" piers this plan draws. Dig every footing to at least ${frost}" (or your inspector's number) and extend the tube forms. An 8" hole takes about 0.35 cu ft of concrete (0.8 of a 60 lb bag) per foot of depth.`)) : frost < 12 && rows.push(box('info', `Frost depth here is ~${frost}". The plan's 48" piers are conservative; your building department may accept shallower footings (12" is a common minimum), which cuts concrete.`)))
   },
   patio(cfg, out, frost, rows) {
     const area = out?.calc?.area_ft2 ?? 0

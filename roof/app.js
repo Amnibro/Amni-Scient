@@ -1,14 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { initPermits, updatePermits } from './codes.js?v=fix1'
-import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=hd1'
+import { initPermits, updatePermits } from './codes.js?v=cp1'
+import { initMapTrace, sitePlanSVG, cropForPlan, mapPlanSnapshot } from './maptrace.js?v=cp1'
 import { initAutoDetect } from './autodetect.js?v=1'
+import { money, parsePrice, priceBom, bomCsv, fitNum, sanitizeCfg, coreError, rectHip } from '../_shared/est-math.js?v=cp1'
 const LS = 'amniroof.cfg.v1', LSP = 'amniroof.prices.v1'
 const defCfg = { mode: 'rect', w: 40, d: 30, polygon: null, pitch: 6, material: 'arch', roof_type: 'gable', overhang_in: 12, house_edge: 0 }
-let cfg = (() => { try { return { ...defCfg, ...JSON.parse(localStorage.getItem(LS)) } } catch { return { ...defCfg } } })()
+let cfg = sanitizeCfg((() => { try { return JSON.parse(localStorage.getItem(LS)) } catch { return null } })(), defCfg, { mode: ['rect', 'poly'], material: ['arch', '3tab', 'metal', 'synthetic'], roof_type: ['gable', 'hip'] })
 let out = null
-let priceEdits = (() => { try { return JSON.parse(localStorage.getItem(LSP)) || {} } catch { return {} } })()
+let priceEdits = (() => { try { return Object.fromEntries(Object.entries(JSON.parse(localStorage.getItem(LSP)) || {}).map(([k, v]) => [k, parsePrice(v)]).filter(([, v]) => v != null)) } catch { return {} } })()
 let catalog = {}
 const $ = s => document.querySelector(s)
 const FINISHES = { arch: ['#5a6b78', 'Architectural'], '3tab': ['#6e7d88', '3-tab'], metal: ['#9aa6ad', 'Metal'], synthetic: ['#4f6470', 'Synthetic'] }
@@ -160,13 +161,13 @@ const renderGuide = () => {
     ['✅ Cleanup + final', ['Run a magnetic sweeper over the lawn/drive several times — nails hide everywhere.', 'Clean gutters, recheck all flashing + sealant, photograph for the warranty.', 'Call for the FINAL inspection before you call it done.']],
   ]
   const tools = ['Roofing nailer + compressor (or hammer-tacker)', 'Tear-off shovel / pry bar', 'Hook-blade utility knife (+ spare blades)', 'Chalk line', 'Tin snips for flashing', 'Caulk gun + roofing sealant', 'Flat bar + roofing hatchet', 'Extension ladder + roof jacks/brackets', 'Harness + rope grab + ridge anchor', 'Magnetic sweeper', 'Tarps']
-  let cost = 0; (out.bom || []).forEach(it => { const p = price(it.id, 'hd'); if (p != null) cost += p * it.qty })
+  const cost = priceBom(out.bom, price).th
   const chk = phases.map((ph, pi) => `<div style="${SEC}"><div style="${GH}">${ph[0]}</div>${ph[1].map((t, ii) => { const k = pi + ':' + ii, on = gChk[k]; return `<label style="display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-gk="${k}" ${on ? 'checked' : ''} style="margin-top:3px;accent-color:var(--acc);flex:none"><span style="${on ? 'color:var(--mut);text-decoration:line-through' : ''}">${t}</span></label>` }).join('')}</div>`).join('')
   body.innerHTML = `<div style="color:var(--mut);font-size:13px;margin-bottom:14px">A pro install sequence for your <b>${c.squares.toFixed(1)}-square ${cfg.roof_type}</b> roof. Tick steps as you go. Pair with sheets RF-1 (plan) + RF-2 (details).</div>`
     + chk
     + guideList('🔍 Inspections', ['Many jurisdictions want a <b>dry-in / underlayment</b> inspection BEFORE you shingle — call first.', 'Final after cap + flashing + cleanup.', 'Photograph the ice &amp; water, flashing, and ridge slot for the warranty + inspector.'])
     + guideList('🧰 Tools', tools)
-    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">$${cost.toFixed(0)}</b> in materials (Home Depot catalog) for ${c.squares.toFixed(1)} squares — edit prices on the Materials tab. Labor (tear-off + install) typically adds $3.50-7/ft².</div></div>`
+    + `<div style="${SEC}"><div style="${GH}">💵 Materials estimate</div><div style="font-size:13px;color:var(--ink)">~<b style="color:var(--ok)">${money(cost, 0)}</b> in materials (Home Depot catalog) for ${c.squares.toFixed(1)} squares — edit prices on the Materials tab. Tear-off + install labor typically adds $4–$7 per ft² of roof.</div></div>`
   body.querySelectorAll('input[data-gk]').forEach(el => el.onchange = () => { gChk[el.dataset.gk] = el.checked; localStorage.setItem(G_LS, JSON.stringify(gChk)); renderGuide() })
 }
 const price = (id, store) => priceEdits[`${id}.${store}`] ?? catalog[id]?.[store] ?? null
@@ -174,22 +175,20 @@ const renderMat = () => {
   if (!out) return
   const c = out.calc
   $('#mat-summary').innerHTML = [[`${c.squares.toFixed(1)}`, 'squares'], [`${c.bundles}`, 'bundles'], [`${c.roof_area_ft2.toFixed(0)} ft²`, 'roof area'], [`${c.pitch}:12`, 'pitch'], [`${c.eave_ft.toFixed(0)} ft`, 'eaves']].map(([b, s]) => `<div class="chip"><b>${b}</b><span>${s}</span></div>`).join('') + '<div style="flex-basis:100%;font-size:12px;color:var(--mut);margin-top:2px">Bundle counts include ~10–15% waste for cuts, hips/valleys, starter + ridge cap — add more for a very cut-up roof.</div>'
-  let th = 0, tl = 0
-  const rows = out.bom.map(it => {
+  const pb = priceBom(out.bom, price), th = pb.th, tl = pb.tl
+  const rows = pb.rows.map(({ it, ph, pl, lh, ll }) => {
     const cat = catalog[it.id] || {}
-    const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes')
-    ph != null && (th += ph * it.qty); pl != null && (tl += pl * it.qty)
     const link = (store, q) => q ? `<a href="https://www.${store === 'hd' ? 'homedepot' : 'lowes'}.com/s/${encodeURIComponent(q)}" target="_blank" rel="noopener">↗</a>` : ''
-    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${ph != null ? '$' + (ph * it.qty).toFixed(2) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${pl != null ? '$' + (pl * it.qty).toFixed(2) : '—'}</td></tr>`
+    return `<tr><td>${it.desc}</td><td>${it.qty}</td><td><input data-id="${it.id}" data-store="hd" value="${ph ?? ''}"> ${link('hd', cat.hdq)}</td><td>${lh != null ? money(lh) : '—'}</td><td><input data-id="${it.id}" data-store="lowes" value="${pl ?? ''}"> ${link('lowes', cat.lq)}</td><td>${ll != null ? money(ll) : '—'}</td></tr>`
   }).join('')
-  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>$${th.toFixed(0)}</b> + typical install labor <b>$${(c.roof_area_ft2 * 4).toFixed(0)}–$${(c.roof_area_ft2 * 7).toFixed(0)}</b> (${c.roof_area_ft2.toFixed(0)} ft² roof × $4–$7/ft²) = <b style="color:var(--ok)">$${(th + c.roof_area_ft2 * 4).toFixed(0)}–$${(th + c.roof_area_ft2 * 7).toFixed(0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Tear-off + install labor; a DIY reroof saves it but roofing is dangerous work. Rough regional guide — get local quotes.</div></div></td></tr>`
-  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">$${th.toFixed(2)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">$${tl.toFixed(2)}</td></tr>${allIn}`
-  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parseFloat(i.value); isNaN(v) ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
+  const allIn = `<tr><td colspan="6" style="padding-top:16px"><div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px"><div style="color:var(--acc);font-weight:600;margin-bottom:6px">💪 Installed / all-in estimate</div><div style="font-size:13px;color:var(--ink)">Materials <b>${money(th, 0)}</b> + typical install labor <b>${money((c.roof_area_ft2 * 4), 0)}–${money((c.roof_area_ft2 * 7), 0)}</b> (${c.roof_area_ft2.toFixed(0)} ft² roof × $4–$7/ft²) = <b style="color:var(--ok)">${money((th + c.roof_area_ft2 * 4), 0)}–${money((th + c.roof_area_ft2 * 7), 0)} installed</b></div><div style="font-size:12px;color:var(--mut);margin-top:5px">Tear-off + install labor; a DIY reroof saves it but roofing is dangerous work. Rough regional guide — get local quotes.</div></div></td></tr>`
+  $('#mat-table').innerHTML = `<tr><th>Item</th><th>Qty</th><th>HD $</th><th>HD total</th><th>Lowes $</th><th>Lowes total</th></tr>${rows}<tr><td class="tot">TOTALS</td><td></td><td></td><td class="tot ${th <= tl ? 'best' : ''}">${money(th)}</td><td></td><td class="tot ${tl < th ? 'best' : ''}">${money(tl)}</td></tr>${allIn}`
+  document.querySelectorAll('#mat-table input').forEach(i => i.onchange = () => { const v = parsePrice(i.value); v == null ? delete priceEdits[`${i.dataset.id}.${i.dataset.store}`] : priceEdits[`${i.dataset.id}.${i.dataset.store}`] = v; localStorage.setItem(LSP, JSON.stringify(priceEdits)); renderMat() })
 }
 const parsePaste = (text, store) => {
   const filled = []
   const norm = text.toLowerCase()
-  for (const it of out.bom) {
+  for (const it of out ? out.bom : []) {
     const c = catalog[it.id]
     if (!c) continue
     const toks = (store === 'hd' ? c.hdq : c.lq).toLowerCase().split(/\s+/).filter(t => t.length > 1)
@@ -228,8 +227,9 @@ const fitCam = () => {
   cam.position.set(cx + ux * span, span * 0.9 + 4, -(cy + uy * span))
 }
 const recompute = () => {
-  out = callCore(cfg)
-  if (out.error) { $('#warns').innerHTML = `<div class="warn">${out.error}</div>`; return }
+  try { out = callCore(cfg) } catch (e) { out = { error: e.message } }
+  if (out.error) { const msg = coreError(out.error); out = null; $('#warns').innerHTML = `<div class="warn">${msg}</div>`; $('#mat-summary').innerHTML = ''; $('#mat-table').innerHTML = `<tr><td style="color:var(--warn)">No estimate yet. ${msg}</td></tr>`; return }
+  cfg.mode === 'rect' && cfg.roof_type === 'hip' && (out = rectHip(out, cfg.w, cfg.d))
   persist(); rebuild3D(); fitCam(); renderPlans(); renderMat(); renderWarns(); renderGuide(); updatePermits()
 }
 let MV = null
@@ -323,7 +323,7 @@ const buildFinishes = () => {
   })
 }
 const initUI = () => {
-  const bind = (id, key, num = true) => { const el = $(id); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? +el.value : el.value; recompute() } }
+  const bind = (id, key, num = true) => { const el = $(id); num && el.type === 'number' && (cfg[key] = fitNum(cfg[key], el, defCfg[key])); el.value = cfg[key]; el.onchange = () => { cfg[key] = num ? el.type === 'number' ? fitNum(el.value, el, cfg[key]) : +el.value : el.value; el.value = cfg[key]; recompute() } }
   bind('#w', 'w'); bind('#d', 'd'); bind('#pitch', 'pitch'); bind('#material', 'material', false); bind('#rooftype', 'roof_type', false); bind('#overhang', 'overhang_in'); bind('#house', 'house_edge')
   document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
     cfg.mode = b.dataset.v
@@ -345,16 +345,17 @@ const initUI = () => {
   $('#open-all-hd').onclick = () => out && out.bom.slice(0, 6).forEach(it => catalog[it.id]?.hdq && window.open(`https://www.homedepot.com/s/${encodeURIComponent(catalog[it.id].hdq)}`, '_blank'))
   $('#reset-prices').onclick = () => { priceEdits = {}; localStorage.removeItem(LSP); renderMat() }
   $('#export-csv').onclick = () => {
-    const csv = ['Item,Qty,HD each,HD total,Lowes each,Lowes total', ...out.bom.map(it => { const ph = price(it.id, 'hd'), pl = price(it.id, 'lowes'); return `"${it.desc}",${it.qty},${ph ?? ''},${ph != null ? (ph * it.qty).toFixed(2) : ''},${pl ?? ''},${pl != null ? (pl * it.qty).toFixed(2) : ''}` })].join('\n')
+    if (!out) return
+    const csv = bomCsv(out.bom, price)
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: 'roof-materials.csv' })
     a.click()
   }
-  $('#dl-svg').onclick = () => { ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `roof-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'roof-site-plan.svg' }).click() }
+  $('#dl-svg').onclick = () => { if (!out) return; ['layout', 'details'].forEach(k => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([out.svgs[k]], { type: 'image/svg+xml' })), download: `roof-${k}.svg` }); a.click() }); const sw = $('#svg-site'); sw && Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([sw.innerHTML], { type: 'image/svg+xml' })), download: 'roof-site-plan.svg' }).click() }
   buildFinishes()
   initPermits(() => ({ ...cfg, height: 0, attach: cfg.house_edge >= 0 ? 'house' : 'free', length: 0, depth: 0 }), () => out)
   if (cfg.mode === 'poly' && cfg.polygon) { $('#rw').style.display = 'none'; $('#rd').style.display = 'none'; document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === 'poly')); const edges = cfg.polygon.map((a, i) => { const b2 = cfg.polygon[(i + 1) % cfg.polygon.length]; return Math.hypot(b2[0] - a[0], b2[1] - a[1]) }); const sel = $('#house'); sel.innerHTML = '<option value="-1">Freestanding</option>' + edges.map((L, i) => `<option value="${i}">Edge ${i + 1} (${L.toFixed(1)} ft) = house</option>`).join(''); sel.value = String(cfg.house_edge) }
 }
-catalog = await fetch('catalog.json').then(r => r.json()).catch(() => ({}))
+catalog = await fetch('catalog.json?v=cp1').then(r => r.json()).catch(() => ({}))
 initUI()
 resize()
 tDraw()

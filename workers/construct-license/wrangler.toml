@@ -1,0 +1,29 @@
+name = "construct-license"
+main = "worker.mjs"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# This worker is separate from braid-license. Do not point Braid's webhook here.
+#
+# Before deploy, create the namespace and replace the id:
+#   wrangler kv namespace create CONSTRUCT_LICENSES
+#
+# Secrets (wrangler secret put …). Never commit these:
+#   STRIPE_SECRET
+#   STRIPE_WEBHOOK_SECRET
+#   SIGNING_JWK          # private JWK from: node keygen.mjs
+#   ADMIN_TOKEN          # optional, for /admin/reissue and /admin/reset-devices
+#
+# Payment Link: set the success URL to
+#   https://amni-scient.com/construct/claim.html?session_id={CHECKOUT_SESSION_ID}
+# and metadata product=construct-pro (or set STRIPE_PRICE_ID below to the Price id).
+
+[vars]
+# TODO(anthony): confirm the device cap. Suggested: 3. Must match AMNI_PRO_MAX_DEVICES in _shared/pro-config.js.
+MAX_DEVICES = "3"
+# STRIPE_PRICE_ID = "price_..."
+
+[[kv_namespaces]]
+binding = "LICENSES"
+id = "00000000000000000000000000000000"
+preview_id = "00000000000000000000000000000000"

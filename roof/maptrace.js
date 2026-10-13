@@ -153,11 +153,12 @@ export const mapPlanSnapshot = async (M, tcW, tcH, poly, pxPerFt) => {
   try { snap = out.toDataURL('image/jpeg', 0.88) } catch {}
   return { snap, w: w2, h: h2, poly: poly.map(p => [(p[0] - sx) * f, (p[1] - sy) * f]), pxPerFt: pxPerFt * f }
 }
+const xesc = s => String(s ?? '').replace(/[&<>'"]/g, c => `&#${c.charCodeAt(0)};`)
 export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footprint, northUp = true }) => {
   const pad = 30, tb = 140
   const W = w + 2 * pad, H = h + tb + 2 * pad
   let s = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}' font-family='monospace'><rect width='${W}' height='${H}' fill='#fff'/>`
-  s += `<text x='${pad}' y='24' font-size='18' font-weight='bold' fill='#111'>${title}</text>`
+  s += `<text x='${pad}' y='24' font-size='18' font-weight='bold' fill='#111'>${xesc(title)}</text>`
   if (snap) s += `<image x='${pad}' y='${pad + 14}' width='${w}' height='${h}' href='${snap}'/>`
   const oy = pad + 14
   if (poly && poly.length > 2) {
@@ -180,8 +181,8 @@ export const sitePlanSVG = ({ snap, w, h, poly, pxPerFt, title, address, footpri
   const ty = oy + h + 24
   s += `<rect x='${pad}' y='${ty}' width='${w}' height='${tb - 34}' fill='#f6f6f6' stroke='#999'/>`
   s += `<text x='${pad + 12}' y='${ty + 24}' font-size='14' fill='${northUp ? '#111' : '#a00'}' font-weight='bold'>${northUp ? 'SITE / TOP-DOWN PLAN — FOR PERMIT REVIEW' : 'PHOTO REFERENCE SKETCH — NOT FOR PERMIT SUBMISSION'}</text>`
-  s += `<text x='${pad + 12}' y='${ty + 46}' font-size='12.5' fill='#333'>${(address || 'Site: (address not set — traced from photo)').slice(0, 120)}</text>`
-  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${footprint.slice(0, 120)}</text>`
+  s += `<text x='${pad + 12}' y='${ty + 46}' font-size='12.5' fill='#333'>${xesc((address || 'Site: (address not set — traced from photo)').slice(0, 120))}</text>`
+  s += `<text x='${pad + 12}' y='${ty + 66}' font-size='12.5' fill='#333'>${xesc(String(footprint ?? '').slice(0, 120))}</text>`
   s += `<text x='${pad + 12}' y='${ty + 86}' font-size='12.5' fill='#333'>${northUp ? `Scale: 1 px = ${(1 / pxPerFt).toFixed(3)} ft · North-up imagery` : 'PERSPECTIVE PHOTO — dimensions approximate, verify on site'} · Generated ${new Date().toISOString().slice(0, 10)} · amni-scient.com</text>`
   return s + '</svg>'
 }
