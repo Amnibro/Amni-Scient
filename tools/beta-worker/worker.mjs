@@ -50,7 +50,7 @@ const remove = async (req, env, url) => {
   const r = await (app ? env.DB.prepare('DELETE FROM signups WHERE email = ? AND app = ?').bind(email, app) : env.DB.prepare('DELETE FROM signups WHERE email = ?').bind(email)).run()
   return json(200, { ok: true, deleted: r.meta.changes })
 }
-const TESTS = [['Amni-Chat', 'com.amniscient.chat'], ['Amni-Map', 'com.amniscient.map'], ['Amni-Type', 'ai.amni.type'], ['Amni-Learn', 'com.amnilearn.mobile'], ['ContAIgion', 'com.amni.contaigion'], ['HumAInity', 'com.amni.humainity']], GROUP = 'https://groups.google.com/g/amni-scient-testers', SITE = 'https://amni-scient.com', enc = s => new TextEncoder().encode(s)
+const TESTS = [['Amni-Chat', 'com.amniscient.chat'], ['Amni-Map', 'com.amniscient.map'], ['Amni-Type', 'com.amniscient.type'], ['Amni-Learn', 'com.amnilearn.mobile'], ['ContAIgion', 'com.amni.contaigion'], ['HumAInity', 'com.amni.humainity']], GROUP = 'https://groups.google.com/g/amni-scient-testers', SITE = 'https://amni-scient.com', enc = s => new TextEncoder().encode(s)
 const b64u = b => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 const unb64u = s => { try { return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))) } catch { return '' } }
 export const unsubSig = async (secret, email) => b64u(new Uint8Array(await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', enc(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), enc(email)))).slice(0, 22)
