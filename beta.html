@@ -76,7 +76,7 @@
 .b-check:has(input:checked){border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:var(--accent-dim)}
 .b-check:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .b-check img{width:28px;height:28px;border-radius:22%}
-.b-check{white-space:nowrap}
+.b-check{white-space:nowrap}.b-future{white-space:normal;margin-top:.8rem;align-items:flex-start}.b-future small{color:var(--text-soft);font-size:.8rem}
 @media(max-width:420px){.b-check img{display:none}}
 @media(min-width:421px){.b-checks{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
 .b-check input,.b-seg input,.b-consent input{width:18px;height:18px;accent-color:var(--accent);flex:0 0 18px;margin:0}
@@ -330,7 +330,7 @@
 </div>
 <fieldset class="b-field" aria-describedby="bf-apps-hint bf-apps-err">
 <legend>Apps to test</legend>
-<p class="b-hint" id="bf-apps-hint">All of them are ticked. Untick any you&rsquo;d rather skip.</p>
+<p class="b-hint" id="bf-apps-hint">All of them are ticked. Untick any you&rsquo;d rather skip. The last box is for apps that aren&rsquo;t out yet.</p>
 <div class="b-checks">
 <label class="b-check"><input type="checkbox" name="apps" value="chat" checked><img src="assets/beta/chat.webp" width="28" height="28" alt="" loading="lazy">Amni-Chat</label>
 <label class="b-check"><input type="checkbox" name="apps" value="learn" checked><img src="assets/beta/learn.webp" width="28" height="28" alt="" loading="lazy">Amni-Learn</label>
@@ -340,6 +340,7 @@
 <label class="b-check"><input type="checkbox" name="apps" value="contaigion" checked><img src="assets/beta/contaigion.webp" width="28" height="28" alt="" loading="lazy">ContAIgion</label>
 <label class="b-check"><input type="checkbox" name="apps" value="humainity" checked><img src="assets/beta/humainity.webp" width="28" height="28" alt="" loading="lazy">HumAInity</label>
 </div>
+<label class="b-check b-future"><input type="checkbox" name="apps" value="future"><span><strong>Future apps too</strong><br><small>Keep me on the list for new apps as they reach testing. Leave this unticked and I may remove you once the apps above are done.</small></span></label>
 <p class="b-err" id="bf-apps-err" hidden></p>
 </fieldset>
 <fieldset class="b-field">
@@ -453,7 +454,7 @@
 const apps=()=>[...f.querySelectorAll('input[name=apps]:checked')].map(i=>i.value),dev=()=>f.querySelector('input[name=device]:checked').value,show=(id,m)=>{const p=g(id),i=id==='bf-apps-err'?null:g(id.replace('-err',''));p.textContent=m||'';p.hidden=!m;i&&i.setAttribute('aria-invalid',m?'true':'false')};
 const check=()=>{const e=em.value.trim(),h=hd.value.trim(),r=[['bf-email-err',!e?'Enter your email address.':!E.test(e)||e.length>254?'That doesn’t look like an email address.':''],['bf-apps-err',apps().length?'':'Pick at least one app.'],['bf-handle-err',H.test(h)?'':MSG.invalid_handle[1]],['bf-consent-err',cs.checked?'':'Please tick the box to continue.']];r.forEach(([id,m])=>show(id,m));const bad=r.find(([,m])=>m);bad&&({'bf-email-err':em,'bf-apps-err':f.querySelector('input[name=apps]'),'bf-handle-err':hd,'bf-consent-err':cs})[bad[0]].focus();return!bad};
 const li=(k,href,label)=>{const l=document.createElement('li'),i=document.createElement('img'),s=document.createElement('strong'),a=document.createElement('a');i.src='assets/beta/'+k+'.webp';i.width=i.height=32;i.alt='';s.textContent=A[k][0];a.href=href;a.target='_blank';a.rel='noopener';a.className='btn btn-outline b-sm';a.textContent=label;l.append(i,s,a);return l};
-const finish=(ap,d,e)=>{const pl=d!=='iphone'?ap:[],tf=d!=='android'?ap.filter(k=>A[k][2]):[];g('beta-done-email').textContent=e;g('beta-done-links').replaceChildren(...pl.map(k=>li(k,A[k][1],A[k][1].endsWith('.apk')?'Download APK':'Google Play test')));g('beta-done-tflinks').replaceChildren(...tf.map(k=>li(k,'https://testflight.apple.com/join/'+A[k][2],'TestFlight')));g('beta-done-play').hidden=!pl.length;g('beta-done-tf').hidden=!tf.length;g('beta-done-msg').textContent=d==='iphone'?'Thank you! I’ll use your email to let you know about iPhone betas for the apps you picked.':'Thank you! I add testers by hand, usually within a day.';f.hidden=true;done.hidden=false;g('beta-done-h').focus()};
+const finish=(all,d,e)=>{const fu=all.includes('future'),ap=all.filter(k=>A[k]),pl=d!=='iphone'?ap:[],tf=d!=='android'?ap.filter(k=>A[k][2]):[];g('beta-done-email').textContent=e;g('beta-done-links').replaceChildren(...pl.map(k=>li(k,A[k][1],A[k][1].endsWith('.apk')?'Download APK':'Google Play test')));g('beta-done-tflinks').replaceChildren(...tf.map(k=>li(k,'https://testflight.apple.com/join/'+A[k][2],'TestFlight')));g('beta-done-play').hidden=!pl.length;g('beta-done-tf').hidden=!tf.length;g('beta-done-msg').textContent=(!ap.length?'Thank you! You’re on the list for future apps.':d==='iphone'?'Thank you! I’ll use your email to let you know about iPhone betas for the apps you picked.':'Thank you! I add testers by hand, usually within a day.')+(fu&&ap.length?' You’ll hear about new apps too.':'');f.hidden=true;done.hidden=false;g('beta-done-h').focus()};
 f.addEventListener('change',e=>{e.target.name==='device'&&(g('bf-email-hint').textContent=hint[dev()]);e.target.name==='apps'&&apps().length&&show('bf-apps-err','');e.target===cs&&cs.checked&&show('bf-consent-err','')});
 document.querySelectorAll('a[data-app]').forEach(a=>a.addEventListener('click',()=>{f.querySelector('input[name=apps][value='+a.dataset.app+']').checked=true;done.hidden||(done.hidden=true,f.hidden=false);setTimeout(()=>em.focus({preventScroll:true}),350)}));
 g('beta-again').addEventListener('click',()=>{f.reset();done.hidden=true;f.hidden=false;st.textContent='';setTimeout(()=>em.focus({preventScroll:true}),50)});

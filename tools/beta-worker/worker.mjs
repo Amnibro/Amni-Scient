@@ -1,4 +1,4 @@
-export const APPS = ['crypt', 'chat', 'learn', 'map', 'type', 'contaigion', 'humainity', 'haven'], DEVICES = ['android', 'iphone', 'both'], MAX_BODY = 2048, RL_LIMIT = 10, RL_TTL = 3600, CAP = 50000, SOURCES = ['link', 'reply', 'admin', 'bounce']
+export const APPS = ['crypt', 'chat', 'learn', 'map', 'type', 'contaigion', 'humainity', 'haven', 'future'], DEVICES = ['android', 'iphone', 'both'], MAX_BODY = 2048, RL_LIMIT = 10, RL_TTL = 3600, CAP = 50000, SOURCES = ['link', 'reply', 'admin', 'bounce']
 const KEYS = new Set(['email', 'apps', 'device', 'handle', 'consent', 'website'])
 const EMAIL = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/
 const HANDLE = /^[\p{L}\p{N} ._'-]{1,40}$/u
@@ -38,7 +38,12 @@ const admin = async (req, env, url) => same(url.searchParams.get('key') || (req.
 const cell = v => { const s = String(v ?? ''), t = /^[=+\-@\t\r]/.test(s) ? "'" + s : s; return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t }
 const exportCsv = async (req, env, url) => {
   if (!await admin(req, env, url)) return json(401, { ok: false, error: 'unauthorized' })
-  const app = url.searchParams.get('app'), cols = 'SELECT email, app, device, handle, created_at FROM signups'
+  const app = url.searchParams.get('app'), notin = url.searchParams.get('notin'), cols = 'SELECT email, app, device, handle, created_at FROM signups'
+  if (notin) {
+    if (!APPS.includes(notin)) return json(400, { ok: false, error: 'invalid_apps' })
+    const r = await env.DB.prepare('SELECT DISTINCT email FROM signups WHERE email NOT IN (SELECT email FROM signups WHERE app = ?) ORDER BY email').bind(notin).all()
+    return text(r.results.map(x => x.email).join(url.searchParams.get('format') === 'emails' ? ',' : '\n') + '\n', 'text/plain; charset=utf-8')
+  }
   if (app && !APPS.includes(app)) return json(400, { ok: false, error: 'invalid_apps' })
   const { results } = await (app ? env.DB.prepare(cols + ' WHERE app = ? ORDER BY created_at').bind(app) : env.DB.prepare(cols + ' ORDER BY app, created_at')).all()
   return url.searchParams.get('format') === 'emails' ? text([...new Set(results.map(r => r.email))].join(',') + '\n', 'text/plain; charset=utf-8') : text(['email,app,device,handle,created_at', ...results.map(r => [r.email, r.app, r.device, r.handle, r.created_at].map(cell).join(','))].join('\n') + '\n', 'text/csv; charset=utf-8', { 'Content-Disposition': 'attachment; filename="amni-beta-signups.csv"' })

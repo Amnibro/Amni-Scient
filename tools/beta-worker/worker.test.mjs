@@ -106,3 +106,11 @@ test('signing up again clears suppression', async () => {
   const env = mk(); await adm(env, '/admin/suppress', { email: 'tester@gmail.com', source: 'reply' }); assert.equal(sup(env).length, 1)
   assert.equal((await post(env, good())).status, 200); assert.equal(sup(env).length, 0)
 })
+test('future-apps opt-in is a normal signup row and the export can list everyone without it', async () => {
+  const env = mk(); await post(env, good({ email: 'in@g.co', apps: ['chat', 'future'] })); await post(env, good({ email: 'out@g.co', apps: ['chat'] })); await post(env, good({ email: 'only@g.co', apps: ['future'] }))
+  assert.equal((await post(env, good({ email: 'x@g.co', apps: ['future', 'evil'] }))).status, 400)
+  const r = await get(env, '/export?notin=future&format=emails', { Authorization: 'Bearer ' + KEY })
+  assert.equal(r.status, 200); assert.equal((await r.text()).trim(), 'out@g.co')
+  assert.equal((await get(env, '/export?notin=nope', { Authorization: 'Bearer ' + KEY })).status, 400)
+  assert.equal((await get(env, '/export?notin=future')).status, 401)
+})
