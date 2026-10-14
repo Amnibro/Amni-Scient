@@ -1,6 +1,7 @@
 import opencascade from './vendor/replicad_single.js';
 import * as K from './kernel.js';
 const blobs={};
+let ghostMemo={shape:null,mesh:null};
 let ready=null,last=null,lastDoc=null;
 async function boot(){const oc=await opencascade({locateFile:()=>new URL('./vendor/replicad_single.wasm',import.meta.url).href,print:()=>{},printErr:()=>{}});await K.init(oc);return true;}
 ready=boot();
@@ -18,9 +19,11 @@ self.onmessage=e=>{
       if(m.cmd==='blob'){blobs[m.key]=m.buf;return postMessage({id:m.id,ok:true});}
       if(m.cmd==='build'){
         const r=await K.build(m.doc,{blobs,upto:m.upto});last=r.body;lastDoc=m.doc;
-        const mesh=K.meshBody(r.body,m.q||1);
-        const tr=mesh?[mesh.pos.buffer,mesh.nrm.buffer,mesh.idx.buffer,mesh.lines.buffer]:[];
-        return postMessage({id:m.id,ok:true,mesh,errors:r.errors,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
+        const gi=m.ghost?m.doc.features.filter(f=>!f.suppressed).findIndex(f=>f.id===m.ghost):-1,gs=gi>0?K.shapeBefore(gi):null;
+        if(gs&&ghostMemo.shape!==gs)ghostMemo={shape:gs,mesh:K.meshBody(gs,m.q||1)};
+        const mesh=gs?ghostMemo.mesh:K.meshBody(r.body,m.q||1),preview=gs?K.meshBody(r.body,m.q||1):null;
+        const tr=gs?(preview?[preview.pos.buffer,preview.nrm.buffer,preview.idx.buffer,preview.lines.buffer]:[]):mesh?[mesh.pos.buffer,mesh.nrm.buffer,mesh.idx.buffer,mesh.lines.buffer]:[];
+        return postMessage({id:m.id,ok:true,mesh,preview,errors:r.errors,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
       }
       if(m.cmd==='export'){
         const b=K.exportBody(last,m.fmt,lastDoc&&lastDoc.units),buf=await b.arrayBuffer();
