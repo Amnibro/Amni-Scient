@@ -22,7 +22,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Braid","url":"https://amni-scient.com/braid","description":"A multi-model round table. Ask once and Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode, and a local model each answer, reading the answers before them. Runs on your existing subscriptions or your own API keys.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows, Linux, macOS","softwareVersion":"open-beta","offers":{"@type":"Offer","price":"10.00","priceCurrency":"USD","category":"subscription","availability":"https://schema.org/InStock"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/braid/braid-og.jpg?v=2"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Braid showcase - a real multi-AI session, captured live","description":"Real screen recording of Braid on the current UI: one All-at-once lap where Claude, Grok and Gemini answer together and finish, then a Squads round where the seats read every word and audit each other's math by name, then the three views, loop modes and the phone. Nothing staged.","thumbnailUrl":"https://amni-scient.com/assets/braid/braid-showcase-poster.jpg?v=1","contentUrl":"https://amni-scient.com/assets/braid/braid-showcase-2026-08.mp4?v=1","uploadDate":"2026-08-18","duration":"PT58S","inLanguage":"en","isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com/"},"caption":{"@type":"MediaObject","contentUrl":"https://amni-scient.com/assets/braid/braid-showcase-captions.vtt?v=1","encodingFormat":"text/vtt"},"hasPart":[{"@type":"Clip","name":"Stop alt-tabbing","startOffset":0,"endOffset":7.2,"url":"https://amni-scient.com/braid#t=0"},{"@type":"Clip","name":"Ask once - every seat answers together","startOffset":7.2,"endOffset":17.6,"url":"https://amni-scient.com/braid#t=8"},{"@type":"Clip","name":"Complete answers - one lap, done","startOffset":17.6,"endOffset":20.8,"url":"https://amni-scient.com/braid#t=18"},{"@type":"Clip","name":"Squads - two sides, real rebuttals","startOffset":20.8,"endOffset":30.73,"url":"https://amni-scient.com/braid#t=21"},{"@type":"Clip","name":"They audit each other's math by name","startOffset":30.73,"endOffset":38.03,"url":"https://amni-scient.com/braid#t=31"},{"@type":"Clip","name":"Side, Stack, Thread","startOffset":38.03,"endOffset":45.83,"url":"https://amni-scient.com/braid#t=39"},{"@type":"Clip","name":"Loops - once, N laps, or a goal","startOffset":45.83,"endOffset":49,"url":"https://amni-scient.com/braid#t=46"},{"@type":"Clip","name":"The phone + open beta $10/mo","startOffset":49,"endOffset":57.5,"url":"https://amni-scient.com/braid#t=50"}],"potentialAction":{"@type":"SeekToAction","target":"https://amni-scient.com/braid#t={seek_to_second_number}","startOffset-input":"required name=seek_to_second_number"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I chat with Claude, Grok and Gemini at the same time?","acceptedAnswer":{"@type":"Answer","text":"Yes, and ChatGPT, Copilot, Cursor, OpenCode, and a local seat too. Braid sends one question to every connected seat. You can read the answers side by side in columns, or run them sequentially so each model reads the answers before it and builds on them."}},{"@type":"Question","name":"Do I need API keys, or does Braid charge for AI usage?","acceptedAnswer":{"@type":"Answer","text":"Neither is required. Braid drives the CLI tools you are already signed into (Claude, Grok, Gemini, ChatGPT, Copilot, Cursor, OpenCode), so a seat costs whatever your existing subscription costs. You can also bring pay-as-you-go API keys or a local model. Braid never meters or resells tokens."}},{"@type":"Question","name":"Can the AIs see each other's answers?","acceptedAnswer":{"@type":"Answer","text":"Yes, that is the whole point of the round table. In sequential mode each seat reads every answer before it and responds to them (agreeing, correcting, or building on top) instead of answering blind."}},{"@type":"Question","name":"Does Braid work with local models like Ollama?","acceptedAnswer":{"@type":"Answer","text":"Yes. A local model seat (an Ollama model, or Adam from Amni-Ai) joins the same table as the subscription seats, at zero per-token cost."}},{"@type":"Question","name":"How much does Braid cost?","acceptedAnswer":{"@type":"Answer","text":"Open-beta pricing is $10/month (or $102/year), locked in for as long as you keep the subscription. There is a $5/month beta-tester tier. Teams are quoted by email. Cancel any time: it is a Stripe subscription, not a contract."}},{"@type":"Question","name":"Why don't I just build this myself - or use another agent harness?","acceptedAnswer":{"@type":"Answer","text":"You can build it. The bill shows up in tokens and subscription burn, not just evenings: wiring multi-model orchestration, sequential handoffs, seat failures, and a room that keeps working costs more in model usage while you reinvent it than sitting on Braid and letting us carry development. Other agent harnesses (CrewAI, AutoGen, LangGraph, OpenAI/Claude agent stacks, multi-agent IDE runners) usually keep you with one vendor, or they re-meter tokens through their API. They do not put the seats you already pay for in the same room, with each seat reading the last. Keep your AI budget for your work; use Braid for the table."}},{"@type":"Question","name":"What platforms does Braid run on?","acceptedAnswer":{"@type":"Answer","text":"Windows and Linux ship as native binaries (Linux needs a recent glibc — Ubuntu 24.04+ or Fedora 40+). macOS ships as a double-clickable Python source bundle (python3 only; Gatekeeper may need right-click Open the first time). Your keys and sessions stay on your machine — nothing is proxied through our servers."}}]}</script>
-<link rel="stylesheet" href="css/style.css?v=b261">
+<link rel="stylesheet" href="css/style.css?v=b263">
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 .braid-mark{width:min(780px,92vw);height:auto;display:block;margin:0 auto -1.2rem}
@@ -182,22 +182,57 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
 <a href="/braid" class="active">BRAID</a>
-<div class="nav-dd">
-<button class="nav-dd-trigger">MORE</button>
-<div class="nav-dd-menu">
-<a href="symphony.html">SYMPHONY</a>
-<a href="grok-remote.html">GROK-REMOTE</a>
-<a href="amni-haven.html">AMNI-HAVEN</a>
-<a href="/">ALL PROJECTS</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
-<a href="about.html">ABOUT</a>
-<a href="faq.html">FAQ</a>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
-<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
 <span></span><span></span><span></span>
 </div>
 </nav>

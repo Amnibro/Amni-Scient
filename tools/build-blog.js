@@ -1,10 +1,11 @@
 const fs = require('fs');
+const { navHtml } = require('./nav');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const POSTS = path.join(ROOT, 'blog', 'posts');
 const OUT = path.join(ROOT, 'blog');
 const SITE = 'https://amni-scient.com';
-const CSS = '/css/style.css?v=b262';
+const CSS = '/css/style.css?v=b263';
 function parseFront(raw) {
   if (!raw.startsWith('---')) throw new Error('missing front matter');
   const end = raw.indexOf('\n---', 3);
@@ -54,53 +55,8 @@ function fmtDate(iso) {
 function themeBoot() {
   return `<script>(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#08090B':'#F3F2EF');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();</script>`;
 }
-function nav(active) {
-  const a = (href, label, key) => `<a href="${href}"${key === active ? ' class="active"' : ''}>${label}</a>`;
-  return `<nav>
-<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
-<div class="links" id="nav-links">
-${a('/', 'HOME', 'home')}
-${a('/amni-calc.html', 'CALCULATORS', 'calc')}
-${a('/amni-learn.html', 'LEARN', 'learn')}
-${a('/blog/', 'BLOG', 'blog')}
-${a('/research.html', 'RESEARCH', 'research')}
-<div class="nav-dd">
-<button class="nav-dd-trigger">PROJECTS</button>
-<div class="nav-dd-menu">
-<a href="/braid">BRAID</a>
-<a href="/symphony.html">SYMPHONY</a>
-<a href="/grok-remote.html">GROK-REMOTE</a>
-<a href="/amni-os.html">AMNI-OS</a>
-<a href="/amni-ai.html">AMNI-AI</a>
-<a href="/amni-browse.html">AMNI-BROWSE</a>
-<a href="/amni-calc.html">AMNI-CALC</a>
-<a href="/amni-explore.html">AMNI-EXPLORE</a>
-<a href="/amni-space.html">AMNI-SPACE</a>
-<a href="/amni-weather.html">AMNI-WEATHER</a>
-<a href="/game/v2/">AMNI-GAME</a>
-<a href="/amni-learn.html">AMNI-LEARN</a>
-<a href="/amni-llm.html">AMNI-LLM</a>
-<a href="/amni-connect.html">AMNI-CONNECT</a>
-<a href="/amni-code.html">AMNI-CODE</a>
-<a href="/amni-core.html">AMNI-CORE</a>
-<a href="/amni-haven.html">AMNI-HAVEN</a>
-<a href="/amni-hedgedoc.html">HEDGEDOC</a>
-<a href="/amni-crypt.html">AMNI-CRYPT</a>
-<a href="/amni-life.html">AMNI-LIFE</a>
-<a href="/amni-prayer.html">AMNI-PRAYER</a>
-<a href="/amni-type.html">AMNI-TYPE</a>
-<a href="/amni-mail.html">AMNI-MAIL</a>
-</div>
-</div>
-${a('/about.html', 'ABOUT', 'about')}
-${a('/faq.html', 'FAQ', 'faq')}
-<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
-</div>
-<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
-<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
-<span></span><span></span><span></span>
-</div>
-</nav>`;
+function nav() {
+  return navHtml('blog/index.html');
 }
 function footer() {
   return `<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>

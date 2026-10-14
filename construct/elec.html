@@ -19,7 +19,7 @@
 <link rel="canonical" href="https://amni-scient.com/construct/elec.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Electrical Wiring Cost Estimator & NEC Load Calculator — Free Circuit + Panel Planner","description":"Free electrical estimator: NEC load calc to service size, sketch outlets and cable runs on your plan, get a breaker schedule, wire takeoff and store pricing.","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/construct/elec.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it legal to do my own electrical work?","acceptedAnswer":{"@type":"Answer","text":"Many states and cities issue homeowner electrical permits for owner-occupied single-family homes, always with inspections; others, and nearly all rental or multi-family property, require a licensed electrician. The utility side and meter equipment are never DIY. The tool's permit panel links your state's adopted code and local permit office; your local AHJ decides."}},{"@type":"Question","name":"What service size do I need?","acceptedAnswer":{"@type":"Answer","text":"Run the load calc: NEC 220.82 takes 100% of the first 10 kVA and 40% of the rest, with HVAC at full value. Most modern houses land on 200 A; adding a heat pump, induction range and EV charging is what pushes past it. The sidebar runs the NEC 220 standard method live as you toggle loads and points you to the 220.82 optional method if the result outgrows a 200 A service."}},{"@type":"Question","name":"How accurate is the wire takeoff?","acceptedAnswer":{"@type":"Answer","text":"The footage comes from cable runs drawn on your actual room layout, measured along each drawn path, not a per-square-foot guess. Prices come from catalog estimates you can overwrite with pasted-in live store pricing, so the total tracks checkout."}},{"@type":"Question","name":"Do bedroom outlets really need AFCI breakers?","acceptedAnswer":{"@type":"Answer","text":"Yes. Since the 2014 NEC cycle, 210.12 has covered virtually all 120 V 15/20 A circuits in living spaces — bedrooms, living rooms, kitchens, laundry. Combination AFCI breakers at $40–$60 are the standard fix; the materials list counts them for the circuits that need them."}},{"@type":"Question","name":"Can I wire the circuits and have an electrician connect the panel?","acceptedAnswer":{"@type":"Answer","text":"That split is common and often the smart play: you rough boxes and cable on a homeowner permit, the licensed electrician terminates the panel and signs off the hot work. Print the E-1 sheet and materials list — a clean circuit directory is what makes that handoff cheap."}}]}</script>
-<link rel="stylesheet" href="../css/style.css?v=b260">
+<link rel="stylesheet" href="../css/style.css?v=b263">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -66,27 +66,57 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
-<div class="nav-dd nav-dd--active">
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
-<div class="nav-dd-menu">
-<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
-<a href="../amni-calc.html">AMNI-CALC</a>
-<a href="../amni-browse.html">AMNI-BROWSE</a>
-<a href="../amni-explore.html">AMNI-EXPLORE</a>
-<a href="../amni-learn.html">AMNI-LEARN</a>
-<a href="../amni-connect.html">AMNI-CONNECT</a>
-<a href="../amni-code.html">AMNI-CODE</a>
-<a href="../amni-haven.html">AMNI-HAVEN</a>
-<a href="../amni-phone.html">AMNI-PHONE</a>
-<a href="../amni-type.html">AMNI-TYPE</a>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
-<a href="../about.html">ABOUT</a>
-<a href="../faq.html">FAQ</a>
-<a href="../privacy.html">PRIVACY</a>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
-<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
 <span></span><span></span><span></span>
 </div>
 </nav>

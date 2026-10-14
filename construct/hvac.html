@@ -19,7 +19,7 @@
 <link rel="canonical" href="https://amni-scient.com/construct/hvac.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HVAC Duct Sizing Calculator & Ductwork Cost Estimator — Free Layout Designer","description":"Free HVAC duct calculator: draw your air handler, registers and returns, get CFM checks on every duct run, airflow vs tonnage checks and a priced materials list.","author":{"@type":"Organization","name":"AMNI-SCIENT"},"publisher":{"@type":"Organization","name":"AMNI-SCIENT","url":"https://amni-scient.com"},"mainEntityOfPage":"https://amni-scient.com/construct/hvac.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I install my own ductwork?","acceptedAnswer":{"@type":"Answer","text":"In many jurisdictions, yes — duct fabrication and installation is homeowner-permittable work under a mechanical permit with inspection, and it is genuinely DIY-friendly sheet-metal-and-flex labor. The refrigerant circuit is the exception: charging and brazing linesets requires EPA 608 certification. Plan and duct it yourself; hire the refrigerant work or choose pre-charged equipment."}},{"@type":"Question","name":"What is the difference between Manual J and Manual D?","acceptedAnswer":{"@type":"Answer","text":"Manual J is the room-by-room heating and cooling load calculation; Manual S selects equipment to match it; Manual D sizes the ducts to deliver each room's airflow within the blower's static pressure budget. This tool checks the layout you draw against typical duct capacities rather than running a full Manual D friction-rate calculation: you bring the loads and pick the sizes, and it flags runs that are too small."}},{"@type":"Question","name":"Is flex duct bad?","acceptedAnswer":{"@type":"Answer","text":"No — badly installed flex is bad. Pulled tight, supported every 4 ft, and kept to short branch runs, R-8 flex performs close to spec at half the installed effort of metal. Long saggy runs and pinched bends are what give it the reputation. The estimator prices insulated flex; the table above shows the real penalty."}},{"@type":"Question","name":"How many CFM does each room need?","acceptedAnswer":{"@type":"Answer","text":"It falls out of the room's share of the load: a typical bedroom wants 75–125 CFM, a large living area 200–400. Divide the system total (400 CFM per ton) across rooms by load share, set each register's CFM in the sketch, and the tool flags any duct too small for the CFM it carries."}}]}</script>
-<link rel="stylesheet" href="../css/style.css?v=b260">
+<link rel="stylesheet" href="../css/style.css?v=b263">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8345487545441889" crossorigin="anonymous" data-overlays="false"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -66,27 +66,57 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
-<div class="nav-dd nav-dd--active">
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
-<div class="nav-dd-menu">
-<a href="../construct/" class="active">AMNI-CONSTRUCT</a>
-<a href="../amni-calc.html">AMNI-CALC</a>
-<a href="../amni-browse.html">AMNI-BROWSE</a>
-<a href="../amni-explore.html">AMNI-EXPLORE</a>
-<a href="../amni-learn.html">AMNI-LEARN</a>
-<a href="../amni-connect.html">AMNI-CONNECT</a>
-<a href="../amni-code.html">AMNI-CODE</a>
-<a href="../amni-haven.html">AMNI-HAVEN</a>
-<a href="../amni-phone.html">AMNI-PHONE</a>
-<a href="../amni-type.html">AMNI-TYPE</a>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
-<a href="../about.html">ABOUT</a>
-<a href="../faq.html">FAQ</a>
-<a href="../privacy.html">PRIVACY</a>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
-<div class="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
 <span></span><span></span><span></span>
 </div>
 </nav>

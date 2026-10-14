@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://amni-scient.com/research/amnitex-railgun">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"AmniTex Railgun: 16× Smaller VRAM Footprint with Bit-Exact Recovery","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"1-bit routing index in VRAM with the exact fp16 residual on NVMe. 16× smaller resident footprint and a bit-exact recovery path, measured on real model weights on an AMD RX 7800 XT.","url":"https://amni-scient.com/research/amnitex-railgun","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-04-02","dateModified":"2026-09-09"}</script>
-<link rel="stylesheet" href="../css/style.css?v=b260">
+<link rel="stylesheet" href="../css/style.css?v=b263">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();reThemeCharts();};})();
@@ -174,26 +174,54 @@
 <a href="/" class="logo">AMNI<span>-SCIENT</span></a>
 <div class="links" id="nav-links">
 <a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html" class="active">RESEARCH</a>
 <div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
-<div class="nav-dd-menu">
-<a href="../amni-browse.html">AMNI-BROWSE</a>
-<a href="../amni-calc.html">AMNI-CALC</a>
-<a href="../amni-explore.html">AMNI-EXPLORE</a>
-<a href="../amni-learn.html">AMNI-LEARN</a>
-<a href="../amni-llm.html">AMNI-LLM</a>
-<a href="../amni-connect.html">AMNI-CONNECT</a>
-<a href="../amni-code.html">AMNI-CODE</a>
-<a href="../amni-haven.html">AMNI-HAVEN</a>
-<a href="../amni-prayer.html">AMNI-PRAYER</a>
-<a href="../amni-phone.html">AMNI-PHONE</a>
-<a href="../amni-type.html">AMNI-TYPE</a>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
 </div>
 </div>
-<a href="../research.html" class="nav-active">RESEARCH</a>
-<a href="../about.html">ABOUT</a>
-<a href="../faq.html">FAQ</a>
-<a href="../privacy.html">PRIVACY</a>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
 </div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
 <div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
