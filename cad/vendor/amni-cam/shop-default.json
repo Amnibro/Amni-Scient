@@ -1,0 +1,1440 @@
+{
+ "name": "Amni default shop (US first pass, 2026-10; calibrate before quoting customers)",
+ "currency": "USD",
+ "margin": 0.35,
+ "min_order": 39.0,
+ "labor": 65.0,
+ "learn": 0.92,
+ "floor": 0.55,
+ "breaks": [
+  1,
+  5,
+  10,
+  25,
+  50,
+  100,
+  250,
+  500,
+  1000
+ ],
+ "expedite": [
+  {
+   "id": "economy",
+   "name": "Economy",
+   "mult": 0.85,
+   "days": 1.6
+  },
+  {
+   "id": "standard",
+   "name": "Standard",
+   "mult": 1.0,
+   "days": 1.0
+  },
+  {
+   "id": "rush",
+   "name": "Expedite",
+   "mult": 1.35,
+   "days": 0.5
+  },
+  {
+   "id": "next",
+   "name": "24 hour",
+   "mult": 1.75,
+   "days": 0.0
+  }
+ ],
+ "processes": [
+  {
+   "id": "laser",
+   "name": "Fiber laser (6 kW)",
+   "kind": "cut",
+   "rate": 120,
+   "setup_min": 5.0,
+   "handle_s": 20.0,
+   "kerf": 0.01,
+   "bed": [
+    60.0,
+    120.0
+   ],
+   "spacing": 0.1,
+   "margin": 0.25,
+   "lead": 3.0,
+   "min_hole": 0.5,
+   "min_hole_abs": 0.02,
+   "min_web": 1.0,
+   "min_web_abs": 0.03,
+   "min_gap": 1.0,
+   "min_gap_abs": 0.012,
+   "min_part": 0.5,
+   "max_part": [
+    44.0,
+    120.0
+   ],
+   "speeds": [
+    {
+     "fam": "steel",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5
+     ],
+     "ipm": [
+      2223.0,
+      1581.0,
+      1049.0,
+      666.0,
+      346.0,
+      219.0,
+      95.2,
+      58.1
+     ],
+     "pierce": [
+      0.2,
+      0.2,
+      0.2,
+      0.22,
+      0.39,
+      0.59,
+      0.94,
+      1.42
+     ]
+    },
+    {
+     "fam": "stainless",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5
+     ],
+     "ipm": [
+      2116.0,
+      1508.0,
+      989.0,
+      604.0,
+      346.0,
+      219.0,
+      95.2,
+      47.1
+     ],
+     "pierce": [
+      0.2,
+      0.2,
+      0.2,
+      0.22,
+      0.39,
+      0.89,
+      1.41,
+      2.13
+     ]
+    },
+    {
+     "fam": "aluminum",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5
+     ],
+     "ipm": [
+      1927.0,
+      1292.0,
+      883.0,
+      564.0,
+      281.0,
+      168.0,
+      62.1,
+      38.7
+     ],
+     "pierce": [
+      0.2,
+      0.2,
+      0.2,
+      0.22,
+      0.39,
+      0.89,
+      1.41,
+      2.13
+     ]
+    },
+    {
+     "fam": "brass",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25
+     ],
+     "ipm": [
+      1674.0,
+      1398.0,
+      1031.0,
+      616.0,
+      278.0,
+      109.0
+     ],
+     "pierce": [
+      0.3,
+      0.3,
+      0.3,
+      0.33,
+      0.58,
+      1.33
+     ]
+    },
+    {
+     "fam": "copper",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375
+     ],
+     "ipm": [
+      1838.0,
+      1367.0,
+      901.0,
+      525.0,
+      259.0,
+      129.0,
+      42.6
+     ],
+     "pierce": [
+      0.3,
+      0.3,
+      0.3,
+      0.33,
+      0.58,
+      1.33,
+      2.11
+     ]
+    }
+   ],
+   "pierce_overhead": 0.5,
+   "accel_g": 1.0,
+   "rapid_ipm": 4300
+  },
+  {
+   "id": "waterjet",
+   "name": "Abrasive waterjet (60 ksi)",
+   "kind": "cut",
+   "rate": 120,
+   "setup_min": 8.0,
+   "handle_s": 30.0,
+   "kerf": 0.042,
+   "bed": [
+    60.0,
+    120.0
+   ],
+   "spacing": 0.15,
+   "margin": 0.5,
+   "lead": 4.0,
+   "min_hole": 0.0,
+   "min_hole_abs": 0.07,
+   "min_web": 1.0,
+   "min_web_abs": 0.05,
+   "min_gap": 0.0,
+   "min_gap_abs": 0.05,
+   "min_part": 0.5,
+   "max_part": [
+    58.0,
+    118.0
+   ],
+   "speeds": [
+    {
+     "fam": "aluminum",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      276,
+      173,
+      109,
+      74.5,
+      46.8,
+      33.6,
+      21.1,
+      15.1,
+      6.8,
+      3.06
+     ],
+     "pierce": [
+      0.12,
+      0.24,
+      0.46,
+      0.78,
+      1.47,
+      2.28,
+      4.17,
+      6.29,
+      20.4,
+      66.3
+     ]
+    },
+    {
+     "fam": "steel",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      99.5,
+      62.4,
+      39.1,
+      26.8,
+      16.8,
+      12.1,
+      7.6,
+      5.4,
+      2.43,
+      1.1
+     ],
+     "pierce": [
+      0.29,
+      0.57,
+      1.11,
+      1.88,
+      3.57,
+      5.55,
+      10.14,
+      15.29,
+      49.7,
+      161.5
+     ]
+    },
+    {
+     "fam": "stainless",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      92.1,
+      57.8,
+      36.2,
+      24.8,
+      15.6,
+      11.2,
+      7.0,
+      5.0,
+      2.25,
+      1.01
+     ],
+     "pierce": [
+      0.31,
+      0.61,
+      1.19,
+      2.02,
+      3.82,
+      5.94,
+      10.84,
+      16.35,
+      53.1,
+      172.5
+     ]
+    },
+    {
+     "fam": "titanium",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      137,
+      85.7,
+      53.7,
+      36.8,
+      23.1,
+      16.6,
+      10.4,
+      7.5,
+      3.38,
+      1.52
+     ],
+     "pierce": [
+      0.22,
+      0.43,
+      0.84,
+      1.43,
+      2.71,
+      4.22,
+      7.69,
+      11.61,
+      37.7,
+      122.5
+     ]
+    },
+    {
+     "fam": "brass",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      169,
+      106,
+      66.6,
+      45.6,
+      28.6,
+      20.6,
+      12.9,
+      9.3,
+      4.19,
+      1.89
+     ],
+     "pierce": [
+      0.18,
+      0.36,
+      0.7,
+      1.19,
+      2.25,
+      3.5,
+      6.39,
+      9.64,
+      31.3,
+      101.7
+     ]
+    },
+    {
+     "fam": "copper",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      130,
+      81.5,
+      51.1,
+      35.0,
+      22.0,
+      15.8,
+      9.9,
+      7.1,
+      3.2,
+      1.44
+     ],
+     "pierce": [
+      0.23,
+      0.45,
+      0.88,
+      1.49,
+      2.83,
+      4.4,
+      8.04,
+      12.12,
+      39.4,
+      128.0
+     ]
+    },
+    {
+     "fam": "plastic",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "ipm": [
+      500,
+      500,
+      420,
+      288,
+      181,
+      130,
+      81.4,
+      58.5,
+      26.36,
+      11.88
+     ],
+     "pierce": [
+      0.04,
+      0.07,
+      0.14,
+      0.24,
+      0.45,
+      0.71,
+      1.29,
+      1.94,
+      6.3,
+      20.5
+     ]
+    },
+    {
+     "fam": "composite",
+     "t": [
+      0.0625,
+      0.125,
+      0.25,
+      0.5
+     ],
+     "ipm": [
+      110,
+      70,
+      40,
+      20
+     ],
+     "pierce": [
+      0.5,
+      1,
+      2,
+      4
+     ]
+    }
+   ],
+   "pierce_overhead": 2.0,
+   "accel_g": 0.05,
+   "rapid_ipm": 600
+  },
+  {
+   "id": "plasma",
+   "name": "HD plasma (130 A)",
+   "kind": "cut",
+   "rate": 100,
+   "setup_min": 6.0,
+   "handle_s": 25.0,
+   "kerf": 0.071,
+   "bed": [
+    60.0,
+    120.0
+   ],
+   "spacing": 0.25,
+   "margin": 0.5,
+   "lead": 3.0,
+   "min_hole": 1.0,
+   "min_hole_abs": 0.15,
+   "min_web": 1.5,
+   "min_web_abs": 0.12,
+   "min_gap": 0.0,
+   "min_gap_abs": 0.12,
+   "min_part": 1.0,
+   "max_part": [
+    58.0,
+    118.0
+   ],
+   "speeds": [
+    {
+     "fam": "steel",
+     "t": [
+      0.04,
+      0.06,
+      0.09,
+      0.125,
+      0.1875,
+      0.25,
+      0.375,
+      0.5
+     ],
+     "ipm": [
+      192,
+      125,
+      339,
+      212,
+      190,
+      150,
+      110,
+      80
+     ],
+     "pierce": [
+      0.0,
+      0.0,
+      0.1,
+      0.2,
+      0.2,
+      0.2,
+      0.3,
+      0.5
+     ]
+    }
+   ],
+   "pierce_overhead": 1.5,
+   "accel_g": 0.2,
+   "rapid_ipm": 1200
+  },
+  {
+   "id": "router",
+   "name": "CNC router 5x10 (ATC)",
+   "kind": "route",
+   "machine": "Production router 5x10 (ATC)",
+   "rate": 95,
+   "setup_min": 8.0,
+   "handle_s": 45.0,
+   "kerf": 0.25,
+   "bed": [
+    60.0,
+    120.0
+   ],
+   "spacing": 0.375,
+   "margin": 0.5,
+   "lead": 4.0,
+   "min_hole": 0.0,
+   "min_hole_abs": 0.125,
+   "min_web": 1.0,
+   "min_web_abs": 0.1,
+   "min_gap": 0.0,
+   "min_gap_abs": 0.125,
+   "min_part": 1.0,
+   "max_part": [
+    58.0,
+    118.0
+   ],
+   "speeds": []
+  },
+  {
+   "id": "bend",
+   "name": "Press brake",
+   "kind": "bend",
+   "rate": 75,
+   "setup_min": 10.0,
+   "handle_s": 8.0,
+   "lead": 2.0,
+   "extra": {
+    "per_bend_min": 5.0,
+    "hit_s": 6.5,
+    "min_line": 19.0
+   }
+  },
+  {
+   "id": "cnc3",
+   "name": "3-axis CNC mill",
+   "kind": "mill",
+   "machine": "Haas VF-2 (Fanuc-style)",
+   "rate": 80,
+   "setup_min": 30.0,
+   "handle_s": 120.0,
+   "lead": 8.0,
+   "extra": {
+    "eff": 0.55,
+    "finish_step_mm": 3.0,
+    "prog_min": 20.0,
+    "prog_per_face": 0.6,
+    "inspect_s": 180.0,
+    "first_article_min": 15.0,
+    "stock_add_in": 0.125,
+    "hole_s": 20.0,
+    "thread_s": 25.0
+   }
+  },
+  {
+   "id": "fdm",
+   "name": "FDM print",
+   "kind": "print",
+   "rate": 6.0,
+   "setup_min": 10.0,
+   "handle_s": 180.0,
+   "lead": 3.0,
+   "extra": {
+    "flow_cm3_hr": 25.0,
+    "wall_mm": 1.2,
+    "infill": 0.2,
+    "layer_mm": 0.2,
+    "layer_s": 2.0,
+    "bed_in": [
+     10.0,
+     10.0,
+     10.0
+    ],
+    "plate_min": 5.0,
+    "support": 0.15
+   },
+   "min_unit": 3.0
+  },
+  {
+   "id": "sla",
+   "name": "SLA print",
+   "kind": "print",
+   "rate": 12.0,
+   "setup_min": 10.0,
+   "handle_s": 600.0,
+   "lead": 4.0,
+   "extra": {
+    "vz_mm_hr": 60.0,
+    "bed_in": [
+     7.9,
+     4.9,
+     8.3
+    ],
+    "support": 1.25,
+    "plate_min": 10.0,
+    "gap_mm": 8.0
+   },
+   "min_unit": 5.0
+  },
+  {
+   "id": "sls",
+   "name": "SLS nylon",
+   "kind": "print",
+   "rate": 28.0,
+   "setup_min": 10.0,
+   "handle_s": 300.0,
+   "lead": 5.0,
+   "extra": {
+    "vz_mm_hr": 21.0,
+    "bed_in": [
+     6.5,
+     6.5,
+     11.8
+    ],
+    "pack": 0.2,
+    "refresh": 0.3
+   },
+   "min_unit": 8.0
+  },
+  {
+   "id": "mjf",
+   "name": "MJF nylon",
+   "kind": "print",
+   "rate": 70.0,
+   "setup_min": 10.0,
+   "handle_s": 240.0,
+   "lead": 5.0,
+   "extra": {
+    "vz_mm_hr": 28.0,
+    "bed_in": [
+     15.0,
+     11.2,
+     15.0
+    ],
+    "pack": 0.2,
+    "refresh": 0.2
+   },
+   "min_unit": 8.0
+  }
+ ],
+ "materials": [
+  {
+   "id": "steel-cr",
+   "name": "Mild steel (1008 CR / A36)",
+   "fam": "steel",
+   "dens": 0.284,
+   "lb": 1.3,
+   "gauges": [
+    0.048,
+    0.06,
+    0.075,
+    0.105,
+    0.119,
+    0.135,
+    0.1875,
+    0.25,
+    0.3125,
+    0.375,
+    0.5,
+    0.75,
+    1.0
+   ],
+   "procs": [
+    "laser",
+    "waterjet",
+    "plasma",
+    "bend"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "ss304",
+   "name": "Stainless 304 (2B)",
+   "fam": "stainless",
+   "dens": 0.289,
+   "lb": 3.0,
+   "gauges": [
+    0.03,
+    0.048,
+    0.06,
+    0.075,
+    0.12,
+    0.1875,
+    0.25,
+    0.375,
+    0.5
+   ],
+   "procs": [
+    "laser",
+    "waterjet",
+    "bend"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "ss316",
+   "name": "Stainless 316",
+   "fam": "stainless",
+   "dens": 0.289,
+   "lb": 4.6,
+   "gauges": [
+    0.048,
+    0.06,
+    0.12,
+    0.1875,
+    0.25
+   ],
+   "procs": [
+    "laser",
+    "waterjet",
+    "bend"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "al5052",
+   "name": "Aluminum 5052-H32",
+   "fam": "aluminum",
+   "dens": 0.097,
+   "lb": 5.0,
+   "gauges": [
+    0.04,
+    0.063,
+    0.08,
+    0.09,
+    0.125,
+    0.1875,
+    0.25,
+    0.375,
+    0.5
+   ],
+   "procs": [
+    "laser",
+    "waterjet",
+    "bend"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "al6061",
+   "name": "Aluminum 6061-T6",
+   "fam": "aluminum",
+   "dens": 0.098,
+   "lb": 6.0,
+   "gauges": [
+    0.063,
+    0.09,
+    0.125,
+    0.1875,
+    0.25,
+    0.375,
+    0.5,
+    0.75,
+    1.0
+   ],
+   "procs": [
+    "laser",
+    "waterjet",
+    "cnc3"
+   ],
+   "cam": "Aluminum 6061 (VMC, carbide)"
+  },
+  {
+   "id": "al7075",
+   "name": "Aluminum 7075-T6",
+   "fam": "aluminum",
+   "dens": 0.101,
+   "lb": 16.5,
+   "gauges": [
+    0.125,
+    0.25,
+    0.5
+   ],
+   "procs": [
+    "waterjet",
+    "cnc3"
+   ],
+   "cam": "Aluminum 7075 (VMC, carbide)"
+  },
+  {
+   "id": "st1018",
+   "name": "Steel 1018",
+   "fam": "steel",
+   "dens": 0.284,
+   "lb": 2.45,
+   "gauges": [],
+   "procs": [
+    "cnc3"
+   ],
+   "cam": "Steel 1018 (VMC, carbide)"
+  },
+  {
+   "id": "st4140",
+   "name": "Steel 4140 (pre-hard)",
+   "fam": "steel",
+   "dens": 0.284,
+   "lb": 4.95,
+   "gauges": [],
+   "procs": [
+    "cnc3"
+   ],
+   "cam": "Steel 4140 (VMC, carbide)"
+  },
+  {
+   "id": "ss303",
+   "name": "Stainless 303",
+   "fam": "stainless",
+   "dens": 0.289,
+   "lb": 6.1,
+   "gauges": [],
+   "procs": [
+    "cnc3"
+   ],
+   "cam": "Stainless 304 (VMC, carbide)"
+  },
+  {
+   "id": "brass260",
+   "name": "Brass 260 sheet",
+   "fam": "brass",
+   "dens": 0.308,
+   "lb": 12.0,
+   "gauges": [
+    0.032,
+    0.04,
+    0.063,
+    0.125,
+    0.25
+   ],
+   "procs": [
+    "laser",
+    "waterjet"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "brass360",
+   "name": "Brass 360 bar",
+   "fam": "brass",
+   "dens": 0.307,
+   "lb": 12.0,
+   "gauges": [],
+   "procs": [
+    "cnc3"
+   ],
+   "cam": "Brass 360 (VMC, carbide)"
+  },
+  {
+   "id": "cu110",
+   "name": "Copper 110",
+   "fam": "copper",
+   "dens": 0.323,
+   "lb": 13.0,
+   "gauges": [
+    0.04,
+    0.063,
+    0.125,
+    0.25
+   ],
+   "procs": [
+    "laser",
+    "waterjet"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "ti-gr2",
+   "name": "Titanium grade 2",
+   "fam": "titanium",
+   "dens": 0.163,
+   "lb": 38.0,
+   "gauges": [
+    0.04,
+    0.063,
+    0.125,
+    0.25
+   ],
+   "procs": [
+    "waterjet"
+   ],
+   "cam": "Titanium 6Al-4V (VMC, carbide)"
+  },
+  {
+   "id": "delrin",
+   "name": "Delrin / acetal",
+   "fam": "plastic",
+   "dens": 0.0513,
+   "lb": 18.0,
+   "gauges": [
+    0.125,
+    0.25,
+    0.5
+   ],
+   "procs": [
+    "router",
+    "cnc3"
+   ],
+   "cam": "Delrin / acetal (VMC)"
+  },
+  {
+   "id": "hdpe",
+   "name": "HDPE",
+   "fam": "plastic",
+   "dens": 0.0347,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.25,
+     4.5
+    ],
+    [
+     0.5,
+     8.5
+    ],
+    [
+     0.75,
+     12.5
+    ]
+   ],
+   "gauges": [
+    0.25,
+    0.5,
+    0.75
+   ],
+   "procs": [
+    "router",
+    "waterjet"
+   ],
+   "cam": "HDPE / Delrin"
+  },
+  {
+   "id": "acrylic",
+   "name": "Acrylic, cast",
+   "fam": "plastic",
+   "dens": 0.043,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.118,
+     4.8
+    ],
+    [
+     0.236,
+     9.8
+    ],
+    [
+     0.375,
+     15.0
+    ],
+    [
+     0.5,
+     20.0
+    ]
+   ],
+   "gauges": [
+    0.118,
+    0.177,
+    0.236,
+    0.375,
+    0.5
+   ],
+   "procs": [
+    "router"
+   ],
+   "cam": "Acrylic (cast)"
+  },
+  {
+   "id": "pc",
+   "name": "Polycarbonate",
+   "fam": "plastic",
+   "dens": 0.0433,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.118,
+     4.6
+    ],
+    [
+     0.236,
+     9.0
+    ]
+   ],
+   "gauges": [
+    0.118,
+    0.236
+   ],
+   "procs": [
+    "router",
+    "waterjet"
+   ],
+   "cam": "Acrylic (cast)"
+  },
+  {
+   "id": "g10",
+   "name": "G10 / FR4",
+   "fam": "composite",
+   "dens": 0.065,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.0625,
+     10.0
+    ],
+    [
+     0.125,
+     17.0
+    ],
+    [
+     0.25,
+     32.0
+    ]
+   ],
+   "gauges": [
+    0.0625,
+    0.125,
+    0.25
+   ],
+   "procs": [
+    "router",
+    "waterjet"
+   ],
+   "cam": "FR4 / PCB"
+  },
+  {
+   "id": "ply-bb",
+   "name": "Baltic birch plywood",
+   "fam": "wood",
+   "dens": 0.0217,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.125,
+     1.2
+    ],
+    [
+     0.25,
+     1.7
+    ],
+    [
+     0.5,
+     2.4
+    ],
+    [
+     0.75,
+     3.2
+    ]
+   ],
+   "gauges": [
+    0.125,
+    0.25,
+    0.5,
+    0.75
+   ],
+   "procs": [
+    "router"
+   ],
+   "cam": "Plywood"
+  },
+  {
+   "id": "mdf",
+   "name": "MDF",
+   "fam": "wood",
+   "dens": 0.0274,
+   "lb": 0.0,
+   "sqft": [
+    [
+     0.25,
+     1.0
+    ],
+    [
+     0.5,
+     1.42
+    ],
+    [
+     0.75,
+     1.8
+    ]
+   ],
+   "gauges": [
+    0.25,
+    0.5,
+    0.75
+   ],
+   "procs": [
+    "router"
+   ],
+   "cam": "MDF"
+  },
+  {
+   "id": "pla",
+   "name": "PLA",
+   "fam": "fdm",
+   "dens": 0.0448,
+   "lb": 5.44,
+   "gauges": [],
+   "procs": [
+    "fdm"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "petg",
+   "name": "PETG",
+   "fam": "fdm",
+   "dens": 0.0459,
+   "lb": 5.44,
+   "gauges": [],
+   "procs": [
+    "fdm"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "asa",
+   "name": "ASA / ABS",
+   "fam": "fdm",
+   "dens": 0.0379,
+   "lb": 9.98,
+   "gauges": [],
+   "procs": [
+    "fdm"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "pacf",
+   "name": "Nylon CF",
+   "fam": "fdm",
+   "dens": 0.0433,
+   "lb": 24.04,
+   "gauges": [],
+   "procs": [
+    "fdm"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "resin",
+   "name": "Standard resin",
+   "fam": "sla",
+   "dens": 0.043,
+   "lb": 32.28,
+   "gauges": [],
+   "procs": [
+    "sla"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "resin-tough",
+   "name": "Tough resin",
+   "fam": "sla",
+   "dens": 0.043,
+   "lb": 60.34,
+   "gauges": [],
+   "procs": [
+    "sla"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "pa12-sls",
+   "name": "Nylon 12 (SLS)",
+   "fam": "sls",
+   "dens": 0.0365,
+   "lb": 45.31,
+   "gauges": [],
+   "procs": [
+    "sls"
+   ],
+   "cam": ""
+  },
+  {
+   "id": "pa12-mjf",
+   "name": "Nylon 12 (MJF)",
+   "fam": "mjf",
+   "dens": 0.0365,
+   "lb": 29.03,
+   "gauges": [],
+   "procs": [
+    "mjf"
+   ],
+   "cam": ""
+  }
+ ],
+ "finishes": [
+  {
+   "id": "deburr",
+   "name": "Deburr / tumble",
+   "kind": "part",
+   "price": 1.5,
+   "min": 0.0,
+   "fams": [
+    "steel",
+    "stainless",
+    "aluminum",
+    "brass",
+    "copper",
+    "titanium"
+   ],
+   "days": 1.0
+  },
+  {
+   "id": "powder",
+   "name": "Powder coat (one color)",
+   "kind": "area",
+   "price": 4.0,
+   "min": 8.0,
+   "fams": [
+    "steel",
+    "stainless",
+    "aluminum"
+   ],
+   "days": 3.0
+  },
+  {
+   "id": "anodize",
+   "name": "Anodize type II (clear or black)",
+   "kind": "area",
+   "price": 3.0,
+   "min": 5.0,
+   "fams": [
+    "aluminum"
+   ],
+   "days": 4.0
+  },
+  {
+   "id": "bead",
+   "name": "Bead blast",
+   "kind": "area",
+   "price": 1.5,
+   "min": 3.0,
+   "fams": [
+    "steel",
+    "stainless",
+    "aluminum",
+    "titanium",
+    "sls",
+    "mjf"
+   ],
+   "days": 1.0
+  },
+  {
+   "id": "zinc",
+   "name": "Zinc plate (clear)",
+   "kind": "lb",
+   "price": 1.5,
+   "min": 5.0,
+   "fams": [
+    "steel"
+   ],
+   "days": 4.0
+  },
+  {
+   "id": "passivate",
+   "name": "Passivate",
+   "kind": "part",
+   "price": 3.0,
+   "min": 0.0,
+   "fams": [
+    "stainless"
+   ],
+   "days": 2.0
+  },
+  {
+   "id": "tap",
+   "name": "Tap threaded holes",
+   "kind": "thread",
+   "price": 1.25,
+   "min": 0.0,
+   "fams": [],
+   "days": 0.0
+  },
+  {
+   "id": "dye",
+   "name": "Dye black",
+   "kind": "part",
+   "price": 4.0,
+   "min": 0.0,
+   "fams": [
+    "sls",
+    "mjf"
+   ],
+   "days": 1.0
+  },
+  {
+   "id": "vapor",
+   "name": "Vapor smooth",
+   "kind": "part",
+   "price": 8.0,
+   "min": 0.0,
+   "fams": [
+    "sls",
+    "mjf"
+   ],
+   "days": 2.0
+  }
+ ],
+ "sources": [
+  {
+   "file": "shop/research/costdata.json",
+   "compiled": "2026-10-14",
+   "note": "every default traces to a source id or an estimate note there; see costdata.md"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';
+const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
+let bad=0;const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)bad++;};
+const run=async(doc,req)=>{K.resetCache();const r=await K.build(doc);if(r.errors.length)console.log(r.errors);return{r,q:await M.quote({body:r.body,doc},{req})};};
+const plate={name:'Plate',units:'in',params:[],features:[{id:'a',type:'box',w:6,d:4,h:0.125},{id:'b',type:'hole',plane:'face',face:{side:'+Z'},d:0.25,thru:true,pts:[[-2.5,-1.5],[2.5,-1.5],[2.5,1.5],[-2.5,1.5]]},{id:'c',type:'fillet',edges:{by:'dir',dir:'Z'},r:0.25}]};
+let {r,q}=await run(plate,{material:'al5052',qty:10});
+const p=q.part,s=p.sheet;
+ok(q.kind==='flat sheet'&&s&&Math.abs(s.t-3.175)<1e-6,'inch plate detected as flat sheet t='+(s&&s.t));
+ok(s&&s.loops.length===5,'5 profile loops (outline + 4 holes): '+(s&&s.loops.length));
+ok(p.holes.length===4&&p.holes.every(h=>Math.abs(h[0]-6.35)<1e-6),'4 holes of 0.25 in');
+const b=q.res.quotes&&q.res.quotes[0];
+ok(q.res.ok&&b.process==='laser','laser is best for 5052 plate: '+(b&&b.process)+' $'+(b&&b.unit)+' ea');
+const cut=b.info.cut_in,exp=2*(5.5+3.5)+TAUq(0.25)+4*Math.PI*0.25;function TAUq(r){return 2*Math.PI*r;}
+ok(Math.abs(cut-exp)<0.02,'cut length '+cut.toFixed(3)+' in vs '+exp.toFixed(3));
+ok(b.info.nest.w_in>5.99&&b.info.nest.h_in>3.99&&b.info.nest.per_sheet>200,'nest '+b.info.nest.per_sheet+' per 5x10 sheet');
+const D=await M.dxf({body:r.body,doc:plate},{units:'in'});ok(D.dxf.includes('CIRCLE')&&(D.dxf.match(/CIRCLE/g)||[]).length===4&&D.dxf.includes('POLYLINE')&&D.dxf.includes('\n42\n'),'DXF: 4 circles + outline with arc bulges');
+const T=await M.toolpath({body:r.body,doc:plate},{job:{units:'in',tabs:3}});ok(T.ok&&T.gcode.includes('G20')&&T.stats.time_min>0,'GRBL toolpath for the Genmitsu: '+(T.stats&&T.stats.time_min.toFixed(1))+' min, '+(T.errors||[]).join('; '));
+({q}=await run({...plate,features:[{id:'a',type:'box',w:6,d:4,h:0.125},{id:'b',type:'hole',plane:'face',face:{side:'+Z'},d:0.03,thru:true,pts:[[0,0]]}]},{material:'steel-cr',qty:5}));
+const dfm=q.res.quotes[0].dfm.find(d=>d.code==='hole');ok(dfm&&dfm.p&&Math.abs(dfm.p[0])<1e-3&&Math.abs(dfm.p[1])<1e-3&&Math.abs(dfm.p[2]-0.125)<1e-3,'tiny hole flagged at its 3D spot '+JSON.stringify(dfm&&dfm.p));
+const blk={name:'Block',units:'mm',params:[],features:[{id:'a',type:'box',w:80,d:50,h:25},{id:'p',type:'extrude',plane:'XY',offset:15,depth:11,op:'cut',shapes:[{k:'rect',w:40,h:20}]},{id:'h',type:'hole',plane:'face',face:{side:'+Z'},d:6.6,thru:true,pts:[[-32,-17],[32,17]]}]};
+({q}=await run(blk,{material:'al6061',qty:1}));
+ok(q.kind==='solid'&&q.res.quotes[0].process==='cnc3','pocketed block quotes as 3-axis CNC: $'+q.res.quotes[0].unit+' '+q.res.quotes[0].lead_days+' days');
+ok(q.part.sharp>=4,'4 sharp pocket corners found: '+q.part.sharp);
+ok(q.part.setups===2&&q.part.holes.length===2,'setups '+q.part.setups+', holes '+q.part.holes.length);
+ok(q.res.quotes[0].dfm.some(d=>d.code==='corner'),'sharp inside corner DFM warning');
+({q}=await run(blk,{material:'pla',qty:3}));ok(q.res.quotes[0].process==='fdm'&&q.res.quotes[0].unit>1,'PLA print quote $'+q.res.quotes[0].unit);
+process.exitCode=bad?1:0;
