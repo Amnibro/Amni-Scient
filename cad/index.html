@@ -38,6 +38,7 @@ header{height:52px;display:flex;align-items:center;gap:10px;padding:0 12px;backg
 .pop button:hover{background:var(--acc-soft)}
 .pop button small{color:var(--mut);font-size:11.5px}
 .hr{flex:1}
+.ws{margin-left:6px;flex:none}.ws button{padding:0 12px;height:28px;font-weight:600}
 .pill{font-size:11.5px;padding:4px 10px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--mut);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
 .pill.ok{color:var(--ok)}.pill.busy{color:var(--warm)}.pill.err{color:var(--err)}
 .ib{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink2)}
@@ -213,6 +214,7 @@ body.showL #left,body.showR #right{transform:none}
 <header>
 <a class="brand" href="/" title="Amni-Scient home"><svg viewBox="0 0 64 64"><path d="M32 8 54 20.5v23L32 56 10 43.5v-23z" fill="none" stroke="var(--acc)" stroke-width="4.5" stroke-linejoin="round"/><path d="M10 20.5 32 33l22-12.5M32 33v23" fill="none" stroke="var(--acc)" stroke-width="3.2" stroke-linejoin="round" opacity=".55"/></svg><span>Amni<b>CAD</b></span></a>
 <input id="docname" aria-label="Document name" value="Untitled part" spellcheck="false">
+<div class="seg ws" id="ws" role="tablist" aria-label="Workspace"><button data-ws="part" class="on" title="Parametric part modeling">Part</button><button data-ws="form" title="Organic sculpting and animation">Form</button></div>
 <div class="tb">
 <div class="menu" id="m-file"><button title="File"><span>▤</span><span class="lbl">File</span></button><div class="pop">
 <button data-act="new">New part<small>Start from scratch or a template</small></button>

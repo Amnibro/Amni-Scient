@@ -1,0 +1,22 @@
+const Y=(x,y,z)=>[x,z,-y],lin=c=>c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;
+export function toAnimGLB(m,bk,o={}){const s=o.units==='in'?0.0254:0.001,nv=m.pos.length/3,P=new Float32Array(nv*3),N=new Float32Array(nv*3),C=new Float32Array(nv*3),mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
+  for(let v=0;v<nv;v++){const p=Y(m.pos[3*v]*s,m.pos[3*v+1]*s,m.pos[3*v+2]*s),n=Y(m.nrm[3*v],m.nrm[3*v+1],m.nrm[3*v+2]);for(let c=0;c<3;c++){P[3*v+c]=p[c];N[3*v+c]=n[c];C[3*v+c]=lin(m.col[3*v+c]);if(p[c]<mn[c])mn[c]=p[c];if(p[c]>mx[c])mx[c]=p[c];}}
+  const parts=[],views=[],acc=[];let off=0;const add=(arr,target)=>{const b=new Uint8Array(arr.buffer,arr.byteOffset,arr.byteLength),pad=(4-b.length%4)%4;parts.push(b,new Uint8Array(pad));views.push({buffer:0,byteOffset:off,byteLength:b.length,...(target?{target}:{})});off+=b.length+pad;return views.length-1;};
+  const A=(arr,ct,type,count,target,extra={})=>{acc.push({bufferView:add(arr,target),componentType:ct,count,type,...extra});return acc.length-1;};
+  const attrs={POSITION:A(P,5126,'VEC3',nv,34962,{min:mn,max:mx}),NORMAL:A(N,5126,'VEC3',nv,34962),COLOR_0:A(C,5126,'VEC3',nv,34962)},ind=A(m.idx,5125,'SCALAR',m.idx.length,34963);
+  const sk=m.skin,nodes=[{name:o.name||'form',mesh:0}],gl={asset:{version:'2.0',generator:'Amni-CAD Form'},scene:0,scenes:[{nodes:[0]}],nodes,meshes:[{name:o.name||'form',primitives:[{attributes:attrs,indices:ind,material:0}]}],materials:[{name:'form',pbrMetallicRoughness:{baseColorFactor:[1,1,1,1],metallicFactor:0,roughnessFactor:0.62}}],accessors:acc,bufferViews:views,buffers:[{byteLength:0}]};
+  if(sk){attrs.JOINTS_0=A(sk.joints,5123,'VEC4',nv,34962);attrs.WEIGHTS_0=A(sk.weights,5126,'VEC4',nv,34962);const B=sk.bones,W=B.map(b=>Y(b.head[0]*s,b.head[1]*s,b.head[2]*s)),ibm=new Float32Array(B.length*16);
+    B.forEach((b,j)=>{const t=b.parent>=0?W[j].map((v,c)=>v-W[b.parent][c]):W[j];nodes.push({name:b.name,translation:t});ibm.set([1,0,0,0,0,1,0,0,0,0,1,0,-W[j][0],-W[j][1],-W[j][2],1],j*16);});
+    B.forEach((b,j)=>{if(b.parent>=0)(nodes[b.parent+1].children=nodes[b.parent+1].children||[]).push(j+1);else gl.scenes[0].nodes.push(j+1);});
+    nodes[0].skin=0;gl.skins=[{joints:B.map((_,j)=>j+1),inverseBindMatrices:A(ibm,5126,'MAT4',B.length),skeleton:1+Math.max(0,B.findIndex(b=>b.parent<0))}];
+    if(bk&&bk.tracks.length){const inp=A(bk.times,5126,'SCALAR',bk.times.length,undefined,{min:[bk.times[0]],max:[bk.times[bk.times.length-1]]}),samplers=[],channels=[];
+      for(const tr of bk.tracks){const j=B.findIndex(b=>b.name===tr.bone);if(j<0)continue;const n=bk.times.length;let out;
+        if(tr.ch==='rot'){out=new Float32Array(n*4);for(let i=0;i<n;i++){const q=tr.values.subarray(4*i,4*i+4);out.set([q[0],q[2],-q[1],q[3]],4*i);}}else{out=new Float32Array(n*3);const t0=nodes[j+1].translation;for(let i=0;i<n;i++){const d=Y(tr.values[3*i]*s,tr.values[3*i+1]*s,tr.values[3*i+2]*s);out.set([t0[0]+d[0],t0[1]+d[1],t0[2]+d[2]],3*i);}}
+        samplers.push({input:inp,output:A(out,5126,tr.ch==='rot'?'VEC4':'VEC3',n),interpolation:'LINEAR'});channels.push({sampler:samplers.length-1,target:{node:j+1,path:tr.ch==='rot'?'rotation':'translation'}});}
+      if(channels.length)gl.animations=[{name:o.clip||'Action',samplers,channels}];}}
+  gl.buffers[0].byteLength=off;const enc=new TextEncoder();let js=enc.encode(JSON.stringify(gl));const jp=(4-js.length%4)%4,jb=new Uint8Array(js.length+jp).fill(32);jb.set(js);const total=12+8+jb.length+8+off,out=new Uint8Array(total),dv=new DataView(out.buffer);
+  dv.setUint32(0,0x46546c67,true);dv.setUint32(4,2,true);dv.setUint32(8,total,true);dv.setUint32(12,jb.length,true);dv.setUint32(16,0x4e4f534a,true);out.set(jb,20);let q=20+jb.length;dv.setUint32(q,off,true);dv.setUint32(q+4,0x004e4942,true);q+=8;for(const p of parts){out.set(p,q);q+=p.length;}
+  return new Blob([out],{type:'model/gltf-binary'});}
+export function toSTL(m,name,o={}){const nt=m.idx.length/3,b=new DataView(new ArrayBuffer(84+nt*50)),hd=new TextEncoder().encode((name||'form')+' units '+(o.units==='in'?'inches':'millimeters'));for(let i=0;i<Math.min(80,hd.length);i++)b.setUint8(i,hd[i]);b.setUint32(80,nt,true);
+  for(let t=0;t<nt;t++){const q=84+t*50,v=[0,1,2].map(k=>m.idx[3*t+k]*3),p=v.map(i=>[m.pos[i],m.pos[i+1],m.pos[i+2]]),u=p[1].map((x,c)=>x-p[0][c]),w=p[2].map((x,c)=>x-p[0][c]),n=[u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0]],l=Math.hypot(...n)||1;n.forEach((x,c)=>b.setFloat32(q+4*c,x/l,true));p.forEach((pp,k)=>pp.forEach((x,c)=>b.setFloat32(q+12+12*k+4*c,x,true)));}
+  return new Blob([b.buffer],{type:'model/stl'});}
