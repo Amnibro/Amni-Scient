@@ -40,7 +40,7 @@ function render(API){const el=ST.el;if(!el)return;const h=API.h,m=mk(API.doc),r=
   const q=cur(r);const qs=r.res.quotes||[];
   const fdm=q&&q.process==='fdm'?fld(h,'Infill',sel(h,[[0,'Default (20%)'],[0.1,'10%'],[0.2,'20%'],[0.4,'40%'],[0.6,'60%'],[1,'Solid']],m.infill,v=>set(d=>{d.infill=+v;}))):null;
   const opts=h('div',{class:'sec'},matSel,qty,fdm,fin,exp);
-  if(!r.res.ok&&!qs.length){el.replaceChildren(head,opts,h('div',{class:'sec'},...(r.res.errors||['No quote']).map(e=>h('div',{class:'alert err'},e))));return;}
+  if(!r.res.ok&&!qs.length){el.replaceChildren(head,opts,h('div',{class:'sec'},...(r.res.errors||['No quote']).map(e=>h('div',{class:'alert err'},e)),(r.res.try||[]).length?h('div',{class:'note'},'Materials this shop can make it in:'):null,h('div',{style:'display:flex;gap:6px;flex-wrap:wrap;margin-top:6px'},...(r.res.try||[]).map(t=>{const id=(t.match(/\(([^)]+)\)$/)||[])[1];return h('button',{class:'btn sm',onclick:()=>set(d=>{d.material=id;d.process='auto';d.finishes=[];})},t.replace(/ \([^)]+\)$/,''));}))));return;}
   const bd=q.breakdown,rows=[['Material',bd.material],['Machine time',bd.machine],['Labor & handling',bd.labor],['Finishing',bd.finish],['Setup (spread over qty)',bd.setup],['Minimum order fill',bd.min_order_fill]].filter(x=>x[1]>0.004);
   const price=h('div',{class:'sec'},h('div',{class:'mk-price'},h('b',null,usd(q.unit)),h('span',null,'each · '+usd(q.total)+' for '+q.qty+' · ships in '+q.lead_days+' business day'+(q.lead_days>1?'s':''))),
     h('div',{class:'note'},q.name+' · '+(r.res.material_name||'')+' · machine time '+nf(q.time_s/60,q.time_s<600?2:1)+' min/part'+(q.ok?'':' · has blocking issues')),

@@ -7,7 +7,7 @@ import os from 'node:os';
 import readline from 'node:readline';
 const VER='1.0.0',PROTOS=['2025-11-25','2025-06-18','2025-03-26','2024-11-05'],GUID='258EAFA5-E914-47DA-95CA-C5AB0DC85B11',MAXMSG=64*2**20,FRAG=2**20;
 const BASE=+(process.env.AMNICAD_PORT||41777),SPAN=+(process.env.AMNICAD_PORT_SPAN||5),CWD=process.cwd(),SITE='https://amni-scient.com/cad/';
-const ORIGINS=new Set(['https://amni-scient.com','https://www.amni-scient.com',...(process.env.AMNICAD_ORIGINS||'').split(',').map(s=>s.trim().replace(/\/$/,'')).filter(Boolean)]);
+const ORIGINS=new Set(['https://amni-scient.com','https://www.amni-scient.com',...[0,1,2,3,4].flatMap(i=>['http://127.0.0.1:'+(41790+i),'http://localhost:'+(41790+i)]),...(process.env.AMNICAD_ORIGINS||'').split(',').map(s=>s.trim().replace(/\/$/,'')).filter(Boolean)]);
 const CFG=process.env.AMNICAD_CONFIG||(process.platform==='win32'?path.join(process.env.APPDATA||path.join(os.homedir(),'AppData','Roaming'),'amnicad'):path.join(process.env.XDG_CONFIG_HOME||path.join(os.homedir(),'.config'),'amnicad')),TOKF=path.join(CFG,'bridge-tokens.json');
 const log=(...a)=>process.stderr.write('[amnicad-mcp] '+a.join(' ')+'\n');
 const okOrigin=o=>!!o&&(ORIGINS.has(o)||/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d{1,5})?$/.test(o));
