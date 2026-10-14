@@ -24,13 +24,14 @@ self.onmessage=e=>{
       }
       if(m.cmd==='export'){
         const b=K.exportBody(last,m.fmt),buf=await b.arrayBuffer();
-        return postMessage({id:m.id,ok:true,buf,mime:m.fmt==='step'?'application/step':'model/stl'},[buf]);
+        return postMessage({id:m.id,ok:true,buf,mime:b.type||'application/octet-stream'},[buf]);
       }
       if(m.cmd==='probe'){
         const feats=(lastDoc&&lastDoc.features||[]).filter(f=>!f.suppressed),i=feats.findIndex(f=>f.id===m.fid),sh=i>=0?K.shapeBefore(i):last;
         if(!sh)return postMessage({id:m.id,ok:true,lines:[],n:0});
         const lines=K.edgePolylines(sh,m.sel,m.faces);return postMessage({id:m.id,ok:true,lines,n:lines.length});
       }
+      if(m.cmd==='plugin'){const mod=await import(new URL(m.module,import.meta.url).href);const r=await mod[m.fn]({body:last,doc:lastDoc,K,blobs},m.args||{});return postMessage({id:m.id,ok:true,r},r&&r.transfer||[]);}
       throw new Error('unknown command '+m.cmd);
     }catch(err){postMessage({id:m.id,ok:false,error:String(err&&err.message||err)});}
   };

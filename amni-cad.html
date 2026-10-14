@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-CAD &mdash; Free Browser CAD with FEA, CFD &amp; AI | AMNI-SCIENT</title>
+<meta name="description" content="Amni-CAD: free parametric 3D CAD in your browser. OpenCascade solids, STEP export, GPU stress and modal analysis, wind-tunnel CFD, automatic 2D drawings with tolerances, SolidWorks-style interface, and an AI assistant that works with Claude, ChatGPT, Gemini or a local model.">
+<meta name="keywords" content="amni-cad,browser cad,free cad,parametric cad,online cad,step export,fea,finite element,cfd,engineering drawing,gd&amp;t,tolerance stack-up,solidworks alternative,creo alternative,opencascade,webgpu,ai cad,claude cad">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-CAD &mdash; Free Browser CAD with FEA, CFD &amp; AI">
+<meta property="og:description" content="Model, analyse, draw and export real CAD parts in the browser. Bring Claude, ChatGPT or a local AI. Your designs never leave your device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-cad.html">
+<meta property="og:image" content="https://amni-scient.com/assets/cad/og-cad.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-CAD &mdash; Free Browser CAD">
+<meta name="twitter:description" content="Parametric CAD, FEA, CFD, 2D drawings and tolerancing in your browser, with the AI you already use.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/cad/og-cad.png">
+<link rel="canonical" href="https://amni-scient.com/amni-cad.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-CAD","url":"https://amni-scient.com/cad/","applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free parametric 3D CAD in the browser with OpenCascade solids, STEP export, stress (FEA), modal and thermal analysis, wind-tunnel CFD, automatic 2D drawings with tolerancing, and an AI assistant that works with Claude, ChatGPT, Gemini or a local model.","author":{"@type":"Organization","name":"Amni-Scient"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b263">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}</style>
+</head>
+<body class="pp theme-cad">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html" class="active">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 18 82 36v38L50 92 18 74V36z" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round" fill="var(--accent-dim)"/>
+<path d="M18 36 50 54l32-18M50 54v38" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round" opacity=".6"/>
+<circle cx="50" cy="54" r="4" fill="var(--accent)"/>
+</svg>
+</div>
+<h1>AMNI-CAD</h1>
+<p class="desc">FREE PARAMETRIC CAD IN YOUR BROWSER &bull; STEP EXPORT &bull; GPU STRESS &amp; FLOW &bull; 2D DRAWINGS &bull; BRING YOUR OWN AI</p>
+<div style="margin-top:2rem">
+<a href="cad/" class="btn btn-primary">LAUNCH AMNI-CAD &rarr;</a>
+</div>
+</div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">Design a real part, test it, draw it and send it to a machine shop or a printer, without installing anything.</p>
+<ul class="ptile-feats"><li>OpenCascade solids with STEP, BREP, STL, 3MF, OBJ, glTF and PLY export</li><li>Stress, natural frequencies and heat flow solved on your GPU</li><li>Wind and water tunnel with drag, pressure and streamlines</li><li>Automatic drawings with ISO 2768, ISO 286 fits and GD&amp;T</li><li>SolidWorks-style and Creo-style layouts</li><li>Works with Claude, ChatGPT, Gemini or a model on your device</li></ul>
+</div>
+<div class="ptile-media"><img src="assets/cad/tile-cad.jpg" alt="Amni-CAD showing an L-bracket with a stress map and the simulation panel" loading="lazy"></div>
+</div>
+<section>
+<h2>WHAT IT DOES</h2>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15l8 4 8-4M4 15V9l8-4 8 4v6M12 19v-6M4 9l8 4 8-4"/></svg></div>
+<h4>PARAMETRIC SOLIDS</h4>
+<p>Real B-rep solids from the OpenCascade kernel: extrude, revolve, sweep, loft, holes with ISO sizes, fillets, chamfers, shells, patterns, mirrors, threads and coil springs. Every number can be a formula of your parameters.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+<h4>STRESS, MODES, HEAT</h4>
+<p>Click faces to fix and load them, then solve on your own GPU. Von Mises stress, displacement and safety factor, plus natural frequencies and steady heat flow.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8c4-4 8 4 12 0s6 0 8 0M2 14c4-4 8 4 12 0s6 0 8 0"/></svg></div>
+<h4>WIND &amp; WATER TUNNEL</h4>
+<p>A lattice-Boltzmann flow solver on WebGPU gives drag coefficient, surface pressure and streamlines around the part, in air or water.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9h16M9 9v11M13 13h4M13 16h4"/></svg></div>
+<h4>2D DRAWINGS</h4>
+<p>Front, top, side and isometric views with hidden lines, auto dimensions, hole callouts and a title block. Export PDF, SVG or DXF.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14M8 8l8 8"/></svg></div>
+<h4>TOLERANCING</h4>
+<p>ISO 2768 general tolerances, ISO 286 fits like H7/g6, GD&amp;T frames, and worst-case, RSS and Monte Carlo stack-ups straight from your model.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></div>
+<h4>BRING YOUR OWN AI</h4>
+<p>Describe a part or a change. Use Claude, OpenAI, Gemini or OpenRouter with your key, your Claude or ChatGPT subscription through the local bridge, or a fully on-device model.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v4H3zM3 11h8v8H3zM13 11h8v3h-8zM13 16h8v3h-8z"/></svg></div>
+<h4>FAMILIAR INTERFACE</h4>
+<p>Switch to a SolidWorks-style or Creo-style layout: ribbon, feature tree with rollback bar, property manager, middle-mouse orbit and the view shortcuts your hands already know.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg></div>
+<h4>OPEN FORMATS</h4>
+<p>STEP and BREP for any CAD or CAM, STL and 3MF for printing, OBJ, glTF and PLY for rendering. Import STEP too.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>USE THE AI YOU ALREADY PAY FOR</h2>
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Websites can&rsquo;t sign in to a Claude Pro/Max or ChatGPT Plus plan. Those plans only work inside their own apps. So Amni-CAD comes to your assistant instead.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">The local bridge</strong> is one small file you run on your own computer. Add it to Claude Code, Claude Desktop, Codex, Gemini CLI or Cursor, pair it once with a six-digit code, and then ask in plain words: &ldquo;make the bracket 20% lighter and show me the stress.&rdquo; You watch the part change in your browser while your assistant reads the results and screenshots.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Prefer an API key?</strong> Paste one for Anthropic, OpenAI or Google, or sign in once with OpenRouter. The key and your prompts go straight from your browser to that provider.</p>
+<p style="margin-top:1.2rem"><strong style="color:var(--text)">Want nothing to leave the machine?</strong> Pick the on-device model (Amni-LLM on WebGPU), or point it at Ollama or LM Studio.</p>
+</div>
+</section>
+<section>
+<h2>TYPICAL WORKFLOW</h2>
+<div class="card-grid">
+<div class="card"><h3>1. SKETCH OR DESCRIBE</h3><p>Start from a template, add features from the ribbon or the palette, or type what you want. Parameters like <code>w = 80</code> drive every size.</p></div>
+<div class="card"><h3>2. TEST IT</h3><p>Pick the faces that are bolted down and the faces that are pushed. Run stress, modes, heat or flow and read the safety factor, frequencies or drag.</p></div>
+<div class="card"><h3>3. DRAW &amp; TOLERANCE</h3><p>Generate the drawing, set the general tolerance class and fits, add GD&amp;T, and check the stack-up before anything gets made.</p></div>
+<div class="card"><h3>4. EXPORT</h3><p>STEP for the machine shop, 3MF or STL for the printer, PDF or DXF drawings, and a share link that carries the whole design.</p></div>
+</div>
+</section>
+<section>
+<h2>PRIVACY &amp; DATA</h2>
+<div style="max-width:800px;margin:0 0;line-height:1.9;color:var(--dim);font-size:.9rem">
+<p>Amni-CAD runs entirely in your browser. Geometry, simulations and drawings are computed on your device, and your designs are saved only in your browser or in files you download. Amni-Scient never receives your models, your prompts or your API keys. Share links carry the design inside the link itself.</p>
+</div>
+</section>
+<section>
+<h2>OPEN AMNI-CAD</h2>
+<p style="color:var(--dim);margin-bottom:1.5rem;font-size:.9rem">Works best in Chrome or Edge on a computer with a mouse. No install, no sign-up.</p>
+<div class="cta-row" style="gap:1rem;flex-wrap:wrap">
+<a href="cad/" class="btn btn-primary">LAUNCH AMNI-CAD</a>
+<a href="cad/mcp/amnicad-mcp.mjs" class="btn btn-outline" download>DOWNLOAD THE AI BRIDGE</a>
+<a href="amni-calc.html" class="btn btn-outline">AMNI-CALC</a>
+</div>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-10-14">October 14, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

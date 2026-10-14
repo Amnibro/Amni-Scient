@@ -65,6 +65,14 @@ aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scroll
 .feat .ty{color:var(--mut);font-size:11px}
 .feat .dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0}
 .feat.sup .nm{text-decoration:line-through;color:var(--mut)}
+.feat.rolled{opacity:.42}
+#tab-ai.brmode #chat,#tab-ai.brmode .chips,#tab-ai.brmode .compose{display:none}
+.feat.dropat,.tend.dropat{box-shadow:inset 0 2px 0 var(--acc)}
+.tend{height:14px}
+.rollbar{display:flex;align-items:center;gap:6px;height:16px;margin:2px 4px;cursor:ns-resize}
+.rollbar i{flex:1;height:3px;border-radius:2px;background:var(--warm);opacity:.85}
+.rollbar:hover i{opacity:1;height:4px}
+.rollbar .btn{height:16px;padding:0 6px;font-size:11px}
 .feat .acts{display:none;gap:2px}
 .feat:hover .acts,.feat.on .acts{display:flex}
 .feat .acts button{width:20px;height:20px;border-radius:5px;color:var(--mut);font-size:12px}
@@ -99,7 +107,7 @@ aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scroll
 #hint p{color:var(--mut);margin-bottom:14px}
 #hint .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .rtabs{display:flex;padding:8px 8px 0;gap:2px;border-bottom:1px solid var(--line);flex-shrink:0;position:sticky;top:0;background:var(--panel);z-index:2}
-.rtabs button{flex:1;padding:8px 2px 9px;color:var(--mut);font-weight:600;font-size:12px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.rtabs button{flex:1;padding:8px 1px 9px;color:var(--mut);font-weight:600;font-size:11.5px;border-bottom:2px solid transparent;margin-bottom:-1px}
 .rtabs button:hover{color:var(--ink)}
 .rtabs button.on{color:var(--ink);border-bottom-color:var(--acc)}
 .tab{display:none;flex:1;min-height:0}
@@ -212,7 +220,12 @@ body.showL #left,body.showR #right{transform:none}
 </div></div>
 <div class="menu" id="m-exp"><button title="Export"><span>⇪</span><span class="lbl">Export</span></button><div class="pop">
 <button data-act="step">STEP (.step)<small>Exact solid for any CAD/CAM</small></button>
+<button data-act="brep">BREP (.brep)<small>Exact OpenCascade solid</small></button>
 <button data-act="stl">STL (.stl)<small>Mesh for 3D printing</small></button>
+<button data-act="3mf">3MF (.3mf)<small>3D printing with units</small></button>
+<button data-act="obj">OBJ (.obj)<small>Mesh for rendering</small></button>
+<button data-act="glb">glTF (.glb)<small>Web, AR, Blender</small></button>
+<button data-act="ply">PLY (.ply)<small>Compact binary mesh</small></button>
 <button data-act="png">Image (.png)<small>Snapshot of the view</small></button>
 </div></div>
 <span class="sep"></span>
@@ -245,11 +258,12 @@ body.showL #left,body.showR #right{transform:none}
 <div class="chip" id="hint"><h2>Design something real</h2><p>Start from a template, add a feature on the left, or describe a part to the AI assistant.</p><div class="row"><button class="btn pri" data-act="new">Templates</button><button class="btn" id="hint-ai">Ask the AI</button></div></div>
 </div>
 <aside id="right" aria-label="Properties">
-<nav class="rtabs"><button data-tab="edit" class="on">Edit</button><button data-tab="ai">AI</button><button data-tab="sim">Stress</button><button data-tab="flow">Flow</button><button data-tab="check">Review</button></nav>
+<nav class="rtabs"><button data-tab="edit" class="on">Edit</button><button data-tab="ai">AI</button><button data-tab="sim">Stress</button><button data-tab="flow">Flow</button><button data-tab="draw">Drawing</button><button data-tab="check">Review</button></nav>
 <div class="tab on" id="tab-edit"></div>
 <div class="tab" id="tab-ai"></div>
 <div class="tab" id="tab-sim"></div>
 <div class="tab" id="tab-flow"></div>
+<div class="tab" id="tab-draw"></div>
 <div class="tab" id="tab-check"></div>
 </aside>
 </main>

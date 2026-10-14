@@ -14,14 +14,17 @@ Actions (applied in order):
  {"delete":"f3"}                         remove a feature
  {"new":true}                            empty the model first (only when the user wants a new part)
  {"material":"al6061"}                   set the material
- {"sim":{"fixed":[face selector],"loads":[{"faces":face selector,"F":[fx,fy,fz]}]}}  set up a stress test (N)
+ {"sim":{"type":"static","fixed":[face selector],"supports":[{"faces":sel,"type":"fixed"|"roller"}],"loads":[{"faces":sel,"F":[fx,fy,fz]} | {"faces":sel,"p":MPa} | {"faces":sel,"M":[mx,my,mz] N·mm torque}],"gravity":true}}  set up a stress test (N, mm, MPa)
+ {"sim":{"type":"modal","modes":6,"supports":[...]}}  natural frequencies (no supports = free part)
+ {"sim":{"type":"thermal","temps":[{"faces":sel,"T":°C}],"conv":[{"faces":sel,"h":W/m²K,"Tinf":°C}],"flux":[{"faces":sel,"Q":W}]}}  steady heat flow
  {"run":"fea"}                           run the stress analysis
  {"flow":{"fluid":"air","speed":10,"dir":"+X"}}  set up a wind/water tunnel test (speed in m/s, dir = flow direction)
  {"run":"flow"}                          run the flow analysis (drag, pressure, streamlines)
 Numbers may be expressions of parameters such as "w/2-8". Angles are degrees. Trig functions take degrees.
 Feature types (type: fields):
 ${featureDocs()}
-Profiles ("shapes") are 2D shapes in sketch coordinates: rect{x,y,w,h,r}, circle{x,y,r}, poly{x,y,r,n}, slot{x,y,l,h}, path{pts:[[x,y],...]}. A shape with "hole":true is subtracted from the others.
+Profiles ("shapes") are 2D shapes in sketch coordinates: rect{x,y,w,h,r}, circle{x,y,r}, poly{x,y,r,n}, slot{x,y,l,h}, path{pts:[[x,y],...]}, ellipse{x,y,rx,ry,a}, spline{pts:[[x,y],...]} (smooth closed), text{x,y,text,h}. A shape with "hole":true is subtracted from the others.
+Holes: prefer standard sizes with "std":"M3".."M20" and "fit":"clearance"|"tapped"|"cbore"|"csink" instead of raw diameters. Threads are real modelled ISO threads (slow to build, so use them only when asked). For springs use coil. For pipes, rails or handles use sweep with a path. For transitions between two outlines use loft.
 Sketch planes: "XY" top (normal +Z), "XZ" front (sketch x = world X, sketch y = world Z), "YZ" right (sketch x = world Y, sketch y = world Z). "offset" moves the plane along its normal. plane "face" plus "face":{"side":"+Z"} sketches on a flat face of the part.
 Hole: drills from its sketch plane against the normal, so put the plane on the top surface (e.g. plane "XY", offset = part height).
 Edge selectors: {"by":"all"}, {"dir":"Z"} straight edges parallel to Z, {"side":"+Z"} edges on the top, {"type":"CIRCLE"} round edges, {"by":"pick","pts":[[x,y,z]]} the edge nearest each point. A list of selectors means "any of them".
