@@ -1,0 +1,4 @@
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as F from '../fea.js';
+const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
+for(const [L,b,t] of [[140,60,6],[100,10,10]]){const r=await K.build({params:[],features:[{id:'a',type:'box',w:L,d:b,h:t}]});const m=K.meshBody(r.body);K.resetCache();const fid=n=>m.faces.findIndex(f=>f.n&&Math.abs(f.n[0]-n[0])+Math.abs(f.n[1]-n[1])+Math.abs(f.n[2]-n[2])<1e-6);
+for(const sw of[1,2,3]){F.setSweeps(sw);const t0=Date.now(),R=F.runFEA({pos:m.pos,idx:m.idx,groups:m.groups,bbox:m.props.bbox,volume:m.props.volume,mat:{E:68900,nu:0.33},fixed:[fid([-1,0,0])],loads:[{faces:[fid([1,0,0])],F:[0,0,-100]}],res:30000},()=>{});console.log(L+'x'+b+'x'+t,'sweeps',sw,'el',R.nEl,'it',R.iters,'ms',Date.now()-t0,'solve',R.ms);}}

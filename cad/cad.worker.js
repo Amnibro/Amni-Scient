@@ -1,0 +1,39 @@
+import opencascade from './vendor/replicad_single.js';
+import * as K from './kernel.js';
+const blobs={};
+let ready=null,last=null,lastDoc=null;
+async function boot(){const oc=await opencascade({locateFile:()=>new URL('./vendor/replicad_single.wasm',import.meta.url).href,print:()=>{},printErr:()=>{}});await K.init(oc);return true;}
+ready=boot();
+const chain=[];let busy=false;
+async function pump(){if(busy)return;busy=true;while(chain.length){const j=chain.shift();try{await j();}catch(e){}}busy=false;}
+self.onmessage=e=>{
+  const m=e.data;
+  if(m.cmd==='build'){
+    for(let i=chain.length-1;i>=0;i--)if(chain[i].kind==='build'){postMessage({id:chain[i].mid,ok:false,superseded:true});chain.splice(i,1);}
+  }
+  const job=async()=>{
+    try{
+      await ready;
+      if(m.cmd==='ping')return postMessage({id:m.id,ok:true});
+      if(m.cmd==='blob'){blobs[m.key]=m.buf;return postMessage({id:m.id,ok:true});}
+      if(m.cmd==='build'){
+        const r=await K.build(m.doc,{blobs,upto:m.upto});last=r.body;lastDoc=m.doc;
+        const mesh=K.meshBody(r.body,m.q||1);
+        const tr=mesh?[mesh.pos.buffer,mesh.nrm.buffer,mesh.idx.buffer,mesh.lines.buffer]:[];
+        return postMessage({id:m.id,ok:true,mesh,errors:r.errors,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
+      }
+      if(m.cmd==='export'){
+        const b=K.exportBody(last,m.fmt),buf=await b.arrayBuffer();
+        return postMessage({id:m.id,ok:true,buf,mime:m.fmt==='step'?'application/step':'model/stl'},[buf]);
+      }
+      if(m.cmd==='probe'){
+        const feats=(lastDoc&&lastDoc.features||[]).filter(f=>!f.suppressed),i=feats.findIndex(f=>f.id===m.fid),sh=i>=0?K.shapeBefore(i):last;
+        if(!sh)return postMessage({id:m.id,ok:true,lines:[],n:0});
+        const lines=K.edgePolylines(sh,m.sel,m.faces);return postMessage({id:m.id,ok:true,lines,n:lines.length});
+      }
+      throw new Error('unknown command '+m.cmd);
+    }catch(err){postMessage({id:m.id,ok:false,error:String(err&&err.message||err)});}
+  };
+  job.kind=m.cmd;job.mid=m.id;chain.push(job);pump();
+};
+ready.then(()=>postMessage({id:0,ready:true})).catch(e=>postMessage({id:0,ready:false,error:String(e.message||e)}));
