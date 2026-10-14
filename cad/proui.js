@@ -71,11 +71,11 @@ const CSS=`
 .okx.ok{color:#fff;background:var(--ok);border-color:var(--ok)}
 .okx.no{color:var(--err)}
 #pm #tab-edit,#dash #tab-edit{display:block!important}
-#dash{display:none;position:absolute;left:12px;right:12px;top:58px;max-height:46%;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:10px;box-shadow:var(--shadow);z-index:6}
+#dash{display:none;position:absolute;left:12px;right:12px;top:58px;max-height:62%;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:10px;box-shadow:var(--shadow);z-index:6}
 .pro-creo.pm-on #dash{display:block}
 #dash #tab-edit .sec{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:2px 16px;align-items:start}
 #dash #tab-edit .sec>*{min-width:0}
-#dash #tab-edit .sec>.ehead,#dash #tab-edit .sec>.alert,#dash #tab-edit .sec>div[style*="margin:8px 0"]{grid-column:1/-1}
+#dash #tab-edit .sec>.ehead,#dash #tab-edit .sec>.alert,#dash #tab-edit .sec>.btn.done,#dash #tab-edit .sec>div[style*="margin:8px 0"]{grid-column:1/-1}
 .pro-sw .rtabs button[data-tab=edit],.pro-creo .rtabs button[data-tab=edit]{display:none}
 #pbar{display:none;height:24px;align-items:center;gap:14px;padding:0 12px;background:var(--bg2);border-top:1px solid var(--line);font-size:11.5px;color:var(--mut);flex-shrink:0}
 .pro #pbar{display:flex}
