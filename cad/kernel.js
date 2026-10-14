@@ -3,6 +3,10 @@ import {evalExpr,resolveParams} from './expr.js';
 import {sketchShapes} from './sketch.js';
 export {evalExpr,resolveParams};
 const STRKEYS=new Set(['id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt']);
+export const HOLESTD_IN={'#4':[0.1285,0.089,0.219,0.112,0.255],'#6':[0.1495,0.1065,0.281,0.138,0.307],'#8':[0.177,0.136,0.312,0.164,0.359],'#10':[0.201,0.1495,0.375,0.19,0.411],'1/4':[0.281,0.201,0.438,0.25,0.531],'5/16':[0.344,0.257,0.531,0.312,0.656],'3/8':[0.406,0.3125,0.625,0.375,0.781],'1/2':[0.531,0.4219,0.812,0.5,1.031]};
+export const THREADSTD={M3:[3,0.5,'mm'],M4:[4,0.7,'mm'],M5:[5,0.8,'mm'],M6:[6,1,'mm'],M8:[8,1.25,'mm'],M10:[10,1.5,'mm'],M12:[12,1.75,'mm'],M16:[16,2,'mm'],M20:[20,2.5,'mm'],'#4-40':[0.112,1/40,'in'],'#6-32':[0.138,1/32,'in'],'#8-32':[0.164,1/32,'in'],'#10-24':[0.19,1/24,'in'],'#10-32':[0.19,1/32,'in'],'1/4-20':[0.25,1/20,'in'],'5/16-18':[0.3125,1/18,'in'],'3/8-16':[0.375,1/16,'in'],'1/2-13':[0.5,1/13,'in']};
+let UNITS='mm';
+const ucv=(from)=>from===UNITS?1:from==='in'?25.4:1/25.4;
 export const HOLESTD={M2:[2.4,1.6,4.3,2.2,4.4],'M2.5':[2.9,2.05,5,2.7,5.5],M3:[3.4,2.5,6.5,3.4,6.72],M4:[4.5,3.3,8,4.4,8.96],M5:[5.5,4.2,10,5.4,11.2],M6:[6.6,5,11,6.5,13.44],M8:[9,6.8,15,8.6,17.92],M10:[11,8.5,18,10.8,22.4],M12:[13.5,10.2,20,13,26.88],M16:[17.5,14,26,17.5,33.6],M20:[22,17.5,33,21.5,40.32]};
 function res(v,scope,k){
   if(Array.isArray(v))return v.map(x=>res(x,scope,k));
@@ -129,7 +133,7 @@ function coneSolid(r1,r2,h,c,ax){
   let pen=R.draw(pts[0]);for(let i=1;i<pts.length;i++)pen=pen.lineTo(pts[i]);
   return pen.close().sketchOnPlane(new R.Plane(c,x,cross(x,ax))).revolve(ax,{origin:c});
 }
-function holeStd(f){const t=f.std&&f.std!=='custom'&&HOLESTD[f.std];if(!t)return f;const fit=f.fit||'clearance';return{...f,d:fit==='tapped'?t[1]:t[0],cb_d:fit==='cbore'?t[2]:0,cb_h:fit==='cbore'?t[3]:0,cs_d:fit==='csink'?t[4]:0};}
+function holeStd(f){const inch=HOLESTD_IN[f.std],t0=f.std&&f.std!=='custom'&&(inch||HOLESTD[f.std]);if(!t0)return f;const k=ucv(inch?'in':'mm'),t=t0.map(v=>v*k),fit=f.fit||'clearance';return{...f,d:fit==='tapped'?t[1]:t[0],cb_d:fit==='cbore'?t[2]:0,cb_h:fit==='cbore'?t[3]:0,cs_d:fit==='csink'?t[4]:0,cs_ang:fit==='csink'?(inch?82:90):f.cs_ang};}
 function holeTool(f0,body){
   const f=holeStd(f0),P=planeFrom(f,body),d=f.d??5,thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth;
   const pts=f.pts&&f.pts.length?f.pts:[[f.x||0,f.y||0]],y=cross(P.n,P.x);
@@ -140,7 +144,7 @@ function holeTool(f0,body){
     const top=c.map((v,i)=>v+P.n[i]*eps);
     let t=R.makeCylinder(d/2,depth+eps,top,down);
     if(f.cb_d>d&&f.cb_h>0)t=t.fuse(R.makeCylinder(f.cb_d/2,f.cb_h+eps,top,down));
-    if(f.cs_d>d){const hh=(f.cs_d-d)/2;t=t.fuse(coneSolid(f.cs_d/2+eps,d/2,hh+eps,top,down));}
+    if(f.cs_d>d){const ta=Math.tan((f.cs_ang||90)*Math.PI/360),hh=(f.cs_d-d)/2/ta;t=t.fuse(coneSolid(f.cs_d/2+eps*ta,d/2,hh+eps,top,down));}
     tool=tool?tool.fuse(t):t;
   }
   return tool;
@@ -175,7 +179,7 @@ function coilTool(f){
   return helixSweep((f.d??20)/2,p,p*(f.turns??5),c,ax,f.hand==='left',R.drawCircle(wd/2));
 }
 function threadTool(f){
-  const c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,p=f.pitch??1.5,d=f.d??10,L=f.length??15,ext=f.kind!=='internal',h=0.6134*p,hi=0.5413*p;
+  const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',h=0.6134*p,hi=0.5413*p;
   const tri=ext?R.draw([0.05*p,-0.4665*p]).lineTo([-h,-0.0835*p]).lineTo([-h,0.0835*p]).lineTo([0.05*p,0.4665*p]).close():R.draw([-0.05*p,-0.404*p]).lineTo([hi,-0.0625*p]).lineTo([hi,0.0625*p]).lineTo([-0.05*p,0.404*p]).close();
   return helixSweep(ext?d/2:d/2-hi,p,L+2*p,c.map((v,i)=>v-ax[i]*p),ax,f.hand==='left',tri);
 }
@@ -207,7 +211,7 @@ function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<M
 export function resetCache(C){if(C){truncate(0,C);return;}truncate(0);cache=[];}
 export async function build(doc,opt={}){
   const cache=opt.cache||cacheRef();
-  const t0=performance.now(),{scope,errors:pErr}=resolveParams(doc.params);
+  const t0=performance.now(),{scope,errors:pErr}=resolveParams(doc.params,doc.units);UNITS=doc.units==='in'?'in':'mm';
   const feats=(doc.features||[]).filter(f=>!f.suppressed),upto=opt.upto??feats.length,errors=[],log=[];
   let body=null,prevKey='',reused=0;
   const tools={};
@@ -273,9 +277,9 @@ export function meshBody(body,q=1){
   return{pos:new Float32Array(m.vertices),nrm:new Float32Array(m.normals),idx:new Uint32Array(m.triangles),groups:m.faceGroups.map(g=>[g.start,g.count,fh.get(g.faceId)??-1]),lines:new Float32Array(me.lines),egroups:me.edgeGroups.map(g=>[g.start,g.count,eh.get(g.edgeId)??-1]),faces,edges,props:{volume:vp?vp.volume:safe(()=>R.measureVolume(body)),com:vp?vp.com:null,area:safe(()=>R.measureArea(body)),bbox:bb,nFaces:F.length,nEdges:E.length,nSolids:body.solids?body.solids.length:1}};
 }
 function safe(f){try{return f();}catch{return null;}}
-export function exportBody(body,fmt){
+export function exportBody(body,fmt,units){
   if(!body)throw new Error('nothing to export');
-  if(fmt==='step')return body.blobSTEP();
+  if(fmt==='step')return units==='in'?R.exportSTEP([{shape:body,name:'part',color:'#b8c2cc'}],{unit:'INCH',modelUnit:'INCH'}):body.blobSTEP();
   if(fmt==='brep')return new Blob([body.serialize()],{type:'model/vnd.brep'});
   if(fmt==='stl')return body.blobSTL({binary:true,tolerance:Math.max(sizeOf(body)*1e-4,0.001),angularTolerance:0.05});
   throw new Error('unknown format '+fmt);

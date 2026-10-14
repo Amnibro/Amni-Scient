@@ -1,0 +1,17 @@
+import * as T from '../tolerance.js';
+let bad=0;const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)bad++;},near=(a,b,e=1e-9)=>Math.abs(a-b)<=e,IN={units:'in'};
+ok(T.asme(0.25,3)==='.250'&&T.asme(1.5,2)==='1.50'&&T.asme(-0.5,2)==='-.50'&&T.asme(0.0004,3)==='.000'&&T.asme(12,2)==='12.00','ASME decimal-inch style, no leading zero');
+ok(T.places(0.281)===3&&T.places(4)===2&&T.places(4,3)===3&&T.places(0.1285)===4,'decimal places grow to show exact values');
+ok(T.angDM(0.5)==="0°30'"&&T.angDM(1)==='1°'&&T.angDM(1.25)==="1°15'",'angles in degrees and minutes');
+const z=T.zoneU('H7',1,'in'),zm=T.zone('H7',25.4);ok(near(z.up,zm.up/25.4)&&near(z.up,0.021/25.4)&&z.lo===0&&near(z.min,1)&&near(z.max,1+0.021/25.4),'Ø1.000 in H7 = ISO Ø25.4 mm H7 converted (+.0008/0)');
+const f=T.fitU(1,'H7/g6','in');ok(f.size===1&&f.type==='clearance'&&near(f.minC,0.007/25.4)&&near(f.maxC,0.041/25.4)&&near(f.shaft.up,-0.007/25.4)&&near(f.shaft.lo,-0.020/25.4),'Ø1.000 in H7/g6 clearance .0003….0016 in');
+ok(T.fitU(25,'H7/g6','mm').maxC===T.fit(25,'H7/g6').maxC,'mm fits unchanged');
+const t2=T.tolOf('d',0.5,{...IN,params:{d:{k:'fit',z:'H7'}}});ok(t2.txt===' H7 (+.0007/0)'&&near(t2.up,0.018/25.4),'inch fit callout text from ISO 286 at 12.7 mm');
+const t1=T.tolOf('w',4,{...IN,params:{w:{k:'pm',up:0.005}}}),t3=T.tolOf('w',4,{...IN,params:{w:{k:'pm',up:0.01,lo:-0.005}}});ok(t1.txt===' ±.005'&&t3.txt===' +.010/−.005','inch ± text');
+ok(T.stdOf(IN)==='ansi'&&T.stdOf({})==='iso'&&T.stdOf({...IN,std:'iso'})==='iso','inch docs default to the ANSI block');
+ok(T.generalTol(1.5,IN)===0.01&&T.generalTol(1.125,IN)===0.005&&T.generalTol(1.5,{...IN,places:3})===0.005&&T.generalTol(2,IN,1)===0.1,'ANSI block .X ±.1 / .XX ±.01 / .XXX ±.005');
+ok(near(T.generalTol(1,{...IN,std:'iso',general:'m'}),0.2/25.4)&&T.generalTol(25.4,{std:'iso',general:'m'})===0.2,'ISO 2768 on inch docs uses the mm size band');
+const n=T.generalNote(IN).join(' | ');ok(n.includes('.X ±.1')&&n.includes('.XX ±.01')&&n.includes('.XXX ±.005')&&n.includes("ANGLES ±0°30'"),'ANSI note: '+n);
+ok(T.generalNote({}).join('')==='GENERAL TOLERANCES ISO 2768-mK','mm docs keep the ISO 2768 note');
+ok(T.fmtL(0.25,'in')==='.25'&&T.fmtL(0.25,'in',3)==='.250'&&T.fmtL(6.6,'mm')==='6.6'&&T.fmtSL(-0.0003,'in',4)==='−.0003'&&T.fmtSL(0,'in')==='0','unit-aware length formatters');
+process.exitCode=bad?1:0;

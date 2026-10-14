@@ -23,7 +23,7 @@ self.onmessage=e=>{
         return postMessage({id:m.id,ok:true,mesh,errors:r.errors,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
       }
       if(m.cmd==='export'){
-        const b=K.exportBody(last,m.fmt),buf=await b.arrayBuffer();
+        const b=K.exportBody(last,m.fmt,lastDoc&&lastDoc.units),buf=await b.arrayBuffer();
         return postMessage({id:m.id,ok:true,buf,mime:b.type||'application/octet-stream'},[buf]);
       }
       if(m.cmd==='probe'){

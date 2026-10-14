@@ -15,8 +15,8 @@ export function evalExpr(v,scope){
   if(typeof r!=='number'||!isFinite(r))throw new Error(`"${s}" is not a finite number`);
   return r;
 }
-export function resolveParams(params){
-  const scope={},errors={};
+export function resolveParams(params,units){
+  const scope={mm:units==='in'?1/25.4:1,inch:units==='in'?1:25.4},errors={};
   for(const p of params||[]){try{scope[p.name]=evalExpr(p.expr,scope);}catch(e){errors[p.name]=e.message;scope[p.name]=0;}}
   return{scope,errors};
 }
