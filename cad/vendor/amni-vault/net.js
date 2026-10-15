@@ -1,4 +1,5 @@
 import init,{Session} from './pkg/vault_core.js';
+import {pca} from './pca.js';
 export const ready=init();
 export {Session};
 const J=s=>JSON.parse(s);
@@ -26,4 +27,6 @@ export function cad(){if(W)return W;const base=new URL(document.querySelector('m
   const plugin=new URL('./plugin.js',location.href).href;
   W={ready,async solids(bytes,fmt){await ready;await call('blob',{key:'vault',buf:bytes});return(await call('plugin',{module:plugin,fn:'solids',args:{blob:'vault',fmt}})).r.solids;},async quotes(indices,req,qtys={}){await ready;return(await call('plugin',{module:plugin,fn:'quotes',args:{indices,req,qtys}})).r;}};
   ready.catch(()=>{W=null;});return W;}
-export function matchSolids(solids,parts){return solids.map(s=>{let best=null;parts.forEach((p,i)=>{const e=p.sig&&p.sig.ext;if(!e)return;const err=Math.max(...[0,1,2].map(k=>Math.abs(e[k]-s.ext[k])/Math.max(e[k],s.ext[k],.5)));if(!best||err<best.err)best={i,err};});return best&&best.err<.06?best.i:-1;});}
+export function matchSolids(solids,parts){const fit=x=>{let best=null;parts.forEach((p,i)=>{const e=p.sig&&p.sig.ext;if(!e)return;const err=Math.max(...[0,1,2].map(k=>Math.abs(e[k]-x[k])/Math.max(e[k],x[k],.5)));if(!best||err<best.err)best={i,err};});return best&&best.err<.06?best.i:-1;},m=solids.map(s=>fit(s.ext)),B=solids.map(s=>{const lo=[1e30,1e30,1e30],hi=[-1e30,-1e30,-1e30];for(let i=0;i<s.pos.length;i+=3)for(let k=0;k<3;k++){lo[k]=Math.min(lo[k],s.pos[i+k]);hi[k]=Math.max(hi[k],s.pos[i+k]);}return{lo,hi};}),gap=(a,b)=>Math.hypot(...[0,1,2].map(k=>Math.max(0,a.lo[k]-b.hi[k],b.lo[k]-a.hi[k]))),un=m.map((v,i)=>v<0?i:-1).filter(i=>i>=0),used=new Set(),U=pts=>fit(pca(Float32Array.from(pts.flatMap(x=>[...solids[x].pos]))).ext);
+  for(const i of un){if(used.has(i))continue;const nb=un.filter(j=>j!==i&&!used.has(j)).sort((a,b)=>gap(B[i],B[a])-gap(B[i],B[b])).slice(0,4),G=[...nb.map(j=>[i,j]),...nb.flatMap((j,a)=>nb.slice(a+1).map(k=>[i,j,k]))];for(const g of G){const k=U(g);if(k>=0){g.forEach(x=>{m[x]=k;used.add(x);});break;}}}
+  return m;}
