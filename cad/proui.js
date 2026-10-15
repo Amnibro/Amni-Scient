@@ -116,7 +116,7 @@ export function init(api){
     const V={1:'front',2:'back',3:'left',4:'right',5:'top',6:'bottom',7:'iso',8:'normal'};
     if(c&&V[k]&&mode==='sw'){e.preventDefault();e.stopImmediatePropagation();X.view(V[k]);}
     else if(c&&k==='d'&&mode==='creo'){e.preventDefault();e.stopImmediatePropagation();X.view('iso');}
-    else if(c&&(k==='b'||k==='q')&&mode==='sw'||c&&k==='g'&&mode==='creo'){e.preventDefault();e.stopImmediatePropagation();api.rebuild();api.toast(mode==='sw'?'Rebuilt':'Regenerated',1200);}
+    else if(!document.body.classList.contains('form-mode')&&(c&&(k==='b'||k==='q')&&mode==='sw'||c&&k==='g'&&mode==='creo')){e.preventDefault();e.stopImmediatePropagation();api.rebuild();api.toast(mode==='sw'?'Rebuilt':'Regenerated',1200);}
     else if(k===' '&&!c){e.preventDefault();e.stopImmediatePropagation();showVori(mx,my);}
     else if(k==='enter'&&document.body.classList.contains('pm-on')){e.preventDefault();pmPart=false;api.active=null;showPM(false);}},true);
   const setMode=k=>{mode=MODES[k]?k:'sw';try{localStorage.setItem('amnicad.ui',mode);localStorage.setItem('amnicad.ui.v','2');}catch{}document.body.classList.remove('pro','pro-sw','pro-creo','pm-on');if(mode!=='amni')document.body.classList.add('pro','pro-'+mode);showPM(false);if(mode!=='amni'&&api.S.tab==='edit')quiet(()=>api.setTab('check'));mouse();drawMenu();drawRibbon();mode!=='amni'&&pick(rtab,false);eqs();drawHead();drawBar();api.renderTree();api.redraw();setTimeout(()=>dispatchEvent(new Event('resize')),30);};
