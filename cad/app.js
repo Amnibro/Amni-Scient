@@ -292,6 +292,7 @@ function remoteCard(){const on=!!RB,st=rbStat.state,col=st==='connected'?'var(--
     boolField('Remote link',on,v=>remoteOn(v)),h('div',{class:'row',style:'align-items:center;gap:8px;margin:4px 0'},h('span',{style:'width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0'}),h('span',{style:'font-size:12.5px;flex:1'},rbStat.text||st)),
     on?h('div',null,h('ol',{style:'margin:8px 0 8px 18px;display:grid;gap:8px'},
       h('li',null,'In Claude (claude.ai or the app): Settings → Connectors → Add custom connector. Name it Amni-CAD and paste this URL. Do this once; it shows up in the Claude app on your phone too.',pre(rUrl())),
+      h('li',null,'Or in Claude Code, run this once (no download needed):',pre('claude mcp add -s user --transport http amnicad '+rUrl())),
       h('li',null,'Open Amni-CAD on your phone with this link: scan the code with the phone\'s camera, or send yourself the link.',h('div',{style:'display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px'},qr,h('div',{style:'flex:1;min-width:160px'},pre(rLink())))),
       h('li',null,'Keep Amni-CAD on screen next to the Claude app (split screen), turn the Amni-CAD connector on in the chat, and ask: "Use Amni-CAD to make a 4 × 2 in bracket with two 1/4 in holes, then show me a screenshot."')),
       h('div',{class:'note',style:'font-size:11.5px'},'Claude\'s commands and results pass through the Amni-CAD relay to reach this page. Nothing is stored or logged. Anyone with this link can edit the design you have open, so keep it private.'),
