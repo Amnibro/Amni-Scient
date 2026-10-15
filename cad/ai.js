@@ -4,6 +4,7 @@ export const CLOUD={anthropic:{base:'https://api.anthropic.com/v1',keyUrl:'https
 function pick(ids,prefer){for(const p of prefer){const hit=ids.filter(id=>typeof p==='string'?id===p:p.test(id)).sort().reverse()[0];if(hit)return hit;}return ids[0];}
 export async function openRouterLogin(){const v=b64u(crypto.getRandomValues(new Uint8Array(48))),ch=b64u(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v))));sessionStorage.setItem('amnicad.or.v',v);location.href='https://openrouter.ai/auth?callback_url='+encodeURIComponent(location.origin+location.pathname)+'&code_challenge='+ch+'&code_challenge_method=S256';}
 export async function openRouterCallback(){const u=new URL(location.href),code=u.searchParams.get('code'),v=sessionStorage.getItem('amnicad.or.v');if(!code||!v)return null;sessionStorage.removeItem('amnicad.or.v');u.searchParams.delete('code');history.replaceState(null,'',u.pathname+u.search+u.hash);const r=await fetch('https://openrouter.ai/api/v1/auth/keys',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,code_verifier:v,code_challenge_method:'S256'})});if(!r.ok)throw new Error('OpenRouter sign-in failed ('+r.status+')');return(await r.json()).key;}
+export const wire=(ms,k)=>ms.map(m=>({role:m.role,content:!m.images||!m.images.length||k==='text'?m.content:k==='anthropic'?[...m.images.map(i=>({type:'image',source:{type:'base64',media_type:i.mime,data:i.b64}})),{type:'text',text:m.content}]:k==='gemini'?[{text:m.content},...m.images.map(i=>({inline_data:{mime_type:i.mime,data:i.b64}}))]:[{type:'text',text:m.content},...m.images.map(i=>({type:'image_url',image_url:{url:'data:'+i.mime+';base64,'+i.b64}}))]}));
 function b64u(u){let s='';for(const b of u)s+=String.fromCharCode(b);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 export function systemPrompt(units){const inch=units==='in';return `You are the design assistant inside Amni-CAD, a parametric 3D CAD app. Lengths are in the document units, which are ${inch?'INCHES':'MILLIMETERS'}; Z is up. If the user gives sizes in other units, convert them (1 in = 25.4 mm). In expressions the constants mm and inch convert, e.g. 6*mm in an inch document. Simulation inputs are always SI: force N, pressure MPa, torque N·mm, temperature °C, heat W (1 lbf = 4.448 N, 1 psi = 0.006895 MPa, °C = (°F − 32)/1.8). When you talk to the user, give imperial units first and metric in parentheses, and use US spelling. You change the model by replying with ONE JSON object and nothing else:
 {"say":"one or two friendly sentences for the user","actions":[ ... ]}
@@ -26,6 +27,7 @@ ${featureDocs()}
 Profiles ("shapes") are 2D shapes in sketch coordinates: rect{x,y,w,h,r}, circle{x,y,r}, poly{x,y,r,n}, slot{x,y,l,h}, path{pts:[[x,y],...]}, ellipse{x,y,rx,ry,a}, spline{pts:[[x,y],...]} (smooth closed), text{x,y,text,h}. A shape with "hole":true is subtracted from the others.
 Holes: prefer standard sizes with "std":"M3".."M20" and "fit":"clearance"|"tapped"|"cbore"|"csink" instead of raw diameters. Threads are real modeled ISO threads (slow to build, so use them only when asked). For springs use coil. For pipes, rails or handles use sweep with a path. For transitions between two outlines use loft.
 Sketch planes: "XY" top (normal +Z), "XZ" front (sketch x = world X, sketch y = world Z), "YZ" right (sketch x = world Y, sketch y = world Z). "offset" moves the plane along its normal. plane "face" plus "face":{"side":"+Z"} sketches on a flat face of the part.
+References: the request may include sketches, photos or drawings the user attached (images, PDF pages, the user's notes and text read from PDFs). They are the base for the model. Dimensions written on a reference are authoritative, and a user note such as "top view, units inches" overrides what you infer. Otherwise estimate proportions from the image, put every guessed size in a named parameter, and list your assumptions in "say". Match views to sketch planes: top view = XY, front view = XZ, right view = YZ. For orthographic drawings, read the title block first for units, scale and material, and follow the projection (third angle is the US default).
 Hole: drills from its sketch plane against the normal, so put the plane on the top surface (e.g. plane "XY", offset = part height).
 Edge selectors: {"by":"all"}, {"dir":"Z"} straight edges parallel to Z, {"side":"+Z"} edges on the top, {"type":"CIRCLE"} round edges, {"by":"pick","pts":[[x,y,z]]} the edge nearest each point. A list of selectors means "any of them".
 Face selectors: {"side":"+Z"} outermost face on that side, {"normal":"-Y"} faces pointing that way, {"type":"CYLINDER"}, {"by":"pick","pts":[[x,y,z]]}.
@@ -34,7 +36,7 @@ Materials: ${Object.entries(MATS).map(([k,m])=>k+' ('+m.n+')').join(', ')}.
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
 Example reply: {"say":"Here is an 80 × 50 × 6 mm plate with four Ø5 holes and 5 mm corner radii.","actions":[{"param":{"name":"w","expr":"80"}},{"param":{"name":"d","expr":"50"}},{"param":{"name":"t","expr":"6"}},{"add":{"type":"box","name":"Plate","w":"w","d":"d","h":"t"}},{"add":{"type":"hole","name":"Holes","plane":"XY","offset":"t","d":5,"thru":true,"pts":[["w/2-8","d/2-8"],["-(w/2-8)","d/2-8"],["w/2-8","-(d/2-8)"],["-(w/2-8)","-(d/2-8)"]]}},{"add":{"type":"fillet","name":"Corners","r":5,"edges":{"dir":"Z"}}}]}`;}
-export function stateMessage(st,text){return 'Model state:\n'+JSON.stringify(st)+'\n\nUser request: '+text+'\n\nReply with the JSON object only. /no_think';}
+export function stateMessage(st,text,refs){return 'Model state:\n'+JSON.stringify(st)+'\n\n'+(refs?refs+'\n\n':'')+'User request: '+text+'\n\nReply with the JSON object only. /no_think';}
 export function parseReply(txt){
   let s=String(txt||'').replace(/<think>[\s\S]*?<\/think>/g,'').replace(/```(?:json)?/g,'');
   const a=s.indexOf('{');if(a<0)return{say:s.trim(),actions:[]};
@@ -47,8 +49,9 @@ export function parseReply(txt){
 export class Assistant{
   constructor(onStatus){this.onStatus=onStatus||(()=>{});this.kind=null;this.engine=null;this.cfg={};}
   get ready(){return!!this.kind;}
+  get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&!this.noVision;}
   async connect(kind,cfg={}){
-    this.kind=null;this.cfg=cfg;
+    this.kind=null;this.cfg=cfg;this.noVision=false;
     if(kind==='browser'){
       if(this.engine&&this.engine.unload)try{await this.engine.unload();}catch{}
       const m=await import('/lib/amni-llm/amni-llm.js');
@@ -81,30 +84,29 @@ export class Assistant{
   cloudHeaders(kind,key){const h={'Content-Type':'application/json'};if(kind==='anthropic'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';}else if(kind==='gemini')h['x-goog-api-key']=key;else{h.Authorization='Bearer '+key;if(kind==='openrouter'){h['HTTP-Referer']='https://amni-scient.com/cad/';h['X-Title']='Amni-CAD';}}return h;}
   hdr(){const h={'Content-Type':'application/json'};if(this.cfg.key)h.Authorization='Bearer '+this.cfg.key;return h;}
   async complete(messages){
-    if(this.kind==='browser')return await this.engine.chat(messages,{max_tokens:1800,temperature:0.2});
+    if(this.kind==='browser')return await this.engine.chat(wire(messages,'text'),{max_tokens:1800,temperature:0.2});
     if(this.kind==='anthropic'){
-      const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),msgs=messages.filter(m=>m.role!=='system').map(m=>({role:m.role,content:m.content}));
+      const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),msgs=wire(messages.filter(m=>m.role!=='system'),'anthropic');
       const r=await fetch(this.cfg.base+'/messages',{method:'POST',headers:this.cloudHeaders('anthropic',this.cfg.key),body:JSON.stringify({model:this.cfg.model,max_tokens:8000,system:sys,messages:msgs})});
       if(!r.ok)throw new Error('Claude error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
     }
     if(this.kind==='gemini'){
-      const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),contents=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),contents=wire(messages.filter(m=>m.role!=='system'),'gemini').map(m=>({role:m.role==='assistant'?'model':'user',parts:Array.isArray(m.content)?m.content:[{text:m.content}]}));
       const r=await fetch(this.cfg.base+'/models/'+encodeURIComponent(this.cfg.model)+':generateContent',{method:'POST',headers:this.cloudHeaders('gemini',this.cfg.key),body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents,generationConfig:{responseMimeType:'application/json'}})});
       if(!r.ok)throw new Error('Gemini error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join('');
     }
     if(this.kind==='openai'||this.kind==='openrouter'){
-      const body={model:this.cfg.model,messages,response_format:{type:'json_object'}},send=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.cloudHeaders(this.kind,this.cfg.key),body:JSON.stringify(body)});
+      const body={model:this.cfg.model,messages:wire(messages,'openai'),response_format:{type:'json_object'}},send=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.cloudHeaders(this.kind,this.cfg.key),body:JSON.stringify(body)});
       let r=await send();if(r.status===400){const t=await r.text();if(/response_format|json_object/i.test(t)){delete body.response_format;r=await send();}else throw new Error('API error 400 '+t.slice(0,240));}
       if(!r.ok)throw new Error('API error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'';
     }
     if(this.kind==='local'){
-      const body={model:this.cfg.model,messages,temperature:0.2,stream:false,response_format:{type:'json_object'}};
-      let r=await fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.hdr(),body:JSON.stringify(body)});
-      if(r.status===400){delete body.response_format;r=await fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.hdr(),body:JSON.stringify(body)});}
+      const img=!this.noVision&&messages.some(m=>m.images&&m.images.length),body={model:this.cfg.model,messages:wire(messages,img?'openai':'text'),temperature:0.2,stream:false,response_format:{type:'json_object'}},go=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.hdr(),body:JSON.stringify(body)});
+      let r=await go();if(r.status===400){delete body.response_format;r=await go();}if(!r.ok&&img){body.messages=wire(messages,'text');r=await go();if(r.ok)this.noVision=true;}
       if(!r.ok)throw new Error('server error '+r.status+' '+(await r.text()).slice(0,200));
       const j=await r.json();return j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'';
     }
-    if(this.kind==='chrome'){const sys=messages.find(m=>m.role==='system'),rest=messages.filter(m=>m.role!=='system');const s=await this.engine.create({initialPrompts:[{role:'system',content:sys.content},...rest.slice(0,-1)]});try{return await s.prompt(rest[rest.length-1].content);}finally{s.destroy&&s.destroy();}}
+    if(this.kind==='chrome'){const sys=messages.find(m=>m.role==='system'),rest=wire(messages.filter(m=>m.role!=='system'),'text');const s=await this.engine.create({initialPrompts:[{role:'system',content:sys.content},...rest.slice(0,-1)]});try{return await s.prompt(rest[rest.length-1].content);}finally{s.destroy&&s.destroy();}}
     throw new Error('connect an AI engine first');
   }
 }

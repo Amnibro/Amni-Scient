@@ -68,6 +68,21 @@ aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scroll
 .feat.sup .nm{text-decoration:line-through;color:var(--mut)}
 .feat.rolled{opacity:.42}
 #tab-ai.brmode #chat,#tab-ai.brmode .chips,#tab-ai.brmode .compose{display:none}
+#tab-ai.brmode .refgo{display:none}#tab-ai:not(.brmode) .brnote{display:none}
+#refs{scroll-margin-top:44px}#refs.drop{background:var(--acc-soft);box-shadow:inset 0 0 0 2px var(--acc)}
+.refdrop{border:1.5px dashed var(--line2);border-radius:10px;padding:9px 10px;text-align:center;color:var(--mut);font-size:12px;display:grid;gap:7px}
+.refl{display:grid;gap:6px;margin-top:8px;max-height:300px;overflow-y:auto;overscroll-behavior:contain}
+.ref{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:6px}
+.ref.off .th,.ref.off .nm{opacity:.5}
+.ref .th{width:56px;height:56px;border-radius:6px;background:#fff;border:1px solid var(--line);cursor:zoom-in;overflow:hidden;display:grid;place-items:center;color:#667085}
+.ref .th img{width:100%;height:100%;object-fit:contain;display:block}
+.ref .nm{font-weight:600;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref .meta{font-size:11px;color:var(--mut);margin-bottom:3px}
+.ref .inp{padding:4px 7px;font-size:12px}
+.ref .side{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--mut)}
+dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
+.refbig{display:block;max-width:100%;max-height:calc(70vh - 120px);margin:0 auto;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.reftext{white-space:pre-wrap;font:11.5px/1.4 var(--mono);background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:7px 9px;max-height:200px;overflow:auto;margin-top:6px}
 .feat.dropat,.tend.dropat{box-shadow:inset 0 2px 0 var(--acc)}
 .tend{height:14px}
 .rollbar{display:flex;align-items:center;gap:6px;height:16px;margin:2px 4px;cursor:ns-resize}
