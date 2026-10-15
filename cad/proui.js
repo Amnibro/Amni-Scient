@@ -17,14 +17,14 @@ function ribbon(mode,X){
     ['Simulate',[['Analyses',[B('sim','Structure','🧱',()=>X.tab('sim')),B('flow','Flow','🌬',()=>X.tab('flow'))]]]],
     ['Detailing',[['Drawing',[B('draw','Drawing','📐',()=>X.tab('draw'))]]]],
     ['View',[['Orientation',views],['Display',[B('d-edges','Shading with Edges','◼',()=>X.click('[data-d=edges]')),B('d-shaded','Shading','●',()=>X.click('[data-d=shaded]')),B('d-xray','Transparent','◌',()=>X.click('[data-d=xray]')),B('d-wire','Wireframe','▦',()=>X.click('[data-d=wire]')),B('proj','Perspective','⌖',()=>X.click('#b-proj'))]]]],
-    ['Tools',[['Assistant',[B('ai','AI Assistant','✦',()=>X.tab('ai'))]],['File',[B('new','New','✚',()=>X.api.act('new')),B('open','Open','📂',()=>X.api.act('open')),B('save','Save','💾',()=>X.api.act('save')),B('import','Import','⇩',()=>X.api.act('import'))]],['Export',exp]]]
+    ['Tools',[['Assistant',[B('ai','AI Assistant','✦',()=>X.tab('ai')),B('refs','References','🖼',()=>{X.tab('ai');setTimeout(()=>{const e=document.getElementById('refs');e&&e.scrollIntoView({block:'nearest'});},80);})]],['File',[B('new','New','✚',()=>X.api.act('new')),B('open','Open','📂',()=>X.api.act('open')),B('save','Save','💾',()=>X.api.act('save')),B('import','Import','⇩',()=>X.api.act('import'))]],['Export',exp]]]
   ]:[
     ['Features',[['Boss/Base',[F('extrude',false,'Extruded Boss/Base','⬆'),F('revolve',false,'Revolved Boss/Base','↻'),F('sweep',false,'Swept Boss/Base','〰'),F('loft',false,'Lofted Boss/Base','⏶')]],['Cut',[F('extrude',true,'Extruded Cut','⬆'),F('revolve',true,'Revolved Cut','↻'),F('sweep',true,'Swept Cut','〰'),F('loft',true,'Lofted Cut','⏶'),F('hole',false,'Hole Wizard','⊙',{std:'#10',fit:'clearance'})]],['Modify',[F('fillet',false,'Fillet','◜'),F('chamfer',false,'Chamfer','◸'),F('shell',false,'Shell','▢'),F('pattern',false,'Linear Pattern','⁘'),F('pattern',false,'Circular Pattern','✺',{kind:'circular'}),F('mirror',false,'Mirror','⇋')]],['More',[F('coil',false,'Helix / Coil','➰'),F('thread',false,'Thread','🔩'),F('split',false,'Split','⫽'),F('scale',false,'Scale','⤢'),F('move',false,'Move/Copy','✥'),B('rebuild','Rebuild','⟳',()=>X.api.rebuild())]],['Primitives',prim]]],
     ['Sketch',[['Sketch',[skOpen]],['Quick shapes',sk]]],
     ['Evaluate',[['Evaluate',evalg],['Orientation',views]]],
     ['Simulation',[['Analyses',[B('sim','Static Study','🧱',()=>X.tab('sim')),B('flow','Flow Simulation','🌬',()=>X.tab('flow'))]]]],
     ['Drawing',[['Drawing',[B('draw','Make Drawing from Part','📐',()=>X.tab('draw'))]]]],
-    ['Assistant',[['AI',[B('ai','AI Assistant','✦',()=>X.tab('ai'))]]]],
+    ['Assistant',[['AI',[B('ai','AI Assistant','✦',()=>X.tab('ai')),B('refs','References','🖼',()=>{X.tab('ai');setTimeout(()=>{const e=document.getElementById('refs');e&&e.scrollIntoView({block:'nearest'});},80);})]]]],
     ['File',[['File',[B('new','New','✚',()=>X.api.act('new')),B('open','Open','📂',()=>X.api.act('open')),B('save','Save','💾',()=>X.api.act('save')),B('import','Import','⇩',()=>X.api.act('import')),B('share','Share link','🔗',()=>X.api.act('share'))]],['Export',exp]]]
   ];
 }
