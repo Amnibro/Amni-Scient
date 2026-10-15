@@ -21,6 +21,9 @@ try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'n
   ok(await p.evaluate(()=>document.querySelector('#dlg').open&&/Your license key/.test(document.querySelector('#dlg-b').textContent)&&/Manage billing/.test(document.querySelector('#dlg-b').textContent)),'welcome dialog shows the key to copy and Manage billing');
   ok(seen.includes('subscriptions/sub_9')||seen.filter(x=>x==='checkout/sessions/cs_test_abc').length>=2,'renewal path ran (period ends within 10 days)');
   const n=seen.length;await p.goto(`http://127.0.0.1:${SP}/cad/`);await sleep(3000);ok(await p.evaluate(()=>document.querySelector('#b-pro').classList.contains('on')),'Pro stays active after reload');
+  const exp=await (await import(W)).sign(env,{...L,iat:Date.now()-40*864e5,exp:Date.now()-864e5});await p.evaluate(t=>localStorage.setItem('amnicad.pro',t),exp);await p.goto(`http://127.0.0.1:${SP}/cad/`);await sleep(3500);
+  ok(await p.evaluate(()=>document.querySelector('#b-pro').classList.contains('on'))&&await p.evaluate(()=>JSON.parse(atob(localStorage.getItem('amnicad.pro').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).exp>Date.now()),'an expired subscription key renews itself on the next visit');
+  SUB.status='canceled';await p.evaluate(t=>localStorage.setItem('amnicad.pro',t),exp);await p.goto(`http://127.0.0.1:${SP}/cad/`);await sleep(3500);ok(await p.evaluate(()=>!document.querySelector('#b-pro').classList.contains('on')),'an expired key for a canceled subscription stays locked');
   ok(!errs.length,'no page errors'+(errs.length?': '+errs.join(' | '):''));
 }catch(e){fail++;console.log('FAIL',e.message);}finally{try{await b?.close();}catch{}srv.kill();ws.close();fs.rmSync(ud,{recursive:true,force:true});}
 console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);
