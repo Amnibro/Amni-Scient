@@ -246,9 +246,12 @@ export function jacobiEig(A,m){
       for(let k=0;k<m;k++){const x=V[k*m+p],y=V[k*m+q];V[k*m+p]=c*x-s*y;V[k*m+q]=s*x+c*y;}}}
   const ord=[...Array(m).keys()].sort((a,b)=>A[a*m+a]-A[b*m+b]);return{w:ord.map(i=>A[i*m+i]),V,ord};
 }
-async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
+export function rigidModes(nn,xyz,Mv){const n=3*nn,c=[0,0,0],defl=[];let mt=0;for(let q=0;q<nn;q++)if(Mv[3*q]){const x=xyz(q);mt+=Mv[3*q];for(let k=0;k<3;k++)c[k]+=Mv[3*q]*x[k];}for(let k=0;k<3;k++)c[k]/=mt||1;
+  const raw=[];for(let d=0;d<6;d++){const v=new Float64Array(n);for(let q=0;q<nn;q++)if(Mv[3*q]){const x=xyz(q),r=[x[0]-c[0],x[1]-c[1],x[2]-c[2]];if(d<3)v[3*q+d]=1;else{const a=d-3,b=(a+1)%3,e=(a+2)%3;v[3*q+b]=-r[e];v[3*q+e]=r[b];}}raw.push(v);}
+  for(const v of raw){for(const R of defl){let s=0;for(let i=0;i<n;i++)s+=R[i]*v[i]*Mv[i];for(let i=0;i<n;i++)v[i]-=s*R[i];}let s=0;for(let i=0;i<n;i++)s+=v[i]*v[i]*Mv[i];s=Math.sqrt(s);if(s>0){for(let i=0;i<n;i++)v[i]/=s;defl.push(v);}}return defl;}
+export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
   const L=Ls[0],n=Mv.length,fx=L.fixed,bs=nev+Math.max(2,Math.ceil(nev/3)),mg=Ls.length>1,tol=opt.tol||1e-3,maxIt=opt.maxIt||250;
-  const A=async x=>{const y=new Float64Array(n);matvec(L,K,x,y);for(let i=0;i<n;i++)if(fx[i])y[i]=0;return y;};
+  const A=ops&&ops.A||(async x=>{const y=new Float64Array(n);matvec(L,K,x,y);for(let i=0;i<n;i++)if(fx[i])y[i]=0;return y;});
   const md=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i]*Mv[i];return s;},dt=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i];return s;};
   const ax=(y,c,x)=>{for(let i=0;i<n;i++)y[i]-=c*x[i];};
   const cl=x=>{for(let i=0;i<n;i++)if(fx[i])x[i]=0;for(const R of defl)ax(x,md(R,x),R);return x;};
@@ -274,9 +277,7 @@ async function modal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat,nev=Math.max(1,Math.min(inp.modes||6,20)),K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
   const dof=supportMask(inp,P),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
   for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)Mv[3*q+c]=L.fixed[3*q+c]?0:P.vol[q]*rho;
-  const defl=[];if(free){const c=[0,0,0];let mt=0;for(let q=0;q<P.nn;q++)if(Mv[3*q]){const x=P.xyz(q);mt+=Mv[3*q];for(let k=0;k<3;k++)c[k]+=Mv[3*q]*x[k];}for(let k=0;k<3;k++)c[k]/=mt||1;
-    const raw=[];for(let d=0;d<6;d++){const v=new Float64Array(n);for(let q=0;q<P.nn;q++)if(Mv[3*q]){const x=P.xyz(q),r=[x[0]-c[0],x[1]-c[1],x[2]-c[2]];if(d<3)v[3*q+d]=1;else{const a=d-3,b=(a+1)%3,e=(a+2)%3;v[3*q+b]=-r[e];v[3*q+e]=r[b];}}raw.push(v);}
-    for(const v of raw){for(const R of defl){let s=0;for(let i=0;i<n;i++)s+=R[i]*v[i]*Mv[i];for(let i=0;i<n;i++)v[i]-=s*R[i];}let s=0;for(let i=0;i<n;i++)s+=v[i]*v[i]*Mv[i];s=Math.sqrt(s);if(s>0){for(let i=0;i<n;i++)v[i]/=s;defl.push(v);}}}
+  const defl=free?rigidModes(P.nn,P.xyz,Mv):[];
   let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls,K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
   if(Ls.length>1&&!(L.om>0))L.om=omOf(L,K);
   const lo={tol:inp.tol,maxIt:inp.maxIt};let E,gpu=!!ctx;try{E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,ctx);}catch(e){if(!ctx)throw e;gpuError=String(e.message||e);gpu=false;E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,null);}finally{ctx&&ctx.free();}
