@@ -181,8 +181,15 @@ function coilTool(f){
 function threadTool(f){
   const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',h=0.6134*p,hi=0.5413*p;
   const tri=ext?R.draw([0.05*p,-0.4665*p]).lineTo([-h,-0.0835*p]).lineTo([-h,0.0835*p]).lineTo([0.05*p,0.4665*p]).close():R.draw([-0.05*p,-0.404*p]).lineTo([hi,-0.0625*p]).lineTo([hi,0.0625*p]).lineTo([-0.05*p,0.404*p]).close();
-  return helixSweep(ext?d/2:d/2-hi,p,L+2*p,c.map((v,i)=>v-ax[i]*p),ax,f.hand==='left',tri);
+  const o=(f.run||1)*p;return helixSweep(ext?d/2:d/2-hi,p,L+2*o,c.map((v,i)=>v-ax[i]*o),ax,f.hand==='left',tri);
 }
+const volOf=b=>R.measureShapeVolumeProperties(b).volume;
+function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
+  if(p<0.5&&!f.up){const u=25.4,r=threadCut(body.clone().scale(u,[0,0,0]),{...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u});return r.scale(1/u,[0,0,0]);}
+  const rate=(ext?0.3197*2*Math.PI*(d/2-0.2373*p):0.2369*2*Math.PI*(d/2-0.5413*p+0.2062*p))*p,v0=volOf(body),S=a1-a0+2*p,at=t=>c.map((v,i)=>v+ax[i]*(t-t0)),REV={X:'-X',Y:'-Y',Z:'-Z','+X':'-X','+Y':'-Y','+Z':'-Z','-X':'X','-Y':'Y','-Z':'Z'},seg=(t,h,dir=1)=>threadTool({...f,axis:dir>0?f.axis||'Z':REV[f.axis||'Z'],...Object.fromEntries(['x','y','z'].map((q,i)=>[q,at(t)[i]])),length:h-2*p}),want=rate*(Math.min(hi2,a1+p)-Math.max(lo,a0-p)),err=r=>Math.abs((v0-volOf(r))/want-1);
+  for(const dir of[1,-1])for(const a of[0,37])try{const t=seg(dir>0?a0:a1,S,dir),r=body.cut(a?t.rotate(a,at(a0),ax):t);if(err(r)<0.02)return r;}catch{}
+  for(const dir of[1,-1])for(const m of[4,1]){try{let r=body;for(let q=0;q<S-1e-9;q+=m*p)r=r.cut(seg(dir>0?a0+q:a1-q,Math.min(m*p,S-q),dir));if(err(r)<0.02)return r;}catch{}}
+  throw new Error('could not cut this thread cleanly; try a slightly different length or start');}
 function splitBody(body,f){
   const P=NAMED[f.plane||'XY'],b=bboxOf(body),S=sizeOf(body)*4+10,o=P.n.map(v=>v*(f.offset||0)),sgn=f.keep==='-'?-1:1,n=P.n.map(v=>v*sgn),x=P.x;
   const half=R.drawRectangle(S,S).sketchOnPlane(new R.Plane(o,x,n)).extrude(S);return body.intersect(half);
@@ -223,7 +230,7 @@ export async function build(doc,opt={}){
     truncate(i,cache);
     let next=body,tool=null;
     if(f)try{
-      if(TOOLMAKERS[f.type]){tool=TOOLMAKERS[f.type](f,body);next=applyOp(body,tool,f.type==='hole'?'cut':f.type==='thread'?'cut':(f.op||'add'));}
+      if(TOOLMAKERS[f.type]){tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
       else if(f.type==='fillet'||f.type==='chamfer'){
         if(!body)throw new Error(f.type+' needs a body');
         const es=selectEdges(body,f.edges);if(!es.length)throw new Error('no edges matched');
