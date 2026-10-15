@@ -3,7 +3,7 @@ const root=path.resolve(new URL('../..',import.meta.url).pathname),P=createRequi
 const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),issuer=process.env.PRO_ISSUER||path.join(os.homedir(),'ai/amni-cad-desktop/tools/pro-license.mjs');
 let fail=0,b;const ok=(c,m)=>{c||fail++;console.log(c?'PASS':'FAIL',m);};
 try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
-  const open=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/`);await sleep(3500);await p.click('button[data-tab=draw]');await sleep(2500);};
+  const open=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/`);await sleep(3500);await p.evaluate(()=>window.amnicad.setTab('draw'));await sleep(2500);};
   const btn=t=>p.evaluate(t=>{const x=[...document.querySelectorAll('button')].find(b=>b.offsetParent&&b.textContent.trim().startsWith(t));return x?x.classList.contains('pro-lock'):null;},t);
   await open();ok(await btn('Style from PDF')===true&&await btn('Edit format')===true,'Pro drawing buttons carry a PRO badge without a license');
   await p.evaluate(()=>[...document.querySelectorAll('button')].find(b=>b.offsetParent&&b.textContent.trim().startsWith('Style from PDF')).click());await sleep(300);
