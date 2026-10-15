@@ -6,7 +6,7 @@ function ribbon(mode,X){
   const F=(t,cut,label,icon,extra)=>B(t+(cut?'-cut':''),label,icon,()=>X.feat(t,{...(cut?{op:'cut'}:{}),...(extra||{})},cut),{cut});
   const skOpen=B('s-open','Sketch','✎',()=>X.sketch());
   const sk=[['rect','Rectangle','▭'],['circle','Circle','◯'],['slot','Slot','⊂⊃'],['poly','Polygon','⬡'],['path','Line','⟋'],['spline','Spline','∿'],['ellipse','Ellipse','⬭'],['text','Text','A']].map(([k,l,i])=>B('s-'+k,l,i,()=>X.shape(k)));
-  const evalg=[B('measure','Measure','📏',()=>X.measure()),B('mass','Mass Properties','⚖',()=>X.mass()),B('section','Section View','◫',()=>X.click('#b-sec')),B('check','Design Review','✔',()=>X.tab('check'))];
+  const evalg=[B('measure','Measure','📏',()=>X.measure()),B('mass','Mass Properties','⚖',()=>X.mass()),B('section','Section View','◫',()=>X.click('#b-sec')),B('check','Design Review','✔',()=>X.tab('check')),B('render','Photo Render','📷',()=>X.api.act('render'))];
   const prim=['box','cylinder','sphere','cone','torus'].map(t=>F(t,false,X.api.FT[t].n,X.api.FT[t].i));
   const sk2=[['Sketch',[skOpen]],['Quick shapes',sk]],ai=[B('ai','AI Assistant','✦',()=>X.tab('ai')),B('refs','References','🖼',()=>{X.tab('ai');setTimeout(()=>{const e=document.getElementById('refs');e&&e.scrollIntoView({block:'nearest'});},80);})],sim=(a,b)=>[B('sim',a,'🧱',()=>X.tab('sim')),B('flow',b,'🌬',()=>X.tab('flow'))],make=[B('make','Instant Quote','💲',()=>X.tab('make')),B('cam','Toolpath & G-code','⚙',()=>{X.tab('make');const go=(n=0)=>{const e=[...document.querySelectorAll('#tab-make h3')].find(x=>/toolpath/i.test(x.textContent));e?e.scrollIntoView({block:'start',behavior:'smooth'}):n<30&&setTimeout(()=>go(n+1),150);};go();})],vault=[B('vault','Vault','🗄',()=>X.tab('vault'))];
   return mode==='creo'?[
