@@ -565,6 +565,23 @@ export class Session {
     }
 }
 if (Symbol.dispose) Session.prototype[Symbol.dispose] = Session.prototype.free;
+
+/**
+ * @param {Uint8Array} pk
+ * @param {Uint8Array} msg
+ * @param {Uint8Array} sig
+ * @returns {boolean}
+ */
+export function verify_ed25519(pk, msg, sig) {
+    const ptr0 = passArray8ToWasm0(pk, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passArray8ToWasm0(msg, wasm.__wbindgen_malloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ptr2 = passArray8ToWasm0(sig, wasm.__wbindgen_malloc);
+    const len2 = WASM_VECTOR_LEN;
+    const ret = wasm.verify_ed25519(ptr0, len0, ptr1, len1, ptr2, len2);
+    return ret !== 0;
+}
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
