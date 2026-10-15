@@ -1,13 +1,11 @@
 import * as R from './vendor/replicad.js';
 import {evalExpr,resolveParams} from './expr.js';
 import {sketchShapes} from './sketch.js';
-export {evalExpr,resolveParams};
+import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
+export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt']);
-export const HOLESTD_IN={'#4':[0.1285,0.089,0.219,0.112,0.255],'#6':[0.1495,0.1065,0.281,0.138,0.307],'#8':[0.177,0.136,0.312,0.164,0.359],'#10':[0.201,0.1495,0.375,0.19,0.411],'1/4':[0.281,0.201,0.438,0.25,0.531],'5/16':[0.344,0.257,0.531,0.312,0.656],'3/8':[0.406,0.3125,0.625,0.375,0.781],'1/2':[0.531,0.4219,0.812,0.5,1.031]};
-export const THREADSTD={M3:[3,0.5,'mm'],M4:[4,0.7,'mm'],M5:[5,0.8,'mm'],M6:[6,1,'mm'],M8:[8,1.25,'mm'],M10:[10,1.5,'mm'],M12:[12,1.75,'mm'],M16:[16,2,'mm'],M20:[20,2.5,'mm'],'#4-40':[0.112,1/40,'in'],'#6-32':[0.138,1/32,'in'],'#8-32':[0.164,1/32,'in'],'#10-24':[0.19,1/24,'in'],'#10-32':[0.19,1/32,'in'],'1/4-20':[0.25,1/20,'in'],'5/16-18':[0.3125,1/18,'in'],'3/8-16':[0.375,1/16,'in'],'1/2-13':[0.5,1/13,'in']};
 let UNITS='mm';
 const ucv=(from)=>from===UNITS?1:from==='in'?25.4:1/25.4;
-export const HOLESTD={M2:[2.4,1.6,4.3,2.2,4.4],'M2.5':[2.9,2.05,5,2.7,5.5],M3:[3.4,2.5,6.5,3.4,6.72],M4:[4.5,3.3,8,4.4,8.96],M5:[5.5,4.2,10,5.4,11.2],M6:[6.6,5,11,6.5,13.44],M8:[9,6.8,15,8.6,17.92],M10:[11,8.5,18,10.8,22.4],M12:[13.5,10.2,20,13,26.88],M16:[17.5,14,26,17.5,33.6],M20:[22,17.5,33,21.5,40.32]};
 function res(v,scope,k){
   if(Array.isArray(v))return v.map(x=>res(x,scope,k));
   if(v&&typeof v==='object'){const o={};for(const kk in v)o[kk]=res(v[kk],scope,kk);return o;}

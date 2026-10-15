@@ -21,6 +21,12 @@ Actions (applied in order):
  {"run":"fea"}                           run the stress analysis
  {"flow":{"fluid":"air","speed":10,"dir":"+X"}}  set up a wind/water tunnel test (speed in m/s, dir = flow direction)
  {"run":"flow"}                          run the flow analysis (drag, pressure, streamlines)
+ {"asm":[ops]}                           build an ASSEMBLY of parts held by mates (opens the Assembly workspace). Ops run in order:
+   {"insert":{"part":"current"|template key|part id|name,"hw":{"kind":"hex"|"shcs"|"nut"|"washer","size":"1/4-20"|"#10-24"|"M6","len":1},"n":2,"gap":1,"at":[x,y,z],"rot":[rx,ry,rz],"fix":true}}  first component is fixed; ids c1,c2,... names like Plate<1>
+   {"mate":{"type":"coincident"|"concentric"|"distance"|"angle"|"parallel"|"perpendicular"|"tangent"|"lock"|"width"|"symmetric","a":REF,"b":REF,"v":dist or degrees,"align":"aligned"|"anti","flip":true}}  width adds a2,b2 (slot sides a,a2 and tab sides b,b2); symmetric adds s (mirror plane)
+   REF = {"c":"c1","face":{"side":"+Z"}} | {"c":"c2","face":{"type":"CYLINDER","r":0.14}} | {"c":"c1","face":{"pick":[x,y,z]}} part-local point | {"c":"c1","plane":"XY"} | {"c":"c1","axis":"Z"} | {"c":"@origin","plane":"XY"}
+   {"move":{"c":"c2","to":[x,y,z]|"by":[dx,dy,dz],"rot":[rx,ry,rz]}} {"fix":"c2"} {"float":"c2"} {"hide":"c3"} {"delete":"c3"} {"delete_mate":"m2"} {"replace":{"c":"c2","part":key}} {"explode":"auto"|"off"}
+   Assembly lengths use the assembly units; hardware is ANSI inch first, ISO metric for M sizes. Bolts point down -Z from the head (head underside at z=0).
 Numbers may be expressions of parameters such as "w/2-8". Angles are degrees. Trig functions take degrees.
 Feature types (type: fields):
 ${featureDocs()}

@@ -2,7 +2,7 @@ const MODES={amni:'Amni (modern)',sw:'SolidWorks-style',creo:'Creo-style'};
 const PLANES={sw:[['XZ','Front Plane','front'],['XY','Top Plane','top'],['YZ','Right Plane','right']],creo:[['XZ','FRONT','front'],['XY','TOP','top'],['YZ','RIGHT','right']]};
 const NAMES={sw:{extrude:['Boss-Extrude','Cut-Extrude'],revolve:['Revolve','Cut-Revolve'],sweep:['Sweep','Cut-Sweep'],loft:['Loft','Cut-Loft'],hole:['Hole'],fillet:['Fillet'],chamfer:['Chamfer'],shell:['Shell'],pattern:['LPattern','CirPattern'],mirror:['Mirror'],coil:['Helix-Coil'],thread:['Thread'],split:['Split'],scale:['Scale'],move:['Body-Move/Copy'],box:['Box'],cylinder:['Cylinder'],sphere:['Sphere'],cone:['Cone'],torus:['Torus']},creo:{extrude:['Extrude','Extrude'],revolve:['Revolve','Revolve'],sweep:['Sweep','Sweep'],loft:['Blend','Blend'],hole:['Hole'],fillet:['Round'],chamfer:['Chamfer'],shell:['Shell'],pattern:['Pattern','Pattern'],mirror:['Mirror'],coil:['Helical Sweep'],thread:['Thread'],split:['Trim'],scale:['Scale'],move:['Move'],box:['Box'],cylinder:['Cylinder'],sphere:['Sphere'],cone:['Cone'],torus:['Torus']}};
 const B=(id,label,icon,run,opt={})=>({id,label,icon,run,...opt});
-function ribbon(mode,X){
+function ribbon(mode,X){if(X.api.hooks.ribbon)return X.api.hooks.ribbon(mode,B,X);
   const F=(t,cut,label,icon,extra)=>B(t+(cut?'-cut':''),label,icon,()=>X.feat(t,{...(cut?{op:'cut'}:{}),...(extra||{})},cut),{cut});
   const skOpen=B('s-open','Sketch','✎',()=>X.sketch());
   const sk=[['rect','Rectangle','▭'],['circle','Circle','◯'],['slot','Slot','⊂⊃'],['poly','Polygon','⬡'],['path','Line','⟋'],['spline','Spline','∿'],['ellipse','Ellipse','⬭'],['text','Text','A']].map(([k,l,i])=>B('s-'+k,l,i,()=>X.shape(k)));
@@ -124,5 +124,5 @@ export function init(api){
   eqh&&(eqh.addEventListener('click',e=>{if(mode==='amni'||e.target.closest('button'))return;const c=!eqh.parentElement.classList.contains('eqc');try{localStorage.setItem('amnicad.ui.eq',c?'':'open');}catch{}eqs();}),new MutationObserver(eqs).observe($('#params'),{childList:true}));
   api.onBuilt&&api.onBuilt(()=>{api.S.tab==='check'&&document.getElementById('tab-check').classList.contains('on')&&quiet(()=>api.setTab('check'));});
   setMode(mode);
-  return{setMode,get mode(){return mode;}};
+  return{setMode,redraw:()=>mode!=='amni'?pick(rtab,false):drawRibbon(),get mode(){return mode;}};
 }

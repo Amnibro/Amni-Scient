@@ -1,0 +1,13 @@
+import * as R from './vendor/replicad.js';
+const PB=new Map(),tr=m=>m?[m.pos.buffer,m.nrm.buffer,m.idx.buffer,m.lines.buffer]:[];
+async function body(ctx,key,doc,sig){let e=PB.get(key);if(!e)PB.set(key,e={cache:[],body:null,sig:null,errors:[],doc:null});if(doc&&e.sig!==sig){const r=await ctx.K.build(doc,{cache:e.cache,blobs:ctx.blobs});e.body=r.body;e.sig=sig;e.errors=r.errors;e.doc=doc;}return e;}
+export async function part(ctx,a){const e=await body(ctx,a.key,a.doc,a.sig),m=e.body?ctx.K.meshBody(e.body,a.q||1):null;return{key:a.key,sig:e.sig,errors:e.errors,mesh:m,transfer:tr(m)};}
+export function drop(ctx,a){for(const k of[...PB.keys()])if(!(a.keep||[]).includes(k)){ctx.K.resetCache(PB.get(k).cache);PB.delete(k);}return{left:PB.size};}
+function place(e,i){if(!e||!e.body)return null;let s=e.body.clone();if(i.k&&Math.abs(i.k-1)>1e-12)s=s.scale(i.k,[0,0,0]);const q=i.q||[0,0,0,1],w=Math.max(-1,Math.min(1,q[3])),sn=Math.sqrt(1-w*w),ang=2*Math.acos(w)*180/Math.PI;if(sn>1e-9&&Math.abs(ang)>1e-9)s=s.rotate(ang,[0,0,0],[q[0]/sn,q[1]/sn,q[2]/sn]);const p=i.p||[0,0,0];return p.some(v=>v)?s.translate(p[0],p[1],p[2]):s;}
+const vol=s=>{try{return R.measureVolume(s);}catch{return 0;}};
+export async function interfere(ctx,a){const S=a.inst.map(i=>{const s=place(PB.get(i.key),i);return s&&{i,s,b:s.boundingBox.bounds,v:vol(s)};}).filter(Boolean),out=[],trs=[],eps=a.eps??1e-6;let pairs=0;
+  try{for(let x=0;x<S.length;x++)for(let y=x+1;y<S.length;y++){const A=S[x],B=S[y];if([0,1,2].some(k=>A.b[1][k]<B.b[0][k]-eps||B.b[1][k]<A.b[0][k]-eps))continue;pairs++;let I=null;try{I=A.s.intersect(B.s);const v=I&&!I.isNull?vol(I):0,lim=Math.max(a.min??0,Math.min(A.v,B.v)*1e-7);if(v>lim){const m=a.mesh===false?null:ctx.K.meshBody(I,0.7);out.push({a:A.i.id,b:B.i.id,vol:v,mesh:m});trs.push(...tr(m));}}catch(e){out.push({a:A.i.id,b:B.i.id,vol:null,err:String(e.message||e)});}finally{try{I&&I.delete();}catch{}}}}
+  finally{for(const s of S)try{s.s.delete();}catch{}}
+  return{hits:out,pairs,checked:S.length,transfer:trs};}
+export async function step(ctx,a){const sh=a.inst.map(i=>({shape:place(PB.get(i.key),i),name:i.name,color:i.color||'#b8c2cc'})).filter(x=>x.shape);if(!sh.length)throw new Error('Nothing to export: build the components first');const b=R.exportSTEP(sh,a.units==='in'?{unit:'INCH',modelUnit:'INCH'}:{unit:'MM',modelUnit:'MM'}),buf=await b.arrayBuffer();for(const x of sh)try{x.shape.delete();}catch{}return{buf,mime:'application/STEP',bytes:buf.byteLength,parts:sh.length,transfer:[buf]};}
+export async function quote(ctx,a){const e=PB.get(a.key);if(!e||!e.body)throw new Error('That part is not built yet');const m=await import('./mfg_kernel.js');return m.quote({body:e.body,doc:e.doc},a.args||{});}
