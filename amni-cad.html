@@ -192,8 +192,13 @@
 <div class="card"><h3>YOUR SHEET FORMATS</h3><p>Style a format from any drawing PDF you already use, with title-block fields found for you. Edit formats and symbols visually, and share them through the vault.</p></div>
 <div class="card"><h3>MARKINGS</h3><p>Classification banners and distribution statements on every sheet, filled in from the part&rsquo;s clearance in the vault.</p></div>
 </div>
-<p style="color:var(--dim);margin:1.2rem 0;font-size:.9rem;max-width:800px">Your license key is checked on your own device. Amni-CAD never sends it, or anything else, anywhere.</p>
-<div class="cta-row" style="gap:1rem;flex-wrap:wrap"><a href="contact.html" class="btn btn-primary">GET AMNI-CAD PRO</a></div>
+<div class="card-grid" style="margin-top:1.2rem">
+<div class="card"><h3>MONTHLY</h3><p><strong style="font-size:1.8rem;color:var(--text)">$15</strong> per seat / month</p><p><button class="btn btn-primary" data-pro-plan="month">BUY MONTHLY</button></p></div>
+<div class="card"><h3>YEARLY</h3><p><strong style="font-size:1.8rem;color:var(--text)">$150</strong> per seat / year &middot; two months free</p><p><button class="btn btn-primary" data-pro-plan="year">BUY YEARLY</button></p></div>
+</div>
+<p id="pro-err" role="alert" style="color:#ff6b6b;font-size:.9rem"></p>
+<p style="color:var(--dim);margin:1.2rem 0;font-size:.9rem;max-width:800px">Secure checkout by Stripe; choose the number of seats there and cancel anytime. Your license key opens in Amni-CAD right after payment and is checked on your own device. Subscription keys renew by sending only the key to our license server near the end of each period. Nothing about your designs ever leaves your computer. Need an invoice or a purchase order? <a href="contact.html">Contact us</a>.</p>
+<script>document.querySelectorAll('[data-pro-plan]').forEach(b=>b.onclick=async()=>{const t=b.textContent,e=document.getElementById('pro-err');b.disabled=true;b.textContent='OPENING CHECKOUT…';e.textContent='';try{const r=await fetch('https://amni-cad-pro.amnibro7.workers.dev/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({plan:b.dataset.proPlan,seats:1})}),j=await r.json();if(!r.ok||!j.url)throw new Error(j.error||'Checkout is unavailable right now');location.href=j.url;}catch(x){e.textContent=x.message+'. Please try again or contact us.';b.disabled=false;b.textContent=t;}});</script>
 </section>
 <section>
 <h2>PRIVACY &amp; DATA</h2>
