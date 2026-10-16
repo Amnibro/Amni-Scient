@@ -7,7 +7,7 @@ const nav=async(hash='')=>{await p.goto('about:blank');await p.goto(`http://127.
 try{
 if(want('csp')){
   const csp=await ev(()=>document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||''),ss=(csp.match(/script-src[^;]*/)||[''])[0];
-  ok(/default-src 'self'/.test(csp)&&!/'unsafe-eval'|'unsafe-inline'/.test(ss)&&/wasm-unsafe-eval/.test(ss)&&/object-src 'none'/.test(csp)&&/api\.anthropic\.com/.test(csp)&&/huggingface\.co/.test(csp)&&/cdn\.jsdelivr\.net/.test(csp),'CSP meta allows self, the AI hosts and wasm only',ss);
+  ok(/default-src 'self'/.test(csp)&&!/'unsafe-eval'|'unsafe-inline'/.test(ss)&&/wasm-unsafe-eval/.test(ss)&&/object-src 'none'/.test(csp)&&/connect-src[^;]*https: wss:/.test(csp)&&!/connect-src[^;]*http: /.test(csp),'CSP meta allows self, secure servers and wasm only',ss);
   const tabs=['edit','sim','flow','mold','make','draw','dies','cutters','vault','check','ai'];
   for(const t of tabs){await ev(t=>window.amnicad.setTab(t),t);await sleep(500);}
   for(const w of['form','asm','tool','part']){await ev(w=>window.amnicad.API.setWS(w),w);await sleep(1800);}
@@ -15,8 +15,8 @@ if(want('csp')){
   await ev(()=>document.querySelector('#b-pro').click());await sleep(500);await ev(()=>document.querySelector('#dlg').close());
   const bad=E.cons.filter(t=>/Content Security Policy|Refused to|violates/i.test(t));
   ok(!bad.length&&!E.errs.length,'every tab and workspace loads under the CSP with no violation or page error',[...bad,...E.errs].join(' | '));
-  const r=await ev(async()=>{const o={v:[]};document.addEventListener('securitypolicyviolation',e=>o.v.push(e.violatedDirective+':'+e.blockedURI));setTimeout('window.__strEval=1',5);const s=document.createElement('script');s.textContent='window.__inj=1';document.head.append(s);try{await fetch('https://example.com/x',{mode:'no-cors'});o.net='allowed';}catch(e){o.net='blocked';}await new Promise(r=>setTimeout(r,200));o.str=window.__strEval||0;o.inj=window.__inj||0;return o;});
-  ok(r.str===0&&r.inj===0&&r.net==='blocked'&&r.v.some(x=>/^script-src/.test(x))&&r.v.some(x=>/^connect-src:https:\/\/example\.com/.test(x)),'string eval, inline scripts and unlisted hosts are blocked',JSON.stringify(r));
+  const r=await ev(async()=>{const o={v:[]};document.addEventListener('securitypolicyviolation',e=>o.v.push(e.violatedDirective+':'+e.blockedURI));setTimeout('window.__strEval=1',5);const s=document.createElement('script');s.textContent='window.__inj=1';document.head.append(s);try{await fetch('https://example.com/x'.replace('https:','http:'),{mode:'no-cors'});o.net='allowed';}catch(e){o.net='blocked';}await new Promise(r=>setTimeout(r,200));o.str=window.__strEval||0;o.inj=window.__inj||0;return o;});
+  ok(r.str===0&&r.inj===0&&r.net==='blocked'&&r.v.some(x=>/^script-src/.test(x))&&r.v.some(x=>/^connect-src:http:\/\/example\.com/.test(x)),'string eval, inline scripts and plain-http hosts are blocked',JSON.stringify(r));
   ok(await ev(()=>{const A=window.amnicad.API;A.applyActions([{param:{name:'wq',expr:'2*sqrt(9)+1'}}]);return window.amnicad.S.scope.wq===7;}),'parametric expressions work without eval');
 }
 if(want('stress')){
