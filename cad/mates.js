@@ -17,9 +17,9 @@ export function faceGeom(m,fid){const gs=groupsOf(m,fid);if(!gs.length)return nu
   if(/CYLIND|CONE|TORUS|REVOLUTION/.test(ty)&&flat<0.999){const d=nrm(eig3(M)[0].vec),c=circle3(pts,d);return{k:'line',p:c.c,d,r:c.r,round:true,area:A,f:fid,t:ty};}
   return flat>0.995||ty==='PLANE'?{k:'plane',p:C,n:nrm(N),area:A,f:fid}:{k:'point',p:C,area:A,f:fid};}
 export function edgeGeom(m,eid){const g=m.egroups.find(x=>x[2]===eid),q=m.edges[eid];if(!g||!q)return null;const L=m.lines,P=[];for(let k=g[0];k<g[0]+g[1];k++)P.push([L[3*k],L[3*k+1],L[3*k+2]]);
-  if(q.type==='LINE')return{k:'line',p:q.a,d:nrm(sub(q.b,q.a)),e:eid};
-  if(/CIRCLE|ELLIPSE/.test(q.type)&&P.length>3){const o=P.reduce((s,p)=>add(s,p),[0,0,0]).map(v=>v/P.length),M=[[0,0,0],[0,0,0],[0,0,0]];for(const p of P){const d=sub(p,o);for(let i=0;i<3;i++)for(let j=0;j<3;j++)M[i][j]+=d[i]*d[j];}const d=nrm(eig3(M)[0].vec),c=circle3(P,d);return{k:'line',p:c.c,d,r:c.r,round:true,e:eid};}
-  return{k:'point',p:q.m,e:eid};}
+  if(q.type==='LINE')return{k:'line',p:q.a,d:nrm(sub(q.b,q.a)),e:eid,len:q.len};
+  if(/CIRCLE|ELLIPSE/.test(q.type)&&P.length>3){const o=P.reduce((s,p)=>add(s,p),[0,0,0]).map(v=>v/P.length),M=[[0,0,0],[0,0,0],[0,0,0]];for(const p of P){const d=sub(p,o);for(let i=0;i<3;i++)for(let j=0;j<3;j++)M[i][j]+=d[i]*d[j];}const d=nrm(eig3(M)[0].vec),c=circle3(P,d);return{k:'line',p:c.c,d,r:c.r,round:true,e:eid,len:q.len};}
+  return{k:'point',p:q.m,e:eid,len:q.len};}
 function cpt(p,a,b,c){const ab=sub(b,a),ac=sub(c,a),ap=sub(p,a),d1=dot(ab,ap),d2=dot(ac,ap);if(d1<=0&&d2<=0)return a;const bp=sub(p,b),d3=dot(ab,bp),d4=dot(ac,bp);if(d3>=0&&d4<=d3)return b;const vc=d1*d4-d3*d2;if(vc<=0&&d1>=0&&d3<=0)return add(a,mul(ab,d1/(d1-d3)));const cp=sub(p,c),d5=dot(ab,cp),d6=dot(ac,cp);if(d6>=0&&d5<=d6)return c;const vb=d5*d2-d1*d6;if(vb<=0&&d2>=0&&d6<=0)return add(a,mul(ac,d2/(d2-d6)));const va=d3*d6-d5*d4;if(va<=0&&d4-d3>=0&&d5-d6>=0)return add(b,mul(sub(c,b),(d4-d3)/((d4-d3)+(d5-d6))));const dn=1/(va+vb+vc);return add(a,add(mul(ab,vb*dn),mul(ac,vc*dn)));}
 const BOX=new WeakMap();
 function boxes(m){let B=BOX.get(m);if(B)return B;B=m.groups.map(g=>{const lo=[1e18,1e18,1e18],hi=[-1e18,-1e18,-1e18];for(let t=g[0];t<g[0]+g[1];t++){const v=m.idx[t]*3;for(let k=0;k<3;k++){lo[k]=Math.min(lo[k],m.pos[v+k]);hi[k]=Math.max(hi[k],m.pos[v+k]);}}return{g,lo,hi};});BOX.set(m,B);return B;}
@@ -34,7 +34,7 @@ export function findFace(m,s){if(!m||!s)return-1;if(typeof s==='number')return s
   if(pk&&!s.side&&!s.normal&&s.r==null){return nearestFace(m,pk,FTY(s.t||s.type)||undefined);}
   if(!C.length)return-1;if(pk)return C.map(x=>({i:x.i,d:len(sub(x.q.c,pk))})).sort((x,y)=>x.d-y.d)[0].i;C.sort((x,y)=>y.a-x.a);return C[Math.min(C.length-1,+s.i||0)].i;}
 export function findEdge(m,s){if(!m||!s)return-1;if(typeof s==='number')return s<m.edges.length?s:-1;const pk=s.pick||s.near;if(pk&&!s.type)return nearestEdge(m,pk);let C=m.edges.map((q,i)=>({q,i})).filter(x=>!s.type||x.q.type===FTY(s.type));if(!C.length)return-1;if(pk)C.sort((x,y)=>len(sub(x.q.m,pk))-len(sub(y.q.m,pk)));else C.sort((x,y)=>y.q.len-x.q.len);return C[Math.min(C.length-1,+s.i||0)].i;}
-const scl=(e,k)=>e&&(k===1?e:{...e,p:mul(e.p,k),...(e.r!=null?{r:e.r*k}:{}),...(e.pts?{pts:e.pts.map(q=>mul(q,k))}:{})});
+const scl=(e,k)=>e&&(k===1?e:{...e,p:mul(e.p,k),...(e.r!=null?{r:e.r*k}:{}),...(e.len!=null?{len:e.len*k}:{}),...(e.pts?{pts:e.pts.map(q=>mul(q,k))}:{})});
 const r5=v=>+v.toFixed(5),fsig=g=>({k:g.k,...(g.n?{n:g.n.map(r5)}:{}),...(g.d?{d:g.d.map(r5)}:{}),...(g.r!=null?{r:r5(g.r)}:{}),a:r5(g.area||0),c:g.p.map(r5)}),bsz=m=>{const b=m.props.bbox;return len(sub(b.max,b.min))||1;};
 const fscore=(g,s)=>{if(!g||g.k!==s.k)return Infinity;const dv=g.n||g.d,sv=s.n||s.d;if(dv&&sv){const c=dot(dv,sv);if(s.n?c<0.999:Math.abs(c)<0.999)return Infinity;}return len(sub(g.p,s.c));},rok=(g,s)=>s.r==null||Math.abs((g.r||0)-s.r)<=Math.max(2e-4,s.r*0.02),fname=s=>s.k==='plane'?'flat face':s.k==='sphere'?'sphere Ø'+r5(s.r*2):s.r!=null?'round face Ø'+r5(s.r*2):'curved face';
 export function pathGeom(m,eid){const g=m.egroups.find(x=>x[2]===eid);if(!g)return null;const L=m.lines,P=[];for(let k=g[0];k<g[0]+g[1];k++)P.push([L[3*k],L[3*k+1],L[3*k+2]]);return P.length>1?{k:'path',p:P[0],pts:P,e:eid}:null;}

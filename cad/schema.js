@@ -19,7 +19,7 @@ fillet:{n:'Fillet',g:'Modify',i:'◜',f:[['r','Radius',2],['edges','Edges',{dir:
 chamfer:{n:'Chamfer',g:'Modify',i:'◸',f:[['d','Distance',1],['edges','Edges',{side:'+Z'},'edges']]},
 shell:{n:'Shell',g:'Modify',i:'▢',f:[['t','Wall thickness',2],['faces','Open faces',{side:'+Z'},'faces']],doc:'hollows the part inward, removing the open faces'},
 pattern:{n:'Pattern',g:'Modify',i:'⁘',f:[['of','Repeat features',[],'feats'],['kind','Type','linear',['linear','circular']],['n','Count',4],['dx','Step X',20,null,s=>s.kind!=='circular'],['dy','Step Y',0,null,s=>s.kind!=='circular'],['dz','Step Z',0,null,s=>s.kind!=='circular'],['axis','Axis','Z',['X','Y','Z'],s=>s.kind==='circular'],['angle','Total angle °',360,null,s=>s.kind==='circular'],['ox','Axis through X',0,null,s=>s.kind==='circular'],['oy','Axis through Y',0,null,s=>s.kind==='circular']],doc:'copies earlier solid/cut/hole features; circular with angle 360 spaces them evenly'},
-mirror:{n:'Mirror',g:'Modify',i:'⇋',f:[['plane','Mirror plane','YZ',['YZ','XZ','XY']],['offset','Plane offset',0]],doc:'adds a mirrored copy of the whole part'},
+mirror:{n:'Mirror',g:'Modify',i:'⇋',f:[['plane','Mirror plane','YZ',['YZ','XZ','XY']],['offset','Plane offset',0],['only','Mirrored copy only',false,'bool']],doc:'adds a mirrored copy of the whole part'},
 move:{n:'Move',g:'Modify',i:'✥',f:[['dx','Move X',0],['dy','Move Y',0],['dz','Move Z',0],['angle','Rotate °',0],['axis','Rotate axis','Z',['X','Y','Z']]]},
 import:{n:'Imported STEP',g:'File',i:'⇩',f:[OP],hidden:true}
 };

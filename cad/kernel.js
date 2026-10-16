@@ -265,7 +265,7 @@ export async function build(doc,opt={}){
       }
       else if(f.type==='mirror'){
         if(!body)throw new Error('mirror needs a body');
-        const P=NAMED[f.plane||'YZ'];next=body.fuse(body.clone().mirror(new R.Plane(P.n.map(v=>v*(f.offset||0)),P.x,P.n)));
+        const P=NAMED[f.plane||'YZ'],mp=new R.Plane(P.n.map(v=>v*(f.offset||0)),P.x,P.n);next=f.only?body.clone().mirror(mp):body.fuse(body.clone().mirror(mp));
       }
       else if(f.type==='split'){if(!body)throw new Error('split needs a body');next=splitBody(body,f);}
       else if(f.type==='scale'){if(!body)throw new Error('scale needs a body');next=body.clone().scale(f.k??1,[f.ox||0,f.oy||0,f.oz||0]);}
