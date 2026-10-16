@@ -21,6 +21,8 @@ Actions (applied in order):
  {"run":"fea"}                           run the stress analysis
  {"flow":{"fluid":"air","speed":10,"dir":"+X"}}  set up a wind/water tunnel test (speed in m/s, dir = flow direction)
  {"run":"flow"}                          run the flow analysis (drag, pressure, streamlines)
+ {"mold":{"material":"pp","gates":[[x,y,z]] | "auto","melt":230,"mold":40,"tinj":1,"pmax":180,"packPct":80,"holdT":30,"mesh":"standard","runner":{"on":true,"L":50,"D":0}}}  set up injection mold flow (°C, s, MPa; gates are points on the part in document units, "auto" picks one; materials pp, abs, pc, pom, pa66, peek, lsr30, lsr50, lsr70; holdT is the LSR cure time; D 0 = auto runner size)
+ {"run":"mold"}                          run the mold flow analysis (fill, pack or cure, gate pressure, clamp tonnage, weld lines, air traps)
 Numbers may be expressions of parameters such as "w/2-8". Angles are degrees. Trig functions take degrees.
 Feature types (type: fields):
 ${featureDocs()}
