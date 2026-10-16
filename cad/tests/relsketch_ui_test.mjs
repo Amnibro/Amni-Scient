@@ -21,7 +21,7 @@ try{await sleep(500);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   const D=await open();const{p,ev,wb,plate,scr,cmd,tab,st,shot,skClick,skTool,skType,field,setField}=D;
   await plate();const base=await st();ok(base.vol>2&&near(base.bb.max[2],0.25),'mounting plate loads (4 × 2.5 × 0.25 in)',[base.vol,base.bb.max]);
   if(want('sketch')){
-    await cmd('Extrude');await sleep(300);let s=await st();const chip=await ev(()=>{const c=document.querySelector('#pickchip');return c&&c.textContent;});ok(s.pick&&/pick a flat face/i.test(chip)&&s.n===base.n,'Extrude asks for a face or plane first and adds nothing yet',chip);
+    await cmd('Extrude');await sleep(300);let s=await st();const chip=await ev(()=>{const c=document.querySelector('#pickpanel'),q=document.querySelector('#pickchip');return c&&q&&c.textContent;});ok(s.pick&&/pick a flat face/i.test(chip)&&s.n===base.n,'Extrude asks for a face or plane first and adds nothing yet',chip);
     const tp=await scr([0.5,0.3,0.25]);await p.mouse.move(tp[0]-4,tp[1]);await sleep(120);await p.mouse.move(tp[0],tp[1]);await sleep(300);const hv=await ev(()=>({cur:window.amnicad.API.renderer.domElement.style.cursor}));ok(hv.cur==='crosshair','hovering a flat face shows the pick cursor',hv);await shot('1-pick-face');
     await p.mouse.click(tp[0],tp[1]);await p.waitForFunction(()=>window.amnicad.S.sketcher,{timeout:15000});await sleep(900);s=await st();
     const fr=await ev(()=>{const H=window.amnicad.S.sketcher,f=H.frame;return{o:f.o,n:f.n,on:f.refs.filter(r=>r.on&&r.k!=='pt').length,kinds:[...new Set(f.refs.filter(r=>r.on).map(r=>r.k))],face:f.face,refEnts:H.sketch.ents.filter(e=>e.ref).length};});
@@ -64,7 +64,7 @@ try{await sleep(500);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   if(want('hole')){
     await plate();await cmd('Hole');await sleep(300);const tp=await scr([0.5,0.3,0.25]);await p.mouse.click(tp[0],tp[1]);await sleep(600);await wb();let s=await st();const h=s.last;
     ok(h.type==='hole'&&h.plane==='face'&&h.face.normal[2]===1&&near(h.pts[0][0],0.5,0.07)&&near(h.pts[0][1],0.3,0.07)&&s.vol<base.vol-0.005,'clicking the top face places a hole where you click',{pts:h.pts,vol:s.vol});
-    const tp2=await scr([-0.5,0.3,0.25]);await p.mouse.click(tp2[0],tp2[1]);await sleep(600);await wb();s=await st();ok(s.last.pts.length===2,'more clicks add more holes until Done',s.last.pts);await shot('7-hole-pick');await ev(()=>{const b=[...document.querySelectorAll('#pickchip button')].find(x=>x.textContent==='Done');b&&b.click();});
+    const tp2=await scr([-0.5,0.3,0.25]);await p.mouse.click(tp2[0],tp2[1]);await sleep(600);await wb();s=await st();ok(s.last.pts.length===2,'more clicks add more holes until Done',s.last.pts);await shot('7-hole-pick');await ev(()=>{const b=[...document.querySelectorAll('#pickpanel button')].find(x=>x.textContent==='Done');b&&b.click();});
   }
   if(want('mirror')){
     await plate();await cmd('Mirror');await sleep(300);const tp=await scr([2,0,0.125]);await p.mouse.click(tp[0],tp[1]);await sleep(600);await wb();const s=await st();
