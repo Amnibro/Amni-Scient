@@ -3,7 +3,7 @@ const TAU=Math.PI*2,R3=1/Math.sqrt(3),R2=Math.SQRT1_2,cross=(a,b)=>[a[1]*b[2]-a[
 export const VIEWS={front:{d:[0,-1,0],x:[1,0,0]},back:{d:[0,1,0],x:[-1,0,0]},top:{d:[0,0,1],x:[1,0,0]},bottom:{d:[0,0,-1],x:[1,0,0]},right:{d:[1,0,0],x:[0,1,0]},left:{d:[-1,0,0],x:[0,-1,0]},iso:{d:[R3,-R3,R3],x:[R2,R2,0]}};
 export const SECTIONS={XZ:{i:1,rm:-1,view:'front',parent:['top','bottom']},YZ:{i:0,rm:1,view:'right',parent:['front','top','back']},XY:{i:2,rm:1,view:'top',parent:['front','right','left']}};
 export const SHEETS={A4:[297,210],A3:[420,297],A2:[594,420],A1:[841,594],A0:[1189,841],'ANSI A':[279.4,215.9],'ANSI B':[431.8,279.4],'ANSI C':[558.8,431.8],'ANSI D':[863.6,558.8],'ANSI E':[1117.6,863.6]};
-export const SCALES=[[50,1],[20,1],[10,1],[5,1],[2,1],[1,1],[1,2],[1,5],[1,10],[1,20],[1,50],[1,100],[1,200]];
+export const SCALES=[[50,1],[20,1],[10,1],[5,1],[2,1],[1,1],[1,2],[1,4],[1,5],[1,10],[1,20],[1,50],[1,100],[1,200]];
 export const VIEW_NAMES=['front','top','right','left','bottom','back','iso'];
 export const GDT=['straightness','flatness','circularity','cylindricity','profile-line','profile-surface','parallelism','perpendicularity','angularity','position','concentricity','symmetry','runout','total-runout'];
 export const GDT_LABEL={straightness:'Straightness',flatness:'Flatness',circularity:'Circularity',cylindricity:'Cylindricity','profile-line':'Profile of a line','profile-surface':'Profile of a surface',parallelism:'Parallelism',perpendicularity:'Perpendicularity',angularity:'Angularity',position:'Position',concentricity:'Concentricity',symmetry:'Symmetry',runout:'Circular runout','total-runout':'Total runout'};
