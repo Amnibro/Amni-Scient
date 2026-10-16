@@ -188,7 +188,7 @@ export async function solve(md,opt={},prog){
   const toolInfo=()=>tools.map(T=>{const F=[0,0,0];for(let s=0;s<T.nodes.length;s++)for(let k=0;k<d;k++)F[k]+=T.fv[s*d+k];return{name:T.name,F,off:toolOff(T,cur.t),n:T.fN.filter(v=>v>0).length};});
   const reactions=()=>{const out={};for(const b of bcs)if(b.name){const o=out[b.name]||(out[b.name]=[0,0,0]);for(const n of b.nodes)o[b.dof]+=R[n*d+b.dof];}return out;};
   const contactOut=()=>[...tools,...pairs].map(T=>({name:T.name,nodes:Array.from(T.nodes||T.sl),fN:Array.from(T.fN),gap:Array.from(T.gap),A:Array.from(T.A)}));
-  const snap=label=>{un.set(u);assemble(false,cur.t,cur.t,false);frames.push({t:cur.t,label,u:Float32Array.from(u),fields:fields(),contact:contactOut(),tools:toolInfo(),react:reactions()});};
+  const snap=(label,end)=>{un.set(u);assemble(false,cur.t,cur.t,false);frames.push({t:cur.t,label,end:!!end,step:cur.step,u:Float32Array.from(u),fields:fields(),contact:contactOut(),tools:toolInfo(),react:reactions()});};
   let tPrev=0;
   for(let si=0;si<steps.length;si++){const S=steps[si],tEnd=S.t1;cur.step=si;
     if(S.release){assemble(false,tPrev,tPrev,false);const f=new Float64Array(nd);for(const T of tools){for(let s=0;s<T.nodes.length;s++)for(let k=0;k<d;k++)f[T.nodes[s]*d+k]+=T.fv[s*d+k];T.on=false;}released={f,amp:[[tPrev,1],[tEnd,0]]};tools.length=0;
@@ -200,6 +200,6 @@ export async function solve(md,opt={},prog){
       hist.push({t,step:si,it:r.it,pen:r.pen,tools:toolInfo(),react:reactions(),nc:tools.reduce((a,T)=>a+T.fN.filter(v=>v>0).length,0)+pairs.reduce((a,Q)=>a+Q.fN.filter(v=>v>0).length,0)});
       if(md.onInc)md.onInc({t,u,api:{fields,contactOut}},hist);if(opt.frameEvery&&incs%opt.frameEvery===0)snap('inc '+incs);
       dt=r.it<=4?Math.min(dtMax,dt*1.5):r.it>9?dt*0.6:dt;if(prog)prog({t,step:si,it:r.it,dt,elapsed:Date.now()-t00,frac:(t)/steps[steps.length-1].t1});await new Promise(q=>setTimeout(q,0));}
-    snap(S.name||'step '+(si+1));tPrev=tEnd;}
+    snap(S.name||'step '+(si+1),true);tPrev=tEnd;}
   return{hist,frames,stats:{incs,iters:totIt,cutbacks:ncut,ms:Date.now()-t00,nn,ne,dofs:nd,neq:sys?sys.n:0,profile:sys?sys.prof:0,lin},X:Float32Array.from(X),E:Int32Array.from(E),dim:d,nen,axi};
 }

@@ -24,7 +24,8 @@ speed:{si:['m/s',1],us:['mph',2.2369363]},
 dens:{si:['kg/m³',1],us:['lb/in³',3.6127292e-5]},
 accel:{si:['m/s²',1],us:['ft/s²',3.2808399]},
 freq:{si:['Hz',1],us:['Hz',1]},
-pa:{si:['Pa',1],us:['psf',0.020885434]}};
+pa:{si:['Pa',1],us:['psf',0.020885434]},
+lineload:{si:['N/mm',1],us:['lbf/in',5.7101471]}};
 export function conv(q,v,to){const u=Q[q][to];return v*u[1]+(u[2]||0);}
 export function back(q,v,from){const u=Q[q][from];return(v-(u[2]||0))/u[1];}
 export const unitOf=(q,s=SYS)=>Q[q][s][0];

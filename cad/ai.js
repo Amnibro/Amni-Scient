@@ -18,7 +18,10 @@ Actions (applied in order):
  {"sim":{"type":"static","fixed":[face selector],"supports":[{"faces":sel,"type":"fixed"|"roller"}],"loads":[{"faces":sel,"F":[fx,fy,fz]} | {"faces":sel,"p":MPa} | {"faces":sel,"M":[mx,my,mz] N·mm torque}],"gravity":true}}  set up a stress test (N, mm, MPa)
  {"sim":{"type":"modal","modes":6,"supports":[...]}}  natural frequencies (no supports = free part)
  {"sim":{"type":"thermal","temps":[{"faces":sel,"T":°C}],"conv":[{"faces":sel,"h":W/m²K,"Tinf":°C}],"flux":[{"faces":sel,"Q":W}]}}  steady heat flow
- {"run":"fea"}                           run the stress analysis
+ {"sim":{"type":"seal","nl":{"shape":"oring","d":3.53,"mode":"axi","ID":20,"groove":"rect","gw":4.8,"gd":2.6,"mat":"lsr50","mu":0.2}}}  elastomer seal / gasket compression (rect: w,h; flat plates: groove "flat" + squeeze 0-1; mats lsr30..lsr70, epdm70, fkm75)
+ {"sim":{"type":"forming","nl":{"mode":"axi"|"plane"|"3d","tool":"dome"|"channel","mat":"ss316l","t":0.2,"Rp":5,"Rd":5.6,"rd":1,"Rb":9,"stroke":2.5,"mu":0.1,"springback":true}}}  sheet forming: thinning, plastic strain, punch force, FLD check, springback (mats ss316l, ss304, ti1, ti2, al5052, cu)
+ {"sim":{"type":"nonlinear","nl":{"mat":"lsr50","plate":0.5,"plateSide":"+Z","steps":10}}}  large-deformation static of the part with the stress supports/loads, optional rigid plate
+ {"run":"fea"}                           run the stress analysis (or the selected seal / forming / nonlinear study)
  {"flow":{"fluid":"air","speed":10,"dir":"+X"}}  set up a wind/water tunnel test (speed in m/s, dir = flow direction)
  {"run":"flow"}                          run the flow analysis (drag, pressure, streamlines)
 Numbers may be expressions of parameters such as "w/2-8". Angles are degrees. Trig functions take degrees.
