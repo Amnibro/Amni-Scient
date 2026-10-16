@@ -1,0 +1,13 @@
+export const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],len=a=>Math.hypot(a[0],a[1],a[2]),nrm=a=>mul(a,1/(len(a)||1)),mid=(a,b)=>mul(add(a,b),0.5),ss=r=>r.reduce((s,v)=>s+v*v,0);
+export const V3={add,sub,mul,dot,cross,len,nrm,mid};
+export const qmul=(a,b)=>[a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]],qconj=q=>[-q[0],-q[1],-q[2],q[3]],qn=q=>{const l=Math.hypot(q[0],q[1],q[2],q[3])||1;return[q[0]/l,q[1]/l,q[2]/l,q[3]/l];};
+export const qrot=(q,v)=>{const u=[q[0],q[1],q[2]],t=mul(cross(u,v),2);return add(add(v,mul(t,q[3])),cross(u,t));};
+export const qexp=w=>{const a=len(w);if(a<1e-12)return qn([w[0]/2,w[1]/2,w[2]/2,1]);const s=Math.sin(a/2)/a;return[w[0]*s,w[1]*s,w[2]*s,Math.cos(a/2)];};
+export const qlog=q=>{const p=q[3]<0?q.map(v=>-v):q,s=Math.hypot(p[0],p[1],p[2]);if(s<1e-12)return[2*p[0],2*p[1],2*p[2]];const a=2*Math.atan2(s,p[3]);return[p[0]/s*a,p[1]/s*a,p[2]/s*a];};
+export const qaxis=(ax,deg)=>qexp(mul(nrm(ax),deg*Math.PI/180)),qeuler=e=>{const[x,y,z]=(e||[0,0,0]).map(v=>(+v||0)*Math.PI/360),c1=Math.cos(x),c2=Math.cos(y),c3=Math.cos(z),s1=Math.sin(x),s2=Math.sin(y),s3=Math.sin(z);return[s1*c2*c3+c1*s2*s3,c1*s2*c3-s1*c2*s3,c1*c2*s3+s1*s2*c3,c1*c2*c3-s1*s2*s3];};
+export const qbetween=(a,b)=>{const d=dot(nrm(a),nrm(b));if(d<-0.999999){const p=nrm(cross(a,Math.abs(a[0])<0.9?[1,0,0]:[0,1,0]));return[p[0],p[1],p[2],0];}return qn([...cross(nrm(a),nrm(b)),1+d]);};
+export const xf=(P,v)=>add(qrot(P.q,v),P.p),inv=P=>{const q=qconj(P.q);return{p:mul(qrot(q,P.p),-1),q};},compose=(A,B)=>({p:xf(A,B.p),q:qn(qmul(A.q,B.q))});
+export const poseOf=c=>({p:(c.p||[0,0,0]).map(Number),q:qn((c.q||[0,0,0,1]).map(Number))});
+export function eig3(A){const a=A.map(r=>r.slice()),v=[[1,0,0],[0,1,0],[0,0,1]];for(let it=0;it<60;it++){let p=0,q=1,m=Math.abs(a[0][1]);if(Math.abs(a[0][2])>m){m=Math.abs(a[0][2]);q=2;}if(Math.abs(a[1][2])>m){m=Math.abs(a[1][2]);p=1;q=2;}if(m<1e-18)break;const th=(a[q][q]-a[p][p])/(2*a[p][q]),t=(th<0?-1:1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c;
+  for(let k=0;k<3;k++){const x=a[k][p],y=a[k][q];a[k][p]=c*x-s*y;a[k][q]=s*x+c*y;}for(let k=0;k<3;k++){const x=a[p][k],y=a[q][k];a[p][k]=c*x-s*y;a[q][k]=s*x+c*y;}for(let k=0;k<3;k++){const x=v[k][p],y=v[k][q];v[k][p]=c*x-s*y;v[k][q]=s*x+c*y;}}
+  return[0,1,2].map(i=>({val:a[i][i],vec:[v[0][i],v[1][i],v[2][i]]})).sort((x,y)=>x.val-y.val);}
