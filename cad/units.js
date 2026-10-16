@@ -24,6 +24,12 @@ speed:{si:['m/s',1],us:['mph',2.2369363]},
 dens:{si:['kg/m³',1],us:['lb/in³',3.6127292e-5]},
 accel:{si:['m/s²',1],us:['ft/s²',3.2808399]},
 freq:{si:['Hz',1],us:['Hz',1]},
+dpress:{si:['kPa',1e-3],us:['psi',1.4503774e-4]},
+vflow:{si:['mL/min',6e7],us:['gal/min',15850.323]},
+mflow:{si:['g/s',1e3],us:['lb/hr',7936.6414]},
+vel:{si:['m/s',1],us:['ft/s',3.2808399]},
+perm:{si:['m²',1],us:['darcy',1.01325e12]},
+beta:{si:['1/m',1],us:['1/ft',0.3048]},
 pa:{si:['Pa',1],us:['psf',0.020885434]}};
 export function conv(q,v,to){const u=Q[q][to];return v*u[1]+(u[2]||0);}
 export function back(q,v,from){const u=Q[q][from];return(v-(u[2]||0))/u[1];}
