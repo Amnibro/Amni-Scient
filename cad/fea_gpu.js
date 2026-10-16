@@ -65,6 +65,31 @@ axpy:EL(`@group(0)@binding(1) var<storage,read> S:array<f32>;
 @group(0)@binding(3) var<storage,read> Ap:array<f32>;
 @group(0)@binding(4) var<storage,read_write> x:array<f32>;
 @group(0)@binding(5) var<storage,read_write> r:array<f32>;`,`let al=S[2];x[n]+=al*p[n];r[n]-=al*Ap[n];`),
+bsr:`struct U{n:u32,rb:u32,cb:u32,mode:u32};
+@group(0)@binding(0) var<uniform> u:U;
+@group(0)@binding(1) var<storage,read> rp:array<u32>;
+@group(0)@binding(2) var<storage,read> ci:array<u32>;
+@group(0)@binding(3) var<storage,read> v:array<f32>;
+@group(0)@binding(4) var<storage,read> x:array<f32>;
+@group(0)@binding(5) var<storage,read> b:array<f32>;
+@group(0)@binding(6) var<storage,read_write> y:array<f32>;
+@compute @workgroup_size(64) fn main(@builtin(global_invocation_id) g:vec3u,@builtin(num_workgroups) nw:vec3u){${IDX}if(n>=u.n){return;}var a:array<f32,9>;
+ for(var k=rp[n];k<rp[n+1u];k++){let j=ci[k]*u.cb;let o=k*u.rb*u.cb;for(var r=0u;r<u.rb;r++){var s=0.0;for(var c=0u;c<u.cb;c++){s+=v[o+r*u.cb+c]*x[j+c];}a[r]+=s;}}
+ for(var r=0u;r<u.rb;r++){let id=n*u.rb+r;if(u.mode==0u){y[id]=a[r];}else if(u.mode==1u){y[id]=b[id]-a[r];}else{y[id]=y[id]+a[r];}}}`,
+chb:`struct U{n:u32,sb:u32,asg:u32,q:u32,c1:f32,c2:f32,q2:f32,q3:f32};
+@group(0)@binding(0) var<uniform> u:U;
+@group(0)@binding(1) var<storage,read> D:array<f32>;
+@group(0)@binding(2) var<storage,read> r:array<f32>;
+@group(0)@binding(3) var<storage,read_write> d:array<f32>;
+@group(0)@binding(4) var<storage,read_write> x:array<f32>;
+@compute @workgroup_size(64) fn main(@builtin(global_invocation_id) g:vec3u,@builtin(num_workgroups) nw:vec3u){${IDX}if(n>=u.n){return;}let s=n/u.sb;let a=n%u.sb;let o=s*u.sb;let m=min(u.sb,u.n-o);var z=0.0;let ro=(s*u.sb+a)*u.sb;
+ for(var c=0u;c<m;c++){z+=D[ro+c]*r[o+c];}let dd=select(u.c1*d[n],0.0,u.asg==1u)+u.c2*z;d[n]=dd;x[n]=select(x[n]+dd,dd,u.asg==1u);}`,
+dmv:`struct U{n:u32,m:u32,a:u32,b2:u32};
+@group(0)@binding(0) var<uniform> u:U;
+@group(0)@binding(1) var<storage,read> M:array<f32>;
+@group(0)@binding(2) var<storage,read> x:array<f32>;
+@group(0)@binding(3) var<storage,read_write> y:array<f32>;
+@compute @workgroup_size(64) fn main(@builtin(global_invocation_id) g:vec3u,@builtin(num_workgroups) nw:vec3u){${IDX}if(n>=u.n){return;}var s=0.0;let o=n*u.n;for(var j=0u;j<u.n;j++){s+=M[o+j]*x[j];}y[n]=s;}`,
 pu:EL(`@group(0)@binding(1) var<storage,read> S:array<f32>;
 @group(0)@binding(2) var<storage,read> z:array<f32>;
 @group(0)@binding(3) var<storage,read_write> p:array<f32>;`,`p[n]=select(z[n]+S[3]*p[n],z[n]*inverseSqrt(max(S[4],1e-30)),u.m==1u);`)};
@@ -122,3 +147,40 @@ export async function gpuContext(Ls,K,opt={}){
   }catch(e){if(!popped){d.popErrorScope().catch(()=>{});d.popErrorScope().catch(()=>{});}free();throw e;}
 }
 export async function gpuSolve(Ls,K,b,opt={},prog){const c=await gpuContext(Ls,K,opt);if(!c)return null;try{return await c.solve(b,prog);}finally{c.free();}}
+export async function gpuAMG(H,b,opt={},prog){
+  const d=await gpuDevice();if(!d)return null;
+  d.pushErrorScope('out-of-memory');d.pushErrorScope('validation');let popped=false;const pop=async()=>{popped=true;const a=await d.popErrorScope(),c=await d.popErrorScope();if(a||c)throw new Error('WebGPU: '+(a||c).message);};
+  const all=[],US=GPUBufferUsage,ids=new Map(),lim=d.limits.maxStorageBufferBindingSize,P=pipesOf(d);
+  const sb=(data)=>{const sz=typeof data==='number'?data*4:data.byteLength;if(sz>lim)throw new Error('GPU buffer limit ('+Math.round(sz/1048576)+' MB)');const B=d.createBuffer({size:Math.max(16,Math.ceil(sz/16)*16),usage:US.STORAGE|US.COPY_DST|US.COPY_SRC});if(typeof data!=='number')d.queue.writeBuffer(B,0,data);all.push(B);ids.set(B,ids.size);return B;};
+  const ub=a=>{const B=d.createBuffer({size:Math.max(16,a.byteLength),usage:US.UNIFORM|US.COPY_DST});d.queue.writeBuffer(B,0,a);all.push(B);return B;},memo=new Map(),bg=(pipe,key,bufs)=>{const k=pipe+key+':'+bufs.map(x=>ids.get(x)??'u').join(',');let g=memo.get(k);if(!g){g=d.createBindGroup({layout:P[pipe].getBindGroupLayout(0),entries:bufs.map((buffer,binding)=>({binding,resource:{buffer}}))});memo.set(k,g);}return g;},free=()=>{for(const B of all)B.destroy();all.length=0;};
+  try{
+    const f32=a=>Float32Array.from(a),u32=a=>Uint32Array.from(a),nL=H.length,C=H[nL-1],GL=H.map((L,l)=>{const n=L.A.n*L.A.rb,g={L,n,x:sb(n),b:l?sb(n):null,t1:sb(n),t4:sb(n),d:sb(n),w:wg(Math.ceil(n/64))};if(l<nL-1){g.A={rp:sb(u32(L.A.rp)),ci:sb(u32(L.A.ci)),v:sb(f32(L.A.v)),n:L.A.n,rb:L.A.rb,cb:L.A.cb};g.P={rp:sb(u32(L.P.rp)),ci:sb(u32(L.P.ci)),v:sb(f32(L.P.v)),n:L.P.n,rb:L.P.rb,cb:L.P.cb};g.R={rp:sb(u32(L.R.rp)),ci:sb(u32(L.R.ci)),v:sb(f32(L.R.v)),n:L.R.n,rb:L.R.rb,cb:L.R.cb};g.D=sb(f32(L.Ds));}return g;});
+    const g0=GL[0],n=g0.n,r=sb(n),p=sb(n),Ap=sb(n),u=sb(n),S=sb(8),part=sb(512),wD=wg(Math.ceil(n/64)),uE=ub(new Uint32Array([n,0,0,0,0,0,0,0])),Mi=sb(f32(H.cinv)),uM=ub(new Uint32Array([C.N,0,0,0]));g0.b=r;g0.A0=g0.A;
+    const Sst=d.createBuffer({size:32,usage:US.MAP_READ|US.COPY_DST}),Ust=d.createBuffer({size:n*4,usage:US.MAP_READ|US.COPY_DST});all.push(Sst,Ust);
+    const uB=new Map(),bu=(M,mode)=>{const k=M.n+'.'+M.rb+'.'+M.cb+'.'+mode;let U=uB.get(k);if(!U)uB.set(k,U=ub(new Uint32Array([M.n,M.rb,M.cb,mode])));return U;},D=(L,pipe,g,c)=>L.push([P[pipe],g,c]);
+    const spmv=(list,M,x,bb,y,mode,key)=>D(list,'bsr',bg('bsr',key+'.'+mode,[bu(M,mode),M.rp,M.ci,M.v,x,bb||x,y]),wg(Math.ceil(M.n/64)));
+    const uC=new Map(),cu=(n2,sbz,asg,c1,c2)=>{const k=[n2,sbz,asg,c1,c2].join(',');let U=uC.get(k);if(!U){const a=new ArrayBuffer(32),iv=new Uint32Array(a),fv=new Float32Array(a);iv[0]=n2;iv[1]=sbz;iv[2]=asg;fv[4]=c1;fv[5]=c2;uC.set(k,U=ub(new Uint8Array(a)));}return U;};
+    const cheb=(list,l,bb,post)=>{const g=GL[l],L=g.L,deg=l?H.cdeg:H.deg,lmax=L.lmax*1.1,lmin=lmax/30,th=(lmax+lmin)/2,de=(lmax-lmin)/2,sg=th/de;let rho=1/sg;
+      const step=(c1,c2,asg,rr)=>D(list,'chb',bg('chb',l+':'+c1+':'+c2+':'+asg+':'+ids.get(rr),[cu(g.n,L.sb,asg,c1,c2),g.D,rr,g.d,g.x]),g.w);
+      if(post){spmv(list,g.A,g.x,bb,g.t1,1,'A'+l);step(0,1/th,0,g.t1);}else step(0,1/th,1,bb);
+      for(let k=1;k<deg;k++){spmv(list,g.A,g.x,bb,g.t1,1,'A'+l);const r1=1/(2*sg-rho);step(r1*rho,2*r1/de,0,g.t1);rho=r1;}};
+    const vc=(list,l,bb)=>{const g=GL[l];if(l===nL-1){D(list,'dmv',bg('dmv','c'+ids.get(bb),[uM,Mi,bb,g.x]),g.w);return;}const c=GL[l+1];cheb(list,l,bb,false);
+      for(let k=0;k<(l?H.gamma:1);k++){spmv(list,g.A,g.x,bb,g.t4,1,'A'+l);spmv(list,g.R,g.t4,null,c.b,0,'R'+l);vc(list,l+1,c.b);spmv(list,g.P,c.x,null,g.x,2,'P'+l);}cheb(list,l,bb,true);};
+    const pre=[];vc(pre,0,r);const z=g0.x;
+    const run=async(list,reps)=>{const e=d.createCommandEncoder(),ps=e.beginComputePass();for(let k=0;k<reps;k++)for(const[pp,g,c]of list){ps.setPipeline(pp);ps.setBindGroup(0,g);ps.dispatchWorkgroups(c[0],c[1]||1);}ps.end();e.copyBufferToBuffer(S,0,Sst,0,32);d.queue.submit([e.finish()]);await Sst.mapAsync(GPUMapMode.READ);const s=new Float32Array(Sst.getMappedRange().slice(0));Sst.unmap();return s;};
+    const fU=[0,1,2,3].map(m=>ub(new Uint32Array([0,m,0,0]))),dU=ub(new Uint32Array([n,0,0,0])),init=[...pre],iter=[];
+    D(init,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(init,'fin',bg('fin','f2',[fU[2],part,S]),[1]);D(init,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    spmv(iter,g0.A0,p,null,Ap,0,'A0x');D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);iter.push(...pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    const rd=async B=>{const e=d.createCommandEncoder();e.copyBufferToBuffer(B,0,Ust,0,n*4);d.queue.submit([e.finish()]);await Ust.mapAsync(GPUMapMode.READ);const v=new Float32Array(Ust.getMappedRange().slice(0));Ust.unmap();return v;};
+    await run(init,1);await pop();
+    const tol=opt.tol||1e-8,maxIt=opt.maxIt||3000,CH=10,fn=Math.sqrt(b.reduce((a,v)=>a+v*v,0))||1,U=new Float64Array(n),y=new Float64Array(n),t0=Date.now(),hist=[];let rhs=b,rel=1,its=0,outer=0;
+    for(;outer<8;outer++){
+      const fr=Math.sqrt(rhs.reduce((a,v)=>a+v*v,0))||1,sc=1/fr,itol=Math.max(1e-5,Math.min(1e-2,tol*fn/fr*0.5));d.queue.writeBuffer(r,0,Float32Array.from(rhs,v=>v*sc));const e=d.createCommandEncoder();e.clearBuffer(u);e.clearBuffer(p);d.queue.submit([e.finish()]);
+      let s=await run(init,1),it=0,best=Infinity,stall=0,ir=Math.sqrt(s[4]);
+      while(it<maxIt&&ir>itol){s=await run(iter,CH);it+=CH;ir=Math.sqrt(Math.max(s[4],0));if(prog)prog(its+it,ir*fr/fn,'gpu');if(s[5]>0||!isFinite(ir))break;ir<best*0.7?(best=ir,stall=0):stall++;if(stall>=8)break;}
+      its+=it;const v=await rd(u);let cn=0,un=0;for(let i=0;i<n;i++){const dv=isFinite(v[i])?v[i]*fr:0;U[i]+=dv;cn+=dv*dv;un+=U[i]*U[i];}opt.mv(U,y);const res=new Float64Array(n);for(let i=0;i<n;i++)res[i]=b[i]-y[i];rel=Math.sqrt(res.reduce((a,q)=>a+q*q,0))/fn;hist.push({it,ir,rel,dU:Math.sqrt(cn/(un||1))});
+      if(rel<tol)break;if(outer>1&&!(rel<hist[outer-1].rel*0.9))break;rhs=res;}
+    if(!(rel<Math.max(tol*100,1e-5)))throw new Error('GPU solver did not converge (residual '+rel.toExponential(1)+')');
+    return{u:U,iters:its,rel,outer:outer+1,hist,gpuMs:Date.now()-t0,levels:nL};
+  }catch(e){if(!popped){d.popErrorScope().catch(()=>{});d.popErrorScope().catch(()=>{});}throw e;}finally{free();}
+}
