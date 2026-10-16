@@ -1,0 +1,35 @@
+import {camLib} from './mfg_kernel.js';
+export const EXTS=['nc','tap','gcode','ngc','cnc','txt','eia','min','mpf','h','sbp','iso'],STRIDE=8,MAXCELLS=200000;
+export async function load(text,o={}){const L=await camLib(),run=new L.GRun(text,JSON.stringify({dialect:o.dialect||'auto',machine:o.machine||null,home_z:o.home_z??50.8})),sum=JSON.parse(run.summary()),pts=run.points(),n=pts.length/STRIDE;return{L,run,sum,pts,n,text,dialect:sum.dialect,free(){try{run.free();}catch{}}};}
+export function stockCfg(sim,o={}){const tl=sim.sum.tools||[],d0=(tl.find(t=>t.dia>0)||{}).dia||o.dia||6.35,c=o.cfg?JSON.parse(JSON.stringify(o.cfg)):JSON.parse(sim.run.auto_stock(JSON.stringify({dia:d0,kind:o.kind||'flat',len:o.len||25,holder:o.holder||0})));c.tools=c.tools||{};for(const t of tl)if(t.dia>0&&!c.tools[t.t])c.tools[t.t]={...(c.tool||{}),dia:t.dia};const area=Math.max(1e-6,c.w*c.h),min=Math.sqrt(area/MAXCELLS);c.cell=Math.max(c.cell||0,min,Math.max(c.w,c.h)/(o.res||400));return c;}
+export function segments(sim,cfg){const P=sim.pts,n=sim.n,start=new Uint32Array(n+1),seg=new Float32Array(Math.max(1,n)*12),cut=t=>{const c=(cfg.tools&&cfg.tools[t])||cfg.tool||{},r=Math.max((c.dia||6.35)/2,1e-3),k=c.kind==='ball'?1:['vbit','drill','chamfer'].includes(c.kind)?2:0;return[r,k,Math.tan(Math.min(179,Math.max(1,c.angle||90))*Math.PI/360)];};let m=0;
+  for(let i=1;i<n;i++){start[i]=m;const q=i*STRIDE,p=q-STRIDE;if(P[q+3]<3){const[r,k,tn]=cut(P[q+5]),o=m*12;seg[o]=P[p];seg[o+1]=P[p+1];seg[o+2]=P[p+2];seg[o+4]=P[q];seg[o+5]=P[q+1];seg[o+6]=P[q+2];seg[o+8]=r;seg[o+9]=k;seg[o+10]=tn;m++;}}start[n]=m;start[0]=0;return{seg:seg.subarray(0,Math.max(1,m)*12),start,count:m};}
+const WGSL=`struct P{x0:f32,y0:f32,cell:f32,bot:f32,nx:u32,ny:u32,start:u32,count:u32,top:f32,p0:f32,p1:f32,p2:f32}
+struct S{a:vec4f,b:vec4f,c:vec4f}
+@group(0) @binding(0) var<uniform> p:P;
+@group(0) @binding(1) var<storage,read> segs:array<S>;
+@group(0) @binding(2) var<storage,read_write> h:array<atomic<i32>>;
+@compute @workgroup_size(64) fn main(@builtin(workgroup_id) w:vec3u,@builtin(local_invocation_index) li:u32){
+let si=w.y*65535u+w.x;if(si>=p.count){return;}let s=segs[p.start+si];let a=s.a.xyz;let b=s.b.xyz;let r=s.c.x;let kind=u32(s.c.y+0.5);let tn=s.c.z;
+if(min(a.z,b.z)>=p.top+1e-6){return;}
+let i0f=max(floor((min(a.x,b.x)-r-p.x0)/p.cell),0.0);let i1f=min(ceil((max(a.x,b.x)+r-p.x0)/p.cell),f32(p.nx)-1.0);let j0f=max(floor((min(a.y,b.y)-r-p.y0)/p.cell),0.0);let j1f=min(ceil((max(a.y,b.y)+r-p.y0)/p.cell),f32(p.ny)-1.0);
+if(i1f<i0f||j1f<j0f){return;}let i0=u32(i0f);let j0=u32(j0f);let wd=u32(i1f)-i0+1u;let tot=wd*(u32(j1f)-j0+1u);
+let ux=b.x-a.x;let uy=b.y-a.y;let aa=ux*ux+uy*uy;let dz=b.z-a.z;
+for(var k=li;k<tot;k+=64u){let i=i0+k%wd;let j=j0+k/wd;let cx=p.x0+f32(i)*p.cell;let cy=p.y0+f32(j)*p.cell;let dx=a.x-cx;let dy=a.y-cy;let c=dx*dx+dy*dy-r*r;var t0=0.0;var t1=1.0;
+if(aa<1e-12){if(c>0.0){continue;}}else{let bb=2.0*(dx*ux+dy*uy);let disc=bb*bb-4.0*aa*c;if(disc<0.0){continue;}let sq=sqrt(disc);t0=max((-bb-sq)/(2.0*aa),0.0);t1=min((-bb+sq)/(2.0*aa),1.0);}
+if(t0>t1){continue;}var z=min(a.z+dz*t0,a.z+dz*t1);
+if(kind!=0u){var tc=0.0;if(aa>=1e-12){tc=clamp(-(dx*ux+dy*uy)/aa,t0,t1);}var m=1e30;for(var q=0u;q<=9u;q++){var t=t0+(t1-t0)*f32(q)/8.0;if(q==9u){t=tc;}let d=min(length(vec2f(a.x+ux*t-cx,a.y+uy*t-cy)),r);var off=d/tn;if(kind==1u){off=r-sqrt(max(r*r-d*d,0.0));}m=min(m,a.z+dz*t+off);}z=m;}
+atomicMin(&h[j*p.nx+i],i32(round(max(z,p.bot)*1000.0)));}}`;
+async function gpuDev(){try{if(typeof navigator==='undefined'||!navigator.gpu)return null;const a=await navigator.gpu.requestAdapter();if(!a)return null;const d=await a.requestDevice();return d;}catch{return null;}}
+export class Stock{
+  static async make(sim,cfg,o={}){const s=new Stock();s.sim=sim;s.cfg=cfg;s.chk=new sim.L.GStock(sim.run,JSON.stringify(cfg));const ci=JSON.parse(s.chk.info());Object.assign(s,{nx:ci.nx,ny:ci.ny,cell:ci.cell,x0:ci.x0,y0:ci.y0,top:ci.top,bot:ci.bot});s.part=s.chk.part();s.chk.run_to(sim.n,true);s.final=JSON.parse(s.chk.info());s.chk.free();s.chk=null;s.idx=1;s.H=new Float32Array(s.nx*s.ny).fill(s.top);
+    const dev=o.gpu===false?null:await gpuDev();if(dev){try{await s.initGpu(dev);}catch(e){s.gpuErr=e.message;s.dev=null;}}if(!s.dev)s.cpu=new sim.L.GStock(sim.run,JSON.stringify(cfg));s.mode=s.dev?'gpu':'cpu';return s;}
+  async initGpu(dev){const sg=segments(this.sim,this.cfg),n=this.nx*this.ny;this.sg=sg;this.dev=dev;dev.pushErrorScope('validation');const B=(size,usage)=>dev.createBuffer({size:Math.max(16,Math.ceil(size/16)*16),usage});
+    this.sb=B(sg.seg.byteLength,GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST);dev.queue.writeBuffer(this.sb,0,sg.seg);this.hb=B(n*4,GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST|GPUBufferUsage.COPY_SRC);this.rb=B(n*4,GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST);
+    this.pl=dev.createComputePipeline({layout:'auto',compute:{module:dev.createShaderModule({code:WGSL}),entryPoint:'main'}});this.init=new Int32Array(n).fill(Math.round(this.top*1000));dev.queue.writeBuffer(this.hb,0,this.init);const e=await dev.popErrorScope();if(e)throw new Error(e.message);}
+  async to(idx){idx=Math.max(1,Math.min(this.sim.n,idx|0));if(idx===this.idx)return this.H;if(this.dev){const back=idx<this.idx,a=back?0:this.sg.start[this.idx],b=this.sg.start[idx],dev=this.dev;if(back)dev.queue.writeBuffer(this.hb,0,this.init);const enc=dev.createCommandEncoder(),ubs=[];for(let s=a;s<b;s+=65535*256){const c=Math.min(b-s,65535*256),u=new ArrayBuffer(48),f=new Float32Array(u),q=new Uint32Array(u);f[0]=this.x0;f[1]=this.y0;f[2]=this.cell;f[3]=this.bot;q[4]=this.nx;q[5]=this.ny;q[6]=s;q[7]=c;f[8]=this.top;const ub=dev.createBuffer({size:48,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});dev.queue.writeBuffer(ub,0,u);ubs.push(ub);const bg=dev.createBindGroup({layout:this.pl.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:ub}},{binding:1,resource:{buffer:this.sb}},{binding:2,resource:{buffer:this.hb}}]}),ps=enc.beginComputePass();ps.setPipeline(this.pl);ps.setBindGroup(0,bg);ps.dispatchWorkgroups(Math.min(c,65535),Math.ceil(c/65535));ps.end();}
+      enc.copyBufferToBuffer(this.hb,0,this.rb,0,this.nx*this.ny*4);dev.queue.submit([enc.finish()]);await this.rb.mapAsync(GPUMapMode.READ);const I=new Int32Array(this.rb.getMappedRange().slice(0));this.rb.unmap();ubs.forEach(b=>b.destroy());for(let i=0;i<I.length;i++)this.H[i]=I[i]/1000;}
+    else{this.cpu.run_to(idx,false);this.H=this.cpu.heights();}this.idx=idx;return this.H;}
+  stats(){const H=this.H,P=this.part,tol=0.01;let rem=0,g=0,left=0;for(let i=0;i<H.length;i++){rem+=Math.max(0,this.top-H[i]);if(P[i]>-1e30){if(H[i]<P[i]-tol)g++;else if(H[i]>P[i]+tol)left++;}}return{removed_mm3:rem*this.cell*this.cell,gouge_cells:g,left_cells:left};}
+  dispose(){try{this.cpu&&this.cpu.free();}catch{}for(const b of[this.sb,this.hb,this.rb])try{b&&b.destroy();}catch{}this.dev=null;}}
+export async function simulate(text,o={}){const sim=await load(text,o),cfg=stockCfg(sim,o),st=await Stock.make(sim,cfg,{gpu:false});const r={...sim.sum,sim:st.final,cfg};st.dispose();sim.free();return r;}
