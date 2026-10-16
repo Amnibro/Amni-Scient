@@ -4,6 +4,7 @@ export const sys=()=>SYS;
 export function setSys(s){SYS=s==='si'?'si':'us';try{localStorage.setItem('amnicad.sys',SYS);}catch{}}
 export const docUnits=doc=>doc&&doc.units==='in'?'in':'mm';
 export const mmPer=doc=>MM_PER[docUnits(doc)];
+export function suffix(t,u){const m=/^\s*(-?\d*\.?\d+(?:e-?\d+)?)\s*(mm|cm|m|in|inch|inches|"|ft|')\s*$/i.exec(String(t));return m?+(+m[1]*{mm:1,cm:10,m:1000,in:25.4,inch:25.4,inches:25.4,'"':25.4,ft:304.8,"'":304.8}[m[2].toLowerCase()]/MM_PER[u==='in'?'in':'mm']).toPrecision(10):t;}
 export function nf(v,d){if(v==null||!isFinite(v))return'—';const a=Math.abs(v),dd=d??(a>=1000?0:a>=100?1:a>=10?2:a>=1?3:a>=0.01?4:5);return((+v.toFixed(dd))||0).toLocaleString('en-US',{maximumFractionDigits:dd});}
 export const Q={
 len:{si:['mm',1],us:['in',1/25.4]},
