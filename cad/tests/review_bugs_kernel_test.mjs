@@ -23,4 +23,8 @@ const w=condK(null,'mystery');ok(w.k===167&&/No thermal conductivity/.test(w.war
 const s2=await build({...h,features:[{id:'f0',type:'box',w:1,d:1,h:0.5,suppressed:true},...h.features]});ok(s2.errors.some(e=>/hole needs a body/.test(e.msg)),'B9 a suppressed base feature gives the same error');
 const s3=await build({...h,features:[{id:'f0',type:'box',w:1,d:1,h:0.5},{id:'f1',type:'hole',plane:'XY',offset:0.5,d:0.25,thru:true,pts:[[0,0]]}]});ok(!s3.errors.length&&Math.abs(R_vol(s3.body)-(0.5-Math.PI*0.125**2*0.5))<1e-3,'B9 a hole in a body still cuts');}
 {const t=JSON.parse(JSON.stringify(TEMPLATES_IN.find(x=>x.key==='bracket').doc)),r=await build(t),m=K.meshBody(r.body),w=wallThickness({pos:m.pos,idx:m.idx,bbox:m.props.bbox,volume:m.props.volume,res:80000});ok(w.minT>0.1875*0.85&&w.minT<0.1875*1.15,'B13 L-bracket (t = 0.1875 in) wall measures within 15 percent, not twice the thickness: '+w.minT.toFixed(4)+' in');}
+{const pl=ct=>({name:'P',units:'in',params:[],features:[{id:'f1',type:'box',w:2,d:1,h:0.25},{id:'f2',type:'hole',plane:'XY',offset:0.25,std:'1/4',fit:'cbore',thru:true,pts:[[0,0]],...ct}]}),r2=await build(pl({std:undefined,d:0.25,cb_d:0.438,cb_h:0.5}));
+ok(r2.warnings.some(w=>/counterbore/.test(w.msg)&&/not shallower/.test(w.msg)),'B14 a counterbore deeper than the plate warns: '+(r2.warnings[0]&&r2.warnings[0].msg.slice(0,60)));
+const cyl=b=>b.faces.filter(f=>f.geomType==='CYLINDRE').map(f=>+(f.boundingBox.bounds[1][0]-f.boundingBox.bounds[0][0]).toFixed(3)).sort();
+ok(JSON.stringify(cyl(r2.body))==='[0.25,0.438]','B14 both the through hole and the counterbore diameters are kept: '+cyl(r2.body));}
 console.log(`${n-bad}/${n} passed`);process.exit(bad?1:0);
