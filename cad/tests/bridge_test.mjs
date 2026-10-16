@@ -6,7 +6,7 @@ import os from'node:os';
 import path from'node:path';
 import assert from'node:assert/strict';
 import {startE2E} from'./e2e_lib.mjs';
-const PORT=41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
+const PORT=+process.env.BRIDGE_PORT||41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
 const ch=spawn(process.execPath,[SRV],{cwd:DIR,env:{...process.env,AMNICAD_PORT:String(PORT),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(DIR,'cfg')},stdio:['pipe','pipe','pipe']});
 let errLog='';ch.stderr.on('data',d=>errLog+=d);
 let rid=0,lbuf='';const waiters=new Map(),notes=[];
