@@ -1,4 +1,4 @@
-import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';import {MATS} from '../schema.js';import {THERMAL,KCOND,condK} from '../thermal_data.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let bad=0,n=0;const ok=(c,m)=>{n++;console.log((c?'PASS ':'FAIL ')+m);c||bad++;};
 const build=async d=>{K.resetCache();return K.build(d);};
@@ -16,4 +16,7 @@ let x=await imp('mm',fin);ok(JSON.stringify(dims(x.b))==='[50.8,25.4,12.7]','B4 
 x=await imp('in',fmm);ok(JSON.stringify(dims(x.b))==='[2,1,0.5]','B4 mm STEP into an inch document is scaled to inches: '+dims(x.b));
 x=await imp('mm',fmm);ok(JSON.stringify(dims(x.b))==='[50.8,25.4,12.7]','B4 a mm export made after an inch export is still mm: '+dims(x.b));
 x=await imp('in',fin);ok(JSON.stringify(dims(x.b))==='[2,1,0.5]','B4 same-unit import is unchanged: '+dims(x.b));}
+{const miss=Object.keys(MATS).filter(k=>!(THERMAL[k]&&THERMAL[k].k>0&&THERMAL[k].cp>0&&THERMAL[k].cte>0&&THERMAL[k].src&&MATS[k].k===THERMAL[k].k));ok(!miss.length&&Object.keys(THERMAL).length===Object.keys(MATS).length,'B7 every material has cited k, cp and CTE: '+miss);
+ok(condK(null,'walnut').k<0.2&&condK(null,'steel1018').k===51.9&&condK({k:3},'x').k===3&&!condK(null,'walnut').warn,'B7 walnut conducts about 1000x less than aluminum: '+condK(null,'walnut').k);
+const w=condK(null,'mystery');ok(w.k===167&&/No thermal conductivity/.test(w.warn),'B7 an unknown material gives an explicit warning, not a silent aluminum value');}
 console.log(`${n-bad}/${n} passed`);process.exit(bad?1:0);
