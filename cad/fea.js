@@ -262,11 +262,11 @@ export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
   let X=[];for(let j=0;j<bs;j++){const v=new Float64Array(n);for(let i=0;i<n;i++)v[i]=fx[i]||!Mv[i]?0:rnd();X.push(await T(cl(v)));}
   [X]=orth(X,null,[],null);let AX=await all(X,A),P=[],AP=[],lam=[],res=[],it=0;
   const rr=(S,AS,keepP)=>{const m=S.length,G=new Float64Array(m*m);for(let i=0;i<m;i++)for(let j=i;j<m;j++)G[i*m+j]=G[j*m+i]=(dt(S[i],AS[j])+dt(S[j],AS[i]))/2;const{w,V,ord}=jacobiEig(G,m),C=new Float64Array(m*m);for(let i=0;i<m;i++)for(let j=0;j<m;j++)C[i*m+j]=V[i*m+ord[j]];const k=Math.min(bs,m),nx=[],nax=[],np=[],nap=[];for(let j=0;j<k;j++){nx.push(comb(S,C,m,j,0));nax.push(comb(AS,C,m,j,0));if(keepP){np.push(comb(S,C,m,j,keepP));nap.push(comb(AS,C,m,j,keepP));}}return{X:nx,AX:nax,P:np,AP:nap,lam:w.slice(0,k)};};
-  ({X,AX,lam}=rr(X,AX,0));
+  ({X,AX,lam}=rr(X,AX,0));let best=null;
   for(;it<maxIt;it++){
     const R=X.map((x,j)=>{const r=AX[j].slice();for(let i=0;i<n;i++)r[i]-=lam[j]*Mv[i]*x[i];return r;});
     res=R.map((r,j)=>{let s=0;for(let i=0;i<n;i++)if(Mv[i])s+=r[i]*r[i]/Mv[i];return Math.sqrt(s)/Math.max(Math.abs(lam[j]),1e-30);});
-    const worst=Math.max(...res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;
+    const worst=Math.max(...res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;if(!best||worst<best.w)best={w:worst,lam:lam.slice(),X:X.map(v=>v.slice()),res:res.slice(),it};else if(best.w<30*tol&&worst>20*best.w)return{lam:best.lam,X:best.X,iters:it,res:best.res};
     let[W]=orth(await all(R.filter((_,j)=>res[j]>=tol*0.1),T),null,X,null);const AW=await all(W,A);
     [P,AP]=orth(P,AP,[...X,...W],[...AX,...AW]);
     const S=[...X,...W,...P],AS=[...AX,...AW,...AP];({X,AX,P,AP,lam}=rr(S,AS,X.length));
