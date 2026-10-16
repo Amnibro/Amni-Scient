@@ -10,7 +10,7 @@ try{await sleep(700);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   const st=()=>p.evaluate(()=>({comps:API.doc.asm.comps.map(c=>({id:c.id,name:c.name,p:c.p,q:c.q,fix:!!c.fix,hide:!!c.hide})),mates:API.doc.asm.mates.map(m=>({id:m.id,type:m.type,name:m.name})),explode:API.doc.asm.explode}));
   const res=()=>p.evaluate(async()=>{const r=(await AU()).state().res;return r&&{ok:r.ok,dof:r.dof,total:r.total,conflicts:r.conflicts,errors:r.errors};});
   ok(await p.evaluate(()=>document.body.classList.contains('asm-mode')&&!!document.getElementById('aleft')&&document.querySelector('#ws button.on').dataset.ws==='asm'),'#asm opens the Assembly workspace with its panels');
-  ok(await p.evaluate(()=>[...document.querySelectorAll('#ws button')].map(x=>x.textContent).join('|'))==='Part|Form|Assembly','workspace toggle shows Part, Form and Assembly');
+  ok(await p.evaluate(()=>[...document.querySelectorAll('#ws button')].map(x=>x.textContent).join('|'))==='Part|Form|Assembly|Tooling','workspace toggle shows Part, Form, Assembly and Tooling');
   await p.evaluate(()=>[...document.querySelectorAll('#aleft button')].find(x=>x.textContent.trim()==='Insert').click());await sleep(400);
   ok(await p.evaluate(()=>document.getElementById('dlg').open&&/Insert component/.test(document.getElementById('dlg-t').textContent)&&/Standard hardware/.test(document.getElementById('dlg-b').textContent)),'Insert opens the component dialog with hardware and templates');
   await p.evaluate(()=>[...[...document.querySelectorAll('#dlg-b .atile')].pop().querySelectorAll('button')].find(x=>/plate/i.test(x.querySelector('b').textContent)).click());await settle();

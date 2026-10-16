@@ -6,7 +6,7 @@ import os from'node:os';
 import path from'node:path';
 import assert from'node:assert/strict';
 import {startE2E} from'./e2e_lib.mjs';
-const PORT=41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
+const PORT=+process.env.BRIDGE_PORT||41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
 const ch=spawn(process.execPath,[SRV],{cwd:DIR,env:{...process.env,AMNICAD_PORT:String(PORT),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(DIR,'cfg')},stdio:['pipe','pipe','pipe']});
 let errLog='';ch.stderr.on('data',d=>errLog+=d);
 let rid=0,lbuf='';const waiters=new Map(),notes=[];
@@ -74,5 +74,8 @@ try{
   await pg.evaluate(()=>{window.amnicad.API.scene.visible=true;document.getElementById('vp').style.display='none';});await sleep(300);const zs=await E.call('screenshot',{view:'iso'});assert.equal(zs.isError,true);assert.match(zs.content[0].text,/no size/);ok('zero-size viewport → clear error');
   await pg.evaluate(()=>{document.getElementById('vp').style.display='';});await sleep(500);const fin=await E.call('screenshot',{view:'current',max_width:700});assert.ok(!fin.isError&&(await cover(fin.content[0].data)).frac>0.03);ok('viewport back → screenshot ok');
   await pg.evaluate(()=>{const a=window.amnicad.API,c=a.camera;c.position.set(5e4,5e4,5e4);c.updateMatrixWorld();});const far=await E.call('screenshot',{});assert.ok(!far.isError&&(await cover(far.content[0].data)).frac>0.03);ok('model outside the frustum is re-framed automatically');
+  const tn=(await E.rpc('tools/list',{})).result.tools.map(t=>t.name);assert.ok(['mold_design','die_cast_design','casting_pattern'].every(n=>tn.includes(n)));ok('tooling tools listed');
+  const cup=E.T(await E.call('apply_actions',{actions:[{new:true,units:'mm'},{add:{type:'box',w:80,d:60,h:30}},{add:{type:'shell',t:2.5,faces:{side:'+Z'}}}]}));assert.deepEqual(cup.errors,[]);const md=E.T(await E.call('mold_design',{material:'abs',cavities:2,step_path:'cup-tool.step'}));assert.ok(md.summary.check.err_pct<0.5&&md.summary.cavities===2&&md.saved&&md.saved[0].bytes>10000,JSON.stringify(md).slice(0,400));ok('mold_design over MCP designs the tool and saves STEP',md.saved[0].bytes+' bytes');
+  const cp=E.T(await E.call('casting_pattern',{material:'al',analyze_only:true}));assert.ok(cp.analysis&&cp.analysis.pull&&cp.analysis.face_counts);ok('casting_pattern analyze_only returns moldability');
   console.log('\nALL',res.length,'PASS');
 }catch(e){console.error('FAIL',e);console.error(errLog);process.exitCode=1;}finally{E&&await E.close();ch.kill();fs.rmSync(DIR,{recursive:true,force:true});setTimeout(()=>process.exit(),100);}

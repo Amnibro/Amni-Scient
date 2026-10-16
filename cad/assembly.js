@@ -1,7 +1,7 @@
 import {ORIGIN,MATES,refKeys,poseOf,worldEnt,localEnt,solve,qeuler,qn,qaxis,qmul,qrot,eig3,V3} from './mates.js';
 import {THREADSTD,FASTDIM,FASTLEN,FASTKIND} from './standards.js';
 const clone=o=>JSON.parse(JSON.stringify(o)),{add,sub,mul,dot,cross,nrm,len}=V3,r6=v=>+(+v).toFixed(6);
-export const PARTKEYS=['name','units','material','params','features','sim','rollback','drawing','make','tol','vault'],UMM={in:25.4,mm:1};
+export const PARTKEYS=['name','units','material','params','features','sim','rollback','drawing','make','tol','vault','tool'],UMM={in:25.4,mm:1};
 export function ensure(d){const A=d.asm||(d.asm={v:1,units:d.units==='mm'?'mm':'in',self:null,parts:{},comps:[],mates:[],explode:{steps:[],t:0}});A.parts=A.parts||{};A.comps=A.comps||[];A.mates=A.mates||[];A.explode=A.explode||{steps:[],t:0};return A;}
 export const has=d=>!!(d&&d.asm&&d.asm.comps&&d.asm.comps.length);
 const nid=(L,p)=>{let n=0;for(const k of L){const m=new RegExp('^'+p+'(\\d+)$').exec(k);if(m)n=Math.max(n,+m[1]);}return p+(n+1);};

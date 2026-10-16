@@ -141,7 +141,7 @@ function primTool(f){
   if(t==='torus'){const c=[f.x||0,f.y||0,f.z||0];return R.drawCircle(f.r2??2).translate(f.r1??10,0).sketchOnPlane(new R.Plane(c,[1,0,0],[0,-1,0])).revolve([0,0,1],{origin:c});}
   throw new Error('unknown primitive '+t);
 }
-function coneSolid(r1,r2,h,c,ax){
+export function coneSolid(r1,r2,h,c,ax){
   const x=nrm(Math.abs(ax[2])>0.9?cross(ax,[0,1,0]):cross(ax,[0,0,1])),pts=[[0,0],[r1,0],[r2,h],[0,h]].filter((p,i,a)=>!(i>0&&p[0]===a[i-1][0]&&p[1]===a[i-1][1]));
   let pen=R.draw(pts[0]);for(let i=1;i<pts.length;i++)pen=pen.lineTo(pts[i]);
   return pen.close().sketchOnPlane(new R.Plane(c,x,cross(x,ax))).revolve(ax,{origin:c});

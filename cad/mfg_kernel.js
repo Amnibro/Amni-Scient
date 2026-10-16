@@ -3,8 +3,8 @@ const V=v=>[v.x,v.y,v.z],P=p=>[p.X(),p.Y(),p.Z()],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]
 const safe=(f,d=null)=>{try{return f();}catch{return d;}},d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),TAU=Math.PI*2;
 let AC=null,memo={body:null,doc:null,a:null};
 export function camLib(){return AC||(AC=(async()=>{const m=await import('./vendor/amni-cam/amni_cam.js'),u=new URL('./vendor/amni-cam/amni_cam_bg.wasm',import.meta.url);await m.default({module_or_path:u.protocol==='file:'?(await import('node:fs')).readFileSync(u):u});return m;})());}
-function cylOf(f){return safe(()=>{const ad=f._geomAdaptor(),c=ad.Cylinder(),ax=c.Axis(),o={r:c.Radius(),p:P(ax.Location()),d:nrm(P(ax.Direction()))};safe(()=>ad.delete());return o;});}
-function circOf(e){return safe(()=>{const ad=e._geomAdaptor(),c=ad.Circle(),o={c:P(c.Location()),r:c.Radius()};safe(()=>ad.delete());return o;});}
+export function cylOf(f){return safe(()=>{const ad=f._geomAdaptor(),c=ad.Cylinder(),ax=c.Axis(),o={r:c.Radius(),p:P(ax.Location()),d:nrm(P(ax.Direction()))};safe(()=>ad.delete());return o;});}
+export function circOf(e){return safe(()=>{const ad=e._geomAdaptor(),c=ad.Circle(),o={c:P(c.Location()),r:c.Radius()};safe(()=>ad.delete());return o;});}
 function edgeSegs(e,pr,sz){const a=V(e.pointAt(0)),b=V(e.pointAt(1)),t=e.geomType,A=pr(a),B=pr(b);
   if(t==='LINE')return[[A,B,0]];
   if(t==='CIRCLE'){const M=pr(V(e.pointAt(0.5))),Q=pr(V(e.pointAt(0.25))),ci=circOf(e);if(d2(A,B)<sz*1e-6){const s=Math.sign((Q[0]-A[0])*(M[1]-A[1])-(Q[1]-A[1])*(M[0]-A[0]))||1;return[[A,M,s],[M,A,s]];}
