@@ -179,4 +179,30 @@ dq.asm.parts.p1.doc.features.splice(1,1);r=await solve(dq);chk('deleting the hol
 {const sm=ASM.summary(dq,r);chk('the assembly summary lists the broken mate for the AI and the tree',sm.errors.length===1&&sm.errors[0].broken&&sm.errors[0].broken.c==='c1',JSON.stringify(sm.errors[0]&&sm.errors[0].broken));}
 dq.asm.parts.p1.doc.features.push({id:'f9',type:'hole',plane:'XY',offset:0.5,d:0.281,thru:true,pts:[[-0.9,0]]});r=await solve(dq);chk('putting an equal hole back at that spot heals the mate',r.ok&&near(dq.asm.comps[1].p[0],-0.9,1e-5),r.errors.length+' errors');
 }
+{
+const MO=await import('../motion.js'),BLK=box(0.4,0.4,0.5);
+const mk=()=>{const dd=fresh();const a=ASM.addPart(dd,FRAME),b=ASM.addPart(dd,LINK);ASM.insert(dd,a);ASM.insert(dd,b,{p:[-0.4,0.3,0.55],q:rotq([0,0,1],20)});ASM.addMate(dd,{type:'hinge',a:H1,b:BORE('c2')});return dd;};
+const dm=mk();await build(dm);ASM.setPoses(dm,ASM.solveDoc(dm,meshOf(dm),{analyze:false}));
+const study={id:'s1',dur:4,fps:10,motors:[{mate:'m1',kind:'const',rate:45}],probes:[{id:'tip',c:'c2',pt:[1.25,0,0],name:'Link tip'}],collide:'off'};
+const before=JSON.stringify(dm.asm);let R=await MO.runStudy(dm,meshOf(dm),study);
+chk('motion study runs 41 frames of a hinge motor at 45 degrees per second',R.frames.length===41&&R.frames.every(f=>f.ok)&&near(R.frames[40].joint.m1.th,180,1e-3),R.frames.length+' frames, th '+R.frames[40].joint.m1.th.toFixed(3));
+chk('the live document is not changed by running a study',JSON.stringify(dm.asm)===before);
+const P=R.plots.tip,rad2=P.x.map((x,i)=>Math.hypot(x+1,P.y[i]));chk('position plot: the link tip stays on a circle of radius 2.5 in around the hinge',rad2.every(v=>near(v,2.5,2e-3)),Math.min(...rad2).toFixed(4)+'..'+Math.max(...rad2).toFixed(4));
+const w=45*Math.PI/180;chk('velocity plot: tip speed = ω r = 1.9635 in/s',P.speed.slice(1,-1).every(v=>near(v,w*2.5,0.02*w*2.5)),P.speed.slice(1,5).map(v=>v.toFixed(4)).join(' '));
+chk('the plot travel equals the arc length (2.5 in × π = 7.854 in)',near(P.travel,Math.PI*2.5,0.02),P.travel.toFixed(4));
+chk('csv export of the plot has one row per frame',MO.csv(R,'tip').split('\n').length===42);
+const tip90=(()=>{const f=R.frames[20].poses.c2,q=M.xf(f,[1.25,0,0]);return q;})(),obs=[tip90[0],tip90[1]];
+const dob=mk();ASM.insert(dob,ASM.addPart(dob,BLK),{p:[obs[0],obs[1],0.5],fix:true});await build(dob);
+const sat=(A,B)=>{for(const poly of[A,B])for(let i=0;i<4;i++){const a=poly[i],b=poly[(i+1)%4],n=[b[1]-a[1],a[0]-b[0]],pr=Q=>Q.map(p=>p[0]*n[0]+p[1]*n[1]),pa=pr(A),pb=pr(B);if(Math.max(...pa)<Math.min(...pb)||Math.max(...pb)<Math.min(...pa))return false;}return true;};
+const OB=[[-.2,-.2],[.2,-.2],[.2,.2],[-.2,.2]].map(p=>[p[0]+obs[0],p[1]+obs[1]]),exp=R.frames.findIndex(f=>sat([[-1.5,-.25],[1.5,-.25],[1.5,.25],[-1.5,.25]].map(p=>M.xf(f.poses.c2,[p[0],p[1],0])),OB));
+const collide=async(poses,movers)=>(await AK.interfere(ctx,{inst:MO.instFor(dob,poses),movers,mesh:false})).hits.map(h=>({a:h.a,b:h.b,vol:h.vol}));
+const R2=await MO.runStudy(dob,meshOf(dob),{...study,collide:'stop',probes:[]},{collide}),got=R2.frames.length-1;
+chk('collision during motion stops the study on the frame the link reaches the block',R2.stopped&&R2.stopped.hits&&R2.stopped.hits.length===1&&Math.abs(got-exp)<=1,'stopped at frame '+got+' (geometry says '+exp+') '+(R2.stopped&&R2.stopped.why));
+const R3=await MO.runStudy(dob,meshOf(dob),{...study,collide:'highlight',probes:[]},{collide});chk('highlight mode runs on and marks every frame that collides',R3.frames.length===41&&R3.hits.length>=2&&R3.hits[0].t===R2.stopped.t,R3.hits.length+' frames with hits, first at t='+(R3.hits[0]&&R3.hits[0].t));
+chk('collision detection ignores pairs that were already touching at the start',R3.frames[0].hits.length===0&&R3.hits.every(h=>h.pairs.every(p=>p==='c2-c3'||p==='c3-c2')),JSON.stringify(R3.hits[0]));
+const keyed={...study,motors:[{mate:'m1',kind:'keys',keys:[[0,0],[2,90],[4,0]],ease:'smooth'}],probes:[],collide:'off'},R4=await MO.runStudy(dm,meshOf(dm),keyed);chk('keyframed motor goes out to 90 degrees and back to 0',near(R4.frames[20].joint.m1.th,90,1e-3)&&near(R4.frames[40].joint.m1.th,0,1e-3)&&R4.frames[10].joint.m1.th>0&&R4.frames[10].joint.m1.th<45,[0,10,20,30,40].map(i=>R4.frames[i].joint.m1.th.toFixed(1)).join(' '));
+const lim=mk();lim.asm.mates[0].lo=-10;lim.asm.mates[0].hi=60;await build(lim);const R5=await MO.runStudy(lim,meshOf(lim),{...study,probes:[]});chk('hard stop: the motor is held at the hinge limit and the study reports it',R5.frames.every(f=>f.ok)&&near(R5.frames[40].joint.m1.th,60,1e-2)&&R5.frames[40].limits.includes('m1:hi')&&R5.frames[10].limits.length===0,R5.frames[40].joint.m1.th.toFixed(3)+' '+R5.frames[40].limits);
+const glb=MO.animGLB(dm.asm.comps.map(c=>({id:c.id,name:c.name,mesh:meshOf(dm)(c.part),k:ASM.kOf(dm,c.part),color:'#8fb3d9'})),R.frames.filter((_,i)=>i%4===0),{units:'in'}),dv=new DataView(glb),jl=dv.getUint32(12,true),js=JSON.parse(new TextDecoder().decode(new Uint8Array(glb,20,jl)));
+chk('animated glTF export: valid header, nodes for each component and a rotation channel for the link',dv.getUint32(0,true)===0x46546C67&&dv.getUint32(8,true)===glb.byteLength&&js.nodes.length===2&&js.animations[0].channels.length===2&&js.animations[0].channels[0].target.node===1,js.nodes.length+' nodes, '+js.accessors.length+' accessors, '+(glb.byteLength/1024).toFixed(1)+' KB');
+}
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
