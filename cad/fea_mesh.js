@@ -1,4 +1,5 @@
-import {KCOND,runFEA,lobpcg,rigidModes} from './fea.js';
+import {runFEA,lobpcg,rigidModes} from './fea.js';
+import {condK} from './thermal_data.js';
 import {meshSolid,HEX_FACES,HEX_NODES,surfOf,closest,thicknessStats,detectSheet} from './mesh.js';
 import {gpuAMG} from './fea_gpu.js';
 const G3=1/Math.sqrt(3),HN=HEX_NODES,GQ=HN.map(n=>n.map(v=>v*G3)),DN=new Float64Array(192),NG=new Float64Array(64),EXT=new Float64Array(64),GB=new Float64Array(264),WB=new Float64Array(8),KF=new Float64Array(1089),YB=new Float64Array(216),LB=new Float64Array(81);
@@ -269,7 +270,7 @@ async function modalMesh(inp,M,prog){
   return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(inp.pos.length),vmMax:1,vmP99:1,uMax:1,nEl:M.E.length/8,nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:H.length,ms:Date.now()-t0,backend:'cpu',skin:{pos:sk.pos,idx:sk.idx,vm:m0?m0.skinMag:new Float32Array(sk.nodes.length),u:m0?m0.skinU:new Float32Array(3*sk.nodes.length)}};
 }
 async function thermalMesh(inp,M,prog){
-  const mat=inp.mat||{},k=(mat.k??KCOND[inp.matKey]??167)*1e-3,nn=M.X.length/3,ne=M.E.length/8,cm=masters(M),pt=pattern(nn,M.E,cm),A={n:nn,m:nn,rb:1,cb:1,rp:pt.rp,ci:pt.ci,v:new Float64Array(pt.ci.length)},Ke=new Float64Array(64),x=new Float64Array(24),t0=Date.now();
+  const mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,nn=M.X.length/3,ne=M.E.length/8,cm=masters(M),pt=pattern(nn,M.E,cm),A={n:nn,m:nn,rb:1,cb:1,rp:pt.rp,ci:pt.ci,v:new Float64Array(pt.ci.length)},Ke=new Float64Array(64),x=new Float64Array(24),t0=Date.now();
   for(let e=0;e<ne;e++){for(let a=0;a<8;a++){const p=3*M.E[8*e+a];x[3*a]=M.X[p];x[3*a+1]=M.X[p+1];x[3*a+2]=M.X[p+2];}keHeat8(x,k,Ke);scatter(A,M.E,e,Ke,1,cm,M.rho?M.rho[e]:1);}
   const ex=(q,f)=>{if(cm&&cm.hq[q]>=0){for(let j=cm.p[q];j<cm.p[q+1];j++)f(cm.i[j],cm.w[j]);}else f(q,1);},addK=(a,b,val)=>ex(a,(i,wi)=>ex(b,(j,wj)=>{const p=find(A.ci,A.rp[i],A.rp[i+1],j);if(p>=0)A.v[p]+=wi*wj*val;}));
   const fix=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),tg=new Int16Array(nn).fill(-1),temps=inp.temps||[],conv=inp.conv||[],flux=inp.flux||[];
@@ -283,6 +284,6 @@ async function thermalMesh(inp,M,prog){
   const S=await solveSys(A,H,b,{tol:inp.tol||1e-9,solver:'cpu'},prog),T=new Float64Array(nn);for(let i=0;i<nn;i++)T[i]=S.u[i]+u0[i];hangFill(M,cm,T,1);
   const qT=temps.map((_,i)=>reactions(R,T,fix,f,tg)[i]||0),qc=cv.map((W,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[q,w]of W)s+=hc*w*(Ti-T[q]);return s;});
   const sk=skinOf(M),sT=new Float32Array(sk.nodes.length);sk.nodes.forEach((q,i)=>{sT[i]=T[q];});const[vT]=toVerts(sk,inp.pos,[[sT,1]]);let Tmin=Infinity,Tmax=-Infinity;for(let q=0;q<nn;q++){Tmin=Math.min(Tmin,T[q]);Tmax=Math.max(Tmax,T[q]);}
-  return{type:'thermal',vT,vStress:vT,vDisp:new Float32Array(inp.pos.length),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,nEl:ne,nDof:nn,iters:S.iters,rel:S.rel,levels:H.length,ms:Date.now()-t0,backend:S.backend,skin:{pos:sk.pos,idx:sk.idx,vm:sT,u:new Float32Array(3*sk.nodes.length)},T:inp.keepU?T:undefined};
+  return{type:'thermal',vT,vStress:vT,vDisp:new Float32Array(inp.pos.length),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,nEl:ne,nDof:nn,iters:S.iters,rel:S.rel,levels:H.length,ms:Date.now()-t0,backend:S.backend,skin:{pos:sk.pos,idx:sk.idx,vm:sT,u:new Float32Array(3*sk.nodes.length)},T:inp.keepU?T:undefined};
 }
 export function colT(M){const{nl,N}=M.sweep,C=N+1,n=nl*C,rp=new Int32Array(n+1),ci=[],v=[];for(let i=0;i<nl;i++)for(let k=0;k<C;k++){for(let j=0;j<=k;j++){ci.push(i*C+j);v.push(1,0,0,0,1,0,0,0,1);}rp[i*C+k+1]=ci.length;}return{n,m:n,rb:3,cb:3,rp,ci:Int32Array.from(ci),v:Float64Array.from(v)};}

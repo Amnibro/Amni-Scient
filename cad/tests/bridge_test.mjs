@@ -7,7 +7,7 @@ import path from'node:path';
 import assert from'node:assert/strict';
 import {startE2E} from'./e2e_lib.mjs';
 const PORT=+process.env.BRIDGE_PORT||41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
-const ch=spawn(process.execPath,[SRV],{cwd:DIR,env:{...process.env,AMNICAD_PORT:String(PORT),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(DIR,'cfg')},stdio:['pipe','pipe','pipe']});
+const ch=spawn(process.execPath,[SRV],{cwd:DIR,env:{...process.env,AMNICAD_PORT:String(PORT),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(DIR,'cfg'),AMNICAD_SAVE_DIR:DIR},stdio:['pipe','pipe','pipe']});
 let errLog='';ch.stderr.on('data',d=>errLog+=d);
 let rid=0,lbuf='';const waiters=new Map(),notes=[];
 ch.stdout.on('data',d=>{lbuf+=d;let i;while((i=lbuf.indexOf('\n'))>=0){const l=lbuf.slice(0,i);lbuf=lbuf.slice(i+1);const m=JSON.parse(l);if(m.id!=null&&waiters.has(m.id)){waiters.get(m.id)(m);waiters.delete(m.id);}else notes.push(m);}});
@@ -51,7 +51,13 @@ try{
   const er=await call('list_templates');assert.equal(er.isError,true);assert.match(er.content[0].text,/boom list_templates/);ok('page error → isError');
   const ex=await call('export',{format:'step',path:'out/part.step'});assert.equal(T(ex).bytes,13);assert.equal(fs.readFileSync(path.join(DIR,'out/part.step'),'utf8'),'ISO-10303-21;');ok('export writes inside cwd');
   assert.match((await call('export',{format:'step',path:'out/part.step'})).content[0].text,/already exists/);ok('no silent overwrite');
-  assert.match((await call('export',{format:'step',path:'../escape.step'})).content[0].text,/must stay inside/);assert.ok(!fs.existsSync(path.join(DIR,'../escape.step')));ok('relative path escape refused');
+  assert.match((await call('export',{format:'step',path:'../escape.step'})).content[0].text,/can only be saved inside/);assert.ok(!fs.existsSync(path.join(DIR,'../escape.step')));ok('relative path escape refused');
+  {const bad=async(p,re,m)=>{const r=await call('export',{format:'step',path:p});assert.equal(r.isError,true,m);assert.match(r.content[0].text,re,m);};const out=path.join(os.tmpdir(),'amnicad-esc-'+process.pid+'.step');
+  await bad(out,/can only be saved inside/,'absolute path outside the save folder');assert.ok(!fs.existsSync(out));ok('B23 absolute path outside the save folder refused');
+  await bad('out/../../x.step',/can only be saved inside/,'traversal');ok('B23 traversal through a subfolder refused');
+  await bad('.bashrc',/not an allowed file name/,'dotfile');await bad('notes.sh',/not an allowed file name/,'extension');ok('B23 hidden files and non-export extensions refused');
+  fs.mkdirSync(path.join(os.tmpdir(),'amnicad-target-'+process.pid),{recursive:true});fs.symlinkSync(path.join(os.tmpdir(),'amnicad-target-'+process.pid),path.join(DIR,'lnk'));await bad('lnk/leak.step',/resolves outside/,'symlink');assert.ok(!fs.existsSync(path.join(os.tmpdir(),'amnicad-target-'+process.pid,'leak.step')));fs.rmSync(path.join(os.tmpdir(),'amnicad-target-'+process.pid),{recursive:true,force:true});ok('B23 a symlink out of the save folder is refused');
+  const ow=await call('export',{format:'step',path:'out/part.step',overwrite:true});assert.equal(ow.isError,undefined);ok('B23 overwrite:true replaces explicitly');}
   const exd=await call('export',{format:'step',path:'out/'});assert.ok(fs.existsSync(path.join(DIR,'out/part.step')));const exr=await call('export',{format:'step'});assert.equal(exr.content[1].type,'resource');assert.equal(exr.content[1].resource.text,'ISO-10303-21;');ok('export without path → embedded resource');
   const g2=await wsConnect({origin:'http://localhost:9999'});g2.send({t:'hello',v:1,app:'amnicad',token:tok});assert.equal((await g2.next()).t,'need-code');g2.close();ok('token bound to origin');
   const g3=await wsConnect();g3.send({t:'hello',v:1,app:'amnicad',token:tok});assert.equal((await g3.next()).t,'welcome');const bye=await g.next(m=>m.t==='bye');assert.match(bye.reason,/Another/);await sleep(100);assert.ok(g.closed);ok('newest page wins, old page told');

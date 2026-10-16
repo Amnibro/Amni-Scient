@@ -45,8 +45,9 @@ export function postGcode(moves,o){
 }
 export function cncPlan(pr,o={}){
   const K=pr.K,mode=o.mode==='bit'?'bit':'ball',len=o.len>0?o.len:12*K,Wst=o.stockW>0?o.stockW:pr.kind==='section'?pr.w:Math.max(pr.w*1.5,1.5*K),yo=pr.kind==='center'?Wst/2:Wst,Ts=o.stockT>0?o.stockT:Math.max(pr.p.T||pr.p.pt||0,pr.h*1.25,0.75*K),safe=0.5*K,moves=[],w=[];
-  const dialect=['grbl','linuxcnc','shopbot'].includes(o.post)?o.post:'grbl',units=dialect==='shopbot'||o.units!=='mm'?'in':'mm',rpm=o.rpm>0?o.rpm:12000,feed=o.feed>0?o.feed:(40*K),plunge=o.plunge>0?o.plunge:20*K;
+  const dialect=['grbl','linuxcnc','shopbot'].includes(o.post)?o.post:'grbl',units=dialect==='shopbot'||o.units!=='mm'?'in':'mm',rpm0=o.rpm>0?o.rpm:12000,smax=+o.smax>0?+o.smax:0,rpm=smax&&rpm0>smax?smax:rpm0,feed=o.feed>0?o.feed:(40*K),plunge=o.plunge>0?o.plunge:20*K;
   let tool,cfgTools,name;
+  rpm<rpm0&&w.push('Spindle speed '+rpm0+' rpm is above the machine maximum of '+smax+' rpm; the program uses '+smax+' rpm.');
   if(mode==='bit'){
     const spec=o.spec||bitSpec({type:'bit',prof:pr.id,pp:Object.fromEntries(Object.keys(pr.defs).map(k=>[k,pr.p[k]])),shank:'1/4',brg:'1/2x3/16'},K),ov=spec.rmax+0.07*K,ax=pr.kind==='center'?yo:yo+spec.A+0.001*K,zt=pr.bb.miny-spec.z0,z=zt;
     moves.push(['r',-ov,ax,safe],['f',-ov,ax,z],['f',len+ov,ax,z],['r',len+ov,ax,safe]);

@@ -1,5 +1,6 @@
 import {gpuSolve,gpuContext} from './fea_gpu.js';
-export const KCOND={al6061:167,al7075:130,steel1018:51.9,steel4140:42.6,ss304:16.2,ss316:16.3,ti64:6.7,brass:115,pla:0.13,petg:0.2,abs:0.17,nylon:0.25,pc:0.2};
+import {KCOND,condK} from './thermal_data.js';
+export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 function dmat(nu){const c=1/((1+nu)*(1-2*nu)),a=c*(1-nu),b=c*nu,g=c*(1-2*nu)/2;return[[a,b,b,0,0,0],[b,a,b,0,0,0],[b,b,a,0,0,0],[0,0,0,g,0,0],[0,0,0,0,g,0],[0,0,0,0,0,g]];}
 function bAt(xi,et,ze){
@@ -292,7 +293,7 @@ async function modal(inp,P,prog){
   return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError};
 }
 async function thermal(inp,P,prog){
-  const{G,pos}=P,mat=inp.mat||{},k=(mat.k??KCOND[inp.matKey]??167)*1e-3,K=keHeat();for(let i=0;i<64;i++)K[i]*=k*G.h;
+  const{G,pos}=P,mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,K=keHeat();for(let i=0;i<64;i++)K[i]*=k*G.h;
   const nn=P.nn,fixed=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),dadd=new Float64Array(nn),tg=new Int16Array(nn).fill(-1),temps=inp.temps||[],conv=inp.conv||[],flux=inp.flux||[];
   temps.forEach((b,bi)=>{for(const n of P.at(b.faces).keys()){fixed[n]=1;u0[n]=b.T;tg[n]=bi;}});
   const cv=conv.map(b=>{const acc=P.at(b.faces),hc=(b.h||10)*1e-6;for(const[n,v]of acc){dadd[n]+=hc*v[0];f[n]+=hc*v[0]*(b.Tinf??20);}return acc;});
@@ -305,7 +306,7 @@ async function thermal(inp,P,prog){
   const qc=cv.map((acc,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[n,v]of acc)s+=hc*v[0]*(Ti-T[n]);return s;});
   const{c:cnt}=nodalField(G,L,null),TN=new Float32Array(nn);let Tmin=Infinity,Tmax=-Infinity;for(let n=0;n<nn;n++)if(cnt[n]){TN[n]=T[n];Tmin=Math.min(Tmin,T[n]);Tmax=Math.max(Tmax,T[n]);}
   const vT=atVerts(G,L,TN,1,pos,cnt);dilate(G,cnt,[TN]);
-  return{type:'thermal',vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
+  return{type:'thermal',vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
 }
 export async function runFEA(inp,prog){
   const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'?60000:40000);
@@ -313,13 +314,13 @@ export async function runFEA(inp,prog){
 }
 function edt1(f,n,d,v,z){let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;for(let q=1;q<n;q++){let s;while(true){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0){k--;continue;}if(s<=z[k]){k--;}break;}k++;v[k]=q;z[k]=s;z[k+1]=1e20;}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];}}
 export function wallThickness(inp){
-  const{pos,idx,bbox,volume,res}=inp,h=Math.cbrt(Math.max(volume,1e-9)/Math.max(4000,Math.min(res||60000,400000))),G=voxelize(pos,idx,bbox,h),{nx,ny,nz}=G,N=nx*ny*nz,INF=1e12,D=new Float64Array(N);
+  const{pos,idx,bbox,volume,res}=inp,h=Math.cbrt(Math.max(volume,1e-9)/Math.max(4000,Math.min(res||60000,400000))),G=voxelize(pos,idx,{min:bbox.min.map(v=>v-2*h),max:bbox.max.map(v=>v+2*h)},h),{nx,ny,nz}=G,N=nx*ny*nz,INF=1e12,D=new Float64Array(N);
   for(let e=0;e<N;e++)D[e]=G.solid[e]?INF:0;
   const m=Math.max(nx,ny,nz),f=new Float64Array(m),d=new Float64Array(m),v=new Int32Array(m),z=new Float64Array(m+1);
   const pass=(len,stride,starts)=>{for(const s0 of starts){for(let q=0;q<len;q++)f[q]=D[s0+q*stride];edt1(f,len,d,v,z);for(let q=0;q<len;q++)D[s0+q*stride]=d[q];}};
   const sx=[],sy=[],sz=[];for(let k=0;k<nz;k++)for(let j=0;j<ny;j++)sx.push((k*ny+j)*nx);for(let k=0;k<nz;k++)for(let i=0;i<nx;i++)sy.push(k*ny*nx+i);for(let j=0;j<ny;j++)for(let i=0;i<nx;i++)sz.push(j*nx+i);
   pass(nx,1,sx);pass(ny,nx,sy);pass(nz,nx*ny,sz);
   let minT=Infinity,at=null,hist=[0,0,0,0,0,0,0,0];
-  for(let k=1;k<nz-1;k++)for(let j=1;j<ny-1;j++)for(let i=1;i<nx-1;i++){const e=(k*ny+j)*nx+i;if(!G.solid[e])continue;const c=D[e];let ridge=true;for(let dk=-1;dk<=1&&ridge;dk++)for(let dj=-1;dj<=1&&ridge;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj&&!dk)continue;if(D[e+(dk*ny+dj)*nx+di]>c+1e-9){ridge=false;break;}}if(!ridge)continue;const t=2*Math.sqrt(c)*h-h*0;if(t<minT){minT=t;at=[G.ox+(i+0.5)*h,G.oy+(j+0.5)*h,G.oz+(k+0.5)*h];}hist[Math.min(7,Math.floor(t/(h*2)))]++;}
+  for(let k=1;k<nz-1;k++)for(let j=1;j<ny-1;j++)for(let i=1;i<nx-1;i++){const e=(k*ny+j)*nx+i;if(!G.solid[e])continue;const c=D[e];let ridge=true;for(let dk=-1;dk<=1&&ridge;dk++)for(let dj=-1;dj<=1&&ridge;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj&&!dk)continue;if(D[e+(dk*ny+dj)*nx+di]>c+1e-9){ridge=false;break;}}if(!ridge)continue;const t=2*Math.sqrt(c)*h-h;if(t<minT){minT=t;at=[G.ox+(i+0.5)*h,G.oy+(j+0.5)*h,G.oz+(k+0.5)*h];}hist[Math.min(7,Math.floor(t/(h*2)))]++;}
   return{minT:isFinite(minT)?minT:null,at,h};
 }

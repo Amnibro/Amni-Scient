@@ -393,4 +393,11 @@ for(const u of['in','mm']){const k=u==='in'?25.4:1,w=u==='in'?[3,2,0.5,0.281]:[7
     chk(u+' '+vw+' view: a length measured on the SVG ('+printed.toFixed(2)+' mm) equals the model length × the stated scale ('+expect.toFixed(2)+' mm)',Math.abs(printed-expect)<0.02*expect+0.05,'width '+((bb[2]-bb[0])).toFixed(3)+' '+u+' at '+sc);
     chk(u+' default sheet is '+(u==='in'?'ANSI':'metric'),u==='in'?/^ANSI/.test(dr.sheet.sheet):/^A\d/.test(dr.sheet.sheet),dr.sheet.sheet);}}
 }
+{const dr=fresh(),a=ASM.addPart(dr,box(1,1,1)),b=ASM.addPart(dr,box(2,1,1));ASM.insert(dr,a,{p:[0,0,0],fix:true});const cm=ASM.mirrorComp(dr,'c1','YZ'),mp0=cm.part;ASM.pattern(dr,{type:'linear',seed:'c1',n:3,step:[3,0,0]});const ok0=ASM.replace(dr,'c1',b);const cp=dr.asm.comps.filter(c=>c.pat),mr=dr.asm.comps.find(c=>c.mir);
+chk('B20 replacing the seed moves its pattern copies to the new part',ok0&&cp.length===2&&cp.every(c=>c.part===b),cp.map(c=>c.part+':'+c.name).join());
+chk('B20 a mirror copy follows the replaced part (mirrored from the new part)',mr.part!==mp0&&dr.asm.parts[mr.part].derived.from===b&&dr.asm.parts[mr.part].derived.mirror,JSON.stringify(dr.asm.parts[mr.part].derived));
+chk('B20 no component is left on the old part',!dr.asm.comps.some(c=>c.part===a)&&!dr.asm.parts[a]);}
+{const HFx=await import('../hwfit.js'),dp=fresh(),a=ASM.addPart(dp,TEMPLATES_IN.find(x=>x.key==='plate').doc);ASM.insert(dp,a,{fix:true});await build(dp);const R1=HFx.smartInsert(dp,meshOf(dp),{c:'c1',kind:'shcs',size:'#10-24'}),nuts=R1.inserted.length;
+chk('B8 smart fasteners ignore the rounded corners and land only in the 4 real holes',R1.inserted.length===4&&dp.asm.comps.length===1+4*2,R1.inserted.length+' fasteners, '+dp.asm.comps.length+' components');
+const corner=HFx.holesOf(meshes.get(a+ASM.sigOf(dp,a)));chk('B8 only concave cylinders count as holes',corner.length===4&&corner.every(h=>Math.abs(h.r*2-0.281)<1e-3),corner.map(h=>(h.r*2).toFixed(3)).join());}
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
