@@ -1,0 +1,23 @@
+const DBN='amnicad-persist',KEEP=7,UNDO_MAX=24*1024*1024,DOC_MAX=16*1024*1024,DOC_V=1;
+let dbp=null;
+const db=()=>dbp||(dbp=new Promise((res,rej)=>{const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>{r.result.createObjectStore('slots',{keyPath:'id'});r.result.createObjectStore('undo',{keyPath:'id'});};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}).catch(e=>{dbp=null;throw e;}));
+const tx=async(st,mode,fn)=>{const d=await db();return new Promise((res,rej)=>{const t=d.transaction(st,mode),q=fn(t.objectStore(st));t.oncomplete=()=>res(q&&q.result);t.onerror=t.onabort=()=>rej(t.error||new Error('storage failed'));});};
+export const newId=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+export const blank=d=>!d||JSON.stringify(d).length<420&&!(d.features&&d.features.length)&&!(d.params&&d.params.length);
+export const listSlots=async()=>(await tx('slots','readonly',s=>s.getAll())||[]).sort((a,b)=>b.t-a.t);
+export const getSlot=id=>tx('slots','readonly',s=>s.get(id));
+export const getUndo=id=>tx('undo','readonly',s=>s.get(id));
+export const delSlot=async id=>{await tx('slots','readwrite',s=>s.delete(id));await tx('undo','readwrite',s=>s.delete(id));};
+export const packUndo=(stack,max=UNDO_MAX)=>{const out=[];let n=0;for(let i=stack.length-1;i>=0;i--){n+=stack[i].s.length;if(n>max)break;out.unshift({s:stack[i].s,tag:stack[i].tag,t:stack[i].t});}return out;};
+export async function prune(keepId,keep=KEEP){const all=await listSlots();for(const s of all.filter(s=>s.id!==keepId).slice(Math.max(0,keep-1)))await delSlot(s.id);}
+export async function saveSlot(id,doc,undo){if(blank(doc))return false;const json=JSON.stringify(doc),stack=undo&&packUndo(undo),rec={id,t:Date.now(),name:doc.name||'Untitled part',n:(doc.features||[]).length,size:json.length,doc:json};await tx('slots','readwrite',s=>s.put(rec));stack&&await tx('undo','readwrite',s=>s.put({id,cur:json,stack}));await prune(id);return true;}
+export async function undoFor(id,rawDoc){try{const r=await getUndo(id);return r?[...r.stack,...(r.cur!==rawDoc?[{s:r.cur,t:0}]:[])]:[];}catch{return[];}}
+export async function inflate(u8,max=DOC_MAX){const ds=new DecompressionStream('deflate-raw'),w=ds.writable.getWriter();w.write(u8).catch(()=>{});w.close().catch(()=>{});const r=ds.readable.getReader(),parts=[];let n=0;for(;;){const{done,value}=await r.read();if(done)break;n+=value.length;if(n>max){r.cancel().catch(()=>{});throw Object.assign(new Error('This shared design is larger than '+Math.round(max/1048576)+' MB once unpacked, so it was not opened.'),{user:1});}parts.push(value);}const all=new Uint8Array(n);let o=0;for(const p of parts){all.set(p,o);o+=p.length;}return new TextDecoder().decode(all);}
+export const check=d=>!d||typeof d!=='object'||Array.isArray(d)?'This is not an Amni-CAD design.':d.format!==undefined&&d.format!=='amnicad'?'This file is not an Amni-CAD design (format "'+String(d.format).slice(0,40)+'").':d.v!==undefined&&!(Number.isInteger(d.v)&&d.v>=1&&d.v<=DOC_V)?'This design was made with a newer version of Amni-CAD (v'+String(d.v).slice(0,10)+'). Update the app to open it.':d.features!==undefined&&!Array.isArray(d.features)||d.params!==undefined&&!Array.isArray(d.params)?'The design is damaged: its feature or parameter list is not a list.':(d.features||[]).length>5000?'This design has more than 5000 features, so it was not opened.':'';
+const ago=t=>{const s=Math.max(0,(Date.now()-t)/1000);return s<60?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':Math.round(s/86400)+' d ago';};
+export async function recoverDialog(H,restore){
+  const{h,dlg,toast}=H;let list=[];try{list=await listSlots();}catch(e){toast('Recovery storage is unavailable: '+(e&&e.message||e),5000);return;}
+  const body=list.length?list.map(s=>h('div',{class:'row','data-slot':s.id,style:'align-items:center;gap:8px;margin:6px 0'},h('div',{style:'flex:1;min-width:0'},h('b',null,s.name),h('div',{class:'note'},ago(s.t)+' · '+s.n+' feature'+(s.n===1?'':'s')+' · '+Math.round(s.size/1024)+' KB')),h('button',{class:'btn sm pri',onclick:async()=>{document.getElementById('dlg').close();await restore(s.id);}},'Restore'),h('button',{class:'btn sm',title:'Delete this copy',onclick:async e=>{await delSlot(s.id);e.target.closest('.row').remove();}},'×'))):[h('p',{class:'note'},'Nothing to recover yet. Amni-CAD keeps your last '+KEEP+' designs here automatically.')];
+  dlg('Recover a design',[h('p',{class:'note'},'The last '+KEEP+' designs you worked on are kept in this browser. Restoring one keeps your current design in this list.'),...body]);
+}
+export const KEEP_SLOTS=KEEP;

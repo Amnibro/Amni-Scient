@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-6p13ug9Y/2TWPZMF0aIT0xv2TqxNkp62hhuZFDN2uAM=' https://cdn.jsdelivr.net/npm/@wllama/wllama@2.4.0/esm/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data: https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com https://openrouter.ai http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://amnicad-relay.amnibro7.workers.dev wss://amnicad-relay.amnibro7.workers.dev https://amni-cad-pro.amnibro7.workers.dev https://cdn.jsdelivr.net/npm/@wllama/wllama@2.4.0/esm/ https://huggingface.co https://*.huggingface.co https://*.hf.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
 <title>Amni-CAD — Free Browser CAD</title>
-<meta name="description" content="Amni-CAD is a free parametric 3D CAD in your browser: real OpenCascade solids, STEP and STL export, built-in stress analysis and an AI assistant that runs locally on your device. Nothing is uploaded.">
+<meta name="description" content="Amni-CAD is a free parametric 3D CAD in your browser: real OpenCascade solids, STEP and STL export, built-in stress analysis and an optional AI assistant that can run on your device. No account and no telemetry; designs stay on your device unless you turn on an online feature.">
 <link rel="canonical" href="https://amni-scient.com/cad/">
 <meta property="og:title" content="Amni-CAD — parametric CAD with local AI">
-<meta property="og:description" content="Model, stress-test and export real CAD parts in the browser. Your designs never leave your device.">
+<meta property="og:description" content="Model, stress-test and export real CAD parts in the browser. No account, no telemetry; designs stay on your device unless you turn on an online feature.">
 <meta name="theme-color" content="#0c0f14">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c0f14'/%3E%3Cpath d='M32 10 52 21v22L32 54 12 43V21z' fill='none' stroke='%2359b6ff' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M12 21l20 11 20-11M32 32v22' fill='none' stroke='%2359b6ff' stroke-width='3' stroke-linejoin='round' opacity='.6'/%3E%3C/svg%3E">
 <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
@@ -241,6 +242,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <button data-act="save">Save<small>Download as .amnicad</small></button>
 <button data-act="import">Import STEP…<small>Bring in a part from other CAD</small></button>
 <button data-act="share">Copy share link<small>The design travels inside the link</small></button>
+<button data-act="recover">Recover…<small>Your last 7 designs, kept in this browser</small></button>
 </div></div>
 <div class="menu" id="m-exp"><button title="Export"><span>⇪</span><span class="lbl">Export</span></button><div class="pop">
 <button data-act="step">STEP (.step)<small>Exact solid for any CAD/CAM</small></button>
