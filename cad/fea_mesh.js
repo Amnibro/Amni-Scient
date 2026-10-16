@@ -171,7 +171,7 @@ function facetGeo(X,E,bf,cb){
 function systemOf(inp,M,mat){
   const nn=M.X.length/3,ne=M.E.length/8,cm=masters(M),E=mat.E,nu=mat.nu,lam=E*nu/((1+nu)*(1-2*nu)),mu=E/(2*(1+nu)),pt=pattern(nn,M.E,cm),A={n:nn,m:nn,rb:3,cb:3,rp:pt.rp,ci:pt.ci,v:new Float64Array(pt.ci.length*9)},Ke=new Float64Array(576),x=new Float64Array(24),rho=M.rho;let cube=null,dmin=Infinity;
   for(let e=0;e<ne;e++){for(let a=0;a<8;a++){const p=3*M.E[8*e+a];x[3*a]=M.X[p];x[3*a+1]=M.X[p+1];x[3*a+2]=M.X[p+2];}
-    if(M.cube){const h=M.cube[e];if(!cube){const u=new Float64Array(24);for(let a=0;a<8;a++)for(let k=0;k<3;k++)u[3*a+k]=(HN[a][k]+1)/2;cube=new Float64Array(576);keQM6(u,lam,mu,cube);}for(let i=0;i<576;i++)Ke[i]=cube[i]*h;}
+    if(M.cube&&M.cube[e]>0){const h=M.cube[e];if(!cube){const u=new Float64Array(24);for(let a=0;a<8;a++)for(let k=0;k<3;k++)u[3*a+k]=(HN[a][k]+1)/2;cube=new Float64Array(576);keQM6(u,lam,mu,cube);}for(let i=0;i<576;i++)Ke[i]=cube[i]*h;}
     else dmin=Math.min(dmin,keQM6(x,lam,mu,Ke,M.type==='sweep'&&isThin(x)));
     scatter(A,M.E,e,Ke,3,cm,rho?rho[e]:1);}
   return{A,cm,lam,mu,nn,ne,dmin};
@@ -186,7 +186,7 @@ function supportDofs(inp,M,cm){
 }
 function loadsOf(inp,M,mat,cm){
   const nn=M.X.length/3,f=new Float64Array(3*nn),ap=[0,0,0],add=(n,F)=>{if(cm&&cm.hq[n]>=0){for(let k=cm.p[n];k<cm.p[n+1];k++)for(let c=0;c<3;c++)f[3*cm.i[k]+c]+=cm.w[k]*F[c];}else for(let c=0;c<3;c++)f[3*n+c]+=F[c];for(let c=0;c<3;c++)ap[c]+=F[c];};
-  for(const ld of inp.loads||[]){const sel=M.select(ld.faces),W=new Map(),Nv=new Map();let tot=0;facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv,A)=>{tot+=A;for(let k=0;k<4;k++){W.set(nd[k],(W.get(nd[k])||0)+w[k]);const v=Nv.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];Nv.set(nd[k],v);}});if(!tot)continue;
+  for(const ld of inp.loads||[]){const sel=M.select(ld.faces),W=new Map(),Nv=new Map();let tot=0;if(!sel.facets.length&&!(ld.faces&&ld.faces.by==='all'&&!sel.faces.length))throw new Error('load faces '+JSON.stringify(sel.faces)+' have no mesh facets; refine the mesh');facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv,A)=>{tot+=A;for(let k=0;k<4;k++){W.set(nd[k],(W.get(nd[k])||0)+w[k]);const v=Nv.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];Nv.set(nd[k],v);}});if(!tot)continue;
     if(ld.M){const Mv=ld.M,c=[0,0,0];for(const[n,w]of W)for(let k=0;k<3;k++)c[k]+=w*M.X[3*n+k]/tot;const mn=Math.hypot(...Mv)||1,m=Mv.map(q=>q/mn),rq=new Map();let J=0;for(const[n,w]of W){const r=[M.X[3*n]-c[0],M.X[3*n+1]-c[1],M.X[3*n+2]-c[2]],d=r[0]*m[0]+r[1]*m[1]+r[2]*m[2],q=[r[0]-d*m[0],r[1]-d*m[1],r[2]-d*m[2]];J+=w*(q[0]**2+q[1]**2+q[2]**2);rq.set(n,q);}
       if(J>0)for(const[n,w]of W){const q=rq.get(n),s=w/J;add(n,[(Mv[1]*q[2]-Mv[2]*q[1])*s,(Mv[2]*q[0]-Mv[0]*q[2])*s,(Mv[0]*q[1]-Mv[1]*q[0])*s]);}}
     else if(ld.p!=null)for(const[n,v]of Nv)add(n,[-ld.p*v[0],-ld.p*v[1],-ld.p*v[2]]);else for(const[n,w]of W)add(n,[ld.F[0]*w/tot,ld.F[1]*w/tot,ld.F[2]*w/tot]);}
