@@ -12,7 +12,7 @@ export function init(api,X){let rec=false;const get=()=>api.look.get(),mode=()=>
   const defs=a=>[...(a[3].all||[]),...(a[3][mode()]||[])],bound=a=>{const o=get().kb||{};return a[0] in o?o[a[0]]===NONE?[]:[o[a[0]]]:defs(a);};
   const map=()=>{const m=new Map();for(const a of ACT)for(const c of bound(a)){m.has(c)||m.set(c,[]);m.get(c).push(a[0]);}return m;};
   const conflicts=kb=>{const m=new Map(),o={...(get().kb||{}),...(kb||{})};for(const a of ACT)for(const c of a[0] in o?o[a[0]]===NONE?[]:[o[a[0]]]:defs(a)){m.has(c)||m.set(c,[]);m.get(c).push(a[0]);}return[...m].filter(([c,l])=>l.length>1||l.some(i=>i in o)&&RES.includes(c)).map(([c,l])=>({combo:c,ids:l,reserved:RES.includes(c)}));};
-  const onKey=e=>{const t=e.target;if(rec||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable)return;const c=combo(e);if(!c)return;const m=map(),ids=m.get(c);if(ids){const a=ACT.find(x=>ids.includes(x[0])&&(!x[5]||x[5]()));if(a){e.preventDefault();e.stopImmediatePropagation();a[4]();return;}}
+  const onKey=e=>{const t=e.target;if(rec||api.S.sketcher||api.S.pick&&e.key==='Escape'||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable)return;const c=combo(e);if(!c)return;const m=map(),ids=m.get(c);if(ids){const a=ACT.find(x=>ids.includes(x[0])&&(!x[5]||x[5]()));if(a){e.preventDefault();e.stopImmediatePropagation();a[4]();return;}}
     const live=ids||[];if(!live.length&&ACT.some(a=>a[0]in(get().kb||{})&&defs(a).includes(c)&&(!a[5]||a[5]()))){e.preventDefault();e.stopImmediatePropagation();}};
   addEventListener('keydown',onKey,true);
   const T=api.THREE,cv=api.renderer.domElement,ctl=api.controls,cur=()=>{const k=get().mm;return PRESETS[k]?k:mode()==='amni'?'amni':'classic';};
