@@ -397,9 +397,7 @@ for(const u of['in','mm']){const k=u==='in'?25.4:1,w=u==='in'?[3,2,0.5,0.281]:[7
 chk('B20 replacing the seed moves its pattern copies to the new part',ok0&&cp.length===2&&cp.every(c=>c.part===b),cp.map(c=>c.part+':'+c.name).join());
 chk('B20 a mirror copy follows the replaced part (mirrored from the new part)',mr.part!==mp0&&dr.asm.parts[mr.part].derived.from===b&&dr.asm.parts[mr.part].derived.mirror,JSON.stringify(dr.asm.parts[mr.part].derived));
 chk('B20 no component is left on the old part',!dr.asm.comps.some(c=>c.part===a)&&!dr.asm.parts[a]);}
-
 {const HFx=await import('../hwfit.js'),dp=fresh(),a=ASM.addPart(dp,TEMPLATES_IN.find(x=>x.key==='plate').doc);ASM.insert(dp,a,{fix:true});await build(dp);const R1=HFx.smartInsert(dp,meshOf(dp),{c:'c1',kind:'shcs',size:'#10-24'}),nuts=R1.inserted.length;
 chk('B8 smart fasteners ignore the rounded corners and land only in the 4 real holes',R1.inserted.length===4&&dp.asm.comps.length===1+4*2,R1.inserted.length+' fasteners, '+dp.asm.comps.length+' components');
 const corner=HFx.holesOf(meshes.get(a+ASM.sigOf(dp,a)));chk('B8 only concave cylinders count as holes',corner.length===4&&corner.every(h=>Math.abs(h.r*2-0.281)<1e-3),corner.map(h=>(h.r*2).toFixed(3)).join());}
-
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);

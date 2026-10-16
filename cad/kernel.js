@@ -292,7 +292,7 @@ function patternTools(f,tools){
 }
 const HINT={fillet:'the radius is probably too big for these edges; try a smaller radius or fewer edges',chamfer:'the distance is probably too big for these edges',shell:'the wall is probably thicker than a fillet or feature allows; thin the wall or enlarge the fillets',extrude:'check that the profile is closed, has area and does not cross itself',revolve:'the profile must not cross the axis',hole:'check the hole lies on the part',pattern:'a copy may fall outside the part',mirror:'the mirror may not touch the part'};
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
-const PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
+const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
 const TOOLMAKERS={box:primTool,cylinder:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
 let cache=[];
 function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<Math.min(i,C.length);j++){keep.add(C[j].shape);keep.add(C[j].tool);}for(let j=i;j<C.length;j++)for(const o of[C[j].shape,C[j].tool])if(o&&!keep.has(o)&&!gone.has(o)){gone.add(o);try{o.delete();}catch{}}C.length=Math.min(C.length,i);}
@@ -301,13 +301,31 @@ export async function build(doc,opt={}){
   const cache=opt.cache||cacheRef();
   const t0=performance.now(),{scope,errors:pErr}=resolveParams(doc.params,doc.units);UNITS=doc.units==='in'?'in':'mm';
   const feats=(doc.features||[]).filter(f=>!f.suppressed),upto=opt.upto??feats.length,errors=[],warnings=[],log=[];
-  let body=null,prevKey='',reused=0;
+  let body=null,prevKey='',reused=0,sk=0;
   const tools={};
   for(let i=0;i<Math.min(upto,feats.length);i++){
     const raw=feats[i];let f,key,perr=null;
+    if(raw.type==='hole'&&body&&i>=sk){
+      let k=i;const lim=Math.min(upto,feats.length)-1;while(k+1<lim&&feats[k+1].type==='hole')k++;
+      if(k-i>=BATCH-1){
+        const fs=[],ks=[];let pk=prevKey,okb=true;
+        for(let j=i;j<=k&&okb;j++)try{const fj=res(feats[j],scope);fs.push(fj);pk+='|'+JSON.stringify(fj);ks.push(pk);}catch{okb=false;}
+        if(okb&&ks.every((kk,j)=>cache[i+j]&&cache[i+j].key===kk)&&cache[k].shape){for(let j=i;j<=k;j++){const c2=cache[j];c2.tool&&(tools[feats[j].id]=c2.tool);c2.warn&&warnings.push(c2.warn);}body=cache[k].shape;prevKey=ks[ks.length-1];reused+=k-i+1;i=k;continue;}
+        if(okb){
+          truncate(i,cache);let ts=[],comp=null;
+          try{
+            ts=fs.map(fj=>holeTool(fj,body));comp=R.makeCompound(ts.map(t=>t.clone()));const nx=body.cut(comp),v0=vol(body),v1=vol(nx),bb=bboxOf(body),none=Math.abs(v1-v0)<=1e-7*Math.max(v0,1e-12);
+            if(!(v1>0))throw new Error('batch cut failed');
+            ts.forEach((t,j)=>{const tb=t.boundingBox.bounds,miss=none||tb[1].some((v,a)=>v<bb.min[a]||tb[0][a]>bb.max[a]),w=miss?{id:feats[i+j].id,name:feats[i+j].name,type:'hole',msg:"Hole '"+(feats[i+j].name||feats[i+j].id)+"' changed nothing: it does not touch the part; check offset/plane."}:null;miss&&warnings.push(w);cache[i+j]={key:ks[j],shape:i+j===k?nx:null,tool:t,warn:w,lazy:i+j!==k};tools[feats[i+j].id]=t;});
+            try{comp.delete();}catch{}
+            body=nx;prevKey=ks[ks.length-1];i=k;continue;
+          }catch(e){for(const t of ts)try{t.delete();}catch{}try{comp&&comp.delete();}catch{}truncate(i,cache);sk=k+1;}
+        }else sk=k+1;
+      }
+    }
     try{f=res(raw,scope);if(f.sketch&&f.sketch.ents&&f.sketch.ents.length)f.shapes=sketchShapes(f.sketch);key=prevKey+'|'+JSON.stringify(f)+(raw.type==='import'?raw.id:raw.type==='edgeprofile'?doc.material:'');}catch(e){perr={id:raw.id,name:raw.name,type:raw.type,msg:e.message};errors.push(perr);key=prevKey+'|ERR'+i;f=null;}
     const c=cache[i];
-    if(c&&c.key===key){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.err&&errors.push(c.err);c.warn&&warnings.push(c.warn);prevKey=key;reused++;continue;}
+    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.err&&errors.push(c.err);c.warn&&warnings.push(c.warn);prevKey=key;reused++;continue;}
     truncate(i,cache);
     let next=body,tool=null,ferr=perr,fwarn=null;
     if(f)try{
@@ -362,8 +380,8 @@ export async function build(doc,opt={}){
 }
 export function meshBody(body,q=1){
   if(!body)return null;
-  const size=sizeOf(body),tol=Math.max(size*2e-4/q,0.002),m=body.mesh({tolerance:tol,angularTolerance:0.12/q}),me=body.meshEdges({tolerance:tol,angularTolerance:0.12/q});
-  const F=faceList(body),E=edgeList(body),fh=new Map(F.map(x=>[x.f.hashCode,x.i])),eh=new Map(E.map(x=>[x.e.hashCode,x.i]));
+  const size=sizeOf(body),E=edgeList(body),tol=Math.max(size*2e-4/q,0.002),ang=Math.min(0.3,Math.max(0.12,2*Math.PI*E.length/8000))/q,m=body.mesh({tolerance:tol,angularTolerance:ang}),me=body.meshEdges({tolerance:tol,angularTolerance:ang});
+  const F=faceList(body),fh=new Map(F.map(x=>[x.f.hashCode,x.i])),eh=new Map(E.map(x=>[x.e.hashCode,x.i]));
   const faces=F.map(x=>({c:x.c,n:x.n,type:x.type,area:safe(()=>R.measureArea(x.f))}));
   const edges=E.map(x=>({m:x.m,a:x.a,b:x.b,type:x.type,len:x.len}));
   let vp=null;try{const p=R.measureShapeVolumeProperties(body);vp={volume:p.volume,com:p.centerOfMass};}catch{}
@@ -379,6 +397,6 @@ export function exportBody(body,fmt,units){
   throw new Error('unknown format '+fmt);
 }
 function cacheRef(){return cache;}
-export function shapeBefore(i){return i>0&&cache[i-1]?cache[i-1].shape:null;}
+export function shapeBefore(i){const c=i>0&&cache[i-1];if(!c)return null;if(c.shape||!c.lazy)return c.shape;let s=i-1;while(s>0&&cache[s-1]&&cache[s-1].lazy)s--;const base=s>0&&cache[s-1].shape;if(!base)return null;try{c.shape=base.cut(R.makeCompound(cache.slice(s,i).map(e=>e.tool.clone())));c.lazy=false;}catch{return null;}return c.shape;}
 export function edgePolylines(shape,sel,isFace){const out=[];const list=isFace?selectFaces(shape,sel).flatMap(q=>q.f.outerWire().edges):selectEdges(shape,sel).map(q=>q.e);for(const e of list){const p=[];for(let k=0;k<=24;k++)p.push(V(e.pointAt(k/24)));out.push(p);}return out;}
 export async function init(oc){R.setOC(oc);return true;}
