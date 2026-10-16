@@ -1,6 +1,8 @@
 import * as DR from './drawing.js';
 const {textW,SHEETS}=DR,segX=DR.segX;
 const hit=(a,b,r)=>!(a[0]>r[2]||b[0]>r[2]&&a[0]>r[2]||Math.max(a[0],b[0])<r[0]||Math.min(a[0],b[0])>r[2]||Math.max(a[1],b[1])<r[1]||Math.min(a[1],b[1])>r[3]);
+const ALIAS={letter:'ANSI A',tabloid:'ANSI B',ledger:'ANSI B'};
+export const normSheet=s=>{if(s==null||s==='')return null;const k=String(s).trim().toLowerCase().replace(/\s+/g,' '),v=Object.keys(SHEETS).find(x=>x.toLowerCase()===k)||ALIAS[k];if(!v)throw new Error('Unknown drawing sheet "'+String(s).slice(0,40)+'". Use one of: '+Object.keys(SHEETS).join(', ')+' (Letter is ANSI A, Tabloid is ANSI B).');return v;};
 export function layoutFrame(sheet){const[W,H]=SHEETS[sheet],ansi=/ANSI/.test(sheet),M=ansi?{l:12.7,r:12.7,t:12.7,b:12.7}:{l:20,r:10,t:10,b:10},F=[M.l,M.b,W-M.r,H-M.t],th=W<300?3:3.5,tbW=Math.min(180,F[2]-F[0]);return{W,H,F,th,nth:th*0.85,tbW,tbH:36};}
 export function bomTable(res,rows,o={}){const L=layoutFrame(res.sheet),rh=L.nth*1.55,cols=[['ITEM',12,'m'],['QTY',12,'m'],['PART NUMBER',34,'s'],['DESCRIPTION',L.tbW-12-12-34-30,'s'],['MATERIAL',30,'s']],x0=L.F[2]-L.tbW,y0=L.F[1]+L.tbH+2.5,fit=(t,w,s)=>{t=String(t??'');while(t.length>2&&textW(t,s)>w-1.5)t=t.slice(0,-2)+'…';return t;},it=res.items,ln=(a,b)=>it.push({t:'l',a,b,ly:'thin'}),tx=(p,t,s,an,b)=>it.push({t:'tx',p,txt:t,s,an,b,ly:'txt'});
   const n=rows.length+1,top=y0+n*rh;ln([x0,y0],[x0+L.tbW,y0]);ln([x0,top],[x0+L.tbW,top]);let x=x0;ln([x,y0],[x,top]);for(const[,w]of cols){x+=w;ln([x,y0],[x,top]);}
@@ -10,7 +12,7 @@ export function bomTable(res,rows,o={}){const L=layoutFrame(res.sheet),rh=L.nth*
   res.bomRect=[x0,y0,x0+L.tbW,top];return res.bomRect;}
 export function extraLines(rows,sheet){const L=layoutFrame(sheet),pitch=L.nth*1.55;return Array.from({length:rows+1},()=>' ');}
 export const defaultSheet=(units,n)=>units==='in'?(n>28?'ANSI D':n>14?'ANSI C':'ANSI B'):(n>28?'A1':n>14?'A2':'A3');
-export function compose(P,rows,o={}){const sheet=o.sheet||defaultSheet(o.units,rows.length),view=(o.views&&o.views[0])||'iso',K=o.units==='in'?25.4:1,mk=scale=>DR.compose(P,{sheet,units:o.units,views:o.views||['iso'],hidden:o.hidden,scale,dims:{overall:false,holes:false,radii:false,chamfers:false,centers:false,gdt:false,autogdt:false},extraNotes:extraLines(rows.length,sheet),title:{name:o.name||'Assembly',number:o.number||'',material:'ASSEMBLY',mass:o.mass||'',author:o.author||'',rev:o.rev||'A'},sheetTxt:o.sheetTxt});
+export function compose(P,rows,o={}){const sheet=normSheet(o.sheet)||defaultSheet(o.units,rows.length),view=(o.views&&o.views[0])||'iso',K=o.units==='in'?25.4:1,mk=scale=>DR.compose(P,{sheet,units:o.units,views:o.views||['iso'],hidden:o.hidden,scale,dims:{overall:false,holes:false,radii:false,chamfers:false,centers:false,gdt:false,autogdt:false},extraNotes:extraLines(rows.length,sheet),title:{name:o.name||'Assembly',number:o.number||'',material:'ASSEMBLY',mass:o.mass||'',author:o.author||'',rev:o.rev||'A'},sheetTxt:o.sheetTxt});
   let res=mk();const v0=res.views.find(v=>v.n===view);if(v0&&Math.abs(v0.s/K-res.scale)>1e-9*Math.max(1,res.scale))res=mk(v0.s/K);
   const V=res.views.find(v=>v.n===view);if(!V)throw new Error('The assembly view did not fit on the sheet');const vb=P.views[view].bb,s=V.s,r=V.rect,X=p=>[r[0]+s*(p[0]-vb[0]),r[1]+s*(p[1]-vb[1])],A=o.anchors&&o.anchors[view]||{},it=res.items,L=layoutFrame(res.sheet);
   bomTable(res,rows,o);const out={lines:[],balloons:[]};
