@@ -76,7 +76,7 @@ function cutterDetail(S,cd,E){
   for(const k of[20,10,5,4,2,1]){const Wd=w*k+2*th,Ht=h*k+lb+th;if(Wd>E.F[2]-E.F[0]-8||Ht>E.F[3]-E.F[1]-8)continue;let best=null;
     for(let x=E.F[0]+4;x+Wd<=E.F[2]-4;x+=3)for(let y=E.F[1]+4;y+Ht<=E.F[3]-4;y+=3){const R=[x-1,y-1,x+Wd+1,y+Ht+1];if(S.occ.some(q=>ovl(pad(R,1.5),q)>0)||E.blk.some(q=>ovl(R,q)>0))continue;const dd=-x*0.3-y;if(!best||dd<best.dd)best={x,y,dd,R};}
     if(!best)continue;const ox=best.x+th-x0*k,oy=best.y+lb-y0*k;
-    S.PL(P.flatMap(p=>[ox+p[0]*k,oy+p[1]*k]),'vis');
+    S.PL(P.flatMap(p=>[ox+p[0]*k,oy+p[1]*k]),'vis');cd.band&&S.PL(cd.band.flatMap(p=>[ox+p[0]*mm*k,oy+p[1]*mm*k]),'hid');for(const l of cd.labels||[])S.T([ox+l.p[0]*mm*k+th*0.5,oy+l.p[1]*mm*k-th*0.3],l.txt,th*0.8);
     const bx=best.x+th;S.L([bx,best.y+lb-th*0.6],[bx+w*k,best.y+lb-th*0.6],'dim');S.T([bx+w*k/2,best.y+lb-th*1.7],cd.w_txt,th*0.9,{an:'m'});
     S.T([best.x+Wd/2,best.y+th*0.9],'PROFILE DETAIL - '+cd.name.toUpperCase(),th*1.15,{an:'m',b:true});S.T([best.x+Wd/2,best.y+th*0.1-th*0.2],'SCALE '+(k>=1?k+':1':'1:'+Math.round(1/k)),th*0.9,{an:'m'});
     cd.rows.forEach((r,i)=>S.T([best.x+th,best.y+lb-th*(3.4+1.55*i)],r,th*0.85));

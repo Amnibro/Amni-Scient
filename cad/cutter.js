@@ -1,3 +1,4 @@
+import PC from './vendor/polygon-clipping.js';
 const D=Math.PI/180;
 export const SHANKS={'1/4':6.35,'1/2':12.7,'8mm':8,'12mm':12};
 export const BEARINGS={none:null,'3/8x1/8':[0.375,0.125],'1/2x3/16':[0.5,0.1875],'5/8x1/4':[0.625,0.25],'3/4x1/4':[0.75,0.25],'1x1/4':[1,0.25]};
@@ -97,15 +98,24 @@ export function bitSpec(f,K=1){
   const last=bc.path.pts[bc.path.pts.length-1],first=bc.path.pts[0],hi=last[1]>=first[1]?last:first,lo=hi===last?first:last;
   const ext=flute>0?[[hi[0],H+flute]]:[],cl=[[rin,(flute>0?H+flute:hi[1])],[rin,lo[1]]];
   const wing=dd(hi===last?{pts:[...bc.path.pts,...ext,...cl],bulge:[...bc.path.bulge,...Array(ext.length+cl.length+1).fill(0)]}:{pts:[...rev(bc.path).pts,...ext,...cl],bulge:[...rev(bc.path).bulge,...Array(ext.length+cl.length+1).fill(0)]});
-  const hook=+f.hook||0,shear=+f.shear||0,relief=+f.relief||0;
+  const hook=+f.hook||0,shear=+f.shear||0,relief=+f.relief||0,body=kind==='router'&&f.body!==false,cw=f.cw>0?+f.cw:0.12*K,wb=f.wb>0?+f.wb:0.1*K,lap=0.04*K,gw=body?(f.gul!=null&&f.gul!==''?Math.max(0,+f.gul):0.07*K):0,ak=body?Math.max(0,+f.ak||0):0,back=Math.min(ak>0?ak:cw-lap,cw-lap),seatD=0.35*ct;
+  const Wf=flat(wing,1e-4*K,true),shift=(P,d)=>[[...P.map(q=>[q[0]-d,q[1]]),[P[0][0]-d,P[0][1]]]],cl0=[[...Wf,Wf[0]]],rings=m=>m.map(p=>p[0].slice(0,-1)).filter(r=>r.length>2&&Math.abs(polyArea(r))>1e-9*K*K);
+  const carb=body?rings(PC.difference(cl0,shift(Wf,cw))):[Wf],steel=body?rings(PC.intersection(cl0,shift(Wf,back))):[],bite=ak>0?{tooth:ak,rev:ak*n}:null;
+  body&&ak>=cw-lap-1e-9&&w.push('The anti-kickback limit is at least the carbide width less the braze lap, so the limiter sits behind the carbide seat; use a smaller limit.');
   (hook<0||hook>30)&&w.push('Hook angle outside 0 to 30 degrees.');(shear<0||shear>30)&&w.push('Shear angle outside 0 to 30 degrees.');(relief<0||relief>30)&&w.push('Relief angle outside 0 to 30 degrees.');
   ct>Rc0*1.2&&w.push('Carbide is thicker than the steel body can hold; thin the carbide or enlarge the shank.');
   const sl=f.sl>0?+f.sl:1.25*K,neck=Math.max(0.1*K,Math.abs(Rc0-sd/2)*2);
-  return{kind,pr,K,sd,br,od,bid,bt,ct,n,A,Rmax,bore,H:H+flute,Hp:H,flute,rmin,rmax,dia:2*rmax,Rc0,z0,rin,core:clean,undercut,wing,hook,shear,relief,sl,neck,warns:w,path:bc.path,ord:Q};
+  return{kind,pr,K,sd,br,od,bid,bt,ct,n,A,Rmax,bore,H:H+flute,Hp:H,flute,rmin,rmax,dia:2*rmax,Rc0,z0,rin,core:clean,undercut,wing,body,cw,wb,lap,gw,ak,back,seatD,carb,steel,bite,g0:0.5*Rc0,hook,shear,relief,sl,neck,warns:w,path:bc.path,ord:Q};
 }
 export function bitVolume(s){
-  const I=(R,t)=>0.5*(t*Math.sqrt(R*R-t*t)+R*R*Math.asin(t/R)),Q=s.ord,zs=[...new Set(Q.map(q=>+q[1].toFixed(7)))].sort((a,b)=>a-b),rho=z=>{let m=0;for(let i=0;i+1<Q.length;i++){const a=Q[i],b=Q[i+1];if(Math.abs(b[1]-a[1])<1e-9)continue;const lo=Math.min(a[1],b[1]),hi=Math.max(a[1],b[1]);if(z>=lo-1e-9&&z<=hi+1e-9)m=Math.max(m,a[0]+(b[0]-a[0])*(z-a[1])/(b[1]-a[1]));}return m;},core=z=>{const c=s.core;for(let i=0;i+1<c.length;i++)if(z>=c[i][1]-1e-9&&z<=c[i+1][1]+1e-9)return c[i][0]+(c[i+1][0]-c[i][0])*((z-c[i][1])/(c[i+1][1]-c[i][1]||1));return c[c.length-1][0];};
-  let v=0;const N=2000,Z=s.Hp;for(let i=0;i<N;i++){const z=(i+0.5)*Z/N,Rc=core(z);v+=(Math.PI*Rc*Rc+s.n*(rho(z)*s.ct-I(Rc,Math.min(s.ct,Rc*0.999))))*Z/N;}
+  const I=(R,t)=>0.5*(t*Math.sqrt(R*R-t*t)+R*R*Math.asin(t/R)),Q=s.ord,rho=z=>{let m=0;for(let i=0;i+1<Q.length;i++){const a=Q[i],b=Q[i+1];if(Math.abs(b[1]-a[1])<1e-9)continue;const lo=Math.min(a[1],b[1]),hi=Math.max(a[1],b[1]);if(z>=lo-1e-9&&z<=hi+1e-9)m=Math.max(m,a[0]+(b[0]-a[0])*(z-a[1])/(b[1]-a[1]));}return m;},core=z=>{const c=s.core;for(let i=0;i+1<c.length;i++)if(z>=c[i][1]-1e-9&&z<=c[i+1][1]+1e-9)return c[i][0]+(c[i+1][0]-c[i][0])*((z-c[i][1])/(c[i+1][1]-c[i][1]||1));return c[c.length-1][0];};
+  let v=0;const N=s.body?300:2000,Z=s.Hp,NY=140;
+  for(let i=0;i<N;i++){const z=(i+0.5)*Z/N,Rc=core(z),r=rho(z);
+    if(!s.body){v+=(Math.PI*Rc*Rc+s.n*(r*s.ct-I(Rc,Math.min(s.ct,Rc*0.999))))*Z/N;continue;}
+    const t=s.ct,y1=t+s.wb;let area=0;
+    for(let j=0;j<NY;j++){const y=(j+0.5)*y1/NY,xd=y<Rc?Math.sqrt(Rc*Rc-y*y):0,iv=[];if(y<=t)iv.push([Math.max(r-s.cw,s.rin),r]);if(y>=s.seatD&&r-s.back>s.rin)iv.push([s.rin,r-s.back]);iv.sort((a,b)=>a[0]-b[0]);let hi=-1e9,len=0;for(const[a,b]of iv){const lo=Math.max(a,hi,xd);if(b>lo)len+=b-lo;hi=Math.max(hi,b);}area+=len*y1/NY;}
+    let gul=0;if(s.gw>0&&Rc>s.g0)for(let j=0;j<NY;j++){const y=(j+0.5)*s.gw/NY;gul+=Math.max(0,Math.sqrt(Math.max(Rc*Rc-y*y,0))-s.g0)*s.gw/NY;}
+    v+=(Math.PI*Rc*Rc+s.n*(area-gul))*Z/N;}
   const Rc=s.core[s.core.length-1][0],Rs=s.sd/2;v+=Math.PI*s.neck/3*(Rc*Rc+Rc*Rs+Rs*Rs)+Math.PI*Rs*Rs*(s.sl-s.neck)+(s.br?Math.PI*(s.od/2)**2*s.bt:0);
   return v;
 }
@@ -116,6 +126,8 @@ export function checkBit(s,rpm,K=1){
   s.kind==='router'&&s.dia>4*s.sd&&o.push({lvl:'warn',key:'shankdia',msg:'A shank this size is light for a cutter this wide; use a 1/2 in or 12 mm shank above '+(4*s.sd/K).toFixed(2)+' in diameter.'});
   o.push({lvl:rr.length?'err':'ok',key:'minr',msg:rr.length?'Profile radius '+(Math.min(...rr)/K).toFixed(4)+' in is below the 1/32 in minimum a carbide wing can be ground to.':'Smallest profile radius is at least 1/32 in.'});
   o.push({lvl:s.ct>s.Rc0*1.2?'warn':'ok',key:'carbide',msg:'Carbide '+(s.ct/K).toFixed(3)+' in ('+(s.ct/K*25.4).toFixed(1)+' mm) on a '+(s.Rc0*2/K).toFixed(3)+' in body.'});
+  s.body&&o.push({lvl:'ok',key:'body',msg:'Steel wing body '+(s.wb/K).toFixed(3)+' in ('+(s.wb/K*25.4).toFixed(1)+' mm) thick behind a '+(s.cw/K).toFixed(3)+' in ('+(s.cw/K*25.4).toFixed(1)+' mm) wide brazed carbide seat'+(s.gw>0?'; gullet '+(s.gw/K).toFixed(3)+' in ('+(s.gw/K*25.4).toFixed(1)+' mm) in front of the carbide.':'; no gullet.')});
+  s.body&&o.push({lvl:s.bite?'ok':'warn',key:'bite',msg:s.bite?'Anti-kickback limiter: bite '+(s.bite.tooth/K).toFixed(4)+' in ('+(s.bite.tooth/K*25.4).toFixed(2)+' mm) per wing and '+(s.bite.rev/K).toFixed(4)+' in ('+(s.bite.rev/K*25.4).toFixed(2)+' mm) per revolution at most.':'No anti-kickback limiter: the bite per revolution is not limited. Set a limiter (try 1/16 in or less) for hand-fed work.'});
   for(const w of s.warns)o.push({lvl:'warn',key:'note',msg:w});
   return o;
 }
@@ -151,7 +163,7 @@ export function checkKnife(ks){
 }
 export function report(c,K=1){
   const type=c.type||'bit',o={prof:c.prof||'roundover',pp:c.pp||{}},pr=profile(o.prof,o.pp,K),dims=Object.fromEntries(Object.keys(pr.defs).map(k=>[k,+(pr.p[k]/(pr.defs[k][2]?1:K)).toFixed(5)])),out={profile:{id:pr.id,name:pr.name,group:pr.group,kind:pr.kind,width_in:+(pr.w/K).toFixed(5),height_in:+(pr.h/K).toFixed(5),cut_area_in2:+(cutArea(pr)/K/K).toFixed(6),section_area_in2:pr.sec?+(secArea(pr)/K/K).toFixed(5):undefined,dims_in_deg:dims,notes:pr.warns}};
-  if(type==='bit'||type==='shaper'){const f={type,...o,...(c[type]||{})},s=bitSpec(f,K);out.cutter={kind:s.kind,cutting_diameter_in:+(s.dia/K).toFixed(4),cutting_diameter_mm:+(s.dia/K*25.4).toFixed(2),cutting_length_in:+(s.H/K).toFixed(4),wings:s.n,carbide_in:+(s.ct/K).toFixed(4),shank_in:+(s.sd/K).toFixed(4),bearing:s.br?{od_in:s.br[0],id_in:s.br[1]}:null,hook:s.hook,shear:s.shear,relief:s.relief,volume_in3:+(bitVolume(s)/K**3).toFixed(5)};out.checks=checkBit(s,+c.rpm||0,K);}
+  if(type==='bit'||type==='shaper'){const f={type,...o,...(c[type]||{})},s=bitSpec(f,K);out.cutter={kind:s.kind,cutting_diameter_in:+(s.dia/K).toFixed(4),cutting_diameter_mm:+(s.dia/K*25.4).toFixed(2),cutting_length_in:+(s.H/K).toFixed(4),wings:s.n,carbide_in:+(s.ct/K).toFixed(4),shank_in:+(s.sd/K).toFixed(4),bearing:s.br?{od_in:s.br[0],id_in:s.br[1]}:null,hook:s.hook,shear:s.shear,relief:s.relief,steel_body:s.body,carbide_width_in:+(s.cw/K).toFixed(4),body_wing_in:+(s.wb/K).toFixed(4),gullet_in:+(s.gw/K).toFixed(4),antikickback_limit_in:s.bite?+(s.bite.tooth/K).toFixed(4):0,bite_per_wing_in:s.bite?+(s.bite.tooth/K).toFixed(4):null,bite_per_rev_in:s.bite?+(s.bite.rev/K).toFixed(4):null,volume_in3:+(bitVolume(s)/K**3).toFixed(5)};out.checks=checkBit(s,+c.rpm||0,K);}
   else if(type==='knife'){const ks=knifeSpec({...o,...(c.knife||{})},K);out.knife={cutting_circle_dia_in:+(ks.R*2/K).toFixed(3),hook:ks.hook,projection_in:+(ks.proj/K).toFixed(4),knife_depth_at_max_in:+(ks.smax/K).toFixed(5),molding_depth_at_max_in:+(ks.dmax/K).toFixed(5),blank_in:[+(ks.len/K).toFixed(4),+(ks.Hb/K).toFixed(4),+(ks.kt/K).toFixed(4)],head:ks.mode,points:ks.V.length};out.checks=checkKnife(ks);}
   if(pr.id==='stick'||pr.id==='cope'){const st=profile('stick',o.pp,K),cp=profile('cope',c.cope_pp||o.pp,K);out.fit=copeFit(st,cp,K);}
   return out;

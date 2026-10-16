@@ -70,12 +70,12 @@ export function cncPlan(pr,o={}){
   return{ok:true,gcode,dialect,mode,units,file:(pr.id+'-'+mode+'.'+(dialect==='shopbot'?'sbp':'nc')),cfg,tool:name,len,Wst,Ts,passes:moves.filter(m=>m[0]==='f').length,feed_dist:dist,time_min:t,warnings:w,machine_units:units};
 }
 export function drawingDetail(f,ev,units){
-  const K=units==='in'?1:25.4,num=v=>typeof v==='string'?ev(v):v,pp=Object.fromEntries(Object.entries(f.pp||{}).map(([k,v])=>[k,Array.isArray(v)?v:num(v)])),pr=profile(f.prof||'roundover',pp,K),u=units==='in'?'IN':'MM',fm=v=>units==='in'?(v/K).toFixed(4)+' IN':v.toFixed(3)+' MM',rows=[],R=radiiOf(pr);
+  const K=units==='in'?1:25.4,num=v=>typeof v==='string'?ev(v):v,pp=Object.fromEntries(Object.entries(f.pp||{}).map(([k,v])=>[k,Array.isArray(v)?v:num(v)])),pr=profile(f.prof||'roundover',pp,K),u=units==='in'?'IN':'MM',fm=v=>units==='in'?(v/K).toFixed(4)+' IN':v.toFixed(3)+' MM',rows=[],labels=[],R=radiiOf(pr);let band=null;
   const Q=flat(pr.cur,0.0005*K),pts=pr.sec?flat(pr.sec,0.0005*K,true):Q;
-  for(const[k,v]of Object.entries(pr.defs))if(rows.length<4)rows.push(v[0].toUpperCase()+' '+(v[2]==='a'?pr.p[k].toFixed(1)+' DEG':v[2]==='n'?String(Math.round(pr.p[k])):fm(pr.p[k])));
+  for(const[k,v]of Object.entries(pr.defs))if(rows.length<(f.type==='bit'?2:4))rows.push(v[0].toUpperCase()+' '+(v[2]==='a'?pr.p[k].toFixed(1)+' DEG':v[2]==='n'?String(Math.round(pr.p[k])):fm(pr.p[k])));
   R.length&&rows.push('R '+R.slice(0,3).map(r=>fm(r)).join(' / '));
-  if(f.type==='bit'||f.type==='shaper'){const fe=Object.fromEntries(Object.entries(f).map(([k,v])=>[k,typeof v==='string'&&!['type','prof','shank','brg','spindle','axis','op','id','name'].includes(k)?ev(v):v])),s=bitSpec({...fe,pp},K);rows.push('CUTTING DIA '+fm(s.dia)+' X '+fm(s.Hp),'WINGS '+s.n+' CARBIDE '+fm(s.ct));}
+  if(f.type==='bit'||f.type==='shaper'){const fe=Object.fromEntries(Object.entries(f).map(([k,v])=>[k,typeof v==='string'&&!['type','prof','shank','brg','spindle','axis','op','id','name'].includes(k)?ev(v):v])),s=bitSpec({...fe,pp},K);rows.push('CUTTING DIA '+fm(s.dia)+' X '+fm(s.Hp),'WINGS '+s.n+' CARBIDE TIP '+fm(s.ct)+' THK X '+fm(s.cw)+' (BRAZED)');if(s.body){rows.push('STEEL BODY WING '+fm(s.wb)+' THK'+(s.gw>0?', GULLET '+fm(s.gw):''));rows.push(s.bite?'ANTI-KICKBACK '+fm(s.bite.tooth)+' PER WING, BITE '+fm(s.bite.rev)+' PER REV':'NO ANTI-KICKBACK LIMITER');if(pr.kind!=='center'){const m=Q[Math.floor(Q.length/2)];band=Q.map(q=>[q[0]+s.cw,q[1]]);labels.push({p:m,txt:'CARBIDE'},{p:[m[0]+s.cw,m[1]],txt:'STEEL BODY'});}}}
   if(f.type==='knife'){const ks=knifeSpec({...f,pp,rc:num(f.rc),proj:num(f.proj),kt:num(f.kt),grip:num(f.grip),km:num(f.km)},K);rows.push('CUT CIRCLE DIA '+fm(ks.R*2),'HOOK '+ks.hook+' DEG PROJ '+fm(ks.proj));}
-  return{name:pr.name,pts,mm:25.4/K,rows:rows.slice(0,7),w_txt:fm(pr.w)+' X '+fm(pr.h)};
+  return{name:pr.name,pts,band,labels,mm:25.4/K,rows:rows.slice(0,7),w_txt:fm(pr.w)+' X '+fm(pr.h)};
 }
 const radiiOf=pr=>[...new Set(radii(pr.cur).map(r=>+r.toFixed(5)))];

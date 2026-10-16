@@ -28,8 +28,8 @@ try{
   await p.evaluate(()=>window.amnicad.setTab('cutters'));await sleep(500);await shot('cutters-desktop');
   const step=await p.evaluate(async()=>{const b=await window.amnicad.exportFmt('step',x=>x);return b.size;}),stl=await p.evaluate(async()=>{const b=await window.amnicad.exportFmt('stl',x=>x);return b.size;});
   ok(step>5000&&stl>1000,'export STEP and STL of the bit',step+' and '+stl+' bytes');
-  await p.evaluate(()=>window.amnicad.setTab('draw'));await sleep(2500);const pdf=await p.evaluate(async()=>{const u=await window.amnicad.API.drawing.exportPdf(),s=new TextDecoder('latin1').decode(u);return{n:u.length,has:/PROFILE DETAIL/.test(s),rad:/ROUNDOVER/.test(s)};});
-  ok(pdf.n>3000&&pdf.has&&pdf.rad,'ANSI drawing sheet carries the profile detail of the cutter',pdf.n+' byte PDF');await sleep(1500);await shot('cutters-drawing');
+  await p.evaluate(()=>window.amnicad.setTab('draw'));await sleep(2500);const pdf=await p.evaluate(async()=>{const u=await window.amnicad.API.drawing.exportPdf(),s=new TextDecoder('latin1').decode(u);return{n:u.length,has:/PROFILE DETAIL/.test(s),rad:/ROUNDOVER/.test(s),carb:/CARBIDE TIP/.test(s)&&/STEEL BODY WING/.test(s)&&/CARBIDE/.test(s)};});
+  ok(pdf.n>3000&&pdf.has&&pdf.rad&&pdf.carb,'ANSI drawing sheet labels the carbide tip and steel body in the profile detail',pdf.n+' byte PDF');await sleep(1500);await shot('cutters-drawing');
   await p.evaluate(()=>window.amnicad.setTab('cutters'));await sleep(300);
   await ck('[data-cu="knife"]');await sleep(300);
   ok(await p.evaluate(()=>/more\./.test(document.querySelector('#tab-cutters').innerText)&&!document.querySelector('#cu-dxf').disabled),'knife tab shows the correction and enables the DXF buttons');

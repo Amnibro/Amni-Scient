@@ -4,7 +4,7 @@ import {sketchShapes} from './sketch.js';
 import {pathPolys,ProfileError} from './polyfix.js';
 import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
-import {profile,bitSpec,knifeSpec,flat,edgeFrame} from './cutter.js';
+import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS} from './schema.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
@@ -222,16 +222,16 @@ function edgeCut(body,f,doc){
   const m=MATS[doc.material];return{shape:out,warn:m&&m.look&&m.look.kind==='wood'?null:'Edge profiles are meant for wood parts; this part is '+((m&&m.n)||doc.material)+'.'};
 }
 const centroid=P=>{let A=0,x=0,y=0;P.forEach((p,i)=>{const q=P[(i+1)%P.length],c=p[0]*q[1]-q[0]*p[1];A+=c;x+=(p[0]+q[0])*c;y+=(p[1]+q[1])*c;});return[x/(3*A),y/(3*A)];};
-function plate(w,org,t,f){
+function plate(w,org,t,f,y0=0){
   const P=flat(w,1e-4*KIN(),true),c=centroid(P),d=profileDrawing([pathShape(w)]);let pl;
   try{pl=f<1-1e-6?d.translate(-c[0],-c[1]).sketchOnPlane(new R.Plane(org(c[0],c[1]),[1,0,0],[0,-1,0])).extrude(t,{extrusionProfile:{profile:'linear',endFactor:f}}):d.sketchOnPlane(new R.Plane(org(0,0),[1,0,0],[0,-1,0])).extrude(t);}catch{pl=d.sketchOnPlane(new R.Plane(org(0,0),[1,0,0],[0,-1,0])).extrude(t);}
-  return pl.translate(0,t,0);
+  return pl.translate(0,t+y0,0);
 }
 function wingSolid(s,i){
-  let w=s.wing;const zm=s.H/2,cs=Math.cos(s.shear*Math.PI/180),al=s.hook*Math.PI/180,D=s.rmax-s.rin,kk=al&&D>0?(-s.rin*Math.cos(al)+Math.sqrt(s.rin*s.rin*Math.cos(al)**2-s.rin*s.rin+s.rmax*s.rmax))/D:1;
-  if(s.shear>0||s.hook>0){const P=flat(w,1e-4*s.K,true);w={pts:P.map(q=>[s.rin+(q[0]-s.rin)*kk,(q[1]-zm)/cs+zm]),bulge:P.map(()=>0)};}
-  const f=s.relief>0?Math.max(0.5,1-s.ct*Math.tan(s.relief*Math.PI/180)/Math.max(s.rmax-s.rin,1e-6)*1):1;
-  let pl=plate(w,(u,v)=>[u,0,s.z0+v],s.ct,f);
+  const zm=s.H/2,cs=Math.cos(s.shear*Math.PI/180),al=s.hook*Math.PI/180,D=s.rmax-s.rin,kk=al&&D>0?(-s.rin*Math.cos(al)+Math.sqrt(s.rin*s.rin*Math.cos(al)**2-s.rin*s.rin+s.rmax*s.rmax))/D:1,tilt=s.shear>0||s.hook>0,org=(u,v)=>[u,0,s.z0+v];
+  const poly=P=>({pts:tilt?P.map(q=>[s.rin+(q[0]-s.rin)*kk,(q[1]-zm)/cs+zm]):P,bulge:P.map(()=>0)}),f=s.relief>0?Math.max(0.5,1-s.ct*Math.tan(s.relief*Math.PI/180)/Math.max(s.rmax-s.rin,1e-6)):1;
+  const parts=s.body?[...s.carb.map(P=>plate(poly(P),org,s.ct,f)),...s.steel.map(P=>plate(poly(P),org,s.ct+s.wb-s.seatD,1,s.seatD))]:[plate(tilt?poly(flat(s.wing,1e-4*s.K,true)):s.wing,org,s.ct,f)];
+  let pl=parts.reduce((a,b)=>a.fuse(b));
   s.hook&&(pl=pl.rotate(-s.hook,[s.rin,0,0],[0,0,1]));s.shear&&(pl=pl.rotate(s.shear,[0,0,s.z0+zm],[1,0,0]));
   return pl.rotate(360*i/s.n,[0,0,0],[0,0,1]);
 }
@@ -239,16 +239,18 @@ function coreSolid(s,lo,r0){
   const c=s.core;let pen=R.draw([r0,lo+c[0][1]]);pen=c[0][0]>r0+1e-9?pen.lineTo([c[0][0],lo+c[0][1]]):pen;for(const q of c.slice(1))pen=pen.lineTo([q[0],lo+q[1]]);
   pen=c[c.length-1][0]>r0+1e-9?pen.lineTo([r0,lo+c[c.length-1][1]]):pen;return pen.close().sketchOnPlane(XZ()).revolve([0,0,1],{origin:[0,0,0]});
 }
-function cutterTool(f){
+function cutterTool(f,body,retry){
   const K=KIN(),s=bitSpec(f,K),wings=Array.from({length:s.n},(_,i)=>wingSolid(s,i)).reduce((a,b)=>a.fuse(b));let t;
   if(s.kind==='shaper'){
     const kw=(s.bore/K>1?0.25:0.1875)*K,N=Math.max(1,Math.round(f.stack||1)),dz=s.H-0.002*K;t=coreSolid({...s,core:[[s.core[0][0],0],[s.core[0][0],dz*(N-1)+s.H]]},0,s.bore/2).fuse(wings);for(let i=1;i<N;i++)t=t.fuse(wings.clone().translate(0,0,i*dz));
     t=t.cut(R.makeBox([s.bore/2-kw/2,-kw/2,-1],[s.bore/2+kw/2,kw/2,N*s.H+1]));
   }else{
     const zt=s.z0+s.H,rc=s.core[s.core.length-1][0];
-    t=coreSolid(s,s.z0,0).fuse(wings).fuse(coneSolid(rc,s.sd/2,s.neck,[0,0,zt],[0,0,1])).fuse(R.makeCylinder(s.sd/2,s.sl-s.neck,[0,0,zt+s.neck],[0,0,1]));
+    const rc0=s.core[s.core.length-1][0];let cs=coreSolid(s,s.z0,0);s.gw>0&&(cs=Array.from({length:s.n},(_,i)=>R.makeBox([s.g0,-s.gw,s.z0-0.01*K],[rc0+0.02*K,0,s.z0+s.H+0.01*K]).rotate(360*i/s.n,[0,0,0],[0,0,1])).reduce((a,g)=>a.cut(g),cs));
+    t=cs.fuse(wings).fuse(coneSolid(rc,s.sd/2,s.neck,[0,0,zt],[0,0,1])).fuse(R.makeCylinder(s.sd/2,s.sl-s.neck,[0,0,zt+s.neck],[0,0,1]));
     s.br&&(t=t.fuse(R.makeCylinder(s.od/2,s.bt,[0,0,0],[0,0,1])));
   }
+  if(!retry&&s.relief>0&&Math.abs(volOf(t))<0.9*bitVolume({...s,hook:0,shear:0,relief:0}))return cutterTool({...f,relief:0},body,true);
   const ax=f.axis||'Z';ax==='X'&&(t=t.rotate(90,[0,0,0],[0,1,0]));ax==='Y'&&(t=t.rotate(-90,[0,0,0],[1,0,0]));
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
