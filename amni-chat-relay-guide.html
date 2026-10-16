@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Chat Relay Setup Guide | AMNI-SCIENT</title>
+<meta name="description" content="Set up your own Amni-Chat relay in about a minute on Linux, Mac, Windows or Docker: free https address, built-in HTTPS and TURN, Sign in with Haven, and every setting explained.">
+<meta property="og:title" content="Amni-Chat Relay Setup Guide">
+<meta property="og:description" content="Set up your own Amni-Chat relay in about a minute on Linux, Mac, Windows or Docker: free https address, built-in HTTPS and TURN, Sign in with Haven, and every setting explained.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-chat-relay-guide">
+<meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Chat Relay Setup Guide">
+<meta name="twitter:description" content="Set up your own Amni-Chat relay in about a minute on Linux, Mac, Windows or Docker: free https address, built-in HTTPS and TURN, Sign in with Haven, and every setting explained.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<link rel="canonical" href="https://amni-scient.com/amni-chat-relay-guide">
+<link rel="stylesheet" href="css/style.css?v=b264">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.g-hero{max-width:1080px;margin:0 auto;padding:7rem 1.25rem 2rem}
+.g-eyebrow{font-size:.72rem;letter-spacing:.18em;color:var(--accent);margin:0 0 .7rem}
+.g-hero h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.05;margin:0 0 1rem}
+.g-lede{max-width:640px;color:var(--dim);font-size:1.05rem;line-height:1.6;margin:0 0 1.7rem}
+.g-quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.7rem;max-width:760px}
+.g-pick{display:flex;flex-direction:column;gap:.2rem;padding:1rem 1.1rem;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--text);background:var(--panel,transparent);transition:border-color .2s,transform .2s}
+.g-pick:hover{border-color:var(--accent);transform:translateY(-1px)}
+.g-pick span{color:var(--dim);font-size:.85rem}
+.g-wrap{max-width:1080px;margin:0 auto;padding:0 1.25rem 4rem;display:grid;grid-template-columns:210px minmax(0,1fr);gap:3rem}
+.g-toc{position:sticky;top:5.5rem;align-self:start;display:flex;flex-direction:column;gap:.15rem;font-size:.85rem}
+.g-toc p{font-size:.68rem;letter-spacing:.16em;color:var(--dim);margin:0 0 .5rem}
+.g-toc a{color:var(--dim);text-decoration:none;padding:.3rem .7rem;border-left:2px solid var(--border)}
+.g-toc a:hover{color:var(--text);border-left-color:var(--accent)}
+.g-body .g-sec{padding:1.7rem 0;border-top:1px solid var(--border);scroll-margin-top:5rem}
+.g-body .g-sec:first-child{border-top:0;padding-top:0}
+.g-body h2{font-size:1.45rem;margin:0 0 .9rem}
+.g-body h3{font-size:1rem;margin:0 0 .4rem}
+.g-body p{margin:.7rem 0}
+.g-body p,.g-body li,.g-body dd{line-height:1.65;color:var(--text);max-width:700px}
+.g-list,.g-steps{padding-left:1.2rem;margin:.6rem 0 1rem}
+.g-list li,.g-steps li{margin:.45rem 0}
+.g-steps{counter-reset:s;list-style:none;padding-left:0}
+.g-steps li{counter-increment:s;position:relative;padding-left:2.2rem}
+.g-steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--accent);color:#fff;font-size:.78rem;display:grid;place-items:center;font-weight:700}
+.g-code{background:#0a0d12;color:#d7dde4;border:1px solid var(--border);border-radius:7px;padding:1rem 1.1rem;overflow-x:auto;font-size:.85rem;line-height:1.6;margin:.8rem 0 1rem;max-width:760px}
+.g-body code{font-size:.86em}
+.g-body :not(pre)>code{background:rgba(127,127,127,.12);padding:.1rem .35rem;border-radius:4px;word-break:break-word}
+.g-note{font-size:.88rem;color:var(--dim)!important;border-left:3px solid var(--accent);padding:.2rem 0 .2rem .9rem}
+.g-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:.8rem;margin:.8rem 0 1.1rem}
+.g-card{border:1px solid var(--border);border-radius:7px;padding:1rem 1.1rem}
+.g-card p{margin:0;font-size:.9rem;color:var(--dim)}
+kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 .35rem;font-size:.82em}
+.g-faq dt{font-weight:700;margin-top:1rem}
+.g-faq dd{margin:.3rem 0 0;color:var(--dim)}
+.g-body .spec-table code{white-space:nowrap}
+@media(max-width:860px){.g-wrap{grid-template-columns:minmax(0,1fr);gap:1rem}.g-toc{position:static;flex-direction:row;flex-wrap:wrap;gap:.4rem}.g-toc p{width:100%}.g-toc a{border:1px solid var(--border);border-radius:999px;padding:.3rem .75rem}.g-body .spec-table code{white-space:normal}.g-body .spec-table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body class="pp theme-chat">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<header class="g-hero">
+<p class="g-eyebrow">AMNI-CHAT &middot; SETUP GUIDE</p>
+<h1>Run your own relay</h1>
+<p class="g-lede">The relay is the small server that passes your sealed messages along. Run it on any computer that stays on, and your Amni-Chat apps talk through it instead of ours. One command, about a minute, nothing to configure.</p>
+<div class="g-quick">
+<a href="#linux" class="g-pick"><b>Linux or Mac</b><span>One line in a terminal</span></a>
+<a href="#windows" class="g-pick"><b>Windows</b><span>Download, double-click</span></a>
+<a href="#docker" class="g-pick"><b>Docker</b><span>Two lines</span></a>
+</div>
+</header>
+<div class="g-wrap">
+<aside class="g-toc" aria-label="On this page">
+<p>ON THIS PAGE</p>
+<a href="#need">What you need</a>
+<a href="#linux">Install on Linux or Mac</a>
+<a href="#windows">Install on Windows</a>
+<a href="#docker">Install with Docker</a>
+<a href="#connect">Connect your apps</a>
+<a href="#address">A permanent address</a>
+<a href="#haven">Sign in with Haven</a>
+<a href="#calls">Calls</a>
+<a href="#push">Notifications</a>
+<a href="#care">Update, back up, remove</a>
+<a href="#settings">All settings</a>
+<a href="#trouble">Troubleshooting</a>
+<a href="#privacy">What the relay can see</a>
+</aside>
+<article class="g-body">
+<div class="g-sec" id="need">
+<h2>What you need</h2>
+<ul class="g-list">
+<li><b>A computer that stays on.</b> A spare PC, a Mac mini, a Raspberry Pi 4 or 5, or a small cloud server. The relay uses about 25 MB of memory.</li>
+<li><b>Nothing else.</b> No domain, no port forwarding, no certificates. Out of the box the relay gets a free https address through a Cloudflare tunnel.</li>
+<li><b>Optional:</b> a domain name, if you want an address that never changes. See <a href="#address">A permanent address</a>.</li>
+</ul>
+<p class="g-note">Builds: Linux (x86-64 and ARM64, any distribution), macOS (Apple silicon and Intel), Windows 10 and 11.</p>
+</div>
+<div class="g-sec" id="linux">
+<h2>Install on Linux or Mac</h2>
+<p>Open a terminal and paste:</p>
+<pre class="g-code"><code>curl -fsSL https://downloads.amni-scient.com/amni-chat-relay/install.sh | sh</code></pre>
+<p>It asks two questions. Press <kbd>Enter</kbd> to skip both:</p>
+<ol class="g-steps">
+<li><b>Domain name.</b> Skip it and you get a free https address. Type one in and you get your own address with a real certificate.</li>
+<li><b>Haven server.</b> Paste your Haven address to let people sign in with Haven. See <a href="#haven">Sign in with Haven</a>.</li>
+</ol>
+<p>When it finishes it prints your address, for example <code>https://quiet-river-maple.trycloudflare.com</code>. It runs in the background and starts again after a reboot.</p>
+<p class="g-note">Run it with <code>sudo</code> to install for the whole machine (in <code>/opt</code>); without it, the relay installs for your user only.</p>
+</div>
+<div class="g-sec" id="windows">
+<h2>Install on Windows</h2>
+<ol class="g-steps">
+<li>Download <a href="https://downloads.amni-scient.com/amni-chat-relay/amni-chat-relay-windows-x86_64.zip">the Windows relay</a> and unzip it anywhere.</li>
+<li>Double-click <b>Start Relay.bat</b>.</li>
+<li>Press <kbd>Enter</kbd> twice to skip the questions.</li>
+</ol>
+<p>The window shows your address and a QR code. Keep the window open while you want the relay running; close it to stop.</p>
+<p class="g-note">Windows may ask whether to let <b>amni-chat-server</b> use the network. Click <b>Allow</b>. Calls and devices on your home network need it.</p>
+</div>
+<div class="g-sec" id="docker">
+<h2>Install with Docker</h2>
+<p>Works with Docker or Podman. Use <code>arm64</code> instead of <code>amd64</code> on a Raspberry Pi.</p>
+<pre class="g-code"><code>curl -fsSL https://downloads.amni-scient.com/amni-chat-relay/amni-chat-relay-docker-amd64.tar.gz \
+  | docker load
+docker run -d --name amni-chat-relay --restart unless-stopped \
+  -v amni_chat:/data -e AMNI_CHAT_TUNNEL=cloudflare amni-chat-relay</code></pre>
+<p>Then <code>docker logs amni-chat-relay</code> shows your address and QR code. Everything the relay keeps lives in the <code>amni_chat</code> volume.</p>
+<p>With your own domain instead of the tunnel:</p>
+<pre class="g-code"><code>docker run -d --name amni-chat-relay --restart unless-stopped \
+  -v amni_chat:/data -p 80:80 -p 443:443 \
+  -e AMNI_CHAT_DOMAIN=chat.example.com amni-chat-relay</code></pre>
+</div>
+<div class="g-sec" id="connect">
+<h2>Connect your apps</h2>
+<div class="g-grid">
+<div class="g-card"><h3>Android</h3><p>Settings &rsaquo; Advanced &rsaquo; Relay server. Paste your address. When creating an account, tap <b>Change server</b> first.</p></div>
+<div class="g-card"><h3>iPhone</h3><p>Settings &rsaquo; Relay. Paste your address. When creating an account, open <b>Advanced</b> first.</p></div>
+<div class="g-card"><h3>Web</h3><p>Open your relay&rsquo;s address in a browser. The web app is built in, and it already talks to your relay.</p></div>
+</div>
+<p>Everyone you chat with needs to be on the same relay. Send them your address.</p>
+</div>
+<div class="g-sec" id="address">
+<h2>A permanent address</h2>
+<p>The free tunnel address changes whenever the relay restarts, and the apps then need the new one. For an address that stays put, use a domain:</p>
+<ol class="g-steps">
+<li>Point a domain or subdomain at your computer&rsquo;s public IP address with an <b>A record</b>, for example <code>chat.example.com</code>.</li>
+<li>Forward TCP ports <b>80</b> and <b>443</b> on your router to that computer. A cloud server usually has them open already.</li>
+<li>Run the installer again and type the domain when asked, or edit <code>AMNI_CHAT_DOMAIN</code> in <code>relay.env</code> and restart.</li>
+</ol>
+<p>The relay gets and renews its own Let&rsquo;s Encrypt certificate. There&rsquo;s no separate web server or certbot to run.</p>
+<p class="g-note">Already use Cloudflare? A named Cloudflare Tunnel pointing at <code>http://localhost:8991</code> also gives a fixed address without opening ports.</p>
+</div>
+<div class="g-sec" id="haven">
+<h2>Sign in with Haven</h2>
+<p>Run a <a href="amni-haven.html">Haven</a> server? Your members can sign in to Amni-Chat with their Haven account and find each other by Haven name.</p>
+<ol class="g-steps">
+<li>Give the relay your Haven address: answer the installer&rsquo;s second question, or set <code>AMNI_CHAT_HAVEN_URL=https://haven.example.com</code> in <code>relay.env</code>.</li>
+<li>To make the relay members-only, set <code>AMNI_CHAT_HAVEN_ONLY=1</code>. Then only people who sign in with that Haven server can create an account or send messages.</li>
+<li>To allow only certain members, list them: <code>AMNI_CHAT_HAVEN_USERS=alice,bob</code>.</li>
+</ol>
+<p>In the apps, <b>Sign in with Haven</b> appears when creating an account and in Settings. It opens Haven, the person taps <b>Approve</b>, and they come back signed in. Friends can then search for <code>@theirname</code>.</p>
+<p class="g-note">Haven tells the relay who signed in, and the relay keeps only the username. Haven never sees Amni-Chat messages, and the relay never sees Haven passwords.</p>
+</div>
+<div class="g-sec" id="calls">
+<h2>Calls</h2>
+<p>Most calls connect phone to phone. When a network blocks that, the call goes through a TURN server, and the relay starts its own.</p>
+<p>The built-in TURN server needs UDP port <b>3478</b> and UDP ports <b>49160&ndash;49200</b> to reach your computer. It opens them on your router automatically when the router supports UPnP; otherwise, forward them by hand. Without them, calls still work on most networks and fall back to public TURN servers on the rest.</p>
+</div>
+<div class="g-sec" id="push">
+<h2>Notifications</h2>
+<ul class="g-list">
+<li><b>Web app:</b> works out of the box. The relay makes its own Web Push keys.</li>
+<li><b>Android without Google:</b> install a UnifiedPush distributor such as ntfy, then turn on Settings &rsaquo; Notifications &rsaquo; Google-free push.</li>
+<li><b>Android and iPhone through Google and Apple:</b> optional. Set <code>AMNI_CHAT_FCM_SA</code> to a Firebase service-account file you own.</li>
+</ul>
+<p>An open app always gets messages instantly over its live connection, with no push service at all.</p>
+</div>
+<div class="g-sec" id="care">
+<h2>Update, back up, remove</h2>
+<div class="g-grid">
+<div class="g-card"><h3>Update</h3><p>Run the install command again, or download the new Windows zip over the old folder. Your data and settings stay.</p></div>
+<div class="g-card"><h3>Back up</h3><p>Copy the <b>data</b> folder. It holds the database and the relay&rsquo;s keys. Restore it to move the relay to another computer.</p></div>
+<div class="g-card"><h3>Remove</h3><p>The installer prints the exact commands. On Windows, close the window and delete the folder.</p></div>
+</div>
+<table class="spec-table">
+<tr><th>WHERE THINGS LIVE</th><th>LINUX / MAC</th><th>WINDOWS</th></tr>
+<tr><td>Program</td><td><code>~/.local/share/amni-chat-relay</code>, or <code>/opt/amni-chat-relay</code> with sudo</td><td>the folder you unzipped</td></tr>
+<tr><td>Settings</td><td><code>relay.env</code> in the program folder</td><td><code>relay.env</code></td></tr>
+<tr><td>Data</td><td><code>data/</code>, or <code>/var/lib/amni-chat-relay</code> with sudo</td><td><code>data\</code></td></tr>
+<tr><td>Logs</td><td><code>journalctl --user -u amni-chat-relay</code> (Linux; drop <code>--user</code> with sudo), <code>data/relay.log</code> (Mac)</td><td>the window</td></tr>
+</table>
+</div>
+<div class="g-sec" id="settings">
+<h2>All settings</h2>
+<p>Put these in <code>relay.env</code>, or pass them with <code>-e</code> to Docker, then restart. None are required.</p>
+<table class="spec-table">
+<tr><th>SETTING</th><th>WHAT IT DOES</th></tr>
+<tr><td><code>AMNI_CHAT_DOMAIN</code></td><td>Your domain. Serves HTTPS on port 443 with an automatic certificate.</td></tr>
+<tr><td><code>AMNI_CHAT_EMAIL</code></td><td>Email for certificate expiry notices.</td></tr>
+<tr><td><code>AMNI_CHAT_TUNNEL</code></td><td><code>cloudflare</code> for the free https address. Leave it off with a domain.</td></tr>
+<tr><td><code>AMNI_CHAT_TURN</code></td><td><code>builtin</code> runs the bundled TURN server for calls.</td></tr>
+<tr><td><code>AMNI_CHAT_TURN_PUBLIC_IP</code></td><td>Your public IP, if the relay can&rsquo;t find it on its own.</td></tr>
+<tr><td><code>AMNI_CHAT_HAVEN_URL</code></td><td>Your Haven server, for Sign in with Haven.</td></tr>
+<tr><td><code>AMNI_CHAT_HAVEN_ONLY</code></td><td><code>1</code> lets only Haven members use the relay.</td></tr>
+<tr><td><code>AMNI_CHAT_HAVEN_USERS</code></td><td>Comma-separated Haven usernames allowed in.</td></tr>
+<tr><td><code>AMNI_CHAT_DATA</code></td><td>The data folder. Set by the installer.</td></tr>
+<tr><td><code>AMNI_CHAT_BIND</code></td><td>Local address and port. Default <code>0.0.0.0:8991</code>.</td></tr>
+<tr><td><code>AMNI_CHAT_INBOX_TTL_DAYS</code></td><td>How long undelivered messages wait. Default 30.</td></tr>
+<tr><td><code>AMNI_CHAT_BLOB_TTL_DAYS</code></td><td>How long encrypted attachments are kept. Default 30.</td></tr>
+<tr><td><code>AMNI_CHAT_FCM_SA</code></td><td>Firebase service account, for Google and Apple push.</td></tr>
+</table>
+<p class="g-note">The relay makes its own secrets on first start and keeps them in <code>data/secrets.env</code>. Don&rsquo;t change <code>AMNI_CHAT_PEPPER</code> once people have signed up, or nobody can be found by number any more.</p>
+</div>
+<div class="g-sec" id="trouble">
+<h2>Troubleshooting</h2>
+<dl class="g-faq">
+<dt>The app says it can&rsquo;t reach the relay.</dt><dd>Open the address in a browser. If the web app loads, check that the app has exactly that address, starting with <code>https://</code>. If it doesn&rsquo;t load, check the logs.</dd>
+<dt>The address stopped working after a restart.</dt><dd>That&rsquo;s the free tunnel: it gets a new address each time. Look in <code>data/public-url.txt</code> for the new one, or set up <a href="#address">a permanent address</a>.</dd>
+<dt>No certificate for my domain.</dt><dd>Ports 80 and 443 must reach this computer, and the domain&rsquo;s A record must point at its public IP. The logs say what Let&rsquo;s Encrypt answered.</dd>
+<dt>Calls connect but there&rsquo;s no audio or video.</dt><dd>The call needed TURN and couldn&rsquo;t reach it. Forward UDP 3478 and 49160&ndash;49200, or set <code>AMNI_CHAT_TURN_PUBLIC_IP</code>.</dd>
+<dt>Sign in with Haven never finishes.</dt><dd>The person must already be logged in to Haven in that browser. Approvals expire after a minute; start again from the app.</dd>
+</dl>
+</div>
+<div class="g-sec" id="privacy">
+<h2>What the relay can see</h2>
+<p>Messages are encrypted on the phone before they reach the relay, with keys that rotate weekly. The relay stores sealed messages until they&rsquo;re delivered, public keys, hashed phone numbers and emails, Haven names of people who signed in with Haven, and timestamps. It sees when a device connects and from which IP address, and keeps that only in memory. It can&rsquo;t read messages, calls or attachments. More on the <a href="amni-chat-relay.html">relay page</a>.</p>
+</div>
+</article>
+</div>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. The relay stores ciphertext only.</p>
+</footer>
+</body>
+</html>

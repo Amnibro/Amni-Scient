@@ -125,12 +125,12 @@
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>END-TO-END ENCRYPTED</h4>
-<p>X25519 key agreement, HKDF-SHA256 and ChaCha20-Poly1305, with Ed25519 signatures. The same code path on Android, iPhone and web. Attachments are encrypted before upload.</p>
+<p>X25519 key agreement, HKDF-SHA256 and ChaCha20-Poly1305, with Ed25519 signatures. Each device signs a fresh key every week for forward secrecy. The same code path on Android, iPhone and web. Attachments are encrypted before upload.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></div>
 <h4>FIND PEOPLE PRIVATELY</h4>
-<p>Look someone up by phone number or email. The lookup is blinded, so the relay matches it without learning who you searched for. It stores a keyed hash, never the number itself.</p>
+<p>Look someone up by phone number or email. The lookup is blinded, so the relay matches it without learning who you searched for. It stores a keyed hash, never the number itself. Or sign in with your <a href="amni-haven.html">Haven</a> account and find friends by @name.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></div>
@@ -194,7 +194,7 @@
 <h2>LIMITS</h2>
 <p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">It&rsquo;s a beta. The Android build installs from an APK while Google reviews the Play test; iPhone is on TestFlight. Both are on the <a href="beta.html#app-chat">beta page</a>.</p>
 <p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The Bluetooth mesh, nostr and SMS are Android only. iPhone and the web app always go through a relay.</p>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Messages are sealed with each device&rsquo;s long-term keys. There&rsquo;s no per-message key ratchet yet, so someone who steals a device&rsquo;s keys could open messages that device can read.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Messages are sealed to keys that each device replaces every week and then erases, so keys stolen later can&rsquo;t open older messages. ThereThere&rsquo;s no per-message ratchet yet: someone who takes a device can read what it received in the last few weeks.rsquo;s no per-message ratchet yet, so someone who steals a deviceThere&rsquo;s no per-message ratchet yet: someone who takes a device can read what it received in the last few weeks.rsquo;s keys could open intercepted messages from the last seven weeks.</p>
 <p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Encryption hides what you say, not that you&rsquo;re online: a relay, and your network, can see when your device connects. The license is AGPL-3.0; the source code isn&rsquo;t public yet.</p>
 </section>
 <section>
