@@ -91,7 +91,7 @@ function faceOfTri(m,t){const i3=t*3,G=m.groups;let lo=0,hi=G.length-1;while(lo<
 function cast(e,o={}){const cv=A.renderer.domElement,r=cv.getBoundingClientRect(),rc=new T.Raycaster();rc.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),A.camera);rc.params.Line2={threshold:6};const L=[...U.objs.values()].filter(x=>x.g.visible&&!(o.skip&&o.skip.has(x.me.userData.c)));if(!L.length)return null;
   const fh=rc.intersectObjects(L.map(x=>x.me),false)[0],loc=(x,p)=>p.clone().applyMatrix4(x.g.matrixWorld.clone().invert()).toArray().map(v=>+v.toFixed(5));let best=null;
   if(fh){const x=U.objs.get(fh.object.userData.c);best={c:fh.object.userData.c,kind:'face',id:faceOfTri(x.m,fh.faceIndex),pick:loc(x,fh.point),pt:fh.point.toArray(),dist:fh.distance};}
-  if(o.edges!==false&&!A.S.disp.includes('shaded')){const eh=rc.intersectObjects(L.map(x=>x.ed),false)[0];if(eh&&(!fh||eh.distance<=fh.distance+sizeL()*0.01)){const x=U.objs.get(eh.object.userData.c),v=eh.faceIndex*2,gr=x.m.egroups.find(g=>v>=g[0]&&v<g[0]+g[1]);if(gr)best={c:eh.object.userData.c,kind:'edge',id:gr[2],pick:loc(x,eh.point),pt:eh.point.toArray(),dist:eh.distance};}}
+  if(o.edges!==false&&!lite()&&!A.S.disp.includes('shaded')){const eh=rc.intersectObjects(L.map(x=>x.ed),false)[0];if(eh&&(!fh||eh.distance<=fh.distance+sizeL()*0.01)){const x=U.objs.get(eh.object.userData.c),v=eh.faceIndex*2,gr=x.m.egroups.find(g=>v>=g[0]&&v<g[0]+g[1]);if(gr)best={c:eh.object.userData.c,kind:'edge',id:gr[2],pick:loc(x,eh.point),pt:eh.point.toArray(),dist:eh.distance};}}
   return best;}
 const refOf=s=>{const m=meshOf(comp(s.c).part);return s.kind==='face'?{c:s.c,face:{pick:s.pick,t:m&&m.faces[s.id]&&m.faces[s.id].type}}:s.kind==='edge'?{c:s.c,edge:{pick:s.pick}}:null;};
 const entOf=ref=>ref&&ASM.resolver(doc(),meshOf)(ref),entW=ref=>{const e=entOf(ref),c=comp(ref.c);return e&&c?MT.worldEnt(U.live&&U.live.get(c.id)||MT.poseOf(c),e):ref&&ref.c===MT.ORIGIN?e:null;};
@@ -101,7 +101,7 @@ function rayPlane(e,pl){const cv=A.renderer.domElement,r=cv.getBoundingClientRec
 function hud(t,s){t?(U.hud.replaceChildren(A.h('b',{html:t}),A.h('small',null,s||'')),U.hud.classList.add('on')):U.hud.classList.remove('on');}
 function down(e){if(!U||!U.on)return;U.tc.camera=A.camera;const cv=A.renderer.domElement;if(e.target!==cv)return;if(U.mo){e.stopPropagation();e.preventDefault();return;}if(e.button===2){U.rd={x:e.clientX,y:e.clientY};return;}if(e.button!==0)return;
   if(U.tc.object){U.tc.pointerHover(U.tc._getPointer(e));if(U.tc.axis){A.controls.enabled=false;return;}}
-  const hit=cast(e),pro=document.body.classList.contains('pro');U.pd={x:e.clientX,y:e.clientY,hit,add:e.shiftKey||e.ctrlKey||e.metaKey,mode:'click',touch:e.pointerType==='touch'||e.pointerType==='pen'};clearTimeout(U.lp);if(U.pd.touch&&!U.mate){const pd=U.pd,cx=e.clientX,cy=e.clientY;U.lp=setTimeout(()=>{if(U.pd===pd&&pd.mode==='click'){pd.lp=true;menuAt({clientX:cx,clientY:cy,target:cv});}},520);}
+  const hit=cast(e),pro=document.body.classList.contains('pro');U.pd={x:e.clientX,y:e.clientY,hit,add:e.shiftKey||e.ctrlKey||e.metaKey,mode:'click',touch:e.pointerType==='touch'||e.pointerType==='pen'};clearTimeout(U.lp);if(U.pd.touch&&!U.mate){const pd=U.pd,cx=e.clientX,cy=e.clientY;U.lp=setTimeout(()=>{if(U.pd===pd){pd.lp=true;menuAt({clientX:cx,clientY:cy,target:cv});}},520);}
   if(hit&&!U.mate&&(pro||e.altKey||isSel(hit.c))||!hit&&(pro||e.shiftKey)){U.pd.mode=hit?e.altKey?'smart':'drag':'box';e.stopPropagation();e.preventDefault();try{cv.setPointerCapture(e.pointerId);}catch{}A.controls.enabled=false;}}
 let hovRaf=0,movRaf=0,lastE=null;
 function move(e){if(!U||!U.on)return;if(U.tc.dragging)return;const p=U.pd;if(U.mo){lastE=e;movRaf||(movRaf=requestAnimationFrame(()=>{movRaf=0;U.mo&&U.mo.update(lastE);}));return;}
@@ -160,14 +160,14 @@ const MTI={coincident:'⧗',concentric:'◎',distance:'↔',angle:'∠',parallel
 function openMate(type,edit){const ents=U.sel.filter(s=>s.kind!=='comp'),m=edit?JSON.parse(JSON.stringify(asm().mates.find(x=>x.id===edit))):{type:type||'coincident'};if(!edit){const a=ents[0],b=ents.find(s=>a&&s.c!==a.c);if(a)m.a={...refOf(a),pick0:a};if(b)m.b={...refOf(b),pick0:b};if(!type&&m.a&&m.b){const s=MT.suggest(entOf(m.a),entOf(m.b));if(s.length)m.type=s[0];}}U.mate={m,edit:edit||null,slot:null};U.mate.slot=MT.refKeys(m).find(k=>!m[k])||null;U.panel='mate';U.tc.detach();mateAuto();}
 function onum(label,key,unit,set,m){const h=A.h;return h('div',{class:'fld'},h('label',null,label),h('div',{class:'ex'},h('input',{type:'number',step:'any',value:m[key]??'',placeholder:'none',onkeydown:e=>e.stopPropagation(),onchange:e=>set(key,e.target.value===''?undefined:+e.target.value)}),h('span',null,unit||'')));}
 function mechFields(m,set){const t=m.type,h=A.h,o=(l,k,u)=>onum(l,k,u,set,m),L=AU(),flip=()=>h('button',{class:'btn sm'+(m.flip?' pri':''),onclick:()=>set('flip',m.flip?undefined:true)},'⇅ Reverse direction'),tog=(l,k)=>h('button',{class:'btn sm'+(m[k]?' pri':''),onclick:()=>set(k,m[k]?undefined:true)},l);
-  if(t==='hinge')return[o('Drive angle','v','°'),o('Lower limit','lo','°'),o('Upper limit','hi','°'),h('div',{class:'row',style:'margin:6px 0'},flip())];
-  if(t==='slider')return[o('Drive position','v',L),o('Lower limit','lo',L),o('Upper limit','hi',L),h('div',{class:'row',style:'margin:6px 0;gap:6px'},flip(),tog('Free to spin','free'))];
-  if(t==='screw')return[o('Pitch (advance per turn)','pitch',L),o('Starts','starts',''),o('Drive angle','v','°'),o('Lower limit','lo','°'),o('Upper limit','hi','°'),h('div',{class:'row',style:'margin:6px 0;gap:6px'},tog('Left hand','rev'),flip())];
-  if(t==='gear')return[o('Ratio (turns of A per turn of B)','ratio',''),o('Phase offset','ph','°'),h('div',{class:'row',style:'margin:6px 0'},tog('Same direction (internal gear)','rev'))];
-  if(t==='rack')return[o('Pinion pitch radius','r',L),h('div',{class:'row',style:'margin:6px 0'},h('button',{class:'btn sm',onclick:()=>set('sg',-(m.sg||1))},'⇅ Reverse direction'))];
+  if(t==='hinge')return[o('Drive angle','v','°'),o('Lower limit','lo','°'),o('Upper limit','hi','°'),h('div',{class:'row',style:'margin:7px 0'},flip())];
+  if(t==='slider')return[o('Drive position','v',L),o('Lower limit','lo',L),o('Upper limit','hi',L),h('div',{class:'row',style:'margin:7px 0;gap:7px'},flip(),tog('Free to spin','free'))];
+  if(t==='screw')return[o('Pitch (advance per turn)','pitch',L),o('Starts','starts',''),o('Drive angle','v','°'),o('Lower limit','lo','°'),o('Upper limit','hi','°'),h('div',{class:'row',style:'margin:7px 0;gap:7px'},tog('Left hand','rev'),flip())];
+  if(t==='gear')return[o('Ratio (turns of A per turn of B)','ratio',''),o('Phase offset','ph','°'),h('div',{class:'row',style:'margin:7px 0'},tog('Same direction (internal gear)','rev'))];
+  if(t==='rack')return[o('Pinion pitch radius','r',L),h('div',{class:'row',style:'margin:7px 0'},h('button',{class:'btn sm',onclick:()=>set('sg',-(m.sg||1))},'⇅ Reverse direction'))];
   if(t==='cam')return[o('Roller radius','rr',L),h('div',{class:'note'},'Pick the cam bore (A) and a point or ball on the follower (B). The follower stays on the cam outline.')];
   if(t==='universal')return[o('Yoke phase','phase','°')];
-  if(t==='path')return[o('Position along the path (0 to 1)','v',''),h('div',{class:'row',style:'margin:6px 0'},tog('Turn to follow the path','tang'))];
+  if(t==='path')return[o('Position along the path (0 to 1)','v',''),h('div',{class:'row',style:'margin:7px 0'},tog('Turn to follow the path','tang'))];
   if(t==='limit_distance')return[o('Smallest distance','lo',L),o('Largest distance','hi',L)];
   if(t==='limit_angle')return[o('Smallest angle','lo','°'),o('Largest angle','hi','°')];
   return[];}
