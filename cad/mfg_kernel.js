@@ -49,3 +49,5 @@ export async function dxf({body,doc},a={}){const an=analyzeBody(body,doc);if(!an
 export async function toolpath({body,doc},a={}){const an=analyzeBody(body,doc);if(!an.part.sheet||!an.part.sheet.loops.length)throw new Error('Toolpaths need a flat sheet part for now');const L=await camLib(),r=JSON.parse(L.sheet_cam(JSON.stringify(an.part.sheet.loops),an.part.sheet.t,JSON.stringify(a.job||{})));
   return{...r,kind:an.kind};}
 export async function catalog(){const L=await camLib();return{cam:JSON.parse(L.cam_catalog()),shop:JSON.parse(L.shop_default())};}
+export async function program(_,a={}){const L=await camLib();return JSON.parse(L.cam_program(JSON.stringify(a.jobs||[])));}
+export async function simulate(_,a={}){if(!a.gcode)throw new Error('No G-code to simulate');return(await import('./gcode_sim.js')).simulate(a.gcode,a);}
