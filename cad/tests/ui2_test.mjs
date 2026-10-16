@@ -132,7 +132,7 @@ if(want('mouse')){
   ok(JSON.stringify(await ev(()=>Object.values(window.amnicad.API.keys.presets).map(v=>v.n)))===JSON.stringify(['Left-drag orbit','Classic CAD mouse','Right-drag orbit','Trackpad']),'mouse presets use generic names');await p.close();
 }
 if(want('aa')){
-  const p=await open({w:1440,ui:'workshop'});await p.addScriptTag({type:'module',content:"import * as L from '/cad/lookcore.js';window.__lc=L;"});await sleep(600);
+  const p=await open({w:1440,ui:'workshop'});await p.evaluate(async()=>{window.__lc=await import('/cad/lookcore.js');});
   for(const ui of['amni','workshop','blueprint'])for(const th of['dark','light','hc']){await p.evaluate((ui,th)=>{const A=window.amnicad.API;A.ui.setMode(ui);A.look.apply({theme:th});A.ui.pick&&A.ui.pick(0);},ui,th);await sleep(700);const t=await p.evaluate(CON),d=await p.evaluate(DOMC);ok(!t.length,`AA tokens ${ui} ${th}`,t.join('; '));ok(!d.length,`AA rendered text ${ui} ${th}`,d.join('; '));ui==='workshop'&&await shot(p,'aa-'+ui+'-'+th);}
   await p.close();
 }
