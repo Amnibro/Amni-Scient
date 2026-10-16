@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-CAD Privacy and Export Control | Local-First CAD | AMNI-SCIENT</title>
+<meta name="description" content="What Amni-CAD keeps on your device, what its optional cloud features send and to whom, how the zero-knowledge vault works, classification banners, and the offline single-file copy. Facts only, no compliance claims.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-CAD Privacy and Export Control | Local-First CAD | AMNI-SCIENT">
+<meta property="og:description" content="What Amni-CAD keeps on your device, what its optional cloud features send and to whom, how the zero-knowledge vault works, classification banners, and the offline single-file copy. Facts only, no compliance claims.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-cad-privacy.html">
+<meta property="og:image" content="https://amni-scient.com/assets/cad/og-cad.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/amni-cad-privacy.html">
+<link rel="stylesheet" href="css/style.css?v=b263">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}.tw{overflow-x:auto;margin:1.1rem 0;-webkit-overflow-scrolling:touch}.tw .spec-table{margin:0;min-width:560px}.tw .spec-table td,.tw .spec-table th{white-space:nowrap;vertical-align:top}.tw .spec-table td.l,.tw .spec-table th.l{white-space:normal;min-width:15rem}.tw .spec-table .n{text-align:right;font-variant-numeric:tabular-nums}.shot{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--elev-1)}.prose{max-width:820px;line-height:1.85;color:var(--dim);font-size:.9rem}.prose p+p{margin-top:1rem}.prose strong,.prose b{color:var(--text)}.pl{margin:.8rem 0 .8rem 1.1rem;display:grid;gap:.45rem;color:var(--dim);font-size:.9rem;line-height:1.65;max-width:820px}.pl b{color:var(--text)}.pass{color:#1b7f4b;font-weight:700}[data-theme=dark] .pass{color:#5fd08f}.fail{color:#c0392b;font-weight:700}[data-theme=dark] .fail{color:#ff8a7a}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;line-height:1.8;color:var(--text);overflow-x:auto;white-space:pre;max-width:820px}.note{font-size:.8rem;color:var(--dim);max-width:820px;line-height:1.7}.sw{display:none}@media(max-width:700px){.sw{display:block;font-size:.76rem;color:var(--dim);margin-top:.9rem}}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:1.2rem;align-items:start}</style>
+</head>
+<body class="pp theme-cad">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html" class="active">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 18 82 36v38L50 92 18 74V36z" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round" fill="var(--accent-dim)"/>
+<path d="M18 36 50 54l32-18M50 54v38" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round" opacity=".6"/>
+<circle cx="50" cy="54" r="4" fill="var(--accent)"/>
+</svg>
+</div>
+<h1>PRIVACY &amp; EXPORT CONTROL</h1>
+<p class="desc">ON YOUR HARDWARE &bull; NO TELEMETRY &bull; ZERO-KNOWLEDGE VAULT &bull; OFFLINE COPY</p>
+<div class="cta-row" style="margin-top:2rem;gap:1rem;flex-wrap:wrap">
+<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
+<a href="amni-cad.html#pricing" class="btn btn-outline">PRICING</a>
+</div>
+</div>
+<section>
+<h2>THE SHORT VERSION</h2>
+<div class="prose"><p>Amni-CAD is designed to keep technical data on hardware you control. The modeling kernel, the simulation solvers, drawings and quotes all run in your browser, on your computer. The free tier needs no account and has no telemetry or activity logging. Your designs are not uploaded.</p><p>A few optional features talk to other services when you turn them on. This page lists each one, what it sends and who receives it. Everything here comes from the Amni-CAD source code and the project documentation. It is a statement of how the software works, not a legal opinion.</p></div>
+</section>
+<section>
+<h2>WHAT STAYS ON YOUR DEVICE</h2>
+<ul class="pl"><li><b>Geometry:</b> the OpenCascade modeling kernel runs as WebAssembly in a browser worker.</li><li><b>Simulation:</b> stress, modes, heat, flow and mold fill are solved on your own CPU and GPU.</li><li><b>Drawings, tolerances and quotes:</b> computed in the page. The quote engine is a WebAssembly module loaded with the app.</li><li><b>Saved designs:</b> kept in your browser&rsquo;s local storage and IndexedDB (your last seven designs and their undo history, so you can recover one) or in files you download. Amni-Scient never receives them.</li><li><b>Share links:</b> the whole design is carried inside the link after the <code>#</code>, a part of a web address that browsers do not send to a web server.</li><li><b>Shop rates and settings:</b> saved in your browser only.</li><li><b>No account, no telemetry:</b> the app has no sign-in for the free tier and contains no analytics, tracking or activity logging. The only network connections the app opens are the optional ones listed below.</li></ul>
+<p class="note">Loading the app downloads its own files from amni-scient.com, which is hosted on Cloudflare. That is an ordinary page request, like visiting any website. The app page loads no third-party scripts, fonts or analytics, and it carries a Content-Security-Policy that lists the only outside servers it may contact. The one exception is the optional on-device AI engine, which downloads a runtime script and a model from the hosts named in the table below the first time you use it.</p>
+</section>
+<section>
+<h2>WHAT THE OPTIONAL FEATURES SEND</h2>
+<p class="prose">None of these is used until you set it up or click it. Each row says what leaves your computer and where it goes.</p>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Feature</th><th class="l">What is sent</th><th class="l">To whom</th></tr></thead><tbody><tr><td class="l">AI assistant with your own API key</td><td class="l">Your prompt, the current part (name, material, finish, parameters, feature list, size, errors and an assembly summary), the faces and edges you have selected, the latest stress, flow, mold-fill, toolpath and G-code results, and any images or PDF text you attach. Your API key goes in the request header.</td><td class="l">The provider you pick, straight from your browser: Anthropic (api.anthropic.com), OpenAI (api.openai.com), Google (generativelanguage.googleapis.com) or OpenRouter (openrouter.ai). Amni-Scient never receives the key, the prompt or the design.</td></tr><tr><td class="l">AI assistant on a server on your computer</td><td class="l">The same request as above.</td><td class="l">A server you run yourself, such as Ollama or LM Studio, at localhost or 127.0.0.1. The page&rsquo;s security policy does not allow other addresses.</td></tr><tr><td class="l">AI assistant on this device (Amni-LLM)</td><td class="l">On first use, only file requests for the runtime (wllama 2.4.0, a script and WebAssembly files) and for the model weights. Your prompts and designs are not part of those requests, and once the files are downloaded the model runs on your device.</td><td class="l">cdn.jsdelivr.net serves the runtime. huggingface.co and its download servers serve the model file. These hosts can see your IP address and which files you ask for. Neither download is checked against a published hash.</td></tr><tr><td class="l">Local AI bridge</td><td class="l">Commands and results between the page and your AI assistant app, such as Claude Code, Claude Desktop, Codex, Gemini CLI or Cursor.</td><td class="l">A small script on your own computer. The page connects to 127.0.0.1 only. It is off until you turn it on.</td></tr><tr><td class="l">Remote link (phone to Claude)</td><td class="l">The commands your Claude connector sends and the results the page returns, which can include model state and screenshots.</td><td class="l">The Amni-CAD relay, a Cloudflare Worker, which forwards them between the page and Claude. The app states that nothing is stored or logged, and that anyone with the link can edit the design you have open, so keep it private. It is off until you turn it on.</td></tr><tr><td class="l">Pro checkout</td><td class="l">The plan (monthly or yearly) and the seat count. You enter payment details on Stripe&rsquo;s page, not ours.</td><td class="l">The Amni-CAD license server (a Cloudflare Worker), which creates a Stripe checkout session, and Stripe.</td></tr><tr><td class="l">Pro license renewal and billing</td><td class="l">Only the license key, during the last 10 days of a subscription period, or when you open Manage billing. Keys that are not subscriptions never renew.</td><td class="l">The Amni-CAD license server and Stripe. Nothing about your designs or your use is sent.</td></tr><tr><td class="l">Vault server</td><td class="l">Ciphertext and signed log entries, described in the next section.</td><td class="l">The vault server you connect to with an invite link. Your organization chooses and runs it.</td></tr></tbody></table></div></section>
+<section>
+<h2>THE ZERO-KNOWLEDGE VAULT (PRO)</h2>
+<div class="prose"><p>The vault is encrypted part data management inside the editor. Parts, assemblies, BOMs, revisions, check-out locks, change orders and comments are encrypted on each person&rsquo;s device. The vault server stores ciphertext and a signed, hash-chained log that it can verify but cannot read.</p></div>
+<ul class="pl"><li><b>Identity:</b> each person has an Ed25519 signing key and an X25519 key, both derived from one 32-byte seed. On disk the seed is sealed with XChaCha20-Poly1305 under an Argon2id key (64 MiB, 3 passes). An admin confirms the key fingerprint out of band when approving a join request.</li><li><b>Clearances and compartments:</b> a vault has 1 to 8 clearance levels, each with its own key, and need-to-know compartments, each with its own key. An item is encrypted under all the keys of its level and compartments together. Someone who is not cleared sees only a reserved number and a &ldquo;Restricted&rdquo; placeholder.</li><li><b>Revocation:</b> lowering a clearance, removing a compartment or removing a member rotates every revoked key and reseals it to the remaining holders only.</li><li><b>Files:</b> content-defined chunks are compressed, then sealed with a per-chunk key derived from the item&rsquo;s classification keys. Chunk IDs are HMACs, so the server cannot confirm guesses about content.</li><li><b>Log:</b> every change is signed by its author and chained to the previous entry. Every client replays the log with the same rules, so an entry that breaks a rule is recorded as rejected and changes nothing.</li></ul>
+<h3 style="margin:1.6rem 0 .4rem">WHAT THE VAULT SERVER CAN SEE</h3>
+<ul class="pl"><li>Vault IDs, member public keys, roles and clearances</li><li>The classification labels on each entry and file (not item names or compartment names)</li><li>Entry counts, sizes and author-supplied timestamps</li><li>Opaque lock IDs, and chunk counts and sizes</li><li>Names typed into join requests</li></ul>
+<p class="note">The vault server software is separate from the Amni-CAD web app. Where it runs is your organization&rsquo;s decision.</p>
+</section>
+<section>
+<h2>CLASSIFICATION BANNERS ON DRAWINGS (PRO)</h2>
+<div class="prose"><p>Drawings can carry a classification banner and a distribution statement on the sheets. The banner picker offers CUI, CONFIDENTIAL, PROPRIETARY, ITAR CONTROLLED and EAR CONTROLLED, or your own text. Distribution statements A through F are available as written, or you can type your own. When a part is linked to the vault, the banner is filled in from the part&rsquo;s clearance.</p><p>These are markings that you choose and apply. Amni-CAD does not decide what classification or export category your data has.</p></div>
+</section>
+<section>
+<h2>THE OFFLINE SINGLE-FILE COPY</h2>
+<div class="prose"><p>For machines that are never connected to a network, the Amni-CAD desktop project has a standalone build that packs the whole app, the modeling kernel, the solvers and the quote engine into a single HTML file of about 16 MB. You open it from disk in Chrome or Edge, and it serves its own files from inside the page. Its self-test opens it from disk, builds a part, solves stress and flow, prices and generates a toolpath, makes a drawing and checks that the design is still there after a reload. We ran that self-test on October 15, 2026: all checks passed, and the page made no network requests. A Pro license key is verified on the device, so pasting a key in works offline. <a href="contact.html">Contact us</a> for a copy of the standalone file or for a fixed-term or perpetual license key for an air-gapped site.</p></div>
+</section>
+<section>
+<h2>EXPORT CONTROL AND COMPLIANCE</h2>
+<div class="prose"><p>Amni-CAD is not certified or accredited for ITAR, EAR or CMMC, and we do not claim that it makes you compliant with any of them. It is designed to keep technical data on hardware you control: computation is local, the free tier sends nothing, optional cloud features are off until you use them, and the vault stores only ciphertext on its server.</p><p><strong>Compliance determinations are yours.</strong> Whether a given design, tool or workflow meets your obligations, including how you deploy the vault server, which AI features you allow, and who holds license keys, is for your organization and its compliance counsel to decide. If you handle controlled data, you can use the offline copy and leave every optional feature off.</p></div>
+</section>
+<section>
+<h2>TRY IT ON YOUR OWN PART</h2>
+<p class="prose">Amni-CAD is free, needs no account and runs in Chrome or Edge on a computer with a mouse. Pro is $15 per seat per month or $150 per seat per year.</p>
+<div class="cta-row" style="gap:1rem;flex-wrap:wrap;margin-top:1.2rem">
+<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
+<a href="amni-cad.html#pricing" class="btn btn-outline">PRICING</a>
+<a href="amni-cad-shops.html" class="btn btn-outline">FOR JOB SHOPS</a>
+<a href="amni-cad-verification.html" class="btn btn-outline">VERIFICATION</a>
+<a href="amni-cad-privacy.html" class="btn btn-outline">PRIVACY</a>
+<a href="contact.html" class="btn btn-outline">CONTACT</a>
+</div>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-10-15">October 15, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
