@@ -380,4 +380,17 @@ done=ASM.apply(dd,[{pattern:{type:'linear',seed:'c2',n:2,step:[0,0,0]}},{mirror:
 chk('pattern, mirror and configuration ops run immediately',done.length===3&&!done[0].startsWith('⚠')&&!done[1].startsWith('⚠'),done.join(' | '));
 done=ASM.apply(dd,[{mate:{type:'hinge',a:{c:'c1',axis:'Z'},b:{c:'c2',face:{type:'CYLINDER',r:2.5}},lo:-30,hi:45}},{motion:{dur:2,fps:10,motors:[{mate:'m1',kind:'const',rate:10}]}}]);chk('new mate types, limits and motion studies are accepted by the AI ops',done[0].startsWith('mate')&&done[1].startsWith('motion')&&dd.asm.mates.at(-1).hi===45&&dd.asm.motion.studies.length===1,done.join(' | '));
 }
+{
+const AD=await import('../asm_draw.js'),HF=await import('../hwfit.js'),mo8=d_=>pid=>meshes.get(pid+ASM.sigOf(d_,pid)),ratioOf=txt=>{const m=/^([\d.]+):([\d.]+)$/.exec(txt);return m?+m[1]/+m[2]:null;};
+const STD=['50:1','20:1','10:1','5:1','4:1','2:1','1:1','1:2','1:4','1:5','1:10','1:20','1:50','1:100','1:200'];
+for(const u of['in','mm']){const k=u==='in'?25.4:1,w=u==='in'?[3,2,0.5,0.281]:[75,50,12,7],dd=u==='in'?fresh():{units:'mm',name:'Assembly',params:[],features:[]};ASM.ensure(dd);
+  const pl={name:'Plate',units:u,material:'al6061',params:[],features:[{id:'f1',type:'box',w:w[0],d:w[1],h:w[2]},{id:'f2',type:'hole',plane:'XY',offset:w[2],d:w[3],thru:true,pts:[[-w[0]/3,0],[w[0]/3,0]]}]},a=ASM.addPart(dd,pl);ASM.insert(dd,a,{fix:true});ASM.insert(dd,a,{p:[0,0,w[2]],fix:true});await build(dd);
+  HF.smartInsert(dd,mo8(dd),{c:'c2',kind:'shcs'});await build(dd);ASM.setPoses(dd,ASM.solveDoc(dd,mo8(dd),{analyze:false}));
+  const g={L:ASM.sizeOf(dd,mo8(dd)),ent:ASM.resolver(dd,mo8(dd)),center:id=>{const c=dd.asm.comps.find(x=>x.id===id),b=mo8(dd)(ASM.pk(c)).props.bbox,kk=ASM.kOf(dd,ASM.pk(c));return M.xf(M.poseOf(c),[0,1,2].map(i=>(b.min[i]+b.max[i])/2*kk));}};ASM.autoExplode(dd,g);const off=ASM.offsets(dd);
+  const inst=dd.asm.comps.map(c=>({id:c.id,key:ASM.sigOf(dd,ASM.pk(c)),p:c.p,q:c.q,k:ASM.kOf(dd,ASM.pk(c)),name:c.name,off:off[c.id]||[0,0,0]}));
+  for(const vw of['iso','front']){const kr=await AK.drawAsm(ctx,{inst,units:u,views:[vw]});const dr=AD.compose(kr.P,ASM.bom(dd),{units:u,views:[vw],anchors:kr.anchors,name:'Scale test'}),txt=dr.sheet.items.filter(q=>q.t==='tx').map(q=>q.txt),stated=txt.map(ratioOf).filter(Boolean),sc=dr.sheet.scaleTxt,r=ratioOf(sc),bb=kr.P.views[vw].bb,svg=dr.svg(),vis=/<g class="vis"[^>]*>(.*?)<\/g>/s.exec(svg)[1],nums=[...vis.matchAll(/[ML]([\d.-]+) ([\d.-]+)/g)].map(m=>[+m[1],+m[2]]),minx=Math.min(...nums.map(n=>n[0])),maxx=Math.max(...nums.map(n=>n[0])),printed=maxx-minx,expect=(bb[2]-bb[0])*k*r;
+    chk(u+' '+vw+' view: the stated scale '+sc+' is a standard scale and the sheet says it',STD.includes(sc)&&txt.includes(sc)&&!txt.some(t=>/ISOMETRIC VIEW \(SCALE/.test(t)),sc+' on '+dr.sheet.sheet);
+    chk(u+' '+vw+' view: a length measured on the SVG ('+printed.toFixed(2)+' mm) equals the model length × the stated scale ('+expect.toFixed(2)+' mm)',Math.abs(printed-expect)<0.02*expect+0.05,'width '+((bb[2]-bb[0])).toFixed(3)+' '+u+' at '+sc);
+    chk(u+' default sheet is '+(u==='in'?'ANSI':'metric'),u==='in'?/^ANSI/.test(dr.sheet.sheet):/^A\d/.test(dr.sheet.sheet),dr.sheet.sheet);}}
+}
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
