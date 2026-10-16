@@ -314,13 +314,13 @@ export async function runFEA(inp,prog){
 }
 function edt1(f,n,d,v,z){let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;for(let q=1;q<n;q++){let s;while(true){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0){k--;continue;}if(s<=z[k]){k--;}break;}k++;v[k]=q;z[k]=s;z[k+1]=1e20;}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];}}
 export function wallThickness(inp){
-  const{pos,idx,bbox,volume,res}=inp,h=Math.cbrt(Math.max(volume,1e-9)/Math.max(4000,Math.min(res||60000,400000))),G=voxelize(pos,idx,bbox,h),{nx,ny,nz}=G,N=nx*ny*nz,INF=1e12,D=new Float64Array(N);
+  const{pos,idx,bbox,volume,res}=inp,h=Math.cbrt(Math.max(volume,1e-9)/Math.max(4000,Math.min(res||60000,400000))),G=voxelize(pos,idx,{min:bbox.min.map(v=>v-2*h),max:bbox.max.map(v=>v+2*h)},h),{nx,ny,nz}=G,N=nx*ny*nz,INF=1e12,D=new Float64Array(N);
   for(let e=0;e<N;e++)D[e]=G.solid[e]?INF:0;
   const m=Math.max(nx,ny,nz),f=new Float64Array(m),d=new Float64Array(m),v=new Int32Array(m),z=new Float64Array(m+1);
   const pass=(len,stride,starts)=>{for(const s0 of starts){for(let q=0;q<len;q++)f[q]=D[s0+q*stride];edt1(f,len,d,v,z);for(let q=0;q<len;q++)D[s0+q*stride]=d[q];}};
   const sx=[],sy=[],sz=[];for(let k=0;k<nz;k++)for(let j=0;j<ny;j++)sx.push((k*ny+j)*nx);for(let k=0;k<nz;k++)for(let i=0;i<nx;i++)sy.push(k*ny*nx+i);for(let j=0;j<ny;j++)for(let i=0;i<nx;i++)sz.push(j*nx+i);
   pass(nx,1,sx);pass(ny,nx,sy);pass(nz,nx*ny,sz);
   let minT=Infinity,at=null,hist=[0,0,0,0,0,0,0,0];
-  for(let k=1;k<nz-1;k++)for(let j=1;j<ny-1;j++)for(let i=1;i<nx-1;i++){const e=(k*ny+j)*nx+i;if(!G.solid[e])continue;const c=D[e];let ridge=true;for(let dk=-1;dk<=1&&ridge;dk++)for(let dj=-1;dj<=1&&ridge;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj&&!dk)continue;if(D[e+(dk*ny+dj)*nx+di]>c+1e-9){ridge=false;break;}}if(!ridge)continue;const t=2*Math.sqrt(c)*h-h*0;if(t<minT){minT=t;at=[G.ox+(i+0.5)*h,G.oy+(j+0.5)*h,G.oz+(k+0.5)*h];}hist[Math.min(7,Math.floor(t/(h*2)))]++;}
+  for(let k=1;k<nz-1;k++)for(let j=1;j<ny-1;j++)for(let i=1;i<nx-1;i++){const e=(k*ny+j)*nx+i;if(!G.solid[e])continue;const c=D[e];let ridge=true;for(let dk=-1;dk<=1&&ridge;dk++)for(let dj=-1;dj<=1&&ridge;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj&&!dk)continue;if(D[e+(dk*ny+dj)*nx+di]>c+1e-9){ridge=false;break;}}if(!ridge)continue;const t=2*Math.sqrt(c)*h-h;if(t<minT){minT=t;at=[G.ox+(i+0.5)*h,G.oy+(j+0.5)*h,G.oz+(k+0.5)*h];}hist[Math.min(7,Math.floor(t/(h*2)))]++;}
   return{minT:isFinite(minT)?minT:null,at,h};
 }

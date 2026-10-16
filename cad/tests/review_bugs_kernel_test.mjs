@@ -1,4 +1,4 @@
-import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';import * as R from '../vendor/replicad.js';import {MATS} from '../schema.js';import {THERMAL,KCOND,condK} from '../thermal_data.js';
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';import {wallThickness} from '../fea.js';import {TEMPLATES_IN} from '../templates.js';import * as R from '../vendor/replicad.js';import {MATS} from '../schema.js';import {THERMAL,KCOND,condK} from '../thermal_data.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let bad=0,n=0;const ok=(c,m)=>{n++;console.log((c?'PASS ':'FAIL ')+m);c||bad++;};
 const R_vol=b=>Math.abs(R.measureVolume(b));const build=async d=>{K.resetCache();return K.build(d);};
@@ -22,4 +22,5 @@ const w=condK(null,'mystery');ok(w.k===167&&/No thermal conductivity/.test(w.war
 {const h={name:'H',units:'in',params:[],features:[{id:'f1',type:'hole',plane:'XY',d:0.25,thru:true,pts:[[0,0]]}]},r=await build(h);ok(r.errors.length===1&&/hole needs a body/.test(r.errors[0].msg)&&!r.body,'B9 a hole with no body reports an error instead of a solid pin: '+(r.errors[0]&&r.errors[0].msg));
 const s2=await build({...h,features:[{id:'f0',type:'box',w:1,d:1,h:0.5,suppressed:true},...h.features]});ok(s2.errors.some(e=>/hole needs a body/.test(e.msg)),'B9 a suppressed base feature gives the same error');
 const s3=await build({...h,features:[{id:'f0',type:'box',w:1,d:1,h:0.5},{id:'f1',type:'hole',plane:'XY',offset:0.5,d:0.25,thru:true,pts:[[0,0]]}]});ok(!s3.errors.length&&Math.abs(R_vol(s3.body)-(0.5-Math.PI*0.125**2*0.5))<1e-3,'B9 a hole in a body still cuts');}
+{const t=JSON.parse(JSON.stringify(TEMPLATES_IN.find(x=>x.key==='bracket').doc)),r=await build(t),m=K.meshBody(r.body),w=wallThickness({pos:m.pos,idx:m.idx,bbox:m.props.bbox,volume:m.props.volume,res:80000});ok(w.minT>0.1875*0.85&&w.minT<0.1875*1.15,'B13 L-bracket (t = 0.1875 in) wall measures within 15 percent, not twice the thickness: '+w.minT.toFixed(4)+' in');}
 console.log(`${n-bad}/${n} passed`);process.exit(bad?1:0);
