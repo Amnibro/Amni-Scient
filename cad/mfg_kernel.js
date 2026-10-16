@@ -26,7 +26,7 @@ export function analyzeBody(body,doc){
     if(t>tol&&capsOK&&wallsOK&&Math.abs(topA-botA)<0.01*topA&&Math.abs(vol-topA*t)<0.012*vol){const up=caps.find((q,i)=>Math.abs(offs[i]-top)<tol*10&&dot(q.n,n)>0)||big,nn=up.n,o=up.c,ref=Math.abs(nn[2])>0.9?[1,0,0]:[0,0,1],ex=Math.abs(nn[2])>0.9?nrm(sub(ref,nn.map(v=>v*dot(ref,nn)))):nrm(cross(ref,nn)),ey=cross(nn,ex),pr=p=>{const d=sub(p,o);return[dot(d,ex)*k,dot(d,ey)*k];};
       const tops=caps.filter((q,i)=>Math.abs(offs[i]-top)<tol*10),loops=[];for(const q of tops){const ws=[q.f.clone().outerWire(),...q.f.clone().innerWires()];for(const w of ws)loops.push(...chain(w.edges.map(e=>edgeSegs(e,pr,size*k)),size*k*1e-5+1e-6));}
       sheet={t:t*k,loops,bends:0,cut_len:0,blank:topA*k*k,pierces:loops.length};frame={o,ex,ey,n:nn,k};}
-    else{const cand=[];for(const a of planes)for(const b of planes){if(a.i>=b.i||dot(a.n,b.n)>-0.9999)continue;const d=dot(sub(a.c,b.c),b.n);if(d>tol*10)cand.push(+(d*k).toFixed(4));}
+    else{const cand=[];for(const a of planes)for(const b of planes){if(a.i>=b.i||dot(a.n,b.n)>-0.9999)continue;const d=dot(sub(a.c,b.c),a.n);if(d>tol*10)cand.push(+(d*k).toFixed(4));}
       const cnt=new Map();cand.forEach(d=>cnt.set(d,(cnt.get(d)||0)+1));const tk=[...cnt.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0])[0];
       if(tk){const t=tk[0]/k,S=area-2*vol/t,cyl=F.filter(q=>q.cyl&&!q.closedCirc),bends=Math.round(cyl.filter(a=>cyl.some(b=>b!==a&&Math.abs(Math.abs(dot(a.cyl.d,b.cyl.d))-1)<1e-4&&Math.abs(Math.abs(a.cyl.r-b.cyl.r)-t)<0.02*t+tol)).length/2);
         if(bends>0&&S>0&&S<0.35*area)sheet={t:t*k,loops:[],bends,cut_len:S/t*k,blank:vol/t*k*k,pierces:1+F.filter(q=>q.cyl&&q.closedCirc).length/1};}}}
