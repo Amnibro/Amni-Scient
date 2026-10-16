@@ -49,7 +49,7 @@ export function localEnt(m,ref,k=1){if(!ref)return null;if(ref.plane){const n={X
   if(ref.vertex){const p=ref.vertex.pick||ref.vertex,e=nearestEdge(m,p),q=m.edges[e];if(!q)return null;return scl({k:'point',p:len(sub(q.a,p))<len(sub(q.b,p))?q.a:q.b},k);}
   return null;}
 export function worldEnt(P,e){return e&&{...e,p:xf(P,e.p),...(e.n?{n:qrot(P.q,e.n)}:{}),...(e.d?{d:qrot(P.q,e.d)}:{})};}
-export const MATES={coincident:'Coincident',concentric:'Concentric',distance:'Distance',angle:'Angle',parallel:'Parallel',perpendicular:'Perpendicular',tangent:'Tangent',lock:'Lock',width:'Width',symmetric:'Symmetric'};
+export const MATES={coincident:'Coincident',concentric:'Concentric',distance:'Distance',angle:'Angle',parallel:'Parallel',perpendicular:'Perpendicular',tangent:'Tangent',lock:'Lock',width:'Width',symmetric:'Symmetric',limit:'Limit'};
 export const EXTRA={width:['a','a2','b','b2'],symmetric:['a','b','s']};
 export const refKeys=m=>EXTRA[m.type]||(m.type==='lock'?['a','b']:['a','b']);
 const RK={plane:0,line:1,sphere:2,point:3},DIRK=e=>e.k==='plane'?e.n:e.k==='line'?e.d:null,bad=t=>{throw new Error(t);};
@@ -59,6 +59,7 @@ export function mres(m,E,L=1){const t=m.type,s=m.align==='aligned'?-1:1,sg=m.fli
   if(t==='width'){const{a,a2,b,b2}=E;if(![a,a2,b,b2].every(e=>e&&e.k==='plane'))bad('Width needs four flat faces: the two sides of the slot on one part and the two sides of the tab on the other.');return[...cross(a.n,b.n),dot(sub(mid(b.p,b2.p),mid(a.p,a2.p)),a.n)/L];}
   if(t==='symmetric'){const{a,b,s:S}=E;if(!S||S.k!=='plane')bad('Symmetric needs a flat face or plane to mirror about.');if(a.k!==b.k)bad('Symmetric needs two entities of the same kind (two faces, two points or two axes).');
     if(a.k==='plane')return[...cross(b.n,mirror(a.n,S.n)),(dot(sub(a.p,S.p),S.n)+dot(sub(b.p,S.p),S.n))/L];if(a.k==='line'){const pa=sub(a.p,mul(S.n,2*dot(sub(a.p,S.p),S.n)));return[...cross(b.d,mirror(a.d,S.n)),...mul(cross(sub(b.p,pa),b.d),1/L)];}return[dot(sub(mid(a.p,b.p),S.p),S.n)/L,...mul(cross(sub(b.p,a.p),S.n),1/L)];}
+  if(t==='limit'){const{a,b}=E;if(!a||!b||a.k!=='plane'||!b.p)bad('Limit needs a flat face or plane on one part and a face, plane or point on the other.');const d=dot(sub(b.p,a.p),a.n)*sg,lo=Math.min(+m.lo||0,+m.hi||0),hi=Math.max(+m.lo||0,+m.hi||0);return[(d-Math.min(hi,Math.max(lo,d)))/L];}
   let a=E.a,b=E.b;if(!a||!b)bad('Pick two entities.');if(RK[a.k]>RK[b.k])[a,b]=[b,a];const pk=a.k+'-'+b.k,P=e=>e.k==='sphere'?'point':e.k,q=P(a)+'-'+P(b),dl=(x,y)=>len(cross(sub(y.p,x.p),x.d));
   if(t==='parallel'||t==='perpendicular'||t==='angle'){const x=DIRK(a),y=DIRK(b);if(!x||!y)bad(MATES[t]+' needs flat faces, straight edges or axes.');if(t==='parallel')return cross(x,y);if(t==='perpendicular')return[dot(x,y)];const ang=Math.atan2(len(cross(x,y)),dot(x,y)),want=(m.flip?180-v:v)*Math.PI/180;return[ang-want];}
   if(t==='concentric'){if(a.k==='plane')bad('Concentric needs round faces, round edges, axes or points.');if(q==='line-line')return[...cross(a.d,b.d),...mul(cross(sub(b.p,a.p),a.d),1/L)];if(q==='line-point')return mul(cross(sub(b.p,a.p),a.d),1/L);return mul(sub(a.p,b.p),1/L);}
@@ -85,11 +86,11 @@ export function solve(st,opt={}){const t0=performance.now(),L=st.L||1,C=new Map(
     if(bad2)errors.push({id:m.id,msg:bad2});}
   const par=new Map(),find=x=>{while(par.get(x)!==x){par.set(x,par.get(par.get(x)));x=par.get(x);}return x;};for(const l of live)for(const c of l.free)par.has(c)||par.set(c,c);for(const l of live)for(let i=1;i<l.free.length;i++)par.set(find(l.free[i]),find(l.free[0]));
   const clusters=new Map();for(const c of par.keys()){const r=find(c);clusters.has(r)||clusters.set(r,{comps:[],mates:[]});clusters.get(r).comps.push(c);}for(const l of live)if(l.free.length)clusters.get(find(l.free[0])).mates.push(l);
-  const conflicts=[],redundant=[],dof={},info={};let iters=0,ok=true;
+  const conflicts=[],redundant=[],dof={},info={};let iters=0,ok=true,mob=0;
   for(const l of live)if(!l.free.length){const r=mres(l.m,world(l.m,l.R,pose),L);if(Math.sqrt(ss(r))>tol*10){ok=false;conflicts.push({id:l.m.id,with:[],msg:'Both components are fixed, so this mate cannot move them. Float one of them.'});}else if(opt.analyze)redundant.push(l.m.id);}
-  for(const cl of clusters.values()){const res=solveCluster(cl,pose,L,opt,tol);iters+=res.it;cl.comps.forEach((c,i)=>pose.set(c,res.P[i]));if(!res.ok){ok=false;for(const k of res.conflicts)conflicts.push(k);}redundant.push(...res.redundant);Object.assign(dof,res.dof);Object.assign(info,res.info);}
-  for(const c of st.comps)if(!(c.id in dof))dof[c.id]=c.fix?0:6;
-  return{ok:ok&&!conflicts.length,poses:pose,dof,info,total:Object.values(dof).reduce((a,b)=>a+b,0),errors,conflicts,redundant,it:iters,ms:performance.now()-t0,clusters:clusters.size};}
+  for(const cl of clusters.values()){const res=solveCluster(cl,pose,L,opt,tol);iters+=res.it;cl.comps.forEach((c,i)=>pose.set(c,res.P[i]));if(!res.ok){ok=false;for(const k of res.conflicts)conflicts.push(k);}redundant.push(...res.redundant);Object.assign(dof,res.dof);Object.assign(info,res.info);mob+=res.mob??Object.values(res.dof).reduce((p,q)=>p+q,0);}
+  for(const c of st.comps)if(!(c.id in dof)){dof[c.id]=c.fix?0:6;mob+=dof[c.id];}
+  return{ok:ok&&!conflicts.length,poses:pose,dof,info,total:Object.values(dof).reduce((a,b)=>a+b,0),mobility:mob,errors,conflicts,redundant,it:iters,ms:performance.now()-t0,clusters:clusters.size};}
 function world(m,R,pose){const E={};for(const k in R)E[k]=worldEnt(pose.get(R[k].c),R[k].e);if(m.type==='lock'){E.Pa=pose.get(R.a.c);E.Pb=pose.get(R.b.c);}return E;}
 function solveCluster(cl,pose,L,opt,tol){const K=cl.comps.length,n=6*K,ix=new Map(cl.comps.map((c,i)=>[c,i])),base=cl.comps.map(c=>pose.get(c)),dr=opt.drag&&ix.has(opt.drag.c)?opt.drag:null,tg=opt.target&&ix.has(opt.target.c)?opt.target:null;
   const P=(x,i)=>({p:add(base[i].p,[x[6*i],x[6*i+1],x[6*i+2]]),q:qn(qmul(qexp([x[6*i+3],x[6*i+4],x[6*i+5]]),base[i].q))}),pm=x=>{const M=new Map(pose);cl.comps.forEach((c,i)=>M.set(c,P(x,i)));return M;},one=(x,i)=>{const M=new Map(pose);M.set(cl.comps[i],P(x,i));return M;};
@@ -100,10 +101,10 @@ function solveCluster(cl,pose,L,opt,tol){const K=cl.comps.length,n=6*K,ix=new Ma
     const T=Array.from({length:K},()=>[]);B.forEach(b=>b.cs.forEach(i=>T[i].push(b)));return{B,T,rows:off};};
   const sys=S=>({rf:x=>{const r=new Array(S.rows);for(const b of S.B){const v=b.f(x);for(let k=0;k<b.n;k++)r[b.off+k]=v[k];}return r;},jf:(x,r0)=>{const J=Array.from({length:S.rows},()=>new Float64Array(n)),y=x.slice();for(let i=0;i<K;i++)for(let j=6*i;j<6*i+6;j++){const h=1e-7;y[j]=x[j]+h;for(const b of S.T[i]){const v=b.f(y);for(let k=0;k<b.n;k++)J[b.off+k][j]=(v[k]-r0[b.off+k])/h;}y[j]=x[j];}return J;}});
   const S1=mk(cl.mates,true),S0=mk(cl.mates,false),A1=sys(S1),A0=sys(S0),it=opt.iters||(dr||tg?24:60);let x=new Array(n).fill(0),R1=lm(n,A1.rf,A1.jf,x,it);x=R1.x;const R0=lm(n,A0.rf,A0.jf,x,it);x=R0.x;
-  const err=Math.sqrt(R0.err),ok=err<tol,out={P:cl.comps.map((c,i)=>P(x,i)),ok,it:R1.it+R0.it,err,conflicts:[],redundant:[],dof:{},info:{}};
+  const err=Math.sqrt(R0.err),ok=err<tol,out={P:cl.comps.map((c,i)=>P(x,i)),ok,it:R1.it+R0.it,err,conflicts:[],redundant:[],dof:{},info:{},mob:null};
   if(opt.fast&&ok)return out;
-  const J=A0.jf(x,A0.rf(x)),N=nullInfo(J,n,1e-6);cl.comps.forEach((c,i)=>{const sub6=(a,b)=>N.basis.map(v=>v.slice(6*i+a,6*i+b)),rk=M=>M.length?nullInfo(M,M[0].length,1e-6).rank:0;out.dof[c]=rk(sub6(0,6));out.info[c]={trans:rk(sub6(0,3)),rot:rk(sub6(3,6))};});
-  if(opt.analyze&&ok)for(const l of cl.mates){const S=mk(cl.mates.filter(z=>z!==l),false);if(!S.rows)continue;const Jm=sys(S).jf(x,sys(S).rf(x));if(nullInfo(Jm,n,1e-6).rank===N.rank)out.redundant.push(l.m.id);}
+  const act=cl.mates.filter(l=>l.m.type!=='limit'||Math.sqrt(ss(mres(l.m,world(l.m,l.R,pm(x)),L)))>tol),Sd=act.length===cl.mates.length?S0:mk(act,false),Ad=sys(Sd),J=Sd.rows?Ad.jf(x,Ad.rf(x)):[],N=nullInfo(J,n,1e-6);out.mob=N.basis.length;cl.comps.forEach((c,i)=>{const sub6=(a,b)=>N.basis.map(v=>v.slice(6*i+a,6*i+b)),rk=M=>M.length?nullInfo(M,M[0].length,1e-6).rank:0;out.dof[c]=rk(sub6(0,6));out.info[c]={trans:rk(sub6(0,3)),rot:rk(sub6(3,6))};});
+  if(opt.analyze&&ok)for(const l of act){const S=mk(act.filter(z=>z!==l),false);if(!S.rows)continue;const Jm=sys(S).jf(x,sys(S).rf(x));if(nullInfo(Jm,n,1e-6).rank===N.rank)out.redundant.push(l.m.id);}
   if(!ok){const r=A0.rf(x),by=S0.B.map((b,k)=>({l:cl.mates[k],e:Math.sqrt(ss(r.slice(b.off,b.off+b.n)))})).sort((p,q)=>q.e-p.e),bad3=[];for(const{l}of by.slice(0,40)){const S=mk(cl.mates.filter(z=>z!==l),false),Q=sys(S),R=lm(n,Q.rf,Q.jf,x.slice(),40);if(Math.sqrt(R.err)<tol)bad3.push(l);}const list=bad3.length?bad3:by.filter(z=>z.e>tol).map(z=>z.l);
     for(const l of list)out.conflicts.push({id:l.m.id,with:cl.mates.filter(z=>z!==l&&z.cs.some(c=>l.cs.includes(c))).map(z=>z.m.id),err:by.find(z=>z.l===l).e});}
   return out;}
