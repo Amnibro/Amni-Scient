@@ -1,6 +1,6 @@
 import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';
 const root=path.resolve(new URL('../..',import.meta.url).pathname),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),sleep=t=>new Promise(r=>setTimeout(r,t));
-export async function startE2E({web=18700,mcp=18701,width=1280,height=800}={}){
+export async function startE2E({web=+process.env.E2E_WEB||18700,mcp=+process.env.E2E_MCP||18701,width=1280,height=800}={}){
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-e2e-')),ud=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-e2e-ud-')),srv=spawn('python3',['-m','http.server',String(web),'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),ch=spawn(process.execPath,[SRV],{cwd:dir,env:{...process.env,AMNICAD_PORT:String(mcp),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(dir,'cfg')},stdio:['pipe','pipe','pipe']});
   let rid=0,buf='',b=null;const waiters=new Map();
   ch.stdout.on('data',d=>{buf+=d;let i;while((i=buf.indexOf('\n'))>=0){const m=JSON.parse(buf.slice(0,i));buf=buf.slice(i+1);waiters.get(m.id)?.(m);waiters.delete(m.id);}});
