@@ -15,6 +15,7 @@ function clean(pts,bz){
   if(!B.some(Boolean)){const k=P.map((p,i)=>{const a=P[(i+P.length-1)%P.length],b=P[(i+1)%P.length];return!(Math.abs(cr(a,p,b))<=1e-9*Math.hypot(p[0]-a[0],p[1]-a[1])*Math.hypot(b[0]-p[0],b[1]-p[1])&&(p[0]-a[0])*(b[0]-p[0])+(p[1]-a[1])*(b[1]-p[1])>0);});if(k.filter(Boolean).length>=3){P=P.filter((_,i)=>k[i]);B=P.map(()=>0);}}
   return{P,B};
 }
+export function selfCross(P){const n=node(P);return{bad:n.bad,at:n.at};}
 function node(P){
   const n=P.length,tol=scaleOf(P)*1e-7,sp=P.map(()=>[]);let first=null;
   const hit=(i,p,t)=>{sp[i].push({p,t});first=first||p;};

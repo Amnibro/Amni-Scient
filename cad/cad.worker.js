@@ -2,7 +2,7 @@ import opencascade from './vendor/replicad_single.js';
 import * as K from './kernel.js';
 const blobs={};
 let ghostMemo={shape:null,mesh:null};
-let ready=null,last=null,lastDoc=null;
+let ready=null,last=null,lastDoc=null,lastScope={};
 async function boot(){const oc=await opencascade({locateFile:()=>new URL('./vendor/replicad_single.wasm',import.meta.url).href,print:()=>{},printErr:()=>{}});await K.init(oc);return true;}
 ready=boot();
 const chain=[];let busy=false;
@@ -18,7 +18,7 @@ self.onmessage=e=>{
       if(m.cmd==='ping')return postMessage({id:m.id,ok:true});
       if(m.cmd==='blob'){blobs[m.key]=m.buf;return postMessage({id:m.id,ok:true});}
       if(m.cmd==='build'){
-        const r=await K.build(m.doc,{blobs,upto:m.upto});last=r.body;lastDoc=m.doc;
+        const r=await K.build(m.doc,{blobs,upto:m.upto});last=r.body;lastDoc=m.doc;lastScope=r.scope||{};
         const gi=m.ghost?m.doc.features.filter(f=>!f.suppressed).findIndex(f=>f.id===m.ghost):-1,gs=gi>0?K.shapeBefore(gi):null;
         if(gs&&ghostMemo.shape!==gs)ghostMemo={shape:gs,mesh:K.meshBody(gs,m.q||1)};
         const mesh=gs?ghostMemo.mesh:K.meshBody(r.body,m.q||1),preview=gs?K.meshBody(r.body,m.q||1):null;
@@ -34,6 +34,7 @@ self.onmessage=e=>{
         if(!sh)return postMessage({id:m.id,ok:true,lines:[],n:0});
         const lines=K.edgePolylines(sh,m.sel,m.faces);return postMessage({id:m.id,ok:true,lines,n:lines.length});
       }
+      if(m.cmd==='frame'||m.cmd==='which'){const feats=(lastDoc&&lastDoc.features||[]).filter(f=>!f.suppressed),i=m.fid?feats.findIndex(f=>f.id===m.fid):-1,sh=i>0?K.shapeBefore(i)||last:i===0?null:last;return postMessage({id:m.id,ok:true,r:m.cmd==="frame"?K.frameInfo(m.f,sh,lastScope):K.whichFeature(m.pt,feats.map(f=>f.id))});}
       if(m.cmd==='plugin'){const mod=await import(new URL(m.module,import.meta.url).href);const r=await mod[m.fn]({body:last,doc:lastDoc,K,blobs},m.args||{});return postMessage({id:m.id,ok:true,r},r&&r.transfer||[]);}
       throw new Error('unknown command '+m.cmd);
     }catch(err){postMessage({id:m.id,ok:false,error:String(err&&err.message||err)});}
