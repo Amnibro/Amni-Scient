@@ -1,7 +1,7 @@
 import path from 'node:path';
 import opencascade from '../vendor/replicad_single.js';
 import * as K from '../kernel.js';
-import * as MF from '../moldflow.js';
+import * as MF from '../injmold.js';
 const dir=path.dirname(new URL(import.meta.url).pathname),FAST=process.env.FAST==='1',rows=[];let fail=0;
 const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+x+')':''));};
 const bench=(name,exp,got,tol,unit='')=>{const e=Math.abs(got/exp-1)*100;rows.push([name,exp,got,unit,e,tol]);ok(e<tol,name,'expected '+exp.toPrecision(5)+unit+', measured '+got.toPrecision(5)+unit+', error '+e.toFixed(3)+' % < '+tol+' %');};

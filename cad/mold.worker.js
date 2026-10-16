@@ -1,4 +1,4 @@
-import * as MF from './moldflow.js';
+import * as MF from './injmold.js';
 let M=null,key='';
 const bufs=r=>{const s=new Set(),walk=o=>{if(!o||typeof o!=='object')return;if(ArrayBuffer.isView(o))return void s.add(o.buffer);for(const k in o)walk(o[k]);};walk(r);return[...s];};
 self.onmessage=e=>{const m=e.data,pg=q=>postMessage({id:m.id,progress:q});try{

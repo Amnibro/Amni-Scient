@@ -23,8 +23,8 @@ try{await sleep(700);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   S=await st();ok(S.comps.length===2&&near(S.comps[1].p[2],3,1e-6),'AI actions delete and insert components',S.comps.map(c=>c.id+'@'+c.p.map(v=>v.toFixed(2))).join(' '));
   const [sx,sy]=await p.evaluate((a)=>cw('c2',a),[xf[0],xf[1],topZ]),[tx,ty]=await p.evaluate((a)=>cw('c1',a),[mid[0]-(geo.max[0]-geo.min[0])*0.2,mid[1]-(geo.max[1]-geo.min[1])*0.2,topZ]);
   await p.mouse.move(sx,sy);await sleep(150);await p.keyboard.down('Alt');await p.mouse.down();for(let i=1;i<=12;i++){await p.mouse.move(sx+(tx-sx)*i/12,sy+(ty-sy)*i/12);await sleep(60);}await sleep(300);
-  const hudT=await p.evaluate(()=>document.getElementById('ahud').classList.contains('on')?document.getElementById('ahud').textContent:'');await shot('asm-02-smartmate-preview');
-  ok(/Coincident/.test(hudT)&&/Release/.test(hudT),'Alt-drag a face onto another part previews a SmartMate',hudT.slice(0,80));
+  const hudT=await p.evaluate(()=>document.getElementById('ahud').classList.contains('on')?document.getElementById('ahud').textContent:'');await shot('asm-02-quickmate-preview');
+  ok(/Coincident/.test(hudT)&&/Release/.test(hudT),'Alt-drag a face onto another part previews a quick mate',hudT.slice(0,80));
   await p.mouse.up();await p.keyboard.up('Alt');await settle(500);S=await st();let R=await res();
   ok(S.mates.length===1&&S.mates[0].type==='coincident'&&R.ok,'releasing adds the coincident mate and the assembly solves',JSON.stringify(S.mates));
   const z1=S.comps[1].p[2],c2q=S.comps[1].q;ok(R.dof.c2===3,'the quick-mated plate has 3 DOF left',R.dof.c2);
