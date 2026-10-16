@@ -23,7 +23,7 @@ self.onmessage=e=>{
         if(gs&&ghostMemo.shape!==gs)ghostMemo={shape:gs,mesh:K.meshBody(gs,m.q||1)};
         const mesh=gs?ghostMemo.mesh:K.meshBody(r.body,m.q||1),preview=gs?K.meshBody(r.body,m.q||1):null;
         const tr=gs?(preview?[preview.pos.buffer,preview.nrm.buffer,preview.idx.buffer,preview.lines.buffer]:[]):mesh?[mesh.pos.buffer,mesh.nrm.buffer,mesh.idx.buffer,mesh.lines.buffer]:[];
-        return postMessage({id:m.id,ok:true,mesh,preview,errors:r.errors,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
+        return postMessage({id:m.id,ok:true,mesh,preview,errors:r.errors,warnings:r.warnings,paramErrors:r.paramErrors,scope:r.scope,ms:r.ms,reused:r.reused},tr);
       }
       if(m.cmd==='export'){
         const b=K.exportBody(last,m.fmt,lastDoc&&lastDoc.units),buf=await b.arrayBuffer();

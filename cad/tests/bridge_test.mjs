@@ -5,6 +5,7 @@ import fs from'node:fs';
 import os from'node:os';
 import path from'node:path';
 import assert from'node:assert/strict';
+import {startE2E} from'./e2e_lib.mjs';
 const PORT=41790,DIR=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-bridge-')),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,sleep=t=>new Promise(r=>setTimeout(r,t));
 const ch=spawn(process.execPath,[SRV],{cwd:DIR,env:{...process.env,AMNICAD_PORT:String(PORT),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(DIR,'cfg')},stdio:['pipe','pipe','pipe']});
 let errLog='';ch.stderr.on('data',d=>errLog+=d);
@@ -22,6 +23,7 @@ function wsConnect({origin='http://127.0.0.1:8943',host='127.0.0.1:'+PORT}={}){r
   s.on('data',d=>{buf=Buffer.concat([buf,d]);if(!open){const i=buf.indexOf('\r\n\r\n');if(i<0)return;const head=buf.subarray(0,i).toString();buf=buf.subarray(i+4);if(!/^HTTP\/1\.1 101/.test(head)){s.destroy();return res({rejected:head.split('\r\n')[0]});}assert.equal(/Sec-WebSocket-Accept: (\S+)/.exec(head)[1],crypto.createHash('sha1').update(key+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64'));open=true;res(c);}
     while(buf.length>=2){const fin=buf[0]&0x80,op=buf[0]&15;let n=buf[1]&127,o=2;assert.equal(buf[1]&0x80,0);if(n===126){if(buf.length<4)return;n=buf.readUInt16BE(2);o=4;}else if(n===127){if(buf.length<10)return;n=Number(buf.readBigUInt64BE(2));o=10;}if(buf.length<o+n)return;const p=buf.subarray(o,o+n);buf=buf.subarray(o+n);if(op===9){c.sendRaw(10,p);continue;}if(op===10){c.pongs++;continue;}if(op===8){c.closed=true;c.closeCode=n>=2?p.readUInt16BE(0):0;continue;}parts.push(p);if(op===0)c.frags=(c.frags||0)+1;if(fin){const m=JSON.parse(Buffer.concat(parts).toString());parts=[];const w=c.waits.find(x=>x.pred(m));if(w){c.waits=c.waits.filter(x=>x!==w);w.ok(m);}else c.msgs.push(m);}}});
   s.on('close',()=>{c.closed=true;});s.on('error',rej);});}
+let E=null;
 const res=[];const ok=(n,v=true)=>{res.push(n);console.log('ok',n,v===true?'':v);};
 try{
   const init=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'bridge-test',version:'1'}});assert.equal(init.result.protocolVersion,'2025-06-18');assert.equal(init.result.serverInfo.name,'amnicad');ok('initialize echoes protocol');
@@ -58,5 +60,19 @@ try{
   const cfg=JSON.parse(fs.readFileSync(path.join(DIR,'cfg/bridge-tokens.json'),'utf8'));assert.ok(!JSON.stringify(cfg).includes(tok));assert.equal((fs.statSync(path.join(DIR,'cfg/bridge-tokens.json')).mode&0o777),0o600);ok('only token hashes stored, mode 600');
   const c0=T(await call('connection_status')).pairing_code,g4=await wsConnect();g4.send({t:'hello',v:1,app:'amnicad'});await g4.next();for(let i=0;i<5;i++){g4.send({t:'pair',code:String((+c0+1+i)%1e6).padStart(6,'0')});await g4.next();}const c1=T(await call('connection_status')).pairing_code;assert.notEqual(c1,c0);g4.send({t:'pair',code:c1});assert.match((await g4.next()).reason,/Too many/);g4.close();ok('5 wrong codes → new code + 60 s lockout');
   const unk=await call('bogus_tool');assert.equal(unk.isError,true);ok('unknown tool');
+  E=await startE2E();const pg=E.page,cardActs=[{new:true},{add:{type:'extrude',name:'Card',plane:'XY',offset:0,shapes:[{k:'rect',w:3.37,h:2.125,r:0.125}],depth:0.03,dir:'+',op:'add'}}];
+  const cs0=E.T(await E.call('apply_actions',{actions:cardActs}));assert.deepEqual(cs0.size,[3.37,2.125,0.03]);assert.deepEqual(cs0.errors,[]);
+  const cover=b64=>pg.evaluate(async d=>{const im=new Image();im.src='data:image/png;base64,'+d;await im.decode();const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const g=c.getContext('2d');g.drawImage(im,0,0);const q=g.getImageData(0,0,c.width,c.height).data;let n=0,t=0;for(let i=0;i<q.length;i+=16){t++;if(Math.abs(q[i]-q[0])+Math.abs(q[i+1]-q[1])+Math.abs(q[i+2]-q[2])>40)n++;}return{frac:n/t,w:im.width,h:im.height};},b64);
+  for(const v of['iso','top']){const sh=await E.call('screenshot',{view:v,max_width:800});assert.equal(sh.content[0].type,'image');const cv=await cover(sh.content[0].data);assert.ok(cv.frac>0.03&&cv.w>=64&&cv.h>=64,v+' card visible '+JSON.stringify(cv));ok('thin card framed and lit in '+v+' view',(cv.frac*100).toFixed(1)+'% of pixels differ from the corner');}
+  await pg.evaluate(()=>{const R=window.amnicad.API.renderer,e=R.getContext().getExtension('WEBGL_lose_context');window.__lose=e;e.loseContext();});await sleep(100);
+  const rec=await E.call('screenshot',{view:'iso',max_width:700});assert.ok(!rec.isError&&rec.content[0].type==='image','context loss recovers');assert.ok((await cover(rec.content[0].data)).frac>0.03);ok('lost WebGL context is restored and the shot has content');
+  const stub=()=>pg.evaluate(()=>{const e=window.__lose;e.loseContext();e.restoreContext=()=>{};Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});});
+  await stub();await sleep(100);const lo=await E.call('screenshot',{view:'iso'});assert.equal(lo.isError,true);assert.match(lo.content[0].text,/in the background on the device; bring it on screen and try again/);ok('unrecoverable lost context in a hidden page → clear error',lo.content[0].text);
+  await pg.evaluate(()=>{delete window.__lose.restoreContext;delete document.visibilityState;window.__lose.restoreContext();});await sleep(800);
+  const back=await E.call('screenshot',{view:'top',max_width:700});assert.ok(!back.isError,'page works after restore');ok('screenshot works again after restore');
+  await pg.evaluate(()=>{window.amnicad.API.scene.visible=false;});const fl=await E.call('screenshot',{view:'iso'});assert.equal(fl.isError,true);assert.match(fl.content[0].text,/came back empty[\s\S]*bring it on screen/);ok('blank frame is detected and reported, never returned',fl.content[0].text.slice(0,60));
+  await pg.evaluate(()=>{window.amnicad.API.scene.visible=true;document.getElementById('vp').style.display='none';});await sleep(300);const zs=await E.call('screenshot',{view:'iso'});assert.equal(zs.isError,true);assert.match(zs.content[0].text,/no size/);ok('zero-size viewport → clear error');
+  await pg.evaluate(()=>{document.getElementById('vp').style.display='';});await sleep(500);const fin=await E.call('screenshot',{view:'current',max_width:700});assert.ok(!fin.isError&&(await cover(fin.content[0].data)).frac>0.03);ok('viewport back → screenshot ok');
+  await pg.evaluate(()=>{const a=window.amnicad.API,c=a.camera;c.position.set(5e4,5e4,5e4);c.updateMatrixWorld();});const far=await E.call('screenshot',{});assert.ok(!far.isError&&(await cover(far.content[0].data)).frac>0.03);ok('model outside the frustum is re-framed automatically');
   console.log('\nALL',res.length,'PASS');
-}catch(e){console.error('FAIL',e);console.error(errLog);process.exitCode=1;}finally{ch.kill();fs.rmSync(DIR,{recursive:true,force:true});setTimeout(()=>process.exit(),100);}
+}catch(e){console.error('FAIL',e);console.error(errLog);process.exitCode=1;}finally{E&&await E.close();ch.kill();fs.rmSync(DIR,{recursive:true,force:true});setTimeout(()=>process.exit(),100);}
