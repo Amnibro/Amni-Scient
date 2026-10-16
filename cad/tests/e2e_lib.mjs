@@ -10,12 +10,12 @@ export async function startE2E({web=+process.env.E2E_WEB||18700,mcp=+process.env
     await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'e2e',version:'1'}});
     for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${web}/cad/`)).ok)break;}catch{}await sleep(250);}
     b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-    const page=await b.newPage();await page.setViewport({width,height});const errs=[];page.on('pageerror',e=>errs.push(e.message));
+    const page=await b.newPage();await page.setViewport({width,height});const errs=[],cons=[];page.on('pageerror',e=>errs.push(e.message));page.on('console',m=>m.type()==='error'&&cons.push(m.text()));
     await page.goto(`http://127.0.0.1:${web}/cad/`);
     await page.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});
     const code=T(await call('connection_status')).pairing_code;
     await page.evaluate(async(c,port)=>{const m=await import('./bridge.js');window.__br=m.connectBridge(window.amnicad.API,{port,span:1,code:c});},code,mcp);
     for(let i=0;i<70&&!T(await call('connection_status')).connected;i++)await sleep(250);
-    return{page,call,T,rpc,errs,close,sleep,dir};
+    return{page,call,T,rpc,errs,cons,close,sleep,dir,web,mcp,connect:async()=>{const code=T(await call('connection_status')).pairing_code;await page.evaluate(async(c,port)=>{const m=await import('./bridge.js');window.__br=m.connectBridge(window.amnicad.API,{port,span:1,code:c});},code,mcp);for(let i=0;i<70&&!T(await call('connection_status')).connected;i++)await sleep(250);}};
   }catch(e){await close();throw e;}
 }
