@@ -1,4 +1,4 @@
-import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';import {wallThickness} from '../fea.js';import {TEMPLATES_IN} from '../templates.js';import * as R from '../vendor/replicad.js';import {MATS} from '../schema.js';import {THERMAL,KCOND,condK} from '../thermal_data.js';
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';import {nlModel} from '../nl_study.js';import {wallThickness} from '../fea.js';import {TEMPLATES_IN} from '../templates.js';import * as R from '../vendor/replicad.js';import {MATS} from '../schema.js';import {THERMAL,KCOND,condK} from '../thermal_data.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let bad=0,n=0;const ok=(c,m)=>{n++;console.log((c?'PASS ':'FAIL ')+m);c||bad++;};
 const R_vol=b=>Math.abs(R.measureVolume(b));const build=async d=>{K.resetCache();return K.build(d);};
@@ -27,4 +27,11 @@ const s3=await build({...h,features:[{id:'f0',type:'box',w:1,d:1,h:0.5},{id:'f1'
 ok(r2.warnings.some(w=>/counterbore/.test(w.msg)&&/not shallower/.test(w.msg)),'B14 a counterbore deeper than the plate warns: '+(r2.warnings[0]&&r2.warnings[0].msg.slice(0,60)));
 const cyl=b=>b.faces.filter(f=>f.geomType==='CYLINDRE').map(f=>+(f.boundingBox.bounds[1][0]-f.boundingBox.bounds[0][0]).toFixed(3)).sort();
 ok(JSON.stringify(cyl(r2.body))==='[0.25,0.438]','B14 both the through hole and the counterbore diameters are kept: '+cyl(r2.body));}
+{const bx=await build({name:'N',units:'mm',params:[],features:[{id:'f1',type:'box',w:20,d:10,h:5}]}),mm=K.meshBody(bx.body),fid=(ax,sg)=>mm.faces.findIndex(f=>Math.abs(f.n[ax]-sg)<1e-6),top=fid(2,1),bot=fid(2,-1),px=fid(0,1),input={pos:mm.pos,idx:mm.idx,groups:mm.groups,bbox:mm.props.bbox,volume:mm.props.volume};
+const net=(L,d)=>L.filter(l=>l.dof===d).reduce((t,l)=>t+l.nodes.length*l.F,0),base={input,res:4000,plate:0,mat:'ss304',supports:[{faces:[bot],type:'fixed'}]};
+let r=await nlModel({...base,loads:[{faces:[top],p:2}]});ok(Math.abs(net(r.md.loads,2)+400)<0.5&&Math.abs(net(r.md.loads,0))<0.5,'B18 pressure load reaches the nonlinear model: net Z force '+net(r.md.loads,2).toFixed(2)+' N (want -400)');
+r=await nlModel({...base,loads:[{faces:[top],M:[0,0,100]}]});{const X=r.md.X,mz=r.md.loads.reduce((t,l)=>{const n=l.nodes[0];return t+(l.dof===1?X[3*n]*l.F:l.dof===0?-X[3*n+1]*l.F:0);},0);ok(Math.abs(mz)>1&&r.md.loads.length>8,'B18 torque load reaches the nonlinear model: moment about Z '+mz.toFixed(1)+' N mm (center offset included)');}
+r=await nlModel({...base,loads:[{faces:[top],F:[0,0,-50]}],gravity:true,rho:7850});ok(Math.abs(net(r.md.loads,2)+50+7850*1e-9*9.80665*1000)<0.01,'B18 force and gravity add up: '+net(r.md.loads,2).toFixed(4)+' N');
+r=await nlModel({...base,supports:[{faces:[px],type:'roller'},{faces:[bot],type:'fixed'}],loads:[{faces:[top],p:1}]});const rx=r.md.bc.filter(b=>b.name==='support'&&b.nodes.length&&Math.abs(r.md.X[3*b.nodes[0]]-10)<1e-6&&b.dof===0);ok(rx.length>=1,'B18 a roller on a +X face holds X, not Z');
+r=await nlModel({...base,supports:[{faces:[px],type:'roller',dir:'Y'}],loads:[{faces:[top],p:1}]});ok(r.md.bc.some(b=>b.dof===1&&Math.abs(r.md.X[3*b.nodes[0]]-10)<1e-6)&&!r.md.bc.some(b=>b.dof===0&&b.nodes.length&&Math.abs(r.md.X[3*b.nodes[0]]-10)<1e-6),'B18 a roller with an explicit direction holds that axis');}
 console.log(`${n-bad}/${n} passed`);process.exit(bad?1:0);
