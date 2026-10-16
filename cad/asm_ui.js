@@ -101,16 +101,16 @@ function rayPlane(e,pl){const cv=A.renderer.domElement,r=cv.getBoundingClientRec
 function hud(t,s){t?(U.hud.replaceChildren(A.h('b',{html:t}),A.h('small',null,s||'')),U.hud.classList.add('on')):U.hud.classList.remove('on');}
 function down(e){if(!U||!U.on)return;U.tc.camera=A.camera;const cv=A.renderer.domElement;if(e.target!==cv)return;if(U.mo){e.stopPropagation();e.preventDefault();return;}if(e.button===2){U.rd={x:e.clientX,y:e.clientY};return;}if(e.button!==0)return;
   if(U.tc.object){U.tc.pointerHover(U.tc._getPointer(e));if(U.tc.axis){A.controls.enabled=false;return;}}
-  const hit=cast(e),pro=document.body.classList.contains('pro');U.pd={x:e.clientX,y:e.clientY,hit,add:e.shiftKey||e.ctrlKey||e.metaKey,mode:'click'};
+  const hit=cast(e),pro=document.body.classList.contains('pro');U.pd={x:e.clientX,y:e.clientY,hit,add:e.shiftKey||e.ctrlKey||e.metaKey,mode:'click',touch:e.pointerType==='touch'||e.pointerType==='pen'};clearTimeout(U.lp);if(U.pd.touch&&!U.mate){const pd=U.pd,cx=e.clientX,cy=e.clientY;U.lp=setTimeout(()=>{if(U.pd===pd&&pd.mode==='click'){pd.lp=true;menuAt({clientX:cx,clientY:cy,target:cv});}},520);}
   if(hit&&!U.mate&&(pro||e.altKey||isSel(hit.c))||!hit&&(pro||e.shiftKey)){U.pd.mode=hit?e.altKey?'smart':'drag':'box';e.stopPropagation();e.preventDefault();try{cv.setPointerCapture(e.pointerId);}catch{}A.controls.enabled=false;}}
 let hovRaf=0,movRaf=0,lastE=null;
 function move(e){if(!U||!U.on)return;if(U.tc.dragging)return;const p=U.pd;if(U.mo){lastE=e;movRaf||(movRaf=requestAnimationFrame(()=>{movRaf=0;U.mo&&U.mo.update(lastE);}));return;}
   if(!p||p.mode==='click'){if(e.buttons||e.target!==A.renderer.domElement)return;hovRaf||(hovRaf=requestAnimationFrame(()=>{hovRaf=0;const h=cast(e),k=h?h.c+h.kind+h.id:'';if(k!==(U.hov?U.hov.c+U.hov.kind+U.hov.id:'')){U.hov=h;render();A.renderer.domElement.style.cursor=h?'pointer':'';}}));return;}
-  if(Math.hypot(e.clientX-p.x,e.clientY-p.y)<4)return;
+  if(Math.hypot(e.clientX-p.x,e.clientY-p.y)<(p.touch?10:4))return;clearTimeout(U.lp);
   if(p.mode==='box'){const r=$('#vp').getBoundingClientRect();Object.assign(U.rect.style,{display:'block',left:Math.min(p.x,e.clientX)-r.left+'px',top:Math.min(p.y,e.clientY)-r.top+'px',width:Math.abs(e.clientX-p.x)+'px',height:Math.abs(e.clientY-p.y)+'px'});return;}
   U.pd=null;startDrag(p,e);}
 function up(e){if(!U||!U.on)return;const p=U.pd,rd=U.rd;U.pd=null;U.rd=null;if(U.mo){e.button===0&&U.mo.end(true);return;}if(!U.tc.dragging)A.controls.enabled=true;U.rect.style.display='none';
-  if(e.button===2&&rd&&Math.hypot(e.clientX-rd.x,e.clientY-rd.y)<4&&e.target===A.renderer.domElement)return menuAt(e);if(!p)return;const moved=Math.hypot(e.clientX-p.x,e.clientY-p.y)>=4;
+  if(e.button===2&&rd&&Math.hypot(e.clientX-rd.x,e.clientY-rd.y)<4&&e.target===A.renderer.domElement)return menuAt(e);if(!p)return;clearTimeout(U.lp);if(p.lp)return;const moved=Math.hypot(e.clientX-p.x,e.clientY-p.y)>=(p.touch?10:4);
   if(p.mode==='box'&&moved)return boxSel(p,e);if(!moved&&e.target===A.renderer.domElement)clickSel(p.hit,p.add);}
 function clickSel(hit,add1){if(U.mate){if(hit){const k=U.mate.slot||MT.refKeys(U.mate.m).find(z=>!U.mate.m[z])||'b';let rf=refOf(hit);const ty=U.mate.m.type;if(rf&&k==='a'&&ty==='cam')rf={c:rf.c,cam:rf.face?{face:rf.face}:{edge:rf.edge}};else if(rf&&k==='a'&&ty==='path'&&rf.edge)rf={c:rf.c,path:rf.edge};U.mate.m[k]={...rf,pick0:hit};const ks=MT.refKeys(U.mate.m);U.mate.slot=ks.find(z=>!U.mate.m[z])||null;mateAuto();}return;}
   const it=hit&&{c:hit.c,kind:hit.kind,id:hit.id,pick:hit.pick};if(!it){if(!add1)U.sel=[];}else if(add1){const i=U.sel.findIndex(s=>s.c===it.c&&s.kind===it.kind&&s.id===it.id);i>=0?U.sel.splice(i,1):U.sel.push(it);}else U.sel=[it];U.panel=U.panel==='mate'?'props':U.panel;render();panels();}
