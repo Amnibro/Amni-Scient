@@ -58,7 +58,7 @@ export function loops(sk){
   const shapes=[],polys=[];
   for(const L of out){const pts=[],bulge=[],poly=[];for(const sg of L){pts.push([P[sg.from][0],P[sg.from][1]]);if(sg.e.k==='arc'){const{r,sw}=arcInfo(P,sg.e),ap=arcPoints(P,sg.e,24),fwd=sg.e.p[0]===sg.from,s=r*(1-Math.cos(sw/2));bulge.push(fwd?-s:s);poly.push(...(fwd?ap:ap.reverse()).slice(0,-1));}else{bulge.push(0);poly.push([P[sg.from][0],P[sg.from][1]]);}}polys.push(poly);shapes.push({k:'path',pts,bulge});}
   sk.ents.forEach(e=>{if(e.cons||e.k!=='circle')return;const C=P[e.p[0]],poly=[];for(let i=0;i<32;i++)poly.push([C[0]+e.r*Math.cos(i/32*2*Math.PI),C[1]+e.r*Math.sin(i/32*2*Math.PI)]);polys.push(poly);shapes.push({k:'circle',x:C[0],y:C[1],r:e.r});});
-  shapes.forEach((s,i)=>{const p0=polys[i][0],depth=polys.filter((q,j)=>j!==i&&inPoly(p0,q)).length;if(depth%2)s.hole=true;});
+  shapes.forEach((s,i)=>{const p0=polys[i][0],depth=polys.filter((q,j)=>j!==i&&inPoly(p0,q)).length;if(depth%2)s.hole=true;Object.defineProperty(s,'poly',{value:polys[i]});});
   if(!shapes.length)throw new Error('the sketch has no closed profile yet');
   return shapes;
 }

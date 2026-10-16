@@ -195,7 +195,7 @@ function sampleTris(pos,idx,tris,h,cb){
     for(const p of pts)cb(p,ar/pts.length,nrm);
   }
 }
-function prep(inp,def){
+export function prep(inp,def){
   const{pos,idx,groups,bbox,volume,res}=inp,target=Math.max(2000,Math.min(res||def,800000)),h=Math.cbrt(Math.max(volume,1e-9)/target),G=voxelize(pos,idx,bbox,h);
   let nAct=0;for(const v of G.solid)nAct+=v;if(nAct<8)throw new Error('part too thin for this resolution, raise resolution');
   const mask=activeNodeMask(G),NX=G.nx+1,NY=G.ny+1,NZ=G.nz+1,nn=NX*NY*NZ,dens=densOf(G),vol=new Float64Array(nn),h3=h*h*h/8;
@@ -237,14 +237,14 @@ async function statik(inp,P,prog){
   let nFixed=0;for(let n=0;n<nnod;n++)if(dof[3*n]||dof[3*n+1]||dof[3*n+2])nFixed++;
   return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,nFixed,backend:S.backend,gpuError:S.gpuError,hist:S.hist};
 }
-export function jacobiEig(A,m){
-  const V=new Float64Array(m*m);for(let i=0;i<m;i++)V[i*m+i]=1;let nf=0;for(let i=0;i<m*m;i++)nf+=A[i]*A[i];
+export function jacobiEig(A,m,Vo){
+  const V=Vo?Vo.fill(0):new Float64Array(m*m);for(let i=0;i<m;i++)V[i*m+i]=1;let nf=0;for(let i=0;i<m*m;i++)nf+=A[i]*A[i];
   for(let sw=0;sw<80;sw++){let off=0;for(let p=0;p<m;p++)for(let q=p+1;q<m;q++)off+=A[p*m+q]**2;if(off<=1e-30*nf)break;
     for(let p=0;p<m;p++)for(let q=p+1;q<m;q++){const apq=A[p*m+q];if(!apq)continue;const th=(A[q*m+q]-A[p*m+p])/(2*apq),t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c;
       for(let k=0;k<m;k++){const x=A[k*m+p],y=A[k*m+q];A[k*m+p]=c*x-s*y;A[k*m+q]=s*x+c*y;}
       for(let k=0;k<m;k++){const x=A[p*m+k],y=A[q*m+k];A[p*m+k]=c*x-s*y;A[q*m+k]=s*x+c*y;}
       for(let k=0;k<m;k++){const x=V[k*m+p],y=V[k*m+q];V[k*m+p]=c*x-s*y;V[k*m+q]=s*x+c*y;}}}
-  const ord=[...Array(m).keys()].sort((a,b)=>A[a*m+a]-A[b*m+b]);return{w:ord.map(i=>A[i*m+i]),V,ord};
+  if(Vo)return Vo;const ord=[...Array(m).keys()].sort((a,b)=>A[a*m+a]-A[b*m+b]);return{w:ord.map(i=>A[i*m+i]),V,ord};
 }
 export function rigidModes(nn,xyz,Mv){const n=3*nn,c=[0,0,0],defl=[];let mt=0;for(let q=0;q<nn;q++)if(Mv[3*q]){const x=xyz(q);mt+=Mv[3*q];for(let k=0;k<3;k++)c[k]+=Mv[3*q]*x[k];}for(let k=0;k<3;k++)c[k]/=mt||1;
   const raw=[];for(let d=0;d<6;d++){const v=new Float64Array(n);for(let q=0;q<nn;q++)if(Mv[3*q]){const x=xyz(q),r=[x[0]-c[0],x[1]-c[1],x[2]-c[2]];if(d<3)v[3*q+d]=1;else{const a=d-3,b=(a+1)%3,e=(a+2)%3;v[3*q+b]=-r[e];v[3*q+e]=r[b];}}raw.push(v);}
