@@ -49,7 +49,7 @@ export function connectBridge(API,{port=41777,span=5,code=null,onStatus=()=>{},r
     form_set:async p=>{const m=await import('./form.js');if(API.ws!=='form')API.setWS('form');const errors=m.setScene(API,p.patch!=null?String(p.patch):String(p.scene||''),p.patch!=null);await sleep(1500);return{errors,...m.sceneInfo(),spec:undefined};},
     asm_get:async()=>{const m=await import('./asm_ui.js');return await m.settle(API);},
     asm_apply:async p=>{const ops=Array.isArray(p.ops)?p.ops:Array.isArray(p.actions)?p.actions:[],done=API.applyActions([{asm:ops}]),m=await import('./asm_ui.js');await sleep(300);return{done,...await m.settle(API)};},
-    asm_check:async p=>{const m=await import('./asm_ui.js');if(API.ws!=='asm')API.setWS('asm');await sleep(400);return await m.check(API,Array.isArray(p.what)&&p.what.length?p.what:['interference','mass','bom']);},
+    asm_check:async p=>{const m=await import('./asm_ui.js');if(API.ws!=='asm')API.setWS('asm');await sleep(400);return await m.check(API,Array.isArray(p.what)&&p.what.length?p.what:['interference','mass','bom'],p);},
     load_template:async p=>{const TL=p.units==='in'||p.units==='mm'?A.templatesFor(p.units):A.TEMPLATES,t=TL.find(x=>x.key===p.key||x.name.toLowerCase()===String(p.key).toLowerCase());if(!t)throw new Error('Unknown template "'+p.key+'". Available: '+TL.map(x=>x.key).join(', '));A.loadDoc(t.doc,t.name);await settle();return{loaded:t.key,...summary(),params:S.doc.params.map(q=>({name:q.name,expr:q.expr,value:S.scope[q.name]}))};},
     screenshot:shot,run_stress:stress,run_flow:flow,run_injection_molding:mold,run_moldflow:mold,export:exp,
     run_nonlinear:async p=>{await settle();return(await import('./nl-ui.js')).runTool(API,p);},
