@@ -309,7 +309,7 @@ export async function build(doc,opt={}){
     truncate(i,cache);
     let next=body,tool=null,ferr=perr,fwarn=null;
     if(f)try{
-      if(TOOLMAKERS[f.type]){tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);if(PROF.has(f.type)&&!(Math.abs(volOf(tool))>1e-12))throw new Error('the profile has no area, so '+f.type+' made nothing; check it is closed and does not cross itself');next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
+      if(TOOLMAKERS[f.type]){if(!body&&(f.type==='hole'||f.type!=='thread'&&['cut','intersect'].includes(f.op)))throw new Error(f.type+' needs a body to cut into; add or unsuppress a solid before it');tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);if(PROF.has(f.type)&&!(Math.abs(volOf(tool))>1e-12))throw new Error('the profile has no area, so '+f.type+' made nothing; check it is closed and does not cross itself');next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
       else if(f.type==='fillet'||f.type==='chamfer'){
         if(!body)throw new Error(f.type+' needs a body');
         const es=selectEdges(body,f.edges);if(!es.length)throw new Error('no edges matched');
