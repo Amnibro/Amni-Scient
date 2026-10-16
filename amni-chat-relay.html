@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Chat Relay &mdash; Optional self-host | AMNI-SCIENT</title>
+<meta name="description" content="An optional self-host relay for Amni-Chat. It adds discovery, a web client, multi-device sync and push, and stores only ciphertext. Docker and Caddy. One-line installer.">
+<meta property="og:title" content="Amni-Chat Relay &mdash; Optional self-host">
+<meta property="og:description" content="Discovery, a web client, multi-device sync and push. Stores ciphertext only. Docker and Caddy. The app does not need it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-chat-relay">
+<meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Chat Relay &mdash; Optional self-host">
+<meta name="twitter:description" content="Discovery, a web client, multi-device sync and push. Stores ciphertext only. The Android app does not need it.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<link rel="canonical" href="https://amni-scient.com/amni-chat-relay">
+<link rel="stylesheet" href="css/style.css?v=b264">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.code-block{background:#0a0d12;border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;font-size:.8rem;color:#c9ccd1;margin:1rem 0;line-height:1.55}
+.relay-fig{width:100%;height:100%;min-height:220px;border:1px solid var(--border);border-radius:3px;background:#07080A}
+</style>
+</head>
+<body class="pp theme-chat">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/amni-chat-relay.html" class="active">CHAT RELAY</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="28" y="22" width="44" height="62" rx="4" stroke="#22D3EE" stroke-width="2.5" fill="rgba(34,211,238,0.05)"/>
+<path d="M36 38h28M36 48h28M36 58h18" stroke="#22D3EE" stroke-width="2"/>
+<rect x="58" y="62" width="16" height="12" rx="2" stroke="#22D3EE" stroke-width="2" fill="#07080A"/>
+<path d="M62 62v-4a4 4 0 0 1 8 0v4" stroke="#22D3EE" stroke-width="2"/>
+<circle cx="50" cy="96" r="3" fill="#22D3EE"/>
+<path d="M50 84v9" stroke="#22D3EE" stroke-width="2"/>
+</svg>
+</div>
+<h1>CHAT RELAY</h1>
+<p class="desc">OPTIONAL &bull; DISCOVERY, WEB, SYNC, PUSH &bull; CIPHERTEXT ONLY</p>
+<div class="cta-row">
+<a href="#install" class="btn btn-primary">INSTALL</a>
+<a href="https://chat.amni-scient.com" class="btn btn-outline" target="_blank" rel="noopener">MY INSTANCE</a>
+<a href="amni-chat.html" class="btn btn-outline">THE APP</a>
+</div>
+</div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">A relay you run yourself, if you want one. The Android app does not need it.</p>
+<ul class="ptile-feats"><li>Discovery, a web client, multi-device sync, and push</li><li>Stores ciphertext only</li><li>Docker, with Caddy for HTTPS</li><li>One line from amni-scient.com/chat-relay/install.sh</li></ul>
+</div>
+<div class="ptile-media">
+<svg class="relay-fig" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Phones and a browser talking to a relay that holds ciphertext">
+<rect width="640" height="360" fill="#07080A"/>
+<g fill="none" stroke="#22D3EE" stroke-width="1.6">
+<rect x="70" y="78" width="92" height="168" rx="10"/>
+<rect x="478" y="78" width="92" height="168" rx="10"/>
+<rect x="250" y="96" width="140" height="96" rx="6"/>
+</g>
+<text x="116" y="268" text-anchor="middle" fill="#22D3EE" font-family="ui-monospace,monospace" font-size="12">phone</text>
+<text x="524" y="268" text-anchor="middle" fill="#22D3EE" font-family="ui-monospace,monospace" font-size="12">phone</text>
+<text x="320" y="214" text-anchor="middle" fill="#22D3EE" font-family="ui-monospace,monospace" font-size="12">web</text>
+<path d="M162 150h88M390 150h88" stroke="#22D3EE" stroke-width="1.4"/>
+<rect x="286" y="124" width="68" height="28" rx="3" fill="none" stroke="#67E8F9" stroke-width="1.4"/>
+<text x="320" y="142" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace,monospace" font-size="11">ciphertext</text>
+<text x="320" y="308" text-anchor="middle" fill="#9fb5ad" font-family="ui-monospace,monospace" font-size="12">your relay &middot; Docker + Caddy</text>
+</svg>
+</div>
+</div>
+<section>
+<h2>WHAT IT ADDS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem"><a href="amni-chat.html">Amni-Chat</a> already chats with no server. The relay is for the jobs a phone-only setup doesn&rsquo;t do: finding people past a QR code, a client in the browser, keeping more than one device in sync, and push.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">It stores ciphertext. It does not store the messages in the clear. MLS still ends at the devices.</p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></div>
+<h4>DISCOVERY</h4>
+<p>A way to find contacts beyond handing someone a QR code or a link in person.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12"/><path d="M8 21h8M12 17v4"/></svg></div>
+<h4>WEB CLIENT</h4>
+<p>The same conversation in a browser, on a machine that isn&rsquo;t the phone.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="14" rx="1"/><rect x="3" y="8" width="6" height="11"/><path d="M15 12h6v7H15"/></svg></div>
+<h4>MULTI-DEVICE</h4>
+<p>Sync across the devices you add. The phone app alone is the one device you paired.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V10a6 6 0 0 1 12 0v6l2 3H4z"/><path d="M10 21h4"/></svg></div>
+<h4>PUSH</h4>
+<p>ntfy is the default. Close the app and a new message can still tap the phone.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+<h4>CIPHERTEXT ONLY</h4>
+<p>The disk holds what MLS already encrypted. The relay can&rsquo;t read it back to you.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v11H4z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg></div>
+<h4>YOURS</h4>
+<p>You run it. I run one too, at <a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a>, if you&rsquo;d rather not.</p>
+</div>
+</div>
+</section>
+<section id="install">
+<h2>ONE LINE</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The installer lives at <a href="https://amni-scient.com/chat-relay/install.sh">amni-scient.com/chat-relay/install.sh</a>. Docker runs the relay. Caddy does HTTPS.</p>
+<pre class="code-block">curl -fsSL https://amni-scient.com/chat-relay/install.sh | sh</pre>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">That URL is a stub today. Run it and it prints &ldquo;coming soon&rdquo; and links this page. The real script ships from the amni-chat repo. I&rsquo;m not going to pretend the placeholder installs Docker.</p>
+<div class="card-grid">
+<div class="card">
+<h3>1. THE LINE</h3>
+<p>Fetch the script and run it. When the real one lands, that same URL is the install.</p>
+</div>
+<div class="card">
+<h3>2. DOCKER + CADDY</h3>
+<p>The relay is a container. Caddy takes care of the HTTPS certificate in front of it.</p>
+</div>
+<div class="card">
+<h3>3. THE STUB</h3>
+<p>Until the repo publishes the script, <a href="chat-relay/install.sh">install.sh</a> only tells you it&rsquo;s coming soon.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>NEXT TO HAVEN</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">You can run the relay on a box that already runs a <a href="amni-haven.html">Haven</a> server. They sit beside each other. Haven stays Haven. This stays ciphertext for Amni-Chat.</p>
+<p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Sign in with Haven is optional. If you don&rsquo;t run Haven, skip it. Push still defaults to ntfy either way.</p>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Role</td><td>optional &middot; the <a href="amni-chat.html">app</a> runs without it</td></tr>
+<tr><td>Adds</td><td>discovery, web client, multi-device sync, push</td></tr>
+<tr><td>Storage</td><td>ciphertext only</td></tr>
+<tr><td>Install</td><td><a href="https://amni-scient.com/chat-relay/install.sh">amni-scient.com/chat-relay/install.sh</a></td></tr>
+<tr><td>Stack</td><td>Docker &middot; Caddy for HTTPS</td></tr>
+<tr><td>Haven</td><td>can run alongside a Haven server &middot; Sign in with Haven is optional</td></tr>
+<tr><td>Push</td><td>ntfy, by default</td></tr>
+<tr><td>My instance</td><td><a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a></td></tr>
+<tr><td>Source repo</td><td>coming soon</td></tr>
+</table>
+</section>
+<section id="source">
+<h2>SOURCE AND A PLACE TO TRY</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">The source repo link is coming soon. Until then, use my instance or wait for the installer. The app&rsquo;s license is AGPL-3.0, on the <a href="amni-chat.html">app page</a>.</p>
+<div class="cta-row" style="flex-wrap:wrap;gap:1rem">
+<a href="https://chat.amni-scient.com" class="btn btn-primary" target="_blank" rel="noopener">CHAT.AMNI-SCIENT.COM</a>
+<a href="chat-relay/install.sh" class="btn btn-outline">INSTALL.SH</a>
+<a href="amni-chat.html" class="btn btn-outline">THE APP</a>
+<span class="btn btn-outline" style="cursor:default" role="note">SOURCE REPO &middot; COMING SOON</span>
+</div>
+</section>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. The relay stores ciphertext only.</p>
+</footer>
+</body>
+</html>
