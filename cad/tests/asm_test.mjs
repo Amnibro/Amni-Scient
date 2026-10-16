@@ -352,4 +352,19 @@ try{ASM.useConfig(dc,'c2','nope');chk('an unknown configuration is refused with 
 {ASM.suppress(dc,['c1']);dc.asm.comps[4].hide=true;const ks=[...new Set(dc.asm.comps.map(c=>ASM.sigOf(dc,ASM.pk(c))))],ex=await AK.mass(ctx,{keys:ks}),mp=ASM.assemblyMass(dc,key=>ex[ASM.sigOf(dc,key)],id=>7870),exp=7870*Math.PI*0.0625*(1+2+3)*0.0254**3;
   chk('assembly mass skips suppressed and hidden components and uses each configuration length (steel studs 1 + 2 + 3 in)',near(mp.mass/exp,1,0.005),mp.mass.toFixed(6)+' kg vs '+exp.toFixed(6)+' kg');}
 }
+{
+const AD=await import('../asm_draw.js'),HF=await import('../hwfit.js'),mo5=d_=>pid=>meshes.get(pid+ASM.sigOf(d_,pid));
+const di=fresh();{const a=ASM.addPart(di,{name:'Plate A',units:'in',material:'al6061',params:[],features:[{id:'f1',type:'box',w:3,d:2,h:0.5},{id:'f2',type:'hole',plane:'XY',offset:0.5,d:0.281,thru:true,pts:[[-1,0],[1,0]]}]});ASM.insert(di,a,{fix:true});ASM.insert(di,a,{p:[0,0,0.5],fix:true});}
+await build(di);HF.smartInsert(di,mo5(di),{c:'c2',kind:'shcs'});await build(di);ASM.setPoses(di,ASM.solveDoc(di,mo5(di),{analyze:false}));
+const g={L:ASM.sizeOf(di,mo5(di)),ent:ASM.resolver(di,mo5(di)),center:id=>{const c=di.asm.comps.find(x=>x.id===id),b=mo5(di)(ASM.pk(c)).props.bbox,k=ASM.kOf(di,ASM.pk(c));return M.xf(M.poseOf(c),[0,1,2].map(i=>(b.min[i]+b.max[i])/2*k));}};ASM.autoExplode(di,g);const off=ASM.offsets(di);
+const inst=di.asm.comps.map(c=>({id:c.id,key:ASM.sigOf(di,ASM.pk(c)),p:c.p,q:c.q,k:ASM.kOf(di,ASM.pk(c)),name:c.name,off:off[c.id]||[0,0,0]}));
+const kr=await AK.drawAsm(ctx,{inst,units:'in',views:['iso']}),rows=ASM.bom(di),dr=AD.compose(kr.P,rows,{units:'in',anchors:kr.anchors,name:'Bolted plates'});
+const nums=dr.balloons.filter(b=>b.placed).map(b=>b.item).sort((a,b)=>a-b).join(),want=rows.map(r=>r.item).join();
+chk('exploded assembly drawing: balloons are numbered exactly like the BOM rows ('+want+')',nums===want,nums+' vs '+want);
+const txt=dr.sheet.items.filter(q=>q.t==='tx').map(q=>q.txt).join('|');chk('BOM table is on the sheet with every part name and quantity',rows.every(r=>txt.includes(r.name))&&rows.every(r=>txt.includes(String(r.qty))),rows.length+' rows');
+const moved=di.asm.comps.filter(c=>off[c.id]&&off[c.id].some(v=>v)).length;chk('one explode line per exploded component',dr.lines.length===moved&&moved>=3,dr.lines.length+' lines for '+moved);
+chk('every balloon leader ends inside its component outline in the view',dr.balloons.filter(b=>b.placed).every(b=>{const[a,b2,c,d]=[b.rect[0],b.rect[1],b.rect[2],b.rect[3]];return b.tip[0]>=Math.min(a,c)-0.01&&b.tip[0]<=Math.max(a,c)+0.01&&b.tip[1]>=Math.min(b2,d)-0.01&&b.tip[1]<=Math.max(b2,d)+0.01;}),'');
+chk('the drawing exports to SVG, PDF and DXF',dr.svg().startsWith('<svg')&&String.fromCharCode(...dr.pdf().slice(0,5)).startsWith('%PDF')&&/AC1018/.test(dr.dxf()),dr.sheet.sheet+' '+dr.sheet.scaleTxt);
+chk('balloons do not overlap each other',dr.balloons.filter(b=>b.placed).every((a,i,L)=>L.every((b,j)=>i===j||Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1])>=9)),'');
+}
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
