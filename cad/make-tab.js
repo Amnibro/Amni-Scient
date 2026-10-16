@@ -15,7 +15,7 @@ function marks(API,res,focus){const q=cur(res);if(!API.marks)return;if(!q){API.m
 const cur=res=>res&&res.res&&res.res.quotes&&(res.res.quotes.find(q=>q.process===res.pick)||res.res.quotes[0]);
 async function run(API){if(!API.mesh){ST.err='Build a part first.';render(API);return;}const seq=++ST.seq,m=mk(API.doc);ST.busy=true;paint();
   try{if(!ST.cat){ST.cat=await API.plugin(K,'catalog',{});const fs=ST.cat.shop.finishes;for(const e of EXTRA_SHOP)fs.some(f=>f.id===e.id)||fs.push(e);}
-    const r=await API.plugin(K,'quote',{req:{qty:Math.max(1,m.qty|0),process:m.process,material:m.material,finishes:fins4(API,m),expedite:m.expedite,infill:+m.infill||0},shop:shopTxt()||JSON.stringify(ST.cat.shop)});if(seq!==ST.seq)return;
+    const r=await API.plugin(K,'quote',{req:{qty:Math.max(1,m.qty|0),process:m.process,material:m.material,finishes:fins4(API,m),expedite:m.expedite,infill:+m.infill||0},shop:shopTxt()||JSON.stringify(ST.cat.shop),mat:API.doc.material});if(seq!==ST.seq)return;
     r.pick=m.process!=='auto'?m.process:null;ST.res=r;ST.err='';ST.focus=-1;}
   catch(e){if(seq===ST.seq)ST.err=e.message||String(e);}finally{if(seq===ST.seq){ST.busy=false;render(API);marks(API,ST.res,ST.focus);}}}
 function schedule(API){clearTimeout(ST.t);ST.t=setTimeout(()=>{if(ST.el&&ST.el.classList.contains('on'))run(API);},500);}
