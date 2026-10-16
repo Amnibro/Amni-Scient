@@ -239,6 +239,7 @@ function coreSolid(s,lo,r0){
   const c=s.core;let pen=R.draw([r0,lo+c[0][1]]);pen=c[0][0]>r0+1e-9?pen.lineTo([c[0][0],lo+c[0][1]]):pen;for(const q of c.slice(1))pen=pen.lineTo([q[0],lo+q[1]]);
   pen=c[c.length-1][0]>r0+1e-9?pen.lineTo([r0,lo+c[c.length-1][1]]):pen;return pen.close().sketchOnPlane(XZ()).revolve([0,0,1],{origin:[0,0,0]});
 }
+let TNOTE=null;
 function cutterTool(f,body,retry){
   const K=KIN(),s=bitSpec(f,K),wings=Array.from({length:s.n},(_,i)=>wingSolid(s,i)).reduce((a,b)=>a.fuse(b));let t;
   if(s.kind==='shaper'){
@@ -250,7 +251,7 @@ function cutterTool(f,body,retry){
     t=cs.fuse(wings).fuse(coneSolid(rc,s.sd/2,s.neck,[0,0,zt],[0,0,1])).fuse(R.makeCylinder(s.sd/2,s.sl-s.neck,[0,0,zt+s.neck],[0,0,1]));
     s.br&&(t=t.fuse(R.makeCylinder(s.od/2,s.bt,[0,0,0],[0,0,1])));
   }
-  if(!retry&&s.relief>0&&Math.abs(volOf(t))<0.9*bitVolume({...s,hook:0,shear:0,relief:0}))return cutterTool({...f,relief:0},body,true);
+  if(!retry&&s.relief>0&&Math.abs(volOf(t))<0.9*bitVolume({...s,hook:0,shear:0,relief:0})){TNOTE='relief angle could not be applied with this hook/shear combination and was set to 0°.';return cutterTool({...f,relief:0},body,true);}
   const ax=f.axis||'Z';ax==='X'&&(t=t.rotate(90,[0,0,0],[0,1,0]));ax==='Y'&&(t=t.rotate(-90,[0,0,0],[1,0,0]));
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
@@ -346,6 +347,7 @@ export async function build(doc,opt={}){
         const sh=raw.fmt==='brep'?R.deserializeShape(new TextDecoder().decode(data)):await R.importSTEP(new Blob([data]));tool=sh;next=applyOp(body,sh,f.op||'add');
       }
       else throw new Error('unknown feature '+f.type);
+      if(TNOTE){fwarn={id:raw.id,name:raw.name,type:raw.type,msg:cap(f.type==='bit'?'Router bit':f.type)+" '"+(f.name||f.id)+"': "+TNOTE};warnings.push(fwarn);TNOTE=null;}
       if(next&&next.isNull)throw new Error('result is empty');
       if(body&&next!==body&&TOOLMAKERS[f.type]&&f.type!=='thread'&&(f.op||'add')!=='intersect'){const v0=vol(body),v1=vol(next);if(Math.abs(v1-v0)<=1e-7*Math.max(v0,1e-12)){const cut=f.type==='hole'||f.op==='cut';fwarn={id:raw.id,name:raw.name,type:raw.type,msg:cap(f.type)+" '"+(f.name||f.id)+"' changed nothing: "+(cut?'it does not touch the part':'it lies entirely inside existing material')+'; check offset/plane.'};warnings.push(fwarn);}}
     }catch(e){ferr={id:raw.id,name:raw.name,type:raw.type,msg:friendly(e,f)};errors.push(ferr);next=body;tool=null;}
