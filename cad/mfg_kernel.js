@@ -51,3 +51,4 @@ export async function toolpath({body,doc},a={}){const an=analyzeBody(body,doc);i
 export async function catalog(){const L=await camLib();return{cam:JSON.parse(L.cam_catalog()),shop:JSON.parse(L.shop_default())};}
 export async function program(_,a={}){const L=await camLib();return JSON.parse(L.cam_program(JSON.stringify(a.jobs||[])));}
 export async function simulate(_,a={}){if(!a.gcode)throw new Error('No G-code to simulate');return(await import('./gcode_sim.js')).simulate(a.gcode,a);}
+export function sheetLoops({body,doc}){const an=analyzeBody(body,doc),s=an.part.sheet;return s?{t:s.t,loops:s.loops,bends:s.bends,blank:s.blank,aspect:an.part.bbox[0]/(an.part.bbox[1]||1)||1}:null;}
