@@ -3,6 +3,7 @@ import * as M from './nl_mesh.js';
 import {matSpec,isMetal,flc,flc0,lindley} from './nl_lib.js';
 const T2=(P,R,dim)=>({...profile(P,R),dim:dim||2}),rev=p2=>({t:'rev',dim:3,p2}),ext=p2=>({t:'ext',dim:3,p2});
 const surfNodes=(m,f)=>M.facetsWhere(m,f).nodes;
+const placeTool=(q,t)=>{const P=Float64Array.from(q.pos),lo=[1e30,1e30,1e30],hi=[-1e30,-1e30,-1e30];for(let i=0;i<P.length;i++){lo[i%3]=Math.min(lo[i%3],P[i]);hi[i%3]=Math.max(hi[i%3],P[i]);}const c=[(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,lo[2]-t];for(let i=0;i<P.length;i++)P[i]-=c[i%3];return meshTool(P,Int32Array.from(q.idx));};
 export const SEAL_DEF={mode:'axi',shape:'oring',d:3.53,ID:20,w:3,h:3,groove:'rect',gw:4.8,gd:2.6,squeeze:null,mu:0.2,mat:'lsr50',n:14};
 export const FORM_DEF={mode:'axi',tool:'dome',t:0.2,mat:'ss316l',Rp:5,Rd:5.6,rd:1,rp:0.5,wp:2,L:8,Rb:9,stroke:2.5,mu:0.1,holder:'clamp',layers:4,ne:60,springback:true};
 function sealGeo(p){const d=p.d,R0=p.mode==='axi'?p.ID/2+d/2:0;let m,loops=null;
@@ -30,7 +31,7 @@ export function formModel(p0){const p={...FORM_DEF,...p0},t=p.t,dim=p.mode==='3d
   if(dim===2){m=M.quadGrid(0,Rb,nr,0,t,nz,gx);m.axi=axi;sheetN=[0,1,0];const eps=t*1e-6;top=surfNodes(m,(x,y)=>y>t-eps);bot=surfNodes(m,(x,y)=>y<eps);axis=M.nodesWhere(m,x=>x<eps);rim=M.nodesWhere(m,x=>x>Rb-eps);}
   else{const q=dome?M.quadDisk([0,0],Rb,Math.max(4,Math.round(nr/2)),{keep:(x,y)=>x>0&&y>0}):M.quadGrid(0,Rb,nr,0,p.W||t*4,Math.max(1,p.nw||2));m=M.hexExtrude(q,0,t,nz);const tz=[0,0,0];sheetN=[0,0,1];const eps=t*1e-6;top=surfNodes(m,(x,y,z)=>z>t-eps);bot=surfNodes(m,(x,y,z)=>z<eps);axis=M.nodesWhere(m,x=>x<eps);sym2=M.nodesWhere(m,(x,y)=>y<eps);rim=dome?M.nodesWhere(m,(x,y)=>Math.hypot(x,y)>Rb*(1-1e-6)):M.nodesWhere(m,x=>x>Rb-eps);if(!dome)sym2=Int32Array.from([...sym2,...M.nodesWhere(m,(x,y)=>y>(p.W||t*4)-eps)]);}
   const zd=dim-1,bc=[{nodes:axis,dof:0,v:0}];if(sym2)bc.push({nodes:sym2,dof:1,v:0});if(p.holder==='clamp')for(let k=0;k<dim;k++)bc.push({nodes:rim,dof:k,v:0,name:k===zd?'clamp':undefined});
-  const pg=dim===3?(dome?rev(punch):ext(punch)):punch,dg=dim===3?(dome?rev(die):ext(die)):die,tools=[{name:'punch',geo:pg,nodes:top,mu:p.mu,move:{dir:dim===3?[0,0,-1]:[0,-1],amp:[[0,0],[1,p.stroke]]}},{name:'die',geo:dg,nodes:bot,mu:p.mu}];
+  const pg=dim===3&&p.punchMesh?placeTool(p.punchMesh,t):dim===3?(dome?rev(punch):ext(punch)):punch,dg=dim===3?(dome?rev(die):ext(die)):die,tools=[{name:'punch',geo:pg,nodes:top,mu:p.mu,move:{dir:dim===3?[0,0,-1]:[0,-1],amp:[[0,0],[1,p.stroke]]}},{name:'die',geo:dg,nodes:bot,mu:p.mu}];
   const pole=[...bot].reduce((b,n)=>m.X[n*dim]<m.X[b*dim]+1e-12&&(dim===2||m.X[n*dim+1]<=m.X[b*dim+1]+1e-12)?n:b,bot[0]),steps=[{t1:1,name:'formed'}];if(p.springback)steps.push({t1:2,name:'springback',release:true,hold:p.holder==='clamp'?[]:[[pole,zd]]});
   return{md:{...m,mats:[mat],bc,tools,steps,sheetN},info:{p,dim,axi,t,top,bot,mat,pole,nz,nr},opt:{dt0:0.01,dtMax:0.04,alpha:1,stab:p.holder==='clamp'?0:1e-5,reuse:dim===3?6:0,solver:p.solver}};}
 function planeStrains(res,u,info){const d=res.dim,ne=res.E.length/res.nen,nen=res.nen,X=res.X,e1=new Float32Array(ne),e2=new Float32Array(ne);
