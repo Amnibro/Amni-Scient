@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Amni-Chat &mdash; Encrypted Android messenger | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Chat is an end-to-end encrypted Android app for text, voice, video and screenshare. MLS via OpenMLS on a Rust core. It runs over nostr and a Bluetooth mesh, with no account and no central server. AGPL-3.0.">
-<meta property="og:title" content="Amni-Chat &mdash; Encrypted Android messenger">
-<meta property="og:description" content="Text, voice, video and screenshare. MLS via OpenMLS on a Rust core, over nostr and a Bluetooth mesh. No account. No central server.">
+<title>Amni-Chat &mdash; Encrypted chat and calls | AMNI-SCIENT</title>
+<meta name="description" content="Encrypted chat, calls and screenshare for Android, iPhone and the web. Messages are sealed on your device with X25519 and ChaCha20-Poly1305. Use our relay or run your own. Off-grid over Bluetooth on Android.">
+<meta property="og:title" content="Amni-Chat &mdash; Encrypted chat and calls">
+<meta property="og:description" content="Encrypted chat, calls and screenshare for Android, iPhone and the web. Messages are sealed on your device with X25519 and ChaCha20-Poly1305. Use our relay or run your own. Off-grid over Bluetooth on Android.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-chat">
 <meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Amni-Chat &mdash; Encrypted Android messenger">
-<meta name="twitter:description" content="Text, voice, video and screenshare. MLS via OpenMLS on a Rust core, over nostr and a Bluetooth mesh. No account. No central server.">
+<meta name="twitter:title" content="Amni-Chat &mdash; Encrypted chat and calls">
+<meta name="twitter:description" content="Encrypted chat, calls and screenshare for Android, iPhone and the web. Messages are sealed on your device with X25519 and ChaCha20-Poly1305. Use our relay or run your own. Off-grid over Bluetooth on Android.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <link rel="canonical" href="https://amni-scient.com/amni-chat">
 <link rel="stylesheet" href="css/style.css?v=b264">
@@ -104,53 +104,53 @@
 </svg>
 </div>
 <h1>AMNI-CHAT</h1>
-<p class="desc">ANDROID BETA &bull; TEXT, VOICE, VIDEO, SCREENSHARE</p>
+<p class="desc">BETA &bull; ANDROID, IPHONE, WEB &bull; TEXT, CALLS, SCREENSHARE</p>
 <div class="cta-row">
 <a href="beta.html#app-chat" class="btn btn-primary">GET THE BETA</a>
-<a href="amni-chat-relay.html" class="btn btn-outline">SELF-HOST RELAY</a>
+<a href="amni-chat-relay.html" class="btn btn-outline">RUN YOUR OWN RELAY</a>
 </div>
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Encrypted chat on your phone. No account, and no central server.</p>
-<ul class="ptile-feats"><li>Text, voice, video and screenshare</li><li>MLS, via OpenMLS, in a Rust core</li><li>Nostr when you&rsquo;re online. A Bluetooth mesh when you&rsquo;re not.</li><li>Add someone with a QR code or a link</li></ul>
+<p class="ptile-line">Encrypted chat and calls. Your messages are sealed on your device before they leave it.</p>
+<ul class="ptile-feats"><li>Text, photos, voice notes, voice and video calls, screenshare</li><li>End-to-end encrypted: X25519, ChaCha20-Poly1305, Ed25519</li><li>Find friends by number or email without the relay learning who you looked up</li><li>On Android it keeps going off-grid, over Bluetooth</li></ul>
 </div>
 <div class="ptile-media"><img class="mark" src="assets/beta/chat.webp" alt="Amni-Chat app icon" width="192" height="192"></div>
 </div>
 <section>
 <h2>WHAT IT DOES</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Amni-Chat is an Android messenger for text, voice, video, and screenshare. It still works when no central server is in the path.</p>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Encryption is MLS, Messaging Layer Security, through <a href="https://openmls.tech/" target="_blank" rel="noopener">OpenMLS</a>. That code sits in a Rust core. There is no account. There is no central server. Add a contact by scanning a QR code or opening a link.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Amni-Chat is a messenger for Android, iPhone and the web. Text, photos, files, voice notes, voice and video calls, and screenshare from Android.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Every message is encrypted on your device. The relay in the middle passes sealed envelopes along and can&rsquo;t open them. Use ours, or <a href="amni-chat-relay.html">run your own</a> and point the apps at it.</p>
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
-<h4>MLS</h4>
-<p>End-to-end encryption for the group. OpenMLS does the protocol. The Rust core is what the app actually runs.</p>
+<h4>END-TO-END ENCRYPTED</h4>
+<p>X25519 key agreement, HKDF-SHA256 and ChaCha20-Poly1305, with Ed25519 signatures. The same code path on Android, iPhone and web. Attachments are encrypted before upload.</p>
 </div>
 <div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="18" cy="17" r="2.2"/><path d="M8 11.2L16 8M8 12.8L16 16"/></svg></div>
-<h4>NOSTR</h4>
-<p>Online traffic goes over nostr. Those relays move packets. Plaintext stays inside the MLS session.</p>
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></div>
+<h4>FIND PEOPLE PRIVATELY</h4>
+<p>Look someone up by phone number or email. The lookup is blinded, so the relay matches it without learning who you searched for. It stores a keyed hash, never the number itself.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></div>
+<h4>CALLS AND SCREENSHARE</h4>
+<p>Voice and video calls, plus screenshare from Android. Calls are encrypted and connect phone to phone when they can. When they can&rsquo;t, a TURN relay forwards the encrypted media.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="14" rx="1"/><rect x="3" y="8" width="6" height="11"/><path d="M15 12h6v7H15"/></svg></div>
+<h4>MORE THAN ONE DEVICE</h4>
+<p>Link another phone or an iPhone to the same account, and your chats follow you.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8a5 5 0 0 1 10 0c0 4-5 5-5 9"/><circle cx="12" cy="20" r="1"/></svg></div>
-<h4>BLUETOOTH MESH</h4>
-<p>Phones in radio range pass traffic over Bluetooth. That hop is the radios talking to each other.</p>
+<h4>OFF-GRID ON ANDROID</h4>
+<p>With no signal and no Wi-Fi, messages hop between nearby Amni-Chat phones over Bluetooth. Android can also send over public nostr relays, so it works without any relay of ours.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v10H8l-3 3z"/></svg></div>
-<h4>SMS</h4>
-<p>The other offline path. A text message carries it when the mesh can&rsquo;t see the other phone.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 17h6M17 14v6"/></svg></div>
-<h4>QR OR LINK</h4>
-<p>That&rsquo;s how you add a contact. Scan the code, or open the link.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/></svg></div>
-<h4>NO ACCOUNT</h4>
-<p>The app makes the keys on the phone. There is no sign-up and no account to log into.</p>
+<h4>SMS TOO</h4>
+<p>On Android it can text people who don&rsquo;t have the app yet, so one inbox covers everyone. Those are ordinary text messages, not encrypted.</p>
 </div>
 </div>
 </section>
@@ -159,70 +159,70 @@
 <div class="card-grid">
 <div class="card">
 <h3>1. KEYS</h3>
-<p>Open the app. It generates the keys on the device. Those keys are not registered with a central server.</p>
+<p>The app makes your keys on the device. Only the public half goes to the relay, so friends can reach you.</p>
 </div>
 <div class="card">
-<h3>2. A CONTACT</h3>
-<p>Show your QR code, or send your link. They add you. You add them. That pair is the conversation.</p>
+<h3>2. FIND OR ADD</h3>
+<p>Search by number or email, or scan a QR code or open an invite link in person.</p>
 </div>
 <div class="card">
-<h3>3. ONLINE</h3>
-<p>When both phones have a network, the packets go over nostr. MLS already wrapped them.</p>
+<h3>3. SEND</h3>
+<p>Your phone seals the message. The relay holds the envelope until the other device picks it up. Attachments are deleted from it after 30 days.</p>
 </div>
 <div class="card">
-<h3>4. OFFLINE</h3>
-<p>Bluetooth mesh if you&rsquo;re close enough. SMS if you&rsquo;re not. Same ciphertext, different pipe.</p>
+<h3>4. NO SIGNAL</h3>
+<p>A message sent during an outage waits in a queue and retries until a path opens: data, the Bluetooth mesh, or nostr.</p>
 </div>
 </div>
 </section>
 <section>
-<h2>APP ALONE, OR A RELAY</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The app is the product. The <a href="amni-chat-relay.html">relay</a> is optional, and you run it yourself if you want the extra pieces.</p>
+<h2>OUR RELAY OR YOURS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The apps use our relay at chat.amni-scient.com until you change it. Switch to <a href="amni-chat-relay.html">your own</a> in the app&rsquo;s relay setting.</p>
 <table class="diff-table">
-<thead><tr><th></th><th>APP ALONE</th><th>WITH YOUR RELAY</th></tr></thead>
+<thead><tr><th></th><th>OUR RELAY</th><th>YOUR RELAY</th></tr></thead>
 <tbody>
-<tr><td>CONTACTS</td><td>QR code or link</td><td>those, plus discovery</td></tr>
-<tr><td>CLIENTS</td><td>the Android app</td><td>plus a web client</td></tr>
-<tr><td>DEVICES</td><td>the phone you paired</td><td>multi-device sync</td></tr>
-<tr><td>PUSH</td><td>no</td><td>ntfy, by default</td></tr>
-<tr><td>WHAT A SERVER STORES</td><td>no central server</td><td>ciphertext only</td></tr>
-<tr><td>OFFLINE</td><td>Bluetooth and SMS</td><td>still Bluetooth and SMS</td></tr>
+<tr><td>SETUP</td><td>nothing, it&rsquo;s the default</td><td>Docker on a server you control</td></tr>
+<tr><td>WHO RUNS IT</td><td>Amniscient</td><td>you</td></tr>
+<tr><td>WHAT IT STORES</td><td>sealed messages until delivered, public keys, hashed numbers and emails, timestamps</td><td>the same, on your disk</td></tr>
+<tr><td>WHAT IT CAN SEE</td><td>when a device connects, its IP address (kept in memory for rate limits) and how much data moves</td><td>the same, and only you see it</td></tr>
+<tr><td>PUSH</td><td>Google (Android) and Apple (iPhone)</td><td>your pick: UnifiedPush, WebPush, your own Firebase, or none</td></tr>
+<tr><td>MESSAGE CONTENT</td><td>can&rsquo;t read it</td><td>can&rsquo;t read it</td></tr>
 </tbody>
 </table>
 </section>
 <section>
 <h2>LIMITS</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">It&rsquo;s a beta. The Android build installs from an APK while Google reviews the Play test. The <a href="beta.html#app-chat">beta page</a> also has an iPhone TestFlight link.</p>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Offline means Bluetooth and SMS. It does not mean the internet keeps working with the radio off and nobody nearby.</p>
-<p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Skip the relay and you don&rsquo;t get its discovery, web client, multi-device sync, or push. Chat still works. License is AGPL-3.0.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">It&rsquo;s a beta. The Android build installs from an APK while Google reviews the Play test; iPhone is on TestFlight. Both are on the <a href="beta.html#app-chat">beta page</a>.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The Bluetooth mesh, nostr and SMS are Android only. iPhone and the web app always go through a relay.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Messages are sealed with each device&rsquo;s long-term keys. There&rsquo;s no per-message key ratchet yet, so someone who steals a device&rsquo;s keys could open messages that device can read.</p>
+<p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Encryption hides what you say, not that you&rsquo;re online: a relay, and your network, can see when your device connects. The license is AGPL-3.0; the source code isn&rsquo;t public yet.</p>
 </section>
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Platform</td><td>Android beta. iPhone TestFlight is on the <a href="beta.html#app-chat">beta page</a>.</td></tr>
-<tr><td>Messages</td><td>Text, voice, video, screenshare</td></tr>
-<tr><td>Encryption</td><td>MLS via OpenMLS</td></tr>
-<tr><td>Core</td><td>Rust</td></tr>
-<tr><td>Online</td><td>nostr</td></tr>
-<tr><td>Offline</td><td>Bluetooth mesh and SMS</td></tr>
-<tr><td>Contacts</td><td>QR code or link</td></tr>
-<tr><td>Account</td><td>none</td></tr>
-<tr><td>Central server</td><td>none</td></tr>
-<tr><td>Relay</td><td>optional &middot; <a href="amni-chat-relay.html">self-host</a></td></tr>
+<tr><td>Platforms</td><td>Android (beta APK), iPhone (TestFlight), web (<a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a>)</td></tr>
+<tr><td>Messages</td><td>Text, photos, files, voice notes, replies, reactions, edits, polls, disappearing messages, groups</td></tr>
+<tr><td>Calls</td><td>Voice and video; screenshare from Android; WebRTC with TURN fallback</td></tr>
+<tr><td>Encryption</td><td>X25519, HKDF-SHA256, ChaCha20-Poly1305, Ed25519</td></tr>
+<tr><td>Finding people</td><td>Phone number or email (blinded lookup), QR code or invite link</td></tr>
+<tr><td>Relay</td><td>Ours by default &middot; <a href="amni-chat-relay.html">or self-host</a></td></tr>
+<tr><td>Off-grid</td><td>Bluetooth mesh and nostr (Android)</td></tr>
+<tr><td>Push</td><td>Firebase, Apple, UnifiedPush, WebPush</td></tr>
+<tr><td>Ads and tracking</td><td>None</td></tr>
 <tr><td>License</td><td>AGPL-3.0</td></tr>
 </table>
 </section>
 <section>
 <h2>GET THE BETA</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Android is an APK for now. iPhone is TestFlight. Report what breaks on the beta page.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Android is an APK for now, iPhone is TestFlight, and the web app runs in any browser. Report what breaks on the beta page.</p>
 <div class="cta-row" style="flex-wrap:wrap;gap:1rem">
 <a href="beta.html#app-chat" class="btn btn-primary">BETA PAGE</a>
 <a href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener" class="btn btn-outline">IPHONE TESTFLIGHT</a>
 <a href="downloads/amni-chat-beta.apk" class="btn btn-outline" download="Amni-Chat.apk">ANDROID APK</a>
-<a href="amni-chat-relay.html" class="btn btn-outline">SELF-HOST RELAY</a>
+<a href="https://chat.amni-scient.com" target="_blank" rel="noopener" class="btn btn-outline">WEB APP</a>
+<a href="amni-chat-relay.html" class="btn btn-outline">RUN YOUR OWN RELAY</a>
 </div>
-<p style="color:var(--dim);font-size:.78rem;margin-top:1.2rem">AGPL-3.0</p>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>

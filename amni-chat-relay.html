@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Amni-Chat Relay &mdash; Optional self-host | AMNI-SCIENT</title>
-<meta name="description" content="An optional self-host relay for Amni-Chat. It adds discovery, a web client, multi-device sync and push, and stores only ciphertext. Docker and Caddy. One-line installer.">
-<meta property="og:title" content="Amni-Chat Relay &mdash; Optional self-host">
-<meta property="og:description" content="Discovery, a web client, multi-device sync and push. Stores ciphertext only. Docker and Caddy. The app does not need it.">
+<title>Amni-Chat Relay &mdash; Run your own | AMNI-SCIENT</title>
+<meta name="description" content="Run your own Amni-Chat relay and point the apps at it. It delivers sealed messages, calls and push, and stores ciphertext only. Docker Compose with nginx, Let&rsquo;s Encrypt and coturn. No Google required.">
+<meta property="og:title" content="Amni-Chat Relay &mdash; Run your own">
+<meta property="og:description" content="Run your own Amni-Chat relay and point the apps at it. It delivers sealed messages, calls and push, and stores ciphertext only. Docker Compose with nginx, Let&rsquo;s Encrypt and coturn. No Google required.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-chat-relay">
 <meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Amni-Chat Relay &mdash; Optional self-host">
-<meta name="twitter:description" content="Discovery, a web client, multi-device sync and push. Stores ciphertext only. The Android app does not need it.">
+<meta name="twitter:title" content="Amni-Chat Relay &mdash; Run your own">
+<meta name="twitter:description" content="Run your own Amni-Chat relay and point the apps at it. It delivers sealed messages, calls and push, and stores ciphertext only. Docker Compose with nginx, Let&rsquo;s Encrypt and coturn. No Google required.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <link rel="canonical" href="https://amni-scient.com/amni-chat-relay">
 <link rel="stylesheet" href="css/style.css?v=b264">
@@ -103,17 +103,17 @@
 </svg>
 </div>
 <h1>CHAT RELAY</h1>
-<p class="desc">OPTIONAL &bull; DISCOVERY, WEB, SYNC, PUSH &bull; CIPHERTEXT ONLY</p>
+<p class="desc">SELF-HOST &bull; YOUR SERVER, YOUR METADATA &bull; CIPHERTEXT ONLY</p>
 <div class="cta-row">
-<a href="#install" class="btn btn-primary">INSTALL</a>
-<a href="https://chat.amni-scient.com" class="btn btn-outline" target="_blank" rel="noopener">PUBLIC INSTANCE</a>
+<a href="#install" class="btn btn-primary">HOW TO RUN IT</a>
+<a href="https://chat.amni-scient.com/selfhost.html" class="btn btn-outline" target="_blank" rel="noopener">FULL GUIDE</a>
 <a href="amni-chat.html" class="btn btn-outline">THE APP</a>
 </div>
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">A relay you run yourself, if you want one. The Android app does not need it.</p>
-<ul class="ptile-feats"><li>Discovery, a web client, multi-device sync, and push</li><li>Stores ciphertext only</li><li>Docker, with Caddy for HTTPS</li><li>One line from amni-scient.com/chat-relay/install.sh</li></ul>
+<p class="ptile-line">Run the server Amni-Chat talks to yourself, and point the apps at it instead of ours.</p>
+<ul class="ptile-feats"><li>Delivers sealed messages, calls and push wakeups</li><li>Stores ciphertext, public keys and hashed identifiers, never message content</li><li>Docker Compose with nginx, Let&rsquo;s Encrypt and a TURN server for calls</li><li>Works with no Google or Firebase at all</li></ul>
 </div>
 <div class="ptile-media">
 <svg class="relay-fig" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Phones and a browser talking to a relay that holds ciphertext">
@@ -129,95 +129,95 @@
 <path d="M162 150h88M390 150h88" stroke="#22D3EE" stroke-width="1.4"/>
 <rect x="286" y="124" width="68" height="28" rx="3" fill="none" stroke="#67E8F9" stroke-width="1.4"/>
 <text x="320" y="142" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace,monospace" font-size="11">ciphertext</text>
-<text x="320" y="308" text-anchor="middle" fill="#9fb5ad" font-family="ui-monospace,monospace" font-size="12">your relay &middot; Docker + Caddy</text>
+<text x="320" y="308" text-anchor="middle" fill="#9fb5ad" font-family="ui-monospace,monospace" font-size="12">your relay &middot; Docker + nginx + coturn</text>
 </svg>
 </div>
 </div>
 <section>
-<h2>WHAT IT ADDS</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem"><a href="amni-chat.html">Amni-Chat</a> already chats with no server. The relay is for the jobs a phone-only setup doesn&rsquo;t do: finding people past a QR code, a client in the browser, keeping more than one device in sync, and push.</p>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">It stores ciphertext. It does not store the messages in the clear. MLS still ends at the devices.</p>
+<h2>WHAT IT DOES</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem"><a href="amni-chat.html">Amni-Chat</a> on iPhone and the web, and Android unless it&rsquo;s off-grid, goes through a relay. The apps use ours at chat.amni-scient.com by default. Run your own and the metadata stays on your hardware.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Messages are encrypted on the devices before they reach the relay. It passes them along and can&rsquo;t open them.</p>
 <div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h12M12 6l6 6-6 6"/></svg></div>
+<h4>DELIVERY</h4>
+<p>Live delivery over a WebSocket, and a store-and-forward inbox for devices that are offline.</p>
+</div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></div>
 <h4>DISCOVERY</h4>
-<p>A way to find contacts beyond handing someone a QR code or a link in person.</p>
+<p>Find people by phone number or email. The relay keeps a keyed hash, and lookups are blinded so it doesn&rsquo;t learn who was searched for.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></div>
+<h4>CALLS</h4>
+<p>Call setup, plus a coturn TURN server for calls that can&rsquo;t connect phone to phone. It forwards encrypted media it can&rsquo;t decrypt.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12"/><path d="M8 21h8M12 17v4"/></svg></div>
-<h4>WEB CLIENT</h4>
-<p>The same conversation in a browser, on a machine that isn&rsquo;t the phone.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="14" rx="1"/><rect x="3" y="8" width="6" height="11"/><path d="M15 12h6v7H15"/></svg></div>
-<h4>MULTI-DEVICE</h4>
-<p>Sync across the devices you add. The phone app alone is the one device you paired.</p>
+<h4>WEB APP AND DEVICES</h4>
+<p>Serves the Amni-Chat web app from your own domain, keeps linked devices in sync, and holds encrypted attachments for 30 days.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V10a6 6 0 0 1 12 0v6l2 3H4z"/><path d="M10 21h4"/></svg></div>
-<h4>PUSH</h4>
-<p>ntfy is the default. Close the app and a new message can still tap the phone.</p>
+<h4>PUSH, YOUR WAY</h4>
+<p>A connected app gets messages live with no push service. For wakeups, turn on UnifiedPush (Google-free), WebPush, or your own Firebase project. All optional.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
 <h4>CIPHERTEXT ONLY</h4>
-<p>The disk holds what MLS already encrypted. The relay can&rsquo;t read it back to you.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v11H4z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg></div>
-<h4>SELF-HOST</h4>
-<p>Run it on your own hardware, or use the public instance at <a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a>.</p>
+<p>It stores sealed messages until they&rsquo;re delivered, public keys, hashed identifiers and timestamps. No message content, no analytics.</p>
 </div>
 </div>
 </section>
 <section id="install">
-<h2>ONE LINE</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The installer lives at <a href="https://amni-scient.com/chat-relay/install.sh">amni-scient.com/chat-relay/install.sh</a>. Docker runs the relay. Caddy does HTTPS.</p>
-<pre class="code-block">curl -fsSL https://amni-scient.com/chat-relay/install.sh | sh</pre>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">That URL is a stub today. Run it and it prints &ldquo;coming soon&rdquo; and links this page. The real script ships from the amni-chat repo. The placeholder does not install Docker.</p>
+<h2>RUN IT</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">You need a Linux server with a domain name pointed at it, TCP ports 80 and 443 plus UDP 3478 and 49160-49200 open, and Docker with the Compose plugin. The <a href="https://chat.amni-scient.com/selfhost.html" target="_blank" rel="noopener">full guide</a> has every setting.</p>
+<pre class="code-block">cd amni-chat/deploy
+cp env.example .env        # your domain, email and three secrets
+docker compose up -d --build</pre>
 <div class="card-grid">
 <div class="card">
-<h3>1. THE LINE</h3>
-<p>Fetch the script and run it. When the real one lands, that same URL is the install.</p>
+<h3>1. CONFIGURE</h3>
+<p>Copy the example settings, set your domain and email, and generate the secrets the guide lists.</p>
 </div>
 <div class="card">
-<h3>2. DOCKER + CADDY</h3>
-<p>The relay is a container. Caddy takes care of the HTTPS certificate in front of it.</p>
+<h3>2. CERTIFICATE</h3>
+<p>Get the first Let&rsquo;s Encrypt certificate with certbot. After that it renews by itself.</p>
 </div>
 <div class="card">
-<h3>3. THE STUB</h3>
-<p>Until the repo publishes the script, <a href="chat-relay/install.sh">install.sh</a> only tells you it&rsquo;s coming soon.</p>
+<h3>3. START</h3>
+<p>Compose starts four containers: the relay, nginx for HTTPS, certbot and coturn for calls.</p>
+</div>
+<div class="card">
+<h3>4. POINT THE APPS</h3>
+<p>In Amni-Chat on Android or iPhone, set the relay to your domain. The web app is already at your domain.</p>
 </div>
 </div>
-</section>
-<section>
-<h2>NEXT TO HAVEN</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">You can run the relay on a box that already runs a <a href="amni-haven.html">Haven</a> server. They sit beside each other. Haven stays Haven. This stays ciphertext for Amni-Chat.</p>
-<p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Sign in with Haven is optional. If you don&rsquo;t run Haven, skip it. Push still defaults to ntfy either way.</p>
+<p style="color:var(--dim);max-width:640px;margin:1.5rem 0 0;font-size:.95rem">No Docker? The relay is a single Rust program. Run it on its own behind Cloudflare Tunnel, Caddy or nginx.</p>
 </section>
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
 <tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Role</td><td>optional &middot; the <a href="amni-chat.html">app</a> runs without it</td></tr>
-<tr><td>Adds</td><td>discovery, web client, multi-device sync, push</td></tr>
-<tr><td>Storage</td><td>ciphertext only</td></tr>
-<tr><td>Install</td><td><a href="https://amni-scient.com/chat-relay/install.sh">amni-scient.com/chat-relay/install.sh</a></td></tr>
-<tr><td>Stack</td><td>Docker &middot; Caddy for HTTPS</td></tr>
-<tr><td>Haven</td><td>can run alongside a Haven server &middot; Sign in with Haven is optional</td></tr>
-<tr><td>Push</td><td>ntfy, by default</td></tr>
-<tr><td>Public instance</td><td><a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a></td></tr>
-<tr><td>Source repo</td><td>coming soon</td></tr>
+<tr><td>Role</td><td>Delivery, discovery, calls, web app, linked devices, push</td></tr>
+<tr><td>Stores</td><td>Sealed messages until delivered, public keys, hashed identifiers, timestamps, encrypted attachments for 30 days</td></tr>
+<tr><td>Never stores</td><td>Message content, contact lists, location, analytics</td></tr>
+<tr><td>Stack</td><td>Docker Compose: relay, nginx, certbot, coturn</td></tr>
+<tr><td>Without Docker</td><td>One Rust binary behind a TLS proxy or Cloudflare Tunnel</td></tr>
+<tr><td>Push</td><td>WebSocket, UnifiedPush, WebPush, optional Firebase</td></tr>
+<tr><td>Google services</td><td>Not required</td></tr>
+<tr><td>Ours</td><td><a href="https://chat.amni-scient.com" target="_blank" rel="noopener">chat.amni-scient.com</a>, the apps&rsquo; default</td></tr>
+<tr><td>License</td><td>AGPL-3.0</td></tr>
 </table>
 </section>
 <section id="source">
-<h2>SOURCE AND A PLACE TO TRY</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">The source repo link is coming soon. Until then, use the public instance at chat.amni-scient.com, or wait for the installer. The app license is AGPL-3.0, on the <a href="amni-chat.html">app page</a>.</p>
+<h2>SOURCE CODE</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">The source code isn&rsquo;t public yet. Until it is, <a href="/contact.html">ask for access</a> if you want to run a relay, or use ours.</p>
 <div class="cta-row" style="flex-wrap:wrap;gap:1rem">
-<a href="https://chat.amni-scient.com" class="btn btn-primary" target="_blank" rel="noopener">CHAT.AMNI-SCIENT.COM</a>
-<a href="chat-relay/install.sh" class="btn btn-outline">INSTALL.SH</a>
+<a href="https://chat.amni-scient.com/selfhost.html" class="btn btn-primary" target="_blank" rel="noopener">FULL GUIDE</a>
+<a href="/contact.html" class="btn btn-outline">ASK FOR ACCESS</a>
 <a href="amni-chat.html" class="btn btn-outline">THE APP</a>
-<span class="btn btn-outline" style="cursor:default" role="note">SOURCE REPO &middot; COMING SOON</span>
 </div>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
