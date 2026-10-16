@@ -16,7 +16,7 @@ export function openMenu(A,x,y,items){closeMenu();if(!document.getElementById('c
   cur={lv,key,out};panel(items,0,x,y);addEventListener('keydown',key,true);document.addEventListener('pointerdown',out,true);document.addEventListener('wheel',out,true);addEventListener('blur',closeMenu);addEventListener('resize',closeMenu);const f=btns(lv[0])[0];f&&f.focus({preventScroll:true});return{close:closeMenu,el:lv[0]};}
 export function install(api,d){const cv=api.renderer.domElement,S=api.S;let rd=null;cv.addEventListener('contextmenu',e=>e.preventDefault());
   cv.addEventListener('pointerdown',e=>{rd=e.button===2?{x:e.clientX,y:e.clientY}:null;});
-  cv.addEventListener('pointerup',e=>{const r=rd;rd=null;if(e.button!==2||!r||api.ws==='form'||Math.hypot(e.clientX-r.x,e.clientY-r.y)>=4)return;openMenu(api,e.clientX,e.clientY,partItems(api,d,e));});}
+  cv.addEventListener('pointerup',e=>{const r=rd;rd=null;if(e.button!==2||!r||api.ws!=='part'||Math.hypot(e.clientX-r.x,e.clientY-r.y)>=4)return;openMenu(api,e.clientX,e.clientY,partItems(api,d,e));});}
 function partItems(api,d,e){const S=api.S,m=api.mesh,hh=m?d.hit(e):null,T=api.THREE,inch=api.units.docUnits(api.doc)==='in',click=s=>{const b=document.querySelector(s);b&&b.click();},secOn=()=>document.getElementById('b-sec').classList.contains('on'),r4=p=>p.map(v=>+(+v).toFixed(4));
   if(hh&&!(hh.kind==='face'?S.sel.faces:S.sel.edges).has(hh.id)){S.sel.faces.clear();S.sel.edges.clear();(hh.kind==='face'?S.sel.faces:S.sel.edges).set(hh.id,hh.pt);api.refreshSel();}
   const only=()=>{S.sel.faces.clear();S.sel.edges.clear();(hh.kind==='face'?S.sel.faces:S.sel.edges).set(hh.id,hh.pt);api.refreshSel();},feats=[...api.doc.features].reverse().slice(0,10),body=api.model.visible;

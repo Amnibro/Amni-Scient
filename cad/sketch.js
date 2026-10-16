@@ -22,7 +22,7 @@ function resid(sk,P,Rr,L,drag){
   if(drag)r.push(P[drag.p][0]-drag.x,P[drag.p][1]-drag.y);
   return r;
 }
-function lsolve(A,b,n){const M=A.map((row,i)=>[...row,b[i]]);for(let c=0;c<n;c++){let p=c;for(let i=c+1;i<n;i++)if(Math.abs(M[i][c])>Math.abs(M[p][c]))p=i;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c]||1e-12;for(let i=c+1;i<n;i++){const f=M[i][c]/d;if(f)for(let j=c;j<=n;j++)M[i][j]-=f*M[c][j];}}const x=new Array(n).fill(0);for(let i=n-1;i>=0;i--){let s=M[i][n];for(let j=i+1;j<n;j++)s-=M[i][j]*x[j];x[i]=s/(M[i][i]||1e-12);}return x;}
+export function lsolve(A,b,n){const M=A.map((row,i)=>[...row,b[i]]);for(let c=0;c<n;c++){let p=c;for(let i=c+1;i<n;i++)if(Math.abs(M[i][c])>Math.abs(M[p][c]))p=i;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c]||1e-12;for(let i=c+1;i<n;i++){const f=M[i][c]/d;if(f)for(let j=c;j<=n;j++)M[i][j]-=f*M[c][j];}}const x=new Array(n).fill(0);for(let i=n-1;i>=0;i--){let s=M[i][n];for(let j=i+1;j<n;j++)s-=M[i][j]*x[j];x[i]=s/(M[i][i]||1e-12);}return x;}
 function jac(f,V,r0){const J=r0.map(()=>new Array(V.length).fill(0));for(let j=0;j<V.length;j++){const h=1e-6*Math.max(1,Math.abs(V[j])),o=V[j];V[j]=o+h;const r1=f(V);V[j]=o;for(let i=0;i<r0.length;i++)J[i][j]=(r1[i]-r0[i])/h;}return J;}
 export function solve(sk,opt={}){
   const{V,at}=vars(sk),n=V.length,b=bounds(sk),L=Math.max(b.w,b.h,10),V0=V.slice(),nf=opt.newFrom??Infinity,wt=at.map(a=>a[0]==='p'&&(a[1]>=nf||opt.drag&&a[1]===opt.drag.p)?1e-4:opt.drag?3e-2:1e-2),f=X=>{const{P,Rr}=load(sk,X,at),r=resid(sk,P,Rr,L,opt.drag);for(let i=0;i<n;i++)r.push(wt[i]*(X[i]-V0[i]));return r;};
@@ -36,14 +36,14 @@ return it;};
   const rr=resid(sk,P,Rr,L,null),res=Math.sqrt(rr.reduce((a,v)=>a+v*v,0));
   return{ok:res<1e-6*L,res,it,dof:opt.dof?dofInfo(sk,f,V,at,L):null};
 }
+export function nullInfo(J,n,tol=1e-7){const M=J.map(r=>Array.from(r)),piv=[];let row=0;
+  for(let c=0;c<n&&row<M.length;c++){let p=row;for(let i=row+1;i<M.length;i++)if(Math.abs(M[i][c])>Math.abs(M[p][c]))p=i;if(Math.abs(M[p][c])<tol)continue;[M[row],M[p]]=[M[p],M[row]];for(let i=0;i<M.length;i++){if(i===row)continue;const fct=M[i][c]/M[row][c];if(fct)for(let j=c;j<n;j++)M[i][j]-=fct*M[row][j];}piv.push(c);row++;}
+  const pivs=new Set(piv),free=[...Array(n).keys()].filter(c=>!pivs.has(c));return{rank:piv.length,free,basis:free.map(fc=>{const v=new Array(n).fill(0);v[fc]=1;piv.forEach((pc,ri)=>{v[pc]=-M[ri][fc]/M[ri][pc];});return v;})};}
 function dofInfo(sk,f0,V,at){
   const{P,Rr}=load(sk,V,at),b=bounds(sk),L=Math.max(b.w,b.h,10),f=X=>{const q=load(sk,X,at);return resid(sk,q.P,q.Rr,L,null);},r0=f(V),n=V.length;if(!n)return{dof:0,free:new Set()};
-  const J=r0.length?jac(f,V.slice(),r0):[],M=J.map(r=>r.slice()),piv=[],tol=1e-7;let row=0;
-  for(let c=0;c<n&&row<M.length;c++){let p=row;for(let i=row+1;i<M.length;i++)if(Math.abs(M[i][c])>Math.abs(M[p][c]))p=i;if(Math.abs(M[p][c])<tol)continue;[M[row],M[p]]=[M[p],M[row]];for(let i=0;i<M.length;i++){if(i===row)continue;const fct=M[i][c]/M[row][c];if(fct)for(let j=c;j<n;j++)M[i][j]-=fct*M[row][j];}piv.push(c);row++;}
-  const pivs=new Set(piv),freeCols=[...Array(n).keys()].filter(c=>!pivs.has(c)),moving=new Set();
-  for(const fc of freeCols){const v=new Array(n).fill(0);v[fc]=1;piv.forEach((pc,ri)=>{v[pc]=-M[ri][fc]/M[ri][pc];});v.forEach((x,i)=>{if(Math.abs(x)>1e-6)moving.add(i);});}
+  const N=nullInfo(r0.length?jac(f,V.slice(),r0):[],n),moving=new Set();for(const v of N.basis)v.forEach((x,i)=>{if(Math.abs(x)>1e-6)moving.add(i);});
   const free=new Set();at.forEach((a,k)=>{if(moving.has(k))free.add(a[0]==='p'?'p'+a[1]:'r'+a[1]);});
-  return{dof:freeCols.length,free,over:r0.length>piv.length&&Math.sqrt(r0.reduce((a,v)=>a+v*v,0))>1e-6*L};
+  return{dof:N.free.length,free,over:r0.length>N.rank&&Math.sqrt(r0.reduce((a,v)=>a+v*v,0))>1e-6*L};
 }
 export function bounds(sk){let a=1e9,b=1e9,c=-1e9,d=-1e9;for(const p of sk.pts){a=Math.min(a,+p[0]);b=Math.min(b,+p[1]);c=Math.max(c,+p[0]);d=Math.max(d,+p[1]);}sk.ents.forEach(e=>{if(e.k==='circle'){const C=sk.pts[e.p[0]],r=+e.r||0;a=Math.min(a,C[0]-r);b=Math.min(b,C[1]-r);c=Math.max(c,C[0]+r);d=Math.max(d,C[1]+r);}});return{x0:a,y0:b,x1:c,y1:d,w:c-a,h:d-b};}
 function arcInfo(P,e){const[a,b,c]=e.p,A=P[a],B=P[b],C=P[c],r=hyp(A[0]-C[0],A[1]-C[1]),t0=Math.atan2(A[1]-C[1],A[0]-C[0]),t1=Math.atan2(B[1]-C[1],B[0]-C[0]);let sw=t1-t0;while(sw<=0)sw+=2*Math.PI;return{r,t0,sw,C};}
