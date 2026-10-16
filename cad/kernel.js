@@ -344,7 +344,7 @@ export async function build(doc,opt={}){
       }
       else if(f.type==='import'){
         const data=opt.blobs&&opt.blobs[raw.blob];if(!data)throw new Error('imported file missing');
-        const sh=raw.fmt==='brep'?R.deserializeShape(new TextDecoder().decode(data)):await R.importSTEP(new Blob([data]));tool=sh;next=applyOp(body,sh,f.op||'add');
+        const k=raw.fmt==='brep'||UNITS!=='in'?1:1/25.4;raw.fmt==='brep'||R.getOC().Interface_Static.SetCVal('xstep.cascade.unit','MM');const s0=raw.fmt==='brep'?R.deserializeShape(new TextDecoder().decode(data)):await R.importSTEP(new Blob([data])),sh=k===1?s0:s0.scale(k,[0,0,0]);tool=sh;next=applyOp(body,sh,f.op||'add');
       }
       else throw new Error('unknown feature '+f.type);
       if(TNOTE){fwarn={id:raw.id,name:raw.name,type:raw.type,msg:cap(f.type==='bit'?'Router bit':f.type)+" '"+(f.name||f.id)+"': "+TNOTE};warnings.push(fwarn);TNOTE=null;}
@@ -371,7 +371,7 @@ export function meshBody(body,q=1){
 function safe(f){try{return f();}catch{return null;}}
 export function exportBody(body,fmt,units){
   if(!body)throw new Error('nothing to export');
-  if(fmt==='step')return units==='in'?R.exportSTEP([{shape:body,name:'part',color:'#b8c2cc'}],{unit:'INCH',modelUnit:'INCH'}):body.blobSTEP();
+  if(fmt==='step'){const u=units==='in'?'INCH':'MM';return R.exportSTEP([{shape:body,name:'part',color:'#b8c2cc'}],{unit:u,modelUnit:u});}
   if(fmt==='brep')return new Blob([body.serialize()],{type:'model/vnd.brep'});
   if(fmt==='stl')return body.blobSTL({binary:true,tolerance:Math.max(sizeOf(body)*1e-4,0.001),angularTolerance:0.05});
   throw new Error('unknown format '+fmt);
