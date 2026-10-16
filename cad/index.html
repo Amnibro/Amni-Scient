@@ -99,7 +99,7 @@ dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
 .pal button span{font-size:15px;color:var(--acc)}
 .pal button:hover{border-color:var(--acc);color:var(--ink)}
 .palg{font-size:10.5px;color:var(--mut);margin:10px 0 2px;text-transform:uppercase;letter-spacing:.08em}
-#vp{position:relative;min-width:0;min-height:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg2) 0%,var(--bg) 70%);overflow:hidden;touch-action:none}
+#vp{position:relative;min-width:0;min-height:0;background:var(--vp,radial-gradient(120% 90% at 50% 0%,var(--bg2) 0%,var(--bg) 70%));overflow:hidden;touch-action:none}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none}
 .vtools{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 20px);pointer-events:none}
 .grp{display:flex;background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:9px;padding:2px;pointer-events:auto;box-shadow:var(--shadow)}
@@ -144,6 +144,7 @@ dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
 .seg button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .btn{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);font-weight:550;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:hover{border-color:var(--acc)}
+.btn.pri:hover{background:var(--acc-hover,var(--acc))}
 .btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
 .btn.pri:hover{filter:brightness(1.08)}
 .btn.sm{height:26px;padding:0 9px;font-size:12px;font-weight:550}
@@ -223,6 +224,8 @@ body.showL #left,body.showR #right{transform:none}
 #mprops{display:none}
 }
 @media (max-width:560px){.tb .opt{display:none}.pill{max-width:120px}header{gap:6px;padding:0 8px;overflow-x:clip}header>*{min-width:0}.brand span{display:none}.tb button,.menu>button{padding:0 8px}.pill{flex-shrink:1;max-width:90px}#ui-menu,#b-theme{display:none}#b-pro{flex-shrink:0;max-width:none;padding:4px 9px}header .tb,header .brand{flex-shrink:0}#kstat{flex-shrink:1;min-width:24px}}
+header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
+.look-compact .sec{padding:7px 10px 8px}.look-compact .sec h3{margin-bottom:5px}.look-compact .feat{padding:3px 6px}.look-compact .prow{margin:1px 0}.look-compact .fld{margin:4px 0}.look-compact #ribbon .rb{min-height:0}.look-compact .tb button,.look-compact .menu>button{height:28px}
 </style>
 </head>
 <body>
@@ -271,6 +274,7 @@ body.showL #left,body.showR #right{transform:none}
 <div class="grp" id="g-view"><button data-v="iso" title="Isometric (0)">Iso</button><button data-v="top" title="Top (1)">Top</button><button data-v="front" title="Front (2)">Front</button><button data-v="right" title="Right (3)">Right</button><button data-v="fit" title="Fit (F)">Fit</button></div>
 <div class="grp" id="g-disp"><button data-d="edges" class="on" title="Shaded with edges">◼︎</button><button data-d="shaded" title="Shaded">●</button><button data-d="xray" title="X-ray">◌</button><button data-d="wire" title="Wireframe">▦</button></div>
 <div class="grp" id="g-sec"><button id="b-sec" title="Section view">Section</button><span id="secx" style="display:none;align-items:center"><button data-ax="X">X</button><button data-ax="Y">Y</button><button data-ax="Z" class="on">Z</button><input type="range" id="secpos" min="0" max="1000" value="500" aria-label="Section position"><button id="secflip" title="Flip">⇅</button></span></div>
+<div class="grp" id="g-res" style="display:none"><button data-r="model" title="Show the plain model">Model</button><button data-r="res" class="on" title="Show analysis results">Results</button><button id="b-lines" title="Streamlines on or off" style="display:none">Streamlines</button></div>
 <div class="grp"><button id="b-proj" title="Toggle perspective / orthographic">Persp</button></div>
 </div>
 <div id="busy"><i></i><span>Building…</span></div>

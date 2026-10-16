@@ -15,6 +15,7 @@ Actions (applied in order):
  {"delete":"f3"}                         remove a feature
  {"new":true}                            empty the model first (only when the user wants a new part)
  {"material":"al6061"}                   set the material
+ {"finish":"anodize2:black"}              set the part finish (look, quote line item, drawing note): machined | bead | anodize2:<clear|black|blue|red|gold|green|purple|orange> | anodize3:<black|gray|bronze> | powder:<black|white|gray|red|blue|green|yellow|orange> | oxide | zinc:<clear|yellow> | nickel | chromate | passivate | paint:<color as for powder>; "machined" or "none" clears it; the viewport and photo render follow the material and finish
  {"sim":{"type":"static","fixed":[face selector],"supports":[{"faces":sel,"type":"fixed"|"roller"}],"loads":[{"faces":sel,"F":[fx,fy,fz]} | {"faces":sel,"p":MPa} | {"faces":sel,"M":[mx,my,mz] N·mm torque}],"gravity":true,"mesh":"auto"|"voxel"|"sweep"|"adaptive","layers":2,"size":mm}}  set up a stress test (N, mm, MPa). mesh: auto (default) uses voxels for chunky parts and switches to a hex mesh when walls are thinner than about 3 voxels; sweep = hex layers through sheet, extruded or formed walls (layers >= 2 through the thickness, size = in-plane element size); adaptive = graded octree hex mesh for general solids with thin ribs. A roller support may add "dir":"x"|"y"|"z" to hold only that direction. mesh, layers and size also apply to modal and thermal
  {"sim":{"type":"modal","modes":6,"supports":[...]}}  natural frequencies (no supports = free part)
  {"sim":{"type":"thermal","temps":[{"faces":sel,"T":°C}],"conv":[{"faces":sel,"h":W/m²K,"Tinf":°C}],"flux":[{"faces":sel,"Q":W}]}}  steady heat flow
@@ -45,6 +46,7 @@ Hole: drills from its sketch plane against the normal, so put the plane on the t
 Edge selectors: {"by":"all"}, {"dir":"Z"} straight edges parallel to Z, {"side":"+Z"} edges on the top, {"type":"CIRCLE"} round edges, {"by":"pick","pts":[[x,y,z]]} the edge nearest each point. A list of selectors means "any of them".
 Face selectors: {"side":"+Z"} outermost face on that side, {"normal":"-Y"} faces pointing that way, {"type":"CYLINDER"}, {"by":"pick","pts":[[x,y,z]]}.
 op: "add" union, "cut" subtract, "intersect".
+Finishes depend on the material (anodize on aluminum or titanium, black oxide and zinc on steel, passivate on stainless).
 Materials: ${Object.entries(MATS).map(([k,m])=>k+' ('+m.n+')').join(', ')}.
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
