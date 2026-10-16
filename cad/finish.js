@@ -1,11 +1,11 @@
 import {MATS} from './schema.js'
 const METAL=['al','steel','ss','ti','brass'],ALL=[...METAL,'plastic','wood','composite'],LK=m=>MATS[m]&&MATS[m].look;
-const BASEL={al6061:['#c4c8ce',1,.38],al7075:['#bfc3c9',1,.36],steel1018:['#7f8388',1,.5],steel4140:['#767a80',1,.46],ss304:['#dadde1',1,.2],ss316:['#dfe2e6',1,.18],ti64:['#a39f97',1,.36],brass:['#d4ac5a',1,.28],pla:['#ece9e0',0,.45],petg:['#6aa0e6',0,.25],abs:['#3a3d43',0,.5],nylon:['#e8e2d3',0,.78],pc:['#eef3f8',0,.05]};
+const BASEL={al6061:['#c4c8ce',1,.38],al7075:['#bfc3c9',1,.36],steel1018:['#7f8388',1,.5],steel4140:['#767a80',1,.46],ss304:['#dadde1',1,.2],ss316:['#dfe2e6',1,.18],ti64:['#a39f97',1,.36],brass:['#d4ac5a',1,.28],p20:['#8a8e93',1,.42],h13:['#7d8186',1,.4],s7:['#7f8388',1,.42],d2:['#878b90',1,.38],a2:['#83878c',1,.4],o1:['#7b7f84',1,.44],m2:['#8d9196',1,.34],ss420m:['#d2d5d9',1,.22],becu:['#c8925e',1,.3],carbide:['#5f6368',1,.32],pla:['#ece9e0',0,.45],petg:['#6aa0e6',0,.25],abs:['#3a3d43',0,.5],nylon:['#e8e2d3',0,.78],pc:['#eef3f8',0,.05]};
 const ANO={clear:'#c9cdd3',black:'#1d1f23',blue:'#2a63c4',red:'#b3262f',gold:'#c9a24a',green:'#2f8a55',purple:'#6a3fa0',orange:'#d9731f'};
 const HARD={black:'#1a1c20',gray:'#4a4e55',bronze:'#6b5436'};
 const PW={black:'#1b1c1f',white:'#f1f1ee',gray:'#8b9096',red:'#b32a2a',blue:'#2457b5',green:'#2e7d4f',yellow:'#e1b82b',orange:'#e2701f'};
 const ZN={clear:'#b9c2cc',yellow:'#c9a83a'};
-export const fam=m=>LK(m)?LK(m).kind:/^al/.test(m)?'al':/^steel/.test(m)?'steel':/^ss/.test(m)?'ss':/^ti/.test(m)?'ti':m==='brass'?'brass':'plastic';
+export const fam=m=>LK(m)?LK(m).kind:/^al/.test(m)?'al':/^(steel|p20|h13|s7|d2|a2|o1|m2|carbide)/.test(m)?'steel':/^ss/.test(m)?'ss':m==='becu'?'brass':/^ti/.test(m)?'ti':m==='brass'?'brass':'plastic';
 export const FINISHES=[
  {id:'machined',n:'As-machined',fams:ALL,note:null,l:b=>b},
  {id:'bead',n:'Bead blast',fams:METAL,q:'bead',note:'bead',l:b=>[b[0],b[1],.76,0]},
