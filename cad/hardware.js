@@ -33,7 +33,6 @@ export function headDims(kind,size){const T=THREADSTD[size],u=T[2],d=T[0],b=base
 const screw=(s,kind)=>{const T=THREADSTD[s.size];if(!T)throw new Error('Unknown thread size '+s.size+'. Use one of '+Object.keys(THREADSTD).join(', '));const[d,pitch,u]=T,H=headDims(kind,s.size),L=+s.len||FASTLEN[u][5],sh={type:'cylinder',name:'Shank',r:x5(d/2),h:x5(L),x:0,y:0,z:x5(-L)},tip={type:'chamfer',name:'Tip chamfer',d:x5(pitch*0.6),edges:{side:'-Z',type:'CIRCLE'}};
   const F=kind==='hex'?[{...hexE(H.dk/R3,0,H.k),name:'Head'},sh,tip]:kind==='shcs'?[{type:'cylinder',name:'Head',r:x5(H.dk/2),h:x5(H.k),x:0,y:0,z:0},{...hexE(H.s/R3,H.k,H.k*0.55,'cut','-'),name:'Socket'},sh,tip]
     :kind==='bhcs'?[{type:'cylinder',name:'Head',r:x5(H.dk/2),h:x5(H.k*0.6),x:0,y:0,z:0},{type:'cone',name:'Dome',r1:x5(H.dk/2),r2:x5(H.dk*0.32),h:x5(H.k*0.4),x:0,y:0,z:x5(H.k*0.6)},{...hexE(H.s/R3,H.k,H.k*0.5,'cut','-'),name:'Socket'},sh,tip]
-    
     :[{type:'cone',name:'Head',r1:x5(d/2),r2:x5(H.dk/2),h:x5(H.k),x:0,y:0,z:x5(-H.k),axis:'Z'},{type:'cylinder',name:'Shank',r:x5(d/2),h:x5(L),x:0,y:0,z:x5(-L)},{...hexE(H.s/R3,-H.k*0.55,H.k*0.6,'cut','+'),name:'Socket'},tip];
   return{name:hwName({...s,kind,len:L}),units:u,material:kind==='hex'?'steel1018':'steel4140',params:[],features:fx(F)};};
 const BUILD={hex:s=>screw(s,'hex'),shcs:s=>screw(s,'shcs'),bhcs:s=>screw(s,'bhcs'),fhcs:s=>screw(s,'fhcs'),
