@@ -1,0 +1,40 @@
+import * as ASM from './assembly.js';
+import {toPoly,offsetPoly,area} from './dies_geo.js';
+const r4=v=>+(+v).toFixed(4),d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),MAXSH=700;
+const box=(id,name,w,d,h,x,y,z,op='add')=>({id,type:'box',name,w:r4(w),d:r4(d),h:r4(h),x:r4(x),y:r4(y),z:r4(z),op}),cyl=(id,name,r,h,x,y,z,op='add')=>({id,type:'cylinder',name,r:r4(r),h:r4(h),x:r4(x),y:r4(y),z:r4(z),axis:'Z',op}),ext=(id,name,shapes,offset,depth,op='add',dir='+',draft=0)=>({id,type:'extrude',name,plane:'XY',offset:r4(offset),shapes,depth:r4(depth),dir,draft,op});
+const rect=(p,q,w,e=0)=>{const l=d2(p,q);return{k:'rect',x:r4((p[0]+q[0])/2),y:r4((p[1]+q[1])/2),w:r4(l+2*e),h:r4(w),r:0,a:r4(Math.atan2(q[1]-p[1],q[0]-p[0])*180/Math.PI)};};
+const segRects=(polys,w,e)=>polys.flatMap(P=>P.slice(1).map((q,i)=>rect(P[i],q,w,e)));
+const ring=(P,pad)=>offsetPoly(P,pad,true);
+export function ruleDieModel(res){const B=res.board,[ox,oy]=B.offset,warn=[],sh=P=>P.map(p=>[p[0]+ox,p[1]+oy]),cap=(a,n)=>{a.length>MAXSH&&warn.push(n+' truncated to '+MAXSH+' segments for the 3D model');return a.slice(0,MAXSH);};
+  const runs=t=>res.runs.filter(r=>r.t===t).map(r=>sh(r.pts)),slotW=t=>res.rules.find(r=>r.type===t)?res.rules.find(r=>r.type===t).slotW:0.04,types=['cut','crease','perf','kiss'].filter(t=>res.runs.some(r=>r.t===t));
+  const slots=cap(types.flatMap(t=>segRects(runs(t),slotW(t),slotW(t)/2)),'Board slots'),parts=[],comps=[];
+  parts.push({key:'board',name:'Die board',material:'balticply',features:[box('f1','Die board '+B.thk+' in ply',B.w,B.h,B.thk,B.w/2,B.h/2,0),...(slots.length?[ext('f2','Rule slots (kerf)',slots,B.thk,B.thk,'cut','-')]:[])]});
+  for(const t of types){const rl=res.rules.find(r=>r.type===t),sg=cap(segRects(runs(t),rl.thk,rl.thk/2),t+' rules');parts.push({key:'rule_'+t,name:{cut:'Cutting rule',crease:'Creasing rule',perf:'Perforating rule',kiss:'Kiss-cut rule'}[t]+' '+rl.pt+' pt, '+rl.h+' in',material:'steel4140',features:[ext('f1','Rule strips',sg,0,rl.h)]});}
+  if(res.rubber.strips.length){const rs=cap(res.rubber.strips.map(s=>({k:'rect',x:s.cx,y:s.cy,w:s.l,h:s.w,r:0,a:s.a})),'Rubber');parts.push({key:'rubber',name:'Ejection rubber '+res.rubber.durometer+'A',material:'abs',features:[ext('f1','Rubber strips',rs,B.thk,res.rubber.height)]});}
+  parts.forEach((p,i)=>comps.push({part:p.key,name:p.name,p:[0,0,0],fix:i===0}));return{name:'Steel rule die',units:'in',parts,comps,warn};}
+export function stampingModel(res){const S=res.dieSet,n=S.stations,t=res.blank.t,p=S.pitch,stk=S.stroke,xs=i=>(i-(n-1)/2)*p,sh=S.shoe,bl=S.block,lowerTop=sh.t,dieTop=lowerTop+bl.t,strZ=dieTop+t+0.25,holdZ=strZ+S.stripper.t+0.75,backZ=holdZ+S.holder.t,upZ=backZ+S.backing.t,top=upZ+sh.t,parts=[],comps=[];
+  const add=(key,name,mat,feat,cs)=>{parts.push({key,name,material:mat,features:feat});cs.forEach(c=>comps.push({part:key,name:c.name||name,p:c.p,fix:!!c.fix}));};
+  add('lower','Lower die shoe','steel1018',[box('f1','Lower shoe',sh.l,sh.w,sh.t,0,0,0)],[{p:[0,0,0],fix:true}]);
+  add('block','Die block','steel4140',[box('f1','Die block',bl.l,bl.w,bl.t,0,0,0)],[{p:[0,0,lowerTop]}]);
+  add('stripper','Stripper plate','steel4140',[box('f1','Stripper',bl.l,bl.w,S.stripper.t,0,0,0)],[{p:[0,0,strZ]}]);
+  add('holder','Punch holder','steel1018',[box('f1','Holder',bl.l,bl.w,S.holder.t,0,0,0)],[{p:[0,0,holdZ]}]);
+  add('backing','Backing plate','steel4140',[box('f1','Backing',bl.l,bl.w,S.backing.t,0,0,0)],[{p:[0,0,backZ]}]);
+  add('upper','Upper die shoe','steel1018',[box('f1','Upper shoe',sh.l,sh.w,sh.t,0,0,0)],[{p:[0,0,upZ]}]);
+  const px=sh.l/2-0.75,py=sh.w/2-0.75,pts=S.post.qty===2?[[-px,0],[px,0]]:[[-px,-py],[px,-py],[px,py],[-px,py]],pl=top-lowerTop-0.5;
+  add('post','Guide post','steel4140',[cyl('f1','Post',S.post.d/2,pl,0,0,0)],pts.map((q,i)=>({name:'Guide post '+(i+1),p:[q[0],q[1],lowerTop]})));
+  const hs=res.blank.holes.map(l=>({d:Math.hypot(l[0][0]-l[1][0],l[0][1]-l[1][1]),c:[(l[0][0]+l[1][0])/2-res.blank.w/2,(l[0][1]+l[1][1])/2-res.blank.h/2]})),punches=[];
+  const feed=res.strip.orientation?'y':'x';hs.forEach((h,i)=>punches.push({name:'Pierce punch '+(i+1),d:h.d,p:[xs(0)+(feed==='x'?h.c[0]:h.c[1]),0,holdZ-1.25]}));
+  const last=res.stations[res.stations.length-1];last&&punches.push({name:'Blanking punch',blank:true,p:[xs(n-1),0,holdZ-1.25]});
+  punches.filter(q=>!q.blank).length&&add('punch','Pierce punch','steel4140',[cyl('f1','Punch',0.5,1.25,0,0,0)].map(f=>({...f,r:r4(Math.max(0.02,punches.find(q=>!q.blank).d/2))})),punches.filter(q=>!q.blank).map(q=>({name:q.name,p:q.p})));
+  punches.find(q=>q.blank)&&add('blankpunch','Blanking punch','steel4140',[box('f1','Blank punch',res.blank.w-2*res.sizing.clearance.c,res.blank.h-2*res.sizing.clearance.c,1.25,0,0,0)],[{name:'Blanking punch',p:punches.find(q=>q.blank).p}]);
+  return{name:'Stamping die set',units:'in',parts,comps,warn:[]};}
+export function extrusionModel(res){const pl=res.plate,T=pl.thickness,toP=l=>({k:'path',pts:toPoly(l,true,0.004).map(p=>[r4(p[0]),r4(p[1])])}),parts=[],comps=[];
+  if(!res.hollow){parts.push({key:'die',name:'Extrusion die plate',material:'steel4140',features:[cyl('f1','Die plate',pl.od/2,T,0,0,0),ext('f2','Orifice',pl.orifice.map(toP),T,T,'cut','-')]});comps.push({part:'die',name:'Extrusion die plate',p:[0,0,0],fix:true});}
+  else{const H=res.porthole,half=T/2,pp=H.ports.map(P=>({k:'path',pts:P.map(p=>[r4(p[0]),r4(p[1])])}));parts.push({key:'mandrel',name:'Mandrel half (ports and mandrel)',material:'steel4140',features:[cyl('f1','Mandrel plate',pl.od/2,half,0,0,0),ext('f2','Ports',pp,half,half,'cut','-'),ext('f3','Mandrel core',H.mandrel.map(toP),half,half+H.chamber*0.5,'add','+')]},{key:'cap',name:'Die cap (orifice and bearings)',material:'steel4140',features:[cyl('f1','Die cap',pl.od/2,half,0,0,0),ext('f2','Orifice',[toP(res.profile.outer)].map(s=>({...s,pts:toPoly(pl.orifice[0],true,0.004).map(p=>[r4(p[0]),r4(p[1])])})),half,half,'cut','-')]});comps.push({part:'mandrel',name:'Mandrel half',p:[0,0,0],fix:true},{part:'cap',name:'Die cap',p:[0,0,half+H.chamber*0.5]});}
+  return{name:'Extrusion die',units:'in',parts,comps,warn:[]};}
+export function forgingModel(res){const f=res.flash,H=res.height,blk=res.block,out=res.parting.outline,P=toPoly(out,true,0.004),sg=area(P)>0?1:-1,cav=P.map(p=>[r4(p[0]-0),r4(p[1])]),cx=P.reduce((a,p)=>a+p[0],0)/P.length,cy=P.reduce((a,p)=>a+p[1],0)/P.length,mv=Q=>Q.map(p=>[r4(p[0]-cx),r4(p[1]-cy)]),land=mv(offsetPoly(P,-f.land*sg,true)),cavP=mv(P),g0=offsetPoly(P,-(f.land+f.gutterWidth)*sg,true),gutter=[...mv(g0),mv(g0)[0],...mv(offsetPoly(P,-f.land*sg,true)).reverse(),mv(offsetPoly(P,-f.land*sg,true))[0]].map(p=>p),parts=[],comps=[];
+  const mk=(key,name,z)=>({key,name,material:'steel4140',features:[box('f1',name,blk.l,blk.w,blk.h/2,0,0,0),ext('f2','Impression (draft '+res.draft.external+' deg)',[{k:'path',pts:cavP}],blk.h/2,H/2,'cut','-',res.draft.external),ext('f3','Flash land',[{k:'path',pts:land}],blk.h/2,f.thickness/2,'cut','-'),ext('f4','Gutter',[{k:'path',pts:gutter}],blk.h/2,f.gutterDepth,'cut','-')]});
+  parts.push(mk('lowerdie','Lower forging die'),mk('upperdie','Upper forging die'));comps.push({part:'lowerdie',name:'Lower forging die',p:[0,0,0],fix:true},{part:'upperdie',name:'Upper forging die',p:[0,0,blk.h/2+0.5],rot:[180,0,0]});
+  return{name:'Forging die',units:'in',parts,comps,warn:['Gutter and flash land are best effort; verify the parting line and flash geometry in a forging simulation.']};}
+export function applyDieModel(d,m,opt={}){const A=ASM.ensure(d);A.units='in';if(opt.replace){A.parts={};A.comps=[];A.mates=[];A.self=null;}const ids={};for(const p of m.parts)ids[p.key]=ASM.addPart(d,{name:p.name,units:m.units,material:p.material,params:[],features:p.features},{t:'embed'},p.name);for(const c of m.comps){const k=ASM.insert(d,ids[c.part],{name:c.name,p:c.p,rot:c.rot,fix:c.fix});k.fix=!!c.fix;}d.name=m.name;return Object.values(ids);}
+export function dieDoc(m){const d={name:m.name,units:m.units,material:'steel4140',params:[],features:[]};applyDieModel(d,m,{replace:true});return d;}
