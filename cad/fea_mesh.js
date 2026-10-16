@@ -53,9 +53,9 @@ export function keHeat8(x,k,K){const dm=grads(x,false);K.fill(0);for(let g=0;g<8
 export function nodeVol(x,out){grads(x,false);for(let a=0;a<8;a++){let s=0;for(let g=0;g<8;g++)s+=NG[g*8+a]*WB[g];out[a]=s;}return out;}
 const vmOf=s=>Math.sqrt(0.5*((s[0]-s[1])**2+(s[1]-s[2])**2+(s[2]-s[0])**2)+3*(s[3]**2+s[4]**2+s[5]**2));
 function masters(M){
-  const nn=M.X.length/3,h=M.hang;if(!h)return null;const p=new Int32Array(nn+1),cnt=new Int32Array(nn).fill(1);for(let q=0;q<h.node.length;q++){let c=0;for(let j=0;j<4;j++)if(h.m[4*q+j]>=0)c++;cnt[h.node[q]]=c;}
+  const nn=M.X.length/3,h=M.hang;if(!h)return null;const HK=h.k||4,p=new Int32Array(nn+1),cnt=new Int32Array(nn).fill(1);for(let q=0;q<h.node.length;q++){let c=0;for(let j=0;j<HK;j++)if(h.m[HK*q+j]>=0)c++;cnt[h.node[q]]=c;}
   for(let i=0;i<nn;i++)p[i+1]=p[i]+cnt[i];const mi=new Int32Array(p[nn]),mw=new Float64Array(p[nn]),hq=new Int32Array(nn).fill(-1);for(let q=0;q<h.node.length;q++)hq[h.node[q]]=q;
-  for(let i=0;i<nn;i++){const q=hq[i];if(q<0){mi[p[i]]=i;mw[p[i]]=1;continue;}let c=0;for(let j=0;j<4;j++)if(h.m[4*q+j]>=0){mi[p[i]+c]=h.m[4*q+j];mw[p[i]+c]=h.w[4*q+j];c++;}}
+  for(let i=0;i<nn;i++){const q=hq[i];if(q<0){mi[p[i]]=i;mw[p[i]]=1;continue;}let c=0;for(let j=0;j<HK;j++)if(h.m[HK*q+j]>=0){mi[p[i]+c]=h.m[HK*q+j];mw[p[i]+c]=h.w[HK*q+j];c++;}}
   return{p,i:mi,w:mw,hq};
 }
 function pattern(nn,E,cm){
@@ -181,7 +181,7 @@ function supportDofs(inp,M,cm){
   const mark=(n,c)=>{if(cm&&cm.hq[n]>=0){for(let k=cm.p[n];k<cm.p[n+1];k++)fix[3*cm.i[k]+c]=1;}else fix[3*n+c]=1;};
   for(const s of sup){const sel=M.select(s.faces),acc=new Map();facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv)=>{for(let k=0;k<4;k++){const v=acc.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];acc.set(nd[k],v);}});
     const roll=s.type==='roller'||s.type==='slider',dv=s.dir!=null?(typeof s.dir==='string'?AXI[s.dir.replace(/[+-]/,'')]:Array.isArray(s.dir)?[0,1,2].reduce((b,c)=>Math.abs(s.dir[c])>Math.abs(s.dir[b])?c:b,0):null):null;
-    for(const[n,v]of acc){const a=dv!=null?dv:Math.abs(v[0])>=Math.abs(v[1])&&Math.abs(v[0])>=Math.abs(v[2])?0:Math.abs(v[1])>=Math.abs(v[2])?1:2;if(roll)mark(n,a);else for(let c=0;c<3;c++)mark(n,c);}}
+    const SS=roll&&dv==null?surfOf(inp):null,fs=SS?new Set(sel.faces):null,o=new Float64Array(6);for(const[n,v0]of acc){let v=v0;if(SS){const t=closest(SS,M.X[3*n],M.X[3*n+1],M.X[3*n+2],u=>fs.has(SS.fid[u]),o);if(t>=0)v=[SS.N[3*t],SS.N[3*t+1],SS.N[3*t+2]];}const a=dv!=null?dv:Math.abs(v[0])>=Math.abs(v[1])&&Math.abs(v[0])>=Math.abs(v[2])?0:Math.abs(v[1])>=Math.abs(v[2])?1:2;if(roll)mark(n,a);else for(let c=0;c<3;c++)mark(n,c);}}
   return fix;
 }
 function loadsOf(inp,M,mat,cm){
@@ -227,7 +227,7 @@ function toVerts(sk,pos,fields){
   for(let v=0;v<nv;v++){const t=closest(S,pos[3*v],pos[3*v+1],pos[3*v+2],null,o);if(t<0)continue;const a=S.T[3*t],b=S.T[3*t+1],c=S.T[3*t+2],u=o[4],w=o[5];fields.forEach(([arr,st],fi)=>{for(let k=0;k<st;k++)out[fi][v*st+k]=(1-u-w)*arr[a*st+k]+u*arr[b*st+k]+w*arr[c*st+k];});}
   return out;
 }
-function meshInfo(M){const q=M.quality||{};return{type:M.type,kind:M.kind,nEl:M.E.length/8,nNode:M.X.length/3,layers:M.layers||null,tMin:M.thickness?M.thickness.min:M.tMin??null,tMax:M.thickness?M.thickness.max:null,h0:M.size?M.size.h0:null,hmin:M.size?M.size.hmin:null,minSJ:q.minSJ,maxAR:q.maxAR,lowSJ:q.lowSJ,volErr:q.volErr,through:M.layers||M.through||null,ms:M.ms,fallback:M.fallback,info:M.info};}
+function meshInfo(M){const q=M.quality||{};return{type:M.type,kind:M.kind,nEl:M.E.length/8,nNode:M.X.length/3,layers:M.layers||null,tMin:M.thickness?M.thickness.min:M.tMin??null,tMax:M.thickness?M.thickness.max:null,h0:M.size?M.size.h0:null,hmin:M.size?M.size.hmin:null,minSJ:q.minSJ,maxAR:q.maxAR,lowSJ:q.lowSJ,volErr:q.volErr,through:M.layers||M.through||null,ms:M.ms,fallback:M.fallback,warn:M.warn||null,info:M.info};}
 export function pickMesh(inp){
   const want=inp.mesh||'voxel';if(want==='voxel')return null;if(want!=='auto')return want;
   const res=inp.res||30000,hv=Math.cbrt(Math.max(inp.volume,1e-9)/Math.max(2000,Math.min(res,800000))),st=thicknessStats(inp);
@@ -236,14 +236,14 @@ export function pickMesh(inp){
 export async function runMeshFEA(inp,prog){
   const kind=pickMesh(inp);if(!kind)return runFEA(inp,prog);
   const type=inp.type||'static',t0=Date.now();prog&&prog(0,1,'mesh');
-  const M=inp.M||meshSolid(inp,{type:kind,res:Math.round((inp.res||30000)*(type==='modal'?0.6:1)),size:inp.meshSize||inp.size,layers:inp.layers}),tm=Date.now()-t0;
+  const M=inp.M||meshSolid(inp,{type:kind,res:Math.round((inp.res||30000)*(type==='modal'?0.6:1)),size:inp.meshSize||inp.size,layers:inp.layers,...(inp.meshOpt||{})}),tm=Date.now()-t0;if(M.E.length/8>(inp.maxEls||600000))throw new Error('The '+M.type+' mesh has '+(M.E.length/8).toLocaleString()+' elements, more than this browser can solve; choose a coarser mesh or a larger element size');
   const r=type==='modal'?await modalMesh(inp,M,prog):type==='thermal'?await thermalMesh(inp,M,prog):await staticMesh(inp,M,prog);
   r.mesh=meshInfo(M);r.mesh.ms=tm;r.ms=Date.now()-t0;return r;
 }
 async function staticMesh(inp,M,prog){
   const mat=inp.mat,t0=Date.now(),sys=systemOf(inp,M,mat),{A,cm,lam,mu,nn,ne}=sys,fix=supportDofs(inp,M,cm);if(!fix.some(v=>v))throw new Error('add at least one fixed face');if(cm)for(const n of M.hang.node)for(let c=0;c<3;c++)fix[3*n+c]=1;
   const{f,ap}=loadsOf(inp,M,mat,cm),f0=f.slice(),R=applyBC(A,fix,f),tA=Date.now(),NS=nullspace(M,fix),TT=M.sweep&&M.sheet&&M.sheet.thin&&(inp.colT??true)?colT(M):null,AA=TT?spgemm(transpose(TT),spgemm(A,TT)):A,ff=TT?mv(transpose(TT),f,new Float64Array(f.length)):f;if(TT){const C=M.sweep.N+1,nb=NS.nb;for(let i=nn-1;i>=0;i--)if(i%C)for(let j=0;j<3*nb;j++)NS.B[3*i*nb+j]-=NS.B[3*(i-1)*nb+j];}const H=amgSetup(AA,NS.B,NS.nb,{theta:inp.theta,theta2:inp.theta2,deg:inp.deg,cdeg:inp.cdeg,gamma:inp.gamma,coarse:inp.coarse,col:inp.col??(M.sweep&&M.sheet&&M.sheet.thin?M.sweep.N+1:1)}),tH=Date.now();
-  const S=await solveSys(AA,H,ff,{tol:inp.tol,solver:inp.solver,gpuMin:inp.gpuMin??(TT?Infinity:5000),maxIt:inp.maxIt,ceps:inp.ceps},prog),u=TT?mv(TT,S.u,new Float64Array(S.u.length)):S.u,tS=Date.now();
+  const S=await solveSys(AA,H,ff,{tol:inp.tol,solver:inp.solver,gpuMin:inp.gpuMin??(TT||M.type==='adaptive'?Infinity:5000),maxIt:inp.maxIt,ceps:inp.ceps},prog),u=TT?mv(TT,S.u,new Float64Array(S.u.length)):S.u,tS=Date.now();
   if(cm)for(let q=0;q<M.hang.node.length;q++){const n=M.hang.node[q];for(let c=0;c<3;c++){let s=0;for(let k=cm.p[n];k<cm.p[n+1];k++)s+=cm.w[k]*u[3*cm.i[k]+c];u[3*n+c]=s;}}
   const sig=new Float64Array(6*nn),cnt=new Uint16Array(nn),x=new Float64Array(24),ue=new Float64Array(24),o48=new Float64Array(48),evm=new Float32Array(ne);
   for(let e=0;e<ne;e++){for(let a=0;a<8;a++){const n=M.E[8*e+a];for(let k=0;k<3;k++){x[3*a+k]=M.X[3*n+k];ue[3*a+k]=u[3*n+k];}}stressQM6(x,ue,lam,mu,o48,!M.cube&&M.type==='sweep'&&isThin(x));let m=0;for(let a=0;a<8;a++){const n=M.E[8*e+a];for(let c=0;c<6;c++)sig[6*n+c]+=o48[6*a+c];cnt[n]++;m=Math.max(m,vmOf(o48.subarray(6*a,6*a+6)));}evm[e]=m;}
@@ -251,7 +251,7 @@ async function staticMesh(inp,M,prog){
   for(let n=0;n<nn;n++){if(!cnt[n])continue;for(let c=0;c<6;c++)sig[6*n+c]/=cnt[n];vm[n]=vmOf(sig.subarray(6*n,6*n+6));um[n]=Math.hypot(u[3*n],u[3*n+1],u[3*n+2]);vmMax=Math.max(vmMax,vm[n]);uMax=Math.max(uMax,um[n]);if(!sup[n]&&!(cm&&cm.hq[n]>=0))vmAway=Math.max(vmAway,vm[n]);}
   const sk=skinOf(M),svm=new Float32Array(sk.nodes.length),su=new Float32Array(3*sk.nodes.length);sk.nodes.forEach((n,i)=>{svm[i]=vm[n];su[3*i]=u[3*n];su[3*i+1]=u[3*n+1];su[3*i+2]=u[3*n+2];});
   const[vStress,vDisp]=toVerts(sk,inp.pos,[[svm,1],[su,3]]);let nFixed=0;for(let n=0;n<nn;n++)if(sup[n])nFixed++;
-  return{type:'static',vStress,vDisp,vmMax,vmP99:vmAway||vmMax,peakLabel:'Peak von Mises (away from supports)',uMax,h:M.size?M.size.h0:M.h0,nEl:ne,nDof:3*nn,iters:S.iters,rel:S.rel,levels:H.length,lvl:H.map(L=>L.A.n+"x"+L.A.rb).join(" "),ms:Date.now()-t0,applied:ap,reaction:reactions(R,u,fix,f0),nFixed,backend:S.backend,gpuError:S.gpuError,hist:S.hist,skin:{pos:sk.pos,idx:sk.idx,vm:svm,u:su},u:inp.keepU?u:undefined,nodeVm:inp.keepU?vm:undefined,times:{assemble:tA-t0,amg:tH-tA,solve:tS-tH,post:Date.now()-tS}};
+  return{type:'static',vStress,vDisp,vmMax,vmP99:vmAway||vmMax,peakLabel:'Peak von Mises (away from supports)',uMax,h:M.size?M.size.h0:M.h0,nEl:ne,nDof:3*nn,iters:S.iters,rel:S.rel,levels:H.length,ms:Date.now()-t0,applied:ap,reaction:reactions(R,u,fix,f0),nFixed,backend:S.backend,gpuError:S.gpuError,hist:S.hist,skin:{pos:sk.pos,idx:sk.idx,vm:svm,u:su},u:inp.keepU?u:undefined,nodeVm:inp.keepU?vm:undefined,times:{assemble:tA-t0,amg:tH-tA,solve:tS-tH,post:Date.now()-tS}};
 }
 function hangFill(M,cm,u,d){if(cm)for(const n of M.hang.node)for(let c=0;c<d;c++){let s=0;for(let k=cm.p[n];k<cm.p[n+1];k++)s+=cm.w[k]*u[d*cm.i[k]+c];u[d*n+c]=s;}return u;}
 function faceW(M,faces){const W=new Map();let tot=0;facetGeo(M.X,M.E,M.select(faces).facets,(i,nd,w,nv,A)=>{tot+=A;for(let k=0;k<4;k++)W.set(nd[k],(W.get(nd[k])||0)+w[k]);});return{W,tot};}

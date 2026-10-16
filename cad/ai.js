@@ -15,7 +15,7 @@ Actions (applied in order):
  {"delete":"f3"}                         remove a feature
  {"new":true}                            empty the model first (only when the user wants a new part)
  {"material":"al6061"}                   set the material
- {"sim":{"type":"static","fixed":[face selector],"supports":[{"faces":sel,"type":"fixed"|"roller"}],"loads":[{"faces":sel,"F":[fx,fy,fz]} | {"faces":sel,"p":MPa} | {"faces":sel,"M":[mx,my,mz] N·mm torque}],"gravity":true}}  set up a stress test (N, mm, MPa)
+ {"sim":{"type":"static","fixed":[face selector],"supports":[{"faces":sel,"type":"fixed"|"roller"}],"loads":[{"faces":sel,"F":[fx,fy,fz]} | {"faces":sel,"p":MPa} | {"faces":sel,"M":[mx,my,mz] N·mm torque}],"gravity":true,"mesh":"auto"|"voxel"|"sweep"|"adaptive","layers":2,"size":mm}}  set up a stress test (N, mm, MPa). mesh: auto (default) uses voxels for chunky parts and switches to a hex mesh when walls are thinner than about 3 voxels; sweep = hex layers through sheet, extruded or formed walls (layers >= 2 through the thickness, size = in-plane element size); adaptive = graded octree hex mesh for general solids with thin ribs. A roller support may add "dir":"x"|"y"|"z" to hold only that direction. mesh, layers and size also apply to modal and thermal
  {"sim":{"type":"modal","modes":6,"supports":[...]}}  natural frequencies (no supports = free part)
  {"sim":{"type":"thermal","temps":[{"faces":sel,"T":°C}],"conv":[{"faces":sel,"h":W/m²K,"Tinf":°C}],"flux":[{"faces":sel,"Q":W}]}}  steady heat flow
  {"run":"fea"}                           run the stress analysis

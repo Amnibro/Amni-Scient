@@ -1,0 +1,7 @@
+import * as THREE from 'three';
+let obj=null,par=null,fm=null;
+export function showSkin(parent,sk,L,col,mat){if(obj){par.remove(obj);obj.geometry.dispose();obj=null;}if(!sk)return null;const g=new THREE.BufferGeometry(),p=new Float32Array(sk.pos.length);for(let i=0;i<p.length;i++)p[i]=sk.pos[i]/L;g.setAttribute('position',new THREE.BufferAttribute(p,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));g.setIndex(new THREE.BufferAttribute(sk.idx,1));g.computeVertexNormals();if(!fm||fm.src!==mat){fm=mat.clone();fm.flatShading=true;fm.clippingPlanes=mat.clippingPlanes;fm.src=mat;}obj=new THREE.Mesh(g,fm);obj.userData.rest=p.slice();obj.castShadow=true;par=parent;parent.add(obj);return obj;}
+export function paintSkin(col){if(!obj)return;obj.geometry.attributes.color.array.set(col);obj.geometry.attributes.color.needsUpdate=true;}
+export function deformSkin(D,k){if(!obj)return;const p=obj.geometry.attributes.position,r=obj.userData.rest;for(let i=0;i<r.length;i++)p.array[i]=r[i]+(D?D[i]*k:0);p.needsUpdate=true;obj.geometry.computeVertexNormals();obj.geometry.computeBoundingSphere();}
+export const skinObj=()=>obj;
+export function meshSummary(m,dual){if(!m)return null;const t={sweep:'Swept hex',adaptive:'Adaptive hex'}[m.type]||m.type;return t+' · '+m.nEl.toLocaleString()+' elements'+(m.through?' · '+(m.type==='sweep'?m.through:m.through.toFixed(1))+' through '+dual('len',m.tMin):'')+(m.minSJ!=null?' · min. quality '+m.minSJ.toFixed(2):'');}
