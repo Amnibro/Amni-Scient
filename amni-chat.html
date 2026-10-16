@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Chat &mdash; Encrypted Android messenger | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Chat is an end-to-end encrypted Android app for text, voice, video and screenshare. MLS via OpenMLS on a Rust core. It runs over nostr and a Bluetooth mesh, with no account and no central server. AGPL-3.0.">
+<meta property="og:title" content="Amni-Chat &mdash; Encrypted Android messenger">
+<meta property="og:description" content="Text, voice, video and screenshare. MLS via OpenMLS on a Rust core, over nostr and a Bluetooth mesh. No account. No central server.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-chat">
+<meta property="og:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Chat &mdash; Encrypted Android messenger">
+<meta name="twitter:description" content="Text, voice, video and screenshare. MLS via OpenMLS on a Rust core, over nostr and a Bluetooth mesh. No account. No central server.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
+<link rel="canonical" href="https://amni-scient.com/amni-chat">
+<link rel="stylesheet" href="css/style.css?v=b264">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.diff-table{width:100%;max-width:880px;margin:1.5rem 0;border-collapse:collapse;font-size:.85rem}
+.diff-table th{background:rgba(34,211,238,0.08);color:var(--accent);padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--accent)}
+.diff-table td{padding:.6rem .8rem;border-bottom:1px solid var(--border);vertical-align:top}
+.diff-table td:first-child{color:var(--dim);width:22%}
+.ptile-media img.mark{object-fit:contain;padding:16%;background:radial-gradient(circle at 50% 42%,var(--accent-dim),#07080A 68%)}
+</style>
+</head>
+<body class="pp theme-chat">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html" class="active">AMNI-CHAT</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 28h64a8 8 0 0 1 8 8v36a8 8 0 0 1-8 8H46l-16 16v-16H18a8 8 0 0 1-8-8V36a8 8 0 0 1 8-8z" stroke="#22D3EE" stroke-width="2.5" fill="rgba(34,211,238,0.05)"/>
+<rect x="40" y="52" width="20" height="16" rx="2" stroke="#22D3EE" stroke-width="2"/>
+<path d="M44 52v-6a6 6 0 0 1 12 0v6" stroke="#22D3EE" stroke-width="2"/>
+<circle cx="50" cy="60" r="1.6" fill="#22D3EE"/>
+</svg>
+</div>
+<h1>AMNI-CHAT</h1>
+<p class="desc">ANDROID BETA &bull; TEXT, VOICE, VIDEO, SCREENSHARE</p>
+<div class="cta-row">
+<a href="beta.html#app-chat" class="btn btn-primary">GET THE BETA</a>
+<a href="amni-chat-relay.html" class="btn btn-outline">SELF-HOST RELAY</a>
+</div>
+</div>
+<div class="ptile">
+<div class="ptile-copy">
+<p class="ptile-line">Encrypted chat on your phone. No account, and no central server.</p>
+<ul class="ptile-feats"><li>Text, voice, video and screenshare</li><li>MLS, via OpenMLS, in a Rust core</li><li>Nostr when you&rsquo;re online. A Bluetooth mesh when you&rsquo;re not.</li><li>Add someone with a QR code or a link</li></ul>
+</div>
+<div class="ptile-media"><img class="mark" src="assets/beta/chat.webp" alt="Amni-Chat app icon" width="192" height="192"></div>
+</div>
+<section>
+<h2>WHAT IT DOES</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Amni-Chat is an Android messenger for text, voice, video, and screenshare. It still works when no central server is in the path.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Encryption is MLS, Messaging Layer Security, through <a href="https://openmls.tech/" target="_blank" rel="noopener">OpenMLS</a>. That code sits in a Rust core. There is no account. There is no central server. Add a contact by scanning a QR code or opening a link.</p>
+<div class="features">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+<h4>MLS</h4>
+<p>End-to-end encryption for the group. OpenMLS does the protocol. The Rust core is what the app actually runs.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="18" cy="17" r="2.2"/><path d="M8 11.2L16 8M8 12.8L16 16"/></svg></div>
+<h4>NOSTR</h4>
+<p>Online traffic goes over nostr. Those relays move packets. Plaintext stays inside the MLS session.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8a5 5 0 0 1 10 0c0 4-5 5-5 9"/><circle cx="12" cy="20" r="1"/></svg></div>
+<h4>BLUETOOTH MESH</h4>
+<p>Phones in radio range pass traffic over Bluetooth. That hop is the radios talking to each other.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v10H8l-3 3z"/></svg></div>
+<h4>SMS</h4>
+<p>The other offline path. A text message carries it when the mesh can&rsquo;t see the other phone.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 17h6M17 14v6"/></svg></div>
+<h4>QR OR LINK</h4>
+<p>That&rsquo;s how you add a contact. Scan the code, or open the link.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/></svg></div>
+<h4>NO ACCOUNT</h4>
+<p>The app makes the keys on the phone. There is no sign-up and no account to log into.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>HOW A MESSAGE MOVES</h2>
+<div class="card-grid">
+<div class="card">
+<h3>1. KEYS</h3>
+<p>Open the app. It generates the keys on the device. Those keys are not registered with a central server.</p>
+</div>
+<div class="card">
+<h3>2. A CONTACT</h3>
+<p>Show your QR code, or send your link. They add you. You add them. That pair is the conversation.</p>
+</div>
+<div class="card">
+<h3>3. ONLINE</h3>
+<p>When both phones have a network, the packets go over nostr. MLS already wrapped them.</p>
+</div>
+<div class="card">
+<h3>4. OFFLINE</h3>
+<p>Bluetooth mesh if you&rsquo;re close enough. SMS if you&rsquo;re not. Same ciphertext, different pipe.</p>
+</div>
+</div>
+</section>
+<section>
+<h2>APP ALONE, OR A RELAY</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">The app is the product. The <a href="amni-chat-relay.html">relay</a> is optional, and you run it yourself if you want the extra pieces.</p>
+<table class="diff-table">
+<thead><tr><th></th><th>APP ALONE</th><th>WITH YOUR RELAY</th></tr></thead>
+<tbody>
+<tr><td>CONTACTS</td><td>QR code or link</td><td>those, plus discovery</td></tr>
+<tr><td>CLIENTS</td><td>the Android app</td><td>plus a web client</td></tr>
+<tr><td>DEVICES</td><td>the phone you paired</td><td>multi-device sync</td></tr>
+<tr><td>PUSH</td><td>no</td><td>ntfy, by default</td></tr>
+<tr><td>WHAT A SERVER STORES</td><td>no central server</td><td>ciphertext only</td></tr>
+<tr><td>OFFLINE</td><td>Bluetooth and SMS</td><td>still Bluetooth and SMS</td></tr>
+</tbody>
+</table>
+</section>
+<section>
+<h2>LIMITS</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">It&rsquo;s a beta. The Android build installs from an APK while Google reviews the Play test. The <a href="beta.html#app-chat">beta page</a> also has an iPhone TestFlight link.</p>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Offline means Bluetooth and SMS. It does not mean the internet keeps working with the radio off and nobody nearby.</p>
+<p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Skip the relay and you don&rsquo;t get its discovery, web client, multi-device sync, or push. Chat still works. License is AGPL-3.0.</p>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Platform</td><td>Android beta. iPhone TestFlight is on the <a href="beta.html#app-chat">beta page</a>.</td></tr>
+<tr><td>Messages</td><td>Text, voice, video, screenshare</td></tr>
+<tr><td>Encryption</td><td>MLS via OpenMLS</td></tr>
+<tr><td>Core</td><td>Rust</td></tr>
+<tr><td>Online</td><td>nostr</td></tr>
+<tr><td>Offline</td><td>Bluetooth mesh and SMS</td></tr>
+<tr><td>Contacts</td><td>QR code or link</td></tr>
+<tr><td>Account</td><td>none</td></tr>
+<tr><td>Central server</td><td>none</td></tr>
+<tr><td>Relay</td><td>optional &middot; <a href="amni-chat-relay.html">self-host</a></td></tr>
+<tr><td>License</td><td>AGPL-3.0</td></tr>
+</table>
+</section>
+<section>
+<h2>GET THE BETA</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1.5rem;font-size:.95rem">Android is an APK for now. iPhone is TestFlight. Report what breaks on the beta page.</p>
+<div class="cta-row" style="flex-wrap:wrap;gap:1rem">
+<a href="beta.html#app-chat" class="btn btn-primary">BETA PAGE</a>
+<a href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener" class="btn btn-outline">IPHONE TESTFLIGHT</a>
+<a href="downloads/amni-chat-beta.apk" class="btn btn-outline" download="Amni-Chat.apk">ANDROID APK</a>
+<a href="amni-chat-relay.html" class="btn btn-outline">SELF-HOST RELAY</a>
+</div>
+<p style="color:var(--dim);font-size:.78rem;margin-top:1.2rem">AGPL-3.0</p>
+</section>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. Amni-Chat is licensed AGPL-3.0.</p>
+</footer>
+</body>
+</html>
