@@ -25,7 +25,7 @@ try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'n
   await load({'amnicad.ui':'workshop','amnicad.ui.v':'3'});
   await ev(()=>{window.__fresh=1;});await ctrlK();
   ok(await vis('#tab-ai')&&await vis('#ai-setup'),'Ctrl+K opens the assistant and a fresh profile sees the Connect an AI card');
-  const opts=await ev(()=>[...document.querySelectorAll('#ai-setup .as-oh b')].map(x=>x.textContent));ok(opts.length===3&&/Claude or ChatGPT app/.test(opts[0])&&/API key/.test(opts[1])&&/Free and private/.test(opts[2]),'first-run card offers three plain choices',opts.join(' | '));
+  const opts=await ev(()=>[...document.querySelectorAll('#ai-setup .as-oh b')].map(x=>x.textContent));ok(opts.length===3&&/Use your AI app/.test(opts[0])&&/API key/.test(opts[1])&&/Free and private/.test(opts[2]),'first-run card offers three plain choices',opts.join(' | '));
   ok(!await vis('#ai-in')&&/No AI connected/.test(await txt('#ai-chip')),'composer is hidden and the chip says no AI is connected before setup');
   const ov=await ev(OV);ok(ov&&ov.area===0&&ov.a.l>=ov.c.r-2,'workshop: the assistant dock does not overlap the 3D view',ov);
   await clickT('#ai-setup .as-oh','paste an API key')||await ev(()=>document.querySelector('#ai-o-key').click());await sleep(200);
@@ -47,7 +47,7 @@ try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'n
   ok(await until(()=>!!document.querySelector('#ai-code'),null,5000),'the pairing code prompt appears when the connector asks for one');
   await ev(()=>{document.querySelector('#ai-code').value='123456';});await clickT('#ai-setup button','Pair');
   ok(await until(()=>/Claude Code/.test(document.querySelector('#ai-chip').textContent)&&!document.querySelector('#ai-setup').offsetParent,null,6000)&&await ev(()=>JSON.parse(localStorage.getItem('amnicad.ai')).kind==='bridge'),'pairing connects and auto-switches to the app, remembered');
-  ok(!await vis('#ai-in')&&/Ask in your Claude or ChatGPT app/.test(await txt('#chat')),'in app mode the chat explains where to ask and the composer is hidden');
+  ok(!await vis('#ai-in')&&/Ask in your AI app/.test(await txt('#chat')),'in app mode the chat explains where to ask and the composer is hidden');
   await ev(()=>localStorage.setItem('amnicad.bridge.on',''));
   await load({'amnicad.ui':'workshop','amnicad.ui.v':'3','amnicad.ai':JSON.stringify({kind:'anthropic',model:'Qwen3.5-4B-Q4_K_M',base:'http://localhost:11434/v1',lmodel:'',remember:true,cm:{},chosen:true}),'amnicad.key.anthropic':'sk-ant-good'});
   await ev(()=>{window.amnicad.API.setTab('ai');window.amnicad.API.showPanel('R');});
