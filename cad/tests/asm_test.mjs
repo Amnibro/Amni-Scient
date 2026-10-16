@@ -2,7 +2,7 @@ import opencascade from '../vendor/replicad_single.js';import * as K from '../ke
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let bad=0,n=0;const chk=(nm,c,x)=>{n++;console.log((c?'OK  ':'BAD ')+nm+(x!==undefined?' · '+x:''));if(!c)bad++;},near=(a,b,t=1e-5)=>Math.abs(a-b)<=t,f4=v=>Array.isArray(v)?'['+v.map(f4).join(',')+']':(+v).toFixed(4);
 const ctx={K,blobs:{}},meshes=new Map(),{dot,sub,len,cross}=M.V3;
-const build=async d=>{for(const pid of new Set(d.asm.comps.map(c=>c.part))){const sig=ASM.sigOf(d,pid);if(meshes.has(pid+sig))continue;const r=await AK.part(ctx,{key:sig,doc:ASM.partDoc(d,pid),sig});if(r.errors.length)console.log('  build errors',pid,JSON.stringify(r.errors));meshes.set(pid+sig,r.mesh);}};
+const build=async d=>{for(const pid of new Set(d.asm.comps.map(ASM.pk))){const sig=ASM.sigOf(d,pid);if(meshes.has(pid+sig))continue;const r=await AK.part(ctx,{key:sig,doc:ASM.partDoc(d,pid),sig});if(r.errors.length)console.log('  build errors',pid,JSON.stringify(r.errors));meshes.set(pid+sig,r.mesh);}};
 const meshOf=d=>pid=>meshes.get(pid+ASM.sigOf(d,pid));
 const solve=async(d,o={})=>{await build(d);const r=ASM.solveDoc(d,meshOf(d),{analyze:true,...o});ASM.setPoses(d,r);return r;};
 const W=(d,ref)=>{const c=d.asm.comps.find(x=>x.id===ref.c);return M.worldEnt(M.poseOf(c),ASM.resolver(d,meshOf(d))(ref));};
@@ -313,5 +313,43 @@ await build(ds);IC.addXref(ds,{part:'c2',name:'span',kind:'param',from:{part:sk.
 const dv=fresh();{const a=ASM.addPart(dv,PLT);ASM.insert(dv,a,{fix:true});const dp=ASM.derivePart(dv,a,{add:[{type:'hole',plane:'XY',offset:'t',d:0.2,thru:true,pts:[[-1,-1]]}],params:{t:'0.25'}},'Plate variant');ASM.insert(dv,dp,{p:[0,5,0],fix:true});}
 await build(dv);{const m1=mo3(dv)('p1'),m2=mo3(dv)('p2'),holes=m=>m.faces.filter(f=>f.type==='CYLINDRE').length;chk('derived part: parent plus an extra hole and a thinner plate',holes(m1)===1&&holes(m2)===2&&near(m2.props.bbox.max[2],0.25,1e-5),holes(m1)+' / '+holes(m2)+' z '+m2.props.bbox.max[2]);
   dv.asm.parts.p1.doc.params.push({name:'extra',expr:'1'});dv.asm.parts.p1.doc.features[0].w=5;await build(dv);const m3=mo3(dv)('p2');chk('editing the parent flows into the derived part (width 4 → 5), the variant keeps its own changes',near(m3.props.bbox.max[0]-m3.props.bbox.min[0],5,1e-5)&&near(m3.props.bbox.max[2],0.25,1e-5),(m3.props.bbox.max[0]-m3.props.bbox.min[0]).toFixed(3));}
+}
+{
+const SPL={name:'Steel plate',units:'in',material:'steel1018',params:[],features:[{id:'f1',type:'box',w:4,d:3,h:0.5},{id:'f2',type:'hole',plane:'XY',offset:0.5,d:0.25,thru:true,pts:[[-1.5,-1],[1.5,-1],[-1.5,1],[1.5,1]]}]},ABS={name:'Aluminum boss',units:'in',material:'al6061',params:[],features:[{id:'f1',type:'cylinder',r:0.5,h:1,x:1,y:0,z:0.5}]};
+const dm=fresh();{const a=ASM.addPart(dm,SPL),b=ASM.addPart(dm,ABS);ASM.insert(dm,a,{fix:true});ASM.insert(dm,b,{fix:true});}await build(dm);
+const MATS=(await import('../schema.js')).MATS,keys=[...new Set(dm.asm.comps.map(c=>ASM.sigOf(dm,ASM.pk(c))))],ex=await AK.mass(ctx,{keys}),items=dm.asm.comps.map(c=>({mom:ex[ASM.sigOf(dm,ASM.pk(c))],P:M.poseOf(c),k:1,rho:MATS[ASM.partDoc(dm,c.part).material].rho})),mp=ASM.massProps(items,25.4);
+const u=0.0254,pi=Math.PI,Vp=(4*3*0.5-4*pi*0.125**2*0.5)*u**3,Vb=pi*0.25*1*u**3,mp1=7870*Vp,mb=2700*Vb;
+const parts=[{m:7870*4*3*0.5*u**3,c:[0,0,0.25],I:(b,c)=>0},];
+const ten=(m,c,Ic)=>{const I=Ic.map(r=>r.slice());const cc=c.map(v=>v*u),d2=cc[0]**2+cc[1]**2+cc[2]**2;for(let i=0;i<3;i++)for(let j=0;j<3;j++)I[i][j]+=m*((i===j?d2:0)-cc[i]*cc[j]);return I;};
+const box=(m,w,d,h)=>[[m*(d*d+h*h)/12,0,0],[0,m*(w*w+h*h)/12,0],[0,0,m*(w*w+d*d)/12]].map(r=>r.map(v=>v*u*u)),cyl=(m,r,h)=>[[m*(3*r*r+h*h)/12,0,0],[0,m*(3*r*r+h*h)/12,0],[0,0,m*r*r/2]].map(r=>r.map(v=>v*u*u));
+const mBox=7870*4*3*0.5*u**3,mHole=7870*pi*0.125**2*0.5*u**3,Ih=[[-1.5,-1],[1.5,-1],[-1.5,1],[1.5,1]];
+const comps=[{m:mBox,c:[0,0,0.25],I:box(mBox,4,3,0.5)},...Ih.map(([x,y])=>({m:-mHole,c:[x,y,0.25],I:cyl(-mHole,0.125,0.5)})),{m:mb,c:[1,0,1],I:cyl(mb,0.5,1)}];
+const Mt=comps.reduce((s,q)=>s+q.m,0),C=[0,1,2].map(i=>comps.reduce((s,q)=>s+q.m*q.c[i],0)/Mt),Ic=[[0,0,0],[0,0,0],[0,0,0]];
+for(const q of comps){const T=ten(q.m,q.c.map((v,i)=>v-C[i]),q.I);for(let i=0;i<3;i++)for(let j=0;j<3;j++)Ic[i][j]+=T[i][j];}
+const pe=(a,b)=>Math.abs(a/b-1)*100;
+chk('mass of a steel plate with 4 holes plus an aluminum boss matches the hand calculation within 0.5 percent',pe(mp.mass,Mt)<0.5,mp.mass.toFixed(6)+' kg vs '+Mt.toFixed(6)+' kg ('+pe(mp.mass,Mt).toFixed(4)+' %)');
+chk('center of mass matches the hand calculation (mm)',[0,1,2].every(i=>Math.abs(mp.com[i]-C[i])<0.005),f4(mp.com)+' vs '+f4(C)+' in');
+chk('moments of inertia about the center of mass match within 0.5 percent (Ixx, Iyy, Izz)',[0,1,2].every(i=>pe(mp.I[i][i]*u*u,Ic[i][i])<0.5),[0,1,2].map(i=>pe(mp.I[i][i]*u*u,Ic[i][i]).toFixed(4)).join(' / ')+' %');
+chk('product of inertia Ixz from the off-center boss matches too',Math.abs(mp.I[0][2]*u*u-Ic[0][2])<0.005*Math.abs(Ic[2][2]),(mp.I[0][2]*u*u).toExponential(4)+' vs '+Ic[0][2].toExponential(4));
+const mesh=dm.asm.comps.map(c=>({mom:ASM.meshMoments(meshOf(dm)(c.part)),P:M.poseOf(c),k:1,rho:MATS[ASM.partDoc(dm,c.part).material].rho})),mm2=ASM.massProps(mesh,25.4);chk('the quick mesh estimate agrees with the exact B-rep result within 0.5 percent',pe(mm2.mass,Mt)<0.5&&pe(mm2.I[2][2]*u*u,Ic[2][2])<0.5,pe(mm2.mass,Mt).toFixed(4)+' / '+pe(mm2.I[2][2]*u*u,Ic[2][2]).toFixed(4)+' %');
+const rot=JSON.parse(JSON.stringify(dm));rot.asm.comps[1].p=[3,1,2];rot.asm.comps[1].q=rotq([1,2,1],40);const it2=rot.asm.comps.map(c=>({mom:ex[ASM.sigOf(rot,ASM.pk(c))],P:M.poseOf(c),k:1,rho:MATS[ASM.partDoc(rot,c.part).material].rho})),mr=ASM.massProps(it2,25.4);chk('moving and turning a component changes the center of mass but not the mass or its own contribution',near(mr.mass,mp.mass,1e-9)&&Math.abs(mr.com[0]-mp.com[0])>0.01,f4(mr.com));
+}
+{
+const STUD={name:'Stud',units:'in',material:'steel1018',params:[{name:'L',expr:'1'}],features:[{id:'f1',type:'cylinder',r:0.25,h:'L'},{id:'f2',type:'hole',plane:'XZ',offset:0,d:0.1,thru:true,pts:[[0,0.5]]}]},mo4=d_=>pid=>meshes.get(pid+ASM.sigOf(d_,pid));
+const dc=fresh();{const a=ASM.addPart(dc,PLATE),b=ASM.addPart(dc,STUD);ASM.insert(dc,a);for(let i=0;i<3;i++)ASM.insert(dc,b,{p:[-1+i*0.5,i-1,2+i]});}
+const names=ASM.configTable(dc,'p2',{columns:['L'],rows:[{name:'S1',L:1,suppress:['f2']},{name:'S2',L:2,suppress:['f2']},{name:'S3',L:3,suppress:['f2']},{name:'S1 holed',L:1}]});
+chk('length table makes 4 configurations of the stud',names.join()==='S1,S2,S3,S1 holed'&&Object.keys(dc.asm.parts.p2.configs).length===4);ASM.insert(dc,'p2',{p:[3,3,3]});ASM.useConfig(dc,'c5','S1 holed');
+['S1','S2','S3'].forEach((n,i)=>ASM.useConfig(dc,'c'+(i+2),n));
+for(let i=2;i<=4;i++)ASM.addMate(dc,{type:'coincident',a:{c:'c1',face:{side:'+Z'}},b:{c:'c'+i,face:{side:'-Z'}}});
+let r=await solve(dc);const tops=[2,3,4].map(i=>{const c=dc.asm.comps[i-1],m=mo4(dc)(ASM.pk(c)),P=M.poseOf(c);return M.xf(P,m.props.bbox.max)[2];});
+chk('each configuration builds its own length and the mates hold them on the plate (tops at z = 1.5, 2.5, 3.5)',r.ok&&near(tops[0],1.5,1e-4)&&near(tops[1],2.5,1e-4)&&near(tops[2],3.5,1e-4),tops.map(v=>v.toFixed(4)).join(' '));
+{const v=[2,3,4,5].map(i=>mo4(dc)(ASM.pk(dc.asm.comps[i-1])).props.volume);chk('a configuration can suppress a feature: only the holed variant loses material (0.1 in cross hole)',near(v[0],Math.PI*0.0625,0.002)&&near(v[1],Math.PI*0.0625*2,0.002)&&near(v[2],Math.PI*0.0625*3,0.003)&&v[0]-v[3]>0.0015,v.map(x=>x.toFixed(5)).join(' '));}
+{const rows=ASM.bom(dc);chk('BOM lists each configuration as its own line',rows.length===5&&rows.filter(x=>x.part==='p2').map(x=>x.cfg).join()==='S1,S2,S3,S1 holed'&&rows.every(x=>x.qty===1)&&/S2/.test(rows[2].desc),rows.map(x=>x.name+' '+x.cfg+' ×'+x.qty).join(' | '));}
+ASM.useConfig(dc,'c2','S3');r=await solve(dc);{const c=dc.asm.comps[1],m=mo4(dc)(ASM.pk(c));chk('switching a component to another configuration keeps its mate and resizes it',r.ok&&near(M.xf(M.poseOf(c),m.props.bbox.max)[2],3.5,1e-4)&&!r.errors.length,r.errors.length+' errors');}
+ASM.useConfig(dc,'c2','S1');ASM.suppress(dc,['c3']);r=await solve(dc);chk('suppressed component is ignored by the solver, its mates raise no errors, and it leaves the BOM',r.ok&&!r.errors.length&&!r.conflicts.length&&ASM.bom(dc).length===4&&ASM.summary(dc,r).components[2].suppressed===true,ASM.bom(dc).length+' rows');
+ASM.saveAsmConfig(dc,'Without S2');ASM.suppress(dc,['c3'],false);ASM.saveAsmConfig(dc,'All');ASM.useAsmConfig(dc,'Without S2');chk('assembly configuration restores which components are suppressed',dc.asm.comps[2].sup===true&&dc.asm.acfg==='Without S2');ASM.useAsmConfig(dc,'All');chk('and switching back brings the component back',!dc.asm.comps[2].sup&&ASM.bom(dc).length===5);
+try{ASM.useConfig(dc,'c2','nope');chk('an unknown configuration is refused with the list of valid names',false);}catch(e){chk('an unknown configuration is refused with the list of valid names',/S1, S2, S3/.test(e.message),e.message);}
+{ASM.suppress(dc,['c1']);dc.asm.comps[4].hide=true;const ks=[...new Set(dc.asm.comps.map(c=>ASM.sigOf(dc,ASM.pk(c))))],ex=await AK.mass(ctx,{keys:ks}),mp=ASM.assemblyMass(dc,key=>ex[ASM.sigOf(dc,key)],id=>7870),exp=7870*Math.PI*0.0625*(1+2+3)*0.0254**3;
+  chk('assembly mass skips suppressed and hidden components and uses each configuration length (steel studs 1 + 2 + 3 in)',near(mp.mass/exp,1,0.005),mp.mass.toFixed(6)+' kg vs '+exp.toFixed(6)+' kg');}
 }
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
