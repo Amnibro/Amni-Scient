@@ -32,7 +32,6 @@ export function fitHole(d,meshOf,c0,h0,spec={}){const A=ASM.ensure(d),kd=KS.incl
   const run=[top];for(let i=1;i<stk.length;i++){if(stk[i].s0<=run[run.length-1].s1+Math.max(dn/f2h*0.2,1e-6))run.push(stk[i]);else break;}
   const mem=run.map(x=>({...x,D:x.w.r*2*f2h,fit:fitOf(x.w.r*2*f2h,hs,dn)})),ti=mem.findIndex(x=>x.fit==='tapped'),clr=ti<0?mem:mem.slice(0,ti),tapM=ti<0?null:mem[ti],last=clr[clr.length-1];
   mem.forEach(x=>{x.fit==='other'&&warn.push(x.w.c.name+' has a Ø'+r5(x.D)+' '+hu+' hole that is neither a clearance nor a tap-drill hole for '+size);});
-  if(!clr.length)throw new Error('The first hole in the stack is a tap-drill hole, so there is nothing for the screw head to clamp');
   const wT=spec.washer?D[9]:0,nutH=D[6],eng=H.engagement(tapM&&(ASM.partDoc(d,ASM.pk(tapM.w.c))||{}).material),sEnd=tapM?tapM.s0:last.s1,clamp=(sEnd-top.s0)*f2h,want=spec.nut??!tapM;let Lmin,Lmax=null;
   if(tapM){Lmin=wT+clamp+eng*dn;Lmax=tapM.w.h.ends.every(e=>e.open)?null:wT+clamp+(tapM.s1-tapM.s0)*f2h-pitch;}else Lmin=wT+clamp+(want?nutH+2*pitch:0);
   const pl=spec.len?{len:+spec.len}:H.pickLen(size,Lmin,Lmax,kd);pl.short&&warn.push('The longest standard length is shorter than needed ('+r5(Lmin)+' '+hu+')');pl.long&&warn.push('The shortest standard length that reaches the thread is too long for the tapped hole, so the engagement is less than '+eng+' d');

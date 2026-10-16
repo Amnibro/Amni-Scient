@@ -367,4 +367,17 @@ chk('every balloon leader ends inside its component outline in the view',dr.ball
 chk('the drawing exports to SVG, PDF and DXF',dr.svg().startsWith('<svg')&&String.fromCharCode(...dr.pdf().slice(0,5)).startsWith('%PDF')&&/AC1018/.test(dr.dxf()),dr.sheet.sheet+' '+dr.sheet.scaleTxt);
 chk('balloons do not overlap each other',dr.balloons.filter(b=>b.placed).every((a,i,L)=>L.every((b,j)=>i===j||Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1])>=9)),'');
 }
+{
+const OPS=await import('../asm_ops.js'),mo6=d_=>pid=>meshes.get(pid+ASM.sigOf(d_,pid));
+const P4=[[-20,-10],[20,-10],[-20,10],[20,10]],dd={units:'mm',name:'Assembly',params:[],features:[]};ASM.ensure(dd);
+const a=ASM.addPart(dd,{name:'Plate 2',units:'mm',material:'al6061',params:[],features:[{id:'f1',type:'box',w:60,d:40,h:20},{id:'f2',type:'hole',plane:'XY',offset:20,d:4.2,thru:false,depth:12,pts:P4}]});ASM.insert(dd,a);
+let done=ASM.apply(dd,[{smart_insert:{c:'Plate 2<1>',hw:{kind:'shcs',size:'M5',len:12}}}]);chk('AI op smart_insert is queued until the parts exist',done[0].startsWith('queued')&&dd.asm.pending.length===1&&dd.asm.comps.length===1,done.join('|'));
+await build(dd);const log=OPS.flush(dd,mo6(dd));await build(dd);
+chk('"insert 4 M5x12 SHCS into the holes on plate 2" inserts 4 screws with their mates',dd.asm.comps.length===5&&dd.asm.mates.length===8&&dd.asm.comps.slice(1).every(c=>/Socket head/.test(c.name))&&!dd.asm.pending.length,log.join(' | '));
+const r=ASM.solveDoc(dd,mo6(dd),{analyze:true});ASM.setPoses(dd,r);chk('the screws solve and sit in the holes (heads on the top face, z = 20)',r.ok&&dd.asm.comps.slice(1).every(c=>near(c.p[2],20,1e-3)),dd.asm.comps.slice(1).map(c=>c.p.map(v=>v.toFixed(1)).join(',')).join(' | '));
+chk('the AI summary lists the log of what the deferred ops did',ASM.summary(dd,r).log.length>=1);
+done=ASM.apply(dd,[{pattern:{type:'linear',seed:'c2',n:2,step:[0,0,0]}},{mirror:{c:'c1',plane:'YZ'}},{config:{part:'p2',table:{columns:['L'],rows:[{name:'x',L:1}]}}}]);
+chk('pattern, mirror and configuration ops run immediately',done.length===3&&!done[0].startsWith('⚠')&&!done[1].startsWith('⚠'),done.join(' | '));
+done=ASM.apply(dd,[{mate:{type:'hinge',a:{c:'c1',axis:'Z'},b:{c:'c2',face:{type:'CYLINDER',r:2.5}},lo:-30,hi:45}},{motion:{dur:2,fps:10,motors:[{mate:'m1',kind:'const',rate:10}]}}]);chk('new mate types, limits and motion studies are accepted by the AI ops',done[0].startsWith('mate')&&done[1].startsWith('motion')&&dd.asm.mates.at(-1).hi===45&&dd.asm.motion.studies.length===1,done.join(' | '));
+}
 console.log(bad?'FAIL '+bad+' of '+n+' checks':'PASS all '+n+' assembly checks');process.exit(bad?1:0);
