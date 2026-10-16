@@ -85,6 +85,24 @@ export function parseReply(txt){
   for(const cand of[body,body.replace(/,\s*([}\]])/g,'$1'),body.replace(/'/g,'"').replace(/,\s*([}\]])/g,'$1')]){try{const o=JSON.parse(cand);return{say:String(o.say||o.message||''),actions:Array.isArray(o.actions)?o.actions:[]};}catch{}}
   return{say:s.trim().slice(0,800),actions:[],parseError:true};
 }
+const PN={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter',local:'your local server',browser:'the on-device model',chrome:'Chrome built-in AI',bridge:'your Claude or ChatGPT app',remote:'your Claude app'};
+export const detectKey=s=>{s=String(s||'').trim();return/^sk-ant-/.test(s)?'anthropic':/^sk-or-/.test(s)?'openrouter':/^AIza/.test(s)?'gemini':/^sk-/.test(s)?'openai':null;};
+export const prettyModel=id=>String(id||'').replace(/^[^/]*\//,'').replace(/-\d{8}$/,'').replace(/^claude-(\w+)-(\d+)-(\d+)$/,(m,n,a,b)=>'Claude '+n[0].toUpperCase()+n.slice(1)+' '+a+'.'+b).replace(/^gpt-/,'GPT-').replace(/^gemini-/,'Gemini ').replace(/^claude-/,'Claude ');
+export function partialSay(buf){const s=String(buf||''),m=/"say"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(s);if(m){try{return JSON.parse('"'+m[1].replace(/\\$/,'')+'"');}catch{return m[1];}}return s.trimStart().startsWith('{')||s.trimStart().startsWith('```')?'':s.replace(/<think>[\s\S]*?(<\/think>|$)/g,'');}
+export function explainError(e,k,csp){const s=e&&e.status,m=String(e&&e.message||e),pn=PN[k]||'the AI',key=CLOUD[k]&&CLOUD[k].keyUrl;
+  if(e&&(e.name==='AbortError'||e.kind==='stop'))return{kind:'stop',title:'Stopped',detail:'',fix:null};
+  if(csp)return{kind:'csp',title:'Blocked by the page security policy',detail:'This page only talks to Anthropic, OpenAI, Google, OpenRouter and servers on this computer. A server on another address is blocked.',fix:'local'};
+  if(k==='bridge'||k==='remote'||e&&e.kind==='bridge')return{kind:'bridge',title:'Your app is not connected',detail:'Open your Claude or ChatGPT app and make sure the Amni-CAD connector is on, or set it up again.',fix:'bridge'};
+  if(s===401||s===403||/\bkey\b.*(reject|invalid|incorrect|not accepted)|invalid.*\bkey\b|unauthorized|authentication/i.test(m))return{kind:'key',title:'That key was not accepted',detail:'Check that it was copied whole and is still active'+(key?' at '+key.replace(/^https:\/\//,'').split('/')[0]:'')+'.',fix:'key'};
+  if(s===429||s===402||s===529||/rate.?limit|quota|insufficient|credit|billing|overloaded|too many requests/i.test(m))return{kind:'quota',title:'Rate limit or credit reached',detail:pn+' says you are sending too fast or are out of credit. Wait a minute and retry, or check your plan and billing.',fix:'retry'};
+  if(s===404||/model.*(not found|does not exist|not supported|unavailable|access)|no models|no chat models/i.test(m))return{kind:'model',title:'That model is not available',detail:pn+' does not offer the selected model to this key. Pick another model.',fix:'model'};
+  if(e&&e.kind==='net'||e instanceof TypeError||/failed to fetch|networkerror|network error|could not reach|load failed/i.test(m))return k==='local'?{kind:'net',title:'Cannot reach the local server',detail:'Is Ollama or LM Studio running? Ollama needs OLLAMA_ORIGINS=https://amni-scient.com set before it starts.',fix:'local'}:{kind:'net',title:'Cannot reach '+pn,detail:'Check your internet connection and try again.',fix:'retry'};
+  return{kind:'other',title:'The AI had a problem',detail:m.slice(0,240),fix:'retry'};}
+export async function probeLocal(){return(await Promise.all([['Ollama','http://localhost:11434/v1'],['LM Studio','http://localhost:1234/v1']].map(async([name,base])=>{try{const r=await fetch(base+'/models',{signal:AbortSignal.timeout(1500)});if(!r.ok)return null;const j=await r.json();return{name,base,models:(j.data||j.models||[]).map(x=>x.id||x.name).filter(Boolean)};}catch{return null;}}))).filter(Boolean);}
+const bad=async(label,r)=>Object.assign(new Error(label+' error '+r.status+' '+(await r.text().catch(()=>'')).slice(0,240)),{status:r.status});
+async function sse(r,pick,tok){const rd=r.body.getReader(),dec=new TextDecoder();let buf='',acc='';for(;;){const{done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;while((i=buf.indexOf('\n'))>=0){const ln=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!ln.startsWith('data:'))continue;const d=ln.slice(5).trim();if(!d||d==='[DONE]')continue;let j;try{j=JSON.parse(d);}catch{continue;}const t=pick(j);if(t){acc+=t;tok(acc);}else if(j.error||j.type==='error')throw Object.assign(new Error((j.error&&j.error.message)||'stream error'),{status:j.error&&j.error.code||529});}}return acc;}
+const out=(r,ps,pf,tok)=>tok&&r.body&&/event-stream/.test(r.headers.get('content-type')||'')?sse(r,ps,tok):r.json().then(pf);
+const oaS=j=>j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content||'',oaF=j=>j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'',gmF=j=>((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''),anS=j=>j.type==='content_block_delta'&&j.delta&&j.delta.text||'',anF=j=>(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
 export class Assistant{
   constructor(onStatus){this.onStatus=onStatus||(()=>{});this.kind=null;this.engine=null;this.cfg={};}
   get ready(){return!!this.kind;}
@@ -97,20 +115,20 @@ export class Assistant{
       this.engine=await m.createEngine(cfg.model||'Qwen3.5-4B-Q4_K_M',{onProgress:p=>this.onStatus('Downloading model '+(p.pct??'')+'%',p.pct),onStatus:(s,msg)=>this.onStatus(msg||s)});
       const info=this.engine.getModelInfo&&this.engine.getModelInfo();this.label=(info&&info.name||cfg.model)+' · '+(info&&info.backend==='amni-wgpu'?'GPU':'CPU');
     }else if(CLOUD[kind]){
-      const C=CLOUD[kind];if(!cfg.key)throw new Error('paste an API key first'+(kind==='openrouter'?' or sign in with OpenRouter':''));this.cfg.base=C.base;
+      const C=CLOUD[kind];if(!cfg.key)throw Object.assign(new Error('paste an API key first'+(kind==='openrouter'?' or sign in with OpenRouter':'')),{status:401});this.cfg.base=C.base;
       const hd=this.cloudHeaders(kind,cfg.key),url=kind==='gemini'?C.base+'/models?pageSize=200':C.base+'/models'+(kind==='anthropic'?'?limit=100':'');
-      const r=await fetch(url,{headers:hd}).catch(e=>{throw new Error('could not reach '+kind+' ('+e.message+')');});
-      if(kind==='openrouter'){const kr=await fetch(C.base+'/key',{headers:hd}).catch(()=>null);if(!kr||!kr.ok)throw new Error('OpenRouter rejected the key'+(kr?' ('+kr.status+')':'')+'. Sign in again or check it at '+C.keyUrl);}
-      if(r.status===401||r.status===403||r.status===400&&kind==='gemini')throw new Error('the key was rejected ('+r.status+'). Check it at '+C.keyUrl);if(!r.ok)throw new Error(kind+' answered '+r.status);
+      const r=await fetch(url,{headers:hd}).catch(e=>{throw Object.assign(new Error('could not reach '+kind+' ('+e.message+')'),{kind:'net'});});
+      if(kind==='openrouter'){const kr=await fetch(C.base+'/key',{headers:hd}).catch(()=>null);if(!kr||!kr.ok)throw Object.assign(new Error('OpenRouter rejected the key'+(kr?' ('+kr.status+')':'')+'. Sign in again or check it at '+C.keyUrl),{status:kr?kr.status:401});}
+      if(r.status===401||r.status===403||r.status===400&&kind==='gemini')throw Object.assign(new Error('the key was rejected ('+r.status+'). Check it at '+C.keyUrl),{status:401});if(!r.ok)throw Object.assign(new Error(kind+' answered '+r.status),{status:r.status});
       const j=await r.json();let ids=kind==='gemini'?(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,'')):(j.data||[]).map(m=>m.id);
       if(kind==='openai')ids=ids.filter(id=>/^(gpt|o\d|chatgpt)/.test(id)&&!/audio|realtime|image|tts|transcribe|search|embedding|instruct/.test(id));
-      if(!ids.length)throw new Error('no chat models available on this key');this.models=ids;if(!this.cfg.model||!ids.includes(this.cfg.model))this.cfg.model=pick(ids,C.prefer);this.label=this.cfg.model+' · '+(kind==='openrouter'?'OpenRouter':kind==='anthropic'?'Anthropic':kind==='openai'?'OpenAI':'Google');
+      if(!ids.length)throw Object.assign(new Error('no chat models available on this key'),{status:404});this.models=ids;if(!this.cfg.model||!ids.includes(this.cfg.model))this.cfg.model=pick(ids,C.prefer);this.label=this.cfg.model+' · '+(kind==='openrouter'?'OpenRouter':kind==='anthropic'?'Anthropic':kind==='openai'?'OpenAI':'Google');
     }else if(kind==='local'){
       const base=(cfg.base||'http://localhost:11434/v1').replace(/\/+$/,'');this.cfg.base=base;
-      const r=await fetch(base+'/models',{headers:this.hdr()}).catch(e=>{throw new Error('could not reach '+base+' ('+e.message+'). Is the server running, and does it allow this site? For Ollama set OLLAMA_ORIGINS=https://amni-scient.com');});
-      if(!r.ok)throw new Error('server answered '+r.status);
+      const r=await fetch(base+'/models',{headers:this.hdr()}).catch(e=>{throw Object.assign(new Error('could not reach '+base+' ('+e.message+'). Is the server running, and does it allow this site? For Ollama set OLLAMA_ORIGINS=https://amni-scient.com'),{kind:'net'});});
+      if(!r.ok)throw Object.assign(new Error('server answered '+r.status),{status:r.status});
       const j=await r.json().catch(()=>({data:[]})),ids=(j.data||j.models||[]).map(x=>x.id||x.name).filter(Boolean);
-      if(!this.cfg.model)this.cfg.model=ids[0];if(!this.cfg.model)throw new Error('no models on the server; pull one first (e.g. ollama pull qwen3:8b)');
+      if(!this.cfg.model)this.cfg.model=ids[0];if(!this.cfg.model)throw Object.assign(new Error('no models on the server; pull one first (e.g. ollama pull qwen3:8b)'),{status:404});
       this.models=ids;this.label=this.cfg.model+' · '+base.replace(/^https?:\/\//,'');
     }else if(kind==='chrome'){
       const LM=globalThis.LanguageModel||(globalThis.ai&&globalThis.ai.languageModel);
@@ -122,30 +140,33 @@ export class Assistant{
   }
   cloudHeaders(kind,key){const h={'Content-Type':'application/json'};if(kind==='anthropic'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';}else if(kind==='gemini')h['x-goog-api-key']=key;else{h.Authorization='Bearer '+key;if(kind==='openrouter'){h['HTTP-Referer']='https://amni-scient.com/cad/';h['X-Title']='Amni-CAD';}}return h;}
   hdr(){const h={'Content-Type':'application/json'};if(this.cfg.key)h.Authorization='Bearer '+this.cfg.key;return h;}
-  async complete(messages){
-    if(this.kind==='browser')return await this.engine.chat(wire(messages,'text'),{max_tokens:1800,temperature:0.2});
+  async complete(messages,o={}){
+    const tok=o.onToken||null,signal=o.signal;
+    if(this.kind==='browser'){
+      if(tok&&this.engine.chatStream){let acc='';for await(const c of this.engine.chatStream(wire(messages,'text'),{max_tokens:1800,temperature:0.2})){const d=c.delta||'';acc=acc&&d.startsWith(acc)?d:acc+d;tok(acc);if(signal&&signal.aborted)throw Object.assign(new Error('stopped'),{name:'AbortError'});}return acc;}
+      return await this.engine.chat(wire(messages,'text'),{max_tokens:1800,temperature:0.2});
+    }
     if(this.kind==='anthropic'){
       const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),msgs=wire(messages.filter(m=>m.role!=='system'),'anthropic');
-      const r=await fetch(this.cfg.base+'/messages',{method:'POST',headers:this.cloudHeaders('anthropic',this.cfg.key),body:JSON.stringify({model:this.cfg.model,max_tokens:8000,system:sys,messages:msgs})});
-      if(!r.ok)throw new Error('Claude error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+      const r=await fetch(this.cfg.base+'/messages',{method:'POST',signal,headers:this.cloudHeaders('anthropic',this.cfg.key),body:JSON.stringify({model:this.cfg.model,max_tokens:8000,system:sys,messages:msgs,...(tok?{stream:true}:{})})});
+      if(!r.ok)throw await bad('Claude',r);return await out(r,anS,anF,tok);
     }
     if(this.kind==='gemini'){
       const sys=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'),contents=wire(messages.filter(m=>m.role!=='system'),'gemini').map(m=>({role:m.role==='assistant'?'model':'user',parts:Array.isArray(m.content)?m.content:[{text:m.content}]}));
-      const r=await fetch(this.cfg.base+'/models/'+encodeURIComponent(this.cfg.model)+':generateContent',{method:'POST',headers:this.cloudHeaders('gemini',this.cfg.key),body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents,generationConfig:{responseMimeType:'application/json'}})});
-      if(!r.ok)throw new Error('Gemini error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+      const r=await fetch(this.cfg.base+'/models/'+encodeURIComponent(this.cfg.model)+(tok?':streamGenerateContent?alt=sse':':generateContent'),{method:'POST',signal,headers:this.cloudHeaders('gemini',this.cfg.key),body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents,generationConfig:{responseMimeType:'application/json'}})});
+      if(!r.ok)throw await bad('Gemini',r);return await out(r,gmF,gmF,tok);
     }
     if(this.kind==='openai'||this.kind==='openrouter'){
-      const body={model:this.cfg.model,messages:wire(messages,'openai'),response_format:{type:'json_object'}},send=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.cloudHeaders(this.kind,this.cfg.key),body:JSON.stringify(body)});
-      let r=await send();if(r.status===400){const t=await r.text();if(/response_format|json_object/i.test(t)){delete body.response_format;r=await send();}else throw new Error('API error 400 '+t.slice(0,240));}
-      if(!r.ok)throw new Error('API error '+r.status+' '+(await r.text()).slice(0,240));const j=await r.json();return j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'';
+      const body={model:this.cfg.model,messages:wire(messages,'openai'),response_format:{type:'json_object'},...(tok?{stream:true}:{})},send=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',signal,headers:this.cloudHeaders(this.kind,this.cfg.key),body:JSON.stringify(body)});
+      let r=await send();if(r.status===400){const t=await r.text();if(/response_format|json_object/i.test(t)){delete body.response_format;r=await send();}else throw Object.assign(new Error('API error 400 '+t.slice(0,240)),{status:400});}
+      if(!r.ok)throw await bad('API',r);return await out(r,oaS,oaF,tok);
     }
     if(this.kind==='local'){
-      const img=!this.noVision&&messages.some(m=>m.images&&m.images.length),body={model:this.cfg.model,messages:wire(messages,img?'openai':'text'),temperature:0.2,stream:false,response_format:{type:'json_object'}},go=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',headers:this.hdr(),body:JSON.stringify(body)});
+      const img=!this.noVision&&messages.some(m=>m.images&&m.images.length),body={model:this.cfg.model,messages:wire(messages,img?'openai':'text'),temperature:0.2,stream:!!tok,response_format:{type:'json_object'}},go=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',signal,headers:this.hdr(),body:JSON.stringify(body)});
       let r=await go();if(r.status===400){delete body.response_format;r=await go();}if(!r.ok&&img){body.messages=wire(messages,'text');r=await go();if(r.ok)this.noVision=true;}
-      if(!r.ok)throw new Error('server error '+r.status+' '+(await r.text()).slice(0,200));
-      const j=await r.json();return j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'';
+      if(!r.ok)throw await bad('server',r);return await out(r,oaS,oaF,tok);
     }
-    if(this.kind==='chrome'){const sys=messages.find(m=>m.role==='system'),rest=wire(messages.filter(m=>m.role!=='system'),'text');const s=await this.engine.create({initialPrompts:[{role:'system',content:sys.content},...rest.slice(0,-1)]});try{return await s.prompt(rest[rest.length-1].content);}finally{s.destroy&&s.destroy();}}
+    if(this.kind==='chrome'){const sys=messages.find(m=>m.role==='system'),rest=wire(messages.filter(m=>m.role!=='system'),'text');const s=await this.engine.create({initialPrompts:[{role:'system',content:sys.content},...rest.slice(0,-1)]});try{if(tok&&s.promptStreaming){let acc='';for await(const c of s.promptStreaming(rest[rest.length-1].content,{signal})){acc+=c;tok(acc);}return acc;}return await s.prompt(rest[rest.length-1].content);}finally{s.destroy&&s.destroy();}}
     throw new Error('connect an AI engine first');
   }
 }

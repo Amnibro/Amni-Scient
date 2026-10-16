@@ -7,6 +7,7 @@ const db=()=>dbp||(dbp=new Promise((res,rej)=>{const r=indexedDB.open(DBN,1);r.o
 const tx=(mode,fn)=>db().then(d=>new Promise((res,rej)=>{const t=d.transaction(STN,mode),q=fn(t.objectStore(STN));t.oncomplete=()=>res(q.result);t.onerror=t.onabort=()=>rej(t.error);}));
 const put=(id,v)=>tx('readwrite',s=>s.put(v,id)).catch(()=>{}),idbGet=id=>tx('readonly',s=>s.get(id)).catch(()=>null),idbKeys=()=>tx('readonly',s=>s.getAllKeys()).catch(()=>[]),idbDel=id=>tx('readwrite',s=>s.delete(id)).catch(()=>{});
 const recOf=async id=>C.get(id)||await idbGet(id).then(v=>v&&v.pages?(C.set(id,v),v):null);
+export const thumb=id=>(C.get(id)||{}).thumb||'';
 const okFile=f=>!!f&&(IMG.test(f.type)||/pdf$/i.test(f.type)||EXT.test(f.name||''));
 const cnv=(w,h)=>Object.assign(document.createElement('canvas'),{width:w,height:h}),blobOf=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
 async function encode(src,sw,sh,vector){const k=Math.min(vector?1e3:1,LONG/Math.max(sw,sh,1)),w=Math.max(1,Math.round(sw*k)),h=Math.max(1,Math.round(sh*k)),c=cnv(w,h),g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(src,0,0,w,h);const[j,p]=await Promise.all([blobOf(c,'image/jpeg',.85),blobOf(c,'image/png')]),b=p&&p.size<j.size?p:j,tk=Math.min(1,240/Math.max(w,h)),t=cnv(Math.max(1,Math.round(w*tk)),Math.max(1,Math.round(h*tk)));t.getContext('2d').drawImage(c,0,0,t.width,t.height);return{page:{mime:b.type,w,h,buf:await b.arrayBuffer()},thumb:t.toDataURL('image/jpeg',.8)};}
