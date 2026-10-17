@@ -126,6 +126,7 @@
       const _sv=$$('#streak-val'); if(_sv){_sv.style.animation='none';void _sv.offsetWidth;_sv.style.animation='spmPulse 0.35s ease';}
       if(currentStreak === 5) showFeedback('🔥 5 Streak!', '#f39c12');
       if(currentStreak === 10) showFeedback('🔥🔥 10 Streak!', '#e74c3c');
+      if(typeof window._kidOnItemDone === 'function') window._kidOnItemDone('score', pts);
   }
   function resetStreak() { currentStreak = 0; updateScoreUI(); }
   function getPersonalBest(game,val){const k='pb-'+game,prev=parseFloat(localStorage.getItem(k))||0;const isTime=game.includes('trail');const better=isTime?(prev===0||val<prev):(val>prev);better&&localStorage.setItem(k,val);return{prev,isNew:better};}
@@ -756,9 +757,12 @@
     const ttsOn=localStorage.getItem('amni-learn-tts')==='on';
     const ttsHd=localStorage.getItem('amni-learn-tts-hd')==='on';
     html.push(`<div style="margin:14px 0 6px;color:#4db8ff;font-size:0.88rem;font-weight:bold">🔊 Read Aloud</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Off by default. Tap the 🔊 button up top to mute/unmute anytime. When on, auto-speaks questions &amp; choices at Level 1 (Pre-K). The 🔊 buttons in games always work.</div><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts" ${ttsOn?'checked':''} style="width:18px;height:18px;cursor:pointer">Read questions aloud automatically (Pre-K)</label><label style="display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,184,255,0.35);border-radius:8px;color:var(--text,#ecf0f1);font-family:JetBrains Mono;font-size:0.82rem;cursor:pointer"><input type="checkbox" id="prof-tts-hd" ${ttsHd?'checked':''} style="width:18px;height:18px;cursor:pointer"><span>🎙️ HD natural voice (Kokoro + Piper backup) <span style="color:#7a8a9a;font-size:0.7rem">— Kokoro first; Piper backup if needed</span></span></label>`);
+    const _kmOn=typeof window._kidIsEnabled==='function'&&window._kidIsEnabled();
+    html.push(`<div style="margin:14px 0 6px;color:#f1c40f;font-size:0.88rem;font-weight:bold">🎒 Kid Mode (Learn First)</div><div style="font-size:0.72rem;color:#7a8a9a;margin-bottom:6px">Requires completing a series of different learning tasks before unlocking free play. Protected by a grown-up gate.</div><button type="button" id="prof-kid-mode-btn" class="retro-btn" style="width:100%;border-color:${_kmOn?'#2ecc71':'#f1c40f'};color:${_kmOn?'#2ecc71':'#f1c40f'};font-size:0.82rem">${_kmOn?'🎒 Kid Mode is ON — Manage (Grown-Up Gate)':'🎒 Set Up / Turn On Kid Mode'}</button>`);
     html.push('<div style="margin-top:14px;display:flex;gap:8px"><button id="prof-save" class="retro-btn" style="flex:1">SAVE</button><button id="prof-cancel" class="retro-btn" style="flex:1">CLOSE</button></div></div>');
     ov.innerHTML=html.join('');
     document.body.appendChild(ov);
+    const _pkb=ov.querySelector('#prof-kid-mode-btn');if(_pkb)_pkb.onclick=()=>{ov.remove();if(typeof window._kidOpenGateOrSettings==='function')window._kidOpenGateOrSettings();};
     ov.querySelectorAll('button[data-key]').forEach(b=>{
       b.onclick=()=>{if(b.disabled)return;const k=b.getAttribute('data-key'),v=b.getAttribute('data-val');localStorage.setItem(k,v);if(k==='amni-learn-theme')_applyTheme(v);ov.remove();window._showProfile();};
     });
@@ -995,6 +999,8 @@
       const btnEl = e.target.closest('.game-btn');
       const game = btnEl.getAttribute('data-game');
       currentGame = game;
+      currentSubgame = game === 'life' ? btnEl.getAttribute('data-subgame') : null;
+      window._currentQuizSubject = game === 'quiz' ? btnEl.getAttribute('data-subject') : null;
       showView(game);
       if(game === 'tracing') initTracing();
       if(game === 'math') initMath();
@@ -1115,6 +1121,7 @@
       $$('#nav-back').innerHTML = '⬅<span class="btn-label"> HOME</span>';
     }
     if(typeof _checkAchievements==='function'){_checkAchievements();if(typeof _renderAchStrip==='function')_renderAchStrip();}
+    if(typeof window._kidOnShowView==='function') window._kidOnShowView(viewId);
     _fitSoon();[120,400,900].forEach(d=>setTimeout(()=>_fitToCard(),d));
   }
   const confCanvas = $$('#confetti-canvas');
@@ -1145,6 +1152,7 @@
     const isPositive = color === '#2ecc71' || color === '#f1c40f' || color === '#9b59b6';
     if(isPositive) spawnConfetti(window.innerWidth/2, window.innerHeight/2, text.includes('Won') || text.includes('Complete') || text.includes('Done') || text.includes('Melody') ? 120 : 50);
     if(currentLevel === 1 && ttsAuto() && typeof speakText === 'function') speakText(text);
+    if(typeof window._kidOnFeedback === 'function') window._kidOnFeedback(text, color);
     setTimeout(() => fb.classList.remove('show'), 1800);
   }
   function _toast(text,color){const t=$$('#mini-toast')||(()=>{const d=document.createElement('div');d.id='mini-toast';document.body.appendChild(d);return d;})();t.textContent=text;t.style.borderColor=color||'var(--accent,#4db8ff)';t.style.color=color||'var(--accent,#4db8ff)';t.classList.remove('show');void t.offsetWidth;t.classList.add('show');clearTimeout(t._tt);t._tt=setTimeout(()=>t.classList.remove('show'),1900);}
@@ -3335,6 +3343,7 @@
         const [a,b]=flipped;
         if(deck[a].emoji===deck[b].emoji){
           deck[a].matched=true;deck[b].matched=true;flipped=[];
+          if(typeof window._kidOnItemDone==='function')window._kidOnItemDone('mm-pair',1);
           if(deck.every(x=>x.matched)){won=true;onWin();}
           render();
         }else{
@@ -4673,6 +4682,7 @@
                       d.classList.add('cleaned'); d.dataset.keep = 'done';
                       dirtCleaned++;
                       const pe=$$('#vac-prog'); if(pe) pe.textContent=dirtCleaned+'/'+dirtCount;
+                      if(dirtCleaned%3===0 && dirtCleaned<dirtCount && typeof window._kidOnItemDone==='function') window._kidOnItemDone('vac',1);
                       if(dirtCleaned === dirtCount) {
                           clearInterval(window._vacTimer);
                           const speed = vacTime < dirtCount ? 3 : (vacTime < dirtCount*2 ? 2 : 1);
@@ -18975,6 +18985,7 @@ function playAnimalSound(type) {
         const g=groups.find(g=>g.isNext);
         if(g&&Math.hypot(mx-g.x,my-g.y)<hitR){
           nextDot++;hintOn=false;
+          if(nextDot%3===0 && nextDot<norm.length && typeof window._kidOnItemDone==='function') window._kidOnItemDone('dot',1);
           if(nextDot>=norm.length){
             done=true;addScore(lvl*10);
             const completedKey='dots-completed-L'+lvl;
@@ -19923,3 +19934,1079 @@ function playAnimalSound(type) {
   function advToggle(){if(currentGame==='adventure'){$$('#nav-back').click();return;}if(currentGame)$$('#nav-back').click();advLoad();currentGame='adventure';showView('adventure');advS.hero?advRenderMap():advHeroPick();}
   ACHIEVEMENTS.push({id:'adv-first',ic:'⚔️',name:'First Quest',desc:'Win an Adventure Mode battle',progress(){const c=_intLS('adv-wins');return{cur:Math.min(c,1),target:1,unlocked:c>=1};}},{id:'adv-crit25',ic:'⚡',name:'Crit Master',desc:'Land 25 critical hits in Adventure',progress(){const c=_intLS('adv-crits');return{cur:Math.min(c,25),target:25,unlocked:c>=25};}},{id:'adv-boss5',ic:'👑',name:'Boss Breaker',desc:'Defeat 5 Adventure bosses',progress(){const c=_intLS('adv-bosses');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}},{id:'adv-gear',ic:'🗡️',name:'Geared Up',desc:'Buy gear in the Hero Shop',progress(){let g=-1;try{const s=JSON.parse(localStorage.getItem('adv-state')||'{}');g=Math.max(typeof s.gearW==='number'?s.gearW:-1,typeof s.gearA==='number'?s.gearA:-1);}catch(e){}return{cur:g>=0?1:0,target:1,unlocked:g>=0};}},{id:'adv-realm',ic:'🐉',name:'Realm Saver',desc:'Defeat the Shadow Dragon',progress(){let f=0;try{f=(JSON.parse(localStorage.getItem('adv-state')||'{}').prog||{}).final0||0;}catch(e){}return{cur:f>0?1:0,target:1,unlocked:f>0};}},{id:'adv-spec5',ic:'⚡',name:'Unleashed',desc:'Fire 5 Special attacks in Adventure',progress(){const c=_intLS('adv-specials');return{cur:Math.min(c,5),target:5,unlocked:c>=5};}});
   (function(){const b=$$('#adv-btn');if(b)b.onclick=advToggle;try{Object.defineProperty(window,'__advT',{get:()=>{try{return sessionStorage.getItem('adv-test')==='1'?{a:advCur&&advCur.a,lv:advCur&&advCur._lv,foe:advFoeHP,hero:advHeroHP,xp:advS&&advS.xp,prog:advS&&advS.prog,coins:advS&&advS.coins,gearW:advS&&advS.gearW,gearA:advS&&advS.gearA,relics:advS&&advS.relics,hmax:advCtx&&advCtx.hmax,lastHit:advLastHit,ac:advAC?advAC.state:null,sfx:advSfxOn(),daily:advS&&advS.daily,ngp:advS&&!!advS.ngp,enraged:advCtx&&!!advCtx.enraged,spec:advSpec,pot:advS&&advS.pot}:null;}catch(e){return null;}}});}catch(e){}})();
+
+  // ==================== KID MODE ("LEARN FIRST") ====================
+  (function initKidMode(){
+    const SETTINGS_KEY = 'amni-kid-mode-settings';
+    const STATE_KEY = 'amni-kid-mode-state';
+
+    const CAT_META = {
+      math:     { label: 'Math & Numbers',     icon: '🧮', color: '#3498db' },
+      reading:  { label: 'Reading & Words',    icon: '📖', color: '#9b59b6' },
+      science:  { label: 'Science & Nature',   icon: '🔬', color: '#2ecc71' },
+      world:    { label: 'World & History',    icon: '🌍', color: '#e67e22' },
+      life:     { label: 'Life & Practical',   icon: '🏠', color: '#1abc9c' },
+      thinking: { label: 'Logic & Brain',      icon: '🧩', color: '#f1c40f' },
+      creative: { label: 'Music & Creative',   icon: '🎨', color: '#e84393' }
+    };
+
+    // Curated catalog of structured learning activities across categories & grade bands
+    const KID_CATALOG = [
+      // Math & Numbers
+      { id: 'math',             game: 'math',             cat: 'math',     icon: '🧮', name: 'Math Challenge',     minL: 1, maxL: 6 },
+      { id: 'quiz:counting',    game: 'quiz', sub: 'counting', cat: 'math', icon: '🔢', name: 'Counting & Numbers', minL: 1, maxL: 3 },
+      { id: 'quiz:shapes',      game: 'quiz', sub: 'shapes',   cat: 'math', icon: '🔷', name: 'Shapes & Geometry',  minL: 1, maxL: 3 },
+      { id: 'life:count',       game: 'life', sub: 'count',    cat: 'math', icon: '🍎', name: 'Count the Objects',  minL: 1, maxL: 2 },
+      { id: 'quiz:math',        game: 'quiz', sub: 'math',     cat: 'math', icon: '📐', name: 'Math Quiz',          minL: 2, maxL: 6 },
+      { id: 'speedmath',        game: 'speedmath',        cat: 'math',     icon: '⚡', name: 'Speed Math',         minL: 2, maxL: 6 },
+      { id: 'numerosity',       game: 'numerosity',       cat: 'math',     icon: '🔵', name: 'Dot Estimate',       minL: 1, maxL: 5 },
+      { id: 'life:money',       game: 'life', sub: 'money',    cat: 'math', icon: '🪙', name: 'Counting Coins',     minL: 1, maxL: 4 },
+      { id: 'life:clock',       game: 'life', sub: 'clock',    cat: 'math', icon: '🕐', name: 'Telling Time',       minL: 1, maxL: 4 },
+
+      // Reading & Words
+      { id: 'phonics',          game: 'phonics',          cat: 'reading',  icon: '🗣️', name: 'Phonics & Sounds',   minL: 1, maxL: 3 },
+      { id: 'tracing',          game: 'tracing',          cat: 'reading',  icon: '✍️', name: 'Letter Tracing',     minL: 1, maxL: 2 },
+      { id: 'quiz:opposites',   game: 'quiz', sub: 'opposites', cat: 'reading', icon: '🪞', name: 'Opposites',     minL: 1, maxL: 3 },
+      { id: 'quiz:languages',   game: 'quiz', sub: 'languages', cat: 'reading', icon: '🌐', name: 'Words & Languages', minL: 2, maxL: 6 },
+      { id: 'wbridge',          game: 'wbridge',          cat: 'reading',  icon: '🌉', name: 'Word Bridge',        minL: 2, maxL: 6 },
+      { id: 'scramble',         game: 'scramble',         cat: 'reading',  icon: '🔤', name: 'Word Scramble',      minL: 2, maxL: 6 },
+      { id: 'anagram',          game: 'anagram',          cat: 'reading',  icon: '🔀', name: 'Anagrams',           minL: 2, maxL: 6 },
+      { id: 'wordsearch',       game: 'wordsearch',       cat: 'reading',  icon: '🔍', name: 'Word Search',        minL: 2, maxL: 6 },
+      { id: 'storybook',        game: 'storybook',        cat: 'reading',  icon: '📖', name: 'Storybook Reading',  minL: 1, maxL: 5 },
+
+      // Science & Nature
+      { id: 'quiz:animals',     game: 'quiz', sub: 'animals',  cat: 'science', icon: '🐾', name: 'Animals & Nature', minL: 1, maxL: 4 },
+      { id: 'quiz:weather',     game: 'quiz', sub: 'weather',  cat: 'science', icon: '🌦️', name: 'Weather & Sky',    minL: 1, maxL: 4 },
+      { id: 'quiz:science',     game: 'quiz', sub: 'science',  cat: 'science', icon: '🔬', name: 'Science Quiz',     minL: 2, maxL: 6 },
+      { id: 'quiz:space',       game: 'quiz', sub: 'space',    cat: 'science', icon: '🚀', name: 'Space & Planets',  minL: 1, maxL: 6 },
+      { id: 'quiz:engineering', game: 'quiz', sub: 'engineering', cat: 'science', icon: '⚙️', name: 'How Things Work', minL: 2, maxL: 6 },
+      { id: 'periodic',         game: 'periodic',         cat: 'science',  icon: '⚛️', name: 'Periodic Table',     minL: 3, maxL: 6 },
+
+      // World & History
+      { id: 'geo',              game: 'geo',              cat: 'world',    icon: '🌍', name: 'World Geography',    minL: 2, maxL: 6 },
+      { id: 'quiz:history',     game: 'quiz', sub: 'history',  cat: 'world', icon: '🏛️', name: 'History Explorer', minL: 2, maxL: 6 },
+      { id: 'quiz:civics',      game: 'quiz', sub: 'civics',   cat: 'world', icon: '⚖️', name: 'Civics & Community', minL: 2, maxL: 6 },
+      { id: 'quiz:mythology',   game: 'quiz', sub: 'mythology',cat: 'world', icon: '⚡', name: 'World Mythology',   minL: 2, maxL: 6 },
+      { id: 'quiz:sports',      game: 'quiz', sub: 'sports',   cat: 'world', icon: '🏅', name: 'Sports & Games',    minL: 1, maxL: 5 },
+      { id: 'mapclick',         game: 'mapclick',         cat: 'world',    icon: '🗺️', name: 'Map Explorer',       minL: 2, maxL: 6 },
+
+      // Life & Practical Skills
+      { id: 'life:petcare',     game: 'life', sub: 'petcare',  cat: 'life', icon: '🐶', name: 'Pet Care',           minL: 1, maxL: 4 },
+      { id: 'life:dishes',      game: 'life', sub: 'dishes',   cat: 'life', icon: '🍽️', name: 'Wash the Dishes',    minL: 1, maxL: 3 },
+      { id: 'life:vacuum',      game: 'life', sub: 'vacuum',   cat: 'life', icon: '🧹', name: 'Tidy the Room',      minL: 1, maxL: 3 },
+      { id: 'life:samediff',    game: 'life', sub: 'samediff', cat: 'life', icon: '🔍', name: 'Same or Different',  minL: 1, maxL: 3 },
+      { id: 'life:findit',      game: 'life', sub: 'findit',   cat: 'life', icon: '🕵️', name: 'Find & Spot It',     minL: 1, maxL: 4 },
+
+      // Logic & Brain
+      { id: 'pattern',          game: 'pattern',          cat: 'thinking', icon: '🔮', name: 'Pattern Finder',     minL: 1, maxL: 6 },
+      { id: 'matching',         game: 'matching',         cat: 'thinking', icon: '🃏', name: 'Memory Match',       minL: 1, maxL: 5 },
+      { id: 'sorthat',          game: 'sorthat',          cat: 'thinking', icon: '🎩', name: 'Sorting Hat',        minL: 1, maxL: 5 },
+      { id: 'blocks',           game: 'blocks',           cat: 'thinking', icon: '🧱', name: 'Block Builder',      minL: 1, maxL: 5 },
+      { id: 'memseq',           game: 'memseq',           cat: 'thinking', icon: '🔔', name: 'Memory Sequence',    minL: 1, maxL: 6 },
+      { id: 'logic',            game: 'logic',            cat: 'thinking', icon: '🧠', name: 'Logic Puzzles',      minL: 2, maxL: 6 },
+      { id: 'sudoku',           game: 'sudoku',           cat: 'thinking', icon: '🔢', name: 'Sudoku',             minL: 2, maxL: 6 },
+
+      // Creative & Music
+      { id: 'quiz:colors',      game: 'quiz', sub: 'colors',   cat: 'creative', icon: '🌈', name: 'Colors & Mixing', minL: 1, maxL: 3 },
+      { id: 'life:colormix',    game: 'life', sub: 'colormix', cat: 'creative', icon: '🎨', name: 'Color Lab',       minL: 1, maxL: 4 },
+      { id: 'ear',              game: 'ear',              cat: 'creative', icon: '👂', name: 'Ear Training',       minL: 1, maxL: 6 },
+      { id: 'dots',             game: 'dots',             cat: 'creative', icon: '✏️', name: 'Connect the Dots',   minL: 1, maxL: 3 },
+      { id: 'typing',           game: 'typing',           cat: 'creative', icon: '⌨️', name: 'Keyboard Practice',  minL: 2, maxL: 6 }
+    ];
+
+    function injectKidCSS() {
+      if (document.getElementById('kid-mode-css')) return;
+      const st = document.createElement('style');
+      st.id = 'kid-mode-css';
+      st.textContent = `
+        #kid-mode-btn.kid-active-learning {
+          background: rgba(46, 204, 113, 0.22) !important;
+          border-color: #2ecc71 !important;
+          color: #2ecc71 !important;
+          box-shadow: 0 0 12px rgba(46, 204, 113, 0.45);
+          font-weight: 700;
+        }
+        #kid-mode-btn.kid-active-freeplay {
+          background: rgba(241, 196, 15, 0.22) !important;
+          border-color: #f1c40f !important;
+          color: #f1c40f !important;
+          box-shadow: 0 0 12px rgba(241, 196, 15, 0.45);
+          font-weight: 700;
+        }
+        .kid-banner-card {
+          background: linear-gradient(145deg, rgba(22, 34, 48, 0.96), rgba(14, 22, 32, 0.98));
+          border: 2px solid #2ecc71;
+          border-radius: 18px;
+          padding: 16px 18px;
+          font-family: 'JetBrains Mono', monospace;
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(46, 204, 113, 0.18);
+          color: #ecf0f1;
+        }
+        .kid-banner-card.freeplay-card {
+          border-color: #f1c40f;
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(241, 196, 15, 0.22);
+        }
+        body.light-mode .kid-banner-card {
+          background: linear-gradient(145deg, #ffffff, #f2f8f5) !important;
+          color: #1a1f2e !important;
+          box-shadow: 0 6px 20px rgba(30, 50, 80, 0.12) !important;
+        }
+        .kid-steps-row {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+          gap: 10px;
+          margin: 12px 0;
+        }
+        .kid-step-pill {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          padding: 10px 11px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1.5px solid rgba(255, 255, 255, 0.12);
+          transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+          text-align: left;
+          position: relative;
+        }
+        body.light-mode .kid-step-pill {
+          background: rgba(0, 0, 0, 0.03) !important;
+          border-color: rgba(0, 0, 0, 0.12) !important;
+        }
+        .kid-step-pill.done {
+          border-color: #2ecc71;
+          background: rgba(46, 204, 113, 0.13);
+        }
+        .kid-step-pill.current {
+          border-color: #f1c40f;
+          background: rgba(241, 196, 15, 0.15);
+          box-shadow: 0 0 16px rgba(241, 196, 15, 0.3);
+          transform: translateY(-2px);
+          cursor: pointer;
+        }
+        .kid-play-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 12px 24px;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 1rem;
+          font-weight: 800;
+          color: #0b1710;
+          background: linear-gradient(135deg, #2ecc71, #27ae60);
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(46, 204, 113, 0.45);
+          transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .kid-play-cta:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 6px 22px rgba(46, 204, 113, 0.65);
+        }
+        .game-btn.kid-locked {
+          opacity: 0.38 !important;
+          filter: grayscale(0.75) !important;
+        }
+        .game-btn.kid-locked::after {
+          content: '🔒 Learn First';
+          position: absolute;
+          top: 7px;
+          right: 7px;
+          font-size: 0.62rem;
+          padding: 2px 6px;
+          border-radius: 6px;
+          background: rgba(0, 0, 0, 0.78);
+          color: #bdc3c7;
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          pointer-events: none;
+        }
+        .game-btn.kid-current-btn {
+          border-color: #2ecc71 !important;
+          box-shadow: 0 0 22px rgba(46, 204, 113, 0.55), inset 0 0 12px rgba(46, 204, 113, 0.2) !important;
+          transform: translateY(-3px);
+        }
+        .game-btn.kid-current-btn::after {
+          content: '🎯 UP NEXT!';
+          position: absolute;
+          top: 7px;
+          right: 7px;
+          font-size: 0.65rem;
+          font-weight: 800;
+          padding: 2px 7px;
+          border-radius: 6px;
+          background: #2ecc71;
+          color: #081b0e;
+          pointer-events: none;
+        }
+        #kid-task-hud {
+          background: linear-gradient(90deg, rgba(16, 32, 24, 0.96), rgba(20, 36, 48, 0.96));
+          border-bottom: 2px solid #2ecc71;
+          padding: 6px 14px;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.82rem;
+          color: #ecf0f1;
+          z-index: 49;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        body.light-mode #kid-task-hud {
+          background: #eafaf1 !important;
+          color: #1a1f2e !important;
+          border-bottom-color: #27ae60 !important;
+        }
+        .kid-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.85);
+          z-index: 10050;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 16px;
+          font-family: 'JetBrains Mono', monospace;
+        }
+        .kid-modal-box {
+          background: #161f2c;
+          border: 2px solid #2ecc71;
+          border-radius: 16px;
+          padding: 22px;
+          max-width: 480px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          color: #ecf0f1;
+          box-shadow: 0 14px 40px rgba(0,0,0,0.65);
+        }
+        body.light-mode .kid-modal-box {
+          background: #ffffff !important;
+          color: #1a1f2e !important;
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    function getDefaultSettings() {
+      return {
+        enabled: false,
+        tasksPerRound: 4,
+        itemsPerTask: 5,
+        freePlayMinutes: 30, // 0 = rest of today
+        pin: '',
+        categories: ['math', 'reading', 'science', 'world', 'life', 'thinking', 'creative'],
+        lastTaskIds: []
+      };
+    }
+
+    function getSettings() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
+        if (raw && typeof raw === 'object') {
+          return Object.assign(getDefaultSettings(), raw);
+        }
+      } catch (e) {}
+      return getDefaultSettings();
+    }
+
+    function saveSettings(s) {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+      } catch (e) {}
+    }
+
+    function getState() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STATE_KEY) || 'null');
+        if (raw && typeof raw === 'object' && Array.isArray(raw.tasks)) return raw;
+      } catch (e) {}
+      return null;
+    }
+
+    function saveState(st) {
+      try {
+        if (!st) localStorage.removeItem(STATE_KEY);
+        else localStorage.setItem(STATE_KEY, JSON.stringify(st));
+      } catch (e) {}
+    }
+
+    function findTaskButton(task) {
+      if (!task) return null;
+      if (task.game === 'quiz' && task.sub) {
+        return document.querySelector(`.game-btn[data-game="quiz"][data-subject="${task.sub}"]`);
+      }
+      if (task.game === 'life' && task.sub) {
+        return document.querySelector(`.game-btn[data-game="life"][data-subgame="${task.sub}"]`);
+      }
+      return document.querySelector(`.game-btn[data-game="${task.game}"]:not([data-subgame]):not([data-subject])`)
+          || document.querySelector(`.game-btn[data-game="${task.game}"]`);
+    }
+
+    function shuffleArr(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function buildLearningPath() {
+      const s = getSettings();
+      const lvl = typeof currentLevel === 'number' ? currentLevel : 1;
+      const allowedCats = (Array.isArray(s.categories) && s.categories.length)
+        ? s.categories
+        : Object.keys(CAT_META);
+
+      // Filter catalog to tasks that exist in DOM and match level + allowed categories
+      let pool = KID_CATALOG.filter(item =>
+        allowedCats.includes(item.cat) &&
+        lvl >= item.minL && lvl <= item.maxL &&
+        !!findTaskButton(item)
+      );
+      if (pool.length < s.tasksPerRound) {
+        pool = KID_CATALOG.filter(item => !!findTaskButton(item));
+      }
+
+      const recentSet = new Set(Array.isArray(s.lastTaskIds) ? s.lastTaskIds : []);
+      const byCat = {};
+      pool.forEach(item => {
+        if (!byCat[item.cat]) byCat[item.cat] = [];
+        byCat[item.cat].push(item);
+      });
+
+      const cats = shuffleArr(Object.keys(byCat));
+      const chosen = [];
+      const usedIds = new Set();
+
+      // Pass 1: pick at most 1 per category, preferring non-recent tasks
+      let pass = 0;
+      while (chosen.length < s.tasksPerRound && pass < 4) {
+        for (let c = 0; c < cats.length && chosen.length < s.tasksPerRound; c++) {
+          const catPool = shuffleArr(byCat[cats[c]] || []);
+          const pick = catPool.find(x => !usedIds.has(x.id) && (pass > 0 || !recentSet.has(x.id)))
+                    || catPool.find(x => !usedIds.has(x.id));
+          if (pick) {
+            usedIds.add(pick.id);
+            chosen.push({
+              id: pick.id,
+              game: pick.game,
+              sub: pick.sub || null,
+              cat: pick.cat,
+              icon: pick.icon,
+              name: pick.name,
+              itemsDone: 0,
+              itemsRequired: Math.max(1, parseInt(s.itemsPerTask, 10) || 5),
+              done: false
+            });
+          }
+        }
+        pass++;
+      }
+
+      s.lastTaskIds = chosen.map(t => t.id);
+      saveSettings(s);
+      return chosen;
+    }
+
+    function startNewRound() {
+      const tasks = buildLearningPath();
+      const st = {
+        phase: 'learning', // 'learning' | 'freeplay'
+        tasks,
+        currentIndex: 0,
+        startedAt: Date.now(),
+        freePlayUntil: 0,
+        roundsCompleted: ((getState() && getState().roundsCompleted) || 0)
+      };
+      saveState(st);
+      syncUI();
+      return st;
+    }
+
+    function ensureValidState() {
+      const s = getSettings();
+      if (!s.enabled) return null;
+      let st = getState();
+      if (!st || !Array.isArray(st.tasks) || !st.tasks.length) {
+        st = startNewRound();
+      }
+      // Check if freeplay expired
+      if (st.phase === 'freeplay' && st.freePlayUntil > 0 && Date.now() > st.freePlayUntil) {
+        st = startNewRound();
+        if (typeof _toast === 'function') {
+          _toast('🎒 Free Play time is up! Ready for a new Learning Path!', '#2ecc71');
+        }
+      }
+      return st;
+    }
+
+    function getCurrentTask() {
+      const st = ensureValidState();
+      if (!st || st.phase !== 'learning') return null;
+      return st.tasks[st.currentIndex] || null;
+    }
+
+    function isActiveTaskMatch(task) {
+      if (!task) return false;
+      if (currentGame !== task.game) return false;
+      if (task.game === 'life' && task.sub) return currentSubgame === task.sub;
+      if (task.game === 'quiz' && task.sub) return window._currentQuizSubject === task.sub;
+      return true;
+    }
+
+    let _allowProgrammaticClick = false;
+    function launchCurrentTask() {
+      const task = getCurrentTask();
+      if (!task) return;
+      const btn = findTaskButton(task);
+      if (!btn) return;
+      if (currentGame && currentGame !== 'menu') {
+        showView('menu');
+      }
+      _allowProgrammaticClick = true;
+      try {
+        btn.click();
+      } finally {
+        _allowProgrammaticClick = false;
+      }
+      syncUI();
+    }
+
+    function formatRemaining(ms) {
+      if (ms <= 0) return '0:00';
+      const totalSec = Math.ceil(ms / 1000);
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function syncUI() {
+      injectKidCSS();
+      const s = getSettings();
+      const topBtn = document.getElementById('kid-mode-btn');
+      const topLbl = document.getElementById('kid-btn-label');
+      const banner = document.getElementById('kid-mode-banner');
+      const hud = document.getElementById('kid-task-hud');
+
+      // Reset all button lock classes first
+      $$all('.game-btn').forEach(b => {
+        b.classList.remove('kid-locked', 'kid-current-btn');
+      });
+
+      if (!s.enabled) {
+        if (topBtn) {
+          topBtn.classList.remove('kid-active-learning', 'kid-active-freeplay');
+          topBtn.style.borderColor = '#2ecc71';
+          topBtn.style.color = '#2ecc71';
+        }
+        if (topLbl) topLbl.textContent = ' KIDS';
+        if (banner) {
+          banner.style.display = 'none';
+          banner.innerHTML = '';
+        }
+        if (hud) {
+          hud.style.display = 'none';
+          hud.innerHTML = '';
+        }
+        return;
+      }
+
+      const st = ensureValidState();
+      if (!st) return;
+
+      if (st.phase === 'learning') {
+        const cur = st.tasks[st.currentIndex];
+        const doneCount = st.tasks.filter(t => t.done).length;
+        if (topBtn) {
+          topBtn.classList.add('kid-active-learning');
+          topBtn.classList.remove('kid-active-freeplay');
+        }
+        if (topLbl) topLbl.textContent = ` ${doneCount}/${st.tasks.length}`;
+
+        // Lock non-current game buttons on menu
+        const curBtn = findTaskButton(cur);
+        $$all('.game-btn').forEach(b => {
+          if (b === curBtn) b.classList.add('kid-current-btn');
+          else b.classList.add('kid-locked');
+        });
+
+        // Render menu banner
+        if (banner) {
+          banner.style.display = 'block';
+          const pct = cur ? Math.min(100, Math.round((cur.itemsDone / cur.itemsRequired) * 100)) : 100;
+          const catInfo = cur && CAT_META[cur.cat] ? CAT_META[cur.cat] : { label: 'Learning', color: '#2ecc71' };
+          banner.innerHTML = `
+            <div class="kid-banner-card">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                <div>
+                  <div style="font-size:1.05rem;font-weight:800;color:#2ecc71;display:flex;align-items:center;gap:8px;">
+                    <span>🎒 KID MODE: LEARN FIRST</span>
+                    <span style="font-size:0.75rem;padding:2px 8px;border-radius:10px;background:rgba(46,204,113,0.18);border:1px solid #2ecc71;">Task ${st.currentIndex + 1} of ${st.tasks.length}</span>
+                  </div>
+                  <div style="font-size:0.8rem;opacity:0.85;margin-top:3px;">
+                    Finish ${st.tasks.length} different learning tasks to unlock <b>🎉 Free Play</b>!
+                  </div>
+                </div>
+                <button type="button" id="kid-banner-manage" class="retro-btn" style="font-size:0.74rem;padding:5px 10px;border-color:#7f8c8d;color:#bdc3c7;">🔒 Grown-Ups</button>
+              </div>
+              <div class="kid-steps-row">
+                ${st.tasks.map((t, idx) => {
+                  const cm = CAT_META[t.cat] || { label: t.cat, color: '#4db8ff' };
+                  const statusIcon = t.done ? '✅' : (idx === st.currentIndex ? '👉' : '🔒');
+                  const subTxt = t.done
+                    ? 'Completed!'
+                    : (idx === st.currentIndex ? `${t.itemsDone} / ${t.itemsRequired} done` : `Step ${idx + 1}`);
+                  return `
+                    <div class="kid-step-pill ${t.done ? 'done' : (idx === st.currentIndex ? 'current' : '')}" data-step-idx="${idx}">
+                      <div style="font-size:1.55rem;line-height:1;">${t.icon}</div>
+                      <div style="min-width:0;flex:1;">
+                        <div style="font-size:0.65rem;color:${cm.color};font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">${statusIcon} ${cm.label}</div>
+                        <div style="font-size:0.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.name}</div>
+                        <div style="font-size:0.7rem;opacity:0.8;">${subTxt}</div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              ${cur ? `
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">
+                  <div style="flex:1;min-width:200px;">
+                    <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:5px;">
+                      <span>Current: <b style="color:${catInfo.color}">${cur.icon} ${cur.name}</b></span>
+                      <span style="color:#f1c40f;font-weight:700;">${cur.itemsDone} / ${cur.itemsRequired} questions</span>
+                    </div>
+                    <div style="height:10px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;">
+                      <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#2ecc71,#f1c40f);transition:width 0.35s;"></div>
+                    </div>
+                  </div>
+                  <button type="button" id="kid-play-next-btn" class="kid-play-cta">
+                    ▶ PLAY ${cur.icon} ${cur.name.toUpperCase()}
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+          const playBtn = document.getElementById('kid-play-next-btn');
+          if (playBtn) playBtn.onclick = () => launchCurrentTask();
+          const curPill = banner.querySelector('.kid-step-pill.current');
+          if (curPill) curPill.onclick = () => launchCurrentTask();
+          const mgrBtn = document.getElementById('kid-banner-manage');
+          if (mgrBtn) mgrBtn.onclick = () => openGateOrSettings();
+        }
+
+        // Render in-game sticky HUD when not on menu
+        if (hud) {
+          const onMenu = !currentGame || currentGame === 'menu' || (views.menu && views.menu.classList.contains('active'));
+          if (!onMenu && cur) {
+            const pct = Math.min(100, Math.round((cur.itemsDone / cur.itemsRequired) * 100));
+            hud.style.display = 'flex';
+            hud.innerHTML = `
+              <span style="font-weight:800;color:#2ecc71;">🎒 Task ${st.currentIndex + 1} of ${st.tasks.length}:</span>
+              <span style="font-weight:700;">${cur.icon} ${cur.name}</span>
+              <div style="width:130px;height:9px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#2ecc71,#f1c40f);transition:width 0.3s;"></div>
+              </div>
+              <span style="color:#f1c40f;font-weight:800;">${cur.itemsDone} / ${cur.itemsRequired} ⭐</span>
+            `;
+          } else {
+            hud.style.display = 'none';
+          }
+        }
+      } else {
+        // Free play unlocked!
+        if (topBtn) {
+          topBtn.classList.remove('kid-active-learning');
+          topBtn.classList.add('kid-active-freeplay');
+        }
+        const remText = st.freePlayUntil > 0
+          ? formatRemaining(st.freePlayUntil - Date.now())
+          : 'ALL DAY';
+        if (topLbl) topLbl.textContent = ` 🎉 ${remText}`;
+
+        if (banner) {
+          banner.style.display = 'block';
+          banner.innerHTML = `
+            <div class="kid-banner-card freeplay-card">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <div style="font-size:1.1rem;font-weight:800;color:#f1c40f;">
+                    🎉 FREE PLAY UNLOCKED! Great learning!
+                  </div>
+                  <div style="font-size:0.82rem;opacity:0.9;margin-top:4px;">
+                    All games & quests are unlocked! ${st.freePlayUntil > 0 ? `Free play time left: <b id="kid-fp-timer" style="color:#2ecc71;">${remText}</b>` : 'Unlocked for the rest of today!'}
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button type="button" id="kid-new-round-btn" class="retro-btn" style="border-color:#2ecc71;color:#2ecc71;font-size:0.78rem;padding:6px 12px;">🔄 Start New Learning Path</button>
+                  <button type="button" id="kid-banner-manage" class="retro-btn" style="border-color:#7f8c8d;color:#bdc3c7;font-size:0.75rem;padding:6px 10px;">🔒 Grown-Ups</button>
+                </div>
+              </div>
+            </div>
+          `;
+          const nrBtn = document.getElementById('kid-new-round-btn');
+          if (nrBtn) nrBtn.onclick = () => {
+            startNewRound();
+            if (typeof _toast === 'function') _toast('🎒 New Learning Path started!', '#2ecc71');
+          };
+          const mgrBtn = document.getElementById('kid-banner-manage');
+          if (mgrBtn) mgrBtn.onclick = () => openGateOrSettings();
+        }
+        if (hud) {
+          hud.style.display = 'none';
+        }
+      }
+    }
+
+    // Periodic timer tick for free-play countdown
+    setInterval(() => {
+      const s = getSettings();
+      if (!s.enabled) return;
+      const st = getState();
+      if (!st || st.phase !== 'freeplay' || !st.freePlayUntil) return;
+      const rem = st.freePlayUntil - Date.now();
+      if (rem <= 0) {
+        ensureValidState();
+        syncUI();
+      } else {
+        const txt = formatRemaining(rem);
+        const topLbl = document.getElementById('kid-btn-label');
+        if (topLbl) topLbl.textContent = ` 🎉 ${txt}`;
+        const fpTimer = document.getElementById('kid-fp-timer');
+        if (fpTimer) fpTimer.textContent = txt;
+      }
+    }, 1000);
+
+    // Debounced item progress tracking
+    let _lastItemTick = 0;
+    function recordItemProgress(source, amount = 1, forceComplete = false) {
+      const s = getSettings();
+      if (!s.enabled) return;
+      const st = ensureValidState();
+      if (!st || st.phase !== 'learning') return;
+      const cur = st.tasks[st.currentIndex];
+      if (!cur || !isActiveTaskMatch(cur)) return;
+
+      const now = Date.now();
+      if (!forceComplete && now - _lastItemTick < 350) return;
+      _lastItemTick = now;
+
+      if (forceComplete) {
+        cur.itemsDone = cur.itemsRequired;
+      } else {
+        cur.itemsDone = Math.min(cur.itemsRequired, (cur.itemsDone || 0) + (amount || 1));
+      }
+
+      if (cur.itemsDone >= cur.itemsRequired) {
+        cur.done = true;
+        st.currentIndex++;
+        if (st.currentIndex >= st.tasks.length) {
+          // Completed all tasks in the path!
+          st.phase = 'freeplay';
+          st.roundsCompleted = (st.roundsCompleted || 0) + 1;
+          const mins = parseInt(s.freePlayMinutes, 10);
+          st.freePlayUntil = mins > 0 ? Date.now() + mins * 60 * 1000 : 0;
+          try {
+            localStorage.setItem('kid-paths-done', (parseInt(localStorage.getItem('kid-paths-done') || '0', 10) + 1));
+          } catch (e) {}
+          saveState(st);
+          syncUI();
+          showCelebrationModal(null, st);
+        } else {
+          const nextTask = st.tasks[st.currentIndex];
+          saveState(st);
+          syncUI();
+          showCelebrationModal(nextTask, st);
+        }
+      } else {
+        saveState(st);
+        syncUI();
+      }
+    }
+
+    function onFeedback(text, color) {
+      if (!text) return;
+      const isPos = color === '#2ecc71' || color === '#f1c40f' || color === '#9b59b6';
+      if (!isPos) return;
+      const t = String(text);
+      // Ignore non-question system/streak/unlock toasts
+      if (/Streak!|Level |Profile|saved|unlocked|Quest complete|Hint/i.test(t)) return;
+      if (/Oops|Try again|Not quite|Wrong|Nope/i.test(t)) return;
+      const isRoundFinish = /You Won|Complete!|All Clean!|Spotless!|All Matched!|Story Complete!|Case Closed!|Puzzle Solved!/i.test(t);
+      recordItemProgress('feedback', 1, isRoundFinish);
+    }
+
+    function showCelebrationModal(nextTask, st) {
+      const existing = document.getElementById('kid-celeb-overlay');
+      if (existing) existing.remove();
+      if (typeof spawnConfetti === 'function') {
+        spawnConfetti(window.innerWidth / 2, window.innerHeight / 3, nextTask ? 90 : 180);
+      }
+      const ov = document.createElement('div');
+      ov.id = 'kid-celeb-overlay';
+      ov.className = 'kid-modal-overlay';
+      if (nextTask) {
+        const cm = CAT_META[nextTask.cat] || { label: nextTask.cat, color: '#2ecc71' };
+        ov.innerHTML = `
+          <div class="kid-modal-box" style="text-align:center;">
+            <div style="font-size:3.2rem;margin-bottom:6px;">🌟</div>
+            <h2 style="color:#2ecc71;margin:0 0 6px;">Awesome Job! Task Complete!</h2>
+            <p style="font-size:0.88rem;opacity:0.85;margin:0 0 14px;">
+              You finished <b>${st.currentIndex} of ${st.tasks.length}</b> tasks on your Learning Path!
+            </p>
+            <div style="background:rgba(255,255,255,0.05);border:1.5px solid ${cm.color};border-radius:14px;padding:14px;margin-bottom:16px;">
+              <div style="font-size:0.72rem;color:${cm.color};font-weight:700;text-transform:uppercase;">Up Next · ${cm.label}</div>
+              <div style="font-size:2.2rem;margin:6px 0;">${nextTask.icon}</div>
+              <div style="font-size:1.1rem;font-weight:800;">${nextTask.name}</div>
+              <div style="font-size:0.78rem;opacity:0.8;margin-top:4px;">Complete ${nextTask.itemsRequired} questions</div>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+              <button type="button" id="kid-celeb-next" class="kid-play-cta" style="flex:1;">▶ Start ${nextTask.icon} ${nextTask.name}</button>
+              <button type="button" id="kid-celeb-menu" class="retro-btn" style="padding:10px 14px;">🏠 Menu</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(ov);
+        ov.querySelector('#kid-celeb-next').onclick = () => {
+          ov.remove();
+          launchCurrentTask();
+        };
+        ov.querySelector('#kid-celeb-menu').onclick = () => {
+          ov.remove();
+          showView('menu');
+        };
+      } else {
+        const s = getSettings();
+        ov.innerHTML = `
+          <div class="kid-modal-box" style="text-align:center;border-color:#f1c40f;">
+            <div style="font-size:3.6rem;margin-bottom:6px;">🎉🏆🎉</div>
+            <h2 style="color:#f1c40f;margin:0 0 8px;">FREE PLAY UNLOCKED!</h2>
+            <p style="font-size:0.92rem;opacity:0.9;margin:0 0 16px;">
+              Amazing work! You completed all <b>${st.tasks.length} learning tasks</b> across different subjects!
+              ${s.freePlayMinutes > 0 ? `<br><br>You now have <b style="color:#2ecc71;">${s.freePlayMinutes} minutes</b> of Free Play!` : '<br><br>All games are unlocked for the rest of today!'}
+            </p>
+            <button type="button" id="kid-celeb-free" class="kid-play-cta" style="background:linear-gradient(135deg,#f1c40f,#f39c12);width:100%;">
+              🎮 Explore All Games!
+            </button>
+          </div>
+        `;
+        document.body.appendChild(ov);
+        ov.querySelector('#kid-celeb-free').onclick = () => {
+          ov.remove();
+          showView('menu');
+        };
+      }
+    }
+
+    // Grown-Up Gate (arithmetic challenge or optional parent PIN) before opening settings when Kid Mode is ON
+    function openGateOrSettings() {
+      const s = getSettings();
+      if (!s.enabled) {
+        openSettingsModal();
+        return;
+      }
+      const existing = document.getElementById('kid-modal-overlay');
+      if (existing) existing.remove();
+
+      const a = Math.floor(Math.random() * 4) + 6; // 6..9
+      const b = Math.floor(Math.random() * 5) + 6; // 6..10
+      const c = Math.floor(Math.random() * 8) + 4; // 4..11
+      const expectedMath = a * b + c;
+      const hasPin = Boolean(s.pin && s.pin.trim().length >= 3);
+
+      const ov = document.createElement('div');
+      ov.id = 'kid-modal-overlay';
+      ov.className = 'kid-modal-overlay';
+      ov.innerHTML = `
+        <div class="kid-modal-box" role="dialog" aria-modal="true" aria-label="Grown-Up Check">
+          <h2 style="color:#f1c40f;margin:0 0 8px;font-size:1.15rem;">🔒 Grown-Up Check</h2>
+          <p style="font-size:0.82rem;opacity:0.85;margin:0 0 14px;">
+            Solve this quick math problem${hasPin ? ' (or enter your Parent PIN)' : ''} to manage Kid Mode settings:
+          </p>
+          <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px;text-align:center;font-size:1.25rem;font-weight:800;color:#4db8ff;margin-bottom:12px;">
+            (${a} × ${b}) + ${c} = ?
+          </div>
+          <input type="text" id="kid-gate-ans" inputmode="numeric" autocomplete="off" placeholder="${hasPin ? 'Answer or Parent PIN' : 'Enter answer...'}" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1.5px solid #4db8ff;background:#0e151f;color:#fff;font-family:inherit;font-size:1rem;margin-bottom:8px;">
+          <div id="kid-gate-err" style="color:#e74c3c;font-size:0.78rem;min-height:18px;margin-bottom:8px;"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button type="button" id="kid-gate-cancel" class="retro-btn" style="border-color:#7f8c8d;color:#bdc3c7;">Cancel</button>
+            <button type="button" id="kid-gate-submit" class="retro-btn" style="border-color:#2ecc71;color:#2ecc71;font-weight:700;">Unlock Settings</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(ov);
+      const inp = ov.querySelector('#kid-gate-ans');
+      const err = ov.querySelector('#kid-gate-err');
+      setTimeout(() => inp && inp.focus(), 40);
+
+      function verify() {
+        const val = (inp.value || '').trim();
+        if (parseInt(val, 10) === expectedMath || (hasPin && val === s.pin.trim())) {
+          ov.remove();
+          openSettingsModal();
+        } else {
+          err.textContent = 'Not quite! Try again.';
+          inp.select();
+        }
+      }
+      ov.querySelector('#kid-gate-submit').onclick = verify;
+      ov.querySelector('#kid-gate-cancel').onclick = () => ov.remove();
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') verify();
+        if (e.key === 'Escape') ov.remove();
+      });
+    }
+
+    function openSettingsModal() {
+      const existing = document.getElementById('kid-modal-overlay');
+      if (existing) existing.remove();
+      const s = getSettings();
+      const st = getState();
+
+      const ov = document.createElement('div');
+      ov.id = 'kid-modal-overlay';
+      ov.className = 'kid-modal-overlay';
+      ov.innerHTML = `
+        <div class="kid-modal-box" role="dialog" aria-modal="true" aria-label="Kid Mode Settings">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <h2 style="color:#2ecc71;margin:0;font-size:1.2rem;">🎒 Kid Mode ("Learn First")</h2>
+            <span style="font-size:0.75rem;padding:3px 8px;border-radius:8px;background:${s.enabled ? 'rgba(46,204,113,0.2)' : 'rgba(255,255,255,0.08)'};color:${s.enabled ? '#2ecc71' : '#aaa'};font-weight:700;">
+              ${s.enabled ? 'ACTIVE' : 'OFF'}
+            </span>
+          </div>
+          <p style="font-size:0.8rem;opacity:0.85;margin:0 0 14px;line-height:1.45;">
+            Guides kids through a balanced series of learning tasks across different subjects before unlocking Free Play.
+          </p>
+
+          <div style="display:grid;gap:12px;margin-bottom:14px;">
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">
+              <span>📋 Tasks per Learning Path:</span>
+              <select id="kid-set-tasks" style="padding:6px 10px;border-radius:8px;background:#0e151f;color:#fff;border:1px solid #4db8ff;font-family:inherit;">
+                ${[2, 3, 4, 5, 6, 8].map(n => `<option value="${n}" ${s.tasksPerRound === n ? 'selected' : ''}>${n} tasks</option>`).join('')}
+              </select>
+            </label>
+
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">
+              <span>⭐ Questions per task:</span>
+              <select id="kid-set-items" style="padding:6px 10px;border-radius:8px;background:#0e151f;color:#fff;border:1px solid #4db8ff;font-family:inherit;">
+                ${[2, 3, 5, 8, 10].map(n => `<option value="${n}" ${s.itemsPerTask === n ? 'selected' : ''}>${n} questions</option>`).join('')}
+              </select>
+            </label>
+
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;">
+              <span>🎉 Free Play reward time:</span>
+              <select id="kid-set-free" style="padding:6px 10px;border-radius:8px;background:#0e151f;color:#fff;border:1px solid #4db8ff;font-family:inherit;">
+                ${[
+                  [15, '15 minutes'],
+                  [30, '30 minutes'],
+                  [45, '45 minutes'],
+                  [60, '60 minutes'],
+                  [0,  'Rest of today']
+                ].map(([v, lbl]) => `<option value="${v}" ${s.freePlayMinutes === v ? 'selected' : ''}>${lbl}</option>`).join('')}
+              </select>
+            </label>
+
+            <div>
+              <div style="font-size:0.82rem;margin-bottom:6px;">🧭 Subjects to include (picks a mix):</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                ${Object.entries(CAT_META).map(([k, m]) => `
+                  <label style="display:flex;align-items:center;gap:6px;font-size:0.76rem;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.04);cursor:pointer;">
+                    <input type="checkbox" class="kid-cat-cb" value="${k}" ${s.categories.includes(k) ? 'checked' : ''}>
+                    <span>${m.icon} ${m.label}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <label style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;">
+              <span>🔑 Optional Parent PIN:</span>
+              <input type="text" id="kid-set-pin" value="${s.pin || ''}" placeholder="None (math gate)" maxlength="8" style="width:130px;padding:5px 8px;border-radius:8px;background:#0e151f;color:#fff;border:1px solid #555;font-family:inherit;font-size:0.8rem;">
+            </label>
+          </div>
+
+          ${s.enabled && st ? `
+            <div style="display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;border-top:1px solid rgba(255,255,255,0.1);margin-bottom:10px;">
+              <button type="button" id="kid-act-skip" class="retro-btn" style="font-size:0.75rem;border-color:#f1c40f;color:#f1c40f;">⏭️ Skip Current Task</button>
+              <button type="button" id="kid-act-newpath" class="retro-btn" style="font-size:0.75rem;border-color:#4db8ff;color:#4db8ff;">🔄 New Learning Path</button>
+              <button type="button" id="kid-act-freeplay" class="retro-btn" style="font-size:0.75rem;border-color:#9b59b6;color:#9b59b6;">🎉 Grant Free Play Now</button>
+            </div>
+          ` : ''}
+
+          <div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:8px;">
+            ${s.enabled ? `
+              <button type="button" id="kid-disable-btn" class="retro-btn" style="border-color:#e74c3c;color:#e74c3c;font-size:0.82rem;">Turn Off Kid Mode</button>
+            ` : '<span></span>'}
+            <div style="display:flex;gap:8px;margin-left:auto;">
+              <button type="button" id="kid-close-btn" class="retro-btn" style="border-color:#7f8c8d;color:#bdc3c7;font-size:0.82rem;">Cancel</button>
+              <button type="button" id="kid-save-enable" class="kid-play-cta" style="padding:8px 16px;font-size:0.85rem;">
+                ${s.enabled ? '💾 Save Settings' : '🎒 Turn On Kid Mode'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(ov);
+
+      function collectForm(enableFlag) {
+        const cats = Array.from(ov.querySelectorAll('.kid-cat-cb:checked')).map(cb => cb.value);
+        const updated = Object.assign({}, getSettings(), {
+          enabled: enableFlag,
+          tasksPerRound: parseInt(ov.querySelector('#kid-set-tasks').value, 10) || 4,
+          itemsPerTask: parseInt(ov.querySelector('#kid-set-items').value, 10) || 5,
+          freePlayMinutes: parseInt(ov.querySelector('#kid-set-free').value, 10),
+          categories: cats.length ? cats : Object.keys(CAT_META),
+          pin: (ov.querySelector('#kid-set-pin').value || '').trim()
+        });
+        saveSettings(updated);
+        return updated;
+      }
+
+      ov.querySelector('#kid-close-btn').onclick = () => ov.remove();
+      ov.querySelector('#kid-save-enable').onclick = () => {
+        const wasEnabled = s.enabled;
+        const updated = collectForm(true);
+        ov.remove();
+        if (!wasEnabled || !getState()) {
+          startNewRound();
+          showView('menu');
+          if (typeof _toast === 'function') _toast('🎒 Kid Mode ON! Complete your Learning Path to unlock Free Play!', '#2ecc71');
+        } else {
+          // Update itemsRequired on remaining tasks if changed
+          const curSt = getState();
+          if (curSt && Array.isArray(curSt.tasks)) {
+            curSt.tasks.forEach(t => {
+              if (!t.done) t.itemsRequired = updated.itemsPerTask;
+            });
+            saveState(curSt);
+          }
+          syncUI();
+          if (typeof _toast === 'function') _toast('🎒 Kid Mode settings saved!', '#2ecc71');
+        }
+      };
+
+      const disBtn = ov.querySelector('#kid-disable-btn');
+      if (disBtn) {
+        disBtn.onclick = () => {
+          collectForm(false);
+          saveState(null);
+          ov.remove();
+          syncUI();
+          if (typeof _toast === 'function') _toast('Kid Mode turned off.', '#4db8ff');
+        };
+      }
+
+      const skipBtn = ov.querySelector('#kid-act-skip');
+      if (skipBtn) {
+        skipBtn.onclick = () => {
+          ov.remove();
+          recordItemProgress('parent-skip', 999, true);
+        };
+      }
+      const npBtn = ov.querySelector('#kid-act-newpath');
+      if (npBtn) {
+        npBtn.onclick = () => {
+          collectForm(true);
+          ov.remove();
+          startNewRound();
+          showView('menu');
+          if (typeof _toast === 'function') _toast('🔄 Started a fresh Learning Path!', '#2ecc71');
+        };
+      }
+      const fpBtn = ov.querySelector('#kid-act-freeplay');
+      if (fpBtn) {
+        fpBtn.onclick = () => {
+          const updated = collectForm(true);
+          const curSt = ensureValidState();
+          curSt.tasks.forEach(t => { t.done = true; t.itemsDone = t.itemsRequired; });
+          curSt.currentIndex = curSt.tasks.length;
+          curSt.phase = 'freeplay';
+          curSt.freePlayUntil = updated.freePlayMinutes > 0 ? Date.now() + updated.freePlayMinutes * 60 * 1000 : 0;
+          saveState(curSt);
+          ov.remove();
+          syncUI();
+          showView('menu');
+          if (typeof _toast === 'function') _toast('🎉 Free Play unlocked!', '#f1c40f');
+        };
+      }
+    }
+
+    // Intercept clicks on locked games during the 'learning' phase (capture phase)
+    document.addEventListener('click', (e) => {
+      if (_allowProgrammaticClick) return;
+      const s = getSettings();
+      if (!s.enabled) return;
+      const st = ensureValidState();
+      if (!st || st.phase !== 'learning') return;
+
+      const cur = st.tasks[st.currentIndex];
+      if (!cur) return;
+
+      const gameBtn = e.target.closest('.game-btn');
+      if (gameBtn) {
+        const expectedBtn = findTaskButton(cur);
+        if (gameBtn !== expectedBtn) {
+          e.stopPropagation();
+          e.preventDefault();
+          if (typeof _toast === 'function') {
+            _toast(`🎒 Learn First! Let's finish ${cur.icon} ${cur.name} (${cur.itemsDone}/${cur.itemsRequired}) first!`, '#2ecc71');
+          }
+          const banner = document.getElementById('kid-mode-banner');
+          if (banner && typeof banner.scrollIntoView === 'function') {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+      }
+
+      // Also guard Adventure Quest button (#adv-btn) and Daily Challenge (#daily-banner) during learning phase
+      const advBtn = e.target.closest('#adv-btn');
+      if (advBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (typeof _toast === 'function') {
+          _toast(`🎒 Finish your Learning Path (${st.currentIndex}/${st.tasks.length}) to unlock ⚔️ Quest Mode!`, '#ffd54f');
+        }
+        return;
+      }
+    }, true);
+
+    // Wire up header #kid-mode-btn
+    const hdrBtn = document.getElementById('kid-mode-btn');
+    if (hdrBtn) {
+      hdrBtn.addEventListener('click', () => openGateOrSettings());
+    }
+
+    // Add Kid Mode achievement
+    if (typeof ACHIEVEMENTS !== 'undefined' && Array.isArray(ACHIEVEMENTS)) {
+      ACHIEVEMENTS.push({
+        id: 'kid-grad',
+        ic: '🎒',
+        name: 'Learn First Champ',
+        desc: 'Complete a Kid Mode learning path to unlock Free Play',
+        progress() {
+          const c = _intLS('kid-paths-done');
+          return { cur: Math.min(c, 1), target: 1, unlocked: c >= 1 };
+        }
+      });
+    }
+
+    // Expose hooks for learn-app.js
+    window._kidIsEnabled = () => getSettings().enabled;
+    window._kidGetSettings = getSettings;
+    window._kidSaveSettings = saveSettings;
+    window._kidGetState = getState;
+    window._kidStartNewRound = startNewRound;
+    window._kidLaunchCurrentTask = launchCurrentTask;
+    window._kidOnItemDone = (src, amt) => {
+      if (src === 'score' && (typeof amt === 'number' && amt <= 0)) return;
+      recordItemProgress(src, src === 'score' ? 1 : (amt || 1), false);
+    };
+    window._kidOnFeedback = onFeedback;
+    window._kidOnShowView = () => syncUI();
+    window._kidOpenGateOrSettings = openGateOrSettings;
+
+    // Initial render
+    syncUI();
+  })();
