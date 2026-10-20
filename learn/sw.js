@@ -1,13 +1,33 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v1291';
+const CACHE = 'amni-learn-v1299';
 const PRECACHE = [
   './',
   './index.html',
   './learn-app.js',
+  './learn-ui.css',
+  './learn-art.js',
+  './assets/art/CREDITS.md',
+  './learn-ui.js',
+  './learn-standards.js',
+  './learn-state-facts.js',
+  './learn-state-studies.js',
+  './learn-sound.js',
+  './learn-hub.js',
+  './mod-kids.js',
+  './mod-music.js',
+  './mod-world.js',
+  './mod-testprep.js',
+  './mod-mature.js',
+  './testbank-ny.js',
+  './testbank-regents.js',
+  './testbank-states.js',
+  '/assets/fonts/fredoka-var.woff2',
+  '/assets/fonts/archivo-var.woff2',
   './manifest.webmanifest',
   './assets/voice/manifest.json',
   './assets/world-map.png',
+  ...['correct','wrong','star','coin','unlock','levelup','win','celebrate','lose','tap','pop','drop','tick','whoosh','flip'].map(n => './assets/sfx/' + n + '.mp3'),
   './assets/audio/bear.mp3','./assets/audio/bee.mp3','./assets/audio/bird.mp3','./assets/audio/boar.mp3',
   './assets/audio/cat.mp3','./assets/audio/chicken.mp3','./assets/audio/cow.mp3','./assets/audio/crocodile.mp3',
   './assets/audio/crow.mp3','./assets/audio/deer.mp3','./assets/audio/dog.mp3','./assets/audio/donkey.mp3',
@@ -49,7 +69,7 @@ self.addEventListener('fetch', (e) => {
   // would pin a stale learn-app.js on the device until the cache was evicted
   // (the cause of "old content after an update"). Static assets (mp3s, images,
   // fonts) stay cache-first below since they rarely change.
-  const isAppCode = e.request.mode === 'navigate' || /\/(index\.html|learn-app\.js)$/.test(url.pathname) || /\/learn\/?$/.test(url.pathname);
+  const isAppCode = e.request.mode === 'navigate' || /\/(index\.html|learn-[a-z-]+\.(js|css)|mod-[a-z]+\.js|testbank-[a-z]+\.js)$/.test(url.pathname) || /\/learn\/?$/.test(url.pathname);
   if (isAppCode) {
     e.respondWith(
       fetch(e.request).then(resp => save(e.request, resp))

@@ -1,3 +1,4 @@
+import {scaleText} from './form_lang.js';
 export const MM_PER={in:25.4,mm:1};
 let SYS='us';try{SYS=localStorage.getItem('amnicad.sys')||'us';}catch{}
 export const sys=()=>SYS;
@@ -57,6 +58,7 @@ export function convertDoc(d,to){const from=docUnits(d);if(from===to)return[];co
   const convSketch=sk=>{if(!sk)return sk;const c=JSON.parse(JSON.stringify(sk));c.pts=c.pts.map(p=>p.map(v=>v*k));c.ents.forEach(e=>{if(e.r!=null)e.r*=k;});c.cons.forEach(q=>{if(q.v!==undefined&&q.k!=='ang')q.v=convLen(q.v,k);});return c;};
   d.features=walk(d.features,'');if(d.sim)for(const key of['supports','loads','temps','conv','flux'])if(d.sim[key])d.sim[key]=d.sim[key].map(x=>({...x,faces:walk(x.faces,'faces')}));
   if(d.tol&&d.tol.params)for(const t of Object.values(d.tol.params))if(t&&t.k==='pm'){t.up=convLen(t.up,k);t.lo=convLen(t.lo,k);}
+  if(d.form)d.form=scaleText(d.form,k);if(d.meshes)for(const id in d.meshes)d.meshes[id].scale=(d.meshes[id].scale||1)*k;
   d.units=to;return warn;}
 export function massSI(r,units,rho){
   const k=units==='in'?25.4:1,m=r.volume*k**3*rho*1e-9,sc=k**5*rho*1e-9,lb=2.2046226/645.16,T=r.T.map(row=>row.map(v=>v*sc)),el={Ixx:T[0][0],Iyy:T[1][1],Izz:T[2][2],Ixy:T[0][1],Iyz:T[1][2],Ixz:T[0][2]};

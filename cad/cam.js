@@ -42,7 +42,7 @@ export async function make(API,o){
     const r=await API.plugin(K,'solid',{job,plan:!!o.plan}),out=norm('solid',mc,job,r);if(seq===CS.seq&&!o.plan)CS.res=out;return out;}
   catch(e){const out={ok:false,route:'none',machine:o.machine,errors:[e.message||String(e)],warnings:[],notes:[],setups:[],tools:[],unreachable:[],time_min:0};if(seq===CS.seq)CS.res=out;return out;}
   finally{if(seq===CS.seq)CS.busy=false;}}
-export const simOpts=(r,s)=>({text:s.gcode,name:s.file,dialect:s.post,post:s.post,machine:r.machine.name,mobj:r.machine,cfg:s.sim&&s.sim.cfg,job:r.job});
+export const simOpts=(r,s)=>({text:s.gcode,name:s.file,dialect:s.post,post:s.post,machine:r.machine.name,mobj:r.machine,cfg:s.sim&&s.sim.cfg,job:r.job,route:r.route,si:Math.max(0,(r.setups||[]).indexOf(s))});
 export const cost=r=>r&&r.machine&&r.time_min?+(r.time_min/60*(r.machine.rate_hr||0)).toFixed(2):0;
 export const dur=m=>m==null||!isFinite(m)?'-':m<1?Math.round(m*60)+' s':m<90?nf(m,m<10?1:0)+' min':Math.floor(m/60)+' h '+Math.round(m%60)+' min';
 export function plot(path,w=420,h=300){

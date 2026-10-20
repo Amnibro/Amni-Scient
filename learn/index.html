@@ -160,12 +160,12 @@
      modules dynamically build panels with hex colors baked into cssText
      — these selectors flip the most common ones on the fly without a
      128-occurrence find/replace through every init function. */
-  body.light-mode [style*="color:var(--text,#ecf0f1)"],
-  body.light-mode [style*="color: var(--text,#ecf0f1)"],
-  body.light-mode [style*="color:#fff"],
-  body.light-mode [style*="color: #fff"],
-  body.light-mode [style*="color:white"],
-  body.light-mode [style*="color: white"] { color: #1a1f2e !important; }
+  body.light-mode [style*="color:var(--text,#ecf0f1)"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: var(--text,#ecf0f1)"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color:#fff"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: #fff"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color:white"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: white"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]) { color: #1a1f2e !important; }
   body.light-mode [style*="color:#bdc3c7"],
   body.light-mode [style*="color:#95a5a6"],
   body.light-mode [style*="color:#888"],
@@ -536,7 +536,7 @@
   .td-controls .t-btn { padding:8px 18px; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: var(--text,#ecf0f1); margin-bottom: 20px; text-align: center; }
   .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
+  #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: var(--ui-text,#2c3e50) !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
   @media (min-width: 600px) { #quiz-prompt { font-size: clamp(2rem,5vw,3.5rem); } }
   #quiz-choices { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
   .dirt { position: absolute; font-size: 2rem; user-select: none; z-index: 1; transition: transform 0.2s, opacity 0.2s; }
@@ -985,7 +985,7 @@
   .ms-cell:not(.revealed):active { transform:scale(0.94); }
   .ms-cell.revealed { background:#dde1e6; border:1px solid #9aa1a9; box-shadow:none; }
   .ms-cell.mine { background:#e74c3c; }
-  .ms-cell.flagged::after { content:'🚩'; }
+  .ms-cell.flagged::after { content:''; display:inline-block; width:1.2em; height:1.2em; vertical-align:-.2em; background:url(assets/art/1f6a9.webp) center/contain no-repeat; }
   .ms-cell[data-n="1"]{ color:#0000ff } .ms-cell[data-n="2"]{ color:#008000 } .ms-cell[data-n="3"]{ color:#ff0000 } .ms-cell[data-n="4"]{ color:#000080 } .ms-cell[data-n="5"]{ color:#800000 } .ms-cell[data-n="6"]{ color:#008080 } .ms-cell[data-n="7"]{ color:#000 } .ms-cell[data-n="8"]{ color:#808080 }
   #feedback.show { animation:celebPop 1.8s ease-out forwards; filter:drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
   #sudoku-view{background:linear-gradient(135deg,#0a1a2a 0%,#0d2a2a 50%,#0a1a2a 100%);background-size:200% 200%;animation:bgShift 14s ease infinite;}
@@ -1414,15 +1414,17 @@
     .math-problem{font-size:clamp(2rem,7vw,3.2rem)!important;margin-bottom:10px!important}
   }
 </style>
+<link rel="stylesheet" href="learn-ui.css?v=1b">
+<script>try{(function(o){var h=document.documentElement;o.size&&o.size!==100?h.style.fontSize=o.size+"%":0;o.hc?h.classList.add("a11y-hc"):0;o.rm?h.classList.add("a11y-rm"):0;o.read?h.classList.add("a11y-read"):0;o.size>100?h.classList.add("a11y-big"):0})(JSON.parse(localStorage.getItem("amni-learn-a11y")||"{}"))}catch(e){}</script>
 </head>
 <body>
 <div id="app">
   <div class="top-bar">
-    <button class="back-btn" id="nav-back" aria-label="Home">⬅<span class="btn-label"> HOME</span></button>
+    <button class="back-btn" id="nav-back" aria-label="Home">⬅<span class="btn-label"> Home</span></button>
     <button class="back-btn" id="level-btn" title="Pick difficulty / age band">📚<span class="btn-label" id="level-btn-label"> Lv 1</span></button>
-    <button class="back-btn" id="adv-btn" title="Adventure Mode — learn by questing!" aria-label="Adventure Mode" style="border-color:#ffd54f;color:#ffd54f">⚔️<span class="btn-label"> QUEST</span></button>
-    <button class="back-btn" id="kid-mode-btn" title="Kid Mode (Learn First) — complete a series of learning tasks to unlock free play!" aria-label="Kid Mode (Learn First)" style="border-color:#2ecc71;color:#2ecc71">🎒<span class="btn-label" id="kid-btn-label"> KIDS</span></button>
-    <div class="brand-text" style="color:#4db8ff;font-family:'JetBrains Mono';font-weight:bold;font-size:1.2rem;">AMNI-LEARN</div>
+    <button class="back-btn" id="adv-btn" title="Adventure Mode — learn by questing!" aria-label="Adventure Mode" style="border-color:#ffd54f;color:#ffd54f">⚔️<span class="btn-label"> Quest</span></button>
+    <button class="back-btn" id="kid-mode-btn" title="Kid Mode (Learn First) — complete a series of learning tasks to unlock free play!" aria-label="Kid Mode (Learn First)" style="border-color:#2ecc71;color:#2ecc71">🎒<span class="btn-label" id="kid-btn-label"> Kids</span></button>
+    <div class="brand-text" style="color:#4db8ff;font-family:'JetBrains Mono';font-weight:bold;font-size:1.2rem;">Amni-Learn</div>
     <div class="score-bar">
         <span>⭐ <span class="score-val" id="score-val">0</span></span>
         <span class="streak-fire" id="streak-fire">🔥 <span class="streak-val" id="streak-val">0</span></span>
@@ -1432,9 +1434,10 @@
     </div>
     <div class="top-controls">
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
+        <button class="theme-btn" id="a11y-btn" title="Display &amp; accessibility" aria-label="Display and accessibility settings" aria-haspopup="dialog"><span aria-hidden="true" style="font-weight:800;letter-spacing:-.02em">Aa</span></button>
         <button class="theme-btn" id="tts-btn" title="Read aloud (off)" aria-label="Toggle read-aloud" aria-pressed="false">🔇</button>
         <button class="theme-btn" id="theme-btn" title="Toggle light/dark theme" aria-label="Toggle theme">🌙</button>
-        <button class="fs-btn" id="fs-btn" aria-label="Toggle fullscreen">⛶<span class="fs-label"> FULLSCREEN</span></button>
+        <button class="fs-btn" id="fs-btn" aria-label="Toggle fullscreen">⛶<span class="fs-label"> Full screen</span></button>
     </div>
   </div>
   <div id="kid-task-hud" role="region" aria-label="Learning task progress" style="display:none;"></div>
@@ -1447,10 +1450,13 @@
     </div>
   </div>
   <div id="menu-view" class="view active">
-    <h1 class="menu-title">CHOOSE A GAME</h1>
+    <h1 class="menu-title">Choose a game</h1>
+    <p class="menu-sub" id="menu-sub"></p>
+    <div class="std-bar" id="std-bar" hidden></div>
     <div id="kid-mode-banner" style="display:none;max-width:860px;width:94%;margin:0 auto 16px;"></div>
-    <button id="ach-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:720px;width:94%;margin:0 auto 6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1c40f;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:background 0.15s;">🏆 Achievements <span id="ach-toggle-count" style="color:#bbb;"></span> <span id="ach-toggle-caret" style="transition:transform 0.2s;">▸</span></button>
+    <button id="ach-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:720px;width:94%;margin:0 auto 6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1c40f;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:background 0.15s;">🏆 Achievements <span id="ach-toggle-count" style="color:var(--ui-muted,#bbb);"></span> <span id="ach-toggle-caret" style="transition:transform 0.2s;">▸</span></button>
     <div id="achievements-strip" style="display:none;gap:6px;max-width:720px;width:94%;margin:0 auto 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;flex-wrap:wrap;justify-content:center;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:background 0.15s;" title="Tap to see all achievements"></div>
+    <div class="menu-quick">
     <div id="daily-banner" style="display:none;max-width:560px;width:92%;margin:0 auto 14px;padding:14px 18px;background:linear-gradient(135deg,rgba(241,196,15,0.22) 0%,rgba(243,156,18,0.18) 100%);border:2px solid #f1c40f;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 22px rgba(241,196,15,0.25);transition:transform 0.15s,box-shadow 0.15s;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
         <div>
@@ -1469,6 +1475,7 @@
         <div style="font-size:0.82rem;color:var(--text,#ecf0f1);margin-top:3px;opacity:0.9;">Tap to launch a random game or quiz from the whole suite</div>
       </div>
       <div style="font-size:1.8rem;">🎰</div>
+    </div>
     </div>
     <div class="game-grid" id="main-game-grid">
       <section class="game-category">
@@ -1529,6 +1536,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="sports"><span class="btn-icon">🏆</span><span class="btn-text">Sports &amp; Olympics</span><span class="btn-desc">Games, athletes &amp; records</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="mythology"><span class="btn-icon">🏛️</span><span class="btn-text">Mythology</span><span class="btn-desc">Gods, heroes, monsters worldwide</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="history"><span class="btn-icon">📜</span><span class="btn-text">World History</span><span class="btn-desc">Civilizations, events & dates</span></button>
+          <button class="game-btn quiz" data-game="quiz" data-subject="mystate"><span class="btn-icon">🗺️</span><span class="btn-text" id="mystate-name">My State</span><span class="btn-desc" id="mystate-desc">Symbols, maps &amp; state history</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="civics"><span class="btn-icon">🏛️</span><span class="btn-text">Civics & Government</span><span class="btn-desc">How governments function</span></button>
         </div>
       </section>
@@ -1715,7 +1723,7 @@
       <div class="life-task-area" id="quiz-task-area" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
           <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px;">
               <button id="quiz-audio-btn" class="btn-icon" aria-label="Read the question aloud" title="Read aloud" style="background:#3498db; color:#fff; border:none; border-radius:50%; width:60px; height:60px; font-size:2rem; cursor:pointer; display:none; box-shadow:0 4px 0 #2980b9;">🔊</button>
-              <div id="quiz-prompt" style="font-size:2.5rem; font-family:'Comic Neue',cursive; text-align:center; color:#2c3e50 !important; font-weight:bold !important; opacity:1 !important;">Loading...</div>
+              <div id="quiz-prompt" style="font-size:2.5rem; font-family:'Comic Neue',cursive; text-align:center; color:var(--ui-text,#2c3e50) !important; font-weight:bold !important; opacity:1 !important;">Loading...</div>
           </div>
           <div id="quiz-choices" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;"></div>
       </div>
@@ -1770,11 +1778,13 @@
         <button class="phon-tab" id="phon-tab-words">🧩 Sound It Out</button>
         <button class="phon-tab" id="phon-tab-match">🎯 Letter Catch</button>
         <button class="phon-tab" id="phon-tab-rhyme">🎵 Rhyme Time</button>
+        <button class="phon-tab" id="phon-tab-sight">👀 Sight Words</button>
       </div>
       <div id="phon-letters-pane" class="phon-pane"></div>
       <div id="phon-words-pane" class="phon-pane" style="display:none"></div>
       <div id="phon-match-pane" class="phon-pane" style="display:none"></div>
       <div id="phon-rhyme-pane" class="phon-pane" style="display:none"></div>
+      <div id="phon-sight-pane" class="phon-pane" style="display:none"></div>
     </div>
   </div>
   <div id="typing-view" class="view">
@@ -1785,7 +1795,7 @@
   <div id="storybook-view" class="view">
     <div id="storybook-list" class="storybook-list"></div>
     <div id="storybook-reader" class="storybook-reader" style="display:none">
-      <button id="story-back-list" class="t-btn" style="background:#34495e;color:#fff;align-self:flex-start;margin:10px 0 0 10px">← Library</button>
+      <button id="story-back-list" class="t-btn" style="background:var(--ui-surface-2,#34495e);color:var(--ui-text,#fff);border:1px solid var(--ui-border,#34495e);align-self:flex-start;margin:10px 0 0 10px">← Library</button>
       <h2 id="story-title" class="story-title-head"></h2>
       <div class="story-cover-large" id="story-cover-large"></div>
       <div class="story-page" id="story-page"></div>
@@ -2116,8 +2126,20 @@
   <canvas id="confetti-canvas"></canvas>
 </div>
 <script>(function(){var P=/best|wins|streak|solved|total|high/;try{var S=window.sessionStorage,L=window.localStorage,oset=Storage.prototype.setItem,oget=Storage.prototype.getItem;Storage.prototype.setItem=function(k,v){oset.call(this,k,v);if(this===S&&P.test(String(k)))try{oset.call(L,k,v)}catch(e){}};Storage.prototype.getItem=function(k){var v=oget.call(this,k);if(v==null&&this===S&&P.test(String(k))){try{v=oget.call(L,k)}catch(e){}}return v}}catch(e){}})();</script>
-<script src="learn-app.js?v=v1291" defer></script>
-<script src="brain-gym.js?v=2" defer></script>
+<script src="learn-ui.js?v=2" defer></script>
+<script src="learn-standards.js?v=2" defer></script>
+<script src="learn-state-facts.js?v=1" defer></script>
+<script src="learn-state-studies.js?v=2" defer></script>
+<script src="learn-app.js?v=v1297" defer></script>
+<script src="learn-sound.js?v=1" defer></script>
+<script src="learn-hub.js?v=2" defer></script>
+<script src="learn-art.js?v=1" defer></script>
+<script src="mod-kids.js?v=4" defer></script>
+<script src="mod-music.js?v=3" defer></script>
+<script src="mod-world.js?v=4" defer></script>
+<script src="mod-testprep.js?v=2" defer></script>
+<script src="mod-mature.js?v=3" defer></script>
+<script src="brain-gym.js?v=2b" defer></script>
 </div>
 <footer class="learn-footer" role="contentinfo">
 <div class="lf-inner">
@@ -2142,13 +2164,13 @@
 <h3>Age Bands &amp; Levels</h3>
 <ul>
 <li><strong>Level 1 &mdash; Pre-K (ages 3&ndash;5):</strong> tracing, animal sounds, simple counting, shape matching</li>
-<li><strong>Level 2 &mdash; K&ndash;1st (ages 5&ndash;7):</strong> phonics, single-digit addition &amp; subtraction, sight words</li>
-<li><strong>Level 3 &mdash; 2nd&ndash;3rd (ages 7&ndash;9):</strong> multiplication, broader vocabulary, beginner science</li>
-<li><strong>Level 4 &mdash; 4th&ndash;5th (ages 9&ndash;11):</strong> fractions, geography, intermediate reading comprehension</li>
-<li><strong>Level 5 &mdash; Middle School:</strong> pre-algebra, introductory chemistry and biology</li>
-<li><strong>Level 6 &mdash; High School:</strong> advanced STEM, algebra, essay-level reading</li>
-<li><strong>Level 7 &mdash; College Prep:</strong> logic puzzles, analytical reasoning</li>
-<li><strong>Level 8 &mdash; Adult Brain Health:</strong> cognitive exercises for focus, memory, processing speed</li>
+<li><strong>Level 2 &mdash; Grades K&ndash;2 (ages 5&ndash;8):</strong> phonics, addition &amp; subtraction, sight words, telling time, money</li>
+<li><strong>Level 3 &mdash; Grades 3&ndash;5 (ages 8&ndash;11):</strong> multiplication, fractions, vocabulary, beginner science and geography</li>
+<li><strong>Level 4 &mdash; Middle School:</strong> pre-algebra, introductory chemistry and biology, deeper reading</li>
+<li><strong>Level 5 &mdash; STEM Challenge (14+):</strong> labs, circuits, algebra and advanced STEM</li>
+<li><strong>Level 6 &mdash; Brain Exercise:</strong> cognitive exercises for focus, memory and processing speed</li>
+<li><strong>Level 7 &mdash; Destress Arcade:</strong> relaxed classic games to unwind</li>
+<li><strong>Level 8 &mdash; College Prep:</strong> university-level math, science, computing and philosophy</li>
 </ul>
 </div>
 <div>
@@ -2156,6 +2178,7 @@
 <p>Every module loads instantly from a single static HTML page &mdash; no backend, no account, no cookies beyond the local score key. Pick a level from the URL with <code>?level=1</code> through <code>?level=8</code>, or land on the <a href="../amni-learn.html">Amni-Learn product page</a> and use the level selector there.</p>
 <p>Progress is saved per-browser. The fullscreen button works on any device, and the game grid re-flows to fit phones, tablets, and desktops. Nothing is sent to a server &mdash; the entire app runs from a single static HTML page, so it works fully offline (airplane mode, school WiFi blocking, no signal &mdash; all fine). No trackers, no accounts, and after the first load, no network requests at all.</p>
 <p>Found a bug or want a new subject? Reach out through the <a href="../about.html">About page</a>.</p>
+<p>Illustrations: Microsoft Fluent Emoji 3D (MIT), packaged by LobeHub (MIT), plus a few Amni-drawn additions. See the <a href="assets/art/CREDITS.md" target="_blank" rel="noopener">art credits</a>.</p>
 </div>
 </div>
 </details>
@@ -2165,6 +2188,7 @@
 <a href="../faq.html">FAQ</a>
 <a href="../privacy.html">Privacy</a>
 <a href="../terms.html">Terms</a>
+<a href="assets/art/CREDITS.md" target="_blank" rel="noopener">Art credits</a>
 <a href="../index.html">Amni-Scient Home</a>
 </nav>
 <div class="lf-copy">&copy; 2026 Amniscient, LLC &mdash; Private, on-device education.</div>

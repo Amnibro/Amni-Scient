@@ -1,5 +1,62 @@
+## 2026-10-20 — Amni-Learn: profile fix
+- Fixed: the Profile window crashed on open because the theme picker looked up the wrong list, so names, themes, mascots and cursor trails could not be changed.
+
+## 2026-10-20 — Amni-Learn: illustrated art everywhere
+- **Real illustrations replace device emoji** across menus, games, quizzes, cards and Play & Learn: 1,144 images in one consistent 3D style from Microsoft Fluent Emoji 3D (MIT, webp packaging by LobeHub, MIT), including every country flag, so flags now show on desktop too. Two missing pieces were drawn to match. About 3 MB, cached for offline use, with the device emoji as a fallback until an image loads.
+- `learn-art.js` swaps emoji for images as screens render, keeping the original text for screen readers and answer checks; canvas games (tower defense, circuits, shapes) draw the images directly. Art credits are linked in the footer.
+
+## 2026-10-20 — Amni-Learn: new Dress for the Weather, American English
+- **Dress for the Weather** is rebuilt as a real dress-up game with hand-drawn art instead of emoji: a friendly child (4 skin tones, 3 hair styles) and 19 clothing pieces that layer correctly on the right body slot (mittens on both hands, coat over shirt, boots over pants, umbrella in one hand). Outfits need 4–7 pieces. Five animated scenes (sunny park, rainy street, snowy yard, windy autumn, hot beach) respect Reduce motion. Ready! glows the right pieces, wobbles wrong ones with a kind spoken reason, and points out missing slots. Grades 3–5 add a °F thermometer and layering by temperature.
+- **American English throughout**: color, center, gray, favorite, practice, traveled, theater, vapor, metric tons, truck driver, parking lot and more. Proper names like Ford's Theatre and Centre Court keep their own spelling.
+
+## 2026-10-20 — Amni-Learn: real instruments and sound effects
+- **Sampled sound engine** (`learn-sound.js`) replaces the oscillator beeps: Salamander Grand Piano (CC BY 3.0), marimba, xylophone, glockenspiel, music box, celesta, kalimba, nylon guitar, strings and a full drum kit rendered from GeneralUser GS, plus Kenney CC0 interface sounds. One shared audio bus with a gentle compressor, limiter and soft reverb; everything is loudness-matched and never clips. About 2.4 MB, cached for offline use.
+- **Music Studio** plays real instruments and drums, and gains a true Xylophone and Kalimba. Play & Learn, Healthy Mind, Study Around the World, Simon, the piano and instrument explorer, ear training, drums, reaction time and the adventure game now use the sampled sounds. Correct and wrong answers get warm, kind chimes.
+- The real animal recordings are unchanged.
+
+## 2026-10-20 — Amni-Learn: Study Around the World and Healthy Mind
+- **Study Around the World** (🌏): Soroban Abacus from Japan (read, set, guided 5- and 10-partner steps, anzan flash, free play), Kuku 九九 times-table chants in Japanese and Chinese, Kumon-style mastery sheets with accuracy and time targets, Singapore bar models (concrete → pictorial → abstract), Chinese numbers with make-ten (凑十法), and a Study Coach with Leitner boxes, Pomodoro and the Feynman check. Each opens with a short note on where the method comes from.
+- **Healthy Mind** (🌿, Brain Exercise and College Prep): Word List Recall with a delayed second recall, Story Recall, Names & Faces, Everyday Math (change, tips, recipes, timetables), Sayings & Words, Then & Now trivia by decade, Odd One Out, Find the Difference, and a Daily Mind Routine with streak, mood journal and progress charts. Large text, no time pressure, read-aloud on every screen, second tries and hints.
+
+## 2026-10-20 — Amni-Learn: every U.S. state
+- **State picker** is now a dropdown with all 50 states and Washington, D.C. New York, Florida and Texas keep their full state standard codes. Every other state follows the Common Core grade-level sequence and shows Common Core (CCSS) codes in the skills map and problem chips, with a note for states that wrote their own standards (Alaska, Indiana, Minnesota, Nebraska, Oklahoma, South Carolina, Virginia).
+- **My State Studies** works for every state: capital, nickname, state bird, flower and tree, statehood year and order, largest city, neighbors and Census region, from a checked fact table, plus shared U.S. civics questions.
+- **Test Prep** shows every state's practice tests when yours has none yet.
+- Fixed: changing grade or state threw a stack overflow from the toast helper.
+
+## 2026-10-20 — Amni-Learn: Play & Learn for little ones
+- **Play & Learn** (🎈, top of Pre-K and K–2, some at Grades 3–5): ten new activities, all spoken aloud with a replay button so Pre-K needs no reading, adaptive difficulty, drag or tap, and gentle chimes. Feed the Animals (counting 1–10), Sticker Scenes (listening and counting with a saved gallery), Maze Runner, Shape Puzzles (rotate to fit), Feelings Friends (feelings and kind choices with a calm-down breath), Dress for the Weather, Color by Number (numerals → addition → multiplication by level), Where Does It Go? (on, under, next to, between), Sorting Baskets, and Pattern Beads that play back as a tune.
+
+## 2026-10-20 — Amni-Learn: Music Studio
+- **Music Studio** (🎵) replaces the old music game with a warm Web Audio synth (piano, marimba, music box, bells, pad, plucked guitar, seven synthesized drums) through a compressor, limiter and soft reverb, scheduled ahead so rhythm stays steady; every instrument peaks below clipping.
+- **Sing-Along**: ten public-domain children's songs with word-by-word highlighted lyrics, backing band, melody-only and "you sing" modes, five instruments and a speed slider.
+- **Play-a-Song**: a colorful xylophone with follow-the-light teaching, multi-touch and glissando. **Beat Maker**: 16-step patterns with presets, tempo, swing and saves. **Rhythm Tap**: Perfect/Good/Miss timing lane. **Ear Games**: high/low, loud/soft, fast/slow up to intervals and major/minor. **Note Reading & Do-Re-Mi**: treble and bass clefs and a solfège ladder. **Calm Music**: an endless gentle lullaby with a sleep timer and a breathing guide for Destress.
+
+## 2026-10-20 — Amni-Learn: Test Prep (New York, Regents and four more states)
+- **Test Prep** (📝, Grades 3–5, Middle School, STEM and College Prep): 46 practice tests with 821 original questions modeled on official state tests. Practice mode explains every answer; Mock test is timed (as a pacing guide), lets you flag and review, then scores by standard and walks through every question. Passages sit beside the questions with Read aloud; number answers accept 0.5, 1/2 and 1 1/2.
+- **New York**: Grades 3–8 Math and ELA, Grade 5 Elementary-level and Grade 8 Intermediate-level Science (298 questions). **Regents**: Algebra I, Geometry, Algebra II, Life Science: Biology, Earth and Space Sciences, Global History and Geography II, U.S. History and Government, ELA.
+- **Other states**: Texas STAAR, Florida FAST/B.E.S.T., Massachusetts MCAS and California CAASPP for Grades 3–5 (plus STAAR science and Grade 8 social studies).
+- An **Official past tests** panel links to each state's archive of real released tests (NYSED, nysedregents.org, TEA, FLDOE, MCAS, CAASPP). Questions are original; only public-domain passages are reused, with credit.
+- Test bank checks: `learn/tests/testbank_ny_test.js` (2,308 checks) and `learn/tests/testbank_states_test.js` (4,731 checks).
+
+## 2026-10-20 — Amni-Learn: New York default, full audit, module hub
+- **New York** is now the default state for Pre-K to Grade 5 (NYS Prekindergarten 2019 and Next Generation Math/ELA standards), with New York Studies for K–2 and Grade 4, cents-only money through Grade 3 and NY codes in every chip.
+- **Audit of all 235 games × 8 levels** in light and dark at desktop and phone width: 0 page errors, 0 phone overflow. Fixed level filtering (Pre-K was showing hard games after the UI refresh), dark-mode prompts that were invisible, white-on-white Word Bridge answers, collapsed Tower of Hanoi and Whack-a-Mole layouts, the tutorial modal, footer level list, and Brain Gym leaking onto other levels.
+- **110 content corrections** after fact-checking ~3,200 quiz questions: current world leaders, records, moon counts, Voyager 1, Artemis, Nobel years, plus answer options that were also correct.
+- **Module hub** (`learn/learn-hub.js`): new activities plug in as self-contained modules with a shared overlay, level gating, voice, scoring and Android back support.
+
+## 2026-10-20 — Amni-Learn: Florida/Texas standards for kids, grown-up look, accessibility
+- **Standards engine** (`learn/learn-standards.js`, pure, testable in Node): Pre-K, K–2 and 3–5 math, clock and money now follow the Florida B.E.S.T./VPK and Texas TEKS/Pre-K benchmarks per grade. A grade picker (P · K · 1 · 2 · 3 · 4 · 5) and a Florida/Texas switch sit on the kid levels, with a Skills map that lists every skill and its standard codes. Off-grade content removed: no × or ÷ before Grade 3, no symbols or numbers past 8 (FL) / 5 (TX) in Pre-K, K–2 clocks follow hours → half hours → 5 minutes (FL) or any minute (TX), Grade 2 money stays at coins, Grade 4 remainders follow each state's format. `tests/standards_engine_test.js` runs 553,884 checks on 56,000 generated problems.
+- **Phonics by grade**: Sound It Out uses grade-level word lists (CVC → blends → digraphs, CVCe, vowel teams, r-controlled → diphthongs, silent letters, -le) with the pattern shown, and a new Sight Words game uses the Dolch list for each grade.
+- **Florida Studies / Texas Studies** quiz (`learn/learn-state-studies.js`) for K–2 (symbols, maps, rules) and Grade 4 (state history, geography, government), with each question tagged to its standard.
+- Kid quiz runs are now 10 / 15 / 20 questions for Pre-K / K–2 / 3–5 instead of up to 100.
+- **New look** (`learn/learn-ui.css`, `learn-ui.js`): calmer, professional UI with Archivo and Fredoka, sentence-case labels, card grid with icon tiles, level colors as accents, pill feedback toast. Adult levels (4–8) get a quieter list-style grid and plain headings.
+- **Accessibility (Aa button)**: text size 100–140 %, high contrast, reduce motion, reading spacing, bigger buttons, and Auto/Light/Dark theme that follows the system.
+- Fix: in light mode the right/wrong answer colors never showed.
+- Real animal recordings, `playAnimalSound` and the animal sound quiz are unchanged.
+
 ## 2026-09-20 — Amni-Learn Sudoku: real highlighting
-- Same-number cells were tinted 9 RGB points off the board colour, so they were invisible, and nothing marked the selected cell's row, column or box. Selecting a cell now shades its row, column and box (and the diagonals in X-Sudoku when you sit on one), same-number cells get a teal outline with bold white digits, and pencil marks matching the active number light up. Same-number follow the selected cell's value, then the last number you placed.
+- Same-number cells were tinted 9 RGB points off the board color, so they were invisible, and nothing marked the selected cell's row, column or box. Selecting a cell now shades its row, column and box (and the diagonals in X-Sudoku when you sit on one), same-number cells get a teal outline with bold white digits, and pencil marks matching the active number light up. Same-number follow the selected cell's value, then the last number you placed.
 
 ## 2026-09-20 — Amni-Learn: chess accepts every mate, Sudoku win panel, best scores survive the tab
 - **Chess Puzzles** only accepted the one recorded move. Validated all 282 puzzles offline with a small move generator: every recorded solution is a legal mate-in-one, and **62 puzzles have a second (or third) mating move** that the game called wrong and used to reset the streak. A runtime mate checker now accepts any legal checkmate; recorded solutions still pass 282/282, illegal moves still fail.
@@ -14,7 +71,7 @@
 
 ## 2026-09-20 — Amni-Learn: Brain Gym (4 new games, daily workout, progress map, new look for the brain level)
 - **Audit first:** all 32 brain games at level 6 launch with zero runtime errors and no dead links, so the work went into what was missing rather than into patches.
-- **Brain Gym** (`learn/brain-gym.js` + `brain-gym.css`, loaded after `learn-app.js`, self-contained overlay so the 7 MB app is untouched): Schulte Table (4×4 to 7×7, adapts to your time), Pattern Matrix (Raven-style 3×3 with four rule families, hard rules unlock at 8/10), Code Breaker (Mastermind, 6 colours, 10 guesses), Word Sprint (45 s category fluency against bundled lists: animals, foods, countries, body, sports). Each keeps a best in localStorage under `bg-*`, and every finish fires a particle burst.
+- **Brain Gym** (`learn/brain-gym.js` + `brain-gym.css`, loaded after `learn-app.js`, self-contained overlay so the 7 MB app is untouched): Schulte Table (4×4 to 7×7, adapts to your time), Pattern Matrix (Raven-style 3×3 with four rule families, hard rules unlock at 8/10), Code Breaker (Mastermind, 6 colors, 10 guesses), Word Sprint (45 s category fluency against bundled lists: animals, foods, countries, body, sports). Each keeps a best in localStorage under `bg-*`, and every finish fires a particle burst.
 - **Daily Workout** chains the four into one brain score with a day streak. **Progress Map** draws a five-domain radar (Memory, Speed, Attention, Logic, Language) from the existing games' bests plus the new ones, an 8-week activity calendar and totals.
 - **Look:** a synapse particle canvas behind the brain level, glass cards with a rotating glow on hover and floating icons for every brain-mode button. Gym card uses the same `section.game-category` / `h2.cat-header` markup as the rest so it sits in the grid.
 - Play-tested by script in Chrome: all four games run to their result screen, workout chaining and the radar render, overlay closes on Back and Escape.
