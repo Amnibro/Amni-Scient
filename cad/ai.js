@@ -1,5 +1,6 @@
 import {featureDocs,MATS} from './schema.js';
 import {PROFILES,RPM_SRC} from './cutter.js';
+import {recipePrompt} from './recipes.js';
 export const ENGINES={anthropic:'Claude (Anthropic)',openai:'OpenAI',gemini:'Google Gemini',openrouter:'OpenRouter (sign in: Claude, GPT, Gemini, Grok…)',local:'Local or custom server (Ollama, LM Studio, any OpenAI-compatible URL)',chrome:'Chrome built-in AI'};
 export const CLOUD={anthropic:{base:'https://api.anthropic.com/v1',keyUrl:'https://console.anthropic.com/settings/keys',prefer:['claude-opus-5-5','claude-sonnet-5-5','claude-fable-5-1','claude-haiku-5-5']},openai:{base:'https://api.openai.com/v1',keyUrl:'https://platform.openai.com/api-keys',prefer:[/^gpt-5(\.\d+)?$/,/^gpt-5/,/^o\d/,/^gpt-4\.1$/,/^gpt-4o$/]},gemini:{base:'https://generativelanguage.googleapis.com/v1beta',keyUrl:'https://aistudio.google.com/apikey',prefer:[/gemini-[\d.]+-pro$/,/gemini-[\d.]+-pro/,/gemini-[\d.]+-flash$/,/gemini/]},openrouter:{base:'https://openrouter.ai/api/v1',keyUrl:'https://openrouter.ai/keys',prefer:[/^anthropic\/claude-opus-5/,/^anthropic\/claude-sonnet-5/,/^anthropic\/claude/,/^openai\/gpt-5/,/^google\/gemini/]}};
 const VER=id=>(id.match(/\d+/g)||[]).filter(n=>n.length<=2).slice(0,2).map(Number),NEW=(a,b)=>{const x=VER(a),y=VER(b);return (y[0]||0)-(x[0]||0)||(y[1]||0)-(x[1]||0)||a.length-b.length;},TIER={anthropic:[/^claude-(?:[\d-]+-)?(opus|sonnet|haiku|fable)(?:-[\d-]+)?$/,'opus sonnet fable haiku'],gemini:[/^gemini-[\d.]+-(pro|flash|flash-lite)$/,'pro flash flash-lite'],openai:[/^gpt-[\d.]+(?:-(mini|nano))?$/,'base mini nano']};
@@ -74,6 +75,8 @@ Edge selectors: {"by":"all"}, {"dir":"Z"} straight edges parallel to Z, {"side":
 Face selectors: {"side":"+Z"} outermost face on that side, {"normal":"-Y"} faces pointing that way, {"type":"CYLINDER"}, {"by":"pick","pts":[[x,y,z]]}.
 op: "add" union, "cut" subtract, "intersect".
 Finishes depend on the material (anodize on aluminum or titanium, black oxide and zinc on steel, passivate on stainless).
+${recipePrompt(units)}
+Checking your work: after you change geometry the app may send you a contact sheet (ISO, TOP, FRONT, RIGHT views in one labelled image) and numbers (size, volume, solids, findings). Compare them with the request. If everything matches, reply with an empty actions list and say so. Otherwise say what is wrong and give corrective actions. More than one solid in the numbers means disconnected pieces, which is always a mistake to fix.
 Materials: ${Object.entries(MATS).map(([k,m])=>k+' ('+m.n+')').join(', ')}.
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
@@ -109,7 +112,7 @@ const oaS=j=>j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.con
 export class Assistant{
   constructor(onStatus){this.onStatus=onStatus||(()=>{});this.kind=null;this.engine=null;this.cfg={};}
   get ready(){return!!this.kind;}
-  get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&!this.noVision;}
+  get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&!this.noVision&&(this.kind!=='local'||/vl|vision|llava|gemma-?3|minicpm|pixtral|moondream|bakllava|mllama|qwen.*omni/i.test(this.cfg.model||''));}
   async connect(kind,cfg={}){
     this.kind=null;this.cfg=cfg;this.noVision=false;
     if(kind==='browser'){
@@ -161,7 +164,7 @@ export class Assistant{
     }
     if(this.kind==='openai'||this.kind==='openrouter'){
       const body={model:this.cfg.model,messages:wire(messages,'openai'),response_format:{type:'json_object'},...(tok?{stream:true}:{})},send=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',signal,headers:this.cloudHeaders(this.kind,this.cfg.key),body:JSON.stringify(body)});
-      let r=await send();if(r.status===400){const t=await r.text();if(/response_format|json_object/i.test(t)){delete body.response_format;r=await send();}else throw Object.assign(new Error('API error 400 '+t.slice(0,240)),{status:400});}
+      let r=await send();if(r.status===400){const t=await r.text();if(/response_format|json_object/i.test(t)){delete body.response_format;r=await send();}else if(messages.some(m=>m.images&&m.images.length)&&/image|vision|multimodal|modalit/i.test(t)){body.messages=wire(messages,'text');this.noVision=true;r=await send();}else throw Object.assign(new Error('API error 400 '+t.slice(0,240)),{status:400});}
       if(!r.ok)throw await bad('API',r);return await out(r,oaS,oaF,tok);
     }
     if(this.kind==='local'){

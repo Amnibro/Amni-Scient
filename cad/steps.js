@@ -4,7 +4,7 @@ const snap=()=>({doc:ST.API.docJSON,res:ST.API.results(),cam:CS.res});
 const ago=t=>{const s=Math.round((Date.now()-t)/1000);return s<60?'just now':s<3600?Math.round(s/60)+' min ago':Math.round(s/3600)+' h ago';};
 export const list=()=>ST.L;
 function push(e){ST.L.push(e);ST.L.length>MAX&&ST.L.shift();paint();}
-function done(label,b,o,err){const a=ST.API.docJSON;push({label:String(label).slice(0,120),kind:o.kind||'process',t:Date.now(),before:b,changed:a!==b.doc,err:err&&(err.message||String(err))});}
+function done(label,b,o,err){const a=ST.API.docJSON;if(o.quiet&&a===b.doc&&!err)return;push({label:String(label).slice(0,120),kind:o.kind||'process',t:Date.now(),before:b,changed:a!==b.doc,err:err&&(err.message||String(err))});}
 export function begin(label,o={}){const b=snap();let open=true;return{end:err=>{if(!open)return;open=false;done(label,b,o,err);},cancel:()=>{open=false;}};}
 export function step(label,fn,o={}){const b=snap();let r;try{r=fn();}catch(e){o.retreatOnError&&ST.API.docJSON!==b.doc&&ST.API.restoreDoc(b.doc);done(label,b,o,e);throw e;}
   return r&&typeof r.then==='function'?r.then(v=>{done(label,b,o);return v;},e=>{o.retreatOnError&&ST.API.docJSON!==b.doc&&ST.API.restoreDoc(b.doc);done(label,b,o,e);throw e;}):(done(label,b,o),r);}
