@@ -1,0 +1,22 @@
+import {spawn} from 'node:child_process';import os from 'node:os';import path from 'node:path';import fs from 'node:fs';import {createRequire} from 'node:module';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18747',P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),sleep=t=>new Promise(r=>setTimeout(r,t));
+let bad=0;const ok=(c,m,x)=>{console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));c||bad++;};
+const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),ud=fs.mkdtempSync(path.join(os.tmpdir(),'solidcam-'));let br;
+const BLK={name:'Bracket',units:'in',params:[],material:'al6061',features:[{id:'a',type:'box',w:4,d:2.5,h:1.25},{id:'p',type:'extrude',plane:'XY',offset:1.25,depth:0.5,op:'cut',dir:'-',shapes:[{k:'rect',w:2,h:1.2,r:0.25}]},{id:'h',type:'hole',plane:'face',face:{side:'+Z'},std:'1/4',fit:'tapped',thru:false,depth:0.6,pts:[[-1.6,-0.9],[1.6,0.9]]}]};
+try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+  const p=await br.newPage(),errs=[];p.on('pageerror',e=>errs.push(e.message));await p.setViewport({width:1440,height:900});await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API,{timeout:60000});
+  await p.evaluate(async d=>{const am=window.amnicad;am.loadDoc(d);await am.API.waitBuild();am.setTab('make');},BLK);await p.waitForSelector('#mk-go',{timeout:30000});
+  const mc=await p.evaluate(()=>{const s=[...document.querySelectorAll('select')].find(s=>[...s.options].some(o=>/VF-2/.test(o.textContent)));const o=s&&[...s.options].find(o=>/VF-2/.test(o.textContent));if(!o)return null;s.value=o.value;s.dispatchEvent(new Event('change',{bubbles:true}));return o.textContent;});ok(!!mc,'the Haas VF-2 is in the machine picker',mc);
+  await sleep(700);const t0=Date.now();await p.click('#mk-go');
+  const r=await p.evaluate(async()=>{const C=await import('./cam.js'),t=Date.now();while((C.CS.busy||!C.CS.res)&&Date.now()-t<300000)await new Promise(r=>setTimeout(r,300));const x=C.CS.res;return x&&{ok:x.ok,route:x.route,errors:x.errors,time:x.time_min,unreach:(x.unreachable||[]).length,setups:(x.setups||[]).map(s=>({wcs:s.wcs,g:s.gcode||'',ops:(s.ops||[]).map(o=>o.name||'')}))};});
+  const secs=(Date.now()-t0)/1000;ok(r&&r.ok&&r.route==='solid',"a solid part on a mill goes through the 3-axis engine",r&&{ok:r.ok,route:r.route,errors:r.errors});
+  ok(r.setups.length>=2&&r.setups[0].wcs==='G54'&&r.setups[1].wcs==='G55','top and flipped setups get their own work offsets',r.setups.map(s=>s.wcs).join(','));
+  const all=r.setups.flatMap(s=>s.ops),g=r.setups.map(s=>s.g).join('\n');ok(['Face','Rough','Finish','Rest','Spot','Drill','tap'].every(k=>all.some(o=>o.includes(k))),'the program faces, roughs, finishes, rest-machines the pocket corners, spots, drills and taps the 1/4-20 holes',all.join(' | '));
+  ok(/G84/.test(g)&&/G54/.test(g)&&/M30/.test(g)&&/^%$/m.test(g)&&/G53 G0 Z0\./.test(g),'Haas output: rigid tap cycle, work offset, G53 Z retract, % wrapped, M30');
+  ok(/G20/.test(g)&&all.some(o=>/ in\b/.test(o))&&!all.some(o=>/ mm\b/.test(o)),'an inch part gets an inch program and inch operation names');
+  ok(r.unreach===0&&r.time>1&&r.time<30,'nothing is unreachable and the cycle time is plausible',r.time.toFixed(1)+' min');
+  ok(secs<60,'G-code is ready in under a minute in the browser',secs.toFixed(1)+' s');
+  ok(await p.waitForFunction(()=>!!document.querySelector('#pipe [data-pipe=make].done'),{timeout:7000}).then(()=>true,()=>false),'the Make step turns done in the step strip');
+  ok(!errs.length,'no page errors',errs.join(' | '));
+}catch(e){bad++;console.log('FAIL',e.message);}finally{br&&await br.close();srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
+console.log(bad?bad+' FAILED':'ALL PASS');process.exit(bad?1:0);
