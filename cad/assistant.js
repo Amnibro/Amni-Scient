@@ -223,7 +223,8 @@ export async function send(o={}){const inp=$('#ai-in');if(!inp)return;const text
   if(o.text==null){inp.value='';grow();}hideAc();const history=memory();S.aiBusy=true;const stp=A.steps&&A.steps.begin('AI: '+text.slice(0,70),{kind:'ai',quiet:true});const ac=new AbortController();V.ctl=ac;const um={role:'user',text},am={role:'assistant',text:'',live:true};S.chat.push(um,am);paintChat();paintBusy();
   const rx=REFS.forAI(S.doc,{vision:H.AI.vision,force:!!o.force,text}),chk=H.cfg.check!==false;let cm=am,req=text+mentionNote(text),hreq='(earlier request) '+text,imgs=rx.images,first=true,tries=0,round=0,kept=0;
   try{
-    for(;;){
+    if(A.ws==='form'){const r=await(await import('./form.js')).askForm(A,text,{signal:ac.signal,onToken:t=>live(cm,t)});cm.live=false;cm.text=r.say;cm.reply=JSON.stringify({say:r.say});cm.card={items:[{k:'edit',t:'Form scene · '+r.note}]};cm.issues=r.errors.map(e=>'Line '+(e.line+1)+': '+e.msg);}
+    else for(;;){
       const msgs=[{role:'system',content:systemPrompt(S.doc.units)},...AISEE.conv(history),{role:'user',content:stateMessage(H.state(),req,first?rx.text:''),images:imgs&&imgs.length?imgs:undefined}],t0=Date.now(),raw=await H.AI.complete(msgs,{signal:ac.signal,onToken:t=>live(cm,t)});first&&rx.sent();
       const rep=parseReply(raw),rj=JSON.stringify({say:rep.say,actions:rep.actions});history.push({role:'user',content:hreq},{role:'assistant',content:rj});cm.reply=rj;
       const pre=JSON.stringify(S.doc),g0=geo(),applied=H.apply(rep.actions),secs=((Date.now()-t0)/1000).toFixed(1)+' s',chg=geo()!==g0;cm.live=false;cm.text=(rep.say||(rep.parseError?'(The model did not return valid JSON.) ':''))||'Done.';cm.card=applied.length?{items:cardItems(pre,applied),before:pre,after:JSON.stringify(S.doc),t:secs}:null;paintChat();first=false;imgs=null;kept+=applied.length?1:0;
