@@ -1,14 +1,15 @@
 import * as R from './vendor/replicad.js';
 import {evalExpr,resolveParams} from './expr.js';
 import {sketchShapes,refit} from './sketch.js';
+import {chainShapes} from './sketch2.js';
 import {pathPolys,ProfileError,selfCross} from './polyfix.js';
 import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
-import {chamferSides} from './features2.js';
+import {chamferSides,alongFaces,FEAT2} from './features2.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const STRKEYS=new Set(['face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
+const STRKEYS=new Set(['pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -39,13 +40,14 @@ export function selectFaces(shape,sel){
   const sels=Array.isArray(sel)?sel:[sel],out=new Set();
   for(const s0 of sels){
     if(typeof s0==='number'){F[s0]&&out.add(s0);continue;}
-    const s=typeof s0==='string'?{side:FNAME[s0.toLowerCase()]||s0}:s0,by=s.by||(s.at?'at':s.side?'side':s.pts?'pick':s.normal?'normal':s.type?'type':'all');
+    const s=typeof s0==='string'?{side:FNAME[s0.toLowerCase()]||s0}:s0,by=s.by||(s.at?'at':s.side?'side':s.pts?'pick':s.normal?'normal':s.dir?'dir':s.type?'type':'all');
     let hit=[];
     if(by==='all')hit=F;
     else if(by==='at'){const nn=nrm(Array.isArray(s.normal)?s.normal.map(Number):AX[s.normal]||[0,0,1]);let best=null,bs=1e18;for(const q of F){if(q.type!=='PLANE'||!q.n||dot(q.n,nn)<0.99)continue;const off=dot(sub(s.at,q.c),q.n),sc=pdist(sub(s.at,q.n.map(v=>v*off)),q.f)*4+Math.abs(off);sc<bs&&(bs=sc,best=q);}best&&hit.push(best);}
     else if(by==='side'){const{ax,i,ext,tol}=sideTest(s.side,shape);hit=F.filter(q=>q.n&&dot(q.n,ax)>0.999&&Math.abs(q.c[i]-ext)<Math.max(tol,1e-3));}
     else if(by==='normal'){const ax=nrm(Array.isArray(s.normal)?s.normal:AX[s.normal]);hit=F.filter(q=>q.n&&dot(q.n,ax)>0.999);}
-    else if(by==='type')hit=F.filter(q=>q.type===String(s.type).toUpperCase());
+    else if(by==='dir')hit=alongFaces(R.getOC(),F,nrm(Array.isArray(s.dir)?s.dir.map(Number):AX[s.dir]||AX.Z));
+    else if(by==='type')hit=F.filter(q=>q.type===String(s.type).toUpperCase().replace('CYLINDER','CYLINDRE'));
     else if(by==='pick'){const tol=sizeOf(shape)*0.02+0.05;for(const p of s.pts||[]){let best=null,bd=1e9;for(const q of F){const d=pdist(p,q.f);if(d<bd){bd=d;best=q;}}if(best&&bd<tol)hit.push(best);}}
     else throw new Error('unknown face selector '+by);
     for(const q of hit)out.add(q.i);
@@ -96,7 +98,7 @@ function projRefs(body,P){const y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);retur
   for(const r of pr){const k=key(r);if(k&&seen.has(k))continue;k&&seen.add(k);out.push(r);if(out.length>420)break;}
   const pc=uv(P.c);out.push({k:'pt',c:[r9(pc[0]),r9(pc[1])],on:true,center:1});return out;}
 export function faceBox(refs,all){let u0=1e18,v0=1e18,u1=-1e18,v1=-1e18;for(const r of refs||[]){if(!r.on&&!all)continue;const P=r.k==='circle'?[[r.c[0]-r.r,r.c[1]-r.r],[r.c[0]+r.r,r.c[1]+r.r]]:r.k==='arc'?[r.a,r.b,...[0,1,2,3].map(i=>[r.c[0]+r.r*Math.cos(i*Math.PI/2),r.c[1]+r.r*Math.sin(i*Math.PI/2)]).filter(q=>{const a0=Math.atan2(r.a[1]-r.c[1],r.a[0]-r.c[0]),a1=Math.atan2(r.b[1]-r.c[1],r.b[0]-r.c[0]),t=Math.atan2(q[1]-r.c[1],q[0]-r.c[0]),w=x=>((x%(2*Math.PI))+2*Math.PI)%(2*Math.PI);return w(t-a0)<=w(a1-a0);})]:r.k==='poly'?r.p:r.k==='pt'?[]:[r.a,r.b];for(const q of P){u0=Math.min(u0,q[0]);v0=Math.min(v0,q[1]);u1=Math.max(u1,q[0]);v1=Math.max(v1,q[1]);}}return u1>=u0?{u0,v0,u1,v1}:null;}
-function liveSketch(f,body){const has=x=>x&&x.sketch&&x.sketch.ents&&x.sketch.ents.length,sk=has(f),ss=(f.sections||[]).some(has),an=(f.shapes||[]).some(q=>q&&q.from)||(f.pts||[]).some(p=>p&&!Array.isArray(p));if(!sk&&!ss&&!an)return f;f={...f};let refs=null;const RF=()=>{if(refs)return refs;try{refs=body?projRefs(body,planeFrom(f,body)):[];}catch{refs=[];}return refs;},solveSk=x=>{const c=JSON.parse(JSON.stringify(x));c.ents.some(e=>e.ref)&&body&&refit(c,RF());return sketchShapes(c);};
+function liveSketch(f,body){const has=x=>x&&x.sketch&&x.sketch.ents&&x.sketch.ents.length,sk=has(f),ss=(f.sections||[]).some(has),an=(f.shapes||[]).some(q=>q&&q.from)||(f.pts||[]).some(p=>p&&!Array.isArray(p));if(!sk&&!ss&&!an)return f;f={...f};let refs=null;const RF=()=>{if(refs)return refs;try{refs=body?projRefs(body,planeFrom(f,body)):[];}catch{refs=[];}return refs;},solveSk=x=>{const c=JSON.parse(JSON.stringify(x));c.ents.some(e=>e.ref)&&body&&refit(c,RF());return(f.type==='rib'?chainShapes:sketchShapes)(c);};
   sk&&(f.shapes=solveSk(f.sketch));ss&&(f.sections=f.sections.map(x=>has(x)?{...x,shapes:solveSk(x.sketch)}:x));
   if(an){const B=faceBox(RF(),true);if(!B)throw new Error('distances from edges need the sketch on a flat face of the part');const ax=(o,k0,k1,lo,hi)=>o[k0]!=null?lo+ +o[k0]:o[k1]!=null?hi- +o[k1]:null;f.shapes=f.shapes&&f.shapes.map(q=>{if(!q||!q.from)return q;const o=q.from,x=ax(o,'left','right',B.u0,B.u1),y=ax(o,'bottom','top',B.v0,B.v1),r={...q};delete r.from;x!=null&&(r.x=x);y!=null&&(r.y=y);return r;});f.pts&&(f.pts=f.pts.map(p=>Array.isArray(p)?p:[ax(p,'left','right',B.u0,B.u1)??0,ax(p,'bottom','top',B.v0,B.v1)??0]));}
   return f;}
@@ -331,6 +333,7 @@ const HINT={fillet:'the radius is probably too big for these edges; try a smalle
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
 const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
 const TOOLMAKERS={box:primTool,cylinder:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
+const KX={R,planeFrom,selectFaces,selectEdges,faceList,edgeList,pdist,sizeOf,bboxOf,volOf,vol,upTo,AXV,M,fu,get NOTES(){return NOTES;},get UNITS(){return UNITS;}};
 let cache=[];
 function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<Math.min(i,C.length);j++){keep.add(C[j].shape);keep.add(C[j].tool);}for(let j=i;j<C.length;j++)for(const o of[C[j].shape,C[j].tool])if(o&&!keep.has(o)&&!gone.has(o)){gone.add(o);try{o.delete();}catch{}}C.length=Math.min(C.length,i);}
 export function resetCache(C){if(C){truncate(0,C);return;}truncate(0);cache=[];}
@@ -407,6 +410,7 @@ export async function build(doc,opt={}){
         const data=opt.blobs&&opt.blobs[raw.blob];if(!data)throw new Error('imported file missing');
         const k=raw.fmt==='brep'||UNITS!=='in'?1:1/25.4;raw.fmt==='brep'||R.getOC().Interface_Static.SetCVal('xstep.cascade.unit','MM');const s0=raw.fmt==='brep'?R.deserializeShape(new TextDecoder().decode(data)):await R.importSTEP(new Blob([data])),sh=k===1?s0:s0.scale(k,[0,0,0]);tool=sh;next=applyOp(body,sh,f.op||'add');
       }
+      else if(FEAT2[f.type]){const r=FEAT2[f.type](f,body,KX,doc);next=r.shape;tool=r.tool||null;}
       else throw new Error('unknown feature '+f.type);
       if(TNOTE){W(cap(f.type==='bit'?'Router bit':f.type)+" '"+(f.name||f.id)+"': "+TNOTE);TNOTE=null;}
       if(next&&next.isNull)throw new Error('result is empty');

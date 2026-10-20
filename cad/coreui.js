@@ -26,3 +26,8 @@ export function frozenEdit(body,thaw,h){
   body.classList.add('frzbody');body.inert=true;
   return[h('div',{class:'frznote'},h('span',null,'This feature is above the freeze bar, so it is locked.'),h('button',{class:'btn sm',onclick:thaw},'Unfreeze')),body];
 }
+export function openLine({h,f,k,label,openSketch,set,ptsEditor,getF}){
+  css();
+  return h('div',{style:'margin:8px 0'},h('div',{class:'row',style:'justify-content:space-between;align-items:center;margin-bottom:4px'},h('label',{class:'mut'},label),h('button',{class:'btn sm pri',title:'Draw the line with lines, arcs, dimensions and relations',onclick:()=>openSketch(f.id)},f.sketch?'\u270E Edit sketch':'\u270E Open sketcher')),
+    f.sketch?h('div',null,h('div',{class:'note'},'Constrained sketch: '+f.sketch.ents.filter(e=>!e.ref).length+' entities, '+f.sketch.cons.length+' dimensions and relations. Dimensions can use your parameters.'),h('button',{class:'btn sm ghost',style:'margin-top:7px',onclick:()=>set('sketch',undefined)},'Convert to simple points')):ptsEditor(()=>(getF(f.id)||{})[k],(L,keep2)=>set(k,L,keep2)));
+}

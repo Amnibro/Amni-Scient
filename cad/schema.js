@@ -1,4 +1,5 @@
 import {THERMAL} from './thermal_data.js';
+import {mkFT2} from './schema2.js';
 const OP=['op','Operation','add',['add','cut','intersect']],X=['x','X',0],Y=['y','Y',0],Z=['z','Z',0],AXIS=['axis','Axis','Z',['X','Y','Z']];
 const PLANE=[['plane','Sketch on','XY',['XY','XZ','YZ','face']],['face','Face',{side:'+Z'},'face',s=>s.plane==='face'],['offset','Offset',0]];
 export const FT={
@@ -29,6 +30,7 @@ shaper:{n:'Shaper cutter',g:'Tooling',i:'◍',f:[['prof','Profile','ogee_roman',
 knife:{n:'Molder knife',g:'Tooling',i:'▭',f:[['prof','Profile','casing','cprof'],['pp','Dimensions',{},'cpp'],['rc','Cutting circle Ø',101.6],['hook','Head hook angle °',20],['proj','Knife projection',12.7],['kt','Knife thickness',4.7625],['grip','Grip above projection',12.7],['km','End margin',6.35],['head','Head position','auto',['auto','top','side']],['bevel','Back bevel °',15],['corr','Corrugated back',false,'bool'],['cp','Corrugation pitch',3.175],['cd','Corrugation depth',0.762],X,Y,Z,OP],doc:'a planer-molder knife blank ground with the molding profile corrected for the cutting circle, hook angle and projection (the knife profile is not the molding profile); lies in the XZ plane, cutting edge up'},
 import:{n:'Imported STEP',g:'File',i:'⇩',f:[OP],hidden:true}
 };
+Object.assign(FT,mkFT2({OP,PLANE}));
 export const SHAPES={rect:{n:'Rectangle',f:[['x','Center x',0],['y','Center y',0],['w','Width',20],['h','Height',10],['r','Corner radius',0],['a','Rotate °',0]]},circle:{n:'Circle',f:[['x','Center x',0],['y','Center y',0],['r','Radius',5]]},poly:{n:'Polygon',f:[['x','Center x',0],['y','Center y',0],['r','Corner radius',10],['n','Sides',6],['a','Rotate °',0]]},slot:{n:'Slot',f:[['x','Center x',0],['y','Center y',0],['l','Length (centers)',20],['h','Width',6],['a','Rotate °',0]]},path:{n:'Polyline',f:[['pts','Points',[[0,0],[20,0],[10,15]],'pts']]},text:{n:'Text',f:[['text','Text','Amni','text'],['x','x',0],['y','y',0],['h','Size',10]]},ellipse:{n:'Ellipse',f:[['x','Center x',0],['y','Center y',0],['rx','Radius x',12],['ry','Radius y',6],['a','Rotate °',0]]},spline:{n:'Spline (closed)',f:[['pts','Points',[[0,0],[20,-5],[25,10],[5,15]],'pts']]},airfoil:{n:'Airfoil',f:[['code','NACA 4-digit or clarky','4412'],['chord','Chord',40],['x','Quarter-chord x',0],['y','Quarter-chord y',0],['a','Pitch ° (about quarter chord)',0],['te','Trailing edge thickness',0],['n','Points per surface',20]]}};
 export const MATS={
 al6061:{n:'Aluminum 6061-T6',E:68900,nu:0.33,rho:2700,sy:276,cost:6},
@@ -61,7 +63,7 @@ fiberglass:{n:'Fiberglass (E-glass mat/polyester)',E:10000,nu:0.3,rho:1700,sy:13
 };
 for(const[k,v]of Object.entries(THERMAL))MATS[k]&&Object.assign(MATS[k],{k:v.k,cp:v.cp,cte:v.cte,tsrc:v.src});
 export const EDGE_MODES=[['all','All edges',()=>({by:'all'})],['dir','Parallel to axis',()=>({dir:'Z'})],['side','On a side',()=>({side:'+Z'})],['circle','Circular edges',()=>({type:'CIRCLE'})],['pick','Picked in view',()=>({by:'pick',pts:[]})]];
-export const FACE_MODES=[['side','Side of part',()=>({side:'+Z'})],['normal','Facing a direction',()=>({normal:'+Z'})],['type','Surface type',()=>({type:'CYLINDER'})],['pick','Picked in view',()=>({by:'pick',pts:[]})],['all','All faces',()=>({by:'all'})]];
+export const FACE_MODES=[['side','Side of part',()=>({side:'+Z'})],['dir','Parallel to an axis',()=>({dir:'Z'})],['normal','Facing a direction',()=>({normal:'+Z'})],['type','Surface type',()=>({type:'CYLINDER'})],['pick','Picked in view',()=>({by:'pick',pts:[]})],['all','All faces',()=>({by:'all'})]];
 const NOLEN=new Set(['angle','draft','a','n','turns','k','modes','type','std','fit','kind','op','plane','dir','axis','hand','keep','by','side','normal','thru','ruled','center','hole','text','wings','stack','hook','shear','relief','bevel','head','prof','shank','brg','spindle','flip','corr','body']);
 export const clean=(v,u='in')=>{const a=Math.abs(v);return a===0||!isFinite(a)?0:+(Math.sign(v)*(u==='in'?a<0.25?Math.max(0.005,Math.round(a/0.005)*0.005):Math.round(a*16)/16:a<1?Math.max(0.1,Math.round(a*10)/10):a<10?Math.round(a*2)/2:Math.round(a))).toFixed(4);};
 const fu=(v,u)=>+(+v).toFixed(4)+(u?(u==='°'?'':' ')+u:'');
