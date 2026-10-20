@@ -1,6 +1,8 @@
 import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as M from '../mfg_kernel.js';
+import {createHash} from 'node:crypto';import {readFileSync} from 'node:fs';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let bad=0;const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)bad++;};
+ok(createHash('sha1').update(readFileSync(new URL('../vendor/amni-cam/amni_cam_bg.wasm',import.meta.url))).digest('hex').startsWith(M.CAMV),'the CAM engine URL version matches the vendored wasm, so browsers and Cloudflare fetch the new build');
 const near=(a,b,t=0.02)=>Math.abs(a-b)<=t,vn=(a,b,t=1e-3)=>a.every((v,i)=>near(v,b[i],t));
 const build=async doc=>{K.resetCache();const r=await K.build(doc);if(r.errors.length)console.log(r.errors);return{body:r.body,doc};};
 const blk={name:'Block',units:'mm',params:[],material:'al6061',features:[{id:'a',type:'box',w:80,d:50,h:25},
