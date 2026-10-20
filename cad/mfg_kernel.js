@@ -1,9 +1,10 @@
 import * as R from './vendor/replicad.js';
+import {THREADSTD,HOLESTD,HOLESTD_IN} from './standards.js';
 const V=v=>[v.x,v.y,v.z],P=p=>[p.X(),p.Y(),p.Z()],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l];};
 const safe=(f,d=null)=>{try{return f();}catch{return d;}},d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),TAU=Math.PI*2;
 const QMAP={al6061:['al6061','al6061'],al7075:['al7075','al7075'],steel1018:['steel-cr','st1018'],steel4140:['steel-cr','st4140'],ss304:['ss304','ss303'],ss316:['ss316','ss303'],ti64:['ti-gr2','ti-gr2'],brass:['brass260','brass360'],pla:['pla','pla'],petg:['petg','petg'],abs:['asa','asa'],nylon:['pa12-mjf','pa12-mjf'],pc:['pc','asa'],maple:['ply-bb','ply-bb'],birch:['ply-bb','ply-bb'],whiteoak:['ply-bb','ply-bb'],walnut:['ply-bb','ply-bb'],ash:['ply-bb','ply-bb'],mahogany:['ply-bb','ply-bb'],sitka:['ply-bb','ply-bb'],pine:['ply-bb','ply-bb'],bamboo:['ply-bb','ply-bb'],balticply:['ply-bb','ply-bb'],mdf:['mdf','mdf'],g10:['g10','g10'],p20:['steel-cr','st4140'],h13:['steel-cr','st4140'],s7:['steel-cr','st4140'],d2:['steel-cr','st4140'],a2:['steel-cr','st4140'],o1:['steel-cr','st4140'],m2:['steel-cr','st4140'],ss420m:['ss304','ss303'],becu:['cu110','cu110'],cfrp:null,fiberglass:null,carbide:null},NOSTOCK={cfrp:'Carbon fiber plate',fiberglass:'Fiberglass',carbide:'Tungsten carbide'};
 export const quoteMat=(key,sheet)=>{const p=QMAP[key];return p?{id:sheet?p[0]:p[1]}:{id:'',note:(NOSTOCK[key]||'This material')+' has no stock in the shop catalog, so it cannot be priced. Pick a stocked material in the Make tab, or send the part out for a custom quote.'};};
-let AC=null,memo={body:null,doc:null,a:null};
+let AC=null,memo={body:null,doc:null,a:null,F:null};
 export function camLib(){return AC||(AC=(async()=>{const m=await import('./vendor/amni-cam/amni_cam.js'),u=new URL('./vendor/amni-cam/amni_cam_bg.wasm',import.meta.url);await m.default({module_or_path:u.protocol==='file:'?(await import('node:fs')).readFileSync(u):u});return m;})());}
 export function cylOf(f){return safe(()=>{const ad=f._geomAdaptor(),c=ad.Cylinder(),ax=c.Axis(),o={r:c.Radius(),p:P(ax.Location()),d:nrm(P(ax.Direction()))};safe(()=>ad.delete());return o;});}
 export function circOf(e){return safe(()=>{const ad=e._geomAdaptor(),c=ad.Circle(),o={c:P(c.Location()),r:c.Radius()};safe(()=>ad.delete());return o;});}
@@ -44,7 +45,7 @@ export function analyzeBody(body,doc){
   let over=0;if(msh){const vp=msh.vertices,tri=msh.triangles,zmin=bb[0][2];for(let q=0;q<tri.length;q+=3){const A=[vp[3*tri[q]],vp[3*tri[q]+1],vp[3*tri[q]+2]],B=[vp[3*tri[q+1]],vp[3*tri[q+1]+1],vp[3*tri[q+1]+2]],C=[vp[3*tri[q+2]],vp[3*tri[q+2]+1],vp[3*tri[q+2]+2]],cr=cross(sub(B,A),sub(C,A)),l=Math.hypot(...cr);if(l<1e-12)continue;if(cr[2]/l<-0.707&&(A[2]+B[2]+C[2])/3>zmin+size*0.002)over+=l/2;}}
   const threads=((doc&&doc.features)||[]).filter(f=>!f.suppressed&&(f.type==='thread'||f.type==='hole'&&(f.tap||f.thread))).reduce((s,f)=>s+Math.max(1,(f.pts&&f.pts.length)||1),0);
   const part={name:(doc&&doc.name)||'part',volume:vol*k**3,area:area*k*k,bbox:[0,1,2].map(i=>(bb[1][i]-bb[0][i])*k),faces:F.length,holes,threads,setups,min_r:concR.length?Math.min(...concR):0,sharp,overhang:over*k*k,sheet};
-  const a={part,frame,plate,kind:sheet?(sheet.bends?'bent sheet':'flat sheet'):'solid',units:doc&&doc.units==='in'?'in':'mm'};memo={body,doc,a};return a;}
+  const a={part,frame,plate,kind:sheet?(sheet.bends?'bent sheet':'flat sheet'):'solid',units:doc&&doc.units==='in'?'in':'mm'};memo={body,doc,a,F};return a;}
 export function to3d(fr,uv){return fr?add(add(fr.o,fr.ex,uv[0]/fr.k),fr.ey,uv[1]/fr.k):null;}
 export async function quote({body,doc},a={}){if(!body)throw new Error('Build a part first');const t0=Date.now(),an=analyzeBody(body,doc),L=await camLib(),dm=a.mat||doc&&doc.material,qm=!(a.req&&a.req.material)&&dm?quoteMat(dm,!!an.part.sheet):null,res=JSON.parse(L.quote(JSON.stringify(an.part),JSON.stringify({...(a.req||{}),...(qm?{material:qm.id||'al6061'}:{})}),a.shop||''));qm&&qm.note&&Object.assign(res,{ok:false,quotes:[],best:null,errors:[qm.note],no_stock:true});if(an.plate&&!(qm&&qm.note)){const pm=quoteMat(dm,true),r2=JSON.parse(L.quote(JSON.stringify({...an.part,sheet:{t:an.plate.t,loops:an.plate.loops,bends:0,cut_len:0,blank:an.plate.blank,pierces:an.plate.pierces}}),JSON.stringify({...(a.req||{}),...(pm&&!pm.note?{material:pm.id}:{})}),a.shop||'')),add=(r2.quotes||[]).filter(q=>!(res.quotes||[]).some(x=>x.process===q.process)).map(q=>({...q,notes:[...(q.notes||[]),'Cut as a flat plate'+(an.plate.trim>0.05?'; the edge chamfers and fillets are not included':'')+'.']}));if(add.length){res.quotes=[...(res.quotes||[]),...add].sort((x,y)=>(y.ok-x.ok)||x.unit-y.unit);res.ok=true;res.best=res.quotes[0].process;res.errors=[];}}
   for(const q of res.quotes||[])for(const d of q.dfm||[])d.p=d.at?to3d(an.frame,d.at):null;return{...an,res,ms:Date.now()-t0};}
@@ -53,6 +54,43 @@ export async function dxf({body,doc},a={}){if(!body)throw new Error('Build a par
 export const flatOf=an=>an.part.sheet&&an.part.sheet.loops.length?an.part.sheet:an.plate;
 export async function toolpath({body,doc},a={}){if(!body)throw new Error('Build a part first');const an=analyzeBody(body,doc),fs=flatOf(an);if(!fs)throw new Error(bentMsg(an,'Toolpaths need a flat sheet or a plate-like part (outline and through-holes cut from one side). This part needs 3D milling, which is not generated yet.'));const L=await camLib(),r=JSON.parse(L.sheet_cam(JSON.stringify(fs.loops),fs.t,JSON.stringify(a.job||{})));if(fs===an.plate)(r.notes=r.notes||[]).push('Cut as a plate: outline and through-holes at full depth from one side'+(fs.trim>0.05?'; edge chamfers and fillets ('+fs.trim+' % of the volume) need a second pass with a chamfer or ball bit':'')+'.');
   return{...r,kind:an.kind};}
+const sideAx={'+X':0,'-X':0,'+Y':1,'-Y':1,'+Z':2,'-Z':2},planeAx=f=>f.plane==='XY'?2:f.plane==='XZ'?1:f.plane==='YZ'?0:f.plane==='face'&&f.face&&typeof f.face==='object'&&sideAx[f.face.side]!=null?sideAx[f.face.side]:-1;
+const tapOf=(dia,doc,p,d,k)=>{for(const f of(doc&&doc.features)||[]){if(f.suppressed||f.type!=='hole'||f.fit!=='tapped'||!f.std||f.std==='custom')continue;const m=HOLESTD[f.std],i=HOLESTD_IN[f.std],td=m?m[1]:i?i[1]*25.4:0;if(!td||Math.abs(td-dia)>Math.max(0.03,dia*0.015))continue;const ax=planeAx(f),pts=(f.pts||[]).filter(q=>Array.isArray(q)&&q.length>1&&q.every(v=>typeof v==='number'));
+  if(ax>=0&&pts.length&&pts.length===(f.pts||[]).length){if(Math.abs(d[ax])<0.9)continue;const o=[0,1,2].filter(j=>j!==ax),mine=o.map(j=>Math.abs(p[j])).sort((x,y)=>x-y);if(!pts.some(q=>{const w=q.map(v=>Math.abs(v)*k).sort((x,y)=>x-y);return Math.abs(w[0]-mine[0])<0.06&&Math.abs(w[1]-mine[1])<0.06;}))continue;}
+  const key=THREADSTD[f.std]?f.std:Object.keys(THREADSTD).find(q=>q.startsWith(f.std+'-')),th=THREADSTD[key];if(th)return{name:key,pitch:th[1]*(th[2]==='in'?25.4:1)};}return null;};
+export function holeList({body,doc}){
+  analyzeBody(body,doc);const F=memo.F,k=doc&&doc.units==='in'?25.4:1,bb=body.boundingBox.bounds,size=Math.hypot(...sub(bb[1],bb[0]))||1,tl=size*1e-4+1e-7,segs=[];
+  for(const q of F){if(!q.cyl||!q.n)continue;const w=sub(q.c,q.cyl.p);if(dot(q.n,sub(w,q.cyl.d.map(v=>v*dot(w,q.cyl.d))))>=0)continue;
+    const {p,d}=q.cyl,ce=safe(()=>q.f.edges.filter(e=>e.geomType==='CIRCLE'),[]).map(e=>({e,ci:circOf(e)})).filter(x=>x.ci).map(x=>({...x,t:dot(sub(x.ci.c,p),d)}));if(ce.length<2)continue;
+    const lo=Math.min(...ce.map(x=>x.t)),hi=Math.max(...ce.map(x=>x.t));if(hi-lo<tl*20)continue;
+    const grp=[ce.filter(x=>x.t-lo<tl*20),ce.filter(x=>hi-x.t<tl*20)];if(!grp.every(g=>Math.abs(g.reduce((s2,x)=>s2+safe(()=>x.e.length,0),0)-TAU*q.cyl.r)<TAU*q.cyl.r*2e-3))continue;
+    const ends=grp.map((g,i)=>{const hs=new Set(g.map(x=>x.e.hashCode)),adj=F.find(r=>r!==q&&[...r.eh].some(h=>hs.has(h))),hiE=i===1,s2=hiE?d:d.map(v=>-v),t=hiE?hi:lo;let kind='bottom',extra=null;
+      if(adj&&adj.t==='PLANE'&&adj.n&&dot(adj.n,s2)>0.5)kind='mouth';
+      else if(adj&&adj.t==='CONE'){const o=safe(()=>adj.f.edges.filter(e=>e.geomType==='CIRCLE'&&!hs.has(e.hashCode)).map(circOf).filter(Boolean).sort((m,n)=>n.r-m.r)[0]);if(o&&o.r>q.cyl.r*1.02){kind='csink';extra={t:dot(sub(o.c,p),d),R:o.r,r:q.cyl.r};}}
+      return{t,hi:hiE,kind,extra};});
+    segs.push({r:q.cyl.r,p,d,t0:lo,t1:hi,ends});}
+  const used=new Set(),out=[];
+  for(let i=0;i<segs.length;i++){if(used.has(i))continue;const g=[segs[i]],ref=segs[i];used.add(i);
+    for(let j=i+1;j<segs.length;j++){if(used.has(j))continue;const o=segs[j],c=cross(ref.d,o.d),dp=sub(o.p,ref.p),off=sub(dp,ref.d.map(v=>v*dot(dp,ref.d)));if(Math.hypot(...c)<1e-3&&Math.hypot(...off)<Math.max(tl*50,1e-3*size)){g.push(o);used.add(j);}}
+    const dd=ref.d,sg=g.map(o=>{const sh=dot(sub(o.p,ref.p),dd);return{...o,t0:o.t0+sh,t1:o.t1+sh,ends:o.ends.map(x=>({...x,t:x.t+sh,extra:x.extra&&{...x.extra,t:x.extra.t+sh}}))};});
+    const tmin=Math.min(...sg.map(o=>o.t0)),tmax=Math.max(...sg.map(o=>o.t1)),en=sg.flatMap(o=>o.ends.map(x=>({...x,r:o.r}))),top=en.filter(x=>Math.abs(x.t-tmax)<tl*20),bot=en.filter(x=>Math.abs(x.t-tmin)<tl*20),open=a=>a.find(x=>x.kind==='mouth'||x.kind==='csink');
+    const oT=open(top),oB=open(bot);if(!oT&&!oB)continue;
+    const thru=!!(oT&&oB),atTop=oT&&oB?(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r>sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1.001||Math.abs(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r-sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r)<=sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1e-3&&dot(dd,[0.001,0.01,1])>=0):!!oT,mouthT=atTop?tmax:tmin,sgn=atTop?-1:1,prim=sg.reduce((a,b)=>b.r<a.r?b:a),rr=prim.r;
+    const cb=sg.filter(o=>o.r>rr*1.05&&Math.abs((atTop?o.t1:o.t0)-mouthT)<tl*20)[0],cbS=cb&&{dia:2*cb.r*k,depth:(cb.t1-cb.t0)*k};
+    const cn=(atTop?top:bot).find(x=>x.kind==='csink'),cnS=cn&&{dia:2*cn.extra.R*k,angle:+(2*Math.atan((cn.extra.R-cn.extra.r)/Math.max(1e-9,Math.abs(cn.extra.t-cn.t)))*180/Math.PI).toFixed(1)};
+    const pt=add(ref.p,dd,mouthT),dep=(tmax-tmin)*k,dia=2*rr*k,pmm=pt.map(v=>v*k),tap=tapOf(dia,doc,pmm,dd.map(v=>v*sgn),k);
+    out.push({p:pt.map(v=>+(v*k).toFixed(4)),d:dd.map(v=>+(v*sgn).toFixed(6)),dia:+dia.toFixed(4),depth:+dep.toFixed(4),thru,tap,cbore:cbS||null,csink:cnS||null});}
+  return out.sort((a,b)=>a.p[2]-b.p[2]||a.p[1]-b.p[1]||a.p[0]-b.p[0]);}
+export function solidJob({body,doc},a={}){
+  const an=analyzeBody(body,doc),k=doc&&doc.units==='in'?25.4:1,bb=body.boundingBox.bounds,size=Math.hypot(...sub(bb[1],bb[0]))||1,m=body.mesh({tolerance:Math.max(0.02/k,size*1e-4),angularTolerance:0.1}),q=1e3,wid=new Map(),V=[],T=[];
+  const ix=i=>{const x=+(m.vertices[3*i]*k).toFixed(3),y=+(m.vertices[3*i+1]*k).toFixed(3),z=+(m.vertices[3*i+2]*k).toFixed(3),key=Math.round(x*q)+','+Math.round(y*q)+','+Math.round(z*q);let j=wid.get(key);if(j==null){j=V.length/3;wid.set(key,j);V.push(x,y,z);}return j;};
+  for(let i=0;i<m.triangles.length;i+=3){const A=ix(m.triangles[i]),B=ix(m.triangles[i+1]),C=ix(m.triangles[i+2]);A!==B&&B!==C&&A!==C&&T.push(A,B,C);}
+  return{name:(doc&&doc.name)||'part',mesh:{v:V,t:T},holes:holeList({body,doc}),bbox:[0,1,2].map(i=>(bb[1][i]-bb[0][i])*k),min:bb[0].map(v=>v*k),kind:an.kind};}
+export async function solid({body,doc},a={}){
+  if(!body)throw new Error('Build a part first');const L=await camLib();if(typeof L.solid_cam!=='function')throw new Error('This build of the CAM engine cannot mill solid parts yet.');
+  const j={...solidJob({body,doc}),...(a.job||{})};delete j.kind;return JSON.parse((a.plan?L.solid_plan:L.solid_cam)(JSON.stringify(j)));}
+export function analyze({body,doc}){if(!body)throw new Error('Build a part first');const an=analyzeBody(body,doc);return{part:an.part,plate:an.plate,kind:an.kind,units:an.units};}
+export async function engine(){const L=await camLib();return{solid:typeof L.solid_cam==='function'&&typeof L.solid_plan==='function'};}
 export async function catalog(){const L=await camLib();return{cam:JSON.parse(L.cam_catalog()),shop:JSON.parse(L.shop_default())};}
 export async function program(_,a={}){const L=await camLib();return JSON.parse(L.cam_program(JSON.stringify(a.jobs||[])));}
 export async function simulate(_,a={}){if(!a.gcode)throw new Error('No G-code to simulate');return(await import('./gcode_sim.js')).simulate(a.gcode,a);}
