@@ -6,6 +6,7 @@ import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
+import {chamferSides} from './features2.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
 let UNITS='mm',NOTES=[];
@@ -337,12 +338,14 @@ export async function build(doc,opt={}){
   const cache=opt.cache||cacheRef();
   const t0=performance.now(),{scope,errors:pErr}=resolveParams(doc.params,doc.units);UNITS=doc.units==='in'?'in':'mm';
   const feats=(doc.features||[]).filter(f=>!f.suppressed),upto=opt.upto??feats.length,errors=[],warnings=[],log=[];
-  let body=null,prevKey='',reused=0,sk=0;
-  const tools={};
-  for(let i=0;i<Math.min(upto,feats.length);i++){
+  let body=null,prevKey='',reused=0,sk=0,i0=0,fk=null;
+  const tools={},nz=Math.min(feats.length,(doc.features||[]).slice(0,Math.max(0,doc.freeze|0)).filter(f=>!f.suppressed).length);
+  if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?warnings.push(...e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
+  cache.fk=null;
+  for(let i=i0;i<Math.min(upto,feats.length);i++){
     const raw=feats[i];let f,key,perr=null;
     if(raw.type==='hole'&&body&&i>=sk){
-      let k=i;const lim=Math.min(upto,feats.length)-1;while(k+1<lim&&feats[k+1].type==='hole')k++;
+      let k=i;const lim=Math.min(upto,feats.length)-1;while(k+1<lim&&feats[k+1].type==='hole'&&(i>=nz||k+1<nz))k++;
       if(k-i>=BATCH-1){
         const fs=[],ks=[];let pk=prevKey,okb=true;
         for(let j=i;j<=k&&okb;j++)try{const fj=res(feats[j],scope);fs.push(fj);pk+='|'+JSON.stringify(fj);ks.push(pk);}catch{okb=false;}
@@ -371,7 +374,8 @@ export async function build(doc,opt={}){
         if(!body)throw new Error(f.type+' needs a body');
         const es=selectEdges(body,f.edges);if(!es.length)throw new Error('no edges matched');
         const set=new Set(es.map(q=>q.e.hashCode)),fil=f.type==='fillet',r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
-        next=upTo(x=>{const fn=e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
+        const cs=!fil&&(f.d2||f.angle)?chamferSides(body,es,f):null;
+        next=upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
       }
       else if(f.type==='edgeprofile'){
         if(!body)throw new Error('edgeprofile needs a body');
@@ -415,6 +419,7 @@ export async function build(doc,opt={}){
     body=next;prevKey=key;
   }
   truncate(Math.min(upto,feats.length),cache);
+  cache.fk=fk;
   return{body,errors,warnings,paramErrors:pErr,scope,reused,ms:performance.now()-t0};
 }
 export function meshBody(body,q=1){

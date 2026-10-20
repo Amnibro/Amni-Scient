@@ -16,6 +16,7 @@ Actions (applied in order):
  {"set":{"id":"f3", "field":value,...}}  change fields of an existing feature
  {"param":{"name":"w","expr":"120"}}     create or change a parameter; expr may use other parameters
  {"delete":"f3"}                         remove a feature
+ {"freeze":"f3"}                         freeze bar after feature f3 (null removes it): features up to it are locked (set and delete on them are skipped) and skipped on rebuild; use it to keep a finished base steady while editing the rest
  {"new":true}                            empty the model first (only when the user wants a new part)
  {"material":"al6061"}                   set the material
  {"finish":"anodize2:black"}              set the part finish (look, quote line item, drawing note): machined | bead | anodize2:<clear|black|blue|red|gold|green|purple|orange> | anodize3:<black|gray|bronze> | powder:<black|white|gray|red|blue|green|yellow|orange> | oxide | zinc:<clear|yellow> | nickel | chromate | passivate | paint:<color as for powder>; "machined" or "none" clears it; the viewport and photo render follow the material and finish

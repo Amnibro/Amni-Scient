@@ -1,0 +1,33 @@
+import {startE2E} from './e2e_lib.mjs';
+let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));},near=(a,b,t=1e-3)=>Math.abs(a-b)<=t*Math.max(1,Math.abs(b));
+const E=await startE2E({web:+process.env.E2E_WEB||18720,mcp:+process.env.E2E_MCP||18721});
+const {page,call,T,errs,sleep}=E,ev=(f,...a)=>page.evaluate(f,...a),wb=async()=>{await sleep(150);await ev(()=>window.amnicad.API.waitBuild());await sleep(250);},act=async a=>{const r=T(await call('apply_actions',{actions:a}));await wb();return r;};
+try{
+  await act([{new:true,units:'mm'},{add:{type:'box',w:80,d:50,h:10}},{add:{type:'hole',plane:'XY',offset:10,pts:[[20,10],[-20,10]],d:6,thru:true}},{add:{type:'fillet',r:3,edges:{dir:'Z'}}},{add:{type:'box',w:10,d:10,h:5,z:10}}]);
+  let st=T(await call('get_state'));ok(st.features.length===4&&!st.errors.length,'base model builds',st.errors);
+  const mp=st.mass_properties;ok(mp&&mp.inertia_kg_mm2&&mp.principal_moments_kg_mm2.length===3&&mp.mass_kg>0,'get_state returns mass_properties',mp&&Object.keys(mp));
+  ok(near(mp.mass_kg,st.mass_g/1000,0.01)&&near(mp.mass_kg/(mp.volume_mm3*1e-9),2700,1e-4),'mass properties agree with the summary mass and volume',[mp.mass_kg,st.mass_g,mp.volume_mm3,st.size]);
+  const r=T(await call('apply_actions',{actions:[{freeze:'f2'}]}));st=T(await call('get_state'));ok(st.freeze&&st.freeze.count===2&&st.freeze.through==='f2','freeze through f2 via apply_actions',st.freeze);
+  const r2=T(await call('apply_actions',{actions:[{set:{id:'f2',d:9}},{set:{id:'f4',h:7}}]}));await wb();st=T(await call('get_state'));
+  ok(st.features.find(f=>f.id==='f2').d===6,'frozen feature edit is refused');ok(st.features.find(f=>f.id==='f4').h===7,'feature after the bar can still be edited');ok((r2.warnings||[]).some(w=>/freeze/i.test(w)),'refusal is explained in warnings',r2.warnings);
+  const r3=T(await call('apply_actions',{actions:[{delete:'f1'}]}));st=T(await call('get_state'));ok(st.features.some(f=>f.id==='f1'),'frozen feature cannot be deleted');
+  const tr=await ev(()=>({frz:[...document.querySelectorAll('#tree .feat.frz')].length,bar:!!document.querySelector('#tree .frzbar'),barAt:[...document.querySelectorAll('#tree > *')].findIndex(e=>e.classList.contains('frzbar'))}));ok(tr.frz===2&&tr.bar&&tr.barAt===2,'tree shows 2 frozen rows and the bar after them',tr);
+  await ev(()=>window.amnicad.API.commit(d=>{d.features[0].w=99;}));st=T(await call('get_state'));ok(st.features[0].w===80,'commit() refuses changes to frozen features');
+  await ev(()=>{window.amnicad.API.active='f1';});await sleep(200);const ed=await ev(()=>({note:!!document.querySelector('#tab-edit .frznote'),inert:!!document.querySelector('#tab-edit .frzbody')&&document.querySelector('#tab-edit .frzbody').inert}));ok(ed.note&&ed.inert,'inspector of a frozen feature is read-only with an Unfreeze button',ed);
+  await ev(()=>{[...document.querySelectorAll('#tab-edit .frznote button')][0].click();});await sleep(200);st=T(await call('get_state'));ok(st.freeze===undefined&&!st.features.length===false,'Unfreeze from the inspector lowers the bar to before that feature',st.freeze);
+  await act([{freeze:'f3'}]);await act([{freeze:null}]);st=T(await call('get_state'));ok(st.freeze===undefined,'freeze null removes the bar');
+  await act([{freeze:'f2'},{new:true,units:'mm'}]);st=T(await call('get_state'));ok(st.freeze===undefined&&st.features.length===0,'new part clears the freeze bar');
+  await act([{add:{type:'box',w:20,d:20,h:20}},{add:{type:'cylinder',r:4,h:30}}]);
+  await ev(()=>{const A=window.amnicad.API;A.commit(d=>{d.freeze=1;});});await act([{add:{type:'box',w:5,d:5,h:5,z:30}}]);await ev(()=>window.amnicad.API.undo());await wb();st=T(await call('get_state'));ok(st.freeze&&st.freeze.count===1&&st.features.length===2,'undo restores features and keeps the bar',[st.freeze,st.features.length]);
+  await ev(()=>window.amnicad.API.undo());await wb();st=T(await call('get_state'));ok(st.features.length===2,'undo of the freeze step');
+  await act([{new:true,units:'in'},{add:{type:'box',w:2,d:3,h:4}}]);await ev(()=>{window.amnicad.API.active=null;});await sleep(400);
+  const mb=await ev(()=>{const b=[...document.querySelectorAll('#tab-edit button')].find(x=>/Mass properties/.test(x.textContent));b&&b.click();return!!b;});ok(mb,'the Part panel has a Mass properties button in every layout');await sleep(1500);
+  ok(await ev(()=>/Ixx/.test(document.querySelector('#dlg').innerText)&&document.querySelector('#dlg').open),'it opens the dialog with the inertia rows');await ev(()=>document.querySelector('#dlg').close());
+  await ev(()=>{localStorage.setItem('amnicad.ui','workshop');localStorage.setItem('amnicad.ui.v','3');});await page.reload();await page.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.S.mesh,{timeout:90000});await sleep(1200);
+  await ev(()=>{const A=window.amnicad.API;A.loadDoc({format:'amnicad',v:1,units:'in',name:'m',material:'steel1018',params:[],features:[{id:'f1',type:'box',w:2,d:3,h:4}]},null,true);});await wb();
+  await ev(()=>{const t=[...document.querySelectorAll('#ribbon .rt button')].find(b=>b.textContent==='Evaluate');t&&t.click();});await sleep(300);const clicked=await ev(()=>{const b=[...document.querySelectorAll('#ribbon .cmd')].find(x=>/Mass Properties/.test(x.title));b&&b.click();return!!b;});ok(clicked,'ribbon has Mass Properties');await sleep(1500);
+  const dl=await ev(()=>{const d=document.querySelector('#dlg');return{open:d&&d.open,txt:d&&d.innerText};});
+  ok(dl.open&&/Ixx/.test(dl.txt)&&/Principal moment 3/.test(dl.txt)&&/lb·in²/.test(dl.txt)&&/kg·m²/.test(dl.txt),'Mass Properties dialog lists inertia and principal moments in both unit systems',(dl.txt||'').replace(/\n/g,' | ').slice(0,700));
+  ok(errs.length===0,'no page errors',errs);
+}finally{await E.close();}
+console.log(fail?'FAILED '+fail:'ALL PASSED');process.exitCode=fail?1:0;

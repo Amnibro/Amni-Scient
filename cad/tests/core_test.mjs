@@ -1,0 +1,41 @@
+import opencascade from '../vendor/replicad_single.js';
+import * as K from '../kernel.js';
+import {FT,featureDocs,defaults,MATS} from '../schema.js';
+import * as MP from '../massprops.js';
+import {massSI} from '../units.js';
+const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
+let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));},near=(a,b,r,m)=>ok(Math.abs(a-b)<=Math.max(Math.abs(b)*r,1e-9),m+' got '+a+' want '+b);
+const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.params||[],features:fs.map((f,i)=>({id:'f'+(i+1),...f}))});},VOL=r=>K.meshBody(r.body).props.volume;
+{const box={type:'box',w:20,d:20,h:10},base=VOL(await B([box])),top=(o)=>({type:'chamfer',edges:{by:'pick',pts:[[0,-10,10]]},...o}),cut=async o=>base-VOL(await B([box,top(o)]));
+  near(await cut({d:2}),0.5*2*2*20,1e-6,'equal chamfer');
+  near(await cut({d:2,d2:4}),0.5*2*4*20,1e-6,'asymmetric chamfer d on the top face');
+  near(await cut({d:2,d2:4,flip:true}),0.5*2*4*20,1e-6,'flip keeps the same material removed');
+  const r1=await B([box,top({d:2,d2:4})]),m1=K.meshBody(r1.body),r2=await B([box,top({d:2,d2:4,flip:true})]),m2=K.meshBody(r2.body),fa=m=>m.faces.find(q=>q.type==='PLANE'&&q.n&&q.n[1]<-0.2&&q.n[2]>0.2);
+  ok(fa(m1)&&fa(m2)&&Math.abs(fa(m1).n[2]-fa(m2).n[2])>0.3,'flip swaps which face gets d: slope normal differs '+JSON.stringify([fa(m1)&&fa(m1).n,fa(m2)&&fa(m2).n]));
+  near(await cut({d:3,angle:30}),0.5*3*3*Math.tan(Math.PI/6)*20,1e-6,'distance-angle chamfer');
+  const bad=await B([box,top({d:2,angle:95})]);ok(bad.errors.length&&/angle/.test(bad.errors[0].msg),'angle 95 is rejected: '+JSON.stringify(bad.errors));
+  const big=await B([box,top({d:30,d2:60})]);ok(!big.errors.length&&big.warnings.some(w=>w.field==='d'),'oversized asymmetric chamfer limited with a note');
+  ok(/d2/.test(featureDocs())&&/chamfer/.test(FT.chamfer.doc),'chamfer doc mentions d2');
+}
+{const rb=async(fs,u)=>MP.props((await B(fs,u)).body),sorted=a=>a.map(p=>p.I);
+  const r=await rb([{type:'box',w:2,d:3,h:4,x:5,y:-2,z:1}]),m=2*3*4,e=(a,b)=>m*(a*a+b*b)/12;
+  near(r.volume,24,1e-9,'box volume');near(r.area,2*(6+8+12),1e-9,'box area');near(r.com[0],5,1e-9,'box com x');near(r.com[2],3,1e-9,'box com z');
+  near(r.T[0][0],e(3,4),1e-7,'box Ixx');near(r.T[1][1],e(2,4),1e-7,'box Iyy');near(r.T[2][2],e(2,3),1e-7,'box Izz');ok(Math.abs(r.T[0][1])<1e-7&&Math.abs(r.T[1][2])<1e-7&&Math.abs(r.T[0][2])<1e-7,'box products of inertia are zero about the com');
+  near(sorted(r.principal)[0],e(2,3),1e-7,'box smallest principal');
+  const c=await rb([{type:'cylinder',r:5,h:20,axis:'X'}]);near(c.T[0][0],Math.PI*25*20*25/2,1e-6,'cylinder axial moment');near(c.T[1][1],Math.PI*25*20*(3*25+400)/12,1e-6,'cylinder transverse moment');
+  const t=await rb([{type:'box',w:10,d:6,h:2},{type:'move',angle:30,axis:'Z'}]);near(sorted(t.principal)[0],10*6*2*(36+4)/12,1e-6,'rotated box keeps its principal moments');ok(Math.abs(t.T[0][1])>1,'rotated box has a product of inertia in world axes');
+  near(Math.abs(t.principal[0].axis[0]*Math.cos(Math.PI/6)+t.principal[0].axis[1]*Math.sin(Math.PI/6)),1,1e-6,'principal axis follows the rotated box edge');
+  const si=massSI(await rb([{type:'box',w:1,d:1,h:1}],'in'),'in',7850);near(si.mass_kg,7850*0.0254**3,1e-9,'inch box mass');near(si.inertia_kg_mm2.Ixx,si.mass_kg*2/12*25.4**2,1e-7,'inch box Ixx in kg mm2');near(si.inertia_lb_in2.Ixx,si.mass_kg*2.2046226*2/12,1e-6,'inch box Ixx in lb in2');
+  const d=await K.build({units:'mm',params:[],features:[{id:'a',type:'box',w:10,d:10,h:10},{id:'b',type:'box',w:10,d:10,h:10,x:30}]});near(MP.props(d.body).volume,2000,1e-9,'two bodies sum volume');
+}
+{const mk=n=>[{type:'box',w:100,d:60,h:8},...Array.from({length:n},(_,i)=>({type:'hole',plane:'XY',offset:8,pts:[[-45+(i%10)*10,-25+Math.floor(i/10)*10]],d:4,thru:true}))],id=fs=>fs.map((f,i)=>({id:'f'+(i+1),...f})),run=(fs,fz)=>K.build({units:'mm',params:[],features:id(fs),freeze:fz});
+  K.resetCache();const fs=mk(40),a=await run(fs,0),va=VOL(a);K.resetCache();const b=await run(fs,20),vb=VOL(b);near(vb,va,1e-12,'frozen build gives the same body as the plain build');
+  const fs2=mk(40);fs2[35].d=5;const c=await run(fs2,20);ok(c.reused>=20,'editing after the bar reuses the frozen prefix, reused '+c.reused);near(VOL(c),VOL(await B(fs2)),1e-12,'edit after the bar matches a fresh build');
+  const fs3=mk(40);fs3[5].d=5;const d=await run(fs3,20);near(VOL(d),VOL(await B(fs3)),1e-12,'a change inside the frozen prefix is still built correctly if it arrives (no stale body)');
+  const p=await K.build({units:'mm',params:[{name:'w',expr:'100'}],features:id([{type:'box',w:'w',d:60,h:8},{type:'box',w:10,d:10,h:30,x:100}]),freeze:1});const p2=await K.build({units:'mm',params:[{name:'w',expr:'120'}],features:id([{type:'box',w:'w',d:60,h:8},{type:'box',w:10,d:10,h:30,x:100}]),freeze:1});
+  near(K.meshBody(p2.body).props.bbox.max[0]-K.meshBody(p2.body).props.bbox.min[0],165,1e-9,'a parameter used by a frozen feature still updates it');
+  const fs4=mk(10);fs4[3].suppressed=true;const e=await run(fs4,5);near(VOL(e),VOL(await B(fs4)),1e-12,'suppressed features inside the frozen prefix are skipped');
+  const f=await run(fs,40);ok(!f.errors.length,'freeze through the last feature builds');const g=await run(fs,40);ok(g.reused===fs.length&&g.errors.length===0,'second build of a fully frozen part reuses everything '+g.reused);
+  const h=await run([...mk(12).slice(0,3),{type:'fillet',r:50,edges:{by:'all'}}],2);ok(h.warnings.length>0,'warnings of frozen+unfrozen features are both reported on later builds');const h2=await run([...mk(12).slice(0,3),{type:'fillet',r:50,edges:{by:'all'}}],4);ok(h2.warnings.length===h.warnings.length,'a warning on a frozen feature is kept when the prefix is reused');
+}
+console.log(pass+' passed, '+fail+' failed');process.exitCode=fail?1:0;
