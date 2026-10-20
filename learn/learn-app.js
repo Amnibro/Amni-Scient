@@ -100,10 +100,10 @@
   let currentSubgame = null;
   const urlParams = new URLSearchParams(window.location.search);
   let currentLevel=parseInt(urlParams.get('level'))||1;currentLevel=(currentLevel<1||currentLevel>8)?1:currentLevel;$$('#main-game-grid').classList.add('mode-'+Math.min(currentLevel,3));
-  const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'PRE-K GAMES',2:'GRADES K-2',3:'GRADES 3-5',4:'MIDDLE SCHOOL',5:'STEM CHALLENGE',6:'BRAIN EXERCISE',7:'DESTRESS ARCADE',8:'COLLEGE PREP'},_ac=_lc[currentLevel];
-  $$('.menu-title').textContent=_ln[currentLevel];$$('.menu-title').style.color=_ac;$$('.menu-title').style.textShadow=`0 0 15px ${_ac}`;$$('#nav-back').style.borderColor=_ac;$$('#nav-back').style.color=_ac;$$('#fs-btn').style.borderColor=_ac;$$('#fs-btn').style.color=_ac;$$('.top-bar').children[1].style.color=_ac;$$('#menu-view').style.background=`radial-gradient(ellipse at 50% 30%,${_ac}12 0%,#0c0f12 60%)`;$$all('.cat-header').forEach(h=>h.style.borderBottomColor=_ac+'30');
+  const _lc={1:'#2ecc71',2:'#f1c40f',3:'#e67e22',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#ff6b9d',8:'#48dbfb'},_ln={1:'Pre-K',2:'Grades K–2',3:'Grades 3–5',4:'Middle School',5:'STEM Challenge',6:'Brain Exercise',7:'Destress Arcade',8:'College Prep'},_lsub={1:'Ages 3–5 · Built on the <b>Florida VPK</b> standards and <b>Texas Pre-K</b> guidelines',2:'Ages 5–8 · Aligned with <b>Florida B.E.S.T.</b> and <b>Texas TEKS</b>',3:'Ages 8–11 · Aligned with <b>Florida B.E.S.T.</b> and <b>Texas TEKS</b>',4:'Ages 11–14 · Pre-algebra, science and deeper reading',5:'Labs, circuits and advanced STEM',6:'Focus, memory and processing speed',7:'Relaxed classics to unwind',8:'University-level subjects'},_ac=_lc[currentLevel];
+  document.body.dataset.lv=currentLevel;document.body.classList.toggle('lv-adult',currentLevel>=4);document.body.classList.toggle('lv-kid',currentLevel<=3);$$('.menu-title').textContent=_ln[currentLevel];$$('#menu-sub')?$$('#menu-sub').innerHTML=_lsub[currentLevel]:0;
   currentLevel===1?$$all('[data-subgame="money"],[data-subgame="clock"],[data-subgame="vacuum"],[data-subgame="dishes"]').forEach(el=>el?el.style.display='none':0):0;currentLevel>=4&&currentLevel!==6&&currentLevel!==7&&currentLevel!==8?($$('#stem-section').style.display='block',$$all('[data-subgame="vacuum"],[data-subgame="dishes"],[data-subgame="clock"],.tracing,.matching').forEach(el=>el?el.style.display='none':0)):0;(currentLevel===4||currentLevel===5)?$$('#main-game-grid').classList.add('wide-mode'):0;currentLevel===6?($$all('.game-category:not(#brain-section):not(.brain-cat)').forEach(c=>c.style.display='none'),$$('#brain-section').style.display='block',$$all('.brain-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===7?($$all('.game-category:not(.destress-cat)').forEach(c=>c.style.display='none'),$$all('.destress-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;currentLevel===8?($$all('.game-category:not(.college-cat)').forEach(c=>c.style.display='none'),$$all('.college-cat').forEach(c=>c.style.display='block'),$$('#main-game-grid').classList.add('brain-mode')):0;
-  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',phonics:'1',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'23','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
+  const _glv={dots:'123',tracing:'12',math:'1234',matching:'123',phonics:'12',typing:'12345',storybook:'123','life:vacuum':'23','life:dishes':'23','life:clock':'234','life:money':'23','life:bubble':'12','life:samediff':'12','life:petcare':'12','life:findit':'12','life:count':'12','life:colormix':'12','life:whackmole':'123','life:mathsolitaire':'345','life:codelock':'345','life:hanoi':'345','life:sliding':'2345','life:lightsout':'345','life:minesweeper':'345','life:twentyfortyeight':'345','life:sudoku':'345','life:memorymatch':'12345','quiz:animals':'1234',music:'1234','quiz:languages':'234','quiz:science':'2345','quiz:colors':'123','quiz:shapes':'123','quiz:counting':'123','quiz:opposites':'123','quiz:weather':'1234','quiz:space':'2345','quiz:sports':'234','quiz:mythology':'34','quiz:history':'34','quiz:civics':'34','quiz:mystate':'23',reflex:'1234',blocks:'2345',sorthat:'2345',wbridge:'34',scramble:'234',memseq:'12345',pattern:'12345',geo:'34','quiz:math':'45','quiz:engineering':'45',circuitlab:'5',rxnlab:'5',netdebug:'5',versus:'45'};
   currentLevel<=5?$$all('#main-game-grid .game-btn').forEach(b=>{const g=b.dataset.game,s=b.dataset.subgame,j=b.dataset.subject,k=s?g+':'+s:(j?g+':'+j:g),lv=_glv[k];lv&&!lv.includes(String(currentLevel))?b.style.display='none':0;}):0;
   $$all('#main-game-grid > .game-category').forEach(cat=>{if(cat.style.display==='none')return;const btns=cat.querySelectorAll('.game-btn');if(!btns.length)return;Array.from(btns).every(b=>b.style.display==='none'||getComputedStyle(b).display==='none')?cat.style.display='none':0;});
   let sessionScore = parseInt(sessionStorage.getItem('amni-learn-score')||'0');
@@ -149,7 +149,7 @@
   }
   function _cssFallback(on) {
     const app=$$('#app');
-    on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').textContent='✖ EXIT FULLSCREEN',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').textContent='⛶ FULLSCREEN',$$('#fs-hint').style.display='none');
+    on ? (app.classList.add('amni-fs'),document.body.style.overflow='hidden',$$('#fs-btn').innerHTML='✖<span class="fs-label"> Exit full screen</span>',$$('#fs-hint').style.display='inline') : (app.classList.remove('amni-fs'),document.body.style.overflow='',$$('#fs-btn').innerHTML='⛶<span class="fs-label"> Full screen</span>',$$('#fs-hint').style.display='none');
   }
   $$('#fs-btn').addEventListener('click', () => ($$('#app').classList.contains('amni-fs')||_fsNative) ? _exitFs() : _enterFs());
   // Cross-module achievements. Each badge has a progress() function that
@@ -599,6 +599,7 @@
     document.body.removeAttribute('data-theme');
     if (btn) { btn.textContent = '🌙'; btn.title = 'Theme: Midnight (tap to change)'; }
   }
+  window._applyTheme=_applyTheme;window._toast=(m,c)=>typeof _toast==='function'?_toast(m,c):0;
   try {
     let savedTheme = localStorage.getItem('amni-learn-theme');
     if (!savedTheme) { savedTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark'; try { localStorage.setItem('amni-learn-theme', savedTheme); } catch {} }
@@ -1116,9 +1117,9 @@
         xb.onclick = () => goBack();
         lt.appendChild(xb);
       }
-      $$('#nav-back').innerHTML = '⬅<span class="btn-label"> MENU</span>';
+      $$('#nav-back').innerHTML = '⬅<span class="btn-label"> Menu</span>';
     } else {
-      $$('#nav-back').innerHTML = '⬅<span class="btn-label"> HOME</span>';
+      $$('#nav-back').innerHTML = '⬅<span class="btn-label"> Home</span>';
     }
     if(typeof _checkAchievements==='function'){_checkAchievements();if(typeof _renderAchStrip==='function')_renderAchStrip();}
     if(typeof window._kidOnShowView==='function') window._kidOnShowView(viewId);
@@ -1333,9 +1334,14 @@
       return;
     }
     $$('#math-hud')?.remove(); const mHud=document.createElement('div'); mHud.className='game-hud'; mHud.id='math-hud'; mHud.innerHTML=`<span class="game-stat">📊 <span class="game-stat-val">${mathRound+1}/${mathTotal}</span></span><span class="game-stat">✅ <span class="game-stat-val">${mathCorrect}</span></span><span class="game-stat">🔥 <span class="game-stat-val">${currentStreak}</span></span>`; mChoices.parentElement.insertBefore(mHud, mProb);
+    const _sp=currentLevel<=3&&window.AmniStd?AmniStd.mathProblem(AmniStd.grade(currentLevel)):null;
+    mProb.style.whiteSpace=_sp?'pre-line':'';
+    _sp?mHud.insertAdjacentHTML('beforeend',`<span class="game-stat std-chip" title="${AmniStd.STATES[_sp.state]} · ${AmniStd.GN[_sp.grade]} · ${AmniStd.SKILL_NAMES[_sp.sk]||''}">${AmniStd.GN[_sp.grade]}${_sp.std.length?' · '+_sp.state+' '+_sp.std.join(', '):''}</span>`):0;
     let maxVal = currentLevel===1?5:(currentLevel===2?20:(currentLevel===3?100:(currentLevel===4?200:500)));
     const roll = Math.random();
-    if(currentLevel >= 4 && roll < 0.25) {
+    if(_sp) {
+        mProb.textContent=_sp.text; mProb.style.fontSize=_sp.long?'clamp(1.25rem,3.4vw,2.1rem)':'clamp(2.5rem,8vw,5rem)'; mathAns=_sp.ans; mathState={a:_sp.a||0,b:_sp.b||0,op:_sp.op||'std',explain:_sp.explain}; hintBtn.style.display=(currentLevel===2&&AmniStd.grade(2)==='K'&&(_sp.op==='+'||_sp.op==='-'))?'block':'none';
+    } else if(currentLevel >= 4 && roll < 0.25) {
         const x = Math.floor(Math.random()*(currentLevel===4?20:50))+2;
         const b = Math.floor(Math.random()*(currentLevel===4?15:30))+1;
         const r = Math.floor(Math.random()*3);
@@ -1367,11 +1373,12 @@
         else { v2=Math.floor(Math.random()*(currentLevel===2?8:12))+2; mathAns=Math.floor(Math.random()*(currentLevel===2?10:15))+1; v1=mathAns*v2; mathState.a=v1; mathState.b=v2; mProb.textContent=`${v1} ÷ ${v2} = ?`; hintBtn.style.display='none'; }
         mathState.explain=_mathSteps(mathState.op,mathState.a,mathState.b,mathAns);
     }
-    let choices = [mathAns];
+    let choices = _sp?_sp.choices.slice():[mathAns];
     const spread = currentLevel===1?3:(currentLevel===2?10:(currentLevel===3?20:(currentLevel===4?30:50)));
-    while(choices.length<4) { const n = typeof mathAns==='number' ? +(mathAns + (Math.floor(Math.random()*spread*2)-spread) + (choices.length)).toFixed(1) : mathAns+choices.length; if(n>=0 && !choices.includes(n) && n!==mathAns) choices.push(n); else { const f = Math.floor(Math.random()*50)+1; if(!choices.includes(f)) choices.push(f); } }
+    while(!_sp&&choices.length<4) { const n = typeof mathAns==='number' ? +(mathAns + (Math.floor(Math.random()*spread*2)-spread) + (choices.length)).toFixed(1) : mathAns+choices.length; if(n>=0 && !choices.includes(n) && n!==mathAns) choices.push(n); else { const f = Math.floor(Math.random()*50)+1; if(!choices.includes(f)) choices.push(f); } }
     choices.sort(()=>Math.random()-0.5); mChoices.innerHTML = '';
-    if(currentLevel===1 && ttsAuto() && typeof speakSeq==='function' && (mathState.op==='+'||mathState.op==='-')) speakSeq([mathState.a+(mathState.op==='+'?' plus ':' minus ')+mathState.b+' equals what?', ...choices.map(String)]);
+    if(_sp&&currentLevel<=2&&_sp.say&&ttsAuto()&&typeof speakSeq==='function') speakSeq([_sp.say,...choices.map(String)]);
+    else if(currentLevel===1 && !(_sp&&_sp.say) && ttsAuto() && typeof speakSeq==='function' && (mathState.op==='+'||mathState.op==='-')) speakSeq([mathState.a+(mathState.op==='+'?' plus ':' minus ')+mathState.b+' equals what?', ...choices.map(String)]);
     function _showMathStep(correct){
       const panel=document.createElement('div');panel.className='math-step-panel';panel.style.cssText='margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.92);border-left:5px solid '+(correct?'#2ecc71':'#e67e22')+';border-radius:10px;color:#2c3e50;font-family:Comic Neue,cursive;font-size:1.05rem;text-align:left;line-height:1.55;max-width:560px;margin-left:auto;margin-right:auto;';
       panel.innerHTML='<div style="font-weight:bold;margin-bottom:4px;color:'+(correct?'#1e8449':'#a04000')+';">'+(correct?'✓ Correct! ':'💡 Answer: ')+mathAns+'</div><div>'+(mathState.explain||('The answer is '+mathAns+'.'))+'</div>';
@@ -1380,7 +1387,7 @@
     }
     let mAnswered=false;
     choices.forEach(c => { const btn = document.createElement('div'); btn.className='m-choice'; btn.textContent=c; btn.onclick=()=>{ if(mAnswered)return; mAnswered=true; $$all('.m-choice').forEach(b=>b.style.pointerEvents='none'); if(c===mathAns){showFeedback('Correct! ✨','#2ecc71'); addScore(1); mathCorrect++; btn.style.background='#2ecc71';btn.style.color='#fff';btn.style.animation='sortCorrect 0.5s ease'; if(currentLevel<=2){mathRound++;setTimeout(initMath,1500);}else{_showMathStep(true);}} else {showFeedback('See the steps below','#e67e22'); resetStreak(); btn.style.opacity='0.4'; btn.style.animation='shake 0.4s'; $$all('.m-choice').forEach(b=>{if(Number(b.textContent)===mathAns||b.textContent==mathAns){b.style.background='#2ecc71';b.style.color='#fff';b.style.animation='sortCorrect 0.5s ease';}}); _showMathStep(false);}}; _kbd(btn,'Answer '+c); mChoices.appendChild(btn); });
-    if(currentLevel===1&&(mathState.op==='+'||mathState.op==='-')&&typeof _mathViz==='function')_mathViz();
+    if(currentLevel===1&&!_sp&&(mathState.op==='+'||mathState.op==='-')&&typeof _mathViz==='function')_mathViz();
   }
   let _mvGen = 0;
   function _mathViz(){
@@ -1398,7 +1405,7 @@
       mViz.innerHTML = html;
   }
   hintBtn.addEventListener('click', () => {
-      if(currentLevel>1) return showFeedback('Hints are for Early Level!','#e67e22');
+      if(currentLevel>2) return showFeedback('Hints are for Early Level!','#e67e22');
       _mathViz();
   });
   const matchGrid = $$('#match-grid'), emojis = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐸','🐯','🦁','🐮','🐷','🐵','🐧','🐦','🐤','🐣','🦇','🦉','🦅','🦆','🐺','🦋','🐌','🐛','🐜','🐝','🪲','🐞','🦗','🕷','🕸','🦂','🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🐓','🦃','🦚','🦜','🦢','🦩','🕊','🐇','🦝','🦨','🦡','🦦','🦥','🐁','🐀','🐿','🦔'];
@@ -1545,13 +1552,13 @@
   }
   function renderPhonWord(){
     const pane=$$('#phon-words-pane');if(!pane)return;
-    const cur=PHON_WORDS[phonWordIdx];
+    const cur=PW()[phonWordIdx];
     const chunks=cur.c.map(c=>`<button class="phon-chunk" data-c="${c}">${c}</button>`).join('');
-    pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="pd-letter" style="font-size:2rem;margin:6px 0">${cur.w}</div><div class="pd-sound" style="margin-bottom:8px">Tap each sound, then Blend</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">Blend the word</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
+    pane.innerHTML=`<div class="phon-word-card"><div class="phon-word-emoji">${cur.e}</div><div class="pd-letter" style="font-size:2rem;margin:6px 0">${cur.w}</div><div class="pd-sound" style="margin-bottom:8px">${cur.p?'<b class="phon-pat">'+cur.p+'</b> · ':''}Tap each sound, then Blend</div><div class="phon-blend-row">${chunks}</div><button class="phon-hear-btn" id="phon-blend-btn">Blend the word</button><div class="phon-word-nav"><button class="phon-tab" id="phon-word-prev">◀ Prev</button><button class="phon-tab" id="phon-word-next">Next ▶</button></div></div>`;
     pane.querySelectorAll('.phon-chunk').forEach(btn=>btn.addEventListener('click',()=>{const ch=btn.dataset.c;const snd=_phonSnd(ch);_phonSpeak(['This part says '+snd+'.', snd+'.']);}));
     $$('#phon-blend-btn').addEventListener('click',()=>{if(typeof speakSeq==='function')speakSeq(_phonBlendSay(cur));else _phonSpeak(cur.w);});
-    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PHON_WORDS.length)%PHON_WORDS.length;renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
-    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PHON_WORDS.length;_phonMark();renderPhonWord();const c=PHON_WORDS[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
+    $$('#phon-word-prev').addEventListener('click',()=>{phonWordIdx=(phonWordIdx-1+PW().length)%PW().length;renderPhonWord();const c=PW()[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
+    $$('#phon-word-next').addEventListener('click',()=>{phonWordIdx=(phonWordIdx+1)%PW().length;_phonMark();renderPhonWord();const c=PW()[phonWordIdx];if(typeof speakSeq==='function')speakSeq(_phonBlendSay(c));});
   }
   function _phonPickN(pool,n,skip){
     const arr=pool.filter(x=>x!==skip),res=[];
@@ -1624,14 +1631,31 @@
       }
     }));
   }
+  let _phonList=null,phonSight={idx:0,score:0};const PW=()=>_phonList||PHON_WORDS;
+  function phonSightRound(){
+    const pane=$$('#phon-sight-pane');if(!pane)return;
+    const L=window.AmniStd&&currentLevel<=2?AmniStd.sightWords(AmniStd.grade(currentLevel)):null;
+    if(!L){pane.innerHTML='';return;}
+    if(phonSight.idx>=10){_phonFinish(pane,phonSight,'phon-sight-best','Sight Words',phonSightRound);return;}
+    const target=L[Math.floor(Math.random()*L.length)],tiles=_phonPickN([target,..._phonPickN(L,2,target)],3,null);
+    phonSight.firstTry=true;
+    pane.innerHTML=_phonGameHUD(phonSight,10)+'<p class="phon-game-q">Listen, then tap the word you hear.</p><div class="phon-blend-row">'+tiles.map(t=>'<button class="phon-game-tile phon-sight-tile" data-w="'+t+'"'+(t===target?' data-ok="1"':'')+'>'+t+'</button>').join('')+'</div><button class="phon-hear-btn" id="phon-sight-replay">Hear it again</button>';
+    const ask=()=>_phonSpeak(['Find the word: '+target+'.']);ask();$$('#phon-sight-replay').onclick=ask;
+    pane.querySelectorAll('.phon-game-tile').forEach(btn=>btn.addEventListener('click',()=>{
+      if(btn.dataset.ok){if(phonSight.firstTry){phonSight.score++;if(typeof addScore==='function')addScore(1);}btn.classList.add('phon-right');_phonSpeak(['Yes! '+target+'.']);phonSight.idx++;setTimeout(()=>{if(currentGame==='phonics')phonSightRound();},1100);}
+      else{phonSight.firstTry=false;btn.classList.add('phon-wrong');_phonSpeak(['That word is '+btn.dataset.w+'. Find '+target+'.']);}
+    }));
+  }
   function initPhonics(){
     if(typeof _hdWarm==='function')_hdWarm();
-    phonIdx=0;phonWordIdx=0;phonMatch={idx:0,score:0};phonRhyme={idx:0,score:0};
-    const tabs=[['#phon-tab-letters','#phon-letters-pane'],['#phon-tab-words','#phon-words-pane'],['#phon-tab-match','#phon-match-pane'],['#phon-tab-rhyme','#phon-rhyme-pane']];
+    phonIdx=0;phonWordIdx=0;phonMatch={idx:0,score:0};phonRhyme={idx:0,score:0};phonSight={idx:0,score:0};
+    const _pg=window.AmniStd&&currentLevel<=2?AmniStd.grade(currentLevel):null;_phonList=_pg?AmniStd.phonicsWords(_pg):null;
+    const _st=$$('#phon-tab-sight');_st?_st.style.display=_pg&&AmniStd.sightWords(_pg)?'':'none':0;
+    const tabs=[['#phon-tab-letters','#phon-letters-pane'],['#phon-tab-words','#phon-words-pane'],['#phon-tab-match','#phon-match-pane'],['#phon-tab-rhyme','#phon-rhyme-pane'],['#phon-tab-sight','#phon-sight-pane']];
     const els=tabs.map(([t,p])=>[$$(t),$$(p)]);
     if(els.some(([t,p])=>!t||!p))return;
     const show=(i)=>{els.forEach(([t,p],j)=>{t.classList.toggle('active',i===j);p.style.display=i===j?'flex':'none';});};
-    els.forEach(([t],i)=>{t.onclick=()=>{show(i);if(i===2){phonMatch={idx:0,score:0};phonMatchRound();}if(i===3){phonRhyme={idx:0,score:0};phonRhymeRound();}};});
+    els.forEach(([t],i)=>{t.onclick=()=>{show(i);if(i===2){phonMatch={idx:0,score:0};phonMatchRound();}if(i===3){phonRhyme={idx:0,score:0};phonRhymeRound();}if(i===4){phonSight={idx:0,score:0};phonSightRound();}};});
     show(0);
     renderPhonLetters();renderPhonWord();
     if(currentLevel<=2&&typeof ttsAuto==='function'&&ttsAuto())_phonSpeak(_phonLetterSay(PHON_LETTERS[0]));
@@ -3254,9 +3278,7 @@
       if (!grid) return;
       grid.innerHTML = Object.entries(_ln).map(([n, name]) => {
         const active = parseInt(n) === currentLevel;
-        return `<button data-level="${n}" style="padding:14px;background:${active ? _lc[n] : '#2a2f3e'};color:#fff;border:2px solid ${active ? _lc[n] : 'transparent'};border-radius:10px;font-family:inherit;font-size:0.95rem;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
-          <span><b>Lv ${n}</b> &nbsp; ${name}</span>${active ? '<span>✓</span>' : ''}
-        </button>`;
+        return `<button data-level="${n}" class="lp-item${active ? ' on' : ''}" style="--c:${_lc[n]}"><span class="lp-n">${n}</span><span class="lp-t"><b>${name}</b><small>${_lsub[n].replace(/<[^>]+>/g,'')}</small></span>${active ? '<span class="lp-ok" aria-label="current">✓</span>' : ''}</button>`;
       }).join('');
       grid.querySelectorAll('[data-level]').forEach(b => b.onclick = () => {
         const n = parseInt(b.dataset.level);
@@ -4828,7 +4850,8 @@
       const cLvl = Math.min(Math.max(currentLevel,2),3);
       lifeTitle.textContent = "🕐 What time is it?";
       let targetHour = Math.floor(Math.random() * 12) + 1;
-      let targetMinute = cLvl === 2 ? [0, 15, 30, 45][Math.floor(Math.random() * 4)] : Math.floor(Math.random() * 12) * 5;
+      const _cg = window.AmniStd && currentLevel <= 3 ? AmniStd.grade(currentLevel) : null;
+      let targetMinute = _cg ? AmniStd.clockMinutes(_cg) : (cLvl === 2 ? [0, 15, 30, 45][Math.floor(Math.random() * 4)] : Math.floor(Math.random() * 12) * 5);
       const minuteAngle = targetMinute * 6; // 360 / 60
       const hourAngle = (targetHour % 12) * 30 + (targetMinute / 60) * 30; // 360 / 12 + partial hour
       const SZ = Math.max(150, Math.min(250, Math.floor(window.innerHeight*0.42), Math.floor(window.innerWidth*0.72)));
@@ -4892,6 +4915,10 @@
               clockContainer.appendChild(num);
           }
       }
+      const _tk = document.createElementNS('http://www.w3.org/2000/svg','svg'); _tk.setAttribute('viewBox','0 0 100 100'); _tk.setAttribute('aria-hidden','true'); _tk.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+      _tk.innerHTML = Array.from({length:60},(_,i)=>{const a=i*Math.PI/30,n=i%5?45:42;return `<line x1="${(50+48*Math.sin(a)).toFixed(2)}" y1="${(50-48*Math.cos(a)).toFixed(2)}" x2="${(50+n*Math.sin(a)).toFixed(2)}" y2="${(50-n*Math.cos(a)).toFixed(2)}" stroke="#2c3e50" stroke-opacity="${i%5?0.55:0.9}" stroke-width="${i%5?0.5:1.2}" stroke-linecap="round"/>`}).join('');
+      clockContainer.insertBefore(_tk, clockContainer.firstChild);
+      if(_cg){const _cs=AmniStd.clockSkill(_cg);lifeArea.insertAdjacentHTML('beforeend',`<div class="std-line"><span class="std-chip">${AmniStd.GN[_cg]}${_cs.length?' · '+AmniStd.state()+' '+_cs.join(', '):''}</span></div>`);}
       lifeArea.appendChild(clockContainer);
       const choicesContainer = document.createElement('div');
       choicesContainer.style.display = 'flex';
@@ -4899,7 +4926,7 @@
       choicesContainer.style.justifyContent = 'center';
       choicesContainer.style.flexWrap = 'wrap';
       const correctTimeStr = `${targetHour}:${targetMinute.toString().padStart(2, '0')}`;
-      let choices = [correctTimeStr];
+      let choices = _cg ? AmniStd.clockChoices(targetHour, targetMinute, _cg) : [correctTimeStr];
       while(choices.length < 4) {
           let rh = Math.floor(Math.random() * 12) + 1;
           let rm = cLvl === 2 ? [0, 15, 30, 45][Math.floor(Math.random() * 4)] : Math.floor(Math.random() * 12) * 5;
@@ -4939,8 +4966,10 @@
   function initMoney() {
       lifeArea.innerHTML = '';
       lifeControls.innerHTML = '';
-      const mLvl = Math.min(currentLevel, 3);
+      const _mg = window.AmniStd && currentLevel >= 2 && currentLevel <= 3 ? AmniStd.grade(currentLevel) : null;
+      const mLvl = _mg ? AmniStd.moneyTier(_mg) : Math.min(currentLevel, 3);
       const titles={1:'Count the Coins!',2:'Count the Money!',3:'Make Change!'};
+      if(_mg){const _ms=AmniStd.moneySkill(_mg);lifeArea.insertAdjacentHTML('beforeend',`<div class="std-line"><span class="std-chip">${AmniStd.GN[_mg]}${_ms.length?' · '+AmniStd.state()+' '+_ms.join(', '):''}</span></div>`);}
       lifeTitle.textContent = titles[mLvl]||'Count the Money!';
       // L1: cents only. L2: mixed dollars + bills. L3: make change.
       // Counting/change only — the register interaction matches the objective.
@@ -10658,7 +10687,7 @@ function playAnimalSound(type) {
   let _quizCurrentSubject = null;
   function startQuizDirectly(subject) {
       _quizCurrentSubject = subject;
-      const data = quizData[subject];
+      const data = subject==='mystate'&&window.AmniStateStudies&&window.AmniStd?AmniStateStudies[AmniStd.state()]:quizData[subject];
       quizTitle.textContent = data.title; _quizBaseTitle = data.title;
       const lvl = Math.min(currentLevel, 5);
       const seen = new Set();
@@ -10677,7 +10706,7 @@ function playAnimalSound(type) {
       const missedSet = new Set(missedHashes);
       const missedQs = pool.filter(q=>missedSet.has(_qHash(q))).sort((a,b)=>(missedMap[_qHash(b)].lastWrong||0)-(missedMap[_qHash(a)].lastWrong||0));
       const fresh = pool.filter(q=>!missedSet.has(_qHash(q))).sort(()=>Math.random()-0.5);
-      const target = Math.min(100, pool.length);
+      const target = Math.min(currentLevel===1?10:currentLevel===2?15:currentLevel===3?20:100, pool.length);
       const missedSlice = missedQs.slice(0, Math.min(missedQs.length, Math.floor(target*0.4)));
       const freshSlice = fresh.slice(0, target - missedSlice.length);
       currentQuiz = [...missedSlice, ...freshSlice].sort(()=>Math.random()-0.5);
@@ -20402,7 +20431,7 @@ function playAnimalSound(type) {
           topBtn.style.borderColor = '#2ecc71';
           topBtn.style.color = '#2ecc71';
         }
-        if (topLbl) topLbl.textContent = ' KIDS';
+        if (topLbl) topLbl.textContent = ' Kids';
         if (banner) {
           banner.style.display = 'none';
           banner.innerHTML = '';

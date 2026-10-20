@@ -1,3 +1,13 @@
+## 2026-10-20 — Amni-Learn: Florida/Texas standards for kids, grown-up look, accessibility
+- **Standards engine** (`learn/learn-standards.js`, pure, testable in Node): Pre-K, K–2 and 3–5 math, clock and money now follow the Florida B.E.S.T./VPK and Texas TEKS/Pre-K benchmarks per grade. A grade picker (P · K · 1 · 2 · 3 · 4 · 5) and a Florida/Texas switch sit on the kid levels, with a Skills map that lists every skill and its standard codes. Off-grade content removed: no × or ÷ before Grade 3, no symbols or numbers past 8 (FL) / 5 (TX) in Pre-K, K–2 clocks follow hours → half hours → 5 minutes (FL) or any minute (TX), Grade 2 money stays at coins, Grade 4 remainders follow each state's format. `tests/standards_engine_test.js` runs 553,884 checks on 56,000 generated problems.
+- **Phonics by grade**: Sound It Out uses grade-level word lists (CVC → blends → digraphs, CVCe, vowel teams, r-controlled → diphthongs, silent letters, -le) with the pattern shown, and a new Sight Words game uses the Dolch list for each grade.
+- **Florida Studies / Texas Studies** quiz (`learn/learn-state-studies.js`) for K–2 (symbols, maps, rules) and Grade 4 (state history, geography, government), with each question tagged to its standard.
+- Kid quiz runs are now 10 / 15 / 20 questions for Pre-K / K–2 / 3–5 instead of up to 100.
+- **New look** (`learn/learn-ui.css`, `learn-ui.js`): calmer, professional UI with Archivo and Fredoka, sentence-case labels, card grid with icon tiles, level colours as accents, pill feedback toast. Adult levels (4–8) get a quieter list-style grid and plain headings.
+- **Accessibility (Aa button)**: text size 100–140 %, high contrast, reduce motion, reading spacing, bigger buttons, and Auto/Light/Dark theme that follows the system.
+- Fix: in light mode the right/wrong answer colours never showed.
+- Real animal recordings, `playAnimalSound` and the animal sound quiz are unchanged.
+
 ## 2026-09-20 — Amni-Learn Sudoku: real highlighting
 - Same-number cells were tinted 9 RGB points off the board colour, so they were invisible, and nothing marked the selected cell's row, column or box. Selecting a cell now shades its row, column and box (and the diagonals in X-Sudoku when you sit on one), same-number cells get a teal outline with bold white digits, and pencil marks matching the active number light up. Same-number follow the selected cell's value, then the last number you placed.
 
