@@ -2,6 +2,7 @@ import * as R from './vendor/replicad.js';
 import {evalExpr,resolveParams} from './expr.js';
 import {sketchShapes,refit} from './sketch.js';
 import {chainShapes} from './sketch2.js';
+import {NAMED,reset as datReset,put as datPut,datumPlane,list as datList,axisRef} from './datum.js';
 import {pathPolys,ProfileError,selfCross} from './polyfix.js';
 import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
@@ -9,7 +10,7 @@ import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
 import {chamferSides,alongFaces,FEAT2} from './features2.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const STRKEYS=new Set(['pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
+const STRKEYS=new Set(['datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -25,7 +26,6 @@ function res(v,scope,k){
 const AX={X:[1,0,0],Y:[0,1,0],Z:[0,0,1],'+X':[1,0,0],'+Y':[0,1,0],'+Z':[0,0,1],'-X':[-1,0,0],'-Y':[0,-1,0],'-Z':[0,0,-1]};
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l]},dist=(a,b)=>Math.hypot(...sub(a,b));
 const V=v=>[v.x,v.y,v.z];
-const NAMED={XY:{n:[0,0,1],x:[1,0,0]},XZ:{n:[0,-1,0],x:[1,0,0]},YZ:{n:[1,0,0],x:[0,1,0]}};
 function sizeOf(shape){const b=shape.boundingBox.bounds;return Math.max(dist(b[0],b[1]),1e-6);}
 function faceList(shape){return shape.faces.map((f,i)=>{let c,n=null;try{c=V(f.center);}catch{c=[0,0,0];}try{n=V(f.normalAt(f.center));}catch{}return{f,i,c,n,type:f.geomType};});}
 function edgeList(shape){return shape.edges.map((e,i)=>{const m=V(e.pointAt(0.5)),a=V(e.startPoint),b=V(e.endPoint);let t=[0,0,0];try{t=V(e.tangentAt(0.5));}catch{}return{e,i,m,a,b,t,type:e.geomType,len:e.length};});}
@@ -74,6 +74,7 @@ export function selectEdges(shape,sel){
 }
 function pdist(p,sh){const v=R.makeVertex(p);try{return R.measureDistanceBetween(v,sh);}catch{return 1e9;}finally{try{v.delete();}catch{}}}
 function planeFrom(f,shape){
+  if(f.plane==='datum')return datumPlane(f);
   if(f.face&&(f.plane===undefined||f.plane==='face')){
     if(!shape)throw new Error('sketch on face needs an existing body');
     const s=f.face,one=x=>{const q=selectFaces(shape,x)[0];if(!q)throw new Error('sketch face not found');if(q.type!=='PLANE')throw new Error('sketch face must be flat');return q;};let n,c,x=null;
@@ -310,7 +311,7 @@ function threadCut(body,f){if(!body)throw new Error('a thread needs a body');con
   for(const dir of[1,-1])for(const m of[4,1]){try{let r=body;for(let q=0;q<S-1e-9;q+=m*p)r=r.cut(seg(dir>0?a0+q:a1-q,Math.min(m*p,S-q),dir));if(err(r)<0.02)return r;}catch{}}
   throw new Error('could not cut this thread cleanly; try a slightly different length or start');}
 function splitBody(body,f){
-  const P=planeFrom(f.plane==='face'?f:{plane:f.plane||'XY',offset:f.offset},body),S=sizeOf(body)*4+10,o=P.o,sgn=f.keep==='-'?-1:1,n=P.n.map(v=>v*sgn),x=P.x;
+  const P=planeFrom(f.plane==='face'||f.plane==='datum'?f:{plane:f.plane||'XY',offset:f.offset},body),S=sizeOf(body)*4+10,o=P.o,sgn=f.keep==='-'?-1:1,n=P.n.map(v=>v*sgn),x=P.x;
   const half=R.drawRectangle(S,S).sketchOnPlane(new R.Plane(o,x,n)).extrude(S);return body.intersect(half);
 }
 function applyOp(body,tool,op){
@@ -323,7 +324,7 @@ function patternTools(f,tools){
   const n0=f.n??4,n=Math.max(1,Math.round(n0)),out=[];n!==n0&&NOTES.push({k:'n',field:'n',v:n,msg:'Count '+n0+' used as '+n+' (a whole number, 1 or more)',fix:[{t:'Use '+n,k:'n',v:n}]});
   for(const t of tools){
     for(let k=1;k<n;k++){
-      if(f.kind==='circular'){const ax=AXV(f.axis),ang=(f.angle??360)===360?360/n:(f.angle)/(n-1);out.push(t.clone().rotate(ang*k,[f.ox||0,f.oy||0,f.oz||0],ax));}
+      if(f.kind==='circular'){const da=axisRef(f.axis),ax=da?da.d:AXV(f.axis),ang=(f.angle??360)===360?360/n:(f.angle)/(n-1);out.push(t.clone().rotate(ang*k,da?da.p:[f.ox||0,f.oy||0,f.oz||0],ax));}
       else out.push(t.clone().translate((f.dx||0)*k,(f.dy||0)*k,(f.dz||0)*k));
     }
   }
@@ -342,9 +343,11 @@ export async function build(doc,opt={}){
   const t0=performance.now(),{scope,errors:pErr}=resolveParams(doc.params,doc.units);UNITS=doc.units==='in'?'in':'mm';
   const feats=(doc.features||[]).filter(f=>!f.suppressed),upto=opt.upto??feats.length,errors=[],warnings=[],log=[];
   let body=null,prevKey='',reused=0,sk=0,i0=0,fk=null;
+  datReset();
   const tools={},nz=Math.min(feats.length,(doc.features||[]).slice(0,Math.max(0,doc.freeze|0)).filter(f=>!f.suppressed).length);
   if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?warnings.push(...e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
   cache.fk=null;
+  for(let j=0;j<i0;j++)cache[j].dat&&datPut(feats[j].id,cache[j].dat);
   for(let i=i0;i<Math.min(upto,feats.length);i++){
     const raw=feats[i];let f,key,perr=null;
     if(raw.type==='hole'&&body&&i>=sk){
@@ -367,9 +370,9 @@ export async function build(doc,opt={}){
     }
     try{f=res(raw,scope);key=prevKey+'|'+JSON.stringify(f)+(raw.type==='import'?raw.id:raw.type==='edgeprofile'?doc.material:'');}catch(e){perr={id:raw.id,name:raw.name,type:raw.type,msg:e.message};errors.push(perr);key=prevKey+'|ERR'+i+JSON.stringify(raw);f=null;}
     const c=cache[i];
-    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.err&&errors.push(c.err);c.warn&&warnings.push(...c.warn);prevKey=key;reused++;continue;}
+    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.dat&&datPut(raw.id,c.dat);c.err&&errors.push(c.err);c.warn&&warnings.push(...c.warn);prevKey=key;reused++;continue;}
     truncate(i,cache);
-    let next=body,tool=null,ferr=perr;const fw=[],W=(msg,x)=>fw.push({id:raw.id,name:raw.name,type:raw.type,msg,...x});NOTES=[];
+    let next=body,tool=null,dat=null,ferr=perr;const fw=[],W=(msg,x)=>fw.push({id:raw.id,name:raw.name,type:raw.type,msg,...x});NOTES=[];
     if(f)try{
       f=liveSketch(f,body);
       if(TOOLMAKERS[f.type]){if(!body&&(f.type==='hole'||f.type!=='thread'&&['cut','intersect'].includes(f.op)))throw new Error(f.type+' needs a body to cut into; add or unsuppress a solid before it');tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);if(PROF.has(f.type)&&!(Math.abs(volOf(tool))>1e-12))throw new Error('the profile has no area, so '+f.type+' made nothing; check it is closed and does not cross itself');next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
@@ -398,19 +401,19 @@ export async function build(doc,opt={}){
       }
       else if(f.type==='mirror'){
         if(!body)throw new Error('mirror needs a body');
-        const P=planeFrom(f.plane==='face'?f:{plane:f.plane||'YZ',offset:f.offset},body),mp=new R.Plane(P.o,P.x,P.n);next=f.only?body.clone().mirror(mp):body.fuse(body.clone().mirror(mp));
+        const P=planeFrom(f.plane==='face'||f.plane==='datum'?f:{plane:f.plane||'YZ',offset:f.offset},body),mp=new R.Plane(P.o,P.x,P.n);next=f.only?body.clone().mirror(mp):body.fuse(body.clone().mirror(mp));
       }
       else if(f.type==='split'){if(!body)throw new Error('split needs a body');next=splitBody(body,f);}
       else if(f.type==='scale'){if(!body)throw new Error('scale needs a body');next=body.clone().scale(f.k??1,[f.ox||0,f.oy||0,f.oz||0]);}
       else if(f.type==='move'){
         if(!body)throw new Error('move needs a body');
-        let b=body.clone();if(f.angle)b=b.rotate(f.angle,[f.ox||0,f.oy||0,f.oz||0],AXV(f.axis));b=b.translate(f.dx||0,f.dy||0,f.dz||0);next=f.copy?body.fuse(b):b;
+        let b=body.clone();const da=axisRef(f.axis);if(f.angle)b=b.rotate(f.angle,da?da.p:[f.ox||0,f.oy||0,f.oz||0],da?da.d:AXV(f.axis));b=b.translate(f.dx||0,f.dy||0,f.dz||0);next=f.copy?body.fuse(b):b;
       }
       else if(f.type==='import'){
         const data=opt.blobs&&opt.blobs[raw.blob];if(!data)throw new Error('imported file missing');
         const k=raw.fmt==='brep'||UNITS!=='in'?1:1/25.4;raw.fmt==='brep'||R.getOC().Interface_Static.SetCVal('xstep.cascade.unit','MM');const s0=raw.fmt==='brep'?R.deserializeShape(new TextDecoder().decode(data)):await R.importSTEP(new Blob([data])),sh=k===1?s0:s0.scale(k,[0,0,0]);tool=sh;next=applyOp(body,sh,f.op||'add');
       }
-      else if(FEAT2[f.type]){const r=FEAT2[f.type](f,body,KX,doc);next=r.shape;tool=r.tool||null;}
+      else if(FEAT2[f.type]){const r=FEAT2[f.type](f,body,KX,doc);next=r.shape;tool=r.tool||null;dat=r.dat||null;dat&&datPut(raw.id,dat);}
       else throw new Error('unknown feature '+f.type);
       if(TNOTE){W(cap(f.type==='bit'?'Router bit':f.type)+" '"+(f.name||f.id)+"': "+TNOTE);TNOTE=null;}
       if(next&&next.isNull)throw new Error('result is empty');
@@ -419,12 +422,12 @@ export async function build(doc,opt={}){
     }catch(e){ferr={id:raw.id,name:raw.name,type:raw.type,msg:friendly(e,f)};errors.push(ferr);next=body;tool=null;}
     for(const q of NOTES)W(cap(raw.type)+" '"+(raw.name||raw.id)+"': "+q.msg,{note:q.msg,field:q.field,...(q.v!=null?{limit:q.v}:{}),fix:q.fix});NOTES=[];warnings.push(...fw);
     if(tool)tools[raw.id]=tool;
-    cache[i]={key,shape:next,tool,err:ferr,warn:fw};
+    cache[i]={key,shape:next,tool,err:ferr,warn:fw,dat};
     body=next;prevKey=key;
   }
   truncate(Math.min(upto,feats.length),cache);
   cache.fk=fk;
-  return{body,errors,warnings,paramErrors:pErr,scope,reused,ms:performance.now()-t0};
+  return{body,errors,warnings,paramErrors:pErr,scope,reused,datums:datList(),ms:performance.now()-t0};
 }
 export function meshBody(body,q=1){
   if(!body)return null;

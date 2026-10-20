@@ -31,3 +31,9 @@ export function openLine({h,f,k,label,openSketch,set,ptsEditor,getF}){
   return h('div',{style:'margin:8px 0'},h('div',{class:'row',style:'justify-content:space-between;align-items:center;margin-bottom:4px'},h('label',{class:'mut'},label),h('button',{class:'btn sm pri',title:'Draw the line with lines, arcs, dimensions and relations',onclick:()=>openSketch(f.id)},f.sketch?'\u270E Edit sketch':'\u270E Open sketcher')),
     f.sketch?h('div',null,h('div',{class:'note'},'Constrained sketch: '+f.sketch.ents.filter(e=>!e.ref).length+' entities, '+f.sketch.cons.length+' dimensions and relations. Dimensions can use your parameters.'),h('button',{class:'btn sm ghost',style:'margin-top:7px',onclick:()=>set('sketch',undefined)},'Convert to simple points')):ptsEditor(()=>(getF(f.id)||{})[k],(L,keep2)=>set(k,L,keep2)));
 }
+export const DKIND={dplane:['datum_plane'],bplane:['datum_plane'],daxis:['datum_axis']};
+export const lastDatum=(d,type,before)=>{const i=d.features.findIndex(f=>f.id===before),L=d.features.slice(0,i<0?d.features.length:i).filter(f=>f.type===type);return L.length?L[L.length-1].id:'';};
+export function datumSelect({h,f,k,label,kind,doc,set,selectField,OPN}){
+  const i=doc.features.findIndex(x=>x.id===f.id),L=doc.features.slice(0,i<0?doc.features.length:i).filter(x=>DKIND[kind].includes(x.type)),opts=[...(kind==='bplane'?['XY','XZ','YZ'].map(p=>[p,OPN[p]||p]):[]),...L.map(x=>[x.id,(x.name||x.id)+' ('+x.id+')'])];
+  return opts.length?selectField(label,opts,f[k]||opts[0][0],v=>set(k,v)):h('div',{class:'note',style:'margin:8px 0'},label+': add a '+(kind==='daxis'?'datum axis':'datum plane')+' before this feature first.');
+}

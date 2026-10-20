@@ -1,6 +1,7 @@
 import * as R from './vendor/replicad.js';
 import {add,mul,dot,cross} from './qmath.js';
 import {pullSel} from './schema2.js';
+import * as D from './datum.js';
 const V3=v=>[v.x,v.y,v.z];
 export function chamferSides(body,es,f){
   const a=+f.angle||0,d2=+f.d2||0;if(a<0||a>=90)throw new Error('chamfer angle must be above 0 and below 90 degrees');if(d2<0)throw new Error('second chamfer distance must be 0 or more');
@@ -39,4 +40,5 @@ function rib(f,body,K){
   if(!use.length)throw new Error('the rib does not reach the part: move or lengthen the line, or change Grow toward');
   const picks=use.flatMap(r=>r.hit),out=picks.reduce((acc,h)=>acc.fuse(h),body);return{shape:out,tool:picks.length===1?picks[0]:R.makeCompound(picks)};
 }
-export const FEAT2={draft,rib};
+const datum=(kind,fr)=>(f,body,K)=>({shape:body,dat:{kind,...fr(f,body,K)}});
+export const FEAT2={draft,rib,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};
