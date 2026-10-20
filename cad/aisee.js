@@ -62,7 +62,7 @@ export function findings(o){
   return F;
 }
 function tile(API,v,g,x,y,w,h,o){
-  const T=API.THREE,R=API.renderer,cv=R.domElement,b=API.S.mesh.props.bbox,c=new T.Vector3(...[0,1,2].map(i=>(b.min[i]+b.max[i])/2)),E=[0,1,2].map(i=>b.max[i]-b.min[i]),r=Math.max(1e-7,Math.hypot(...E)/2),asp=cv.width/cv.height,d=new T.Vector3(...API.VIEWS[v]).normalize(),ax={top:[0,1],front:[0,2],right:[1,2]}[v];
+  const T=API.THREE,R=API.renderer,cv=R.domElement,b=o.bbox||API.S.mesh.props.bbox,c=new T.Vector3(...[0,1,2].map(i=>(b.min[i]+b.max[i])/2)),E=[0,1,2].map(i=>b.max[i]-b.min[i]),r=Math.max(1e-7,Math.hypot(...E)/2),asp=cv.width/cv.height,d=new T.Vector3(...API.VIEWS[v]).normalize(),ax={top:[0,1],front:[0,2],right:[1,2]}[v];
   let cam;
   if(v==='iso'){
     cam=new T.PerspectiveCamera(30,asp,r/100,r*200);cam.up.set(0,0,1);let k=r*5;
@@ -77,19 +77,22 @@ function tile(API,v,g,x,y,w,h,o){
 }
 export async function sheet(API,o={}){
   const S=API.S,R=API.renderer,cv=R.domElement,W=Math.max(400,Math.min(+o.width||1000,2000)),hid=document.visibilityState==='hidden';
-  if(!S.mesh)throw new Error('There is no solid to look at yet.');
-  if(S.ws&&S.ws!=='part')throw new Error('The contact sheet is for the Part workspace; the page is showing '+S.ws+'.');
+  const fb=S.ws==='form'&&API.hooks.bounds?API.hooks.bounds():null;
+  if(S.ws==='form'&&!fb)throw new Error('The form is empty; there is nothing to look at yet.');
+  if(!fb&&!S.mesh)throw new Error('There is no solid to look at yet.');
+  if(!fb&&S.ws&&S.ws!=='part')throw new Error('The contact sheet is for the Part and Form workspaces; the page is showing '+S.ws+'.');
   try{if(R.getContext().isContextLost())throw 0;}catch{throw new Error(hid?'The Amni-CAD page is in the background; bring it on screen and try again.':'The 3D view lost its WebGL context and could not be read. Reload the Amni-CAD page and try again.');}
   if(cv.width<2||cv.height<2)throw new Error('The 3D viewport has no size (the page is minimized or its layout collapsed). Bring the Amni-CAD page on screen and try again.');
   const tw=Math.floor(W/2),th=Math.max(160,Math.min(Math.round(tw*cv.height/cv.width),Math.round(tw*1.1))),c=document.createElement('canvas');c.width=tw*2;c.height=th*2;
   const g=c.getContext('2d');g.fillStyle=BG;g.fillRect(0,0,c.width,c.height);
-  const ui={units:S.doc.units==='in'?'in':'mm'};
+  const ui={units:S.doc.units==='in'?'in':'mm',bbox:fb&&{min:fb.min,max:fb.max}};
   try{TILES.forEach(([v],i)=>tile(API,v,g,(i%2)*tw,Math.floor(i/2)*th,tw,th,ui));}finally{API.redraw();}
   const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',+o.quality||0.82)),tn=document.createElement('canvas');tn.width=Math.min(320,c.width);tn.height=Math.round(c.height*tn.width/c.width);tn.getContext('2d').drawImage(c,0,0,tn.width,tn.height);
   const b64=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob);});
   return{b64,mime:'image/jpeg',bytes:blob.size,width:c.width,height:c.height,thumb:tn.toDataURL('image/jpeg',0.6),views:TILES.map(t=>t[0])};
 }
 export async function review(API,o={}){
+  if(API.S.ws==='form')return formReview(API,o);
   await API.waitBuild();
   const rep=report(API);rep.thin=o.thin===false?null:await thin(API);
   const F=findings(rep),out={report:{...rep,thin:rep.thin?{t:rep.thin.t,at:rep.thin.at}:undefined},findings:F};
@@ -97,6 +100,8 @@ export async function review(API,o={}){
   try{Object.assign(out,await sheet(API,o));}catch(e){out.sheet_error=e.message;}
   return out;
 }
+async function formReview(API,o){const fm=await import('./form.js');await fm.whenMeshed(API).catch(()=>{});const info=await fm.sceneInfo(API),m=info.mesh,u=info.units,F=info.errors.slice(0,7).map(e=>'Scene line '+(e.line+1)+': '+e.msg),ev=await(await import('./poly_io.js')).evalScene(API.doc,API.doc.form||'',{rd:false}).catch(e=>(F.push(e.message),[]));if(!m||!m.triangles)F.push('The form is empty.');for(const x of info.meshes||[])x.missing&&F.push('Mesh object '+x.name+' has no data (%'+x.data+'); undo or reopen the saved file.');for(const x of ev){const s=x.stats;s&&(s.boundary||s.nonManifold)&&F.push('Mesh object '+x.it.name+' is not watertight ('+(s.boundary?s.boundary+' open edges':'')+(s.boundary&&s.nonManifold?', ':'')+(s.nonManifold?s.nonManifold+' edges shared by 3+ faces':'')+'); fine for games and renders, fix it before 3D printing.');x.warn&&x.warn.length&&F.push(x.it.name+': '+x.warn.join('; '));}
+  const size=m&&m.bbox?m.bbox.max.map((v,i)=>+(v-m.bbox.min[i]).toFixed(4)):null,out={report:{workspace:'form',units:u,size,bbox:m&&m.bbox,volume:m&&m.volume,triangles:m&&m.triangles,lines:info.lines,meshes:info.meshes,animation:info.animation,empty:!m||!m.triangles},findings:F};if(o.sheet===false||out.report.empty)return out;try{Object.assign(out,await sheet(API,o));}catch(e){out.sheet_error=e.message;}return out;}
 export const brief=o=>{const r=o.report||o,u=r.units;return r.empty?'nothing is built':`${r.solids} solid${r.solids===1?'':'s'}, ${r.size.join(' × ')} ${u}`+(r.errors&&r.errors.length?`, ${r.errors.length} feature error${r.errors.length===1?'':'s'}`:'')+(o.findings&&o.findings.length?`, ${o.findings.length} finding${o.findings.length===1?'':'s'}`:', no findings');};
 export function reviewText(o,req,round,image,params=[]){
   const rk=recipeFor(req),tip=rk&&!params.some(p=>String(p).startsWith(rk+'_'))?`\nTip: this request is a ${RECIPES[rk].n.toLowerCase()}. A recipe builds it correctly in one action, for example {"new":true} then ${JSON.stringify(RECIPES[rk].ex)}; hand-modeled versions usually come out wrong. Use the recipe and keep the sizes the user asked for.`:'';
