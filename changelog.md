@@ -1,3 +1,6 @@
+## 2026-10-20 — Amni-Learn: profile fix
+- Fixed: the Profile window crashed on open because the theme picker looked up the wrong list, so names, themes, mascots and cursor trails could not be changed.
+
 ## 2026-10-20 — Amni-Learn: illustrated art everywhere
 - **Real illustrations replace device emoji** across menus, games, quizzes, cards and Play & Learn: 1,144 images in one consistent 3D style from Microsoft Fluent Emoji 3D (MIT, webp packaging by LobeHub, MIT), including every country flag, so flags now show on desktop too. Two missing pieces were drawn to match. About 3 MB, cached for offline use, with the device emoji as a fallback until an image loads.
 - `learn-art.js` swaps emoji for images as screens render, keeping the original text for screen readers and answer checks; canvas games (tower defense, circuits, shapes) draw the images directly. Art credits are linked in the footer.

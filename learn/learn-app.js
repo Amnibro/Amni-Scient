@@ -752,7 +752,7 @@
       });
       h+='</div>';return h;
     }
-    html.push(_pickerSection('🎨 Theme','theme','amni-learn-theme',theme));
+    html.push(_pickerSection('🎨 Theme','themes','amni-learn-theme',theme));
     html.push(_pickerSection('🌟 Mascot','mascots','profile-mascot',mascot));
     html.push(_pickerSection('✨ Cursor Trail','cursors','profile-cursor',cursor));
     const ttsOn=localStorage.getItem('amni-learn-tts')==='on';
