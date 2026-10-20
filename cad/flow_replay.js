@@ -1,0 +1,10 @@
+const CP=[-2,1.2],SP=[0,2],ST={t:null};
+const q8=(a,[lo,hi])=>{const o=new Uint8Array(a.length),k=255/(hi-lo);for(let i=0;i<a.length;i++)o[i]=Math.max(0,Math.min(255,Math.round((a[i]-lo)*k)));return o;},dq=(a,[lo,hi])=>{const o=new Float32Array(a.length),k=(hi-lo)/255;for(let i=0;i<a.length;i++)o[i]=lo+a[i]*k;return o;};
+export function push(F,r,step,last){const n=r.cp.length,cap=Math.max(7,Math.min(40,Math.floor(48e6/(2*n))));F.k=F.k||1;F.c=(F.c||0)+1;if(!last&&F.c%F.k)return;F.push({step,cd:r.cd,cp:q8(r.cp,CP),sp:q8(r.sp,SP)});if(F.length>cap){const keep=F.filter((_,i)=>i%2===0||i===F.length-1);F.splice(0,F.length,...keep);F.k*=2;}}
+export const past=f=>!!(f&&f.frames&&f.view!=null&&f.view<f.frames.length-1&&f.frames[f.view]);
+export function shown(f){if(!past(f))return f.r;const fr=f.frames[f.view];fr.d=fr.d||{cp:dq(fr.cp,CP),sp:dq(fr.sp,SP)};f.frames.forEach(x=>x!==fr&&delete x.d);return{...f.r,cp:fr.d.cp,sp:fr.d.sp};}
+export const stop=()=>{clearInterval(ST.t);ST.t=null;},playing=()=>!!ST.t;
+export function row(h,f,redraw){const F=f.frames,n=F.length,cur=()=>f.view??n-1,lab=h('span',{class:'note',style:'min-width:9em;text-align:right'}),rg=h('input',{type:'range',min:0,max:n-1,value:cur(),style:'flex:1',oninput:e=>{stop();bt.textContent='Play';f.view=+e.target.value;show();}}),
+  show=()=>{const i=cur(),x=F[i];rg.value=i;lab.textContent=(i===n-1?'Final':'Step '+x.step.toLocaleString())+(x.cd!=null?' · Cd '+(+x.cd).toFixed(3):'');redraw();},
+  bt=h('button',{class:'btn sm',onclick:()=>{if(playing()){stop();bt.textContent='Play';return;}if(cur()>=n-1)f.view=0;bt.textContent='Pause';show();ST.t=setInterval(()=>{if(!rg.isConnected){stop();return;}const i=cur()+1;i>=n-1?(f.view=null,stop(),bt.textContent='Play'):f.view=i;show();},420);}},playing()?'Pause':'Play');
+  lab.textContent=cur()===n-1?'Final':'Step '+F[cur()].step.toLocaleString();return h('div',{class:'fld'},h('label',null,'Replay the solve'),h('div',{class:'row',style:'flex-wrap:nowrap;align-items:center'},bt,rg,lab),h('div',{class:'note'},'Watch the flow develop from the first steps to the final average. Streamlines show the final flow.'));}
