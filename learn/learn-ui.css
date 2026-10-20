@@ -1,4 +1,5 @@
 @font-face{font-family:Fredoka;font-style:normal;font-weight:300 700;font-display:swap;src:url(/assets/fonts/fredoka-var.woff2) format('woff2')}
+@font-face{font-family:'Comic Neue';font-style:normal;font-weight:300 700;font-display:swap;src:url(/assets/fonts/fredoka-var.woff2) format('woff2')}
 :root{--ui-sans:Archivo,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--ui-round:Fredoka,Archivo,ui-rounded,system-ui,sans-serif;--ui-r:14px;--ui-r-lg:20px;--ui-t:.18s cubic-bezier(.2,.7,.3,1)}
 :root body:not(#_){--ui-bg:#0E1116;--ui-surface:#161A21;--ui-surface-2:#1E232B;--ui-border:#2A303A;--ui-text:#EDF0F5;--ui-muted:#A3ABBA;--ui-ok:#22C55E;--ui-ok-bg:rgba(34,197,94,.17);--ui-bad:#F87171;--ui-bad-bg:rgba(248,113,113,.17);--ui-shadow:0 1px 2px rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.22);--ui-shadow-hi:0 2px 4px rgba(0,0,0,.35),0 14px 30px rgba(0,0,0,.35);--lv:#38BDF8;background:var(--ui-bg)!important;color:var(--ui-text);font-family:var(--ui-sans)}
 :root body.light-mode:not(#_){--ui-bg:#F4F6FA;--ui-surface:#FFFFFF;--ui-surface-2:#EEF1F7;--ui-border:#DFE3EC;--ui-text:#121826;--ui-muted:#535D70;--ui-ok:#15803D;--ui-ok-bg:#DCFCE7;--ui-bad:#B91C1C;--ui-bad-bg:#FEE2E2;--ui-shadow:0 1px 2px rgba(17,24,39,.05),0 4px 14px rgba(17,24,39,.07);--ui-shadow-hi:0 2px 4px rgba(17,24,39,.07),0 14px 28px rgba(17,24,39,.12)}
@@ -34,6 +35,7 @@ body[data-theme]:not(#_){--lv:var(--accent,#38BDF8)}
 #app .cat-header-icon{width:31px!important;height:31px!important;border-radius:9px!important;font-size:1.05rem!important;background:color-mix(in srgb,var(--gb,var(--lv)) 15%,var(--ui-surface))!important;border:1px solid color-mix(in srgb,var(--gb,var(--lv)) 25%,var(--ui-border))!important;box-shadow:none!important}
 #app .cat-games{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(157px,1fr))!important;gap:12px!important;padding:0!important}
 #app .game-btn{flex:none!important;width:auto!important;max-width:none!important;min-height:0!important;margin:0!important;background:var(--ui-surface)!important;border:1px solid var(--ui-border)!important;border-radius:var(--ui-r)!important;box-shadow:var(--ui-shadow)!important;padding:17px 14px 15px!important;color:var(--ui-text)!important;display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;text-align:center;transform:none;transition:transform var(--ui-t),box-shadow var(--ui-t),border-color var(--ui-t)!important;animation:none!important}
+html body #app .game-btn[style*="display: none"],html body #app .game-btn[style*="display:none"]{display:none!important}
 :where(#app) .game-btn::before{content:none}
 #app .game-btn .btn-icon{font-size:1.9rem!important;width:57px;height:57px;display:grid!important;place-items:center;border-radius:15px;background:color-mix(in srgb,var(--gb,var(--lv)) 14%,var(--ui-surface));filter:none!important;margin:0 0 8px!important;transform:none!important;line-height:1}
 #app .game-btn .btn-text{font:700 .97rem/1.25 var(--ui-sans)!important;text-shadow:none!important;color:var(--ui-text)!important;letter-spacing:0!important}
@@ -164,3 +166,48 @@ body:not(.light-mode) #app .phon-hear-btn{color:#0E1116!important}
 #app .phon-pat{color:var(--ui-text)}
 #app .life-task-area .t-btn{background:var(--ui-surface)!important;color:var(--ui-text)!important;border:2px solid var(--ui-border)!important;border-radius:var(--ui-r)!important;box-shadow:0 3px 0 var(--ui-border)!important;font-family:var(--ui-round)!important;font-weight:700!important}
 @media (hover:hover){#app .life-task-area .t-btn:hover{border-color:var(--lv)!important}}
+#app .life-controls,#app .tracing-controls{background:transparent!important;padding:0!important;box-shadow:none!important;flex-wrap:wrap;justify-content:center}
+#app .life-controls:not(:has(*)){display:none!important}
+.tut-overlay{background:rgba(10,12,17,.55)!important;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.tut-box{background:var(--ui-surface)!important;border:1px solid var(--ui-border)!important;border-top:4px solid var(--lv)!important;box-shadow:var(--ui-shadow-hi);color:var(--ui-text)}
+.tut-title{font:800 1.2rem/1.3 var(--ui-sans)!important;color:var(--ui-text)!important}
+.tut-step{font:500 .95rem/1.55 var(--ui-sans)!important;color:var(--ui-text)!important;background:var(--ui-surface-2)!important;border-left:3px solid var(--lv)!important}
+.tut-step b{color:inherit!important;font-weight:800}
+.tut-step .tut-num{background:var(--lv)!important;color:var(--ui-bg)!important;font-family:var(--ui-sans)!important}
+.tut-btn{font:700 .95rem var(--ui-sans)!important;background:var(--lv)!important;border:1px solid var(--lv)!important;color:var(--ui-bg)!important}
+.tut-btn[style*="9b59b6"]{background:var(--ui-surface-2)!important;border-color:var(--ui-border)!important;color:var(--ui-text)!important}
+.tut-close{color:var(--ui-muted)!important}
+#app .tut-trigger:not(.exit-btn){font:600 .78rem var(--ui-sans)!important;color:var(--ui-muted)!important;border-color:var(--ui-border)!important;background:var(--ui-surface)!important}
+#app .tut-trigger.exit-btn{font:700 .78rem var(--ui-sans)!important}
+#app .lab-tool{background:var(--ui-surface);border:1px solid var(--ui-border);color:var(--ui-text);border-radius:10px;font:600 .88rem var(--ui-sans);box-shadow:var(--ui-shadow)}
+#app .lab-tool:hover,#app .lab-tool.active{background:color-mix(in srgb,var(--lv) 14%,var(--ui-surface));border-color:var(--lv);color:var(--ui-text)}
+body:not(.light-mode) #app :is(.life-task-area,.quiz-task-area,#teach-phase,.life-controls) :is([style*="2c3e50"],[style*="44, 62, 80"],[style*="1a1f2e"],[style*="26, 31, 46"],[style*="color:#333"],[style*="51, 51, 51"],[style*="color:#111"],[style*="17, 17, 17"],[style*="color:#555"],[style*="85, 85, 85"]):not([style*="background"]){color:var(--ui-text)!important}
+body:not(.light-mode) #app :is(.life-task-area,.quiz-task-area,#teach-phase) :is([style*="7f8c8d"],[style*="127, 140, 141"]):not([style*="background"]){color:var(--ui-muted)!important}
+#app .phon-detail{background:var(--ui-surface)!important;border:2px solid var(--lv)!important;box-shadow:var(--ui-shadow)}
+#app .wb-choice-text{color:var(--ui-text)}
+#app :is(.t-next,.start-quiz-btn,.pat-opt):not([style*="background"]),#app #sd-same{background:#15803D!important;color:#fff!important;box-shadow:0 4px 0 #14532D!important}
+#app .geo-opt:not([style*="background"]){background:#2563EB;color:#fff}
+#app .scr-tile,#app .cs-btn.undo{color:#1F1300}
+#app :is(.story-progress,.music-info,.idle-rate,.scr-hint){color:var(--ui-muted)}
+#app .p-key:not(.black) .note-lbl{color:#4B5563}
+body.light-mode #app :is(.sdk-btn,.nmm-btn,.seq-mode-btn,.spm-key,.retro-btn):not([style*="background"]):not(.active){color:var(--lv)!important;border-color:var(--lv)!important}
+body.light-mode #app :is(.sdk-btn,.seq-mode-btn,.retro-btn).active{background:var(--lv)!important;border-color:var(--lv)!important;color:#fff!important}
+body.light-mode #app :is(.sort-info,.rfx-score,.idle-display,.idle-item-cost,.blk-target-chip .opt){color:#B45309;text-shadow:none}
+body.light-mode #app :is(.blk-info,.blk-target-chip){color:#6D28D9}
+body.light-mode #app .blk-target-chip .best{color:#15803D}
+body.light-mode #app .rfx-timer{color:#0F766E}
+body.light-mode #app .type-letter:not(.filled):not(.error){color:#8A93A3}
+.learn-footer{background:var(--ui-surface)!important;border-top:1px solid var(--ui-border)!important;color:var(--ui-muted)!important;font-family:var(--ui-sans)!important}
+.learn-footer :is(p,li,.lf-copy,.ad-tag){color:var(--ui-muted)!important}
+.learn-footer :is(strong,h2,h3,summary){color:var(--ui-text)!important;text-shadow:none!important}
+.learn-footer a,.learn-footer code{color:var(--lv)!important;background:none}
+.learn-footer :is(.lf-nav,.disc-ad){border-color:var(--ui-border)!important}
+#app :is(.retro-btn,.nmm-btn,.sdk-btn)[style*="background"]:not([style*="transparent"]){color:#fff!important}
+#app [style*="background: rgb(46, 204, 113)"][style*="color: rgb(255, 255, 255)"]:not(.m-choice){background:#15803D!important;border-color:#14532D!important}
+#app .idle-item.locked{opacity:.6}
+body.light-mode #app :is([class*="-mode-btn"],.ws-topic-btn,.sdk-num,.agm-tile):not(.active):not(.used):not(.sdk-num-done):not(.hint-reveal):not([style*="background"]){color:var(--lv)!important;border-color:var(--lv)!important}
+body.light-mode #app :is([class*="-mode-btn"],.ws-topic-btn,.sdk-num).active{background:var(--lv)!important;border-color:var(--lv)!important;color:#fff!important}
+body.light-mode #app :is(.agm-hint,.agm-cat-badge){color:var(--lv)}
+body.light-mode #app .mr-btn.same{color:#15803D;border-color:#15803D}
+body.light-mode #app .mr-btn.mirror{color:#B91C1C;border-color:#B91C1C}
+body.light-mode #app .sol-chip:not(.active){background:var(--ui-surface-2);color:var(--ui-text)}

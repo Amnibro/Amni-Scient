@@ -160,12 +160,12 @@
      modules dynamically build panels with hex colors baked into cssText
      — these selectors flip the most common ones on the fly without a
      128-occurrence find/replace through every init function. */
-  body.light-mode [style*="color:var(--text,#ecf0f1)"],
-  body.light-mode [style*="color: var(--text,#ecf0f1)"],
-  body.light-mode [style*="color:#fff"],
-  body.light-mode [style*="color: #fff"],
-  body.light-mode [style*="color:white"],
-  body.light-mode [style*="color: white"] { color: #1a1f2e !important; }
+  body.light-mode [style*="color:var(--text,#ecf0f1)"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: var(--text,#ecf0f1)"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color:#fff"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: #fff"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color:white"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]),
+  body.light-mode [style*="color: white"]:not([style*="background:#"]):not([style*="background: #"]):not([style*="gradient"]):not([style*="background: rgb("]) { color: #1a1f2e !important; }
   body.light-mode [style*="color:#bdc3c7"],
   body.light-mode [style*="color:#95a5a6"],
   body.light-mode [style*="color:#888"],
@@ -536,7 +536,7 @@
   .td-controls .t-btn { padding:8px 18px; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: var(--text,#ecf0f1); margin-bottom: 20px; text-align: center; }
   .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: #2c3e50 !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
+  #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: var(--ui-text,#2c3e50) !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
   @media (min-width: 600px) { #quiz-prompt { font-size: clamp(2rem,5vw,3.5rem); } }
   #quiz-choices { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
   .dirt { position: absolute; font-size: 2rem; user-select: none; z-index: 1; transition: transform 0.2s, opacity 0.2s; }
@@ -1454,7 +1454,7 @@
     <p class="menu-sub" id="menu-sub"></p>
     <div class="std-bar" id="std-bar" hidden></div>
     <div id="kid-mode-banner" style="display:none;max-width:860px;width:94%;margin:0 auto 16px;"></div>
-    <button id="ach-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:720px;width:94%;margin:0 auto 6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1c40f;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:background 0.15s;">🏆 Achievements <span id="ach-toggle-count" style="color:#bbb;"></span> <span id="ach-toggle-caret" style="transition:transform 0.2s;">▸</span></button>
+    <button id="ach-toggle" aria-expanded="false" style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:720px;width:94%;margin:0 auto 6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1c40f;font-family:'JetBrains Mono',monospace;font-size:0.85rem;cursor:pointer;transition:background 0.15s;">🏆 Achievements <span id="ach-toggle-count" style="color:var(--ui-muted,#bbb);"></span> <span id="ach-toggle-caret" style="transition:transform 0.2s;">▸</span></button>
     <div id="achievements-strip" style="display:none;gap:6px;max-width:720px;width:94%;margin:0 auto 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;flex-wrap:wrap;justify-content:center;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:background 0.15s;" title="Tap to see all achievements"></div>
     <div class="menu-quick">
     <div id="daily-banner" style="display:none;max-width:560px;width:92%;margin:0 auto 14px;padding:14px 18px;background:linear-gradient(135deg,rgba(241,196,15,0.22) 0%,rgba(243,156,18,0.18) 100%);border:2px solid #f1c40f;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 22px rgba(241,196,15,0.25);transition:transform 0.15s,box-shadow 0.15s;">
@@ -1723,7 +1723,7 @@
       <div class="life-task-area" id="quiz-task-area" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
           <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px;">
               <button id="quiz-audio-btn" class="btn-icon" aria-label="Read the question aloud" title="Read aloud" style="background:#3498db; color:#fff; border:none; border-radius:50%; width:60px; height:60px; font-size:2rem; cursor:pointer; display:none; box-shadow:0 4px 0 #2980b9;">🔊</button>
-              <div id="quiz-prompt" style="font-size:2.5rem; font-family:'Comic Neue',cursive; text-align:center; color:#2c3e50 !important; font-weight:bold !important; opacity:1 !important;">Loading...</div>
+              <div id="quiz-prompt" style="font-size:2.5rem; font-family:'Comic Neue',cursive; text-align:center; color:var(--ui-text,#2c3e50) !important; font-weight:bold !important; opacity:1 !important;">Loading...</div>
           </div>
           <div id="quiz-choices" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;"></div>
       </div>
@@ -1795,7 +1795,7 @@
   <div id="storybook-view" class="view">
     <div id="storybook-list" class="storybook-list"></div>
     <div id="storybook-reader" class="storybook-reader" style="display:none">
-      <button id="story-back-list" class="t-btn" style="background:#34495e;color:#fff;align-self:flex-start;margin:10px 0 0 10px">← Library</button>
+      <button id="story-back-list" class="t-btn" style="background:var(--ui-surface-2,#34495e);color:var(--ui-text,#fff);border:1px solid var(--ui-border,#34495e);align-self:flex-start;margin:10px 0 0 10px">← Library</button>
       <h2 id="story-title" class="story-title-head"></h2>
       <div class="story-cover-large" id="story-cover-large"></div>
       <div class="story-page" id="story-page"></div>
@@ -2130,6 +2130,12 @@
 <script src="learn-standards.js?v=1" defer></script>
 <script src="learn-state-studies.js?v=1" defer></script>
 <script src="learn-app.js?v=v1292" defer></script>
+<script src="learn-hub.js?v=1" defer></script>
+<script src="mod-kids.js?v=1" defer></script>
+<script src="mod-music.js?v=1" defer></script>
+<script src="mod-world.js?v=1" defer></script>
+<script src="mod-testprep.js?v=1" defer></script>
+<script src="mod-mature.js?v=1" defer></script>
 <script src="brain-gym.js?v=2" defer></script>
 </div>
 <footer class="learn-footer" role="contentinfo">
@@ -2155,13 +2161,13 @@
 <h3>Age Bands &amp; Levels</h3>
 <ul>
 <li><strong>Level 1 &mdash; Pre-K (ages 3&ndash;5):</strong> tracing, animal sounds, simple counting, shape matching</li>
-<li><strong>Level 2 &mdash; K&ndash;1st (ages 5&ndash;7):</strong> phonics, single-digit addition &amp; subtraction, sight words</li>
-<li><strong>Level 3 &mdash; 2nd&ndash;3rd (ages 7&ndash;9):</strong> multiplication, broader vocabulary, beginner science</li>
-<li><strong>Level 4 &mdash; 4th&ndash;5th (ages 9&ndash;11):</strong> fractions, geography, intermediate reading comprehension</li>
-<li><strong>Level 5 &mdash; Middle School:</strong> pre-algebra, introductory chemistry and biology</li>
-<li><strong>Level 6 &mdash; High School:</strong> advanced STEM, algebra, essay-level reading</li>
-<li><strong>Level 7 &mdash; College Prep:</strong> logic puzzles, analytical reasoning</li>
-<li><strong>Level 8 &mdash; Adult Brain Health:</strong> cognitive exercises for focus, memory, processing speed</li>
+<li><strong>Level 2 &mdash; Grades K&ndash;2 (ages 5&ndash;8):</strong> phonics, addition &amp; subtraction, sight words, telling time, money</li>
+<li><strong>Level 3 &mdash; Grades 3&ndash;5 (ages 8&ndash;11):</strong> multiplication, fractions, vocabulary, beginner science and geography</li>
+<li><strong>Level 4 &mdash; Middle School:</strong> pre-algebra, introductory chemistry and biology, deeper reading</li>
+<li><strong>Level 5 &mdash; STEM Challenge (14+):</strong> labs, circuits, algebra and advanced STEM</li>
+<li><strong>Level 6 &mdash; Brain Exercise:</strong> cognitive exercises for focus, memory and processing speed</li>
+<li><strong>Level 7 &mdash; Destress Arcade:</strong> relaxed classic games to unwind</li>
+<li><strong>Level 8 &mdash; College Prep:</strong> university-level math, science, computing and philosophy</li>
 </ul>
 </div>
 <div>

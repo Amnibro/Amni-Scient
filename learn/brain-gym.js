@@ -118,7 +118,7 @@ function mount(){
  sec.parentNode.insertBefore(cat,sec);
  const acts={workout,progress,schulte,matrix,codebreaker,wordsprint};
  $$('.bg-game',cat).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();acts[b.dataset.bg]()},true));
- const sync=()=>{const on=$('#main-game-grid')?.classList.contains('brain-mode');document.body.classList.toggle('bg-brain',!!on);cat.style.display=on?'':'none'};sync();new MutationObserver(sync).observe($('#main-game-grid')||document.body,{attributes:true,attributeFilter:['class']});
+ const sync=()=>{const on=$('#main-game-grid')?.classList.contains('brain-mode')&&document.body.dataset.lv==='6';document.body.classList.toggle('bg-brain',!!on);cat.style.display=on?'':'none'};sync();new MutationObserver(sync).observe($('#main-game-grid')||document.body,{attributes:true,attributeFilter:['class']});
  synapse();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,0)):setTimeout(mount,0);
