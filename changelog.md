@@ -1,3 +1,10 @@
+## 2026-10-20 — Amni-Learn: Test Prep (New York, Regents and four more states)
+- **Test Prep** (📝, Grades 3–5, Middle School, STEM and College Prep): 46 practice tests with 821 original questions modeled on official state tests. Practice mode explains every answer; Mock test is timed (as a pacing guide), lets you flag and review, then scores by standard and walks through every question. Passages sit beside the questions with Read aloud; number answers accept 0.5, 1/2 and 1 1/2.
+- **New York**: Grades 3–8 Math and ELA, Grade 5 Elementary-level and Grade 8 Intermediate-level Science (298 questions). **Regents**: Algebra I, Geometry, Algebra II, Life Science: Biology, Earth and Space Sciences, Global History and Geography II, U.S. History and Government, ELA.
+- **Other states**: Texas STAAR, Florida FAST/B.E.S.T., Massachusetts MCAS and California CAASPP for Grades 3–5 (plus STAAR science and Grade 8 social studies).
+- An **Official past tests** panel links to each state's archive of real released tests (NYSED, nysedregents.org, TEA, FLDOE, MCAS, CAASPP). Questions are original; only public-domain passages are reused, with credit.
+- Test bank checks: `learn/tests/testbank_ny_test.js` (2,308 checks) and `learn/tests/testbank_states_test.js` (4,731 checks).
+
 ## 2026-10-20 — Amni-Learn: New York default, full audit, module hub
 - **New York** is now the default state for Pre-K to Grade 5 (NYS Prekindergarten 2019 and Next Generation Math/ELA standards), with New York Studies for K–2 and Grade 4, cents-only money through Grade 3 and NY codes in every chip.
 - **Audit of all 235 games × 8 levels** in light and dark at desktop and phone width: 0 page errors, 0 phone overflow. Fixed level filtering (Pre-K was showing hard games after the UI refresh), dark-mode prompts that were invisible, white-on-white Word Bridge answers, collapsed Tower of Hanoi and Whack-a-Mole layouts, the tutorial modal, footer level list, and Brain Gym leaking onto other levels.
