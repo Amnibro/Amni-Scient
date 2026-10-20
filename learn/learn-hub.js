@@ -50,16 +50,20 @@ function catEl(c){
  s.innerHTML=`<h2 class="cat-header"><span class="cat-header-icon">${c.icon}</span> ${esc(c.title)}</h2><div class="cat-games"></div>`;
  c.top?g.insertBefore(s,g.querySelector(':scope > .game-category')):g.appendChild(s);return s;
 }
-function sync(){const L=String(lv());Object.values(CATS).forEach(c=>{const s=catEl(c);if(!s)return;let any=0;$$('.hub-game',s).forEach(b=>{const m=MODS.find(x=>x.id===b.dataset.hub),on=!m.levels||m.levels.includes(L);b.style.display=on?'':'none';any|=on});s.style.display=any?'':'none'})}
+const SEEN='amni-learn-seen',seen=()=>{try{return JSON.parse(localStorage.getItem(SEEN)||'[]')}catch{return []}},bkey=b=>b.dataset.hub?'h:'+b.dataset.hub:b.dataset.game?'g:'+[b.dataset.game,b.dataset.subgame||b.dataset.subject||''].join(':'):'';
+const unNew=b=>{b.classList.add('seen');b.querySelectorAll('.game-new-badge').forEach(x=>x.remove())};
+const markSeen=b=>{const k=bkey(b),s=seen();k&&!s.includes(k)?(()=>{try{localStorage.setItem(SEEN,JSON.stringify([...s,k]))}catch{}})():0;unNew(b)};
+const badges=()=>{const s=seen();$$('#main-game-grid .game-btn').forEach(b=>s.includes(bkey(b))?unNew(b):0)};
+function sync(){const L=String(lv()),g=$('#main-game-grid');Object.values(CATS).forEach(c=>{const s=catEl(c);if(!s)return;typeof c.top==='string'&&g?(c.top.includes(L)?g.insertBefore(s,g.querySelector(':scope > .game-category')):g.appendChild(s)):0;let any=0;$$('.hub-game',s).forEach(b=>{const m=MODS.find(x=>x.id===b.dataset.hub),on=!m.levels||m.levels.includes(L);b.style.display=on?'':'none';any|=on});s.style.display=any?'':'none'})}
 function mountMod(m){const s=catEl(CATS[m.cat]);s&&!$(`.hub-game[data-hub="${m.id}"]`)?$('.cat-games',s).appendChild(card(m)):0}
-function mount(){if(!$('#main-game-grid'))return;MODS.forEach(mountMod);sync()}
+function mount(){if(!$('#main-game-grid'))return;MODS.forEach(mountMod);sync();badges()}
 const Hub={
  category(c){CATS[c.id]=Object.assign(CATS[c.id]||{},c);document.readyState!=='loading'?mount():0},
  register(m){MODS.push(m);document.readyState!=='loading'?mount():0},
  open,close,lv,mods:MODS,cats:CATS
 };
 window.AmniHub=Hub;
-const boot=()=>{mount();new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-lv']});const q=new URLSearchParams(location.search).get('hub');q?setTimeout(()=>open(q),300):0};
+const boot=()=>{mount();document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#main-game-grid .game-btn');b?markSeen(b):0},true);new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-lv']});const q=new URLSearchParams(location.search).get('hub');q?setTimeout(()=>{const m=MODS.find(x=>x.id===q);m&&(!m.levels||m.levels.includes(String(lv())))?open(q):0},300):0};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0)):setTimeout(boot,0);
 css('hub-core',`
 #hub-overlay{position:fixed;inset:0;z-index:9000;display:none;background:var(--ui-bg,#0E1116);color:var(--ui-text,#EDF0F5);font-family:var(--ui-sans,system-ui,sans-serif);overflow:auto}
@@ -70,6 +74,7 @@ body.hub-open{overflow:hidden}
 .hub-back{font:700 .95rem var(--ui-sans,system-ui);padding:10px 16px;min-height:44px;border-radius:999px;border:1px solid var(--ui-border,#2A303A);background:var(--ui-surface-2,#1E232B);color:inherit;cursor:pointer}
 .hub-title{flex:1;font:800 clamp(1.1rem,3vw,1.5rem) var(--ui-sans,system-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body.lv-kid .hub-title{font-family:var(--ui-round,var(--ui-sans))}
+@media (max-width:480px){.hub-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2;overflow-wrap:break-word}}
 .hub-stat{font:700 .95rem var(--ui-sans,system-ui);color:var(--ui-muted,#A3ABBA);white-space:nowrap}
 .hub-stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:20px}
 .hub-card{width:100%;background:var(--ui-surface,#161A21);border:1px solid var(--ui-border,#2A303A);border-radius:var(--ui-r-lg,20px);box-shadow:var(--ui-shadow,none);padding:clamp(16px,3vw,28px)}
