@@ -15,6 +15,7 @@ import * as PRO from './pro.js';
 import {Assistant,openRouterCallback} from './ai.js';
 import * as REFS from './refs.js';
 import * as ASST from './assistant.js';
+import * as RCP from './recipes.js';
 import * as CTX from './ctxmenu.js';
 import {showSkin,paintSkin,deformSkin,skinObj,meshSummary} from './mesh_view.js';
 import * as ASM from './assembly.js';
@@ -432,6 +433,7 @@ function applyActions(actions){const done=[],ids=new Set();S.lastWarn=[];if(!Arr
     if(['tool','mold_design','die_cast_design','casting_pattern'].includes(a.run)){S.queueTool=a.run;done.push(a.run==='tool'?'design the tool':a.run.replace(/_/g,' '));}
     if(a.asm){done.push(...ASM.apply(d,a.asm,{templates:templatesFor(ASM.ensure(d).units)}));S.asmAct=true;}
     if(a.name&&typeof a.name==='string'){d.name=a.name;}}});if(S.asmAct){S.asmAct=false;if(S.ws!=='asm')setTimeout(()=>setWS('asm'),0);}S.lastAiIds=ids;if(S.queueCam){const w=S.queueCam,prev=S.pendingRun;S.queueCam=null;S.pendingRun=()=>{prev&&prev();setTimeout(()=>{setTab('make');runCam(w).catch(e=>toast('Toolpath: '+e.message,5000));},50);};}if(S.queueCut){const w=S.queueCut;S.queueCut=null;const prev=S.pendingRun;S.pendingRun=()=>{prev&&prev();setTimeout(()=>{setTab('cutters');runCut(w==='cutter_sim').catch(e=>toast('Cutters: '+e.message,5000));},50);};}if(S.queueMold){S.queueMold=false;const prev=S.pendingRun,sg=S.moldSuggest;S.moldSuggest=false;S.pendingRun=()=>{prev&&prev();setTimeout(()=>{setTab('mold');runMold({suggest:sg}).catch(e=>toast('Injection molding: '+e.message,5000));},50);};}if(S.queueDies){const q=S.queueDies;S.queueDies=null;setTimeout(async()=>{setTab('dies');for(const[m,cf]of q)try{await(tabMods.dies||(tabMods.dies=await import(TABMODS.dies))).tool(API,m,{...cf,_panel:true});}catch(e){toast('Die design: '+e.message,5000);}},50);}if(S.queueTool){const w=S.queueTool,prev=S.pendingRun;S.queueTool=null;S.pendingRun=()=>{prev&&prev();setTimeout(()=>import('./tooling_ui.js').then(m=>m.runTool(API,w==='tool'?((S.doc.tool||{}).process==='die'?'die_cast_design':['pattern','permanent'].includes((S.doc.tool||{}).process)?'casting_pattern':'mold_design'):w,{process:(S.doc.tool||{}).process})).catch(e=>toast('Tooling: '+e.message,6000)),50);};}if(S.queueFlow){S.queueFlow=false;const prev=S.pendingRun;S.pendingRun=()=>{prev&&prev();setTimeout(()=>{setTab('flow');runFlow();},50);};}if(S.queueFea){S.queueFea=false;const prev=S.pendingRun;S.pendingRun=()=>{prev&&prev();setTimeout(()=>{setTab('sim');runFea();},50);};}return done;}
+{const a0=applyActions;applyActions=(acts,...r)=>{const x=RCP.expandRecipes(acts,S.doc),d=a0(x.actions,...r);S.lastWarn.push(...x.warns);return[...d,...x.done];};}
 const RES=[[8000,'Quick'],[30000,'Standard'],[100000,'Fine'],[250000,'Ultra']];
 function faceIdsFor(sel){if(!S.mesh)return[];const F=S.mesh.faces,list=Array.isArray(sel)?sel:[sel],out=new Set(),b=S.mesh.props.bbox,size=Math.hypot(b.max[0]-b.min[0],b.max[1]-b.min[1],b.max[2]-b.min[2]);
   for(const s of list){if(!s)continue;if(typeof s==='number'){out.add(s);continue;}

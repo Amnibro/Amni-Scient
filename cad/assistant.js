@@ -1,5 +1,6 @@
 import {CLOUD,systemPrompt,stateMessage,parseReply,openRouterLogin,detectKey,probeLocal,explainError,prettyModel,partialSay} from './ai.js';
 import * as REFS from './refs.js';
+import * as AISEE from './aisee.js';
 const CSS=`#tab-ai.on{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .as-head{display:flex;align-items:center;gap:6px;padding:9px 10px 4px 12px;flex:none}
 .as-chip{flex:1;min-width:0;display:flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--line2);border-radius:calc(99px*var(--rk,1));background:var(--bg2);color:var(--ink);font-size:12.5px;text-align:left}
@@ -107,12 +108,18 @@ html body.ask-on.form-mode #right>#tab-ai.on,html body.ask-on.asm-mode #right>#t
 html body.ask-on.form-mode #right,html body.ask-on.asm-mode #right,html body.ask-on.tool-mode #right{display:flex!important}
 .feat.as-flash{animation:asf 1.4s}
 @keyframes asf{0%,70%{box-shadow:0 0 0 2px var(--acc)}100%{box-shadow:0 0 0 2px transparent}}
+.as-chk{display:flex;align-items:center;gap:6px;padding:2px 12px 4px;font-size:11.5px;color:var(--mut);flex:none;cursor:pointer}
+.as-chk input{margin:0}
+#tab-ai.as-su .as-chk,#tab-ai.as-br .as-chk{display:none}
+@media (max-width:699px){#right:not([data-snap=tall]):not([data-snap=full]) #tab-ai .as-chk{display:none}}
+.msg.s.as-look{display:flex;gap:8px;align-items:center;text-align:left}
+.as-look img{width:92px;flex:none;border-radius:6px;border:1px solid var(--line2);background:#eef1f5}
 @media (prefers-reduced-motion:reduce){.msg.live::after,.feat.as-flash{animation:none}}`;
 const CK='amnicad.chat.',IK='amnicad.chat.idx',LEN=/^(w|d|h|r|t|l|len|depth|dist|offset|height|width|wall|dia|rx|ry|rc|od|id|x|y|z|thk|thick|size)$/,SW={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter'};
 const lget=k=>{try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},lset=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v));}catch{}};
 let A,H,S,h,el=null,cur=null,HP=null;const V={pick:null,setup:false,err:null,busy:null,msg:'',pct:null,probe:null,sig:'',csp:0,ctl:null,ac:null,kk:'',rs:'',tab:'edit',ts:0};
 const q=s=>document.querySelector(s),$=s=>el&&el.querySelector(s),slot=()=>S.slot||'default',lbl=s=>s.charAt(0).toUpperCase()+s.slice(1);
-const keep=()=>S.chat.filter(m=>!m.live&&m.role!=='err').slice(-70).map(m=>({role:m.role,text:String(m.text||'').slice(0,6000),issues:m.issues,card:m.card&&{items:m.card.items,t:m.card.t}}));
+const keep=()=>S.chat.filter(m=>!m.live&&m.role!=='err').slice(-70).map(m=>({role:m.role,text:String(m.text||'').slice(0,6000),issues:m.issues,card:m.card&&{items:m.card.items,t:m.card.t},...(m.reply?{reply:String(m.reply).slice(0,4000)}:{}),...(m.hist?{hist:String(m.hist).slice(0,1500)}:{}),...(m.thumb&&S.chat.indexOf(m)>=S.chat.length-9?{thumb:m.thumb}:{})}));
 function save(){const k=CK+slot();lset(k,{m:keep()});const ix=(lget(IK)||[]).filter(x=>x!==k);ix.push(k);while(ix.length>30)lset(ix.shift(),null);lset(IK,ix);}
 function sync(){if(cur===slot())return;cur=slot();S.chat=((lget(CK+cur)||{}).m||[]).map(m=>({...m}));}
 const bst=()=>H.bridge.state(),isBr=()=>H.cfg.kind==='bridge'||H.cfg.kind==='remote';
@@ -171,7 +178,7 @@ function diffDocs(a,b){const u=b.units==='in'?'in':'mm',ia=new Map(a.features.ma
   for(const n of pa.keys())pb.has(n)||o.push({k:'param',t:'Removed parameter '+n});
   a.material!==b.material&&o.push({k:'set',t:'Material → '+((A.MATS[b.material]||{}).n||b.material)});js(a.finish||null)!==js(b.finish||null)&&o.push({k:'set',t:'Finish → '+(b.finish||'machined')});a.units!==b.units&&o.push({k:'set',t:'Units → '+b.units});
   return o;}
-const cardItems=(before,applied)=>{const o=diffDocs(JSON.parse(before),S.doc),ex=applied.filter(x=>!/^(new part|param |\+|edit |delete |material|finish)/.test(x)).map(x=>({k:'run',t:lbl(x)}));return[...o,...ex].slice(0,8).concat(o.length+ex.length>8?[{k:'set',t:'+'+(o.length+ex.length-8)+' more changes'}]:[]);};
+const cardItems=(before,applied)=>{const o=diffDocs(JSON.parse(before),S.doc),ex=applied.filter(x=>!/^(new part|param |\+|edit |delete |material|finish)/.test(x)).map(x=>({k:'run',t:lbl(x)}));return[...ex.filter(x=>/^Recipe /.test(x.t)),...o,...ex.filter(x=>!/^Recipe /.test(x.t))].slice(0,8).concat(o.length+ex.length>8?[{k:'set',t:'+'+(o.length+ex.length-8)+' more changes'}]:[]);};
 function show(id){const f=S.doc.features.find(x=>x.id===id);if(!f)return A.toast('That feature no longer exists');A.active=id;const r=q('#tree .feat.on');r&&(r.scrollIntoView({block:'nearest'}),r.classList.add('as-flash'),setTimeout(()=>r.classList.remove('as-flash'),1400));}
 function toggle(m){const c=m.card,want=c.undone?c.after:c.before,expect=c.undone?c.before:c.after;if(JSON.stringify(S.doc)!==expect){A.toast('The part changed since this message; use Undo in the toolbar instead',4200);return false;}A.commit(d=>{for(const k of Object.keys(d))delete d[k];Object.assign(d,JSON.parse(want));});c.undone=!c.undone;paintChat();return true;}
 function cardEl(m){const c=m.card,live=c.before!=null,can=live&&JSON.stringify(S.doc)===(c.undone?c.before:c.after),ex=x=>x.id&&S.doc.features.some(f=>f.id===x.id),first=(c.items.find(x=>x.k==='add'&&ex(x))||c.items.find(ex)||{}).id;
@@ -179,6 +186,7 @@ function cardEl(m){const c=m.card,live=c.before!=null,can=live&&JSON.stringify(S
 function msgEl(m,lastU){const u=m.role==='user';
   if(m.role==='err')return errEl(m,'msg a');
   if(m.role==='sys')return h('div',{class:'msg s'},m.text);
+  if(m.role==='look')return lookEl(m);
   const b=h('div',{class:'msg '+(u?'u':'a')+(m.live?' live':'')},h('span',{class:'as-t'},m.text||''),m.live?h('span',{class:'as-dots'},'Thinking…'):null,m.card&&m.card.items.length?cardEl(m):null,m.issues&&m.issues.length?h('div',{class:'as-iss'},h('b',null,'Still not building. '),m.issues.join(' ')):null);m.live&&(m.node=b);
   return u&&lastU&&!S.aiBusy?h('div',{style:'display:contents'},b,h('div',{class:'as-ua'},h('button',{id:'ai-retry',onclick:()=>retryLast()},'Retry'),h('button',{id:'ai-edit',onclick:()=>retryLast(true)},'Edit and resend'))):b;}
 function paintChat(){const c=$('#chat');if(!c)return;sync();el.classList.toggle('as-has',S.chat.length>0);if(bridgeMode()&&!showSu()){const st=bst().st||{};c.replaceChildren(h('div',{class:'msg a'},h('b',null,st.state==='connected'?'Connected to '+(st.clients||['your app'])[0]:'Waiting for your app'),h('div',null,'Ask in your AI app, for example "make this part 20% lighter and show me a screenshot". The changes appear here as you watch.'),!st.state||st.state!=='connected'?h('div',{class:'as-ca'},h('button',{class:'btn sm pri',onclick:()=>openSetup('app')},'Show setup'),h('span',{class:'mut'},st.text||'')):null));return;}
@@ -204,21 +212,33 @@ function showAc(){const ta=$('#ai-in'),m=/(^|\s)@([\w.-]*)$/.exec(ta.value.slice
 function pickAc(i){const ta=$('#ai-in'),a=V.ac,x=a.L[i];ta.value=ta.value.slice(0,a.at)+x.key+' '+ta.value.slice(a.at+a.len);const p=a.at+x.key.length+1;ta.setSelectionRange(p,p);hideAc();ta.focus();grow();}
 function grow(){const t=$('#ai-in');t&&(t.style.height='auto',t.style.height=Math.min(132,t.scrollHeight)+'px');}
 export function setText(t){const ta=$('#ai-in');ta&&(ta.value=t,grow(),ta.focus(),ta.setSelectionRange(t.length,t.length));}
-function retryLast(edit){if(S.aiBusy)return;const L=S.chat,i=L.map(m=>m.role).lastIndexOf('user');if(i<0)return;const um=L[i],am=L.slice(i+1).filter(m=>m.card&&m.card.before!=null).pop();if(am&&!am.card.undone)JSON.stringify(S.doc)===am.card.after?toggle(am):A.toast('The part changed since that reply, so it was kept. The new reply builds on it.',4200);S.chat.length=i;paintChat();save();edit?setText(um.text):send({text:um.text});}
+function retryLast(edit){if(S.aiBusy)return;const L=S.chat,i=L.map(m=>m.role).lastIndexOf('user');if(i<0)return;const um=L[i];for(const am of L.slice(i+1).filter(m=>m.card&&m.card.before!=null&&!m.card.undone).reverse()){if(JSON.stringify(S.doc)!==am.card.after){A.toast('The part changed since that reply, so it was kept. The new reply builds on it.',4200);break;}toggle(am);}S.chat.length=i;paintChat();save();edit?setText(um.text):send({text:um.text});}
 const plain=e=>(e.name?"'"+e.name+"' ":'')+((A.FT[(S.doc.features.find(f=>f.id===e.id)||{}).type]||{}).n||'feature')+': '+e.msg;
+const geo=()=>JSON.stringify([S.doc.features,S.doc.params,S.doc.units]);
+function memory(){const o=[];for(const m of S.chat){if(m.live||m.role==='err'||m.role==='sys'||m.role==='look'&&!m.hist)continue;o.push(m.role==='user'?{role:'user',content:'(earlier request) '+String(m.text).slice(0,900)}:m.role==='look'?{role:'user',content:m.hist}:{role:'assistant',content:m.reply||JSON.stringify({say:m.text,applied:m.card?m.card.items.map(x=>x.t):[]}).slice(0,3500)});}const t=o.slice(-16);while(t.length&&t[0].role!=='user')t.shift();return t;}
+const lookEl=m=>h('div',{class:'msg s as-look'},m.thumb?h('img',{src:m.thumb,alt:'What the AI saw: ISO, top, front and right views'}):null,h('span',null,m.text)),chkEl=()=>h('label',{class:'as-chk',title:'After each change the AI looks at pictures (ISO, top, front, right) and numbers of what it built and fixes mistakes, up to '+AISEE.MAX_ROUNDS+' rounds. Turn it off to save time and tokens.'},h('input',{type:'checkbox',id:'ai-check',checked:H.cfg.check!==false,onchange:e=>{H.cfg.check=e.target.checked;H.save();}}),'Check my work');
 export async function send(o={}){const inp=$('#ai-in');if(!inp)return;const text=String(o.text!=null?o.text:inp.value).trim();if(!text||S.aiBusy)return;
   if(isBr()&&!H.AI.ready){A.toast('Ask in your AI app. It is connected to this page.',4200);return;}
   if(!H.AI.ready&&!await autoConnect()){V.setup=true;paint();return;}
-  if(o.text==null){inp.value='';grow();}hideAc();S.aiBusy=true;const ac=new AbortController();V.ctl=ac;const um={role:'user',text},am={role:'assistant',text:'',live:true};S.chat.push(um,am);paintChat();paintBusy();
-  const before0=JSON.stringify(S.doc),rx=REFS.forAI(S.doc,{vision:H.AI.vision,force:!!o.force,text});let cm=am;
-  try{let tries=0,req=text+mentionNote(text),history=[];
-    for(;;){const first=!history.length,msgs=[{role:'system',content:systemPrompt(S.doc.units)},...history,{role:'user',content:stateMessage(H.state(),req,first?rx.text:''),images:first&&rx.images.length?rx.images:undefined}],t0=Date.now(),raw=await H.AI.complete(msgs,{signal:ac.signal,onToken:t=>live(cm,t)});if(first)rx.sent();const rep=parseReply(raw);history.push({role:'user',content:'(earlier request) '+req},{role:'assistant',content:JSON.stringify({say:rep.say,actions:rep.actions})});
-      const applied=H.apply(rep.actions),secs=((Date.now()-t0)/1000).toFixed(1)+' s';cm.live=false;cm.text=(rep.say||(rep.parseError?'(The model did not return valid JSON.) ':''))||'Done.';cm.card=applied.length?{items:cardItems(before0,applied),before:before0,after:JSON.stringify(S.doc),t:secs}:null;paintChat();
-      if(!applied.length)break;await H.wait();const bad=S.errors.filter(e=>S.lastAiIds&&S.lastAiIds.has(e.id)),wn=(S.warnings||[]).filter(e=>S.lastAiIds&&S.lastAiIds.has(e.id)).map(e=>e.msg).concat(S.lastWarn);
-      if(!bad.length&&!wn.length||tries>=1){cm.issues=bad.map(plain);break;}
-      tries++;req=(bad.length?'Your last change failed to build: '+bad.map(e=>e.id+(e.name?" '"+e.name+"'":'')+': '+e.msg).join('; ')+'. Fix it with set/delete actions. ':'')+(wn.length?'Warnings: '+wn.join(' ')+' Fix them with set actions.':'');
-      S.chat.push({role:'sys',text:(bad.length?'The part did not build ('+bad.map(plain).join('; ')+')':'The part built with warnings')+'. Asking the AI to fix it.'});cm={role:'assistant',text:'',live:true};S.chat.push(cm);paintChat();}
-  }catch(e){const x=fx(e,H.AI.kind),i=S.chat.indexOf(cm);i>=0&&S.chat.splice(i,1);x.kind==='stop'?S.chat.push({role:'sys',text:'Stopped. Nothing from that reply was applied.'}):S.chat.push({role:'err',text:x.title,...x});}
+  if(o.text==null){inp.value='';grow();}hideAc();const history=memory();S.aiBusy=true;const ac=new AbortController();V.ctl=ac;const um={role:'user',text},am={role:'assistant',text:'',live:true};S.chat.push(um,am);paintChat();paintBusy();
+  const rx=REFS.forAI(S.doc,{vision:H.AI.vision,force:!!o.force,text}),chk=H.cfg.check!==false;let cm=am,req=text+mentionNote(text),hreq='(earlier request) '+text,imgs=rx.images,first=true,tries=0,round=0,kept=0;
+  try{
+    for(;;){
+      const msgs=[{role:'system',content:systemPrompt(S.doc.units)},...AISEE.conv(history),{role:'user',content:stateMessage(H.state(),req,first?rx.text:''),images:imgs&&imgs.length?imgs:undefined}],t0=Date.now(),raw=await H.AI.complete(msgs,{signal:ac.signal,onToken:t=>live(cm,t)});first&&rx.sent();
+      const rep=parseReply(raw),rj=JSON.stringify({say:rep.say,actions:rep.actions});history.push({role:'user',content:hreq},{role:'assistant',content:rj});cm.reply=rj;
+      const pre=JSON.stringify(S.doc),g0=geo(),applied=H.apply(rep.actions),secs=((Date.now()-t0)/1000).toFixed(1)+' s',chg=geo()!==g0;cm.live=false;cm.text=(rep.say||(rep.parseError?'(The model did not return valid JSON.) ':''))||'Done.';cm.card=applied.length?{items:cardItems(pre,applied),before:pre,after:JSON.stringify(S.doc),t:secs}:null;paintChat();first=false;imgs=null;kept+=applied.length?1:0;
+      if(!applied.length&&!S.lastWarn.length)break;
+      await H.wait();const bad=S.errors.filter(e=>S.lastAiIds&&S.lastAiIds.has(e.id)),wn=(S.warnings||[]).filter(e=>S.lastAiIds&&S.lastAiIds.has(e.id)).map(e=>e.msg).concat(S.lastWarn),hurt=bad.length||wn.length,fixReq=(bad.length?'Your last change failed to build: '+bad.map(e=>e.id+(e.name?" '"+e.name+"'":'')+': '+e.msg).join('; ')+'. Fix it with set/delete actions. ':'')+(wn.length?'Warnings: '+wn.join(' ')+' Fix them with set actions.':'');
+      if(!chk){if(!hurt||tries>=1){cm.issues=bad.map(plain);break;}tries++;req=fixReq;hreq='(automatic check) '+req.slice(0,900);S.chat.push({role:'sys',text:(bad.length?'The part did not build ('+bad.map(plain).join('; ')+')':'The part built with warnings')+'. Asking the AI to fix it.'});}
+      else{
+        if(round>0&&!chg||!chg&&!hurt||round>=AISEE.MAX_ROUNDS||A.ws!=='part'){cm.issues=bad.map(plain);round>0&&S.chat.push({role:'sys',text:round>=AISEE.MAX_ROUNDS&&chg?'I stopped after '+round+' checks. The last change was not looked at again.':'That reply changed nothing, so I stopped checking.'});break;}
+        round++;const rv=await AISEE.review(A,{sheet:H.AI.vision});if(ac.signal.aborted)throw Object.assign(new Error('stopped'),{name:'AbortError'});
+        rv.findings.unshift(...S.lastWarn.map(w=>'Your last change: '+w));const vis=H.AI.vision&&!!rv.b64;hreq='(automatic check '+round+') '+AISEE.brief(rv)+(rv.findings.length?'; findings: '+rv.findings.join(' | ').slice(0,900):'');
+        S.chat.push({role:'look',text:(bad.length?'The part did not build ('+bad.map(plain).join('; ')+'). ':'')+'Check '+round+' of '+AISEE.MAX_ROUNDS+': '+AISEE.brief(rv)+(vis?'':rv.sheet_error?' (no picture: '+rv.sheet_error+')':' (numbers only; this AI cannot see images)'),thumb:vis?rv.thumb:undefined,hist:hreq});
+        req=AISEE.reviewText(rv,text,round,vis,S.doc.params.map(p=>p.name));imgs=vis?[{mime:rv.mime,b64:rv.b64}]:null;
+      }
+      cm={role:'assistant',text:'',live:true};S.chat.push(cm);paintChat();}
+  }catch(e){const x=fx(e,H.AI.kind),i=S.chat.indexOf(cm);i>=0&&cm.live&&S.chat.splice(i,1);x.kind==='stop'?S.chat.push({role:'sys',text:kept?'Stopped. Changes from earlier replies were kept; use Undo to revert them.':'Stopped. Nothing from that reply was applied.'}):S.chat.push({role:'err',text:x.title,...x});}
   finally{S.aiBusy=false;V.ctl=null;cm.live=false;save();paintChat();paintBusy();paintSugg();paintCtx();}}
 export const stop=()=>V.ctl&&V.ctl.abort();
 export function open(o={}){const ws=A.ws;document.body.classList.toggle('ask-on',ws!=='part');S.tab!=='ai'&&(V.tab=S.tab);A.setTab('ai');A.showPanel('R');o.focus!==false&&setTimeout(()=>{const t=$('#ai-in');t&&t.offsetParent&&t.focus();},60);}
@@ -229,6 +249,7 @@ function build(){el=q('#tab-ai');el.dataset.built='1';
   el.addEventListener('dragover',e=>{[...(e.dataTransfer?e.dataTransfer.types:[])].includes('Files')&&e.preventDefault();});el.addEventListener('drop',e=>{if(e.defaultPrevented)return;e.preventDefault();A.refs.add(e.dataTransfer.files);});
   const refs=REFS.panel(A,{kind:()=>H.cfg.kind,go:()=>send({text:REFS.PROMPT,force:true})});
   el.replaceChildren(h('div',{class:'as-head'},chipEl(),h('button',{class:'as-ib as-exp',id:'ai-exp',title:'Expand or shrink the panel','aria-label':'Expand or shrink the panel',onclick:()=>{const g=q('#right .m-grab');g&&g.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));}},'⤢'),h('button',{class:'as-ib as-info',id:'ai-info',title:'What is sent?','aria-label':'What is sent?',onclick:()=>{el.classList.toggle('as-n-open');const d=$('.as-sent');d&&(d.open=el.classList.contains('as-n-open'));}},'ⓘ'),h('button',{class:'as-ib',id:'ai-clear',title:'Clear this part\'s conversation','aria-label':'Clear this part\'s conversation',onclick:()=>{S.chat=[];lset(CK+slot(),null);paintChat();},html:'<svg viewBox="0 0 24 24"><path d="M3 7h18M9 7V4h6v3m-8 0l1 13h8l1-13"/></svg>'}),h('button',{class:'as-ib as-back',id:'ai-close',title:'Back to the workspace panel','aria-label':'Back to the workspace panel',onclick:close},'✕')),h('div',{class:'as-note'}),h('div',{class:'as-prog'},h('i')),h('div',{class:'as-setup',id:'ai-setup'}),h('div',{id:'chat'}),h('div',{class:'chips'}),h('div',{class:'as-ctx'}),h('div',{class:'as-th'}),
+    chkEl(),
     h('details',{class:'as-refs'},h('summary',null,'References'),refs),
     h('div',{class:'compose'},h('button',{class:'as-clip',id:'ai-attach',title:'Attach sketches, photos or PDF drawings','aria-label':'Attach sketches, photos or PDF drawings',onclick:()=>up.click(),html:'<svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>'}),up,h('div',{class:'as-ta'},ta),h('button',{class:'btn pri',id:'ai-send',onclick:()=>S.aiBusy?stop():send()},'Send')));}
 export function render(){el=q('#tab-ai');el.dataset.built||build();!configured()&&(bst().st||{}).state==='connected'&&bridge(bst().st);paint();!H.AI.ready&&!V.busy&&configured()&&!isBr()&&!V.setup&&H.cfg.kind!=='browser'&&V.tried!==H.cfg.kind+H.keys.get(H.cfg.kind)&&(V.tried=H.cfg.kind+H.keys.get(H.cfg.kind),connect(H.cfg.kind));}
