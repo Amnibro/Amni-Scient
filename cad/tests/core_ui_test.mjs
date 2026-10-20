@@ -75,6 +75,27 @@ try{
   const dp=await ev(()=>window.amnicad.API.doc.features.find(x=>x.type==='datum_plane'&&x.plane==='XZ'));ok(!!dp,'picking a base plane creates the datum plane',dp);
   await ev(()=>{window.amnicad.API.addFeature('datum_axis');});await sleep(500);ok(await ev(()=>!!window.amnicad.S.pick),'datum axis starts a pick flow');await ev(()=>{window.amnicad.API.undo&&document.querySelector('#pickpanel .btn.ghost')&&[...document.querySelectorAll('#pickpanel button')].find(b=>b.textContent==='Cancel').click();});
   await ev(()=>{window.amnicad.API.addFeature('datum_point');});await sleep(500);ok(await ev(()=>!!window.amnicad.S.pick),'datum point starts a pick flow');await ev(()=>{[...document.querySelectorAll('#pickpanel button')].find(b=>b.textContent==='Cancel').click();});
+  await act([{new:true,units:'mm'},{add:{type:'box',w:60,d:40,h:10}},{add:{type:'hole',plane:'XY',offset:10,pts:[[0,0]],d:8,thru:true}}]);
+  let ms=T(await call('measure',{a:{face:{side:'+Z'}},b:{face:{side:'-Z'}}}));ok(Math.abs(ms.min_distance-10)<1e-6&&ms.parallel&&Math.abs(ms.gap-10)<1e-6&&ms.units==='mm','MCP measure: top to bottom is 10 mm and parallel',ms);
+  ms=T(await call('measure',{a:{face:{type:'CYLINDER'}}}));ok(Math.abs(ms.a.radius-4)<1e-6&&Math.abs(ms.a.diameter-8)<1e-6,'MCP measure: hole radius and diameter',ms.a);
+  ms=T(await call('measure',{a:{point:[20,0,30]},b:{face:{side:'+Z'}}}));ok(Math.abs(ms.min_distance-20)<1e-6,'MCP measure: point to face',ms.min_distance);
+  ms=T(await call('measure',{a:{body:true}}));ok(Math.abs(ms.a.volume-(60*40*10-Math.PI*16*10))<1,'MCP measure: body volume',ms.a.volume);
+  const bad=await call('measure',{a:{face:{by:'all'}},b:{face:{side:'+Z'}}});ok(bad.isError||/matched/.test(JSON.stringify(bad)),'MCP measure explains an ambiguous selector',JSON.stringify(bad).slice(0,200));
+  await ev(()=>{const A=window.amnicad.API,m=A.mesh,top=m.faces.findIndex(f=>f.type==='PLANE'&&f.n&&f.n[2]>0.99),bot=m.faces.findIndex(f=>f.type==='PLANE'&&f.n&&f.n[2]<-0.99);A.S.sel.faces.clear();A.S.sel.edges.clear();A.S.sel.faces.set(top,m.faces[top].c);A.S.sel.faces.set(bot,m.faces[bot].c);A.refreshSel();});
+  ms=T(await call('measure',{}));ok(Math.abs(ms.min_distance-10)<1e-6,'MCP measure with no arguments uses the selection in the page',ms.min_distance);
+  await ev(()=>{const A=window.amnicad.API;A.S.sel.faces.clear();A.refreshSel();window.amnicad.view('iso',true);});await sleep(600);
+  const scr=q=>ev(q=>{const A=window.amnicad.API,v=new A.THREE.Vector3(...q).project(A.camera),r=A.renderer.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height];},q);
+  await ev(()=>document.querySelector('#b-meas').click());await sleep(300);ok(await ev(()=>!!document.querySelector('#measurep')&&window.amnicad.S.measure.on),'Measure button opens the measure panel');
+  let[x,y]=await scr([20,0,10]);await page.mouse.click(x,y);await sleep(600);
+  let tx=await ev(()=>document.querySelector('#measurep').innerText);ok(/plane face/i.test(tx)&&/Area/.test(tx),'one click on the top face shows its area',tx.replace(/\n/g,' | ').slice(0,200));
+  [x,y]=await scr([0,-20,5]);await page.mouse.click(x,y);await sleep(800);
+  tx=await ev(()=>document.querySelector('#measurep').innerText);ok(/Minimum distance/.test(tx)&&/Angle[\s|]*90/.test(tx.replace(/\n/g,' | ')),'second click on the front face shows the 90 degree angle and distance',tx.replace(/\n/g,' | ').slice(0,300));
+  ok(await ev(()=>!!window.amnicad.S.measure.g),'a distance line is drawn in the view');
+  if(process.env.SHOTS){await page.screenshot({path:process.env.SHOTS+'/measure_two_faces.png'});}
+  await ev(()=>{[...document.querySelectorAll('#measurep .seg button')].find(b=>/Point/.test(b.textContent)).click();});await sleep(200);
+  [x,y]=await scr([30,20,10]);await page.mouse.click(x,y);await sleep(500);[x,y]=await scr([-30,20,10]);await page.mouse.click(x,y);await sleep(800);
+  tx=await ev(()=>document.querySelector('#measurep').innerText);const md=/Minimum distance\s*\n?\s*([\d.]+)/.exec(tx);ok(md&&Math.abs(+md[1]/25.4-60/25.4)<0.2,'point mode snaps to the top corners: distance about 60 mm',tx.replace(/\n/g,' | ').slice(0,260));
+  await page.keyboard.press('Escape');await sleep(300);ok(await ev(()=>!document.querySelector('#measurep')&&!window.amnicad.S.measure.on),'Escape exits measure mode');
   await act([{new:true,units:'in'},{add:{type:'box',w:2,d:3,h:4}}]);await ev(()=>{window.amnicad.API.active=null;});await sleep(400);
   const mb=await ev(()=>{const b=[...document.querySelectorAll('#tab-edit button')].find(x=>/Mass properties/.test(x.textContent));b&&b.click();return!!b;});ok(mb,'the Part panel has a Mass properties button in every layout');await sleep(1500);
   ok(await ev(()=>/Ixx/.test(document.querySelector('#dlg').innerText)&&document.querySelector('#dlg').open),'it opens the dialog with the inertia rows');await ev(()=>document.querySelector('#dlg').close());

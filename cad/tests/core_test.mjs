@@ -2,6 +2,7 @@ import opencascade from '../vendor/replicad_single.js';
 import * as K from '../kernel.js';
 import {FT,featureDocs,defaults,MATS} from '../schema.js';
 import * as MP from '../massprops.js';
+import * as MS from '../measure.js';
 import {massSI,convertDoc} from '../units.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));},near=(a,b,r,m)=>ok(Math.abs(a-b)<=Math.max(Math.abs(b)*r,1e-9),m+' got '+a+' want '+b);
@@ -118,5 +119,24 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   const inch=await B([{type:'box',w:2,d:2,h:1},{type:'datum_plane',plane:'XY',offset:1.5},on('f2',{shapes:[{k:'rect',w:0.5,h:0.5}],depth:0.25})],'in');near(bb(inch).max[2],1.75,1e-9,'datum plane offsets are document units');
   ok(/datum_plane:/.test(featureDocs())&&/datum_axis:/.test(featureDocs())&&/datum_point:/.test(featureDocs())&&['datum_plane','datum_axis','datum_point'].every(k=>FT[k].doc.length>100),'datum features have docs');
   for(const k of['datum_plane','datum_axis','datum_point']){const r2=await B([box,defaults(k)]);ok(!r2.errors.length,'defaults of '+k+' build '+JSON.stringify(r2.errors));}
+}
+{const box={type:'box',w:20,d:20,h:10},M=async(fs,a,b,u='mm')=>{const r=await B(fs,u);return MS.measure(r.body,K,a,b);};
+  let m=await M([box],{face:{side:'+Z'}},{face:{side:'-Z'}});near(m.min_distance,10,1e-9,'top to bottom distance');ok(m.parallel&&Math.abs(m.gap-10)<1e-9&&m.angle_deg<1e-6&&Math.abs(m.normals_angle_deg-180)<1e-6,'parallel faces report the gap and 180 degree normals '+JSON.stringify(m));near(m.a.area,400,1e-9,'face area');ok(m.a.type==='plane'&&m.a.normal[2]===1,'face info');
+  m=await M([box],{face:{side:'+Z'}},{face:{side:'+X'}});near(m.angle_deg,90,1e-9,'perpendicular faces 90 degrees');ok(m.min_distance<1e-9,'faces that share an edge are at distance 0');
+  m=await M([{type:'box',w:10,d:10,h:10},{type:'box',w:10,d:10,h:10,x:30}],{solid:0},{solid:1});near(m.min_distance,20,1e-9,'two solids: minimum distance');near(m.closest_a[0],5,1e-9,'closest point on the first solid');near(m.closest_b[0],25,1e-9,'closest point on the second solid');
+  m=await M([box],{point:[0,0,20]},{point:[3,4,20]});near(m.min_distance,5,1e-9,'point to point');near(m.delta[1],4,1e-9,'point delta y');near(m.center_distance,5,1e-9,'point center distance');
+  m=await M([box],{point:[0,0,25]},{face:{side:'+Z'}});near(m.min_distance,15,1e-9,'point to face');
+  m=await M([box],{edge:{by:'pick',pts:[[0,-10,10]]}},{edge:{by:'pick',pts:[[0,10,10]]}});near(m.min_distance,20,1e-9,'two parallel edges');ok(m.parallel&&m.angle_deg<1e-6,'parallel edges');
+  m=await M([box],{edge:{by:'pick',pts:[[0,-10,10]]}},{edge:{by:'pick',pts:[[10,0,0]]}});near(m.angle_deg,90,1e-9,'perpendicular edges 90 degrees');near(m.a.length,20,1e-9,'edge length');
+  m=await M([box],{face:{side:'+Z'}},{edge:{by:'pick',pts:[[10,10,5]]}});near(m.angle_deg,90,1e-9,'plane to a vertical edge is 90 degrees');
+  m=await M([box,{type:'hole',plane:'XY',offset:10,pts:[[0,0]],d:8,thru:true}],{face:{type:'CYLINDER'}});near(m.a.radius,4,1e-9,'hole radius');near(m.a.diameter,8,1e-9,'hole diameter');near(Math.abs(m.a.axis[2]),1,1e-9,'hole axis');
+  m=await M([box,{type:'hole',plane:'XY',offset:10,pts:[[0,0]],d:8,thru:true}],{edge:{by:'pick',pts:[[4,0,10]]}});ok(m.a.type==='circle'&&Math.abs(m.a.radius-4)<1e-9&&Math.abs(m.a.diameter-8)<1e-9,'circle edge radius and diameter '+JSON.stringify(m.a));
+  m=await M([box,{type:'datum_plane',plane:'XY',offset:15}],{face:{side:'+Z'}},{datum:'f2'});near(m.min_distance,5,1e-9,'face to datum plane');ok(m.parallel&&Math.abs(m.gap-5)<1e-9,'datum plane is parallel to the top');
+  m=await M([box,{type:'datum_axis',mode:'points',pts:[[30,0,0],[30,0,1]]}],{datum:'f2'},{face:{side:'+X'}});near(m.min_distance,20,1e-9,'datum axis to face');
+  m=await M([box,{type:'datum_point',x:0,y:0,z:30}],{datum:'f2'},{face:{side:'+Z'}});near(m.min_distance,20,1e-9,'datum point to face');
+  m=await M([box],{body:true});near(m.a.volume,4000,1e-9,'body volume');near(m.a.size[2],10,1e-9,'body size');
+  const bad=await B([box]);let msg='';try{MS.measure(bad.body,K,{face:{normal:'+X'}},{face:{by:'all'}});}catch(e){msg=e.message;}ok(/matched/.test(msg),'ambiguous selector is explained: '+msg);
+  msg='';try{MS.measure(bad.body,K,{});}catch(e){msg=e.message;}ok(/face, edge, point/.test(msg),'empty ref is explained: '+msg);
+  m=await M([{type:'box',w:2,d:2,h:1}],{face:{side:'+Z'}},{face:{side:'-Z'}},'in');near(m.min_distance,1,1e-9,'inch document measures in inches');
 }
 console.log(pass+' passed, '+fail+' failed');process.exitCode=fail?1:0;

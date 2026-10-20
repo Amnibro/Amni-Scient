@@ -11,6 +11,7 @@ export const planeRef=(v,off=0)=>NAMED[v]?(({n,x})=>({o:mul(n,off),n,x}))(NAMED[
 export const axisRef=a=>{if(a&&typeof a==='object'&&!Array.isArray(a)&&a.p&&a.d)return{p:a.p.map(Number),d:nrm(a.d.map(Number))};const d=typeof a==='string'&&DAT[a];return d&&d.kind==='axis'?{p:d.p,d:d.d}:null;};
 export const rot=(v,u,t)=>{const c=Math.cos(t),s=Math.sin(t),k=dot(u,v)*(1-c),w=cross(u,v);return[v[0]*c+w[0]*s+u[0]*k,v[1]*c+w[1]*s+u[1]*k,v[2]*c+w[2]*s+u[2]*k];};
 export const lineOf=(n1,h1,n2,h2)=>{const d=cross(n1,n2),dd=dot(d,d);if(dd<1e-12)throw new Error('the two planes are parallel, so they have no line of intersection');const a=mul(cross(n2,d),h1/dd),b=mul(cross(d,n1),h2/dd);return{p:add(a,b),d:nrm(d)};};
+export function cylGeom(oc,fc,type){const s=new oc.BRepAdaptor_Surface(fc.wrapped,true),q=type==='CONE'?s.Cone():s.Cylinder(),a=q.Axis(),l=a.Location(),d=a.Direction(),r={p:[l.X(),l.Y(),l.Z()],d:[d.X(),d.Y(),d.Z()],r:q.RefRadius?q.RefRadius():q.Radius()};s.delete&&s.delete();return r;}
 export function frameOfPlane(f,body,K){
   const off=+f.offset||0,m=f.plane||'XY';
   if(NAMED[m]||m==='face'||m==='datum'){const P=K.planeFrom({plane:m,face:f.face,datum:f.datum,offset:off},body);return{o:P.o,n:P.n,x:P.x};}
@@ -25,7 +26,7 @@ export function frameOfAxis(f,body,K){
   if(m==='planes'){const A=planeRef(f.pa||'XY'),Bp=planeRef(f.pb||'XZ');return lineOf(A.n,dot(A.n,A.o),Bp.n,dot(Bp.n,Bp.o));}
   if(!body)throw new Error('this axis needs a part to measure from');
   if(m==='edge'){const e=K.selectEdges(body,f.edges)[0];if(!e||e.type!=='LINE')throw new Error('pick a straight edge for the axis');return{p:e.a,d:nrm(sub(e.b,e.a))};}
-  if(m==='cylinder'){const q=K.selectFaces(body,f.faces)[0];if(!q||!/CYLINDRE|CONE/.test(q.type))throw new Error('pick a round face (cylinder or cone) for the axis');const oc=K.R.getOC(),s=new oc.BRepAdaptor_Surface(q.f.wrapped,true),a=(q.type==='CONE'?s.Cone():s.Cylinder()).Axis(),l=a.Location(),d=a.Direction(),r={p:[l.X(),l.Y(),l.Z()],d:[d.X(),d.Y(),d.Z()]};s.delete&&s.delete();return r;}
+  if(m==='cylinder'){const q=K.selectFaces(body,f.faces)[0];if(!q||!/CYLINDRE|CONE/.test(q.type))throw new Error('pick a round face (cylinder or cone) for the axis');const g=cylGeom(K.R.getOC(),q.f,q.type);return{p:g.p,d:g.d};}
   throw new Error('an axis is defined by points, cylinder, planes or edge, not "'+m+'"');
 }
 export function frameOfPoint(f,body,K){

@@ -6,7 +6,11 @@ const CSS=`.feat.frz{background:color-mix(in srgb,var(--acc) 7%,transparent)}
 .frzbar .btn{height:17px;padding:0 7px;font-size:11px}
 .frzbar b{font-size:10px;color:var(--acc);letter-spacing:.04em}
 .frznote{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:8px 0;padding:8px 10px;border-radius:8px;border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);background:var(--acc-soft);font-size:12.5px}
-.frzbody{opacity:.7}`;
+.frzbody{opacity:.7}
+.measurep{position:absolute;left:10px;top:52px;z-index:7;max-width:min(360px,calc(100% - 20px));max-height:calc(100% - 70px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow);font-size:12.5px}
+.measurep .mi{gap:7px;align-items:center;margin:2px 0}
+.measurep .kv{margin-top:7px}
+@media (pointer:coarse){.measurep .x{width:34px;height:34px}.measurep .seg button{min-height:34px}}`;
 export function css(){if(typeof document==='undefined'||document.getElementById('core-css'))return;const s=document.createElement('style');s.id='core-css';s.textContent=CSS;document.head.append(s);}
 export function rowFreeze(items,fs,fz,setFz,h){
   css();

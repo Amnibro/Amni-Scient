@@ -10,7 +10,7 @@ export function chamferSides(body,es,f){
   const first=new Map(es.map(q=>{const fs=adj.get(q.e.hashCode)||[];if(fs.length!==2)return[q.e.hashCode,null];const n=fs.map(g=>V3(g.normalAt(q.m))),c=[2,0,1].map(i=>n[0][i]-n[1][i]).find(d=>Math.abs(d)>1e-7)||0;return[q.e.hashCode,fs[(c<0)!==!!f.flip?1:0].hashCode];}));
   return(x,r)=>{const dd=d2?d2*x/r:x;return e=>{const h=first.get(e.hashCode);return h===undefined?null:h===null?x:{...(a?{distance:x,angle:a}:{distances:[x,dd]}),selectedFace:ff=>ff.when(({element})=>element.hashCode===h)};};};
 }
-export const cylAxis=(oc,fc)=>{const s=new oc.BRepAdaptor_Surface(fc.wrapped,true),d=s.Cylinder().Axis().Direction(),r=[d.X(),d.Y(),d.Z()];s.delete&&s.delete();return r;};
+export const cylAxis=(oc,fc)=>D.cylGeom(oc,fc,'CYLINDRE').d;
 export const alongFaces=(oc,F,ax)=>F.filter(q=>q.type==='PLANE'?q.n&&Math.abs(dot(q.n,ax))<1e-7:q.type==='CYLINDRE'&&Math.abs(Math.abs(dot(cylAxis(oc,q.f),ax))-1)<1e-7);
 function draft(f,body,K){
   const oc=R.getOC(),p=K.AXV(f.pull||'+Z'),a=+f.angle;if(!isFinite(a)||Math.abs(a)>=90)throw new Error('draft angle must be between -90 and 90 degrees');if(!a)return{shape:body};
