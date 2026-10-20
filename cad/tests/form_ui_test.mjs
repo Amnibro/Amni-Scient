@@ -13,6 +13,10 @@ try{await sleep(700);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   const key=async(...ks)=>{for(const k of ks){await p.keyboard.press(k);await sleep(40);}};
   const menu=async(x,y)=>{await p.mouse.click(x,y,{button:'right'});await sleep(250);return p.evaluate(()=>{const m=document.querySelector('.ctxm');return m?[...m.querySelectorAll('button span')].map(b=>b.textContent):null;});};
   const pickMenu=async label=>p.evaluate(l=>{const b=[...document.querySelectorAll('.ctxm button')].find(x=>x.querySelector('span').textContent===l);b&&b.click();return!!b;},label);
+  const st0=await p.evaluate(async()=>{const d=API.download,got=[];API.download=(b,n)=>got.push(n);const r=await API.hooks.formExport('glb');API.download=d;return{form:API.doc.form||'',on:document.getElementById('fstart').classList.contains('on'),n:document.querySelectorAll('#fstart [data-tpl]').length,r,got:got.length,toast:document.getElementById('toast').textContent,bounds:API.hooks.bounds()};});
+  ok(!st0.form&&st0.on&&st0.n>=7&&st0.r===true&&!st0.got&&/Nothing to export yet/.test(st0.toast)&&st0.bounds===null,'an empty Form opens a start screen without changing the document, and exports say there is nothing yet',JSON.stringify(st0));
+  await p.click('#fstart [data-tpl=mascot]');await settle(300);const st1=await p.evaluate(()=>({form:API.doc.form||'',on:document.getElementById('fstart').classList.contains('on')}));await p.evaluate(()=>API.undo());await sleep(400);const st2=await p.evaluate(()=>({form:API.doc.form||'',on:document.getElementById('fstart').classList.contains('on')}));
+  ok(/ bone /.test(st1.form)&&!st1.on&&!st2.form.trim()&&st2.on,'picking a template adds it as one undoable step, and undo brings the start screen back',JSON.stringify({a:st1.form.length,b:st2.form.length,on:[st1.on,st2.on]}));
   await setScene(SCENE);
   let [bx,by]=await scr([2.5,0,0.5]);const [cx,cy]=await scr([0,0,0.5]);
   await p.mouse.move(bx,by);await p.mouse.click(bx,by);await sleep(200);ok(JSON.stringify(await sel())==='["ball"]','click selects the shape under the cursor',JSON.stringify(await sel()));
