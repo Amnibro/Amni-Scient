@@ -40,5 +40,26 @@ function rib(f,body,K){
   if(!use.length)throw new Error('the rib does not reach the part: move or lengthen the line, or change Grow toward');
   const picks=use.flatMap(r=>r.hit),out=picks.reduce((acc,h)=>acc.fuse(h),body);return{shape:out,tool:picks.length===1?picks[0]:R.makeCompound(picks)};
 }
+const solidsOf=b=>b.solids||[b],ivol=(a,b)=>{try{return Math.abs(R.measureShapeVolumeProperties(a.intersect(b)).volume);}catch{return 0;}};
+function pickBodies(sel,L,K,tools){
+  const out=[];for(const s of Array.isArray(sel)?sel:[sel]){
+    if(typeof s==='number'){out.push(s);continue;}if(!s||typeof s!=='object')continue;
+    if(s.index!=null)out.push(+s.index);
+    else if(s.by==='all')L.forEach((_,i)=>out.push(i));
+    else if(s.feature!=null){const t=tools[s.feature];if(!t)throw new Error('feature "'+s.feature+'" made no body to select');const v=L.map(b=>ivol(b,t)),m=Math.max(...v);if(!(m>1e-9))throw new Error('no body contains the geometry of feature "'+s.feature+'" any more');out.push(v.indexOf(m));}
+    else if(s.largest||s.smallest){const v=L.map(b=>Math.abs(K.volOf(b))),m=s.largest?Math.max(...v):Math.min(...v);out.push(v.indexOf(m));}
+    else if(s.pts||s.by==='pick'){for(const p of s.pts||[]){let bi=-1,bd=1e18;L.forEach((b,i)=>{const d=K.pdist(p,b);d<bd&&(bd=d,bi=i);});bi>=0&&out.push(bi);}}
+  }
+  return[...new Set(out)];
+}
+function combine(f,body,K,doc,tools){
+  if(!body)throw new Error('combine needs bodies to work on');const L=solidsOf(body);if(L.length<2)throw new Error('the part has only one body, so there is nothing to combine');
+  const kind=f.kind||'union',t=pickBodies(f.target===undefined?{largest:true}:f.target,L,K,tools)[0];if(t==null||!L[t])throw new Error('the target body was not found; the part has '+L.length+' bodies (index 0 to '+(L.length-1)+')');
+  const ts=pickBodies(f.tools===undefined||f.tools===null||Array.isArray(f.tools)&&!f.tools.length?{by:'all'}:f.tools,L,K,tools).filter(i=>i!==t&&L[i]);if(!ts.length)throw new Error('pick at least one other body to combine with');
+  let res=L[t];for(const i of ts)res=kind==='subtract'?res.cut(L[i]):kind==='intersect'?res.intersect(L[i]):res.fuse(L[i]);
+  const rs=solidsOf(res);if(!rs.length||!(rs.reduce((a,x)=>a+Math.abs(K.volOf(x)),0)>1e-12))throw new Error(kind==='intersect'?'the bodies do not overlap, so the intersection is empty':'the result is empty');
+  const rest=L.filter((_,i)=>i!==t&&(!ts.includes(i)||f.keep&&kind!=='union')),out=[...rs,...rest],warn=kind==='union'&&rs.length>1?'the bodies do not touch, so they stay separate':null;
+  return{shape:out.length===1?out[0]:R.makeCompound(out),warn};
+}
 const datum=(kind,fr)=>(f,body,K)=>({shape:body,dat:{kind,...fr(f,body,K)}});
-export const FEAT2={draft,rib,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};
+export const FEAT2={draft,rib,combine,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};

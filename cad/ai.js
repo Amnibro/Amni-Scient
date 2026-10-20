@@ -72,7 +72,7 @@ Hole: drills from its sketch plane against the normal, so put it on the face it 
 Limits: values that do not fit are not silently clamped. The build uses the nearest value that works and returns a warning with "field", "limit" and "fix" suggestions (e.g. a rect corner radius above half its smaller side, a fillet too large for its edges, a hole deeper than the part). Read the warnings in the result and fix the value instead of leaving it.
 Edge selectors: {"by":"all"}, {"dir":"Z"} straight edges parallel to Z, {"side":"+Z"} edges on the top, {"type":"CIRCLE"} round edges, {"by":"pick","pts":[[x,y,z]]} the edge nearest each point. A list of selectors means "any of them".
 Face selectors: {"side":"+Z"} outermost face on that side, {"normal":"-Y"} faces pointing that way, {"type":"CYLINDER"}, {"by":"pick","pts":[[x,y,z]]}.
-op: "add" union, "cut" subtract, "intersect".
+op: "add" union, "cut" subtract, "intersect", "new" keeps the solid as its own body even where it touches or overlaps the part (merge bodies later with the combine feature). An added feature that does not touch the part also becomes a separate body and the result carries a warning.
 Finishes depend on the material (anodize on aluminum or titanium, black oxide and zinc on steel, passivate on stainless).
 Materials: ${Object.entries(MATS).map(([k,m])=>k+' ('+m.n+')').join(', ')}.
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.

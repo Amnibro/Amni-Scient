@@ -1,6 +1,6 @@
 import {THERMAL} from './thermal_data.js';
 import {mkFT2} from './schema2.js';
-const OP=['op','Operation','add',['add','cut','intersect']],X=['x','X',0],Y=['y','Y',0],Z=['z','Z',0],AXIS=['axis','Axis','Z',['X','Y','Z']];
+const OP=['op','Operation','add',['add','cut','intersect','new']],X=['x','X',0],Y=['y','Y',0],Z=['z','Z',0],AXIS=['axis','Axis','Z',['X','Y','Z']];
 const PLANE=[['plane','Sketch on','XY',['XY','XZ','YZ','face','datum']],['face','Face',{side:'+Z'},'face',s=>s.plane==='face'],['datum','Datum plane','','dplane',s=>s.plane==='datum'],['offset','Offset',0]];
 export const FT={
 box:{n:'Box',g:'Solid',i:'▣',f:[['w','Width (X)',40],['d','Depth (Y)',30],['h','Height (Z)',10],['x','Center X',0],['y','Center Y',0],['z','Base Z',0],OP],doc:'axis-aligned box centered on x,y with its base at z'},

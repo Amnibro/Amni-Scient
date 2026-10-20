@@ -139,4 +139,32 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   msg='';try{MS.measure(bad.body,K,{});}catch(e){msg=e.message;}ok(/face, edge, point/.test(msg),'empty ref is explained: '+msg);
   m=await M([{type:'box',w:2,d:2,h:1}],{face:{side:'+Z'}},{face:{side:'-Z'}},'in');near(m.min_distance,1,1e-9,'inch document measures in inches');
 }
+{const A={type:'box',w:20,d:20,h:10},Bx={type:'box',w:10,d:10,h:10,x:30},nb=r=>K.meshBody(r.body).props.nSolids,vl=r=>K.meshBody(r.body).props.volume;
+  let r=await B([A,Bx]);ok(!r.errors.length&&nb(r)===2,'disjoint add makes 2 bodies');ok(r.warnings.some(w=>w.id==='f2'&&!w.field&&/separate body/.test(w.msg)&&w.bodies===2),'disjoint add carries a visible warning '+JSON.stringify(r.warnings.map(w=>w.msg)));
+  r=await B([A,{...Bx,x:12}]);ok(nb(r)===1&&!r.warnings.length,'an add that overlaps the part is silent');r=await B([A,{...Bx,x:5}]);ok(r.warnings.some(w=>/entirely inside/.test(w.msg)),'an add inside the part keeps its existing note');
+  r=await B([A,{...Bx,x:12,op:'new'}]);ok(nb(r)===2&&r.warnings.some(w=>/overlaps/.test(w.msg)),'op new keeps a touching body separate and warns about the overlap '+JSON.stringify(r.warnings.map(w=>w.msg)));
+  r=await B([A,{...Bx,x:30,op:'new'}]);ok(nb(r)===2&&r.warnings.length===1&&/separate/.test(r.warnings[0].msg),'op new far away: one warning, no overlap note');
+  r=await B([{type:'box',w:60,d:10,h:10},{type:'box',w:10,d:30,h:5,x:0,op:'cut'}]);ok(nb(r)===1&&!r.warnings.length,'a notch that leaves the bar in one piece is silent');
+  r=await B([{type:'box',w:60,d:10,h:10},{type:'box',w:10,d:30,h:30,op:'cut'}]);ok(nb(r)===2&&r.warnings.some(w=>/split/.test(w.msg)),'a cut that splits the part warns '+JSON.stringify(r.warnings.map(w=>w.msg)));
+  r=await B([A,Bx,{type:'combine',kind:'union'}]);ok(nb(r)===2&&r.warnings.some(w=>/stay separate/.test(w.msg)),'union of bodies that do not touch says so');
+  r=await B([A,{...Bx,x:30,op:'new'},{type:'combine',kind:'union'}]);ok(!r.errors.length,'union of bodies that do not touch builds');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'union'}]);ok(!r.errors.length&&nb(r)===1,'union merges two overlapping bodies into one');near(vl(r),4700,1e-6,'merged volume removes the overlap');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{index:0},tools:[{index:1}]}]);ok(!r.errors.length&&nb(r)===1,'subtract builds');near(vl(r),3700,1e-6,'subtract removes the overlap from the target');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',keep:true}]);ok(nb(r)===2,'subtract with keep leaves the tool body in place');near(vl(r),3700+1000,1e-6,'volume of target-minus-tool plus the kept tool');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'intersect'}]);ok(!r.errors.length&&nb(r)===1,'intersect builds');near(vl(r),300,1e-6,'intersect keeps the shared volume');
+  r=await B([A,Bx,{type:'combine',kind:'intersect'}]);ok(r.errors.length&&/overlap/.test(r.errors[0].msg),'intersect of disjoint bodies is explained');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{feature:'f2'},tools:{feature:'f1'}}]);near(vl(r),700,1e-6,'bodies can be selected by the feature that made them (subtract A from B)');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{largest:true},tools:{smallest:true}}]);near(vl(r),3700,1e-6,'largest and smallest selectors');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{by:'pick',pts:[[-9,0,5]]},tools:{by:'pick',pts:[[29,0,5]]}}]);near(vl(r),3700,1e-6,'pick selectors choose the nearest body');
+  r=await B([A,{type:'combine'}]);ok(r.errors.length&&/only one body/.test(r.errors[0].msg),'combine of a single body is explained');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{index:5}}]);ok(r.errors.length&&/target body/.test(r.errors[0].msg),'bad target index is explained');
+  r=await B([A,{...Bx,x:30},{type:'fillet',r:1,edges:{by:'all'}}]);ok(!r.errors.length&&nb(r)===2,'fillet works on a part with two bodies');
+  r=await B([A,{...Bx,x:30},{type:'mirror',plane:'YZ',only:false}]);ok(!r.errors.length&&nb(r)===3,'mirror of a two body part about its middle gives three bodies');
+  const mb=K.meshBody((await B([A,Bx])).body).props;ok(mb.solids&&mb.solids.length===2&&Math.abs(mb.solids[0].volume+mb.solids[1].volume-mb.volume)<1e-6&&mb.solids[0].bbox.min.length===3,'meshBody lists each body with volume, center and box');
+  ok(!K.meshBody((await B([A])).body).props.solids,'a single body has no body list');
+  const inch=await B([{type:'box',w:2,d:2,h:1},{type:'box',w:1,d:1,h:1,x:3}],'in');ok(inch.warnings.some(w=>/separate/.test(w.msg)),'inch documents warn too');
+  ok(/combine:/.test(featureDocs())&&FT.combine.doc.length>200,'combine has a doc');
+  const sup=await B([A,Bx,{type:'combine',kind:'union',suppressed:true}]);ok(nb(sup)===2,'suppressed combine is skipped');
+  const pt=await B([A,{...Bx,x:30,op:'new'},{type:'pattern',of:['f2'],n:2,dx:20,kind:'linear'}]);ok(!pt.errors.length,'pattern of a new body builds '+JSON.stringify(pt.errors));
+}
 console.log(pass+' passed, '+fail+' failed');process.exitCode=fail?1:0;

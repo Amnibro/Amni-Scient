@@ -41,3 +41,18 @@ export function datumSelect({h,f,k,label,kind,doc,set,selectField,OPN}){
   const i=doc.features.findIndex(x=>x.id===f.id),L=doc.features.slice(0,i<0?doc.features.length:i).filter(x=>DKIND[kind].includes(x.type)),opts=[...(kind==='bplane'?['XY','XZ','YZ'].map(p=>[p,OPN[p]||p]):[]),...L.map(x=>[x.id,(x.name||x.id)+' ('+x.id+')'])];
   return opts.length?selectField(label,opts,f[k]||opts[0][0],v=>set(k,v)):h('div',{class:'note',style:'margin:8px 0'},label+': add a '+(kind==='daxis'?'datum axis':'datum plane')+' before this feature first.');
 }
+const sizeOf=b=>[0,1,2].map(i=>b.max[i]-b.min[i]);
+export function bodyLabel(UN,doc,b){return'Body '+(b.index+1)+' · '+UN.nf(UN.volMM3(b.volume,doc)/1000,3)+' cm³ · '+sizeOf(b.bbox).map(v=>UN.nf(v,3)).join(' × ')+' '+UN.docUnits(doc);}
+export function bodyList({h,mesh,UN,doc,addCombine}){
+  css();const L=mesh&&mesh.props&&mesh.props.solids;if(!L)return[];
+  return[h('div',{class:'palg',style:'margin-top:7px'},'Bodies ('+L.length+')'),...L.map((b,i)=>h('div',{class:'feat mi',title:'A separate solid of the part',style:'cursor:default'},h('span',{class:'ic'},'▣'),h('span',{class:'nm'},bodyLabel(UN,doc,{...b,index:i})))),h('div',{class:'row',style:'margin:5px 4px'},h('button',{class:'btn sm',title:'Merge, subtract or intersect bodies',onclick:addCombine},'Combine bodies…'))];
+}
+const sel=(b,s)=>s&&typeof s==='object'&&s.index!=null?s.index===b.index:false;
+export function bodyPick({h,f,k,label,kind,bodies,set,UN,doc}){
+  if(!bodies)return h('div',{class:'note',style:'margin:8px 0'},label+': loading the bodies…');
+  if(bodies.length<2)return h('div',{class:'note',style:'margin:8px 0'},label+': the part has only one body at this point, so there is nothing to combine.');
+  const cur=f[k],idx=v=>[].concat(v===undefined?[]:v).filter(s=>s&&s.index!=null).map(s=>s.index);
+  if(kind==='body')return h('div',{class:'fld'},h('label',null,label),h('select',{onchange:e=>set(k,{index:+e.target.value})},...bodies.map(b=>h('option',{value:b.index,selected:idx(cur)[0]===b.index||(idx(cur).length===0&&b.index===0)},bodyLabel(UN,doc,b)))));
+  const all=cur&&cur.by==='all',on=new Set(idx(cur));
+  return h('div',{style:'margin:8px 0'},h('label',{class:'mut'},label),h('div',{class:'row',style:'gap:7px;margin:5px 0'},h('label',{class:'row',style:'gap:7px;align-items:center'},h('input',{type:'checkbox',checked:all,onchange:e=>set(k,e.target.checked?{by:'all'}:bodies.filter(b=>idx(f.target)[0]!==b.index).map(b=>({index:b.index})))}),'Every other body')),...(all?[]:bodies.map(b=>h('label',{class:'row',style:'gap:7px;align-items:center'},h('input',{type:'checkbox',checked:on.has(b.index),onchange:e=>{const s=new Set(idx(f[k]));e.target.checked?s.add(b.index):s.delete(b.index);set(k,[...s].map(i=>({index:i})));}}),bodyLabel(UN,doc,b)))));
+}
