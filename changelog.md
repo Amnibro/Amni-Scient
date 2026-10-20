@@ -1,3 +1,9 @@
+## 2026-10-20 — Amni-Learn: every U.S. state
+- **State picker** is now a dropdown with all 50 states and Washington, D.C. New York, Florida and Texas keep their full state standard codes. Every other state follows the Common Core grade-level sequence and shows Common Core (CCSS) codes in the skills map and problem chips, with a note for states that wrote their own standards (Alaska, Indiana, Minnesota, Nebraska, Oklahoma, South Carolina, Virginia).
+- **My State Studies** works for every state: capital, nickname, state bird, flower and tree, statehood year and order, largest city, neighbors and Census region, from a checked fact table, plus shared U.S. civics questions.
+- **Test Prep** shows every state's practice tests when yours has none yet.
+- Fixed: changing grade or state threw a stack overflow from the toast helper.
+
 ## 2026-10-20 — Amni-Learn: Play & Learn for little ones
 - **Play & Learn** (🎈, top of Pre-K and K–2, some at Grades 3–5): ten new activities, all spoken aloud with a replay button so Pre-K needs no reading, adaptive difficulty, drag or tap, and gentle chimes. Feed the Animals (counting 1–10), Sticker Scenes (listening and counting with a saved gallery), Maze Runner, Shape Puzzles (rotate to fit), Feelings Friends (feelings and kind choices with a calm-down breath), Dress for the Weather, Color by Number (numerals → addition → multiplication by level), Where Does It Go? (on, under, next to, between), Sorting Baskets, and Pattern Beads that play back as a tune.
 

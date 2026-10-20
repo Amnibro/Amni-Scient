@@ -46,7 +46,7 @@ for(const st of STS)for(const g of ['P','K','1','2','3','4','5']){
 }
 for(const st of STS)for(const g of ['K','1','2','3','4','5']){const r=S._rng(99);for(let i=0;i<500;i++){const h=1+Math.floor(r()*12),m=S.clockMinutes(g,st,r),c=S.clockChoices(h,m,g,st,r),okStr=`${h}:${String(m).padStart(2,'0')}`;ok(m>=0&&m<60,'minute range');ok(c.includes(okStr)&&new Set(c).size===c.length&&c.length===4,`clock choices ${st} ${g} ${okStr} ${c}`);g==='K'?ok(m===0,'K hours only'):0;g==='1'?ok(m%30===0,'Grade 1 hour/half'):0;g==='2'&&st!=='TX'?ok(m%5===0,st+' Grade 2 five minutes'):0;}}
 for(const st of STS)for(const g of ['P','K','1','2','3','4','5']){const sk=S.skillsFor(g,st);ok(sk.length>=3,'skills map '+st+g);sk.forEach(x=>ok(x.name&&Array.isArray(x.codes),'skill row '+st+g+x.sk))}
-ok(S.state()==='NY','default state is NY');ok(Object.keys(S.STATES).join()==='NY,FL,TX','state order');ok(STS.every(k=>S.FRAMEWORK[k]&&S.FRAMEWORK[k].P&&S.FRAMEWORK[k].m&&S.FRAMEWORK[k].e),'framework labels');
+ok(S.state()==='NY','default state is NY');ok(Object.keys(S.STATES).length===51&&['NY','FL','TX'].every(k=>S.fam(k)===k),'all states listed');ok(Object.keys(S.STATES).filter(k=>S.fam(k)==='CC').every(k=>S.fw(k).m&&Object.keys(S.STD).every(x=>Array.isArray(S.STD[x].CC))),'Common Core fallback for other states');ok(STS.every(k=>S.FRAMEWORK[k]&&S.FRAMEWORK[k].P&&S.FRAMEWORK[k].m&&S.FRAMEWORK[k].e),'framework labels');
 Object.entries(S.STD).forEach(([k,v])=>STS.forEach(st=>ok(Array.isArray(v[st]),'STD '+k+' missing '+st)));
 ok(['K','1','2','3'].every(g=>S.moneyTier(g,'NY')===1)&&S.moneyTier('3','FL')===2&&S.moneyTier('3','TX')===2&&S.moneyTier('4','NY')===3,'money tiers');
 ok(S.phonicsWords('K','NY').length===S.phonicsWords('K','FL').length,'NY K phonics is CVC only');
