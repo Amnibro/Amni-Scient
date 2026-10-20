@@ -1,3 +1,8 @@
+## 2026-10-20 — Amni-Learn: Music Studio
+- **Music Studio** (🎵) replaces the old music game with a warm Web Audio synth (piano, marimba, music box, bells, pad, plucked guitar, seven synthesized drums) through a compressor, limiter and soft reverb, scheduled ahead so rhythm stays steady; every instrument peaks below clipping.
+- **Sing-Along**: ten public-domain children's songs with word-by-word highlighted lyrics, backing band, melody-only and "you sing" modes, five instruments and a speed slider.
+- **Play-a-Song**: a colourful xylophone with follow-the-light teaching, multi-touch and glissando. **Beat Maker**: 16-step patterns with presets, tempo, swing and saves. **Rhythm Tap**: Perfect/Good/Miss timing lane. **Ear Games**: high/low, loud/soft, fast/slow up to intervals and major/minor. **Note Reading & Do-Re-Mi**: treble and bass clefs and a solfège ladder. **Calm Music**: an endless gentle lullaby with a sleep timer and a breathing guide for Destress.
+
 ## 2026-10-20 — Amni-Learn: Test Prep (New York, Regents and four more states)
 - **Test Prep** (📝, Grades 3–5, Middle School, STEM and College Prep): 46 practice tests with 821 original questions modeled on official state tests. Practice mode explains every answer; Mock test is timed (as a pacing guide), lets you flag and review, then scores by standard and walks through every question. Passages sit beside the questions with Read aloud; number answers accept 0.5, 1/2 and 1 1/2.
 - **New York**: Grades 3–8 Math and ELA, Grade 5 Elementary-level and Grade 8 Intermediate-level Science (298 questions). **Regents**: Algebra I, Geometry, Algebra II, Life Science: Biology, Earth and Space Sciences, Global History and Geography II, U.S. History and Government, ELA.
