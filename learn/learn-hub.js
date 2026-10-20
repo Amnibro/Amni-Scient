@@ -2,7 +2,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const CATS={},MODS=[],CSS=new Set();
-let ov,stage,ttl,stat,cur=null,timers=[],closers=[];
+let ov,stage,ttl,stat,cur=null,timers=[],closers=[],guard=null;
 const L=()=>window._learnApi||{};
 const lv=()=>+(document.body.dataset.lv||new URLSearchParams(location.search).get('level')||1);
 const store=id=>({get:(k,d)=>{try{const v=localStorage.getItem('hub-'+id+'-'+k);return v===null?d:JSON.parse(v)}catch{return d}},set:(k,v)=>{try{localStorage.setItem('hub-'+id+'-'+k,JSON.stringify(v))}catch{}}});
@@ -20,11 +20,11 @@ function ensure(){
  ov=document.createElement('div');ov.id='hub-overlay';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');
  ov.innerHTML='<div class="hub-shell"><div class="hub-head"><button class="hub-back" id="hub-back" aria-label="Back">← Back</button><div class="hub-title" id="hub-title"></div><div class="hub-stat" id="hub-stat" aria-live="polite"></div></div><div class="hub-stage" id="hub-stage"></div></div>';
  document.body.appendChild(ov);stage=$('#hub-stage');ttl=$('#hub-title');stat=$('#hub-stat');
- $('#hub-back').onclick=()=>history.state&&history.state.hub?history.back():close();
+ $('#hub-back').onclick=()=>guard&&guard()===false?0:(guard=null,history.state&&history.state.hub?history.back():close());
  document.addEventListener('keydown',e=>e.key==='Escape'&&ov.classList.contains('on')?($('#hub-back').click()):0);
- window.addEventListener('popstate',()=>ov.classList.contains('on')?close(true):0);
+ window.addEventListener('popstate',()=>ov.classList.contains('on')?(guard&&guard()===false?(history.state&&history.state.hub?0:history.pushState({hub:1},'')):close(true)):0);
 }
-function clear(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];closers.splice(0).forEach(f=>{try{f()}catch{}});try{L().stop&&L().stop()}catch{}}
+function clear(){guard=null;timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];closers.splice(0).forEach(f=>{try{f()}catch{}});try{L().stop&&L().stop()}catch{}}
 function close(){if(!cur)return;clear();cur=null;ov.classList.remove('on');document.body.classList.remove('game-active','hub-open');stage.innerHTML=''}
 function open(id){
  const m=MODS.find(x=>x.id===id);if(!m)return;ensure();clear();cur=m;
@@ -38,7 +38,7 @@ function open(id){
   confetti:()=>{try{L().confetti&&L().confetti(innerWidth/2,innerHeight/3,70)}catch{}},
   store:store(m.id),audio,tone,sfx,note,css,esc,shuffle,pick,
   after:(ms,f)=>{const t=setTimeout(f,ms);timers.push(t);return t},every:(ms,f)=>{const t=setInterval(f,ms);timers.push(t);return t},
-  onClose:f=>closers.push(f),close:()=>history.state&&history.state.hub?history.back():close(),
+  onClose:f=>closers.push(f),onBeforeClose:f=>guard=f,close:()=>(guard=null,history.state&&history.state.hub?history.back():close()),
   html:h=>{stage.innerHTML=h;return stage},reopen:()=>open(m.id)};
  try{m.open(api)}catch(e){stage.innerHTML='<p class="hub-err">Sorry, this activity could not start.</p>';console.error(e)}
 }

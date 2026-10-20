@@ -1,3 +1,8 @@
+## 2026-10-20 — Amni-Learn: Test Prep fixes
+- Test Prep now shows each level's own grade band. When your state has no tests for that level, it shows other states' tests (New York first) and says so. The "All grades" switch works again.
+- Leaving a mock or practice test partway (Back, Escape, Exit or the phone's back button) now asks first: keep working, submit now, or leave.
+- Reading passages show numbered paragraphs, so questions that cite "paragraph 4" line up. A timed-out mock says it was submitted.
+
 ## 2026-10-20 — Amni-Learn: profile fix
 - Fixed: the Profile window crashed on open because the theme picker looked up the wrong list, so names, themes, mascots and cursor trails could not be changed.
 
