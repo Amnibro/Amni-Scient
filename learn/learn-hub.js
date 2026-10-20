@@ -10,7 +10,7 @@ let actx=null;
 const audio=()=>{actx=actx||window.AmniSound&&AmniSound.ctx()||new (window.AudioContext||window.webkitAudioContext)();actx.state==='suspended'?actx.resume():0;return actx};
 const SND=window.AmniSound,sfx=(n,o)=>SND?SND.sfx(n,o):false,note=(i,m,o)=>SND?SND.note(i,m,o):false;
 const tone=(f,d=.3,type='sine',when=0,g=.2)=>{if(SND&&(!SND.on()||SND.note(f>=1200?'celesta':'marimba',Math.round(SND.midi(f)),{when,dur:d+.25,vel:Math.min(1,g*7)})))return;try{const c=audio(),t=c.currentTime+when,o=c.createOscillator(),v=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+.01);v.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(v).connect(c.destination);o.start(t);o.stop(t+d+.05)}catch{}};
-const speak=t=>{try{L().speak?L().speak(t):(speechSynthesis.cancel(),speechSynthesis.speak(new SpeechSynthesisUtterance(t)))}catch{}};
+const speak=t=>{try{L().speak?(Array.isArray(t)?L().speakSeq(t):L().speak(t)):(speechSynthesis.cancel(),speechSynthesis.speak(new SpeechSynthesisUtterance([].concat(t).join(' '))))}catch{}};
 const css=(id,text)=>{if(CSS.has(id))return;CSS.add(id);const s=document.createElement('style');s.id='hubcss-'+id;s.textContent=text;document.head.appendChild(s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};

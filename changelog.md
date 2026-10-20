@@ -1,3 +1,8 @@
+## 2026-10-20 — Amni-Learn: natural voice-overs
+- **About 9,600 pre-recorded voice clips** (Kokoro, the same natural "Heart" voice) now cover what Play & Learn, Music, Study Around the World, Healthy Mind, Phonics, Storybook and the kid games say. In those sections 97–100% of spoken lines play a real recording instead of the robotic browser voice. Long passages and changing numbers still use the in-browser natural voice.
+- **Phonics sounds are now correct:** short "a" as in apple, short "o" as in octopus, and the held sounds (sss, mmm, fff, shh, th) are recorded from exact phonemes instead of being spelled out letter by letter. "Star" now blends as s-t-ar.
+- Clips load on demand and are cached for offline use; the clip list updates with each release.
+
 ## 2026-10-20 — Amni-Learn: big fix sweep
 - **Correct facts:** about 60 quiz answers and 15 Learn First cards fixed (platypus, Taipei 101's damper, the first quad Axel, Bolt, bowling and more), plus answer keys in Daily Challenge, Logic Puzzles, College Prep, Sorting Hat, Speed Challenge, Reaction Lab and Geography. Civics no longer names current officeholders.
 - **Fairer quizzes:** the right answer is no longer the only one with a picture, duplicate questions are gone, quizzes run 10–25 questions, harder questions stay at their level, and Texas/Florida history shows only for those states. Daily Challenge now fits the level.

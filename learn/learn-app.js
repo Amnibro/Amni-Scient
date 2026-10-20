@@ -1543,7 +1543,7 @@
     {w:'bed',c:['b','e','d'],e:'🛏️'},{w:'cup',c:['c','u','p'],e:'☕'},{w:'sit',c:['s','i','t'],e:'🪑'},
     {w:'run',c:['r','u','n'],e:'🏃'},{w:'red',c:['r','e','d'],e:'🔴'},{w:'bug',c:['b','u','g'],e:'🐛'},
     {w:'fan',c:['f','a','n'],e:'🪭'},{w:'log',c:['l','o','g'],e:'🪵'},{w:'net',c:['n','e','t'],e:'🥅'},
-    {w:'fish',c:['f','i','sh'],e:'🐟'},{w:'frog',c:['f','r','o','g'],e:'🐸'},{w:'star',c:['s','t','a','r'],e:'⭐'},
+    {w:'fish',c:['f','i','sh'],e:'🐟'},{w:'frog',c:['f','r','o','g'],e:'🐸'},{w:'star',c:['s','t','ar'],e:'⭐'},
     {w:'moon',c:['m','oo','n'],e:'🌙'},{w:'duck',c:['d','u','ck'],e:'🦆'},{w:'milk',c:['m','i','l','k'],e:'🥛'},
     {w:'nest',c:['n','e','s','t'],e:'🪺'},{w:'shop',c:['sh','o','p'],e:'🏪'},{w:'chin',c:['ch','i','n'],e:'😀'},
     {w:'bat',c:['b','a','t'],e:'🦇'},{w:'hen',c:['h','e','n'],e:'🐓'},{w:'box',c:['b','o','x'],e:'📦'},
@@ -1567,9 +1567,9 @@
   const _phonSnd=(x,cs)=>{const k=String(x).toLowerCase(),w=cs?cs.join(''):'';return cs&&PHON_SP[w+':'+k]?PHON_SP[w+':'+k]:cs&&_phonLong[k]&&cs.length>2&&/^[b-df-hj-np-tv-z]e$/.test(cs[cs.length-1])&&cs.filter(c=>/^[aeiou]$/.test(c)).length===1?_phonLong[k]:PHON_SP[k]||(/^[a-z]$/.test(k)?'uh':k);};
   function _phonLetterName(c){return 'This is the letter '+c.l+'.';}
   function _phonLetterSound(c){const snd=_phonSnd(c.l);return 'The letter '+c.l+' says '+snd+'.';}
-  function _phonLetterSay(c){const snd=_phonSnd(c.l);return ['This is the letter '+c.l+'. Its sound is '+snd+'. '+c.w+' starts with '+snd+'. Say '+snd+'. '+c.w+'.'];}
+  function _phonLetterSay(c){const snd=_phonSnd(c.l),st=/, as in /.test(snd)?'that sound':snd;return ['This is the letter '+c.l+'. Its sound is '+snd+'. '+c.w+' starts with '+st+'. Say '+snd+'. '+c.w+'.'];}
   function _phonSoundAsk(c){const snd=_phonSnd(c.l);return ['Listen for the sound '+snd+'. Which letter makes '+snd+'?'];}
-  function _phonSoundYes(c){const snd=_phonSnd(c.l);return ['Yes! Letter '+c.l+' makes the sound '+snd+'. '+c.w+' starts with '+snd+'.'];}
+  function _phonSoundYes(c){const snd=_phonSnd(c.l),st=/, as in /.test(snd)?'that sound':snd;return ['Yes! Letter '+c.l+' makes the sound '+snd+'. '+c.w+' starts with '+st+'.'];}
   function _phonBlendSay(cur){const sounds=cur.c.map(c=>_phonSnd(c,cur.c));return ['Let us sound out '+cur.w+'. '+sounds.join(', then ')+', makes '+cur.w+'.'];}
   function _phonRhymeAsk(w){return ['Which word rhymes with '+w+'?'];}
   let phonIdx=0,phonWordIdx=0,phonMatch=null,phonRhyme=null;
@@ -10559,7 +10559,8 @@ function playAnimalSound(type) {
 }
 
   const _TTS_FR={2:'half',3:'third',4:'fourth',5:'fifth',6:'sixth',7:'seventh',8:'eighth',9:'ninth',10:'tenth',12:'twelfth'};
-  function _ttsClean(t){return String(t).replace(/(\d) (\d+)\/(\d+)\b/g,'$1 and $2/$3').replace(/\b(\d+)\/(\d+)\b/g,(m,n,d)=>_TTS_FR[d]?n+' '+(d==2?(n==1?'half':'halves'):_TTS_FR[d]+(n==1?'':'s')):n+' over '+d).replace(/(\d)\s*[×✕]\s*(?=\d)/g,'$1 times ').replace(/(\d) x (?=\d)/g,'$1 times ').replace(/\s*÷\s*/g,' divided by ').replace(/(\d)\s*−\s*(?=\d)/g,'$1 minus ').replace(/(\d) - (?=\d)/g,'$1 minus ').replace(/(^|[\s(=:])−\s*(?=\d)/g,'$1minus ').replace(/(\d)\s*–\s*(?=\d)/g,'$1 to ').replace(/(\d)\s*\+\s*(?=\d)/g,'$1 plus ').replace(/\s*=\s*/g,' equals ').replace(/(\d)\s*%/g,'$1 percent').replace(/\s&\s/g,' and ').replace(/(\d)\s*°\s*([FC])\b/g,(m,n,u)=>n+' degrees '+(u==='F'?'Fahrenheit':'Celsius')).replace(/(\d)\s*°/g,'$1 degrees').replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
+  const _TTS_AC=new Set('USA NYC DNA RNA ELA TV UK US CPU ATM ID OK FBI CIA UN EU NFL NBA MLB ABC ABCS CEO PE AM PM STAAR SAT ACT PSAT HS GPS UV LED TNT WWI WWII II III IV VI VII VIII IX XI XII NY NJ CA TX FL MA DC NASA AI PC IQ HTML CSS URL PDF BC AD ASL'.split(' '));
+  function _ttsClean(t){return String(t).replace(/^\s*([★❤▲■●♦♣♠])️?\s*$/,(m,c)=>({'★':'star','❤':'heart','▲':'triangle','■':'square','●':'circle','♦':'diamond','♣':'club','♠':'spade'})[c]).replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/\s*[→⇒➡]\s*/g,' to ').replace(/~\s*(?=\d)/g,'about ').replace(/(\d)\s*<\s*(?=\d)/g,'$1 is less than ').replace(/(\d)\s*>\s*(?=\d)/g,'$1 is greater than ').replace(/π/g,'pi').replace(/\bvs\.?(?=\s)/gi,'versus').replace(/\be\.g\.,?/gi,'for example').replace(/\bi\.e\.,?/gi,'that is').replace(/\betc\./gi,'et cetera').replace(/\b[A-Z][A-Z']{2,}\b/g,w=>_TTS_AC.has(w)?w:w.toLowerCase()).replace(/\s×\s/g,' times ').replace(/(\d)\s*([½¼¾])/g,'$1 and $2').replace(/[½¼¾]/g,c=>({'½':'one half','¼':'one quarter','¾':'three quarters'})[c]).replace(/(\d) (\d+)\/(\d+)\b/g,'$1 and $2/$3').replace(/\b(\d+)\/(\d+)\b/g,(m,n,d,o,s)=>+d>=10||/[(:]\s*$/.test(s.slice(0,o))||/^\s*[!)]/.test(s.slice(o+m.length))?n+' out of '+d:_TTS_FR[d]?(n==1?'one':n)+' '+(d==2?(n==1?'half':'halves'):_TTS_FR[d]+(n==1?'':'s')):n+' over '+d).replace(/(\d)\s*[×✕]\s*(?=\d)/g,'$1 times ').replace(/(\d) x (?=\d)/g,'$1 times ').replace(/\s*÷\s*/g,' divided by ').replace(/(\d)\s*−\s*(?=\d)/g,'$1 minus ').replace(/(\d) - (?=\d)/g,'$1 minus ').replace(/(^|[\s(=:])−\s*(?=\d)/g,'$1minus ').replace(/(\d)\s*–\s*(?=\d)/g,'$1 to ').replace(/(\d)\s*\+\s*(?=\d)/g,'$1 plus ').replace(/(^|[\s(=:])\+(?=\d)/g,'$1plus ').replace(/\s*=\s*/g,' equals ').replace(/(\d)\s*%/g,'$1 percent').replace(/\s&\s/g,' and ').replace(/\b(Mr|Mrs|Dr)\.\s/g,(m,a)=>({Mr:'Mister',Mrs:'Missus',Dr:'Doctor'})[a]+' ').replace(/\bMs\.\s/g,'Ms ').replace(/\b([ap])\.m\.(?=\s|$)/gi,(m,x)=>x.toUpperCase()+'M').replace(/\b(practis(?=e|ed|es|ing\b)|color|favorite|center|gray|theater|travell(?=ed|ing|er)|memoris(?=e|ed|es|ing\b)|organis(?=e\b|ed|es\b|ing|ation))/gi,w=>({practis:'practic',color:'color',favorite:'favorite',center:'center',gray:'gray',theater:'theater',travell:'travel',memoris:'memoriz',organis:'organiz'})[w.toLowerCase()]||w).replace(/(\d)\s*°\s*([FC])\b/g,(m,n,u)=>n+' degrees '+(u==='F'?'Fahrenheit':'Celsius')).replace(/(\d)\s*°/g,'$1 degrees').replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\(\s*\)/g,'').replace(/\s+([!?.,])/g,'$1').replace(/\s+/g,' ').trim();}
   let _ttsVoiceCache=null;
   function _ttsPickVoice(vs){return vs.find(x=>/Microsoft (Aria|Jenny|Michelle|Natural)|Google US English|Samantha|Karen|Allison|Moira|Tessa|Fiona|Microsoft Zira/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&/natural|neural|online/i.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
   function _ttsVoice(){if(_ttsVoiceCache)return _ttsVoiceCache;_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());return _ttsVoiceCache;}
@@ -10609,7 +10610,7 @@ function playAnimalSound(type) {
     try{return await _kkInit;}catch(e){_kkInit=null;_kkFailed=true;throw e;}
   }
   function _kkPrep(t){t=String(t).replace(/([.!?])\s*(?=[A-Z])/g,'$1 ').replace(/,\s*/g,', ').replace(/!{2,}/g,'!').replace(/\.{3,}/g,'…');const a=t.replace(/[^a-zA-Z]/g,'');if(a&&a.replace(/[^A-Z]/g,'').length/a.length>0.6){t=t.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bi\b/g,'I');}return t;}
-  function _chunkSpans(text){const spans=[];const re=/[^.!?]*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&out.length>1&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
+  function _chunkSpans(text){const spans=[];const re=/(?:\b(?:Mr|Mrs|Ms|Dr|St)\.|\.(?=\d)|[^.!?])*[.!?]+\s*/g;let m;while((m=re.exec(text))){if(m[0].trim())spans.push({s:m.index,e:m.index+m[0].length,t:m[0]});}spans.length?(spans[spans.length-1].e<text.length&&text.slice(spans[spans.length-1].e).trim()&&spans.push({s:spans[spans.length-1].e,e:text.length,t:text.slice(spans[spans.length-1].e)})):spans.push({s:0,e:text.length,t:text});const out=[];for(const sp of spans){const last=out[out.length-1];last&&out.length>1&&(last.e-last.s)+(sp.e-sp.s)<140?(last.e=sp.e,last.t+=sp.t):out.push({s:sp.s,e:sp.e,t:sp.t});}return out;}
   let _kkBlobCache=new Map();
   async function _kkWav(text,speed){
     const key=_kkPrep(text)+'|'+(speed||1);
@@ -10624,9 +10625,11 @@ function playAnimalSound(type) {
   }
   let _synthCache=new Map();
   let _voiceMan=null;
-  fetch('assets/voice/manifest.json').then(r=>r.ok?r.json():null).then(m=>{_voiceMan=m||null;}).catch(()=>{});
+  let _voiceManP=fetch('assets/voice/manifest.json').then(r=>r.ok?r.json():null).then(m=>{_voiceMan=m||null;}).catch(()=>{}).finally(()=>{_voiceManP=null;});
   function _synthWav(text,speed){const key=text+'|'+(speed||1);if(_synthCache.has(key))return _synthCache.get(key);const f=_voiceMan&&_voiceMan[key];const p=f?fetch('assets/voice/'+f).then(r=>{if(!r.ok)throw new Error('vf-'+r.status);return r.blob();}).catch(()=>_synthRaw(text,speed)):_synthRaw(text,speed);p.catch(()=>_synthCache.delete(key));_synthCache.size>120&&_synthCache.clear();_synthCache.set(key,p);return p;}
   function _voiceHas(parts,speed){return !!_voiceMan&&parts.every(t=>_voiceMan[t+'|'+(speed||1)]);}
+  function _voiceKey(t){const m=_voiceMan;if(!m)return null;const s=String(t).trim(),b=s.replace(/[\s,;:.…]+$/,'');return m[t+'|1']?t:m[s+'|1']?s:m[s+' |1']?s+' ':m[b+'|1']?b:null;}
+  function _voicePlan(parts,d){d=d||0;return parts.flatMap(t=>{const k=_voiceKey(t);if(k||d>3)return[k||t];const n=String(t).replace(/,/g,''),s=d>2?(/^\d{3,9}$/.test(n)&&+n>100?[[+n/1e6|0,'million'],[(+n/1e3|0)%1000,'thousand'],[+n%1000,'']].flatMap(([v,w])=>v?[...(v>100&&v%100?[v-v%100,v%100]:[v]).map(String),w]:[]).filter(Boolean):[t]):String(t).replace([/([.!?…]+["'”’)\]]*)\s+/g,/([,;:])\s+|\s+[—–]\s+/g,/(\d[\d,]*(?:\.\d+)?)/g][d],d<2?'$1\u0001':'\u0001$1\u0001').split('\u0001').map(x=>x.trim()).filter(x=>/[a-z0-9]/i.test(x)),p=_voicePlan(s.length?s:[t],d+1);return d<1||p.every(_voiceKey)?p:[t];});}
   async function _synthRaw(text,speed){if(_kkReady){try{return await _kkWav(text,speed);}catch(e){}}if(_hdReady){try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}}if(_kkCan()&&!_kkFailed){try{return await _kkWav(text,speed);}catch(e){}}try{const m=await _hdLoad();return await m.predict({text:text,voiceId:_HDVOICE});}catch(e){}throw new Error('no-synth');}
   function hdOn(){try{return localStorage.getItem('amni-learn-tts-hd')==='on';}catch(e){return false;}}
   function _hdCtx(){return currentGame==='phonics'||currentGame==='storybook';}
@@ -10648,41 +10651,42 @@ function playAnimalSound(type) {
   function _hdStop(){_hdGen++;try{if(_hdAudio){_hdAudio.onended=null;_hdAudio.onerror=null;_hdAudio.pause();_hdAudio.src='';_hdAudio=null;}}catch(e){}}
   function _hdPlayBlob(b){return new Promise(res=>{let a;try{a=new Audio(URL.createObjectURL(b));}catch(e){return res();}_hdAudio=a;const done=()=>{try{URL.revokeObjectURL(a.src);}catch(e){}res();};a.onended=done;a.onerror=done;a.play().catch(done);});}
   function _ttsBatch(arr){return arr.flatMap(t=>_chunkSpans(t).map(c=>c.t));}
-  async function _hdSay(items){
+  async function _hdSay(items,web){
     _hdStop();const gen=_hdGen;
-    const arr=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean);
-    const parts=_ttsBatch(arr);
-    if(!_kkReady&&!_hdReady&&!_voiceHas(parts,1)){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}
+    const parts=_voicePlan(_ttsBatch((Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean)));
+    if(!web&&!_kkReady&&!_hdReady&&!parts.every(_voiceKey)){if(_kkCan()){try{await _kkLoad();}catch(e){try{await _hdLoad();}catch(_){}}}else{try{await _hdLoad();}catch(_){}}}
     if(gen!==_hdGen)return;
-    const pre=t=>{const p=_synthWav(t);p.catch(()=>{});return p;};
+    const pre=t=>{const p=web&&!_kkReady&&!_hdReady&&!_voiceKey(t)?Promise.reject(new Error('web')):_synthWav(t);p.catch(()=>{});return p;};
     let next=parts.length?pre(parts[0]):null;
     for(let i=0;i<parts.length;i++){
       if(gen!==_hdGen)return;
-      let wav;try{wav=await next;}catch(e){if(gen!==_hdGen)return;_webSeq([parts[i]]);continue;}
-      next=i+1<parts.length?pre(parts[i+1]):null;
+      const cur=next;next=i+1<parts.length?pre(parts[i+1]):null;
+      let wav;try{wav=await cur;}catch(e){if(gen!==_hdGen)return;await _webSeq([parts[i]]);continue;}
       if(gen!==_hdGen)return;
       await _hdPlayBlob(wav);
     }
   }
-  function _webSeq(items){
-    if(!('speechSynthesis' in window)) return;
+  function _webSeq(items){return new Promise(res=>{
+    if(!('speechSynthesis' in window))return res();
     try {
       window.speechSynthesis.cancel();
-      const v=_ttsVoice();
-      (Array.isArray(items)?items:[items]).forEach(t=>{
-        const clean=_ttsClean(t); if(!clean) return;
+      const v=_ttsVoice(),a=(Array.isArray(items)?items:[items]).map(_ttsClean).filter(Boolean),tm=setTimeout(res,1500+a.join(' ').length*90);
+      a.length?0:res();
+      a.forEach((clean,i)=>{
         const u=new SpeechSynthesisUtterance(clean);
         u.rate=0.88; u.pitch=1.05; u.lang='en-US'; if(v) u.voice=v;
+        i===a.length-1?u.onend=u.onerror=()=>{clearTimeout(tm);res();}:0;
         window.speechSynthesis.speak(u);
       });
-    } catch(e) {}
-  }
+    } catch(e) {res();}
+  });}
   function speakSeq(items){
     const arr=(Array.isArray(items)?items:[items]).filter(t=>t!=null&&String(t).trim());
     if(!arr.length)return;
-    const wantHd=hdOn()||_hdCtx();
-    if(!wantHd)return _webSeq(arr);
-    if(_hdReady||_kkReady||_voiceHas(_ttsBatch(arr.map(_ttsClean).filter(Boolean)),1))return void _hdSay(arr).catch(()=>_webSeq(arr));
+    if(_voiceManP)return void _voiceManP.then(()=>speakSeq(arr));
+    const wantHd=hdOn()||_hdCtx(),plan=_voicePlan(_ttsBatch(arr.map(_ttsClean).filter(Boolean))),full=plan.every(_voiceKey),hit=full||plan.some(_voiceKey);
+    if(_hdReady||_kkReady||full)return void _hdSay(arr).catch(()=>_webSeq(arr));
+    if(!wantHd||hit)return hit?void _hdSay(arr,1).catch(()=>_webSeq(arr)):void _webSeq(arr);
     _speakWait=arr;_storyWait=null;
     try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}
     _hdBanner('Loading natural voice... please wait');
