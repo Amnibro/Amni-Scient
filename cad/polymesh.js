@@ -4,7 +4,7 @@ const LAY={v:[['co',Float64Array,3],['vE',Int32Array,1],['vF',Uint8Array,1]],e:[
 const tyOf=a=>Object.keys(TY).find(k=>a instanceof TY[k])||'f32',INT=new Set(['u8','u16','u32','i32']);
 export class PolyMesh{
   constructor(){this.nv=this.ne=this.nl=this.nf=0;this.cap={v:0,e:0,l:0,f:0};for(const d in LAY)for(const[k,T]of LAY[d])this[k]=new T(0);this.attrs={};this.meta={};this.ver=0;}
-  need(d,n){if(n<=this.cap[d])return;const c=Math.max(n,Math.ceil(this.cap[d]*1.7),64);for(const[k,T,s]of LAY[d]){const a=new T(c*s);a.set(this[k].subarray(0,this.cap[d]*s));this[k]=a;}for(const L of Object.values(this.attrs))if(L.dom===d){const a=new TY[L.type](c*L.n);a.set(L.d.subarray(0,this.cap[d]*L.n));L.d=a;}this.cap[d]=c;}
+  need(d,n){if(n<=this.cap[d])return;const c=Math.max(n,Math.ceil(this.cap[d]*1.7),70);for(const[k,T,s]of LAY[d]){const a=new T(c*s);a.set(this[k].subarray(0,this.cap[d]*s));this[k]=a;}for(const L of Object.values(this.attrs))if(L.dom===d){const a=new TY[L.type](c*L.n);a.set(L.d.subarray(0,this.cap[d]*L.n));L.d=a;}this.cap[d]=c;}
   count(d){return d==='v'?this.nv:d==='e'?this.ne:d==='l'?this.nl:this.nf;}
   attr(name,dom,n=1,type='f32',meta){let L=this.attrs[name];if(!L)L=this.attrs[name]={dom,n,type,meta:meta||{},d:new TY[type](Math.max(1,this.cap[dom])*n)};return L;}
   has(name){return!!this.attrs[name];}
