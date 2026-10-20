@@ -1,3 +1,23 @@
+## 2026-10-20 — Amni-Learn: natural voice-overs
+- **About 9,600 pre-recorded voice clips** (Kokoro, the same natural "Heart" voice) now cover what Play & Learn, Music, Study Around the World, Healthy Mind, Phonics, Storybook and the kid games say. In those sections 97–100% of spoken lines play a real recording instead of the robotic browser voice. Long passages and changing numbers still use the in-browser natural voice.
+- **Phonics sounds are now correct:** short "a" as in apple, short "o" as in octopus, and the held sounds (sss, mmm, fff, shh, th) are recorded from exact phonemes instead of being spelled out letter by letter. "Star" now blends as s-t-ar.
+- Clips load on demand and are cached for offline use; the clip list updates with each release.
+
+## 2026-10-20 — Amni-Learn: big fix sweep
+- **Correct facts:** about 60 quiz answers and 15 Learn First cards fixed (platypus, Taipei 101's damper, the first quad Axel, Bolt, bowling and more), plus answer keys in Daily Challenge, Logic Puzzles, College Prep, Sorting Hat, Speed Challenge, Reaction Lab and Geography. Civics no longer names current officeholders.
+- **Fairer quizzes:** the right answer is no longer the only one with a picture, duplicate questions are gone, quizzes run 10–25 questions, harder questions stay at their level, and Texas/Florida history shows only for those states. Daily Challenge now fits the level.
+- **Phones:** the top bar fits, with extra buttons in a "⋯" menu and 44px touch targets; game controls, teach cards, Sudoku and Speed Challenge no longer get cut off; Shape Puzzles has tap-to-place; Pre-K menu is two columns; Map Clicker is bigger and pans.
+- **Readable in every theme:** Brain Exercise text, Visual Scan, Chimp, Stroop, Color Sort and game status lines are readable in dark and light; Brain Gym follows light mode; the profile icon is visible. Reduce motion now stops confetti, the cursor trail and background animation.
+- **Game fixes:** Stroop no longer locks up, Color Sort is always winnable (all levels 1–30 checked), Garden, Cookie Clicker and Auto Miner stop when you leave, Tower Defense towers fire after a reload and ask before selling, Minesweeper flags stay, Snake waits for a tap, Pull the Pin has 8 new levels, Space Invaders has a shield button, retro games run at normal speed on 120 Hz screens, Circuit Builder and AI Ethics Debug work by touch, and Circuit Builder handles parallel resistors.
+- **Navigation:** Back returns to the menu instead of leaving the app, Kid Mode only picks games from your level, NEW badges clear once opened, Healthy Mind sits last at College Prep, and landing-page buttons open the matching level.
+- **Activities:** Names & Faces matches names to faces, the Daily Mind Routine returns to the routine, Beat Maker no longer flips beats when you scroll on a phone, and kid songs stay at the kid levels.
+- **American English:** Fall, soccer, candy and US clothing words throughout.
+
+## 2026-10-20 — Amni-Learn: Test Prep fixes
+- Test Prep now shows each level's own grade band. When your state has no tests for that level, it shows other states' tests (New York first) and says so. The "All grades" switch works again.
+- Leaving a mock or practice test partway (Back, Escape, Exit or the phone's back button) now asks first: keep working, submit now, or leave.
+- Reading passages show numbered paragraphs, so questions that cite "paragraph 4" line up. A timed-out mock says it was submitted.
+
 ## 2026-10-20 — Amni-Learn: profile fix
 - Fixed: the Profile window crashed on open because the theme picker looked up the wrong list, so names, themes, mascots and cursor trails could not be changed.
 

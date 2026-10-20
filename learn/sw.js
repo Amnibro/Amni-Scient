@@ -1,6 +1,6 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v1299';
+const CACHE = 'amni-learn-v1302';
 const PRECACHE = [
   './',
   './index.html',
@@ -69,7 +69,7 @@ self.addEventListener('fetch', (e) => {
   // would pin a stale learn-app.js on the device until the cache was evicted
   // (the cause of "old content after an update"). Static assets (mp3s, images,
   // fonts) stay cache-first below since they rarely change.
-  const isAppCode = e.request.mode === 'navigate' || /\/(index\.html|learn-[a-z-]+\.(js|css)|mod-[a-z]+\.js|testbank-[a-z]+\.js)$/.test(url.pathname) || /\/learn\/?$/.test(url.pathname);
+  const isAppCode = e.request.mode === 'navigate' || /\/(index\.html|learn-[a-z-]+\.(js|css)|mod-[a-z]+\.js|testbank-[a-z]+\.js|voice\/manifest\.json)$/.test(url.pathname) || /\/learn\/?$/.test(url.pathname);
   if (isAppCode) {
     e.respondWith(
       fetch(e.request).then(resp => save(e.request, resp))

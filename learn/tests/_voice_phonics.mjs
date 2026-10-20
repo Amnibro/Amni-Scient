@@ -1,0 +1,22 @@
+import fs from 'fs';import path from 'path';import {execFileSync,spawnSync} from 'child_process';
+import {fileURLToPath,pathToFileURL} from 'url';
+const KP=path.join(process.env.KOKORO_DIR,'node_modules/kokoro-js/dist/'),KS=fs.readFileSync(KP+'kokoro.js','utf8');fs.writeFileSync(KP+'kokoro_ph.js',KS.replace('Q as env}','Q as env,m as phonemize}'));
+const {KokoroTTS,phonemize}=await import(pathToFileURL(KP+'kokoro_ph.js').href);
+const VD=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../assets/voice'),MF=path.join(VD,'manifest.json'),man=JSON.parse(fs.readFileSync(MF,'utf8')),dry=process.argv[2]==='dry',SR=24000;
+const IPA={eh:'ˈɛ',ih:'ˈɪ',fff:'fff',mmm:'mː',nnn:'nː',rrr:'ɹː',sss:'sː',vvv:'vː',zzz:'zː',kss:'kss',ks:'kss',shh:'ʃː',thh:'θθθ',ooo:'ˈuː',eee:'ˈiː',ay:'ˈeɪ',ow:'ˈaʊ'};
+const R=/\b(?:a(?=, as in apple)|o(?=, as in octopus)|oo(?=, as in book)|eh|ih|fff|mmm|nnn|rrr|sss|vvv|zzz|kss|ks|shh|thh|ooo|eee|ay|ow)\b/g;
+const ov=(t,n)=>t==='a'&&/^, as in apple/.test(n)?'ˈæ':t==='o'&&/^, as in octopus/.test(n)?'ˈɑː':t==='oo'&&/^, as in book/.test(n)?'ˈʊ':IPA[t];
+const ph=async s=>{let out='',i=0;for(const m of s.matchAll(R)){const pre=s.slice(i,m.index);out+=(pre.trim()?(await phonemize(pre.trim(),'a')):'')+(/\s$/.test(pre)||!pre?' ':'')+ov(m[0],s.slice(m.index+m[0].length));i=m.index+m[0].length;}const rest=s.slice(i);return (out+(rest.trim()?(/^\s/.test(rest)?' ':'')+(await phonemize(rest.trim(),'a')):rest.trim())).replace(/\s+/g,' ').trim();};
+const split=t=>(String(t).match(/[^.!?…]+(?:[.!?…]+["'”’)\]]*|$)\s*/g)||[t]).map(s=>s.trim()).filter(s=>/[a-z0-9]/i.test(s));
+const trim=x=>{let m=0;for(const v of x)m=Math.max(m,Math.abs(v));const th=Math.max(m*.01,.001);let s=0,e=x.length-1;while(s<e&&Math.abs(x[s])<th)s++;while(e>s&&Math.abs(x[e])<th)e--;return x.subarray(Math.max(0,s-Math.round(.035*SR)),Math.min(x.length,e+Math.round(.06*SR)))};
+const pad=n=>new Float32Array(Math.round(n*SR));
+const wav=(x,f)=>{const b=Buffer.alloc(44+x.length*2);b.write('RIFF',0);b.writeUInt32LE(36+x.length*2,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(SR,24);b.writeUInt32LE(SR*2,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(x.length*2,40);x.forEach((v,i)=>b.writeInt16LE(Math.max(-32768,Math.min(32767,Math.round(v*32767))),44+i*2));fs.writeFileSync(f,b)};
+const CMP='acompressor=threshold=-24dB:ratio=3:attack=3:release=60',meas=f=>{const r=spawnSync('ffmpeg',['-hide_banner','-nostats','-i',f,'-af',CMP+',ebur128=framelog=quiet','-f','null','-'],{encoding:'utf8'});const m=/I:\s+(-?[\d.]+) LUFS/.exec(r.stderr||'');return m?+m[1]:-20};
+const done=new Set(fs.existsSync(process.env.PHFIX_LOG||'')?JSON.parse(fs.readFileSync(process.env.PHFIX_LOG,'utf8')).map(x=>x[2]):[]),keys=Object.keys(man).filter(k=>{R.lastIndex=0;return !done.has(man[k])&&R.test(k.replace(/\|[^|]*$/,''))});
+if(dry){for(const k of keys.slice(0,+(process.argv[3]||12))){const t=k.replace(/\|[^|]*$/,'');console.log(t,'\n  =>',(await Promise.all(split(t).map(ph))).join(' | '))}process.exit(0)}
+const tts=await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',{dtype:'fp32',device:'cpu'}),tmp=fs.mkdtempSync(path.join(process.cwd(),'pf-'));
+let n=Math.max(0,...Object.values(man).map(f=>+(/v(\d+)\.ogg/.exec(f)||[0,0])[1])),c=0;const log=[];
+for(const k of keys){const t=k.replace(/\|[^|]*$/,''),sp=+k.split('|').pop()||1,segs=[];for(const s of split(t)){const p=await ph(s),{input_ids}=tts.tokenizer(p,{truncation:true}),a=await tts.generate_from_ids(input_ids,{voice:'af_heart',speed:sp});segs.push(trim(a.audio),pad(.22))}segs.pop();segs.push(pad(.14));
+ const L=segs.reduce((a,s)=>a+s.length,0),y=new Float32Array(L);let o=0;for(const s of segs){y.set(s,o);o+=s.length}
+ const file='v'+String(++n).padStart(4,'0')+'.ogg',w=path.join(tmp,file+'.wav');wav(y,w);const g=Math.max(-12,Math.min(18,-13.7-meas(w)));execFileSync('ffmpeg',['-y','-loglevel','error','-i',w,'-af',`${CMP},volume=${g.toFixed(2)}dB,alimiter=limit=0.97:attack=2:release=40:level=false`,'-ar','48000','-ac','1','-c:a','libopus','-b:a','32k',path.join(VD,file)]);fs.unlinkSync(w);log.push([k,man[k],file]);man[k]=file;++c%20===0?console.log(c):0}
+fs.writeFileSync(MF,JSON.stringify(man));fs.writeFileSync(process.env.PHFIX_LOG||'phfix_log.json',JSON.stringify(log));fs.rmSync(tmp,{recursive:true,force:true});console.log('rerecorded',c);

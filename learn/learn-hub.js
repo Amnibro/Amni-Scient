@@ -2,7 +2,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const CATS={},MODS=[],CSS=new Set();
-let ov,stage,ttl,stat,cur=null,timers=[],closers=[];
+let ov,stage,ttl,stat,cur=null,timers=[],closers=[],guard=null;
 const L=()=>window._learnApi||{};
 const lv=()=>+(document.body.dataset.lv||new URLSearchParams(location.search).get('level')||1);
 const store=id=>({get:(k,d)=>{try{const v=localStorage.getItem('hub-'+id+'-'+k);return v===null?d:JSON.parse(v)}catch{return d}},set:(k,v)=>{try{localStorage.setItem('hub-'+id+'-'+k,JSON.stringify(v))}catch{}}});
@@ -10,7 +10,7 @@ let actx=null;
 const audio=()=>{actx=actx||window.AmniSound&&AmniSound.ctx()||new (window.AudioContext||window.webkitAudioContext)();actx.state==='suspended'?actx.resume():0;return actx};
 const SND=window.AmniSound,sfx=(n,o)=>SND?SND.sfx(n,o):false,note=(i,m,o)=>SND?SND.note(i,m,o):false;
 const tone=(f,d=.3,type='sine',when=0,g=.2)=>{if(SND&&(!SND.on()||SND.note(f>=1200?'celesta':'marimba',Math.round(SND.midi(f)),{when,dur:d+.25,vel:Math.min(1,g*7)})))return;try{const c=audio(),t=c.currentTime+when,o=c.createOscillator(),v=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+.01);v.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(v).connect(c.destination);o.start(t);o.stop(t+d+.05)}catch{}};
-const speak=t=>{try{L().speak?L().speak(t):(speechSynthesis.cancel(),speechSynthesis.speak(new SpeechSynthesisUtterance(t)))}catch{}};
+const speak=t=>{try{L().speak?(Array.isArray(t)?L().speakSeq(t):L().speak(t)):(speechSynthesis.cancel(),speechSynthesis.speak(new SpeechSynthesisUtterance([].concat(t).join(' '))))}catch{}};
 const css=(id,text)=>{if(CSS.has(id))return;CSS.add(id);const s=document.createElement('style');s.id='hubcss-'+id;s.textContent=text;document.head.appendChild(s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -20,11 +20,11 @@ function ensure(){
  ov=document.createElement('div');ov.id='hub-overlay';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');
  ov.innerHTML='<div class="hub-shell"><div class="hub-head"><button class="hub-back" id="hub-back" aria-label="Back">← Back</button><div class="hub-title" id="hub-title"></div><div class="hub-stat" id="hub-stat" aria-live="polite"></div></div><div class="hub-stage" id="hub-stage"></div></div>';
  document.body.appendChild(ov);stage=$('#hub-stage');ttl=$('#hub-title');stat=$('#hub-stat');
- $('#hub-back').onclick=()=>history.state&&history.state.hub?history.back():close();
+ $('#hub-back').onclick=()=>guard&&guard()===false?0:(guard=null,history.state&&history.state.hub?history.back():close());
  document.addEventListener('keydown',e=>e.key==='Escape'&&ov.classList.contains('on')?($('#hub-back').click()):0);
- window.addEventListener('popstate',()=>ov.classList.contains('on')?close(true):0);
+ window.addEventListener('popstate',()=>ov.classList.contains('on')?(guard&&guard()===false?(history.state&&history.state.hub?0:history.pushState({hub:1},'')):close(true)):0);
 }
-function clear(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];closers.splice(0).forEach(f=>{try{f()}catch{}});try{L().stop&&L().stop()}catch{}}
+function clear(){guard=null;timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];closers.splice(0).forEach(f=>{try{f()}catch{}});try{L().stop&&L().stop()}catch{}}
 function close(){if(!cur)return;clear();cur=null;ov.classList.remove('on');document.body.classList.remove('game-active','hub-open');stage.innerHTML=''}
 function open(id){
  const m=MODS.find(x=>x.id===id);if(!m)return;ensure();clear();cur=m;
@@ -38,7 +38,7 @@ function open(id){
   confetti:()=>{try{L().confetti&&L().confetti(innerWidth/2,innerHeight/3,70)}catch{}},
   store:store(m.id),audio,tone,sfx,note,css,esc,shuffle,pick,
   after:(ms,f)=>{const t=setTimeout(f,ms);timers.push(t);return t},every:(ms,f)=>{const t=setInterval(f,ms);timers.push(t);return t},
-  onClose:f=>closers.push(f),close:()=>history.state&&history.state.hub?history.back():close(),
+  onClose:f=>closers.push(f),onBeforeClose:f=>guard=f,close:()=>(guard=null,history.state&&history.state.hub?history.back():close()),
   html:h=>{stage.innerHTML=h;return stage},reopen:()=>open(m.id)};
  try{m.open(api)}catch(e){stage.innerHTML='<p class="hub-err">Sorry, this activity could not start.</p>';console.error(e)}
 }
@@ -50,16 +50,20 @@ function catEl(c){
  s.innerHTML=`<h2 class="cat-header"><span class="cat-header-icon">${c.icon}</span> ${esc(c.title)}</h2><div class="cat-games"></div>`;
  c.top?g.insertBefore(s,g.querySelector(':scope > .game-category')):g.appendChild(s);return s;
 }
-function sync(){const L=String(lv());Object.values(CATS).forEach(c=>{const s=catEl(c);if(!s)return;let any=0;$$('.hub-game',s).forEach(b=>{const m=MODS.find(x=>x.id===b.dataset.hub),on=!m.levels||m.levels.includes(L);b.style.display=on?'':'none';any|=on});s.style.display=any?'':'none'})}
+const SEEN='amni-learn-seen',seen=()=>{try{return JSON.parse(localStorage.getItem(SEEN)||'[]')}catch{return []}},bkey=b=>b.dataset.hub?'h:'+b.dataset.hub:b.dataset.game?'g:'+[b.dataset.game,b.dataset.subgame||b.dataset.subject||''].join(':'):'';
+const unNew=b=>{b.classList.add('seen');b.querySelectorAll('.game-new-badge').forEach(x=>x.remove())};
+const markSeen=b=>{const k=bkey(b),s=seen();k&&!s.includes(k)?(()=>{try{localStorage.setItem(SEEN,JSON.stringify([...s,k]))}catch{}})():0;unNew(b)};
+const badges=()=>{const s=seen();$$('#main-game-grid .game-btn').forEach(b=>s.includes(bkey(b))?unNew(b):0)};
+function sync(){const L=String(lv()),g=$('#main-game-grid');Object.values(CATS).forEach(c=>{const s=catEl(c);if(!s)return;typeof c.top==='string'&&g?(c.top.includes(L)?g.insertBefore(s,g.querySelector(':scope > .game-category')):g.appendChild(s)):0;let any=0;$$('.hub-game',s).forEach(b=>{const m=MODS.find(x=>x.id===b.dataset.hub),on=!m.levels||m.levels.includes(L);b.style.display=on?'':'none';any|=on});s.style.display=any?'':'none'})}
 function mountMod(m){const s=catEl(CATS[m.cat]);s&&!$(`.hub-game[data-hub="${m.id}"]`)?$('.cat-games',s).appendChild(card(m)):0}
-function mount(){if(!$('#main-game-grid'))return;MODS.forEach(mountMod);sync()}
+function mount(){if(!$('#main-game-grid'))return;MODS.forEach(mountMod);sync();badges()}
 const Hub={
  category(c){CATS[c.id]=Object.assign(CATS[c.id]||{},c);document.readyState!=='loading'?mount():0},
  register(m){MODS.push(m);document.readyState!=='loading'?mount():0},
  open,close,lv,mods:MODS,cats:CATS
 };
 window.AmniHub=Hub;
-const boot=()=>{mount();new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-lv']});const q=new URLSearchParams(location.search).get('hub');q?setTimeout(()=>open(q),300):0};
+const boot=()=>{mount();document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#main-game-grid .game-btn');b?markSeen(b):0},true);new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-lv']});const q=new URLSearchParams(location.search).get('hub');q?setTimeout(()=>{const m=MODS.find(x=>x.id===q);m&&(!m.levels||m.levels.includes(String(lv())))?open(q):0},300):0};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0)):setTimeout(boot,0);
 css('hub-core',`
 #hub-overlay{position:fixed;inset:0;z-index:9000;display:none;background:var(--ui-bg,#0E1116);color:var(--ui-text,#EDF0F5);font-family:var(--ui-sans,system-ui,sans-serif);overflow:auto}
@@ -70,6 +74,7 @@ body.hub-open{overflow:hidden}
 .hub-back{font:700 .95rem var(--ui-sans,system-ui);padding:10px 16px;min-height:44px;border-radius:999px;border:1px solid var(--ui-border,#2A303A);background:var(--ui-surface-2,#1E232B);color:inherit;cursor:pointer}
 .hub-title{flex:1;font:800 clamp(1.1rem,3vw,1.5rem) var(--ui-sans,system-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body.lv-kid .hub-title{font-family:var(--ui-round,var(--ui-sans))}
+@media (max-width:480px){.hub-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2;overflow-wrap:break-word}}
 .hub-stat{font:700 .95rem var(--ui-sans,system-ui);color:var(--ui-muted,#A3ABBA);white-space:nowrap}
 .hub-stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:20px}
 .hub-card{width:100%;background:var(--ui-surface,#161A21);border:1px solid var(--ui-border,#2A303A);border-radius:var(--ui-r-lg,20px);box-shadow:var(--ui-shadow,none);padding:clamp(16px,3vw,28px)}

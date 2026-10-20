@@ -288,9 +288,11 @@
      (data-hscroll) that intentionally exceed parent. */
   @media (max-width: 768px) {
     .view *:not([data-hscroll] *):not(canvas) {
-      max-width: 100vw !important;
+      max-width: 100% !important;
       box-sizing: border-box;
     }
+    #app .view .teach-card { width: min(280px, 78vw); min-width: 0; max-width: min(280px, 78vw) !important; }
+    #app .view .teach-card .tc-fact, #app .view .teach-card .tc-title { overflow-wrap: break-word; }
     /* Common iOS table/grid offenders that ignore parent max-width */
     .view table, .view pre, .view code { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100% !important; }
   }
@@ -360,7 +362,7 @@
   .game-btn::before { content:''; position:absolute; inset:0; background: radial-gradient(120% 60% at 50% -20%, color-mix(in srgb, var(--gb) 22%, transparent) 0%, transparent 60%); pointer-events:none; opacity:.8; transition: opacity .3s; }
   .game-btn:active { transform: translateY(-1px) scale(0.985); }
   .game-btn > *, .storybook-card > * { pointer-events: none; }
-  .game-new-badge { position: absolute; top: 9px; right: 9px; background: #ff3b7f; color: #fff; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; line-height: 1; padding: 4px 7px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; z-index: 2; pointer-events: none; }
+  .game-new-badge { position: absolute; top: 9px; right: 9px; background: #c2185b; color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; line-height: 1; padding: 4px 7px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; z-index: 2; pointer-events: none; }
   .storybook-card { touch-action: manipulation; -webkit-tap-highlight-color: rgba(77,184,255,0.18); -webkit-appearance: none; appearance: none; }
   .game-btn:hover { transform: translateY(-5px) scale(1.03); border-color: color-mix(in srgb, var(--gb) 85%, #fff); box-shadow: 0 16px 34px -8px color-mix(in srgb, var(--gb) 45%, rgba(0,0,0,0.6)), 0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12); }
   .game-btn:hover::before { opacity: 1; }
@@ -406,10 +408,10 @@
   @media (orientation: portrait) and (max-width: 600px) { .cat-games { flex-direction: column !important; } .game-btn { flex: 1 1 100% !important; } }
   #tracing-view { background: #1b1e23; }
   #math-view { background: #1e252b; justify-content: center; }
-  #matching-view { background: #221f26; justify-content: center; }
-  #typing-view { background: #24221d; justify-content: center; }
-  #life-view { background: #1a2522; justify-content: center; }
-  #quiz-view { background: #26211d; justify-content: center; }
+  #matching-view { background: #221f26; justify-content: safe center; }
+  #typing-view { background: #24221d; justify-content: safe center; }
+  #life-view { background: #1a2522; justify-content: safe center; }
+  #quiz-view { background: #26211d; justify-content: safe center; }
   #trace-canvas { background: #fff; border: 4px dashed #ccc; border-radius: 20px; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='12' fill='none' stroke='%233498db' stroke-width='2' opacity='0.7'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%233498db'/%3E%3C/svg%3E") 16 16, crosshair; touch-action: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 10px; }
   .tracing-controls { margin-top: 15px; display: flex; gap: 10px; margin-bottom: 20px; position: sticky; bottom: 10px; z-index: 20; background: rgba(27,30,35,0.95); padding: 10px; border-radius: 12px; }
   .t-btn { padding: clamp(8px,2vw,10px) clamp(12px,3vw,20px); font-size: clamp(0.9rem,2.5vw,1.2rem); border-radius: 8px; border: none; cursor: pointer; font-family: 'Comic Neue', cursive; font-weight: bold; color: white; }
@@ -535,7 +537,7 @@
   .td-controls { margin-top:10px; display:flex; gap:8px; justify-content:center; padding:0 10px 14px; }
   .td-controls .t-btn { padding:8px 18px; }
   .life-title { font-family: 'Comic Neue', cursive; font-size: 2.5rem; color: var(--text,#ecf0f1); margin-bottom: 20px; text-align: center; }
-  .life-task-area { touch-action: none; background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .life-task-area { background: #fff; border: 4px solid #bdc3c7; border-radius: 20px; padding: clamp(10px,2vw,20px); width: 90%; max-width: 600px; min-height: clamp(250px,50vw,400px); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: safe center; flex-shrink: 0; }
   #quiz-prompt { font-size: clamp(1.5rem,5vw,2.5rem); margin-bottom: 30px; font-family: 'Comic Neue', cursive; text-align: center; width: 100%; color: var(--ui-text,#2c3e50) !important; font-weight: bold !important; opacity: 1 !important; text-shadow: none !important; margin-top: 0; }
   @media (min-width: 600px) { #quiz-prompt { font-size: clamp(2rem,5vw,3.5rem); } }
   #quiz-choices { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
@@ -1381,7 +1383,7 @@
   @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important;scroll-behavior:auto!important}}
   button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #f1c40f;outline-offset:2px;border-radius:6px}
   .nmm-btn,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(77,184,255,0.18)}
-  .game-btn[data-game="gonogo"]::before,.game-btn[data-game="symcode"]::before,.game-btn[data-game="corsi"]::before,.game-btn[data-game="flanker"]::before,.game-btn[data-game="simon"]::before,.game-btn[data-game="numerosity"]::before,.game-btn[data-game="posner"]::before,.game-btn[data-game="backspan"]::before,.game-btn[data-game="tol"]::before,.game-btn[data-game="changedet"]::before,.game-btn[data-game="taskswitch"]::before{content:'NEW';position:absolute;inset:auto;top:6px;right:6px;left:auto;bottom:auto;width:auto;height:auto;line-height:1.2;background:#e74c3c;color:#fff;font-size:0.56rem;font-weight:700;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;z-index:3;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+  .game-btn[data-game="gonogo"]::before,.game-btn[data-game="symcode"]::before,.game-btn[data-game="corsi"]::before,.game-btn[data-game="flanker"]::before,.game-btn[data-game="simon"]::before,.game-btn[data-game="numerosity"]::before,.game-btn[data-game="posner"]::before,.game-btn[data-game="backspan"]::before,.game-btn[data-game="tol"]::before,.game-btn[data-game="changedet"]::before,.game-btn[data-game="taskswitch"]::before{content:'NEW';position:absolute;inset:auto;top:6px;right:6px;left:auto;bottom:auto;width:auto;height:auto;line-height:1.2;background:#c2185b;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:0.5px;z-index:3;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
   html,body,#app,.view,.top-bar{touch-action:manipulation;}
   #quiz-prompt{font-size:clamp(1.25rem,5vw,2.5rem)!important;min-width:0;max-width:100%;flex-shrink:1;overflow-wrap:break-word;word-break:break-word;hyphens:auto;}
   #quiz-task-area .m-choice{max-width:100%;overflow-wrap:break-word;}
@@ -1414,7 +1416,7 @@
     .math-problem{font-size:clamp(2rem,7vw,3.2rem)!important;margin-bottom:10px!important}
   }
 </style>
-<link rel="stylesheet" href="learn-ui.css?v=1b">
+<link rel="stylesheet" href="learn-ui.css?v=2">
 <script>try{(function(o){var h=document.documentElement;o.size&&o.size!==100?h.style.fontSize=o.size+"%":0;o.hc?h.classList.add("a11y-hc"):0;o.rm?h.classList.add("a11y-rm"):0;o.read?h.classList.add("a11y-read"):0;o.size>100?h.classList.add("a11y-big"):0})(JSON.parse(localStorage.getItem("amni-learn-a11y")||"{}"))}catch(e){}</script>
 </head>
 <body>
@@ -1436,7 +1438,7 @@
         <span class="fs-hint" id="fs-hint">(Press ESC to exit)</span>
         <button class="theme-btn" id="a11y-btn" title="Display &amp; accessibility" aria-label="Display and accessibility settings" aria-haspopup="dialog"><span aria-hidden="true" style="font-weight:800;letter-spacing:-.02em">Aa</span></button>
         <button class="theme-btn" id="tts-btn" title="Read aloud (off)" aria-label="Toggle read-aloud" aria-pressed="false">🔇</button>
-        <button class="theme-btn" id="theme-btn" title="Toggle light/dark theme" aria-label="Toggle theme">🌙</button>
+        <button class="theme-btn" id="theme-btn" title="Theme: Midnight (tap to change)" aria-label="Change color theme">🌙</button>
         <button class="fs-btn" id="fs-btn" aria-label="Toggle fullscreen">⛶<span class="fs-label"> Full screen</span></button>
     </div>
   </div>
@@ -1472,7 +1474,7 @@
     <div id="random-game-banner" style="max-width:560px;width:92%;margin:0 auto 14px;padding:10px 16px;background:linear-gradient(135deg,rgba(155,89,182,0.22),rgba(142,68,173,0.18));border:2px solid #9b59b6;border-radius:14px;cursor:pointer;font-family:'JetBrains Mono',monospace;box-shadow:0 0 18px rgba(155,89,182,0.25);transition:transform 0.15s,box-shadow 0.15s;display:flex;align-items:center;justify-content:space-between;gap:10px;">
       <div>
         <div style="font-size:1.05rem;font-weight:bold;color:#9b59b6;text-shadow:0 0 6px rgba(155,89,182,0.4);">🎲 Spin the Wheel</div>
-        <div style="font-size:0.82rem;color:var(--text,#ecf0f1);margin-top:3px;opacity:0.9;">Tap to launch a random game or quiz from the whole suite</div>
+        <div style="font-size:0.82rem;color:var(--text,#ecf0f1);margin-top:3px;opacity:0.9;">Tap to launch a random game or quiz from this level</div>
       </div>
       <div style="font-size:1.8rem;">🎰</div>
     </div>
@@ -1507,7 +1509,7 @@
         </div>
       </section>
       <section class="game-category">
-        <h2 class="cat-header"><span class="cat-header-icon">🧠</span> Brain Exercise</h2>
+        <h2 class="cat-header"><span class="cat-header-icon">🧠</span> Thinking Games</h2>
         <div class="cat-games">
           <button class="game-btn life" data-game="life" data-subgame="mathsolitaire"><span class="btn-icon">🃏</span><span class="btn-text">Math Solitaire</span><span class="btn-desc">Play cards onto target foundations</span></button>
           <button class="game-btn life" data-game="life" data-subgame="codelock"><span class="btn-icon">🔐</span><span class="btn-text">Code Lock</span><span class="btn-desc">Crack the hidden color code</span></button>
@@ -1518,6 +1520,8 @@
           <button class="game-btn life" data-game="life" data-subgame="twentyfortyeight"><span class="btn-icon">🔢</span><span class="btn-text">2048</span><span class="btn-desc">Slide and merge to reach 2048</span></button>
           <button class="game-btn life" data-game="life" data-subgame="sudoku"><span class="btn-icon">🔢</span><span class="btn-text">Sudoku 4×4</span><span class="btn-desc">Each row, col, &amp; box has 1-4 once</span></button>
           <button class="game-btn life" data-game="life" data-subgame="memorymatch"><span class="btn-icon">🧠</span><span class="btn-text">Memory Match</span><span class="btn-desc">Flip cards, find pairs</span></button>
+          <button class="game-btn memseq" data-game="memseq"><span class="btn-icon">💡</span><span class="btn-text">Memory Sequence</span><span class="btn-desc">Remember the pattern</span></button>
+          <button class="game-btn pattern" data-game="pattern"><span class="btn-icon">🔢</span><span class="btn-text">Pattern Puzzle</span><span class="btn-desc">Find what comes next</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1538,6 +1542,7 @@
           <button class="game-btn quiz" data-game="quiz" data-subject="history"><span class="btn-icon">📜</span><span class="btn-text">World History</span><span class="btn-desc">Civilizations, events & dates</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="mystate"><span class="btn-icon">🗺️</span><span class="btn-text" id="mystate-name">My State</span><span class="btn-desc" id="mystate-desc">Symbols, maps &amp; state history</span></button>
           <button class="game-btn quiz" data-game="quiz" data-subject="civics"><span class="btn-icon">🏛️</span><span class="btn-text">Civics & Government</span><span class="btn-desc">How governments function</span></button>
+          <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span><span class="btn-desc">Flags & countries</span></button>
         </div>
       </section>
       <section class="game-category">
@@ -1560,16 +1565,8 @@
           <button class="game-btn scramble" data-game="scramble"><span class="btn-icon">🔤</span><span class="btn-text">Word Scramble</span><span class="btn-desc">Unscramble the letters</span></button>
         </div>
       </section>
-      <section class="game-category">
-        <h2 class="cat-header"><span class="cat-header-icon">🧠</span> Brain Training</h2>
-        <div class="cat-games">
-          <button class="game-btn memseq" data-game="memseq"><span class="btn-icon">💡</span><span class="btn-text">Memory Sequence</span><span class="btn-desc">Remember the pattern</span></button>
-          <button class="game-btn pattern" data-game="pattern"><span class="btn-icon">🔢</span><span class="btn-text">Pattern Puzzle</span><span class="btn-desc">Find what comes next</span></button>
-          <button class="game-btn geo" data-game="geo"><span class="btn-icon">🌎</span><span class="btn-text">Geography Explorer</span><span class="btn-desc">Flags & countries</span></button>
-        </div>
-      </section>
       <section class="game-category" id="stem-section" style="display:none;">
-        <h2 class="cat-header" id="stem-title"><span class="cat-header-icon">🎓</span> Higher Education (STEM)</h2>
+        <h2 class="cat-header" id="stem-title"><span class="cat-header-icon">🎓</span> Advanced STEM</h2>
         <div class="cat-games">
           <button class="game-btn quiz" id="btn-math" data-game="quiz" data-subject="math"><span class="btn-icon">📐</span><span class="btn-text">Advanced Math</span><span class="btn-desc">Algebra & calculus</span></button>
           <button class="game-btn quiz" id="btn-engineering" data-game="quiz" data-subject="engineering"><span class="btn-icon">⚙️</span><span class="btn-text">Physics & Engineering</span><span class="btn-desc">Forces & machines</span></button>
@@ -2126,20 +2123,20 @@
   <canvas id="confetti-canvas"></canvas>
 </div>
 <script>(function(){var P=/best|wins|streak|solved|total|high/;try{var S=window.sessionStorage,L=window.localStorage,oset=Storage.prototype.setItem,oget=Storage.prototype.getItem;Storage.prototype.setItem=function(k,v){oset.call(this,k,v);if(this===S&&P.test(String(k)))try{oset.call(L,k,v)}catch(e){}};Storage.prototype.getItem=function(k){var v=oget.call(this,k);if(v==null&&this===S&&P.test(String(k))){try{v=oget.call(L,k)}catch(e){}}return v}}catch(e){}})();</script>
-<script src="learn-ui.js?v=2" defer></script>
-<script src="learn-standards.js?v=2" defer></script>
+<script src="learn-ui.js?v=3" defer></script>
+<script src="learn-standards.js?v=3" defer></script>
 <script src="learn-state-facts.js?v=1" defer></script>
 <script src="learn-state-studies.js?v=2" defer></script>
-<script src="learn-app.js?v=v1297" defer></script>
+<script src="learn-app.js?v=v1299" defer></script>
 <script src="learn-sound.js?v=1" defer></script>
-<script src="learn-hub.js?v=2" defer></script>
+<script src="learn-hub.js?v=5" defer></script>
 <script src="learn-art.js?v=1" defer></script>
-<script src="mod-kids.js?v=4" defer></script>
-<script src="mod-music.js?v=3" defer></script>
-<script src="mod-world.js?v=4" defer></script>
-<script src="mod-testprep.js?v=2" defer></script>
-<script src="mod-mature.js?v=3" defer></script>
-<script src="brain-gym.js?v=2b" defer></script>
+<script src="mod-kids.js?v=5" defer></script>
+<script src="mod-music.js?v=4" defer></script>
+<script src="mod-world.js?v=5" defer></script>
+<script src="mod-testprep.js?v=3" defer></script>
+<script src="mod-mature.js?v=4" defer></script>
+<script src="brain-gym.js?v=3" defer></script>
 </div>
 <footer class="learn-footer" role="contentinfo">
 <div class="lf-inner">
