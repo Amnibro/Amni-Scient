@@ -14,7 +14,7 @@ export function sup(it,n){const P=it.pts,k=it.kind,c=k==='capsule'||k==='cyl'?V(
   if(k==='box'){const hh=P[1].map(v=>Math.abs(v)/2),rr=Math.min(it.r||0,...hh);return dc+(hh[0]-rr)*Math.abs(m.x)+(hh[1]-rr)*Math.abs(m.y)+(hh[2]-rr)*Math.abs(m.z)+rr;}
   if(k==='torus')return dc+it.R*Math.hypot(m.x,m.y)+it.r;
   if(k==='capsule'||k==='cyl'){const E=P.slice(0,2).map(p=>V(p).sub(c).applyQuaternion(q).add(c)),u=E[1].clone().sub(E[0]).normalize();return k==='cyl'?Math.max(E[0].dot(n),E[1].dot(n))+it.r*Math.sqrt(Math.max(0,1-u.dot(n)**2)):Math.max(E[0].dot(n)+it.r,E[1].dot(n)+(typeof it.e==='number'?it.e:it.r));}
-  return Math.max(...P.map(p=>V(p).dot(n)))+(BRUSHES.includes(k)?it.r:0);}
+  return Math.max(...(k==='light'||k==='camera'?P.slice(0,1):P).map(p=>V(p).dot(n)))+(BRUSHES.includes(k)?it.r:0);}
 export function aabb(its){const min=[1e9,1e9,1e9],max=[-1e9,-1e9,-1e9];for(const it of its)for(let i=0;i<3;i++){const e=V(AX['xyz'[i]]);max[i]=Math.max(max[i],sup(it,e));min[i]=Math.min(min[i],-sup(it,e.negate()));}return{min,max};}
 export function xf(o,op,c){const P=posIdx(o),k=o.kind;if(op.kind==='move'){for(const i of P)o.pts[i]=o.pts[i].map((v,j)=>j<3?v+op.d[j]:v);return o;}
   if(op.kind==='rotate'){const q=new T.Quaternion().setFromAxisAngle(V(op.axis).normalize(),op.deg*D2R);for(const i of P)o.pts[i]=[...V(o.pts[i]).sub(c).applyQuaternion(q).add(c).toArray(),...o.pts[i].slice(3)];if(CEN.includes(k)&&k!=='sphere')setRot(o,q.clone().multiply(rq(o)));else if((k==='capsule'||k==='cyl')&&o.rot)setRot(o,q.clone().multiply(rq(o)).multiply(q.clone().invert()));if(Array.isArray(o.d))o.d=V(o.d).applyQuaternion(q).toArray();if(Array.isArray(o.n))o.n=V(o.n).applyQuaternion(q).toArray();return o;}
