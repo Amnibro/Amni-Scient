@@ -8,12 +8,12 @@ const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wa
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));},near=(a,b,r,m)=>ok(Math.abs(a-b)<=Math.max(Math.abs(b)*r,1e-9),m+' got '+a+' want '+b);
 const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.params||[],features:fs.map((f,i)=>({id:'f'+(i+1),...f}))});},VOL=r=>K.meshBody(r.body).props.volume;
 {const box={type:'box',w:20,d:20,h:10},base=VOL(await B([box])),top=(o)=>({type:'chamfer',edges:{by:'pick',pts:[[0,-10,10]]},...o}),cut=async o=>base-VOL(await B([box,top(o)]));
-  near(await cut({d:2}),0.5*2*2*20,1e-6,'equal chamfer');
-  near(await cut({d:2,d2:4}),0.5*2*4*20,1e-6,'asymmetric chamfer d on the top face');
-  near(await cut({d:2,d2:4,flip:true}),0.5*2*4*20,1e-6,'flip keeps the same material removed');
+  near(await cut({d:2}),0.5*2*2*20,1e-7,'equal chamfer');
+  near(await cut({d:2,d2:4}),0.5*2*4*20,1e-7,'asymmetric chamfer d on the top face');
+  near(await cut({d:2,d2:4,flip:true}),0.5*2*4*20,1e-7,'flip keeps the same material removed');
   const r1=await B([box,top({d:2,d2:4})]),m1=K.meshBody(r1.body),r2=await B([box,top({d:2,d2:4,flip:true})]),m2=K.meshBody(r2.body),fa=m=>m.faces.find(q=>q.type==='PLANE'&&q.n&&q.n[1]<-0.2&&q.n[2]>0.2);
   ok(fa(m1)&&fa(m2)&&Math.abs(fa(m1).n[2]-fa(m2).n[2])>0.3,'flip swaps which face gets d: slope normal differs '+JSON.stringify([fa(m1)&&fa(m1).n,fa(m2)&&fa(m2).n]));
-  near(await cut({d:3,angle:30}),0.5*3*3*Math.tan(Math.PI/6)*20,1e-6,'distance-angle chamfer');
+  near(await cut({d:3,angle:30}),0.5*3*3*Math.tan(Math.PI/6)*20,1e-7,'distance-angle chamfer');
   const bad=await B([box,top({d:2,angle:95})]);ok(bad.errors.length&&/angle/.test(bad.errors[0].msg),'angle 95 is rejected: '+JSON.stringify(bad.errors));
   const big=await B([box,top({d:30,d2:60})]);ok(!big.errors.length&&big.warnings.some(w=>w.field==='d'),'oversized asymmetric chamfer limited with a note');
   ok(/d2/.test(featureDocs())&&/chamfer/.test(FT.chamfer.doc),'chamfer doc mentions d2');
@@ -23,10 +23,10 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   near(r.volume,24,1e-9,'box volume');near(r.area,2*(6+8+12),1e-9,'box area');near(r.com[0],5,1e-9,'box com x');near(r.com[2],3,1e-9,'box com z');
   near(r.T[0][0],e(3,4),1e-7,'box Ixx');near(r.T[1][1],e(2,4),1e-7,'box Iyy');near(r.T[2][2],e(2,3),1e-7,'box Izz');ok(Math.abs(r.T[0][1])<1e-7&&Math.abs(r.T[1][2])<1e-7&&Math.abs(r.T[0][2])<1e-7,'box products of inertia are zero about the com');
   near(sorted(r.principal)[0],e(2,3),1e-7,'box smallest principal');
-  const c=await rb([{type:'cylinder',r:5,h:20,axis:'X'}]);near(c.T[0][0],Math.PI*25*20*25/2,1e-6,'cylinder axial moment');near(c.T[1][1],Math.PI*25*20*(3*25+400)/12,1e-6,'cylinder transverse moment');
-  const t=await rb([{type:'box',w:10,d:6,h:2},{type:'move',angle:30,axis:'Z'}]);near(sorted(t.principal)[0],10*6*2*(36+4)/12,1e-6,'rotated box keeps its principal moments');ok(Math.abs(t.T[0][1])>1,'rotated box has a product of inertia in world axes');
-  near(Math.abs(t.principal[0].axis[0]*Math.cos(Math.PI/6)+t.principal[0].axis[1]*Math.sin(Math.PI/6)),1,1e-6,'principal axis follows the rotated box edge');
-  const si=massSI(await rb([{type:'box',w:1,d:1,h:1}],'in'),'in',7850);near(si.mass_kg,7850*0.0254**3,1e-9,'inch box mass');near(si.inertia_kg_mm2.Ixx,si.mass_kg*2/12*25.4**2,1e-7,'inch box Ixx in kg mm2');near(si.inertia_lb_in2.Ixx,si.mass_kg*2.2046226*2/12,1e-6,'inch box Ixx in lb in2');
+  const c=await rb([{type:'cylinder',r:5,h:20,axis:'X'}]);near(c.T[0][0],Math.PI*25*20*25/2,1e-7,'cylinder axial moment');near(c.T[1][1],Math.PI*25*20*(3*25+400)/12,1e-7,'cylinder transverse moment');
+  const t=await rb([{type:'box',w:10,d:6,h:2},{type:'move',angle:30,axis:'Z'}]);near(sorted(t.principal)[0],10*6*2*(36+4)/12,1e-7,'rotated box keeps its principal moments');ok(Math.abs(t.T[0][1])>1,'rotated box has a product of inertia in world axes');
+  near(Math.abs(t.principal[0].axis[0]*Math.cos(Math.PI/6)+t.principal[0].axis[1]*Math.sin(Math.PI/6)),1,1e-7,'principal axis follows the rotated box edge');
+  const si=massSI(await rb([{type:'box',w:1,d:1,h:1}],'in'),'in',7850);near(si.mass_kg,7850*0.0254**3,1e-9,'inch box mass');near(si.inertia_kg_mm2.Ixx,si.mass_kg*2/12*25.4**2,1e-7,'inch box Ixx in kg mm2');near(si.inertia_lb_in2.Ixx,si.mass_kg*2.2046226*2/12,1e-7,'inch box Ixx in lb in2');
   const d=await K.build({units:'mm',params:[],features:[{id:'a',type:'box',w:10,d:10,h:10},{id:'b',type:'box',w:10,d:10,h:10,x:30}]});near(MP.props(d.body).volume,2000,1e-9,'two bodies sum volume');
 }
 {const mk=n=>[{type:'box',w:100,d:60,h:8},...Array.from({length:n},(_,i)=>({type:'hole',plane:'XY',offset:8,pts:[[-45+(i%10)*10,-25+Math.floor(i/10)*10]],d:4,thru:true}))],id=fs=>fs.map((f,i)=>({id:'f'+(i+1),...f})),run=(fs,fz)=>K.build({units:'mm',params:[],features:id(fs),freeze:fz});
@@ -40,16 +40,16 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   const h=await run([...mk(12).slice(0,3),{type:'fillet',r:50,edges:{by:'all'}}],2);ok(h.warnings.length>0,'warnings of frozen+unfrozen features are both reported on later builds');const h2=await run([...mk(12).slice(0,3),{type:'fillet',r:50,edges:{by:'all'}}],4);ok(h2.warnings.length===h.warnings.length,'a warning on a frozen feature is kept when the prefix is reused');
 }
 {const box={type:'box',w:20,d:20,h:10},T5=Math.tan(5*Math.PI/180),fr=(w0,w1,h)=>h*(w0*w0+w0*w1+w1*w1)/3,mb=r=>K.meshBody(r.body),bx=r=>{const b=mb(r).props.bbox;return[b.max[0]-b.min[0],b.max[2]-b.min[2]];};
-  let r=await B([box,{type:'draft',angle:5}]);ok(!r.errors.length,'draft builds '+JSON.stringify(r.errors));near(VOL(r),fr(20,20-20*T5,10),1e-6,'draft 5 deg about the bottom narrows toward the pull');
-  const tops=m=>m.faces.filter(q=>q.type==='PLANE'&&q.n&&q.n[2]>0.99);near(tops(mb(r))[0].area,(20-20*T5)**2,1e-6,'top face area after draft');
-  r=await B([box,{type:'draft',angle:5,neutral:'top'}]);near(VOL(r),fr(20,20+20*T5,10),1e-6,'neutral at the top: the base grows');
-  r=await B([box,{type:'draft',angle:5,neutral:'mid'}]);near(VOL(r),fr(20,20,10)+0*1,1e-2,'mid neutral keeps volume about the same');near(bx(r)[0],20+10*T5,1e-6,'mid neutral: width spans +-5 tan');
-  r=await B([box,{type:'draft',angle:5,pull:'-Z'}]);near(VOL(r),fr(20,20-20*T5,10),1e-6,'pull -Z mirrors the +Z case (bottom and top are measured along the pull)');r=await B([box,{type:'draft',angle:5,pull:'-Z',neutral:'top'}]);near(VOL(r),fr(20,20+20*T5,10),1e-6,'pull -Z with neutral top fixes the physical bottom');
-  r=await B([box,{type:'draft',angle:-5}]);near(VOL(r),fr(20,20+20*T5,10),1e-6,'negative angle leans away from the pull');
-  r=await B([box,{type:'draft',angle:5,neutral:'offset',offset:4}]);near(bx(r)[0],20+8*T5,1e-6,'offset neutral plane at 4 from the bottom');
-  r=await B([box,{type:'draft',angle:5,neutral:'face',nface:{side:'+Z'}}]);near(VOL(r),fr(20,20+20*T5,10),1e-6,'neutral face = top face');
-  r=await B([box,{type:'draft',angle:5,pull:[0,0,1]}]);near(VOL(r),fr(20,20-20*T5,10),1e-6,'pull given as a vector');
-  r=await B([box,{type:'draft',angle:5,faces:{by:'pick',pts:[[10,0,5]]}}]);const one=VOL(r);near(one,4000-0.5*10*10*T5*20,1e-6,'only the picked wall tilts');
+  let r=await B([box,{type:'draft',angle:5}]);ok(!r.errors.length,'draft builds '+JSON.stringify(r.errors));near(VOL(r),fr(20,20-20*T5,10),1e-7,'draft 5 deg about the bottom narrows toward the pull');
+  const tops=m=>m.faces.filter(q=>q.type==='PLANE'&&q.n&&q.n[2]>0.99);near(tops(mb(r))[0].area,(20-20*T5)**2,1e-7,'top face area after draft');
+  r=await B([box,{type:'draft',angle:5,neutral:'top'}]);near(VOL(r),fr(20,20+20*T5,10),1e-7,'neutral at the top: the base grows');
+  r=await B([box,{type:'draft',angle:5,neutral:'mid'}]);near(VOL(r),fr(20,20,10)+0*1,1e-2,'mid neutral keeps volume about the same');near(bx(r)[0],20+10*T5,1e-7,'mid neutral: width spans +-5 tan');
+  r=await B([box,{type:'draft',angle:5,pull:'-Z'}]);near(VOL(r),fr(20,20-20*T5,10),1e-7,'pull -Z mirrors the +Z case (bottom and top are measured along the pull)');r=await B([box,{type:'draft',angle:5,pull:'-Z',neutral:'top'}]);near(VOL(r),fr(20,20+20*T5,10),1e-7,'pull -Z with neutral top fixes the physical bottom');
+  r=await B([box,{type:'draft',angle:-5}]);near(VOL(r),fr(20,20+20*T5,10),1e-7,'negative angle leans away from the pull');
+  r=await B([box,{type:'draft',angle:5,neutral:'offset',offset:4}]);near(bx(r)[0],20+8*T5,1e-7,'offset neutral plane at 4 from the bottom');
+  r=await B([box,{type:'draft',angle:5,neutral:'face',nface:{side:'+Z'}}]);near(VOL(r),fr(20,20+20*T5,10),1e-7,'neutral face = top face');
+  r=await B([box,{type:'draft',angle:5,pull:[0,0,1]}]);near(VOL(r),fr(20,20-20*T5,10),1e-7,'pull given as a vector');
+  r=await B([box,{type:'draft',angle:5,faces:{by:'pick',pts:[[10,0,5]]}}]);const one=VOL(r);near(one,4000-0.5*10*10*T5*20,1e-7,'only the picked wall tilts');
   r=await B([box,{type:'draft',angle:5,faces:{side:'+Z'}}]);ok(r.errors.length&&/pull/.test(r.errors[0].msg),'drafting only the top (square to the pull) is explained: '+JSON.stringify(r.errors));
   r=await B([box,{type:'draft',angle:80}]);ok(!r.errors.length&&r.warnings.some(w=>w.field==='angle'&&w.limit>0&&w.limit<80),'a draft angle that cannot work is limited with a note '+JSON.stringify(r.warnings.map(w=>w.msg)));
   r=await B([box,{type:'draft',angle:95}]);ok(r.errors.length,'angle 95 is rejected');
@@ -60,7 +60,7 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   const dk=defaults('draft');r=await B([box,dk]);ok(!r.errors.length&&VOL(r)<4000,'defaults build');
   ok(/draft:/.test(featureDocs())&&FT.draft.doc.length>100,'draft has a doc');
   const inch=await B([{type:'box',w:2,d:2,h:1},{type:'draft',angle:3,neutral:'offset',offset:0.25}],'in');ok(!inch.errors.length,'inch document drafts');
-  const cyl=await B([{type:'cylinder',r:5,h:10},{type:'draft',angle:5}]);near(VOL(cyl),Math.PI*10*(25+5*(5-10*T5)+(5-10*T5)**2)/3,1e-6,'a cylinder wall drafts into a cone');
+  const cyl=await B([{type:'cylinder',r:5,h:10},{type:'draft',angle:5}]);near(VOL(cyl),Math.PI*10*(25+5*(5-10*T5)+(5-10*T5)**2)/3,1e-7,'a cylinder wall drafts into a cone');
   const sel=await B([{type:'cylinder',r:5,h:10},{type:'shell',t:1,faces:{type:'CYLINDER'}}]);ok(sel.errors.length===0||sel.errors[0].msg,'CYLINDER type selector resolves (was never matched)');
   const cs=K.selectFaces((await B([{type:'cylinder',r:5,h:10}])).body,{type:'CYLINDER'});ok(cs.length===1,'face selector type CYLINDER matches the cylinder wall');
 }
@@ -103,7 +103,7 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   r=await B([box,{type:'datum_plane',plane:'mid',fa:{side:'-Z'},fb:{side:'+Z'}},on('f2',{depth:1})]);near(bb(r).max[2],10,1e-9,'mid plane between bottom and top at z=5 (slab inside)');near(r.datums[0].o[2],5,1e-9,'mid datum at z=5');
   r=await B([box,{type:'datum_plane',plane:'mid',fa:{side:'-Z'},fb:{side:'+X'}}]);ok(r.errors.length&&/parallel/.test(r.errors[0].msg),'mid plane of non-parallel faces is explained');
   r=await B([{type:'cylinder',r:3,h:10,x:10},{type:'datum_axis',mode:'cylinder',faces:{type:'CYLINDER'}}]);near(r.datums[0].p[0],10,1e-9,'cylinder axis passes through the cylinder center');near(Math.abs(r.datums[0].d[2]),1,1e-9,'cylinder axis is Z');
-  r=await B([{type:'cylinder',r:3,h:10,x:10},{type:'datum_axis',mode:'points',pts:[[0,0,0],[0,0,1]]},{type:'pattern',of:['f1'],kind:'circular',n:4,axis:'f2'}]);near(VOL(r),4*Math.PI*9*10,1e-6,'circular pattern about a datum axis id');
+  r=await B([{type:'cylinder',r:3,h:10,x:10},{type:'datum_axis',mode:'points',pts:[[0,0,0],[0,0,1]]},{type:'pattern',of:['f1'],kind:'circular',n:4,axis:'f2'}]);near(VOL(r),4*Math.PI*9*10,1e-7,'circular pattern about a datum axis id');
   const mv=await B([{type:'cylinder',r:3,h:10,x:10},{type:'datum_axis',mode:'points',pts:[[0,0,0],[0,0,1]]},{type:'move',angle:90,axis:'f2',copy:false}]);near(bb(mv).max[1],13,1e-9,'move rotates about a datum axis id');
   r=await B([box,{type:'datum_axis',mode:'planes',pa:'XY',pb:'XZ'}]);near(Math.abs(r.datums[0].d[0]),1,1e-9,'XY and XZ meet along X');
   r=await B([box,{type:'datum_plane',plane:'XZ'},{type:'datum_plane',plane:'XY',offset:3},{type:'datum_axis',mode:'planes',pa:'f2',pb:'f3'}]);near(r.datums[2].p[2],3,1e-9,'axis from two datum planes sits at the offset plane');
@@ -122,12 +122,12 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   for(const k of['datum_plane','datum_axis','datum_point']){const r2=await B([box,defaults(k)]);ok(!r2.errors.length,'defaults of '+k+' build '+JSON.stringify(r2.errors));}
 }
 {const box={type:'box',w:20,d:20,h:10},M=async(fs,a,b,u='mm')=>{const r=await B(fs,u);return MS.measure(r.body,K,a,b);};
-  let m=await M([box],{face:{side:'+Z'}},{face:{side:'-Z'}});near(m.min_distance,10,1e-9,'top to bottom distance');ok(m.parallel&&Math.abs(m.gap-10)<1e-9&&m.angle_deg<1e-6&&Math.abs(m.normals_angle_deg-180)<1e-6,'parallel faces report the gap and 180 degree normals '+JSON.stringify(m));near(m.a.area,400,1e-9,'face area');ok(m.a.type==='plane'&&m.a.normal[2]===1,'face info');
+  let m=await M([box],{face:{side:'+Z'}},{face:{side:'-Z'}});near(m.min_distance,10,1e-9,'top to bottom distance');ok(m.parallel&&Math.abs(m.gap-10)<1e-9&&m.angle_deg<1e-7&&Math.abs(m.normals_angle_deg-180)<1e-7,'parallel faces report the gap and 180 degree normals '+JSON.stringify(m));near(m.a.area,400,1e-9,'face area');ok(m.a.type==='plane'&&m.a.normal[2]===1,'face info');
   m=await M([box],{face:{side:'+Z'}},{face:{side:'+X'}});near(m.angle_deg,90,1e-9,'perpendicular faces 90 degrees');ok(m.min_distance<1e-9,'faces that share an edge are at distance 0');
   m=await M([{type:'box',w:10,d:10,h:10},{type:'box',w:10,d:10,h:10,x:30}],{solid:0},{solid:1});near(m.min_distance,20,1e-9,'two solids: minimum distance');near(m.closest_a[0],5,1e-9,'closest point on the first solid');near(m.closest_b[0],25,1e-9,'closest point on the second solid');
   m=await M([box],{point:[0,0,20]},{point:[3,4,20]});near(m.min_distance,5,1e-9,'point to point');near(m.delta[1],4,1e-9,'point delta y');near(m.center_distance,5,1e-9,'point center distance');
   m=await M([box],{point:[0,0,25]},{face:{side:'+Z'}});near(m.min_distance,15,1e-9,'point to face');
-  m=await M([box],{edge:{by:'pick',pts:[[0,-10,10]]}},{edge:{by:'pick',pts:[[0,10,10]]}});near(m.min_distance,20,1e-9,'two parallel edges');ok(m.parallel&&m.angle_deg<1e-6,'parallel edges');
+  m=await M([box],{edge:{by:'pick',pts:[[0,-10,10]]}},{edge:{by:'pick',pts:[[0,10,10]]}});near(m.min_distance,20,1e-9,'two parallel edges');ok(m.parallel&&m.angle_deg<1e-7,'parallel edges');
   m=await M([box],{edge:{by:'pick',pts:[[0,-10,10]]}},{edge:{by:'pick',pts:[[10,0,0]]}});near(m.angle_deg,90,1e-9,'perpendicular edges 90 degrees');near(m.a.length,20,1e-9,'edge length');
   m=await M([box],{face:{side:'+Z'}},{edge:{by:'pick',pts:[[10,10,5]]}});near(m.angle_deg,90,1e-9,'plane to a vertical edge is 90 degrees');
   m=await M([box,{type:'hole',plane:'XY',offset:10,pts:[[0,0]],d:8,thru:true}],{face:{type:'CYLINDER'}});near(m.a.radius,4,1e-9,'hole radius');near(m.a.diameter,8,1e-9,'hole diameter');near(Math.abs(m.a.axis[2]),1,1e-9,'hole axis');
@@ -151,19 +151,19 @@ const B=async(fs,u='mm',x={})=>{K.resetCache();return K.build({units:u,params:x.
   r=await B([{type:'box',w:60,d:10,h:10},{type:'box',w:10,d:30,h:30,op:'cut'}]);ok(nb(r)===2&&r.warnings.some(w=>/split/.test(w.msg)),'a cut that splits the part warns '+JSON.stringify(r.warnings.map(w=>w.msg)));
   r=await B([A,Bx,{type:'combine',kind:'union'}]);ok(nb(r)===2&&r.warnings.some(w=>/stay separate/.test(w.msg)),'union of bodies that do not touch says so');
   r=await B([A,{...Bx,x:30,op:'new'},{type:'combine',kind:'union'}]);ok(!r.errors.length,'union of bodies that do not touch builds');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'union'}]);ok(!r.errors.length&&nb(r)===1,'union merges two overlapping bodies into one');near(vl(r),4700,1e-6,'merged volume removes the overlap');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{index:0},tools:[{index:1}]}]);ok(!r.errors.length&&nb(r)===1,'subtract builds');near(vl(r),3700,1e-6,'subtract removes the overlap from the target');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',keep:true}]);ok(nb(r)===2,'subtract with keep leaves the tool body in place');near(vl(r),3700+1000,1e-6,'volume of target-minus-tool plus the kept tool');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'intersect'}]);ok(!r.errors.length&&nb(r)===1,'intersect builds');near(vl(r),300,1e-6,'intersect keeps the shared volume');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'union'}]);ok(!r.errors.length&&nb(r)===1,'union merges two overlapping bodies into one');near(vl(r),4700,1e-7,'merged volume removes the overlap');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{index:0},tools:[{index:1}]}]);ok(!r.errors.length&&nb(r)===1,'subtract builds');near(vl(r),3700,1e-7,'subtract removes the overlap from the target');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',keep:true}]);ok(nb(r)===2,'subtract with keep leaves the tool body in place');near(vl(r),3700+1000,1e-7,'volume of target-minus-tool plus the kept tool');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'intersect'}]);ok(!r.errors.length&&nb(r)===1,'intersect builds');near(vl(r),300,1e-7,'intersect keeps the shared volume');
   r=await B([A,Bx,{type:'combine',kind:'intersect'}]);ok(r.errors.length&&/overlap/.test(r.errors[0].msg),'intersect of disjoint bodies is explained');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{feature:'f2'},tools:{feature:'f1'}}]);near(vl(r),700,1e-6,'bodies can be selected by the feature that made them (subtract A from B)');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{largest:true},tools:{smallest:true}}]);near(vl(r),3700,1e-6,'largest and smallest selectors');
-  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{by:'pick',pts:[[-9,0,5]]},tools:{by:'pick',pts:[[29,0,5]]}}]);near(vl(r),3700,1e-6,'pick selectors choose the nearest body');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{feature:'f2'},tools:{feature:'f1'}}]);near(vl(r),700,1e-7,'bodies can be selected by the feature that made them (subtract A from B)');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{largest:true},tools:{smallest:true}}]);near(vl(r),3700,1e-7,'largest and smallest selectors');
+  r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{by:'pick',pts:[[-9,0,5]]},tools:{by:'pick',pts:[[29,0,5]]}}]);near(vl(r),3700,1e-7,'pick selectors choose the nearest body');
   r=await B([A,{type:'combine'}]);ok(r.errors.length&&/only one body/.test(r.errors[0].msg),'combine of a single body is explained');
   r=await B([A,{...Bx,x:12,op:'new'},{type:'combine',kind:'subtract',target:{index:5}}]);ok(r.errors.length&&/target body/.test(r.errors[0].msg),'bad target index is explained');
   r=await B([A,{...Bx,x:30},{type:'fillet',r:1,edges:{by:'all'}}]);ok(!r.errors.length&&nb(r)===2,'fillet works on a part with two bodies');
   r=await B([A,{...Bx,x:30},{type:'mirror',plane:'YZ',only:false}]);ok(!r.errors.length&&nb(r)===3,'mirror of a two body part about its middle gives three bodies');
-  const mb=K.meshBody((await B([A,Bx])).body).props;ok(mb.solids&&mb.solids.length===2&&Math.abs(mb.solids[0].volume+mb.solids[1].volume-mb.volume)<1e-6&&mb.solids[0].bbox.min.length===3,'meshBody lists each body with volume, center and box');
+  const mb=K.meshBody((await B([A,Bx])).body).props;ok(mb.solids&&mb.solids.length===2&&Math.abs(mb.solids[0].volume+mb.solids[1].volume-mb.volume)<1e-7&&mb.solids[0].bbox.min.length===3,'meshBody lists each body with volume, center and box');
   ok(!K.meshBody((await B([A])).body).props.solids,'a single body has no body list');
   const inch=await B([{type:'box',w:2,d:2,h:1},{type:'box',w:1,d:1,h:1,x:3}],'in');ok(inch.warnings.some(w=>/separate/.test(w.msg)),'inch documents warn too');
   {const d2=JSON.parse(JSON.stringify({units:'mm',params:[],features:[{id:'f1',...A},{id:'f2',...Bx,x:12,op:'new'},{id:'f3',type:'combine',kind:'subtract',target:{index:1},tools:[{index:0}]}]}));convertDoc(d2,'in');ok(d2.features[2].target.index===1&&d2.features[2].tools[0].index===0,'body indexes survive a unit conversion '+JSON.stringify(d2.features[2]));K.resetCache();const ri=await K.build(d2);ok(!ri.errors.length,'converted combine builds '+JSON.stringify(ri.errors));ok(defaults('combine','in').target.index===0,'combine defaults in inches keep the body index');}

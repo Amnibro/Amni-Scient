@@ -19,7 +19,7 @@ try{
   await page.keyboard.press('t');await sleep(80);ok(await ev(()=>window.amnicad.S.sketcher.tool)==='trim','T key activates trim');
   await clk([10,0]);s=await S();ok(s.lines===2,'trim keeps two entities (one shortened)',s.lines);
   const e0=await ev(()=>{const k=window.amnicad.S.sketcher.sketch;const a=k.ents[0];return a.p.map(i=>k.pts[i]);});
-  ok(e0.some(p=>Math.abs(p[0])<1e-6&&Math.abs(p[1])<1e-6)&&!e0.some(p=>p[0]>1),'the clicked half of the line is gone, it now ends at the crossing',e0);
+  ok(e0.some(p=>Math.abs(p[0])<1e-7&&Math.abs(p[1])<1e-7)&&!e0.some(p=>p[0]>1),'the clicked half of the line is gone, it now ends at the crossing',e0);
   await page.keyboard.press('e');await sleep(80);ok(await ev(()=>window.amnicad.S.sketcher.tool)==='extend','E key activates extend');
   await clk([-2,0]);await sleep(100);
   await open();
@@ -58,7 +58,7 @@ try{
   await page.reload();await page.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});await sleep(1500);
   await ev(()=>{window.amnicad.API.commit(d=>{d.features=[];});});await wb();await ev(()=>{window.amnicad.API.addFeature('extrude',{plane:'XY',offset:0,_smart:1,_mode:'sketch'});});await sleep(1800);
   ok(await ev(()=>!!window.amnicad.S.sketcher),'sketcher opens on a touch device');
-  const big=await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].filter(b=>/Trim|Extend|Slot|fillet|Offset|Concentric/.test(b.title)).map(b=>[b.title.split(':')[0],Math.round(b.getBoundingClientRect().width),Math.round(b.getBoundingClientRect().height)]));ok(big.length>=6&&big.every(b=>b[1]>=44&&b[2]>=44),'new sketch buttons are at least 44 px for touch',big);
+  const big=await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].filter(b=>/Trim|Extend|Slot|fillet|Offset|Concentric/.test(b.title)).map(b=>[b.title.split(':')[0],Math.round(b.getBoundingClientRect().width),Math.round(b.getBoundingClientRect().height)]));ok(big.length>=7&&big.every(b=>b[1]>=44&&b[2]>=44),'new sketch buttons are at least 44 px for touch',big);
   const tap=async q=>{const[x,y]=await sks(q);await page.touchscreen.tap(x,y);await sleep(220);};
   await ev(()=>document.querySelector('#skx button.t[data-t=line]').click());await tap([-20,0]);await tap([20,0]);await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].find(b=>/Finish the line/.test(b.title)).click());await tap([0,-15]);await tap([0,15]);await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].find(b=>/Finish the line/.test(b.title)).click());
   s=await S();ok(s.lines===2,'two lines drawn by touch',s.lines);

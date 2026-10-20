@@ -48,7 +48,7 @@ try{
   await act([{new:true,units:'mm'},{add:{type:'box',w:60,d:40,h:10}},{add:{type:'datum_plane',name:'Mid',plane:'XY',offset:25}},{add:{type:'datum_axis',mode:'points',pts:[[0,0,0],[0,0,40]]}},{add:{type:'datum_point',x:5,y:5,z:5}}]);
   st=T(await call('get_state'));ok(!st.errors.length&&st.datums&&st.datums.length===3,'get_state lists the datums',[st.errors,(st.datums||[]).map(d=>d.id+':'+d.kind)]);
   ok(st.datums.find(d=>d.kind==='plane').name==='Mid'&&Math.abs(st.datums.find(d=>d.kind==='plane').o[2]-25)<1e-9,'datum plane frame in get_state');
-  const dg=await ev(()=>{const g=window.amnicad.S.datumG;return g?g.children.length:0;});ok(dg>=6,'datums are drawn in the 3D view ('+dg+' objects)',dg);
+  const dg=await ev(()=>{const g=window.amnicad.S.datumG;return g?g.children.length:0;});ok(dg>=7,'datums are drawn in the 3D view ('+dg+' objects)',dg);
   const r4=await act([{add:{type:'extrude',plane:'datum',datum:'f2',shapes:[{k:'circle',r:5}],depth:6}}]);st=T(await call('get_state'));ok(!st.errors.length&&st.size[2]>=30,'extrude sketched on the datum plane via apply_actions',[st.errors,st.size]);
   await ev(()=>{window.amnicad.API.active='f5';});await sleep(300);
   const ins=await ev(()=>({labels:[...document.querySelectorAll('#tab-edit label')].map(l=>l.textContent),sel:[...document.querySelectorAll('#tab-edit select')].map(x=>[...x.options].map(o=>o.textContent).join('/'))}));ok(ins.labels.includes('Datum plane')&&ins.sel.some(x=>/Mid/.test(x)),'inspector offers the datum plane as a sketch plane',ins);
@@ -60,7 +60,7 @@ try{
   await ev(()=>{window.amnicad.API.active='f3';});await sleep(300);
   ok(await ev(()=>[...document.querySelectorAll('#tab-edit label')].some(l=>/About the axis/.test(l.textContent))&&[...document.querySelectorAll('#tab-edit select')].some(x=>[...x.options].some(o=>/f2/.test(o.textContent)))),'angle mode shows the axis picker listing the datum axis');
   st=T(await call('get_state'));ok(!st.errors.length,'angled datum plane and an extrude on it build',st.errors.map(e=>e.msg));
-  const d3=st.datums.find(d=>d.id==='f3');ok(Math.abs(Math.abs(d3.n[2])-Math.cos(Math.PI/6))<1e-6,'30 degree datum plane normal in get_state',d3.n);
+  const d3=st.datums.find(d=>d.id==='f3');ok(Math.abs(Math.abs(d3.n[2])-Math.cos(Math.PI/6))<1e-7,'30 degree datum plane normal in get_state',d3.n);
   if(process.env.SHOTS){await ev(()=>{window.amnicad.API.active=null;window.amnicad.view('iso',true);});await sleep(600);await page.screenshot({path:process.env.SHOTS+'/datum_angle_plane.png'});}
   await ev(()=>{window.amnicad.API.active=null;});
   await act([{new:true,units:'mm'},{add:{type:'box',w:60,d:40,h:10}},{add:{type:'datum_plane',plane:'XY',offset:25}}]);
@@ -76,13 +76,13 @@ try{
   await ev(()=>{window.amnicad.API.addFeature('datum_axis');});await sleep(500);ok(await ev(()=>!!window.amnicad.S.pick),'datum axis starts a pick flow');await ev(()=>{window.amnicad.API.undo&&document.querySelector('#pickpanel .btn.ghost')&&[...document.querySelectorAll('#pickpanel button')].find(b=>b.textContent==='Cancel').click();});
   await ev(()=>{window.amnicad.API.addFeature('datum_point');});await sleep(500);ok(await ev(()=>!!window.amnicad.S.pick),'datum point starts a pick flow');await ev(()=>{[...document.querySelectorAll('#pickpanel button')].find(b=>b.textContent==='Cancel').click();});
   await act([{new:true,units:'mm'},{add:{type:'box',w:60,d:40,h:10}},{add:{type:'hole',plane:'XY',offset:10,pts:[[0,0]],d:8,thru:true}}]);
-  let ms=T(await call('measure',{a:{face:{side:'+Z'}},b:{face:{side:'-Z'}}}));ok(Math.abs(ms.min_distance-10)<1e-6&&ms.parallel&&Math.abs(ms.gap-10)<1e-6&&ms.units==='mm','MCP measure: top to bottom is 10 mm and parallel',ms);
-  ms=T(await call('measure',{a:{face:{type:'CYLINDER'}}}));ok(Math.abs(ms.a.radius-4)<1e-6&&Math.abs(ms.a.diameter-8)<1e-6,'MCP measure: hole radius and diameter',ms.a);
-  ms=T(await call('measure',{a:{point:[20,0,30]},b:{face:{side:'+Z'}}}));ok(Math.abs(ms.min_distance-20)<1e-6,'MCP measure: point to face',ms.min_distance);
+  let ms=T(await call('measure',{a:{face:{side:'+Z'}},b:{face:{side:'-Z'}}}));ok(Math.abs(ms.min_distance-10)<1e-7&&ms.parallel&&Math.abs(ms.gap-10)<1e-7&&ms.units==='mm','MCP measure: top to bottom is 10 mm and parallel',ms);
+  ms=T(await call('measure',{a:{face:{type:'CYLINDER'}}}));ok(Math.abs(ms.a.radius-4)<1e-7&&Math.abs(ms.a.diameter-8)<1e-7,'MCP measure: hole radius and diameter',ms.a);
+  ms=T(await call('measure',{a:{point:[20,0,30]},b:{face:{side:'+Z'}}}));ok(Math.abs(ms.min_distance-20)<1e-7,'MCP measure: point to face',ms.min_distance);
   ms=T(await call('measure',{a:{body:true}}));ok(Math.abs(ms.a.volume-(60*40*10-Math.PI*16*10))<1,'MCP measure: body volume',ms.a.volume);
   const bad=await call('measure',{a:{face:{by:'all'}},b:{face:{side:'+Z'}}});ok(bad.isError||/matched/.test(JSON.stringify(bad)),'MCP measure explains an ambiguous selector',JSON.stringify(bad).slice(0,200));
   await ev(()=>{const A=window.amnicad.API,m=A.mesh,top=m.faces.findIndex(f=>f.type==='PLANE'&&f.n&&f.n[2]>0.99),bot=m.faces.findIndex(f=>f.type==='PLANE'&&f.n&&f.n[2]<-0.99);A.S.sel.faces.clear();A.S.sel.edges.clear();A.S.sel.faces.set(top,m.faces[top].c);A.S.sel.faces.set(bot,m.faces[bot].c);A.refreshSel();});
-  ms=T(await call('measure',{}));ok(Math.abs(ms.min_distance-10)<1e-6,'MCP measure with no arguments uses the selection in the page',ms.min_distance);
+  ms=T(await call('measure',{}));ok(Math.abs(ms.min_distance-10)<1e-7,'MCP measure with no arguments uses the selection in the page',ms.min_distance);
   await ev(()=>{const A=window.amnicad.API;A.S.sel.faces.clear();A.refreshSel();window.amnicad.view('iso',true);});await sleep(600);
   const scr=q=>ev(q=>{const A=window.amnicad.API,v=new A.THREE.Vector3(...q).project(A.camera),r=A.renderer.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height];},q);
   await ev(()=>document.querySelector('#b-meas').click());await sleep(300);ok(await ev(()=>!!document.querySelector('#measurep')&&window.amnicad.S.measure.on),'Measure button opens the measure panel');
@@ -114,8 +114,8 @@ try{
   ok(!(rr.warnings||[]).some(w=>/unknown field|Unknown feature/i.test(w))&&!rr.errors.length,'the action language builds rib, draft, asymmetric chamfer, datum plane and an extrude on it',rr.warnings);
   st=T(await call('get_state'));ok(st.features.find(f=>f.type==='rib').t===3&&st.features.length===7,'thickness is accepted as the rib thickness',st.features.find(f=>f.type==='rib'));
   const vA=await vol(),docJ=await ev(()=>JSON.stringify(window.amnicad.API.doc));
-  await ev(j=>{window.amnicad.API.loadDoc(JSON.parse(j),null,true);},docJ);await wb();const vB=await vol(),docK=await ev(()=>JSON.stringify(window.amnicad.API.doc));ok(Math.abs(vA-vB)<1e-6&&JSON.parse(docJ).features.length===JSON.parse(docK).features.length,'a document with rib, draft, datum and chamfer reloads to the same volume',[vA,vB]);
-  await ev(()=>{const A=window.amnicad.API;A.undo();A.undo();});await wb();const vC=await vol();await ev(()=>{const A=window.amnicad.API;A.redo();A.redo();});await wb();ok(Math.abs((await vol())-vB)<1e-6&&Math.abs(vC-vB)>1e-3,'undo removes the last features and redo brings them back',[vC,vB]);
+  await ev(j=>{window.amnicad.API.loadDoc(JSON.parse(j),null,true);},docJ);await wb();const vB=await vol(),docK=await ev(()=>JSON.stringify(window.amnicad.API.doc));ok(Math.abs(vA-vB)<1e-7&&JSON.parse(docJ).features.length===JSON.parse(docK).features.length,'a document with rib, draft, datum and chamfer reloads to the same volume',[vA,vB]);
+  await ev(()=>{const A=window.amnicad.API;A.undo();A.undo();});await wb();const vC=await vol();await ev(()=>{const A=window.amnicad.API;A.redo();A.redo();});await wb();ok(Math.abs((await vol())-vB)<1e-7&&Math.abs(vC-vB)>1e-3,'undo removes the last features and redo brings them back',[vC,vB]);
   const nf=await ev(()=>window.amnicad.API.doc.features.length);ok(nf===7,'redo restores the features',nf);
   await act([{new:true,units:'in'},{add:{type:'box',w:2,d:3,h:4}}]);await ev(()=>{window.amnicad.API.active=null;});await sleep(400);
   const mb=await ev(()=>{const b=[...document.querySelectorAll('#tab-edit button')].find(x=>/Mass properties/.test(x.textContent));b&&b.click();return!!b;});ok(mb,'the Part panel has a Mass properties button in every layout');await sleep(1500);

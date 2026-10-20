@@ -1,5 +1,5 @@
 const COL=0x59b6ff,AX=0xffb454,PT=0xff7a59;
-function tag(T,text,col,size){const cv=document.createElement('canvas'),x=cv.getContext('2d');cv.width=256;cv.height=64;x.font='600 28px system-ui,sans-serif';x.fillStyle='#'+col.toString(16).padStart(6,'0');x.textBaseline='middle';x.fillText(String(text).slice(0,16),6,32);const tx=new T.CanvasTexture(cv),sp=new T.Sprite(new T.SpriteMaterial({map:tx,depthTest:false,transparent:true}));sp.scale.set(size*0.5,size*0.125,1);sp.center.set(0,0.5);sp.renderOrder=11;return sp;}
+function tag(T,text,col,size){const cv=document.createElement('canvas'),x=cv.getContext('2d');cv.width=256;cv.height=64;x.font='600 28px system-ui,sans-serif';x.fillStyle='#'+col.toString(16).padStart(6,'0');x.textBaseline='middle';x.fillText(String(text).slice(0,16),7,32);const tx=new T.CanvasTexture(cv),sp=new T.Sprite(new T.SpriteMaterial({map:tx,depthTest:false,transparent:true}));sp.scale.set(size*0.5,size*0.125,1);sp.center.set(0,0.5);sp.renderOrder=11;return sp;}
 export function show({THREE:T,model,bbox,list,names,units,prev}){
   if(prev){model.remove(prev);prev.traverse(o=>{o.geometry&&o.geometry.dispose();if(o.material){o.material.map&&o.material.map.dispose();o.material.dispose();}});}
   if(!list||!list.length)return null;
