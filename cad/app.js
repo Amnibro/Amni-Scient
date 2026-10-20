@@ -567,4 +567,5 @@ Object.assign(API,{showEdit,frameOf,startPick,endPick,reEdit,quickShape,placeOn,
 VPX.init({hooks:uiHooks,cv:R.domElement,ctl,axScene,axCam,model,edgeMat,pvEdge,hovMat,prevMat,HOV,hemi,key,fill,scene,ground,shadowMat,matFront,clip,view,lastView:()=>lastView,resize,needs:()=>{needs=true;},cam:()=>cam,camO,hasMesh:()=>!!S.mesh});themeColors();
 window.amnicad={API,runFlow,runMold,runCam,flowCfg,renderFlow,S,commit,rpc:(c,o)=>rpc(W,c,o),runFea,view,applyActions,faceIdsFor,loadDoc,setTab,addFeature,exportFmt,get TEMPLATES(){return templatesFor(prefUnits());},templatesFor};
 CTX.install(API,{hit,faceOfTri,meshObj:()=>meshObj,delFeature});
+import('./pipeline.js').then(m=>m.mount(API,S)).catch(e=>console.warn('pipeline',e.message));
 ASST.init(API,{AI,cfg:aiCfg,keys:keyStore,save:saveAi,state:modelState,apply:applyActions,wait:waitBuild,bridge:{on:bridgeOn,card:bridgeCard,remote:remoteCard,state:()=>({on:!!BR,st:brStat,pair:c=>BR&&BR.pair&&BR.pair(c),forget:()=>BR&&BR.forget&&BR.forget()})}});
