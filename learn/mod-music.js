@@ -9,6 +9,7 @@ const chord=n=>{const r=/^([A-G])([#b]?)(maj7|m7|m|7)?$/.exec(n);return{p:(NM[r[
 const vc=(pc,lo)=>lo+((pc-lo)%12+12)%12;
 const NOI=new WeakMap(),KS=new Map(),ENG=new WeakMap();
 const noise=c=>NOI.get(c)||(NOI.set(c,(()=>{const b=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b})()),NOI.get(c));
+const SND=()=>window.AmniSound,SI={box:['musicbox',12,1],bell:['glockenspiel',0,.8],pluck:['guitar',0,.9],pad:['strings',0,.35]},PL=['piano','marimba','guitar','drums'];
 const vget=()=>{try{const v=parseFloat(localStorage.getItem('amni-music-vol'));return isNaN(v)?.8:v}catch{return .8}};
 function mk(c){
  const G=(v=0)=>{const g=c.createGain();g.gain.value=v;return g},F=(type,f,q=.7)=>{const b=c.createBiquadFilter();b.type=type;b.frequency.value=f;b.Q.value=q;return b};
@@ -38,10 +39,10 @@ function mk(c){
   shaker:(t,v,o)=>{const g=G();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.17,t+.025);g.gain.setTargetAtTime(0,t+.025,.03);ch(Nz(t,t+.3),F('highpass',5000),g,o)},
   wood:(t,v,o)=>{ch(O(880,t,t+.3,'triangle'),AD(t,v*.35,.001,.03),o);ch(Nz(t,t+.1),F('bandpass',1700,4),AD(t,v*.3,.001,.012),o)},
   tom:(t,v,o)=>{const s=O(190,t,t+1.3);s.frequency.exponentialRampToValueAtTime(110,t+.2);ch(s,AD(t,v*.7,.002,.17),o)}};
- return{c,bus,noise:()=>noise(c),vol:x=>{mst.gain.setTargetAtTime(x,c.currentTime,.05);try{localStorage.setItem('amni-music-vol',x)}catch{}},note:(i,m,t,d,v,o)=>(V[i]&&i!=='mal'?V[i]:V.piano)(m,t,d,v,o||bus),drum:(k,t,v,o)=>D[k]&&D[k](t,v,o||bus)};
+ return{c,bus,noise:()=>noise(c),vol:x=>{mst.gain.setTargetAtTime(x,c.currentTime,.05);try{localStorage.setItem('amni-music-vol',x)}catch{}},note:(i,m,t,d,v,o)=>{const s=SI[i]||[i,0,1];return SND()&&SND().note(s[0],m+s[1],{at:t,dur:d,vel:v*s[2],out:o||bus})||(V[i]&&i!=='mal'?V[i]:V.piano)(m,t,d,v,o||bus)},drum:(k,t,v,o)=>SND()&&SND().hit(k,{at:t,vel:Math.min(1,v*1.2),out:o||bus})||D[k]&&D[k](t,v,o||bus)};
 }
 const eng=c=>ENG.get(c)||(ENG.set(c,mk(c)),ENG.get(c));
-const ses=api=>{api.css('music',CSS);const c=api.audio(),E=eng(c),out=c.createGain(),q=[],fr=new Set();let raf=0,one=null;out.connect(E.bus);
+const ses=api=>{api.css('music',CSS);SND()&&SND().preload(PL.concat(api.store.get('inst','marimba')));const c=api.audio(),E=eng(c),out=c.createGain(),q=[],fr=new Set();let raf=0,one=null;out.connect(E.bus);
  const loop=()=>{const n=c.currentTime;while(q.length&&q[0][0]<=n+.01)q.shift()[1]();fr.forEach(f=>f(n));raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop);
  api.onClose(()=>{cancelAnimationFrame(raf);q.length=0;fr.clear();out.gain.setTargetAtTime(0,c.currentTime,.03);setTimeout(()=>out.disconnect(),500)});
  return{c,E,out,fr,now:()=>c.currentTime,at:(t,f)=>{let i=q.length;while(i&&q[i-1][0]>t)i--;q.splice(i,0,[t,f])},n:(i,m,t,d=.5,v=.7,o)=>E.note(i,m,t??c.currentTime,d,v,o||out),d:(k,t,v=.7,o)=>E.drum(k,t??c.currentTime,v,o||out),
@@ -79,7 +80,7 @@ const band=(S,x,o)=>{prep(x);const B=x.bar,ci=o.count?B:0,ev=[],N=x.N.slice(0,o.
  const sub=B===2?1/3:.5;for(let j=0;j*sub<end-.01;j++){const bb=j*sub,ib=Math.round(bb*1000)/1000%B,on=Math.abs(ib-Math.round(ib))<.01,r=Math.round(ib);ev.push({b:ci+bb,f:(t,bus)=>o.beat()&&(on&&(r===0||(B===4&&r===2))?S.d('kick',t,.55,bus):on&&r%2?S.d('clap',t,.22,bus):S.d('shaker',t,on?.35:.22,bus))})}
  ev.push({b:ci+end+.3,end:1});return ev};
 const SOL={C:'Do',D:'Re',E:'Mi',F:'Fa',G:'Sol',A:'La',B:'Ti'},KC={C:'#E8453C',D:'#F28C28',E:'#F5C518',F:'#4CB944',G:'#22B5A5',A:'#3D7FE0',B:'#8E5BD9'};
-const INSTS=[['marimba','🎵 Xylophone'],['piano','🎹 Piano'],['box','🎁 Music box'],['pluck','🎸 Guitar'],['bell','🔔 Bells']];
+const INSTS=[['marimba','🎵 Marimba'],['xylophone','🪵 Xylophone'],['piano','🎹 Piano'],['box','🎁 Music box'],['kalimba','🎶 Kalimba'],['pluck','🎸 Guitar'],['bell','🔔 Bells']];
 const xylo=(K,lab,val)=>K.map((k,i)=>`<button type="button" class="mu-k" data-i="${i}"${val?` data-v="${k[0]}"`:''} style="--c:${KC[k[0]]};--h:${100-i*38/Math.max(1,K.length-1)};${'AB'.includes(k[0])?'--kt:#fff':''}" aria-label="${SOL[k[0]]} ${k[0]}"><span class="mu-kn">${lab==='let'?k[0]:lab==='none'?'':SOL[k[0]]}</span><span class="mu-kl">${lab==='both'?k[0]:''}</span></button>`).join('');
 const lyr=(x,esc,li,cur=-1)=>(li==null?x.L:[x.L[li]]).map(l=>`<span class="mu-line">${l.map(w=>`<span class="mu-w">${w.map(s=>`<span class="mu-s${s.i<cur?' done':s.i===cur?' on':''}">${esc(s.t)}</span>`).join('')}</span>`).join(' ')}</span>`).join('');
 const seg=(k,o,cur,lab,cls='')=>`<div class="mu-seg ${cls}" role="group" aria-label="${lab||k}" data-k="${k}">${o.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${String(v)===String(cur)}">${l}</button>`).join('')}</div>`;
@@ -106,7 +107,7 @@ H.register({id:'music-sing',cat:'music',icon:'🎤',title:'Sing-Along',desc:'Sin
   const hl=s=>{cnt.textContent='';sy.forEach((e,j)=>{e.classList.toggle('on',j===s);e.classList.toggle('done',j<s)});bar.style.width=(s+1)/x.ns*100+'%';const l=x.lineOf[s];l!==ln&&(ln=l,box.scrollTop=Math.max(0,lines[l].offsetTop-box.clientHeight/3))};
   go.onclick=()=>P?reset():(reset(),go.textContent='⏹ Stop',P=perform(S,api,band(S,x,{inst:()=>inst,mel:()=>mode==='you'?.12:1,ch:()=>mode!=='mel',beat:()=>mode!=='mel',count:1,cnt:n=>cnt.textContent=n,on:hl}),()=>60/(x.bpm*tempo/100),()=>{star(st,x.id,0,1);api.status('⭐ '+starsOf(st));api.score(10);api.confetti();api.feedback(pick(['Beautiful singing! 🌟','What a star! ⭐','Encore! 👏']),true);cheer(S);P=null;go.textContent='▶ Sing again!'}));
   $('.mu-back',r).onclick=menu;
-  bind(r,S,{mode:v=>{mode=v;st.set('mode',v)},inst:v=>{inst=v;st.set('inst',v);P||S.n(v,72,null,.5,.7)},tempo:v=>{tempo=v;st.set('tempo',v)}})};
+  bind(r,S,{mode:v=>{mode=v;st.set('mode',v)},inst:v=>{inst=v;st.set('inst',v);SND()?SND().preload(v).then(()=>P||S.n(v,72,null,.5,.7)):P||S.n(v,72,null,.5,.7)},tempo:v=>{tempo=v;st.set('tempo',v)}})};
  menu()}});
 H.register({id:'music-keys',cat:'music',icon:'🎹',title:'Play-a-Song',desc:'Follow the glowing bars and play real songs',levels:'1234',isNew:true,open(api){
  const S=ses(api),st=api.store,K=api.level>=3?['G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5']:['C4','D4','E4','F4','G4','A4','B4','C5'],KM=K.map(toMidi),list=SONGS.filter(x=>prep(x).N.every(n=>n.n==null||KM.includes(n.n)));
@@ -124,12 +125,12 @@ H.register({id:'music-keys',cat:'music',icon:'🎹',title:'Play-a-Song',desc:'Fo
  xy.addEventListener('click',e=>{const b=e.target.closest('.mu-k');b&&e.detail===0&&tap(+b.dataset.i)});
  const kd=e=>{const i='asdfghjkl;\''.indexOf(e.key.toLowerCase());i>=0&&i<K.length&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&tap(i)};document.addEventListener('keydown',kd);api.onClose(()=>document.removeEventListener('keydown',kd));
  lis.onclick=()=>x&&demo(0);ag.onclick=()=>{D&&D.stop();D=null;pos=0;miss=0;show()};
- bind(r,S,{song:v=>{D&&D.stop();D=null;x=SONGS.find(s=>s.id===v)||null;x&&(lim=x.N.length/(x.vs||1),N=x.N.slice(0,lim).filter(n=>n.n!=null));pos=0;miss=0;show();x&&api.speak&&api.level<3&&api.speak("Let's play "+x.sn)},inst:v=>{inst=v;st.set('inst',v)},lab:v=>{lab=v;st.set('lab',v);xy.innerHTML=xylo(K,lab);show()}});
+ bind(r,S,{song:v=>{D&&D.stop();D=null;x=SONGS.find(s=>s.id===v)||null;x&&(lim=x.N.length/(x.vs||1),N=x.N.slice(0,lim).filter(n=>n.n!=null));pos=0;miss=0;show();x&&api.speak&&api.level<3&&api.speak("Let's play "+x.sn)},inst:v=>{inst=v;st.set('inst',v);SND()&&SND().preload(v)},lab:v=>{lab=v;st.set('lab',v);xy.innerHTML=xylo(K,lab);show()}});
  show()}});
 const TR=[['kick','💥','Boom','#E8453C'],['snare','🥁','Snap','#F28C28'],['hat','✨','Tss','#D9A400'],['clap','👏','Clap','#4CB944'],['shaker','🥚','Shake','#22B5A5'],['wood','🪵','Tok','#3D7FE0'],['tom','🐘','Dum','#8E5BD9'],['bell','🔔','Ding','#D9468F']];
 const PRE={rock:{kick:'x.......x.x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',tom:'.............xxx'},hiphop:{kick:'x......x..x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.xx',clap:'....x.......x...',bell:'x.........x.....'},samba:{kick:'x.......x.......',tom:'....x.......x...',snare:'..x...x...x.x.x.',shaker:'xxxxxxxxxxxxxxxx',wood:'x.xx.x.xx.x.x.x.',bell:'x..x..x...x..x..'},march:{kick:'x...x...x...x...',snare:'x.xxx.x.x.xxx.x.',hat:'x.......x.......',wood:'..x...x...x...x.'}},PENT=[72,76,79,81,84,81,79,76];
 H.register({id:'music-beats',cat:'music',icon:'🥁',title:'Beat Maker',desc:'Build your own drum grooves',levels:'23457',isNew:true,open(api){
- const S=ses(api),st=api.store,T=api.level===2?TR.slice(0,4):TR,pre=n=>Object.fromEntries(TR.map(([k])=>[k,[...(PRE[n]&&PRE[n][k]||'').padEnd(16,'.')].map(c=>c==='x')])),last=st.get('last',null);
+ const S=ses(api),st=api.store,T=(SND()&&SND().preload('bell'),api.level)===2?TR.slice(0,4):TR,pre=n=>Object.fromEntries(TR.map(([k])=>[k,[...(PRE[n]&&PRE[n][k]||'').padEnd(16,'.')].map(c=>c==='x')])),last=st.get('last',null);
  let p=last&&last.p?Object.assign(pre(''),last.p):pre('rock'),bpm=last?last.bpm:100,sw=last?last.sw:0,slot='1',L=null,paint=null;
  const rand=()=>Object.fromEntries(TR.map(([k],j)=>[k,Array.from({length:16},(_,s)=>Math.random()<[s%4?.12:.7,s%8===4?.9:.07,s%2?.3:.8,.1,.3,.17,.1,.2][j])]));
  const r=api.html(`<div class="mu"><div class="hub-card"><div class="hub-row"><button type="button" class="hub-btn primary mu-go">▶ Play</button></div>${seg('pre',[['rock','🎸 Rock'],['hiphop','🧢 Hip-hop'],['samba','🌴 Samba'],['march','🎺 March'],['rand','🎲 Surprise'],['clear','🧹 Clear']],'','Presets')}${rng('bpm','Tempo',70,180,bpm,' bpm')}${rng('sw','Swing',0,70,sw,'%')}${volUI()}</div><div class="hub-card"><div class="mu-grid">${T.map(([k,e,n,c])=>`<button type="button" class="mu-pad" data-k="${k}" style="--c:${c}"><span aria-hidden="true">${e}</span>${n}</button>`+Array.from({length:16},(_,i)=>`<button type="button" class="mu-st${(i>>2)%2?'':' b4'}" data-k="${k}" data-s="${i}" style="--c:${c}" aria-pressed="${!!p[k][i]}" aria-label="${n} step ${i+1}"></button>`).join('')).join('')}</div></div><div class="hub-card"><div class="hub-row">${seg('slot',[['1','Slot 1'],['2','Slot 2'],['3','Slot 3']],'1','Save slot')}<button type="button" class="hub-btn mu-save">💾 Save</button><button type="button" class="hub-btn mu-load">📂 Load</button></div></div></div>`);
@@ -204,7 +205,7 @@ H.register({id:'music-notes',cat:'music',icon:'🎼',title:'Note Reading & Do-Re
 H.register({id:'music-calm',cat:'music',icon:'🌙',title:'Calm Music',desc:'Gentle lullabies and dreamy sounds with a sleep timer',levels:'17',isNew:true,open(api){
  const S=ses(api),st=api.store;let mood=st.get('mood','lull'),tm=st.get('tm',api.level===1?'15':'0'),rain=st.get('rain','off'),K=null,rn=null,end=0,fad=0,br=0;
  const MO={lull:{bpm:58,B:3,pr:['C','Am','F','G'],sc:[60,62,64,67,69,72,74,76],mi:'box',p:.7},dream:{bpm:52,B:4,pr:['Fmaj7','Em7','Dm7','Cmaj7'],sc:[60,62,64,67,69,72,74,76],mi:'piano',p:.4},star:{bpm:48,B:4,pr:['C','Em','Am','F'],sc:[72,74,76,79,81,84,86,88],mi:'bell',p:.3}};
- const cg=S.c.createGain();cg.connect(S.out);
+ const cg=S.c.createGain();cg.connect(S.out);SND()&&SND().preload(['strings','musicbox','glockenspiel']);
  const r=api.html(`<div class="mu"><div class="mu-sky">${Array.from({length:28},()=>`<i class="mu-star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${(Math.random()*3).toFixed(2)}s"></i>`).join('')}<div class="mu-moon"><span class="mu-br${api.level===1?' big':''}">${api.level===1?'😴':'🌙'}</span></div></div><div class="hub-card"><div class="hub-row"><button type="button" class="hub-btn primary mu-go">▶ Play</button><span class="hub-tag mu-left">No timer</span></div>${seg('mood',[['lull','🌙 Lullaby'],['dream','☁️ Dreamy'],['star','✨ Starlight']],mood,'Mood')}${seg('tm',[['0','∞ No timer'],['5','5 min'],['10','10 min'],['15','15 min'],['30','30 min']],tm,'Sleep timer')}${seg('rain',[['off','🌙 Quiet night'],['on','🌧️ Soft rain']],rain,'Rain')}${volUI()}</div></div>`);
  const go=$('.mu-go',r),sky=$('.mu-sky',r),left=$('.mu-left',r),bt=$('.mu-br',r);
  const rainOn=()=>{rn&&(rn.stop(),rn=null);if(rain!=='on'||!K)return;const c=S.c,s=c.createBufferSource(),hp=c.createBiquadFilter(),lp=c.createBiquadFilter(),g=c.createGain();s.buffer=S.E.noise();s.loop=true;hp.type='highpass';hp.frequency.value=400;lp.type='lowpass';lp.frequency.value=2200;g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(.07,c.currentTime+2);s.connect(hp).connect(lp).connect(g).connect(cg);s.start();rn=s};

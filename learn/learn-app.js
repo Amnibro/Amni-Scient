@@ -1671,6 +1671,7 @@
   function _jzOn(){try{return localStorage.getItem('game-sfx')!=='off';}catch(e){return true;}}
   function _jzSfx(kind){
     if(!_jzOn())return;
+    if(window.AmniSound&&AmniSound.sfx({pop:'pop',hit:'wrong',score:'correct',combo:'star',win:'win',lose:'lose',tick:'tick',whoosh:'whoosh'}[kind]||'tap'))return;
     try{
       if(!_jzCtx)_jzCtx=new (window.AudioContext||window.webkitAudioContext)();
       if(_jzCtx.state==='suspended')_jzCtx.resume().catch(()=>{});
@@ -5040,11 +5041,13 @@
       lifeControls.appendChild(resetBtn);
   }
   let audioCtx = null;
-  function getAudioCtx() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+  function getAudioCtx() { if(!audioCtx) audioCtx = window.AmniSound&&AmniSound.ctx() || new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
   const noteNms = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
   const noteFreqMap = {};
   for(let oct=3;oct<=6;oct++) noteNms.forEach((n,i)=>{ noteFreqMap[n+oct] = 440*Math.pow(2,((oct-4)*12+i-9)/12); });
-  function playNote(noteName, dur=0.5, type='sine') {
+  function playNote(noteName, dur=0.5, type='sine', nm) {
+    const si=nm?{Piano:'piano',Guitar:'guitar',Banjo:'guitar',Bass:'guitar',Ukulele:'guitar',Violin:'strings',Viola:'strings',Cello:'strings',Xylophone:'xylophone',Triangle:'glockenspiel',Bell:'glockenspiel',Celesta:'celesta'}[nm]:'piano',nr=/^([A-G]#?)(\d)$/.exec(noteName);
+    if(si&&nr&&window.AmniSound&&AmniSound.note(si,12*(+nr[2]+1)+noteNms.indexOf(nr[1]),{dur:dur+0.2,vel:0.8}))return;
     const ctx=getAudioCtx(), freq=noteFreqMap[noteName]; if(!freq) return;
     const osc=ctx.createOscillator(), gain=ctx.createGain();
     osc.type=type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
@@ -5052,6 +5055,7 @@
     osc.connect(gain); gain.connect(ctx.destination); osc.start(ctx.currentTime); osc.stop(ctx.currentTime+dur);
   }
   function playDrum(type='kick') {
+    if(window.AmniSound&&AmniSound.hit(type,{vel:0.9}))return;
     const ctx=getAudioCtx();
     if(type==='kick') { const o=ctx.createOscillator(),g=ctx.createGain(); o.frequency.setValueAtTime(150,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.5); g.gain.setValueAtTime(1,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.5); o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime+0.5); }
     else if(type==='snare') { const bs=ctx.sampleRate*0.2, buf=ctx.createBuffer(1,bs,ctx.sampleRate), d=buf.getChannelData(0); for(let i=0;i<bs;i++) d[i]=Math.random()*2-1; const n=ctx.createBufferSource(); n.buffer=buf; const g=ctx.createGain(); g.gain.setValueAtTime(0.5,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.2); const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=1000; n.connect(f); f.connect(g); g.connect(ctx.destination); n.start(ctx.currentTime); n.stop(ctx.currentTime+0.2); }
@@ -5218,8 +5222,8 @@
       {emoji:'🪕',name:'Banjo',desc:'Twangy strings',wave:'sawtooth',note:'G3',dur:0.5},
       {emoji:'🎵',name:'Xylophone',desc:'Wooden bars',wave:'sine',note:'C5',dur:0.6},
       {emoji:'🔺',name:'Triangle',desc:'Metal chime',wave:'sine',note:'B5',dur:1.2},
-      {emoji:'🪇',name:'Maracas',desc:'Shaken beads',wave:'drum',note:'hihat',dur:0.3},
-      {emoji:'🪘',name:'Tambourine',desc:'Jingled frame',wave:'drum',note:'hihat',dur:0.4}
+      {emoji:'🪇',name:'Maracas',desc:'Shaken beads',wave:'drum',note:'shaker',dur:0.3},
+      {emoji:'🪘',name:'Tambourine',desc:'Jingled frame',wave:'drum',note:'tamb',dur:0.4}
     ];
     if(currentLevel>=2) instruments.push(
       {emoji:'🎶',name:'Organ',desc:'Sustained keys',wave:'square',note:'C4',dur:1.5},
@@ -5258,7 +5262,7 @@
     const grid=document.createElement('div'); grid.className='inst-grid';
     instruments.forEach(inst=>{ const card=document.createElement('div'); card.className='inst-card';
       card.innerHTML=`<span class="inst-emoji">${inst.emoji}</span><span class="inst-name">${inst.name}</span><span class="inst-desc">${inst.desc}</span>`;
-      card.onclick=()=>{ inst.wave==='drum'?playDrum(inst.note):playNote(inst.note,inst.dur,inst.wave); card.style.borderColor='#e94560'; card.style.transform='scale(1.08)'; setTimeout(()=>{card.style.borderColor='#0f3460';card.style.transform='scale(1)';},300); };
+      card.onclick=()=>{ inst.wave==='drum'?playDrum(inst.note):playNote(inst.note,inst.dur,inst.wave,inst.name); card.style.borderColor='#e94560'; card.style.transform='scale(1.08)'; setTimeout(()=>{card.style.borderColor='#0f3460';card.style.transform='scale(1)';},300); };
       _kbd(card,'Play '+inst.name);
       grid.appendChild(card); });
     musicContent.appendChild(grid);
@@ -10520,7 +10524,8 @@ function playAnimalSound(type) {
     a.play().catch(e => console.error('Audio play failed:', animal, e));
 }
 
-  function _ttsClean(t){return String(t).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
+  const _TTS_FR={2:'half',3:'third',4:'fourth',5:'fifth',6:'sixth',7:'seventh',8:'eighth',9:'ninth',10:'tenth',12:'twelfth'};
+  function _ttsClean(t){return String(t).replace(/(\d) (\d+)\/(\d+)\b/g,'$1 and $2/$3').replace(/\b(\d+)\/(\d+)\b/g,(m,n,d)=>_TTS_FR[d]?n+' '+(d==2?(n==1?'half':'halves'):_TTS_FR[d]+(n==1?'':'s')):n+' over '+d).replace(/(\d)\s*[×✕]\s*(?=\d)/g,'$1 times ').replace(/(\d) x (?=\d)/g,'$1 times ').replace(/\s*÷\s*/g,' divided by ').replace(/(\d)\s*−\s*(?=\d)/g,'$1 minus ').replace(/(\d) - (?=\d)/g,'$1 minus ').replace(/(^|[\s(=:])−\s*(?=\d)/g,'$1minus ').replace(/(\d)\s*–\s*(?=\d)/g,'$1 to ').replace(/(\d)\s*\+\s*(?=\d)/g,'$1 plus ').replace(/\s*=\s*/g,' equals ').replace(/(\d)\s*%/g,'$1 percent').replace(/\s&\s/g,' and ').replace(/(\d)\s*°\s*([FC])\b/g,(m,n,u)=>n+' degrees '+(u==='F'?'Fahrenheit':'Celsius')).replace(/(\d)\s*°/g,'$1 degrees').replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/\s+/g,' ').trim();}
   let _ttsVoiceCache=null;
   function _ttsPickVoice(vs){return vs.find(x=>/Microsoft (Aria|Jenny|Michelle|Natural)|Google US English|Samantha|Karen|Allison|Moira|Tessa|Fiona|Microsoft Zira/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&/natural|neural|online/i.test(x.name))||vs.find(x=>/^en[-_]US/i.test(x.lang)&&/female/i.test(x.name))||vs.find(x=>/en[-_]US/i.test(x.lang)&&x.localService)||vs.find(x=>/^en/i.test(x.lang))||null;}
   function _ttsVoice(){if(_ttsVoiceCache)return _ttsVoiceCache;_ttsVoiceCache=_ttsPickVoice(window.speechSynthesis.getVoices());return _ttsVoiceCache;}
@@ -11798,6 +11803,7 @@ function playAnimalSound(type) {
     });
     function playTone(freq, dur) {
       if(!sound) return;
+      if(window.AmniSound&&AmniSound.note('marimba',Math.round(AmniSound.midi(freq)),{dur:dur+0.2,vel:0.9}))return;
       try { const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(freq,ctx.currentTime); g.gain.setValueAtTime(0.3,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur); o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime+dur); } catch(e){}
     }
     function flashPad(idx, dur) {
@@ -13954,7 +13960,7 @@ function playAnimalSound(type) {
   ];
   const _morseLookup={..._morseMap};_morseQCodes.forEach(q=>{_morseLookup[q.k]=q.m;});
   let _morseAC=null;
-  function _morseCtx(){if(!_morseAC){try{_morseAC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}return _morseAC;}
+  function _morseCtx(){if(!_morseAC){try{_morseAC=window.AmniSound&&AmniSound.ctx()||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}return _morseAC;}
   function _playMorse(code,wpm=18){const ctx=_morseCtx();if(!ctx)return Promise.resolve();const unit=1.2/wpm;let t=ctx.currentTime+0.03;const symbols=[];for(const ch of code){if(ch==='.')symbols.push([t,unit],t+=unit+unit);else if(ch==='-')symbols.push([t,unit*3],t+=unit*3+unit);else if(ch===' ')t+=unit*2;}const tone=(start,dur)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=620;g.gain.setValueAtTime(0,start);g.gain.linearRampToValueAtTime(0.25,start+0.005);g.gain.setValueAtTime(0.25,start+dur-0.01);g.gain.linearRampToValueAtTime(0,start+dur);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+0.02);};symbols.forEach(s=>{if(Array.isArray(s))tone(s[0],s[1]);});return new Promise(r=>setTimeout(r,(t-ctx.currentTime+0.05)*1000));}
   function initMorse(){
     const root=$$('#morse-game');root.innerHTML='';
@@ -14058,9 +14064,9 @@ function playAnimalSound(type) {
   const _chordTypes=[['Major',[0,4,7]],['Minor',[0,3,7]],['Diminished',[0,3,6]],['Augmented',[0,4,8]],['Dom 7',[0,4,7,10]],['Maj 7',[0,4,7,11]],['Min 7',[0,3,7,10]],['Sus 4',[0,5,7]],['Sus 2',[0,2,7]]];
   const _noteNames=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
   function _midiHz(m){return 440*Math.pow(2,(m-69)/12);}
-  function _earTone(ctx,freq,t,dur,gain=0.18){if(!ctx||!isFinite(freq)||freq<=0)return;const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+0.015);g.gain.linearRampToValueAtTime(gain*0.65,t+dur*0.5);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+dur+0.02);}
+  function _earTone(ctx,freq,t,dur,gain=0.18){if(!ctx||!isFinite(freq)||freq<=0)return;if(window.AmniSound&&AmniSound.note('piano',Math.round(AmniSound.midi(freq)),{at:t,dur,vel:Math.min(1,gain*5)}))return;const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+0.015);g.gain.linearRampToValueAtTime(gain*0.65,t+dur*0.5);g.gain.linearRampToValueAtTime(0,t+dur);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+dur+0.02);}
   function _playNotes(midis,style){const ctx=_morseCtx();if(!ctx)return;const now=ctx.currentTime+0.05;const dur=0.55;if(style==='harmonic'){midis.forEach(m=>_earTone(ctx,_midiHz(m),now,1.0,0.14));}else if(style==='ascending'){midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}else{midis.forEach((m,i)=>_earTone(ctx,_midiHz(m),now+i*0.6,dur));}}
-  function initEar(){
+  function initEar(){window.AmniSound&&AmniSound.preload('piano');
     const root=$$('#ear-game');
     if(!root){console.error('[initEar] #ear-game not found');return;}
     root.innerHTML='';
@@ -15416,7 +15422,7 @@ function playAnimalSound(type) {
       addScore(Math.max(1,Math.floor(20-avg/25)));
       const rb=document.createElement('button');rb.className='nmm-btn';rb.textContent='AGAIN';rb.style.marginTop='12px';rb.onclick=()=>{rd=0;res=[];initReaction();};ct.appendChild(rb);
     }
-    function playBeep(){try{const ctxA=new (window.AudioContext||window.webkitAudioContext)();const o=ctxA.createOscillator(),g=ctxA.createGain();o.type='sine';o.frequency.value=880;const now=ctxA.currentTime;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.3,now+0.01);g.gain.setValueAtTime(0.3,now+0.10);g.gain.linearRampToValueAtTime(0,now+0.15);o.connect(g);g.connect(ctxA.destination);o.start(now);o.stop(now+0.2);}catch(e){}}
+    function playBeep(){if(window.AmniSound&&AmniSound.note('glockenspiel',81,{vel:1}))return;try{const ctxA=new (window.AudioContext||window.webkitAudioContext)();const o=ctxA.createOscillator(),g=ctxA.createGain();o.type='sine';o.frequency.value=880;const now=ctxA.currentTime;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.3,now+0.01);g.gain.setValueAtTime(0.3,now+0.10);g.gain.linearRampToValueAtTime(0,now+0.15);o.connect(g);g.connect(ctxA.destination);o.start(now);o.stop(now+0.2);}catch(e){}}
     const choiceColors=[{n:'RED',h:'#e74c3c'},{n:'BLUE',h:'#3498db'},{n:'GREEN',h:'#2ecc71'},{n:'YELLOW',h:'#f1c40f'}];
     function go(){
       if(currentGame!=='reaction')return;
@@ -19921,7 +19927,7 @@ function playAnimalSound(type) {
   const ADV_GEAR={w:[["🗡️","Wooden Sword",4,30],["⚔️","Steel Blade",8,80],["🔱","Storm Trident",12,160],["🌟","Star Saber",16,280]],a:[["🛡️","Leather Shield",20,30],["🪖","Iron Helm",40,80],["🧥","Dragon Cloak",60,160],["💎","Crystal Aegis",80,280]]};
   let advS=null,advCur=null,advFoeHP=0,advHeroHP=0,advCombo=0,advQs=[],advQi=0,advCtx=null,advAC=null,advLastHit=null,advSpec=0,advQT=0;
   function advSfxOn(){try{return localStorage.getItem('adv-sfx')!=='off';}catch(e){return true;}}
-  function advSfx(type){if(!advSfxOn())return;try{advAC=advAC||new (window.AudioContext||window.webkitAudioContext)();const t=advAC.currentTime,mk=(f0,f1,dur,delay,wave,vol)=>{const o=advAC.createOscillator(),g=advAC.createGain();o.type=wave||'square';o.frequency.setValueAtTime(f0,t+delay);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+delay+dur);g.gain.setValueAtTime(vol||0.07,t+delay);g.gain.exponentialRampToValueAtTime(0.001,t+delay+dur);o.connect(g);g.connect(advAC.destination);o.start(t+delay);o.stop(t+delay+dur+0.02);};type==='hit'?mk(620,260,0.12,0):type==='crit'?(mk(440,0,0.09,0),mk(660,0,0.09,0.07),mk(990,0,0.14,0.14)):type==='miss'?mk(170,80,0.22,0,'sawtooth',0.09):type==='win'?(mk(523,0,0.12,0),mk(659,0,0.12,0.11),mk(784,0,0.12,0.22),mk(1047,0,0.3,0.33)):type==='lose'?mk(330,160,0.4,0,'triangle',0.08):type==='buy'?(mk(880,0,0.08,0),mk(1320,0,0.12,0.08)):type==='revive'?mk(392,784,0.35,0,'sine',0.08):type==='roar'?(mk(130,42,0.55,0,'sawtooth',0.11),mk(65,36,0.62,0.05,'square',0.07)):type==='special'?(mk(523,0,0.09,0),mk(659,0,0.09,0.08),mk(784,0,0.09,0.16),mk(1047,0,0.2,0.24),mk(1319,0,0.28,0.3,'sine',0.06)):type==='potion'?(mk(700,1100,0.09,0,'square',0.05),mk(900,1400,0.09,0.09,'square',0.05),mk(1100,1700,0.12,0.18,'square',0.05)):type==='swift'?mk(1500,2100,0.06,0,'sine',0.045):type==='star1'?mk(523,0,0.16,0,'sine',0.09):type==='star2'?mk(659,0,0.16,0,'sine',0.09):type==='star3'?(mk(784,0,0.14,0),mk(1047,0,0.26,0.1,'sine',0.08)):0;}catch(e){}}
+  function advSfx(type){if(!advSfxOn())return;const sm={hit:'pop',crit:'star',miss:'wrong',win:'win',lose:'lose',buy:'coin',revive:'unlock',special:'levelup',potion:'drop',swift:'whoosh'}[type],sn={star1:72,star2:76,star3:79}[type];if(window.AmniSound&&(sm?AmniSound.sfx(sm,{force:1}):sn?AmniSound.note('glockenspiel',sn,{vel:0.9})&&(type!=='star3'||AmniSound.note('glockenspiel',84,{when:0.1,vel:0.9})):0))return;try{advAC=advAC||new (window.AudioContext||window.webkitAudioContext)();const t=advAC.currentTime,mk=(f0,f1,dur,delay,wave,vol)=>{const o=advAC.createOscillator(),g=advAC.createGain();o.type=wave||'square';o.frequency.setValueAtTime(f0,t+delay);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+delay+dur);g.gain.setValueAtTime(vol||0.07,t+delay);g.gain.exponentialRampToValueAtTime(0.001,t+delay+dur);o.connect(g);g.connect(advAC.destination);o.start(t+delay);o.stop(t+delay+dur+0.02);};type==='hit'?mk(620,260,0.12,0):type==='crit'?(mk(440,0,0.09,0),mk(660,0,0.09,0.07),mk(990,0,0.14,0.14)):type==='miss'?mk(170,80,0.22,0,'sawtooth',0.09):type==='win'?(mk(523,0,0.12,0),mk(659,0,0.12,0.11),mk(784,0,0.12,0.22),mk(1047,0,0.3,0.33)):type==='lose'?mk(330,160,0.4,0,'triangle',0.08):type==='buy'?(mk(880,0,0.08,0),mk(1320,0,0.12,0.08)):type==='revive'?mk(392,784,0.35,0,'sine',0.08):type==='roar'?(mk(130,42,0.55,0,'sawtooth',0.11),mk(65,36,0.62,0.05,'square',0.07)):type==='special'?(mk(523,0,0.09,0),mk(659,0,0.09,0.08),mk(784,0,0.09,0.16),mk(1047,0,0.2,0.24),mk(1319,0,0.28,0.3,'sine',0.06)):type==='potion'?(mk(700,1100,0.09,0,'square',0.05),mk(900,1400,0.09,0.09,'square',0.05),mk(1100,1700,0.12,0.18,'square',0.05)):type==='swift'?mk(1500,2100,0.06,0,'sine',0.045):type==='star1'?mk(523,0,0.16,0,'sine',0.09):type==='star2'?mk(659,0,0.16,0,'sine',0.09):type==='star3'?(mk(784,0,0.14,0),mk(1047,0,0.26,0.1,'sine',0.08)):0;}catch(e){}}
   function advBurst(x,y,crit){const fx=$$('#adv-fx');if(!fx)return;const n=crit?12:7;for(let i=0;i<n;i++){const s=document.createElement('span');s.textContent=crit?'✨':'✦';s.style.cssText=`position:absolute;left:${x}%;top:${y}%;font-size:${crit?1.1:0.8}rem;color:#ffd54f;pointer-events:none;z-index:4`;fx.appendChild(s);const a=Math.PI*2*i/n,d=crit?90:55;s.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(0.2)`,opacity:0}],{duration:crit?750:550,easing:'ease-out'});setTimeout(()=>s.remove(),crit?760:560);}}
   function advShakeBT(hard){const bt=document.querySelector('.adv-bt');if(bt)bt.animate([{transform:'translateX(0)'},{transform:`translateX(${hard?-14:-8}px)`},{transform:`translateX(${hard?12:7}px)`},{transform:`translateX(${hard?-7:-4}px)`},{transform:'translateX(0)'}],{duration:hard?340:260});}
   const ADV_QPOOL=[{id:'win2',t:'Win 2 battles',n:2},{id:'combo4',t:'Reach a 4x combo',n:1},{id:'crit2',t:'Land 2 critical hits',n:2},{id:'star3',t:'Earn a 3-star victory',n:1},{id:'boss1',t:'Defeat a boss',n:1},{id:'coin25',t:'Collect 25 coins',n:25},{id:'perfect1',t:'Win without missing',n:1}];
