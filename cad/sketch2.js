@@ -1,5 +1,5 @@
 import {solve,arcPoints} from './sketch.js';
-const r9=v=>+(+v).toFixed(9);
+import {r9} from './qmath.js';
 export function chains(sk){
   const P=sk.pts,E=sk.ents,L=E.map((e,i)=>!e.cons&&(e.k==='line'||e.k==='arc')?i:-1).filter(i=>i>=0),adj=new Map(),seen=new Set(),out=[];
   L.forEach(i=>[E[i].p[0],E[i].p[1]].forEach(q=>adj.set(q,(adj.get(q)||[]).concat(i))));

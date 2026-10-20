@@ -70,7 +70,7 @@ try{
   const ex=await ev(()=>{const f=window.amnicad.API.doc.features.find(x=>x.type==='extrude');return f&&{plane:f.plane,datum:f.datum};});ok(ex&&ex.plane==='datum'&&ex.datum==='f2','extrude placed on the picked datum plane',ex);
   await ev(()=>{window.amnicad.S.sketcher&&window.amnicad.S.sketcher.close();window.amnicad.API.commit(d=>{d.features=d.features.filter(x=>x.type!=='extrude');});});await wb();
   await ev(()=>{window.amnicad.API.addFeature('datum_plane');});await sleep(500);
-  const pb=await ev(()=>({pick:!!window.amnicad.S.pick,label:window.amnicad.S.pick&&window.amnicad.S.pick.label,btns:[...document.querySelectorAll('#pickpanel button')].map(b=>b.textContent)}));ok(pb.pick&&/Datum plane/.test(pb.label)&&pb.btns.includes('Midplane')&&pb.btns.includes('3 points'),'adding a datum plane starts the pick flow with midplane and 3 point options',pb);
+  const pb=await ev(()=>({pick:!!window.amnicad.S.pick,label:window.amnicad.S.pick&&window.amnicad.S.pick.label,btns:[...document.querySelectorAll('#pickpanel button')].map(b=>b.textContent)}));ok(pb.pick&&/Datum plane/.test(pb.label)&&pb.btns.includes('Midplane')&&pb.btns.includes('3 points')&&pb.btns.includes('Angled from edge'),'adding a datum plane starts the pick flow with midplane and 3 point options',pb);
   await ev(()=>{[...document.querySelectorAll('#pickpanel .seg button')].find(b=>/XZ/.test(b.textContent)).click();});await wb();
   const dp=await ev(()=>window.amnicad.API.doc.features.find(x=>x.type==='datum_plane'&&x.plane==='XZ'));ok(!!dp,'picking a base plane creates the datum plane',dp);
   await ev(()=>{window.amnicad.API.addFeature('datum_axis');});await sleep(500);ok(await ev(()=>!!window.amnicad.S.pick),'datum axis starts a pick flow');await ev(()=>{window.amnicad.API.undo&&document.querySelector('#pickpanel .btn.ghost')&&[...document.querySelectorAll('#pickpanel button')].find(b=>b.textContent==='Cancel').click();});
@@ -95,6 +95,7 @@ try{
   await ev(()=>{[...document.querySelectorAll('#measurep .seg button')].find(b=>/Point/.test(b.textContent)).click();});await sleep(200);
   [x,y]=await scr([30,20,10]);await page.mouse.click(x,y);await sleep(500);[x,y]=await scr([-30,20,10]);await page.mouse.click(x,y);await sleep(800);
   tx=await ev(()=>document.querySelector('#measurep').innerText);const md=/Minimum distance\s*\n?\s*([\d.]+)/.exec(tx);ok(md&&Math.abs(+md[1]/25.4-60/25.4)<0.2,'point mode snaps to the top corners: distance about 60 mm',tx.replace(/\n/g,' | ').slice(0,260));
+  ok(await ev(()=>!!document.querySelector('#selinfo #measurep')),'the measure results sit in the viewport chip, not in a floating panel');
   await page.keyboard.press('Escape');await sleep(300);ok(await ev(()=>!document.querySelector('#measurep')&&!window.amnicad.S.measure.on),'Escape exits measure mode');
   const r5=await act([{new:true,units:'mm'},{add:{type:'box',w:20,d:20,h:10}},{add:{type:'box',w:10,d:10,h:10,x:30}}]);
   ok((r5.warnings||[]).some(w=>/separate body/.test(w)),'apply_actions reports the disjoint add as a warning',r5.warnings);

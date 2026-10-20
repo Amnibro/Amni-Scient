@@ -32,13 +32,13 @@ export function install(API){
     return o;
   };
   const panel=()=>{
-    let el=$('#measurep');if(!M.on){el&&el.remove();return;}css();
+    const box=$('#selinfo');if(!M.on||!box)return;css();
     const nel=h('div',{id:'measurep',class:'measurep',role:'group','aria-label':'Measure'},
       h('div',{class:'row',style:'align-items:center;gap:7px;margin-bottom:7px'},h('b',null,'Measure'),h('div',{class:'seg',style:'margin-left:auto'},...[['auto','Face / edge'],['point','Point']].map(([k,t])=>h('button',{class:M.mode===k?'on':'',onclick:()=>{M.mode=k;panel();}},t))),h('button',{class:'x',title:'Clear',onclick:()=>{M.items=[];sync();compute();}},'↺'),h('button',{class:'x',title:'Close','aria-label':'Close measure',onclick:()=>toggle(false)},'×')),
       ...M.items.map((it,i)=>h('div',{class:'row mi'},h('span',{class:'mut'},'AB'[i]+': '),h('span',null,KIND[it.face!=null?'face':it.edge!=null?'edge':'point']+(it.point?' '+a3(it.point.map(v=>+v.toFixed(3))):' #'+(it.face!=null?it.face:it.edge))),h('button',{class:'x',title:'Remove','aria-label':'Remove',onclick:()=>{M.items.splice(i,1);sync();compute();}},'×'))),
       M.err?h('div',{class:'alert warn'},M.err):M.res?h('div',{class:'kv'},...rows(M.res)):h('div',{class:'note'},M.mode==='point'?'Click points on the part; edge ends and midpoints snap. Pick two to get the distance.':'Click a face or an edge, then another to measure the distance and angle between them. Click one for its size, radius or area.'),
       h('div',{class:'note',style:'margin-top:7px'},'Esc exits measure.'));
-    el?el.replaceWith(nel):$('#vp').append(nel);
+    box.replaceChildren(nel);box.style.display='block';
   };
   const snap=hh=>{const m=S.mesh;if(hh.kind==='edge'&&m&&m.edges[hh.id]){const q=m.edges[hh.id],P=hh.pt,c=[q.a,q.b,q.m].map(p=>[Math.hypot(p[0]-P[0],p[1]-P[1],p[2]-P[2]),p]).sort((x,y)=>x[0]-y[0])[0];if(c[0]<q.len*0.15+1e-9)return c[1].map(v=>+v.toFixed(7));}return hh.pt.map(v=>+v.toFixed(7));};
   M.click=hh=>{
@@ -46,7 +46,7 @@ export function install(API){
     M.items=M.items.length>=2?[it]:[...M.items,it];sync();compute();
   };
   function toggle(on){
-    M.on=on===undefined?!M.on:!!on;$('#b-meas')&&$('#b-meas').classList.toggle('on',M.on);if(!M.on){M.items=[];M.res=null;M.err='';sync();clearG();panel();return;}
+    M.on=on===undefined?!M.on:!!on;$('#b-meas')&&$('#b-meas').classList.toggle('on',M.on);if(!M.on){M.items=[];M.res=null;M.err='';const bx=$('#selinfo');bx&&bx.replaceChildren();sync();clearG();return;}
     S.pick&&API.endPick&&API.endPick(true);panel();API.toast&&API.toast('Measure: click a face, an edge or (Point mode) a spot on the part',3000);
   }
   M.toggle=toggle;M.reset=()=>{if(M.on&&M.items.length){M.items=[];M.res=null;M.err='';clearG();panel();}};

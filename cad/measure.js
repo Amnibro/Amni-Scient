@@ -1,7 +1,8 @@
 import * as R from './vendor/replicad.js';
 import * as D from './datum.js';
-import {add,sub,mul,dot,cross,len,nrm} from './qmath.js';
-const V=v=>[v.x,v.y,v.z],DEG=180/Math.PI,r9=v=>+(+v).toFixed(9),v9=a=>a.map(r9),acute=(a,b)=>Math.acos(Math.min(1,Math.abs(dot(nrm(a),nrm(b)))))*DEG,obt=(a,b)=>Math.acos(Math.max(-1,Math.min(1,dot(nrm(a),nrm(b)))))*DEG;
+import {add,sub,mul,dot,cross,len,nrm,vec as V,r9} from './qmath.js';
+import {solidsOf} from './features2.js';
+const DEG=180/Math.PI,v9=a=>a.map(r9),acute=(a,b)=>Math.acos(Math.min(1,Math.abs(dot(nrm(a),nrm(b)))))*DEG,obt=(a,b)=>Math.acos(Math.max(-1,Math.min(1,dot(nrm(a),nrm(b)))))*DEG;
 const dist=(s1,s2)=>{const oc=R.getOC(),d=new oc.BRepExtrema_DistShapeShape();try{d.LoadS1(s1.wrapped);d.LoadS2(s2.wrapped);d.Perform();if(!d.IsDone()||!d.NbSolution())throw new Error('the distance could not be measured');const a=d.PointOnShape1(1),b=d.PointOnShape2(1),o={d:d.Value(),a:[a.X(),a.Y(),a.Z()],b:[b.X(),b.Y(),b.Z()]};a.delete&&a.delete();b.delete&&b.delete();return o;}finally{d.delete();}};
 const big=(K,body)=>{const b=body?body.boundingBox.bounds:[[0,0,0],[1,1,1]];return 40*Math.max(Math.hypot(b[1][0]-b[0][0],b[1][1]-b[0][1],b[1][2]-b[0][2]),1e-3);};
 function datumItem(id,d,body,K){
@@ -15,8 +16,8 @@ export function item(body,K,ref){
   if(ref.point){const p=ref.point.map(Number);if(p.length<3||p.some(v=>!isFinite(v)))throw new Error('a point needs x, y and z');return{kind:'point',c:p,shape:R.makeVertex(p),info:{kind:'point',point:v9(p)}};}
   if(ref.datum!==undefined){const d=D.get(ref.datum);if(!d)throw new Error('datum "'+ref.datum+'" was not found');return datumItem(ref.datum,d,body,K);}
   if(!body)throw new Error('nothing is built yet');
-  if(ref.solid!==undefined){const s=(body.solids||[body])[+ref.solid];if(!s)throw new Error('there is no solid '+ref.solid+'; the part has '+(body.solids||[body]).length);const p=R.measureShapeVolumeProperties(s),c=p.centerOfMass,b=s.boundingBox.bounds;return{kind:'solid',shape:s,c:V(c),info:{kind:'solid',index:+ref.solid,volume:r9(Math.abs(p.volume)),area:r9(R.measureArea(s)),center_of_mass:v9(V(c)),bbox_min:v9(b[0]),bbox_max:v9(b[1]),size:v9(b[1].map((v,i)=>v-b[0][i]))}};}
-  if(ref.body){const p=R.measureShapeVolumeProperties(body),c=p.centerOfMass,b=body.boundingBox.bounds;return{kind:'solid',shape:body,c:V(c),info:{kind:'body',solids:(body.solids||[body]).length,volume:r9(Math.abs(p.volume)),area:r9(R.measureArea(body)),center_of_mass:v9(V(c)),bbox_min:v9(b[0]),bbox_max:v9(b[1]),size:v9(b[1].map((v,i)=>v-b[0][i]))}};}
+  if(ref.solid!==undefined){const s=solidsOf(body)[+ref.solid];if(!s)throw new Error('there is no solid '+ref.solid+'; the part has '+solidsOf(body).length);const p=R.measureShapeVolumeProperties(s),c=p.centerOfMass,b=s.boundingBox.bounds;return{kind:'solid',shape:s,c:V(c),info:{kind:'solid',index:+ref.solid,volume:r9(Math.abs(p.volume)),area:r9(R.measureArea(s)),center_of_mass:v9(V(c)),bbox_min:v9(b[0]),bbox_max:v9(b[1]),size:v9(b[1].map((v,i)=>v-b[0][i]))}};}
+  if(ref.body){const p=R.measureShapeVolumeProperties(body),c=p.centerOfMass,b=body.boundingBox.bounds;return{kind:'solid',shape:body,c:V(c),info:{kind:'body',solids:solidsOf(body).length,volume:r9(Math.abs(p.volume)),area:r9(R.measureArea(body)),center_of_mass:v9(V(c)),bbox_min:v9(b[0]),bbox_max:v9(b[1]),size:v9(b[1].map((v,i)=>v-b[0][i]))}};}
   if(ref.face!==undefined){
     const q=K.selectFaces(body,ref.face);if(!q.length)throw new Error('no face matched');if(q.length>1)throw new Error(q.length+' faces matched; pick one with {"by":"pick","pts":[[x,y,z]]} or a face id from get_state');const f=q[0],i={kind:'face',type:f.type.toLowerCase(),area:r9(R.measureArea(f.f)),center:v9(f.c)};let n=null,t=null;
     try{i.perimeter=r9(f.f.edges.reduce((a,e)=>a+e.length,0));}catch{}

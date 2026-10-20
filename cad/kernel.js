@@ -8,7 +8,8 @@ import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
-import {chamferSides,alongFaces,FEAT2} from './features2.js';
+import {chamferSides,alongFaces,FEAT2,solidsOf} from './features2.js';
+import {vec as V} from './qmath.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
 let UNITS='mm',NOTES=[];
@@ -25,7 +26,6 @@ function res(v,scope,k){
 }
 const AX={X:[1,0,0],Y:[0,1,0],Z:[0,0,1],'+X':[1,0,0],'+Y':[0,1,0],'+Z':[0,0,1],'-X':[-1,0,0],'-Y':[0,-1,0],'-Z':[0,0,-1]};
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l]},dist=(a,b)=>Math.hypot(...sub(a,b));
-const V=v=>[v.x,v.y,v.z];
 function sizeOf(shape){const b=shape.boundingBox.bounds;return Math.max(dist(b[0],b[1]),1e-6);}
 function faceList(shape){return shape.faces.map((f,i)=>{let c,n=null;try{c=V(f.center);}catch{c=[0,0,0];}try{n=V(f.normalAt(f.center));}catch{}return{f,i,c,n,type:f.geomType};});}
 function edgeList(shape){return shape.edges.map((e,i)=>{const m=V(e.pointAt(0.5)),a=V(e.startPoint),b=V(e.endPoint);let t=[0,0,0];try{t=V(e.tangentAt(0.5));}catch{}return{e,i,m,a,b,t,type:e.geomType,len:e.length};});}
@@ -303,7 +303,7 @@ function knifeTool(f){
     t=t.cut(profileDrawing([{k:'path',pts:P,bulge:[]}]).sketchOnPlane(new R.Plane([0,0,-1],[1,0,0],[0,0,1])).extrude(s.Hb+2));}
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
-const solidsOf=b=>b.solids||[b],nSol=b=>{const L=solidsOf(b),n=L.length;L.forEach(del);return n;},smemo=new WeakMap(),nsol=b=>{let v=smemo.get(b);v===undefined&&smemo.set(b,v=nSol(b));return v;},volOf=b=>R.measureShapeVolumeProperties(b).volume,vmemo=new WeakMap(),vol=b=>{let v=vmemo.get(b);v===undefined&&vmemo.set(b,v=Math.abs(volOf(b)));return v;},cap=t=>t[0].toUpperCase()+t.slice(1);
+const nSol=b=>{const L=solidsOf(b),n=L.length;L.forEach(del);return n;},smemo=new WeakMap(),nsol=b=>{let v=smemo.get(b);v===undefined&&smemo.set(b,v=nSol(b));return v;},volOf=b=>R.measureShapeVolumeProperties(b).volume,vmemo=new WeakMap(),vol=b=>{let v=vmemo.get(b);v===undefined&&vmemo.set(b,v=Math.abs(volOf(b)));return v;},cap=t=>t[0].toUpperCase()+t.slice(1);
 function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
   if(p<0.5&&!f.up){const u=25.4,r=threadCut(body.clone().scale(u,[0,0,0]),{...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u});return r.scale(1/u,[0,0,0]);}
   const rate=(ext?0.3197*2*Math.PI*(d/2-0.2373*p):0.2369*2*Math.PI*(d/2-0.5413*p+0.2062*p))*p,v0=volOf(body),S=a1-a0+2*p,at=t=>c.map((v,i)=>v+ax[i]*(t-t0)),REV={X:'-X',Y:'-Y',Z:'-Z','+X':'-X','+Y':'-Y','+Z':'-Z','-X':'X','-Y':'Y','-Z':'Z'},seg=(t,h,dir=1)=>threadTool({...f,axis:dir>0?f.axis||'Z':REV[f.axis||'Z'],...Object.fromEntries(['x','y','z'].map((q,i)=>[q,at(t)[i]])),length:h-2*p}),want=rate*(Math.min(hi2,a1+p)-Math.max(lo,a0-p)),err=r=>Math.abs((v0-volOf(r))/want-1);
@@ -429,7 +429,8 @@ export async function build(doc,opt={}){
   }
   truncate(Math.min(upto,feats.length),cache);
   cache.fk=fk;
-  return{body,errors,warnings,paramErrors:pErr,scope,reused,datums:datList(),ms:performance.now()-t0};
+  const nfin=body?nsol(body):0;
+  return{body,errors,warnings:nfin>1?warnings:warnings.filter(w=>w.bodies==null),paramErrors:pErr,scope,reused,datums:datList(),ms:performance.now()-t0};
 }
 export function meshBody(body,q=1){
   if(!body)return null;
