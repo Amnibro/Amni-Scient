@@ -1,15 +1,18 @@
 // Amni-Learn service worker — cold-cache offline / airplane mode support.
 // Bumps the CACHE name on every meaningful change so old caches roll out.
-const CACHE = 'amni-learn-v1294';
+const CACHE = 'amni-learn-v1299';
 const PRECACHE = [
   './',
   './index.html',
   './learn-app.js',
   './learn-ui.css',
+  './learn-art.js',
+  './assets/art/CREDITS.md',
   './learn-ui.js',
   './learn-standards.js',
   './learn-state-facts.js',
   './learn-state-studies.js',
+  './learn-sound.js',
   './learn-hub.js',
   './mod-kids.js',
   './mod-music.js',
@@ -24,6 +27,7 @@ const PRECACHE = [
   './manifest.webmanifest',
   './assets/voice/manifest.json',
   './assets/world-map.png',
+  ...['correct','wrong','star','coin','unlock','levelup','win','celebrate','lose','tap','pop','drop','tick','whoosh','flip'].map(n => './assets/sfx/' + n + '.mp3'),
   './assets/audio/bear.mp3','./assets/audio/bee.mp3','./assets/audio/bird.mp3','./assets/audio/boar.mp3',
   './assets/audio/cat.mp3','./assets/audio/chicken.mp3','./assets/audio/cow.mp3','./assets/audio/crocodile.mp3',
   './assets/audio/crow.mp3','./assets/audio/deer.mp3','./assets/audio/dog.mp3','./assets/audio/donkey.mp3',

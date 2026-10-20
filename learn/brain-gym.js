@@ -10,7 +10,7 @@ const GAMES={
  progress:{icon:'📈',title:'Progress Map',desc:'Your five domains'},
  schulte:{icon:'🔢',title:'Schulte Table',desc:'Find 1→25 fast'},
  matrix:{icon:'🧩',title:'Pattern Matrix',desc:'Complete the grid'},
- codebreaker:{icon:'🎯',title:'Code Breaker',desc:'Crack the colour code'},
+ codebreaker:{icon:'🎯',title:'Code Breaker',desc:'Crack the color code'},
  wordsprint:{icon:'⚡',title:'Word Sprint',desc:'Name the category'}
 };
 const WORDS={
@@ -39,7 +39,7 @@ function result(title,lines,score,game,retry){logPlay(game,score);const best=rd(
 function schulte(){
  const lvl=clamp(num(KEY+'schulte-lvl')||5,4,7),n=lvl,cells=shuffle(Array.from({length:n*n},(_,i)=>i+1));let next=1,t0=0,errors=0;
  openOverlay(`Schulte Table ${n}×${n}`);
- stage.innerHTML=`<div class="bg-intro"><p>Tap the numbers in order from <b>1</b> to <b>${n*n}</b> as fast as you can. Keep your eyes on the centre and use your peripheral vision.</p><button class="bg-btn" id="bg-go">Start</button></div>`;
+ stage.innerHTML=`<div class="bg-intro"><p>Tap the numbers in order from <b>1</b> to <b>${n*n}</b> as fast as you can. Keep your eyes on the center and use your peripheral vision.</p><button class="bg-btn" id="bg-go">Start</button></div>`;
  $('#bg-go').onclick=()=>{stage.innerHTML=`<div class="bg-grid" style="grid-template-columns:repeat(${n},1fr)">${cells.map(v=>`<button class="bg-cell" data-v="${v}">${v}</button>`).join('')}</div><div class="bg-hint">Next: <b id="bg-next">1</b></div>`;t0=performance.now();tick=setInterval(()=>setTimer(((performance.now()-t0)/1000).toFixed(1)+'s'),100);
   $$('.bg-cell',stage).forEach(b=>b.onclick=()=>{const v=+b.dataset.v;if(v!==next){errors++;b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),250);return}b.classList.add('done');next++;$('#bg-next').textContent=next;if(next>n*n){clearInterval(tick);tick=null;const s=(performance.now()-t0)/1000;const par=n*n*.55;const score=clamp(Math.round(1000*par/(s+errors*.8)),50,1500);const wasBest=bestUpdate('schulte-best-'+n,s,true);wr(KEY+'schulte-lvl',s<par*.8?Math.min(7,n+1):s>par*1.6?Math.max(4,n-1):n);result(wasBest?'🏆 New best!':'Table cleared',[`Time <b>${s.toFixed(1)}s</b> · ${errors} mistake${errors===1?'':'s'}`,`Best ${n}×${n}: ${parseFloat(rd(KEY+'schulte-best-'+n)).toFixed(1)}s`,`Next time: ${rd(KEY+'schulte-lvl')}×${rd(KEY+'schulte-lvl')}`],score,'schulte',schulte)}})}
 }
@@ -71,7 +71,7 @@ function codebreaker(){
  const K=6,L=4,MAX=10,code=Array.from({length:L},()=>Math.random()*K|0);let guess=[],rows=[];
  openOverlay('Code Breaker');
  const feedback=g=>{let black=0,white=0;const cc=[...code],gg=[...g];for(let i=0;i<L;i++)if(gg[i]===cc[i]){black++;cc[i]=gg[i]=-1}for(let i=0;i<L;i++)if(gg[i]>=0){const j=cc.indexOf(gg[i]);if(j>=0){white++;cc[j]=-1}}return{black,white}};
- const render=()=>{stage.innerHTML=`<div class="bg-hint">Guess the 4-colour code. ● = right colour right spot, ○ = right colour wrong spot. <b>${MAX-rows.length}</b> guesses left</div><div class="bg-cb-rows">${rows.map(r=>`<div class="bg-cb-row">${r.g.map(c=>`<span class="bg-peg" style="background:${COLORS[c]}"></span>`).join('')}<span class="bg-fb">${'●'.repeat(r.f.black)}${'○'.repeat(r.f.white)}</span></div>`).join('')}<div class="bg-cb-row cur">${Array.from({length:L},(_,i)=>`<span class="bg-peg ${guess[i]==null?'empty':''}" style="background:${guess[i]==null?'transparent':COLORS[guess[i]]}"></span>`).join('')}<button class="bg-btn sm" id="bg-undo">⌫</button><button class="bg-btn sm" id="bg-sub" ${guess.length<L?'disabled':''}>Check</button></div></div><div class="bg-palette">${COLORS.map((c,i)=>`<button class="bg-peg pick" data-i="${i}" style="background:${c}"></button>`).join('')}</div>`;
+ const render=()=>{stage.innerHTML=`<div class="bg-hint">Guess the 4-color code. ● = right color right spot, ○ = right color wrong spot. <b>${MAX-rows.length}</b> guesses left</div><div class="bg-cb-rows">${rows.map(r=>`<div class="bg-cb-row">${r.g.map(c=>`<span class="bg-peg" style="background:${COLORS[c]}"></span>`).join('')}<span class="bg-fb">${'●'.repeat(r.f.black)}${'○'.repeat(r.f.white)}</span></div>`).join('')}<div class="bg-cb-row cur">${Array.from({length:L},(_,i)=>`<span class="bg-peg ${guess[i]==null?'empty':''}" style="background:${guess[i]==null?'transparent':COLORS[guess[i]]}"></span>`).join('')}<button class="bg-btn sm" id="bg-undo">⌫</button><button class="bg-btn sm" id="bg-sub" ${guess.length<L?'disabled':''}>Check</button></div></div><div class="bg-palette">${COLORS.map((c,i)=>`<button class="bg-peg pick" data-i="${i}" style="background:${c}"></button>`).join('')}</div>`;
   $$('.pick',stage).forEach(b=>b.onclick=()=>{if(guess.length<L){guess.push(+b.dataset.i);render()}});
   $('#bg-undo').onclick=()=>{guess.pop();render()};
   $('#bg-sub').onclick=()=>{const f=feedback(guess);rows.push({g:guess,f});guess=[];if(f.black===L){const n=rows.length;const score=clamp(1300-n*100,300,1200);const wasBest=bestUpdate('codebreaker-best',n,true);result(wasBest?'🏆 New best!':'Code cracked!',[`Solved in <b>${n}</b> guess${n===1?'':'es'}`,`Best: ${rd(KEY+'codebreaker-best')} guesses`],score,'codebreaker',codebreaker);return}if(rows.length>=MAX){result('Out of guesses',[`The code was ${code.map(c=>`<span class="bg-peg" style="background:${COLORS[c]}"></span>`).join('')}`],100,'codebreaker',codebreaker);return}render()}};

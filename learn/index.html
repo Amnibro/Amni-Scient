@@ -985,7 +985,7 @@
   .ms-cell:not(.revealed):active { transform:scale(0.94); }
   .ms-cell.revealed { background:#dde1e6; border:1px solid #9aa1a9; box-shadow:none; }
   .ms-cell.mine { background:#e74c3c; }
-  .ms-cell.flagged::after { content:'🚩'; }
+  .ms-cell.flagged::after { content:''; display:inline-block; width:1.2em; height:1.2em; vertical-align:-.2em; background:url(assets/art/1f6a9.webp) center/contain no-repeat; }
   .ms-cell[data-n="1"]{ color:#0000ff } .ms-cell[data-n="2"]{ color:#008000 } .ms-cell[data-n="3"]{ color:#ff0000 } .ms-cell[data-n="4"]{ color:#000080 } .ms-cell[data-n="5"]{ color:#800000 } .ms-cell[data-n="6"]{ color:#008080 } .ms-cell[data-n="7"]{ color:#000 } .ms-cell[data-n="8"]{ color:#808080 }
   #feedback.show { animation:celebPop 1.8s ease-out forwards; filter:drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
   #sudoku-view{background:linear-gradient(135deg,#0a1a2a 0%,#0d2a2a 50%,#0a1a2a 100%);background-size:200% 200%;animation:bgShift 14s ease infinite;}
@@ -2130,14 +2130,16 @@
 <script src="learn-standards.js?v=2" defer></script>
 <script src="learn-state-facts.js?v=1" defer></script>
 <script src="learn-state-studies.js?v=2" defer></script>
-<script src="learn-app.js?v=v1293" defer></script>
-<script src="learn-hub.js?v=1" defer></script>
-<script src="mod-kids.js?v=1" defer></script>
-<script src="mod-music.js?v=1" defer></script>
-<script src="mod-world.js?v=1" defer></script>
+<script src="learn-app.js?v=v1297" defer></script>
+<script src="learn-sound.js?v=1" defer></script>
+<script src="learn-hub.js?v=2" defer></script>
+<script src="learn-art.js?v=1" defer></script>
+<script src="mod-kids.js?v=4" defer></script>
+<script src="mod-music.js?v=3" defer></script>
+<script src="mod-world.js?v=4" defer></script>
 <script src="mod-testprep.js?v=2" defer></script>
-<script src="mod-mature.js?v=1" defer></script>
-<script src="brain-gym.js?v=2" defer></script>
+<script src="mod-mature.js?v=3" defer></script>
+<script src="brain-gym.js?v=2b" defer></script>
 </div>
 <footer class="learn-footer" role="contentinfo">
 <div class="lf-inner">
@@ -2176,6 +2178,7 @@
 <p>Every module loads instantly from a single static HTML page &mdash; no backend, no account, no cookies beyond the local score key. Pick a level from the URL with <code>?level=1</code> through <code>?level=8</code>, or land on the <a href="../amni-learn.html">Amni-Learn product page</a> and use the level selector there.</p>
 <p>Progress is saved per-browser. The fullscreen button works on any device, and the game grid re-flows to fit phones, tablets, and desktops. Nothing is sent to a server &mdash; the entire app runs from a single static HTML page, so it works fully offline (airplane mode, school WiFi blocking, no signal &mdash; all fine). No trackers, no accounts, and after the first load, no network requests at all.</p>
 <p>Found a bug or want a new subject? Reach out through the <a href="../about.html">About page</a>.</p>
+<p>Illustrations: Microsoft Fluent Emoji 3D (MIT), packaged by LobeHub (MIT), plus a few Amni-drawn additions. See the <a href="assets/art/CREDITS.md" target="_blank" rel="noopener">art credits</a>.</p>
 </div>
 </div>
 </details>
@@ -2185,6 +2188,7 @@
 <a href="../faq.html">FAQ</a>
 <a href="../privacy.html">Privacy</a>
 <a href="../terms.html">Terms</a>
+<a href="assets/art/CREDITS.md" target="_blank" rel="noopener">Art credits</a>
 <a href="../index.html">Amni-Scient Home</a>
 </nav>
 <div class="lf-copy">&copy; 2026 Amniscient, LLC &mdash; Private, on-device education.</div>
