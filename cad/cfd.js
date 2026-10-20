@@ -49,7 +49,7 @@ export async function runCFD(inp,prog,shouldStop){const t0=Date.now(),now=()=>pe
   const S=setup(gpu?inp:{...inp,cells:inp.cpuCells||inp.cells}),{G,solid}=S,n=G.nx*G.ny*G.nz,fl=FLUIDS[inp.fluid]||FLUIDS.air,U=inp.speed||10,Dm=S.D*1e-3,Re=U*Dm/fl.nu;
   const ulb=gpu?0.06:0.08,Dc=S.D/S.h,nulb=ulb*Dc/Re,tau=Math.max(0.5+3*nulb,0.5005),steps=Math.round((inp.flows||2.2)*G.nx/ulb),cs=0.17;
   const fInit=new Float32Array(n*19);for(let c=0;c<n;c++)if(!solid[c])for(let i=0;i<19;i++)fInit[i*n+c]=feqJ(i,1,ulb,0,0);
-  let hist=[],mac,frcSum=[0,0,0],backend,tS=now();const live=m=>{if(!inp.live||now()-tS<1500)return null;tS=now();return fin(m);};prog&&prog({step:0,steps,cd:null,backend:gpu?'WebGPU':'CPU'});
+  let hist=[],mac,frcSum=[0,0,0],backend,tS=now();const live=m=>{if(!inp.live||now()-tS<1500)return null;tS=now();return fin(m);};
   if(gpu){backend='WebGPU';const dev=gpu,mk=(sz,u)=>dev.createBuffer({size:Math.max(16,sz),usage:u}),SU=GPUBufferUsage;
     const ub=mk(32,SU.UNIFORM|SU.COPY_DST),fa=mk(n*76,SU.STORAGE|SU.COPY_DST|SU.COPY_SRC),fb=mk(n*76,SU.STORAGE|SU.COPY_DST|SU.COPY_SRC),sb=mk(n*4,SU.STORAGE|SU.COPY_DST),frc=mk(n*12,SU.STORAGE|SU.COPY_SRC),mb=mk(n*16,SU.STORAGE|SU.COPY_SRC),rb=mk(n*16,SU.MAP_READ|SU.COPY_DST),ab=mk(n*16,SU.STORAGE|SU.COPY_SRC|SU.COPY_DST),rf=mk(n*12,SU.MAP_READ|SU.COPY_DST);
     const pa=new ArrayBuffer(32),pu=new Uint32Array(pa),pf=new Float32Array(pa);pu[0]=G.nx;pu[1]=G.ny;pu[2]=G.nz;pu[3]=n;pf[4]=tau;pf[5]=ulb;pf[6]=cs;dev.queue.writeBuffer(ub,0,pa);dev.queue.writeBuffer(fa,0,fInit);dev.queue.writeBuffer(fb,0,fInit);dev.queue.writeBuffer(sb,0,solid);
