@@ -1,3 +1,6 @@
+## 2026-10-20 — Amni-Learn: Play & Learn for little ones
+- **Play & Learn** (🎈, top of Pre-K and K–2, some at Grades 3–5): ten new activities, all spoken aloud with a replay button so Pre-K needs no reading, adaptive difficulty, drag or tap, and gentle chimes. Feed the Animals (counting 1–10), Sticker Scenes (listening and counting with a saved gallery), Maze Runner, Shape Puzzles (rotate to fit), Feelings Friends (feelings and kind choices with a calm-down breath), Dress for the Weather, Color by Number (numerals → addition → multiplication by level), Where Does It Go? (on, under, next to, between), Sorting Baskets, and Pattern Beads that play back as a tune.
+
 ## 2026-10-20 — Amni-Learn: Music Studio
 - **Music Studio** (🎵) replaces the old music game with a warm Web Audio synth (piano, marimba, music box, bells, pad, plucked guitar, seven synthesized drums) through a compressor, limiter and soft reverb, scheduled ahead so rhythm stays steady; every instrument peaks below clipping.
 - **Sing-Along**: ten public-domain children's songs with word-by-word highlighted lyrics, backing band, melody-only and "you sing" modes, five instruments and a speed slider.
