@@ -2,7 +2,7 @@ import {FT,SHAPES} from './schema.js';
 const FKEEP=['id','type','name','suppressed','sketch','note','color','blob','fmt','material','face'],SKEEP=['k','hole','a','x','y','bulge','stroke','closed','kind','from'],XTRA={hole:['x','y','cs_ang','depth'],thread:['run','length'],pattern:['oz']},SKIND={rectangle:'rect',square:'rect',polygon:'poly',line:'path',polyline:'path',naca:'airfoil',wing:'airfoil'},PLN={XY:['z',1],XZ:['y',-1],YZ:['x',1]},SEC=['offset','shapes'];
 const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];};
 export const closest=(k,L)=>{let best=null,bd=1e9;for(const c of L){const d=lev(String(k).toLowerCase(),c.toLowerCase());d<bd&&(bd=d,best=c);}return bd<=Math.max(2,Math.ceil(String(k).length/2))?best:null;};
-const cap=t=>t[0].toUpperCase()+t.slice(1),ALI=[['points','pts'],['radius','r'],['width','w'],['height','h']];
+const cap=t=>t[0].toUpperCase()+t.slice(1),ALI=[['points','pts'],['radius','r'],['width','w'],['height','h'],['thickness','t']];
 const unk=(lab,k,L)=>{const U=[...new Set(L)],al=ALI.filter(x=>U.includes(x[1])),c0=closest(k,[...U,...al.map(x=>x[0])]),c=(al.find(x=>x[0]===c0)||[])[1]||c0;return lab+': unknown field "'+k+'" was ignored; '+(c?'closest valid field is "'+c+'"':'valid fields: '+U.join(', '))+'.';};
 function shape(s,lab,W){
   if(!s||typeof s!=='object'||Array.isArray(s))return s;

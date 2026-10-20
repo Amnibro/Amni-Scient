@@ -19,6 +19,9 @@ function resid(sk,P,Rr,L,drag){
     else if(k==='mid'){const q=E[c.e].p,A=P[q[0]],B=P[q[1]];r.push(P[c.p][0]-(A[0]+B[0])/2,P[c.p][1]-(A[1]+B[1])/2);}
     else if(k==='on'||k==='pl'){const t=E[c.e],Q=P[c.p];if(t.k==='line'){const A=P[t.p[0]],B=P[t.p[1]],d=hyp(B[0]-A[0],B[1]-A[1])||1;r.push((c.sg||1)*((B[0]-A[0])*(Q[1]-A[1])-(B[1]-A[1])*(Q[0]-A[0]))/d-num(c.v));}else{const C=G.cen(c.e);r.push(hyp(Q[0]-C[0],Q[1]-C[1])-G.rad(c.e)-num(c.v));}}
     else if(k==='coin'){const[a,b]=c.p;r.push(P[a][0]-P[b][0],P[a][1]-P[b][1]);}
+    else if(k==='conc'){const A=G.cen(c.e[0]),B=G.cen(c.e[1]);r.push(A[0]-B[0],A[1]-B[1]);}
+    else if(k==='col'){const q=E[c.e[0]].p,A=P[q[0]],B=P[q[1]],d=hyp(B[0]-A[0],B[1]-A[1])||1;for(const z of E[c.e[1]].p.slice(0,2)){const Q=P[z];r.push(((B[0]-A[0])*(Q[1]-A[1])-(B[1]-A[1])*(Q[0]-A[0]))/d);}}
+    else if(k==='sym'){const q=E[c.e].p,A=P[q[0]],B=P[q[1]],d=hyp(B[0]-A[0],B[1]-A[1])||1,U=[(B[0]-A[0])/d,(B[1]-A[1])/d],X=P[c.p[0]],Y=P[c.p[1]];r.push((U[0]*(Y[1]+X[1]-2*A[1])-U[1]*(Y[0]+X[0]-2*A[0]))/2,U[0]*(Y[0]-X[0])+U[1]*(Y[1]-X[1]));}
   }
   if(drag)r.push(P[drag.p][0]-drag.x,P[drag.p][1]-drag.y);
   return r;

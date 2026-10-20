@@ -1,5 +1,6 @@
 export const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],len=a=>Math.hypot(a[0],a[1],a[2]),nrm=a=>mul(a,1/(len(a)||1)),mid=(a,b)=>mul(add(a,b),0.5),ss=r=>r.reduce((s,v)=>s+v*v,0);
 export const V3={add,sub,mul,dot,cross,len,nrm,mid};
+export const vec=v=>[v.x,v.y,v.z],r9=v=>+(+v).toFixed(9);
 export const qmul=(a,b)=>[a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]],qconj=q=>[-q[0],-q[1],-q[2],q[3]],qn=q=>{const l=Math.hypot(q[0],q[1],q[2],q[3])||1;return[q[0]/l,q[1]/l,q[2]/l,q[3]/l];};
 export const qrot=(q,v)=>{const u=[q[0],q[1],q[2]],t=mul(cross(u,v),2);return add(add(v,mul(t,q[3])),cross(u,t));};
 export const qexp=w=>{const a=len(w);if(a<1e-12)return qn([w[0]/2,w[1]/2,w[2]/2,1]);const s=Math.sin(a/2)/a;return[w[0]*s,w[1]*s,w[2]*s,Math.cos(a/2)];};

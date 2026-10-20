@@ -32,7 +32,8 @@ vel:{si:['m/s',1],us:['ft/s',3.2808399]},
 perm:{si:['m²',1],us:['darcy',1.01325e12]},
 beta:{si:['1/m',1],us:['1/ft',0.3048]},
 pa:{si:['Pa',1],us:['psf',0.020885434]},
-lineload:{si:['N/mm',1],us:['lbf/in',5.7101471]}};
+lineload:{si:['N/mm',1],us:['lbf/in',5.7101471]},
+inertia:{si:['kg·m²',1e-6],us:['lb·in²',0.003417171]}};
 export function conv(q,v,to){const u=Q[q][to];return v*u[1]+(u[2]||0);}
 export function back(q,v,from){const u=Q[q][from];return(v-(u[2]||0))/u[1];}
 export const unitOf=(q,s=SYS)=>Q[q][s][0];
@@ -47,7 +48,7 @@ export const areaMM2=(vDoc2,doc)=>vDoc2*Math.pow(mmPer(doc),2);
 export const massKg=(vDoc3,doc,rho)=>volMM3(vDoc3,doc)*rho*1e-9;
 export function massDual(kg){const lb=kg*2.2046226,us=lb<1?nf(lb*16,2)+' oz':nf(lb,3)+' lb',si=kg<1?nf(kg*1000,1)+' g':nf(kg,3)+' kg';return SYS==='us'?us+' ('+si+')':si+' ('+us+')';}
 export function bboxDual(b,doc){const u=docUnits(doc),s=[0,1,2].map(i=>b.max[i]-b.min[i]),o=u==='in'?'mm':'in',k=u==='in'?25.4:1/25.4;return s.map(v=>nf(v)).join(' × ')+' '+u+' ('+s.map(v=>nf(v*k)).join(' × ')+' '+o+')';}
-const NOLENK=new Set(['angle','draft','a','n','turns','k','modes','id','type','name','op','plane','dir','axis','kind','hand','keep','by','side','normal','std','fit','of','material','text','blob','fmt','note','thru','ruled','center','hole','suppressed']);
+const NOLENK=new Set(['index','angle','draft','a','n','turns','k','modes','id','type','name','op','plane','dir','axis','kind','hand','keep','by','side','normal','std','fit','of','material','text','blob','fmt','note','thru','ruled','center','hole','suppressed']);
 const EXPRNL=new Set(['angle','draft','a','n','turns','k','modes']);
 export function convLen(v,k){if(typeof v==='number')return+(v*k).toPrecision(10);if(typeof v!=='string')return v;const t=v.trim();if(/^-?\d*\.?\d+(e-?\d+)?$/i.test(t))return+(+t*k).toPrecision(10);return t.replace(/(^|[+\-(,]\s*)(\d*\.?\d+)(?=\s*($|[+\-),]))/g,(m,pre,num,_,off,str)=>{const before=str.slice(0,off+pre.length).replace(/\s+$/,'');if(/[A-Za-z_]\w*\s*\($/.test(before)||/[*/^]\s*$/.test(before))return m;const after=str.slice(off+m.length).trimStart();if(/^[*/^]/.test(after))return m;return pre+String(+(+num*k).toPrecision(10));});}
 export function convertDoc(d,to){const from=docUnits(d);if(from===to)return[];const k=from==='mm'?1/25.4:25.4,warn=[],nonLen=new Set();const scan=(o,key)=>{if(Array.isArray(o))o.forEach(x=>scan(x,key));else if(o&&typeof o==='object')for(const kk in o)scan(o[kk],kk);else if(typeof o==='string'&&EXPRNL.has(key))for(const id of o.match(/[A-Za-z_]\w*/g)||[])nonLen.add(id);};scan(d.features,'');
@@ -57,3 +58,7 @@ export function convertDoc(d,to){const from=docUnits(d);if(from===to)return[];co
   d.features=walk(d.features,'');if(d.sim)for(const key of['supports','loads','temps','conv','flux'])if(d.sim[key])d.sim[key]=d.sim[key].map(x=>({...x,faces:walk(x.faces,'faces')}));
   if(d.tol&&d.tol.params)for(const t of Object.values(d.tol.params))if(t&&t.k==='pm'){t.up=convLen(t.up,k);t.lo=convLen(t.lo,k);}
   d.units=to;return warn;}
+export function massSI(r,units,rho){
+  const k=units==='in'?25.4:1,m=r.volume*k**3*rho*1e-9,sc=k**5*rho*1e-9,lb=2.2046226/645.16,T=r.T.map(row=>row.map(v=>v*sc)),el={Ixx:T[0][0],Iyy:T[1][1],Izz:T[2][2],Ixy:T[0][1],Iyz:T[1][2],Ixz:T[0][2]};
+  return{mass_kg:m,volume_mm3:r.volume*k**3,area_mm2:r.area*k*k,center_of_mass:r.com,inertia_kg_mm2:el,inertia_lb_in2:Object.fromEntries(Object.entries(el).map(([a,v])=>[a,v*lb])),principal_moments_kg_mm2:r.principal.map(p=>p.I*sc),principal_moments_lb_in2:r.principal.map(p=>p.I*sc*lb),principal_axes:r.principal.map(p=>p.axis),note:'inertia about the center of mass along the model X, Y, Z axes; off-diagonal values are inertia-tensor elements (negative products of inertia)'};
+}
