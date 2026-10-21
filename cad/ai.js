@@ -1,4 +1,4 @@
-import {featureDocs,MATS} from './schema.js';
+import {featureDocs,MATS,MGROUPS} from './schema.js';
 import {PROFILES,RPM_SRC} from './cutter.js';
 import {recipePrompt} from './recipes.js';
 export const ENGINES={anthropic:'Claude (Anthropic)',openai:'OpenAI',gemini:'Google Gemini',openrouter:'OpenRouter (sign in: Claude, GPT, Gemini, Grok…)',local:'Local or custom server (Ollama, LM Studio, any OpenAI-compatible URL)',chrome:'Chrome built-in AI'};
@@ -78,7 +78,7 @@ op: "add" union, "cut" subtract, "intersect", "new" keeps the solid as its own b
 Finishes depend on the material (anodize on aluminum or titanium, black oxide and zinc on steel, passivate on stainless).
 ${recipePrompt(units)}
 Checking your work: after you change geometry the app may send you a contact sheet (ISO, TOP, FRONT, RIGHT views in one labelled image) and numbers (size, volume, solids, findings). Compare them with the request. If everything matches, reply with an empty actions list and say so. Otherwise say what is wrong and give corrective actions. More than one solid in the numbers means disconnected pieces, which is always a mistake to fix.
-Materials: ${Object.entries(MATS).map(([k,m])=>k+' ('+m.n+')').join(', ')}.
+Materials (set doc material to the id): ${MGROUPS.map(g=>g+': '+Object.entries(MATS).filter(([,m])=>m.g===g).map(([k,m])=>k+'='+m.n).join(', ')).join('; ')}.
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
 Example reply: {"say":"Here is an 80 × 50 × 6 mm plate with four Ø5 holes and 5 mm corner radii.","actions":[{"param":{"name":"w","expr":"80"}},{"param":{"name":"d","expr":"50"}},{"param":{"name":"t","expr":"6"}},{"add":{"type":"box","name":"Plate","w":"w","d":"d","h":"t"}},{"add":{"type":"hole","name":"Holes","plane":"XY","offset":"t","d":5,"thru":true,"pts":[["w/2-8","d/2-8"],["-(w/2-8)","d/2-8"],["w/2-8","-(d/2-8)"],["-(w/2-8)","-(d/2-8)"]]}},{"add":{"type":"fillet","name":"Corners","r":5,"edges":{"dir":"Z"}}}]}`;}
