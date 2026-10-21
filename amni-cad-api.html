@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-CAD Headless API | Scripted CAD, Simulation and CAM | AMNI-SCIENT</title>
+<meta name="description" content="Run Amni-CAD from scripts on your own computer: build parts, export STEP, run stress, flow and nonlinear studies, and get quotes, flat DXF and G-code through a command and a local HTTP API. Included with Amni-CAD Pro.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-CAD Headless API | Scripted CAD, Simulation and CAM | AMNI-SCIENT">
+<meta property="og:description" content="Run Amni-CAD from scripts on your own computer: build parts, export STEP, run stress, flow and nonlinear studies, and get quotes, flat DXF and G-code through a command and a local HTTP API. Included with Amni-CAD Pro.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-cad-api.html">
+<meta property="og:image" content="https://amni-scient.com/assets/cad/og-cad.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/amni-cad-api.html">
+<link rel="stylesheet" href="css/style.css?v=b263">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em}body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}.tw{overflow-x:auto;margin:1.1rem 0;-webkit-overflow-scrolling:touch}.tw .spec-table{margin:0;min-width:560px}.tw .spec-table td,.tw .spec-table th{white-space:nowrap;vertical-align:top}.tw .spec-table td.l,.tw .spec-table th.l{white-space:normal;min-width:15rem}.tw .spec-table .n{text-align:right;font-variant-numeric:tabular-nums}.shot{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--elev-1)}.prose{max-width:820px;line-height:1.85;color:var(--dim);font-size:.9rem}.prose p+p{margin-top:1rem}.prose strong,.prose b{color:var(--text)}.pl{margin:.8rem 0 .8rem 1.1rem;display:grid;gap:.45rem;color:var(--dim);font-size:.9rem;line-height:1.65;max-width:820px}.pl b{color:var(--text)}.pass{color:#1b7f4b;font-weight:700}[data-theme=dark] .pass{color:#5fd08f}.fail{color:#c0392b;font-weight:700}[data-theme=dark] .fail{color:#ff8a7a}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;line-height:1.8;color:var(--text);overflow-x:auto;white-space:pre;max-width:820px}.note{font-size:.8rem;color:var(--dim);max-width:820px;line-height:1.7}.sw{display:none}@media(max-width:700px){.sw{display:block;font-size:.76rem;color:var(--dim);margin-top:.9rem}}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:1.2rem;align-items:start}</style>
+</head>
+<body class="pp theme-cad">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html" class="active">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 18 82 36v38L50 92 18 74V36z" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round" fill="var(--accent-dim)"/>
+<path d="M18 36 50 54l32-18M50 54v38" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round" opacity=".6"/>
+<circle cx="50" cy="54" r="4" fill="var(--accent)"/>
+</svg>
+</div>
+<h1>HEADLESS API</h1>
+<p class="desc">SCRIPT AMNI-CAD ON YOUR OWN COMPUTER &bull; INCLUDED WITH PRO &bull; NOTHING UPLOADED</p>
+<div class="cta-row" style="margin-top:2rem;gap:1rem;flex-wrap:wrap">
+<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
+<a href="amni-cad.html#pricing" class="btn btn-outline">PRICING</a>
+</div>
+</div>
+<section>
+<h2>WHAT IT DOES</h2>
+<div class="prose"><p>The headless API is the Amni-CAD engine without the editor. It runs as the <code>amnicad</code> command and as an HTTP API on your own computer, so scripts, build servers and other programs can build parts and run studies with no browser open.</p></div>
+<ul class="pl"><li><b>Build</b> parts from an Amni-CAD document (JSON) or a STEP or BREP file, and get size, volume, mass and every face</li><li><b>Export</b> STEP, STL or BREP</li><li><b>Stress, vibration and heat</b> with fixed, roller, prescribed, spring and stop supports, and force, pressure, torque, remote and bearing loads</li><li><b>Flow:</b> drag, lift and drag coefficient in air or water</li><li><b>Nonlinear:</b> large deflection, plasticity and contact between bodies</li><li><b>Make:</b> instant quotes, flat DXF and G-code with your own machines and tools</li></ul>
+<div class="prose"><p>Your designs are computed on your computer and are never uploaded. The command contacts amni-scient.com only to download the engine and its updates (every file is checked against a SHA-256 checksum), and to renew your license key.</p></div>
+</section>
+<section>
+<h2>SET IT UP</h2>
+<div class="prose"><p>You need Node.js 20 or newer on Windows, macOS or Linux, about 30 MB of disk, and an Amni-CAD Pro or Enterprise license key. Copy your key from <b>Pro</b> in Amni-CAD (<b>Copy key</b>), or from the page that opens after checkout.</p></div>
+<div class="eq">curl -fsSLO https://amni-scient.com/cad/api/amnicad.mjs
+node amnicad.mjs activate AMNIPRO1.your-key
+node amnicad.mjs serve</div>
+<div class="prose" style="margin-top:1rem"><p>The first command that needs the engine downloads it. <code>serve</code> listens on <code>http://127.0.0.1:41800/v1/</code>. Run <code>node amnicad.mjs help</code> for every command.</p></div>
+</section>
+<section>
+<h2>HOW THE LICENSE TOKEN WORKS</h2>
+<ul class="pl"><li><b>Your key is the token.</b> It is a license signed by the Amni-CAD license server, naming your plan, seat count and paid-through date. <code>activate</code> checks the signature on your computer and saves the key in your user settings folder, readable only by you.</li><li><b>Renewal is automatic.</b> In the last 10 days of each billing period, the command sends only the key to the license server, which checks your subscription with Stripe and sends back a fresh key. Nothing else about you or your work is sent.</li><li><b>Cancel anytime.</b> When a subscription ends, the API keeps working through the period you paid for plus a 7-day grace period, then stops until you renew.</li><li><b>Seats.</b> Pro covers one person and Enterprise covers up to 10. A key isn&rsquo;t locked to one computer; each person may use it on the computers they work on.</li><li><b>A separate local token</b> protects the HTTP API from other programs and web pages. It is created on first use, stored next to the key, and printed by <code>node amnicad.mjs token</code>. Send it as <code>Authorization: Bearer &lt;token&gt;</code>. The server answers only on 127.0.0.1 and refuses requests addressed to any other host name.</li></ul>
+</section>
+<section>
+<h2>ROUTES</h2>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Route</th><th class="l">Body</th><th class="l">Returns</th></tr></thead><tbody>
+<tr><td>GET /v1/health</td><td class="l">none, no token needed</td><td class="l">status</td></tr>
+<tr><td>GET /v1/license</td><td class="l">none</td><td class="l">name, organization, plan, seats, paid-through date</td></tr>
+<tr><td>GET /v1/catalog</td><td class="l">none</td><td class="l">materials, fluids, CAM machines, tools and stock</td></tr>
+<tr><td>POST /v1/build</td><td class="l">job JSON, or a STEP file (<code>?faces=1</code> lists faces)</td><td class="l">size, bounding box, volume, area, mass, faces</td></tr>
+<tr><td>POST /v1/export</td><td class="l">job with <code>"format":"step"</code>, <code>"stl"</code> or <code>"brep"</code></td><td class="l">the file (<code>?json=1</code> for base64 in JSON)</td></tr>
+<tr><td>POST /v1/stress</td><td class="l">job with <code>sim</code></td><td class="l">peak stress, displacement, safety factor, reactions; modes; temperatures</td></tr>
+<tr><td>POST /v1/flow</td><td class="l">job with <code>flow</code></td><td class="l">Cd, Cl, drag in N, Reynolds number</td></tr>
+<tr><td>POST /v1/nonlinear</td><td class="l">job with <code>sim</code> and <code>params</code></td><td class="l">displacement, stress, plastic strain, reactions, contact</td></tr>
+<tr><td>POST /v1/quote</td><td class="l">job with <code>qty</code>, <code>material</code>, <code>finishes</code></td><td class="l">a quote for every process, DFM issues</td></tr>
+<tr><td>POST /v1/dxf</td><td class="l">job with <code>units</code></td><td class="l">flat-pattern DXF</td></tr>
+<tr><td>POST /v1/toolpath</td><td class="l">job with <code>cam</code> (machine, tool, material, tabs, units)</td><td class="l">G-code and run time</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>A STRESS STUDY</h2>
+<div class="eq">curl -s http://127.0.0.1:41800/v1/stress \
+ -H "Authorization: Bearer $(node amnicad.mjs token)" \
+ -H "Content-Type: application/json" -d '{
+ "doc": {"units":"mm","material":"al6061",
+         "features":[{"id":"a","type":"box","w":100,"d":10,"h":10,"x":50}]},
+ "sim": {"supports":[{"faces":{"side":"-X"},"type":"fixed"}],
+         "loads":[{"faces":{"side":"+X"},"F":[0,0,-100]}],
+         "res":"standard"}}'</div>
+<ul class="pl"><li><b>Pick faces</b> with <code>{"side":"+Z"}</code> (the outermost faces on that side), <code>{"normal":"-X"}</code> (every face pointing that way), <code>{"type":"cylinder"}</code>, <code>{"pts":[[x,y,z]]}</code> (the face nearest each point), or face numbers from <code>/v1/build</code>.</li><li><b>Supports:</b> <code>fixed</code>, <code>roller</code>, <code>disp</code> with <code>"d":[dx,dy,dz]</code>, <code>spring</code> with <code>"k"</code> in N/mm, and <code>stop</code> with <code>"gap"</code> in mm.</li><li><b>Loads:</b> <code>"F":[x,y,z]</code> in N, <code>"p"</code> in MPa, <code>"M":[x,y,z]</code> in N&middot;mm, <code>"at":[x,y,z]</code> for a remote load, <code>"dist":"bearing"</code> for a pin in a hole.</li><li><b>Study type:</b> <code>"type":"static"</code> (the default), <code>"modal"</code> or <code>"thermal"</code>. Mesh <code>"res"</code>: quick, standard, fine or ultra.</li><li>Lengths follow <code>doc.units</code>; forces and stresses are always N and MPa.</li></ul>
+</section>
+<section>
+<h2>WITHOUT A SERVER</h2>
+<div class="eq">{"op":"stress","doc":{...},"sim":{...}}
+
+node amnicad.mjs run job.json --out result.json</div>
+<div class="prose" style="margin-top:1rem"><p><code>op</code> is build, export, stress, flow, nonlinear, quote, dxf or toolpath. Files (STEP, STL, DXF) are written to <code>--out</code>.</p></div>
+</section>
+<section>
+<h2>PLANS</h2>
+<div class="card-grid">
+<div class="card"><h3>PRO</h3><p><strong style="font-size:1.8rem;color:var(--text)">$15</strong> per month, or $150 per year</p><p>One person. Every Pro tool in the editor plus the headless API.</p><p><a href="amni-cad.html#pro" class="btn btn-primary">GET PRO</a></p></div>
+<div class="card"><h3>ENTERPRISE</h3><p><strong style="font-size:1.8rem;color:var(--text)">$99</strong> per month, or $990 per year</p><p>Up to 10 people on one subscription and one key. Every Pro tool plus the headless API.</p><p><a href="amni-cad.html#pro" class="btn btn-primary">GET ENTERPRISE</a></p></div>
+</div>
+<p class="prose" style="margin-top:1rem">More than 10 people, an invoice or a purchase order? <a href="contact.html">Contact us</a>.</p>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-10-20">October 20, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
