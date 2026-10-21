@@ -44,6 +44,7 @@ const HELP=`Amni-CAD headless API (included with Amni-CAD Pro)
   amnicad run <job.json> [--out <file>]
                                    run one job without a server; job.op is build, export,
                                    stress, flow, nonlinear, quote, dxf or toolpath
+  amnicad vault <command>          Enterprise: team vault automation (amnicad vault help)
   amnicad update                   download the latest engine
   amnicad deactivate               remove the license from this computer
 Docs: https://amni-scient.com/amni-cad-api.html`;
@@ -55,6 +56,7 @@ export async function main(argv=process.argv.slice(2)){const[cmd,...a]=argv,opt=
   if(cmd==='deactivate'){lic.remove();return say('License removed from this computer');}
   if(cmd==='status'){let s;try{s=lic.info(await lic.load(true));}catch(e){s={error:e.message};}return console.log(JSON.stringify({license:s,engine:dir,api_token_file:path.join(cfgDir(),'api-token')},null,1));}
   if(cmd==='serve'){const s=await serve({engine:{E,P,dir},lic,port:opt('port')!=null?+opt('port'):PORT,host:opt('host'),cors:opt('cors')});await lic.load();return say('Amni-CAD API on http://'+(opt('host')||'127.0.0.1')+':'+s.port+'/v1/ · token: amnicad token');}
+  if(cmd==='vault'){const L=await lic.load();if(!P.allows(L,'team'))throw new Error('Vault automation comes with Amni-CAD Enterprise');const V=await import(pathToFileURL(path.join(dir,'api','vault_node.mjs')).href);return V.cli(a,{config:cfgDir(),E,log:say});}
   if(cmd==='run'){await lic.load();const j=JSON.parse(fs.readFileSync(a[0],'utf8')),fn={build:'build',export:'exportPart',stress:'stress',flow:'flow',nonlinear:'nonlinear',quote:'quote',dxf:'dxf',toolpath:'toolpath'}[j.op];if(!fn)throw new Error('job.op must be build, export, stress, flow, nonlinear, quote, dxf or toolpath');const r=await E[fn](j),out=opt('out');
     if(r.bytes||r.text!=null){const f=out||(r.name||'part.dxf');fs.writeFileSync(f,r.bytes?Buffer.from(r.bytes):r.text);return say('Wrote '+f);}const t=JSON.stringify(r,null,1);out?fs.writeFileSync(out,t):console.log(t);return;}
   throw new Error('Unknown command "'+cmd+'"\n'+HELP);}

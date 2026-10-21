@@ -15,7 +15,7 @@ if(fs.existsSync(KEY)){const k=crypto.createPrivateKey(fs.readFileSync(KEY)),goo
   await rej(P.check(good.replace(/\.([^.]+)\./,(m,p)=>'.'+b64(JSON.stringify({...base,seats:999}))+'.')),/signature is not valid/,'rejects a key whose payload was edited');
   await rej(P.check(forge({...base,exp:Date.now()-1000},k)),/expired/,'rejects an expired key');
   await rej(P.check(forge({...base,v:2},k)),/newer Amni-CAD/,'rejects a future license version');
-  await P.activate(forge({...base,feat:['vault']},k));ok(P.has('vault')&&!P.has('pdfstyle'),'feature-limited keys unlock only their features');
-  await P.activate(good);ok(Object.keys(P.FEATURES).every(P.has),'full keys unlock every Pro feature');P.deactivate();ok(!P.active()&&!P.has('vault'),'removing the key locks Pro again');
+  await P.activate(forge({...base,feat:['vault']},k));ok(P.has('vault')&&P.has('pdm')&&!P.has('pdfstyle'),'feature-limited keys unlock only their features (older vault keys open the personal vault)');
+  await P.activate(good);ok(Object.keys(P.FEATURES).filter(f=>!P.ENT.has(f)).every(P.has)&&!P.has('team'),'full Pro keys unlock every Pro feature but not the Enterprise team vault');await P.activate(forge({...base,plan:'enterprise',seats:10},k));ok(Object.keys(P.FEATURES).every(P.has),'Enterprise keys unlock everything, including the team vault');P.deactivate();ok(!P.active()&&!P.has('vault'),'removing the key locks Pro again');
 }else console.log('SKIP signed-key checks: no signing key on this machine');
 console.log(fail?'FAILURES '+fail:'ALL PASS');process.exit(fail?1:0);

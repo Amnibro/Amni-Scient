@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-const CAD=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),ROOTS=['headless.js','pro.js','pro_keys.json'],EXTRA=['vendor/replicad_single.wasm'];
+const CAD=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),ROOTS=['headless.js','pro.js','pro_keys.json','api/vault_node.mjs','vendor/amni-vault/net.js','vendor/amni-vault/pkg/vault_core.js'],EXTRA=['vendor/replicad_single.wasm'];
 const SPEC=/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s+|new URL\(\s*)(['"])(\.{1,2}\/[^'"?#]+)/g;
 export function crawl(dir=CAD){const seen=new Set(),todo=[...ROOTS,...EXTRA];while(todo.length){const f=todo.pop();if(seen.has(f))continue;const p=path.join(dir,f);if(!fs.existsSync(p)||fs.statSync(p).isDirectory())continue;seen.add(f);if(!/\.m?js$/.test(f))continue;const src=fs.readFileSync(p,'utf8');for(const m of src.matchAll(SPEC)){const r=path.posix.normalize(path.posix.join(path.posix.dirname(f),m[2]));r.startsWith('..')||todo.push(r);}const near=f.replace(/\.js$/,'_bg.wasm');fs.existsSync(path.join(dir,near))&&todo.push(near);}return[...seen].sort();}
 export function manifest(dir=CAD){const files=Object.fromEntries(crawl(dir).map(f=>[f,crypto.createHash('sha256').update(fs.readFileSync(path.join(dir,f))).digest('hex')]));return{api:1,files};}
