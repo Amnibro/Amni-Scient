@@ -2,7 +2,7 @@ import {gltfMaterial,texWriter} from './material.js';
 import {tangents} from './uv.js';
 const VIEW_EMIT=1.6,Y=(x,y,z)=>[x,z,-y],lin=c=>c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4,hexL=c=>{const n=parseInt((c||'#ffffff').slice(1),16);return[n>>16&255,n>>8&255,n&255].map(v=>lin(v/255));};
 export function matGroups(m){if(!m.mat||!m.mats||!m.mats.length)return null;const by=m.mats.map(()=>[]),I=m.idx,M=m.mat;for(let t=0;t<I.length;t+=3){const a=M[I[t]],b=M[I[t+1]],c=M[I[t+2]],k=a===b||a===c?a:b===c?b:a;(by[k]||by[0]).push(I[t],I[t+1],I[t+2]);}return by.map((x,i)=>({mat:m.mats[i],i,idx:Uint32Array.from(x)})).filter(g=>g.idx.length);}
-export function toAnimGLB(m,bk,o={}){const s=o.units==='in'?0.0254:0.001,nv=m.pos.length/3,P=new Float32Array(nv*3),N=new Float32Array(nv*3),C=new Float32Array(nv*3),mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
+export function toAnimGLB(m,bk,o={}){const s=o.scale||(o.units==='in'?0.0254:0.001),nv=m.pos.length/3,P=new Float32Array(nv*3),N=new Float32Array(nv*3),C=new Float32Array(nv*3),mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
   for(let v=0;v<nv;v++){const p=Y(m.pos[3*v]*s,m.pos[3*v+1]*s,m.pos[3*v+2]*s),n=Y(m.nrm[3*v],m.nrm[3*v+1],m.nrm[3*v+2]);for(let c=0;c<3;c++){P[3*v+c]=p[c];N[3*v+c]=n[c];C[3*v+c]=lin(m.col[3*v+c]);if(p[c]<mn[c])mn[c]=p[c];if(p[c]>mx[c])mx[c]=p[c];}}
   const parts=[],views=[],acc=[];let off=0;const add=(arr,target)=>{const b=new Uint8Array(arr.buffer,arr.byteOffset,arr.byteLength),pad=(4-b.length%4)%4;parts.push(b,new Uint8Array(pad));views.push({buffer:0,byteOffset:off,byteLength:b.length,...(target?{target}:{})});off+=b.length+pad;return views.length-1;};
   const A=(arr,ct,type,count,target,extra={})=>{acc.push({bufferView:add(arr,target),componentType:ct,count,type,...extra});return acc.length-1;};

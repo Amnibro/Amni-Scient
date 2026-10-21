@@ -1,0 +1,3 @@
+import * as ART from './art.js';
+import {zipStore} from './exporters.js';
+onmessage=async e=>{const m=e.data;try{const r=await ART.asset(m.src,{...m.o,progress:(k,v)=>postMessage({progress:k,...v})}),n=String(m.o.name||'asset').replace(/[^\w.-]/g,'_'),img=Object.fromEntries(Object.entries(r.png).map(([k,v])=>[k,ART.decodePNG(v)])),review=ART.sheet([0,35,90,180].map(yaw=>ART.render(r.mesh,img,{size:300,yaw})),4),zip=new Uint8Array(await zipStore([[n+'.glb',r.glb],...r.lods.map((l,i)=>[n+'.lod'+(i+1)+'.glb',l.glb]),['report.json',JSON.stringify(r.report,null,1)]]).arrayBuffer());postMessage({ok:true,zip,review,report:r.report,name:n},[zip.buffer,review.buffer]);}catch(err){postMessage({ok:false,error:String(err&&err.message||err)});}};

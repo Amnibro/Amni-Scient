@@ -129,6 +129,8 @@ node amnicad.mjs serve</div>
 <tr><td>POST /v1/quote</td><td class="l">job with <code>qty</code>, <code>material</code>, <code>finishes</code></td><td class="l">a quote for every process, DFM issues</td></tr>
 <tr><td>POST /v1/dxf</td><td class="l">job with <code>units</code></td><td class="l">flat-pattern DXF</td></tr>
 <tr><td>POST /v1/toolpath</td><td class="l">job with <code>cam</code> (machine, tool, material, tabs, units)</td><td class="l">G-code and run time</td></tr>
+<tr><td>POST /v1/art</td><td class="l">a .glb sculpt or scan (<code>?kind=humanoid&amp;size=2048</code>), or JSON with base64 <code>glb</code>, optional <code>paint</code>, <code>kind</code>, <code>tris</code>, <code>budgets</code>, <code>size</code>, <code>height</code>, <code>joints</code></td><td class="l">a zip with the game-ready GLB (retopology, UVs, baked normal, AO, color, roughness and metal maps, auto-rig and clips for humanoids and quadrupeds), two LODs and a report</td></tr>
+<tr><td>POST /v1/art/review</td><td class="l">a .glb (<code>?views=0,90,180&amp;size=512</code>)</td><td class="l">a PNG contact sheet rendered with its PBR materials</td></tr>
 </tbody></table></div>
 </section>
 <section>
@@ -148,7 +150,14 @@ node amnicad.mjs serve</div>
 <div class="eq">{"op":"stress","doc":{...},"sim":{...}}
 
 node amnicad.mjs run job.json --out result.json</div>
-<div class="prose" style="margin-top:1rem"><p><code>op</code> is build, export, stress, flow, nonlinear, quote, dxf or toolpath. Files (STEP, STL, DXF) are written to <code>--out</code>.</p></div>
+<div class="prose" style="margin-top:1rem"><p><code>op</code> is build, export, stress, flow, nonlinear, quote, dxf, toolpath, art or review. Files (STEP, STL, DXF, zip, PNG) are written to <code>--out</code>.</p></div>
+</section>
+<section>
+<h2>A GAME-READY ASSET</h2>
+<div class="eq">{"op":"art","glb":"knight_sculpt.glb","kind":"humanoid","size":2048}
+
+node amnicad.mjs run knight.json --out knight.zip</div>
+<ul class="pl"><li><b>One call does the asset pass:</b> decimates the sculpt to the triangle budget, unwraps and packs UVs, bakes tangent-space normals, ambient occlusion, base color, roughness and metal from the source (its textures or vertex colors), and writes LOD1 and LOD2 with their own UVs and smaller textures.</li><li><b>Characters come rigged.</b> Humanoids get a 22-bone skeleton with standard names (Hips, Spine, LeftArm, RightUpLeg and so on), skin weights from geodesic distance through the body, and idle, walk, run, attack, cast, aim, hit and death clips. Quadrupeds get a 19-bone skeleton with idle, walk, run, attack, hit and death. Sculpt characters in an A-pose with the arms clear of the body for the cleanest weights; pass <code>joints</code> to place any joint yourself.</li><li><b>Two sources:</b> send the full-detail sculpt as <code>glb</code> and a lower, painted copy as <code>paint</code> to bake shape detail from one and color from the other.</li></ul>
 </section>
 <section>
 <h2>PLANS</h2>
