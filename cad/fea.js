@@ -1,5 +1,7 @@
 import {gpuSolve,gpuContext} from './fea_gpu.js';
 import {KCOND,condK} from './thermal_data.js';
+import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
+import {voxSkin,skinU} from './fea_skin.js';
 export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 function dmat(nu){const c=1/((1+nu)*(1-2*nu)),a=c*(1-nu),b=c*nu,g=c*(1-2*nu)/2;return[[a,b,b,0,0,0],[b,a,b,0,0,0],[b,b,a,0,0,0],[0,0,0,g,0,0],[0,0,0,0,g,0],[0,0,0,0,0,g]];}
@@ -153,18 +155,18 @@ async function solve(Ls,K,f,opt={},prog){
   const L=Ls[0],n=L.nn*L.nd,b=new Float64Array(n),want=opt.solver||'auto';for(let i=0;i<n;i++)b[i]=L.fixed[i]?0:f[i]||0;let gpuError;
   if(L.nd===3&&want!=='cpu'&&(want==='gpu'||L.sc.length>(opt.gpuMin||15000)))try{const r=await gpuSolve(Ls,K,b,{tol:opt.tol||1e-6,maxIt:opt.maxIt,nsw:NSW,mv:(x,y)=>matvec(L,K,x,y)},prog);if(r)return{...r,backend:'gpu'};gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
   if(Ls.length>1&&!(L.om>0))L.om=omOf(L,K);
-  return{...pcg(Ls,K,b,opt,prog),backend:'cpu',gpuError};
+  return{...pcg(Ls,K,b,opt,prog),backend:'cpu',gpuError,why:gpuError?'':want==='cpu'?'CPU chosen':L.nd!==3?'heat solves on the CPU':opt.dadd?'springs solve on the CPU':'Auto: small enough that the CPU is quicker'};
 }
 export async function solveGrid(G,mat,dof,force,opt={},prog){
   const K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
-  const Ls=setup(G,K,3,dof,null,opt.mg,opt.solver!=='cpu'),S=await solve(Ls,K,force,opt,prog),L=Ls[0],u=S.u;
+  const sv=opt.dadd?'cpu':opt.solver,Ls=setup(G,K,3,dof,opt.dadd||null,opt.mg,sv!=='cpu'),L=Ls[0],u0=opt.u0,y=u0?new Float64Array(force.length):null;y&&matvec(L,K,u0,y,true);const S=await solve(Ls,K,y?force.map((v,i)=>v-y[i]):force,{...opt,solver:sv},prog),u=S.u;if(u0)for(let i=0;i<u.length;i++)u[i]+=u0[i];
   const DB=bCenter(mat.nu),ne=L.sc.length,vm=new Float32Array(ne),sig=new Float32Array(ne*6),ue=new Float64Array(24),s=mat.E/G.h;
   for(let q=0;q<ne;q++){
     for(let a=0;a<8;a++){const nd=L.E[q*8+a]*3;ue[3*a]=u[nd];ue[3*a+1]=u[nd+1];ue[3*a+2]=u[nd+2];}
     const S6=[0,0,0,0,0,0];for(let r2=0;r2<6;r2++){let t=0;for(let j=0;j<24;j++)t+=DB[r2][j]*ue[j];S6[r2]=t*s;}
     sig.set(S6,q*6);vm[q]=Math.sqrt(0.5*((S6[0]-S6[1])**2+(S6[1]-S6[2])**2+(S6[2]-S6[0])**2)+3*(S6[3]**2+S6[4]**2+S6[5]**2));
   }
-  return{...S,vm,sig,levels:Ls.length,L0:L};
+  let ku=null;return{...S,vm,sig,levels:Ls.length,L0:L,R:d=>{if(!ku){ku=new Float64Array(u.length);matvec(L,K,u,ku,true);}return ku[d]-force[d];}};
 }
 export function nodalField(G,L,elemVal){
   const v=new Float32Array(L.nn),c=new Uint16Array(L.nn);
@@ -206,19 +208,15 @@ export function prep(inp,def){
   const xyz=n=>[G.ox+(n%NX)*h,G.oy+(Math.floor(n/NX)%NY)*h,G.oz+Math.floor(n/(NX*NY))*h];
   return{G,h,nAct,nn,NX,NY,NZ,at,xyz,vol,pos};
 }
-function supportMask(inp,P){
+function supportMask(inp,P,modal){
   const dof=new Uint8Array(P.nn*3),sup=[...(inp.fixed&&inp.fixed.length?[{faces:inp.fixed,type:'fixed'}]:[]),...(inp.supports||[])];
-  for(const s of sup)for(const[n,v]of P.at(s.faces)){const roll=s.type==='roller'||s.type==='slider',a=Math.abs(v[1])>=Math.abs(v[2])&&Math.abs(v[1])>=Math.abs(v[3])?0:Math.abs(v[2])>=Math.abs(v[3])?1:2;if(roll)dof[3*n+a]=1;else dof[3*n]=dof[3*n+1]=dof[3*n+2]=1;}
+  for(const s of sup)for(const[n,v]of ADV.has(s.type)&&!(modal&&s.type!=='spring')?[]:P.at(s.faces)){const roll=s.type==='roller'||s.type==='slider',a=Math.abs(v[1])>=Math.abs(v[2])&&Math.abs(v[1])>=Math.abs(v[3])?0:Math.abs(v[2])>=Math.abs(v[3])?1:2;if(roll)dof[3*n+a]=1;else dof[3*n]=dof[3*n+1]=dof[3*n+2]=1;}
   return dof;
 }
 function loadVec(inp,P,mat){
   const f=new Float64Array(P.nn*3),ap=[0,0,0],add=(n,F)=>{for(let c=0;c<3;c++){f[3*n+c]+=F[c];ap[c]+=F[c];}};
   for(const ld of inp.loads||[]){
-    const acc=P.at(ld.faces);let tot=0;for(const v of acc.values())tot+=v[0];if(!tot)continue;
-    if(ld.M){const M=ld.M,c=[0,0,0];for(const[n,v]of acc){const x=P.xyz(n);for(let k=0;k<3;k++)c[k]+=v[0]*x[k]/tot;}const mn=Math.hypot(...M)||1,m=M.map(q=>q/mn),rp=new Map();let J=0;
-      for(const[n,v]of acc){const x=P.xyz(n),r=[x[0]-c[0],x[1]-c[1],x[2]-c[2]],d=r[0]*m[0]+r[1]*m[1]+r[2]*m[2],q=[r[0]-d*m[0],r[1]-d*m[1],r[2]-d*m[2]];J+=v[0]*(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]);rp.set(n,q);}
-      if(J>0)for(const[n,v]of acc){const q=rp.get(n),s=v[0]/J;add(n,[(M[1]*q[2]-M[2]*q[1])*s,(M[2]*q[0]-M[0]*q[2])*s,(M[0]*q[1]-M[1]*q[0])*s]);}}
-    else for(const[n,v]of acc)add(n,ld.p?[-ld.p*v[1],-ld.p*v[2],-ld.p*v[3]]:[ld.F[0]*v[0]/tot,ld.F[1]*v[0]/tot,ld.F[2]*v[0]/tot]);
+    distLoad(ld,P.at(ld.faces),P.xyz,add);
   }
   const g=inp.accel||(mat.g?mat.g.map(v=>v*9.80665):null);
   if(g&&mat.rho){const k=mat.rho*1e-9;for(let n=0;n<P.nn;n++)if(P.vol[n])add(n,[g[0]*k*P.vol[n],g[1]*k*P.vol[n],g[2]*k*P.vol[n]]);}
@@ -227,16 +225,16 @@ function loadVec(inp,P,mat){
 function gridOut(P){const G=P.G;return{h:P.h,nEl:P.nAct,grid:{nx:G.nx,ny:G.ny,nz:G.nz}};}
 function fieldOut(P,fs){const G=P.G;return{o:[G.ox,G.oy,G.oz],h:G.h,n:[P.NX,P.NY,P.NZ],...fs};}
 async function statik(inp,P,prog){
-  const{G,pos}=P,mat=inp.mat,dof=supportMask(inp,P);if(!dof.some(v=>v))throw new Error('add at least one fixed face');
-  const{f,ap}=loadVec(inp,P,mat),t0=Date.now(),S=await solveGrid(G,mat,dof,f,{tol:inp.tol||1e-6,mg:inp.mg,solver:inp.solver,gpuMin:inp.gpuMin},prog),ms=Date.now()-t0;
+  const{G,pos}=P,mat=inp.mat,dof=supportMask(inp,P),B=bcOf(inp,P.nn,P.at),held=dof.some(v=>v)||!!B.u0;for(let i=0;i<dof.length;i++)dof[i]|=B.dof[i];if(!held&&!B.stops.size&&!B.dadd)throw new Error('add at least one fixed face');
+  const{f,ap}=loadVec(inp,P,mat),t0=Date.now(),go=act=>{const d=dof.slice(),u0=B.u0?B.u0.slice():act.size?new Float64Array(3*P.nn):null;for(const[k,v]of act){d[k]=1;u0[k]=v;}return solveGrid(G,mat,d,f,{tol:inp.tol||1e-6,mg:inp.mg,solver:inp.solver,gpuMin:inp.gpuMin,u0,dadd:B.dadd},prog);},S=B.stops.size?await contactSolve(B,held,go):await go(new Map()),ms=Date.now()-t0,wire=voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz);wire.u=skinU(wire,S.u);
   const{v:vmN,c:cnt}=nodalField(G,S.L0,S.vm),vStress=atVerts(G,S.L0,vmN,1,pos,cnt),vDisp=atVerts(G,S.L0,new Float32Array(S.u),3,pos,cnt);
   const nnod=P.nn,fVm=new Float32Array(nnod),fU=new Float32Array(nnod);
   for(let n=0;n<nnod;n++)if(cnt[n]){fVm[n]=vmN[n];fU[n]=Math.hypot(S.u[3*n],S.u[3*n+1],S.u[3*n+2]);}
-  dilate(G,cnt,[fVm,fU]);
+  dilate(G,cnt,[fVm,fU]);wire.vm=Float32Array.from(wire.nodes,n=>fVm[n]);
   let vmMax=0,uMax=0;const sorted=Float32Array.from(S.vm).sort();for(const v of S.vm)vmMax=Math.max(vmMax,v);
   for(let i=0;i<S.u.length;i+=3)uMax=Math.max(uMax,Math.hypot(S.u[i],S.u[i+1],S.u[i+2]));
   let nFixed=0;for(let n=0;n<nnod;n++)if(dof[3*n]||dof[3*n+1]||dof[3*n+2])nFixed++;
-  return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,nFixed,backend:S.backend,gpuError:S.gpuError,hist:S.hist};
+  return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,nFixed,backend:S.backend,gpuError:S.gpuError,why:S.why,hist:S.hist,wire,contact:S.contact,held:B.grp.size?heldBy(B,S.R):undefined};
 }
 export function jacobiEig(A,m,Vo){
   const V=Vo?Vo.fill(0):new Float64Array(m*m);for(let i=0;i<m;i++)V[i*m+i]=1;let nf=0;for(let i=0;i<m*m;i++)nf+=A[i]*A[i];
@@ -276,7 +274,7 @@ export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
 }
 async function modal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat,nev=Math.max(1,Math.min(inp.modes||6,20)),K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
-  const dof=supportMask(inp,P),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
+  const dof=supportMask(inp,P,true),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
   for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)Mv[3*q+c]=L.fixed[3*q+c]?0:P.vol[q]*rho;
   const defl=free?rigidModes(P.nn,P.xyz,Mv):[];
   let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls,K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
@@ -284,13 +282,13 @@ async function modal(inp,P,prog){
   const lo={tol:inp.tol,maxIt:inp.maxIt};let E,gpu=!!ctx;try{E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,ctx);}catch(e){if(!ctx)throw e;gpuError=String(e.message||e);gpu=false;E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,null);}finally{ctx&&ctx.free();}
   const {c:cnt}=nodalField(G,L,null),lmax=Math.max(...E.lam.map(Math.abs),1e-30);
   let mt=0;for(let q=0;q<P.nn;q++)mt+=P.vol[q]*rho;
-  const modes=[];let rigid=0;
+  const modes=[],wire=voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz);let rigid=0;
   for(let j=0;j<E.lam.length&&modes.length<nev;j++){const lam=E.lam[j];if(lam<1e-7*lmax&&!free){rigid++;continue;}const x=E.X[j],u=new Float32Array(P.nn);let um=0;for(let q=0;q<P.nn;q++){u[q]=Math.hypot(x[3*q],x[3*q+1],x[3*q+2]);um=Math.max(um,u[q]);}
     const gm=[0,0,0];for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)gm[c]+=Mv[3*q+c]*x[3*q+c];
     const ux=new Float32Array(n);for(let i=0;i<n;i++)ux[i]=x[i]/(um||1);for(let q=0;q<P.nn;q++)u[q]/=um||1;
-    modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0]});}
+    modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0],wireU:skinU(wire,ux)});}
   const m0=modes[0],vMag=new Float32Array(pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
-  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError};
+  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire};
 }
 async function thermal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,K=keHeat();for(let i=0;i<64;i++)K[i]*=k*G.h;
@@ -306,10 +304,10 @@ async function thermal(inp,P,prog){
   const qc=cv.map((acc,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[n,v]of acc)s+=hc*v[0]*(Ti-T[n]);return s;});
   const{c:cnt}=nodalField(G,L,null),TN=new Float32Array(nn);let Tmin=Infinity,Tmax=-Infinity;for(let n=0;n<nn;n++)if(cnt[n]){TN[n]=T[n];Tmin=Math.min(Tmin,T[n]);Tmax=Math.max(Tmax,T[n]);}
   const vT=atVerts(G,L,TN,1,pos,cnt);dilate(G,cnt,[TN]);
-  return{type:'thermal',vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
+  return{type:'thermal',wire:(w=>(w.vm=Float32Array.from(w.nodes,n=>TN[n]),w))(voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz)),vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'?60000:40000);
+  const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
   return type==='modal'?modal(inp,P,prog):type==='thermal'?thermal(inp,P,prog):statik(inp,P,prog);
 }
 function edt1(f,n,d,v,z){let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;for(let q=1;q<n;q++){let s;while(true){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0){k--;continue;}if(s<=z[k]){k--;}break;}k++;v[k]=q;z[k]=s;z[k+1]=1e20;}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];}}

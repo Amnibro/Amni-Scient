@@ -322,13 +322,13 @@ function applyOp(body,tool,op){
   return body.fuse(tool);
 }
 function patternTools(f,tools){
-  const n0=f.n??4,n=Math.max(1,Math.round(n0)),out=[];n!==n0&&NOTES.push({k:'n',field:'n',v:n,msg:'Count '+n0+' used as '+n+' (a whole number, 1 or more)',fix:[{t:'Use '+n,k:'n',v:n}]});
-  for(const t of tools){
-    for(let k=1;k<n;k++){
-      if(f.kind==='circular'){const da=axisRef(f.axis),ax=da?da.d:AXV(f.axis),ang=(f.angle??360)===360?360/n:(f.angle)/(n-1);out.push(t.clone().rotate(ang*k,da?da.p:[f.ox||0,f.oy||0,f.oz||0],ax));}
-      else out.push(t.clone().translate((f.dx||0)*k,(f.dy||0)*k,(f.dz||0)*k));
-    }
-  }
+  const n0=f.n??4,n=Math.max(1,Math.round(n0)),out=[],kind=f.kind||'linear',skip=new Set((f.skip||[]).map(r=>Math.round(+(Array.isArray(r)?r[0]:r))-1)),T=[],sp=(v,m)=>f.total&&m>1?v/(m-1):v;n!==n0&&NOTES.push({k:'n',field:'n',v:n,msg:'Count '+n0+' used as '+n+' (a whole number, 1 or more)',fix:[{t:'Use '+n,k:'n',v:n}]});
+  if(kind==='circular'){const da=axisRef(f.axis),ax=da?da.d:AXV(f.axis),ang=(f.angle??360)===360?360/n:(f.angle)/(n-1);for(let k=1;k<n;k++)T.push(t=>t.rotate(ang*k,da?da.p:[f.ox||0,f.oy||0,f.oz||0],ax));}
+  else if(kind==='curve'){const P=(f.path||[]).map(q=>[+q[0]||0,+q[1]||0,+(q[2]??0)||0]);if(P.length<2)throw new Error('pattern along a path needs 2 or more path points');const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(...sub(P[i],P[i-1])));const at=s=>{let i=1;while(i<P.length-1&&L[i]<s)i++;const t=(s-L[i-1])/Math.max(L[i]-L[i-1],1e-12),d=nrm(sub(P[i],P[i-1]));return{p:P[i-1].map((v,c)=>v+(P[i][c]-v)*t),d};},t0=at(0).d;
+    for(let k=1;k<n;k++){const q=at(L[L.length-1]*k/Math.max(n-1,1)),ax=cross(t0,q.d),sn=Math.hypot(...ax),ang=Math.atan2(sn,dot(t0,q.d))*180/Math.PI,mv=sub(q.p,P[0]);T.push(t=>{const m=t.translate(mv[0],mv[1],mv[2]);return f.align&&sn>1e-9?m.rotate(ang,q.p,nrm(ax)):m;});}}
+  else if(kind==='offsets')for(const q of f.pts||[])T.push(t=>t.translate(+q[0]||0,+q[1]||0,+(q[2]??0)||0));
+  else{const n2=Math.max(1,Math.round(f.n2??1));for(let b=0;b<n2;b++)for(let a=0;a<n;a++)(a||b)&&T.push(t=>t.translate(sp(f.dx||0,n)*a+sp(f.dx2||0,n2)*b,sp(f.dy||0,n)*a+sp(f.dy2||0,n2)*b,sp(f.dz||0,n)*a+sp(f.dz2||0,n2)*b));}
+  for(const t of tools)T.forEach((g,k)=>skip.has(k+1)||out.push(g(t.clone())));
   return out;
 }
 const HINT={fillet:'the radius is probably too big for these edges; try a smaller radius or fewer edges',chamfer:'the distance is probably too big for these edges',shell:'the wall is probably thicker than a fillet or feature allows; thin the wall or enlarge the fillets',extrude:'check that the profile is closed, has area and does not cross itself',revolve:'the profile must not cross the axis',hole:'check the hole lies on the part',pattern:'a copy may fall outside the part',mirror:'the mirror may not touch the part'};
@@ -396,9 +396,9 @@ export async function build(doc,opt={}){
         const v0=volOf(body);next=upTo(x=>{const q=body.shell(x,ff=>ff.when(({element})=>set.has(element.hashCode))),v=volOf(q);if(!(v>0&&v<v0*(1-1e-7)))throw new Error('wall too thick');return q;},t,5,'Wall thickness','t','the thickest wall this part allows').r;
       }
       else if(f.type==='pattern'){
-        const src=(f.of||[]).map(id=>tools[id]).filter(Boolean);if(!src.length)throw new Error('pattern: pick features that made a body or cut');
+        if(f.body){const cp=patternTools(f,[body]);next=cp.length?applyOp(body,cp.length===1?cp[0]:R.makeCompound(cp),'add'):body;}else{const src=(f.of||[]).map(id=>tools[id]).filter(Boolean);if(!src.length)throw new Error('pattern: pick features that made a body or cut');
         const ops=(f.of||[]).map(id=>{const r2=feats.find(x=>x.id===id);return r2?(r2.type==='hole'?'cut':r2.op||'add'):'add';});
-        let b=body;src.forEach((t,si)=>{const cp=patternTools(f,[t]);if(!cp.length)return;const c=cp.length===1?cp[0]:R.makeCompound(cp);b=applyOp(b,c,ops[si]);});next=b;
+        let b=body;src.forEach((t,si)=>{const cp=patternTools(f,[t]);if(!cp.length)return;const c=cp.length===1?cp[0]:R.makeCompound(cp);b=applyOp(b,c,ops[si]);});next=b;}
       }
       else if(f.type==='mirror'){
         if(!body)throw new Error('mirror needs a body');
@@ -436,7 +436,7 @@ export function meshBody(body,q=1){
   if(!body)return null;
   const size=sizeOf(body),E=edgeList(body),tol=Math.max(size*2e-4/q,0.002),ang=Math.min(0.3,Math.max(0.12,2*Math.PI*E.length/8000))/q,m=body.mesh({tolerance:tol,angularTolerance:ang}),me=body.meshEdges({tolerance:tol,angularTolerance:ang});
   const F=faceList(body),fh=new Map(F.map(x=>[x.f.hashCode,x.i])),eh=new Map(E.map(x=>[x.e.hashCode,x.i]));
-  const faces=F.map(x=>({c:x.c,n:x.n,type:x.type,area:safe(()=>R.measureArea(x.f))}));
+  const sid=new Map();safe(()=>(body.solids&&body.solids.length>1?body.solids:[]).forEach((sd,i)=>sd.faces.forEach(g=>sid.set(g.hashCode,i))));const faces=F.map(x=>({c:x.c,n:x.n,type:x.type,area:safe(()=>R.measureArea(x.f)),...(sid.size?{solid:sid.get(x.f.hashCode)??0}:{})}));
   const edges=E.map(x=>({m:x.m,a:x.a,b:x.b,type:x.type,len:x.len}));
   let vp=null;try{const p=R.measureShapeVolumeProperties(body);vp={volume:p.volume,com:p.centerOfMass};}catch{}
   const bb=bboxOf(body);

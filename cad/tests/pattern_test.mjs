@@ -1,0 +1,13 @@
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';
+const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
+let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));};
+const vol=async fs=>{const r=await K.build({params:[],features:fs});if(r.errors&&r.errors.length)console.log(JSON.stringify(r.errors));return K.meshBody(r.body).props.volume;};
+const plate={id:'p',type:'box',w:200,d:200,h:10,x:0,y:0},cyl={id:'c',type:'cylinder',r:5,h:10,x:-60,y:-60,z:10};
+const v0=await vol([plate]),vc=Math.PI*25*10;
+const g=await vol([plate,cyl,{id:'q',type:'pattern',of:['c'],kind:'linear',n:3,dx:40,n2:2,dy2:50,skip:[[4]]}]);ok(Math.abs(g-(v0+5*vc))/vc<0.02,'3×2 grid with one copy skipped adds 5 pins '+(g-v0)/vc);
+const t=await vol([plate,cyl,{id:'q',type:'pattern',of:['c'],kind:'linear',n:5,dx:120,total:true}]);ok(Math.abs(t-(v0+5*vc))/vc<0.02,'total span puts 5 pins in 120 mm '+(t-v0)/vc);
+const cu=await vol([plate,cyl,{id:'q',type:'pattern',of:['c'],kind:'curve',n:4,path:[[-60,-60,10],[60,-60,10],[60,60,10]],align:true}]);ok(Math.abs(cu-(v0+4*vc))/vc<0.02,'4 pins along an L path '+(cu-v0)/vc);
+const of=await vol([plate,cyl,{id:'q',type:'pattern',of:['c'],kind:'offsets',pts:[[30,0,0],[0,30,0],[90,90,0]]}]);ok(Math.abs(of-(v0+4*vc))/vc<0.02,'offset copies '+(of-v0)/vc);
+const bd=await vol([{id:'b',type:'box',w:10,d:10,h:10},{id:'q',type:'pattern',body:true,kind:'linear',n:3,dx:20}]);ok(Math.abs(bd-3000)<1,'whole-part pattern '+bd);
+const ci=await vol([plate,cyl,{id:'q',type:'pattern',of:['c'],kind:'circular',n:6,axis:'Z',ox:0,oy:0,oz:0,skip:[[2],[3]]}]);ok(Math.abs(ci-(v0+4*vc))/vc<0.02,'circular with two skipped '+(ci-v0)/vc);
+console.log(fail?`${fail} failed, ${pass} passed`:`ALL ${pass} PASS`);process.exit(fail?1:0);
