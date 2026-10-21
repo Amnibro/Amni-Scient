@@ -13,7 +13,7 @@ h1{font-size:1.9rem;margin:0 0 4px}
 h2{font-size:1.2rem;margin:32px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
 p,li{color:var(--fg)}
 .muted{color:var(--muted)}
-table{width:100%;border-collapse:collapse;font-size:.95rem}
+.tw{overflow-x:auto;max-width:100%}td{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;font-size:.95rem}
 th,td{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:600}
 a{color:var(--accent)}
@@ -32,7 +32,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <p>To give you routes, search results, traffic, speed limits and place details, the app sends coordinates to the <strong>Amni-Map gateway</strong>, a server we run on Cloudflare. Routes, search and speed-limit lookups use your exact position. The gateway relays only the request itself (coordinates or search text), never your IP address or phone details, to public OpenStreetMap-based services: the OSRM, FOSSGIS and Valhalla routing servers, Photon (komoot) and Nominatim (OpenStreetMap Foundation) for search, and public Overpass servers for map details. Those services see the gateway, not your phone, and keep their own logs of what the gateway asked. The gateway itself keeps no request logs.</p>
 
 <h2>What is sent, and where</h2>
-<table>
+<div class="tw"><table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
 <tr><td>Trip start (your position), stops and destination</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes so a repeat request is fast.</td></tr>
 <tr><td>Search text and your exact position (to rank places near you first), and positions to name the town or street near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results near you</td><td>Not stored</td></tr>
@@ -43,7 +43,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <tr><td>Feedback you type</td><td>Gateway</td><td>Improve the app</td><td>Your words, the app version and the day</td></tr>
 <tr><td>A tester code, if you enter one</td><td>Gateway</td><td>Check the code and issue a tester pass</td><td>The pass stays on your phone and is renewed through the gateway; no identity attached</td></tr>
 <tr><td>Map tiles for the area on screen</td><td>Directly to OpenFreeMap (map tiles, styles and fonts), Amazon Web Services (terrain for hillshade and contour lines), NASA GIBS and the U.S. Geological Survey (Orbit and Topo styles). Sentinel-2 and close-up US Orbit imagery come through the gateway</td><td>Draw the map</td><td>Governed by those providers; they see your IP address and the map area</td></tr>
-</table>
+</table></div>
 
 <h2>On your phone only</h2>
 <ul>
@@ -74,7 +74,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <h3>Location</h3>
 <p>Amni-Map asks only for <strong>While Using the App</strong> location permission; it never asks for "Always". While a trip you started is running, iOS keeps sending the app location updates with the screen off or in another app, so spoken guidance continues, and iOS shows the blue location indicator while it does. When the trip ends, the app stops using location in the background. Spoken turn prompts use the background audio mode only to play while you navigate. The app never shares your location with other apps on your device.</p>
 <h3>What is sent, and where</h3>
-<table>
+<div class="tw"><table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
 <tr><td>Trip start (your position), stops, destination, and your avoid-highways and avoid-tolls choices</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes.</td></tr>
 <tr><td>Search text and your exact position (to rank places near you first), and positions to name the town, street or dropped pin near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results and place names</td><td>Not stored</td></tr>
@@ -84,7 +84,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <tr><td>Road reports you post (kind, place, time and a random report ID) and your votes on reports</td><td>Gateway</td><td>Show other drivers what is on the road</td><td>As in the Android table: shown until they expire, no identity attached</td></tr>
 <tr><td>Feedback you type (up to 2,000 characters)</td><td>Gateway</td><td>Improve the app</td><td>Your words, the app version with "iOS", and the day</td></tr>
 <tr><td>Map tiles for the area on screen</td><td>Directly to OpenFreeMap (map tiles, styles and fonts), Amazon Web Services (terrain for hillshade), NASA GIBS and the U.S. Geological Survey (Orbit and Topo styles). Sentinel-2 imagery comes through the gateway</td><td>Draw the map</td><td>Governed by those providers; they see your IP address and the map area</td></tr>
-</table>
+</table></div>
 <p>The iOS app does not have the Android app's "Help map traffic" speed upload, tester codes, copilot, music map, voice search, Android Auto or Pro subscription, so none of the data those features use is collected on iOS. It does not use the microphone or the camera.</p>
 <h3>On your device only</h3>
 <ul>
