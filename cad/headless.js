@@ -7,6 +7,8 @@ import {faceIds} from './facesel.js';
 import {runMeshFEA} from './fea_mesh.js';
 import {runCFD,FLUIDS} from './cfd.js';
 import {runStudy} from './nl_study.js';
+import * as ART from './art.js';
+import {zipStore} from './exporters.js';
 export const VERSION=1,FLOW_CELLS={quick:40000,standard:90000,fine:180000},MESH_RES={quick:12000,standard:30000,fine:80000,ultra:200000};
 let ready=null,chain=Promise.resolve();
 const bad=(m,code=400)=>Object.assign(new Error(m),{code}),r4=v=>+(+v).toPrecision(4);
@@ -35,3 +37,6 @@ export const quote=j=>serial(async()=>{const b=await built(j),r=await M.quote({b
 export const dxf=j=>serial(async()=>{const b=await built(j);return{text:(await M.dxf({body:b.body,doc:b.doc},{units:j.units||'in'})).dxf,type:'application/dxf'};});
 export const toolpath=j=>serial(async()=>{const b=await built(j),c=(await M.catalog()).cam,pick=(Lst,n)=>Lst.find(x=>x.name===n)||Lst.find(x=>n&&x.name.toLowerCase().includes(String(n).toLowerCase()))||Lst[0],o=j.cam||{},job={name:b.doc.name||'part',machine:pick(c.machines,o.machine),tool:pick(c.tools,o.tool),material:pick(c.materials,o.material||'Plywood'),tabs:+(o.tabs??4),units:o.units||'in',air_cut:!!o.air_cut},r=await M.toolpath({body:b.body,doc:b.doc},{job});return{ok:r.ok,gcode:r.gcode,stats:r.stats,errors:r.errors,warnings:r.warnings};});
 export const catalog=async()=>({materials:Object.fromEntries(Object.entries(MATS).map(([k,v])=>[k,{name:v.n,E_MPa:v.E,yield_MPa:v.sy,density_kg_m3:v.rho}])),fluids:Object.keys(FLUIDS),cam:(await M.catalog()).cam});
+const b64=g=>typeof g==='string'?Uint8Array.from(Buffer.from(g,'base64')):g instanceof Uint8Array?g:new Uint8Array(g),glbIn=j=>{const g=j.glb||j.blobs&&j.blobs.glb;if(!g)throw bad('Send {"glb":"<base64 .glb>","kind":"humanoid"} or a .glb file as the body');return b64(g);},artOpts=j=>{const o={};for(const k of['kind','name','tris','budgets','size','maps','clips','height','yaw','joints','samples','smooth','uv','angle','voxels'])j[k]!=null&&(o[k]=j[k]);j.paint&&(o.paint=b64(j.paint));if(o.kind&&!['humanoid','quadruped','prop','weapon','vehicle','building'].includes(o.kind))throw bad('kind must be humanoid, quadruped, prop, weapon, vehicle or building');o.size=Math.min(4096,Math.max(256,+o.size||2048));return o;};
+export const art=j=>serial(async()=>{const o=artOpts(j),r=await ART.asset(glbIn(j),o),n=String(o.name||'asset').replace(/[^\w.-]/g,'_'),files=[[n+'.glb',r.glb],...r.lods.map((l,i)=>[n+'.lod'+(i+1)+'.glb',l.glb]),['report.json',JSON.stringify(r.report,null,1)]];return j.report_only?r.report:{bytes:new Uint8Array(await zipStore(files).arrayBuffer()),type:'application/zip',name:n+'.zip',report:r.report};});
+export const artReview=j=>serial(async()=>{const r=await ART.review(glbIn(j),{size:Math.min(1024,+j.size||512),views:j.views});return{bytes:r.png,type:'image/png',name:String(j.name||'asset').replace(/[^\w.-]/g,'_')+'-review.png'};});
