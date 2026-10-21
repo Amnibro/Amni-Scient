@@ -159,11 +159,22 @@ node amnicad.mjs run job.json --out result.json</div>
 node amnicad.mjs run knight.json --out knight.zip</div>
 <ul class="pl"><li><b>One call does the asset pass:</b> decimates the sculpt to the triangle budget, unwraps and packs UVs, bakes tangent-space normals, ambient occlusion, base color, roughness and metal from the source (its textures or vertex colors), and writes LOD1 and LOD2 with their own UVs and smaller textures.</li><li><b>Characters come rigged.</b> Humanoids get a 22-bone skeleton with standard names (Hips, Spine, LeftArm, RightUpLeg and so on), skin weights from geodesic distance through the body, and idle, walk, run, attack, cast, aim, hit and death clips. Quadrupeds get a 19-bone skeleton with idle, walk, run, attack, hit and death. Sculpt characters in an A-pose with the arms clear of the body for the cleanest weights; pass <code>joints</code> to place any joint yourself.</li><li><b>Two sources:</b> send the full-detail sculpt as <code>glb</code> and a lower, painted copy as <code>paint</code> to bake shape detail from one and color from the other.</li></ul>
 </section>
+<section id="vault">
+<h2>VAULT AUTOMATION (ENTERPRISE)</h2>
+<div class="prose"><p>With an Enterprise key, the <code>amnicad</code> command can join your team vault and check files in for you. Run it on a build server or any computer that saves CAD files. It has its own vault key, so an admin approves it once in Amni-CAD under Vault, like any teammate.</p></div>
+<div class="eq">amnicad vault join "&lt;invite link&gt;" --name "Build server"
+amnicad vault watch ./released --every 7
+amnicad vault add bracket.step drawing.pdf --note "From supplier"
+amnicad vault ls bracket
+amnicad vault get PRT-000012 --what all --out ./out
+amnicad vault status</div>
+<div class="prose" style="margin-top:1rem"><p><code>watch</code> checks in every new or changed STEP, Amni-CAD, PDF, STL and DXF file under the folder. A changed file becomes the next revision of the same item, and files that have not changed are skipped. An assembly STEP is split into an assembly and its parts. An Amni-CAD file is built into a STEP by the engine and stored with its native file. Files are encrypted on the computer before they are sent. Add <code>--once</code> to check the folder one time, for scheduled jobs.</p></div>
+</section>
 <section>
 <h2>PLANS</h2>
 <div class="card-grid">
 <div class="card"><h3>PRO</h3><p><strong style="font-size:1.8rem;color:var(--text)">$15</strong> per month, or $150 per year</p><p>One person. Every Pro tool in the editor plus the headless API.</p><p><a href="amni-cad.html#pro" class="btn btn-primary">GET PRO</a></p></div>
-<div class="card"><h3>ENTERPRISE</h3><p><strong style="font-size:1.8rem;color:var(--text)">$99</strong> per month, or $990 per year</p><p>Up to 10 people on one subscription and one key. Every Pro tool plus the headless API.</p><p><a href="amni-cad.html#pro" class="btn btn-primary">GET ENTERPRISE</a></p></div>
+<div class="card"><h3>ENTERPRISE</h3><p><strong style="font-size:1.8rem;color:var(--text)">$99</strong> per month, or $990 per year</p><p>Up to 10 people on one subscription and one key. Every Pro tool and the headless API, plus a hosted team vault and vault automation.</p><p><a href="amni-cad.html#pro" class="btn btn-primary">GET ENTERPRISE</a></p></div>
 </div>
 <p class="prose" style="margin-top:1rem">More than 10 people, an invoice or a purchase order? <a href="contact.html">Contact us</a>.</p>
 </section>

@@ -1,8 +1,9 @@
 import {fam} from './finish.js';
+import {matBase} from './schema.js';
 import {nf} from './units.js';
 import {zipStore} from './exporters.js';
 const K='./mfg_kernel.js',LS='amnicad.cam',STORE_MAX=40,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-export const CUTK=['plasma','laser','waterjet'],CUST='Custom machine',METALS=['al','steel','ss','ti','brass'],PROC={vmc:'cnc3',router:'router',laser:'laser',plasma:'plasma',waterjet:'waterjet'};
+export const CUTK=['plasma','laser','waterjet'],CUST='Custom machine',METALS=['al','steel','ss','ti','brass','mg','zn','ref'],PROC={vmc:'cnc3',router:'router',laser:'laser',plasma:'plasma',waterjet:'waterjet'};
 export const CS={cat:null,res:null,plan:null,busy:false,err:'',seq:0,key:''};
 const rd=()=>{try{return JSON.parse(localStorage.getItem(LS)||'{}');}catch{return{};}};
 export const prefs=()=>({machine:'',mine:[],...rd()});
@@ -22,7 +23,7 @@ export function suggest(cat,doc,res){const L=machList(cat),by=n=>L.find(x=>x.nam
 export function machineOf(cat,doc,res){const c=(doc.make&&doc.make.cam)||{},P=prefs(),L=machList(cat,P,c.machine),n=c.machine&&c.machine!=='auto'?c.machine:P.machine,hit=pick(L,n);if(hit)return{...hit,chosen:true};const s=suggest(cat,doc,res);return{...s,chosen:false};}
 export const toolsFor=(cat,mc)=>cat.cam.tools.filter(t=>CUTK.includes(mc.kind)?t.kind==='kerf':t.kind!=='drill'&&t.kind!=='kerf');
 export const autoT=(tl,mc,part)=>{if(CUTK.includes(mc.kind))return tl.find(t=>t.name.toLowerCase().startsWith(mc.kind))||tl[0];const fl=tl.filter(t=>t.kind==='flat'&&(mc.kind==='vmc')===/^Carbide/.test(t.name)),L=fl.length?fl:tl.filter(t=>t.kind==='flat'),lim=Math.min(12.7,...(part&&part.holes||[]).map(h=>h[0]*0.95),...(part&&part.min_r>0?[2*part.min_r]:[]),...(part&&part.sheet?[Math.max(3.175,part.sheet.t*2)]:[])),ok=L.filter(t=>t.dia<=lim+1e-9).sort((a,b)=>b.dia-a.dia);return ok[0]||L.sort((a,b)=>a.dia-b.dia)[0]||tl[0];};
-export const autoF=(cat,doc,mc)=>{const b=FEEDM[doc.material]||(fam(doc.material||'')==='wood'?'Hardwood':'Plywood'),ms=cat.cam.materials,v=ms.find(x=>x.name===b+' (VMC, carbide)'),r=ms.find(x=>x.name===b);return(mc.kind==='vmc'?v||r:r||v)||ms[0];};
+export const autoF=(cat,doc,mc)=>{const b=FEEDM[doc.material]||FEEDM[matBase(doc.material||'')]||(fam(doc.material||'')==='wood'?'Hardwood':'Plywood'),ms=cat.cam.materials,v=ms.find(x=>x.name===b+' (VMC, carbide)'),r=ms.find(x=>x.name===b);return(mc.kind==='vmc'?v||r:r||v)||ms[0];};
 export function machFull(mc,c){return mc.name===CUST&&c.custom?{...mc,...c.custom,s_max:c.custom.max_rpm||mc.s_max}:mc;}
 export function flatJob(API,cat,mc,c,res){const doc=API.doc,tl=toolsFor(cat,mc),part=res&&res.part,gp=cat.cam.posts.filter(p=>p.gen);return{name:API.safeName(),machine:mc,tool:pick(tl,c.tool)||autoT(tl,mc,part),material:pick(cat.cam.materials,c.material)||autoF(cat,doc,mc),tabs:CUTK.includes(mc.kind)?0:c.tabs,units:c.units,air_cut:!!c.air_cut,post:(pick(gp,c.post)||{}).id||''};}
 export const engineReady=async API=>{try{return await API.plugin(K,'engine',{});}catch{return{solid:false};}};
