@@ -1,3 +1,4 @@
+import {region,RGE} from './region.js';
 import {gpuSolve,gpuContext} from './fea_gpu.js';
 import {KCOND,condK} from './thermal_data.js';
 import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
@@ -204,7 +205,7 @@ export function prep(inp,def){
   const mask=activeNodeMask(G),NX=G.nx+1,NY=G.ny+1,NZ=G.nz+1,nn=NX*NY*NZ,dens=densOf(G),vol=new Float64Array(nn),h3=h*h*h/8;
   for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const w=dens[(k*G.ny+j)*G.nx+i]*h3;if(w)for(let d=0;d<8;d++)vol[((k+(d>>2))*NY+(j+((d>>1)&1)))*NX+i+(d&1)]+=w;}
   const trisOf=ids=>{const out=[];for(const g of groups)if(ids.includes(g[2]))for(let t=g[0]/3;t<(g[0]+g[1])/3;t++)out.push(t);return out;};
-  const at=ids=>{const acc=new Map();sampleTris(pos,idx,trisOf(ids||[]),h,(p,w,nr)=>{const n=nearestActive(G,mask,...p);if(n<0)return;const v=acc.get(n)||[0,0,0,0];v[0]+=w;v[1]+=w*nr[0];v[2]+=w*nr[1];v[3]+=w*nr[2];acc.set(n,v);});return acc;};
+  const at=sp=>{const acc=new Map(),rg=region(sp&&sp.region),ids=sp&&!Array.isArray(sp)&&sp.faces?sp.faces:sp;sampleTris(pos,idx,trisOf(ids||[]),h,(p,w,nr)=>{if(rg&&!rg.test(p[0],p[1],p[2],h))return;const n=nearestActive(G,mask,...p);if(n<0)return;const v=acc.get(n)||[0,0,0,0];v[0]+=w;v[1]+=w*nr[0];v[2]+=w*nr[1];v[3]+=w*nr[2];acc.set(n,v);});if(rg&&!acc.size)throw new Error(RGE);return acc;};
   const xyz=n=>[G.ox+(n%NX)*h,G.oy+(Math.floor(n/NX)%NY)*h,G.oz+Math.floor(n/(NX*NY))*h];
   return{G,h,nAct,nn,NX,NY,NZ,at,xyz,vol,pos};
 }
