@@ -36,6 +36,8 @@ ok(Object.entries(CR.VARIANTS).every(([sl,v])=>v.every(sh=>PL.lods.every(L=>L.me
 ok(rw===0&&rs===0,'every part ring is bit-identical to the default core ring (pos '+rw+', skin '+rs+')');
 ok(!over.length,'every part fits its slot budget '+over.join(' '));ok(nan===0,'parts carry no NaN positions or morphs');
 ok(PL.lods.every(L=>L.meshes.every(m=>m.morphs.length===CR.MORPHS.length)),'parts carry the full morph list');
+ok(['legs_fish','tail_fan','tail_ringed','tail_mane','horn_tusks','wings_l_flame'].every(n=>PL.lods[0].meshes.find(m=>m.name===n)?.pc?.some((v,i)=>i%4===3&&v>.5)),'animal parts carry _PARTCOLOR with real weight');
+ok(PL.lods.every(L=>L.meshes.every(m=>{for(let i=0;i<m.nrm.length;i+=3)if(Math.abs(Math.hypot(m.nrm[i],m.nrm[i+1],m.nrm[i+2])-1)>.01)return false;return true;})),'every part normal is unit length');
 const TJ=JSON.parse(new TextDecoder().decode((g=>g.subarray(20,20+new DataView(g.buffer,g.byteOffset).getUint32(12,true)))(CR.chaoGLB(CR.buildChao({levels:[0]})))));ok(TJ.animations?.length===Object.keys(CR.CHAO_CLIPS).length&&TJ.animations.every(a=>a.channels.length&&a.channels.every(c=>TJ.nodes[c.target.node].name)),'template carries every clip with channels on named joints');
 ok(['ar_wave','ar_high_five','ar_squat','ar_pushup','ar_jumping_jack','ar_flap','ar_high_knees','ar_curl','ar_mirror_rest'].every(n=>TJ.animations.some(a=>a.name===n)),'AR clip set is complete');
 console.log('\nbuild+checks ms',Date.now()-t0);console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);
