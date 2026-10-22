@@ -1,5 +1,6 @@
 import {recipeFor,RECIPES} from './recipes.js';
-const TILES=[['iso','ISO'],['top','TOP x→ y↑'],['front','FRONT x→ z↑'],['right','RIGHT y→ z↑']],BG='#eef1f5',r2=v=>+(+v).toFixed(3),r4=v=>+(+v).toFixed(4),sleep=t=>new Promise(r=>setTimeout(r,t)),MAXR=3;
+import {sleep} from './tick.js';
+const TILES=[['iso','ISO'],['top','TOP x→ y↑'],['front','FRONT x→ z↑'],['right','RIGHT y→ z↑']],BG='#eef1f5',r2=v=>+(+v).toFixed(3),r4=v=>+(+v).toFixed(4),MAXR=3;
 export const MAX_ROUNDS=MAXR;
 export function inside(m){
   const P=m.pos,I=m.idx,n=I.length/3;let x0=1e30,y0=1e30,x1=-1e30,y1=-1e30;

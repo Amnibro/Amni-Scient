@@ -1,6 +1,7 @@
 import {b64} from './refs.js';
+import {sleep} from './tick.js';
 import * as AISEE from './aisee.js';
-const PFX='amnicad.bridge.',ls={get:k=>{try{return localStorage.getItem(PFX+k);}catch{return null;}},set:(k,v)=>{try{v==null?localStorage.removeItem(PFX+k):localStorage.setItem(PFX+k,v);}catch{}}},sleep=t=>new Promise(r=>setTimeout(r,t));
+const PFX='amnicad.bridge.',ls={get:k=>{try{return localStorage.getItem(PFX+k);}catch{return null;}},set:(k,v)=>{try{v==null?localStorage.removeItem(PFX+k):localStorage.setItem(PFX+k,v);}catch{}}};
 const MCP_URL=new URL('./mcp/amnicad-mcp.mjs',import.meta.url).href,RESN={quick:8000,standard:30000,fine:100000,ultra:250000},FRESN={quick:0,standard:1,fine:2},TEXTF=new Set(['step','stp','amnicad','obj','dxf','svg','iges','igs','brep','json']);
 const blobB64=b=>b.arrayBuffer().then(b64),LIVE=new Set();let AUX=null;
 export const appName=n=>!n||/^your ai app$/i.test(n)?'Your AI app':/claude.?code/i.test(n)?'Claude Code':/claude|anthropic/i.test(n)?'Claude':/chatgpt|openai/i.test(n)?'ChatGPT':/grok|xai/i.test(n)?'Grok':/opencode/i.test(n)?'opencode':/codex/i.test(n)?'Codex':/gemini/i.test(n)?'Gemini':/cursor/i.test(n)?'Cursor':n;
