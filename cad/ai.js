@@ -93,7 +93,7 @@ export function parseReply(txt){
   return{say:s.trim().slice(0,800),actions:[],parseError:true};
 }
 const PN={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter',local:'your local server',browser:'the on-device model',chrome:'Chrome built-in AI',bridge:'your Claude or ChatGPT app',remote:'your Claude app'};
-export const detectKey=s=>{s=String(s||'').trim();return/^sk-ant-/.test(s)?'anthropic':/^sk-or-/.test(s)?'openrouter':/^AIza/.test(s)?'gemini':/^sk-/.test(s)?'openai':null;};
+export const detectKey=s=>{s=String(s||'').trim();return/^sk-ant-/.test(s)?'anthropic':/^sk-or-/.test(s)?'openrouter':/^(AIza|AQ\.)/.test(s)?'gemini':/^sk-/.test(s)?'openai':null;};
 export const prettyModel=id=>String(id||'').replace(/^[^/]*\//,'').replace(/-\d{8}$/,'').replace(/^claude-(\w+)-(\d+)-(\d+)$/,(m,n,a,b)=>'Claude '+n[0].toUpperCase()+n.slice(1)+' '+a+'.'+b).replace(/^gpt-/,'GPT-').replace(/^gemini-/,'Gemini ').replace(/^claude-/,'Claude ');
 export function partialSay(buf){const s=String(buf||''),m=/"say"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(s);if(m){try{return JSON.parse('"'+m[1].replace(/\\$/,'')+'"');}catch{return m[1];}}return s.trimStart().startsWith('{')||s.trimStart().startsWith('```')?'':s.replace(/<think>[\s\S]*?(<\/think>|$)/g,'');}
 export function explainError(e,k,csp){const s=e&&e.status,m=String(e&&e.message||e),pn=PN[k]||'the AI',key=CLOUD[k]&&CLOUD[k].keyUrl;
