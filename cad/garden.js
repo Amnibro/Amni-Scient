@@ -73,6 +73,9 @@ export function fruit(id,lv,r=.07){const g=G0();
     SP.slice(0,R3(lv,[0,1,6])).forEach((s,i)=>{const u=nrm(crs(Math.abs(s[2])<.9?[0,0,1]:[1,0,0],s)),v=crs(s,u),ar=i?.27:.32;sph(g,2,R3(lv,[4,5,10]),180,d=>{const q=nrm(add(s,add(mul(u,d[0]*ar),mul(v,d[1]*ar)))),l=1.012+.006*d[2];return[q[0]*rx*l,q[1]*rx*l,cz+q[2]*rz*l];},()=>U(sp));});
     const j0=g.i.length;sph(g,R3(lv,[1,1,2]),ns,95,d=>[d[0]*rx*.96,d[1]*rx*.96,cz-d[2]*r*.15],()=>U('cream'));for(let t=j0;t<g.i.length;t+=3){const x=g.i[t+1];g.i[t+1]=g.i[t+2];g.i[t+2]=x;}return{g};}
   const k=id.replace('fruit_',''),[col,f,sz]=FR[k];sph(g,R3(lv,[3,5,12]),R3(lv,[7,9,22]),180,d=>mul(f(d),r),()=>U(col));stem(g,[0,0,r*sz],lv);return{g};}
+export const SEEDS=['round','triangle','square','hero','dark','strong','tasty'].map(k=>'seed_'+k);
+export function seed(id,lv){const g=G0(),k=id.slice(5),col=FR[k][0],P=[[2,4],[2,4],[3,7]];rbox(g,[0,0,.045],[.032,.008,.04],lv,col,.3,P);lv!==1&&rbox(g,[0,0,.088],[.033,.009,.005],lv,'cream',.4,[[2,4],[2,4],[2,4]]);
+  if(lv>0){const f=fruit('fruit_'+k,0,.016).g,b=g.p.length/3;g.p.push(...f.p.map((v,i)=>i%3===1?v*.35-.012:i%3===2?v+.045:v));g.t.push(...f.t.map((v,i)=>f.t[i]));for(const v of f.i)g.i.push(v+b);}return{g};}
 export const FRUITS=['fruit_round','fruit_triangle','fruit_square','fruit_hero','fruit_dark','fruit_strong','fruit_tasty','fruit_heart','fruit_elder','fruit_gentle','mushroom_stamina','mushroom_brain','mushroom_clover'];
 export function rock(kind,lv){const g=G0();
   if(kind==='boulder'){const sf=(d,l=1)=>{const w=(1+.07*bump(d,3))*l;return[d[0]*.38*w,d[1]*.33*w,.17+d[2]*.24*w];};sph(g,R3(lv,[4,7,12]),R3(lv,[9,14,24]),180,sf,()=>U('stone'));cap(g,sf,48,lv,'moss',[[1,7],[2,10],[4,20]]);}
@@ -99,6 +102,7 @@ export function gardenGLBs(){const out={},ys=s=>s.map(q=>Y(...q).map(v=>+v.toFix
   out.nest=set('nest',['nest'],(k,lv)=>nest(lv));out.trough=set('trough',['trough'],(k,lv)=>trough(lv));
   out.gate=glb('gate',LV.map(lv=>{const q=gate(lv),pm=toMesh('gate_portal',q.portal,{uv:'TEXCOORD_0 planar 0..1 over the opening, TEXCOORD_1 polar (u=angle/2pi, v=radius 0..1 from the arch center) for swirl scroll'});pm.uv2=q.uv2;return{lv,meshes:[toMesh('gate',q.g),pm]};}),{portal:'separate mesh gate_portal on material gate_portal; arch static'},n=>n==='gate_portal'?'portal':'garden');
   out.fruits=glb('fruit',LV.map(lv=>({lv,meshes:FRUITS.map(id=>toMesh(id,fruit(id,lv).g,{pivot:'center',hand_held:true}))})),{pivot:'fruit center (sockets are fruit centers)'});
+  out.seeds=glb('seed',LV.map(lv=>({lv,meshes:SEEDS.map(id=>toMesh(id,seed(id,lv).g,{hand_held:true}))})),{pivot:'packet base center'});
   out.rocks=set('rock',['boulder','stepping','mossy'],(k,lv)=>rock(k,lv));out.bushes=set('bush',['flower','hedge','berry'],(k,lv)=>bush(k,lv));out.kindergarten=set('kindergarten',['sign','door'],(k,lv)=>kinder(k,lv));
   return out;}
-export const BUDGET={tree:[1500,700,220],tree_big:[2400,900,300],nest:[900,370,130],trough:[700,240,90],gate:[1200,480,180],fruit:[600,120,48],rock:[700,240,90],bush:[1400,500,180],kindergarten:[1200,480,180]};
+export const BUDGET={tree:[1500,700,220],tree_big:[2400,900,300],nest:[900,370,130],trough:[700,240,90],gate:[1200,480,180],fruit:[600,120,48],seed:[120,50,24],rock:[700,240,90],bush:[1400,500,180],kindergarten:[1200,480,180]};
