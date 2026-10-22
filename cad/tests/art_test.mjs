@@ -61,4 +61,15 @@ hi.mats=[{base:{data:texd,w:8,h:8},factor:[1,1,1,1],rough:.3,metal:1}];hi.tmat=n
 ok(C[at(2,8)]>200&&C[at(2,8)+2]<40&&C[at(13,8)+2]>200&&C[at(13,8)]<40,'color bakes sample the source texture');ok(Math.abs(MR[at(8,8)+1]-77)<7&&MR[at(8,8)+2]>245,'roughness and metal bake from the source material');
 const z=await ta('headless',()=>H.art({glb:r.glb,kind:'prop',name:'crate',size:256,budgets:[800,300]}));ok(z.type==='application/zip'&&z.bytes.length>1000&&z.report.lods.length===1&&z.report.bones===0,'the headless API returns a zip with the asset, its LODs and a report');
 let threw='';try{await H.art({glb:r.glb,kind:'dragon'});}catch(e){threw=e.message;}ok(/kind must be/.test(threw),'unknown kinds are refused');
+const AP=`units m
+torso capsule 0,0,.95 0,0,1.45 r.17
+head sphere 0,0,1.62 r.11
+armL capsule .2,0,1.42 .5,0,.95 r.05
+armR capsule -.2,0,1.42 -.5,0,.95 r.05
+legL capsule .1,0,.95 .12,0,.06 r.07
+legR capsule -.1,0,.95 -.12,0,.06 r.07
+sword capsule .17,0,.95 .3,0,.35 r.02`,am=SDF.mesh(SDF.compile(AP),150),af=RIG.fitHumanoid(am.pos),ab=n=>af.bones.find(b=>b.name===n);
+ok(ab('LeftHand').head[0]>.35&&ab('LeftHand').tail[2]>.8,'A-pose hands are found at the arm tips, not at a sword hanging from the hip');
+const red=ART.encodePNG(new Uint8Array(64*64*4).map((_,i)=>i%4===0||i%4===3?255:0),64,64),pr=await ART.asset({pos:Float32Array.from(am.pos),idx:am.idx,nrm:Float32Array.from(am.nrm),col:am.col},{kind:'humanoid',name:'proj',size:256,budgets:[2000],samples:7,project:red}),pb=ART.decodePNG(pr.png.base).data;let reds=0;for(let i=0;i<pb.length;i+=4)pb[i]>200&&pb[i+1]<60&&reds++;
+ok(pr.report.project&&pr.report.project.texels>50&&reds>50,'concept projection paints the front of the head ('+reds+' texels)');
 console.log('\nperformance',JSON.stringify(perf));console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);
