@@ -132,10 +132,10 @@ var h2=vw.querySelector('h2');if(!h2||h2.parentElement!==vw)return;
 var p=document.createElement('p');p.className='mod-desc';p.textContent=DESC[nm];
 vw.insertBefore(p,h2.nextSibling)})}
 function injectQuickNav(){document.querySelectorAll('.view').forEach(function(vw){
-var cards=[].slice.call(vw.querySelectorAll('.card')).filter(function(c){return c.querySelector('h3')});
-if(cards.length<3)return;
-var row=vw.querySelector('.qn-row');if(row&&+row.dataset.n===cards.length)return;
-row&&row.remove();row=document.createElement('div');row.className='qn-row';row.dataset.n=cards.length;
+var cards=[].slice.call(vw.querySelectorAll('.card')).filter(function(c){return c.querySelector('h3')&&c.style.display!=='none'&&getComputedStyle(c).display!=='none'});
+vw.dataset.qnw||(vw.dataset.qnw=1,vw.addEventListener('change',function(){clearTimeout(vw._qnt);vw._qnt=setTimeout(injectQuickNav,80)}));
+var sig=cards.map(function(c){return c.querySelector('h3').textContent.trim()}).join('|'),row=vw.querySelector('.qn-row');if(cards.length<3){row&&row.remove();return}if(row&&row.dataset.sig===sig)return;
+row&&row.remove();row=document.createElement('div');row.className='qn-row';row.dataset.n=cards.length;row.dataset.sig=sig;
 cards.forEach(function(cd){var t=cd.querySelector('h3').textContent.trim().replace(/\s+/g,' ');t.length>32&&(t=t.slice(0,30)+'…');var b=document.createElement('button');b.type='button';b.className='qn-chip';b.textContent=t;b.onclick=function(){cd.scrollIntoView({behavior:'smooth',block:'start'});cd.classList.add('eng-flash');setTimeout(function(){cd.classList.remove('eng-flash')},1200)};row.appendChild(b)});
 if(window.IntersectionObserver){row._io&&row._io.disconnect();var io=new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;var idx=cards.indexOf(en.target);idx<0||[].forEach.call(row.children,function(ch,k){ch.classList.toggle('qn-on',k===idx)})})},{root:vw,rootMargin:'-8% 0px -72% 0px'});cards.forEach(function(cd){io.observe(cd)});row._io=io}
 var anc=vw.querySelector('.mod-desc')||vw.querySelector('h2');anc&&anc.parentElement===vw?vw.insertBefore(row,anc.nextSibling):vw.insertBefore(row,vw.firstChild)})}

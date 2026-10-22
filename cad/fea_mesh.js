@@ -182,14 +182,14 @@ function accOf(M,faces){const acc=new Map();facetGeo(M.X,M.E,M.select(faces).fac
 function supportDofs(inp,M,cm,modal){
   const nn=M.X.length/3,fix=new Uint8Array(3*nn),sup=[...(inp.fixed&&inp.fixed.length?[{faces:inp.fixed,type:'fixed'}]:[]),...(inp.supports||[])].filter(s=>!ADV.has(s.type)||modal&&s.type!=='spring'),AXI={x:0,y:1,z:2,X:0,Y:1,Z:2};
   const mark=(n,c)=>{if(cm&&cm.hq[n]>=0){for(let k=cm.p[n];k<cm.p[n+1];k++)fix[3*cm.i[k]+c]=1;}else fix[3*n+c]=1;};
-  for(const s of sup){const sel=M.select(s.faces),acc=new Map();facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv)=>{for(let k=0;k<4;k++){const v=acc.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];acc.set(nd[k],v);}});
+  for(const s of sup){const sel=M.select(s.faces),acc=new Map();if(!sel.facets.length&&s.faces&&s.faces.region)throw new Error('A support area covers no part of the mesh. Place it on the supported face, make it larger, or use a finer mesh.');facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv)=>{for(let k=0;k<4;k++){const v=acc.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];acc.set(nd[k],v);}});
     const roll=s.type==='roller'||s.type==='slider',dv=s.dir!=null?(typeof s.dir==='string'?AXI[s.dir.replace(/[+-]/,'')]:Array.isArray(s.dir)?[0,1,2].reduce((b,c)=>Math.abs(s.dir[c])>Math.abs(s.dir[b])?c:b,0):null):null;
     const SS=roll&&dv==null?surfOf(inp):null,fs=SS?new Set(sel.faces):null,o=new Float64Array(6);for(const[n,v0]of acc){let v=v0;if(SS){const t=closest(SS,M.X[3*n],M.X[3*n+1],M.X[3*n+2],u=>fs.has(SS.fid[u]),o);if(t>=0)v=[SS.N[3*t],SS.N[3*t+1],SS.N[3*t+2]];}const a=dv!=null?dv:Math.abs(v[0])>=Math.abs(v[1])&&Math.abs(v[0])>=Math.abs(v[2])?0:Math.abs(v[1])>=Math.abs(v[2])?1:2;if(roll)mark(n,a);else for(let c=0;c<3;c++)mark(n,c);}}
   return fix;
 }
 function loadsOf(inp,M,mat,cm){
   const nn=M.X.length/3,f=new Float64Array(3*nn),ap=[0,0,0],add=(n,F)=>{if(cm&&cm.hq[n]>=0){for(let k=cm.p[n];k<cm.p[n+1];k++)for(let c=0;c<3;c++)f[3*cm.i[k]+c]+=cm.w[k]*F[c];}else for(let c=0;c<3;c++)f[3*n+c]+=F[c];for(let c=0;c<3;c++)ap[c]+=F[c];};
-  for(const ld of inp.loads||[]){const sel=M.select(ld.faces);if(!sel.facets.length&&!(ld.faces&&ld.faces.by==='all'&&!sel.faces.length))throw new Error('load faces '+JSON.stringify(sel.faces)+' have no mesh facets; refine the mesh');distLoad(ld,accOf(M,ld.faces),n=>[M.X[3*n],M.X[3*n+1],M.X[3*n+2]],add);}
+  for(const ld of inp.loads||[]){const sel=M.select(ld.faces);if(!sel.facets.length&&!(ld.faces&&ld.faces.by==='all'&&!sel.faces.length))throw new Error(ld.faces&&ld.faces.region?'A load area covers no part of the mesh. Place it on the loaded face, make it larger, or use a finer mesh.':'load faces '+JSON.stringify(sel.faces)+' have no mesh facets; refine the mesh');distLoad(ld,accOf(M,ld.faces),n=>[M.X[3*n],M.X[3*n+1],M.X[3*n+2]],add);}
   const g=inp.accel||(mat.g?mat.g.map(v=>v*9.80665):null);if(g&&mat.rho){const k=mat.rho*1e-9,vol=nodalVol(M);for(let n=0;n<nn;n++)if(vol[n])add(n,[g[0]*k*vol[n],g[1]*k*vol[n],g[2]*k*vol[n]]);}
   return{f,ap};
 }
@@ -258,7 +258,7 @@ async function staticMesh(inp,M,prog){
   return{type:'static',vStress,vDisp,vmMax,vmP99:vmAway||vmMax,peakLabel:'Peak von Mises (away from supports)',uMax,h:M.size?M.size.h0:M.h0,nEl:ne,nDof:3*nn,iters:S.iters,rel:S.rel,levels:H.length,ms:Date.now()-t0,applied:ap,reaction:reactions(R,u,fix,f0),nFixed,backend:S.backend,gpuError:S.gpuError,why:S.why,hist:S.hist,contact:S.contact,held:B.grp.size?heldBy(B,S.R):undefined,skin:{pos:sk.pos,idx:sk.idx,vm:svm,u:su},u:inp.keepU?u:undefined,nodeVm:inp.keepU?vm:undefined,times:{assemble:tA-t0,amg:tH-tA,solve:tS-tH,post:Date.now()-tS}};
 }
 function hangFill(M,cm,u,d){if(cm)for(const n of M.hang.node)for(let c=0;c<d;c++){let s=0;for(let k=cm.p[n];k<cm.p[n+1];k++)s+=cm.w[k]*u[d*cm.i[k]+c];u[d*n+c]=s;}return u;}
-function faceW(M,faces){const W=new Map();let tot=0;facetGeo(M.X,M.E,M.select(faces).facets,(i,nd,w,nv,A)=>{tot+=A;for(let k=0;k<4;k++)W.set(nd[k],(W.get(nd[k])||0)+w[k]);});return{W,tot};}
+function faceW(M,faces){const W=new Map(),fc=M.select(faces).facets;let tot=0;if(!fc.length&&faces&&faces.region)throw new Error('A thermal area covers no part of the mesh. Place it on its face, make it larger, or use a finer mesh.');facetGeo(M.X,M.E,fc,(i,nd,w,nv,A)=>{tot+=A;for(let k=0;k<4;k++)W.set(nd[k],(W.get(nd[k])||0)+w[k]);});return{W,tot};}
 async function modalMesh(inp,M,prog){
   const mat=inp.mat,nev=Math.max(1,Math.min(inp.modes||6,20)),t0=Date.now(),{A,cm,nn}=systemOf(inp,M,mat),fix=supportDofs(inp,M,cm,true),free=!fix.some(v=>v),rho=(mat.rho||7850)*1e-12,vol=nodalVol(M),n=3*nn,Mv=new Float64Array(n);
   if(cm)for(const h of M.hang.node)for(let c=0;c<3;c++)fix[3*h+c]=1;

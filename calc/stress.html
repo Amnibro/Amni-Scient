@@ -168,7 +168,7 @@
 <li>Tension is positive. The tool knows nothing about geometry or loads, so σ and τ come from your hand calculation or FEA, already multiplied by any stress concentration.</li>
 <li>It assumes a linear elastic, isotropic, homogeneous material. Both FoS values use von Mises. There is no Tresca-based FoS, no brittle criterion such as Coulomb-Mohr, and no fatigue check.</li>
 <li>The Mohr's circle card is plane stress (σx, σy, τxy in MPa). It reports σ₁, σ₂, in-plane τ_max, the principal angle θp, 2D von Mises and a Tresca shear that includes the out-of-plane circle.</li>
-<li>The K_t card covers two cases: a circular hole in a finite-width plate (Howland fit on the net section, flagged above d/w = 0.65, rejected at d/w ≥ 1) and an elliptical hole in a wide plate (Inglis, K_t = 1 + 2a/b). Fillets and grooves are not included.</li>
+<li>The K_t card covers two cases: a circular hole in a finite-width plate (Howland fit on the net section, flagged above d/w = 0.65, rejected at d/w ≥ 1; enter the gross stress far from the hole and the card applies K_t to the net-section stress σ/(1 − d/w)) and an elliptical hole in a wide plate (Inglis, K_t = 1 + 2a/b). Fillets and grooves are not included.</li>
 </ul>
 <p>The shaft surface state from the worked example above (σx = 86 MPa, τxy = 19.9 MPa, others zero, S_y = 530 MPa) returns σ_vM = 92.65 MPa and a yield FoS of 5.72.</p>
 </div>

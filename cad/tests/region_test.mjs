@@ -1,0 +1,13 @@
+import path from 'node:path';import {fileURLToPath} from 'node:url';import {engine} from '../api/amnicad.mjs';import {region,RGE} from '../region.js';
+const CAD=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');let pass=0,fail=0;const ok=(c,m,x)=>{c?pass++:(fail++,console.log('FAIL',m+(x!==undefined?' ('+x+')':'')));};
+const c=region({kind:'circle',c:[0,0,0],n:[0,0,1],r:2}),r=region({kind:'rect',c:[0,0,0],n:[0,0,1],w:4,h:2,a:90}),p=region({kind:'poly',c:[0,0,0],n:[0,0,1],pts:[[0,0],[4,0],[0,4]]});
+ok(c.test(1.9,0,0,0.1)&&!c.test(2.1,0,0,0.1)&&!c.test(0,0,3,0.1),'a circle holds points inside it and on its plane');ok(r.test(0,1.9,0,0.1)&&!r.test(1.9,0,0,0.1),'an angle turns the rectangle');ok(p.test(1,1,0,0.1)&&!p.test(3,3,0,0.1),'an outline holds points inside it');
+ok(region({kind:'circle',c:[0,0,0],n:[0,0,0],r:1})===null&&region({kind:'rect',c:[0,0,0],n:[0,0,1],w:0,h:1})===null&&region({kind:'poly',c:[0,0,0],n:[0,0,1],pts:[[0,0],[1,0]]})===null,'bad shapes are ignored');
+const{E}=await engine({dir:CAD}),doc={units:'mm',material:'steel1018',features:[{id:'a',type:'box',w:100,d:10,h:10,x:50}]},sup={faces:{side:'-X'},type:'fixed'},st=l=>E.stress({doc,sim:{supports:[sup],loads:[l],res:'standard'}}),tip=(x={})=>({faces:{side:'+X'},p:1,...x}),Fz=j=>Math.abs(j.applied_N[0]);
+const w=await st(tip()),ci=await st(tip({region:{kind:'circle',c:[100,0,5],n:[1,0,0],r:3}})),re=await st(tip({region:{kind:'rect',c:[100,0,5],n:[1,0,0],w:10,h:4}}));
+ok(Math.abs(Fz(w)-100)<1,'pressure on the whole end carries 100 N',Fz(w));ok(Math.abs(Fz(ci)-Math.PI*9)/(Math.PI*9)<0.05,'pressure on a circle carries pi r^2',Fz(ci));ok(Math.abs(Fz(re)-40)<2,'pressure on a rectangle carries w h',Fz(re));
+const half=await st({faces:{side:'+X'},F:[0,0,-100],region:{kind:'rect',c:[100,0,7.5],n:[1,0,0],w:10,h:5}});ok(Math.abs(half.applied_N[2]+100)<1e-6,'a force on an area keeps its total',half.applied_N[2]);
+let err='';try{await st({faces:{side:'+X'},F:[0,0,-100],region:{kind:'circle',c:[50,0,5],n:[1,0,0],r:2}});}catch(e){err=e.message;}ok(/covers no part of the mesh/.test(err),'an area off its face explains the problem',err);
+const nl=l=>E.nonlinear({doc,sim:{supports:[sup],loads:[l],res:'coarse'}}),nw=await nl({faces:{side:'+Z'},F:[0,0,-500]}),nm=await nl({faces:{side:'+Z'},F:[0,0,-500],region:{kind:'rect',c:[30,0,10],n:[0,0,1],w:10,h:10}});
+ok(nm.max_disp_mm<nw.max_disp_mm*0.5&&Math.abs(nm.support_reaction_N[2]-500)<1,'nonlinear studies load only the area',[nw.max_disp_mm,nm.max_disp_mm]);
+console.log(fail?`${fail} failed, ${pass} passed`:`ALL ${pass} PASS`);process.exit(fail?1:0);

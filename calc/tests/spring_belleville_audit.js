@@ -1,21 +1,8 @@
 let pass=0,fail=0;
 const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL: '+m));};
 const ap=(a,b,m,r)=>ok(typeof a==='number'&&isFinite(a)&&Math.abs(a-b)<=Math.abs(b)*(r||1e-6)+1e-9,m+' got '+a+' want '+b);
-const BELL_E=210000,BELL_NU=0.3;
-function bellGeom(De,Di,t,h0){
-  const dlt=De/Di,ln=Math.log(dlt);
-  const M=(6/Math.PI)*Math.pow((dlt-1)/dlt,2)/ln;
-  const K2=(6/Math.PI)*((dlt-1)/ln-1)/ln;
-  const K3=(3/Math.PI)*(dlt-1)/ln;
-  const CAL=4*BELL_E/((1-BELL_NU*BELL_NU)*M*De*De);
-  const Fs=s=>CAL*t*t*t*s*((h0-s)*(h0-s/2)/(t*t)+1);
-  const k0=CAL*t*t*t*(h0*h0/(t*t)+1);
-  let sPk=h0,FPk=Fs(h0),prevF=0;
-  for(let i=1;i<=400;i++){const s2=h0*i/400,f2=Fs(s2);if(f2<prevF){sPk=h0*(i-1)/400;FPk=prevF;break;}prevF=f2;}
-  const dAt=Ff=>{if(!(Ff>0))return 0;if(Ff>=FPk)return sPk;let lo=0,hi=sPk;for(let i=0;i<80;i++){const m2=(lo+hi)/2;Fs(m2)<Ff?lo=m2:hi=m2;}return(lo+hi)/2;};
-  const stress=s=>{const sc=-(4*BELL_E*s)/((1-BELL_NU*BELL_NU)*M*De*De);const om=sc*(K2*(h0-s/2)+K3*t),id=sc*(K2*(h0-s/2)-K3*t);return{om,id,max:Math.max(Math.abs(om),Math.abs(id))};};
-  return{Fs,k0,sPk,FPk,dAt,stress,F75:Fs(0.75*Math.min(h0,sPk)),M,K2,K3};
-}
+const SRC=require('fs').readFileSync(require('path').join(__dirname,'..','calc-fixes.js'),'utf8'),A0=SRC.indexOf('const BELL_E='),B0=SRC.indexOf('function buildBellCatalog');
+const{bellGeom,BELL_E,BELL_NU}=new Function(SRC.slice(A0,B0)+';return{bellGeom,BELL_E,BELL_NU};')();
 const CAT=[
   {cat:'BV-A31.5-1.75 (M16)',bolt:'M16',De:31.5,Di:16.3,t:1.75,h0:0.7},
   {cat:'BV-B31.5-1.25 (M16)',bolt:'M16',De:31.5,Di:16.3,t:1.25,h0:0.9},
@@ -70,5 +57,12 @@ const yTop=Math.max(A.FPk,100);
 ok(A.dAt(100)<=xTop&&100<=yTop,'plot range includes op for light load');
 const yTopOL=Math.max(A.FPk,A.FPk*2);
 ok(A.FPk*2<=yTopOL,'plot y-range expands for overload F');
+const D=bellGeom(20,10.2,1.25,0.508),sd=D.dAt(2000),sx=D.stress(sd),dl=20/10.2,ln=Math.log(dl),K1=(6/Math.PI)*Math.pow((dl-1)/dl,2)/ln,P=4*210000*sd*1.25/(0.91*K1*400);
+ap(sx.OM,-P*3/Math.PI,'σ_OM per DIN EN 16983 (3/π factor)',1e-9);
+ap(sx.max,Math.abs(sx.OM),'static check uses |σ_OM|, not the local σ_I peak',1e-12);
+ok(Math.abs(sx.I)>Math.abs(sx.OM),'σ_I peak exceeds σ_OM');
+ok(sx.II>0&&sx.III>0&&sx.tens===Math.max(sx.II,sx.III),'σ_II and σ_III are tensile and feed the fatigue value');
+ok(1500/sx.max>1.2,'a catalog disc at 80% of its rated load passes the static check at R_e 1500 MPa');
+const s75=D.stress(0.75*D.h0);ok(Math.abs(s75.OM)>1400&&Math.abs(s75.OM)<1700,'σ_OM at 0.75·h₀ sits near R_e, as DIN EN 16983 intends');
 console.log(pass+' passed, '+fail+' failed');
 process.exitCode=fail?1:0;

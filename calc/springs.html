@@ -168,7 +168,7 @@
 <li>The allowable shear is 0.45 times the value in the strength field. The designer fills that field with S_ut, which gives Shigley's static limit.</li>
 <li>Solid height is N_total·d. The card flags a spring driven to solid by the applied force and marks an index C outside 4 to 12.</li>
 <li>Torsion springs read the force field as a moment in N·mm and use E = 200 GPa without the curvature factor. Wave springs use Smalley's equations for steel strip.</li>
-<li>Belleville discs use Almen-László with E = 210 GPa and ν = 0.3. Force beyond the peak of the curve is flagged and deflection is held at the peak. Friction between stacked discs is ignored.</li>
+<li>Belleville discs use Almen-László with E = 210 GPa and ν = 0.3. The static check follows DIN EN 16983: |σ_OM| = 4E·s·t/((1 − ν²)·K₁·D_e²) · 3/π is compared with the yield point R_e in the strength field, which switches to 1500 MPa for hardened C75S/51CrV4 discs. σ_I (the local compressive peak at the inner top edge) and the tensile σ_II and σ_III are listed for reference and for fatigue checks against the DIN EN 16984 diagrams. Force beyond the peak of the curve is flagged and deflection is held at the peak. Friction between stacked discs is ignored.</li>
 <li>Stacks: n_s discs or springs in series multiply deflection, n_p in parallel multiply force.</li>
 <li>Not checked in the analysis card: buckling (the designer reports L₀/D and warns at 5.2), surge frequency, fatigue life, and set or relaxation at temperature.</li>
 </ul>

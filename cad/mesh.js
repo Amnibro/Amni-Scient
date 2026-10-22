@@ -1,3 +1,4 @@
+import {region} from './region.js';
 export const HEX_FACES=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
 export const HEX_NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 const AX={X:[1,0,0],Y:[0,1,0],Z:[0,0,1],'+X':[1,0,0],'+Y':[0,1,0],'+Z':[0,0,1],'-X':[-1,0,0],'-Y':[0,-1,0],'-Z':[0,0,-1]},K26=67108864,ek=(a,b)=>a<b?a*K26+b:b*K26+a,ka=k=>Math.floor(k/K26),kb=k=>k%K26;
@@ -228,7 +229,7 @@ export function faceIds(inp,spec){
   walk(spec);return out;
 }
 function selector(inp,M){
-  return spec=>{const ids=faceIds(inp,spec),fac=[],seen=new Uint8Array(M.X.length/3),nodes=[];for(let i=0;i<M.bf.length;i++)if(ids.has(M.ff[i])){fac.push(M.bf[i]);const e=Math.floor(M.bf[i]/6);for(const a of HEX_FACES[M.bf[i]%6]){const n=M.E[8*e+a];if(!seen[n]){seen[n]=1;nodes.push(n);}}}return{nodes:Int32Array.from(nodes),facets:Int32Array.from(fac),faces:[...ids]};};
+  return spec=>{const ids=faceIds(inp,spec),rg=region(spec&&spec.region),fac=[],seen=new Uint8Array(M.X.length/3),nodes=[];for(let i=0;i<M.bf.length;i++)if(ids.has(M.ff[i])){if(rg){const e=Math.floor(M.bf[i]/6),q=HEX_FACES[M.bf[i]%6].map(a=>M.E[8*e+a]),X=M.X,c=[0,1,2].map(k=>(X[3*q[0]+k]+X[3*q[1]+k]+X[3*q[2]+k]+X[3*q[3]+k])/4),hf=Math.hypot(X[3*q[1]]-X[3*q[0]],X[3*q[1]+1]-X[3*q[0]+1],X[3*q[1]+2]-X[3*q[0]+2]);if(!rg.test(c[0],c[1],c[2],hf))continue;}fac.push(M.bf[i]);const e=Math.floor(M.bf[i]/6);for(const a of HEX_FACES[M.bf[i]%6]){const n=M.E[8*e+a];if(!seen[n]){seen[n]=1;nodes.push(n);}}}return{nodes:Int32Array.from(nodes),facets:Int32Array.from(fac),faces:[...ids]};};
 }
 function extrudedS0(S,sh,opt,h0,N,res){
   const ft=faceTable(S),S0=sh.S0,{T,V,N:TN,nt,TT}=S,isS=new Set();for(let t=0;t<nt;t++)if(S0[t]||sh.S1[t])isS.add(S.fid[t]);

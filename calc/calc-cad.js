@@ -322,7 +322,7 @@ function updateMesh(){
 }
 function bootViewer(){
   const cv=$('cad-canvas');
-  if(!cv||viewer||!W.THREE||!W.THREE.OrbitControls||!cv.offsetParent)return;
+  if(!cv||viewer||!W.THREE||!W.THREE.OrbitControls||!cv.offsetParent||(W.__glOK&&!W.__glOK()))return;
   const T=W.THREE,sc=new T.Scene();sc.background=new T.Color(0x0a0a0a);
   const w=cv.clientWidth||500,h=cv.clientHeight||380;
   const cam=new T.PerspectiveCamera(40,w/h,0.1,5000);cam.position.set(120,100,150);

@@ -166,7 +166,7 @@
 <ul>
 <li>There are 22 preset shapes, including rectangle, hollow rectangle, round bar, tube, pipe, I-beam with equal or unequal flanges, channel, tee, equal and unequal angle, square HSS, ellipse, semicircle, hexagon and octagon.</li>
 <li>Outputs depend on the shape: A, centroid, I_x and I_y about centroidal axes, elastic S (top and bottom fibre for unsymmetric shapes), r_x and r_y, and plastic Z for the rectangle, round bar and I-beam.</li>
-<li>J appears only for round and tubular shapes, the rectangle, square HSS and ellipse. For the rectangle it is the Saint-Venant torsion constant, not I_x + I_y; for square HSS it is the thin-wall estimate t·(B − t)³.</li>
+<li>J appears for round and tubular shapes, the rectangle, square HSS, ellipse and drawn polygons. For the rectangle it is the Saint-Venant torsion constant, not I_x + I_y; for square HSS it is the thin-wall estimate t·(B − t)³; for a drawn polygon it is Saint-Venant's estimate A⁴/(4π²·(I_x + I_y)), exact for circles and ellipses and within about 7% for compact solid shapes.</li>
 <li>Rolled shapes are idealized with uniform flanges and sharp corners, so values differ slightly from AISC or EN tables that include root fillets and taper.</li>
 <li>Angles are reported about axes parallel to the legs. Principal axes and the product of inertia I_xy are not computed.</li>
 <li>A drawn polygon must be one closed outline that does not cross itself and has no holes. Its S uses the farther extreme fibre, which gives the smaller modulus.</li>
