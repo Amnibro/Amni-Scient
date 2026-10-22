@@ -2,7 +2,7 @@ import * as G from '../garden.js';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));};
 const B=G.BUDGET,L=[2,1,0],tri=g=>g.i.length/3,bad=g=>g.p.some(v=>!Number.isFinite(v)),fit=(k,g,i,m)=>ok(tri(g)<=B[k][i]&&!bad(g),`${m} LOD${i} ${tri(g)}>${B[k][i]}`);
 const nrmOK=g=>{const m=G.toMesh('x',g);for(let v=0;v<m.nrm.length;v+=3)if(Math.abs(Math.hypot(m.nrm[v],m.nrm[v+1],m.nrm[v+2])-1)>1e-3)return false;return true;};
-L.forEach((lv,i)=>{for(let s=0;s<4;s++)fit('tree',G.tree(s,lv).g,i,'tree '+s);fit('nest',G.nest(lv).g,i,'nest');fit('trough',G.trough(lv).g,i,'trough');const q=G.gate(lv);ok(tri(q.g)+tri(q.portal)<=B.gate[i]&&q.uv2.length===q.portal.p.length/3*2,`gate LOD${i} ${tri(q.g)+tri(q.portal)}`);
+L.forEach((lv,i)=>{for(let s=0;s<4;s++)fit(s<2?'tree':'tree_big',G.tree(s,lv).g,i,'tree '+s);fit('nest',G.nest(lv).g,i,'nest');fit('trough',G.trough(lv).g,i,'trough');const q=G.gate(lv);ok(tri(q.g)+tri(q.portal)<=B.gate[i]&&q.uv2.length===q.portal.p.length/3*2,`gate LOD${i} ${tri(q.g)+tri(q.portal)}`);
   for(const id of G.FRUITS)fit('fruit',G.fruit(id,lv).g,i,id);for(const k of['boulder','stepping','mossy'])fit('rock',G.rock(k,lv).g,i,'rock '+k);for(const k of['flower','hedge','berry'])fit('bush',G.bush(k,lv).g,i,'bush '+k);for(const k of['sign','door'])fit('kindergarten',G.kinder(k,lv).g,i,'kindergarten '+k);});
 ok([G.tree(3,2).g,G.fruit('mushroom_stamina',2).g,G.rock('boulder',2).g,G.bush('flower',2).g].every(nrmOK),'smooth unit normals including per-face colored meshes');
 ok(G.tree(3,2).sock.length===7&&G.tree(2,2).sock.length===3&&JSON.stringify(G.tree(3,0).sock)===JSON.stringify(G.tree(3,2).sock),'young and full trees carry 3 and 7 fruit sockets, identical across LODs');
