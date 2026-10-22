@@ -1,7 +1,7 @@
 import * as R from './vendor/replicad.js';
 import {THREADSTD,HOLESTD,HOLESTD_IN} from './standards.js';
 import {MATS,matBase} from './schema.js';
-export const CAMV='d952288802';
+export const CAMV='e779f30eb7';
 const V=v=>[v.x,v.y,v.z],P=p=>[p.X(),p.Y(),p.Z()],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l];};
 const safe=(f,d=null)=>{try{return f();}catch{return d;}},d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),TAU=Math.PI*2;
 const QMAP={al6061:['al6061','al6061'],al7075:['al7075','al7075'],steel1018:['steel-cr','st1018'],steel4140:['steel-cr','st4140'],ss304:['ss304','ss303'],ss316:['ss316','ss303'],ti64:['ti-gr2','ti-gr2'],brass:['brass260','brass360'],pla:['pla','pla'],petg:['petg','petg'],abs:['asa','asa'],nylon:['pa12-mjf','pa12-mjf'],pc:['pc','asa'],maple:['ply-bb','ply-bb'],birch:['ply-bb','ply-bb'],whiteoak:['ply-bb','ply-bb'],walnut:['ply-bb','ply-bb'],ash:['ply-bb','ply-bb'],mahogany:['ply-bb','ply-bb'],sitka:['ply-bb','ply-bb'],pine:['ply-bb','ply-bb'],bamboo:['ply-bb','ply-bb'],balticply:['ply-bb','ply-bb'],mdf:['mdf','mdf'],g10:['g10','g10'],p20:['steel-cr','st4140'],h13:['steel-cr','st4140'],s7:['steel-cr','st4140'],d2:['steel-cr','st4140'],a2:['steel-cr','st4140'],o1:['steel-cr','st4140'],m2:['steel-cr','st4140'],ss420m:['ss304','ss303'],becu:['cu110','cu110'],cfrp:null,fiberglass:null,carbide:null},NOSTOCK={cfrp:'Carbon fiber plate',fiberglass:'Fiberglass',carbide:'Tungsten carbide'};
@@ -90,9 +90,9 @@ export function solidJob({body,doc},a={}){
   return{name:(doc&&doc.name)||'part',mesh:{v:V,t:T},holes:holeList({body,doc}),bbox:[0,1,2].map(i=>(bb[1][i]-bb[0][i])*k),min:bb[0].map(v=>v*k),kind:an.kind};}
 export async function solid({body,doc},a={}){
   if(!body)throw new Error('Build a part first');const L=await camLib();if(typeof L.solid_cam!=='function')throw new Error('This build of the CAM engine cannot mill solid parts yet.');
-  const j={...solidJob({body,doc}),...(a.job||{})};delete j.kind;return JSON.parse((a.plan?L.solid_plan:L.solid_cam)(JSON.stringify(j)));}
+  const j={...solidJob({body,doc}),...(a.job||{})};delete j.kind;return JSON.parse((a.tooling?L.solid_tooling:a.plan?L.solid_plan:L.solid_cam)(JSON.stringify(j)));}
 export function analyze({body,doc}){if(!body)throw new Error('Build a part first');const an=analyzeBody(body,doc);return{part:an.part,plate:an.plate,kind:an.kind,units:an.units};}
-export async function engine(){const L=await camLib();return{solid:typeof L.solid_cam==='function'&&typeof L.solid_plan==='function'};}
+export async function engine(){const L=await camLib();return{solid:typeof L.solid_cam==='function'&&typeof L.solid_plan==='function',tooling:typeof L.solid_tooling==='function'};}
 export async function catalog(){const L=await camLib();return{cam:JSON.parse(L.cam_catalog()),shop:JSON.parse(L.shop_default())};}
 export async function program(_,a={}){const L=await camLib();return JSON.parse(L.cam_program(JSON.stringify(a.jobs||[])));}
 export async function simulate(_,a={}){if(!a.gcode)throw new Error('No G-code to simulate');return(await import('./gcode_sim.js')).simulate(a.gcode,a);}

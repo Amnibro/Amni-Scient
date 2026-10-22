@@ -43,6 +43,8 @@ export async function make(API,o){
     const r=await API.plugin(K,'solid',{job,plan:!!o.plan}),out=norm('solid',mc,job,r);if(seq===CS.seq&&!o.plan)CS.res=out;return out;}
   catch(e){const out={ok:false,route:'none',machine:o.machine,errors:[e.message||String(e)],warnings:[],notes:[],setups:[],tools:[],unreachable:[],time_min:0};if(seq===CS.seq)CS.res=out;return out;}
   finally{if(seq===CS.seq)CS.busy=false;}}
+export const SLOW_MIN=70;
+export async function faster(API,r){if(!r||!r.ok||r.route!=='solid'||!r.job||!(r.time_min>=SLOW_MIN))return[];try{const t=await API.plugin(K,'solid',{job:r.job,tooling:true}),op=s=>s.ops.slice(0,3).map(o=>o.replace(/,.*$/,'').toLowerCase()).join(', ')+(s.ops.length>3?' and more':'');return(t.suggestions||[]).map(s=>({kind:s.kind,saves_min:+(r.time_min*s.saves).toFixed(1),saves_pct:Math.round(100*s.saves),tools:s.tools,machine:s.machine,scallop_mm:s.scallop,text:(s.kind==='tool'?'Add '+s.tools.map(x=>x.name).join(' and ')+' to your tools ('+op(s)+')':s.kind==='machine'?'Run it on a stiffer router such as the '+String(s.machine).replace(/ \(.*\)$/,''):'Finish the 3D surfaces to a 0.002 in (0.05 mm) scallop: faint ridges, fine for most functional parts')+': about '+dur(r.time_min*s.saves)+' shorter ('+Math.round(100*s.saves)+' %).'}));}catch{return[];}}
 export const simOpts=(r,s)=>({text:s.gcode,name:s.file,dialect:s.post,post:s.post,machine:r.machine.name,mobj:r.machine,cfg:s.sim&&s.sim.cfg,job:r.job,route:r.route,si:Math.max(0,(r.setups||[]).indexOf(s))});
 export const cost=r=>r&&r.machine&&r.time_min?+(r.time_min/60*(r.machine.rate_hr||0)).toFixed(2):0;
 export const dur=m=>m==null||!isFinite(m)?'-':m<1?Math.round(m*60)+' s':m<90?nf(m,m<10?1:0)+' min':Math.floor(m/60)+' h '+Math.round(m%60)+' min';

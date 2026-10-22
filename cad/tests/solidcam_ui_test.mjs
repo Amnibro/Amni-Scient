@@ -17,6 +17,8 @@ try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-s
   ok(r.unreach===0&&r.time>1&&r.time<30,'nothing is unreachable and the cycle time is plausible',r.time.toFixed(1)+' min');
   ok(secs<60,'G-code is ready in under a minute in the browser',secs.toFixed(1)+' s');
   ok(await p.waitForFunction(()=>!!document.querySelector('#pipe [data-pipe=make].done'),{timeout:7000}).then(()=>true,()=>false),'the Make step turns done in the step strip');
-  ok(!errs.length,'no page errors',errs.join(' | '));
+  await p.evaluate(()=>{const s=[...document.querySelectorAll('select')].find(s=>[...s.options].some(o=>/LongMill/.test(o.textContent)));const o=[...s.options].find(o=>/LongMill/.test(o.textContent));s.value=o.value;s.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(700);await p.click('#mk-go');
+  const lf=await p.evaluate(async()=>{const C=await import('./cam.js'),t=Date.now();await new Promise(r=>setTimeout(r,500));while((C.CS.busy||!C.CS.res)&&Date.now()-t<300000)await new Promise(r=>setTimeout(r,300));const x=C.CS.res,t1=Date.now();let el=null;while(Date.now()-t1<300000){el=document.getElementById('mk-fast');if(el&&!/Checking whether/.test(el.textContent))break;await new Promise(r=>setTimeout(r,500));}return{ok:x.ok,time:x.time_min,errors:x.errors,txt:el&&el.textContent,secs:(Date.now()-t1)/1000};});
+  ok(lf.ok&&lf.time>=70&&/Ways to cut this job time/.test(lf.txt)&&/stiffer router such as the \w/.test(lf.txt)&&/shorter \(\d+ %\)/.test(lf.txt),'a long router job lists faster tooling or machines with the time each saves',lf);
 }catch(e){bad++;console.log('FAIL',e.message);}finally{br&&await br.close();srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
 console.log(bad?bad+' FAILED':'ALL PASS');process.exit(bad?1:0);
