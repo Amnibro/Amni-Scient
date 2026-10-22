@@ -4,7 +4,9 @@ export const SW=[['leaf_dark',[44,122,48]],['leaf',[74,170,60]],['leaf_light',[1
  ['straw',[234,184,92]],['straw_dark',[196,142,62]],['cream',[250,238,210]],['marble',[242,240,234]],['gold',[238,188,66]],['gold_dark',[192,142,42]],['stone',[152,152,158]],['stone_light',[192,192,198]],
  ['stone_dark',[112,112,120]],['tan',[208,182,142]],['soil',[122,82,52]],['red',[222,56,48]],['yellow',[250,206,60]],['orange',[246,140,40]],['purple',[150,84,196]],['pink',[248,128,168]],
  ['blue',[70,112,224]],['teal',[52,190,178]],['green',[120,200,80]],['white',[255,251,246]],['berry_blue',[64,92,214]],['berry_red',[218,42,58]],['portal_blue',[84,124,244]],['portal_violet',[152,92,232]],
- ['cyan',[96,232,242]],['peach',[255,190,170]],['gold_pale',[255,232,140]],['dark_purple',[90,36,92]],['brown',[150,96,60]],['sky',[150,206,250]],['black',[38,34,40]],['grey_blue',[120,140,170]]];
+ ['cyan',[96,232,242]],['peach',[255,190,170]],['gold_pale',[255,232,140]],['dark_purple',[90,36,92]],['brown',[150,96,60]],['sky',[150,206,250]],['black',[38,34,40]],['grey_blue',[120,140,170]],
+ ['basalt',[74,76,98]],['basalt_light',[104,108,134]],['crystal',[186,130,255]],['crystal_light',[226,196,255]],['glow',[255,216,128]],['coral',[255,124,112]],['sand',[244,224,172]],['driftwood',[196,178,156]],
+ ['cloud_shade',[214,226,246]],['cloud',[252,253,255]],['palm',[96,186,82]],['coconut',[128,84,52]],['shell',[255,214,196]]];
 const SI=Object.fromEntries(SW.map(([k],i)=>[k,i])),U=k=>[((SI[k]%8)+.5)/8,((SI[k]>>3)+.5)/8];
 export function gardenPalette(){const w=64,d=new Uint8Array(w*w*4);for(let y=0;y<w;y++)for(let x=0;x<w;x++){const k=(y>>3)*8+(x>>3);d.set([...(SW[k]?SW[k][1]:[255,0,255]),255],4*(y*w+x));}return{w,h:w,data:d};}
 const H=(x,y,z)=>{const s=Math.sin(x*12.9898+y*78.233+z*37.719)*43758.5453;return s-Math.floor(s);},bump=(d,f=9)=>Math.sin(f*d[0])*Math.sin(f*d[1]+1)*Math.sin(f*d[2]+2);
@@ -24,7 +26,7 @@ const rbox=(g,c,s,lv,uv,e=.35,res=[[2,4],[3,7],[4,8]])=>sph(g,res[lv][0],res[lv]
 const tube=(g,C,r,S,uv)=>tubeG(g,C,r,S,U(uv));
 const tuft=(g,b,lv,n=3,h=.08)=>{for(let i=0;i<n;i++){const a=i*TAU/n+.4;blade(g,b,nrm([Math.cos(a)*.45,Math.sin(a)*.45,1]),[-Math.sin(a),Math.cos(a),0],h,.022,Math.max(0,lv-1),'leaf','leaf_dark');}};
 const flw=(g,c,nn,lv,col='pink',s=.035)=>{const u=nrm(crs(Math.abs(nn[2])<.9?[0,0,1]:[1,0,0],nn)),v=crs(nn,u);sph(g,2,R3(lv,[5,10,15]),180,d=>{const rr=s*(.62+.38*Math.abs(Math.cos(2.5*Math.atan2(d[1],d[0]))));return add(c,add(add(mul(u,d[0]*rr),mul(v,d[1]*rr)),mul(nn,d[2]*s*.22)));},()=>U(col));sph(g,2,R3(lv,[3,4,5]),180,d=>add(add(c,mul(nn,s*.2)),mul(d,s*.3)),()=>U('yellow'));};
-export const KIT={U,R3,tube,rbox,blade,flw,slab,orient,TAU};
+export const KIT={U,R3,tube,rbox,blade,flw,slab,orient,TAU,canopy,puffs,lg,GR,cap,SI};
 export const toMesh=(name,g,x={})=>{const m=fin(g),P=m.pos,I=m.idx,nv=P.length/3,pt=v=>[P[3*v],P[3*v+1],P[3*v+2]],K=v=>Math.round(P[3*v]*2e4)+','+Math.round(P[3*v+1]*2e4)+','+Math.round(P[3*v+2]*2e4),W=new Map(),FN=[],O=new Float32Array(3*nv),N=new Float32Array(3*nv);
   for(let t=0;t<I.length;t+=3){const a=pt(I[t]),f=crs(sub(pt(I[t+1]),a),sub(pt(I[t+2]),a));FN.push(f);for(let j=0;j<3;j++){const v=I[t+j],k=K(v);W.has(k)?W.get(k).push(t/3):W.set(k,[t/3]);for(let c=0;c<3;c++)O[3*v+c]+=f[c];}}
   for(let v=0;v<nv;v++){const o0=[O[3*v],O[3*v+1],O[3*v+2]],lo=len(o0),o=lo>0?mul(o0,1/lo):o0;let s=[0,0,0];for(const f of W.get(K(v))||[]){const l=len(FN[f]);l>1e-12&&dot(FN[f],o)/l>.5&&(s=add(s,FN[f]));}let n=len(s)>1e-12?nrm(s):lo>0?o:[0,0,1];for(const[a,b,c,w]of g.bend||[])v>=a&&v<b&&(n=nrm(add(mul(n,1-w),mul(nrm(sub(pt(v),c)),w))));N.set(n,3*v);}
@@ -95,7 +97,7 @@ export function kinder(kind,lv){const g=G0(),RB=[[2,4],[3,8],[5,12]];
   else{const arch=(w,h,m)=>[[-w,0],[w,0],...[...Array(m+1)].map((_,i)=>{const a=Math.PI*i/m;return[Math.cos(a)*w,h+Math.sin(a)*w];})],m=R3(lv,[4,7,12]);slab(g,arch(.3,.5,m),-.08,.08,'wood_dark',.018);slab(g,arch(.24,.5,m),-.1,-.06,'orange',.014);const wn=R3(lv,[5,10,16]);tube(g,[[0,-.105,.56],[0,-.112,.56]],[.075,.075],wn,'sky');tube(g,[...Array(wn+1)].map((_,i)=>{const a=i*TAU/wn;return[Math.cos(a)*.08,-.11,.56+Math.sin(a)*.08];}),.014,R3(lv,[3,4,5]),'wood_dark');sph(g,R3(lv,[2,3,4]),R3(lv,[4,7,8]),180,d=>add([.16,-.12,.36],mul(d,.025)),()=>U('gold'));
     for(let k=0;k<R3(lv,[0,2,3]);k++)rbox(g,[(k-(R3(lv,[0,2,3])-1)/2)*.12,-.102,.25],[.004,.004,.22],lv,'wood_dark',.5,[[2,4],[2,4],[2,4]]);}
   return{g};}
-const LV=[2,1,0],MAT={garden:{name:'garden_palette',tex:'garden',rough:.45},portal:{name:'gate_portal',tex:'garden',rough:.3,emit:[.45,.5,1],es:1.5,double:true}},TX=()=>({garden:gardenPalette()});
+const LV=[2,1,0],MAT={garden:{name:'garden_palette',tex:'garden',rough:.45},portal:{name:'gate_portal',tex:'garden',rough:.3,emit:[.45,.5,1],es:1.5,double:true},glow:{name:'garden_glow',tex:'garden',etex:'garden',emit:[1,1,1],es:2,rough:.3}},TX=()=>({garden:gardenPalette()});
 export const glb=(name,lods,ex={},matOf=()=>"garden")=>chaoGLB({lods:lods.map(L=>({rings:{},...L}))},{name,flat:true,morphs:[],merged:false,mats:MAT,matOf,tex:TX(),extras:{kind:'garden_prop',units:'meters, Y-up, pivot at base center',...ex}});
 export function gardenGLBs(){const out={},ys=s=>s.map(q=>Y(...q).map(v=>+v.toFixed(4))),set=(name,ids,f,ex)=>glb(name,LV.map(lv=>({lv,meshes:ids.map(k=>toMesh(k===name?k:name+'_'+k,f(k,lv).g,ex))})));
   out.trees=glb('tree',LV.map(lv=>({lv,meshes:['sprout','sapling','young','full'].map((n,s)=>{const t=tree(s,lv);return toMesh(`tree_${n}`,t.g,{fruit_sockets:ys(t.sock),fruit_scale:t.fs,stage:s});})})),{stages:['tree_sprout','tree_sapling','tree_young','tree_full']});

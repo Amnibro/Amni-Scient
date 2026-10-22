@@ -9,6 +9,6 @@ ok(G.tree(3,2).sock.length===7&&G.tree(2,2).sock.length===3&&JSON.stringify(G.tr
 const tc=G.tree(3,2),cen=[0,0,1.8*.62+.74*.5];ok(tc.sock.every(s=>Math.hypot(s[0]-cen[0],s[1]-cen[1])>.55),'fruit sockets sit on the outer canopy');
 const out=G.gardenGLBs();ok(['trees','nest','trough','gate','fruits','seeds','rocks','bushes','kindergarten'].every(k=>out[k]&&out[k].length>1000),'every garden GLB exports');
 const js=b=>JSON.parse(new TextDecoder().decode(b.subarray(20,20+new DataView(b.buffer,b.byteOffset).getUint32(12,true))));
-const gj=js(out.gate);ok(gj.meshes.some(m=>m.name==='gate_portal_LOD0'&&m.primitives[0].attributes.TEXCOORD_1!==undefined)&&gj.materials.length===2,'gate portal is its own mesh and material with polar UVs');
+const gj=js(out.gate);ok(gj.meshes.some(m=>m.name==='gate_portal_LOD0'&&m.primitives[0].attributes.TEXCOORD_1!==undefined)&&gj.materials.some(m=>m.name==='gate_portal'),'gate portal is its own mesh and material with polar UVs');
 ok(['rock_boulder_LOD0','rock_stepping_LOD2','rock_mossy_LOD1'].every(n=>js(out.rocks).meshes.some(m=>m.name===n))&&js(out.bushes).meshes.length===9&&js(out.kindergarten).meshes.length===7-1,'rocks, bushes and kindergarten meshes are named <id>_LODn');
 console.log(`${pass} passed, ${fail} failed`);process.exit(fail?1:0);

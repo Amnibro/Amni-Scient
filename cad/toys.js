@@ -54,6 +54,7 @@ const T={
  kite_tail:(g,lv)=>{const n=R3(lv,[4,7,12]),Q=[...Array(n+1)].map((_,i)=>{const t=i/n;return[.05*Math.sin(t*TAU*1.5),0,.3-.29*t];});tube(g,Q,.004,3,'white');for(let k=0;k<R3(lv,[1,2,3]);k++){const q=Q[Math.round((k+1)*n/(R3(lv,[1,2,3])+1))];for(const s of[1,-1])blade(g,q,nrm([s,0,.25]),[0,-s,0],.035,.02,Math.max(0,lv-1),k%2?'yellow':'pink','red',.1);}},
 };
 const PIV={swing_seat:[0,0,.76],kite:[0,0,.56],kite_tail:[0,0,.3]};
+export const TK={xf,turn,flip,box,ball,disc,cyl,ring,grid,arc,BS,BX};
 export const TOYS=['ball','tv','radio','car','horse','sandbox','crayons','drum','flute','xylophone','piano','bell','dance_mat','easel','music_box','swing','swing_seat','slide','kite','kite_tail'];
 export const toy=(k,lv)=>{const g=G0();T[k](g,lv);return{g};};
 export const TOY_BUDGET=[800,320,120];
