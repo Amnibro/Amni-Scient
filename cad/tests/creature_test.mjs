@@ -17,7 +17,7 @@ for(const L of b.lods){const lod=[2,1,0].indexOf(L.lv),core=L.meshes[0],tris=L.m
   const gaps=[[null,0],[null,1],['power',0],['fly',1],['dark_child',1],['swim',1]].map(([m,p])=>state(m,p));ok(Math.max(...gaps)<=1e-6,`LOD${lod} seam gap stays under 1e-6 m in bind, posed and morphed states (${Math.max(...gaps).toExponential(2)})`);}
 const glb=CR.chaoGLB(b),v=new DataView(glb.buffer),jl=v.getUint32(12,true),G=JSON.parse(new TextDecoder().decode(glb.subarray(20,20+jl)));
 ok(v.getUint32(0,true)===0x46546c67&&v.getUint32(8,true)===glb.length,'GLB header is valid');
-ok(G.meshes.length===42&&G.meshes.every(m=>/^chao_child_[a-z_]+_LOD[012]$/.test(m.name)),'GLB names every mesh <id>_<slot>_LOD<n>');
+ok(G.meshes.length===45&&G.meshes.filter(m=>m.extras.slot==='merged').length===3&&G.meshes.every(m=>/^chao_child_[a-z_]+_LOD[012]$/.test(m.name)),'GLB names every mesh <id>_<slot>_LOD<n>');
 ok(G.meshes.every(m=>m.primitives[0].targets.length===CR.MORPHS.length&&m.extras.targetNames.join()===CR.MORPHS.join()),'every mesh carries all 25 morph targets in contract order');
 ok(G.skins[0].joints.length===B.length&&CR.SOCKETS.every(n=>G.nodes.some(x=>x.name===n)),'skin includes socket joints as nodes');
 const yb=[1e9,-1e9];for(const m of G.meshes.filter(m=>m.name.endsWith('LOD0'))){const a=G.accessors[m.primitives[0].attributes.POSITION];yb[0]=Math.min(yb[0],a.min[1]);yb[1]=Math.max(yb[1],a.max[1]);}ok(Math.abs(yb[0])<1e-4&&Math.abs(yb[1]-.38)<1e-4,`LOD0 is Y-up, 0.38 m tall, pivot at ground contact (${yb.map(x=>x.toFixed(4))})`);
