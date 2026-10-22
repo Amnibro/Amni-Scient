@@ -1,7 +1,7 @@
 import * as R from './vendor/replicad.js';
 import {THREADSTD,HOLESTD,HOLESTD_IN} from './standards.js';
 import {MATS,matBase} from './schema.js';
-export const CAMV='3082bd36f1';
+export const CAMV='90d0b43982';
 const V=v=>[v.x,v.y,v.z],P=p=>[p.X(),p.Y(),p.Z()],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l];};
 const safe=(f,d=null)=>{try{return f();}catch{return d;}},d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),TAU=Math.PI*2;
 const QMAP={al6061:['al6061','al6061'],al7075:['al7075','al7075'],steel1018:['steel-cr','st1018'],steel4140:['steel-cr','st4140'],ss304:['ss304','ss303'],ss316:['ss316','ss303'],ti64:['ti-gr2','ti-gr2'],brass:['brass260','brass360'],pla:['pla','pla'],petg:['petg','petg'],abs:['asa','asa'],nylon:['pa12-mjf','pa12-mjf'],pc:['pc','asa'],maple:['ply-bb','ply-bb'],birch:['ply-bb','ply-bb'],whiteoak:['ply-bb','ply-bb'],walnut:['ply-bb','ply-bb'],ash:['ply-bb','ply-bb'],mahogany:['ply-bb','ply-bb'],sitka:['ply-bb','ply-bb'],pine:['ply-bb','ply-bb'],bamboo:['ply-bb','ply-bb'],balticply:['ply-bb','ply-bb'],mdf:['mdf','mdf'],g10:['g10','g10'],p20:['steel-cr','st4140'],h13:['steel-cr','st4140'],s7:['steel-cr','st4140'],d2:['steel-cr','st4140'],a2:['steel-cr','st4140'],o1:['steel-cr','st4140'],m2:['steel-cr','st4140'],ss420m:['ss304','ss303'],becu:['cu110','cu110'],cfrp:null,fiberglass:null,carbide:null},NOSTOCK={cfrp:'Carbon fiber plate',fiberglass:'Fiberglass',carbide:'Tungsten carbide'};
@@ -80,7 +80,7 @@ export function holeList({body,doc}){
     const thru=!!(oT&&oB),atTop=oT&&oB?(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r>sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1.001||Math.abs(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r-sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r)<=sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1e-3&&dot(dd,[0.001,0.01,1])>=0):!!oT,mouthT=atTop?tmax:tmin,sgn=atTop?-1:1,prim=sg.reduce((a,b)=>b.r<a.r?b:a),rr=prim.r;
     const cb=sg.filter(o=>o.r>rr*1.05&&Math.abs((atTop?o.t1:o.t0)-mouthT)<tl*20)[0],cbS=cb&&{dia:2*cb.r*k,depth:(cb.t1-cb.t0)*k};
     const cn=(atTop?top:bot).find(x=>x.kind==='csink'),cnS=cn&&{dia:2*cn.extra.R*k,angle:+(2*Math.atan((cn.extra.R-cn.extra.r)/Math.max(1e-9,Math.abs(cn.extra.t-cn.t)))*180/Math.PI).toFixed(1)};
-    const pt=add(ref.p,dd,mouthT),dep=(tmax-tmin)*k,dia=2*rr*k,pmm=pt.map(v=>v*k),tap=tapOf(dia,doc,pmm,dd.map(v=>v*sgn),k);
+    const mT=cn&&!cbS?cn.extra.t:mouthT,pt=add(ref.p,dd,mT),dep=(tmax-tmin+Math.abs(mT-mouthT))*k,dia=2*rr*k,pmm=pt.map(v=>v*k),tap=tapOf(dia,doc,pmm,dd.map(v=>v*sgn),k);
     out.push({p:pt.map(v=>+(v*k).toFixed(4)),d:dd.map(v=>+(v*sgn).toFixed(6)),dia:+dia.toFixed(4),depth:+dep.toFixed(4),thru,tap,cbore:cbS||null,csink:cnS||null});}
   return out.sort((a,b)=>a.p[2]-b.p[2]||a.p[1]-b.p[1]||a.p[0]-b.p[0]);}
 export function solidJob({body,doc},a={}){

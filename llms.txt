@@ -1,0 +1,16 @@
+# AMNI-SCIENT
+
+> Engineering software that runs in the browser: Amni-CAD (parametric CAD with stress, flow and CAM) and Amni-Calc (engineering calculators). Also known as amnicad, Amni CAD, amnicad API.
+
+## Amni-CAD for AI agents
+
+There are two ways for an agent to use Amni-CAD.
+
+- [Amni-CAD MCP server](https://amni-scient.com/cad/): drives Amni-CAD open in the user's browser. Free, no license key. In Amni-CAD open the assistant panel, expand "Other apps, or an AI app on my phone", turn on the remote link and copy its URL (https://amnicad-relay.amnibro7.workers.dev/mcp/<secret>, Streamable HTTP, no authentication). Codex: `codex mcp add amnicad --url <URL>`. Claude Code: `claude mcp add -s user --transport http amnicad <URL>`. The page must stay open while the agent works.
+- [Amni-CAD headless API](https://amni-scient.com/amni-cad-api): the engine without the editor, as the `amnicad` command and a local HTTP API at http://127.0.0.1:41800/v1/ (Bearer token from `node amnicad.mjs token`). Needs an Amni-CAD Pro or Enterprise license key. Install: `curl -fsSLO https://amni-scient.com/cad/api/amnicad.mjs`, then `node amnicad.mjs activate <AMNIPRO key>` and `node amnicad.mjs serve`. Jobs: build, export (STEP, STL, BREP), stress, flow, nonlinear, quote, dxf, toolpath, review.
+
+## Products
+
+- [Amni-CAD](https://amni-scient.com/amni-cad): parametric CAD, FEA, CFD, CAM and quoting in the browser
+- [Amni-CAD headless API docs](https://amni-scient.com/amni-cad-api)
+- [Amni-Calc](https://amni-scient.com/amni-calc): engineering calculators (beams, springs, fatigue, bolts, gears, fluids, thermal)
