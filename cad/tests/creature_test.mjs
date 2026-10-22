@@ -1,0 +1,25 @@
+import * as CR from '../creature.js';
+import * as RIG from '../rig.js';
+let pass=0,fail=0;const ok=(c,m)=>{c?pass++:(fail++,console.log('FAIL',m));},t0=Date.now();
+const b=CR.buildChao(),nd=b.nDeform,B=b.bones,q=(ax,d)=>{const h=d*Math.PI/360,s=Math.sin(h);return[ax[0]*s,ax[1]*s,ax[2]*s,Math.cos(h)];},tr={upperarm_l:q([1,0,0],-110),lowerarm_l:q([1,0,0],-30),thigh_l:q([1,0,0],-40),calf_r:q([1,0,0],30),wing_l_01:q([0,0,1],35),head:q([0,1,0],15),spine_02:q([0,0,1],20),tail_01:q([1,0,0],20),ear_r:q([0,1,0],-25)},bk={actions:[{name:'p',len:1,times:new Float32Array([0,1]),tracks:Object.entries(tr).map(([bone,v])=>({bone,ch:'rot',values:Float32Array.from([...v,...v])}))}]};
+ok(B.length===nd+CR.SOCKETS.length&&nd===35,'chao_v1 has 35 deform joints and '+CR.SOCKETS.length+' socket joints');
+ok(CR.DEFORM.every(n=>B.slice(0,nd).some(x=>x.name===n))&&CR.SOCKETS.every(n=>B.slice(nd).some(x=>x.name===n)),'every contract joint and socket name is present');
+ok(B.every((x,i)=>x.parent<i),'joints are ordered parent-first');
+const lim={0:12000,1:5000,2:1800};
+for(const L of b.lods){const lod=[2,1,0].indexOf(L.lv),core=L.meshes[0],tris=L.meshes.reduce((a,m)=>a+m.idx.length/3,0);
+  ok(tris<=lim[lod],`LOD${lod} is within budget (${tris} tris)`);
+  ok(Object.keys(L.rings).length===10,`LOD${lod} has all 10 seam rings`);
+  let wq=true,nq=true,mq=true,inf=0;for(const[k,r]of Object.entries(L.rings)){const p=L.meshes.find(m=>m.name===k);ok(r.core.length===r.part.length&&new Set(r.part).size===r.part.length,`LOD${lod} ${k} ring maps one to one (${r.core.length} verts)`);r.core.forEach((cv,i)=>{const pv=r.part[i];for(let c=0;c<4;c++){p.joints[4*pv+c]===core.joints[4*cv+c]&&p.weights[4*pv+c]===core.weights[4*cv+c]||(wq=false);}for(let c=0;c<3;c++)p.nrm[3*pv+c]===core.nrm[3*cv+c]||(nq=false);for(const[mi]of CR.MORPHS.entries())for(let c=0;c<3;c++)p.morphs[mi][3*pv+c]===core.morphs[mi][3*cv+c]||(mq=false);});}
+  ok(wq&&nq&&mq,`LOD${lod} ring weights, normals and morph deltas match bit for bit`);
+  for(const m of L.meshes)for(let v=0;v<m.pos.length/3;v++){let n=0,s=0;for(let c=0;c<4;c++){m.weights[4*v+c]>0&&n++;s+=m.weights[4*v+c];}inf=Math.max(inf,n);Math.abs(s-1)>1e-4&&ok(false,`${m.name} vertex ${v} weights sum to ${s}`);}
+  ok(inf<=(lod===2?2:4),`LOD${lod} uses at most ${inf} influences`);
+  const sk={bones:B.slice(0,nd)},state=(mo,pose)=>{const P={};for(const m of L.meshes){const mi=CR.MORPHS.indexOf(mo),pos=mo?Float32Array.from(m.pos,(x,i)=>x+m.morphs[mi][i]):m.pos;P[m.name]=pose?RIG.pose({pos,nrm:m.nrm},{...sk,joints:m.joints,weights:m.weights},bk,'p',0).pos:pos;}let g=0;for(const[k,r]of Object.entries(L.rings))r.core.forEach((cv,i)=>{for(let c=0;c<3;c++)g=Math.max(g,Math.abs(P.core[3*cv+c]-P[k][3*r.part[i]+c]));});return g;};
+  const gaps=[[null,0],[null,1],['power',0],['fly',1],['dark_child',1],['swim',1]].map(([m,p])=>state(m,p));ok(Math.max(...gaps)<=1e-6,`LOD${lod} seam gap stays under 1e-6 m in bind, posed and morphed states (${Math.max(...gaps).toExponential(2)})`);}
+const glb=CR.chaoGLB(b),v=new DataView(glb.buffer),jl=v.getUint32(12,true),G=JSON.parse(new TextDecoder().decode(glb.subarray(20,20+jl)));
+ok(v.getUint32(0,true)===0x46546c67&&v.getUint32(8,true)===glb.length,'GLB header is valid');
+ok(G.meshes.length===36&&G.meshes.every(m=>/^chao_child_[a-z_]+_LOD[012]$/.test(m.name)),'GLB names every mesh <id>_<slot>_LOD<n>');
+ok(G.meshes.every(m=>m.primitives[0].targets.length===CR.MORPHS.length&&m.extras.targetNames.join()===CR.MORPHS.join()),'every mesh carries all 25 morph targets in contract order');
+ok(G.skins[0].joints.length===B.length&&CR.SOCKETS.every(n=>G.nodes.some(x=>x.name===n)),'skin includes socket joints as nodes');
+const yb=[1e9,-1e9];for(const m of G.meshes.filter(m=>m.name.endsWith('LOD0'))){const a=G.accessors[m.primitives[0].attributes.POSITION];yb[0]=Math.min(yb[0],a.min[1]);yb[1]=Math.max(yb[1],a.max[1]);}ok(Math.abs(yb[0])<1e-4&&Math.abs(yb[1]-.38)<1e-4,`LOD0 is Y-up, 0.38 m tall, pivot at ground contact (${yb.map(x=>x.toFixed(4))})`);
+const core0=G.meshes.find(m=>m.name==='chao_child_core_LOD0');ok(Object.keys(core0.extras.rings).length===10&&G.meshes.find(m=>m.name==='chao_child_arms_l_LOD0').extras.rings.ring_arms_l.length===core0.extras.rings.ring_arms_l.length,'ring index lists are stored as mesh extras');
+console.log('\nbuild+checks ms',Date.now()-t0);console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);
