@@ -7,5 +7,6 @@ for(const k of['dawn_column','dawn_lantern','dusk_basalt','dusk_crystal','coral_
 const G=D.decorGLBs(),js=b=>JSON.parse(new TextDecoder().decode(b.subarray(20,20+new DataView(b.buffer,b.byteOffset).getUint32(12,true))));
 for(const[set,b]of Object.entries(G)){const j=js(b);ok(j.meshes.every(m=>/^decor_[a-z_]+_LOD[012]$/.test(m.name)),`${set} mesh names`);}
 const dj=js(G.dusk);ok(dj.meshes.some(m=>m.name==='decor_dusk_crystal_glow_LOD0'&&dj.materials[m.primitives[0].material].name==='garden_glow'&&dj.materials[m.primitives[0].material].emissiveTexture),'glow meshes use the emissive palette material');
-ok(js(G.coral).meshes.some(m=>m.name==='decor_coral_palm_fronds_LOD0'&&m.extras.pivot),'palm fronds carry a sway pivot');
+for(const[r,clip,nb]of[['coral_palm','sway',23],['sky_chime','swing',4]]){const j=js(G[r]);ok(j.skins?.[0]?.joints.length===nb&&j.animations?.some(an=>an.name===clip&&an.extras.loop)&&j.meshes.every(m=>m.primitives.every(q=>q.attributes.JOINTS_0!==undefined&&q.attributes.WEIGHTS_0!==undefined)),`${r} is skinned with ${nb} joints and loops ${clip}`);}
+const pf=D.decor('coral_palm_fronds',2).g;ok(pf.bw.length===7,'each palm frond carries its own three-bone weights');
 console.log(`${pass} passed, ${fail} failed`);process.exit(fail?1:0);

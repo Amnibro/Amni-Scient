@@ -7,10 +7,10 @@ export const SW=[['leaf_dark',[44,122,48]],['leaf',[74,170,60]],['leaf_light',[1
  ['cyan',[96,232,242]],['peach',[255,190,170]],['gold_pale',[255,232,140]],['dark_purple',[90,36,92]],['brown',[150,96,60]],['sky',[150,206,250]],['black',[38,34,40]],['grey_blue',[120,140,170]],
  ['basalt',[74,76,98]],['basalt_light',[104,108,134]],['crystal',[186,130,255]],['crystal_light',[226,196,255]],['glow',[255,216,128]],['coral',[255,124,112]],['sand',[244,224,172]],['driftwood',[196,178,156]],
  ['cloud_shade',[214,226,246]],['cloud',[252,253,255]],['palm',[96,186,82]],['coconut',[128,84,52]],['shell',[255,214,196]]];
-const SI=Object.fromEntries(SW.map(([k],i)=>[k,i])),U=k=>[((SI[k]%8)+.5)/8,((SI[k]>>3)+.5)/8];
-export function gardenPalette(){const w=64,d=new Uint8Array(w*w*4);for(let y=0;y<w;y++)for(let x=0;x<w;x++){const k=(y>>3)*8+(x>>3);d.set([...(SW[k]?SW[k][1]:[255,0,255]),255],4*(y*w+x));}return{w,h:w,data:d};}
+const SI=Object.fromEntries(SW.map(([k],i)=>[k,i])),PR=16,U=k=>[((SI[k]%8)+.5)/8,((SI[k]>>3)+.5)/PR];
+export function gardenPalette(){const w=64,h=8*PR,d=new Uint8Array(w*h*4),C=k=>SW[k]?SW[k][1]:k>=8?C(k-8):[255,255,255];for(let y=0;y<h;y++)for(let x=0;x<w;x++)d.set([...C((y>>3)*8+(x>>3)),255],4*(y*w+x));return{w,h,data:d};}
 const H=(x,y,z)=>{const s=Math.sin(x*12.9898+y*78.233+z*37.719)*43758.5453;return s-Math.floor(s);},bump=(d,f=9)=>Math.sin(f*d[0])*Math.sin(f*d[1]+1)*Math.sin(f*d[2]+2);
-const R3=(lv,a)=>a[lv],GR=t=>[.0625+.25*Math.min(1,Math.max(0,t)),.0625],lg=(c,R)=>(p,n)=>GR(.36+.42*n[2]+.32*(p[2]-c[2])/R);
+const R3=(lv,a)=>a[lv],GR=t=>[.0625+.25*Math.min(1,Math.max(0,t)),.5/PR],lg=(c,R)=>(p,n)=>GR(.36+.42*n[2]+.32*(p[2]-c[2])/R);
 const puffs=(c,R,n,rp,seed=1,sq=[1,1,.8],z0=1.35)=>[...Array(n)].map((_,i)=>{const z=1-(i+.5)/n*z0,r=Math.sqrt(Math.max(0,1-z*z)),a=i*2.399963+seed;return{c:add(c,[Math.cos(a)*r*R*sq[0],Math.sin(a)*r*R*sq[1],z*R*sq[2]]),r:rp*(.85+.3*H(i,seed,3)),o:[Math.cos(a)*r,Math.sin(a)*r,z]};});
 const ball=(g,c,o,r,lv,uvf,res,th=115)=>{const u=nrm(crs(Math.abs(o[2])<.9?[0,0,1]:[1,0,0],o)),v=crs(o,u),D=d=>add(add(mul(u,d[0]),mul(v,d[1])),mul(o,d[2]));sph(g,res[lv][0],res[lv][1],th,d=>add(c,mul(D(d),r)),d=>uvf(add(c,mul(D(d),r)),D(d)));};
 function canopy(g,P,core,lv,uvf,res,keep,bend=.5){const v0=g.p.length/3,E=d=>add(core.c,d.map((v,i)=>v*core.s[i]));core.s&&sph(g,R3(lv,[3,3,4]),R3(lv,[7,7,10]),180,E,d=>uvf(E(d),d));for(const q of lv===0?P.filter((q,i)=>i%Math.ceil(P.length/keep)===0):P)ball(g,q.c,nrm(q.o),q.r,lv,uvf,res);(g.bend=g.bend||[]).push([v0,g.p.length/3,core.c,bend]);}
@@ -26,11 +26,14 @@ const rbox=(g,c,s,lv,uv,e=.35,res=[[2,4],[3,7],[4,8]])=>sph(g,res[lv][0],res[lv]
 const tube=(g,C,r,S,uv)=>tubeG(g,C,r,S,U(uv));
 const tuft=(g,b,lv,n=3,h=.08)=>{for(let i=0;i<n;i++){const a=i*TAU/n+.4;blade(g,b,nrm([Math.cos(a)*.45,Math.sin(a)*.45,1]),[-Math.sin(a),Math.cos(a),0],h,.022,Math.max(0,lv-1),'leaf','leaf_dark');}};
 const flw=(g,c,nn,lv,col='pink',s=.035)=>{const u=nrm(crs(Math.abs(nn[2])<.9?[0,0,1]:[1,0,0],nn)),v=crs(nn,u);sph(g,2,R3(lv,[5,10,15]),180,d=>{const rr=s*(.62+.38*Math.abs(Math.cos(2.5*Math.atan2(d[1],d[0]))));return add(c,add(add(mul(u,d[0]*rr),mul(v,d[1]*rr)),mul(nn,d[2]*s*.22)));},()=>U(col));sph(g,2,R3(lv,[3,4,5]),180,d=>add(add(c,mul(nn,s*.2)),mul(d,s*.3)),()=>U('yellow'));};
-export const KIT={U,R3,tube,rbox,blade,flw,slab,orient,TAU,canopy,puffs,lg,GR,cap,SI};
+export const KIT={PR,U,R3,tube,rbox,blade,flw,slab,orient,TAU,canopy,puffs,lg,GR,cap,SI};
 export const toMesh=(name,g,x={})=>{const m=fin(g),P=m.pos,I=m.idx,nv=P.length/3,pt=v=>[P[3*v],P[3*v+1],P[3*v+2]],K=v=>Math.round(P[3*v]*2e4)+','+Math.round(P[3*v+1]*2e4)+','+Math.round(P[3*v+2]*2e4),W=new Map(),FN=[],O=new Float32Array(3*nv),N=new Float32Array(3*nv);
   for(let t=0;t<I.length;t+=3){const a=pt(I[t]),f=crs(sub(pt(I[t+1]),a),sub(pt(I[t+2]),a));FN.push(f);for(let j=0;j<3;j++){const v=I[t+j],k=K(v);W.has(k)?W.get(k).push(t/3):W.set(k,[t/3]);for(let c=0;c<3;c++)O[3*v+c]+=f[c];}}
   for(let v=0;v<nv;v++){const o0=[O[3*v],O[3*v+1],O[3*v+2]],lo=len(o0),o=lo>0?mul(o0,1/lo):o0;let s=[0,0,0];for(const f of W.get(K(v))||[]){const l=len(FN[f]);l>1e-12&&dot(FN[f],o)/l>.5&&(s=add(s,FN[f]));}let n=len(s)>1e-12?nrm(s):lo>0?o:[0,0,1];for(const[a,b,c,w]of g.bend||[])v>=a&&v<b&&(n=nrm(add(mul(n,1-w),mul(nrm(sub(pt(v),c)),w))));N.set(n,3*v);}
-  return{name,slot:name,...m,nrm:N,x};};
+  const sk=g.bw?(()=>{const J=new Uint16Array(4*nv),Wt=new Float32Array(4*nv);for(let v=0;v<nv;v++)Wt[4*v]=1;for(const[a,b,f]of g.bw)for(let v=a;v<b;v++){const r=(typeof f==='number'?[[f,1]]:f(pt(v))).slice(0,4),t=r.reduce((s,q)=>s+q[1],0)||1;for(let i=0;i<4;i++){const w=r[i]?r[i][1]/t:0;J[4*v+i]=w>0?r[i][0]:0;Wt[4*v+i]=w;}}return{joints:J,weights:Wt};})():{};
+  return{name,slot:name,...m,nrm:N,...sk,x};};
+export const on=(g,j,f)=>{const v0=g.p.length/3;f();(g.bw=g.bw||[]).push([v0,g.p.length/3,j]);return g;};
+export const skinGlb=(name,lods,bones,clips,ex={},matOf=n=>n.endsWith('_glow')?'glow':'garden')=>chaoGLB({lods:lods.map(L=>({rings:{},...L})),bones},{name,flat:true,morphs:[],merged:false,mats:MAT,matOf,tex:TX(),rig:name+'_rig',clips,extras:{kind:'garden_prop',units:'meters, Y-up, pivot at base center',...ex}});
 const TREE=[{h:.35},{h:.8,tr:.055,cr:.2},{h:1.3,tr:.1,cr:.62,n:12,rp:.33,fruit:3},{h:1.8,tr:.14,cr:.74,n:15,rp:.37,fruit:7}];
 export function tree(stage,lv){const g=G0(),T=TREE[stage],sock=[],trunk=(th,tr)=>{const n=R3(lv,[3,5,8]),C=[...Array(n+1)].map((_,i)=>{const t=i/n;return[.08*th*Math.sin(t*3),0,t*th];});tube(g,C,C.map((_,i)=>tr*(1-.4*i/n)*(1+1.1*Math.max(0,1-i/n*4)**2)),R3(lv,[4,7,10]),'trunk');return C[n];};
   if(stage===0){sph(g,R3(lv,[2,3,5]),R3(lv,[7,10,16]),90,d=>[d[0]*.1,d[1]*.1,d[2]*.045*(1+.12*bump(d,5))],()=>U('soil'));const st=[[0,0,0],[.012,0,.1],[0,0,.2]];tube(g,st,[.014,.012,.01],R3(lv,[4,5,7]),'leaf');for(const s of[1,-1])blade(g,st[2],nrm([s,0,.8]),[0,-s,0],.14,.06,lv);return{g,sock};}
