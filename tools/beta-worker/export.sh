@@ -3,7 +3,7 @@ set -euo pipefail
 ENV_FILE="${BETA_ENV:-$HOME/.config/amni/beta-admin.env}"
 [ -r "$ENV_FILE" ] || { echo "missing $ENV_FILE" >&2; exit 1; }
 set -a; . "$ENV_FILE"; set +a
-usage(){ echo "usage: $0 [app] | --emails <app> | --not-in <app> (emails of people with no row for that app, e.g. future) | --delete <email> [app] | --suppressed [--emails] | --suppress <email> [link|reply|admin|bounce] [--remove-testing] | --unsuppress <email>" >&2; echo "apps: crypt chat learn map type contaigion humainity haven future" >&2; exit 2; }
+usage(){ echo "usage: $0 [app] | --emails <app> | --not-in <app> (emails of people with no row for that app, e.g. future) | --delete <email> [app] | --suppressed [--emails] | --suppress <email> [link|reply|admin|bounce] [--remove-testing] | --unsuppress <email>" >&2; echo "apps: crypt chat learn map type contaigion humainity haven pompom future" >&2; exit 2; }
 auth=(-H "Authorization: Bearer $BETA_ADMIN_KEY")
 case "${1:-}" in
 -h|--help) usage;;

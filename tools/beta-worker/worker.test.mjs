@@ -114,3 +114,4 @@ test('future-apps opt-in is a normal signup row and the export can list everyone
   assert.equal((await get(env, '/export?notin=nope', { Authorization: 'Bearer ' + KEY })).status, 400)
   assert.equal((await get(env, '/export?notin=future')).status, 401)
 })
+test('pompom APK sign-up is stored for android', async () => { const env = mk(), r = await post(env, good({ apps: ['pompom', 'future'] })); assert.equal(r.status, 200); assert.deepEqual(rows(env).map(x => [x.app, x.device]), [['future', 'android'], ['pompom', 'android']]) })
