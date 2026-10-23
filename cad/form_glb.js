@@ -1,5 +1,6 @@
 import {gltfMaterial,texWriter} from './material.js';
 import {tangents} from './uv.js';
+export {toSTL} from './exporters.js';
 const VIEW_EMIT=1.6,Y=(x,y,z)=>[x,z,-y],lin=c=>c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4,hexL=c=>{const n=parseInt((c||'#ffffff').slice(1),16);return[n>>16&255,n>>8&255,n&255].map(v=>lin(v/255));};
 export function matGroups(m){if(!m.mat||!m.mats||!m.mats.length)return null;const by=m.mats.map(()=>[]),I=m.idx,M=m.mat;for(let t=0;t<I.length;t+=3){const a=M[I[t]],b=M[I[t+1]],c=M[I[t+2]],k=a===b||a===c?a:b===c?b:a;(by[k]||by[0]).push(I[t],I[t+1],I[t+2]);}return by.map((x,i)=>({mat:m.mats[i],i,idx:Uint32Array.from(x)})).filter(g=>g.idx.length);}
 export function toAnimGLB(m,bk,o={}){const s=o.scale||(o.units==='in'?0.0254:0.001),nv=m.pos.length/3,P=new Float32Array(nv*3),N=new Float32Array(nv*3),C=new Float32Array(nv*3),mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
@@ -25,6 +26,3 @@ export function toAnimGLB(m,bk,o={}){const s=o.scale||(o.units==='in'?0.0254:0.0
   gl.buffers[0].byteLength=off;const enc=new TextEncoder();let js=enc.encode(JSON.stringify(gl));const jp=(4-js.length%4)%4,jb=new Uint8Array(js.length+jp).fill(32);jb.set(js);const total=12+8+jb.length+8+off,out=new Uint8Array(total),dv=new DataView(out.buffer);
   dv.setUint32(0,0x46546c67,true);dv.setUint32(4,2,true);dv.setUint32(8,total,true);dv.setUint32(12,jb.length,true);dv.setUint32(16,0x4e4f534a,true);out.set(jb,20);let q=20+jb.length;dv.setUint32(q,off,true);dv.setUint32(q+4,0x004e4942,true);q+=8;for(const p of parts){out.set(p,q);q+=p.length;}
   return new Blob([out],{type:'model/gltf-binary'});}
-export function toSTL(m,name,o={}){const nt=m.idx.length/3,b=new DataView(new ArrayBuffer(84+nt*50)),hd=new TextEncoder().encode((name||'form')+' units '+(o.units==='in'?'inches':'millimeters'));for(let i=0;i<Math.min(80,hd.length);i++)b.setUint8(i,hd[i]);b.setUint32(80,nt,true);
-  for(let t=0;t<nt;t++){const q=84+t*50,v=[0,1,2].map(k=>m.idx[3*t+k]*3),p=v.map(i=>[m.pos[i],m.pos[i+1],m.pos[i+2]]),u=p[1].map((x,c)=>x-p[0][c]),w=p[2].map((x,c)=>x-p[0][c]),n=[u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0]],l=Math.hypot(...n)||1;n.forEach((x,c)=>b.setFloat32(q+4*c,x/l,true));p.forEach((pp,k)=>pp.forEach((x,c)=>b.setFloat32(q+12+12*k+4*c,x,true)));}
-  return new Blob([b.buffer],{type:'model/stl'});}
