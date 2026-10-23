@@ -16,8 +16,9 @@ const TOPICS={
 const FTRE=new RegExp('^- ('+Object.keys(FT).join('|')+'):'),CORE=/^(You are the design assistant|Actions \(applied|\{"say"| \{"(add|set|param|delete|new|material|finish)"|Numbers may be expressions)/;
 export const TOPIC_LIST=Object.entries(TOPICS).map(([k,v])=>({topic:k,about:v.about}));
 export function language(units,topic){
-  const t=topic==null||topic===''||/^(all|full)$/i.test(String(topic))?null:String(topic).toLowerCase().replace(/[^a-z]/g,'');
-  if(!t)return{text:systemPrompt(units),topics:TOPIC_LIST,recipes:listRecipes(units).map(r=>({key:r.key,summary:r.summary,aliases:r.aliases,example:r.example})),note:'Full reference. Pass topic (recipes, sketch, assembly, sim, tooling, materials, references, actions or form) for a short section.'};
+  const t=topic==null||topic===''?'':String(topic).toLowerCase().replace(/[^a-z]/g,'');
+  if(t==='all'||t==='full')return{text:systemPrompt(units),topics:TOPIC_LIST,recipes:listRecipes(units).map(r=>({key:r.key,summary:r.summary,aliases:r.aliases,example:r.example})),note:'Full reference. Pass topic (recipes, sketch, assembly, sim, tooling, materials, references, actions or form) for a short section.'};
+  if(!t)return{...language(units,'sketch'),topic:'start',recipes:listRecipes(units).map(r=>({key:r.key,summary:r.summary})),note:'Modeling essentials only. Before simulations, assemblies, tooling, materials or a recipe, read that topic; topic "all" returns the full reference (about 50 KB).'};
   const T=TOPICS[t==='recipe'?'recipes':t==='simulation'?'sim':t];
   if(t==='form')return{topic:'form',text:'Form workspace (use form_get, form_set, form_key, form_render and mesh_edit, not apply_actions; review_design shows a contact sheet of the form):\n'+SPEC+'\n'+MESH_GUIDE,topics:TOPIC_LIST};
   if(!T)return{text:'Unknown topic "'+topic+'". Topics: '+Object.keys(TOPICS).join(', ')+'.',topics:TOPIC_LIST};
