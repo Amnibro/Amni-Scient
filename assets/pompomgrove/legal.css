@@ -1,0 +1,17 @@
+:root{--bg:#fffaf0;--fg:#2b1712;--muted:#6b5446;--line:#eadfcd;--accent:#2f8f3a;--card:#ffffff;--chip:#ffe9b8}
+@media (prefers-color-scheme:dark){:root{--bg:#14110d;--fg:#f3ebe0;--muted:#b8a796;--line:#3a3128;--accent:#7fd88a;--card:#1d1914;--chip:#3a2f1c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:28px 16px 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+header a{color:var(--muted);text-decoration:none;font-size:.9rem}
+.brand{font-weight:800;font-size:1.05rem;color:var(--fg);text-decoration:none}
+h1{font-size:2rem;line-height:1.2;margin:0 0 6px}
+h2{font-size:1.2rem;margin:30px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.muted{color:var(--muted)}
+a{color:var(--accent)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:17px;padding:17px 20px;margin:18px 0}
+.pill{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
+.btn{display:inline-block;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;border-radius:14px;padding:11px 20px}
+@media (prefers-color-scheme:dark){.btn{color:#14110d}}
+nav.sub{display:flex;gap:16px;margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.95rem}
