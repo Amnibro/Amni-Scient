@@ -2,10 +2,10 @@ import {CLOUD,systemPrompt,stateMessage,parseReply,openRouterLogin,detectKey,pro
 import * as REFS from './refs.js';
 import * as AISEE from './aisee.js';
 const CSS=`#tab-ai.on{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.as-head{display:flex;align-items:center;gap:6px;padding:9px 10px 4px 12px;flex:none}
+.as-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:9px 10px 4px 12px;flex:none}
 .as-chip{flex:1;min-width:0;display:flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--line2);border-radius:calc(99px*var(--rk,1));background:var(--bg2);color:var(--ink);font-size:12.5px;text-align:left}
 .as-chip:hover{border-color:var(--acc)}
-.as-q{flex:none;max-width:132px;padding:5px 7px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--ink);font-size:12px}
+.as-q{order:9;flex:1 1 100%;min-width:0;padding:5px 7px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--ink);font-size:12px}
 .as-chip .d{width:8px;height:8px;border-radius:50%;background:var(--mut);flex:none}
 .as-chip.ok .d{background:var(--ok)}.as-chip.wait .d{background:var(--warn)}.as-chip.bad .d{background:var(--err)}
 .as-chip .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
@@ -63,6 +63,7 @@ body.form-mode .as-back,body.asm-mode .as-back,body.tool-mode .as-back{display:i
 .as-dots{display:none;color:var(--mut)}
 .msg.live::after{content:'';display:inline-block;width:7px;height:13px;margin-left:2px;vertical-align:-2px;background:var(--acc);opacity:.7;animation:asb 1s steps(2) infinite}
 @keyframes asb{50%{opacity:0}}
+#tab-ai .msg,#tab-ai .as-card,#tab-ai .as-card *{overflow-wrap:anywhere;min-width:0}
 .as-card{margin-top:8px;border:1px solid var(--line2);border-radius:calc(9px*var(--rk,1));background:var(--bg2);overflow:hidden}
 .as-it{display:flex;gap:8px;align-items:flex-start;width:100%;padding:6px 9px;text-align:left;font-size:12px;line-height:1.35;color:var(--ink2);border-bottom:1px solid var(--line)}
 .as-it:hover{background:var(--acc-soft)}
@@ -160,7 +161,7 @@ function localBody(){const P=V.probe||{},LM=globalThis.LanguageModel||(globalThi
 function setupEl(){const k=H.AI.kind,ready=H.AI.ready,used={app:isBr()&&!ready,key:ready&&['anthropic','openai','gemini','openrouter'].includes(k),local:ready&&['local','browser','chrome'].includes(k)},O=(id,t,d,b)=>h('div',{class:'as-opt'+(V.pick===id?' on':''),'data-o':id},h('button',{class:'as-oh',id:'ai-o-'+id,'aria-expanded':String(V.pick===id),onclick:()=>choose(V.pick===id?null:id)},h('b',null,t),h('small',null,d),used[id]?h('em',null,'In use'):null),V.pick===id?h('div',{class:'as-ob'},...b()):null),back=ready||configured();
   return[h('div',{class:'as-st'},h('h3',null,back?'Switch AI':'Connect an AI'),h('p',null,back?'Pick one. Your choice is remembered.':'Pick one to start. You can switch any time from the chip at the top.')),V.err?errEl(V.err,'msg a'):null,
     ready&&H.AI.models&&H.AI.models.length>1?h('div',{class:'fld'},h('label',null,'Model'),h('select',{id:'ai-model','aria-label':'Model',onchange:e=>pickModel(H.AI.kind+'|'+e.target.value)},...H.AI.models.map(x=>h('option',{value:x,selected:x===H.AI.cfg.model},x)))):null,
-    O('app','Use your AI app','Claude, ChatGPT, Gemini, Grok, Cursor and more. Your subscription works, no key to paste.',appBody),O('key','Use an API key','Claude, OpenAI, Gemini or OpenRouter.',()=>[...keyBody(),h('div',{class:'as-or'},h('b',null,'No key? '),...orBody())]),O('local','Free and private','Ollama or LM Studio on this computer.',localBody),
+    O('app','Use your AI app','Claude, ChatGPT, Gemini, Copilot, Grok, Cursor and more. Your subscription works, no key to paste.',appBody),O('key','Use an API key','Claude, OpenAI, Gemini or OpenRouter.',()=>[...keyBody(),h('div',{class:'as-or'},h('b',null,'No key? '),...orBody())]),O('local','Free and private','Ollama or LM Studio on this computer.',localBody),
     back?h('button',{class:'btn sm ghost',id:'ai-back',onclick:()=>{V.setup=false;V.err=null;paint();}},'Back to chat'):null];}
 function paintSetup(){const s=$('.as-setup');if(!s)return;const keep=[...s.querySelectorAll('input[id]')].map(i=>[i.id,i.value,i===document.activeElement]);s.replaceChildren(...setupEl().filter(Boolean));for(const[id,v,f]of keep){const i=$('#'+id);i&&v&&(i.value=v,f&&i.focus());}}
 function chipEl(){const b=bridgeMode(),st=bst().st||{},ok=H.AI.ready||b&&st.state==='connected',busy=V.busy,nm=busy?(V.msg||'Connecting…'):H.AI.ready?(H.AI.kind==='browser'||H.AI.kind==='chrome'?H.AI.label:prettyModel(H.AI.cfg.model)||H.AI.label):b?(st.state==='connected'?(st.clients||['Your app'])[0]:'Your AI app'):V.err&&configured()?'Not connected':'No AI connected',sw=busy?'':ok?'connected':b?'waiting':configured()?'not connected':'';
