@@ -1,3 +1,8 @@
+## 2026-10-24 — Amni-Learn apps: live content updates
+- **The Android and iOS apps now update their activities from amni-scient.com.** When the app opens, it checks for new or fixed activities and downloads only the files that changed (each one is checked against the site's list). They apply the next time you come back to the menu, so new sections like Math Crossword arrive without waiting for an app-store update. Without internet, the app keeps using what it has.
+- **iOS now has every Amni-Learn section:** Play & Learn, Music Studio, Study Around the World, Test Prep and all of Healthy Mind, including Math Crossword.
+- Math Crossword squares stay larger on short, wide screens.
+
 ## 2026-10-23 — Amni-Learn: Math Crossword
 - **New Math Crossword** in Healthy Mind at the Brain Exercise, Destress Arcade and College Prep levels. Place number tiles in the empty squares so every equation, across and down, is true. Finished equations turn green; wrong ones turn red.
 - Easy (+ and −, up to 20), Medium (adds ×, up to 50), Hard (adds ÷, up to 99) and Expert (up to 144), plus a Daily puzzle with a streak. Each puzzle is new, and any arrangement that makes every equation true counts as solved.

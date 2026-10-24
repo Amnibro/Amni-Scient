@@ -29,7 +29,7 @@ const CSS=`
 .mx-mode{display:flex;flex-direction:column;gap:4px;align-items:center;padding:14px;min-height:5.5rem;border-radius:var(--ui-r,14px);border:2px solid var(--ui-border,#2A303A);background:var(--ui-surface,#161A21);color:inherit;cursor:pointer;font:700 1.15rem var(--ui-sans,system-ui)}
 .mx-mode small{font-weight:600;font-size:.85rem;color:var(--ui-muted,#A3ABBA)}
 .mx-mode.day{border-color:var(--lv,#38BDF8)}
-.mx-grid{--g:3px;--c:max(1.5rem,min(3.4rem,calc((min(100vw,1068px) - 68px) / var(--w) - var(--g)),calc((100dvh - 400px) / var(--h) - var(--g))));display:grid;grid-template-columns:repeat(var(--w),var(--c));grid-template-rows:repeat(var(--h),var(--c));gap:var(--g);justify-content:center;touch-action:manipulation}
+.mx-grid{--g:3px;--c:max(1.5rem,min(3.4rem,calc((min(100vw,1068px) - 68px) / var(--w) - var(--g)),max(2.2rem,calc((100dvh - 340px) / var(--h) - var(--g)))));display:grid;grid-template-columns:repeat(var(--w),var(--c));grid-template-rows:repeat(var(--h),var(--c));gap:var(--g);justify-content:center;touch-action:manipulation}
 .mx-c{display:flex;align-items:center;justify-content:center;border-radius:calc(var(--c)*.18);font:800 calc(var(--c)*.47) var(--ui-sans,system-ui);font-variant-numeric:tabular-nums;padding:0;border:2px solid transparent;color:inherit;transition:background .2s,border-color .2s}
 .mx-n{background:var(--ui-surface-2,#1E232B);border-color:var(--ui-border,#2A303A)}
 .mx-o{color:var(--ui-muted,#A3ABBA)}
@@ -46,7 +46,7 @@ const CSS=`
 .mx-t:disabled{visibility:hidden}
 .mx-fb{min-height:1.5em;font-weight:700}
 .mx-best{color:#F59E0B;font-weight:800}
-@media (max-width:520px){.hub-card.mx{padding:12px 8px}.mx-grid{--g:2px;--c:max(1.5rem,min(3.4rem,calc((100vw - 52px) / var(--w) - var(--g)),calc((100dvh - 400px) / var(--h) - var(--g))))}.mx .hub-btn{padding:10px 14px}}
+@media (max-width:520px){.hub-card.mx{padding:12px 8px}.mx-grid{--g:2px;--c:max(1.5rem,min(3.4rem,calc((100vw - 52px) / var(--w) - var(--g)),max(2.2rem,calc((100dvh - 340px) / var(--h) - var(--g)))))}.mx .hub-btn{padding:10px 14px}}
 html.a11y-rm .mx-c{transition:none}
 `;
 H.category({id:'mind',icon:'🌿',title:'Healthy Mind',top:'6'});
