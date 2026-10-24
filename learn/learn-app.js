@@ -3350,6 +3350,7 @@
     if (isWebView || isFile || isStandalone || /; ?wv\)/.test(ua)) {
       document.body.classList.add('in-app');
     }
+    if (/[?&]native=1/.test(location.search) || (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.amni)) document.body.classList.add('native-app');
   })();
 
   function initLifeGame(subgame) {
