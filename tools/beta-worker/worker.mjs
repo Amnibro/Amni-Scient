@@ -1,4 +1,4 @@
-export const APPS = ['crypt', 'chat', 'learn', 'map', 'type', 'contaigion', 'humainity', 'haven', 'pompom', 'future'], DEVICES = ['android', 'iphone', 'both'], MAX_BODY = 2048, RL_LIMIT = 10, RL_TTL = 3600, CAP = 50000, SOURCES = ['link', 'reply', 'admin', 'bounce']
+export const APPS = ['crypt', 'chat', 'learn', 'map', 'type', 'contaigion', 'humainity', 'haven', 'pompom', 'waystone', 'future'], DEVICES = ['android', 'iphone', 'both'], MAX_BODY = 2048, RL_LIMIT = 10, RL_TTL = 3600, CAP = 50000, SOURCES = ['link', 'reply', 'admin', 'bounce']
 const KEYS = new Set(['email', 'apps', 'device', 'handle', 'consent', 'website'])
 const EMAIL = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/
 const HANDLE = /^[\p{L}\p{N} ._'-]{1,40}$/u

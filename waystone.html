@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Waystone &mdash; A Co-op Climbing Roguelite for Android and iPhone | AMNI-SCIENT</title>
+<meta name="description" content="Waystone is a co-op climbing roguelite for Android and iPhone. Climb a procedurally generated mountain with friends: manage grip, bank ore at campfires, gamble on chests and shrines, and light the summit beacon before the night catches you.">
+<meta property="og:title" content="Waystone &mdash; a co-op climbing roguelite">
+<meta property="og:description" content="Waystone is a co-op climbing roguelite for Android and iPhone. Climb a procedurally generated mountain with friends: manage grip, bank ore at campfires, gamble on chests and shrines, and light the summit beacon before the night catches you.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/waystone.html">
+<meta property="og:image" content="https://amni-scient.com/assets/waystone/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Waystone &mdash; a co-op climbing roguelite">
+<meta name="twitter:description" content="Climb a procedurally generated mountain with friends. Android and iPhone betas.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/waystone/og.jpg">
+<link rel="canonical" href="https://amni-scient.com/waystone.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Waystone","url":"https://amni-scient.com/waystone.html","image":"https://amni-scient.com/assets/waystone/og.jpg","description":"Waystone is a co-op climbing roguelite for Android and iPhone. Climb a procedurally generated mountain with friends: manage grip, bank ore at campfires, gamble on chests and shrines, and light the summit beacon before the night catches you.","genre":["Roguelite","Climbing","Co-op"],"playMode":["SinglePlayer","CoOp"],"gamePlatform":["Android","iOS"],"author":[{"@type":"Person","name":"ancsemi","url":"https://github.com/ancsemi"},{"@type":"Person","name":"amnibro","url":"https://github.com/Amnibro"}],"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b263">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.ws-hero-media{max-width:1080px;margin:2rem auto 0;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:#0d1320;aspect-ratio:1434/660}
+.ws-hero-media img{width:100%;height:100%;object-fit:cover;display:block}
+.ws-beta{font-size:1.05rem;padding:1rem 1.6rem}
+.ws-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:1.4rem}
+.ws-credits{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:1.2rem}
+.ws-credit{border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;background:var(--panel)}
+.ws-credit b{display:block;font-size:1.05rem;color:var(--text)}
+.ws-credit span{display:block;margin-top:.3rem;color:var(--text-soft);font-size:.92rem}
+</style>
+</head>
+<body class="pp theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html" class="active">WAYSTONE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<div class="product-hero">
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">Waystone</h1>
+<p class="desc">CLIMB &bull; GAMBLE &bull; BANK &bull; SUMMIT</p>
+<div class="cta-row" style="margin-top:2rem">
+<a href="beta-apk.html" class="btn btn-primary ws-beta">ANDROID: SIGN UP FOR THE APK</a>
+<a href="beta.html#app-waystone" class="btn btn-outline ws-beta">IPHONE: TESTFLIGHT SOON</a>
+</div>
+<p style="color:var(--dim);font-size:.8rem;margin-top:.9rem;letter-spacing:.05em">Free beta for Android and iPhone. Co-op with friends on the same network.</p>
+<div class="ws-hero-media"><img src="assets/waystone/hero.webp" width="1434" height="660" alt="The Waystone massif rising from the sea, ringed by floating islands, green and mossy below and icy near the top"></div>
+</div>
+<section style="max-width:980px;margin:0 auto">
+<p style="color:var(--text-soft);line-height:1.7">Waystone is a co-op climbing roguelite. Every expedition is a new mountain: a seeded, procedurally generated massif rising out of the sea, ringed by floating islands, sea spires and stone bridges. Climb it hand over hand, manage your grip, carry ore up the faces and decide when to bank it at a campfire and when to risk it all for the greed bonus at the summit. Light the beacon and everyone wins. Fall, and you lose what you were carrying.</p>
+<div class="features" style="margin-top:2rem">
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l6-11 4 6 3-4 5 9z"/></svg></div>
+<h4>FOUR ZONES, ONE CLIMB</h4>
+<p>Saltcliff Shore, Mossback Gorge, The Rime and Cinder Crown, each with its own weather, from rockfalls and flash floods to biting cold.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
+<h4>GRIP, COLD AND HUNGER</h4>
+<p>Grip drains as you hang on. Injuries, cold and hunger eat into it, so every route up a bad wall is a choice.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="9" width="16" height="11"/><path d="M4 13h16M10 13v3h4v-3"/></svg></div>
+<h4>CHESTS, SHRINES AND RELICS</h4>
+<p>Buy keys before the climb, crack chests on the way up, bargain at shrines and stack relics, from real jackpots to the occasional rubber duck.</p>
+</div>
+<div class="feature">
+<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 20c1-4 9-4 10 0M11 20c1-4 9-4 10 0"/></svg></div>
+<h4>CLIMB TOGETHER</h4>
+<p>Lower a rope to a friend, revive the fallen and share the cost: revived climbers are soul-linked until the next campfire.</p>
+</div>
+</div>
+<h2 style="margin-top:2.4rem">Screenshots</h2>
+<div class="ws-strip">
+<img src="assets/waystone/01_mountain.webp" alt="The massif from the sea: shore cliffs, a mossy middle and icy upper walls" loading="lazy" width="1434" height="660" style="width:100%;height:auto;border-radius:12px">
+<img src="assets/waystone/02_islands.webp" alt="Floating islands drifting around the mountain" loading="lazy" width="1434" height="660" style="width:100%;height:auto;border-radius:12px">
+</div>
+<h2 style="margin-top:2.4rem">More to discover</h2>
+<ul style="color:var(--text-soft);line-height:1.8;margin:1rem 0 0 1.2rem">
+<li><b>Bank or push your luck.</b> Bank ore at a campfire to keep it, or carry it to the summit for two and a half times the haul.</li>
+<li><b>Day and night.</b> Night comes cold and dark, and something walks the mountain. Stay near a fire.</li>
+<li><b>Tools and loadouts.</b> Spend banked ore at Base Camp on tools, tool mods and body upgrades. Everyone carries a glider.</li>
+<li><b>Grades.</b> Push to harder grades for richer ore, better chests and new modifiers.</li>
+<li><b>Music by place.</b> Each zone has its own day and night tracks that drift in now and then while you climb.</li>
+</ul>
+<h2 style="margin-top:2.4rem" id="beta">Join the beta</h2>
+<p style="color:var(--text-soft);line-height:1.7">On Android, <a href="beta-apk.html">sign up for the APK</a> and you'll get the download link the day it's ready. The iPhone beta is coming to TestFlight; its link will be on the <a href="beta.html">beta page</a>. To play together, everyone joins the same Wi-Fi or a phone's hotspot, one player hosts, and the others join. Questions? See <a href="support-waystone.html">support</a>.</p>
+<div class="cta-row" style="margin:2.4rem 0 1rem">
+<a href="beta-apk.html" class="btn btn-primary">ANDROID: GET THE APK</a>
+<a href="support-waystone.html" class="btn btn-outline">SUPPORT</a>
+<a href="privacy-waystone.html" class="btn btn-outline">PRIVACY</a>
+</div>
+<h2 style="margin-top:2.4rem" id="credits">Credits</h2>
+<div class="ws-credits">
+<div class="ws-credit"><b><a href="https://github.com/ancsemi" target="_blank" rel="noopener">@ancsemi</a></b><span>Original game and contributions</span></div>
+<div class="ws-credit"><b><a href="https://github.com/Amnibro" target="_blank" rel="noopener">@amnibro</a></b><span>Design and music contributions</span></div>
+<div class="ws-credit"><b>Amni-Scient</b><span>Publisher</span></div>
+</div>
+<p style="color:var(--dim);font-size:.85rem;margin-top:1.4rem">Waystone collects no data: no ads, no analytics, no accounts.</p>
+</section>
+
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy-waystone.html">PRIVACY</a>
+<a href="support-waystone.html">SUPPORT</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
