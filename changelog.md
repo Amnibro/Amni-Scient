@@ -1,3 +1,8 @@
+## 2026-10-23 — Amni-Learn: Math Crossword
+- **New Math Crossword** in Healthy Mind at the Brain Exercise, Destress Arcade and College Prep levels. Place number tiles in the empty squares so every equation, across and down, is true. Finished equations turn green; wrong ones turn red.
+- Easy (+ and −, up to 20), Medium (adds ×, up to 50), Hard (adds ÷, up to 99) and Expert (up to 144), plus a Daily puzzle with a streak. Each puzzle is new, and any arrangement that makes every equation true counts as solved.
+- Undo, Hint, Clear and Read aloud. An optional timer and best times per difficulty. Leave mid-puzzle and Continue picks it back up. Works offline and fits phone screens.
+
 ## 2026-10-20 — Amni-Learn: natural voice-overs
 - **About 9,600 pre-recorded voice clips** (Kokoro, the same natural "Heart" voice) now cover what Play & Learn, Music, Study Around the World, Healthy Mind, Phonics, Storybook and the kid games say. In those sections 97–100% of spoken lines play a real recording instead of the robotic browser voice. Long passages and changing numbers still use the in-browser natural voice.
 - **Phonics sounds are now correct:** short "a" as in apple, short "o" as in octopus, and the held sounds (sss, mmm, fff, shh, th) are recorded from exact phonemes instead of being spelled out letter by letter. "Star" now blends as s-t-ar.
