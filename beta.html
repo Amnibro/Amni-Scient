@@ -25,7 +25,7 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<link rel="stylesheet" href="css/beta.css?v=b2">
+<link rel="stylesheet" href="css/beta.css?v=b3">
 </head>
 <body class="pp">
 <div class="grid-bg"></div>
@@ -144,7 +144,7 @@
 <p>Learning games for every age, from pre-K letters and counting to STEM labs and quizzes.</p>
 <ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill on">Android: open now</li></ul>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/gnWxJTFg" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="https://play.google.com/apps/testing/com.amnilearn.mobile" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/gnWxJTFg" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="beta-play.html?app=learn">Join on Google Play</a></div>
 </article>
 <article class="b-app" id="app-type">
 <img src="assets/beta/type.webp" width="60" height="60" alt="" loading="lazy">
@@ -153,7 +153,7 @@
 <p>A swipe keyboard that predicts and corrects entirely on your phone. Nothing you type is sent anywhere.</p>
 <ul class="b-pills"><li class="b-pill on">iPhone: open now</li><li class="b-pill on">Android: open now</li></ul>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/yTvRRNSE" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="https://play.google.com/apps/testing/com.amniscient.type" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/yTvRRNSE" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="beta-play.html?app=type">Join on Google Play</a></div>
 </article>
 <article class="b-app" id="app-map">
 <img src="assets/beta/map.webp" width="60" height="60" alt="" loading="lazy">
@@ -172,7 +172,7 @@
 <p>Lock files on your phone with strong encryption. The keys and the files stay on the device.</p>
 <ul class="b-pills"><li class="b-pill on">Android: open now</li><li class="b-pill off">iPhone: later</li></ul>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://play.google.com/apps/testing/com.amnicrypt" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="beta-play.html?app=crypt">Join on Google Play</a></div>
 </article>
 <article class="b-app" id="app-pompom">
 <img src="assets/beta/pompom.webp" width="60" height="60" alt="" loading="lazy">
@@ -201,7 +201,7 @@
 <p>A strategy game where you guide a runaway AI across the world, one outbreak at a time.</p>
 <ul class="b-pills"><li class="b-pill on">Android: open now</li><li class="b-pill off">iPhone: later</li></ul>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://play.google.com/apps/testing/com.amni.contaigion" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="beta-play.html?app=contaigion">Join on Google Play</a></div>
 </article>
 <article class="b-app" id="app-humainity">
 <img src="assets/beta/humainity.webp" width="60" height="60" alt="" loading="lazy">
@@ -210,7 +210,7 @@
 <p>Rally humanity and take the world back from the machines. It&rsquo;s the sister game to ContAIgion.</p>
 <ul class="b-pills"><li class="b-pill on">Android: open now</li><li class="b-pill off">iPhone: later</li></ul>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://play.google.com/apps/testing/com.amni.humainity" target="_blank" rel="noopener">Join on Google Play</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="beta-play.html?app=humainity">Join on Google Play</a></div>
 </article>
 </div>
 </section>
@@ -226,7 +226,7 @@
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></div>
 <h4>Become a tester</h4>
-<p>Open an app&rsquo;s Google Play test link and tap <em>Become a tester</em>. Group members are let in right away, no waiting.</p>
+<p>Tap an app&rsquo;s <em>Join on Google Play</em> button, join the testers group once, then tap <em>Become a tester</em>. You&rsquo;re in right away, no waiting.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18"/><path d="M11 17h2"/></svg></div>
@@ -313,7 +313,8 @@
 <p id="beta-done-msg">Thank you! You can start testing right away.</p>
 <div id="beta-done-play" hidden>
 <h4>On Android, open now</h4>
-<p>First <a href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">join the testers group</a> while signed in to <strong id="beta-done-email"></strong>. Then open each link on your phone, tap <em>Become a tester</em>, and install the app from Google Play.</p>
+<p>Open these on your phone, signed in to <strong id="beta-done-email"></strong> in the Play Store. Join the testers group once, tap <em>Become a tester</em>, then install. You&rsquo;re in right away.</p>
+<p><a class="btn btn-primary b-sm" href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">1. Join the testers group</a></p>
 <ul class="b-links" id="beta-done-links"></ul>
 </div>
 <div id="beta-done-tf" hidden>
@@ -392,6 +393,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="js/beta.js?v=b2" defer></script>
+<script src="js/beta.js?v=b3" defer></script>
 </body>
 </html>
