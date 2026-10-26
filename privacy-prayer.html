@@ -83,18 +83,22 @@
 <p class="effective">Effective Date: 2026-04-27 &nbsp;|&nbsp; Last Updated: 2026-04-27</p>
 <p>This privacy policy describes how Amni-Prayer (Imago Nuntii Divini), a browser-based 3D nodal scripture map developed by Amni-Scient, handles user information.</p>
 <h2>1. DATA WE COLLECT</h2>
-<p><strong>We collect no personal data.</strong> Amni-Prayer has no accounts, no login, no analytics, and no Amni-Scient-operated server that receives user data. Bible text (35,817 verses) and the cross-reference graph (64,497 cross-references) are embedded in the static page bundle.</p>
+<p><strong>We collect no personal data.</strong> Amni-Prayer has no accounts, no login, no analytics, and no Amni-Scient-operated server that receives user data. Scripture texts, the link graph and the search indexes are static files served with the page.</p>
 <h2>2. DATA HANDLING</h2>
-<p>Reading state, last verse, layout choice, and bookmarks (if any) are stored in your browser's <code>localStorage</code>. Tandem reading mode, pattern analysis, and cross-reference rendering all run client-side via JavaScript and Three.js.</p>
+<p>Reading state, last verse, layout choice, and bookmarks (if any) are stored in your browser's <code>localStorage</code>. Search, comparison, correlation, pattern analysis and rendering all run client-side in a WebAssembly module and WebGL2.</p>
 <h2>3. THIRD-PARTY SERVICES</h2>
 <h3>3.1 Google AdSense (landing page only)</h3>
-<p>The Amni-Prayer landing page at <code>amni-scient.com/amni-prayer.html</code> displays a Google AdSense banner. The interactive scripture map at <code>/prayer/</code> shows the Ko-fi support panel rather than ads. AdSense data is collected and processed by Google per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+<p>The Amni-Prayer landing page at <code>amni-scient.com/amni-prayer.html</code> displays a Google AdSense banner. The interactive scripture map at <code>/prayer/</code> shows no ads. AdSense data is collected and processed by Google per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
 <h3>3.2 Optional In-Browser AI</h3>
 <p>Amni-Prayer offers an optional in-browser AI panel for verse exploration via WebLLM (MLC). When enabled, the chosen model (Qwen, SmolLM2, etc.) is downloaded from MLC's CDN and runs entirely in your browser. Prompts and replies do not leave your device.</p>
-<h3>3.3 Three.js CDN</h3>
-<p>The 3D nodal renderer loads Three.js from a public CDN (jsDelivr) at first use; CDN access logs may include your IP per the CDN's policy. After first load the asset is browser-cached.</p>
+<h3>3.3 Optional Meaning Search</h3>
+<p>When you turn on &asymp; Meaning search, the page loads the Transformers.js library from a public CDN (jsDelivr) and a small embedding model (Snowflake Arctic Embed S) from Hugging Face. Both are cached by your browser. Your search text is processed on your device and is not sent to any server.</p>
+<h3>3.4 Google Fonts</h3>
+<p>Fonts for Hebrew, Arabic, Devanagari, Chinese and Gurmukhi text are loaded from Google Fonts; Google may log your IP per <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>.</p>
+<h3>3.5 Optional Local AI</h3>
+<p>If you configure a local AI server (such as Amni-Ai) in the Discuss panel, your questions and the selected verse are sent to the address you enter, which by default is on your own computer.</p>
 <h2>4. CONTENT</h2>
-<p>Bible text is public-domain Catholic scripture. Cross-references reflect the developer's analytic graph (see the <a href="terms.html#prayer">Amni-Prayer terms addendum</a>). Amni-Prayer is not affiliated with any church or denomination.</p>
+<p>Bible text is the public-domain Douay-Rheims Catholic Bible; other scriptures use public-domain texts and translations, with the Arabic Qur&rsquo;an text from the Tanzil Project (tanzil.net). Cross-references reflect the developer's analytic graph (see the <a href="terms.html#prayer">Amni-Prayer terms addendum</a>). Amni-Prayer is not affiliated with any church or denomination.</p>
 <h2>5. CHILDREN'S PRIVACY</h2>
 <p>Amni-Prayer is not directed at children under 13 specifically; it contains no age-restricted content. Because we collect no information, no information from any user is processed.</p>
 <h2>6. YOUR RIGHTS</h2>
