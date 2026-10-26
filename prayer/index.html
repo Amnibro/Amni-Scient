@@ -2,19 +2,33 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Imago Nuntii Divini — Bible Pointcloud</title>
-<meta name="description" content="Imago Nuntii Divini: the Catholic Bible as an interactive 3D point cloud of verses and cross-references, running entirely in your browser.">
-<link rel="stylesheet" href="style.css?v=b260"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Amni Prayer — Scripture as a cosmos of light</title>
+<meta name="description" content="Amni Prayer: the Catholic Bible and six other scriptures as interactive 3D point clouds of verses and links, with comparison, meaning search, correlation and prayer — running entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Sans+Gurmukhi&family=Noto+Serif+Devanagari&family=Noto+Serif+Hebrew&family=Noto+Serif+TC&display=swap"/>
+<link rel="stylesheet" href="style.css?v=h1"/>
 </head>
-<body>
+<body data-faith="catholic">
 <div id="ui">
-  <h1>Imago Nuntii Divini</h1>
-  <p class="sub">35,817 verses · 64,497 cross-references · OT + NT<br><span style="opacity:0.4;font-size:0.65rem">Click = select/zoom · Double-click = read chapter · Click empty = deselect</span></p>
-  <div id="legend">
-    <span class="ot-dot"></span> Old Testament
-    <span class="nt-dot"></span> New Testament
+  <div id="title-row">
+    <button id="faithBtn" title="Choose a scripture"><span id="faith-sym">&#x271D;</span> <span id="faith-label">Catholic</span> &#x25BE;</button>
+    <button id="menuBtn" title="Show controls" aria-label="Show controls">&#x2630;</button>
   </div>
+  <h1 id="app-title">Amni Prayer</h1>
+  <p class="sub"><span id="app-sub"></span><br><span class="hint">Click = select · Double-click = read chapter · Click empty = deselect</span></p>
+  <div id="search-row">
+    <div id="search-wrap">
+      <input type="text" id="search-input" placeholder="Search a reference or a word&hellip;" autocomplete="off" spellcheck="false"/>
+      <div id="search-hits" role="listbox"></div>
+    </div>
+    <button id="search-btn">Find</button>
+    <button id="meaning-btn" title="Search by meaning (runs a small model in your browser)">&#x2248; Meaning</button>
+  </div>
+  <div id="search-result"></div>
+  <div id="menu">
+  <div id="legend"></div>
   <div id="controls">
     <label>Edges <input type="checkbox" id="showEdges" checked/></label>
     <label>Spin <input type="checkbox" id="autoRotate" checked/></label>
@@ -37,66 +51,27 @@
       <option value="kind">Kinds</option>
       <option value="degree">Nexus</option>
       <option value="flat">Plane</option>
+      <option value="chrono">Chronology</option>
     </select></label>
-    <button id="tandemBtn" title="Split view: book text + visualizer + connected passages">&#x21E8; TANDEM</button>    <label style="gap:5px;align-items:center">&#x03B1; <input type="range" id="alphaSlider" min="0.1" max="2.0" step="0.05" value="1.0" style="width:58px;vertical-align:middle;accent-color:#f0c850" title="Node / edge brightness"/></label>
-    <button id="patternsBtn" title="Theological pattern analysis for selected verse">&#x2726; PATTERNS</button>
-    <button id="discussBtn" title="Discuss this passage with the AI guide">&#x2756; DISCUSS</button>
-    <button id="prayBtn" title="Catholic prayers in Latin and English">&#x271D; PRAY</button></div>
-  <div id="search-row">
-    <div id="search-wrap">
-    <input type="text" id="search-input" placeholder="Jn 3:16, love, Mary, Sinai&hellip;" autocomplete="off" spellcheck="false"/>
-    <div id="search-hits" role="listbox"></div>
-    </div>
-    <button id="search-btn">Find</button>
-    <span id="search-result"></span>
+    <label id="linkModeWrap">Links <select id="linkMode"><option value="0">Cross-refs</option><option value="1">Meaning</option><option value="2" selected>Both</option></select></label>
+    <label class="alpha">&#x03B1; <input type="range" id="alphaSlider" min="0.1" max="2.0" step="0.05" value="1.0" title="Node / edge brightness"/></label>
+  </div>
+  <div id="tools">
+    <button id="tandemBtn" title="Split view: book text + visualizer + connected passages">&#x21E8; TANDEM</button>
+    <button id="patternsBtn" title="Pattern analysis for the selected verse">&#x2726; PATTERNS</button>
+    <button id="compareBtn" title="Compare the selected verse with parallels and other scriptures">&#x21C4; COMPARE</button>
+    <button id="correlateBtn" title="Book and chapter correlation heatmap">&#x25A6; CORRELATE</button>
+    <button id="pathBtn" title="Find the chain of links between two verses">&#x26D3; FIND LINKS</button>
+    <button id="discussBtn" title="Discuss this passage with the guide">&#x2756; DISCUSS</button>
+    <button id="prayBtn" title="Prayers">&#x1F56F; PRAY</button>
+    <button id="bridgeBtn" title="What the Catholic Church teaches" style="display:none">&#x271D; THE CHURCH</button>
   </div>
   <div id="book-legend"></div>
-  <div id="radial-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Concentric era rings &middot; Pentateuch at center &middot; Revelation at edge<br>Books spaced within each ring &middot; chapters radiate outward</span>
+  <div id="mode-legend"></div>
   </div>
-  <div id="spiral-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Golden Fibonacci spiral &middot; Genesis at core &middot; Revelation at outer arm<br>Sunflower pattern &middot; divine order in creation</span>
-  </div>
-  <div id="sabbath-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Seven branches &middot; creation&rsquo;s sevenfold rhythm<br>&#x1F54A; Light &middot; &#x1F30A; Expanse &middot; &#x1F33F; Fruitful &middot; &#x2606; Luminaries &middot; &#x1F41F; Creatures &middot; &#x1F464; Humanity &middot; &#x1F54E; Rest</span>
-  </div>
-  <div id="helix-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Double helix &middot; OT and NT as intertwined strands<br>Cross-references bridge the two Testaments &middot; 8 turns Genesis&rarr;Revelation</span>
-  </div>
-  <div id="crown-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">12-fold crown &middot; tribes &rarr; apostles &rarr; gates of New Jerusalem<br>Peaks and valleys &middot; pivotal verses rise like gems</span>
-  </div>
-  <div id="iam-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Radiant bloom &middot; sinusoidal helix rising upward<br>Mass-weighted z-depth &middot; auto-rotating ascent</span>
-  </div>
-  <div id="graph-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Nodes cluster by cross-reference proximity<br>Connected verses pull together · Slow spin</span>
-  </div>
-  <div id="waterfall-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">← OT (Genesis→Malachi) &nbsp;|&nbsp; NT (Matthew→Revelation) →<br>↕ canonical order · ★ pivotal nodes float forward</span>
-  </div>
-  <div id="clean-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">BFS-ordered grid · median crossing reduction · fewest edge crossings<br>Edges visible at higher opacity · Pivotal nodes float on z-axis</span>
-  </div>
-  <div id="voice-legend" style="display:none">
-    <span style="opacity:0.6;font-size:0.65rem">Verses sorted by voice &amp; kind &mdash; top to bottom:</span><br>
-    <span style="font-size:0.65rem"><span style="color:#f0c850">Parable</span> &middot; <span style="color:#60ff90">Praise &amp; Song</span> &middot; <span style="color:#ff6060">Prophecy</span> &middot; <span style="color:#cc60ff">Vision</span> &middot; <span style="color:#60aaff">Apostolic</span> &middot; <span style="color:#40ddcc">Acts</span> &middot; <span style="color:#ffa030">Gospel</span> &middot; <span style="color:#ffcc88">Law &amp; Covenant</span> &middot; <span style="color:#8899aa">Narrative</span></span>
-  </div>
-  <div id="book-layout-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Clusters by book &middot; OT top row &middot; NT bottom row &middot; cluster size = verse count</span>
-  </div>
-  <div id="kind-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Clusters by literary kind &middot; narrative at center &middot; types orbit outward</span>
-  </div>
-  <div id="degree-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Concentric rings by cross-reference count &middot; hub nodes at center &middot; isolated nodes at edge</span>
-  </div>
-  <div id="flat-legend" style="display:none">
-    <span style="opacity:0.5;font-size:0.7rem">Force-directed flat plane &middot; z=0 &middot; connected nodes pull together &middot; edges fully visible</span>
-  </div>
-  <div id="tooltip"></div>
-  <div id="stats"></div>
 </div>
+<div id="tooltip"></div>
+<div id="stats"></div>
 <div id="discuss-panel" style="display:none">
   <div id="discuss-header"><span>&#x2756; DISCUSS <span id="adam-badge" title="Click to configure local AI" style="font-size:0.6rem;opacity:0.5;margin-left:4px;cursor:pointer">&#x25CF; local</span> <button id="ai-setup-btn" title="Configure local AI (Amni-Ai)">&#x2699;</button></span><button id="discuss-close">&#x2715;</button></div>
   <div id="discuss-log"></div>
@@ -182,9 +157,9 @@
 </div>
 <div id="pray-panel" style="display:none">
   <div id="pray-header">
-    <span id="pray-title">&#x271D; PRAYERS</span>
+    <span id="pray-title"><span id="pray-sym">&#x271D;</span> PRAYERS</span>
     <div class="pray-header-actions">
-      <button id="pray-lang-btn" title="Toggle Latin / English / Both" data-lang="both">BOTH</button>
+      <button id="pray-lang-btn" title="Toggle original / English / both" data-lang="both">BOTH</button>
       <button id="pray-close">&#x2715;</button>
     </div>
   </div>
@@ -220,7 +195,7 @@
   </div>
 </div>
 <div id="patterns-panel" style="display:none">
-  <div class="tandem-conn-title" style="color:#c89eff">&#x2726; PATTERN ANALYSIS</div>
+  <div class="tandem-conn-title pat-header">&#x2726; PATTERN ANALYSIS</div>
   <div id="patterns-body"></div>
 </div>
 <div id="tandem-wrapper" style="display:none">
@@ -238,7 +213,40 @@
   </div>
   <div id="book-panel-body"></div>
 </div>
+<div id="compare-panel" class="side-panel" style="display:none">
+  <div class="panel-head"><span>&#x21C4; COMPARE</span><button id="compare-close">&#x2715;</button></div>
+  <div id="compare-body" class="panel-body"></div>
+</div>
+<div id="correlate-panel" class="side-panel wide" style="display:none">
+  <div class="panel-head"><span>&#x25A6; CORRELATE</span><span class="head-tools"><select id="cor-mode"><option value="0">by links</option><option value="1">by meaning</option></select><button id="correlate-close">&#x2715;</button></span></div>
+  <div class="panel-body">
+    <div id="cor-title" class="dim"></div>
+    <div id="cor-wrap"><canvas id="cor-canvas" width="8" height="8"></canvas></div>
+    <div class="cor-scale"><span>weaker</span><i></i><span>stronger</span><span class="dim">· gray = same book</span></div>
+    <div id="cor-hover" class="dim">Hover a cell</div>
+    <div id="cor-pairs"></div>
+  </div>
+</div>
+<div id="path-panel" class="side-panel" style="display:none">
+  <div class="panel-head"><span>&#x26D3; FIND LINKS</span><button id="path-close">&#x2715;</button></div>
+  <div class="panel-body">
+    <div class="path-row"><input type="text" id="path-to" placeholder="to: a reference or a word&hellip;" autocomplete="off" spellcheck="false"/><button id="path-go">GO</button></div>
+    <div id="path-body"></div>
+  </div>
+</div>
+<div id="bridge-panel" class="side-panel" style="display:none">
+  <div class="panel-head"><span>&#x271D; WHAT THE CHURCH TEACHES</span><button id="bridge-close">&#x2715;</button></div>
+  <div id="bridge-body" class="panel-body"></div>
+</div>
+<div id="faith-panel" style="display:none">
+  <div class="faith-box">
+    <div class="panel-head"><span>CHOOSE A SCRIPTURE</span><button id="faith-close">&#x2715;</button></div>
+    <div id="faith-grid"></div>
+    <p class="faith-note"><b>Made by a Catholic.</b> The Catholic Bible is home. Each other scripture is presented on its own terms, with its own text and prayers, and with clearly labeled Catholic notes you can read or ignore.</p>
+  </div>
+</div>
 <canvas id="canvas"></canvas>
+<svg id="chron-axis" aria-hidden="true"></svg>
 <div id="intro-loader" aria-hidden="true">
   <div class="intro-stage-bg"></div>
   <div class="intro-wrap">
@@ -292,7 +300,7 @@
         <line x1="110" y1="10" x2="110" y2="22" transform="rotate(315 110 110)"/>
         <line x1="110" y1="10" x2="110" y2="22" transform="rotate(345 110 110)"/>
       </g>
-      <g class="rw-core">
+      <g class="rw-core rw-cross">
         <circle cx="110" cy="110" r="22" fill="url(#rw-center)" opacity="0.85"/>
         <circle cx="110" cy="110" r="22" fill="none" stroke="#f0c850" stroke-width="1.2"/>
         <g stroke="#2a1d08" stroke-width="2.6" stroke-linecap="round">
@@ -301,23 +309,16 @@
         </g>
       </g>
     </svg>
-    <h1 class="intro-title">Imago Nuntii Divini</h1>
-    <div class="intro-sub">A Bible-Cosmos Visualization &middot; 35,817 Verses</div>
-    <div class="intro-latin" id="intro-latin">In principio erat Verbum</div>
+    <div id="rw-sym" aria-hidden="true"></div>
+    <h1 class="intro-title" id="intro-title">Amni Prayer</h1>
+    <div class="intro-sub" id="intro-sub">Scripture as a cosmos of light</div>
+    <div class="intro-latin" id="intro-latin"></div>
     <div class="intro-progress-wrap">
       <div class="intro-progress-bar"><div id="intro-progress-fill"></div></div>
-      <div id="intro-stage">Gathering the scriptures&hellip;</div>
+      <div id="intro-stage">Awakening the engine&hellip;</div>
     </div>
   </div>
 </div>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
-  }
-}
-</script>
-<script type="module" src="main.js"></script>
+<script type="module">import {start} from './helium.js'; start({wasm: 'prayer.wasm'});</script>
 </body>
 </html>
