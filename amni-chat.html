@@ -19,6 +19,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/beta/og-beta.png">
 <link rel="canonical" href="https://amni-scient.com/amni-chat">
 <link rel="stylesheet" href="css/style.css?v=b264">
+<link rel="stylesheet" href="css/beta.css?v=b7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -108,7 +109,7 @@
 <h1>AMNI-CHAT</h1>
 <p class="desc">BETA &bull; ANDROID, IPHONE, WEB &bull; TEXT, CALLS, SCREENSHARE</p>
 <div class="cta-row">
-<a href="beta.html#app-chat" class="btn btn-primary">GET THE BETA</a>
+<a href="#beta" class="btn btn-primary">GET THE BETA</a>
 <a href="amni-chat-relay.html" class="btn btn-outline">RUN YOUR OWN RELAY</a>
 </div>
 </div>
@@ -199,6 +200,11 @@
 <p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">Messages are sealed to keys that each device replaces every week and then erases, so keys stolen later can&rsquo;t open older messages. There&rsquo;s no per-message ratchet yet: someone who takes a device can read what it received in the last few weeks.</p>
 <p style="color:var(--dim);max-width:640px;margin:0;font-size:.95rem">Encryption hides what you say, not that you&rsquo;re online: a relay, and your network, can see when your device connects. The license is AGPL-3.0; the source code isn&rsquo;t public yet.</p>
 </section>
+<section id="beta">
+<h2>JOIN THE BETA</h2>
+<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.95rem">On iPhone, <a href="https://testflight.apple.com/join/PUQxysvc" target="_blank" rel="noopener">join on TestFlight</a>. On Android, <a href="downloads/amni-chat-beta.apk" download="Amni-Chat.apk">download the APK</a>. Sign up here and I&rsquo;ll send you new builds and let you know when the Google Play test opens.</p>
+<div class="b-panel b-solo" id="beta-signup" data-apps="chat"></div>
+</section>
 <section>
 <h2>SPECIFICATIONS</h2>
 <table class="spec-table">
@@ -238,5 +244,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. Amni-Chat is licensed AGPL-3.0.</p>
 </footer>
+<script src="js/beta.js?v=b4" defer></script>
 </body>
 </html>

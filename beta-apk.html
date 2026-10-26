@@ -25,7 +25,7 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<link rel="stylesheet" href="css/beta.css?v=b2">
+<link rel="stylesheet" href="css/beta.css?v=b7">
 </head>
 <body class="pp">
 <div class="grid-bg"></div>
@@ -135,10 +135,10 @@
 <div>
 <h3><a href="waystone.html">Waystone</a></h3>
 <p>A co-op climbing roguelite. A new mountain every expedition: manage your grip, bank ore at campfires and light the summit beacon with friends.</p>
-<ul class="b-pills"><li class="b-pill off">Android: APK soon</li><li class="b-pill off">iPhone: TestFlight soon</li></ul>
+<ul class="b-pills"><li class="b-pill off">Android: APK soon</li><li class="b-pill on">iPhone &amp; iPad: open now</li></ul>
 <p class="b-note">Sign up and I&rsquo;ll email you the download link the day the Android build is ready.</p>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="#signup" data-app="waystone">Sign up for the APK</a><a class="btn btn-outline b-sm" href="waystone.html">About the game</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="#signup" data-app="waystone">Sign up for the APK</a><a class="btn btn-outline b-sm" href="https://testflight.apple.com/join/hSqUwnTr" target="_blank" rel="noopener">iPhone: TestFlight</a></div>
 </article>
 <article class="b-app" id="app-chat">
 <img src="assets/beta/chat.webp" width="60" height="60" alt="" loading="lazy">
@@ -191,52 +191,7 @@
 <section id="signup" aria-labelledby="signup-h">
 <h2 id="signup-h">Sign up</h2>
 <div class="b-signup">
-<div class="b-panel">
-<form id="beta-form" data-device="android" novalidate>
-<div class="b-field">
-<label for="bf-email">Email</label>
-<input class="b-input" id="bf-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="254" required aria-describedby="bf-email-hint bf-email-err">
-<p class="b-hint" id="bf-email-hint">Any email you check. Download links and new builds go here.</p>
-<p class="b-err" id="bf-email-err" hidden></p>
-</div>
-<fieldset class="b-field" aria-describedby="bf-apps-hint bf-apps-err">
-<legend>APKs to get</legend>
-<p class="b-hint" id="bf-apps-hint">Pick the apps you want. The last box is for apps that aren&rsquo;t out yet.</p>
-<div class="b-checks">
-<label class="b-check"><input type="checkbox" name="apps" value="pompom" checked><img src="assets/beta/pompom.webp" width="28" height="28" alt="" loading="lazy">Pom-Pom Grove</label>
-<label class="b-check"><input type="checkbox" name="apps" value="waystone" checked><img src="assets/beta/waystone.webp" width="28" height="28" alt="" loading="lazy">Waystone</label>
-<label class="b-check"><input type="checkbox" name="apps" value="chat"><img src="assets/beta/chat.webp" width="28" height="28" alt="" loading="lazy">Amni-Chat</label>
-<label class="b-check"><input type="checkbox" name="apps" value="map"><img src="assets/beta/map.webp" width="28" height="28" alt="" loading="lazy">Amni-Map</label>
-</div>
-<label class="b-check b-future"><input type="checkbox" name="apps" value="future"><span><strong>Future apps too</strong><br><small>Keep me on the list for new apps as they reach testing. Leave this unticked and I may remove you once the apps above are done.</small></span></label>
-<p class="b-err" id="bf-apps-err" hidden></p>
-</fieldset>
-<div class="b-field">
-<label for="bf-handle">Name or handle <span class="opt">(optional)</span></label>
-<input class="b-input" id="bf-handle" name="handle" type="text" autocomplete="nickname" maxlength="40" aria-describedby="bf-handle-hint bf-handle-err">
-<p class="b-hint" id="bf-handle-hint">So I know who to thank. Letters, numbers, spaces and . _ &rsquo; - only.</p>
-<p class="b-err" id="bf-handle-err" hidden></p>
-</div>
-<div class="b-hp" aria-hidden="true"><label for="bf-website">Leave this empty</label><input id="bf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-<label class="b-consent"><input type="checkbox" id="bf-consent" name="consent" aria-describedby="bf-consent-err"><span>I&rsquo;m 13 or older, and Amni-Scient may use this email to send me beta downloads and contact me about the test. Details are in the <a href="privacy.html#beta-signup">privacy policy</a>.</span></label>
-<p class="b-err" id="bf-consent-err" hidden></p>
-<div class="b-submit">
-<button class="btn btn-primary" type="submit" id="bf-submit">Sign me up</button>
-<p class="b-status" id="bf-status" role="status" aria-live="polite"></p>
-</div>
-</form>
-<div class="b-done" id="beta-done" hidden>
-<h3 tabindex="-1" id="beta-done-h">You&rsquo;re on the list</h3>
-<p id="beta-done-msg">Thank you!</p>
-<div id="beta-done-play" hidden>
-<h4>Download now</h4>
-<p>Open these on your Android phone. New builds and links go to <strong id="beta-done-email"></strong>.</p>
-<ul class="b-links" id="beta-done-links"></ul>
-</div>
-<div id="beta-done-tf" hidden><ul class="b-links" id="beta-done-tflinks"></ul></div>
-<p style="margin-top:1.4rem"><a href="#signup" id="beta-again">Sign up another email</a></p>
-</div>
-</div>
+<div class="b-panel" id="beta-signup" data-apps="pompom,waystone,chat,map" data-device="android"></div>
 <aside class="b-aside" aria-label="About this form">
 <h3>What happens next</h3>
 <ol>
@@ -270,7 +225,7 @@
 </details>
 <details>
 <summary>I have an iPhone. Can I still test?</summary>
-<div><p>Yes! Pom-Pom Grove, Amni-Chat, Amni-Learn and Amni-Type are open on TestFlight. The links are on the <a href="beta.html">beta page</a>.</p></div>
+<div><p>Yes! Pom-Pom Grove, Waystone, Amni-Chat, Amni-Learn and Amni-Type are open on TestFlight. The links are on the <a href="beta.html">beta page</a>.</p></div>
 </details>
 <details>
 <summary>How do I leave?</summary>
@@ -279,7 +234,7 @@
 </div>
 </section>
 </main>
-<p class="page-updated">Last updated <time datetime="2026-10-23">October 23, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-10-26">October 26, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
@@ -293,6 +248,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="js/beta.js?v=b2" defer></script>
+<script src="js/beta.js?v=b4" defer></script>
 </body>
 </html>

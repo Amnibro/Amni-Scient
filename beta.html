@@ -25,7 +25,7 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<link rel="stylesheet" href="css/beta.css?v=b5">
+<link rel="stylesheet" href="css/beta.css?v=b7">
 </head>
 <body class="pp">
 <div class="grid-bg"></div>
@@ -123,7 +123,7 @@
 </header>
 <section id="apps" aria-labelledby="apps-h">
 <h2 id="apps-h">The apps</h2>
-<p class="b-intro">Nine apps are in testing. On iPhone, five have a public TestFlight beta, including the new games Pom-Pom Grove and Waystone. On Android, five are open on Google Play, Amni-Chat and Amni-Map install from an APK while Google finishes reviewing them, and the games Pom-Pom Grove and Waystone have an <a href="beta-apk.html">APK sign-up</a>.</p>
+<p class="b-intro">Nine apps are in testing. On iPhone, five have a public TestFlight beta, including the new games Pom-Pom Grove and Waystone. On Android, five are open on Google Play, Amni-Chat and Amni-Map install from an APK while Google finishes reviewing them, and the games Pom-Pom Grove and Waystone have an APK on the way: <a href="#signup">sign up below</a> to get it the day it&rsquo;s ready.</p>
 <div class="b-panel b-group"><h3>On Android, two taps</h3><ol><li><a href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener"><strong>Join the Amni-Scient testers group</strong></a> with the Google account on your phone. You only do this once, and it covers every app.</li><li>Tap <em>Join on Google Play</em> next to any app below, then <em>Become a tester</em>, and install it from the Play Store.</li></ol><a class="btn btn-primary b-sm" href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">Join the testers group</a></div>
 <div class="b-apps">
 <article class="b-app" id="app-chat">
@@ -183,9 +183,9 @@
 <h3><a href="pom-pom-grove.html">Pom-Pom Grove</a></h3>
 <p>A cozy creature-raising game. Hatch Pomlings, feed them by hand, mix animal parts, then race and play minigames across five gardens.</p>
 <ul class="b-pills"><li class="b-pill on">iPhone &amp; iPad: open now</li><li class="b-pill off">Android: APK sign-up</li></ul>
-<p class="b-note">The Android version is on its way as an APK. <a href="beta-apk.html">Sign up for the APK</a> and I&rsquo;ll email you the download link the day it&rsquo;s ready.</p>
+<p class="b-note">The Android version is on its way as an APK. <a href="#signup" data-app="pompom" data-device="android">Sign up below</a> and I&rsquo;ll email you the download link the day it&rsquo;s ready.</p>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/YAmPR3DH" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="beta-apk.html">Android APK sign-up</a><a class="btn btn-outline b-sm" href="pom-pom-grove.html">About the game</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/YAmPR3DH" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="#signup" data-app="pompom" data-device="android">Android: get the APK</a><a class="btn btn-outline b-sm" href="pom-pom-grove.html">About the game</a></div>
 </article>
 <article class="b-app" id="app-waystone">
 <img src="assets/beta/waystone.webp" width="60" height="60" alt="" loading="lazy">
@@ -193,9 +193,9 @@
 <h3><a href="waystone.html">Waystone</a></h3>
 <p>A co-op climbing roguelite. A new mountain every expedition: manage your grip, bank ore at campfires and light the summit beacon with friends.</p>
 <ul class="b-pills"><li class="b-pill on">iPhone &amp; iPad: open now</li><li class="b-pill off">Android: APK sign-up</li></ul>
-<p class="b-note">On iPhone you can climb solo or join a friend&rsquo;s room on the same Wi-Fi. The Android version is on its way as an APK. <a href="beta-apk.html">Sign up for the APK</a> and I&rsquo;ll email you the download link the day it&rsquo;s ready.</p>
+<p class="b-note">On iPhone you can climb solo or join a friend&rsquo;s room on the same Wi-Fi. The Android version is on its way as an APK. <a href="#signup" data-app="waystone" data-device="android">Sign up below</a> and I&rsquo;ll email you the download link the day it&rsquo;s ready.</p>
 </div>
-<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/hSqUwnTr" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="beta-apk.html">Android APK sign-up</a><a class="btn btn-outline b-sm" href="waystone.html">About the game</a></div>
+<div class="b-acts"><a class="btn btn-primary b-sm" href="https://testflight.apple.com/join/hSqUwnTr" target="_blank" rel="noopener">Join on TestFlight</a><a class="btn btn-outline b-sm" href="#signup" data-app="waystone" data-device="android">Android: get the APK</a><a class="btn btn-outline b-sm" href="waystone.html">About the game</a></div>
 </article>
 <article class="b-app" id="app-contaigion">
 <img src="assets/beta/contaigion.webp" width="60" height="60" alt="" loading="lazy">
@@ -266,70 +266,7 @@
 <section id="signup" aria-labelledby="signup-h">
 <h2 id="signup-h">Sign up</h2>
 <div class="b-signup">
-<div class="b-panel">
-<form id="beta-form" novalidate>
-<div class="b-field">
-<label for="bf-email">Google account email</label>
-<input class="b-input" id="bf-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="254" required aria-describedby="bf-email-hint bf-email-err">
-<p class="b-hint" id="bf-email-hint">Use the Google account signed in to the Play Store on your Android phone. That is usually your Gmail address.</p>
-<p class="b-err" id="bf-email-err" hidden></p>
-</div>
-<fieldset class="b-field" aria-describedby="bf-apps-hint bf-apps-err">
-<legend>Apps to test</legend>
-<p class="b-hint" id="bf-apps-hint">All of them are ticked. Untick any you&rsquo;d rather skip. The last box is for apps that aren&rsquo;t out yet.</p>
-<div class="b-checks">
-<label class="b-check"><input type="checkbox" name="apps" value="chat" checked><img src="assets/beta/chat.webp" width="28" height="28" alt="" loading="lazy">Amni-Chat</label>
-<label class="b-check"><input type="checkbox" name="apps" value="learn" checked><img src="assets/beta/learn.webp" width="28" height="28" alt="" loading="lazy">Amni-Learn</label>
-<label class="b-check"><input type="checkbox" name="apps" value="type" checked><img src="assets/beta/type.webp" width="28" height="28" alt="" loading="lazy">Amni-Type</label>
-<label class="b-check"><input type="checkbox" name="apps" value="map" checked><img src="assets/beta/map.webp" width="28" height="28" alt="" loading="lazy">Amni-Map</label>
-<label class="b-check"><input type="checkbox" name="apps" value="crypt" checked><img src="assets/beta/crypt.webp" width="28" height="28" alt="" loading="lazy">Amni-Crypt</label>
-<label class="b-check"><input type="checkbox" name="apps" value="pompom" checked><img src="assets/beta/pompom.webp" width="28" height="28" alt="" loading="lazy">Pom-Pom Grove</label>
-<label class="b-check"><input type="checkbox" name="apps" value="waystone" checked><img src="assets/beta/waystone.webp" width="28" height="28" alt="" loading="lazy">Waystone</label>
-<label class="b-check"><input type="checkbox" name="apps" value="contaigion" checked><img src="assets/beta/contaigion.webp" width="28" height="28" alt="" loading="lazy">ContAIgion</label>
-<label class="b-check"><input type="checkbox" name="apps" value="humainity" checked><img src="assets/beta/humainity.webp" width="28" height="28" alt="" loading="lazy">HumAInity</label>
-</div>
-<label class="b-check b-future"><input type="checkbox" name="apps" value="future"><span><strong>Future apps too</strong><br><small>Keep me on the list for new apps as they reach testing. Leave this unticked and I may remove you once the apps above are done.</small></span></label>
-<p class="b-err" id="bf-apps-err" hidden></p>
-</fieldset>
-<fieldset class="b-field">
-<legend>Your phone</legend>
-<div class="b-seg">
-<label><input type="radio" name="device" value="android" checked>Android</label>
-<label><input type="radio" name="device" value="iphone">iPhone</label>
-<label><input type="radio" name="device" value="both">Both</label>
-</div>
-</fieldset>
-<div class="b-field">
-<label for="bf-handle">Name or handle <span class="opt">(optional)</span></label>
-<input class="b-input" id="bf-handle" name="handle" type="text" autocomplete="nickname" maxlength="40" aria-describedby="bf-handle-hint bf-handle-err">
-<p class="b-hint" id="bf-handle-hint">So I know who to thank. Letters, numbers, spaces and . _ &rsquo; - only.</p>
-<p class="b-err" id="bf-handle-err" hidden></p>
-</div>
-<div class="b-hp" aria-hidden="true"><label for="bf-website">Leave this empty</label><input id="bf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-<label class="b-consent"><input type="checkbox" id="bf-consent" name="consent" aria-describedby="bf-consent-err"><span>I&rsquo;m 13 or older, and Amni-Scient may use this email to add me to the tester list and contact me about the test. Details are in the <a href="privacy.html#beta-signup">privacy policy</a>.</span></label>
-<p class="b-err" id="bf-consent-err" hidden></p>
-<div class="b-submit">
-<button class="btn btn-primary" type="submit" id="bf-submit">Sign me up</button>
-<p class="b-status" id="bf-status" role="status" aria-live="polite"></p>
-</div>
-</form>
-<div class="b-done" id="beta-done" hidden>
-<h3 tabindex="-1" id="beta-done-h">You&rsquo;re on the list</h3>
-<p id="beta-done-msg">Thank you! You can start testing right away.</p>
-<div id="beta-done-play" hidden>
-<h4>On Android, open now</h4>
-<p>Open these on your phone, signed in to <strong id="beta-done-email"></strong> in the Play Store. Join the testers group once, tap <em>Become a tester</em>, then install. You&rsquo;re in right away.</p>
-<p><a class="btn btn-primary b-sm" href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">1. Join the testers group</a></p>
-<ul class="b-links" id="beta-done-links"></ul>
-</div>
-<div id="beta-done-tf" hidden>
-<h4>On iPhone, open now</h4>
-<p>Install Apple&rsquo;s TestFlight app, then open these. No waiting!</p>
-<ul class="b-links" id="beta-done-tflinks"></ul>
-</div>
-<p style="margin-top:1.4rem"><a href="#signup" id="beta-again">Sign up another account</a></p>
-</div>
-</div>
+<div class="b-panel" id="beta-signup" data-apps="chat,learn,type,map,crypt,pompom,waystone,contaigion,humainity"></div>
 <aside class="b-aside" aria-label="About this form">
 <h3>What happens next</h3>
 <ol>
@@ -379,12 +316,12 @@
 </details>
 <details>
 <summary>What about the other apps on iPhone?</summary>
-<div><p>Amni-Chat, Amni-Learn, Amni-Type and Pom-Pom Grove are open on TestFlight today. Amni-Map, Amni-Crypt, ContAIgion and HumAInity are Android-only for now. Sign up with iPhone selected so I know you&rsquo;re interested. Their TestFlight links will appear on this page when they open.</p></div>
+<div><p>Amni-Chat, Amni-Learn, Amni-Type, Pom-Pom Grove and Waystone are open on TestFlight today. Amni-Map, Amni-Crypt, ContAIgion and HumAInity are Android-only for now. Sign up with iPhone selected so I know you&rsquo;re interested. Their TestFlight links will appear on this page when they open.</p></div>
 </details>
 </div>
 </section>
 </main>
-<p class="page-updated">Last updated <time datetime="2026-10-24">October 24, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-10-26">October 26, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
@@ -398,6 +335,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="js/beta.js?v=b3" defer></script>
+<script src="js/beta.js?v=b4" defer></script>
 </body>
 </html>

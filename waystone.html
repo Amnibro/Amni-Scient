@@ -20,6 +20,7 @@
 <link rel="canonical" href="https://amni-scient.com/waystone.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Waystone","url":"https://amni-scient.com/waystone.html","image":"https://amni-scient.com/assets/waystone/og.jpg","description":"Waystone is a co-op climbing roguelite for Android and iPhone. Climb a procedurally generated mountain with friends: manage grip, bank ore at campfires, gamble on chests and shrines, and light the summit beacon before the night catches you.","genre":["Roguelite","Climbing","Co-op"],"playMode":["SinglePlayer","CoOp"],"gamePlatform":["Android","iOS"],"author":[{"@type":"Person","name":"ancsemi","url":"https://github.com/ancsemi"},{"@type":"Person","name":"amnibro","url":"https://github.com/Amnibro"}],"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
 <link rel="stylesheet" href="css/style.css?v=b263">
+<link rel="stylesheet" href="css/beta.css?v=b7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -105,7 +106,7 @@
 <h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">Waystone</h1>
 <p class="desc">CLIMB &bull; GAMBLE &bull; BANK &bull; SUMMIT</p>
 <div class="cta-row" style="margin-top:2rem">
-<a href="beta-apk.html" class="btn btn-primary ws-beta">ANDROID: SIGN UP FOR THE APK</a>
+<a href="#beta" class="btn btn-primary ws-beta" data-app="waystone" data-device="android">ANDROID: SIGN UP FOR THE APK</a>
 <a href="https://testflight.apple.com/join/hSqUwnTr" class="btn btn-outline ws-beta" target="_blank" rel="noopener">IPHONE: JOIN ON TESTFLIGHT</a>
 </div>
 <p style="color:var(--dim);font-size:.8rem;margin-top:.9rem;letter-spacing:.05em">Free beta for Android and iPhone. Co-op with friends on the same network.</p>
@@ -149,9 +150,10 @@
 <li><b>Music by place.</b> Each zone has its own day and night tracks that drift in now and then while you climb.</li>
 </ul>
 <h2 style="margin-top:2.4rem" id="beta">Join the beta</h2>
-<p style="color:var(--text-soft);line-height:1.7">On Android, <a href="beta-apk.html">sign up for the APK</a> and you'll get the download link the day it's ready. On iPhone, <a href="https://testflight.apple.com/join/hSqUwnTr" target="_blank" rel="noopener">join the TestFlight beta</a> to climb solo or join a friend&rsquo;s room. To play together, everyone joins the same Wi-Fi or a phone's hotspot, one player hosts, and the others join. Questions? See <a href="support-waystone.html">support</a>.</p>
+<p style="color:var(--text-soft);line-height:1.7">On Android, sign up below and you'll get the download link the day it's ready. On iPhone, <a href="https://testflight.apple.com/join/hSqUwnTr" target="_blank" rel="noopener">join the TestFlight beta</a> to climb solo or join a friend&rsquo;s room. To play together, everyone joins the same Wi-Fi or a phone's hotspot, one player hosts, and the others join. Questions? See <a href="support-waystone.html">support</a>.</p>
+<div class="b-panel b-solo" id="beta-signup" data-apps="waystone"></div>
 <div class="cta-row" style="margin:2.4rem 0 1rem">
-<a href="beta-apk.html" class="btn btn-primary">ANDROID: GET THE APK</a>
+<a href="https://testflight.apple.com/join/hSqUwnTr" class="btn btn-primary" target="_blank" rel="noopener">IPHONE: JOIN ON TESTFLIGHT</a>
 <a href="support-waystone.html" class="btn btn-outline">SUPPORT</a>
 <a href="privacy-waystone.html" class="btn btn-outline">PRIVACY</a>
 </div>
@@ -176,5 +178,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
+<script src="js/beta.js?v=b4" defer></script>
 </body>
 </html>
