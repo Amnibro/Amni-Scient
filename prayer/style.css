@@ -31,7 +31,7 @@ body{background:#0a0a12;color:#e0d8c8;font-family:"Archivo","Segoe UI Variable T
 .ot-dot,.nt-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
 .ot-dot{background:#d4a035;box-shadow:0 0 6px #d4a035}
 .nt-dot{background:#4488ee;box-shadow:0 0 6px #4488ee}
-#controls{margin-top:10px;display:flex;gap:14px;align-items:center;font-size:0.78rem;pointer-events:all}
+#controls{margin-top:10px;display:flex;flex-wrap:wrap;gap:7px 14px;align-items:center;font-size:0.78rem;pointer-events:all}
 #controls label{display:flex;align-items:center;gap:4px;cursor:pointer}
 #controls select{background:#1a1a2e;color:#ccc;border:1px solid #333;border-radius:3px;padding:2px 4px;font-size:0.75rem}
 #tooltip{position:fixed;bottom:24px;left:24px;background:rgba(10,10,18,0.92);border:1px solid #333;border-radius:6px;padding:10px 14px;font-size:0.82rem;max-width:420px;display:none;pointer-events:none;backdrop-filter:blur(8px)}
@@ -407,3 +407,8 @@ body.menu-open #ui{background:rgba(8,8,16,.9);right:0;max-height:78dvh;backdrop-
 #chron-axis{position:fixed;display:none;pointer-events:none;z-index:4;overflow:visible}
 #chron-axis line{stroke:rgba(240,220,170,.14);stroke-width:1}
 #chron-axis text{fill:#d8cba6;font:600 11px/1 'Archivo',system-ui,sans-serif;letter-spacing:.04em;paint-order:stroke;stroke:#0a0a12;stroke-width:3px}
+#chron-axis line.tr,#chron-axis line.sc{stroke-width:var(--bw,2px);stroke-linecap:round;stroke-opacity:.85}
+#chron-axis line.tr{stroke:#e8c26a}
+#chron-axis line.sc{stroke:#7fa6ff}
+.ctr{color:#e8c26a}.csc{color:#7fa6ff}
+#chron-axis line.cn{stroke:#7fa6ff;stroke-opacity:.4;stroke-width:1;stroke-dasharray:2 4}
