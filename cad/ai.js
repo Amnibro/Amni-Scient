@@ -117,7 +117,7 @@ export class Assistant{
   get ready(){return!!this.kind;}
   get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&this.kind!=='paste'&&!this.noVision&&(this.kind!=='local'||/vl|vision|llava|gemma-?3|minicpm|pixtral|moondream|bakllava|mllama|qwen.*omni/i.test(this.cfg.model||''));}
   async connect(kind,cfg={}){
-    this.kind=null;this.cfg=cfg;this.noVision=false;
+    this.kind=null;this.cfg=cfg;this.noVision=false;this.models=null;
     if(kind==='browser'){
       if(this.engine&&this.engine.unload)try{await this.engine.unload();}catch{}
       const m=await import('/lib/amni-llm/amni-llm.js');
