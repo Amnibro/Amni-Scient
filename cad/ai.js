@@ -83,6 +83,8 @@ Rules: base solids first, then cuts and holes, then fillets and chamfers last. K
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
 Example reply: {"say":"Here is an 80 × 50 × 6 mm plate with four Ø5 holes and 5 mm corner radii.","actions":[{"param":{"name":"w","expr":"80"}},{"param":{"name":"d","expr":"50"}},{"param":{"name":"t","expr":"6"}},{"add":{"type":"box","name":"Plate","w":"w","d":"d","h":"t"}},{"add":{"type":"hole","name":"Holes","plane":"XY","offset":"t","d":5,"thru":true,"pts":[["w/2-8","d/2-8"],["-(w/2-8)","d/2-8"],["w/2-8","-(d/2-8)"],["-(w/2-8)","-(d/2-8)"]]}},{"add":{"type":"fillet","name":"Corners","r":5,"edges":{"dir":"Z"}}}]}`;}
 export function stateMessage(st,text,refs){return 'Model state:\n'+JSON.stringify(st)+'\n\n'+(refs?refs+'\n\n':'')+'User request: '+text+'\n\nReply with the JSON object only. /no_think';}
+export const PASTE_HEAD='You are used through copy and paste. The user copies these messages from Amni-CAD into this chat and pastes your replies back, and Amni-CAD applies the JSON. Answer every message with only the JSON object described below, in one ```json code block. Later messages carry the updated model state and the next request.';
+export function pastePrompt(ms,fresh){const c=m=>String(m&&m.content||'').replace(/ \/no_think$/,''),L=c(ms[ms.length-1]),sys=ms.filter(m=>m.role==='system').map(c),rest=ms.slice(0,-1).filter(m=>m.role!=='system'),T=L+(/json/i.test(L.slice(-80))?'':'\n\nReply with the JSON object only.')+' Use one ```json code block.';return fresh?[PASTE_HEAD,...sys,rest.length?'Conversation so far:\n'+rest.map(m=>(m.role==='user'?'User: ':'You: ')+c(m)).join('\n'):'',T].filter(Boolean).join('\n\n'):T;}
 export function parseReply(txt){
   let s=String(txt||'').replace(/<think>[\s\S]*?<\/think>/g,'').replace(/```(?:json)?/g,'');
   const a=s.indexOf('{');if(a<0)return{say:s.trim(),actions:[]};
@@ -92,7 +94,7 @@ export function parseReply(txt){
   for(const cand of[body,body.replace(/,\s*([}\]])/g,'$1'),body.replace(/'/g,'"').replace(/,\s*([}\]])/g,'$1')]){try{const o=JSON.parse(cand);return{say:String(o.say||o.message||''),actions:Array.isArray(o.actions)?o.actions:[]};}catch{}}
   return{say:s.trim().slice(0,800),actions:[],parseError:true};
 }
-const PN={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter',local:'your local server',browser:'the on-device model',chrome:'Chrome built-in AI',bridge:'your Claude or ChatGPT app',remote:'your Claude app'};
+const PN={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter',local:'your local server',browser:'the on-device model',chrome:'Chrome built-in AI',bridge:'your Claude or ChatGPT app',remote:'your Claude app',paste:'your chat app'};
 export const detectKey=s=>{s=String(s||'').trim();return/^sk-ant-/.test(s)?'anthropic':/^sk-or-/.test(s)?'openrouter':/^(AIza|AQ\.)/.test(s)?'gemini':/^sk-/.test(s)?'openai':null;};
 export const prettyModel=id=>String(id||'').replace(/^[^/]*\//,'').replace(/-\d{8}$/,'').replace(/^claude-(\w+)-(\d+)-(\d+)$/,(m,n,a,b)=>'Claude '+n[0].toUpperCase()+n.slice(1)+' '+a+'.'+b).replace(/^gpt-/,'GPT-').replace(/^gemini-/,'Gemini ').replace(/^claude-/,'Claude ');
 export function partialSay(buf){const s=String(buf||''),m=/"say"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(s);if(m){try{return JSON.parse('"'+m[1].replace(/\\$/,'')+'"');}catch{return m[1];}}return s.trimStart().startsWith('{')||s.trimStart().startsWith('```')?'':s.replace(/<think>[\s\S]*?(<\/think>|$)/g,'');}
@@ -113,7 +115,7 @@ const oaS=j=>j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.con
 export class Assistant{
   constructor(onStatus){this.onStatus=onStatus||(()=>{});this.kind=null;this.engine=null;this.cfg={};}
   get ready(){return!!this.kind;}
-  get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&!this.noVision&&(this.kind!=='local'||/vl|vision|llava|gemma-?3|minicpm|pixtral|moondream|bakllava|mllama|qwen.*omni/i.test(this.cfg.model||''));}
+  get vision(){return!!this.kind&&this.kind!=='browser'&&this.kind!=='chrome'&&this.kind!=='paste'&&!this.noVision&&(this.kind!=='local'||/vl|vision|llava|gemma-?3|minicpm|pixtral|moondream|bakllava|mllama|qwen.*omni/i.test(this.cfg.model||''));}
   async connect(kind,cfg={}){
     this.kind=null;this.cfg=cfg;this.noVision=false;
     if(kind==='browser'){
@@ -142,6 +144,7 @@ export class Assistant{
       if(!LM)throw new Error('this browser has no built-in AI (Chrome with Gemini Nano)');
       const av=LM.availability?await LM.availability():'available';if(av==='unavailable')throw new Error('built-in AI is unavailable on this device');
       this.engine=LM;this.label='Chrome built-in AI';
+    }else if(kind==='paste'){this.label='Copy and paste';
     }else throw new Error('unknown engine');
     this.kind=kind;this.onStatus('Ready · '+this.label);return this.label;
   }
@@ -149,6 +152,7 @@ export class Assistant{
   hdr(){const h={'Content-Type':'application/json'};if(this.cfg.key)h.Authorization='Bearer '+this.cfg.key;return h;}
   async complete(messages,o={}){
     const tok=o.onToken||null,signal=o.signal;
+    if(this.kind==='paste'){if(!this.paste)throw new Error('copy and paste is not ready');return await this.paste(messages,{signal});}
     if(this.kind==='browser'){
       if(tok&&this.engine.chatStream){let acc='';for await(const c of this.engine.chatStream(wire(messages,'text'),{max_tokens:1800,temperature:0.2})){const d=c.delta||'';acc=acc&&d.startsWith(acc)?d:acc+d;tok(acc);if(signal&&signal.aborted)throw Object.assign(new Error('stopped'),{name:'AbortError'});}return acc;}
       return await this.engine.chat(wire(messages,'text'),{max_tokens:1800,temperature:0.2});

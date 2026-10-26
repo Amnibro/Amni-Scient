@@ -1,4 +1,5 @@
 import {voxelize} from './fea.js';
+import {sleep} from './tick.js';
 export const EX=[0,1,-1,0,0,0,0,1,-1,1,-1,1,-1,1,-1,0,0,0,0],EY=[0,0,0,1,-1,0,0,1,-1,-1,1,0,0,0,0,1,-1,1,-1],EZ=[0,0,0,0,0,1,-1,0,0,0,0,1,-1,-1,1,1,-1,-1,1],OPP=[0,2,1,4,3,6,5,8,7,10,9,12,11,14,13,16,15,18,17],WQ=[1/3,1/18,1/18,1/18,1/18,1/18,1/18,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36];
 export const FLUIDS={air:{n:'Air (20 °C)',rho:1.204,nu:1.516e-5},water:{n:'Water (20 °C)',rho:998,nu:1.004e-6}};
 const AXI={'+X':[0,1],'-X':[0,-1],'+Y':[1,1],'-Y':[1,-1],'+Z':[2,1],'-Z':[2,-1]};
@@ -66,7 +67,7 @@ export async function runCFD(inp,prog,shouldStop){const t0=Date.now(),now=()=>pe
     const enc=dev.createCommandEncoder();enc.copyBufferToBuffer(nAvg?ab:mb,0,rb,0,n*16);dev.queue.submit([enc.finish()]);await rb.mapAsync(GPUMapMode.READ);mac=new Float32Array(rb.getMappedRange()).slice();rb.unmap();if(nAvg)for(let i=0;i<mac.length;i++)mac[i]/=nAvg;
     for(const b of[ub,fa,fb,sb,frc,mb,rb,rf,ab])b.destroy();dev.destroy&&dev.destroy();
   }else{backend=cpuOnly?'CPU ('+why+')':'CPU';let tP=now();const st={nx:G.nx,ny:G.ny,nz:G.nz,n,tau,u:ulb,cs,fa:fInit,fb:fInit.slice(),sol:solid,frc:new Float32Array(n*3),mac:new Float32Array(n*4),avg:new Float32Array(n*4),acc:false};let nAvg=0;const accFrom=Math.floor(steps*0.6);
-    for(let s=1;s<=steps;s++){st.acc=s>accFrom;if(st.acc)nAvg++;cpuStep(st);if(now()-tP>250||s===steps){tP=now();frcSum=sumF(st.frc);const cd=frcSum[0]/(0.5*ulb*ulb*S.area);hist.push([s,cd]);const snap=s<steps?live(st.mac):null;prog&&prog({step:s,steps,cd,backend,...(snap?{snap}:{})});await new Promise(r=>setTimeout(r,0));if(shouldStop&&shouldStop())break;}}mac=st.mac;if(nAvg){mac=st.avg;for(let i=0;i<mac.length;i++)mac[i]/=nAvg;}}
+    for(let s=1;s<=steps;s++){st.acc=s>accFrom;if(st.acc)nAvg++;cpuStep(st);if(now()-tP>250||s===steps){tP=now();frcSum=sumF(st.frc);const cd=frcSum[0]/(0.5*ulb*ulb*S.area);hist.push([s,cd]);const snap=s<steps?live(st.mac):null;prog&&prog({step:s,steps,cd,backend,...(snap?{snap}:{})});await sleep(0);if(shouldStop&&shouldStop())break;}}mac=st.mac;if(nAvg){mac=st.avg;for(let i=0;i<mac.length;i++)mac[i]/=nAvg;}}
   return fin(mac);
   function fin(mac){const tail=hist.slice(Math.floor(hist.length*0.7)),cd=tail.reduce((a,b)=>a+b[1],0)/Math.max(tail.length,1),cl=Math.hypot(frcSum[1],frcSum[2])/(0.5*ulb*ulb*S.area);
   const block=S.area/(G.ny*G.nz),cdRaw=cd,cdC=cd/(1+2.5*cd*block),Aphys=S.area*S.h*S.h*1e-6,drag=cdC*0.5*fl.rho*U*U*Aphys,q=0.5*fl.rho*U*U;

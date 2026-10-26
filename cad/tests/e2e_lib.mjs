@@ -1,6 +1,6 @@
 import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';
 const root=path.resolve(new URL('../..',import.meta.url).pathname),SRV=new URL('../mcp/amnicad-mcp.mjs',import.meta.url).pathname,P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),sleep=t=>new Promise(r=>setTimeout(r,t));
-export async function startE2E({web=+process.env.E2E_WEB||18700,mcp=+process.env.E2E_MCP||18701,width=1280,height=800,bg=false}={}){
+export async function startE2E({web=+process.env.E2E_WEB||18700,mcp=+process.env.E2E_MCP||18701,width=1280,height=800,bg=false,args=[]}={}){
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-e2e-')),ud=fs.mkdtempSync(path.join(os.tmpdir(),'amnicad-e2e-ud-')),srv=spawn('python3',['-m','http.server',String(web),'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),ch=spawn(process.execPath,[SRV],{cwd:dir,env:{...process.env,AMNICAD_PORT:String(mcp),AMNICAD_PORT_SPAN:'1',AMNICAD_CONFIG:path.join(dir,'cfg'),AMNICAD_SAVE_DIR:dir},stdio:['pipe','pipe','pipe']});
   let rid=0,buf='',b=null;const waiters=new Map();
   ch.stdout.on('data',d=>{buf+=d;let i;while((i=buf.indexOf('\n'))>=0){const m=JSON.parse(buf.slice(0,i));buf=buf.slice(i+1);waiters.get(m.id)?.(m);waiters.delete(m.id);}});
@@ -9,7 +9,7 @@ export async function startE2E({web=+process.env.E2E_WEB||18700,mcp=+process.env
   try{
     await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'e2e',version:'1'}});
     for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${web}/cad/`)).ok)break;}catch{}await sleep(250);}
-    b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,...(bg?{ignoreDefaultArgs:['--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows']}:{}),args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+    b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,...(bg?{ignoreDefaultArgs:['--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows']}:{}),args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader',...args]});
     const page=await b.newPage();await page.setViewport({width,height});const errs=[],cons=[];page.on('pageerror',e=>errs.push(e.message));page.on('console',m=>m.type()==='error'&&cons.push(m.text()));
     await page.goto(`http://127.0.0.1:${web}/cad/`);
     await page.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});

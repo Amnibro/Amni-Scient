@@ -2,6 +2,7 @@ import {EX,EY,EZ,OPP,WQ,frame,gpuDevice,fillSolid} from './cfd.js';
 import {voxelize} from './fea.js';
 import {zoneProps} from './porous.js';
 import {solvePlate} from './flow_plate.js';
+import {sleep} from './tick.js';
 const LAM=3/16;
 const WGSL=`struct P{nx:u32,ny:u32,nz:u32,n:u32,sx:u32,per:u32,post:u32,nzn:u32,wp:f32,wm:f32,gx:f32,gy:f32,gz:f32,umax:f32,nu:f32,pad:f32};
 @group(0)@binding(0) var<uniform> p:P;@group(0)@binding(1) var<storage,read> fa:array<f32>;@group(0)@binding(2) var<storage,read_write> fb:array<f32>;@group(0)@binding(3) var<storage,read> T:array<u32>;@group(0)@binding(4) var<storage,read> Z:array<vec4f>;@group(0)@binding(5) var<storage,read> PR:array<f32>;@group(0)@binding(6) var<storage,read_write> mac:array<f32>;@group(0)@binding(7) var<storage,read_write> pf:array<f32>;@group(0)@binding(8) var<storage,read_write> st:array<f32>;
@@ -55,7 +56,7 @@ export async function lbmCore(S,prog,stop){const t0=Date.now(),{nx,ny,nz}=S,n=nx
     const sub=S.sub||Math.max(1,Math.min(chk,Math.round(2e8/Math.max(n,1))));while(s<maxS){let R=null;for(let k=0;k<chk&&!(k&&stop&&stop());k+=sub){const kk=Math.min(sub,chk-k);R=await run(kk,false,k+kk>=chk?(mon?2:1):0);}R=R||await run(1,false,mon?2:1);const M=measure(R.q,R.m);conv=judge(M);prog&&prog({step:s,steps:maxS,backend,Q:M.Q,U:M.U,ch:hist[hist.length-1][1]});if(conv||Date.now()-t0>maxMs||stop&&stop())break;}
     const R=await run(1,true,2);mac=R.m;st=R.sx;S.pfLast=R.q;for(const b of[ub,fa,fb,tb,zb,pb,mb,qb,sb,rq,rm,rs])b.destroy();dev.destroy&&dev.destroy();
   }else{backend=why&&S.gpu!==false?'CPU ('+why+')':'CPU';const C={nx,ny,nz,n,T:S.T,pn,nb:neighbors({nx,ny,nz,T:S.T,per}),Zf,PR,per,G,wp,wm,umax,nu:S.nu,fa:new Float32Array(n*19),fb:new Float32Array(n*19),mac:new Float32Array(n*4),pf:new Float32Array(n),st:new Float32Array(S.noStrain?6:n*6)};
-    while(s<maxS){for(let k=0;k<chk;k++)cpuStep(C,false);s+=chk;const M=measure(C.pf,C.mac);conv=judge(M);prog&&prog({step:s,steps:maxS,backend,Q:M.Q,U:M.U,ch:hist[hist.length-1][1]});await new Promise(r=>setTimeout(r,0));if(conv||Date.now()-t0>maxMs||stop&&stop())break;}
+    while(s<maxS){for(let k=0;k<chk;k++)cpuStep(C,false);s+=chk;const M=measure(C.pf,C.mac);conv=judge(M);prog&&prog({step:s,steps:maxS,backend,Q:M.Q,U:M.U,ch:hist[hist.length-1][1]});await sleep(0);if(conv||Date.now()-t0>maxMs||stop&&stop())break;}
     cpuStep(C,!S.noStrain);s++;mac=C.mac;st=C.st;S.pfLast=C.pf;}
   const M=measure(S.pfLast,mac),ms=Date.now()-t0;let nf=0;for(let c=0;c<n;c++)if((S.T[c]&255)!==1)nf++;
   return{backend,steps:s,converged:conv,ms,mlups:nf*s/Math.max(ms,1)/1e3,mac,st,Q:M.Q,U:M.U,PR:Array.from(PR),G:Array.from(G),hist,tau:tp,nfluid:nf};}
