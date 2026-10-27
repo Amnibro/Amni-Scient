@@ -1,3 +1,7 @@
+## 2026-10-26 — Amni-Learn: new storyteller voice
+- **Storybooks and the Pre-K to grade 5 sections now speak with a new, more natural voice (Amelia, from ElevenLabs).** About 6,800 lines were re-recorded: every storybook page and story quiz, the kids' activities, praise and feedback, the kid games, math, Study Around the World, tutorials, teaching cards and most quiz questions.
+- Phonics, Healthy Mind and a few quiz questions keep the earlier voice for now. They move to the new voice next.
+
 ## 2026-10-24 — Amni-Learn apps: live content updates
 - **The Android and iOS apps now update their activities from amni-scient.com.** When the app opens, it checks for new or fixed activities and downloads only the files that changed (each one is checked against the site's list). They apply the next time you come back to the menu, so new sections like Math Crossword arrive without waiting for an app-store update. Without internet, the app keeps using what it has.
 - **iOS now has every Amni-Learn section:** Play & Learn, Music Studio, Study Around the World, Test Prep and all of Healthy Mind, including Math Crossword.
