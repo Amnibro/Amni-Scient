@@ -22,7 +22,7 @@ try{
     if(w===1280){
       if(apps.length>1){await p.click('#bf-all');const none=await p.$$eval('.b-checks input:checked',x=>x.length);ok(!none,`${n}: Clear all left ${none}`);const r0=await submit(p);ok(!r0.sent.length&&r0.appsErr.includes('Pick'),`${n}: empty pick was sent`);await p.click('#bf-all');}
       const r=await submit(p);ok(r.done&&r.sent.length===1,`${n}: submit ${JSON.stringify(r)}`);const body=r.sent[0]||{};ok(JSON.stringify([...body.apps||[]].sort())===JSON.stringify([...apps].sort())&&body.device===(fixed||'android')&&body.consent===true,`${n}: body ${JSON.stringify(body)}`);ok(r.msg.length>10,`${n}: no thank-you text`);
-      ok(r.play.length===apps.filter(k=>!['pompom','waystone'].includes(k)).length,`${n}: Android links ${r.play}`);
+      ok(r.play.length===apps.filter(k=>k!=='waystone').length&&(!apps.includes('pompom')||r.play.includes('beta-play.html?app=pompom')),`${n}: Android links ${r.play}`);
     }
     await p.close();
   }
