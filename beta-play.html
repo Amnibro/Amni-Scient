@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Join an Android Beta | AMNI-SCIENT</title>
-<meta name="description" content="Three taps to test an Amni-Scient app on Android: join the testers group, become a tester on Google Play, install.">
+<title>Join a Beta | AMNI-SCIENT</title>
+<meta name="description" content="Join an Amni-Scient beta: TestFlight on iPhone, or three short steps on Android with fixes for every Google message.">
 <meta name="google-adsense-account" content="ca-pub-8345487545441889">
 <link rel="canonical" href="https://amni-scient.com/beta-play.html">
 <meta name="robots" content="noindex">
@@ -13,7 +13,7 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<link rel="stylesheet" href="css/beta.css?v=b8">
+<link rel="stylesheet" href="css/beta.css?v=b9">
 </head>
 <body class="pp">
 <div class="grid-bg"></div>
@@ -86,19 +86,32 @@
 <div>
 <p class="eyebrow">Beta program &bull; Android</p>
 <h1 id="bp-h">Join the Android beta</h1>
-<p class="lede">Use the Google account that&rsquo;s signed in to the Play Store. The first step is once only: after it, every <em>Join on Google Play</em> button goes straight to step 2.</p>
+<p class="lede" id="bp-lede">Three steps, about a minute. Google will ask which account to use: each time, pick the one your Play Store uses.</p>
+<p class="bp-acct" id="bp-acct">Not sure which one? Open the <strong>Play Store</strong> app and tap your picture at the top right. The email under your name is the account.</p>
 </div>
 </header>
 <section aria-labelledby="bp-h">
-<ol class="bp-steps">
-<li><h3>Join the testers group</h3><p>Tap <em>Join group</em>. You only do this once, and it opens every Amni-Scient beta on Google Play.</p><a class="btn btn-primary" id="bp-group" href="https://groups.google.com/g/amni-scient-testers" target="_blank" rel="noopener">Join the testers group</a></li>
-<li><h3>Become a tester</h3><p>Tap <em>Become a tester</em>. You&rsquo;re in right away.</p><a class="btn btn-primary" id="bp-opt" href="beta.html#apps" target="_blank" rel="noopener">Become a tester</a></li>
-<li><h3>Install it</h3><p>Install from Google Play like any other app. Updates arrive on their own.</p><a class="btn btn-outline" id="bp-get" href="beta.html#apps" target="_blank" rel="noopener">Open in Google Play</a></li>
+<div class="b-panel bp-other" id="bp-other" hidden><p id="bp-other-t"></p><a class="btn btn-primary" id="bp-other-a" href="beta.html#apps">See every beta</a></div>
+<ol class="bp-steps" id="bp-steps">
+<li><h3>Join the testers group</h3><p>Pick your Play Store account. Then tap <em>Join group</em> at the top of the page, and <em>Join group</em> again in the box that opens. You only do this once, and it covers every Amni-Scient app.</p><a class="btn btn-primary" id="bp-group" href="https://groups.google.com/g/amni-scient-testers/about" target="_blank" rel="noopener">Join the testers group</a><p class="bp-after">Done? Come back to this page for step 2.</p></li>
+<li><h3>Become a tester</h3><p>Pick the same account, then tap <em>Become a tester</em>.</p><a class="btn btn-primary" id="bp-opt" href="beta.html#apps" target="_blank" rel="noopener">Become a tester</a><p class="bp-after" id="bp-old" hidden>Got an earlier test invite for this app, maybe through Haven? <a class="bp-leave" href="beta.html#apps" target="_blank" rel="noopener">Leave that old test</a> first (tap <em>Leave the program</em>), or Google won&rsquo;t let you into this one.</p></li>
+<li><h3>Install it</h3><p>Tap <em>Install</em> in the Play Store. Updates arrive on their own.</p><a class="btn btn-outline" id="bp-get" href="beta.html#apps" target="_blank" rel="noopener">Open in Google Play</a></li>
 </ol>
-<p class="bp-note">Something not working? If Play says the app isn&rsquo;t available, check that you joined the group with the same Google account, then try step 2 again. <a href="beta.html#apps">See every beta</a>.</p>
+<p class="bp-note" id="bp-tf-p" hidden>On an iPhone instead? <a id="bp-tf" href="beta.html#apps" target="_blank" rel="noopener">Join on TestFlight</a>.</p>
+<div class="bp-fix" id="bp-fix">
+<h2>Stuck? Find what your screen says</h2>
+<div class="b-faq">
+<details><summary>Google asks you to sign in, or says the browser &ldquo;may not be secure&rdquo;</summary><div><p>Sign in with the account your Play Store uses. If Google says the browser or app may not be secure, this page opened inside another app. Tap the &#8942; menu, choose <em>Open in Chrome</em>, and start again.</p></div></details>
+<details><summary>&ldquo;You don&rsquo;t have permission to access this content&rdquo;</summary><div><p>You&rsquo;re on the group&rsquo;s page but not in it yet. Tap <em>Join group</em> next to the group&rsquo;s name at the top, then <em>Join group</em> again in the box.</p></div></details>
+<details><summary>&ldquo;App not available&rdquo; when you try to become a tester</summary><div><p>Google doesn&rsquo;t see that account in the testers group. Do step 1 again and pick the same account in both steps. Then wait a minute and try step 2 again.</p></div></details>
+<details><summary>&ldquo;You are a tester&rdquo;, but the Play Store can&rsquo;t find the app</summary><div><p>The Play Store is using a different account. In the Play Store, tap your picture and switch to the account you picked above. If it&rsquo;s already the right one, wait 10 minutes and try again: Google can take a little while.</p></div></details>
+<details id="bp-fix-old"><summary>The Play Store shows &ldquo;Internal Early Access&rdquo; or an old version</summary><div><p>You&rsquo;re still in an older test of this app, and it blocks the new one. <a class="bp-leave" href="beta.html#apps" target="_blank" rel="noopener">Leave the old test</a>, tap <em>Leave the program</em>, then do step 2 again.</p></div></details>
+<details><summary>&ldquo;Your device isn&rsquo;t compatible with this version&rdquo;</summary><div><p>This test doesn&rsquo;t support your phone yet, so there&rsquo;s nothing more to do for now. Thanks for trying!</p></div></details>
+</div>
+</div>
 </section>
 </main>
-<p class="page-updated">Last updated <time datetime="2026-10-24">October 24, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-10-28">October 28, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
@@ -112,6 +125,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="js/beta.js?v=b7" defer></script>
+<script src="js/beta.js?v=b8" defer></script>
 </body>
 </html>
