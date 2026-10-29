@@ -761,7 +761,7 @@
 <ul>
 <li><strong>The ISO baked the WebKit stub of Amni-Browse.</strong> <code>packaging/amni-browse/PKGBUILD</code> now builds the default <code>servo-real</code> feature set at the pinned v0.12.1 commit, LTO off, with Servo's build and runtime deps mapped to Arch names. <code>build-local-repo.sh</code> keys its cache on the PKGBUILD's hash so the old WebKit package is not reused. <code>bootstrap.sh</code> adds a 16 GB swapfile.
 </li>
-<li><strong>Control's buttons did nothing on a real machine.</strong> New <code>amni-control-host</code> daemon on 127.0.0.1:15900 serves the page and runs a fixed verb table, root verbs through the polkit helper, long ones in a Konsole window. Token-gated. <code>amni-control</code> launcher opens it.
+<li><strong>Control's buttons did nothing on a real machine.</strong> New <code>amni-control-host</code> background process on 127.0.0.1:15900 serves the page and runs a fixed verb table, root verbs through the polkit helper, long ones in a Konsole window. Token-gated. <code>amni-control</code> launcher opens it.
 </li>
 <li><strong><code>polkit-kde-agent</code> was not on the image</strong>, so <code>pkexec</code> had no dialog to show.
 </li>

@@ -94,8 +94,8 @@
 <li>Writes no access logs by default (beyond standard stdout diagnostics you choose to capture)</li>
 </ul>
 <p>Because <em>you</em> run the signaling server, Amni-Scient has no visibility into who connects, when, or to what. We do not operate any hosted signaling service.</p>
-<h2>4. INPUT DAEMON</h2>
-<p>The Rust input daemon (<code>amni-control</code>) listens on <code>127.0.0.1:7878</code> &mdash; localhost only, never bound to a public interface. It receives JSON input events over that local socket and calls <code>enigo</code> to synthesize mouse and keyboard actions. The daemon does not read the screen, does not open files, and does not make outbound network requests of any kind.</p>
+<h2>4. INPUT PROCESS</h2>
+<p>The Rust input process (<code>amni-control</code>) listens on <code>127.0.0.1:7878</code> &mdash; localhost only, never bound to a public interface. It receives JSON input events over that local socket and calls <code>enigo</code> to synthesize mouse and keyboard actions. The input process does not read the screen, does not open files, and does not make outbound network requests of any kind.</p>
 <h2>5. LOCAL DATA HANDLING</h2>
 <p>Amni-Connect stores very little on disk:</p>
 <ul>
@@ -123,7 +123,7 @@
 <h2>11. DATA RETENTION</h2>
 <p>We retain no user data. Any session state lives only in the memory of your own signaling server and your own devices until processes exit or machines reboot.</p>
 <h2>12. SECURITY</h2>
-<p>Amni-Connect relies on the native WebRTC DTLS-SRTP stack for media encryption and on the operating system&rsquo;s TLS implementation for signaling transport. Input traffic between the Electron host and the Rust daemon stays on loopback (127.0.0.1) and never leaves the machine. You are responsible for securing your own signaling server (firewall, TLS reverse proxy, origin allowlist).</p>
+<p>Amni-Connect relies on the native WebRTC DTLS-SRTP stack for media encryption and on the operating system&rsquo;s TLS implementation for signaling transport. Input traffic between the Electron host and the Rust input process stays on loopback (127.0.0.1) and never leaves the machine. You are responsible for securing your own signaling server (firewall, TLS reverse proxy, origin allowlist).</p>
 <h2>13. CHILDREN&rsquo;S PRIVACY</h2>
 <p>Amni-Connect is not directed at children under 13. Because the application collects no data at all, there is no child-specific data collection to disclose.</p>
 <h2>14. YOUR RIGHTS</h2>

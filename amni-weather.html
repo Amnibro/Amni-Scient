@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Weather &mdash; Interactive Weather Maps | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Weather is interactive weather maps in your browser (v1.4.7). Live Open-Meteo fields, point forecast (hourly/7-day/surf/UV/air), NWS + GDACS hazards, US units default, Rust/WASM field engine.">
+<meta name="description" content="Amni-Weather is interactive weather maps in your browser (v1.4.7). Live weather layers, a forecast for any spot you tap (hourly, 7-day, surf, UV and air quality), and warnings from the National Weather Service and GDACS. US units by default.">
 <meta name="keywords" content="amni-weather,weather map,interactive weather,open-meteo,NWS alerts,GDACS,point forecast,wasm,meteoblue alternative,custom colormap">
 <meta property="og:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta property="og:description" content="Multi-layer weather maps in your browser. Live fields, pin forecast, NWS/GDACS hazards, US units. Free in-browser WASM engine, v1.4.7.">
+<meta property="og:description" content="Weather maps in your browser with live layers, a forecast for any spot, and storm and hazard warnings. US units. Free, v1.4.7.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-weather">
 <meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Amni-Weather &mdash; Interactive Weather Maps">
-<meta name="twitter:description" content="Weather maps in your browser: live Open-Meteo, pin forecast, NWS/GDACS hazards. Free in-browser WASM, v1.4.7.">
+<meta name="twitter:description" content="Weather maps in your browser: live layers, a forecast for any spot, storm and hazard warnings. Free, v1.4.7.">
 <link rel="canonical" href="https://amni-scient.com/amni-weather">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Amni-Weather","url":"https://amni-scient.com/weather/","description":"Interactive weather maps with live Open-Meteo fields, point forecast panels, NWS and GDACS hazards, customizable colormaps, and Rust/WASM field engine.","applicationCategory":"WeatherApplication","operatingSystem":"Any (Modern Browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"softwareVersion":"1.4.7"}</script>
 <link rel="stylesheet" href="css/style.css?v=b263">
@@ -100,20 +100,20 @@
 <div class="product-hero">
 <div class="wx-icon" aria-hidden="true"></div>
 <h1>AMNI-WEATHER</h1>
-<p class="desc">SLIPPY WEATHER MAPS &bull; LIVE FIELDS &bull; PIN FORECAST &bull; NWS + GDACS &bull; RUST/WASM &bull; v1.4.7</p>
+<p class="desc">LIVE WEATHER MAPS &bull; TAP ANYWHERE FOR A FORECAST &bull; STORM &amp; HAZARD WARNINGS &bull; v1.4.7</p>
 <div class="cta-row" style="margin-top:1rem;margin-bottom:.8rem">
 <a href="weather/" class="btn btn-primary">LAUNCH MAPS</a>
 <a href="privacy-weather.html" class="btn">PRIVACY</a>
 </div>
-<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">Free &amp; in-browser &nbsp;&bull;&nbsp; Open-Meteo live + baked pack fields &nbsp;&bull;&nbsp; US units default</p>
+<p style="color:var(--dim);font-size:.72rem;letter-spacing:.04em">Free, in your browser &nbsp;&bull;&nbsp; live data from Open-Meteo &nbsp;&bull;&nbsp; US units by default</p>
 </div>
 <div class="layer-chips">
 <span>Temperature</span><span>Feels like</span><span>Dew point</span><span>Humidity</span><span>Precipitation</span><span>Clouds</span><span>Pressure</span><span>Wind</span><span>CAPE</span><span>UV</span><span>Visibility</span><span>Hourly forecast</span><span>7-day</span><span>Surf</span><span>Air quality</span><span>NWS alerts</span><span>GDACS</span>
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Interactive weather maps in your browser. Stack live model layers on a slippy basemap, then drop a pin for a forecast (v1.4.7).</p>
-<ul class="ptile-feats"><li>Temp, wind, precip, CAPE, UV, pressure &amp; more</li><li>Pin forecast: hourly / 7-day / surf / UV·air</li><li>NWS + GDACS hazards · US units default</li><li>Live Open-Meteo + pack fallback, Rust/WASM fields</li></ul>
+<p class="ptile-line">Interactive weather maps in your browser. Stack live weather layers on a map you can drag and zoom, then drop a pin for a forecast (v1.4.7).</p>
+<ul class="ptile-feats"><li>Temperature, wind, rain, storm energy, UV, pressure and more</li><li>Tap for a forecast: hourly, 7-day, surf, UV and air quality</li><li>Warnings from the National Weather Service and GDACS · US units</li><li>Live data, with a saved copy if the live feed is down</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/weather/tile-weather.jpg" alt="Amni-Weather temperature layer" loading="lazy"></div>
 </div>
@@ -123,12 +123,12 @@
 <div class="features">
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/><path d="M12 8v6"/></svg></div>
-<h4>MAP LAYERS + LOD</h4>
-<p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom in and the live lattice gets denser; zoomed out it stays light, so the map stays snappy.</p>
+<h4>MAP LAYERS</h4>
+<p>Temperature, feels-like, dew point, humidity, precip, clouds, MSL pressure, wind, CAPE, UV, visibility. Zoom in and more detail fills in; zoomed out it stays light, so the map stays quick.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
-<h4>SLIPPY MAP UX</h4>
+<h4>A SMOOTH MAP</h4>
 <p>Fractional zoom, inertia pan, pinch on mobile, wind streamlines, pressure isobars, city labels and borders. It finds you with browser geolocation, falls back to IP, and remembers your last place.</p>
 </div>
 <div class="feature">

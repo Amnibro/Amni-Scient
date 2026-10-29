@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Amni-Space &mdash; Visual Disk Map with an AI Seat | AMNI-SCIENT</title>
-<meta name="description" content="Amni-Space is a visual disk map for Windows. It reads the NTFS $MFT directly, so a whole drive maps in about 20 seconds. Treemap and sunburst views, duplicate and cache detection, and an AI seat that proposes a cleanup you approve. Deletes go to the Recycle Bin and every run is undoable.">
+<title>Amni-Space &mdash; Visual Disk Map with an AI Helper | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Space is a visual disk map for Windows. It reads the drive&rsquo;s own file index directly, so a whole drive maps in about 20 seconds. Treemap and sunburst views, duplicate and cache detection, and an AI helper that proposes a cleanup you approve. Deletes go to the Recycle Bin and every run is undoable.">
 <meta name="keywords" content="amni-space,disk space analyzer,treemap,spacesniffer alternative,wiztree alternative,ntfs mft scanner,disk cleanup,windows disk usage,find duplicate files">
 <meta property="og:title" content="Amni-Space &mdash; Visual Disk Map with an AI Seat">
 <meta property="og:description" content="See where your Windows disk went. Treemap and sunburst, a whole drive mapped in about 20 seconds, duplicate and cache detection, and an AI that proposes a cleanup you approve. Nothing is deleted without you.">
@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="See where your Windows disk went. Treemap and sunburst, a whole drive in about 20 seconds, duplicates and caches, and an AI that proposes a cleanup you approve.">
 <meta name="twitter:image" content="https://amni-scient.com/assets/space/treemap.png">
 <link rel="canonical" href="https://amni-scient.com/amni-space">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Space","url":"https://amni-scient.com/amni-space.html","description":"Visual disk-space map for Windows that reads the NTFS $MFT directly, with treemap and sunburst views and an AI seat that proposes a cleanup you approve.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows 10, Windows 11","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/space/treemap.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Space","url":"https://amni-scient.com/amni-space.html","description":"Visual disk-space map for Windows that reads the drive&#39;s own file index directly, with treemap and sunburst views and an AI helper that proposes a cleanup you approve.","applicationCategory":"UtilitiesApplication","operatingSystem":"Windows 10, Windows 11","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"},"image":"https://amni-scient.com/assets/space/treemap.png"}</script>
 <link rel="stylesheet" href="css/style.css?v=b263">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
@@ -111,8 +111,8 @@
 </div>
 <div class="ptile">
 <div class="ptile-copy">
-<p class="ptile-line">Amni-Space is a disk map for Windows. Your drive filled up and you don&rsquo;t know why? It shows you, as a picture you can click into. And it&rsquo;s quick: it reads the NTFS master file table directly instead of walking folders, so a 930 GB drive with 2.7 million files draws in about twenty seconds.</p>
-<ul class="ptile-feats"><li>Treemap or sunburst &middot; click to zoom, breadcrumb to jump</li><li>Finds caches, build output, duplicates and stale copies</li><li>An AI seat reads the map and proposes a cleanup &mdash; you approve every line</li><li>Deletes go to the Recycle Bin &middot; every run is journalled and undoable</li></ul>
+<p class="ptile-line">Amni-Space is a disk map for Windows. Your drive filled up and you don&rsquo;t know why? It shows you, as a picture you can click into. And it&rsquo;s quick: it reads the drive&rsquo;s own file index instead of opening every folder, so a 930 GB drive with 2.7 million files draws in about twenty seconds.</p>
+<ul class="ptile-feats"><li>Treemap or sunburst &middot; click to zoom in, use the path bar to jump back</li><li>Finds caches, leftover build files, duplicates and stale copies</li><li>An AI helper reads the map and proposes a cleanup &mdash; you approve every line</li><li>Deletes go to the Recycle Bin &middot; every cleanup is logged and can be undone</li></ul>
 </div>
 <div class="ptile-media"><img src="assets/space/treemap.png" alt="Amni-Space treemap of a Windows folder" loading="lazy" onclick="openLightbox(this.src,this.alt)"></div>
 </div>
@@ -182,7 +182,7 @@
 <tr><td>Irreplaceable</td><td>model weights, bakes, checkpoints, datasets, backups, keys and credentials are never offered</td></tr>
 <tr><td>In use</td><td>a folder holding a venv, a running executable, a service or a scheduled task cannot be moved</td></tr>
 <tr><td>The AI</td><td>proposes only &bull; cannot execute unless you switch autonomy on, and then only under a byte cap</td></tr>
-<tr><td>Network</td><td>binds to 127.0.0.1 &bull; your file names leave the machine only if you choose a cloud AI seat</td></tr>
+<tr><td>Network</td><td>only reachable from your own PC &bull; your file names leave it only if you choose a cloud AI</td></tr>
 <tr><td>Keys</td><td>stored in <code>%APPDATA%\AmniSpace</code> &bull; sent only to the provider you picked, over HTTPS</td></tr>
 <tr><td>License</td><td>Free for personal use &bull; &copy; Amniscient, LLC</td></tr>
 </table>
@@ -210,7 +210,7 @@
 <ol style="color:var(--dim);font-size:.85rem;max-width:680px;margin:0 0 1rem;padding-left:1.1rem;line-height:1.75">
 <li><strong>Windows asks for administrator.</strong> That&rsquo;s only so it can read the drive&rsquo;s file table, the trick that makes a whole-drive scan take twenty seconds instead of ten minutes. Say no and you can still scan any single folder.</li>
 <li><strong>Windows may say the publisher is unrecognized.</strong> This build isn&rsquo;t code-signed yet. Choose <em>More info</em> then <em>Run anyway</em>, or check the hash above first.</li>
-<li><strong>Your browser opens on the map.</strong> The app is a local server on 127.0.0.1, so nothing leaves your machine.</li>
+<li><strong>Your browser opens on the map.</strong> The app runs on your own PC, so nothing leaves it.</li>
 <li><strong>Pick a drive and press Scan.</strong> That&rsquo;s the whole setup!</li>
 </ol>
 <p style="color:var(--dim);font-size:.8rem;margin-bottom:0">To remove it: <code>powershell -File "$env:LOCALAPPDATA\AmniSpace\uninstall.ps1"</code>, or just delete the exe if you took the direct download.</p>
