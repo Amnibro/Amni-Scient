@@ -37,6 +37,14 @@ html,body{overscroll-behavior-y:none}
 .price-card ul{list-style:none;padding:0;margin:1.2rem 0;text-align:left}
 .price-card li{padding:.35rem 0;font-size:.88rem;color:var(--text)}
 .price-card li::before{content:'✓ ';color:#e8b565;font-weight:700}
+.buy-row{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.buy-row .cta-big{border:0;cursor:pointer;font:inherit;width:100%}
+.buy-row .cta-big.alt{background:transparent;border:1px solid rgba(232,181,101,.6);color:#e8b565}
+.buy-row .cta-big[disabled]{opacity:.6;cursor:progress}
+.buy-msg{min-height:1.2em;font-size:.85rem;color:#e8b565;margin:.5rem 0 0}
+.lic-box{margin-top:1rem;text-align:left}
+.lic-box textarea{width:100%;font:12px/1.4 ui-monospace,monospace;word-break:break-all;background:rgba(0,0,0,.25);color:var(--text);border:1px solid rgba(232,181,101,.4);border-radius:8px;padding:.5rem}
+.linkish{background:none;border:0;color:#e8b565;text-decoration:underline;cursor:pointer;font:inherit}
 .cta-big{display:inline-block;background:#e8b565;color:#14100a;font-weight:700;padding:.85rem 2rem;border-radius:9px;text-decoration:none;font-size:.95rem;box-shadow:0 0 18px rgba(232,181,101,.35)}
 .cta-sub{display:block;margin-top:.8rem;font-size:.75rem;color:var(--dim)}
 .how{margin:3rem 0}
@@ -142,8 +150,12 @@ html,body{overscroll-behavior-y:none}
 <li>Permit packets, 3D showcases &amp; pipeline dashboard</li>
 <li>Priority feature requests</li>
 </ul>
-<a class="cta-big" id="buy-btn" href="../deck/">Start free trial →</a>
-<span class="cta-sub" id="buy-note">14 days free · no card, no account · cancel anytime</span>
+<div class="founding-sub" style="margin-top:0">or <b>$190/year</b> — two months free</div>
+<div class="buy-row"><button type="button" class="cta-big" id="buy-monthly" data-plan="monthly">Subscribe — $19/mo →</button><button type="button" class="cta-big alt" id="buy-annual" data-plan="annual">Subscribe — $190/yr →</button></div>
+<span class="cta-sub" id="buy-note">14 days free, then billed by Stripe · cancel anytime · license key shown here after checkout</span>
+<p class="buy-msg" id="buy-msg" role="status" aria-live="polite"></p>
+<div class="lic-box" id="lic-box" hidden><p id="lic-head"></p><textarea id="lic-key" rows="3" readonly spellcheck="false" aria-label="License key"></textarea><p class="cta-sub">Pro is unlocked in this browser. To use Pro on another device, open any estimator there → 💼 Pro → paste this key.</p><p><a href="../deck/" class="cta-big">Open an estimator →</a> <button type="button" class="linkish" id="lic-billing">Manage billing</button></p></div>
+<p class="cta-sub" style="margin-top:.8rem"><a href="../deck/">Or start the free 14-day trial in any estimator</a> — no card, no account.</p>
 </div>
 <div class="how">
 <h2>How it works</h2>
@@ -155,9 +167,9 @@ html,body{overscroll-behavior-y:none}
 </div>
 <div class="pro-faq">
 <h2>Questions</h2>
-<details><summary>Where is my data stored?</summary><div>On your device, full stop. Company profile, clients, quotes — everything lives in your browser's local storage. Nothing is uploaded to any server, ever. One-click Export backup (and restore) lives on your <a href="dashboard.html" style="color:#e8b565">Pro Dashboard</a> — back up to a file you control.</div></details>
+<details><summary>Where is the data stored?</summary><div>On your device, full stop. Company profile, clients, quotes — everything lives in your browser's local storage. Nothing is uploaded to any server, ever. One-click Export backup (and restore) lives on your <a href="dashboard.html" style="color:#e8b565">Pro Dashboard</a> — back up to a file you control.</div></details>
 <details><summary>Do the free tools stay free?</summary><div>Yes — every estimator, the 3D designers, plans, materials pricing and guides stay free for everyone. Pro adds the contractor business layer: branding, rates, quotes, packets, showcases.</div></details>
-<details><summary>What happens when my trial ends?</summary><div>The free estimators keep working exactly as before. Your Pro data stays on your device and unlocks again the moment you subscribe.</div></details>
+<details><summary>What happens when the trial ends?</summary><div>The free estimators keep working exactly as before. Your Pro data stays on your device and unlocks again the moment you subscribe.</div></details>
 <details><summary>Is there an Android app?</summary><div>In development — web first, then Android. The web tool already works well on phones and tablets.</div></details>
 </div>
 </div>
@@ -172,8 +184,29 @@ html,body{overscroll-behavior-y:none}
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script src="../_shared/pro-config.js?v=c1"></script>
-<script>window.AMNI_BUY_URL&&(document.getElementById('buy-btn').href=window.AMNI_BUY_URL,document.getElementById('buy-btn').textContent='Subscribe — $19/mo →',document.getElementById('buy-note').textContent='Secure checkout · cancel anytime · license key by email')</script>
+<script src="../_shared/pro-config.js?v=c2"></script>
+<script src="../_shared/pro-license.js?v=l1"></script>
+<script>
+(() => {
+  const P = window.AmniConstructPro, $ = id => document.getElementById(id), msg = $('buy-msg')
+  if (!P) return
+  const show = L => {
+    if (!L) return
+    $('lic-box').hidden = false
+    $('lic-head').textContent = (P.claimed() ? 'Thanks — ' : '') + 'Amni-Construct Pro is active' + (L.exp ? ' (renews by ' + new Date(L.exp).toLocaleDateString() + ')' : '') + '.'
+    $('lic-key').value = L.token
+  }
+  document.querySelectorAll('.buy-row button').forEach(b => b.addEventListener('click', () => {
+    msg.textContent = 'Opening secure checkout…'
+    document.querySelectorAll('.buy-row button').forEach(x => x.disabled = true)
+    P.buy(b.dataset.plan).catch(e => { msg.textContent = e.message; document.querySelectorAll('.buy-row button').forEach(x => x.disabled = false) })
+  }))
+  $('lic-billing').addEventListener('click', () => P.billing().catch(e => { msg.textContent = e.message }))
+  $('lic-key').addEventListener('focus', e => e.target.select())
+  if (P.pendingSession()) msg.textContent = 'Activating the license…'
+  P.load().then(L => { msg.textContent = P.error() || ''; show(L) })
+})()
+</script>
 <script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
