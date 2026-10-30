@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Deck Builders — Design, Price & Permit Decks in the Browser | Amni-Construct</title>
+<meta name="description" content="Free 3D deck designer for builders and contractors: live material pricing, framing plans, cut lists, branded client quotes and permit packets. Plans made with Amni-Construct were approved by the City of Cohoes, NY building department.">
+<meta property="og:title" content="Amni-Construct for deck builders">
+<meta property="og:description" content="Design a deck in 3D, price it live, print permit-ready plans and send a branded quote. Free in the browser.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://amni-scient.com/construct/img/hero-deck.webp">
+<meta property="og:url" content="https://amni-scient.com/construct/builders.html">
+<link rel="canonical" href="https://amni-scient.com/construct/builders.html">
+<link rel="stylesheet" href="../css/style.css?v=b263">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.crumbs{color:var(--dim);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin:1rem 0 0;padding:0 1.5rem}
+html,body{overscroll-behavior-y:none}
+.crumbs a{color:var(--dim)}
+.pro-wrap{max-width:960px;margin:0 auto;padding:0 1.5rem}
+.pro-hero{text-align:center;padding:3rem 0 2rem}
+.pro-hero h1{font-size:2rem;letter-spacing:.06em;margin:0}
+.pro-hero h1 span{color:#e8b565}
+.pro-hero p{color:var(--dim);max-width:620px;margin:1rem auto;line-height:1.7}
+.badge{display:inline-block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#e8b565;border:1px solid rgba(232,181,101,.5);border-radius:99px;padding:.3rem .9rem;margin-bottom:1rem}
+.feat3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:2rem 0}
+.feat{background:linear-gradient(180deg,rgba(232,181,101,.05),transparent);border:1px solid rgba(232,181,101,.22);border-radius:10px;padding:1.4rem}
+.feat h3{margin:0 0 .5rem;color:#e8b565;font-size:1rem}
+.feat p{color:var(--dim);font-size:.85rem;line-height:1.7;margin:0}
+.feat .soon{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border,rgba(255,255,255,.15));border-radius:99px;padding:.15rem .5rem;margin-left:.4rem;vertical-align:2px}
+.price-card{max-width:420px;margin:2.5rem auto;text-align:center;border:1px solid rgba(232,181,101,.45);border-radius:14px;padding:2rem;background:linear-gradient(180deg,rgba(232,181,101,.08),rgba(232,181,101,.02))}
+.price-card .amt{font-size:3rem;font-weight:700;color:#e8b565}
+.price-card .founding{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#e8b565;border:1px solid rgba(232,181,101,.5);border-radius:99px;padding:.2rem .7rem;margin-bottom:.5rem}
+.price-card .founding-sub{font-size:.82rem;color:var(--dim);margin-top:.35rem}
+.price-card .amt small{font-size:1rem;color:var(--dim);font-weight:400}
+.price-card ul{list-style:none;padding:0;margin:1.2rem 0;text-align:left}
+.price-card li{padding:.35rem 0;font-size:.88rem;color:var(--text)}
+.price-card li::before{content:'✓ ';color:#e8b565;font-weight:700}
+.cta-big{display:inline-block;background:#e8b565;color:#14100a;font-weight:700;padding:.85rem 2rem;border-radius:9px;text-decoration:none;font-size:.95rem;box-shadow:0 0 18px rgba(232,181,101,.35)}
+.cta-sub{display:block;margin-top:.8rem;font-size:.75rem;color:var(--dim)}
+.how{margin:3rem 0}
+.how h2{color:#e8b565;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
+.how ol{color:var(--text);line-height:2;font-size:.92rem}
+.pro-faq{margin:3rem 0}
+.pro-faq h2{color:#e8b565;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
+.pro-faq details{border:1px solid var(--border,rgba(255,255,255,.1));border-radius:6px;margin-bottom:.6rem;background:rgba(255,255,255,.015)}
+.pro-faq summary{cursor:pointer;padding:.8rem 1rem;font-size:.9rem}
+.pro-faq div{padding:0 1rem 1rem;color:var(--dim);font-size:.86rem;line-height:1.7}
+
+.b-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:center;padding:2.5rem 0 1.5rem;text-align:left}
+.b-hero h1{font-size:clamp(1.8rem,4.4vw,2.7rem);line-height:1.08;letter-spacing:.02em;margin:0}
+.b-hero h1 span{color:#e8b565}
+.b-hero .lead{color:var(--dim);line-height:1.7;margin:1rem 0 0;font-size:1rem}
+.b-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.5rem;align-items:center}
+.cta-ghost{display:inline-block;border:1px solid rgba(232,181,101,.6);color:#e8b565;font-weight:700;padding:.8rem 1.6rem;border-radius:9px;text-decoration:none;font-size:.95rem}
+.cta-ghost:hover{background:rgba(232,181,101,.1)}
+.b-shot{margin:0}
+.b-shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(232,181,101,.25)}
+.b-shot figcaption{font-size:.75rem;color:var(--dim);margin-top:.5rem}
+.trust{display:flex;gap:.8rem;align-items:flex-start;margin-top:1.4rem;padding:.8rem 1rem;border:1px solid rgba(95,191,110,.4);border-left:3px solid #5fbf6e;border-radius:6px;background:rgba(95,191,110,.07);font-size:.85rem;line-height:1.55;color:var(--dim)}
+.trust b{color:var(--text)}
+.trust-ico{flex:none;width:20px;height:20px;border-radius:50%;background:#5fbf6e;color:#0a0a0a;font-weight:800;font-size:12px;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
+.flow{counter-reset:st;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0 0;padding:0;list-style:none}
+.flow li{counter-increment:st;border:1px solid var(--border,rgba(255,255,255,.12));border-radius:10px;padding:1rem 1.1rem;font-size:.86rem;line-height:1.6;color:var(--dim)}
+.flow li::before{content:counter(st);display:inline-flex;width:24px;height:24px;border-radius:50%;background:#e8b565;color:#14100a;font-weight:800;font-size:.8rem;align-items:center;justify-content:center;margin-bottom:.5rem}
+.flow li b{display:block;color:var(--text);margin-bottom:.2rem}
+.b-close{text-align:center;margin:3rem 0 3.5rem}
+.b-close h2{font-size:1.4rem;margin:0 0 .6rem}
+.b-close p{color:var(--dim);margin:0 auto 1.3rem;max-width:560px;line-height:1.7}
+.b-close .b-cta{justify-content:center}
+@media (max-width:860px){.b-hero{grid-template-columns:1fr;gap:1.5rem;padding-top:1.5rem}.b-cta a{flex:1 1 100%;text-align:center}}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e0954a">
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">AI</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">DESKTOP &amp; OS</span>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE</span>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LEARN &amp; EXPLORE</span>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">LIFE</span>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<p class="crumbs"><a href="../">Home</a> &rsaquo; <a href="../construct/">Amni-Construct</a> &rsaquo; Deck builders</p>
+<main class="pro-wrap">
+<section class="b-hero no-rise">
+<div>
+<span class="badge">🪚 For deck builders &amp; contractors</span>
+<h1>Design it, price it, <span>permit it</span> — before you leave the driveway.</h1>
+<p class="lead">Model the deck in 3D with the client, watch the material total update with every change, then print framing plans and a branded quote from the same design. Free in the browser on phone, tablet or laptop. No account, nothing to install.</p>
+<div class="b-cta">
+<a class="cta-big" href="../deck/">Design a deck free →</a>
+<a class="cta-ghost" href="pro.html">See Pro: quotes &amp; permits</a>
+</div>
+<div class="trust" role="note"><span class="trust-ico" aria-hidden="true">✓</span><span><b>Permit-approved plans.</b> Plans made with Amni-Construct were approved by the City of Cohoes, NY building department.</span></div>
+</div>
+<figure class="b-shot">
+<img src="img/hero-deck.webp" srcset="img/hero-deck-640.webp 640w, img/hero-deck.webp 1280w" sizes="(max-width:860px) 92vw, 520px" width="1280" height="840" alt="A 16 by 12 foot deck modeled in 3D beside its printed framing plan sheet" fetchpriority="high">
+<figcaption>Classic 16×12 pressure-treated preset: the 3D model and its S-1 framing plan, from one design.</figcaption>
+</figure>
+</section>
+<div class="feat3">
+<div class="feat"><h3>🧱 Live materials &amp; pricing</h3><p>Joists, beams, posts, footings, decking, fasteners and hardware are counted from the actual framing. Totals update as length, depth, height, spacing or decking change, and compare across stores.</p></div>
+<div class="feat"><h3>📐 Framing plans</h3><p>A printable S-1 to S-6 sheet set: framing and footing layout, elevations, stair and connection details, all dimensioned from the same model the client approved.</p></div>
+<div class="feat"><h3>🪚 Cut list</h3><p>Every board with its length, grouped by member, so the lumber order and the saw work match the plan.</p></div>
+<div class="feat"><h3>🧾 Branded client quotes <span class="soon">Pro</span></h3><p>Your logo, license number, labor lines, markup, tax and deposit on a print-ready quote. The live bill of materials flows straight in.</p></div>
+<div class="feat"><h3>📋 Permit packets <span class="soon">Pro</span></h3><p>A cover sheet with parcel, contractor and valuation, stapled to the plan sheets. Print, sign and submit to the building department.</p></div>
+<div class="feat"><h3>📸 3D showcase <span class="soon">Pro</span></h3><p>Snapshot the 3D model or send a link that opens the exact design, so the client sees what they are signing off on.</p></div>
+</div>
+<section class="how no-rise">
+<h2>From site visit to signed quote</h2>
+<ol class="flow">
+<li><b>Measure &amp; model</b>Enter the size, or draw or trace the footprint from a photo. Stairs, railings and finishes in a few taps.</li>
+<li><b>Price it live</b>The estimate tracks every change, with a full material table and cut list.</li>
+<li><b>Print the plans</b>Framing, footing and elevation sheets ready for the permit desk.</li>
+<li><b>Send the quote</b>Turn the estimate into a branded quote or permit packet with Pro. 14-day free trial, no card.</li>
+</ol>
+</section>
+<section class="b-close no-rise">
+<h2>Start with the next deck on the schedule</h2>
+<p>All eleven estimators are free for everyone. Pro adds the business layer: branded quotes, permit packets, client book and showcases.</p>
+<div class="b-cta">
+<a class="cta-big" href="../deck/">Open the deck designer →</a>
+<a class="cta-ghost" href="pro.html">Pro pricing</a>
+<a class="cta-ghost" href="deck.html">Deck building guide</a>
+</div>
+</section>
+</main>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../construct/">AMNI-CONSTRUCT</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script>"serviceWorker" in navigator&&navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
+</body>
+</html>

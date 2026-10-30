@@ -88,17 +88,25 @@ const readTot = () => {
 }
 const pill = document.createElement('div')
 pill.id = 'uk-quote'
-pill.innerHTML = '<span class="uk-qlab">Live<br>estimate</span><b></b><button id="uk-share" title="Copy a shareable link to this exact design">🔗</button>'
+pill.innerHTML = '<span class="uk-qlab">Live<br>estimate</span><b></b><button id="uk-share" title="Copy a shareable link to this exact design">🔗</button><button id="uk-pro" type="button" title="Turn this estimate into a branded client quote or a permit packet"><span class="uk-pl">📄 Turn this into a branded quote / permit packet</span><span class="uk-ps">📄 Quote / permit</span></button>'
 pill.setAttribute('role', 'button')
 pill.setAttribute('aria-label', 'Open materials and pricing')
 pill.tabIndex = 0
 document.body.appendChild(pill)
 $('#uk-share').setAttribute('aria-label', 'Copy a shareable link to this design')
 const qv = pill.querySelector('b')
-const upd = () => { const v = readTot(); pill.classList.toggle('on', !!v); v && (qv.textContent = v) }
+const upd = () => { const v = readTot(); pill.classList.toggle('on', !!v); pill.classList.toggle('has-pro', !!document.getElementById('pro-open')); v && (qv.textContent = v) }
 matHost && new MutationObserver(upd).observe(matHost, { childList: true, subtree: true, characterData: true })
 upd(); setTimeout(upd, 1600); setTimeout(upd, 4200)
-pill.addEventListener('click', e => { e.target.id !== 'uk-share' && matTab && matTab.click() })
+pill.addEventListener('click', e => { !e.target.closest('#uk-share,#uk-pro') && matTab && matTab.click() })
+$('#uk-pro').addEventListener('click', e => {
+  e.stopPropagation()
+  const o = document.getElementById('pro-open')
+  if (!o) return
+  o.click()
+  setTimeout(() => { const g = document.getElementById('pro-gen'); g && g.scrollIntoView({ block: 'center', behavior: 'smooth' }) }, 120)
+})
+addEventListener('load', upd)
 pill.addEventListener('keydown', e => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target === pill) {
     e.preventDefault()
@@ -129,8 +137,16 @@ if (mod && tabs.length && !localStorage.getItem(ck)) {
   if (feats.length) {
     const c = document.createElement('div')
     c.id = 'uk-coach'
-    c.innerHTML = `Everything updates live as you tweak — and your running total floats bottom-right.<br>${feats.slice(0, 3).join('<br>')}<br><button class="uk-ok">Got it</button>`
-    document.body.appendChild(c)
+    const view = $('#view')
+    const phone = matchMedia('(max-width:820px)').matches
+    if (phone && view) {
+      c.className = 'in-view'
+      c.innerHTML = `<span>Totals update live as you tweak. Tap <b>☰</b> for every setting, or swipe the tabs for plans &amp; materials.</span><button class="uk-ok">Got it</button>`
+      view.appendChild(c)
+    } else {
+      c.innerHTML = `Everything updates live as you tweak — and your running total floats bottom-right.<br>${feats.slice(0, 3).join('<br>')}<br><button class="uk-ok">Got it</button>`
+      document.body.appendChild(c)
+    }
     const bye = () => c.remove()
     c.querySelector('.uk-ok').onclick = bye
     setTimeout(bye, 16000)
