@@ -1,0 +1,47 @@
+fn lox(a u32) u32 { (((a & 3) + 1) >> 1) & 1 }
+fn loy(a u32) u32 { ((a & 3) >> 1) & 1 }
+fn loz(a u32) u32 { a >> 2 }
+gpu fn mv(n u32, NX u32, NY u32, NZ u32, nx u32, ny u32, nz u32, ke u32, mode u32, om f32, K const f32[:], sc const f32[:], cq const i32[:], x const f32[:], b const f32[:], d const f32[:], y f32[:]) {
+	if n >= NX * NY * NZ { return; }
+	let i = n % NX;
+	let j = (n / NX) % NY;
+	let k = n / (NX * NY);
+	let e8 u32 = 8;
+	let e3 u32 = 3;
+	var a0 f32 = 0.0; var a1 f32 = 0.0; var a2 f32 = 0.0;
+	var u0 f32 = 0.0; var u1 f32 = 0.0; var u2 f32 = 0.0;
+	if ke == 0 { u0 = x[3 * n]; u1 = x[3 * n + 1]; u2 = x[3 * n + 2]; }
+	if mode != 3 {
+		for a in e8 {
+			let lx = lox(a); let ly = loy(a); let lz = loz(a);
+			if i < lx || j < ly || k < lz { continue; }
+			let ci = i - lx; let cj = j - ly; let ck = k - lz;
+			if ci >= nx || cj >= ny || ck >= nz { continue; }
+			let q = cq[(ck * ny + cj) * nx + ci];
+			if q < 0 { continue; }
+			let qu = q as u32;
+			let kb = if ke == 1 { qu * 576 } else { 0 };
+			let s f32 = if ke == 1 { 1.0 } else { sc[qu] };
+			let n0 = (ck * NY + cj) * NX + ci;
+			var t0 f32 = 0.0; var t1 f32 = 0.0; var t2 f32 = 0.0;
+			for e in e8 {
+				let nb = 3 * (n0 + lox(e) + loy(e) * NX + loz(e) * NX * NY);
+				let v0 = x[nb] - u0; let v1 = x[nb + 1] - u1; let v2 = x[nb + 2] - u2;
+				let r = kb + 72 * a + 3 * e;
+				t0 += K[r] * v0 + K[r + 1] * v1 + K[r + 2] * v2;
+				t1 += K[r + 24] * v0 + K[r + 25] * v1 + K[r + 26] * v2;
+				t2 += K[r + 48] * v0 + K[r + 49] * v1 + K[r + 50] * v2;
+			}
+			a0 += s * t0; a1 += s * t1; a2 += s * t2;
+		}
+	}
+	for c in e3 {
+		let id = 3 * n + c;
+		let ac = if c == 0 { a0 } else if c == 1 { a1 } else { a2 };
+		let dd = d[id];
+		let fx = dd < 0.0;
+		var o f32 = 0.0;
+		if mode == 0 { o = if fx { x[id] } else { ac }; } else if mode == 1 { o = if fx { 0.0 } else { b[id] - ac }; } else if mode == 2 { o = if fx { 0.0 } else { x[id] + om * (b[id] - ac) / dd }; } else { o = if fx { 0.0 } else { om * b[id] / dd }; }
+		y[id] = o;
+	}
+}

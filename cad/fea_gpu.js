@@ -1,3 +1,4 @@
+import HK from './fea_kernels.js';
 const IDX='let n=g.x+g.y*nw.x*64u;';
 const EL=(b,body)=>`struct U{n:u32,m:u32,a:u32,b:u32,c:u32,d:u32,e:u32,f:u32};
 @group(0)@binding(0) var<uniform> u:U;
@@ -6,28 +7,7 @@ ${b}
 const RED=`var<workgroup> s1:array<f32,256>;var<workgroup> s2:array<f32,256>;
 fn red(li:u32){var s=128u;loop{if(s==0u){break;}if(li<s){s1[li]+=s1[li+s];s2[li]+=s2[li+s];}workgroupBarrier();s=s>>1u;}}`;
 const WGSL={
-mv:`struct P{NX:u32,NY:u32,NZ:u32,nx:u32,ny:u32,nz:u32,ke:u32,mode:u32,om:f32,q0:u32,q1:u32,q2:u32,q3:u32,q4:u32,q5:u32,q6:u32};
-@group(0)@binding(0) var<uniform> p:P;
-@group(0)@binding(1) var<storage,read> K:array<f32>;
-@group(0)@binding(2) var<storage,read> sc:array<f32>;
-@group(0)@binding(3) var<storage,read> cq:array<i32>;
-@group(0)@binding(4) var<storage,read> x:array<f32>;
-@group(0)@binding(5) var<storage,read> b:array<f32>;
-@group(0)@binding(6) var<storage,read> d:array<f32>;
-@group(0)@binding(7) var<storage,read_write> y:array<f32>;
-fn lo(a:u32)->vec3u{let c=a&3u;return vec3u(((c+1u)>>1u)&1u,(c>>1u)&1u,a>>2u);}
-@compute @workgroup_size(64) fn main(@builtin(global_invocation_id) g:vec3u,@builtin(num_workgroups) nw:vec3u){${IDX}
- if(n>=p.NX*p.NY*p.NZ){return;}
- let i=n%p.NX;let j=(n/p.NX)%p.NY;let k=n/(p.NX*p.NY);var ac=vec3f(0.0);let ur=select(vec3f(0.0),vec3f(x[3u*n],x[3u*n+1u],x[3u*n+2u]),p.ke==0u);
- if(p.mode!=3u){for(var a=0u;a<8u;a++){let l=lo(a);if(i<l.x||j<l.y||k<l.z){continue;}let ci=i-l.x;let cj=j-l.y;let ck=k-l.z;if(ci>=p.nx||cj>=p.ny||ck>=p.nz){continue;}
-  let q=cq[(ck*p.ny+cj)*p.nx+ci];if(q<0){continue;}
-  let kb=select(0u,u32(q)*576u,p.ke==1u);let s=select(sc[u32(q)],1.0,p.ke==1u);let n0=(ck*p.NY+cj)*p.NX+ci;var t=vec3f(0.0);
-  for(var e=0u;e<8u;e++){let m=lo(e);let nb=3u*(n0+m.x+m.y*p.NX+m.z*p.NX*p.NY);let v=vec3f(x[nb],x[nb+1u],x[nb+2u])-ur;let r=kb+72u*a+3u*e;
-   t+=vec3f(dot(vec3f(K[r],K[r+1u],K[r+2u]),v),dot(vec3f(K[r+24u],K[r+25u],K[r+26u]),v),dot(vec3f(K[r+48u],K[r+49u],K[r+50u]),v));}
-  ac+=s*t;}}
- for(var c=0u;c<3u;c++){let id=3u*n+c;let dd=d[id];let fx=dd<0.0;var o=0.0;
-  if(p.mode==0u){o=select(ac[c],x[id],fx);}else if(p.mode==1u){o=select(b[id]-ac[c],0.0,fx);}else if(p.mode==2u){o=select(x[id]+p.om*(b[id]-ac[c])/dd,0.0,fx);}else{o=select(p.om*b[id]/dd,0.0,fx);}
-  y[id]=o;}}`,
+mv:HK.mv.wgsl,
 rs:EL(`@group(0)@binding(1) var<storage,read> tf:array<f32>;
 @group(0)@binding(2) var<storage,read> df:array<f32>;
 @group(0)@binding(3) var<storage,read> dc:array<f32>;
