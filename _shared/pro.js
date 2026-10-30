@@ -34,12 +34,14 @@ PS.rateBook = PS.rateBook && PS.rateBook.length ? PS.rateBook : [{ d: 'Demolitio
 const saveP = () => localStorage.setItem('amni.pro.v1', JSON.stringify(PS))
 const saveQ = () => localStorage.setItem(QK, JSON.stringify(Q))
 const TRIAL_MS = 14 * 864e5
-const chk = k => { const m = k.match(/^AMNI-PRO-([A-Z0-9]{5})-([A-Z0-9]{5})$/); if (!m) return false; const p = m[1] + m[2]; let s = 0; for (let i = 0; i < 9; i++) s += p.charCodeAt(i) * (i + 3); return p[9] === (s % 36).toString(36).toUpperCase() }
+// Paid Pro = a license key signed by the Construct license server (see _shared/pro-license.js).
+const LIC = window.AmniConstructPro
+let lic = null
+const escL = v => String(v || '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';')
 const isPro = () => nativeBilling
   ? nativeBillingState && nativeBillingState.entitled === true
-  : PS.key ? true : PS.trialStart ? Date.now() < PS.trialStart + TRIAL_MS : false
+  : lic ? true : PS.trialStart ? Date.now() < PS.trialStart + TRIAL_MS : false
 const trialDays = () => PS.trialStart ? Math.max(0, Math.ceil((PS.trialStart + TRIAL_MS - Date.now()) / 864e5)) : 0
-const lsqCheck = k => window.AMNI_LSQ ? fetch('https://api.lemonsqueezy.com/v1/licenses/validate', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ license_key: k }) }).then(r => r.json()).then(j => !!j.valid).catch(() => chk(k)) : Promise.resolve(chk(k))
 const money = n => '$' + (+n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const matRaw = () => { if (!matHost) return 0; const t = matHost.querySelector('.tot.best') || matHost.querySelector('.tot'); const m = (t ? t.textContent : matHost.textContent).match(/\$\s*([\d,]+(?:\.\d{2})?)/g); return m && m.length ? Math.max(...m.map(x => +x.replace(/[$,\s]/g, ''))) : 0 }
 const calc = () => { const mr = matRaw(), ms = mr * (1 + (+Q.r.markup || 0) / 100), lb = Q.labor.reduce((a, l) => a + (+l.hrs || 0) * (+l.rate || 0), 0), ex = Q.extras.reduce((a, x) => a + (+x.amt || 0), 0), oh = +Q.r.overhead || 0, di = +Q.r.discount || 0, sub = ms + lb + ex + oh - di, tax = sub * (+Q.r.tax || 0) / 100, grand = sub + tax; return { mr, ms, lb, ex, oh, di, sub, tax, grand, dep: grand * (+Q.r.deposit || 0) / 100 } }
@@ -105,7 +107,7 @@ const gate = document.createElement('div')
 gate.id = 'pro-gate'
 gate.innerHTML = nativeBilling
   ? `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Choose monthly or annual Pro through Google Play. Prices shown below come directly from Play for your account and region. Entitlement is restored from your active Play subscription and is never imported from a project or share link.</p><div id="pro-play-plans" role="group" aria-label="Google Play subscription plans"></div><button class="pro-btn ghost big" id="pro-play-restore" style="margin-top:8px">Restore purchase</button><p class="gate-err" id="pro-play-msg" role="status" aria-live="polite"></p></div>`
-  : `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Branded client quotes, your labor rates and markup, permit-ready packets — built for contractors. Try every Pro feature free for 14 days, no card needed.</p><button class="pro-btn big" id="pro-trial">Start free 14-day trial</button><input type="text" id="pro-key" placeholder="AMNI-PRO-XXXXX-XXXXX" spellcheck="false"><p class="gate-err" id="pro-key-err"></p><button class="pro-btn ghost big" id="pro-activate" style="margin-top:2px">Activate license key</button><p class="gate-alt"><a href="../construct/pro.html" target="_blank">Plans & pricing ↗</a></p></div>`
+  : `<div class="gate-card"><h2>💼 Amni-Construct Pro</h2><p>Branded client quotes, your labor rates and markup, permit-ready packets — built for contractors. Try every Pro feature free for 14 days, no card needed.</p><button class="pro-btn big" id="pro-trial">Start free 14-day trial</button><div class="pro-buy" style="display:flex;gap:6px;margin-top:8px"><button class="pro-btn big" id="pro-buy-m" style="flex:1">$19 / month</button><button class="pro-btn big" id="pro-buy-y" style="flex:1">$190 / year</button></div><p class="gate-alt" style="margin-top:4px">Subscriptions start with 14 days free · secure checkout by Stripe · cancel anytime</p><p class="gate-err" id="pro-buy-err" role="status" aria-live="polite"></p><textarea id="pro-key" rows="2" placeholder="Paste a license key (AMNIPRO1.…)" spellcheck="false" autocomplete="off" style="width:100%;resize:vertical"></textarea><p class="gate-err" id="pro-key-err"></p><button class="pro-btn ghost big" id="pro-activate" style="margin-top:2px">Activate license key</button><p class="gate-alt"><a href="../construct/pro.html" target="_blank">Plans & pricing ↗</a></p></div>`
 document.body.appendChild(gate)
 const S = id => drawer.querySelector('#' + id)
 const status = () => {
@@ -126,11 +128,13 @@ const status = () => {
     el.id = 'pro-status'
     return
   }
-  PS.key ? (el.className = 'ok', el.textContent = 'PRO ACTIVE') : isPro() ? (el.className = 'trial', el.textContent = 'TRIAL — ' + trialDays() + 'd left') : (el.className = 'off', el.textContent = 'LOCKED')
+  lic ? (el.className = 'ok', el.textContent = 'PRO ACTIVE') : isPro() ? (el.className = 'trial', el.textContent = 'TRIAL — ' + trialDays() + 'd left') : (el.className = 'off', el.textContent = 'LOCKED')
   el.id = 'pro-status'
-  S('pro-lic-row').innerHTML = PS.key ? `<p class="pro-note" style="margin-top:16px">License: ${PS.key.slice(0, 14)}••• · <a href="#" id="pro-deact" style="color:#c96b6b">deactivate</a></p>` : `<p class="pro-note" style="margin-top:16px"><a href="#" id="pro-unlock" style="color:#e8b565">${isPro() ? 'Enter license key' : 'Unlock Pro'}</a> · <a href="../construct/pro.html" target="_blank" style="color:#e8b565">pricing ↗</a></p>`
+  S('pro-lic-row').innerHTML = lic ? `<p class="pro-note" style="margin-top:16px">License: ${escL(lic.org || lic.name || lic.email || lic.id)}${lic.exp ? ' · renews by ' + new Date(lic.exp).toLocaleDateString() : ''} · <a href="#" id="pro-bill" style="color:#e8b565">billing</a> · <a href="#" id="pro-deact" style="color:#c96b6b">deactivate</a></p>` : `<p class="pro-note" style="margin-top:16px"><a href="#" id="pro-unlock" style="color:#e8b565">${isPro() ? 'Enter license key' : 'Unlock Pro'}</a> · <a href="../construct/pro.html" target="_blank" style="color:#e8b565">pricing ↗</a></p>`
   const d = S('pro-deact')
-  d && (d.onclick = e => { e.preventDefault(); PS.key = ''; saveP(); status() })
+  d && (d.onclick = e => { e.preventDefault(); LIC && LIC.deactivate(); lic = null; PS.key = ''; saveP(); status() })
+  const bl = S('pro-bill')
+  bl && (bl.onclick = e => { e.preventDefault(); LIC.billing().catch(err => alert(err.message)) })
   const u = S('pro-unlock')
   u && (u.onclick = e => { e.preventDefault(); gate.classList.add('on') })
 }
@@ -356,7 +360,7 @@ S('pro-sug-send').onclick = () => {
   const txt = S('pro-sug').value.trim(), em = S('pro-sug-mail').value.trim(), note = S('pro-sug-note')
   if (txt.length < 8) return note.textContent = 'Tell us a little more first!'
   note.textContent = 'Sending…'
-  const entitlement = nativeBilling ? (isPro() ? 'pro' : 'free') : PS.key ? 'pro' : isPro() ? 'trial' : 'free'
+  const entitlement = nativeBilling ? (isPro() ? 'pro' : 'free') : lic ? 'pro' : isPro() ? 'trial' : 'free'
   const ctx = `module: ${mod} · status: ${entitlement} · ua: ${navigator.userAgent.slice(0, 60)}`
   fetch('https://formsubmit.co/ajax/amnibro7@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ _subject: 'Amni-Construct suggestion (' + mod + ')', suggestion: txt, reply_to: em || '(none)', context: ctx, _template: 'table' }) }).then(r => r.json()).then(j => { j.success === 'true' || j.success === true ? (note.textContent = '✓ Sent — thank you!', S('pro-sug').value = '') : Promise.reject(0) }).catch(() => { location.href = 'mailto:amnibro7@gmail.com?subject=' + encodeURIComponent('Amni-Construct suggestion (' + mod + ')') + '&body=' + encodeURIComponent(txt + '\n\n' + ctx + (em ? '\nreply: ' + em : '')); note.textContent = 'Opening your email app instead…' })
 }
@@ -379,7 +383,12 @@ if (nativeBilling) {
   syncPlayBillingUI()
 } else {
   gate.querySelector('#pro-trial').onclick = () => { PS.trialStart = PS.trialStart || Date.now(); saveP(); gate.classList.remove('on'); status() }
-  gate.querySelector('#pro-activate').onclick = () => { const k = gate.querySelector('#pro-key').value.trim().toUpperCase(), err = gate.querySelector('#pro-key-err'); err.textContent = 'Checking…'; lsqCheck(k).then(ok => { ok ? (PS.key = k, saveP(), err.textContent = '', gate.classList.remove('on'), status()) : err.textContent = 'That key doesn’t validate — check for typos or contact support.' }) }
+  const buyErr = gate.querySelector('#pro-buy-err')
+  const buyBtn = (id, plan) => { const b = gate.querySelector(id); b.onclick = () => { if (!LIC) return buyErr.textContent = 'Checkout is unavailable — reload the page.'; buyErr.textContent = 'Opening secure checkout…'; b.disabled = true; LIC.buy(plan).catch(e => { buyErr.textContent = e.message; b.disabled = false }) } }
+  buyBtn('#pro-buy-m', 'monthly')
+  buyBtn('#pro-buy-y', 'annual')
+  gate.querySelector('#pro-activate').onclick = () => { const k = gate.querySelector('#pro-key').value.replace(/\s+/g, ''), err = gate.querySelector('#pro-key-err'); if (!k) return err.textContent = 'Paste the license key first.'; if (!LIC) return err.textContent = 'License checking is unavailable — reload the page.'; err.textContent = 'Checking…'; LIC.activate(k).then(L => { lic = L; PS.key = L.token; saveP(); err.textContent = ''; gate.querySelector('#pro-key').value = ''; gate.classList.remove('on'); status() }, e => { err.textContent = e.message || 'That key doesn’t validate — check for typos or contact support.' }) }
+  LIC && LIC.load().then(L => { lic = L; if (L && PS.key !== L.token) { PS.key = L.token; saveP() } const e = LIC.error(); e && (gate.querySelector('#pro-key-err').textContent = e); status() })
   status()
 }
 })()
