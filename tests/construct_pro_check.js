@@ -25,7 +25,7 @@ let fail = 0; const ok = (c, m) => { c || fail++; console.log(c ? 'PASS' : 'FAIL
     p.on('console', m => m.type() === 'error' && errs.push(m.text())); p.on('pageerror', e => errs.push('PAGEERR ' + e.message))
     p.on('response', r => r.status() >= 400 && errs.push(r.status() + ' ' + r.url()))
     await c.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => { const u = r.request().url(); if (u.startsWith(API) || u.startsWith('https://checkout.stripe.com')) return r.fallback(); return r.fulfill({ status: 204, body: '' }) })
-    if (pub !== undefined) await c.route(/pro-config\.js/, async r => { const res = await r.fetch(); const t = (await res.text()).replace("window.AMNI_CONSTRUCT_PUB = ''", 'window.AMNI_CONSTRUCT_PUB = ' + JSON.stringify(pub)); r.fulfill({ response: res, body: t }) })
+    if (pub !== undefined) await c.route(/pro-config\.js/, async r => { const res = await r.fetch(); const t = (await res.text()).replace(/window\.AMNI_CONSTRUCT_PUB = '[^']*'/, () => 'window.AMNI_CONSTRUCT_PUB = ' + JSON.stringify(pub)); r.fulfill({ response: res, body: t }) })
     if (api) await c.route(u => u.href.startsWith(API), r => { reqs.push([r.request().method(), r.request().url(), r.request().postData()]); return r.fulfill(api(r.request())) })
     await c.route(/checkout\.stripe\.com/, r => r.fulfill({ status: 200, contentType: 'text/html', body: '<title>stripe-checkout-stub</title>' }))
     if (ps) await c.addInitScript(v => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('amni.pro.v1', v); sessionStorage.setItem('seeded', '1') } }, JSON.stringify(ps))
@@ -38,7 +38,7 @@ let fail = 0; const ok = (c, m) => { c || fail++; console.log(c ? 'PASS' : 'FAIL
 
   // 1-2. Production config (no pub yet): pages load clean.
   for (const [n, u] of [['pro.html', '/construct/pro.html'], ['deck tool', '/deck/'], ['dashboard', '/construct/dashboard.html']]) { const { c, errs } = await open(u); ok(errs.length === 0, `${n} loads with zero console errors` + (errs.length ? ' :: ' + errs.join(' | ') : '')); await c.close() }
-  { const { c, p, errs } = await open('/deck/', { ps: { key: oldKey } }); await gate(p); const e = await tryKey(p, signL(base_L)); ok(/not configured/.test(e) && /LOCKED/.test(await status(p)), 'with no public key configured yet, even a signed key is refused (fails closed)'); ok(errs.length === 0, 'no console errors'); await c.close() }
+  { const { c, p, errs } = await open('/deck/', { pub: '', ps: { key: oldKey } }); await gate(p); const e = await tryKey(p, signL(base_L)); ok(/not configured/.test(e) && /LOCKED/.test(await status(p)), 'with no public key configured yet, even a signed key is refused (fails closed)'); ok(errs.length === 0, 'no console errors'); await c.close() }
 
   // 3-4. With a test public key injected: old checksum key rejected, signed key accepted.
   { const { c, p, errs } = await open('/deck/', { pub: PUB, ps: { key: oldKey } })
