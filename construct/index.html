@@ -110,16 +110,48 @@ body{overflow-x:hidden}
 .site-back:hover{color:#e8ecf2;border-color:#9aa3b2}
 input,select,textarea,pre,code,.price,.num{font-family:var(--mono)}
 body{font-variant-numeric:tabular-nums}
-.app h2::before{content:"";display:inline-block;width:8px;height:8px;margin-right:9px;background:var(--tile,var(--acc));vertical-align:1px}.app.deck{--tile:var(--deck)}.app.patio{--tile:var(--patio)}.app.pool{--tile:var(--pool)}.app.floor{--tile:var(--floor)}.app.roof{--tile:var(--roof)}.app.frame{--tile:var(--frame)}.app.plumb{--tile:var(--plumb)}.app.elec{--tile:var(--elec)}.app.plan{--tile:var(--plan)}.app.garden{--tile:var(--garden)}.app.hvac{--tile:var(--hvac)}</style>
+.app h2::before{content:"";display:inline-block;width:8px;height:8px;margin-right:9px;background:var(--tile,var(--acc));vertical-align:1px}.app.deck{--tile:var(--deck)}.app.patio{--tile:var(--patio)}.app.pool{--tile:var(--pool)}.app.floor{--tile:var(--floor)}.app.roof{--tile:var(--roof)}.app.frame{--tile:var(--frame)}.app.plumb{--tile:var(--plumb)}.app.elec{--tile:var(--elec)}.app.plan{--tile:var(--plan)}.app.garden{--tile:var(--garden)}.app.hvac{--tile:var(--hvac)}
+header.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:44px;align-items:center;max-width:1180px;margin:0 auto;padding:44px 28px 26px;text-align:left}
+.hero .site-back{margin-bottom:22px}
+.hero .eyebrow{display:flex;align-items:center;gap:12px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--deck);margin-bottom:12px}
+.hero .eyebrow::before{content:"";width:28px;height:1px;background:var(--deck);flex:none}
+.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.05}
+.hero .lead{color:var(--ink);opacity:.86;font-size:17px;line-height:1.6;margin:16px 0 0;max-width:520px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn-pri,.btn-sec{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:0 22px;border-radius:3px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:filter .18s,border-color .18s,color .18s}
+.btn-pri{background:var(--deck);color:#0a0a0a}
+.btn-pri:hover{filter:brightness(1.08)}
+.btn-sec{border:1px solid var(--line2,#333a46);color:var(--ink)}
+.btn-sec:hover{border-color:#e8b565;color:#e8b565}
+.trust{display:flex;gap:12px;align-items:flex-start;margin-top:26px;padding:12px 14px;border:1px solid rgba(95,191,110,.35);border-left:3px solid #5fbf6e;border-radius:3px;background:rgba(95,191,110,.06);font-size:13px;line-height:1.5;color:var(--mut);max-width:520px}
+.trust b{color:var(--ink)}
+.trust-ico{flex:none;width:20px;height:20px;border-radius:50%;background:#5fbf6e;color:#0a0a0a;font-weight:800;font-size:12px;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
+.hero-shot{margin:0}
+.hero-shot img{display:block;width:100%;height:auto}
+.intro{color:var(--mut);max-width:760px;margin:6px auto 0;padding:0 20px;line-height:1.65;text-align:center;font-size:14px}
+@media (max-width:900px){header.hero{grid-template-columns:1fr;gap:26px;padding:28px 18px 12px}.hero .site-back{margin-bottom:16px}.hero .lead{font-size:15.5px}.hero-cta a{flex:1 1 100%;justify-content:center}}
+</style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#C89B4E">
 </head>
 <body>
-<header>
-  <a class="site-back" href="/">&#8592; AMNI-SCIENT</a>
-  <h1>AMNI-CONSTRUCT</h1>
-  <p>Design any work on your house before you swing a hammer. Trace from a photo or satellite, model it in 3D, print real construction plans, price every board, bag and fixture, and know what your town requires — free, in your browser. Building toward the whole house: decks, patios, pools, flooring, framing, roofing, plumbing &amp; electrical. New — <a href="../scan/" style="color:#6cc0d8;text-decoration:none">scan a space with your phone</a> and drop the real dimensions into any project.</p>
+<header class="hero">
+  <div class="hero-copy">
+    <a class="site-back" href="/">&#8592; AMNI-SCIENT</a>
+    <div class="eyebrow">For deck builders &amp; contractors · free in your browser</div>
+    <h1>AMNI-CONSTRUCT</h1>
+    <p class="lead">Design the deck in 3D with the client, print permit-ready framing plans, price every board and hand over a branded quote — from one browser tab, on site or in the truck.</p>
+    <div class="hero-cta">
+      <a class="btn-pri" href="../deck/">Design a deck free →</a>
+      <a class="btn-sec" href="builders.html">Pro for builders →</a>
+    </div>
+    <div class="trust" role="note"><span class="trust-ico" aria-hidden="true">✓</span><span><b>Permit-approved plans.</b> Plans made with Amni-Construct were approved by the City of Cohoes, NY building department.</span></div>
+  </div>
+  <figure class="hero-shot">
+    <img src="img/hero-deck.webp" srcset="img/hero-deck-640.webp 640w, img/hero-deck.webp 1280w" sizes="(max-width:900px) 92vw, 620px" width="1280" height="840" alt="A 16 by 12 foot deck with stairs and railing modeled in 3D, next to its printed S-1 framing plan sheet" fetchpriority="high">
+  </figure>
 </header>
+<p class="intro">Design any work on your house before you swing a hammer. Trace from a photo or satellite, model it in 3D, print real construction plans, price every board, bag and fixture, and know what your town requires — free, in your browser. Building toward the whole house: decks, patios, pools, flooring, framing, roofing, plumbing &amp; electrical. New — <a href="../scan/" style="color:#6cc0d8;text-decoration:none">scan a space with your phone</a> and drop the real dimensions into any project.</p>
 <a href="pro.html" class="pro-strip"><span class="pro-strip-badge">💼 NEW</span><span><b>Amni-Construct Pro</b> — contractor mode: branded client quotes with your rates &amp; markup, permit packets, showcases. <u>Free 14-day trial</u> in every estimator.</span><span class="pro-strip-go">→</span></a>
 <div class="apps">
   <a class="app deck" href="../deck/">
@@ -257,7 +289,7 @@ body{font-variant-numeric:tabular-nums}
     <div class="cell"><b>⚡ Electrical · LIVE</b>NEC load calc → service size, branch circuits, breaker schedule, wire gauge, receptacle/switch/fixture counts, E-1 panel schedule.</div>
     <div class="cell"><b>🗺️ Whole-house plan · LIVE</b>List rooms → auto floor plan, 3D massing, room schedule, totals, and a trade rollup that hands every app its numbers.</div>
     <div class="cell"><b>🌱 Garden · LIVE</b>List raised beds + plants → scaled layout with plant rows, counts by spacing, soil/compost/mulch + drip takeoff, 3D beds, planting schedule, GD-1/GD-2 sheets.</div>
-    <div class="cell"><b>🔬 <a href="../scan/" style="color:#6cc0d8;text-decoration:none">Amni-Scan</a> · LIVE</b>Scan a space with your phone → a real metric outline that drops into every footprint app (📐 Use my scan). Our OWN capture too — camera → point cloud → soft splats → .ply export/reload, plus WebXR AR tap-to-measure + depth-sensing. All in-browser, no third-party app.</div>
+    <div class="cell"><b>🔬 <a href="../scan/" style="color:#6cc0d8;text-decoration:none">Amni-Scan</a> · LIVE</b>Scan a space with your phone → a real metric outline that drops into every footprint app (📐 Use my scan). Built-in capture too — camera → point cloud → soft splats → .ply export/reload, plus WebXR AR tap-to-measure + depth-sensing. All in-browser, no third-party app.</div>
   </div>
   <h3>Shared across both</h3>
   <div class="grid">
