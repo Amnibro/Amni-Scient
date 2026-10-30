@@ -1,3 +1,8 @@
+## 2026-10-30 — Amni-Construct Pro: Stripe checkout and signed license keys (pending deploy)
+- **Subscribe buttons ($19/month, $190/year) on the Pro page and in every estimator's Pro panel** now start a Stripe Checkout with 14 days free, through the new Amni-Construct Pro license server (`https://amni-construct-pro.amnibro7.workers.dev`, not deployed yet).
+- **License keys are now signed** (`AMNIPRO1.…`, Ed25519, same format as Amni-CAD Pro with a separate Construct key) and checked in the browser with the public key in `_shared/pro-config.js` (`AMNI_CONSTRUCT_PUB`, empty until the production key is made, so every key is refused until then). The old `AMNI-PRO-XXXXX-XXXXX` checksum keys and the LemonSqueezy check are gone.
+- After checkout, the Pro page activates the key automatically and shows it for use on other devices; the Pro dashboard and estimators pick it up. The one-click 14-day trial in the estimators is unchanged.
+
 ## 2026-10-26 — Amni-Learn: new storyteller voice
 - **Storybooks and the Pre-K to grade 5 sections now speak with a new, more natural voice (Amelia, from ElevenLabs).** About 6,800 lines were re-recorded: every storybook page and story quiz, the kids' activities, praise and feedback, the kid games, math, Study Around the World, tutorials, teaching cards and most quiz questions.
 - Phonics, Healthy Mind and a few quiz questions keep the earlier voice for now. They move to the new voice next.
