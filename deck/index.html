@@ -109,8 +109,27 @@ td a:hover{text-decoration:underline}
 <link rel="modulepreload" href="../_shared/vendor/three-r160/three.module.min.js">
 <link rel="modulepreload" href="app.js?v=hd3">
 <link rel="stylesheet" href="/assets/app-brand.css?v=1">
-<link rel="stylesheet" href="../_shared/ui-kit.css?v=u4">
+<link rel="stylesheet" href="../_shared/ui-kit.css?v=u5">
 <link rel="stylesheet" href="../_shared/pro.css?v=p5">
+<style id="deck-phone-fix">
+#qsize{display:none}
+.h-touch{display:none}
+@media (pointer:coarse){.h-mouse{display:none}.h-touch{display:inline}}
+@media (max-width:820px){
+  #view{--uk-coach-top:64px}
+  #qsize{display:flex;position:absolute;top:8px;left:8px;right:8px;z-index:5;gap:6px;align-items:center;padding:6px;background:rgba(17,20,26,.86);border:1px solid var(--line);border-radius:12px;backdrop-filter:blur(8px)}
+  #qsize label{flex:1;min-width:0;display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:0 6px;height:40px}
+  #qsize label:focus-within{border-color:var(--acc)}
+  #qsize label span{font-size:11px;font-weight:700;color:var(--acc)}
+  #qsize label i{font-style:normal;font-size:11px;color:var(--mut)}
+  #qsize input{flex:1;min-width:0;width:100%;background:none;border:0;color:var(--ink);font-size:16px;text-align:center;padding:0;-moz-appearance:textfield}
+  #qsize input::-webkit-inner-spin-button,#qsize input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  #qsize input:focus{outline:none}
+  #qsize button{flex:none;height:40px;padding:0 10px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap}
+  #view:has(.pane.on) #qsize{display:none}
+  #hud{bottom:72px;left:8px;right:8px;text-align:center}
+}
+</style>
 <style id="deck-header-fix">
 header h1,header .crumb,.tab{white-space:nowrap}
 header .crumb{display:flex;align-items:center;gap:7px;color:var(--mut)}
@@ -122,7 +141,7 @@ header .tabs{flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
 header .tabs::-webkit-scrollbar{display:none}
 header .tab{flex:none}
 header .pro-tab{white-space:nowrap;flex:none}
-@media (max-width:1060px) and (min-width:821px){header .crumb{display:none}}
+@media (max-width:1060px){header .crumb{display:none}}
 @media (max-width:1180px) and (min-width:821px){header .crumb a.switch{display:none}.tab{padding-left:9px;padding-right:9px;letter-spacing:.07em}}
 </style>
 <link rel="manifest" href="../construct/manifest.webmanifest">
@@ -191,7 +210,13 @@ header .pro-tab{white-space:nowrap;flex:none}
   </div>
   <div id="view">
     <canvas id="c3d"></canvas>
-    <div id="hud">drag = orbit · wheel = zoom · right-drag = pan · <b style="color:#e8a33d">grab stairs to move them</b></div>
+    <div id="qsize" role="group" aria-label="Deck size">
+      <label id="q-l"><span>L</span><input type="number" inputmode="decimal" data-for="length" min="4" max="40" step="1" aria-label="Length along house, feet"><i>ft</i></label>
+      <label id="q-d"><span>D</span><input type="number" inputmode="decimal" data-for="depth" min="4" max="20" step="1" aria-label="Depth from house, feet"><i>ft</i></label>
+      <label><span>H</span><input type="number" inputmode="decimal" data-for="height" min="8" max="96" step="1" aria-label="Height above grade, inches"><i>in</i></label>
+      <button type="button" id="qmore" aria-label="Open all settings">☰ More</button>
+    </div>
+    <div id="hud"><span class="h-mouse">drag = orbit · wheel = zoom · right-drag = pan · <b style="color:#e8a33d">grab stairs to move them</b></span><span class="h-touch">1 finger = orbit · pinch = zoom · 2 fingers = pan · <b style="color:#e8a33d">drag a stair to move it</b></span></div>
     <div class="pane" id="pane-draw" style="padding:0"><div id="draw-host" style="position:absolute;inset:0"></div></div>
     <div class="pane" id="pane-trace">
       <div class="planbar">
@@ -266,7 +291,14 @@ header .pro-tab{white-space:nowrap;flex:none}
 </main>
 <script type="module" src="app.js?v=hd3"></script>
 <script>(function(){var b=document.getElementById("menubtn"),s=document.getElementById("side"),d=document.getElementById("backdrop");if(!b||!s||!d)return;function set(o){s.classList.toggle("open",o);d.classList.toggle("open",o)}b.addEventListener("click",function(){set(!s.classList.contains("open"))});d.addEventListener("click",function(){set(false)});s.addEventListener("click",function(e){if(e.target.closest(".seg-b,.addbtn,.preset"))setTimeout(function(){set(false)},160)})})();</script>
-<script src="../_shared/ui-kit.js?v=u3" defer></script>
+<script>(function(){var bar=document.getElementById('qsize');if(!bar)return;var qs=[].slice.call(bar.querySelectorAll('input'));
+function src(q){return document.getElementById(q.dataset.for)}
+function pull(){qs.forEach(function(q){var s=src(q);if(s&&document.activeElement!==q&&q.value!==s.value)q.value=s.value});var rw=document.getElementById('rw');var poly=rw&&getComputedStyle(rw).display==='none';document.getElementById('q-l').style.display=poly?'none':'';document.getElementById('q-d').style.display=poly?'none':''}
+qs.forEach(function(q){q.addEventListener('input',function(){var s=src(q),v=parseFloat(q.value);if(!s||isNaN(v))return;s.value=q.value;s.dispatchEvent(new Event('input',{bubbles:true}))});q.addEventListener('blur',function(){var s=src(q);s&&(q.value=s.value)})});
+document.getElementById('side').addEventListener('input',pull);document.getElementById('side').addEventListener('click',function(){setTimeout(pull,0)});
+document.getElementById('qmore').addEventListener('click',function(){document.getElementById('menubtn').click()});
+pull();var n=0,iv=setInterval(function(){pull();++n>20&&clearInterval(iv)},250)})()</script>
+<script src="../_shared/ui-kit.js?v=u4" defer></script>
 <script src="../_shared/pro-config.js?v=c1"></script>
 <script src="../_shared/pro.js?v=p7" defer></script>
 </body>

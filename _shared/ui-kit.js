@@ -129,8 +129,16 @@ if (mod && tabs.length && !localStorage.getItem(ck)) {
   if (feats.length) {
     const c = document.createElement('div')
     c.id = 'uk-coach'
-    c.innerHTML = `Everything updates live as you tweak — and your running total floats bottom-right.<br>${feats.slice(0, 3).join('<br>')}<br><button class="uk-ok">Got it</button>`
-    document.body.appendChild(c)
+    const view = $('#view')
+    const phone = matchMedia('(max-width:820px)').matches
+    if (phone && view) {
+      c.className = 'in-view'
+      c.innerHTML = `<span>Totals update live as you tweak. Tap <b>☰</b> for every setting, or swipe the tabs for plans &amp; materials.</span><button class="uk-ok">Got it</button>`
+      view.appendChild(c)
+    } else {
+      c.innerHTML = `Everything updates live as you tweak — and your running total floats bottom-right.<br>${feats.slice(0, 3).join('<br>')}<br><button class="uk-ok">Got it</button>`
+      document.body.appendChild(c)
+    }
     const bye = () => c.remove()
     c.querySelector('.uk-ok').onclick = bye
     setTimeout(bye, 16000)
