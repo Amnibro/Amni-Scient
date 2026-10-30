@@ -71,3 +71,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 html,body{overscroll-behavior-y:none}
 #uk-coach.in-view{position:absolute;top:var(--uk-coach-top,10px);bottom:auto;left:10px;right:10px;transform:none;max-width:none;display:flex;align-items:center;gap:12px;padding:10px 12px;font-size:12.5px;line-height:1.45;border-radius:12px}
 #uk-coach.in-view .uk-ok{margin-top:0;flex:none;min-height:36px}
+
+#uk-pro{display:none;align-items:center;margin-left:2px;padding:7px 11px;border-radius:10px;border:1px solid var(--acc,#e8b565);background:rgba(232,181,101,.12);color:var(--acc,#e8b565);font:600 12px/1.2 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+#uk-pro:hover{background:var(--acc,#e8b565);color:#111}
+#uk-pro:focus-visible{outline:2px solid var(--acc,#e8b565);outline-offset:2px}
+#uk-quote.has-pro #uk-pro{display:inline-flex}
+#uk-pro .uk-ps{display:none}
+@media (max-width:820px){#uk-pro{padding:6px 9px;font-size:11px}#uk-pro .uk-pl{display:none}#uk-pro .uk-ps{display:inline}}
+@media print{#uk-pro{display:none!important}}

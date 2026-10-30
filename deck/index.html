@@ -109,7 +109,7 @@ td a:hover{text-decoration:underline}
 <link rel="modulepreload" href="../_shared/vendor/three-r160/three.module.min.js">
 <link rel="modulepreload" href="app.js?v=hd3">
 <link rel="stylesheet" href="/assets/app-brand.css?v=1">
-<link rel="stylesheet" href="../_shared/ui-kit.css?v=u5">
+<link rel="stylesheet" href="../_shared/ui-kit.css?v=u6">
 <link rel="stylesheet" href="../_shared/pro.css?v=p5">
 <style id="deck-phone-fix">
 #qsize{display:none}
@@ -131,6 +131,7 @@ td a:hover{text-decoration:underline}
 }
 </style>
 <style id="deck-header-fix">
+@media (min-width:821px) and (max-width:1500px){#hud{bottom:76px}}
 header h1,header .crumb,.tab{white-space:nowrap}
 header .crumb{display:flex;align-items:center;gap:7px;color:var(--mut)}
 header .crumb .sep{color:var(--line2,#3a404b)}
@@ -298,7 +299,7 @@ qs.forEach(function(q){q.addEventListener('input',function(){var s=src(q),v=pars
 document.getElementById('side').addEventListener('input',pull);document.getElementById('side').addEventListener('click',function(){setTimeout(pull,0)});
 document.getElementById('qmore').addEventListener('click',function(){document.getElementById('menubtn').click()});
 pull();var n=0,iv=setInterval(function(){pull();++n>20&&clearInterval(iv)},250)})()</script>
-<script src="../_shared/ui-kit.js?v=u4" defer></script>
+<script src="../_shared/ui-kit.js?v=u5" defer></script>
 <script src="../_shared/pro-config.js?v=c1"></script>
 <script src="../_shared/pro.js?v=p7" defer></script>
 </body>
