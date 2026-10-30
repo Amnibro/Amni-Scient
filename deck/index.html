@@ -111,6 +111,20 @@ td a:hover{text-decoration:underline}
 <link rel="stylesheet" href="/assets/app-brand.css?v=1">
 <link rel="stylesheet" href="../_shared/ui-kit.css?v=u4">
 <link rel="stylesheet" href="../_shared/pro.css?v=p5">
+<style id="deck-header-fix">
+header h1,header .crumb,.tab{white-space:nowrap}
+header .crumb{display:flex;align-items:center;gap:7px;color:var(--mut)}
+header .crumb .sep{color:var(--line2,#3a404b)}
+header .crumb .here{color:var(--ink)}
+header .crumb a.switch{margin-left:6px;padding:2px 7px;border:1px solid var(--line);border-radius:3px;color:var(--mut)!important}
+header .crumb a.switch:hover{color:var(--ink)!important;border-color:var(--mut);text-decoration:none}
+header .tabs{flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
+header .tabs::-webkit-scrollbar{display:none}
+header .tab{flex:none}
+header .pro-tab{white-space:nowrap;flex:none}
+@media (max-width:1060px) and (min-width:821px){header .crumb{display:none}}
+@media (max-width:1180px) and (min-width:821px){header .crumb a.switch{display:none}.tab{padding-left:9px;padding-right:9px;letter-spacing:.07em}}
+</style>
 <link rel="manifest" href="../construct/manifest.webmanifest">
 <meta name="theme-color" content="#e0954a">
 </head>
@@ -118,12 +132,12 @@ td a:hover{text-decoration:underline}
 <header>
   <button id="menubtn" aria-label="Open setup">☰</button>
   <h1>Amni-Deck</h1>
-  <span class="crumb" style="color:var(--mut);font-size:12px">part of <a href="../construct/" style="color:var(--acc);text-decoration:none">AMNI-CONSTRUCT</a><a href="../patio/" style="color:#8fa8b8;text-decoration:none">switch to 🧱 Patio</a></span>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../construct/">Amni-Construct</a><span class="sep" aria-hidden="true">/</span><span class="here" aria-current="page">Deck</span><a class="switch" href="../patio/" title="Switch to the Patio designer">⇄ Patio</a></nav>
   <div class="tabs"><button type="button" class="tab on" data-pane="3d">3D View</button>
     <button type="button" class="tab" data-pane="draw">Draw shape</button>
     <button type="button" class="tab" data-pane="trace">Photo Trace</button>
     <button type="button" class="tab" data-pane="plans">2D Plans</button>
-    <button type="button" class="tab" data-pane="mat">Materials &amp; Pricing</button>
+    <button type="button" class="tab" data-pane="mat" title="Materials &amp; pricing">Materials</button>
     <button type="button" class="tab" data-pane="cuts">Cut List</button>
     <button type="button" class="tab" data-pane="guide">Build Guide</button>
   </div>
