@@ -1,0 +1,26 @@
+import {spawn} from 'node:child_process';import os from 'node:os';import path from 'node:path';import fs from 'node:fs';import {createRequire} from 'node:module';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18757',P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),sleep=t=>new Promise(r=>setTimeout(r,t));
+let bad=0;const ok=(c,m,x)=>{console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));c||bad++;};
+const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),ud=fs.mkdtempSync(path.join(os.tmpdir(),'cutcam-'));let br;
+const PLATE={name:'Gusset',units:'in',params:[],material:'steel1018',features:[{id:'a',type:'box',w:6,d:4,h:0.25},{id:'b',type:'hole',plane:'face',face:{side:'+Z'},d:0.75,thru:true,pts:[[-2,-1],[2,1]]}]};
+const pick=async(p,re)=>p.evaluate(src=>{const re=new RegExp(src),s=[...document.querySelectorAll('select')].find(s=>[...s.options].some(o=>re.test(o.textContent)));const o=s&&[...s.options].find(o=>re.test(o.textContent));if(!o)return null;s.value=o.value;s.dispatchEvent(new Event('change',{bubbles:true}));return o.textContent;},re.source);
+const run=async p=>{await sleep(700);await p.click('#mk-go');return p.evaluate(async()=>{const C=await import('./cam.js'),t=Date.now();await new Promise(r=>setTimeout(r,400));while((C.CS.busy||!C.CS.res)&&Date.now()-t<120000)await new Promise(r=>setTimeout(r,300));const x=C.CS.res,s=(x.setups||[])[0]||{};return{ok:x.ok,route:x.route,errors:x.errors,warnings:x.warnings,notes:x.notes,g:s.gcode||x.gcode||''};});};
+try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+  const p=await br.newPage(),errs=[];p.on('pageerror',e=>errs.push(e.message));await p.setViewport({width:1440,height:900});await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API,{timeout:60000});
+  await p.evaluate(async d=>{const am=window.amnicad;am.loadDoc(d);await am.API.waitBuild();am.setTab('make');},PLATE);await p.waitForSelector('#mk-go',{timeout:30000});
+  ok(!!await pick(p,/^Plasma table \(M3\/M5 torch\)/),'the generic plasma table is in the machine picker');
+  const a=await run(p);
+  ok(a.ok&&a.route==='flat'&&/M3/.test(a.g),'a steel plate on a plasma table gets a cutting program',{ok:a.ok,route:a.route,errors:a.errors});
+  const f=+((/F(\d+(\.\d+)?)/.exec(a.g)||[])[1]);ok(Math.abs(f-150)<2&&/speed table/.test(a.notes.join(' ')),'1/4 in steel cuts at the table speed, about 150 in/min',f);
+  ok(/G4 P0\.20/.test(a.g)&&(a.g.match(/^G3 /mg)||[]).length>0&&(a.g.match(/^G2 /mg)||[]).length>0,'the table pierce delay is used, holes run G3 and the outline G2');
+  await p.click('#mk-mach-edit');await p.waitForSelector('#mk-mach-save',{timeout:10000});
+  const shown=await p.evaluate(()=>{const d=document.getElementById('dlg'),sel=[...d.querySelectorAll('select')],from=sel[0],o=[...from.options].find(o=>/^Plasma table/.test(o.textContent));from.value=o.value;from.dispatchEvent(new Event('change',{bubbles:true}));const box=d.querySelector('.mk-cutbox'),set=(lb,v)=>{const f=[...box.querySelectorAll('.fld')].find(f=>f.querySelector('label').textContent.startsWith(lb));f.querySelector('input').value=v;};const vis=box.style.display!=='none';set('Cut speed','120');set('Pierce delay','1.3');set('Pierce height','0.15');d.querySelector('input[type=text]').value='Shop plasma';document.getElementById('mk-mach-save').click();return vis;});
+  ok(shown,'the machine editor shows the cutting-head fields for a plasma machine');
+  await sleep(500);ok(!!await pick(p,/^Shop plasma/),'the saved machine is in the picker');
+  const b=await run(p);const f2=+((/F(\d+(\.\d+)?)/.exec(b.g)||[])[1]);
+  ok(b.ok&&Math.abs(f2-120)<0.5&&/G4 P1\.30/.test(b.g)&&/G0 Z0\.150/.test(b.g)&&!/speed table/.test(b.notes.join(' ')),'the shop cut speed, pierce delay and pierce height reach the G-code',{f:f2,errors:b.errors});
+  const hid=await p.evaluate(()=>{document.getElementById('mk-mach-edit').click();return new Promise(r=>setTimeout(()=>{const d=document.getElementById('dlg'),from=d.querySelectorAll('select')[0],o=[...from.options].find(o=>/VF-2/.test(o.textContent));from.value=o.value;from.dispatchEvent(new Event('change',{bubbles:true}));const v=d.querySelector('.mk-cutbox').style.display;d.close();r(v);},300));});
+  ok(hid==='none','the cutting fields hide for a mill',hid);
+  ok(errs.length===0,'no page errors',errs.slice(0,3));
+}catch(e){bad++;console.log('FAIL',e.message);}finally{br&&await br.close();srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
+console.log(bad?bad+' FAILED':'ALL PASS');process.exit(bad?1:0);
