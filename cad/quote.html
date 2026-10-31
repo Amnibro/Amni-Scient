@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' blob: data: https: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>Instant quote</title>
+<style>
+:root{--bg:#08090B;--bg2:#0D0F12;--panel:#111418;--panel2:#161A20;--line:#20242B;--line2:#2E343D;--ink:#EDEFF2;--ink2:#C9CED6;--mut:#A7ADB6;--acc:#C89B4E;--acc-ink:#120C03;--acc-soft:rgba(200,155,78,.14);--ok:#4fd18b;--warn:#f5c04e;--err:#FF6B6B;--r:10px;color-scheme:dark;--font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F3F2EF;--bg2:#EAE9E4;--panel:#FFFFFF;--panel2:#F8F7F4;--line:#E0DED8;--line2:#CBC7BE;--ink:#101216;--ink2:#2B3037;--mut:#555B64;--acc:#7F5A14;--acc-ink:#FFFFFF;--acc-soft:rgba(127,90,20,.11);--ok:#0F7A43;--warn:#855F00;--err:#B3261E;color-scheme:light}}
+:root[data-theme="light"]{--bg:#F3F2EF;--bg2:#EAE9E4;--panel:#FFFFFF;--panel2:#F8F7F4;--line:#E0DED8;--line2:#CBC7BE;--ink:#101216;--ink2:#2B3037;--mut:#555B64;--acc:#7F5A14;--acc-ink:#FFFFFF;--acc-soft:rgba(127,90,20,.11);--ok:#0F7A43;--warn:#855F00;--err:#B3261E;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--font);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}a{color:var(--acc)}
+#app{max-width:1120px;margin:0 auto;padding:14px}
+.hd{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px}.hd img{max-height:40px;max-width:160px;object-fit:contain}.hd .nm{font-weight:700;font-size:17px}.hd .tg{color:var(--mut);font-size:12.5px}.hd .ct{margin-left:auto;text-align:right;color:var(--ink2);font-size:12.5px;white-space:pre-line}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}@media (max-width:760px){.grid{grid-template-columns:1fr}.hd{flex-wrap:wrap}.hd .ct{margin-left:0;text-align:left;width:100%}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}.card+.card{margin-top:12px}.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:10px;font-weight:650}
+.drop{border:1.5px dashed var(--line2);border-radius:var(--r);min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:18px;cursor:pointer;background:var(--bg2)}.drop.hov{border-color:var(--acc);background:var(--acc-soft)}.drop b{font-size:15px}.drop small{color:var(--mut)}
+.pv{position:relative;background:var(--bg2);border-radius:var(--r);overflow:hidden}.pv canvas,.pv svg{display:block;width:100%;height:260px;color:var(--acc)}.pv .fn{position:absolute;left:10px;bottom:8px;font-size:12px;color:var(--ink2);background:var(--panel);padding:2px 8px;border-radius:99px;border:1px solid var(--line)}.pv .chg{position:absolute;right:8px;top:8px}
+.fld{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:8px;margin-bottom:8px}.fld>span{color:var(--ink2);font-size:13px}
+.inp,select.inp,textarea.inp{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:8px;padding:7px 9px;min-height:34px}.inp:focus{outline:2px solid var(--acc);outline-offset:-1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips label{display:flex;gap:5px;align-items:center;border:1px solid var(--line2);border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer}.chips input{accent-color:var(--acc)}
+.btn{border:1px solid var(--line2);background:var(--panel2);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;min-height:34px}.btn:hover{border-color:var(--acc)}.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}.btn:disabled{opacity:.45;cursor:default}.btn.sm{padding:3px 9px;min-height:28px;font-size:12.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.price .u{font-size:32px;font-weight:750;letter-spacing:-.01em}.price .t{color:var(--ink2)}.lead{color:var(--ok);font-weight:600;margin-top:2px}.sub{color:var(--mut);font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}td,th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mut);font-weight:600;font-size:12px}td.n,th.n{text-align:right}
+.alt button{background:none;border:0;color:var(--acc);cursor:pointer;padding:0;text-decoration:underline}
+.dfm{margin-top:8px;font-size:12.5px}.dfm li{margin:2px 0 2px 18px}.dfm .error{color:var(--err)}.dfm .warn{color:var(--warn)}
+.msg{font-size:13px;margin-top:8px}.msg.err{color:var(--err)}.msg.ok{color:var(--ok)}.note{color:var(--mut);font-size:12px;margin-top:6px}
+.ft{margin-top:12px;color:var(--mut);font-size:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}.ft .badge{margin-left:auto;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:2px 9px}.ft .badge b{color:var(--acc)}
+.busy{color:var(--mut);font-size:13px}.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line2);border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes sp{to{transform:rotate(1turn)}}
+#sheet{display:none}
+@media print{body{background:#fff;color:#000}#app{display:none}#sheet{display:block;padding:10mm;font:11pt/1.4 var(--font);color:#000}#sheet .sh{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--acc);padding-bottom:8px;margin-bottom:12px}#sheet img{max-height:48px}#sheet td,#sheet th{border-bottom:1px solid #ccc;color:#000}#sheet .terms{margin-top:14px;font-size:9pt;white-space:pre-line;color:#333}}
+</style>
+</head>
+<body>
+<div id="app"><p class="busy"><span class="spin"></span>Loading quote tool…</p></div>
+<div id="sheet"></div>
+<script type="module" src="./quote.js"></script>
+</body>
+</html>

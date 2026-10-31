@@ -1,0 +1,29 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "$id":"https://amni-scient.com/cad/api/quote-request.schema.json",
+ "title":"Amni-CAD quote request",
+ "description":"Body POSTed by the customer quote widget (cad/quote.html) to a shop-configured endpoint, and the file saved by Download quote. A shop field map (widget.request.map) can reshape it; this schema describes the unmapped form. Prices are computed in the customer's browser and must be re-checked by the shop before accepting an order.",
+ "type":"object",
+ "required":["schema","id","created","contact","part","quote"],
+ "properties":{
+  "schema":{"const":"amnicad.quote-request/1"},
+  "id":{"type":"string","pattern":"^q[0-9a-z]+$"},
+  "created":{"type":"string","format":"date-time"},
+  "shop":{"type":"object","properties":{"name":{"type":"string"}}},
+  "contact":{"type":"object","required":["name","email"],"properties":{"name":{"type":"string"},"email":{"type":"string"},"company":{"type":"string"},"notes":{"type":"string"}}},
+  "part":{"type":"object","properties":{
+   "file":{"type":"string"},"format":{"type":"string","enum":["","dxf","step","brep"]},
+   "kind":{"type":"string","description":"flat sheet, bent sheet or solid"},
+   "size_in":{"type":"array","items":{"type":"number"},"maxItems":3},
+   "thickness_in":{"type":["number","null"]},"volume_in3":{"type":["number","null"]}}},
+  "quote":{"type":["object","null"],"properties":{
+   "process":{"type":"string"},"process_name":{"type":"string"},"material":{"type":"string"},"material_name":{"type":"string"},
+   "qty":{"type":"integer","minimum":1},"unit":{"type":"number"},"total":{"type":"number"},"currency":{"type":"string"},
+   "lead_days":{"type":["number","null"]},"expedite":{"type":"string"},
+   "finishes":{"type":"array","items":{"type":"string"}},
+   "breaks":{"type":"array","items":{"type":"object","properties":{"qty":{"type":"number"},"unit":{"type":"number"}}}},
+   "dfm":{"type":"array","items":{"type":"object","properties":{"sev":{"type":"string"},"msg":{"type":"string"}}}},
+   "notes":{"type":"array","items":{"type":"string"}}}},
+  "file":{"type":"object","description":"Only when the shop sets widget.request.files and uses the JSON format.","properties":{"name":{"type":"string"},"format":{"type":"string"},"base64":{"type":"string"}}}
+ }
+}
