@@ -414,6 +414,32 @@ fn main() {
 </tbody>
 </table>
 <p class="fine">The trade so far: Helium code is smaller in bytes but runs to more lines. The Waystone port also carries its own bit-exact copy of the browser&rsquo;s math functions, which the JavaScript gets for free, so the worlds match exactly between the two versions. The Rust binary links the system C library; the Helium binary is fully static. Measured October 31, 2026 on the same Xeon computer as the benchmark above, pinned to four cores, with Node 24.22.1, Rust 1.99.1 and the Helium compiler at commit 69da7253. Other ports (the mail app core, the web UI kit, the full game builds) don&rsquo;t have a like-for-like test yet and are left out.</p>
+<h3 style="margin-top:2.2rem">PEAK MEMORY</h3>
+<p class="lead">Peak memory (maximum resident set size) for the same runs, same inputs and same computer, read with GNU time. Median of 7 runs after a warm-up; the output was again identical on both sides in every run.</p>
+<table class="spec-table">
+<thead><tr><th>App and workload</th><th class="n">Original</th><th class="n">Helium</th><th class="n">Helium memory</th></tr></thead>
+<tbody>
+<tr><td>Waystone: massif world</td><td class="n">87.9 MiB (JavaScript, Node)</td><td class="n">6.4 MiB</td><td class="n">13.8&times; less</td></tr>
+<tr><td>Waystone: archipelago world</td><td class="n">113.1 MiB (JavaScript, Node)</td><td class="n">8.0 MiB</td><td class="n">14.1&times; less</td></tr>
+<tr><td>Waystone: corkscrew world</td><td class="n">86.7 MiB (JavaScript, Node)</td><td class="n">6.1 MiB</td><td class="n">14.3&times; less</td></tr>
+<tr><td>Pom-Pom Grove: 8 garden simulations</td><td class="n">3.9 MiB (Rust)</td><td class="n">1.6 MiB</td><td class="n">2.4&times; less in total, about even in private memory</td></tr>
+<tr><td>Empty program, for reference</td><td class="n">41.2 MiB (node -e 0), 1.9 MiB (Rust)</td><td class="n">0.7 MiB</td><td class="n"></td></tr>
+</tbody>
+</table>
+<p class="fine">A fair reading: 41 MiB of every Node figure is the runtime itself, before any game code runs. Taking each side&rsquo;s empty program away, Waystone still uses 8 to 10&times; less in Helium (5.4 to 7.3 MiB against 45.5 to 71.8 MiB), and Node&rsquo;s peak also depends on when its garbage collector runs. Pom-Pom Grove is close to a tie: most of the Rust figure is the shared system C library mapped into the process; counting only private memory, Helium uses slightly more (0.86 MiB against 0.71 MiB). Both numbers are within about 2 MiB of an empty program. Cross-checked with cgroup memory accounting and per-process memory counters, which agree on all of this. Measured October 31, 2026.</p>
+<h3 style="margin-top:2.2rem">WAYSTONE BEFORE AND AFTER THE PORT</h3>
+<table class="spec-table">
+<thead><tr><th>Measure</th><th class="n">JavaScript (Node)</th><th class="n">Helium</th><th class="n">Result</th></tr></thead>
+<tbody>
+<tr><td>World test, median time (massif / archipelago / corkscrew)</td><td class="n">2,577 / 1,593 / 2,232 ms</td><td class="n">1,302 / 627 / 1,161 ms</td><td class="n">Helium 1.9 to 2.5&times; faster</td></tr>
+<tr><td>World test, peak memory (massif / archipelago / corkscrew)</td><td class="n">87.9 / 113.1 / 86.7 MiB</td><td class="n">6.4 / 8.0 / 6.1 MiB</td><td class="n">Helium about 14&times; less</td></tr>
+<tr><td>Start-up of an empty program</td><td class="n">20.8 ms</td><td class="n">1.4 ms</td><td class="n">Helium faster</td></tr>
+<tr><td>World code, bytes</td><td class="n">435,133</td><td class="n">377,657</td><td class="n">Helium 13% smaller</td></tr>
+<tr><td>World code, lines</td><td class="n">6,595</td><td class="n">7,177</td><td class="n">Helium 9% longer</td></tr>
+<tr><td>What the test needs to run</td><td class="n">435,133 bytes of source plus the 126.9 MB Node runtime</td><td class="n">one 2.36 MB static binary</td><td class="n">Not a like-for-like size</td></tr>
+</tbody>
+</table>
+<p class="fine">The full game is not compared yet: the Helium build is not at feature parity with the JavaScript one, and it carries its own renderer and platform layer that the browser build gets from the browser. Node 24.22.1, Helium compiler at commit 69da7253, Waystone port at the commit that matches JavaScript upstream b25e86b1.</p>
 </section>
 <section>
 <h2>STATUS</h2>
