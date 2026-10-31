@@ -2,6 +2,8 @@ import {fam} from './finish.js';
 import {matBase} from './schema.js';
 import {nf} from './units.js';
 import {zipStore,toSTL} from './exporters.js';
+import {applyParams,finalize,betaHeader} from './cam-ovr.js';
+export {finalize};
 const K='./mfg_kernel.js',LS='amnicad.cam',STORE_MAX=40,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 export const CUTK=['plasma','laser','waterjet'],CUST='Custom machine',METALS=['al','steel','ss','ti','brass','mg','zn','ref'],PROC={vmc:'cnc3',router:'router',laser:'laser',plasma:'plasma',waterjet:'waterjet'};
 export const CS={cat:null,res:null,plan:null,busy:false,err:'',seq:0,key:''};
@@ -38,9 +40,9 @@ export async function make(API,o){
   const seq=++CS.seq;CS.busy=true;CS.err='';
   try{const cat=await load(API),eng=await engineReady(API),res=o.res,c=o.cam||camOf(API.doc),mc=machFull(o.machine,c),route=routeOf(mc,res,eng);
     if(route==='none'){const out=norm('solid',mc,null,{ok:false,errors:[CUTK.includes(mc.kind)?mc.name+' cuts flat sheet and plate. This part needs a mill.':'This part needs 3D milling and this build of the CAM engine cannot do that yet.']});if(seq===CS.seq)CS.res=out;return out;}
-    if(route==='flat'){const job=flatJob(API,cat,mc,c,res),tp=await API.plugin(K,'toolpath',{job}),out=norm('flat',mc,job,tp);if(seq===CS.seq)CS.res=out;return out;}
-    const mat=pick(cat.cam.materials,c.material)||autoF(cat,API.doc,mc),post=pick(cat.cam.posts.filter(p=>p.gen),c.post),job={name:API.safeName(),units:c.units,machine:{...mc,post:post?post.id:mc.post},material:mat,stock:Array.isArray(c.stock)&&c.stock.length===3?{x:c.stock[0],y:c.stock[1],z:c.stock[2]}:c.stock||null,opts:{strategy:c.strategy||'auto',tabs:c.tabs,air_cut:!!c.air_cut,...(o.opts||{})}};
-    const r=await API.plugin(K,'solid',{job,plan:!!o.plan}),out=norm('solid',mc,job,r);if(seq===CS.seq&&!o.plan)CS.res=out;return out;}
+    if(route==='flat'){const job=applyParams('flat',flatJob(API,cat,mc,c,res),c.ovr),tp=await API.plugin(K,'toolpath',{job}),out=finalize(norm('flat',mc,job,tp),c.ovr);if(seq===CS.seq)CS.res=out;return out;}
+    const mat=pick(cat.cam.materials,c.material)||autoF(cat,API.doc,mc),post=pick(cat.cam.posts.filter(p=>p.gen),c.post),job0={name:API.safeName(),units:c.units,machine:{...mc,post:post?post.id:mc.post},material:mat,stock:Array.isArray(c.stock)&&c.stock.length===3?{x:c.stock[0],y:c.stock[1],z:c.stock[2]}:c.stock||null,opts:{strategy:c.strategy||'auto',tabs:c.tabs,air_cut:!!c.air_cut,...(o.opts||{})}},job=applyParams('solid',job0,c.ovr);
+    const r=await API.plugin(K,'solid',{job,plan:!!o.plan}),out=finalize(norm('solid',mc,job,r),c.ovr);if(seq===CS.seq&&!o.plan)CS.res=out;return out;}
   catch(e){const out={ok:false,route:'none',machine:o.machine,errors:[e.message||String(e)],warnings:[],notes:[],setups:[],tools:[],unreachable:[],time_min:0};if(seq===CS.seq)CS.res=out;return out;}
   finally{if(seq===CS.seq)CS.busy=false;}}
 export const SLOW_MIN=70;
@@ -53,7 +55,7 @@ export function plot(path,w=420,h=300){
   const pad=Math.max(x1-x0,y1-y0)*0.04+1,W=x1-x0+2*pad,H=y1-y0+2*pad,sw=Math.max(W,H)/380;let cut='',rap='',px=null;
   for(const q of path){const pt=(q[0]-x0+pad).toFixed(2)+','+(y1-q[1]+pad).toFixed(2);if(px){q[3]===0?(rap+='M'+px+'L'+pt):(cut+='M'+px+'L'+pt);}px=pt;}
   return'<svg viewBox="0 0 '+W.toFixed(2)+' '+H.toFixed(2)+'" width="'+w+'" height="'+h+'" xmlns="http://www.w3.org/2000/svg"><rect width="'+W.toFixed(2)+'" height="'+H.toFixed(2)+'" fill="#f4f6fa"/><path d="'+rap+'" stroke="#9aa5b8" stroke-width="'+sw/2+'" stroke-dasharray="'+sw*3+'" fill="none"/><path d="'+cut+'" stroke="#1d6fd8" stroke-width="'+sw+'" fill="none" stroke-linejoin="round"/></svg>';}
-export const fixSetup=s=>{const p=s&&s.workholding&&s.workholding.program,f=p&&p.setups&&p.setups[0];return f&&f.gcode?{...f,post:s.post,post_name:s.post_name}:null;};
+export const fixSetup=s=>{const p=s&&s.workholding&&s.workholding.program,f=p&&p.setups&&p.setups[0];return f&&f.gcode?{...f,gcode:betaHeader(f.gcode),post:s.post,post_name:s.post_name}:null;};
 export function fixMesh(s,local){const w=s.workholding,R=s.rot,o=s.origin,c=w.corner||[0,0,0],pos=[],idx=[];for(const b of w.bodies||[]){const v=b.mesh.v,n=pos.length/3;for(let i=0;i<v.length;i+=3){const p=[v[i],v[i+1],v[i+2]];local?pos.push(p[0]-c[0],p[1]-c[1],p[2]-c[2]):pos.push(...[0,1,2].map(a=>R[a]*p[0]+R[3+a]*p[1]+R[6+a]*p[2]+o[a]));}for(const t of b.mesh.t)idx.push(t+n);}return{pos,idx};}
 export const fixName=(API,s)=>API.safeName()+'_'+(s.file||'').replace(/^.*_(op\d+)\..*$/,'$1')+'_'+(s.workholding.kind==='soft_jaws'?'jaws':'nest');
 export function sheetHtml(API,r,ex={}){
