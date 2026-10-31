@@ -1,6 +1,7 @@
 import opencascade from './vendor/replicad_single.js';
 import * as K from './kernel.js';
 import * as M from './mfg_kernel.js';
+import * as SR from './shoprules.js';
 import {MATS} from './schema.js';
 import {feaInput,toMM} from './sim_input.js';
 import {faceIds} from './facesel.js';
@@ -33,7 +34,7 @@ export const nonlinear=(j,prog)=>serial(async()=>{const b=await built(j),sim=sim
   const st={kind:'nonlinear',p:{mat:'al5052',...prm,mode:'3d',input,supports:sim.supports.map(s=>({faces:ids(s),type:s.type,dir:s.dir,d:s.d,gap:s.gap})).filter(nf),loads:(sim.loads||[]).map(l=>({faces:ids(l),F:l.F,p:l.p,M:l.M})).filter(nf),gravity:!!sim.gravity,rho:(MATS[b.doc.material]||{}).rho},opt:{}};
   const R=await runStudy(st,prog),P=R.post;return{max_disp_mm:r4(P.uMax),peak_vonMises_MPa:r4(P.vmMax),max_plastic_strain:r4(P.epMax),support_reaction_N:P.reaction.map(r4),contact:P.contact,mesh:P.mesh,steps:R.res.hist.length,build_errors:b.errors};});
 const mfgReq=j=>({qty:Math.max(1,parseInt(j.qty||1)||1),material:j.material||'',process:j.process||'auto',finishes:[].concat(j.finishes||[]),expedite:j.expedite||'standard',infill:+(j.infill||0)});
-export const quote=j=>serial(async()=>{const b=await built(j),r=await M.quote({body:b.body,doc:b.doc},{req:mfgReq(j.req||j),shop:j.shop?JSON.stringify(j.shop):''});return{kind:r.kind,part:{...r.part,sheet:r.part.sheet&&{...r.part.sheet,loops:undefined,loop_count:r.part.sheet.loops.length}},quote:r.res,build_errors:b.errors};});
+export const quote=j=>serial(async()=>{const b=await built(j),rq=mfgReq(j.req||j),sh=j.shop?{...(await M.catalog()).shop,...j.shop}:null,r=await M.quote({body:b.body,doc:b.doc},{req:rq,shop:sh?JSON.stringify(SR.prepare(sh)):''});return{kind:r.kind,part:{...r.part,sheet:r.part.sheet&&{...r.part.sheet,loops:undefined,loop_count:r.part.sheet.loops.length}},quote:sh?SR.apply(r.res,sh,{kind:r.kind,part:r.part,req:rq}):r.res,build_errors:b.errors};});
 export const dxf=j=>serial(async()=>{const b=await built(j);return{text:(await M.dxf({body:b.body,doc:b.doc},{units:j.units||'in'})).dxf,type:'application/dxf'};});
 export const toolpath=j=>serial(async()=>{const b=await built(j),c=(await M.catalog()).cam,pick=(Lst,n)=>Lst.find(x=>x.name===n)||Lst.find(x=>n&&x.name.toLowerCase().includes(String(n).toLowerCase()))||Lst[0],o=j.cam||{},job={name:b.doc.name||'part',machine:pick(c.machines,o.machine),tool:pick(c.tools,o.tool),material:pick(c.materials,o.material||'Plywood'),tabs:+(o.tabs??4),units:o.units||'in',air_cut:!!o.air_cut},r=await M.toolpath({body:b.body,doc:b.doc},{job});return{ok:r.ok,gcode:r.gcode,stats:r.stats,errors:r.errors,warnings:r.warnings};});
 export const catalog=async()=>({materials:Object.fromEntries(Object.entries(MATS).map(([k,v])=>[k,{name:v.n,E_MPa:v.E,yield_MPa:v.sy,density_kg_m3:v.rho}])),fluids:Object.keys(FLUIDS),cam:(await M.catalog()).cam});

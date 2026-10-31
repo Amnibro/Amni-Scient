@@ -1,0 +1,5 @@
+// Amni-CAD quote widget embed: <script src=".../cad/quote-embed.js" data-shop="..." async></script>
+// Adds the quote iframe after the script tag (or into a .amnicad-quote box) and keeps its height matched to the content.
+(()=>{const me=document.currentScript||[...document.querySelectorAll('script[src*="quote-embed.js"]')].pop();if(!me)return;const src=new URL('quote.html',me.src),d=me.dataset,box=d.target&&document.querySelector(d.target)||me.previousElementSibling&&me.previousElementSibling.classList.contains('amnicad-quote')&&me.previousElementSibling;
+  src.hash=(d.shop?'shop='+d.shop:'')+(d.theme?(d.shop?'&':'')+'theme='+d.theme:'');const f=document.createElement('iframe');f.src=src.href;f.title=d.title||'Instant quote';f.loading='lazy';f.setAttribute('allow','clipboard-write');f.style.cssText='display:block;width:100%;border:0;max-width:'+(d.maxWidth||'1140px')+';height:'+(d.height||'820')+'px';
+  box?box.append(f):me.after(f);addEventListener('message',e=>{if(e.source!==f.contentWindow||e.origin!==src.origin)return;const m=e.data;if(m&&m.amnicad==='quote-height'&&m.h>200&&m.h<20000)f.style.height=m.h+'px';});})();
