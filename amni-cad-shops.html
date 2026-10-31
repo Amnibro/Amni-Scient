@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
-<title>Amni-CAD for Job Shops | Instant Quote, DFM and Flat DXF | AMNI-SCIENT</title>
-<meta name="description" content="See a real Amni-CAD quote for a laser-cut aluminum plate with every number shown, DFM flags pinned to the part, a downloadable flat DXF, and how to enter your own shop rates. Free, in your browser.">
+<title>Amni-CAD for Job Shops | Quote, DFM, G-code, Embed | AMNI-SCIENT</title>
+<meta name="description" content="Instant quotes from part geometry at your own shop rates, DFM flags, G-code, flat DXF and drawings. Embed a quote link on your site. Free, in the browser.">
 <meta name="author" content="Amni-Scient">
-<meta property="og:title" content="Amni-CAD for Job Shops | Instant Quote, DFM and Flat DXF | AMNI-SCIENT">
-<meta property="og:description" content="See a real Amni-CAD quote for a laser-cut aluminum plate with every number shown, DFM flags pinned to the part, a downloadable flat DXF, and how to enter your own shop rates. Free, in your browser.">
+<meta property="og:title" content="Amni-CAD for Job Shops | Quote, DFM, G-code, Embed | AMNI-SCIENT">
+<meta property="og:description" content="Instant quotes from part geometry at your own shop rates, DFM flags, G-code, flat DXF and drawings. Embed a quote link on your site. Free, in the browser.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amni-cad-shops.html">
 <meta property="og:image" content="https://amni-scient.com/assets/cad/og-cad.png">
@@ -18,7 +18,19 @@
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<style>body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}.tw{overflow-x:auto;margin:1.1rem 0;-webkit-overflow-scrolling:touch}.tw .spec-table{margin:0;min-width:560px}.tw .spec-table td,.tw .spec-table th{white-space:nowrap;vertical-align:top}.tw .spec-table td.l,.tw .spec-table th.l{white-space:normal;min-width:15rem}.tw .spec-table .n{text-align:right;font-variant-numeric:tabular-nums}.shot{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--elev-1)}.prose{max-width:820px;line-height:1.85;color:var(--dim);font-size:.9rem}.prose p+p{margin-top:1rem}.prose strong,.prose b{color:var(--text)}.pl{margin:.8rem 0 .8rem 1.1rem;display:grid;gap:.45rem;color:var(--dim);font-size:.9rem;line-height:1.65;max-width:820px}.pl b{color:var(--text)}.pass{color:#1b7f4b;font-weight:700}[data-theme=dark] .pass{color:#5fd08f}.fail{color:#c0392b;font-weight:700}[data-theme=dark] .fail{color:#ff8a7a}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;line-height:1.8;color:var(--text);overflow-x:auto;white-space:pre;max-width:820px}.note{font-size:.8rem;color:var(--dim);max-width:820px;line-height:1.7}.sw{display:none}@media(max-width:700px){.sw{display:block;font-size:.76rem;color:var(--dim);margin-top:.9rem}}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:1.2rem;align-items:start}</style>
+<style>body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}
+.fx{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:1.1rem;margin-top:1.4rem}
+.fx figure{margin:0;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--elev-1)}
+.fx img,.fx video{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:top left;background:#e9edf2}
+.fx figcaption{padding:.7rem .9rem;font-weight:700;letter-spacing:.04em;font-size:.86rem;color:var(--text)}
+.steps{counter-reset:s}
+@media(min-width:1000px){.fx.steps{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:640px) and (max-width:999px){.fx.steps{grid-template-columns:repeat(2,1fr)}}.steps figcaption::before{counter-increment:s;content:counter(s) ". ";color:var(--accent)}
+.fx small{display:block;font-weight:400;letter-spacing:0;color:var(--dim);font-size:.78rem;margin-top:.2rem}
+.snip{display:flex;gap:.6rem;align-items:stretch;margin-top:1.2rem;max-width:900px}.snip code{flex:1;min-width:0;font:.76rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem .9rem;overflow-x:auto;white-space:nowrap;color:var(--text)}
+.note{font-size:.8rem;color:var(--dim);max-width:820px;line-height:1.7;margin-top:.8rem}
+details.wq{margin-top:1.6rem;max-width:620px}details.wq summary{cursor:pointer;font-weight:700;letter-spacing:.04em;color:var(--accent)}
+.wq table{width:100%;border-collapse:collapse;margin-top:.8rem;font-size:.84rem}.wq td{padding:.35rem .5rem;border-bottom:1px solid var(--border)}.wq td+td{text-align:right;font-variant-numeric:tabular-nums}</style>
 </head>
 <body class="pp theme-cad">
 <div class="grid-bg"></div>
@@ -95,66 +107,43 @@
 </svg>
 </div>
 <h1>FOR JOB SHOPS</h1>
-<p class="desc">INSTANT QUOTE &bull; DFM FLAGS &bull; FLAT DXF &bull; YOUR OWN SHOP RATES</p>
-<div class="cta-row" style="margin-top:2rem;gap:1rem;flex-wrap:wrap">
-<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
-<a href="amni-cad.html#pricing" class="btn btn-outline">PRICING</a>
-</div>
+<p class="desc">Quote any part from its geometry, at your rates.</p>
+<div class="cta-row" style="margin-top:2rem"><a href="cad/" class="btn btn-primary">START FREE &rarr;</a></div>
 </div>
 <section>
-<h2>A QUOTE YOU CAN CHECK</h2>
-<div class="prose"><p>Amni-CAD prices a part from its geometry while you design it. This page shows one real run, start to finish, so you can judge the numbers before you open the app. Every figure below came from the app&rsquo;s own Instant Quote on the Manufacture tab, run in a headless browser on October 15, 2026, using the <strong>default shop rates</strong>. Those defaults are a first-pass US starting point, not a price list. The section on your own shop rates shows how to replace them.</p></div>
-<div class="two" style="margin-top:1.6rem">
-<div><h3 style="margin-bottom:.6rem">THE PART</h3>
-<ul class="pl"><li><b>Source:</b> the built-in Mounting plate template, with width 6 in (152.4 mm), depth 4 in (101.6 mm) and thickness 0.125 in (3.175 mm)</li><li><b>Features:</b> four 0.281 in (7.14 mm) corner holes and 0.25 in (6.35 mm) corner radii. The template&rsquo;s 0.02 in (0.5 mm) top chamfer is deleted, because a chamfer makes the app treat the plate as a machined part instead of a cut sheet.</li><li><b>Material:</b> aluminum 5052-H32</li><li><b>Quantity:</b> 25, standard lead time, no finish</li><li><b>Detected as:</b> flat sheet, so laser and waterjet are quoted</li></ul></div>
-<div><img class="shot" src="assets/cad/shop/quote-sheet.jpg" width="352" height="900" loading="lazy" style="max-width:352px" alt="The Amni-CAD instant quote panel for the mounting plate: price, cost lines, material, quantity, processes and design for manufacturing"><p class="note" style="margin-top:.6rem">The Manufacture tab quote panel for this part, as the app drew it.</p></div>
+<h2>WHAT IT DOES</h2>
+<div class="fx">
+<figure><video muted loop playsinline preload="none" poster="assets/cad/shop/quote.jpg" data-src="assets/cad/shop/quote.mp4" width="800" height="600" aria-label="Quote panel repricing a 6 x 4 in plate as quantity goes from 1 to 1000"></video><figcaption>INSTANT QUOTE FROM GEOMETRY</figcaption></figure>
+<figure><img src="assets/cad/shop/processes.webp" width="800" height="600" loading="lazy" decoding="async" alt="Processes list: fiber laser $3.67, waterjet $4.42, 3-axis mill $19.84 each at 1000 pieces"><figcaption>EVERY PROCESS, PRICED</figcaption></figure>
+<figure><img src="assets/cad/shop/dfm.webp" width="800" height="600" loading="lazy" decoding="async" alt="Amber marker on a 0.03 in hole with the matching DFM warning"><figcaption>DFM FLAGS ON THE PART</figcaption></figure>
+<figure><img src="assets/cad/shop/breaks.webp" width="800" height="600" loading="lazy" decoding="async" alt="Quantity breaks table from 1 to 1000 pieces"><figcaption>QUANTITY BREAKS TO 1000</figcaption></figure>
+<figure><video muted loop playsinline preload="none" poster="assets/cad/shop/toolpath.jpg" data-src="assets/cad/shop/toolpath.mp4" width="800" height="600" aria-label="G-code simulation of a milled enclosure with stock removal"></video><figcaption>SIMULATED TOOLPATHS, POSTED G-CODE</figcaption></figure>
+<figure><img src="assets/cad/shop/setup-sheet.webp" width="800" height="600" loading="lazy" decoding="async" alt="Generated setup sheet with tools, stock and cycle time"><figcaption>SETUP SHEETS FOR THE FLOOR</figcaption></figure>
+<figure><img src="assets/cad/shop/flat-dxf.webp" width="800" height="600" loading="lazy" decoding="async" alt="Top view of the plate with DXF export buttons"><figcaption>FLAT DXF IN ONE CLICK</figcaption></figure>
+<figure><img src="assets/cad/shop/drawing.webp" width="800" height="600" loading="lazy" decoding="async" alt="Automatic drawing of the plate with hole callouts and feature control frames"><figcaption>DRAWINGS WITH GD&amp;T</figcaption></figure>
 </div>
-<h3 style="margin:2rem 0 .4rem">FIBER LASER, 25 PIECES</h3>
-<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Line</th><th class="n">Per piece (USD)</th><th class="l">What drives it</th></tr></thead><tbody><tr><td class="l">Material</td><td class="n">$2.76</td><td class="l">Plate area plus nesting on a 60 x 120 in (1524 x 3048 mm) sheet: 266 parts per sheet at 85% utilization</td></tr><tr><td class="l">Machine time</td><td class="n">$0.15</td><td class="l">23.10 in (586.8 mm) of cut and 5 pierces, at a rated 564 in/min (14.3 m/min) for 0.125 in aluminum, charged at $120 per hour</td></tr><tr><td class="l">Labor and handling</td><td class="n">$0.25</td><td class="l">Handling time at the shop labor rate of $65 per hour</td></tr><tr><td class="l">Setup, spread over the quantity</td><td class="n">$0.40</td><td class="l">$10.00 of setup spread over 25 pieces</td></tr><tr><td class="l"><b>Quoted</b></td><td class="n"><b>$3.55 each</b></td><td class="l"><b>$88.83 for 25</b>, ships in 3 business days. The shop margin (35% by default) is included in every line, and lines are rounded separately, so they can differ from the quoted price by a cent.</td></tr></tbody></table></div><p class="note">The quote also lists an abrasive waterjet price for the same part, and ranks every process the material allows.</p>
-<h3 style="margin:2rem 0 .4rem">PROCESS COMPARISON AND QUANTITY BREAKS</h3>
-<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="n">Quantity</th><th class="n">Laser, each</th><th class="n">Waterjet, each</th><th class="n">3-axis mill, each (see note)</th></tr></thead><tbody><tr><td class="n">1</td><td class="n">$39.00</td><td class="n">$39.00</td><td class="n">$166.86</td></tr><tr><td class="n">5</td><td class="n">$7.80</td><td class="n">$7.80</td><td class="n">$46.54</td></tr><tr><td class="n">10</td><td class="n">$4.20</td><td class="n">$5.76</td><td class="n">$30.92</td></tr><tr><td class="n">25</td><td class="n">$3.55</td><td class="n">$4.66</td><td class="n">$21.02</td></tr><tr><td class="n">50</td><td class="n">$3.32</td><td class="n">$4.25</td><td class="n">$17.34</td></tr><tr><td class="n">100</td><td class="n">$3.19</td><td class="n">$4.00</td><td class="n">$15.20</td></tr><tr><td class="n">250</td><td class="n">$3.12</td><td class="n">$3.86</td><td class="n">$13.99</td></tr><tr><td class="n">500</td><td class="n">$3.10</td><td class="n">$3.83</td><td class="n">$13.70</td></tr><tr><td class="n">1000</td><td class="n">$3.09</td><td class="n">$3.81</td><td class="n">$13.55</td></tr></tbody></table></div><p class="note">Orders below the $39.00 minimum are filled up to the minimum, which is why quantities 1 and 5 price at $39.00 total. The laser and waterjet columns are the 0.125 in sheet plate. The mill column is the unmodified template (4 x 2.5 x 0.25 in, or 101.6 x 63.5 x 6.35 mm, in 6061-T6, with its chamfer), which the app detects as a machined part: 2 setups, 4.25 x 2.75 x 0.5 in (108 x 70 x 12.7 mm) stock, $6.08 material, $3.89 machine time, $5.15 labor and $5.90 setup per piece at quantity 25, ships in 8 business days. It is shown to illustrate how the same template changes process when its geometry changes.</p>
-<h3 style="margin:2rem 0 .4rem">DOWNLOAD THE FLAT DXF</h3>
-<p class="prose">The Manufacture tab exports the flat pattern for cut parts. This is the file the app produced for the plate above: the outline with arc corners as a polyline, plus four circles, in inches.</p>
-<div class="cta-row" style="gap:1rem;flex-wrap:wrap;margin-top:1rem"><a href="assets/cad/shop/mounting-plate-flat.dxf" class="btn btn-primary" download>DOWNLOAD mounting-plate-flat.dxf</a></div>
+<details class="wq"><summary>See a full quote</summary>
+<p class="note">Mounting plate, 6 &times; 4 &times; 0.125 in, aluminum 6061-T6, fiber laser, qty 25, default rates. Run October 30, 2026.</p>
+<table><tr><td>Material</td><td>$3.34</td></tr><tr><td>Machine time</td><td>$0.15</td></tr><tr><td>Labor &amp; handling</td><td>$0.25</td></tr><tr><td>Setup (spread over qty)</td><td>$0.40</td></tr><tr><td><b>Each</b></td><td><b>$4.14</b></td></tr><tr><td><b>25 pieces</b></td><td><b>$103.46</b></td></tr></table>
+<p class="note">Ships in 3 business days. <a href="assets/cad/shop/mounting-plate-flat.dxf" download>Flat DXF</a></p>
+</details>
 </section>
 <section>
-<h2>DFM FLAGS, PINNED TO THE PART</h2>
-<div class="two">
-<div class="prose"><p>Design-for-manufacturing checks run with the quote. Each flag names the process, the limit and the number that broke it, and a marker appears on the 3D part at the spot to fix.</p><p>To show a flag, the same plate gets one deliberately bad feature: a 0.03 in (0.76 mm) vent hole at the center. The app&rsquo;s result for each process:</p>
-<ul class="pl"><li><b>Fiber laser:</b> hole 0.03 in (0.76 mm) is below the 0.062 in (1.59 mm) minimum; it may not cut cleanly, so drill or ream it after. Severity: warning.</li><li><b>Abrasive waterjet:</b> the same hole is below the 0.07 in (1.78 mm) minimum.</li></ul>
-<p>The price moves with the change: the laser quote becomes $3.57 each ($89.36 for 25) and the waterjet quote $4.74 each ($118.55 for 25), because there is one more pierce and more cut length. The shop file also holds minimum web, slot gap and part-size limits for every process, and the app checks those the same way.</p></div>
-<div><img class="shot" src="assets/cad/shop/quote-dfm.jpg" width="352" height="900" loading="lazy" style="max-width:352px" alt="The Amni-CAD quote panel with a design for manufacturing warning about a 0.03 inch hole"><p class="note" style="margin-top:.6rem">The warning appears under Design for Manufacturing. In the 3D view an amber marker sits on the hole.</p></div>
+<h2>INTO YOUR SITE AND WORKFLOW</h2>
+<div class="fx steps">
+<figure><img src="assets/cad/shop/step-rates.webp" width="800" height="600" loading="lazy" decoding="async" alt="Shop rates editor with name, margin and labor rate"><figcaption>SET YOUR RATES<small>Manufacture &rarr; Shop rates&hellip;</small></figcaption></figure>
+<figure><img src="assets/cad/shop/step-link.webp" width="800" height="600" loading="lazy" decoding="async" alt="Quote link dialog with the link and the embed code"><figcaption>COPY A QUOTE LINK<small>Shop rates &rarr; Quote link&hellip;</small></figcaption></figure>
+<figure><img src="assets/cad/shop/step-embed.webp" width="800" height="600" loading="lazy" decoding="async" alt="An example shop web page with the Amni-CAD quote embedded, priced at the shop rates"><figcaption>EMBED ON YOUR SITE<small>Example shop page, quote embedded</small></figcaption></figure>
+<figure><img src="assets/cad/shop/step-cam.webp" width="800" height="600" loading="lazy" decoding="async" alt="Make panel with per-setup G-code downloads and toolpaths shown on the part"><figcaption>FILES INTO YOUR CAM<small>G-code, DXF, setup sheet, Quote JSON</small></figcaption></figure>
 </div>
+<div class="snip"><code id="snip">&lt;iframe src="https://amni-scient.com/cad/#shop=q1bKS8xNVbJScq1IzC3ISVXwSSxOLVJwztdT0lHKTSxKz8xTsjLQMzLVUcpJTMovUrKyMK0FAA" title="Instant quote" width="100%" height="760" style="border:0" allow="clipboard-write"&gt;&lt;/iframe&gt;</code><button class="btn btn-outline" type="button" onclick="navigator.clipboard.writeText(document.getElementById('snip').textContent);this.textContent='COPIED'">COPY</button></div>
+<p class="note">Example rates. Customer files stay in their browser. Pro: <a href="amni-cad-api.html">headless API</a> with your shop file. Enterprise: watch-folder vault.</p>
 </section>
 <section>
-<h2>YOUR OWN SHOP RATES</h2>
-<div class="prose"><p>The defaults are there so a first quote works on day one. They are labeled as a first pass, and the app says to calibrate them before quoting customers. Choose <b>Shop rates&hellip;</b> on the Manufacture tab to edit the whole cost model as a text file, in inches, inches per minute, dollars per pound and dollars per square foot. It is saved in your browser only and never sent anywhere. Reset restores the defaults.</p></div>
-<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">What you can set</th><th class="l">Default shop value</th></tr></thead><tbody><tr><td class="l">Machine hourly rates</td><td class="l">Fiber laser $120, waterjet $120, plasma $100, CNC router $95, press brake $75, 3-axis mill $80, FDM print $6, SLA print $12, SLS nylon $28, MJF nylon $70 (per hour)</td></tr><tr><td class="l">Shop labor rate</td><td class="l">$65 per hour</td></tr><tr><td class="l">Margin and minimum order</td><td class="l">35% margin, $39.00 minimum order</td></tr><tr><td class="l">Materials</td><td class="l">Price per pound, density and available gauges for each material</td></tr><tr><td class="l">Cutting speeds and pierce times</td><td class="l">Per process, material family and thickness</td></tr><tr><td class="l">Nesting</td><td class="l">Sheet size, part spacing, edge margin and kerf per process</td></tr><tr><td class="l">DFM limits</td><td class="l">Minimum hole, web, gap and part size per process</td></tr><tr><td class="l">Finishes and lead times</td><td class="l">Finish costs, plus economy, standard, expedite and 24 hour multipliers</td></tr></tbody></table></div><p class="prose">A calibration test on the same 25-piece laser quote, changing one setting at a time and re-running the app&rsquo;s quote:</p>
-<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Setting changed</th><th class="n">Laser, each</th><th class="n">Laser, 25 pieces</th></tr></thead><tbody><tr><td class="l">Default shop</td><td class="n">$3.55</td><td class="n">$88.83</td></tr><tr><td class="l">Laser $180 per hour and labor $85 per hour</td><td class="n">$3.91</td><td class="n">$97.63</td></tr><tr><td class="l">Margin 25% instead of 35%</td><td class="n">$3.19</td><td class="n">$79.65</td></tr></tbody></table></div><p class="note">These are what-if numbers for illustration, not recommendations for your rates.</p>
-<div class="prose" style="margin-top:1.4rem"><p>The same quote engine is available to scripts. Your AI assistant can call a <code>quote</code> tool through the local bridge, and the Amni-CAD desktop project includes a local quote server (<code>POST /quote</code> with a STEP file, returning every process, the DFM issues and the flat DXF) that you run on your own computer. <a href="contact.html">Contact us</a> for access to the desktop build.</p></div>
+<p class="note" style="margin-top:0">Free: quoting, DFM, G-code, DXF, drawings. Pro $15/mo. Enterprise $99/mo, up to 10 people. <a href="amni-cad.html#pricing">Pricing</a></p>
 </section>
-<section>
-<h2>WHAT ELSE A SHOP GETS</h2>
-<div class="card-grid">
-<div class="card"><h3>G-CODE</h3><p>GRBL, LinuxCNC and Fanuc-style posts with linted G-code, tabs, helical holes and ramped entries, for machines from a Genmitsu 3018 up to a Haas VF-2.</p></div>
-<div class="card"><h3>DRAWINGS</h3><p>Automatic ANSI drawings in decimal inches with fits and GD&amp;T, exported as PDF, SVG or DXF. Pro adds your own sheet formats, built from a drawing PDF you already use.</p></div>
-<div class="card"><h3>STEP IN, STEP OUT</h3><p>Import a customer&rsquo;s STEP file, quote it, and send back a STEP, STL, 3MF or DXF. Nothing is uploaded; the quote is computed on your computer.</p></div>
-<div class="card"><h3>NO SEAT LIMIT ON FREE</h3><p>Quoting, DFM and CAM are in the free tier. Pro ($15 per month or $150 per year per person, or Enterprise at $99 per month for up to 10 people) adds the vault (PDM), sheet formats, symbols and classification markings, and Enterprise adds a hosted team vault. See <a href="amni-cad.html#pricing">pricing</a>.</p></div>
-</div>
-</section>
-<section>
-<h2>TRY IT ON YOUR OWN PART</h2>
-<p class="prose">Amni-CAD is free, needs no account and runs in Chrome or Edge on a computer with a mouse. Pro is $15 per month or $150 per year for one person; Enterprise is $99 per month or $990 per year for up to 10 people. Both include the <a href="amni-cad-api.html">headless API</a>.</p>
-<div class="cta-row" style="gap:1rem;flex-wrap:wrap;margin-top:1.2rem">
-<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
-<a href="amni-cad.html#pricing" class="btn btn-outline">PRICING</a>
-<a href="amni-cad-shops.html" class="btn btn-outline">FOR JOB SHOPS</a>
-<a href="amni-cad-verification.html" class="btn btn-outline">VERIFICATION</a>
-<a href="amni-cad-privacy.html" class="btn btn-outline">PRIVACY</a>
-<a href="contact.html" class="btn btn-outline">CONTACT</a>
-</div>
-</section>
-<p class="page-updated">Last updated <time datetime="2026-10-20">October 20, 2026</time></p>
+<script>(function(){var v=[].slice.call(document.querySelectorAll('video[data-src]'));function go(e){if(!e.src){e.src=e.dataset.src;}e.play&&e.play().catch(function(){});}if(!('IntersectionObserver'in window)){v.forEach(go);return;}var o=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting)go(x.target);else if(x.target.src)x.target.pause();});},{rootMargin:'200px'});v.forEach(function(e){o.observe(e);});})();</script>
+<p class="page-updated">Last updated <time datetime="2026-10-30">October 30, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
