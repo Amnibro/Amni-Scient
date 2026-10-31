@@ -7,13 +7,17 @@ export const clearance=(mat,t)=>{const M=STAMP_MATS[mat]||STAMP_MATS.mild,c=M.a*
 export const webFor=t=>r4(Math.max(1.2*t,0.05)),edgeFor=t=>r4(Math.max(1.25*t,0.07));
 export const webTable=()=>[0.01,0.02,0.03,0.05,0.075,0.1,0.125,0.1875].map(t=>({t,web:webFor(t),edge:edgeFor(t)}));
 export const kFactor=(R,t)=>R<t?0.33:R<3*t?0.4:0.5;
-export const bendAllow=(R,t,angDeg)=>rad(angDeg)*(R+kFactor(R,t)*t),bendDeduct=(R,t,angDeg)=>2*(R+t)*Math.tan(rad(angDeg)/2)-bendAllow(R,t,angDeg);
+// Bend allowance on the neutral axis. K defaults to the R/t rule above; pass K to override.
+export const bendAllow=(R,t,angDeg,K)=>rad(angDeg)*(R+(K??kFactor(R,t))*t);
+// Outside setback: legs measured to the outside mold line (virtual sharp). At 180 deg (hems) the mold line is at infinity, so legs are taken to the outside tangent of the bend (setback R + t).
+export const setback=(R,t,angDeg)=>angDeg>=180-1e-9?R+t:(R+t)*Math.tan(rad(angDeg)/2);
+export const bendDeduct=(R,t,angDeg,K)=>2*setback(R,t,angDeg)-bendAllow(R,t,angDeg,K);
 export function springback(mat,t,Rf,angF){const M=STAMP_MATS[mat]||STAMP_MATS.mild,Y=M.sy*1000,E=M.E*1000,f=Ri=>{const x=Ri*Y/(E*t);return Ri/Rf-(4*x**3-3*x+1);};let lo=0,hi=Rf;for(let i=0;i<70;i++){const m=(lo+hi)/2;f(m)<0?lo=m:hi=m;}const Ri=(lo+hi)/2,aI=angF*(Rf+t/2)/(Ri+t/2);return{Ri:r4(Ri),angleTool:r3(aI),overbend:r3(aI-angF),ratio:r4(Ri/Rf),source:SOURCES.springback};}
-export function blankDev(s={}){const k=s.units==='mm'?1/25.4:1,t=(s.t||0.05)*k;let outer,holes=[];
-  const ty=s.type||(s.od?'washer':s.legs?'bracket':s.loops&&s.loops.length?'loops':'rect');if(ty==='washer'){const od=(s.od||1)*k,id=(s.id??0.5)*k;outer=[[od/2,0,1],[-od/2,0,1]];id>0&&holes.push([[id/2,0,1],[-id/2,0,1]]);}
-  else if(ty==='bracket'){const legs=(s.legs||[1,1.5]).map(v=>v*k),ang=s.angles||legs.slice(1).map(()=>90),R=(s.r??s.t??0.05)*k,w=(s.width||1)*k;let L=legs.reduce((a,b)=>a+b,0);ang.forEach(a=>{L-=bendDeduct(R,t,a);});outer=[[0,0,0],[L,0,0],[L,w,0],[0,w,0]];(s.holes||[]).forEach(([x,y,d])=>holes.push([[x*k+d*k/2,y*k,1],[x*k-d*k/2,y*k,1]]));s.dev={legs,angles:ang,R,K:kFactor(R,t),bendAllow:ang.map(a=>r4(bendAllow(R,t,a))),bendDeduct:ang.map(a=>r4(bendDeduct(R,t,a))),length:r4(L)};}
+export function blankDev(s={}){const k=s.units==='mm'?1/25.4:1,L=(v,d)=>v!=null&&v!==''?v*k:d,t=s.t?s.t*k:0.05;let outer,holes=[];
+  const ty=s.type||(s.od?'washer':s.legs?'bracket':s.loops&&s.loops.length?'loops':'rect');if(ty==='washer'){const od=L(s.od,1),id=L(s.id,0.5);outer=[[od/2,0,1],[-od/2,0,1]];id>0&&holes.push([[id/2,0,1],[-id/2,0,1]]);}
+  else if(ty==='bracket'){const legs=s.legs?s.legs.map(v=>v*k):[1,1.5],ang=s.angles||legs.slice(1).map(()=>90),R=L(s.r,t),w=L(s.width,1),K=s.k!=null&&s.k>=0&&s.k<=1?+s.k:kFactor(R,t);if(ang.length!==legs.length-1)throw new Error('A bracket with '+legs.length+' legs needs '+(legs.length-1)+' bend angles');ang.forEach(a=>{if(!(a>0&&a<=180))throw new Error('Bend angle '+a+' deg is out of range; use more than 0 and at most 180');});let Lf=legs.reduce((a,b)=>a+b,0);ang.forEach(a=>{Lf-=bendDeduct(R,t,a,K);});if(!(Lf>0))throw new Error('The legs are too short for these bends: the flat blank length comes out at or below zero');outer=[[0,0,0],[Lf,0,0],[Lf,w,0],[0,w,0]];(s.holes||[]).forEach(([x,y,d])=>holes.push([[x*k+d*k/2,y*k,1],[x*k-d*k/2,y*k,1]]));s.dev={legs,angles:ang,R,K,bendAllow:ang.map(a=>r4(bendAllow(R,t,a,K))),bendDeduct:ang.map(a=>r4(bendDeduct(R,t,a,K))),setback:ang.map(a=>r4(setback(R,t,a))),length:r4(Lf)};}
   else if(ty==='loops'){const ls=s.loops.map(l=>l.map(p=>[p[0]*k,p[1]*k,p[2]||0])),ar=ls.map(l=>Math.abs(loopArea(l))),i=ar.indexOf(Math.max(...ar));outer=ls[i];holes=ls.filter((_,j)=>j!==i);}
-  else{const w=(s.w||2)*k,h=(s.h||1)*k;outer=[[0,0,0],[w,0,0],[w,h,0],[0,h,0]];(s.holes||[]).forEach(([x,y,d])=>holes.push([[x*k+d*k/2,y*k,1],[x*k-d*k/2,y*k,1]]));}
+  else{const w=L(s.w,2),h=L(s.h,1);outer=[[0,0,0],[w,0,0],[w,h,0],[0,h,0]];(s.holes||[]).forEach(([x,y,d])=>holes.push([[x*k+d*k/2,y*k,1],[x*k-d*k/2,y*k,1]]));}
   const b=bbox([{pts:outer,closed:true}]),mv=l=>l.map(p=>[p[0]-b.x0,p[1]-b.y0,p[2]||0]),O=mv(outer),H=holes.map(mv),gross=Math.abs(loopArea(O)),hole=H.reduce((a,l)=>a+Math.abs(loopArea(l)),0),per=plen(O,true),hp=H.reduce((a,l)=>a+plen(l,true),0);
   return{t,outer:O,holes:H,w:b.w,h:b.h,gross:r4(gross),net:r4(gross-hole),perimeter:r4(per+hp),outerPerimeter:r4(per),holePerimeter:r4(hp),dev:s.dev||null};}
 const roundD=l=>l.length===2&&l[0][2]===1&&l[1][2]===1?d2(l[0],l[1]):null,cen=l=>l.length===2?[(l[0][0]+l[1][0])/2,(l[0][1]+l[1][1])/2]:null;
