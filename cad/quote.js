@@ -79,14 +79,30 @@ async function quote(geo){if(!S.file)return;const my=++S.seq,R=S.req;try{
     S.busy='Pricing…';const req={qty:R.qty,process:'auto',material:R.material||'',finishes:R.finishes,expedite:R.expedite},r=await plugin('quote',{req,shop:JSON.stringify(S.eng)});if(my!==S.seq)return;
     r.res=SR.apply(r.res,S.shop,{kind:r.kind,part:r.part,req});S.r=r;S.ctx={kind:r.kind,part:r.part,req};S.busy='';if(S.fmt!=='dxf'&&!R.material&&r.res.material)S.autoMat=r.res.material;}
   catch(e){if(my!==S.seq)return;S.busy='';S.err=(e.message||String(e)).replace(/^Error: /,'');}upd();}
-// preview: flat SVG for DXF, shaded isometric view for STEP
-function draw(){const v=$('#q-view');if(!v)return;if(S.fmt==='dxf'&&S.P){v.innerHTML=DP.svg(S.P);return;}const m=S.mesh;if(!m||!m.pos)return;const cv=h('canvas'),W=v.clientWidth||520,H=260,dpr=Math.min(2,devicePixelRatio||1);cv.width=W*dpr;cv.height=H*dpr;rc(v,cv);const g=cv.getContext('2d');g.scale(dpr,dpr);
-  const P=m.pos,I=m.idx,ca=Math.cos(-Math.PI/4),sa=Math.sin(-Math.PI/4),cb=Math.cos(.62),sb=Math.sin(.62),n=P.length/3,X=new Float32Array(n),Y=new Float32Array(n),Z=new Float32Array(n);let x0=1/0,x1=-1/0,y0=1/0,y1=-1/0;
-  for(let i=0;i<n;i++){const x=P[3*i],y=P[3*i+1],z=P[3*i+2],u=x*ca-y*sa,w=x*sa+y*ca;X[i]=u;Y[i]=-(z*cb-w*sb);Z[i]=w*cb+z*sb;x0=Math.min(x0,X[i]);x1=Math.max(x1,X[i]);y0=Math.min(y0,Y[i]);y1=Math.max(y1,Y[i]);}
-  const s=Math.min((W-30)/(x1-x0||1),(H-30)/(y1-y0||1)),ox=W/2-s*(x0+x1)/2,oy=H/2-s*(y0+y1)/2,T=[],acc=getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()||'#C89B4E';
-  for(let t=0;t<I.length;t+=3){const a=I[t],b=I[t+1],c=I[t+2],ux=X[b]-X[a],uy=Y[b]-Y[a],uz=Z[b]-Z[a],vx=X[c]-X[a],vy=Y[c]-Y[a],vz=Z[c]-Z[a];let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const l=Math.hypot(nx,ny,nz)||1;nx/=l;ny/=l;nz/=l;T.push([Z[a]+Z[b]+Z[c],a,b,c,Math.abs(-.35*nx-.6*ny+.72*nz)]);}
-  T.sort((p,q)=>q[0]-p[0]);const rgb=hex(acc);for(const[,a,b,c,L]of T){const k=.28+.72*L;g.fillStyle='rgb('+rgb.map(v=>Math.round(40+(v-40)*k*.9+40*k)).join(',')+')';g.strokeStyle=g.fillStyle;g.lineWidth=.6;g.beginPath();g.moveTo(ox+s*X[a],oy+s*Y[a]);g.lineTo(ox+s*X[b],oy+s*Y[b]);g.lineTo(ox+s*X[c],oy+s*Y[c]);g.closePath();g.fill();g.stroke();}}
-const hex=c=>{const m=/^#?([0-9a-f]{6})/i.exec(c)||/^#?([0-9a-f]{3})/i.exec(c);if(!m)return[200,155,78];const x=m[1].length===3?m[1].split('').map(v=>v+v).join(''):m[1];return[0,2,4].map(i=>parseInt(x.slice(i,i+2),16));};
+// preview: flat SVG for DXF; for STEP a z-buffered isometric render (3x supersampled) with shading, B-rep edges and a soft ground shadow
+const MCOL=[[/brass|bronze/,[205,170,96]],[/copper/,[200,124,88]],[/titan/,[168,166,176]],[/stain|ss\d|304|316/,[184,188,194]],[/steel|iron|a36|10\d\d|41\d\d|tool/,[156,162,170]],[/abs|nylon|delrin|acetal|pom|hdpe|uhmw|plastic|acryl|petg|pla\b|peek|pvc|polyc/,[228,228,222]],[/wood|ply|mdf|oak|maple|birch/,[206,170,120]]];
+const mcol=()=>{const id=S.req.material||S.autoMat||(S.r&&S.r.res.material)||'',m=(S.eng&&S.eng.materials||[]).find(x=>x.id===id)||{},k=[id,m.fam,m.name].join(' ').toLowerCase();return(MCOL.find(([r])=>r.test(k))||[0,[196,202,210]])[1];};
+export function iso(m,w,hh){const P=m.pos,N=m.nrm,n=P.length/3,ca=Math.cos(-Math.PI/4),sa=Math.sin(-Math.PI/4),cb=Math.cos(.62),sb=Math.sin(.62),X=new Float32Array(n),Y=new Float32Array(n),D=new Float32Array(n),L=new Float32Array(n);let x0=1/0,x1=-1/0,y0=1/0,y1=-1/0;
+  const l1=[-.42,.74,.52],l2=[.62,.12,.78],hv=[l1[0],l1[1],l1[2]+1],hl=Math.hypot(...hv);
+  for(let i=0;i<n;i++){const x=P[3*i],y=P[3*i+1],z=P[3*i+2],u=x*ca-y*sa,w=x*sa+y*ca;X[i]=u;Y[i]=z*cb-w*sb;D[i]=w*cb+z*sb;x0=Math.min(x0,u);x1=Math.max(x1,u);y0=Math.min(y0,Y[i]);y1=Math.max(y1,Y[i]);
+    if(N){const a=N[3*i],b=N[3*i+1],c=N[3*i+2],nu=a*ca-b*sa,nw=a*sa+b*ca;let q=[nu,c*cb-nw*sb,nw*cb+c*sb];q[2]<0&&(q=q.map(v=>-v));const d1=Math.max(0,q[0]*l1[0]+q[1]*l1[1]+q[2]*l1[2]),d2=Math.max(0,q[0]*l2[0]+q[1]*l2[1]+q[2]*l2[2]),sp=Math.pow(Math.max(0,(q[0]*hv[0]+q[1]*hv[1]+q[2]*hv[2])/hl),28);L[i]=.3+.56*d1+.2*d2+.3*sp;}else L[i]=-1;}
+  const s=Math.min(w*.86/(x1-x0||1),hh*.8/(y1-y0||1)),cx=(x0+x1)/2,cy=(y0+y1)/2;for(let i=0;i<n;i++){X[i]=w/2+s*(X[i]-cx);Y[i]=hh*.47-s*(Y[i]-cy);D[i]*=s;}
+  return{X,Y,D,L,s,cx,cy,foot:[w/2,hh*.47+s*(y1-y0)/2,s*(x1-x0)/2]};}
+export function raster(m,w,hh,base){const{X,Y,D,L,s:S2,cx:CX,cy:CY,foot}=iso(m,w,hh),I=m.idx,zb=new Float32Array(w*hh).fill(-1/0),tid=new Int32Array(w*hh).fill(-1),px=new Uint8ClampedArray(w*hh*4);
+  for(let t=0;t<I.length;t+=3){const a=I[t],b=I[t+1],c=I[t+2],ax=X[a],ay=Y[a],bx=X[b],by=Y[b],cx=X[c],cy=Y[c],ar=(bx-ax)*(cy-ay)-(by-ay)*(cx-ax);if(Math.abs(ar)<1e-9)continue;
+    let la=L[a],lb=L[b],lc=L[c];if(la<0){const ux=bx-ax,uy=by-ay,ud=D[b]-D[a],vx=cx-ax,vy=cy-ay,vd=D[c]-D[a],nz=Math.abs(ux*vy-uy*vx)/(Math.hypot(uy*vd-ud*vy,ud*vx-ux*vd,ux*vy-uy*vx)||1);la=lb=lc=.35+.6*nz;}
+    const mnx=Math.max(0,Math.floor(Math.min(ax,bx,cx))),mxx=Math.min(w-1,Math.ceil(Math.max(ax,bx,cx))),mny=Math.max(0,Math.floor(Math.min(ay,by,cy))),mxy=Math.min(hh-1,Math.ceil(Math.max(ay,by,cy)));
+    for(let y=mny;y<=mxy;y++){const py=y+.5;for(let x=mnx;x<=mxx;x++){const qx=x+.5,w0=((bx-qx)*(cy-py)-(by-py)*(cx-qx))/ar,w1=((cx-qx)*(ay-py)-(cy-py)*(ax-qx))/ar,w2=1-w0-w1;if(w0<-1e-6||w1<-1e-6||w2<-1e-6)continue;
+      const d=w0*D[a]+w1*D[b]+w2*D[c],k=y*w+x;if(d<=zb[k])continue;zb[k]=d;tid[k]=t/3;const li=w0*la+w1*lb+w2*lc,o=4*k;for(let j=0;j<3;j++)px[o+j]=base[j]*Math.min(1.15,li)+(li>1?(li-1)*160:0);px[o+3]=255;}}}
+  const E=m.lines;if(E&&E.length){const ca=Math.cos(-Math.PI/4),sa=Math.sin(-Math.PI/4),cb=Math.cos(.62),sb=Math.sin(.62),eps=Math.max(2,S2*.35),r=Math.max(1,Math.round(w/1400));
+    const pj=i=>{const x=E[i],y=E[i+1],z=E[i+2],wv=x*sa+y*ca;return[w/2+S2*((x*ca-y*sa)-CX),hh*.47-S2*((z*cb-wv*sb)-CY),S2*(wv*cb+z*sb)];};
+    for(let i=0;i+5<E.length;i+=6){const p=pj(i),q=pj(i+3),st=Math.ceil(Math.max(Math.abs(q[0]-p[0]),Math.abs(q[1]-p[1])))||1;for(let j=0;j<=st;j++){const f=j/st,x=Math.round(p[0]+(q[0]-p[0])*f),y=Math.round(p[1]+(q[1]-p[1])*f),d=p[2]+(q[2]-p[2])*f;
+      for(let oy=-r;oy<=r;oy++)for(let ox=-r;ox<=r;ox++){const xx=x+ox,yy=y+oy;if(xx<0||yy<0||xx>=w||yy>=hh)continue;const k=yy*w+xx;if(zb[k]>-1/0&&d<zb[k]-eps)continue;const o=4*k;if(px[o+3]){px[o]=px[o]*.25+30;px[o+1]=px[o+1]*.25+34;px[o+2]=px[o+2]*.25+40;}else{px[o]=40;px[o+1]=44;px[o+2]=50;px[o+3]=200;}px[o+3]=255;}}}}
+  return{px,zb,tid,foot};}
+function draw(){const v=$('#q-view');if(!v)return;if(S.fmt==='dxf'&&S.P){v.innerHTML=DP.svg(S.P);return;}const m=S.mesh;if(!m||!m.pos)return;const cv=h('canvas'),W=v.clientWidth||520,H=260,dpr=Math.min(2,devicePixelRatio||1),k=3,w=W*k|0,hh=H*k;cv.width=W*dpr;cv.height=H*dpr;rc(v,cv);
+  const R=raster(m,w,hh,mcol()),off=document.createElement('canvas');off.width=w;off.height=hh;off.getContext('2d').putImageData(new ImageData(R.px,w,hh),0,0);S.pv={w,hh,tid:R.tid,zb:R.zb};
+  const g=cv.getContext('2d'),sc=cv.width/w,[fx,fy,fr]=R.foot,gr=g.createRadialGradient(fx*sc,fy*sc,0,fx*sc,fy*sc,fr*sc);gr.addColorStop(0,'rgba(0,0,0,.22)');gr.addColorStop(1,'rgba(0,0,0,0)');g.save();g.translate(fx*sc,fy*sc);g.scale(1,.16);g.translate(-fx*sc,-fy*sc);g.fillStyle=gr;g.beginPath();g.arc(fx*sc,fy*sc,fr*sc,0,7);g.fill();g.restore();
+  g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(off,0,0,cv.width,cv.height);}
 // request
 function contact(){const v=i=>($('#'+i)&&$('#'+i).value||'').trim();return{name:v('q-name').slice(0,120),email:v('q-email').slice(0,160),company:v('q-co').slice(0,120),notes:v('q-notes').slice(0,4000)};}
 const say=(t,c='')=>{const m=$('#q-msg');if(m){m.textContent=t;m.className='msg '+c;}fit();};
