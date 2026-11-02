@@ -1,4 +1,4 @@
-import {spawn} from 'node:child_process';import os from 'node:os';import path from 'node:path';import fs from 'node:fs';import {createRequire} from 'node:module';
+import {spawn} from 'node:child_process';import os from 'node:os';import path from 'node:path';import fs from 'node:fs';import {createRequire} from 'node:module';import {asPro} from './pro_key.mjs';
 const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18757',P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),sleep=t=>new Promise(r=>setTimeout(r,t));
 let bad=0;const ok=(c,m,x)=>{console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));c||bad++;};
 const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'}),ud=fs.mkdtempSync(path.join(os.tmpdir(),'cutcam-'));let br;
@@ -6,7 +6,7 @@ const PLATE={name:'Gusset',units:'in',params:[],material:'steel1018',features:[{
 const pick=async(p,re)=>p.evaluate(src=>{const re=new RegExp(src),s=[...document.querySelectorAll('select')].find(s=>[...s.options].some(o=>re.test(o.textContent)));const o=s&&[...s.options].find(o=>re.test(o.textContent));if(!o)return null;s.value=o.value;s.dispatchEvent(new Event('change',{bubbles:true}));return o.textContent;},re.source);
 const run=async p=>{await sleep(700);await p.click('#mk-go');return p.evaluate(async()=>{const C=await import('./cam.js'),t=Date.now();await new Promise(r=>setTimeout(r,400));while((C.CS.busy||!C.CS.res)&&Date.now()-t<120000)await new Promise(r=>setTimeout(r,300));const x=C.CS.res,s=(x.setups||[])[0]||{};return{ok:x.ok,route:x.route,errors:x.errors,warnings:x.warnings,notes:x.notes,g:s.gcode||x.gcode||''};});};
 try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-  const p=await br.newPage(),errs=[];p.on('pageerror',e=>errs.push(e.message));await p.setViewport({width:1440,height:900});await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API,{timeout:60000});
+  const p=await br.newPage(),errs=[];await asPro(p);p.on('pageerror',e=>errs.push(e.message));await p.setViewport({width:1440,height:900});await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API,{timeout:60000});
   await p.evaluate(async d=>{const am=window.amnicad;am.loadDoc(d);await am.API.waitBuild();am.setTab('make');},PLATE);await p.waitForSelector('#mk-go',{timeout:30000});
   ok(!!await pick(p,/^Plasma table \(M3\/M5 torch\)/),'the generic plasma table is in the machine picker');
   const a=await run(p);

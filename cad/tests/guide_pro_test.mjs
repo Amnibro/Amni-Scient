@@ -1,0 +1,20 @@
+import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';import {asPro,proKey} from './pro_key.mjs';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18767',SH=process.env.SHOTS||'',sleep=t=>new Promise(r=>setTimeout(r,t));let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
+const P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),ud=fs.mkdtempSync(path.join(os.tmpdir(),'guide-pro-')),srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});let br;
+const PART={name:'Pump bracket',units:'in',params:[],material:'al6061',features:[{id:'a',type:'box',w:5,d:2,h:0.375}],guide:{brief:'Pump bracket, 20 lb load, aluminum, 12 pieces',who:'eng',ok:{mat:true,draw:true}}};
+if(!proKey()){console.log('SKIP: needs the license issuer');process.exit(0);}
+try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:300000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+  const p=await br.newPage();await p.setViewport({width:1440,height:900});await asPro(p);const errs=[];p.on('pageerror',e=>errs.push(e.message));const st=()=>p.evaluate(()=>window.amnicad.API.guide.state());
+  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.guide,{timeout:150000});
+  await p.evaluate(async d=>{const A=window.amnicad.API;A.loadDoc(d,null);await A.waitBuild();A.applyActions([{sim:{type:'static',supports:[{faces:{side:'-X'},type:'fixed'}],loads:[{faces:{side:'+X'},p:20}]}}]);await new Promise(r=>setTimeout(r,600));A.setTab('sim');await new Promise(r=>setTimeout(r,400));await A.runFea();A.guide.enter();},PART);await sleep(2500);
+  let s=await st();ok(s.step==='review','with the brief, shape, material, strength and drawing done, Sign off is the current step',s.steps.map(x=>x.k+(x.ok?'✓':'')).join(' '));
+  ok(await p.evaluate(()=>/Send it to an engineer for sign-off/.test(document.querySelector('#gd-card').textContent)),'the step says an engineer signs off');
+  await p.click('#gd-show');await sleep(1200);const r=await p.evaluate(()=>{const g=document.querySelector('#gd-ring');if(!g)return null;const b=g.getBoundingClientRect(),c=document.elementsFromPoint(b.left+b.width/2,b.top+b.height/2).find(e=>!/^gd-/.test(e.id));return c&&(c.closest('button')||c).textContent.trim();});ok(/^Check in/.test(r||''),'with Pro, Show me opens the Vault tab and points at Check in',r);
+  await p.evaluate(()=>[...document.querySelectorAll('#right button')].find(b=>/^Check in/.test(b.textContent.trim())&&b.offsetParent).click());await p.waitForFunction(()=>/Rev A\.1/.test(document.querySelector('#tab-vault').textContent),{timeout:120000});await sleep(1800);
+  s=await st();ok(s.steps[5].st==='in work'&&await p.evaluate(()=>!!document.querySelector('#gd-act')&&document.querySelector('#gd-act').textContent==='Send for review'),'after check-in the step shows In work and a Send for review button',s.steps[5].st);
+  await p.click('#gd-act');await p.waitForFunction(()=>window.amnicad.API.guide.state().steps[5].ok,{timeout:30000}).catch(()=>{});await sleep(800);
+  s=await st();ok(s.steps[5].ok&&s.steps[5].st==='in review'&&s.step==='make','Send for review moves it to In review, the step is done and Make it is next',s.steps[5].st);
+  SH&&(fs.mkdirSync(SH,{recursive:true}),await p.screenshot({path:path.join(SH,'g10-sent-for-review.png')}));
+  ok(!errs.length,'no page errors',errs.slice(0,3).join(' | '));
+}catch(e){fail++;console.log('FAIL',e.stack||e.message);}
+try{await br?.close();}catch{}srv.kill();fs.rmSync(ud,{recursive:true,force:true});console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);

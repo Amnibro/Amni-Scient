@@ -1,9 +1,9 @@
-import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';
+import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';import {asPro} from './pro_key.mjs';
 const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18737',sleep=t=>new Promise(r=>setTimeout(r,t));let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+x+')':''));};
 const P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),ud=fs.mkdtempSync(path.join(os.tmpdir(),'steps-ui-')),srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});let br;
 const PLATE={name:'Steps plate',units:'in',params:[],material:'al6061',features:[{id:'a',type:'box',w:6,d:4,h:0.25},{id:'b',type:'hole',plane:'face',face:{side:'+Z'},d:0.5,thru:true,pts:[[-2.25,-1.25],[2.25,1.25]]}]};
 try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-  const p=await br.newPage();await p.setViewport({width:1280,height:800});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+  const p=await br.newPage();await asPro(p);await p.setViewport({width:1280,height:800});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.steps,{timeout:60000});
   const r1=await p.evaluate(async d=>{const am=window.amnicad,A=am.API;am.loadDoc(d);await A.waitBuild();const b0=A.docJSON,dis=document.getElementById('b-steps').disabled;A.steps.step('AI: Fin',()=>am.applyActions([{add:{type:'box',name:'Fin',w:0.25,d:4,h:1,x:2.5,z:0.25}}]),{kind:'ai'});await A.waitBuild();const n1=A.steps.list().length,f1=am.S.doc.features.length;
     A.steps.step('AI: Fillet',()=>am.applyActions([{add:{type:'fillet',name:'Round',r:0.05,edges:{dir:'Z'}}}]),{kind:'ai'});await A.waitBuild();

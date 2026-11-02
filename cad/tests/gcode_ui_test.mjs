@@ -1,4 +1,4 @@
-import {spawn} from 'node:child_process';
+import {spawn} from 'node:child_process';import {asPro} from './pro_key.mjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -10,7 +10,7 @@ const PLATE={name:'Sim plate',units:'in',params:[],material:'al6061',features:[{
 const EXT='0 BEGIN PGM DROPTEST MM\n1 BLK FORM 0.1 Z X+0 Y+0 Z-12\n2 BLK FORM 0.2 X+80 Y+60 Z+0\n3 TOOL CALL 1 Z S6000\n4 M3\n5 L Z+20 R0 FMAX\n6 L X+20 Y+20 R0 FMAX\n7 L Z+2 R0 FMAX\n8 L Z-3 R0 F300\n9 L X+60 R0 F900\n10 L Y+40\n11 L X+20\n12 L Y+20\n13 CC X+40 Y+30\n14 L X+50 Y+30 Z-3 R0 F900\n15 C X+30 Y+30 DR+\n16 C X+50 Y+30 DR+\n17 L Z+20 R0 FMAX\n18 CYCL DEF 200 DRILLING ~\n  Q200=+2 ~\n  Q201=-10 ~\n  Q206=+150 ~\n  Q202=+4 ~\n  Q210=+0 ~\n  Q203=+0 ~\n  Q204=+20 ~\n  Q211=+0\n19 L X+10 Y+10 R0 FMAX M99\n20 L X+70 R0 FMAX M99\n21 M30\n22 END PGM DROPTEST MM\n';
 const FAN='%\nO2000 (FILE PICK)\nG20 G17 G90 G40 G49 G80\nT1 M6\nS8000 M3\nG43 H1 G0 Z1.\nG0 X0.5 Y0.5\nG1 Z-0.1 F20.\nG1 X2.5 F40.\nG2 X3. Y1. R0.5\nG1 Y2.\nG3 X2.5 Y2.5 I-0.5 J0.\nG1 X0.5\nG0 Z1.\nG0 X1. Y1.\nG0 Z-0.05\nG0 X2. Y1.5\nG0 Z1.\nM30\n%\n';
 try{br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox',...(gpu?['--enable-unsafe-webgpu','--enable-features=Vulkan','--use-angle=vulkan','--ignore-gpu-blocklist']:['--use-angle=swiftshader','--enable-unsafe-swiftshader'])]});
-  const p=await br.newPage();await p.setViewport({width:1440,height:900});const errs=[],reqs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push('console: '+m.text());});p.on('request',r=>{if(!r.url().startsWith('http://127.0.0.1:'+port)&&!r.url().startsWith('data:')&&!r.url().startsWith('blob:'))reqs.push(r.url());});
+  const p=await br.newPage();await asPro(p);await p.setViewport({width:1440,height:900});const errs=[],reqs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push('console: '+m.text());});p.on('request',r=>{if(!r.url().startsWith('http://127.0.0.1:'+port)&&!r.url().startsWith('data:')&&!r.url().startsWith('blob:'))reqs.push(r.url());});
   await sleep(400);await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API,{timeout:60000});
   const built=await p.evaluate(async d=>{const am=window.amnicad,A=am.API;am.loadDoc(d);await A.waitBuild();for(let i=0;i<200&&!(A.mesh&&A.mesh.idx&&A.mesh.idx.length);i++)await new Promise(r=>setTimeout(r,200));window.__dls=[];A.download=(b,n)=>window.__dls.push({b,n});document.querySelector('.rtabs button[data-tab=make]').click();return!!A.mesh;},PLATE);ok(built,'6 × 4 × 0.25 in plate with 4 holes builds');
   await p.waitForFunction(()=>document.querySelector('#tab-make #mk-cam'),{timeout:120000});

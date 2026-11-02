@@ -56,7 +56,7 @@ async function measure(API,C,doc){const S=API.S,U=API.units;await API.trialDoc(d
   if(C.need.has('cam')){const K=await import('./cam.js'),cat=await K.load(API),res=await API.plugin('./mfg_kernel.js','analyze',{}),r=await K.make(API,{machine:K.machineOf(cat,doc,res),res,plan:true});if(!r.ok)return null;M.cam=r.time_min;}
   return M;}
 export async function run(API,o={},ui={}){const S=API.S,U=API.units,steps=API.steps,t0=Date.now();if(S.optRun)throw new Error('An optimization is already running');await API.waitBuild();if(!S.mesh)throw new Error('Build a part first: there is no solid to optimize.');
-  const g=goalOf(o,!studyGap(API,new Set(['static']))),need=needOf(g),gap=studyGap(API,need);if(gap)throw Object.assign(new Error(gap.msg),{tab:gap.tab});
+  const g=goalOf(o,!studyGap(API,new Set(['static']))),need=needOf(g),gap=studyGap(API,need);if(gap)throw Object.assign(new Error(gap.msg),{tab:gap.tab});const mt=[...new Set([...need].map(t=>t==='flow'?'cfd':t==='cam'?'cam':['static','modal','thermal'].includes(t)?'fea':null).filter(Boolean))];for(const f of mt)if(API.pro&&!await API.pro.meter(f))throw new Error('Your free '+(f==='fea'?'stress':f==='cfd'?'flow':'G-code')+' report is used. Optimizing needs Amni-CAD Pro.');
   const all=discover(S.doc,API.FT);let V=o.vars&&!o.vars.length?[]:pickVars(all,o.vars?o.vars.map(v=>({id:v.id,min:v.lo,max:v.hi})):o.variables);if(!V.length)throw new Error(all.length?'Tick at least one size to change.':'There are no numeric parameters or sizes to change. Name key sizes as parameters (w = 3.5) first.');
   const orig=API.docJSON,res0=API.results(),vis={fea:S.fea,flow:S.flow},fres=API.flowCfg&&API.flowCfg.res,K=need.has('cam')?await import('./cam.js'):null,cam0=K&&K.CS.res;let shop='';try{shop=localStorage.getItem('amnicad.shop')||'';}catch{}
   const C={need,errs:S.errors.length,solids:S.mesh.props.nSolids||1,warn:new Set((S.warnings||[]).map(wkey)),shop,qty:o.qty,halt:()=>!!(ui.stop&&ui.stop())},P0=S.mesh.props,sig=p=>[p.volume,...p.bbox.min,...p.bbox.max],s0=sig(P0),mk=x=>V.reduce((d,v,i)=>setVar(d,v,x[i]),JSON.parse(orig)),block=e=>{(e.ctrlKey||e.metaKey)&&/^[zy]$/i.test(e.key)&&(e.preventDefault(),e.stopImmediatePropagation());};
@@ -74,6 +74,7 @@ export async function run(API,o={},ui={}){const S=API.S,U=API.units,steps=API.st
   else if(vis.fea||vis.flow){S.fea=vis.fea&&{...vis.fea,tex:false};S.flow=vis.flow;API.applyRes&&API.applyRes();}
   steps&&steps.mute&&steps.mute(false);
   if(applied&&o.verify!==false&&[...need].some(t=>['static','modal','thermal'].includes(t))&&((S.doc.sim||{}).res||30000)!==QUICK_RES&&need.has((S.doc.sim||{}).type||'static')){ui.phase&&ui.phase('Checking the result at your study resolution…');await API.runFea();verified=S.lastFea||null;}
+  out&&API.pro&&mt.forEach(f=>API.pro.spend(f));
   if(fin&&!out)throw fin;
   const met=M=>M?Object.fromEntries(Object.entries(M).filter(([,v])=>v!=null&&isFinite(v)).map(([k,v])=>[k,+v.toPrecision(5)])):null;
   return{applied,step:idx,label:lab,goal:g.id,objective:g.obj,constraints:g.cons,reason:fin?'error: '+fin.message:flat?'flat':out.reason,feasible:!!best&&best.feas,improved:win,evaluations:out.evals,failed:out.hist.filter(e=>!e.ok).length,infeasible:out.hist.filter(e=>e.ok&&!e.feas).length,wall_s:+((Date.now()-t0)/1000).toFixed(1),skipped,before:met(base),after:met(win?best.M:base),verified,
