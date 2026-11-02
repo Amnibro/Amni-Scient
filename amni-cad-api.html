@@ -169,11 +169,14 @@ node amnicad.mjs run knight.json --out knight.zip</div>
 <div class="prose"><p>With an Enterprise key, the <code>amnicad</code> command can join your team vault and check files in for you. Run it on a build server or any computer that saves CAD files. It has its own vault key, so an admin approves it once in Amni-CAD under Vault, like any teammate.</p></div>
 <div class="eq">amnicad vault join "&lt;invite link&gt;" --name "Build server"
 amnicad vault watch ./released --every 7
+amnicad vault import ./old-pdm-export --dry-run
+amnicad vault import ./scans --watch
 amnicad vault add bracket.step drawing.pdf --note "From supplier"
 amnicad vault ls bracket
 amnicad vault get PRT-000012 --what all --out ./out
 amnicad vault status</div>
 <div class="prose" style="margin-top:1rem"><p><code>watch</code> checks in every new or changed STEP, Amni-CAD, PDF, STL and DXF file under the folder. A changed file becomes the next revision of the same item, and files that have not changed are skipped. An assembly STEP is split into an assembly and its parts. An Amni-CAD file is built into a STEP by the engine and stored with its native file. Files are encrypted on the computer before they are sent. Add <code>--once</code> to check the folder one time, for scheduled jobs.</p></div>
+<div class="prose" style="margin-top:1rem"><p><code>import</code> moves files from another PDM or a scanner into the vault. Point it at a folder exported from SOLIDWORKS PDM, Autodesk Vault, Onshape, Windchill, Arena or any other system. Each part keeps its old number, revision note, name, material and Released state. These come from a spreadsheet export in the folder if there is one, then from each PDF drawing's title block, then from the file names. Drawings and native CAD files are filed next to their part. <code>--dry-run</code> prints the plan without changing anything. <code>--watch</code> keeps importing new files, so a scanner's scan-to-folder output lands in the vault on its own. Image-only scans are read with text recognition in the browser importer (Vault &rarr; Import), which also previews everything before it imports.</p></div>
 </section>
 <section>
 <h2>PLANS</h2>
