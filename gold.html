@@ -103,6 +103,7 @@
 <div style="margin-top:2rem" class="row">
 <a href="#example" class="btn btn-primary">SEE AN EXAMPLE &rarr;</a>
 <a href="#results" class="btn btn-outline">HELIUM RESULTS</a>
+<a href="#rewrites" class="btn btn-outline">OUR APPS IN GOLD</a>
 </div>
 </div>
 <section>
@@ -166,7 +167,35 @@ fn gold_x(n int) int {
 </div>
 <p class="fine">Benchmarks: medians, identical output, Xeon, Debian 13, Oct 2026.</p>
 </section>
-<p class="page-updated">Last updated <time datetime="2026-10-31">October 31, 2026</time></p>
+<section id="rewrites">
+<h2>OUR APPS, REWRITTEN IN GOLD</h2>
+<p class="lead">We took the core engine of six Amni apps, had Gold write each one as plain English, and built that into Helium. Every rewrite was run on hundreds of real inputs next to the original and gives the same answers.</p>
+<div class="card-grid">
+<div class="card"><p class="stat">3,265 / 3,265</p><p>test inputs give the same answer as the original</p></div>
+<div class="card"><p class="stat">24% fewer</p><p>tokens for an AI to read than the original code (89,964 vs 118,343)</p></div>
+<div class="card"><p class="stat">4 of 6</p><p>rewrites run as fast or faster than the original</p></div>
+</div>
+<div class="tbl">
+<table class="spec-table">
+<thead><tr><th>App (part rewritten)</th><th>Original</th><th class="n">Same answers</th><th class="n">Tokens: original &rarr; Gold</th><th class="n">Speed vs original</th></tr></thead>
+<tbody>
+<tr><td>Amni-Calc (all engineering calculators)</td><td>Rust</td><td class="n">687 / 687</td><td class="n">95,993 &rarr; 71,744 (25% fewer)</td><td class="n">2.3&times; slower</td></tr>
+<tr><td>Amni-Price (shelf-tag price reader)</td><td>Kotlin</td><td class="n">400 / 400</td><td class="n">5,376 &rarr; 4,743 (12% fewer)</td><td class="n">1.1&times; faster</td></tr>
+<tr><td>Amni-Type (swipe-typing decoder)</td><td>Java</td><td class="n">400 / 400</td><td class="n">3,618 &rarr; 2,688 (26% fewer)</td><td class="n">1.7&times; slower</td></tr>
+<tr><td>Amni-Mail (mail rules engine)</td><td>Python</td><td class="n">400 / 400</td><td class="n">6,053 &rarr; 5,855 (3% fewer)</td><td class="n">2.2&times; faster</td></tr>
+<tr><td>Amni-Crypt (Reffelt cipher layer)</td><td>Python + NumPy</td><td class="n">80 / 80</td><td class="n">6,155 &rarr; 3,037 (51% fewer)</td><td class="n">96&times; faster</td></tr>
+<tr><td>Amni-CAD (unit and dimension text)</td><td>JavaScript (Node.js)</td><td class="n">1,298 / 1,298</td><td class="n">1,148 &rarr; 1,897 (65% more)</td><td class="n">23&times; faster</td></tr>
+</tbody>
+</table>
+</div>
+<details class="faq-inline" style="margin-top:1rem"><summary style="cursor:pointer;font-weight:700">How we measured, and where Helium loses</summary>
+<p class="fine">Same answers: every input was run through the original program and the rewrite, and their output compared line by line. 3,234 lines match byte for byte. The other 31 are inputs both versions reject as invalid, where the error message is worded differently (Rust's JSON reader and Python's regex library phrase errors their own way).</p>
+<p class="fine">Tokens: counted with Claude's own tokenizer, original source files against the Gold files. The Helium that Gold writes from them is 141,540 tokens; you read and edit the Gold, not the Helium. Gold is longer than the original only for the CAD unit code, which is 34 dense lines of JavaScript.</p>
+<p class="fine">Speed: each program runs the same inputs many times in one process; we report the fastest of 5 runs, start-up included, on a shared Linux desktop. Helium is slower than Rust on Amni-Calc (number formatting and general code generation) and slower than Java on Amni-Type, where Java's built-in math is faster than Helium's exact-to-the-last-bit math. Amni-Crypt also ships a hand-tuned C version of the same layer that uses vector instructions; that runs 13&times; faster than the Helium rewrite.</p>
+<p class="fine">Fixes along the way: the rewrites found 13 gaps in Helium itself: missing math and number-format functions, a regex crash, four unsafe code patterns the compiler now rejects, and slow paths in regex, JSON, number printing and atan2. All are fixed in Helium.</p>
+</details>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-11-02">November 2, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
