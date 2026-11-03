@@ -5,7 +5,7 @@ const ROOT = path.join(__dirname, '..');
 const POSTS = path.join(ROOT, 'blog', 'posts');
 const OUT = path.join(ROOT, 'blog');
 const SITE = 'https://amni-scient.com';
-const CSS = '/css/style.css?v=b263';
+const CSS = '/css/style.css?v=b267';
 function parseFront(raw) {
   if (!raw.startsWith('---')) throw new Error('missing front matter');
   const end = raw.indexOf('\n---', 3);
