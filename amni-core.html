@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://amni-scient.com/assets/explore/og-explore.png">
 <link rel="canonical" href="https://amni-scient.com/amni-core">
 <link rel="stylesheet" href="css/style.css?v=b263">
+<link rel="stylesheet" href="css/shots.css?v=1">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
@@ -115,140 +116,24 @@
 </svg>
 </div>
 <h1>AMNI-CORE</h1>
-<p class="desc">A FROM-SCRATCH OS &bull; RUNS REAL WINDOWS, LINUX &amp; macOS APPS &bull; FROSTED-GLASS DESKTOP</p>
+<p class="desc">A FROM-SCRATCH OS &bull; RUNS REAL WINDOWS, LINUX &amp; macOS APPS &bull; IN DEVELOPMENT</p>
+<div class="dl" style="margin-top:2rem"><a href="https://github.com/Amnibro/Amni-Scient/releases/download/amni-core-v3.582/amni-core-v3.582-efi.zip" class="btn btn-primary" target="_blank" rel="noopener" download>DOWNLOAD OS IMAGE (v3.582)</a><a href="https://github.com/Amnibro/Amni-Scient/releases/tag/amni-core-v3.582" class="btn btn-outline" target="_blank" rel="noopener">RELEASE NOTES</a></div>
+<nav class="jump" aria-label="On this page"><a href="#boot">Boot</a><a href="#run">Run</a><a href="#get">Try It</a></nav>
 </div>
-<div class="ptile">
-<div class="ptile-copy">
-<p class="ptile-line">An operating system I&rsquo;m building from scratch. It runs real Windows, Linux &amp; macOS apps natively, on a frosted-glass desktop.</p>
-<ul class="ptile-feats"><li>Runs real Windows, Linux and Mac programs, with no virtual machine or emulator</li><li>Built from zero, not on top of Linux, BSD or Windows</li><li>Boots on modern PCs into a frosted-glass desktop drawn by the graphics card</li><li>Does its math in base 17 instead of base 2</li></ul>
-</div>
-<div class="ptile-media"><img src="assets/core/desktop.jpg" alt="Amni-Core frosted-glass desktop" loading="lazy"></div>
-</div>
-<section>
-<h2>WHY THIS PLATFORM EXISTS</h2>
-<div class="card-grid">
-<div class="card">
-<h3>YOUR SOFTWARE, YOUR OS</h3>
-<p>A clean-sheet platform usually means leaving your apps behind. Amni-Core refuses that trade-off: it runs the real Windows, Linux and macOS programs you already use, on a kernel you can actually trust.</p>
-</div>
-<div class="card">
-<h3>SMALLER TRUST BASE</h3>
-<p>Legacy operating systems inherit decades of compatibility layers, privileged interfaces and historical baggage. Amni-Core is meant to reduce that inherited trust burden.</p>
-</div>
-<div class="card">
-<h3>DETERMINISTIC EXECUTION</h3>
-<p>GPU-forward scheduling and explicit subsystem boundaries make it easier to reason about performance, isolation, and system state under load.</p>
-</div>
-<div class="card">
-<h3>RESEARCH-LED ENGINEERING</h3>
-<p>This isn&rsquo;t a theme on top of an existing kernel. It&rsquo;s a long-horizon systems project, and architecture decisions get published only when the subsystems are defensible.</p>
-</div>
-</div>
+<section id="boot">
+<h2>BOOT</h2>
+<p class="lede">Its own kernel, with no Linux, BSD or Windows underneath. It boots on modern PCs into a frosted-glass desktop.</p>
+<div class="shots"><figure><img src="assets/core/page/desktop.webp" width="1200" height="900" alt="The Amni-Core frosted-glass desktop with a terminal" loading="lazy"><figcaption>Frosted-glass desktop</figcaption></figure></div>
 </section>
-<section>
-<h2>ONE OS. EVERY PROGRAM.</h2>
-<p style="color:var(--dim);max-width:640px;margin:0 0 1rem;font-size:.9rem">Its own kernel, its own loaders, its own desktop, with no Linux, BSD or Windows underneath. Here&rsquo;s what that gets you.</p>
-<div class="features">
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v5a2 2 0 1 0 2 2h5v9h-9a2 2 0 1 0-2-2H4z"/></svg></div>
-<h4>UNIVERSAL BINARY EXECUTION</h4>
-<p>Real, unmodified Windows (.exe / PE), Linux (ELF) and macOS (Mach-O) programs run directly on the kernel. No virtual machine, no emulator: Amni-Core implements the ABIs itself and resolves each program&rsquo;s imports natively.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></div>
-<h4>FROSTED-GLASS DESKTOP</h4>
-<p>It boots straight from UEFI into a translucent, GPU-forward desktop with real windows, a dock, live wallpaper and apps, all rendered by the kernel&rsquo;s own compositor with anti-aliased glass and adjustable translucency.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v5l-4 4v9h-4v-9L6 8z"/></svg></div>
-<h4>BUILT FROM ZERO</h4>
-<p>No Linux, BSD or NT underneath. The bootloader, kernel, memory manager, scheduler, drivers, loaders and window system are all original code. It&rsquo;s a clean-sheet platform, not a fork.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.6 8.2-8 9-4.4-.8-8-4-8-9V6z"/></svg></div>
-<h4>MODERN CRYPTO &amp; INTEGRITY</h4>
-<p>Authenticated encryption (ChaCha20-Poly1305 AEAD), large-key SPN ciphers and an integrity-checked boot chain. Security is a first-order design constraint here, not a bolt-on.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L5 13.5h6L10.5 22 19 10.5h-6z"/></svg></div>
-<h4>GPU-FORWARD</h4>
-<p>The compute pipeline treats the GPU as a first-class execution target, not an accelerator. Scheduling, memory and rendering are designed around massively parallel hardware. GPU-native display is the next milestone.</p>
-</div>
-<div class="feature">
-<div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></div>
-<h4>SEPTIDECIMAL CORE</h4>
-<p>A novel base-17 computational encoding runs through the platform: a fundamentally different numerical and symbolic representation from conventional binary-centric systems.</p>
-</div>
-</div>
+<section id="run">
+<h2>RUN</h2>
+<p class="lede">Real, unmodified Windows, Linux and Mac programs run directly on the kernel, with no virtual machine.</p>
+<div class="shots"><figure><img src="assets/core/page/win32.webp" width="480" height="445" alt="A standard Win32 message loop painting a window on Amni-Core" loading="lazy"><figcaption>A Windows program</figcaption></figure><figure><img src="assets/core/page/frosted.webp" width="660" height="464" alt="A terminal window running Linux and Mac binaries" loading="lazy"><figcaption>Linux and Mac binaries</figcaption></figure></div>
 </section>
-<section>
-<h2>SCREENSHOTS</h2>
-<p style="color:var(--dim);max-width:680px;margin:0 0 1.5rem;font-size:.85rem">Captured from real UEFI boots. Status: preliminary builds.</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;max-width:1000px;margin:0 0">
-<a href="assets/core/desktop.jpg" target="_blank" rel="noopener" style="grid-column:1/-1"><img src="assets/core/desktop.jpg" alt="Amni-Core frosted-glass desktop" loading="lazy" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.12);display:block"></a>
-<a href="assets/core/frosted-window.png" target="_blank" rel="noopener"><img src="assets/core/frosted-window.png" alt="Kernel-rendered frosted-glass window" loading="lazy" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.12);display:block"></a>
-<a href="assets/core/real-binaries.png" target="_blank" rel="noopener"><img src="assets/core/real-binaries.png" alt="Real Windows, Linux and macOS binaries executing natively" loading="lazy" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.12);display:block"></a>
-</div>
-</section>
-<section>
-<h2>DESIGN PRINCIPLES</h2>
-<div class="card-grid">
-<div class="card">
-<h3>CLEAN-SHEET KERNEL</h3>
-<p>Modern operating systems carry decades of inherited abstractions. Amni-Core starts from zero &mdash; an original kernel with no Linux, BSD, or NT underneath, so every layer is understood and owned end to end.</p>
-</div>
-<div class="card">
-<h3>RUN EVERYTHING NATIVELY</h3>
-<p>Rather than locking you out of existing software, Amni-Core reimplements the Windows, Linux, and macOS binary interfaces directly on its own kernel &mdash; so real programs run without a VM, while the substrate underneath stays clean-sheet.</p>
-</div>
-<div class="card">
-<h3>GPU-NATIVE PIPELINE</h3>
-<p>Traditional OS architectures treat GPUs as peripheral devices. Amni-Core is built to integrate GPU compute into the core execution and display model, enabling parallel-first scheduling across the whole stack.</p>
-</div>
-<div class="card">
-<h3>NOVEL COMPUTATION</h3>
-<p>A septidecimal (base-17) encoding and computation model runs through the platform, diverging from conventional binary-centric architectures &mdash; the same representation that powers Amni&rsquo;s texture-native AI work.</p>
-</div>
-</div>
-</section>
-<section>
-<h2>SPECIFICATIONS</h2>
-<table class="spec-table">
-<tr><th>PARAMETER</th><th>VALUE</th></tr>
-<tr><td>Architecture</td><td>Original, from-scratch (no Linux / BSD / NT base)</td></tr>
-<tr><td>Boot</td><td>UEFI &rarr; framebuffer (GOP) compositor &mdash; frosted-glass desktop, working today</td></tr>
-<tr><td>Binary Execution</td><td>Native Windows (PE/.exe), Linux (ELF) &amp; macOS (Mach-O) &mdash; real unmodified binaries, no VM/emulator</td></tr>
-<tr><td>Encoding</td><td>Septidecimal (base-17) computational encoding</td></tr>
-<tr><td>Cryptography</td><td>ChaCha20-Poly1305 AEAD + large-key SPN ciphers; integrity-checked boot chain</td></tr>
-<tr><td>Execution Model</td><td>GPU-forward parallel pipeline (target); CPU + GOP rendering today</td></tr>
-<tr><td>Desktop</td><td>Kernel-native window manager &mdash; windows, dock, live wallpaper, adjustable glass translucency</td></tr>
-<tr><td>Target Hardware</td><td>Desktop / GPU-equipped x86-64</td></tr>
-<tr><td>Status</td><td>Active development &mdash; desktop + native binary execution working; GPU-native display next</td></tr>
-</table>
-</section>
-<section>
-<h2>DEVELOPMENT ROADMAP</h2>
-<table class="spec-table">
-<tr><th>PHASE</th><th>FOCUS</th><th>STATUS</th></tr>
-<tr><td>Boot &amp; Desktop</td><td>UEFI bring-up, hardware discovery, framebuffer compositor, and a frosted-glass window manager.</td><td>Working</td></tr>
-<tr><td>Binary Execution</td><td>Native PE/ELF/Mach-O loaders and the Windows, Linux &amp; macOS ABI surface so real unmodified programs run on the kernel.</td><td>In progress &mdash; real apps loading &amp; running</td></tr>
-<tr><td>Full Applications</td><td>Completing the API surface so large real-world software &mdash; browsers, productivity and AI tools, games &mdash; runs end to end.</td><td>Next</td></tr>
-<tr><td>GPU-Native</td><td>Moving display and the compute pipeline onto the GPU from boot to application layer.</td><td>Planned</td></tr>
-</table>
-<p style="color:var(--dim);max-width:760px;margin:1.5rem auto 0;font-size:.85rem;line-height:1.8">I tie Amni-Core milestones to working subsystems, not placeholder dates. The goal is a coherent platform architecture that can be judged on technical merit when it&rsquo;s ready.</p>
-</section>
-<section>
-<h2>STATUS</h2>
-<p style="color:var(--dim);margin-bottom:2rem;font-size:.9rem;max-width:600px;margin-left:auto;margin-right:auto">Amni-Core is in active development. It&rsquo;s a long-horizon project building toward a fundamentally new computing platform, and I&rsquo;ll publish updates as development milestones are reached.</p>
-<div style="margin:0 auto 2.6rem">
-<a href="https://github.com/Amnibro/Amni-Scient/releases/download/amni-core-v3.582/amni-core-v3.582-efi.zip" class="btn" style="background:#6c7ae0;color:#05070a;border-color:#6c7ae0" download>&#9660; DOWNLOAD OS IMAGE (v3.582)</a>
-<a href="https://github.com/Amnibro/Amni-Scient/releases/tag/amni-core-v3.582" target="_blank" rel="noopener" class="btn btn-outline" style="color:#6c7ae0;border-color:rgba(108,122,224,.45);margin-left:.6rem">RELEASE NOTES</a>
-<p style="color:var(--dim);font-size:.78rem;margin:.9rem auto 0;max-width:560px">UEFI-bootable &bull; ~24&nbsp;MB &bull; write the <code>EFI\</code> folder to a FAT32 USB (or boot in QEMU). It&rsquo;s an active-development build, and the boot instructions are in the readme inside the zip.</p>
-</div>
-<div class="cta-row" style="flex-wrap:wrap;gap:1rem">
-<a href="research.html" class="btn btn-outline">RELATED RESEARCH</a>
-<a href="privacy-core.html" class="btn btn-outline">PRIVACY POLICY</a>
-</div>
+<section id="get">
+<h2>TRY IT</h2>
+<p class="lede">An active-development build. Write the EFI folder to a FAT32 USB stick, or boot it in QEMU.</p>
+<div class="dl"><a href="https://github.com/Amnibro/Amni-Scient/releases/download/amni-core-v3.582/amni-core-v3.582-efi.zip" class="btn btn-primary" download>DOWNLOAD OS IMAGE (v3.582)</a><a href="https://github.com/Amnibro/Amni-Scient/releases/tag/amni-core-v3.582" target="_blank" rel="noopener" class="btn btn-outline">RELEASE NOTES</a><a href="research.html" class="btn btn-outline">RELATED RESEARCH</a><a href="privacy-core.html" class="btn btn-outline">PRIVACY POLICY</a></div><p class="note">UEFI-bootable &bull; about 24 MB &bull; boot steps are in the readme inside the zip. Screenshots are from real UEFI boots of preliminary builds.</p>
 </section>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
@@ -262,5 +147,6 @@
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
+<script src="js/shots.js?v=1"></script>
 </body>
 </html>
