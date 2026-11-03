@@ -1,11 +1,12 @@
+import {keep as keepLocal} from './policy.js';
 const DBN='amnicad-refs',STN='refs',MAXPG=10,LONG=1600,MAXREFS=24,MAXIMG=12,MAXMB=60,C=new Map(),seen=new Set(),IMG=/^image\/(png|jpeg|webp|gif|svg\+xml)$/,EXT=/\.(png|jpe?g|webp|gif|svg|pdf)$/i,SAFE=/^image\/(png|jpeg|webp|gif)$/;
 export const PROMPT='Model this part from my references. Use every dimension written on them, estimate anything missing from the proportions and make those sizes named parameters. Tell me which view you matched to which sketch plane and list your assumptions.';
 let dbp=null,A=null,box=null,opt={},last='',hooked=false;
 export function b64(buf){const u=buf instanceof Uint8Array?buf:new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);}
 export function unb64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u.buffer;}
-const db=()=>dbp||(dbp=new Promise((res,rej)=>{const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>r.result.createObjectStore(STN);r.onsuccess=()=>res(r.result);r.onerror=()=>{dbp=null;rej(r.error);};}));
+const db=()=>dbp||(dbp=new Promise((res,rej)=>{if(!keepLocal)return rej(new Error('Reference images are not kept on this device'));const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>r.result.createObjectStore(STN);r.onsuccess=()=>res(r.result);r.onerror=()=>{dbp=null;rej(r.error);};}));
 const tx=(mode,fn)=>db().then(d=>new Promise((res,rej)=>{const t=d.transaction(STN,mode),q=fn(t.objectStore(STN));t.oncomplete=()=>res(q.result);t.onerror=t.onabort=()=>rej(t.error);}));
-const put=(id,v)=>tx('readwrite',s=>s.put(v,id)).catch(()=>{}),idbGet=id=>tx('readonly',s=>s.get(id)).catch(()=>null),idbKeys=()=>tx('readonly',s=>s.getAllKeys()).catch(()=>[]),idbDel=id=>tx('readwrite',s=>s.delete(id)).catch(()=>{});
+const put=(id,v)=>keepLocal?tx('readwrite',s=>s.put(v,id)).catch(()=>{}):Promise.resolve(),idbGet=id=>tx('readonly',s=>s.get(id)).catch(()=>null),idbKeys=()=>tx('readonly',s=>s.getAllKeys()).catch(()=>[]),idbDel=id=>tx('readwrite',s=>s.delete(id)).catch(()=>{});
 const recOf=async id=>C.get(id)||await idbGet(id).then(v=>v&&v.pages?(C.set(id,v),v):null);
 export const thumb=id=>(C.get(id)||{}).thumb||'';
 const okFile=f=>!!f&&(IMG.test(f.type)||/pdf$/i.test(f.type)||EXT.test(f.name||''));

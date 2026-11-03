@@ -1,4 +1,5 @@
 import {PolyMesh,TY} from './polymesh.js';
+import {keep as keepLocal} from './policy.js';
 export const CHUNK=131072,LIMIT=192*1048576,KEYRE=/mc:[0-9a-z]+:[0-9]+/g;
 const ARR={pos:'f32',fo:'u32',cv:'u32',le:'u32',ef:'u8',ff:'u8',fm:'u16',vf:'u8'},mem=new Map(),pend=new Map(),use={bytes:0,trims:0};let api=null,idbp=null,flushT=0;
 export const stats=()=>({chunks:mem.size,bytes:use.bytes,limit:LIMIT,trims:use.trims});
@@ -22,7 +23,7 @@ const scaleMods=(mods,s)=>{const M=JSON.parse(JSON.stringify(mods||[]));if(s!==1
 export const modsOf=rec=>scaleMods(rec&&rec.mods,rec&&rec.scale||1),setMods=(rec,mods)=>({...rec,mods:scaleMods(mods,1/(rec.scale||1))});
 const idb=()=>idbp||(idbp=new Promise((res,rej)=>{if(typeof indexedDB==='undefined')return rej(new Error('no storage'));const r=indexedDB.open('amnicad-mesh',1);r.onupgradeneeded=()=>r.result.createObjectStore('chunks');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}).catch(e=>{idbp=null;throw e;}));
 function flushSoon(){clearTimeout(flushT);flushT=setTimeout(()=>flushIDB().catch(()=>{}),700);}
-export async function flushIDB(){if(!pend.size)return;const items=[...pend];pend.clear();const db=await idb();await new Promise((res,rej)=>{const t=db.transaction('chunks','readwrite'),s=t.objectStore('chunks');for(const[k,v]of items)s.put(v,k);t.oncomplete=res;t.onerror=t.onabort=()=>rej(t.error);});}
+export async function flushIDB(){if(!keepLocal)pend.clear();if(!pend.size)return;const items=[...pend];pend.clear();const db=await idb();await new Promise((res,rej)=>{const t=db.transaction('chunks','readwrite'),s=t.objectStore('chunks');for(const[k,v]of items)s.put(v,k);t.oncomplete=res;t.onerror=t.onabort=()=>rej(t.error);});}
 export async function load(keys){const miss=[...new Set(keys)].filter(k=>!mem.has(k));if(!miss.length)return 0;let db;try{db=await idb();}catch{return miss.length;}const got=await new Promise(res=>{const t=db.transaction('chunks','readonly'),s=t.objectStore('chunks'),out=[];for(const k of miss){const q=s.get(k);q.onsuccess=()=>q.result&&out.push([k,new Uint8Array(q.result.buffer?q.result.buffer:q.result,q.result.byteOffset||0,q.result.byteLength)]);}t.oncomplete=()=>res(out);t.onerror=t.onabort=()=>res(out);});for(const[k,u]of got){mem.set(k,u.slice());use.bytes+=u.length;}return miss.length-got.length;}
 export async function ensure(doc){const keys=docKeys(doc);const missing=await load(keys);return{missing};}
 const b64=u=>{let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s);},unb64=s=>{const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;};
