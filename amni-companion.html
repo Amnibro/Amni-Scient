@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Companion &mdash; A 3D AI Companion in Your Browser | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Companion is a free, open-source 3D AI companion for your browser. Bring your own GLB or VRM model and your own AI key, talk by voice, and see it in AR with body tracking and gesture recognition. Runs on your device.">
+<meta name="keywords" content="ai companion,3d companion,vrm,glb,webxr,ar companion,body tracking,gesture recognition,bring your own model,claude,grok,ollama,amni-scient">
+<meta property="og:title" content="Amni-Companion &mdash; A 3D AI Companion in Your Browser">
+<meta property="og:description" content="Bring your own model and AI key. Talk to it, show it things, and see it in AR with body tracking. Free, open source and private.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-companion">
+<meta property="og:image" content="https://amni-scient.com/assets/amni-companion/hero.jpg">
+<link rel="canonical" href="https://amni-scient.com/amni-companion">
+<link rel="stylesheet" href="css/style.css?v=b267">
+<style>
+.theme-comp{--accent:#7d5cff;--accent-glow:rgba(125,92,255,.4)}
+[data-theme=dark] .theme-comp{--accent:#a98bff;--accent-glow:rgba(169,139,255,.4)}
+.cshots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:1.4rem;max-width:1100px;margin:0 auto}
+.cshot{margin:0;border:1px solid var(--accent);border-radius:14px;overflow:hidden;background:#0b0f1f;box-shadow:0 0 28px var(--accent-glow)}
+.cshot img{display:block;width:100%;height:auto}
+.cshot figcaption{padding:.7rem .9rem;font-size:.75rem;color:#c9cdf2;line-height:1.5}
+.chero{display:block;width:min(980px,100%);height:auto;border-radius:14px;border:1px solid var(--accent);box-shadow:0 0 40px var(--accent-glow);margin:1.4rem 0 0}
+.ctags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 0}
+.ctags code{font-size:.72rem;padding:.2rem .5rem;border:1px solid var(--accent);border-radius:999px}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-comp">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-companion.html" class="active">AMNI-COMPANION</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<h1>AMNI-COMPANION</h1>
+<p class="desc">A 3D AI COMPANION IN YOUR BROWSER &bull; BRING YOUR OWN MODEL AND KEY &bull; AR WITH BODY TRACKING &bull; OPEN SOURCE</p>
+<div class="cta-row" style="margin-top:1.5rem;margin-bottom:1rem;gap:1rem;flex-wrap:wrap">
+<a href="/companion/" class="btn btn-primary" style="text-decoration:none">&#9654; OPEN AMNI-COMPANION</a>
+<a href="https://github.com/Amnibro/amni-companion" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#128214; SOURCE ON GITHUB</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="text-decoration:none">&#9749; SUPPORT DEVELOPMENT</a>
+</div>
+<img class="chero" src="assets/amni-companion/hero.jpg" alt="Holo, the stock companion, waving from her glowing floor pad with the chat bar below" width="1400" height="875">
+</div>
+<section>
+<h2>A FRIEND THAT LIVES ON YOUR SCREEN</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 2rem;font-size:.9rem">Amni-Companion puts an animated 3D character in your browser that you can talk to, show things to, and stand next to in AR. Pick Holo or Dex, or drop in any rigged model you own. Connect the AI you already pay for, or use the small offline brain. Nothing to install, no account, and nothing leaves your device that you didn&rsquo;t send.</p>
+<div class="features">
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3"/><path d="M6 21c0-6 2.5-10 6-10s6 4 6 10"/></svg></div><h4>BRING YOUR OWN MODEL</h4><p>Drop in a rigged <code>.glb</code> or <code>.vrm</code>: Mixamo, VRoid, Ready Player Me, Unreal, Rigify or Amni-CAD. The skeleton is matched by meaning and the whole animation library is retargeted onto it.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h1V4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h-1V4z"/></svg></div><h4>BRING YOUR OWN BRAIN</h4><p>Claude, OpenAI, Grok, Gemini, OpenRouter, Ollama, LM Studio or any OpenAI-compatible endpoint, called straight from your browser with your key. An offline brain works with no key at all.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div><h4>CAMERA AR + BODY TRACKING</h4><p>Your companion stands over your camera feed and can mirror your body like a reflection, tracked on-device with MediaPipe.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11V6a2 2 0 0 1 4 0v5M11 10V4a2 2 0 0 1 4 0v6M15 10V6a2 2 0 0 1 4 0v8a7 7 0 0 1-14 0v-3a2 2 0 0 1 4 0"/></svg></div><h4>IT NOTICES YOU</h4><p>Waves, claps, pointing, hands up, thumbs up, peace signs, smiles, winks, nods and head shakes, plus objects you hold up. It reacts out loud if you let it.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg></div><h4>IN YOUR ROOM</h4><p>On WebXR phones and headsets, place it on your floor and it walks over when you call it.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>PRIVATE BY DESIGN</h4><p>No accounts, servers or analytics. Models, keys, settings and history stay in your browser, and one button erases them all.</p></div>
+</div>
+</section>
+<section>
+<h2>SEE IT</h2>
+<div class="cshots">
+<figure class="cshot"><img src="assets/amni-companion/camera.jpg" alt="The companion standing over a live camera feed, mirroring the person behind it" loading="lazy" width="900" height="700"><figcaption>Camera AR: tap the camera, then <b>Mirror me</b> to have it copy your moves.</figcaption></figure>
+<figure class="cshot"><img src="assets/amni-companion/byo.jpg" alt="A VRoid model loaded into Amni-Companion, waving" loading="lazy" width="900" height="900"><figcaption>Bring your own: a VRoid <code>.vrm</code> dropped in and dancing within seconds.</figcaption></figure>
+<figure class="cshot"><img src="assets/amni-companion/dex.jpg" alt="Dex, the engineer companion, in the room view" loading="lazy" width="900" height="900"><figcaption>Dex: calm engineer, dry wit, black glasses and a charcoal hoodie.</figcaption></figure>
+</div>
+</section>
+<section>
+<h2>IT MOVES WHEN IT TALKS</h2>
+<p style="color:var(--dim);max-width:720px;margin:0 0 1rem;font-size:.9rem">Connected brains are taught a tiny set of tags. When a reply carries one, the companion acts it out: it waves, dances, walks to you, glances around or changes expression. The offline brain uses the same tags.</p>
+<div class="ctags"><code>[[emote:wave]]</code><code>[[anim:dance]]</code><code>[[walk:user]]</code><code>[[look:left]]</code><code>[[face:smile]]</code><code>[[remember:name=Sam]]</code></div>
+</section>
+<section>
+<h2>SPECIFICATIONS</h2>
+<table class="spec-table">
+<tr><th>PARAMETER</th><th>VALUE</th></tr>
+<tr><td>Runs in</td><td>Chrome, Edge, Safari and Firefox on desktop and phone; installable as an app and works offline after the first visit</td></tr>
+<tr><td>Models</td><td>Rigged humanoid <code>.glb</code> / <code>.vrm</code> (VRM 0.x and 1.0 with node constraints); auto skeleton matching across 22 body parts; mouth, blink and expression blend shapes</td></tr>
+<tr><td>Brains</td><td>Claude (default <code>claude-opus-5-5</code>), OpenAI, Grok, Gemini, OpenRouter, Ollama, LM Studio, any OpenAI-compatible endpoint, or offline</td></tr>
+<tr><td>Recognition</td><td>On-device MediaPipe pose, hand gestures, face blend shapes and object detection</td></tr>
+<tr><td>AR</td><td>Camera AR on any device with a camera; WebXR room placement where supported</td></tr>
+<tr><td>Voice</td><td>Web Speech recognition (on-device where the browser offers it) and speech synthesis</td></tr>
+<tr><td>Core</td><td>Written in Gold, compiled to checked Helium and WebAssembly: skeleton matching, retargeting, pose solving, tracking filters, recognition and the offline brain</td></tr>
+<tr><td>Animation</td><td>Quaternius Universal Animation Library (CC0)</td></tr>
+<tr><td>License</td><td>AGPL-3.0, free</td></tr>
+</table>
+</section>
+<footer style="padding:3rem 1rem;color:var(--dim);font-size:.75rem;letter-spacing:1px">
+<p>&copy; Amniscient, LLC &bull; <a href="privacy.html">PRIVACY</a> &bull; <a href="/">HOME</a></p>
+</footer>
+</body>
+</html>
