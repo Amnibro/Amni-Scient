@@ -13,7 +13,7 @@ let offset = 0;
 const env = {
   DB: makeD1(fileURLToPath(new URL('../schema.sql', import.meta.url))),
   DEV_AUTH: '1', DEV_FAKE_PAY: '1', ADMIN_EMAILS: process.env.ADMIN_EMAILS || 'admin@example.com',
-  ALLOWED_ORIGINS: 'http://localhost:8080,http://127.0.0.1:8080', SITE_URL: 'http://127.0.0.1:8080/test/',
+  ALLOWED_ORIGINS: 'http://localhost:8080,http://127.0.0.1:8080,http://10.0.2.2:8080', SITE_URL: 'http://127.0.0.1:8080/test/',
   REPORT_THRESHOLD: '2', PAYOUT_MIN_CENTS: '1000', __now: () => Date.now() + offset,
 };
 
