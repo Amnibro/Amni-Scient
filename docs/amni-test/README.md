@@ -162,7 +162,7 @@ All endpoints take and return JSON, and use `Authorization: Bearer <session toke
 | `POST /api/campaigns/:id/invited { assignmentIds? }` | Marks testers invited (all `accepted` ones when the list is omitted) |
 | `POST /api/campaigns/:id/close` | Closes the campaign and credits the unused budget |
 | `POST /api/checkins/:id/helpful` | Marks a check-in helpful |
-| `POST /api/assignments/:id/confirm` | Confirms a completion |
+| `POST /api/assignments/:id/confirm` | Confirms a completion, or accepts an app-fault exit early |
 | `POST /api/assignments/:id/dispute { note }` | Disputes an `exit_pending` or `completed_pending` test |
 
 **Admin**

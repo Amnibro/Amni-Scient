@@ -287,11 +287,14 @@
       }
       case 'exit_pending': {
         var d = ctx.cfg.excusedReasons.indexOf(a.exitReason) >= 0 && (a.exitReason === 'privacy' || a.exitReason === 'offensive') ? 3 : 1;
+        var ebox = AT.errBox();
+        var acceptExit = h('button', { type: 'button', class: 'btn at-sm', text: 'Accept exit now', 'data-accept-exit': a.id });
+        acceptExit.addEventListener('click', function () { AT.run(acceptExit, ebox, async function () { await AT.api('/api/assignments/' + a.id + '/confirm', {}); await ctx.refresh(); }); });
         card.append(h('div', { class: 'at-sub' },
           h('p', null, 'Left the test: ', h('b', { style: 'color:var(--text)', text: AT.EXIT_LABELS[a.exitReason] || a.exitReason })),
           a.exitNote ? h('p', { class: 'at-quote', text: a.exitNote }) : null,
-          h('p', { text: 'If you don’t dispute' + (a.deadline ? ' by ' + AT.dateTime(a.deadline) + ' (' + AT.left(a.deadline) + ')' : '') + ', the exit is excused: the tester is paid for the days done and you get ' + d + ' demerit' + (d === 1 ? '' : 's') + '.' }),
-          a.disputeNote ? h('div', null, h('p', { text: 'You disputed this. An admin will decide. Your note:' }), h('p', { class: 'at-quote', text: a.disputeNote })) : disputeForm(ctx, a)));
+          h('p', { text: 'If you don’t dispute' + (a.deadline ? ' by ' + AT.dateTime(a.deadline) + ' (' + AT.left(a.deadline) + ')' : '') + ', the exit is excused: the tester is paid for the days done and you get ' + d + ' demerit' + (d === 1 ? '' : 's') + '. You can also accept it now so their slot opens sooner.' }),
+          a.disputeNote ? h('div', null, h('p', { text: 'You disputed this. An admin will decide. Your note:' }), h('p', { class: 'at-quote', text: a.disputeNote })) : h('div', null, h('div', { class: 'at-actions', style: 'margin-top:.6rem' }, acceptExit), ebox, disputeForm(ctx, a))));
         break;
       }
       case 'excused':

@@ -94,6 +94,7 @@ test('happy path: accept, invite, start, three check-ins, confirm, paid', async 
   assert.equal(camp.campaign.spentCents, 100);
   assert.equal(camp.campaign.reservedCents, 0);
   assert.equal(camp.campaign.assignments[0].checkins.length, 3);
+  assert.equal(camp.campaign.assignments[0].tester.name, undefined, 'developers only get the email');
 });
 
 test('feedback that is too short is refused; own app cannot be tested; 18+ is required', async () => {
@@ -167,6 +168,13 @@ test('excused exit pays pro-rata and charges the developer; a disputed exit lost
   assert.equal((await h.call('POST', `/api/assignments/${a2.id}/exit`, { reason: 'privacy', note: 'Asks for contacts for no reason' }, t2)).status, 'exit_pending');
   await h.call('POST', `/api/assignments/${a2.id}/dispute`, { note: 'We never request contacts; see manifest' }, ctx.dev);
   h.tick(73 * HOUR); await sweep(h.env);
+  const t3 = await tester(h, 'c@example.com');
+  h.db('UPDATE campaigns SET slots = 3, budget_cents = 300');
+  const a3 = await startTest(h, ctx, t3);
+  h.tick(DAY);
+  await h.call('POST', `/api/assignments/${a3.id}/exit`, { reason: 'wont_install', note: 'Play says the device is not compatible' }, t3);
+  assert.equal((await h.call('POST', `/api/assignments/${a3.id}/confirm`, {}, ctx.dev)).ok, true, 'developer accepts the exit early');
+  assert.equal(h.db('SELECT status FROM assignments WHERE id = ?', a3.id)[0].status, 'excused');
   let me1 = await h.call('GET', '/api/me', undefined, t1);
   assert.equal(me1.balanceCents, 50, '7 of 14 days of $1');
   assert.equal(me1.tester.demerits, 0);
@@ -179,7 +187,7 @@ test('excused exit pays pro-rata and charges the developer; a disputed exit lost
   assert.equal(me2.tester.demerits, 5);
   assert.equal(me2.balanceCents, 0);
   const dev = await h.call('GET', '/api/me', undefined, ctx.dev);
-  assert.equal(dev.dev.demerits, 1, 'crash exit charged the developer; the disputed privacy exit did not');
+  assert.equal(dev.dev.demerits, 2, 'the crash and wont_install exits charged the developer; the disputed privacy exit did not');
 });
 
 test('unexcused exit costs 5; two of them ban the account; one appeal reinstates at standing >= 0', async () => {

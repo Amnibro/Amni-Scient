@@ -274,7 +274,7 @@ export async function terminate(env, userId, reason, fraud) {
   // Their campaigns as a developer: close, and excuse their testers with pro-rata pay.
   for (const c of await all(env, "SELECT * FROM campaigns WHERE owner_id = ? AND status = 'open'", userId)) {
     for (const a of await all(env, `SELECT * FROM assignments WHERE campaign_id = ? AND status IN ('accepted','invited','active','completed_pending','exit_pending')`, c.id)) {
-      const pay = a.status === 'completed_pending' ? a.price_cents : R.proRataPay(a.price_cents, a.started_at, t);
+      const pay = a.status === 'completed_pending' ? R.completionPay(a.price_cents, (await one(env, 'SELECT COUNT(*) AS n FROM checkins WHERE assignment_id = ?', a.id)).n) : R.proRataPay(a.price_cents, a.started_at, t);
       await settle(env, a, 'excused', pay, { note: 'The developer account was closed' });
     }
     await closeCampaign(env, c.id);
@@ -330,13 +330,13 @@ async function campaignView(env, c, u, detail = false) {
   if (!detail) return v;
   v.sdkKey = c.sdk_key;
   const t = now(env);
-  const rows = await all(env, `SELECT a.*, u.email, u.name, u.tester_merits, u.tester_demerits, (SELECT MAX(day) FROM pings p WHERE p.assignment_id = a.id) AS last_ping_day,
+  const rows = await all(env, `SELECT a.*, u.email, u.tester_merits, u.tester_demerits, (SELECT MAX(day) FROM pings p WHERE p.assignment_id = a.id) AS last_ping_day,
     (SELECT COUNT(*) FROM pings p WHERE p.assignment_id = a.id) AS ping_days FROM assignments a JOIN users u ON u.id = a.tester_id WHERE a.campaign_id = ? ORDER BY a.accepted_at`, c.id);
   v.assignments = [];
   for (const a of rows) {
     const checkins = await all(env, 'SELECT id, day, worked, broke, device, helpful, created_at FROM checkins WHERE assignment_id = ? ORDER BY day', a.id);
     const view = assignmentView(a, c, checkins, t);
-    v.assignments.push({ ...view, tester: { email: a.email, name: a.name, level: R.levelFor(R.standing(a.tester_merits, a.tester_demerits)).level }, lastPingDay: a.last_ping_day, pingDays: a.ping_days, installClaimed: !!a.install_id, exitNote: a.exit_note, checkins: checkins.map((x) => ({ id: x.id, day: x.day, worked: x.worked, broke: x.broke, device: x.device, helpful: !!x.helpful, at: x.created_at })) });
+    v.assignments.push({ ...view, tester: { email: a.email, level: R.levelFor(R.standing(a.tester_merits, a.tester_demerits)).level }, lastPingDay: a.last_ping_day, pingDays: a.ping_days, installClaimed: !!a.install_id, exitNote: a.exit_note, checkins: checkins.map((x) => ({ id: x.id, day: x.day, worked: x.worked, broke: x.broke, device: x.device, helpful: !!x.helpful, at: x.created_at })) });
   }
   v.emails = rows.filter((a) => ['accepted', 'invited', 'active', 'completed_pending'].includes(a.status)).map((a) => a.email);
   return v;
@@ -444,6 +444,7 @@ export async function excuse(env, a, note) {
 
 async function confirm(env, u, id) {
   const { a } = await campaignAssignment(env, u, id);
+  if (a.status === 'exit_pending') { await excuse(env, a, 'Exit accepted by the developer'); return { ok: true }; }
   if (a.status !== 'completed_pending') fail(400, 'Nothing to confirm');
   await complete(env, a, 'Confirmed by the developer');
   return { ok: true };
