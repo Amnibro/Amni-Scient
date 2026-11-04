@@ -15,7 +15,8 @@ const bridge = native ? {
   haptic: (k) => call('haptic', k),
   share: typeof native.share === 'function' ? (t) => call('share', t) : null,
   signOut: () => call('signOut'),
-  installed: (pkgs) => { const r = call('installed', JSON.stringify(pkgs)); try { return r ? JSON.parse(r) : null; } catch (e) { return null; } },
+  installed: (pkgs) => { const r = call('installed', JSON.stringify(pkgs.slice(0, 50))); try { return r ? JSON.parse(r) : null; } catch (e) { return null; } },
+  version: () => String(call('appVersion') || ''),
 } : null;
 if (native) {
   const base = String(call('getApiBase') || '').replace(/\/+$/, '');
@@ -77,6 +78,7 @@ async function sync({ visit = false } = {}) {
     }
     const d = await AT.api('/api/game/town');
     S.data = d; S.lastSync = Date.now();
+    noticeRank(d);
     checkInstalls();
     render();
   })();
@@ -178,8 +180,19 @@ function openPanel(kind, id) {
   el.hidden = false; document.body.classList.add('tw-panel-open');
   requestAnimationFrame(() => el.classList.add('in'));
   $('tw-panel-title').focus({ preventScroll: true });
+  updateInset();
   if (S.scene && !S.list && ['stall', 'tower', 'workshop', 'quests', 'beacon', 'trophies', 'market', 'leaderboard'].includes(kind)) S.scene.focus(kind === 'leaderboard' ? 'plaza' : kind, id);
 }
+// keep the focused thing in the part of the scene the panel doesn't cover
+function updateInset() {
+  if (!S.scene || !S.panel) return;
+  const el = $('tw-panel'), W = window.innerWidth, H = window.innerHeight;
+  const hudB = $('tw-hud').getBoundingClientRect().bottom;
+  if (W >= 760) S.scene.setInset(Math.round((W - el.offsetLeft) / 2), Math.round(hudB / 4));
+  else S.scene.setInset(0, Math.round((H - el.offsetTop - hudB) / 2));
+}
+window.addEventListener('resize', () => requestAnimationFrame(updateInset));
+if (window.ResizeObserver) new ResizeObserver(() => updateInset()).observe($('tw-panel'));
 function drawPanel(fresh) {
   const body = $('tw-panel-body');
   if (!fresh) snapshot(body);
@@ -204,6 +217,7 @@ function closePanel() {
   snapshot($('tw-panel-body'));
   if (p.onClose) p.onClose();
   const el = $('tw-panel'); el.classList.remove('in'); document.body.classList.remove('tw-panel-open');
+  if (S.scene) { S.scene.setInset(0, 0); S.scene.select(null); }
   setTimeout(() => { if (!S.panel) el.hidden = true; }, 220);
   if (p.opener && p.opener.isConnected) p.opener.focus({ preventScroll: true });
 }
@@ -241,7 +255,7 @@ function renderList() {
   const btn = (label, sub, fn, attrs = {}) => h('li', null, h('button', Object.assign({ type: 'button', class: 'tw-row', onclick: fn }, attrs), h('span', { class: 'tw-row-main' }, h('b', { text: label }), sub ? h('small', { text: sub }) : null)));
   const running = (d.myTests || []).filter((a) => P.RUNNING.includes(a.status));
   const sec = (title, ...kids) => h('section', { class: 'tw-lsec' }, h('h2', { text: title }), ...kids);
-  AT.clear(root).append(
+  AT.add(AT.clear(root),
     !S.gl ? h('p', { class: 'tw-note', role: 'note', text: 'This browser can’t show the 3D town, so here it is as a list. Everything works the same.' }) : null,
     h('h1', { class: 'tw-list-h', text: 'Test Town' }),
     sec('Your Workshop', h('ul', { class: 'tw-rows' },
@@ -257,6 +271,17 @@ function renderList() {
 }
 
 // ---------------------------------------------------------------- rewards
+// Rank-ups can also happen while you're away (a developer confirms a finished test). Remember the last rank this
+// device showed for this user and celebrate on the next visit if it went up and no action response did already.
+function rankKey(d) { return 'tw-rank-' + d.user.id; }
+function noticeRank(d) {
+  const idx = Math.max(0, RANKS.indexOf(d.me.rank.name));
+  let seen = null; try { seen = localStorage.getItem(rankKey(d)); } catch (e) { /* ignore */ }
+  const prev = S.rankIdx != null ? S.rankIdx : seen != null ? Number(seen) : idx;
+  S.rankIdx = idx;
+  try { localStorage.setItem(rankKey(d), String(idx)); } catch (e) { /* ignore */ }
+  if (idx > prev && S.rankShown !== d.me.rank.name) setTimeout(() => reward({ xp: 0, rankUp: true, rank: d.me.rank.name }), 900);
+}
 function toast(title, sub, kind) {
   const el = h('div', { class: 'tw-toast' + (kind ? ' tw-toast--' + kind : '') }, h('b', { text: title }), sub ? h('span', { text: sub }) : null);
   const box = $('tw-toasts');
@@ -268,12 +293,14 @@ function toast(title, sub, kind) {
 function reward(game, o = {}) {
   game = game || {};
   const xp = game.xp || 0;
-  if (o.msg) toast(o.msg, xp ? '+' + xp + ' XP' : '', 'xp');
-  else if (xp) toast('+' + xp + ' XP', o.sub || '', 'xp');
+  const base = xp - (game.questsDone || []).reduce((a, q) => a + (q.rewardXp || 0), 0); // quest XP gets its own toast
+  if (o.msg) toast(o.msg, base > 0 ? '+' + base + ' XP' : '', 'xp');
+  else if (base > 0) toast('+' + base + ' XP', o.sub || '', 'xp');
   (game.questsDone || []).forEach((q) => toast('Quest done: ' + q.title, '+' + q.rewardXp + ' XP', 'quest'));
   (game.newBadges || []).forEach((b) => toast('Badge: ' + b.name, b.description, 'badge'));
   if (S.scene && !o.quiet) S.scene.celebrate({ at: o.at, id: o.id, n: xp >= 50 ? 110 : 70 });
   if (game.rankUp) {
+    if (S.rankShown === game.rank) return; S.rankShown = game.rank;
     haptic('success');
     const ov = $('tw-rankup');
     $('tw-rankup-name').textContent = game.rank;

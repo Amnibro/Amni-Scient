@@ -432,7 +432,8 @@ export function menuPanel(ctx) {
       h('button', { type: 'button', class: 'tw-row', onclick: () => { window.toggleTheme(); ctx.open('menu'); } }, h('span', { class: 'tw-row-main' }, h('b', { text: dark ? 'Daylight' : 'Dusk' }), h('small', { text: dark ? 'Switch to the light theme' : 'Switch to the dark theme (evening in town)' }))),
       h('button', { type: 'button', class: 'tw-row', onclick: () => ctx.open('trophies') }, h('span', { class: 'tw-row-main' }, h('b', { text: 'Trophy Hall' }), h('small', { text: 'Your badges' }))),
       h('button', { type: 'button', class: 'tw-row', onclick: () => ctx.open('help') }, h('span', { class: 'tw-row-main' }, h('b', { text: 'How Test Town works' }), h('small', { text: 'Moving around, XP and money' }))),
-      h('button', { type: 'button', class: 'tw-row', onclick: () => ctx.signOut() }, h('span', { class: 'tw-row-main' }, h('b', { text: 'Sign out' }), h('small', { text: ctx.data.user.email })))),
+      h('button', { type: 'button', class: 'tw-row', onclick: () => ctx.signOut() }, h('span', { class: 'tw-row-main' }, h('b', { text: 'Sign out' }), h('small', { text: ctx.data.user.email }))),
+      ctx.bridge && ctx.bridge.version() ? h('p', { class: 'at-hint', style: 'text-align:center;margin-top:.4rem', text: 'Amni-Test app ' + ctx.bridge.version() }) : null),
   };
 }
 export function helpPanel() {

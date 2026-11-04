@@ -902,18 +902,26 @@ export function createScene(canvas, labelsEl, opts = {}) {
     flyTo(controls.target, cur.radius, cur.theta + dir * Math.PI / 4);
   }
   function home() { const hv = homeView(); flyTo(hv.target, homeDistance(), hv.az); }
+  // gold ring under whatever the open panel is about
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.55, 1.85, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#E2BC7C', transparent: true, opacity: 0.9, depthWrite: false }));
+  ring.position.y = 0.12; ring.visible = false; ring.renderOrder = 2; scene.add(ring);
+  const RING_R = { stall: 1.0, tower: 0.9, workshop: 2.2, quests: 1.3, beacon: 1.6, trophies: 2.6, plaza: 2.6, market: 0 };
+  function select(kind, id) {
+    const r = RING_R[kind]; const p = r ? (kind === 'workshop' ? new THREE.Vector3(HOUSE[0], 0, HOUSE[1]) : worldPos(kind, id)) : null;
+    if (!p) { ring.visible = false; wake(); return; }
+    ring.position.set(p.x, 0.12, p.z); ring.scale.setScalar(r); ring.visible = true; ring.userData.until = performance.now() + 3500; wake();
+  }
   function focusOn(kind, id) {
-    let p = null, d = 18;
-    if (kind === 'stall') { p = market.pos(id); d = 14; }
-    else if (kind === 'tower') { p = workshop.pos(id); d = 14; }
-    else if (PLACES[kind]) { p = new THREE.Vector3(PLACES[kind].x, 0, PLACES[kind].z); d = kind === 'market' ? 22 : 16; }
+    select(kind, id);
+    let p = null, d = 24;
+    if (kind === 'stall') { p = market.pos(id); d = 22; }
+    else if (kind === 'tower') { p = workshop.pos(id); d = 22; }
+    else if (PLACES[kind]) { p = new THREE.Vector3(PLACES[kind].x, 0, PLACES[kind].z); d = kind === 'market' ? 30 : kind === 'workshop' ? 26 : 22; }
     else if (kind === 'leaderboard') { p = new THREE.Vector3(0, 0, 0); }
     if (!p) return;
     p.y = 0;
-    // on a phone the panel covers the lower half: look a bit below the object so it sits higher
-    const half = window.innerWidth < 760;
-    if (half) { const fwd = new THREE.Vector3().subVectors(controls.target, camera.position).setY(0).normalize(); p.addScaledVector(fwd, d * 0.28); }
-    flyTo(p, d);
+    if (camera.aspect < 1) d *= THREE.MathUtils.clamp(0.6 / camera.aspect, 1, 1.5); // keep a similar width in view on tall screens
+    flyTo(p, d); // panels shift the view centre with setInset(), so the object stays in the uncovered part
   }
   const _d = new THREE.Vector3();
   controls.addEventListener('change', () => {
@@ -1045,6 +1053,19 @@ export function createScene(canvas, labelsEl, opts = {}) {
     } else burst(p, { n: o.n || 70 });
   }
 
+  // ---------- inset: while a panel covers part of the screen, move the projection centre into the free area
+  const inset = { x: 0, y: 0, tx: 0, ty: 0 };
+  function setInset(tx, ty) { inset.tx = tx; inset.ty = ty; wake(900); }
+  function applyInset(dt) {
+    if (inset.x === inset.tx && inset.y === inset.ty) return;
+    const k = reduced ? 1 : Math.min(1, dt * 8);
+    inset.x += (inset.tx - inset.x) * k; inset.y += (inset.ty - inset.y) * k;
+    if (Math.abs(inset.x - inset.tx) < 0.5 && Math.abs(inset.y - inset.ty) < 0.5) { inset.x = inset.tx; inset.y = inset.ty; }
+    const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
+    if (!inset.x && !inset.y) camera.clearViewOffset(); else camera.setViewOffset(w, h, inset.x, inset.y, w, h);
+    wake(100);
+  }
+
   // ---------- loop
   let raf = 0, lastRender = 0, wakeUntil = 0, lastInput = performance.now(), paused = false, prevT = 0;
   function wake(ms = 600) { lastInput = performance.now(); wakeUntil = Math.max(wakeUntil, lastInput + ms); if (!raf && !paused) raf = requestAnimationFrame(frame); }
@@ -1070,10 +1091,11 @@ export function createScene(canvas, labelsEl, opts = {}) {
       placeCamera(tg, dist, az, pol);
       if (fly.t >= 1) fly = null;
     }
+    applyInset(dt);
     if (controls.update()) wake(120);
     // ambient
     if (!reduced) {
-      clouds.forEach((c) => { c.userData.ang += c.userData.speed * dt; c.position.set(Math.cos(c.userData.ang) * c.userData.rad, c.userData.y + Math.sin(t * 0.3 + c.userData.rad) * 0.4, Math.sin(c.userData.ang) * c.userData.rad * 0.9); c.rotation.y = -c.userData.ang; const dc = c.position.distanceTo(camera.position); c.material.opacity = THREE.MathUtils.clamp((dc - 14) / 16, 0, 1); c.visible = c.material.opacity > 0.02; });
+      clouds.forEach((c) => { c.userData.ang += c.userData.speed * dt; c.position.set(Math.cos(c.userData.ang) * c.userData.rad, c.userData.y + Math.sin(t * 0.3 + c.userData.rad) * 0.4, Math.sin(c.userData.ang) * c.userData.rad * 0.9); c.rotation.y = -c.userData.ang; const dc = c.position.distanceTo(camera.position); c.material.opacity = THREE.MathUtils.clamp((dc - 14) / 16, 0, 1) * (c.userData.y < 0 ? (isDusk ? 0.4 : 0.78) : 1); c.visible = c.material.opacity > 0.02; });
       islets.forEach((m) => { m.position.y = m.userData.y0 + Math.sin(t * 0.6 + m.userData.ph) * 0.5; m.rotation.y = t * 0.05 + m.userData.ph; });
       for (const m of water) {
         const p = m.geometry.getAttribute('position'), b = m.userData.base;
@@ -1086,6 +1108,7 @@ export function createScene(canvas, labelsEl, opts = {}) {
       hall.tick(t); workshop.tick(t);
     }
     beacon.tick(t, dt);
+    if (ring.visible) { const live = !reduced && now < ring.userData.until; ring.material.opacity = live ? 0.6 + Math.sin(t * 4) * 0.3 : 0.85; if (live) wake(100); }
     market.faceCamera();
     // grow animations
     for (let i = anims.length - 1; i >= 0; i--) {
@@ -1131,7 +1154,8 @@ export function createScene(canvas, labelsEl, opts = {}) {
   function resize() {
     const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.fov = camera.aspect < 0.8 ? 48 : 40; camera.updateProjectionMatrix();
+    camera.aspect = w / h; camera.fov = camera.aspect < 0.8 ? 48 : 40;
+    if (inset.x || inset.y) camera.setViewOffset(w, h, inset.x, inset.y, w, h); else camera.updateProjectionMatrix();
     controls.maxDistance = homeDistance() * 1.35;
     wake();
   }
@@ -1150,7 +1174,7 @@ export function createScene(canvas, labelsEl, opts = {}) {
   });
 
   return {
-    update, setTheme, setLabel, focus: focusOn, rotate, home, celebrate, walkTo,
+    update, setTheme, setLabel, setInset, focus: focusOn, select, rotate, home, celebrate, walkTo,
     previewAvatar: setAvatar,
     screenPos(kind, id) { // client coordinates of a thing in the scene (used by tests and the tutorial)
       const p = worldPos(kind, id); if (!p) return null;

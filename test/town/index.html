@@ -9,6 +9,14 @@
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://amni-scient.com/test/town/">
 <script>
+/* No cross-origin frames: the Android app exposes its AmniApp bridge to every frame.
+   Inside the app (UA "AmniTestApp/", ?app=1, or a bridge) only same-origin frames are allowed. In a normal browser
+   Google's sign-in button (an accounts.google.com iframe, as on /test/app.html) is the one exception. */
+(function(){var app=/\bAmniTestApp\//.test(navigator.userAgent)||!!window.AmniApp||/[?&]app=1\b/.test(location.search);
+document.write('<meta http-equiv="Content-Security-Policy" content="frame-src \'self\''+(app?'':' https://accounts.google.com')+'">');})();
+</script>
+<noscript><meta http-equiv="Content-Security-Policy" content="frame-src 'self'"></noscript>
+<script>
 (function(){var h=document.documentElement,s=null;try{s=localStorage.getItem('amni-theme');}catch(e){}
 if(!s)s=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';h.dataset.theme=s;
 function u(){var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}u();

@@ -74,13 +74,16 @@ body.town.tw-listmode{overflow:auto}
 
 /* rank-up moment */
 .tw-rankup{position:fixed;inset:0;z-index:40;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle at 50% 45%,var(--accent-glow),transparent 60%)}
-.tw-rankup>div{display:grid;justify-items:center;gap:.2rem;padding:1.2rem 1.8rem;text-align:center;opacity:0}
+.tw-rankup>div{display:grid;justify-items:center;gap:.35rem;padding:1.3rem 1.8rem 1.4rem;margin:0 16px;text-align:center;opacity:0;border:1px solid color-mix(in srgb,var(--accent) 50%,var(--tw-line));border-radius:16px;background:var(--tw-glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--elev-3),0 0 60px var(--accent-glow)}
 .tw-rankup.go>div{animation:tw-rank 3.2s var(--ease-out) forwards}
 .tw-rankup small{font:800 .72rem/1 var(--font-sans);font-stretch:var(--w-cond);letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
 .tw-rankup b{font:800 clamp(2.4rem,11vw,4.4rem)/1 var(--font-sans);font-stretch:112%;text-transform:uppercase;color:var(--text);text-shadow:0 2px 0 var(--bg),0 0 30px var(--accent-glow)}
 .tw-rankup span{max-width:28ch;font-size:.85rem;color:var(--text-soft);text-shadow:0 1px 0 var(--bg)}
 @keyframes tw-rank{0%{opacity:0;transform:scale(.6)}14%{opacity:1;transform:scale(1.06)}22%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
 
+/* the site's generic section{} spacing doesn't apply inside the town */
+body.town section:not(.tw-panel){padding:0;margin:0;max-width:none;background:none}
+body.town .tw-panel{max-width:none;margin:0;padding-top:0;padding-left:0;padding-right:0}
 /* panel: bottom sheet on phones, drawer on wide screens */
 .tw-panel{position:fixed;z-index:25;left:0;right:0;bottom:0;max-height:min(66vh,640px);display:flex;flex-direction:column;border:1px solid var(--tw-line);border-bottom:0;border-radius:16px 16px 0 0;background:var(--panel);box-shadow:0 -18px 50px -20px rgba(0,0,0,.45);transform:translateY(102%);transition:transform .28s var(--ease-out);padding-bottom:var(--tw-safe-b)}
 .tw-panel.in{transform:none}
@@ -98,10 +101,13 @@ body.town.tw-listmode{overflow:auto}
   .tw-hud{right:auto;width:min(560px,calc(100vw - 460px))}
   .tw-panel-open .tw-dock{left:calc((100vw - 444px)/2)}
 }
-@media(max-width:759px){.tw-panel-open .tw-dock{opacity:0;pointer-events:none}}
+@media(max-width:759px){
+  .tw-panel{left:6px;right:6px;bottom:calc(var(--tw-dock-h) + 16px + var(--tw-safe-b));max-height:calc(100% - var(--tw-dock-h) - 112px - var(--tw-safe-t) - var(--tw-safe-b));border-bottom:1px solid var(--tw-line);border-radius:16px;padding-bottom:0;transform:translateY(calc(100% + var(--tw-dock-h) + 30px))}
+  .tw-panel-open .tw-dock{box-shadow:var(--elev-3)}
+}
 
 /* panel content */
-.tw-sec{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)}
+body.town section.tw-sec{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)}
 .tw-sec-h{font:800 .66rem/1.2 var(--font-sans);font-stretch:var(--w-cond);letter-spacing:.17em;text-transform:uppercase;color:var(--text);margin:0 0 .6rem}
 .tw-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem .9rem;margin:.8rem 0;font-size:.88rem}
 .tw-dl dt{color:var(--dim);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding-top:.2rem}
@@ -207,8 +213,8 @@ body.town.tw-listmode{overflow:auto}
 /* list view */
 .tw-list{position:relative;z-index:2;min-height:100%;padding:calc(118px + var(--tw-safe-t)) max(16px,calc((100vw - 760px)/2)) calc(var(--tw-dock-h) + 40px + var(--tw-safe-b));outline:none}
 .tw-list-h{font:800 clamp(1.6rem,6vw,2.3rem)/1 var(--font-sans);font-stretch:112%;text-transform:uppercase;color:var(--text);margin:0 0 1rem}
-.tw-lsec{margin:0 0 1.3rem}
-.tw-lsec h2{font:800 .7rem/1.2 var(--font-sans);font-stretch:var(--w-cond);letter-spacing:.17em;text-transform:uppercase;color:var(--text-soft);margin:0 0 .5rem}
+body.town section.tw-lsec{margin:0 0 1.5rem}
+.tw-lsec h2{text-align:left;font:800 .7rem/1.2 var(--font-sans);font-stretch:var(--w-cond);letter-spacing:.17em;text-transform:uppercase;color:var(--text-soft);margin:0 0 .5rem}
 .tw-note{padding:.7rem .85rem;border:1px solid color-mix(in srgb,var(--at-warn) 55%,var(--border));border-radius:8px;color:var(--text-soft);font-size:.86rem;margin-bottom:1rem}
 
 /* sign-in gate + loading */

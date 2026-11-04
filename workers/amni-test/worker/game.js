@@ -37,9 +37,10 @@ export const QUESTS = [
 
 const rankAt = (name) => RANKS.findIndex((r) => r.name === name);
 export const COSMETICS = [
-  ...['c0', 'c1', 'c2', 'c3'].map((id) => ({ kind: 'color', id, name: `Colour ${id.slice(1)}`, rank: 'Rookie' })),
-  { kind: 'color', id: 'c4', name: 'Colour 4', rank: 'Scout' }, { kind: 'color', id: 'c5', name: 'Colour 5', rank: 'Tinkerer' },
-  { kind: 'color', id: 'c6', name: 'Colour 6', rank: 'Bug Hunter' }, { kind: 'color', id: 'c7', name: 'Colour 7', rank: 'Pathfinder' },
+  { kind: 'color', id: 'c0', name: 'Brass', rank: 'Rookie' }, { kind: 'color', id: 'c1', name: 'Slate', rank: 'Rookie' },
+  { kind: 'color', id: 'c2', name: 'Sage', rank: 'Rookie' }, { kind: 'color', id: 'c3', name: 'Clay', rank: 'Rookie' },
+  { kind: 'color', id: 'c4', name: 'Lagoon', rank: 'Scout' }, { kind: 'color', id: 'c5', name: 'Plum', rank: 'Tinkerer' },
+  { kind: 'color', id: 'c6', name: 'Sunflower', rank: 'Bug Hunter' }, { kind: 'color', id: 'c7', name: 'Ember', rank: 'Pathfinder' },
   { kind: 'shape', id: 'cube', name: 'Cube', rank: 'Rookie' }, { kind: 'shape', id: 'capsule', name: 'Capsule', rank: 'Rookie' },
   { kind: 'shape', id: 'cone', name: 'Cone', rank: 'Tinkerer' }, { kind: 'shape', id: 'star', name: 'Star', rank: 'Architect' },
   { kind: 'hat', id: 'none', name: 'No hat', rank: 'Rookie' }, { kind: 'hat', id: 'cap', name: 'Cap', rank: 'Rookie' },
