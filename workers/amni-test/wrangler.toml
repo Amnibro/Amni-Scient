@@ -1,0 +1,44 @@
+name = "amni-test"
+main = "worker/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# wrangler d1 create amni-test   -> paste the database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "amni-test"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+GOOGLE_CLIENT_ID = ""
+ALLOWED_ORIGINS = "https://amni-scient.com,https://www.amni-scient.com"
+SITE_URL = "https://amni-scient.com/test/"
+ADMIN_EMAILS = ""   # comma list of admin Google emails; set before launch
+FEE_PCT = "30"
+FEE_MIN_CENTS = "50"
+PAYOUT_MIN_CENTS = "1000"
+REPORT_THRESHOLD = "2"
+
+# Secrets (never commit): wrangler secret put STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET
+
+# Local development: wrangler dev --env dev   (uses a local D1 and the dev sign-in)
+[env.dev]
+name = "amni-test-dev"
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "amni-test-dev"
+database_id = "local"
+[env.dev.vars]
+GOOGLE_CLIENT_ID = ""
+ALLOWED_ORIGINS = "http://localhost:8080,http://127.0.0.1:8080"
+SITE_URL = "http://localhost:8080/test/"
+ADMIN_EMAILS = "admin@example.com"
+DEV_AUTH = "1"
+DEV_FAKE_PAY = "1"
+FEE_PCT = "30"
+FEE_MIN_CENTS = "50"
+PAYOUT_MIN_CENTS = "1000"
+REPORT_THRESHOLD = "2"
