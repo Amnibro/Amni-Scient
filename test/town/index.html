@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#FBFAF8">
+<title>Test Town | Amni-Test</title>
+<meta name="description" content="Test Town: your Amni-Test tests, quests and rank as a little floating island.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://amni-scient.com/test/town/">
+<script>
+(function(){var h=document.documentElement,s=null;try{s=localStorage.getItem('amni-theme');}catch(e){}
+if(!s)s=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';h.dataset.theme=s;
+function u(){var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}u();
+window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;try{localStorage.setItem('amni-theme',n);}catch(e){}u();window.dispatchEvent(new CustomEvent('town-theme',{detail:n}));};})();
+</script>
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/test/amni-test.css?v=1">
+<link rel="stylesheet" href="/test/town/town.css?v=1">
+<script type="importmap">
+{ "imports": {
+  "three": "/amni-phone/lib/three/build/three.module.js",
+  "three/addons/": "/amni-phone/lib/three/examples/jsm/"
+} }
+</script>
+</head>
+<body class="town">
+<a class="tw-skip" href="#tw-list">Skip to list view</a>
+
+<!-- 3D scene -->
+<div id="tw-stage" class="tw-stage" aria-hidden="true">
+  <canvas id="tw-canvas"></canvas>
+  <div id="tw-labels" class="tw-labels"></div>
+  <div id="tw-toasts" class="tw-toasts" role="status" aria-live="polite"></div>
+</div>
+
+<!-- HUD -->
+<header class="tw-hud" id="tw-hud" hidden>
+  <div class="tw-hud-row">
+    <button type="button" class="tw-rank" id="tw-rank" aria-label="Your rank and XP">
+      <span class="tw-rank-badge" id="tw-rank-ico" aria-hidden="true"></span>
+      <span class="tw-rank-txt"><b id="tw-rank-name">Rookie</b><small id="tw-xp-txt">0 XP</small></span>
+    </button>
+    <div class="tw-stats">
+      <button type="button" class="tw-stat" id="tw-streak" aria-label="Streak"><i class="tw-flame" aria-hidden="true"></i><b id="tw-streak-n">0</b></button>
+      <button type="button" class="tw-stat" id="tw-balance" aria-label="Balance"><b id="tw-balance-n">$0.00</b></button>
+      <button type="button" class="tw-stat tw-stat--pay" id="tw-pay" aria-label="Pay level"><small>LV</small><b id="tw-pay-lv">1</b><small id="tw-pay-price">$1</small></button>
+    </div>
+  </div>
+  <div class="tw-xpbar" role="progressbar" aria-label="Progress to the next rank" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="tw-xpbar"><i id="tw-xpbar-fill"></i></div>
+  <p class="tw-xp-next" id="tw-xp-next"></p>
+</header>
+
+<div class="tw-dock" id="tw-dock" role="navigation" aria-label="Town" hidden>
+  <button type="button" data-open="quests" id="tw-btn-quests"><span class="tw-ico tw-ico-quest" aria-hidden="true"></span>Quests<em id="tw-quest-dot" hidden></em></button>
+  <button type="button" data-open="leaderboard" id="tw-btn-board"><span class="tw-ico tw-ico-board" aria-hidden="true"></span>Leaders</button>
+  <button type="button" data-open="profile" id="tw-btn-profile"><span class="tw-ico tw-ico-me" aria-hidden="true"></span>Profile</button>
+  <button type="button" id="tw-btn-list" aria-pressed="false"><span class="tw-ico tw-ico-list" aria-hidden="true"></span><span id="tw-list-label">List</span></button>
+  <button type="button" data-open="menu" id="tw-btn-menu" aria-haspopup="true"><span class="tw-ico tw-ico-more" aria-hidden="true"></span>More</button>
+</div>
+
+<div class="tw-cam" id="tw-cam" hidden>
+  <button type="button" id="tw-rot-l" aria-label="Rotate left" title="Rotate left (Q)">&#x21BA;</button>
+  <button type="button" id="tw-home" aria-label="Back to the whole island" title="Whole island">&#x2316;</button>
+  <button type="button" id="tw-rot-r" aria-label="Rotate right" title="Rotate right (E)">&#x21BB;</button>
+</div>
+
+<!-- List view (also the no-WebGL fallback) -->
+<main id="tw-list" class="tw-list" hidden tabindex="-1" aria-label="Test Town list view"></main>
+
+<!-- Panel (bottom sheet on phones, side drawer on wide screens) -->
+<section class="tw-panel" id="tw-panel" role="dialog" aria-modal="false" aria-labelledby="tw-panel-title" hidden>
+  <div class="tw-panel-grip" aria-hidden="true"></div>
+  <header class="tw-panel-head">
+    <h2 id="tw-panel-title" tabindex="-1"></h2>
+    <button type="button" class="tw-x" id="tw-panel-close" aria-label="Close panel">&times;</button>
+  </header>
+  <div class="tw-panel-body" id="tw-panel-body"></div>
+</section>
+
+<!-- Sign-in -->
+<section class="tw-gate" id="tw-gate" hidden>
+  <div class="at-panel tw-gate-card">
+    <p class="eyebrow">Amni-Test</p>
+    <h1>Test Town</h1>
+    <p>A small floating town for your app tests. Sign in with the Google account your Play Store uses.</p>
+    <p class="at-err" id="tw-gate-msg" role="alert"></p>
+    <div id="tw-signin"><p class="at-loading">Loading&hellip;</p></div>
+    <p class="at-hint" style="margin-top:1rem">By signing in you agree to the <a href="/test/terms.html">terms</a> and <a href="/test/privacy.html">privacy policy</a>. Prefer plain pages? <a href="/test/app.html">Open the full app</a>.</p>
+  </div>
+</section>
+
+<div class="tw-loading" id="tw-loading"><div class="tw-loading-isle" aria-hidden="true"></div><p>Raising the island&hellip;</p></div>
+<div class="tw-rankup" id="tw-rankup" hidden aria-hidden="true"><div><small>Rank up</small><b id="tw-rankup-name"></b><span id="tw-rankup-sub"></span></div></div>
+<noscript><div class="tw-gate"><div class="at-panel tw-gate-card"><p>Test Town needs JavaScript. <a href="/test/app.html">Open the plain app</a>.</p></div></div></noscript>
+
+<script src="/test/amni-test.js?v=1"></script>
+<script type="module" src="/test/town/town.js?v=1"></script>
+</body>
+</html>
