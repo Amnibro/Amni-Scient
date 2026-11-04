@@ -23,7 +23,15 @@ CREATE TABLE IF NOT EXISTS users (
   credit_cents INTEGER NOT NULL DEFAULT 0,        -- developer credit from unused budgets
   forfeited_cents INTEGER NOT NULL DEFAULT 0,
   stripe_account_id TEXT,
-  payouts_enabled INTEGER NOT NULL DEFAULT 0
+  payouts_enabled INTEGER NOT NULL DEFAULT 0,
+  -- Test Town (game layer; never affects money)
+  xp INTEGER NOT NULL DEFAULT 0,
+  nickname TEXT UNIQUE COLLATE NOCASE,
+  avatar TEXT NOT NULL DEFAULT '{"color":"c0","shape":"cube","hat":"none","trail":"none"}',
+  show_on_board INTEGER NOT NULL DEFAULT 1,
+  streak_current INTEGER NOT NULL DEFAULT 0,
+  streak_best INTEGER NOT NULL DEFAULT 0,
+  streak_last_day INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -102,8 +110,9 @@ CREATE TABLE IF NOT EXISTS checkins (
 CREATE TABLE IF NOT EXISTS pings (
   assignment_id INTEGER NOT NULL REFERENCES assignments(id),
   day INTEGER NOT NULL,
+  src TEXT NOT NULL DEFAULT 'sdk',  -- sdk (developer's app) | app (tester's Amni-Test app)
   at INTEGER NOT NULL,
-  PRIMARY KEY (assignment_id, day)
+  PRIMARY KEY (assignment_id, day, src)
 );
 
 -- Reputation and money ledger, shown to the user so every change is explained.
@@ -151,4 +160,31 @@ CREATE TABLE IF NOT EXISTS payouts (
 CREATE TABLE IF NOT EXISTS stripe_events (
   id TEXT PRIMARY KEY,
   created_at INTEGER NOT NULL
+);
+
+-- Test Town game layer
+CREATE TABLE IF NOT EXISTS xp_events (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  kind TEXT NOT NULL,               -- visit | accept | checkin | detailed | helpful | completed | quest:<id>
+  xp INTEGER NOT NULL,
+  assignment_id INTEGER,
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS xp_events_user ON xp_events(user_id, kind, created_at);
+CREATE INDEX IF NOT EXISTS xp_events_time ON xp_events(created_at);
+
+CREATE TABLE IF NOT EXISTS badges (
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  badge_id TEXT NOT NULL,
+  earned_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, badge_id)
+);
+
+CREATE TABLE IF NOT EXISTS quest_awards (
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  quest_id TEXT NOT NULL,
+  period TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, quest_id, period)
 );

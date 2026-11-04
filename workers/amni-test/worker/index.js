@@ -4,6 +4,7 @@ import { now, one, all, run, randomBytes, b64url, sha256Hex, logEvent, testerDel
 import { verifyGoogleIdToken } from './google.js';
 import { stripe, verifyStripeSignature } from './stripe.js';
 import { sweep } from './sweep.js';
+import * as G from './game.js';
 
 const SESSION_DAYS = 30;
 const HOLDING = "('accepted','invited','active','completed_pending','completed')";
@@ -153,7 +154,8 @@ async function accept(env, u, campaignId) {
   }
   await run(env, "INSERT INTO assignments (campaign_id, tester_id, price_cents, status, claim_code, accepted_at) VALUES (?,?,?,'accepted',?,?)", c.id, u.id, price, code, now(env));
   const a = await one(env, 'SELECT * FROM assignments WHERE claim_code = ?', code);
-  return { assignment: assignmentView(a, c, [], now(env)) };
+  const game = await G.award(env, u.id, [{ kind: 'accept', xp: G.XP.accept }], a.id);
+  return { assignment: assignmentView(a, c, [], now(env)), game };
 }
 
 async function myAssignments(env, u) {
@@ -191,18 +193,21 @@ async function checkin(env, u, id, b) {
   const worked = text(b.worked, 4000), broke = text(b.broke, 4000), device = text(b.device, 200);
   if (worked.length + broke.length < 20) fail(400, 'Write at least a couple of sentences about what worked and what broke');
   await run(env, 'INSERT INTO checkins (assignment_id, day, worked, broke, device, created_at) VALUES (?,?,?,?,?,?)', a.id, w.day, worked, broke, device, now(env));
+  const xpEvents = [{ kind: 'checkin', xp: G.XP.checkin }];
+  if (worked.length + broke.length >= G.DETAILED_CHARS) xpEvents.push({ kind: 'detailed', xp: G.XP.detailed });
+  let game = await G.award(env, u.id, xpEvents, a.id);
   if (w.day === 14) {
     await run(env, "UPDATE assignments SET status = 'completed_pending', pending_at = ? WHERE id = ? AND status = 'active'", now(env), a.id);
     // SDK campaigns: a ping on day 13 or later proves the app stayed installed, so pay now.
     const c = await one(env, 'SELECT verification FROM campaigns WHERE id = ?', a.campaign_id);
-    const late = c.verification === 'sdk' && (await one(env, 'SELECT day FROM pings WHERE assignment_id = ? AND day >= 13 LIMIT 1', a.id));
+    const late = c.verification === 'sdk' && (await one(env, "SELECT day FROM pings WHERE assignment_id = ? AND day >= 13 AND src = 'sdk' LIMIT 1", a.id));
     if (late) {
-      await complete(env, await one(env, 'SELECT * FROM assignments WHERE id = ?', a.id), 'Confirmed by the app');
-      return { ok: true, day: w.day, status: 'completed' };
+      game = G.mergeGame(game, await complete(env, await one(env, 'SELECT * FROM assignments WHERE id = ?', a.id), 'Confirmed by the app'));
+      return { ok: true, day: w.day, status: 'completed', game };
     }
-    return { ok: true, day: w.day, status: 'completed_pending' };
+    return { ok: true, day: w.day, status: 'completed_pending', game };
   }
-  return { ok: true, day: w.day };
+  return { ok: true, day: w.day, game };
 }
 
 async function exitTest(env, u, id, b) {
@@ -330,13 +335,14 @@ async function campaignView(env, c, u, detail = false) {
   if (!detail) return v;
   v.sdkKey = c.sdk_key;
   const t = now(env);
-  const rows = await all(env, `SELECT a.*, u.email, u.tester_merits, u.tester_demerits, (SELECT MAX(day) FROM pings p WHERE p.assignment_id = a.id) AS last_ping_day,
-    (SELECT COUNT(*) FROM pings p WHERE p.assignment_id = a.id) AS ping_days FROM assignments a JOIN users u ON u.id = a.tester_id WHERE a.campaign_id = ? ORDER BY a.accepted_at`, c.id);
+  const rows = await all(env, `SELECT a.*, u.email, u.tester_merits, u.tester_demerits, (SELECT MAX(day) FROM pings p WHERE p.assignment_id = a.id AND p.src = 'sdk') AS last_ping_day,
+    (SELECT COUNT(*) FROM pings p WHERE p.assignment_id = a.id AND p.src = 'sdk') AS ping_days,
+    (SELECT MAX(day) FROM pings p WHERE p.assignment_id = a.id AND p.src = 'app') AS last_app_day FROM assignments a JOIN users u ON u.id = a.tester_id WHERE a.campaign_id = ? ORDER BY a.accepted_at`, c.id);
   v.assignments = [];
   for (const a of rows) {
     const checkins = await all(env, 'SELECT id, day, worked, broke, device, helpful, created_at FROM checkins WHERE assignment_id = ? ORDER BY day', a.id);
     const view = assignmentView(a, c, checkins, t);
-    v.assignments.push({ ...view, tester: { email: a.email, level: R.levelFor(R.standing(a.tester_merits, a.tester_demerits)).level }, lastPingDay: a.last_ping_day, pingDays: a.ping_days, installClaimed: !!a.install_id, exitNote: a.exit_note, checkins: checkins.map((x) => ({ id: x.id, day: x.day, worked: x.worked, broke: x.broke, device: x.device, helpful: !!x.helpful, at: x.created_at })) });
+    v.assignments.push({ ...view, tester: { email: a.email, level: R.levelFor(R.standing(a.tester_merits, a.tester_demerits)).level, ...(await G.testerCard(env, a.tester_id)) }, lastPingDay: a.last_ping_day, lastAppReportDay: a.last_app_day ?? null, pingDays: a.ping_days, installClaimed: !!a.install_id, exitNote: a.exit_note, checkins: checkins.map((x) => ({ id: x.id, day: x.day, worked: x.worked, broke: x.broke, device: x.device, helpful: !!x.helpful, at: x.created_at })) });
   }
   v.emails = rows.filter((a) => ['accepted', 'invited', 'active', 'completed_pending'].includes(a.status)).map((a) => a.email);
   return v;
@@ -421,6 +427,7 @@ async function helpful(env, u, checkinId) {
     await run(env, 'UPDATE assignments SET helpful_count = helpful_count + 1 WHERE id = ?', a.id);
     await testerDelta(env, a.tester_id, 'helpful', R.MERIT.helpful, 0, a.id, 'A developer marked your feedback helpful');
   }
+  await G.award(env, a.tester_id, [{ kind: 'helpful', xp: G.XP.helpful }], a.id);
   return { ok: true };
 }
 
@@ -431,7 +438,7 @@ export async function complete(env, a, note) {
   await testerDelta(env, a.tester_id, 'completed', R.MERIT.completed, 0, a.id, 'Finished a 14-day test');
   const c = await one(env, 'SELECT owner_id FROM campaigns WHERE id = ?', a.campaign_id);
   await devDelta(env, c.owner_id, 'tester_completed', 1, 0, a.id, 'A tester finished your test');
-  return true;
+  return G.award(env, a.tester_id, [{ kind: 'completed', xp: G.XP.completed }], a.id);
 }
 
 export async function excuse(env, a, note) {
@@ -544,7 +551,7 @@ async function sdkPing(env, b) {
   if (!a) fail(404, 'This install has not claimed a test');
   if (!a.started_at) return { ok: true, day: null };
   const day = R.dayIndex(a.started_at, now(env));
-  await run(env, 'INSERT OR IGNORE INTO pings (assignment_id, day, at) VALUES (?,?,?)', a.id, day, now(env));
+  await run(env, "INSERT OR IGNORE INTO pings (assignment_id, day, src, at) VALUES (?,?, 'sdk', ?)", a.id, day, now(env));
   return { ok: true, day };
 }
 
@@ -662,6 +669,16 @@ async function route(env, req, url) {
     if (seg[4] === 'dispute') return dispute(env, u, aid, b);
   }
   if (m === 'POST' && p === '/api/reports') return report(env, u, b);
+  if (m === 'POST' && p === '/api/game/visit') return G.visit(env, u);
+  if (m === 'GET' && p === '/api/game/state') return G.state(env, u.id);
+  if (m === 'POST' && p === '/api/game/profile') return G.updateProfile(env, u, b, fail);
+  if (m === 'GET' && p === '/api/game/leaderboard') return G.leaderboard(env, u, url.searchParams.get('period'));
+  if (m === 'GET' && p === '/api/game/town') {
+    const [me, market, mine, board] = [await G.state(env, u.id), await listTests(env, u), await myAssignments(env, u), await G.leaderboard(env, u, 'week')];
+    const v = meView(u);
+    return { me, market: market.tests, myTests: mine.assignments, podium: board.rows.slice(0, 3), balanceCents: u.balance_cents, tester: v.tester, user: v.user };
+  }
+  if (m === 'POST' && p === '/api/app/installs') return G.appInstalls(env, u, b, R.dayIndex);
   if (m === 'POST' && p === '/api/payouts/onboard') return onboard(env, u);
   if (m === 'POST' && p === '/api/payouts/request') return requestPayout(env, u);
   if (p === '/api/campaigns') {
