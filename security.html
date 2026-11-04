@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Security | Amni-Scient</title>
+<meta name="description" content="How to report a security vulnerability in Amni-Scient products, our response times and safe harbor, how security fixes ship, and why support channels never take controlled data.">
+<link rel="canonical" href="https://amni-scient.com/security">
+<link rel="stylesheet" href="css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.toc{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0 2rem;padding:1rem;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,0.02)}
+.toc a{font-size:.78rem;padding:.3rem .6rem;border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--dim);transition:all .15s}
+.toc a:hover{color:var(--text);border-color:var(--accent,#7c5cfc)}
+.product-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.product-section h2{display:flex;align-items:center;gap:.7rem}
+.product-section .pdot{display:inline-block;width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body class="pp">
+<div class="grid-bg"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="legal">
+<h1>SECURITY</h1>
+<p class="effective">Last Updated: 2026-11-03</p>
+<h2>REPORTING A VULNERABILITY</h2>
+<p>Email <a href="mailto:security@amni-scient.com">security@amni-scient.com</a> with the product and version, the steps to reproduce and the impact you expect. Please report privately and do not disclose the issue publicly until it is fixed.</p>
+<ul>
+<li>We acknowledge reports within 3 business days and give a first assessment within 10 business days.</li>
+<li>We aim to release a fix within 90 days and will agree a disclosure date with you. We credit reporters who want credit.</li>
+<li>In scope: every Amni-Scient app and service, including Amni-CAD (web, desktop and self-host bundle), Amni-Vault (CLI, self-hosted server and hosted vault), Amni-Haven, Amni-Crypt, and our release signing and update paths.</li>
+<li>Out of scope: denial of service by volume, social engineering of staff, physical attacks, and findings that need an already compromised device.</li>
+</ul>
+<h3>Safe harbor</h3>
+<p>We will not pursue legal action for good-faith research that follows this policy: test only accounts and vaults you own, do not access or keep other people's data, stop and tell us if you reach data that is not yours, and give us reasonable time to fix the issue before you publish.</p>
+<h2>ADVISORIES</h2>
+<p>Fixes ship as signed releases. Each security fix comes with an advisory in the release notes listing the affected versions, the severity, the CVE when one is assigned, and what to do. Check every download against its published checksums and release signature.</p>
+<h2>SUPPORT AND CONTROLLED DATA</h2>
+<p>Our support channels (email, chat, issue trackers and video calls) are <strong>not approved for controlled data</strong>, whoever staffs them. Never send:</p>
+<ul>
+<li>CUI, ITAR technical data or EAR-controlled technology</li>
+<li>design files, drawings, models, STEP or mesh exports, or screenshots and screen shares of controlled designs</li>
+<li>vault identity files, passphrases, invite links or receipt keys</li>
+</ul>
+<p>Amni-Scient staff will never ask for these, never ask for remote access to your systems, and never need your design data to help you. Reproduce problems with an unclassified test part, or send the output of <code>av verify</code> and the Amni-CAD self-test, which contain no design content. If controlled data reaches us anyway, we delete it, tell you, and do not forward it.</p>
+<h2>OTHER CONTACTS</h2>
+<ul>
+<li>Privacy requests: <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a></li>
+<li>Export control and sanctions: <a href="mailto:export@amni-scient.com">export@amni-scient.com</a></li>
+<li>Abuse reports: <a href="mailto:abuse@amni-scient.com">abuse@amni-scient.com</a></li>
+<li>Everything else: see the <a href="/contact.html">contact page</a></li>
+</ul>
+<p>A machine-readable version of this contact is at <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</p>
+<p style="color:var(--dim);font-size:.75rem;margin-top:3rem">&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</div>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
