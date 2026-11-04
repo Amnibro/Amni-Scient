@@ -1,6 +1,6 @@
 const K0=['cloud_ai','ai_bridge','relay','share_links','browser_ai','hosted_vault','checkout','paste_ai'],W=typeof window!=='undefined',U=new URL('./policy.json',import.meta.url),parse=t=>{try{return t.trim()?JSON.parse(t):{};}catch{return{org:'your organization',error:'The policy file could not be read, so every online feature is off.',allow:Object.fromEntries(K0.map(k=>[k,false])),keep_local:false};}},J=(()=>{try{const x=new XMLHttpRequest();x.open('GET',U,false);x.setRequestHeader('Cache-Control','no-cache');x.send();return x.status===200?parse(x.responseText):{};}catch{return{};}})(),K=['cloud_ai','local_ai','browser_ai','chrome_ai','paste_ai','ai_bridge','relay','share_links','hosted_vault','checkout'];
 export const POL=Object.freeze({...J,allow:Object.freeze(Object.fromEntries(K.map(k=>[k,!(J.allow&&J.allow[k]===false)])))});
-export const managed=!!(J.org||J.allow||J.keep_local===false);
+export const managed=!!(J.org||J.allow||J.keep_local===false||J.fips===true);
 export const keep=J.keep_local!==false;
 if(!keep&&W){try{Object.keys(localStorage).filter(k=>/^amnicad\.(doc|slot|chat\.)/.test(k)).forEach(k=>localStorage.removeItem(k));}catch{}for(const d of['amnicad','amnicad-persist','amnicad-mesh','amnicad-refs'])try{indexedDB.deleteDatabase(d);}catch{}}
 export const allow=k=>POL.allow[k]!==false;

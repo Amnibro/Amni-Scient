@@ -367,6 +367,13 @@ export class Session {
         }
     }
     /**
+     * @returns {boolean}
+     */
+    fips() {
+        const ret = wasm.session_fips(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
      * @param {string} id
      * @returns {string}
      */
@@ -385,13 +392,14 @@ export class Session {
         }
     }
     /**
+     * @param {boolean} fips
      * @returns {string}
      */
-    generate() {
+    generate(fips) {
         let deferred1_0;
         let deferred1_1;
         try {
-            const ret = wasm.session_generate(this.__wbg_ptr);
+            const ret = wasm.session_generate(this.__wbg_ptr, fips);
             deferred1_0 = ret[0];
             deferred1_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);
@@ -716,6 +724,79 @@ export class Session {
 if (Symbol.dispose) Session.prototype[Symbol.dispose] = Session.prototype.free;
 
 /**
+ * @returns {string}
+ */
+export function crypto_module() {
+    let deferred1_0;
+    let deferred1_1;
+    try {
+        const ret = wasm.crypto_module();
+        deferred1_0 = ret[0];
+        deferred1_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+    }
+}
+
+/**
+ * @param {string} seed
+ * @returns {string}
+ */
+export function receipt_key(seed) {
+    let deferred3_0;
+    let deferred3_1;
+    try {
+        const ptr0 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.receipt_key(ptr0, len0);
+        var ptr2 = ret[0];
+        var len2 = ret[1];
+        if (ret[3]) {
+            ptr2 = 0; len2 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred3_0 = ptr2;
+        deferred3_1 = len2;
+        return getStringFromWasm0(ptr2, len2);
+    } finally {
+        wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+    }
+}
+
+/**
+ * @param {string} seed
+ * @param {string} vault
+ * @param {string} entries
+ * @param {number} rts
+ * @returns {string}
+ */
+export function receipts(seed, vault, entries, rts) {
+    let deferred5_0;
+    let deferred5_1;
+    try {
+        const ptr0 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(vault, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(entries, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.receipts(ptr0, len0, ptr1, len1, ptr2, len2, rts);
+        var ptr4 = ret[0];
+        var len4 = ret[1];
+        if (ret[3]) {
+            ptr4 = 0; len4 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred5_0 = ptr4;
+        deferred5_1 = len4;
+        return getStringFromWasm0(ptr4, len4);
+    } finally {
+        wasm.__wbindgen_free(deferred5_0, deferred5_1, 1);
+    }
+}
+
+/**
  * @param {string} name
  * @param {Uint8Array} data
  * @param {Uint32Array} ids
@@ -768,14 +849,14 @@ export function step_tree(name, data) {
  * @param {Uint8Array} sig
  * @returns {boolean}
  */
-export function verify_ed25519(pk, msg, sig) {
+export function verify_sig(pk, msg, sig) {
     const ptr0 = passArray8ToWasm0(pk, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
     const ptr1 = passArray8ToWasm0(msg, wasm.__wbindgen_malloc);
     const len1 = WASM_VECTOR_LEN;
     const ptr2 = passArray8ToWasm0(sig, wasm.__wbindgen_malloc);
     const len2 = WASM_VECTOR_LEN;
-    const ret = wasm.verify_ed25519(ptr0, len0, ptr1, len1, ptr2, len2);
+    const ret = wasm.verify_sig(ptr0, len0, ptr1, len1, ptr2, len2);
     return ret !== 0;
 }
 function __wbg_get_imports() {
