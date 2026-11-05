@@ -1,7 +1,7 @@
-import init,{Session} from './pkg/vault_core.js';
+import init,{Session as WasmSession} from './pkg/vault_core.js';
 import {pca} from './pca.js';
 export const ready=init();
-export {Session};
+export const Session=globalThis.amnicadDesktop&&globalThis.amnicadDesktop.VaultSession||WasmSession;
 const J=s=>JSON.parse(s);
 export class ApiError extends Error{constructor(m,code,body){super(m);this.code=code;this.body=body;}}
 export async function raw(server,path,{method='GET',body,headers={}}={}){const r=await fetch(server.replace(/\/$/,'')+path,{method,body,headers,cache:'no-store'});const t=r.headers.get('content-type')||'';const b=t.includes('json')?await r.json():new Uint8Array(await r.arrayBuffer());if(!r.ok)throw new ApiError(b&&b.error||('HTTP '+r.status),r.status,b);return b;}

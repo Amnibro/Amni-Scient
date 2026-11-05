@@ -348,6 +348,21 @@ export class Session {
             wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
         }
     }
+    /**
+     * @returns {string}
+     */
+    crypto_module() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.session_crypto_module(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
     drop_pending() {
         wasm.session_drop_pending(this.__wbg_ptr);
     }
