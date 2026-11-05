@@ -6,8 +6,10 @@ const J=s=>JSON.parse(s);
 export class ApiError extends Error{constructor(m,code,body){super(m);this.code=code;this.body=body;}}
 export async function raw(server,path,{method='GET',body,headers={}}={}){const r=await fetch(server.replace(/\/$/,'')+path,{method,body,headers,cache:'no-store'});const t=r.headers.get('content-type')||'';const b=t.includes('json')?await r.json():new Uint8Array(await r.arrayBuffer());if(!r.ok)throw new ApiError(b&&b.error||('HTTP '+r.status),r.status,b);return b;}
 export class Client{
-  constructor(server,vid,ses){this.server=server.replace(/\/$/,'');this.vid=vid;this.s=ses;this.cache=new Map();this.listeners=new Set();this.live=false;}
-  req(method,path,body,headers={}){return raw(this.server,path,{method,body,headers:{'x-av-auth':this.s.auth(this.vid,method,path,Date.now()),...headers}});}
+  constructor(server,vid,ses){this.server=server.replace(/\/$/,'');this.vid=vid;this.s=ses;this.cache=new Map();this.listeners=new Set();this.live=false;this.mfa='';this.onMfa=null;}
+  async req(method,path,body,headers={}){for(let i=0;;i++){try{return await raw(this.server,path,{method,body,headers:{'x-av-auth':this.s.auth(this.vid,method,path,Date.now()),...(this.mfa?{'x-av-mfa':this.mfa}:{}),...headers}});}catch(e){const k=e.code===401&&e.body&&e.body.mfa;if(!k||i||!this.onMfa||path.includes('/mfa'))throw e;await(this.mfaP||(this.mfaP=Promise.resolve(this.onMfa(k,this,e)).finally(()=>{this.mfaP=null;})));}}}
+  mfaCall(method,what='',body){return this.req(method,`/api/v/${this.vid}/mfa${what?'/'+encodeURIComponent(what):''}`,body&&JSON.stringify(body),body?{'content-type':'application/json'}:{});}
+  async mfaVerify(code){const r=await this.mfaCall('POST','verify',{code});this.mfa=r.token;return r;}
   async sync(wait=0){const r=await this.req('GET',`/api/v/${this.vid}/log?from=${this.s.next()}${wait?'&wait='+wait:''}`);const n=r.entries.length?this.s.ingest(JSON.stringify(r.entries)):0;if(n)this.emit();return n;}
   on(f){this.listeners.add(f);return()=>this.listeners.delete(f);}
   emit(){for(const f of this.listeners)try{f();}catch(e){console.error(e);}}

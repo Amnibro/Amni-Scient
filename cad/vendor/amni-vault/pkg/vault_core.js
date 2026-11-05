@@ -740,6 +740,97 @@ export function crypto_module() {
 }
 
 /**
+ * @param {string} state
+ * @param {string} seed
+ * @param {string} vault
+ * @param {string} key
+ * @param {string} token
+ * @param {number} now
+ * @param {boolean} forced
+ * @returns {string}
+ */
+export function mfa_gate(state, seed, vault, key, token, now, forced) {
+    let deferred7_0;
+    let deferred7_1;
+    try {
+        const ptr0 = passStringToWasm0(state, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(vault, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(token, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ret = wasm.mfa_gate(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4, now, forced);
+        var ptr6 = ret[0];
+        var len6 = ret[1];
+        if (ret[3]) {
+            ptr6 = 0; len6 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred7_0 = ptr6;
+        deferred7_1 = len6;
+        return getStringFromWasm0(ptr6, len6);
+    } finally {
+        wasm.__wbindgen_free(deferred7_0, deferred7_1, 1);
+    }
+}
+
+/**
+ * @param {string} state
+ * @param {string} seed
+ * @param {string} vault
+ * @param {string} key
+ * @param {string} role
+ * @param {string} token
+ * @param {number} now
+ * @param {boolean} forced
+ * @param {number} hours
+ * @param {string} what
+ * @param {string} arg
+ * @param {string} body
+ * @returns {string}
+ */
+export function mfa_op(state, seed, vault, key, role, token, now, forced, hours, what, arg, body) {
+    let deferred11_0;
+    let deferred11_1;
+    try {
+        const ptr0 = passStringToWasm0(state, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(vault, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(role, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(token, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ptr6 = passStringToWasm0(what, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len6 = WASM_VECTOR_LEN;
+        const ptr7 = passStringToWasm0(arg, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len7 = WASM_VECTOR_LEN;
+        const ptr8 = passStringToWasm0(body, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len8 = WASM_VECTOR_LEN;
+        const ret = wasm.mfa_op(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4, ptr5, len5, now, forced, hours, ptr6, len6, ptr7, len7, ptr8, len8);
+        var ptr10 = ret[0];
+        var len10 = ret[1];
+        if (ret[3]) {
+            ptr10 = 0; len10 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred11_0 = ptr10;
+        deferred11_1 = len10;
+        return getStringFromWasm0(ptr10, len10);
+    } finally {
+        wasm.__wbindgen_free(deferred11_0, deferred11_1, 1);
+    }
+}
+
+/**
  * @param {string} seed
  * @returns {string}
  */
