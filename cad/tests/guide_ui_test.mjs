@@ -21,6 +21,15 @@ try{await sleep(700);SH&&fs.mkdirSync(SH,{recursive:true});br=await P.launch({ex
   await p.keyboard.press('Escape');await sleep(200);ok(!await ring(),'Escape clears the pointer');
   await p.evaluate(async d=>{const A=window.amnicad.API,g=A.doc.guide;A.loadDoc({...d,guide:g},null);await A.waitBuild();},BRACKET);await sleep(1500);
   s=await st();ok(s.steps[1].ok&&s.step==='mat','with a part built, Shape is done and Material is next',s.steps[1].st);
+  await p.evaluate(()=>document.querySelector('#tree .feat').click());await sleep(500);
+  const lay=await p.evaluate(()=>{const g=document.querySelector('#gleft'),pm=document.querySelector('#pm'),L=document.querySelector('#left'),gb=g.getBoundingClientRect(),a=(getComputedStyle(g).backgroundColor.match(/[\d.]+/g)||[]).map(Number),opaque=a.length<4||a[3]>0.9;
+    const over=[...pm.querySelectorAll('*')].filter(e=>{const b=e.getBoundingClientRect();if(b.width<2||b.height<2)return false;const iw=Math.min(gb.right,b.right)-Math.max(gb.left,b.left),ih=Math.min(gb.bottom,b.bottom)-Math.max(gb.top,b.top);return iw>1&&ih>1;}).slice(0,3).map(e=>e.id||e.className||e.tagName);
+    const mid=document.elementFromPoint(gb.left+gb.width/2,gb.top+28),inGuide=!!(mid&&mid.closest('#gleft'));
+    const inp=[...pm.querySelectorAll('input,select,button')].find(e=>{const b=e.getBoundingClientRect(),lb=L.getBoundingClientRect();return b.width>8&&b.height>8&&b.top>=lb.top-1&&b.bottom<=lb.bottom+1;});
+    let field=null;if(inp){const b=inp.getBoundingClientRect(),top=document.elementFromPoint(b.left+b.width/2,b.top+b.height/2);field=top&&(top.closest('#gleft')?'guide':top.closest('#pm')?'pm':'other');}
+    const side=L.getBoundingClientRect(),click=document.elementFromPoint(side.left+24,side.top+side.height/2);return {pmOn:document.body.classList.contains('pm-on'),opaque,inGuide,over,field,sidebar:click&&(click.closest('#left')===L)&&getComputedStyle(L).pointerEvents!=='none'&&parseFloat(getComputedStyle(L).opacity)>.9};});
+  ok(lay.pmOn&&lay.opaque&&lay.inGuide&&!lay.over.length&&lay.field!=='guide'&&lay.sidebar,'Guided design does not overlap the left sidebar: solid panel above the property editor, sidebar stays opaque and clickable',JSON.stringify(lay));
+  await p.evaluate(()=>{const b=document.querySelector('#pm .okx.ok');b&&b.click();});await sleep(400);
   await p.click('#gd-show');await sleep(700);r=await ring();ok(r&&/material/i.test(r.title+r.hit),'Show me points at the material in the feature tree',r);await shot('g03-show-me-material');
   await p.keyboard.press('Escape');await p.click('#gd-done');await sleep(900);s=await st();ok(s.steps[2].ok&&s.step==='fea','Use this material completes the step and moves to strength',s.steps[2].st);
   await p.click('#gd-show');await sleep(900);r=await ring();ok(r&&/Support on selected faces/.test(r.hit)&&await p.evaluate(()=>window.amnicad.S.tab==='sim'),'Show me opens the stress study and points at Add support',r);await shot('g04-show-me-support');
