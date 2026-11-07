@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#FBFAF8">
 <meta name="robots" content="noindex, nofollow">
 <title>AmniTex Conversation LUT &mdash; Starting Fresh Every Turn | AMNI-SCIENT</title>
-<meta name="description" content="AmniTex Stateless Conversation LUT: compacting multi-turn AI conversations into a 2D spatial TexGrid in native Gold/Helium so the model starts fresh on every turn with O(1) input tokens and 100% exact recall.">
+<meta name="description" content="AmniTex stores every AI conversation turn and project doc in a lossless byte-page store with 1.66 microsecond keyword lookup, written in native Gold/Helium. Token savings are shown as measured, estimated or projected.">
 <meta property="og:title" content="AmniTex Conversation LUT &mdash; Starting Fresh Every Turn">
-<meta property="og:description" content="95.1% cumulative input token reduction at Turn 20 (measured from IDE transcript) and 20/20 exact fact recall across 200 turns in 1.66 microseconds per query.">
+<meta property="og:description" content="1.66 microsecond lossless lookup over every stored conversation turn, in native Gold/Helium. Fresh-turn token savings are projected; an A/B test is next.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/amnitex-lut">
 <link rel="canonical" href="https://amni-scient.com/amnitex-lut">
@@ -113,8 +113,8 @@
 
 <section class="product-hero">
 <h1>AMNITEX CONVERSATION LUT</h1>
-<div class="big-stat">95.1<span>%</span></div>
-<div class="big-label">CUMULATIVE INPUT TOKENS SAVED AT TURN 20 (99.65% AT TURN 200) BY COMPACTING EVERY CONVERSATION TURN INTO A LOSSLESS 2D SPATIAL LUT IN NATIVE GOLD / HELIUM.</div>
+<div class="big-stat">1.66<span> &micro;s</span></div>
+<div class="big-label">EXACT KEYWORD LOOKUP OVER EVERY STORED CONVERSATION TURN AND PROJECT DOC, IN NATIVE GOLD / HELIUM. TOKEN SAVINGS BELOW ARE LABELED AS MEASURED, ESTIMATED OR PROJECTED.</div>
 </section>
 
 <section>
@@ -123,51 +123,51 @@
 <div class="ps-col problem">
 <h3>THE O(N&sup2;) HISTORY TRAP &amp; LOSSY COMPACTION</h3>
 <p>When you use an LLM for a long coding session, two things eat your context window: <span class="highlight">file discovery</span> (grepping and reading whole files) and <span class="highlight">the conversation history itself</span>.</p>
-<p>Replacing file reads with an MCP lookup saves ~50% early on, because Turn 1 is copied into Turn 2, Turns 1&ndash;2 into Turn 3, and so on. Across <em>N</em> turns, cumulative input scales as <span class="highlight">N(N+1)/2 = O(N&sup2;)</span>.</p>
-<p>When the window fills up, standard IDEs run <span class="highlight">summary compaction</span>: an LLM summarizes older turns into a 4,500&ndash;15,000 token block. That summary block is <em>still</em> re-read on every turn after that, and worse, it drops exact constants, port numbers, struct fields and line numbers from earlier turns (only <span class="highlight">10%</span> exact fact retention across 200 turns in our benchmark).</p>
+<p>Most clients resend the whole conversation on every turn: Turn 1 is copied into Turn 2, Turns 1&ndash;2 into Turn 3, and so on. Across <em>N</em> turns, cumulative input scales as <span class="highlight">N(N+1)/2 = O(N&sup2;)</span>. Prompt caching makes the repeated part cheaper, but it still fills the window.</p>
+<p>When the window fills up, clients run <span class="highlight">summary compaction</span>: older turns are summarized into a smaller block. Summaries can drop exact constants, port numbers and struct fields from earlier turns. How much they drop depends on the summarizer; we have not yet measured a real one.</p>
 </div>
 <div class="ps-col solution">
-<h3>START FRESH EVERY TURN FROM AMNITEX</h3>
+<h3>THE IDEA: START FRESH EVERY TURN FROM AMNITEX</h3>
 <p>Look-up tables (LUTs) don&rsquo;t re-read their whole table on every query. AmniTex (<span class="highlight">atex</span>) treats both your codebase <em>and</em> your conversation history as an external byte-page LUT.</p>
-<p>After each turn, a native <span class="highlight">Gold / Helium</span> lifecycle hook writes the full, unedited turn into a 1 MB binary page (<span class="highlight">conv::&lt;id&gt;::turn_N</span>) and updates a tiny ~210-token state card (<span class="highlight">conv::&lt;id&gt;::state</span>). Every word and snake_case subword is hashed into a 2D spatial <span class="highlight">TexGrid</span>.</p>
-<p>On the next turn, the model can <span class="highlight">start fresh</span>. Its context window holds only the 572-token MCP schema, the 210-token state card, the top-3 exact snippets pulled from the TexGrid (~450 tokens), and the new prompt. Per-turn input stays flat at <span class="highlight">O(1)</span> while the external AmniTex LUT grows losslessly on disk.</p>
+<p>After each turn, a native <span class="highlight">Gold / Helium</span> lifecycle hook writes the full, unedited turn into a 1 MB binary page (<span class="highlight">conv::&lt;id&gt;::turn_N</span>) and updates a small state card (<span class="highlight">conv::&lt;id&gt;::state</span>). Every word and snake_case subword is hashed into a 2D spatial <span class="highlight">TexGrid</span>. <strong>This part works today.</strong></p>
+<p>The goal is a client that sends only the system prompt, tool schemas, the state card, a few recalled snippets and the new prompt, instead of the full history. Per-turn input would then stay roughly flat. <strong>No client does this yet</strong>, so the fresh-turn numbers on this page are projections, not measurements.</p>
 </div>
 </div>
 </section>
 
 <section>
-<h2>MEASURED NUMBERS</h2>
+<h2>WHAT IS MEASURED</h2>
 <div class="stat-strip">
 <div class="stat-item">
-<div class="stat-num">90.5%</div>
-<div class="stat-label">SAVED AT TURN 8 (MEASURED LIVE ON IDE TRANSCRIPT_FULL.JSONL: 117K VS 1.24M TOK)</div>
-</div>
-<div class="stat-item">
-<div class="stat-num">95.1%</div>
-<div class="stat-label">PROJECTED AT TURN 20 FROM 3-TURN LOCK (507K VS 10.27M CUMULATIVE TOKENS)</div>
+<div class="stat-num">1.66 &micro;s</div>
+<div class="stat-label">PER-QUERY TEXGRID LOOKUP, MEASURED IN THE 200-TURN BENCHMARK</div>
 </div>
 <div class="stat-item">
 <div class="stat-num">20 / 20</div>
-<div class="stat-label">EXACT FACT RECALL ACROSS 200 TURNS (100% LUT VS 10% LOSSY COMPACTION)</div>
+<div class="stat-label">PLANTED FACTS RECALLED BYTE-EXACT (QUERIES SHARE A KEYWORD WITH THE FACT)</div>
 </div>
 <div class="stat-item">
-<div class="stat-num">1.66 &micro;s</div>
-<div class="stat-label">PER-QUERY SPATIAL TEXGRID RECALL IN NATIVE GOLD / HELIUM (17.5&times; FASTER THAN PYTHON)</div>
+<div class="stat-num">17.5&times;</div>
+<div class="stat-label">FASTER GRID BUILD + 3 SEARCHES THAN THE PYTHON VERSION (31.5 MS VS 551.6 MS)</div>
+</div>
+<div class="stat-item">
+<div class="stat-num">~20&ndash;40%</div>
+<div class="stat-label">ESTIMATED TOKENS SAVED IN A REAL SESSION TODAY BY REPLACING FILE READS WITH LOOKUPS (TRACKER ESTIMATE, NOT AN A/B TEST)</div>
 </div>
 </div>
 </section>
 
 <section>
-<h2>INTERACTIVE TRAJECTORY PROOF</h2>
+<h2>PROJECTED TRAJECTORIES</h2>
 <div class="chart-box">
 <div class="chart-header">
 <div>
-<strong style="color:var(--text);letter-spacing:1px">CUMULATIVE MODEL INPUT TOKENS ACROSS TURNS</strong>
-<div style="color:var(--dim);font-size:.78rem;margin-top:.25rem" id="chart-sub">Switch between our live 8-turn IDE transcript (with 30-turn projection) and the 200-turn deterministic Gold/Helium benchmark.</div>
+<strong style="color:var(--text);letter-spacing:1px">CUMULATIVE MODEL INPUT TOKENS ACROSS TURNS (ESTIMATED AND PROJECTED)</strong>
+<div style="color:var(--dim);font-size:.78rem;margin-top:.25rem" id="chart-sub">The blue fresh-turn line is hypothetical in both views: no client runs in that mode yet. The benchmark view uses fixed per-turn token sizes, not a live model.</div>
 </div>
 <div class="chart-tabs">
 <button class="chart-btn active" id="tab-live" onclick="setDataset('live')">LIVE IDE TRANSCRIPT (T1&ndash;T30)</button>
-<button class="chart-btn" id="tab-bench" onclick="setDataset('bench')">200-TURN BENCHMARK (T5&ndash;T200)</button>
+<button class="chart-btn" id="tab-bench" onclick="setDataset('bench')">200-TURN SIMULATION (T5&ndash;T200)</button>
 </div>
 </div>
 <svg id="lut-chart" viewBox="0 0 860 280" style="width:100%;height:auto;overflow:visible"></svg>
@@ -175,16 +175,16 @@
 </section>
 
 <section>
-<h2>PROOF 1: LIVE IDE TRANSCRIPT TELEMETRY (ZERO MODEL SELF-REPORTING)</h2>
-<p style="color:var(--dim);max-width:980px;margin:0 auto 1rem;font-size:.88rem;line-height:1.8">Measured by an external native Gold/Helium hook (<code style="color:var(--text)">context_tracker_bin</code>) reading raw byte lengths from <code style="color:var(--text)">transcript_full.jsonl</code> after each turn of an actual 8-turn engineering session, with linear slope locked after Turn 3.</p>
+<h2>LIVE IDE TRANSCRIPT: ESTIMATES, NOT AN A/B TEST</h2>
+<p style="color:var(--dim);max-width:980px;margin:0 auto 1rem;font-size:.88rem;line-height:1.8">An external Gold/Helium hook (<code style="color:var(--text)">context_tracker_bin</code>) reads byte lengths from <code style="color:var(--text)">transcript_full.jsonl</code> after each turn and converts them at ~4 characters per token. The &ldquo;without AmniTex&rdquo; column estimates the file reads that lookups replaced. The fresh-turn column is what the session <em>would</em> have cost if the client dropped history each turn, which it did not. Rows after Turn 8 are linear projections. None of these figures include prompt caching.</p>
 <div class="comparison-table">
 <table>
 <tr>
 <th>Checkpoint</th>
-<th>Without AmniTex (Full History + Raw Reads)</th>
-<th>AmniTex Discovery Only (History Kept)</th>
-<th>AmniTex Fresh-Turn LUT (conv::* Compacted)</th>
-<th>Net Tokens Saved (LUT)</th>
+<th>Without AmniTex (estimate)</th>
+<th>AmniTex Discovery Only (history kept)</th>
+<th>Fresh-Turn Mode (hypothetical)</th>
+<th>Difference vs. Estimate (hypothetical)</th>
 </tr>
 <tr>
 <td>Turn 1 (Measured)</td>
@@ -233,15 +233,15 @@
 </section>
 
 <section>
-<h2>PROOF 2: 200-TURN DETERMINISTIC RECALL &amp; SCALING BENCHMARK</h2>
-<p style="color:var(--dim);max-width:980px;margin:0 auto 1rem;font-size:.88rem;line-height:1.8">Compiled and run with <code style="color:var(--text)">bench_conv_lut_bin</code> (1,979 Helium words, zero dependencies). Simulates 200 coding turns with 20 exact technical facts planted between Turn 1 and Turn 199 (UDP ports, CRC seeds, AVX2 strides, ALPN strings, B-tree fanouts), then queries all 20 facts at Turn 200.</p>
+<h2>200-TURN SIMULATION: REAL RECALL AND SPEED, ASSUMED TOKEN SIZES</h2>
+<p style="color:var(--dim);max-width:980px;margin:0 auto 1rem;font-size:.88rem;line-height:1.8">Compiled and run with <code style="color:var(--text)">bench_conv_lut_bin</code> (1,979 Helium words, zero dependencies). Simulates 200 coding turns with 20 exact technical facts planted between Turn 1 and Turn 199 (UDP ports, CRC seeds, AVX2 strides, ALPN strings, B-tree fanouts), then queries all 20 facts at Turn 200. <strong>Measured:</strong> recall and lookup time. <strong>Assumed:</strong> every token count in this table comes from fixed per-turn sizes in the source (4,850 tokens per full turn, 1,752 per fresh turn, a 4,500-token summary), and the fresh-turn figure leaves out the system prompt and tool schemas a real client also sends. The lossy-summary recall is a modeled rule (facts older than Turn 185 are lost), not a run of a real summarizer.</p>
 <div class="comparison-table">
 <table>
 <tr>
 <th>Metric / Turn</th>
-<th>Mode 1: Full History Chat O(N&sup2;)</th>
+<th>Mode 1: Full History (no caching)</th>
 <th>Mode 2: Rolling Window + Lossy Summary (Every 7 Turns)</th>
-<th>Mode 3: AmniTex Stateless Fresh-Turn LUT O(1)</th>
+<th>Mode 3: Fresh-Turn Mode (hypothetical)</th>
 </tr>
 <tr>
 <td>Turn 10 Cumulative Input</td>
@@ -283,12 +283,12 @@
 <td>Active Window at Turn 200</td>
 <td class="loss">989,644 tok (Exceeds 200k&ndash;500k limits)</td>
 <td>22,712 tok (Summary grows every cycle)</td>
-<td class="win">1,752 tok flat (Constant O(1) every turn)</td>
+<td class="win">1,752 tok flat (assumed; excludes system prompt and tool schemas)</td>
 </tr>
 <tr>
 <td>Exact Recall of 20 Planted Facts at Turn 200</td>
 <td>20 / 20 (If window fits &amp; doesn&rsquo;t degrade)</td>
-<td class="loss">2 / 20 (10.0% &mdash; early specifics lost in summary)</td>
+<td class="loss">2 / 20 (modeled rule, not a real summarizer)</td>
 <td class="win">20 / 20 (100.0% &mdash; lossless byte-page recall)</td>
 </tr>
 <tr>
@@ -352,7 +352,7 @@
 </tr>
 </table>
 </div>
-<div class="code-box"># Compile and run the 200-turn Stateless Conversation LUT proof in Gold / Helium:
+<div class="code-box"># Compile and run the 200-turn simulation in Gold / Helium:
 gold build bench_conv_lut.gold
 hc build bench_conv_lut.amni -o bench_conv_lut_bin --vhost
 ./bench_conv_lut_bin</div>
@@ -382,8 +382,8 @@ hc build bench_conv_lut.amni -o bench_conv_lut_bin --vhost
 </section>
 
 <section class="cta-section">
-<h2>INSPECT THE RAW PROOF DATA</h2>
-<p>Every number on this page comes directly from the compiled Gold/Helium benchmark output and external transcript hook JSON.</p>
+<h2>INSPECT THE RAW DATA</h2>
+<p>Every number on this page comes from the Gold/Helium benchmark output or the transcript hook JSON. Next step: an A/B harness that runs real tasks through a model API with and without full history, so the token savings can be measured instead of projected.</p>
 <div class="cta-row">
 <a href="https://github.com/Amnibro/amnitex/releases/tag/v0.3.0" class="btn btn-primary">DOWNLOAD HELIUM RELEASE (v0.3.0) &rarr;</a>
 <a href="research/conv_lut_bench_results.json" class="btn btn-outline">VIEW 200-TURN BENCHMARK JSON</a>
@@ -460,9 +460,9 @@ function drawLutChart(){
   });
   const midLabel = curMode === 'live' ? 'AmniTex Discovery Only (History Kept)' : 'Rolling Window + Lossy Summary Compaction';
   s += `<g transform="translate(${padL+12}, ${padT+10})">
-    <rect x="0" y="-8" width="14" height="3.5" fill="#e74c3c"/><text x="20" y="-3" font-size="12" fill="currentColor">Without AmniTex O(N²)</text>
+    <rect x="0" y="-8" width="14" height="3.5" fill="#e74c3c"/><text x="20" y="-3" font-size="12" fill="currentColor">Full history (no caching)</text>
     <rect x="205" y="-8" width="14" height="3.5" fill="#f39c12"/><text x="225" y="-3" font-size="12" fill="currentColor">${midLabel}</text>
-    <rect x="520" y="-8" width="14" height="3.5" fill="#00d2d3"/><text x="540" y="-3" font-size="12" fill="currentColor">AmniTex Fresh-Turn LUT O(1)</text>
+    <rect x="520" y="-8" width="14" height="3.5" fill="#00d2d3"/><text x="540" y="-3" font-size="12" fill="currentColor">Fresh-turn mode (hypothetical)</text>
   </g>`;
   svg.innerHTML = s;
 }
