@@ -358,11 +358,35 @@ hc build bench_conv_lut.amni -o bench_conv_lut_bin --vhost
 ./bench_conv_lut_bin</div>
 </section>
 
+<section id="install">
+<h2>INSTALL IN ONE LINE (NATIVE GOLD / HELIUM)</h2>
+<p style="color:var(--dim);max-width:980px;margin:0 auto 1rem;font-size:.88rem;line-height:1.8">Installs the native Helium binary (<code style="color:var(--text)">~/.local/bin/atex</code>), runs the self-test, indexes your workspace into <code style="color:var(--text)">~/.atex</code>, and automatically wires <strong style="color:var(--text)">Claude Code, Claude Desktop, Cursor, Windsurf, Grok Build, OpenAI Codex, and Gemini CLI</strong>:</p>
+<div class="code-box">curl -fsSL https://amni-scient.com/atex-install.sh | sh</div>
+<div class="explain-grid" style="margin-top:1.2rem">
+<div class="explain-card">
+<div class="step-n">CLAUDE CODE &amp; DESKTOP</div>
+<h4>Plugin Marketplace &amp; .mcpb</h4>
+<p><code style="color:var(--text)">/plugin marketplace add Amnibro/amnitex</code><br><code style="color:var(--text)">/plugin install amnitex@amnitex-marketplace</code><br>Or open <a href="https://github.com/Amnibro/amnitex/releases/latest/download/amnitex.mcpb" style="color:var(--accent)">amnitex.mcpb</a> in Claude Desktop.</p>
+</div>
+<div class="explain-card">
+<div class="step-n">GROK BUILD &amp; GEMINI CLI</div>
+<h4>Native Marketplace Install</h4>
+<p><code style="color:var(--text)">grok plugin install Amnibro/amnitex --trust</code><br><code style="color:var(--text)">grok plugin enable amnitex</code><br>Gemini CLI: <code style="color:var(--text)">gemini extensions install https://github.com/Amnibro/amnitex</code></p>
+</div>
+<div class="explain-card">
+<div class="step-n">CODEX, CURSOR &amp; WINDSURF</div>
+<h4>Auto-Wired by atex install</h4>
+<p>Running <code style="color:var(--text)">atex install</code> wires <code style="color:var(--text)">~/.codex/config.toml</code>, <code style="color:var(--text)">~/.cursor/mcp.json</code>, and <code style="color:var(--text)">~/.codeium/windsurf/mcp_config.json</code> with automatic backups.</p>
+</div>
+</div>
+</section>
+
 <section class="cta-section">
 <h2>INSPECT THE RAW PROOF DATA</h2>
 <p>Every number on this page comes directly from the compiled Gold/Helium benchmark output and external transcript hook JSON.</p>
 <div class="cta-row">
-<a href="research/conv_lut_bench_results.json" class="btn btn-primary">VIEW 200-TURN BENCHMARK JSON &rarr;</a>
+<a href="https://github.com/Amnibro/amnitex/releases/tag/v0.3.0" class="btn btn-primary">DOWNLOAD HELIUM RELEASE (v0.3.0) &rarr;</a>
+<a href="research/conv_lut_bench_results.json" class="btn btn-outline">VIEW 200-TURN BENCHMARK JSON</a>
 <a href="gold.html" class="btn btn-outline">EXPLORE THE GOLD LANGUAGE</a>
 </div>
 </section>
