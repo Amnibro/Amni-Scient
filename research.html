@@ -253,6 +253,19 @@ footer a.kofi-link,footer a.kofi-link:hover,footer a.kofi-link:focus,footer a.ko
 </div>
 <a href="research/amnitex-railgun.html" class="btn btn-primary">EXPLORE FRAMEWORK &rarr;</a>
 </div>
+<div class="research-card" style="border-color:rgba(0,210,211,.5)">
+<div class="rc-tag">SPATIAL LUT &bull; STATELESS TURN COMPACTION &bull; GOLD / HELIUM</div>
+<h3>AMNITEX CONVERSATION LUT</h3>
+<p>Replaces O(N&sup2;) multi-turn chat history and lossy summary compaction with a lossless 2D spatial TexGrid in native Gold/Helium. Every turn is written raw to a 1 MB byte-page (<code style="color:var(--text)">conv::&lt;id&gt;::turn_N</code>) so the model starts fresh on each turn pulling only a ~210-token state card plus top-3 exact snippets. Measured on a live 8-turn IDE transcript: 90.5% cumulative input saved at Turn 8 (95.1% projected at Turn 20). Measured on a 200-turn benchmark: 20/20 exact fact recall in 1.66 &micro;s per query (99.65% input saved vs full history).</p>
+<div class="rc-eq">h = FNV1a(w) &nbsp;&rarr;&nbsp; (x, y) &isin; W&times;H &nbsp;&rarr;&nbsp; O(1) turn input (1,752 tok flat)</div>
+<div class="rc-apps">
+<span>95.1% SAVED AT T20</span>
+<span>20/20 EXACT RECALL</span>
+<span>1.66 &micro;S LOOKUP</span>
+<span>GOLD / HELIUM NATIVE</span>
+</div>
+<a href="amnitex-lut.html" class="btn btn-primary">EXPLORE PROOF &amp; BENCHMARKS &rarr;</a>
+</div>
 </div>
 </section>
 <section id="area-level">
