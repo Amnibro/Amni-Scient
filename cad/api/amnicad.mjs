@@ -45,12 +45,16 @@ const HELP=`Amni-CAD headless API (included with Amni-CAD Pro)
                                    run one job without a server; job.op is build, export,
                                    stress, flow, nonlinear, quote, dxf, toolpath, art
                                    (game-ready GLB + LODs from a sculpt) or review
+  amnicad model status             whether a CAD-trained pack is released (it is not, until a signed manifest exists)
+  amnicad model fetch [cad|bonsai] [--manifest file] [--out file]
+                                   native installer. Refuses while the pack is unreleased. The browser does not install it.
   amnicad vault <command>          Enterprise: team vault automation (amnicad vault help)
   amnicad update                   download the latest engine
   amnicad deactivate               remove the license from this computer
 Docs: https://amni-scient.com/amni-cad-api.html`;
 export async function main(argv=process.argv.slice(2)){const[cmd,...a]=argv,opt=n=>{const i=a.indexOf('--'+n);return i>=0?a[i+1]:undefined;};
   if(!cmd||cmd==='help'||cmd==='--help')return say(HELP);if(cmd==='token')return console.log(apiToken());
+  if(cmd==='model'){const M=await import(pathToFileURL(path.join(path.dirname(fileURLToPath(import.meta.url)),'model_fetch.mjs')).href);return M.cli(a,say);}
   if(cmd==='update')return void await sync();
   const{E,P,dir}=await engine(),lic=licenser(P);
   if(cmd==='activate'){const x=await lic.activate(a[0]||'');return say('Amni-CAD Pro is active for '+(x.org||x.name||x.email)+(x.exp?' until '+new Date(x.exp).toLocaleDateString('en-US'):''));}
