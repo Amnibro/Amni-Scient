@@ -1,0 +1,161 @@
+=== -5e1881deeb51648c
+import os;
+import web;
+import gfx;
+import gfx.linalg;
+import gfx.gltf;
+import gfx.envmap;
+import gfx.scene3d;
+=== 13982c95626a5c5e
+var C f32[40];
+var L f32[16];
+var asset = -1;
+var item = -1;
+var ground_item = -1;
+var sw = 0;
+var sh = 0;
+var light f32 = 0.0;
+=== 1aae73adf41aaea0
+extern fn hv_f32(id i32, xs f32[:]);
+=== 4c8907b78b4491d8
+fn main() {
+	hv_f32(0, C[..]);
+	hv_f32(1, L[..]);
+	gltf::lazy_pixels = true;
+	let a = args();
+	var glb byte[>..] = [];
+	if !read_file(a[1], glb) {
+		print("render: cannot read ", a[1]);
+		return;
+	}
+	asset = gltf::load_bytes(glb[..], "/m/");
+	if asset < 0 {
+		print("render: ", gltf::error());
+		return;
+	}
+	var gb byte[>..] = [];
+	var ga = -1;
+	if read_file("/m/ground.glb", gb) {
+		ga = gltf::load_bytes(gb[..], "/m/");
+		if ga >= 0 {
+			for k in gltf::assets[ga].materials.count {
+				gltf::materials[gltf::assets[ga].materials.first + k].no_shadow = true;
+			}
+		}
+	}
+	if !gfx::open("amni render", 640, 480) {
+		print("render: ", gfx::error());
+		return;
+	}
+	item = s3d::add(asset);
+	s3d::place(item, gfx::mat4_identity);
+	if ga >= 0 {
+		ground_item = s3d::add(ga);
+		s3d::place(ground_item, gfx::mat4_identity);
+	}
+	s3d::temporal = 1;
+	s3d::ao_mode = 1;
+	s3d::look.ao_samples = 32;
+	s3d::ssr_on = true;
+	s3d::ssr_rough = 0.4;
+	s3d::spec_occlusion = false;
+	s3d::sun = s3d::Sun { to_sun: linalg::unit3(float3 { 0.4, 0.8, 0.45 }), rgb: float3 { 3.0, 3.0, 3.0 }, shadows: true, shadow_far: 10.0, map_size: 2048, angle: 0.02, reach: 1.0, fit: true, contact: 0.02 };
+	s3d::sky = s3d::Sky { zenith: float3 { 0.5, 0.5, 0.5 }, horizon: float3 { 0.5, 0.5, 0.5 }, ground: float3 { 0.5, 0.5, 0.5 }, ambient: 1.0, draw: true };
+	s3d::look.desaturate = 0.0;
+	let z = gfx::screen_size();
+	sw = z.x as int;
+	sh = z.y as int;
+	s3d::init(sw, sh);
+	web::frames(true);
+}
+=== 668b5ec2cc3c18e3
+fn apply_light() {
+	if L[0] == light { return; }
+	light = L[0];
+	let to_sun = linalg::unit3(float3 { C[32], C[33], C[34] });
+	if L[1] == 1.0 {
+		s3d::atmosphere(to_sun, L[2], L[3], L[4]);
+		envmap::intensity = 1.0;
+		s3d::sky.draw = true;
+	}
+	if L[1] == 2.0 {
+		if !envmap::load("/m/env.hdr") {
+			print("render: cannot read the lighting");
+			return;
+		}
+		envmap::intensity = L[2];
+		s3d::sky.draw = L[3] > 0.5;
+		s3d::sky.horizon = float3 { L[4], L[5], L[6] };
+		s3d::sun.rgb = float3 { L[7], L[8], L[9] };
+	}
+}
+=== 01f40945ad1a026f
+fn apply_view() {
+	s3d::view = s3d::Camera { eye: float3 { C[0], C[1], C[2] }, target: float3 { C[3], C[4], C[5] }, up: float3 { C[21], C[22], C[23] }, fov_y: C[6], near: C[7], far: C[8] };
+	s3d::look.exposure = C[9];
+	s3d::look.curve = C[10] as int;
+	s3d::look.bloom = C[11];
+	s3d::look.vignette = C[12];
+	s3d::look.chroma = C[13];
+	s3d::look.grain = C[14];
+	s3d::look.sharpen = C[15];
+	s3d::look.saturation = C[16];
+	s3d::look.contrast = C[17];
+	s3d::look.warmth = C[18];
+	s3d::sun.shadow_far = C[20];
+	s3d::wet = C[24];
+	s3d::snow = C[25];
+	s3d::dof_aperture = C[26];
+	s3d::dof_focus = C[27];
+	envmap::rotation = C[31];
+	if L[1] == 2.0 {
+		s3d::sun.to_sun = linalg::unit3(float3 { C[32], C[33], C[34] });
+	}
+	if ground_item >= 0 {
+		let p = float3 { C[36], 0.0, C[37] };
+		let q = float3 { 0.0 - C[36], 0.0, 0.0 - C[37] };
+		s3d::place(ground_item, gfx::mul(gfx::translate(p), gfx::mul(gfx::rotate(float3 { 0.0, 1.0, 0.0 }, C[35]), gfx::translate(q))));
+	}
+}
+=== 6b17f8ea583802cb
+fn capture() {
+	let w = C[29] as int;
+	let h = C[30] as int;
+	C[28] = 0.0;
+	s3d::look.ao_samples = 70;
+	s3d::gtao_steps = 17;
+	s3d::init(w, h);
+	s3d::temporal_reset = true;
+	let target = gfx::render_target(w, h, gfx::RGBA8);
+	for i in C[38] as int {
+		s3d::render(target);
+	}
+	let saved = gfx::save_png(target, "/out/render.png");
+	gfx::release(target);
+	s3d::look.ao_samples = 32;
+	s3d::gtao_steps = 8;
+	s3d::init(sw, sh);
+}
+=== 0b7268a25888752c
+export fn hr_stop() {
+	web::frames(false);
+}
+=== -79c097f6f6494d5c
+export fn he_frame(t real) {
+	if !gfx::frame() { return; }
+	apply_view();
+	apply_light();
+	if C[28] > 0.5 {
+		capture();
+		return;
+	}
+	let z = gfx::screen_size();
+	if z.x as int != sw || z.y as int != sh {
+		sw = z.x as int;
+		sh = z.y as int;
+		s3d::init(sw, sh);
+	}
+	if s3d::render_begin() {
+		s3d::render_end(gfx::screen());
+	}
+}

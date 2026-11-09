@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Helium Graphics &mdash; Real-Time 3D Rendering in Helium | AMNI-SCIENT</title>
+<meta name="description" content="Helium Graphics is a real-time 3D renderer that runs on Vulkan and in the browser on WebGPU. Compare it with three.js, see the numbers, and use it in Amni-CAD or from your own code.">
+<meta name="keywords" content="helium graphics,3d renderer,webgpu renderer,vulkan renderer,physically based rendering,gltf renderer,three.js comparison,amni-cad render">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Helium Graphics &mdash; Real-Time 3D Rendering in Helium">
+<meta property="og:description" content="A real-time 3D renderer written in Helium, for Vulkan and WebGPU. Comparison with three.js, numbers, and how to use it in Amni-CAD.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/helium-graphics.html">
+<meta property="og:image" content="https://amni-scient.com/assets/helium-graphics/water.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Helium Graphics &mdash; Real-Time 3D Rendering in Helium">
+<meta name="twitter:description" content="A real-time 3D renderer written in Helium, for Vulkan and WebGPU.">
+<link rel="canonical" href="https://amni-scient.com/helium-graphics.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"Helium Graphics","url":"https://amni-scient.com/helium-graphics.html","codeRepository":"https://github.com/Amnibro/helium","programmingLanguage":"Helium","publisher":{"@type":"Organization","name":"Amniscient, LLC"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>body.theme-hg{--accent:#57C7E3;--accent-soft:#a5e3f2;--accent-dim:rgba(87,199,227,.11);--accent-glow:rgba(87,199,227,.26);--accent-ink:#04202a}[data-theme="light"] body.theme-hg{--accent:#0B6E8A;--accent-dim:rgba(11,110,138,.09);--accent-glow:rgba(11,110,138,.2);--accent-ink:#fff}.lead{color:var(--dim);margin-bottom:1.2rem;font-size:.9rem;max-width:800px;line-height:1.7}.fine{color:var(--dim);margin:1rem 0;font-size:.8rem;max-width:800px;line-height:1.6}.row{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;margin-top:.7rem}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.code{display:block;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem 1rem;margin:.5rem 0 1rem;font-family:var(--font-mono);font-size:.74rem;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;max-height:540px}.code code{font:inherit;white-space:inherit}.label{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--accent);margin-top:1.2rem}.stat{font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.2}.tbl{overflow-x:auto;max-width:100%}.tbl .spec-table{min-width:520px}.spec-table td,.spec-table th{vertical-align:top}section h3{font-size:1rem;font-weight:700;color:var(--text);margin:1.8rem 0 .6rem}.hg-hero,.hg-wide{max-width:1100px;margin:1.5rem auto 0;padding:0 1rem}.hg-wide{padding:0;margin:1.2rem 0}figure{margin:0}figure img{display:block;width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel2)}figcaption{color:var(--dim);font-size:.78rem;line-height:1.5;margin-top:.45rem}figcaption b{color:var(--text)}.hg-row{display:grid;gap:.8rem;margin:1rem 0}.hg-2{grid-template-columns:repeat(2,minmax(0,1fr))}.hg-3{grid-template-columns:repeat(3,minmax(0,1fr))}.hg-h{margin-bottom:.1rem}.hg-h span{color:var(--dim);font-weight:400;font-size:.82rem;margin-left:.4rem}.hg-steps{padding-left:1.3rem;max-width:800px;color:var(--text-soft);font-size:.9rem;line-height:1.7}.hg-steps li{margin:.45rem 0}.hg-steps strong{color:var(--text)}.hg-code2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:1rem;align-items:start}.hg-credits{padding-left:1.1rem;list-style:disc}.hg-credits li{margin:.3rem 0}@media(max-width:860px){.hg-code2,.hg-2{grid-template-columns:minmax(0,1fr)}}@media(max-width:520px){.hg-3{gap:.4rem}.hg-3 figcaption{font-size:.7rem}.stat{font-size:1.5rem}}</style>
+</head>
+<body class="pp theme-hg">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a>
+<a href="/helium-graphics.html" class="active">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="42" r="15" stroke="var(--accent)" stroke-width="2.4" fill="var(--accent-dim)"/>
+<path d="M50 17v7M50 60v7M25 42h7M68 42h7M32 24l5 5M63 55l5 5M68 24l-5 5M37 55l-5 5" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/>
+<path d="M18 82c8-7 16-7 24 0s16 7 24 0 11-5 16-3M18 96c8-7 16-7 24 0s16 7 24 0 11-5 16-3" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+</svg>
+</div>
+<h1>HELIUM GRAPHICS</h1>
+<p class="desc">REAL-TIME 3D RENDERING, WRITTEN IN OUR OWN LANGUAGE. ON YOUR GRAPHICS CARD AND IN YOUR BROWSER.</p>
+<div style="margin-top:2rem" class="row">
+<a href="#amni-cad" class="btn btn-primary">USE IT IN AMNI-CAD &rarr;</a>
+<a href="#compare" class="btn btn-outline">SEE THE COMPARISON</a>
+<a href="#code" class="btn btn-outline">USE IT FROM CODE</a>
+<a href="#gaps" class="btn btn-outline">WHAT IT CAN'T DO YET</a>
+</div>
+</div>
+<figure class="hg-hero"><img src="assets/helium-graphics/water.webp" width="1200" height="640" alt="Open water at low sun, with the sun's reflection glittering across the waves and clouds lit from behind." fetchpriority="high"><figcaption>Sky, clouds, sun and water, all calculated by Helium. No photos.</figcaption></figure>
+<section>
+<h2>WHAT IT IS</h2>
+<p class="lead">Helium Graphics is the 3D renderer built into <a href="https://github.com/Amnibro/helium">Helium</a>, our compiled language. It reads standard glTF models and draws them with physically based materials, light and shadow. The same code runs on Vulkan on your desktop and on WebGPU in a browser tab.</p>
+<div class="card-grid">
+<div class="card"><p class="stat">16.1 &rarr; 28.7 dB</p><p>average match to three.js across 12 test scenes, before and after this round of work</p></div>
+<div class="card"><p class="stat">17&times; less</p><p>squared pixel error against those same reference images</p></div>
+<div class="card"><p class="stat">About 1 second</p><p>for a finished 1200 &times; 800 image in Amni-CAD on our test PC, with an AMD RX 9060 XT</p></div>
+</div>
+</section>
+<section id="amni-cad">
+<h2>USE IT IN AMNI-CAD</h2>
+<p class="lead">Helium is one of three render engines in <a href="/amni-cad.html">Amni-CAD</a>. You don't need to install anything or write any code. You need a browser with WebGPU, such as Chrome or Edge.</p>
+<figure class="hg-wide"><img src="assets/helium-graphics/amnicad.webp" width="1440" height="900" loading="lazy" alt="Amni-CAD with a blue mascot in the live Helium view under a cloudy sky. The Render tab on the right shows the Helium engine selected, with sliders for sun height, sun direction, clouds and haze."><figcaption>The live Helium view in Amni-CAD. Orbit and zoom while it draws.</figcaption></figure>
+<h3>Get a picture in four steps</h3>
+<ol class="hg-steps">
+<li><strong>Open the render settings.</strong> In the <b>Form</b> workspace, click the <b>Render</b> tab on the right. For a solid part, use <b>Export &rarr; Photo render&hellip;</b> instead.</li>
+<li><strong>Pick the engine.</strong> Next to <b>Engine</b>, choose <b>Helium</b>.</li>
+<li><strong>Look around.</strong> Click <b>Render view</b>. Orbit and zoom as usual, and move any slider to see the change right away. Click <b>Stop</b> when you're done.</li>
+<li><strong>Save it.</strong> Set the size under <b>Output</b>, then click <b>Render image</b>. A PNG downloads, and the finished picture stays on screen until you close it.</li>
+</ol>
+<h3>The settings that matter</h3>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Setting</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><b>Environment</b></td><td>Choose <b>Daylight sky</b> for a real sun and clouds, a preset such as <b>Studio softboxes</b> or <b>Sunset</b>, or <b>HDRI file</b> for your own .hdr or .exr image.</td></tr>
+<tr><td><b>Sun height, Sun direction</b></td><td>Low sun gives long shadows and warm light. High sun gives short shadows and a blue sky.</td></tr>
+<tr><td><b>Clouds, Haze</b></td><td>How much of the sky is covered, and how thick the air looks toward the horizon.</td></tr>
+<tr><td><b>Ground</b></td><td>A seamless backdrop or a colored floor to catch shadows, or none. Under Daylight sky, the backdrop becomes an open floor so you can see the horizon.</td></tr>
+<tr><td><b>f-stop, Focus</b></td><td>Set an f-stop for background blur, then click <b>Pick on model</b> to choose what stays sharp.</td></tr>
+<tr><td><b>Finish</b></td><td><b>Film look</b> sets the overall color response. <b>Glow</b>, <b>Dark corners</b>, <b>Sharpen</b>, <b>Film grain</b>, <b>Color fringe</b>, <b>Saturation</b>, <b>Contrast</b> and <b>Warmth</b> add the final polish.</td></tr>
+</tbody></table></div>
+<h3>Which engine should you pick?</h3>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Engine</th><th>Pick it when</th><th>Keep in mind</th></tr></thead>
+<tbody>
+<tr><td><b>Helium</b></td><td>You want a live view, a daylight sky, lots of finish controls, or a very large model.</td><td>Needs WebGPU. Stills only for now, no animation. Light does not bounce as fully as in Path traced.</td></tr>
+<tr><td><b>Path traced</b></td><td>You want the most accurate light, reflections through glass, or an animation.</td><td>Slower. It takes seconds to minutes per image, and noise clears over time.</td></tr>
+<tr><td><b>Rasterized</b></td><td>You want a quick image on any device.</td><td>Simplest lighting of the three, and it works without WebGPU.</td></tr>
+</tbody></table></div>
+<p class="fine">The AI assistant can use it too: ask it to render with Helium, or call the <code>form_render</code> tool with <code>engine: "helium"</code>. The Amni-CAD desktop app on Linux has no WebGPU yet, so open Amni-CAD in Chrome or Edge there.</p>
+<div class="hg-row hg-2">
+<figure><img src="assets/helium-graphics/cad-sky.webp" width="1200" height="800" loading="lazy" alt="The mascot on an open floor under heavy clouds, with a long soft shadow."><figcaption>Daylight sky, heavy clouds</figcaption></figure>
+<figure><img src="assets/helium-graphics/cad-noon.webp" width="1200" height="800" loading="lazy" alt="The mascot on an open floor under a blue sky at high sun, with a short shadow."><figcaption>Daylight sky, high sun</figcaption></figure>
+<figure><img src="assets/helium-graphics/cad-studio.webp" width="1200" height="800" loading="lazy" alt="The mascot on a white backdrop with a soft shadow."><figcaption>Studio softboxes on the seamless backdrop</figcaption></figure>
+<figure><img src="assets/helium-graphics/cad-film.webp" width="1200" height="800" loading="lazy" alt="The same studio shot with warmer color, darker corners and a softer film response."><figcaption>The same shot with Film look, Warmth and Dark corners</figcaption></figure>
+</div>
+<figure><img src="assets/helium-graphics/cad-part.webp" width="1200" height="400" loading="lazy" alt="The same metal V-belt pulley twice, on a white backdrop. Both show a bright top and a softly shaded groove."><figcaption>A metal pulley made in Part: Helium on the left, Path traced on the right</figcaption></figure>
+</section>
+<section id="compare">
+<h2>SIDE BY SIDE WITH THREE.JS</h2>
+<p class="lead">We hold Helium up against <a href="https://threejs.org">three.js</a>, the web's most widely used 3D library, with the same model, camera and lighting. "Before" is Helium at the start of this round of work. "Now" is the current code.</p>
+<h3 class="hg-h">Anisotropy Barn Lamp <span>Brushed metal</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/lamp-three.webp" width="640" height="640" loading="lazy" alt="Anisotropy Barn Lamp, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/lamp-before.webp" width="640" height="640" loading="lazy" alt="Anisotropy Barn Lamp, rendered by Helium, before."><figcaption>Before <b>16.0 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/lamp-now.webp" width="640" height="640" loading="lazy" alt="Anisotropy Barn Lamp, rendered by Helium, now."><figcaption>Now <b>30.5 dB</b></figcaption></figure>
+</div>
+<h3 class="hg-h">Mosquito in Amber <span>Thick colored glass</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/amber-three.webp" width="640" height="640" loading="lazy" alt="Mosquito in Amber, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/amber-before.webp" width="640" height="640" loading="lazy" alt="Mosquito in Amber, rendered by Helium, before."><figcaption>Before <b>17.3 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/amber-now.webp" width="640" height="640" loading="lazy" alt="Mosquito in Amber, rendered by Helium, now."><figcaption>Now <b>33.9 dB</b></figcaption></figure>
+</div>
+<h3 class="hg-h">Toy Car <span>Clear coat, sheen and glass</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/toycar-three.webp" width="640" height="465" loading="lazy" alt="Toy Car, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/toycar-before.webp" width="640" height="465" loading="lazy" alt="Toy Car, rendered by Helium, before."><figcaption>Before <b>14.2 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/toycar-now.webp" width="640" height="465" loading="lazy" alt="Toy Car, rendered by Helium, now."><figcaption>Now <b>28.9 dB</b></figcaption></figure>
+</div>
+<h3 class="hg-h">Iridescence Abalone <span>Oil-slick color shift</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/abalone-three.webp" width="640" height="640" loading="lazy" alt="Iridescence Abalone, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/abalone-before.webp" width="640" height="640" loading="lazy" alt="Iridescence Abalone, rendered by Helium, before."><figcaption>Before <b>12.2 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/abalone-now.webp" width="640" height="640" loading="lazy" alt="Iridescence Abalone, rendered by Helium, now."><figcaption>Now <b>28.0 dB</b></figcaption></figure>
+</div>
+<h3 class="hg-h">Metal Rough Spheres <span>Metal and roughness</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/spheres-three.webp" width="640" height="576" loading="lazy" alt="Metal Rough Spheres, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/spheres-before.webp" width="640" height="576" loading="lazy" alt="Metal Rough Spheres, rendered by Helium, before."><figcaption>Before <b>17.7 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/spheres-now.webp" width="640" height="576" loading="lazy" alt="Metal Rough Spheres, rendered by Helium, now."><figcaption>Now <b>26.5 dB</b></figcaption></figure>
+</div>
+<h3 class="hg-h">Clear Coat Test <span>Clear coat</span></h3>
+<div class="hg-row hg-3">
+<figure><img src="assets/helium-graphics/clearcoat-three.webp" width="640" height="524" loading="lazy" alt="Clear Coat Test, rendered by three.js."><figcaption>three.js</figcaption></figure>
+<figure><img src="assets/helium-graphics/clearcoat-before.webp" width="640" height="524" loading="lazy" alt="Clear Coat Test, rendered by Helium, before."><figcaption>Before <b>17.1 dB</b></figcaption></figure>
+<figure><img src="assets/helium-graphics/clearcoat-now.webp" width="640" height="524" loading="lazy" alt="Clear Coat Test, rendered by Helium, now."><figcaption>Now <b>24.3 dB</b></figcaption></figure>
+</div>
+<p class="fine">Models come from the Khronos glTF Sample Assets. Full credits are at the bottom of this page.</p>
+</section>
+<section id="features">
+<h2>WHAT IT DRAWS</h2>
+<div class="card-grid hg-feat">
+<div class="card"><h3>Materials</h3><p>Everything in the glTF metal and roughness model, plus clear coat, sheen for cloth, glass with thickness and color, adjustable index of refraction, colored highlights, oil-slick color shift, brushed metal and glowing surfaces. Texture transforms and compressed vertex data too. Baseline and progressive JPEG load, alongside PNG and HDR.</p></div>
+<div class="card"><h3>Light</h3><p>Image-based lighting from any HDR photo, with accurate reflections at every roughness. Hundreds of small lights can share a scene, including sphere and tube lights that give soft, shaped highlights. The first 16 cast shadows and light up fog.</p></div>
+<div class="card"><h3>Sky and weather</h3><p>A physically modeled sky that responds to the sun's height, so you get blue noon and orange dusk from one setting. Clouds, haze, wet surfaces and snow build-up.</p></div>
+<div class="card"><h3>Shadow and depth</h3><p>Sun shadows that sharpen near the contact point and soften with distance, tiny contact shadows, ambient occlusion in the creases, screen-space reflections, and optional bounced light on graphics cards with ray tracing.</p></div>
+<div class="card"><h3>Surface detail</h3><p>Height-mapped surfaces that keep their depth at low angles, and animated water with waves, sun glitter, foam at the shoreline and a clear view of the shallows.</p></div>
+<div class="card"><h3>Finish</h3><p>Four film responses (Reinhard, ACES, AgX and Neutral), bloom, depth of field, motion blur, vignette, color fringe, film grain, sharpening, color grading tables, and fine dither so skies don't show bands.</p></div>
+</div>
+<div class="hg-row hg-2">
+<figure><img src="assets/helium-graphics/shore.webp" width="1200" height="620" loading="lazy" alt="Waves running up a sandy beach, with foam at the shoreline and blue-green water beyond."><figcaption>Water reaches the sand with foam and a clear view of the shallows.</figcaption></figure>
+<figure><img src="assets/helium-graphics/depth.webp" width="1000" height="460" loading="lazy" alt="Two brick floors side by side. The right one has bricks with real-looking depth and shadowed gaps."><figcaption>The same flat floor, without and with height mapping.</figcaption></figure>
+</div>
+<figure class="hg-wide"><img src="assets/helium-graphics/lights.webp" width="1500" height="500" loading="lazy" alt="A grid of metal and rough spheres lit by 8, then 64, then 512 small colored lights."><figcaption>8, 64 and 512 lights on the same scene. At 1920 × 1080 on an RX 9060 XT, a character scene takes 2.5 ms per frame with its base lights, 3.2 ms with 8 more, 5.2 ms with 64 more and 16.1 ms with 512 more. Another program was using about half the graphics card during that run, so these are upper bounds.</figcaption></figure>
+</section>
+<section id="numbers">
+<h2>THE NUMBERS</h2>
+<p class="lead">PSNR measures how close two images are, pixel by pixel. Higher is closer. Each extra 10 dB means ten times less squared error. Around 30 dB, differences are hard to spot without flipping between the two images.</p>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Scene</th><th>Shows</th><th>Before</th><th>Now</th></tr></thead>
+<tbody>
+<tr><td>Iridescence Abalone</td><td>Oil-slick color shift</td><td class="n">12.2 dB</td><td class="n"><b>28.0 dB</b></td></tr>
+<tr><td>Mosquito in Amber</td><td>Thick colored glass</td><td class="n">17.3 dB</td><td class="n"><b>33.9 dB</b></td></tr>
+<tr><td>Sheen Chair</td><td>Cloth sheen</td><td class="n">14.7 dB</td><td class="n"><b>26.6 dB</b></td></tr>
+<tr><td>Clear Coat Test</td><td>Clear coat</td><td class="n">17.1 dB</td><td class="n"><b>24.3 dB</b></td></tr>
+<tr><td>Dex</td><td>Character, cloth and skin</td><td class="n">18.3 dB</td><td class="n"><b>28.6 dB</b></td></tr>
+<tr><td>Damaged Helmet</td><td>Worn metal, studio light</td><td class="n">16.0 dB</td><td class="n"><b>28.5 dB</b></td></tr>
+<tr><td>Damaged Helmet, outdoors</td><td>Lit by an HDR sky</td><td class="n">13.5 dB</td><td class="n"><b>32.1 dB</b></td></tr>
+<tr><td>Holo</td><td>Character and hair</td><td class="n">17.8 dB</td><td class="n"><b>28.7 dB</b></td></tr>
+<tr><td>Anisotropy Barn Lamp</td><td>Brushed metal</td><td class="n">16.0 dB</td><td class="n"><b>30.5 dB</b></td></tr>
+<tr><td>Metal Rough Spheres</td><td>Metal and roughness</td><td class="n">17.7 dB</td><td class="n"><b>26.5 dB</b></td></tr>
+<tr><td>Toy Car</td><td>Clear coat, sheen and glass</td><td class="n">14.2 dB</td><td class="n"><b>28.9 dB</b></td></tr>
+<tr><td>Transmission Test</td><td>Glass</td><td class="n">18.6 dB</td><td class="n"><b>27.8 dB</b></td></tr>
+<tr><td><b>Average</b></td><td></td><td class="n"><b>16.1 dB</b></td><td class="n"><b>28.7 dB</b></td></tr>
+</tbody></table></div>
+<details class="faq-inline" style="margin-top:1rem">
+<summary style="cursor:pointer;font-weight:700">How we measured, and what the numbers don't say</summary>
+<p class="fine">Reference images come from three.js r160 with ACES tone mapping and its standard environment filtering. Helium uses the same glTF file, camera, HDR image and exposure, on an AMD RX 9060 XT. We compare 8-bit pixels across the whole frame, background included. Both renderers are lit the same way, but three.js is a target for us here, not the truth: it is a rasterizer with its own approximations.</p>
+<p class="fine">PSNR doesn't see everything. A sharp edge one pixel off costs more than a broad color error that looks worse. So we also compare by eye, and the differences we can still see are listed under <a href="#gaps">what it can't do yet</a>.</p>
+<p class="fine">Each round of work also has to pass the Helium graphics tests: reference images, energy checks, native and browser output compared frame by frame, and every shader compiled for WebGPU.</p>
+</details>
+</section>
+<section id="code">
+<h2>USE IT FROM CODE</h2>
+<p class="lead">This program loads a model, sets up a sky and saves a finished picture. You can write it in Gold, which is plain English, or directly in Helium. Both forms below compile and run as shown.</p>
+<div class="hg-code2">
+<div><p class="label">Gold: still.gold</p><pre class="code"><code>use std
+into still.amni
+
+Imports: gfx, gfx.linalg, gfx.gltf, gfx.envmap and gfx.scene3d. `main()` sets `gltf::lazy_pixels = true`, then `let model = gltf::load("model.glb")` (negative: print `gltf::error()` and return). Call `gfx::open_headless(1280, 720)` and `s3d::place(s3d::add(model), gfx::mat4_identity)`. Set `s3d::view` to an `s3d::Camera` with eye (2.0, 1.2, 3.0), target (0.0, 0.4, 0.0), up (0.0, 1.0, 0.0), fov_y 0.6, near 0.05, far 100.0. Call `s3d::atmosphere(linalg::unit3(float3 { 0.5, 0.7, 0.4 }), 3.5, 1.0, 0.3)`. Set `s3d::look.curve = 1`, `s3d::temporal = 1` and `s3d::ao_mode = 1`. Call `s3d::init(1280, 720)`, make `target` with `gfx::render_target(1280, 720, gfx::RGBA8)`, call `s3d::render(target)` 32 times, then `gfx::save_png(target, "out.png")` into `saved`, print `saved`, and call `gfx::close()`.</code></pre></div>
+<div><p class="label">Helium: still.amni</p><pre class="code"><code>import gfx;
+import gfx.linalg;
+import gfx.gltf;
+import gfx.envmap;
+import gfx.scene3d;
+fn main() {
+    gltf::lazy_pixels = true;
+    let model = gltf::load("model.glb");
+    if model &lt; 0 {
+        print(gltf::error());
+        return;
+    }
+    gfx::open_headless(1280, 720);
+    s3d::place(s3d::add(model), gfx::mat4_identity);
+    s3d::view = s3d::Camera { eye: float3 { 2.0, 1.2, 3.0 }, target: float3 { 0.0, 0.4, 0.0 }, up: float3 { 0.0, 1.0, 0.0 }, fov_y: 0.6, near: 0.05, far: 100.0 };
+    s3d::atmosphere(linalg::unit3(float3 { 0.5, 0.7, 0.4 }), 3.5, 1.0, 0.3);
+    s3d::look.curve = 1;
+    s3d::temporal = 1;
+    s3d::ao_mode = 1;
+    s3d::init(1280, 720);
+    let target = gfx::render_target(1280, 720, gfx::RGBA8);
+    for i in 32 {
+        s3d::render(target);
+    }
+    let saved = gfx::save_png(target, "out.png");
+    print(saved);
+    gfx::close();
+}</code></pre></div>
+</div>
+<p class="fine">Build and run with <code>gold run still.gold</code> or <code>hc run still.amni</code>. For a window, use <code>gfx::open(title, w, h)</code> instead of <code>gfx::open_headless</code>. For a browser tab, see <a href="https://github.com/Amnibro/helium/blob/main/hc/lib/gfx/README.md#in-the-browser-webgpu">running in the browser</a>.</p>
+<h3>Common controls</h3>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Line</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>s3d::atmosphere(to_sun, 3.5, 1.0, 0.3)</code></td><td>Physical sky: sun direction, sun power, haze, clouds. It sets the background, the sun color and the light.</td></tr>
+<tr><td><code>envmap::load("studio.hdr")</code></td><td>Light the scene from an HDR image. Also <code>envmap::intensity</code> and <code>envmap::rotation</code>.</td></tr>
+<tr><td><code>s3d::add_light(pos, rgb, range)</code></td><td>Add a small light. Use <code>s3d::lights.push</code> with <code>radius</code> and <code>length</code> for sphere and tube lights.</td></tr>
+<tr><td><code>s3d::look.curve = 1</code></td><td>Film response: 0 Reinhard, 1 ACES, 2 AgX, 3 Neutral.</td></tr>
+<tr><td><code>s3d::look.vignette</code>, <code>.chroma</code>, <code>.grain</code>, <code>.sharpen</code>, <code>.saturation</code>, <code>.contrast</code>, <code>.warmth</code></td><td>Finish controls.</td></tr>
+<tr><td><code>s3d::wet</code>, <code>s3d::snow</code>, <code>s3d::world_time</code></td><td>Weather, and time for water and clouds.</td></tr>
+<tr><td><code>s3d::temporal = 1</code></td><td>Smooth edges over many frames. Render about 32 times for a still image.</td></tr>
+</tbody></table></div>
+<p class="fine">Two Helium-only material settings sit in a glTF file's <code>extras</code>: <code>{"amni": "water"}</code> makes animated water, and <code>{"height": {"index": 3, "scale": 0.04}}</code> adds depth from a height map. Keep your scene near one unit across, because shadow settings work in meters. See the full reference in the <a href="/api-library/helium/lib/gfx">API library</a>.</p>
+</section>
+<section id="gaps">
+<h2>WHAT IT CAN'T DO YET</h2>
+<p class="lead">Helium is getting close to three.js on stills, but it isn't at the level of Unreal Engine 5 yet. Here's what is still missing or still wrong.</p>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Area</th><th>Where it stands</th></tr></thead>
+<tbody>
+<tr><td><b>Compared with Unreal Engine 5</b></td><td>No Nanite-style geometry that scales to billions of triangles, no texture or mesh streaming for open worlds, and no fully dynamic bounced light at Lumen's quality.</td></tr>
+<tr><td><b>Known differences from three.js</b></td><td>Sheen on cloth looks brighter on the chair and toy car. Clear coat base colors come out brighter on one test, and we haven't found the cause yet.</td></tr>
+<tr><td><b>Missing light features</b></td><td>No rectangular area lights (sphere and tube lights stand in), no caustics, no local reflection probes. Light falloff doesn't fully match three.js's physical mode.</td></tr>
+<tr><td><b>Missing scene features</b></td><td>No decals, no alpha to coverage for foliage edges, no rain or snow particles, no hardware instancing.</td></tr>
+<tr><td><b>Missing file formats</b></td><td>No BC or KTX2 compressed textures, no WebP textures, and no Draco or meshopt compressed meshes.</td></tr>
+<tr><td><b>In Amni-CAD</b></td><td>Stills and live view only, so use Path traced for animations. Models and textures need to fit in the browser's memory, and Helium tells you when they don't. Reflections and bounced light are simpler than in Path traced.</td></tr>
+</tbody></table></div>
+</section>
+<section id="credits">
+<h2>CREDITS</h2>
+<ul class="fine hg-credits">
+<li>Wayfair Lamp: &copy; 2023 Wayfair, model and textures by Eric Chadwick, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</li>
+<li>Iridescence Abalone: material by Eric Chadwick, model by Abby Crawford (<a href="https://skfb.ly/GTLF">source</a>), both <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</li>
+<li><a href="https://sketchfab.com/3d-models/real-time-refraction-demo-mosquito-in-amber-37233d6ed84844fea1ebe88069ea58d1">Real-time Refraction Demo: Mosquito in Amber</a> by Sketchfab, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</li>
+<li>Toy Car: public domain (CC0). Model by Guido Odendahl, materials edited by Eric Chadwick.</li>
+<li>Metal Rough Spheres and Clear Coat Test: Analytical Graphics, Inc., <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</li>
+<li>Damaged Helmet, Sheen Chair and Transmission Test (&copy; 2020 Adobe Inc.) are in the numbers table only.</li>
+<li>HDR lighting: <a href="https://polyhaven.com">Poly Haven</a>, CC0.</li>
+<li>The mascot, water and brick scenes are our own.</li>
+</ul>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-11-09">November 9, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
