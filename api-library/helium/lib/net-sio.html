@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-sio">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-sio">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=dc7446771e">
+<link rel="stylesheet" href="/api-library/lib.css?v=8b83fd2070">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=dc7446771e'; start({wasm: '/api-library/search.wasm?v=dc7446771e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=8b83fd2070'; start({wasm: '/api-library/search.wasm?v=8b83fd2070'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/sio</h1>
 <p class="lib-lede">A Socket.IO client over WebSocket, with a fallback to long polling.</p>
-<p class="lib-meta"><code>import net.sio;</code> &middot; <code>net::</code> &middot; 20 functions, 1 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he">Source</a></p>
+<p class="lib-meta"><code>import net.sio;</code> &middot; <code>net::</code> &middot; 20 functions, 1 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#connection-state">Connection State <span class="n">4</span></a></li>
 <li><a href="#client-session">Client Session <span class="n">7</span></a></li>
@@ -115,154 +115,154 @@
 <h3><a href="#SIO_ERR">SIO_ERR</a> <i>constant</i></h3>
 <pre>SIO_ERR := -1</pre>
 <p>Constant returned by pumping and status checks meaning the connection failed or hit an error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L8">hc/lib/net/sio.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L8">hc/lib/net/sio.he:8</a>
 </article>
 <article class="sym" id="SIO_CONNECTING">
 <h3><a href="#SIO_CONNECTING">SIO_CONNECTING</a> <i>constant</i></h3>
 <pre>SIO_CONNECTING := 1</pre>
 <p>Constant meaning the client is still connecting and the Socket.IO session is not yet established.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L9">hc/lib/net/sio.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L9">hc/lib/net/sio.he:9</a>
 </article>
 <article class="sym" id="SIO_OPEN">
 <h3><a href="#SIO_OPEN">SIO_OPEN</a> <i>constant</i></h3>
 <pre>SIO_OPEN := 2</pre>
 <p>Constant meaning the connection is open, though the Socket.IO namespace may not yet be connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L10">hc/lib/net/sio.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L10">hc/lib/net/sio.he:10</a>
 </article>
 <article class="sym" id="SIO_CLOSED">
 <h3><a href="#SIO_CLOSED">SIO_CLOSED</a> <i>constant</i></h3>
 <pre>SIO_CLOSED := 3</pre>
 <p>Constant meaning the connection has been closed by the server or by the client.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L11">hc/lib/net/sio.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L11">hc/lib/net/sio.he:11</a>
 </article>
 <h2 id="client-session">Client Session <span class="n">7</span></h2>
 <article class="sym" id="Sio">
 <h3><a href="#Sio">Sio</a> <i>type</i></h3>
 <pre>struct Sio { w Ws = Ws{}, st int = 0, auth byte[&gt;..] = [], sid byte[&gt;..] = [], pi real = 25.0, pt real = 20.0, last real = 0.0, next int = 1, evn byte[&gt;..][&gt;..] = [], evd byte[&gt;..][&gt;..] = [], evid int[&gt;..] = [], ei int = 0, ackid int[&gt;..] = [], ackd byte[&gt;..][&gt;..] = [], err byte[&gt;..] = [], poll bool = false, base byte[&gt;..] = [], hdrs byte[&gt;..] = [], esid byte[&gt;..] = [], outq byte[&gt;..] = [], hq Http[&gt;..] = [], getting bool = false, posting bool = false }</pre>
 <p>Type holding the state of a Socket.IO connection, including transport, event queue, pending acknowledgements and last error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L12">hc/lib/net/sio.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L12">hc/lib/net/sio.he:12</a>
 </article>
 <article class="sym" id="sio_open">
 <h3><a href="#sio_open">sio_open</a> <i>function</i></h3>
 <pre>sio_open(base const byte[:], auth_json const byte[:]) Sio</pre>
 <p>Opens a Socket.IO connection to a base URL over WebSocket, sending auth JSON in the connect packet.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L13">hc/lib/net/sio.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L13">hc/lib/net/sio.he:13</a>
 </article>
 <article class="sym" id="sio_open_with">
 <h3><a href="#sio_open_with">sio_open_with</a> <i>function</i></h3>
 <pre>sio_open_with(base const byte[:], auth_json const byte[:], headers const byte[:]) Sio</pre>
 <p>Opens a Socket.IO connection over WebSocket, sending extra HTTP headers with the handshake and polling requests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L14">hc/lib/net/sio.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L14">hc/lib/net/sio.he:14</a>
 </article>
 <article class="sym" id="sio_open_mode">
 <h3><a href="#sio_open_mode">sio_open_mode</a> <i>function</i></h3>
 <pre>sio_open_mode(base const byte[:], auth_json const byte[:], headers const byte[:], polling bool) Sio</pre>
 <p>Opens a Socket.IO connection, using long polling directly when polling is true, otherwise WebSocket with polling fallback.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L15">hc/lib/net/sio.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L15">hc/lib/net/sio.he:15</a>
 </article>
 <article class="sym" id="sio_pump">
 <h3><a href="#sio_pump">sio_pump</a> <i>function</i></h3>
 <pre>sio_pump(s Sio&amp;) int</pre>
 <p>Advances the connection by reading incoming packets and returns a status, falling back to polling if the upgrade fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L96">hc/lib/net/sio.he:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L96">hc/lib/net/sio.he:96</a>
 </article>
 <article class="sym" id="sio_close">
 <h3><a href="#sio_close">sio_close</a> <i>function</i></h3>
 <pre>sio_close(s Sio&amp;)</pre>
 <p>Closes the connection, sending a disconnect packet if connected and flushing queued polling data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L137">hc/lib/net/sio.he:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L137">hc/lib/net/sio.he:137</a>
 </article>
 <article class="sym" id="sio_fd">
 <h3><a href="#sio_fd">sio_fd</a> <i>function</i></h3>
 <pre>sio_fd(s const Sio&amp;) int</pre>
 <p>Returns the underlying socket file descriptor, for use in external polling or select loops.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L143">hc/lib/net/sio.he:143</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L143">hc/lib/net/sio.he:143</a>
 </article>
 <h2 id="events">Events <span class="n">5</span></h2>
 <article class="sym" id="sio_emit">
 <h3><a href="#sio_emit">sio_emit</a> <i>function</i></h3>
 <pre>sio_emit(s Sio&amp;, name const byte[:], args const byte[:]) bool</pre>
 <p>Sends a named event with JSON arguments, returning false if the session is not connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L122">hc/lib/net/sio.he:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L122">hc/lib/net/sio.he:122</a>
 </article>
 <article class="sym" id="sio_call">
 <h3><a href="#sio_call">sio_call</a> <i>function</i></h3>
 <pre>sio_call(s Sio&amp;, name const byte[:], args const byte[:]) int</pre>
 <p>Sends an event expecting an acknowledgement and returns its id, or -1 if the session is not connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L123">hc/lib/net/sio.he:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L123">hc/lib/net/sio.he:123</a>
 </article>
 <article class="sym" id="sio_reply">
 <h3><a href="#sio_reply">sio_reply</a> <i>function</i></h3>
 <pre>sio_reply(s Sio&amp;, id int, args const byte[:]) bool</pre>
 <p>Sends an acknowledgement reply with JSON arguments for a received event id, returning false if not connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L127">hc/lib/net/sio.he:127</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L127">hc/lib/net/sio.he:127</a>
 </article>
 <article class="sym" id="sio_event">
 <h3><a href="#sio_event">sio_event</a> <i>function</i></h3>
 <pre>sio_event(s Sio&amp;, name byte[&gt;..]&amp;, args byte[&gt;..]&amp;) int</pre>
 <p>Pops the next received event into name and args, returning its ack id, or -2 if none are queued.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L128">hc/lib/net/sio.he:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L128">hc/lib/net/sio.he:128</a>
 </article>
 <article class="sym" id="sio_ack">
 <h3><a href="#sio_ack">sio_ack</a> <i>function</i></h3>
 <pre>sio_ack(s Sio&amp;, id int, out byte[&gt;..]&amp;) bool</pre>
 <p>Takes the acknowledgement arguments for a call id into out, returning false if none has arrived.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L133">hc/lib/net/sio.he:133</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L133">hc/lib/net/sio.he:133</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="poll_url">
 <h3><a href="#poll_url">poll_url</a> <i>function</i></h3>
 <pre>poll_url(s Sio&amp;) byte[&gt;..]</pre>
 <p>Builds the long-polling endpoint URL, including the engine session id once known.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L26">hc/lib/net/sio.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L26">hc/lib/net/sio.he:26</a>
 </article>
 <article class="sym" id="go_poll">
 <h3><a href="#go_poll">go_poll</a> <i>function</i></h3>
 <pre>go_poll(s Sio&amp;)</pre>
 <p>Switches the connection to long polling and starts the first GET request.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L30">hc/lib/net/sio.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L30">hc/lib/net/sio.he:30</a>
 </article>
 <article class="sym" id="tx">
 <h3><a href="#tx">tx</a> <i>function</i></h3>
 <pre>tx(s Sio&amp;, pkt const byte[:])</pre>
 <p>Queues or sends a raw packet over the active transport, batching polling packets with a separator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L33">hc/lib/net/sio.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L33">hc/lib/net/sio.he:33</a>
 </article>
 <article class="sym" id="poll_pump">
 <h3><a href="#poll_pump">poll_pump</a> <i>function</i></h3>
 <pre>poll_pump(s Sio&amp;) int</pre>
 <p>Advances long-polling GET and POST requests, delivering received packets, and returns the open status.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L37">hc/lib/net/sio.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L37">hc/lib/net/sio.he:37</a>
 </article>
 <article class="sym" id="sio_fail">
 <h3><a href="#sio_fail">sio_fail</a> <i>function</i></h3>
 <pre>sio_fail(s Sio&amp;, why const byte[:]) int</pre>
 <p>Records an error message, closes the transport and returns the error status.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L57">hc/lib/net/sio.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L57">hc/lib/net/sio.he:57</a>
 </article>
 <article class="sym" id="num_at">
 <h3><a href="#num_at">num_at</a> <i>function</i></h3>
 <pre>num_at(d const byte[:], i0 int) int, int</pre>
 <p>Parses a decimal number starting at an index, returning the value (or -1 if none) and the next index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L60">hc/lib/net/sio.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L60">hc/lib/net/sio.he:60</a>
 </article>
 <article class="sym" id="args_of">
 <h3><a href="#args_of">args_of</a> <i>function</i></h3>
 <pre>args_of(d json::Doc&amp;, root int, skip int) byte[&gt;..]</pre>
 <p>Formats JSON array elements from a node into a bytes array, skipping the first given number of elements.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L64">hc/lib/net/sio.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L64">hc/lib/net/sio.he:64</a>
 </article>
 <article class="sym" id="on_packet">
 <h3><a href="#on_packet">on_packet</a> <i>function</i></h3>
 <pre>on_packet(s Sio&amp;, m const byte[:]) int</pre>
 <p>Handles one decoded Engine.IO or Socket.IO packet, updating state and queuing events or acknowledgements.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L68">hc/lib/net/sio.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L68">hc/lib/net/sio.he:68</a>
 </article>
 <article class="sym" id="packet">
 <h3><a href="#packet">packet</a> <i>function</i></h3>
 <pre>packet(s Sio&amp;, kind const byte[:], id int, name const byte[:], args const byte[:]) bool</pre>
 <p>Builds and sends an event or acknowledgement packet, returning false if the session is not connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/net/sio.he#L114">hc/lib/net/sio.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/net/sio.he#L114">hc/lib/net/sio.he:114</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -272,7 +272,7 @@
 <h2>Helium library</h2>
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>196</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>199</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>

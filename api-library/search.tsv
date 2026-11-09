@@ -730,6 +730,7 @@ regex::AT_NOT_WORD_EDGE	constant	regex	/api-library/helium/lib/regex#AT_NOT_WORD
 regex::Regex	type	regex	/api-library/helium/lib/regex#Regex	Compiled regular expression holding its program, byte sets and group count, ready for matching.	pub
 regex::Parser	type	regex	/api-library/helium/lib/regex#Parser	Parser state holding the pattern, position, tree, byte sets, group count and first error.	int
 regex::node	function	regex	/api-library/helium/lib/regex#node	Appends a tree node and returns its index.	int
+regex::both_cases	function	regex	/api-library/helium/lib/regex#both_cases	Adds the uppercase and lowercase counterparts of every letter already set in a byte table, for case-insensitive matching.	int
 regex::set_node	function	regex	/api-library/helium/lib/regex#set_node	Adds a byte set and returns a tree node that matches it.	int
 regex::problem	function	regex	/api-library/helium/lib/regex#problem	Records the first parse error with its offset and stops further parsing.	int
 regex::more	function	regex	/api-library/helium/lib/regex#more	Returns whether unparsed pattern remains and no error has occurred.	int
@@ -749,10 +750,12 @@ regex::alternation	function	regex	/api-library/helium/lib/regex#alternation	Pars
 regex::op	function	regex	/api-library/helium/lib/regex#op	Appends an instruction to the program and returns its index.	int
 regex::order	function	regex	/api-library/helium/lib/regex#order	Sets a split's branch order so the preferred target is tried first when greedy.	int
 regex::lay_out	function	regex	/api-library/helium/lib/regex#lay_out	Lays out a tree node as instructions at the program end and returns the new length.	int
-regex::build	function	regex	/api-library/helium/lib/regex#build	Builds a regex from a pattern, storing any error message in err.	int
+regex::build	function	regex	/api-library/helium/lib/regex#build	Parses and lays out a pattern into a Regex, leaving any error text in err and optionally folding letter case.	int
 regex::starts	function	regex	/api-library/helium/lib/regex#starts	Computes the set of bytes a match can start with and stores it for scanning.	int
 regex::compile	function	regex	/api-library/helium/lib/regex#compile	Compiles a pattern into a regex, aborting the program with the reason if it is invalid.	pub
 regex::compile	function	regex	/api-library/helium/lib/regex#compile	Compiles a pattern into a regex, leaving the reason in err and matching nothing if invalid.	pub
+regex::compile_ignore_case	function	regex	/api-library/helium/lib/regex#compile_ignore_case	Compiles a pattern that ignores letter case, leaving the reason in err and matching nothing when the pattern is bad.	pub
+regex::compile_ignore_case	function	regex	/api-library/helium/lib/regex#compile_ignore_case	Compiles a pattern that ignores letter case, stopping the program with the reason when the pattern is bad.	pub
 regex::Threads	type	regex	/api-library/helium/lib/regex#Threads	Queue of live threads holding instruction indexes and their capture slots.	int
 regex::Machine	type	regex	/api-library/helium/lib/regex#Machine	Working state of the matcher holding thread queues, visit marks and capture buffers.	int
 regex::holds	function	regex	/api-library/helium/lib/regex#holds	Returns whether a zero-width assertion condition holds at a position in the text.	int

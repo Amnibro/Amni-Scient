@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/edit-view">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/edit-view">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=dc7446771e">
+<link rel="stylesheet" href="/api-library/lib.css?v=8b83fd2070">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=dc7446771e'; start({wasm: '/api-library/search.wasm?v=dc7446771e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=8b83fd2070'; start({wasm: '/api-library/search.wasm?v=8b83fd2070'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>edit/view</h1>
 <p class="lib-lede">Connect an edited scene to the 3D renderer so it draws in the viewport.</p>
-<p class="lib-meta"><code>import edit.view;</code> &middot; <code>editview::</code> &middot; 5 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni">Source</a></p>
+<p class="lib-meta"><code>import edit.view;</code> &middot; <code>editview::</code> &middot; 5 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#viewport-sync">Viewport Sync <span class="n">3</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -113,38 +113,38 @@
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears the mesh cache, scene items, lights and loaded glTF data so the viewport can be rebuilt from scratch.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L18">hc/lib/edit/view.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L18">hc/lib/edit/view.amni:18</a>
 </article>
 <article class="sym" id="camera">
 <h3><a href="#camera">camera</a> <i>function</i></h3>
 <pre>camera(c edit::Cam)</pre>
 <p>Sets the 3D renderer's view camera from an editor camera, using fixed near and far planes of 0.1 and 200.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L19">hc/lib/edit/view.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L19">hc/lib/edit/view.amni:19</a>
 </article>
 <article class="sym" id="sync">
 <h3><a href="#sync">sync</a> <i>function</i></h3>
 <pre>sync()</pre>
 <p>Rebuilds the renderer's items and lights from the edited scene, placing each entity at its world transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L20">hc/lib/edit/view.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L20">hc/lib/edit/view.amni:20</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (3)</summary>
 <article class="sym" id="KEYS">
 <h3><a href="#KEYS">KEYS</a> <i>constant</i></h3>
 <pre>var KEYS int[&gt;..] = []; var ASSETS int[&gt;..] = []</pre>
 <p>Parallel lists caching generated mesh asset handles and the appearance keys that identify them.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L9">hc/lib/edit/view.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L9">hc/lib/edit/view.amni:9</a>
 </article>
 <article class="sym" id="key">
 <h3><a href="#key">key</a> <i>function</i></h3>
 <pre>key(e edit::Ent) int</pre>
 <p>Returns an integer cache key combining an entity's kind and its RGB color quantized to 8 bits per channel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L10">hc/lib/edit/view.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L10">hc/lib/edit/view.amni:10</a>
 </article>
 <article class="sym" id="asset">
 <h3><a href="#asset">asset</a> <i>function</i></h3>
 <pre>asset(e edit::Ent) int</pre>
 <p>Returns the cached mesh asset for an entity's kind and color, creating a cube, sphere or plane when missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/edit/view.amni#L11">hc/lib/edit/view.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8b83fd237fc450d9b7ed1534953d2c3d44be2c48/hc/lib/edit/view.amni#L11">hc/lib/edit/view.amni:11</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -154,7 +154,7 @@
 <h2>Helium library</h2>
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>196</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>199</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
