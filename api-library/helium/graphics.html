@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/graphics">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/graphics">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=e9dccb69e1">
+<link rel="stylesheet" href="/api-library/lib.css?v=0770e349e1">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=e9dccb69e1'; start({wasm: '/api-library/search.wasm?v=e9dccb69e1'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=0770e349e1'; start({wasm: '/api-library/search.wasm?v=0770e349e1'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -105,8 +105,8 @@
 <p class="lib-lede">The GPU layer, the 3D renderer, models, meshes, particles and image files.</p>
 <div class="lib-grid">
 <a class="lib-card" href="/api-library/helium/lib/gfx"><strong>gfx</strong><span>The GPU layer: windows, input events, buffers, textures, samplers, render passes, pipelines and compute.</span><small>234 functions, 44 types, 107 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-scene3d"><strong>gfx/scene3d</strong><span>A 3D renderer for glTF assets with sun shadows, ambient occlusion, temporal upscaling, bloom and color grading.</span><small>79 functions, 27 types, 170 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-gltf"><strong>gfx/gltf</strong><span>Load glTF 2.0 models (<code>.glb</code> and <code>.gltf</code>) into memory pools the renderer uploads in one go.</span><small>30 functions, 12 types, 47 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-scene3d"><strong>gfx/scene3d</strong><span>A 3D renderer for glTF assets with sun shadows, ambient occlusion, temporal upscaling, bloom and color grading.</span><small>111 functions, 35 types, 239 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-gltf"><strong>gfx/gltf</strong><span>Load glTF 2.0 models (<code>.glb</code> and <code>.gltf</code>) into memory pools the renderer uploads in one go.</span><small>34 functions, 13 types, 53 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-shapes"><strong>gfx/shapes</strong><span>Build spheres, planes and boxes in code. They render through <code>gfx.scene3d</code> exactly like loaded models.</span><small>6 functions, 0 types, 0 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-motion"><strong>gfx/motion</strong><span>Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.</span><small>10 functions, 0 types, 6 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-linalg"><strong>gfx/linalg</strong><span>Quaternions, rigid transforms and 4x4 matrix helpers for the 3D renderer.</span><small>24 functions, 1 types, 0 constants</small></a>
@@ -114,9 +114,13 @@
 <a class="lib-card" href="/api-library/helium/lib/gfx-sparks"><strong>gfx/sparks</strong><span>Fast GPU particles drawn as glowing camera-facing discs in the <code>gfx.scene3d</code> color pass.</span><small>7 functions, 3 types, 11 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-rt"><strong>gfx/rt</strong><span>Build a bounding volume tree of triangles for ray tracing, upload it to the GPU, and test rays against it.</span><small>14 functions, 0 types, 14 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-scalability"><strong>gfx/scalability</strong><span>Pick and apply graphics quality settings for the device.</span><small>4 functions, 0 types, 2 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-codec_png"><strong>gfx/codec_png</strong><span>Decode PNG files to RGBA pixels and write 8-bit PNG files.</span><small>12 functions, 0 types, 2 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-codec_jpeg"><strong>gfx/codec_jpeg</strong><span>Decode baseline JPEG files to RGBA pixels.</span><small>5 functions, 2 types, 1 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-codec_png"><strong>gfx/codec_png</strong><span>Decode PNG files to RGBA pixels and write 8-bit PNG files.</span><small>13 functions, 0 types, 4 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-codec_jpeg"><strong>gfx/codec_jpeg</strong><span>Decode baseline JPEG files to RGBA pixels.</span><small>7 functions, 2 types, 3 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-cornell"><strong>gfx/cornell</strong><span>The classic Cornell box test scene as plain triangle data.</span><small>9 functions, 0 types, 15 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-clusters"><strong>gfx/clusters</strong><span>Assigns scene lights to a 3D grid of view-frustum cells so renderers can efficiently shade many lights per pixel.</span><small>6 functions, 0 types, 7 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-codec_hdr"><strong>gfx/codec_hdr</strong><span>Decodes Radiance HDR (RGBE) image files into floating-point pixel data, letting a program load high-dynamic-range images.</span><small>4 functions, 0 types, 2 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-codec_jpeg_enc"><strong>gfx/codec_jpeg_enc</strong><span>Encodes RGBA pixel images into JPEG-compressed byte data, with adjustable quality, so programs can save or send photos.</span><small>16 functions, 2 types, 11 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-envmap"><strong>gfx/envmap</strong><span>Lets a program load environment maps and prefilter them into GGX-blurred cubemaps for image-based lighting, including sun and haze effects.</span><small>13 functions, 2 types, 18 constants</small></a>
 </div>
 
 </main>
@@ -126,7 +130,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics" class="on">Graphics<span>938</span></a>
+<li><a href="/api-library/helium/graphics" class="on">Graphics<span>1146</span></a>
 <ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
@@ -141,6 +145,10 @@
 <li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
 <li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
 <li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
