@@ -135,9 +135,10 @@
 <ol class="hg-steps">
 <li><strong>Open the render settings.</strong> In the <b>Form</b> workspace, click the <b>Render</b> tab on the right. For a solid part, use <b>Export &rarr; Photo render&hellip;</b> instead.</li>
 <li><strong>Pick the engine.</strong> Next to <b>Engine</b>, choose <b>Helium</b>.</li>
-<li><strong>Look around.</strong> Click <b>Render view</b>. Orbit and zoom as usual, and move any slider to see the change right away. Click <b>Stop</b> when you're done.</li>
+<li><strong>Look around.</strong> Click <b>Render view</b>. Orbit and zoom as usual, and move any slider to see the change right away. If you play the timeline, the view waits and shows the new pose when you pause. Click <b>Stop</b> when you're done.</li>
 <li><strong>Save it.</strong> Set the size under <b>Output</b>, then click <b>Render image</b>. A PNG downloads, and the finished picture stays on screen until you close it.</li>
 </ol>
+<p><strong>On a phone:</strong> tap <b>Open</b> at the bottom of the screen, then the <b>Render</b> tab. After you start the view, tap <b>Model</b> to hide the panel. One finger orbits, and two fingers zoom and pan. On a Galaxy Z Fold 7, a 1200&times;800 picture takes about 5 seconds and the live view runs at about 10 frames a second.</p>
 <h3>The settings that matter</h3>
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
@@ -257,7 +258,7 @@
 <div><p class="label">Gold: still.gold</p><pre class="code"><code>use std
 into still.amni
 
-Imports: gfx, gfx.linalg, gfx.gltf, gfx.envmap and gfx.scene3d. `main()` sets `gltf::lazy_pixels = true`, then `let model = gltf::load("model.glb")` (negative: print `gltf::error()` and return). Call `gfx::open_headless(1280, 720)` and `s3d::place(s3d::add(model), gfx::mat4_identity)`. Set `s3d::view` to an `s3d::Camera` with eye (2.0, 1.2, 3.0), target (0.0, 0.4, 0.0), up (0.0, 1.0, 0.0), fov_y 0.6, near 0.05, far 100.0. Call `s3d::atmosphere(linalg::unit3(float3 { 0.5, 0.7, 0.4 }), 3.5, 1.0, 0.3)`. Set `s3d::look.curve = 1`, `s3d::temporal = 1` and `s3d::ao_mode = 1`. Call `s3d::init(1280, 720)`, make `target` with `gfx::render_target(1280, 720, gfx::RGBA8)`, call `s3d::render(target)` 32 times, then `gfx::save_png(target, "out.png")` into `saved`, print `saved`, and call `gfx::close()`.</code></pre></div>
+Imports: gfx, gfx.linalg, gfx.gltf, gfx.envmap and gfx.scene3d. `main()` sets `gltf::lazy_pixels = true`, then `let model = gltf::load("model.glb")` (negative: print `gltf::error()` and return). Call `gfx::open_headless(1280, 720)` and `s3d::place(s3d::add(model), gfx::mat4_identity)`. Set `s3d::view` to an `s3d::Camera` with eye (2.0, 1.2, 3.0), target (0.0, 0.4, 0.0), up (0.0, 1.0, 0.0), fov_y 0.6, near 0.05, far 100.0. Call `s3d::atmosphere(linalg::unit3(float3 { 0.5, 0.7, 0.4 }), 3.5, 1.0, 0.3)`. Set `s3d::look.curve = 1`, `s3d::temporal = 1` and `s3d::ao_mode = 1`. Call `s3d::init(1280, 720)`, make `target` with `gfx::render_target(1280, 720, gfx::RGBA8)`, call `s3d::render(target)` then `gfx::flush()` 32 times, then `gfx::save_png(target, "out.png")` into `saved`, print `saved`, and call `gfx::close()`.</code></pre></div>
 <div><p class="label">Helium: still.amni</p><pre class="code"><code>import gfx;
 import gfx.linalg;
 import gfx.gltf;
@@ -281,6 +282,7 @@ fn main() {
     let target = gfx::render_target(1280, 720, gfx::RGBA8);
     for i in 32 {
         s3d::render(target);
+        gfx::flush();
     }
     let saved = gfx::save_png(target, "out.png");
     print(saved);

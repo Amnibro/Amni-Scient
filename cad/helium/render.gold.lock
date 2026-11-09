@@ -117,7 +117,7 @@ fn apply_view() {
 		s3d::place(ground_item, gfx::mul(gfx::translate(p), gfx::mul(gfx::rotate(float3 { 0.0, 1.0, 0.0 }, C[35]), gfx::translate(q))));
 	}
 }
-=== 6b17f8ea583802cb
+=== 5a6a5b83a33feaac
 fn capture() {
 	let w = C[29] as int;
 	let h = C[30] as int;
@@ -129,6 +129,7 @@ fn capture() {
 	let target = gfx::render_target(w, h, gfx::RGBA8);
 	for i in C[38] as int {
 		s3d::render(target);
+		gfx::flush();
 	}
 	let saved = gfx::save_png(target, "/out/render.png");
 	gfx::release(target);

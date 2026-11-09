@@ -122,6 +122,7 @@ fn capture() {
 	let target = gfx::render_target(w, h, gfx::RGBA8);
 	for i in C[38] as int {
 		s3d::render(target);
+		gfx::flush();
 	}
 	let saved = gfx::save_png(target, "/out/render.png");
 	gfx::release(target);
