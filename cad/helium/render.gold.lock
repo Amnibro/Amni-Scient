@@ -17,10 +17,8 @@ var sh = 0;
 var light f32 = 0.0;
 === 1aae73adf41aaea0
 extern fn hv_f32(id i32, xs f32[:]);
-=== 4c8907b78b4491d8
+=== 637f30310ef00788
 fn main() {
-	hv_f32(0, C[..]);
-	hv_f32(1, L[..]);
 	gltf::lazy_pixels = true;
 	let a = args();
 	var glb byte[>..] = [];
@@ -47,6 +45,8 @@ fn main() {
 		print("render: ", gfx::error());
 		return;
 	}
+	hv_f32(0, C[..]);
+	hv_f32(1, L[..]);
 	item = s3d::add(asset);
 	s3d::place(item, gfx::mat4_identity);
 	if ga >= 0 {
