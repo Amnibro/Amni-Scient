@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/commands">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/commands">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0b4dde38f6">
+<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0b4dde38f6'; start({wasm: '/api-library/search.wasm?v=0b4dde38f6'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -115,7 +115,8 @@
 <tr><td><code>gold packs</code></td><td>List the indexed packs.</td></tr>
 <tr><td><code>gold find</code></td><td>Show which functions a sentence would retrieve.</td></tr>
 <tr><td><code>gold compact</code></td><td>Pack data tables without a model call.</td></tr>
-<tr><td><code>gold squeeze</code></td><td>Shorten the Gold and keep it only if it still passes.</td></tr>
+<tr><td><code>gold squeeze</code></td><td>Rewrite the Gold as shorter plain English and keep it only if it still passes.</td></tr>
+<tr><td><code>gold lint</code></td><td>List lines that read as code instead of English.</td></tr>
 </tbody></table></div>
 <h2 id="build-and-run">Build and run</h2>
 <h3 id="gold-build">gold build</h3>
@@ -151,7 +152,11 @@
 <h3 id="gold-squeeze">gold squeeze</h3>
 <pre><code>gold squeeze file.gold check='command' [rounds=4]
 </code></pre>
-<p>Shortens the Gold as far as it will go. Each shorter version is rebuilt from scratch and kept only when it rebuilds and your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
+<p>Rewrites the Gold as shorter plain English. Each shorter version is rebuilt from scratch and kept only when it rebuilds and your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
+<h3 id="gold-lint">gold lint</h3>
+<pre><code>gold lint file.gold
+</code></pre>
+<p>Lists every line that reads as code: operators such as <code>==</code> or <code>&amp;&amp;</code>, function signatures and Helium types. <code>gold build</code> refuses these lines in paragraphs that changed. Set <code>GOLD_LINT=warn</code> to build anyway.</p>
 <h3 id="gold-compact">gold compact</h3>
 <pre><code>gold compact file.gold
 </code></pre>
@@ -206,10 +211,11 @@
 <tbody>
 <tr><td><code>GOLD_CACHE</code></td><td><code>~/.cache/gold</code></td><td>The cache folder.</td></tr>
 <tr><td><code>GOLD_ROOT</code></td><td>The installed resource folder if it contains <code>packs</code>, otherwise <code>~/ai/amni-lang/gold</code></td><td>The Gold root folder.</td></tr>
-<tr><td><code>GOLD_HELIUM</code></td><td><code>~/ai/amni-lang/helium-gold</code></td><td>The Helium folder.</td></tr>
+<tr><td><code>GOLD_HELIUM</code></td><td><code>~/ai/amni-lang/helium</code></td><td>The Helium folder.</td></tr>
 <tr><td><code>GOLD_HC</code></td><td><code>$GOLD_HELIUM/build/hc</code></td><td>The Helium compiler.</td></tr>
 <tr><td><code>GOLD_HC_LIB</code></td><td><code>$GOLD_HELIUM/hc/lib</code></td><td>The compiler's library folder.</td></tr>
 <tr><td><code>GOLD_VERBOSE</code></td><td>unset</td><td>Set to any non-empty value for verbose output.</td></tr>
+<tr><td><code>GOLD_LINT</code></td><td>unset</td><td>Set to <code>warn</code> to build paragraphs that still read as code.</td></tr>
 </tbody></table></div>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/gold/">&larr; Get started with Gold</a>
@@ -223,7 +229,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>

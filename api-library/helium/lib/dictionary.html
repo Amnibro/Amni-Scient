@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/dictionary">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/dictionary">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0b4dde38f6">
+<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0b4dde38f6'; start({wasm: '/api-library/search.wasm?v=0b4dde38f6'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>dictionary</h1>
 <p class="lib-lede">A hash map from any key type to any value type, with insert, lookup, update, remove and iteration.</p>
-<p class="lib-meta"><code>import dictionary;</code> &middot; 26 functions, 2 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he">Source</a></p>
+<p class="lib-meta"><code>import dictionary;</code> &middot; 26 functions, 2 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>dictionary: a hash map from K to V.
 Open addressing with linear probing over a power-of-two table, kept as three
 parallel arrays (keys, vals, states) so a probe walks the one-byte states and
@@ -122,19 +122,19 @@ never-used slot.</pre></details>
 <h3><a href="#dictionary_slot">dictionary_slot</a> <i>type</i></h3>
 <pre>struct dictionary_slot&lt;K, V&gt; { key K, val V, state byte }</pre>
 <p>Slot type holding a key, value and state byte, also yielded when iterating a dictionary's items.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L10">hc/lib/dictionary.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L10">hc/lib/dictionary.he:10</a>
 </article>
 <article class="sym" id="dictionary">
 <h3><a href="#dictionary">dictionary</a> <i>type</i></h3>
 <pre>struct dictionary&lt;K, V&gt; { count int = 0, removed int = 0, keys K[&gt;..&lt;] = [], vals V[&gt;..&lt;] = [], states byte[&gt;..&lt;] = [] }</pre>
 <p>Hash map type from key type K to value type V, using open addressing with linear probing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L11">hc/lib/dictionary.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L11">hc/lib/dictionary.he:11</a>
 </article>
 <article class="sym" id="reserve">
 <h3><a href="#reserve">reserve</a> <i>function</i></h3>
 <pre>reserve&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, n int)</pre>
 <p>Grows the table so the dictionary can hold n entries without rehashing again.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L102">hc/lib/dictionary.he:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L102">hc/lib/dictionary.he:102</a>
 </article>
 <h2 id="dictionary-access">Dictionary Access <span class="n">12</span></h2>
 <article class="sym" id="get">
@@ -143,99 +143,99 @@ never-used slot.</pre></details>
 <p>Returns the value for a key, or null when the key is absent.</p>
 <pre>get&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K, fallback V) V</pre>
 <p>Returns the value for a key, or the given fallback when the key is absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L68">hc/lib/dictionary.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L68">hc/lib/dictionary.he:68</a>
 </article>
 <article class="sym" id="contains">
 <h3><a href="#contains">contains</a> <i>function</i></h3>
 <pre>contains&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K) bool</pre>
 <p>Returns whether the dictionary contains the given key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L75">hc/lib/dictionary.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L75">hc/lib/dictionary.he:75</a>
 </article>
 <article class="sym" id="insert">
 <h3><a href="#insert">insert</a> <i>function</i></h3>
 <pre>insert&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K, val V) bool</pre>
 <p>Sets the value for a key, returning true when the key was new.</p>
 <p class="note">sets key to val; true when key was new</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L77">hc/lib/dictionary.he:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L77">hc/lib/dictionary.he:77</a>
 </article>
 <article class="sym" id="get_or_insert">
 <h3><a href="#get_or_insert">get_or_insert</a> <i>function</i></h3>
 <pre>get_or_insert&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K, v0 V) V&amp;</pre>
 <p>Returns a mutable reference to the key's value, inserting the given initial value when the key is absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L81">hc/lib/dictionary.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L81">hc/lib/dictionary.he:81</a>
 </article>
 <article class="sym" id="update">
 <h3><a href="#update">update</a> <i>function</i></h3>
 <pre>update&lt;K, V, F&gt;(d dictionary&lt;K, V&gt;&amp;, key K, v0 V)</pre>
 <p>Applies the function F to the key's value in place, first inserting the given initial value when absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L84">hc/lib/dictionary.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L84">hc/lib/dictionary.he:84</a>
 </article>
 <article class="sym" id="remove">
 <h3><a href="#remove">remove</a> <i>function</i></h3>
 <pre>remove&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K) bool</pre>
 <p>Removes a key from the dictionary, returning false when the key was not present.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L91">hc/lib/dictionary.he:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L91">hc/lib/dictionary.he:91</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;)</pre>
 <p>Removes all entries from the dictionary while keeping its allocated table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L98">hc/lib/dictionary.he:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L98">hc/lib/dictionary.he:98</a>
 </article>
 <article class="sym" id="each">
 <h3><a href="#each">each</a> <i>function</i></h3>
 <pre>each&lt;K, V, F&gt;(d dictionary&lt;K, V&gt;&amp;)</pre>
 <p>Calls the function F with each live key and a mutable reference to its value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L105">hc/lib/dictionary.he:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L105">hc/lib/dictionary.he:105</a>
 </article>
 <article class="sym" id="keys">
 <h3><a href="#keys">keys</a> <i>function</i></h3>
 <pre>keys&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;) K[&gt;..]</pre>
 <p>Returns a new array of all keys currently in the dictionary.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L106">hc/lib/dictionary.he:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L106">hc/lib/dictionary.he:106</a>
 </article>
 <article class="sym" id="values">
 <h3><a href="#values">values</a> <i>function</i></h3>
 <pre>values&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;) V[&gt;..]</pre>
 <p>Returns a new array of all values currently in the dictionary.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L110">hc/lib/dictionary.he:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L110">hc/lib/dictionary.he:110</a>
 </article>
 <article class="sym" id="items">
 <h3><a href="#items">items</a> <i>function</i></h3>
 <pre>items&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;) dictionary_slot&lt;K, V&gt;[&gt;..]</pre>
 <p>Returns a new array of key-value slots for every entry in the dictionary.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L114">hc/lib/dictionary.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L114">hc/lib/dictionary.he:114</a>
 </article>
 <article class="sym" id="truthy">
 <h3><a href="#truthy">truthy</a> <i>function</i></h3>
 <pre>truthy&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;) bool</pre>
 <p>Returns whether the dictionary holds at least one entry.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L118">hc/lib/dictionary.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L118">hc/lib/dictionary.he:118</a>
 </article>
 <h2 id="dictionary-sets">Dictionary Sets <span class="n">4</span></h2>
 <article class="sym" id="set_add">
 <h3><a href="#set_add">set_add</a> <i>function</i></h3>
 <pre>set_add&lt;K&gt;(d dictionary&lt;K, bool&gt;&amp;, k K)</pre>
 <p>Adds a key to a set represented as a dictionary with boolean values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L128">hc/lib/dictionary.he:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L128">hc/lib/dictionary.he:128</a>
 </article>
 <article class="sym" id="set">
 <h3><a href="#set">set</a> <i>function</i></h3>
 <pre>set&lt;T&gt;(xs T[:]) dictionary&lt;T, bool&gt;</pre>
 <p>Builds a set, a dictionary with boolean values, from the distinct elements of an array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L129">hc/lib/dictionary.he:129</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L129">hc/lib/dictionary.he:129</a>
 </article>
 <article class="sym" id="counter">
 <h3><a href="#counter">counter</a> <i>function</i></h3>
 <pre>counter&lt;T&gt;(xs T[:]) dictionary&lt;T, int&gt;</pre>
 <p>Builds a dictionary counting how many times each element occurs in an array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L133">hc/lib/dictionary.he:133</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L133">hc/lib/dictionary.he:133</a>
 </article>
 <article class="sym" id="dict_from">
 <h3><a href="#dict_from">dict_from</a> <i>function</i></h3>
 <pre>dict_from&lt;K, V&gt;(ks K[:], vs V[:]) dictionary&lt;K, V&gt;</pre>
 <p>Builds a dictionary pairing each key in one array with the value at the same index in another.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L137">hc/lib/dictionary.he:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L137">hc/lib/dictionary.he:137</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (7)</summary>
 <article class="sym" id="probe">
@@ -243,40 +243,40 @@ never-used slot.</pre></details>
 <pre>probe&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K) int</pre>
 <p>Returns the table slot index holding the given key, or -1 when the key is absent.</p>
 <p class="note">slot index holding key, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L14">hc/lib/dictionary.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L14">hc/lib/dictionary.he:14</a>
 </article>
 <article class="sym" id="rehash">
 <h3><a href="#rehash">rehash</a> <i>function</i></h3>
 <pre>rehash&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, size int)</pre>
 <p>Rebuilds the table at the given power-of-two size, reinserting all live entries and dropping removed slots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L26">hc/lib/dictionary.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L26">hc/lib/dictionary.he:26</a>
 </article>
 <article class="sym" id="place">
 <h3><a href="#place">place</a> <i>function</i></h3>
 <pre>place&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K, v0 V) int, bool</pre>
 <p>Returns the slot index for a key, adding it with the given value when absent, plus whether it was added.</p>
 <p class="note">index of key's slot, adding key with value v0 when absent; true when added. One probe: remembers the first removed slot on the way to the never-used one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L42">hc/lib/dictionary.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L42">hc/lib/dictionary.he:42</a>
 </article>
 <article class="sym" id="dict_at">
 <h3><a href="#dict_at">dict_at</a> <i>function</i></h3>
 <pre>dict_at&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;, key K) V&amp;</pre>
 <p>Returns a mutable reference to the key's value for indexing, inserting the default value when absent.</p>
 <p class="note">d[key]: the value for key, added as the default value when absent</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L88">hc/lib/dictionary.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L88">hc/lib/dictionary.he:88</a>
 </article>
 <article class="sym" id="slot_lt">
 <h3><a href="#slot_lt">slot_lt</a> <i>function</i></h3>
 <pre>slot_lt&lt;K, V&gt;(a dictionary_slot&lt;K, V&gt;, b dictionary_slot&lt;K, V&gt;) bool</pre>
 <p>Orders two slots by key, breaking ties by value, for sorting.</p>
 <p class="note">helpers the Python dialect lowers to</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L121">hc/lib/dictionary.he:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L121">hc/lib/dictionary.he:121</a>
 </article>
 <article class="sym" id="sorted">
 <h3><a href="#sorted">sorted</a> <i>function</i></h3>
 <pre>sorted&lt;K, V&gt;(xs dictionary_slot&lt;K, V&gt;[:]) dictionary_slot&lt;K, V&gt;[&gt;..]</pre>
 <p>Returns a new array of the given slots sorted by key, then by value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L123">hc/lib/dictionary.he:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L123">hc/lib/dictionary.he:123</a>
 </article>
 <article class="sym" id="pyfmt">
 <h3><a href="#pyfmt">pyfmt</a> <i>function, 2 forms</i></h3>
@@ -284,7 +284,7 @@ never-used slot.</pre></details>
 <p>Formats a slot as a Python-style key and value tuple string.</p>
 <pre>pyfmt&lt;K, V&gt;(d dictionary&lt;K, V&gt;&amp;) byte[&gt;..]</pre>
 <p>Formats a dictionary as a Python-style brace-delimited string of key-value pairs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/dictionary.he#L141">hc/lib/dictionary.he:141</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/37515e8ed5cebec5324d7ad11234076c44cd99cc/hc/lib/dictionary.he#L141">hc/lib/dictionary.he:141</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -310,7 +310,7 @@ never-used slot.</pre></details>
 </li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
