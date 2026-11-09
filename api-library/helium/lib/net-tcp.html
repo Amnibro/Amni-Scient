@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-tcp">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-tcp">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0770e349e1">
+<link rel="stylesheet" href="/api-library/lib.css?v=c19a43c36a">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0770e349e1'; start({wasm: '/api-library/search.wasm?v=0770e349e1'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=c19a43c36a'; start({wasm: '/api-library/search.wasm?v=c19a43c36a'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/tcp</h1>
 <p class="lib-lede">Non-blocking TCP client connections with host name lookup.</p>
-<p class="lib-meta"><code>import net.tcp;</code> &middot; <code>net::</code> &middot; 12 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he">Source</a></p>
+<p class="lib-meta"><code>import net.tcp;</code> &middot; <code>net::</code> &middot; 12 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#connections">Connections <span class="n">5</span></a></li>
 <li><a href="#socket-i-o">Socket I/O <span class="n">2</span></a></li>
@@ -114,81 +114,81 @@
 <h3><a href="#tcp_resolve">tcp_resolve</a> <i>function</i></h3>
 <pre>tcp_resolve(host const byte[:], port int) byte[&gt;..][&gt;..]</pre>
 <p>Resolves a host name and port into up to 16 address entries, returning an empty list on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L25">hc/lib/net/tcp.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L25">hc/lib/net/tcp.he:25</a>
 </article>
 <article class="sym" id="tcp_open_at">
 <h3><a href="#tcp_open_at">tcp_open_at</a> <i>function</i></h3>
 <pre>tcp_open_at(a const byte[:]) int</pre>
 <p>Opens a non-blocking TCP socket and starts connecting to one resolved address entry, returning its descriptor or -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L34">hc/lib/net/tcp.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L34">hc/lib/net/tcp.he:34</a>
 </article>
 <article class="sym" id="tcp_open">
 <h3><a href="#tcp_open">tcp_open</a> <i>function</i></h3>
 <pre>tcp_open(host const byte[:], port int) int</pre>
 <p>Starts a non-blocking connection to the host and port using the first address that yields a socket, returning -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L40">hc/lib/net/tcp.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L40">hc/lib/net/tcp.he:40</a>
 </article>
 <article class="sym" id="tcp_status">
 <h3><a href="#tcp_status">tcp_status</a> <i>function</i></h3>
 <pre>tcp_status(fd int, ms int) int</pre>
 <p>Checks a connecting socket, returning 0 if still pending, 1 if connected, or -1 on error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L47">hc/lib/net/tcp.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L47">hc/lib/net/tcp.he:47</a>
 </article>
 <article class="sym" id="tcp_close">
 <h3><a href="#tcp_close">tcp_close</a> <i>function</i></h3>
 <pre>tcp_close(fd int)</pre>
 <p>Closes the socket descriptor if it is not negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L66">hc/lib/net/tcp.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L66">hc/lib/net/tcp.he:66</a>
 </article>
 <h2 id="socket-i-o">Socket I/O <span class="n">2</span></h2>
 <article class="sym" id="tcp_send">
 <h3><a href="#tcp_send">tcp_send</a> <i>function</i></h3>
 <pre>tcp_send(fd int, d const byte[:]) int</pre>
 <p>Sends bytes without blocking, returning the count sent, 0 if the socket is not ready, or -1 on error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L53">hc/lib/net/tcp.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L53">hc/lib/net/tcp.he:53</a>
 </article>
 <article class="sym" id="tcp_recv">
 <h3><a href="#tcp_recv">tcp_recv</a> <i>function</i></h3>
 <pre>tcp_recv(fd int, out byte[&gt;..]&amp;, ms int) int</pre>
 <p>Appends received bytes to the output buffer, returning the count, 0 if nothing arrived within ms milliseconds, or -1 on closure or error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L60">hc/lib/net/tcp.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L60">hc/lib/net/tcp.he:60</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
 <article class="sym" id="TCP_OS">
 <h3><a href="#TCP_OS">TCP_OS</a> <i>constant</i></h3>
 <pre>var TCP_OS = 0</pre>
 <p>Cached operating system code used internally, where 0 means not yet detected, 1 non-Darwin, and 2 Darwin.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L18">hc/lib/net/tcp.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L18">hc/lib/net/tcp.he:18</a>
 </article>
 <article class="sym" id="tcp_darwin">
 <h3><a href="#tcp_darwin">tcp_darwin</a> <i>function</i></h3>
 <pre>tcp_darwin() bool</pre>
 <p>Returns whether the running system is Darwin, detecting and caching the result on first call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L19">hc/lib/net/tcp.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L19">hc/lib/net/tcp.he:19</a>
 </article>
 <article class="sym" id="le_n">
 <h3><a href="#le_n">le_n</a> <i>function</i></h3>
 <pre>le_n(b const byte[:], o int, n int) uint</pre>
 <p>Reads n little-endian bytes from a byte slice at an offset and returns them as an unsigned integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L22">hc/lib/net/tcp.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L22">hc/lib/net/tcp.he:22</a>
 </article>
 <article class="sym" id="cz">
 <h3><a href="#cz">cz</a> <i>function</i></h3>
 <pre>cz(s const byte[:]) byte[&gt;..]</pre>
 <p>Returns a copy of a byte slice with a terminating zero byte appended for C APIs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L23">hc/lib/net/tcp.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L23">hc/lib/net/tcp.he:23</a>
 </article>
 <article class="sym" id="int_bytes">
 <h3><a href="#int_bytes">int_bytes</a> <i>function</i></h3>
 <pre>int_bytes(v int) byte[&gt;..]</pre>
 <p>Returns the four little-endian bytes of an integer, used for building C structures.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L24">hc/lib/net/tcp.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L24">hc/lib/net/tcp.he:24</a>
 </article>
 <article class="sym" id="tcp_poll">
 <h3><a href="#tcp_poll">tcp_poll</a> <i>function</i></h3>
 <pre>tcp_poll(fd int, ev int, ms int) int</pre>
 <p>Polls a descriptor for the given event flags for up to ms milliseconds, returning the resulting event flags or 0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/net/tcp.he#L43">hc/lib/net/tcp.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/net/tcp.he#L43">hc/lib/net/tcp.he:43</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -198,7 +198,7 @@
 <h2>Helium library</h2>
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>196</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>

@@ -642,13 +642,14 @@ json::K_NUM	constant	json	/api-library/helium/lib/json#K_NUM	Node kind constant 
 json::K_STR	constant	json	/api-library/helium/lib/json#K_STR	Node kind constant for a JSON string value.	pub
 json::K_ARR	constant	json	/api-library/helium/lib/json#K_ARR	Node kind constant for a JSON array.	pub
 json::K_OBJ	constant	json	/api-library/helium/lib/json#K_OBJ	Node kind constant for a JSON object.	pub
-json::Node	type	json	/api-library/helium/lib/json#Node	Single tree node holding its kind, value, text locations, first child, next sibling and child count.	int
-json::Doc	type	json	/api-library/helium/lib/json#Doc	Parsed JSON document made of an array of nodes and a shared text pool.	pub
+json::DocNode	type	json	/api-library/helium/lib/json#DocNode	Internal index-based node record holding kind, numeric value, pool offsets for text and key, and sibling links for a parsed document.	int
+json::Doc	type	json	/api-library/helium/lib/json#Doc	Internal index-based document holding a node list and a shared byte pool for strings and keys.	int
 json::text_of	function	json	/api-library/helium/lib/json#text_of	Returns the string text stored for node n from the pool.	int
 json::key_of	function	json	/api-library/helium/lib/json#key_of	Returns the member name stored for node n from the pool.	int
 json::add_node	function	json	/api-library/helium/lib/json#add_node	Appends a new node of the given kind and returns its index.	int
 json::attach	function	json	/api-library/helium/lib/json#attach	Links child after prev under parent, increments the parent's count, and returns the child.	int
 json::value	function	json	/api-library/helium/lib/json#value	Reads one value into the document, returning its node index or -1 on error or excessive nesting.	int
+json::digits_u64	function	json	/api-library/helium/lib/json#digits_u64	Parses a decimal digit range into an unsigned integer, returning false when empty, malformed, leading-zero, or overflowing.	int
 json::parse	function	json	/api-library/helium/lib/json#parse	Parses text into a cleared document, returning the root index and an empty message, or -1 and the reason.	pub
 json::member	function	json	/api-library/helium/lib/json#member	Returns the index of the object member with the given name, or -1 if absent.	pub
 json::element	function	json	/api-library/helium/lib/json#element	Returns the index of element k of an array, or -1 if there is none.	pub
@@ -658,6 +659,7 @@ json::each	function	json	/api-library/helium/lib/json#each	Calls the block with 
 json::kind	function	json	/api-library/helium/lib/json#kind	Returns the kind of node n, or -1 for an invalid index.	pub
 json::as_f64	function	json	/api-library/helium/lib/json#as_f64	Returns a node's number as a real and true, or 0.0 and false if it is not numeric.	pub
 json::as_i64	function	json	/api-library/helium/lib/json#as_i64	Returns a node's whole-number value and true, or 0 and false if it is not an integer.	pub
+json::as_u64	function	json	/api-library/helium/lib/json#as_u64	Returns node n of an index-based document as an unsigned integer, with false when it is not a suitable number.	int
 json::as_bool	function	json	/api-library/helium/lib/json#as_bool	Returns a node's boolean value and true, or false and false if it is not a boolean.	pub
 json::as_string	function	json	/api-library/helium/lib/json#as_string	Returns a node's string text and true, or an empty string and false if it is not a string.	pub
 json::is_null	function	json	/api-library/helium/lib/json#is_null	Returns whether node n is a JSON null.	pub
@@ -674,6 +676,17 @@ json::push_element	function	json	/api-library/helium/lib/json#push_element	Appen
 json::put_member	function	json	/api-library/helium/lib/json#put_member	Sets an object member to child, replacing any existing member of that name in place, and returns the child.	pub
 json::drop_member	function	json	/api-library/helium/lib/json#drop_member	Removes the named member from object n and returns true if it was present.	pub
 json::format_node	function	json	/api-library/helium/lib/json#format_node	Appends node n and its children to out as compact JSON and returns the new length of out.	pub
+json::Node	type	json	/api-library/helium/lib/json#Node	Parsed JSON node linking to its first child and next sibling, with its member key and typed value.	pub
+json::Value	type	json	/api-library/helium/lib/json#Value	Tagged value of a parsed JSON node: null, bool, signed or unsigned integer, real, string, or array or object with a child count.	pub
+json::value_of	function	json	/api-library/helium/lib/json#value_of	Converts an internal document node and its string pool into a typed Value.	int
+json::parse	function	json	/api-library/helium/lib/json#parse	Parses JSON text into nodes appended to doc, returning the root node, or null with an error message on failure.	pub
+json::member	function	json	/api-library/helium/lib/json#member	Returns the member of an object node with the given key, or null when absent or not an object.	pub
+json::each	function	json	/api-library/helium/lib/json#each	Calls the given block with each child of a node, in order.	pub
+json::as_f64	function	json	/api-library/helium/lib/json#as_f64	Returns a node's number as a real with true, or false when it is null or not numeric.	pub
+json::as_i64	function	json	/api-library/helium/lib/json#as_i64	Returns a node's value as a signed integer with true, or false when it is null or not an integer.	pub
+json::as_u64	function	json	/api-library/helium/lib/json#as_u64	Returns a node's value as an unsigned integer with true, or false when null, negative, or not an integer.	pub
+json::as_bool	function	json	/api-library/helium/lib/json#as_bool	Returns a node's boolean value with true, or false when it is null or not a boolean.	pub
+json::as_string	function	json	/api-library/helium/lib/json#as_string	Returns a node's string contents with true, or false when it is null or not a string.	pub
 regex::T_EMPTY	constant	regex	/api-library/helium/lib/regex#T_EMPTY	Tree node kind for an empty pattern fragment that matches nothing but succeeds.	int
 regex::T_SET	constant	regex	/api-library/helium/lib/regex#T_SET	Tree node kind for a single-byte set that consumes one byte.	int
 regex::T_CAT	constant	regex	/api-library/helium/lib/regex#T_CAT	Tree node kind for a concatenation of two sub-patterns.	int
@@ -742,6 +755,7 @@ binary::f64_bits	function	binary	/api-library/helium/lib/binary#f64_bits	Binds a
 binary::f64_from_bits	function	binary	/api-library/helium/lib/binary#f64_from_bits	Binds a C function that builds a real from a raw 64-bit pattern.	int
 binary::fits	function	binary	/api-library/helium/lib/binary#fits	Returns whether the bytes from position at up to at plus size lie inside data.	int
 binary::gather	function	binary	/api-library/helium/lib/binary#gather	Combines n bytes at a position into an unsigned little-endian number without checking bounds.	int
+binary::le	function	binary	/api-library/helium/lib/binary#le	Reads n bytes starting at an offset as an unsigned little-endian number, without checking bounds, so the caller must ensure they fit.	pub
 binary::read_u8	function	binary	/api-library/helium/lib/binary#read_u8	Reads one byte at the given position, returning false as the second result when out of bounds.	pub
 binary::read_u16le	function	binary	/api-library/helium/lib/binary#read_u16le	Reads an unsigned 16-bit little-endian value at the given position, returning false when out of bounds.	pub
 binary::read_i16le	function	binary	/api-library/helium/lib/binary#read_i16le	Reads a signed 16-bit little-endian value at the given position, returning false when out of bounds.	pub
