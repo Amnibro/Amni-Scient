@@ -7,7 +7,7 @@ import {CAD_TRAINED,BONSAI_OPTIONAL,packStatus} from '../model_pack.js';
 import {fetchPack,discover,health,manifest,cli} from '../api/model_fetch.mjs';
 let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-ok(!packStatus(CAD_TRAINED).ready&&!CAD_TRAINED.url&&CAD_TRAINED.bytes===3892652160&&CAD_TRAINED.sha256==='199839613fbf80d775a0d30000dc0592c62f38f0cf83ef352f6069e823349613'&&CAD_TRAINED.serve.ctx===8192&&CAD_TRAINED.serve.parallel===4&&CAD_TRAINED.ollamaTag==='amni-cad-3b:latest'&&!/qwen|huggingface|174080|home\//i.test(JSON.stringify(CAD_TRAINED)),'the CAD pack is pinned by digest, has no download URL, and uses a bounded serve profile',CAD_TRAINED);
+ok(!packStatus(CAD_TRAINED).ready&&!CAD_TRAINED.url&&CAD_TRAINED.bytes===3892652160&&CAD_TRAINED.sha256==='199839613fbf80d775a0d30000dc0592c62f38f0cf83ef352f6069e823349613'&&CAD_TRAINED.serve.ctx===24576&&CAD_TRAINED.serve.parallel===1&&CAD_TRAINED.ollamaTag==='amni-cad-3b:latest'&&!/qwen|huggingface|174080|home\//i.test(JSON.stringify(CAD_TRAINED)),'the CAD pack is pinned by digest, has no download URL, and uses a bounded serve profile',CAD_TRAINED);
 ok(!packStatus(BONSAI_OPTIONAL).ready&&BONSAI_OPTIONAL.role==='optional','Bonsai stays an optional unreleased slot');
 let un='';try{await fetchPack(CAD_TRAINED,{dest:'/tmp/nope.gguf'});}catch(e){un=e.code;}
 ok(un==='unreleased','fetch refuses the unreleased pack before any network',un);

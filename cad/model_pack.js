@@ -12,7 +12,7 @@ export const CAD_TRAINED={
   ollamaTag:'amni-cad-3b:latest',
   license:'Apache-2.0',
   licenseScope:'GGUF and base-model metadata only. Not a grant to publish the weights or the training data.',
-  serve:{ctx:8192,parallel:4,batch:1024,ubatch:512,cacheK:'q8_0',cacheV:'q8_0'},
+  serve:{ctx:24576,parallel:1,batch:1024,ubatch:512,cacheK:'q8_0',cacheV:'q8_0'},
   note:'Identified by digest. No download link is published, so this page cannot install it.'
 };
 export const BONSAI_OPTIONAL={id:'bonsai-optional',role:'optional',status:'unreleased',bytes:null,sha256:null,url:null,runtime:null,note:'Optional and separate from the CAD-trained pack. It needs its own runtime and a proven adapter. It is not installed by this app.'};
