@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/language/builtins">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/language/builtins">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -105,23 +105,31 @@
 <p>The compiler provides these directly. They work in every program with no import, and they do not appear in any library module.</p>
 <h2 id="output-and-text">Output and text</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Function</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Function</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>print(a, b, ...)</code></td><td>Writes its arguments with nothing between them, then a newline.</td></tr>
 <tr><td><code>str(a, b, ...)</code></td><td>Builds a <code>byte[&gt;..]</code> string from its arguments.</td></tr>
 <tr><td><code>format(out, a, b, ...)</code></td><td>Appends its arguments to the string <code>out</code>. Define your own <code>format(out, value)</code> to control how a type prints.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="stopping-and-checking">Stopping and checking</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Function</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Function</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>assert(c)</code></td><td>Stops the program when <code>c</code> is false. It also narrows an optional.</td></tr>
 <tr><td><code>abort(msg)</code></td><td>Stops the program with a message.</td></tr>
 <tr><td><code>exit(code)</code></td><td>Ends the program with an exit code.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="values-and-bytes">Values and bytes</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Function</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Function</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>copy(x)</code></td><td>Makes a copy of a value that would otherwise alias, such as a growable array.</td></tr>
 <tr><td><code>default&lt;T&gt;()</code></td><td>Makes the default value of a type.</td></tr>
@@ -130,11 +138,14 @@
 <tr><td><code>bytes_of(a)</code></td><td>Views a value's memory as bytes, without copying.</td></tr>
 <tr><td><code>embed_file(&quot;path&quot;)</code></td><td>Puts a file's contents into the program at compile time.</td></tr>
 <tr><td><code>embed_shader(&quot;x.frag&quot;)</code></td><td>Compiles a shader file into the program at compile time. <code>embed_shader(&quot;frag&quot;, source)</code> takes the stage and source instead.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="threads-and-queues">Threads and queues</h2>
 <p>Threads share nothing. They talk through queues, one per type, and only flat values with no references can cross.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Function</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Function</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>thread_spawn(worker)</code></td><td>Starts a <code>thread_fn</code> and returns its id.</td></tr>
 <tr><td><code>thread_spawn_contained(worker)</code></td><td>Starts a <code>thread_fn</code> whose failure ends only that thread, not the whole program.</td></tr>
@@ -145,11 +156,14 @@
 <tr><td><code>qget&lt;T&gt;(ms)</code></td><td>Waits up to <code>ms</code> milliseconds. Returns the value and a <code>bool</code> that says whether one arrived.</td></tr>
 <tr><td><code>qpoll&lt;T&gt;()</code></td><td>Returns the next value and <code>true</code> if one is ready, without waiting.</td></tr>
 <tr><td><code>qlimit&lt;T&gt;(n)</code></td><td>Sets the most values the queue for <code>T</code> can hold.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="array-members">Array members</h2>
 <p>Every array kind has these. See <a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a>.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Member</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Member</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>.len</code></td><td>The number of elements.</td></tr>
 <tr><td><code>.cap</code></td><td>The capacity.</td></tr>
@@ -160,7 +174,8 @@
 <tr><td><code>.resize(n, v)</code></td><td>Changes the length, filling new elements with <code>v</code>.</td></tr>
 <tr><td><code>.clear()</code></td><td>Removes every element.</td></tr>
 <tr><td><code>.index_of(ref)</code></td><td>Returns the position of an element from a reference to it.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <p>Any function can also be called like a member: <code>x.f(a)</code> is <code>f(x, a)</code>.</p>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/helium/language/commands">&larr; Commands and options</a>
@@ -171,18 +186,18 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
@@ -206,8 +221,7 @@
 <li><a href="#values-and-bytes">Values and bytes</a></li>
 <li><a href="#threads-and-queues">Threads and queues</a></li>
 <li><a href="#array-members">Array members</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
 <li><a href="/api-library/helium/language/core-language">Core language</a></li>
 <li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/language/lookup-table-functions">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/language/lookup-table-functions">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -105,8 +105,7 @@
 <p><code>lut fn</code> turns a pure function of small inputs into a lookup table:</p>
 <pre><code>fn steps(n int) int { var x = n; var c = 0; while x &gt; 1 { x = if x % 2 == 0 { x / 2 } else { 3 * x + 1 }; c++; } c }
 lut fn fast_steps(n u16) int { steps(n) }
-fn main() { print(fast_steps(27), &quot; &quot;, fast_steps(27)); }
-</code></pre>
+fn main() { print(fast_steps(27), &quot; &quot;, fast_steps(27)); }</code></pre>
 <ul>
 <li>Parameters are <code>bool</code>, <code>byte</code>/<code>u8</code>, <code>i8</code>, <code>u16</code> or <code>i16</code>, 24 bits in all; the result is any fixed-size flat type.</li>
 <li>Each entry is computed on its first call and then looked up. The table is sparse: 4096-entry tiles exist only once something in them is asked for, so an unvisited range costs nothing.</li>
@@ -124,18 +123,18 @@ fn main() { print(fast_steps(27), &quot; &quot;, fast_steps(27)); }
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/language/commands">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/language/commands">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,11 +104,12 @@
 <h1>Commands and options</h1>
 <p>The compiler is one command, <code>hc</code>. Run <code>hc help</code> to print this list in short form.</p>
 <pre><code>hc &lt;command&gt; file [options] [-- program args...]
-hc file [options] [-- program args...]
-</code></pre>
+hc file [options] [-- program args...]</code></pre>
 <h2 id="commands">Commands</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Command</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Command</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>hc run</code></td><td>Compile natively into the cache and run the program. <code>hc file</code> does the same.</td></tr>
 <tr><td><code>hc build</code></td><td>Build an executable: <code>-o out</code> for native, <code>-o out.c</code> for C, <code>--web</code> for WebAssembly.</td></tr>
@@ -117,10 +118,13 @@ hc file [options] [-- program args...]
 <tr><td><code>hc lsp</code></td><td>Run the language server: diagnostics, hover, definition, references, rename, symbols, completion, signature help and inlay hints.</td></tr>
 <tr><td><code>hc version</code></td><td>Print the version.</td></tr>
 <tr><td><code>hc help</code></td><td>Print the short help.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="options">Options</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Option</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>-o path</code></td><td>Output path for <code>build</code>. The default is the file's name without its extension.</td></tr>
 <tr><td><code>--debug</code></td><td>Add overflow, range and tag checks that name the source line.</td></tr>
@@ -134,22 +138,25 @@ hc file [options] [-- program args...]
 <tr><td><code>--vhost</code></td><td>Pick <code>--v4</code>, <code>--v3</code> or neither from this machine's CPU, like <code>-march=native</code>.</td></tr>
 <tr><td><code>--all</code></td><td>With <code>check</code>: also check every typed function nothing calls.</td></tr>
 <tr><td><code>--update</code></td><td>With <code>fetch</code>: fetch tags and branches again.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="packages">Packages</h2>
 <p>A program declares a git package right in its import line:</p>
-<pre><code>import name from &quot;owner/repo@ref&quot;;
-</code></pre>
+<pre><code>import name from &quot;owner/repo@ref&quot;;</code></pre>
 <p><code>hc fetch file</code> clones what a program declares, and a build fetches anything missing unless you pass <code>--offline</code>.</p>
 <h2 id="environment-variables">Environment variables</h2>
 <div class="lib-tw"><table>
-<thead><tr><th>Variable</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Variable</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>HC_LIB</code></td><td>The library folder. By default, <code>lib</code> beside <code>hc</code>, then <code>hc/lib</code>.</td></tr>
 <tr><td><code>HELIUM_HOME</code></td><td>Where saved lookup tables live, instead of <code>~/.helium</code>.</td></tr>
 <tr><td><code>HELIUM_GPU</code></td><td><code>off</code> keeps lookup-table fills on the CPU. <code>discrete</code> prefers the discrete GPU.</td></tr>
 <tr><td><code>HELIUM_GPU_MIN_MS</code></td><td>How long a CPU fill must take before the GPU takes over. The default is 30 ms.</td></tr>
 <tr><td><code>HELIUM_GPU_LOG</code></td><td><code>1</code> reports what ran where. <code>2</code> also writes each table's compute shader.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/helium/">&larr; Helium</a>
 <a class="next" href="/api-library/helium/language/builtins">Built-in functions &rarr;</a>
@@ -159,18 +166,18 @@ hc file [options] [-- program args...]
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
@@ -192,8 +199,7 @@ hc file [options] [-- program args...]
 <li><a href="#options">Options</a></li>
 <li><a href="#packages">Packages</a></li>
 <li><a href="#environment-variables">Environment variables</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
 <li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
 <li><a href="/api-library/helium/language/core-language">Core language</a></li>

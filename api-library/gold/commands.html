@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/commands">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/commands">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,9 @@
 <h1>Commands</h1>
 <p>Run <code>gold</code> with no arguments to print this list in short form. Options use the form <code>name=value</code>.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Command</th><th>What it does</th></tr></thead>
+<thead>
+<tr><th>Command</th><th>What it does</th></tr>
+</thead>
 <tbody>
 <tr><td><code>gold build</code></td><td>Translate, check and write the Helium.</td></tr>
 <tr><td><code>gold run</code></td><td>Build, then run the program.</td></tr>
@@ -117,76 +119,74 @@
 <tr><td><code>gold compact</code></td><td>Pack data tables without a model call.</td></tr>
 <tr><td><code>gold squeeze</code></td><td>Rewrite the Gold as shorter plain English and keep it only if it still passes.</td></tr>
 <tr><td><code>gold lint</code></td><td>List lines that read as code instead of English.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="build-and-run">Build and run</h2>
 <h3 id="gold-build">gold build</h3>
-<pre><code>gold build file.gold
-</code></pre>
+<pre><code>gold build file.gold</code></pre>
 <p>Translates the paragraphs that changed, checks the whole file with the Helium compiler, and writes the Helium next to the Gold file, or to the <code>into</code> path from its header. Results are cached in <code>file.gold.lock</code>, so an unchanged paragraph never calls the model again. Commit the lock file with your code.</p>
 <h3 id="gold-run">gold run</h3>
-<pre><code>gold run file.gold [-- program arguments]
-</code></pre>
+<pre><code>gold run file.gold [-- program arguments]</code></pre>
 <p>Builds the file, then runs the program. Everything after <code>--</code> goes to your program.</p>
 <h3 id="gold-show">gold show</h3>
-<pre><code>gold show file.gold
-</code></pre>
+<pre><code>gold show file.gold</code></pre>
 <p>Builds the file, then prints the Helium it produced.</p>
 <h3 id="gold-test">gold test</h3>
-<pre><code>gold test file.gold
-</code></pre>
+<pre><code>gold test file.gold</code></pre>
 <p>Builds the file, then runs the test command of every pack named on its <code>use</code> line.</p>
 <h2 id="bring-in-existing-code">Bring in existing code</h2>
 <h3 id="gold-port">gold port</h3>
-<pre><code>gold port source [use=pack,pack] [into=file] [lang=amni|he|py] [ns=name] [gold=out.gold]
-</code></pre>
+<pre><code>gold port source [use=pack,pack] [into=file] [lang=amni|he|py] [ns=name] [gold=out.gold]</code></pre>
 <p>Reads code in any language, writes the Gold that describes it, and builds that Gold.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Option</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>use=</code></td><td>Packs the new code may call, separated by commas.</td></tr>
 <tr><td><code>into=</code></td><td>The Helium file to write.</td></tr>
 <tr><td><code>lang=</code></td><td>The Helium flavor to write: <code>amni</code>, <code>he</code> or <code>py</code>.</td></tr>
 <tr><td><code>ns=</code></td><td>The namespace for the new code.</td></tr>
 <tr><td><code>gold=</code></td><td>Where to save the Gold. By default it sits beside the source, named after it.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h3 id="gold-squeeze">gold squeeze</h3>
-<pre><code>gold squeeze file.gold check='command' [rounds=4]
-</code></pre>
+<pre><code>gold squeeze file.gold check='command' [rounds=4]</code></pre>
 <p>Rewrites the Gold as shorter plain English. Each shorter version is rebuilt from scratch and kept only when it rebuilds and your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
 <h3 id="gold-lint">gold lint</h3>
-<pre><code>gold lint file.gold
-</code></pre>
+<pre><code>gold lint file.gold</code></pre>
 <p>Lists every line that reads as code: operators such as <code>==</code> or <code>&amp;&amp;</code>, function signatures and Helium types. <code>gold build</code> refuses these lines in paragraphs that changed. Set <code>GOLD_LINT=warn</code> to build anyway.</p>
 <h3 id="gold-compact">gold compact</h3>
-<pre><code>gold compact file.gold
-</code></pre>
+<pre><code>gold compact file.gold</code></pre>
 <p>Packs the data tables in a file, with no model call. It adds a first <code>@</code> row of column scales, and a blank cell repeats the cell above. See <a href="/api-library/gold/format#data-tables">data tables</a>.</p>
 <h2 id="work-with-packs">Work with packs</h2>
 <h3 id="gold-pack">gold pack</h3>
-<pre><code>gold pack name folder [lang=] [main=] [test=] [skip=]
-</code></pre>
+<pre><code>gold pack name folder [lang=] [main=] [test=] [skip=]</code></pre>
 <p>Indexes every top-level function, type and global in a Helium folder into <code>packs/name</code>, so Gold can find and call them. See <a href="/api-library/gold/packs">Packs</a>.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Option</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>lang=</code></td><td>The product's Helium flavor.</td></tr>
 <tr><td><code>main=</code></td><td>The product's root file, used to check new code in place.</td></tr>
 <tr><td><code>test=</code></td><td>The command <code>gold test</code> runs.</td></tr>
 <tr><td><code>skip=</code></td><td>A regular expression of files to leave out.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h3 id="gold-packs">gold packs</h3>
-<pre><code>gold packs
-</code></pre>
+<pre><code>gold packs</code></pre>
 <p>Lists each pack with its language, symbol count and folder.</p>
 <h3 id="gold-find">gold find</h3>
-<pre><code>gold find pack,pack words to look up
-</code></pre>
+<pre><code>gold find pack,pack words to look up</code></pre>
 <p>Shows which functions a sentence would retrieve. Use it to check that a paragraph points Gold at the code you meant.</p>
 <h2 id="environment-variables">Environment variables</h2>
 <p>Environment variables change which models Gold uses and where it finds its tools.</p>
 <h3 id="models">Models</h3>
 <div class="lib-tw"><table>
-<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Variable</th><th>Default</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>GOLD_MODEL</code></td><td><code>sonnet</code></td><td>The model that translates and repairs. <code>granite</code> or <code>local:&lt;name&gt;</code> uses the local llama-server.</td></tr>
 <tr><td><code>GOLD_MODEL_HARD</code></td><td><code>opus</code></td><td>The model used for the last repair.</td></tr>
@@ -194,20 +194,26 @@
 <tr><td><code>GOLD_MODEL_FALLBACK</code></td><td><code>sonnet</code></td><td>The model that takes over after the local model's repair rounds.</td></tr>
 <tr><td><code>GOLD_TRIES</code></td><td><code>4</code></td><td>How many repair rounds to try. The limit extends up to 10 while each round changes the errors.</td></tr>
 <tr><td><code>GOLD_K</code></td><td><code>70</code></td><td>An integer setting read at startup.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h3 id="local-model">Local model</h3>
 <div class="lib-tw"><table>
-<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Variable</th><th>Default</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>GOLD_LOCAL_URL</code></td><td><code>http://127.0.0.1:18790</code></td><td>The address of the local llama-server.</td></tr>
 <tr><td><code>GOLD_LOCAL_UNIT</code></td><td><code>amni-bonsai.service</code></td><td>The unit used to start the local server.</td></tr>
 <tr><td><code>GOLD_LOCAL_WAIT</code></td><td><code>120</code></td><td>Seconds to wait for the GPU.</td></tr>
 <tr><td><code>GOLD_LOCAL_ROUNDS</code></td><td><code>2</code></td><td>How many repair rounds the local model gets before <code>GOLD_MODEL_FALLBACK</code> takes over.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <p>If the local model is unavailable, the whole build falls back to <code>GOLD_MODEL_FALLBACK</code>.</p>
 <h3 id="paths-and-tools">Paths and tools</h3>
 <div class="lib-tw"><table>
-<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Variable</th><th>Default</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>GOLD_CACHE</code></td><td><code>~/.cache/gold</code></td><td>The cache folder.</td></tr>
 <tr><td><code>GOLD_ROOT</code></td><td>The installed resource folder if it contains <code>packs</code>, otherwise <code>~/ai/amni-lang/gold</code></td><td>The Gold root folder.</td></tr>
@@ -216,7 +222,8 @@
 <tr><td><code>GOLD_HC_LIB</code></td><td><code>$GOLD_HELIUM/hc/lib</code></td><td>The compiler's library folder.</td></tr>
 <tr><td><code>GOLD_VERBOSE</code></td><td>unset</td><td>Set to any non-empty value for verbose output.</td></tr>
 <tr><td><code>GOLD_LINT</code></td><td>unset</td><td>Set to <code>warn</code> to build paragraphs that still read as code.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/gold/">&larr; Get started with Gold</a>
 <a class="next" href="/api-library/gold/format">File format &rarr;</a>
@@ -226,18 +233,18 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g" open><summary>Gold</summary>
 <ul>
@@ -247,8 +254,7 @@
 <li><a href="#bring-in-existing-code">Bring in existing code</a></li>
 <li><a href="#work-with-packs">Work with packs</a></li>
 <li><a href="#environment-variables">Environment variables</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href="/api-library/gold/format">File format</a></li>
 <li><a href="/api-library/gold/settings">Settings</a></li>
 <li><a href="/api-library/gold/dialects">Dialects</a></li>

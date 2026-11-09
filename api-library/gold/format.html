@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/format">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/format">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -110,18 +110,20 @@ Struct `Progress` holds level, xp into the level, xp the level needs, and the ne
 
 `progress_of(xp int, prestige int) Progress` builds it from total xp using the profile's level and prestige rules.
 
-`progress_line(p Progress) byte[&gt;..]` formats it as `Lv 7 (120/450 xp) - next prestige 3000`.
-</code></pre>
+`progress_line(p Progress) byte[&gt;..]` formats it as `Lv 7 (120/450 xp) - next prestige 3000`.</code></pre>
 <h2 id="header-lines">Header lines</h2>
 <p>Header lines come before the first paragraph.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Line</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Line</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td><code>use a, b</code></td><td>Packs or Helium library modules whose functions the code may call.</td></tr>
 <tr><td><code>into path</code></td><td>The file to write, inside the product or as an absolute path.</td></tr>
 <tr><td><code>lang amni</code></td><td>The Helium flavor to write: <code>amni</code>, <code>he</code> or <code>py</code>. Without it, Gold uses the flavor of the <code>into</code> file, then the product's, then <code>.amni</code>.</td></tr>
 <tr><td><code>dialect js</code></td><td>Apply a source language's rules to every paragraph. See <a href="/api-library/gold/dialects">Dialects</a>.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="paragraphs">Paragraphs</h2>
 <ul>
 <li>Write one paragraph per unit: a type, a function, or the program's top level.</li>
@@ -133,32 +135,32 @@ Struct `Progress` holds level, xp into the level, xp the level needs, and the ne
 <p>When you need exact code, use a fence. Gold keeps it as written.</p>
 <pre><code>```amni
 fn clamp01(x real) real { min(max(x, 0.0), 1.0) }
-```
-</code></pre>
+```</code></pre>
 <p>Fences can be marked <code>amni</code> or <code>he</code>.</p>
 <h2 id="data-tables">Data tables</h2>
 <p>Rows of data go in a <code>table</code> fence. Gold turns the table into Helium itself, with no model call.</p>
 <pre><code>```table materials Material
 steel | 7850 | 200e9
 &quot;     | 7870 | 205e9
-```
-</code></pre>
+```</code></pre>
 <p>This makes a function <code>materials()</code> that returns the rows as <code>Material</code> values.</p>
 <div class="lib-tw"><table>
-<thead><tr><th>Cell</th><th>Meaning</th></tr></thead>
+<thead>
+<tr><th>Cell</th><th>Meaning</th></tr>
+</thead>
 <tbody>
 <tr><td>Cells split on <code>|</code></td><td>Cells follow the struct's field order.</td></tr>
 <tr><td><code>&quot;</code> or a blank cell</td><td>Repeats the cell above.</td></tr>
 <tr><td><code>''</code></td><td>An empty string.</td></tr>
 <tr><td>Single quotes</td><td>Keeps a cell that looks like a number, or starts with <code>#</code>, as text.</td></tr>
 <tr><td>First <code>@</code> row</td><td>Column scales added by <code>gold compact</code>: <code>e9</code> appends an exponent, and <code>.</code> marks a real column so <code>7870</code> means <code>7870.0</code>.</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <h2 id="expected-output">Expected output</h2>
 <p>End a standalone program with <code>expect:</code> and the exact lines it must print. Gold runs the program and repairs it until the output matches.</p>
 <pre><code>expect:
 the: 4
-cat: 2
-</code></pre>
+cat: 2</code></pre>
 <h2 id="comments">Comments</h2>
 <p>A line that starts with <code>#</code> is a comment.</p>
 <nav class="lib-pn">
@@ -170,18 +172,18 @@ cat: 2
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g" open><summary>Gold</summary>
 <ul>
@@ -194,8 +196,7 @@ cat: 2
 <li><a href="#data-tables">Data tables</a></li>
 <li><a href="#expected-output">Expected output</a></li>
 <li><a href="#comments">Comments</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href="/api-library/gold/settings">Settings</a></li>
 <li><a href="/api-library/gold/dialects">Dialects</a></li>
 <li><a href="/api-library/gold/packs">Packs</a></li>

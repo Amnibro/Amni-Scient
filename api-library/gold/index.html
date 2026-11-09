@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -115,19 +115,16 @@ cd helium
 hc/bootstrap.sh
 cd ../gold
 HC_LIB=../helium/hc/lib ../helium/build/hc build gold.amni -o gold_bin
-GOLD_HELIUM=../helium ./gold pack std ../helium/hc/lib lang=he
-</code></pre>
+GOLD_HELIUM=../helium ./gold pack std ../helium/hc/lib lang=he</code></pre>
 <p>Keep <code>GOLD_HELIUM</code> set to that Helium checkout whenever you run Gold.</p>
 <h2 id="your-first-program">Your first program</h2>
 <p>Save this as <code>hello.gold</code>:</p>
 <pre><code>`main()` prints &quot;hello, world&quot;.
 
 expect:
-hello, world
-</code></pre>
+hello, world</code></pre>
 <p>Then run it:</p>
-<pre><code>gold run hello.gold
-</code></pre>
+<pre><code>gold run hello.gold</code></pre>
 <p>Gold writes <code>hello.amni</code> next to your file, runs it, and checks that the output matches the <code>expect:</code> lines. If it does not match, Gold repairs the code and tries again.</p>
 <h2 id="a-real-program">A real program</h2>
 <pre><code># word frequency report
@@ -139,14 +136,12 @@ expect:
 the: 4
 cat: 2
 and: 1
-total: 11
-</code></pre>
+total: 11</code></pre>
 <p>A build prints what it did and what it cost:</p>
 <pre><code>$ gold build units.gold
 gold: translating 6 of 6 blocks with sonnet
 gold: repairing 1 block(s), round 1
-gold: units.amni ok (6 blocks, 294 Gold words -&gt; 846 Helium words; 2 model calls, $0.19, 36 s)
-</code></pre>
+gold: units.amni ok (6 blocks, 294 Gold words -&gt; 846 Helium words; 2 model calls, $0.19, 36 s)</code></pre>
 <h2 id="where-to-go-next">Where to go next</h2>
 <ul>
 <li><a href="/api-library/gold/commands">Commands</a>: everything the <code>gold</code> command can do.</li>
@@ -163,18 +158,18 @@ gold: units.amni ok (6 blocks, 294 Gold words -&gt; 846 Helium words; 2 model ca
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g" open><summary>Gold</summary>
 <ul>
@@ -184,8 +179,7 @@ gold: units.amni ok (6 blocks, 294 Gold words -&gt; 846 Helium words; 2 model ca
 <li><a href="#your-first-program">Your first program</a></li>
 <li><a href="#a-real-program">A real program</a></li>
 <li><a href="#where-to-go-next">Where to go next</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href="/api-library/gold/commands">Commands</a></li>
 <li><a href="/api-library/gold/format">File format</a></li>
 <li><a href="/api-library/gold/settings">Settings</a></li>

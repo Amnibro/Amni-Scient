@@ -915,7 +915,7 @@ gfx::CSh	type	gfx	/api-library/helium/lib/gfx#CSh	C-layout struct for shader cre
 gfx::CVB	type	gfx	/api-library/helium/lib/gfx#CVB	C-layout struct describing a vertex buffer binding description.	int
 gfx::CVA	type	gfx	/api-library/helium/lib/gfx#CVA	C-layout struct describing a vertex attribute.	int
 gfx::CCTD	type	gfx	/api-library/helium/lib/gfx#CCTD	C-layout struct describing a color target's format and blend state.	int
-gfx::CGP	type	gfx	/api-library/helium/lib/gfx#CGP	C-layout struct for graphics pipeline creation parameters passed to the GPU backend.	int
+gfx::CGP	type	gfx	/api-library/helium/lib/gfx#CGP	Raw C struct describing a graphics pipeline creation request, laid out for the SDL GPU call and not used directly by programs.	int
 gfx::CCP	type	gfx	/api-library/helium/lib/gfx#CCP	C-layout struct for compute pipeline creation parameters passed to the GPU backend.	int
 gfx::CVP	type	gfx	/api-library/helium/lib/gfx#CVP	C-layout struct describing a viewport rectangle and depth range.	int
 gfx::CRect	type	gfx	/api-library/helium/lib/gfx#CRect	C-layout struct describing an integer rectangle for scissor regions.	int
@@ -1194,7 +1194,7 @@ gfx::get_shader	function	gfx	/api-library/helium/lib/gfx#get_shader	Returns the 
 gfx::infmt	function	gfx	/api-library/helium/lib/gfx#infmt	Maps a shader input type code to its default vertex format code.	int
 gfx::inkind	function	gfx	/api-library/helium/lib/gfx#inkind	Returns a character telling whether a shader input type is integer, unsigned or float.	int
 gfx::vertex_layout	function	gfx	/api-library/helium/lib/gfx#vertex_layout	Builds the vertex attributes and buffer descriptions of a pipeline from its vertex shader inputs, returning false on a bad format override.	int
-gfx::cctd	function	gfx	/api-library/helium/lib/gfx#cctd	Builds a color target blend description for a texture format and blend mode.	int
+gfx::cctd	function	gfx	/api-library/helium/lib/gfx#cctd	Builds the raw C color-target description for a blend mode, format and optional RGB write mask, for pipeline creation.	int
 gfx::teq	function	gfx	/api-library/helium/lib/gfx#teq	Returns whether two render target configurations are equal.	int
 gfx::pipeline_for	function	gfx	/api-library/helium/lib/gfx#pipeline_for	Returns the GPU pipeline for a pipeline index and the current targets, creating it if needed, or 0 on failure.	int
 gfx::create_pipeline	function	gfx	/api-library/helium/lib/gfx#create_pipeline	Creates a graphics pipeline from vertex and fragment shader blobs and a description, returning a zero handle on failure.	pub
@@ -1268,6 +1268,8 @@ s3d::Look	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Look	Tone and blo
 s3d::NodeOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#NodeOv	Record of a per-item node override holding translation, rotation and scale applied when posing.	pub
 s3d::WeightOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#WeightOv	Record of a per-item morph weight override for one node and weight index.	pub
 s3d::Item	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Item	Placed instance of a glTF asset with transform, animation state, blending and tracked nodes.	pub
+s3d::InstSet	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#InstSet	Record describing one set of instanced copies of an asset, with its range, LOD, bounds and visibility lists.	int
+s3d::Wind	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Wind	Wind settings holding direction, strength, speed and time, used to sway foliage.	pub
 s3d::Batch	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Batch	Flattened per-primitive draw record with matrices and sort depth, built from the item list each frame.	int
 s3d::DrawU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DrawU	Uniform block holding per-draw matrices, deformation and motion data for the shader.	int
 s3d::FrameU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FrameU	Uniform block of per-frame data: cascades, sun, sky, lights and probe volume.	int
@@ -1384,6 +1386,10 @@ s3d::multiscatter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#multi
 s3d::furnace_scale	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_scale	Test hook scaling the direct light; 1.0 in normal use.	int
 s3d::furnace_mode	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_mode	Test hook selecting deliberately faulty furnace behaviors; 0 in normal use.	int
 s3d::test_rect_naive	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_rect_naive	Test hook that selects the naive rectangular light path; false in normal use.	int
+s3d::alpha_to_coverage	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#alpha_to_coverage	Flag enabling alpha-to-coverage for cut-out surfaces.	pub
+s3d::mip_bias	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias	Texture mip level bias applied when sampling, in mip levels.	pub
+s3d::mip_bias_auto	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias_auto	Flag that lets the renderer choose the mip bias automatically.	pub
+s3d::test_morph_still	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_morph_still	Test hook that holds morph targets still.	int
 s3d::temporal	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal	Selects temporal accumulation: 0 is off unless the output is upscaled, 1 is on.	pub
 s3d::temporal_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_blend	Weight of a new frame on a still pixel in temporal accumulation.	pub
 s3d::temporal_motion	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_motion	Extra weight per output pixel of motion in temporal accumulation.	pub
@@ -1420,6 +1426,8 @@ s3d::width	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#width	Curren
 s3d::height	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#height	Current render height in pixels.	int
 s3d::pipe_lit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit	GPU pipeline for lit single-sided opaque and cut-out surfaces.	int
 s3d::pipe_lit_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit_two	GPU pipeline for lit double-sided surfaces.	int
+s3d::pipe_cut	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cut	Pipeline for drawing cut-out surfaces.	int
+s3d::pipe_cut_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cut_two	Pipeline for drawing double-sided cut-out surfaces.	int
 s3d::pipe_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend	GPU pipeline for blended surfaces.	int
 s3d::pipe_blend_back	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend_back	Pipeline drawing blended surface back faces.	int
 s3d::pipe_trans_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_trans_copy	Pipeline that copies the scene color for transmissive surfaces to sample.	int
@@ -1545,6 +1553,30 @@ s3d::ibuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ibuf	GPU inde
 s3d::mbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mbuf	GPU buffer holding morph target data.	int
 s3d::jbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#jbuf	GPU storage buffer holding joint matrices for skinned meshes.	int
 s3d::jbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#jbuf_cap	Current capacity of the joint buffer.	int
+s3d::instances	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instances	List of instance sets added to the scene.	int
+s3d::inst_m	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_m	Per-instance model matrices for all instance sets.	int
+s3d::inst_c	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_c	Per-instance bounding spheres, stored as center and radius.	int
+s3d::inst_ids	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_ids	Per-instance ids of the instances that passed culling.	int
+s3d::inst_t0	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t0	Per-instance data array for the first texture-related shader input.	int
+s3d::inst_t1	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t1	Per-instance data array for the second texture-related shader input.	int
+s3d::inst_t2	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t2	Per-instance data array for the third texture-related shader input.	int
+s3d::inst_t3	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t3	Per-instance data array for the fourth texture-related shader input.	int
+s3d::inst_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_dirty	Flag marking instance data as needing re-upload or re-culling.	int
+s3d::inst_all	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_all	Flag that draws every instance, bypassing culling results.	int
+s3d::instance_cull	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_cull	Flag that turns culling of individual instances on or off.	pub
+s3d::xbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#xbuf	GPU buffer holding instance transform data.	int
+s3d::xbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#xbuf_cap	Current capacity of the instance transform buffer.	int
+s3d::idbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf	GPU buffer holding visible instance ids.	int
+s3d::idbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf_cap	Current capacity of the instance id buffer.	int
+s3d::fr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fr	Six frustum planes used for instance culling.	int
+s3d::wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind-2	Current wind settings that drive foliage sway.	pub
+s3d::wind_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_prev	Previous frame's wind value kept for motion vectors.	int
+s3d::wind_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_fresh	Flag marking that no previous wind state exists yet.	int
+s3d::wind_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_u	Wind values packed for upload to shaders.	int
+s3d::pushers	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pushers	List of float4 pusher values that displace swaying foliage.	pub
+s3d::prev_pushers	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#prev_pushers	Previous frame's pushers kept for motion vectors.	int
+s3d::push_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#push_u	Pusher values packed for shader upload.	int
+s3d::ppush_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ppush_u	Previous frame's pusher values packed for shader upload.	int
 s3d::uploaded_verts	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_verts	Vertex count last uploaded to the GPU, or -1 if none.	int
 s3d::uploaded_indices	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_indices	Index count last uploaded to the GPU, or -1 if none.	int
 s3d::uploaded_morphs	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_morphs	Morph data count last uploaded to the GPU, or -1 if none.	int
@@ -1562,6 +1594,10 @@ s3d::prev_joints	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#prev_j
 s3d::cur_keys	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_keys	Keys of this frame's per-node entries, saved for the next frame.	int
 s3d::cur_models	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_models	This frame's model matrices per node, saved for the next frame.	int
 s3d::cur_bases	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_bases	This frame's joint palette base offsets per node, saved for the next frame.	int
+s3d::cur_wb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_wb	Current frame's morph weight base offsets per draw.	int
+s3d::prev_wb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#prev_wb	Previous frame's morph weight base offsets per draw.	int
+s3d::cur_w	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_w	Current frame's morph weights.	int
+s3d::old_w	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#old_w	Previous frame's morph weights.	int
 s3d::cascade_end	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_end	Far view distances of each shadow cascade, passed to the shader.	int
 s3d::cascade_vp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_vp	Light-space view-projection matrices, one per shadow cascade.	int
 s3d::cascade_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_live	Number of sun shadow cascades currently in use.	int
@@ -1572,6 +1608,16 @@ s3d::x4	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#x4	Builds a flo
 s3d::none	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#none	Returns a null texture handle.	int
 s3d::add	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add	Adds an asset instance to the scene and returns its item index.	pub
 s3d::place	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#place	Sets the world placement matrix of a scene item.	pub
+s3d::corner	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#corner	Returns one of the eight corners of a box, selected by the low three bits of k.	int
+s3d::asset_box	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#asset_box	Returns the minimum and maximum corners of an asset's bounding box in its rest pose.	pub
+s3d::sway	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sway	Makes an item sway in the wind by the given amount, using its asset's top height.	pub
+s3d::inst_bound	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_bound	Recomputes the bounding sphere of one instance from its matrix.	int
+s3d::add_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_instances	Adds a set of instances of an asset from model matrices and returns the set index.	pub
+s3d::set_instance	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_instance	Replaces one instance's matrix in a set and updates its bounds.	pub
+s3d::clear_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clear_instances	Removes all instance sets and their matrices.	pub
+s3d::instance_drawn	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_drawn	Returns how many instances of a set were drawn at the given LOD.	pub
+s3d::instance_list	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_list	Returns the indices of instances of a set drawn at the given LOD.	pub
+s3d::instance_triangles	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_triangles	Returns the triangle count drawn for an instance set across its LODs.	pub
 s3d::animate	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#animate	Plays an animation on an item at the given time, cancelling any crossfade.	pub
 s3d::crossfade	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#crossfade	Blends two animations on an item, with weight w applied to the target animation.	pub
 s3d::bend	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bend	Applies an extra rotation to one node of an item on top of its animation.	pub
@@ -1643,9 +1689,11 @@ s3d::find_prev	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#find_pre
 s3d::in_view	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#in_view	Returns whether a bounding box is at least partly inside the view frustum.	int
 s3d::atmosphere	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#atmosphere	Sets the sun direction, color and sky from a sun direction, power, haze and cloud amount.	pub
 s3d::item_lights	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_lights	Registers or updates the lights defined by an item's glTF nodes, and applies any directional light to the sun.	int
+s3d::frustum	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#frustum	Extracts the six normalized frustum clip planes from a view-projection matrix for culling instances against the camera.	int
+s3d::gather_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather_instances	Flattens instance sets into per-frame draw batches, culling against the view frustum, splitting LODs, and uploading instance ids and transforms to GPU buffers.	int
 s3d::gather	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather	Flattens visible items into draw batches with poses, joint palettes and previous-frame transforms.	int
 s3d::forward	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forward	Returns the unit vector from the camera eye toward its target.	int
-s3d::mw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mw	Returns the morph target weight at index j for a node, or 0 when j is beyond the target count.	int
+s3d::mw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mw	Returns a morph target weight from a pool, or 0.0 when the base is negative or the index is out of range.	int
 s3d::draw_uniforms	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_uniforms	Builds per-draw uniform data for a batch, including morph weights and previous transforms.	int
 s3d::bind_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bind_geometry	Binds the shared vertex, index and storage buffers for geometry drawing.	int
 s3d::draw_prim	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_prim	Draws one primitive's indexed geometry from a batch.	int
@@ -1657,6 +1705,7 @@ s3d::image_avg	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_av
 s3d::gi_scene	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_scene	Builds the ray-tracing scene from batch geometry and sets up the irradiance probe grid.	int
 s3d::gi_rot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rot	Returns a pseudo-random rotation uniform for the given probe update index.	int
 s3d::gi_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_pass	Runs compute passes that trace probe rays and update irradiance and distance data.	int
+s3d::signed_range	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#signed_range	Returns a light's range as positive, or negative when its falloff mode is 1, clamped to at least 0.01.	int
 s3d::light_upload	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_upload	Uploads the light list and its camera-cluster assignments to GPU storage buffers, growing them when needed.	int
 s3d::gi_bind	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_bind	Binds ray-tracing and probe storage buffers, or dummy buffers when unavailable.	int
 s3d::shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_pass	Renders the sun shadow cascades into the depth map from the batch.	int
@@ -1671,6 +1720,9 @@ s3d::ssr_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_pass	
 s3d::ssgi_live	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssgi_live	Returns whether screen-space GI is active, meaning it is enabled while baked GI and probe capture are off.	int
 s3d::ssgi_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssgi_pass	Traces, accumulates and upsamples screen-space indirect light each frame, publishing the result to the frame uniforms when it succeeds.	int
 s3d::ssr_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_capture	Copies the resolved color into a mipmapped image for reflections to sample next frame.	int
+s3d::cut_cover	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_cover	Returns whether a material is alpha-masked and alpha-to-coverage is enabled, so cut-out edges use coverage.	int
+s3d::lit_pipe	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lit_pipe	Picks the lit pipeline for a material, using the cut-out variant when alpha-to-coverage applies and the two-sided variant when double sided.	int
+s3d::mip_scale	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_scale	Returns the texture mip scale from the output-to-render width ratio when auto bias is on, combined with the manual mip bias.	int
 s3d::surface_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#surface_of	Builds the surface uniform data from a material.	int
 s3d::draw_lit	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_lit	Draws one batch item with lit shading, binding its uniforms and textures.	int
 s3d::trans_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_capture	Copies the scene color into a mipmapped texture that transmissive materials sample for refraction.	int
@@ -1801,6 +1853,7 @@ shapes::vertex	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#vertex	App
 shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wraps the most recently added vertices and indices into a one-node asset and returns its asset index.	int
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
+shapes::blade	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#blade	Builds a flat, double-sided tapered strip mesh of given height, base width and tip width, split into segments, and returns its asset id.	pub
 shapes::cube	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#cube	Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.	pub
 motion::MAX_WEIGHTS	constant	gfx/motion	/api-library/helium/lib/gfx-motion#MAX_WEIGHTS	Constant giving the maximum number of morph target weights stored per node in the pose weight array.	pub
 motion::pose_t	constant	gfx/motion	/api-library/helium/lib/gfx-motion#pose_t	Per-node translation array of the current pose, indexed like glTF nodes.	int

@@ -210,7 +210,7 @@ function sdlgpu(R) {
     for (let k = 0; k < s.n[5]; k++, o += 4) s.usz.push(u32(o));
     o += 2 * b[7]; for (let k = u16(64); k > 0; k--, o += 4) s.binds.push({ group: b[o], binding: b[o + 1], kind: b[o + 2], info: b[o + 3] });
     for (const [, gr, bi, d] of s.wgsl.matchAll(/@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s*\w+\s*:\s*texture_storage_(2d_array|2d|3d)/g)) s.dims[gr + ' ' + bi] = d.replace('_', '-');
-    s.nofilt = new Set([...s.wgsl.matchAll(/@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*texture_(?:2d|2d_array|3d|cube|cube_array)<f32>/g)].filter(([, , , v]) => !new RegExp(`texture(Sample\\w*|Gather\\w*)\\(\\s*(\\d+\\s*,\\s*)?${v}\\b`).test(s.wgsl)).map(([, gr, bi]) => gr + ' ' + bi));
+    s.nofilt = new Set([...s.wgsl.matchAll(/@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*texture_(?:2d|2d_array|3d|cube|cube_array)<f32>/g)].filter(([, , , v]) => !new RegExp(`\\b${v}\\s*,\\s*(${[...s.wgsl.matchAll(/(\w+)\s*:\s*sampler\b/g)].map(x => x[1]).join('|') || '\\B\\b'})\\b`).test(s.wgsl)).map(([, gr, bi]) => gr + ' ' + bi));
     return s;
   };
   const role = (b, sh, comp) => {
@@ -321,7 +321,7 @@ function sdlgpu(R) {
       for (let i = 0; i < r32(p, 144); i++) { const c = r64(p, 136) + 36 * i, eb = m[c + 29]; tg.push({ format: F[s32(c, 0)][0], writeMask: m[c + 30] ? m[c + 28] : 15, blend: eb ? { color: { srcFactor: BF[s32(c, 4)], dstFactor: BF[s32(c, 8)], operation: BO[s32(c, 12)] }, alpha: { srcFactor: BF[s32(c, 16)], dstFactor: BF[s32(c, 20)], operation: BO[s32(c, 24)] } } : undefined }); }
       for (let i = 0; i < bufs.length; i++) bufs[i] ||= null;
       const prim = s32(p, 48), ds = m[q + 152] ? { format: F[s32(p, 148)][0], depthWriteEnabled: !!m[q + 131], depthCompare: m[q + 130] ? CMP[s32(p, 92)] : 'always', depthBias: m[q + 76] ? Math.round(rf(p, 64)) : 0, depthBiasSlopeScale: m[q + 76] ? rf(p, 72) : 0, depthBiasClamp: m[q + 76] ? rf(p, 68) : 0 } : undefined;
-      return nh({ g: dev.createRenderPipeline({ layout: L.pl, vertex: { module: vs.mod, entryPoint: 'main', buffers: bufs }, fragment: { module: fs.mod, entryPoint: 'main', targets: tg }, primitive: { topology: TOPO[prim], cullMode: ['none', 'front', 'back'][s32(p, 56)], frontFace: s32(p, 60) ? 'cw' : 'ccw', stripIndexFormat: prim === 1 || prim === 3 ? 'uint32' : undefined }, depthStencil: ds, multisample: { count: MS(s32(p, 80)) } }), gs: L.gs });
+      return nh({ g: dev.createRenderPipeline({ layout: L.pl, vertex: { module: vs.mod, entryPoint: 'main', buffers: bufs }, fragment: { module: fs.mod, entryPoint: 'main', targets: tg }, primitive: { topology: TOPO[prim], cullMode: ['none', 'front', 'back'][s32(p, 56)], frontFace: s32(p, 60) ? 'cw' : 'ccw', stripIndexFormat: prim === 1 || prim === 3 ? 'uint32' : undefined }, depthStencil: ds, multisample: { count: MS(s32(p, 80)), alphaToCoverageEnabled: !!m[q + 89] && MS(s32(p, 80)) > 1 } }), gs: L.gs });
     },
     SDL_ReleaseGPUGraphicsPipeline: (d, h) => del(h),
     SDL_CreateGPUComputePipeline: (d, p) => { if (r32(p, 24) !== 64) return fail('gfx on the web takes WGSL shaders (format 64)'); const s = blob(r64(p, 8), r64(p, 0)); if (!s || !s.wgsl) return fail('a compute shader with no WGSL'); const L = layout([s]); return nh({ g: dev.createComputePipeline({ layout: L.pl, compute: { module: dev.createShaderModule({ code: s.wgsl }), entryPoint: 'main' } }), gs: L.gs }); },

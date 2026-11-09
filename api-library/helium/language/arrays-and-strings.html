@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/language/arrays-and-strings">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/language/arrays-and-strings">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=37515e8ec7">
+<link rel="stylesheet" href="/api-library/lib.css?v=cf9559ffc6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=37515e8ec7'; start({wasm: '/api-library/search.wasm?v=37515e8ec7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cf9559ffc6'; start({wasm: '/api-library/search.wasm?v=cf9559ffc6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,9 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>Arrays and strings</h1>
 <div class="lib-tw"><table>
-<thead><tr><th>Type</th><th>Size behavior</th></tr></thead>
+<thead>
+<tr><th>Type</th><th>Size behavior</th></tr>
+</thead>
 <tbody>
 <tr><td><code>T[k]</code></td><td>fixed, k elements</td></tr>
 <tr><td><code>T[]</code>, <code>T[varint]</code></td><td>sized at construction, then frozen</td></tr>
@@ -112,7 +114,8 @@
 <tr><td><code>T[&gt;..]</code></td><td>grow-only, the default growable array; elements never move</td></tr>
 <tr><td><code>T[&gt;..&lt;]</code></td><td>grow-shrink: stacks, queues, heaps</td></tr>
 <tr><td><code>T[:]</code></td><td>slice: a view of any array kind, never a copy</td></tr>
-</tbody></table></div>
+</tbody>
+</table></div>
 <p>Members: <code>.len .cap .push(v) .append(xs) .pop() .pop_n(n) .resize(n, v) .clear() .index_of(ref)</code>. <code>push</code> returns a reference to the new element. Slicing <code>a[x..y]</code>, <code>a[..y]</code>, <code>a[^2..]</code> (last two). Literals: <code>[1, 2, 3]</code>, <code>[0; 16]</code>, <code>[]</code>. <code>var out = [];</code> takes its element type from the first push.</p>
 <p>A string is any <code>byte</code> array: <code>byte[&gt;..]</code> builder, <code>byte[]</code> finished, <code>byte[..16]</code> small inline, <code>const byte[:]</code> view (string literals). <code>'a'</code> is an integer. Strings compare with <code>==</code>.</p>
 <pre><code>fn main() {
@@ -126,8 +129,7 @@
 	let parts = split(&quot;alice,30,paris&quot;, ',');
 	let n, ok = parse_int(trim(&quot; 30 &quot;));
 	print(s, &quot; &quot;, stack, &quot; &quot;, top, &quot; &quot;, parts, &quot; &quot;, n, &quot; &quot;, ok, &quot; &quot;, s[..5], &quot; &quot;, words(&quot; go  north &quot;));
-}
-</code></pre>
+}</code></pre>
 <p>Rules that cause most errors:</p>
 <ul>
 <li>Only one resizable array (<code>T[&gt;..]</code>, <code>T[&gt;..&lt;]</code>) per struct, as its last field; never as an array element. Use <code>T[]</code> or <code>T[..k]</code> inside elements: <code>byte[][&gt;..]</code> is a list of strings.</li>
@@ -145,18 +147,18 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>1219</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
-<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
-<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
-<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
-<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1272</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
