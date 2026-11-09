@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Gold &mdash; Plain English In, Checked Helium Out | AMNI-SCIENT</title>
-<meta name="description" content="Gold turns plain English into checked, native Helium. Six Amni apps rewritten in Gold use 51% fewer tokens than the original code and give the same answers on 3,265 test inputs. Usage guide, API reference and benchmarks.">
+<meta name="description" content="Gold turns plain English into checked, native Helium. Six Amni apps rewritten in Gold use 53% fewer tokens than the original code and give the same answers on 3,265 test inputs. Usage guide, API reference and benchmarks.">
 <meta name="keywords" content="gold,helium language,phrase to code,natural language programming,compiled language,verified code generation">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Gold &mdash; Plain English In, Checked Helium Out">
@@ -118,7 +118,7 @@
 <h2>WHAT IT IS</h2>
 <p class="lead">Gold is plain English that compiles to <a href="https://github.com/Amnibro/helium">Helium</a>, our compiled language. You describe what a program or a product feature does, one short block at a time. Gold finds the functions your product already has, has an AI model write the Helium, checks it with the Helium compiler (types, memory safety, and the exact output when you give one), fixes compile errors on its own, and saves the result so the same Gold always builds the same program.</p>
 <div class="card-grid">
-<div class="card"><p class="stat">51% fewer</p><p>tokens for an AI to read than the original code, across six real apps</p></div>
+<div class="card"><p class="stat">53% fewer</p><p>tokens for an AI to read than the original code, across six real apps</p></div>
 <div class="card"><p class="stat">3,265 / 3,265</p><p>test inputs give the same answer as the original</p></div>
 <div class="card"><p class="stat">1&ndash;2</p><p>model calls for a typical build; unchanged blocks are reused from the lock file</p></div>
 </div>
@@ -126,39 +126,40 @@
 <section id="usage">
 <h2>HOW TO USE IT</h2>
 <p class="lead">Write a <code>.gold</code> file: a few header lines, then one block of plain English per function or type. Run <code>gold build</code>. Below is a real file from our Amni-CAD rewrite, the JavaScript it replaced, and the Helium Gold wrote from it. All 1,298 test inputs give the same text as the original.</p>
-<div class="uv"><input type="radio" name="uv" id="uv0" checked><label for="uv0">Gold (991 tokens)</label><input type="radio" name="uv" id="uv1"><label for="uv1">Original JavaScript (1,148 tokens)</label><input type="radio" name="uv" id="uv2"><label for="uv2">Helium that Gold wrote (first 45 of 131 lines)</label><div class="uvb"><code class="code uvp uvp0">into units.amni
+<div class="uv"><input type="radio" name="uv" id="uv0" checked><label for="uv0">Gold (939 tokens)</label><input type="radio" name="uv" id="uv1"><label for="uv1">Original JavaScript (1,148 tokens)</label><input type="radio" name="uv" id="uv2"><label for="uv2">Helium that Gold wrote (first 45 of 102 lines)</label><div class="uvb"><code class="code uvp uvp0">into units.amni
 use os, math
 dialect js
 
-`SYS` = &quot;us&quot;, or &quot;si&quot; if file `amnicad.sys` holds &quot;si&quot; (trimmed). `sys()` -&gt; SYS. `set_sys(s)`: SYS = s==&quot;si&quot; ? &quot;si&quot; : &quot;us&quot;, then try writing SYS to that file.
+The unit system `SYS` is &quot;si&quot; if the file amnicad.sys holds &quot;si&quot; once trimmed, else &quot;us&quot;. `sys` returns it. `set_sys` sets it to &quot;si&quot; for &quot;si&quot; and &quot;us&quot; for anything else, then tries to save it to that file, ignoring failure.
 
-`MM_PER`: in 25.4, mm 1. `doc_units(u)`: u==&quot;in&quot; ? &quot;in&quot; : &quot;mm&quot;. `mm_per(u)` = MM_PER[doc_units(u)].
+`doc_units` gives &quot;in&quot; for &quot;in&quot; and &quot;mm&quot; for anything else. `mm_per` gives the millimeters per document unit: 25.4 for inches, 1 for millimeters.
 
-`nf(v real, d int = -1)` -&gt; new string: &quot;—&quot; if not finite, else JS `(+v.toFixed(d)||0).toLocaleString(&#x27;en-US&#x27;,{maximumFractionDigits:d})`; d=-1 means by |v|: ≥1000 0, ≥100 1, ≥10 2, ≥1 3, ≥0.01 4, else 5.
+`nf` shows a number with some decimals, by default -1, as a new string. A non-finite number shows &quot;—&quot;. With -1, the size of the number picks the decimals: 0 from 1000 up, 1 from 100, 2 from 10, 3 from 1, 4 from 0.01, else 5. Round like toFixed, drop a negative zero, then print like en-US toLocaleString with at most that many decimals.
 
-Struct `Unit { label const byte[:], factor real, offset real }`. `unit_entry(q, s)` -&gt; Unit, aborts &quot;unknown quantity&quot; for unknown q. Per q: si label factor; us label factor [offset]:
-- len: mm 1; in 1/25.4
-- area: mm² 1; in² 1/645.16
-- vol: cm³ 1e-3; in³ 1/16387.064
-- mass: kg 1; lb 2.2046226
-- force: N 1; lbf 0.22480894
-- press, stress: MPa 1; psi 145.03774
-- modulus: GPa 1e-3; Msi 1.4503774e-4
-- torque: N·mm 1; lbf·in 0.0088507458
-- temp: °C 1; °F 1.8 offset 32
-- dtemp: K 1; °F 1.8
-- power: W 1; BTU/hr 3.4121416
-- film: W/m²K 1; BTU/hr·ft²·°F 0.17611016
-- cond: W/m·K 1; BTU/hr·ft·°F 0.57782155
-- speed: m/s 1; mph 2.2369363
-- dens: kg/m³ 1; lb/in³ 3.6127292e-5
-- accel: m/s² 1; ft/s² 3.2808399
-- freq: Hz 1; Hz 1
-- pa: Pa 1; psf 0.020885434
+`unit_entry` gives a quantity&#x27;s label, factor and offset in a system, &quot;si&quot; or &quot;us&quot;. An unknown quantity aborts with &quot;unknown quantity&quot;. Metric factors are 1 and offsets are 0 unless shown.
+quantity | si | factor | us | factor | offset
+len | mm | | in | 1/25.4
+area | mm² | | in² | 1/645.16
+vol | cm³ | 1e-3 | in³ | 1/16387.064
+mass | kg | | lb | 2.2046226
+force | N | | lbf | 0.22480894
+press, stress | MPa | | psi | 145.03774
+modulus | GPa | 1e-3 | Msi | 1.4503774e-4
+torque | N·mm | | lbf·in | 0.0088507458
+temp | °C | | °F | 1.8 | 32
+dtemp | K | | °F | 1.8
+power | W | | BTU/hr | 3.4121416
+film | W/m²K | | BTU/hr·ft²·°F | 0.17611016
+cond | W/m·K | | BTU/hr·ft·°F | 0.57782155
+speed | m/s | | mph | 2.2369363
+dens | kg/m³ | | lb/in³ | 3.6127292e-5
+accel | m/s² | | ft/s² | 3.2808399
+freq | Hz | | Hz | 1
+pa | Pa | | psf | 0.020885434
 
-With u = unit_entry(q, s): `conv(q, v, s)` = v*u.factor + u.offset; `back(q, v, s)` = (v - u.offset)/u.factor; `unit_of(q, s = SYS)` = u.label; `to_si(q, v)` = back(q, v, SYS); `from_si(q, v)` = conv(q, v, SYS).
+`conv` turns a metric value into a system&#x27;s unit: times the factor, plus the offset. `back` undoes it: minus the offset, divided by the factor. `to_si` and `from_si` do the same for the current system. `unit_of` gives the label in a system, by default the current one.
 
-`one(q, v, s = SYS, d = -1)` -&gt; new string: nf(conv(q, v, s), d) + &quot; &quot; + unit_of(q, s). `dual(q, v, d = -1)`: one(q, v, SYS, d) + &quot; (&quot; + one(q, v, other system, d) + &quot;)&quot;.</code><code class="code uvp uvp1">export const MM_PER={in:25.4,mm:1};
+`one` shows a metric value in a system (default current) with some decimals (default -1): the `nf` of the converted value, a space and the label. `dual` shows it in the current system, then the other in parentheses, like `2 in (50.8 mm)`.</code><code class="code uvp uvp1">export const MM_PER={in:25.4,mm:1};
 let SYS=&#x27;us&#x27;;try{SYS=localStorage.getItem(&#x27;amnicad.sys&#x27;)||&#x27;us&#x27;;}catch{}
 export const sys=()=&gt;SYS;
 export function setSys(s){SYS=s===&#x27;si&#x27;?&#x27;si&#x27;:&#x27;us&#x27;;try{localStorage.setItem(&#x27;amnicad.sys&#x27;,SYS);}catch{}}
@@ -193,65 +194,64 @@ export const fromSI=(q,v)=&gt;conv(q,v,SYS);
 export function one(q,vSI,s=SYS,d){return nf(conv(q,vSI,s),d)+&#x27; &#x27;+Q[q][s][0];}
 export function dual(q,vSI,d){const a=SYS,b=a===&#x27;us&#x27;?&#x27;si&#x27;:&#x27;us&#x27;;return one(q,vSI,a,d)+&#x27; (&#x27;+one(q,vSI,b,d)+&#x27;)&#x27;;}</code><code class="code uvp uvp2">import os;
 import math;
+import tiles.js;
 var SYS byte[&gt;..];
-var SYS_INIT bool = false;
-fn init_sys() {
-	if SYS_INIT { return; }
-	SYS_INIT = true;
-	var b byte[&gt;..] = [];
-	var si = false;
-	if read_file(&quot;amnicad.sys&quot;, b) {
-		if trim(b) == &quot;si&quot; { si = true; }
-	}
+var sys_loaded bool = false;
+fn load_sys() {
+	sys_loaded = true;
 	SYS.clear();
-	SYS.append(if si { &quot;si&quot; } else { &quot;us&quot; });
+	var buf byte[&gt;..] = [];
+	if read_file(&quot;amnicad.sys&quot;, buf) &amp;&amp; trim(buf) == &quot;si&quot; { SYS.append(&quot;si&quot;); } else { SYS.append(&quot;us&quot;); }
 }
 fn sys() const byte[:] {
-	init_sys();
-	SYS[0..SYS.len]
+	if !sys_loaded { load_sys(); }
+	SYS
 }
 fn set_sys(s const byte[:]) {
-	SYS_INIT = true;
-	let si = s == &quot;si&quot;;
+	sys_loaded = true;
 	SYS.clear();
-	SYS.append(if si { &quot;si&quot; } else { &quot;us&quot; });
-	let ok = write_file(&quot;amnicad.sys&quot;, SYS[0..SYS.len]);
+	if s == &quot;si&quot; { SYS.append(&quot;si&quot;); } else { SYS.append(&quot;us&quot;); }
+	write_file(&quot;amnicad.sys&quot;, SYS);
 }
 fn doc_units(u const byte[:]) const byte[:] {
 	if u == &quot;in&quot; { &quot;in&quot; } else { &quot;mm&quot; }
 }
 fn mm_per(u const byte[:]) real {
-	if doc_units(u) == &quot;in&quot; { 25.4 } else { 1.0 }
+	if u == &quot;in&quot; { 25.4 } else { 1.0 }
 }
-fn nf(v real, d int = -1) byte[&gt;..] {
+fn nf(x real, d int = -1) byte[&gt;..] {
 	var out byte[&gt;..] = [];
-	if !is_finite(v) {
+	if !is_finite(x) {
 		out.append(&quot;—&quot;);
 		return out;
 	}
-	var dd = d;
-	if dd &lt; 0 {
-		let a = abs(v);
-		dd = if a &gt;= 1000.0 { 0 } else if a &gt;= 100.0 { 1 } else if a &gt;= 10.0 { 2 } else if a &gt;= 1.0 { 3 } else if a &gt;= 0.01 { 4 } else { 5 };
+	var dec = d;
+	if dec &lt; 0 {
+		let a = fabs(x);
+		dec = if a &gt;= 1000.0 { 0 } else if a &gt;= 100.0 { 1 } else if a &gt;= 10.0 { 2 } else if a &gt;= 1.0 { 3 } else if a &gt;= 0.01 { 4 } else { 5 };
 	}
-	var t byte[&gt;..] = [];
-	format_flt(t, v, dd, true);</code></div></div>
+	let fixed = js::to_fixed(x, dec);
+	var v, ok = parse_flt(fixed);
+	if v == 0.0 { v = 0.0; }
+	return js::locale_string(v, dec);
+}
+fn unit_entry(q const byte[:], s const byte[:]) const byte[:], real, real {
+	let si = s == &quot;si&quot;;</code></div></div>
 <p class="label">IN THE TERMINAL</p>
 <code class="code">$ gold build units.gold
 gold: translating 6 of 6 blocks with sonnet
-gold: repairing 1 block(s), round 1
-gold: units.amni ok (6 blocks, 294 Gold words -&gt; 846 Helium words; 2 model calls, $0.19, 36 s)
+gold: units.amni ok (6 blocks, 410 Gold words -&gt; 765 Helium words; 1 model calls, 18279 in / 3754 out tokens, $0.1107, 23 s)
 $ gold run units.gold
 $ gold test units.gold</code>
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>Step</th><th>What you do</th></tr></thead>
 <tbody>
 <tr><td>1. Header</td><td><code>use</code> the product (or Helium library modules) whose functions the code should call, <code>into</code> the file to write, and optionally <code>dialect js</code> (or rust, python, java, kotlin, numpy) when you port code, so that language's number and rounding rules apply everywhere without being spelled out.</td></tr>
-<tr><td>2. Blocks</td><td>One block per unit, separated by blank lines. Say what it does: inputs, result, rules, formats, edge cases. Put exact names in backticks only when other code calls them.</td></tr>
+<tr><td>2. Blocks</td><td>One block per unit, separated by blank lines. Say what it does in plain English: inputs, result, rules, formats, edge cases. Put exact names in backticks only when other code calls them. For a port, name the original built-in (Python&#x27;s <code>int()</code>, JavaScript&#x27;s <code>toFixed</code>) and Gold calls Helium&#x27;s tested copy of it.</td></tr>
 <tr><td>3. Build</td><td><code>gold build f.gold</code> writes checked Helium. Edit one block and rebuild: only that block goes back to the model.</td></tr>
 <tr><td>4. Check</td><td><code>gold run</code>, <code>gold test</code>, or an <code>expect:</code> list of exact output lines that Gold runs and repairs against.</td></tr>
 <tr><td>5. Port</td><td><code>gold port app.rs into=src/app.he</code> reads existing code in any language and writes the Gold for it, then builds it.</td></tr>
-<tr><td>6. Shrink</td><td><code>gold compact</code> packs data tables; <code>gold squeeze f.gold check='&lt;cmd&gt;'</code> shortens the Gold and keeps the shorter version only if a fresh rebuild still passes your check.</td></tr>
+<tr><td>6. Shrink</td><td><code>gold compact</code> packs data tables; <code>gold squeeze f.gold check='&lt;cmd&gt;'</code> rewrites the Gold as shorter plain English and keeps the shorter version only if a fresh rebuild still passes your check.</td></tr>
 </tbody></table></div>
 </section>
 <section id="api">
@@ -272,7 +272,8 @@ $ gold test units.gold</code>
 <tr><td><code>gold packs</code></td><td>List the packs.</td></tr>
 <tr><td><code>gold find pack,pack words</code></td><td>Show which functions a sentence would retrieve.</td></tr>
 <tr><td><code>gold compact f.gold</code></td><td>Pack data tables: a first <code>@</code> row of column scales, blank cells repeat the cell above. No model call.</td></tr>
-<tr><td><code>gold squeeze f.gold check='cmd' [rounds=4]</code></td><td>Shorten the Gold as far as it goes; each shorter version is rebuilt from scratch and kept only if the check command passes.</td></tr>
+<tr><td><code>gold squeeze f.gold check='cmd' [rounds=4]</code></td><td>Rewrite the Gold as shorter plain English; each shorter version is rebuilt from scratch and kept only if the check command passes.</td></tr>
+<tr><td><code>gold lint f.gold</code></td><td>List lines that read as code instead of English: operators, signatures, Helium types. <code>gold build</code> stops on them in changed blocks unless <code>GOLD_LINT=warn</code>.</td></tr>
 </tbody></table></div>
 <h3 style="margin-top:2rem">FILE FORMAT</h3>
 <div class="tbl"><table class="spec-table">
@@ -282,7 +283,7 @@ $ gold test units.gold</code>
 <tr><td><code>into path</code></td><td>The file to write, inside the product or absolute.</td></tr>
 <tr><td><code>lang amni|he|py</code></td><td>The Helium flavor to write (default: the <code>into</code> file's, else the product's).</td></tr>
 <tr><td><code>dialect js|rust|python|java|kotlin|numpy</code></td><td>The source language's conventions apply to every block.</td></tr>
-<tr><td>Blocks</td><td>Plain English separated by blank lines, one unit each. Backticks mark exact names and signatures.</td></tr>
+<tr><td>Blocks</td><td>Plain English separated by blank lines, one unit each. Backticks mark exact names.</td></tr>
 <tr><td><code>```amni</code> / <code>```he</code> fence</td><td>Literal Helium, kept as written.</td></tr>
 <tr><td><code>```table fn Type</code> fence</td><td>Data rows, <code>|</code> between cells in field order; <code>"</code> or a blank cell repeats the cell above; <code>''</code> is an empty string. Becomes a <code>fn()</code> returning the rows, without a model call.</td></tr>
 <tr><td><code>expect:</code></td><td>The exact lines a program must print; Gold runs it and repairs until they match.</td></tr>
@@ -299,6 +300,7 @@ $ gold test units.gold</code>
 <tr><td><code>GOLD_K</code></td><td>70</td><td>Product functions shown to the model per build.</td></tr>
 <tr><td><code>GOLD_HELIUM</code>, <code>GOLD_HC</code>, <code>GOLD_HC_LIB</code></td><td>helium checkout</td><td>Which Helium compiler and library to check against.</td></tr>
 <tr><td><code>GOLD_CACHE</code>, <code>GOLD_VERBOSE</code></td><td>~/.cache/gold</td><td>Cache folder; print each step.</td></tr>
+<tr><td><code>GOLD_LINT</code></td><td>off</td><td>Set to <code>warn</code> to build blocks that still read as code.</td></tr>
 </tbody></table></div>
 <h3 style="margin-top:2rem">HELIUM LIBRARY ADDED FOR THE REWRITES</h3>
 <div class="tbl"><table class="spec-table">
@@ -340,28 +342,28 @@ $ gold test units.gold</code>
 <p class="lead">We took the core engine of six Amni apps, had Gold write each one as plain English, and built that into Helium. Every rewrite was run on hundreds of real inputs next to the original and gives the same answers.</p>
 <div class="card-grid">
 <div class="card"><p class="stat">3,265 / 3,265</p><p>test inputs give the same answer as the original</p></div>
-<div class="card"><p class="stat">51% fewer</p><p>tokens for an AI to read than the original code (58,256 vs 118,343)</p></div>
-<div class="card"><p class="stat">5 of 6</p><p>rewrites run faster than the original</p></div>
+<div class="card"><p class="stat">53% fewer</p><p>tokens for an AI to read than the original code (55,525 vs 118,343)</p></div>
+<div class="card"><p class="stat">4 of 6</p><p>rewrites run faster than the original</p></div>
 </div>
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>App (part rewritten)</th><th>Original</th><th class="n">Same answers</th><th class="n">Tokens: original &rarr; Gold</th><th class="n">Speed vs original</th></tr></thead>
 <tbody>
-<tr><td>Amni-Calc (all engineering calculators)</td><td>Rust</td><td class="n">687 / 687</td><td class="n">95,993 &rarr; 45,948 (52% fewer)</td><td class="n">1.10&times; slower</td></tr>
-<tr><td>Amni-Price (shelf-tag price reader)</td><td>Kotlin</td><td class="n">400 / 400</td><td class="n">5,376 &rarr; 3,576 (33% fewer)</td><td class="n">1.2&times; faster</td></tr>
-<tr><td>Amni-Type (swipe-typing decoder)</td><td>Java</td><td class="n">400 / 400</td><td class="n">3,618 &rarr; 1,974 (45% fewer)</td><td class="n">1.4&times; faster</td></tr>
-<tr><td>Amni-Mail (mail rules engine)</td><td>Python</td><td class="n">400 / 400</td><td class="n">6,053 &rarr; 4,276 (29% fewer)</td><td class="n">2.9&times; faster</td></tr>
-<tr><td>Amni-Crypt (Reffelt cipher layer)</td><td>Python + NumPy</td><td class="n">80 / 80</td><td class="n">6,155 &rarr; 1,491 (76% fewer)</td><td class="n">805&times; faster</td></tr>
-<tr><td>Amni-CAD (unit and dimension text)</td><td>JavaScript (Node.js)</td><td class="n">1,298 / 1,298</td><td class="n">1,148 &rarr; 991 (14% fewer)</td><td class="n">25&times; faster</td></tr>
+<tr><td>Amni-Calc (all engineering calculators)</td><td>Rust</td><td class="n">687 / 687</td><td class="n">95,993 &rarr; 45,135 (53% fewer)</td><td class="n">1.10&times; slower</td></tr>
+<tr><td>Amni-Price (shelf-tag price reader)</td><td>Kotlin</td><td class="n">400 / 400</td><td class="n">5,376 &rarr; 3,040 (43% fewer)</td><td class="n">1.1&times; slower</td></tr>
+<tr><td>Amni-Type (swipe-typing decoder)</td><td>Java</td><td class="n">400 / 400</td><td class="n">3,618 &rarr; 1,507 (58% fewer)</td><td class="n">1.3&times; faster</td></tr>
+<tr><td>Amni-Mail (mail rules engine)</td><td>Python</td><td class="n">400 / 400</td><td class="n">6,053 &rarr; 3,369 (44% fewer)</td><td class="n">3.7&times; faster</td></tr>
+<tr><td>Amni-Crypt (Reffelt cipher layer)</td><td>Python + NumPy</td><td class="n">80 / 80</td><td class="n">6,155 &rarr; 1,535 (75% fewer)</td><td class="n">704&times; faster</td></tr>
+<tr><td>Amni-CAD (unit and dimension text)</td><td>JavaScript (Node.js)</td><td class="n">1,298 / 1,298</td><td class="n">1,148 &rarr; 939 (18% fewer)</td><td class="n">20&times; faster</td></tr>
 </tbody></table></div>
 <details class="faq-inline" style="margin-top:1rem">
 <summary style="cursor:pointer;font-weight:700">How we measured, and where Helium still loses</summary>
 <p class="fine">Same answers: every input was run through the original program and the rewrite, and their output compared line by line. 3,235 lines match byte for byte. The other 30 are inputs both versions reject as invalid, where the error message is worded differently (Rust's JSON reader and Python's regex library phrase errors their own way).</p>
-<p class="fine">Tokens: counted with Claude's own tokenizer, original source files against the Gold files. The Helium that Gold writes from them is 140,139 tokens; you read and edit the Gold, not the Helium.</p>
-<p class="fine">Speed: each program runs the same inputs many times in one process; we report the fastest of several runs, start-up included, on a shared Linux desktop (AMD Ryzen 9 9950X3D). Amni-Calc is the one rewrite still slower than its original, by 1.10&times;, mostly in turning numbers into text. Helium now finds a number's shortest digits with one wide multiply instead of three (the method Rust's newest formatter uses), but the rest of its number printing still runs more instructions than Rust's. Amni-Crypt also ships a hand-tuned C version of the same cipher layer built on the CPU's AES and GFNI vector instructions; the Helium rewrite now uses those same instructions through its new <code>gf</code> library and is now only 1.07&times; slower than it (it was 13&times; slower).</p>
+<p class="fine">Tokens: counted with Claude's own tokenizer, original source files against the Gold files. The Helium that Gold writes from them is 137,886 tokens; you read and edit the Gold, not the Helium.</p>
+<p class="fine">Speed: each program runs the same inputs many times in one process; we report the fastest of several runs, start-up included, on a shared Linux desktop (AMD Ryzen 9 9950X3D). Amni-Calc and Amni-Price run slower than their originals, by 1.10&times; and 1.1&times;. Amni-Calc loses mostly in turning numbers into text. Helium now finds a number's shortest digits with one wide multiply instead of three (the method Rust's newest formatter uses), but the rest of its number printing still runs more instructions than Rust's. Amni-Crypt also ships a hand-tuned C version of the same cipher layer built on the CPU's AES and GFNI vector instructions; the Helium rewrite now uses those same instructions through its new <code>gf</code> library and is 1.18&times; slower than it (it was 13&times; slower).</p>
 <p class="fine">Fixes along the way: the rewrites found gaps in Helium itself, all now fixed: missing math and number-format functions, a regex crash, four unsafe code patterns the compiler now rejects, memory from short-lived values not being given back (Amni-Calc used 601 MB, now 5 MB), loops copying each item instead of reading it in place, slow paths in regex, JSON, number printing, sorting short lists, clearing memory, string escaping, splitting words and atan2, a buffer resize that zero-filled one byte at a time, and no access to the CPU's AES and GFNI instructions.</p>
 </details>
 </section>
-<p class="page-updated">Last updated <time datetime="2026-11-03">November 3, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-09">November 9, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
