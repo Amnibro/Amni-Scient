@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Arrays and strings | AMNI-SCIENT</title>
+<meta name="description" content="The array kinds, their members, strings, and the rules behind most errors.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Arrays and strings">
+<meta property="og:description" content="The array kinds, their members, strings, and the rules behind most errors.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/language/arrays-and-strings">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/language/arrays-and-strings">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> Arrays and strings</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>Arrays and strings</h1>
+<div class="lib-tw"><table>
+<thead><tr><th>Type</th><th>Size behavior</th></tr></thead>
+<tbody>
+<tr><td><code>T[k]</code></td><td>fixed, k elements</td></tr>
+<tr><td><code>T[]</code>, <code>T[varint]</code></td><td>sized at construction, then frozen</td></tr>
+<tr><td><code>T[..k]</code></td><td>inline capacity k, grows/shrinks within it</td></tr>
+<tr><td><code>T[..]</code></td><td>capacity chosen at construction (<code>[..16]</code>)</td></tr>
+<tr><td><code>T[&gt;..]</code></td><td>grow-only, the default growable array; elements never move</td></tr>
+<tr><td><code>T[&gt;..&lt;]</code></td><td>grow-shrink: stacks, queues, heaps</td></tr>
+<tr><td><code>T[:]</code></td><td>slice: a view of any array kind, never a copy</td></tr>
+</tbody></table></div>
+<p>Members: <code>.len .cap .push(v) .append(xs) .pop() .pop_n(n) .resize(n, v) .clear() .index_of(ref)</code>. <code>push</code> returns a reference to the new element. Slicing <code>a[x..y]</code>, <code>a[..y]</code>, <code>a[^2..]</code> (last two). Literals: <code>[1, 2, 3]</code>, <code>[0; 16]</code>, <code>[]</code>. <code>var out = [];</code> takes its element type from the first push.</p>
+<p>A string is any <code>byte</code> array: <code>byte[&gt;..]</code> builder, <code>byte[]</code> finished, <code>byte[..16]</code> small inline, <code>const byte[:]</code> view (string literals). <code>'a'</code> is an integer. Strings compare with <code>==</code>.</p>
+<pre><code>fn main() {
+	var s byte[&gt;..] = [];
+	s.append(&quot;hello&quot;);
+	s.push(',');
+	format(s, &quot; world &quot;, 6 * 7);
+	var stack int[&gt;..&lt;] = [];
+	for i in 5 { stack.push(i * i); }
+	let top = stack.pop();
+	let parts = split(&quot;alice,30,paris&quot;, ',');
+	let n, ok = parse_int(trim(&quot; 30 &quot;));
+	print(s, &quot; &quot;, stack, &quot; &quot;, top, &quot; &quot;, parts, &quot; &quot;, n, &quot; &quot;, ok, &quot; &quot;, s[..5], &quot; &quot;, words(&quot; go  north &quot;));
+}
+</code></pre>
+<p>Rules that cause most errors:</p>
+<ul>
+<li>Only one resizable array (<code>T[&gt;..]</code>, <code>T[&gt;..&lt;]</code>) per struct, as its last field; never as an array element. Use <code>T[]</code> or <code>T[..k]</code> inside elements: <code>byte[][&gt;..]</code> is a list of strings.</li>
+<li>Arrays of variable-size elements (<code>byte[][&gt;..]</code>, <code>Shape..[&gt;..]</code>) can be iterated but not indexed.</li>
+<li>Non-fixed values never copy implicitly: <code>let c = xs;</code> aliases; <code>copy(xs)</code> copies. Fixed-size values copy on assignment.</li>
+<li>A <code>T[&gt;..]</code> may <code>pop</code>/<code>clear</code>/<code>resize</code> only where no reference or slice into it is still used afterwards.</li>
+<li>Assigning a whole growable array clears it first, so <code>xs = f(xs)</code> is an error; build into another variable and <code>xs = copy(tmp)</code>.</li>
+</ul>
+<nav class="lib-pn">
+<a class="prev" href="/api-library/helium/language/core-language">&larr; Core language</a>
+<a class="next" href="/api-library/helium/language/control-flow">Control flow &rarr;</a>
+</nav>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g" open><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings" class="on">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

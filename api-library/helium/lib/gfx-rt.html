@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/rt | AMNI-SCIENT</title>
+<meta name="description" content="Build a bounding volume tree of triangles for ray tracing, upload it to the GPU, and test rays against it.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/rt">
+<meta property="og:description" content="Build a bounding volume tree of triangles for ray tracing, upload it to the GPU, and test rays against it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-rt">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-rt">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/rt</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/rt</h1>
+<p class="lib-lede">Build a bounding volume tree of triangles for ray tracing, upload it to the GPU, and test rays against it.</p>
+<p class="lib-meta"><code>import gfx.rt;</code> &middot; <code>rt::</code> &middot; 14 functions, 0 types, 14 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#tree-building">Tree Building <span class="n">4</span></a></li>
+<li><a href="#gpu-upload">GPU Upload <span class="n">2</span></a></li>
+<li><a href="#ray-queries">Ray Queries <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="tree-building">Tree Building <span class="n">4</span></h2>
+<article class="sym" id="clear">
+<h3><a href="#clear">clear</a> <i>function</i></h3>
+<pre>clear()</pre>
+<p>Removes all triangles from the scene and marks the tree as needing a rebuild.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L17">hc/lib/gfx/rt.amni:17</a>
+</article>
+<article class="sym" id="count">
+<h3><a href="#count">count</a> <i>function</i></h3>
+<pre>count() int</pre>
+<p>Returns the number of triangles currently added to the scene.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L18">hc/lib/gfx/rt.amni:18</a>
+</article>
+<article class="sym" id="add">
+<h3><a href="#add">add</a> <i>function</i></h3>
+<pre>add(a float3, b float3, c float3, rgb float3)</pre>
+<p>Adds a triangle from three vertices with an RGB albedo color; call build afterward to include it.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L19">hc/lib/gfx/rt.amni:19</a>
+</article>
+<article class="sym" id="build">
+<h3><a href="#build">build</a> <i>function</i></h3>
+<pre>build()</pre>
+<p>Builds the bounding volume tree and triangle arrays from the added triangles, leaving the tree unready if there are none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L79">hc/lib/gfx/rt.amni:79</a>
+</article>
+<h2 id="gpu-upload">GPU Upload <span class="n">2</span></h2>
+<article class="sym" id="upload">
+<h3><a href="#upload">upload</a> <i>function</i></h3>
+<pre>upload()</pre>
+<p>Uploads the built node and triangle arrays to GPU storage buffers, replacing earlier buffers, and does nothing if not built.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L115">hc/lib/gfx/rt.amni:115</a>
+</article>
+<article class="sym" id="release">
+<h3><a href="#release">release</a> <i>function</i></h3>
+<pre>release()</pre>
+<p>Releases the GPU buffers if they exist.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L123">hc/lib/gfx/rt.amni:123</a>
+</article>
+<h2 id="ray-queries">Ray Queries <span class="n">1</span></h2>
+<article class="sym" id="hit">
+<h3><a href="#hit">hit</a> <i>function</i></h3>
+<pre>hit(ox f32, oy f32, oz f32, dx f32, dy f32, dz f32, tmax0 f32) f32, int</pre>
+<p>Tests a ray against the tree and returns the closest hit distance and triangle index, or the maximum distance and -1 if none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L124">hc/lib/gfx/rt.amni:124</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (21)</summary>
+<article class="sym" id="BINS">
+<h3><a href="#BINS">BINS</a> <i>constant</i></h3>
+<pre>let BINS = 12</pre>
+<p>Constant giving the number of bins used to evaluate surface-area-heuristic split candidates per axis.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L3">hc/lib/gfx/rt.amni:3</a>
+</article>
+<article class="sym" id="LEAF">
+<h3><a href="#LEAF">LEAF</a> <i>constant</i></h3>
+<pre>let LEAF = 4</pre>
+<p>Constant giving the maximum number of triangles a leaf node holds before a split is attempted.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L4">hc/lib/gfx/rt.amni:4</a>
+</article>
+<article class="sym" id="NODE_FLOATS">
+<h3><a href="#NODE_FLOATS">NODE_FLOATS</a> <i>constant</i></h3>
+<pre>let NODE_FLOATS = 8</pre>
+<p>Constant giving the number of floats each tree node occupies in the node array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L5">hc/lib/gfx/rt.amni:5</a>
+</article>
+<article class="sym" id="TRI_FLOATS">
+<h3><a href="#TRI_FLOATS">TRI_FLOATS</a> <i>constant</i></h3>
+<pre>let TRI_FLOATS = 16</pre>
+<p>Constant giving the number of floats each triangle occupies in the triangle array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L6">hc/lib/gfx/rt.amni:6</a>
+</article>
+<article class="sym" id="tri_in">
+<h3><a href="#tri_in">tri_in</a> <i>constant</i></h3>
+<pre>var tri_in f32[&gt;..] = []</pre>
+<p>Input array of triangle vertex coordinates, nine floats per triangle, filled by add.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L7">hc/lib/gfx/rt.amni:7</a>
+</article>
+<article class="sym" id="alb_in">
+<h3><a href="#alb_in">alb_in</a> <i>constant</i></h3>
+<pre>var alb_in f32[&gt;..] = []</pre>
+<p>Input array of per-triangle albedo colors, three floats per triangle, parallel to the triangle input.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L8">hc/lib/gfx/rt.amni:8</a>
+</article>
+<article class="sym" id="nodes">
+<h3><a href="#nodes">nodes</a> <i>constant</i></h3>
+<pre>var nodes f32[&gt;..] = []</pre>
+<p>Flattened array of tree nodes holding bounds, child or leaf data, produced by build.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L9">hc/lib/gfx/rt.amni:9</a>
+</article>
+<article class="sym" id="tris">
+<h3><a href="#tris">tris</a> <i>constant</i></h3>
+<pre>var tris f32[&gt;..] = []</pre>
+<p>Flattened array of reordered triangle data with edge vectors and albedo, produced by build.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L10">hc/lib/gfx/rt.amni:10</a>
+</article>
+<article class="sym" id="order">
+<h3><a href="#order">order</a> <i>constant</i></h3>
+<pre>var order int[&gt;..] = []</pre>
+<p>Working array of triangle indices reordered during splitting so each leaf covers a contiguous range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L11">hc/lib/gfx/rt.amni:11</a>
+</article>
+<article class="sym" id="cen">
+<h3><a href="#cen">cen</a> <i>constant</i></h3>
+<pre>var cen f32[&gt;..] = []</pre>
+<p>Working array of triangle centroids, three floats per triangle, used when binning splits.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L12">hc/lib/gfx/rt.amni:12</a>
+</article>
+<article class="sym" id="node_buf">
+<h3><a href="#node_buf">node_buf</a> <i>constant</i></h3>
+<pre>var node_buf gfx::Buffer</pre>
+<p>GPU buffer holding the node array after upload.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L13">hc/lib/gfx/rt.amni:13</a>
+</article>
+<article class="sym" id="tri_buf">
+<h3><a href="#tri_buf">tri_buf</a> <i>constant</i></h3>
+<pre>var tri_buf gfx::Buffer</pre>
+<p>GPU buffer holding the triangle array after upload.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L14">hc/lib/gfx/rt.amni:14</a>
+</article>
+<article class="sym" id="has_bufs">
+<h3><a href="#has_bufs">has_bufs</a> <i>constant</i></h3>
+<pre>var has_bufs = false</pre>
+<p>Flag recording whether GPU buffers currently exist and must be released before replacement.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L15">hc/lib/gfx/rt.amni:15</a>
+</article>
+<article class="sym" id="ready">
+<h3><a href="#ready">ready</a> <i>constant</i></h3>
+<pre>var ready = false</pre>
+<p>Flag that is true once build has produced a usable tree and false when the scene is empty or cleared.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L16">hc/lib/gfx/rt.amni:16</a>
+</article>
+<article class="sym" id="tmin">
+<h3><a href="#tmin">tmin</a> <i>function</i></h3>
+<pre>tmin(t int, k int) f32</pre>
+<p>Returns the smallest coordinate of a triangle's vertices along the given axis.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L23">hc/lib/gfx/rt.amni:23</a>
+</article>
+<article class="sym" id="tmax">
+<h3><a href="#tmax">tmax</a> <i>function</i></h3>
+<pre>tmax(t int, k int) f32</pre>
+<p>Returns the largest coordinate of a triangle's vertices along the given axis.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L24">hc/lib/gfx/rt.amni:24</a>
+</article>
+<article class="sym" id="area">
+<h3><a href="#area">area</a> <i>function</i></h3>
+<pre>area(lo f32[3], hi f32[3]) f32</pre>
+<p>Returns the surface area measure of a bounding box, used as the split cost metric.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L25">hc/lib/gfx/rt.amni:25</a>
+</article>
+<article class="sym" id="set_node">
+<h3><a href="#set_node">set_node</a> <i>function</i></h3>
+<pre>set_node(n int, lo f32[3], hi f32[3], a int, c int)</pre>
+<p>Writes a node's bounding box and its child or leaf fields into the node array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L29">hc/lib/gfx/rt.amni:29</a>
+</article>
+<article class="sym" id="new_node">
+<h3><a href="#new_node">new_node</a> <i>function</i></h3>
+<pre>new_node() int</pre>
+<p>Appends a zeroed node to the node array and returns its index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L34">hc/lib/gfx/rt.amni:34</a>
+</article>
+<article class="sym" id="bounds">
+<h3><a href="#bounds">bounds</a> <i>function</i></h3>
+<pre>bounds(first int, cnt int) f32[3], f32[3], f32[3], f32[3]</pre>
+<p>Returns the bounds of a triangle range and the bounds of its centroids.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L35">hc/lib/gfx/rt.amni:35</a>
+</article>
+<article class="sym" id="split">
+<h3><a href="#split">split</a> <i>function</i></h3>
+<pre>split(first int, cnt int, clo f32[3], chi f32[3], parent_area f32) int, int, f32</pre>
+<p>Finds the best binned surface-area-heuristic split, returning axis, bin and cost, with axis negative when no split helps.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/rt.amni#L46">hc/lib/gfx/rt.amni:46</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt" class="on">gfx/rt</a><ul class="lib-sub">
+<li><a href="#tree-building">Tree Building</a></li>
+<li><a href="#gpu-upload">GPU Upload</a></li>
+<li><a href="#ray-queries">Ray Queries</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

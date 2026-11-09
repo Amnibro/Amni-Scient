@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>API Library | AMNI-SCIENT</title>
+<meta name="description" content="Every Gold command and every Helium function, type and constant, grouped by what it does and searchable.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="API Library">
+<meta property="og:description" content="Every Gold command and every Helium function, type and constant, grouped by what it does and searchable.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/">
+<link rel="canonical" href="https://amni-scient.com/api-library/">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a></p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>API Library</h1>
+<p class="lib-lede">Every Gold command and every Helium function, type and constant, grouped by what it does and searchable.</p>
+<h2>Helium library</h2>
+<p>4965 functions, types and constants in 66 modules.</p>
+<div class="lib-grid">
+<a class="lib-card" href="/api-library/helium/logic"><strong>Logic &amp; Core</strong><span>Numbers, arrays, sorting, strings, maps and error handling: the building blocks of every program.</span><small>435 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/data"><strong>Text &amp; Data</strong><span>JSON, regular expressions, Base64, binary formats and decompression.</span><small>182 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/system"><strong>Files &amp; System</strong><span>Files, folders, processes, clocks and calling into C.</span><small>41 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/graphics"><strong>Graphics</strong><span>The GPU layer, the 3D renderer, models, meshes, particles and image files.</span><small>936 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/ui"><strong>User Interface</strong><span>Windows, buttons, text input, game HUDs, touch gestures and fonts.</span><small>1241 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/audio"><strong>Audio</strong><span>Sound playback, 3D positioning, mixing and reverb.</span><small>83 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/animation"><strong>Animation</strong><span>Skeletons, clips, blending, state machines, inverse kinematics and skinning.</span><small>252 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/physics"><strong>Physics &amp; Navigation</strong><span>Rigid-body simulation, collisions, joints and pathfinding.</span><small>1105 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/world"><strong>Worlds &amp; Editors</strong><span>Streaming large worlds and building scene editors.</span><small>93 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/network"><strong>Networking</strong><span>Sockets, HTTP, TLS, WebSockets and multiplayer game networking.</span><small>265 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/security"><strong>Security</strong><span>Hashes, encryption, signatures and certificates.</span><small>180 functions and types</small></a>
+<a class="lib-card" href="/api-library/helium/web"><strong>Web Pages</strong><span>Control the browser from a Helium web build: page elements, events and WebGL.</span><small>152 functions and types</small></a>
+</div>
+<h2>Gold</h2>
+<div class="lib-grid">
+<a class="lib-card" href="/api-library/gold/"><strong>Get started with Gold</strong><span>Install Gold and write your first program in plain English.</span></a>
+<a class="lib-card" href="/api-library/gold/commands"><strong>Commands</strong><span>Every gold command and its options, with examples.</span></a>
+<a class="lib-card" href="/api-library/gold/format"><strong>File format</strong><span>Headers, paragraphs, exact code, data tables and expected output.</span></a>
+<a class="lib-card" href="/api-library/gold/settings"><strong>Settings</strong><span>The environment variables that choose models, compilers and limits.</span></a>
+<a class="lib-card" href="/api-library/gold/dialects"><strong>Dialects</strong><span>Keep the number and rounding rules of Rust, Python, JavaScript, Java, Kotlin or NumPy when porting.</span></a>
+<a class="lib-card" href="/api-library/gold/packs"><strong>Packs</strong><span>Index your own product so Gold can find and call its code.</span></a>
+<a class="lib-card" href="/api-library/gold/writing"><strong>Writing good Gold</strong><span>How to get the right program on the first try, and what to do when a build fails.</span></a>
+<a class="lib-card" href="/api-library/gold/how"><strong>How a build works</strong><span>The six steps from plain English to checked Helium.</span></a>
+</div>
+<h2>Helium language</h2>
+<div class="lib-grid">
+<a class="lib-card" href="/api-library/helium/"><strong>Helium</strong><span>Install Helium, run your first program, and browse the whole standard library.</span></a>
+<a class="lib-card" href="/api-library/helium/language/commands"><strong>Commands and options</strong><span>Every hc command, option and environment variable.</span></a>
+<a class="lib-card" href="/api-library/helium/language/builtins"><strong>Built-in functions</strong><span>Functions the compiler provides directly: print, copy, threads, queues and array members.</span></a>
+<a class="lib-card" href="/api-library/helium/language/amni-basics"><strong>.amni basics</strong><span>The three things to know before reading .amni code.</span></a>
+<a class="lib-card" href="/api-library/helium/language/core-language"><strong>Core language</strong><span>Variables, functions, numbers and how memory stays safe with no heap.</span></a>
+<a class="lib-card" href="/api-library/helium/language/arrays-and-strings"><strong>Arrays and strings</strong><span>The array kinds, their members, strings, and the rules behind most errors.</span></a>
+<a class="lib-card" href="/api-library/helium/language/control-flow"><strong>Control flow</strong><span>If, match, guard, loops, ranges and blocks that return values.</span></a>
+<a class="lib-card" href="/api-library/helium/language/structs-enums-match"><strong>Structs, enums, match</strong><span>Structs, enums with payloads, pattern matching and generic structs.</span></a>
+<a class="lib-card" href="/api-library/helium/language/references-and-optionals"><strong>References and optionals</strong><span>References, optional values and the rules that stop them dangling.</span></a>
+<a class="lib-card" href="/api-library/helium/language/functions-generics-blocks"><strong>Functions, generics, blocks</strong><span>Overloads, generics, trailing blocks, nested functions and recursion.</span></a>
+<a class="lib-card" href="/api-library/helium/language/lookup-table-functions"><strong>Lookup-table functions</strong><span>Turn a pure function into a saved lookup table that can fill on the GPU.</span></a>
+<a class="lib-card" href="/api-library/helium/language/program-modules-threads"><strong>Program, modules, threads</strong><span>Imports, namespaces, globals, threads and calling C.</span></a>
+<a class="lib-card" href="/api-library/helium/language/the-standard-library-at-a-glance"><strong>The standard library at a glance</strong><span>A one-page tour of the most-used library functions.</span></a>
+<a class="lib-card" href="/api-library/helium/language/compact-constructs-and-warnings"><strong>Compact constructs and warnings</strong><span>One-line constructs for common loops, and the warnings that suggest them.</span></a>
+<a class="lib-card" href="/api-library/helium/language/web-builds"><strong>Web builds</strong><span>Build for the browser with WebAssembly, the web module and WebGL.</span></a>
+</div>
+<h2>For AI agents</h2>
+<p>The full library as JSON: <a href="/api-library/index.json">/api-library/index.json</a>.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g" open><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g" open><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

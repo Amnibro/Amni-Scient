@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/motion | AMNI-SCIENT</title>
+<meta name="description" content="Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/motion">
+<meta property="og:description" content="Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-motion">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-motion">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/motion</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/motion</h1>
+<p class="lib-lede">Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.</p>
+<p class="lib-meta"><code>import gfx.motion;</code> &middot; <code>motion::</code> &middot; 10 functions, 0 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>motion: poses for glTF scenes. Samples animation channels (step, linear and
+cubic Hermite spline per the glTF 2.0 specification), walks the node hierarchy
+into world matrices, and builds joint matrices and morph weights for drawing.
+The pose arrays are indexed like gltf::nodes.</pre></details>
+<ul class="lib-pills">
+<li><a href="#morph-weights">Morph Weights <span class="n">3</span></a></li>
+<li><a href="#pose-state">Pose State <span class="n">3</span></a></li>
+<li><a href="#animation-sampling">Animation Sampling <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="morph-weights">Morph Weights <span class="n">3</span></h2>
+<article class="sym" id="MAX_WEIGHTS">
+<h3><a href="#MAX_WEIGHTS">MAX_WEIGHTS</a> <i>constant</i></h3>
+<pre>let MAX_WEIGHTS = 8</pre>
+<p>Constant giving the maximum number of morph target weights stored per node in the pose.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L10">hc/lib/gfx/motion.amni:10</a>
+</article>
+<article class="sym" id="joints">
+<h3><a href="#joints">joints</a> <i>function</i></h3>
+<pre>joints(skin int, out gfx::mat4[&gt;..]&amp;)</pre>
+<p>Fills the output array with world-space joint matrices of a skin, for drawing with an identity model.</p>
+<p class="note">Joint matrices of a skin in world space (vertices are then drawn with an identity model).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L151">hc/lib/gfx/motion.amni:151</a>
+</article>
+<article class="sym" id="weight">
+<h3><a href="#weight">weight</a> <i>function</i></h3>
+<pre>weight(node int, j int) f32</pre>
+<p>Returns morph weight j of a node from the current pose.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L159">hc/lib/gfx/motion.amni:159</a>
+</article>
+<h2 id="pose-state">Pose State <span class="n">3</span></h2>
+<article class="sym" id="world">
+<h3><a href="#world">world</a> <i>constant</i></h3>
+<pre>var world gfx::mat4[&gt;..]</pre>
+<p>Array of world matrices per node, filled by update and used when drawing.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L16">hc/lib/gfx/motion.amni:16</a>
+</article>
+<article class="sym" id="rest">
+<h3><a href="#rest">rest</a> <i>function</i></h3>
+<pre>rest(asset int)</pre>
+<p>Resets every node of the given asset to its rest pose, including morph weights.</p>
+<p class="note">Puts every node of the asset back in its rest pose (morph weights from the node, else its mesh).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L29">hc/lib/gfx/motion.amni:29</a>
+</article>
+<article class="sym" id="update">
+<h3><a href="#update">update</a> <i>function</i></h3>
+<pre>update(asset int, root gfx::mat4)</pre>
+<p>Computes world matrices for all nodes of an asset's scene, placed by the given root transform.</p>
+<p class="note">World matrices for the asset's scene, placed by `root` (the asset's transform in the world).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L128">hc/lib/gfx/motion.amni:128</a>
+</article>
+<h2 id="animation-sampling">Animation Sampling <span class="n">1</span></h2>
+<article class="sym" id="apply">
+<h3><a href="#apply">apply</a> <i>function</i></h3>
+<pre>apply(anim int, t f32, amount f32)</pre>
+<p>Applies an animation at time t to the pose, where an amount of 1 replaces it and less blends.</p>
+<p class="note">Applies animation `anim` at time t. amount 1 replaces the pose; less blends toward it.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L102">hc/lib/gfx/motion.amni:102</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
+<article class="sym" id="pose_t">
+<h3><a href="#pose_t">pose_t</a> <i>constant</i></h3>
+<pre>var pose_t float3[&gt;..]</pre>
+<p>Per-node translation array of the current pose, indexed like glTF nodes.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L12">hc/lib/gfx/motion.amni:12</a>
+</article>
+<article class="sym" id="pose_r">
+<h3><a href="#pose_r">pose_r</a> <i>constant</i></h3>
+<pre>var pose_r linalg::Quat[&gt;..]</pre>
+<p>Per-node rotation quaternion array of the current pose, indexed like glTF nodes.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L13">hc/lib/gfx/motion.amni:13</a>
+</article>
+<article class="sym" id="pose_s">
+<h3><a href="#pose_s">pose_s</a> <i>constant</i></h3>
+<pre>var pose_s float3[&gt;..]</pre>
+<p>Per-node scale array of the current pose, indexed like glTF nodes.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L14">hc/lib/gfx/motion.amni:14</a>
+</article>
+<article class="sym" id="pose_w">
+<h3><a href="#pose_w">pose_w</a> <i>constant</i></h3>
+<pre>var pose_w f32[&gt;..];          // MAX_WEIGHTS per node</pre>
+<p>Per-node morph weight array of the current pose, holding MAX_WEIGHTS entries for each node.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L15">hc/lib/gfx/motion.amni:15</a>
+</article>
+<article class="sym" id="grow">
+<h3><a href="#grow">grow</a> <i>function</i></h3>
+<pre>grow()</pre>
+<p>Extends the pose and world arrays with default entries until they cover every loaded glTF node.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L18">hc/lib/gfx/motion.amni:18</a>
+</article>
+<article class="sym" id="key_before">
+<h3><a href="#key_before">key_before</a> <i>function</i></h3>
+<pre>key_before(times gltf::Span, t f32) int</pre>
+<p>Returns the index of the last time key at or before t, or 0 when t precedes the first key.</p>
+<p class="note">Index of the last key at or before t (0 when t is before the first key).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L45">hc/lib/gfx/motion.amni:45</a>
+</article>
+<article class="sym" id="sample">
+<h3><a href="#sample">sample</a> <i>function</i></h3>
+<pre>sample(c gltf::Channel, t f32, j int) f32</pre>
+<p>Returns component j of a channel at time t, using step, linear or cubic spline interpolation.</p>
+<p class="note">Samples component j of channel c at time t.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L58">hc/lib/gfx/motion.amni:58</a>
+</article>
+<article class="sym" id="rotation_at">
+<h3><a href="#rotation_at">rotation_at</a> <i>function</i></h3>
+<pre>rotation_at(c gltf::Channel, t f32) linalg::Quat</pre>
+<p>Returns the normalized rotation quaternion of a channel at time t, using spherical interpolation for linear channels.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L85">hc/lib/gfx/motion.amni:85</a>
+</article>
+<article class="sym" id="local_matrix">
+<h3><a href="#local_matrix">local_matrix</a> <i>function</i></h3>
+<pre>local_matrix(i int) gfx::mat4</pre>
+<p>Returns the local transform matrix of a node, from its stored matrix or its pose translation, rotation and scale.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/motion.amni#L122">hc/lib/gfx/motion.amni:122</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion" class="on">gfx/motion</a><ul class="lib-sub">
+<li><a href="#morph-weights">Morph Weights</a></li>
+<li><a href="#pose-state">Pose State</a></li>
+<li><a href="#animation-sampling">Animation Sampling</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

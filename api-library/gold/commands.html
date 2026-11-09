@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Commands | AMNI-SCIENT</title>
+<meta name="description" content="Every gold command and its options, with examples.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Commands">
+<meta property="og:description" content="Every gold command and its options, with examples.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/gold/commands">
+<link rel="canonical" href="https://amni-scient.com/api-library/gold/commands">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/gold/">Gold</a> <span>&rsaquo;</span> Commands</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>Commands</h1>
+<p>Run <code>gold</code> with no arguments to print this list in short form. Options use the form <code>name=value</code>.</p>
+<div class="lib-tw"><table>
+<thead><tr><th>Command</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>gold build</code></td><td>Translate, check and write the Helium.</td></tr>
+<tr><td><code>gold run</code></td><td>Build, then run the program.</td></tr>
+<tr><td><code>gold show</code></td><td>Build, then print the Helium.</td></tr>
+<tr><td><code>gold test</code></td><td>Build, then run the test commands of every pack it uses.</td></tr>
+<tr><td><code>gold port</code></td><td>Write Gold for existing code in any language, then build it.</td></tr>
+<tr><td><code>gold pack</code></td><td>Index a product's Helium functions so Gold can call them.</td></tr>
+<tr><td><code>gold packs</code></td><td>List the indexed packs.</td></tr>
+<tr><td><code>gold find</code></td><td>Show which functions a sentence would retrieve.</td></tr>
+<tr><td><code>gold compact</code></td><td>Pack data tables without a model call.</td></tr>
+<tr><td><code>gold squeeze</code></td><td>Shorten the Gold and keep it only if it still passes.</td></tr>
+</tbody></table></div>
+<h2 id="build-and-run">Build and run</h2>
+<h3 id="gold-build">gold build</h3>
+<pre><code>gold build file.gold
+</code></pre>
+<p>Translates the paragraphs that changed, checks the whole file with the Helium compiler, and writes the Helium next to the Gold file, or to the <code>into</code> path from its header. Results are cached in <code>file.gold.lock</code>, so an unchanged paragraph never calls the model again. Commit the lock file with your code.</p>
+<h3 id="gold-run">gold run</h3>
+<pre><code>gold run file.gold [-- program arguments]
+</code></pre>
+<p>Builds the file, then runs the program. Everything after <code>--</code> goes to your program.</p>
+<h3 id="gold-show">gold show</h3>
+<pre><code>gold show file.gold
+</code></pre>
+<p>Builds the file, then prints the Helium it produced.</p>
+<h3 id="gold-test">gold test</h3>
+<pre><code>gold test file.gold
+</code></pre>
+<p>Builds the file, then runs the test command of every pack named on its <code>use</code> line.</p>
+<h2 id="bring-in-existing-code">Bring in existing code</h2>
+<h3 id="gold-port">gold port</h3>
+<pre><code>gold port source [use=pack,pack] [into=file] [lang=amni|he|py] [ns=name] [gold=out.gold]
+</code></pre>
+<p>Reads code in any language, writes the Gold that describes it, and builds that Gold.</p>
+<div class="lib-tw"><table>
+<thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>use=</code></td><td>Packs the new code may call, separated by commas.</td></tr>
+<tr><td><code>into=</code></td><td>The Helium file to write.</td></tr>
+<tr><td><code>lang=</code></td><td>The Helium flavor to write: <code>amni</code>, <code>he</code> or <code>py</code>.</td></tr>
+<tr><td><code>ns=</code></td><td>The namespace for the new code.</td></tr>
+<tr><td><code>gold=</code></td><td>Where to save the Gold. By default it sits beside the source, named after it.</td></tr>
+</tbody></table></div>
+<h3 id="gold-squeeze">gold squeeze</h3>
+<pre><code>gold squeeze file.gold check='command' [rounds=4]
+</code></pre>
+<p>Shortens the Gold as far as it will go. Each shorter version is rebuilt from scratch and kept only when your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
+<h3 id="gold-compact">gold compact</h3>
+<pre><code>gold compact file.gold
+</code></pre>
+<p>Packs the data tables in a file, with no model call. It adds a first <code>@</code> row of column scales, and a blank cell repeats the cell above. See <a href="/api-library/gold/format#data-tables">data tables</a>.</p>
+<h2 id="work-with-packs">Work with packs</h2>
+<h3 id="gold-pack">gold pack</h3>
+<pre><code>gold pack name folder [lang=] [main=] [test=] [skip=]
+</code></pre>
+<p>Indexes every top-level function, type and global in a Helium folder into <code>packs/name</code>, so Gold can find and call them. See <a href="/api-library/gold/packs">Packs</a>.</p>
+<div class="lib-tw"><table>
+<thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>lang=</code></td><td>The product's Helium flavor.</td></tr>
+<tr><td><code>main=</code></td><td>The product's root file, used to check new code in place.</td></tr>
+<tr><td><code>test=</code></td><td>The command <code>gold test</code> runs.</td></tr>
+<tr><td><code>skip=</code></td><td>A regular expression of files to leave out.</td></tr>
+</tbody></table></div>
+<h3 id="gold-packs">gold packs</h3>
+<pre><code>gold packs
+</code></pre>
+<p>Lists each pack with its language, symbol count and folder.</p>
+<h3 id="gold-find">gold find</h3>
+<pre><code>gold find pack,pack words to look up
+</code></pre>
+<p>Shows which functions a sentence would retrieve. Use it to check that a paragraph points Gold at the code you meant.</p>
+<nav class="lib-pn">
+<a class="prev" href="/api-library/gold/">&larr; Get started with Gold</a>
+<a class="next" href="/api-library/gold/format">File format &rarr;</a>
+</nav>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g" open><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands" class="on">Commands</a><ul class="lib-sub">
+<li><a href="#build-and-run">Build and run</a></li>
+<li><a href="#bring-in-existing-code">Bring in existing code</a></li>
+<li><a href="#work-with-packs">Work with packs</a></li>
+</ul>
+</li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

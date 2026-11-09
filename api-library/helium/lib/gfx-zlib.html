@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/zlib | AMNI-SCIENT</title>
+<meta name="description" content="Decompress DEFLATE and zlib streams, the compression used inside PNG files.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/zlib">
+<meta property="og:description" content="Decompress DEFLATE and zlib streams, the compression used inside PNG files.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-zlib">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-zlib">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/data">Text &amp; Data</a> <span>&rsaquo;</span> gfx/zlib</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/zlib</h1>
+<p class="lib-lede">Decompress DEFLATE and zlib streams, the compression used inside PNG files.</p>
+<p class="lib-meta"><code>import gfx.zlib;</code> &middot; <code>zlib::</code> &middot; 5 functions, 1 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>zlib: a DEFLATE decoder (RFC 1951) with the zlib wrapper (RFC 1950), for PNG image data.
+Huffman codes are canonical; each table keeps a 9-bit direct lookup and walks the
+per-length counts for longer codes.</pre></details>
+<ul class="lib-pills">
+<li><a href="#decompression">Decompression <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="decompression">Decompression <span class="n">2</span></h2>
+<article class="sym" id="inflate_raw">
+<h3><a href="#inflate_raw">inflate_raw</a> <i>function</i></h3>
+<pre>inflate_raw(src const byte[:], out byte[&gt;..]&amp;) bool</pre>
+<p>Decodes a raw DEFLATE stream, appending bytes to out, and returns false if the data is corrupt.</p>
+<p class="note">Raw DEFLATE stream to out (appended). Returns false on corrupt data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L59">hc/lib/gfx/zlib.amni:59</a>
+</article>
+<article class="sym" id="inflate">
+<h3><a href="#inflate">inflate</a> <i>function</i></h3>
+<pre>inflate(src const byte[:], out byte[&gt;..]&amp;) bool</pre>
+<p>Decodes a zlib stream by checking its header and inflating the data into out, without verifying the Adler-32 checksum.</p>
+<p class="note">zlib stream: 2-byte header, DEFLATE data, Adler-32 (not verified).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L179">hc/lib/gfx/zlib.amni:179</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (10)</summary>
+<article class="sym" id="FAST">
+<h3><a href="#FAST">FAST</a> <i>constant</i></h3>
+<pre>let FAST = 9</pre>
+<p>Constant giving the number of bits resolved by the direct lookup table in a Huffman code.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L6">hc/lib/gfx/zlib.amni:6</a>
+</article>
+<article class="sym" id="Code">
+<h3><a href="#Code">Code</a> <i>type</i></h3>
+<pre>struct Code {
+	fast i32[512],   // (symbol &lt;&lt; 4) | length, or 0 when the code is longer than FAST bits
+	count i32[16],   // codes of each length
+	symbol i32[320], // symbols ordered by code
+}</pre>
+<p>Huffman decoding table holding a direct lookup, per-length code counts, and symbols ordered by code.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L8">hc/lib/gfx/zlib.amni:8</a>
+</article>
+<article class="sym" id="empty_code">
+<h3><a href="#empty_code">empty_code</a> <i>function</i></h3>
+<pre>empty_code() Code</pre>
+<p>Returns a new Code with all lookup, count, and symbol entries zeroed.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L14">hc/lib/gfx/zlib.amni:14</a>
+</article>
+<article class="sym" id="reverse_bits">
+<h3><a href="#reverse_bits">reverse_bits</a> <i>function</i></h3>
+<pre>reverse_bits(v int, n int) int</pre>
+<p>Returns the low n bits of a value in reversed order, used to index canonical codes.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L16">hc/lib/gfx/zlib.amni:16</a>
+</article>
+<article class="sym" id="build">
+<h3><a href="#build">build</a> <i>function</i></h3>
+<pre>build(c Code&amp;, lens i32[:]) bool</pre>
+<p>Builds decoding tables from code lengths, returning false if the lengths over-subscribe the code space.</p>
+<p class="note">Builds the tables from code lengths; false if the lengths over-subscribe the code space.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L24">hc/lib/gfx/zlib.amni:24</a>
+</article>
+<article class="sym" id="LEN_BASE">
+<h3><a href="#LEN_BASE">LEN_BASE</a> <i>constant</i></h3>
+<pre>let LEN_BASE = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258]</pre>
+<p>Table of base match lengths for length symbols, starting at symbol 257.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L52">hc/lib/gfx/zlib.amni:52</a>
+</article>
+<article class="sym" id="LEN_EXTRA">
+<h3><a href="#LEN_EXTRA">LEN_EXTRA</a> <i>constant</i></h3>
+<pre>let LEN_EXTRA = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0]</pre>
+<p>Table of extra bit counts to read for each length symbol.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L53">hc/lib/gfx/zlib.amni:53</a>
+</article>
+<article class="sym" id="DIST_BASE">
+<h3><a href="#DIST_BASE">DIST_BASE</a> <i>constant</i></h3>
+<pre>let DIST_BASE = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577]</pre>
+<p>Table of base match distances for each distance symbol.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L54">hc/lib/gfx/zlib.amni:54</a>
+</article>
+<article class="sym" id="DIST_EXTRA">
+<h3><a href="#DIST_EXTRA">DIST_EXTRA</a> <i>constant</i></h3>
+<pre>let DIST_EXTRA = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13]</pre>
+<p>Table of extra bit counts to read for each distance symbol.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L55">hc/lib/gfx/zlib.amni:55</a>
+</article>
+<article class="sym" id="CL_ORDER">
+<h3><a href="#CL_ORDER">CL_ORDER</a> <i>constant</i></h3>
+<pre>let CL_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]</pre>
+<p>Order in which code length code lengths are stored in a dynamic block header.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/zlib.amni#L56">hc/lib/gfx/zlib.amni:56</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/json">json</a></li>
+<li><a href="/api-library/helium/lib/regex">regex</a></li>
+<li><a href="/api-library/helium/lib/base64">base64</a></li>
+<li><a href="/api-library/helium/lib/binary">binary</a></li>
+<li><a href="/api-library/helium/lib/gfx-zlib" class="on">gfx/zlib</a><ul class="lib-sub">
+<li><a href="#decompression">Decompression</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

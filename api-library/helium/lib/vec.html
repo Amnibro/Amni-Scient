@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>vec | AMNI-SCIENT</title>
+<meta name="description" content="Small fixed vectors such as float3 with dot and cross products, lengths, normalizing and blending.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="vec">
+<meta property="og:description" content="Small fixed vectors such as float3 with dot and cross products, lengths, normalizing and blending.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/vec">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/vec">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/logic">Logic &amp; Core</a> <span>&rsaquo;</span> vec</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>vec</h1>
+<p class="lib-lede">Small fixed vectors such as <code>float3</code> with dot and cross products, lengths, normalizing and blending.</p>
+<p class="lib-meta"><code>import vec;</code> &middot; 22 functions, 3 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#vector-types">Vector Types <span class="n">21</span></a></li>
+<li><a href="#vector-math">Vector Math <span class="n">9</span></a></li>
+</ul>
+<h2 id="vector-types">Vector Types <span class="n">21</span></h2>
+<article class="sym" id="vec2">
+<h3><a href="#vec2">vec2</a> <i>type</i></h3>
+<pre>struct vec2&lt;T&gt; { x T, y T }</pre>
+<p>Generic two-component vector with x and y fields, combined element by element using arithmetic operators.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L5">hc/lib/vec.he:5</a>
+</article>
+<article class="sym" id="vec3">
+<h3><a href="#vec3">vec3</a> <i>type</i></h3>
+<pre>struct vec3&lt;T&gt; { x T, y T, z T }</pre>
+<p>Generic three-component vector with x, y and z fields, combined element by element using arithmetic operators.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L6">hc/lib/vec.he:6</a>
+</article>
+<article class="sym" id="vec4">
+<h3><a href="#vec4">vec4</a> <i>type</i></h3>
+<pre>struct vec4&lt;T&gt; { x T, y T, z T, w T }</pre>
+<p>Generic four-component vector with x, y, z and w fields, combined element by element using arithmetic operators.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L7">hc/lib/vec.he:7</a>
+</article>
+<article class="sym" id="float2_1">
+<h3><a href="#float2_1">float2_1</a> <i>constant</i></h3>
+<pre>float2_1 := float2{1.0, 1.0}</pre>
+<p>Constant two-component f32 vector with both components set to one.</p>
+<p class="note">all-zero and all-one constants</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L20">hc/lib/vec.he:20</a>
+</article>
+<article class="sym" id="float3_1">
+<h3><a href="#float3_1">float3_1</a> <i>constant</i></h3>
+<pre>float3_1 := float3{1.0, 1.0, 1.0}</pre>
+<p>Constant three-component f32 vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L21">hc/lib/vec.he:21</a>
+</article>
+<article class="sym" id="float4_1">
+<h3><a href="#float4_1">float4_1</a> <i>constant</i></h3>
+<pre>float4_1 := float4{1.0, 1.0, 1.0, 1.0}</pre>
+<p>Constant four-component f32 vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L22">hc/lib/vec.he:22</a>
+</article>
+<article class="sym" id="double2_1">
+<h3><a href="#double2_1">double2_1</a> <i>constant</i></h3>
+<pre>double2_1 := double2{1.0, 1.0}</pre>
+<p>Constant two-component real vector with both components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L23">hc/lib/vec.he:23</a>
+</article>
+<article class="sym" id="double3_1">
+<h3><a href="#double3_1">double3_1</a> <i>constant</i></h3>
+<pre>double3_1 := double3{1.0, 1.0, 1.0}</pre>
+<p>Constant three-component real vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L24">hc/lib/vec.he:24</a>
+</article>
+<article class="sym" id="double4_1">
+<h3><a href="#double4_1">double4_1</a> <i>constant</i></h3>
+<pre>double4_1 := double4{1.0, 1.0, 1.0, 1.0}</pre>
+<p>Constant four-component real vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L25">hc/lib/vec.he:25</a>
+</article>
+<article class="sym" id="int2_1">
+<h3><a href="#int2_1">int2_1</a> <i>constant</i></h3>
+<pre>int2_1 := int2{1, 1}</pre>
+<p>Constant two-component i32 vector with both components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L26">hc/lib/vec.he:26</a>
+</article>
+<article class="sym" id="int3_1">
+<h3><a href="#int3_1">int3_1</a> <i>constant</i></h3>
+<pre>int3_1 := int3{1, 1, 1}</pre>
+<p>Constant three-component i32 vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L27">hc/lib/vec.he:27</a>
+</article>
+<article class="sym" id="int4_1">
+<h3><a href="#int4_1">int4_1</a> <i>constant</i></h3>
+<pre>int4_1 := int4{1, 1, 1, 1}</pre>
+<p>Constant four-component i32 vector with all components set to one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L28">hc/lib/vec.he:28</a>
+</article>
+<article class="sym" id="float2_0">
+<h3><a href="#float2_0">float2_0</a> <i>constant</i></h3>
+<pre>float2_0 := float2_1 * 0.0</pre>
+<p>Constant two-component f32 vector with both components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L29">hc/lib/vec.he:29</a>
+</article>
+<article class="sym" id="float3_0">
+<h3><a href="#float3_0">float3_0</a> <i>constant</i></h3>
+<pre>float3_0 := float3_1 * 0.0</pre>
+<p>Constant three-component f32 vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L30">hc/lib/vec.he:30</a>
+</article>
+<article class="sym" id="float4_0">
+<h3><a href="#float4_0">float4_0</a> <i>constant</i></h3>
+<pre>float4_0 := float4_1 * 0.0</pre>
+<p>Constant four-component f32 vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L31">hc/lib/vec.he:31</a>
+</article>
+<article class="sym" id="double2_0">
+<h3><a href="#double2_0">double2_0</a> <i>constant</i></h3>
+<pre>double2_0 := double2_1 * 0.0</pre>
+<p>Constant two-component real vector with both components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L32">hc/lib/vec.he:32</a>
+</article>
+<article class="sym" id="double3_0">
+<h3><a href="#double3_0">double3_0</a> <i>constant</i></h3>
+<pre>double3_0 := double3_1 * 0.0</pre>
+<p>Constant three-component real vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L33">hc/lib/vec.he:33</a>
+</article>
+<article class="sym" id="double4_0">
+<h3><a href="#double4_0">double4_0</a> <i>constant</i></h3>
+<pre>double4_0 := double4_1 * 0.0</pre>
+<p>Constant four-component real vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L34">hc/lib/vec.he:34</a>
+</article>
+<article class="sym" id="int2_0">
+<h3><a href="#int2_0">int2_0</a> <i>constant</i></h3>
+<pre>int2_0 := int2_1 * 0</pre>
+<p>Constant two-component i32 vector with both components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L35">hc/lib/vec.he:35</a>
+</article>
+<article class="sym" id="int3_0">
+<h3><a href="#int3_0">int3_0</a> <i>constant</i></h3>
+<pre>int3_0 := int3_1 * 0</pre>
+<p>Constant three-component i32 vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L36">hc/lib/vec.he:36</a>
+</article>
+<article class="sym" id="int4_0">
+<h3><a href="#int4_0">int4_0</a> <i>constant</i></h3>
+<pre>int4_0 := int4_1 * 0</pre>
+<p>Constant four-component i32 vector with all components set to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L37">hc/lib/vec.he:37</a>
+</article>
+<h2 id="vector-math">Vector Math <span class="n">9</span></h2>
+<article class="sym" id="dot">
+<h3><a href="#dot">dot</a> <i>function, 3 forms</i></h3>
+<pre>dot&lt;T&gt;(a vec2&lt;T&gt;, b vec2&lt;T&gt;) T</pre>
+<p>Returns the dot product of two two-component vectors, the sum of their component-wise products.</p>
+<pre>dot&lt;T&gt;(a vec3&lt;T&gt;, b vec3&lt;T&gt;) T</pre>
+<p>Returns the dot product of two three-component vectors, the sum of their component-wise products.</p>
+<pre>dot&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;) T</pre>
+<p>Returns the dot product of two four-component vectors, the sum of their component-wise products.</p>
+<p class="note">products: multiply component-wise, then add the components up</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L40">hc/lib/vec.he:40</a>
+</article>
+<article class="sym" id="cross">
+<h3><a href="#cross">cross</a> <i>function</i></h3>
+<pre>cross&lt;T&gt;(a vec3&lt;T&gt;, b vec3&lt;T&gt;) vec3&lt;T&gt;</pre>
+<p>Returns the right-handed cross product of two three-component vectors, perpendicular to both.</p>
+<p class="note">the right-handed perpendicular of a and b</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L50">hc/lib/vec.he:50</a>
+</article>
+<article class="sym" id="length_sq">
+<h3><a href="#length_sq">length_sq</a> <i>function, 3 forms</i></h3>
+<pre>length_sq&lt;T&gt;(v vec2&lt;T&gt;) T</pre>
+<p>Returns the squared length of a two-component vector, avoiding a square root.</p>
+<pre>length_sq&lt;T&gt;(v vec3&lt;T&gt;) T</pre>
+<p>Returns the squared length of a three-component vector, avoiding a square root.</p>
+<pre>length_sq&lt;T&gt;(v vec4&lt;T&gt;) T</pre>
+<p>Returns the squared length of a four-component vector, avoiding a square root.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L56">hc/lib/vec.he:56</a>
+</article>
+<article class="sym" id="length">
+<h3><a href="#length">length</a> <i>function, 3 forms</i></h3>
+<pre>length&lt;T&gt;(v vec2&lt;T&gt;) T</pre>
+<p>Returns the Euclidean length of a two-component vector.</p>
+<pre>length&lt;T&gt;(v vec3&lt;T&gt;) T</pre>
+<p>Returns the Euclidean length of a three-component vector.</p>
+<pre>length&lt;T&gt;(v vec4&lt;T&gt;) T</pre>
+<p>Returns the Euclidean length of a four-component vector.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L59">hc/lib/vec.he:59</a>
+</article>
+<article class="sym" id="normalize">
+<h3><a href="#normalize">normalize</a> <i>function, 3 forms</i></h3>
+<pre>normalize&lt;T&gt;(v vec2&lt;T&gt;) vec2&lt;T&gt;</pre>
+<p>Returns a two-component vector divided by its length; a zero vector is not guarded against.</p>
+<pre>normalize&lt;T&gt;(v vec3&lt;T&gt;) vec3&lt;T&gt;</pre>
+<p>Returns a three-component vector divided by its length; a zero vector is not guarded against.</p>
+<pre>normalize&lt;T&gt;(v vec4&lt;T&gt;) vec4&lt;T&gt;</pre>
+<p>Returns a four-component vector divided by its length; a zero vector is not guarded against.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L62">hc/lib/vec.he:62</a>
+</article>
+<article class="sym" id="distance">
+<h3><a href="#distance">distance</a> <i>function, 3 forms</i></h3>
+<pre>distance&lt;T&gt;(a vec2&lt;T&gt;, b vec2&lt;T&gt;) T</pre>
+<p>Returns the Euclidean distance between two two-component vectors.</p>
+<pre>distance&lt;T&gt;(a vec3&lt;T&gt;, b vec3&lt;T&gt;) T</pre>
+<p>Returns the Euclidean distance between two three-component vectors.</p>
+<pre>distance&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;) T</pre>
+<p>Returns the Euclidean distance between two four-component vectors.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L65">hc/lib/vec.he:65</a>
+</article>
+<article class="sym" id="lerp">
+<h3><a href="#lerp">lerp</a> <i>function, 3 forms</i></h3>
+<pre>lerp&lt;T&gt;(a vec2&lt;T&gt;, b vec2&lt;T&gt;, t T) vec2&lt;T&gt;</pre>
+<p>Returns a linear blend of two two-component vectors, giving a at t of 0 and b at t of 1.</p>
+<pre>lerp&lt;T&gt;(a vec3&lt;T&gt;, b vec3&lt;T&gt;, t T) vec3&lt;T&gt;</pre>
+<p>Returns a linear blend of two three-component vectors, giving a at t of 0 and b at t of 1.</p>
+<pre>lerp&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;, t T) vec4&lt;T&gt;</pre>
+<p>Returns a linear blend of two four-component vectors, giving a at t of 0 and b at t of 1.</p>
+<p class="note">blending: t = 0 gives a, t = 1 gives b</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L70">hc/lib/vec.he:70</a>
+</article>
+<article class="sym" id="xy">
+<h3><a href="#xy">xy</a> <i>function, 2 forms</i></h3>
+<pre>xy&lt;T&gt;(v vec3&lt;T&gt;) vec2&lt;T&gt;</pre>
+<p>Returns the first two components, x and y, of a three-component vector as a two-component vector.</p>
+<pre>xy&lt;T&gt;(v vec4&lt;T&gt;) vec2&lt;T&gt;</pre>
+<p>Returns the first two components, x and y, of a four-component vector as a two-component vector.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L75">hc/lib/vec.he:75</a>
+</article>
+<article class="sym" id="xyz">
+<h3><a href="#xyz">xyz</a> <i>function</i></h3>
+<pre>xyz&lt;T&gt;(v vec4&lt;T&gt;) vec3&lt;T&gt;</pre>
+<p>Returns the first three components, x, y and z, of a four-component vector as a three-component vector.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/vec.he#L77">hc/lib/vec.he:77</a>
+</article>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/std">std</a></li>
+<li><a href="/api-library/helium/lib/math">math</a></li>
+<li><a href="/api-library/helium/lib/vec" class="on">vec</a><ul class="lib-sub">
+<li><a href="#vector-types">Vector Types</a></li>
+<li><a href="#vector-math">Vector Math</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/dictionary">dictionary</a></li>
+<li><a href="/api-library/helium/lib/exception">exception</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

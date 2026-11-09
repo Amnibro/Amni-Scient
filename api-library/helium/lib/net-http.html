@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>net/http | AMNI-SCIENT</title>
+<meta name="description" content="An HTTP client with chunked replies and JSON helpers.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="net/http">
+<meta property="og:description" content="An HTTP client with chunked replies and JSON helpers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-http">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-http">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/network">Networking</a> <span>&rsaquo;</span> net/http</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>net/http</h1>
+<p class="lib-lede">An HTTP client with chunked replies and JSON helpers.</p>
+<div class="lib-dev">Coming soon: this module is not in the public Helium repository yet, so importing it from a public checkout will fail.</div>
+<p class="lib-meta"><code>import net.http;</code> &middot; <code>net::</code> &middot; 9 functions, 2 types, 3 constants</p>
+<ul class="lib-pills">
+<li><a href="#http-requests">Http Requests <span class="n">10</span></a></li>
+<li><a href="#url-parsing">Url Parsing <span class="n">3</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="http-requests">Http Requests <span class="n">10</span></h2>
+<article class="sym" id="HTTP_ERR">
+<h3><a href="#HTTP_ERR">HTTP_ERR</a> <i>constant</i></h3>
+<pre>HTTP_ERR := -1</pre>
+<p>Status code returned when an HTTP request has failed.</p>
+<span class="src">hc/lib/net/http.he:6</span>
+</article>
+<article class="sym" id="HTTP_PENDING">
+<h3><a href="#HTTP_PENDING">HTTP_PENDING</a> <i>constant</i></h3>
+<pre>HTTP_PENDING := 0</pre>
+<p>Status code returned when an HTTP request is still in progress.</p>
+<span class="src">hc/lib/net/http.he:7</span>
+</article>
+<article class="sym" id="HTTP_DONE">
+<h3><a href="#HTTP_DONE">HTTP_DONE</a> <i>constant</i></h3>
+<pre>HTTP_DONE := 1</pre>
+<p>Status code returned when an HTTP response has been fully received.</p>
+<span class="src">hc/lib/net/http.he:8</span>
+</article>
+<article class="sym" id="Http">
+<h3><a href="#Http">Http</a> <i>type</i></h3>
+<pre>struct Http { c Tls = Tls{}, st int = 0, req byte[&gt;..] = [], status int = 0, head byte[&gt;..] = [], body byte[&gt;..] = [], raw byte[&gt;..] = [], clen int = -1, chunked bool = false, nobody bool = false, err byte[&gt;..] = [], deadline real = 0.0 }</pre>
+<p>State of one HTTP request, including connection, status code, headers, body and any error message.</p>
+<span class="src">hc/lib/net/http.he:10</span>
+</article>
+<article class="sym" id="http_start">
+<h3><a href="#http_start">http_start</a> <i>function</i></h3>
+<pre>http_start(method const byte[:], url const byte[:], headers const byte[:], body const byte[:]) Http</pre>
+<p>Starts a non-blocking HTTP request and returns its state, marked as failed if the URL is bad.</p>
+<span class="src">hc/lib/net/http.he:36</span>
+</article>
+<article class="sym" id="http_header">
+<h3><a href="#http_header">http_header</a> <i>function</i></h3>
+<pre>http_header(head const byte[:], name const byte[:]) byte[&gt;..]</pre>
+<p>Returns the value of a named header from a response head, matched case-insensitively, or empty if absent.</p>
+<span class="src">hc/lib/net/http.he:43</span>
+</article>
+<article class="sym" id="http_pump">
+<h3><a href="#http_pump">http_pump</a> <i>function</i></h3>
+<pre>http_pump(h Http&amp;) int</pre>
+<p>Advances a pending request by reading available data, returning HTTP_ERR, HTTP_PENDING or HTTP_DONE.</p>
+<span class="src">hc/lib/net/http.he:61</span>
+</article>
+<article class="sym" id="http_wait">
+<h3><a href="#http_wait">http_wait</a> <i>function</i></h3>
+<pre>http_wait(h Http&amp;, ms int) int</pre>
+<p>Pumps a request until it finishes or the timeout in milliseconds expires, returning the final status.</p>
+<span class="src">hc/lib/net/http.he:88</span>
+</article>
+<article class="sym" id="http_fetch">
+<h3><a href="#http_fetch">http_fetch</a> <i>function</i></h3>
+<pre>http_fetch(method const byte[:], url const byte[:], headers const byte[:], body const byte[:], ms int) Http</pre>
+<p>Performs a complete blocking HTTP request with the given timeout in milliseconds and returns its state.</p>
+<span class="src">hc/lib/net/http.he:95</span>
+</article>
+<article class="sym" id="http_json">
+<h3><a href="#http_json">http_json</a> <i>function</i></h3>
+<pre>http_json(method const byte[:], url const byte[:], token const byte[:], body const byte[:], ms int) Http</pre>
+<p>Performs a blocking HTTP request with JSON content headers and an optional bearer token, timing out in milliseconds.</p>
+<span class="src">hc/lib/net/http.he:96</span>
+</article>
+<h2 id="url-parsing">Url Parsing <span class="n">3</span></h2>
+<article class="sym" id="Url">
+<h3><a href="#Url">Url</a> <i>type</i></h3>
+<pre>struct Url { secure bool = false, host byte[&gt;..] = [], port int = 0, path byte[&gt;..] = [] }</pre>
+<p>Parsed URL holding the secure flag, host, port and path, with default ports 443 or 80.</p>
+<span class="src">hc/lib/net/http.he:9</span>
+</article>
+<article class="sym" id="url_parse">
+<h3><a href="#url_parse">url_parse</a> <i>function</i></h3>
+<pre>url_parse(u const byte[:]) Url, bool</pre>
+<p>Parses a URL into scheme security, host, port and path, returning false if the URL is invalid.</p>
+<span class="src">hc/lib/net/http.he:11</span>
+</article>
+<article class="sym" id="host_header">
+<h3><a href="#host_header">host_header</a> <i>function</i></h3>
+<pre>host_header(u const Url&amp;) byte[&gt;..]</pre>
+<p>Returns the Host header value for a URL, bracketing IPv6 hosts and omitting default ports.</p>
+<span class="src">hc/lib/net/http.he:29</span>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (1)</summary>
+<article class="sym" id="dechunk">
+<h3><a href="#dechunk">dechunk</a> <i>function</i></h3>
+<pre>dechunk(h Http&amp;) bool</pre>
+<p>Decodes chunked transfer-encoded data from the raw buffer into the body, returning true when complete or failed.</p>
+<span class="src">hc/lib/net/http.he:49</span>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/net-sock">net/sock</a></li>
+<li><a href="/api-library/helium/lib/net-udp">net/udp</a></li>
+<li><a href="/api-library/helium/lib/net-tcp">net/tcp</a></li>
+<li><a href="/api-library/helium/lib/net-http" class="on">net/http</a><ul class="lib-sub">
+<li><a href="#http-requests">Http Requests</a></li>
+<li><a href="#url-parsing">Url Parsing</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/net-tls">net/tls</a></li>
+<li><a href="/api-library/helium/lib/net-ws">net/ws</a></li>
+<li><a href="/api-library/helium/lib/net-sio">net/sio</a></li>
+<li><a href="/api-library/helium/lib/net-link">net/link</a></li>
+<li><a href="/api-library/helium/lib/net-snap">net/snap</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

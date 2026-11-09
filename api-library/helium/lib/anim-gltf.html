@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>anim/gltf | AMNI-SCIENT</title>
+<meta name="description" content="Read skinned characters from .glb files: skeletons, inverse bind matrices and animation samplers.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="anim/gltf">
+<meta property="og:description" content="Read skinned characters from .glb files: skeletons, inverse bind matrices and animation samplers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-gltf">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-gltf">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/animation">Animation</a> <span>&rsaquo;</span> anim/gltf</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>anim/gltf</h1>
+<p class="lib-lede">Read skinned characters from <code>.glb</code> files: skeletons, inverse bind matrices and animation samplers.</p>
+<p class="lib-meta"><code>import anim.gltf;</code> &middot; <code>anim::</code> &middot; 24 functions, 3 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>anim/gltf: a clean-room GLB (glTF 2.0 binary) reader for skinned
+characters, written from the Khronos glTF 2.0 specification: the 12-byte
+header and JSON/BIN chunks, accessors over buffer views (float and
+normalized integer components), node TRS, skins with inverse bind
+matrices, and animation samplers (LINEAR, STEP, CUBICSPLINE), resampled
+into the clip bank at a uniform rate. Sparse accessors and external
+buffers are not supported (GLB with one embedded BIN chunk only).</pre></details>
+<ul class="lib-pills">
+<li><a href="#glb-loading">GLB Loading <span class="n">2</span></a></li>
+<li><a href="#skeleton-import">Skeleton Import <span class="n">1</span></a></li>
+<li><a href="#animation-import">Animation Import <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="glb-loading">GLB Loading <span class="n">2</span></h2>
+<article class="sym" id="glb_open">
+<h3><a href="#glb_open">glb_open</a> <i>function</i></h3>
+<pre>glb_open(path const byte[:]) bool</pre>
+<p>Reads a .glb file and parses its JSON chunk, returning false with an error recorded on failure.</p>
+<p class="note">Reads a .glb file and parses its JSON chunk.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L33">hc/lib/anim/gltf.amni:33</a>
+</article>
+<article class="sym" id="glb_close">
+<h3><a href="#glb_close">glb_close</a> <i>function</i></h3>
+<pre>glb_close()</pre>
+<p>Releases the parsed JSON document and GLB bytes to free memory once data has been extracted.</p>
+<p class="note">Drop the parsed JSON document and the GLB bytes once everything needed has been extracted. json::Doc keeps two growable arrays per node and the Helium runtime maps a separate reservation for each, so a big glTF document can hold tens of thousands of mappings (near vm.max_map_count) until released.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L56">hc/lib/anim/gltf.amni:56</a>
+</article>
+<h2 id="skeleton-import">Skeleton Import <span class="n">1</span></h2>
+<article class="sym" id="glb_skeleton">
+<h3><a href="#glb_skeleton">glb_skeleton</a> <i>function</i></h3>
+<pre>glb_skeleton(sk Skeleton&amp;, skin int) bool</pre>
+<p>Loads a skin as a skeleton with joints ordered parent-before-child, rest pose and inverse bind matrices; returns false on error.</p>
+<p class="note">Loads skin `skin` as a skeleton: joints sorted parent-before-child (by depth among joints), parent = nearest joint ancestor.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L133">hc/lib/anim/gltf.amni:133</a>
+</article>
+<h2 id="animation-import">Animation Import <span class="n">1</span></h2>
+<article class="sym" id="glb_clips">
+<h3><a href="#glb_clips">glb_clips</a> <i>function</i></h3>
+<pre>glb_clips(sk Skeleton&amp;, prefix const byte[:], fps_in f32, root_name const byte[:]) int</pre>
+<p>Loads every glTF animation into the clip bank resampled at a uniform rate, returning the number of clips loaded.</p>
+<p class="note">Loads every animation into the clip bank, resampled at `fps` (or the clip's extras.fps when fps &lt;= 0, default 30). Clip names get `prefix`. Every clip's root motion is set on the joint named `root_name` (if any). Returns the number of clips loaded.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L240">hc/lib/anim/gltf.amni:240</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (29)</summary>
+<article class="sym" id="GLB">
+<h3><a href="#GLB">GLB</a> <i>constant</i></h3>
+<pre>var GLB byte[&gt;..]</pre>
+<p>Holds the raw bytes of the currently opened GLB file for the reader's internal use.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L18">hc/lib/anim/gltf.amni:18</a>
+</article>
+<article class="sym" id="GDOC">
+<h3><a href="#GDOC">GDOC</a> <i>constant</i></h3>
+<pre>var GDOC json::Doc</pre>
+<p>Holds the parsed JSON document from the opened GLB file's JSON chunk.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L19">hc/lib/anim/gltf.amni:19</a>
+</article>
+<article class="sym" id="NODE_PARENT">
+<h3><a href="#NODE_PARENT">NODE_PARENT</a> <i>constant</i></h3>
+<pre>var NODE_PARENT i32[&gt;..];   // node -&gt; parent node (-1)</pre>
+<p>Maps each glTF node index to its parent node index, or -1 when it has none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L20">hc/lib/anim/gltf.amni:20</a>
+</article>
+<article class="sym" id="NODE_JOINT">
+<h3><a href="#NODE_JOINT">NODE_JOINT</a> <i>constant</i></h3>
+<pre>var NODE_JOINT i32[&gt;..];    // node -&gt; skeleton joint (-1)</pre>
+<p>Maps each glTF node index to its skeleton joint index, or -1 when it is not a joint.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L21">hc/lib/anim/gltf.amni:21</a>
+</article>
+<article class="sym" id="SKIN_JOINT">
+<h3><a href="#SKIN_JOINT">SKIN_JOINT</a> <i>constant</i></h3>
+<pre>var SKIN_JOINT i32[&gt;..];    // skin.joints order -&gt; skeleton joint</pre>
+<p>Maps the skin's joints order to skeleton joint indices for the loaded skin.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L22">hc/lib/anim/gltf.amni:22</a>
+</article>
+<article class="sym" id="GlbInfo">
+<h3><a href="#GlbInfo">GlbInfo</a> <i>type</i></h3>
+<pre>struct GlbInfo { ok bool, root int, bin int, bin_len int, err byte[..128] }</pre>
+<p>Status record for the opened GLB, with success flag, JSON root, binary chunk location and error text.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L24">hc/lib/anim/gltf.amni:24</a>
+</article>
+<article class="sym" id="GI">
+<h3><a href="#GI">GI</a> <i>constant</i></h3>
+<pre>var GI GlbInfo</pre>
+<p>Global status of the most recently opened GLB file.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L25">hc/lib/anim/gltf.amni:25</a>
+</article>
+<article class="sym" id="gerr">
+<h3><a href="#gerr">gerr</a> <i>function</i></h3>
+<pre>gerr(msg const byte[:]) bool</pre>
+<p>Records an error message in the load status, truncated to 120 bytes, and returns false.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L27">hc/lib/anim/gltf.amni:27</a>
+</article>
+<article class="sym" id="u32_at">
+<h3><a href="#u32_at">u32_at</a> <i>function</i></h3>
+<pre>u32_at(at int) int</pre>
+<p>Reads a little-endian unsigned 32-bit integer from the loaded GLB bytes at the given offset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L29">hc/lib/anim/gltf.amni:29</a>
+</article>
+<article class="sym" id="f32_at">
+<h3><a href="#f32_at">f32_at</a> <i>function</i></h3>
+<pre>f32_at(at int) f32</pre>
+<p>Reads a little-endian 32-bit float from the loaded GLB bytes at the given offset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L30">hc/lib/anim/gltf.amni:30</a>
+</article>
+<article class="sym" id="jm">
+<h3><a href="#jm">jm</a> <i>function</i></h3>
+<pre>jm(n int, key const byte[:]) int</pre>
+<p>Returns the JSON node for an object member by key, or a negative value when missing.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L63">hc/lib/anim/gltf.amni:63</a>
+</article>
+<article class="sym" id="jel">
+<h3><a href="#jel">jel</a> <i>function</i></h3>
+<pre>jel(n int, k int) int</pre>
+<p>Returns the JSON node at a given index within an array node.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L64">hc/lib/anim/gltf.amni:64</a>
+</article>
+<article class="sym" id="jlen">
+<h3><a href="#jlen">jlen</a> <i>function</i></h3>
+<pre>jlen(n int) int</pre>
+<p>Returns the number of elements in a JSON array node, or 0 if the node is not an array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L65">hc/lib/anim/gltf.amni:65</a>
+</article>
+<article class="sym" id="jnum">
+<h3><a href="#jnum">jnum</a> <i>function</i></h3>
+<pre>jnum(n int, dflt f32) f32</pre>
+<p>Returns a JSON node's numeric value as a float, or the default when it is not a number.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L66">hc/lib/anim/gltf.amni:66</a>
+</article>
+<article class="sym" id="jint">
+<h3><a href="#jint">jint</a> <i>function</i></h3>
+<pre>jint(n int, dflt int) int</pre>
+<p>Returns a JSON node's integer value, or the default when it is not an integer.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L67">hc/lib/anim/gltf.amni:67</a>
+</article>
+<article class="sym" id="jtop">
+<h3><a href="#jtop">jtop</a> <i>function</i></h3>
+<pre>jtop(key const byte[:]) int</pre>
+<p>Returns the JSON node for a top-level member of the glTF document by key.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L68">hc/lib/anim/gltf.amni:68</a>
+</article>
+<article class="sym" id="Accessor">
+<h3><a href="#Accessor">Accessor</a> <i>type</i></h3>
+<pre>struct Accessor { off int, stride int, count int, ctype int, ncomp int, norm bool }</pre>
+<p>Describes a glTF accessor's location in the binary chunk: offset, stride, count, component type, component count and normalization.</p>
+<p class="note">accessors glTF 2.0 spec §3.6.2 &quot;Accessors&quot;: componentType 5120 BYTE, 5121 UNSIGNED_BYTE (1 byte), 5122 SHORT, 5123 UNSIGNED_SHORT (2), 5125 UNSIGNED_INT, 5126 FLOAT (4); type SCALAR/VEC2/VEC3/VEC4/MAT2/MAT3/MAT4 = 1/2/3/4/4/9/16 components; a zero bufferView.byteStride means tightly packed.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L75">hc/lib/anim/gltf.amni:75</a>
+</article>
+<article class="sym" id="component_bytes">
+<h3><a href="#component_bytes">component_bytes</a> <i>function</i></h3>
+<pre>component_bytes(ct int) int</pre>
+<p>Returns the byte size of a glTF component type code.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L76">hc/lib/anim/gltf.amni:76</a>
+</article>
+<article class="sym" id="ncomp_of">
+<h3><a href="#ncomp_of">ncomp_of</a> <i>function</i></h3>
+<pre>ncomp_of(ty const byte[:]) int</pre>
+<p>Returns the number of components for a glTF accessor type name such as VEC3 or MAT4.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L77">hc/lib/anim/gltf.amni:77</a>
+</article>
+<article class="sym" id="accessor">
+<h3><a href="#accessor">accessor</a> <i>function</i></h3>
+<pre>accessor(i int) Accessor</pre>
+<p>Builds an Accessor for the glTF accessor at the given index, resolving its buffer view offset and stride.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L80">hc/lib/anim/gltf.amni:80</a>
+</article>
+<article class="sym" id="acc_f">
+<h3><a href="#acc_f">acc_f</a> <i>function</i></h3>
+<pre>acc_f(a Accessor, k int, c int) f32</pre>
+<p>Reads one component of an accessor element as a float, converting normalized integers to the unit range.</p>
+<p class="note">Component c of element k as a float (normalized ints per the spec).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L103">hc/lib/anim/gltf.amni:103</a>
+</article>
+<article class="sym" id="acc_i">
+<h3><a href="#acc_i">acc_i</a> <i>function</i></h3>
+<pre>acc_i(a Accessor, k int, c int) int</pre>
+<p>Reads one component of an accessor element as a raw integer.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L114">hc/lib/anim/gltf.amni:114</a>
+</article>
+<article class="sym" id="acc_v3">
+<h3><a href="#acc_v3">acc_v3</a> <i>function</i></h3>
+<pre>acc_v3(a Accessor, k int) float3</pre>
+<p>Reads an accessor element as a three-component float vector.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L118">hc/lib/anim/gltf.amni:118</a>
+</article>
+<article class="sym" id="acc_v4">
+<h3><a href="#acc_v4">acc_v4</a> <i>function</i></h3>
+<pre>acc_v4(a Accessor, k int) float4</pre>
+<p>Reads an accessor element as a four-component float vector.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L119">hc/lib/anim/gltf.amni:119</a>
+</article>
+<article class="sym" id="node_trs">
+<h3><a href="#node_trs">node_trs</a> <i>function</i></h3>
+<pre>node_trs(n int) Xf</pre>
+<p>Builds a transform from a glTF node's translation, rotation and scale, using identity defaults for missing values.</p>
+<p class="note">nodes and the skeleton</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L122">hc/lib/anim/gltf.amni:122</a>
+</article>
+<article class="sym" id="Samp">
+<h3><a href="#Samp">Samp</a> <i>type</i></h3>
+<pre>struct Samp { input Accessor, output Accessor, interp i32 }   // 0 LINEAR, 1 STEP, 2 CUBICSPLINE</pre>
+<p>Pairs an animation sampler's input and output accessors with its interpolation mode: linear, step or cubic spline.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L193">hc/lib/anim/gltf.amni:193</a>
+</article>
+<article class="sym" id="find_key">
+<h3><a href="#find_key">find_key</a> <i>function</i></h3>
+<pre>find_key(a Accessor, t f32) int</pre>
+<p>Finds the index of the last keyframe at or before the given time, clamped to a valid segment.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L194">hc/lib/anim/gltf.amni:194</a>
+</article>
+<article class="sym" id="samp_val">
+<h3><a href="#samp_val">samp_val</a> <i>function</i></h3>
+<pre>samp_val(s Samp, k int, c int, n int) f32</pre>
+<p>Reads one component of a sampler's value at a keyframe, using the middle value for cubic spline keys.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L205">hc/lib/anim/gltf.amni:205</a>
+</article>
+<article class="sym" id="samp_eval">
+<h3><a href="#samp_eval">samp_eval</a> <i>function</i></h3>
+<pre>samp_eval(s Samp, t f32, n int, is_rot bool) float4</pre>
+<p>Evaluates a sampler at a given time for three or four components, interpolating by its mode and normalizing rotations.</p>
+<p class="note">Evaluates n components (3 or 4) of the sampler at time t.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/gltf.amni#L210">hc/lib/anim/gltf.amni:210</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/anim-clip">anim/clip</a></li>
+<li><a href="/api-library/helium/lib/anim-pose">anim/pose</a></li>
+<li><a href="/api-library/helium/lib/anim-space">anim/space</a></li>
+<li><a href="/api-library/helium/lib/anim-machine">anim/machine</a></li>
+<li><a href="/api-library/helium/lib/anim-ik">anim/ik</a></li>
+<li><a href="/api-library/helium/lib/anim-skin">anim/skin</a></li>
+<li><a href="/api-library/helium/lib/anim-gpuskin">anim/gpuskin</a></li>
+<li><a href="/api-library/helium/lib/anim-gltf" class="on">anim/gltf</a><ul class="lib-sub">
+<li><a href="#glb-loading">GLB Loading</a></li>
+<li><a href="#skeleton-import">Skeleton Import</a></li>
+<li><a href="#animation-import">Animation Import</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/anim-math">anim/math</a></li>
+<li><a href="/api-library/helium/lib/anim-gold">anim/gold</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

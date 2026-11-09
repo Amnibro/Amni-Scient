@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>crypto/aead | AMNI-SCIENT</title>
+<meta name="description" content="Authenticated encryption with ChaCha20-Poly1305 and AES-GCM.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="crypto/aead">
+<meta property="og:description" content="Authenticated encryption with ChaCha20-Poly1305 and AES-GCM.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-aead">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-aead">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/security">Security</a> <span>&rsaquo;</span> crypto/aead</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>crypto/aead</h1>
+<p class="lib-lede">Authenticated encryption with ChaCha20-Poly1305 and AES-GCM.</p>
+<div class="lib-dev">Coming soon: this module is not in the public Helium repository yet, so importing it from a public checkout will fail.</div>
+<p class="lib-meta"><code>import crypto.aead;</code> &middot; <code>crypto::</code> &middot; 23 functions, 1 types, 3 constants</p>
+<ul class="lib-pills">
+<li><a href="#algorithm-selection">Algorithm Selection <span class="n">3</span></a></li>
+<li><a href="#authenticated-encryption">Authenticated Encryption <span class="n">3</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="algorithm-selection">Algorithm Selection <span class="n">3</span></h2>
+<article class="sym" id="AES_GCM">
+<h3><a href="#AES_GCM">AES_GCM</a> <i>constant</i></h3>
+<pre>AES_GCM := 1</pre>
+<p>Constant selecting AES-GCM as the algorithm for sealing and opening messages.</p>
+<span class="src">hc/lib/crypto/aead.he:4</span>
+</article>
+<article class="sym" id="CHACHA20_POLY1305">
+<h3><a href="#CHACHA20_POLY1305">CHACHA20_POLY1305</a> <i>constant</i></h3>
+<pre>CHACHA20_POLY1305 := 2</pre>
+<p>Constant selecting ChaCha20-Poly1305 with a 32-byte key and 12-byte nonce.</p>
+<span class="src">hc/lib/crypto/aead.he:5</span>
+</article>
+<article class="sym" id="XCHACHA20_POLY1305">
+<h3><a href="#XCHACHA20_POLY1305">XCHACHA20_POLY1305</a> <i>constant</i></h3>
+<pre>XCHACHA20_POLY1305 := 3</pre>
+<p>Constant selecting XChaCha20-Poly1305, which takes a 32-byte key and an extended 24-byte nonce.</p>
+<span class="src">hc/lib/crypto/aead.he:6</span>
+</article>
+<h2 id="authenticated-encryption">Authenticated Encryption <span class="n">3</span></h2>
+<article class="sym" id="aead_ok">
+<h3><a href="#aead_ok">aead_ok</a> <i>function</i></h3>
+<pre>aead_ok(alg int, key const byte[:], nonce const byte[:]) bool</pre>
+<p>Returns whether the key and nonce lengths are valid for the chosen algorithm.</p>
+<span class="src">hc/lib/crypto/aead.he:112</span>
+</article>
+<article class="sym" id="aead_seal">
+<h3><a href="#aead_seal">aead_seal</a> <i>function</i></h3>
+<pre>aead_seal(alg int, key const byte[:], nonce const byte[:], aad const byte[:], pt const byte[:]) byte[&gt;..], bool</pre>
+<p>Encrypts plaintext with associated data and returns ciphertext with a 16-byte tag appended, plus false on invalid key or nonce.</p>
+<span class="src">hc/lib/crypto/aead.he:119</span>
+</article>
+<article class="sym" id="aead_open">
+<h3><a href="#aead_open">aead_open</a> <i>function</i></h3>
+<pre>aead_open(alg int, key const byte[:], nonce const byte[:], aad const byte[:], ct const byte[:]) byte[&gt;..], bool</pre>
+<p>Verifies and decrypts ciphertext with a trailing 16-byte tag, returning empty and false if inputs or tag are invalid.</p>
+<span class="src">hc/lib/crypto/aead.he:125</span>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (21)</summary>
+<article class="sym" id="Aes">
+<h3><a href="#Aes">Aes</a> <i>type</i></h3>
+<pre>struct Aes { nr int = 0, rk byte[240] = [0; 240] }</pre>
+<p>Expanded AES key schedule holding the round count and round key bytes.</p>
+<span class="src">hc/lib/crypto/aead.he:8</span>
+</article>
+<article class="sym" id="le32">
+<h3><a href="#le32">le32</a> <i>function</i></h3>
+<pre>le32(p const byte[:], j int) u32</pre>
+<p>Reads four bytes from a slice at an offset as a little-endian 32-bit integer.</p>
+<span class="src">hc/lib/crypto/aead.he:9</span>
+</article>
+<article class="sym" id="put32">
+<h3><a href="#put32">put32</a> <i>function</i></h3>
+<pre>put32(o byte[&gt;..]&amp;, v u32)</pre>
+<p>Appends a 32-bit value to a byte list in little-endian order.</p>
+<span class="src">hc/lib/crypto/aead.he:10</span>
+</article>
+<article class="sym" id="put64">
+<h3><a href="#put64">put64</a> <i>function</i></h3>
+<pre>put64(o byte[&gt;..]&amp;, v u64)</pre>
+<p>Appends a 64-bit value to a byte list in little-endian order.</p>
+<span class="src">hc/lib/crypto/aead.he:11</span>
+</article>
+<article class="sym" id="rl">
+<h3><a href="#rl">rl</a> <i>function</i></h3>
+<pre>rl(x u32, n int) u32</pre>
+<p>Rotates a 32-bit value left by the given number of bits.</p>
+<span class="src">hc/lib/crypto/aead.he:12</span>
+</article>
+<article class="sym" id="qr">
+<h3><a href="#qr">qr</a> <i>function</i></h3>
+<pre>qr(x u32[16]&amp;, a int, b int, c int, d int)</pre>
+<p>Applies the ChaCha quarter round to four selected words of the state.</p>
+<span class="src">hc/lib/crypto/aead.he:13</span>
+</article>
+<article class="sym" id="rounds">
+<h3><a href="#rounds">rounds</a> <i>function</i></h3>
+<pre>rounds(x u32[16]&amp;)</pre>
+<p>Runs the twenty ChaCha rounds, as ten double rounds, over a 16-word state in place.</p>
+<span class="src">hc/lib/crypto/aead.he:15</span>
+</article>
+<article class="sym" id="cc_state">
+<h3><a href="#cc_state">cc_state</a> <i>function</i></h3>
+<pre>cc_state(key const byte[:], n const byte[:], ctr u32) u32[16]</pre>
+<p>Builds the initial ChaCha state from key, nonce and block counter, accepting 12 or 16 byte nonces.</p>
+<span class="src">hc/lib/crypto/aead.he:16</span>
+</article>
+<article class="sym" id="chacha20">
+<h3><a href="#chacha20">chacha20</a> <i>function</i></h3>
+<pre>chacha20(key const byte[:], nonce const byte[:], ctr u32, d const byte[:]) byte[&gt;..]</pre>
+<p>Encrypts or decrypts data by XORing it with the ChaCha20 keystream starting at the given counter.</p>
+<span class="src">hc/lib/crypto/aead.he:21</span>
+</article>
+<article class="sym" id="hchacha20">
+<h3><a href="#hchacha20">hchacha20</a> <i>function</i></h3>
+<pre>hchacha20(key const byte[:], n16 const byte[:]) byte[&gt;..]</pre>
+<p>Derives a 32-byte subkey from a key and 16-byte nonce for XChaCha20.</p>
+<span class="src">hc/lib/crypto/aead.he:30</span>
+</article>
+<article class="sym" id="poly1305">
+<h3><a href="#poly1305">poly1305</a> <i>function</i></h3>
+<pre>poly1305(key const byte[:], m const byte[:]) byte[&gt;..]</pre>
+<p>Computes the 16-byte Poly1305 authentication tag of a message using a 32-byte one-time key.</p>
+<span class="src">hc/lib/crypto/aead.he:35</span>
+</article>
+<article class="sym" id="pad16">
+<h3><a href="#pad16">pad16</a> <i>function</i></h3>
+<pre>pad16(o byte[&gt;..]&amp;)</pre>
+<p>Pads a byte list with zeros up to a multiple of 16 bytes.</p>
+<span class="src">hc/lib/crypto/aead.he:56</span>
+</article>
+<article class="sym" id="cp_tag">
+<h3><a href="#cp_tag">cp_tag</a> <i>function</i></h3>
+<pre>cp_tag(key const byte[:], nonce const byte[:], aad const byte[:], ct const byte[:]) byte[&gt;..]</pre>
+<p>Computes the Poly1305 tag over associated data and ciphertext using a key derived from ChaCha20.</p>
+<span class="src">hc/lib/crypto/aead.he:57</span>
+</article>
+<article class="sym" id="xt">
+<h3><a href="#xt">xt</a> <i>function</i></h3>
+<pre>xt(b byte) byte</pre>
+<p>Multiplies a byte by x in the AES finite field.</p>
+<span class="src">hc/lib/crypto/aead.he:60</span>
+</article>
+<article class="sym" id="aes_key">
+<h3><a href="#aes_key">aes_key</a> <i>function</i></h3>
+<pre>aes_key(key const byte[:]) Aes</pre>
+<p>Expands a 16, 24 or 32 byte AES key into its round key schedule.</p>
+<span class="src">hc/lib/crypto/aead.he:61</span>
+</article>
+<article class="sym" id="aes_block">
+<h3><a href="#aes_block">aes_block</a> <i>function</i></h3>
+<pre>aes_block(a const Aes&amp;, inp const byte[:], o byte[16]&amp;)</pre>
+<p>Encrypts one 16-byte block with AES into the output block.</p>
+<span class="src">hc/lib/crypto/aead.he:70</span>
+</article>
+<article class="sym" id="be64b">
+<h3><a href="#be64b">be64b</a> <i>function</i></h3>
+<pre>be64b(p const byte[:], j int) u64</pre>
+<p>Reads eight bytes from a slice at an offset as a big-endian 64-bit integer.</p>
+<span class="src">hc/lib/crypto/aead.he:81</span>
+</article>
+<article class="sym" id="gmul">
+<h3><a href="#gmul">gmul</a> <i>function</i></h3>
+<pre>gmul(xh u64, xl u64, yh u64, yl u64) u64, u64</pre>
+<p>Multiplies two 128-bit values in the GCM field, returning high and low halves.</p>
+<span class="src">hc/lib/crypto/aead.he:82</span>
+</article>
+<article class="sym" id="ghash">
+<h3><a href="#ghash">ghash</a> <i>function</i></h3>
+<pre>ghash(hh u64, hl u64, a const byte[:], c const byte[:]) byte[&gt;..]</pre>
+<p>Computes the 16-byte GHASH of associated data and ciphertext using the hash subkey halves.</p>
+<span class="src">hc/lib/crypto/aead.he:88</span>
+</article>
+<article class="sym" id="gcm_core">
+<h3><a href="#gcm_core">gcm_core</a> <i>function</i></h3>
+<pre>gcm_core(key const byte[:], iv const byte[:], aad const byte[:], d const byte[:], enc bool) byte[&gt;..], byte[&gt;..]</pre>
+<p>Runs AES-GCM counter-mode encryption or decryption and returns the output with its authentication tag.</p>
+<span class="src">hc/lib/crypto/aead.he:99</span>
+</article>
+<article class="sym" id="cp_keys">
+<h3><a href="#cp_keys">cp_keys</a> <i>function</i></h3>
+<pre>cp_keys(alg int, key const byte[:], nonce const byte[:]) byte[&gt;..], byte[&gt;..]</pre>
+<p>Returns the effective key and nonce for ChaCha20-Poly1305, deriving them via HChaCha20 for the extended-nonce variant.</p>
+<span class="src">hc/lib/crypto/aead.he:115</span>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/crypto-hash">crypto/hash</a></li>
+<li><a href="/api-library/helium/lib/crypto-aead" class="on">crypto/aead</a><ul class="lib-sub">
+<li><a href="#algorithm-selection">Algorithm Selection</a></li>
+<li><a href="#authenticated-encryption">Authenticated Encryption</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/crypto-c25519">crypto/c25519</a></li>
+<li><a href="/api-library/helium/lib/crypto-ecc">crypto/ecc</a></li>
+<li><a href="/api-library/helium/lib/crypto-rsa">crypto/rsa</a></li>
+<li><a href="/api-library/helium/lib/crypto-x509">crypto/x509</a></li>
+<li><a href="/api-library/helium/lib/crypto-bn">crypto/bn</a></li>
+<li><a href="/api-library/helium/lib/crypto-rand">crypto/rand</a></li>
+<li><a href="/api-library/helium/lib/gf">gf</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

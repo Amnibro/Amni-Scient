@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>anim/machine | AMNI-SCIENT</title>
+<meta name="description" content="The animation state machine: states, conditional transitions, crossfades, phase sync and interruption.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="anim/machine">
+<meta property="og:description" content="The animation state machine: states, conditional transitions, crossfades, phase sync and interruption.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-machine">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-machine">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/animation">Animation</a> <span>&rsaquo;</span> anim/machine</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>anim/machine</h1>
+<p class="lib-lede">The animation state machine: states, conditional transitions, crossfades, phase sync and interruption.</p>
+<p class="lib-meta"><code>import anim.machine;</code> &middot; <code>anim::</code> &middot; 13 functions, 6 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>anim/machine: motions (a clip or a blend space) and the animation state
+machine: states, transitions with conditions / exit times, smoothstep
+crossfades, phase sync, and interruption by freezing the last output pose.
+Root motion flows through: every motion reports its root displacement
+for the tick and the machine blends them with the same weights as the
+poses. Clean-room; see DESIGN.md.</pre></details>
+<ul class="lib-pills">
+<li><a href="#motion-kinds">Motion Kinds <span class="n">3</span></a></li>
+<li><a href="#transition-conditions">Transition Conditions <span class="n">9</span></a></li>
+<li><a href="#state-machine">State Machine <span class="n">12</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="motion-kinds">Motion Kinds <span class="n">3</span></h2>
+<article class="sym" id="MK_CLIP">
+<h3><a href="#MK_CLIP">MK_CLIP</a> <i>constant</i></h3>
+<pre>let MK_CLIP = 0</pre>
+<p>Motion kind value selecting a single animation clip as a state's motion.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L15">hc/lib/anim/machine.amni:15</a>
+</article>
+<article class="sym" id="MK_SPACE">
+<h3><a href="#MK_SPACE">MK_SPACE</a> <i>constant</i></h3>
+<pre>let MK_SPACE = 1</pre>
+<p>Motion kind value selecting a blend space as a state's motion.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L16">hc/lib/anim/machine.amni:16</a>
+</article>
+<article class="sym" id="Motion">
+<h3><a href="#Motion">Motion</a> <i>type</i></h3>
+<pre>struct Motion { kind i32, clip i32 = -1, space i32 = -1, px i32 = -1, py i32 = -1, rate f32 = 1.0 }</pre>
+<p>Motion description of a state, either a clip or a blend space with rate and parameter bindings.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L25">hc/lib/anim/machine.amni:25</a>
+</article>
+<h2 id="transition-conditions">Transition Conditions <span class="n">9</span></h2>
+<article class="sym" id="OP_GT">
+<h3><a href="#OP_GT">OP_GT</a> <i>constant</i></h3>
+<pre>let OP_GT = 0</pre>
+<p>Condition operator that passes when the parameter is greater than the given value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L17">hc/lib/anim/machine.amni:17</a>
+</article>
+<article class="sym" id="OP_LT">
+<h3><a href="#OP_LT">OP_LT</a> <i>constant</i></h3>
+<pre>let OP_LT = 1</pre>
+<p>Condition operator that passes when the parameter is less than the given value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L18">hc/lib/anim/machine.amni:18</a>
+</article>
+<article class="sym" id="OP_GE">
+<h3><a href="#OP_GE">OP_GE</a> <i>constant</i></h3>
+<pre>let OP_GE = 2</pre>
+<p>Condition operator that passes when the parameter is at least the given value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L19">hc/lib/anim/machine.amni:19</a>
+</article>
+<article class="sym" id="OP_LE">
+<h3><a href="#OP_LE">OP_LE</a> <i>constant</i></h3>
+<pre>let OP_LE = 3</pre>
+<p>Condition operator that passes when the parameter is at most the given value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L20">hc/lib/anim/machine.amni:20</a>
+</article>
+<article class="sym" id="OP_TRUE">
+<h3><a href="#OP_TRUE">OP_TRUE</a> <i>constant</i></h3>
+<pre>let OP_TRUE = 4;   // param &gt; 0.5 (a bool or trigger)</pre>
+<p>Condition operator that passes when a bool or trigger parameter is above 0.5.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L21">hc/lib/anim/machine.amni:21</a>
+</article>
+<article class="sym" id="OP_FALSE">
+<h3><a href="#OP_FALSE">OP_FALSE</a> <i>constant</i></h3>
+<pre>let OP_FALSE = 5;  // param &lt;= 0.5</pre>
+<p>Condition operator that passes when a bool or trigger parameter is at most 0.5.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L22">hc/lib/anim/machine.amni:22</a>
+</article>
+<article class="sym" id="NPARAM">
+<h3><a href="#NPARAM">NPARAM</a> <i>constant</i></h3>
+<pre>let NPARAM = 16</pre>
+<p>Number of parameter slots available in a machine's parameter array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L23">hc/lib/anim/machine.amni:23</a>
+</article>
+<article class="sym" id="Cond">
+<h3><a href="#Cond">Cond</a> <i>type</i></h3>
+<pre>struct Cond { param i32 = -1, op i32 = 0, value f32 = 0.0 }</pre>
+<p>Condition comparing one machine parameter against a value using an operator.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L27">hc/lib/anim/machine.amni:27</a>
+</article>
+<article class="sym" id="cond">
+<h3><a href="#cond">cond</a> <i>function</i></h3>
+<pre>cond(param i32, op i32, value f32 = 0.0) Cond</pre>
+<p>Returns a condition comparing the given parameter to a value with the given operator.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L83">hc/lib/anim/machine.amni:83</a>
+</article>
+<h2 id="state-machine">State Machine <span class="n">12</span></h2>
+<article class="sym" id="State">
+<h3><a href="#State">State</a> <i>type</i></h3>
+<pre>struct State { name byte[..32], motion Motion }</pre>
+<p>State with a name of up to 32 bytes and the motion it plays.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L26">hc/lib/anim/machine.amni:26</a>
+</article>
+<article class="sym" id="Transition">
+<h3><a href="#Transition">Transition</a> <i>type</i></h3>
+<pre>struct Transition {
+	from i32,             // -1: from any state
+	to i32,
+	nc i32 = 0, c Cond[2] = [Cond{}, Cond{}],
+	exit_time f32 = -1.0, // &gt;= 0: also needs the source phase to reach it
+	duration f32 = 0.2,   // crossfade seconds
+	sync bool = false,    // target starts at the source's normalized phase
+	consume i32 = -1,     // trigger param reset to 0 when this fires
+}</pre>
+<p>Transition between states, with up to two conditions, optional exit time, crossfade duration, phase sync and trigger consumption.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L28">hc/lib/anim/machine.amni:28</a>
+</article>
+<article class="sym" id="MachineDef">
+<h3><a href="#MachineDef">MachineDef</a> <i>type</i></h3>
+<pre>struct MachineDef {
+	nstates i32, states State[16],
+	ntrans i32, trans Transition[48],
+	nspaces i32, spaces Space[4],
+	entry i32,
+	// an interrupting fade (from a frozen pose) lasts at least this long; its
+	// source does not run out like a clip does, and the blend's acceleration
+	// term scales with 1/duration^2 times the frozen-to-target distance
+	interrupt_min f32,
+}</pre>
+<p>Definition of a state machine holding its states, transitions, blend spaces, entry state and interrupt fade minimum.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L37">hc/lib/anim/machine.amni:37</a>
+</article>
+<article class="sym" id="Machine">
+<h3><a href="#Machine">Machine</a> <i>type</i></h3>
+<pre>struct Machine {
+	cur i32, phase f32, time_in f32,
+	src_kind i32,          // 0 none, 1 a live state, 2 a frozen pose
+	src i32, src_phase f32,
+	fade f32, fade_dur f32,
+	params f32[16],
+	root float3,           // root displacement of the last tick (character space)
+	root_v float3,         // its velocity (m/s); a frozen source keeps moving at it
+	frozen_v float3,
+	fired i32,             // transition index fired this tick, or -1
+	ticks i32,
+	// frozen source of an interrupted fade: the last output pose, carried
+	// forward by its last per-tick joint change (frozen_d) with that change
+	// decaying linearly to zero over the first 30% of the fade, so joint
+	// velocity stays continuous at the interrupt instead of dropping to zero,
+	// while the extrapolated pose does not drift far from what was on screen.
+	frozen Pose, frozen_d Pose, last Pose, prev Pose,
+}</pre>
+<p>Runtime state of a machine, including current state, phase, fade, parameters, root motion and frozen pose for interruptions.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L47">hc/lib/anim/machine.amni:47</a>
+</article>
+<article class="sym" id="machine_def">
+<h3><a href="#machine_def">machine_def</a> <i>function</i></h3>
+<pre>machine_def() MachineDef</pre>
+<p>Returns an empty machine definition with default values.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L66">hc/lib/anim/machine.amni:66</a>
+</article>
+<article class="sym" id="def_space">
+<h3><a href="#def_space">def_space</a> <i>function</i></h3>
+<pre>def_space(d MachineDef&amp;, s Space) i32</pre>
+<p>Adds a blend space to the definition and returns its index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L67">hc/lib/anim/machine.amni:67</a>
+</article>
+<article class="sym" id="def_state_clip">
+<h3><a href="#def_state_clip">def_state_clip</a> <i>function</i></h3>
+<pre>def_state_clip(d MachineDef&amp;, name const byte[:], clip int, rate f32 = 1.0) i32</pre>
+<p>Adds a state playing a clip to the definition and returns its state index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L68">hc/lib/anim/machine.amni:68</a>
+</article>
+<article class="sym" id="def_state_space">
+<h3><a href="#def_state_space">def_state_space</a> <i>function</i></h3>
+<pre>def_state_space(d MachineDef&amp;, name const byte[:], space i32, px i32, py i32 = -1, rate f32 = 1.0) i32</pre>
+<p>Adds a state playing a blend space driven by parameters px and py, returning its state index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L75">hc/lib/anim/machine.amni:75</a>
+</article>
+<article class="sym" id="def_trans">
+<h3><a href="#def_trans">def_trans</a> <i>function</i></h3>
+<pre>def_trans(d MachineDef&amp;, t Transition) i32</pre>
+<p>Adds a transition to the definition and returns its index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L82">hc/lib/anim/machine.amni:82</a>
+</article>
+<article class="sym" id="machine_start">
+<h3><a href="#machine_start">machine_start</a> <i>function</i></h3>
+<pre>machine_start(d MachineDef&amp;, m Machine&amp;, state i32)</pre>
+<p>Starts a machine in the given state, resetting phase, fade and root motion.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L85">hc/lib/anim/machine.amni:85</a>
+</article>
+<article class="sym" id="machine_update">
+<h3><a href="#machine_update">machine_update</a> <i>function</i></h3>
+<pre>machine_update(d MachineDef&amp;, m Machine&amp;, dt f32, out Pose&amp;, scratch Pose&amp;, scratch2 Pose&amp;, acc Accum&amp;)</pre>
+<p>Advances the machine one tick, firing transitions, crossfading and writing the output pose and root motion.</p>
+<p class="note">One tick: pick a transition, advance the live motions, crossfade.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L172">hc/lib/anim/machine.amni:172</a>
+</article>
+<article class="sym" id="approach">
+<h3><a href="#approach">approach</a> <i>function</i></h3>
+<pre>approach(x f32, target f32, rate f32, dt f32) f32</pre>
+<p>Returns a value moved toward a target at a given rate per second without overshooting.</p>
+<p class="note">Moves x toward target at rate per second (for smooth layer weights/params).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L237">hc/lib/anim/machine.amni:237</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (4)</summary>
+<article class="sym" id="motion_looping">
+<h3><a href="#motion_looping">motion_looping</a> <i>function</i></h3>
+<pre>motion_looping(d MachineDef&amp;, mo Motion) bool</pre>
+<p>Returns whether a motion loops, meaning its clip or every clip in its blend space loops.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L90">hc/lib/anim/machine.amni:90</a>
+</article>
+<article class="sym" id="eval_motion">
+<h3><a href="#eval_motion">eval_motion</a> <i>function</i></h3>
+<pre>eval_motion(d MachineDef&amp;, mo Motion, params f32[16]&amp;, phase f32, dt f32, out Pose&amp;, tmp Pose&amp;, acc Accum&amp;) float3, f32</pre>
+<p>Advances a motion by dt, writes its in-place pose, and returns root displacement and new phase.</p>
+<p class="note">Samples a motion advanced by dt from phase; writes the pose (root pinned in place) and returns the root displacement and the new phase.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L99">hc/lib/anim/machine.amni:99</a>
+</article>
+<article class="sym" id="cond_ok">
+<h3><a href="#cond_ok">cond_ok</a> <i>function</i></h3>
+<pre>cond_ok(c Cond, params f32[16]&amp;) bool</pre>
+<p>Returns whether a single condition currently holds for the given parameters.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L151">hc/lib/anim/machine.amni:151</a>
+</article>
+<article class="sym" id="trans_ok">
+<h3><a href="#trans_ok">trans_ok</a> <i>function</i></h3>
+<pre>trans_ok(d MachineDef&amp;, m Machine&amp;, t Transition) bool</pre>
+<p>Returns whether a transition may fire given the current state, conditions and exit time.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/machine.amni#L163">hc/lib/anim/machine.amni:163</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/anim-clip">anim/clip</a></li>
+<li><a href="/api-library/helium/lib/anim-pose">anim/pose</a></li>
+<li><a href="/api-library/helium/lib/anim-space">anim/space</a></li>
+<li><a href="/api-library/helium/lib/anim-machine" class="on">anim/machine</a><ul class="lib-sub">
+<li><a href="#motion-kinds">Motion Kinds</a></li>
+<li><a href="#transition-conditions">Transition Conditions</a></li>
+<li><a href="#state-machine">State Machine</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/anim-ik">anim/ik</a></li>
+<li><a href="/api-library/helium/lib/anim-skin">anim/skin</a></li>
+<li><a href="/api-library/helium/lib/anim-gpuskin">anim/gpuskin</a></li>
+<li><a href="/api-library/helium/lib/anim-gltf">anim/gltf</a></li>
+<li><a href="/api-library/helium/lib/anim-math">anim/math</a></li>
+<li><a href="/api-library/helium/lib/anim-gold">anim/gold</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

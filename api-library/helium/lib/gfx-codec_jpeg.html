@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/codec_jpeg | AMNI-SCIENT</title>
+<meta name="description" content="Decode baseline JPEG files to RGBA pixels.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/codec_jpeg">
+<meta property="og:description" content="Decode baseline JPEG files to RGBA pixels.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/codec_jpeg</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/codec_jpeg</h1>
+<p class="lib-lede">Decode baseline JPEG files to RGBA pixels.</p>
+<p class="lib-meta"><code>import gfx.codec_jpeg;</code> &middot; <code>codec_jpeg::</code> &middot; 5 functions, 2 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>codec_jpeg: baseline sequential JPEG decoding to RGBA8 (ITU-T T.81, JFIF color).
+Huffman-coded 8-bit DCT with any sampling factors and restart intervals; grayscale or YCbCr.
+Progressive, arithmetic-coded, lossless and CMYK files are reported as not decodable.</pre></details>
+<ul class="lib-pills">
+<li><a href="#jpeg-decoding">JPEG Decoding <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="jpeg-decoding">JPEG Decoding <span class="n">2</span></h2>
+<article class="sym" id="is_jpeg">
+<h3><a href="#is_jpeg">is_jpeg</a> <i>function</i></h3>
+<pre>is_jpeg(b const byte[:]) bool</pre>
+<p>Returns whether the bytes begin with the JPEG signature marker sequence, false for shorter or non-matching data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L23">hc/lib/gfx/codec_jpeg.amni:23</a>
+</article>
+<article class="sym" id="decode">
+<h3><a href="#decode">decode</a> <i>function</i></h3>
+<pre>decode(file const byte[:], out byte[&gt;..]&amp;) int, int, bool</pre>
+<p>Decodes a baseline JPEG file into RGBA pixels appended to the output buffer, returning width, height and false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L56">hc/lib/gfx/codec_jpeg.amni:56</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
+<article class="sym" id="Table">
+<h3><a href="#Table">Table</a> <i>type</i></h3>
+<pre>struct Table {
+	mincode i32[17],
+	maxcode i32[18],
+	first i32[17],
+	symbols byte[256],
+	ready bool,
+}</pre>
+<p>Huffman decoding table holding code ranges and symbols for one JPEG table slot, used internally while decoding.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L7">hc/lib/gfx/codec_jpeg.amni:7</a>
+</article>
+<article class="sym" id="Channel">
+<h3><a href="#Channel">Channel</a> <i>type</i></h3>
+<pre>struct Channel { ident int, hsamp int, vsamp int, qtable int, dc_table int, ac_table int, dc_prev int, blocks_x int, blocks_y int, offset int }</pre>
+<p>Per-channel frame state with sampling factors, table selectors, DC prediction and sample location, used internally by the decoder.</p>
+<p class="note">One colour channel of a frame (T.81 B.2.2): sampling factors, table selectors, running DC prediction and where its decoded samples live in `planes`.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L17">hc/lib/gfx/codec_jpeg.amni:17</a>
+</article>
+<article class="sym" id="ZIGZAG">
+<h3><a href="#ZIGZAG">ZIGZAG</a> <i>constant</i></h3>
+<pre>let ZIGZAG = [0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28,</pre>
+<p>Lookup table mapping zigzag scan position to natural row-major coefficient index within an 8x8 block.</p>
+<p class="note">zigzag position k -&gt; natural (row-major) coefficient index</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L20">hc/lib/gfx/codec_jpeg.amni:20</a>
+</article>
+<article class="sym" id="be16">
+<h3><a href="#be16">be16</a> <i>function</i></h3>
+<pre>be16(b const byte[:], o int) int</pre>
+<p>Reads a big-endian 16-bit unsigned integer from the byte slice at the given offset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L25">hc/lib/gfx/codec_jpeg.amni:25</a>
+</article>
+<article class="sym" id="make_table">
+<h3><a href="#make_table">make_table</a> <i>function</i></h3>
+<pre>make_table(t Table&amp;, counts const byte[:], syms const byte[:])</pre>
+<p>Builds a Huffman decoding table from per-length code counts and symbol list, copying up to 256 symbols.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L27">hc/lib/gfx/codec_jpeg.amni:27</a>
+</article>
+<article class="sym" id="basis">
+<h3><a href="#basis">basis</a> <i>function</i></h3>
+<pre>basis() f32[64]</pre>
+<p>Returns the precomputed 8x8 inverse DCT basis matrix of cosine factors used to reconstruct pixel blocks.</p>
+<p class="note">8x8 inverse DCT basis: BASIS[x * 8 + u] = c(u) / 2 * cos((2x + 1) u pi / 16)</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/codec_jpeg.amni#L45">hc/lib/gfx/codec_jpeg.amni:45</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg" class="on">gfx/codec_jpeg</a><ul class="lib-sub">
+<li><a href="#jpeg-decoding">JPEG Decoding</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

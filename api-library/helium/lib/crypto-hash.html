@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>crypto/hash | AMNI-SCIENT</title>
+<meta name="description" content="SHA-1 and SHA-2 hashes, HMAC, HKDF, PBKDF2 and constant-time comparison.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="crypto/hash">
+<meta property="og:description" content="SHA-1 and SHA-2 hashes, HMAC, HKDF, PBKDF2 and constant-time comparison.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-hash">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-hash">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/security">Security</a> <span>&rsaquo;</span> crypto/hash</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>crypto/hash</h1>
+<p class="lib-lede">SHA-1 and SHA-2 hashes, HMAC, HKDF, PBKDF2 and constant-time comparison.</p>
+<div class="lib-dev">Coming soon: this module is not in the public Helium repository yet, so importing it from a public checkout will fail.</div>
+<p class="lib-meta"><code>import crypto.hash;</code> &middot; <code>crypto::</code> &middot; 26 functions, 1 types, 4 constants</p>
+<ul class="lib-pills">
+<li><a href="#hash-algorithms">Hash Algorithms <span class="n">15</span></a></li>
+<li><a href="#keyed-derivation">Keyed Derivation <span class="n">6</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="hash-algorithms">Hash Algorithms <span class="n">15</span></h2>
+<article class="sym" id="SHA1">
+<h3><a href="#SHA1">SHA1</a> <i>constant</i></h3>
+<pre>SHA1 := 1</pre>
+<p>Constant selecting the SHA-1 algorithm, which produces 20-byte digests.</p>
+<span class="src">hc/lib/crypto/hash.he:3</span>
+</article>
+<article class="sym" id="SHA256">
+<h3><a href="#SHA256">SHA256</a> <i>constant</i></h3>
+<pre>SHA256 := 2</pre>
+<p>Constant selecting the SHA-256 algorithm, which produces 32-byte digests.</p>
+<span class="src">hc/lib/crypto/hash.he:4</span>
+</article>
+<article class="sym" id="SHA384">
+<h3><a href="#SHA384">SHA384</a> <i>constant</i></h3>
+<pre>SHA384 := 3</pre>
+<p>Constant selecting the SHA-384 algorithm, which produces 48-byte digests.</p>
+<span class="src">hc/lib/crypto/hash.he:5</span>
+</article>
+<article class="sym" id="SHA512">
+<h3><a href="#SHA512">SHA512</a> <i>constant</i></h3>
+<pre>SHA512 := 4</pre>
+<p>Constant selecting the SHA-512 algorithm, which produces 64-byte digests.</p>
+<span class="src">hc/lib/crypto/hash.he:6</span>
+</article>
+<article class="sym" id="Hash">
+<h3><a href="#Hash">Hash</a> <i>type</i></h3>
+<pre>struct Hash { kind int = 0, a u32[8] = [0; 8], b u64[8] = [0; 8], buf byte[&gt;..] = [], n u64 = 0 }</pre>
+<p>Incremental hashing state for one algorithm, holding chaining values, buffered input and total length processed.</p>
+<span class="src">hc/lib/crypto/hash.he:13</span>
+</article>
+<article class="sym" id="hash_size">
+<h3><a href="#hash_size">hash_size</a> <i>function</i></h3>
+<pre>hash_size(kind int) int</pre>
+<p>Returns the digest length in bytes for an algorithm constant, or 0 if the kind is unknown.</p>
+<span class="src">hc/lib/crypto/hash.he:14</span>
+</article>
+<article class="sym" id="block_size">
+<h3><a href="#block_size">block_size</a> <i>function</i></h3>
+<pre>block_size(kind int) int</pre>
+<p>Returns the internal block size in bytes for an algorithm, 128 for SHA-384 and SHA-512 and 64 otherwise.</p>
+<span class="src">hc/lib/crypto/hash.he:15</span>
+</article>
+<article class="sym" id="hash_new">
+<h3><a href="#hash_new">hash_new</a> <i>function</i></h3>
+<pre>hash_new(kind int) Hash</pre>
+<p>Creates a fresh hashing state initialized for the given algorithm constant.</p>
+<span class="src">hc/lib/crypto/hash.he:20</span>
+</article>
+<article class="sym" id="hash_update">
+<h3><a href="#hash_update">hash_update</a> <i>function</i></h3>
+<pre>hash_update(h Hash&amp;, d const byte[:])</pre>
+<p>Feeds more bytes into a hashing state, buffering any partial block.</p>
+<span class="src">hc/lib/crypto/hash.he:56</span>
+</article>
+<article class="sym" id="hash_final">
+<h3><a href="#hash_final">hash_final</a> <i>function</i></h3>
+<pre>hash_final(h0 const Hash&amp;) byte[&gt;..]</pre>
+<p>Returns the digest of all data fed so far, leaving the original state unchanged.</p>
+<span class="src">hc/lib/crypto/hash.he:64</span>
+</article>
+<article class="sym" id="digest">
+<h3><a href="#digest">digest</a> <i>function</i></h3>
+<pre>digest(kind int, d const byte[:]) byte[&gt;..]</pre>
+<p>Returns the digest of a byte slice using the chosen algorithm in one call.</p>
+<span class="src">hc/lib/crypto/hash.he:71</span>
+</article>
+<article class="sym" id="sha1">
+<h3><a href="#sha1">sha1</a> <i>function</i></h3>
+<pre>sha1(d const byte[:]) byte[&gt;..]</pre>
+<p>Returns the 20-byte SHA-1 digest of a byte slice.</p>
+<span class="src">hc/lib/crypto/hash.he:72</span>
+</article>
+<article class="sym" id="sha256">
+<h3><a href="#sha256">sha256</a> <i>function</i></h3>
+<pre>sha256(d const byte[:]) byte[&gt;..]</pre>
+<p>Returns the 32-byte SHA-256 digest of a byte slice.</p>
+<span class="src">hc/lib/crypto/hash.he:73</span>
+</article>
+<article class="sym" id="sha384">
+<h3><a href="#sha384">sha384</a> <i>function</i></h3>
+<pre>sha384(d const byte[:]) byte[&gt;..]</pre>
+<p>Returns the 48-byte SHA-384 digest of a byte slice.</p>
+<span class="src">hc/lib/crypto/hash.he:74</span>
+</article>
+<article class="sym" id="sha512">
+<h3><a href="#sha512">sha512</a> <i>function</i></h3>
+<pre>sha512(d const byte[:]) byte[&gt;..]</pre>
+<p>Returns the 64-byte SHA-512 digest of a byte slice.</p>
+<span class="src">hc/lib/crypto/hash.he:75</span>
+</article>
+<h2 id="keyed-derivation">Keyed Derivation <span class="n">6</span></h2>
+<article class="sym" id="hmac">
+<h3><a href="#hmac">hmac</a> <i>function</i></h3>
+<pre>hmac(kind int, key const byte[:], msg const byte[:]) byte[&gt;..]</pre>
+<p>Returns the HMAC of a message under a key using the chosen hash algorithm.</p>
+<span class="src">hc/lib/crypto/hash.he:76</span>
+</article>
+<article class="sym" id="hkdf_extract">
+<h3><a href="#hkdf_extract">hkdf_extract</a> <i>function</i></h3>
+<pre>hkdf_extract(kind int, salt const byte[:], ikm const byte[:]) byte[&gt;..]</pre>
+<p>Returns the HKDF pseudorandom key extracted from input keying material, using a zero-filled salt if none is given.</p>
+<span class="src">hc/lib/crypto/hash.he:83</span>
+</article>
+<article class="sym" id="hkdf_expand">
+<h3><a href="#hkdf_expand">hkdf_expand</a> <i>function</i></h3>
+<pre>hkdf_expand(kind int, prk const byte[:], info const byte[:], n int) byte[&gt;..], bool</pre>
+<p>Returns n bytes of HKDF output keying material, or false if n is negative or exceeds 255 hash lengths.</p>
+<span class="src">hc/lib/crypto/hash.he:86</span>
+</article>
+<article class="sym" id="hkdf">
+<h3><a href="#hkdf">hkdf</a> <i>function</i></h3>
+<pre>hkdf(kind int, ikm const byte[:], salt const byte[:], info const byte[:], n int) byte[&gt;..], bool</pre>
+<p>Returns n bytes derived by HKDF extract-then-expand, or false if the requested length is invalid.</p>
+<span class="src">hc/lib/crypto/hash.he:94</span>
+</article>
+<article class="sym" id="ct_eq">
+<h3><a href="#ct_eq">ct_eq</a> <i>function</i></h3>
+<pre>ct_eq(a const byte[:], b const byte[:]) bool</pre>
+<p>Returns whether two byte slices are equal, comparing in constant time and returning false for differing lengths.</p>
+<span class="src">hc/lib/crypto/hash.he:95</span>
+</article>
+<article class="sym" id="pbkdf2">
+<h3><a href="#pbkdf2">pbkdf2</a> <i>function</i></h3>
+<pre>pbkdf2(kind int, pw const byte[:], salt const byte[:], iters int, n int) byte[&gt;..], bool</pre>
+<p>Returns n bytes derived from a password and salt by PBKDF2-HMAC, or false if iterations or length are below 1 or the hash is unknown.</p>
+<span class="src">hc/lib/crypto/hash.he:108</span>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (10)</summary>
+<article class="sym" id="r32">
+<h3><a href="#r32">r32</a> <i>function</i></h3>
+<pre>r32(x u32, n int) u32</pre>
+<p>Rotates a 32-bit value right by the given number of bits.</p>
+<span class="src">hc/lib/crypto/hash.he:16</span>
+</article>
+<article class="sym" id="r64">
+<h3><a href="#r64">r64</a> <i>function</i></h3>
+<pre>r64(x u64, n int) u64</pre>
+<p>Rotates a 64-bit value right by the given number of bits.</p>
+<span class="src">hc/lib/crypto/hash.he:17</span>
+</article>
+<article class="sym" id="be32">
+<h3><a href="#be32">be32</a> <i>function</i></h3>
+<pre>be32(p const byte[:], j int) u32</pre>
+<p>Reads four bytes at an offset as a big-endian 32-bit integer.</p>
+<span class="src">hc/lib/crypto/hash.he:18</span>
+</article>
+<article class="sym" id="be64">
+<h3><a href="#be64">be64</a> <i>function</i></h3>
+<pre>be64(p const byte[:], j int) u64</pre>
+<p>Reads eight bytes at an offset as a big-endian 64-bit integer.</p>
+<span class="src">hc/lib/crypto/hash.he:19</span>
+</article>
+<article class="sym" id="c1">
+<h3><a href="#c1">c1</a> <i>function</i></h3>
+<pre>c1(h Hash&amp;, p const byte[:], o int)</pre>
+<p>Processes one 64-byte block at an offset using the SHA-1 compression function.</p>
+<span class="src">hc/lib/crypto/hash.he:27</span>
+</article>
+<article class="sym" id="c256">
+<h3><a href="#c256">c256</a> <i>function</i></h3>
+<pre>c256(h Hash&amp;, p const byte[:], o int)</pre>
+<p>Processes one 64-byte block at an offset using the SHA-256 compression function.</p>
+<span class="src">hc/lib/crypto/hash.he:37</span>
+</article>
+<article class="sym" id="c512">
+<h3><a href="#c512">c512</a> <i>function</i></h3>
+<pre>c512(h Hash&amp;, p const byte[:], o int)</pre>
+<p>Processes one 128-byte block at an offset using the SHA-512 compression function.</p>
+<span class="src">hc/lib/crypto/hash.he:46</span>
+</article>
+<article class="sym" id="comp">
+<h3><a href="#comp">comp</a> <i>function</i></h3>
+<pre>comp(h Hash&amp;, p const byte[:], o int)</pre>
+<p>Dispatches one block to the compression function matching the state's algorithm.</p>
+<span class="src">hc/lib/crypto/hash.he:55</span>
+</article>
+<article class="sym" id="hmac_states">
+<h3><a href="#hmac_states">hmac_states</a> <i>function</i></h3>
+<pre>hmac_states(kind int, key const byte[:]) Hash, Hash</pre>
+<p>Returns precomputed inner and outer HMAC hash states for a key, for reuse across many messages.</p>
+<span class="src">hc/lib/crypto/hash.he:100</span>
+</article>
+<article class="sym" id="hmac_with">
+<h3><a href="#hmac_with">hmac_with</a> <i>function</i></h3>
+<pre>hmac_with(hi const Hash&amp;, ho const Hash&amp;, m const byte[:]) byte[&gt;..]</pre>
+<p>Returns the HMAC of a message using precomputed inner and outer states without modifying them.</p>
+<span class="src">hc/lib/crypto/hash.he:107</span>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/crypto-hash" class="on">crypto/hash</a><ul class="lib-sub">
+<li><a href="#hash-algorithms">Hash Algorithms</a></li>
+<li><a href="#keyed-derivation">Keyed Derivation</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/crypto-aead">crypto/aead</a></li>
+<li><a href="/api-library/helium/lib/crypto-c25519">crypto/c25519</a></li>
+<li><a href="/api-library/helium/lib/crypto-ecc">crypto/ecc</a></li>
+<li><a href="/api-library/helium/lib/crypto-rsa">crypto/rsa</a></li>
+<li><a href="/api-library/helium/lib/crypto-x509">crypto/x509</a></li>
+<li><a href="/api-library/helium/lib/crypto-bn">crypto/bn</a></li>
+<li><a href="/api-library/helium/lib/crypto-rand">crypto/rand</a></li>
+<li><a href="/api-library/helium/lib/gf">gf</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

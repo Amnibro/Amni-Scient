@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>anim/clip | AMNI-SCIENT</title>
+<meta name="description" content="The clip bank: keyframes at a uniform rate, sampled by time or phase, with additive clips and root motion.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="anim/clip">
+<meta property="og:description" content="The clip bank: keyframes at a uniform rate, sampled by time or phase, with additive clips and root motion.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-clip">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-clip">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/animation">Animation</a> <span>&rsaquo;</span> anim/clip</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>anim/clip</h1>
+<p class="lib-lede">The clip bank: keyframes at a uniform rate, sampled by time or phase, with additive clips and root motion.</p>
+<p class="lib-meta"><code>import anim.clip;</code> &middot; <code>anim::</code> &middot; 18 functions, 1 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni">Source</a></p>
+<details class="lib-notes"><summary>Notes from the source</summary><pre>anim/clip: the clip bank (uniformly resampled keyframes), sampling by
+time or normalized phase, additive clip baking and root-motion extraction.
+Clean-room; see DESIGN.md.</pre></details>
+<ul class="lib-pills">
+<li><a href="#clip-bank">Clip Bank <span class="n">11</span></a></li>
+<li><a href="#sampling">Sampling <span class="n">3</span></a></li>
+<li><a href="#root-motion">Root Motion <span class="n">4</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="clip-bank">Clip Bank <span class="n">11</span></h2>
+<article class="sym" id="Clip">
+<h3><a href="#Clip">Clip</a> <i>type</i></h3>
+<pre>struct Clip {
+	name byte[..64],
+	nj i32, frames i32, fps f32, dur f32, base int,
+	looping bool, additive bool,
+	root i32,          // root-motion joint, -1 for none
+	root_v float3,     // average root velocity over one period (m/s)
+	root_end float3,   // root translation delta over one period
+	speed f32,         // horizontal root speed (m/s)
+}</pre>
+<p>Describes one animation clip's metadata, including frame count, rate, looping, additive flag, and root-motion data.</p>
+<p class="note">Frame-major storage: key (f, j) of clip c is at CLIPS[c].base + f * nj + j. A looping clip's last frame is expected to equal its first, so its period is dur = (frames - 1) / fps.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L13">hc/lib/anim/clip.amni:13</a>
+</article>
+<article class="sym" id="clip_count">
+<h3><a href="#clip_count">clip_count</a> <i>function</i></h3>
+<pre>clip_count() int</pre>
+<p>Returns the number of clips currently stored in the bank.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L27">hc/lib/anim/clip.amni:27</a>
+</article>
+<article class="sym" id="clip_find">
+<h3><a href="#clip_find">clip_find</a> <i>function</i></h3>
+<pre>clip_find(name const byte[:]) i32</pre>
+<p>Returns the index of the clip with the exact given name, or -1 if none matches.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L28">hc/lib/anim/clip.amni:28</a>
+</article>
+<article class="sym" id="clip_find_suffix">
+<h3><a href="#clip_find_suffix">clip_find_suffix</a> <i>function</i></h3>
+<pre>clip_find_suffix(sfx const byte[:]) i32</pre>
+<p>Returns the index of the first clip whose name ends with the given suffix, or -1.</p>
+<p class="note">Suffix match, e.g. &quot;walk&quot; finds &quot;humanoid_v1_loco_walk&quot; (first match).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L33">hc/lib/anim/clip.amni:33</a>
+</article>
+<article class="sym" id="clip_bank_clear">
+<h3><a href="#clip_bank_clear">clip_bank_clear</a> <i>function</i></h3>
+<pre>clip_bank_clear()</pre>
+<p>Removes all clips and keyframe data from the bank.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L37">hc/lib/anim/clip.amni:37</a>
+</article>
+<article class="sym" id="clip_new">
+<h3><a href="#clip_new">clip_new</a> <i>function</i></h3>
+<pre>clip_new(sk Skeleton&amp;, name const byte[:], frames i32, fps f32, looping bool) int</pre>
+<p>Creates a clip with the given frame count and rate, filled with the skeleton's rest pose, and returns its index.</p>
+<p class="note">Reserves frames * nj keys filled from the skeleton rest pose.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L40">hc/lib/anim/clip.amni:40</a>
+</article>
+<article class="sym" id="clip_set">
+<h3><a href="#clip_set">clip_set</a> <i>function</i></h3>
+<pre>clip_set(c int, f int, j int, t float3, r float4, s float3)</pre>
+<p>Sets the translation, rotation and scale keys of one joint at one frame of a clip.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L53">hc/lib/anim/clip.amni:53</a>
+</article>
+<article class="sym" id="clip_set_t">
+<h3><a href="#clip_set_t">clip_set_t</a> <i>function</i></h3>
+<pre>clip_set_t(c int, f int, j int, t float3)</pre>
+<p>Sets only the translation key of one joint at one frame of a clip.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L57">hc/lib/anim/clip.amni:57</a>
+</article>
+<article class="sym" id="clip_set_r">
+<h3><a href="#clip_set_r">clip_set_r</a> <i>function</i></h3>
+<pre>clip_set_r(c int, f int, j int, r float4)</pre>
+<p>Sets only the rotation key of one joint at one frame of a clip.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L58">hc/lib/anim/clip.amni:58</a>
+</article>
+<article class="sym" id="clip_set_s">
+<h3><a href="#clip_set_s">clip_set_s</a> <i>function</i></h3>
+<pre>clip_set_s(c int, f int, j int, s float3)</pre>
+<p>Sets only the scale key of one joint at one frame of a clip.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L59">hc/lib/anim/clip.amni:59</a>
+</article>
+<article class="sym" id="make_additive_clip">
+<h3><a href="#make_additive_clip">make_additive_clip</a> <i>function</i></h3>
+<pre>make_additive_clip(sk Skeleton&amp;, src int, ref int, ref_frame int, name const byte[:]) int</pre>
+<p>Creates an additive clip by expressing every frame of a source clip relative to a frame of a reference clip, returning its index.</p>
+<p class="note">Bakes an additive clip: every frame of src expressed relative to frame ref_frame of clip ref (q = qref^-1 q, t - tref, s / sref).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L96">hc/lib/anim/clip.amni:96</a>
+</article>
+<h2 id="sampling">Sampling <span class="n">3</span></h2>
+<article class="sym" id="clip_time">
+<h3><a href="#clip_time">clip_time</a> <i>function</i></h3>
+<pre>clip_time(c int, t f32) f32</pre>
+<p>Returns a time in seconds wrapped into the clip's period if looping, otherwise clamped to its duration.</p>
+<p class="note">Wraps (looping) or clamps a time into [0, dur].</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L62">hc/lib/anim/clip.amni:62</a>
+</article>
+<article class="sym" id="sample">
+<h3><a href="#sample">sample</a> <i>function</i></h3>
+<pre>sample(c int, t f32, p Pose&amp;)</pre>
+<p>Samples a clip at a time in seconds into a pose, interpolating between neighboring frames.</p>
+<p class="note">Samples clip c at time t (seconds) into p, interpolating between the two neighbouring frames (lerp translation/scale, short-arc nlerp rotation).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L70">hc/lib/anim/clip.amni:70</a>
+</article>
+<article class="sym" id="sample_phase">
+<h3><a href="#sample_phase">sample_phase</a> <i>function</i></h3>
+<pre>sample_phase(c int, phase f32, p Pose&amp;)</pre>
+<p>Samples a clip at a normalized phase, where 0 to 1 spans the clip's duration, into a pose.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L92">hc/lib/anim/clip.amni:92</a>
+</article>
+<h2 id="root-motion">Root Motion <span class="n">4</span></h2>
+<article class="sym" id="clip_set_root">
+<h3><a href="#clip_set_root">clip_set_root</a> <i>function</i></h3>
+<pre>clip_set_root(c int, root i32)</pre>
+<p>Sets a clip's root-motion joint, or none if negative, and computes its average horizontal velocity and speed.</p>
+<p class="note">Root motion. The root joint's horizontal (XZ) translation is the motion; the in-place pose pins it to its frame-0 value. Yaw is left in the pose (none of the target rigs turn through their loco clips).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L113">hc/lib/anim/clip.amni:113</a>
+</article>
+<article class="sym" id="root_pos">
+<h3><a href="#root_pos">root_pos</a> <i>function</i></h3>
+<pre>root_pos(c int, t f32) float3</pre>
+<p>Returns the root joint's interpolated translation in the clip at the given time in seconds.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L124">hc/lib/anim/clip.amni:124</a>
+</article>
+<article class="sym" id="root_delta">
+<h3><a href="#root_delta">root_delta</a> <i>function</i></h3>
+<pre>root_delta(c int, t0 f32, t1 f32) float3</pre>
+<p>Returns the horizontal root displacement between two unwrapped times in seconds, adding whole periods for looping clips.</p>
+<p class="note">Horizontal root displacement while the clip's unwrapped time goes from t0 to t1 (t1 &gt;= t0); loops add whole periods.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L138">hc/lib/anim/clip.amni:138</a>
+</article>
+<article class="sym" id="make_in_place">
+<h3><a href="#make_in_place">make_in_place</a> <i>function</i></h3>
+<pre>make_in_place(c int, p Pose&amp;)</pre>
+<p>Pins the pose's root joint horizontal position to its frame-0 value, removing the clip's horizontal root motion.</p>
+<p class="note">Pins the root joint's XZ to its frame-0 value (in-place pose).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L151">hc/lib/anim/clip.amni:151</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (5)</summary>
+<article class="sym" id="CLIPS">
+<h3><a href="#CLIPS">CLIPS</a> <i>constant</i></h3>
+<pre>var CLIPS Clip[&gt;..]</pre>
+<p>Global storage array of all clip records in the bank, indexed by clip id.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L22">hc/lib/anim/clip.amni:22</a>
+</article>
+<article class="sym" id="KT">
+<h3><a href="#KT">KT</a> <i>constant</i></h3>
+<pre>var KT float3[&gt;..]</pre>
+<p>Global frame-major storage of per-joint translation keyframes shared by all clips.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L23">hc/lib/anim/clip.amni:23</a>
+</article>
+<article class="sym" id="KR">
+<h3><a href="#KR">KR</a> <i>constant</i></h3>
+<pre>var KR float4[&gt;..]</pre>
+<p>Global frame-major storage of per-joint rotation keyframes shared by all clips.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L24">hc/lib/anim/clip.amni:24</a>
+</article>
+<article class="sym" id="KS">
+<h3><a href="#KS">KS</a> <i>constant</i></h3>
+<pre>var KS float3[&gt;..]</pre>
+<p>Global frame-major storage of per-joint scale keyframes shared by all clips.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L25">hc/lib/anim/clip.amni:25</a>
+</article>
+<article class="sym" id="key_at">
+<h3><a href="#key_at">key_at</a> <i>function</i></h3>
+<pre>key_at(c int, f int, j int) int</pre>
+<p>Returns the flat keyframe storage index for joint j at frame f of clip c.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/anim/clip.amni#L52">hc/lib/anim/clip.amni:52</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/anim-clip" class="on">anim/clip</a><ul class="lib-sub">
+<li><a href="#clip-bank">Clip Bank</a></li>
+<li><a href="#sampling">Sampling</a></li>
+<li><a href="#root-motion">Root Motion</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/anim-pose">anim/pose</a></li>
+<li><a href="/api-library/helium/lib/anim-space">anim/space</a></li>
+<li><a href="/api-library/helium/lib/anim-machine">anim/machine</a></li>
+<li><a href="/api-library/helium/lib/anim-ik">anim/ik</a></li>
+<li><a href="/api-library/helium/lib/anim-skin">anim/skin</a></li>
+<li><a href="/api-library/helium/lib/anim-gpuskin">anim/gpuskin</a></li>
+<li><a href="/api-library/helium/lib/anim-gltf">anim/gltf</a></li>
+<li><a href="/api-library/helium/lib/anim-math">anim/math</a></li>
+<li><a href="/api-library/helium/lib/anim-gold">anim/gold</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

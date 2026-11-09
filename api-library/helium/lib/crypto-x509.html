@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>crypto/x509 | AMNI-SCIENT</title>
+<meta name="description" content="Parse X.509 certificates and verify certificate chains.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="crypto/x509">
+<meta property="og:description" content="Parse X.509 certificates and verify certificate chains.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-x509">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-x509">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/security">Security</a> <span>&rsaquo;</span> crypto/x509</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>crypto/x509</h1>
+<p class="lib-lede">Parse X.509 certificates and verify certificate chains.</p>
+<div class="lib-dev">Coming soon: this module is not in the public Helium repository yet, so importing it from a public checkout will fail.</div>
+<p class="lib-meta"><code>import crypto.x509;</code> &middot; <code>crypto::</code> &middot; 18 functions, 2 types, 8 constants</p>
+<ul class="lib-pills">
+<li><a href="#verification-results">Verification Results <span class="n">5</span></a></li>
+<li><a href="#certificate-parsing">Certificate Parsing <span class="n">6</span></a></li>
+<li><a href="#certificate-verification">Certificate Verification <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="verification-results">Verification Results <span class="n">5</span></h2>
+<article class="sym" id="X509_OK">
+<h3><a href="#X509_OK">X509_OK</a> <i>constant</i></h3>
+<pre>X509_OK := 0</pre>
+<p>Constant for a certificate chain verified successfully, returned by x509_verify when trust, name, and validity checks all pass.</p>
+<span class="src">hc/lib/crypto/x509.he:8</span>
+</article>
+<article class="sym" id="X509_UNTRUSTED">
+<h3><a href="#X509_UNTRUSTED">X509_UNTRUSTED</a> <i>constant</i></h3>
+<pre>X509_UNTRUSTED := 1</pre>
+<p>Constant for a chain that does not lead to any trusted root certificate, or exceeds the depth limit.</p>
+<span class="src">hc/lib/crypto/x509.he:9</span>
+</article>
+<article class="sym" id="X509_BAD_NAME">
+<h3><a href="#X509_BAD_NAME">X509_BAD_NAME</a> <i>constant</i></h3>
+<pre>X509_BAD_NAME := 2</pre>
+<p>Constant for a chain whose leaf certificate does not match the requested host name or IP address.</p>
+<span class="src">hc/lib/crypto/x509.he:10</span>
+</article>
+<article class="sym" id="X509_EXPIRED">
+<h3><a href="#X509_EXPIRED">X509_EXPIRED</a> <i>constant</i></h3>
+<pre>X509_EXPIRED := 3</pre>
+<p>Constant for a chain that is trusted but contains a certificate outside its validity period.</p>
+<span class="src">hc/lib/crypto/x509.he:11</span>
+</article>
+<article class="sym" id="X509_BAD">
+<h3><a href="#X509_BAD">X509_BAD</a> <i>constant</i></h3>
+<pre>X509_BAD := 4</pre>
+<p>Constant for a chain rejected as malformed, empty, not valid for servers, or carrying an unrecognized critical extension.</p>
+<span class="src">hc/lib/crypto/x509.he:12</span>
+</article>
+<h2 id="certificate-parsing">Certificate Parsing <span class="n">6</span></h2>
+<article class="sym" id="KEY_RSA">
+<h3><a href="#KEY_RSA">KEY_RSA</a> <i>constant</i></h3>
+<pre>KEY_RSA := 1</pre>
+<p>Constant identifying an RSA public key in a parsed certificate's key algorithm field.</p>
+<span class="src">hc/lib/crypto/x509.he:13</span>
+</article>
+<article class="sym" id="KEY_EC">
+<h3><a href="#KEY_EC">KEY_EC</a> <i>constant</i></h3>
+<pre>KEY_EC := 2</pre>
+<p>Constant identifying an elliptic curve public key in a parsed certificate's key algorithm field.</p>
+<span class="src">hc/lib/crypto/x509.he:14</span>
+</article>
+<article class="sym" id="KEY_ED25519">
+<h3><a href="#KEY_ED25519">KEY_ED25519</a> <i>constant</i></h3>
+<pre>KEY_ED25519 := 3</pre>
+<p>Constant identifying an Ed25519 public key in a parsed certificate's key algorithm field.</p>
+<span class="src">hc/lib/crypto/x509.he:15</span>
+</article>
+<article class="sym" id="Cert">
+<h3><a href="#Cert">Cert</a> <i>type</i></h3>
+<pre>struct Cert { raw byte[&gt;..] = [], tbs byte[&gt;..] = [], salg byte[&gt;..] = [], sparams byte[&gt;..] = [], sig byte[&gt;..] = [], issuer byte[&gt;..] = [], subject byte[&gt;..] = [], nb int = 0, na int = 0, kalg int = 0, kcurve int = 0, kpub byte[&gt;..] = [], rn byte[&gt;..] = [], re byte[&gt;..] = [], spki byte[&gt;..] = [], ca bool = false, plen int = -1, ku int = -1, server bool = true, dns byte[&gt;..][&gt;..] = [], ips byte[&gt;..][&gt;..] = [], crit bool = false }</pre>
+<p>Parsed X.509 certificate holding signature data, issuer, subject, validity times, public key, and extension fields.</p>
+<span class="src">hc/lib/crypto/x509.he:17</span>
+</article>
+<article class="sym" id="x509_parse">
+<h3><a href="#x509_parse">x509_parse</a> <i>function</i></h3>
+<pre>x509_parse(d const byte[:]) Cert, bool</pre>
+<p>Parses a DER-encoded X.509 certificate, returning the certificate and false if the encoding is invalid.</p>
+<span class="src">hc/lib/crypto/x509.he:93</span>
+</article>
+<article class="sym" id="x509_pem">
+<h3><a href="#x509_pem">x509_pem</a> <i>function</i></h3>
+<pre>x509_pem(pem const byte[:]) Cert[&gt;..]</pre>
+<p>Returns all valid certificates found in PEM-encoded text, skipping blocks that fail to decode or parse.</p>
+<span class="src">hc/lib/crypto/x509.he:117</span>
+</article>
+<h2 id="certificate-verification">Certificate Verification <span class="n">1</span></h2>
+<article class="sym" id="x509_verify">
+<h3><a href="#x509_verify">x509_verify</a> <i>function</i></h3>
+<pre>x509_verify(chain const Cert[:], host const byte[:], now int, roots const Cert[:]) int</pre>
+<p>Verifies a certificate chain against trusted roots for a host at a given time, returning one of the X509_ result codes.</p>
+<span class="src">hc/lib/crypto/x509.he:177</span>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (16)</summary>
+<article class="sym" id="Der">
+<h3><a href="#Der">Der</a> <i>type</i></h3>
+<pre>struct Der { tag int = -1, i int = 0, s int = 0, n int = 0, e int = 0 }</pre>
+<p>Parsed DER element recording its tag, start offset, content offset, content length, and end offset.</p>
+<span class="src">hc/lib/crypto/x509.he:16</span>
+</article>
+<article class="sym" id="der_at">
+<h3><a href="#der_at">der_at</a> <i>function</i></h3>
+<pre>der_at(d const byte[:], i int, lim int) Der</pre>
+<p>Parses one DER element header at an offset within a limit, returning a tag of -1 if malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:18</span>
+</article>
+<article class="sym" id="kids">
+<h3><a href="#kids">kids</a> <i>function</i></h3>
+<pre>kids(d const byte[:], p Der) Der[&gt;..], bool</pre>
+<p>Parses the child DER elements of a parent element, returning them and false if any child is malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:31</span>
+</article>
+<article class="sym" id="oid_is">
+<h3><a href="#oid_is">oid_is</a> <i>function</i></h3>
+<pre>oid_is(d const byte[:], k Der, hx const byte[:]) bool</pre>
+<p>Checks whether a DER element is an object identifier matching the given hex-encoded bytes.</p>
+<span class="src">hc/lib/crypto/x509.he:38</span>
+</article>
+<article class="sym" id="civil_days">
+<h3><a href="#civil_days">civil_days</a> <i>function</i></h3>
+<pre>civil_days(y0 int, m int, d int) int</pre>
+<p>Converts a year, month, and day into a count of days since the Unix epoch.</p>
+<span class="src">hc/lib/crypto/x509.he:39</span>
+</article>
+<article class="sym" id="dig">
+<h3><a href="#dig">dig</a> <i>function</i></h3>
+<pre>dig(d const byte[:], i int, n int) int</pre>
+<p>Reads a fixed number of decimal digits from bytes, returning -1 if any character is not a digit.</p>
+<span class="src">hc/lib/crypto/x509.he:42</span>
+</article>
+<article class="sym" id="der_time">
+<h3><a href="#der_time">der_time</a> <i>function</i></h3>
+<pre>der_time(d const byte[:], k Der) int</pre>
+<p>Converts a DER UTCTime or GeneralizedTime element to Unix seconds, returning -1 if invalid.</p>
+<span class="src">hc/lib/crypto/x509.he:43</span>
+</article>
+<article class="sym" id="uint_bytes">
+<h3><a href="#uint_bytes">uint_bytes</a> <i>function</i></h3>
+<pre>uint_bytes(d const byte[:], k Der) byte[&gt;..]</pre>
+<p>Returns the bytes of a DER integer with leading zero bytes removed.</p>
+<span class="src">hc/lib/crypto/x509.he:49</span>
+</article>
+<article class="sym" id="spki_parse">
+<h3><a href="#spki_parse">spki_parse</a> <i>function</i></h3>
+<pre>spki_parse(c Cert&amp;, d const byte[:], sp Der) bool</pre>
+<p>Parses a SubjectPublicKeyInfo element into the certificate's key fields, returning false if unsupported or malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:50</span>
+</article>
+<article class="sym" id="ext_parse">
+<h3><a href="#ext_parse">ext_parse</a> <i>function</i></h3>
+<pre>ext_parse(c Cert&amp;, d const byte[:], ex Der) bool</pre>
+<p>Parses certificate extensions into the certificate's CA, key usage, extended usage, and alternative name fields, returning false if malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:65</span>
+</article>
+<article class="sym" id="alg_hash">
+<h3><a href="#alg_hash">alg_hash</a> <i>function</i></h3>
+<pre>alg_hash(d const byte[:], k Der) int</pre>
+<p>Maps a SHA-2 digest algorithm identifier to its hash constant, returning 0 if unrecognized.</p>
+<span class="src">hc/lib/crypto/x509.he:130</span>
+</article>
+<article class="sym" id="pss_kind">
+<h3><a href="#pss_kind">pss_kind</a> <i>function</i></h3>
+<pre>pss_kind(d const byte[:]) int, int, int</pre>
+<p>Extracts the hash, mask generation hash, and salt length from RSA-PSS signature parameters, returning zeros if malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:131</span>
+</article>
+<article class="sym" id="sig_ok">
+<h3><a href="#sig_ok">sig_ok</a> <i>function</i></h3>
+<pre>sig_ok(salg const byte[:], sparams const byte[:], tbs const byte[:], sig const byte[:], k const Cert&amp;) bool</pre>
+<p>Checks a signature over signed data using the signature algorithm and the given certificate's public key.</p>
+<span class="src">hc/lib/crypto/x509.he:148</span>
+</article>
+<article class="sym" id="signed_by">
+<h3><a href="#signed_by">signed_by</a> <i>function</i></h3>
+<pre>signed_by(c const Cert&amp;, k const Cert&amp;) bool</pre>
+<p>Returns whether a certificate's issuer matches another certificate's subject and its signature verifies with that certificate's key.</p>
+<span class="src">hc/lib/crypto/x509.he:159</span>
+</article>
+<article class="sym" id="ipv4">
+<h3><a href="#ipv4">ipv4</a> <i>function</i></h3>
+<pre>ipv4(h const byte[:]) byte[&gt;..]</pre>
+<p>Parses a dotted-decimal IPv4 address into four bytes, returning an empty array if malformed.</p>
+<span class="src">hc/lib/crypto/x509.he:160</span>
+</article>
+<article class="sym" id="name_ok">
+<h3><a href="#name_ok">name_ok</a> <i>function</i></h3>
+<pre>name_ok(c const Cert&amp;, host0 const byte[:]) bool</pre>
+<p>Returns whether a certificate's DNS or IP alternative names match a host, with case-insensitive and single-label wildcard matching.</p>
+<span class="src">hc/lib/crypto/x509.he:166</span>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a>
+<ul>
+<li><a href="/api-library/helium/lib/crypto-hash">crypto/hash</a></li>
+<li><a href="/api-library/helium/lib/crypto-aead">crypto/aead</a></li>
+<li><a href="/api-library/helium/lib/crypto-c25519">crypto/c25519</a></li>
+<li><a href="/api-library/helium/lib/crypto-ecc">crypto/ecc</a></li>
+<li><a href="/api-library/helium/lib/crypto-rsa">crypto/rsa</a></li>
+<li><a href="/api-library/helium/lib/crypto-x509" class="on">crypto/x509</a><ul class="lib-sub">
+<li><a href="#verification-results">Verification Results</a></li>
+<li><a href="#certificate-parsing">Certificate Parsing</a></li>
+<li><a href="#certificate-verification">Certificate Verification</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/lib/crypto-bn">crypto/bn</a></li>
+<li><a href="/api-library/helium/lib/crypto-rand">crypto/rand</a></li>
+<li><a href="/api-library/helium/lib/gf">gf</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Dialects | AMNI-SCIENT</title>
+<meta name="description" content="Keep the number and rounding rules of Rust, Python, JavaScript, Java, Kotlin or NumPy when porting.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Dialects">
+<meta property="og:description" content="Keep the number and rounding rules of Rust, Python, JavaScript, Java, Kotlin or NumPy when porting.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/gold/dialects">
+<link rel="canonical" href="https://amni-scient.com/api-library/gold/dialects">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/gold/">Gold</a> <span>&rsaquo;</span> Dialects</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>Dialects</h1>
+<p>When you port code, a <code>dialect</code> header line brings in the source language's rules: how it sums floats, prints numbers, rounds and casts. Every paragraph follows them, so you never have to restate them.</p>
+<pre><code>use os, math
+dialect js
+</code></pre>
+<h2 id="rust">Rust</h2>
+<p>The original is Rust. Unless a block says otherwise:</p>
+<ul>
+<li>Numbers are f64 (<code>real</code>) and <code>i64</code>/<code>usize</code> (<code>int</code>). <code>x as i64</code>/<code>as u32</code> from a float truncates toward zero and saturates (NaN -&gt; 0): write <code>sat_int(x)</code> style code with explicit clamps, never a checked <code>as</code>.</li>
+<li>Float sums with <code>.iter().sum()</code> start at -0.0, so an empty sum is -0.0. <code>f64::abs</code> is <code>fabs</code>. <code>powi(n)</code> is <code>powi(x, n)</code>, <code>powf</code> is <code>pow</code>, <code>x.max(y)</code>/<code>x.min(y)</code> are <code>max</code>/<code>min</code> (NaN-ignoring: if one side is NaN return the other).</li>
+<li>Keep the source's arithmetic grouping exactly; floats are not reassociated.</li>
+<li>JSON in and out is serde_json: read with <code>json</code> (missing optional fields are absent, <code>null</code> counts as absent), write numbers with <code>json::format_number</code> (serde's shortest round-trip form: <code>1.0</code>, <code>1e16</code>, <code>-0.0</code>, NaN/inf as <code>null</code>), keys in struct field order, <code>Option</code> fields that are <code>None</code> are written as <code>null</code> unless the block says they are skipped.</li>
+<li><code>{}</code> in format strings is Rust <code>Display</code> for f64: shortest round-trip digits, no exponent, <code>.0</code> dropped (<code>1</code>, <code>0.1</code>, <code>1e-7</code> prints <code>0.0000001</code>); <code>{:.N}</code> rounds half to even on the binary value like <code>format_flt(out, v, N)</code>.</li>
+<li>Errors are returned as <code>Err(String)</code>; a solver that fails returns a JSON object <code>{&quot;error&quot;: &quot;&lt;text&gt;&quot;}</code> with the exact text.</li>
+<li><code>Vec&lt;T&gt;</code> is <code>T[&gt;..]</code>, <code>&amp;str</code>/<code>String</code> fields are <code>byte[]</code>, <code>HashMap</code> iteration order is never relied on.</li>
+</ul>
+<h2 id="python">Python</h2>
+<p>The original is Python 3. Unless a block says otherwise:</p>
+<ul>
+<li><code>int</code> is <code>int</code>, <code>float</code> is <code>real</code>. <code>/</code> is <code>truediv</code>, <code>//</code> and <code>%</code> round down (<code>floor_div</code>, <code>pydivmod</code>), <code>round()</code> is half-to-even (<code>pyround</code>).</li>
+<li><code>str(x)</code> is <code>pyfmt(x)</code> (floats print shortest round-trip with <code>.0</code>, <code>1e-05</code>, <code>inf</code>, <code>nan</code>, <code>True</code>/<code>False</code>), <code>repr(s)</code> is <code>pyrepr(s)</code>.</li>
+<li>Truthiness: empty string, empty list, 0, 0.0 and None are false (<code>truthy</code>).</li>
+<li><code>s.lower()</code>/<code>upper()</code>/<code>strip()</code>/<code>split()</code> work on ASCII here; <code>split()</code> with no argument splits on runs of whitespace and drops empty parts; <code>split(sep)</code> keeps empty parts.</li>
+<li><code>json.dumps</code> default separators are <code>&quot;, &quot;</code> and <code>&quot;: &quot;</code>, <code>ensure_ascii</code> escapes non-ASCII as <code>\uXXXX</code>, keys keep insertion order; <code>json.loads</code> gives dicts, lists, str, int, float, bool, None.</li>
+<li><code>re</code> patterns are used verbatim with Helium <code>regex</code> (search = first match anywhere, match = anchored at start, fullmatch = whole string; <code>re.I</code> = case-insensitive).</li>
+<li>dict iteration is insertion order; <code>sorted</code> is stable; <code>min</code>/<code>max</code> return the first of equal items.</li>
+<li>Exceptions caught by the source become explicit error results with the exact message text the source prints.</li>
+</ul>
+<h2 id="javascript">JavaScript</h2>
+<p>The original is JavaScript. Unless a block says otherwise:</p>
+<ul>
+<li>Every number is a double (<code>real</code>); integers stay exact below 2^53. <code>Math.round</code> rounds half up (toward +inf): <code>floor(x + 0.5)</code>. <code>toFixed(n)</code> rounds half away from zero on the decimal digits: <code>format_flt(out, v, n, away = true)</code>. <code>parseFloat</code> reads the longest numeric prefix, <code>Number(&quot;&quot;)</code> is 0, <code>Number(&quot;x&quot;)</code> is NaN.</li>
+<li><code>String(x)</code> / template <code>${x}</code> of a number: shortest round-trip digits, no <code>.0</code> for integers, exponent form <code>1e+21</code> from 1e21 up and <code>1e-7</code> below 1e-6, <code>-0</code> prints <code>0</code>, <code>NaN</code>, <code>Infinity</code>.</li>
+<li><code>||</code> returns the first truthy operand (0, &quot;&quot;, NaN, null, undefined are falsy); <code>??</code> only skips null/undefined.</li>
+<li>String methods are UTF-16 but inputs here are ASCII: <code>slice</code>, <code>padStart</code>, <code>toUpperCase</code>, <code>trim</code> as usual; regex literals are used verbatim with Helium <code>regex</code>.</li>
+<li>Objects keep insertion order for string keys.</li>
+</ul>
+<h2 id="java">Java</h2>
+<p>The original is Java. Unless a block says otherwise:</p>
+<ul>
+<li><code>double</code> is <code>real</code>, <code>int</code>/<code>long</code> are <code>int</code> (but <code>int</code> arithmetic wraps at 32 bits where the source relies on it: say so), <code>(int) x</code> from a double truncates toward zero and saturates, NaN -&gt; 0.</li>
+<li><code>Math.abs</code> is <code>fabs</code>, <code>Math.exp/log/sqrt/atan2/hypot</code> keep their names, <code>Math.round</code> is <code>floor(x + 0.5)</code> as an int, <code>Math.max/min</code> with NaN return NaN.</li>
+<li><code>Double.toString</code>: shortest digits that round-trip, always with a <code>.</code>, exponent form <code>1.0E10</code> from 1e7 up and below 1e-3.</li>
+<li><code>String.format(&quot;%.Nf&quot;)</code> rounds half up on the decimal digits: <code>format_flt(out, v, N, away = true)</code>.</li>
+<li><code>char</code> is a UTF-16 unit; inputs here are ASCII, so <code>Character.isLetter</code>/<code>toLowerCase</code> are the ASCII versions.</li>
+<li><code>ArrayList</code>/arrays are <code>T[&gt;..]</code>; <code>HashMap</code> order is never relied on; <code>Arrays.sort</code> on objects is stable.</li>
+</ul>
+<h2 id="kotlin">Kotlin</h2>
+<p>The original is Kotlin (JVM). Unless a block says otherwise:</p>
+<ul>
+<li><code>Double</code> is <code>real</code>, <code>Int</code>/<code>Long</code> are <code>int</code>; <code>toInt()</code> from a Double truncates toward zero and saturates, NaN -&gt; 0.</li>
+<li><code>Regex</code> patterns are used verbatim with Helium <code>regex</code> (<code>find</code> = first match anywhere, <code>matches</code> = whole string, <code>containsMatchIn</code> = any match; <code>RegexOption.IGNORE_CASE</code> = case-insensitive).</li>
+<li><code>toDoubleOrNull</code>/<code>toIntOrNull</code> return absent on anything that is not a full valid number (no surrounding spaces).</li>
+<li><code>String.format(&quot;%.2f&quot;)</code> rounds half up on the decimal digits: <code>format_flt(out, v, 2, away = true)</code>; <code>Double.toString</code> is Java's (shortest digits, always a <code>.</code>, <code>1.0E10</code> from 1e7 up and below 1e-3).</li>
+<li><code>?.</code>/<code>?:</code> chains become explicit has-value checks; data classes print as <code>Name(a=1, b=x)</code> only where the source prints them.</li>
+<li><code>trim()</code>, <code>lowercase()</code>, <code>split()</code> on ASCII text; <code>split(&quot;,&quot;)</code> keeps empty parts.</li>
+</ul>
+<h2 id="numpy">NumPy</h2>
+<p>The original is Python with numpy. Unless a block says otherwise:</p>
+<ul>
+<li><code>np.uint8</code>/<code>uint32</code>/<code>uint64</code> arithmetic wraps; write it with Helium <code>u8</code>/<code>u32</code>/<code>u64</code> (wrapping), not <code>int</code>.</li>
+<li>Vectorized expressions over arrays become plain loops over <code>byte[]</code>/<code>u32[]</code> slices in the same element order; broadcasting a scalar means using it for every element.</li>
+<li><code>np.roll(a, k)</code> moves element i to (i + k) mod n; <code>a[::-1]</code> reverses; <code>np.bitwise_xor</code>, <code>&amp;</code>, <code>|</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> act per element with the dtype's width.</li>
+<li><code>int.from_bytes(b, &quot;little&quot;)</code> / <code>.to_bytes(n, &quot;little&quot;)</code> are little-endian loads and stores (<code>load_u64le</code>/<code>store_u64le</code> for 8 bytes).</li>
+<li>Keep table lookups as tables (precomputed once into a module <code>var</code>), not recomputed per block.</li>
+</ul>
+<nav class="lib-pn">
+<a class="prev" href="/api-library/gold/settings">&larr; Settings</a>
+<a class="next" href="/api-library/gold/packs">Packs &rarr;</a>
+</nav>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors<span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking<span>265</span></a></li>
+<li><a href="/api-library/helium/security">Security<span>180</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages<span>152</span></a></li>
+</ul>
+<details class="lib-g" open><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects" class="on">Dialects</a><ul class="lib-sub">
+<li><a href="#rust">Rust</a></li>
+<li><a href="#python">Python</a></li>
+<li><a href="#javascript">JavaScript</a></li>
+<li><a href="#java">Java</a></li>
+<li><a href="#kotlin">Kotlin</a></li>
+<li><a href="#numpy">NumPy</a></li>
+</ul>
+</li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
