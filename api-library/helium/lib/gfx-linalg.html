@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-linalg">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-linalg">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<link rel="stylesheet" href="/api-library/lib.css?v=e9dccb69e1">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=e9dccb69e1'; start({wasm: '/api-library/search.wasm?v=e9dccb69e1'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/linalg</h1>
 <p class="lib-lede">Quaternions, rigid transforms and 4x4 matrix helpers for the 3D renderer.</p>
-<p class="lib-meta"><code>import gfx.linalg;</code> &middot; <code>linalg::</code> &middot; 24 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.linalg;</code> &middot; <code>linalg::</code> &middot; 24 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#quaternions">Quaternions <span class="n">7</span></a></li>
 <li><a href="#matrices-and-vectors">Matrices and Vectors <span class="n">16</span></a></li>
@@ -114,160 +114,160 @@
 <h3><a href="#Quat">Quat</a> <i>type</i></h3>
 <pre>struct Quat { x f32, y f32, z f32, w f32 }</pre>
 <p>Quaternion type holding x, y, z vector and w scalar components, used to represent 3D rotations.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L7">hc/lib/gfx/linalg.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L7">hc/lib/gfx/linalg.amni:7</a>
 </article>
 <article class="sym" id="quat_identity">
 <h3><a href="#quat_identity">quat_identity</a> <i>function</i></h3>
 <pre>quat_identity() Quat</pre>
 <p>Returns the identity quaternion, which represents no rotation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L9">hc/lib/gfx/linalg.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L9">hc/lib/gfx/linalg.amni:9</a>
 </article>
 <article class="sym" id="qmul">
 <h3><a href="#qmul">qmul</a> <i>function</i></h3>
 <pre>qmul(a Quat, b Quat) Quat</pre>
 <p>Returns the Hamilton product of two quaternions, which rotates by b first and then by a.</p>
 <p class="note">Hamilton product: applying the result rotates by b first, then a.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L30">hc/lib/gfx/linalg.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L30">hc/lib/gfx/linalg.amni:30</a>
 </article>
 <article class="sym" id="qnorm">
 <h3><a href="#qnorm">qnorm</a> <i>function</i></h3>
 <pre>qnorm(q Quat) Quat</pre>
 <p>Returns the quaternion scaled to unit length, or the identity if its length is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L39">hc/lib/gfx/linalg.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L39">hc/lib/gfx/linalg.amni:39</a>
 </article>
 <article class="sym" id="qaxis">
 <h3><a href="#qaxis">qaxis</a> <i>function</i></h3>
 <pre>qaxis(axis float3, angle f32) Quat</pre>
 <p>Returns a quaternion rotating by an angle in radians around the given axis, which is normalized first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L45">hc/lib/gfx/linalg.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L45">hc/lib/gfx/linalg.amni:45</a>
 </article>
 <article class="sym" id="qrotate">
 <h3><a href="#qrotate">qrotate</a> <i>function</i></h3>
 <pre>qrotate(q Quat, v float3) float3</pre>
 <p>Returns the vector rotated by the given quaternion.</p>
 <p class="note">v' = v + 2w(u x v) + 2(u x (u x v)), with u the vector part of q.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L52">hc/lib/gfx/linalg.amni:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L52">hc/lib/gfx/linalg.amni:52</a>
 </article>
 <article class="sym" id="qslerp">
 <h3><a href="#qslerp">qslerp</a> <i>function</i></h3>
 <pre>qslerp(a Quat, b0 Quat, t f32) Quat</pre>
 <p>Returns a spherical interpolation between two quaternions along the shorter arc, using a normalized lerp when nearly parallel.</p>
 <p class="note">Spherical interpolation on the shorter arc; falls back to a normalized lerp when nearly parallel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L61">hc/lib/gfx/linalg.amni:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L61">hc/lib/gfx/linalg.amni:61</a>
 </article>
 <h2 id="matrices-and-vectors">Matrices and Vectors <span class="n">16</span></h2>
 <article class="sym" id="v3">
 <h3><a href="#v3">v3</a> <i>function</i></h3>
 <pre>v3(x f32, y f32, z f32) float3</pre>
 <p>Returns a float3 built from the given x, y and z components.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L13">hc/lib/gfx/linalg.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L13">hc/lib/gfx/linalg.amni:13</a>
 </article>
 <article class="sym" id="length3">
 <h3><a href="#length3">length3</a> <i>function</i></h3>
 <pre>length3(v float3) f32</pre>
 <p>Returns the Euclidean length of a float3 vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L15">hc/lib/gfx/linalg.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L15">hc/lib/gfx/linalg.amni:15</a>
 </article>
 <article class="sym" id="unit3">
 <h3><a href="#unit3">unit3</a> <i>function</i></h3>
 <pre>unit3(v float3) float3</pre>
 <p>Returns the vector scaled to unit length, or the input unchanged if its length is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L17">hc/lib/gfx/linalg.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L17">hc/lib/gfx/linalg.amni:17</a>
 </article>
 <article class="sym" id="dot3">
 <h3><a href="#dot3">dot3</a> <i>function</i></h3>
 <pre>dot3(a float3, b float3) f32</pre>
 <p>Returns the dot product of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L23">hc/lib/gfx/linalg.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L23">hc/lib/gfx/linalg.amni:23</a>
 </article>
 <article class="sym" id="cross3">
 <h3><a href="#cross3">cross3</a> <i>function</i></h3>
 <pre>cross3(a float3, b float3) float3</pre>
 <p>Returns the cross product of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L25">hc/lib/gfx/linalg.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L25">hc/lib/gfx/linalg.amni:25</a>
 </article>
 <article class="sym" id="mix3">
 <h3><a href="#mix3">mix3</a> <i>function</i></h3>
 <pre>mix3(a float3, b float3, t f32) float3</pre>
 <p>Linearly interpolates between two float3 vectors by factor t, where 0 gives a and 1 gives b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L27">hc/lib/gfx/linalg.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L27">hc/lib/gfx/linalg.amni:27</a>
 </article>
 <article class="sym" id="qmatrix">
 <h3><a href="#qmatrix">qmatrix</a> <i>function</i></h3>
 <pre>qmatrix(q Quat) gfx::mat4</pre>
 <p>Returns the 4x4 rotation matrix of a unit quaternion.</p>
 <p class="note">Rotation matrix of a unit quaternion.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L79">hc/lib/gfx/linalg.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L79">hc/lib/gfx/linalg.amni:79</a>
 </article>
 <article class="sym" id="compose">
 <h3><a href="#compose">compose</a> <i>function</i></h3>
 <pre>compose(t float3, r Quat, s float3) gfx::mat4</pre>
 <p>Returns a matrix combining translation, rotation and scale in T * R * S order, as glTF nodes do.</p>
 <p class="note">T * R * S, the glTF node transform order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L92">hc/lib/gfx/linalg.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L92">hc/lib/gfx/linalg.amni:92</a>
 </article>
 <article class="sym" id="flat">
 <h3><a href="#flat">flat</a> <i>function</i></h3>
 <pre>flat(m gfx::mat4) f32[16]</pre>
 <p>Returns the matrix as 16 floats in column-major order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L101">hc/lib/gfx/linalg.amni:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L101">hc/lib/gfx/linalg.amni:101</a>
 </article>
 <article class="sym" id="unflat">
 <h3><a href="#unflat">unflat</a> <i>function</i></h3>
 <pre>unflat(a f32[16]) gfx::mat4</pre>
 <p>Returns a matrix built from 16 floats given in column-major order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L105">hc/lib/gfx/linalg.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L105">hc/lib/gfx/linalg.amni:105</a>
 </article>
 <article class="sym" id="transpose">
 <h3><a href="#transpose">transpose</a> <i>function</i></h3>
 <pre>transpose(m gfx::mat4) gfx::mat4</pre>
 <p>Returns the transpose of a 4x4 matrix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L109">hc/lib/gfx/linalg.amni:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L109">hc/lib/gfx/linalg.amni:109</a>
 </article>
 <article class="sym" id="inverse">
 <h3><a href="#inverse">inverse</a> <i>function</i></h3>
 <pre>inverse(m gfx::mat4) gfx::mat4</pre>
 <p>Returns the general inverse of a 4x4 matrix, or the identity matrix if the input is singular.</p>
 <p class="note">General inverse by the adjugate: the 2x2 minors of the top two and bottom two rows (Laplace expansion along row pairs) give every cofactor. Singular input gives identity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L115">hc/lib/gfx/linalg.amni:115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L115">hc/lib/gfx/linalg.amni:115</a>
 </article>
 <article class="sym" id="normal_matrix">
 <h3><a href="#normal_matrix">normal_matrix</a> <i>function</i></h3>
 <pre>normal_matrix(m gfx::mat4) gfx::mat4</pre>
 <p>Returns the inverse-transpose of the matrix with translation removed, for transforming normals.</p>
 <p class="note">Matrix for transforming normals: inverse-transpose of the upper 3x3, no translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L154">hc/lib/gfx/linalg.amni:154</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L154">hc/lib/gfx/linalg.amni:154</a>
 </article>
 <article class="sym" id="point">
 <h3><a href="#point">point</a> <i>function</i></h3>
 <pre>point(m gfx::mat4, p float3) float3</pre>
 <p>Returns a point transformed by the matrix, including translation and a divide by w when w is not 0 or 1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L161">hc/lib/gfx/linalg.amni:161</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L161">hc/lib/gfx/linalg.amni:161</a>
 </article>
 <article class="sym" id="direction">
 <h3><a href="#direction">direction</a> <i>function</i></h3>
 <pre>direction(m gfx::mat4, d float3) float3</pre>
 <p>Returns a direction vector transformed by the matrix, ignoring translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L167">hc/lib/gfx/linalg.amni:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L167">hc/lib/gfx/linalg.amni:167</a>
 </article>
 <article class="sym" id="near_equal">
 <h3><a href="#near_equal">near_equal</a> <i>function</i></h3>
 <pre>near_equal(a gfx::mat4, b gfx::mat4, eps f32) bool</pre>
 <p>Returns true if every pair of matrix elements differs by no more than eps.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L172">hc/lib/gfx/linalg.amni:172</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L172">hc/lib/gfx/linalg.amni:172</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
 <article class="sym" id="f">
 <h3><a href="#f">f</a> <i>function</i></h3>
 <pre>f(v real) f32</pre>
 <p>Converts a real number to f32 for use in this module's math code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L11">hc/lib/gfx/linalg.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L11">hc/lib/gfx/linalg.amni:11</a>
 </article>
 <article class="sym" id="col">
 <h3><a href="#col">col</a> <i>function</i></h3>
 <pre>col(x f32, y f32, z f32, w f32) float4</pre>
 <p>Returns a float4 built from four components, used to construct matrix columns.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/gfx/linalg.amni#L76">hc/lib/gfx/linalg.amni:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/gfx/linalg.amni#L76">hc/lib/gfx/linalg.amni:76</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -278,8 +278,8 @@
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a>
+<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>938</span></a>
 <ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
@@ -301,7 +301,7 @@
 <li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
 </ul>
 </li>
-<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
 <li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>

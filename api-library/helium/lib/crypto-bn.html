@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-bn">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-bn">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<link rel="stylesheet" href="/api-library/lib.css?v=e9dccb69e1">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=e9dccb69e1'; start({wasm: '/api-library/search.wasm?v=e9dccb69e1'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,8 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/bn</h1>
 <p class="lib-lede">Big-number and Montgomery arithmetic the other security modules build on.</p>
-<div class="lib-dev">Coming soon: this module is not in the public Helium repository yet, so importing it from a public checkout will fail.</div>
-<p class="lib-meta"><code>import crypto.bn;</code> &middot; <code>crypto::</code> &middot; 19 functions, 1 types, 0 constants</p>
+<p class="lib-meta"><code>import crypto.bn;</code> &middot; <code>crypto::</code> &middot; 19 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#big-numbers">Big Numbers <span class="n">7</span></a></li>
 <li><a href="#montgomery-arithmetic">Montgomery Arithmetic <span class="n">8</span></a></li>
@@ -115,123 +114,123 @@
 <h3><a href="#Mont">Mont</a> <i>type</i></h3>
 <pre>struct Mont { n u32[&gt;..] = [], k int = 0, n0 u32 = 0, rr u32[&gt;..] = [], one u32[&gt;..] = [], bits int = 0 }</pre>
 <p>Holds precomputed Montgomery context for an odd modulus: limbs, word inverse, R squared, one, and bit length.</p>
-<span class="src">hc/lib/crypto/bn.he:3</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L3">hc/lib/crypto/bn.he:3</a>
 </article>
 <article class="sym" id="bn_from">
 <h3><a href="#bn_from">bn_from</a> <i>function</i></h3>
 <pre>bn_from(b const byte[:], k int) u32[&gt;..]</pre>
 <p>Converts big-endian bytes into a little-endian array of k 32-bit limbs, dropping bytes that overflow k limbs.</p>
-<span class="src">hc/lib/crypto/bn.he:4</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L4">hc/lib/crypto/bn.he:4</a>
 </article>
 <article class="sym" id="bn_bytes">
 <h3><a href="#bn_bytes">bn_bytes</a> <i>function</i></h3>
 <pre>bn_bytes(a const u32[:], n int) byte[&gt;..]</pre>
 <p>Converts limbs into a big-endian byte array of exactly n bytes, zero-padding or truncating high bytes.</p>
-<span class="src">hc/lib/crypto/bn.he:8</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L8">hc/lib/crypto/bn.he:8</a>
 </article>
 <article class="sym" id="bn_cmp">
 <h3><a href="#bn_cmp">bn_cmp</a> <i>function</i></h3>
 <pre>bn_cmp(a const u32[:], b const u32[:]) int</pre>
 <p>Compares two limb numbers of possibly different lengths, returning -1, 0 or 1 for less, equal or greater.</p>
-<span class="src">hc/lib/crypto/bn.he:12</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L12">hc/lib/crypto/bn.he:12</a>
 </article>
 <article class="sym" id="bn_zero">
 <h3><a href="#bn_zero">bn_zero</a> <i>function</i></h3>
 <pre>bn_zero(a const u32[:]) bool</pre>
 <p>Returns whether every limb is zero, scanning all limbs without early exit.</p>
-<span class="src">hc/lib/crypto/bn.he:19</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L19">hc/lib/crypto/bn.he:19</a>
 </article>
 <article class="sym" id="bn_bits">
 <h3><a href="#bn_bits">bn_bits</a> <i>function</i></h3>
 <pre>bn_bits(a const u32[:]) int</pre>
 <p>Returns the position of the highest set bit plus one, or 0 for zero.</p>
-<span class="src">hc/lib/crypto/bn.he:20</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L20">hc/lib/crypto/bn.he:20</a>
 </article>
 <article class="sym" id="bn_bit">
 <h3><a href="#bn_bit">bn_bit</a> <i>function</i></h3>
 <pre>bn_bit(a const u32[:], i int) int</pre>
 <p>Returns bit i of the number as 0 or 1, where bit 0 is the least significant.</p>
-<span class="src">hc/lib/crypto/bn.he:27</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L27">hc/lib/crypto/bn.he:27</a>
 </article>
 <h2 id="montgomery-arithmetic">Montgomery Arithmetic <span class="n">8</span></h2>
 <article class="sym" id="mont_new">
 <h3><a href="#mont_new">mont_new</a> <i>function</i></h3>
 <pre>mont_new(nb const byte[:]) Mont</pre>
 <p>Builds a Montgomery context from big-endian modulus bytes, precomputing the word inverse, R squared and the Montgomery form of one.</p>
-<span class="src">hc/lib/crypto/bn.he:34</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L34">hc/lib/crypto/bn.he:34</a>
 </article>
 <article class="sym" id="madd">
 <h3><a href="#madd">madd</a> <i>function</i></h3>
 <pre>madd(m const Mont&amp;, a const u32[:], b const u32[:]) u32[&gt;..]</pre>
 <p>Returns the sum of two reduced values modulo the context's modulus.</p>
-<span class="src">hc/lib/crypto/bn.he:44</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L44">hc/lib/crypto/bn.he:44</a>
 </article>
 <article class="sym" id="msub">
 <h3><a href="#msub">msub</a> <i>function</i></h3>
 <pre>msub(m const Mont&amp;, a const u32[:], b const u32[:]) u32[&gt;..]</pre>
 <p>Returns the difference of two reduced values modulo the context's modulus.</p>
-<span class="src">hc/lib/crypto/bn.he:48</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L48">hc/lib/crypto/bn.he:48</a>
 </article>
 <article class="sym" id="mmul">
 <h3><a href="#mmul">mmul</a> <i>function</i></h3>
 <pre>mmul(m const Mont&amp;, a const u32[:], b const u32[:]) u32[&gt;..]</pre>
 <p>Returns the Montgomery product of two values, which is a*b/R modulo the modulus.</p>
-<span class="src">hc/lib/crypto/bn.he:52</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L52">hc/lib/crypto/bn.he:52</a>
 </article>
 <article class="sym" id="to_mont">
 <h3><a href="#to_mont">to_mont</a> <i>function</i></h3>
 <pre>to_mont(m const Mont&amp;, a const u32[:]) u32[&gt;..]</pre>
 <p>Converts a value into Montgomery form by multiplying it with R squared.</p>
-<span class="src">hc/lib/crypto/bn.he:64</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L64">hc/lib/crypto/bn.he:64</a>
 </article>
 <article class="sym" id="from_mont">
 <h3><a href="#from_mont">from_mont</a> <i>function</i></h3>
 <pre>from_mont(m const Mont&amp;, a const u32[:]) u32[&gt;..]</pre>
 <p>Converts a value out of Montgomery form back to an ordinary residue.</p>
-<span class="src">hc/lib/crypto/bn.he:65</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L65">hc/lib/crypto/bn.he:65</a>
 </article>
 <article class="sym" id="mpow">
 <h3><a href="#mpow">mpow</a> <i>function</i></h3>
 <pre>mpow(m const Mont&amp;, a const u32[:], e const u32[:]) u32[&gt;..]</pre>
 <p>Raises a Montgomery-form base to an exponent given as limbs, returning the result in Montgomery form.</p>
-<span class="src">hc/lib/crypto/bn.he:66</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L66">hc/lib/crypto/bn.he:66</a>
 </article>
 <article class="sym" id="minv">
 <h3><a href="#minv">minv</a> <i>function</i></h3>
 <pre>minv(m const Mont&amp;, a const u32[:]) u32[&gt;..]</pre>
 <p>Returns the modular inverse of a Montgomery-form value by exponentiating to the modulus minus two, so the modulus must be prime.</p>
-<span class="src">hc/lib/crypto/bn.he:70</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L70">hc/lib/crypto/bn.he:70</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (5)</summary>
 <article class="sym" id="sub_mask">
 <h3><a href="#sub_mask">sub_mask</a> <i>function</i></h3>
 <pre>sub_mask(a const u32[:], b const u32[:]) u32[&gt;..], u32</pre>
 <p>Subtracts b from a limb by limb, returning the difference and an all-ones mask if it borrowed.</p>
-<span class="src">hc/lib/crypto/bn.he:28</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L28">hc/lib/crypto/bn.he:28</a>
 </article>
 <article class="sym" id="csel">
 <h3><a href="#csel">csel</a> <i>function</i></h3>
 <pre>csel(m u32, a const u32[:], b const u32[:]) u32[&gt;..]</pre>
 <p>Selects limbs of a when mask m is all ones or of b when zero, without branching.</p>
-<span class="src">hc/lib/crypto/bn.he:32</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L32">hc/lib/crypto/bn.he:32</a>
 </article>
 <article class="sym" id="cswap">
 <h3><a href="#cswap">cswap</a> <i>function</i></h3>
 <pre>cswap(a u32[&gt;..]&amp;, b u32[&gt;..]&amp;, bit int)</pre>
 <p>Swaps the contents of two limb arrays when bit is 1, without branching on the secret bit.</p>
-<span class="src">hc/lib/crypto/bn.he:33</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L33">hc/lib/crypto/bn.he:33</a>
 </article>
 <article class="sym" id="mdbl">
 <h3><a href="#mdbl">mdbl</a> <i>function</i></h3>
 <pre>mdbl(m const Mont&amp;, a const u32[:]) u32[&gt;..]</pre>
 <p>Doubles a value modulo the modulus, conditionally subtracting the modulus to keep the result reduced.</p>
-<span class="src">hc/lib/crypto/bn.he:40</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L40">hc/lib/crypto/bn.he:40</a>
 </article>
 <article class="sym" id="reduce_once">
 <h3><a href="#reduce_once">reduce_once</a> <i>function</i></h3>
 <pre>reduce_once(m const Mont&amp;, a const u32[:]) u32[&gt;..]</pre>
 <p>Subtracts the modulus once from a value if it is not smaller than the modulus, without branching.</p>
-<span class="src">hc/lib/crypto/bn.he:72</span>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/crypto/bn.he#L72">hc/lib/crypto/bn.he:72</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -242,9 +241,9 @@
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>938</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
 <li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>
