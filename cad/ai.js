@@ -95,6 +95,8 @@ export function parseReply(txt){
   for(const cand of[body,body.replace(/,\s*([}\]])/g,'$1'),body.replace(/'/g,'"').replace(/,\s*([}\]])/g,'$1')]){try{const o=JSON.parse(cand);return{say:String(o.say||o.message||''),actions:Array.isArray(o.actions)?o.actions:[]};}catch{}}
   return{say:s.trim().slice(0,800),actions:[],parseError:true};
 }
+/** Local servers sometimes put the JSON in reasoning_content and leave content empty. Only a parsed {say, actions} object is returned. Raw reasoning is never shown or executed. */
+export function localReplyText(msg){const m=msg&&msg.message||msg||{},content=typeof m.content==='string'?m.content:'';if(content.trim())return content;const reason=m.reasoning_content||m.reasoning;if(typeof reason!=='string'||!reason.includes('{'))return '';const p=parseReply(reason);if(p.parseError||!p.say&&!(p.actions&&p.actions.length))return '';return JSON.stringify({say:p.say,actions:p.actions});}
 const PN={anthropic:'Anthropic',openai:'OpenAI',gemini:'Google',openrouter:'OpenRouter',local:'your local server',browser:'the on-device model',chrome:'Chrome built-in AI',bridge:'your Claude or ChatGPT app',remote:'your Claude app',paste:'your chat app'};
 export const detectKey=s=>{s=String(s||'').trim();return/^sk-ant-/.test(s)?'anthropic':/^sk-or-/.test(s)?'openrouter':/^(AIza|AQ\.)/.test(s)?'gemini':/^sk-/.test(s)?'openai':null;};
 export const prettyModel=id=>String(id||'').replace(/^[^/]*\//,'').replace(/-\d{8}$/,'').replace(/^claude-(\w+)-(\d+)-(\d+)$/,(m,n,a,b)=>'Claude '+n[0].toUpperCase()+n.slice(1)+' '+a+'.'+b).replace(/^gpt-/,'GPT-').replace(/^gemini-/,'Gemini ').replace(/^claude-/,'Claude ');
@@ -175,9 +177,11 @@ export class Assistant{
       if(!r.ok)throw await bad('API',r);return await out(r,oaS,oaF,tok);
     }
     if(this.kind==='local'){
-      const img=!this.noVision&&messages.some(m=>m.images&&m.images.length),body={model:this.cfg.model,messages:wire(messages,img?'openai':'text'),temperature:0.2,stream:!!tok,response_format:{type:'json_object'}},go=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',signal,headers:this.hdr(),body:JSON.stringify(body)});
-      let r=await go();if(r.status===400){delete body.response_format;r=await go();}if(!r.ok&&img){body.messages=wire(messages,'text');r=await go();if(r.ok)this.noVision=true;}
-      if(!r.ok)throw await bad('server',r);return await out(r,oaS,oaF,tok);
+      const img=!this.noVision&&messages.some(m=>m.images&&m.images.length),body={model:this.cfg.model,messages:wire(messages,img?'openai':'text'),temperature:0.2,stream:false,think:false,response_format:{type:'json_object'}},go=()=>fetch(this.cfg.base+'/chat/completions',{method:'POST',signal,headers:this.hdr(),body:JSON.stringify(body)});
+      let r=await go();
+      for(let i=0;i<2&&r.status===400;i++){const t=await r.text(),think=/think/i.test(t),fmt=/response_format|json_object/i.test(t);if(!think&&!fmt)throw Object.assign(new Error('server error 400 '+t.slice(0,240)),{status:400});if(think)delete body.think;if(fmt)delete body.response_format;r=await go();}
+      if(!r.ok&&img){body.messages=wire(messages,'text');r=await go();if(r.ok)this.noVision=true;}
+      if(!r.ok)throw await bad('server',r);const j=await r.json(),text=localReplyText(j.choices&&j.choices[0]);tok&&text&&tok(text);return text;
     }
     if(this.kind==='chrome'){const sys=messages.find(m=>m.role==='system'),rest=wire(messages.filter(m=>m.role!=='system'),'text');const s=await this.engine.create({initialPrompts:[{role:'system',content:sys.content},...rest.slice(0,-1)]});try{if(tok&&s.promptStreaming){let acc='';for await(const c of s.promptStreaming(rest[rest.length-1].content,{signal})){acc+=c;tok(acc);}return acc;}return await s.prompt(rest[rest.length-1].content);}finally{s.destroy&&s.destroy();}}
     throw new Error('connect an AI engine first');

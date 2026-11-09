@@ -1,0 +1,13 @@
+import {localReplyText,parseReply} from '../ai.js';
+let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+JSON.stringify(x)+')':''));};
+const thought='I will think about the plate for a while and not emit a tool call.';
+ok(localReplyText({message:{content:'',reasoning_content:thought}})==='','raw reasoning with no action object is dropped',localReplyText({message:{content:'',reasoning_content:thought}}));
+const good='{"say":"ok","actions":[{"new":true,"units":"mm"}]}';
+ok(localReplyText({message:{content:good}})==good,'content is used as-is when it is present');
+const mixed='First I consider the stock.\n'+good+'\nThen I stop.';
+const out=localReplyText({message:{content:'',reasoning_content:mixed}});
+const parsed=parseReply(out);
+ok(parsed.say==='ok'&&parsed.actions.length===1&&parsed.actions[0].new===true&&!/consider the stock/.test(out),'only the structured object is kept from reasoning_content',out);
+ok(localReplyText({message:{content:'',reasoning_content:'{"thought":"do not run this"}'}})==='','a reasoning object without say or actions is not executed');
+console.log(fail?fail+' FAILED':'ALL PASS');
+process.exit(fail?1:0);

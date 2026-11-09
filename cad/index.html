@@ -23,7 +23,7 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font:13px/1.45 var(--font);font-variant-numeric:tabular-nums;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0}
-header{height:52px;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0;z-index:5}
+header{min-height:52px;height:auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:6px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0;z-index:5;overflow:visible}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-weight:650;font-size:15px;letter-spacing:.01em;white-space:nowrap}
 .brand svg{width:26px;height:26px}
 .brand b{color:var(--brand);font-weight:750}
@@ -47,10 +47,11 @@ header{height:52px;display:flex;align-items:center;gap:10px;padding:0 12px;backg
 .pro-lock::after{content:'PRO';margin-left:6px;font-size:9px;font-weight:800;letter-spacing:.5px;padding:1px 4px;border-radius:calc(3px*var(--rk,1));background:var(--acc,#59b6ff);color:var(--acc-ink,#fff);vertical-align:1px}.pill.pro{cursor:pointer;font-weight:700;color:var(--mut)}.pill.pro.on{color:var(--acc,#59b6ff);border-color:var(--acc,#59b6ff)}.pill.ok{color:var(--ok)}.pill.busy{color:var(--warm)}.pill.err{color:var(--err)}
 .ib{width:32px;height:32px;border-radius:calc(8px*var(--rk,1));display:grid;place-items:center;color:var(--ink2)}
 .ib:hover{background:var(--panel2);color:var(--ink)}
-main{position:relative;flex:1;display:grid;--lwc:clamp(150px,var(--lw,min(272px,30vw)),44vw);--rwc:clamp(150px,var(--rw,min(352px,34vw)),44vw);grid-template-columns:var(--lwc) minmax(0,1fr) var(--rwc);min-height:0}
+main{position:relative;flex:1;display:grid;--lwc:clamp(150px,var(--lw,min(272px,30vw)),44vw);--rwc:clamp(150px,var(--rw,min(352px,34vw)),44vw);grid-template-columns:var(--lwc) minmax(0,1fr);min-height:0}
 aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 #left{border-right:1px solid var(--line)}
-#right{border-left:1px solid var(--line);display:flex;flex-direction:column;overflow-wrap:break-word}
+#right{border-left:1px solid var(--line);display:none;flex-direction:column;overflow-wrap:break-word}
+@media (min-width:700px){#right{position:absolute;top:0;bottom:0;left:var(--lwc);right:0;width:auto;z-index:6;border:0;border-left:1px solid var(--line);border-radius:0;box-shadow:none;background:var(--panel)}body.sheet-on #right{display:flex}#pipe,#right .rtabs{display:none!important}#work-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);flex:none;background:var(--panel)}#work-bar b{font-size:15px}#sheet-x{margin:0 0 0 auto;height:36px;padding:0 14px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);font-weight:650}#tab-ai.on{width:min(760px,100%);margin:0 auto}}
 .sec{padding:12px 12px 14px;border-bottom:1px solid var(--line)}
 .sec h3{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);margin-bottom:8px}
 .sec h3 button{color:var(--acc);font-size:12px;text-transform:none;letter-spacing:0;font-weight:600;padding:2px 6px;border-radius:calc(6px*var(--rk,1))}
@@ -220,6 +221,7 @@ dialog kbd{font-family:var(--mono);font-size:11px;background:var(--bg2);border:1
 #mob{display:none}
 @media (max-width:699px),((pointer:coarse) and (not (any-pointer:fine)) and (max-width:1100px)){
 main{grid-template-columns:1fr}
+#right{display:flex}
 #right .rtabs{overflow-x:auto;scrollbar-width:none}#right .rtabs button{flex:0 0 auto;padding:8px 9px 9px}
 #left,#right{position:fixed;top:52px;bottom:56px;width:min(360px,92vw);z-index:20;box-shadow:var(--shadow);transition:transform .22s ease}
 #left{left:0;transform:translateX(-102%)}
@@ -234,6 +236,7 @@ body.showL #left,body.showR #right{transform:none}
 #mprops{display:none}
 }
 @media (max-width:1000px){#docname{display:none}}
+@media (min-width:700px){#b-ask{display:none}}
 @media (max-width:1100px){#b-ask .lbl{display:none}}
 @media (max-width:800px){header{gap:7px;padding:0 8px}.tb>button,.menu>button{padding:0 7px}.ws button{padding:0 8px}#kstat{max-width:90px}}
 @media (max-width:900px){.brand span,.tb .lbl,.tb .sep{display:none}
@@ -241,7 +244,7 @@ body.showL #left,body.showR #right{transform:none}
 #kstat.ok{background:var(--ok)}#kstat.busy{background:var(--warm);animation:mpulse 1.2s ease-in-out infinite}#kstat.err{background:var(--err)}
 @keyframes mpulse{50%{opacity:.35}}
 }
-@media (max-width:560px){.tb .opt{display:none}.pill{max-width:120px}header{gap:6px;padding:0 8px;overflow-x:clip}header>*{min-width:0}.brand span{display:none}.tb>button,.menu>button{padding:0 8px}.pill{flex-shrink:1;max-width:90px}#ui-menu,#b-theme{display:none}#b-pro{flex-shrink:0;max-width:none;padding:4px 9px}header .tb,header .brand{flex-shrink:0}#kstat{flex-shrink:1;min-width:24px}}
+@media (max-width:560px){.tb .opt{display:none}.pill{max-width:120px}header{gap:6px;padding:6px 8px;overflow:visible}header>*{min-width:0}.brand span{display:none}.tb>button,.menu>button{padding:0 8px}.pill{flex-shrink:1;max-width:none}#ui-menu,#b-theme{display:none}#b-pro{flex-shrink:0;max-width:none;padding:4px 9px}header .tb,header .brand{flex-shrink:0}#kstat{flex-shrink:1;min-width:24px}}
 header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 .look-compact .sec{padding:7px 10px 8px}.look-compact .sec h3{margin-bottom:5px}.look-compact .feat{padding:3px 6px}.look-compact .prow{margin:1px 0}.look-compact .fld{margin:4px 0}.look-compact #ribbon .rb{min-height:0}.look-compact .tb>button,.look-compact .menu>button{height:28px}
 </style>
@@ -319,7 +322,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <div class="tab" id="tab-check"></div>
 </aside>
 </main>
-<nav id="mob"><button data-m="L"><span>☰</span>Design</button><button data-m="V" class="on"><span>◆</span>Model</button><button data-m="R"><span>⚙</span>Panel</button></nav>
+<nav id="mob"><button data-m="L"><span>☰</span>Design</button><button data-m="V" class="on"><span>◆</span>Model</button><button data-m="R"><span>⚙</span>Open</button></nav>
 <dialog id="dlg"><div class="dh"><h2 id="dlg-t"></h2><button class="ib" id="dlg-x" aria-label="Close">✕</button></div><div class="db" id="dlg-b"></div></dialog>
 <div id="toast"></div>
 <input type="file" id="file" hidden>
