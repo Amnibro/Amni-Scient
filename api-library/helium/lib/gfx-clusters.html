@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-clusters">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-clusters">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0770e349e1">
+<link rel="stylesheet" href="/api-library/lib.css?v=c19a43c36a">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0770e349e1'; start({wasm: '/api-library/search.wasm?v=0770e349e1'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=c19a43c36a'; start({wasm: '/api-library/search.wasm?v=c19a43c36a'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -63,7 +63,7 @@
 <a href="/amni-companion.html">AMNI-COMPANION</a>
 <a href="/amni-llm.html">AMNI-LLM</a>
 <a href="/amni-code.html">AMNI-CODE</a>
-<a href="/gold.html" class="active">GOLD</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
 <a href="/amni-core.html">AMNI-CORE</a>
 <a href="/amni-mail.html">AMNI-MAIL</a>
 <a href="/amni-space.html">AMNI-SPACE</a>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/clusters</h1>
 <p class="lib-lede">Assigns scene lights to a 3D grid of view-frustum cells so renderers can efficiently shade many lights per pixel.</p>
-<p class="lib-meta"><code>import gfx.clusters;</code> &middot; <code>clusters::</code> &middot; 6 functions, 0 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.clusters;</code> &middot; <code>clusters::</code> &middot; 6 functions, 0 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#light-assignment">Light Assignment <span class="n">1</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -113,80 +113,80 @@
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build(view gfx::mat4, tan_x f32, tan_y f32, near f32, far f32, lights const float4[:], out u32[&gt;..]&amp;)</pre>
 <p>Builds the cluster light grid from view-space lights, writing cell headers followed by light index lists into out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L11">hc/lib/gfx/clusters.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L11">hc/lib/gfx/clusters.amni:11</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (12)</summary>
 <article class="sym" id="CX">
 <h3><a href="#CX">CX</a> <i>constant</i></h3>
 <pre>let CX = 16</pre>
 <p>Number of cluster cells along the horizontal screen axis in the light-assignment grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L4">hc/lib/gfx/clusters.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L4">hc/lib/gfx/clusters.amni:4</a>
 </article>
 <article class="sym" id="CY">
 <h3><a href="#CY">CY</a> <i>constant</i></h3>
 <pre>let CY = 9</pre>
 <p>Number of cluster cells along the vertical screen axis in the light-assignment grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L5">hc/lib/gfx/clusters.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L5">hc/lib/gfx/clusters.amni:5</a>
 </article>
 <article class="sym" id="CZ">
 <h3><a href="#CZ">CZ</a> <i>constant</i></h3>
 <pre>let CZ = 24</pre>
 <p>Number of logarithmically spaced depth slices in the light-assignment grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L6">hc/lib/gfx/clusters.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L6">hc/lib/gfx/clusters.amni:6</a>
 </article>
 <article class="sym" id="MAX_PER">
 <h3><a href="#MAX_PER">MAX_PER</a> <i>constant</i></h3>
 <pre>let MAX_PER = 255</pre>
 <p>Maximum number of lights stored for any single cluster cell; extra lights are dropped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L7">hc/lib/gfx/clusters.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L7">hc/lib/gfx/clusters.amni:7</a>
 </article>
 <article class="sym" id="counts">
 <h3><a href="#counts">counts</a> <i>constant</i></h3>
 <pre>var counts int[&gt;..]</pre>
 <p>Scratch array holding per-cell light counts, reused as write offsets while building the grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L8">hc/lib/gfx/clusters.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L8">hc/lib/gfx/clusters.amni:8</a>
 </article>
 <article class="sym" id="pair_c">
 <h3><a href="#pair_c">pair_c</a> <i>constant</i></h3>
 <pre>var pair_c int[&gt;..]</pre>
 <p>Scratch array of cell indices, paired with the light indices in the matching light array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L9">hc/lib/gfx/clusters.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L9">hc/lib/gfx/clusters.amni:9</a>
 </article>
 <article class="sym" id="pair_l">
 <h3><a href="#pair_l">pair_l</a> <i>constant</i></h3>
 <pre>var pair_l int[&gt;..]</pre>
 <p>Scratch array of light indices, paired with the cell indices in the matching cell array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L10">hc/lib/gfx/clusters.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L10">hc/lib/gfx/clusters.amni:10</a>
 </article>
 <article class="sym" id="slice_of">
 <h3><a href="#slice_of">slice_of</a> <i>function</i></h3>
 <pre>slice_of(z f32, near f32, far f32) int</pre>
 <p>Returns the depth slice index for a view-space depth, clamped to the valid slice range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L21">hc/lib/gfx/clusters.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L21">hc/lib/gfx/clusters.amni:21</a>
 </article>
 <article class="sym" id="depth_at">
 <h3><a href="#depth_at">depth_at</a> <i>function</i></h3>
 <pre>depth_at(k int, near f32, far f32) f32</pre>
 <p>Returns the near-plane depth of a depth slice, using the same logarithmic spacing as the slices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L25">hc/lib/gfx/clusters.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L25">hc/lib/gfx/clusters.amni:25</a>
 </article>
 <article class="sym" id="cell">
 <h3><a href="#cell">cell</a> <i>function</i></h3>
 <pre>cell(v f32, n int) int</pre>
 <p>Returns a cell index from a continuous grid coordinate, clamped to the valid range for that axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L28">hc/lib/gfx/clusters.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L28">hc/lib/gfx/clusters.amni:28</a>
 </article>
 <article class="sym" id="place">
 <h3><a href="#place">place</a> <i>function</i></h3>
 <pre>place(view gfx::mat4, tan_x f32, tan_y f32, near f32, far f32, l float4, li int)</pre>
 <p>Adds one light's index to every cluster cell its bounding sphere overlaps, recording cell and light pairs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L31">hc/lib/gfx/clusters.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L31">hc/lib/gfx/clusters.amni:31</a>
 </article>
 <article class="sym" id="finish">
 <h3><a href="#finish">finish</a> <i>function</i></h3>
 <pre>finish(out u32[&gt;..]&amp;)</pre>
 <p>Packs the recorded cell and light pairs into the output array as headers plus index lists, capping each cell.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/gfx/clusters.amni#L71">hc/lib/gfx/clusters.amni:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c19a43c0ee98ce2f9bf5b5a40d43f91ff7e3509d/hc/lib/gfx/clusters.amni#L71">hc/lib/gfx/clusters.amni:71</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -196,7 +196,7 @@
 <h2>Helium library</h2>
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data<span>196</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a>
 <ul>
