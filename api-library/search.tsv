@@ -1216,21 +1216,27 @@ s3d::MAX_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_LIG
 s3d::GI_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GI_LIGHTS	Maximum number of lights passed to the global illumination probe update.	pub
 s3d::GLOW_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GLOW_LEVELS	Number of reduction levels in the bloom chain.	int
 s3d::MSAA	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MSAA	Number of samples per pixel used by the multisampled color pass.	pub
+s3d::LOCAL_LAYERS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#LOCAL_LAYERS	Number of depth layers in the local light shadow map array, matching the local matrix count in the frame uniforms.	int
+s3d::HIZ_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HIZ_LEVELS	Number of reduced depth mip levels built for tracing screen space reflections.	int
 s3d::Camera	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Camera	Camera description with eye, target, up vector, vertical field of view and near and far planes.	pub
 s3d::Sun	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Sun	Sun description with direction toward the sun, color, shadow settings and shadow map size.	pub
 s3d::Light	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Light	Point light with position, range and color; only kind 0 (point) is currently supported.	pub
 s3d::Sky	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Sky	Sky gradient colors, ambient strength and whether the sky is drawn.	pub
 s3d::Look	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Look	Tone and bloom settings: exposure, white point, bloom, desaturation and ambient occlusion parameters.	pub
+s3d::NodeOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#NodeOv	Record of a per-item node override holding translation, rotation and scale applied when posing.	pub
+s3d::WeightOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#WeightOv	Record of a per-item morph weight override for one node and weight index.	pub
 s3d::Item	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Item	Placed instance of a glTF asset with transform, animation state, blending and tracked nodes.	pub
 s3d::Batch	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Batch	Flattened per-primitive draw record with matrices and sort depth, built from the item list each frame.	int
 s3d::DrawU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DrawU	Uniform block holding per-draw matrices, deformation and motion data for the shader.	int
 s3d::FrameU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FrameU	Uniform block of per-frame data: cascades, sun, sky, lights and probe volume.	int
 s3d::GiU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GiU	Uniform block for the probe update pass with volume layout, rotation, sun, sky and lights.	int
 s3d::SurfaceU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SurfaceU	Uniform block of material parameters for a surface draw.	int
+s3d::ExtU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ExtU	Uniform block carrying extended material parameters and texture transforms such as specular, coat, transmission and iridescence.	int
 s3d::CutU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CutU	Uniform block of material parameters for cut-out surface draws.	int
 s3d::CutViewU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CutViewU	Uniform block of cut-out material parameters plus a view matrix.	int
 s3d::SkyU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SkyU	Uniform block for drawing the sky with inverse and previous view-projection matrices and gradient colors.	int
 s3d::AoU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#AoU	Uniform block of lens and tuning parameters for the ambient occlusion pass.	int
+s3d::ContactU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ContactU	Uniform block of lens, jitter, sun direction and tuning values for the contact shadow pass.	int
 s3d::GtaoU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GtaoU	Uniform block of lens, tuning and size parameters for the ground-truth ambient occlusion pass.	int
 s3d::TileU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TileU	Uniform block for the lens tile pass with size, lens and mode values.	int
 s3d::NearU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#NearU	Uniform block for the neighborhood pass with size and mode values.	int
@@ -1239,9 +1245,13 @@ s3d::DofU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DofU	Uniform bloc
 s3d::TexelU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TexelU	Uniform block holding the texel size for a post-processing pass.	int
 s3d::GlowU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GlowU	Uniform block with texel size and brightness cut for the bloom threshold pass.	int
 s3d::GradeU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GradeU	Uniform block of tone parameters for the final grading pass.	int
+s3d::HistU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HistU	Uniform block giving the size and range for the exposure histogram compute pass.	int
+s3d::AdaptU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#AdaptU	Uniform block with range, percentile and rate values for the exposure adaptation compute pass.	int
 s3d::FogU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FogU	Uniform block for the volumetric fog pass with cascades, sun, lights and fog parameters.	int
 s3d::QuadG	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadG	Geometry data for a particle quad with four corner positions and colors.	int
 s3d::QuadViewU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadViewU	Uniform block with view-projection matrix and camera right and up vectors for particle quads.	int
+s3d::SsrU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SsrU	Uniform block of lens, jitter, tuning, edge and matrix values for the screen space reflection trace.	int
+s3d::HizU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HizU	Uniform block holding the parameters for building one hierarchical depth level.	int
 s3d::TemporalU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TemporalU	Uniform block with input and output sizes, jitter and tuning values for the temporal pass.	int
 s3d::view	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#view	Global camera the caller edits between frames to position and aim the view.	pub
 s3d::sun	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sun	Global sun settings the caller edits between frames, including direction, color and shadows.	pub
@@ -1251,6 +1261,22 @@ s3d::debug_view	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#debug_v
 s3d::ao_mode	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ao_mode	Selects the ambient occlusion technique used when ambient occlusion is on.	pub
 s3d::gtao_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gtao_steps	Number of steps taken by the ground-truth ambient occlusion pass.	pub
 s3d::gtao_falloff	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gtao_falloff	Falloff value applied by the ground-truth ambient occlusion pass.	pub
+s3d::spec_occlusion	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#spec_occlusion	Switch enabling specular occlusion, on by default.	pub
+s3d::ssr_on	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_on	Switch enabling screen space reflections, off by default.	pub
+s3d::ssr_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_steps	Number of steps taken when tracing each reflection ray, 48 by default.	pub
+s3d::ssr_thickness	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_thickness	Assumed depth thickness of surfaces when testing reflection ray hits, 0.05 by default.	pub
+s3d::ssr_max_dist	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_max_dist	Maximum distance a reflection ray travels, 3.0 by default.	pub
+s3d::ssr_rough	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_rough	Roughness setting for screen space reflections, 0.5 by default.	pub
+s3d::ssr_edge	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_edge	Width of the fade applied near screen edges for reflections, 0.07 by default.	pub
+s3d::ssr_hit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_hit	Render target storing reflection ray hit results, created on demand.	int
+s3d::ssr_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_prev	Copy of the previous frame's color used as the source for reflected color.	int
+s3d::hiz	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hiz	List of reduced-resolution depth textures used to accelerate reflection tracing.	int
+s3d::ssr_have	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_have	Flag recording whether a previous frame copy is available for reflections.	int
+s3d::bent_ran	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bent_ran	Flag recording whether the bent normal pass ran this frame.	int
+s3d::mt_ran	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mt_ran	Flag recording whether the motion tile pass ran this frame.	int
+s3d::pipe_hiz	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_hiz	Pipeline that builds the hierarchical depth levels.	int
+s3d::pipe_ssr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ssr	Pipeline that traces screen space reflection rays.	int
+s3d::pipe_ssr_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ssr_copy	Pipeline that copies the frame for use as reflection color source.	int
 s3d::motion_blur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#motion_blur	Strength of the motion blur effect; 0 turns it off.	pub
 s3d::mb_samples	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mb_samples	Number of samples taken by the motion blur pass.	pub
 s3d::mb_soft_z	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mb_soft_z	Depth softness tolerance used by the motion blur pass when comparing surfaces.	pub
@@ -1331,6 +1357,8 @@ s3d::height	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#height	Curr
 s3d::pipe_lit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit	GPU pipeline for lit single-sided opaque and cut-out surfaces.	int
 s3d::pipe_lit_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit_two	GPU pipeline for lit double-sided surfaces.	int
 s3d::pipe_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend	GPU pipeline for blended surfaces.	int
+s3d::pipe_blend_back	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend_back	Pipeline drawing blended surface back faces.	int
+s3d::pipe_trans_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_trans_copy	Pipeline that copies the scene color for transmissive surfaces to sample.	int
 s3d::pipe_shadow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_shadow	GPU pipeline that renders depth into the shadow map.	int
 s3d::pipe_normals	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_normals	GPU pipeline for the prepass that writes view normals and depth.	int
 s3d::pipe_normals_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_normals_two	GPU pipeline for the double-sided normal and depth prepass.	int
@@ -1339,10 +1367,15 @@ s3d::pipe_sky_motion	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pi
 s3d::pipe_ao	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ao	GPU pipeline for hemisphere ambient occlusion.	int
 s3d::pipe_ao_blur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ao_blur	GPU pipeline for the depth-aware blur of hemisphere ambient occlusion.	int
 s3d::pipe_gtao	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_gtao	GPU pipeline for ground-truth ambient occlusion.	int
+s3d::pipe_contact	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_contact	Pipeline that renders screen space contact shadows.	int
+s3d::contact_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_tex	Render target holding contact shadow results.	int
+s3d::contact_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_steps	Number of steps taken when marching contact shadows, 12 by default.	pub
+s3d::contact_thick	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_thick	Assumed depth thickness used for contact shadow hit tests, 0.02 by default.	pub
 s3d::pipe_lens_tile	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lens_tile	GPU pipeline that computes tiled lens blur radii.	int
 s3d::pipe_lens_near	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lens_near	GPU pipeline that handles near-field lens blur.	int
 s3d::pipe_mblur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_mblur	GPU pipeline that applies motion blur.	int
 s3d::pipe_dof	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_dof	GPU pipeline that applies depth of field.	int
+s3d::pipe_dof_pack	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_dof_pack	Pipeline that packs color and blur data for the depth of field pass.	int
 s3d::fx	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fx	Intermediate texture used by the lens and motion effects.	int
 s3d::tile_a	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tile_a	First tile texture used by the blur passes.	int
 s3d::tile_b	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tile_b	Second tile texture used by the blur passes.	int
@@ -1352,6 +1385,16 @@ s3d::pipe_down	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_dow
 s3d::pipe_up	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_up	GPU pipeline that upsamples the bloom chain back up.	int
 s3d::pipe_grade	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_grade	GPU pipeline that applies exposure, tone curve and sRGB conversion.	int
 s3d::pipe_temporal	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_temporal	GPU pipeline that accumulates jittered frames into the history image.	int
+s3d::pipe_hist	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_hist	Compute pipeline that builds the luminance histogram for auto exposure.	int
+s3d::pipe_adapt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_adapt	Compute pipeline that adapts exposure toward the target using the histogram.	int
+s3d::hist_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hist_buf	Storage buffer holding the luminance histogram bins.	int
+s3d::expo_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#expo_buf	Storage buffer holding the current adapted exposure value.	int
+s3d::expo_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#expo_fresh	Flag marking that exposure has not yet adapted, so it can start fresh.	int
+s3d::exposure_dt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#exposure_dt	Time step in seconds used when adapting auto exposure, defaulting to one sixtieth.	pub
+s3d::lut_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lut_tex	Texture holding the color grading lookup table.	int
+s3d::lut_n	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lut_n	Edge size of the color grading lookup table, zero until one is created.	int
+s3d::ae_log_min	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ae_log_min	Lower bound of the log luminance range covered by the exposure histogram.	int
+s3d::ae_log_max	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ae_log_max	Upper bound of the log luminance range covered by the exposure histogram.	int
 s3d::color_ms	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#color_ms	Multisampled color render target for the main pass.	int
 s3d::depth_ms	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#depth_ms	Multisampled depth render target for the main pass.	int
 s3d::hdr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hdr	Resolved HDR color texture produced from the multisampled target.	int
@@ -1371,6 +1414,11 @@ s3d::bent_raw	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bent_raw	
 s3d::bent	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bent	Blurred bent normal texture.	int
 s3d::ao	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ao	Final blurred ambient occlusion texture.	int
 s3d::shadow_map	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_map	Cascaded depth texture the sun shadows are rendered into.	int
+s3d::local_map	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_map	Shadow map array for local lights.	int
+s3d::local_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_size	Current resolution of the local light shadow map.	int
+s3d::local_shadow_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_shadow_size	Resolution in texels of local light shadow maps, 1024 by default.	pub
+s3d::local_used	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_used	Count of local shadow layers used this frame.	int
+s3d::local_vp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_vp	View-projection matrices for local light shadow layers.	int
 s3d::shadow_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_size	Resolution in texels of each shadow map layer.	int
 s3d::glow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#glow	Chain of reduced-size textures used for bloom.	int
 s3d::white	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#white	Fallback one-pixel white texture for materials without a texture.	int
@@ -1379,6 +1427,32 @@ s3d::smp_linear	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_lin
 s3d::smp_point	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_point	Point-filtering sampler.	int
 s3d::smp_shadow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_shadow	Comparison sampler used to read the shadow map.	int
 s3d::smp_cache	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_cache	Cache of samplers created for material texture settings.	int
+s3d::spec_aa	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#spec_aa	Switch enabling specular antialiasing, on by default.	pub
+s3d::wet	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wet	Wetness amount applied to surfaces, 0 by default.	pub
+s3d::world_time	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#world_time	Time value in seconds passed to shaders, 0 by default.	pub
+s3d::snow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#snow	Snow coverage amount applied to surfaces, 0 by default.	pub
+s3d::light_data	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_data	CPU list of packed per-light data uploaded for shading.	int
+s3d::light_xr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_xr	CPU list of extra packed per-light data uploaded alongside light data.	int
+s3d::cluster_words	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_words	CPU list of clustered light assignment words uploaded to the GPU.	int
+s3d::light_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_buf	Storage buffer holding packed light data.	int
+s3d::cluster_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_buf	Storage buffer holding clustered light assignment words.	int
+s3d::light_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_cap	Current capacity of the light storage buffer.	int
+s3d::cluster_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_cap	Current capacity of the cluster storage buffer.	int
+s3d::ext_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_size	Edge size in pixels of each layer in the extended material texture arrays.	int
+s3d::ext_arr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_arr	Two texture arrays holding linear and sRGB layers for extended material maps.	int
+s3d::ext_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_cap	Layer capacity of each extended material texture array.	int
+s3d::ext_cnt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_cnt	Count of layers allocated in each extended material texture array.	int
+s3d::ext_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_dirty	Flags marking arrays that need mips regenerated.	int
+s3d::ext_map	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_map	Lookup from image and color space to its layer in the extended arrays.	int
+s3d::ext_src	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_src	Flat list of triples recording array, source image and layer for rebuilding extended arrays.	int
+s3d::ext_zero	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_zero	Default empty extended material uniform block.	int
+s3d::ext_pushed	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_pushed	Flag recording whether extended material uniforms have been pushed.	int
+s3d::smp_ext	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_ext	Sampler with repeat wrapping and anisotropy for the extended material arrays.	int
+s3d::pipe_ext_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ext_copy	Pipeline that copies a source image into a layer of an extended array.	int
+s3d::trans_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_tex	Texture holding scene color that transmissive surfaces sample.	int
+s3d::trans_w	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_w	Width in pixels of the transmission texture.	int
+s3d::trans_h	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_h	Height in pixels of the transmission texture.	int
+s3d::smp_trans	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_trans	Sampler used to read the transmission texture.	int
 s3d::tex_srgb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_srgb	Cache of textures uploaded as sRGB color.	int
 s3d::tex_linear	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_linear	Cache of textures uploaded as linear data.	int
 s3d::vbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vbuf	GPU vertex buffer holding mesh vertices.	int
@@ -1405,6 +1479,7 @@ s3d::cur_models	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_mod
 s3d::cur_bases	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cur_bases	This frame's joint palette base offsets per node, saved for the next frame.	int
 s3d::cascade_end	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_end	Far view distances of each shadow cascade, passed to the shader.	int
 s3d::cascade_vp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_vp	Light-space view-projection matrices, one per shadow cascade.	int
+s3d::cascade_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cascade_live	Number of sun shadow cascades currently in use.	int
 s3d::frames	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#frames	Count of frames rendered, used to pick the jitter sample.	int
 s3d::motion_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#motion_fresh	Flag that is true when no previous frame exists to measure motion against.	int
 s3d::f4	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#f4	Builds a float4 from four components.	int
@@ -1418,7 +1493,14 @@ s3d::bend	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bend	Applies 
 s3d::track	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#track	Tracks a node's world matrix in one of the item's slots for later reading.	pub
 s3d::tracked	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tracked	Returns the world matrix of the node tracked in a slot of an item.	pub
 s3d::pose	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pose	Poses an item's skeleton from its animations and updates its tracked node matrices.	int
+s3d::node_ov	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#node_ov	List of node overrides applied when posing items.	int
+s3d::weight_ov	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#weight_ov	List of morph weight overrides applied when posing items.	int
+s3d::set_node	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_node	Sets a translation, rotation and scale override for a node of an item, replacing any existing one.	pub
+s3d::set_weight	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_weight	Sets a morph weight override for a node of an item, ignoring indices out of range.	pub
+s3d::clear_pose	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clear_pose	Removes all node and morph weight overrides for an item.	pub
 s3d::add_light	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_light	Adds a point light with position, color and range to the scene.	pub
+s3d::studio_soft	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#studio_soft	Configures a soft studio setup with the given background color and key light strength, replacing the sun, lights and sky.	pub
+s3d::add_spot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_spot	Adds a spot light at a position aimed at a target, optionally casting shadows.	pub
 s3d::quad	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quad	Queues a colored quad with per-corner colors and a shape id for additive or multiply drawing.	pub
 s3d::glow_line	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#glow_line	Queues a camera-facing glowing line segment of the given width and color.	pub
 s3d::ground_mark	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ground_mark	Queues a flat colored mark lying on the ground plane with a given radius, alpha and shape.	pub
@@ -1439,6 +1521,8 @@ s3d::make_targets	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#make_
 s3d::make_targets	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#make_targets	Creates render targets at a render size and an output size for temporal results, bloom and the caller's target.	int
 s3d::make_motion	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#make_motion	Creates the motion target on first use.	int
 s3d::drop_motion	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#drop_motion	Releases the motion target if it exists.	int
+s3d::make_ssr	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#make_ssr	Creates the reflection targets and depth levels if they do not exist yet.	int
+s3d::drop_ssr	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#drop_ssr	Releases the reflection targets and depth levels and clears the history flag.	int
 s3d::make_shadow_map	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#make_shadow_map	Creates the cascaded depth texture array for sun shadows at the given size.	int
 s3d::pixel_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pixel_texture	Creates a one-pixel texture from an RGBA value and format.	int
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Creates render targets and pipelines, returns true when ready, and is safe to call again after a resize.	pub
@@ -1448,6 +1532,13 @@ s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#up
 s3d::mip_count	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_count	Returns the number of mip levels for a texture size.	int
 s3d::image_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_texture	Creates and caches a GPU texture from a glTF image, with mipmaps.	int
 s3d::warm	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#warm	Ensures a texture reference's image is uploaded to the GPU.	int
+s3d::ext_fill	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_fill	Copies a source texture into one layer of an extended material array.	int
+s3d::ext_make	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_make	Allocates an extended material array with the given layer capacity and refills its layers.	int
+s3d::ext_need	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_need	Ensures a material texture has a layer in the extended array, growing it if needed.	int
+s3d::ext_finish	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_finish	Creates any missing extended arrays and regenerates mips for those that changed.	int
+s3d::ext_layer	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_layer	Returns the array layer of a texture as a float, or the given fallback when it has none.	int
+s3d::ext_set	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_set	Writes a texture's transform and layer into slot i of an extended material uniform block.	int
+s3d::ext_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_of	Builds the extended-material uniform block from a glTF material's specular, coat, transmission, anisotropy and iridescence settings.	int
 s3d::warm_textures	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#warm_textures	Creates every texture the batch will sample before the first render pass.	int
 s3d::wrap_mode	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wrap_mode	Converts a glTF wrap constant to a gfx wrap mode.	int
 s3d::texture_sampler	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#texture_sampler	Returns a cached sampler matching a glTF texture's filtering and wrapping.	int
@@ -1456,8 +1547,11 @@ s3d::material_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#materi
 s3d::cut_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_of	Builds the alpha cutout uniform data from a material.	int
 s3d::find_prev	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#find_prev	Returns the index of a node key in last frame's list, or -1 if absent.	int
 s3d::in_view	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#in_view	Returns whether a bounding box is at least partly inside the view frustum.	int
+s3d::atmosphere	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#atmosphere	Sets the sun direction, color and sky from a sun direction, power, haze and cloud amount.	pub
+s3d::item_lights	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_lights	Registers or updates the lights defined by an item's glTF nodes, and applies any directional light to the sun.	int
 s3d::gather	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather	Flattens visible items into draw batches with poses, joint palettes and previous-frame transforms.	int
 s3d::forward	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forward	Returns the unit vector from the camera eye toward its target.	int
+s3d::mw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mw	Returns the morph target weight at index j for a node, or 0 when j is beyond the target count.	int
 s3d::draw_uniforms	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_uniforms	Builds per-draw uniform data for a batch, including morph weights and previous transforms.	int
 s3d::bind_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bind_geometry	Binds the shared vertex, index and storage buffers for geometry drawing.	int
 s3d::draw_prim	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_prim	Draws one primitive's indexed geometry from a batch.	int
@@ -1469,13 +1563,20 @@ s3d::image_avg	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_av
 s3d::gi_scene	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_scene	Builds the ray-tracing scene from batch geometry and sets up the irradiance probe grid.	int
 s3d::gi_rot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rot	Returns a pseudo-random rotation uniform for the given probe update index.	int
 s3d::gi_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_pass	Runs compute passes that trace probe rays and update irradiance and distance data.	int
+s3d::light_upload	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_upload	Uploads the light list and its camera-cluster assignments to GPU storage buffers, growing them when needed.	int
 s3d::gi_bind	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_bind	Binds ray-tracing and probe storage buffers, or dummy buffers when unavailable.	int
 s3d::shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_pass	Renders the sun shadow cascades into the depth map from the batch.	int
+s3d::local_shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_shadow_pass	Renders depth layers for shadow-casting local lights, skipping blended and no-shadow materials and off-screen geometry.	int
 s3d::fullscreen	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fullscreen	Binds a pipeline for a fullscreen draw.	int
 s3d::sky_u	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sky_u	Builds the sky uniform data from the view and sun settings.	int
 s3d::ao_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ao_pass	Runs the prepass for normals, depth and motion, then computes and blurs ambient occlusion.	int
+s3d::contact_on	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_on	Returns whether contact shadows are enabled, which requires sun shadows on and a positive contact strength.	int
+s3d::contact_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_pass	Renders a screen-space contact shadow texture toward the sun from the depth and normal prepass.	int
+s3d::ssr_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_pass	Builds a depth hierarchy and traces screen-space reflection hits, updating the reflection uniforms.	int
+s3d::ssr_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_capture	Copies the resolved color into a mipmapped image for reflections to sample next frame.	int
 s3d::surface_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#surface_of	Builds the surface uniform data from a material.	int
 s3d::draw_lit	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_lit	Draws one batch item with lit shading, binding its uniforms and textures.	int
+s3d::trans_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_capture	Copies the scene color into a mipmapped texture that transmissive materials sample for refraction.	int
 s3d::color_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#color_pass	Renders the sky, opaque, blended and particle surfaces into the multisampled color target.	int
 s3d::lens_tiles	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_tiles	Builds per-tile lens data from the source texture for depth of field and motion blur.	int
 s3d::lens_swap	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_swap	Swaps the working HDR and effects textures so the next lens pass reads the latest result.	int
@@ -1485,8 +1586,16 @@ s3d::temporal_draw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temp
 s3d::temporal_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_pass	Runs the temporal accumulation decision, skipping and invalidating history when temporal is off, otherwise drawing and validating it.	int
 s3d::temporal_repeat	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_repeat	Repeats only the temporal pass a given number of times on the last frame's inputs, for timing.	int
 s3d::glow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#glow_pass	Builds the bloom chain by thresholding the resolved image, downsampling, then upsampling back to full size.	int
+s3d::set_lut	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_lut	Replaces the color grading lookup table from n×n×n RGBA8 texels; returns false if n is under 2 or data is too short.	pub
+s3d::identity_lut	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#identity_lut	Installs a neutral identity color grading lookup table of size n per axis, leaving colors unchanged.	pub
+s3d::lut_strip	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lut_strip	Loads a color grading lookup table from a strip image whose width equals height squared; returns false otherwise.	pub
+s3d::lut_cube	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lut_cube	Parses a .cube text file into the color grading lookup table; returns false if the size or data is invalid.	pub
+s3d::exposure_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#exposure_pass	Runs the compute passes that build a luminance histogram and adapt the automatic exposure value each frame.	int
+s3d::exposure_now	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#exposure_now	Returns the current automatic exposure multiplier read back from the GPU, or 1.0 if the read fails.	pub
 s3d::grade_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#grade_pass	Writes the resolved image with bloom, exposure, tone curve and desaturation applied into the target texture.	int
 s3d::render	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#render	Renders the whole scene for one frame into the given RGBA8 target and advances the frame counter.	pub
+s3d::render_begin	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#render_begin	Runs the first half of a frame through color and fog passes; returns false if the renderer is not ready.	pub
+s3d::render_end	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#render_end	Finishes the frame with lens, temporal, bloom, exposure and grading passes into the given RGBA8 target.	pub
 gltf::VERTEX_FLOATS	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#VERTEX_FLOATS	Number of floats in each loaded vertex: position, normal, two UV sets, tangent, color, joints and weights.	pub
 gltf::AT_POS	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#AT_POS	Float offset of the position (3 floats) within a vertex.	pub
 gltf::AT_NRM	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#AT_NRM	Float offset of the normal (3 floats) within a vertex.	pub
@@ -1511,6 +1620,7 @@ gltf::Span	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Span	Range of items in
 gltf::TexRef	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#TexRef	Reference to a texture and the UV set used to sample it, with -1 meaning none.	pub
 gltf::Material	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Material	Surface description holding color, metallic, roughness, texture references, emissive, alpha mode and extra layering options.	pub
 gltf::Primitive	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Primitive	Record for one mesh primitive with its vertex, index and morph ranges, material, bounds and skinning flags.	pub
+gltf::PLight	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#PLight	Describes one punctual light from the asset, with kind, color, range and inner and outer cone angles.	pub
 gltf::Mesh	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Mesh	Mesh made of a range of primitives, with default morph weights and a name.	pub
 gltf::Node	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Node	Scene graph node with parent, mesh, skin, children, transform, morph weights and name.	pub
 gltf::Texture	type	gfx/gltf	/api-library/helium/lib/gfx-gltf#Texture	Texture record naming its image, filtering, mipmap use and wrap modes.	pub
@@ -1526,11 +1636,17 @@ gltf::floats	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#floats	Global po
 gltf::ints	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#ints	Global pool of integer indices, such as node children, joints and scene roots.	pub
 gltf::matrices	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#matrices	Global pool of inverse bind matrices for skins.	pub
 gltf::pixels	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#pixels	Global pool of decoded RGBA image pixel bytes.	pub
+gltf::lazy_pixels	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#lazy_pixels	Flag that, when true, keeps images compressed and defers pixel decoding until needed.	pub
+gltf::bad_images	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#bad_images	Counts images that failed to decode and were replaced by placeholder pixels.	pub
+gltf::coded	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#coded	Pool of still-compressed PNG or JPEG image bytes kept for lazily decoded images.	int
+gltf::decoded	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#decoded	Scratch buffer holding RGBA pixels of the most recently decoded lazy image.	int
+gltf::decoded_of	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#decoded_of	Index of the image currently held in the decoded buffer, or -1 for none.	int
 gltf::names	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#names	Global pool of name text referenced by spans.	pub
 gltf::meshes	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#meshes	Global pool of all loaded meshes.	pub
 gltf::prims	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#prims	Global pool of all loaded mesh primitives.	pub
 gltf::nodes	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#nodes	Global pool of all loaded scene nodes.	pub
 gltf::materials	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#materials-2	Global pool of all loaded materials.	pub
+gltf::plights	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#plights	Pool of all punctual lights read from loaded assets.	pub
 gltf::textures	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#textures	Global pool of all loaded textures.	pub
 gltf::images	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#images	Global pool of all loaded images.	pub
 gltf::skins	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#skins	Global pool of all loaded skins.	pub
@@ -1568,13 +1684,17 @@ gltf::component	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#component	Rea
 gltf::read_accessor	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#read_accessor	Appends all elements of an accessor to an output list, returning count, values per element and success.	int
 gltf::load	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#load	Loads a glTF or GLB file into the pools and returns its asset index, or -1 on failure.	pub
 gltf::texref	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#texref	Builds a texture reference from a JSON texture info object, offset by the asset's texture base.	int
+gltf::need_pixels	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#need_pixels	Decodes the lazy image at the given index into the shared buffer, substituting white pixels on failure.	pub
+gltf::image_pixels	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#image_pixels	Returns the RGBA pixels of an image, or an empty slice if a lazy image is not yet decoded.	pub
 gltf::decode_image	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#decode_image	Decodes a PNG or JPEG image into the pixel pool, using a white 1x1 image on failure.	int
+gltf::presize	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#presize	Reserves vertex and index pool capacity for large assets before parsing, based on accessor counts.	int
 gltf::load_bytes	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#load_bytes	Loads glTF or GLB data from memory into the pools, returning its asset index or -1 on failure.	pub
 gltf::add_primitive	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_primitive	Reads one mesh primitive into the vertex, index and morph pools, returning false on error.	int
 gltf::add_texture_file	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_texture_file	Loads an image file as a new repeating, mipmapped texture and returns its index, or -1 on failure.	pub
 gltf::find_node	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#find_node	Returns the index of the node with the given name in an asset, or -1 if none.	pub
 gltf::in_place	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#in_place	Removes horizontal root motion from an animation's node translation and returns the distance it drifted.	pub
 gltf::find_animation	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#find_animation	Returns the index of the animation with the given name in an asset, or -1 if none.	pub
+gltf::shade_preset	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#shade_preset	Returns a built-in float4 shading preset chosen by kind and part index, or all zeros when the pair has no preset.	int
 gltf::default_material	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#default_material	Returns a default material that is opaque, white, fully metallic and rough with no textures.	pub
 shapes::material	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#material	Returns a material with the given RGB base color, metallic factor and roughness factor, for use with the shape builders.	pub
 shapes::vertex	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#vertex	Appends one vertex with position, normal, texture coordinates and tangent to the shared glTF vertex pool.	int
@@ -1582,7 +1702,7 @@ shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wra
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
 shapes::cube	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#cube	Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.	pub
-motion::MAX_WEIGHTS	constant	gfx/motion	/api-library/helium/lib/gfx-motion#MAX_WEIGHTS	Constant giving the maximum number of morph target weights stored per node in the pose.	pub
+motion::MAX_WEIGHTS	constant	gfx/motion	/api-library/helium/lib/gfx-motion#MAX_WEIGHTS	Constant giving the maximum number of morph target weights stored per node in the pose weight array.	pub
 motion::pose_t	constant	gfx/motion	/api-library/helium/lib/gfx-motion#pose_t	Per-node translation array of the current pose, indexed like glTF nodes.	int
 motion::pose_r	constant	gfx/motion	/api-library/helium/lib/gfx-motion#pose_r	Per-node rotation quaternion array of the current pose, indexed like glTF nodes.	int
 motion::pose_s	constant	gfx/motion	/api-library/helium/lib/gfx-motion#pose_s	Per-node scale array of the current pose, indexed like glTF nodes.	int
@@ -1718,8 +1838,11 @@ scal::scale_of	function	gfx/scalability	/api-library/helium/lib/gfx-scalability#
 scal::apply	function	gfx/scalability	/api-library/helium/lib/gfx-scalability#apply	Applies a quality level by recording it and configuring shadows, ambient occlusion, bloom, global illumination and temporal settings.	pub
 scal::init	function	gfx/scalability	/api-library/helium/lib/gfx-scalability#init	Applies a quality level, then initializes the 3D scene at scaled internal resolution for the given window size, returning its result.	pub
 scal::pick	function	gfx/scalability	/api-library/helium/lib/gfx-scalability#pick	Returns the highest quality level whose measured frame time in milliseconds fits within the budget, or LOW if none does.	pub
+codec_png::idat	constant	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#idat	Module-level buffer holding concatenated IDAT chunk data during decoding, used only internally by the decoder.	int
+codec_png::raw	constant	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#raw	Module-level buffer holding decompressed scanline bytes during decoding, used only internally by the decoder.	int
 codec_png::be32	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#be32	Reads a big-endian 32-bit integer from a byte slice at the given offset.	int
 codec_png::is_png	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#is_png	Returns whether the bytes begin with the eight-byte PNG signature.	pub
+codec_png::size	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#size	Returns the width and height of a PNG from its header, with false if the data is invalid or empty.	pub
 codec_png::samples_per_pixel	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#samples_per_pixel	Returns the number of samples per pixel for a PNG color type, or 0 if invalid.	int
 codec_png::paeth	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#paeth	Computes the Paeth predictor value used when reversing PNG row filters.	int
 codec_png::unfilter	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#unfilter	Reverses the per-row PNG filters in place, returning false if a filter type is invalid.	int
@@ -1735,8 +1858,12 @@ codec_png::write	function	gfx/codec_png	/api-library/helium/lib/gfx-codec_png#wr
 codec_jpeg::Table	type	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#Table	Huffman decoding table holding code ranges and symbols for one JPEG table slot, used internally while decoding.	int
 codec_jpeg::Channel	type	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#Channel	Per-channel frame state with sampling factors, table selectors, DC prediction and sample location, used internally by the decoder.	int
 codec_jpeg::ZIGZAG	constant	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#ZIGZAG	Lookup table mapping zigzag scan position to natural row-major coefficient index within an 8x8 block.	int
+codec_jpeg::planes	constant	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#planes	Global buffer holding decoded sample bytes for all channels, written by the inverse DCT during decoding.	int
+codec_jpeg::coefs	constant	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#coefs	Global buffer of quantized DCT coefficients stored as 16-bit integers, used internally while decoding scans.	int
+codec_jpeg::idct	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#idct	Performs an 8x8 inverse DCT on a coefficient block and writes clamped 0-255 samples into the plane buffer.	int
 codec_jpeg::is_jpeg	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#is_jpeg	Returns whether the bytes begin with the JPEG signature marker sequence, false for shorter or non-matching data.	pub
 codec_jpeg::be16	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#be16	Reads a big-endian 16-bit unsigned integer from the byte slice at the given offset.	int
+codec_jpeg::size	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#size	Returns width, height and a success flag read from a JPEG's frame header, with false meaning invalid or unreadable data.	pub
 codec_jpeg::make_table	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#make_table	Builds a Huffman decoding table from per-length code counts and symbol list, copying up to 256 symbols.	int
 codec_jpeg::basis	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#basis	Returns the precomputed 8x8 inverse DCT basis matrix of cosine factors used to reconstruct pixel blocks.	int
 codec_jpeg::decode	function	gfx/codec_jpeg	/api-library/helium/lib/gfx-codec_jpeg#decode	Decodes a baseline JPEG file into RGBA pixels appended to the output buffer, returning width, height and false on failure.	pub
@@ -5185,3 +5312,84 @@ gl::generate_mipmap	function	webgl	/api-library/helium/lib/webgl#generate_mipmap
 gl::delete	function	webgl	/api-library/helium/lib/webgl#delete	Deletes the GL object identified by the given handle.	pub
 gl::drawing_w	function	webgl	/api-library/helium/lib/webgl#drawing_w	Returns the width of the drawing buffer in pixels.	pub
 gl::drawing_h	function	webgl	/api-library/helium/lib/webgl#drawing_h	Returns the height of the drawing buffer in pixels.	pub
+clusters::CX	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CX	Number of cluster cells along the horizontal screen axis in the light-assignment grid.	int
+clusters::CY	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CY	Number of cluster cells along the vertical screen axis in the light-assignment grid.	int
+clusters::CZ	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CZ	Number of logarithmically spaced depth slices in the light-assignment grid.	int
+clusters::MAX_PER	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#MAX_PER	Maximum number of lights stored for any single cluster cell; extra lights are dropped.	int
+clusters::counts	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#counts	Scratch array holding per-cell light counts, reused as write offsets while building the grid.	int
+clusters::pair_c	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#pair_c	Scratch array of cell indices, paired with the light indices in the matching light array.	int
+clusters::pair_l	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#pair_l	Scratch array of light indices, paired with the cell indices in the matching cell array.	int
+clusters::build	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#build	Builds the cluster light grid from view-space lights, writing cell headers followed by light index lists into out.	pub
+clusters::slice_of	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#slice_of	Returns the depth slice index for a view-space depth, clamped to the valid slice range.	int
+clusters::depth_at	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#depth_at	Returns the near-plane depth of a depth slice, using the same logarithmic spacing as the slices.	int
+clusters::cell	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#cell	Returns a cell index from a continuous grid coordinate, clamped to the valid range for that axis.	int
+clusters::place	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#place	Adds one light's index to every cluster cell its bounding sphere overlaps, recording cell and light pairs.	int
+clusters::finish	function	gfx/clusters	/api-library/helium/lib/gfx-clusters#finish	Packs the recorded cell and light pairs into the output array as headers plus index lists, capping each cell.	int
+codec_hdr::scales	constant	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#scales	Lookup table of 256 float multipliers, indexed by RGBE exponent byte, used to scale mantissas during decoding.	int
+codec_hdr::scales_ready	constant	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#scales_ready	Flag indicating whether the exponent scale table has been filled in yet.	int
+codec_hdr::is_hdr	function	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#is_hdr	Returns whether the bytes begin with the "#?" signature of a Radiance HDR file.	pub
+codec_hdr::next_line	function	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#next_line	Reads the next newline-terminated line from the bytes starting at an offset, advancing it; returns false if no newline remains.	int
+codec_hdr::decode	function	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#decode	Decodes Radiance HDR bytes into RGBA float pixels, returning width, height and false on malformed or unsupported data.	pub
+codec_hdr::half_pixels	function	gfx/codec_hdr	/api-library/helium/lib/gfx-codec_hdr#half_pixels	Converts RGBA float values into packed 16-bit half-float bytes, clamping negatives and NaN to zero and large values to the half maximum.	pub
+codec_jpeg_enc::ZZ	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#ZZ	Zigzag scan order table mapping coefficient positions in an 8x8 block, used internally during quantization and header output.	int
+codec_jpeg_enc::LUM_Q	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#LUM_Q	Standard JPEG luminance quantization base table of 64 entries, scaled by quality before use.	int
+codec_jpeg_enc::CHR_Q	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#CHR_Q	Standard JPEG chrominance quantization base table of 64 entries, scaled by quality before use.	int
+codec_jpeg_enc::DC_LUM_BITS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#DC_LUM_BITS	Huffman code length counts for the standard luminance DC table.	int
+codec_jpeg_enc::DC_LUM_VALS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#DC_LUM_VALS	Symbol values for the standard luminance DC Huffman table.	int
+codec_jpeg_enc::DC_CHR_BITS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#DC_CHR_BITS	Huffman code length counts for the standard chrominance DC table.	int
+codec_jpeg_enc::DC_CHR_VALS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#DC_CHR_VALS	Symbol values for the standard chrominance DC Huffman table.	int
+codec_jpeg_enc::AC_LUM_BITS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#AC_LUM_BITS	Huffman code length counts for the standard luminance AC table.	int
+codec_jpeg_enc::AC_LUM_VALS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#AC_LUM_VALS	Symbol values for the standard luminance AC Huffman table.	int
+codec_jpeg_enc::AC_CHR_BITS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#AC_CHR_BITS	Huffman code length counts for the standard chrominance AC table.	int
+codec_jpeg_enc::AC_CHR_VALS	constant	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#AC_CHR_VALS	Symbol values for the standard chrominance AC Huffman table.	int
+codec_jpeg_enc::put8	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#put8	Appends a single byte to the output buffer.	int
+codec_jpeg_enc::put16	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#put16	Appends a 16-bit value to the output buffer in big-endian byte order.	int
+codec_jpeg_enc::put_list	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#put_list	Appends each integer in a list to the output buffer as a byte.	int
+codec_jpeg_enc::put_dht	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#put_dht	Appends a Huffman table definition, with its class and ID byte, to the output buffer.	int
+codec_jpeg_enc::encode	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#encode	Encodes RGBA pixels into JPEG data in the output buffer, returning false if dimensions are invalid or pixels are too few.	pub
+codec_jpeg_enc::HT	type	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#HT	Huffman lookup table holding the code and bit length for each symbol.	int
+codec_jpeg_enc::BitW	type	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#BitW	Bit writer state holding pending accumulated bits and their count.	int
+codec_jpeg_enc::build_table	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#build_table	Builds a Huffman code lookup table from code length counts and symbol values.	int
+codec_jpeg_enc::scaled_q	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#scaled_q	Returns a quantization table scaled by quality, with quality clamped to 1 through 100.	int
+codec_jpeg_enc::cos_table	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#cos_table	Returns the precomputed cosine table used by the 8x8 discrete cosine transform.	int
+codec_jpeg_enc::fdct	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#fdct	Performs an in-place forward discrete cosine transform on an 8x8 block.	int
+codec_jpeg_enc::transform	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#transform	Applies the DCT and quantization to a block, storing rounded coefficients in zigzag order.	int
+codec_jpeg_enc::load_y	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#load_y	Loads an 8x8 block of luminance samples into the working block, shifted by 128.	int
+codec_jpeg_enc::load_c	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#load_c	Loads an 8x8 chrominance block by averaging 2x2 pixel groups, shifted by 128.	int
+codec_jpeg_enc::put_bits	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#put_bits	Writes the low bits of a code to the bit stream, inserting a zero byte after any 0xFF.	int
+codec_jpeg_enc::flush_bits	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#flush_bits	Pads any remaining partial byte with one bits and writes it to the output.	int
+codec_jpeg_enc::bit_size	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#bit_size	Returns the number of bits needed to represent the absolute value of an integer.	int
+codec_jpeg_enc::code_block	function	gfx/codec_jpeg_enc	/api-library/helium/lib/gfx-codec_jpeg_enc#code_block	Huffman-encodes one quantized block, writing the DC difference and run-length coded AC coefficients.	int
+envmap::on	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#on	Flag that enables image-based environment lighting, set true once an environment map or sky has been loaded.	pub
+envmap::physical	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#physical	Flag that is true when the current environment comes from the physical sky model rather than an equirectangular image.	pub
+envmap::intensity	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#intensity	Brightness multiplier applied to the environment lighting, defaulting to 1.0.	pub
+envmap::rotation	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#rotation	Rotation of the environment map, defaulting to 0.0.	pub
+envmap::blur	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#blur	Blur amount for the environment, defaulting to 0.0.	pub
+envmap::size	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#size	Face resolution in pixels of the prefiltered cubemap built from an equirectangular map, defaulting to 512.	pub
+envmap::samples	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#samples	Number of GGX samples used per texel when prefiltering the cubemap, defaulting to 512.	pub
+envmap::cube	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#cube	Prefiltered GGX cubemap holding the specular and irradiance mip levels.	int
+envmap::dummy	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#dummy	Placeholder 1x1 black cubemap returned when no environment is active.	int
+envmap::smp	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#smp	Clamp-addressed linear sampler used when reading cubemap sources.	int
+envmap::smp_wrap	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#smp_wrap	Linear sampler that repeats horizontally, used for reading equirectangular maps.	int
+envmap::pipe_equi	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_equi	Pipeline that renders an equirectangular image into cubemap faces.	int
+envmap::pipe_ggx	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_ggx	Pipeline that renders GGX-prefiltered cubemap mip levels.	int
+envmap::ready	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#ready	Flag recording that the shared samplers, pipelines and dummy texture have been created.	int
+envmap::lv	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#lv	Number of mip levels in the current prefiltered cubemap.	int
+envmap::EnvU	type	gfx/envmap	/api-library/helium/lib/gfx-envmap#EnvU	Uniform block passed to the environment fragment shaders, packing face index, roughness, sample count and source size.	int
+envmap::setup	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#setup	Creates the shared pipelines, samplers and dummy cubemap once; later calls do nothing.	int
+envmap::levels	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#levels	Returns the number of prefiltered mip levels for a cubemap of the given size, at least 2.	int
+envmap::faces	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#faces	Renders all six faces of one cubemap mip with the given pipeline, source texture and roughness.	int
+envmap::filter	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#filter	Prefilters a raw cubemap of the given size into the GGX-blurred cubemap, reallocating it if the level count changes.	int
+envmap::sun_color	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#sun_color	Returns the sun's color for a given direction by integrating atmospheric scattering, with power and haze scaling; black if the sun is below the planet's horizon.	pub
+envmap::EnvSkyU	type	gfx/envmap	/api-library/helium/lib/gfx-envmap#EnvSkyU	Uniform block passed to the sky fragment shader, packing face, sun direction and power, and cloud settings.	int
+envmap::pipe_ms	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_ms	Pipeline that renders the multiple-scattering lookup texture for the sky.	int
+envmap::pipe_sky	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_sky	Pipeline that renders the procedural sky into cubemap faces.	int
+envmap::sky_ready	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#sky_ready	Flag recording that the sky pipelines have been created.	int
+envmap::mip_count	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#mip_count	Returns the number of mip levels in a full chain for a texture of the given size.	int
+envmap::setup_sky	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#setup_sky	Creates the sky pipelines once; later calls do nothing.	int
+envmap::set_sky	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#set_sky	Generates a procedural sky cubemap from sun direction, power, haze and clouds, then prefilters it for lighting.	pub
+envmap::set_equirect	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#set_equirect	Sets the environment from raw equirectangular float RGBA pixels of the given width and height, then prefilters it.	pub
+envmap::load	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#load	Loads an HDR image file as the environment map, returning false if reading or decoding fails.	pub
+envmap::texture	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#texture	Returns the prefiltered environment cubemap, or a black dummy cubemap when no environment is active.	pub
+envmap::spec_lod	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#spec_lod	Returns the mip level used for specular reflection sampling, the second-to-last level.	pub
+envmap::irr_lod	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#irr_lod	Returns the mip level holding the diffuse irradiance, the last level.	pub

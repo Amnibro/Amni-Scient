@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-gold">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-gold">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=e9dccb69e1">
+<link rel="stylesheet" href="/api-library/lib.css?v=0770e349e1">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=e9dccb69e1'; start({wasm: '/api-library/search.wasm?v=e9dccb69e1'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=0770e349e1'; start({wasm: '/api-library/search.wasm?v=0770e349e1'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/gold</h1>
 <p class="lib-lede">A ready-made walking and running character: speed blending, action states, an upper-body layer, root motion and foot planting.</p>
-<p class="lib-meta"><code>import anim.gold;</code> &middot; <code>anim::</code> &middot; 9 functions, 2 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.gold;</code> &middot; <code>anim::</code> &middot; 9 functions, 2 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/gold: the &quot;gold angle&quot; locomotion character used by the tests and
 the JK / BFME proofs: &quot;blend walk into run above 3 m/s; plant feet&quot;.
 A 1D speed space (idle, walk at its natural speed and stretched to
@@ -131,13 +131,13 @@ planting on gently rolling ground.</pre></details>
 	err byte[..96],
 }</pre>
 <p>Rig data for the character: clip and joint indices, upper-body mask, leg chains, ok flag and error message.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L46">hc/lib/anim/gold.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L46">hc/lib/anim/gold.amni:46</a>
 </article>
 <article class="sym" id="gold_setup">
 <h3><a href="#gold_setup">gold_setup</a> <i>function</i></h3>
 <pre>gold_setup(sk Skeleton&amp;, prefix const byte[:], r GoldRig&amp;, d MachineDef&amp;) bool</pre>
 <p>Finds clips and joints by prefix and builds the machine definition, returning false and recording an error if any is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L84">hc/lib/anim/gold.amni:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L84">hc/lib/anim/gold.amni:84</a>
 </article>
 <h2 id="character-update">Character Update <span class="n">3</span></h2>
 <article class="sym" id="Character">
@@ -156,109 +156,109 @@ planting on gently rolling ground.</pre></details>
 	pal Palette,
 }</pre>
 <p>Per-character runtime state: state machine, world transform, speed, leg chains, poses, model and skin palette.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L148">hc/lib/anim/gold.amni:148</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L148">hc/lib/anim/gold.amni:148</a>
 </article>
 <article class="sym" id="gold_char">
 <h3><a href="#gold_char">gold_char</a> <i>function</i></h3>
 <pre>gold_char(r GoldRig&amp;, d MachineDef&amp;, ch Character&amp;, pos float3, yaw f32)</pre>
 <p>Starts a character's machine at its entry state and places it at a world position and yaw with foot planting on.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L161">hc/lib/anim/gold.amni:161</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L161">hc/lib/anim/gold.amni:161</a>
 </article>
 <article class="sym" id="gold_update">
 <h3><a href="#gold_update">gold_update</a> <i>function</i></h3>
 <pre>gold_update(sk Skeleton&amp;, r GoldRig&amp;, d MachineDef&amp;, ch Character&amp;, dt f32, make_palette bool)</pre>
 <p>Advances one character by dt seconds, blending locomotion, layering upper-body additive, applying root motion and planting feet, optionally building the skin palette.</p>
 <p class="note">One tick of one character. make_palette also builds its skin palette.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L168">hc/lib/anim/gold.amni:168</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L168">hc/lib/anim/gold.amni:168</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (14)</summary>
 <article class="sym" id="P_SPEED">
 <h3><a href="#P_SPEED">P_SPEED</a> <i>constant</i></h3>
 <pre>let P_SPEED = 0</pre>
 <p>Index of the speed parameter in a character's machine, driven each tick by the smoothed speed command.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L19">hc/lib/anim/gold.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L19">hc/lib/anim/gold.amni:19</a>
 </article>
 <article class="sym" id="P_ACT">
 <h3><a href="#P_ACT">P_ACT</a> <i>constant</i></h3>
 <pre>let P_ACT = 1</pre>
 <p>Index of the machine parameter that triggers the action state; consumed when the transition fires.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L20">hc/lib/anim/gold.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L20">hc/lib/anim/gold.amni:20</a>
 </article>
 <article class="sym" id="P_ACT2">
 <h3><a href="#P_ACT2">P_ACT2</a> <i>constant</i></h3>
 <pre>let P_ACT2 = 2</pre>
 <p>Index of the machine parameter that triggers the interrupting action state, which can fire from any state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L21">hc/lib/anim/gold.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L21">hc/lib/anim/gold.amni:21</a>
 </article>
 <article class="sym" id="WALK_TOP">
 <h3><a href="#WALK_TOP">WALK_TOP</a> <i>constant</i></h3>
 <pre>let WALK_TOP = 1.8;    // walk stretched up to here</pre>
 <p>Speed in meters per second up to which the walk clip is stretched before blending toward run.</p>
 <p class="note">The walk-&gt;run blend band [WALK_TOP, RUN_LOW] is centred on 3 m/s and 2.4 m/s wide: the speed spring crosses it in about 0.3 s when braking from a run (a 0.8 m/s band took ~0.1 s, a near-miss crossfade the pop test flags, which is what capped the spring at 2.4 s).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L26">hc/lib/anim/gold.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L26">hc/lib/anim/gold.amni:26</a>
 </article>
 <article class="sym" id="RUN_LOW">
 <h3><a href="#RUN_LOW">RUN_LOW</a> <i>constant</i></h3>
 <pre>let RUN_LOW = 4.2;     // run from here</pre>
 <p>Speed in meters per second from which the run clip is fully used, ending the walk-to-run blend band.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L27">hc/lib/anim/gold.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L27">hc/lib/anim/gold.amni:27</a>
 </article>
 <article class="sym" id="RUN_TOP">
 <h3><a href="#RUN_TOP">RUN_TOP</a> <i>constant</i></h3>
 <pre>let RUN_TOP = 6.0</pre>
 <p>Top speed in meters per second of the run range in the locomotion speed space.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L28">hc/lib/anim/gold.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L28">hc/lib/anim/gold.amni:28</a>
 </article>
 <article class="sym" id="SPEED_W">
 <h3><a href="#SPEED_W">SPEED_W</a> <i>constant</i></h3>
 <pre>let SPEED_W = 5.27</pre>
 <p>Natural frequency in radians per second of the critically damped spring that smooths the speed command.</p>
 <p class="note">Speed command smoothing: a critically damped spring (natural frequency SPEED_W rad/s), so the speed parameter is C1 in time. The previous linear slew (8 m/s^2) started and stopped its acceleration instantly, and the walk/run blend it drives turned that into a per-frame velocity kink on the whole body (seen by the per-state pop thresholds, see DESIGN.md).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L35">hc/lib/anim/gold.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L35">hc/lib/anim/gold.amni:35</a>
 </article>
 <article class="sym" id="spring_cd">
 <h3><a href="#spring_cd">spring_cd</a> <i>function</i></h3>
 <pre>spring_cd(x f32&amp;, v f32&amp;, target f32, w f32, dt f32)</pre>
 <p>Advances a critically damped spring one step, updating position and velocity toward a target over dt seconds.</p>
 <p class="note">Exact step of x'' = w^2 (target - x) - 2 w x' (critical damping, the closed-form solution x = target + (c1 + c2 t) e^(-w t)).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L38">hc/lib/anim/gold.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L38">hc/lib/anim/gold.amni:38</a>
 </article>
 <article class="sym" id="gold_ground">
 <h3><a href="#gold_ground">gold_ground</a> <i>function</i></h3>
 <pre>gold_ground(x f32, z f32) f32</pre>
 <p>Returns the height of the gently rolling test ground at the given x and z position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L58">hc/lib/anim/gold.amni:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L58">hc/lib/anim/gold.amni:58</a>
 </article>
 <article class="sym" id="find_joint2">
 <h3><a href="#find_joint2">find_joint2</a> <i>function</i></h3>
 <pre>find_joint2(sk Skeleton&amp;, a const byte[:], b const byte[:]) i32</pre>
 <p>Returns the index of the first joint found by name a, otherwise by name b, or negative if neither exists.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L60">hc/lib/anim/gold.amni:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L60">hc/lib/anim/gold.amni:60</a>
 </article>
 <article class="sym" id="find_clip2">
 <h3><a href="#find_clip2">find_clip2</a> <i>function</i></h3>
 <pre>find_clip2(prefix const byte[:], a const byte[:], b const byte[:]) i32</pre>
 <p>Returns the index of a loaded clip named with the prefix plus a, otherwise plus b, or negative if neither exists.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L64">hc/lib/anim/gold.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L64">hc/lib/anim/gold.amni:64</a>
 </article>
 <article class="sym" id="gold_fail">
 <h3><a href="#gold_fail">gold_fail</a> <i>function</i></h3>
 <pre>gold_fail(r GoldRig&amp;, msg const byte[:]) bool</pre>
 <p>Records an error message in the rig, marks it not ok, and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L73">hc/lib/anim/gold.amni:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L73">hc/lib/anim/gold.amni:73</a>
 </article>
 <article class="sym" id="EXIT_FADE">
 <h3><a href="#EXIT_FADE">EXIT_FADE</a> <i>constant</i></h3>
 <pre>let EXIT_FADE f32 = 0.3</pre>
 <p>Duration in seconds of the crossfade from an action state back to locomotion.</p>
 <p class="note">Finds clips and joints for a JK (walk_fwd/run_fwd/thigh/calf) or BFME (humanoid_v1_loco_*/thigh/shin) character whose clips were loaded with name prefix `prefix`, and builds the machine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L78">hc/lib/anim/gold.amni:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L78">hc/lib/anim/gold.amni:78</a>
 </article>
 <article class="sym" id="exit_at">
 <h3><a href="#exit_at">exit_at</a> <i>function</i></h3>
 <pre>exit_at(clip i32, fade f32) f32</pre>
 <p>Returns the normalized exit time that makes the crossfade end as a non-looping action clip ends.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/anim/gold.amni#L79">hc/lib/anim/gold.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0770e346752e5fe2a25043ca47be2cdf56c85be8/hc/lib/anim/gold.amni#L79">hc/lib/anim/gold.amni:79</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -270,7 +270,7 @@ planting on gently rolling ground.</pre></details>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics<span>938</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>1146</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a>
