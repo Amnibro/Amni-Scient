@@ -51,7 +51,7 @@ main{position:relative;flex:1;display:grid;--lwc:clamp(150px,var(--lw,min(272px,
 aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 #left{border-right:1px solid var(--line)}
 #right{border-left:1px solid var(--line);display:none;flex-direction:column;overflow-wrap:break-word}
-@media (min-width:700px){#right{position:absolute;top:10px;right:10px;bottom:10px;width:min(400px,calc(100% - var(--lwc) - 24px));z-index:8;border:1px solid var(--line2);border-radius:12px;box-shadow:var(--shadow);background:var(--panel)}body.sheet-on #right{display:flex}#pipe,#right .rtabs{display:none!important}}
+@media (min-width:700px){#right{position:absolute;top:0;bottom:0;left:var(--lwc);right:0;width:auto;z-index:6;border:0;border-left:1px solid var(--line);border-radius:0;box-shadow:none;background:var(--panel)}body.sheet-on #right{display:flex}#pipe,#right .rtabs{display:none!important}#work-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);flex:none;background:var(--panel)}#work-bar b{font-size:15px}#sheet-x{margin:0 0 0 auto;height:36px;padding:0 14px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);font-weight:650}#tab-ai.on{width:min(760px,100%);margin:0 auto}}
 .sec{padding:12px 12px 14px;border-bottom:1px solid var(--line)}
 .sec h3{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);margin-bottom:8px}
 .sec h3 button{color:var(--acc);font-size:12px;text-transform:none;letter-spacing:0;font-weight:600;padding:2px 6px;border-radius:calc(6px*var(--rk,1))}
