@@ -135,10 +135,10 @@
 <ol class="hg-steps">
 <li><strong>Open the render settings.</strong> In the <b>Form</b> workspace, click the <b>Render</b> tab on the right. For a solid part, use <b>Export &rarr; Photo render&hellip;</b> instead.</li>
 <li><strong>Pick the engine.</strong> Next to <b>Engine</b>, choose <b>Helium</b>.</li>
-<li><strong>Look around.</strong> Click <b>Render view</b>. Orbit and zoom as usual, and move any slider to see the change right away. If you play the timeline, the view waits and shows the new pose when you pause. Click <b>Stop</b> when you're done.</li>
+<li><strong>Look around.</strong> Click <b>Render view</b>. Orbit and zoom as usual, and move any slider to see the change right away. Play the timeline and the model moves right in the view. While anything moves, the view draws a little softer so it keeps up, then sharpens again when you stop. Click <b>Stop</b> when you're done.</li>
 <li><strong>Save it.</strong> Set the size under <b>Output</b>, then click <b>Render image</b>. A PNG downloads, and the finished picture stays on screen until you close it.</li>
 </ol>
-<p><strong>On a phone:</strong> tap <b>Open</b> at the bottom of the screen, then the <b>Render</b> tab. After you start the view, tap <b>Model</b> to hide the panel. One finger orbits, and two fingers zoom and pan. On a Galaxy Z Fold 7, a 1200&times;800 picture takes about 5 seconds and the live view runs at about 10 frames a second.</p>
+<p><strong>On a phone:</strong> tap <b>Open</b> at the bottom of the screen, then the <b>Render</b> tab. After you start the view, tap <b>Model</b> to hide the panel. One finger orbits, and two fingers zoom and pan. On a Galaxy Z Fold 7, a 1200&times;800 picture takes about 5 seconds, and the live view plays animations at about 15 to 25 frames a second.</p>
 <h3>The settings that matter</h3>
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
@@ -154,8 +154,8 @@
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>Engine</th><th>Pick it when</th><th>Keep in mind</th></tr></thead>
 <tbody>
-<tr><td><b>Helium</b></td><td>You want a live view, a daylight sky, lots of finish controls, or a very large model.</td><td>Needs WebGPU. Stills only for now, no animation. Light does not bounce as fully as in Path traced.</td></tr>
-<tr><td><b>Path traced</b></td><td>You want the most accurate light, reflections through glass, or an animation.</td><td>Slower. It takes seconds to minutes per image, and noise clears over time.</td></tr>
+<tr><td><b>Helium</b></td><td>You want a live view, a daylight sky, lots of finish controls, or a very large model.</td><td>Needs WebGPU. Plays animations in the live view, but can't save them as a video yet. Light does not bounce as fully as in Path traced.</td></tr>
+<tr><td><b>Path traced</b></td><td>You want the most accurate light, reflections through glass, or to save an animation as a video.</td><td>Slower. It takes seconds to minutes per image, and noise clears over time.</td></tr>
 <tr><td><b>Rasterized</b></td><td>You want a quick image on any device.</td><td>Simplest lighting of the three, and it works without WebGPU.</td></tr>
 </tbody></table></div>
 <p class="fine">The AI assistant can use it too: ask it to render with Helium, or call the <code>form_render</code> tool with <code>engine: "helium"</code>. The Amni-CAD desktop app on Linux has no WebGPU yet, so open Amni-CAD in Chrome or Edge there.</p>
@@ -315,7 +315,7 @@ fn main() {
 <tr><td><b>Missing light features</b></td><td>No rectangular area lights (sphere and tube lights stand in), no caustics, no local reflection probes. Light falloff doesn't fully match three.js's physical mode.</td></tr>
 <tr><td><b>Missing scene features</b></td><td>No decals, no alpha to coverage for foliage edges, no rain or snow particles, no hardware instancing.</td></tr>
 <tr><td><b>Missing file formats</b></td><td>No BC or KTX2 compressed textures, no WebP textures, and no Draco or meshopt compressed meshes.</td></tr>
-<tr><td><b>In Amni-CAD</b></td><td>Stills and live view only, so use Path traced for animations. Models and textures need to fit in the browser's memory, and Helium tells you when they don't. Reflections and bounced light are simpler than in Path traced.</td></tr>
+<tr><td><b>In Amni-CAD</b></td><td>Animations play in the live view. To save one as a video, use Path traced or Rasterized. Models and textures need to fit in the browser's memory, and Helium tells you when they don't. Reflections and bounced light are simpler than in Path traced.</td></tr>
 </tbody></table></div>
 </section>
 <section id="credits">

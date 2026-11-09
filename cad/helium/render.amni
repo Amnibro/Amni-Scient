@@ -5,6 +5,7 @@ import gfx.linalg;
 import gfx.gltf;
 import gfx.envmap;
 import gfx.scene3d;
+import math;
 var C f32[40];
 var L f32[16];
 var asset = -1;
@@ -12,7 +13,11 @@ var item = -1;
 var ground_item = -1;
 var sw = 0;
 var sh = 0;
+var iw = 0;
+var ih = 0;
 var light f32 = 0.0;
+var P f32[>..] = [];
+var padded = false;
 extern fn hv_f32(id i32, xs f32[:]);
 fn main() {
 	gltf::lazy_pixels = true;
@@ -43,6 +48,10 @@ fn main() {
 	}
 	hv_f32(0, C[..]);
 	hv_f32(1, L[..]);
+	for i in gltf::assets[asset].nodes.count * 15 + 8 {
+		P.push(0.0);
+	}
+	hv_f32(2, P[..]);
 	item = s3d::add(asset);
 	s3d::place(item, gfx::mat4_identity);
 	if ga >= 0 {
@@ -61,6 +70,8 @@ fn main() {
 	let z = gfx::screen_size();
 	sw = z.x as int;
 	sh = z.y as int;
+	iw = sw;
+	ih = sh;
 	s3d::init(sw, sh);
 	web::frames(true);
 }
@@ -111,6 +122,40 @@ fn apply_view() {
 		s3d::place(ground_item, gfx::mul(gfx::translate(p), gfx::mul(gfx::rotate(float3 { 0.0, 1.0, 0.0 }, C[35]), gfx::translate(q))));
 	}
 }
+fn apply_pose() {
+	if P.len == 0 { return; }
+	let a = gltf::assets[asset];
+	if P[0] > 0.0 && !padded {
+		padded = true;
+		for k in a.nodes.count {
+			let n = gltf::nodes[a.nodes.first + k];
+			if n.mesh >= 0 && n.skin >= 0 {
+				let m = gltf::meshes[n.mesh];
+				for q in m.prims.count {
+					let i = m.prims.first + q;
+					gltf::prims[i].lo = gltf::prims[i].lo + float3 { P[2], P[3], P[4] };
+					gltf::prims[i].hi = gltf::prims[i].hi + float3 { P[5], P[6], P[7] };
+				}
+			}
+		}
+	}
+	for k in (P[0] as int) {
+		let o = 8 + k * 11;
+		s3d::set_node(item, a.nodes.first + (P[o] as int), float3 { P[o + 1], P[o + 2], P[o + 3] }, linalg::Quat { x: P[o + 4], y: P[o + 5], z: P[o + 6], w: P[o + 7] }, float3 { P[o + 8], P[o + 9], P[o + 10] });
+	}
+	var j = s3d::items[item].light_base;
+	for k in (P[1] as int) {
+		let o = 8 + (P[0] as int) * 11 + k * 4;
+		let li = gltf::nodes[a.nodes.first + (P[o] as int)].light;
+		let rgb = float3 { P[o + 1], P[o + 2], P[o + 3] };
+		gltf::plights[li].rgb = rgb;
+		if gltf::plights[li].kind != 0 && j >= 0 {
+			s3d::lights[j].rgb = rgb;
+			s3d::lights[j].range = linalg::f(sqrt((max(rgb.x, max(rgb.y, rgb.z)) * 1000.0) as real));
+			j += 1;
+		}
+	}
+}
 fn capture() {
 	let w = C[29] as int;
 	let h = C[30] as int;
@@ -120,7 +165,7 @@ fn capture() {
 	s3d::init(w, h);
 	s3d::temporal_reset = true;
 	let target = gfx::render_target(w, h, gfx::RGBA8);
-	for i in C[38] as int {
+	for i in (C[38] as int) {
 		s3d::render(target);
 		gfx::flush();
 	}
@@ -128,7 +173,7 @@ fn capture() {
 	gfx::release(target);
 	s3d::look.ao_samples = 32;
 	s3d::gtao_steps = 8;
-	s3d::init(sw, sh);
+	s3d::init(iw, ih, sw, sh);
 }
 export fn hr_stop() {
 	web::frames(false);
@@ -137,15 +182,21 @@ export fn he_frame(t real) {
 	if !gfx::frame() { return; }
 	apply_view();
 	apply_light();
+	apply_pose();
 	if C[28] > 0.5 {
 		capture();
 		return;
 	}
 	let z = gfx::screen_size();
-	if z.x as int != sw || z.y as int != sh {
+	let k = if C[39] > 0.0 { C[39] } else { 1.0 };
+	let rw = max((z.x * k) as int, 1);
+	let rh = max((z.y * k) as int, 1);
+	if z.x as int != sw || z.y as int != sh || rw != iw || rh != ih {
 		sw = z.x as int;
 		sh = z.y as int;
-		s3d::init(sw, sh);
+		iw = rw;
+		ih = rh;
+		s3d::init(iw, ih, sw, sh);
 	}
 	if s3d::render_begin() {
 		s3d::render_end(gfx::screen());
