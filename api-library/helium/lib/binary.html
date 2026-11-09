@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/binary">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/binary">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=3b77a5b8e8">
+<link rel="stylesheet" href="/api-library/lib.css?v=0b4dde38f6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=3b77a5b8e8'; start({wasm: '/api-library/search.wasm?v=3b77a5b8e8'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=0b4dde38f6'; start({wasm: '/api-library/search.wasm?v=0b4dde38f6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>binary</h1>
 <p class="lib-lede">Float bit patterns, bounds-checked little-endian reads, a read cursor and little-endian writes.</p>
-<p class="lib-meta"><code>import binary;</code> &middot; <code>binary::</code> &middot; 36 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he">Source</a></p>
+<p class="lib-meta"><code>import binary;</code> &middot; <code>binary::</code> &middot; 36 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#byte-reading">Byte Reading <span class="n">11</span></a></li>
 <li><a href="#read-cursor">Read Cursor <span class="n">5</span></a></li>
@@ -115,7 +115,7 @@
 <h3><a href="#le">le</a> <i>function</i></h3>
 <pre>le(data const byte[:], at int, n int) uint</pre>
 <p>Reads n bytes starting at an offset as an unsigned little-endian number, without checking bounds, so the caller must ensure they fit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L21">hc/lib/binary.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L21">hc/lib/binary.he:21</a>
 </article>
 <article class="sym" id="read_u8">
 <h3><a href="#read_u8">read_u8</a> <i>function, 2 forms</i></h3>
@@ -123,7 +123,7 @@
 <p>Reads one byte at the given position, returning false as the second result when out of bounds.</p>
 <pre>read_u8(r Reader&amp;) byte, bool</pre>
 <p>Reads one byte and advances the cursor, returning false without advancing when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L23">hc/lib/binary.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L23">hc/lib/binary.he:23</a>
 </article>
 <article class="sym" id="read_u16le">
 <h3><a href="#read_u16le">read_u16le</a> <i>function, 2 forms</i></h3>
@@ -131,7 +131,7 @@
 <p>Reads an unsigned 16-bit little-endian value at the given position, returning false when out of bounds.</p>
 <pre>read_u16le(r Reader&amp;) u16, bool</pre>
 <p>Reads an unsigned 16-bit little-endian value and advances two bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L24">hc/lib/binary.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L24">hc/lib/binary.he:24</a>
 </article>
 <article class="sym" id="read_i16le">
 <h3><a href="#read_i16le">read_i16le</a> <i>function, 2 forms</i></h3>
@@ -139,7 +139,7 @@
 <p>Reads a signed 16-bit little-endian value at the given position, returning false when out of bounds.</p>
 <pre>read_i16le(r Reader&amp;) i16, bool</pre>
 <p>Reads a signed 16-bit little-endian value and advances two bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L25">hc/lib/binary.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L25">hc/lib/binary.he:25</a>
 </article>
 <article class="sym" id="read_u32le">
 <h3><a href="#read_u32le">read_u32le</a> <i>function, 2 forms</i></h3>
@@ -147,7 +147,7 @@
 <p>Reads an unsigned 32-bit little-endian value at the given position, returning false when out of bounds.</p>
 <pre>read_u32le(r Reader&amp;) u32, bool</pre>
 <p>Reads an unsigned 32-bit little-endian value and advances four bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L26">hc/lib/binary.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L26">hc/lib/binary.he:26</a>
 </article>
 <article class="sym" id="read_i32le">
 <h3><a href="#read_i32le">read_i32le</a> <i>function, 2 forms</i></h3>
@@ -155,7 +155,7 @@
 <p>Reads a signed 32-bit little-endian value at the given position, returning false when out of bounds.</p>
 <pre>read_i32le(r Reader&amp;) i32, bool</pre>
 <p>Reads a signed 32-bit little-endian value and advances four bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L27">hc/lib/binary.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L27">hc/lib/binary.he:27</a>
 </article>
 <article class="sym" id="read_u64le">
 <h3><a href="#read_u64le">read_u64le</a> <i>function, 2 forms</i></h3>
@@ -163,7 +163,7 @@
 <p>Reads an unsigned 64-bit little-endian value at the given position, returning false when out of bounds.</p>
 <pre>read_u64le(r Reader&amp;) uint, bool</pre>
 <p>Reads an unsigned 64-bit little-endian value and advances eight bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L28">hc/lib/binary.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L28">hc/lib/binary.he:28</a>
 </article>
 <article class="sym" id="read_f32le">
 <h3><a href="#read_f32le">read_f32le</a> <i>function, 2 forms</i></h3>
@@ -171,7 +171,7 @@
 <p>Reads a 32-bit little-endian float at the given position, returning false when out of bounds.</p>
 <pre>read_f32le(r Reader&amp;) f32, bool</pre>
 <p>Reads a 32-bit little-endian float and advances four bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L29">hc/lib/binary.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L29">hc/lib/binary.he:29</a>
 </article>
 <article class="sym" id="read_f64le">
 <h3><a href="#read_f64le">read_f64le</a> <i>function, 2 forms</i></h3>
@@ -179,7 +179,7 @@
 <p>Reads a 64-bit little-endian real at the given position, returning false when out of bounds.</p>
 <pre>read_f64le(r Reader&amp;) real, bool</pre>
 <p>Reads a 64-bit little-endian real and advances eight bytes, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L30">hc/lib/binary.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L30">hc/lib/binary.he:30</a>
 </article>
 <article class="sym" id="read_bytes">
 <h3><a href="#read_bytes">read_bytes</a> <i>function, 2 forms</i></h3>
@@ -187,7 +187,7 @@
 <p>Returns a slice of size bytes at the given position, with false as the second result when out of bounds.</p>
 <pre>read_bytes(r Reader&amp;, size int) const byte[:], bool</pre>
 <p>Reads a slice of size bytes and advances the cursor, returning false when out of bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L31">hc/lib/binary.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L31">hc/lib/binary.he:31</a>
 </article>
 <article class="sym" id="read_name">
 <h3><a href="#read_name">read_name</a> <i>function, 2 forms</i></h3>
@@ -196,7 +196,7 @@
 <pre>read_name(r Reader&amp;, width int) const byte[:], bool</pre>
 <p>Reads a fixed-width zero-padded name and advances by the full width, returning false when out of bounds.</p>
 <p class="note">a fixed-width field holding a zero-padded name</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L33">hc/lib/binary.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L33">hc/lib/binary.he:33</a>
 </article>
 <h2 id="read-cursor">Read Cursor <span class="n">5</span></h2>
 <article class="sym" id="Reader">
@@ -204,102 +204,102 @@
 <pre>struct Reader { data const byte[:], pos int }</pre>
 <p>A cursor over a byte slice that tracks the current position and advances past what it reads.</p>
 <p class="note">a cursor over bytes that moves past what it reads</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L41">hc/lib/binary.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L41">hc/lib/binary.he:41</a>
 </article>
 <article class="sym" id="reader">
 <h3><a href="#reader">reader</a> <i>function</i></h3>
 <pre>reader(data const byte[:]) Reader</pre>
 <p>Creates a Reader positioned at the start of the given bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L42">hc/lib/binary.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L42">hc/lib/binary.he:42</a>
 </article>
 <article class="sym" id="remaining">
 <h3><a href="#remaining">remaining</a> <i>function</i></h3>
 <pre>remaining(r Reader&amp;) int</pre>
 <p>Returns the number of bytes left to read after the cursor position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L43">hc/lib/binary.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L43">hc/lib/binary.he:43</a>
 </article>
 <article class="sym" id="skip">
 <h3><a href="#skip">skip</a> <i>function</i></h3>
 <pre>skip(r Reader&amp;, size int) bool</pre>
 <p>Advances the cursor by size bytes, returning false and staying put when that would pass the end.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L44">hc/lib/binary.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L44">hc/lib/binary.he:44</a>
 </article>
 <article class="sym" id="subreader">
 <h3><a href="#subreader">subreader</a> <i>function</i></h3>
 <pre>subreader(r Reader&amp;, size int) Reader, bool</pre>
 <p>Takes the next size bytes as a separate Reader and advances past them, returning false when out of bounds.</p>
 <p class="note">the next size bytes as a reader of their own</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L59">hc/lib/binary.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L59">hc/lib/binary.he:59</a>
 </article>
 <h2 id="little-endian-writing">Little-Endian Writing <span class="n">5</span></h2>
 <article class="sym" id="put_u16le">
 <h3><a href="#put_u16le">put_u16le</a> <i>function</i></h3>
 <pre>put_u16le(out byte[&gt;..]&amp;, v u16)</pre>
 <p>Appends an unsigned 16-bit value to a byte list in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L62">hc/lib/binary.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L62">hc/lib/binary.he:62</a>
 </article>
 <article class="sym" id="put_u32le">
 <h3><a href="#put_u32le">put_u32le</a> <i>function</i></h3>
 <pre>put_u32le(out byte[&gt;..]&amp;, v u32)</pre>
 <p>Appends an unsigned 32-bit value to a byte list in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L63">hc/lib/binary.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L63">hc/lib/binary.he:63</a>
 </article>
 <article class="sym" id="put_u64le">
 <h3><a href="#put_u64le">put_u64le</a> <i>function</i></h3>
 <pre>put_u64le(out byte[&gt;..]&amp;, v uint)</pre>
 <p>Appends an unsigned 64-bit value to a byte list in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L64">hc/lib/binary.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L64">hc/lib/binary.he:64</a>
 </article>
 <article class="sym" id="put_f32le">
 <h3><a href="#put_f32le">put_f32le</a> <i>function</i></h3>
 <pre>put_f32le(out byte[&gt;..]&amp;, v f32)</pre>
 <p>Appends a 32-bit float to a byte list as little-endian bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L65">hc/lib/binary.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L65">hc/lib/binary.he:65</a>
 </article>
 <article class="sym" id="put_f64le">
 <h3><a href="#put_f64le">put_f64le</a> <i>function</i></h3>
 <pre>put_f64le(out byte[&gt;..]&amp;, v real)</pre>
 <p>Appends a 64-bit real to a byte list as little-endian bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L66">hc/lib/binary.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L66">hc/lib/binary.he:66</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
 <article class="sym" id="f32_bits">
 <h3><a href="#f32_bits">f32_bits</a> <i>function</i></h3>
 <pre>f32_bits(x f32) u32</pre>
 <p>Binds a C function that returns the raw IEEE 754 bit pattern of a 32-bit float.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L5">hc/lib/binary.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L5">hc/lib/binary.he:5</a>
 </article>
 <article class="sym" id="f32_from_bits">
 <h3><a href="#f32_from_bits">f32_from_bits</a> <i>function</i></h3>
 <pre>f32_from_bits(bits u32) f32</pre>
 <p>Binds a C function that builds a 32-bit float from a raw bit pattern.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L6">hc/lib/binary.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L6">hc/lib/binary.he:6</a>
 </article>
 <article class="sym" id="f64_bits">
 <h3><a href="#f64_bits">f64_bits</a> <i>function</i></h3>
 <pre>f64_bits(x real) uint</pre>
 <p>Binds a C function that returns the raw IEEE 754 bit pattern of a real as an unsigned integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L7">hc/lib/binary.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L7">hc/lib/binary.he:7</a>
 </article>
 <article class="sym" id="f64_from_bits">
 <h3><a href="#f64_from_bits">f64_from_bits</a> <i>function</i></h3>
 <pre>f64_from_bits(bits uint) real</pre>
 <p>Binds a C function that builds a real from a raw 64-bit pattern.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L8">hc/lib/binary.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L8">hc/lib/binary.he:8</a>
 </article>
 <article class="sym" id="fits">
 <h3><a href="#fits">fits</a> <i>function</i></h3>
 <pre>fits(data const byte[:], at int, size int) bool</pre>
 <p>Returns whether the bytes from position at up to at plus size lie inside data.</p>
 <p class="note">true when bytes [at, at + size) lie inside data</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L11">hc/lib/binary.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L11">hc/lib/binary.he:11</a>
 </article>
 <article class="sym" id="gather">
 <h3><a href="#gather">gather</a> <i>function</i></h3>
 <pre>gather(data const byte[:], at int, n int) uint</pre>
 <p>Combines n bytes at a position into an unsigned little-endian number without checking bounds.</p>
 <p class="note">n bytes at `at` as an unsigned little-endian number; the caller checks bounds</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/binary.he#L14">hc/lib/binary.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/binary.he#L14">hc/lib/binary.he:14</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

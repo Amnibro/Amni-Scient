@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-cornell">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-cornell">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=3b77a5b8e8">
+<link rel="stylesheet" href="/api-library/lib.css?v=0b4dde38f6">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=3b77a5b8e8'; start({wasm: '/api-library/search.wasm?v=3b77a5b8e8'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=0b4dde38f6'; start({wasm: '/api-library/search.wasm?v=0b4dde38f6'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/cornell</h1>
 <p class="lib-lede">The classic Cornell box test scene as plain triangle data.</p>
-<p class="lib-meta"><code>import gfx.cornell;</code> &middot; <code>cornell::</code> &middot; 9 functions, 0 types, 15 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.cornell;</code> &middot; <code>cornell::</code> &middot; 9 functions, 0 types, 15 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>cornell: the Cornell box scene shared by the CPU path-traced reference
 (hc/test/gfx/gi/cornell_pt.amni) and the renderer's GI gate in gfx_smoke, so both
 see the same triangles. Geometry from the Cornell Box Data published by the Cornell
@@ -123,77 +123,77 @@ gfx imports.</pre></details>
 <h3><a href="#PI">PI</a> <i>constant</i></h3>
 <pre>let PI = 3.14159265358979</pre>
 <p>Constant holding the value of pi, used for angle and sampling math in the scene.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L11">hc/lib/gfx/cornell.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L11">hc/lib/gfx/cornell.amni:11</a>
 </article>
 <article class="sym" id="TMIN">
 <h3><a href="#TMIN">TMIN</a> <i>constant</i></h3>
 <pre>let TMIN = 0.0001</pre>
 <p>Minimum ray distance used to avoid self-intersection when tracing against the triangles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L15">hc/lib/gfx/cornell.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L15">hc/lib/gfx/cornell.amni:15</a>
 </article>
 <h2 id="scene-geometry">Scene Geometry <span class="n">6</span></h2>
 <article class="sym" id="SCALE">
 <h3><a href="#SCALE">SCALE</a> <i>constant</i></h3>
 <pre>let SCALE = 0.01;               // mm -&gt; scene units (room about 5.5 units)</pre>
 <p>Scale factor converting the published millimeter coordinates into scene units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L12">hc/lib/gfx/cornell.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L12">hc/lib/gfx/cornell.amni:12</a>
 </article>
 <article class="sym" id="tris">
 <h3><a href="#tris">tris</a> <i>constant</i></h3>
 <pre>var tris real[&gt;..] = [];   // 3 vertices per triangle, scene units</pre>
 <p>Triangle vertex array in scene units, holding three vertices per triangle, filled by build.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L35">hc/lib/gfx/cornell.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L35">hc/lib/gfx/cornell.amni:35</a>
 </article>
 <article class="sym" id="tri_mat">
 <h3><a href="#tri_mat">tri_mat</a> <i>constant</i></h3>
 <pre>var tri_mat int[&gt;..] = []</pre>
 <p>Material id for each triangle, parallel to the triangle array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L36">hc/lib/gfx/cornell.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L36">hc/lib/gfx/cornell.amni:36</a>
 </article>
 <article class="sym" id="surface_of">
 <h3><a href="#surface_of">surface_of</a> <i>function</i></h3>
 <pre>surface_of(t int) int</pre>
 <p>Returns the surface index of a triangle: 0 floor, 1 ceiling, 2 back, 3 red, 4 green, 5 short block, 6 tall block.</p>
 <p class="note">triangle -&gt; surface: 0 floor, 1 ceiling, 2 back, 3 red, 4 green, 5 short block, 6 tall block</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L59">hc/lib/gfx/cornell.amni:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L59">hc/lib/gfx/cornell.amni:59</a>
 </article>
 <article class="sym" id="RX">
 <h3><a href="#RX">RX</a> <i>constant</i></h3>
 <pre>let RX = 556.0; let RY = 548.8; let RZ = 559.2</pre>
 <p>X, Y and Z constants giving the room's size in millimeters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L61">hc/lib/gfx/cornell.amni:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L61">hc/lib/gfx/cornell.amni:61</a>
 </article>
 <article class="sym" id="build">
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build()</pre>
 <p>Builds the Cornell box triangles, clearing and refilling the triangle and material arrays.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L62">hc/lib/gfx/cornell.amni:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L62">hc/lib/gfx/cornell.amni:62</a>
 </article>
 <h2 id="reference-camera">Reference Camera <span class="n">4</span></h2>
 <article class="sym" id="REF_W">
 <h3><a href="#REF_W">REF_W</a> <i>constant</i></h3>
 <pre>let REF_W = 128</pre>
 <p>Width in pixels of the reference render of the scene.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L13">hc/lib/gfx/cornell.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L13">hc/lib/gfx/cornell.amni:13</a>
 </article>
 <article class="sym" id="REF_H">
 <h3><a href="#REF_H">REF_H</a> <i>constant</i></h3>
 <pre>let REF_H = 128</pre>
 <p>Height in pixels of the reference render of the scene.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L14">hc/lib/gfx/cornell.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L14">hc/lib/gfx/cornell.amni:14</a>
 </article>
 <article class="sym" id="EYE_X">
 <h3><a href="#EYE_X">EYE_X</a> <i>constant</i></h3>
 <pre>let EYE_X = 2.78; let EYE_Y = 2.73; let EYE_Z = -8.0</pre>
 <p>X, Y and Z constants placing the camera eye in scene units, looking down +z.</p>
 <p class="note">camera: (278, 273, -800) mm looking down +z, 35 mm lens on a 25 mm film</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L17">hc/lib/gfx/cornell.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L17">hc/lib/gfx/cornell.amni:17</a>
 </article>
 <article class="sym" id="FOV_Y">
 <h3><a href="#FOV_Y">FOV_Y</a> <i>constant</i></h3>
 <pre>let FOV_Y = 0.691111014;        // 2 atan(12.5 / 35)</pre>
 <p>Vertical field of view of the camera in radians, from a 35 mm lens on 25 mm film.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L18">hc/lib/gfx/cornell.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L18">hc/lib/gfx/cornell.amni:18</a>
 </article>
 <h2 id="lighting">Lighting <span class="n">8</span></h2>
 <article class="sym" id="LIGHT_X">
@@ -201,78 +201,78 @@ gfx imports.</pre></details>
 <pre>let LIGHT_X = 2.78; let LIGHT_Y = 5.388; let LIGHT_Z = 2.795</pre>
 <p>X, Y and Z constants placing the point light just below the ceiling light, in scene units.</p>
 <p class="note">point light 10 mm under the centre of the published ceiling light (343..213, 227..332)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L20">hc/lib/gfx/cornell.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L20">hc/lib/gfx/cornell.amni:20</a>
 </article>
 <article class="sym" id="LIGHT_RGB">
 <h3><a href="#LIGHT_RGB">LIGHT_RGB</a> <i>constant</i></h3>
 <pre>let LIGHT_RGB = 18.0;           // white, renderer units</pre>
 <p>Intensity of the white point light, in renderer units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L21">hc/lib/gfx/cornell.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L21">hc/lib/gfx/cornell.amni:21</a>
 </article>
 <article class="sym" id="LIGHT_RANGE">
 <h3><a href="#LIGHT_RANGE">LIGHT_RANGE</a> <i>constant</i></h3>
 <pre>let LIGHT_RANGE = 100.0</pre>
 <p>Distance in scene units beyond which the point light contributes nothing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L22">hc/lib/gfx/cornell.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L22">hc/lib/gfx/cornell.amni:22</a>
 </article>
 <article class="sym" id="AO_RADIUS">
 <h3><a href="#AO_RADIUS">AO_RADIUS</a> <i>constant</i></h3>
 <pre>let AO_RADIUS = 1.0;            // the GTAO test radius (AO_REF_RADIUS in gfx_smoke)</pre>
 <p>Radius in scene units used for the ambient occlusion test.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L23">hc/lib/gfx/cornell.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L23">hc/lib/gfx/cornell.amni:23</a>
 </article>
 <article class="sym" id="albedo_r">
 <h3><a href="#albedo_r">albedo_r</a> <i>function</i></h3>
 <pre>albedo_r(m int) real</pre>
 <p>Returns the red albedo component for a material id, where 1 is red, 2 is green and others are white.</p>
 <p class="note">materials: 0 white, 1 red (left wall, x = 556), 2 green (right wall, x = 0)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L25">hc/lib/gfx/cornell.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L25">hc/lib/gfx/cornell.amni:25</a>
 </article>
 <article class="sym" id="albedo_g">
 <h3><a href="#albedo_g">albedo_g</a> <i>function</i></h3>
 <pre>albedo_g(m int) real</pre>
 <p>Returns the green albedo component for a material id, where 1 is red, 2 is green and others are white.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L26">hc/lib/gfx/cornell.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L26">hc/lib/gfx/cornell.amni:26</a>
 </article>
 <article class="sym" id="albedo_b">
 <h3><a href="#albedo_b">albedo_b</a> <i>function</i></h3>
 <pre>albedo_b(m int) real</pre>
 <p>Returns the blue albedo component for a material id, where 1 is red, 2 is green and others are white.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L27">hc/lib/gfx/cornell.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L27">hc/lib/gfx/cornell.amni:27</a>
 </article>
 <article class="sym" id="falloff">
 <h3><a href="#falloff">falloff</a> <i>function</i></h3>
 <pre>falloff(d real) real</pre>
 <p>Returns the point-light attenuation at distance d, matching the renderer's range falloff.</p>
 <p class="note">the renderer's point-light falloff (range_falloff in shaders/lighting.glsl)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L29">hc/lib/gfx/cornell.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L29">hc/lib/gfx/cornell.amni:29</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (4)</summary>
 <article class="sym" id="TRI_FLOATS">
 <h3><a href="#TRI_FLOATS">TRI_FLOATS</a> <i>constant</i></h3>
 <pre>let TRI_FLOATS = 9</pre>
 <p>Number of floats stored per triangle in the triangle array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L34">hc/lib/gfx/cornell.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L34">hc/lib/gfx/cornell.amni:34</a>
 </article>
 <article class="sym" id="tri">
 <h3><a href="#tri">tri</a> <i>function</i></h3>
 <pre>tri(a0 real, a1 real, a2 real, b0 real, b1 real, b2 real, c0 real, c1 real, c2 real, m int)</pre>
 <p>Appends one triangle with the given vertices in millimeters, scaled to scene units, and its material.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L38">hc/lib/gfx/cornell.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L38">hc/lib/gfx/cornell.amni:38</a>
 </article>
 <article class="sym" id="quad">
 <h3><a href="#quad">quad</a> <i>function</i></h3>
 <pre>quad(a0 real, a1 real, a2 real, b0 real, b1 real, b2 real, c0 real, c1 real, c2 real, d0 real, d1 real, d2 real, m int)</pre>
 <p>Appends a quad given by four corners in order around its edge as two triangles.</p>
 <p class="note">quad a b c d (in order around the edge) as two triangles</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L45">hc/lib/gfx/cornell.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L45">hc/lib/gfx/cornell.amni:45</a>
 </article>
 <article class="sym" id="add_block">
 <h3><a href="#add_block">add_block</a> <i>function</i></h3>
 <pre>add_block(x0 real, z0 real, x1 real, z1 real, x2 real, z2 real, x3 real, z3 real, h real)</pre>
 <p>Appends a block with four top corners at height h and sides extending down to the floor.</p>
 <p class="note">block: top corners (x, z) at height h, sides down to the floor</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3b77a5b02d7e3ac9370a1fc7bb714b129e380eed/hc/lib/gfx/cornell.amni#L50">hc/lib/gfx/cornell.amni:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0b4dde39d271ba687c5820d971b84f234949c14d/hc/lib/gfx/cornell.amni#L50">hc/lib/gfx/cornell.amni:50</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
