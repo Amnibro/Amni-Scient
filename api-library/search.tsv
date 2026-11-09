@@ -5431,3 +5431,61 @@ envmap::load	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#load	Loads a
 envmap::texture	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#texture	Returns the prefiltered environment cubemap, or a black dummy cubemap when no environment is active.	pub
 envmap::spec_lod	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#spec_lod	Returns the mip level used for specular reflection sampling, the second-to-last level.	pub
 envmap::irr_lod	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#irr_lod	Returns the mip level holding the diffuse irradiance, the last level.	pub
+js::num_str	function	tiles/js	/api-library/helium/lib/tiles-js#num_str	Converts a real number to its JavaScript-style string form, handling NaN, Infinity, zero, and switching to exponent notation for very large or small values.	pub
+js::to_fixed	function	tiles/js	/api-library/helium/lib/tiles-js#to_fixed	Formats a real number with a fixed count of decimal digits, returning "NaN" for NaN and exponent-style output at 1e21 or above.	pub
+js::locale_string	function	tiles/js	/api-library/helium/lib/tiles-js#locale_string	Formats a real number with locale-style digit grouping and at most max_digits fractional digits, using ∞ symbols for infinities.	pub
+py::is_ws	function	tiles/py	/api-library/helium/lib/tiles-py#is_ws	Returns whether a byte is an ASCII whitespace character (space or tab through carriage return).	int
+py::strip_ws	function	tiles/py	/api-library/helium/lib/tiles-py#strip_ws	Returns a subslice of the text with leading and trailing whitespace removed.	int
+py::scan_digits	function	tiles/py	/api-library/helium/lib/tiles-py#scan_digits	Appends digits from a position to the output, skipping single underscores between digits, and returns the index where scanning stopped.	int
+py::int_of	function	tiles/py	/api-library/helium/lib/tiles-py#int_of	Parses text as a signed integer with Python rules, returning false if invalid or out of 64-bit range.	pub
+py::int_of	function	tiles/py	/api-library/helium/lib/tiles-py#int_of	Converts a JSON node to an integer, handling booleans, numbers and numeric strings, returning false if impossible.	pub
+py::float_of	function	tiles/py	/api-library/helium/lib/tiles-py#float_of	Parses text as a float with Python rules, accepting inf and nan, and returns false if invalid.	pub
+py::put_repr	function	tiles/py	/api-library/helium/lib/tiles-py#put_repr	Appends the Python repr of a string to the output buffer.	int
+py::put_bool	function	tiles/py	/api-library/helium/lib/tiles-py#put_bool	Appends Python-style True or False for a JSON boolean node to the output buffer.	int
+py::put_num	function	tiles/py	/api-library/helium/lib/tiles-py#put_num	Appends a JSON numeric node to the output using Python number formatting.	int
+py::repr_into	function	tiles/py	/api-library/helium/lib/tiles-py#repr_into	Recursively appends the Python repr of a JSON node, including arrays and objects, using a scratch stack.	int
+py::str_of	function	tiles/py	/api-library/helium/lib/tiles-py#str_of	Returns a JSON node as a string, using the raw text for strings and Python repr otherwise.	pub
+py::truthy	function	tiles/py	/api-library/helium/lib/tiles-py#truthy	Returns whether a JSON node is truthy under Python rules, such as empty strings and zero being false.	pub
+py::Hms	type	tiles/py	/api-library/helium/lib/tiles-py#Hms	Holds hours, minutes, seconds and microseconds parsed from an ISO time string.	int
+py::num_at	function	tiles/py	/api-library/helium/lib/tiles-py#num_at	Parses a fixed number of digits at a position, returning -1 if too short or non-digit.	int
+py::is_leap	function	tiles/py	/api-library/helium/lib/tiles-py#is_leap	Returns whether a year is a Gregorian leap year.	int
+py::month_days	function	tiles/py	/api-library/helium/lib/tiles-py#month_days	Returns the number of days in a given month of a given year.	int
+py::days_from_civil	function	tiles/py	/api-library/helium/lib/tiles-py#days_from_civil	Returns the day count since the Unix epoch for a civil year, month and day.	int
+py::iso_week_days	function	tiles/py	/api-library/helium/lib/tiles-py#iso_week_days	Converts an ISO year, week and weekday to days since the epoch, returning false if invalid.	int
+py::date_end	function	tiles/py	/api-library/helium/lib/tiles-py#date_end	Returns the end index of the date portion of an ISO string, or -1 if malformed.	int
+py::parse_date	function	tiles/py	/api-library/helium/lib/tiles-py#parse_date	Parses an ISO calendar, week or ordinal date prefix into days since the epoch, returning false if invalid.	int
+py::parse_hms	function	tiles/py	/api-library/helium/lib/tiles-py#parse_hms	Parses an ISO time string into hours, minutes, seconds and microseconds, returning false if malformed.	int
+py::fromisoformat	function	tiles/py	/api-library/helium/lib/tiles-py#fromisoformat	Parses an ISO 8601 date or datetime with optional time zone into microseconds since the epoch, returning false if invalid.	pub
+py::g_f	constant	tiles/py	/api-library/helium/lib/tiles-py#g_f	Global buffer holding the header text currently being parsed.	int
+py::g_pos	constant	tiles/py	/api-library/helium/lib/tiles-py#g_pos	Global read position within the header buffer.	int
+py::g_cm	constant	tiles/py	/api-library/helium/lib/tiles-py#g_cm	Global buffer accumulating comment text for the current address.	int
+py::g_ncm	constant	tiles/py	/api-library/helium/lib/tiles-py#g_ncm	Global count of comments collected for the current address.	int
+py::g_ws	constant	tiles/py	/api-library/helium/lib/tiles-py#g_ws	Global buffer holding whitespace skipped between address tokens.	int
+py::g_pname	constant	tiles/py	/api-library/helium/lib/tiles-py#g_pname	Global buffer accumulating the display name phrase of the current address.	int
+py::g_pn	constant	tiles/py	/api-library/helium/lib/tiles-py#g_pn	Global count of phrases collected in the current display name.	int
+py::g_pfl	constant	tiles/py	/api-library/helium/lib/tiles-py#g_pfl	Global length of the display name after the first phrase.	int
+py::is_special	function	tiles/py	/api-library/helium/lib/tiles-py#is_special	Returns whether a byte is an address special character such as parentheses, angle brackets, at sign or comma.	int
+py::is_atomend	function	tiles/py	/api-library/helium/lib/tiles-py#is_atomend	Returns whether a byte ends an address atom, being whitespace or a special character.	int
+py::is_phraseend	function	tiles/py	/api-library/helium/lib/tiles-py#is_phraseend	Returns whether a byte ends a phrase atom, treating periods as part of the phrase.	int
+py::is_blank	function	tiles/py	/api-library/helium/lib/tiles-py#is_blank	Returns whether a byte is blank, including whitespace and ASCII separator control characters.	int
+py::read_comment	function	tiles/py	/api-library/helium/lib/tiles-py#read_comment	Recursively reads a parenthesized comment, with nested comments and backslash escapes, into the output buffer.	int
+py::read_plain	function	tiles/py	/api-library/helium/lib/tiles-py#read_plain	Reads a quoted or bracketed section up to the end byte, handling backslash escapes, into the output buffer.	int
+py::ad_comment	function	tiles/py	/api-library/helium/lib/tiles-py#ad_comment	Reads a comment at the current position and appends it to the comment buffer.	int
+py::ad_goto	function	tiles/py	/api-library/helium/lib/tiles-py#ad_goto	Skips whitespace and comments, recording skipped spaces and tabs in the whitespace buffer.	int
+py::ad_atom	function	tiles/py	/api-library/helium/lib/tiles-py#ad_atom	Reads an atom at the current position into the output buffer, optionally stopping at phrase ends.	int
+py::ph_start	function	tiles/py	/api-library/helium/lib/tiles-py#ph_start	Marks the start of a new display name phrase, adding a separating space if needed.	int
+py::ph_end	function	tiles/py	/api-library/helium/lib/tiles-py#ph_end	Records the display name length after the first phrase finishes.	int
+py::ad_phrases	function	tiles/py	/api-library/helium/lib/tiles-py#ad_phrases	Reads display name phrases, including quoted strings and comments, into the global name buffer.	int
+py::ad_domain	function	tiles/py	/api-library/helium/lib/tiles-py#ad_domain	Reads a domain, including bracketed literals and comments, into the output buffer, clearing it if another at sign appears.	int
+py::pop_blank	function	tiles/py	/api-library/helium/lib/tiles-py#pop_blank	Removes the last recorded token from the address buffer if it contains only blank characters.	int
+py::ad_spec	function	tiles/py	/api-library/helium/lib/tiles-py#ad_spec	Reads an address specification of local part and optional domain into the output buffer.	int
+py::ad_route	function	tiles/py	/api-library/helium/lib/tiles-py#ad_route	Reads an angle-bracketed route address, skipping obsolete routing domains, and writes its address spec to the output.	int
+py::add_pair	function	tiles/py	/api-library/helium/lib/tiles-py#add_pair	Appends a name and address pair, leaving both empty if the address contains a bracket.	int
+py::ad_case_spec	function	tiles/py	/api-library/helium/lib/tiles-py#ad_case_spec	Parses a bare address spec and appends it with the collected comments as its name.	int
+py::ad_case_route	function	tiles/py	/api-library/helium/lib/tiles-py#ad_case_route	Parses a route address and appends it with the display name and comments as its name.	int
+py::ad_address	function	tiles/py	/api-library/helium/lib/tiles-py#ad_address	Recursively parses one address or group from the header and appends its name and address pairs.	int
+py::ad_parse	function	tiles/py	/api-library/helium/lib/tiles-py#ad_parse	Parses a whole header into lists of names and addresses, adding an empty pair if an address yields nothing.	int
+py::strip_esc	function	tiles/py	/api-library/helium/lib/tiles-py#strip_esc	Copies text to the output while removing backslash escapes before a given character.	int
+py::count_commas	function	tiles/py	/api-library/helium/lib/tiles-py#count_commas	Counts commas in a range of the text.	int
+py::expected_count	function	tiles/py	/api-library/helium/lib/tiles-py#expected_count	Estimates the number of addresses in a header by counting commas outside quoted strings.	int
+py::getaddresses	function	tiles/py	/api-library/helium/lib/tiles-py#getaddresses	Parses an address header into parallel lists of names and addresses, returning a single empty pair if malformed.	pub
