@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/commands">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/commands">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=eb7966b71e">
+<link rel="stylesheet" href="/api-library/lib.css?v=dc7446771e">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=eb7966b71e'; start({wasm: '/api-library/search.wasm?v=eb7966b71e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=dc7446771e'; start({wasm: '/api-library/search.wasm?v=dc7446771e'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -151,7 +151,7 @@
 <h3 id="gold-squeeze">gold squeeze</h3>
 <pre><code>gold squeeze file.gold check='command' [rounds=4]
 </code></pre>
-<p>Shortens the Gold as far as it will go. Each shorter version is rebuilt from scratch and kept only when your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
+<p>Shortens the Gold as far as it will go. Each shorter version is rebuilt from scratch and kept only when it rebuilds and your check command exits with 0. Use a check that also watches speed, so a shorter version can never make your program slower.</p>
 <h3 id="gold-compact">gold compact</h3>
 <pre><code>gold compact file.gold
 </code></pre>
@@ -177,6 +177,40 @@
 <pre><code>gold find pack,pack words to look up
 </code></pre>
 <p>Shows which functions a sentence would retrieve. Use it to check that a paragraph points Gold at the code you meant.</p>
+<h2 id="environment-variables">Environment variables</h2>
+<p>Environment variables change which models Gold uses and where it finds its tools.</p>
+<h3 id="models">Models</h3>
+<div class="lib-tw"><table>
+<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>GOLD_MODEL</code></td><td><code>sonnet</code></td><td>The model that translates and repairs. <code>granite</code> or <code>local:&lt;name&gt;</code> uses the local llama-server.</td></tr>
+<tr><td><code>GOLD_MODEL_HARD</code></td><td><code>opus</code></td><td>The model used for the last repair.</td></tr>
+<tr><td><code>GOLD_MODEL_PORT</code></td><td><code>opus</code></td><td>The model used by <code>gold port</code>.</td></tr>
+<tr><td><code>GOLD_MODEL_FALLBACK</code></td><td><code>sonnet</code></td><td>The model that takes over after the local model's repair rounds.</td></tr>
+<tr><td><code>GOLD_TRIES</code></td><td><code>4</code></td><td>How many repair rounds to try. The limit extends up to 10 while each round changes the errors.</td></tr>
+<tr><td><code>GOLD_K</code></td><td><code>70</code></td><td>An integer setting read at startup.</td></tr>
+</tbody></table></div>
+<h3 id="local-model">Local model</h3>
+<div class="lib-tw"><table>
+<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>GOLD_LOCAL_URL</code></td><td><code>http://127.0.0.1:18790</code></td><td>The address of the local llama-server.</td></tr>
+<tr><td><code>GOLD_LOCAL_UNIT</code></td><td><code>amni-bonsai.service</code></td><td>The unit used to start the local server.</td></tr>
+<tr><td><code>GOLD_LOCAL_WAIT</code></td><td><code>120</code></td><td>Seconds to wait for the GPU.</td></tr>
+<tr><td><code>GOLD_LOCAL_ROUNDS</code></td><td><code>2</code></td><td>How many repair rounds the local model gets before <code>GOLD_MODEL_FALLBACK</code> takes over.</td></tr>
+</tbody></table></div>
+<p>If the local model is unavailable, the whole build falls back to <code>GOLD_MODEL_FALLBACK</code>.</p>
+<h3 id="paths-and-tools">Paths and tools</h3>
+<div class="lib-tw"><table>
+<thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>GOLD_CACHE</code></td><td><code>~/.cache/gold</code></td><td>The cache folder.</td></tr>
+<tr><td><code>GOLD_ROOT</code></td><td>The installed resource folder if it contains <code>packs</code>, otherwise <code>~/ai/amni-lang/gold</code></td><td>The Gold root folder.</td></tr>
+<tr><td><code>GOLD_HELIUM</code></td><td><code>~/ai/amni-lang/helium-gold</code></td><td>The Helium folder.</td></tr>
+<tr><td><code>GOLD_HC</code></td><td><code>$GOLD_HELIUM/build/hc</code></td><td>The Helium compiler.</td></tr>
+<tr><td><code>GOLD_HC_LIB</code></td><td><code>$GOLD_HELIUM/hc/lib</code></td><td>The compiler's library folder.</td></tr>
+<tr><td><code>GOLD_VERBOSE</code></td><td>unset</td><td>Set to any non-empty value for verbose output.</td></tr>
+</tbody></table></div>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/gold/">&larr; Get started with Gold</a>
 <a class="next" href="/api-library/gold/format">File format &rarr;</a>
@@ -206,6 +240,7 @@
 <li><a href="#build-and-run">Build and run</a></li>
 <li><a href="#bring-in-existing-code">Bring in existing code</a></li>
 <li><a href="#work-with-packs">Work with packs</a></li>
+<li><a href="#environment-variables">Environment variables</a></li>
 </ul>
 </li>
 <li><a href="/api-library/gold/format">File format</a></li>

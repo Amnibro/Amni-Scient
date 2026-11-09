@@ -25,6 +25,26 @@ Work with packs	guide	Commands	/api-library/gold/commands#work-with-packs		pub
 main=	guide	Commands	/api-library/gold/commands#gold-pack	The product's root file, used to check new code in place.	pub
 test=	guide	Commands	/api-library/gold/commands#gold-pack	The command gold test runs.	pub
 skip=	guide	Commands	/api-library/gold/commands#gold-pack	A regular expression of files to leave out.	pub
+Environment variables	guide	Commands	/api-library/gold/commands#environment-variables		pub
+Models	guide	Commands	/api-library/gold/commands#models		pub
+GOLD_MODEL	guide	Commands	/api-library/gold/commands#models	The model that translates and repairs. granite or local:<name> uses the local llama-server.	pub
+GOLD_MODEL_HARD	guide	Commands	/api-library/gold/commands#models	The model used for the last repair.	pub
+GOLD_MODEL_PORT	guide	Commands	/api-library/gold/commands#models	The model used by gold port.	pub
+GOLD_MODEL_FALLBACK	guide	Commands	/api-library/gold/commands#models	The model that takes over after the local model's repair rounds.	pub
+GOLD_TRIES	guide	Commands	/api-library/gold/commands#models	How many repair rounds to try. The limit extends up to 10 while each round changes the errors.	pub
+GOLD_K	guide	Commands	/api-library/gold/commands#models	An integer setting read at startup.	pub
+Local model	guide	Commands	/api-library/gold/commands#local-model		pub
+GOLD_LOCAL_URL	guide	Commands	/api-library/gold/commands#local-model	The address of the local llama-server.	pub
+GOLD_LOCAL_UNIT	guide	Commands	/api-library/gold/commands#local-model	The unit used to start the local server.	pub
+GOLD_LOCAL_WAIT	guide	Commands	/api-library/gold/commands#local-model	Seconds to wait for the GPU.	pub
+GOLD_LOCAL_ROUNDS	guide	Commands	/api-library/gold/commands#local-model	How many repair rounds the local model gets before GOLD_MODEL_FALLBACK takes over.	pub
+Paths and tools	guide	Commands	/api-library/gold/commands#paths-and-tools		pub
+GOLD_CACHE	guide	Commands	/api-library/gold/commands#paths-and-tools	The cache folder.	pub
+GOLD_ROOT	guide	Commands	/api-library/gold/commands#paths-and-tools	The Gold root folder.	pub
+GOLD_HELIUM	guide	Commands	/api-library/gold/commands#paths-and-tools	The Helium folder.	pub
+GOLD_HC	guide	Commands	/api-library/gold/commands#paths-and-tools	The Helium compiler.	pub
+GOLD_HC_LIB	guide	Commands	/api-library/gold/commands#paths-and-tools	The compiler's library folder.	pub
+GOLD_VERBOSE	guide	Commands	/api-library/gold/commands#paths-and-tools	Set to any non-empty value for verbose output.	pub
 Commands	guide	Gold	/api-library/gold/commands	Every gold command and its options, with examples.	pub
 Header lines	guide	File format	/api-library/gold/format#header-lines		pub
 use a, b	guide	File format	/api-library/gold/format#header-lines	Packs or Helium library modules whose functions the code may call.	pub
@@ -42,6 +62,7 @@ File format	guide	Gold	/api-library/gold/format	Headers, paragraphs, exact code,
 GOLD_HELIUM	guide	Settings	/api-library/gold/settings	Which Helium checkout to check against.	pub
 GOLD_HC	guide	Settings	/api-library/gold/settings	The Helium compiler to use.	pub
 GOLD_HC_LIB	guide	Settings	/api-library/gold/settings	The Helium library folder to use.	pub
+GOLD_ROOT	guide	Settings	/api-library/gold/settings	Where Gold's files are found.	pub
 GOLD_MODEL	guide	Settings	/api-library/gold/settings	The model that writes the Helium. granite or local:<name> uses a local llama-server instead.	pub
 GOLD_MODEL_HARD	guide	Settings	/api-library/gold/settings	The model for the last repair round.	pub
 GOLD_MODEL_PORT	guide	Settings	/api-library/gold/settings	The model that writes Gold from existing code.	pub
@@ -53,7 +74,7 @@ GOLD_LOCAL_ROUNDS	guide	Settings	/api-library/gold/settings	How many repair roun
 GOLD_TRIES	guide	Settings	/api-library/gold/settings	Repair rounds. This extends up to 10 while each round changes the errors.	pub
 GOLD_K	guide	Settings	/api-library/gold/settings	How many product functions the model sees per build.	pub
 GOLD_CACHE	guide	Settings	/api-library/gold/settings	The cache folder.	pub
-GOLD_VERBOSE	guide	Settings	/api-library/gold/settings	Print each step.	pub
+GOLD_VERBOSE	guide	Settings	/api-library/gold/settings	Print each step. Set it to any non-empty value to turn it on.	pub
 Settings	guide	Gold	/api-library/gold/settings	The environment variables that choose models, compilers and limits.	pub
 Rust	guide	Dialects	/api-library/gold/dialects#rust		pub
 Python	guide	Dialects	/api-library/gold/dialects#python		pub

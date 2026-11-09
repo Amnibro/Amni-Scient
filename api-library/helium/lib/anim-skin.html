@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-skin">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-skin">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=eb7966b71e">
+<link rel="stylesheet" href="/api-library/lib.css?v=dc7446771e">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=eb7966b71e'; start({wasm: '/api-library/search.wasm?v=eb7966b71e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=dc7446771e'; start({wasm: '/api-library/search.wasm?v=dc7446771e'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/skin</h1>
 <p class="lib-lede">Skinning palettes and linear-blend skinning of glTF mesh data on the CPU.</p>
-<p class="lib-meta"><code>import anim.skin;</code> &middot; <code>anim::</code> &middot; 6 functions, 2 types, 5 constants &middot; <a href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.skin;</code> &middot; <code>anim::</code> &middot; 6 functions, 2 types, 5 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/skin: skinning palettes (model * inverse bind, as column-major 4x4)
 and linear-blend CPU skinning of a glTF mesh primitive. On the GPU the
 palette is what gets uploaded; the CPU path is for tests, tools and the
@@ -118,84 +118,84 @@ software renderer. Clean-room; see DESIGN.md.</pre></details>
 <h3><a href="#Palette">Palette</a> <i>type</i></h3>
 <pre>struct Palette { n i32, m M4[128] }</pre>
 <p>Holds the number of joints and their column-major skinning matrices, up to 128, ready for upload or CPU skinning.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L12">hc/lib/anim/skin.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L12">hc/lib/anim/skin.amni:12</a>
 </article>
 <article class="sym" id="palette">
 <h3><a href="#palette">palette</a> <i>function</i></h3>
 <pre>palette(sk Skeleton&amp;, m Model&amp;, out Palette&amp;)</pre>
 <p>Fills a palette with each joint's model matrix multiplied by its inverse bind matrix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L22">hc/lib/anim/skin.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L22">hc/lib/anim/skin.amni:22</a>
 </article>
 <article class="sym" id="skin_cpu">
 <h3><a href="#skin_cpu">skin_cpu</a> <i>function</i></h3>
 <pre>skin_cpu(mesh SkinMesh, pal Palette&amp;, out_p float3[&gt;..]&amp;, out_n float3[&gt;..]&amp;, out_t float4[&gt;..]&amp;)</pre>
 <p>Skins every vertex of a mesh on the CPU with linear blending, writing positions, normals and tangents to the output arrays.</p>
 <p class="note">Linear blend skinning of every vertex. The weighted 3x4 matrix A = sum_k w_k M_k is formed once per vertex (same arithmetic as skin.comp), then: p' = A p t' = normalize(A3 t.xyz), w' = w * sign(det A3) n' = normalize(cof(A3) n * sign(det A3)) where A3 is the upper 3x3 and cof(A3) = det(A3) * inverse-transpose(A3):</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L71">hc/lib/anim/skin.amni:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L71">hc/lib/anim/skin.amni:71</a>
 </article>
 <h2 id="skinmesh-loading">SkinMesh Loading <span class="n">3</span></h2>
 <article class="sym" id="SkinMesh">
 <h3><a href="#SkinMesh">SkinMesh</a> <i>type</i></h3>
 <pre>struct SkinMesh { base int, nv int, ok bool }</pre>
 <p>Handle to a loaded skin mesh, giving its vertex range in the shared banks and whether loading succeeded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L13">hc/lib/anim/skin.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L13">hc/lib/anim/skin.amni:13</a>
 </article>
 <article class="sym" id="skin_bank_clear">
 <h3><a href="#skin_bank_clear">skin_bank_clear</a> <i>function</i></h3>
 <pre>skin_bank_clear()</pre>
 <p>Clears all shared skin vertex banks, discarding every loaded skin mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L20">hc/lib/anim/skin.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L20">hc/lib/anim/skin.amni:20</a>
 </article>
 <article class="sym" id="glb_skin_mesh">
 <h3><a href="#glb_skin_mesh">glb_skin_mesh</a> <i>function</i></h3>
 <pre>glb_skin_mesh(mesh int, prim int) SkinMesh</pre>
 <p>Loads positions, normals, tangents, joints and weights of a glTF mesh primitive, returning a SkinMesh whose ok is false if required attributes are missing.</p>
 <p class="note">Loads POSITION/NORMAL/TANGENT/JOINTS_0/WEIGHTS_0 of mesh `mesh` primitive `prim` from the open GLB (after glb_skeleton, which maps skin joints).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L29">hc/lib/anim/skin.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L29">hc/lib/anim/skin.amni:29</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (7)</summary>
 <article class="sym" id="SK_P">
 <h3><a href="#SK_P">SK_P</a> <i>constant</i></h3>
 <pre>var SK_P float3[&gt;..]</pre>
 <p>Shared bank of bind-pose vertex positions for all loaded skin meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L14">hc/lib/anim/skin.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L14">hc/lib/anim/skin.amni:14</a>
 </article>
 <article class="sym" id="SK_N">
 <h3><a href="#SK_N">SK_N</a> <i>constant</i></h3>
 <pre>var SK_N float3[&gt;..]</pre>
 <p>Shared bank of bind-pose vertex normals for all loaded skin meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L15">hc/lib/anim/skin.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L15">hc/lib/anim/skin.amni:15</a>
 </article>
 <article class="sym" id="SK_T">
 <h3><a href="#SK_T">SK_T</a> <i>constant</i></h3>
 <pre>var SK_T float4[&gt;..];  // glTF TANGENT: xyz + handedness w (+-1)</pre>
 <p>Shared bank of bind-pose tangents, with xyz direction and handedness w of plus or minus one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L16">hc/lib/anim/skin.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L16">hc/lib/anim/skin.amni:16</a>
 </article>
 <article class="sym" id="SK_J">
 <h3><a href="#SK_J">SK_J</a> <i>constant</i></h3>
 <pre>var SK_J i32[&gt;..];     // 4 skeleton joint indices per vertex</pre>
 <p>Shared bank of four skeleton joint indices per vertex for all loaded skin meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L17">hc/lib/anim/skin.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L17">hc/lib/anim/skin.amni:17</a>
 </article>
 <article class="sym" id="SK_W">
 <h3><a href="#SK_W">SK_W</a> <i>constant</i></h3>
 <pre>var SK_W float4[&gt;..]</pre>
 <p>Shared bank of four normalized joint weights per vertex for all loaded skin meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L18">hc/lib/anim/skin.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L18">hc/lib/anim/skin.amni:18</a>
 </article>
 <article class="sym" id="skin_unit">
 <h3><a href="#skin_unit">skin_unit</a> <i>function</i></h3>
 <pre>skin_unit(v float3) float3</pre>
 <p>Returns a normalized copy of a vector, yielding zero instead of NaN for degenerate input.</p>
 <p class="note">normalize, with 0 for a degenerate vector (no NaN); skin.comp does the same</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L95">hc/lib/anim/skin.amni:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L95">hc/lib/anim/skin.amni:95</a>
 </article>
 <article class="sym" id="skin_unit4">
 <h3><a href="#skin_unit4">skin_unit4</a> <i>function</i></h3>
 <pre>skin_unit4(v float3, w f32) float4</pre>
 <p>Returns a normalized vector packed with the given handedness value as a float4.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/eb7966baedb1e27d9a4009aa921c980865b6361a/hc/lib/anim/skin.amni#L96">hc/lib/anim/skin.amni:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dc74467f295582a7e112ced98dceb9b0abd467c1/hc/lib/anim/skin.amni#L96">hc/lib/anim/skin.amni:96</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
