@@ -62,7 +62,7 @@ function paint(force){if(!G.on||!G.el)return;const c=cur(),n=STEPS.filter(s=>s.o
 const tick=()=>{if(!G.on)return;vaultPoll().then(()=>paint());};
 export function enter(){const A=G.A;if(G.on)return;G.on=true;A.ws!=='part'&&A.setWS('part');document.body.classList.add('guide-mode');$('#left').prepend(G.el);syncBtn();G.last=STEPS[cur()].k;G.iv=setInterval(tick,700);A.setTab('edit');vaultPoll().then(()=>paint(true));try{history.replaceState(null,'','#guide');}catch{}}
 export function exit(){if(!G.on)return;G.on=false;clearInterval(G.iv);unspot();document.body.classList.remove('guide-mode');syncBtn();try{location.hash==='#guide'&&history.replaceState(null,'',location.pathname+location.search);}catch{}}
-function syncBtn(){const b=$('#ws [data-guide]');if(!b)return;b.classList.toggle('on',G.on);b.setAttribute('aria-selected',String(G.on));G.on&&$$ws().forEach(x=>x!==b&&x.classList.remove('on'));!G.on&&G.A&&$$ws().forEach(x=>x.dataset.ws&&x.classList.toggle('on',x.dataset.ws===G.A.ws));}
+function syncBtn(){const b=$('#ws [data-guide]');if(!b)return;b.classList.toggle('on',G.on);b.setAttribute('aria-selected',String(G.on));G.on&&$$ws().forEach(x=>x!==b&&x.classList.remove('on'));!G.on&&G.A&&$$ws().forEach(x=>x.dataset.tab?x.classList.remove('on'):x.dataset.ws&&x.classList.toggle('on',x.dataset.ws===G.A.ws));}
 const $$ws=()=>[...document.querySelectorAll('#ws button')];
 export const state=()=>({on:G.on,step:STEPS[cur()].k,steps:STEPS.map(s=>({k:s.k,ok:s.ok(),st:s.st()}))});
 export function mount(A,S){G.A=A;G.S=S;document.head.append(Object.assign(document.createElement('style'),{id:'gd-css',textContent:CSS}));G.el=A.h('div',{id:'gleft','aria-label':'Guided design steps'});

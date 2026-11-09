@@ -14,7 +14,7 @@ try{
   const waitWS=async()=>{await p.evaluate(async()=>{const A=window.amnicad.API;await A.waitBuild();for(let i=0;i<300&&!(A.mesh&&A.mesh.idx&&A.mesh.idx.length);i++)await new Promise(r=>setTimeout(r,200));});};
   await p.evaluate(async()=>{const am=window.amnicad,A=am.API;am.loadDoc({name:'Sheet plate',units:'in',params:[],material:'steel1018',features:[{id:'a',type:'box',w:6,d:4,h:0.125},{id:'b',type:'hole',plane:'face',face:{side:'+Z'},d:0.25,thru:true,pts:[[-2.5,-1.5],[2.5,-1.5],[2.5,1.5],[-2.5,1.5]]}]});await A.waitBuild();for(let i=0;i<200&&!(A.mesh&&A.mesh.idx&&A.mesh.idx.length);i++)await new Promise(r=>setTimeout(r,200));});
   await tab('dies');
-  const tabs=await p.evaluate(()=>[...document.querySelectorAll('.rtabs button')].map(b=>b.textContent));ok(tabs.includes('Dies')&&tabs.includes('Mold'),'Dies tab sits next to Mold',tabs.join(','));
+  const tabs=await p.evaluate(()=>({r:[...document.querySelectorAll('.rtabs button')].map(b=>b.textContent),w:[...document.querySelectorAll('#ws button')].map(b=>b.textContent)}));ok(tabs.r.includes('Dies')&&!tabs.r.includes('Mold')&&tabs.w.includes('Mold'),'Dies stays in the side strip and Mold is in the top selector',tabs.r.join(',')+' | '+tabs.w.join(','));
   const head=await p.evaluate(()=>document.querySelector('#tab-dies h3').textContent);ok(head==='Cutting & Forming Dies','panel is named Cutting & Forming Dies');
   let r=await p.evaluate(()=>({svg:!!document.querySelector('#tab-dies #dz-svg svg'),price:document.querySelector('#tab-dies .dz-big b').textContent,txt:document.querySelector('#tab-dies').textContent}));
   ok(r.svg&&/\$/.test(r.price)&&/Rule total/.test(r.txt)&&/Crease channel/.test(r.txt),'steel rule panel renders the tuck-end carton die with cost and specs',r.price);

@@ -12,7 +12,7 @@ try{await sleep(700);b=await P.launch({executablePath:'/usr/bin/google-chrome-st
   const click=(sel,re)=>p.evaluate((s,r)=>{const e=[...document.querySelectorAll(s)].find(x=>new RegExp(r).test(x.textContent)&&!x.disabled);e&&e.click();return!!e;},sel,re);
   await p.goto(`http://127.0.0.1:${port}/cad/`);await sleep(4500);await hook();
   await p.evaluate(async()=>{const t=window.amnicad.templatesFor('in').find(x=>x.key==='enclosure');window.amnicad.loadDoc(t.doc,t.name);await API.waitBuild();});await sleep(800);
-  ok(await p.evaluate(()=>[...document.querySelectorAll('#ws button')].map(x=>x.textContent).join('|'))==='Part|Form|Assembly|Tooling','workspace toggle includes Tooling');
+  ok(await p.evaluate(()=>{const t=[...document.querySelectorAll('#ws button')].map(x=>x.textContent).join('|');return /^(Guided\|)?Part\|Form\|Assembly\|Tooling\|AI\|FEA\|CFD\|Mold\|Drawing\|Vault$/.test(t);}),'workspace toggle includes Tooling and the study tools');
   await p.click('#ws button[data-ws="tool"]');await sleep(700);
   ok(await p.evaluate(()=>document.body.classList.contains('tool-mode')&&!!document.getElementById('tleft')&&document.querySelector('#ws button.on').dataset.ws==='tool'&&/#tool/.test(location.hash)),'Tooling opens with its panels and #tool in the URL');
   ok(await until(async()=>{const s=await st();return s&&s.analysis&&!s.busy;},120000),'moldability analysis runs on entry');
