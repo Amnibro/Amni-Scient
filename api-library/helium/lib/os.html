@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/os">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/os">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a4">
+<link rel="stylesheet" href="/api-library/lib.css?v=e9dccb68e2">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a4'; start({wasm: '/api-library/search.wasm?v=a4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=e9dccb68e2'; start({wasm: '/api-library/search.wasm?v=e9dccb68e2'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,10 +103,11 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>os</h1>
 <p class="lib-lede">Files, folders, standard streams, command-line arguments, environment variables, clocks and child processes.</p>
-<p class="lib-meta"><code>import os;</code> &middot; 33 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he">Source</a></p>
+<p class="lib-meta"><code>import os;</code> &middot; 34 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#files">Files <span class="n">14</span></a></li>
 <li><a href="#process-and-streams">Process and Streams <span class="n">17</span></a></li>
+<li><a href="#time">Time <span class="n">1</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
 </ul>
 <h2 id="files">Files <span class="n">14</span></h2>
@@ -114,209 +115,216 @@
 <h3><a href="#read_file">read_file</a> <i>function</i></h3>
 <pre>read_file(path const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Reads a whole file into the output buffer, returning false if it could not be read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L6">hc/lib/os.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L6">hc/lib/os.he:6</a>
 </article>
 <article class="sym" id="write_file">
 <h3><a href="#write_file">write_file</a> <i>function</i></h3>
 <pre>write_file(path const byte[:], data const byte[:]) bool</pre>
 <p>Writes data to a file, replacing its contents, and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L7">hc/lib/os.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L7">hc/lib/os.he:7</a>
 </article>
 <article class="sym" id="write_file_atomic">
 <h3><a href="#write_file_atomic">write_file_atomic</a> <i>function</i></h3>
 <pre>write_file_atomic(path const byte[:], data const byte[:]) bool</pre>
 <p>Writes data to a file atomically so readers never see partial contents, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L8">hc/lib/os.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L8">hc/lib/os.he:8</a>
 </article>
 <article class="sym" id="append_file">
 <h3><a href="#append_file">append_file</a> <i>function</i></h3>
 <pre>append_file(path const byte[:], data const byte[:]) bool</pre>
 <p>Appends data to the end of a file and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L9">hc/lib/os.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L9">hc/lib/os.he:9</a>
 </article>
 <article class="sym" id="make_exec">
 <h3><a href="#make_exec">make_exec</a> <i>function</i></h3>
 <pre>make_exec(path const byte[:]) bool</pre>
 <p>Marks a file as executable and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L10">hc/lib/os.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L10">hc/lib/os.he:10</a>
 </article>
 <article class="sym" id="file_exists">
 <h3><a href="#file_exists">file_exists</a> <i>function</i></h3>
 <pre>file_exists(path const byte[:]) bool</pre>
 <p>Returns whether a file or directory exists at the given path.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L13">hc/lib/os.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L13">hc/lib/os.he:13</a>
 </article>
 <article class="sym" id="is_dir">
 <h3><a href="#is_dir">is_dir</a> <i>function</i></h3>
 <pre>is_dir(path const byte[:]) bool</pre>
 <p>Returns whether the path refers to a directory.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L14">hc/lib/os.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L14">hc/lib/os.he:14</a>
 </article>
 <article class="sym" id="file_mtime">
 <h3><a href="#file_mtime">file_mtime</a> <i>function</i></h3>
 <pre>file_mtime(path const byte[:]) int</pre>
 <p>Returns the modification time of a file as an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L15">hc/lib/os.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L15">hc/lib/os.he:15</a>
 </article>
 <article class="sym" id="rename_file">
 <h3><a href="#rename_file">rename_file</a> <i>function</i></h3>
 <pre>rename_file(src const byte[:], dst const byte[:]) bool</pre>
 <p>Renames or moves a file from the source path to the destination, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L16">hc/lib/os.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L16">hc/lib/os.he:16</a>
 </article>
 <article class="sym" id="delete_file">
 <h3><a href="#delete_file">delete_file</a> <i>function</i></h3>
 <pre>delete_file(path const byte[:]) bool</pre>
 <p>Deletes a file and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L17">hc/lib/os.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L17">hc/lib/os.he:17</a>
 </article>
 <article class="sym" id="make_dir">
 <h3><a href="#make_dir">make_dir</a> <i>function</i></h3>
 <pre>make_dir(path const byte[:]) bool</pre>
 <p>Creates a directory and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L18">hc/lib/os.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L18">hc/lib/os.he:18</a>
 </article>
 <article class="sym" id="delete_dir">
 <h3><a href="#delete_dir">delete_dir</a> <i>function</i></h3>
 <pre>delete_dir(path const byte[:]) bool</pre>
 <p>Deletes a directory and returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L19">hc/lib/os.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L19">hc/lib/os.he:19</a>
 </article>
 <article class="sym" id="list_dir">
 <h3><a href="#list_dir">list_dir</a> <i>function</i></h3>
 <pre>list_dir(path const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Lists the entries of a directory into the output buffer, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L20">hc/lib/os.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L20">hc/lib/os.he:20</a>
 </article>
 <article class="sym" id="resource_dir">
 <h3><a href="#resource_dir">resource_dir</a> <i>function</i></h3>
 <pre>resource_dir(out byte[&gt;..]&amp;) bool</pre>
 <p>Writes the path of the program's resource directory into the output buffer, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L21">hc/lib/os.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L21">hc/lib/os.he:21</a>
 </article>
 <h2 id="process-and-streams">Process and Streams <span class="n">17</span></h2>
 <article class="sym" id="write_stdout">
 <h3><a href="#write_stdout">write_stdout</a> <i>function</i></h3>
 <pre>write_stdout(text const byte[:])</pre>
 <p>Writes text to standard output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L24">hc/lib/os.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L24">hc/lib/os.he:24</a>
 </article>
 <article class="sym" id="write_stderr">
 <h3><a href="#write_stderr">write_stderr</a> <i>function</i></h3>
 <pre>write_stderr(text const byte[:])</pre>
 <p>Writes text to standard error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L25">hc/lib/os.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L25">hc/lib/os.he:25</a>
 </article>
 <article class="sym" id="flush_stdout">
 <h3><a href="#flush_stdout">flush_stdout</a> <i>function</i></h3>
 <pre>flush_stdout()</pre>
 <p>Flushes buffered standard output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L26">hc/lib/os.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L26">hc/lib/os.he:26</a>
 </article>
 <article class="sym" id="read_line">
 <h3><a href="#read_line">read_line</a> <i>function</i></h3>
 <pre>read_line(out byte[&gt;..]&amp;) bool</pre>
 <p>Reads one line from standard input into the output buffer, returning false on failure or end of input.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L27">hc/lib/os.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L27">hc/lib/os.he:27</a>
 </article>
 <article class="sym" id="read_bytes">
 <h3><a href="#read_bytes">read_bytes</a> <i>function</i></h3>
 <pre>read_bytes(count int, out byte[&gt;..]&amp;) int</pre>
 <p>Reads up to the requested number of bytes from standard input and returns the count read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L28">hc/lib/os.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L28">hc/lib/os.he:28</a>
 </article>
 <article class="sym" id="read_stdin">
 <h3><a href="#read_stdin">read_stdin</a> <i>function</i></h3>
 <pre>read_stdin(out byte[&gt;..]&amp;)</pre>
 <p>Reads all remaining standard input into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L29">hc/lib/os.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L29">hc/lib/os.he:29</a>
 </article>
 <article class="sym" id="env">
 <h3><a href="#env">env</a> <i>function</i></h3>
 <pre>env(name const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Reads an environment variable into the output buffer, returning false if it is not set.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L34">hc/lib/os.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L34">hc/lib/os.he:34</a>
 </article>
 <article class="sym" id="run_command">
 <h3><a href="#run_command">run_command</a> <i>function</i></h3>
 <pre>run_command(command const byte[:]) int</pre>
 <p>Runs a shell command as a child process and returns an integer result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L35">hc/lib/os.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L35">hc/lib/os.he:35</a>
 </article>
 <article class="sym" id="trim_memory">
 <h3><a href="#trim_memory">trim_memory</a> <i>function</i></h3>
 <pre>trim_memory() bool</pre>
 <p>Asks the runtime to release unused memory back to the system, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L36">hc/lib/os.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L36">hc/lib/os.he:36</a>
 </article>
 <article class="sym" id="args">
 <h3><a href="#args">args</a> <i>function</i></h3>
 <pre>args() byte[:][&gt;..]</pre>
 <p>Returns every command-line argument as a list of slices, with the program name first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L39">hc/lib/os.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L39">hc/lib/os.he:39</a>
 </article>
 <article class="sym" id="time_ns">
 <h3><a href="#time_ns">time_ns</a> <i>function</i></h3>
 <pre>time_ns() int</pre>
 <p>Returns the wall clock time since the epoch in nanoseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L48">hc/lib/os.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L48">hc/lib/os.he:48</a>
 </article>
 <article class="sym" id="clock_ns">
 <h3><a href="#clock_ns">clock_ns</a> <i>function</i></h3>
 <pre>clock_ns() int</pre>
 <p>Returns a monotonic clock reading in nanoseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L49">hc/lib/os.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L50">hc/lib/os.he:50</a>
 </article>
 <article class="sym" id="sleep_ms">
 <h3><a href="#sleep_ms">sleep_ms</a> <i>function</i></h3>
 <pre>sleep_ms(ms int)</pre>
 <p>Pauses the program for the given number of milliseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L50">hc/lib/os.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L51">hc/lib/os.he:51</a>
 </article>
 <article class="sym" id="random_seed">
 <h3><a href="#random_seed">random_seed</a> <i>function</i></h3>
 <pre>random_seed() uint</pre>
 <p>Returns a random unsigned 64-bit value suitable for seeding a random generator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L51">hc/lib/os.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L52">hc/lib/os.he:52</a>
 </article>
-<article class="sym" id="time">
-<h3><a href="#time">time</a> <i>function</i></h3>
+<article class="sym" id="time-2">
+<h3><a href="#time-2">time</a> <i>function</i></h3>
 <pre>time() real</pre>
 <p>Returns the wall clock time since the epoch in seconds as a real.</p>
 <p class="note">seconds as reals: wall clock since the epoch, and a monotonic clock</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L53">hc/lib/os.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L54">hc/lib/os.he:54</a>
 </article>
 <article class="sym" id="clock">
 <h3><a href="#clock">clock</a> <i>function</i></h3>
 <pre>clock() real</pre>
 <p>Returns a monotonic clock reading in seconds as a real.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L54">hc/lib/os.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L55">hc/lib/os.he:55</a>
 </article>
 <article class="sym" id="sleep">
 <h3><a href="#sleep">sleep</a> <i>function</i></h3>
 <pre>sleep(seconds real)</pre>
 <p>Pauses the program for the given number of seconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L55">hc/lib/os.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L56">hc/lib/os.he:56</a>
+</article>
+<h2 id="time">Time <span class="n">1</span></h2>
+<article class="sym" id="utc_offset">
+<h3><a href="#utc_offset">utc_offset</a> <i>function</i></h3>
+<pre>utc_offset(unix_seconds int) int</pre>
+<p>Returns the UTC offset in seconds for the given Unix timestamp, as used for converting to local time.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L49">hc/lib/os.he:49</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (3)</summary>
 <article class="sym" id="arg_count">
 <h3><a href="#arg_count">arg_count</a> <i>function</i></h3>
 <pre>arg_count() int</pre>
 <p>Returns the number of command-line arguments, used by the args function.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L32">hc/lib/os.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L32">hc/lib/os.he:32</a>
 </article>
 <article class="sym" id="arg">
 <h3><a href="#arg">arg</a> <i>function</i></h3>
 <pre>arg(index int, out byte[&gt;..]&amp;)</pre>
 <p>Appends the command-line argument at the given index to the output buffer, wrapped by args.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L33">hc/lib/os.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L33">hc/lib/os.he:33</a>
 </article>
 <article class="sym" id="ARGV_TEXT">
 <h3><a href="#ARGV_TEXT">ARGV_TEXT</a> <i>constant</i></h3>
 <pre>var ARGV_TEXT byte[&gt;..]</pre>
 <p>Backing buffer holding the text of every command-line argument for args.</p>
 <p class="note">every command-line argument, the program name first</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/38a5e04940d85e27e26cf55cc3c7c4d90800cb0c/hc/lib/os.he#L38">hc/lib/os.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/e9dccb67e1ee6fccd9867101bd63d88db3806170/hc/lib/os.he#L38">hc/lib/os.he:38</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -327,19 +335,20 @@
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core<span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data<span>182</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System<span>41</span></a>
+<li><a href="/api-library/helium/system">Files &amp; System<span>42</span></a>
 <ul>
 <li><a href="/api-library/helium/lib/os" class="on">os</a><ul class="lib-sub">
 <li><a href="#files">Files</a></li>
 <li><a href="#process-and-streams">Process and Streams</a></li>
+<li><a href="#time">Time</a></li>
 <li><a href="#internal">Internal helpers</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/lib/ffi">ffi</a></li>
 </ul>
 </li>
-<li><a href="/api-library/helium/graphics">Graphics<span>936</span></a></li>
-<li><a href="/api-library/helium/ui">User Interface<span>1241</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics<span>938</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface<span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio<span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation<span>252</span></a></li>
 <li><a href="/api-library/helium/physics">Physics &amp; Navigation<span>1105</span></a></li>

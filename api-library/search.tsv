@@ -42,9 +42,14 @@ File format	guide	Gold	/api-library/gold/format	Headers, paragraphs, exact code,
 GOLD_HELIUM	guide	Settings	/api-library/gold/settings	Which Helium checkout to check against.	pub
 GOLD_HC	guide	Settings	/api-library/gold/settings	The Helium compiler to use.	pub
 GOLD_HC_LIB	guide	Settings	/api-library/gold/settings	The Helium library folder to use.	pub
-GOLD_MODEL	guide	Settings	/api-library/gold/settings	The model that writes the Helium.	pub
+GOLD_MODEL	guide	Settings	/api-library/gold/settings	The model that writes the Helium. granite or local:<name> uses a local llama-server instead.	pub
 GOLD_MODEL_HARD	guide	Settings	/api-library/gold/settings	The model for the last repair round.	pub
 GOLD_MODEL_PORT	guide	Settings	/api-library/gold/settings	The model that writes Gold from existing code.	pub
+GOLD_MODEL_FALLBACK	guide	Settings	/api-library/gold/settings	Takes over from a local model after its repair rounds, or when it is unavailable.	pub
+GOLD_LOCAL_URL	guide	Settings	/api-library/gold/settings	Where the local llama-server listens.	pub
+GOLD_LOCAL_UNIT	guide	Settings	/api-library/gold/settings	The service that starts the local llama-server.	pub
+GOLD_LOCAL_WAIT	guide	Settings	/api-library/gold/settings	Seconds to wait for the GPU before using the local model.	pub
+GOLD_LOCAL_ROUNDS	guide	Settings	/api-library/gold/settings	How many repair rounds the local model gets.	pub
 GOLD_TRIES	guide	Settings	/api-library/gold/settings	Repair rounds. This extends up to 10 while each round changes the errors.	pub
 GOLD_K	guide	Settings	/api-library/gold/settings	How many product functions the model sees per build.	pub
 GOLD_CACHE	guide	Settings	/api-library/gold/settings	The cache folder.	pub
@@ -807,10 +812,11 @@ trim_memory	function	os	/api-library/helium/lib/os#trim_memory	Asks the runtime 
 ARGV_TEXT	constant	os	/api-library/helium/lib/os#ARGV_TEXT	Backing buffer holding the text of every command-line argument for args.	int
 args	function	os	/api-library/helium/lib/os#args	Returns every command-line argument as a list of slices, with the program name first.	pub
 time_ns	function	os	/api-library/helium/lib/os#time_ns	Returns the wall clock time since the epoch in nanoseconds.	pub
+utc_offset	function	os	/api-library/helium/lib/os#utc_offset	Returns the UTC offset in seconds for the given Unix timestamp, as used for converting to local time.	pub
 clock_ns	function	os	/api-library/helium/lib/os#clock_ns	Returns a monotonic clock reading in nanoseconds.	pub
 sleep_ms	function	os	/api-library/helium/lib/os#sleep_ms	Pauses the program for the given number of milliseconds.	pub
 random_seed	function	os	/api-library/helium/lib/os#random_seed	Returns a random unsigned 64-bit value suitable for seeding a random generator.	pub
-time	function	os	/api-library/helium/lib/os#time	Returns the wall clock time since the epoch in seconds as a real.	pub
+time	function	os	/api-library/helium/lib/os#time-2	Returns the wall clock time since the epoch in seconds as a real.	pub
 clock	function	os	/api-library/helium/lib/os#clock	Returns a monotonic clock reading in seconds as a real.	pub
 sleep	function	os	/api-library/helium/lib/os#sleep	Pauses the program for the given number of seconds.	pub
 ffi::cstr	function	ffi	/api-library/helium/lib/ffi#cstr	Reads a null-terminated C string at address p into the out buffer, returning false when it cannot.	int
@@ -1078,6 +1084,8 @@ gfx::inject_mouse	function	gfx	/api-library/helium/lib/gfx#inject_mouse	Queues a
 gfx::events_into	function	gfx	/api-library/helium/lib/gfx#events_into	Copies this frame's events into the output array and returns the total event count.	pub
 gfx::fingers	function	gfx	/api-library/helium/lib/gfx#fingers	Returns the touch fingers currently down, with their positions in screen pixels.	pub
 gfx::events	function	gfx	/api-library/helium/lib/gfx#events	Returns a copy of the events received during this frame.	pub
+gfx::display_scale	function	gfx	/api-library/helium/lib/gfx#display_scale	Returns the window's display scale factor, or 1.0 when no window exists or the scale is unavailable.	pub
+gfx::touch_first	function	gfx	/api-library/helium/lib/gfx#touch_first	Returns true when the platform is Android or iOS, where touch is the primary input.	pub
 gfx::text_input	function	gfx	/api-library/helium/lib/gfx#text_input	Turns text input events on or off for the window.	pub
 gfx::inject_text	function	gfx	/api-library/helium/lib/gfx#inject_text	Queues synthetic text input to be delivered as text events, returning false on failure.	pub
 gfx::scancode	function	gfx	/api-library/helium/lib/gfx#scancode	Returns the scancode for a key name, or 0 when no key has that name.	pub
@@ -1757,6 +1765,16 @@ cornell::surface_of	function	gfx/cornell	/api-library/helium/lib/gfx-cornell#sur
 cornell::RX	constant	gfx/cornell	/api-library/helium/lib/gfx-cornell#RX	X, Y and Z constants giving the room's size in millimeters.	pub
 cornell::build	function	gfx/cornell	/api-library/helium/lib/gfx-cornell#build	Builds the Cornell box triangles, clearing and refilling the triangle and material arrays.	pub
 ui::MAIN_THREAD	constant	ui	/api-library/helium/lib/ui#MAIN_THREAD	Constant marking that the UI module must be used from the main thread.	int
+ui::EDIT_SEEN	constant	ui	/api-library/helium/lib/ui#EDIT_SEEN	Tracks whether a text edit was seen this frame, used internally by the module's own input handling.	int
+ui::HELD	constant	ui	/api-library/helium/lib/ui#HELD	Holds the set of currently held inputs as integer triples, used only by this module's own code.	int
+ui::TD	constant	ui	/api-library/helium/lib/ui#TD	Internal flag recording touch-down state for the module's own touch handling.	int
+ui::TDRAG	constant	ui	/api-library/helium/lib/ui#TDRAG	Internal flag recording whether a touch is dragging, used by the module's own touch handling.	int
+ui::TPEND	constant	ui	/api-library/helium/lib/ui#TPEND	Internal flag recording a pending touch action, used by the module's own touch handling.	int
+ui::TX0	constant	ui	/api-library/helium/lib/ui#TX0	Internal touch start x coordinate used by the module's own touch handling.	int
+ui::TY0	constant	ui	/api-library/helium/lib/ui#TY0	Internal touch start y coordinate used by the module's own touch handling.	int
+ui::TLY	constant	ui	/api-library/helium/lib/ui#TLY	Internal last touch y coordinate used by the module's own touch handling.	int
+ui::TV	constant	ui	/api-library/helium/lib/ui#TV	Internal touch velocity value used by the module's own touch handling.	int
+ui::TT0	constant	ui	/api-library/helium/lib/ui#TT0	Internal touch start time used by the module's own touch handling.	int
 ui::Context	type	ui	/api-library/helium/lib/ui#Context	Handle type identifying a UI context that holds windows, widgets, and style state.	pub
 ui::FontAtlas	type	ui	/api-library/helium/lib/ui#FontAtlas	Handle type identifying a font atlas that collects fonts and bakes them into a texture.	pub
 ui::Font	type	ui	/api-library/helium/lib/ui#Font	Handle type identifying a font added to a font atlas.	pub
@@ -1836,7 +1854,7 @@ ui::builtin	function	ui	/api-library/helium/lib/ui#builtin	Returns a built-in ra
 ui::glyph_ranges_into	function	ui	/api-library/helium/lib/ui#glyph_ranges_into	Copies the glyph ranges for a RANGE_* constant into a buffer and returns the count.	pub
 ui::glyph_ranges	function	ui	/api-library/helium/lib/ui#glyph_ranges	Returns the glyph range pairs for a RANGE_* constant.	pub
 ui::be	function	ui	/api-library/helium/lib/ui#be	Reads a big-endian 32-bit value from font data.	int
-ui::plausible	function	ui	/api-library/helium/lib/ui#plausible	Checks whether data looks like a valid TrueType or OpenType font.	int
+ui::plausible	function	ui	/api-library/helium/lib/ui#plausible	Checks whether font data bytes hold a valid TrueType or OpenType font at the given index, returning false otherwise.	int
 ui::proggy	function	ui	/api-library/helium/lib/ui#proggy	Returns the decompressed built-in default font data.	int
 ui::add_font	function	ui	/api-library/helium/lib/ui#add_font	Validates arguments and adds a font from a built-in, memory, or file source to an atlas.	int
 ui::add_default_font	function	ui	/api-library/helium/lib/ui#add_default_font	Adds the built-in default font to an atlas at a pixel height, with optional config and glyph ranges.	pub
@@ -1850,6 +1868,7 @@ ui::add_font_from_file	function	ui	/api-library/helium/lib/ui#add_font_from_file
 ui::add_font_from_file	function	ui	/api-library/helium/lib/ui#add_font_from_file	Adds a font loaded from a file to a font atlas using default configuration and returns it.	pub
 ui::order	function	ui	/api-library/helium/lib/ui#order	Returns the font configuration indexes of all fonts in the atlas, in font order.	int
 ui::pow2	function	ui	/api-library/helium/lib/ui#pow2	Rounds an integer up to the next power of two.	int
+ui::kadj	function	ui	/api-library/helium/lib/ui#kadj	Returns the kerning adjustment in pixels between two baked glyph indices, or zero when they come from different fonts.	int
 ui::find_in	function	ui	/api-library/helium/lib/ui#find_in	Returns the glyph index for a codepoint within a font, or the fallback glyph if absent.	int
 ui::nk_bake	function	ui	/api-library/helium/lib/ui#nk_bake	Packs and renders all configured fonts into the atlas bitmap, returning false if a font fails to load or pack.	int
 ui::resize_sizes	function	ui	/api-library/helium/lib/ui#resize_sizes	Rescales every configured font size in the atlas from its stored original size.	int
@@ -1904,7 +1923,7 @@ ui::SCOPE_ENDS	constant	ui	/api-library/helium/lib/ui#SCOPE_ENDS	Table of functi
 ui::NULL_RECT	constant	ui	/api-library/helium/lib/ui#NULL_RECT	Rectangle covering a very large area, used as an effectively unbounded clip region.	int
 ui::MB	type	ui	/api-library/helium/lib/ui#MB	Internal state of one mouse button: held, click count and position.	int
 ui::KY	type	ui	/api-library/helium/lib/ui#KY	Internal state of one keyboard key: held and click count.	int
-ui::Inp	type	ui	/api-library/helium/lib/ui#Inp	Internal per-frame input state holding mouse, key and text data.	int
+ui::Inp	type	ui	/api-library/helium/lib/ui#Inp	Internal record of per-frame input state: mouse buttons, pointer position, scroll, keys and typed text.	int
 ui::CB	type	ui	/api-library/helium/lib/ui#CB	Internal command buffer range with its clip rectangle.	int
 ui::PB	type	ui	/api-library/helium/lib/ui#PB	Internal range of commands belonging to a panel.	int
 ui::Pop	type	ui	/api-library/helium/lib/ui#Pop	Internal state of a popup window, including its buffer and header.	int
@@ -1968,6 +1987,7 @@ ui::input_motion	function	ui	/api-library/helium/lib/ui#input_motion	Records the
 ui::input_key	function	ui	/api-library/helium/lib/ui#input_key	Records a key press or release during the input phase.	pub
 ui::input_button	function	ui	/api-library/helium/lib/ui#input_button	Records a mouse button press or release at a position during the input phase.	pub
 ui::input_scroll	function	ui	/api-library/helium/lib/ui#input_scroll	Adds a scroll amount to the frame's scroll delta, rejecting non-finite values.	pub
+ui::input_scroll_px	function	ui	/api-library/helium/lib/ui#input_scroll_px	Adds a pixel-based scroll amount, divided by the context scale, to the pending scroll; must be called between input begin and end.	pub
 ui::input_char	function	ui	/api-library/helium/lib/ui#input_char	Adds a single byte character as typed text during the input phase.	pub
 ui::input_glyph	function	ui	/api-library/helium/lib/ui#input_glyph	Adds a UTF-8 encoded glyph of one to four bytes as typed text during the input phase.	pub
 ui::input_unicode	function	ui	/api-library/helium/lib/ui#input_unicode	Adds a Unicode code point as typed text during the input phase.	pub
@@ -2244,6 +2264,8 @@ ui::push_style	function	ui	/api-library/helium/lib/ui#push_style	Validates a sty
 ui::pop_style	function	ui	/api-library/helium/lib/ui#pop_style	Restores the most recently pushed style, returning false if none was pushed.	pub
 ui::style_default	function	ui	/api-library/helium/lib/ui#style_default	Resets the context's style to the default color table.	pub
 ui::style_from_table	function	ui	/api-library/helium/lib/ui#style_from_table	Rebuilds the context's style from a table of exactly 32 colors, one per color slot.	pub
+ui::style_shape	function	ui	/api-library/helium/lib/ui#style_shape	Sets button and widget corner rounding and spacing, scaling paddings from the spacing; rounding must be >= 0 and spacing > 0.	pub
+ui::style_button_text	function	ui	/api-library/helium/lib/ui#style_button_text	Sets the button's normal, hover and active text colors to one color.	pub
 ui::default_color_table_into	function	ui	/api-library/helium/lib/ui#default_color_table_into	Copies the default color table into the output buffer and returns the number of colors copied.	pub
 ui::style_get_color_by_name_into	function	ui	/api-library/helium/lib/ui#style_get_color_by_name_into	Copies the name of a color slot into the output buffer and returns the bytes copied, or 0 if invalid.	pub
 ui::style_font_ok	function	ui	/api-library/helium/lib/ui#style_font_ok	Checks that a font handle is valid and its atlas is baked, reporting misuse otherwise.	int
@@ -2403,6 +2425,11 @@ ui::label	function	ui	/api-library/helium/lib/ui#label	Draws a single-line text 
 ui::label_colored	function	ui	/api-library/helium/lib/ui#label_colored	Draws a single-line text label with the given alignment and color in the next widget space.	pub
 ui::label_wrap	function	ui	/api-library/helium/lib/ui#label_wrap	Draws word-wrapped text in the next widget space using the default text color.	pub
 ui::label_colored_wrap	function	ui	/api-library/helium/lib/ui#label_colored_wrap	Draws word-wrapped text in the next widget space using the given color.	pub
+ui::font_height	function	ui	/api-library/helium/lib/ui#font_height	Returns the line height of a font, or 0 if the font handle is invalid.	pub
+ui::style_text_padding	function	ui	/api-library/helium/lib/ui#style_text_padding	Sets the padding around text labels and returns the previous padding.	pub
+ui::row_spacing	function	ui	/api-library/helium/lib/ui#row_spacing	Returns the spacing between widgets and rows in the context's window style.	pub
+ui::group_padding	function	ui	/api-library/helium/lib/ui#group_padding	Returns the padding inside groups from the context's window style.	pub
+ui::wrap_height	function	ui	/api-library/helium/lib/ui#wrap_height	Returns the height needed to draw text wrapped to a width with a font, or 0 if invalid.	pub
 ui::image_w	function	ui	/api-library/helium/lib/ui#image_w	Places an image widget with the given tint, reporting errors under the given calling function name.	int
 ui::image	function	ui	/api-library/helium/lib/ui#image	Draws an image in the next widget space without tinting.	pub
 ui::image_color	function	ui	/api-library/helium/lib/ui#image_color	Draws an image in the next widget space tinted with the given color.	pub
@@ -2551,6 +2578,7 @@ ui::ed_fok	function	ui	/api-library/helium/lib/ui#ed_fok	Reports whether a chara
 ui::ed_clear	function	ui	/api-library/helium/lib/ui#ed_clear	Resets the buffer's cursor, selection, undo history and scroll, and applies multiline mode, filter and fit settings.	int
 ui::ed_bounds	function	ui	/api-library/helium/lib/ui#ed_bounds	Measures the width and height of a text range using a font, with optional stop at the first newline.	int
 ui::ed_row	function	ui	/api-library/helium/lib/ui#ed_row	Measures the row of text starting at a character position.	int
+ui::kw	function	ui	/api-library/helium/lib/ui#kw	Returns the pixel width of a glyph run in a text slice, kerning-adjusted against the previous character when one exists.	int
 ui::ed_gw	function	ui	/api-library/helium/lib/ui#ed_gw	Returns the width of one character of a line using a font.	int
 ui::ed_locate	function	ui	/api-library/helium/lib/ui#ed_locate	Returns the character index closest to a point within the laid-out text.	int
 ui::ed_click	function	ui	/api-library/helium/lib/ui#ed_click	Moves the cursor to a clicked point and collapses the selection there.	int
@@ -2831,6 +2859,7 @@ ui::render	function	ui	/api-library/helium/lib/ui#render	Renders the context's U
 ui::render	function	ui	/api-library/helium/lib/ui#render	Renders the context's UI onto the screen with the default conversion configuration.	pub
 ui::gfx_key	function	ui	/api-library/helium/lib/ui#gfx_key	Returns the cached scancode for the named key at the given index.	int
 ui::input_gfx_key	function	ui	/api-library/helium/lib/ui#input_gfx_key	Translates a graphics key event into UI key input, handling clipboard paste and shortcuts.	int
+ui::touch_cancel	function	ui	/api-library/helium/lib/ui#touch_cancel	Cancels the in-progress left-button touch press on a context, releasing it and moving its pointer far offscreen.	pub
 ui::input_from_gfx	function	ui	/api-library/helium/lib/ui#input_from_gfx	Feeds all pending graphics events, clipboard, text and timing into the context for a frame.	pub
 hud::Node	type	gfx/hud	/api-library/helium/lib/gfx-hud#Node	Struct holding one HUD node's layout, style, transform, text and focus properties, plus its computed rectangle.	pub
 hud::ROW	constant	gfx/hud	/api-library/helium/lib/gfx-hud#ROW	Constants selecting a node's main direction, either row or column.	pub
@@ -2940,7 +2969,8 @@ touch::hyp	function	gfx/touch	/api-library/helium/lib/gfx-touch#hyp	Returns the 
 touch::reset	function	gfx/touch	/api-library/helium/lib/gfx-touch#reset	Clears queued gestures and returns the recognizer to its idle state.	pub
 touch::frame	function	gfx/touch	/api-library/helium/lib/gfx-touch#frame	Processes one frame of finger data at time t, updating recognizer state and queuing any recognized gestures.	pub
 ttf::Info	type	ttf	/api-library/helium/lib/ttf#Info	Holds the font data bytes and cached table offsets used by this module's TrueType parsing code.	int
-ttf::V	type	ttf	/api-library/helium/lib/ttf#V	Represents one outline vertex with its type, position and control point for rasterizing.	int
+ttf::V	type	ttf	/api-library/helium/lib/ttf#V	Raw outline vertex record used internally for glyph shapes, with a type tag and coordinates plus control points.	int
+ttf::Cs	type	ttf	/api-library/helium/lib/ttf#Cs	Internal cursor state for decoding CFF charstrings, tracking current point, contour start and accumulated vertices.	int
 ttf::Pt	type	ttf	/api-library/helium/lib/ttf#Pt	Represents a floating-point point used while flattening curves into line segments.	int
 ttf::E	type	ttf	/api-library/helium/lib/ttf#E	Represents a directed edge used by the scanline rasterizer, with a flag for reversed direction.	int
 ttf::A	type	ttf	/api-library/helium/lib/ttf#A	Represents an active edge tracked by the scanline rasterizer between scanlines.	int
@@ -2956,7 +2986,9 @@ ttf::ru16	function	ttf	/api-library/helium/lib/ttf#ru16	Reads an unsigned big-en
 ttf::w16	function	ttf	/api-library/helium/lib/ttf#w16	Wraps an integer into the signed 16-bit range.	int
 ttf::rs16	function	ttf	/api-library/helium/lib/ttf#rs16	Reads a signed big-endian 16-bit value from font data at an offset.	int
 ttf::ru32	function	ttf	/api-library/helium/lib/ttf#ru32	Reads an unsigned big-endian 32-bit value from font data at an offset.	int
-ttf::find_table	function	ttf	/api-library/helium/lib/ttf#find_table	Returns the offset of the table with the given four-character tag, or 0 if absent.	int
+ttf::font_offset	function	ttf	/api-library/helium/lib/ttf#font_offset	Returns the byte offset of the font at the given index in a font file, or -1 if invalid.	pub
+ttf::font_count	function	ttf	/api-library/helium/lib/ttf#font_count	Returns how many fonts a file contains, counting collections, or 0 if the data is too short.	pub
+ttf::find_table	function	ttf	/api-library/helium/lib/ttf#find_table	Returns the byte offset of the table with the given four-character tag, or 0 if absent.	int
 ttf::init	function	ttf	/api-library/helium/lib/ttf#init	Parses the font tables and character map, returning false if a required table or usable map is missing.	pub
 ttf::glyph_index	function	ttf	/api-library/helium/lib/ttf#glyph_index	Returns the glyph index for a Unicode code point, or 0 if the font has no glyph for it.	pub
 ttf::gofs	function	ttf	/api-library/helium/lib/ttf#gofs	Returns the offset of a glyph's data in the glyf table, or -1 if the glyph is empty or invalid.	int
@@ -2970,6 +3002,7 @@ ttf::xf	function	ttf	/api-library/helium/lib/ttf#xf	Applies one row of a composi
 ttf::shape	function	ttf	/api-library/helium/lib/ttf#shape	Returns the outline vertices for a glyph, including composite glyphs, or an empty array if it has none.	pub
 ttf::bbox	function	ttf	/api-library/helium/lib/ttf#bbox	Returns a glyph's pixel bounding box for the given scales and offsets, with y flipped downward.	pub
 ttf::curve	function	ttf	/api-library/helium/lib/ttf#curve	Recursively flattens a quadratic curve into line points, stopping at a flatness threshold or depth limit.	int
+ttf::cubic	function	ttf	/api-library/helium/lib/ttf#cubic	Flattens a cubic Bézier curve into line points by recursive subdivision, appending the results to a point list.	int
 ttf::lt	function	ttf	/api-library/helium/lib/ttf#lt	Returns whether one edge starts above another, used to order edges.	int
 ttf::qs	function	ttf	/api-library/helium/lib/ttf#qs	Quicksorts a range of edges by starting y, leaving small partitions for insertion sort.	int
 ttf::sort_edges	function	ttf	/api-library/helium/lib/ttf#sort_edges	Sorts edges by starting y using quicksort followed by insertion sort.	int
@@ -2997,6 +3030,31 @@ ttf::bits_f	function	ttf	/api-library/helium/lib/ttf#bits_f	Declares a C binding
 ttf::rword	function	ttf	/api-library/helium/lib/ttf#rword	Reads a 32-bit word from the packed-rectangle array at a byte offset as if it were a flat buffer.	int
 ttf::pc_at	function	ttf	/api-library/helium/lib/ttf#pc_at	Returns the packed glyph record at an index, decoding it from the rectangle array when beyond the stored records.	int
 ttf::render	function	ttf	/api-library/helium/lib/ttf#render	Renders packed glyphs into the atlas and fills their records, returning false if any glyph failed to pack.	pub
+ttf::cov	function	ttf	/api-library/helium/lib/ttf#cov	Looks up a glyph in a coverage table and returns its coverage index, or -1 if absent.	int
+ttf::cls	function	ttf	/api-library/helium/lib/ttf#cls	Returns the class value of a glyph from a class definition table, or 0 if not listed.	int
+ttf::vsz	function	ttf	/api-library/helium/lib/ttf#vsz	Returns the byte size of a positioning value record based on its format flags.	int
+ttf::xadv	function	ttf	/api-library/helium/lib/ttf#xadv	Reads the horizontal advance adjustment from a positioning value record, or 0 if the format has none.	int
+ttf::kern_setup	function	ttf	/api-library/helium/lib/ttf#kern_setup	Locates kerning tables and collects pair adjustment subtables from the font for later kerning lookups.	int
+ttf::pair	function	ttf	/api-library/helium/lib/ttf#pair	Looks up a glyph pair in a pair adjustment subtable, returning the kerning value and whether the pair was found.	int
+ttf::legacy	function	ttf	/api-library/helium/lib/ttf#legacy	Sums horizontal kerning values for a glyph pair from a legacy kern table, or 0 if the format is unsupported.	int
+ttf::kern_raw	function	ttf	/api-library/helium/lib/ttf#kern_raw	Computes the uncached kerning adjustment for a glyph pair, using pair adjustment subtables or the legacy table.	int
+ttf::kern	function	ttf	/api-library/helium/lib/ttf#kern	Returns the kerning adjustment in font units between two glyphs, caching results, or 0 if either glyph is not positive.	pub
+ttf::rofs	function	ttf	/api-library/helium/lib/ttf#rofs	Reads a big-endian unsigned integer of the given byte size at an offset.	int
+ttf::ix_item	function	ttf	/api-library/helium/lib/ttf#ix_item	Returns the data offset and byte length of an item in a CFF index.	int
+ttf::ix_end	function	ttf	/api-library/helium/lib/ttf#ix_end	Returns the offset just past the end of a CFF index.	int
+ttf::dnum	function	ttf	/api-library/helium/lib/ttf#dnum	Decodes a CFF dictionary integer operand and returns its value with the offset of the next byte.	int
+ttf::dict_get	function	ttf	/api-library/helium/lib/ttf#dict_get	Collects the operands of a given operator from a CFF dictionary, returning an empty list if the key is missing.	int
+ttf::priv_subrs	function	ttf	/api-library/helium/lib/ttf#priv_subrs	Returns the offset of the local subroutine index from a CFF private dictionary, or 0 if none.	int
+ttf::cff_init	function	ttf	/api-library/helium/lib/ttf#cff_init	Initializes CFF data for a font by locating charstrings, subroutines and font dictionaries, returning false if unsupported or malformed.	int
+ttf::subr	function	ttf	/api-library/helium/lib/ttf#subr	Finds a subroutine in a CFF index after applying the bias, returning its offset and length, or zero if invalid.	int
+ttf::cid_subrs	function	ttf	/api-library/helium/lib/ttf#cid_subrs	Returns the local subroutine offset for a glyph in a CID-keyed CFF font, or 0 if none is selected.	int
+ttf::cv	function	ttf	/api-library/helium/lib/ttf#cv	Appends a vertex with coordinates wrapped to 16 bits to a charstring cursor's vertex list.	int
+ttf::cclose	function	ttf	/api-library/helium/lib/ttf#cclose	Closes the current CFF contour with a line back to its start if the pen is not already there.	int
+ttf::cmove	function	ttf	/api-library/helium/lib/ttf#cmove	Starts a new contour by moving the pen by a relative offset after closing the previous one.	int
+ttf::cline	function	ttf	/api-library/helium/lib/ttf#cline	Adds a line segment from the current point by a relative offset.	int
+ttf::ccurve	function	ttf	/api-library/helium/lib/ttf#ccurve	Adds a cubic curve from relative control point and end offsets, updating the current point.	int
+ttf::cff_shape	function	ttf	/api-library/helium/lib/ttf#cff_shape	Decodes a CFF glyph's charstring into outline vertices, returning an empty list if the data is malformed.	int
+ttf::cff_box	function	ttf	/api-library/helium/lib/ttf#cff_box	Computes a glyph's bounding box from its CFF outline including cubic control points, returning false if the glyph has no outline.	int
 audio::MAIN_THREAD	constant	audio	/api-library/helium/lib/audio#MAIN_THREAD	Flag marking that the audio module must be used from the main thread.	int
 audio::fmod	function	audio	/api-library/helium/lib/audio#fmod	Binds C fmod to compute a floating-point remainder for wrapping playback positions.	int
 audio::MAX_SOUNDS	constant	audio	/api-library/helium/lib/audio#MAX_SOUNDS	Constant for the maximum number of sound slots, 256, that can be loaded at once.	int

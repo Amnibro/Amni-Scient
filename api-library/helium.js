@@ -113,7 +113,7 @@ export async function start(o = {}) {
     he_js_import: (u, un, tag) => { const id = nid++; import(S(u, un)).then(m => jsdone(id, tag, m), e => jsdone(id, tag, null, e)); return id; },
     he_js_call: (h, m, mn, a, an, tag) => { const id = nid++, o = H[h], ms = S(m, mn), i = ms.lastIndexOf('.'), args = revive(JSON.parse(S(a, an) || '[]')); Promise.resolve().then(() => Reflect.apply(ms ? path(o, ms) : o, i < 0 ? o : path(o, ms.slice(0, i)), args)).then(v => jsdone(id, tag, v), e => jsdone(id, tag, null, e)); return id; },
     he_js_result: (id, r) => { const v = jsres.get(id); if (!v) return 0; put(r, v.json ?? v.err ?? ''); return v.err === undefined ? 1 : 0; }, he_js_handle: id => jsres.get(id)?.h || 0,
-    he_gl_init: (c, aa, al) => { gl = el(c)?.getContext('webgl2', { antialias: !!aa, alpha: !!al, premultipliedAlpha: false, preserveDrawingBuffer: false, xrCompatible: !!o.xr }); return gl ? 1 : 0; },
+    he_gl_init: (c, aa, al) => { gl = el(c)?.getContext('webgl2', { antialias: !!aa, alpha: !!al, premultipliedAlpha: false, preserveDrawingBuffer: false }); return gl ? 1 : 0; },
     he_gl_viewport: (x, y, w, h) => gl.viewport(x, y, w, h), he_gl_clear_color: (r, g, b, a) => gl.clearColor(r, g, b, a), he_gl_clear: m => gl.clear(m),
     he_gl_enable: c => gl.enable(c), he_gl_disable: c => gl.disable(c), he_gl_blend_func: (s, d) => gl.blendFunc(s, d), he_gl_blend_func_sep: (a, b, c, d) => gl.blendFuncSeparate(a, b, c, d),
     he_gl_depth_mask: on => gl.depthMask(!!on), he_gl_depth_func: f => gl.depthFunc(f),
@@ -132,9 +132,6 @@ export async function start(o = {}) {
     he_gl_create_texture: () => nh(gl.createTexture()), he_gl_bind_texture: (t, x) => gl.bindTexture(t, H[x] || null), he_gl_active_texture: u => gl.activeTexture(u),
     he_gl_tex_rgba: (w, h, p, n) => gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, B(p, n)), he_gl_tex_param: (t, n, v) => gl.texParameteri(t, n, v), he_gl_generate_mipmap: t => gl.generateMipmap(t),
     he_gl_delete: h => { const v = H[h]; if (!v || !gl) return; for (const k of ['Buffer', 'Shader', 'Program', 'Texture', 'VertexArray']) if (v instanceof globalThis['WebGL' + k + (k === 'VertexArray' ? 'Object' : '')]) gl['delete' + k](v); rel(h); },
-    he_gl_tex_image: (p, n, mp, mn) => { const t = gl.createTexture(), h = nh(t); gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([200, 200, 200, 255])); createImageBitmap(new Blob([B(p, n).slice()], { type: S(mp, mn) || 'image/png' })).then(i => { if (H[h] !== t) return; gl.bindTexture(gl.TEXTURE_2D, t); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, gl.RGBA, gl.UNSIGNED_BYTE, i); gl.generateMipmap(gl.TEXTURE_2D); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); i.close?.(); }).catch(() => {}); return h; },
-    he_gl_uniform_mat4v: (l, p, n) => gl.uniformMatrix4fv(H[l], false, new Float32Array(B(p, n * 4).slice().buffer)), he_gl_uniform4fv: (l, p, n) => gl.uniform4fv(H[l], new Float32Array(B(p, n * 4).slice().buffer)),
-    he_gl_bind_framebuffer: f => gl.bindFramebuffer(gl.FRAMEBUFFER, H[f] || null), he_gl_scissor: (x, y, w, h) => gl.scissor(x, y, w, h), he_gl_cull: m => gl.cullFace(m), he_gl_color_mask: (r, g, b, a) => gl.colorMask(!!r, !!g, !!b, !!a),
     he_gl_drawing_w: () => gl?.drawingBufferWidth || 0, he_gl_drawing_h: () => gl?.drawingBufferHeight || 0,
     sin: Math.sin, cos: Math.cos, tan: Math.tan, asin: Math.asin, acos: Math.acos, atan: Math.atan, atan2: Math.atan2, sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh, exp: Math.exp, log: Math.log, log2: Math.log2, log10: Math.log10, pow: Math.pow, cbrt: Math.cbrt, hypot: Math.hypot, expm1: Math.expm1, log1p: Math.log1p,
     sinf: Math.sin, cosf: Math.cos, tanf: Math.tan, asinf: Math.asin, acosf: Math.acos, atanf: Math.atan, atan2f: Math.atan2, expf: Math.exp, logf: Math.log, log2f: Math.log2, log10f: Math.log10, powf: Math.pow, cbrtf: Math.cbrt, hypotf: Math.hypot
@@ -142,7 +139,7 @@ export async function start(o = {}) {
   const res = await fetch(url), bytes = await res.arrayBuffer(), mod = await WebAssembly.compile(bytes);
   const meta = new Uint8Array(WebAssembly.Module.customSections(mod, 'he.mem')[0] || new ArrayBuffer(5)), pages = meta[0] | meta[1] << 8 | meta[2] << 16 | meta[3] << 24;
   mem = new WebAssembly.Memory({ initial: pages, maximum: 65536, shared: meta[4] === 1 });
-  const imports = { env: new Proxy({ ...env, ...(o.imports ? o.imports({ B, S, put, H, nh, rel, u8, dv, fire, gl: () => gl, ex: () => ex, call: (f, ...a) => { const r = busy ? undefined : run(f, a); drain(); return r; } }) : {}), memory: mem }, { get: (t, n) => t[n] || ((...a) => { console.warn('helium: missing import', n, a); return 0; }) }) };
+  const imports = { env: new Proxy({ ...env, memory: mem }, { get: (t, n) => t[n] || ((...a) => { console.warn('helium: missing import', n, a); return 0; }) }) };
   ex = (await WebAssembly.instantiate(mod, imports)).exports;
   busy++;
   try { ex.he_start(0n); } catch (e) { fail(e); } finally { busy--; }
