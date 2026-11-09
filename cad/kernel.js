@@ -6,12 +6,13 @@ import {NAMED,reset as datReset,put as datPut,datumPlane,list as datList,axisRef
 import {pathPolys,ProfileError,selfCross} from './polyfix.js';
 import {airfoilPoints} from './airfoil.js';
 import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
+import {lookupThread,threadById} from './threads.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
 import {chamferSides,alongFaces,FEAT2,solidsOf} from './features2.js';
 import {vec as V} from './qmath.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head']);
+const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -21,7 +22,7 @@ const ucv=(from)=>from===UNITS?1:from==='in'?25.4:1/25.4;
 function res(v,scope,k){
   if(Array.isArray(v))return v.map(x=>res(x,scope,k));
   if(v&&typeof v==='object'){const o={};for(const kk in v)o[kk]=res(v[kk],scope,kk);return o;}
-  if(typeof v==='string'&&!STRKEYS.has(k))return evalExpr(v,scope);
+  if(typeof v==='string'&&!STRKEYS.has(k)){const th=threadById(v);if(th)return k==='d'?th.major:k==='pitch'?th.pitch:v;return evalExpr(v,scope);}
   return v;
 }
 const AX={X:[1,0,0],Y:[0,1,0],Z:[0,0,1],'+X':[1,0,0],'+Y':[0,1,0],'+Z':[0,0,1],'-X':[-1,0,0],'-Y':[0,-1,0],'-Z':[0,0,-1]};
@@ -235,8 +236,9 @@ function coilTool(f){
   if(p<=wd*1.02)throw new Error('pitch must be larger than the wire diameter');
   return helixSweep((f.d??M(20))/2,p,p*(f.turns??5),c,ax,f.hand==='left',R.drawCircle(wd/2));
 }
+function threadNums(f){if(f.up)return {p:+f.pitch,d:+f.d};const t=lookupThread(f);if(!t)return {p:+f.pitch||1.5,d:+f.d||10};const k=ucv(t.unit);return {p:t.pitch*k,d:t.major*k};}
 function threadTool(f){
-  const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',h=0.6134*p,hi=0.5413*p;
+  const tn=threadNums(f),c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',h=0.6134*p,hi=0.5413*p;
   const tri=ext?R.draw([0.05*p,-0.4665*p]).lineTo([-h,-0.0835*p]).lineTo([-h,0.0835*p]).lineTo([0.05*p,0.4665*p]).close():R.draw([-0.05*p,-0.404*p]).lineTo([hi,-0.0625*p]).lineTo([hi,0.0625*p]).lineTo([-0.05*p,0.404*p]).close();
   const o=(f.run||1)*p;return helixSweep(ext?d/2:d/2-hi,p,L+2*o,c.map((v,i)=>v-ax[i]*o),ax,f.hand==='left',tri);
 }
@@ -304,8 +306,8 @@ function knifeTool(f){
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
 const nSol=b=>{const L=solidsOf(b),n=L.length;L.forEach(del);return n;},smemo=new WeakMap(),nsol=b=>{let v=smemo.get(b);v===undefined&&smemo.set(b,v=nSol(b));return v;},volOf=b=>R.measureShapeVolumeProperties(b).volume,vmemo=new WeakMap(),vol=b=>{let v=vmemo.get(b);v===undefined&&vmemo.set(b,v=Math.abs(volOf(b)));return v;},cap=t=>t[0].toUpperCase()+t.slice(1);
-function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const ts=f.std&&f.std!=='custom'&&THREADSTD[f.std],k=ts?ucv(ts[2]):1,p=ts?ts[1]*k:f.pitch??1.5,d=ts?ts[0]*k:f.d??10,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
-  if(p<0.5&&!f.up){const u=25.4,r=threadCut(body.clone().scale(u,[0,0,0]),{...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u});return r.scale(1/u,[0,0,0]);}
+function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const tn=threadNums(f),p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
+  if(p<0.5&&!f.up){const u=25.4,g={...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u};delete g.threadId;const r=threadCut(body.clone().scale(u,[0,0,0]),g);return r.scale(1/u,[0,0,0]);}
   const rate=(ext?0.3197*2*Math.PI*(d/2-0.2373*p):0.2369*2*Math.PI*(d/2-0.5413*p+0.2062*p))*p,v0=volOf(body),S=a1-a0+2*p,at=t=>c.map((v,i)=>v+ax[i]*(t-t0)),REV={X:'-X',Y:'-Y',Z:'-Z','+X':'-X','+Y':'-Y','+Z':'-Z','-X':'X','-Y':'Y','-Z':'Z'},seg=(t,h,dir=1)=>threadTool({...f,axis:dir>0?f.axis||'Z':REV[f.axis||'Z'],...Object.fromEntries(['x','y','z'].map((q,i)=>[q,at(t)[i]])),length:h-2*p}),want=rate*(Math.min(hi2,a1+p)-Math.max(lo,a0-p)),err=r=>Math.abs((v0-volOf(r))/want-1);
   for(const dir of[1,-1])for(const a of[0,37])try{const t=seg(dir>0?a0:a1,S,dir),r=body.cut(a?t.rotate(a,at(a0),ax):t);if(err(r)<0.02)return r;}catch{}
   for(const dir of[1,-1])for(const m of[4,1]){try{let r=body;for(let q=0;q<S-1e-9;q+=m*p)r=r.cut(seg(dir>0?a0+q:a1-q,Math.min(m*p,S-q),dir));if(err(r)<0.02)return r;}catch{}}
