@@ -202,6 +202,7 @@ EULER	constant	std	/api-library/helium/lib/std#EULER	Constant for Euler's number
 popcount	function	std	/api-library/helium/lib/std#popcount	Returns the number of set bits in an unsigned integer.	pub
 clz	function	std	/api-library/helium/lib/std#clz	Returns the number of leading zero bits in an unsigned integer.	pub
 ctz	function	std	/api-library/helium/lib/std#ctz	Returns the number of trailing zero bits in an unsigned integer.	pub
+match32_at	function	std	/api-library/helium/lib/std#match32_at	Thin C binding that returns a match result for a 32-byte-wide comparison at index i of a byte slice, used by this module's own byte set code.	int
 pow	function	std	/api-library/helium/lib/std#pow	Returns x raised to the power y for real values.	pub
 pow	function	std	/api-library/helium/lib/std#pow	Returns x raised to the power y for f32 values.	pub
 std_fabs	function	std	/api-library/helium/lib/std#std_fabs	Thin binding to the C fabs function returning the absolute value of a real.	int
@@ -5134,6 +5135,9 @@ net::ERR	constant	net/sock	/api-library/helium/lib/net-sock#ERR	Event flag repor
 net::HUP	constant	net/sock	/api-library/helium/lib/net-sock#HUP	Event flag reported when the peer has hung up.	pub
 net::ANY	constant	net/sock	/api-library/helium/lib/net-sock#ANY	Wildcard IPv4 address of zero, which binds to all local interfaces.	pub
 net::LOOPBACK	constant	net/sock	/api-library/helium/lib/net-sock#LOOPBACK	IPv4 address 127.0.0.1 as an integer, for connecting to the local machine.	pub
+net::SHUT_RD	constant	net/sock	/api-library/helium/lib/net-sock#SHUT_RD	Constant selecting the receive direction when shutting down a socket, so further reads are disallowed.	pub
+net::SHUT_WR	constant	net/sock	/api-library/helium/lib/net-sock#SHUT_WR	Constant selecting the send direction when shutting down a socket, so further writes are disallowed.	pub
+net::SHUT_RDWR	constant	net/sock	/api-library/helium/lib/net-sock#SHUT_RDWR	Constant selecting both directions when shutting down a socket, disallowing further reads and writes.	pub
 net::Addr	type	net/sock	/api-library/helium/lib/net-sock#Addr	IPv4 address and port pair, with the address held as a 32-bit integer.	pub
 net::Poll	type	net/sock	/api-library/helium/lib/net-sock#Poll	Fixed-capacity set of up to 64 handles with tags, used to wait for socket events.	pub
 net::KA	constant	net/sock	/api-library/helium/lib/net-sock#KA	Scratch buffer holding the raw socket address structure passed to C calls.	int
@@ -5156,6 +5160,7 @@ net::recv_into	function	net/sock	/api-library/helium/lib/net-sock#recv_into	Rece
 net::udp_raw	function	net/sock	/api-library/helium/lib/net-sock#udp_raw	Creates a UDP socket bound to a raw IP and port, returning a handle or negative error.	int
 net::send_to_raw	function	net/sock	/api-library/helium/lib/net-sock#send_to_raw	Sends a UDP datagram to a raw IP and port, returning the byte count or a negative error.	int
 net::close	function	net/sock	/api-library/helium/lib/net-sock#close	Closes a socket handle, returning 0 on success or a negative error code.	pub
+net::shutdown	function	net/sock	/api-library/helium/lib/net-sock#shutdown	Shuts down reading, writing, or both on a socket handle, returning 0 on success or a negative error code.	pub
 net::nodelay	function	net/sock	/api-library/helium/lib/net-sock#nodelay	Enables or disables TCP no-delay on a handle, returning 0 on success or a negative error.	pub
 net::blocking	function	net/sock	/api-library/helium/lib/net-sock#blocking	Sets a handle to blocking mode when on is true, otherwise non-blocking, returning 0 or a negative error.	pub
 net::local_raw	function	net/sock	/api-library/helium/lib/net-sock#local_raw	Returns the local address of a handle packed into one integer, or a negative error.	int
@@ -6181,3 +6186,35 @@ net::qe_next	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_next	Re
 net::qe_port	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_port	Returns the local UDP port the endpoint socket is bound to.	pub
 net::qe_same	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_same	Returns how many active connections have the same IP address as the given address.	pub
 net::qe_close	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_close	Closes the endpoint's UDP socket and marks it as closed.	pub
+libm::Ipio2Row	type	libm	/api-library/helium/lib/libm#Ipio2Row	Row type holding one 24-bit chunk of the table of 2/pi bits used for argument reduction.	int
+libm::ipio2_table	function	libm	/api-library/helium/lib/libm#ipio2_table	Returns the 66-entry table of 2/pi bit chunks used by large-argument reduction.	int
+libm::IPIO2	constant	libm	/api-library/helium/lib/libm#IPIO2	Lazily filled cache of the 2/pi table rows, populated on first access.	int
+libm::ipio2_at	function	libm	/api-library/helium/lib/libm#ipio2_at	Returns the 24-bit 2/pi chunk at index i, filling the table cache on first use.	int
+libm::PIO2	constant	libm	/api-library/helium/lib/libm#PIO2	Table of eight pi/2 pieces in decreasing magnitude used to rebuild the reduced remainder.	int
+libm::scalbn	function	libm	/api-library/helium/lib/libm#scalbn	Returns x multiplied by 2 raised to the power n, built from exponent bits.	int
+libm::k_sinf	function	libm	/api-library/helium/lib/libm#k_sinf	Computes sine of a small reduced argument as a polynomial approximation, returning f32.	int
+libm::k_cosf	function	libm	/api-library/helium/lib/libm#k_cosf	Computes cosine of a small reduced argument as a polynomial approximation, returning f32.	int
+libm::TWO24	constant	libm	/api-library/helium/lib/libm#TWO24	Constant 2 to the 24th power, used to split values into 24-bit chunks.	int
+libm::TWON24	constant	libm	/api-library/helium/lib/libm#TWON24	Constant 2 to the power of negative 24, used to split values into 24-bit chunks.	int
+libm::rem_pio2_large	function	libm	/api-library/helium/lib/libm#rem_pio2_large	Reduces a scaled large argument modulo pi/2, returning the quadrant count modulo 8 and the remainder.	int
+libm::INV_PIO2	constant	libm	/api-library/helium/lib/libm#INV_PIO2	Constant equal to 2/pi, used to estimate the quadrant of an argument.	int
+libm::PIO2_1	constant	libm	/api-library/helium/lib/libm#PIO2_1	Leading part of pi/2 used to subtract multiples of pi/2 with extra precision.	int
+libm::PIO2_1T	constant	libm	/api-library/helium/lib/libm#PIO2_1T	Trailing correction to pi/2 paired with the leading part for precise reduction.	int
+libm::TOINT	constant	libm	/api-library/helium/lib/libm#TOINT	Rounding constant added and subtracted to round a real value to the nearest integer.	int
+libm::rem_pio2f	function	libm	/api-library/helium/lib/libm#rem_pio2f	Reduces an f32 modulo pi/2, returning the quadrant count and the remainder; non-finite input gives a NaN remainder.	int
+libm::ATAN_HI	constant	libm	/api-library/helium/lib/libm#ATAN_HI	High parts of the arctangent reference values at 0.5, 1.0, 1.5 and infinity.	int
+libm::ATAN_LO	constant	libm	/api-library/helium/lib/libm#ATAN_LO	Low correction parts paired with the high arctangent reference values.	int
+libm::A_T	constant	libm	/api-library/helium/lib/libm#A_T	Polynomial coefficients used to approximate arctangent on a reduced argument.	int
+libm::atanf	function	libm	/api-library/helium/lib/libm#atanf	Returns the arctangent of an f32 in radians, passing NaN through unchanged.	pub
+libm::PIF	constant	libm	/api-library/helium/lib/libm#PIF	Single-precision value of pi used by the two-argument arctangent.	int
+libm::PI_LO	constant	libm	/api-library/helium/lib/libm#PI_LO	Low-order correction to the single-precision value of pi.	int
+libm::atan2f	function	libm	/api-library/helium/lib/libm#atan2f	Returns the angle in radians of the point (x, y) using both signs to pick the quadrant.	pub
+libm::FRAC_PI_2	constant	libm	/api-library/helium/lib/libm#FRAC_PI_2	Constant pi/2 as a double-precision real.	int
+libm::P1	constant	libm	/api-library/helium/lib/libm#P1	Constant equal to one times pi/2, used as a shift in sine and cosine.	int
+libm::P2	constant	libm	/api-library/helium/lib/libm#P2	Constant equal to two times pi/2, used as a shift in sine and cosine.	int
+libm::P3	constant	libm	/api-library/helium/lib/libm#P3	Constant equal to three times pi/2, used as a shift in sine and cosine.	int
+libm::P4	constant	libm	/api-library/helium/lib/libm#P4	Constant equal to four times pi/2, used as a shift in sine and cosine.	int
+libm::sinf	function	libm	/api-library/helium/lib/libm#sinf	Returns the sine of an f32 angle given in radians.	pub
+libm::cosf	function	libm	/api-library/helium/lib/libm#cosf	Returns the cosine of an f32 angle given in radians.	pub
+libm::sincosf	function	libm	/api-library/helium/lib/libm#sincosf	Returns the sine and cosine of an f32 angle in radians as a pair.	pub
+libm::hypotf	function	libm	/api-library/helium/lib/libm#hypotf	Returns the length of the hypotenuse for two f32 legs, scaling to avoid overflow and underflow.	pub

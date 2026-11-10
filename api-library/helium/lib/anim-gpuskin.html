@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-gpuskin">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-gpuskin">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=282377af47">
+<link rel="stylesheet" href="/api-library/lib.css?v=0d600fb320">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=282377af47'; start({wasm: '/api-library/search.wasm?v=282377af47'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=0d600fb320'; start({wasm: '/api-library/search.wasm?v=0d600fb320'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/gpuskin</h1>
 <p class="lib-lede">Linear-blend skinning on the GPU through a self-contained Vulkan compute backend.</p>
-<p class="lib-meta"><code>import anim.gpuskin;</code> &middot; <code>gsk::</code> &middot; 25 functions, 1 types, 32 constants &middot; <a href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he">Source</a></p>
+<p class="lib-meta"><code>import anim.gpuskin;</code> &middot; <code>gsk::</code> &middot; 25 functions, 1 types, 32 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/gpuskin: GPU linear-blend skinning on a self-contained Vulkan compute
 backend (own FFI, own buffer layout, own shader: anim/skin.comp compiled by
 Helium's GLSL-&gt;SPIR-V compiler `hcn --spv`). Clean-room: written from the
@@ -130,32 +130,32 @@ Dispatch (ceil(nv/64), nchar, 1). `out` is what a vertex shader reads.
 <h3><a href="#error">error</a> <i>function</i></h3>
 <pre>error() const byte[:]</pre>
 <p>Returns the message describing the most recent failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L109">hc/lib/anim/gpuskin.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L109">hc/lib/anim/gpuskin.he:109</a>
 </article>
 <article class="sym" id="device_name">
 <h3><a href="#device_name">device_name</a> <i>function</i></h3>
 <pre>device_name() const byte[:]</pre>
 <p>Returns the name of the selected Vulkan device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L110">hc/lib/anim/gpuskin.he:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L110">hc/lib/anim/gpuskin.he:110</a>
 </article>
 <article class="sym" id="device_type">
 <h3><a href="#device_type">device_type</a> <i>function</i></h3>
 <pre>device_type() int</pre>
 <p>Returns the Vulkan device type code of the selected device, where 2 is discrete and 1 is integrated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L111">hc/lib/anim/gpuskin.he:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L111">hc/lib/anim/gpuskin.he:111</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(pick int) bool</pre>
 <p>Creates the Vulkan instance and device, returning false on failure; pick selects a device index, or -1 prefers discrete GPUs.</p>
 <p class="note">Instance + device. pick: -1 = prefer discrete &gt; integrated &gt; virtual &gt; cpu, otherwise the physical-device index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L120">hc/lib/anim/gpuskin.he:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L120">hc/lib/anim/gpuskin.he:120</a>
 </article>
 <article class="sym" id="shutdown">
 <h3><a href="#shutdown">shutdown</a> <i>function</i></h3>
 <pre>shutdown()</pre>
 <p>Waits for the device to go idle and destroys all Vulkan objects created by init and setup.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L255">hc/lib/anim/gpuskin.he:255</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L255">hc/lib/anim/gpuskin.he:255</a>
 </article>
 <h2 id="skinning-pipeline">Skinning Pipeline <span class="n">4</span></h2>
 <article class="sym" id="setup">
@@ -163,326 +163,326 @@ Dispatch (ceil(nv/64), nchar, 1). `out` is what a vertex shader reads.
 <pre>setup(spv const byte[:], rest const byte[:], wts const byte[:], jts const byte[:], nv int, nj int, nchar int) bool</pre>
 <p>Creates buffers, pipeline and command buffers for skinning, uploading rest data; returns false on failure or if more than 255 joints.</p>
 <p class="note">rest: 12 floats/vertex as bytes (pos.xyz,1, nrm.xyz,0, tan.xyzw); wts: 4 floats/vertex; jts: 1 uint/vertex; spv: compiled anim/skin.comp.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L185">hc/lib/anim/gpuskin.he:185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L185">hc/lib/anim/gpuskin.he:185</a>
 </article>
 <article class="sym" id="frame">
 <h3><a href="#frame">frame</a> <i>function</i></h3>
 <pre>frame(pal const byte[:]) bool</pre>
 <p>Uploads the joint palettes and runs the skinning dispatch, returning false if submission fails.</p>
 <p class="note">palettes: 12 floats (3 rows x vec4) per joint per character, as bytes</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L233">hc/lib/anim/gpuskin.he:233</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L233">hc/lib/anim/gpuskin.he:233</a>
 </article>
 <article class="sym" id="gpu_ms">
 <h3><a href="#gpu_ms">gpu_ms</a> <i>function</i></h3>
 <pre>gpu_ms() real</pre>
 <p>Returns the GPU time of the last frame in milliseconds, or -1 if timestamps are unsupported.</p>
 <p class="note">GPU time of the last frame() in ms from timestamps (-1 if unsupported)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L237">hc/lib/anim/gpuskin.he:237</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L237">hc/lib/anim/gpuskin.he:237</a>
 </article>
 <article class="sym" id="readback">
 <h3><a href="#readback">readback</a> <i>function</i></h3>
 <pre>readback(out byte[&gt;..]&amp;) bool</pre>
 <p>Copies the skinned output back into a byte buffer, returning false on failure.</p>
 <p class="note">copy `out` back: 12 floats per vertex per character</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L245">hc/lib/anim/gpuskin.he:245</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L245">hc/lib/anim/gpuskin.he:245</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (49)</summary>
 <article class="sym" id="Buf">
 <h3><a href="#Buf">Buf</a> <i>type</i></h3>
 <pre>struct Buf { b uint, m uint, p uint, size int }</pre>
 <p>Holds a Vulkan buffer handle, its device memory, mapped host pointer and size in bytes for one GPU buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L68">hc/lib/anim/gpuskin.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L68">hc/lib/anim/gpuskin.he:68</a>
 </article>
 <article class="sym" id="ERR">
 <h3><a href="#ERR">ERR</a> <i>constant</i></h3>
 <pre>var ERR byte[&gt;..]</pre>
 <p>Holds the last error message text set by a failed setup or init step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L69">hc/lib/anim/gpuskin.he:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L69">hc/lib/anim/gpuskin.he:69</a>
 </article>
 <article class="sym" id="DEVNAME">
 <h3><a href="#DEVNAME">DEVNAME</a> <i>constant</i></h3>
 <pre>var DEVNAME byte[&gt;..]</pre>
 <p>Holds the name of the selected Vulkan physical device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L70">hc/lib/anim/gpuskin.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L70">hc/lib/anim/gpuskin.he:70</a>
 </article>
 <article class="sym" id="DEVTYPE">
 <h3><a href="#DEVTYPE">DEVTYPE</a> <i>constant</i></h3>
 <pre>var DEVTYPE = 0</pre>
 <p>Holds the Vulkan device type code of the selected physical device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L71">hc/lib/anim/gpuskin.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L71">hc/lib/anim/gpuskin.he:71</a>
 </article>
 <article class="sym" id="INST">
 <h3><a href="#INST">INST</a> <i>constant</i></h3>
 <pre>var INST uint = 0</pre>
 <p>Holds the Vulkan instance handle, zero until init succeeds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L72">hc/lib/anim/gpuskin.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L72">hc/lib/anim/gpuskin.he:72</a>
 </article>
 <article class="sym" id="PHYS">
 <h3><a href="#PHYS">PHYS</a> <i>constant</i></h3>
 <pre>var PHYS uint = 0</pre>
 <p>Holds the selected Vulkan physical device handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L73">hc/lib/anim/gpuskin.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L73">hc/lib/anim/gpuskin.he:73</a>
 </article>
 <article class="sym" id="DEV">
 <h3><a href="#DEV">DEV</a> <i>constant</i></h3>
 <pre>var DEV uint = 0</pre>
 <p>Holds the Vulkan logical device handle, zero until init succeeds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L74">hc/lib/anim/gpuskin.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L74">hc/lib/anim/gpuskin.he:74</a>
 </article>
 <article class="sym" id="QUEUE">
 <h3><a href="#QUEUE">QUEUE</a> <i>constant</i></h3>
 <pre>var QUEUE uint = 0</pre>
 <p>Holds the compute queue handle used for all submissions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L75">hc/lib/anim/gpuskin.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L75">hc/lib/anim/gpuskin.he:75</a>
 </article>
 <article class="sym" id="QFAM">
 <h3><a href="#QFAM">QFAM</a> <i>constant</i></h3>
 <pre>var QFAM = -1</pre>
 <p>Holds the index of the queue family chosen for compute, or -1 if none was found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L76">hc/lib/anim/gpuskin.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L76">hc/lib/anim/gpuskin.he:76</a>
 </article>
 <article class="sym" id="TSBITS">
 <h3><a href="#TSBITS">TSBITS</a> <i>constant</i></h3>
 <pre>var TSBITS = 0</pre>
 <p>Holds the count of valid timestamp bits for the chosen queue family.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L77">hc/lib/anim/gpuskin.he:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L77">hc/lib/anim/gpuskin.he:77</a>
 </article>
 <article class="sym" id="TSPERIOD">
 <h3><a href="#TSPERIOD">TSPERIOD</a> <i>constant</i></h3>
 <pre>var TSPERIOD = 0.0</pre>
 <p>Holds the timestamp period used to convert GPU ticks to nanoseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L78">hc/lib/anim/gpuskin.he:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L78">hc/lib/anim/gpuskin.he:78</a>
 </article>
 <article class="sym" id="MEMP">
 <h3><a href="#MEMP">MEMP</a> <i>constant</i></h3>
 <pre>var MEMP byte[&gt;..]</pre>
 <p>Holds the raw physical device memory properties used to select memory types.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L79">hc/lib/anim/gpuskin.he:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L79">hc/lib/anim/gpuskin.he:79</a>
 </article>
 <article class="sym" id="REST">
 <h3><a href="#REST">REST</a> <i>constant</i></h3>
 <pre>var REST Buf</pre>
 <p>Holds the device-local buffer of rest-pose vertex data for positions, normals and tangents.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L80">hc/lib/anim/gpuskin.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L80">hc/lib/anim/gpuskin.he:80</a>
 </article>
 <article class="sym" id="WTS">
 <h3><a href="#WTS">WTS</a> <i>constant</i></h3>
 <pre>var WTS Buf</pre>
 <p>Holds the device-local buffer of normalized per-vertex skinning weights.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L81">hc/lib/anim/gpuskin.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L81">hc/lib/anim/gpuskin.he:81</a>
 </article>
 <article class="sym" id="JTS">
 <h3><a href="#JTS">JTS</a> <i>constant</i></h3>
 <pre>var JTS Buf</pre>
 <p>Holds the device-local buffer of packed per-vertex joint indices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L82">hc/lib/anim/gpuskin.he:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L82">hc/lib/anim/gpuskin.he:82</a>
 </article>
 <article class="sym" id="PAL">
 <h3><a href="#PAL">PAL</a> <i>constant</i></h3>
 <pre>var PAL Buf</pre>
 <p>Holds the host-visible buffer of joint palette matrices uploaded each frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L83">hc/lib/anim/gpuskin.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L83">hc/lib/anim/gpuskin.he:83</a>
 </article>
 <article class="sym" id="PAR">
 <h3><a href="#PAR">PAR</a> <i>constant</i></h3>
 <pre>var PAR Buf</pre>
 <p>Holds the host-visible buffer of vertex, joint and character counts for the shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L84">hc/lib/anim/gpuskin.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L84">hc/lib/anim/gpuskin.he:84</a>
 </article>
 <article class="sym" id="OUT">
 <h3><a href="#OUT">OUT</a> <i>constant</i></h3>
 <pre>var OUT Buf</pre>
 <p>Holds the device-local skinned output buffer that a vertex shader can read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L85">hc/lib/anim/gpuskin.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L85">hc/lib/anim/gpuskin.he:85</a>
 </article>
 <article class="sym" id="RB">
 <h3><a href="#RB">RB</a> <i>constant</i></h3>
 <pre>var RB Buf</pre>
 <p>Holds the host-visible readback buffer, created on the first readback call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L86">hc/lib/anim/gpuskin.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L86">hc/lib/anim/gpuskin.he:86</a>
 </article>
 <article class="sym" id="STG">
 <h3><a href="#STG">STG</a> <i>constant</i></h3>
 <pre>var STG Buf</pre>
 <p>Holds the host-visible staging buffer used to upload data to device-local buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L87">hc/lib/anim/gpuskin.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L87">hc/lib/anim/gpuskin.he:87</a>
 </article>
 <article class="sym" id="SM">
 <h3><a href="#SM">SM</a> <i>constant</i></h3>
 <pre>var SM uint = 0</pre>
 <p>Holds the compute shader module handle for the skinning shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L88">hc/lib/anim/gpuskin.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L88">hc/lib/anim/gpuskin.he:88</a>
 </article>
 <article class="sym" id="DSL">
 <h3><a href="#DSL">DSL</a> <i>constant</i></h3>
 <pre>var DSL uint = 0</pre>
 <p>Holds the descriptor set layout handle for the six skinning buffer bindings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L89">hc/lib/anim/gpuskin.he:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L89">hc/lib/anim/gpuskin.he:89</a>
 </article>
 <article class="sym" id="PL">
 <h3><a href="#PL">PL</a> <i>constant</i></h3>
 <pre>var PL uint = 0</pre>
 <p>Holds the pipeline layout handle for the skinning compute pipeline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L90">hc/lib/anim/gpuskin.he:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L90">hc/lib/anim/gpuskin.he:90</a>
 </article>
 <article class="sym" id="PIPE">
 <h3><a href="#PIPE">PIPE</a> <i>constant</i></h3>
 <pre>var PIPE uint = 0</pre>
 <p>Holds the compute pipeline handle that runs the skinning shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L91">hc/lib/anim/gpuskin.he:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L91">hc/lib/anim/gpuskin.he:91</a>
 </article>
 <article class="sym" id="DP">
 <h3><a href="#DP">DP</a> <i>constant</i></h3>
 <pre>var DP uint = 0</pre>
 <p>Holds the descriptor pool handle from which the skinning descriptor set is allocated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L92">hc/lib/anim/gpuskin.he:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L92">hc/lib/anim/gpuskin.he:92</a>
 </article>
 <article class="sym" id="DS">
 <h3><a href="#DS">DS</a> <i>constant</i></h3>
 <pre>var DS uint = 0</pre>
 <p>Holds the descriptor set binding the skinning buffers to the shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L93">hc/lib/anim/gpuskin.he:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L93">hc/lib/anim/gpuskin.he:93</a>
 </article>
 <article class="sym" id="CP">
 <h3><a href="#CP">CP</a> <i>constant</i></h3>
 <pre>var CP uint = 0</pre>
 <p>Holds the command pool handle used to allocate command buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L94">hc/lib/anim/gpuskin.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L94">hc/lib/anim/gpuskin.he:94</a>
 </article>
 <article class="sym" id="CB_SKIN">
 <h3><a href="#CB_SKIN">CB_SKIN</a> <i>constant</i></h3>
 <pre>var CB_SKIN uint = 0</pre>
 <p>Holds the prerecorded command buffer that runs the skinning dispatch each frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L95">hc/lib/anim/gpuskin.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L95">hc/lib/anim/gpuskin.he:95</a>
 </article>
 <article class="sym" id="CB_XFER">
 <h3><a href="#CB_XFER">CB_XFER</a> <i>constant</i></h3>
 <pre>var CB_XFER uint = 0</pre>
 <p>Holds the command buffer used for uploads and readback transfers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L96">hc/lib/anim/gpuskin.he:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L96">hc/lib/anim/gpuskin.he:96</a>
 </article>
 <article class="sym" id="QP">
 <h3><a href="#QP">QP</a> <i>constant</i></h3>
 <pre>var QP uint = 0</pre>
 <p>Holds the timestamp query pool handle, zero when timestamps are unsupported.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L97">hc/lib/anim/gpuskin.he:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L97">hc/lib/anim/gpuskin.he:97</a>
 </article>
 <article class="sym" id="NV">
 <h3><a href="#NV">NV</a> <i>constant</i></h3>
 <pre>var NV = 0</pre>
 <p>Holds the vertex count passed to setup.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L98">hc/lib/anim/gpuskin.he:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L98">hc/lib/anim/gpuskin.he:98</a>
 </article>
 <article class="sym" id="NJ">
 <h3><a href="#NJ">NJ</a> <i>constant</i></h3>
 <pre>var NJ = 0</pre>
 <p>Holds the joint count per character passed to setup.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L99">hc/lib/anim/gpuskin.he:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L99">hc/lib/anim/gpuskin.he:99</a>
 </article>
 <article class="sym" id="NCH">
 <h3><a href="#NCH">NCH</a> <i>constant</i></h3>
 <pre>var NCH = 0</pre>
 <p>Holds the character count passed to setup.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L100">hc/lib/anim/gpuskin.he:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L100">hc/lib/anim/gpuskin.he:100</a>
 </article>
 <article class="sym" id="p32">
 <h3><a href="#p32">p32</a> <i>function</i></h3>
 <pre>p32(b byte[&gt;..]&amp;, o int, v int)</pre>
 <p>Writes a 32-bit integer into a byte buffer at an offset in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L102">hc/lib/anim/gpuskin.he:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L102">hc/lib/anim/gpuskin.he:102</a>
 </article>
 <article class="sym" id="p64">
 <h3><a href="#p64">p64</a> <i>function</i></h3>
 <pre>p64(b byte[&gt;..]&amp;, o int, v uint)</pre>
 <p>Writes a 64-bit unsigned integer into a byte buffer at an offset in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L103">hc/lib/anim/gpuskin.he:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L103">hc/lib/anim/gpuskin.he:103</a>
 </article>
 <article class="sym" id="g32">
 <h3><a href="#g32">g32</a> <i>function</i></h3>
 <pre>g32(b const byte[:], o int) int</pre>
 <p>Reads a little-endian 32-bit integer from a byte buffer at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L104">hc/lib/anim/gpuskin.he:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L104">hc/lib/anim/gpuskin.he:104</a>
 </article>
 <article class="sym" id="g64">
 <h3><a href="#g64">g64</a> <i>function</i></h3>
 <pre>g64(b const byte[:], o int) uint</pre>
 <p>Reads a little-endian 64-bit unsigned integer from a byte buffer at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L105">hc/lib/anim/gpuskin.he:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L105">hc/lib/anim/gpuskin.he:105</a>
 </article>
 <article class="sym" id="zb">
 <h3><a href="#zb">zb</a> <i>function</i></h3>
 <pre>zb(n int) byte[&gt;..]</pre>
 <p>Returns a new zero-filled byte buffer of the given length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L106">hc/lib/anim/gpuskin.he:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L106">hc/lib/anim/gpuskin.he:106</a>
 </article>
 <article class="sym" id="pt">
 <h3><a href="#pt">pt</a> <i>function</i></h3>
 <pre>pt(b const byte[:]) uint</pre>
 <p>Returns the raw memory address of a byte slice for passing to Vulkan.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L107">hc/lib/anim/gpuskin.he:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L107">hc/lib/anim/gpuskin.he:107</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(m const byte[:]) bool</pre>
 <p>Stores an error message for later retrieval and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L108">hc/lib/anim/gpuskin.he:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L108">hc/lib/anim/gpuskin.he:108</a>
 </article>
 <article class="sym" id="f32_of_bits">
 <h3><a href="#f32_of_bits">f32_of_bits</a> <i>function</i></h3>
 <pre>f32_of_bits(v int) real</pre>
 <p>Converts the bits of an IEEE-754 single-precision float into a real value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L112">hc/lib/anim/gpuskin.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L112">hc/lib/anim/gpuskin.he:112</a>
 </article>
 <article class="sym" id="memtype">
 <h3><a href="#memtype">memtype</a> <i>function</i></h3>
 <pre>memtype(bits int, want int) int</pre>
 <p>Returns the index of a memory type allowed by the bits that has all wanted property flags, or -1.</p>
 <p class="note">memory type with all of `want` property bits (1 device-local, 2 host-visible, 4 coherent)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L147">hc/lib/anim/gpuskin.he:147</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L147">hc/lib/anim/gpuskin.he:147</a>
 </article>
 <article class="sym" id="mkbuf">
 <h3><a href="#mkbuf">mkbuf</a> <i>function</i></h3>
 <pre>mkbuf(b Buf&amp;, size int, usage int, host bool) bool</pre>
 <p>Creates a Vulkan buffer with bound memory, optionally mapped to host memory, returning false on failure.</p>
 <p class="note">usage: 0x20 storage, 1 transfer src, 2 transfer dst. host: map it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L151">hc/lib/anim/gpuskin.he:151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L151">hc/lib/anim/gpuskin.he:151</a>
 </article>
 <article class="sym" id="freebuf">
 <h3><a href="#freebuf">freebuf</a> <i>function</i></h3>
 <pre>freebuf(b Buf&amp;)</pre>
 <p>Destroys a buffer and its memory, and resets its handles to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L164">hc/lib/anim/gpuskin.he:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L164">hc/lib/anim/gpuskin.he:164</a>
 </article>
 <article class="sym" id="cmdbuf">
 <h3><a href="#cmdbuf">cmdbuf</a> <i>function</i></h3>
 <pre>cmdbuf() uint</pre>
 <p>Allocates a primary command buffer from the command pool, returning 0 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L166">hc/lib/anim/gpuskin.he:166</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L166">hc/lib/anim/gpuskin.he:166</a>
 </article>
 <article class="sym" id="begin">
 <h3><a href="#begin">begin</a> <i>function</i></h3>
 <pre>begin(cb uint) bool</pre>
 <p>Begins recording a command buffer for one-time submission, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L170">hc/lib/anim/gpuskin.he:170</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L170">hc/lib/anim/gpuskin.he:170</a>
 </article>
 <article class="sym" id="submit_wait">
 <h3><a href="#submit_wait">submit_wait</a> <i>function</i></h3>
 <pre>submit_wait(cb uint) bool</pre>
 <p>Submits a command buffer to the queue and waits for the queue to go idle, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L171">hc/lib/anim/gpuskin.he:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L171">hc/lib/anim/gpuskin.he:171</a>
 </article>
 <article class="sym" id="barrier">
 <h3><a href="#barrier">barrier</a> <i>function</i></h3>
 <pre>barrier(cb uint, ss int, sa int, dst int, da int)</pre>
 <p>Records a global memory barrier between the given pipeline stages and access masks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L174">hc/lib/anim/gpuskin.he:174</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L174">hc/lib/anim/gpuskin.he:174</a>
 </article>
 <article class="sym" id="upload">
 <h3><a href="#upload">upload</a> <i>function</i></h3>
 <pre>upload(dst Buf&amp;, data const byte[:]) bool</pre>
 <p>Copies data through the staging buffer into a device-local buffer, returning false on failure.</p>
 <p class="note">one-shot copy host staging -&gt; device buffer</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/anim/gpuskin.he#L177">hc/lib/anim/gpuskin.he:177</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/anim/gpuskin.he#L177">hc/lib/anim/gpuskin.he:177</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -491,7 +491,7 @@ Dispatch (ceil(nv/64), nchar, 1). `out` is what a vertex shader reads.
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics <span>1585</span></a></li>
@@ -516,7 +516,7 @@ Dispatch (ceil(nv/64), nchar, 1). `out` is what a vertex shader reads.
 </li>
 <li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
-<li><a href="/api-library/helium/network">Networking <span>391</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
 <li><a href="/api-library/helium/security">Security <span>189</span></a></li>
 <li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
