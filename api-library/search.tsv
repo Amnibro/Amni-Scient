@@ -209,6 +209,16 @@ pyout	function	std	/api-library/helium/lib/std#pyout	Binds the C runtime routine
 store_u64le	function	std	/api-library/helium/lib/std#store_u64le	Thin binding that stores a 64-bit unsigned value into a byte slice at an offset in little-endian order.	int
 load_u64le	function	std	/api-library/helium/lib/std#load_u64le	Thin binding that loads a 64-bit unsigned value from a byte slice at an offset in little-endian order.	int
 std_from_bits	function	std	/api-library/helium/lib/std#std_from_bits	Thin binding that builds a real from a raw 64-bit IEEE bit pattern.	int
+std_mulhi	function	std	/api-library/helium/lib/std#std_mulhi	Multiplies two unsigned integers and returns the high 64 bits of the product; a thin C binding for internal use.	int
+std_vk_cpu	function	std	/api-library/helium/lib/std#std_vk_cpu	Returns the CPU capability flag, 1 when the vectorized string routines are usable; a thin C binding behind hxk.	int
+std_ptr	function	std	/api-library/helium/lib/std#std_ptr	Returns the raw address of a byte slice as an unsigned integer for use with low-level C bindings.	int
+std_ld8	function	std	/api-library/helium/lib/std#std_ld8	Loads an unsigned 64-bit value from the raw memory address p.	int
+std_st8	function	std	/api-library/helium/lib/std#std_st8	Stores the unsigned 64-bit value v at the raw memory address p.	int
+std_st1	function	std	/api-library/helium/lib/std#std_st1	Stores the low byte of integer v at the raw memory address p.	int
+std_zdec	function	std	/api-library/helium/lib/std#std_zdec	Decodes the unsigned value b into digits and writes the decimal exponent through e; a thin C binding.	int
+std_vk_span	function	std	/api-library/helium/lib/std#std_vk_span	Scans n bytes starting at address p with vector code and returns how many bytes to skip; used by each_word.	int
+std_vk_hexenc	function	std	/api-library/helium/lib/std#std_vk_hexenc	Encodes n bytes at address s as hexadecimal text written to address d; a thin C binding.	int
+std_vk_hexdec	function	std	/api-library/helium/lib/std#std_vk_hexdec	Decodes n hexadecimal characters at address s into bytes at address d and returns a status result; a thin C binding.	int
 min	function	std	/api-library/helium/lib/std#min	Returns the smaller of two values.	pub
 max	function	std	/api-library/helium/lib/std#max	Returns the larger of two values.	pub
 min	function	std	/api-library/helium/lib/std#min	Returns the smallest of three values.	pub
@@ -375,6 +385,8 @@ lstrip	function	std	/api-library/helium/lib/std#lstrip	Returns the slice of s wi
 rstrip	function	std	/api-library/helium/lib/std#rstrip	Returns the slice of s with any trailing bytes found in cs removed.	pub
 strip	function	std	/api-library/helium/lib/std#strip	Returns the slice of s with bytes found in cs removed from both ends.	pub
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of a string split at a separator byte, including empty pieces.	pub
+HXK	constant	std	/api-library/helium/lib/std#HXK	Cached CPU capability value, initialized to -1 until first checked by hxk.	int
+hxk	function	std	/api-library/helium/lib/std#hxk	Returns true when the vectorized string fast path is available, checking the CPU once and caching the result.	int
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of s between occurrences of the separator slice.	pub
 each_word	function	std	/api-library/helium/lib/std#each_word	Calls the block with each run of non-space bytes in s, skipping whitespace.	pub
 split	function	std	/api-library/helium/lib/std#split	Returns the pieces of s separated by a single byte, as slices of s.	pub
@@ -445,6 +457,7 @@ hex	function	std	/api-library/helium/lib/std#hex	Returns the integer as a hexade
 oct	function	std	/api-library/helium/lib/std#oct	Returns the integer as an octal string with a 0o prefix.	pub
 bin	function	std	/api-library/helium/lib/std#bin	Returns the integer as a binary string with a 0b prefix.	pub
 big_div_small	function	std	/api-library/helium/lib/std#big_div_small	Divides a limb array by k in place and returns the remainder.	int
+fixed_parts	function	std	/api-library/helium/lib/std#fixed_parts	Splits a real into its integer part and a rounded decimals-digit fraction as integers, ties to even or away from zero; returns false for sizes of 2^53 or more, inf, nan, or decimals outside 0 to 18.	int
 format_flt	function	std	/api-library/helium/lib/std#format_flt	Appends v to out with exactly the given decimals, rounding half to even or away from zero if away is set.	pub
 fmt	function	std	/api-library/helium/lib/std#fmt	Returns v as a new string with the given number of decimals, rounding away from zero if away is set.	pub
 fstr_w	function	std	/api-library/helium/lib/std#fstr_w	Pads the text t of a string field on the right to width w, as an f-string does by default.	int
@@ -674,7 +687,8 @@ json::DIG2	constant	json	/api-library/helium/lib/json#DIG2	Lookup table of the t
 json::digits_of	function	json	/api-library/helium/lib/json#digits_of	Fills digits with the shortest digit string that reads back as v and returns its decimal exponent.	int
 json::dlen17	function	json	/api-library/helium/lib/json#dlen17	Returns the number of decimal digits in a value of up to 17 digits.	int
 json::swar8	function	json	/api-library/helium/lib/json#swar8	Converts eight decimal digits packed in an integer into their ASCII characters in one word.	int
-json::format_number	function	json	/api-library/helium/lib/json#format_number	Appends a real in its shortest exact form, writing NaN and infinity as null; plus_exp adds a plus sign to positive exponents.	pub
+json::format_number	function	json	/api-library/helium/lib/json#format_number	Appends a real number to the output buffer as JSON text, writing "null" for NaN or infinity and ".0" on whole values; plus_exp adds a "+" to positive exponents.	pub
+json::format_finite	function	json	/api-library/helium/lib/json#format_finite	Appends the shortest-digit form of a finite real, given its raw bits, to the output buffer; helper for format_number.	int
 json::Reader	type	json	/api-library/helium/lib/json#Reader	Pull reader over JSON text that tracks its position and keeps the first error with its byte offset.	pub
 json::reader	function	json	/api-library/helium/lib/json#reader	Returns a new reader positioned at the start of text.	pub
 json::ok	function	json	/api-library/helium/lib/json#ok	Returns whether the reader has encountered no error so far.	pub
@@ -797,11 +811,16 @@ regex::compile	function	regex	/api-library/helium/lib/regex#compile	Compiles a p
 regex::compile_ignore_case	function	regex	/api-library/helium/lib/regex#compile_ignore_case	Compiles a pattern that ignores letter case, leaving the reason in err and matching nothing when the pattern is bad.	pub
 regex::compile_ignore_case	function	regex	/api-library/helium/lib/regex#compile_ignore_case	Compiles a pattern that ignores letter case, stopping the program with the reason when the pattern is bad.	pub
 regex::Threads	type	regex	/api-library/helium/lib/regex#Threads	Queue of live threads holding instruction indexes and their capture slots.	int
-regex::Machine	type	regex	/api-library/helium/lib/regex#Machine	Working state of the matcher holding thread queues, visit marks and capture buffers.	int
+regex::Machine	type	regex	/api-library/helium/lib/regex#Machine	Holds the Pike machine's working state: live thread lists, visit marks, saved slots, and backtracking buffers, reused across searches.	int
+regex::BACK_BITS	constant	regex	/api-library/helium/lib/regex#BACK_BITS	Constant giving the most instruction and position pairs the backtracking search may mark before the Pike machine is used.	int
 regex::holds	function	regex	/api-library/helium/lib/regex#holds	Returns whether a zero-width assertion condition holds at a position in the text.	int
 regex::follow	function	regex	/api-library/helium/lib/regex#follow	Follows jumps from an instruction and queues threads waiting on a byte or matched, in priority order.	int
 regex::machine	function	regex	/api-library/helium/lib/regex#machine	Creates a matcher state sized for a regex.	int
 regex::run	function	regex	/api-library/helium/lib/regex#run	Finds the first match starting at or after a position, leaving its slots in the machine.	int
+regex::stuck	function	regex	/api-library/helium/lib/regex#stuck	Returns true when the instruction at pc consumes a byte and the byte at position i cannot match its set.	int
+regex::room	function	regex	/api-library/helium/lib/regex#room	Grows the machine's visit bit array so it can hold at least the given number of bits.	int
+regex::back	function	regex	/api-library/helium/lib/regex#back	Searches by backtracking from a start position, marking tried instruction and position pairs, and returns whether a match was found.	int
+regex::pike	function	regex	/api-library/helium/lib/regex#pike	Searches with the Pike machine from a start position, running all threads in lockstep, and returns whether a match was found.	int
 regex::find	function	regex	/api-library/helium/lib/regex#find	Returns the start and end of the first match, or -1 and -1 if none.	pub
 regex::matches	function	regex	/api-library/helium/lib/regex#matches	Returns whether the text contains a match.	pub
 regex::each_slots	function	regex	/api-library/helium/lib/regex#each_slots	Calls the block with the capture slots of each non-overlapping match from left to right.	int
@@ -5407,8 +5426,10 @@ gf::SB	constant	gf	/api-library/helium/lib/gf#SB	Lookup table holding the AES S-
 gf::ISB	constant	gf	/api-library/helium/lib/gf#ISB	Lookup table holding the inverse AES S-box substitution for each byte value.	int
 gf::init	function	gf	/api-library/helium/lib/gf#init	Detects CPU vector support and fills the exponent, logarithm, S-box and inverse S-box tables.	int
 gf::mul	function	gf	/api-library/helium/lib/gf#mul	Returns the product of two field elements, initializing tables on first use.	pub
-gf::dot64	function	gf	/api-library/helium/lib/gf#dot64	Computes a 64-byte output as the XOR of sixteen field-multiplied 64-byte vectors, with an optional group rotation; output must not overlap inputs.	pub
-gf::dots	function	gf	/api-library/helium/lib/gf#dots	Portable or vector fallback for the 64-byte dot product, called by the inlined wrapper.	int
+gf::dot64	function	gf	/api-library/helium/lib/gf#dot64	Computes one 64-byte block as the XOR of sixteen 64-byte vectors multiplied by repeated 4-byte groups, optionally rotating the stored result.	pub
+gf::dot16	function	gf	/api-library/helium/lib/gf#dot16	Computes sixteen 64-byte dot products at once over 1024-byte blocks, where each output row uses the matching row of s.	pub
+gf::dot16	function	gf	/api-library/helium/lib/gf#dot16	Computes sixteen dot products over 1024-byte blocks with rows permuted and rotated by perm and rot, gathering in mode 0 and scattering otherwise.	pub
+gf::dots	function	gf	/api-library/helium/lib/gf#dots	Computes one 64-byte dot product with a portable fallback when vector instructions are absent, used by the inline dot functions.	int
 gf::mix	function	gf	/api-library/helium/lib/gf#mix	Applies the S-box then MixColumns to each 4-byte group of a buffer range.	pub
 gf::mix_inv	function	gf	/api-library/helium/lib/gf#mix_inv	Applies InvMixColumns then the inverse S-box to each 4-byte group of a buffer range.	pub
 gf::mixk	function	gf	/api-library/helium/lib/gf#mixk	Inline dispatcher choosing the vector routine or the scalar fallback for forward and inverse mixing.	int
@@ -5656,6 +5677,7 @@ envmap::irr_lod	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#irr_lod	R
 js::num_str	function	tiles/js	/api-library/helium/lib/tiles-js#num_str	Converts a real number to its JavaScript-style string form, handling NaN, Infinity, zero, and switching to exponent notation for very large or small values.	pub
 js::to_fixed	function	tiles/js	/api-library/helium/lib/tiles-js#to_fixed	Formats a real number with a fixed count of decimal digits, returning "NaN" for NaN and exponent-style output at 1e21 or above.	pub
 js::locale_string	function	tiles/js	/api-library/helium/lib/tiles-js#locale_string	Formats a real number with locale-style digit grouping and at most max_digits fractional digits, using ∞ symbols for infinities.	pub
+js::fixed_locale	function	tiles/js	/api-library/helium/lib/tiles-js#fixed_locale	Formats a real as a string with fixed decimals and comma-grouped thousands, trimming trailing zeros; with or_zero true, omits the minus sign when the rounded result is zero.	pub
 py::is_ws	function	tiles/py	/api-library/helium/lib/tiles-py#is_ws	Returns whether a byte is an ASCII whitespace character (space or tab through carriage return).	int
 py::strip_ws	function	tiles/py	/api-library/helium/lib/tiles-py#strip_ws	Returns a subslice of the text with leading and trailing whitespace removed.	int
 py::scan_digits	function	tiles/py	/api-library/helium/lib/tiles-py#scan_digits	Appends digits from a position to the output, skipping single underscores between digits, and returns the index where scanning stopped.	int

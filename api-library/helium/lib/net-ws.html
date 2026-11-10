@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-ws">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-ws">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=cbbbac25db">
+<link rel="stylesheet" href="/api-library/lib.css?v=b649580154">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=cbbbac25db'; start({wasm: '/api-library/search.wasm?v=cbbbac25db'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b649580154'; start({wasm: '/api-library/search.wasm?v=b649580154'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/ws</h1>
 <p class="lib-lede">A WebSocket client.</p>
-<p class="lib-meta"><code>import net.ws;</code> &middot; <code>net::</code> &middot; 11 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he">Source</a></p>
+<p class="lib-meta"><code>import net.ws;</code> &middot; <code>net::</code> &middot; 11 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#connection-state">Connection State <span class="n">7</span></a></li>
 <li><a href="#messaging">Messaging <span class="n">6</span></a></li>
@@ -114,117 +114,117 @@
 <h3><a href="#WS_ERR">WS_ERR</a> <i>constant</i></h3>
 <pre>WS_ERR := -1</pre>
 <p>Status value returned by pump and send calls when the connection has failed or hit a protocol error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L9">hc/lib/net/ws.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L9">hc/lib/net/ws.he:9</a>
 </article>
 <article class="sym" id="WS_CONNECTING">
 <h3><a href="#WS_CONNECTING">WS_CONNECTING</a> <i>constant</i></h3>
 <pre>WS_CONNECTING := 1</pre>
 <p>Status value meaning the WebSocket handshake is still in progress and the connection is not yet usable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L10">hc/lib/net/ws.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L10">hc/lib/net/ws.he:10</a>
 </article>
 <article class="sym" id="WS_OPEN">
 <h3><a href="#WS_OPEN">WS_OPEN</a> <i>constant</i></h3>
 <pre>WS_OPEN := 2</pre>
 <p>Status value meaning the handshake finished and the connection is open for sending and receiving messages.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L11">hc/lib/net/ws.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L11">hc/lib/net/ws.he:11</a>
 </article>
 <article class="sym" id="WS_CLOSED">
 <h3><a href="#WS_CLOSED">WS_CLOSED</a> <i>constant</i></h3>
 <pre>WS_CLOSED := 3</pre>
 <p>Status value meaning the connection has been closed, either by a close handshake or by the peer dropping.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L12">hc/lib/net/ws.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L12">hc/lib/net/ws.he:12</a>
 </article>
 <article class="sym" id="WS_TEXT">
 <h3><a href="#WS_TEXT">WS_TEXT</a> <i>constant</i></h3>
 <pre>WS_TEXT := 1</pre>
 <p>Message kind value identifying a UTF-8 text message, as returned by the next-message call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L13">hc/lib/net/ws.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L13">hc/lib/net/ws.he:13</a>
 </article>
 <article class="sym" id="WS_BINARY">
 <h3><a href="#WS_BINARY">WS_BINARY</a> <i>constant</i></h3>
 <pre>WS_BINARY := 2</pre>
 <p>Message kind value identifying a binary message, as returned by the next-message call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L14">hc/lib/net/ws.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L14">hc/lib/net/ws.he:14</a>
 </article>
 <article class="sym" id="Ws">
 <h3><a href="#Ws">Ws</a> <i>type</i></h3>
 <pre>struct Ws { c Tls = Tls{}, st int = 0, req byte[&gt;..] = [], key byte[&gt;..] = [], rx byte[&gt;..] = [], frag byte[&gt;..] = [], fop int = 0, msgs byte[&gt;..][&gt;..] = [], kinds int[&gt;..] = [], mi int = 0, err byte[&gt;..] = [], code int = 0, pool byte[&gt;..] = [], pi int = 0, head byte[&gt;..] = [] }</pre>
 <p>Client WebSocket connection holding the TLS stream, handshake state, buffered incoming messages and error text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L16">hc/lib/net/ws.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L16">hc/lib/net/ws.he:16</a>
 </article>
 <h2 id="messaging">Messaging <span class="n">6</span></h2>
 <article class="sym" id="ws_open">
 <h3><a href="#ws_open">ws_open</a> <i>function</i></h3>
 <pre>ws_open(url const byte[:], headers const byte[:]) Ws</pre>
 <p>Starts a WebSocket connection to a URL with extra request headers, returning a handle whose state is failed if the URL is bad.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L17">hc/lib/net/ws.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L17">hc/lib/net/ws.he:17</a>
 </article>
 <article class="sym" id="ws_pump">
 <h3><a href="#ws_pump">ws_pump</a> <i>function</i></h3>
 <pre>ws_pump(w Ws&amp;) int</pre>
 <p>Advances the connection by performing handshake and reading incoming frames, returning the current status or an error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L72">hc/lib/net/ws.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L72">hc/lib/net/ws.he:72</a>
 </article>
 <article class="sym" id="ws_send">
 <h3><a href="#ws_send">ws_send</a> <i>function</i></h3>
 <pre>ws_send(w Ws&amp;, d const byte[:], binary bool) bool</pre>
 <p>Sends a text or binary message, returning false if the connection is not open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L106">hc/lib/net/ws.he:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L106">hc/lib/net/ws.he:106</a>
 </article>
 <article class="sym" id="ws_next">
 <h3><a href="#ws_next">ws_next</a> <i>function</i></h3>
 <pre>ws_next(w Ws&amp;, out byte[&gt;..]&amp;) int</pre>
 <p>Moves the next received message into the output buffer and returns its kind, or 0 if none is queued.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L109">hc/lib/net/ws.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L109">hc/lib/net/ws.he:109</a>
 </article>
 <article class="sym" id="ws_close">
 <h3><a href="#ws_close">ws_close</a> <i>function</i></h3>
 <pre>ws_close(w Ws&amp;, code int)</pre>
 <p>Closes the connection with a status code, sending a close frame first if the connection is open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L114">hc/lib/net/ws.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L114">hc/lib/net/ws.he:114</a>
 </article>
 <article class="sym" id="ws_fd">
 <h3><a href="#ws_fd">ws_fd</a> <i>function</i></h3>
 <pre>ws_fd(w const Ws&amp;) int</pre>
 <p>Returns the underlying socket file descriptor, for use in polling.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L117">hc/lib/net/ws.he:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L117">hc/lib/net/ws.he:117</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
 <article class="sym" id="WS_MAX">
 <h3><a href="#WS_MAX">WS_MAX</a> <i>constant</i></h3>
 <pre>WS_MAX := 67108864</pre>
 <p>Maximum allowed size in bytes of a single frame or reassembled message, set to 64 MiB.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L15">hc/lib/net/ws.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L15">hc/lib/net/ws.he:15</a>
 </article>
 <article class="sym" id="ws_fail">
 <h3><a href="#ws_fail">ws_fail</a> <i>function</i></h3>
 <pre>ws_fail(w Ws&amp;, why const byte[:]) int</pre>
 <p>Records an error message, marks the connection failed, closes the stream and returns the error status.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L23">hc/lib/net/ws.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L23">hc/lib/net/ws.he:23</a>
 </article>
 <article class="sym" id="mask4">
 <h3><a href="#mask4">mask4</a> <i>function</i></h3>
 <pre>mask4(w Ws&amp;) byte[&gt;..]</pre>
 <p>Returns four random masking bytes for an outgoing client frame, refilling a random pool when exhausted.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L26">hc/lib/net/ws.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L26">hc/lib/net/ws.he:26</a>
 </article>
 <article class="sym" id="frame">
 <h3><a href="#frame">frame</a> <i>function</i></h3>
 <pre>frame(w Ws&amp;, op int, d const byte[:])</pre>
 <p>Builds a masked frame with the given opcode and payload and writes it to the stream.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L29">hc/lib/net/ws.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L29">hc/lib/net/ws.he:29</a>
 </article>
 <article class="sym" id="utf8_ok">
 <h3><a href="#utf8_ok">utf8_ok</a> <i>function</i></h3>
 <pre>utf8_ok(s const byte[:]) bool</pre>
 <p>Checks whether a byte sequence is well-formed UTF-8, returning false if it is not.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L37">hc/lib/net/ws.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L37">hc/lib/net/ws.he:37</a>
 </article>
 <article class="sym" id="on_frame">
 <h3><a href="#on_frame">on_frame</a> <i>function</i></h3>
 <pre>on_frame(w Ws&amp;, fin bool, op int, p const byte[:]) int</pre>
 <p>Handles one decoded frame by answering control frames, reassembling fragments and queuing complete messages, failing on protocol violations.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/net/ws.he#L52">hc/lib/net/ws.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/net/ws.he#L52">hc/lib/net/ws.he:52</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -233,8 +233,8 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core <span>472</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>485</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
@@ -258,7 +258,7 @@
 <li><a href="/api-library/helium/lib/net-snap">net/snap</a></li>
 </ul>
 </li>
-<li><a href="/api-library/helium/security">Security <span>180</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>182</span></a></li>
 <li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
