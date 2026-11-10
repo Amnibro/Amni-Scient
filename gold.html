@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#FBFAF8">
 <title>Gold &mdash; Plain English In, Checked Helium Out | AMNI-SCIENT</title>
-<meta name="description" content="Gold turns plain English into checked, native Helium. Six Amni apps rewritten in Gold use 53% fewer tokens than the original code and give the same answers on 3,265 test inputs. Usage guide, API reference and benchmarks.">
+<meta name="description" content="Gold turns plain English into checked, native Helium. Six Amni apps rewritten in Gold use 57% fewer tokens than the original code and give the same answers on 3,265 test inputs. Usage guide, API reference and benchmarks.">
 <meta name="keywords" content="gold,helium language,phrase to code,natural language programming,compiled language,verified code generation">
 <meta name="author" content="Amni-Scient">
 <meta property="og:title" content="Gold &mdash; Plain English In, Checked Helium Out">
@@ -118,7 +118,7 @@
 <h2>WHAT IT IS</h2>
 <p class="lead">Gold is plain English that compiles to <a href="https://github.com/Amnibro/helium">Helium</a>, our compiled language. You describe what a program or a product feature does, one short block at a time. Gold finds the functions your product already has, has an AI model write the Helium, checks it with the Helium compiler (types, memory safety, and the exact output when you give one), fixes compile errors on its own, and saves the result so the same Gold always builds the same program.</p>
 <div class="card-grid">
-<div class="card"><p class="stat">53% fewer</p><p>tokens for an AI to read than the original code, across six real apps</p></div>
+<div class="card"><p class="stat">57% fewer</p><p>tokens for an AI to read than the original code, across six real apps</p></div>
 <div class="card"><p class="stat">3,265 / 3,265</p><p>test inputs give the same answer as the original</p></div>
 <div class="card"><p class="stat">1&ndash;2</p><p>model calls for a typical build; unchanged blocks are reused from the lock file</p></div>
 </div>
@@ -342,28 +342,28 @@ $ gold test units.gold</code>
 <p class="lead">We took the core engine of six Amni apps, had Gold write each one as plain English, and built that into Helium. Every rewrite was run on hundreds of real inputs next to the original and gives the same answers.</p>
 <div class="card-grid">
 <div class="card"><p class="stat">3,265 / 3,265</p><p>test inputs give the same answer as the original</p></div>
-<div class="card"><p class="stat">53% fewer</p><p>tokens for an AI to read than the original code (55,525 vs 118,343)</p></div>
-<div class="card"><p class="stat">4 of 6</p><p>rewrites run faster than the original</p></div>
+<div class="card"><p class="stat">57% fewer</p><p>tokens for an AI to read than the original code (51,382 vs 118,343)</p></div>
+<div class="card"><p class="stat">5 of 6</p><p>rewrites run faster than the original, and the sixth runs even</p></div>
 </div>
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>App (part rewritten)</th><th>Original</th><th class="n">Same answers</th><th class="n">Tokens: original &rarr; Gold</th><th class="n">Speed vs original</th></tr></thead>
 <tbody>
-<tr><td>Amni-Calc (all engineering calculators)</td><td>Rust</td><td class="n">687 / 687</td><td class="n">95,993 &rarr; 45,135 (53% fewer)</td><td class="n">1.10&times; slower</td></tr>
-<tr><td>Amni-Price (shelf-tag price reader)</td><td>Kotlin</td><td class="n">400 / 400</td><td class="n">5,376 &rarr; 3,040 (43% fewer)</td><td class="n">1.1&times; slower</td></tr>
-<tr><td>Amni-Type (swipe-typing decoder)</td><td>Java</td><td class="n">400 / 400</td><td class="n">3,618 &rarr; 1,507 (58% fewer)</td><td class="n">1.3&times; faster</td></tr>
+<tr><td>Amni-Calc (all engineering calculators)</td><td>Rust</td><td class="n">687 / 687</td><td class="n">95,993 &rarr; 41,255 (57% fewer)</td><td class="n">about even</td></tr>
+<tr><td>Amni-Price (shelf-tag price reader)</td><td>Kotlin</td><td class="n">400 / 400</td><td class="n">5,376 &rarr; 3,040 (43% fewer)</td><td class="n">2.3&times; faster</td></tr>
+<tr><td>Amni-Type (swipe-typing decoder)</td><td>Java</td><td class="n">400 / 400</td><td class="n">3,618 &rarr; 1,507 (58% fewer)</td><td class="n">1.4&times; faster</td></tr>
 <tr><td>Amni-Mail (mail rules engine)</td><td>Python</td><td class="n">400 / 400</td><td class="n">6,053 &rarr; 3,369 (44% fewer)</td><td class="n">3.7&times; faster</td></tr>
-<tr><td>Amni-Crypt (Reffelt cipher layer)</td><td>Python + NumPy</td><td class="n">80 / 80</td><td class="n">6,155 &rarr; 1,535 (75% fewer)</td><td class="n">704&times; faster</td></tr>
-<tr><td>Amni-CAD (unit and dimension text)</td><td>JavaScript (Node.js)</td><td class="n">1,298 / 1,298</td><td class="n">1,148 &rarr; 939 (18% fewer)</td><td class="n">20&times; faster</td></tr>
+<tr><td>Amni-Crypt (Reffelt cipher layer)</td><td>Python + NumPy</td><td class="n">80 / 80</td><td class="n">6,155 &rarr; 1,287 (79% fewer)</td><td class="n">1,691&times; faster</td></tr>
+<tr><td>Amni-CAD (unit and dimension text)</td><td>JavaScript (Node.js)</td><td class="n">1,298 / 1,298</td><td class="n">1,148 &rarr; 924 (20% fewer)</td><td class="n">58&times; faster</td></tr>
 </tbody></table></div>
 <details class="faq-inline" style="margin-top:1rem">
 <summary style="cursor:pointer;font-weight:700">How we measured, and where Helium still loses</summary>
 <p class="fine">Same answers: every input was run through the original program and the rewrite, and their output compared line by line. 3,235 lines match byte for byte. The other 30 are inputs both versions reject as invalid, where the error message is worded differently (Rust's JSON reader and Python's regex library phrase errors their own way).</p>
-<p class="fine">Tokens: counted with Claude's own tokenizer, original source files against the Gold files. The Helium that Gold writes from them is 137,886 tokens; you read and edit the Gold, not the Helium.</p>
-<p class="fine">Speed: each program runs the same inputs many times in one process; we report the fastest of several runs, start-up included, on a shared Linux desktop (AMD Ryzen 9 9950X3D). Amni-Calc and Amni-Price run slower than their originals, by 1.10&times; and 1.1&times;. Amni-Calc loses mostly in turning numbers into text. Helium now finds a number's shortest digits with one wide multiply instead of three (the method Rust's newest formatter uses), but the rest of its number printing still runs more instructions than Rust's. Amni-Crypt also ships a hand-tuned C version of the same cipher layer built on the CPU's AES and GFNI vector instructions; the Helium rewrite now uses those same instructions through its new <code>gf</code> library and is 1.18&times; slower than it (it was 13&times; slower).</p>
-<p class="fine">Fixes along the way: the rewrites found gaps in Helium itself, all now fixed: missing math and number-format functions, a regex crash, four unsafe code patterns the compiler now rejects, memory from short-lived values not being given back (Amni-Calc used 601 MB, now 5 MB), loops copying each item instead of reading it in place, slow paths in regex, JSON, number printing, sorting short lists, clearing memory, string escaping, splitting words and atan2, a buffer resize that zero-filled one byte at a time, and no access to the CPU's AES and GFNI instructions.</p>
+<p class="fine">Tokens: counted with Claude's own tokenizer, original source files against the Gold files. The Helium that Gold writes from them is 137,529 tokens; you read and edit the Gold, not the Helium.</p>
+<p class="fine">Speed: each program runs the same inputs many times in one process; we report the fastest of several runs, start-up included, on a shared Linux desktop (AMD Ryzen 9 9950X3D). Amni-Calc runs even with its Rust original, also when the Rust is built for this exact CPU; most of its time goes to turning numbers into text, where Helium now finds a number&rsquo;s shortest digits with one wide multiply (the method Rust&rsquo;s newest formatter uses). Amni-Crypt also ships a hand-tuned C version of the same cipher layer built on the CPU&rsquo;s AES and GFNI vector instructions, and Helium uses those same instructions through its <code>gf</code> library. On the whole job the Helium rewrite is 3.5&times; faster than that C built the way the app builds it (gcc) and 1.14&times; faster than the C built with clang for this CPU, mostly because the C reads hex and text with plain loops. On the cipher alone, Helium is 1.11&times; faster than the app&rsquo;s gcc build and 1.07&times; slower than the clang build.</p>
+<p class="fine">Fixes along the way: the rewrites found gaps in Helium itself, all now fixed: missing math and number-format functions, a regex crash, four unsafe code patterns the compiler now rejects, memory from short-lived values not being given back (Amni-Calc used 601 MB, now 5 MB), loops copying each item instead of reading it in place, slow paths in regex, JSON, number printing, sorting short lists, clearing memory, string escaping, splitting words and atan2, a buffer resize that zero-filled one byte at a time, and no access to the CPU's AES, GFNI and AVX-512 vector instructions.</p>
 </details>
 </section>
-<p class="page-updated">Last updated <time datetime="2026-11-09">November 9, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-10">November 10, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
