@@ -1325,6 +1325,7 @@ gfx::elem_size	function	gfx	/api-library/helium/lib/gfx#elem_size	Returns the by
 gfx::append_as	function	gfx	/api-library/helium/lib/gfx#append_as	Appends elements decoded from a raw byte block, prefixed with a length, to the output array.	int
 s3d::CASCADES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CASCADES	Number of cascaded shadow map layers fitted to slices of the view frustum for sun shadows.	pub
 s3d::MAX_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_LIGHTS	Maximum number of point lights the renderer uses in a frame.	pub
+s3d::MAX_FOG_VOLUMES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_FOG_VOLUMES	Constant giving the maximum number of fog volumes that can be active in the scene at once.	pub
 s3d::MAX_PROBES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_PROBES	Maximum number of reflection probes the scene can hold at once.	pub
 s3d::GI_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GI_LIGHTS	Maximum number of lights passed to the global illumination probe update.	pub
 s3d::GLOW_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GLOW_LEVELS	Number of reduction levels in the bloom chain.	int
@@ -1367,6 +1368,7 @@ s3d::GlowU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GlowU	Uniform bl
 s3d::GradeU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GradeU	Uniform block of tone parameters for the final grading pass.	int
 s3d::HistU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HistU	Uniform block giving the size and range for the exposure histogram compute pass.	int
 s3d::AdaptU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#AdaptU	Uniform block with range, percentile and rate values for the exposure adaptation compute pass.	int
+s3d::FogVolume	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FogVolume	A box or ellipsoid-shaped region of fog with its own position, size, density, color and edge softness.	pub
 s3d::FogU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FogU	Uniform block for the volumetric fog pass with cascades, sun, lights and fog parameters.	int
 s3d::QuadG	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadG	Geometry data for a particle quad with four corner positions and colors.	int
 s3d::QuadViewU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadViewU	Uniform block with view-projection matrix and camera right and up vectors for particle quads.	int
@@ -1494,6 +1496,11 @@ s3d::fog_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_step
 s3d::fog_g	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_g	Anisotropy of the fog's light scattering, where higher values favor forward scattering toward the sun.	pub
 s3d::fog_ambient	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_ambient	Ambient light color added to the fog.	pub
 s3d::fog_sun	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_sun	Intensity of sun light scattered by the fog.	pub
+s3d::fog_lights	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_lights	Scale for how strongly local lights scatter through the fog, where 1.0 is the default.	pub
+s3d::fog_noise	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_noise	Strength of the noise that varies fog density, where 0.0 disables the noise.	pub
+s3d::fog_noise_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_noise_size	World-space size of the fog noise pattern, used when noise strength is above zero.	pub
+s3d::fog_wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_wind	World-space wind vector that scrolls the fog noise over time.	pub
+s3d::fog_volumes	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_volumes	List of fog volumes the caller edits to place local fog in the scene.	pub
 s3d::pipe_fog	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_fog	GPU pipeline that draws the fog pass.	int
 s3d::quads	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quads	List of billboard quads queued for drawing this frame.	int
 s3d::quad_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quad_buf	GPU vertex buffer holding the quad data for the frame.	int

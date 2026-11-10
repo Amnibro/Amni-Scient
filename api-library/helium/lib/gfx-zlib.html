@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-zlib">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-zlib">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=264d073654">
+<link rel="stylesheet" href="/api-library/lib.css?v=33c2371739">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=264d073654'; start({wasm: '/api-library/search.wasm?v=264d073654'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=33c2371739'; start({wasm: '/api-library/search.wasm?v=33c2371739'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/zlib</h1>
 <p class="lib-lede">Decompress DEFLATE and zlib streams, the compression used inside PNG files.</p>
-<p class="lib-meta"><code>import gfx.zlib;</code> &middot; <code>zlib::</code> &middot; 5 functions, 1 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.zlib;</code> &middot; <code>zlib::</code> &middot; 5 functions, 1 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>zlib: a DEFLATE decoder (RFC 1951) with the zlib wrapper (RFC 1950), for PNG image data.
 Huffman codes are canonical; each table keeps a 9-bit direct lookup and walks the
 per-length counts for longer codes.
@@ -118,21 +118,21 @@ per-length counts for longer codes.
 <pre>inflate_raw(src const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a raw DEFLATE stream, appending bytes to out, and returns false if the data is corrupt.</p>
 <p class="note">Raw DEFLATE stream to out (appended). Returns false on corrupt data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L59">hc/lib/gfx/zlib.amni:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L59">hc/lib/gfx/zlib.amni:59</a>
 </article>
 <article class="sym" id="inflate">
 <h3><a href="#inflate">inflate</a> <i>function</i></h3>
 <pre>inflate(src const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a zlib stream by checking its header and inflating the data into out, without verifying the Adler-32 checksum.</p>
 <p class="note">zlib stream: 2-byte header, DEFLATE data, Adler-32 (not verified).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L179">hc/lib/gfx/zlib.amni:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L179">hc/lib/gfx/zlib.amni:179</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (10)</summary>
 <article class="sym" id="FAST">
 <h3><a href="#FAST">FAST</a> <i>constant</i></h3>
 <pre>let FAST = 9</pre>
 <p>Constant giving the number of bits resolved by the direct lookup table in a Huffman code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L6">hc/lib/gfx/zlib.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L6">hc/lib/gfx/zlib.amni:6</a>
 </article>
 <article class="sym" id="Code">
 <h3><a href="#Code">Code</a> <i>type</i></h3>
@@ -142,56 +142,56 @@ per-length counts for longer codes.
 	symbol i32[320], // symbols ordered by code
 }</pre>
 <p>Huffman decoding table holding a direct lookup, per-length code counts, and symbols ordered by code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L8">hc/lib/gfx/zlib.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L8">hc/lib/gfx/zlib.amni:8</a>
 </article>
 <article class="sym" id="empty_code">
 <h3><a href="#empty_code">empty_code</a> <i>function</i></h3>
 <pre>empty_code() Code</pre>
 <p>Returns a new Code with all lookup, count, and symbol entries zeroed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L14">hc/lib/gfx/zlib.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L14">hc/lib/gfx/zlib.amni:14</a>
 </article>
 <article class="sym" id="reverse_bits">
 <h3><a href="#reverse_bits">reverse_bits</a> <i>function</i></h3>
 <pre>reverse_bits(v int, n int) int</pre>
 <p>Returns the low n bits of a value in reversed order, used to index canonical codes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L16">hc/lib/gfx/zlib.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L16">hc/lib/gfx/zlib.amni:16</a>
 </article>
 <article class="sym" id="build">
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build(c Code&amp;, lens i32[:]) bool</pre>
 <p>Builds decoding tables from code lengths, returning false if the lengths over-subscribe the code space.</p>
 <p class="note">Builds the tables from code lengths; false if the lengths over-subscribe the code space.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L24">hc/lib/gfx/zlib.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L24">hc/lib/gfx/zlib.amni:24</a>
 </article>
 <article class="sym" id="LEN_BASE">
 <h3><a href="#LEN_BASE">LEN_BASE</a> <i>constant</i></h3>
 <pre>let LEN_BASE = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258]</pre>
 <p>Table of base match lengths for length symbols, starting at symbol 257.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L52">hc/lib/gfx/zlib.amni:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L52">hc/lib/gfx/zlib.amni:52</a>
 </article>
 <article class="sym" id="LEN_EXTRA">
 <h3><a href="#LEN_EXTRA">LEN_EXTRA</a> <i>constant</i></h3>
 <pre>let LEN_EXTRA = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0]</pre>
 <p>Table of extra bit counts to read for each length symbol.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L53">hc/lib/gfx/zlib.amni:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L53">hc/lib/gfx/zlib.amni:53</a>
 </article>
 <article class="sym" id="DIST_BASE">
 <h3><a href="#DIST_BASE">DIST_BASE</a> <i>constant</i></h3>
 <pre>let DIST_BASE = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577]</pre>
 <p>Table of base match distances for each distance symbol.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L54">hc/lib/gfx/zlib.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L54">hc/lib/gfx/zlib.amni:54</a>
 </article>
 <article class="sym" id="DIST_EXTRA">
 <h3><a href="#DIST_EXTRA">DIST_EXTRA</a> <i>constant</i></h3>
 <pre>let DIST_EXTRA = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13]</pre>
 <p>Table of extra bit counts to read for each distance symbol.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L55">hc/lib/gfx/zlib.amni:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L55">hc/lib/gfx/zlib.amni:55</a>
 </article>
 <article class="sym" id="CL_ORDER">
 <h3><a href="#CL_ORDER">CL_ORDER</a> <i>constant</i></h3>
 <pre>let CL_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]</pre>
 <p>Order in which code length code lengths are stored in a dynamic block header.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/264d073b17ce59e06c089dfe1b1ca4d785ad0c60/hc/lib/gfx/zlib.amni#L56">hc/lib/gfx/zlib.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/zlib.amni#L56">hc/lib/gfx/zlib.amni:56</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -215,7 +215,7 @@ per-length counts for longer codes.
 </ul>
 </li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1562</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1569</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
