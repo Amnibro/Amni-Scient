@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/audio">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/audio">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=6ac13de017">
+<link rel="stylesheet" href="/api-library/lib.css?v=7083b26c90">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=6ac13de017'; start({wasm: '/api-library/search.wasm?v=6ac13de017'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=7083b26c90'; start({wasm: '/api-library/search.wasm?v=7083b26c90'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>audio</h1>
 <p class="lib-lede">Load and play sounds with voices, 3D positioning, mix buses, reverb and offline rendering.</p>
-<p class="lib-meta"><code>import audio;</code> &middot; <code>audio::</code> &middot; 42 functions, 5 types, 36 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he">Source</a></p>
+<p class="lib-meta"><code>import audio;</code> &middot; <code>audio::</code> &middot; 42 functions, 5 types, 36 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#sounds">Sounds <span class="n">3</span></a></li>
 <li><a href="#voices">Voices <span class="n">7</span></a></li>
@@ -117,504 +117,504 @@
 <h3><a href="#Sound">Sound</a> <i>type</i></h3>
 <pre>struct Sound { id uint }</pre>
 <p>Handle identifying a loaded sound, where an id of zero means null or invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L9">hc/lib/audio.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L9">hc/lib/audio.he:9</a>
 </article>
 <article class="sym" id="create_sound">
 <h3><a href="#create_sound">create_sound</a> <i>function</i></h3>
 <pre>create_sound(samples const f32[:], sample_rate int = 48000, channels int = 1) Sound</pre>
 <p>Creates a sound from mono or stereo float samples in the range -1 to 1, returning a null handle on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L195">hc/lib/audio.he:195</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L195">hc/lib/audio.he:195</a>
 </article>
 <article class="sym" id="release_sound">
 <h3><a href="#release_sound">release_sound</a> <i>function</i></h3>
 <pre>release_sound(sound Sound) bool</pre>
 <p>Releases a sound and stops its voices, returning false if the handle is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L196">hc/lib/audio.he:196</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L196">hc/lib/audio.he:196</a>
 </article>
 <h2 id="voices">Voices <span class="n">7</span></h2>
 <article class="sym" id="Voice">
 <h3><a href="#Voice">Voice</a> <i>type</i></h3>
 <pre>struct Voice { id uint }</pre>
 <p>Handle identifying a playing voice, where an id of zero means no voice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L10">hc/lib/audio.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L10">hc/lib/audio.he:10</a>
 </article>
 <article class="sym" id="voice_count">
 <h3><a href="#voice_count">voice_count</a> <i>function</i></h3>
 <pre>voice_count() int</pre>
 <p>Returns the number of voices currently playing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L222">hc/lib/audio.he:222</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L222">hc/lib/audio.he:222</a>
 </article>
 <article class="sym" id="play">
 <h3><a href="#play">play</a> <i>function</i></h3>
 <pre>play(sound Sound, volume f32 = 1.0, pan f32 = 0.0, pitch f32 = 1.0, looping bool = false) Voice</pre>
 <p>Plays a sound with volume 0 to 1, pan -1 to 1 and pitch, returning a null voice on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L223">hc/lib/audio.he:223</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L223">hc/lib/audio.he:223</a>
 </article>
 <article class="sym" id="playing">
 <h3><a href="#playing">playing</a> <i>function</i></h3>
 <pre>playing(voice Voice) bool</pre>
 <p>Returns whether a voice is still playing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L224">hc/lib/audio.he:224</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L224">hc/lib/audio.he:224</a>
 </article>
 <article class="sym" id="stop">
 <h3><a href="#stop">stop</a> <i>function</i></h3>
 <pre>stop(voice Voice)</pre>
 <p>Stops a voice, doing nothing if it is not playing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L225">hc/lib/audio.he:225</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L225">hc/lib/audio.he:225</a>
 </article>
 <article class="sym" id="stop_all">
 <h3><a href="#stop_all">stop_all</a> <i>function</i></h3>
 <pre>stop_all()</pre>
 <p>Stops every playing voice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L226">hc/lib/audio.he:226</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L226">hc/lib/audio.he:226</a>
 </article>
 <article class="sym" id="set_voice">
 <h3><a href="#set_voice">set_voice</a> <i>function</i></h3>
 <pre>set_voice(voice Voice, volume f32, pan f32, pitch f32) bool</pre>
 <p>Changes a playing voice's volume, pan and pitch, returning false if invalid or stopped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L227">hc/lib/audio.he:227</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L227">hc/lib/audio.he:227</a>
 </article>
 <h2 id="spatial-audio">Spatial Audio <span class="n">5</span></h2>
 <article class="sym" id="set_listener">
 <h3><a href="#set_listener">set_listener</a> <i>function</i></h3>
 <pre>set_listener(x real, y real, z real, fx real, fy real, fz real, ux real, uy real, uz real, vx real, vy real, vz real)</pre>
 <p>Sets the listener's position, forward and up directions, and velocity for 3D sound.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L60">hc/lib/audio.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L60">hc/lib/audio.he:60</a>
 </article>
 <article class="sym" id="set_bus">
 <h3><a href="#set_bus">set_bus</a> <i>function</i></h3>
 <pre>set_bus(b int, v f32)</pre>
 <p>Sets the volume of a mix bus, ignoring indexes outside 0 to 7.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L61">hc/lib/audio.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L61">hc/lib/audio.he:61</a>
 </article>
 <article class="sym" id="set_spatial">
 <h3><a href="#set_spatial">set_spatial</a> <i>function</i></h3>
 <pre>set_spatial(itd bool, shadow bool, limit bool)</pre>
 <p>Enables or disables interaural time delay, head shadow and the output limiter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L63">hc/lib/audio.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L63">hc/lib/audio.he:63</a>
 </article>
 <article class="sym" id="play3d">
 <h3><a href="#play3d">play3d</a> <i>function</i></h3>
 <pre>play3d(sound Sound, x real, y real, z real, volume f32 = 1.0, pitch f32 = 1.0, looping bool = false, min_dist real = 1.0, max_dist real = 1000.0, rolloff real = 1.0) Voice</pre>
 <p>Plays a sound at a 3D position with distance rolloff, returning a null voice on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L212">hc/lib/audio.he:212</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L212">hc/lib/audio.he:212</a>
 </article>
 <article class="sym" id="set_voice3d">
 <h3><a href="#set_voice3d">set_voice3d</a> <i>function</i></h3>
 <pre>set_voice3d(voice Voice, x real, y real, z real, vx real, vy real, vz real, occlusion real, send real, bus int) bool</pre>
 <p>Updates a 3D voice's position, velocity, occlusion, reverb send and bus, returning false if it stopped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L218">hc/lib/audio.he:218</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L218">hc/lib/audio.he:218</a>
 </article>
 <h2 id="reverb">Reverb <span class="n">2</span></h2>
 <article class="sym" id="set_reverb">
 <h3><a href="#set_reverb">set_reverb</a> <i>function</i></h3>
 <pre>set_reverb(wet real, room real, damp real)</pre>
 <p>Sets the reverb wet level, room size and damping applied to the mix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L62">hc/lib/audio.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L62">hc/lib/audio.he:62</a>
 </article>
 <article class="sym" id="set_send">
 <h3><a href="#set_send">set_send</a> <i>function</i></h3>
 <pre>set_send(voice Voice, send real, bus int) bool</pre>
 <p>Sets a voice's reverb send amount and mix bus, returning false if the voice stopped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L221">hc/lib/audio.he:221</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L221">hc/lib/audio.he:221</a>
 </article>
 <h2 id="device-setup">Device Setup <span class="n">7</span></h2>
 <article class="sym" id="available">
 <h3><a href="#available">available</a> <i>function</i></h3>
 <pre>available() bool</pre>
 <p>Returns whether audio is available, which is always true.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L165">hc/lib/audio.he:165</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L165">hc/lib/audio.he:165</a>
 </article>
 <article class="sym" id="open">
 <h3><a href="#open">open</a> <i>function</i></h3>
 <pre>open(sample_rate int = 48000) bool</pre>
 <p>Opens audio output on the default device at the given sample rate, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L177">hc/lib/audio.he:177</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L177">hc/lib/audio.he:177</a>
 </article>
 <article class="sym" id="open_offline">
 <h3><a href="#open_offline">open_offline</a> <i>function</i></h3>
 <pre>open_offline(sample_rate int = 48000) bool</pre>
 <p>Opens an offline mixer at the given sample rate for rendering without a device, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L178">hc/lib/audio.he:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L178">hc/lib/audio.he:178</a>
 </article>
 <article class="sym" id="close">
 <h3><a href="#close">close</a> <i>function</i></h3>
 <pre>close()</pre>
 <p>Closes audio, stops the device stream and releases all sounds and voices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L179">hc/lib/audio.he:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L179">hc/lib/audio.he:179</a>
 </article>
 <article class="sym" id="error_into">
 <h3><a href="#error_into">error_into</a> <i>function</i></h3>
 <pre>error_into(out byte[:]) int</pre>
 <p>Copies the last error message into a buffer and returns its full length in bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L182">hc/lib/audio.he:182</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L182">hc/lib/audio.he:182</a>
 </article>
 <article class="sym" id="error">
 <h3><a href="#error">error</a> <i>function</i></h3>
 <pre>error() byte[&gt;..]</pre>
 <p>Returns a copy of the last error message, truncated to 1024 bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L185">hc/lib/audio.he:185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L185">hc/lib/audio.he:185</a>
 </article>
 <article class="sym" id="render">
 <h3><a href="#render">render</a> <i>function</i></h3>
 <pre>render(out f32[:]) bool</pre>
 <p>Renders mixed stereo audio into a buffer on an offline mixer, returning false otherwise.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L231">hc/lib/audio.he:231</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L231">hc/lib/audio.he:231</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (59)</summary>
 <article class="sym" id="MAIN_THREAD">
 <h3><a href="#MAIN_THREAD">MAIN_THREAD</a> <i>constant</i></h3>
 <pre>MAIN_THREAD := true</pre>
 <p>Flag marking that the audio module must be used from the main thread.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L5">hc/lib/audio.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L5">hc/lib/audio.he:5</a>
 </article>
 <article class="sym" id="fmod">
 <h3><a href="#fmod">fmod</a> <i>function</i></h3>
 <pre>fmod(x real, y real) real</pre>
 <p>Binds C fmod to compute a floating-point remainder for wrapping playback positions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L6">hc/lib/audio.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L6">hc/lib/audio.he:6</a>
 </article>
 <article class="sym" id="MAX_SOUNDS">
 <h3><a href="#MAX_SOUNDS">MAX_SOUNDS</a> <i>constant</i></h3>
 <pre>MAX_SOUNDS := 256 as i32</pre>
 <p>Constant for the maximum number of sound slots, 256, that can be loaded at once.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L7">hc/lib/audio.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L7">hc/lib/audio.he:7</a>
 </article>
 <article class="sym" id="MAX_VOICES">
 <h3><a href="#MAX_VOICES">MAX_VOICES</a> <i>constant</i></h3>
 <pre>MAX_VOICES := 64 as i32</pre>
 <p>Constant for the maximum number of simultaneous voices, 64, that can play at once.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L8">hc/lib/audio.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L8">hc/lib/audio.he:8</a>
 </article>
 <article class="sym" id="Snd">
 <h3><a href="#Snd">Snd</a> <i>type</i></h3>
 <pre>struct Snd { id uint, pcm f32[&gt;..], frames int, rate int, ch int }</pre>
 <p>Internal record holding a sound's PCM samples, frame count, sample rate and channel count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L11">hc/lib/audio.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L11">hc/lib/audio.he:11</a>
 </article>
 <article class="sym" id="Vc">
 <h3><a href="#Vc">Vc</a> <i>type</i></h3>
 <pre>struct Vc { id uint, snd int, pos real, vol f32, pan f32, pitch f32, lp bool, end int, d3 bool, px real, py real, pz real, vx real, vy real, vz real, mind real, maxd real, roll real, occ real, send real, bus int, gl real, gr real, fl real, fr real, sl real, sr real }</pre>
 <p>Internal record of a voice's playback position, gain, pan, pitch, 3D state, send and filter state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L12">hc/lib/audio.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L12">hc/lib/audio.he:12</a>
 </article>
 <article class="sym" id="Spec">
 <h3><a href="#Spec">Spec</a> <i>type</i></h3>
 <pre>struct Spec { format i32, channels i32, freq i32 }</pre>
 <p>C structure describing an SDL audio format, channel count and sample frequency.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L13">hc/lib/audio.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L13">hc/lib/audio.he:13</a>
 </article>
 <article class="sym" id="OPEN">
 <h3><a href="#OPEN">OPEN</a> <i>constant</i></h3>
 <pre>var OPEN = false</pre>
 <p>Flag recording whether the audio system is currently open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L24">hc/lib/audio.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L24">hc/lib/audio.he:24</a>
 </article>
 <article class="sym" id="OFFLINE">
 <h3><a href="#OFFLINE">OFFLINE</a> <i>constant</i></h3>
 <pre>var OFFLINE = false</pre>
 <p>Flag recording whether the mixer was opened for offline rendering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L25">hc/lib/audio.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L25">hc/lib/audio.he:25</a>
 </article>
 <article class="sym" id="RATE">
 <h3><a href="#RATE">RATE</a> <i>constant</i></h3>
 <pre>var RATE = 0</pre>
 <p>Output sample rate in Hz of the open mixer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L26">hc/lib/audio.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L26">hc/lib/audio.he:26</a>
 </article>
 <article class="sym" id="STREAM">
 <h3><a href="#STREAM">STREAM</a> <i>constant</i></h3>
 <pre>var STREAM uint = 0</pre>
 <p>Handle of the SDL audio stream used for device output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L27">hc/lib/audio.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L27">hc/lib/audio.he:27</a>
 </article>
 <article class="sym" id="NEXT">
 <h3><a href="#NEXT">NEXT</a> <i>constant</i></h3>
 <pre>var NEXT uint = 0</pre>
 <p>Counter used to generate the next unique sound or voice handle id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L28">hc/lib/audio.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L28">hc/lib/audio.he:28</a>
 </article>
 <article class="sym" id="SND">
 <h3><a href="#SND">SND</a> <i>constant</i></h3>
 <pre>var SND Snd[&gt;..] = []</pre>
 <p>Table of sound slots holding loaded sound data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L29">hc/lib/audio.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L29">hc/lib/audio.he:29</a>
 </article>
 <article class="sym" id="VC">
 <h3><a href="#VC">VC</a> <i>constant</i></h3>
 <pre>var VC Vc[&gt;..] = []</pre>
 <p>Table of voice slots holding playing voice state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L30">hc/lib/audio.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L30">hc/lib/audio.he:30</a>
 </article>
 <article class="sym" id="ERR">
 <h3><a href="#ERR">ERR</a> <i>constant</i></h3>
 <pre>var ERR byte[&gt;..] = []</pre>
 <p>Buffer holding the most recent error message text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L31">hc/lib/audio.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L31">hc/lib/audio.he:31</a>
 </article>
 <article class="sym" id="BUF">
 <h3><a href="#BUF">BUF</a> <i>constant</i></h3>
 <pre>var BUF f32[&gt;..] = []</pre>
 <p>Scratch buffer of stereo samples mixed before queuing to the device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L32">hc/lib/audio.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L32">hc/lib/audio.he:32</a>
 </article>
 <article class="sym" id="PUT">
 <h3><a href="#PUT">PUT</a> <i>constant</i></h3>
 <pre>var PUT = 0</pre>
 <p>Running count of frames queued to the output device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L33">hc/lib/audio.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L33">hc/lib/audio.he:33</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(m const byte[:]) bool</pre>
 <p>Records an error message and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L34">hc/lib/audio.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L34">hc/lib/audio.he:34</a>
 </article>
 <article class="sym" id="sdl_fail">
 <h3><a href="#sdl_fail">sdl_fail</a> <i>function</i></h3>
 <pre>sdl_fail() bool</pre>
 <p>Records the current SDL error message and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L35">hc/lib/audio.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L35">hc/lib/audio.he:35</a>
 </article>
 <article class="sym" id="okrate">
 <h3><a href="#okrate">okrate</a> <i>function</i></h3>
 <pre>okrate(r int) bool</pre>
 <p>Checks that a sample rate lies between 8000 and 192000 Hz.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L36">hc/lib/audio.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L36">hc/lib/audio.he:36</a>
 </article>
 <article class="sym" id="okpar">
 <h3><a href="#okpar">okpar</a> <i>function</i></h3>
 <pre>okpar(v f32, p f32, q f32) bool</pre>
 <p>Validates volume, pan and pitch ranges, recording an error and returning false when out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L37">hc/lib/audio.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L37">hc/lib/audio.he:37</a>
 </article>
 <article class="sym" id="vc0">
 <h3><a href="#vc0">vc0</a> <i>function</i></h3>
 <pre>vc0() Vc</pre>
 <p>Returns a default voice record with unit gain and default 3D distance settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L38">hc/lib/audio.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L38">hc/lib/audio.he:38</a>
 </article>
 <article class="sym" id="LP">
 <h3><a href="#LP">LP</a> <i>constant</i></h3>
 <pre>var LP real[&gt;..] = [0.0, 0.0, 0.0]</pre>
 <p>Listener position coordinates used for 3D mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L39">hc/lib/audio.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L39">hc/lib/audio.he:39</a>
 </article>
 <article class="sym" id="LF">
 <h3><a href="#LF">LF</a> <i>constant</i></h3>
 <pre>var LF real[&gt;..] = [0.0, 0.0, -1.0]</pre>
 <p>Listener forward direction vector used for 3D mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L40">hc/lib/audio.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L40">hc/lib/audio.he:40</a>
 </article>
 <article class="sym" id="LU">
 <h3><a href="#LU">LU</a> <i>constant</i></h3>
 <pre>var LU real[&gt;..] = [0.0, 1.0, 0.0]</pre>
 <p>Listener up direction vector used for 3D mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L41">hc/lib/audio.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L41">hc/lib/audio.he:41</a>
 </article>
 <article class="sym" id="LV">
 <h3><a href="#LV">LV</a> <i>constant</i></h3>
 <pre>var LV real[&gt;..] = [0.0, 0.0, 0.0]</pre>
 <p>Listener velocity vector used for Doppler calculations.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L42">hc/lib/audio.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L42">hc/lib/audio.he:42</a>
 </article>
 <article class="sym" id="BUSV">
 <h3><a href="#BUSV">BUSV</a> <i>constant</i></h3>
 <pre>var BUSV f32[&gt;..] = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]</pre>
 <p>Per-bus volume levels for the eight mix buses.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L43">hc/lib/audio.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L43">hc/lib/audio.he:43</a>
 </article>
 <article class="sym" id="ITD">
 <h3><a href="#ITD">ITD</a> <i>constant</i></h3>
 <pre>var ITD = true</pre>
 <p>Flag enabling interaural time difference in 3D mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L44">hc/lib/audio.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L44">hc/lib/audio.he:44</a>
 </article>
 <article class="sym" id="SHADOW">
 <h3><a href="#SHADOW">SHADOW</a> <i>constant</i></h3>
 <pre>var SHADOW = true</pre>
 <p>Flag enabling head shadow filtering in 3D mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L45">hc/lib/audio.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L45">hc/lib/audio.he:45</a>
 </article>
 <article class="sym" id="LIMIT">
 <h3><a href="#LIMIT">LIMIT</a> <i>constant</i></h3>
 <pre>var LIMIT = true</pre>
 <p>Flag enabling the output peak limiter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L46">hc/lib/audio.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L46">hc/lib/audio.he:46</a>
 </article>
 <article class="sym" id="LTHR">
 <h3><a href="#LTHR">LTHR</a> <i>constant</i></h3>
 <pre>var LTHR = 0.98</pre>
 <p>Peak threshold level used by the output limiter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L47">hc/lib/audio.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L47">hc/lib/audio.he:47</a>
 </article>
 <article class="sym" id="LG">
 <h3><a href="#LG">LG</a> <i>constant</i></h3>
 <pre>var LG = 1.0</pre>
 <p>Current gain applied by the output limiter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L48">hc/lib/audio.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L48">hc/lib/audio.he:48</a>
 </article>
 <article class="sym" id="WET">
 <h3><a href="#WET">WET</a> <i>constant</i></h3>
 <pre>var WET = 0.0</pre>
 <p>Wet level of the reverb effect.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L49">hc/lib/audio.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L49">hc/lib/audio.he:49</a>
 </article>
 <article class="sym" id="ROOM">
 <h3><a href="#ROOM">ROOM</a> <i>constant</i></h3>
 <pre>var ROOM = 0.7</pre>
 <p>Room size setting of the reverb effect.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L50">hc/lib/audio.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L50">hc/lib/audio.he:50</a>
 </article>
 <article class="sym" id="DAMP">
 <h3><a href="#DAMP">DAMP</a> <i>constant</i></h3>
 <pre>var DAMP = 0.3</pre>
 <p>Damping amount of the reverb effect.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L51">hc/lib/audio.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L51">hc/lib/audio.he:51</a>
 </article>
 <article class="sym" id="SEND">
 <h3><a href="#SEND">SEND</a> <i>constant</i></h3>
 <pre>var SEND f32[&gt;..] = []</pre>
 <p>Buffer of per-frame signal sent to the reverb.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L52">hc/lib/audio.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L52">hc/lib/audio.he:52</a>
 </article>
 <article class="sym" id="CB">
 <h3><a href="#CB">CB</a> <i>constant</i></h3>
 <pre>var CB real[&gt;..] = []</pre>
 <p>Sample storage for the reverb comb filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L53">hc/lib/audio.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L53">hc/lib/audio.he:53</a>
 </article>
 <article class="sym" id="CI">
 <h3><a href="#CI">CI</a> <i>constant</i></h3>
 <pre>var CI int[&gt;..] = []</pre>
 <p>Start offsets of each comb filter within its storage.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L54">hc/lib/audio.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L54">hc/lib/audio.he:54</a>
 </article>
 <article class="sym" id="CF">
 <h3><a href="#CF">CF</a> <i>constant</i></h3>
 <pre>var CF real[&gt;..] = []</pre>
 <p>Filter state values for the comb filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L55">hc/lib/audio.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L55">hc/lib/audio.he:55</a>
 </article>
 <article class="sym" id="AB">
 <h3><a href="#AB">AB</a> <i>constant</i></h3>
 <pre>var AB real[&gt;..] = []</pre>
 <p>Sample storage for the reverb all-pass filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L56">hc/lib/audio.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L56">hc/lib/audio.he:56</a>
 </article>
 <article class="sym" id="AI">
 <h3><a href="#AI">AI</a> <i>constant</i></h3>
 <pre>var AI int[&gt;..] = []</pre>
 <p>Start offsets of each all-pass filter within its storage.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L57">hc/lib/audio.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L57">hc/lib/audio.he:57</a>
 </article>
 <article class="sym" id="CT">
 <h3><a href="#CT">CT</a> <i>constant</i></h3>
 <pre>CT := [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617]</pre>
 <p>Base delay lengths in samples for the comb filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L58">hc/lib/audio.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L58">hc/lib/audio.he:58</a>
 </article>
 <article class="sym" id="AT">
 <h3><a href="#AT">AT</a> <i>constant</i></h3>
 <pre>AT := [556, 441, 341, 225]</pre>
 <p>Base delay lengths in samples for the all-pass filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L59">hc/lib/audio.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L59">hc/lib/audio.he:59</a>
 </article>
 <article class="sym" id="rv_init">
 <h3><a href="#rv_init">rv_init</a> <i>function</i></h3>
 <pre>rv_init()</pre>
 <p>Allocates the reverb delay buffers on first use, scaled to the sample rate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L64">hc/lib/audio.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L64">hc/lib/audio.he:64</a>
 </article>
 <article class="sym" id="CP">
 <h3><a href="#CP">CP</a> <i>constant</i></h3>
 <pre>var CP int[&gt;..] = []</pre>
 <p>Current write positions of the comb filter delay lines.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L71">hc/lib/audio.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L71">hc/lib/audio.he:71</a>
 </article>
 <article class="sym" id="AP">
 <h3><a href="#AP">AP</a> <i>constant</i></h3>
 <pre>var AP int[&gt;..] = []</pre>
 <p>Current write positions of the all-pass filter delay lines.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L72">hc/lib/audio.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L72">hc/lib/audio.he:72</a>
 </article>
 <article class="sym" id="reverb-2">
 <h3><a href="#reverb-2">reverb</a> <i>function</i></h3>
 <pre>reverb(out f32[:], n int)</pre>
 <p>Adds reverb of the send signal into the stereo output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L73">hc/lib/audio.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L73">hc/lib/audio.he:73</a>
 </article>
 <article class="sym" id="audible">
 <h3><a href="#audible">audible</a> <i>function</i></h3>
 <pre>audible(v Vc) real</pre>
 <p>Returns the estimated loudness of a voice after distance and occlusion attenuation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L85">hc/lib/audio.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L85">hc/lib/audio.he:85</a>
 </article>
 <article class="sym" id="nid">
 <h3><a href="#nid">nid</a> <i>function</i></h3>
 <pre>nid() uint</pre>
 <p>Returns the next unique handle id, or zero after recording an error if exhausted.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L90">hc/lib/audio.he:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L90">hc/lib/audio.he:90</a>
 </article>
 <article class="sym" id="slots">
 <h3><a href="#slots">slots</a> <i>function</i></h3>
 <pre>slots()</pre>
 <p>Fills the sound and voice tables up to their maximum sizes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L91">hc/lib/audio.he:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L91">hc/lib/audio.he:91</a>
 </article>
 <article class="sym" id="find_sound">
 <h3><a href="#find_sound">find_sound</a> <i>function</i></h3>
 <pre>find_sound(h Sound) int</pre>
 <p>Returns the slot index of a sound handle, or -1 after recording an error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L94">hc/lib/audio.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L94">hc/lib/audio.he:94</a>
 </article>
 <article class="sym" id="find_voice">
 <h3><a href="#find_voice">find_voice</a> <i>function</i></h3>
 <pre>find_voice(h Voice) int</pre>
 <p>Returns the slot index of a voice handle, or -1 if it is not playing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L97">hc/lib/audio.he:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L97">hc/lib/audio.he:97</a>
 </article>
 <article class="sym" id="mix3">
 <h3><a href="#mix3">mix3</a> <i>function</i></h3>
 <pre>mix3(vi int, out f32[:], n int)</pre>
 <p>Mixes one 3D voice into the output with panning, Doppler, delay and filtering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L100">hc/lib/audio.he:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L100">hc/lib/audio.he:100</a>
 </article>
 <article class="sym" id="mix">
 <h3><a href="#mix">mix</a> <i>function</i></h3>
 <pre>mix(out f32[:])</pre>
 <p>Mixes all active voices into a stereo buffer with reverb, limiting and clipping.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L134">hc/lib/audio.he:134</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L134">hc/lib/audio.he:134</a>
 </article>
 <article class="sym" id="pump">
 <h3><a href="#pump">pump</a> <i>function</i></h3>
 <pre>pump()</pre>
 <p>Mixes and queues audio to the output device when its queue runs low.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L160">hc/lib/audio.he:160</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L160">hc/lib/audio.he:160</a>
 </article>
 <article class="sym" id="open_raw">
 <h3><a href="#open_raw">open_raw</a> <i>function</i></h3>
 <pre>open_raw(sample_rate int, offline bool) bool</pre>
 <p>Opens the mixer, either on a device stream or in offline mode, after validating the rate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L166">hc/lib/audio.he:166</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L166">hc/lib/audio.he:166</a>
 </article>
 <article class="sym" id="create_sound_raw">
 <h3><a href="#create_sound_raw">create_sound_raw</a> <i>function</i></h3>
 <pre>create_sound_raw(samples const f32[:], sample_rate int, channels int) Sound</pre>
 <p>Creates a sound from validated PCM samples, returning a null handle on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L186">hc/lib/audio.he:186</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L186">hc/lib/audio.he:186</a>
 </article>
 <article class="sym" id="slot_for">
 <h3><a href="#slot_for">slot_for</a> <i>function</i></h3>
 <pre>slot_for(aud real) int</pre>
 <p>Chooses a free voice slot or steals the quietest one, returning -1 if none is available.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L201">hc/lib/audio.he:201</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L201">hc/lib/audio.he:201</a>
 </article>
 <article class="sym" id="play_raw">
 <h3><a href="#play_raw">play_raw</a> <i>function</i></h3>
 <pre>play_raw(sound Sound, volume f32, pan f32, pitch f32, looping bool) Voice</pre>
 <p>Starts a stereo voice for a sound after validating parameters, returning a null handle on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/audio.he#L207">hc/lib/audio.he:207</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/audio.he#L207">hc/lib/audio.he:207</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -626,7 +626,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1785</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1789</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a><ul>
 <li><a href="/api-library/helium/lib/audio" class="on">audio</a><ul class="lib-sub">

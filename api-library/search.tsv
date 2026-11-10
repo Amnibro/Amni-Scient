@@ -1632,6 +1632,9 @@ s3d::smp_shadow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_sha
 s3d::smp_cache	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_cache	Cache of samplers created for material texture settings.	int
 s3d::spec_aa	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#spec_aa	Switch enabling specular antialiasing, on by default.	pub
 s3d::wet	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wet	Wetness amount applied to surfaces, 0 by default.	pub
+s3d::ripples	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ripples	Strength of rain ripples on wet surfaces, where 0.0 disables them.	pub
+s3d::puddles	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#puddles	Amount of standing puddles on surfaces, where 0.0 means none.	pub
+s3d::puddle_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#puddle_size	Size scale of puddles, defaulting to 1.7.	pub
 s3d::world_time	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#world_time	Time value in seconds passed to shaders, 0 by default.	pub
 s3d::snow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#snow	Snow coverage amount applied to surfaces, 0 by default.	pub
 s3d::shelter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shelter	Flag that enables the shelter map, which occludes sky light under cover, when true.	pub
@@ -1812,6 +1815,7 @@ s3d::clear_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cl
 s3d::instance_drawn	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_drawn	Returns how many instances of a set were drawn at the given LOD.	pub
 s3d::instance_list	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_list	Returns the indices of instances of a set drawn at the given LOD.	pub
 s3d::instance_triangles	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_triangles	Returns the triangle count drawn for an instance set across its LODs.	pub
+s3d::handheld	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#handheld	Returns a copy of the camera with procedural handheld shake applied, or the camera unchanged when amount is zero.	pub
 s3d::animate	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#animate	Plays an animation on an item at the given time, cancelling any crossfade.	pub
 s3d::crossfade	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#crossfade	Blends two animations on an item, with weight w applied to the target animation.	pub
 s3d::bend	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bend	Applies an extra rotation to one node of an item on top of its animation.	pub
