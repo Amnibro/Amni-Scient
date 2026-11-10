@@ -1,0 +1,17 @@
+import {parse} from '../form_lang.js';import {props,join,review,fresh} from '../form_fix.js';
+let bad=0;const ok=(c,n,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?' ('+x+')':''));if(!c)bad++;},z=(t,n)=>parse(t).items.find(x=>x.name===n).pts[0][2];
+const BASE='base box 0,0,.5 2,2,1',NEAR=BASE+'\nknob sphere 0,0,1.7 r.5',FAR=BASE+'\nball sphere 2.5,0,.5 r.5',V='vase cyl 0,0,0 0,0,3 r1';
+ok(props(BASE).comps===1&&props(NEAR).comps===2,'a floating part counts as a second piece');
+const j=join(NEAR,BASE);ok(props(j).comps===1&&z(j,'knob')<1.7&&j.split('\n')[0]===BASE,'a near miss is pulled into the part it should join',j.split('\n')[1]);
+ok(join(NEAR,NEAR)===NEAR,'lines that were already in the scene are never moved');
+ok(join(FAR,BASE)===FAR,'a part far from the rest is left where it is');
+const rv=review('add a ball',FAR,false,undefined,BASE);ok(!!rv&&rv.lp.includes('ball')&&/not joined/.test(rv.msg)&&/Original request: add a ball$/.test(rv.msg),'a far loose part is sent back for one more try',rv&&rv.msg.slice(27,140));
+ok(review('add a ball',FAR,false,undefined,FAR)===null,'loose parts that were already in the scene are not reported');
+ok(!fresh('put a ball next to the base',FAR,BASE)&&fresh('add a ball',FAR,BASE)&&!fresh('add a ball',FAR,FAR),'parts asked to sit apart are left alone');
+ok(review('put a ball beside the base',FAR,false,undefined,BASE)===null,'a request for separate parts passes the check');
+const sv=review('Make a vase 5 tall',V,true);ok(!!sv&&sv.sz.length===1&&/5 tall/.test(sv.msg),'a wrong size is sent back',sv&&sv.sz[0]);
+ok(review('Make a vase 3 tall',V,true)===null&&review('Make a vase about 3.4 tall',V,true)===null,'matching sizes pass, with slack for about');
+ok(review('Make a traffic light: a dark housing box 1 wide and 3 tall on top of a thin pole',BASE.replace('base box 0,0,.5 2,2,1','pole cyl 0,0,0 0,0,1.3 r.07\nhousing box 0,0,2.7 1,1,3'),true)===null,'a size that fits one of the parts is not held against the whole model');
+ok(review('Make it 5 tall',V,false)===null,'sizes are only checked when the whole scene is rewritten');
+ok(review('add a ball','ball sphere',false)===null&&join('ball sphere',BASE)==='ball sphere','broken text is passed through untouched');
+console.log(bad?bad+' failed':'all passed');process.exit(bad?1:0);
