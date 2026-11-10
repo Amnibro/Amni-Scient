@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-scalability">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-scalability">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
+<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/scalability</h1>
 <p class="lib-lede">Pick and apply graphics quality settings for the device.</p>
-<p class="lib-meta"><code>import gfx.scalability;</code> &middot; <code>scal::</code> &middot; 4 functions, 0 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.scalability;</code> &middot; <code>scal::</code> &middot; 4 functions, 0 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#quality-levels">Quality Levels <span class="n">4</span></a></li>
 <li><a href="#applying-settings">Applying Settings <span class="n">2</span></a></li>
@@ -113,38 +113,38 @@
 <h3><a href="#LOW">LOW</a> <i>constant</i></h3>
 <pre>let LOW = 0; let MEDIUM = 1; let HIGH = 2; let EPIC = 3</pre>
 <p>Constants naming the quality presets LOW, MEDIUM, HIGH and EPIC, numbered 0 to 3, accepted by the other functions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L5">hc/lib/gfx/scalability.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L5">hc/lib/gfx/scalability.amni:5</a>
 </article>
 <article class="sym" id="level">
 <h3><a href="#level">level</a> <i>constant</i></h3>
 <pre>var level = 2</pre>
 <p>Variable holding the currently applied quality level, defaulting to HIGH and updated by apply.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L6">hc/lib/gfx/scalability.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L6">hc/lib/gfx/scalability.amni:6</a>
 </article>
 <article class="sym" id="scale_of">
 <h3><a href="#scale_of">scale_of</a> <i>function</i></h3>
 <pre>scale_of(l int) f32</pre>
 <p>Returns the render resolution scale for a quality level: 0.5 for LOW, 0.75 for MEDIUM, otherwise 1.0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L7">hc/lib/gfx/scalability.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L7">hc/lib/gfx/scalability.amni:7</a>
 </article>
 <article class="sym" id="pick">
 <h3><a href="#pick">pick</a> <i>function</i></h3>
 <pre>pick(budget_ms f32, ms f32[4]) int</pre>
 <p>Returns the highest quality level whose measured frame time in milliseconds fits within the budget, or LOW if none does.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L17">hc/lib/gfx/scalability.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L17">hc/lib/gfx/scalability.amni:17</a>
 </article>
 <h2 id="applying-settings">Applying Settings <span class="n">2</span></h2>
 <article class="sym" id="apply">
 <h3><a href="#apply">apply</a> <i>function</i></h3>
 <pre>apply(l int)</pre>
 <p>Applies a quality level by recording it and configuring shadows, ambient occlusion, bloom, global illumination and temporal settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L8">hc/lib/gfx/scalability.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L8">hc/lib/gfx/scalability.amni:8</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(w int, h int, l int) bool</pre>
 <p>Applies a quality level, then initializes the 3D scene at scaled internal resolution for the given window size, returning its result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/scalability.amni#L16">hc/lib/gfx/scalability.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/scalability.amni#L16">hc/lib/gfx/scalability.amni:16</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
@@ -155,7 +155,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

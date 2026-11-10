@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/edit-scene">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/edit-scene">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
+<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>edit/scene</h1>
 <p class="lib-lede">The core of a scene editor: entities, undo and redo, parenting, save and load, picking and drag handles.</p>
-<p class="lib-meta"><code>import edit.scene;</code> &middot; <code>edit::</code> &middot; 46 functions, 4 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni">Source</a></p>
+<p class="lib-meta"><code>import edit.scene;</code> &middot; <code>edit::</code> &middot; 46 functions, 4 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#entities">Entities <span class="n">9</span></a></li>
 <li><a href="#picking-and-dragging">Picking and Dragging <span class="n">10</span></a></li>
@@ -116,329 +116,329 @@
 <h3><a href="#CUBE">CUBE</a> <i>constant</i></h3>
 <pre>let CUBE = 0; let SPHERE = 1; let PLANE = 2; let LIGHT = 3</pre>
 <p>Constants identifying entity kinds (cube, sphere, plane, light) stored in an entity's kind field.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L7">hc/lib/edit/scene.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L7">hc/lib/edit/scene.amni:7</a>
 </article>
 <article class="sym" id="Ent">
 <h3><a href="#Ent">Ent</a> <i>type</i></h3>
 <pre>struct Ent { id int, parent int, kind int, name byte[..64], t float3, r linalg::Quat, s float3, color float3 }</pre>
 <p>A scene entity with id, parent id, kind, name, translation, rotation, scale and color.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L8">hc/lib/edit/scene.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L8">hc/lib/edit/scene.amni:8</a>
 </article>
 <article class="sym" id="reset">
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears all entities and undo history and resets id numbering to start over.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L15">hc/lib/edit/scene.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L15">hc/lib/edit/scene.amni:15</a>
 </article>
 <article class="sym" id="ent">
 <h3><a href="#ent">ent</a> <i>function</i></h3>
 <pre>ent(kind int, name const byte[:]) Ent</pre>
 <p>Creates a default entity of the given kind with the name truncated to 64 bytes, without adding it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L17">hc/lib/edit/scene.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L17">hc/lib/edit/scene.amni:17</a>
 </article>
 <article class="sym" id="add">
 <h3><a href="#add">add</a> <i>function</i></h3>
 <pre>add(e0 Ent) int</pre>
 <p>Adds an entity as an undoable step, assigning a new id if none is set, and returns its id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L23">hc/lib/edit/scene.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L23">hc/lib/edit/scene.amni:23</a>
 </article>
 <article class="sym" id="set">
 <h3><a href="#set">set</a> <i>function</i></h3>
 <pre>set(e Ent)</pre>
 <p>Replaces the stored entity with the same id as an undoable step, ignoring unknown ids.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L24">hc/lib/edit/scene.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L24">hc/lib/edit/scene.amni:24</a>
 </article>
 <article class="sym" id="remove">
 <h3><a href="#remove">remove</a> <i>function</i></h3>
 <pre>remove(id int)</pre>
 <p>Removes an entity and all its descendants as one undoable step, ignoring unknown ids.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L36">hc/lib/edit/scene.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L36">hc/lib/edit/scene.amni:36</a>
 </article>
 <article class="sym" id="world">
 <h3><a href="#world">world</a> <i>function</i></h3>
 <pre>world(id int) gfx::mat4</pre>
 <p>Returns the world transform matrix of an entity by id, combining parent transforms, or identity if unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L56">hc/lib/edit/scene.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L56">hc/lib/edit/scene.amni:56</a>
 </article>
 <article class="sym" id="reparent">
 <h3><a href="#reparent">reparent</a> <i>function</i></h3>
 <pre>reparent(id int, np int) bool</pre>
 <p>Changes an entity's parent while preserving its world transform, returning false if the id is unknown or the move would create a cycle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L68">hc/lib/edit/scene.amni:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L68">hc/lib/edit/scene.amni:68</a>
 </article>
 <h2 id="picking-and-dragging">Picking and Dragging <span class="n">10</span></h2>
 <article class="sym" id="R3">
 <h3><a href="#R3">R3</a> <i>type</i></h3>
 <pre>struct R3 { x real, y real, z real }</pre>
 <p>A three-component vector using real precision, used for ray and drag math.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L10">hc/lib/edit/scene.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L10">hc/lib/edit/scene.amni:10</a>
 </article>
 <article class="sym" id="Cam">
 <h3><a href="#Cam">Cam</a> <i>type</i></h3>
 <pre>struct Cam { eye float3, target float3, up float3, fov_y f32, w f32, h f32 }</pre>
 <p>A camera description with eye, target, up vector, vertical field of view and viewport size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L11">hc/lib/edit/scene.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L11">hc/lib/edit/scene.amni:11</a>
 </article>
 <article class="sym" id="ray">
 <h3><a href="#ray">ray</a> <i>function</i></h3>
 <pre>ray(c Cam, px real, py real) R3, R3</pre>
 <p>Returns the ray origin and direction through a screen pixel for the camera.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L126">hc/lib/edit/scene.amni:126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L126">hc/lib/edit/scene.amni:126</a>
 </article>
 <article class="sym" id="project">
 <h3><a href="#project">project</a> <i>function</i></h3>
 <pre>project(c Cam, p R3) real, real</pre>
 <p>Returns the screen pixel coordinates of a world-space point as seen by the camera.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L132">hc/lib/edit/scene.amni:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L132">hc/lib/edit/scene.amni:132</a>
 </article>
 <article class="sym" id="pick">
 <h3><a href="#pick">pick</a> <i>function</i></h3>
 <pre>pick(c Cam, px real, py real) int</pre>
 <p>Returns the id of the nearest entity under a screen pixel, or -1 if none is hit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L167">hc/lib/edit/scene.amni:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L167">hc/lib/edit/scene.amni:167</a>
 </article>
 <article class="sym" id="drag_axis">
 <h3><a href="#drag_axis">drag_axis</a> <i>function</i></h3>
 <pre>drag_axis(c Cam, p R3, a R3, x0 real, y0 real, x1 real, y1 real) real</pre>
 <p>Returns how far a mouse drag moves along an axis, in world units along that axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L179">hc/lib/edit/scene.amni:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L179">hc/lib/edit/scene.amni:179</a>
 </article>
 <article class="sym" id="drag_plane">
 <h3><a href="#drag_plane">drag_plane</a> <i>function</i></h3>
 <pre>drag_plane(c Cam, p R3, n R3, x0 real, y0 real, x1 real, y1 real) R3</pre>
 <p>Returns the world-space offset of a mouse drag projected onto a plane.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L180">hc/lib/edit/scene.amni:180</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L180">hc/lib/edit/scene.amni:180</a>
 </article>
 <article class="sym" id="drag_rotate">
 <h3><a href="#drag_rotate">drag_rotate</a> <i>function</i></h3>
 <pre>drag_rotate(c Cam, p R3, a R3, x0 real, y0 real, x1 real, y1 real) real</pre>
 <p>Returns the angle in radians a mouse drag rotates about an axis through a point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L181">hc/lib/edit/scene.amni:181</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L181">hc/lib/edit/scene.amni:181</a>
 </article>
 <article class="sym" id="drag_scale">
 <h3><a href="#drag_scale">drag_scale</a> <i>function</i></h3>
 <pre>drag_scale(c Cam, p R3, a R3, x0 real, y0 real, x1 real, y1 real) real</pre>
 <p>Returns the scale factor from a mouse drag along an axis, or 1 if the start is at the pivot.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L186">hc/lib/edit/scene.amni:186</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L186">hc/lib/edit/scene.amni:186</a>
 </article>
 <article class="sym" id="snap">
 <h3><a href="#snap">snap</a> <i>function</i></h3>
 <pre>snap(v real, step real) real</pre>
 <p>Rounds a value to the nearest multiple of the step, returning it unchanged if the step is not positive.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L187">hc/lib/edit/scene.amni:187</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L187">hc/lib/edit/scene.amni:187</a>
 </article>
 <h2 id="undo-and-redo">Undo and Redo <span class="n">5</span></h2>
 <article class="sym" id="drag_begin">
 <h3><a href="#drag_begin">drag_begin</a> <i>function</i></h3>
 <pre>drag_begin()</pre>
 <p>Begins a drag so that repeated entity updates merge into a single undo step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L33">hc/lib/edit/scene.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L33">hc/lib/edit/scene.amni:33</a>
 </article>
 <article class="sym" id="drag_end">
 <h3><a href="#drag_end">drag_end</a> <i>function</i></h3>
 <pre>drag_end()</pre>
 <p>Ends a drag started earlier and commits its changes as one undo step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L34">hc/lib/edit/scene.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L34">hc/lib/edit/scene.amni:34</a>
 </article>
 <article class="sym" id="undo">
 <h3><a href="#undo">undo</a> <i>function</i></h3>
 <pre>undo() bool</pre>
 <p>Reverts the most recent step, returning false if nothing can be undone or a transaction is open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L43">hc/lib/edit/scene.amni:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L43">hc/lib/edit/scene.amni:43</a>
 </article>
 <article class="sym" id="redo">
 <h3><a href="#redo">redo</a> <i>function</i></h3>
 <pre>redo() bool</pre>
 <p>Reapplies the most recently undone step, returning false if nothing can be redone or a transaction is open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L49">hc/lib/edit/scene.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L49">hc/lib/edit/scene.amni:49</a>
 </article>
 <article class="sym" id="steps">
 <h3><a href="#steps">steps</a> <i>function</i></h3>
 <pre>steps() int</pre>
 <p>Returns the number of steps currently applied in the undo history.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L54">hc/lib/edit/scene.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L54">hc/lib/edit/scene.amni:54</a>
 </article>
 <h2 id="save-and-load">Save and Load <span class="n">2</span></h2>
 <article class="sym" id="save">
 <h3><a href="#save">save</a> <i>function</i></h3>
 <pre>save(out byte[&gt;..]&amp;)</pre>
 <p>Writes all entities into the buffer as JSON text, replacing its previous contents.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L78">hc/lib/edit/scene.amni:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L78">hc/lib/edit/scene.amni:78</a>
 </article>
 <article class="sym" id="load">
 <h3><a href="#load">load</a> <i>function</i></h3>
 <pre>load(text const byte[:]) bool</pre>
 <p>Replaces the scene with entities parsed from JSON text, returning false if parsing fails or entities are missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L95">hc/lib/edit/scene.amni:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L95">hc/lib/edit/scene.amni:95</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (28)</summary>
 <article class="sym" id="Op">
 <h3><a href="#Op">Op</a> <i>type</i></h3>
 <pre>struct Op { kind int, at int, before Ent, after Ent }</pre>
 <p>A recorded edit holding the operation kind, entity index, and entity state before and after.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L9">hc/lib/edit/scene.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L9">hc/lib/edit/scene.amni:9</a>
 </article>
 <article class="sym" id="E">
 <h3><a href="#E">E</a> <i>constant</i></h3>
 <pre>var E Ent[&gt;..] = []</pre>
 <p>Global list of all entities in the scene, in storage order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L12">hc/lib/edit/scene.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L12">hc/lib/edit/scene.amni:12</a>
 </article>
 <article class="sym" id="NEXT">
 <h3><a href="#NEXT">NEXT</a> <i>constant</i></h3>
 <pre>var NEXT = 1</pre>
 <p>Next entity id to assign to a newly added entity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L13">hc/lib/edit/scene.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L13">hc/lib/edit/scene.amni:13</a>
 </article>
 <article class="sym" id="OPS">
 <h3><a href="#OPS">OPS</a> <i>constant</i></h3>
 <pre>var OPS Op[&gt;..] = []; var SA int[&gt;..] = []; var SB int[&gt;..] = []; var CUR = 0; var TX = 0; var DRAG = false</pre>
 <p>Global undo history state: operation log, step ranges, current step, transaction depth and drag flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L14">hc/lib/edit/scene.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L14">hc/lib/edit/scene.amni:14</a>
 </article>
 <article class="sym" id="idx">
 <h3><a href="#idx">idx</a> <i>function</i></h3>
 <pre>idx(id int) int</pre>
 <p>Returns the storage index of the entity with the given id, or -1 if none exists.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L16">hc/lib/edit/scene.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L16">hc/lib/edit/scene.amni:16</a>
 </article>
 <article class="sym" id="del">
 <h3><a href="#del">del</a> <i>function</i></h3>
 <pre>del(i int)</pre>
 <p>Removes the entity at the given storage index by shifting later entities down.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L18">hc/lib/edit/scene.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L18">hc/lib/edit/scene.amni:18</a>
 </article>
 <article class="sym" id="ins">
 <h3><a href="#ins">ins</a> <i>function</i></h3>
 <pre>ins(i int, e Ent)</pre>
 <p>Inserts an entity at the given storage index, shifting later entities up.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L19">hc/lib/edit/scene.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L19">hc/lib/edit/scene.amni:19</a>
 </article>
 <article class="sym" id="begin">
 <h3><a href="#begin">begin</a> <i>function</i></h3>
 <pre>begin()</pre>
 <p>Starts an undo transaction, discarding redo history, with nested calls grouped into one step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L20">hc/lib/edit/scene.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L20">hc/lib/edit/scene.amni:20</a>
 </article>
 <article class="sym" id="commit">
 <h3><a href="#commit">commit</a> <i>function</i></h3>
 <pre>commit()</pre>
 <p>Ends an undo transaction and finalizes the step when the outermost one closes, dropping empty steps.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L21">hc/lib/edit/scene.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L21">hc/lib/edit/scene.amni:21</a>
 </article>
 <article class="sym" id="rec">
 <h3><a href="#rec">rec</a> <i>function</i></h3>
 <pre>rec(kind int, at int, b Ent, a Ent)</pre>
 <p>Appends an operation record of the given kind, index, and before and after states to the log.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L22">hc/lib/edit/scene.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L22">hc/lib/edit/scene.amni:22</a>
 </article>
 <article class="sym" id="under">
 <h3><a href="#under">under</a> <i>function</i></h3>
 <pre>under(id int, root int) bool</pre>
 <p>Returns true if an entity is the given root or a descendant of it through parent links.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L35">hc/lib/edit/scene.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L35">hc/lib/edit/scene.amni:35</a>
 </article>
 <article class="sym" id="local">
 <h3><a href="#local">local</a> <i>function</i></h3>
 <pre>local(i int) gfx::mat4</pre>
 <p>Returns the local transform matrix of the entity at the given storage index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L55">hc/lib/edit/scene.amni:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L55">hc/lib/edit/scene.amni:55</a>
 </article>
 <article class="sym" id="quat_of">
 <h3><a href="#quat_of">quat_of</a> <i>function</i></h3>
 <pre>quat_of(m gfx::mat4) linalg::Quat</pre>
 <p>Converts the rotation part of a matrix into a normalized quaternion.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L57">hc/lib/edit/scene.amni:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L57">hc/lib/edit/scene.amni:57</a>
 </article>
 <article class="sym" id="nums">
 <h3><a href="#nums">nums</a> <i>function</i></h3>
 <pre>nums(out byte[&gt;..]&amp;, v const f32[:])</pre>
 <p>Appends a list of numbers to a byte buffer as a JSON array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L77">hc/lib/edit/scene.amni:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L77">hc/lib/edit/scene.amni:77</a>
 </article>
 <article class="sym" id="fl">
 <h3><a href="#fl">fl</a> <i>function</i></h3>
 <pre>fl(d json::Doc&amp;, n int, key const byte[:], k int) f32</pre>
 <p>Reads a float from an array member of a JSON node, defaulting when missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L93">hc/lib/edit/scene.amni:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L93">hc/lib/edit/scene.amni:93</a>
 </article>
 <article class="sym" id="it">
 <h3><a href="#it">it</a> <i>function</i></h3>
 <pre>it(d json::Doc&amp;, n int, key const byte[:]) int</pre>
 <p>Reads an integer member of a JSON node, defaulting when missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L94">hc/lib/edit/scene.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L94">hc/lib/edit/scene.amni:94</a>
 </article>
 <article class="sym" id="r3">
 <h3><a href="#r3">r3</a> <i>function</i></h3>
 <pre>r3(v float3) R3</pre>
 <p>Converts a float3 vector to a real-precision R3 vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L118">hc/lib/edit/scene.amni:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L118">hc/lib/edit/scene.amni:118</a>
 </article>
 <article class="sym" id="radd">
 <h3><a href="#radd">radd</a> <i>function</i></h3>
 <pre>radd(a R3, b R3) R3</pre>
 <p>Returns the component-wise sum of two R3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L119">hc/lib/edit/scene.amni:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L119">hc/lib/edit/scene.amni:119</a>
 </article>
 <article class="sym" id="rsub">
 <h3><a href="#rsub">rsub</a> <i>function</i></h3>
 <pre>rsub(a R3, b R3) R3</pre>
 <p>Returns the component-wise difference of two R3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L120">hc/lib/edit/scene.amni:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L120">hc/lib/edit/scene.amni:120</a>
 </article>
 <article class="sym" id="rmul">
 <h3><a href="#rmul">rmul</a> <i>function</i></h3>
 <pre>rmul(a R3, s real) R3</pre>
 <p>Returns an R3 vector scaled by a real number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L121">hc/lib/edit/scene.amni:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L121">hc/lib/edit/scene.amni:121</a>
 </article>
 <article class="sym" id="rdot">
 <h3><a href="#rdot">rdot</a> <i>function</i></h3>
 <pre>rdot(a R3, b R3) real</pre>
 <p>Returns the dot product of two R3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L122">hc/lib/edit/scene.amni:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L122">hc/lib/edit/scene.amni:122</a>
 </article>
 <article class="sym" id="rcross">
 <h3><a href="#rcross">rcross</a> <i>function</i></h3>
 <pre>rcross(a R3, b R3) R3</pre>
 <p>Returns the cross product of two R3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L123">hc/lib/edit/scene.amni:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L123">hc/lib/edit/scene.amni:123</a>
 </article>
 <article class="sym" id="runit">
 <h3><a href="#runit">runit</a> <i>function</i></h3>
 <pre>runit(a R3) R3</pre>
 <p>Returns an R3 vector scaled to unit length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L124">hc/lib/edit/scene.amni:124</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L124">hc/lib/edit/scene.amni:124</a>
 </article>
 <article class="sym" id="basis">
 <h3><a href="#basis">basis</a> <i>function</i></h3>
 <pre>basis(c Cam) R3, R3, R3</pre>
 <p>Returns the camera's forward, right and up direction vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L125">hc/lib/edit/scene.amni:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L125">hc/lib/edit/scene.amni:125</a>
 </article>
 <article class="sym" id="xform">
 <h3><a href="#xform">xform</a> <i>function</i></h3>
 <pre>xform(m gfx::mat4, p R3, w real) R3</pre>
 <p>Transforms an R3 point or direction by a matrix, using w to include translation or not.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L138">hc/lib/edit/scene.amni:138</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L138">hc/lib/edit/scene.amni:138</a>
 </article>
 <article class="sym" id="hit">
 <h3><a href="#hit">hit</a> <i>function</i></h3>
 <pre>hit(i int, o R3, d R3) real</pre>
 <p>Returns the ray distance to the entity at a storage index, or -1 if it misses.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L139">hc/lib/edit/scene.amni:139</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L139">hc/lib/edit/scene.amni:139</a>
 </article>
 <article class="sym" id="line_param">
 <h3><a href="#line_param">line_param</a> <i>function</i></h3>
 <pre>line_param(o R3, d R3, p R3, a R3) real</pre>
 <p>Returns the parameter along an axis line closest to a ray, or 0 if they are parallel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L173">hc/lib/edit/scene.amni:173</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L173">hc/lib/edit/scene.amni:173</a>
 </article>
 <article class="sym" id="plane_point">
 <h3><a href="#plane_point">plane_point</a> <i>function</i></h3>
 <pre>plane_point(o R3, d R3, p R3, n R3) R3</pre>
 <p>Returns the point where a ray meets a plane defined by a point and normal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/edit/scene.amni#L178">hc/lib/edit/scene.amni:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/edit/scene.amni#L178">hc/lib/edit/scene.amni:178</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -450,7 +450,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

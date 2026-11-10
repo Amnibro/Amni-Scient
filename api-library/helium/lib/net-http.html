@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-http">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-http">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
+<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/http</h1>
 <p class="lib-lede">An HTTP client with chunked replies and JSON helpers.</p>
-<p class="lib-meta"><code>import net.http;</code> &middot; <code>net::</code> &middot; 9 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he">Source</a></p>
+<p class="lib-meta"><code>import net.http;</code> &middot; <code>net::</code> &middot; 9 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#http-requests">Http Requests <span class="n">10</span></a></li>
 <li><a href="#url-parsing">Url Parsing <span class="n">3</span></a></li>
@@ -114,87 +114,87 @@
 <h3><a href="#HTTP_ERR">HTTP_ERR</a> <i>constant</i></h3>
 <pre>HTTP_ERR := -1</pre>
 <p>Status code returned when an HTTP request has failed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L6">hc/lib/net/http.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L6">hc/lib/net/http.he:6</a>
 </article>
 <article class="sym" id="HTTP_PENDING">
 <h3><a href="#HTTP_PENDING">HTTP_PENDING</a> <i>constant</i></h3>
 <pre>HTTP_PENDING := 0</pre>
 <p>Status code returned when an HTTP request is still in progress.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L7">hc/lib/net/http.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L7">hc/lib/net/http.he:7</a>
 </article>
 <article class="sym" id="HTTP_DONE">
 <h3><a href="#HTTP_DONE">HTTP_DONE</a> <i>constant</i></h3>
 <pre>HTTP_DONE := 1</pre>
 <p>Status code returned when an HTTP response has been fully received.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L8">hc/lib/net/http.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L8">hc/lib/net/http.he:8</a>
 </article>
 <article class="sym" id="Http">
 <h3><a href="#Http">Http</a> <i>type</i></h3>
 <pre>struct Http { c Tls = Tls{}, st int = 0, req byte[&gt;..] = [], status int = 0, head byte[&gt;..] = [], body byte[&gt;..] = [], raw byte[&gt;..] = [], clen int = -1, chunked bool = false, nobody bool = false, err byte[&gt;..] = [], deadline real = 0.0 }</pre>
 <p>State of one HTTP request, including connection, status code, headers, body and any error message.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L10">hc/lib/net/http.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L10">hc/lib/net/http.he:10</a>
 </article>
 <article class="sym" id="http_start">
 <h3><a href="#http_start">http_start</a> <i>function</i></h3>
 <pre>http_start(method const byte[:], url const byte[:], headers const byte[:], body const byte[:]) Http</pre>
 <p>Starts a non-blocking HTTP request and returns its state, marked as failed if the URL is bad.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L36">hc/lib/net/http.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L36">hc/lib/net/http.he:36</a>
 </article>
 <article class="sym" id="http_header">
 <h3><a href="#http_header">http_header</a> <i>function</i></h3>
 <pre>http_header(head const byte[:], name const byte[:]) byte[&gt;..]</pre>
 <p>Returns the value of a named header from a response head, matched case-insensitively, or empty if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L43">hc/lib/net/http.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L43">hc/lib/net/http.he:43</a>
 </article>
 <article class="sym" id="http_pump">
 <h3><a href="#http_pump">http_pump</a> <i>function</i></h3>
 <pre>http_pump(h Http&amp;) int</pre>
 <p>Advances a pending request by reading available data, returning HTTP_ERR, HTTP_PENDING or HTTP_DONE.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L61">hc/lib/net/http.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L61">hc/lib/net/http.he:61</a>
 </article>
 <article class="sym" id="http_wait">
 <h3><a href="#http_wait">http_wait</a> <i>function</i></h3>
 <pre>http_wait(h Http&amp;, ms int) int</pre>
 <p>Pumps a request until it finishes or the timeout in milliseconds expires, returning the final status.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L88">hc/lib/net/http.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L88">hc/lib/net/http.he:88</a>
 </article>
 <article class="sym" id="http_fetch">
 <h3><a href="#http_fetch">http_fetch</a> <i>function</i></h3>
 <pre>http_fetch(method const byte[:], url const byte[:], headers const byte[:], body const byte[:], ms int) Http</pre>
 <p>Performs a complete blocking HTTP request with the given timeout in milliseconds and returns its state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L95">hc/lib/net/http.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L95">hc/lib/net/http.he:95</a>
 </article>
 <article class="sym" id="http_json">
 <h3><a href="#http_json">http_json</a> <i>function</i></h3>
 <pre>http_json(method const byte[:], url const byte[:], token const byte[:], body const byte[:], ms int) Http</pre>
 <p>Performs a blocking HTTP request with JSON content headers and an optional bearer token, timing out in milliseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L96">hc/lib/net/http.he:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L96">hc/lib/net/http.he:96</a>
 </article>
 <h2 id="url-parsing">Url Parsing <span class="n">3</span></h2>
 <article class="sym" id="Url">
 <h3><a href="#Url">Url</a> <i>type</i></h3>
 <pre>struct Url { secure bool = false, host byte[&gt;..] = [], port int = 0, path byte[&gt;..] = [] }</pre>
 <p>Parsed URL holding the secure flag, host, port and path, with default ports 443 or 80.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L9">hc/lib/net/http.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L9">hc/lib/net/http.he:9</a>
 </article>
 <article class="sym" id="url_parse">
 <h3><a href="#url_parse">url_parse</a> <i>function</i></h3>
 <pre>url_parse(u const byte[:]) Url, bool</pre>
 <p>Parses a URL into scheme security, host, port and path, returning false if the URL is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L11">hc/lib/net/http.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L11">hc/lib/net/http.he:11</a>
 </article>
 <article class="sym" id="host_header">
 <h3><a href="#host_header">host_header</a> <i>function</i></h3>
 <pre>host_header(u const Url&amp;) byte[&gt;..]</pre>
 <p>Returns the Host header value for a URL, bracketing IPv6 hosts and omitting default ports.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L29">hc/lib/net/http.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L29">hc/lib/net/http.he:29</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (1)</summary>
 <article class="sym" id="dechunk">
 <h3><a href="#dechunk">dechunk</a> <i>function</i></h3>
 <pre>dechunk(h Http&amp;) bool</pre>
 <p>Decodes chunked transfer-encoded data from the raw buffer into the body, returning true when complete or failed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/net/http.he#L49">hc/lib/net/http.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/net/http.he#L49">hc/lib/net/http.he:49</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -206,7 +206,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

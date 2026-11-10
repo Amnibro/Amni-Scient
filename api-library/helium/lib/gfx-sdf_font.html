@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-sdf_font">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-sdf_font">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
+<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/sdf_font</h1>
 <p class="lib-lede">A built-in font drawn from vector strokes, so text stays sharp at any size with no font files.</p>
-<p class="lib-meta"><code>import gfx.sdf_font;</code> &middot; 15 functions, 3 types, 19 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.sdf_font;</code> &middot; 15 functions, 3 types, 19 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>sdf_font: an original procedural signed-distance-field font. ASCII 32..126
 are vector strokes (line segments and circular arcs) defined in code; there
 are no font files. sdf_bake renders a 1024x512 distance atlas on the CPU in
@@ -130,33 +130,33 @@ sdf_text_w(text, px) is the advance width in pixels.
 <h3><a href="#TextVtx">TextVtx</a> <i>type</i></h3>
 <pre>struct TextVtx { pos float2, uv float2, col byte[4] }</pre>
 <p>Vertex layout for text quads holding position, atlas UV and RGBA colour, fed to the SDF text shaders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L20">hc/lib/gfx/sdf_font.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L20">hc/lib/gfx/sdf_font.amni:20</a>
 </article>
 <article class="sym" id="sdf_text_w">
 <h3><a href="#sdf_text_w">sdf_text_w</a> <i>function</i></h3>
 <pre>sdf_text_w(t const byte[:], px f32) f32</pre>
 <p>Returns the advance width of the text in pixels for the given cap height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L976">hc/lib/gfx/sdf_font.amni:976</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L976">hc/lib/gfx/sdf_font.amni:976</a>
 </article>
 <article class="sym" id="sdf_text">
 <h3><a href="#sdf_text">sdf_text</a> <i>function</i></h3>
 <pre>sdf_text(vs TextVtx[&gt;..]&amp;, x f32, y f32, px f32, t const byte[:], c byte[4], weight int, outline bool)</pre>
 <p>Appends glyph quads for text at a top-left position, with cap height in pixels, weight, and shadow or outline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L988">hc/lib/gfx/sdf_font.amni:988</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L988">hc/lib/gfx/sdf_font.amni:988</a>
 </article>
 <article class="sym" id="sdf_rect">
 <h3><a href="#sdf_rect">sdf_rect</a> <i>function</i></h3>
 <pre>sdf_rect(vs TextVtx[&gt;..]&amp;, x f32, y f32, w f32, h f32, c byte[4])</pre>
 <p>Appends a flat-colored rectangle to the vertex stream so it can share the text pipeline.</p>
 <p class="note">A flat rectangle in the same vertex stream (uv.x &lt; 0).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L1053">hc/lib/gfx/sdf_font.amni:1053</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L1053">hc/lib/gfx/sdf_font.amni:1053</a>
 </article>
 <article class="sym" id="sdf_draw">
 <h3><a href="#sdf_draw">sdf_draw</a> <i>function</i></h3>
 <pre>sdf_draw(target gfx::Texture, w int, h int, vs TextVtx[&gt;..]&amp;)</pre>
 <p>Draws the accumulated vertices over a target texture of the given pixel size without clearing it.</p>
 <p class="note">Draw vs over target (w x h pixels, y down) without clearing it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L1061">hc/lib/gfx/sdf_font.amni:1061</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L1061">hc/lib/gfx/sdf_font.amni:1061</a>
 </article>
 <h2 id="font-atlas">Font Atlas <span class="n">3</span></h2>
 <article class="sym" id="sdf_init">
@@ -164,19 +164,19 @@ sdf_text_w(text, px) is the advance width in pixels.
 <pre>sdf_init()</pre>
 <p>Bakes and uploads the distance atlas and builds the text pipeline once; requires an open gfx device.</p>
 <p class="note">Bake and upload the atlas and build the text pipeline once; needs an open gfx device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L960">hc/lib/gfx/sdf_font.amni:960</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L960">hc/lib/gfx/sdf_font.amni:960</a>
 </article>
 <article class="sym" id="sdf_texture">
 <h3><a href="#sdf_texture">sdf_texture</a> <i>function</i></h3>
 <pre>sdf_texture() gfx::Texture</pre>
 <p>Returns the atlas texture to bind at fragment sampler slot 0 when drawing text vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L973">hc/lib/gfx/sdf_font.amni:973</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L973">hc/lib/gfx/sdf_font.amni:973</a>
 </article>
 <article class="sym" id="sdf_sampler">
 <h3><a href="#sdf_sampler">sdf_sampler</a> <i>function</i></h3>
 <pre>sdf_sampler() gfx::Sampler</pre>
 <p>Returns the linear, clamped sampler to bind at fragment sampler slot 0 alongside the atlas texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L974">hc/lib/gfx/sdf_font.amni:974</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L974">hc/lib/gfx/sdf_font.amni:974</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (29)</summary>
 <article class="sym" id="SdfStroke">
@@ -187,178 +187,178 @@ sdf_text_w(text, px) is the advance width in pixels.
 	r f32, a0 f32, a1 f32
 }</pre>
 <p>Internal record of one vector stroke, either a line segment or a circular arc, used to build glyphs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L22">hc/lib/gfx/sdf_font.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L22">hc/lib/gfx/sdf_font.amni:22</a>
 </article>
 <article class="sym" id="SDF_ATLAS_W">
 <h3><a href="#SDF_ATLAS_W">SDF_ATLAS_W</a> <i>constant</i></h3>
 <pre>let SDF_ATLAS_W = 1024</pre>
 <p>Width in pixels of the baked distance-field atlas texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L28">hc/lib/gfx/sdf_font.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L28">hc/lib/gfx/sdf_font.amni:28</a>
 </article>
 <article class="sym" id="SDF_ATLAS_H">
 <h3><a href="#SDF_ATLAS_H">SDF_ATLAS_H</a> <i>constant</i></h3>
 <pre>let SDF_ATLAS_H = 512</pre>
 <p>Height in pixels of the baked distance-field atlas texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L29">hc/lib/gfx/sdf_font.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L29">hc/lib/gfx/sdf_font.amni:29</a>
 </article>
 <article class="sym" id="SDF_CELL">
 <h3><a href="#SDF_CELL">SDF_CELL</a> <i>constant</i></h3>
 <pre>let SDF_CELL = 48</pre>
 <p>Size in pixels of one square glyph cell in the atlas.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L30">hc/lib/gfx/sdf_font.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L30">hc/lib/gfx/sdf_font.amni:30</a>
 </article>
 <article class="sym" id="SDF_COLS">
 <h3><a href="#SDF_COLS">SDF_COLS</a> <i>constant</i></h3>
 <pre>let SDF_COLS = 20</pre>
 <p>Number of glyph cells per atlas row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L31">hc/lib/gfx/sdf_font.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L31">hc/lib/gfx/sdf_font.amni:31</a>
 </article>
 <article class="sym" id="SDF_CAP_H">
 <h3><a href="#SDF_CAP_H">SDF_CAP_H</a> <i>constant</i></h3>
 <pre>let SDF_CAP_H f32 = 24.0</pre>
 <p>Cap height in cell units that the glyph strokes are designed against.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L32">hc/lib/gfx/sdf_font.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L32">hc/lib/gfx/sdf_font.amni:32</a>
 </article>
 <article class="sym" id="SDF_SPREAD">
 <h3><a href="#SDF_SPREAD">SDF_SPREAD</a> <i>constant</i></h3>
 <pre>let SDF_SPREAD f32 = 6.0</pre>
 <p>Distance-field spread in cell pixels, the range over which distance values are encoded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L33">hc/lib/gfx/sdf_font.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L33">hc/lib/gfx/sdf_font.amni:33</a>
 </article>
 <article class="sym" id="SDF_R_REG">
 <h3><a href="#SDF_R_REG">SDF_R_REG</a> <i>constant</i></h3>
 <pre>let SDF_R_REG f32 = 1.3</pre>
 <p>Stroke radius in cell pixels used when baking the regular weight.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L34">hc/lib/gfx/sdf_font.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L34">hc/lib/gfx/sdf_font.amni:34</a>
 </article>
 <article class="sym" id="SDF_R_BOLD">
 <h3><a href="#SDF_R_BOLD">SDF_R_BOLD</a> <i>constant</i></h3>
 <pre>let SDF_R_BOLD f32 = 2.1</pre>
 <p>Stroke radius in cell pixels used when baking the bold weight.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L35">hc/lib/gfx/sdf_font.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L35">hc/lib/gfx/sdf_font.amni:35</a>
 </article>
 <article class="sym" id="SDF_TEX">
 <h3><a href="#SDF_TEX">SDF_TEX</a> <i>constant</i></h3>
 <pre>var SDF_TEX gfx::Texture</pre>
 <p>Global texture holding the baked distance atlas.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L37">hc/lib/gfx/sdf_font.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L37">hc/lib/gfx/sdf_font.amni:37</a>
 </article>
 <article class="sym" id="SDF_SMP">
 <h3><a href="#SDF_SMP">SDF_SMP</a> <i>constant</i></h3>
 <pre>var SDF_SMP gfx::Sampler</pre>
 <p>Global sampler used when reading the atlas texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L38">hc/lib/gfx/sdf_font.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L38">hc/lib/gfx/sdf_font.amni:38</a>
 </article>
 <article class="sym" id="SDF_READY">
 <h3><a href="#SDF_READY">SDF_READY</a> <i>constant</i></h3>
 <pre>var SDF_READY bool = false</pre>
 <p>Flag recording whether the atlas and GPU resources have been initialized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L39">hc/lib/gfx/sdf_font.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L39">hc/lib/gfx/sdf_font.amni:39</a>
 </article>
 <article class="sym" id="SDF_PIPE">
 <h3><a href="#SDF_PIPE">SDF_PIPE</a> <i>constant</i></h3>
 <pre>var SDF_PIPE gfx::Pipeline</pre>
 <p>Global graphics pipeline used to draw SDF text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L40">hc/lib/gfx/sdf_font.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L40">hc/lib/gfx/sdf_font.amni:40</a>
 </article>
 <article class="sym" id="SDF_VB">
 <h3><a href="#SDF_VB">SDF_VB</a> <i>constant</i></h3>
 <pre>var SDF_VB gfx::Buffer</pre>
 <p>Global GPU vertex buffer holding text quads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L41">hc/lib/gfx/sdf_font.amni:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L41">hc/lib/gfx/sdf_font.amni:41</a>
 </article>
 <article class="sym" id="SDF_VB_CAP">
 <h3><a href="#SDF_VB_CAP">SDF_VB_CAP</a> <i>constant</i></h3>
 <pre>var SDF_VB_CAP int = 0</pre>
 <p>Current capacity of the text vertex buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L42">hc/lib/gfx/sdf_font.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L42">hc/lib/gfx/sdf_font.amni:42</a>
 </article>
 <article class="sym" id="SdfProj">
 <h3><a href="#SdfProj">SdfProj</a> <i>type</i></h3>
 <pre>struct SdfProj { proj gfx::mat4 }</pre>
 <p>Uniform struct holding the projection matrix passed to the text vertex shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L44">hc/lib/gfx/sdf_font.amni:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L44">hc/lib/gfx/sdf_font.amni:44</a>
 </article>
 <article class="sym" id="SDF_STROKES">
 <h3><a href="#SDF_STROKES">SDF_STROKES</a> <i>constant</i></h3>
 <pre>var SDF_STROKES SdfStroke[&gt;..] = []</pre>
 <p>Global list of all strokes for every glyph, stored in order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L46">hc/lib/gfx/sdf_font.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L46">hc/lib/gfx/sdf_font.amni:46</a>
 </article>
 <article class="sym" id="SDF_FIRST">
 <h3><a href="#SDF_FIRST">SDF_FIRST</a> <i>constant</i></h3>
 <pre>var SDF_FIRST int[95]</pre>
 <p>Per-glyph index of the first stroke in the stroke list, for ASCII 32 to 126.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L47">hc/lib/gfx/sdf_font.amni:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L47">hc/lib/gfx/sdf_font.amni:47</a>
 </article>
 <article class="sym" id="SDF_COUNT">
 <h3><a href="#SDF_COUNT">SDF_COUNT</a> <i>constant</i></h3>
 <pre>var SDF_COUNT int[95]</pre>
 <p>Per-glyph number of strokes, for ASCII 32 to 126.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L48">hc/lib/gfx/sdf_font.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L48">hc/lib/gfx/sdf_font.amni:48</a>
 </article>
 <article class="sym" id="SDF_ADV">
 <h3><a href="#SDF_ADV">SDF_ADV</a> <i>constant</i></h3>
 <pre>var SDF_ADV f32[95]</pre>
 <p>Per-glyph advance width in font units, for ASCII 32 to 126.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L49">hc/lib/gfx/sdf_font.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L49">hc/lib/gfx/sdf_font.amni:49</a>
 </article>
 <article class="sym" id="SDF_OFF">
 <h3><a href="#SDF_OFF">SDF_OFF</a> <i>constant</i></h3>
 <pre>var SDF_OFF f32[95]</pre>
 <p>Per-glyph horizontal shift in font units that centres the ink within its advance.</p>
 <p class="note">Pen-relative x shift (font units) that centres each glyph's ink inside its advance.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L51">hc/lib/gfx/sdf_font.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L51">hc/lib/gfx/sdf_font.amni:51</a>
 </article>
 <article class="sym" id="sdf_seg">
 <h3><a href="#sdf_seg">sdf_seg</a> <i>function</i></h3>
 <pre>sdf_seg(x0 f32, y0 f32, x1 f32, y1 f32)</pre>
 <p>Appends a line segment stroke between two points to the global stroke list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L53">hc/lib/gfx/sdf_font.amni:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L53">hc/lib/gfx/sdf_font.amni:53</a>
 </article>
 <article class="sym" id="sdf_arc">
 <h3><a href="#sdf_arc">sdf_arc</a> <i>function</i></h3>
 <pre>sdf_arc(cx f32, cy f32, r f32, a0 f32, a1 f32)</pre>
 <p>Appends a circular arc stroke with the given centre, radius and start and end angles in radians.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L57">hc/lib/gfx/sdf_font.amni:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L57">hc/lib/gfx/sdf_font.amni:57</a>
 </article>
 <article class="sym" id="sdf_circle">
 <h3><a href="#sdf_circle">sdf_circle</a> <i>function</i></h3>
 <pre>sdf_circle(cx f32, cy f32, r f32)</pre>
 <p>Appends a full circle stroke by adding an arc sweeping the whole turn.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L61">hc/lib/gfx/sdf_font.amni:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L61">hc/lib/gfx/sdf_font.amni:61</a>
 </article>
 <article class="sym" id="sdf_dist_seg">
 <h3><a href="#sdf_dist_seg">sdf_dist_seg</a> <i>function</i></h3>
 <pre>sdf_dist_seg(px f32, py f32, x0 f32, y0 f32, x1 f32, y1 f32) f32</pre>
 <p>Returns the shortest distance from a point to a line segment, clamping to its endpoints.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L65">hc/lib/gfx/sdf_font.amni:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L65">hc/lib/gfx/sdf_font.amni:65</a>
 </article>
 <article class="sym" id="sdf_dist_arc">
 <h3><a href="#sdf_dist_arc">sdf_dist_arc</a> <i>function</i></h3>
 <pre>sdf_dist_arc(px f32, py f32, cx f32, cy f32, r f32, a0 f32, a1 f32) f32</pre>
 <p>Returns the shortest distance from a point to a circular arc, using the arc endpoints when outside its sweep.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L80">hc/lib/gfx/sdf_font.amni:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L80">hc/lib/gfx/sdf_font.amni:80</a>
 </article>
 <article class="sym" id="sdf_fit_bearings">
 <h3><a href="#sdf_fit_bearings">sdf_fit_bearings</a> <i>function</i></h3>
 <pre>sdf_fit_bearings()</pre>
 <p>Computes each glyph's horizontal offset so its ink is centred within its advance width.</p>
 <p class="note">Strokes are drawn on a shared 48-unit cell (origin x 8), but advances are proportional, so centre the ink of each glyph within its advance.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L108">hc/lib/gfx/sdf_font.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L108">hc/lib/gfx/sdf_font.amni:108</a>
 </article>
 <article class="sym" id="sdf_build_glyphs">
 <h3><a href="#sdf_build_glyphs">sdf_build_glyphs</a> <i>function</i></h3>
 <pre>sdf_build_glyphs()</pre>
 <p>Builds the stroke definitions, advances and offsets for ASCII 32 to 126, doing nothing if already built.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L132">hc/lib/gfx/sdf_font.amni:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L132">hc/lib/gfx/sdf_font.amni:132</a>
 </article>
 <article class="sym" id="sdf_bake">
 <h3><a href="#sdf_bake">sdf_bake</a> <i>function</i></h3>
 <pre>sdf_bake(pix byte[&gt;..]&amp;)</pre>
 <p>Bakes the regular and bold distance atlas into a pixel buffer on the CPU, replacing its contents.</p>
 <p class="note">Bake the atlas into pix (SDF_ATLAS_W x SDF_ATLAS_H RGBA8, the distance in every channel): regular weight in cell rows 0..4, bold in rows 5..9. CPU only.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/sdf_font.amni#L905">hc/lib/gfx/sdf_font.amni:905</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/gfx/sdf_font.amni#L905">hc/lib/gfx/sdf_font.amni:905</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -370,7 +370,7 @@ sdf_text_w(text, px) is the advance width in pixels.
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a><ul>
 <li><a href="/api-library/helium/lib/ui">ui</a></li>
 <li><a href="/api-library/helium/lib/gfx-hud">gfx/hud</a></li>

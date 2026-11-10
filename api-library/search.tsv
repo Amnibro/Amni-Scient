@@ -1360,6 +1360,9 @@ s3d::fx_dt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fx_dt	Frame 
 s3d::nd_ran	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#nd_ran	Flag recording whether the neighborhood pass ran this frame.	int
 s3d::gi_on	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_on	Turns the probe-based global illumination on when true.	pub
 s3d::rt_shadows	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#rt_shadows	Enables ray traced shadows when true.	pub
+s3d::rt_reflect	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#rt_reflect	Flag enabling ray-traced reflections; false leaves them off.	pub
+s3d::rt_rough	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#rt_rough	Roughness cutoff for ray-traced reflections; surfaces rougher than this value are not ray traced.	pub
+s3d::rt_reach	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#rt_reach	Maximum ray distance for ray-traced reflections, in world units.	pub
 s3d::gi_ao	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_ao	Enables ambient occlusion contribution from the global illumination probes when true.	pub
 s3d::gi_rt_visibility	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rt_visibility	Enables ray traced visibility checks for the global illumination probes when true.	pub
 s3d::gi_dims	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_dims	Probe grid dimensions along x, y and z.	pub
@@ -2022,6 +2025,7 @@ rt::NODE_FLOATS	constant	gfx/rt	/api-library/helium/lib/gfx-rt#NODE_FLOATS	Const
 rt::TRI_FLOATS	constant	gfx/rt	/api-library/helium/lib/gfx-rt#TRI_FLOATS	Constant giving the number of floats each triangle occupies in the triangle array.	int
 rt::tri_in	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tri_in	Input array of triangle vertex coordinates, nine floats per triangle, filled by add.	int
 rt::alb_in	constant	gfx/rt	/api-library/helium/lib/gfx-rt#alb_in	Input array of per-triangle albedo colors, three floats per triangle, parallel to the triangle input.	int
+rt::mat_in	constant	gfx/rt	/api-library/helium/lib/gfx-rt#mat_in	Accumulates per-triangle glow and packed metalness and roughness values that add appends, consumed when the tree is built.	int
 rt::nodes	constant	gfx/rt	/api-library/helium/lib/gfx-rt#nodes	Flattened array of tree nodes holding bounds, child or leaf data, produced by build.	int
 rt::tris	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tris	Flattened array of reordered triangle data with edge vectors and albedo, produced by build.	int
 rt::order	constant	gfx/rt	/api-library/helium/lib/gfx-rt#order	Working array of triangle indices reordered during splitting so each leaf covers a contiguous range.	int
@@ -2032,7 +2036,7 @@ rt::has_bufs	constant	gfx/rt	/api-library/helium/lib/gfx-rt#has_bufs	Flag record
 rt::ready	constant	gfx/rt	/api-library/helium/lib/gfx-rt#ready	Flag that is true once build has produced a usable tree and false when the scene is empty or cleared.	int
 rt::clear	function	gfx/rt	/api-library/helium/lib/gfx-rt#clear	Removes all triangles from the scene and marks the tree as needing a rebuild.	pub
 rt::count	function	gfx/rt	/api-library/helium/lib/gfx-rt#count	Returns the number of triangles currently added to the scene.	pub
-rt::add	function	gfx/rt	/api-library/helium/lib/gfx-rt#add	Adds a triangle from three vertices with an RGB albedo color; call build afterward to include it.	pub
+rt::add	function	gfx/rt	/api-library/helium/lib/gfx-rt#add	Appends one triangle with vertices, albedo color, metalness and roughness clamped to 0..1, and emissive glow to the scene input.	pub
 rt::tmin	function	gfx/rt	/api-library/helium/lib/gfx-rt#tmin	Returns the smallest coordinate of a triangle's vertices along the given axis.	int
 rt::tmax	function	gfx/rt	/api-library/helium/lib/gfx-rt#tmax	Returns the largest coordinate of a triangle's vertices along the given axis.	int
 rt::area	function	gfx/rt	/api-library/helium/lib/gfx-rt#area	Returns the surface area measure of a bounding box, used as the split cost metric.	int

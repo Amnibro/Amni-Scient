@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/regex">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/regex">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
+<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>regex</h1>
 <p class="lib-lede">Regular expressions over bytes. Matching time grows linearly with the text, so a bad pattern cannot hang a program.</p>
-<p class="lib-meta"><code>import regex;</code> &middot; <code>regex::</code> &middot; 39 functions, 7 types, 17 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he">Source</a></p>
+<p class="lib-meta"><code>import regex;</code> &middot; <code>regex::</code> &middot; 39 functions, 7 types, 17 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>regex: byte-oriented regular expressions.
 A pattern is parsed into a tree, the tree is laid out as a list of
 instructions, and a Pike machine runs every live thread in lockstep over
@@ -126,7 +126,7 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 <h3><a href="#Regex">Regex</a> <i>type</i></h3>
 <pre>struct Regex { prog Op[&gt;..] = [], sets ByteSet[&gt;..] = [], groups int = 1, first int = -1 }</pre>
 <p>Compiled regular expression holding its program, byte sets and group count, ready for matching.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L40">hc/lib/regex.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L40">hc/lib/regex.he:40</a>
 </article>
 <article class="sym" id="compile">
 <h3><a href="#compile">compile</a> <i>function, 2 forms</i></h3>
@@ -135,7 +135,7 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 <pre>compile(pattern byte[:], err byte[&gt;..]&amp;) Regex</pre>
 <p>Compiles a pattern into a regex, leaving the reason in err and matching nothing if invalid.</p>
 <p class="note">compiles pattern; a bad pattern stops the program with the reason</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L361">hc/lib/regex.he:361</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L361">hc/lib/regex.he:361</a>
 </article>
 <article class="sym" id="compile_ignore_case">
 <h3><a href="#compile_ignore_case">compile_ignore_case</a> <i>function, 2 forms</i></h3>
@@ -143,7 +143,7 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 <p>Compiles a pattern that ignores letter case, leaving the reason in err and matching nothing when the pattern is bad.</p>
 <pre>compile_ignore_case(pattern byte[:]) Regex</pre>
 <p>Compiles a pattern that ignores letter case, stopping the program with the reason when the pattern is bad.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L368">hc/lib/regex.he:368</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L368">hc/lib/regex.he:368</a>
 </article>
 <h2 id="matching-text">Matching Text <span class="n">4</span></h2>
 <article class="sym" id="find">
@@ -151,26 +151,26 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 <pre>find(re Regex&amp;, text byte[:]) int, int</pre>
 <p>Returns the start and end of the first match, or -1 and -1 if none.</p>
 <p class="note">start and end of the first match, or -1, -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L464">hc/lib/regex.he:464</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L464">hc/lib/regex.he:464</a>
 </article>
 <article class="sym" id="matches">
 <h3><a href="#matches">matches</a> <i>function</i></h3>
 <pre>matches(re Regex&amp;, text byte[:]) bool</pre>
 <p>Returns whether the text contains a match.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L468">hc/lib/regex.he:468</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L468">hc/lib/regex.he:468</a>
 </article>
 <article class="sym" id="each_match">
 <h3><a href="#each_match">each_match</a> <i>function</i></h3>
 <pre>each_match&lt;F&gt;(re Regex&amp;, text byte[:])</pre>
 <p>Calls the block with the start and end of each non-overlapping match.</p>
 <p class="note">calls the block with the start and end of each match</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L488">hc/lib/regex.he:488</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L488">hc/lib/regex.he:488</a>
 </article>
 <article class="sym" id="count">
 <h3><a href="#count">count</a> <i>function</i></h3>
 <pre>count(re Regex&amp;, text byte[:]) int</pre>
 <p>Returns the number of non-overlapping matches in the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L490">hc/lib/regex.he:490</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L490">hc/lib/regex.he:490</a>
 </article>
 <h2 id="captures">Captures <span class="n">4</span></h2>
 <article class="sym" id="Captures">
@@ -178,142 +178,142 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 <pre>struct Captures { text const byte[:], slots int[&gt;..] }</pre>
 <p>Match result with its text and group slots, where group 0 is the whole match.</p>
 <p class="note">a match with its groups: group 0 is the whole match, an unset group is empty</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L496">hc/lib/regex.he:496</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L496">hc/lib/regex.he:496</a>
 </article>
 <article class="sym" id="group">
 <h3><a href="#group">group</a> <i>function</i></h3>
 <pre>group(c Captures, k int) const byte[:]</pre>
 <p>Returns the text of a capture group, or an empty slice if unset or out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L497">hc/lib/regex.he:497</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L497">hc/lib/regex.he:497</a>
 </article>
 <article class="sym" id="each_captures">
 <h3><a href="#each_captures">each_captures</a> <i>function</i></h3>
 <pre>each_captures&lt;F&gt;(re Regex&amp;, text byte[:])</pre>
 <p>Calls the block with a Captures value for each non-overlapping match.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L500">hc/lib/regex.he:500</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L500">hc/lib/regex.he:500</a>
 </article>
 <article class="sym" id="format_replaced">
 <h3><a href="#format_replaced">format_replaced</a> <i>function</i></h3>
 <pre>format_replaced&lt;F&gt;(out byte[&gt;..]&amp;, re Regex&amp;, text byte[:])</pre>
 <p>Copies text to out, replacing each match with what the block appends.</p>
 <p class="note">copies text to out with each match replaced by what the block appends</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L503">hc/lib/regex.he:503</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L503">hc/lib/regex.he:503</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (50)</summary>
 <article class="sym" id="T_EMPTY">
 <h3><a href="#T_EMPTY">T_EMPTY</a> <i>constant</i></h3>
 <pre>T_EMPTY := 0</pre>
 <p>Tree node kind for an empty pattern fragment that matches nothing but succeeds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L15">hc/lib/regex.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L15">hc/lib/regex.he:15</a>
 </article>
 <article class="sym" id="T_SET">
 <h3><a href="#T_SET">T_SET</a> <i>constant</i></h3>
 <pre>T_SET := 1</pre>
 <p>Tree node kind for a single-byte set that consumes one byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L16">hc/lib/regex.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L16">hc/lib/regex.he:16</a>
 </article>
 <article class="sym" id="T_CAT">
 <h3><a href="#T_CAT">T_CAT</a> <i>constant</i></h3>
 <pre>T_CAT := 2</pre>
 <p>Tree node kind for a concatenation of two sub-patterns.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L17">hc/lib/regex.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L17">hc/lib/regex.he:17</a>
 </article>
 <article class="sym" id="T_ALT">
 <h3><a href="#T_ALT">T_ALT</a> <i>constant</i></h3>
 <pre>T_ALT := 3</pre>
 <p>Tree node kind for an alternation between two sub-patterns.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L18">hc/lib/regex.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L18">hc/lib/regex.he:18</a>
 </article>
 <article class="sym" id="T_REP">
 <h3><a href="#T_REP">T_REP</a> <i>constant</i></h3>
 <pre>T_REP := 4</pre>
 <p>Tree node kind for a repetition with lower and upper bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L19">hc/lib/regex.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L19">hc/lib/regex.he:19</a>
 </article>
 <article class="sym" id="T_GROUP">
 <h3><a href="#T_GROUP">T_GROUP</a> <i>constant</i></h3>
 <pre>T_GROUP := 5</pre>
 <p>Tree node kind for a capture group holding an inner pattern and its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L20">hc/lib/regex.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L20">hc/lib/regex.he:20</a>
 </article>
 <article class="sym" id="T_ASSERT">
 <h3><a href="#T_ASSERT">T_ASSERT</a> <i>constant</i></h3>
 <pre>T_ASSERT := 6</pre>
 <p>Tree node kind for a zero-width assertion such as a start, end or word edge.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L21">hc/lib/regex.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L21">hc/lib/regex.he:21</a>
 </article>
 <article class="sym" id="Tree">
 <h3><a href="#Tree">Tree</a> <i>type</i></h3>
 <pre>struct Tree { kind int, a int, b int, lo int, hi int, greedy bool }</pre>
 <p>Parse tree node holding a kind, operands, repeat bounds and a greedy flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L22">hc/lib/regex.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L22">hc/lib/regex.he:22</a>
 </article>
 <article class="sym" id="OP_SET">
 <h3><a href="#OP_SET">OP_SET</a> <i>constant</i></h3>
 <pre>OP_SET := 0</pre>
 <p>Instruction kind that consumes one byte belonging to a byte set.</p>
 <p class="note">instructions: SET consumes a byte in sets[a]; SPLIT tries a, then b; JMP goes to a; SAVE records the position in slot a; ASSERT checks condition a</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L26">hc/lib/regex.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L26">hc/lib/regex.he:26</a>
 </article>
 <article class="sym" id="OP_SPLIT">
 <h3><a href="#OP_SPLIT">OP_SPLIT</a> <i>constant</i></h3>
 <pre>OP_SPLIT := 1</pre>
 <p>Instruction kind that tries one branch first and the other as a fallback.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L27">hc/lib/regex.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L27">hc/lib/regex.he:27</a>
 </article>
 <article class="sym" id="OP_JMP">
 <h3><a href="#OP_JMP">OP_JMP</a> <i>constant</i></h3>
 <pre>OP_JMP := 2</pre>
 <p>Instruction kind that jumps unconditionally to another instruction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L28">hc/lib/regex.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L28">hc/lib/regex.he:28</a>
 </article>
 <article class="sym" id="OP_SAVE">
 <h3><a href="#OP_SAVE">OP_SAVE</a> <i>constant</i></h3>
 <pre>OP_SAVE := 3</pre>
 <p>Instruction kind that records the current position in a capture slot.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L29">hc/lib/regex.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L29">hc/lib/regex.he:29</a>
 </article>
 <article class="sym" id="OP_MATCH">
 <h3><a href="#OP_MATCH">OP_MATCH</a> <i>constant</i></h3>
 <pre>OP_MATCH := 4</pre>
 <p>Instruction kind that marks a successful match.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L30">hc/lib/regex.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L30">hc/lib/regex.he:30</a>
 </article>
 <article class="sym" id="OP_ASSERT">
 <h3><a href="#OP_ASSERT">OP_ASSERT</a> <i>constant</i></h3>
 <pre>OP_ASSERT := 5</pre>
 <p>Instruction kind that checks a zero-width condition before continuing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L31">hc/lib/regex.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L31">hc/lib/regex.he:31</a>
 </article>
 <article class="sym" id="Op">
 <h3><a href="#Op">Op</a> <i>type</i></h3>
 <pre>struct Op { kind int, a int, b int }</pre>
 <p>Compiled instruction holding a kind and two operands.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L32">hc/lib/regex.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L32">hc/lib/regex.he:32</a>
 </article>
 <article class="sym" id="AT_START">
 <h3><a href="#AT_START">AT_START</a> <i>constant</i></h3>
 <pre>AT_START := 0</pre>
 <p>Assertion condition that holds only at the start of the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L35">hc/lib/regex.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L35">hc/lib/regex.he:35</a>
 </article>
 <article class="sym" id="AT_END">
 <h3><a href="#AT_END">AT_END</a> <i>constant</i></h3>
 <pre>AT_END := 1</pre>
 <p>Assertion condition that holds only at the end of the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L36">hc/lib/regex.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L36">hc/lib/regex.he:36</a>
 </article>
 <article class="sym" id="AT_WORD_EDGE">
 <h3><a href="#AT_WORD_EDGE">AT_WORD_EDGE</a> <i>constant</i></h3>
 <pre>AT_WORD_EDGE := 2</pre>
 <p>Assertion condition that holds at a boundary between word and non-word bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L37">hc/lib/regex.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L37">hc/lib/regex.he:37</a>
 </article>
 <article class="sym" id="AT_NOT_WORD_EDGE">
 <h3><a href="#AT_NOT_WORD_EDGE">AT_NOT_WORD_EDGE</a> <i>constant</i></h3>
 <pre>AT_NOT_WORD_EDGE := 3</pre>
 <p>Assertion condition that holds where there is no word boundary.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L38">hc/lib/regex.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L38">hc/lib/regex.he:38</a>
 </article>
 <article class="sym" id="Parser">
 <h3><a href="#Parser">Parser</a> <i>type</i></h3>
@@ -327,197 +327,197 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 	fold bool = false
 }</pre>
 <p>Parser state holding the pattern, position, tree, byte sets, group count and first error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L42">hc/lib/regex.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L42">hc/lib/regex.he:42</a>
 </article>
 <article class="sym" id="node">
 <h3><a href="#node">node</a> <i>function</i></h3>
 <pre>node(p Parser&amp;, kind int, a int, b int) int</pre>
 <p>Appends a tree node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L52">hc/lib/regex.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L52">hc/lib/regex.he:52</a>
 </article>
 <article class="sym" id="both_cases">
 <h3><a href="#both_cases">both_cases</a> <i>function</i></h3>
 <pre>both_cases(on bool[256]&amp;)</pre>
 <p>Adds the uppercase and lowercase counterparts of every letter already set in a byte table, for case-insensitive matching.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L55">hc/lib/regex.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L55">hc/lib/regex.he:55</a>
 </article>
 <article class="sym" id="set_node">
 <h3><a href="#set_node">set_node</a> <i>function</i></h3>
 <pre>set_node(p Parser&amp;, s ByteSet) int</pre>
 <p>Adds a byte set and returns a tree node that matches it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L56">hc/lib/regex.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L56">hc/lib/regex.he:56</a>
 </article>
 <article class="sym" id="problem">
 <h3><a href="#problem">problem</a> <i>function</i></h3>
 <pre>problem(p Parser&amp;, what const byte[:])</pre>
 <p>Records the first parse error with its offset and stops further parsing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L60">hc/lib/regex.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L60">hc/lib/regex.he:60</a>
 </article>
 <article class="sym" id="more">
 <h3><a href="#more">more</a> <i>function</i></h3>
 <pre>more(p Parser&amp;) bool</pre>
 <p>Returns whether unparsed pattern remains and no error has occurred.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L63">hc/lib/regex.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L63">hc/lib/regex.he:63</a>
 </article>
 <article class="sym" id="next_is">
 <h3><a href="#next_is">next_is</a> <i>function</i></h3>
 <pre>next_is(p Parser&amp;, c byte) bool</pre>
 <p>Returns whether the next pattern byte equals the given byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L64">hc/lib/regex.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L64">hc/lib/regex.he:64</a>
 </article>
 <article class="sym" id="word_byte">
 <h3><a href="#word_byte">word_byte</a> <i>function</i></h3>
 <pre>word_byte(c byte) bool</pre>
 <p>Returns whether a byte is a letter, digit or underscore.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L66">hc/lib/regex.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L66">hc/lib/regex.he:66</a>
 </article>
 <article class="sym" id="hex_of">
 <h3><a href="#hex_of">hex_of</a> <i>function</i></h3>
 <pre>hex_of(c byte) int</pre>
 <p>Returns the value of a hexadecimal digit, or -1 if it is not one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L67">hc/lib/regex.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L67">hc/lib/regex.he:67</a>
 </article>
 <article class="sym" id="class_letter">
 <h3><a href="#class_letter">class_letter</a> <i>function</i></h3>
 <pre>class_letter(on bool[256]&amp;, c byte) bool</pre>
 <p>Adds the bytes of a class letter such as d, w or s to a set, returning false if unknown.</p>
 <p class="note">adds the members of a class letter (d w s, capital for the complement); false when c names no class</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L75">hc/lib/regex.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L75">hc/lib/regex.he:75</a>
 </article>
 <article class="sym" id="escape_byte">
 <h3><a href="#escape_byte">escape_byte</a> <i>function</i></h3>
 <pre>escape_byte(p Parser&amp;) byte</pre>
 <p>Reads an escape after a backslash and returns the byte it stands for.</p>
 <p class="note">the byte an escape stands for, after the backslash; at is moved past it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L85">hc/lib/regex.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L85">hc/lib/regex.he:85</a>
 </article>
 <article class="sym" id="parse_class">
 <h3><a href="#parse_class">parse_class</a> <i>function</i></h3>
 <pre>parse_class(p Parser&amp;) int</pre>
 <p>Parses a bracket character class and returns its tree node.</p>
 <p class="note">[...] with the opening bracket already taken</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L104">hc/lib/regex.he:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L104">hc/lib/regex.he:104</a>
 </article>
 <article class="sym" id="one_byte">
 <h3><a href="#one_byte">one_byte</a> <i>function</i></h3>
 <pre>one_byte(p Parser&amp;, c byte) int</pre>
 <p>Returns a tree node matching exactly one given byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L151">hc/lib/regex.he:151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L151">hc/lib/regex.he:151</a>
 </article>
 <article class="sym" id="atom">
 <h3><a href="#atom">atom</a> <i>function</i></h3>
 <pre>atom(p Parser&amp;) int</pre>
 <p>Parses a single atom such as a group, class, dot, anchor or escape.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L156">hc/lib/regex.he:156</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L156">hc/lib/regex.he:156</a>
 </article>
 <article class="sym" id="number">
 <h3><a href="#number">number</a> <i>function</i></h3>
 <pre>number(p Parser&amp;) int</pre>
 <p>Reads a decimal number at the current position, or returns -1 if none.</p>
 <p class="note">a decimal number at p.at, or -1 when there is none</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L200">hc/lib/regex.he:200</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L200">hc/lib/regex.he:200</a>
 </article>
 <article class="sym" id="counted">
 <h3><a href="#counted">counted</a> <i>function</i></h3>
 <pre>counted(p Parser&amp;) int, int, bool</pre>
 <p>Parses a counted repeat like {m,n}, returning bounds and whether one was present.</p>
 <p class="note">{m}, {m,} or {m,n} at p.at: lo, hi (-1 for no bound), and whether it was one</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L208">hc/lib/regex.he:208</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L208">hc/lib/regex.he:208</a>
 </article>
 <article class="sym" id="repetition">
 <h3><a href="#repetition">repetition</a> <i>function</i></h3>
 <pre>repetition(p Parser&amp;) int</pre>
 <p>Parses an atom with any following repetition operators and returns its tree node.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L225">hc/lib/regex.he:225</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L225">hc/lib/regex.he:225</a>
 </article>
 <article class="sym" id="concatenation">
 <h3><a href="#concatenation">concatenation</a> <i>function</i></h3>
 <pre>concatenation(p Parser&amp;) int</pre>
 <p>Parses a sequence of repetitions into a concatenation tree node.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L256">hc/lib/regex.he:256</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L256">hc/lib/regex.he:256</a>
 </article>
 <article class="sym" id="alternation">
 <h3><a href="#alternation">alternation</a> <i>function</i></h3>
 <pre>alternation(p Parser&amp;) int</pre>
 <p>Parses alternatives separated by bars and returns the resulting tree node.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L263">hc/lib/regex.he:263</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L263">hc/lib/regex.he:263</a>
 </article>
 <article class="sym" id="op">
 <h3><a href="#op">op</a> <i>function</i></h3>
 <pre>op(re Regex&amp;, kind int, a int, b int) int</pre>
 <p>Appends an instruction to the program and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L271">hc/lib/regex.he:271</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L271">hc/lib/regex.he:271</a>
 </article>
 <article class="sym" id="order">
 <h3><a href="#order">order</a> <i>function</i></h3>
 <pre>order(re Regex&amp;, s int, into int, past int, greedy bool)</pre>
 <p>Sets a split's branch order so the preferred target is tried first when greedy.</p>
 <p class="note">a split at s that prefers `into` when greedy and `past` otherwise</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L275">hc/lib/regex.he:275</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L275">hc/lib/regex.he:275</a>
 </article>
 <article class="sym" id="lay_out">
 <h3><a href="#lay_out">lay_out</a> <i>function</i></h3>
 <pre>lay_out(re Regex&amp;, tree Tree[:], t int) int</pre>
 <p>Lays out a tree node as instructions at the program end and returns the new length.</p>
 <p class="note">lays out tree node t at the end of the program; returns the new length</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L280">hc/lib/regex.he:280</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L280">hc/lib/regex.he:280</a>
 </article>
 <article class="sym" id="build">
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build(pattern byte[:], err byte[&gt;..]&amp;, fold bool) Regex</pre>
 <p>Parses and lays out a pattern into a Regex, leaving any error text in err and optionally folding letter case.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L315">hc/lib/regex.he:315</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L315">hc/lib/regex.he:315</a>
 </article>
 <article class="sym" id="starts">
 <h3><a href="#starts">starts</a> <i>function</i></h3>
 <pre>starts(re Regex&amp;)</pre>
 <p>Computes the set of bytes a match can start with and stores it for scanning.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L336">hc/lib/regex.he:336</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L336">hc/lib/regex.he:336</a>
 </article>
 <article class="sym" id="Threads">
 <h3><a href="#Threads">Threads</a> <i>type</i></h3>
 <pre>struct Threads { pcs int[&gt;..] = [], slots int[&gt;..] = [] }</pre>
 <p>Queue of live threads holding instruction indexes and their capture slots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L377">hc/lib/regex.he:377</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L377">hc/lib/regex.he:377</a>
 </article>
 <article class="sym" id="Machine">
 <h3><a href="#Machine">Machine</a> <i>type</i></h3>
 <pre>struct Machine { now Threads, later Threads, seen int[&gt;..], stamp int, work int[&gt;..], best int[&gt;..], width int }</pre>
 <p>Working state of the matcher holding thread queues, visit marks and capture buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L378">hc/lib/regex.he:378</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L378">hc/lib/regex.he:378</a>
 </article>
 <article class="sym" id="holds">
 <h3><a href="#holds">holds</a> <i>function</i></h3>
 <pre>holds(cond int, text byte[:], i int) bool</pre>
 <p>Returns whether a zero-width assertion condition holds at a position in the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L380">hc/lib/regex.he:380</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L380">hc/lib/regex.he:380</a>
 </article>
 <article class="sym" id="follow">
 <h3><a href="#follow">follow</a> <i>function</i></h3>
 <pre>follow(re Regex&amp;, m Machine&amp;, into Threads&amp;, pc int, text byte[:], i int) int</pre>
 <p>Follows jumps from an instruction and queues threads waiting on a byte or matched, in priority order.</p>
 <p class="note">follows every jump from pc at position i, queueing the threads that wait on a byte or have matched, in priority order</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L389">hc/lib/regex.he:389</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L389">hc/lib/regex.he:389</a>
 </article>
 <article class="sym" id="machine">
 <h3><a href="#machine">machine</a> <i>function</i></h3>
 <pre>machine(re Regex&amp;) Machine</pre>
 <p>Creates a matcher state sized for a regex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L410">hc/lib/regex.he:410</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L410">hc/lib/regex.he:410</a>
 </article>
 <article class="sym" id="run">
 <h3><a href="#run">run</a> <i>function</i></h3>
 <pre>run(re Regex&amp;, m Machine&amp;, text byte[:], from int) bool</pre>
 <p>Finds the first match starting at or after a position, leaving its slots in the machine.</p>
 <p class="note">the first match starting at or after from; its slots are left in m.best</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L421">hc/lib/regex.he:421</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L421">hc/lib/regex.he:421</a>
 </article>
 <article class="sym" id="each_slots">
 <h3><a href="#each_slots">each_slots</a> <i>function</i></h3>
 <pre>each_slots&lt;F&gt;(re Regex&amp;, text byte[:])</pre>
 <p>Calls the block with the capture slots of each non-overlapping match from left to right.</p>
 <p class="note">walks the matches left to right without overlap. An empty match is not taken where the previous match ended; the scan steps one byte instead</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/regex.he#L474">hc/lib/regex.he:474</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/regex.he#L474">hc/lib/regex.he:474</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -543,7 +543,7 @@ syntax: literals, ., [...] and [^...] with ranges, \d \w \s \D \W \S,
 </ul>
 </li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
