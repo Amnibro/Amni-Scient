@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-bc">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-bc">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=1893d7de04">
+<link rel="stylesheet" href="/api-library/lib.css?v=6ac13de017">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=1893d7de04'; start({wasm: '/api-library/search.wasm?v=1893d7de04'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=6ac13de017'; start({wasm: '/api-library/search.wasm?v=6ac13de017'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/bc</h1>
 <p class="lib-lede">Decodes BC1, BC3, BC4, BC5, and BC7 block-compressed texture data into raw RGBA pixels and computes compressed sizes.</p>
-<p class="lib-meta"><code>import gfx.bc;</code> &middot; <code>bc::</code> &middot; 26 functions, 0 types, 21 constants &middot; <a href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.bc;</code> &middot; <code>bc::</code> &middot; 26 functions, 0 types, 21 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#format-codes">Format Codes <span class="n">9</span></a></li>
 <li><a href="#mipmaps">Mipmaps <span class="n">1</span></a></li>
@@ -115,63 +115,63 @@
 <pre>let BC1 = 1</pre>
 <p>Constant identifying the BC1 block format (8 bytes per 4x4 block) for use with size, decode and encode.</p>
 <p class="note">Namespace bc; imports math. Block-compressed texture formats BC1, BC3, BC4, BC5 and BC7 on the CPU: decoders that give the same texels a GPU gives, and encoders. A format is named by an int kind: constants `BC1 = 1`, `BC3 = 3`, `BC4 = 4`, `BC5 = 5`, `BC7 = 7`. Every format stores a picture as 4 by 4 texel blocks in row order (blocks across = (w + 3) / 4, blocks down = (h + 3) / 4); a block is 8 by</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L3">hc/lib/gfx/bc.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L3">hc/lib/gfx/bc.amni:3</a>
 </article>
 <article class="sym" id="BC3">
 <h3><a href="#BC3">BC3</a> <i>constant</i></h3>
 <pre>let BC3 = 3</pre>
 <p>Constant identifying the BC3 block format (16 bytes per block, with alpha) for use with size, decode and encode.</p>
 <p class="note">Namespace bc; imports math. Block-compressed texture formats BC1, BC3, BC4, BC5 and BC7 on the CPU: decoders that give the same texels a GPU gives, and encoders. A format is named by an int kind: constants `BC1 = 1`, `BC3 = 3`, `BC4 = 4`, `BC5 = 5`, `BC7 = 7`. Every format stores a picture as 4 by 4 texel blocks in row order (blocks across = (w + 3) / 4, blocks down = (h + 3) / 4); a block is 8 by</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L4">hc/lib/gfx/bc.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L4">hc/lib/gfx/bc.amni:4</a>
 </article>
 <article class="sym" id="BC4">
 <h3><a href="#BC4">BC4</a> <i>constant</i></h3>
 <pre>let BC4 = 4</pre>
 <p>Constant identifying the single-channel BC4 block format (8 bytes per block) for use with size, decode and encode.</p>
 <p class="note">Namespace bc; imports math. Block-compressed texture formats BC1, BC3, BC4, BC5 and BC7 on the CPU: decoders that give the same texels a GPU gives, and encoders. A format is named by an int kind: constants `BC1 = 1`, `BC3 = 3`, `BC4 = 4`, `BC5 = 5`, `BC7 = 7`. Every format stores a picture as 4 by 4 texel blocks in row order (blocks across = (w + 3) / 4, blocks down = (h + 3) / 4); a block is 8 by</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L5">hc/lib/gfx/bc.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L5">hc/lib/gfx/bc.amni:5</a>
 </article>
 <article class="sym" id="BC5">
 <h3><a href="#BC5">BC5</a> <i>constant</i></h3>
 <pre>let BC5 = 5</pre>
 <p>Constant identifying the two-channel BC5 block format (16 bytes per block) for use with size, decode and encode.</p>
 <p class="note">Namespace bc; imports math. Block-compressed texture formats BC1, BC3, BC4, BC5 and BC7 on the CPU: decoders that give the same texels a GPU gives, and encoders. A format is named by an int kind: constants `BC1 = 1`, `BC3 = 3`, `BC4 = 4`, `BC5 = 5`, `BC7 = 7`. Every format stores a picture as 4 by 4 texel blocks in row order (blocks across = (w + 3) / 4, blocks down = (h + 3) / 4); a block is 8 by</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L6">hc/lib/gfx/bc.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L6">hc/lib/gfx/bc.amni:6</a>
 </article>
 <article class="sym" id="BC7">
 <h3><a href="#BC7">BC7</a> <i>constant</i></h3>
 <pre>let BC7 = 7</pre>
 <p>Constant identifying the BC7 block format (16 bytes per block) for use with size, decode and encode.</p>
 <p class="note">Namespace bc; imports math. Block-compressed texture formats BC1, BC3, BC4, BC5 and BC7 on the CPU: decoders that give the same texels a GPU gives, and encoders. A format is named by an int kind: constants `BC1 = 1`, `BC3 = 3`, `BC4 = 4`, `BC5 = 5`, `BC7 = 7`. Every format stores a picture as 4 by 4 texel blocks in row order (blocks across = (w + 3) / 4, blocks down = (h + 3) / 4); a block is 8 by</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L7">hc/lib/gfx/bc.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L7">hc/lib/gfx/bc.amni:7</a>
 </article>
 <article class="sym" id="block_bytes">
 <h3><a href="#block_bytes">block_bytes</a> <i>function</i></h3>
 <pre>block_bytes(kind int) int</pre>
 <p>Returns the bytes per 4x4 block for a format code, or 0 if the format is unsupported.</p>
 <p class="note">`block_bytes(kind int) int` is 8 for BC1 and BC4, 16 for BC3, BC5 and BC7, and 0 for any other kind.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L22">hc/lib/gfx/bc.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L22">hc/lib/gfx/bc.amni:22</a>
 </article>
 <article class="sym" id="size">
 <h3><a href="#size">size</a> <i>function</i></h3>
 <pre>size(kind int, w int, h int) int</pre>
 <p>Returns the compressed byte size of a w by h pixel image in the given format, rounding up to whole blocks.</p>
 <p class="note">`size(kind int, w int, h int) int` is the byte count of one picture: `block_bytes(kind) * ((w + 3) / 4) * ((h + 3) / 4)`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L29">hc/lib/gfx/bc.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L29">hc/lib/gfx/bc.amni:29</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(kind int, blocks const byte[:], w int, h int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes block-compressed data into RGBA pixels in out, returning false for an unsupported format, bad size or too little data.</p>
 <p class="note">`decode(kind int, blocks, w int, h int, out) bool` (blocks: read-only byte slice; out: growable byte array by reference) clears `out`, resizes it to `w * h * 4` and fills it with the decoded picture; false (and `out` left empty) when kind is unknown, w or h is not positive, or `blocks` is shorter than `size(kind, w, h)`. Each block is decoded into a local 64-byte array and only the texels inside t</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L255">hc/lib/gfx/bc.amni:255</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L255">hc/lib/gfx/bc.amni:255</a>
 </article>
 <article class="sym" id="encode">
 <h3><a href="#encode">encode</a> <i>function</i></h3>
 <pre>encode(kind int, rgba const byte[:], w int, h int, out byte[&gt;..]&amp;) bool</pre>
 <p>Encodes RGBA pixels into block-compressed data in out, returning false for an unsupported format, bad size or too little data.</p>
 <p class="note">`encode(kind int, rgba, w int, h int, out) bool` (rgba: read-only byte slice; out: growable byte array by reference) clears `out`, resizes it to `size(kind, w, h)` and writes one block per 4 by 4 group using `fetch`; false (out left empty) when kind is unknown, w or h is not positive or `rgba` is shorter than `w * h * 4`. BC1: `pack_color` with four = false (alpha is ignored; every texel comes out</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L673">hc/lib/gfx/bc.amni:673</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L673">hc/lib/gfx/bc.amni:673</a>
 </article>
 <h2 id="mipmaps">Mipmaps <span class="n">1</span></h2>
 <article class="sym" id="halve">
@@ -179,7 +179,7 @@
 <pre>halve(rgba const byte[:], w int, h int, srgb bool, out byte[&gt;..]&amp;) int, int</pre>
 <p>Downsamples an RGBA image to half size in out, optionally averaging in linear space for sRGB, and returns the new width and height.</p>
 <p class="note">`halve(rgba, w int, h int, srgb bool, out)` returning two ints (rgba: read-only byte slice; out: growable byte array by reference) makes the next smaller mip: the result is `max(w / 2, 1)` by `max(h / 2, 1)`, written into `out` (cleared first), and those two sizes are returned. Each result pixel is the average of the 2 by 2 source pixels it covers (source coordinates clamped to the edge when a sid</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L704">hc/lib/gfx/bc.amni:704</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L704">hc/lib/gfx/bc.amni:704</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (37)</summary>
 <article class="sym" id="P2">
@@ -187,240 +187,240 @@
 <pre>let P2 int[64] = [52428, 34952, 61166, 60616, 51328, 65260, 65224, 60544, 51200, 65516, 65152, 59392, 65512, 65280, 65520, 61440, 63248, 142, 28928, 2254, 140, 29456, 12544, 36046, 2188, 12560, 26214, 13932, 6120, 4080,</pre>
 <p>Lookup table of two-subset partition masks, one bit per pixel, for the 64 BC7 partitions.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L8">hc/lib/gfx/bc.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L8">hc/lib/gfx/bc.amni:8</a>
 </article>
 <article class="sym" id="P3">
 <h3><a href="#P3">P3</a> <i>constant</i></h3>
 <pre>let P3 int[64] = [2858963024, 1784303680, 1515864576, 1414570152, 2779054080, 2694860880, 1431675040, 1515868240, 2857697280, 2857719040, 2863289600, 2425393296, 2492765332, 2762253476, 2846200912, 705315408, 2777960512,</pre>
 <p>Lookup table of three-subset partition maps, two bits per pixel, for the 64 BC7 partitions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L9">hc/lib/gfx/bc.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L9">hc/lib/gfx/bc.amni:9</a>
 </article>
 <article class="sym" id="A2">
 <h3><a href="#A2">A2</a> <i>constant</i></h3>
 <pre>let A2 int[64] = [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 2, 8, 2, 2, 8, 8, 15, 2, 8, 2, 2, 8, 8, 2, 2, 15, 15, 6, 8, 2, 8, 15, 15, 2, 8, 2, 2, 2, 15, 15, 6, 6, 2, 6, 8, 15, 15, 2, 2, 15, 15,</pre>
 <p>Table of anchor pixel indices for the second subset in two-subset BC7 partitions.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L10">hc/lib/gfx/bc.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L10">hc/lib/gfx/bc.amni:10</a>
 </article>
 <article class="sym" id="A3A">
 <h3><a href="#A3A">A3A</a> <i>constant</i></h3>
 <pre>let A3A int[64] = [3, 3, 15, 15, 8, 3, 15, 15, 8, 8, 6, 6, 6, 5, 3, 3, 3, 3, 8, 15, 3, 3, 6, 10, 5, 8, 8, 6, 8, 5, 15, 15, 8, 15, 3, 5, 6, 10, 8, 15, 15, 3, 15, 5, 15, 15, 15, 15, 3, 15, 5, 5, 5, 8, 5, 10, 5, 10, 8, 13,</pre>
 <p>Table of anchor pixel indices for the second subset in three-subset BC7 partitions.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L11">hc/lib/gfx/bc.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L11">hc/lib/gfx/bc.amni:11</a>
 </article>
 <article class="sym" id="A3B">
 <h3><a href="#A3B">A3B</a> <i>constant</i></h3>
 <pre>let A3B int[64] = [15, 8, 8, 3, 15, 15, 3, 8, 15, 15, 15, 15, 15, 15, 15, 8, 15, 8, 15, 3, 15, 8, 15, 8, 3, 15, 6, 10, 15, 15, 10, 8, 15, 3, 15, 10, 10, 8, 9, 10, 6, 15, 8, 15, 3, 6, 6, 8, 15, 3, 15, 15, 15, 15, 15, 15,</pre>
 <p>Table of anchor pixel indices for the third subset in three-subset BC7 partitions.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L12">hc/lib/gfx/bc.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L12">hc/lib/gfx/bc.amni:12</a>
 </article>
 <article class="sym" id="W2">
 <h3><a href="#W2">W2</a> <i>constant</i></h3>
 <pre>let W2 int[4] = [0, 21, 43, 64]</pre>
 <p>Interpolation weight table for 2-bit BC7 indices, on a scale of 64.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L13">hc/lib/gfx/bc.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L13">hc/lib/gfx/bc.amni:13</a>
 </article>
 <article class="sym" id="W3">
 <h3><a href="#W3">W3</a> <i>constant</i></h3>
 <pre>let W3 int[8] = [0, 9, 18, 27, 37, 46, 55, 64]</pre>
 <p>Interpolation weight table for 3-bit BC7 indices, on a scale of 64.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L14">hc/lib/gfx/bc.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L14">hc/lib/gfx/bc.amni:14</a>
 </article>
 <article class="sym" id="W4">
 <h3><a href="#W4">W4</a> <i>constant</i></h3>
 <pre>let W4 int[16] = [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64]</pre>
 <p>Interpolation weight table for 4-bit BC7 indices, on a scale of 64.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L15">hc/lib/gfx/bc.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L15">hc/lib/gfx/bc.amni:15</a>
 </article>
 <article class="sym" id="M_SUBSETS">
 <h3><a href="#M_SUBSETS">M_SUBSETS</a> <i>constant</i></h3>
 <pre>let M_SUBSETS int[8] = [3, 2, 3, 2, 1, 1, 1, 2]</pre>
 <p>Number of subsets used by each of the eight BC7 modes.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L16">hc/lib/gfx/bc.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L16">hc/lib/gfx/bc.amni:16</a>
 </article>
 <article class="sym" id="M_PART">
 <h3><a href="#M_PART">M_PART</a> <i>constant</i></h3>
 <pre>let M_PART int[8] = [4, 6, 6, 6, 0, 0, 0, 6]</pre>
 <p>Number of partition selector bits for each of the eight BC7 modes.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L17">hc/lib/gfx/bc.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L17">hc/lib/gfx/bc.amni:17</a>
 </article>
 <article class="sym" id="M_CBITS">
 <h3><a href="#M_CBITS">M_CBITS</a> <i>constant</i></h3>
 <pre>let M_CBITS int[8] = [4, 6, 5, 7, 5, 7, 7, 5]</pre>
 <p>Color endpoint bit width per channel for each of the eight BC7 modes.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L18">hc/lib/gfx/bc.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L18">hc/lib/gfx/bc.amni:18</a>
 </article>
 <article class="sym" id="M_ABITS">
 <h3><a href="#M_ABITS">M_ABITS</a> <i>constant</i></h3>
 <pre>let M_ABITS int[8] = [0, 0, 0, 0, 6, 8, 7, 5]</pre>
 <p>Alpha endpoint bit width for each of the eight BC7 modes, zero when the mode has no alpha.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L19">hc/lib/gfx/bc.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L19">hc/lib/gfx/bc.amni:19</a>
 </article>
 <article class="sym" id="M_PBITS">
 <h3><a href="#M_PBITS">M_PBITS</a> <i>constant</i></h3>
 <pre>let M_PBITS int[8] = [1, 2, 0, 1, 0, 0, 1, 1]</pre>
 <p>Per-mode flag giving how the BC7 endpoint p-bits are stored: none, per endpoint, or per subset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L20">hc/lib/gfx/bc.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L20">hc/lib/gfx/bc.amni:20</a>
 </article>
 <article class="sym" id="M_IBITS">
 <h3><a href="#M_IBITS">M_IBITS</a> <i>constant</i></h3>
 <pre>let M_IBITS int[8] = [3, 3, 2, 2, 2, 2, 4, 2]</pre>
 <p>Index bit width for each of the eight BC7 modes.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L21">hc/lib/gfx/bc.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L21">hc/lib/gfx/bc.amni:21</a>
 </article>
 <article class="sym" id="e5">
 <h3><a href="#e5">e5</a> <i>function</i></h3>
 <pre>e5(v int) int</pre>
 <p>Expands a 5-bit color value to 8 bits by bit replication.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L32">hc/lib/gfx/bc.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L32">hc/lib/gfx/bc.amni:32</a>
 </article>
 <article class="sym" id="e6">
 <h3><a href="#e6">e6</a> <i>function</i></h3>
 <pre>e6(v int) int</pre>
 <p>Expands a 6-bit color value to 8 bits by bit replication.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L33">hc/lib/gfx/bc.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L33">hc/lib/gfx/bc.amni:33</a>
 </article>
 <article class="sym" id="color_block">
 <h3><a href="#color_block">color_block</a> <i>function</i></h3>
 <pre>color_block(b const byte[:], at int, four bool, px byte[:], o int)</pre>
 <p>Decodes one BC1-style color block into 16 RGBA pixels, treating it as four-color mode when requested.</p>
 <p class="note">`color_block(b, at int, four bool, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes the 8-byte BC1 color block at `b[at]` into 16 RGBA texels written at `px[o + 4 i]`. c0 and c1 are 16-bit RGB565 values (bytes 0-1 and 2-3; red in the top 5 bits); expand a 5-bit value v as `(v &lt;&lt; 3) | (v &gt;&gt; 2)` and a 6-bit one as `(v &lt;&lt; 2) | (v &gt;&gt; 4)`. When `four` is true or c0 &gt; c1 (com</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L34">hc/lib/gfx/bc.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L34">hc/lib/gfx/bc.amni:34</a>
 </article>
 <article class="sym" id="alpha_palette">
 <h3><a href="#alpha_palette">alpha_palette</a> <i>function</i></h3>
 <pre>alpha_palette(a0 int, a1 int, pal int[:])</pre>
 <p>Fills an 8-entry alpha palette from two endpoint values, using the BC3 and BC4 interpolation rules.</p>
 <p class="note">`alpha_block(b, at int, px, o int, step int)` (b: read-only byte slice; px: byte slice it writes into) decodes the 8-byte BC4 block at `b[at]` into 16 single values written at `px[o + step * i]`. a0 = byte 0, a1 = byte 1. The 8-entry palette comes from `alpha_palette(a0 int, a1 int, pal)` (pal: int slice of 8 it fills), a separate function this block defines: entries 0 and 1 are a0 and a1. Each in</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L64">hc/lib/gfx/bc.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L64">hc/lib/gfx/bc.amni:64</a>
 </article>
 <article class="sym" id="alpha_block">
 <h3><a href="#alpha_block">alpha_block</a> <i>function</i></h3>
 <pre>alpha_block(b const byte[:], at int, px byte[:], o int, step int)</pre>
 <p>Decodes one BC3-style alpha block into a single channel of 16 pixels at the given offset and stride.</p>
 <p class="note">`alpha_block(b, at int, px, o int, step int)` (b: read-only byte slice; px: byte slice it writes into) decodes the 8-byte BC4 block at `b[at]` into 16 single values written at `px[o + step * i]`. a0 = byte 0, a1 = byte 1. The 8-entry palette comes from `alpha_palette(a0 int, a1 int, pal)` (pal: int slice of 8 it fills), a separate function this block defines: entries 0 and 1 are a0 and a1. Each in</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L85">hc/lib/gfx/bc.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L85">hc/lib/gfx/bc.amni:85</a>
 </article>
 <article class="sym" id="bits">
 <h3><a href="#bits">bits</a> <i>function</i></h3>
 <pre>bits(b const byte[:], at int, pos int, n int) int</pre>
 <p>Reads n bits from a block starting at a bit position, least significant bit first.</p>
 <p class="note">`bits(b, at int, pos int, n int) int` (b: read-only byte slice) reads n bits (n from 0 to 8) of the 16-byte block at `b[at]` starting at bit `pos`, where bit p is bit `p &amp; 7` of byte `p &gt;&gt; 3`, the first bit read being the lowest bit of the result. n = 0 gives 0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L92">hc/lib/gfx/bc.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L92">hc/lib/gfx/bc.amni:92</a>
 </article>
 <article class="sym" id="bc7_anchor">
 <h3><a href="#bc7_anchor">bc7_anchor</a> <i>function</i></h3>
 <pre>bc7_anchor(i int, ns int, part int) bool</pre>
 <p>Returns whether a pixel index is an anchor index for the given subset count and partition.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L100">hc/lib/gfx/bc.amni:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L100">hc/lib/gfx/bc.amni:100</a>
 </article>
 <article class="sym" id="bc7_w">
 <h3><a href="#bc7_w">bc7_w</a> <i>function</i></h3>
 <pre>bc7_w(n int, k int) int</pre>
 <p>Returns the interpolation weight for index k at the given index bit width.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L103">hc/lib/gfx/bc.amni:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L103">hc/lib/gfx/bc.amni:103</a>
 </article>
 <article class="sym" id="bc7_block">
 <h3><a href="#bc7_block">bc7_block</a> <i>function</i></h3>
 <pre>bc7_block(b const byte[:], at int, px byte[:], o int)</pre>
 <p>Decodes one BC7 block into 16 RGBA pixels, writing transparent black for an invalid mode.</p>
 <p class="note">`bc7_block(b, at int, px, o int)` (b: read-only byte slice; px: byte slice it writes into) decodes one BC7 block into 16 RGBA texels at `px[o + 4 i]`, exactly as the format defines it: - The mode m is the index of the lowest set bit of byte 0; when byte 0 is 0 all 64 output bytes are 0 and that is all. Reading continues at bit m + 1. - Read in this order: the partition number (`M_PART[m]` bits); f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L110">hc/lib/gfx/bc.amni:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L110">hc/lib/gfx/bc.amni:110</a>
 </article>
 <article class="sym" id="fetch">
 <h3><a href="#fetch">fetch</a> <i>function</i></h3>
 <pre>fetch(rgba const byte[:], w int, h int, bx int, by int, px byte[:])</pre>
 <p>Copies a 4x4 pixel tile from an RGBA image into a buffer, clamping coordinates at the image edges.</p>
 <p class="note">`fetch(rgba, w int, h int, bx int, by int, px)` (rgba: read-only byte slice; px: byte slice it writes into) copies the 4 by 4 texels of block (bx, by) into `px` (64 bytes), repeating the last column and row for texels past the picture's edge.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L301">hc/lib/gfx/bc.amni:301</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L301">hc/lib/gfx/bc.amni:301</a>
 </article>
 <article class="sym" id="c565">
 <h3><a href="#c565">c565</a> <i>function</i></h3>
 <pre>c565(r real, g real, bl real) int</pre>
 <p>Converts RGB values in the 0 to 255 range to a packed RGB565 color with rounding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L310">hc/lib/gfx/bc.amni:310</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L310">hc/lib/gfx/bc.amni:310</a>
 </article>
 <article class="sym" id="clamp255">
 <h3><a href="#clamp255">clamp255</a> <i>function</i></h3>
 <pre>clamp255(x real) real</pre>
 <p>Clamps a real value to the range 0 to 255.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L316">hc/lib/gfx/bc.amni:316</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L316">hc/lib/gfx/bc.amni:316</a>
 </article>
 <article class="sym" id="pal4">
 <h3><a href="#pal4">pal4</a> <i>function</i></h3>
 <pre>pal4(c0 int, c1 int, pal int[:])</pre>
 <p>Builds the four-color RGB palette for a BC1 block from two RGB565 endpoints.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L319">hc/lib/gfx/bc.amni:319</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L319">hc/lib/gfx/bc.amni:319</a>
 </article>
 <article class="sym" id="assign4">
 <h3><a href="#assign4">assign4</a> <i>function</i></h3>
 <pre>assign4(px const byte[:], pal const int[:], idx int[:]) int</pre>
 <p>Assigns each of 16 pixels to its nearest palette entry and returns the total squared error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L331">hc/lib/gfx/bc.amni:331</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L331">hc/lib/gfx/bc.amni:331</a>
 </article>
 <article class="sym" id="pack_color">
 <h3><a href="#pack_color">pack_color</a> <i>function</i></h3>
 <pre>pack_color(px const byte[:], b byte[:], at int, four bool)</pre>
 <p>Encodes 16 RGBA pixels into a BC1-style color block using a principal axis fit with refinement.</p>
 <p class="note">`pack_color(px, b, at int, four bool)` (px: read-only byte slice; b: byte slice it writes into) writes an 8-byte BC1 color block for the 16 texels in `px` (alpha ignored) at `b[at]`, in float math: the mean color and the 3 by 3 covariance of the 16 colors; the main axis by 8 rounds of power iteration started from the covariance's diagonal-largest axis (start vector = (1, 1, 1) projected through th</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L352">hc/lib/gfx/bc.amni:352</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L352">hc/lib/gfx/bc.amni:352</a>
 </article>
 <article class="sym" id="pack_alpha">
 <h3><a href="#pack_alpha">pack_alpha</a> <i>function</i></h3>
 <pre>pack_alpha(px const byte[:], o int, step int, b byte[:], at int)</pre>
 <p>Encodes one channel of 16 pixels into a BC3-style alpha block at the given offset.</p>
 <p class="note">`pack_alpha(px, o int, step int, b, at int)` (px: read-only byte slice; b: byte slice it writes into) writes an 8-byte BC4 block at `b[at]` for the 16 values `px[o + step * i]`: a0 = the largest value, a1 = the smallest. When they are equal write a0, a1 and all indices 0. Otherwise (a0 &gt; a1) fill the palette by calling `alpha_palette(a0, a1, pal)`, the function the `alpha_block` block defines (no </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L455">hc/lib/gfx/bc.amni:455</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L455">hc/lib/gfx/bc.amni:455</a>
 </article>
 <article class="sym" id="bq_end">
 <h3><a href="#bq_end">bq_end</a> <i>function</i></h3>
 <pre>bq_end(ef const real[:], at int, opaque bool, qf int[:]) int</pre>
 <p>Quantizes one BC7 endpoint to 7 bits plus the best p-bit, returning the chosen p-bit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L486">hc/lib/gfx/bc.amni:486</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L486">hc/lib/gfx/bc.amni:486</a>
 </article>
 <article class="sym" id="bq_make">
 <h3><a href="#bq_make">bq_make</a> <i>function</i></h3>
 <pre>bq_make(ef const real[:], opaque bool, qf int[:], pb int[:], ev int[:])</pre>
 <p>Quantizes both endpoints of a BC7 block and computes their expanded values and p-bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L515">hc/lib/gfx/bc.amni:515</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L515">hc/lib/gfx/bc.amni:515</a>
 </article>
 <article class="sym" id="bq_assign">
 <h3><a href="#bq_assign">bq_assign</a> <i>function</i></h3>
 <pre>bq_assign(px const byte[:], ev const int[:], idx int[:]) int</pre>
 <p>Assigns 4-bit BC7 indices to 16 pixels and returns the total squared error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L522">hc/lib/gfx/bc.amni:522</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L522">hc/lib/gfx/bc.amni:522</a>
 </article>
 <article class="sym" id="bq_put">
 <h3><a href="#bq_put">bq_put</a> <i>function</i></h3>
 <pre>bq_put(b byte[:], at int, pos int&amp;, v int, n int)</pre>
 <p>Appends the low n bits of a value to a block at a running bit position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L557">hc/lib/gfx/bc.amni:557</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L557">hc/lib/gfx/bc.amni:557</a>
 </article>
 <article class="sym" id="pack_bc7">
 <h3><a href="#pack_bc7">pack_bc7</a> <i>function</i></h3>
 <pre>pack_bc7(px const byte[:], b byte[:], at int)</pre>
 <p>Encodes 16 RGBA pixels into a BC7 mode 6 block using a principal axis fit with refinement.</p>
 <p class="note">`pack_bc7(px, b, at int)` (px: read-only byte slice; b: byte slice it writes into) writes a 16-byte BC7 block in mode 6 (one subset, 7-bit red, green, blue and alpha endpoints, one p-bit per endpoint, 4-bit indices) for the 16 RGBA texels in `px`, in float math over the four channels: - The mean and the 4 by 4 covariance; the main axis by 8 rounds of power iteration (start: the covariance applied </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L566">hc/lib/gfx/bc.amni:566</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L566">hc/lib/gfx/bc.amni:566</a>
 </article>
 <article class="sym" id="srgb_dec">
 <h3><a href="#srgb_dec">srgb_dec</a> <i>constant</i></h3>
 <pre>var srgb_dec real[256]</pre>
 <p>Lookup table converting 8-bit sRGB values to linear floating point, filled on first use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L702">hc/lib/gfx/bc.amni:702</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L702">hc/lib/gfx/bc.amni:702</a>
 </article>
 <article class="sym" id="srgb_ok">
 <h3><a href="#srgb_ok">srgb_ok</a> <i>constant</i></h3>
 <pre>var srgb_ok bool = false</pre>
 <p>Flag recording whether the sRGB decoding table has been filled.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gfx/bc.amni#L703">hc/lib/gfx/bc.amni:703</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gfx/bc.amni#L703">hc/lib/gfx/bc.amni:703</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -432,7 +432,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1751</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1785</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

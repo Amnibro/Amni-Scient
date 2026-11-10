@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gf">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gf">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=1893d7de04">
+<link rel="stylesheet" href="/api-library/lib.css?v=6ac13de017">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=1893d7de04'; start({wasm: '/api-library/search.wasm?v=1893d7de04'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=6ac13de017'; start({wasm: '/api-library/search.wasm?v=6ac13de017'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gf</h1>
 <p class="lib-lede">Fast GF(2^8) arithmetic over byte buffers and the AES S-box and MixColumns steps, using CPU vector instructions when present.</p>
-<p class="lib-meta"><code>import gf;</code> &middot; <code>gf::</code> &middot; 10 functions, 0 types, 5 constants &middot; <a href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he">Source</a></p>
+<p class="lib-meta"><code>import gf;</code> &middot; <code>gf::</code> &middot; 10 functions, 0 types, 5 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>gf: arithmetic in GF(2^8) with the AES polynomial (x^8 + x^4 + x^3 + x + 1)
 over whole byte buffers, plus the AES S-box and MixColumns step. Uses the
 CPU's GFNI and VAES instructions when it has them.
@@ -119,14 +119,14 @@ CPU's GFNI and VAES instructions when it has them.
 <pre>mul(a int, b int) int</pre>
 <p>Returns the product of two field elements, initializing tables on first use.</p>
 <p class="note">a times b in the field</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L25">hc/lib/gf.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L25">hc/lib/gf.he:25</a>
 </article>
 <article class="sym" id="dot64">
 <h3><a href="#dot64">dot64</a> <i>function</i></h3>
 <pre>inline dot64(out byte[:], at int, vecs const byte[:], vat int, s const byte[:], sat int, rot int = 0, orot int = -1)</pre>
 <p>Computes one 64-byte block as the XOR of sixteen 64-byte vectors multiplied by repeated 4-byte groups, optionally rotating the stored result.</p>
 <p class="note">out[at..at+64] = XOR over j &lt; 16 of vecs[vat+64j .. +64] times, byte by byte, the 4-byte group s[sat + 4*((j+rot)%16) ..] repeated across the 64 bytes. With orot from 0 to 15 the result is turned up by that many 4-byte groups before it is stored: result byte k lands at out[at + (k + 4*orot) % 64]. out must not overlap vecs or s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L33">hc/lib/gf.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L33">hc/lib/gf.he:33</a>
 </article>
 <article class="sym" id="dot16">
 <h3><a href="#dot16">dot16</a> <i>function, 2 forms</i></h3>
@@ -135,7 +135,7 @@ CPU's GFNI and VAES instructions when it has them.
 <pre>inline dot16(out byte[:], vecs const byte[:], s const byte[:], perm const byte[:], rot const byte[:], mode int = 0)</pre>
 <p>Computes sixteen dot products over 1024-byte blocks with rows permuted and rotated by perm and rot, gathering in mode 0 and scattering otherwise.</p>
 <p class="note">sixteen dot64 products at once over whole 1024-byte blocks: row y of out is the dot64 of vecs with row y of s, a row being 64 bytes</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L40">hc/lib/gf.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L40">hc/lib/gf.he:40</a>
 </article>
 <h2 id="aes-steps">AES Steps <span class="n">2</span></h2>
 <article class="sym" id="mix">
@@ -143,69 +143,69 @@ CPU's GFNI and VAES instructions when it has them.
 <pre>mix(buf byte[:], at int, n int)</pre>
 <p>Applies the S-box then MixColumns to each 4-byte group of a buffer range.</p>
 <p class="note">each 4-byte group of buf[at..at+n]: S-box on every byte, then AES MixColumns</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L81">hc/lib/gf.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L81">hc/lib/gf.he:81</a>
 </article>
 <article class="sym" id="mix_inv">
 <h3><a href="#mix_inv">mix_inv</a> <i>function</i></h3>
 <pre>mix_inv(buf byte[:], at int, n int)</pre>
 <p>Applies InvMixColumns then the inverse S-box to each 4-byte group of a buffer range.</p>
 <p class="note">the inverse: InvMixColumns, then the inverse S-box</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L83">hc/lib/gf.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L83">hc/lib/gf.he:83</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="K">
 <h3><a href="#K">K</a> <i>constant</i></h3>
 <pre>var K = -1</pre>
 <p>Cached CPU capability flag, negative until initialization detects whether vector instructions are available.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L6">hc/lib/gf.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L6">hc/lib/gf.he:6</a>
 </article>
 <article class="sym" id="EXP">
 <h3><a href="#EXP">EXP</a> <i>constant</i></h3>
 <pre>var EXP byte[512]</pre>
 <p>Lookup table of field element powers, doubled in length so log sums need no modular reduction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L7">hc/lib/gf.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L7">hc/lib/gf.he:7</a>
 </article>
 <article class="sym" id="LOG">
 <h3><a href="#LOG">LOG</a> <i>constant</i></h3>
 <pre>var LOG byte[256]</pre>
 <p>Lookup table of discrete logarithms for nonzero field elements, used to multiply by addition.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L8">hc/lib/gf.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L8">hc/lib/gf.he:8</a>
 </article>
 <article class="sym" id="SB">
 <h3><a href="#SB">SB</a> <i>constant</i></h3>
 <pre>var SB byte[256]</pre>
 <p>Lookup table holding the AES S-box substitution for each byte value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L9">hc/lib/gf.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L9">hc/lib/gf.he:9</a>
 </article>
 <article class="sym" id="ISB">
 <h3><a href="#ISB">ISB</a> <i>constant</i></h3>
 <pre>var ISB byte[256]</pre>
 <p>Lookup table holding the inverse AES S-box substitution for each byte value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L10">hc/lib/gf.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L10">hc/lib/gf.he:10</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init()</pre>
 <p>Detects CPU vector support and fills the exponent, logarithm, S-box and inverse S-box tables.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L11">hc/lib/gf.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L11">hc/lib/gf.he:11</a>
 </article>
 <article class="sym" id="dots">
 <h3><a href="#dots">dots</a> <i>function</i></h3>
 <pre>dots(o byte[:], v const byte[:], g const byte[:], rot int, orot int)</pre>
 <p>Computes one 64-byte dot product with a portable fallback when vector instructions are absent, used by the inline dot functions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L70">hc/lib/gf.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L70">hc/lib/gf.he:70</a>
 </article>
 <article class="sym" id="mixk">
 <h3><a href="#mixk">mixk</a> <i>function</i></h3>
 <pre>inline mixk(buf byte[:], at int, n int, inv int)</pre>
 <p>Inline dispatcher choosing the vector routine or the scalar fallback for forward and inverse mixing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L84">hc/lib/gf.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L84">hc/lib/gf.he:84</a>
 </article>
 <article class="sym" id="mixs">
 <h3><a href="#mixs">mixs</a> <i>function</i></h3>
 <pre>mixs(b byte[:], n int, inv int)</pre>
 <p>Scalar fallback that performs forward or inverse mixing on groups of four bytes, using vector code when possible.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/gf.he#L87">hc/lib/gf.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6ac13deb3df1a33d3a4f1f4167a811518a6b8f24/hc/lib/gf.he#L87">hc/lib/gf.he:87</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -217,7 +217,7 @@ CPU's GFNI and VAES instructions when it has them.
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1751</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1785</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

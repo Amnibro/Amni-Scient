@@ -2202,16 +2202,41 @@ fx::SimU	type	gfx/fx	/api-library/helium/lib/gfx-fx#SimU	Uniform block passed to
 fx::SortU	type	gfx/fx	/api-library/helium/lib/gfx-fx#SortU	Uniform block passed to the clear and sort compute shaders with sizes and sort stage parameters.	int
 fx::ViewU	type	gfx/fx	/api-library/helium/lib/gfx-fx#ViewU	Uniform block passed to the vertex shader with view matrices, camera axes and blend mode.	int
 fx::FragU	type	gfx/fx	/api-library/helium/lib/gfx-fx#FragU	Uniform block passed to the fragment shader with depth availability, scale and shape mode.	int
-fx::MAXE	constant	gfx/fx	/api-library/helium/lib/gfx-fx#MAXE	Maximum number of emitters that can be active at once.	pub
+fx::ArgsU	type	gfx/fx	/api-library/helium/lib/gfx-fx#ArgsU	Raw uniform struct holding indirect draw arguments for the GPU pipeline, used only by this module's shaders.	int
+fx::LitU	type	gfx/fx	/api-library/helium/lib/gfx-fx#LitU	Raw uniform struct holding sun direction, sun color and ambient light passed to the mesh shader.	int
+fx::MAXE	constant	gfx/fx	/api-library/helium/lib/gfx-fx#MAXE	Constant for the maximum number of emitters that can be active at once.	int
+fx::EVN	constant	gfx/fx	/api-library/helium/lib/gfx-fx#EVN	Constant for the number of event slots in the GPU event buffer.	int
+fx::EVK	constant	gfx/fx	/api-library/helium/lib/gfx-fx#EVK	Constant for the number of values stored per event in the GPU event buffer.	int
+fx::TP	constant	gfx/fx	/api-library/helium/lib/gfx-fx#TP	Constant for the number of trail points stored per particle in the trail buffer.	int
+fx::MV	constant	gfx/fx	/api-library/helium/lib/gfx-fx#MV	Constant for the maximum number of mesh vertex indices that can be stored across all registered meshes.	int
+fx::MS	constant	gfx/fx	/api-library/helium/lib/gfx-fx#MS	Constant for the maximum number of meshes that can be registered for particle use.	int
 fx::capacity	constant	gfx/fx	/api-library/helium/lib/gfx-fx#capacity	Number of particle slots allocated on the GPU, zero until initialized.	int
 fx::sort_n	constant	gfx/fx	/api-library/helium/lib/gfx-fx#sort_n	Power-of-two size used for the depth sorting passes.	int
-fx::parts	constant	gfx/fx	/api-library/helium/lib/gfx-fx#parts	GPU buffers storing particles, free slots, alive indices, sort keys and emitter data.	int
-fx::p_clear	constant	gfx/fx	/api-library/helium/lib/gfx-fx#p_clear	Compute pipelines for clearing, spawning, simulating and sorting particles.	int
-fx::pipe_add	constant	gfx/fx	/api-library/helium/lib/gfx-fx#pipe_add	Render pipelines for additive and alpha-blended particle drawing.	int
+fx::parts	constant	gfx/fx	/api-library/helium/lib/gfx-fx#parts	Module-level GPU buffers holding particles, free and live lists, sort keys, emitters, events, trails, meshes and draw arguments.	int
+fx::trail_full	constant	gfx/fx	/api-library/helium/lib/gfx-fx#trail_full	Flag set once the trail buffer has been enlarged to hold trails for every particle.	int
+fx::mesh_ready	constant	gfx/fx	/api-library/helium/lib/gfx-fx#mesh_ready	Flag set once the mesh vertex buffer has been allocated.	int
+fx::mesh_used	constant	gfx/fx	/api-library/helium/lib/gfx-fx#mesh_used	Count of mesh vertex indices already used by registered meshes.	int
+fx::mesh_first	constant	gfx/fx	/api-library/helium/lib/gfx-fx#mesh_first	List of first-vertex offsets for each registered mesh in the mesh buffer.	int
+fx::mesh_n	constant	gfx/fx	/api-library/helium/lib/gfx-fx#mesh_n	List of vertex counts for each registered mesh.	int
+fx::sun_dir	constant	gfx/fx	/api-library/helium/lib/gfx-fx#sun_dir	Direction vector pointing toward the sun, used to light mesh particles.	int
+fx::sun_rgb	constant	gfx/fx	/api-library/helium/lib/gfx-fx#sun_rgb	Color of the sun light applied to mesh particles.	int
+fx::ambient	constant	gfx/fx	/api-library/helium/lib/gfx-fx#ambient	Ambient light color applied to mesh particles.	int
+fx::p_clear	constant	gfx/fx	/api-library/helium/lib/gfx-fx#p_clear	Compute pipelines for clearing, spawning, simulating, sorting and building draw arguments.	int
+fx::pipe_add	constant	gfx/fx	/api-library/helium/lib/gfx-fx#pipe_add	Render pipelines for additive and alpha blended particles, their trail variants and mesh particles.	int
 fx::smp	constant	gfx/fx	/api-library/helium/lib/gfx-fx#smp	Nearest-filter clamped sampler used for the depth texture.	int
 fx::emitters	constant	gfx/fx	/api-library/helium/lib/gfx-fx#emitters	List of registered emitters, holding at most the maximum emitter count.	int
 fx::acc	constant	gfx/fx	/api-library/helium/lib/gfx-fx#acc	Per-emitter fractional spawn accumulators carried between frames.	int
 fx::bursts	constant	gfx/fx	/api-library/helium/lib/gfx-fx#bursts	Per-emitter pending burst particle counts consumed on the next simulation step.	int
+fx::gone	constant	gfx/fx	/api-library/helium/lib/gfx-fx#gone	Per-emitter flags marking slots that were removed and can be reused.	int
+fx::error	constant	gfx/fx	/api-library/helium/lib/gfx-fx#error	Buffer holding the most recent effect script error message.	int
+fx::bad	constant	gfx/fx	/api-library/helium/lib/gfx-fx#bad	Flag set while parsing when a value is not a valid number.	int
+fx::fx_emits	constant	gfx/fx	/api-library/helium/lib/gfx-fx#fx_emits	List of emitter templates from all loaded effect scripts.	int
+fx::fx_burst	constant	gfx/fx	/api-library/helium/lib/gfx-fx#fx_burst	List of burst counts for each emitter template in loaded effects.	int
+fx::fx_first	constant	gfx/fx	/api-library/helium/lib/gfx-fx#fx_first	List of indexes of each loaded effect's first emitter template.	int
+fx::fx_n	constant	gfx/fx	/api-library/helium/lib/gfx-fx#fx_n	List of emitter template counts for each loaded effect.	int
+fx::play_slots	constant	gfx/fx	/api-library/helium/lib/gfx-fx#play_slots	List of emitter slots used by all playing effects.	int
+fx::play_first	constant	gfx/fx	/api-library/helium/lib/gfx-fx#play_first	List of indexes of each playing effect's first emitter slot.	int
+fx::play_n	constant	gfx/fx	/api-library/helium/lib/gfx-fx#play_n	List of emitter slot counts for each playing effect.	int
 fx::gravity	constant	gfx/fx	/api-library/helium/lib/gfx-fx#gravity	Global gravity vector applied to particles, defaulting to 9.8 downward on the Y axis.	pub
 fx::thickness	constant	gfx/fx	/api-library/helium/lib/gfx-fx#thickness	Thickness value passed to the simulation for depth-based particle collision.	pub
 fx::sorting	constant	gfx/fx	/api-library/helium/lib/gfx-fx#sorting	Flag enabling depth sorting of alpha-blended particles, true by default.	pub
@@ -2230,12 +2255,21 @@ fx::rain	function	gfx/fx	/api-library/helium/lib/gfx-fx#rain	Returns an emitter 
 fx::snow	function	gfx/fx	/api-library/helium/lib/gfx-fx#snow	Returns an emitter preset for drifting snow, based on rain with slower speed, curl noise and alpha blending.	pub
 fx::weather_bounds	function	gfx/fx	/api-library/helium/lib/gfx-fx#weather_bounds	Returns the horizontal extent and top height covered by active wrapping emitters around the given position.	pub
 fx::add	function	gfx/fx	/api-library/helium/lib/gfx-fx#add	Adds an emitter and returns its index, or -1 if the maximum is reached.	pub
+fx::remove	function	gfx/fx	/api-library/helium/lib/gfx-fx#remove	Removes the emitter in a slot, turning it off and freeing it for reuse; out-of-range indexes are ignored.	pub
+fx::fail	function	gfx/fx	/api-library/helium/lib/gfx-fx#fail	Records a parse error with its line number and message in the error buffer, then returns -1.	int
+fx::val	function	gfx/fx	/api-library/helium/lib/gfx-fx#val	Parses text as a number, setting the parse-failure flag when it is invalid, and returns it as a float.	int
+fx::pick	function	gfx/fx	/api-library/helium/lib/gfx-fx#pick	Returns the value at an index from a list, reusing the last value when the index is past the end and 0 when empty.	int
+fx::named	function	gfx/fx	/api-library/helium/lib/gfx-fx#named	Returns the position of the named emitter among the emitters in an effect script, or -1 if missing.	int
+fx::effect	function	gfx/fx	/api-library/helium/lib/gfx-fx#effect	Parses effect script text into a reusable effect and returns its handle, or -1 on error with the message recorded.	pub
+fx::play	function	gfx/fx	/api-library/helium/lib/gfx-fx#play	Starts a loaded effect at a world position by creating its emitters, returning a play handle or -1 on failure.	pub
+fx::stop	function	gfx/fx	/api-library/helium/lib/gfx-fx#stop	Stops a playing effect by removing all of its emitters; invalid handles are ignored.	pub
 fx::set	function	gfx/fx	/api-library/helium/lib/gfx-fx#set	Replaces the emitter at the given index with new settings.	pub
 fx::burst	function	gfx/fx	/api-library/helium/lib/gfx-fx#burst	Queues a burst of the given number of particles from the emitter at the next step.	pub
 fx::clear_emitters	function	gfx/fx	/api-library/helium/lib/gfx-fx#clear_emitters	Removes all emitters and their pending spawn state.	pub
 fx::wants_depth	function	gfx/fx	/api-library/helium/lib/gfx-fx#wants_depth	Returns whether any active emitter needs a depth texture for collision or soft particles.	pub
+fx::mesh	function	gfx/fx	/api-library/helium/lib/gfx-fx#mesh	Registers a mesh from positions, normals and indices for particle use, returning its id or -1 if full or uninitialized.	pub
 fx::upload_emitters	function	gfx/fx	/api-library/helium/lib/gfx-fx#upload_emitters	Packs emitter settings into floats and uploads them to the GPU emitter buffer.	int
-fx::spawn_counts	function	gfx/fx	/api-library/helium/lib/gfx-fx#spawn_counts	Computes spawn counts for each emitter this frame, returning the total and per-emitter counts.	int
+fx::spawn_counts	function	gfx/fx	/api-library/helium/lib/gfx-fx#spawn_counts	Computes how many particles each emitter spawns this frame from rates and bursts, returning the total and per-emitter counts.	int
 fx::simulate	function	gfx/fx	/api-library/helium/lib/gfx-fx#simulate	Advances the particle simulation by a time step, spawning, updating and optionally sorting particles on the GPU.	pub
 fx::draw	function	gfx/fx	/api-library/helium/lib/gfx-fx#draw	Draws all live particles as billboards using additive then alpha pipelines, with optional normal-depth texture and scale.	pub
 fx::read_parts	function	gfx/fx	/api-library/helium/lib/gfx-fx#read_parts	Reads all particle data back from the GPU into the output array, returning false on failure.	pub
