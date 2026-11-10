@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/writing">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/writing">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3ef78">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3ef78'; start({wasm: '/api-library/search.wasm?v=17f4c3ef78'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -118,7 +118,7 @@
 <ul>
 <li>Check every port against the original on a few hundred real inputs. Fix a mismatch by making the Gold sentence more exact.</li>
 <li>Floats: write formulas in the source's grouping, name <code>powi</code>, <code>fabs</code> or <code>tanh</code> instead of defining them, and state quirks such as saturating casts, sums that start at -0.0, NaN text and <code>e+16</code> exponents.</li>
-<li>Put big tables in a <code>table</code> fence or an <code>he</code> fence, not in sentences.</li>
+<li>Put big tables in a <code>table</code> fence or an <code>he</code> fence, not in sentences. Write the rows in full, then run <code>gold compact</code> to pack them.</li>
 <li>Keep the original's cost model. Say that regular expressions and tables are built once into a module <code>var</code>, and say how a hot table is laid out when the layout is what makes it fast.</li>
 <li>After a rule change that touches many paragraphs, delete the <code>.gold.lock</code> file and rebuild the whole thing.</li>
 <li>Use a <a href="/api-library/gold/dialects">dialect</a> so number and rounding rules come along without restating them.</li>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/commands">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/commands">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3ef78">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3ef78'; start({wasm: '/api-library/search.wasm?v=17f4c3ef78'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -116,7 +116,7 @@
 <tr><td><code>gold pack</code></td><td>Index a product's Helium functions so Gold can call them.</td></tr>
 <tr><td><code>gold packs</code></td><td>List the indexed packs.</td></tr>
 <tr><td><code>gold find</code></td><td>Show which functions a sentence would retrieve.</td></tr>
-<tr><td><code>gold compact</code></td><td>Pack data tables without a model call.</td></tr>
+<tr><td><code>gold compact</code></td><td>Pack data tables into fewer tokens, or write them back out in full. No model call.</td></tr>
 <tr><td><code>gold squeeze</code></td><td>Rewrite the Gold as shorter plain English and keep it only if it still passes.</td></tr>
 <tr><td><code>gold lint</code></td><td>List lines that read as code instead of English.</td></tr>
 </tbody>
@@ -157,8 +157,9 @@
 <pre><code>gold lint file.gold</code></pre>
 <p>Lists every line that reads as code: operators such as <code>==</code> or <code>&amp;&amp;</code>, function signatures and Helium types. <code>gold build</code> refuses these lines in paragraphs that changed. Set <code>GOLD_LINT=warn</code> to build anyway.</p>
 <h3 id="gold-compact">gold compact</h3>
-<pre><code>gold compact file.gold</code></pre>
-<p>Packs the data tables in a file, with no model call. It adds a first <code>@</code> row of column scales, and a blank cell repeats the cell above. See <a href="/api-library/gold/format#data-tables">data tables</a>.</p>
+<pre><code>gold compact file.gold
+gold compact file.gold wide</code></pre>
+<p>Packs the data tables in a file into fewer tokens, with no model call. It adds a first <code>@</code> row of column marks and leaves out cells that repeat the row above. With <code>wide</code>, it writes every table back out in full, ready to edit. See <a href="/api-library/gold/format#packed-tables">packed tables</a>.</p>
 <h2 id="work-with-packs">Work with packs</h2>
 <h3 id="gold-pack">gold pack</h3>
 <pre><code>gold pack name folder [lang=] [main=] [test=] [skip=]</code></pre>

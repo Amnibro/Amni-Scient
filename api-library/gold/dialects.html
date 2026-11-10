@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/dialects">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/dialects">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3ef78">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3ef78'; start({wasm: '/api-library/search.wasm?v=17f4c3ef78'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -131,7 +131,7 @@ dialect js</code></pre>
 <h2 id="javascript">JavaScript</h2>
 <p>The original is JavaScript. Unless a block says otherwise:</p>
 <ul>
-<li>Every number is a double (<code>real</code>); integers stay exact below 2^53. <code>Math.round</code> rounds half up (toward +inf): <code>floor(x + 0.5)</code>. <code>toFixed(n)</code> rounds half away from zero on the decimal digits: <code>format_flt(out, v, n, away = true)</code>. <code>parseFloat</code> reads the longest numeric prefix, <code>Number(&quot;&quot;)</code> is 0, <code>Number(&quot;x&quot;)</code> is NaN.</li>
+<li>Every number is a double (<code>real</code>); integers stay exact below 2^53. <code>Math.round</code> rounds half up (toward +inf): <code>floor(x + 0.5)</code>. <code>toFixed(n)</code> rounds half away from zero on the decimal digits: <code>format_flt(out, v, n, away = true)</code>. <code>(+x.toFixed(n)).toLocaleString(&quot;en-US&quot;, { maximumFractionDigits: n })</code> is <code>js::fixed_locale(x, n)</code>, and <code>js::fixed_locale(x, n, true)</code> with <code>|| 0</code> before the print. <code>parseFloat</code> reads the longest numeric prefix, <code>Number(&quot;&quot;)</code> is 0, <code>Number(&quot;x&quot;)</code> is NaN.</li>
 <li><code>String(x)</code> / template <code>${x}</code> of a number: shortest round-trip digits, no <code>.0</code> for integers, exponent form <code>1e+21</code> from 1e21 up and <code>1e-7</code> below 1e-6, <code>-0</code> prints <code>0</code>, <code>NaN</code>, <code>Infinity</code>.</li>
 <li><code>||</code> returns the first truthy operand (0, &quot;&quot;, NaN, null, undefined are falsy); <code>??</code> only skips null/undefined.</li>
 <li>String methods are UTF-16 but inputs here are ASCII: <code>slice</code>, <code>padStart</code>, <code>toUpperCase</code>, <code>trim</code> as usual; regex literals are used verbatim with Helium <code>regex</code>.</li>

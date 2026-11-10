@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/gold/format">
 <link rel="canonical" href="https://amni-scient.com/api-library/gold/format">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3ef78">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3ef78'; start({wasm: '/api-library/search.wasm?v=17f4c3ef78'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -151,11 +151,37 @@ steel | 7850 | 200e9
 <tbody>
 <tr><td>Cells split on <code>|</code></td><td>Cells follow the struct's field order.</td></tr>
 <tr><td><code>&quot;</code> or a blank cell</td><td>Repeats the cell above.</td></tr>
+<tr><td>A short row</td><td>Cells left off the end repeat the cells above. A row that repeats every cell is a lone <code>&quot;</code>.</td></tr>
 <tr><td><code>''</code></td><td>An empty string.</td></tr>
 <tr><td>Single quotes</td><td>Keeps a cell that looks like a number, or starts with <code>#</code>, as text.</td></tr>
-<tr><td>First <code>@</code> row</td><td>Column scales added by <code>gold compact</code>: <code>e9</code> appends an exponent, and <code>.</code> marks a real column so <code>7870</code> means <code>7870.0</code>.</td></tr>
 </tbody>
 </table></div>
+<h3 id="packed-tables">Packed tables</h3>
+<p>Write a table in full. <code>gold compact file.gold</code> then packs it into fewer tokens, and Gold reads both forms the same way. A packed table starts with an <code>@</code> row that holds one mark per column.</p>
+<pre><code>```table bolts Bolt
+@+|.2|.1|.|.1
+M8 coarse|125|70|15000|88
+10|150|85|24000
+12|175|102|35000
+14|200|120|48000
+18|250|155|79000|109
+20||175|101000
+```</code></pre>
+<p>The second row reads <code>M10 coarse | 1.5 | 8.5 | 24000.0 | 8.8</code>.</p>
+<div class="lib-tw"><table>
+<thead>
+<tr><th>Mark</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>.</code></td><td>A real column: <code>24000</code> means <code>24000.0</code>.</td></tr>
+<tr><td><code>.2</code></td><td>The decimal point moves two places left: <code>125</code> means <code>1.25</code>.</td></tr>
+<tr><td><code>e9</code></td><td>Every number gets the exponent: <code>200</code> means <code>200e9</code>.</td></tr>
+<tr><td><code>.1e9</code></td><td>Both, the point first: <code>205</code> means <code>20.5e9</code>.</td></tr>
+<tr><td><code>+</code></td><td>A text column whose rows differ in their first number. A cell that is only a number replaces that number in the cell above: <code>10</code> under <code>M8 coarse</code> means <code>M10 coarse</code>.</td></tr>
+<tr><td>No mark</td><td>The cells are read as written.</td></tr>
+</tbody>
+</table></div>
+<p>A number that carries its own exponent is read as written. <code>gold compact file.gold wide</code> writes every table back out in full, ready to edit. Packing it again gives the same packed table.</p>
 <h2 id="expected-output">Expected output</h2>
 <p>End a standalone program with <code>expect:</code> and the exact lines it must print. Gold runs the program and repairs it until the output matches.</p>
 <pre><code>expect:
