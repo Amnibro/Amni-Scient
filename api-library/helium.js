@@ -347,6 +347,7 @@ function sdlgpu(R) {
     SDL_BindGPUVertexStorageBuffers: (p, s, b, n) => bset(p, 0, 'sbuf', s, b, n), SDL_BindGPUFragmentStorageBuffers: (p, s, b, n) => bset(p, 1, 'sbuf', s, b, n), SDL_BindGPUComputeStorageBuffers: (p, s, b, n) => bset(p, 2, 'sbuf', s, b, n),
     SDL_DrawGPUPrimitives: (p, nv, ni, fv, fi) => { const pa = g(p); if (bind(pa)) pa.e.draw(nv, ni, fv, fi); },
     SDL_DrawGPUIndexedPrimitives: (p, nx, ni, fx, vo, fi) => { const pa = g(p); if (bind(pa)) pa.e.drawIndexed(nx, ni, fx, vo, fi); },
+    SDL_DrawGPUIndexedPrimitivesIndirect: (p, b, o, n) => { const pa = g(p), t = g(b); if (t && bind(pa)) for (let i = 0; i < n; i++) pa.e.drawIndexedIndirect(t.g, o + i * 20); },
     SDL_DispatchGPUCompute: (p, x, y, z) => { const pa = g(p); if (bind(pa)) pa.e.dispatchWorkgroups(x, y, z); },
     SDL_PushGPUVertexUniformData: (c, s, p, n) => upush(c, 0, s, p, n), SDL_PushGPUFragmentUniformData: (c, s, p, n) => upush(c, 1, s, p, n), SDL_PushGPUComputeUniformData: (c, s, p, n) => upush(c, 2, s, p, n),
     SDL_BlitGPUTexture: (c, b) => { const s = g(r64(b, 0)), d = g(r64(b, 32)); blit(g(c), s, r32(b, 8), r32(b, 12), r32(b, 16), r32(b, 20), r32(b, 24), r32(b, 28), d, r32(b, 40), r32(b, 44), r32(b, 48), r32(b, 52), r32(b, 56), r32(b, 60), s32(b, 88) === 1, s32(b, 84), s32(b, 64), [rf(b, 68), rf(b, 72), rf(b, 76), rf(b, 80)]); },

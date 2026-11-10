@@ -1295,6 +1295,7 @@ gfx::draw	function	gfx	/api-library/helium/lib/gfx#draw	Draws the given number o
 gfx::draw_instanced	function	gfx	/api-library/helium/lib/gfx#draw_instanced	Draws the given number of vertices for the given number of instances.	pub
 gfx::draw_indexed	function	gfx	/api-library/helium/lib/gfx#draw_indexed	Draws indexed geometry from the bound index buffer with control over instances, first index, vertex offset and first instance.	pub
 gfx::draw_indexed	function	gfx	/api-library/helium/lib/gfx#draw_indexed	Draws the given number of indices once from the bound index buffer.	pub
+gfx::draw_indexed_indirect	function	gfx	/api-library/helium/lib/gfx#draw_indexed_indirect	Draws indexed geometry using arguments read from an indirect buffer, which must hold five u32 values at a 4-byte-aligned offset and requires a bound index buffer.	pub
 gfx::draw_indexed_instanced	function	gfx	/api-library/helium/lib/gfx#draw_indexed_instanced	Draws the given number of indices from the bound index buffer for the given number of instances.	pub
 gfx::begin_compute	function	gfx	/api-library/helium/lib/gfx#begin_compute	Begins a compute pass with read-write buffers and textures, returning false if resources are invalid or lack compute write usage.	pub
 gfx::begin_compute	function	gfx	/api-library/helium/lib/gfx#begin_compute	Begins a compute pass with read-write buffers only, returning false on failure.	pub
@@ -1654,6 +1655,34 @@ s3d::inst_t2	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t2	Pe
 s3d::inst_t3	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t3	Per-instance data array for the fourth texture-related shader input.	int
 s3d::inst_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_dirty	Flag marking instance data as needing re-upload or re-culling.	int
 s3d::inst_all	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_all	Flag that draws every instance, bypassing culling results.	int
+s3d::meshlets	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlets	Flag that turns on meshlet-based rendering of large meshes, off by default.	pub
+s3d::meshlet_px	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_px	Pixel-size threshold, in pixels, used when selecting meshlet detail; defaults to 1.0.	pub
+s3d::meshlet_cone	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_cone	Flag enabling normal-cone culling of meshlets, on by default.	pub
+s3d::meshlet_cpu	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_cpu	Flag that runs meshlet culling on the CPU instead of the GPU compute pipeline, off by default.	pub
+s3d::meshlet_min	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_min	Minimum mesh size, defaulting to 4000, at which meshlet rendering applies.	pub
+s3d::meshlet_budget	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_budget	Budget limit for meshlet rendering work, defaulting to 8000000.	pub
+s3d::ml_first	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_first	Per-mesh index of the first meshlet entry, rebuilt when meshlet data changes.	int
+s3d::ml_count	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_count	Per-mesh meshlet counts, kept alongside the first-meshlet indices.	int
+s3d::ml_tab	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_tab	CPU-side meshlet table data uploaded to the GPU table buffer.	int
+s3d::ml_rng	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_rng	CPU-side meshlet range data uploaded to the GPU range buffer.	int
+s3d::ml_idx	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_idx	CPU-side meshlet index data uploaded to the GPU index buffer.	int
+s3d::ml_draws	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_draws	CPU-side per-draw meshlet data uploaded to the GPU draw buffer.	int
+s3d::ml_bases	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_bases	Base offsets into the meshlet arrays for each draw.	int
+s3d::ml_sel	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_sel	CPU-side list of selected meshlets produced by culling.	int
+s3d::ml_tab_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_tab_buf	GPU buffer holding the meshlet table.	int
+s3d::ml_rng_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_rng_buf	GPU buffer holding the meshlet ranges.	int
+s3d::ml_idx_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_idx_buf	GPU buffer holding the meshlet indices.	int
+s3d::ml_draw_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_draw_buf	GPU buffer holding the meshlet draw records.	int
+s3d::ml_args_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_args_buf	GPU buffer holding the indirect draw arguments for meshlets.	int
+s3d::ml_out_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_out_buf	GPU buffer receiving the meshlets that survive culling.	int
+s3d::ml_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_dirty	Flag marking meshlet data as changed and needing re-upload.	int
+s3d::ml_have	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_have	Flag recording whether meshlet data currently exists.	int
+s3d::ml_draw_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_draw_cap	Current capacity of the meshlet draw buffer.	int
+s3d::ml_out_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_out_cap	Current capacity of the meshlet output buffer.	int
+s3d::pipe_ml_cull	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ml_cull	Compute pipeline that culls meshlets on the GPU.	int
+s3d::pipe_ml_fit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_ml_fit	Compute pipeline that fits meshlet output for drawing.	int
+s3d::MlU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MlU	Uniform block for meshlet culling holding eye position, LOD parameters and six frustum planes.	int
+s3d::MlFitU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MlFitU	Uniform block for the meshlet fit pass holding a single count vector.	int
 s3d::instance_cull	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#instance_cull	Flag that turns culling of individual instances on or off.	pub
 s3d::xbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#xbuf	GPU buffer holding instance transform data.	int
 s3d::xbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#xbuf_cap	Current capacity of the instance transform buffer.	int
@@ -1800,6 +1829,14 @@ s3d::item_lights	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_l
 s3d::frustum	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#frustum	Extracts the six normalized frustum clip planes from a view-projection matrix for culling instances against the camera.	int
 s3d::gather_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather_instances	Flattens instance sets into per-frame draw batches, culling against the view frustum, splitting LODs, and uploading instance ids and transforms to GPU buffers.	int
 s3d::gather	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather	Flattens visible items into draw batches with poses, joint palettes and previous-frame transforms.	int
+s3d::meshlet_prepare	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_prepare	Uploads newly built meshlet data for each loaded primitive, skipping skinned, morphed, blended, tiny or special-shaded ones.	int
+s3d::meshlet_slot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_slot	Registers a draw instance's transform for meshlet culling and returns its slot, or -1 if the primitive has no meshlets.	int
+s3d::ml_at	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_at	Returns a meshlet's bounding point transformed by a draw's matrix, selected by row index.	int
+s3d::ml_far	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_far	Returns the distance between a point and the eye position.	int
+s3d::ml_keep	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_keep	Decides whether a meshlet survives level-of-detail, frustum and backface cone tests for a draw.	int
+s3d::ml_plane	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_plane	Returns a normalized frustum plane built by combining two plane vectors with a scale factor.	int
+s3d::meshlet_select	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_select	Selects visible meshlets for all draws each frame, on the CPU or via GPU compute, and fills indirect draw arguments.	int
+s3d::meshlet_stats	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_stats	Returns counts of camera-visible triangles, total selected triangles, and draws whose output overflowed the buffer budget.	pub
 s3d::forward	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forward	Returns the unit vector from the camera eye toward its target.	int
 s3d::mw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mw	Returns a morph target weight from a pool, or 0.0 when the base is negative or the index is out of range.	int
 s3d::draw_uniforms	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_uniforms	Builds per-draw uniform data for a batch, including morph weights and previous transforms.	int
@@ -5809,3 +5846,63 @@ ktx2::put_sample	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_sample	A
 ktx2::sample_count	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#sample_count	Returns the number of data format descriptor samples for a format kind, or 0 if unsupported.	int
 ktx2::put_dfd	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_dfd	Appends the data format descriptor block for a format kind and color space to the output buffer.	int
 ktx2::write	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#write	Builds a KTX2 file from level data into the output buffer, optionally zlib-wrapped; returns false on invalid arguments.	pub
+meshlet::V3	type	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#V3	Internal 3D vector of real components used by the meshlet builder's geometry routines.	int
+meshlet::vget	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#vget	Reads the three position components of vertex v from a strided float array into a V3.	int
+meshlet::v3dot	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#v3dot	Returns the dot product of two vectors.	int
+meshlet::v3len	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#v3len	Returns the Euclidean length of a vector.	int
+meshlet::v3cross	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#v3cross	Returns the cross product of two vectors.	int
+meshlet::MAX_TRIS	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#MAX_TRIS	Maximum number of triangles placed in one emitted cluster.	int
+meshlet::GROUP	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#GROUP	Target number of clusters merged into one group when building hierarchy levels.	int
+meshlet::GROUP_MAX	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#GROUP_MAX	Upper limit on clusters allowed in one group.	int
+meshlet::SOLO	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#SOLO	Cluster count at or below which all clusters are put into a single group.	int
+meshlet::ROW	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#ROW	Number of float values stored per cluster row in the cluster table.	int
+meshlet::SAMPLES	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#SAMPLES	Maximum number of sample vertices kept per cluster for error measurement.	int
+meshlet::FAR	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#FAR	Large sentinel float value written into the cluster table as an unset error bound.	int
+meshlet::idx	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#idx	Growing array of triangle vertex indices for all emitted clusters.	pub
+meshlet::tab	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#tab	Growing float table holding one ROW-sized bounds and error record per cluster.	pub
+meshlet::rng	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#rng	Growing array of start and length pairs locating each cluster's indices in idx.	pub
+meshlet::count	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#count	Total number of clusters emitted so far.	pub
+meshlet::leaves	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#leaves	Number of leaf-level clusters built from the original mesh.	pub
+meshlet::levels	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#levels	Number of hierarchy levels built so far.	pub
+meshlet::level_tris	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#level_tris	Growing array of the total triangle count emitted at each hierarchy level.	pub
+meshlet::weld	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#weld	Maps each vertex to the representative vertex sharing its quantized position.	int
+meshlet::smp	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#smp	Growing array of sample vertex ids collected across all clusters.	int
+meshlet::srng	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#srng	Growing array of start and length pairs locating each cluster's samples in smp.	int
+meshlet::next_v	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#next_v	Index of the next unused vertex slot where simplification writes new vertices.	int
+meshlet::weld_build	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#weld_build	Builds the weld map that merges vertices at identical quantized positions, clearing any previous map.	pub
+meshlet::radix_pass	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#radix_pass	Performs one 10-bit counting sort pass of indices by key at the given shift.	int
+meshlet::sort_by_key	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sort_by_key	Fills order with indices sorted by ascending integer key using three radix passes.	int
+meshlet::v3sc	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#v3sc	Returns a vector scaled by a real factor.	int
+meshlet::v3at	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#v3at	Returns the vector component selected by axis number 0, 1 or otherwise 2.	int
+meshlet::frac	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#frac	Returns a divided by b, or zero when b is nearly zero.	int
+meshlet::seg_dist	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#seg_dist	Returns the distance from a point to a line segment.	int
+meshlet::tri_dist	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#tri_dist	Returns the distance from a point to a triangle.	int
+meshlet::nearest	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#nearest	Finds the nearest triangle and distance for each sample vertex, returning the largest distance.	int
+meshlet::emit	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#emit	Splits triangles into spatially ordered clusters of limited size and appends their bounds, cones and samples to the tables.	int
+meshlet::Cand	type	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#Cand	Candidate edge collapse holding its vertices, move flag, interpolation parameter, cost and target position.	int
+meshlet::pmap	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#pmap	Maps weld ids to local vertex numbers during simplification, with negative meaning unassigned.	int
+meshlet::sp_org	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_org	Original vertex index for each triangle corner during simplification.	int
+meshlet::sp_plc	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_plc	Local welded vertex number for each triangle corner during simplification.	int
+meshlet::sp_live	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_live	Flags marking which triangles are still alive during simplification.	int
+meshlet::sp_pp	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_pp	Current position of each local vertex during simplification.	int
+meshlet::sp_q	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_q	Ten accumulated quadric error coefficients per local vertex.	int
+meshlet::sp_w	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_w	Accumulated triangle area weight per local vertex.	int
+meshlet::sp_lock	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_lock	Flags marking boundary vertices that must not be collapsed away.	int
+meshlet::sp_ts	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_ts	Start offsets into sp_tl listing triangles around each vertex.	int
+meshlet::sp_tl	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_tl	Flat list of triangle ids adjacent to each local vertex.	int
+meshlet::sp_corner	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_corner	Returns the position of corner q of triangle t.	int
+meshlet::sp_has	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_has	Returns whether triangle t uses local vertex a.	int
+meshlet::sp_slot	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_slot	Returns which corner of triangle t uses vertex a, or -1 if none.	int
+meshlet::sp_pair	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_pair	Collects the original vertices at a and their counterparts at b, returning false if the mapping is inconsistent.	int
+meshlet::sp_inverse	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_inverse	Returns whether two vertex correspondence maps are exact inverses of each other.	int
+meshlet::sp_qs	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_qs	Returns the sum of one quadric coefficient for two vertices.	int
+meshlet::sp_mulq	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_mulq	Multiplies the combined quadric matrix of two vertices by a vector.	int
+meshlet::sp_qerr	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_qerr	Returns the area-normalized quadric error of placing the merged vertex at a point.	int
+meshlet::sp_flips	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#sp_flips	Returns whether collapsing to a point would flip or degenerate any surrounding triangle.	int
+meshlet::simplify	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#simplify	Collapses edges to reduce triangles toward a target count, returning the largest geometric error introduced.	pub
+meshlet::NBR	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#NBR	Maximum number of neighbors tracked per cluster when grouping.	int
+meshlet::g_add_nb	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#g_add_nb	Adds or increments a neighbor entry for cluster i, ignoring new neighbors beyond the limit.	int
+meshlet::group	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#group	Partitions the current clusters into groups for the next hierarchy level.	pub
+meshlet::build	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#build	Builds the meshlet hierarchy from a vertex position buffer and triangle indices, replacing any previously built data; welds vertices and simplifies grouped clusters per level.	pub
+meshlet::cut	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut	Fills the output array with triangle indices of all clusters whose error range contains the given error threshold e.	pub
+meshlet::cut_tris	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut_tris	Returns the number of triangles in the clusters selected for the given error threshold e, matching what cut would output.	pub

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-sparks">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-sparks">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=b649580154">
+<link rel="stylesheet" href="/api-library/lib.css?v=5dbd59575b">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=b649580154'; start({wasm: '/api-library/search.wasm?v=b649580154'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=5dbd59575b'; start({wasm: '/api-library/search.wasm?v=5dbd59575b'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/sparks</h1>
 <p class="lib-lede">Fast GPU particles drawn as glowing camera-facing discs in the <code>gfx.scene3d</code> color pass.</p>
-<p class="lib-meta"><code>import gfx.sparks;</code> &middot; <code>sparks::</code> &middot; 7 functions, 3 types, 11 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.sparks;</code> &middot; <code>sparks::</code> &middot; 7 functions, 3 types, 11 constants &middot; <a href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>sparks: GPU particles. Emission writes slots of a fixed ring on the CPU side;
 each step a compute shader integrates every live particle in place, and the
 colour pass of gfx.scene3d draws them as additive camera-facing discs.
@@ -119,66 +119,66 @@ colour pass of gfx.scene3d draws them as additive camera-facing discs.
 <h3><a href="#gravity">gravity</a> <i>constant</i></h3>
 <pre>var gravity float3 = float3 { 0.0, -9.8, 0.0 }</pre>
 <p>Acceleration applied to every particle each step, defaulting to downward 9.8.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L19">hc/lib/gfx/sparks.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L19">hc/lib/gfx/sparks.amni:19</a>
 </article>
 <article class="sym" id="drag">
 <h3><a href="#drag">drag</a> <i>constant</i></h3>
 <pre>var drag f32 = 0.6</pre>
 <p>Velocity damping factor applied by the simulation, defaulting to 0.6.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L20">hc/lib/gfx/sparks.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L20">hc/lib/gfx/sparks.amni:20</a>
 </article>
 <article class="sym" id="ground">
 <h3><a href="#ground">ground</a> <i>constant</i></h3>
 <pre>var ground f32 = 0.0</pre>
 <p>Height of the ground plane that particles collide with, defaulting to 0.0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L21">hc/lib/gfx/sparks.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L21">hc/lib/gfx/sparks.amni:21</a>
 </article>
 <article class="sym" id="bounce">
 <h3><a href="#bounce">bounce</a> <i>constant</i></h3>
 <pre>var bounce f32 = 0.4</pre>
 <p>Fraction of velocity retained when a particle bounces off the ground, defaulting to 0.4.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L22">hc/lib/gfx/sparks.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L22">hc/lib/gfx/sparks.amni:22</a>
 </article>
 <article class="sym" id="step">
 <h3><a href="#step">step</a> <i>function</i></h3>
 <pre>step(dt f32)</pre>
 <p>Uploads queued particles and advances the simulation by dt seconds; call outside any pass.</p>
 <p class="note">Uploads new particles and advances the simulation; call outside any pass.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L72">hc/lib/gfx/sparks.amni:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L72">hc/lib/gfx/sparks.amni:72</a>
 </article>
 <h2 id="spark-emission">Spark Emission <span class="n">5</span></h2>
 <article class="sym" id="ready">
 <h3><a href="#ready">ready</a> <i>function</i></h3>
 <pre>ready() bool</pre>
 <p>Returns whether the particle system has been initialized and has capacity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L24">hc/lib/gfx/sparks.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L24">hc/lib/gfx/sparks.amni:24</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(count int) bool</pre>
 <p>Allocates GPU buffers and pipelines for at least count particles, rounded up to 64, returning true on success.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L26">hc/lib/gfx/sparks.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L26">hc/lib/gfx/sparks.amni:26</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear()</pre>
 <p>Kills every particle and resets the ring for a new scene; call outside any pass.</p>
 <p class="note">Kills every particle (a new scene); call outside any pass.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L40">hc/lib/gfx/sparks.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L40">hc/lib/gfx/sparks.amni:40</a>
 </article>
 <article class="sym" id="emit">
 <h3><a href="#emit">emit</a> <i>function</i></h3>
 <pre>emit(pos float3, vel float3, life f32, rgba float4, size0 f32, size1 f32)</pre>
 <p>Queues one particle with a life in seconds, shrinking from size0 to size1.</p>
 <p class="note">One particle: life in seconds, size shrinking from size0 to size1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L51">hc/lib/gfx/sparks.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L51">hc/lib/gfx/sparks.amni:51</a>
 </article>
 <article class="sym" id="burst">
 <h3><a href="#burst">burst</a> <i>function</i></h3>
 <pre>burst(pos float3, dir float3, n int, speed f32, spread f32, life f32, rgba float4, size f32, seed int)</pre>
 <p>Queues a spray of n randomized particles around dir, where spread 0 is a line and 1 a hemisphere.</p>
 <p class="note">A spray of n particles around dir with the given spread (0 = a line, 1 = a hemisphere).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L59">hc/lib/gfx/sparks.amni:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L59">hc/lib/gfx/sparks.amni:59</a>
 </article>
 <h2 id="spark-rendering">Spark Rendering <span class="n">1</span></h2>
 <article class="sym" id="draw">
@@ -186,68 +186,68 @@ colour pass of gfx.scene3d draws them as additive camera-facing discs.
 <pre>draw(view_proj gfx::mat4, right float3, up float3)</pre>
 <p>Draws all particles as camera-facing discs inside the current color pass.</p>
 <p class="note">Draws inside the current colour pass (called by gfx.scene3d).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L87">hc/lib/gfx/sparks.amni:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L87">hc/lib/gfx/sparks.amni:87</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (10)</summary>
 <article class="sym" id="Spark">
 <h3><a href="#Spark">Spark</a> <i>type</i></h3>
 <pre>struct Spark { pos_life float4, vel_span float4, rgba float4, size float4 }</pre>
 <p>Raw GPU particle record packing position, velocity, color and size vectors for one particle slot.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L8">hc/lib/gfx/sparks.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L8">hc/lib/gfx/sparks.amni:8</a>
 </article>
 <article class="sym" id="StepU">
 <h3><a href="#StepU">StepU</a> <i>type</i></h3>
 <pre>struct StepU { gravity_dt float4, world float4 }</pre>
 <p>Uniform block passed to the simulation compute shader holding gravity, time step and world parameters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L9">hc/lib/gfx/sparks.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L9">hc/lib/gfx/sparks.amni:9</a>
 </article>
 <article class="sym" id="ViewU">
 <h3><a href="#ViewU">ViewU</a> <i>type</i></h3>
 <pre>struct ViewU { view_proj gfx::mat4, right float4, up float4 }</pre>
 <p>Uniform block for the draw shader holding the view-projection matrix and camera right and up vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L10">hc/lib/gfx/sparks.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L10">hc/lib/gfx/sparks.amni:10</a>
 </article>
 <article class="sym" id="capacity">
 <h3><a href="#capacity">capacity</a> <i>constant</i></h3>
 <pre>var capacity int = 0</pre>
 <p>Number of particle slots in the ring, or zero before initialization.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L12">hc/lib/gfx/sparks.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L12">hc/lib/gfx/sparks.amni:12</a>
 </article>
 <article class="sym" id="next">
 <h3><a href="#next">next</a> <i>constant</i></h3>
 <pre>var next int = 0</pre>
 <p>Index of the next ring slot that emit will write.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L13">hc/lib/gfx/sparks.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L13">hc/lib/gfx/sparks.amni:13</a>
 </article>
 <article class="sym" id="buf">
 <h3><a href="#buf">buf</a> <i>constant</i></h3>
 <pre>var buf gfx::Buffer</pre>
 <p>GPU storage buffer holding every particle slot, updated in place by the simulation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L14">hc/lib/gfx/sparks.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L14">hc/lib/gfx/sparks.amni:14</a>
 </article>
 <article class="sym" id="sim">
 <h3><a href="#sim">sim</a> <i>constant</i></h3>
 <pre>var sim gfx::ComputePipeline</pre>
 <p>Compute pipeline that integrates all live particles each step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L15">hc/lib/gfx/sparks.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L15">hc/lib/gfx/sparks.amni:15</a>
 </article>
 <article class="sym" id="pipe">
 <h3><a href="#pipe">pipe</a> <i>constant</i></h3>
 <pre>var pipe gfx::Pipeline</pre>
 <p>Graphics pipeline that draws particles as additively blended discs without depth writes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L16">hc/lib/gfx/sparks.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L16">hc/lib/gfx/sparks.amni:16</a>
 </article>
 <article class="sym" id="pending">
 <h3><a href="#pending">pending</a> <i>constant</i></h3>
 <pre>var pending Spark[&gt;..] = []</pre>
 <p>Queue of emitted particles waiting to be uploaded on the next step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L17">hc/lib/gfx/sparks.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L17">hc/lib/gfx/sparks.amni:17</a>
 </article>
 <article class="sym" id="pending_slot">
 <h3><a href="#pending_slot">pending_slot</a> <i>constant</i></h3>
 <pre>var pending_slot int[&gt;..] = []</pre>
 <p>Ring slot indices matching each queued particle in the pending list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/gfx/sparks.amni#L18">hc/lib/gfx/sparks.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/gfx/sparks.amni#L18">hc/lib/gfx/sparks.amni:18</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -259,7 +259,7 @@ colour pass of gfx.scene3d draws them as additive camera-facing discs.
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>485</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1500</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -284,6 +284,7 @@ colour pass of gfx.scene3d draws them as additive camera-facing discs.
 <li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
 <li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
 <li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>

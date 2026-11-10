@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/webgl">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/webgl">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=b649580154">
+<link rel="stylesheet" href="/api-library/lib.css?v=5dbd59575b">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=b649580154'; start({wasm: '/api-library/search.wasm?v=b649580154'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=5dbd59575b'; start({wasm: '/api-library/search.wasm?v=5dbd59575b'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>webgl</h1>
 <p class="lib-lede">WebGL2 graphics on a canvas: shaders, buffers, textures and draw calls.</p>
-<p class="lib-meta"><code>import webgl;</code> &middot; <code>gl::</code> &middot; 50 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he">Source</a></p>
+<p class="lib-meta"><code>import webgl;</code> &middot; <code>gl::</code> &middot; 50 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#setup">Setup <span class="n">4</span></a></li>
 <li><a href="#frame-state">Frame State <span class="n">8</span></a></li>
@@ -119,308 +119,308 @@
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(canvas i32, antialias bool, alpha bool) bool</pre>
 <p>Initializes WebGL2 on the given canvas handle, with antialiasing and alpha options; returns false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L43">hc/lib/webgl.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L43">hc/lib/webgl.he:43</a>
 </article>
 <article class="sym" id="viewport">
 <h3><a href="#viewport">viewport</a> <i>function</i></h3>
 <pre>viewport(x i32, y i32, w i32, h i32)</pre>
 <p>Sets the viewport rectangle in pixels used when rasterizing to the canvas.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L44">hc/lib/webgl.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L44">hc/lib/webgl.he:44</a>
 </article>
 <article class="sym" id="drawing_w">
 <h3><a href="#drawing_w">drawing_w</a> <i>function</i></h3>
 <pre>drawing_w() i32</pre>
 <p>Returns the width of the drawing buffer in pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L91">hc/lib/webgl.he:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L91">hc/lib/webgl.he:91</a>
 </article>
 <article class="sym" id="drawing_h">
 <h3><a href="#drawing_h">drawing_h</a> <i>function</i></h3>
 <pre>drawing_h() i32</pre>
 <p>Returns the height of the drawing buffer in pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L92">hc/lib/webgl.he:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L92">hc/lib/webgl.he:92</a>
 </article>
 <h2 id="frame-state">Frame State <span class="n">8</span></h2>
 <article class="sym" id="clear_color">
 <h3><a href="#clear_color">clear_color</a> <i>function</i></h3>
 <pre>clear_color(r f64, g f64, b f64, a f64)</pre>
 <p>Sets the RGBA color, with components as floats, used when clearing the color buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L45">hc/lib/webgl.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L45">hc/lib/webgl.he:45</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear(mask i32)</pre>
 <p>Clears the buffers selected by the given bit mask, such as color or depth.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L46">hc/lib/webgl.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L46">hc/lib/webgl.he:46</a>
 </article>
 <article class="sym" id="enable">
 <h3><a href="#enable">enable</a> <i>function</i></h3>
 <pre>enable(cap i32)</pre>
 <p>Enables a pipeline capability such as blending, depth testing or face culling.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L47">hc/lib/webgl.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L47">hc/lib/webgl.he:47</a>
 </article>
 <article class="sym" id="disable">
 <h3><a href="#disable">disable</a> <i>function</i></h3>
 <pre>disable(cap i32)</pre>
 <p>Disables a pipeline capability previously turned on with enable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L48">hc/lib/webgl.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L48">hc/lib/webgl.he:48</a>
 </article>
 <article class="sym" id="blend_func">
 <h3><a href="#blend_func">blend_func</a> <i>function</i></h3>
 <pre>blend_func(s i32, d i32)</pre>
 <p>Sets the source and destination blend factors applied to all color channels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L49">hc/lib/webgl.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L49">hc/lib/webgl.he:49</a>
 </article>
 <article class="sym" id="blend_func_sep">
 <h3><a href="#blend_func_sep">blend_func_sep</a> <i>function</i></h3>
 <pre>blend_func_sep(sc i32, dc i32, sa i32, da i32)</pre>
 <p>Sets separate blend factors for the color channels and for the alpha channel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L50">hc/lib/webgl.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L50">hc/lib/webgl.he:50</a>
 </article>
 <article class="sym" id="depth_mask">
 <h3><a href="#depth_mask">depth_mask</a> <i>function</i></h3>
 <pre>depth_mask(on bool)</pre>
 <p>Turns depth buffer writes on or off.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L51">hc/lib/webgl.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L51">hc/lib/webgl.he:51</a>
 </article>
 <article class="sym" id="depth_func">
 <h3><a href="#depth_func">depth_func</a> <i>function</i></h3>
 <pre>depth_func(f i32)</pre>
 <p>Sets the comparison function used for depth testing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L52">hc/lib/webgl.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L52">hc/lib/webgl.he:52</a>
 </article>
 <h2 id="shaders">Shaders <span class="n">10</span></h2>
 <article class="sym" id="create_shader">
 <h3><a href="#create_shader">create_shader</a> <i>function</i></h3>
 <pre>create_shader(kind i32) i32</pre>
 <p>Creates a shader object of the given kind, such as vertex or fragment, and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L53">hc/lib/webgl.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L53">hc/lib/webgl.he:53</a>
 </article>
 <article class="sym" id="shader_source">
 <h3><a href="#shader_source">shader_source</a> <i>function</i></h3>
 <pre>shader_source(sh i32, src const u8[:])</pre>
 <p>Sets the source text of a shader object.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L54">hc/lib/webgl.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L54">hc/lib/webgl.he:54</a>
 </article>
 <article class="sym" id="compile_shader">
 <h3><a href="#compile_shader">compile_shader</a> <i>function</i></h3>
 <pre>compile_shader(sh i32) bool</pre>
 <p>Compiles a shader and returns false if compilation fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L55">hc/lib/webgl.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L55">hc/lib/webgl.he:55</a>
 </article>
 <article class="sym" id="shader_log">
 <h3><a href="#shader_log">shader_log</a> <i>function</i></h3>
 <pre>shader_log(sh i32, out u8[&gt;..]&amp;)</pre>
 <p>Writes the shader's compile log into the output buffer for diagnosing errors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L56">hc/lib/webgl.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L56">hc/lib/webgl.he:56</a>
 </article>
 <article class="sym" id="create_program">
 <h3><a href="#create_program">create_program</a> <i>function</i></h3>
 <pre>create_program() i32</pre>
 <p>Creates an empty shader program and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L57">hc/lib/webgl.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L57">hc/lib/webgl.he:57</a>
 </article>
 <article class="sym" id="attach_shader">
 <h3><a href="#attach_shader">attach_shader</a> <i>function</i></h3>
 <pre>attach_shader(p i32, sh i32)</pre>
 <p>Attaches a compiled shader to a program.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L58">hc/lib/webgl.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L58">hc/lib/webgl.he:58</a>
 </article>
 <article class="sym" id="bind_attrib">
 <h3><a href="#bind_attrib">bind_attrib</a> <i>function</i></h3>
 <pre>bind_attrib(p i32, idx i32, name const u8[:])</pre>
 <p>Binds a named vertex attribute to the given index before the program is linked.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L59">hc/lib/webgl.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L59">hc/lib/webgl.he:59</a>
 </article>
 <article class="sym" id="link_program">
 <h3><a href="#link_program">link_program</a> <i>function</i></h3>
 <pre>link_program(p i32) bool</pre>
 <p>Links a program and returns false if linking fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L60">hc/lib/webgl.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L60">hc/lib/webgl.he:60</a>
 </article>
 <article class="sym" id="program_log">
 <h3><a href="#program_log">program_log</a> <i>function</i></h3>
 <pre>program_log(p i32, out u8[&gt;..]&amp;)</pre>
 <p>Writes the program's link log into the output buffer for diagnosing errors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L61">hc/lib/webgl.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L61">hc/lib/webgl.he:61</a>
 </article>
 <article class="sym" id="use_program">
 <h3><a href="#use_program">use_program</a> <i>function</i></h3>
 <pre>use_program(p i32)</pre>
 <p>Makes the given program current for subsequent draw calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L62">hc/lib/webgl.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L62">hc/lib/webgl.he:62</a>
 </article>
 <h2 id="uniforms">Uniforms <span class="n">7</span></h2>
 <article class="sym" id="uniform_loc">
 <h3><a href="#uniform_loc">uniform_loc</a> <i>function</i></h3>
 <pre>uniform_loc(p i32, name const u8[:]) i32</pre>
 <p>Returns the location of a named uniform in a program.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L63">hc/lib/webgl.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L63">hc/lib/webgl.he:63</a>
 </article>
 <article class="sym" id="uniform1f">
 <h3><a href="#uniform1f">uniform1f</a> <i>function</i></h3>
 <pre>uniform1f(loc i32, x f64)</pre>
 <p>Sets a float uniform at the given location on the current program.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L64">hc/lib/webgl.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L64">hc/lib/webgl.he:64</a>
 </article>
 <article class="sym" id="uniform2f">
 <h3><a href="#uniform2f">uniform2f</a> <i>function</i></h3>
 <pre>uniform2f(loc i32, x f64, y f64)</pre>
 <p>Sets a two-component float uniform at the given location.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L65">hc/lib/webgl.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L65">hc/lib/webgl.he:65</a>
 </article>
 <article class="sym" id="uniform3f">
 <h3><a href="#uniform3f">uniform3f</a> <i>function</i></h3>
 <pre>uniform3f(loc i32, x f64, y f64, z f64)</pre>
 <p>Sets a three-component float uniform at the given location.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L66">hc/lib/webgl.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L66">hc/lib/webgl.he:66</a>
 </article>
 <article class="sym" id="uniform4f">
 <h3><a href="#uniform4f">uniform4f</a> <i>function</i></h3>
 <pre>uniform4f(loc i32, x f64, y f64, z f64, w f64)</pre>
 <p>Sets a four-component float uniform at the given location.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L67">hc/lib/webgl.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L67">hc/lib/webgl.he:67</a>
 </article>
 <article class="sym" id="uniform1i">
 <h3><a href="#uniform1i">uniform1i</a> <i>function</i></h3>
 <pre>uniform1i(loc i32, v i32)</pre>
 <p>Sets an integer uniform, such as a texture unit index, at the given location.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L68">hc/lib/webgl.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L68">hc/lib/webgl.he:68</a>
 </article>
 <article class="sym" id="uniform_mat4">
 <h3><a href="#uniform_mat4">uniform_mat4</a> <i>function</i></h3>
 <pre>uniform_mat4(loc i32, m const f32[:])</pre>
 <p>Sets a 4x4 matrix uniform from an array of 32-bit floats.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L69">hc/lib/webgl.he:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L69">hc/lib/webgl.he:69</a>
 </article>
 <h2 id="buffers">Buffers <span class="n">5</span></h2>
 <article class="sym" id="create_buffer">
 <h3><a href="#create_buffer">create_buffer</a> <i>function</i></h3>
 <pre>create_buffer() i32</pre>
 <p>Creates a buffer object and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L70">hc/lib/webgl.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L70">hc/lib/webgl.he:70</a>
 </article>
 <article class="sym" id="bind_buffer">
 <h3><a href="#bind_buffer">bind_buffer</a> <i>function</i></h3>
 <pre>bind_buffer(target i32, b i32)</pre>
 <p>Binds a buffer to the given target such as array or element array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L71">hc/lib/webgl.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L71">hc/lib/webgl.he:71</a>
 </article>
 <article class="sym" id="buffer_data">
 <h3><a href="#buffer_data">buffer_data</a> <i>function</i></h3>
 <pre>buffer_data(target i32, data const u8[:], usage i32)</pre>
 <p>Uploads the given bytes into the buffer bound to the target, using the given usage hint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L72">hc/lib/webgl.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L72">hc/lib/webgl.he:72</a>
 </article>
 <article class="sym" id="buffer_alloc">
 <h3><a href="#buffer_alloc">buffer_alloc</a> <i>function</i></h3>
 <pre>buffer_alloc(target i32, bytes i32, usage i32)</pre>
 <p>Allocates an uninitialized buffer of the given byte size on the target with a usage hint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L73">hc/lib/webgl.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L73">hc/lib/webgl.he:73</a>
 </article>
 <article class="sym" id="buffer_sub">
 <h3><a href="#buffer_sub">buffer_sub</a> <i>function</i></h3>
 <pre>buffer_sub(target i32, offset i32, data const u8[:])</pre>
 <p>Overwrites part of the bound buffer with the given bytes starting at a byte offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L74">hc/lib/webgl.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L74">hc/lib/webgl.he:74</a>
 </article>
 <h2 id="vertex-arrays">Vertex Arrays <span class="n">6</span></h2>
 <article class="sym" id="create_vao">
 <h3><a href="#create_vao">create_vao</a> <i>function</i></h3>
 <pre>create_vao() i32</pre>
 <p>Creates a vertex array object and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L75">hc/lib/webgl.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L75">hc/lib/webgl.he:75</a>
 </article>
 <article class="sym" id="bind_vao">
 <h3><a href="#bind_vao">bind_vao</a> <i>function</i></h3>
 <pre>bind_vao(v i32)</pre>
 <p>Binds a vertex array object so its attribute state is used.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L76">hc/lib/webgl.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L76">hc/lib/webgl.he:76</a>
 </article>
 <article class="sym" id="attrib_ptr">
 <h3><a href="#attrib_ptr">attrib_ptr</a> <i>function</i></h3>
 <pre>attrib_ptr(idx i32, size i32, kind i32, norm bool, stride i32, offset i32)</pre>
 <p>Describes how vertex attribute data is laid out in the bound buffer, with stride and offset in bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L77">hc/lib/webgl.he:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L77">hc/lib/webgl.he:77</a>
 </article>
 <article class="sym" id="enable_attrib">
 <h3><a href="#enable_attrib">enable_attrib</a> <i>function</i></h3>
 <pre>enable_attrib(idx i32)</pre>
 <p>Enables the vertex attribute at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L78">hc/lib/webgl.he:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L78">hc/lib/webgl.he:78</a>
 </article>
 <article class="sym" id="disable_attrib">
 <h3><a href="#disable_attrib">disable_attrib</a> <i>function</i></h3>
 <pre>disable_attrib(idx i32)</pre>
 <p>Disables the vertex attribute at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L79">hc/lib/webgl.he:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L79">hc/lib/webgl.he:79</a>
 </article>
 <article class="sym" id="attrib_divisor">
 <h3><a href="#attrib_divisor">attrib_divisor</a> <i>function</i></h3>
 <pre>attrib_divisor(idx i32, d i32)</pre>
 <p>Sets how many instances pass between attribute updates, for instanced drawing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L80">hc/lib/webgl.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L80">hc/lib/webgl.he:80</a>
 </article>
 <h2 id="drawing">Drawing <span class="n">3</span></h2>
 <article class="sym" id="draw_arrays">
 <h3><a href="#draw_arrays">draw_arrays</a> <i>function</i></h3>
 <pre>draw_arrays(mode i32, first i32, count i32)</pre>
 <p>Draws primitives of the given mode from the enabled arrays, starting at first for count vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L81">hc/lib/webgl.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L81">hc/lib/webgl.he:81</a>
 </article>
 <article class="sym" id="draw_elements">
 <h3><a href="#draw_elements">draw_elements</a> <i>function</i></h3>
 <pre>draw_elements(mode i32, count i32, kind i32, offset i32)</pre>
 <p>Draws indexed primitives from the bound element buffer, with the index type and a byte offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L82">hc/lib/webgl.he:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L82">hc/lib/webgl.he:82</a>
 </article>
 <article class="sym" id="draw_arrays_instanced">
 <h3><a href="#draw_arrays_instanced">draw_arrays_instanced</a> <i>function</i></h3>
 <pre>draw_arrays_instanced(mode i32, first i32, count i32, n i32)</pre>
 <p>Draws the given number of instances of primitives from the enabled arrays.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L83">hc/lib/webgl.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L83">hc/lib/webgl.he:83</a>
 </article>
 <h2 id="textures">Textures <span class="n">7</span></h2>
 <article class="sym" id="create_texture">
 <h3><a href="#create_texture">create_texture</a> <i>function</i></h3>
 <pre>create_texture() i32</pre>
 <p>Creates a texture object and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L84">hc/lib/webgl.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L84">hc/lib/webgl.he:84</a>
 </article>
 <article class="sym" id="bind_texture">
 <h3><a href="#bind_texture">bind_texture</a> <i>function</i></h3>
 <pre>bind_texture(target i32, t i32)</pre>
 <p>Binds a texture to the given target on the active texture unit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L85">hc/lib/webgl.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L85">hc/lib/webgl.he:85</a>
 </article>
 <article class="sym" id="active_texture">
 <h3><a href="#active_texture">active_texture</a> <i>function</i></h3>
 <pre>active_texture(unit i32)</pre>
 <p>Selects the active texture unit for later texture bindings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L86">hc/lib/webgl.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L86">hc/lib/webgl.he:86</a>
 </article>
 <article class="sym" id="tex_rgba">
 <h3><a href="#tex_rgba">tex_rgba</a> <i>function</i></h3>
 <pre>tex_rgba(w i32, h i32, data const u8[:])</pre>
 <p>Uploads RGBA pixel bytes of the given width and height to the bound texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L87">hc/lib/webgl.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L87">hc/lib/webgl.he:87</a>
 </article>
 <article class="sym" id="tex_param">
 <h3><a href="#tex_param">tex_param</a> <i>function</i></h3>
 <pre>tex_param(target i32, name i32, v i32)</pre>
 <p>Sets an integer parameter, such as filtering or wrapping, on the texture bound to the target.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L88">hc/lib/webgl.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L88">hc/lib/webgl.he:88</a>
 </article>
 <article class="sym" id="generate_mipmap">
 <h3><a href="#generate_mipmap">generate_mipmap</a> <i>function</i></h3>
 <pre>generate_mipmap(target i32)</pre>
 <p>Generates mipmaps for the texture bound to the target.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L89">hc/lib/webgl.he:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L89">hc/lib/webgl.he:89</a>
 </article>
 <article class="sym" id="delete">
 <h3><a href="#delete">delete</a> <i>function</i></h3>
 <pre>delete(h i32)</pre>
 <p>Deletes the GL object identified by the given handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b649580a845210fdb587716ca3af895c8b4ff363/hc/lib/webgl.he#L90">hc/lib/webgl.he:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/webgl.he#L90">hc/lib/webgl.he:90</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
@@ -431,7 +431,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>485</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1500</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
