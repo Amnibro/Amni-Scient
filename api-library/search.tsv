@@ -1015,6 +1015,7 @@ gfx::VF	constant	gfx	/api-library/helium/lib/gfx#VF	Internal table mapping verte
 gfx::VSZ	constant	gfx	/api-library/helium/lib/gfx#VSZ	Internal table of byte sizes for each vertex attribute kind.	int
 gfx::VK	constant	gfx	/api-library/helium/lib/gfx#VK	Internal string of scalar type letters for each vertex attribute kind.	int
 gfx::TFMT	constant	gfx	/api-library/helium/lib/gfx#TFMT	Internal table mapping texture format constants to native format codes.	int
+gfx::TBC	constant	gfx	/api-library/helium/lib/gfx#TBC	Lookup table of native format codes for block-compressed (BC) texture formats, indexed by the gfx BC format constant minus 21.	int
 gfx::ALN	constant	gfx	/api-library/helium/lib/gfx#ALN	Internal scancodes of keys that have alternate display names.	int
 gfx::ALS	constant	gfx	/api-library/helium/lib/gfx#ALS	Internal alternate display names matching the alternate-name scancodes.	int
 gfx::pp	function	gfx	/api-library/helium/lib/gfx#pp	Returns the native pointer to the bytes of a value.	int
@@ -1061,6 +1062,7 @@ gfx::flush_raw	function	gfx	/api-library/helium/lib/gfx#flush_raw	Waits for all 
 gfx::flush	function	gfx	/api-library/helium/lib/gfx#flush	Blocks until all submitted GPU work finishes, reporting any error; must not be called inside a pass.	pub
 gfx::texfmt	function	gfx	/api-library/helium/lib/gfx#texfmt	Maps a library texture format constant to the backend format code, or -1 if unknown.	int
 gfx::isdepth	function	gfx	/api-library/helium/lib/gfx#isdepth	Returns whether a backend format code is a depth format.	int
+gfx::isblock	function	gfx	/api-library/helium/lib/gfx#isblock	Returns whether a native texture format code is a block-compressed format, which affects how uploads and readbacks are sized.	int
 gfx::stage_name	function	gfx	/api-library/helium/lib/gfx#stage_name	Returns the name of a shader stage as text, used in error messages.	int
 gfx::pname	function	gfx	/api-library/helium/lib/gfx#pname	Returns the name of the active pass kind, render or compute, for error messages.	int
 gfx::scrtex	function	gfx	/api-library/helium/lib/gfx#scrtex	Creates or replaces the texture backing the screen or its depth buffer, returning false on failure.	int
@@ -1161,7 +1163,7 @@ gfx::texture_cube	function	gfx	/api-library/helium/lib/gfx#texture_cube	Creates 
 gfx::texture_array	function	gfx	/api-library/helium/lib/gfx#texture_array	Creates an array texture with the given number of layers, format and usage flags.	pub
 gfx::region	function	gfx	/api-library/helium/lib/gfx#region	Validates a region of a texture's mip and layer and fills in the copy region, returning false on misuse.	int
 gfx::texbytes	function	gfx	/api-library/helium/lib/gfx#texbytes	Checks that a byte count matches the size of a texture region, returning false on mismatch.	int
-gfx::upload_texture	function	gfx	/api-library/helium/lib/gfx#upload_texture	Uploads bytes into a texture region through a transfer buffer, returning false on failure.	int
+gfx::upload_texture	function	gfx	/api-library/helium/lib/gfx#upload_texture	Uploads bytes into a texture region through a transfer buffer, using a fresh command buffer or the current one; returns false on failure.	int
 gfx::update_texture_region	function	gfx	/api-library/helium/lib/gfx#update_texture_region	Updates a texture region with bytes after validating the texture, region and data size.	int
 gfx::update_texture	function	gfx	/api-library/helium/lib/gfx#update_texture	Updates a region of a texture with bytes, returning false if the region or data size is invalid.	pub
 gfx::update_texture	function	gfx	/api-library/helium/lib/gfx#update_texture	Updates the whole base mip of a texture with bytes, returning false on invalid size.	pub
@@ -1179,6 +1181,7 @@ gfx::save_png	function	gfx	/api-library/helium/lib/gfx#save_png	Saves a texture 
 gfx::screenshot	function	gfx	/api-library/helium/lib/gfx#screenshot	Saves the screen contents as a PNG file at the given path, returning false on failure.	pub
 gfx::load_texture	function	gfx	/api-library/helium/lib/gfx#load_texture	Loads a PNG or BMP image file into a texture, using flags for mipmaps and sRGB, returning a zero handle on failure.	pub
 gfx::generate_mips	function	gfx	/api-library/helium/lib/gfx#generate_mips	Generates the mip chain of a sampled texture with more than one mip.	pub
+gfx::format_supported	function	gfx	/api-library/helium/lib/gfx#format_supported	Returns whether the device supports a gfx texture format for sampled 2D textures; false if gfx is not open or the format is unknown.	pub
 gfx::texture_info	function	gfx	/api-library/helium/lib/gfx#texture_info	Returns the description of a texture, with zero size if the handle is invalid.	pub
 gfx::release	function	gfx	/api-library/helium/lib/gfx#release	Releases a texture, except the screen textures owned by gfx.	pub
 gfx::texel_size	function	gfx	/api-library/helium/lib/gfx#texel_size	Returns the size in bytes of one texel of the given format.	pub
@@ -1269,6 +1272,7 @@ s3d::NodeOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#NodeOv	Record o
 s3d::WeightOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#WeightOv	Record of a per-item morph weight override for one node and weight index.	pub
 s3d::Item	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Item	Placed instance of a glTF asset with transform, animation state, blending and tracked nodes.	pub
 s3d::InstSet	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#InstSet	Record describing one set of instanced copies of an asset, with its range, LOD, bounds and visibility lists.	int
+s3d::Caustics	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Caustics	Settings for underwater light caustics, including strength, focus, wave pattern, water absorption and the box they cover.	pub
 s3d::Wind	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Wind	Wind settings holding direction, strength, speed and time, used to sway foliage.	pub
 s3d::Batch	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Batch	Flattened per-primitive draw record with matrices and sort depth, built from the item list each frame.	int
 s3d::DrawU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DrawU	Uniform block holding per-draw matrices, deformation and motion data for the shader.	int
@@ -1548,6 +1552,15 @@ s3d::trans_h	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_h	He
 s3d::smp_trans	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#smp_trans	Sampler used to read the transmission texture.	int
 s3d::tex_srgb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_srgb	Cache of textures uploaded as sRGB color.	int
 s3d::tex_linear	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_linear	Cache of textures uploaded as linear data.	int
+s3d::tex_compress	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_compress	Flag that turns on block compression of textures when they are uploaded, off by default.	pub
+s3d::tex_gpu_bc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_gpu_bc	Flag allowing block-compressed textures to be uploaded as-is when the GPU supports the format; otherwise they are decoded.	pub
+s3d::tex_cache	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_cache	Directory path of the on-disk cache of baked compressed textures, empty when caching is disabled.	int
+s3d::tex_encoded	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_encoded	Count of textures encoded to compressed form during baking.	int
+s3d::tex_cached	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_cached	Count of textures found already baked in the on-disk cache.	int
+s3d::tex_mem	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_mem	Running total of bytes of texture memory allocated for loaded images.	int
+s3d::tex_ns	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_ns	Nanosecond counter for texture loading time.	int
+s3d::texture_bytes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#texture_bytes	Returns the total bytes of texture memory allocated for loaded images.	pub
+s3d::set_texture_cache	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_texture_cache	Sets the directory used to cache baked compressed textures on disk.	pub
 s3d::vbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vbuf	GPU vertex buffer holding mesh vertices.	int
 s3d::ibuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ibuf	GPU index buffer holding mesh indices.	int
 s3d::mbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mbuf	GPU buffer holding morph target data.	int
@@ -1569,6 +1582,7 @@ s3d::xbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#xbuf_cap	
 s3d::idbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf	GPU buffer holding visible instance ids.	int
 s3d::idbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf_cap	Current capacity of the instance id buffer.	int
 s3d::fr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fr	Six frustum planes used for instance culling.	int
+s3d::caustics	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#caustics-2	Global caustics settings that the caller edits between frames.	pub
 s3d::wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind-2	Current wind settings that drive foliage sway.	pub
 s3d::wind_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_prev	Previous frame's wind value kept for motion vectors.	int
 s3d::wind_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_fresh	Flag marking that no previous wind state exists yet.	int
@@ -1670,6 +1684,10 @@ s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Initiali
 s3d::forget	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forget	Releases cached textures and geometry copies after the glTF pools are reset.	pub
 s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#upload_geometry	Uploads glTF vertex, index and morph data to GPU buffers when their sizes change.	int
 s3d::mip_count	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_count	Returns the number of mip levels for a texture size.	int
+s3d::chain_bytes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#chain_bytes	Returns the total byte size of a texture's mip chain for the given format kind, size and level count.	int
+s3d::tex_path	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_path	Builds the cache file path for an image, derived from a hash of its contents, size and color space.	int
+s3d::tex_bake	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_bake	Encodes an image to a BC7 KTX2 file with mips, reusing a matching cached file; returns false on failure.	int
+s3d::ktx_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ktx_texture	Creates a GPU texture from KTX2 file bytes, decoding block formats when the GPU lacks support; returns a null texture if invalid.	int
 s3d::image_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_texture	Creates and caches a GPU texture from a glTF image, with mipmaps.	int
 s3d::warm	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#warm	Ensures a texture reference's image is uploaded to the GPU.	int
 s3d::ext_fill	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_fill	Copies a source texture into one layer of an extended material array.	int
@@ -1836,12 +1854,14 @@ gltf::load	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#load	Loads a glTF 
 gltf::texref	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#texref	Builds a texture reference from a JSON texture info object, offset by the asset's texture base.	int
 gltf::need_pixels	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#need_pixels	Decodes the lazy image at the given index into the shared buffer, substituting white pixels on failure.	pub
 gltf::image_pixels	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#image_pixels	Returns the RGBA pixels of an image, or an empty slice if a lazy image is not yet decoded.	pub
+gltf::image_file	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#image_file	Returns the encoded bytes of the image at absolute index i, as stored in the module's coded-data pool.	int
 gltf::decode_image	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#decode_image	Decodes a PNG or JPEG image into the pixel pool, using a white 1x1 image on failure.	int
 gltf::presize	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#presize	Reserves vertex and index pool capacity for large assets before parsing, based on accessor counts.	int
 gltf::load_bytes	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#load_bytes	Loads glTF or GLB data from memory into the pools, returning its asset index or -1 on failure.	pub
 gltf::add_primitive	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_primitive	Reads one mesh primitive into the vertex, index and morph pools, returning false on error.	int
 gltf::add_texture_file	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_texture_file	Loads an image file as a new repeating, mipmapped texture and returns its index, or -1 on failure.	pub
 gltf::add_image	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_image	Registers an already decoded image in the global pools with the given wrap mode and returns its new texture index.	int
+gltf::add_texture_ktx2	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_texture_ktx2	Registers a KTX2 texture from file bytes with the given wrap mode, and returns its texture index.	pub
 gltf::add_texture_rgba	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_texture_rgba	Adds raw RGBA pixel data of the given width and height as a texture with the given wrap mode, returning its index.	pub
 gltf::find_node	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#find_node	Returns the index of the node with the given name in an asset, or -1 if none.	pub
 gltf::in_place	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#in_place	Removes horizontal root motion from an animation's node translation and returns the distance it drifted.	pub
@@ -1853,6 +1873,7 @@ shapes::vertex	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#vertex	App
 shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wraps the most recently added vertices and indices into a one-node asset and returns its asset index.	int
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
+shapes::water	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#water	Builds a double-sided, transparent water plane of the given half-extent, returning the id of the new mesh asset.	pub
 shapes::blade	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#blade	Builds a flat, double-sided tapered strip mesh of given height, base width and tip width, split into segments, and returns its asset id.	pub
 shapes::cube	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#cube	Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.	pub
 motion::MAX_WEIGHTS	constant	gfx/motion	/api-library/helium/lib/gfx-motion#MAX_WEIGHTS	Constant giving the maximum number of morph target weights stored per node in the pose weight array.	pub
@@ -5618,3 +5639,77 @@ py::strip_esc	function	tiles/py	/api-library/helium/lib/tiles-py#strip_esc	Copie
 py::count_commas	function	tiles/py	/api-library/helium/lib/tiles-py#count_commas	Counts commas in a range of the text.	int
 py::expected_count	function	tiles/py	/api-library/helium/lib/tiles-py#expected_count	Estimates the number of addresses in a header by counting commas outside quoted strings.	int
 py::getaddresses	function	tiles/py	/api-library/helium/lib/tiles-py#getaddresses	Parses an address header into parallel lists of names and addresses, returning a single empty pair if malformed.	pub
+bc::BC1	constant	gfx/bc	/api-library/helium/lib/gfx-bc#BC1	Constant identifying the BC1 block format (8 bytes per 4x4 block) for use with size, decode and encode.	pub
+bc::BC3	constant	gfx/bc	/api-library/helium/lib/gfx-bc#BC3	Constant identifying the BC3 block format (16 bytes per block, with alpha) for use with size, decode and encode.	pub
+bc::BC4	constant	gfx/bc	/api-library/helium/lib/gfx-bc#BC4	Constant identifying the single-channel BC4 block format (8 bytes per block) for use with size, decode and encode.	pub
+bc::BC5	constant	gfx/bc	/api-library/helium/lib/gfx-bc#BC5	Constant identifying the two-channel BC5 block format (16 bytes per block) for use with size, decode and encode.	pub
+bc::BC7	constant	gfx/bc	/api-library/helium/lib/gfx-bc#BC7	Constant identifying the BC7 block format (16 bytes per block) for use with size, decode and encode.	pub
+bc::P2	constant	gfx/bc	/api-library/helium/lib/gfx-bc#P2	Lookup table of two-subset partition masks, one bit per pixel, for the 64 BC7 partitions.	int
+bc::P3	constant	gfx/bc	/api-library/helium/lib/gfx-bc#P3	Lookup table of three-subset partition maps, two bits per pixel, for the 64 BC7 partitions.	int
+bc::A2	constant	gfx/bc	/api-library/helium/lib/gfx-bc#A2	Table of anchor pixel indices for the second subset in two-subset BC7 partitions.	int
+bc::A3A	constant	gfx/bc	/api-library/helium/lib/gfx-bc#A3A	Table of anchor pixel indices for the second subset in three-subset BC7 partitions.	int
+bc::A3B	constant	gfx/bc	/api-library/helium/lib/gfx-bc#A3B	Table of anchor pixel indices for the third subset in three-subset BC7 partitions.	int
+bc::W2	constant	gfx/bc	/api-library/helium/lib/gfx-bc#W2	Interpolation weight table for 2-bit BC7 indices, on a scale of 64.	int
+bc::W3	constant	gfx/bc	/api-library/helium/lib/gfx-bc#W3	Interpolation weight table for 3-bit BC7 indices, on a scale of 64.	int
+bc::W4	constant	gfx/bc	/api-library/helium/lib/gfx-bc#W4	Interpolation weight table for 4-bit BC7 indices, on a scale of 64.	int
+bc::M_SUBSETS	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_SUBSETS	Number of subsets used by each of the eight BC7 modes.	int
+bc::M_PART	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_PART	Number of partition selector bits for each of the eight BC7 modes.	int
+bc::M_CBITS	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_CBITS	Color endpoint bit width per channel for each of the eight BC7 modes.	int
+bc::M_ABITS	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_ABITS	Alpha endpoint bit width for each of the eight BC7 modes, zero when the mode has no alpha.	int
+bc::M_PBITS	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_PBITS	Per-mode flag giving how the BC7 endpoint p-bits are stored: none, per endpoint, or per subset.	int
+bc::M_IBITS	constant	gfx/bc	/api-library/helium/lib/gfx-bc#M_IBITS	Index bit width for each of the eight BC7 modes.	int
+bc::block_bytes	function	gfx/bc	/api-library/helium/lib/gfx-bc#block_bytes	Returns the bytes per 4x4 block for a format code, or 0 if the format is unsupported.	pub
+bc::size	function	gfx/bc	/api-library/helium/lib/gfx-bc#size	Returns the compressed byte size of a w by h pixel image in the given format, rounding up to whole blocks.	pub
+bc::e5	function	gfx/bc	/api-library/helium/lib/gfx-bc#e5	Expands a 5-bit color value to 8 bits by bit replication.	int
+bc::e6	function	gfx/bc	/api-library/helium/lib/gfx-bc#e6	Expands a 6-bit color value to 8 bits by bit replication.	int
+bc::color_block	function	gfx/bc	/api-library/helium/lib/gfx-bc#color_block	Decodes one BC1-style color block into 16 RGBA pixels, treating it as four-color mode when requested.	int
+bc::alpha_palette	function	gfx/bc	/api-library/helium/lib/gfx-bc#alpha_palette	Fills an 8-entry alpha palette from two endpoint values, using the BC3 and BC4 interpolation rules.	int
+bc::alpha_block	function	gfx/bc	/api-library/helium/lib/gfx-bc#alpha_block	Decodes one BC3-style alpha block into a single channel of 16 pixels at the given offset and stride.	int
+bc::bits	function	gfx/bc	/api-library/helium/lib/gfx-bc#bits	Reads n bits from a block starting at a bit position, least significant bit first.	int
+bc::bc7_anchor	function	gfx/bc	/api-library/helium/lib/gfx-bc#bc7_anchor	Returns whether a pixel index is an anchor index for the given subset count and partition.	int
+bc::bc7_w	function	gfx/bc	/api-library/helium/lib/gfx-bc#bc7_w	Returns the interpolation weight for index k at the given index bit width.	int
+bc::bc7_block	function	gfx/bc	/api-library/helium/lib/gfx-bc#bc7_block	Decodes one BC7 block into 16 RGBA pixels, writing transparent black for an invalid mode.	int
+bc::decode	function	gfx/bc	/api-library/helium/lib/gfx-bc#decode	Decodes block-compressed data into RGBA pixels in out, returning false for an unsupported format, bad size or too little data.	pub
+bc::fetch	function	gfx/bc	/api-library/helium/lib/gfx-bc#fetch	Copies a 4x4 pixel tile from an RGBA image into a buffer, clamping coordinates at the image edges.	int
+bc::c565	function	gfx/bc	/api-library/helium/lib/gfx-bc#c565	Converts RGB values in the 0 to 255 range to a packed RGB565 color with rounding.	int
+bc::clamp255	function	gfx/bc	/api-library/helium/lib/gfx-bc#clamp255	Clamps a real value to the range 0 to 255.	int
+bc::pal4	function	gfx/bc	/api-library/helium/lib/gfx-bc#pal4	Builds the four-color RGB palette for a BC1 block from two RGB565 endpoints.	int
+bc::assign4	function	gfx/bc	/api-library/helium/lib/gfx-bc#assign4	Assigns each of 16 pixels to its nearest palette entry and returns the total squared error.	int
+bc::pack_color	function	gfx/bc	/api-library/helium/lib/gfx-bc#pack_color	Encodes 16 RGBA pixels into a BC1-style color block using a principal axis fit with refinement.	int
+bc::pack_alpha	function	gfx/bc	/api-library/helium/lib/gfx-bc#pack_alpha	Encodes one channel of 16 pixels into a BC3-style alpha block at the given offset.	int
+bc::bq_end	function	gfx/bc	/api-library/helium/lib/gfx-bc#bq_end	Quantizes one BC7 endpoint to 7 bits plus the best p-bit, returning the chosen p-bit.	int
+bc::bq_make	function	gfx/bc	/api-library/helium/lib/gfx-bc#bq_make	Quantizes both endpoints of a BC7 block and computes their expanded values and p-bits.	int
+bc::bq_assign	function	gfx/bc	/api-library/helium/lib/gfx-bc#bq_assign	Assigns 4-bit BC7 indices to 16 pixels and returns the total squared error.	int
+bc::bq_put	function	gfx/bc	/api-library/helium/lib/gfx-bc#bq_put	Appends the low n bits of a value to a block at a running bit position.	int
+bc::pack_bc7	function	gfx/bc	/api-library/helium/lib/gfx-bc#pack_bc7	Encodes 16 RGBA pixels into a BC7 mode 6 block using a principal axis fit with refinement.	int
+bc::encode	function	gfx/bc	/api-library/helium/lib/gfx-bc#encode	Encodes RGBA pixels into block-compressed data in out, returning false for an unsupported format, bad size or too little data.	pub
+bc::srgb_dec	constant	gfx/bc	/api-library/helium/lib/gfx-bc#srgb_dec	Lookup table converting 8-bit sRGB values to linear floating point, filled on first use.	int
+bc::srgb_ok	constant	gfx/bc	/api-library/helium/lib/gfx-bc#srgb_ok	Flag recording whether the sRGB decoding table has been filled.	int
+bc::halve	function	gfx/bc	/api-library/helium/lib/gfx-bc#halve	Downsamples an RGBA image to half size in out, optionally averaging in linear space for sRGB, and returns the new width and height.	pub
+ktx2::Info	type	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#Info	Describes the result of parsing a KTX2 file, including format kind, color space, dimensions, level count, supercompression scheme and error code.	pub
+ktx2::E_NONE	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_NONE	Error code meaning the file parsed successfully with no error.	pub
+ktx2::E_SHORT	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_SHORT	Error code meaning the file is too short to hold the header or level index.	pub
+ktx2::E_MAGIC	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_MAGIC	Error code meaning the file does not start with the KTX2 identifier bytes.	pub
+ktx2::E_FORMAT	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_FORMAT	Error code meaning the file's Vulkan pixel format is not supported.	pub
+ktx2::E_SHAPE	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_SHAPE	Error code meaning dimensions, depth, layers, faces or level count are unsupported or out of range.	pub
+ktx2::E_SCHEME	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_SCHEME	Error code meaning the supercompression scheme is neither none nor zlib.	pub
+ktx2::E_LEVEL	constant	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#E_LEVEL	Error code meaning a mip level entry has an invalid offset, length or uncompressed size.	pub
+ktx2::level_size	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#level_size	Returns the uncompressed byte size of mip level n for the given format kind and base dimensions.	pub
+ktx2::is_ktx2	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#is_ktx2	Returns whether the data begins with the 12-byte KTX2 file identifier.	pub
+ktx2::rd32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#rd32	Reads a little-endian 32-bit integer from the byte slice at the given offset.	int
+ktx2::rd64	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#rd64	Reads a little-endian 64-bit integer at an offset, returning -1 if the value exceeds 31 high bits.	int
+ktx2::vk_kind	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_kind	Maps a Vulkan format code to this module's format kind, returning -1 if unsupported.	int
+ktx2::ktx_fail	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#ktx_fail	Builds an Info value with the given error code and ok set to false.	int
+ktx2::read	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#read	Parses and validates a KTX2 file header and level index, returning an Info with ok false and an error code on failure.	pub
+ktx2::adler32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#adler32	Computes the Adler-32 checksum of the data, used to verify zlib-compressed levels.	int
+ktx2::level	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#level	Extracts mip level n into the output buffer, inflating zlib data and verifying it; returns false on failure.	pub
+ktx2::put16	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put16	Appends a 16-bit value to the output buffer in little-endian order.	int
+ktx2::put32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put32	Appends a 32-bit value to the output buffer in little-endian order.	int
+ktx2::put32be	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put32be	Appends a 32-bit value to the output buffer in big-endian order.	int
+ktx2::put64	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put64	Appends a 64-bit value to the output buffer in little-endian order.	int
+ktx2::sample_count	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#sample_count	Returns the number of data format descriptor samples for a format kind, or 0 if unsupported.	int
+ktx2::vk_of	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_of	Returns the Vulkan format code for a format kind and color space.	int
+ktx2::put_sample	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_sample	Appends one data format descriptor sample entry with bit offset, length, channel and upper bound.	int
+ktx2::put_dfd	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_dfd	Appends the data format descriptor block for a format kind and color space to the output buffer.	int
+ktx2::stored_len	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#stored_len	Returns the byte length of a level when stored, adding zlib stored-block framing if deflate is true.	int
+ktx2::write	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#write	Builds a KTX2 file from level data into the output buffer, optionally zlib-wrapped; returns false on invalid arguments.	pub
