@@ -5203,6 +5203,7 @@ net::cz	function	net/tcp	/api-library/helium/lib/net-tcp#cz	Returns a copy of a 
 net::int_bytes	function	net/tcp	/api-library/helium/lib/net-tcp#int_bytes	Returns the four little-endian bytes of an integer, used for building C structures.	int
 net::tcp_resolve	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_resolve	Resolves a host name and port into up to 16 address entries, returning an empty list on failure.	pub
 net::tcp_open_at	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_open_at	Opens a non-blocking TCP socket and starts connecting to one resolved address entry, returning its descriptor or -1.	pub
+net::tcp_nodelay	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_nodelay	Enables TCP_NODELAY on a socket descriptor so small writes are sent immediately; only called internally when opening connections.	int
 net::tcp_open	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_open	Starts a non-blocking connection to the host and port using the first address that yields a socket, returning -1 on failure.	pub
 net::tcp_poll	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_poll	Polls a descriptor for the given event flags for up to ms milliseconds, returning the resulting event flags or 0.	int
 net::tcp_status	function	net/tcp	/api-library/helium/lib/net-tcp#tcp_status	Checks a connecting socket, returning 0 if still pending, 1 if connected, or -1 on error.	pub
@@ -5240,7 +5241,7 @@ net::g24	function	net/tls	/api-library/helium/lib/net-tls#g24	Reads a 24-bit big
 net::tl_ext	function	net/tls	/api-library/helium/lib/net-tls#tl_ext	Appends a TLS extension with its type and length-prefixed body to a buffer.	int
 net::hsmsg	function	net/tls	/api-library/helium/lib/net-tls#hsmsg	Builds a handshake message with a type byte and 24-bit length prefix around the body.	int
 net::label	function	net/tls	/api-library/helium/lib/net-tls#label	Derives TLS 1.3 key material with HKDF-Expand using a labeled info structure.	int
-net::tl_fail	function	net/tls	/api-library/helium/lib/net-tls#tl_fail	Records an error message, closes the socket and marks the connection failed, returning the error constant.	int
+net::tl_fail	function	net/tls	/api-library/helium/lib/net-tls#tl_fail	Records a fatal handshake error, sends an alert when possible, closes the socket, and returns TLS_ERR.	int
 net::record	function	net/tls	/api-library/helium/lib/net-tls#record	Queues a record in the write buffer, encrypting it when keys are active for the negotiated TLS version.	int
 net::prf	function	net/tls	/api-library/helium/lib/net-tls#prf	Computes the TLS 1.2 pseudo-random function using HMAC to produce the requested number of bytes.	int
 net::seq8	function	net/tls	/api-library/helium/lib/net-tls#seq8	Encodes a 64-bit sequence number as eight big-endian bytes.	int
@@ -5253,6 +5254,7 @@ net::ske_ok	function	net/tls	/api-library/helium/lib/net-tls#ske_ok	Checks a TLS
 net::cv_ok	function	net/tls	/api-library/helium/lib/net-tls#cv_ok	Checks a TLS 1.3 CertificateVerify signature against the leaf certificate key, returning false if invalid.	int
 net::on_hs	function	net/tls	/api-library/helium/lib/net-tls#on_hs	Processes one handshake message according to the current state, verifying certificates and Finished messages and returning the resulting state.	int
 net::on_record	function	net/tls	/api-library/helium/lib/net-tls#on_record	Decrypts and dispatches one incoming record, handling alerts, application data and handshake messages.	int
+net::hs_run	function	net/tls	/api-library/helium/lib/net-tls#hs_run	Processes buffered handshake messages in order until data is incomplete or an error occurs, returning the resulting state.	int
 net::flush	function	net/tls	/api-library/helium/lib/net-tls#flush	Sends buffered outgoing bytes over the socket, returning false on a send error.	int
 net::tls_open	function	net/tls	/api-library/helium/lib/net-tls#tls_open	Starts a TLS connection to a host and port, offering the given ALPN protocol, and returns it without blocking.	pub
 net::stream_open	function	net/tls	/api-library/helium/lib/net-tls#stream_open	Starts a connection that uses TLS when secure is true, or a plain stream otherwise, returning it without blocking.	pub
@@ -5263,6 +5265,17 @@ net::tls_write	function	net/tls	/api-library/helium/lib/net-tls#tls_write	Sends 
 net::tls_read	function	net/tls	/api-library/helium/lib/net-tls#tls_read	Moves received application data into the output buffer and returns the number of bytes moved.	pub
 net::tls_close	function	net/tls	/api-library/helium/lib/net-tls#tls_close	Closes the connection, sending a close alert first if the TLS session is open.	pub
 net::tls_wait	function	net/tls	/api-library/helium/lib/net-tls#tls_wait	Pumps the connection until it leaves the handshake state or the timeout in milliseconds elapses, returning the state.	pub
+net::suite13	function	net/tls	/api-library/helium/lib/net-tls#suite13	Sets the session's cipher suite, hash, AEAD algorithm and key length from a TLS 1.3 suite code.	int
+net::hs_keys	function	net/tls	/api-library/helium/lib/net-tls#hs_keys	Derives handshake traffic secrets from the shared secret and the transcript hash so far.	int
+net::ap_keys	function	net/tls	/api-library/helium/lib/net-tls#ap_keys	Derives client and server application traffic secrets, returning them in that order.	int
+net::cv_msg	function	net/tls	/api-library/helium/lib/net-tls#cv_msg	Builds the signed content for a server CertificateVerify message from the transcript hash.	int
+net::send_hs	function	net/tls	/api-library/helium/lib/net-tls#send_hs	Wraps a handshake body in a message header, adds it to the transcript and queues it for sending.	int
+net::hello	function	net/tls	/api-library/helium/lib/net-tls#hello	Builds and sends a server ServerHello with the given random, session id, cipher suite and key share.	int
+net::on_ch	function	net/tls	/api-library/helium/lib/net-tls#on_ch	Handles a received ClientHello on the server, negotiating parameters and sending the server's handshake flight.	int
+net::tls_feed	function	net/tls	/api-library/helium/lib/net-tls#tls_feed	Feeds handshake bytes received at the given encryption level into a QUIC session and returns its state.	pub
+net::tls_accept	function	net/tls	/api-library/helium/lib/net-tls#tls_accept	Creates a server-side session on an accepted socket using the given certificate, private key and ALPN protocol.	pub
+net::tls_quic	function	net/tls	/api-library/helium/lib/net-tls#tls_quic	Creates a QUIC-mode session, as client or server, carrying transport parameters, with no socket of its own.	pub
+net::tls_start	function	net/tls	/api-library/helium/lib/net-tls#tls_start	Starts the handshake of a QUIC client session by sending its ClientHello.	pub
 net::WS_ERR	constant	net/ws	/api-library/helium/lib/net-ws#WS_ERR	Status value returned by pump and send calls when the connection has failed or hit a protocol error.	pub
 net::WS_CONNECTING	constant	net/ws	/api-library/helium/lib/net-ws#WS_CONNECTING	Status value meaning the WebSocket handshake is still in progress and the connection is not yet usable.	pub
 net::WS_OPEN	constant	net/ws	/api-library/helium/lib/net-ws#WS_OPEN	Status value meaning the handshake finished and the connection is open for sending and receiving messages.	pub
@@ -5487,6 +5500,8 @@ crypto::der_int	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#der_int	P
 crypto::ecdsa_verify_der	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#ecdsa_verify_der	Verifies a DER-encoded ECDSA signature over a message using the chosen hash kind; false means invalid or malformed.	pub
 crypto::rfc6979	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#rfc6979	Derives a deterministic ECDSA nonce from the private key and message digest following RFC 6979.	int
 crypto::ecdsa_sign	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#ecdsa_sign	Signs a message with a deterministic ECDSA nonce, returning fixed-width r||s bytes; false means invalid key or degenerate signature.	pub
+crypto::der_uint	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#der_uint	Encodes a big-endian unsigned integer as a DER INTEGER, trimming leading zeros and adding a zero byte when the high bit is set.	int
+crypto::ecdsa_sign_der	function	crypto/ecc	/api-library/helium/lib/crypto-ecc#ecdsa_sign_der	Signs a message with a private key and returns the signature as DER-encoded ASN.1 SEQUENCE bytes; false means signing failed.	pub
 crypto::strip0	function	crypto/rsa	/api-library/helium/lib/crypto-rsa#strip0	Returns the input bytes with leading zero bytes removed.	int
 crypto::digest_info	function	crypto/rsa	/api-library/helium/lib/crypto-rsa#digest_info	Returns the DER DigestInfo prefix bytes for the given hash kind, defaulting to SHA-512 when unmatched.	int
 crypto::rsa_public	function	crypto/rsa	/api-library/helium/lib/crypto-rsa#rsa_public	Computes the RSA public operation on a signature, returning the result bytes and false if key or signature is invalid.	int
@@ -5521,6 +5536,11 @@ crypto::signed_by	function	crypto/x509	/api-library/helium/lib/crypto-x509#signe
 crypto::ipv4	function	crypto/x509	/api-library/helium/lib/crypto-x509#ipv4	Parses a dotted-decimal IPv4 address into four bytes, returning an empty array if malformed.	int
 crypto::name_ok	function	crypto/x509	/api-library/helium/lib/crypto-x509#name_ok	Returns whether a certificate's DNS or IP alternative names match a host, with case-insensitive and single-label wildcard matching.	int
 crypto::x509_verify	function	crypto/x509	/api-library/helium/lib/crypto-x509#x509_verify	Verifies a certificate chain against trusted roots for a host at a given time, returning one of the X509_ result codes.	pub
+crypto::der_tlv	function	crypto/x509	/api-library/helium/lib/crypto-x509#der_tlv	Encodes a DER tag-length-value element from a tag and body, using the shortest length form up to three length bytes.	int
+crypto::x509_date	function	crypto/x509	/api-library/helium/lib/crypto-x509#x509_date	Encodes a Unix timestamp in seconds as a DER UTCTime or GeneralizedTime value, choosing by year.	int
+crypto::x509_self_signed	function	crypto/x509	/api-library/helium/lib/crypto-x509#x509_self_signed	Builds a self-signed P-256 X.509 certificate for a name or IPv4 address, valid for the given days; false on failure.	pub
+crypto::pkcs8_ec	function	crypto/x509	/api-library/helium/lib/crypto-x509#pkcs8_ec	Encodes a P-256 or P-384 private key as PKCS#8 DER, choosing the curve by key length; false on failure.	pub
+crypto::pkcs8_ec_parse	function	crypto/x509	/api-library/helium/lib/crypto-x509#pkcs8_ec_parse	Parses PKCS#8 or SEC1 EC private key DER, returning the raw key bytes and curve id, or 0 if invalid.	pub
 crypto::Mont	type	crypto/bn	/api-library/helium/lib/crypto-bn#Mont	Holds precomputed Montgomery context for an odd modulus: limbs, word inverse, R squared, one, and bit length.	pub
 crypto::bn_from	function	crypto/bn	/api-library/helium/lib/crypto-bn#bn_from	Converts big-endian bytes into a little-endian array of k 32-bit limbs, dropping bytes that overflow k limbs.	pub
 crypto::bn_bytes	function	crypto/bn	/api-library/helium/lib/crypto-bn#bn_bytes	Converts limbs into a big-endian byte array of exactly n bytes, zero-padding or truncating high bytes.	pub
@@ -6048,3 +6068,98 @@ cloth::particle	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#particle	Re
 cloth::stretch_now	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#stretch_now	Returns the largest edge stretch ratio of a cloth, at least 1.	pub
 cloth::speed	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#speed	Returns the average particle speed of a cloth, or 0 when it has no particles.	pub
 cloth::bounds	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#bounds	Returns the axis-aligned bounding box of a cloth as min x, y, z then max x, y, z.	pub
+net::QUIC_HANDSHAKE	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_HANDSHAKE	Constant for a connection still performing its handshake before application data can flow.	pub
+net::QUIC_OPEN	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_OPEN	Constant for a connection whose handshake finished and which can carry stream data.	pub
+net::QUIC_CLOSING	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_CLOSING	Constant for a connection that sent a close and is waiting out its closing period.	pub
+net::QUIC_DRAINING	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_DRAINING	Constant for a connection that received a close from the peer and is draining.	pub
+net::QUIC_CLOSED	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_CLOSED	Constant for a connection that is fully closed and can be discarded.	pub
+net::QMAXD	constant	net/quic	/api-library/helium/lib/net-quic#QMAXD	Maximum datagram size in bytes used when building outgoing packets and sizing congestion window steps.	int
+net::QStream	type	net/quic	/api-library/helium/lib/net-quic#QStream	Per-stream state holding send and receive buffers, acknowledged ranges, flow control limits and reset flags.	int
+net::QSent	type	net/quic	/api-library/helium/lib/net-quic#QSent	Record of a sent packet holding its number, send time, size and the frames it carried.	int
+net::QSpace	type	net/quic	/api-library/helium/lib/net-quic#QSpace	Per-encryption-level packet space holding keys, receive ranges, sent packets and acknowledgment timing state.	int
+net::Quic	type	net/quic	/api-library/helium/lib/net-quic#Quic	Connection object holding all state for one QUIC endpoint, passed to the other functions in this module.	pub
+net::qk_set	function	net/quic	/api-library/helium/lib/net-quic#qk_set	Copies all key material from one packet protection key set into another.	int
+net::rs_add	function	net/quic	/api-library/helium/lib/net-quic#rs_add	Adds a half-open range of integers to a sorted range list, merging overlaps.	int
+net::rs_has	function	net/quic	/api-library/helium/lib/net-quic#rs_has	Returns whether a value falls inside any range of a sorted range list.	int
+net::rs_gap	function	net/quic	/api-library/helium/lib/net-quic#rs_gap	Finds the first uncovered gap within a span of a range list, returning the span end pair when none.	int
+net::rs_shift	function	net/quic	/api-library/helium/lib/net-quic#rs_shift	Removes the first range from a range list.	int
+net::qs_new	function	net/quic	/api-library/helium/lib/net-quic#qs_new	Creates a stream with the given id, send limit and receive window.	int
+net::qs_write	function	net/quic	/api-library/helium/lib/net-quic#qs_write	Appends data to a stream's send buffer, compacting consumed bytes when the buffer grows large.	int
+net::qs_acked	function	net/quic	/api-library/helium/lib/net-quic#qs_acked	Records that a stream byte range was acknowledged and advances the send buffer past contiguous acknowledged data.	int
+net::qs_recv	function	net/quic	/api-library/helium/lib/net-quic#qs_recv	Stores received stream data at its offset, ignoring bytes already consumed and tracking which ranges arrived.	int
+net::qs_avail	function	net/quic	/api-library/helium/lib/net-quic#qs_avail	Returns the number of contiguous received bytes ready to be read from a stream.	int
+net::qs_take	function	net/quic	/api-library/helium/lib/net-quic#qs_take	Moves contiguous received bytes from a stream into an output buffer and returns the count.	int
+net::q_pto	function	net/quic	/api-library/helium/lib/net-quic#q_pto	Returns the probe timeout in seconds for a packet space, including peer ack delay for the application level.	int
+net::q_end	function	net/quic	/api-library/helium/lib/net-quic#q_end	Starts closing the connection with an error code and reason unless it is already closing.	int
+net::q_drop	function	net/quic	/api-library/helium/lib/net-quic#q_drop	Discards the keys and sent packet tracking for a packet space, releasing its in-flight bytes.	int
+net::q_new	function	net/quic	/api-library/helium/lib/net-quic#q_new	Creates a connection with default parameters, a random connection id and transport settings for a client or server.	int
+net::quic_client	function	net/quic	/api-library/helium/lib/net-quic#quic_client	Creates a client connection to a host with the given protocol name and pinned certificate value.	pub
+net::quic_server	function	net/quic	/api-library/helium/lib/net-quic#quic_server	Creates a server connection using the given certificate, private key and protocol name.	pub
+net::q_pull	function	net/quic	/api-library/helium/lib/net-quic#q_pull	Moves handshake output and derived keys from the TLS engine into the QUIC layer and validates peer parameters.	int
+net::q_tls	function	net/quic	/api-library/helium/lib/net-quic#q_tls	Creates and starts the TLS engine for the connection using its transport parameters.	int
+net::q_find	function	net/quic	/api-library/helium/lib/net-quic#q_find	Returns the index of the stream with the given id, or -1 if not found.	int
+net::q_stream	function	net/quic	/api-library/helium/lib/net-quic#q_stream	Finds or creates a peer-initiated stream by id, closing the connection on illegal or over-limit ids.	int
+net::quic_open	function	net/quic	/api-library/helium/lib/net-quic#quic_open	Opens a new locally initiated bidirectional or unidirectional stream and returns its id, or -1 if unavailable.	pub
+net::q_credit	function	net/quic	/api-library/helium/lib/net-quic#q_credit	Raises the connection receive limit and schedules an update once enough data has been read.	int
+net::q_done	function	net/quic	/api-library/helium/lib/net-quic#q_done	Frees a stream's bookkeeping and grants the peer more stream credit once both directions are finished.	int
+net::q_sdata	function	net/quic	/api-library/helium/lib/net-quic#q_sdata	Handles received stream data, enforcing final size and flow control limits and storing the bytes.	int
+net::q_requeue	function	net/quic	/api-library/helium/lib/net-quic#q_requeue	Requeues the frames of a lost sent packet for retransmission.	int
+net::q_compact	function	net/quic	/api-library/helium/lib/net-quic#q_compact	Removes acknowledged or lost entries from a packet space's sent list.	int
+net::q_lost	function	net/quic	/api-library/helium/lib/net-quic#q_lost	Declares packets lost by time or packet threshold, requeues them and reduces the congestion window.	int
+net::q_ack	function	net/quic	/api-library/helium/lib/net-quic#q_ack	Processes an acknowledgment frame, freeing sent packets, updating round trip estimates and growing the congestion window.	int
+net::q_frame	function	net/quic	/api-library/helium/lib/net-quic#q_frame	Handles one decoded frame according to its type, updating connection and stream state.	int
+net::q_open	function	net/quic	/api-library/helium/lib/net-quic#q_open	Decrypts a packet in a space, trying the next key phase when needed.	int
+net::quic_rekey	function	net/quic	/api-library/helium/lib/net-quic#quic_rekey	Rotates the application keys to the next key phase, returning false if the handshake is not confirmed or the connection is not open.	pub
+net::q_packet	function	net/quic	/api-library/helium/lib/net-quic#q_packet	Parses, decrypts and processes one packet from a datagram and returns the number of bytes consumed.	int
+net::quic_recv	function	net/quic	/api-library/helium/lib/net-quic#quic_recv	Processes a received UDP datagram at the given time, handling each coalesced packet in it.	pub
+net::q_ackf	function	net/quic	/api-library/helium/lib/net-quic#q_ackf	Builds an acknowledgment frame for a packet space from its received ranges.	int
+net::q_emit	function	net/quic	/api-library/helium/lib/net-quic#q_emit	Writes stream or crypto data frames into a packet buffer, preferring retransmissions, and records them as sent.	int
+net::q_ctl	function	net/quic	/api-library/helium/lib/net-quic#q_ctl	Encodes a simple control frame with up to three integer fields into a buffer.	int
+net::q_note	function	net/quic	/api-library/helium/lib/net-quic#q_note	Records a non-stream control frame entry in a sent packet's frame list.	int
+net::q_app	function	net/quic	/api-library/helium/lib/net-quic#q_app	Writes pending control frames and stream data for the application level into a packet payload.	int
+net::q_frames	function	net/quic	/api-library/helium/lib/net-quic#q_frames	Builds the frame payload for one packet space, including acknowledgments, data and probes, or empty if nothing to send.	int
+net::q_closef	function	net/quic	/api-library/helium/lib/net-quic#q_closef	Builds a connection close frame payload for a packet space.	int
+net::q_min	function	net/quic	/api-library/helium/lib/net-quic#q_min	Returns the smaller of two times, treating zero as unset.	int
+net::q_timer	function	net/quic	/api-library/helium/lib/net-quic#q_timer	Computes the next loss or probe timer deadline, its packet space and whether it is a loss timer.	int
+net::q_timers	function	net/quic	/api-library/helium/lib/net-quic#q_timers	Applies expired idle, closing, loss and probe timers to the connection.	int
+net::quic_timeout	function	net/quic	/api-library/helium/lib/net-quic#quic_timeout	Returns the time of the next event the connection needs handled, or 0.0 if closed.	pub
+net::quic_send	function	net/quic	/api-library/helium/lib/net-quic#quic_send	Builds the next outgoing UDP datagram into the output buffer, returning false if there is nothing to send.	pub
+net::quic_state	function	net/quic	/api-library/helium/lib/net-quic#quic_state	Returns the connection's current state value.	pub
+net::quic_close	function	net/quic	/api-library/helium/lib/net-quic#quic_close	Closes the connection with an application error code and reason sent to the peer.	pub
+net::quic_write	function	net/quic	/api-library/helium/lib/net-quic#quic_write	Appends data to a stream's send buffer, returning false if the stream is unknown, finished, reset or the connection is closing.	pub
+net::quic_fin	function	net/quic	/api-library/helium/lib/net-quic#quic_fin	Marks the end of a stream's send side, returning false if the stream is unknown or reset.	pub
+net::quic_read	function	net/quic	/api-library/helium/lib/net-quic#quic_read	Reads available stream data into an output buffer and returns the byte count, or -1 if the stream is unknown.	pub
+net::quic_stream	function	net/quic	/api-library/helium/lib/net-quic#quic_stream	Returns a bit flag set describing a stream's readable, finished, reset, stop-requested and acknowledged status, or -1 if unknown.	pub
+net::quic_unsent	function	net/quic	/api-library/helium/lib/net-quic#quic_unsent	Returns the number of written stream bytes not yet acknowledged by the peer.	pub
+net::quic_reset	function	net/quic	/api-library/helium/lib/net-quic#quic_reset	Abruptly ends a stream's send side with an error code.	pub
+net::quic_stop	function	net/quic	/api-library/helium/lib/net-quic#quic_stop	Asks the peer to stop sending on a stream with an error code.	pub
+net::quic_accept	function	net/quic	/api-library/helium/lib/net-quic#quic_accept	Returns the next peer-initiated stream id not yet accepted, or -1 if none is pending.	pub
+net::QF_NV	constant	net/quic_wire	/api-library/helium/lib/net-quic_wire#QF_NV	Lookup string giving how many variable-length integer fields each QUIC frame type carries, indexed by frame type.	int
+net::QKeys	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QKeys	Holds the cipher algorithm, hash, secret, key, IV, and header-protection key for one QUIC encryption level.	pub
+net::QOpen	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QOpen	Result of opening a protected packet, with success flag, packet number, first header byte, and decrypted payload.	pub
+net::QHdr	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QHdr	Parsed QUIC packet header with validity flag, form, type, version, connection IDs, token, packet number offset, and end offset.	pub
+net::QFrame	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QFrame	A QUIC frame with its type, numeric fields, fin flag, payload data, token bytes, and ranges.	pub
+net::QRd	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QRd	Read cursor holding the current offset and a flag set when a variable-length read fails.	int
+net::QParams	type	net/quic_wire	/api-library/helium/lib/net-quic_wire#QParams	QUIC transport parameter set with integer values, a bitmask of received IDs, and connection ID fields.	pub
+net::qv_len	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qv_len	Returns the number of bytes needed to encode a value as a QUIC variable-length integer.	pub
+net::qv_put	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qv_put	Appends a value to a byte list as a QUIC variable-length integer.	pub
+net::qv_get	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qv_get	Decodes a variable-length integer at an offset, returning the value and next offset, or -1 and the same offset on failure.	pub
+net::qr	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qr	Reads a variable-length integer at the cursor and advances it, setting the bad flag and returning 0 on failure.	int
+net::qk_from	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qk_from	Returns packet keys derived from a TLS traffic secret according to the given cipher suite.	pub
+net::qk_initial	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qk_initial	Returns the initial packet keys derived from the destination connection ID for the client or server side.	pub
+net::qk_update	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qk_update	Returns the next-generation keys for a key update, keeping the same header-protection key.	pub
+net::qp_mask	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qp_mask	Returns the header-protection mask computed from a ciphertext sample using the key's cipher.	int
+net::qp_nonce	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qp_nonce	Returns the per-packet AEAD nonce by XORing the packet number into the key's IV.	int
+net::qp_pn	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qp_pn	Returns the full packet number reconstructed from truncated bits and the largest number received so far.	int
+net::qp_seal	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qp_seal	Returns an encrypted packet with header protection applied, or an empty result if sealing fails or the packet is too short.	pub
+net::qp_open	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qp_open	Returns the result of removing header protection and decrypting a packet, with ok false when authentication fails.	pub
+net::qh_pn	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qh_pn	Appends the truncated packet number bytes to a header being built.	int
+net::qh_long	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qh_long	Returns a long-form QUIC header for the given packet type, connection IDs, token, packet number, and payload length.	pub
+net::qh_short	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qh_short	Returns a short-form QUIC header with the destination connection ID, key phase, and packet number.	pub
+net::qh_parse	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qh_parse	Returns a parsed header from a packet, with ok false when the packet is malformed or truncated.	pub
+net::qf_put	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qf_put	Appends the wire encoding of a QUIC frame to a byte list.	pub
+net::qf_get	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qf_get	Decodes a QUIC frame at an offset, returning the frame and next offset, or -1 offset on malformed input.	pub
+net::qtp_new	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_new	Returns transport parameters initialized with default values.	pub
+net::qtp_bytes	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_bytes	Appends one transport parameter with its ID and length-prefixed raw value to a byte list.	int
+net::qtp_put	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_put	Returns the encoded transport parameters, including the original destination connection ID only when encoding for a server.	pub
+net::qtp_get	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_get	Decodes transport parameters, returning them with a flag that is false when data is invalid or violates limits.	pub
