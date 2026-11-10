@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-c25519">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-c25519">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=d47db11dd9">
+<link rel="stylesheet" href="/api-library/lib.css?v=7a3bf9087f">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=d47db11dd9'; start({wasm: '/api-library/search.wasm?v=d47db11dd9'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=7a3bf9087f'; start({wasm: '/api-library/search.wasm?v=7a3bf9087f'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/c25519</h1>
 <p class="lib-lede">X25519 key exchange and Ed25519 signatures.</p>
-<p class="lib-meta"><code>import crypto.c25519;</code> &middot; <code>crypto::</code> &middot; 28 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.c25519;</code> &middot; <code>crypto::</code> &middot; 28 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#x25519-key-exchange">X25519 Key Exchange <span class="n">2</span></a></li>
 <li><a href="#ed25519-signatures">Ed25519 Signatures <span class="n">3</span></a></li>
@@ -114,177 +114,177 @@
 <h3><a href="#x25519">x25519</a> <i>function</i></h3>
 <pre>x25519(k const byte[:], u const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 32-byte X25519 shared secret from a 32-byte private scalar and a peer's public u-coordinate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L51">hc/lib/crypto/c25519.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L51">hc/lib/crypto/c25519.he:51</a>
 </article>
 <article class="sym" id="x25519_base">
 <h3><a href="#x25519_base">x25519_base</a> <i>function</i></h3>
 <pre>x25519_base(k const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 32-byte X25519 public key for a private scalar, using the base point 9.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L60">hc/lib/crypto/c25519.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L60">hc/lib/crypto/c25519.he:60</a>
 </article>
 <h2 id="ed25519-signatures">Ed25519 Signatures <span class="n">3</span></h2>
 <article class="sym" id="ed25519_public">
 <h3><a href="#ed25519_public">ed25519_public</a> <i>function</i></h3>
 <pre>ed25519_public(seed const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 32-byte Ed25519 public key derived from a 32-byte seed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L85">hc/lib/crypto/c25519.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L85">hc/lib/crypto/c25519.he:85</a>
 </article>
 <article class="sym" id="ed25519_sign">
 <h3><a href="#ed25519_sign">ed25519_sign</a> <i>function</i></h3>
 <pre>ed25519_sign(seed const byte[:], m const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 64-byte Ed25519 signature of a message made with a 32-byte seed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L86">hc/lib/crypto/c25519.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L86">hc/lib/crypto/c25519.he:86</a>
 </article>
 <article class="sym" id="ed25519_verify">
 <h3><a href="#ed25519_verify">ed25519_verify</a> <i>function</i></h3>
 <pre>ed25519_verify(pk const byte[:], m const byte[:], sig const byte[:]) bool</pre>
 <p>Returns whether a 64-byte signature is valid for a message under a 32-byte public key; false if invalid or malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L112">hc/lib/crypto/c25519.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L112">hc/lib/crypto/c25519.he:112</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (24)</summary>
 <article class="sym" id="Ep">
 <h3><a href="#Ep">Ep</a> <i>type</i></h3>
 <pre>struct Ep { x int[16] = [0; 16], y int[16] = [0; 16], z int[16] = [0; 16], t int[16] = [0; 16] }</pre>
 <p>Extended-coordinate point on the Ed25519 curve, holding x, y, z and t field elements.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L13">hc/lib/crypto/c25519.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L13">hc/lib/crypto/c25519.he:13</a>
 </article>
 <article class="sym" id="car">
 <h3><a href="#car">car</a> <i>function</i></h3>
 <pre>car(o int[16]&amp;)</pre>
 <p>Carries and normalizes a 16-limb field element in place after arithmetic.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L14">hc/lib/crypto/c25519.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L14">hc/lib/crypto/c25519.he:14</a>
 </article>
 <article class="sym" id="fsel">
 <h3><a href="#fsel">fsel</a> <i>function</i></h3>
 <pre>fsel(p int[16]&amp;, q int[16]&amp;, b int)</pre>
 <p>Swaps two field elements in constant time when b is 1, leaving them unchanged when 0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L19">hc/lib/crypto/c25519.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L19">hc/lib/crypto/c25519.he:19</a>
 </article>
 <article class="sym" id="fa">
 <h3><a href="#fa">fa</a> <i>function</i></h3>
 <pre>fa(a int[16], b int[16]) int[16]</pre>
 <p>Returns the limb-wise sum of two field elements without carrying.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L22">hc/lib/crypto/c25519.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L22">hc/lib/crypto/c25519.he:22</a>
 </article>
 <article class="sym" id="fz">
 <h3><a href="#fz">fz</a> <i>function</i></h3>
 <pre>fz(a int[16], b int[16]) int[16]</pre>
 <p>Returns the limb-wise difference of two field elements without carrying.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L23">hc/lib/crypto/c25519.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L23">hc/lib/crypto/c25519.he:23</a>
 </article>
 <article class="sym" id="fm">
 <h3><a href="#fm">fm</a> <i>function</i></h3>
 <pre>fm(a int[16], b int[16]) int[16]</pre>
 <p>Returns the product of two field elements, reduced modulo 2^255 - 19.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L24">hc/lib/crypto/c25519.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L24">hc/lib/crypto/c25519.he:24</a>
 </article>
 <article class="sym" id="fs">
 <h3><a href="#fs">fs</a> <i>function</i></h3>
 <pre>fs(a int[16]) int[16]</pre>
 <p>Returns the square of a field element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L30">hc/lib/crypto/c25519.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L30">hc/lib/crypto/c25519.he:30</a>
 </article>
 <article class="sym" id="finv">
 <h3><a href="#finv">finv</a> <i>function</i></h3>
 <pre>finv(i int[16]) int[16]</pre>
 <p>Returns the modular inverse of a field element via exponentiation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L31">hc/lib/crypto/c25519.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L31">hc/lib/crypto/c25519.he:31</a>
 </article>
 <article class="sym" id="fpow2523">
 <h3><a href="#fpow2523">fpow2523</a> <i>function</i></h3>
 <pre>fpow2523(i int[16]) int[16]</pre>
 <p>Returns a field element raised to the power (p-5)/8, used for square roots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L35">hc/lib/crypto/c25519.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L35">hc/lib/crypto/c25519.he:35</a>
 </article>
 <article class="sym" id="fpack">
 <h3><a href="#fpack">fpack</a> <i>function</i></h3>
 <pre>fpack(n int[16]) byte[&gt;..]</pre>
 <p>Returns the canonical 32-byte little-endian encoding of a field element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L39">hc/lib/crypto/c25519.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L39">hc/lib/crypto/c25519.he:39</a>
 </article>
 <article class="sym" id="funpack">
 <h3><a href="#funpack">funpack</a> <i>function</i></h3>
 <pre>funpack(n const byte[:]) int[16]</pre>
 <p>Returns a field element decoded from 32 little-endian bytes, ignoring the top bit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L48">hc/lib/crypto/c25519.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L48">hc/lib/crypto/c25519.he:48</a>
 </article>
 <article class="sym" id="fneq">
 <h3><a href="#fneq">fneq</a> <i>function</i></h3>
 <pre>fneq(a int[16], b int[16]) bool</pre>
 <p>Returns whether two field elements differ, comparing their packed forms in constant time.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L49">hc/lib/crypto/c25519.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L49">hc/lib/crypto/c25519.he:49</a>
 </article>
 <article class="sym" id="fpar">
 <h3><a href="#fpar">fpar</a> <i>function</i></h3>
 <pre>fpar(a int[16]) int</pre>
 <p>Returns the parity, 0 or 1, of a field element's canonical value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L50">hc/lib/crypto/c25519.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L50">hc/lib/crypto/c25519.he:50</a>
 </article>
 <article class="sym" id="epadd">
 <h3><a href="#epadd">epadd</a> <i>function</i></h3>
 <pre>epadd(p Ep&amp;, q Ep)</pre>
 <p>Adds point q to point p in place using extended coordinates.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L61">hc/lib/crypto/c25519.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L61">hc/lib/crypto/c25519.he:61</a>
 </article>
 <article class="sym" id="epswap">
 <h3><a href="#epswap">epswap</a> <i>function</i></h3>
 <pre>epswap(p Ep&amp;, q Ep&amp;, b int)</pre>
 <p>Swaps two curve points in constant time when b is 1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L64">hc/lib/crypto/c25519.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L64">hc/lib/crypto/c25519.he:64</a>
 </article>
 <article class="sym" id="eppack">
 <h3><a href="#eppack">eppack</a> <i>function</i></h3>
 <pre>eppack(p Ep) byte[&gt;..]</pre>
 <p>Returns the 32-byte compressed encoding of a curve point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L65">hc/lib/crypto/c25519.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L65">hc/lib/crypto/c25519.he:65</a>
 </article>
 <article class="sym" id="epmul">
 <h3><a href="#epmul">epmul</a> <i>function</i></h3>
 <pre>epmul(q0 Ep, s const byte[:]) Ep</pre>
 <p>Returns a curve point multiplied by a 32-byte little-endian scalar.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L66">hc/lib/crypto/c25519.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L66">hc/lib/crypto/c25519.he:66</a>
 </article>
 <article class="sym" id="epbase">
 <h3><a href="#epbase">epbase</a> <i>function</i></h3>
 <pre>epbase(s const byte[:]) Ep</pre>
 <p>Returns the Ed25519 base point multiplied by a scalar.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L70">hc/lib/crypto/c25519.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L70">hc/lib/crypto/c25519.he:70</a>
 </article>
 <article class="sym" id="modl">
 <h3><a href="#modl">modl</a> <i>function</i></h3>
 <pre>modl(x int[64]&amp;) byte[&gt;..]</pre>
 <p>Reduces a 64-limb integer modulo the group order L and returns it as 32 bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L71">hc/lib/crypto/c25519.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L71">hc/lib/crypto/c25519.he:71</a>
 </article>
 <article class="sym" id="reduce64">
 <h3><a href="#reduce64">reduce64</a> <i>function</i></h3>
 <pre>reduce64(h const byte[:]) byte[&gt;..]</pre>
 <p>Returns a 64-byte hash reduced modulo the group order L as 32 bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L83">hc/lib/crypto/c25519.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L83">hc/lib/crypto/c25519.he:83</a>
 </article>
 <article class="sym" id="ed_secret">
 <h3><a href="#ed_secret">ed_secret</a> <i>function</i></h3>
 <pre>ed_secret(seed const byte[:]) byte[&gt;..]</pre>
 <p>Returns the SHA-512 expansion of a seed with the scalar bits clamped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L84">hc/lib/crypto/c25519.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L84">hc/lib/crypto/c25519.he:84</a>
 </article>
 <article class="sym" id="unpackneg">
 <h3><a href="#unpackneg">unpackneg</a> <i>function</i></h3>
 <pre>unpackneg(p const byte[:], r Ep&amp;) bool</pre>
 <p>Decodes a compressed public key into the negated curve point r, returning false if it is not on the curve.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L92">hc/lib/crypto/c25519.he:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L92">hc/lib/crypto/c25519.he:92</a>
 </article>
 <article class="sym" id="small_order">
 <h3><a href="#small_order">small_order</a> <i>function</i></h3>
 <pre>small_order(q Ep) bool</pre>
 <p>Returns whether a curve point has small order, meaning it is unsafe as a public key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L101">hc/lib/crypto/c25519.he:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L101">hc/lib/crypto/c25519.he:101</a>
 </article>
 <article class="sym" id="s_canonical">
 <h3><a href="#s_canonical">s_canonical</a> <i>function</i></h3>
 <pre>s_canonical(s const byte[:]) bool</pre>
 <p>Returns whether a signature scalar is canonical, meaning strictly less than the group order L.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/crypto/c25519.he#L105">hc/lib/crypto/c25519.he:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/c25519.he#L105">hc/lib/crypto/c25519.he:105</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
