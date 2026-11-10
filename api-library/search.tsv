@@ -6076,6 +6076,7 @@ net::QUIC_CLOSED	constant	net/quic	/api-library/helium/lib/net-quic#QUIC_CLOSED	
 net::QMAXD	constant	net/quic	/api-library/helium/lib/net-quic#QMAXD	Maximum datagram size in bytes used when building outgoing packets and sizing congestion window steps.	int
 net::QStream	type	net/quic	/api-library/helium/lib/net-quic#QStream	Per-stream state holding send and receive buffers, acknowledged ranges, flow control limits and reset flags.	int
 net::QSent	type	net/quic	/api-library/helium/lib/net-quic#QSent	Record of a sent packet holding its number, send time, size and the frames it carried.	int
+net::QRec	type	net/quic	/api-library/helium/lib/net-quic#QRec	Record of a sent packet kept for loss detection, holding its packet number, send time, size, and offset and count of its frame data.	int
 net::QSpace	type	net/quic	/api-library/helium/lib/net-quic#QSpace	Per-encryption-level packet space holding keys, receive ranges, sent packets and acknowledgment timing state.	int
 net::Quic	type	net/quic	/api-library/helium/lib/net-quic#Quic	Connection object holding all state for one QUIC endpoint, passed to the other functions in this module.	pub
 net::qk_set	function	net/quic	/api-library/helium/lib/net-quic#qk_set	Copies all key material from one packet protection key set into another.	int
@@ -6163,3 +6164,20 @@ net::qtp_new	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_ne
 net::qtp_bytes	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_bytes	Appends one transport parameter with its ID and length-prefixed raw value to a byte list.	int
 net::qtp_put	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_put	Returns the encoded transport parameters, including the original destination connection ID only when encoding for a server.	pub
 net::qtp_get	function	net/quic_wire	/api-library/helium/lib/net-quic_wire#qtp_get	Decodes transport parameters, returning them with a flag that is false when data is invalid or violates limits.	pub
+net::QEp	type	net/quic_ep	/api-library/helium/lib/net-quic_ep#QEp	Holds a UDP socket and the set of QUIC connections, with optional server credentials, served on one port.	pub
+net::qe_bind	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_bind	Returns a QUIC endpoint whose UDP socket is bound to the given address.	pub
+net::qe_serve	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_serve	Enables server mode with a certificate, key and ALPN; returns false unless the key is a P-256 EC key.	pub
+net::qe_slot	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_slot	Returns the index of a free connection slot for the peer address, growing the table if needed.	int
+net::qe_dial	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_dial	Starts a client connection to an address with host, ALPN and pin, returning its connection slot index.	pub
+net::qe_free	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_free	Releases the connection slot at the given index, ignoring indexes that are out of range or already empty.	pub
+net::qe_find	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_find	Returns the slot index of the connection matching a connection ID, or -1 if none matches.	int
+net::qe_vn	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_vn	Sends a version negotiation packet to the peer in reply to an unsupported QUIC version.	int
+net::qe_first	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_first	Returns whether a datagram is a valid client Initial packet that can be opened with its initial keys.	int
+net::qe_route	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_route	Routes a received datagram to its connection, creating a server connection for a valid new Initial packet.	int
+net::qe_timeout	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_timeout	Returns the earliest nonzero connection timeout across all connections, or 0.0 if none is pending.	int
+net::qe_flush	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_flush	Sends all pending outgoing packets for every connection and frees closed connections that were already handed out.	pub
+net::qe_poll	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_poll	Waits up to the given milliseconds for datagrams, routes them, flushes output, and returns how many were received.	pub
+net::qe_next	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_next	Returns the index of the next newly opened connection not yet handed out, or -1 if none.	pub
+net::qe_port	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_port	Returns the local UDP port the endpoint socket is bound to.	pub
+net::qe_same	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_same	Returns how many active connections have the same IP address as the given address.	pub
+net::qe_close	function	net/quic_ep	/api-library/helium/lib/net-quic_ep#qe_close	Closes the endpoint's UDP socket and marks it as closed.	pub

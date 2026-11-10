@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>net/quic_ep | AMNI-SCIENT</title>
+<meta name="description" content="Lets a program run a QUIC endpoint over UDP, accepting or dialing multiple encrypted client and server connections on one socket.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="net/quic_ep">
+<meta property="og:description" content="Lets a program run a QUIC endpoint over UDP, accepting or dialing multiple encrypted client and server connections on one socket.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-quic_ep">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-quic_ep">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=282377af47">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=282377af47'; start({wasm: '/api-library/search.wasm?v=282377af47'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/network">Networking</a> <span>&rsaquo;</span> net/quic_ep</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>net/quic_ep</h1>
+<p class="lib-lede">Lets a program run a QUIC endpoint over UDP, accepting or dialing multiple encrypted client and server connections on one socket.</p>
+<p class="lib-meta"><code>import net.quic_ep;</code> &middot; <code>net::</code> &middot; 16 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#quic-endpoint">QUIC Endpoint <span class="n">5</span></a></li>
+<li><a href="#connection-handling">Connection Handling <span class="n">4</span></a></li>
+<li><a href="#packet-processing">Packet Processing <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="quic-endpoint">QUIC Endpoint <span class="n">5</span></h2>
+<article class="sym" id="QEp">
+<h3><a href="#QEp">QEp</a> <i>type</i></h3>
+<pre>struct QEp { fd int = -1, srv bool = false, cert byte[&gt;..] = [], key byte[&gt;..] = [], alpn byte[&gt;..] = [], c Quic[&gt;..][&gt;..] = [], to Addr[&gt;..] = [], given bool[&gt;..] = [], buf byte[&gt;..] = [], out byte[&gt;..] = [], maxc int = 200, n int = 0 }</pre>
+<p>Holds a UDP socket and the set of QUIC connections, with optional server credentials, served on one port.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L8">hc/lib/net/quic_ep.he:8</a>
+</article>
+<article class="sym" id="qe_bind">
+<h3><a href="#qe_bind">qe_bind</a> <i>function</i></h3>
+<pre>qe_bind(a Addr) QEp</pre>
+<p>Returns a QUIC endpoint whose UDP socket is bound to the given address.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L9">hc/lib/net/quic_ep.he:9</a>
+</article>
+<article class="sym" id="qe_serve">
+<h3><a href="#qe_serve">qe_serve</a> <i>function</i></h3>
+<pre>qe_serve(e QEp&amp;, cert const byte[:], key const byte[:], alpn const byte[:]) bool</pre>
+<p>Enables server mode with a certificate, key and ALPN; returns false unless the key is a P-256 EC key.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L10">hc/lib/net/quic_ep.he:10</a>
+</article>
+<article class="sym" id="qe_port">
+<h3><a href="#qe_port">qe_port</a> <i>function</i></h3>
+<pre>qe_port(e QEp&amp;) int</pre>
+<p>Returns the local UDP port the endpoint socket is bound to.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L67">hc/lib/net/quic_ep.he:67</a>
+</article>
+<article class="sym" id="qe_close">
+<h3><a href="#qe_close">qe_close</a> <i>function</i></h3>
+<pre>qe_close(e QEp&amp;)</pre>
+<p>Closes the endpoint's UDP socket and marks it as closed.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L69">hc/lib/net/quic_ep.he:69</a>
+</article>
+<h2 id="connection-handling">Connection Handling <span class="n">4</span></h2>
+<article class="sym" id="qe_dial">
+<h3><a href="#qe_dial">qe_dial</a> <i>function</i></h3>
+<pre>qe_dial(e QEp&amp;, to Addr, host const byte[:], alpn const byte[:], pin const byte[:]) int</pre>
+<p>Starts a client connection to an address with host, ALPN and pin, returning its connection slot index.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L21">hc/lib/net/quic_ep.he:21</a>
+</article>
+<article class="sym" id="qe_free">
+<h3><a href="#qe_free">qe_free</a> <i>function</i></h3>
+<pre>qe_free(e QEp&amp;, i int)</pre>
+<p>Releases the connection slot at the given index, ignoring indexes that are out of range or already empty.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L22">hc/lib/net/quic_ep.he:22</a>
+</article>
+<article class="sym" id="qe_next">
+<h3><a href="#qe_next">qe_next</a> <i>function</i></h3>
+<pre>qe_next(e QEp&amp;) int</pre>
+<p>Returns the index of the next newly opened connection not yet handed out, or -1 if none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L63">hc/lib/net/quic_ep.he:63</a>
+</article>
+<article class="sym" id="qe_same">
+<h3><a href="#qe_same">qe_same</a> <i>function</i></h3>
+<pre>qe_same(e QEp&amp;, a Addr) int</pre>
+<p>Returns how many active connections have the same IP address as the given address.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L68">hc/lib/net/quic_ep.he:68</a>
+</article>
+<h2 id="packet-processing">Packet Processing <span class="n">2</span></h2>
+<article class="sym" id="qe_flush">
+<h3><a href="#qe_flush">qe_flush</a> <i>function</i></h3>
+<pre>qe_flush(e QEp&amp;, now real)</pre>
+<p>Sends all pending outgoing packets for every connection and frees closed connections that were already handed out.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L49">hc/lib/net/quic_ep.he:49</a>
+</article>
+<article class="sym" id="qe_poll">
+<h3><a href="#qe_poll">qe_poll</a> <i>function</i></h3>
+<pre>qe_poll(e QEp&amp;, ms int) int</pre>
+<p>Waits up to the given milliseconds for datagrams, routes them, flushes output, and returns how many were received.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L54">hc/lib/net/quic_ep.he:54</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
+<article class="sym" id="qe_slot">
+<h3><a href="#qe_slot">qe_slot</a> <i>function</i></h3>
+<pre>qe_slot(e QEp&amp;, to Addr) int</pre>
+<p>Returns the index of a free connection slot for the peer address, growing the table if needed.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L16">hc/lib/net/quic_ep.he:16</a>
+</article>
+<article class="sym" id="qe_find">
+<h3><a href="#qe_find">qe_find</a> <i>function</i></h3>
+<pre>qe_find(e QEp&amp;, id const byte[:]) int</pre>
+<p>Returns the slot index of the connection matching a connection ID, or -1 if none matches.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L23">hc/lib/net/quic_ep.he:23</a>
+</article>
+<article class="sym" id="qe_vn">
+<h3><a href="#qe_vn">qe_vn</a> <i>function</i></h3>
+<pre>qe_vn(e QEp&amp;, d const byte[:], dl int, sl int, to Addr)</pre>
+<p>Sends a version negotiation packet to the peer in reply to an unsupported QUIC version.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L27">hc/lib/net/quic_ep.he:27</a>
+</article>
+<article class="sym" id="qe_first">
+<h3><a href="#qe_first">qe_first</a> <i>function</i></h3>
+<pre>qe_first(d const byte[:], dl int) bool</pre>
+<p>Returns whether a datagram is a valid client Initial packet that can be opened with its initial keys.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L28">hc/lib/net/quic_ep.he:28</a>
+</article>
+<article class="sym" id="qe_route">
+<h3><a href="#qe_route">qe_route</a> <i>function</i></h3>
+<pre>qe_route(e QEp&amp;, d const byte[:], from Addr, now real)</pre>
+<p>Routes a received datagram to its connection, creating a server connection for a valid new Initial packet.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L29">hc/lib/net/quic_ep.he:29</a>
+</article>
+<article class="sym" id="qe_timeout">
+<h3><a href="#qe_timeout">qe_timeout</a> <i>function</i></h3>
+<pre>qe_timeout(e QEp&amp;) real</pre>
+<p>Returns the earliest nonzero connection timeout across all connections, or 0.0 if none is pending.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/282377a484e638aa7537f3a865a94fda88f4eca4/hc/lib/net/quic_ep.he#L44">hc/lib/net/quic_ep.he:44</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1585</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>391</span></a><ul>
+<li><a href="/api-library/helium/lib/net-sock">net/sock</a></li>
+<li><a href="/api-library/helium/lib/net-udp">net/udp</a></li>
+<li><a href="/api-library/helium/lib/net-tcp">net/tcp</a></li>
+<li><a href="/api-library/helium/lib/net-http">net/http</a></li>
+<li><a href="/api-library/helium/lib/net-tls">net/tls</a></li>
+<li><a href="/api-library/helium/lib/net-ws">net/ws</a></li>
+<li><a href="/api-library/helium/lib/net-sio">net/sio</a></li>
+<li><a href="/api-library/helium/lib/net-link">net/link</a></li>
+<li><a href="/api-library/helium/lib/net-snap">net/snap</a></li>
+<li><a href="/api-library/helium/lib/net-quic">net/quic</a></li>
+<li><a href="/api-library/helium/lib/net-quic_wire">net/quic_wire</a></li>
+<li><a href="/api-library/helium/lib/net-quic_ep" class="on">net/quic_ep</a><ul class="lib-sub">
+<li><a href="#quic-endpoint">QUIC Endpoint</a></li>
+<li><a href="#connection-handling">Connection Handling</a></li>
+<li><a href="#packet-processing">Packet Processing</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-10">2026-11-10</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
