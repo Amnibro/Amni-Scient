@@ -826,6 +826,7 @@ zlib::CL_ORDER	constant	gfx/zlib	/api-library/helium/lib/gfx-zlib#CL_ORDER	Order
 zlib::inflate_raw	function	gfx/zlib	/api-library/helium/lib/gfx-zlib#inflate_raw	Decodes a raw DEFLATE stream, appending bytes to out, and returns false if the data is corrupt.	pub
 zlib::inflate	function	gfx/zlib	/api-library/helium/lib/gfx-zlib#inflate	Decodes a zlib stream by checking its header and inflating the data into out, without verifying the Adler-32 checksum.	pub
 read_file	function	os	/api-library/helium/lib/os#read_file	Reads a whole file into the output buffer, returning false if it could not be read.	pub
+read_file_range	function	os	/api-library/helium/lib/os#read_file_range	Reads count bytes from a file starting at the given byte offset into the output buffer, returning false on failure.	pub
 write_file	function	os	/api-library/helium/lib/os#write_file	Writes data to a file, replacing its contents, and returns false on failure.	pub
 write_file_atomic	function	os	/api-library/helium/lib/os#write_file_atomic	Writes data to a file atomically so readers never see partial contents, returning false on failure.	pub
 append_file	function	os	/api-library/helium/lib/os#append_file	Appends data to the end of a file and returns false on failure.	pub
@@ -1559,6 +1560,24 @@ s3d::tex_encoded	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_en
 s3d::tex_cached	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_cached	Count of textures found already baked in the on-disk cache.	int
 s3d::tex_mem	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_mem	Running total of bytes of texture memory allocated for loaded images.	int
 s3d::tex_ns	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_ns	Nanosecond counter for texture loading time.	int
+s3d::tex_stream	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_stream	Flag that turns on mip-level streaming for textures, loading lower detail first and refining as needed.	pub
+s3d::tex_budget	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_budget	Sets the texture memory budget in bytes that streaming tries to stay under; zero means no limit.	pub
+s3d::tex_upload_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_upload_cap	Caps how many bytes of texture data streaming may upload per step, defaulting to 4 MiB.	pub
+s3d::tex_hold	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_hold	Number of frames a texture keeps its detail level before streaming lets it drop to a lower one.	pub
+s3d::tex_wait	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_wait	Flag that makes streaming wait for wanted detail levels instead of spreading loads across frames.	pub
+s3d::tex_stream_bias	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_stream_bias	Integer offset added to the wanted mip level, so positive values trade sharpness for memory.	pub
+s3d::tex_streamed	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_streamed	Running count of bytes uploaded to the GPU by texture streaming, kept for statistics.	int
+s3d::tex_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_steps	Running count of streaming texture rebuild steps performed, kept for statistics.	int
+s3d::tex_pending	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_pending	Statistics counter for texture streaming work still pending.	int
+s3d::tex_starved	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_starved	Statistics counter for streaming requests starved by the upload cap or budget.	int
+s3d::tex_read	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_read	Running count of bytes read from disk by texture baking and streaming, kept for statistics.	int
+s3d::tex_stream_ns	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_stream_ns	Accumulated nanoseconds spent in texture streaming updates, kept for statistics.	int
+s3d::TexStream	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TexStream	Per-texture streaming state record holding the source, mip range, wanted level and idle count.	int
+s3d::streams	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#streams	List of streaming records indexed by image number times two plus one for sRGB.	int
+s3d::stream_pool	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_pool	Byte pool holding cache paths or encoded files that streamed textures read mip data from.	int
+s3d::stream_lv	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_lv	Table of per-level offset, size and cumulative chain size entries for streamed textures.	int
+s3d::stream_mem	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_mem	Total bytes of texture memory currently held by streamed textures.	int
+s3d::uv_dens	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uv_dens	Cache of the smallest UV-space texel density per primitive and UV set, used to pick mip levels.	int
 s3d::texture_bytes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#texture_bytes	Returns the total bytes of texture memory allocated for loaded images.	pub
 s3d::set_texture_cache	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#set_texture_cache	Sets the directory used to cache baked compressed textures on disk.	pub
 s3d::vbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vbuf	GPU vertex buffer holding mesh vertices.	int
@@ -1686,9 +1705,21 @@ s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#up
 s3d::mip_count	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_count	Returns the number of mip levels for a texture size.	int
 s3d::chain_bytes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#chain_bytes	Returns the total byte size of a texture's mip chain for the given format kind, size and level count.	int
 s3d::tex_path	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_path	Builds the cache file path for an image, derived from a hash of its contents, size and color space.	int
-s3d::tex_bake	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_bake	Encodes an image to a BC7 KTX2 file with mips, reusing a matching cached file; returns false on failure.	int
+s3d::tex_bake	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_bake	Encodes an image into a BC7 KTX2 file with mips, reusing a cached file when valid; returns false on failure.	int
+s3d::tex_format	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_format	Returns the GPU texture format matching a compression kind and sRGB flag, falling back to uncompressed RGBA8.	int
 s3d::ktx_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ktx_texture	Creates a GPU texture from KTX2 file bytes, decoding block formats when the GPU lacks support; returns a null texture if invalid.	int
+s3d::stream_chain	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_chain	Returns the byte size of a streamed texture's mip chain from the given level down.	int
+s3d::stream_tail	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_tail	Returns how many low mip levels stay resident, stopping once the level drops below 128 pixels or block alignment fails.	int
+s3d::stream_fetch	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_fetch	Reads a byte range of a streamed texture's source from file, embedded data or memory; returns false on failure.	int
+s3d::stream_build	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_build	Builds and uploads a streamed texture from the given top mip down, replacing the previous GPU texture.	int
+s3d::stream_open	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_open	Starts streaming an image by reading its KTX2 header or baking it, returns false if it cannot be streamed.	int
+s3d::stream_at	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_at	Returns the streaming record index for an image, or -1 when it is not streamed.	int
 s3d::image_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_texture	Creates and caches a GPU texture from a glTF image, with mipmaps.	int
+s3d::full_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#full_texture	Returns an image's texture at full detail for external use, rebuilding streamed textures up to the needed size.	int
+s3d::uv_density	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uv_density	Returns the smallest texel-per-world-unit UV density of a primitive's UV set, caching the result.	int
+s3d::stream_reach	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_reach	Returns the distance-to-texel scale for a batch, used to estimate which mip level the camera needs.	int
+s3d::stream_wants	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_wants	Computes the wanted mip level for every streamed texture from the current batches and camera.	int
+s3d::stream_update	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#stream_update	Updates streaming each frame by choosing target levels, applying the memory budget and rebuilding textures.	int
 s3d::warm	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#warm	Ensures a texture reference's image is uploaded to the GPU.	int
 s3d::ext_fill	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_fill	Copies a source texture into one layer of an extended material array.	int
 s3d::ext_make	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_make	Allocates an extended material array with the given layer capacity and refills its layers.	int
@@ -5698,18 +5729,20 @@ ktx2::level_size	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#level_size	R
 ktx2::is_ktx2	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#is_ktx2	Returns whether the data begins with the 12-byte KTX2 file identifier.	pub
 ktx2::rd32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#rd32	Reads a little-endian 32-bit integer from the byte slice at the given offset.	int
 ktx2::rd64	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#rd64	Reads a little-endian 64-bit integer at an offset, returning -1 if the value exceeds 31 high bits.	int
-ktx2::vk_kind	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_kind	Maps a Vulkan format code to this module's format kind, returning -1 if unsupported.	int
-ktx2::ktx_fail	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#ktx_fail	Builds an Info value with the given error code and ok set to false.	int
+ktx2::head_fail	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#head_fail	Builds an Info result that carries only the given error code, with ok left false.	int
+ktx2::vk_kind	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_kind	Maps a Vulkan format number to an internal block-compression kind, returning -1 when unsupported.	int
+ktx2::vk_srgb	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_srgb	Returns whether a Vulkan format number denotes an sRGB color encoding.	int
+ktx2::max_levels	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#max_levels	Returns the number of mip levels in a full chain for an image of the given width and height.	int
+ktx2::head	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#head	Parses and validates a KTX2 header and level index, returning an Info whose ok is false on failure.	pub
+ktx2::span	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#span	Returns the byte offset and stored length of mip level n, or -1 and 0 when invalid.	pub
 ktx2::read	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#read	Parses and validates a KTX2 file header and level index, returning an Info with ok false and an error code on failure.	pub
 ktx2::adler32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#adler32	Computes the Adler-32 checksum of the data, used to verify zlib-compressed levels.	int
+ktx2::unpack	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#unpack	Decodes one stored mip level into out, handling raw or zlib data, and returns false on any failure.	pub
 ktx2::level	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#level	Extracts mip level n into the output buffer, inflating zlib data and verifying it; returns false on failure.	pub
 ktx2::put16	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put16	Appends a 16-bit value to the output buffer in little-endian order.	int
 ktx2::put32	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put32	Appends a 32-bit value to the output buffer in little-endian order.	int
-ktx2::put32be	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put32be	Appends a 32-bit value to the output buffer in big-endian order.	int
 ktx2::put64	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put64	Appends a 64-bit value to the output buffer in little-endian order.	int
+ktx2::put_sample	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_sample	Appends one sample descriptor entry for a data format descriptor to out, using the given bit offset, width, channel and upper bound.	int
 ktx2::sample_count	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#sample_count	Returns the number of data format descriptor samples for a format kind, or 0 if unsupported.	int
-ktx2::vk_of	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#vk_of	Returns the Vulkan format code for a format kind and color space.	int
-ktx2::put_sample	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_sample	Appends one data format descriptor sample entry with bit offset, length, channel and upper bound.	int
 ktx2::put_dfd	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#put_dfd	Appends the data format descriptor block for a format kind and color space to the output buffer.	int
-ktx2::stored_len	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#stored_len	Returns the byte length of a level when stored, adding zlib stored-block framing if deflate is true.	int
 ktx2::write	function	gfx/ktx2	/api-library/helium/lib/gfx-ktx2#write	Builds a KTX2 file from level data into the output buffer, optionally zlib-wrapped; returns false on invalid arguments.	pub

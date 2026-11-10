@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-hash">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-hash">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=4670418dd7">
+<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=4670418dd7'; start({wasm: '/api-library/search.wasm?v=4670418dd7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/hash</h1>
 <p class="lib-lede">SHA-1 and SHA-2 hashes, HMAC, HKDF, PBKDF2 and constant-time comparison.</p>
-<p class="lib-meta"><code>import crypto.hash;</code> &middot; <code>crypto::</code> &middot; 26 functions, 1 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.hash;</code> &middot; <code>crypto::</code> &middot; 26 functions, 1 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#hash-algorithms">Hash Algorithms <span class="n">15</span></a></li>
 <li><a href="#keyed-derivation">Keyed Derivation <span class="n">6</span></a></li>
@@ -114,189 +114,189 @@
 <h3><a href="#SHA1">SHA1</a> <i>constant</i></h3>
 <pre>SHA1 := 1</pre>
 <p>Constant selecting the SHA-1 algorithm, which produces 20-byte digests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L3">hc/lib/crypto/hash.he:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L3">hc/lib/crypto/hash.he:3</a>
 </article>
 <article class="sym" id="SHA256">
 <h3><a href="#SHA256">SHA256</a> <i>constant</i></h3>
 <pre>SHA256 := 2</pre>
 <p>Constant selecting the SHA-256 algorithm, which produces 32-byte digests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L4">hc/lib/crypto/hash.he:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L4">hc/lib/crypto/hash.he:4</a>
 </article>
 <article class="sym" id="SHA384">
 <h3><a href="#SHA384">SHA384</a> <i>constant</i></h3>
 <pre>SHA384 := 3</pre>
 <p>Constant selecting the SHA-384 algorithm, which produces 48-byte digests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L5">hc/lib/crypto/hash.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L5">hc/lib/crypto/hash.he:5</a>
 </article>
 <article class="sym" id="SHA512">
 <h3><a href="#SHA512">SHA512</a> <i>constant</i></h3>
 <pre>SHA512 := 4</pre>
 <p>Constant selecting the SHA-512 algorithm, which produces 64-byte digests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L6">hc/lib/crypto/hash.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L6">hc/lib/crypto/hash.he:6</a>
 </article>
 <article class="sym" id="Hash">
 <h3><a href="#Hash">Hash</a> <i>type</i></h3>
 <pre>struct Hash { kind int = 0, a u32[8] = [0; 8], b u64[8] = [0; 8], buf byte[&gt;..] = [], n u64 = 0 }</pre>
 <p>Incremental hashing state for one algorithm, holding chaining values, buffered input and total length processed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L13">hc/lib/crypto/hash.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L13">hc/lib/crypto/hash.he:13</a>
 </article>
 <article class="sym" id="hash_size">
 <h3><a href="#hash_size">hash_size</a> <i>function</i></h3>
 <pre>hash_size(kind int) int</pre>
 <p>Returns the digest length in bytes for an algorithm constant, or 0 if the kind is unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L14">hc/lib/crypto/hash.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L14">hc/lib/crypto/hash.he:14</a>
 </article>
 <article class="sym" id="block_size">
 <h3><a href="#block_size">block_size</a> <i>function</i></h3>
 <pre>block_size(kind int) int</pre>
 <p>Returns the internal block size in bytes for an algorithm, 128 for SHA-384 and SHA-512 and 64 otherwise.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L15">hc/lib/crypto/hash.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L15">hc/lib/crypto/hash.he:15</a>
 </article>
 <article class="sym" id="hash_new">
 <h3><a href="#hash_new">hash_new</a> <i>function</i></h3>
 <pre>hash_new(kind int) Hash</pre>
 <p>Creates a fresh hashing state initialized for the given algorithm constant.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L20">hc/lib/crypto/hash.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L20">hc/lib/crypto/hash.he:20</a>
 </article>
 <article class="sym" id="hash_update">
 <h3><a href="#hash_update">hash_update</a> <i>function</i></h3>
 <pre>hash_update(h Hash&amp;, d const byte[:])</pre>
 <p>Feeds more bytes into a hashing state, buffering any partial block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L56">hc/lib/crypto/hash.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L56">hc/lib/crypto/hash.he:56</a>
 </article>
 <article class="sym" id="hash_final">
 <h3><a href="#hash_final">hash_final</a> <i>function</i></h3>
 <pre>hash_final(h0 const Hash&amp;) byte[&gt;..]</pre>
 <p>Returns the digest of all data fed so far, leaving the original state unchanged.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L64">hc/lib/crypto/hash.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L64">hc/lib/crypto/hash.he:64</a>
 </article>
 <article class="sym" id="digest">
 <h3><a href="#digest">digest</a> <i>function</i></h3>
 <pre>digest(kind int, d const byte[:]) byte[&gt;..]</pre>
 <p>Returns the digest of a byte slice using the chosen algorithm in one call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L71">hc/lib/crypto/hash.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L71">hc/lib/crypto/hash.he:71</a>
 </article>
 <article class="sym" id="sha1">
 <h3><a href="#sha1">sha1</a> <i>function</i></h3>
 <pre>sha1(d const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 20-byte SHA-1 digest of a byte slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L72">hc/lib/crypto/hash.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L72">hc/lib/crypto/hash.he:72</a>
 </article>
 <article class="sym" id="sha256">
 <h3><a href="#sha256">sha256</a> <i>function</i></h3>
 <pre>sha256(d const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 32-byte SHA-256 digest of a byte slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L73">hc/lib/crypto/hash.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L73">hc/lib/crypto/hash.he:73</a>
 </article>
 <article class="sym" id="sha384">
 <h3><a href="#sha384">sha384</a> <i>function</i></h3>
 <pre>sha384(d const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 48-byte SHA-384 digest of a byte slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L74">hc/lib/crypto/hash.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L74">hc/lib/crypto/hash.he:74</a>
 </article>
 <article class="sym" id="sha512">
 <h3><a href="#sha512">sha512</a> <i>function</i></h3>
 <pre>sha512(d const byte[:]) byte[&gt;..]</pre>
 <p>Returns the 64-byte SHA-512 digest of a byte slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L75">hc/lib/crypto/hash.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L75">hc/lib/crypto/hash.he:75</a>
 </article>
 <h2 id="keyed-derivation">Keyed Derivation <span class="n">6</span></h2>
 <article class="sym" id="hmac">
 <h3><a href="#hmac">hmac</a> <i>function</i></h3>
 <pre>hmac(kind int, key const byte[:], msg const byte[:]) byte[&gt;..]</pre>
 <p>Returns the HMAC of a message under a key using the chosen hash algorithm.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L76">hc/lib/crypto/hash.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L76">hc/lib/crypto/hash.he:76</a>
 </article>
 <article class="sym" id="hkdf_extract">
 <h3><a href="#hkdf_extract">hkdf_extract</a> <i>function</i></h3>
 <pre>hkdf_extract(kind int, salt const byte[:], ikm const byte[:]) byte[&gt;..]</pre>
 <p>Returns the HKDF pseudorandom key extracted from input keying material, using a zero-filled salt if none is given.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L83">hc/lib/crypto/hash.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L83">hc/lib/crypto/hash.he:83</a>
 </article>
 <article class="sym" id="hkdf_expand">
 <h3><a href="#hkdf_expand">hkdf_expand</a> <i>function</i></h3>
 <pre>hkdf_expand(kind int, prk const byte[:], info const byte[:], n int) byte[&gt;..], bool</pre>
 <p>Returns n bytes of HKDF output keying material, or false if n is negative or exceeds 255 hash lengths.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L86">hc/lib/crypto/hash.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L86">hc/lib/crypto/hash.he:86</a>
 </article>
 <article class="sym" id="hkdf">
 <h3><a href="#hkdf">hkdf</a> <i>function</i></h3>
 <pre>hkdf(kind int, ikm const byte[:], salt const byte[:], info const byte[:], n int) byte[&gt;..], bool</pre>
 <p>Returns n bytes derived by HKDF extract-then-expand, or false if the requested length is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L94">hc/lib/crypto/hash.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L94">hc/lib/crypto/hash.he:94</a>
 </article>
 <article class="sym" id="ct_eq">
 <h3><a href="#ct_eq">ct_eq</a> <i>function</i></h3>
 <pre>ct_eq(a const byte[:], b const byte[:]) bool</pre>
 <p>Returns whether two byte slices are equal, comparing in constant time and returning false for differing lengths.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L95">hc/lib/crypto/hash.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L95">hc/lib/crypto/hash.he:95</a>
 </article>
 <article class="sym" id="pbkdf2">
 <h3><a href="#pbkdf2">pbkdf2</a> <i>function</i></h3>
 <pre>pbkdf2(kind int, pw const byte[:], salt const byte[:], iters int, n int) byte[&gt;..], bool</pre>
 <p>Returns n bytes derived from a password and salt by PBKDF2-HMAC, or false if iterations or length are below 1 or the hash is unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L108">hc/lib/crypto/hash.he:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L108">hc/lib/crypto/hash.he:108</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (10)</summary>
 <article class="sym" id="r32">
 <h3><a href="#r32">r32</a> <i>function</i></h3>
 <pre>r32(x u32, n int) u32</pre>
 <p>Rotates a 32-bit value right by the given number of bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L16">hc/lib/crypto/hash.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L16">hc/lib/crypto/hash.he:16</a>
 </article>
 <article class="sym" id="r64">
 <h3><a href="#r64">r64</a> <i>function</i></h3>
 <pre>r64(x u64, n int) u64</pre>
 <p>Rotates a 64-bit value right by the given number of bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L17">hc/lib/crypto/hash.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L17">hc/lib/crypto/hash.he:17</a>
 </article>
 <article class="sym" id="be32">
 <h3><a href="#be32">be32</a> <i>function</i></h3>
 <pre>be32(p const byte[:], j int) u32</pre>
 <p>Reads four bytes at an offset as a big-endian 32-bit integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L18">hc/lib/crypto/hash.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L18">hc/lib/crypto/hash.he:18</a>
 </article>
 <article class="sym" id="be64">
 <h3><a href="#be64">be64</a> <i>function</i></h3>
 <pre>be64(p const byte[:], j int) u64</pre>
 <p>Reads eight bytes at an offset as a big-endian 64-bit integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L19">hc/lib/crypto/hash.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L19">hc/lib/crypto/hash.he:19</a>
 </article>
 <article class="sym" id="c1">
 <h3><a href="#c1">c1</a> <i>function</i></h3>
 <pre>c1(h Hash&amp;, p const byte[:], o int)</pre>
 <p>Processes one 64-byte block at an offset using the SHA-1 compression function.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L27">hc/lib/crypto/hash.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L27">hc/lib/crypto/hash.he:27</a>
 </article>
 <article class="sym" id="c256">
 <h3><a href="#c256">c256</a> <i>function</i></h3>
 <pre>c256(h Hash&amp;, p const byte[:], o int)</pre>
 <p>Processes one 64-byte block at an offset using the SHA-256 compression function.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L37">hc/lib/crypto/hash.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L37">hc/lib/crypto/hash.he:37</a>
 </article>
 <article class="sym" id="c512">
 <h3><a href="#c512">c512</a> <i>function</i></h3>
 <pre>c512(h Hash&amp;, p const byte[:], o int)</pre>
 <p>Processes one 128-byte block at an offset using the SHA-512 compression function.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L46">hc/lib/crypto/hash.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L46">hc/lib/crypto/hash.he:46</a>
 </article>
 <article class="sym" id="comp">
 <h3><a href="#comp">comp</a> <i>function</i></h3>
 <pre>comp(h Hash&amp;, p const byte[:], o int)</pre>
 <p>Dispatches one block to the compression function matching the state's algorithm.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L55">hc/lib/crypto/hash.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L55">hc/lib/crypto/hash.he:55</a>
 </article>
 <article class="sym" id="hmac_states">
 <h3><a href="#hmac_states">hmac_states</a> <i>function</i></h3>
 <pre>hmac_states(kind int, key const byte[:]) Hash, Hash</pre>
 <p>Returns precomputed inner and outer HMAC hash states for a key, for reuse across many messages.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L100">hc/lib/crypto/hash.he:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L100">hc/lib/crypto/hash.he:100</a>
 </article>
 <article class="sym" id="hmac_with">
 <h3><a href="#hmac_with">hmac_with</a> <i>function</i></h3>
 <pre>hmac_with(hi const Hash&amp;, ho const Hash&amp;, m const byte[:]) byte[&gt;..]</pre>
 <p>Returns the HMAC of a message using precomputed inner and outer states without modifying them.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/crypto/hash.he#L107">hc/lib/crypto/hash.he:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/crypto/hash.he#L107">hc/lib/crypto/hash.he:107</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -307,8 +307,8 @@
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1367</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

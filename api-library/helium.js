@@ -32,6 +32,7 @@ export async function start(o = {}) {
       case 3: { const f = fds.get(N(a)); if (!f) return -9n; if (f.w) { const t = new Uint8Array(f.w.reduce((k, x) => k + x.length, 0)); let k = 0; for (const x of f.w) { t.set(x, k); k += x.length; } files.set(f.p, t); o.onsave?.(f.p); } fds.delete(N(a)); return 0n; }
       case 4: { const p = cz(N(a)); if (!files.has(p)) return -2n; wst(N(b), fb(files.get(p)).length); return 0n; }
       case 5: { const f = fds.get(N(a)); if (!f) return -9n; wst(N(b), f.b ? f.b.length : 0); return 0n; }
+      case 8: { const f = fds.get(N(a)); if (!f?.b) return -9n; f.o = Math.max(0, Math.min(N(b), f.b.length)); return BigInt(f.o); }
       case 87: return files.delete(cz(N(a))) ? 0n : -2n;
       case 9: return BigInt(mmap(N(b)));
       case 11: unmap(N(a), N(b)); return 0n;

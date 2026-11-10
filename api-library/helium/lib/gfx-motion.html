@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-motion">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-motion">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=4670418dd7">
+<link rel="stylesheet" href="/api-library/lib.css?v=22e93d241b">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=4670418dd7'; start({wasm: '/api-library/search.wasm?v=4670418dd7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=22e93d241b'; start({wasm: '/api-library/search.wasm?v=22e93d241b'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/motion</h1>
 <p class="lib-lede">Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.</p>
-<p class="lib-meta"><code>import gfx.motion;</code> &middot; <code>motion::</code> &middot; 10 functions, 0 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.motion;</code> &middot; <code>motion::</code> &middot; 10 functions, 0 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>motion: poses for glTF scenes. Samples animation channels (step, linear and
 cubic Hermite spline per the glTF 2.0 specification), walks the node hierarchy
 into world matrices, and builds joint matrices and morph weights for drawing.
@@ -120,41 +120,41 @@ The pose arrays are indexed like gltf::nodes.
 <h3><a href="#MAX_WEIGHTS">MAX_WEIGHTS</a> <i>constant</i></h3>
 <pre>let MAX_WEIGHTS = 64</pre>
 <p>Constant giving the maximum number of morph target weights stored per node in the pose weight array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L10">hc/lib/gfx/motion.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L10">hc/lib/gfx/motion.amni:10</a>
 </article>
 <article class="sym" id="joints">
 <h3><a href="#joints">joints</a> <i>function</i></h3>
 <pre>joints(skin int, out gfx::mat4[&gt;..]&amp;)</pre>
 <p>Fills the output array with world-space joint matrices of a skin, for drawing with an identity model.</p>
 <p class="note">Joint matrices of a skin in world space (vertices are then drawn with an identity model).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L151">hc/lib/gfx/motion.amni:151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L151">hc/lib/gfx/motion.amni:151</a>
 </article>
 <article class="sym" id="weight">
 <h3><a href="#weight">weight</a> <i>function</i></h3>
 <pre>weight(node int, j int) f32</pre>
 <p>Returns morph weight j of a node from the current pose.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L159">hc/lib/gfx/motion.amni:159</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L159">hc/lib/gfx/motion.amni:159</a>
 </article>
 <h2 id="pose-state">Pose State <span class="n">3</span></h2>
 <article class="sym" id="world">
 <h3><a href="#world">world</a> <i>constant</i></h3>
 <pre>var world gfx::mat4[&gt;..]</pre>
 <p>Array of world matrices per node, filled by update and used when drawing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L16">hc/lib/gfx/motion.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L16">hc/lib/gfx/motion.amni:16</a>
 </article>
 <article class="sym" id="rest">
 <h3><a href="#rest">rest</a> <i>function</i></h3>
 <pre>rest(asset int)</pre>
 <p>Resets every node of the given asset to its rest pose, including morph weights.</p>
 <p class="note">Puts every node of the asset back in its rest pose (morph weights from the node, else its mesh).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L29">hc/lib/gfx/motion.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L29">hc/lib/gfx/motion.amni:29</a>
 </article>
 <article class="sym" id="update">
 <h3><a href="#update">update</a> <i>function</i></h3>
 <pre>update(asset int, root gfx::mat4)</pre>
 <p>Computes world matrices for all nodes of an asset's scene, placed by the given root transform.</p>
 <p class="note">World matrices for the asset's scene, placed by `root` (the asset's transform in the world).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L128">hc/lib/gfx/motion.amni:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L128">hc/lib/gfx/motion.amni:128</a>
 </article>
 <h2 id="animation-sampling">Animation Sampling <span class="n">1</span></h2>
 <article class="sym" id="apply">
@@ -162,64 +162,64 @@ The pose arrays are indexed like gltf::nodes.
 <pre>apply(anim int, t f32, amount f32)</pre>
 <p>Applies an animation at time t to the pose, where an amount of 1 replaces it and less blends.</p>
 <p class="note">Applies animation `anim` at time t. amount 1 replaces the pose; less blends toward it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L102">hc/lib/gfx/motion.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L102">hc/lib/gfx/motion.amni:102</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="pose_t">
 <h3><a href="#pose_t">pose_t</a> <i>constant</i></h3>
 <pre>var pose_t float3[&gt;..]</pre>
 <p>Per-node translation array of the current pose, indexed like glTF nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L12">hc/lib/gfx/motion.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L12">hc/lib/gfx/motion.amni:12</a>
 </article>
 <article class="sym" id="pose_r">
 <h3><a href="#pose_r">pose_r</a> <i>constant</i></h3>
 <pre>var pose_r linalg::Quat[&gt;..]</pre>
 <p>Per-node rotation quaternion array of the current pose, indexed like glTF nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L13">hc/lib/gfx/motion.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L13">hc/lib/gfx/motion.amni:13</a>
 </article>
 <article class="sym" id="pose_s">
 <h3><a href="#pose_s">pose_s</a> <i>constant</i></h3>
 <pre>var pose_s float3[&gt;..]</pre>
 <p>Per-node scale array of the current pose, indexed like glTF nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L14">hc/lib/gfx/motion.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L14">hc/lib/gfx/motion.amni:14</a>
 </article>
 <article class="sym" id="pose_w">
 <h3><a href="#pose_w">pose_w</a> <i>constant</i></h3>
 <pre>var pose_w f32[&gt;..];          // MAX_WEIGHTS per node</pre>
 <p>Per-node morph weight array of the current pose, holding MAX_WEIGHTS entries for each node.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L15">hc/lib/gfx/motion.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L15">hc/lib/gfx/motion.amni:15</a>
 </article>
 <article class="sym" id="grow">
 <h3><a href="#grow">grow</a> <i>function</i></h3>
 <pre>grow()</pre>
 <p>Extends the pose and world arrays with default entries until they cover every loaded glTF node.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L18">hc/lib/gfx/motion.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L18">hc/lib/gfx/motion.amni:18</a>
 </article>
 <article class="sym" id="key_before">
 <h3><a href="#key_before">key_before</a> <i>function</i></h3>
 <pre>key_before(times gltf::Span, t f32) int</pre>
 <p>Returns the index of the last time key at or before t, or 0 when t precedes the first key.</p>
 <p class="note">Index of the last key at or before t (0 when t is before the first key).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L45">hc/lib/gfx/motion.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L45">hc/lib/gfx/motion.amni:45</a>
 </article>
 <article class="sym" id="sample">
 <h3><a href="#sample">sample</a> <i>function</i></h3>
 <pre>sample(c gltf::Channel, t f32, j int) f32</pre>
 <p>Returns component j of a channel at time t, using step, linear or cubic spline interpolation.</p>
 <p class="note">Samples component j of channel c at time t.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L58">hc/lib/gfx/motion.amni:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L58">hc/lib/gfx/motion.amni:58</a>
 </article>
 <article class="sym" id="rotation_at">
 <h3><a href="#rotation_at">rotation_at</a> <i>function</i></h3>
 <pre>rotation_at(c gltf::Channel, t f32) linalg::Quat</pre>
 <p>Returns the normalized rotation quaternion of a channel at time t, using spherical interpolation for linear channels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L85">hc/lib/gfx/motion.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L85">hc/lib/gfx/motion.amni:85</a>
 </article>
 <article class="sym" id="local_matrix">
 <h3><a href="#local_matrix">local_matrix</a> <i>function</i></h3>
 <pre>local_matrix(i int) gfx::mat4</pre>
 <p>Returns the local transform matrix of a node, from its stored matrix or its pose translation, rotation and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/4670418c608afb8e14f56600707b8a4262152583/hc/lib/gfx/motion.amni#L122">hc/lib/gfx/motion.amni:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/22e93d250417232df48b66c0b9fed4bd06ba2008/hc/lib/gfx/motion.amni#L122">hc/lib/gfx/motion.amni:122</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -230,8 +230,8 @@ The pose arrays are indexed like gltf::nodes.
 <ul>
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
-<li><a href="/api-library/helium/system">Files &amp; System <span>42</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1367</span></a><ul>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1399</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
