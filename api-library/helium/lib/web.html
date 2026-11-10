@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/web">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/web">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=13b68bb8dc">
+<link rel="stylesheet" href="/api-library/lib.css?v=cbbbac25db">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=13b68bb8dc'; start({wasm: '/api-library/search.wasm?v=13b68bb8dc'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=cbbbac25db'; start({wasm: '/api-library/search.wasm?v=cbbbac25db'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>web</h1>
 <p class="lib-lede">Talk to the browser from a Helium web build: page elements, events, timers, fetch, storage and other JavaScript libraries.</p>
-<p class="lib-meta"><code>import web;</code> &middot; <code>web::</code> &middot; 101 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he">Source</a></p>
+<p class="lib-meta"><code>import web;</code> &middot; <code>web::</code> &middot; 101 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#page-geometry">Page Geometry <span class="n">3</span></a></li>
 <li><a href="#console-and-timing">Console and Timing <span class="n">8</span></a></li>
@@ -120,621 +120,621 @@
 <h3><a href="#Rect">Rect</a> <i>type</i></h3>
 <pre>struct Rect { x f64, y f64, w f64, h f64 }</pre>
 <p>Rectangle of x, y, width and height values, filled in by element bounds queries.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L2">hc/lib/web.he:2</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L2">hc/lib/web.he:2</a>
 </article>
 <article class="sym" id="rect">
 <h3><a href="#rect">rect</a> <i>function</i></h3>
 <pre>rect(h i32, r Rect&amp;)</pre>
 <p>Fills the Rect with the element's bounding box.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L80">hc/lib/web.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L80">hc/lib/web.he:80</a>
 </article>
 <article class="sym" id="put_pixels">
 <h3><a href="#put_pixels">put_pixels</a> <i>function</i></h3>
 <pre>put_pixels(canvas i32, w i32, h i32, rgba const u8[:])</pre>
 <p>Draws the RGBA pixel data of the given width and height onto the canvas element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L81">hc/lib/web.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L81">hc/lib/web.he:81</a>
 </article>
 <h2 id="console-and-timing">Console and Timing <span class="n">8</span></h2>
 <article class="sym" id="log">
 <h3><a href="#log">log</a> <i>function</i></h3>
 <pre>log(s const u8[:])</pre>
 <p>Writes a message to the browser console as a log entry.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L21">hc/lib/web.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L21">hc/lib/web.he:21</a>
 </article>
 <article class="sym" id="warn">
 <h3><a href="#warn">warn</a> <i>function</i></h3>
 <pre>warn(s const u8[:])</pre>
 <p>Writes a message to the browser console as a warning.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L22">hc/lib/web.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L22">hc/lib/web.he:22</a>
 </article>
 <article class="sym" id="error">
 <h3><a href="#error">error</a> <i>function</i></h3>
 <pre>error(s const u8[:])</pre>
 <p>Writes a message to the browser console as an error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L23">hc/lib/web.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L23">hc/lib/web.he:23</a>
 </article>
 <article class="sym" id="now">
 <h3><a href="#now">now</a> <i>function</i></h3>
 <pre>now() f64</pre>
 <p>Returns the current high-resolution time in milliseconds as a floating-point number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L24">hc/lib/web.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L24">hc/lib/web.he:24</a>
 </article>
 <article class="sym" id="epoch_ms">
 <h3><a href="#epoch_ms">epoch_ms</a> <i>function</i></h3>
 <pre>epoch_ms() f64</pre>
 <p>Returns the current wall-clock time as milliseconds since the Unix epoch.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L25">hc/lib/web.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L25">hc/lib/web.he:25</a>
 </article>
 <article class="sym" id="frames">
 <h3><a href="#frames">frames</a> <i>function</i></h3>
 <pre>frames(on bool)</pre>
 <p>Turns per-frame callbacks on or off according to the flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L26">hc/lib/web.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L26">hc/lib/web.he:26</a>
 </article>
 <article class="sym" id="timer">
 <h3><a href="#timer">timer</a> <i>function</i></h3>
 <pre>timer(ms f64, tag i32) i32</pre>
 <p>Starts a timer that fires after the given milliseconds with the tag, returning its id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L27">hc/lib/web.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L27">hc/lib/web.he:27</a>
 </article>
 <article class="sym" id="clear_timer">
 <h3><a href="#clear_timer">clear_timer</a> <i>function</i></h3>
 <pre>clear_timer(id i32)</pre>
 <p>Cancels the timer with the given id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L28">hc/lib/web.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L28">hc/lib/web.he:28</a>
 </article>
 <h2 id="browser-environment">Browser Environment <span class="n">17</span></h2>
 <article class="sym" id="win_w">
 <h3><a href="#win_w">win_w</a> <i>function</i></h3>
 <pre>win_w() f64</pre>
 <p>Returns the window width.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L29">hc/lib/web.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L29">hc/lib/web.he:29</a>
 </article>
 <article class="sym" id="win_h">
 <h3><a href="#win_h">win_h</a> <i>function</i></h3>
 <pre>win_h() f64</pre>
 <p>Returns the window height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L30">hc/lib/web.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L30">hc/lib/web.he:30</a>
 </article>
 <article class="sym" id="dpr">
 <h3><a href="#dpr">dpr</a> <i>function</i></h3>
 <pre>dpr() f64</pre>
 <p>Returns the device pixel ratio of the display.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L31">hc/lib/web.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L31">hc/lib/web.he:31</a>
 </article>
 <article class="sym" id="device_memory">
 <h3><a href="#device_memory">device_memory</a> <i>function</i></h3>
 <pre>device_memory() f64</pre>
 <p>Returns the approximate device memory reported by the browser.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L32">hc/lib/web.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L32">hc/lib/web.he:32</a>
 </article>
 <article class="sym" id="user_agent">
 <h3><a href="#user_agent">user_agent</a> <i>function</i></h3>
 <pre>user_agent(out u8[&gt;..]&amp;)</pre>
 <p>Writes the browser user agent string into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L33">hc/lib/web.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L33">hc/lib/web.he:33</a>
 </article>
 <article class="sym" id="secure">
 <h3><a href="#secure">secure</a> <i>function</i></h3>
 <pre>secure() bool</pre>
 <p>Returns whether the page runs in a secure context.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L34">hc/lib/web.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L34">hc/lib/web.he:34</a>
 </article>
 <article class="sym" id="has_webgpu">
 <h3><a href="#has_webgpu">has_webgpu</a> <i>function</i></h3>
 <pre>has_webgpu() bool</pre>
 <p>Returns whether the browser supports WebGPU.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L35">hc/lib/web.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L35">hc/lib/web.he:35</a>
 </article>
 <article class="sym" id="prefers_dark">
 <h3><a href="#prefers_dark">prefers_dark</a> <i>function</i></h3>
 <pre>prefers_dark() bool</pre>
 <p>Returns whether the user prefers a dark color scheme.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L36">hc/lib/web.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L36">hc/lib/web.he:36</a>
 </article>
 <article class="sym" id="reduced_motion">
 <h3><a href="#reduced_motion">reduced_motion</a> <i>function</i></h3>
 <pre>reduced_motion() bool</pre>
 <p>Returns whether the user prefers reduced motion.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L37">hc/lib/web.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L37">hc/lib/web.he:37</a>
 </article>
 <article class="sym" id="location">
 <h3><a href="#location">location</a> <i>function</i></h3>
 <pre>location(part const u8[:], out u8[&gt;..]&amp;)</pre>
 <p>Writes the named part of the page location into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L38">hc/lib/web.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L38">hc/lib/web.he:38</a>
 </article>
 <article class="sym" id="param">
 <h3><a href="#param">param</a> <i>function</i></h3>
 <pre>param(name const u8[:], out u8[&gt;..]&amp;) bool</pre>
 <p>Writes the named URL query parameter into the output buffer, returning false if it is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L39">hc/lib/web.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L39">hc/lib/web.he:39</a>
 </article>
 <article class="sym" id="set_url">
 <h3><a href="#set_url">set_url</a> <i>function</i></h3>
 <pre>set_url(url const u8[:], replace bool)</pre>
 <p>Changes the page URL without loading it, replacing the current history entry when the flag is true.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L40">hc/lib/web.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L40">hc/lib/web.he:40</a>
 </article>
 <article class="sym" id="navigate">
 <h3><a href="#navigate">navigate</a> <i>function</i></h3>
 <pre>navigate(url const u8[:])</pre>
 <p>Navigates the current page to the given URL.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L41">hc/lib/web.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L41">hc/lib/web.he:41</a>
 </article>
 <article class="sym" id="open">
 <h3><a href="#open">open</a> <i>function</i></h3>
 <pre>open(url const u8[:])</pre>
 <p>Opens the given URL in a new browsing context.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L42">hc/lib/web.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L42">hc/lib/web.he:42</a>
 </article>
 <article class="sym" id="title">
 <h3><a href="#title">title</a> <i>function</i></h3>
 <pre>title(s const u8[:])</pre>
 <p>Sets the page title.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L43">hc/lib/web.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L43">hc/lib/web.he:43</a>
 </article>
 <article class="sym" id="clipboard">
 <h3><a href="#clipboard">clipboard</a> <i>function</i></h3>
 <pre>clipboard(s const u8[:])</pre>
 <p>Copies the given text to the system clipboard.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L44">hc/lib/web.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L44">hc/lib/web.he:44</a>
 </article>
 <article class="sym" id="store_get">
 <h3><a href="#store_get">store_get</a> <i>function</i></h3>
 <pre>store_get(key const u8[:], out u8[&gt;..]&amp;) bool</pre>
 <p>Writes the stored value for the key into the output buffer, returning false if missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L109">hc/lib/web.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L109">hc/lib/web.he:109</a>
 </article>
 <h2 id="page-elements">Page Elements <span class="n">18</span></h2>
 <article class="sym" id="el">
 <h3><a href="#el">el</a> <i>function</i></h3>
 <pre>el(id const u8[:]) i32</pre>
 <p>Returns a handle to the element with the given id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L45">hc/lib/web.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L45">hc/lib/web.he:45</a>
 </article>
 <article class="sym" id="query">
 <h3><a href="#query">query</a> <i>function</i></h3>
 <pre>query(root i32, sel const u8[:]) i32</pre>
 <p>Returns a handle to the first element under the root matching the selector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L46">hc/lib/web.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L46">hc/lib/web.he:46</a>
 </article>
 <article class="sym" id="query_all">
 <h3><a href="#query_all">query_all</a> <i>function</i></h3>
 <pre>query_all(root i32, sel const u8[:]) i32</pre>
 <p>Queries all elements under the root matching the selector, returning a result list to read with list_at.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L47">hc/lib/web.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L47">hc/lib/web.he:47</a>
 </article>
 <article class="sym" id="list_at">
 <h3><a href="#list_at">list_at</a> <i>function</i></h3>
 <pre>list_at(i i32) i32</pre>
 <p>Returns the element handle at the given index of the latest query_all result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L48">hc/lib/web.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L48">hc/lib/web.he:48</a>
 </article>
 <article class="sym" id="create">
 <h3><a href="#create">create</a> <i>function</i></h3>
 <pre>create(tag const u8[:]) i32</pre>
 <p>Creates an HTML element with the given tag and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L49">hc/lib/web.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L49">hc/lib/web.he:49</a>
 </article>
 <article class="sym" id="create_svg">
 <h3><a href="#create_svg">create_svg</a> <i>function</i></h3>
 <pre>create_svg(tag const u8[:]) i32</pre>
 <p>Creates an SVG element with the given tag and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L50">hc/lib/web.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L50">hc/lib/web.he:50</a>
 </article>
 <article class="sym" id="append">
 <h3><a href="#append">append</a> <i>function</i></h3>
 <pre>append(parent i32, child i32)</pre>
 <p>Appends the child element to the end of the parent's children.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L51">hc/lib/web.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L51">hc/lib/web.he:51</a>
 </article>
 <article class="sym" id="insert_before">
 <h3><a href="#insert_before">insert_before</a> <i>function</i></h3>
 <pre>insert_before(parent i32, child i32, before i32)</pre>
 <p>Inserts the child into the parent before the given reference element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L52">hc/lib/web.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L52">hc/lib/web.he:52</a>
 </article>
 <article class="sym" id="remove">
 <h3><a href="#remove">remove</a> <i>function</i></h3>
 <pre>remove(h i32)</pre>
 <p>Removes the element from its parent in the page.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L53">hc/lib/web.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L53">hc/lib/web.he:53</a>
 </article>
 <article class="sym" id="release">
 <h3><a href="#release">release</a> <i>function</i></h3>
 <pre>release(h i32)</pre>
 <p>Releases the handle so the browser side can free the element reference.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L54">hc/lib/web.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L54">hc/lib/web.he:54</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear(h i32)</pre>
 <p>Removes all children of the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L55">hc/lib/web.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L55">hc/lib/web.he:55</a>
 </article>
 <article class="sym" id="parent">
 <h3><a href="#parent">parent</a> <i>function</i></h3>
 <pre>parent(h i32) i32</pre>
 <p>Returns a handle to the parent of the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L56">hc/lib/web.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L56">hc/lib/web.he:56</a>
 </article>
 <article class="sym" id="closest">
 <h3><a href="#closest">closest</a> <i>function</i></h3>
 <pre>closest(h i32, sel const u8[:]) i32</pre>
 <p>Returns the nearest ancestor, including the element itself, matching the selector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L57">hc/lib/web.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L57">hc/lib/web.he:57</a>
 </article>
 <article class="sym" id="child">
 <h3><a href="#child">child</a> <i>function</i></h3>
 <pre>child(h i32, i i32) i32</pre>
 <p>Returns a handle to the child element at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L58">hc/lib/web.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L58">hc/lib/web.he:58</a>
 </article>
 <article class="sym" id="child_count">
 <h3><a href="#child_count">child_count</a> <i>function</i></h3>
 <pre>child_count(h i32) i32</pre>
 <p>Returns the number of children of the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L59">hc/lib/web.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L59">hc/lib/web.he:59</a>
 </article>
 <article class="sym" id="contains">
 <h3><a href="#contains">contains</a> <i>function</i></h3>
 <pre>contains(a i32, b i32) bool</pre>
 <p>Returns whether the first element contains the second.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L60">hc/lib/web.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L60">hc/lib/web.he:60</a>
 </article>
 <article class="sym" id="same">
 <h3><a href="#same">same</a> <i>function</i></h3>
 <pre>same(a i32, b i32) bool</pre>
 <p>Returns whether both handles refer to the same element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L61">hc/lib/web.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L61">hc/lib/web.he:61</a>
 </article>
 <article class="sym" id="scroll_into">
 <h3><a href="#scroll_into">scroll_into</a> <i>function</i></h3>
 <pre>scroll_into(h i32, smooth bool, center bool)</pre>
 <p>Scrolls the element into view, optionally smoothly and centered.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L79">hc/lib/web.he:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L79">hc/lib/web.he:79</a>
 </article>
 <h2 id="element-content">Element Content <span class="n">17</span></h2>
 <article class="sym" id="text">
 <h3><a href="#text">text</a> <i>function</i></h3>
 <pre>text(h i32, s const u8[:])</pre>
 <p>Sets the text content of the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L62">hc/lib/web.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L62">hc/lib/web.he:62</a>
 </article>
 <article class="sym" id="html">
 <h3><a href="#html">html</a> <i>function</i></h3>
 <pre>html(h i32, s const u8[:])</pre>
 <p>Sets the inner HTML of the element from the given markup.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L63">hc/lib/web.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L63">hc/lib/web.he:63</a>
 </article>
 <article class="sym" id="append_html">
 <h3><a href="#append_html">append_html</a> <i>function</i></h3>
 <pre>append_html(h i32, s const u8[:])</pre>
 <p>Appends the given markup to the element's existing HTML.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L64">hc/lib/web.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L64">hc/lib/web.he:64</a>
 </article>
 <article class="sym" id="get_text">
 <h3><a href="#get_text">get_text</a> <i>function</i></h3>
 <pre>get_text(h i32, out u8[&gt;..]&amp;)</pre>
 <p>Writes the text content of the element into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L65">hc/lib/web.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L65">hc/lib/web.he:65</a>
 </article>
 <article class="sym" id="attr">
 <h3><a href="#attr">attr</a> <i>function</i></h3>
 <pre>attr(h i32, name const u8[:], value const u8[:])</pre>
 <p>Sets the named attribute on the element to the given value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L66">hc/lib/web.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L66">hc/lib/web.he:66</a>
 </article>
 <article class="sym" id="del_attr">
 <h3><a href="#del_attr">del_attr</a> <i>function</i></h3>
 <pre>del_attr(h i32, name const u8[:])</pre>
 <p>Removes the named attribute from the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L67">hc/lib/web.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L67">hc/lib/web.he:67</a>
 </article>
 <article class="sym" id="get_attr">
 <h3><a href="#get_attr">get_attr</a> <i>function</i></h3>
 <pre>get_attr(h i32, name const u8[:], out u8[&gt;..]&amp;) bool</pre>
 <p>Writes the named attribute value into the output buffer, returning false if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L68">hc/lib/web.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L68">hc/lib/web.he:68</a>
 </article>
 <article class="sym" id="style">
 <h3><a href="#style">style</a> <i>function</i></h3>
 <pre>style(h i32, prop const u8[:], value const u8[:])</pre>
 <p>Sets an inline style property on the element to the given value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L69">hc/lib/web.he:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L69">hc/lib/web.he:69</a>
 </article>
 <article class="sym" id="cls">
 <h3><a href="#cls">cls</a> <i>function</i></h3>
 <pre>cls(h i32, name const u8[:], on bool)</pre>
 <p>Adds or removes the named CSS class according to the flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L70">hc/lib/web.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L70">hc/lib/web.he:70</a>
 </article>
 <article class="sym" id="has_cls">
 <h3><a href="#has_cls">has_cls</a> <i>function</i></h3>
 <pre>has_cls(h i32, name const u8[:]) bool</pre>
 <p>Returns whether the element has the named CSS class.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L71">hc/lib/web.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L71">hc/lib/web.he:71</a>
 </article>
 <article class="sym" id="prop">
 <h3><a href="#prop">prop</a> <i>function</i></h3>
 <pre>prop(h i32, name const u8[:], value const u8[:])</pre>
 <p>Sets a string property on the element object.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L72">hc/lib/web.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L72">hc/lib/web.he:72</a>
 </article>
 <article class="sym" id="prop_num">
 <h3><a href="#prop_num">prop_num</a> <i>function</i></h3>
 <pre>prop_num(h i32, name const u8[:], v f64)</pre>
 <p>Sets a numeric property on the element object.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L73">hc/lib/web.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L73">hc/lib/web.he:73</a>
 </article>
 <article class="sym" id="prop_bool">
 <h3><a href="#prop_bool">prop_bool</a> <i>function</i></h3>
 <pre>prop_bool(h i32, name const u8[:], v bool)</pre>
 <p>Sets a boolean property on the element object.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L74">hc/lib/web.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L74">hc/lib/web.he:74</a>
 </article>
 <article class="sym" id="get_prop">
 <h3><a href="#get_prop">get_prop</a> <i>function</i></h3>
 <pre>get_prop(h i32, name const u8[:], out u8[&gt;..]&amp;) bool</pre>
 <p>Writes the named element property as a string into the output buffer, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L75">hc/lib/web.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L75">hc/lib/web.he:75</a>
 </article>
 <article class="sym" id="get_num">
 <h3><a href="#get_num">get_num</a> <i>function</i></h3>
 <pre>get_num(h i32, name const u8[:]) f64</pre>
 <p>Returns the named element property as a number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L76">hc/lib/web.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L76">hc/lib/web.he:76</a>
 </article>
 <article class="sym" id="get_bool">
 <h3><a href="#get_bool">get_bool</a> <i>function</i></h3>
 <pre>get_bool(h i32, name const u8[:]) bool</pre>
 <p>Returns the named element property as a boolean.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L77">hc/lib/web.he:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L77">hc/lib/web.he:77</a>
 </article>
 <article class="sym" id="call">
 <h3><a href="#call">call</a> <i>function</i></h3>
 <pre>call(h i32, method const u8[:])</pre>
 <p>Calls the named method on the element with no arguments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L78">hc/lib/web.he:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L78">hc/lib/web.he:78</a>
 </article>
 <h2 id="event-handling">Event Handling <span class="n">27</span></h2>
 <article class="sym" id="listen">
 <h3><a href="#listen">listen</a> <i>function</i></h3>
 <pre>listen(h i32, kind const u8[:], tag i32, flags i32)</pre>
 <p>Registers a listener on the element for the event kind, delivering the tag and using the given flags.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L82">hc/lib/web.he:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L82">hc/lib/web.he:82</a>
 </article>
 <article class="sym" id="capture_pointer">
 <h3><a href="#capture_pointer">capture_pointer</a> <i>function</i></h3>
 <pre>capture_pointer(h i32, id i32)</pre>
 <p>Directs further events of the given pointer id to the element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L83">hc/lib/web.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L83">hc/lib/web.he:83</a>
 </article>
 <article class="sym" id="ev_type">
 <h3><a href="#ev_type">ev_type</a> <i>function</i></h3>
 <pre>ev_type(out u8[&gt;..]&amp;)</pre>
 <p>Writes the current event's type name into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L84">hc/lib/web.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L84">hc/lib/web.he:84</a>
 </article>
 <article class="sym" id="ev_target">
 <h3><a href="#ev_target">ev_target</a> <i>function</i></h3>
 <pre>ev_target() i32</pre>
 <p>Returns the handle of the current event's target element.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L85">hc/lib/web.he:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L85">hc/lib/web.he:85</a>
 </article>
 <article class="sym" id="ev_x">
 <h3><a href="#ev_x">ev_x</a> <i>function</i></h3>
 <pre>ev_x() f64</pre>
 <p>Returns the current event's x coordinate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L86">hc/lib/web.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L86">hc/lib/web.he:86</a>
 </article>
 <article class="sym" id="ev_y">
 <h3><a href="#ev_y">ev_y</a> <i>function</i></h3>
 <pre>ev_y() f64</pre>
 <p>Returns the current event's y coordinate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L87">hc/lib/web.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L87">hc/lib/web.he:87</a>
 </article>
 <article class="sym" id="ev_dx">
 <h3><a href="#ev_dx">ev_dx</a> <i>function</i></h3>
 <pre>ev_dx() f64</pre>
 <p>Returns the current event's horizontal delta, such as for wheel events.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L88">hc/lib/web.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L88">hc/lib/web.he:88</a>
 </article>
 <article class="sym" id="ev_dy">
 <h3><a href="#ev_dy">ev_dy</a> <i>function</i></h3>
 <pre>ev_dy() f64</pre>
 <p>Returns the current event's vertical delta, such as for wheel events.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L89">hc/lib/web.he:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L89">hc/lib/web.he:89</a>
 </article>
 <article class="sym" id="ev_button">
 <h3><a href="#ev_button">ev_button</a> <i>function</i></h3>
 <pre>ev_button() i32</pre>
 <p>Returns the button number of the current pointer event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L90">hc/lib/web.he:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L90">hc/lib/web.he:90</a>
 </article>
 <article class="sym" id="ev_buttons">
 <h3><a href="#ev_buttons">ev_buttons</a> <i>function</i></h3>
 <pre>ev_buttons() i32</pre>
 <p>Returns the bitmask of buttons held during the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L91">hc/lib/web.he:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L91">hc/lib/web.he:91</a>
 </article>
 <article class="sym" id="ev_pointer">
 <h3><a href="#ev_pointer">ev_pointer</a> <i>function</i></h3>
 <pre>ev_pointer() i32</pre>
 <p>Returns the pointer id of the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L92">hc/lib/web.he:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L92">hc/lib/web.he:92</a>
 </article>
 <article class="sym" id="ev_mods">
 <h3><a href="#ev_mods">ev_mods</a> <i>function</i></h3>
 <pre>ev_mods() i32</pre>
 <p>Returns the modifier key bitmask of the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L93">hc/lib/web.he:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L93">hc/lib/web.he:93</a>
 </article>
 <article class="sym" id="ev_key">
 <h3><a href="#ev_key">ev_key</a> <i>function</i></h3>
 <pre>ev_key(out u8[&gt;..]&amp;)</pre>
 <p>Writes the key name of the current keyboard event into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L94">hc/lib/web.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L94">hc/lib/web.he:94</a>
 </article>
 <article class="sym" id="ev_value">
 <h3><a href="#ev_value">ev_value</a> <i>function</i></h3>
 <pre>ev_value(out u8[&gt;..]&amp;)</pre>
 <p>Writes the value of the current input event's element into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L95">hc/lib/web.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L95">hc/lib/web.he:95</a>
 </article>
 <article class="sym" id="ev_checked">
 <h3><a href="#ev_checked">ev_checked</a> <i>function</i></h3>
 <pre>ev_checked() bool</pre>
 <p>Returns whether the current event's element is checked.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L96">hc/lib/web.he:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L96">hc/lib/web.he:96</a>
 </article>
 <article class="sym" id="ev_touches">
 <h3><a href="#ev_touches">ev_touches</a> <i>function</i></h3>
 <pre>ev_touches() i32</pre>
 <p>Returns the number of touch points in the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L97">hc/lib/web.he:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L97">hc/lib/web.he:97</a>
 </article>
 <article class="sym" id="ev_touch_x">
 <h3><a href="#ev_touch_x">ev_touch_x</a> <i>function</i></h3>
 <pre>ev_touch_x(i i32) f64</pre>
 <p>Returns the x coordinate of the touch point at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L98">hc/lib/web.he:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L98">hc/lib/web.he:98</a>
 </article>
 <article class="sym" id="ev_touch_y">
 <h3><a href="#ev_touch_y">ev_touch_y</a> <i>function</i></h3>
 <pre>ev_touch_y(i i32) f64</pre>
 <p>Returns the y coordinate of the touch point at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L99">hc/lib/web.he:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L99">hc/lib/web.he:99</a>
 </article>
 <article class="sym" id="ev_num">
 <h3><a href="#ev_num">ev_num</a> <i>function</i></h3>
 <pre>ev_num(name const u8[:]) f64</pre>
 <p>Returns the named numeric field of the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L100">hc/lib/web.he:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L100">hc/lib/web.he:100</a>
 </article>
 <article class="sym" id="ev_str">
 <h3><a href="#ev_str">ev_str</a> <i>function</i></h3>
 <pre>ev_str(name const u8[:], out u8[&gt;..]&amp;) bool</pre>
 <p>Writes the named string field of the current event into the output buffer, returning false if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L101">hc/lib/web.he:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L101">hc/lib/web.he:101</a>
 </article>
 <article class="sym" id="ev_prevent">
 <h3><a href="#ev_prevent">ev_prevent</a> <i>function</i></h3>
 <pre>ev_prevent()</pre>
 <p>Cancels the default browser action of the current event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L102">hc/lib/web.he:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L102">hc/lib/web.he:102</a>
 </article>
 <article class="sym" id="ev_stop">
 <h3><a href="#ev_stop">ev_stop</a> <i>function</i></h3>
 <pre>ev_stop()</pre>
 <p>Stops the current event from propagating further.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L103">hc/lib/web.he:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L103">hc/lib/web.he:103</a>
 </article>
 <article class="sym" id="ev_id">
 <h3><a href="#ev_id">ev_id</a> <i>function</i></h3>
 <pre>ev_id() i32</pre>
 <p>Returns the id of the current fetch, import or call event's operation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L104">hc/lib/web.he:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L104">hc/lib/web.he:104</a>
 </article>
 <article class="sym" id="ev_status">
 <h3><a href="#ev_status">ev_status</a> <i>function</i></h3>
 <pre>ev_status() i32</pre>
 <p>Returns the status code of the current fetch event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L105">hc/lib/web.he:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L105">hc/lib/web.he:105</a>
 </article>
 <article class="sym" id="ev_loaded">
 <h3><a href="#ev_loaded">ev_loaded</a> <i>function</i></h3>
 <pre>ev_loaded() f64</pre>
 <p>Returns the bytes loaded so far in the current progress event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L106">hc/lib/web.he:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L106">hc/lib/web.he:106</a>
 </article>
 <article class="sym" id="ev_total">
 <h3><a href="#ev_total">ev_total</a> <i>function</i></h3>
 <pre>ev_total() f64</pre>
 <p>Returns the total bytes expected in the current progress event.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L107">hc/lib/web.he:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L107">hc/lib/web.he:107</a>
 </article>
 <article class="sym" id="ev_json">
 <h3><a href="#ev_json">ev_json</a> <i>function</i></h3>
 <pre>ev_json(out u8[&gt;..]&amp;)</pre>
 <p>Writes the current event's data as JSON into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L108">hc/lib/web.he:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L108">hc/lib/web.he:108</a>
 </article>
 <h2 id="local-storage">Local Storage <span class="n">2</span></h2>
 <article class="sym" id="store_set">
 <h3><a href="#store_set">store_set</a> <i>function</i></h3>
 <pre>store_set(key const u8[:], value const u8[:])</pre>
 <p>Stores a string value under a key in the browser's persistent local storage.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L110">hc/lib/web.he:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L110">hc/lib/web.he:110</a>
 </article>
 <article class="sym" id="store_del">
 <h3><a href="#store_del">store_del</a> <i>function</i></h3>
 <pre>store_del(key const u8[:])</pre>
 <p>Deletes the value stored under a key in the browser's local storage.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L111">hc/lib/web.he:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L111">hc/lib/web.he:111</a>
 </article>
 <h2 id="network-requests">Network Requests <span class="n">4</span></h2>
 <article class="sym" id="fetch">
 <h3><a href="#fetch">fetch</a> <i>function</i></h3>
 <pre>fetch(url const u8[:], tag i32) i32</pre>
 <p>Starts an HTTP fetch of a URL and returns an id; completion arrives as a fetch event with the given tag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L112">hc/lib/web.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L112">hc/lib/web.he:112</a>
 </article>
 <article class="sym" id="request">
 <h3><a href="#request">request</a> <i>function</i></h3>
 <pre>request(url const u8[:], method const u8[:], headers_json const u8[:], body const u8[:], tag i32, timeout_ms f64) i32</pre>
 <p>Starts an HTTP request with custom method, JSON headers, body and timeout in milliseconds, returning an id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L113">hc/lib/web.he:113</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L113">hc/lib/web.he:113</a>
 </article>
 <article class="sym" id="fetch_take">
 <h3><a href="#fetch_take">fetch_take</a> <i>function</i></h3>
 <pre>fetch_take(id i32, out u8[&gt;..]&amp;) bool</pre>
 <p>Copies a finished fetch response into the output buffer, returning false if it is not ready.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L114">hc/lib/web.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L114">hc/lib/web.he:114</a>
 </article>
 <article class="sym" id="fetch_free">
 <h3><a href="#fetch_free">fetch_free</a> <i>function</i></h3>
 <pre>fetch_free(id i32)</pre>
 <p>Releases the resources held for a fetch id once its response is no longer needed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L115">hc/lib/web.he:115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L115">hc/lib/web.he:115</a>
 </article>
 <h2 id="javascript-interop">JavaScript Interop <span class="n">6</span></h2>
 <article class="sym" id="js_global">
 <h3><a href="#js_global">js_global</a> <i>function</i></h3>
 <pre>js_global(path const u8[:]) i32</pre>
 <p>Returns a handle to a global JavaScript object found by its dotted path.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L116">hc/lib/web.he:116</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L116">hc/lib/web.he:116</a>
 </article>
 <article class="sym" id="js_get">
 <h3><a href="#js_get">js_get</a> <i>function</i></h3>
 <pre>js_get(h i32, path const u8[:]) i32</pre>
 <p>Returns a handle to a property of a JavaScript object, found by path.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L117">hc/lib/web.he:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L117">hc/lib/web.he:117</a>
 </article>
 <article class="sym" id="js_import">
 <h3><a href="#js_import">js_import</a> <i>function</i></h3>
 <pre>js_import(url const u8[:], tag i32) i32</pre>
 <p>Starts importing a JavaScript module from a URL, returning an id; completion arrives as a JS event with the tag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L118">hc/lib/web.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L118">hc/lib/web.he:118</a>
 </article>
 <article class="sym" id="js_call">
 <h3><a href="#js_call">js_call</a> <i>function</i></h3>
 <pre>js_call(h i32, method const u8[:], args_json const u8[:], tag i32) i32</pre>
 <p>Calls a method on a JavaScript object with JSON-encoded arguments and returns an id for the result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L119">hc/lib/web.he:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L119">hc/lib/web.he:119</a>
 </article>
 <article class="sym" id="js_result">
 <h3><a href="#js_result">js_result</a> <i>function</i></h3>
 <pre>js_result(id i32, out u8[&gt;..]&amp;) bool</pre>
 <p>Copies the result of a JavaScript call into the output buffer, returning false if unavailable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L120">hc/lib/web.he:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L120">hc/lib/web.he:120</a>
 </article>
 <article class="sym" id="js_handle">
 <h3><a href="#js_handle">js_handle</a> <i>function</i></h3>
 <pre>js_handle(id i32) i32</pre>
 <p>Converts a JavaScript call or import result id into an object handle for further calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/13b68bbe91f6ef11f72ff9c25b6bea2f73f506f5/hc/lib/web.he#L121">hc/lib/web.he:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/cbbbac2a7819bc4c22b0729b0858e8471ea32dfe/hc/lib/web.he#L121">hc/lib/web.he:121</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
@@ -742,7 +742,7 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core <span>435</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>472</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>257</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics <span>1403</span></a></li>

@@ -205,6 +205,7 @@ std_ceil	function	std	/api-library/helium/lib/std#std_ceil	Thin binding to the C
 std_round	function	std	/api-library/helium/lib/std#std_round	Thin binding to the C round function returning a real rounded to the nearest integer.	int
 std_bits	function	std	/api-library/helium/lib/std#std_bits	Thin binding returning the raw 64-bit IEEE pattern of a real, used by hashing.	int
 float_dec	function	std	/api-library/helium/lib/std#float_dec	Thin binding that returns decimal digits of a real and writes the exponent through e.	int
+pyout	function	std	/api-library/helium/lib/std#pyout	Binds the C runtime routine that writes a byte string to output for Python-dialect printing.	int
 store_u64le	function	std	/api-library/helium/lib/std#store_u64le	Thin binding that stores a 64-bit unsigned value into a byte slice at an offset in little-endian order.	int
 load_u64le	function	std	/api-library/helium/lib/std#load_u64le	Thin binding that loads a 64-bit unsigned value from a byte slice at an offset in little-endian order.	int
 std_from_bits	function	std	/api-library/helium/lib/std#std_from_bits	Thin binding that builds a real from a raw 64-bit IEEE bit pattern.	int
@@ -370,6 +371,9 @@ trim	function	std	/api-library/helium/lib/std#trim	Returns a slice of the string
 strip	function	std	/api-library/helium/lib/std#strip	Returns a slice with leading and trailing whitespace removed, as a Python-style alias of trim.	pub
 lstrip	function	std	/api-library/helium/lib/std#lstrip	Returns a slice with leading whitespace removed, as a Python-style alias of trim_start.	pub
 rstrip	function	std	/api-library/helium/lib/std#rstrip	Returns a slice with trailing whitespace removed, as a Python-style alias of trim_end.	pub
+lstrip	function	std	/api-library/helium/lib/std#lstrip	Returns the slice of s with any leading bytes found in cs removed.	pub
+rstrip	function	std	/api-library/helium/lib/std#rstrip	Returns the slice of s with any trailing bytes found in cs removed.	pub
+strip	function	std	/api-library/helium/lib/std#strip	Returns the slice of s with bytes found in cs removed from both ends.	pub
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of a string split at a separator byte, including empty pieces.	pub
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of s between occurrences of the separator slice.	pub
 each_word	function	std	/api-library/helium/lib/std#each_word	Calls the block with each run of non-space bytes in s, skipping whitespace.	pub
@@ -410,6 +414,7 @@ to_int	function	std	/api-library/helium/lib/std#to_int	Returns s, trimmed of whi
 to_int	function	std	/api-library/helium/lib/std#to_int	Returns s, trimmed of whitespace, parsed as an integer in the given base, or 0 if parsing fails.	pub
 to_int	function	std	/api-library/helium/lib/std#to_int	Returns a growable byte array parsed as a base 10 integer, or 0 if parsing fails.	pub
 to_int	function	std	/api-library/helium/lib/std#to_int	Converts a value of any type to an int by casting.	pub
+to_int	function	std	/api-library/helium/lib/std#to_int	Converts a real to an int, with the cast unchecked; the result is undefined when out of range.	pub
 flt_digit	function	std	/api-library/helium/lib/std#flt_digit	Returns whether the byte is an ASCII decimal digit.	int
 big_mul_add	function	std	/api-library/helium/lib/std#big_mul_add	Multiplies a limb array by m and adds add in place, growing it on carry.	int
 big_bits	function	std	/api-library/helium/lib/std#big_bits	Returns the number of significant bits in a limb array.	int
@@ -467,6 +472,23 @@ tuple_lt	function	std	/api-library/helium/lib/std#tuple_lt	Returns whether the f
 tuple_lt	function	std	/api-library/helium/lib/std#tuple_lt	Returns whether the first four-field tuple orders before the second, comparing fields f0 through f3 in order.	pub
 range	function	std	/api-library/helium/lib/std#range	Returns an array of integers from 0 up to but excluding n, stepping by 1.	pub
 range	function	std	/api-library/helium/lib/std#range	Returns an array of integers from a up to but excluding b, stepping by 1.	pub
+pyrcount	function	std	/api-library/helium/lib/std#pyrcount	Counts the iterations of a Python-style range loop from start, stop and step, returning zero when the range is empty.	int
+pyc1	function	std	/api-library/helium/lib/std#pyc1	Returns the first byte of a string slice, used when lowering Python single-character access.	int
+pydigit	function	std	/api-library/helium/lib/std#pydigit	Converts an ASCII digit byte to its integer value by subtracting 48, without checking the byte is a digit.	int
+pyown	function	std	/api-library/helium/lib/std#pyown	Copies a slice of byte strings into a new growable array of independently owned strings.	int
+pydel	function	std	/api-library/helium/lib/std#pydel	Removes the element at an index from a growable array, where a negative index counts from the end.	int
+pybi	function	std	/api-library/helium/lib/std#pybi	Converts a boolean to an integer, returning 1 for true and 0 for false.	int
+pyf0	function	std	/api-library/helium/lib/std#pyf0	Returns the first element of a slice, used when lowering Python tuple field access.	int
+pyf1	function	std	/api-library/helium/lib/std#pyf1	Returns the second element of a slice, used when lowering Python tuple field access.	int
+pyf2	function	std	/api-library/helium/lib/std#pyf2	Returns the third element of a slice, used when lowering Python tuple field access.	int
+pyf3	function	std	/api-library/helium/lib/std#pyf3	Returns the fourth element of a slice, used when lowering Python tuple field access.	int
+pystar	function	std	/api-library/helium/lib/std#pystar	Joins the Python-style string forms of a slice's elements into a new string, separated by the given separator.	int
+pyformat	function	std	/api-library/helium/lib/std#pyformat	Formats an integer like a Python format spec, supporting zero fill, width and the b, o, x, X and d conversions.	int
+pych	function	std	/api-library/helium/lib/std#pych	Returns a new growable byte string containing the single given byte.	int
+repeat	function	std	/api-library/helium/lib/std#repeat	Returns a new array holding the slice's elements repeated n times in order.	pub
+split	function	std	/api-library/helium/lib/std#split	Splits a string on a separator into slices, stopping after n splits unless n is negative.	pub
+partition	function	std	/api-library/helium/lib/std#partition	Splits a string at the first separator into the part before, the separator and the part after.	pub
+pyg	function	std	/api-library/helium/lib/std#pyg	Formats a real with p significant digits like Python's g conversion, trimming trailing zeros and a bare decimal point.	int
 range	function	std	/api-library/helium/lib/std#range	Returns an array of integers from a toward b, excluding b, advancing by step s which may be negative.	pub
 truediv	function	std	/api-library/helium/lib/std#truediv	Returns the real quotient of two integers, converting both to real before dividing.	pub
 truediv	function	std	/api-library/helium/lib/std#truediv	Returns the real quotient of an integer divided by a real.	pub
@@ -493,6 +515,17 @@ pyfmt	function	std	/api-library/helium/lib/std#pyfmt	Returns a parenthesized tex
 pyrepr	function	std	/api-library/helium/lib/std#pyrepr	Returns a quoted, escaped form of a byte string, preferring single quotes unless the text contains only a single quote.	pub
 pyrepr	function	std	/api-library/helium/lib/std#pyrepr	Returns a quoted, escaped form of a growable byte string, as for a byte slice.	pub
 pyrepr	function	std	/api-library/helium/lib/std#pyrepr	Returns the repr text of any value, which is its str form unless it is a string.	pub
+pyrepr	function	std	/api-library/helium/lib/std#pyrepr	Returns the Python repr form of a single byte, as a quoted string.	int
+pynone	function	std	/api-library/helium/lib/std#pynone	Returns the sentinel integer used to represent Python's None, which is 1 shifted left by 62.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Returns an integer unchanged, used when lowering Python assignment to a copied value.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Returns a real unchanged, used when lowering Python assignment to a copied value.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Returns a boolean unchanged, used when lowering Python assignment to a copied value.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Converts a byte to a new growable single-byte string for Python assignment.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Copies a byte string slice into a new growable string for Python assignment.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Copies a growable byte string into a new independent growable string for Python assignment.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Copies a slice into a new growable array for Python assignment.	int
+pylv	function	std	/api-library/helium/lib/std#pylv	Copies a growable array into a new independent growable array for Python assignment.	int
+pystep	function	std	/api-library/helium/lib/std#pystep	Returns a new array of the slice elements selected by Python-style start, stop and step, with 1 shifted left by 62 meaning an omitted bound.	int
 STR_ascii_lowercase	constant	std	/api-library/helium/lib/std#STR_ascii_lowercase	The lowercase ASCII letters a to z, as in Python's string module.	pub
 STR_ascii_uppercase	constant	std	/api-library/helium/lib/std#STR_ascii_uppercase	The uppercase ASCII letters A to Z, as in Python's string module.	pub
 STR_ascii_letters	constant	std	/api-library/helium/lib/std#STR_ascii_letters	All ASCII letters, lowercase followed by uppercase, as in Python's string module.	pub
@@ -615,7 +648,11 @@ values	function	dictionary	/api-library/helium/lib/dictionary#values	Returns a n
 items	function	dictionary	/api-library/helium/lib/dictionary#items	Returns a new array of key-value slots for every entry in the dictionary.	pub
 truthy	function	dictionary	/api-library/helium/lib/dictionary#truthy	Returns whether the dictionary holds at least one entry.	pub
 slot_lt	function	dictionary	/api-library/helium/lib/dictionary#slot_lt	Orders two slots by key, breaking ties by value, for sorting.	int
+sorted	function	dictionary	/api-library/helium/lib/dictionary#sorted	Returns the dictionary's keys as a new sorted list in ascending order, using the default key comparison.	pub
+sorted	function	dictionary	/api-library/helium/lib/dictionary#sorted	Returns the dictionary's keys as a new sorted list, ordered by the comparison function F supplied as a type parameter.	pub
+list	function	dictionary	/api-library/helium/lib/dictionary#list	Returns the dictionary's keys as a new list, in table order rather than sorted.	pub
 sorted	function	dictionary	/api-library/helium/lib/dictionary#sorted	Returns a new array of the given slots sorted by key, then by value.	int
+pydel	function	dictionary	/api-library/helium/lib/dictionary#pydel	Removes a key from the dictionary, serving as the lowering target for Python-style del statements.	int
 set_add	function	dictionary	/api-library/helium/lib/dictionary#set_add	Adds a key to a set represented as a dictionary with boolean values.	pub
 set	function	dictionary	/api-library/helium/lib/dictionary#set	Builds a set, a dictionary with boolean values, from the distinct elements of an array.	pub
 counter	function	dictionary	/api-library/helium/lib/dictionary#counter	Builds a dictionary counting how many times each element occurs in an array.	pub
