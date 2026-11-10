@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/hair | AMNI-SCIENT</title>
+<meta name="description" content="Renders simulated, physically shaded hair strands on 3D models using GPU compute, with grooming, lighting, shadows, and strand physics controls.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/hair">
+<meta property="og:description" content="Renders simulated, physically shaded hair strands on 3D models using GPU compute, with grooming, lighting, shadows, and strand physics controls.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-hair">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-hair">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=ba006bc068">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=ba006bc068'; start({wasm: '/api-library/search.wasm?v=ba006bc068'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/hair</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/hair</h1>
+<p class="lib-lede">Renders simulated, physically shaded hair strands on 3D models using GPU compute, with grooming, lighting, shadows, and strand physics controls.</p>
+<p class="lib-meta"><code>import gfx.hair;</code> &middot; <code>hair::</code> &middot; 37 functions, 5 types, 29 constants &middot; <a href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#hair-look">Hair Look <span class="n">1</span></a></li>
+<li><a href="#strand-physics">Strand Physics <span class="n">4</span></a></li>
+<li><a href="#hair-rendering">Hair Rendering <span class="n">9</span></a></li>
+<li><a href="#hair-styling">Hair Styling <span class="n">7</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="hair-look">Hair Look <span class="n">1</span></h2>
+<article class="sym" id="Look">
+<h3><a href="#Look">Look</a> <i>type</i></h3>
+<pre>struct Look { color float3 = float3 { 0.58, 0.38, 0.14 }, roughness f32 = 0.42, spread f32 = 0.3, width f32 = 0.00007, slab f32 = 0.004, clump f32 = 0.004, gain f32 = 1.7, exposure f32 = 1.0, scatter f32 = 0.7, density f32 = 1.0, shade f32 = 1.0, ambient float3 = float3 { 0.22, 0.22, 0.22 }, falloff f32 = 40.0, part f32 = 0.0 }</pre>
+<p>Appearance settings for a groom, such as color, roughness, width, density, scatter, exposure, and ambient lighting.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L12">hc/lib/gfx/hair.amni:12</a>
+</article>
+<h2 id="strand-physics">Strand Physics <span class="n">4</span></h2>
+<article class="sym" id="Physics">
+<h3><a href="#Physics">Physics</a> <i>type</i></h3>
+<pre>struct Physics { gravity float3 = float3 { 0.0, -9.81, 0.0 }, styled f32 = 1.0, tip f32 = 0.012, root f32 = 0.35, bone_tip f32 = 0.08, bone_root f32 = 0.5, bend f32 = 0.5, carry f32 = 0.9, damping f32 = 0.02, lift f32 = 0.0, gap_min f32 = 0.0005, gap_max f32 = 0.004 }</pre>
+<p>Simulation settings for a groom, including gravity, stiffness along the strand, damping, and gap limits for collision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L13">hc/lib/gfx/hair.amni:13</a>
+</article>
+<article class="sym" id="probe">
+<h3><a href="#probe">probe</a> <i>function</i></h3>
+<pre>probe(g int, k int) f32</pre>
+<p>Requests diagnostic simulation statistics and returns the stored value at index k, or 0 if out of range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L200">hc/lib/gfx/hair.amni:200</a>
+</article>
+<article class="sym" id="body">
+<h3><a href="#body">body</a> <i>function</i></h3>
+<pre>body(g int, asset int, skin_name const byte[:], joints const byte[:][:], solids const byte[:][:])</pre>
+<p>Builds collision solids for a groom from named joints and meshes of a skinned model.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L423">hc/lib/gfx/hair.amni:423</a>
+</article>
+<article class="sym" id="solid">
+<h3><a href="#solid">solid</a> <i>function</i></h3>
+<pre>solid(g int, node int)</pre>
+<p>Marks a mesh node as a collision solid for a groom and bakes its distance field.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L839">hc/lib/gfx/hair.amni:839</a>
+</article>
+<h2 id="hair-rendering">Hair Rendering <span class="n">9</span></h2>
+<article class="sym" id="Groom">
+<h3><a href="#Groom">Groom</a> <i>type</i></h3>
+<pre>struct Groom { on bool, show bool, look Look, phys Physics, model gfx::mat4, prev gfx::mat4, item int, anchor int, anchor_inv gfx::mat4, top f32, center float3, core float3, radius f32, guides int, parts int, cells int, sdf_done bool, reset bool, ask bool, strands int, points int, segments int, bones int, tgt gfx::Buffer, st gfx::Buffer, gd gfx::Buffer, simb gfx::Buffer, sdfb gfx::Buffer, trib gfx::Buffer, statb gfx::Buffer, pts gfx::Buffer, rest gfx::Buffer, skin gfx::Buffer, matsb gfx::Buffer, segs gfx::Buffer, lfront gfx::Buffer, lacc gfx::Buffer }</pre>
+<p>A loaded hair instance holding its look, physics, placement, strand counts, and GPU buffers.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L14">hc/lib/gfx/hair.amni:14</a>
+</article>
+<article class="sym" id="load">
+<h3><a href="#load">load</a> <i>function</i></h3>
+<pre>load(data const byte[:], strands int) int</pre>
+<p>Creates a groom from hair data bytes and a strand count, returning its handle or -1 if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L89">hc/lib/gfx/hair.amni:89</a>
+</article>
+<article class="sym" id="load_file">
+<h3><a href="#load_file">load_file</a> <i>function</i></h3>
+<pre>load_file(path const byte[:], strands int) int</pre>
+<p>Creates a groom from a hair data file, returning its handle or -1 if reading or parsing fails.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L175">hc/lib/gfx/hair.amni:175</a>
+</article>
+<article class="sym" id="unload">
+<h3><a href="#unload">unload</a> <i>function</i></h3>
+<pre>unload(g int)</pre>
+<p>Releases a groom's GPU buffers and disables it, ignoring invalid or already unloaded handles.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L179">hc/lib/gfx/hair.amni:179</a>
+</article>
+<article class="sym" id="follow">
+<h3><a href="#follow">follow</a> <i>function</i></h3>
+<pre>follow(g int, item int, anchor int)</pre>
+<p>Attaches a groom to a scene item and optional anchor node so it tracks the animated model.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L186">hc/lib/gfx/hair.amni:186</a>
+</article>
+<article class="sym" id="place">
+<h3><a href="#place">place</a> <i>function</i></h3>
+<pre>place(g int, m gfx::mat4)</pre>
+<p>Sets a groom's model transform matrix.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L197">hc/lib/gfx/hair.amni:197</a>
+</article>
+<article class="sym" id="cards">
+<h3><a href="#cards">cards</a> <i>function</i></h3>
+<pre>cards(asset int, mesh const byte[:], anchor const byte[:], strands int) int</pre>
+<p>Creates a groom from a named hair card mesh in a model, returning its handle or -1 on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L540">hc/lib/gfx/hair.amni:540</a>
+</article>
+<article class="sym" id="draw">
+<h3><a href="#draw">draw</a> <i>function</i></h3>
+<pre>draw(dt f32)</pre>
+<p>Simulates and renders all visible grooms over the scene for a frame, taking the time step in seconds.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L733">hc/lib/gfx/hair.amni:733</a>
+</article>
+<article class="sym" id="points">
+<h3><a href="#points">points</a> <i>function</i></h3>
+<pre>points(g int, out byte[&gt;..]&amp;)</pre>
+<p>Reads a groom's simulated strand points back from the GPU into a byte buffer, 48 bytes per point; leaves it untouched if the groom is invalid or off.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L946">hc/lib/gfx/hair.amni:946</a>
+</article>
+<h2 id="hair-styling">Hair Styling <span class="n">7</span></h2>
+<article class="sym" id="Style">
+<h3><a href="#Style">Style</a> <i>type</i></h3>
+<pre>struct Style { steps int = 12, length f32 = 0.2, vary f32 = 0.25, width f32 = 0.004, droop f32 = 0.7, curl f32 = 0.0, turns f32 = 3.0, clumps int = 0, clump f32 = 0.5, seed int = 7 }</pre>
+<p>Parameters for generating strands procedurally, such as steps, length, variation, width, droop, curl, and clumps.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L774">hc/lib/gfx/hair.amni:774</a>
+</article>
+<article class="sym" id="fur">
+<h3><a href="#fur">fur</a> <i>function</i></h3>
+<pre>fur() Style</pre>
+<p>Returns a Style preset for short, fine fur strands.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L780">hc/lib/gfx/hair.amni:780</a>
+</article>
+<article class="sym" id="roots">
+<h3><a href="#roots">roots</a> <i>function</i></h3>
+<pre>roots(pos const float3[:], nrm const float3[:], idx const int[:], lo float3, hi float3, count int, seed int, rp float3[&gt;..]&amp;, rn float3[&gt;..]&amp;) int</pre>
+<p>Samples random root positions and normals over area-weighted mesh triangles inside a box, returning the count or 0 if none qualify.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L781">hc/lib/gfx/hair.amni:781</a>
+</article>
+<article class="sym" id="mesh_soup">
+<h3><a href="#mesh_soup">mesh_soup</a> <i>function</i></h3>
+<pre>mesh_soup(node int, pos float3[&gt;..]&amp;, nrm float3[&gt;..]&amp;, idx int[&gt;..]&amp;)</pre>
+<p>Appends a mesh node's vertex positions, normals, and indices to the given arrays.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L817">hc/lib/gfx/hair.amni:817</a>
+</article>
+<article class="sym" id="mesh_roots">
+<h3><a href="#mesh_roots">mesh_roots</a> <i>function</i></h3>
+<pre>mesh_roots(node int, lo float3, hi float3, count int, seed int, rp float3[&gt;..]&amp;, rn float3[&gt;..]&amp;) int</pre>
+<p>Samples random strand roots and normals on a mesh node within a box, returning the count or 0 if none qualify.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L832">hc/lib/gfx/hair.amni:832</a>
+</article>
+<article class="sym" id="groom">
+<h3><a href="#groom">groom</a> <i>function</i></h3>
+<pre>groom(rp const float3[:], rn const float3[:], st Style, data byte[&gt;..]&amp;)</pre>
+<p>Generates strand data bytes from root positions, normals, and a Style.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L859">hc/lib/gfx/hair.amni:859</a>
+</article>
+<article class="sym" id="card_mesh">
+<h3><a href="#card_mesh">card_mesh</a> <i>function</i></h3>
+<pre>card_mesh(data const byte[:], m gltf::Material) int</pre>
+<p>Builds a hair-card mesh from packed strand data and a material, returning the new mesh id, or -1 if the data is invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L918">hc/lib/gfx/hair.amni:918</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (50)</summary>
+<article class="sym" id="HairU">
+<h3><a href="#HairU">HairU</a> <i>type</i></h3>
+<pre>struct HairU { view_proj gfx::mat4, view gfx::mat4, proj gfx::mat4, size float4, cam float4, to_sun float4, sun_rgb float4, hair float4, sky float4, params float4, look float4, light_vp gfx::mat4, light float4, shadow_vp gfx::mat4, mel float4, pl float4[8], shape float4, core float4 }</pre>
+<p>Uniform block passed to the hair compute and composite shaders, holding matrices, camera, lighting, and strand look parameters.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L11">hc/lib/gfx/hair.amni:11</a>
+</article>
+<article class="sym" id="SIM">
+<h3><a href="#SIM">SIM</a> <i>constant</i></h3>
+<pre>let SIM = 120</pre>
+<p>Number of float4 slots reserved per groom in the simulation parameter array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L15">hc/lib/gfx/hair.amni:15</a>
+</article>
+<article class="sym" id="PARTS">
+<h3><a href="#PARTS">PARTS</a> <i>constant</i></h3>
+<pre>let PARTS = 8</pre>
+<p>Maximum number of body parts per groom used as collision solids.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L16">hc/lib/gfx/hair.amni:16</a>
+</article>
+<article class="sym" id="BONES">
+<h3><a href="#BONES">BONES</a> <i>constant</i></h3>
+<pre>let BONES = 64</pre>
+<p>Maximum number of skinning bones a groom can use.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L17">hc/lib/gfx/hair.amni:17</a>
+</article>
+<article class="sym" id="LIGHT">
+<h3><a href="#LIGHT">LIGHT</a> <i>constant</i></h3>
+<pre>let LIGHT = 512</pre>
+<p>Resolution in pixels of the square light-space buffers used for hair shadowing.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L18">hc/lib/gfx/hair.amni:18</a>
+</article>
+<article class="sym" id="grooms">
+<h3><a href="#grooms">grooms</a> <i>constant</i></h3>
+<pre>var grooms Groom[&gt;..] = []</pre>
+<p>Global list of all loaded grooms, indexed by groom handle.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L19">hc/lib/gfx/hair.amni:19</a>
+</article>
+<article class="sym" id="simv">
+<h3><a href="#simv">simv</a> <i>constant</i></h3>
+<pre>var simv float4[&gt;..] = []</pre>
+<p>Global array of simulation parameters packed per groom for upload to the GPU.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L20">hc/lib/gfx/hair.amni:20</a>
+</article>
+<article class="sym" id="part_node">
+<h3><a href="#part_node">part_node</a> <i>constant</i></h3>
+<pre>var part_node int[&gt;..] = []</pre>
+<p>Per-groom node indices of the body parts used as collision solids.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L21">hc/lib/gfx/hair.amni:21</a>
+</article>
+<article class="sym" id="part_ib">
+<h3><a href="#part_ib">part_ib</a> <i>constant</i></h3>
+<pre>var part_ib gfx::mat4[&gt;..] = []</pre>
+<p>Per-groom inverse bind matrices for the collision body parts.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L22">hc/lib/gfx/hair.amni:22</a>
+</article>
+<article class="sym" id="bone_node">
+<h3><a href="#bone_node">bone_node</a> <i>constant</i></h3>
+<pre>var bone_node int[&gt;..] = []</pre>
+<p>Per-groom scene node indices for skinning bones.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L23">hc/lib/gfx/hair.amni:23</a>
+</article>
+<article class="sym" id="bone_rest">
+<h3><a href="#bone_rest">bone_rest</a> <i>constant</i></h3>
+<pre>var bone_rest gfx::mat4[&gt;..] = []</pre>
+<p>Per-groom inverse rest-pose matrices for skinning bones.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L24">hc/lib/gfx/hair.amni:24</a>
+</article>
+<article class="sym" id="mats">
+<h3><a href="#mats">mats</a> <i>constant</i></h3>
+<pre>var mats gfx::mat4[&gt;..] = []</pre>
+<p>Per-groom bone skinning matrices uploaded to the GPU each frame.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L25">hc/lib/gfx/hair.amni:25</a>
+</article>
+<article class="sym" id="probe_v">
+<h3><a href="#probe_v">probe_v</a> <i>constant</i></h3>
+<pre>var probe_v f32[&gt;..] = []</pre>
+<p>Per-groom storage for diagnostic values returned by the probe function.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L26">hc/lib/gfx/hair.amni:26</a>
+</article>
+<article class="sym" id="w">
+<h3><a href="#w">w</a> <i>constant</i></h3>
+<pre>var w = 0</pre>
+<p>Current width in pixels of the hair render buffers.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L27">hc/lib/gfx/hair.amni:27</a>
+</article>
+<article class="sym" id="h">
+<h3><a href="#h">h</a> <i>constant</i></h3>
+<pre>var h = 0</pre>
+<p>Current height in pixels of the hair render buffers.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L28">hc/lib/gfx/hair.amni:28</a>
+</article>
+<article class="sym" id="made">
+<h3><a href="#made">made</a> <i>constant</i></h3>
+<pre>var made = false</pre>
+<p>Flag recording whether the shared pipelines have been created.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L29">hc/lib/gfx/hair.amni:29</a>
+</article>
+<article class="sym" id="front">
+<h3><a href="#front">front</a> <i>constant</i></h3>
+<pre>var front gfx::Buffer = default&lt;gfx::Buffer&gt;()</pre>
+<p>Screen-sized buffer holding the nearest hair depth per pixel.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L30">hc/lib/gfx/hair.amni:30</a>
+</article>
+<article class="sym" id="acc">
+<h3><a href="#acc">acc</a> <i>constant</i></h3>
+<pre>var acc gfx::Buffer = default&lt;gfx::Buffer&gt;()</pre>
+<p>Screen-sized buffer accumulating hair shading per pixel.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L31">hc/lib/gfx/hair.amni:31</a>
+</article>
+<article class="sym" id="hairt">
+<h3><a href="#hairt">hairt</a> <i>constant</i></h3>
+<pre>var hairt gfx::Texture = default&lt;gfx::Texture&gt;()</pre>
+<p>Texture holding the resolved hair image composited over the scene.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L32">hc/lib/gfx/hair.amni:32</a>
+</article>
+<article class="sym" id="smp">
+<h3><a href="#smp">smp</a> <i>constant</i></h3>
+<pre>var smp gfx::Sampler = default&lt;gfx::Sampler&gt;()</pre>
+<p>Nearest-neighbor clamped sampler used when reading depth and shadow textures.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L33">hc/lib/gfx/hair.amni:33</a>
+</article>
+<article class="sym" id="comp">
+<h3><a href="#comp">comp</a> <i>constant</i></h3>
+<pre>var comp gfx::Pipeline = default&lt;gfx::Pipeline&gt;()</pre>
+<p>Pipeline that composites the resolved hair texture onto the HDR target.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L34">hc/lib/gfx/hair.amni:34</a>
+</article>
+<article class="sym" id="clear_p">
+<h3><a href="#clear_p">clear_p</a> <i>constant</i></h3>
+<pre>var clear_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that clears the hair depth and accumulation buffers.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L35">hc/lib/gfx/hair.amni:35</a>
+</article>
+<article class="sym" id="raster_p">
+<h3><a href="#raster_p">raster_p</a> <i>constant</i></h3>
+<pre>var raster_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that rasterizes hair strand segments.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L36">hc/lib/gfx/hair.amni:36</a>
+</article>
+<article class="sym" id="resolve_p">
+<h3><a href="#resolve_p">resolve_p</a> <i>constant</i></h3>
+<pre>var resolve_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that resolves accumulated hair samples into the hair texture.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L37">hc/lib/gfx/hair.amni:37</a>
+</article>
+<article class="sym" id="skin_p">
+<h3><a href="#skin_p">skin_p</a> <i>constant</i></h3>
+<pre>var skin_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that skins strand points by bone matrices.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L38">hc/lib/gfx/hair.amni:38</a>
+</article>
+<article class="sym" id="sim_p">
+<h3><a href="#sim_p">sim_p</a> <i>constant</i></h3>
+<pre>var sim_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that simulates strand physics.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L39">hc/lib/gfx/hair.amni:39</a>
+</article>
+<article class="sym" id="sdf_p">
+<h3><a href="#sdf_p">sdf_p</a> <i>constant</i></h3>
+<pre>var sdf_p gfx::ComputePipeline = default&lt;gfx::ComputePipeline&gt;()</pre>
+<p>Compute pipeline that builds signed distance fields of collision bodies.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L40">hc/lib/gfx/hair.amni:40</a>
+</article>
+<article class="sym" id="mel_of">
+<h3><a href="#mel_of">mel_of</a> <i>function</i></h3>
+<pre>mel_of(c float3, bn f32) float2</pre>
+<p>Returns eumelanin and pheomelanin amounts approximating a given hair color and spread value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L41">hc/lib/gfx/hair.amni:41</a>
+</article>
+<article class="sym" id="ready">
+<h3><a href="#ready">ready</a> <i>function</i></h3>
+<pre>ready()</pre>
+<p>Creates the shared pipelines and sampler once, doing nothing on later calls.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L67">hc/lib/gfx/hair.amni:67</a>
+</article>
+<article class="sym" id="size">
+<h3><a href="#size">size</a> <i>function</i></h3>
+<pre>size(nw int, nh int)</pre>
+<p>Resizes the screen-sized hair buffers and texture, releasing any previous ones.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L79">hc/lib/gfx/hair.amni:79</a>
+</article>
+<article class="sym" id="f32_at">
+<h3><a href="#f32_at">f32_at</a> <i>function</i></h3>
+<pre>f32_at(data const byte[:], at int) f32</pre>
+<p>Returns the 32-bit float stored at a byte offset in the data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L88">hc/lib/gfx/hair.amni:88</a>
+</article>
+<article class="sym" id="bone">
+<h3><a href="#bone">bone</a> <i>function</i></h3>
+<pre>bone(g int, i int) int</pre>
+<p>Returns the scene node index of a groom's skinning bone.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L198">hc/lib/gfx/hair.amni:198</a>
+</article>
+<article class="sym" id="pose">
+<h3><a href="#pose">pose</a> <i>function</i></h3>
+<pre>pose(g int, i int, m gfx::mat4)</pre>
+<p>Sets a groom's skinning matrix for a bone, ignoring out-of-range indices.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L199">hc/lib/gfx/hair.amni:199</a>
+</article>
+<article class="sym" id="skin_joint">
+<h3><a href="#skin_joint">skin_joint</a> <i>function</i></h3>
+<pre>skin_joint(sk int, node int) int</pre>
+<p>Returns the index of a node within a skin's joint list, or -1 if absent.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L204">hc/lib/gfx/hair.amni:204</a>
+</article>
+<article class="sym" id="tri_owner">
+<h3><a href="#tri_owner">tri_owner</a> <i>function</i></h3>
+<pre>tri_owner(v0 int, v1 int, v2 int) int</pre>
+<p>Returns the joint with the largest total weight across a triangle's vertices, or -1 if none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L209">hc/lib/gfx/hair.amni:209</a>
+</article>
+<article class="sym" id="tri_box_hit">
+<h3><a href="#tri_box_hit">tri_box_hit</a> <i>function</i></h3>
+<pre>tri_box_hit(tl const float4[:], k int, lo float3, hi float3) bool</pre>
+<p>Returns whether a triangle's bounds, expanded by a margin, overlap the given box.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L239">hc/lib/gfx/hair.amni:239</a>
+</article>
+<article class="sym" id="find_cards">
+<h3><a href="#find_cards">find_cards</a> <i>function</i></h3>
+<pre>find_cards(asset int, name const byte[:]) int</pre>
+<p>Returns the node of a named mesh made of valid hair card strips, or -1 if none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L252">hc/lib/gfx/hair.amni:252</a>
+</article>
+<article class="sym" id="card_data">
+<h3><a href="#card_data">card_data</a> <i>function</i></h3>
+<pre>card_data(asset int, n int, anchor int, data byte[&gt;..]&amp;) bool</pre>
+<p>Converts a hair card mesh into groom data bytes, returning false if the node has no mesh.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L279">hc/lib/gfx/hair.amni:279</a>
+</article>
+<article class="sym" id="bake">
+<h3><a href="#bake">bake</a> <i>function</i></h3>
+<pre>bake(g int, parts int, all const float4[:], lo const float3[:], hi const float3[:])</pre>
+<p>Packs collision triangles and grid parameters per body part and allocates distance field buffers for a groom.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L499">hc/lib/gfx/hair.amni:499</a>
+</article>
+<article class="sym" id="live">
+<h3><a href="#live">live</a> <i>function</i></h3>
+<pre>live(g int) bool</pre>
+<p>Returns whether a groom is loaded and visible.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L552">hc/lib/gfx/hair.amni:552</a>
+</article>
+<article class="sym" id="put">
+<h3><a href="#put">put</a> <i>function</i></h3>
+<pre>put(at int, m gfx::mat4)</pre>
+<p>Writes a matrix into four consecutive simulation parameter slots.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L553">hc/lib/gfx/hair.amni:553</a>
+</article>
+<article class="sym" id="uniforms_of">
+<h3><a href="#uniforms_of">uniforms_of</a> <i>function</i></h3>
+<pre>uniforms_of(g int) HairU</pre>
+<p>Builds the shader uniform block for a groom from its look, camera, sun, and lights.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L559">hc/lib/gfx/hair.amni:559</a>
+</article>
+<article class="sym" id="wipe">
+<h3><a href="#wipe">wipe</a> <i>function</i></h3>
+<pre>wipe(u0 HairU, a gfx::Buffer, b gfx::Buffer, mode int, n int)</pre>
+<p>Clears a pair of hair buffers on the GPU using a given mode and element count.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L599">hc/lib/gfx/hair.amni:599</a>
+</article>
+<article class="sym" id="raster">
+<h3><a href="#raster">raster</a> <i>function</i></h3>
+<pre>raster(g int, u0 HairU, mode int)</pre>
+<p>Dispatches the strand rasterization pass for a groom in a given mode, camera or light view.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L608">hc/lib/gfx/hair.amni:608</a>
+</article>
+<article class="sym" id="track">
+<h3><a href="#track">track</a> <i>function</i></h3>
+<pre>track(g int)</pre>
+<p>Updates a groom's model transform and bone matrices from its followed scene item's animation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L625">hc/lib/gfx/hair.amni:625</a>
+</article>
+<article class="sym" id="raw">
+<h3><a href="#raw">raw</a> <i>constant</i></h3>
+<pre>var raw byte[&gt;..] = []</pre>
+<p>Scratch byte array that receives simulation statistics read back from the GPU.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L634">hc/lib/gfx/hair.amni:634</a>
+</article>
+<article class="sym" id="us">
+<h3><a href="#us">us</a> <i>constant</i></h3>
+<pre>var us HairU[&gt;..] = []</pre>
+<p>Scratch array of per-groom uniform blocks built each frame.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L635">hc/lib/gfx/hair.amni:635</a>
+</article>
+<article class="sym" id="simulate">
+<h3><a href="#simulate">simulate</a> <i>function</i></h3>
+<pre>simulate(g int, dt f32)</pre>
+<p>Runs one physics step for a groom, including skinning, collision field baking, and optional statistics readback.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L636">hc/lib/gfx/hair.amni:636</a>
+</article>
+<article class="sym" id="rs">
+<h3><a href="#rs">rs</a> <i>constant</i></h3>
+<pre>var rs = 7</pre>
+<p>Seed state of the random number generator used for strand generation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L775">hc/lib/gfx/hair.amni:775</a>
+</article>
+<article class="sym" id="rnd">
+<h3><a href="#rnd">rnd</a> <i>function</i></h3>
+<pre>rnd() f32</pre>
+<p>Returns the next pseudo-random float in the range from 0 up to but excluding 1.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ba006bc6321303f3d039f8bd71e1ec49e93ad67a/hc/lib/gfx/hair.amni#L776">hc/lib/gfx/hair.amni:776</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1712</span></a><ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
+<li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
+<li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
+<li><a href="/api-library/helium/lib/gfx-hair" class="on">gfx/hair</a><ul class="lib-sub">
+<li><a href="#hair-look">Hair Look</a></li>
+<li><a href="#strand-physics">Strand Physics</a></li>
+<li><a href="#hair-rendering">Hair Rendering</a></li>
+<li><a href="#hair-styling">Hair Styling</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-10">2026-11-10</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
