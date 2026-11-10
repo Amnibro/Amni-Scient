@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-ktx2">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-ktx2">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=33c2371739">
+<link rel="stylesheet" href="/api-library/lib.css?v=3e94191994">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=33c2371739'; start({wasm: '/api-library/search.wasm?v=33c2371739'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=3e94191994'; start({wasm: '/api-library/search.wasm?v=3e94191994'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/ktx2</h1>
 <p class="lib-lede">Parses KTX2 texture files, validating headers and reading dimensions, color space, and mip levels for block-compressed or raw images.</p>
-<p class="lib-meta"><code>import gfx.ktx2;</code> &middot; <code>ktx2::</code> &middot; 21 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.ktx2;</code> &middot; <code>ktx2::</code> &middot; 21 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#ktx2-reading">KTX2 Reading <span class="n">15</span></a></li>
 <li><a href="#ktx2-writing">KTX2 Writing <span class="n">1</span></a></li>
@@ -115,105 +115,105 @@
 <pre>struct Info { ok bool = false, kind int, srgb bool, width int, height int, levels int, scheme int, error int = 0 }</pre>
 <p>Describes the result of parsing a KTX2 file, including format kind, color space, dimensions, level count, supercompression scheme and error code.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L4">hc/lib/gfx/ktx2.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L4">hc/lib/gfx/ktx2.amni:4</a>
 </article>
 <article class="sym" id="E_NONE">
 <h3><a href="#E_NONE">E_NONE</a> <i>constant</i></h3>
 <pre>let E_NONE = 0</pre>
 <p>Error code meaning the file parsed successfully with no error.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L5">hc/lib/gfx/ktx2.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L5">hc/lib/gfx/ktx2.amni:5</a>
 </article>
 <article class="sym" id="E_SHORT">
 <h3><a href="#E_SHORT">E_SHORT</a> <i>constant</i></h3>
 <pre>let E_SHORT = 1</pre>
 <p>Error code meaning the file is too short to hold the header or level index.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L6">hc/lib/gfx/ktx2.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L6">hc/lib/gfx/ktx2.amni:6</a>
 </article>
 <article class="sym" id="E_MAGIC">
 <h3><a href="#E_MAGIC">E_MAGIC</a> <i>constant</i></h3>
 <pre>let E_MAGIC = 2</pre>
 <p>Error code meaning the file does not start with the KTX2 identifier bytes.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L7">hc/lib/gfx/ktx2.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L7">hc/lib/gfx/ktx2.amni:7</a>
 </article>
 <article class="sym" id="E_FORMAT">
 <h3><a href="#E_FORMAT">E_FORMAT</a> <i>constant</i></h3>
 <pre>let E_FORMAT = 3</pre>
 <p>Error code meaning the file's Vulkan pixel format is not supported.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L8">hc/lib/gfx/ktx2.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L8">hc/lib/gfx/ktx2.amni:8</a>
 </article>
 <article class="sym" id="E_SHAPE">
 <h3><a href="#E_SHAPE">E_SHAPE</a> <i>constant</i></h3>
 <pre>let E_SHAPE = 4</pre>
 <p>Error code meaning dimensions, depth, layers, faces or level count are unsupported or out of range.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L9">hc/lib/gfx/ktx2.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L9">hc/lib/gfx/ktx2.amni:9</a>
 </article>
 <article class="sym" id="E_SCHEME">
 <h3><a href="#E_SCHEME">E_SCHEME</a> <i>constant</i></h3>
 <pre>let E_SCHEME = 5</pre>
 <p>Error code meaning the supercompression scheme is neither none nor zlib.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L10">hc/lib/gfx/ktx2.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L10">hc/lib/gfx/ktx2.amni:10</a>
 </article>
 <article class="sym" id="E_LEVEL">
 <h3><a href="#E_LEVEL">E_LEVEL</a> <i>constant</i></h3>
 <pre>let E_LEVEL = 6</pre>
 <p>Error code meaning a mip level entry has an invalid offset, length or uncompressed size.</p>
 <p class="note">The struct `Info` has, in this order: `ok` bool (default false), `kind` int, `srgb` bool, `width` int, `height` int, `levels` int, `scheme` int, and `error` int (default 0). Error codes are constants: `E_NONE = 0`, `E_SHORT = 1` (file too short), `E_MAGIC = 2` (not a KTX2 file), `E_FORMAT = 3` (a pixel format this module does not read), `E_SHAPE = 4` (3D, array, cube map, or a bad size or level co</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L11">hc/lib/gfx/ktx2.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L11">hc/lib/gfx/ktx2.amni:11</a>
 </article>
 <article class="sym" id="level_size">
 <h3><a href="#level_size">level_size</a> <i>function</i></h3>
 <pre>level_size(kind int, w int, h int, n int) int</pre>
 <p>Returns the uncompressed byte size of mip level n for the given format kind and base dimensions.</p>
 <p class="note">`level_size(kind int, w int, h int, n int) int` is the byte count of mip level n of a w by h picture: the level is `max(w &gt;&gt; n, 1)` by `max(h &gt;&gt; n, 1)`; kind 0 takes 4 bytes per pixel; the others are what the bc module's own `size` function gives for that level, called as bc::size(kind, level width, level height) (the module imports gfx.bc; no local copy of that function).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L12">hc/lib/gfx/ktx2.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L12">hc/lib/gfx/ktx2.amni:12</a>
 </article>
 <article class="sym" id="is_ktx2">
 <h3><a href="#is_ktx2">is_ktx2</a> <i>function</i></h3>
 <pre>is_ktx2(file const byte[:]) bool</pre>
 <p>Returns whether the data begins with the 12-byte KTX2 file identifier.</p>
 <p class="note">`is_ktx2(file) bool` (file: read-only byte slice) is true when the file is at least 12 bytes and starts with the bytes 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x32, 0x30, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L18">hc/lib/gfx/ktx2.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L18">hc/lib/gfx/ktx2.amni:18</a>
 </article>
 <article class="sym" id="head">
 <h3><a href="#head">head</a> <i>function</i></h3>
 <pre>head(file const byte[:]) Info</pre>
 <p>Parses and validates a KTX2 header and level index, returning an Info whose ok is false on failure.</p>
 <p class="note">`head(file) Info` (file: read-only byte slice, which may be only the start of a larger file) parses the header and the level index without looking at the level data. After the 12-byte identifier come nine 32-bit fields: vkFormat, typeSize, pixelWidth, pixelHeight, pixelDepth, layerCount, faceCount, levelCount, supercompressionScheme; then the index: dfdByteOffset, dfdByteLength, kvdByteOffset, kvd</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L54">hc/lib/gfx/ktx2.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L54">hc/lib/gfx/ktx2.amni:54</a>
 </article>
 <article class="sym" id="span">
 <h3><a href="#span">span</a> <i>function</i></h3>
 <pre>span(file const byte[:], info Info, n int) int, int</pre>
 <p>Returns the byte offset and stored length of mip level n, or -1 and 0 when invalid.</p>
 <p class="note">`span(file, info Info, n int) int, int` (file: read-only byte slice, which may be only the start of the file) returns two ints, the byte offset and the stored byte length of level n, read from the level index in `file`. It returns -1 and 0 when `info.ok` is false, n is outside 0 to levels - 1, or `file` is shorter than 80 + 24 * (n + 1) bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L83">hc/lib/gfx/ktx2.amni:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L83">hc/lib/gfx/ktx2.amni:83</a>
 </article>
 <article class="sym" id="read">
 <h3><a href="#read">read</a> <i>function</i></h3>
 <pre>read(file const byte[:]) Info</pre>
 <p>Parses and validates a KTX2 file header and level index, returning an Info with ok false and an error code on failure.</p>
 <p class="note">`read(file) Info` (file: read-only byte slice holding the whole file) is `head(file)` plus one more check when that is ok: for every level, the offset and length from `span` must not pass the end of the file (offset plus length at most the file length), else the result has `ok` false and error E_LEVEL. No header parsing here: `head` does it all.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L88">hc/lib/gfx/ktx2.amni:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L88">hc/lib/gfx/ktx2.amni:88</a>
 </article>
 <article class="sym" id="unpack">
 <h3><a href="#unpack">unpack</a> <i>function</i></h3>
 <pre>unpack(stored const byte[:], info Info, n int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes one stored mip level into out, handling raw or zlib data, and returns false on any failure.</p>
 <p class="note">`unpack(stored, info Info, n int, out) bool` (stored: read-only byte slice holding exactly the stored bytes of level n; out: growable byte array by reference) clears `out` and fills it with level n's bytes: false when `info.ok` is false or n is outside 0 to levels - 1. With scheme 0 it is a copy of `stored`, and false (with `out` empty) when its length differs from `level_size`. With scheme 3 `sto</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L111">hc/lib/gfx/ktx2.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L111">hc/lib/gfx/ktx2.amni:111</a>
 </article>
 <article class="sym" id="level">
 <h3><a href="#level">level</a> <i>function</i></h3>
 <pre>level(file const byte[:], info Info, n int, out byte[&gt;..]&amp;) bool</pre>
 <p>Extracts mip level n into the output buffer, inflating zlib data and verifying it; returns false on failure.</p>
 <p class="note">`level(file, info Info, n int, out) bool` (file: read-only byte slice holding the whole file; out: growable byte array by reference) clears `out`, takes level n's offset and length from `span`, and is false when the offset is negative or offset plus length passes the end of the file; otherwise it is the result of `unpack` on that part of the file. No decoding here: `unpack` does it all.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L138">hc/lib/gfx/ktx2.amni:138</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L138">hc/lib/gfx/ktx2.amni:138</a>
 </article>
 <h2 id="ktx2-writing">KTX2 Writing <span class="n">1</span></h2>
 <article class="sym" id="write">
@@ -221,87 +221,87 @@
 <pre>write(kind int, srgb bool, w int, h int, levels int, data const byte[:], deflate bool, out byte[&gt;..]&amp;) bool</pre>
 <p>Builds a KTX2 file from level data into the output buffer, optionally zlib-wrapped; returns false on invalid arguments.</p>
 <p class="note">`write(kind int, srgb bool, w int, h int, levels int, data, deflate bool, out) bool` (data: read-only byte slice holding the levels back to back, level 0 first, each exactly `level_size` long; out: growable byte array by reference, cleared first) writes a complete KTX2 file; false (out left empty) when kind is not one of 0, 1, 3, 4, 5, 7, the sizes or level count would fail `head`'s checks, or `da</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L217">hc/lib/gfx/ktx2.amni:217</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L217">hc/lib/gfx/ktx2.amni:217</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (13)</summary>
 <article class="sym" id="rd32">
 <h3><a href="#rd32">rd32</a> <i>function</i></h3>
 <pre>rd32(f const byte[:], at int) int</pre>
 <p>Reads a little-endian 32-bit integer from the byte slice at the given offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L24">hc/lib/gfx/ktx2.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L24">hc/lib/gfx/ktx2.amni:24</a>
 </article>
 <article class="sym" id="rd64">
 <h3><a href="#rd64">rd64</a> <i>function</i></h3>
 <pre>rd64(f const byte[:], at int) int</pre>
 <p>Reads a little-endian 64-bit integer at an offset, returning -1 if the value exceeds 31 high bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L27">hc/lib/gfx/ktx2.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L27">hc/lib/gfx/ktx2.amni:27</a>
 </article>
 <article class="sym" id="head_fail">
 <h3><a href="#head_fail">head_fail</a> <i>function</i></h3>
 <pre>head_fail(e int) Info</pre>
 <p>Builds an Info result that carries only the given error code, with ok left false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L30">hc/lib/gfx/ktx2.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L30">hc/lib/gfx/ktx2.amni:30</a>
 </article>
 <article class="sym" id="vk_kind">
 <h3><a href="#vk_kind">vk_kind</a> <i>function</i></h3>
 <pre>vk_kind(v int) int</pre>
 <p>Maps a Vulkan format number to an internal block-compression kind, returning -1 when unsupported.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L31">hc/lib/gfx/ktx2.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L31">hc/lib/gfx/ktx2.amni:31</a>
 </article>
 <article class="sym" id="vk_srgb">
 <h3><a href="#vk_srgb">vk_srgb</a> <i>function</i></h3>
 <pre>vk_srgb(v int) bool</pre>
 <p>Returns whether a Vulkan format number denotes an sRGB color encoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L42">hc/lib/gfx/ktx2.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L42">hc/lib/gfx/ktx2.amni:42</a>
 </article>
 <article class="sym" id="max_levels">
 <h3><a href="#max_levels">max_levels</a> <i>function</i></h3>
 <pre>max_levels(w int, h int) int</pre>
 <p>Returns the number of mip levels in a full chain for an image of the given width and height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L48">hc/lib/gfx/ktx2.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L48">hc/lib/gfx/ktx2.amni:48</a>
 </article>
 <article class="sym" id="adler32">
 <h3><a href="#adler32">adler32</a> <i>function</i></h3>
 <pre>adler32(data const byte[:]) int</pre>
 <p>Computes the Adler-32 checksum of the data, used to verify zlib-compressed levels.</p>
 <p class="note">`unpack(stored, info Info, n int, out) bool` (stored: read-only byte slice holding exactly the stored bytes of level n; out: growable byte array by reference) clears `out` and fills it with level n's bytes: false when `info.ok` is false or n is outside 0 to levels - 1. With scheme 0 it is a copy of `stored`, and false (with `out` empty) when its length differs from `level_size`. With scheme 3 `sto</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L102">hc/lib/gfx/ktx2.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L102">hc/lib/gfx/ktx2.amni:102</a>
 </article>
 <article class="sym" id="put16">
 <h3><a href="#put16">put16</a> <i>function</i></h3>
 <pre>put16(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 16-bit value to the output buffer in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L144">hc/lib/gfx/ktx2.amni:144</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L144">hc/lib/gfx/ktx2.amni:144</a>
 </article>
 <article class="sym" id="put32">
 <h3><a href="#put32">put32</a> <i>function</i></h3>
 <pre>put32(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 32-bit value to the output buffer in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L148">hc/lib/gfx/ktx2.amni:148</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L148">hc/lib/gfx/ktx2.amni:148</a>
 </article>
 <article class="sym" id="put64">
 <h3><a href="#put64">put64</a> <i>function</i></h3>
 <pre>put64(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 64-bit value to the output buffer in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L152">hc/lib/gfx/ktx2.amni:152</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L152">hc/lib/gfx/ktx2.amni:152</a>
 </article>
 <article class="sym" id="put_sample">
 <h3><a href="#put_sample">put_sample</a> <i>function</i></h3>
 <pre>put_sample(out byte[&gt;..]&amp;, bit_off int, bits int, chan int, upper int)</pre>
 <p>Appends one sample descriptor entry for a data format descriptor to out, using the given bit offset, width, channel and upper bound.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L156">hc/lib/gfx/ktx2.amni:156</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L156">hc/lib/gfx/ktx2.amni:156</a>
 </article>
 <article class="sym" id="sample_count">
 <h3><a href="#sample_count">sample_count</a> <i>function</i></h3>
 <pre>sample_count(kind int) int</pre>
 <p>Returns the number of data format descriptor samples for a format kind, or 0 if unsupported.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L164">hc/lib/gfx/ktx2.amni:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L164">hc/lib/gfx/ktx2.amni:164</a>
 </article>
 <article class="sym" id="put_dfd">
 <h3><a href="#put_dfd">put_dfd</a> <i>function</i></h3>
 <pre>put_dfd(out byte[&gt;..]&amp;, kind int, srgb bool)</pre>
 <p>Appends the data format descriptor block for a format kind and color space to the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/33c23710223190e0052e670d192e7cd2fbc47322/hc/lib/gfx/ktx2.amni#L171">hc/lib/gfx/ktx2.amni:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3e9419137e17c2309402cd2e802969e84f5d61f8/hc/lib/gfx/ktx2.amni#L171">hc/lib/gfx/ktx2.amni:171</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -313,7 +313,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1569</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1585</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

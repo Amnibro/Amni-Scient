@@ -1342,6 +1342,7 @@ s3d::WeightOv	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#WeightOv	Reco
 s3d::Item	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Item	Placed instance of a glTF asset with transform, animation state, blending and tracked nodes.	pub
 s3d::InstSet	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#InstSet	Record describing one set of instanced copies of an asset, with its range, LOD, bounds and visibility lists.	int
 s3d::Caustics	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Caustics	Settings for underwater light caustics, including strength, focus, wave pattern, water absorption and the box they cover.	pub
+s3d::Sea	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Sea	Settings for the sea surface renderer, controlling reflections, ray march steps, underwater view, light shafts and scatter color.	pub
 s3d::Wind	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Wind	Wind settings holding direction, strength, speed and time, used to sway foliage.	pub
 s3d::Clouds	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Clouds	Settings for the volumetric cloud layer, including coverage, altitude, thickness, density, wind drift, ray steps, sun lighting, cloud shadows and render resolution scale.	pub
 s3d::CloudU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CloudU	Uniform block passed to the cloud shader holding camera, sun, wind, environment and ambient data.	int
@@ -1369,6 +1370,7 @@ s3d::GradeU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GradeU	Uniform 
 s3d::HistU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HistU	Uniform block giving the size and range for the exposure histogram compute pass.	int
 s3d::AdaptU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#AdaptU	Uniform block with range, percentile and rate values for the exposure adaptation compute pass.	int
 s3d::FogVolume	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FogVolume	A box or ellipsoid-shaped region of fog with its own position, size, density, color and edge softness.	pub
+s3d::SeaU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SeaU	Raw uniform block passed to the sea shader with camera, sun, cascade, absorption and wave data.	int
 s3d::FogU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FogU	Uniform block for the volumetric fog pass with cascades, sun, lights and fog parameters.	int
 s3d::QuadG	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadG	Geometry data for a particle quad with four corner positions and colors.	int
 s3d::QuadViewU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#QuadViewU	Uniform block with view-projection matrix and camera right and up vectors for particle quads.	int
@@ -1502,6 +1504,7 @@ s3d::fog_noise_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog
 s3d::fog_wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_wind	World-space wind vector that scrolls the fog noise over time.	pub
 s3d::fog_volumes	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_volumes	List of fog volumes the caller edits to place local fog in the scene.	pub
 s3d::pipe_fog	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_fog	GPU pipeline that draws the fog pass.	int
+s3d::pipe_sea	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_sea	GPU pipeline that draws the sea surface.	int
 s3d::quads	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quads	List of billboard quads queued for drawing this frame.	int
 s3d::quad_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quad_buf	GPU vertex buffer holding the quad data for the frame.	int
 s3d::quad_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#quad_cap	Current capacity of the quad buffer.	int
@@ -1745,6 +1748,16 @@ s3d::pipe_clouds	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_c
 s3d::pipe_cloud_shadow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cloud_shadow	Render pipeline that renders the cloud shadow map.	int
 s3d::wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind-2	Current wind settings that drive foliage sway.	pub
 s3d::wind_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_prev	Previous frame's wind value kept for motion vectors.	int
+s3d::water_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#water_prev	Previous frame's water value kept for motion vectors.	int
+s3d::sea	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea-2	Global sea settings the caller edits between frames.	pub
+s3d::sea_on	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_on	Internal flag recording whether the sea is active this frame.	int
+s3d::sea_level	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_level	Internal water surface height used for the current frame.	int
+s3d::sea_lo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_lo	Internal lower corner of the sea's bounding box.	int
+s3d::sea_hi	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_hi	Internal upper corner of the sea's bounding box.	int
+s3d::sea_waves	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_waves	Internal wave parameters packed for the sea shader.	int
+s3d::sea_absorb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_absorb	Internal per-channel light absorption of the water, passed to shaders.	int
+s3d::sea_scatter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_scatter	Internal water scatter color passed to shaders.	int
+s3d::sea_wet	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_wet	Returns whether the camera is currently below the sea surface and inside its horizontal bounds.	int
 s3d::wind_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_fresh	Flag marking that no previous wind state exists yet.	int
 s3d::wind_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_u	Wind values packed for upload to shaders.	int
 s3d::pushers	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pushers	List of float4 pusher values that displace swaying foliage.	pub
@@ -1943,6 +1956,7 @@ s3d::trans_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tran
 s3d::color_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#color_pass	Renders the sky, opaque, blended and particle surfaces into the multisampled color target.	int
 s3d::lens_tiles	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_tiles	Builds per-tile lens data from the source texture for depth of field and motion blur.	int
 s3d::lens_swap	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_swap	Swaps the working HDR and effects textures so the next lens pass reads the latest result.	int
+s3d::sea_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_pass	Renders the underwater sea effect pass using scene depth and shadows, then swaps the HDR and effect buffers; skips when no sea is visible.	int
 s3d::fog_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_pass	Raymarches volumetric fog through the scene, lit by the sun cascades and point lights, then swaps buffers.	int
 s3d::lens_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_pass	Applies motion blur from motion vectors and depth of field to the HDR image when each effect is enabled.	int
 s3d::temporal_draw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_draw	Draws one temporal accumulation pass into the inactive history image and makes it current.	int
@@ -2070,7 +2084,9 @@ shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wra
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
 shapes::sheet	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sheet	Builds an n-by-n grid quad patch from origin o spanning edge vectors u and v, with material m, returning the new asset id.	pub
+shapes::water_material	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#water_material	Builds a transparent, refractive water material whose surface swell strength is set by the given value.	pub
 shapes::water	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#water	Builds a double-sided, transparent water plane of the given half-extent, returning the id of the new mesh asset.	pub
+shapes::sea	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sea	Creates a flat water sheet of half-size extent, subdivided into n cells per side, with swelling waves, returning its asset id.	pub
 shapes::blade	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#blade	Builds a flat, double-sided tapered strip mesh of given height, base width and tip width, split into segments, and returns its asset id.	pub
 shapes::cube	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#cube	Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.	pub
 motion::MAX_WEIGHTS	constant	gfx/motion	/api-library/helium/lib/gfx-motion#MAX_WEIGHTS	Constant giving the maximum number of morph target weights stored per node in the pose weight array.	pub
