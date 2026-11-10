@@ -1342,6 +1342,9 @@ s3d::Item	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Item	Placed insta
 s3d::InstSet	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#InstSet	Record describing one set of instanced copies of an asset, with its range, LOD, bounds and visibility lists.	int
 s3d::Caustics	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Caustics	Settings for underwater light caustics, including strength, focus, wave pattern, water absorption and the box they cover.	pub
 s3d::Wind	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Wind	Wind settings holding direction, strength, speed and time, used to sway foliage.	pub
+s3d::Clouds	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Clouds	Settings for the volumetric cloud layer, including coverage, altitude, thickness, density, wind drift, ray steps, sun lighting, cloud shadows and render resolution scale.	pub
+s3d::CloudU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CloudU	Uniform block passed to the cloud shader holding camera, sun, wind, environment and ambient data.	int
+s3d::CloudShadowU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CloudShadowU	Uniform block passed to the cloud shadow shader holding the shadow area, sun direction, slab and wind data.	int
 s3d::Batch	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Batch	Flattened per-primitive draw record with matrices and sort depth, built from the item list each frame.	int
 s3d::DrawU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DrawU	Uniform block holding per-draw matrices, deformation and motion data for the shader.	int
 s3d::FrameU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FrameU	Uniform block of per-frame data: cascades, sun, sky, lights and probe volume.	int
@@ -1724,6 +1727,15 @@ s3d::idbuf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf	GPU bu
 s3d::idbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#idbuf_cap	Current capacity of the instance id buffer.	int
 s3d::fr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fr	Six frustum planes used for instance culling.	int
 s3d::caustics	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#caustics-2	Global caustics settings that the caller edits between frames.	pub
+s3d::clouds	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clouds-2	Global cloud settings the caller edits between frames, off by default.	pub
+s3d::cloud_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_tex	Texture holding the rendered cloud layer for the frame.	int
+s3d::cloud_shadow_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_shadow_tex	Texture holding the cloud shadow map projected onto the scene.	int
+s3d::cloud_shadow_n	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_shadow_n	Internal count tracking the cloud shadow state.	int
+s3d::cloud_res	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_res	Internal cache of the cloud render resolution scale currently allocated.	int
+s3d::cloud_cu	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_cu	Internal first cloud coordinate vector used when sampling cloud shadows.	int
+s3d::cloud_cv	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_cv	Internal second cloud coordinate vector used when sampling cloud shadows.	int
+s3d::pipe_clouds	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_clouds	Render pipeline that draws the cloud layer.	int
+s3d::pipe_cloud_shadow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cloud_shadow	Render pipeline that renders the cloud shadow map.	int
 s3d::wind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind-2	Current wind settings that drive foliage sway.	pub
 s3d::wind_prev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_prev	Previous frame's wind value kept for motion vectors.	int
 s3d::wind_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wind_fresh	Flag marking that no previous wind state exists yet.	int
@@ -1896,6 +1908,12 @@ s3d::local_shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#
 s3d::fullscreen	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fullscreen	Binds a pipeline for a fullscreen draw.	int
 s3d::sky_u	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sky_u	Builds the sky uniform data from the view and sun settings.	int
 s3d::ao_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ao_pass	Runs the prepass for normals, depth and motion, then computes and blurs ambient occlusion.	int
+s3d::clouds_live	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clouds_live	Returns whether cloud rendering is active this frame, requiring clouds enabled, nonzero cover and no capture in progress.	int
+s3d::cloud_shadow_on	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_shadow_on	Returns whether cloud shadows are active, requiring live clouds and a shadow strength above zero.	int
+s3d::cloud_target	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_target	Returns the render target texture holding the rendered clouds, for use by other passes of the renderer.	int
+s3d::cloud_shadow_target	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_shadow_target	Returns the render target texture holding the cloud shadow map, which is empty until shadows have been drawn.	int
+s3d::cloud_view	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_view	Transforms a cloud slab vector by a matrix, adding the matrix translation scaled by the vector's w component.	int
+s3d::cloud_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloud_pass	Renders the cloud shadow map, centered on the camera, and the clouds themselves; does nothing when clouds are not live.	int
 s3d::contact_on	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_on	Returns whether contact shadows are enabled, which requires sun shadows on and a positive contact strength.	int
 s3d::contact_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#contact_pass	Renders a screen-space contact shadow texture toward the sun from the depth and normal prepass.	int
 s3d::ssr_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_pass	Builds a depth hierarchy and traces screen-space reflection hits, updating the reflection uniforms.	int
@@ -5735,6 +5753,8 @@ envmap::cubes	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#cubes	Count
 envmap::cube_n	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#cube_n	Width and height in pixels of each face in the currently allocated environment cube array.	int
 envmap::gen	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#gen	Generation counter incremented when the environment cubemap contents are replaced, so dependents can detect changes.	int
 envmap::pipe_copy	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_copy	Pipeline used to copy existing cubemap faces and mips into a newly allocated cube array.	int
+envmap::clear	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#clear	Cube texture used as a cleared placeholder for the environment map when no sky clouds are active.	int
+envmap::clear_on	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#clear_on	Flag set when the sky has clouds, marking the cleared placeholder texture as in use.	int
 envmap::CopyU	type	gfx/envmap	/api-library/helium/lib/gfx-envmap#CopyU	Uniform block carrying the face, slot and mip indices for the cubemap copy shader.	int
 envmap::EnvU	type	gfx/envmap	/api-library/helium/lib/gfx-envmap#EnvU	Uniform block passed to the environment fragment shaders, packing face index, roughness, sample count and source size.	int
 envmap::setup	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#setup	Creates the shared pipelines, samplers and dummy cubemap once; later calls do nothing.	int
@@ -5747,9 +5767,16 @@ envmap::sun_color	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#sun_col
 envmap::EnvSkyU	type	gfx/envmap	/api-library/helium/lib/gfx-envmap#EnvSkyU	Uniform block passed to the sky fragment shader, packing face, sun direction and power, and cloud settings.	int
 envmap::pipe_ms	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_ms	Pipeline that renders the multiple-scattering lookup texture for the sky.	int
 envmap::pipe_sky	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#pipe_sky	Pipeline that renders the procedural sky into cubemap faces.	int
+envmap::noise	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#noise	Cached 80-cube 3D noise texture lazily built and sampled by the sky shader for cloud shapes.	int
+envmap::smp_noise	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#smp_noise	Repeat-wrapping linear sampler used to read the cloud noise texture.	int
 envmap::sky_ready	constant	gfx/envmap	/api-library/helium/lib/gfx-envmap#sky_ready	Flag recording that the sky pipelines have been created.	int
 envmap::mip_count	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#mip_count	Returns the number of mip levels in a full chain for a texture of the given size.	int
 envmap::setup_sky	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#setup_sky	Creates the sky pipelines once; later calls do nothing.	int
+envmap::noise_l	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#noise_l	Returns a lattice noise value in 0 to 1 from a byte lattice, wrapping coordinates at 80.	int
+envmap::noise_m	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#noise_m	Returns a smoothstep-eased interpolation between two values by a fraction from 0 to 1.	int
+envmap::noise_o	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#noise_o	Returns trilinearly interpolated lattice noise at a given cell stride and shift, optionally folded into a billowy ridge shape.	int
+envmap::noise_tex	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#noise_tex	Returns the shared 3D cloud noise texture, generating and uploading it on first use.	int
+envmap::sky_faces	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#sky_faces	Renders the six faces of a sky cubemap with sun, haze, clouds and wind using the given multiple-scattering texture.	int
 envmap::set_sky	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#set_sky	Generates a procedural sky cubemap from sun direction, power, haze and clouds, then prefilters it for lighting.	pub
 envmap::set_equirect	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#set_equirect	Sets the environment from raw equirectangular float RGBA pixels of the given width and height, then prefilters it.	pub
 envmap::load	function	gfx/envmap	/api-library/helium/lib/gfx-envmap#load	Loads an HDR image file as the environment map, returning false if reading or decoding fails.	pub
