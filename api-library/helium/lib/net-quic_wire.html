@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-quic_wire">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-quic_wire">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=69877038c9">
+<link rel="stylesheet" href="/api-library/lib.css?v=1893d7de04">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=69877038c9'; start({wasm: '/api-library/search.wasm?v=69877038c9'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=1893d7de04'; start({wasm: '/api-library/search.wasm?v=1893d7de04'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/quic_wire</h1>
 <p class="lib-lede">Lets a program encode, decode, encrypt, and protect QUIC packets, including headers, variable-length integers, and key derivation.</p>
-<p class="lib-meta"><code>import net.quic_wire;</code> &middot; <code>net::</code> &middot; 22 functions, 6 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he">Source</a></p>
+<p class="lib-meta"><code>import net.quic_wire;</code> &middot; <code>net::</code> &middot; 22 functions, 6 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#packet-keys">Packet Keys <span class="n">4</span></a></li>
 <li><a href="#packet-protection">Packet Protection <span class="n">3</span></a></li>
@@ -117,180 +117,180 @@
 <h3><a href="#QKeys">QKeys</a> <i>type</i></h3>
 <pre>struct QKeys { alg int = 0, hk int = 0, sec byte[&gt;..] = [], key byte[&gt;..] = [], iv byte[&gt;..] = [], hp byte[&gt;..] = [] }</pre>
 <p>Holds the cipher algorithm, hash, secret, key, IV, and header-protection key for one QUIC encryption level.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L7">hc/lib/net/quic_wire.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L7">hc/lib/net/quic_wire.he:7</a>
 </article>
 <article class="sym" id="qk_from">
 <h3><a href="#qk_from">qk_from</a> <i>function</i></h3>
 <pre>qk_from(suite int, sec const byte[:]) QKeys</pre>
 <p>Returns packet keys derived from a TLS traffic secret according to the given cipher suite.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L28">hc/lib/net/quic_wire.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L28">hc/lib/net/quic_wire.he:28</a>
 </article>
 <article class="sym" id="qk_initial">
 <h3><a href="#qk_initial">qk_initial</a> <i>function</i></h3>
 <pre>qk_initial(dcid const byte[:], server bool) QKeys</pre>
 <p>Returns the initial packet keys derived from the destination connection ID for the client or server side.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L31">hc/lib/net/quic_wire.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L31">hc/lib/net/quic_wire.he:31</a>
 </article>
 <article class="sym" id="qk_update">
 <h3><a href="#qk_update">qk_update</a> <i>function</i></h3>
 <pre>qk_update(k const QKeys&amp;) QKeys</pre>
 <p>Returns the next-generation keys for a key update, keeping the same header-protection key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L33">hc/lib/net/quic_wire.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L33">hc/lib/net/quic_wire.he:33</a>
 </article>
 <h2 id="packet-protection">Packet Protection <span class="n">3</span></h2>
 <article class="sym" id="QOpen">
 <h3><a href="#QOpen">QOpen</a> <i>type</i></h3>
 <pre>struct QOpen { ok bool = false, pn int = 0, first int = 0, data byte[&gt;..] = [] }</pre>
 <p>Result of opening a protected packet, with success flag, packet number, first header byte, and decrypted payload.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L8">hc/lib/net/quic_wire.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L8">hc/lib/net/quic_wire.he:8</a>
 </article>
 <article class="sym" id="qp_seal">
 <h3><a href="#qp_seal">qp_seal</a> <i>function</i></h3>
 <pre>qp_seal(k const QKeys&amp;, hdr const byte[:], pnl int, pn int, body const byte[:]) byte[&gt;..]</pre>
 <p>Returns an encrypted packet with header protection applied, or an empty result if sealing fails or the packet is too short.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L44">hc/lib/net/quic_wire.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L44">hc/lib/net/quic_wire.he:44</a>
 </article>
 <article class="sym" id="qp_open">
 <h3><a href="#qp_open">qp_open</a> <i>function</i></h3>
 <pre>qp_open(k const QKeys&amp;, p const byte[:], pno int, largest int) QOpen</pre>
 <p>Returns the result of removing header protection and decrypting a packet, with ok false when authentication fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L50">hc/lib/net/quic_wire.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L50">hc/lib/net/quic_wire.he:50</a>
 </article>
 <h2 id="headers">Headers <span class="n">4</span></h2>
 <article class="sym" id="QHdr">
 <h3><a href="#QHdr">QHdr</a> <i>type</i></h3>
 <pre>struct QHdr { ok bool = false, lg bool = false, ty int = 0, ver int = 0, dcid byte[&gt;..] = [], scid byte[&gt;..] = [], token byte[&gt;..] = [], pno int = 0, stop int = 0 }</pre>
 <p>Parsed QUIC packet header with validity flag, form, type, version, connection IDs, token, packet number offset, and end offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L9">hc/lib/net/quic_wire.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L9">hc/lib/net/quic_wire.he:9</a>
 </article>
 <article class="sym" id="qh_long">
 <h3><a href="#qh_long">qh_long</a> <i>function</i></h3>
 <pre>qh_long(ty int, dcid const byte[:], scid const byte[:], token const byte[:], pnl int, pn int, plen int) byte[&gt;..]</pre>
 <p>Returns a long-form QUIC header for the given packet type, connection IDs, token, packet number, and payload length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L57">hc/lib/net/quic_wire.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L57">hc/lib/net/quic_wire.he:57</a>
 </article>
 <article class="sym" id="qh_short">
 <h3><a href="#qh_short">qh_short</a> <i>function</i></h3>
 <pre>qh_short(dcid const byte[:], phase int, pnl int, pn int) byte[&gt;..]</pre>
 <p>Returns a short-form QUIC header with the destination connection ID, key phase, and packet number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L61">hc/lib/net/quic_wire.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L61">hc/lib/net/quic_wire.he:61</a>
 </article>
 <article class="sym" id="qh_parse">
 <h3><a href="#qh_parse">qh_parse</a> <i>function</i></h3>
 <pre>qh_parse(p const byte[:], cidl int) QHdr</pre>
 <p>Returns a parsed header from a packet, with ok false when the packet is malformed or truncated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L62">hc/lib/net/quic_wire.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L62">hc/lib/net/quic_wire.he:62</a>
 </article>
 <h2 id="frame-encoding">Frame Encoding <span class="n">6</span></h2>
 <article class="sym" id="QFrame">
 <h3><a href="#QFrame">QFrame</a> <i>type</i></h3>
 <pre>struct QFrame { ty int = 0, a int = 0, b int = 0, c int = 0, fin bool = false, data byte[&gt;..] = [], tok byte[&gt;..] = [], rg int[&gt;..] = [] }</pre>
 <p>A QUIC frame with its type, numeric fields, fin flag, payload data, token bytes, and ranges.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L10">hc/lib/net/quic_wire.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L10">hc/lib/net/quic_wire.he:10</a>
 </article>
 <article class="sym" id="qv_len">
 <h3><a href="#qv_len">qv_len</a> <i>function</i></h3>
 <pre>qv_len(v int) int</pre>
 <p>Returns the number of bytes needed to encode a value as a QUIC variable-length integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L13">hc/lib/net/quic_wire.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L13">hc/lib/net/quic_wire.he:13</a>
 </article>
 <article class="sym" id="qv_put">
 <h3><a href="#qv_put">qv_put</a> <i>function</i></h3>
 <pre>qv_put(b byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a value to a byte list as a QUIC variable-length integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L14">hc/lib/net/quic_wire.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L14">hc/lib/net/quic_wire.he:14</a>
 </article>
 <article class="sym" id="qv_get">
 <h3><a href="#qv_get">qv_get</a> <i>function</i></h3>
 <pre>qv_get(b const byte[:], o int) int, int</pre>
 <p>Decodes a variable-length integer at an offset, returning the value and next offset, or -1 and the same offset on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L17">hc/lib/net/quic_wire.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L17">hc/lib/net/quic_wire.he:17</a>
 </article>
 <article class="sym" id="qf_put">
 <h3><a href="#qf_put">qf_put</a> <i>function</i></h3>
 <pre>qf_put(b byte[&gt;..]&amp;, f const QFrame&amp;)</pre>
 <p>Appends the wire encoding of a QUIC frame to a byte list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L84">hc/lib/net/quic_wire.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L84">hc/lib/net/quic_wire.he:84</a>
 </article>
 <article class="sym" id="qf_get">
 <h3><a href="#qf_get">qf_get</a> <i>function</i></h3>
 <pre>qf_get(p const byte[:], o0 int) QFrame, int</pre>
 <p>Decodes a QUIC frame at an offset, returning the frame and next offset, or -1 offset on malformed input.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L97">hc/lib/net/quic_wire.he:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L97">hc/lib/net/quic_wire.he:97</a>
 </article>
 <h2 id="transport-parameters">Transport Parameters <span class="n">4</span></h2>
 <article class="sym" id="QParams">
 <h3><a href="#QParams">QParams</a> <i>type</i></h3>
 <pre>struct QParams { v int[&gt;..] = [], has int = 0, odcid byte[&gt;..] = [], iscid byte[&gt;..] = [], rscid byte[&gt;..] = [], srt byte[&gt;..] = [] }</pre>
 <p>QUIC transport parameter set with integer values, a bitmask of received IDs, and connection ID fields.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L12">hc/lib/net/quic_wire.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L12">hc/lib/net/quic_wire.he:12</a>
 </article>
 <article class="sym" id="qtp_new">
 <h3><a href="#qtp_new">qtp_new</a> <i>function</i></h3>
 <pre>qtp_new() QParams</pre>
 <p>Returns transport parameters initialized with default values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L130">hc/lib/net/quic_wire.he:130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L130">hc/lib/net/quic_wire.he:130</a>
 </article>
 <article class="sym" id="qtp_put">
 <h3><a href="#qtp_put">qtp_put</a> <i>function</i></h3>
 <pre>qtp_put(p const QParams&amp;, server bool) byte[&gt;..]</pre>
 <p>Returns the encoded transport parameters, including the original destination connection ID only when encoding for a server.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L132">hc/lib/net/quic_wire.he:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L132">hc/lib/net/quic_wire.he:132</a>
 </article>
 <article class="sym" id="qtp_get">
 <h3><a href="#qtp_get">qtp_get</a> <i>function</i></h3>
 <pre>qtp_get(d const byte[:], server bool) QParams, bool</pre>
 <p>Decodes transport parameters, returning them with a flag that is false when data is invalid or violates limits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L138">hc/lib/net/quic_wire.he:138</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L138">hc/lib/net/quic_wire.he:138</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (8)</summary>
 <article class="sym" id="QF_NV">
 <h3><a href="#QF_NV">QF_NV</a> <i>constant</i></h3>
 <pre>QF_NV := &quot;0022321022222222121112112100210&quot;</pre>
 <p>Lookup string giving how many variable-length integer fields each QUIC frame type carries, indexed by frame type.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L6">hc/lib/net/quic_wire.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L6">hc/lib/net/quic_wire.he:6</a>
 </article>
 <article class="sym" id="QRd">
 <h3><a href="#QRd">QRd</a> <i>type</i></h3>
 <pre>struct QRd { o int = 0, bad bool = false }</pre>
 <p>Read cursor holding the current offset and a flag set when a variable-length read fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L11">hc/lib/net/quic_wire.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L11">hc/lib/net/quic_wire.he:11</a>
 </article>
 <article class="sym" id="qr">
 <h3><a href="#qr">qr</a> <i>function</i></h3>
 <pre>qr(p const byte[:], r QRd&amp;) int</pre>
 <p>Reads a variable-length integer at the cursor and advances it, setting the bad flag and returning 0 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L24">hc/lib/net/quic_wire.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L24">hc/lib/net/quic_wire.he:24</a>
 </article>
 <article class="sym" id="qp_mask">
 <h3><a href="#qp_mask">qp_mask</a> <i>function</i></h3>
 <pre>qp_mask(k const QKeys&amp;, s const byte[:]) byte[&gt;..]</pre>
 <p>Returns the header-protection mask computed from a ciphertext sample using the key's cipher.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L35">hc/lib/net/quic_wire.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L35">hc/lib/net/quic_wire.he:35</a>
 </article>
 <article class="sym" id="qp_nonce">
 <h3><a href="#qp_nonce">qp_nonce</a> <i>function</i></h3>
 <pre>qp_nonce(k const QKeys&amp;, pn int) byte[&gt;..]</pre>
 <p>Returns the per-packet AEAD nonce by XORing the packet number into the key's IV.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L38">hc/lib/net/quic_wire.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L38">hc/lib/net/quic_wire.he:38</a>
 </article>
 <article class="sym" id="qp_pn">
 <h3><a href="#qp_pn">qp_pn</a> <i>function</i></h3>
 <pre>qp_pn(largest int, tr int, bits int) int</pre>
 <p>Returns the full packet number reconstructed from truncated bits and the largest number received so far.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L39">hc/lib/net/quic_wire.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L39">hc/lib/net/quic_wire.he:39</a>
 </article>
 <article class="sym" id="qh_pn">
 <h3><a href="#qh_pn">qh_pn</a> <i>function</i></h3>
 <pre>qh_pn(h byte[&gt;..]&amp;, pnl int, pn int)</pre>
 <p>Appends the truncated packet number bytes to a header being built.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L56">hc/lib/net/quic_wire.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L56">hc/lib/net/quic_wire.he:56</a>
 </article>
 <article class="sym" id="qtp_bytes">
 <h3><a href="#qtp_bytes">qtp_bytes</a> <i>function</i></h3>
 <pre>qtp_bytes(b byte[&gt;..]&amp;, id int, v const byte[:])</pre>
 <p>Appends one transport parameter with its ID and length-prefixed raw value to a byte list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6987703f888ace67d88269bbedb93f5d200dd008/hc/lib/net/quic_wire.he#L131">hc/lib/net/quic_wire.he:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1893d7d13de29dd6bd76c7c96f35a7316ac94a5e/hc/lib/net/quic_wire.he#L131">hc/lib/net/quic_wire.he:131</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -302,7 +302,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1747</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1751</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

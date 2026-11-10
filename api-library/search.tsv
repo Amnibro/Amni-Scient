@@ -1471,6 +1471,8 @@ s3d::multiscatter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#multi
 s3d::furnace_scale	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_scale	Test hook scaling the direct light; 1.0 in normal use.	int
 s3d::furnace_mode	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_mode	Test hook selecting deliberately faulty furnace behaviors; 0 in normal use.	int
 s3d::test_rect_naive	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_rect_naive	Test hook that selects the naive rectangular light path; false in normal use.	int
+s3d::test_all_lights	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_all_lights	Test flag that forces every light to be processed, bypassing the normal light culling, for verifying renderer behavior.	int
+s3d::test_cluster_range	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_cluster_range	Test scale factor for the light cluster depth range, where 1.0 is the normal setting.	int
 s3d::alpha_to_coverage	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#alpha_to_coverage	Flag enabling alpha-to-coverage for cut-out surfaces.	pub
 s3d::mip_bias	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias	Texture mip level bias applied when sampling, in mip levels.	pub
 s3d::mip_bias_auto	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias_auto	Flag that lets the renderer choose the mip bias automatically.	pub
@@ -5799,7 +5801,9 @@ gl::drawing_h	function	webgl	/api-library/helium/lib/webgl#drawing_h	Returns the
 clusters::CX	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CX	Number of cluster cells along the horizontal screen axis in the light-assignment grid.	int
 clusters::CY	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CY	Number of cluster cells along the vertical screen axis in the light-assignment grid.	int
 clusters::CZ	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#CZ	Number of logarithmically spaced depth slices in the light-assignment grid.	int
-clusters::MAX_PER	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#MAX_PER	Maximum number of lights stored for any single cluster cell; extra lights are dropped.	int
+clusters::MAX_PER	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#MAX_PER	Constant giving the maximum number of lights that can be stored for a single cluster cell; extra lights are dropped.	pub
+clusters::dropped	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#dropped	Counter of light-to-cell assignments discarded because a cell was already full, updated during building.	int
+clusters::top	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#top	Internal scratch variable used while assigning lights to cells, with no meaning shown outside the build.	int
 clusters::counts	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#counts	Scratch array holding per-cell light counts, reused as write offsets while building the grid.	int
 clusters::pair_c	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#pair_c	Scratch array of cell indices, paired with the light indices in the matching light array.	int
 clusters::pair_l	constant	gfx/clusters	/api-library/helium/lib/gfx-clusters#pair_l	Scratch array of light indices, paired with the cell indices in the matching cell array.	int
