@@ -1715,6 +1715,8 @@ s3d::meshlet_cone	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshl
 s3d::meshlet_cpu	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_cpu	Flag that runs meshlet culling on the CPU instead of the GPU compute pipeline, off by default.	pub
 s3d::meshlet_min	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_min	Minimum mesh size, defaulting to 4000, at which meshlet rendering applies.	pub
 s3d::meshlet_budget	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_budget	Budget limit for meshlet rendering work, defaulting to 8000000.	pub
+s3d::meshlet_grow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_grow	Boolean flag controlling whether the meshlet draw budget grows automatically over time; true by default.	pub
+s3d::meshlet_budget_max	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_budget_max	Upper limit on the meshlet budget when it grows automatically, set to 250,000,000 by default.	pub
 s3d::ml_first	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_first	Per-mesh index of the first meshlet entry, rebuilt when meshlet data changes.	int
 s3d::ml_count	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_count	Per-mesh meshlet counts, kept alongside the first-meshlet indices.	int
 s3d::ml_tab	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_tab	CPU-side meshlet table data uploaded to the GPU table buffer.	int
@@ -1730,6 +1732,8 @@ s3d::ml_draw_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_dra
 s3d::ml_args_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_args_buf	GPU buffer holding the indirect draw arguments for meshlets.	int
 s3d::ml_out_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_out_buf	GPU buffer receiving the meshlets that survive culling.	int
 s3d::ml_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_dirty	Flag marking meshlet data as changed and needing re-upload.	int
+s3d::ml_tick	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_tick	Internal frame counter used by the meshlet culling code to track when its budget was last adjusted.	int
+s3d::ml_seen	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_seen	Internal count of meshlets seen in the most recent frame, used to decide budget changes.	int
 s3d::ml_have	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_have	Flag recording whether meshlet data currently exists.	int
 s3d::ml_draw_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_draw_cap	Current capacity of the meshlet draw buffer.	int
 s3d::ml_out_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_out_cap	Current capacity of the meshlet output buffer.	int
@@ -1913,7 +1917,7 @@ s3d::frustum	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#frustum	Ex
 s3d::gather_instances	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather_instances	Flattens instance sets into per-frame draw batches, culling against the view frustum, splitting LODs, and uploading instance ids and transforms to GPU buffers.	int
 s3d::gather	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gather	Flattens visible items into draw batches with poses, joint palettes and previous-frame transforms.	int
 s3d::meshlet_prepare	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_prepare	Uploads newly built meshlet data for each loaded primitive, skipping skinned, morphed, blended, tiny or special-shaded ones.	int
-s3d::meshlet_slot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_slot	Registers a draw instance's transform for meshlet culling and returns its slot, or -1 if the primitive has no meshlets.	int
+s3d::meshlet_slot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_slot	Registers one draw of a primitive's meshlets for GPU culling, returning its slot index, or -1 when meshlets are off, absent, or the draw limit is reached.	int
 s3d::ml_at	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_at	Returns a meshlet's bounding point transformed by a draw's matrix, selected by row index.	int
 s3d::ml_far	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_far	Returns the distance between a point and the eye position.	int
 s3d::ml_keep	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ml_keep	Decides whether a meshlet survives level-of-detail, frustum and backface cone tests for a draw.	int

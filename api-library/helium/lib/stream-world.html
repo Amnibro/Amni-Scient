@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/stream-world">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/stream-world">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=7083b26c90">
+<link rel="stylesheet" href="/api-library/lib.css?v=d47db11dd9">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=7083b26c90'; start({wasm: '/api-library/search.wasm?v=7083b26c90'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=d47db11dd9'; start({wasm: '/api-library/search.wasm?v=d47db11dd9'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>stream/world</h1>
 <p class="lib-lede">Stream a large world: load and unload grid cells in background threads as the player moves.</p>
-<p class="lib-meta"><code>import stream.world;</code> &middot; <code>stream::</code> &middot; 14 functions, 2 types, 17 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni">Source</a></p>
+<p class="lib-meta"><code>import stream.world;</code> &middot; <code>stream::</code> &middot; 14 functions, 2 types, 17 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#grid-setup">Grid Setup <span class="n">3</span></a></li>
 <li><a href="#streaming-tuning">Streaming Tuning <span class="n">8</span></a></li>
@@ -117,204 +117,204 @@
 <h3><a href="#cell_m">cell_m</a> <i>constant</i></h3>
 <pre>var cell_m f32 = 25.0</pre>
 <p>Side length of one grid cell in meters, set by the grid function.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L6">hc/lib/stream/world.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L6">hc/lib/stream/world.amni:6</a>
 </article>
 <article class="sym" id="grid">
 <h3><a href="#grid">grid</a> <i>function</i></h3>
 <pre>grid(w int, h int, origin_x f32, origin_z f32, cell f32)</pre>
 <p>Defines the cell grid size, world origin and cell size, resetting all streaming state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L42">hc/lib/stream/world.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L42">hc/lib/stream/world.amni:42</a>
 </article>
 <article class="sym" id="cell_path">
 <h3><a href="#cell_path">cell_path</a> <i>function</i></h3>
 <pre>cell_path(cx int, cz int, path const byte[:])</pre>
 <p>Assigns the file path to load for the cell at the given grid coordinates.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L48">hc/lib/stream/world.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L48">hc/lib/stream/world.amni:48</a>
 </article>
 <h2 id="streaming-tuning">Streaming Tuning <span class="n">8</span></h2>
 <article class="sym" id="load_r">
 <h3><a href="#load_r">load_r</a> <i>constant</i></h3>
 <pre>var load_r f32 = 100.0</pre>
 <p>Distance in meters within which cells are requested for loading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L7">hc/lib/stream/world.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L7">hc/lib/stream/world.amni:7</a>
 </article>
 <article class="sym" id="unload_r">
 <h3><a href="#unload_r">unload_r</a> <i>constant</i></h3>
 <pre>var unload_r f32 = 125.0</pre>
 <p>Distance in meters beyond which loaded or loading cells are dropped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L8">hc/lib/stream/world.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L8">hc/lib/stream/world.amni:8</a>
 </article>
 <article class="sym" id="inner_r">
 <h3><a href="#inner_r">inner_r</a> <i>constant</i></h3>
 <pre>var inner_r f32 = 50.0</pre>
 <p>Distance in meters inside which cells are never evicted to meet the memory budget.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L9">hc/lib/stream/world.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L9">hc/lib/stream/world.amni:9</a>
 </article>
 <article class="sym" id="budget">
 <h3><a href="#budget">budget</a> <i>constant</i></h3>
 <pre>var budget = 2 &lt;&lt; 20</pre>
 <p>Maximum total bytes of resident cell data before distant cells are evicted.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L10">hc/lib/stream/world.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L10">hc/lib/stream/world.amni:10</a>
 </article>
 <article class="sym" id="frame_bytes">
 <h3><a href="#frame_bytes">frame_bytes</a> <i>constant</i></h3>
 <pre>var frame_bytes = 1 &lt;&lt; 20</pre>
 <p>Maximum bytes of chunk data copied into cells per update call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L11">hc/lib/stream/world.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L11">hc/lib/stream/world.amni:11</a>
 </article>
 <article class="sym" id="max_inflight">
 <h3><a href="#max_inflight">max_inflight</a> <i>constant</i></h3>
 <pre>var max_inflight = 8</pre>
 <p>Maximum number of cells loading at the same time.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L12">hc/lib/stream/world.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L12">hc/lib/stream/world.amni:12</a>
 </article>
 <article class="sym" id="sync">
 <h3><a href="#sync">sync</a> <i>constant</i></h3>
 <pre>var sync = false</pre>
 <p>Flag that, when true, loads cells synchronously on the calling thread instead of using workers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L13">hc/lib/stream/world.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L13">hc/lib/stream/world.amni:13</a>
 </article>
 <article class="sym" id="io_delay_ms">
 <h3><a href="#io_delay_ms">io_delay_ms</a> <i>constant</i></h3>
 <pre>var io_delay_ms = 0</pre>
 <p>Artificial delay in milliseconds added to each cell read, for simulating slow storage.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L14">hc/lib/stream/world.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L14">hc/lib/stream/world.amni:14</a>
 </article>
 <h2 id="worker-control">Worker Control <span class="n">2</span></h2>
 <article class="sym" id="start">
 <h3><a href="#start">start</a> <i>function</i></h3>
 <pre>start(workers int)</pre>
 <p>Starts the given number of background loader threads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L49">hc/lib/stream/world.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L49">hc/lib/stream/world.amni:49</a>
 </article>
 <article class="sym" id="stop">
 <h3><a href="#stop">stop</a> <i>function</i></h3>
 <pre>stop()</pre>
 <p>Stops all loader threads and waits for them to exit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L50">hc/lib/stream/world.amni:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L50">hc/lib/stream/world.amni:50</a>
 </article>
 <h2 id="cell-access">Cell Access <span class="n">5</span></h2>
 <article class="sym" id="loaded">
 <h3><a href="#loaded">loaded</a> <i>function</i></h3>
 <pre>loaded(k int) bool</pre>
 <p>Returns whether the cell has finished loading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L61">hc/lib/stream/world.amni:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L61">hc/lib/stream/world.amni:61</a>
 </article>
 <article class="sym" id="bytes">
 <h3><a href="#bytes">bytes</a> <i>function</i></h3>
 <pre>bytes(k int) const byte[:]</pre>
 <p>Returns the loaded file contents of a cell.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L62">hc/lib/stream/world.amni:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L62">hc/lib/stream/world.amni:62</a>
 </article>
 <article class="sym" id="load_count">
 <h3><a href="#load_count">load_count</a> <i>function</i></h3>
 <pre>load_count(k int) int</pre>
 <p>Returns how many times the cell has completed loading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L63">hc/lib/stream/world.amni:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L63">hc/lib/stream/world.amni:63</a>
 </article>
 <article class="sym" id="take_new">
 <h3><a href="#take_new">take_new</a> <i>function</i></h3>
 <pre>take_new(out int[&gt;..]&amp;)</pre>
 <p>Moves the list of newly loaded cells into the output array and clears the internal list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L64">hc/lib/stream/world.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L64">hc/lib/stream/world.amni:64</a>
 </article>
 <article class="sym" id="resident_bytes">
 <h3><a href="#resident_bytes">resident_bytes</a> <i>function</i></h3>
 <pre>resident_bytes() int</pre>
 <p>Returns the total bytes currently held by loaded cells.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L108">hc/lib/stream/world.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L108">hc/lib/stream/world.amni:108</a>
 </article>
 <h2 id="streaming-control">Streaming Control <span class="n">1</span></h2>
 <article class="sym" id="update">
 <h3><a href="#update">update</a> <i>function</i></h3>
 <pre>update(x f32, z f32)</pre>
 <p>Advances streaming for the player position, unloading far cells, receiving chunks and starting new loads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L66">hc/lib/stream/world.amni:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L66">hc/lib/stream/world.amni:66</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (14)</summary>
 <article class="sym" id="Req">
 <h3><a href="#Req">Req</a> <i>type</i></h3>
 <pre>struct Req { id int, gen int, delay int, path byte[..128] }</pre>
 <p>Request sent to a loader thread, carrying cell id, generation, delay and file path.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L4">hc/lib/stream/world.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L4">hc/lib/stream/world.amni:4</a>
 </article>
 <article class="sym" id="Chunk">
 <h3><a href="#Chunk">Chunk</a> <i>type</i></h3>
 <pre>struct Chunk { id int, gen int, off int, n int, total int, data byte[..8192] }</pre>
 <p>Chunk of file data sent back from a loader thread, tagged with cell id and generation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L5">hc/lib/stream/world.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L5">hc/lib/stream/world.amni:5</a>
 </article>
 <article class="sym" id="gw">
 <h3><a href="#gw">gw</a> <i>constant</i></h3>
 <pre>var gw = 0; var gh = 0; var ox f32 = 0.0; var oz f32 = 0.0</pre>
 <p>Grid width, height and world origin used to map cell indices to positions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L15">hc/lib/stream/world.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L15">hc/lib/stream/world.amni:15</a>
 </article>
 <article class="sym" id="PATHS">
 <h3><a href="#PATHS">PATHS</a> <i>constant</i></h3>
 <pre>var PATHS byte[&gt;..][&gt;..] = []</pre>
 <p>Per-cell file paths for the grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L16">hc/lib/stream/world.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L16">hc/lib/stream/world.amni:16</a>
 </article>
 <article class="sym" id="STATE">
 <h3><a href="#STATE">STATE</a> <i>constant</i></h3>
 <pre>var STATE int[&gt;..] = []; var GEN int[&gt;..] = []; var GOT int[&gt;..] = []; var LOADS int[&gt;..] = []</pre>
 <p>Per-cell load state, generation, received byte count and completed load count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L17">hc/lib/stream/world.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L17">hc/lib/stream/world.amni:17</a>
 </article>
 <article class="sym" id="DATA">
 <h3><a href="#DATA">DATA</a> <i>constant</i></h3>
 <pre>var DATA byte[&gt;..][&gt;..] = []</pre>
 <p>Per-cell buffers holding loaded file data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L18">hc/lib/stream/world.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L18">hc/lib/stream/world.amni:18</a>
 </article>
 <article class="sym" id="WORKERS">
 <h3><a href="#WORKERS">WORKERS</a> <i>constant</i></h3>
 <pre>var WORKERS int[&gt;..] = []</pre>
 <p>Handles of running loader worker threads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L19">hc/lib/stream/world.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L19">hc/lib/stream/world.amni:19</a>
 </article>
 <article class="sym" id="resident">
 <h3><a href="#resident">resident</a> <i>constant</i></h3>
 <pre>var resident = 0</pre>
 <p>Running total of bytes held by loaded cells.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L20">hc/lib/stream/world.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L20">hc/lib/stream/world.amni:20</a>
 </article>
 <article class="sym" id="inflight">
 <h3><a href="#inflight">inflight</a> <i>constant</i></h3>
 <pre>var inflight = 0</pre>
 <p>Count of cells currently being loaded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L21">hc/lib/stream/world.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L21">hc/lib/stream/world.amni:21</a>
 </article>
 <article class="sym" id="NEW">
 <h3><a href="#NEW">NEW</a> <i>constant</i></h3>
 <pre>var NEW int[&gt;..] = []</pre>
 <p>Queue of cells that finished loading since the last take_new call.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L22">hc/lib/stream/world.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L22">hc/lib/stream/world.amni:22</a>
 </article>
 <article class="sym" id="loader">
 <h3><a href="#loader">loader</a> <i>function</i></h3>
 <pre>thread_fn loader(chunk: int)</pre>
 <p>Worker thread body that reads requested files and sends them back in chunks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L23">hc/lib/stream/world.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L23">hc/lib/stream/world.amni:23</a>
 </article>
 <article class="sym" id="dist">
 <h3><a href="#dist">dist</a> <i>function</i></h3>
 <pre>dist(k int, x f32, z f32) f32</pre>
 <p>Returns the distance in meters from a point to the nearest edge of a cell, zero if inside.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L51">hc/lib/stream/world.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L51">hc/lib/stream/world.amni:51</a>
 </article>
 <article class="sym" id="drop_cell">
 <h3><a href="#drop_cell">drop_cell</a> <i>function</i></h3>
 <pre>drop_cell(k int)</pre>
 <p>Unloads a cell, releasing its data and invalidating any pending load for it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L56">hc/lib/stream/world.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L56">hc/lib/stream/world.amni:56</a>
 </article>
 <article class="sym" id="finish">
 <h3><a href="#finish">finish</a> <i>function</i></h3>
 <pre>finish(k int)</pre>
 <p>Marks a cell as fully loaded and updates counters and the new-cell queue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/stream/world.amni#L65">hc/lib/stream/world.amni:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/stream/world.amni#L65">hc/lib/stream/world.amni:65</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -326,7 +326,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1789</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1793</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

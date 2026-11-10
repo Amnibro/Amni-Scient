@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_hdr">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_hdr">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=7083b26c90">
+<link rel="stylesheet" href="/api-library/lib.css?v=d47db11dd9">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=7083b26c90'; start({wasm: '/api-library/search.wasm?v=7083b26c90'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=d47db11dd9'; start({wasm: '/api-library/search.wasm?v=d47db11dd9'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/codec_hdr</h1>
 <p class="lib-lede">Decodes Radiance HDR (RGBE) image files into floating-point pixel data, letting a program load high-dynamic-range images.</p>
-<p class="lib-meta"><code>import gfx.codec_hdr;</code> &middot; <code>codec_hdr::</code> &middot; 4 functions, 0 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.codec_hdr;</code> &middot; <code>codec_hdr::</code> &middot; 4 functions, 0 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#hdr-decoding">HDR Decoding <span class="n">2</span></a></li>
 <li><a href="#pixel-conversion">Pixel Conversion <span class="n">1</span></a></li>
@@ -115,14 +115,14 @@
 <pre>is_hdr(b const byte[:]) bool</pre>
 <p>Returns whether the bytes begin with the &quot;#?&quot; signature of a Radiance HDR file.</p>
 <p class="note">`is_hdr(b const byte[:]) bool` is true when `b` starts with the bytes &quot;#?&quot;.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L5">hc/lib/gfx/codec_hdr.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L5">hc/lib/gfx/codec_hdr.amni:5</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(b const byte[:], out f32[&gt;..]&amp;) int, int, bool</pre>
 <p>Decodes Radiance HDR bytes into RGBA float pixels, returning width, height and false on malformed or unsupported data.</p>
 <p class="note">`decode(b const byte[:], out f32[&gt;..]&amp;) int, int, bool` returns width, height, ok and fills `out` (cleared first) with 4 floats per pixel in file order (red, green, blue, 1.0), top row first. The text header ends at the first empty line; a `FORMAT=` line other than `32-bit_rle_rgbe` is a failure. The next line must be `-Y &lt;height&gt; +X &lt;width&gt;` with both positive and at most 32768, otherwise failure</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L16">hc/lib/gfx/codec_hdr.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L16">hc/lib/gfx/codec_hdr.amni:16</a>
 </article>
 <h2 id="pixel-conversion">Pixel Conversion <span class="n">1</span></h2>
 <article class="sym" id="half_pixels">
@@ -130,26 +130,26 @@
 <pre>half_pixels(rgba const f32[:], out byte[&gt;..]&amp;)</pre>
 <p>Converts RGBA float values into packed 16-bit half-float bytes, clamping negatives and NaN to zero and large values to the half maximum.</p>
 <p class="note">`half_pixels(rgba const f32[:], out byte[&gt;..]&amp;)` clears `out` and appends each float as a little-endian IEEE 754 binary16: read each float's IEEE 754 bits from the 4 little-endian bytes of a local `var x f32[1]` holding it, through `bytes_of(x)` (there is no to_bits function); NaN and negative values become 0, values at or above 65504 become 0x7BFF, values below 2^-14 become 0, otherwise the expon</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L108">hc/lib/gfx/codec_hdr.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L108">hc/lib/gfx/codec_hdr.amni:108</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (3)</summary>
 <article class="sym" id="scales">
 <h3><a href="#scales">scales</a> <i>constant</i></h3>
 <pre>var scales f32[256]</pre>
 <p>Lookup table of 256 float multipliers, indexed by RGBE exponent byte, used to scale mantissas during decoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L3">hc/lib/gfx/codec_hdr.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L3">hc/lib/gfx/codec_hdr.amni:3</a>
 </article>
 <article class="sym" id="scales_ready">
 <h3><a href="#scales_ready">scales_ready</a> <i>constant</i></h3>
 <pre>var scales_ready bool = false</pre>
 <p>Flag indicating whether the exponent scale table has been filled in yet.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L4">hc/lib/gfx/codec_hdr.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L4">hc/lib/gfx/codec_hdr.amni:4</a>
 </article>
 <article class="sym" id="next_line">
 <h3><a href="#next_line">next_line</a> <i>function</i></h3>
 <pre>next_line(b const byte[:], at int&amp;) const byte[:], bool</pre>
 <p>Reads the next newline-terminated line from the bytes starting at an offset, advancing it; returns false if no newline remains.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7083b26c4159b182749d4c28c1459ced0b11830d/hc/lib/gfx/codec_hdr.amni#L8">hc/lib/gfx/codec_hdr.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d47db1161c1b6f64db5407d0ba13a3949f90f673/hc/lib/gfx/codec_hdr.amni#L8">hc/lib/gfx/codec_hdr.amni:8</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -161,7 +161,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1789</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1793</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
