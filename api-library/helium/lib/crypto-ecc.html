@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-ecc">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-ecc">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=5dbd59575b">
+<link rel="stylesheet" href="/api-library/lib.css?v=c1ae8a1d6d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=5dbd59575b'; start({wasm: '/api-library/search.wasm?v=5dbd59575b'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=c1ae8a1d6d'; start({wasm: '/api-library/search.wasm?v=c1ae8a1d6d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/ecc</h1>
 <p class="lib-lede">Elliptic-curve keys, ECDH key exchange, and ECDSA signing and verification.</p>
-<p class="lib-meta"><code>import crypto.ecc;</code> &middot; <code>crypto::</code> &middot; 20 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.ecc;</code> &middot; <code>crypto::</code> &middot; 20 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#curve-selection">Curve Selection <span class="n">2</span></a></li>
 <li><a href="#key-exchange">Key Exchange <span class="n">3</span></a></li>
@@ -115,154 +115,154 @@
 <h3><a href="#P256">P256</a> <i>constant</i></h3>
 <pre>P256 := 1</pre>
 <p>Constant identifying the NIST P-256 curve, passed as the id argument to the elliptic-curve functions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L6">hc/lib/crypto/ecc.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L6">hc/lib/crypto/ecc.he:6</a>
 </article>
 <article class="sym" id="P384">
 <h3><a href="#P384">P384</a> <i>constant</i></h3>
 <pre>P384 := 2</pre>
 <p>Constant identifying the NIST P-384 curve, passed as the id argument to the elliptic-curve functions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L7">hc/lib/crypto/ecc.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L7">hc/lib/crypto/ecc.he:7</a>
 </article>
 <h2 id="key-exchange">Key Exchange <span class="n">3</span></h2>
 <article class="sym" id="ec_public">
 <h3><a href="#ec_public">ec_public</a> <i>function</i></h3>
 <pre>ec_public(id int, priv const byte[:]) byte[&gt;..], bool</pre>
 <p>Derives the uncompressed public key from a private key for the given curve; false means the private key is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L67">hc/lib/crypto/ecc.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L67">hc/lib/crypto/ecc.he:67</a>
 </article>
 <article class="sym" id="ec_generate">
 <h3><a href="#ec_generate">ec_generate</a> <i>function</i></h3>
 <pre>ec_generate(id int) byte[&gt;..]</pre>
 <p>Generates a random valid private key for the given curve as bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L71">hc/lib/crypto/ecc.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L71">hc/lib/crypto/ecc.he:71</a>
 </article>
 <article class="sym" id="ecdh">
 <h3><a href="#ecdh">ecdh</a> <i>function</i></h3>
 <pre>ecdh(id int, priv const byte[:], peer const byte[:]) byte[&gt;..], bool</pre>
 <p>Computes the ECDH shared secret x coordinate from a private key and peer public key; false means invalid input or infinity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L76">hc/lib/crypto/ecc.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L76">hc/lib/crypto/ecc.he:76</a>
 </article>
 <h2 id="ecdsa-signatures">ECDSA Signatures <span class="n">3</span></h2>
 <article class="sym" id="ecdsa_verify">
 <h3><a href="#ecdsa_verify">ecdsa_verify</a> <i>function</i></h3>
 <pre>ecdsa_verify(id int, kind int, pub const byte[:], msg const byte[:], sig const byte[:]) bool</pre>
 <p>Verifies a fixed-width r||s ECDSA signature over a message using the chosen hash kind; false means invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L90">hc/lib/crypto/ecc.he:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L90">hc/lib/crypto/ecc.he:90</a>
 </article>
 <article class="sym" id="ecdsa_verify_der">
 <h3><a href="#ecdsa_verify_der">ecdsa_verify_der</a> <i>function</i></h3>
 <pre>ecdsa_verify_der(id int, kind int, pub const byte[:], msg const byte[:], der const byte[:]) bool</pre>
 <p>Verifies a DER-encoded ECDSA signature over a message using the chosen hash kind; false means invalid or malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L104">hc/lib/crypto/ecc.he:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L104">hc/lib/crypto/ecc.he:104</a>
 </article>
 <article class="sym" id="ecdsa_sign">
 <h3><a href="#ecdsa_sign">ecdsa_sign</a> <i>function</i></h3>
 <pre>ecdsa_sign(id int, kind int, priv const byte[:], msg const byte[:]) byte[&gt;..], bool</pre>
 <p>Signs a message with a deterministic ECDSA nonce, returning fixed-width r||s bytes; false means invalid key or degenerate signature.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L119">hc/lib/crypto/ecc.he:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L119">hc/lib/crypto/ecc.he:119</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (17)</summary>
 <article class="sym" id="Curve">
 <h3><a href="#Curve">Curve</a> <i>type</i></h3>
 <pre>struct Curve { size int = 0, p Mont = Mont{}, n Mont = Mont{}, b u32[&gt;..] = [], gx u32[&gt;..] = [], gy u32[&gt;..] = [], sq u32[&gt;..] = [] }</pre>
 <p>Parameters of one elliptic curve: field and order moduli, coefficient b, generator coordinates and a square-root exponent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L8">hc/lib/crypto/ecc.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L8">hc/lib/crypto/ecc.he:8</a>
 </article>
 <article class="sym" id="Pj">
 <h3><a href="#Pj">Pj</a> <i>type</i></h3>
 <pre>struct Pj { x u32[&gt;..] = [], y u32[&gt;..] = [], z u32[&gt;..] = [] }</pre>
 <p>Projective point on an elliptic curve with x, y and z coordinates in Montgomery form.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L9">hc/lib/crypto/ecc.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L9">hc/lib/crypto/ecc.he:9</a>
 </article>
 <article class="sym" id="CV">
 <h3><a href="#CV">CV</a> <i>constant</i></h3>
 <pre>var CV Curve[&gt;..]</pre>
 <p>Lazily populated table of the supported curve parameter sets, indexed by curve id minus one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L10">hc/lib/crypto/ecc.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L10">hc/lib/crypto/ecc.he:10</a>
 </article>
 <article class="sym" id="hexb">
 <h3><a href="#hexb">hexb</a> <i>function</i></h3>
 <pre>hexb(s const byte[:]) byte[&gt;..]</pre>
 <p>Decodes a hexadecimal string into a byte array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L11">hc/lib/crypto/ecc.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L11">hc/lib/crypto/ecc.he:11</a>
 </article>
 <article class="sym" id="curves">
 <h3><a href="#curves">curves</a> <i>function</i></h3>
 <pre>curves()</pre>
 <p>Initializes the curve parameter table for P-256 and P-384 once, doing nothing if already populated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L12">hc/lib/crypto/ecc.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L12">hc/lib/crypto/ecc.he:12</a>
 </article>
 <article class="sym" id="zeros">
 <h3><a href="#zeros">zeros</a> <i>function</i></h3>
 <pre>zeros(k int) u32[&gt;..]</pre>
 <p>Returns a zero-filled big-number array of k words.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L27">hc/lib/crypto/ecc.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L27">hc/lib/crypto/ecc.he:27</a>
 </article>
 <article class="sym" id="ecadd">
 <h3><a href="#ecadd">ecadd</a> <i>function</i></h3>
 <pre>ecadd(c const Curve&amp;, p const Pj&amp;, q const Pj&amp;) Pj</pre>
 <p>Adds two projective curve points using a complete addition formula.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L28">hc/lib/crypto/ecc.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L28">hc/lib/crypto/ecc.he:28</a>
 </article>
 <article class="sym" id="ecmul">
 <h3><a href="#ecmul">ecmul</a> <i>function</i></h3>
 <pre>ecmul(c const Curve&amp;, p const Pj&amp;, k const u32[:]) Pj</pre>
 <p>Multiplies a curve point by a scalar using a Montgomery ladder with constant-time swaps.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L36">hc/lib/crypto/ecc.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L36">hc/lib/crypto/ecc.he:36</a>
 </article>
 <article class="sym" id="gen">
 <h3><a href="#gen">gen</a> <i>function</i></h3>
 <pre>gen(c const Curve&amp;) Pj</pre>
 <p>Returns the generator base point of the given curve.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L43">hc/lib/crypto/ecc.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L43">hc/lib/crypto/ecc.he:43</a>
 </article>
 <article class="sym" id="affine_x">
 <h3><a href="#affine_x">affine_x</a> <i>function</i></h3>
 <pre>affine_x(c const Curve&amp;, p const Pj&amp;) u32[&gt;..]</pre>
 <p>Returns the affine x coordinate of a projective point as a plain big number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L44">hc/lib/crypto/ecc.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L44">hc/lib/crypto/ecc.he:44</a>
 </article>
 <article class="sym" id="ec_encode">
 <h3><a href="#ec_encode">ec_encode</a> <i>function</i></h3>
 <pre>ec_encode(c const Curve&amp;, p const Pj&amp;) byte[&gt;..]</pre>
 <p>Encodes a point as an uncompressed byte string starting with 0x04 followed by x and y.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L45">hc/lib/crypto/ecc.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L45">hc/lib/crypto/ecc.he:45</a>
 </article>
 <article class="sym" id="ec_decode">
 <h3><a href="#ec_decode">ec_decode</a> <i>function</i></h3>
 <pre>ec_decode(c const Curve&amp;, b const byte[:]) Pj, bool</pre>
 <p>Decodes an uncompressed or compressed point and checks it lies on the curve; false means invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L48">hc/lib/crypto/ecc.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L48">hc/lib/crypto/ecc.he:48</a>
 </article>
 <article class="sym" id="scalar">
 <h3><a href="#scalar">scalar</a> <i>function</i></h3>
 <pre>scalar(c const Curve&amp;, d const byte[:]) u32[&gt;..], bool</pre>
 <p>Parses a private scalar of the curve's byte size; false means it is zero, out of range or wrong length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L63">hc/lib/crypto/ecc.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L63">hc/lib/crypto/ecc.he:63</a>
 </article>
 <article class="sym" id="hash_int">
 <h3><a href="#hash_int">hash_int</a> <i>function</i></h3>
 <pre>hash_int(c const Curve&amp;, h const byte[:]) u32[&gt;..]</pre>
 <p>Converts a message digest into a scalar reduced modulo the curve order, truncating long digests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L82">hc/lib/crypto/ecc.he:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L82">hc/lib/crypto/ecc.he:82</a>
 </article>
 <article class="sym" id="ec_verify_core">
 <h3><a href="#ec_verify_core">ec_verify_core</a> <i>function</i></h3>
 <pre>ec_verify_core(c const Curve&amp;, kind int, pub const byte[:], msg const byte[:], r const u32[:], s const u32[:]) bool</pre>
 <p>Verifies an ECDSA signature given as r and s scalars; false means the signature or public key is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L83">hc/lib/crypto/ecc.he:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L83">hc/lib/crypto/ecc.he:83</a>
 </article>
 <article class="sym" id="der_int">
 <h3><a href="#der_int">der_int</a> <i>function</i></h3>
 <pre>der_int(b const byte[:], i int, sz int) const byte[:], int, bool</pre>
 <p>Parses one DER integer at an offset, returning its unsigned bytes, next offset and success flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L94">hc/lib/crypto/ecc.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L94">hc/lib/crypto/ecc.he:94</a>
 </article>
 <article class="sym" id="rfc6979">
 <h3><a href="#rfc6979">rfc6979</a> <i>function</i></h3>
 <pre>rfc6979(c const Curve&amp;, kind int, d const byte[:], h1 const byte[:]) u32[&gt;..]</pre>
 <p>Derives a deterministic ECDSA nonce from the private key and message digest following RFC 6979.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/5dbd595f8c31c86a515105a2862638eab2692477/hc/lib/crypto/ecc.he#L109">hc/lib/crypto/ecc.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/crypto/ecc.he#L109">hc/lib/crypto/ecc.he:109</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -271,7 +271,7 @@
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core <span>485</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
 <li><a href="/api-library/helium/graphics">Graphics <span>1500</span></a></li>
@@ -334,7 +334,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-09">2026-11-09</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-10">2026-11-10</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>

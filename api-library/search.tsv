@@ -219,6 +219,8 @@ std_zdec	function	std	/api-library/helium/lib/std#std_zdec	Decodes the unsigned 
 std_vk_span	function	std	/api-library/helium/lib/std#std_vk_span	Scans n bytes starting at address p with vector code and returns how many bytes to skip; used by each_word.	int
 std_vk_hexenc	function	std	/api-library/helium/lib/std#std_vk_hexenc	Encodes n bytes at address s as hexadecimal text written to address d; a thin C binding.	int
 std_vk_hexdec	function	std	/api-library/helium/lib/std#std_vk_hexdec	Decodes n hexadecimal characters at address s into bytes at address d and returns a status result; a thin C binding.	int
+std_vk_ord16	function	std	/api-library/helium/lib/std#std_vk_ord16	Raw C binding that sorts sixteen 16-bit keys at pointer addresses, wrapped by order16.	int
+std_vk_xor	function	std	/api-library/helium/lib/std#std_vk_xor	Raw C binding that XORs n bytes from a source address into a destination address, wrapped by xor_bytes.	int
 min	function	std	/api-library/helium/lib/std#min	Returns the smaller of two values.	pub
 max	function	std	/api-library/helium/lib/std#max	Returns the larger of two values.	pub
 min	function	std	/api-library/helium/lib/std#min	Returns the smallest of three values.	pub
@@ -387,6 +389,8 @@ strip	function	std	/api-library/helium/lib/std#strip	Returns the slice of s with
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of a string split at a separator byte, including empty pieces.	pub
 HXK	constant	std	/api-library/helium/lib/std#HXK	Cached CPU capability value, initialized to -1 until first checked by hxk.	int
 hxk	function	std	/api-library/helium/lib/std#hxk	Returns true when the vectorized string fast path is available, checking the CPU once and caching the result.	int
+order16	function	std	/api-library/helium/lib/std#order16	Writes into out the indices of sixteen little-endian 16-bit keys in ascending order, keeping index order for equal keys.	pub
+xor_bytes	function	std	/api-library/helium/lib/std#xor_bytes	XORs each byte of src into the matching byte of dst, requiring src to be at least as long as dst.	pub
 each_split	function	std	/api-library/helium/lib/std#each_split	Calls the block with each piece of s between occurrences of the separator slice.	pub
 each_word	function	std	/api-library/helium/lib/std#each_word	Calls the block with each run of non-space bytes in s, skipping whitespace.	pub
 split	function	std	/api-library/helium/lib/std#split	Returns the pieces of s separated by a single byte, as slices of s.	pub
