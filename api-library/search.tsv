@@ -1922,6 +1922,61 @@ s3d::gi_rot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rot	Retu
 s3d::gi_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_pass	Runs compute passes that trace probe rays and update irradiance and distance data.	int
 s3d::signed_range	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#signed_range	Returns a light's range as positive, or negative when its falloff mode is 1, clamped to at least 0.01.	int
 s3d::light_upload	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_upload	Uploads the light list and its camera-cluster assignments to GPU storage buffers, growing them when needed.	int
+s3d::VSM_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#VSM_LEVELS	Constant for the number of clip levels in the virtual shadow map, each covering twice the range of the previous.	int
+s3d::VSM_PAGE	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#VSM_PAGE	Constant for the side length in texels of one virtual shadow page.	int
+s3d::VSM_GRID	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#VSM_GRID	Constant for the number of pages per side in each level's grid of the virtual shadow map.	int
+s3d::VSM_HEAD	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#VSM_HEAD	Constant for the number of header entries at the start of the virtual shadow page table.	int
+s3d::vsm_face	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_face	Table of corner indices defining the six faces of a box, four corners per face.	int
+s3d::vsm_atlas	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_atlas	Depth texture array atlas holding the rendered virtual shadow pages.	int
+s3d::vsm_side	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_side	Current side length in texels of the atlas, or zero before it is created.	int
+s3d::vsm_table	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_table	GPU buffer holding the page table that shaders read to locate shadow pages.	int
+s3d::pipe_vsm_clear	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_vsm_clear	Pipeline that clears the depth of a shadow page before it is redrawn.	int
+s3d::vsm_tab	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_tab	CPU copy of the page table, with per-level origins followed by page slot entries.	int
+s3d::vsm_mark	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_mark	Per-frame grid of flags marking which pages the visible geometry needs.	int
+s3d::vsm_at	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_at	Map from grid cell to the atlas slot currently holding it, or minus one.	int
+s3d::vsm_key	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_key	Packed level and page coordinates identifying what each atlas slot holds, or minus one when free.	int
+s3d::vsm_hash	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_hash	Content hashes of what each atlas slot last rendered, used to detect stale pages.	int
+s3d::vsm_seen	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_seen	Frame number when each atlas slot was last needed, protecting in-use slots from reuse.	int
+s3d::vsm_org	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_org	Page grid origin for each level, stored as an x and y pair.	int
+s3d::vsm_r	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_r	Rotation rows of the sun's light-space basis used to project world positions.	int
+s3d::vsm_pa	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_pa	Scratch polygon buffer of clipped vertices, used as input while marking pages.	int
+s3d::vsm_pb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_pb	Scratch polygon buffer receiving the output of each clipping step.	int
+s3d::vsm_bc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_bc	Scratch buffer of world-space corners for the current batch bounding box.	int
+s3d::vsm_sc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_sc	Scratch buffer of world-space corners for a slice of the view frustum.	int
+s3d::vsm_bp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_bp	Scratch buffer of plane equations for the current batch bounding box.	int
+s3d::vsm_sp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_sp	Scratch buffer of plane equations for a slice of the view frustum.	int
+s3d::vsm_cr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_cr	Light-space two-dimensional bounds of each shadow-casting batch, used to find batches overlapping a page.	int
+s3d::vsm_ch	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_ch	Content hash of each shadow-casting batch, combined to detect page changes.	int
+s3d::vsm_cb	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_cb	Index into the batch list for each shadow-casting batch.	int
+s3d::vsm_todo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_todo	List of atlas slots whose pages must be redrawn this frame.	int
+s3d::vsm_t0	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_t0	Texel size of the finest level in world units, taken from the sun settings.	int
+s3d::vsm_zc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_zc	Eye depth along the sun direction, snapped to a 256-unit step, used to detect camera movement.	int
+s3d::vsm_dir	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_dir	Sun direction used to build the current pages, compared each frame to detect changes.	int
+s3d::vsm_hand	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_hand	Rotating cursor for finding a free atlas slot to evict.	int
+s3d::vsm_frame	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_frame	Frame counter for page usage tracking, incremented each time the virtual shadow update runs.	int
+s3d::vsm_drawn	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_drawn	Number of pages redrawn in the most recent frame.	int
+s3d::vsm_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_live	Number of pages in use by the most recent frame.	int
+s3d::vsm_missed	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_missed	Number of needed pages that could not get a slot in the most recent frame.	int
+s3d::vsm_wide	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_wide	Extra margin in light-space units from the sun's angular size, widening page marking to cover penumbrae.	int
+s3d::vsm_blank	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_blank	Test flag that skips marking visible pages so no pages are requested.	int
+s3d::vsm_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_fresh	Flag that is true until the atlas depth has been cleared for the first time.	int
+s3d::inst_rev	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_rev	Revision counter of instance data, mixed into batch hashes to detect changed instances.	int
+s3d::vsm_planes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_planes	Builds six inward-facing plane equations from eight box corners and writes them to the output buffer.	int
+s3d::vsm_cut	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_cut	Clips the current polygon against six planes, leaving the result in the polygon scratch buffer.	int
+s3d::vsm_paint	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_paint	Marks every page cell at one level that the current polygon touches, including a margin.	int
+s3d::vsm_faces	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_faces	Marks pages at a level touched by the faces of one box clipped against another's planes.	int
+s3d::vsm_mix	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_mix	Combines a running hash with an integer value and returns the new hash.	int
+s3d::vsm_box	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_box	Writes the eight world-space bounding box corners of a batch into the output buffer.	int
+s3d::vsm_batch_hash	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_batch_hash	Returns a hash of a batch's geometry, transform, and instance state that changes when its shadow must be redrawn.	int
+s3d::vsm_reset	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_reset	Empties the page-slot assignments and hashes so every page will be redrawn.	int
+s3d::vsm_setup	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_setup	Prepares virtual shadow map state for the frame, recreating the atlas and recomputing level origins when needed.	int
+s3d::vsm_level	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_level	Returns the clip level for a distance and scale, clamped to the valid range.	int
+s3d::vsm_cell	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_cell	Returns the level, page coordinates and grid cell index for an atlas slot, with cell minus one when off-grid.	int
+s3d::vsm_hit	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_hit	Returns whether a batch's light-space bounds overlap the given rectangle.	int
+s3d::vsm_marks	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_marks	Marks all pages needed by visible batches by intersecting their bounds with each view frustum slice.	int
+s3d::vsm_update	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_update	Updates page assignments, then redraws pages that are new or whose contents changed into the atlas.	int
+s3d::vsm_stats	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_stats	Returns the pages redrawn, pages in use and pages that could not be placed last frame.	pub
+s3d::vsm_test_blank	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm_test_blank	Sets a test flag that skips marking visible pages so no pages are requested.	pub
 s3d::gi_bind	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_bind	Binds ray-tracing and probe storage buffers, or dummy buffers when unavailable.	int
 s3d::shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_pass	Renders the sun shadow cascades into the depth map from the batch.	int
 s3d::shelter_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shelter_pass	Renders a top-down depth map around the eye so weather effects can tell which pixels are sheltered from above.	int

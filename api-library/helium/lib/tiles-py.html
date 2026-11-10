@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/tiles-py">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/tiles-py">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=6095aeb6e7">
+<link rel="stylesheet" href="/api-library/lib.css?v=bf8bd9d6e7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=6095aeb6e7'; start({wasm: '/api-library/search.wasm?v=6095aeb6e7'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=bf8bd9d6e7'; start({wasm: '/api-library/search.wasm?v=bf8bd9d6e7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>tiles/py</h1>
 <p class="lib-lede">Lets a program convert text and JSON values into integers and floats using Python-style parsing rules, including whitespace and underscores.</p>
-<p class="lib-meta"><code>import tiles.py;</code> &middot; <code>py::</code> &middot; 46 functions, 1 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he">Source</a></p>
+<p class="lib-meta"><code>import tiles.py;</code> &middot; <code>py::</code> &middot; 46 functions, 1 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#number-parsing">Number Parsing <span class="n">2</span></a></li>
 <li><a href="#value-formatting">Value Formatting <span class="n">2</span></a></li>
@@ -119,14 +119,14 @@
 <pre>int_of(d json::Doc&amp;, node int) int, bool</pre>
 <p>Converts a JSON node to an integer, handling booleans, numbers and numeric strings, returning false if impossible.</p>
 <p class="note">`int_of(text)` is Python's int() of a str. It returns the int and true, or 0 and false where Python raises ValueError. After stripping whitespace the text is an optional + or - and then ASCII digits, where a single underscore may sit between two digits; leading zeros are fine. A number that does not fit in a signed 64-bit int also gives 0 and false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L26">hc/lib/tiles/py.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L26">hc/lib/tiles/py.he:26</a>
 </article>
 <article class="sym" id="float_of">
 <h3><a href="#float_of">float_of</a> <i>function</i></h3>
 <pre>float_of(text const byte[:]) real, bool</pre>
 <p>Parses text as a float with Python rules, accepting inf and nan, and returns false if invalid.</p>
 <p class="note">`float_of(text)` is Python's float() of a str: the number and true, or 0.0 and false where Python raises ValueError. After stripping whitespace the text is an optional sign and then either inf, infinity or nan in any letter case, or digits with an optional point and fraction (at least one digit in all) and an optional exponent of e or E, an optional sign and digits. A single underscore may sit bet</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L66">hc/lib/tiles/py.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L66">hc/lib/tiles/py.he:66</a>
 </article>
 <h2 id="value-formatting">Value Formatting <span class="n">2</span></h2>
 <article class="sym" id="str_of">
@@ -134,14 +134,14 @@
 <pre>str_of(d json::Doc&amp;, node int) byte[&gt;..]</pre>
 <p>Returns a JSON node as a string, using the raw text for strings and Python repr otherwise.</p>
 <p class="note">`str_of(d, node)` is Python's str() of a JSON value: None, True, False, a number like `pyfmt`, a str unchanged, and a list or object as Python's repr, `[a, b]` and `{'key': value}` with &quot;, &quot; between items and &quot;: &quot; after keys, strings inside written by `pyrepr`, nested values the same way.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L174">hc/lib/tiles/py.he:174</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L174">hc/lib/tiles/py.he:174</a>
 </article>
 <article class="sym" id="truthy">
 <h3><a href="#truthy">truthy</a> <i>function</i></h3>
 <pre>truthy(d json::Doc&amp;, node int) bool</pre>
 <p>Returns whether a JSON node is truthy under Python rules, such as empty strings and zero being false.</p>
 <p class="note">`truthy(d, node)` is Python's truth of a JSON value: null, false, 0, 0.0, an empty str, an empty list and an empty object are false, anything else is true.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L183">hc/lib/tiles/py.he:183</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L183">hc/lib/tiles/py.he:183</a>
 </article>
 <h2 id="date-parsing">Date Parsing <span class="n">1</span></h2>
 <article class="sym" id="fromisoformat">
@@ -149,7 +149,7 @@
 <pre>fromisoformat(text const byte[:]) int, bool</pre>
 <p>Parses an ISO 8601 date or datetime with optional time zone into microseconds since the epoch, returning false if invalid.</p>
 <p class="note">`fromisoformat(text)` is Python's datetime.fromisoformat as microseconds since 1970-01-01 UTC: the int and true, or 0 and false where Python raises ValueError. A time without a zone counts as UTC. The text is a date, then optionally any one separator character and a time, then optionally a zone. The date is YYYY-MM-DD or YYYYMMDD, or an ISO week date YYYY-Www or YYYY-Www-D (also without dashes), w</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L331">hc/lib/tiles/py.he:331</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L331">hc/lib/tiles/py.he:331</a>
 </article>
 <h2 id="address-parsing">Address Parsing <span class="n">1</span></h2>
 <article class="sym" id="getaddresses">
@@ -157,296 +157,296 @@
 <pre>getaddresses(header const byte[:], names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;)</pre>
 <p>Parses an address header into parallel lists of names and addresses, returning a single empty pair if malformed.</p>
 <p class="note">`getaddresses(header, names, addrs)` is Python's email.utils.getaddresses of a one-item list, with its default strict checks: it appends each pair's display name to `names` and its address to `addrs`, in order; both are growable lists of growable strings, so callers can index them. Each pair is one comma-separated item of the RFC 2822 address list: an addr-spec with an optional comment in parenthe</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L682">hc/lib/tiles/py.he:682</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L682">hc/lib/tiles/py.he:682</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (48)</summary>
 <article class="sym" id="is_ws">
 <h3><a href="#is_ws">is_ws</a> <i>function</i></h3>
 <pre>is_ws(c byte) bool</pre>
 <p>Returns whether a byte is an ASCII whitespace character (space or tab through carriage return).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L5">hc/lib/tiles/py.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L5">hc/lib/tiles/py.he:5</a>
 </article>
 <article class="sym" id="strip_ws">
 <h3><a href="#strip_ws">strip_ws</a> <i>function</i></h3>
 <pre>strip_ws(s const byte[:]) const byte[:]</pre>
 <p>Returns a subslice of the text with leading and trailing whitespace removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L7">hc/lib/tiles/py.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L7">hc/lib/tiles/py.he:7</a>
 </article>
 <article class="sym" id="scan_digits">
 <h3><a href="#scan_digits">scan_digits</a> <i>function</i></h3>
 <pre>scan_digits(s const byte[:], i int, out byte[&gt;..]&amp;) int</pre>
 <p>Appends digits from a position to the output, skipping single underscores between digits, and returns the index where scanning stopped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L14">hc/lib/tiles/py.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L14">hc/lib/tiles/py.he:14</a>
 </article>
 <article class="sym" id="put_repr">
 <h3><a href="#put_repr">put_repr</a> <i>function</i></h3>
 <pre>put_repr(out byte[&gt;..]&amp;, s const byte[:])</pre>
 <p>Appends the Python repr of a string to the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L107">hc/lib/tiles/py.he:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L107">hc/lib/tiles/py.he:107</a>
 </article>
 <article class="sym" id="put_bool">
 <h3><a href="#put_bool">put_bool</a> <i>function</i></h3>
 <pre>put_bool(out byte[&gt;..]&amp;, d json::Doc&amp;, node int)</pre>
 <p>Appends Python-style True or False for a JSON boolean node to the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L114">hc/lib/tiles/py.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L114">hc/lib/tiles/py.he:114</a>
 </article>
 <article class="sym" id="put_num">
 <h3><a href="#put_num">put_num</a> <i>function</i></h3>
 <pre>put_num(out byte[&gt;..]&amp;, d json::Doc&amp;, node int)</pre>
 <p>Appends a JSON numeric node to the output using Python number formatting.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L122">hc/lib/tiles/py.he:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L122">hc/lib/tiles/py.he:122</a>
 </article>
 <article class="sym" id="repr_into">
 <h3><a href="#repr_into">repr_into</a> <i>function</i></h3>
 <pre>recursive fn repr_into(out byte[&gt;..]&amp;, d json::Doc&amp;, node int, scratch int[&gt;..]&amp;)</pre>
 <p>Recursively appends the Python repr of a JSON node, including arrays and objects, using a scratch stack.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L137">hc/lib/tiles/py.he:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L137">hc/lib/tiles/py.he:137</a>
 </article>
 <article class="sym" id="Hms">
 <h3><a href="#Hms">Hms</a> <i>type</i></h3>
 <pre>struct Hms { h int, m int, s int, us int }</pre>
 <p>Holds hours, minutes, seconds and microseconds parsed from an ISO time string.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L202">hc/lib/tiles/py.he:202</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L202">hc/lib/tiles/py.he:202</a>
 </article>
 <article class="sym" id="num_at">
 <h3><a href="#num_at">num_at</a> <i>function</i></h3>
 <pre>num_at(s const byte[:], at int, n int) int</pre>
 <p>Parses a fixed number of digits at a position, returning -1 if too short or non-digit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L204">hc/lib/tiles/py.he:204</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L204">hc/lib/tiles/py.he:204</a>
 </article>
 <article class="sym" id="is_leap">
 <h3><a href="#is_leap">is_leap</a> <i>function</i></h3>
 <pre>is_leap(y int) bool</pre>
 <p>Returns whether a year is a Gregorian leap year.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L213">hc/lib/tiles/py.he:213</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L213">hc/lib/tiles/py.he:213</a>
 </article>
 <article class="sym" id="month_days">
 <h3><a href="#month_days">month_days</a> <i>function</i></h3>
 <pre>month_days(y int, m int) int</pre>
 <p>Returns the number of days in a given month of a given year.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L215">hc/lib/tiles/py.he:215</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L215">hc/lib/tiles/py.he:215</a>
 </article>
 <article class="sym" id="days_from_civil">
 <h3><a href="#days_from_civil">days_from_civil</a> <i>function</i></h3>
 <pre>days_from_civil(y int, m int, d int) int</pre>
 <p>Returns the day count since the Unix epoch for a civil year, month and day.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L222">hc/lib/tiles/py.he:222</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L222">hc/lib/tiles/py.he:222</a>
 </article>
 <article class="sym" id="iso_week_days">
 <h3><a href="#iso_week_days">iso_week_days</a> <i>function</i></h3>
 <pre>iso_week_days(y int, w int, d int) int, bool</pre>
 <p>Converts an ISO year, week and weekday to days since the epoch, returning false if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L231">hc/lib/tiles/py.he:231</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L231">hc/lib/tiles/py.he:231</a>
 </article>
 <article class="sym" id="date_end">
 <h3><a href="#date_end">date_end</a> <i>function</i></h3>
 <pre>date_end(s const byte[:]) int</pre>
 <p>Returns the end index of the date portion of an ISO string, or -1 if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L243">hc/lib/tiles/py.he:243</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L243">hc/lib/tiles/py.he:243</a>
 </article>
 <article class="sym" id="parse_date">
 <h3><a href="#parse_date">parse_date</a> <i>function</i></h3>
 <pre>parse_date(s const byte[:], de int) int, bool</pre>
 <p>Parses an ISO calendar, week or ordinal date prefix into days since the epoch, returning false if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L263">hc/lib/tiles/py.he:263</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L263">hc/lib/tiles/py.he:263</a>
 </article>
 <article class="sym" id="parse_hms">
 <h3><a href="#parse_hms">parse_hms</a> <i>function</i></h3>
 <pre>parse_hms(t const byte[:]) Hms, bool</pre>
 <p>Parses an ISO time string into hours, minutes, seconds and microseconds, returning false if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L291">hc/lib/tiles/py.he:291</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L291">hc/lib/tiles/py.he:291</a>
 </article>
 <article class="sym" id="g_f">
 <h3><a href="#g_f">g_f</a> <i>constant</i></h3>
 <pre>var g_f byte[&gt;..]</pre>
 <p>Global buffer holding the header text currently being parsed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L380">hc/lib/tiles/py.he:380</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L380">hc/lib/tiles/py.he:380</a>
 </article>
 <article class="sym" id="g_pos">
 <h3><a href="#g_pos">g_pos</a> <i>constant</i></h3>
 <pre>var g_pos int = 0</pre>
 <p>Global read position within the header buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L381">hc/lib/tiles/py.he:381</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L381">hc/lib/tiles/py.he:381</a>
 </article>
 <article class="sym" id="g_cm">
 <h3><a href="#g_cm">g_cm</a> <i>constant</i></h3>
 <pre>var g_cm byte[&gt;..]</pre>
 <p>Global buffer accumulating comment text for the current address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L382">hc/lib/tiles/py.he:382</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L382">hc/lib/tiles/py.he:382</a>
 </article>
 <article class="sym" id="g_ncm">
 <h3><a href="#g_ncm">g_ncm</a> <i>constant</i></h3>
 <pre>var g_ncm int = 0</pre>
 <p>Global count of comments collected for the current address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L383">hc/lib/tiles/py.he:383</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L383">hc/lib/tiles/py.he:383</a>
 </article>
 <article class="sym" id="g_ws">
 <h3><a href="#g_ws">g_ws</a> <i>constant</i></h3>
 <pre>var g_ws byte[&gt;..]</pre>
 <p>Global buffer holding whitespace skipped between address tokens.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L384">hc/lib/tiles/py.he:384</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L384">hc/lib/tiles/py.he:384</a>
 </article>
 <article class="sym" id="g_pname">
 <h3><a href="#g_pname">g_pname</a> <i>constant</i></h3>
 <pre>var g_pname byte[&gt;..]</pre>
 <p>Global buffer accumulating the display name phrase of the current address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L385">hc/lib/tiles/py.he:385</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L385">hc/lib/tiles/py.he:385</a>
 </article>
 <article class="sym" id="g_pn">
 <h3><a href="#g_pn">g_pn</a> <i>constant</i></h3>
 <pre>var g_pn int = 0</pre>
 <p>Global count of phrases collected in the current display name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L386">hc/lib/tiles/py.he:386</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L386">hc/lib/tiles/py.he:386</a>
 </article>
 <article class="sym" id="g_pfl">
 <h3><a href="#g_pfl">g_pfl</a> <i>constant</i></h3>
 <pre>var g_pfl int = 0</pre>
 <p>Global length of the display name after the first phrase.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L387">hc/lib/tiles/py.he:387</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L387">hc/lib/tiles/py.he:387</a>
 </article>
 <article class="sym" id="is_special">
 <h3><a href="#is_special">is_special</a> <i>function</i></h3>
 <pre>is_special(c byte) bool</pre>
 <p>Returns whether a byte is an address special character such as parentheses, angle brackets, at sign or comma.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L388">hc/lib/tiles/py.he:388</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L388">hc/lib/tiles/py.he:388</a>
 </article>
 <article class="sym" id="is_atomend">
 <h3><a href="#is_atomend">is_atomend</a> <i>function</i></h3>
 <pre>is_atomend(c byte) bool</pre>
 <p>Returns whether a byte ends an address atom, being whitespace or a special character.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L389">hc/lib/tiles/py.he:389</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L389">hc/lib/tiles/py.he:389</a>
 </article>
 <article class="sym" id="is_phraseend">
 <h3><a href="#is_phraseend">is_phraseend</a> <i>function</i></h3>
 <pre>is_phraseend(c byte) bool</pre>
 <p>Returns whether a byte ends a phrase atom, treating periods as part of the phrase.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L390">hc/lib/tiles/py.he:390</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L390">hc/lib/tiles/py.he:390</a>
 </article>
 <article class="sym" id="is_blank">
 <h3><a href="#is_blank">is_blank</a> <i>function</i></h3>
 <pre>is_blank(c byte) bool</pre>
 <p>Returns whether a byte is blank, including whitespace and ASCII separator control characters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L391">hc/lib/tiles/py.he:391</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L391">hc/lib/tiles/py.he:391</a>
 </article>
 <article class="sym" id="read_comment">
 <h3><a href="#read_comment">read_comment</a> <i>function</i></h3>
 <pre>recursive fn read_comment(out byte[&gt;..]&amp;)</pre>
 <p>Recursively reads a parenthesized comment, with nested comments and backslash escapes, into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L392">hc/lib/tiles/py.he:392</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L392">hc/lib/tiles/py.he:392</a>
 </article>
 <article class="sym" id="read_plain">
 <h3><a href="#read_plain">read_plain</a> <i>function</i></h3>
 <pre>read_plain(out byte[&gt;..]&amp;, endc byte)</pre>
 <p>Reads a quoted or bracketed section up to the end byte, handling backslash escapes, into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L413">hc/lib/tiles/py.he:413</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L413">hc/lib/tiles/py.he:413</a>
 </article>
 <article class="sym" id="ad_comment">
 <h3><a href="#ad_comment">ad_comment</a> <i>function</i></h3>
 <pre>ad_comment()</pre>
 <p>Reads a comment at the current position and appends it to the comment buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L430">hc/lib/tiles/py.he:430</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L430">hc/lib/tiles/py.he:430</a>
 </article>
 <article class="sym" id="ad_goto">
 <h3><a href="#ad_goto">ad_goto</a> <i>function</i></h3>
 <pre>ad_goto()</pre>
 <p>Skips whitespace and comments, recording skipped spaces and tabs in the whitespace buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L435">hc/lib/tiles/py.he:435</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L435">hc/lib/tiles/py.he:435</a>
 </article>
 <article class="sym" id="ad_atom">
 <h3><a href="#ad_atom">ad_atom</a> <i>function</i></h3>
 <pre>ad_atom(out byte[&gt;..]&amp;, phrase bool)</pre>
 <p>Reads an atom at the current position into the output buffer, optionally stopping at phrase ends.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L449">hc/lib/tiles/py.he:449</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L449">hc/lib/tiles/py.he:449</a>
 </article>
 <article class="sym" id="ph_start">
 <h3><a href="#ph_start">ph_start</a> <i>function</i></h3>
 <pre>ph_start()</pre>
 <p>Marks the start of a new display name phrase, adding a separating space if needed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L457">hc/lib/tiles/py.he:457</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L457">hc/lib/tiles/py.he:457</a>
 </article>
 <article class="sym" id="ph_end">
 <h3><a href="#ph_end">ph_end</a> <i>function</i></h3>
 <pre>ph_end()</pre>
 <p>Records the display name length after the first phrase finishes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L461">hc/lib/tiles/py.he:461</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L461">hc/lib/tiles/py.he:461</a>
 </article>
 <article class="sym" id="ad_phrases">
 <h3><a href="#ad_phrases">ad_phrases</a> <i>function</i></h3>
 <pre>ad_phrases()</pre>
 <p>Reads display name phrases, including quoted strings and comments, into the global name buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L464">hc/lib/tiles/py.he:464</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L464">hc/lib/tiles/py.he:464</a>
 </article>
 <article class="sym" id="ad_domain">
 <h3><a href="#ad_domain">ad_domain</a> <i>function</i></h3>
 <pre>ad_domain(out byte[&gt;..]&amp;)</pre>
 <p>Reads a domain, including bracketed literals and comments, into the output buffer, clearing it if another at sign appears.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L485">hc/lib/tiles/py.he:485</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L485">hc/lib/tiles/py.he:485</a>
 </article>
 <article class="sym" id="pop_blank">
 <h3><a href="#pop_blank">pop_blank</a> <i>function</i></h3>
 <pre>pop_blank(asb byte[&gt;..]&amp;, starts int[&gt;..]&amp;)</pre>
 <p>Removes the last recorded token from the address buffer if it contains only blank characters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L507">hc/lib/tiles/py.he:507</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L507">hc/lib/tiles/py.he:507</a>
 </article>
 <article class="sym" id="ad_spec">
 <h3><a href="#ad_spec">ad_spec</a> <i>function</i></h3>
 <pre>ad_spec(out byte[&gt;..]&amp;)</pre>
 <p>Reads an address specification of local part and optional domain into the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L517">hc/lib/tiles/py.he:517</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L517">hc/lib/tiles/py.he:517</a>
 </article>
 <article class="sym" id="ad_route">
 <h3><a href="#ad_route">ad_route</a> <i>function</i></h3>
 <pre>ad_route(out byte[&gt;..]&amp;)</pre>
 <p>Reads an angle-bracketed route address, skipping obsolete routing domains, and writes its address spec to the output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L561">hc/lib/tiles/py.he:561</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L561">hc/lib/tiles/py.he:561</a>
 </article>
 <article class="sym" id="add_pair">
 <h3><a href="#add_pair">add_pair</a> <i>function</i></h3>
 <pre>add_pair(names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;, n const byte[:], a const byte[:])</pre>
 <p>Appends a name and address pair, leaving both empty if the address contains a bracket.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L587">hc/lib/tiles/py.he:587</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L587">hc/lib/tiles/py.he:587</a>
 </article>
 <article class="sym" id="ad_case_spec">
 <h3><a href="#ad_case_spec">ad_case_spec</a> <i>function</i></h3>
 <pre>ad_case_spec(names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;)</pre>
 <p>Parses a bare address spec and appends it with the collected comments as its name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L597">hc/lib/tiles/py.he:597</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L597">hc/lib/tiles/py.he:597</a>
 </article>
 <article class="sym" id="ad_case_route">
 <h3><a href="#ad_case_route">ad_case_route</a> <i>function</i></h3>
 <pre>ad_case_route(names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;)</pre>
 <p>Parses a route address and appends it with the display name and comments as its name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L602">hc/lib/tiles/py.he:602</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L602">hc/lib/tiles/py.he:602</a>
 </article>
 <article class="sym" id="ad_address">
 <h3><a href="#ad_address">ad_address</a> <i>function</i></h3>
 <pre>recursive fn ad_address(names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;)</pre>
 <p>Recursively parses one address or group from the header and appends its name and address pairs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L613">hc/lib/tiles/py.he:613</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L613">hc/lib/tiles/py.he:613</a>
 </article>
 <article class="sym" id="ad_parse">
 <h3><a href="#ad_parse">ad_parse</a> <i>function</i></h3>
 <pre>ad_parse(header const byte[:], names byte[&gt;..][&gt;..]&amp;, addrs byte[&gt;..][&gt;..]&amp;)</pre>
 <p>Parses a whole header into lists of names and addresses, adding an empty pair if an address yields nothing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L644">hc/lib/tiles/py.he:644</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L644">hc/lib/tiles/py.he:644</a>
 </article>
 <article class="sym" id="strip_esc">
 <h3><a href="#strip_esc">strip_esc</a> <i>function</i></h3>
 <pre>strip_esc(s const byte[:], c byte, out byte[&gt;..]&amp;)</pre>
 <p>Copies text to the output while removing backslash escapes before a given character.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L653">hc/lib/tiles/py.he:653</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L653">hc/lib/tiles/py.he:653</a>
 </article>
 <article class="sym" id="count_commas">
 <h3><a href="#count_commas">count_commas</a> <i>function</i></h3>
 <pre>count_commas(s const byte[:], a int, b int) int</pre>
 <p>Counts commas in a range of the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L662">hc/lib/tiles/py.he:662</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L662">hc/lib/tiles/py.he:662</a>
 </article>
 <article class="sym" id="expected_count">
 <h3><a href="#expected_count">expected_count</a> <i>function</i></h3>
 <pre>expected_count(addr const byte[:]) int</pre>
 <p>Estimates the number of addresses in a header by counting commas outside quoted strings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/tiles/py.he#L667">hc/lib/tiles/py.he:667</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bf8bd9d8368a939fc6b3d97f39c9320b7a6e522c/hc/lib/tiles/py.he#L667">hc/lib/tiles/py.he:667</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -473,7 +473,7 @@
 </ul>
 </li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1585</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1640</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
