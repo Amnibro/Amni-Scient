@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-tls">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-tls">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=c1ae8a1d6d">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=c1ae8a1d6d'; start({wasm: '/api-library/search.wasm?v=c1ae8a1d6d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/tls</h1>
 <p class="lib-lede">A TLS client with certificate checking and pinning.</p>
-<p class="lib-meta"><code>import net.tls;</code> &middot; <code>net::</code> &middot; 32 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he">Source</a></p>
+<p class="lib-meta"><code>import net.tls;</code> &middot; <code>net::</code> &middot; 32 functions, 1 types, 7 constants &middot; <a href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#connection-state">Connection State <span class="n">10</span></a></li>
 <li><a href="#certificate-trust">Certificate Trust <span class="n">4</span></a></li>
@@ -115,244 +115,244 @@
 <h3><a href="#TLS_ERR">TLS_ERR</a> <i>constant</i></h3>
 <pre>TLS_ERR := -1</pre>
 <p>Constant returned by state queries when the connection failed, after which the error is recorded and the socket closed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L12">hc/lib/net/tls.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L12">hc/lib/net/tls.he:12</a>
 </article>
 <article class="sym" id="TLS_HANDSHAKE">
 <h3><a href="#TLS_HANDSHAKE">TLS_HANDSHAKE</a> <i>constant</i></h3>
 <pre>TLS_HANDSHAKE := 1</pre>
 <p>Constant meaning the connection is still connecting or performing the TLS handshake.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L13">hc/lib/net/tls.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L13">hc/lib/net/tls.he:13</a>
 </article>
 <article class="sym" id="TLS_OPEN">
 <h3><a href="#TLS_OPEN">TLS_OPEN</a> <i>constant</i></h3>
 <pre>TLS_OPEN := 2</pre>
 <p>Constant meaning the handshake finished and the connection is ready to read and write application data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L14">hc/lib/net/tls.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L14">hc/lib/net/tls.he:14</a>
 </article>
 <article class="sym" id="TLS_CLOSED">
 <h3><a href="#TLS_CLOSED">TLS_CLOSED</a> <i>constant</i></h3>
 <pre>TLS_CLOSED := 3</pre>
 <p>Constant meaning the connection was closed cleanly, such as by a peer close alert or local close.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L15">hc/lib/net/tls.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L15">hc/lib/net/tls.he:15</a>
 </article>
 <article class="sym" id="Tls">
 <h3><a href="#Tls">Tls</a> <i>type</i></h3>
 <pre>struct Tls { fd int = -1, host byte[&gt;..] = [], st int = 0, err byte[&gt;..] = [], suite int = 0, hk int = 0, alg int = 0, kl int = 0, rbuf byte[&gt;..] = [], hs byte[&gt;..] = [], tr byte[&gt;..] = [], wbuf byte[&gt;..] = [], rk byte[&gt;..] = [], riv byte[&gt;..] = [], rseq u64 = 0, wk byte[&gt;..] = [], wiv byte[&gt;..] = [], wseq u64 = 0, renc bool = false, wenc bool = false, xpriv byte[&gt;..] = [], ppriv byte[&gt;..] = [], crand byte[&gt;..] = [], sid byte[&gt;..] = [], hsec byte[&gt;..] = [], cs byte[&gt;..] = [], ss byte[&gt;..] = [], hrr bool = false, group int = 0, cookie byte[&gt;..] = [], certs crypto::Cert[&gt;..] = [], verify int = -1, pin byte[&gt;..] = [], creq bool = false, crctx byte[&gt;..] = [], app byte[&gt;..] = [], alpn byte[&gt;..] = [], ccs bool = false, addrs byte[&gt;..][&gt;..] = [], ai int = 0, v12 bool = false, srand byte[&gt;..] = [], ems bool = false, ecs bool = false, pms byte[&gt;..] = [], kpub byte[&gt;..] = [], ms byte[&gt;..] = [], plain bool = false }</pre>
 <p>Connection object holding socket, handshake and record-layer state for one TLS or plain stream, passed to the connection functions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L16">hc/lib/net/tls.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L16">hc/lib/net/tls.he:16</a>
 </article>
 <article class="sym" id="tls_open">
 <h3><a href="#tls_open">tls_open</a> <i>function</i></h3>
 <pre>tls_open(host const byte[:], port int, alpn const byte[:]) Tls</pre>
 <p>Starts a TLS connection to a host and port, offering the given ALPN protocol, and returns it without blocking.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L234">hc/lib/net/tls.he:234</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L234">hc/lib/net/tls.he:234</a>
 </article>
 <article class="sym" id="stream_open">
 <h3><a href="#stream_open">stream_open</a> <i>function</i></h3>
 <pre>stream_open(secure bool, host const byte[:], port int, alpn const byte[:]) Tls</pre>
 <p>Starts a connection that uses TLS when secure is true, or a plain stream otherwise, returning it without blocking.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L235">hc/lib/net/tls.he:235</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L235">hc/lib/net/tls.he:235</a>
 </article>
 <article class="sym" id="tls_state">
 <h3><a href="#tls_state">tls_state</a> <i>function</i></h3>
 <pre>tls_state(t const Tls&amp;) int</pre>
 <p>Returns the connection's state as an error, handshake, open or closed constant.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L244">hc/lib/net/tls.he:244</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L244">hc/lib/net/tls.he:244</a>
 </article>
 <article class="sym" id="tls_close">
 <h3><a href="#tls_close">tls_close</a> <i>function</i></h3>
 <pre>tls_close(t Tls&amp;)</pre>
 <p>Closes the connection, sending a close alert first if the TLS session is open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L280">hc/lib/net/tls.he:280</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L280">hc/lib/net/tls.he:280</a>
 </article>
 <article class="sym" id="tls_wait">
 <h3><a href="#tls_wait">tls_wait</a> <i>function</i></h3>
 <pre>tls_wait(t Tls&amp;, ms int) int</pre>
 <p>Pumps the connection until it leaves the handshake state or the timeout in milliseconds elapses, returning the state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L283">hc/lib/net/tls.he:283</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L283">hc/lib/net/tls.he:283</a>
 </article>
 <h2 id="certificate-trust">Certificate Trust <span class="n">4</span></h2>
 <article class="sym" id="ROOTS">
 <h3><a href="#ROOTS">ROOTS</a> <i>constant</i></h3>
 <pre>var ROOTS crypto::Cert[&gt;..]</pre>
 <p>Global list of trusted root certificates used to verify server certificate chains.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L17">hc/lib/net/tls.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L17">hc/lib/net/tls.he:17</a>
 </article>
 <article class="sym" id="PINS">
 <h3><a href="#PINS">PINS</a> <i>constant</i></h3>
 <pre>var PINS byte[&gt;..][&gt;..]</pre>
 <p>Global list of pinned SPKI SHA-256 hashes that are accepted even when chain verification fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L18">hc/lib/net/tls.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L18">hc/lib/net/tls.he:18</a>
 </article>
 <article class="sym" id="tls_add_roots">
 <h3><a href="#tls_add_roots">tls_add_roots</a> <i>function</i></h3>
 <pre>tls_add_roots(pem const byte[:]) int</pre>
 <p>Parses PEM certificates and appends them to the trusted roots, returning the number of certificates parsed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L20">hc/lib/net/tls.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L20">hc/lib/net/tls.he:20</a>
 </article>
 <article class="sym" id="tls_pin">
 <h3><a href="#tls_pin">tls_pin</a> <i>function</i></h3>
 <pre>tls_pin(spki_sha256 const byte[:])</pre>
 <p>Adds a SHA-256 hash of a server's public key info to the pinned list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L21">hc/lib/net/tls.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L21">hc/lib/net/tls.he:21</a>
 </article>
 <h2 id="data-transfer">Data Transfer <span class="n">3</span></h2>
 <article class="sym" id="tls_pump">
 <h3><a href="#tls_pump">tls_pump</a> <i>function</i></h3>
 <pre>tls_pump(t Tls&amp;) int</pre>
 <p>Advances connecting, handshake and I/O without blocking, and returns the current state constant.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L245">hc/lib/net/tls.he:245</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L245">hc/lib/net/tls.he:245</a>
 </article>
 <article class="sym" id="tls_write">
 <h3><a href="#tls_write">tls_write</a> <i>function</i></h3>
 <pre>tls_write(t Tls&amp;, d const byte[:]) bool</pre>
 <p>Sends data over an open connection, splitting it into records, and returns false if not open or sending fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L273">hc/lib/net/tls.he:273</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L273">hc/lib/net/tls.he:273</a>
 </article>
 <article class="sym" id="tls_read">
 <h3><a href="#tls_read">tls_read</a> <i>function</i></h3>
 <pre>tls_read(t Tls&amp;, out byte[&gt;..]&amp;) int</pre>
 <p>Moves received application data into the output buffer and returns the number of bytes moved.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L279">hc/lib/net/tls.he:279</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L279">hc/lib/net/tls.he:279</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (23)</summary>
 <article class="sym" id="HRR_RAND">
 <h3><a href="#HRR_RAND">HRR_RAND</a> <i>constant</i></h3>
 <pre>HRR_RAND := &quot;cf21ad74e59a6111be1d8c021e65b891c2a211167abb8c5e079e09e2c8a8339c&quot;</pre>
 <p>Hex-encoded fixed random value that identifies a ServerHello as a HelloRetryRequest.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L19">hc/lib/net/tls.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L19">hc/lib/net/tls.he:19</a>
 </article>
 <article class="sym" id="p16">
 <h3><a href="#p16">p16</a> <i>function</i></h3>
 <pre>p16(b byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 16-bit big-endian integer to a byte buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L22">hc/lib/net/tls.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L22">hc/lib/net/tls.he:22</a>
 </article>
 <article class="sym" id="p24">
 <h3><a href="#p24">p24</a> <i>function</i></h3>
 <pre>p24(b byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 24-bit big-endian integer to a byte buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L23">hc/lib/net/tls.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L23">hc/lib/net/tls.he:23</a>
 </article>
 <article class="sym" id="g16">
 <h3><a href="#g16">g16</a> <i>function</i></h3>
 <pre>g16(b const byte[:], i int) int</pre>
 <p>Reads a 16-bit big-endian integer from a byte slice at an index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L24">hc/lib/net/tls.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L24">hc/lib/net/tls.he:24</a>
 </article>
 <article class="sym" id="g24">
 <h3><a href="#g24">g24</a> <i>function</i></h3>
 <pre>g24(b const byte[:], i int) int</pre>
 <p>Reads a 24-bit big-endian integer from a byte slice at an index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L25">hc/lib/net/tls.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L25">hc/lib/net/tls.he:25</a>
 </article>
 <article class="sym" id="tl_ext">
 <h3><a href="#tl_ext">tl_ext</a> <i>function</i></h3>
 <pre>tl_ext(e byte[&gt;..]&amp;, ty int, body const byte[:])</pre>
 <p>Appends a TLS extension with its type and length-prefixed body to a buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L26">hc/lib/net/tls.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L26">hc/lib/net/tls.he:26</a>
 </article>
 <article class="sym" id="hsmsg">
 <h3><a href="#hsmsg">hsmsg</a> <i>function</i></h3>
 <pre>hsmsg(ty int, body const byte[:]) byte[&gt;..]</pre>
 <p>Builds a handshake message with a type byte and 24-bit length prefix around the body.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L27">hc/lib/net/tls.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L27">hc/lib/net/tls.he:27</a>
 </article>
 <article class="sym" id="label">
 <h3><a href="#label">label</a> <i>function</i></h3>
 <pre>label(kind int, sec const byte[:], lb const byte[:], ctx const byte[:], n int) byte[&gt;..]</pre>
 <p>Derives TLS 1.3 key material with HKDF-Expand using a labeled info structure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L28">hc/lib/net/tls.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L28">hc/lib/net/tls.he:28</a>
 </article>
 <article class="sym" id="tl_fail">
 <h3><a href="#tl_fail">tl_fail</a> <i>function</i></h3>
 <pre>tl_fail(t Tls&amp;, why const byte[:]) int</pre>
 <p>Records an error message, closes the socket and marks the connection failed, returning the error constant.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L31">hc/lib/net/tls.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L31">hc/lib/net/tls.he:31</a>
 </article>
 <article class="sym" id="record">
 <h3><a href="#record">record</a> <i>function</i></h3>
 <pre>record(t Tls&amp;, ty int, d const byte[:])</pre>
 <p>Queues a record in the write buffer, encrypting it when keys are active for the negotiated TLS version.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L34">hc/lib/net/tls.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L34">hc/lib/net/tls.he:34</a>
 </article>
 <article class="sym" id="prf">
 <h3><a href="#prf">prf</a> <i>function</i></h3>
 <pre>prf(kind int, sec const byte[:], lb const byte[:], seed const byte[:], n int) byte[&gt;..]</pre>
 <p>Computes the TLS 1.2 pseudo-random function using HMAC to produce the requested number of bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L46">hc/lib/net/tls.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L46">hc/lib/net/tls.he:46</a>
 </article>
 <article class="sym" id="seq8">
 <h3><a href="#seq8">seq8</a> <i>function</i></h3>
 <pre>seq8(v u64) byte[&gt;..]</pre>
 <p>Encodes a 64-bit sequence number as eight big-endian bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L50">hc/lib/net/tls.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L50">hc/lib/net/tls.he:50</a>
 </article>
 <article class="sym" id="nonce12">
 <h3><a href="#nonce12">nonce12</a> <i>function</i></h3>
 <pre>nonce12(iv const byte[:], explicit const byte[:], seq u64, gcm bool) byte[&gt;..]</pre>
 <p>Builds the AEAD nonce for a record from the IV, explicit part and sequence number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L51">hc/lib/net/tls.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L51">hc/lib/net/tls.he:51</a>
 </article>
 <article class="sym" id="set_read">
 <h3><a href="#set_read">set_read</a> <i>function</i></h3>
 <pre>set_read(t Tls&amp;, sec const byte[:])</pre>
 <p>Derives and installs read keys and IV from a traffic secret, resetting the read sequence number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L56">hc/lib/net/tls.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L56">hc/lib/net/tls.he:56</a>
 </article>
 <article class="sym" id="set_write">
 <h3><a href="#set_write">set_write</a> <i>function</i></h3>
 <pre>set_write(t Tls&amp;, sec const byte[:])</pre>
 <p>Derives and installs write keys and IV from a traffic secret, resetting the write sequence number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L57">hc/lib/net/tls.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L57">hc/lib/net/tls.he:57</a>
 </article>
 <article class="sym" id="send_ch">
 <h3><a href="#send_ch">send_ch</a> <i>function</i></h3>
 <pre>send_ch(t Tls&amp;)</pre>
 <p>Builds and queues the ClientHello, generating random values and key shares on first use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L58">hc/lib/net/tls.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L58">hc/lib/net/tls.he:58</a>
 </article>
 <article class="sym" id="on_sh">
 <h3><a href="#on_sh">on_sh</a> <i>function</i></h3>
 <pre>on_sh(t Tls&amp;, b const byte[:], raw const byte[:]) int</pre>
 <p>Processes a ServerHello, handling TLS 1.2 fallback, HelloRetryRequest and TLS 1.3 key exchange and handshake secrets.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L72">hc/lib/net/tls.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L72">hc/lib/net/tls.he:72</a>
 </article>
 <article class="sym" id="ske_ok">
 <h3><a href="#ske_ok">ske_ok</a> <i>function</i></h3>
 <pre>ske_ok(t Tls&amp;, sc int, sig const byte[:], m const byte[:]) bool</pre>
 <p>Checks a TLS 1.2 ServerKeyExchange signature against the leaf certificate key, returning false if unsupported or invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L109">hc/lib/net/tls.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L109">hc/lib/net/tls.he:109</a>
 </article>
 <article class="sym" id="cv_ok">
 <h3><a href="#cv_ok">cv_ok</a> <i>function</i></h3>
 <pre>cv_ok(t Tls&amp;, scheme int, sig const byte[:], th const byte[:]) bool</pre>
 <p>Checks a TLS 1.3 CertificateVerify signature against the leaf certificate key, returning false if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L117">hc/lib/net/tls.he:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L117">hc/lib/net/tls.he:117</a>
 </article>
 <article class="sym" id="on_hs">
 <h3><a href="#on_hs">on_hs</a> <i>function</i></h3>
 <pre>on_hs(t Tls&amp;, ty int, b const byte[:], raw const byte[:]) int</pre>
 <p>Processes one handshake message according to the current state, verifying certificates and Finished messages and returning the resulting state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L125">hc/lib/net/tls.he:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L125">hc/lib/net/tls.he:125</a>
 </article>
 <article class="sym" id="on_record">
 <h3><a href="#on_record">on_record</a> <i>function</i></h3>
 <pre>on_record(t Tls&amp;, ty0 int, hdr const byte[:], body const byte[:]) int</pre>
 <p>Decrypts and dispatches one incoming record, handling alerts, application data and handshake messages.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L194">hc/lib/net/tls.he:194</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L194">hc/lib/net/tls.he:194</a>
 </article>
 <article class="sym" id="flush">
 <h3><a href="#flush">flush</a> <i>function</i></h3>
 <pre>flush(t Tls&amp;) bool</pre>
 <p>Sends buffered outgoing bytes over the socket, returning false on a send error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L227">hc/lib/net/tls.he:227</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L227">hc/lib/net/tls.he:227</a>
 </article>
 <article class="sym" id="next_addr">
 <h3><a href="#next_addr">next_addr</a> <i>function</i></h3>
 <pre>next_addr(t Tls&amp;) bool</pre>
 <p>Opens a socket to the next resolved address, returning false when no addresses remain.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/tls.he#L239">hc/lib/net/tls.he:239</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/tls.he#L239">hc/lib/net/tls.he:239</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -364,11 +364,11 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1500</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1535</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>265</span></a><ul>
 <li><a href="/api-library/helium/lib/net-sock">net/sock</a></li>

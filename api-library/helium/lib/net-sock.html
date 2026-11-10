@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-sock">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-sock">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=c1ae8a1d6d">
+<link rel="stylesheet" href="/api-library/lib.css?v=17f4c3e0f5">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=c1ae8a1d6d'; start({wasm: '/api-library/search.wasm?v=c1ae8a1d6d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=17f4c3e0f5'; start({wasm: '/api-library/search.wasm?v=17f4c3e0f5'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/sock</h1>
 <p class="lib-lede">TCP and UDP sockets with addresses, polling, length-prefixed frames and readable error names.</p>
-<p class="lib-meta"><code>import net.sock;</code> &middot; <code>net::</code> &middot; 46 functions, 2 types, 28 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he">Source</a></p>
+<p class="lib-meta"><code>import net.sock;</code> &middot; <code>net::</code> &middot; 46 functions, 2 types, 28 constants &middot; <a href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#would-block">Would Block <span class="n">1</span></a></li>
 <li><a href="#error-codes">Error Codes <span class="n">18</span></a></li>
@@ -118,463 +118,463 @@
 <h3><a href="#AGAIN">AGAIN</a> <i>constant</i></h3>
 <pre>AGAIN := -11</pre>
 <p>Error code returned when a non-blocking operation has no data ready or cannot proceed yet; retry later.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L23">hc/lib/net/sock.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L23">hc/lib/net/sock.he:23</a>
 </article>
 <h2 id="error-codes">Error Codes <span class="n">18</span></h2>
 <article class="sym" id="INPROGRESS">
 <h3><a href="#INPROGRESS">INPROGRESS</a> <i>constant</i></h3>
 <pre>INPROGRESS := -115</pre>
 <p>Error code meaning a non-blocking connect has started but not yet finished.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L24">hc/lib/net/sock.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L24">hc/lib/net/sock.he:24</a>
 </article>
 <article class="sym" id="INTR">
 <h3><a href="#INTR">INTR</a> <i>constant</i></h3>
 <pre>INTR := -4</pre>
 <p>Error code meaning the call was interrupted by a signal before completing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L25">hc/lib/net/sock.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L25">hc/lib/net/sock.he:25</a>
 </article>
 <article class="sym" id="BADF">
 <h3><a href="#BADF">BADF</a> <i>constant</i></h3>
 <pre>BADF := -9</pre>
 <p>Error code meaning the handle is not a valid open socket.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L26">hc/lib/net/sock.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L26">hc/lib/net/sock.he:26</a>
 </article>
 <article class="sym" id="ACCES">
 <h3><a href="#ACCES">ACCES</a> <i>constant</i></h3>
 <pre>ACCES := -13</pre>
 <p>Error code meaning permission to perform the socket operation was denied.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L27">hc/lib/net/sock.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L27">hc/lib/net/sock.he:27</a>
 </article>
 <article class="sym" id="INVAL">
 <h3><a href="#INVAL">INVAL</a> <i>constant</i></h3>
 <pre>INVAL := -22</pre>
 <p>Error code meaning an argument was invalid, such as a malformed address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L28">hc/lib/net/sock.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L28">hc/lib/net/sock.he:28</a>
 </article>
 <article class="sym" id="PIPE">
 <h3><a href="#PIPE">PIPE</a> <i>constant</i></h3>
 <pre>PIPE := -32</pre>
 <p>Error code meaning the write failed because the connection's other end is closed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L29">hc/lib/net/sock.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L29">hc/lib/net/sock.he:29</a>
 </article>
 <article class="sym" id="NOSYS">
 <h3><a href="#NOSYS">NOSYS</a> <i>constant</i></h3>
 <pre>NOSYS := -38</pre>
 <p>Error code meaning the operation is not supported on this target.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L30">hc/lib/net/sock.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L30">hc/lib/net/sock.he:30</a>
 </article>
 <article class="sym" id="MSGSIZE">
 <h3><a href="#MSGSIZE">MSGSIZE</a> <i>constant</i></h3>
 <pre>MSGSIZE := -90</pre>
 <p>Error code meaning the message is too large to send.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L31">hc/lib/net/sock.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L31">hc/lib/net/sock.he:31</a>
 </article>
 <article class="sym" id="ADDRINUSE">
 <h3><a href="#ADDRINUSE">ADDRINUSE</a> <i>constant</i></h3>
 <pre>ADDRINUSE := -98</pre>
 <p>Error code meaning the requested local address and port are already in use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L32">hc/lib/net/sock.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L32">hc/lib/net/sock.he:32</a>
 </article>
 <article class="sym" id="ADDRNOTAVAIL">
 <h3><a href="#ADDRNOTAVAIL">ADDRNOTAVAIL</a> <i>constant</i></h3>
 <pre>ADDRNOTAVAIL := -99</pre>
 <p>Error code meaning the requested address is not available on this machine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L33">hc/lib/net/sock.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L33">hc/lib/net/sock.he:33</a>
 </article>
 <article class="sym" id="NETUNREACH">
 <h3><a href="#NETUNREACH">NETUNREACH</a> <i>constant</i></h3>
 <pre>NETUNREACH := -101</pre>
 <p>Error code meaning the network cannot be reached.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L34">hc/lib/net/sock.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L34">hc/lib/net/sock.he:34</a>
 </article>
 <article class="sym" id="CONNABORTED">
 <h3><a href="#CONNABORTED">CONNABORTED</a> <i>constant</i></h3>
 <pre>CONNABORTED := -103</pre>
 <p>Error code meaning the connection was aborted before it could be accepted.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L35">hc/lib/net/sock.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L35">hc/lib/net/sock.he:35</a>
 </article>
 <article class="sym" id="CONNRESET">
 <h3><a href="#CONNRESET">CONNRESET</a> <i>constant</i></h3>
 <pre>CONNRESET := -104</pre>
 <p>Error code meaning the peer reset the connection.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L36">hc/lib/net/sock.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L36">hc/lib/net/sock.he:36</a>
 </article>
 <article class="sym" id="NOTCONN">
 <h3><a href="#NOTCONN">NOTCONN</a> <i>constant</i></h3>
 <pre>NOTCONN := -107</pre>
 <p>Error code meaning the socket is not connected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L37">hc/lib/net/sock.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L37">hc/lib/net/sock.he:37</a>
 </article>
 <article class="sym" id="TIMEDOUT">
 <h3><a href="#TIMEDOUT">TIMEDOUT</a> <i>constant</i></h3>
 <pre>TIMEDOUT := -110</pre>
 <p>Error code meaning the operation timed out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L38">hc/lib/net/sock.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L38">hc/lib/net/sock.he:38</a>
 </article>
 <article class="sym" id="CONNREFUSED">
 <h3><a href="#CONNREFUSED">CONNREFUSED</a> <i>constant</i></h3>
 <pre>CONNREFUSED := -111</pre>
 <p>Error code meaning the remote host actively refused the connection.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L39">hc/lib/net/sock.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L39">hc/lib/net/sock.he:39</a>
 </article>
 <article class="sym" id="HOSTUNREACH">
 <h3><a href="#HOSTUNREACH">HOSTUNREACH</a> <i>constant</i></h3>
 <pre>HOSTUNREACH := -113</pre>
 <p>Error code meaning the remote host cannot be reached.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L40">hc/lib/net/sock.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L40">hc/lib/net/sock.he:40</a>
 </article>
 <article class="sym" id="error_name">
 <h3><a href="#error_name">error_name</a> <i>function</i></h3>
 <pre>error_name(e int) const byte[:]</pre>
 <p>Returns a readable name for a socket error code, or &quot;socket error&quot; if the code is unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L179">hc/lib/net/sock.he:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L179">hc/lib/net/sock.he:179</a>
 </article>
 <h2 id="polling">Polling <span class="n">12</span></h2>
 <article class="sym" id="READ">
 <h3><a href="#READ">READ</a> <i>constant</i></h3>
 <pre>READ := 1</pre>
 <p>Event flag requesting or reporting that the handle is readable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L41">hc/lib/net/sock.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L41">hc/lib/net/sock.he:41</a>
 </article>
 <article class="sym" id="WRITE">
 <h3><a href="#WRITE">WRITE</a> <i>constant</i></h3>
 <pre>WRITE := 4</pre>
 <p>Event flag requesting or reporting that the handle is writable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L42">hc/lib/net/sock.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L42">hc/lib/net/sock.he:42</a>
 </article>
 <article class="sym" id="ERR">
 <h3><a href="#ERR">ERR</a> <i>constant</i></h3>
 <pre>ERR := 8</pre>
 <p>Event flag reported when the handle has an error condition.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L43">hc/lib/net/sock.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L43">hc/lib/net/sock.he:43</a>
 </article>
 <article class="sym" id="HUP">
 <h3><a href="#HUP">HUP</a> <i>constant</i></h3>
 <pre>HUP := 16</pre>
 <p>Event flag reported when the peer has hung up.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L44">hc/lib/net/sock.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L44">hc/lib/net/sock.he:44</a>
 </article>
 <article class="sym" id="Poll">
 <h3><a href="#Poll">Poll</a> <i>type</i></h3>
 <pre>struct Poll { n int, tags int[64], fds int[64] }</pre>
 <p>Fixed-capacity set of up to 64 handles with tags, used to wait for socket events.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L48">hc/lib/net/sock.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L48">hc/lib/net/sock.he:48</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear(p Poll&amp;)</pre>
 <p>Empties a poll set so it holds no handles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L146">hc/lib/net/sock.he:146</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L146">hc/lib/net/sock.he:146</a>
 </article>
 <article class="sym" id="add">
 <h3><a href="#add">add</a> <i>function</i></h3>
 <pre>add(p Poll&amp;, h int, events int, tag int = 0) bool</pre>
 <p>Adds a handle with event flags and an optional tag to a poll set, returning false if it is full.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L147">hc/lib/net/sock.he:147</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L147">hc/lib/net/sock.he:147</a>
 </article>
 <article class="sym" id="wait">
 <h3><a href="#wait">wait</a> <i>function</i></h3>
 <pre>wait(p Poll&amp;, ms int) int</pre>
 <p>Waits up to ms milliseconds for events, moves ready entries to the front, and returns their count or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L151">hc/lib/net/sock.he:151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L151">hc/lib/net/sock.he:151</a>
 </article>
 <article class="sym" id="tag">
 <h3><a href="#tag">tag</a> <i>function</i></h3>
 <pre>tag(p Poll&amp;, i int) int</pre>
 <p>Returns the tag stored for the poll entry at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L166">hc/lib/net/sock.he:166</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L166">hc/lib/net/sock.he:166</a>
 </article>
 <article class="sym" id="handle">
 <h3><a href="#handle">handle</a> <i>function</i></h3>
 <pre>handle(p Poll&amp;, i int) int</pre>
 <p>Returns the socket handle stored for the poll entry at the given index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L167">hc/lib/net/sock.he:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L167">hc/lib/net/sock.he:167</a>
 </article>
 <article class="sym" id="events">
 <h3><a href="#events">events</a> <i>function</i></h3>
 <pre>events(p Poll&amp;, i int) int</pre>
 <p>Returns the event flags reported for the poll entry at the given index after a wait.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L168">hc/lib/net/sock.he:168</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L168">hc/lib/net/sock.he:168</a>
 </article>
 <article class="sym" id="wait_one">
 <h3><a href="#wait_one">wait_one</a> <i>function</i></h3>
 <pre>wait_one(h int, events int, ms int) int</pre>
 <p>Waits up to ms milliseconds on one handle and returns its reported events, 0 on timeout, or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L169">hc/lib/net/sock.he:169</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L169">hc/lib/net/sock.he:169</a>
 </article>
 <h2 id="addresses">Addresses <span class="n">11</span></h2>
 <article class="sym" id="ANY">
 <h3><a href="#ANY">ANY</a> <i>constant</i></h3>
 <pre>ANY := 0</pre>
 <p>Wildcard IPv4 address of zero, which binds to all local interfaces.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L45">hc/lib/net/sock.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L45">hc/lib/net/sock.he:45</a>
 </article>
 <article class="sym" id="LOOPBACK">
 <h3><a href="#LOOPBACK">LOOPBACK</a> <i>constant</i></h3>
 <pre>LOOPBACK := 0x7F000001</pre>
 <p>IPv4 address 127.0.0.1 as an integer, for connecting to the local machine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L46">hc/lib/net/sock.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L46">hc/lib/net/sock.he:46</a>
 </article>
 <article class="sym" id="Addr">
 <h3><a href="#Addr">Addr</a> <i>type</i></h3>
 <pre>struct Addr { ip int, port int }</pre>
 <p>IPv4 address and port pair, with the address held as a 32-bit integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L47">hc/lib/net/sock.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L47">hc/lib/net/sock.he:47</a>
 </article>
 <article class="sym" id="parse_ip">
 <h3><a href="#parse_ip">parse_ip</a> <i>function</i></h3>
 <pre>parse_ip(s const byte[:]) int, bool</pre>
 <p>Parses a dotted IPv4 string or &quot;localhost&quot; into an integer, with false if the text is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L95">hc/lib/net/sock.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L95">hc/lib/net/sock.he:95</a>
 </article>
 <article class="sym" id="addr">
 <h3><a href="#addr">addr</a> <i>function</i></h3>
 <pre>addr(host const byte[:], port int) Addr</pre>
 <p>Builds an Addr from a host string and port, setting the IP to -1 if the host is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L109">hc/lib/net/sock.he:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L109">hc/lib/net/sock.he:109</a>
 </article>
 <article class="sym" id="parse_addr">
 <h3><a href="#parse_addr">parse_addr</a> <i>function</i></h3>
 <pre>parse_addr(s const byte[:]) Addr, bool</pre>
 <p>Parses text of the form host:port into an Addr, with false if malformed or the port is out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L110">hc/lib/net/sock.he:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L110">hc/lib/net/sock.he:110</a>
 </article>
 <article class="sym" id="format">
 <h3><a href="#format">format</a> <i>function</i></h3>
 <pre>format(out byte[&gt;..]&amp;, a Addr)</pre>
 <p>Appends an address to the output buffer as dotted IPv4 text followed by a colon and port.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L117">hc/lib/net/sock.he:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L117">hc/lib/net/sock.he:117</a>
 </article>
 <article class="sym" id="valid">
 <h3><a href="#valid">valid</a> <i>function</i></h3>
 <pre>valid(a Addr) bool</pre>
 <p>Returns whether an Addr has an IP within 32 bits and a port from 0 to 65535.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L119">hc/lib/net/sock.he:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L119">hc/lib/net/sock.he:119</a>
 </article>
 <article class="sym" id="local_addr">
 <h3><a href="#local_addr">local_addr</a> <i>function</i></h3>
 <pre>local_addr(h int) Addr</pre>
 <p>Returns the local address of a handle, or an Addr with IP -1 and the error code as port on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L135">hc/lib/net/sock.he:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L135">hc/lib/net/sock.he:135</a>
 </article>
 <article class="sym" id="peer_addr">
 <h3><a href="#peer_addr">peer_addr</a> <i>function</i></h3>
 <pre>peer_addr(h int) Addr</pre>
 <p>Returns the remote address of a connected handle, or an Addr with IP -1 and the error code as port on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L136">hc/lib/net/sock.he:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L136">hc/lib/net/sock.he:136</a>
 </article>
 <article class="sym" id="local_port">
 <h3><a href="#local_port">local_port</a> <i>function</i></h3>
 <pre>local_port(h int) int</pre>
 <p>Returns the local port of a handle, or a negative error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L137">hc/lib/net/sock.he:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L137">hc/lib/net/sock.he:137</a>
 </article>
 <h2 id="sockets">Sockets <span class="n">13</span></h2>
 <article class="sym" id="accept">
 <h3><a href="#accept">accept</a> <i>function</i></h3>
 <pre>accept(h int) int</pre>
 <p>Accepts a pending connection on a listening handle, returning a new non-blocking handle or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L66">hc/lib/net/sock.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L66">hc/lib/net/sock.he:66</a>
 </article>
 <article class="sym" id="connected">
 <h3><a href="#connected">connected</a> <i>function</i></h3>
 <pre>connected(h int) int</pre>
 <p>Checks whether a non-blocking connect has finished, returning 0 on success, AGAIN if pending, or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L72">hc/lib/net/sock.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L72">hc/lib/net/sock.he:72</a>
 </article>
 <article class="sym" id="send">
 <h3><a href="#send">send</a> <i>function</i></h3>
 <pre>send(h int, data const byte[:]) int</pre>
 <p>Sends bytes without blocking and returns the count sent, or a negative error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L79">hc/lib/net/sock.he:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L79">hc/lib/net/sock.he:79</a>
 </article>
 <article class="sym" id="close">
 <h3><a href="#close">close</a> <i>function</i></h3>
 <pre>close(h int) int</pre>
 <p>Closes a socket handle, returning 0 on success or a negative error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L87">hc/lib/net/sock.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L87">hc/lib/net/sock.he:87</a>
 </article>
 <article class="sym" id="nodelay">
 <h3><a href="#nodelay">nodelay</a> <i>function</i></h3>
 <pre>nodelay(h int, on bool) int</pre>
 <p>Enables or disables TCP no-delay on a handle, returning 0 on success or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L88">hc/lib/net/sock.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L88">hc/lib/net/sock.he:88</a>
 </article>
 <article class="sym" id="blocking">
 <h3><a href="#blocking">blocking</a> <i>function</i></h3>
 <pre>blocking(h int, on bool) int</pre>
 <p>Sets a handle to blocking mode when on is true, otherwise non-blocking, returning 0 or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L89">hc/lib/net/sock.he:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L89">hc/lib/net/sock.he:89</a>
 </article>
 <article class="sym" id="listen">
 <h3><a href="#listen">listen</a> <i>function</i></h3>
 <pre>listen(a Addr, backlog int = 64) int</pre>
 <p>Creates a TCP listening socket on an address, returning a handle or a negative error such as INVAL.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L120">hc/lib/net/sock.he:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L120">hc/lib/net/sock.he:120</a>
 </article>
 <article class="sym" id="connect">
 <h3><a href="#connect">connect</a> <i>function</i></h3>
 <pre>connect(a Addr) int</pre>
 <p>Starts a non-blocking TCP connection to an address, returning a handle or a negative error such as INVAL.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L121">hc/lib/net/sock.he:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L121">hc/lib/net/sock.he:121</a>
 </article>
 <article class="sym" id="recv">
 <h3><a href="#recv">recv</a> <i>function</i></h3>
 <pre>recv(h int, out byte[&gt;..]&amp;, limit int = 65536) int</pre>
 <p>Appends received bytes to the output buffer, up to a limit, and returns the count or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L122">hc/lib/net/sock.he:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L122">hc/lib/net/sock.he:122</a>
 </article>
 <article class="sym" id="send_all">
 <h3><a href="#send_all">send_all</a> <i>function</i></h3>
 <pre>send_all(h int, data const byte[:]) int</pre>
 <p>Sends all of the data, returning the total sent, or the count so far if it would block, or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L127">hc/lib/net/sock.he:127</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L127">hc/lib/net/sock.he:127</a>
 </article>
 <article class="sym" id="udp">
 <h3><a href="#udp">udp</a> <i>function</i></h3>
 <pre>udp(a Addr) int</pre>
 <p>Creates a UDP socket bound to an address, returning a handle or a negative error such as INVAL.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L138">hc/lib/net/sock.he:138</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L138">hc/lib/net/sock.he:138</a>
 </article>
 <article class="sym" id="send_to">
 <h3><a href="#send_to">send_to</a> <i>function</i></h3>
 <pre>send_to(h int, to Addr, data const byte[:]) int</pre>
 <p>Sends a UDP datagram to an address, returning the byte count or a negative error such as INVAL.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L139">hc/lib/net/sock.he:139</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L139">hc/lib/net/sock.he:139</a>
 </article>
 <article class="sym" id="recv_from">
 <h3><a href="#recv_from">recv_from</a> <i>function</i></h3>
 <pre>recv_from(h int, out byte[&gt;..]&amp;, from Addr&amp;) int</pre>
 <p>Receives a UDP datagram into the output buffer, stores the sender in from, and returns the byte count or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L140">hc/lib/net/sock.he:140</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L140">hc/lib/net/sock.he:140</a>
 </article>
 <h2 id="framing">Framing <span class="n">2</span></h2>
 <article class="sym" id="frame">
 <h3><a href="#frame">frame</a> <i>function</i></h3>
 <pre>frame(out byte[&gt;..]&amp;, msg const byte[:])</pre>
 <p>Appends a message to the buffer prefixed with its length as two little-endian bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L174">hc/lib/net/sock.he:174</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L174">hc/lib/net/sock.he:174</a>
 </article>
 <article class="sym" id="frame_len">
 <h3><a href="#frame_len">frame_len</a> <i>function</i></h3>
 <pre>frame_len(buf const byte[:]) int</pre>
 <p>Returns the total size of the first complete length-prefixed frame in the buffer, or 0 if incomplete.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L175">hc/lib/net/sock.he:175</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L175">hc/lib/net/sock.he:175</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (19)</summary>
 <article class="sym" id="KA">
 <h3><a href="#KA">KA</a> <i>constant</i></h3>
 <pre>var KA byte[&gt;..]</pre>
 <p>Scratch buffer holding the raw socket address structure passed to C calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L49">hc/lib/net/sock.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L49">hc/lib/net/sock.he:49</a>
 </article>
 <article class="sym" id="KL">
 <h3><a href="#KL">KL</a> <i>constant</i></h3>
 <pre>var KL byte[&gt;..]</pre>
 <p>Scratch buffer holding the address length value passed to C calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L50">hc/lib/net/sock.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L50">hc/lib/net/sock.he:50</a>
 </article>
 <article class="sym" id="KB">
 <h3><a href="#KB">KB</a> <i>constant</i></h3>
 <pre>var KB byte[&gt;..]</pre>
 <p>Shared scratch buffer used to stage received data before copying it out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L51">hc/lib/net/sock.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L51">hc/lib/net/sock.he:51</a>
 </article>
 <article class="sym" id="KP">
 <h3><a href="#KP">KP</a> <i>constant</i></h3>
 <pre>var KP byte[&gt;..]</pre>
 <p>Scratch buffer used for option values and poll structures in C calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L52">hc/lib/net/sock.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L52">hc/lib/net/sock.he:52</a>
 </article>
 <article class="sym" id="err">
 <h3><a href="#err">err</a> <i>function</i></h3>
 <pre>err() int</pre>
 <p>Reads the C errno value and returns it negated, or -5 if it is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L53">hc/lib/net/sock.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L53">hc/lib/net/sock.he:53</a>
 </article>
 <article class="sym" id="ka">
 <h3><a href="#ka">ka</a> <i>function</i></h3>
 <pre>ka(ip int, port int)</pre>
 <p>Fills the scratch address buffer with an IPv4 address and port.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L54">hc/lib/net/sock.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L54">hc/lib/net/sock.he:54</a>
 </article>
 <article class="sym" id="kl">
 <h3><a href="#kl">kl</a> <i>function</i></h3>
 <pre>kl()</pre>
 <p>Resets the scratch address and length buffers to prepare for a C call that fills them.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L56">hc/lib/net/sock.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L56">hc/lib/net/sock.he:56</a>
 </article>
 <article class="sym" id="kip">
 <h3><a href="#kip">kip</a> <i>function</i></h3>
 <pre>kip() int</pre>
 <p>Returns the IPv4 address currently stored in the scratch address buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L57">hc/lib/net/sock.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L57">hc/lib/net/sock.he:57</a>
 </article>
 <article class="sym" id="kport">
 <h3><a href="#kport">kport</a> <i>function</i></h3>
 <pre>kport() int</pre>
 <p>Returns the port currently stored in the scratch address buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L58">hc/lib/net/sock.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L58">hc/lib/net/sock.he:58</a>
 </article>
 <article class="sym" id="opt">
 <h3><a href="#opt">opt</a> <i>function</i></h3>
 <pre>opt(fd int, lv int, o int, v int) int</pre>
 <p>Sets an integer socket option on a handle and returns the raw C result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L59">hc/lib/net/sock.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L59">hc/lib/net/sock.he:59</a>
 </article>
 <article class="sym" id="open_sock">
 <h3><a href="#open_sock">open_sock</a> <i>function</i></h3>
 <pre>open_sock(kind int) int</pre>
 <p>Creates a non-blocking close-on-exec IPv4 socket of the given kind, returning a handle or negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L60">hc/lib/net/sock.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L60">hc/lib/net/sock.he:60</a>
 </article>
 <article class="sym" id="listen_raw">
 <h3><a href="#listen_raw">listen_raw</a> <i>function</i></h3>
 <pre>listen_raw(ip int, port int, backlog int) int</pre>
 <p>Creates, binds and listens on a TCP socket for a raw IP and port, returning a handle or negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L61">hc/lib/net/sock.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L61">hc/lib/net/sock.he:61</a>
 </article>
 <article class="sym" id="connect_raw">
 <h3><a href="#connect_raw">connect_raw</a> <i>function</i></h3>
 <pre>connect_raw(ip int, port int) int</pre>
 <p>Starts a non-blocking TCP connection to a raw IP and port, returning a handle or negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L67">hc/lib/net/sock.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L67">hc/lib/net/sock.he:67</a>
 </article>
 <article class="sym" id="recv_into">
 <h3><a href="#recv_into">recv_into</a> <i>function</i></h3>
 <pre>recv_into(h int, buf byte[:]) int</pre>
 <p>Receives bytes into a caller buffer and returns the count, or a negative error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L80">hc/lib/net/sock.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L80">hc/lib/net/sock.he:80</a>
 </article>
 <article class="sym" id="udp_raw">
 <h3><a href="#udp_raw">udp_raw</a> <i>function</i></h3>
 <pre>udp_raw(ip int, port int) int</pre>
 <p>Creates a UDP socket bound to a raw IP and port, returning a handle or negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L81">hc/lib/net/sock.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L81">hc/lib/net/sock.he:81</a>
 </article>
 <article class="sym" id="send_to_raw">
 <h3><a href="#send_to_raw">send_to_raw</a> <i>function</i></h3>
 <pre>send_to_raw(h int, ip int, port int, data const byte[:]) int</pre>
 <p>Sends a UDP datagram to a raw IP and port, returning the byte count or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L86">hc/lib/net/sock.he:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L86">hc/lib/net/sock.he:86</a>
 </article>
 <article class="sym" id="local_raw">
 <h3><a href="#local_raw">local_raw</a> <i>function</i></h3>
 <pre>local_raw(h int) int</pre>
 <p>Returns the local address of a handle packed into one integer, or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L93">hc/lib/net/sock.he:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L93">hc/lib/net/sock.he:93</a>
 </article>
 <article class="sym" id="peer_raw">
 <h3><a href="#peer_raw">peer_raw</a> <i>function</i></h3>
 <pre>peer_raw(h int) int</pre>
 <p>Returns the peer address of a handle packed into one integer, or a negative error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L94">hc/lib/net/sock.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L94">hc/lib/net/sock.he:94</a>
 </article>
 <article class="sym" id="unpack">
 <h3><a href="#unpack">unpack</a> <i>function</i></h3>
 <pre>unpack(v int) Addr</pre>
 <p>Converts a packed integer of address and port into an Addr.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c1ae8a16b80144562a3192237d7d832189272084/hc/lib/net/sock.he#L118">hc/lib/net/sock.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/17f4c3ef88e735fa6862afc43248d1a51934b664/hc/lib/net/sock.he#L118">hc/lib/net/sock.he:118</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -586,11 +586,11 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>489</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1500</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1535</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1105</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>265</span></a><ul>
 <li><a href="/api-library/helium/lib/net-sock" class="on">net/sock</a><ul class="lib-sub">

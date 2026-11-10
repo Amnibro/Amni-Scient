@@ -1347,6 +1347,7 @@ s3d::CutViewU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CutViewU	Unif
 s3d::SkyU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SkyU	Uniform block for drawing the sky with inverse and previous view-projection matrices and gradient colors.	int
 s3d::AoU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#AoU	Uniform block of lens and tuning parameters for the ambient occlusion pass.	int
 s3d::ContactU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ContactU	Uniform block of lens, jitter, sun direction and tuning values for the contact shadow pass.	int
+s3d::SssU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SssU	Uniform block layout for the subsurface scattering pass, holding lens and tuning vectors, a center, eight profile entries and 64 sample taps.	int
 s3d::GtaoU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GtaoU	Uniform block of lens, tuning and size parameters for the ground-truth ambient occlusion pass.	int
 s3d::TileU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TileU	Uniform block for the lens tile pass with size, lens and mode values.	int
 s3d::NearU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#NearU	Uniform block for the neighborhood pass with size and mode values.	int
@@ -1459,6 +1460,8 @@ s3d::alpha_to_coverage	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#
 s3d::mip_bias	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias	Texture mip level bias applied when sampling, in mip levels.	pub
 s3d::mip_bias_auto	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_bias_auto	Flag that lets the renderer choose the mip bias automatically.	pub
 s3d::test_morph_still	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_morph_still	Test hook that holds morph targets still.	int
+s3d::ClothIt	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ClothIt	Per-cloth bookkeeping record linking a simulation handle to its primitive, with flags for stepped, shown and dirty state.	int
+s3d::cloths	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloths	List of active cloth records, one per primitive converted by add_cloth.	int
 s3d::temporal	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal	Selects temporal accumulation: 0 is off unless the output is upscaled, 1 is on.	pub
 s3d::temporal_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_blend	Weight of a new frame on a still pixel in temporal accumulation.	pub
 s3d::temporal_motion	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_motion	Extra weight per output pixel of motion in temporal accumulation.	pub
@@ -1500,6 +1503,27 @@ s3d::pipe_cut_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_
 s3d::pipe_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend	GPU pipeline for blended surfaces.	int
 s3d::pipe_blend_back	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend_back	Pipeline drawing blended surface back faces.	int
 s3d::pipe_trans_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_trans_copy	Pipeline that copies the scene color for transmissive surfaces to sample.	int
+s3d::sss_on	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_on	Flag that turns the subsurface scattering effect on when true; off by default.	pub
+s3d::sss_taps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_taps	Number of sample taps used by the subsurface scattering blur, 64 by default.	pub
+s3d::sss_lod	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_lod	Level of detail setting for subsurface scattering, 5.0 by default.	pub
+s3d::sss_depth	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_depth	Flag that enables depth awareness in the subsurface scattering pass, true by default.	pub
+s3d::sss_ran	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_ran	Internal flag recording whether the subsurface scattering pass has run.	int
+s3d::sss_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_live	Internal flag recording whether subsurface scattering is currently active.	int
+s3d::sss_mode	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_mode	Mode selector for the subsurface scattering technique, 0 by default.	pub
+s3d::sss_np	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_np	Internal count of primitives used by the subsurface scattering pass.	int
+s3d::sss_built	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_built	Internal counter recording how many subsurface scattering resources have been built.	int
+s3d::sss_w	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_w	Internal width in pixels of the subsurface scattering targets.	int
+s3d::sss_h	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_h	Internal height in pixels of the subsurface scattering targets.	int
+s3d::sss_levels	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_levels	Internal count of mip levels in the subsurface scattering textures.	int
+s3d::sss_ps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_ps	Internal pixel scale value used by the subsurface scattering pass.	int
+s3d::sss_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_u	Internal uniform data instance uploaded to the subsurface scattering shaders.	int
+s3d::sss_irr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_irr	Internal texture holding irradiance for the subsurface scattering pass.	int
+s3d::sss_set	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_set	Internal texture holding the subsurface scattering setup data.	int
+s3d::sss_out	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_out	Internal texture receiving the subsurface scattering output.	int
+s3d::pipe_sss	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_sss	Internal pipeline for the subsurface scattering pass on single sided surfaces.	int
+s3d::pipe_sss_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_sss_two	Internal pipeline for the subsurface scattering pass on double sided surfaces.	int
+s3d::pipe_sss_set	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_sss_set	Internal pipeline for the subsurface scattering setup pass.	int
+s3d::pipe_sss_blur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_sss_blur	Internal pipeline for the subsurface scattering blur pass.	int
 s3d::Probe	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Probe	A box-shaped reflection probe with a capture position, bounds and edge fade.	pub
 s3d::Decal	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Decal	A projected decal with position, rotation, size, textures, opacity and material overrides.	pub
 s3d::decals	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#decals-2	List of decals currently placed in the scene.	pub
@@ -1733,6 +1757,9 @@ s3d::x4	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#x4	Builds a flo
 s3d::none	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#none	Returns a null texture handle.	int
 s3d::add	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add	Adds an asset instance to the scene and returns its item index.	pub
 s3d::place	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#place	Sets the world placement matrix of a scene item.	pub
+s3d::cloth_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cloth_of	Returns the index of the cloth record for a primitive index, or -1 when none exists.	int
+s3d::add_cloth	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_cloth	Converts the first mesh primitive of an asset into a simulated cloth and returns its cloth index, or -1 if it is skinned or has morph targets.	pub
+s3d::step_cloth	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#step_cloth	Advances a cloth simulation by dt seconds under wind vector w and writes the result into the mesh vertices and bounds.	pub
 s3d::corner	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#corner	Returns one of the eight corners of a box, selected by the low three bits of k.	int
 s3d::asset_box	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#asset_box	Returns the minimum and maximum corners of an asset's bounding box in its rest pose.	pub
 s3d::sway	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sway	Makes an item sway in the wind by the given amount, using its asset's top height.	pub
@@ -1874,6 +1901,13 @@ s3d::lit_pipe	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lit_pipe	
 s3d::mip_scale	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_scale	Returns the texture mip scale from the output-to-render width ratio when auto bias is on, combined with the manual mip bias.	int
 s3d::surface_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#surface_of	Builds the surface uniform data from a material.	int
 s3d::draw_lit	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_lit	Draws one batch item with lit shading, binding its uniforms and textures.	int
+s3d::sss_skin	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_skin	Checks whether a material is an opaque skin-shaded surface that takes part in subsurface scattering.	int
+s3d::sss_draws	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_draws	Checks whether a batch is a visible, non-transparent, non-blended draw using a subsurface skin material.	int
+s3d::sss_dist	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_dist	Returns a material's per-channel scattering distances, clamped above zero, with the largest in the fourth component.	int
+s3d::sss_find	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_find	Returns the index of a stored scattering profile matching the given distances, or the profile count if none matches.	int
+s3d::sss_target	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_target	Returns the texture holding the subsurface scattering output.	int
+s3d::sss_plain	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_plain	Returns the texture holding the unblurred irradiance for subsurface scattering.	int
+s3d::sss_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sss_pass	Runs the subsurface scattering pass, resizing targets, building sample taps and collecting skin profiles when enabled.	int
 s3d::trans_capture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#trans_capture	Copies the scene color into a mipmapped texture that transmissive materials sample for refraction.	int
 s3d::color_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#color_pass	Renders the sky, opaque, blended and particle surfaces into the multisampled color target.	int
 s3d::lens_tiles	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_tiles	Builds per-tile lens data from the source texture for depth of field and motion blur.	int
@@ -2004,6 +2038,7 @@ shapes::vertex	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#vertex	App
 shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wraps the most recently added vertices and indices into a one-node asset and returns its asset index.	int
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
+shapes::sheet	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sheet	Builds an n-by-n grid quad patch from origin o spanning edge vectors u and v, with material m, returning the new asset id.	pub
 shapes::water	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#water	Builds a double-sided, transparent water plane of the given half-extent, returning the id of the new mesh asset.	pub
 shapes::blade	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#blade	Builds a flat, double-sided tapered strip mesh of given height, base width and tip width, split into segments, and returns its asset id.	pub
 shapes::cube	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#cube	Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.	pub
@@ -5910,3 +5945,50 @@ meshlet::group	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#group	Pa
 meshlet::build	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#build	Builds the meshlet hierarchy from a vertex position buffer and triangle indices, replacing any previously built data; welds vertices and simplifies grouped clusters per level.	pub
 meshlet::cut	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut	Fills the output array with triangle indices of all clusters whose error range contains the given error threshold e.	pub
 meshlet::cut_tris	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut_tris	Returns the number of triangles in the clusters selected for the given error threshold e, matching what cut would output.	pub
+cloth::Cloth	type	gfx/cloth	/api-library/helium/lib/gfx-cloth#Cloth	Per-cloth record holding a simulated mesh's particle, edge, bend, triangle ranges and tunable physics settings such as gravity, damping, and substeps.	pub
+cloth::cloths	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#cloths	Global storage of all cloth instances created in the simulation.	int
+cloth::pos	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#pos	Flat array of particle positions as x, y, z triples.	int
+cloth::old	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#old	Flat array of particle positions from the start of the current substep, used for velocity and friction.	int
+cloth::vel	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#vel	Flat array of particle velocities as x, y, z triples.	int
+cloth::nrm	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#nrm	Flat array of per-particle surface normals as x, y, z triples.	int
+cloth::last	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#last	Flat array of particle positions captured before the latest step, written out as previous-frame positions.	int
+cloth::rest	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#rest	Flat array of particle rest positions, used to measure reach distances to pinned particles.	int
+cloth::goal	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#goal	Flat array of target positions that pinned particles move toward during a step.	int
+cloth::push	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#push	Flat array of per-particle aerodynamic push accumulated from wind and drag each step.	int
+cloth::inv	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#inv	Per-particle inverse mass array, set to zero while a particle is pinned.	int
+cloth::inv0	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#inv0	Per-particle original inverse mass array, restored when a particle is unpinned.	int
+cloth::held	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#held	Per-particle flags marking which particles are currently pinned.	int
+cloth::reach_to	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#reach_to	Per-particle index of the nearest pinned particle, or -1 when none exists.	int
+cloth::reach	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#reach	Per-particle maximum rest distance allowed from its nearest pinned particle.	int
+cloth::edges	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#edges	Flat array of particle index pairs, one pair per stretch constraint edge.	int
+cloth::edge_len	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#edge_len	Rest lengths of the stretch constraint edges.	int
+cloth::bends	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bends	Flat array of particle index pairs across shared edges, used as bend constraints.	int
+cloth::bend_len	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bend_len	Rest lengths of the bend constraints.	int
+cloth::tris	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tris	Flat array of particle index triples, one triple per triangle.	int
+cloth::vmap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#vmap	Mapping from each source mesh vertex to its merged particle index.	int
+cloth::balls	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#balls	Flat array of sphere colliders stored as x, y, z, radius quadruples.	int
+cloth::pills	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#pills	Flat array of capsule colliders stored as two endpoints and a radius, seven values each.	int
+cloth::floor_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_on	Flag indicating whether the ground plane collider is enabled.	int
+cloth::floor_y	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_y	Height of the ground plane collider along the y axis.	int
+cloth::key_bits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#key_bits	Hashes a vertex position into an unsigned key for merging duplicate vertices.	int
+cloth::add3	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#add3	Appends an x, y, z triple to a flat array.	int
+cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the current distance between two particles by index.	int
+cloth::make	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#make	Builds a cloth from mesh vertices and triangle indices, merging duplicate positions, and returns its cloth index.	pub
+cloth::pin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pin	Pins a cloth vertex so it moves to the given world position during steps instead of simulating.	pub
+cloth::unpin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unpin	Releases a pinned cloth vertex so it simulates freely again.	pub
+cloth::reset	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#reset	Clears all cloths, particle data, and colliders.	pub
+cloth::clear_colliders	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#clear_colliders	Removes all sphere and capsule colliders and disables the ground plane.	pub
+cloth::ball	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ball	Adds a sphere collider with the given center and radius.	pub
+cloth::pill	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pill	Adds a capsule collider between two endpoints with the given radius.	pub
+cloth::ground	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ground	Enables a horizontal ground plane at the given height.	pub
+cloth::normals	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#normals	Recomputes smoothed per-particle normals for a cloth from its triangles.	int
+cloth::limits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#limits	Computes each unpinned particle's nearest pinned particle and its rest distance for reach limiting.	int
+cloth::contact	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#contact	Pushes a particle out of a sphere and applies friction against its sliding motion.	int
+cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a position-based distance constraint between two particles with the given rest length and softness.	int
+cloth::step	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#step	Advances a cloth simulation by dt seconds under wind, applying gravity, constraints, collisions, and normals.	pub
+cloth::write	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#write	Writes simulated position and normal offsets and previous-frame offsets for each vertex into an output buffer.	pub
+cloth::count	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#count	Returns the number of simulated particles in a cloth.	pub
+cloth::particle	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#particle	Returns the particle index that a cloth's source vertex maps to.	pub
+cloth::stretch_now	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#stretch_now	Returns the largest edge stretch ratio of a cloth, at least 1.	pub
+cloth::speed	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#speed	Returns the average particle speed of a cloth, or 0 when it has no particles.	pub
+cloth::bounds	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#bounds	Returns the axis-aligned bounding box of a cloth as min x, y, z then max x, y, z.	pub
