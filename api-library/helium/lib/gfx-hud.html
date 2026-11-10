@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-hud">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-hud">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0d600fb320">
+<link rel="stylesheet" href="/api-library/lib.css?v=6095aeb6e7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0d600fb320'; start({wasm: '/api-library/search.wasm?v=0d600fb320'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=6095aeb6e7'; start({wasm: '/api-library/search.wasm?v=6095aeb6e7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/hud</h1>
 <p class="lib-lede">An in-game HUD: a tree of nodes with layout, animated tweens, rich text and localized strings.</p>
-<p class="lib-meta"><code>import gfx.hud;</code> &middot; <code>hud::</code> &middot; 33 functions, 5 types, 16 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.hud;</code> &middot; <code>hud::</code> &middot; 33 functions, 5 types, 16 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#layout">Layout <span class="n">9</span></a></li>
 <li><a href="#animation">Animation <span class="n">7</span></a></li>
@@ -116,329 +116,329 @@
 <h3><a href="#Node">Node</a> <i>type</i></h3>
 <pre>struct Node { parent int, dir int, jus int, ali int, gap f32, pd f32, mar f32, wm int, wv f32, hm int, hv f32, grow f32, shrink f32, basis f32, minw f32, maxw f32, minh f32, maxh f32, abs bool, l f32, t f32, r f32, x f32, y f32, w f32, h f32, dw bool, dh bool, color float4, border float4, bw f32, radius f32, focusable bool, text int, opacity f32, ox f32, oy f32, scale f32, visible bool }</pre>
 <p>Struct holding one HUD node's layout, style, transform, text and focus properties, plus its computed rectangle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L6">hc/lib/gfx/hud.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L6">hc/lib/gfx/hud.amni:6</a>
 </article>
 <article class="sym" id="ROW">
 <h3><a href="#ROW">ROW</a> <i>constant</i></h3>
 <pre>let ROW = 0; let COL = 1</pre>
 <p>Constants selecting a node's main direction, either row or column.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L7">hc/lib/gfx/hud.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L7">hc/lib/gfx/hud.amni:7</a>
 </article>
 <article class="sym" id="START">
 <h3><a href="#START">START</a> <i>constant</i></h3>
 <pre>let START = 0; let END = 1; let CENTER = 2; let BETWEEN = 3; let AROUND = 4; let EVENLY = 5; let STRETCH = 3</pre>
 <p>Constants for justifying children along the main axis and aligning them across it; STRETCH shares the value of BETWEEN.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L8">hc/lib/gfx/hud.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L8">hc/lib/gfx/hud.amni:8</a>
 </article>
 <article class="sym" id="AUTO">
 <h3><a href="#AUTO">AUTO</a> <i>constant</i></h3>
 <pre>let AUTO = 0; let PX = 1; let PCT = 2</pre>
 <p>Constants selecting how a node's width or height is sized: automatic, pixels or percent of the parent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L9">hc/lib/gfx/hud.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L9">hc/lib/gfx/hud.amni:9</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear()</pre>
 <p>Removes all nodes from the HUD tree.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L12">hc/lib/gfx/hud.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L12">hc/lib/gfx/hud.amni:12</a>
 </article>
 <article class="sym" id="node">
 <h3><a href="#node">node</a> <i>function</i></h3>
 <pre>node(parent int) int</pre>
 <p>Creates a node with default properties under the given parent, or as a root if negative, and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L13">hc/lib/gfx/hud.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L13">hc/lib/gfx/hud.amni:13</a>
 </article>
 <article class="sym" id="layout_root">
 <h3><a href="#layout_root">layout_root</a> <i>function</i></h3>
 <pre>layout_root(n int, x f32, y f32, w f32, h f32)</pre>
 <p>Sets the root node's rectangle and lays out the whole tree beneath it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L43">hc/lib/gfx/hud.amni:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L43">hc/lib/gfx/hud.amni:43</a>
 </article>
 <article class="sym" id="LEFT">
 <h3><a href="#LEFT">LEFT</a> <i>constant</i></h3>
 <pre>let LEFT = 0; let UP = 1; let RIGHT = 2; let DOWN = 3</pre>
 <p>Constants naming the four directions used for focus navigation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L135">hc/lib/gfx/hud.amni:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L135">hc/lib/gfx/hud.amni:135</a>
 </article>
 <article class="sym" id="nav">
 <h3><a href="#nav">nav</a> <i>function</i></h3>
 <pre>nav(from int, dir int) int</pre>
 <p>Returns the nearest focusable visible node in the given direction, or the starting node if none exists.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L136">hc/lib/gfx/hud.amni:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L136">hc/lib/gfx/hud.amni:136</a>
 </article>
 <h2 id="animation">Animation <span class="n">7</span></h2>
 <article class="sym" id="LINEAR">
 <h3><a href="#LINEAR">LINEAR</a> <i>constant</i></h3>
 <pre>let LINEAR = 0; let IN_QUAD = 1; let OUT_QUAD = 2; let INOUT_QUAD = 3; let IN_CUBIC = 4; let OUT_CUBIC = 5; let INOUT_CUBIC = 6; let IN_BACK = 7; let OUT_BACK = 8; let OUT_ELASTIC = 9</pre>
 <p>Constants naming the easing curves available to tweens.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L150">hc/lib/gfx/hud.amni:150</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L150">hc/lib/gfx/hud.amni:150</a>
 </article>
 <article class="sym" id="ease">
 <h3><a href="#ease">ease</a> <i>function</i></h3>
 <pre>ease(k int, t real) real</pre>
 <p>Returns the eased progress for a time value from 0 to 1 using the chosen easing curve.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L151">hc/lib/gfx/hud.amni:151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L151">hc/lib/gfx/hud.amni:151</a>
 </article>
 <article class="sym" id="P_X">
 <h3><a href="#P_X">P_X</a> <i>constant</i></h3>
 <pre>let P_X = 0; let P_Y = 1; let P_OPACITY = 2; let P_SCALE = 3</pre>
 <p>Constants naming the node properties a tween can animate: offset, opacity and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L159">hc/lib/gfx/hud.amni:159</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L159">hc/lib/gfx/hud.amni:159</a>
 </article>
 <article class="sym" id="tween">
 <h3><a href="#tween">tween</a> <i>function</i></h3>
 <pre>tween(n int, p int, to real, dur real, e int) int</pre>
 <p>Starts a tween of a node property toward a target over a duration and returns its tween index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L164">hc/lib/gfx/hud.amni:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L164">hc/lib/gfx/hud.amni:164</a>
 </article>
 <article class="sym" id="then">
 <h3><a href="#then">then</a> <i>function</i></h3>
 <pre>then(prev int, to real, dur real, e int) int</pre>
 <p>Chains a tween after a previous one that begins where it ends, and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L165">hc/lib/gfx/hud.amni:165</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L165">hc/lib/gfx/hud.amni:165</a>
 </article>
 <article class="sym" id="tw_value">
 <h3><a href="#tw_value">tw_value</a> <i>function</i></h3>
 <pre>tw_value(i int) real</pre>
 <p>Returns a tween's current interpolated value based on its elapsed time.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L166">hc/lib/gfx/hud.amni:166</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L166">hc/lib/gfx/hud.amni:166</a>
 </article>
 <article class="sym" id="tick">
 <h3><a href="#tick">tick</a> <i>function</i></h3>
 <pre>tick(dt real)</pre>
 <p>Advances all active tweens by the given time step and applies their values to nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L167">hc/lib/gfx/hud.amni:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L167">hc/lib/gfx/hud.amni:167</a>
 </article>
 <h2 id="text">Text <span class="n">6</span></h2>
 <article class="sym" id="rich">
 <h3><a href="#rich">rich</a> <i>function</i></h3>
 <pre>rich(src const byte[:], size f32, color u32)</pre>
 <p>Parses markup with bold, color and size tags into styled text runs using a default size and color.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L188">hc/lib/gfx/hud.amni:188</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L188">hc/lib/gfx/hud.amni:188</a>
 </article>
 <article class="sym" id="wrap">
 <h3><a href="#wrap">wrap</a> <i>function</i></h3>
 <pre>wrap(width f32)</pre>
 <p>Breaks the parsed text into lines that fit within the given width, splitting at spaces and newlines.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L215">hc/lib/gfx/hud.amni:215</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L215">hc/lib/gfx/hud.amni:215</a>
 </article>
 <article class="sym" id="set_locale">
 <h3><a href="#set_locale">set_locale</a> <i>function</i></h3>
 <pre>set_locale(l const byte[:])</pre>
 <p>Sets the current locale used for string lookups.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L227">hc/lib/gfx/hud.amni:227</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L227">hc/lib/gfx/hud.amni:227</a>
 </article>
 <article class="sym" id="put_string">
 <h3><a href="#put_string">put_string</a> <i>function</i></h3>
 <pre>put_string(locale const byte[:], key const byte[:], v const byte[:])</pre>
 <p>Adds or replaces a localized string for a locale and key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L228">hc/lib/gfx/hud.amni:228</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L228">hc/lib/gfx/hud.amni:228</a>
 </article>
 <article class="sym" id="tr">
 <h3><a href="#tr">tr</a> <i>function</i></h3>
 <pre>tr(key const byte[:], names byte[&gt;..][&gt;..]&amp;, vals byte[&gt;..][&gt;..]&amp;) byte[&gt;..]</pre>
 <p>Returns a localized string with placeholders replaced by named values, or the key in brackets if missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L230">hc/lib/gfx/hud.amni:230</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L230">hc/lib/gfx/hud.amni:230</a>
 </article>
 <article class="sym" id="set_text">
 <h3><a href="#set_text">set_text</a> <i>function</i></h3>
 <pre>set_text(n int, s const byte[:])</pre>
 <p>Assigns a text string to a node for display.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L256">hc/lib/gfx/hud.amni:256</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L256">hc/lib/gfx/hud.amni:256</a>
 </article>
 <h2 id="rendering">Rendering <span class="n">1</span></h2>
 <article class="sym" id="draw">
 <h3><a href="#draw">draw</a> <i>function</i></h3>
 <pre>draw(target gfx::Texture, w int, h int, clear bool, bg float4)</pre>
 <p>Draws the visible HUD nodes into a target texture of the given size, optionally clearing it to a background color.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L260">hc/lib/gfx/hud.amni:260</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L260">hc/lib/gfx/hud.amni:260</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (31)</summary>
 <article class="sym" id="N">
 <h3><a href="#N">N</a> <i>constant</i></h3>
 <pre>var N Node[&gt;..] = []</pre>
 <p>Global array storing every node in the HUD tree.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L10">hc/lib/gfx/hud.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L10">hc/lib/gfx/hud.amni:10</a>
 </article>
 <article class="sym" id="KIDS">
 <h3><a href="#KIDS">KIDS</a> <i>constant</i></h3>
 <pre>var KIDS int[&gt;..][&gt;..] = []</pre>
 <p>Global array storing each node's list of child node indices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L11">hc/lib/gfx/hud.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L11">hc/lib/gfx/hud.amni:11</a>
 </article>
 <article class="sym" id="lo">
 <h3><a href="#lo">lo</a> <i>function</i></h3>
 <pre>lo(n int, ax int) f32</pre>
 <p>Returns a node's minimum size on the given axis, where negative means unset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L20">hc/lib/gfx/hud.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L20">hc/lib/gfx/hud.amni:20</a>
 </article>
 <article class="sym" id="hi">
 <h3><a href="#hi">hi</a> <i>function</i></h3>
 <pre>hi(n int, ax int) f32</pre>
 <p>Returns a node's maximum size on the given axis, where negative means unset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L21">hc/lib/gfx/hud.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L21">hc/lib/gfx/hud.amni:21</a>
 </article>
 <article class="sym" id="clampv">
 <h3><a href="#clampv">clampv</a> <i>function</i></h3>
 <pre>clampv(n int, ax int, v f32) f32</pre>
 <p>Clamps a size to the node's minimum and maximum on an axis, never below its padding total.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L22">hc/lib/gfx/hud.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L22">hc/lib/gfx/hud.amni:22</a>
 </article>
 <article class="sym" id="spec">
 <h3><a href="#spec">spec</a> <i>function</i></h3>
 <pre>spec(n int, ax int, cb f32, cdef bool) f32</pre>
 <p>Returns a node's explicitly specified size on an axis, or -1 when automatic or unresolvable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L23">hc/lib/gfx/hud.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L23">hc/lib/gfx/hud.amni:23</a>
 </article>
 <article class="sym" id="intrinsic">
 <h3><a href="#intrinsic">intrinsic</a> <i>function</i></h3>
 <pre>intrinsic(n int, ax int) f32</pre>
 <p>Computes a node's content-based size on an axis from its children, gaps and padding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L27">hc/lib/gfx/hud.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L27">hc/lib/gfx/hud.amni:27</a>
 </article>
 <article class="sym" id="contrib">
 <h3><a href="#contrib">contrib</a> <i>function</i></h3>
 <pre>contrib(c int, ax int, main bool) f32</pre>
 <p>Returns a child's clamped outer size contribution on an axis, including margins, for intrinsic sizing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L38">hc/lib/gfx/hud.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L38">hc/lib/gfx/hud.amni:38</a>
 </article>
 <article class="sym" id="lay">
 <h3><a href="#lay">lay</a> <i>function</i></h3>
 <pre>lay(n int)</pre>
 <p>Recursively computes flexbox-style positions and sizes for a node's children.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L44">hc/lib/gfx/hud.amni:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L44">hc/lib/gfx/hud.amni:44</a>
 </article>
 <article class="sym" id="Tw">
 <h3><a href="#Tw">Tw</a> <i>type</i></h3>
 <pre>struct Tw { node int, prop int, a real, b real, el real, dur real, ease int, next int, live bool, from_prev bool }</pre>
 <p>Struct recording one tween's target node, property, endpoints, elapsed time, duration, easing and chain link.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L160">hc/lib/gfx/hud.amni:160</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L160">hc/lib/gfx/hud.amni:160</a>
 </article>
 <article class="sym" id="TW">
 <h3><a href="#TW">TW</a> <i>constant</i></h3>
 <pre>var TW Tw[&gt;..] = []</pre>
 <p>Global array storing all tweens, both active and finished.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L161">hc/lib/gfx/hud.amni:161</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L161">hc/lib/gfx/hud.amni:161</a>
 </article>
 <article class="sym" id="prop_get">
 <h3><a href="#prop_get">prop_get</a> <i>function</i></h3>
 <pre>prop_get(n int, p int) real</pre>
 <p>Returns the current value of a node's animatable property.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L162">hc/lib/gfx/hud.amni:162</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L162">hc/lib/gfx/hud.amni:162</a>
 </article>
 <article class="sym" id="prop_set">
 <h3><a href="#prop_set">prop_set</a> <i>function</i></h3>
 <pre>prop_set(n int, p int, v real)</pre>
 <p>Sets a node's animatable property to the given value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L163">hc/lib/gfx/hud.amni:163</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L163">hc/lib/gfx/hud.amni:163</a>
 </article>
 <article class="sym" id="Run">
 <h3><a href="#Run">Run</a> <i>type</i></h3>
 <pre>struct Run { start int, len int, bold bool, color u32, size f32 }</pre>
 <p>Struct describing a run of characters sharing bold, color and size styling.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L182">hc/lib/gfx/hud.amni:182</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L182">hc/lib/gfx/hud.amni:182</a>
 </article>
 <article class="sym" id="TXT">
 <h3><a href="#TXT">TXT</a> <i>constant</i></h3>
 <pre>var TXT byte[&gt;..] = []</pre>
 <p>Global buffer holding the plain characters produced by parsing rich text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L183">hc/lib/gfx/hud.amni:183</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L183">hc/lib/gfx/hud.amni:183</a>
 </article>
 <article class="sym" id="RUNS">
 <h3><a href="#RUNS">RUNS</a> <i>constant</i></h3>
 <pre>var RUNS Run[&gt;..] = []</pre>
 <p>Global array of styled runs produced by parsing rich text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L184">hc/lib/gfx/hud.amni:184</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L184">hc/lib/gfx/hud.amni:184</a>
 </article>
 <article class="sym" id="CSZ">
 <h3><a href="#CSZ">CSZ</a> <i>constant</i></h3>
 <pre>var CSZ f32[&gt;..] = []</pre>
 <p>Global array of per-character font sizes for the parsed rich text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L185">hc/lib/gfx/hud.amni:185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L185">hc/lib/gfx/hud.amni:185</a>
 </article>
 <article class="sym" id="hexv">
 <h3><a href="#hexv">hexv</a> <i>function</i></h3>
 <pre>hexv(c byte) u32</pre>
 <p>Converts a hexadecimal digit character to its numeric value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L186">hc/lib/gfx/hud.amni:186</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L186">hc/lib/gfx/hud.amni:186</a>
 </article>
 <article class="sym" id="starts">
 <h3><a href="#starts">starts</a> <i>function</i></h3>
 <pre>starts(s const byte[:], at int, p const byte[:]) bool</pre>
 <p>Checks whether a pattern appears in a string at a given position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L187">hc/lib/gfx/hud.amni:187</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L187">hc/lib/gfx/hud.amni:187</a>
 </article>
 <article class="sym" id="LINES">
 <h3><a href="#LINES">LINES</a> <i>constant</i></h3>
 <pre>var LINES int[&gt;..] = []</pre>
 <p>Global array of start and end index pairs for each wrapped text line.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L212">hc/lib/gfx/hud.amni:212</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L212">hc/lib/gfx/hud.amni:212</a>
 </article>
 <article class="sym" id="char_w">
 <h3><a href="#char_w">char_w</a> <i>function</i></h3>
 <pre>char_w(i int) f32</pre>
 <p>Returns the rendered width of one parsed character at its size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L213">hc/lib/gfx/hud.amni:213</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L213">hc/lib/gfx/hud.amni:213</a>
 </article>
 <article class="sym" id="span_w">
 <h3><a href="#span_w">span_w</a> <i>function</i></h3>
 <pre>span_w(a int, b int) f32</pre>
 <p>Returns the total rendered width of a range of parsed characters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L214">hc/lib/gfx/hud.amni:214</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L214">hc/lib/gfx/hud.amni:214</a>
 </article>
 <article class="sym" id="SK">
 <h3><a href="#SK">SK</a> <i>constant</i></h3>
 <pre>var SK byte[&gt;..][&gt;..] = []; var SV byte[&gt;..][&gt;..] = []; var LOCALE byte[&gt;..] = []</pre>
 <p>Global tables holding localized string keys, values and the current locale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L226">hc/lib/gfx/hud.amni:226</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L226">hc/lib/gfx/hud.amni:226</a>
 </article>
 <article class="sym" id="find_string">
 <h3><a href="#find_string">find_string</a> <i>function</i></h3>
 <pre>find_string(locale const byte[:], key const byte[:]) int</pre>
 <p>Returns the table index of a localized string for a locale and key, or -1 if missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L229">hc/lib/gfx/hud.amni:229</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L229">hc/lib/gfx/hud.amni:229</a>
 </article>
 <article class="sym" id="PanVtx">
 <h3><a href="#PanVtx">PanVtx</a> <i>type</i></h3>
 <pre>struct PanVtx { pos float2, loc float2, half float2, rb float2, fill byte[4], edge byte[4] }</pre>
 <p>Struct describing one vertex of a HUD panel quad.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L252">hc/lib/gfx/hud.amni:252</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L252">hc/lib/gfx/hud.amni:252</a>
 </article>
 <article class="sym" id="HudProj">
 <h3><a href="#HudProj">HudProj</a> <i>type</i></h3>
 <pre>struct HudProj { proj gfx::mat4 }</pre>
 <p>Struct holding the projection matrix for HUD rendering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L253">hc/lib/gfx/hud.amni:253</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L253">hc/lib/gfx/hud.amni:253</a>
 </article>
 <article class="sym" id="PAN_READY">
 <h3><a href="#PAN_READY">PAN_READY</a> <i>constant</i></h3>
 <pre>var PAN_READY = false; var PAN_PIPE gfx::Pipeline; var PAN_VB gfx::Buffer; var PAN_CAP = 0</pre>
 <p>Global state tracking the panel pipeline, vertex buffer and its capacity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L254">hc/lib/gfx/hud.amni:254</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L254">hc/lib/gfx/hud.amni:254</a>
 </article>
 <article class="sym" id="TEXTS">
 <h3><a href="#TEXTS">TEXTS</a> <i>constant</i></h3>
 <pre>var TEXTS byte[&gt;..][&gt;..] = []</pre>
 <p>Global array storing the strings assigned to nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L255">hc/lib/gfx/hud.amni:255</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L255">hc/lib/gfx/hud.amni:255</a>
 </article>
 <article class="sym" id="rgba">
 <h3><a href="#rgba">rgba</a> <i>function</i></h3>
 <pre>rgba(c float4, a f32) byte[4]</pre>
 <p>Converts a color and alpha multiplier to four bytes in the 0 to 255 range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L257">hc/lib/gfx/hud.amni:257</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L257">hc/lib/gfx/hud.amni:257</a>
 </article>
 <article class="sym" id="alpha_of">
 <h3><a href="#alpha_of">alpha_of</a> <i>function</i></h3>
 <pre>alpha_of(n int) f32</pre>
 <p>Returns a node's opacity multiplied by those of all its ancestors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L258">hc/lib/gfx/hud.amni:258</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L258">hc/lib/gfx/hud.amni:258</a>
 </article>
 <article class="sym" id="shown">
 <h3><a href="#shown">shown</a> <i>function</i></h3>
 <pre>shown(n int) bool</pre>
 <p>Returns whether a node and all its ancestors are visible.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/gfx/hud.amni#L259">hc/lib/gfx/hud.amni:259</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/gfx/hud.amni#L259">hc/lib/gfx/hud.amni:259</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

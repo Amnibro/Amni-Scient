@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/nav-mesh">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/nav-mesh">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0d600fb320">
+<link rel="stylesheet" href="/api-library/lib.css?v=6095aeb6e7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0d600fb320'; start({wasm: '/api-library/search.wasm?v=0d600fb320'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=6095aeb6e7'; start({wasm: '/api-library/search.wasm?v=6095aeb6e7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>nav/mesh</h1>
 <p class="lib-lede">Build a navigation mesh of walkable cells and find paths across it.</p>
-<p class="lib-meta"><code>import nav.mesh;</code> &middot; <code>nav::</code> &middot; 19 functions, 0 types, 20 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni">Source</a></p>
+<p class="lib-meta"><code>import nav.mesh;</code> &middot; <code>nav::</code> &middot; 19 functions, 0 types, 20 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#build-settings">Build Settings <span class="n">7</span></a></li>
 <li><a href="#mesh-input">Mesh Input <span class="n">3</span></a></li>
@@ -116,239 +116,239 @@
 <h3><a href="#cs">cs</a> <i>constant</i></h3>
 <pre>var cs f32 = 0.1</pre>
 <p>Sets the voxel cell size in world units used when rasterizing the navigation mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L3">hc/lib/nav/mesh.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L3">hc/lib/nav/mesh.amni:3</a>
 </article>
 <article class="sym" id="ch">
 <h3><a href="#ch">ch</a> <i>constant</i></h3>
 <pre>var ch f32 = 0.05</pre>
 <p>Sets the voxel height in world units used when quantizing vertical spans.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L4">hc/lib/nav/mesh.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L4">hc/lib/nav/mesh.amni:4</a>
 </article>
 <article class="sym" id="radius">
 <h3><a href="#radius">radius</a> <i>constant</i></h3>
 <pre>var radius f32 = 0.3</pre>
 <p>Sets the agent radius in world units; cells closer to an edge than this are excluded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L5">hc/lib/nav/mesh.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L5">hc/lib/nav/mesh.amni:5</a>
 </article>
 <article class="sym" id="height">
 <h3><a href="#height">height</a> <i>constant</i></h3>
 <pre>var height f32 = 1.8</pre>
 <p>Sets the agent height in world units; walkable cells need at least this much clearance.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L6">hc/lib/nav/mesh.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L6">hc/lib/nav/mesh.amni:6</a>
 </article>
 <article class="sym" id="step">
 <h3><a href="#step">step</a> <i>constant</i></h3>
 <pre>var step f32 = 0.35</pre>
 <p>Sets the maximum height difference in world units an agent can step between neighboring cells.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L7">hc/lib/nav/mesh.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L7">hc/lib/nav/mesh.amni:7</a>
 </article>
 <article class="sym" id="slope_deg">
 <h3><a href="#slope_deg">slope_deg</a> <i>constant</i></h3>
 <pre>var slope_deg f32 = 45.0</pre>
 <p>Sets the maximum walkable slope angle in degrees; steeper triangles are not walkable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L8">hc/lib/nav/mesh.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L8">hc/lib/nav/mesh.amni:8</a>
 </article>
 <article class="sym" id="rect_max">
 <h3><a href="#rect_max">rect_max</a> <i>constant</i></h3>
 <pre>var rect_max = 16</pre>
 <p>Sets the maximum width or height in cells of a merged rectangle region.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L9">hc/lib/nav/mesh.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L9">hc/lib/nav/mesh.amni:9</a>
 </article>
 <h2 id="mesh-input">Mesh Input <span class="n">3</span></h2>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear()</pre>
 <p>Discards all input triangles and marks the mesh as not ready.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L23">hc/lib/nav/mesh.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L23">hc/lib/nav/mesh.amni:23</a>
 </article>
 <article class="sym" id="add">
 <h3><a href="#add">add</a> <i>function</i></h3>
 <pre>add(a float3, b float3, c float3)</pre>
 <p>Adds one triangle to the input geometry used by the next build.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L24">hc/lib/nav/mesh.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L24">hc/lib/nav/mesh.amni:24</a>
 </article>
 <article class="sym" id="build">
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build() bool</pre>
 <p>Builds the navigation mesh from the added triangles and returns false if there are none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L99">hc/lib/nav/mesh.amni:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L99">hc/lib/nav/mesh.amni:99</a>
 </article>
 <h2 id="mesh-data">Mesh Data <span class="n">4</span></h2>
 <article class="sym" id="cell_count">
 <h3><a href="#cell_count">cell_count</a> <i>function</i></h3>
 <pre>cell_count() int</pre>
 <p>Returns the total number of walkable cells in the built mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L25">hc/lib/nav/mesh.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L25">hc/lib/nav/mesh.amni:25</a>
 </article>
 <article class="sym" id="live_cells">
 <h3><a href="#live_cells">live_cells</a> <i>function</i></h3>
 <pre>live_cells() int</pre>
 <p>Returns the number of cells that belong to a merged rectangle region.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L26">hc/lib/nav/mesh.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L26">hc/lib/nav/mesh.amni:26</a>
 </article>
 <article class="sym" id="rect_count">
 <h3><a href="#rect_count">rect_count</a> <i>function</i></h3>
 <pre>rect_count() int</pre>
 <p>Returns the number of merged rectangle regions in the built mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L27">hc/lib/nav/mesh.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L27">hc/lib/nav/mesh.amni:27</a>
 </article>
 <article class="sym" id="portal_count">
 <h3><a href="#portal_count">portal_count</a> <i>function</i></h3>
 <pre>portal_count() int</pre>
 <p>Returns the number of portals connecting adjacent regions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L28">hc/lib/nav/mesh.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L28">hc/lib/nav/mesh.amni:28</a>
 </article>
 <h2 id="path-queries">Path Queries <span class="n">2</span></h2>
 <article class="sym" id="locate">
 <h3><a href="#locate">locate</a> <i>function</i></h3>
 <pre>locate(p float3) int, float3</pre>
 <p>Finds the nearest mesh cell to a point and returns its index with the snapped position, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L212">hc/lib/nav/mesh.amni:212</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L212">hc/lib/nav/mesh.amni:212</a>
 </article>
 <article class="sym" id="path">
 <h3><a href="#path">path</a> <i>function</i></h3>
 <pre>path(a float3, b float3, out float3[&gt;..]&amp;) bool</pre>
 <p>Finds a path between two points over the mesh, returning false if either point is off the mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L267">hc/lib/nav/mesh.amni:267</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L267">hc/lib/nav/mesh.amni:267</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (23)</summary>
 <article class="sym" id="tri_in">
 <h3><a href="#tri_in">tri_in</a> <i>constant</i></h3>
 <pre>var tri_in f32[&gt;..] = []</pre>
 <p>Holds the input triangle vertices as packed x, y, z floats, nine per triangle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L10">hc/lib/nav/mesh.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L10">hc/lib/nav/mesh.amni:10</a>
 </article>
 <article class="sym" id="gw">
 <h3><a href="#gw">gw</a> <i>constant</i></h3>
 <pre>var gw = 0; var gh = 0; var ox f32 = 0.0; var oy f32 = 0.0; var oz f32 = 0.0</pre>
 <p>Holds the voxel grid dimensions and world-space origin computed during a build.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L11">hc/lib/nav/mesh.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L11">hc/lib/nav/mesh.amni:11</a>
 </article>
 <article class="sym" id="col_head">
 <h3><a href="#col_head">col_head</a> <i>constant</i></h3>
 <pre>var col_head int[&gt;..] = []</pre>
 <p>Holds the index of the first span in each grid column's linked list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L12">hc/lib/nav/mesh.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L12">hc/lib/nav/mesh.amni:12</a>
 </article>
 <article class="sym" id="sp_lo">
 <h3><a href="#sp_lo">sp_lo</a> <i>constant</i></h3>
 <pre>var sp_lo int[&gt;..] = []; var sp_hi int[&gt;..] = []; var sp_walk byte[&gt;..] = []; var sp_y f32[&gt;..] = []; var sp_next int[&gt;..] = []</pre>
 <p>Holds per-span bounds, walkability, surface height and next-span links for the voxelized geometry.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L13">hc/lib/nav/mesh.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L13">hc/lib/nav/mesh.amni:13</a>
 </article>
 <article class="sym" id="col_c0">
 <h3><a href="#col_c0">col_c0</a> <i>constant</i></h3>
 <pre>var col_c0 int[&gt;..] = []; var col_cn int[&gt;..] = []</pre>
 <p>Holds each grid column's first cell index and cell count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L14">hc/lib/nav/mesh.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L14">hc/lib/nav/mesh.amni:14</a>
 </article>
 <article class="sym" id="c_col">
 <h3><a href="#c_col">c_col</a> <i>constant</i></h3>
 <pre>var c_col int[&gt;..] = []; var c_top int[&gt;..] = []; var c_ceil int[&gt;..] = []; var c_y f32[&gt;..] = []; var c_link int[&gt;..] = []; var c_dist int[&gt;..] = []; var c_rect int[&gt;..] = []</pre>
 <p>Holds per-cell column, top, ceiling, height, neighbor links, edge distance and region assignment.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L15">hc/lib/nav/mesh.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L15">hc/lib/nav/mesh.amni:15</a>
 </article>
 <article class="sym" id="r_x0">
 <h3><a href="#r_x0">r_x0</a> <i>constant</i></h3>
 <pre>var r_x0 int[&gt;..] = []; var r_z0 int[&gt;..] = []; var r_x1 int[&gt;..] = []; var r_z1 int[&gt;..] = []; var r_cx f32[&gt;..] = []; var r_cz f32[&gt;..] = []</pre>
 <p>Holds the grid bounds and center of each merged rectangle region.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L16">hc/lib/nav/mesh.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L16">hc/lib/nav/mesh.amni:16</a>
 </article>
 <article class="sym" id="p_a">
 <h3><a href="#p_a">p_a</a> <i>constant</i></h3>
 <pre>var p_a int[&gt;..] = []; var p_b int[&gt;..] = []; var p_d int[&gt;..] = []; var p_q0 float3[&gt;..] = []; var p_q1 float3[&gt;..] = []; var p_next int[&gt;..] = []</pre>
 <p>Holds portal endpoints, region pairs, directions and list links between adjacent regions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L17">hc/lib/nav/mesh.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L17">hc/lib/nav/mesh.amni:17</a>
 </article>
 <article class="sym" id="r_head">
 <h3><a href="#r_head">r_head</a> <i>constant</i></h3>
 <pre>var r_head int[&gt;..] = []; var adj0 int[&gt;..] = []; var adj int[&gt;..] = []</pre>
 <p>Holds the region adjacency list offsets and entries that reference portals.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L18">hc/lib/nav/mesh.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L18">hc/lib/nav/mesh.amni:18</a>
 </article>
 <article class="sym" id="poly_a">
 <h3><a href="#poly_a">poly_a</a> <i>constant</i></h3>
 <pre>var poly_a f32[&gt;..] = []; var poly_b f32[&gt;..] = []</pre>
 <p>Holds scratch polygon buffers used during build.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L19">hc/lib/nav/mesh.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L19">hc/lib/nav/mesh.amni:19</a>
 </article>
 <article class="sym" id="ready">
 <h3><a href="#ready">ready</a> <i>constant</i></h3>
 <pre>var ready = false</pre>
 <p>Flags whether a mesh has been built and is ready for queries.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L20">hc/lib/nav/mesh.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L20">hc/lib/nav/mesh.amni:20</a>
 </article>
 <article class="sym" id="DX">
 <h3><a href="#DX">DX</a> <i>constant</i></h3>
 <pre>let DX = [-1, 0, 1, 0]</pre>
 <p>Lists the x offsets of the four neighbor directions on the grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L21">hc/lib/nav/mesh.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L21">hc/lib/nav/mesh.amni:21</a>
 </article>
 <article class="sym" id="DZ">
 <h3><a href="#DZ">DZ</a> <i>constant</i></h3>
 <pre>let DZ = [0, 1, 0, -1]</pre>
 <p>Lists the z offsets of the four neighbor directions on the grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L22">hc/lib/nav/mesh.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L22">hc/lib/nav/mesh.amni:22</a>
 </article>
 <article class="sym" id="clip">
 <h3><a href="#clip">clip</a> <i>function</i></h3>
 <pre>clip(inp f32[&gt;..]&amp;, n int, out f32[&gt;..]&amp;, axis int, v f32, keep_hi bool) int</pre>
 <p>Clips a polygon against an axis-aligned plane and returns the resulting vertex count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L29">hc/lib/nav/mesh.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L29">hc/lib/nav/mesh.amni:29</a>
 </article>
 <article class="sym" id="add_span">
 <h3><a href="#add_span">add_span</a> <i>function</i></h3>
 <pre>add_span(c int, lo int, hi int, walk bool, y f32)</pre>
 <p>Inserts a height span into a grid column, merging it with overlapping spans.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L46">hc/lib/nav/mesh.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L46">hc/lib/nav/mesh.amni:46</a>
 </article>
 <article class="sym" id="raster">
 <h3><a href="#raster">raster</a> <i>function</i></h3>
 <pre>raster(t int, cosw f32)</pre>
 <p>Rasterizes one input triangle into spans of the voxel grid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L62">hc/lib/nav/mesh.amni:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L62">hc/lib/nav/mesh.amni:62</a>
 </article>
 <article class="sym" id="link">
 <h3><a href="#link">link</a> <i>function</i></h3>
 <pre>link(c int, d int) int</pre>
 <p>Returns the neighbor cell index in a given direction, or negative if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L98">hc/lib/nav/mesh.amni:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L98">hc/lib/nav/mesh.amni:98</a>
 </article>
 <article class="sym" id="mid">
 <h3><a href="#mid">mid</a> <i>function</i></h3>
 <pre>mid(p int) float3</pre>
 <p>Returns the midpoint of a portal's edge.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L237">hc/lib/nav/mesh.amni:237</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L237">hc/lib/nav/mesh.amni:237</a>
 </article>
 <article class="sym" id="dist">
 <h3><a href="#dist">dist</a> <i>function</i></h3>
 <pre>dist(a float3, b float3) f32</pre>
 <p>Returns the Euclidean distance between two points.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L238">hc/lib/nav/mesh.amni:238</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L238">hc/lib/nav/mesh.amni:238</a>
 </article>
 <article class="sym" id="cross_at">
 <h3><a href="#cross_at">cross_at</a> <i>function</i></h3>
 <pre>cross_at(q int, a float3, b float3) float3</pre>
 <p>Returns where the segment between two points crosses a portal edge, or the nearer edge endpoint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L239">hc/lib/nav/mesh.amni:239</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L239">hc/lib/nav/mesh.amni:239</a>
 </article>
 <article class="sym" id="cross2">
 <h3><a href="#cross2">cross2</a> <i>function</i></h3>
 <pre>cross2(a float3, b float3, c float3) f32</pre>
 <p>Returns the signed 2D cross product of two edge vectors on the xz plane.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L245">hc/lib/nav/mesh.amni:245</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L245">hc/lib/nav/mesh.amni:245</a>
 </article>
 <article class="sym" id="hpush">
 <h3><a href="#hpush">hpush</a> <i>function</i></h3>
 <pre>hpush(hk f32[&gt;..]&amp;, hv int[&gt;..]&amp;, k f32, v int)</pre>
 <p>Pushes a key and value onto a binary min-heap.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L246">hc/lib/nav/mesh.amni:246</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L246">hc/lib/nav/mesh.amni:246</a>
 </article>
 <article class="sym" id="hpop">
 <h3><a href="#hpop">hpop</a> <i>function</i></h3>
 <pre>hpop(hk f32[&gt;..]&amp;, hv int[&gt;..]&amp;) int</pre>
 <p>Removes and returns the value with the smallest key from a binary min-heap.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/nav/mesh.amni#L251">hc/lib/nav/mesh.amni:251</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/nav/mesh.amni#L251">hc/lib/nav/mesh.amni:251</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

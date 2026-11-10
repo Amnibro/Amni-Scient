@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/vec">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/vec">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=0d600fb320">
+<link rel="stylesheet" href="/api-library/lib.css?v=6095aeb6e7">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=0d600fb320'; start({wasm: '/api-library/search.wasm?v=0d600fb320'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=6095aeb6e7'; start({wasm: '/api-library/search.wasm?v=6095aeb6e7'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>vec</h1>
 <p class="lib-lede">Small fixed vectors such as <code>float3</code> with dot and cross products, lengths, normalizing and blending.</p>
-<p class="lib-meta"><code>import vec;</code> &middot; 22 functions, 3 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he">Source</a></p>
+<p class="lib-meta"><code>import vec;</code> &middot; 22 functions, 3 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#vector-types">Vector Types <span class="n">21</span></a></li>
 <li><a href="#vector-math">Vector Math <span class="n">9</span></a></li>
@@ -113,128 +113,128 @@
 <h3><a href="#vec2">vec2</a> <i>type</i></h3>
 <pre>struct vec2&lt;T&gt; { x T, y T }</pre>
 <p>Generic two-component vector with x and y fields, combined element by element using arithmetic operators.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L5">hc/lib/vec.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L5">hc/lib/vec.he:5</a>
 </article>
 <article class="sym" id="vec3">
 <h3><a href="#vec3">vec3</a> <i>type</i></h3>
 <pre>struct vec3&lt;T&gt; { x T, y T, z T }</pre>
 <p>Generic three-component vector with x, y and z fields, combined element by element using arithmetic operators.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L6">hc/lib/vec.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L6">hc/lib/vec.he:6</a>
 </article>
 <article class="sym" id="vec4">
 <h3><a href="#vec4">vec4</a> <i>type</i></h3>
 <pre>struct vec4&lt;T&gt; { x T, y T, z T, w T }</pre>
 <p>Generic four-component vector with x, y, z and w fields, combined element by element using arithmetic operators.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L7">hc/lib/vec.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L7">hc/lib/vec.he:7</a>
 </article>
 <article class="sym" id="float2_1">
 <h3><a href="#float2_1">float2_1</a> <i>constant</i></h3>
 <pre>float2_1 := float2{1.0, 1.0}</pre>
 <p>Constant two-component f32 vector with both components set to one.</p>
 <p class="note">all-zero and all-one constants</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L20">hc/lib/vec.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L20">hc/lib/vec.he:20</a>
 </article>
 <article class="sym" id="float3_1">
 <h3><a href="#float3_1">float3_1</a> <i>constant</i></h3>
 <pre>float3_1 := float3{1.0, 1.0, 1.0}</pre>
 <p>Constant three-component f32 vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L21">hc/lib/vec.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L21">hc/lib/vec.he:21</a>
 </article>
 <article class="sym" id="float4_1">
 <h3><a href="#float4_1">float4_1</a> <i>constant</i></h3>
 <pre>float4_1 := float4{1.0, 1.0, 1.0, 1.0}</pre>
 <p>Constant four-component f32 vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L22">hc/lib/vec.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L22">hc/lib/vec.he:22</a>
 </article>
 <article class="sym" id="double2_1">
 <h3><a href="#double2_1">double2_1</a> <i>constant</i></h3>
 <pre>double2_1 := double2{1.0, 1.0}</pre>
 <p>Constant two-component real vector with both components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L23">hc/lib/vec.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L23">hc/lib/vec.he:23</a>
 </article>
 <article class="sym" id="double3_1">
 <h3><a href="#double3_1">double3_1</a> <i>constant</i></h3>
 <pre>double3_1 := double3{1.0, 1.0, 1.0}</pre>
 <p>Constant three-component real vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L24">hc/lib/vec.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L24">hc/lib/vec.he:24</a>
 </article>
 <article class="sym" id="double4_1">
 <h3><a href="#double4_1">double4_1</a> <i>constant</i></h3>
 <pre>double4_1 := double4{1.0, 1.0, 1.0, 1.0}</pre>
 <p>Constant four-component real vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L25">hc/lib/vec.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L25">hc/lib/vec.he:25</a>
 </article>
 <article class="sym" id="int2_1">
 <h3><a href="#int2_1">int2_1</a> <i>constant</i></h3>
 <pre>int2_1 := int2{1, 1}</pre>
 <p>Constant two-component i32 vector with both components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L26">hc/lib/vec.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L26">hc/lib/vec.he:26</a>
 </article>
 <article class="sym" id="int3_1">
 <h3><a href="#int3_1">int3_1</a> <i>constant</i></h3>
 <pre>int3_1 := int3{1, 1, 1}</pre>
 <p>Constant three-component i32 vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L27">hc/lib/vec.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L27">hc/lib/vec.he:27</a>
 </article>
 <article class="sym" id="int4_1">
 <h3><a href="#int4_1">int4_1</a> <i>constant</i></h3>
 <pre>int4_1 := int4{1, 1, 1, 1}</pre>
 <p>Constant four-component i32 vector with all components set to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L28">hc/lib/vec.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L28">hc/lib/vec.he:28</a>
 </article>
 <article class="sym" id="float2_0">
 <h3><a href="#float2_0">float2_0</a> <i>constant</i></h3>
 <pre>float2_0 := float2_1 * 0.0</pre>
 <p>Constant two-component f32 vector with both components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L29">hc/lib/vec.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L29">hc/lib/vec.he:29</a>
 </article>
 <article class="sym" id="float3_0">
 <h3><a href="#float3_0">float3_0</a> <i>constant</i></h3>
 <pre>float3_0 := float3_1 * 0.0</pre>
 <p>Constant three-component f32 vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L30">hc/lib/vec.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L30">hc/lib/vec.he:30</a>
 </article>
 <article class="sym" id="float4_0">
 <h3><a href="#float4_0">float4_0</a> <i>constant</i></h3>
 <pre>float4_0 := float4_1 * 0.0</pre>
 <p>Constant four-component f32 vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L31">hc/lib/vec.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L31">hc/lib/vec.he:31</a>
 </article>
 <article class="sym" id="double2_0">
 <h3><a href="#double2_0">double2_0</a> <i>constant</i></h3>
 <pre>double2_0 := double2_1 * 0.0</pre>
 <p>Constant two-component real vector with both components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L32">hc/lib/vec.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L32">hc/lib/vec.he:32</a>
 </article>
 <article class="sym" id="double3_0">
 <h3><a href="#double3_0">double3_0</a> <i>constant</i></h3>
 <pre>double3_0 := double3_1 * 0.0</pre>
 <p>Constant three-component real vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L33">hc/lib/vec.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L33">hc/lib/vec.he:33</a>
 </article>
 <article class="sym" id="double4_0">
 <h3><a href="#double4_0">double4_0</a> <i>constant</i></h3>
 <pre>double4_0 := double4_1 * 0.0</pre>
 <p>Constant four-component real vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L34">hc/lib/vec.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L34">hc/lib/vec.he:34</a>
 </article>
 <article class="sym" id="int2_0">
 <h3><a href="#int2_0">int2_0</a> <i>constant</i></h3>
 <pre>int2_0 := int2_1 * 0</pre>
 <p>Constant two-component i32 vector with both components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L35">hc/lib/vec.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L35">hc/lib/vec.he:35</a>
 </article>
 <article class="sym" id="int3_0">
 <h3><a href="#int3_0">int3_0</a> <i>constant</i></h3>
 <pre>int3_0 := int3_1 * 0</pre>
 <p>Constant three-component i32 vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L36">hc/lib/vec.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L36">hc/lib/vec.he:36</a>
 </article>
 <article class="sym" id="int4_0">
 <h3><a href="#int4_0">int4_0</a> <i>constant</i></h3>
 <pre>int4_0 := int4_1 * 0</pre>
 <p>Constant four-component i32 vector with all components set to zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L37">hc/lib/vec.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L37">hc/lib/vec.he:37</a>
 </article>
 <h2 id="vector-math">Vector Math <span class="n">9</span></h2>
 <article class="sym" id="dot">
@@ -246,14 +246,14 @@
 <pre>dot&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;) T</pre>
 <p>Returns the dot product of two four-component vectors, the sum of their component-wise products.</p>
 <p class="note">products: multiply component-wise, then add the components up</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L40">hc/lib/vec.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L40">hc/lib/vec.he:40</a>
 </article>
 <article class="sym" id="cross">
 <h3><a href="#cross">cross</a> <i>function</i></h3>
 <pre>cross&lt;T&gt;(a vec3&lt;T&gt;, b vec3&lt;T&gt;) vec3&lt;T&gt;</pre>
 <p>Returns the right-handed cross product of two three-component vectors, perpendicular to both.</p>
 <p class="note">the right-handed perpendicular of a and b</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L50">hc/lib/vec.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L50">hc/lib/vec.he:50</a>
 </article>
 <article class="sym" id="length_sq">
 <h3><a href="#length_sq">length_sq</a> <i>function, 3 forms</i></h3>
@@ -263,7 +263,7 @@
 <p>Returns the squared length of a three-component vector, avoiding a square root.</p>
 <pre>length_sq&lt;T&gt;(v vec4&lt;T&gt;) T</pre>
 <p>Returns the squared length of a four-component vector, avoiding a square root.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L56">hc/lib/vec.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L56">hc/lib/vec.he:56</a>
 </article>
 <article class="sym" id="length">
 <h3><a href="#length">length</a> <i>function, 3 forms</i></h3>
@@ -273,7 +273,7 @@
 <p>Returns the Euclidean length of a three-component vector.</p>
 <pre>length&lt;T&gt;(v vec4&lt;T&gt;) T</pre>
 <p>Returns the Euclidean length of a four-component vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L59">hc/lib/vec.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L59">hc/lib/vec.he:59</a>
 </article>
 <article class="sym" id="normalize">
 <h3><a href="#normalize">normalize</a> <i>function, 3 forms</i></h3>
@@ -283,7 +283,7 @@
 <p>Returns a three-component vector divided by its length; a zero vector is not guarded against.</p>
 <pre>normalize&lt;T&gt;(v vec4&lt;T&gt;) vec4&lt;T&gt;</pre>
 <p>Returns a four-component vector divided by its length; a zero vector is not guarded against.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L62">hc/lib/vec.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L62">hc/lib/vec.he:62</a>
 </article>
 <article class="sym" id="distance">
 <h3><a href="#distance">distance</a> <i>function, 3 forms</i></h3>
@@ -293,7 +293,7 @@
 <p>Returns the Euclidean distance between two three-component vectors.</p>
 <pre>distance&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;) T</pre>
 <p>Returns the Euclidean distance between two four-component vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L65">hc/lib/vec.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L65">hc/lib/vec.he:65</a>
 </article>
 <article class="sym" id="lerp">
 <h3><a href="#lerp">lerp</a> <i>function, 3 forms</i></h3>
@@ -304,7 +304,7 @@
 <pre>lerp&lt;T&gt;(a vec4&lt;T&gt;, b vec4&lt;T&gt;, t T) vec4&lt;T&gt;</pre>
 <p>Returns a linear blend of two four-component vectors, giving a at t of 0 and b at t of 1.</p>
 <p class="note">blending: t = 0 gives a, t = 1 gives b</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L70">hc/lib/vec.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L70">hc/lib/vec.he:70</a>
 </article>
 <article class="sym" id="xy">
 <h3><a href="#xy">xy</a> <i>function, 2 forms</i></h3>
@@ -312,13 +312,13 @@
 <p>Returns the first two components, x and y, of a three-component vector as a two-component vector.</p>
 <pre>xy&lt;T&gt;(v vec4&lt;T&gt;) vec2&lt;T&gt;</pre>
 <p>Returns the first two components, x and y, of a four-component vector as a two-component vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L75">hc/lib/vec.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L75">hc/lib/vec.he:75</a>
 </article>
 <article class="sym" id="xyz">
 <h3><a href="#xyz">xyz</a> <i>function</i></h3>
 <pre>xyz&lt;T&gt;(v vec4&lt;T&gt;) vec3&lt;T&gt;</pre>
 <p>Returns the first three components, x, y and z, of a four-component vector as a three-component vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/0d600fb5e4b346d24bf4b24b1fd549e911695450/hc/lib/vec.he#L77">hc/lib/vec.he:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/6095aebc28ec88235475d7200268f37c1aec5f96/hc/lib/vec.he#L77">hc/lib/vec.he:77</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
