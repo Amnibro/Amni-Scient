@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-rsa">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-rsa">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=7a3bf9087f">
+<link rel="stylesheet" href="/api-library/lib.css?v=a53ad2887f">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=7a3bf9087f'; start({wasm: '/api-library/search.wasm?v=7a3bf9087f'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a53ad2887f'; start({wasm: '/api-library/search.wasm?v=a53ad2887f'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/rsa</h1>
 <p class="lib-lede">RSA PKCS#1 and PSS signature verification.</p>
-<p class="lib-meta"><code>import crypto.rsa;</code> &middot; <code>crypto::</code> &middot; 6 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.rsa;</code> &middot; <code>crypto::</code> &middot; 6 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#rsa-signature-verification">RSA Signature Verification <span class="n">2</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -113,38 +113,38 @@
 <h3><a href="#rsa_pkcs1_verify">rsa_pkcs1_verify</a> <i>function</i></h3>
 <pre>rsa_pkcs1_verify(kind int, n const byte[:], e const byte[:], msg const byte[:], sig const byte[:]) bool</pre>
 <p>Verifies an RSA PKCS#1 v1.5 signature over a message, returning false if it does not match.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L17">hc/lib/crypto/rsa.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L17">hc/lib/crypto/rsa.he:17</a>
 </article>
 <article class="sym" id="rsa_pss_verify">
 <h3><a href="#rsa_pss_verify">rsa_pss_verify</a> <i>function</i></h3>
 <pre>rsa_pss_verify(kind int, mgf int, slen int, n0 const byte[:], e const byte[:], msg const byte[:], sig const byte[:]) bool</pre>
 <p>Verifies an RSA PSS signature over a message with the given hash, mask function and salt length, returning false on mismatch.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L30">hc/lib/crypto/rsa.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L30">hc/lib/crypto/rsa.he:30</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (4)</summary>
 <article class="sym" id="strip0">
 <h3><a href="#strip0">strip0</a> <i>function</i></h3>
 <pre>strip0(b const byte[:]) const byte[:]</pre>
 <p>Returns the input bytes with leading zero bytes removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L5">hc/lib/crypto/rsa.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L5">hc/lib/crypto/rsa.he:5</a>
 </article>
 <article class="sym" id="digest_info">
 <h3><a href="#digest_info">digest_info</a> <i>function</i></h3>
 <pre>digest_info(kind int) byte[&gt;..]</pre>
 <p>Returns the DER DigestInfo prefix bytes for the given hash kind, defaulting to SHA-512 when unmatched.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L6">hc/lib/crypto/rsa.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L6">hc/lib/crypto/rsa.he:6</a>
 </article>
 <article class="sym" id="rsa_public">
 <h3><a href="#rsa_public">rsa_public</a> <i>function</i></h3>
 <pre>rsa_public(n0 const byte[:], e const byte[:], sig const byte[:]) byte[&gt;..], bool</pre>
 <p>Computes the RSA public operation on a signature, returning the result bytes and false if key or signature is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L10">hc/lib/crypto/rsa.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L10">hc/lib/crypto/rsa.he:10</a>
 </article>
 <article class="sym" id="mgf1">
 <h3><a href="#mgf1">mgf1</a> <i>function</i></h3>
 <pre>mgf1(kind int, seed const byte[:], n int) byte[&gt;..]</pre>
 <p>Generates a mask of n bytes from a seed using the MGF1 construction with the given hash.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/crypto/rsa.he#L24">hc/lib/crypto/rsa.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/crypto/rsa.he#L24">hc/lib/crypto/rsa.he:24</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -156,7 +156,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1793</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1807</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-math">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-math">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=7a3bf9087f">
+<link rel="stylesheet" href="/api-library/lib.css?v=a53ad2887f">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=7a3bf9087f'; start({wasm: '/api-library/search.wasm?v=7a3bf9087f'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a53ad2887f'; start({wasm: '/api-library/search.wasm?v=a53ad2887f'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/math</h1>
 <p class="lib-lede">Quaternions and rigid transforms for the animation runtime.</p>
-<p class="lib-meta"><code>import anim.math;</code> &middot; <code>anim::</code> &middot; 25 functions, 2 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.math;</code> &middot; <code>anim::</code> &middot; 25 functions, 2 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/math: quaternions and rigid transforms for the animation runtime.
 Clean-room: written from the textbook definitions (Hamilton product,
 q v q*, nlerp/slerp as in Shoemake 1985 &quot;Animating rotation with
@@ -123,32 +123,32 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <h3><a href="#QI">QI</a> <i>constant</i></h3>
 <pre>let QI = float4 { 0.0, 0.0, 0.0, 1.0 }</pre>
 <p>Identity quaternion representing no rotation, stored as float4 with w as the scalar part.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L10">hc/lib/anim/math.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L10">hc/lib/anim/math.amni:10</a>
 </article>
 <article class="sym" id="V0">
 <h3><a href="#V0">V0</a> <i>constant</i></h3>
 <pre>let V0 = float3 { 0.0, 0.0, 0.0 }</pre>
 <p>Zero vector with all three components set to 0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L11">hc/lib/anim/math.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L11">hc/lib/anim/math.amni:11</a>
 </article>
 <article class="sym" id="V1">
 <h3><a href="#V1">V1</a> <i>constant</i></h3>
 <pre>let V1 = float3 { 1.0, 1.0, 1.0 }</pre>
 <p>Vector with all three components set to 1, used as the unscaled identity scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L12">hc/lib/anim/math.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L12">hc/lib/anim/math.amni:12</a>
 </article>
 <h2 id="vector-construction">Vector Construction <span class="n">2</span></h2>
 <article class="sym" id="v3">
 <h3><a href="#v3">v3</a> <i>function</i></h3>
 <pre>v3(x f32, y f32, z f32) float3</pre>
 <p>Builds a float3 from x, y and z components.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L14">hc/lib/anim/math.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L14">hc/lib/anim/math.amni:14</a>
 </article>
 <article class="sym" id="q4">
 <h3><a href="#q4">q4</a> <i>function</i></h3>
 <pre>q4(x f32, y f32, z f32, w f32) float4</pre>
 <p>Builds a float4 quaternion from x, y, z and scalar w components.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L15">hc/lib/anim/math.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L15">hc/lib/anim/math.amni:15</a>
 </article>
 <h2 id="quaternions">Quaternions <span class="n">11</span></h2>
 <article class="sym" id="qmul">
@@ -156,71 +156,71 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <pre>qmul(a float4, b float4) float4</pre>
 <p>Returns the Hamilton product a*b, which rotates by b first and then by a.</p>
 <p class="note">Hamilton product a*b: rotating by b, then by a.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L18">hc/lib/anim/math.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L18">hc/lib/anim/math.amni:18</a>
 </article>
 <article class="sym" id="qconj">
 <h3><a href="#qconj">qconj</a> <i>function</i></h3>
 <pre>qconj(q float4) float4</pre>
 <p>Returns the conjugate of a quaternion, which is the inverse for unit quaternions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L25">hc/lib/anim/math.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L25">hc/lib/anim/math.amni:25</a>
 </article>
 <article class="sym" id="qdot">
 <h3><a href="#qdot">qdot</a> <i>function</i></h3>
 <pre>qdot(a float4, b float4) f32</pre>
 <p>Returns the four-component dot product of two quaternions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L26">hc/lib/anim/math.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L26">hc/lib/anim/math.amni:26</a>
 </article>
 <article class="sym" id="qneg">
 <h3><a href="#qneg">qneg</a> <i>function</i></h3>
 <pre>qneg(q float4) float4</pre>
 <p>Returns the quaternion with all four components negated, representing the same rotation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L27">hc/lib/anim/math.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L27">hc/lib/anim/math.amni:27</a>
 </article>
 <article class="sym" id="qnorm">
 <h3><a href="#qnorm">qnorm</a> <i>function</i></h3>
 <pre>qnorm(q float4) float4</pre>
 <p>Returns the quaternion scaled to unit length, or identity if its squared length is nearly zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L28">hc/lib/anim/math.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L28">hc/lib/anim/math.amni:28</a>
 </article>
 <article class="sym" id="qrot">
 <h3><a href="#qrot">qrot</a> <i>function</i></h3>
 <pre>qrot(q float4, v float3) float3</pre>
 <p>Returns a vector rotated by a unit quaternion.</p>
 <p class="note">v rotated by unit q: v + 2w(u x v) + 2 u x (u x v), u = q.xyz.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L35">hc/lib/anim/math.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L35">hc/lib/anim/math.amni:35</a>
 </article>
 <article class="sym" id="qaxis">
 <h3><a href="#qaxis">qaxis</a> <i>function</i></h3>
 <pre>qaxis(axis float3, angle f32) float4</pre>
 <p>Builds a quaternion rotating by an angle in radians about an axis, or identity for a zero axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L40">hc/lib/anim/math.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L40">hc/lib/anim/math.amni:40</a>
 </article>
 <article class="sym" id="qfromto">
 <h3><a href="#qfromto">qfromto</a> <i>function</i></h3>
 <pre>qfromto(a float3, b float3) float4</pre>
 <p>Builds the shortest rotation taking direction a onto direction b, or identity if either is near zero length.</p>
 <p class="note">The shortest rotation taking direction a onto direction b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L47">hc/lib/anim/math.amni:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L47">hc/lib/anim/math.amni:47</a>
 </article>
 <article class="sym" id="qangle">
 <h3><a href="#qangle">qangle</a> <i>function</i></h3>
 <pre>qangle(a float4, b float4) f32</pre>
 <p>Returns the angle in radians, from 0 to pi, of the rotation taking one quaternion to another.</p>
 <p class="note">Angle (radians, 0..pi) of the rotation taking a to b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L64">hc/lib/anim/math.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L64">hc/lib/anim/math.amni:64</a>
 </article>
 <article class="sym" id="qyaw">
 <h3><a href="#qyaw">qyaw</a> <i>function</i></h3>
 <pre>qyaw(yaw f32) float4</pre>
 <p>Builds a quaternion rotating by a yaw angle in radians about the +Y axis.</p>
 <p class="note">Rotation about +Y (yaw), and the yaw of a rotation's forward (+Z) axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L87">hc/lib/anim/math.amni:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L87">hc/lib/anim/math.amni:87</a>
 </article>
 <article class="sym" id="yaw_of">
 <h3><a href="#yaw_of">yaw_of</a> <i>function</i></h3>
 <pre>yaw_of(q float4) f32</pre>
 <p>Returns the yaw angle in radians of a rotation's forward +Z axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L88">hc/lib/anim/math.amni:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L88">hc/lib/anim/math.amni:88</a>
 </article>
 <h2 id="quaternion-interpolation">Quaternion Interpolation <span class="n">4</span></h2>
 <article class="sym" id="nlerp">
@@ -228,27 +228,27 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <pre>nlerp(a float4, b float4, t f32) float4</pre>
 <p>Returns the normalized linear interpolation between two quaternions on the shorter arc at parameter t.</p>
 <p class="note">Normalized linear interpolation on the shorter arc.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L69">hc/lib/anim/math.amni:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L69">hc/lib/anim/math.amni:69</a>
 </article>
 <article class="sym" id="slerp">
 <h3><a href="#slerp">slerp</a> <i>function</i></h3>
 <pre>slerp(a float4, b float4, t f32) float4</pre>
 <p>Returns the spherical linear interpolation between two quaternions on the shorter arc at parameter t.</p>
 <p class="note">Spherical linear interpolation on the shorter arc (Shoemake 1985).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L75">hc/lib/anim/math.amni:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L75">hc/lib/anim/math.amni:75</a>
 </article>
 <article class="sym" id="smoothstep01">
 <h3><a href="#smoothstep01">smoothstep01</a> <i>function</i></h3>
 <pre>smoothstep01(x f32) f32</pre>
 <p>Returns a smoothstep curve of x clamped to 0 through 1, easing at both ends.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L137">hc/lib/anim/math.amni:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L137">hc/lib/anim/math.amni:137</a>
 </article>
 <article class="sym" id="smootherstep01">
 <h3><a href="#smootherstep01">smootherstep01</a> <i>function</i></h3>
 <pre>smootherstep01(x f32) f32</pre>
 <p>Returns a smootherstep curve of x clamped to 0 through 1, with zero first and second derivatives at the ends.</p>
 <p class="note">C2 &quot;smootherstep&quot; 6t^5 - 15t^4 + 10t^3 (Perlin 2002): zero 1st and 2nd derivative at both ends, so a crossfade adds no acceleration kink.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L140">hc/lib/anim/math.amni:140</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L140">hc/lib/anim/math.amni:140</a>
 </article>
 <h2 id="transforms">Transforms <span class="n">6</span></h2>
 <article class="sym" id="Xf">
@@ -256,38 +256,38 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <pre>struct Xf { t float3, r float4, s float3 }</pre>
 <p>Rigid transform with translation, rotation quaternion and per-axis scale, mapping p to t + r(s*p).</p>
 <p class="note">A rigid transform with non-uniform scale: p' = t + r (s * p).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L91">hc/lib/anim/math.amni:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L91">hc/lib/anim/math.amni:91</a>
 </article>
 <article class="sym" id="XI">
 <h3><a href="#XI">XI</a> <i>constant</i></h3>
 <pre>let XI = Xf { V0, QI, V1 }</pre>
 <p>Identity transform with zero translation, identity rotation and unit scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L92">hc/lib/anim/math.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L92">hc/lib/anim/math.amni:92</a>
 </article>
 <article class="sym" id="xf_point">
 <h3><a href="#xf_point">xf_point</a> <i>function</i></h3>
 <pre>xf_point(x Xf, p float3) float3</pre>
 <p>Returns a point transformed by scale, rotation and translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L93">hc/lib/anim/math.amni:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L93">hc/lib/anim/math.amni:93</a>
 </article>
 <article class="sym" id="xf_dir">
 <h3><a href="#xf_dir">xf_dir</a> <i>function</i></h3>
 <pre>xf_dir(x Xf, v float3) float3</pre>
 <p>Returns a direction vector rotated by the transform, ignoring translation and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L94">hc/lib/anim/math.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L94">hc/lib/anim/math.amni:94</a>
 </article>
 <article class="sym" id="xf_mul">
 <h3><a href="#xf_mul">xf_mul</a> <i>function</i></h3>
 <pre>xf_mul(a Xf, b Xf) Xf</pre>
 <p>Returns the parent-times-child composition of two transforms, exact only for uniform scale or leaf-only scale.</p>
 <p class="note">parent * child (scale is treated per axis; exact for uniform scale and for the usual animation case of scale only on leaves).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L97">hc/lib/anim/math.amni:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L97">hc/lib/anim/math.amni:97</a>
 </article>
 <article class="sym" id="xf_inv">
 <h3><a href="#xf_inv">xf_inv</a> <i>function</i></h3>
 <pre>xf_inv(a Xf) Xf</pre>
 <p>Returns the inverse of a transform, dividing by its per-axis scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L98">hc/lib/anim/math.amni:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L98">hc/lib/anim/math.amni:98</a>
 </article>
 <h2 id="matrices">Matrices <span class="n">5</span></h2>
 <article class="sym" id="M4">
@@ -295,31 +295,31 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <pre>struct M4 { m f32[16] }</pre>
 <p>Column-major 4x4 matrix of 16 floats in glTF and GPU layout.</p>
 <p class="note">Column-major 4x4 matrix (glTF / GPU layout).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L105">hc/lib/anim/math.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L105">hc/lib/anim/math.amni:105</a>
 </article>
 <article class="sym" id="m4_of">
 <h3><a href="#m4_of">m4_of</a> <i>function</i></h3>
 <pre>m4_of(x Xf) M4</pre>
 <p>Builds a column-major 4x4 matrix from a transform's translation, rotation and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L106">hc/lib/anim/math.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L106">hc/lib/anim/math.amni:106</a>
 </article>
 <article class="sym" id="m4_mul">
 <h3><a href="#m4_mul">m4_mul</a> <i>function</i></h3>
 <pre>m4_mul(a M4, b M4) M4</pre>
 <p>Returns the product of two column-major 4x4 matrices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L118">hc/lib/anim/math.amni:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L118">hc/lib/anim/math.amni:118</a>
 </article>
 <article class="sym" id="m4_point">
 <h3><a href="#m4_point">m4_point</a> <i>function</i></h3>
 <pre>m4_point(a M4, p float3) float3</pre>
 <p>Returns a point transformed by a 4x4 matrix, including translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L127">hc/lib/anim/math.amni:127</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L127">hc/lib/anim/math.amni:127</a>
 </article>
 <article class="sym" id="m4_dir">
 <h3><a href="#m4_dir">m4_dir</a> <i>function</i></h3>
 <pre>m4_dir(a M4, p float3) float3</pre>
 <p>Returns a direction transformed by a 4x4 matrix, ignoring translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/7a3bf9091073baf038b27bc37108e845c6ed788f/hc/lib/anim/math.amni#L132">hc/lib/anim/math.amni:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/anim/math.amni#L132">hc/lib/anim/math.amni:132</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
@@ -330,7 +330,7 @@ quaternion curves&quot;), not from any engine. Quaternions are float4
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1793</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1807</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a><ul>

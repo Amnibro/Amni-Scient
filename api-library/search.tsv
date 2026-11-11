@@ -1714,6 +1714,7 @@ s3d::meshlet_px	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet
 s3d::meshlet_cone	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_cone	Flag enabling normal-cone culling of meshlets, on by default.	pub
 s3d::meshlet_cpu	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_cpu	Flag that runs meshlet culling on the CPU instead of the GPU compute pipeline, off by default.	pub
 s3d::meshlet_min	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_min	Minimum mesh size, defaulting to 4000, at which meshlet rendering applies.	pub
+s3d::meshlet_thin	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_thin	Tunable scale factor for thinning thin-triangle meshlets during culling, defaulting to 1.0.	int
 s3d::meshlet_budget	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_budget	Budget limit for meshlet rendering work, defaulting to 8000000.	pub
 s3d::meshlet_grow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_grow	Boolean flag controlling whether the meshlet draw budget grows automatically over time; true by default.	pub
 s3d::meshlet_budget_max	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlet_budget_max	Upper limit on the meshlet budget when it grows automatically, set to 250,000,000 by default.	pub
@@ -1871,6 +1872,11 @@ s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Creates 
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Initializes rendering at a render size and writes a larger output size using temporal upscaling.	pub
 s3d::forget	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forget	Releases cached textures and geometry copies after the glTF pools are reset.	pub
 s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#upload_geometry	Uploads glTF vertex, index and morph data to GPU buffers when their sizes change.	int
+s3d::cut_keep	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_keep	Flag that enables preserving alpha-cutout coverage when building mip levels for cutout textures.	int
+s3d::cut_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_of	Returns the alpha cutoff of the first alpha-masked material using the image, or -1 when none or disabled.	int
+s3d::cut_share	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_share	Returns the fraction of pixels whose alpha is at or above the cutoff, in RGBA8 pixel data.	int
+s3d::cut_fit	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_fit	Rescales the alpha channel of a mip level in place so its cutoff coverage matches the wanted share.	int
+s3d::cut_chain	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_chain	Uploads successive mip levels of a cutout image, halving each and preserving alpha coverage against the cutoff.	int
 s3d::mip_count	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mip_count	Returns the number of mip levels for a texture size.	int
 s3d::chain_bytes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#chain_bytes	Returns the total byte size of a texture's mip chain for the given format kind, size and level count.	int
 s3d::tex_path	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#tex_path	Builds the cache file path for an image, derived from a hash of its contents, size and color space.	int
@@ -6132,6 +6138,14 @@ meshlet::simplify	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#simpl
 meshlet::NBR	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#NBR	Maximum number of neighbors tracked per cluster when grouping.	int
 meshlet::g_add_nb	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#g_add_nb	Adds or increments a neighbor entry for cluster i, ignoring new neighbors beyond the limit.	int
 meshlet::group	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#group	Partitions the current clusters into groups for the next hierarchy level.	pub
+meshlet::thin_on	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin_on	Flag enabling thin-feature detection during simplification, false by default.	int
+meshlet::thin_k	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin_k	Scale factor applied to thin-feature detection, defaulting to 1.0.	int
+meshlet::thin_isles	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin_isles	Count of disconnected triangle islands found by the last thin-feature analysis.	int
+meshlet::thin_width	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin_width	Width measurement recorded by the last thin-feature analysis, in mesh units.	int
+meshlet::thin_long	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin_long	Length measurement recorded by the last thin-feature analysis, in mesh units.	int
+meshlet::tmap	constant	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#tmap	Scratch map from vertex index to local slot, grown on demand by thin analysis.	int
+meshlet::uf	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#uf	Finds the root of an element in a union-find parent array, compressing the path along the way.	int
+meshlet::thin	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#thin	Analyzes a triangle set for thin disconnected islands, writing results to out and returning a real score, or -1 when fewer than two islands exist.	int
 meshlet::build	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#build	Builds the meshlet hierarchy from a vertex position buffer and triangle indices, replacing any previously built data; welds vertices and simplifies grouped clusters per level.	pub
 meshlet::cut	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut	Fills the output array with triangle indices of all clusters whose error range contains the given error threshold e.	pub
 meshlet::cut_tris	function	gfx/meshlet	/api-library/helium/lib/gfx-meshlet#cut_tris	Returns the number of triangles in the clusters selected for the given error threshold e, matching what cut would output.	pub
