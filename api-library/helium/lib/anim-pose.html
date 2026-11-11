@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-pose">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-pose">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=54f7d6b5b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=35d76d55b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=54f7d6b5b4'; start({wasm: '/api-library/search.wasm?v=54f7d6b5b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=35d76d55b4'; start({wasm: '/api-library/search.wasm?v=35d76d55b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/pose</h1>
 <p class="lib-lede">Skeletons, local poses, forward kinematics, blending, additive layers and per-bone masks.</p>
-<p class="lib-meta"><code>import anim.pose;</code> &middot; <code>anim::</code> &middot; 16 functions, 5 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.pose;</code> &middot; <code>anim::</code> &middot; 16 functions, 5 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#skeletons">Skeletons <span class="n">10</span></a></li>
 <li><a href="#blending-and-masks">Blending and Masks <span class="n">12</span></a></li>
@@ -113,7 +113,7 @@
 <h3><a href="#MAXJ">MAXJ</a> <i>constant</i></h3>
 <pre>let MAXJ = 128</pre>
 <p>Constant giving the maximum number of joints a skeleton, pose, model or mask can hold.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L8">hc/lib/anim/pose.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L8">hc/lib/anim/pose.amni:8</a>
 </article>
 <article class="sym" id="Skeleton">
 <h3><a href="#Skeleton">Skeleton</a> <i>type</i></h3>
@@ -126,139 +126,139 @@
 }</pre>
 <p>Joint hierarchy stored parent-before-child, with rest transforms, inverse bind matrices and joint names.</p>
 <p class="note">Joints are stored parent-before-child (parent[j] &lt; j, root parent -1).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L11">hc/lib/anim/pose.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L11">hc/lib/anim/pose.amni:11</a>
 </article>
 <article class="sym" id="Pose">
 <h3><a href="#Pose">Pose</a> <i>type</i></h3>
 <pre>struct Pose { n i32, t float3[128], r float4[128], s float3[128] }</pre>
 <p>Local-space pose holding translation, rotation and scale for each joint.</p>
 <p class="note">A local-space pose: translation, rotation, scale per joint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L19">hc/lib/anim/pose.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L19">hc/lib/anim/pose.amni:19</a>
 </article>
 <article class="sym" id="Model">
 <h3><a href="#Model">Model</a> <i>type</i></h3>
 <pre>struct Model { n i32, x Xf[128] }</pre>
 <p>Model-space transforms of every joint, produced by forward kinematics from a pose.</p>
 <p class="note">Model-space (character-space) transforms of every joint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L21">hc/lib/anim/pose.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L21">hc/lib/anim/pose.amni:21</a>
 </article>
 <article class="sym" id="rest_pose">
 <h3><a href="#rest_pose">rest_pose</a> <i>function</i></h3>
 <pre>rest_pose(sk Skeleton&amp;, p Pose&amp;)</pre>
 <p>Fills a pose with the skeleton's rest translation, rotation and scale for every joint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L25">hc/lib/anim/pose.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L25">hc/lib/anim/pose.amni:25</a>
 </article>
 <article class="sym" id="identity_pose">
 <h3><a href="#identity_pose">identity_pose</a> <i>function</i></h3>
 <pre>identity_pose(n i32, p Pose&amp;)</pre>
 <p>Fills a pose of n joints with zero translation, identity rotation and unit scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L29">hc/lib/anim/pose.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L29">hc/lib/anim/pose.amni:29</a>
 </article>
 <article class="sym" id="joint_index">
 <h3><a href="#joint_index">joint_index</a> <i>function</i></h3>
 <pre>joint_index(sk Skeleton&amp;, name const byte[:]) i32</pre>
 <p>Returns the index of the joint with the given name, or -1 if none matches.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L33">hc/lib/anim/pose.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L33">hc/lib/anim/pose.amni:33</a>
 </article>
 <article class="sym" id="local_xf">
 <h3><a href="#local_xf">local_xf</a> <i>function</i></h3>
 <pre>local_xf(p Pose&amp;, j int) Xf</pre>
 <p>Returns the local transform of joint j from a pose as a translation, rotation and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L37">hc/lib/anim/pose.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L37">hc/lib/anim/pose.amni:37</a>
 </article>
 <article class="sym" id="fk">
 <h3><a href="#fk">fk</a> <i>function</i></h3>
 <pre>fk(sk Skeleton&amp;, p Pose&amp;, m Model&amp;)</pre>
 <p>Computes model-space joint transforms from a local pose by multiplying each joint with its parent's transform.</p>
 <p class="note">Forward kinematics: model[j] = model[parent] * local[j].</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L40">hc/lib/anim/pose.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L40">hc/lib/anim/pose.amni:40</a>
 </article>
 <article class="sym" id="local_rot_from_model">
 <h3><a href="#local_rot_from_model">local_rot_from_model</a> <i>function</i></h3>
 <pre>local_rot_from_model(sk Skeleton&amp;, m Model&amp;, j int, model_r float4) float4</pre>
 <p>Converts a model-space rotation of joint j into a local rotation relative to its parent's model rotation.</p>
 <p class="note">Model rotation -&gt; local rotation of joint j given its parent's model rotation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L49">hc/lib/anim/pose.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L49">hc/lib/anim/pose.amni:49</a>
 </article>
 <h2 id="blending-and-masks">Blending and Masks <span class="n">12</span></h2>
 <article class="sym" id="Mask">
 <h3><a href="#Mask">Mask</a> <i>type</i></h3>
 <pre>struct Mask { w f32[128] }</pre>
 <p>Per-bone weights from 0 to 1 used to limit how strongly a layer applies.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L23">hc/lib/anim/pose.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L23">hc/lib/anim/pose.amni:23</a>
 </article>
 <article class="sym" id="blend2">
 <h3><a href="#blend2">blend2</a> <i>function</i></h3>
 <pre>blend2(a Pose&amp;, b Pose&amp;, w f32, out Pose&amp;)</pre>
 <p>Blends two poses by weight w, linearly for translation and scale and with nlerp for rotation.</p>
 <p class="note">Two-pose blend: out = a*(1-w) + b*w (rotations nlerp on the short arc).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L56">hc/lib/anim/pose.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L56">hc/lib/anim/pose.amni:56</a>
 </article>
 <article class="sym" id="Accum">
 <h3><a href="#Accum">Accum</a> <i>type</i></h3>
 <pre>struct Accum { n i32, wsum f32, t float3[128], r float4[128], s float3[128] }</pre>
 <p>Accumulator that sums weighted poses so several sources can be blended and then normalized.</p>
 <p class="note">N-way normalized weighted blend, done as an accumulator so callers can sample each source straight into it. Rotations are summed with their sign aligned to the first contribution, then normalized (the normalized weighted quaternion average; exact for n = 2 up to nlerp's arc spacing).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L70">hc/lib/anim/pose.amni:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L70">hc/lib/anim/pose.amni:70</a>
 </article>
 <article class="sym" id="accum_begin">
 <h3><a href="#accum_begin">accum_begin</a> <i>function</i></h3>
 <pre>accum_begin(acc Accum&amp;, n i32)</pre>
 <p>Resets an accumulator for n joints, clearing the weight sum and all accumulated values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L71">hc/lib/anim/pose.amni:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L71">hc/lib/anim/pose.amni:71</a>
 </article>
 <article class="sym" id="accum_add">
 <h3><a href="#accum_add">accum_add</a> <i>function</i></h3>
 <pre>accum_add(acc Accum&amp;, p Pose&amp;, w f32)</pre>
 <p>Adds a pose to an accumulator with weight w, ignoring weights of zero or less.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L75">hc/lib/anim/pose.amni:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L75">hc/lib/anim/pose.amni:75</a>
 </article>
 <article class="sym" id="accum_end">
 <h3><a href="#accum_end">accum_end</a> <i>function</i></h3>
 <pre>accum_end(acc Accum&amp;, out Pose&amp;)</pre>
 <p>Normalizes the accumulated weights and writes the blended pose, yielding zeros if no weight was added.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L87">hc/lib/anim/pose.amni:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L87">hc/lib/anim/pose.amni:87</a>
 </article>
 <article class="sym" id="blend_n">
 <h3><a href="#blend_n">blend_n</a> <i>function</i></h3>
 <pre>blend_n(poses Pose[:], weights f32[:], out Pose&amp;)</pre>
 <p>Blends a list of poses with matching weights into one normalized pose.</p>
 <p class="note">Blend n poses taken from a flat pose list with the given weights.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L97">hc/lib/anim/pose.amni:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L97">hc/lib/anim/pose.amni:97</a>
 </article>
 <article class="sym" id="make_additive">
 <h3><a href="#make_additive">make_additive</a> <i>function</i></h3>
 <pre>make_additive(pose Pose&amp;, ref Pose&amp;, out Pose&amp;)</pre>
 <p>Builds an additive delta pose from a pose relative to a reference pose.</p>
 <p class="note">Additive: delta = ref^-1 * pose per joint in local space (rotation qref^-1 q, translation t - tref, scale s / sref).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L106">hc/lib/anim/pose.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L106">hc/lib/anim/pose.amni:106</a>
 </article>
 <article class="sym" id="apply_additive">
 <h3><a href="#apply_additive">apply_additive</a> <i>function</i></h3>
 <pre>apply_additive(base Pose&amp;, delta Pose&amp;, weight f32, mask Mask&amp;, use_mask bool)</pre>
 <p>Applies an additive delta pose onto a base pose in place, scaled by weight and optionally by a mask.</p>
 <p class="note">base += delta * weight (* mask): q = qbase * slerp(I, qdelta, w).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L115">hc/lib/anim/pose.amni:115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L115">hc/lib/anim/pose.amni:115</a>
 </article>
 <article class="sym" id="apply_override">
 <h3><a href="#apply_override">apply_override</a> <i>function</i></h3>
 <pre>apply_override(base Pose&amp;, over Pose&amp;, weight f32, mask Mask&amp;, use_mask bool)</pre>
 <p>Blends an override pose into a base pose in place by weight, optionally scaled per bone by a mask.</p>
 <p class="note">Override layer: base = lerp(base, over, weight * mask).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L125">hc/lib/anim/pose.amni:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L125">hc/lib/anim/pose.amni:125</a>
 </article>
 <article class="sym" id="mask_clear">
 <h3><a href="#mask_clear">mask_clear</a> <i>function</i></h3>
 <pre>mask_clear(m Mask&amp;)</pre>
 <p>Sets every bone weight in a mask to zero.</p>
 <p class="note">Masks: all zero, then a joint and every descendant set to w.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L136">hc/lib/anim/pose.amni:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L136">hc/lib/anim/pose.amni:136</a>
 </article>
 <article class="sym" id="mask_branch">
 <h3><a href="#mask_branch">mask_branch</a> <i>function</i></h3>
 <pre>mask_branch(sk Skeleton&amp;, m Mask&amp;, root i32, w f32)</pre>
 <p>Sets a joint and all its descendants to weight w in a mask, ignoring negative roots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/anim/pose.amni#L137">hc/lib/anim/pose.amni:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/anim/pose.amni#L137">hc/lib/anim/pose.amni:137</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 

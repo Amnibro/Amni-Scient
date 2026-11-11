@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-gltf">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-gltf">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=54f7d6b5b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=35d76d55b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=54f7d6b5b4'; start({wasm: '/api-library/search.wasm?v=54f7d6b5b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=35d76d55b4'; start({wasm: '/api-library/search.wasm?v=35d76d55b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/gltf</h1>
 <p class="lib-lede">Load glTF 2.0 models (<code>.glb</code> and <code>.gltf</code>) into memory pools the renderer uploads in one go.</p>
-<p class="lib-meta"><code>import gfx.gltf;</code> &middot; <code>gltf::</code> &middot; 38 functions, 13 types, 53 constants &middot; <a href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.gltf;</code> &middot; <code>gltf::</code> &middot; 38 functions, 13 types, 53 constants &middot; <a href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>gltf: reads glTF 2.0 assets (.glb, and .gltf with external or data-URI buffers)
 into flat global pools that the renderer uploads in one go.
 Written from the Khronos glTF 2.0 specification. Every index stored in a pool
@@ -124,87 +124,87 @@ record is absolute (already offset by the owning asset's base), or -1 for none.
 <pre>let VERTEX_FLOATS = 26</pre>
 <p>Number of floats in each loaded vertex: position, normal, two UV sets, tangent, color, joints and weights.</p>
 <p class="note">One vertex is 26 floats: position 3, normal 3, uv0 2, uv1 2, tangent 4, color 4, joints 4, weights 4.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L18">hc/lib/gfx/gltf.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L18">hc/lib/gfx/gltf.amni:18</a>
 </article>
 <article class="sym" id="AT_POS">
 <h3><a href="#AT_POS">AT_POS</a> <i>constant</i></h3>
 <pre>let AT_POS = 0</pre>
 <p>Float offset of the position (3 floats) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L19">hc/lib/gfx/gltf.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L19">hc/lib/gfx/gltf.amni:19</a>
 </article>
 <article class="sym" id="AT_NRM">
 <h3><a href="#AT_NRM">AT_NRM</a> <i>constant</i></h3>
 <pre>let AT_NRM = 3</pre>
 <p>Float offset of the normal (3 floats) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L20">hc/lib/gfx/gltf.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L20">hc/lib/gfx/gltf.amni:20</a>
 </article>
 <article class="sym" id="AT_UV0">
 <h3><a href="#AT_UV0">AT_UV0</a> <i>constant</i></h3>
 <pre>let AT_UV0 = 6</pre>
 <p>Float offset of the first UV set (2 floats) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L21">hc/lib/gfx/gltf.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L21">hc/lib/gfx/gltf.amni:21</a>
 </article>
 <article class="sym" id="AT_UV1">
 <h3><a href="#AT_UV1">AT_UV1</a> <i>constant</i></h3>
 <pre>let AT_UV1 = 8</pre>
 <p>Float offset of the second UV set (2 floats) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L22">hc/lib/gfx/gltf.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L22">hc/lib/gfx/gltf.amni:22</a>
 </article>
 <article class="sym" id="AT_TAN">
 <h3><a href="#AT_TAN">AT_TAN</a> <i>constant</i></h3>
 <pre>let AT_TAN = 10</pre>
 <p>Float offset of the tangent (4 floats, w is handedness) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L23">hc/lib/gfx/gltf.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L23">hc/lib/gfx/gltf.amni:23</a>
 </article>
 <article class="sym" id="AT_COL">
 <h3><a href="#AT_COL">AT_COL</a> <i>constant</i></h3>
 <pre>let AT_COL = 14</pre>
 <p>Float offset of the RGBA vertex color (4 floats) within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L24">hc/lib/gfx/gltf.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L24">hc/lib/gfx/gltf.amni:24</a>
 </article>
 <article class="sym" id="AT_JOINT">
 <h3><a href="#AT_JOINT">AT_JOINT</a> <i>constant</i></h3>
 <pre>let AT_JOINT = 18</pre>
 <p>Float offset of the four joint indices within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L25">hc/lib/gfx/gltf.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L25">hc/lib/gfx/gltf.amni:25</a>
 </article>
 <article class="sym" id="AT_WEIGHT">
 <h3><a href="#AT_WEIGHT">AT_WEIGHT</a> <i>constant</i></h3>
 <pre>let AT_WEIGHT = 22</pre>
 <p>Float offset of the four skinning weights within a vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L26">hc/lib/gfx/gltf.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L26">hc/lib/gfx/gltf.amni:26</a>
 </article>
 <article class="sym" id="MORPH_FLOATS">
 <h3><a href="#MORPH_FLOATS">MORPH_FLOATS</a> <i>constant</i></h3>
 <pre>let MORPH_FLOATS = 8</pre>
 <p>Number of floats in one morph target delta: position xyz, padding, normal xyz, padding.</p>
 <p class="note">One morph delta is 8 floats: position xyz, pad, normal xyz, pad.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L28">hc/lib/gfx/gltf.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L28">hc/lib/gfx/gltf.amni:28</a>
 </article>
 <h2 id="materials">Materials <span class="n">8</span></h2>
 <article class="sym" id="ALPHA_OPAQUE">
 <h3><a href="#ALPHA_OPAQUE">ALPHA_OPAQUE</a> <i>constant</i></h3>
 <pre>let ALPHA_OPAQUE = 0</pre>
 <p>Alpha mode value for a fully opaque material.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L30">hc/lib/gfx/gltf.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L30">hc/lib/gfx/gltf.amni:30</a>
 </article>
 <article class="sym" id="ALPHA_MASK">
 <h3><a href="#ALPHA_MASK">ALPHA_MASK</a> <i>constant</i></h3>
 <pre>let ALPHA_MASK = 1</pre>
 <p>Alpha mode value for a material that discards pixels below its alpha cutoff.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L31">hc/lib/gfx/gltf.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L31">hc/lib/gfx/gltf.amni:31</a>
 </article>
 <article class="sym" id="ALPHA_BLEND">
 <h3><a href="#ALPHA_BLEND">ALPHA_BLEND</a> <i>constant</i></h3>
 <pre>let ALPHA_BLEND = 2</pre>
 <p>Alpha mode value for a material blended with what is behind it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L32">hc/lib/gfx/gltf.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L32">hc/lib/gfx/gltf.amni:32</a>
 </article>
 <article class="sym" id="TexRef">
 <h3><a href="#TexRef">TexRef</a> <i>type</i></h3>
 <pre>struct TexRef { texture int, uv int, m float4 = float4 { 1.0, 0.0, 0.0, 1.0 }, o float2 = float2 { 0.0, 0.0 } }</pre>
 <p>Reference to a texture and the UV set used to sample it, with -1 meaning none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L42">hc/lib/gfx/gltf.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L42">hc/lib/gfx/gltf.amni:42</a>
 </article>
 <article class="sym" id="Material">
 <h3><a href="#Material">Material</a> <i>type</i></h3>
@@ -226,550 +226,550 @@ record is absolute (already offset by the owning asset's base), or -1 for none.
 	sheen_c_tex TexRef = TexRef { -1, 0 }, sheen_r_tex TexRef = TexRef { -1, 0 }
 }</pre>
 <p>Surface description holding color, metallic, roughness, texture references, emissive, alpha mode and extra layering options.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L43">hc/lib/gfx/gltf.amni:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L43">hc/lib/gfx/gltf.amni:43</a>
 </article>
 <article class="sym" id="Texture">
 <h3><a href="#Texture">Texture</a> <i>type</i></h3>
 <pre>struct Texture { image int, mag_nearest bool, min_nearest bool, mipmaps bool, wrap_s int, wrap_t int }</pre>
 <p>Texture record naming its image, filtering, mipmap use and wrap modes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L64">hc/lib/gfx/gltf.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L64">hc/lib/gfx/gltf.amni:64</a>
 </article>
 <article class="sym" id="Image">
 <h3><a href="#Image">Image</a> <i>type</i></h3>
 <pre>struct Image { width int, height int, pixels Span, ok bool, coded Span = Span { 0, 0 }, ktx bool = false }</pre>
 <p>Decoded image with width, height, RGBA pixel range and a flag telling whether decoding succeeded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L65">hc/lib/gfx/gltf.amni:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L65">hc/lib/gfx/gltf.amni:65</a>
 </article>
 <article class="sym" id="default_material">
 <h3><a href="#default_material">default_material</a> <i>function</i></h3>
 <pre>default_material() Material</pre>
 <p>Returns a default material that is opaque, white, fully metallic and rough with no textures.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L1011">hc/lib/gfx/gltf.amni:1011</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L1011">hc/lib/gfx/gltf.amni:1011</a>
 </article>
 <h2 id="animation">Animation <span class="n">12</span></h2>
 <article class="sym" id="PATH_T">
 <h3><a href="#PATH_T">PATH_T</a> <i>constant</i></h3>
 <pre>let PATH_T = 0</pre>
 <p>Channel path value for animating a node's translation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L33">hc/lib/gfx/gltf.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L33">hc/lib/gfx/gltf.amni:33</a>
 </article>
 <article class="sym" id="PATH_R">
 <h3><a href="#PATH_R">PATH_R</a> <i>constant</i></h3>
 <pre>let PATH_R = 1</pre>
 <p>Channel path value for animating a node's rotation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L34">hc/lib/gfx/gltf.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L34">hc/lib/gfx/gltf.amni:34</a>
 </article>
 <article class="sym" id="PATH_S">
 <h3><a href="#PATH_S">PATH_S</a> <i>constant</i></h3>
 <pre>let PATH_S = 2</pre>
 <p>Channel path value for animating a node's scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L35">hc/lib/gfx/gltf.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L35">hc/lib/gfx/gltf.amni:35</a>
 </article>
 <article class="sym" id="PATH_W">
 <h3><a href="#PATH_W">PATH_W</a> <i>constant</i></h3>
 <pre>let PATH_W = 3</pre>
 <p>Channel path value for animating a node's morph target weights.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L36">hc/lib/gfx/gltf.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L36">hc/lib/gfx/gltf.amni:36</a>
 </article>
 <article class="sym" id="STEP_LINEAR">
 <h3><a href="#STEP_LINEAR">STEP_LINEAR</a> <i>constant</i></h3>
 <pre>let STEP_LINEAR = 0</pre>
 <p>Interpolation mode that blends linearly between keyframes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L37">hc/lib/gfx/gltf.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L37">hc/lib/gfx/gltf.amni:37</a>
 </article>
 <article class="sym" id="STEP_HOLD">
 <h3><a href="#STEP_HOLD">STEP_HOLD</a> <i>constant</i></h3>
 <pre>let STEP_HOLD = 1</pre>
 <p>Interpolation mode that holds each keyframe value until the next one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L38">hc/lib/gfx/gltf.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L38">hc/lib/gfx/gltf.amni:38</a>
 </article>
 <article class="sym" id="STEP_CUBIC">
 <h3><a href="#STEP_CUBIC">STEP_CUBIC</a> <i>constant</i></h3>
 <pre>let STEP_CUBIC = 2</pre>
 <p>Interpolation mode that uses cubic spline tangents between keyframes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L39">hc/lib/gfx/gltf.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L39">hc/lib/gfx/gltf.amni:39</a>
 </article>
 <article class="sym" id="Skin">
 <h3><a href="#Skin">Skin</a> <i>type</i></h3>
 <pre>struct Skin { joints Span, inverse_binds Span, skeleton int, name Span }</pre>
 <p>Skin with joint nodes, inverse bind matrices, optional skeleton root and name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L66">hc/lib/gfx/gltf.amni:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L66">hc/lib/gfx/gltf.amni:66</a>
 </article>
 <article class="sym" id="Channel">
 <h3><a href="#Channel">Channel</a> <i>type</i></h3>
 <pre>struct Channel { node int, path int, interp int, times Span, values Span, width int }</pre>
 <p>Animation channel targeting one node path, with interpolation, keyframe times and values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L67">hc/lib/gfx/gltf.amni:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L67">hc/lib/gfx/gltf.amni:67</a>
 </article>
 <article class="sym" id="Animation">
 <h3><a href="#Animation">Animation</a> <i>type</i></h3>
 <pre>struct Animation { channels Span, duration f32, name Span }</pre>
 <p>Named animation made of a range of channels and its duration in seconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L68">hc/lib/gfx/gltf.amni:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L68">hc/lib/gfx/gltf.amni:68</a>
 </article>
 <article class="sym" id="in_place">
 <h3><a href="#in_place">in_place</a> <i>function</i></h3>
 <pre>in_place(anim int, node int) f32</pre>
 <p>Removes horizontal root motion from an animation's node translation and returns the distance it drifted.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L974">hc/lib/gfx/gltf.amni:974</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L974">hc/lib/gfx/gltf.amni:974</a>
 </article>
 <article class="sym" id="find_animation">
 <h3><a href="#find_animation">find_animation</a> <i>function</i></h3>
 <pre>find_animation(asset int, name const byte[:]) int</pre>
 <p>Returns the index of the animation with the given name in an asset, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L996">hc/lib/gfx/gltf.amni:996</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L996">hc/lib/gfx/gltf.amni:996</a>
 </article>
 <h2 id="asset-data">Asset Data <span class="n">27</span></h2>
 <article class="sym" id="Span">
 <h3><a href="#Span">Span</a> <i>type</i></h3>
 <pre>struct Span { first int, count int }</pre>
 <p>Range of items in a pool, given by a first index and a count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L41">hc/lib/gfx/gltf.amni:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L41">hc/lib/gfx/gltf.amni:41</a>
 </article>
 <article class="sym" id="Primitive">
 <h3><a href="#Primitive">Primitive</a> <i>type</i></h3>
 <pre>struct Primitive { vfirst int, vcount int, ifirst int, icount int, material int, mfirst int, targets int, lo float3, hi float3, tangents bool, skinned bool }</pre>
 <p>Record for one mesh primitive with its vertex, index and morph ranges, material, bounds and skinning flags.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L60">hc/lib/gfx/gltf.amni:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L60">hc/lib/gfx/gltf.amni:60</a>
 </article>
 <article class="sym" id="Mesh">
 <h3><a href="#Mesh">Mesh</a> <i>type</i></h3>
 <pre>struct Mesh { prims Span, weights Span, name Span }</pre>
 <p>Mesh made of a range of primitives, with default morph weights and a name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L62">hc/lib/gfx/gltf.amni:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L62">hc/lib/gfx/gltf.amni:62</a>
 </article>
 <article class="sym" id="Node">
 <h3><a href="#Node">Node</a> <i>type</i></h3>
 <pre>struct Node { parent int, mesh int, skin int, children Span, t float3, r linalg::Quat, s float3, matrix gfx::mat4, has_matrix bool, weights Span, name Span, light int = -1 }</pre>
 <p>Scene graph node with parent, mesh, skin, children, transform, morph weights and name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L63">hc/lib/gfx/gltf.amni:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L63">hc/lib/gfx/gltf.amni:63</a>
 </article>
 <article class="sym" id="Asset">
 <h3><a href="#Asset">Asset</a> <i>type</i></h3>
 <pre>struct Asset { meshes Span, nodes Span, materials Span, textures Span, images Span, skins Span, animations Span, roots Span, ok bool }</pre>
 <p>Loaded asset holding ranges into every pool for its meshes, nodes, materials, textures, images, skins, animations and roots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L69">hc/lib/gfx/gltf.amni:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L69">hc/lib/gfx/gltf.amni:69</a>
 </article>
 <article class="sym" id="verts">
 <h3><a href="#verts">verts</a> <i>constant</i></h3>
 <pre>var verts f32[&gt;..]</pre>
 <p>Global pool of vertex floats for all loaded primitives.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L71">hc/lib/gfx/gltf.amni:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L71">hc/lib/gfx/gltf.amni:71</a>
 </article>
 <article class="sym" id="indices">
 <h3><a href="#indices">indices</a> <i>constant</i></h3>
 <pre>var indices u32[&gt;..]</pre>
 <p>Global pool of triangle indices for all loaded primitives.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L72">hc/lib/gfx/gltf.amni:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L72">hc/lib/gfx/gltf.amni:72</a>
 </article>
 <article class="sym" id="morphs">
 <h3><a href="#morphs">morphs</a> <i>constant</i></h3>
 <pre>var morphs f32[&gt;..]</pre>
 <p>Global pool of morph target delta floats.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L73">hc/lib/gfx/gltf.amni:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L73">hc/lib/gfx/gltf.amni:73</a>
 </article>
 <article class="sym" id="floats">
 <h3><a href="#floats">floats</a> <i>constant</i></h3>
 <pre>var floats f32[&gt;..]</pre>
 <p>Global pool of miscellaneous floats, such as weights, keyframe times and keyframe values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L74">hc/lib/gfx/gltf.amni:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L74">hc/lib/gfx/gltf.amni:74</a>
 </article>
 <article class="sym" id="ints">
 <h3><a href="#ints">ints</a> <i>constant</i></h3>
 <pre>var ints int[&gt;..]</pre>
 <p>Global pool of integer indices, such as node children, joints and scene roots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L75">hc/lib/gfx/gltf.amni:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L75">hc/lib/gfx/gltf.amni:75</a>
 </article>
 <article class="sym" id="matrices">
 <h3><a href="#matrices">matrices</a> <i>constant</i></h3>
 <pre>var matrices gfx::mat4[&gt;..]</pre>
 <p>Global pool of inverse bind matrices for skins.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L76">hc/lib/gfx/gltf.amni:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L76">hc/lib/gfx/gltf.amni:76</a>
 </article>
 <article class="sym" id="pixels">
 <h3><a href="#pixels">pixels</a> <i>constant</i></h3>
 <pre>var pixels byte[&gt;..]</pre>
 <p>Global pool of decoded RGBA image pixel bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L77">hc/lib/gfx/gltf.amni:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L77">hc/lib/gfx/gltf.amni:77</a>
 </article>
 <article class="sym" id="names">
 <h3><a href="#names">names</a> <i>constant</i></h3>
 <pre>var names byte[&gt;..]</pre>
 <p>Global pool of name text referenced by spans.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L83">hc/lib/gfx/gltf.amni:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L83">hc/lib/gfx/gltf.amni:83</a>
 </article>
 <article class="sym" id="meshes">
 <h3><a href="#meshes">meshes</a> <i>constant</i></h3>
 <pre>var meshes Mesh[&gt;..]</pre>
 <p>Global pool of all loaded meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L84">hc/lib/gfx/gltf.amni:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L84">hc/lib/gfx/gltf.amni:84</a>
 </article>
 <article class="sym" id="prims">
 <h3><a href="#prims">prims</a> <i>constant</i></h3>
 <pre>var prims Primitive[&gt;..]</pre>
 <p>Global pool of all loaded mesh primitives.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L85">hc/lib/gfx/gltf.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L85">hc/lib/gfx/gltf.amni:85</a>
 </article>
 <article class="sym" id="nodes">
 <h3><a href="#nodes">nodes</a> <i>constant</i></h3>
 <pre>var nodes Node[&gt;..]</pre>
 <p>Global pool of all loaded scene nodes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L86">hc/lib/gfx/gltf.amni:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L86">hc/lib/gfx/gltf.amni:86</a>
 </article>
 <article class="sym" id="materials-2">
 <h3><a href="#materials-2">materials</a> <i>constant</i></h3>
 <pre>var materials Material[&gt;..]</pre>
 <p>Global pool of all loaded materials.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L87">hc/lib/gfx/gltf.amni:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L87">hc/lib/gfx/gltf.amni:87</a>
 </article>
 <article class="sym" id="textures">
 <h3><a href="#textures">textures</a> <i>constant</i></h3>
 <pre>var textures Texture[&gt;..]</pre>
 <p>Global pool of all loaded textures.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L89">hc/lib/gfx/gltf.amni:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L89">hc/lib/gfx/gltf.amni:89</a>
 </article>
 <article class="sym" id="images">
 <h3><a href="#images">images</a> <i>constant</i></h3>
 <pre>var images Image[&gt;..]</pre>
 <p>Global pool of all loaded images.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L90">hc/lib/gfx/gltf.amni:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L90">hc/lib/gfx/gltf.amni:90</a>
 </article>
 <article class="sym" id="skins">
 <h3><a href="#skins">skins</a> <i>constant</i></h3>
 <pre>var skins Skin[&gt;..]</pre>
 <p>Global pool of all loaded skins.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L91">hc/lib/gfx/gltf.amni:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L91">hc/lib/gfx/gltf.amni:91</a>
 </article>
 <article class="sym" id="channels">
 <h3><a href="#channels">channels</a> <i>constant</i></h3>
 <pre>var channels Channel[&gt;..]</pre>
 <p>Global pool of all loaded animation channels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L92">hc/lib/gfx/gltf.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L92">hc/lib/gfx/gltf.amni:92</a>
 </article>
 <article class="sym" id="animations">
 <h3><a href="#animations">animations</a> <i>constant</i></h3>
 <pre>var animations Animation[&gt;..]</pre>
 <p>Global pool of all loaded animations.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L93">hc/lib/gfx/gltf.amni:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L93">hc/lib/gfx/gltf.amni:93</a>
 </article>
 <article class="sym" id="assets">
 <h3><a href="#assets">assets</a> <i>constant</i></h3>
 <pre>var assets Asset[&gt;..]</pre>
 <p>Global pool of all loaded assets, indexed by the value returned from loading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L94">hc/lib/gfx/gltf.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L94">hc/lib/gfx/gltf.amni:94</a>
 </article>
 <article class="sym" id="text_of">
 <h3><a href="#text_of">text_of</a> <i>function</i></h3>
 <pre>text_of(s Span) const byte[:]</pre>
 <p>Returns the name text a span refers to.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L123">hc/lib/gfx/gltf.amni:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L123">hc/lib/gfx/gltf.amni:123</a>
 </article>
 <article class="sym" id="add_texture_file">
 <h3><a href="#add_texture_file">add_texture_file</a> <i>function</i></h3>
 <pre>add_texture_file(path const byte[:]) int</pre>
 <p>Loads an image file as a new repeating, mipmapped texture and returns its index, or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L949">hc/lib/gfx/gltf.amni:949</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L949">hc/lib/gfx/gltf.amni:949</a>
 </article>
 <article class="sym" id="add_texture_rgba">
 <h3><a href="#add_texture_rgba">add_texture_rgba</a> <i>function</i></h3>
 <pre>add_texture_rgba(px const byte[:], w int, h int, wrap int) int</pre>
 <p>Adds raw RGBA pixel data of the given width and height as a texture with the given wrap mode, returning its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L962">hc/lib/gfx/gltf.amni:962</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L962">hc/lib/gfx/gltf.amni:962</a>
 </article>
 <article class="sym" id="find_node">
 <h3><a href="#find_node">find_node</a> <i>function</i></h3>
 <pre>find_node(asset int, name const byte[:]) int</pre>
 <p>Returns the index of the node with the given name in an asset, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L968">hc/lib/gfx/gltf.amni:968</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L968">hc/lib/gfx/gltf.amni:968</a>
 </article>
 <h2 id="lighting">Lighting <span class="n">2</span></h2>
 <article class="sym" id="PLight">
 <h3><a href="#PLight">PLight</a> <i>type</i></h3>
 <pre>struct PLight { kind int, rgb float3, range f32, inner f32, outer f32 }</pre>
 <p>Describes one punctual light from the asset, with kind, color, range and inner and outer cone angles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L61">hc/lib/gfx/gltf.amni:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L61">hc/lib/gfx/gltf.amni:61</a>
 </article>
 <article class="sym" id="plights">
 <h3><a href="#plights">plights</a> <i>constant</i></h3>
 <pre>var plights PLight[&gt;..]</pre>
 <p>Pool of all punctual lights read from loaded assets.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L88">hc/lib/gfx/gltf.amni:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L88">hc/lib/gfx/gltf.amni:88</a>
 </article>
 <h2 id="loading">Loading <span class="n">10</span></h2>
 <article class="sym" id="lazy_pixels">
 <h3><a href="#lazy_pixels">lazy_pixels</a> <i>constant</i></h3>
 <pre>var lazy_pixels = false</pre>
 <p>Flag that, when true, keeps images compressed and defers pixel decoding until needed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L78">hc/lib/gfx/gltf.amni:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L78">hc/lib/gfx/gltf.amni:78</a>
 </article>
 <article class="sym" id="bad_images">
 <h3><a href="#bad_images">bad_images</a> <i>constant</i></h3>
 <pre>var bad_images = 0</pre>
 <p>Counts images that failed to decode and were replaced by placeholder pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L79">hc/lib/gfx/gltf.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L79">hc/lib/gfx/gltf.amni:79</a>
 </article>
 <article class="sym" id="error">
 <h3><a href="#error">error</a> <i>function</i></h3>
 <pre>error() const byte[:]</pre>
 <p>Returns the message describing the most recent load failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L107">hc/lib/gfx/gltf.amni:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L107">hc/lib/gfx/gltf.amni:107</a>
 </article>
 <article class="sym" id="skipped">
 <h3><a href="#skipped">skipped</a> <i>function</i></h3>
 <pre>skipped() int</pre>
 <p>Returns how many point and line primitives were skipped because they are not loaded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L108">hc/lib/gfx/gltf.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L108">hc/lib/gfx/gltf.amni:108</a>
 </article>
 <article class="sym" id="reset">
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears every asset pool and the error state, discarding all loaded assets.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L116">hc/lib/gfx/gltf.amni:116</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L116">hc/lib/gfx/gltf.amni:116</a>
 </article>
 <article class="sym" id="load">
 <h3><a href="#load">load</a> <i>function</i></h3>
 <pre>load(path const byte[:]) int</pre>
 <p>Loads a glTF or GLB file into the pools and returns its asset index, or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L300">hc/lib/gfx/gltf.amni:300</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L300">hc/lib/gfx/gltf.amni:300</a>
 </article>
 <article class="sym" id="need_pixels">
 <h3><a href="#need_pixels">need_pixels</a> <i>function</i></h3>
 <pre>need_pixels(i int)</pre>
 <p>Decodes the lazy image at the given index into the shared buffer, substituting white pixels on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L322">hc/lib/gfx/gltf.amni:322</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L322">hc/lib/gfx/gltf.amni:322</a>
 </article>
 <article class="sym" id="image_pixels">
 <h3><a href="#image_pixels">image_pixels</a> <i>function</i></h3>
 <pre>image_pixels(i int) const byte[:]</pre>
 <p>Returns the RGBA pixels of an image, or an empty slice if a lazy image is not yet decoded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L351">hc/lib/gfx/gltf.amni:351</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L351">hc/lib/gfx/gltf.amni:351</a>
 </article>
 <article class="sym" id="load_bytes">
 <h3><a href="#load_bytes">load_bytes</a> <i>function</i></h3>
 <pre>load_bytes(data const byte[:], dir const byte[:]) int</pre>
 <p>Loads glTF or GLB data from memory into the pools, returning its asset index or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L431">hc/lib/gfx/gltf.amni:431</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L431">hc/lib/gfx/gltf.amni:431</a>
 </article>
 <article class="sym" id="add_texture_ktx2">
 <h3><a href="#add_texture_ktx2">add_texture_ktx2</a> <i>function</i></h3>
 <pre>add_texture_ktx2(file const byte[:], wrap int) int</pre>
 <p>Registers a KTX2 texture from file bytes with the given wrap mode, and returns its texture index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L961">hc/lib/gfx/gltf.amni:961</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L961">hc/lib/gfx/gltf.amni:961</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (35)</summary>
 <article class="sym" id="coded">
 <h3><a href="#coded">coded</a> <i>constant</i></h3>
 <pre>var coded byte[&gt;..]</pre>
 <p>Pool of still-compressed PNG or JPEG image bytes kept for lazily decoded images.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L80">hc/lib/gfx/gltf.amni:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L80">hc/lib/gfx/gltf.amni:80</a>
 </article>
 <article class="sym" id="decoded">
 <h3><a href="#decoded">decoded</a> <i>constant</i></h3>
 <pre>var decoded byte[&gt;..]</pre>
 <p>Scratch buffer holding RGBA pixels of the most recently decoded lazy image.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L81">hc/lib/gfx/gltf.amni:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L81">hc/lib/gfx/gltf.amni:81</a>
 </article>
 <article class="sym" id="decoded_of">
 <h3><a href="#decoded_of">decoded_of</a> <i>constant</i></h3>
 <pre>var decoded_of = -1</pre>
 <p>Index of the image currently held in the decoded buffer, or -1 for none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L82">hc/lib/gfx/gltf.amni:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L82">hc/lib/gfx/gltf.amni:82</a>
 </article>
 <article class="sym" id="problem">
 <h3><a href="#problem">problem</a> <i>constant</i></h3>
 <pre>var problem byte[&gt;..]</pre>
 <p>Buffer holding the most recent load error message.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L95">hc/lib/gfx/gltf.amni:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L95">hc/lib/gfx/gltf.amni:95</a>
 </article>
 <article class="sym" id="skipped_prims">
 <h3><a href="#skipped_prims">skipped_prims</a> <i>constant</i></h3>
 <pre>var skipped_prims int[&gt;..];   // one counter: point and line primitives are not loaded</pre>
 <p>Single-element counter of point and line primitives skipped during loading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L96">hc/lib/gfx/gltf.amni:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L96">hc/lib/gfx/gltf.amni:96</a>
 </article>
 <article class="sym" id="blob">
 <h3><a href="#blob">blob</a> <i>constant</i></h3>
 <pre>var blob byte[&gt;..]</pre>
 <p>Scratch buffer of binary data for the asset currently being read.</p>
 <p class="note">scratch for the asset being read</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L99">hc/lib/gfx/gltf.amni:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L99">hc/lib/gfx/gltf.amni:99</a>
 </article>
 <article class="sym" id="buf_at">
 <h3><a href="#buf_at">buf_at</a> <i>constant</i></h3>
 <pre>var buf_at int[&gt;..]</pre>
 <p>Scratch list of each buffer's start offset in the blob.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L100">hc/lib/gfx/gltf.amni:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L100">hc/lib/gfx/gltf.amni:100</a>
 </article>
 <article class="sym" id="buf_len">
 <h3><a href="#buf_len">buf_len</a> <i>constant</i></h3>
 <pre>var buf_len int[&gt;..]</pre>
 <p>Scratch list of each buffer's length in bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L101">hc/lib/gfx/gltf.amni:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L101">hc/lib/gfx/gltf.amni:101</a>
 </article>
 <article class="sym" id="view_at">
 <h3><a href="#view_at">view_at</a> <i>constant</i></h3>
 <pre>var view_at int[&gt;..]</pre>
 <p>Scratch list of each buffer view's start offset in the blob.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L102">hc/lib/gfx/gltf.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L102">hc/lib/gfx/gltf.amni:102</a>
 </article>
 <article class="sym" id="view_len">
 <h3><a href="#view_len">view_len</a> <i>constant</i></h3>
 <pre>var view_len int[&gt;..]</pre>
 <p>Scratch list of each buffer view's length in bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L103">hc/lib/gfx/gltf.amni:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L103">hc/lib/gfx/gltf.amni:103</a>
 </article>
 <article class="sym" id="view_stride">
 <h3><a href="#view_stride">view_stride</a> <i>constant</i></h3>
 <pre>var view_stride int[&gt;..]</pre>
 <p>Scratch list of each buffer view's byte stride, with 0 meaning tightly packed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L104">hc/lib/gfx/gltf.amni:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L104">hc/lib/gfx/gltf.amni:104</a>
 </article>
 <article class="sym" id="accessor_node">
 <h3><a href="#accessor_node">accessor_node</a> <i>constant</i></h3>
 <pre>var accessor_node int[&gt;..]</pre>
 <p>Scratch list of JSON node indices for each accessor of the asset being read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L105">hc/lib/gfx/gltf.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L105">hc/lib/gfx/gltf.amni:105</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(msg const byte[:]) int</pre>
 <p>Records an error message and returns -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L110">hc/lib/gfx/gltf.amni:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L110">hc/lib/gfx/gltf.amni:110</a>
 </article>
 <article class="sym" id="keep_name">
 <h3><a href="#keep_name">keep_name</a> <i>function</i></h3>
 <pre>keep_name(s const byte[:]) Span</pre>
 <p>Stores a name in the name pool and returns its span.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L125">hc/lib/gfx/gltf.amni:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L125">hc/lib/gfx/gltf.amni:125</a>
 </article>
 <article class="sym" id="get">
 <h3><a href="#get">get</a> <i>function</i></h3>
 <pre>get(d json::Doc&amp;, n int, key const byte[:]) int</pre>
 <p>Returns the JSON child node for a key of an object, or -1 if missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L133">hc/lib/gfx/gltf.amni:133</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L133">hc/lib/gfx/gltf.amni:133</a>
 </article>
 <article class="sym" id="num">
 <h3><a href="#num">num</a> <i>function</i></h3>
 <pre>num(d json::Doc&amp;, n int, key const byte[:], fallback real) real</pre>
 <p>Returns a numeric JSON member, or the fallback if absent or not a number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L143">hc/lib/gfx/gltf.amni:143</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L143">hc/lib/gfx/gltf.amni:143</a>
 </article>
 <article class="sym" id="whole">
 <h3><a href="#whole">whole</a> <i>function</i></h3>
 <pre>whole(d json::Doc&amp;, n int, key const byte[:], fallback int) int</pre>
 <p>Returns a JSON member as an integer, or the fallback if absent or not a number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L148">hc/lib/gfx/gltf.amni:148</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L148">hc/lib/gfx/gltf.amni:148</a>
 </article>
 <article class="sym" id="truth">
 <h3><a href="#truth">truth</a> <i>function</i></h3>
 <pre>truth(d json::Doc&amp;, n int, key const byte[:], fallback bool) bool</pre>
 <p>Returns a boolean JSON member, or the fallback if absent or not a boolean.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L153">hc/lib/gfx/gltf.amni:153</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L153">hc/lib/gfx/gltf.amni:153</a>
 </article>
 <article class="sym" id="word">
 <h3><a href="#word">word</a> <i>function</i></h3>
 <pre>word(d json::Doc&amp;, n int, key const byte[:]) const byte[:]</pre>
 <p>Returns a string JSON member, or an empty string if absent or not a string.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L158">hc/lib/gfx/gltf.amni:158</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L158">hc/lib/gfx/gltf.amni:158</a>
 </article>
 <article class="sym" id="children_of">
 <h3><a href="#children_of">children_of</a> <i>function</i></h3>
 <pre>children_of(d json::Doc&amp;, n int, out int[&gt;..]&amp;)</pre>
 <p>Collects the child node indices of a JSON node into an output list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L164">hc/lib/gfx/gltf.amni:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L164">hc/lib/gfx/gltf.amni:164</a>
 </article>
 <article class="sym" id="item_num">
 <h3><a href="#item_num">item_num</a> <i>function</i></h3>
 <pre>item_num(d json::Doc&amp;, arr int, k int, fallback real) real</pre>
 <p>Returns the numeric element at an index of a JSON array, or the fallback.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L171">hc/lib/gfx/gltf.amni:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L171">hc/lib/gfx/gltf.amni:171</a>
 </article>
 <article class="sym" id="u32le">
 <h3><a href="#u32le">u32le</a> <i>function</i></h3>
 <pre>u32le(b const byte[:], o int) int</pre>
 <p>Reads a little-endian 32-bit integer from a byte slice at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L178">hc/lib/gfx/gltf.amni:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L178">hc/lib/gfx/gltf.amni:178</a>
 </article>
 <article class="sym" id="hexval">
 <h3><a href="#hexval">hexval</a> <i>function</i></h3>
 <pre>hexval(c byte) int</pre>
 <p>Converts a hexadecimal digit character to its value, or -1 if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L180">hc/lib/gfx/gltf.amni:180</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L180">hc/lib/gfx/gltf.amni:180</a>
 </article>
 <article class="sym" id="fetch_uri">
 <h3><a href="#fetch_uri">fetch_uri</a> <i>function</i></h3>
 <pre>fetch_uri(uri const byte[:], dir const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Appends the bytes a URI refers to, decoding data URIs or reading a file relative to a directory; false on failure.</p>
 <p class="note">Resolves a URI: data URIs are decoded, anything else is a path relative to dir.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L185">hc/lib/gfx/gltf.amni:185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L185">hc/lib/gfx/gltf.amni:185</a>
 </article>
 <article class="sym" id="component_size">
 <h3><a href="#component_size">component_size</a> <i>function</i></h3>
 <pre>component_size(kind int) int</pre>
 <p>Returns the byte size of a glTF component type code, or 0 if unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L210">hc/lib/gfx/gltf.amni:210</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L210">hc/lib/gfx/gltf.amni:210</a>
 </article>
 <article class="sym" id="type_shape">
 <h3><a href="#type_shape">type_shape</a> <i>function</i></h3>
 <pre>type_shape(t const byte[:]) int, int</pre>
 <p>Returns the column and row counts of a glTF accessor type name, or 0 and 0 if unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L214">hc/lib/gfx/gltf.amni:214</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L214">hc/lib/gfx/gltf.amni:214</a>
 </article>
 <article class="sym" id="component">
 <h3><a href="#component">component</a> <i>function</i></h3>
 <pre>component(o int, kind int, normalized bool) real</pre>
 <p>Reads one component from the buffer blob at an offset and converts it to a real, normalizing if requested.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L225">hc/lib/gfx/gltf.amni:225</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L225">hc/lib/gfx/gltf.amni:225</a>
 </article>
 <article class="sym" id="read_accessor">
 <h3><a href="#read_accessor">read_accessor</a> <i>function</i></h3>
 <pre>read_accessor&lt;T&gt;(d json::Doc&amp;, index int, out T[&gt;..]&amp;) int, int, bool</pre>
 <p>Appends all elements of an accessor to an output list, returning count, values per element and success.</p>
 <p class="note">Appends every element of accessor `index` to out (count * columns * rows values, columns major); returns count, values per element and success.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L247">hc/lib/gfx/gltf.amni:247</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L247">hc/lib/gfx/gltf.amni:247</a>
 </article>
 <article class="sym" id="texref">
 <h3><a href="#texref">texref</a> <i>function</i></h3>
 <pre>texref(d json::Doc&amp;, n int, tex_base int) TexRef</pre>
 <p>Builds a texture reference from a JSON texture info object, offset by the asset's texture base.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L308">hc/lib/gfx/gltf.amni:308</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L308">hc/lib/gfx/gltf.amni:308</a>
 </article>
 <article class="sym" id="image_file">
 <h3><a href="#image_file">image_file</a> <i>function</i></h3>
 <pre>image_file(i int) const byte[:]</pre>
 <p>Returns the encoded bytes of the image at absolute index i, as stored in the module's coded-data pool.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L358">hc/lib/gfx/gltf.amni:358</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L358">hc/lib/gfx/gltf.amni:358</a>
 </article>
 <article class="sym" id="decode_image">
 <h3><a href="#decode_image">decode_image</a> <i>function</i></h3>
 <pre>decode_image(data const byte[:]) Image</pre>
 <p>Decodes a PNG or JPEG image into the pixel pool, using a white 1x1 image on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L359">hc/lib/gfx/gltf.amni:359</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L359">hc/lib/gfx/gltf.amni:359</a>
 </article>
 <article class="sym" id="presize">
 <h3><a href="#presize">presize</a> <i>function</i></h3>
 <pre>presize(d json::Doc&amp;, root int)</pre>
 <p>Reserves vertex and index pool capacity for large assets before parsing, based on accessor counts.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L407">hc/lib/gfx/gltf.amni:407</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L407">hc/lib/gfx/gltf.amni:407</a>
 </article>
 <article class="sym" id="add_primitive">
 <h3><a href="#add_primitive">add_primitive</a> <i>function</i></h3>
 <pre>add_primitive(d json::Doc&amp;, p int, mat_base int, mat_count int) bool</pre>
 <p>Reads one mesh primitive into the vertex, index and morph pools, returning false on error.</p>
 <p class="note">Reads one mesh primitive into the vertex, index and morph pools.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L822">hc/lib/gfx/gltf.amni:822</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L822">hc/lib/gfx/gltf.amni:822</a>
 </article>
 <article class="sym" id="add_image">
 <h3><a href="#add_image">add_image</a> <i>function</i></h3>
 <pre>add_image(im Image, wrap int) int</pre>
 <p>Registers an already decoded image in the global pools with the given wrap mode and returns its new texture index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L956">hc/lib/gfx/gltf.amni:956</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L956">hc/lib/gfx/gltf.amni:956</a>
 </article>
 <article class="sym" id="shade_preset">
 <h3><a href="#shade_preset">shade_preset</a> <i>function</i></h3>
 <pre>shade_preset(kind int, part int) float4</pre>
 <p>Returns a built-in float4 shading preset chosen by kind and part index, or all zeros when the pair has no preset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/gfx/gltf.amni#L1002">hc/lib/gfx/gltf.amni:1002</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/gltf.amni#L1002">hc/lib/gfx/gltf.amni:1002</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
