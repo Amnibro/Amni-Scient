@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-snap">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-snap">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=6047bec913">
+<link rel="stylesheet" href="/api-library/lib.css?v=dee25bb8d0">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=6047bec913'; start({wasm: '/api-library/search.wasm?v=6047bec913'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=dee25bb8d0'; start({wasm: '/api-library/search.wasm?v=dee25bb8d0'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/snap</h1>
 <p class="lib-lede">Compact game-state snapshots, interpolation and client-side prediction.</p>
-<p class="lib-meta"><code>import net.snap;</code> &middot; <code>net::</code> &middot; 29 functions, 0 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni">Source</a></p>
+<p class="lib-meta"><code>import net.snap;</code> &middot; <code>net::</code> &middot; 29 functions, 0 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#snapshot-store">Snapshot Store <span class="n">8</span></a></li>
 <li><a href="#snapshot-codec">Snapshot Codec <span class="n">2</span></a></li>
@@ -116,227 +116,227 @@
 <h3><a href="#store_new">store_new</a> <i>function</i></h3>
 <pre>store_new(fields int, max_entities int) int</pre>
 <p>Creates a snapshot store for entities with the given field count and capacity, returning its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L11">hc/lib/net/snap.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L11">hc/lib/net/snap.amni:11</a>
 </article>
 <article class="sym" id="set">
 <h3><a href="#set">set</a> <i>function</i></h3>
 <pre>set(s int, id int, vals const i32[:])</pre>
 <p>Inserts or updates an entity's quantized field values in the store's current state, ignoring new entities when full.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L26">hc/lib/net/snap.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L26">hc/lib/net/snap.amni:26</a>
 </article>
 <article class="sym" id="remove">
 <h3><a href="#remove">remove</a> <i>function</i></h3>
 <pre>remove(s int, id int)</pre>
 <p>Removes an entity from the store's current state, doing nothing if it is absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L38">hc/lib/net/snap.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L38">hc/lib/net/snap.amni:38</a>
 </article>
 <article class="sym" id="commit">
 <h3><a href="#commit">commit</a> <i>function</i></h3>
 <pre>commit(s int, tick int)</pre>
 <p>Saves the store's current state into the history slot for the given tick.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L46">hc/lib/net/snap.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L46">hc/lib/net/snap.amni:46</a>
 </article>
 <article class="sym" id="has">
 <h3><a href="#has">has</a> <i>function</i></h3>
 <pre>has(s int, tick int) bool</pre>
 <p>Returns whether the store has a committed snapshot for the given tick.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L51">hc/lib/net/snap.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L51">hc/lib/net/snap.amni:51</a>
 </article>
 <article class="sym" id="get">
 <h3><a href="#get">get</a> <i>function</i></h3>
 <pre>get(s int, tick int, id int, out i32[&gt;..]&amp;) bool</pre>
 <p>Copies an entity's quantized field values at a tick into the output array, returning false if unavailable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L107">hc/lib/net/snap.amni:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L107">hc/lib/net/snap.amni:107</a>
 </article>
 <article class="sym" id="snap_equal">
 <h3><a href="#snap_equal">snap_equal</a> <i>function</i></h3>
 <pre>snap_equal(a int, ta int, b int, tb int) bool</pre>
 <p>Returns whether two stored snapshots have identical entity ids and values, false if either is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L114">hc/lib/net/snap.amni:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L114">hc/lib/net/snap.amni:114</a>
 </article>
 <article class="sym" id="latest">
 <h3><a href="#latest">latest</a> <i>function</i></h3>
 <pre>latest(s int) int</pre>
 <p>Returns the newest committed tick in a store, or -1 if none exist.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L122">hc/lib/net/snap.amni:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L122">hc/lib/net/snap.amni:122</a>
 </article>
 <h2 id="snapshot-codec">Snapshot Codec <span class="n">2</span></h2>
 <article class="sym" id="encode">
 <h3><a href="#encode">encode</a> <i>function</i></h3>
 <pre>encode(s int, tick int, base int, out byte[&gt;..]&amp;) bool</pre>
 <p>Encodes a tick's snapshot into a byte buffer as a delta against an optional earlier base tick, returning false if the tick is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L56">hc/lib/net/snap.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L56">hc/lib/net/snap.amni:56</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(s int, data const byte[:]) int</pre>
 <p>Decodes a snapshot packet into the store's current state and history, returning its tick or -1 if invalid or its base is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L80">hc/lib/net/snap.amni:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L80">hc/lib/net/snap.amni:80</a>
 </article>
 <h2 id="interpolation">Interpolation <span class="n">3</span></h2>
 <article class="sym" id="interp">
 <h3><a href="#interp">interp</a> <i>function</i></h3>
 <pre>interp(s int, t f32, id int, out f32[&gt;..]&amp;) bool</pre>
 <p>Interpolates an entity's field values at fractional tick t between surrounding snapshots, returning false if unavailable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L123">hc/lib/net/snap.amni:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L123">hc/lib/net/snap.amni:123</a>
 </article>
 <article class="sym" id="arrival">
 <h3><a href="#arrival">arrival</a> <i>function</i></h3>
 <pre>arrival(s int, now_ticks f32, tick int)</pre>
 <p>Records the arrival delay of a received snapshot tick for a store, trimming old samples when many accumulate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L142">hc/lib/net/snap.amni:142</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L142">hc/lib/net/snap.amni:142</a>
 </article>
 <article class="sym" id="render_time">
 <h3><a href="#render_time">render_time</a> <i>function</i></h3>
 <pre>render_time(s int, now_ticks f32) f32</pre>
 <p>Returns the tick time at which to render a store, based on the 95th-percentile arrival delay plus a margin.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L143">hc/lib/net/snap.amni:143</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L143">hc/lib/net/snap.amni:143</a>
 </article>
 <h2 id="prediction">Prediction <span class="n">4</span></h2>
 <article class="sym" id="pred_new">
 <h3><a href="#pred_new">pred_new</a> <i>function</i></h3>
 <pre>pred_new(fields int) int</pre>
 <p>Creates a prediction buffer for the given number of fields per entry, returning its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L136">hc/lib/net/snap.amni:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L136">hc/lib/net/snap.amni:136</a>
 </article>
 <article class="sym" id="pred_push">
 <h3><a href="#pred_push">pred_push</a> <i>function</i></h3>
 <pre>pred_push(r int, seq int, vals const f32[:])</pre>
 <p>Records predicted float values for an input sequence number, overwriting any older entry in the same slot.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L138">hc/lib/net/snap.amni:138</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L138">hc/lib/net/snap.amni:138</a>
 </article>
 <article class="sym" id="pred_after">
 <h3><a href="#pred_after">pred_after</a> <i>function</i></h3>
 <pre>pred_after(r int, acked int, out_seq int[&gt;..]&amp;)</pre>
 <p>Fills the output array with stored sequence numbers newer than the acknowledged one, sorted ascending.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L139">hc/lib/net/snap.amni:139</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L139">hc/lib/net/snap.amni:139</a>
 </article>
 <article class="sym" id="pred_get">
 <h3><a href="#pred_get">pred_get</a> <i>function</i></h3>
 <pre>pred_get(r int, seq int, out f32[&gt;..]&amp;) bool</pre>
 <p>Copies the predicted values stored for a sequence number into the output array, returning false if not stored.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L140">hc/lib/net/snap.amni:140</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L140">hc/lib/net/snap.amni:140</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (20)</summary>
 <article class="sym" id="HIST">
 <h3><a href="#HIST">HIST</a> <i>constant</i></h3>
 <pre>let HIST = 64</pre>
 <p>Constant giving the number of ticks of history kept in each snapshot store's ring buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L4">hc/lib/net/snap.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L4">hc/lib/net/snap.amni:4</a>
 </article>
 <article class="sym" id="S_F">
 <h3><a href="#S_F">S_F</a> <i>constant</i></h3>
 <pre>var S_F int[&gt;..] = []; var S_M int[&gt;..] = []</pre>
 <p>Global arrays holding each store's field count and maximum entity count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L5">hc/lib/net/snap.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L5">hc/lib/net/snap.amni:5</a>
 </article>
 <article class="sym" id="H_tick">
 <h3><a href="#H_tick">H_tick</a> <i>constant</i></h3>
 <pre>var H_tick int[&gt;..] = []; var H_n int[&gt;..] = []; var H_ids int[&gt;..] = []; var H_vals i32[&gt;..] = []</pre>
 <p>Global arrays holding the committed per-tick history of entity ids, values and counts for all stores.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L6">hc/lib/net/snap.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L6">hc/lib/net/snap.amni:6</a>
 </article>
 <article class="sym" id="C_n">
 <h3><a href="#C_n">C_n</a> <i>constant</i></h3>
 <pre>var C_n int[&gt;..] = []; var C_ids int[&gt;..] = []; var C_vals i32[&gt;..] = []</pre>
 <p>Global arrays holding each store's current working set of entity ids, values and count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L7">hc/lib/net/snap.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L7">hc/lib/net/snap.amni:7</a>
 </article>
 <article class="sym" id="S_hoff">
 <h3><a href="#S_hoff">S_hoff</a> <i>constant</i></h3>
 <pre>var S_hoff int[&gt;..] = []; var S_coff int[&gt;..] = []; var S_cv int[&gt;..] = []</pre>
 <p>Global arrays holding each store's offsets into the shared history, current-state and value arrays.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L8">hc/lib/net/snap.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L8">hc/lib/net/snap.amni:8</a>
 </article>
 <article class="sym" id="quant">
 <h3><a href="#quant">quant</a> <i>function</i></h3>
 <pre>quant(x f32) i32</pre>
 <p>Converts a float to a fixed-point integer with 1/1024 resolution, rounding to nearest.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L9">hc/lib/net/snap.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L9">hc/lib/net/snap.amni:9</a>
 </article>
 <article class="sym" id="dequant">
 <h3><a href="#dequant">dequant</a> <i>function</i></h3>
 <pre>dequant(v i32) f32</pre>
 <p>Converts a fixed-point integer with 1/1024 resolution back to a float.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L10">hc/lib/net/snap.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L10">hc/lib/net/snap.amni:10</a>
 </article>
 <article class="sym" id="hslot">
 <h3><a href="#hslot">hslot</a> <i>function</i></h3>
 <pre>hslot(s int, tick int) int</pre>
 <p>Returns the history ring slot index that a tick maps to for a store.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L21">hc/lib/net/snap.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L21">hc/lib/net/snap.amni:21</a>
 </article>
 <article class="sym" id="ids_base">
 <h3><a href="#ids_base">ids_base</a> <i>function</i></h3>
 <pre>ids_base(s int) int</pre>
 <p>Returns the starting index of a store's entity ids within the shared history id array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L22">hc/lib/net/snap.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L22">hc/lib/net/snap.amni:22</a>
 </article>
 <article class="sym" id="vals_base">
 <h3><a href="#vals_base">vals_base</a> <i>function</i></h3>
 <pre>vals_base(s int) int</pre>
 <p>Returns the starting index of a store's values within the shared history value array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L23">hc/lib/net/snap.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L23">hc/lib/net/snap.amni:23</a>
 </article>
 <article class="sym" id="row">
 <h3><a href="#row">row</a> <i>function</i></h3>
 <pre>row(s int, slot int) int</pre>
 <p>Returns the index of the first id of a history slot within the shared id array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L24">hc/lib/net/snap.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L24">hc/lib/net/snap.amni:24</a>
 </article>
 <article class="sym" id="vrow">
 <h3><a href="#vrow">vrow</a> <i>function</i></h3>
 <pre>vrow(s int, slot int) int</pre>
 <p>Returns the index of the first value of a history slot within the shared value array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L25">hc/lib/net/snap.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L25">hc/lib/net/snap.amni:25</a>
 </article>
 <article class="sym" id="putv">
 <h3><a href="#putv">putv</a> <i>function</i></h3>
 <pre>putv(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a non-negative integer to a byte buffer using variable-length 7-bit encoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L52">hc/lib/net/snap.amni:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L52">hc/lib/net/snap.amni:52</a>
 </article>
 <article class="sym" id="getv">
 <h3><a href="#getv">getv</a> <i>function</i></h3>
 <pre>getv(b const byte[:], at int&amp;) int</pre>
 <p>Reads a variable-length integer from a byte buffer at the given position and advances the position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L53">hc/lib/net/snap.amni:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L53">hc/lib/net/snap.amni:53</a>
 </article>
 <article class="sym" id="zz">
 <h3><a href="#zz">zz</a> <i>function</i></h3>
 <pre>zz(v int) int</pre>
 <p>Maps a signed integer to a non-negative one using zigzag encoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L54">hc/lib/net/snap.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L54">hc/lib/net/snap.amni:54</a>
 </article>
 <article class="sym" id="unzz">
 <h3><a href="#unzz">unzz</a> <i>function</i></h3>
 <pre>unzz(u int) int</pre>
 <p>Reverses zigzag encoding, mapping a non-negative integer back to a signed one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L55">hc/lib/net/snap.amni:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L55">hc/lib/net/snap.amni:55</a>
 </article>
 <article class="sym" id="PR_F">
 <h3><a href="#PR_F">PR_F</a> <i>constant</i></h3>
 <pre>var PR_F int[&gt;..] = []; var PR_seq int[&gt;..] = []; var PR_vals f32[&gt;..] = []; var PR_off int[&gt;..] = []</pre>
 <p>Global arrays holding each prediction buffer's field count, input sequence numbers, values and offsets.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L134">hc/lib/net/snap.amni:134</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L134">hc/lib/net/snap.amni:134</a>
 </article>
 <article class="sym" id="PR_CAP">
 <h3><a href="#PR_CAP">PR_CAP</a> <i>constant</i></h3>
 <pre>let PR_CAP = 256</pre>
 <p>Constant giving the number of sequence slots in each prediction buffer's ring.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L135">hc/lib/net/snap.amni:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L135">hc/lib/net/snap.amni:135</a>
 </article>
 <article class="sym" id="pvals_base">
 <h3><a href="#pvals_base">pvals_base</a> <i>function</i></h3>
 <pre>pvals_base(r int) int</pre>
 <p>Returns the starting index of a prediction buffer's values within the shared value array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L137">hc/lib/net/snap.amni:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L137">hc/lib/net/snap.amni:137</a>
 </article>
 <article class="sym" id="AR_s">
 <h3><a href="#AR_s">AR_s</a> <i>constant</i></h3>
 <pre>var AR_s int[&gt;..] = []; var AR_v f32[&gt;..] = []</pre>
 <p>Global arrays recording snapshot arrival stores and their delay measurements in ticks for render timing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/net/snap.amni#L141">hc/lib/net/snap.amni:141</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/net/snap.amni#L141">hc/lib/net/snap.amni:141</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

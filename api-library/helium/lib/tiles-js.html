@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/tiles-js">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/tiles-js">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=6047bec913">
+<link rel="stylesheet" href="/api-library/lib.css?v=dee25bb8d0">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=6047bec913'; start({wasm: '/api-library/search.wasm?v=6047bec913'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=dee25bb8d0'; start({wasm: '/api-library/search.wasm?v=dee25bb8d0'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>tiles/js</h1>
 <p class="lib-lede">Converts numbers to JavaScript-style strings, including formatting with fixed decimals and locale-aware digit grouping.</p>
-<p class="lib-meta"><code>import tiles.js;</code> &middot; <code>js::</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/tiles/js.he">Source</a></p>
+<p class="lib-meta"><code>import tiles.js;</code> &middot; <code>js::</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/tiles/js.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#number-formatting">Number Formatting <span class="n">2</span></a></li>
 <li><a href="#locale-formatting">Locale Formatting <span class="n">2</span></a></li>
@@ -114,14 +114,14 @@
 <pre>num_str(x real) byte[&gt;..]</pre>
 <p>Converts a real number to its JavaScript-style string form, handling NaN, Infinity, zero, and switching to exponent notation for very large or small values.</p>
 <p class="note">`num_str(x)` is JavaScript's String(x): NaN, Infinity or -Infinity; 0 for both zeros; otherwise a minus sign for negatives, then the shortest digits d1..dk with the point after n digits written as plain digits when n is from 1 to 21 (zeros added after the digits as needed), as &quot;0.&quot; and -n zeros then the digits when n is from -5 to 0, and otherwise as d1, a point and the other digits if any, &quot;e&quot;, a</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/tiles/js.he#L4">hc/lib/tiles/js.he:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/tiles/js.he#L4">hc/lib/tiles/js.he:4</a>
 </article>
 <article class="sym" id="to_fixed">
 <h3><a href="#to_fixed">to_fixed</a> <i>function</i></h3>
 <pre>to_fixed(x real, digits int) byte[&gt;..]</pre>
 <p>Formats a real number with a fixed count of decimal digits, returning &quot;NaN&quot; for NaN and exponent-style output at 1e21 or above.</p>
 <p class="note">`to_fixed(x, digits)` is JavaScript's x.toFixed(digits) for digits from 0 to 100: &quot;NaN&quot; for NaN, `num_str(x)` when the size of x is at least 1e21, and otherwise the exact value of x rounded to that many decimals, a tie going away from zero, written as `math::fabs` of x with exactly that many decimals and a minus sign in front when x is below zero, so -0.001 with 2 decimals is &quot;-0.00&quot; and -0 is &quot;0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/tiles/js.he#L38">hc/lib/tiles/js.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/tiles/js.he#L38">hc/lib/tiles/js.he:38</a>
 </article>
 <h2 id="locale-formatting">Locale Formatting <span class="n">2</span></h2>
 <article class="sym" id="locale_string">
@@ -129,14 +129,14 @@
 <pre>locale_string(x real, max_digits int) byte[&gt;..]</pre>
 <p>Formats a real number with locale-style digit grouping and at most max_digits fractional digits, using ∞ symbols for infinities.</p>
 <p class="note">`locale_string(x, max_digits)` is JavaScript's x.toLocaleString(&quot;en-US&quot;, { maximumFractionDigits: max_digits }) with the minimum left at 0: &quot;NaN&quot;, &quot;∞&quot; or &quot;-∞&quot; for those values, and otherwise x's shortest digits rounded to at most max_digits decimals, a tie going away from zero, with trailing zero decimals and a bare point dropped, the whole part grouped in threes with commas, and a minus sign </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/tiles/js.he#L48">hc/lib/tiles/js.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/tiles/js.he#L48">hc/lib/tiles/js.he:48</a>
 </article>
 <article class="sym" id="fixed_locale">
 <h3><a href="#fixed_locale">fixed_locale</a> <i>function</i></h3>
 <pre>fixed_locale(x real, digits int, or_zero bool = false) byte[&gt;..]</pre>
 <p>Formats a real as a string with fixed decimals and comma-grouped thousands, trimming trailing zeros; with or_zero true, omits the minus sign when the rounded result is zero.</p>
 <p class="note">`fixed_locale(x, digits, or_zero)` is JavaScript's (+x.toFixed(digits)).toLocaleString(&quot;en-US&quot;, { maximumFractionDigits: digits }) as one new string; with or_zero, false by default, the number has &quot;|| 0&quot; applied before it prints, so NaN and -0 print &quot;0&quot;. In full it is `locale_string` of the number `parse_flt` reads from `to_fixed(x, digits)`, made 0.0 first when or_zero is set and that number is N</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/6047becfb87b169d8916159fae47923230281997/hc/lib/tiles/js.he#L89">hc/lib/tiles/js.he:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/tiles/js.he#L89">hc/lib/tiles/js.he:89</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
