@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-aead">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-aead">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=dee25bb8d0">
+<link rel="stylesheet" href="/api-library/lib.css?v=fdc62ad4c8">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=dee25bb8d0'; start({wasm: '/api-library/search.wasm?v=dee25bb8d0'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=fdc62ad4c8'; start({wasm: '/api-library/search.wasm?v=fdc62ad4c8'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/aead</h1>
 <p class="lib-lede">Authenticated encryption with ChaCha20-Poly1305 and AES-GCM.</p>
-<p class="lib-meta"><code>import crypto.aead;</code> &middot; <code>crypto::</code> &middot; 23 functions, 1 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.aead;</code> &middot; <code>crypto::</code> &middot; 23 functions, 1 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#algorithm-selection">Algorithm Selection <span class="n">3</span></a></li>
 <li><a href="#authenticated-encryption">Authenticated Encryption <span class="n">3</span></a></li>
@@ -114,165 +114,165 @@
 <h3><a href="#AES_GCM">AES_GCM</a> <i>constant</i></h3>
 <pre>AES_GCM := 1</pre>
 <p>Constant selecting AES-GCM as the algorithm for sealing and opening messages.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L4">hc/lib/crypto/aead.he:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L4">hc/lib/crypto/aead.he:4</a>
 </article>
 <article class="sym" id="CHACHA20_POLY1305">
 <h3><a href="#CHACHA20_POLY1305">CHACHA20_POLY1305</a> <i>constant</i></h3>
 <pre>CHACHA20_POLY1305 := 2</pre>
 <p>Constant selecting ChaCha20-Poly1305 with a 32-byte key and 12-byte nonce.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L5">hc/lib/crypto/aead.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L5">hc/lib/crypto/aead.he:5</a>
 </article>
 <article class="sym" id="XCHACHA20_POLY1305">
 <h3><a href="#XCHACHA20_POLY1305">XCHACHA20_POLY1305</a> <i>constant</i></h3>
 <pre>XCHACHA20_POLY1305 := 3</pre>
 <p>Constant selecting XChaCha20-Poly1305, which takes a 32-byte key and an extended 24-byte nonce.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L6">hc/lib/crypto/aead.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L6">hc/lib/crypto/aead.he:6</a>
 </article>
 <h2 id="authenticated-encryption">Authenticated Encryption <span class="n">3</span></h2>
 <article class="sym" id="aead_ok">
 <h3><a href="#aead_ok">aead_ok</a> <i>function</i></h3>
 <pre>aead_ok(alg int, key const byte[:], nonce const byte[:]) bool</pre>
 <p>Returns whether the key and nonce lengths are valid for the chosen algorithm.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L112">hc/lib/crypto/aead.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L112">hc/lib/crypto/aead.he:112</a>
 </article>
 <article class="sym" id="aead_seal">
 <h3><a href="#aead_seal">aead_seal</a> <i>function</i></h3>
 <pre>aead_seal(alg int, key const byte[:], nonce const byte[:], aad const byte[:], pt const byte[:]) byte[&gt;..], bool</pre>
 <p>Encrypts plaintext with associated data and returns ciphertext with a 16-byte tag appended, plus false on invalid key or nonce.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L119">hc/lib/crypto/aead.he:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L119">hc/lib/crypto/aead.he:119</a>
 </article>
 <article class="sym" id="aead_open">
 <h3><a href="#aead_open">aead_open</a> <i>function</i></h3>
 <pre>aead_open(alg int, key const byte[:], nonce const byte[:], aad const byte[:], ct const byte[:]) byte[&gt;..], bool</pre>
 <p>Verifies and decrypts ciphertext with a trailing 16-byte tag, returning empty and false if inputs or tag are invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L125">hc/lib/crypto/aead.he:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L125">hc/lib/crypto/aead.he:125</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (21)</summary>
 <article class="sym" id="Aes">
 <h3><a href="#Aes">Aes</a> <i>type</i></h3>
 <pre>struct Aes { nr int = 0, rk byte[240] = [0; 240] }</pre>
 <p>Expanded AES key schedule holding the round count and round key bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L8">hc/lib/crypto/aead.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L8">hc/lib/crypto/aead.he:8</a>
 </article>
 <article class="sym" id="le32">
 <h3><a href="#le32">le32</a> <i>function</i></h3>
 <pre>le32(p const byte[:], j int) u32</pre>
 <p>Reads four bytes from a slice at an offset as a little-endian 32-bit integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L9">hc/lib/crypto/aead.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L9">hc/lib/crypto/aead.he:9</a>
 </article>
 <article class="sym" id="put32">
 <h3><a href="#put32">put32</a> <i>function</i></h3>
 <pre>put32(o byte[&gt;..]&amp;, v u32)</pre>
 <p>Appends a 32-bit value to a byte list in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L10">hc/lib/crypto/aead.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L10">hc/lib/crypto/aead.he:10</a>
 </article>
 <article class="sym" id="put64">
 <h3><a href="#put64">put64</a> <i>function</i></h3>
 <pre>put64(o byte[&gt;..]&amp;, v u64)</pre>
 <p>Appends a 64-bit value to a byte list in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L11">hc/lib/crypto/aead.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L11">hc/lib/crypto/aead.he:11</a>
 </article>
 <article class="sym" id="rl">
 <h3><a href="#rl">rl</a> <i>function</i></h3>
 <pre>rl(x u32, n int) u32</pre>
 <p>Rotates a 32-bit value left by the given number of bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L12">hc/lib/crypto/aead.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L12">hc/lib/crypto/aead.he:12</a>
 </article>
 <article class="sym" id="qr">
 <h3><a href="#qr">qr</a> <i>function</i></h3>
 <pre>qr(x u32[16]&amp;, a int, b int, c int, d int)</pre>
 <p>Applies the ChaCha quarter round to four selected words of the state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L13">hc/lib/crypto/aead.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L13">hc/lib/crypto/aead.he:13</a>
 </article>
 <article class="sym" id="rounds">
 <h3><a href="#rounds">rounds</a> <i>function</i></h3>
 <pre>rounds(x u32[16]&amp;)</pre>
 <p>Runs the twenty ChaCha rounds, as ten double rounds, over a 16-word state in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L15">hc/lib/crypto/aead.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L15">hc/lib/crypto/aead.he:15</a>
 </article>
 <article class="sym" id="cc_state">
 <h3><a href="#cc_state">cc_state</a> <i>function</i></h3>
 <pre>cc_state(key const byte[:], n const byte[:], ctr u32) u32[16]</pre>
 <p>Builds the initial ChaCha state from key, nonce and block counter, accepting 12 or 16 byte nonces.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L16">hc/lib/crypto/aead.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L16">hc/lib/crypto/aead.he:16</a>
 </article>
 <article class="sym" id="chacha20">
 <h3><a href="#chacha20">chacha20</a> <i>function</i></h3>
 <pre>chacha20(key const byte[:], nonce const byte[:], ctr u32, d const byte[:]) byte[&gt;..]</pre>
 <p>Encrypts or decrypts data by XORing it with the ChaCha20 keystream starting at the given counter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L21">hc/lib/crypto/aead.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L21">hc/lib/crypto/aead.he:21</a>
 </article>
 <article class="sym" id="hchacha20">
 <h3><a href="#hchacha20">hchacha20</a> <i>function</i></h3>
 <pre>hchacha20(key const byte[:], n16 const byte[:]) byte[&gt;..]</pre>
 <p>Derives a 32-byte subkey from a key and 16-byte nonce for XChaCha20.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L30">hc/lib/crypto/aead.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L30">hc/lib/crypto/aead.he:30</a>
 </article>
 <article class="sym" id="poly1305">
 <h3><a href="#poly1305">poly1305</a> <i>function</i></h3>
 <pre>poly1305(key const byte[:], m const byte[:]) byte[&gt;..]</pre>
 <p>Computes the 16-byte Poly1305 authentication tag of a message using a 32-byte one-time key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L35">hc/lib/crypto/aead.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L35">hc/lib/crypto/aead.he:35</a>
 </article>
 <article class="sym" id="pad16">
 <h3><a href="#pad16">pad16</a> <i>function</i></h3>
 <pre>pad16(o byte[&gt;..]&amp;)</pre>
 <p>Pads a byte list with zeros up to a multiple of 16 bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L56">hc/lib/crypto/aead.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L56">hc/lib/crypto/aead.he:56</a>
 </article>
 <article class="sym" id="cp_tag">
 <h3><a href="#cp_tag">cp_tag</a> <i>function</i></h3>
 <pre>cp_tag(key const byte[:], nonce const byte[:], aad const byte[:], ct const byte[:]) byte[&gt;..]</pre>
 <p>Computes the Poly1305 tag over associated data and ciphertext using a key derived from ChaCha20.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L57">hc/lib/crypto/aead.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L57">hc/lib/crypto/aead.he:57</a>
 </article>
 <article class="sym" id="xt">
 <h3><a href="#xt">xt</a> <i>function</i></h3>
 <pre>xt(b byte) byte</pre>
 <p>Multiplies a byte by x in the AES finite field.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L60">hc/lib/crypto/aead.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L60">hc/lib/crypto/aead.he:60</a>
 </article>
 <article class="sym" id="aes_key">
 <h3><a href="#aes_key">aes_key</a> <i>function</i></h3>
 <pre>aes_key(key const byte[:]) Aes</pre>
 <p>Expands a 16, 24 or 32 byte AES key into its round key schedule.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L61">hc/lib/crypto/aead.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L61">hc/lib/crypto/aead.he:61</a>
 </article>
 <article class="sym" id="aes_block">
 <h3><a href="#aes_block">aes_block</a> <i>function</i></h3>
 <pre>aes_block(a const Aes&amp;, inp const byte[:], o byte[16]&amp;)</pre>
 <p>Encrypts one 16-byte block with AES into the output block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L70">hc/lib/crypto/aead.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L70">hc/lib/crypto/aead.he:70</a>
 </article>
 <article class="sym" id="be64b">
 <h3><a href="#be64b">be64b</a> <i>function</i></h3>
 <pre>be64b(p const byte[:], j int) u64</pre>
 <p>Reads eight bytes from a slice at an offset as a big-endian 64-bit integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L81">hc/lib/crypto/aead.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L81">hc/lib/crypto/aead.he:81</a>
 </article>
 <article class="sym" id="gmul">
 <h3><a href="#gmul">gmul</a> <i>function</i></h3>
 <pre>gmul(xh u64, xl u64, yh u64, yl u64) u64, u64</pre>
 <p>Multiplies two 128-bit values in the GCM field, returning high and low halves.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L82">hc/lib/crypto/aead.he:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L82">hc/lib/crypto/aead.he:82</a>
 </article>
 <article class="sym" id="ghash">
 <h3><a href="#ghash">ghash</a> <i>function</i></h3>
 <pre>ghash(hh u64, hl u64, a const byte[:], c const byte[:]) byte[&gt;..]</pre>
 <p>Computes the 16-byte GHASH of associated data and ciphertext using the hash subkey halves.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L88">hc/lib/crypto/aead.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L88">hc/lib/crypto/aead.he:88</a>
 </article>
 <article class="sym" id="gcm_core">
 <h3><a href="#gcm_core">gcm_core</a> <i>function</i></h3>
 <pre>gcm_core(key const byte[:], iv const byte[:], aad const byte[:], d const byte[:], enc bool) byte[&gt;..], byte[&gt;..]</pre>
 <p>Runs AES-GCM counter-mode encryption or decryption and returns the output with its authentication tag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L99">hc/lib/crypto/aead.he:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L99">hc/lib/crypto/aead.he:99</a>
 </article>
 <article class="sym" id="cp_keys">
 <h3><a href="#cp_keys">cp_keys</a> <i>function</i></h3>
 <pre>cp_keys(alg int, key const byte[:], nonce const byte[:]) byte[&gt;..], byte[&gt;..]</pre>
 <p>Returns the effective key and nonce for ChaCha20-Poly1305, deriving them via HChaCha20 for the extended-nonce variant.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/crypto/aead.he#L115">hc/lib/crypto/aead.he:115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/crypto/aead.he#L115">hc/lib/crypto/aead.he:115</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-cloth">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-cloth">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=dee25bb8d0">
+<link rel="stylesheet" href="/api-library/lib.css?v=fdc62ad4c8">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=dee25bb8d0'; start({wasm: '/api-library/search.wasm?v=dee25bb8d0'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=fdc62ad4c8'; start({wasm: '/api-library/search.wasm?v=fdc62ad4c8'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/cloth</h1>
 <p class="lib-lede">Simulates cloth as a mesh of particles with gravity, drag, and collisions so fabric drapes and moves realistically.</p>
-<p class="lib-meta"><code>import gfx.cloth;</code> &middot; <code>cloth::</code> &middot; 22 functions, 1 types, 24 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.cloth;</code> &middot; <code>cloth::</code> &middot; 22 functions, 1 types, 24 constants &middot; <a href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#cloth-setup">Cloth Setup <span class="n">12</span></a></li>
 <li><a href="#colliders">Colliders <span class="n">4</span></a></li>
@@ -115,84 +115,84 @@
 <pre>struct Cloth { p0 int, np int, e0 int, ne int, b0 int, nb int, t0 int, nt int, v0 int, nv int, density real = 0.2, gravity real = 9.81, thickness real = 0.005, damping real = 1.0, air real = 1.2, drag real = 1.28, friction real = 0.5, stretch real = 0.0, bend real = 1.0, substeps int = 8, limit bool = true, stale bool = true, keep bool = false }</pre>
 <p>Per-cloth record holding a simulated mesh's particle, edge, bend, triangle ranges and tunable physics settings such as gravity, damping, and substeps.</p>
 <p class="note">`Cloth` is a struct with these fields, in this order: where its particles start in the particle arrays and how many it has (`p0`, `np`), the same for its edges (`e0`, `ne`), its bends (`b0`, `nb`), its triangles (`t0`, `nt`) and its mesh vertices (`v0`, `nv`), all int; then the settings, all real with these defaults: `density` 0.2 (kilograms per square meter), `gravity` 9.81, `thickness` 0.005, `d</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L4">hc/lib/gfx/cloth.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L4">hc/lib/gfx/cloth.amni:4</a>
 </article>
 <article class="sym" id="make">
 <h3><a href="#make">make</a> <i>function</i></h3>
 <pre>make(p const f32[:], stride int, at int, nv int, indices const u32[:]) int</pre>
 <p>Builds a cloth from mesh vertices and triangle indices, merging duplicate positions, and returns its cloth index.</p>
 <p class="note">`make(p, stride int, at int, nv int, indices) int` (p: read-only f32 slice; indices: read-only u32 slice) builds a cloth from a mesh and returns its number. Vertex v's position is the three floats at `p[v * stride + at]`. `indices` holds three vertex numbers per triangle, each below nv. - Particles: vertices whose three coordinates are exactly equal share one particle (meshes repeat vertices along</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L51">hc/lib/gfx/cloth.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L51">hc/lib/gfx/cloth.amni:51</a>
 </article>
 <article class="sym" id="pin">
 <h3><a href="#pin">pin</a> <i>function</i></h3>
 <pre>pin(c int, vertex int, x real, y real, z real)</pre>
 <p>Pins a cloth vertex so it moves to the given world position during steps instead of simulating.</p>
 <p class="note">`pin(c int, vertex int, x real, y real, z real)` holds the particle of the cloth's mesh vertex `vertex` at the point: sets its `goal`, and when it was not held yet marks it held, sets its `inv` to 0 and marks the cloth stale. `unpin(c int, vertex int)` frees it again: when held, `held` becomes false, `inv` becomes `inv0` and the cloth is marked stale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L159">hc/lib/gfx/cloth.amni:159</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L159">hc/lib/gfx/cloth.amni:159</a>
 </article>
 <article class="sym" id="unpin">
 <h3><a href="#unpin">unpin</a> <i>function</i></h3>
 <pre>unpin(c int, vertex int)</pre>
 <p>Releases a pinned cloth vertex so it simulates freely again.</p>
 <p class="note">`pin(c int, vertex int, x real, y real, z real)` holds the particle of the cloth's mesh vertex `vertex` at the point: sets its `goal`, and when it was not held yet marks it held, sets its `inv` to 0 and marks the cloth stale. `unpin(c int, vertex int)` frees it again: when held, `held` becomes false, `inv` becomes `inv0` and the cloth is marked stale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L170">hc/lib/gfx/cloth.amni:170</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L170">hc/lib/gfx/cloth.amni:170</a>
 </article>
 <article class="sym" id="reset">
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears all cloths, particle data, and colliders.</p>
 <p class="note">`reset()` forgets every cloth and every collider: it empties all the module arrays and turns the floor off.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L178">hc/lib/gfx/cloth.amni:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L178">hc/lib/gfx/cloth.amni:178</a>
 </article>
 <article class="sym" id="step">
 <h3><a href="#step">step</a> <i>function</i></h3>
 <pre>step(c int, dt real, wx real, wy real, wz real)</pre>
 <p>Advances a cloth simulation by dt seconds under wind, applying gravity, constraints, collisions, and normals.</p>
 <p class="note">`step(c int, dt real, wx real, wy real, wz real)` advances cloth c by dt seconds in a wind of velocity (wx, wy, wz). Nothing happens when dt is not above 0 or the cloth has no particles. - First: when the cloth is stale and `limit` is true, run `limits`. Copy the cloth's `pos` to `from`, and also to `last` unless `keep` is true. - Wind, once for the whole step: zero the cloth's `push`. For each tr</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L341">hc/lib/gfx/cloth.amni:341</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L341">hc/lib/gfx/cloth.amni:341</a>
 </article>
 <article class="sym" id="write">
 <h3><a href="#write">write</a> <i>function</i></h3>
 <pre>write(c int, p const f32[:], stride int, at int, at_n int, out f32[:])</pre>
 <p>Writes simulated position and normal offsets and previous-frame offsets for each vertex into an output buffer.</p>
 <p class="note">`write(c int, p, stride int, at int, at_n int, out)` (p: read-only f32 slice, the mesh's vertices as given to `make`, with vertex v's normal at `p[v * stride + at_n]`; out: writable f32 slice of at least `nv * 16` floats) writes the cloth as two morph targets of eight floats per vertex. For vertex v with particle i, target one at `out[v * 8]`: `pos` of i minus the vertex's position, then 0, then `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L473">hc/lib/gfx/cloth.amni:473</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L473">hc/lib/gfx/cloth.amni:473</a>
 </article>
 <article class="sym" id="count">
 <h3><a href="#count">count</a> <i>function</i></h3>
 <pre>count(c int) int</pre>
 <p>Returns the number of simulated particles in a cloth.</p>
 <p class="note">Readers: `count(c int) int` is the cloth's particle count; `particle(c int, vertex int) int` is the mesh vertex's particle as an index into the shared arrays; `stretch_now(c int) real` is the largest, over the cloth's edges, of the edge's current length over its stored length (1.0 with no edges); `speed(c int) real` is the mean length of the cloth's particle velocities (0 with no particles); `boun</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L490">hc/lib/gfx/cloth.amni:490</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L490">hc/lib/gfx/cloth.amni:490</a>
 </article>
 <article class="sym" id="particle">
 <h3><a href="#particle">particle</a> <i>function</i></h3>
 <pre>particle(c int, vertex int) int</pre>
 <p>Returns the particle index that a cloth's source vertex maps to.</p>
 <p class="note">Readers: `count(c int) int` is the cloth's particle count; `particle(c int, vertex int) int` is the mesh vertex's particle as an index into the shared arrays; `stretch_now(c int) real` is the largest, over the cloth's edges, of the edge's current length over its stored length (1.0 with no edges); `speed(c int) real` is the mean length of the cloth's particle velocities (0 with no particles); `boun</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L493">hc/lib/gfx/cloth.amni:493</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L493">hc/lib/gfx/cloth.amni:493</a>
 </article>
 <article class="sym" id="stretch_now">
 <h3><a href="#stretch_now">stretch_now</a> <i>function</i></h3>
 <pre>stretch_now(c int) real</pre>
 <p>Returns the largest edge stretch ratio of a cloth, at least 1.</p>
 <p class="note">Readers: `count(c int) int` is the cloth's particle count; `particle(c int, vertex int) int` is the mesh vertex's particle as an index into the shared arrays; `stretch_now(c int) real` is the largest, over the cloth's edges, of the edge's current length over its stored length (1.0 with no edges); `speed(c int) real` is the mean length of the cloth's particle velocities (0 with no particles); `boun</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L496">hc/lib/gfx/cloth.amni:496</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L496">hc/lib/gfx/cloth.amni:496</a>
 </article>
 <article class="sym" id="speed">
 <h3><a href="#speed">speed</a> <i>function</i></h3>
 <pre>speed(c int) real</pre>
 <p>Returns the average particle speed of a cloth, or 0 when it has no particles.</p>
 <p class="note">Readers: `count(c int) int` is the cloth's particle count; `particle(c int, vertex int) int` is the mesh vertex's particle as an index into the shared arrays; `stretch_now(c int) real` is the largest, over the cloth's edges, of the edge's current length over its stored length (1.0 with no edges); `speed(c int) real` is the mean length of the cloth's particle velocities (0 with no particles); `boun</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L505">hc/lib/gfx/cloth.amni:505</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L505">hc/lib/gfx/cloth.amni:505</a>
 </article>
 <article class="sym" id="bounds">
 <h3><a href="#bounds">bounds</a> <i>function</i></h3>
 <pre>bounds(c int) real, real, real, real, real, real</pre>
 <p>Returns the axis-aligned bounding box of a cloth as min x, y, z then max x, y, z.</p>
 <p class="note">Readers: `count(c int) int` is the cloth's particle count; `particle(c int, vertex int) int` is the mesh vertex's particle as an index into the shared arrays; `stretch_now(c int) real` is the largest, over the cloth's edges, of the edge's current length over its stored length (1.0 with no edges); `speed(c int) real` is the mean length of the cloth's particle velocities (0 with no particles); `boun</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L515">hc/lib/gfx/cloth.amni:515</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L515">hc/lib/gfx/cloth.amni:515</a>
 </article>
 <h2 id="colliders">Colliders <span class="n">4</span></h2>
 <article class="sym" id="clear_colliders">
@@ -200,26 +200,26 @@
 <pre>clear_colliders()</pre>
 <p>Removes all sphere and capsule colliders and disables the ground plane.</p>
 <p class="note">`clear_colliders()` empties `balls` and `pills` and turns the floor off. `ball(x real, y real, z real, r real)` adds a sphere, `pill(ax real, ay real, az real, bx real, by real, bz real, r real)` adds a capsule, `ground(y real)` turns the floor on at that height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L202">hc/lib/gfx/cloth.amni:202</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L202">hc/lib/gfx/cloth.amni:202</a>
 </article>
 <article class="sym" id="ball">
 <h3><a href="#ball">ball</a> <i>function</i></h3>
 <pre>ball(x real, y real, z real, r real)</pre>
 <p>Adds a sphere collider with the given center and radius.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L207">hc/lib/gfx/cloth.amni:207</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L207">hc/lib/gfx/cloth.amni:207</a>
 </article>
 <article class="sym" id="pill">
 <h3><a href="#pill">pill</a> <i>function</i></h3>
 <pre>pill(ax real, ay real, az real, bx real, by real, bz real, r real)</pre>
 <p>Adds a capsule collider between two endpoints with the given radius.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L213">hc/lib/gfx/cloth.amni:213</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L213">hc/lib/gfx/cloth.amni:213</a>
 </article>
 <article class="sym" id="ground">
 <h3><a href="#ground">ground</a> <i>function</i></h3>
 <pre>ground(y real)</pre>
 <p>Enables a horizontal ground plane at the given height.</p>
 <p class="note">`clear_colliders()` empties `balls` and `pills` and turns the floor off. `ball(x real, y real, z real, r real)` adds a sphere, `pill(ax real, ay real, az real, bx real, by real, bz real, r real)` adds a capsule, `ground(y real)` turns the floor on at that height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L222">hc/lib/gfx/cloth.amni:222</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L222">hc/lib/gfx/cloth.amni:222</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (31)</summary>
 <article class="sym" id="cloths">
@@ -227,212 +227,212 @@
 <pre>var cloths Cloth[&gt;..]</pre>
 <p>Global storage of all cloth instances created in the simulation.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L5">hc/lib/gfx/cloth.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L5">hc/lib/gfx/cloth.amni:5</a>
 </article>
 <article class="sym" id="pos">
 <h3><a href="#pos">pos</a> <i>constant</i></h3>
 <pre>var pos real[&gt;..]</pre>
 <p>Flat array of particle positions as x, y, z triples.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L6">hc/lib/gfx/cloth.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L6">hc/lib/gfx/cloth.amni:6</a>
 </article>
 <article class="sym" id="old">
 <h3><a href="#old">old</a> <i>constant</i></h3>
 <pre>var old real[&gt;..]</pre>
 <p>Flat array of particle positions from the start of the current substep, used for velocity and friction.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L7">hc/lib/gfx/cloth.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L7">hc/lib/gfx/cloth.amni:7</a>
 </article>
 <article class="sym" id="vel">
 <h3><a href="#vel">vel</a> <i>constant</i></h3>
 <pre>var vel real[&gt;..]</pre>
 <p>Flat array of particle velocities as x, y, z triples.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L8">hc/lib/gfx/cloth.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L8">hc/lib/gfx/cloth.amni:8</a>
 </article>
 <article class="sym" id="nrm">
 <h3><a href="#nrm">nrm</a> <i>constant</i></h3>
 <pre>var nrm real[&gt;..]</pre>
 <p>Flat array of per-particle surface normals as x, y, z triples.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L9">hc/lib/gfx/cloth.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L9">hc/lib/gfx/cloth.amni:9</a>
 </article>
 <article class="sym" id="last">
 <h3><a href="#last">last</a> <i>constant</i></h3>
 <pre>var last real[&gt;..]</pre>
 <p>Flat array of particle positions captured before the latest step, written out as previous-frame positions.</p>
 <p class="note">`Cloth` is a struct with these fields, in this order: where its particles start in the particle arrays and how many it has (`p0`, `np`), the same for its edges (`e0`, `ne`), its bends (`b0`, `nb`), its triangles (`t0`, `nt`) and its mesh vertices (`v0`, `nv`), all int; then the settings, all real with these defaults: `density` 0.2 (kilograms per square meter), `gravity` 9.81, `thickness` 0.005, `d</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L10">hc/lib/gfx/cloth.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L10">hc/lib/gfx/cloth.amni:10</a>
 </article>
 <article class="sym" id="rest">
 <h3><a href="#rest">rest</a> <i>constant</i></h3>
 <pre>var rest real[&gt;..]</pre>
 <p>Flat array of particle rest positions, used to measure reach distances to pinned particles.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L11">hc/lib/gfx/cloth.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L11">hc/lib/gfx/cloth.amni:11</a>
 </article>
 <article class="sym" id="goal">
 <h3><a href="#goal">goal</a> <i>constant</i></h3>
 <pre>var goal real[&gt;..]</pre>
 <p>Flat array of target positions that pinned particles move toward during a step.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L12">hc/lib/gfx/cloth.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L12">hc/lib/gfx/cloth.amni:12</a>
 </article>
 <article class="sym" id="push">
 <h3><a href="#push">push</a> <i>constant</i></h3>
 <pre>var push real[&gt;..]</pre>
 <p>Flat array of per-particle aerodynamic push accumulated from wind and drag each step.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L14">hc/lib/gfx/cloth.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L14">hc/lib/gfx/cloth.amni:14</a>
 </article>
 <article class="sym" id="inv">
 <h3><a href="#inv">inv</a> <i>constant</i></h3>
 <pre>var inv real[&gt;..]</pre>
 <p>Per-particle inverse mass array, set to zero while a particle is pinned.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L15">hc/lib/gfx/cloth.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L15">hc/lib/gfx/cloth.amni:15</a>
 </article>
 <article class="sym" id="inv0">
 <h3><a href="#inv0">inv0</a> <i>constant</i></h3>
 <pre>var inv0 real[&gt;..]</pre>
 <p>Per-particle original inverse mass array, restored when a particle is unpinned.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L16">hc/lib/gfx/cloth.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L16">hc/lib/gfx/cloth.amni:16</a>
 </article>
 <article class="sym" id="held">
 <h3><a href="#held">held</a> <i>constant</i></h3>
 <pre>var held bool[&gt;..]</pre>
 <p>Per-particle flags marking which particles are currently pinned.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L17">hc/lib/gfx/cloth.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L17">hc/lib/gfx/cloth.amni:17</a>
 </article>
 <article class="sym" id="reach_to">
 <h3><a href="#reach_to">reach_to</a> <i>constant</i></h3>
 <pre>var reach_to int[&gt;..]</pre>
 <p>Per-particle index of the nearest pinned particle, or -1 when none exists.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L18">hc/lib/gfx/cloth.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L18">hc/lib/gfx/cloth.amni:18</a>
 </article>
 <article class="sym" id="reach">
 <h3><a href="#reach">reach</a> <i>constant</i></h3>
 <pre>var reach real[&gt;..]</pre>
 <p>Per-particle maximum rest distance allowed from its nearest pinned particle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L19">hc/lib/gfx/cloth.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L19">hc/lib/gfx/cloth.amni:19</a>
 </article>
 <article class="sym" id="edges">
 <h3><a href="#edges">edges</a> <i>constant</i></h3>
 <pre>var edges int[&gt;..]</pre>
 <p>Flat array of particle index pairs, one pair per stretch constraint edge.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L20">hc/lib/gfx/cloth.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L20">hc/lib/gfx/cloth.amni:20</a>
 </article>
 <article class="sym" id="edge_len">
 <h3><a href="#edge_len">edge_len</a> <i>constant</i></h3>
 <pre>var edge_len real[&gt;..]</pre>
 <p>Rest lengths of the stretch constraint edges.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L21">hc/lib/gfx/cloth.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L21">hc/lib/gfx/cloth.amni:21</a>
 </article>
 <article class="sym" id="bends">
 <h3><a href="#bends">bends</a> <i>constant</i></h3>
 <pre>var bends int[&gt;..]</pre>
 <p>Flat array of particle index pairs across shared edges, used as bend constraints.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L22">hc/lib/gfx/cloth.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L22">hc/lib/gfx/cloth.amni:22</a>
 </article>
 <article class="sym" id="bend_len">
 <h3><a href="#bend_len">bend_len</a> <i>constant</i></h3>
 <pre>var bend_len real[&gt;..]</pre>
 <p>Rest lengths of the bend constraints.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L23">hc/lib/gfx/cloth.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L23">hc/lib/gfx/cloth.amni:23</a>
 </article>
 <article class="sym" id="tris">
 <h3><a href="#tris">tris</a> <i>constant</i></h3>
 <pre>var tris int[&gt;..]</pre>
 <p>Flat array of particle index triples, one triple per triangle.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L24">hc/lib/gfx/cloth.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L24">hc/lib/gfx/cloth.amni:24</a>
 </article>
 <article class="sym" id="vmap">
 <h3><a href="#vmap">vmap</a> <i>constant</i></h3>
 <pre>var vmap int[&gt;..]</pre>
 <p>Mapping from each source mesh vertex to its merged particle index.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L25">hc/lib/gfx/cloth.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L25">hc/lib/gfx/cloth.amni:25</a>
 </article>
 <article class="sym" id="balls">
 <h3><a href="#balls">balls</a> <i>constant</i></h3>
 <pre>var balls real[&gt;..]</pre>
 <p>Flat array of sphere colliders stored as x, y, z, radius quadruples.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L26">hc/lib/gfx/cloth.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L26">hc/lib/gfx/cloth.amni:26</a>
 </article>
 <article class="sym" id="pills">
 <h3><a href="#pills">pills</a> <i>constant</i></h3>
 <pre>var pills real[&gt;..]</pre>
 <p>Flat array of capsule colliders stored as two endpoints and a radius, seven values each.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L27">hc/lib/gfx/cloth.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L27">hc/lib/gfx/cloth.amni:27</a>
 </article>
 <article class="sym" id="floor_on">
 <h3><a href="#floor_on">floor_on</a> <i>constant</i></h3>
 <pre>var floor_on bool = false</pre>
 <p>Flag indicating whether the ground plane collider is enabled.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L28">hc/lib/gfx/cloth.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L28">hc/lib/gfx/cloth.amni:28</a>
 </article>
 <article class="sym" id="floor_y">
 <h3><a href="#floor_y">floor_y</a> <i>constant</i></h3>
 <pre>var floor_y real = 0.0</pre>
 <p>Height of the ground plane collider along the y axis.</p>
 <p class="note">Module vars, all growable arrays that every cloth appends to: `cloths` (of Cloth); `pos`, `old`, `vel`, `nrm`, `last`, `rest`, `goal`, `from` and `push` (real, three numbers per particle: position now, position at the start of the substep, velocity, normal, position at the end of the step before, position when made, the point a pinned particle is held at, where a pinned particle was when the step </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L29">hc/lib/gfx/cloth.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L29">hc/lib/gfx/cloth.amni:29</a>
 </article>
 <article class="sym" id="key_bits">
 <h3><a href="#key_bits">key_bits</a> <i>function</i></h3>
 <pre>key_bits(x f32, y f32, z f32) uint</pre>
 <p>Hashes a vertex position into an unsigned key for merging duplicate vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L30">hc/lib/gfx/cloth.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L30">hc/lib/gfx/cloth.amni:30</a>
 </article>
 <article class="sym" id="add3">
 <h3><a href="#add3">add3</a> <i>function</i></h3>
 <pre>add3(a real[&gt;..]&amp;, x real, y real, z real)</pre>
 <p>Appends an x, y, z triple to a flat array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L40">hc/lib/gfx/cloth.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L40">hc/lib/gfx/cloth.amni:40</a>
 </article>
 <article class="sym" id="pdist">
 <h3><a href="#pdist">pdist</a> <i>function</i></h3>
 <pre>pdist(i int, j int) real</pre>
 <p>Returns the current distance between two particles by index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L45">hc/lib/gfx/cloth.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L45">hc/lib/gfx/cloth.amni:45</a>
 </article>
 <article class="sym" id="normals">
 <h3><a href="#normals">normals</a> <i>function</i></h3>
 <pre>normals(c int)</pre>
 <p>Recomputes smoothed per-particle normals for a cloth from its triangles.</p>
 <p class="note">`normals(c int)` recomputes the cloth's particle normals: zero them, add each triangle's cross product (the edge from its first to its second corner cross the edge from its first to its third, at the current positions) to its three particles, then scale each to length one, or set (0, 1, 0) where the sum is shorter than 1e-20.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L226">hc/lib/gfx/cloth.amni:226</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L226">hc/lib/gfx/cloth.amni:226</a>
 </article>
 <article class="sym" id="limits">
 <h3><a href="#limits">limits</a> <i>function</i></h3>
 <pre>limits(c int)</pre>
 <p>Computes each unpinned particle's nearest pinned particle and its rest distance for reach limiting.</p>
 <p class="note">`limits(c int)` rebuilds the reach limits and clears `stale`: for every particle of the cloth that is not held, `reach_to` is the held particle of the same cloth whose `rest` position is nearest to the particle's `rest` position and `reach` is that distance; -1 when the cloth has no held particle. Held particles get -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L266">hc/lib/gfx/cloth.amni:266</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L266">hc/lib/gfx/cloth.amni:266</a>
 </article>
 <article class="sym" id="contact">
 <h3><a href="#contact">contact</a> <i>function</i></h3>
 <pre>contact(i int, cx real, cy real, cz real, r real, friction real)</pre>
 <p>Pushes a particle out of a sphere and applies friction against its sliding motion.</p>
 <p class="note">`contact(i int, cx real, cy real, cz real, r real, friction real)` keeps particle i (three numbers at `pos[i * 3]`) at least r from the point (cx, cy, cz): when its distance d is below r, and above 1e-12, it moves straight away from the point to distance r. Then friction: take the particle's movement this substep (its position minus `old`), remove from it the part along the direction from the poin</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L292">hc/lib/gfx/cloth.amni:292</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L292">hc/lib/gfx/cloth.amni:292</a>
 </article>
 <article class="sym" id="solve">
 <h3><a href="#solve">solve</a> <i>function</i></h3>
 <pre>solve(a int, b int, rest_len real, soft real, h real)</pre>
 <p>Applies a position-based distance constraint between two particles with the given rest length and softness.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/cloth.amni#L321">hc/lib/gfx/cloth.amni:321</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/cloth.amni#L321">hc/lib/gfx/cloth.amni:321</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg_enc">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg_enc">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=dee25bb8d0">
+<link rel="stylesheet" href="/api-library/lib.css?v=fdc62ad4c8">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=dee25bb8d0'; start({wasm: '/api-library/search.wasm?v=dee25bb8d0'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=fdc62ad4c8'; start({wasm: '/api-library/search.wasm?v=fdc62ad4c8'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/codec_jpeg_enc</h1>
 <p class="lib-lede">Encodes RGBA pixel images into JPEG-compressed byte data, with adjustable quality, so programs can save or send photos.</p>
-<p class="lib-meta"><code>import gfx.codec_jpeg_enc;</code> &middot; <code>codec_jpeg_enc::</code> &middot; 16 functions, 2 types, 11 constants &middot; <a href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.codec_jpeg_enc;</code> &middot; <code>codec_jpeg_enc::</code> &middot; 16 functions, 2 types, 11 constants &middot; <a href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#jpeg-encoding">JPEG Encoding <span class="n">1</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -114,176 +114,176 @@
 <pre>encode(rgba const byte[:], w int, h int, quality int, out byte[&gt;..]&amp;) bool</pre>
 <p>Encodes RGBA pixels into JPEG data in the output buffer, returning false if dimensions are invalid or pixels are too few.</p>
 <p class="note">`encode(rgba const byte[:], w int, h int, quality int, out byte[&gt;..]&amp;) bool` encodes a w by h RGBA image (alpha ignored) into out (cleared first); false when w or h is not positive or above 65535 or the input is shorter than `w * h * 4`. Write SOI (FF D8); a JFIF APP0 (FF E0, length 16, &quot;JFIF&quot; and a zero, version 1.1, density units 0, density 1 by 1, no thumbnail); DQT (FF DB) with table 0 (lumina</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L29">hc/lib/gfx/codec_jpeg_enc.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L29">hc/lib/gfx/codec_jpeg_enc.amni:29</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (28)</summary>
 <article class="sym" id="ZZ">
 <h3><a href="#ZZ">ZZ</a> <i>constant</i></h3>
 <pre>let ZZ int[64] = [0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45, 38,</pre>
 <p>Zigzag scan order table mapping coefficient positions in an 8x8 block, used internally during quantization and header output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L3">hc/lib/gfx/codec_jpeg_enc.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L3">hc/lib/gfx/codec_jpeg_enc.amni:3</a>
 </article>
 <article class="sym" id="LUM_Q">
 <h3><a href="#LUM_Q">LUM_Q</a> <i>constant</i></h3>
 <pre>let LUM_Q byte[64] = [16, 11, 10, 16, 24, 40, 51, 61, 12, 12, 14, 19, 26, 58, 60, 55, 14, 13, 16, 24, 40, 57, 69, 56, 14, 17, 22, 29, 51, 87, 80, 62, 18, 22, 37, 56, 68, 109, 103, 77, 24, 35, 55, 64, 81, 104, 113, 92, 49</pre>
 <p>Standard JPEG luminance quantization base table of 64 entries, scaled by quality before use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L4">hc/lib/gfx/codec_jpeg_enc.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L4">hc/lib/gfx/codec_jpeg_enc.amni:4</a>
 </article>
 <article class="sym" id="CHR_Q">
 <h3><a href="#CHR_Q">CHR_Q</a> <i>constant</i></h3>
 <pre>let CHR_Q byte[64] = [17, 18, 24, 47, 99, 99, 99, 99, 18, 21, 26, 66, 99, 99, 99, 99, 24, 26, 56, 99, 99, 99, 99, 99, 47, 66, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99</pre>
 <p>Standard JPEG chrominance quantization base table of 64 entries, scaled by quality before use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L5">hc/lib/gfx/codec_jpeg_enc.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L5">hc/lib/gfx/codec_jpeg_enc.amni:5</a>
 </article>
 <article class="sym" id="DC_LUM_BITS">
 <h3><a href="#DC_LUM_BITS">DC_LUM_BITS</a> <i>constant</i></h3>
 <pre>let DC_LUM_BITS byte[16] = [0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]</pre>
 <p>Huffman code length counts for the standard luminance DC table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L6">hc/lib/gfx/codec_jpeg_enc.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L6">hc/lib/gfx/codec_jpeg_enc.amni:6</a>
 </article>
 <article class="sym" id="DC_LUM_VALS">
 <h3><a href="#DC_LUM_VALS">DC_LUM_VALS</a> <i>constant</i></h3>
 <pre>let DC_LUM_VALS byte[12] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</pre>
 <p>Symbol values for the standard luminance DC Huffman table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L7">hc/lib/gfx/codec_jpeg_enc.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L7">hc/lib/gfx/codec_jpeg_enc.amni:7</a>
 </article>
 <article class="sym" id="DC_CHR_BITS">
 <h3><a href="#DC_CHR_BITS">DC_CHR_BITS</a> <i>constant</i></h3>
 <pre>let DC_CHR_BITS byte[16] = [0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]</pre>
 <p>Huffman code length counts for the standard chrominance DC table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L8">hc/lib/gfx/codec_jpeg_enc.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L8">hc/lib/gfx/codec_jpeg_enc.amni:8</a>
 </article>
 <article class="sym" id="DC_CHR_VALS">
 <h3><a href="#DC_CHR_VALS">DC_CHR_VALS</a> <i>constant</i></h3>
 <pre>let DC_CHR_VALS byte[12] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</pre>
 <p>Symbol values for the standard chrominance DC Huffman table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L9">hc/lib/gfx/codec_jpeg_enc.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L9">hc/lib/gfx/codec_jpeg_enc.amni:9</a>
 </article>
 <article class="sym" id="AC_LUM_BITS">
 <h3><a href="#AC_LUM_BITS">AC_LUM_BITS</a> <i>constant</i></h3>
 <pre>let AC_LUM_BITS byte[16] = [0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d]</pre>
 <p>Huffman code length counts for the standard luminance AC table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L10">hc/lib/gfx/codec_jpeg_enc.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L10">hc/lib/gfx/codec_jpeg_enc.amni:10</a>
 </article>
 <article class="sym" id="AC_LUM_VALS">
 <h3><a href="#AC_LUM_VALS">AC_LUM_VALS</a> <i>constant</i></h3>
 <pre>let AC_LUM_VALS byte[162] = [0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12, 0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08, 0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,</pre>
 <p>Symbol values for the standard luminance AC Huffman table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L11">hc/lib/gfx/codec_jpeg_enc.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L11">hc/lib/gfx/codec_jpeg_enc.amni:11</a>
 </article>
 <article class="sym" id="AC_CHR_BITS">
 <h3><a href="#AC_CHR_BITS">AC_CHR_BITS</a> <i>constant</i></h3>
 <pre>let AC_CHR_BITS byte[16] = [0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77]</pre>
 <p>Huffman code length counts for the standard chrominance AC table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L12">hc/lib/gfx/codec_jpeg_enc.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L12">hc/lib/gfx/codec_jpeg_enc.amni:12</a>
 </article>
 <article class="sym" id="AC_CHR_VALS">
 <h3><a href="#AC_CHR_VALS">AC_CHR_VALS</a> <i>constant</i></h3>
 <pre>let AC_CHR_VALS byte[162] = [0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21, 0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71, 0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91, 0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,</pre>
 <p>Symbol values for the standard chrominance AC Huffman table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L13">hc/lib/gfx/codec_jpeg_enc.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L13">hc/lib/gfx/codec_jpeg_enc.amni:13</a>
 </article>
 <article class="sym" id="put8">
 <h3><a href="#put8">put8</a> <i>function</i></h3>
 <pre>put8(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a single byte to the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L14">hc/lib/gfx/codec_jpeg_enc.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L14">hc/lib/gfx/codec_jpeg_enc.amni:14</a>
 </article>
 <article class="sym" id="put16">
 <h3><a href="#put16">put16</a> <i>function</i></h3>
 <pre>put16(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 16-bit value to the output buffer in big-endian byte order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L17">hc/lib/gfx/codec_jpeg_enc.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L17">hc/lib/gfx/codec_jpeg_enc.amni:17</a>
 </article>
 <article class="sym" id="put_list">
 <h3><a href="#put_list">put_list</a> <i>function</i></h3>
 <pre>put_list(out byte[&gt;..]&amp;, xs int[:])</pre>
 <p>Appends each integer in a list to the output buffer as a byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L21">hc/lib/gfx/codec_jpeg_enc.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L21">hc/lib/gfx/codec_jpeg_enc.amni:21</a>
 </article>
 <article class="sym" id="put_dht">
 <h3><a href="#put_dht">put_dht</a> <i>function</i></h3>
 <pre>put_dht(out byte[&gt;..]&amp;, tc_th int, bits const byte[:], vals const byte[:])</pre>
 <p>Appends a Huffman table definition, with its class and ID byte, to the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L24">hc/lib/gfx/codec_jpeg_enc.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L24">hc/lib/gfx/codec_jpeg_enc.amni:24</a>
 </article>
 <article class="sym" id="HT">
 <h3><a href="#HT">HT</a> <i>type</i></h3>
 <pre>struct HT { code int[256], size int[256] }</pre>
 <p>Huffman lookup table holding the code and bit length for each symbol.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L106">hc/lib/gfx/codec_jpeg_enc.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L106">hc/lib/gfx/codec_jpeg_enc.amni:106</a>
 </article>
 <article class="sym" id="BitW">
 <h3><a href="#BitW">BitW</a> <i>type</i></h3>
 <pre>struct BitW { acc int, n int }</pre>
 <p>Bit writer state holding pending accumulated bits and their count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L107">hc/lib/gfx/codec_jpeg_enc.amni:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L107">hc/lib/gfx/codec_jpeg_enc.amni:107</a>
 </article>
 <article class="sym" id="build_table">
 <h3><a href="#build_table">build_table</a> <i>function</i></h3>
 <pre>build_table(bits const byte[:], vals const byte[:]) HT</pre>
 <p>Builds a Huffman code lookup table from code length counts and symbol values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L108">hc/lib/gfx/codec_jpeg_enc.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L108">hc/lib/gfx/codec_jpeg_enc.amni:108</a>
 </article>
 <article class="sym" id="scaled_q">
 <h3><a href="#scaled_q">scaled_q</a> <i>function</i></h3>
 <pre>scaled_q(base const byte[:], quality int) int[64]</pre>
 <p>Returns a quantization table scaled by quality, with quality clamped to 1 through 100.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L125">hc/lib/gfx/codec_jpeg_enc.amni:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L125">hc/lib/gfx/codec_jpeg_enc.amni:125</a>
 </article>
 <article class="sym" id="cos_table">
 <h3><a href="#cos_table">cos_table</a> <i>function</i></h3>
 <pre>cos_table() real[64]</pre>
 <p>Returns the precomputed cosine table used by the 8x8 discrete cosine transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L135">hc/lib/gfx/codec_jpeg_enc.amni:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L135">hc/lib/gfx/codec_jpeg_enc.amni:135</a>
 </article>
 <article class="sym" id="fdct">
 <h3><a href="#fdct">fdct</a> <i>function</i></h3>
 <pre>fdct(f real[64]&amp;, cs real[:])</pre>
 <p>Performs an in-place forward discrete cosine transform on an 8x8 block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L144">hc/lib/gfx/codec_jpeg_enc.amni:144</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L144">hc/lib/gfx/codec_jpeg_enc.amni:144</a>
 </article>
 <article class="sym" id="transform">
 <h3><a href="#transform">transform</a> <i>function</i></h3>
 <pre>transform(f real[64]&amp;, cs real[:], q int[:], zz int[64]&amp;)</pre>
 <p>Applies the DCT and quantization to a block, storing rounded coefficients in zigzag order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L164">hc/lib/gfx/codec_jpeg_enc.amni:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L164">hc/lib/gfx/codec_jpeg_enc.amni:164</a>
 </article>
 <article class="sym" id="load_y">
 <h3><a href="#load_y">load_y</a> <i>function</i></h3>
 <pre>load_y(f real[64]&amp;, yp real[:], pw int, x0 int, y0 int)</pre>
 <p>Loads an 8x8 block of luminance samples into the working block, shifted by 128.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L172">hc/lib/gfx/codec_jpeg_enc.amni:172</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L172">hc/lib/gfx/codec_jpeg_enc.amni:172</a>
 </article>
 <article class="sym" id="load_c">
 <h3><a href="#load_c">load_c</a> <i>function</i></h3>
 <pre>load_c(f real[64]&amp;, p real[:], pw int, cx0 int, cy0 int)</pre>
 <p>Loads an 8x8 chrominance block by averaging 2x2 pixel groups, shifted by 128.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L179">hc/lib/gfx/codec_jpeg_enc.amni:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L179">hc/lib/gfx/codec_jpeg_enc.amni:179</a>
 </article>
 <article class="sym" id="put_bits">
 <h3><a href="#put_bits">put_bits</a> <i>function</i></h3>
 <pre>put_bits(out byte[&gt;..]&amp;, bw BitW&amp;, code int, size int)</pre>
 <p>Writes the low bits of a code to the bit stream, inserting a zero byte after any 0xFF.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L189">hc/lib/gfx/codec_jpeg_enc.amni:189</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L189">hc/lib/gfx/codec_jpeg_enc.amni:189</a>
 </article>
 <article class="sym" id="flush_bits">
 <h3><a href="#flush_bits">flush_bits</a> <i>function</i></h3>
 <pre>flush_bits(out byte[&gt;..]&amp;, bw BitW&amp;)</pre>
 <p>Pads any remaining partial byte with one bits and writes it to the output.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L201">hc/lib/gfx/codec_jpeg_enc.amni:201</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L201">hc/lib/gfx/codec_jpeg_enc.amni:201</a>
 </article>
 <article class="sym" id="bit_size">
 <h3><a href="#bit_size">bit_size</a> <i>function</i></h3>
 <pre>bit_size(v int) int</pre>
 <p>Returns the number of bits needed to represent the absolute value of an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L207">hc/lib/gfx/codec_jpeg_enc.amni:207</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L207">hc/lib/gfx/codec_jpeg_enc.amni:207</a>
 </article>
 <article class="sym" id="code_block">
 <h3><a href="#code_block">code_block</a> <i>function</i></h3>
 <pre>code_block(zz int[:], pred int&amp;, dc HT&amp;, ac HT&amp;, bw BitW&amp;, out byte[&gt;..]&amp;)</pre>
 <p>Huffman-encodes one quantized block, writing the DC difference and run-length coded AC coefficients.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/dee25bb1f4fd8748ded3c38e030f67a2da7999bd/hc/lib/gfx/codec_jpeg_enc.amni#L216">hc/lib/gfx/codec_jpeg_enc.amni:216</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/gfx/codec_jpeg_enc.amni#L216">hc/lib/gfx/codec_jpeg_enc.amni:216</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
