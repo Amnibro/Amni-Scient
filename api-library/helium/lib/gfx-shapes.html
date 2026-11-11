@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-shapes">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-shapes">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=35d76d55b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=99c39475b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=35d76d55b4'; start({wasm: '/api-library/search.wasm?v=35d76d55b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=99c39475b4'; start({wasm: '/api-library/search.wasm?v=99c39475b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/shapes</h1>
 <p class="lib-lede">Build spheres, planes and boxes in code. They render through <code>gfx.scene3d</code> exactly like loaded models.</p>
-<p class="lib-meta"><code>import gfx.shapes;</code> &middot; <code>shapes::</code> &middot; 11 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.shapes;</code> &middot; <code>shapes::</code> &middot; 11 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#materials">Materials <span class="n">2</span></a></li>
 <li><a href="#primitive-shapes">Primitive Shapes <span class="n">5</span></a></li>
@@ -115,14 +115,14 @@
 <h3><a href="#material">material</a> <i>function</i></h3>
 <pre>material(rgb float3, metallic f32, roughness f32) gltf::Material</pre>
 <p>Returns a material with the given RGB base color, metallic factor and roughness factor, for use with the shape builders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L9">hc/lib/gfx/shapes.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L9">hc/lib/gfx/shapes.amni:9</a>
 </article>
 <article class="sym" id="water_material">
 <h3><a href="#water_material">water_material</a> <i>function</i></h3>
 <pre>water_material(swell f32) gltf::Material</pre>
 <p>Builds a transparent, refractive water material whose surface swell strength is set by the given value.</p>
 <p class="note">Axis-aligned box centred on the origin.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L97">hc/lib/gfx/shapes.amni:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L97">hc/lib/gfx/shapes.amni:97</a>
 </article>
 <h2 id="primitive-shapes">Primitive Shapes <span class="n">5</span></h2>
 <article class="sym" id="sphere">
@@ -130,59 +130,59 @@
 <pre>sphere(radius f32, around int, down int, m gltf::Material) int</pre>
 <p>Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.</p>
 <p class="note">UV sphere: `around` segments in longitude, `down` in latitude.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L50">hc/lib/gfx/shapes.amni:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L50">hc/lib/gfx/shapes.amni:50</a>
 </article>
 <article class="sym" id="plane">
 <h3><a href="#plane">plane</a> <i>function</i></h3>
 <pre>plane(half f32, m gltf::Material) int</pre>
 <p>Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.</p>
 <p class="note">Square in the xz plane facing +y.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L74">hc/lib/gfx/shapes.amni:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L74">hc/lib/gfx/shapes.amni:74</a>
 </article>
 <article class="sym" id="water">
 <h3><a href="#water">water</a> <i>function</i></h3>
 <pre>water(half f32) int</pre>
 <p>Builds a double-sided, transparent water plane of the given half-extent, returning the id of the new mesh asset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L104">hc/lib/gfx/shapes.amni:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L104">hc/lib/gfx/shapes.amni:104</a>
 </article>
 <article class="sym" id="sea">
 <h3><a href="#sea">sea</a> <i>function</i></h3>
 <pre>sea(half f32, n int) int</pre>
 <p>Creates a flat water sheet of half-size extent, subdivided into n cells per side, with swelling waves, returning its asset id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L105">hc/lib/gfx/shapes.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L105">hc/lib/gfx/shapes.amni:105</a>
 </article>
 <article class="sym" id="cube">
 <h3><a href="#cube">cube</a> <i>function</i></h3>
 <pre>cube(half float3, m gltf::Material) int</pre>
 <p>Builds an axis-aligned box centered on the origin with the given half-extents per axis, returning its asset index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L123">hc/lib/gfx/shapes.amni:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L123">hc/lib/gfx/shapes.amni:123</a>
 </article>
 <h2 id="mesh-building">Mesh Building <span class="n">2</span></h2>
 <article class="sym" id="sheet">
 <h3><a href="#sheet">sheet</a> <i>function</i></h3>
 <pre>sheet(n int, o float3, u float3, v float3, m gltf::Material) int</pre>
 <p>Builds an n-by-n grid quad patch from origin o spanning edge vectors u and v, with material m, returning the new asset id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L86">hc/lib/gfx/shapes.amni:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L86">hc/lib/gfx/shapes.amni:86</a>
 </article>
 <article class="sym" id="blade">
 <h3><a href="#blade">blade</a> <i>function</i></h3>
 <pre>blade(height f32, width f32, tip f32, segments int, m gltf::Material) int</pre>
 <p>Builds a flat, double-sided tapered strip mesh of given height, base width and tip width, split into segments, and returns its asset id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L106">hc/lib/gfx/shapes.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L106">hc/lib/gfx/shapes.amni:106</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
 <article class="sym" id="vertex">
 <h3><a href="#vertex">vertex</a> <i>function</i></h3>
 <pre>vertex(p float3, n float3, u f32, v f32, t float4)</pre>
 <p>Appends one vertex with position, normal, texture coordinates and tangent to the shared glTF vertex pool.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L17">hc/lib/gfx/shapes.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L17">hc/lib/gfx/shapes.amni:17</a>
 </article>
 <article class="sym" id="finish">
 <h3><a href="#finish">finish</a> <i>function</i></h3>
 <pre>finish(vfirst int, ifirst int, lo float3, hi float3, m gltf::Material) int</pre>
 <p>Wraps the most recently added vertices and indices into a one-node asset and returns its asset index.</p>
 <p class="note">Wraps vertices [vfirst, end) and indices [ifirst, end) into an asset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/gfx/shapes.amni#L29">hc/lib/gfx/shapes.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/shapes.amni#L29">hc/lib/gfx/shapes.amni:29</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

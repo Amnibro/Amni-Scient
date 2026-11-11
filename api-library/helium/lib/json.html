@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/json">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/json">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=35d76d55b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=99c39475b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=35d76d55b4'; start({wasm: '/api-library/search.wasm?v=35d76d55b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=99c39475b4'; start({wasm: '/api-library/search.wasm?v=99c39475b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>json</h1>
 <p class="lib-lede">Write JSON text, read it piece by piece with a pull reader, or parse it into a small document tree.</p>
-<p class="lib-meta"><code>import json;</code> &middot; <code>json::</code> &middot; 72 functions, 5 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he">Source</a></p>
+<p class="lib-meta"><code>import json;</code> &middot; <code>json::</code> &middot; 72 functions, 5 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#writing-json">Writing JSON <span class="n">8</span></a></li>
 <li><a href="#reading-json">Reading JSON <span class="n">14</span></a></li>
@@ -116,186 +116,186 @@
 <pre>format_escaped(out byte[&gt;..]&amp;, s byte[:])</pre>
 <p>Appends s to out with quotes, backslashes and control bytes escaped as JSON requires, without surrounding quotes.</p>
 <p class="note">s with the escapes JSON needs: quote, backslash and control bytes</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L10">hc/lib/json.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L10">hc/lib/json.he:10</a>
 </article>
 <article class="sym" id="format_string">
 <h3><a href="#format_string">format_string</a> <i>function</i></h3>
 <pre>format_string(out byte[&gt;..]&amp;, s byte[:])</pre>
 <p>Appends s to out as a complete quoted JSON string with escapes applied.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L36">hc/lib/json.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L36">hc/lib/json.he:36</a>
 </article>
 <article class="sym" id="format_key">
 <h3><a href="#format_key">format_key</a> <i>function</i></h3>
 <pre>format_key(out byte[&gt;..]&amp;, key byte[:])</pre>
 <p>Appends an object member name as a quoted string followed by a colon.</p>
 <p class="note">a member name and its colon</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L41">hc/lib/json.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L41">hc/lib/json.he:41</a>
 </article>
 <article class="sym" id="format_bool">
 <h3><a href="#format_bool">format_bool</a> <i>function</i></h3>
 <pre>format_bool(out byte[&gt;..]&amp;, b bool)</pre>
 <p>Appends the JSON literal true or false to out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L44">hc/lib/json.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L44">hc/lib/json.he:44</a>
 </article>
 <article class="sym" id="format_null">
 <h3><a href="#format_null">format_null</a> <i>function</i></h3>
 <pre>format_null(out byte[&gt;..]&amp;)</pre>
 <p>Appends the JSON literal null to out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L45">hc/lib/json.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L45">hc/lib/json.he:45</a>
 </article>
 <article class="sym" id="format_int">
 <h3><a href="#format_int">format_int</a> <i>function</i></h3>
 <pre>format_int(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends an integer to out in decimal form.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L46">hc/lib/json.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L46">hc/lib/json.he:46</a>
 </article>
 <article class="sym" id="format_number">
 <h3><a href="#format_number">format_number</a> <i>function</i></h3>
 <pre>inline format_number(out byte[&gt;..]&amp;, v real, plus_exp bool = false)</pre>
 <p>Appends a real number to the output buffer as JSON text, writing &quot;null&quot; for NaN or infinity and &quot;.0&quot; on whole values; plus_exp adds a &quot;+&quot; to positive exponents.</p>
 <p class="note">a finite number in its shortest exact form: plain decimals for 1e-5 up to 1e16, with &quot;.0&quot; on whole values, and d.ddde&lt;n&gt; outside that range (d.ddde+&lt;n&gt; for positive n with plus_exp, as serde_json writes it). JSON has no NaN or infinity, so those come out as null</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L92">hc/lib/json.he:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L92">hc/lib/json.he:92</a>
 </article>
 <article class="sym" id="format_node">
 <h3><a href="#format_node">format_node</a> <i>function</i></h3>
 <pre>format_node(out byte[&gt;..]&amp;, d Doc&amp;, n int) int</pre>
 <p>Appends node n and its children to out as compact JSON and returns the new length of out.</p>
 <p class="note">writes node n back out as compact JSON</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L590">hc/lib/json.he:590</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L590">hc/lib/json.he:590</a>
 </article>
 <h2 id="reading-json">Reading JSON <span class="n">14</span></h2>
 <article class="sym" id="Reader">
 <h3><a href="#Reader">Reader</a> <i>type</i></h3>
 <pre>struct Reader { text const byte[:], pos int = 0, error byte[&gt;..] = [], error_at int = -1, key byte[&gt;..] = [] }</pre>
 <p>Pull reader over JSON text that tracks its position and keeps the first error with its byte offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L169">hc/lib/json.he:169</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L169">hc/lib/json.he:169</a>
 </article>
 <article class="sym" id="reader">
 <h3><a href="#reader">reader</a> <i>function</i></h3>
 <pre>reader(text const byte[:]) Reader</pre>
 <p>Returns a new reader positioned at the start of text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L171">hc/lib/json.he:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L171">hc/lib/json.he:171</a>
 </article>
 <article class="sym" id="ok">
 <h3><a href="#ok">ok</a> <i>function</i></h3>
 <pre>ok(r Reader&amp;) bool</pre>
 <p>Returns whether the reader has encountered no error so far.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L172">hc/lib/json.he:172</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L172">hc/lib/json.he:172</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(r Reader&amp;, what const byte[:])</pre>
 <p>Records the first error with its byte offset and moves the reader to the end of the text.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L173">hc/lib/json.he:173</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L173">hc/lib/json.he:173</a>
 </article>
 <article class="sym" id="message">
 <h3><a href="#message">message</a> <i>function</i></h3>
 <pre>message(r Reader&amp;) byte[&gt;..]</pre>
 <p>Returns the recorded error as a message including the byte offset where it occurred.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L178">hc/lib/json.he:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L178">hc/lib/json.he:178</a>
 </article>
 <article class="sym" id="finish">
 <h3><a href="#finish">finish</a> <i>function</i></h3>
 <pre>finish(r Reader&amp;) bool</pre>
 <p>Returns true when the text held exactly one value with nothing after it, otherwise records an error.</p>
 <p class="note">true when the text held one value and nothing after it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L185">hc/lib/json.he:185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L185">hc/lib/json.he:185</a>
 </article>
 <article class="sym" id="read_number">
 <h3><a href="#read_number">read_number</a> <i>function</i></h3>
 <pre>read_number(r Reader&amp;) real</pre>
 <p>Reads a JSON number as a real, recording an error and returning 0.0 if none is present.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L231">hc/lib/json.he:231</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L231">hc/lib/json.he:231</a>
 </article>
 <article class="sym" id="read_int">
 <h3><a href="#read_int">read_int</a> <i>function</i></h3>
 <pre>read_int(r Reader&amp;) int</pre>
 <p>Reads a whole-number JSON value as an int, recording an error if it is fractional or out of range.</p>
 <p class="note">a number written as a whole value that fits in an int</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L241">hc/lib/json.he:241</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L241">hc/lib/json.he:241</a>
 </article>
 <article class="sym" id="read_bool">
 <h3><a href="#read_bool">read_bool</a> <i>function</i></h3>
 <pre>read_bool(r Reader&amp;) bool</pre>
 <p>Reads true or false, recording an error and returning false if neither is present.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L253">hc/lib/json.he:253</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L253">hc/lib/json.he:253</a>
 </article>
 <article class="sym" id="read_null">
 <h3><a href="#read_null">read_null</a> <i>function</i></h3>
 <pre>read_null(r Reader&amp;) bool</pre>
 <p>Reads the literal null and returns whether it was present.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L259">hc/lib/json.he:259</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L259">hc/lib/json.he:259</a>
 </article>
 <article class="sym" id="read_string">
 <h3><a href="#read_string">read_string</a> <i>function</i></h3>
 <pre>read_string(r Reader&amp;, scratch byte[&gt;..]&amp;) const byte[:]</pre>
 <p>Reads the string at the current position, decoding escapes into scratch, and returns the decoded bytes.</p>
 <p class="note">the string at r.pos, decoded into scratch</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L320">hc/lib/json.he:320</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L320">hc/lib/json.he:320</a>
 </article>
 <article class="sym" id="each_member">
 <h3><a href="#each_member">each_member</a> <i>function</i></h3>
 <pre>each_member&lt;F&gt;(r Reader&amp;)</pre>
 <p>Calls the block with each member name of an object; the block must read or skip the value.</p>
 <p class="note">calls the block with each member name of an object; the block reads or skips the value</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L326">hc/lib/json.he:326</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L326">hc/lib/json.he:326</a>
 </article>
 <article class="sym" id="each_element">
 <h3><a href="#each_element">each_element</a> <i>function</i></h3>
 <pre>each_element&lt;F&gt;(r Reader&amp;)</pre>
 <p>Calls the block for each element of an array; the block must read or skip the element.</p>
 <p class="note">calls the block for each element of an array; the block reads or skips it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L347">hc/lib/json.he:347</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L347">hc/lib/json.he:347</a>
 </article>
 <article class="sym" id="skip_value">
 <h3><a href="#skip_value">skip_value</a> <i>function</i></h3>
 <pre>skip_value(r Reader&amp;) bool</pre>
 <p>Skips one value of any kind and returns whether the reader is still free of errors.</p>
 <p class="note">steps over one value of any kind; returns whether the reader is still fine</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L364">hc/lib/json.he:364</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L364">hc/lib/json.he:364</a>
 </article>
 <h2 id="document-tree">Document Tree <span class="n">33</span></h2>
 <article class="sym" id="K_NULL">
 <h3><a href="#K_NULL">K_NULL</a> <i>constant</i></h3>
 <pre>K_NULL := 0</pre>
 <p>Node kind constant for a JSON null value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L382">hc/lib/json.he:382</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L382">hc/lib/json.he:382</a>
 </article>
 <article class="sym" id="K_BOOL">
 <h3><a href="#K_BOOL">K_BOOL</a> <i>constant</i></h3>
 <pre>K_BOOL := 1</pre>
 <p>Node kind constant for a JSON boolean value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L383">hc/lib/json.he:383</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L383">hc/lib/json.he:383</a>
 </article>
 <article class="sym" id="K_INT">
 <h3><a href="#K_INT">K_INT</a> <i>constant</i></h3>
 <pre>K_INT := 2</pre>
 <p>Node kind constant for a number written as a whole value that fits in an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L384">hc/lib/json.he:384</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L384">hc/lib/json.he:384</a>
 </article>
 <article class="sym" id="K_NUM">
 <h3><a href="#K_NUM">K_NUM</a> <i>constant</i></h3>
 <pre>K_NUM := 3</pre>
 <p>Node kind constant for a JSON number stored as a real.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L385">hc/lib/json.he:385</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L385">hc/lib/json.he:385</a>
 </article>
 <article class="sym" id="K_STR">
 <h3><a href="#K_STR">K_STR</a> <i>constant</i></h3>
 <pre>K_STR := 4</pre>
 <p>Node kind constant for a JSON string value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L386">hc/lib/json.he:386</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L386">hc/lib/json.he:386</a>
 </article>
 <article class="sym" id="K_ARR">
 <h3><a href="#K_ARR">K_ARR</a> <i>constant</i></h3>
 <pre>K_ARR := 5</pre>
 <p>Node kind constant for a JSON array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L387">hc/lib/json.he:387</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L387">hc/lib/json.he:387</a>
 </article>
 <article class="sym" id="K_OBJ">
 <h3><a href="#K_OBJ">K_OBJ</a> <i>constant</i></h3>
 <pre>K_OBJ := 6</pre>
 <p>Node kind constant for a JSON object.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L388">hc/lib/json.he:388</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L388">hc/lib/json.he:388</a>
 </article>
 <article class="sym" id="parse">
 <h3><a href="#parse">parse</a> <i>function, 2 forms</i></h3>
@@ -304,7 +304,7 @@
 <pre>parse(text const byte[:], doc Node[&gt;..]&amp;, decoded byte[&gt;..]&amp;) Node?, byte[&gt;..]</pre>
 <p>Parses JSON text into nodes appended to doc, returning the root node, or null with an error message on failure.</p>
 <p class="note">parses text into d (cleared first): the root index and &quot;&quot; or -1 and why</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L466">hc/lib/json.he:466</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L466">hc/lib/json.he:466</a>
 </article>
 <article class="sym" id="member">
 <h3><a href="#member">member</a> <i>function, 2 forms</i></h3>
@@ -313,26 +313,26 @@
 <pre>member(n Node?, key byte[:]) Node?</pre>
 <p>Returns the member of an object node with the given key, or null when absent or not an object.</p>
 <p class="note">the member of object n named key, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L475">hc/lib/json.he:475</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L475">hc/lib/json.he:475</a>
 </article>
 <article class="sym" id="element">
 <h3><a href="#element">element</a> <i>function</i></h3>
 <pre>element(d Doc&amp;, n int, k int) int</pre>
 <p>Returns the index of element k of an array, or -1 if there is none.</p>
 <p class="note">element k of array n, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L483">hc/lib/json.he:483</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L483">hc/lib/json.he:483</a>
 </article>
 <article class="sym" id="name_of">
 <h3><a href="#name_of">name_of</a> <i>function</i></h3>
 <pre>name_of(d Doc&amp;, c int) const byte[:]</pre>
 <p>Returns the member name of node c, or an empty string if c is negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L491">hc/lib/json.he:491</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L491">hc/lib/json.he:491</a>
 </article>
 <article class="sym" id="count">
 <h3><a href="#count">count</a> <i>function</i></h3>
 <pre>count(d Doc&amp;, n int) int</pre>
 <p>Returns the number of children of node n, or 0 for an invalid index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L492">hc/lib/json.he:492</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L492">hc/lib/json.he:492</a>
 </article>
 <article class="sym" id="each">
 <h3><a href="#each">each</a> <i>function, 2 forms</i></h3>
@@ -341,13 +341,13 @@
 <pre>each&lt;F&gt;(n Node&amp;)</pre>
 <p>Calls the given block with each child of a node, in order.</p>
 <p class="note">calls the block with each child of n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L494">hc/lib/json.he:494</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L494">hc/lib/json.he:494</a>
 </article>
 <article class="sym" id="kind">
 <h3><a href="#kind">kind</a> <i>function</i></h3>
 <pre>kind(d Doc&amp;, n int) int</pre>
 <p>Returns the kind of node n, or -1 for an invalid index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L499">hc/lib/json.he:499</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L499">hc/lib/json.he:499</a>
 </article>
 <article class="sym" id="as_f64">
 <h3><a href="#as_f64">as_f64</a> <i>function, 2 forms</i></h3>
@@ -355,7 +355,7 @@
 <p>Returns a node's number as a real and true, or 0.0 and false if it is not numeric.</p>
 <pre>as_f64(n Node?) real, bool</pre>
 <p>Returns a node's number as a real with true, or false when it is null or not numeric.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L500">hc/lib/json.he:500</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L500">hc/lib/json.he:500</a>
 </article>
 <article class="sym" id="as_i64">
 <h3><a href="#as_i64">as_i64</a> <i>function, 2 forms</i></h3>
@@ -363,7 +363,7 @@
 <p>Returns a node's whole-number value and true, or 0 and false if it is not an integer.</p>
 <pre>as_i64(n Node?) int, bool</pre>
 <p>Returns a node's value as a signed integer with true, or false when it is null or not an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L504">hc/lib/json.he:504</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L504">hc/lib/json.he:504</a>
 </article>
 <article class="sym" id="as_u64">
 <h3><a href="#as_u64">as_u64</a> <i>function, 2 forms</i></h3>
@@ -371,7 +371,7 @@
 <p>Returns node n of an index-based document as an unsigned integer, with false when it is not a suitable number.</p>
 <pre>as_u64(n Node?) uint, bool</pre>
 <p>Returns a node's value as an unsigned integer with true, or false when null, negative, or not an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L507">hc/lib/json.he:507</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L507">hc/lib/json.he:507</a>
 </article>
 <article class="sym" id="as_bool">
 <h3><a href="#as_bool">as_bool</a> <i>function, 2 forms</i></h3>
@@ -379,7 +379,7 @@
 <p>Returns a node's boolean value and true, or false and false if it is not a boolean.</p>
 <pre>as_bool(n Node?) bool, bool</pre>
 <p>Returns a node's boolean value with true, or false when it is null or not a boolean.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L511">hc/lib/json.he:511</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L511">hc/lib/json.he:511</a>
 </article>
 <article class="sym" id="as_string">
 <h3><a href="#as_string">as_string</a> <i>function, 2 forms</i></h3>
@@ -387,240 +387,240 @@
 <p>Returns a node's string text and true, or an empty string and false if it is not a string.</p>
 <pre>as_string(n Node?) const byte[:], bool</pre>
 <p>Returns a node's string contents with true, or false when it is null or not a string.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L514">hc/lib/json.he:514</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L514">hc/lib/json.he:514</a>
 </article>
 <article class="sym" id="is_null">
 <h3><a href="#is_null">is_null</a> <i>function</i></h3>
 <pre>is_null(d Doc&amp;, n int) bool</pre>
 <p>Returns whether node n is a JSON null.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L517">hc/lib/json.he:517</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L517">hc/lib/json.he:517</a>
 </article>
 <article class="sym" id="set_name">
 <h3><a href="#set_name">set_name</a> <i>function</i></h3>
 <pre>set_name(d Doc&amp;, n int, key const byte[:])</pre>
 <p>Sets the member name of node n, copying the key into the pool first.</p>
 <p class="note">builders for documents assembled or edited in code; text is copied into the pool first, so it may be a slice of the same document</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L520">hc/lib/json.he:520</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L520">hc/lib/json.he:520</a>
 </article>
 <article class="sym" id="new_obj">
 <h3><a href="#new_obj">new_obj</a> <i>function</i></h3>
 <pre>new_obj(d Doc&amp;) int</pre>
 <p>Creates an empty object node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L526">hc/lib/json.he:526</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L526">hc/lib/json.he:526</a>
 </article>
 <article class="sym" id="new_arr">
 <h3><a href="#new_arr">new_arr</a> <i>function</i></h3>
 <pre>new_arr(d Doc&amp;) int</pre>
 <p>Creates an empty array node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L527">hc/lib/json.he:527</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L527">hc/lib/json.he:527</a>
 </article>
 <article class="sym" id="new_null">
 <h3><a href="#new_null">new_null</a> <i>function</i></h3>
 <pre>new_null(d Doc&amp;) int</pre>
 <p>Creates a null node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L528">hc/lib/json.he:528</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L528">hc/lib/json.he:528</a>
 </article>
 <article class="sym" id="new_str">
 <h3><a href="#new_str">new_str</a> <i>function</i></h3>
 <pre>new_str(d Doc&amp;, s const byte[:]) int</pre>
 <p>Creates a string node holding a copy of s and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L529">hc/lib/json.he:529</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L529">hc/lib/json.he:529</a>
 </article>
 <article class="sym" id="new_int">
 <h3><a href="#new_int">new_int</a> <i>function</i></h3>
 <pre>new_int(d Doc&amp;, v int) int</pre>
 <p>Creates an integer node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L537">hc/lib/json.he:537</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L537">hc/lib/json.he:537</a>
 </article>
 <article class="sym" id="new_num">
 <h3><a href="#new_num">new_num</a> <i>function</i></h3>
 <pre>new_num(d Doc&amp;, v real) int</pre>
 <p>Creates a real-number node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L542">hc/lib/json.he:542</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L542">hc/lib/json.he:542</a>
 </article>
 <article class="sym" id="new_bool">
 <h3><a href="#new_bool">new_bool</a> <i>function</i></h3>
 <pre>new_bool(d Doc&amp;, v bool) int</pre>
 <p>Creates a boolean node and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L546">hc/lib/json.he:546</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L546">hc/lib/json.he:546</a>
 </article>
 <article class="sym" id="push_element">
 <h3><a href="#push_element">push_element</a> <i>function</i></h3>
 <pre>push_element(d Doc&amp;, n int, child int) int</pre>
 <p>Appends a child to array n, detaching it from old siblings, and returns the child.</p>
 <p class="note">appends child to array n, detached from any old siblings; returns the child</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L559">hc/lib/json.he:559</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L559">hc/lib/json.he:559</a>
 </article>
 <article class="sym" id="put_member">
 <h3><a href="#put_member">put_member</a> <i>function</i></h3>
 <pre>put_member(d Doc&amp;, n int, key const byte[:], child int) int</pre>
 <p>Sets an object member to child, replacing any existing member of that name in place, and returns the child.</p>
 <p class="note">sets member key of object n to child, replacing an existing member in place; returns the child</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L563">hc/lib/json.he:563</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L563">hc/lib/json.he:563</a>
 </article>
 <article class="sym" id="drop_member">
 <h3><a href="#drop_member">drop_member</a> <i>function</i></h3>
 <pre>drop_member(d Doc&amp;, n int, key const byte[:]) bool</pre>
 <p>Removes the named member from object n and returns true if it was present.</p>
 <p class="note">removes member key from object n; true when it was there</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L577">hc/lib/json.he:577</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L577">hc/lib/json.he:577</a>
 </article>
 <article class="sym" id="Node">
 <h3><a href="#Node">Node</a> <i>type</i></h3>
 <pre>struct Node { next Node&amp;&lt;u32&gt;?, first Node&amp;&lt;u32&gt;?, key const byte[:], val Value }</pre>
 <p>Parsed JSON node linking to its first child and next sibling, with its member key and typed value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L607">hc/lib/json.he:607</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L607">hc/lib/json.he:607</a>
 </article>
 <article class="sym" id="Value">
 <h3><a href="#Value">Value</a> <i>type</i></h3>
 <pre>enum Value { Null, Bool { v bool }, Int { v int }, UInt { v uint }, Num { v real }, Str { s const byte[:] }, Arr { count int }, Obj { count int } }</pre>
 <p>Tagged value of a parsed JSON node: null, bool, signed or unsigned integer, real, string, or array or object with a child count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L608">hc/lib/json.he:608</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L608">hc/lib/json.he:608</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (23)</summary>
 <article class="sym" id="HEXCHARS">
 <h3><a href="#HEXCHARS">HEXCHARS</a> <i>constant</i></h3>
 <pre>HEXCHARS := &quot;0123456789abcdef&quot;</pre>
 <p>Lowercase hexadecimal digit characters used to write \u00XX escapes for control bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L7">hc/lib/json.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L7">hc/lib/json.he:7</a>
 </article>
 <article class="sym" id="DIG2">
 <h3><a href="#DIG2">DIG2</a> <i>constant</i></h3>
 <pre>DIG2 := &quot;00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899&quot;</pre>
 <p>Lookup table of the two-digit decimal strings 00 through 99 used for digit conversion.</p>
 <p class="note">the shortest digits that read back as v (no sign, no zeros at the end) and the power of ten after the first of them: v = d.ddd * 10^e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L50">hc/lib/json.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L50">hc/lib/json.he:50</a>
 </article>
 <article class="sym" id="digits_of">
 <h3><a href="#digits_of">digits_of</a> <i>function</i></h3>
 <pre>digits_of(v real, digits byte[&gt;..]&amp;) int</pre>
 <p>Fills digits with the shortest digit string that reads back as v and returns its decimal exponent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L51">hc/lib/json.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L51">hc/lib/json.he:51</a>
 </article>
 <article class="sym" id="dlen17">
 <h3><a href="#dlen17">dlen17</a> <i>function</i></h3>
 <pre>dlen17(v u64) int</pre>
 <p>Returns the number of decimal digits in a value of up to 17 digits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L80">hc/lib/json.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L80">hc/lib/json.he:80</a>
 </article>
 <article class="sym" id="swar8">
 <h3><a href="#swar8">swar8</a> <i>function</i></h3>
 <pre>swar8(x u64) u64</pre>
 <p>Converts eight decimal digits packed in an integer into their ASCII characters in one word.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L84">hc/lib/json.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L84">hc/lib/json.he:84</a>
 </article>
 <article class="sym" id="format_finite">
 <h3><a href="#format_finite">format_finite</a> <i>function</i></h3>
 <pre>format_finite(out byte[&gt;..]&amp;, b uint, plus_exp bool)</pre>
 <p>Appends the shortest-digit form of a finite real, given its raw bits, to the output buffer; helper for format_number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L95">hc/lib/json.he:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L95">hc/lib/json.he:95</a>
 </article>
 <article class="sym" id="white">
 <h3><a href="#white">white</a> <i>function</i></h3>
 <pre>white(c byte) bool</pre>
 <p>Returns whether a byte is JSON white space.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L179">hc/lib/json.he:179</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L179">hc/lib/json.he:179</a>
 </article>
 <article class="sym" id="peek">
 <h3><a href="#peek">peek</a> <i>function</i></h3>
 <pre>peek(r Reader&amp;) byte</pre>
 <p>Skips white space and returns the next byte, or 0 at the end of the text.</p>
 <p class="note">the next byte that is not white space, or 0 at the end</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L181">hc/lib/json.he:181</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L181">hc/lib/json.he:181</a>
 </article>
 <article class="sym" id="expect">
 <h3><a href="#expect">expect</a> <i>function</i></h3>
 <pre>expect(r Reader&amp;, c byte) bool</pre>
 <p>Consumes the expected byte after white space, or records an error and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L188">hc/lib/json.he:188</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L188">hc/lib/json.he:188</a>
 </article>
 <article class="sym" id="literal">
 <h3><a href="#literal">literal</a> <i>function</i></h3>
 <pre>literal(r Reader&amp;, word const byte[:]) bool</pre>
 <p>Consumes the given word at the current position, or records an error and returns false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L198">hc/lib/json.he:198</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L198">hc/lib/json.he:198</a>
 </article>
 <article class="sym" id="number_end">
 <h3><a href="#number_end">number_end</a> <i>function</i></h3>
 <pre>number_end(r Reader&amp;) int, bool</pre>
 <p>Finds the end of a JSON number at the current position and whether it had a fraction or exponent, or -1.</p>
 <p class="note">the extent of a number at r.pos by the JSON grammar; the end and whether it had a fraction or exponent, or -1 when there is no number</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L208">hc/lib/json.he:208</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L208">hc/lib/json.he:208</a>
 </article>
 <article class="sym" id="hex4">
 <h3><a href="#hex4">hex4</a> <i>function</i></h3>
 <pre>hex4(t byte[:], at int) int</pre>
 <p>Parses four hexadecimal digits at a position into a value, or returns -1 if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L261">hc/lib/json.he:261</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L261">hc/lib/json.he:261</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(r Reader&amp;, into byte[&gt;..]&amp;) bool</pre>
 <p>Decodes the JSON string at the current position into a cleared buffer, returning false on error.</p>
 <p class="note">decodes the string at r.pos into into (cleared first); false on a problem</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L272">hc/lib/json.he:272</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L272">hc/lib/json.he:272</a>
 </article>
 <article class="sym" id="DocNode">
 <h3><a href="#DocNode">DocNode</a> <i>type</i></h3>
 <pre>struct DocNode { kind int = 0, num real = 0.0, whole int = 0, at int = 0, len int = 0, nat int = 0, nlen int = 0, first int = -1, next int = -1, count int = 0 }</pre>
 <p>Internal index-based node record holding kind, numeric value, pool offsets for text and key, and sibling links for a parsed document.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L389">hc/lib/json.he:389</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L389">hc/lib/json.he:389</a>
 </article>
 <article class="sym" id="Doc">
 <h3><a href="#Doc">Doc</a> <i>type</i></h3>
 <pre>struct Doc { nodes DocNode[&gt;..] = [], pool byte[&gt;..] = [] }</pre>
 <p>Internal index-based document holding a node list and a shared byte pool for strings and keys.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L390">hc/lib/json.he:390</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L390">hc/lib/json.he:390</a>
 </article>
 <article class="sym" id="text_of">
 <h3><a href="#text_of">text_of</a> <i>function</i></h3>
 <pre>text_of(d Doc&amp;, n int) const byte[:]</pre>
 <p>Returns the string text stored for node n from the pool.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L391">hc/lib/json.he:391</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L391">hc/lib/json.he:391</a>
 </article>
 <article class="sym" id="key_of">
 <h3><a href="#key_of">key_of</a> <i>function</i></h3>
 <pre>key_of(d Doc&amp;, n int) const byte[:]</pre>
 <p>Returns the member name stored for node n from the pool.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L392">hc/lib/json.he:392</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L392">hc/lib/json.he:392</a>
 </article>
 <article class="sym" id="add_node">
 <h3><a href="#add_node">add_node</a> <i>function</i></h3>
 <pre>add_node(d Doc&amp;, kind int) int</pre>
 <p>Appends a new node of the given kind and returns its index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L394">hc/lib/json.he:394</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L394">hc/lib/json.he:394</a>
 </article>
 <article class="sym" id="attach">
 <h3><a href="#attach">attach</a> <i>function</i></h3>
 <pre>attach(d Doc&amp;, parent int, prev int, child int) int</pre>
 <p>Links child after prev under parent, increments the parent's count, and returns the child.</p>
 <p class="note">links child after prev under parent; returns the child</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L399">hc/lib/json.he:399</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L399">hc/lib/json.he:399</a>
 </article>
 <article class="sym" id="value">
 <h3><a href="#value">value</a> <i>function</i></h3>
 <pre>value(r Reader&amp;, d Doc&amp;, depth int) int</pre>
 <p>Reads one value into the document, returning its node index or -1 on error or excessive nesting.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L404">hc/lib/json.he:404</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L404">hc/lib/json.he:404</a>
 </article>
 <article class="sym" id="digits_u64">
 <h3><a href="#digits_u64">digits_u64</a> <i>function</i></h3>
 <pre>digits_u64(text const byte[:], from int, to int) uint, bool</pre>
 <p>Parses a decimal digit range into an unsigned integer, returning false when empty, malformed, leading-zero, or overflowing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L454">hc/lib/json.he:454</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L454">hc/lib/json.he:454</a>
 </article>
 <article class="sym" id="last_of">
 <h3><a href="#last_of">last_of</a> <i>function</i></h3>
 <pre>last_of(d Doc&amp;, n int) int</pre>
 <p>Returns the last child of node n, or -1 if it has none.</p>
 <p class="note">the last child of n, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L551">hc/lib/json.he:551</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L551">hc/lib/json.he:551</a>
 </article>
 <article class="sym" id="value_of">
 <h3><a href="#value_of">value_of</a> <i>function</i></h3>
 <pre>value_of(n DocNode&amp;, pool const byte[:]) Value</pre>
 <p>Converts an internal document node and its string pool into a typed Value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/json.he#L609">hc/lib/json.he:609</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/json.he#L609">hc/lib/json.he:609</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

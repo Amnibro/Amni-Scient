@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/std">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/std">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=35d76d55b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=99c39475b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=35d76d55b4'; start({wasm: '/api-library/search.wasm?v=35d76d55b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=99c39475b4'; start({wasm: '/api-library/search.wasm?v=99c39475b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>std</h1>
 <p class="lib-lede">The library every program sees without importing it: numbers, arrays, sorting, heaps, strings, parsing, printing and random numbers.</p>
-<p class="lib-meta">Always available, no import needed &middot; 346 functions, 5 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he">Source</a></p>
+<p class="lib-meta">Always available, no import needed &middot; 346 functions, 5 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>std: the library every Helium program sees without importing it.
 Sections, in order: scalars, hashing, slices, array edits, sorting, heaps,
 strings, characters, numbers in and out, random numbers, byte sets, tuples,
@@ -162,32 +162,32 @@ and the helpers the Python dialect lowers to.
 <h3><a href="#INF">INF</a> <i>constant</i></h3>
 <pre>INF := 1.0e308 * 10.0</pre>
 <p>Constant for positive infinity as a real value, computed by overflowing a large literal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L6">hc/lib/std.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L6">hc/lib/std.he:6</a>
 </article>
 <article class="sym" id="EULER">
 <h3><a href="#EULER">EULER</a> <i>constant</i></h3>
 <pre>EULER := 2.718281828459045</pre>
 <p>Constant for Euler's number e as a real value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L7">hc/lib/std.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L7">hc/lib/std.he:7</a>
 </article>
 <h2 id="bit-operations">Bit Operations <span class="n">3</span></h2>
 <article class="sym" id="popcount">
 <h3><a href="#popcount">popcount</a> <i>function</i></h3>
 <pre>popcount(x uint) int</pre>
 <p>Returns the number of set bits in an unsigned integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L11">hc/lib/std.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L11">hc/lib/std.he:11</a>
 </article>
 <article class="sym" id="clz">
 <h3><a href="#clz">clz</a> <i>function</i></h3>
 <pre>clz(x uint) int</pre>
 <p>Returns the number of leading zero bits in an unsigned integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L12">hc/lib/std.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L12">hc/lib/std.he:12</a>
 </article>
 <article class="sym" id="ctz">
 <h3><a href="#ctz">ctz</a> <i>function</i></h3>
 <pre>ctz(x uint) int</pre>
 <p>Returns the number of trailing zero bits in an unsigned integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L13">hc/lib/std.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L13">hc/lib/std.he:13</a>
 </article>
 <h2 id="powers-and-roots">Powers and Roots <span class="n">2</span></h2>
 <article class="sym" id="pow">
@@ -200,14 +200,14 @@ and the helpers the Python dialect lowers to.
 <p>Returns the integer b raised to the non-negative power e.</p>
 <pre>pow(b int, e int, m int) int</pre>
 <p>Returns the integer b raised to the power e modulo m using repeated squaring.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L15">hc/lib/std.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L15">hc/lib/std.he:15</a>
 </article>
 <article class="sym" id="isqrt">
 <h3><a href="#isqrt">isqrt</a> <i>function</i></h3>
 <pre>isqrt(n int) int</pre>
 <p>Returns the floor of the square root of n, for n of zero or more.</p>
 <p class="note">floor of the square root, for n &gt;= 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L99">hc/lib/std.he:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L99">hc/lib/std.he:99</a>
 </article>
 <h2 id="min-and-max">Min and Max <span class="n">5</span></h2>
 <article class="sym" id="min">
@@ -222,7 +222,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns the smallest element of a non-empty slice.</p>
 <pre>min&lt;T, F&gt;(xs T[:]) T</pre>
 <p>Returns the smallest element of a non-empty slice, using a block that says whether a orders before b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L41">hc/lib/std.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L41">hc/lib/std.he:41</a>
 </article>
 <article class="sym" id="max">
 <h3><a href="#max">max</a> <i>function, 5 forms</i></h3>
@@ -236,26 +236,26 @@ and the helpers the Python dialect lowers to.
 <p>Returns the largest element of a non-empty slice.</p>
 <pre>max&lt;T, F&gt;(xs T[:]) T</pre>
 <p>Returns the largest element of a non-empty slice, using a block that says whether a orders before b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L42">hc/lib/std.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L42">hc/lib/std.he:42</a>
 </article>
 <article class="sym" id="clamp">
 <h3><a href="#clamp">clamp</a> <i>function</i></h3>
 <pre>clamp&lt;T&gt;(x T, lo T, hi T) T</pre>
 <p>Returns x limited to the range from lo to hi, keeping the sign of negative zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L47">hc/lib/std.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L47">hc/lib/std.he:47</a>
 </article>
 <article class="sym" id="min_by">
 <h3><a href="#min_by">min_by</a> <i>function</i></h3>
 <pre>min_by&lt;T, F&gt;(xs T[:]) int</pre>
 <p>Returns the index of the element with the smallest key from the block, or -1 if empty.</p>
 <p class="note">index of the element with the smallest (largest) key; the block gives the key</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L252">hc/lib/std.he:252</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L252">hc/lib/std.he:252</a>
 </article>
 <article class="sym" id="max_by">
 <h3><a href="#max_by">max_by</a> <i>function</i></h3>
 <pre>max_by&lt;T, F&gt;(xs T[:]) int</pre>
 <p>Returns the index of the element with the largest key from the block, or -1 if empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L257">hc/lib/std.he:257</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L257">hc/lib/std.he:257</a>
 </article>
 <h2 id="basic-arithmetic">Basic Arithmetic <span class="n">4</span></h2>
 <article class="sym" id="abs">
@@ -263,7 +263,7 @@ and the helpers the Python dialect lowers to.
 <pre>abs&lt;T&gt;(x T) T</pre>
 <p>Returns the absolute value of a number.</p>
 <p class="note">(for floats this keeps the sign of -0.0, which is not below zero)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L52">hc/lib/std.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L52">hc/lib/std.he:52</a>
 </article>
 <article class="sym" id="sign">
 <h3><a href="#sign">sign</a> <i>function, 3 forms</i></h3>
@@ -273,7 +273,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns -1.0, 1.0 or x itself when zero, giving the sign of a real.</p>
 <pre>sign(x f32) f32</pre>
 <p>Returns -1.0, 1.0 or x itself when zero, giving the sign of an f32.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L53">hc/lib/std.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L53">hc/lib/std.he:53</a>
 </article>
 <article class="sym" id="lerp">
 <h3><a href="#lerp">lerp</a> <i>function, 2 forms</i></h3>
@@ -281,14 +281,14 @@ and the helpers the Python dialect lowers to.
 <p>Returns the linear interpolation between a and b at parameter t for reals.</p>
 <pre>lerp(a f32, b f32, t f32) f32</pre>
 <p>Returns the linear interpolation between a and b at parameter t for f32 values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L65">hc/lib/std.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L65">hc/lib/std.he:65</a>
 </article>
 <article class="sym" id="swap">
 <h3><a href="#swap">swap</a> <i>function</i></h3>
 <pre>swap&lt;T&gt;(a T&amp;, b T&amp;)</pre>
 <p>Swaps the values of two variables passed by reference.</p>
 <p class="note">(a typed local owns a copy; an untyped one would alias)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L68">hc/lib/std.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L68">hc/lib/std.he:68</a>
 </article>
 <h2 id="integer-division">Integer Division <span class="n">2</span></h2>
 <article class="sym" id="rem">
@@ -296,14 +296,14 @@ and the helpers the Python dialect lowers to.
 <pre>rem&lt;T&gt;(a T, b T) T</pre>
 <p>Returns the remainder of a divided by b, taking the sign of a.</p>
 <p class="note">remainder that takes the sign of a (Helium's % is Euclidean)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L73">hc/lib/std.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L73">hc/lib/std.he:73</a>
 </article>
 <article class="sym" id="div_euclid">
 <h3><a href="#div_euclid">div_euclid</a> <i>function</i></h3>
 <pre>div_euclid&lt;T&gt;(a T, b T) T</pre>
 <p>Returns the quotient of a and b rounded so the remainder is never negative.</p>
 <p class="note">quotient rounded so that the remainder is never negative</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L75">hc/lib/std.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L75">hc/lib/std.he:75</a>
 </article>
 <h2 id="integer-math">Integer Math <span class="n">3</span></h2>
 <article class="sym" id="next_pow2">
@@ -311,51 +311,51 @@ and the helpers the Python dialect lowers to.
 <pre>next_pow2(x int) int</pre>
 <p>Returns the smallest power of two that is at least x, or 1 for x of 1 or less.</p>
 <p class="note">smallest power of two that is at least x (1 for x &lt;= 1)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L80">hc/lib/std.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L80">hc/lib/std.he:80</a>
 </article>
 <article class="sym" id="gcd">
 <h3><a href="#gcd">gcd</a> <i>function</i></h3>
 <pre>gcd(a int, b int) int</pre>
 <p>Returns the greatest common divisor of two integers, always non-negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L106">hc/lib/std.he:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L106">hc/lib/std.he:106</a>
 </article>
 <article class="sym" id="lcm">
 <h3><a href="#lcm">lcm</a> <i>function</i></h3>
 <pre>lcm(a int, b int) int</pre>
 <p>Returns the least common multiple of two integers, or 0 if either is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L113">hc/lib/std.he:113</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L113">hc/lib/std.he:113</a>
 </article>
 <h2 id="combinatorics">Combinatorics <span class="n">3</span></h2>
 <article class="sym" id="factorial">
 <h3><a href="#factorial">factorial</a> <i>function</i></h3>
 <pre>factorial(n int) int</pre>
 <p>Returns the factorial of n as an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L114">hc/lib/std.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L114">hc/lib/std.he:114</a>
 </article>
 <article class="sym" id="perm">
 <h3><a href="#perm">perm</a> <i>function</i></h3>
 <pre>perm(n int, k int) int</pre>
 <p>Returns the number of ordered selections of k items from n, or 0 if k is out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L118">hc/lib/std.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L118">hc/lib/std.he:118</a>
 </article>
 <article class="sym" id="comb">
 <h3><a href="#comb">comb</a> <i>function</i></h3>
 <pre>comb(n int, k int) int</pre>
 <p>Returns the number of unordered selections of k items from n, or 0 if k is out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L123">hc/lib/std.he:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L123">hc/lib/std.he:123</a>
 </article>
 <h2 id="rounding">Rounding <span class="n">2</span></h2>
 <article class="sym" id="ifloor">
 <h3><a href="#ifloor">ifloor</a> <i>function</i></h3>
 <pre>ifloor(x real) int</pre>
 <p>Returns the largest integer not greater than a real value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L129">hc/lib/std.he:129</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L129">hc/lib/std.he:129</a>
 </article>
 <article class="sym" id="iceil">
 <h3><a href="#iceil">iceil</a> <i>function</i></h3>
 <pre>iceil(x real) int</pre>
 <p>Returns the smallest integer not less than a real value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L130">hc/lib/std.he:130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L130">hc/lib/std.he:130</a>
 </article>
 <h2 id="hashing">Hashing <span class="n">3</span></h2>
 <article class="sym" id="hash_mix">
@@ -363,13 +363,13 @@ and the helpers the Python dialect lowers to.
 <pre>hash_mix(x uint) uint</pre>
 <p>Returns a well-mixed 64-bit hash of an unsigned value so every input bit affects every output bit.</p>
 <p class="note">a 64-bit finalizer: every input bit reaches every output bit</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L135">hc/lib/std.he:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L135">hc/lib/std.he:135</a>
 </article>
 <article class="sym" id="hash_combine">
 <h3><a href="#hash_combine">hash_combine</a> <i>function</i></h3>
 <pre>hash_combine(seed uint, h uint) uint</pre>
 <p>Returns a new hash combining a running seed with another hash value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L141">hc/lib/std.he:141</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L141">hc/lib/std.he:141</a>
 </article>
 <article class="sym" id="hash">
 <h3><a href="#hash">hash</a> <i>function, 15 forms</i></h3>
@@ -403,7 +403,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a hash of a three-element tuple by combining the hashes of its fields.</p>
 <pre>hash&lt;A, B, C, D&gt;(t tuple4&lt;A, B, C, D&gt;) uint</pre>
 <p>Returns a hash of a four-element tuple by combining the hashes of its fields.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L142">hc/lib/std.he:142</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L142">hc/lib/std.he:142</a>
 </article>
 <h2 id="searching">Searching <span class="n">7</span></h2>
 <article class="sym" id="contains">
@@ -412,7 +412,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns true if the slice contains an element equal to v.</p>
 <pre>contains(s byte[:], sub byte[:]) bool</pre>
 <p>Returns true if the byte string contains sub as a contiguous run.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L171">hc/lib/std.he:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L171">hc/lib/std.he:171</a>
 </article>
 <article class="sym" id="find">
 <h3><a href="#find">find</a> <i>function, 4 forms</i></h3>
@@ -425,13 +425,13 @@ and the helpers the Python dialect lowers to.
 <pre>find&lt;T, F&gt;(xs T[:]) T?</pre>
 <p>Returns the first element the block accepts, or null if none does.</p>
 <p class="note">position of the first element equal to v, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L176">hc/lib/std.he:176</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L176">hc/lib/std.he:176</a>
 </article>
 <article class="sym" id="rfind">
 <h3><a href="#rfind">rfind</a> <i>function</i></h3>
 <pre>rfind&lt;T&gt;(xs T[:], sub T[:]) int</pre>
 <p>Returns the position of the last run equal to sub, or -1 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L195">hc/lib/std.he:195</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L195">hc/lib/std.he:195</a>
 </article>
 <article class="sym" id="index">
 <h3><a href="#index">index</a> <i>function, 2 forms</i></h3>
@@ -439,25 +439,25 @@ and the helpers the Python dialect lowers to.
 <p>Returns the position of the first element equal to v, or -1 if absent.</p>
 <pre>index&lt;T&gt;(xs T[:], sub T[:]) int</pre>
 <p>Returns the position of the first run equal to sub, or -1 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L201">hc/lib/std.he:201</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L201">hc/lib/std.he:201</a>
 </article>
 <article class="sym" id="position">
 <h3><a href="#position">position</a> <i>function</i></h3>
 <pre>position&lt;T&gt;(xs T[:], v T) int</pre>
 <p>Returns the position of the first element equal to v, or -1 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L203">hc/lib/std.he:203</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L203">hc/lib/std.he:203</a>
 </article>
 <article class="sym" id="find_index">
 <h3><a href="#find_index">find_index</a> <i>function</i></h3>
 <pre>find_index&lt;T, F&gt;(xs T[:]) int</pre>
 <p>Returns the position of the first element the block accepts, or -1 if none does.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L204">hc/lib/std.he:204</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L204">hc/lib/std.he:204</a>
 </article>
 <article class="sym" id="starts_with">
 <h3><a href="#starts_with">starts_with</a> <i>function</i></h3>
 <pre>starts_with&lt;T&gt;(xs T[:], p T[:]) bool</pre>
 <p>Returns true if the slice begins with the elements of p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L278">hc/lib/std.he:278</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L278">hc/lib/std.he:278</a>
 </article>
 <h2 id="slice-testing">Slice Testing <span class="n">5</span></h2>
 <article class="sym" id="any">
@@ -466,7 +466,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns true if the block accepts at least one element of the slice.</p>
 <pre>any(xs bool[:]) bool</pre>
 <p>Returns true if any bool in the slice is true.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L207">hc/lib/std.he:207</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L207">hc/lib/std.he:207</a>
 </article>
 <article class="sym" id="all">
 <h3><a href="#all">all</a> <i>function, 2 forms</i></h3>
@@ -474,25 +474,25 @@ and the helpers the Python dialect lowers to.
 <p>Returns true if the block accepts every element of the slice, including when empty.</p>
 <pre>all(xs bool[:]) bool</pre>
 <p>Returns true if every bool in the slice is true, including when empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L210">hc/lib/std.he:210</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L210">hc/lib/std.he:210</a>
 </article>
 <article class="sym" id="ends_with">
 <h3><a href="#ends_with">ends_with</a> <i>function</i></h3>
 <pre>ends_with&lt;T&gt;(xs T[:], p T[:]) bool</pre>
 <p>Reports whether a slice ends with the given suffix slice, returning false when the suffix is longer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L279">hc/lib/std.he:279</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L279">hc/lib/std.he:279</a>
 </article>
 <article class="sym" id="startswith">
 <h3><a href="#startswith">startswith</a> <i>function</i></h3>
 <pre>startswith(s byte[:], p byte[:]) bool</pre>
 <p>Reports whether a byte string begins with the given prefix, as a Python-style alias of starts_with.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L280">hc/lib/std.he:280</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L280">hc/lib/std.he:280</a>
 </article>
 <article class="sym" id="endswith">
 <h3><a href="#endswith">endswith</a> <i>function</i></h3>
 <pre>endswith(s byte[:], p byte[:]) bool</pre>
 <p>Reports whether a byte string ends with the given suffix, as a Python-style alias of ends_with.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L281">hc/lib/std.he:281</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L281">hc/lib/std.he:281</a>
 </article>
 <h2 id="counting">Counting <span class="n">1</span></h2>
 <article class="sym" id="count">
@@ -503,27 +503,27 @@ and the helpers the Python dialect lowers to.
 <p>Returns how many elements of the slice the block accepts.</p>
 <pre>count(s byte[:], sub byte[:]) int</pre>
 <p>Returns the number of non-overlapping occurrences of sub in the byte string.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L219">hc/lib/std.he:219</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L219">hc/lib/std.he:219</a>
 </article>
 <h2 id="slice-access">Slice Access <span class="n">3</span></h2>
 <article class="sym" id="last">
 <h3><a href="#last">last</a> <i>function</i></h3>
 <pre>last&lt;T&gt;(xs T[:]) T&amp;</pre>
 <p>Returns a reference to the last element of the slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L262">hc/lib/std.he:262</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L262">hc/lib/std.he:262</a>
 </article>
 <article class="sym" id="elem">
 <h3><a href="#elem">elem</a> <i>function</i></h3>
 <pre>elem&lt;T&gt;(xs T[:], i int) T</pre>
 <p>Returns the element at index i of the slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L263">hc/lib/std.he:263</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L263">hc/lib/std.he:263</a>
 </article>
 <article class="sym" id="taken">
 <h3><a href="#taken">taken</a> <i>function</i></h3>
 <pre>taken&lt;T&gt;(xs T[:], i int) T</pre>
 <p>Returns an owned copy of the element at index i.</p>
 <p class="note">an owned copy of xs[i]</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L345">hc/lib/std.he:345</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L345">hc/lib/std.he:345</a>
 </article>
 <h2 id="binary-search">Binary Search <span class="n">2</span></h2>
 <article class="sym" id="lower_bound">
@@ -531,47 +531,47 @@ and the helpers the Python dialect lowers to.
 <pre>lower_bound&lt;T, F&gt;(xs T[:]) int</pre>
 <p>Returns the first index where the block turns false, for a block true on a prefix.</p>
 <p class="note">first index where the block turns false, for a block true on a prefix</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L265">hc/lib/std.he:265</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L265">hc/lib/std.he:265</a>
 </article>
 <article class="sym" id="binary_search">
 <h3><a href="#binary_search">binary_search</a> <i>function</i></h3>
 <pre>binary_search&lt;T&gt;(xs T[:], v T) int, bool</pre>
 <p>Returns where v is or would be inserted in a sorted slice, and whether it is present.</p>
 <p class="note">in a sorted slice: where v is or would go, and whether it is there</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L272">hc/lib/std.he:272</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L272">hc/lib/std.he:272</a>
 </article>
 <h2 id="iteration">Iteration <span class="n">2</span></h2>
 <article class="sym" id="each_rev">
 <h3><a href="#each_rev">each_rev</a> <i>function</i></h3>
 <pre>each_rev&lt;T, F&gt;(xs T[:])</pre>
 <p>Calls the block on each element of a slice, from last to first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L282">hc/lib/std.he:282</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L282">hc/lib/std.he:282</a>
 </article>
 <article class="sym" id="each_chunk">
 <h3><a href="#each_chunk">each_chunk</a> <i>function</i></h3>
 <pre>each_chunk&lt;T, F&gt;(xs T[:], n int)</pre>
 <p>Calls the block with consecutive sub-slices of n elements, where the last piece may be shorter.</p>
 <p class="note">calls the block with consecutive pieces of n elements (the last may be shorter)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L288">hc/lib/std.he:288</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L288">hc/lib/std.he:288</a>
 </article>
 <h2 id="slice-transforms">Slice Transforms <span class="n">7</span></h2>
 <article class="sym" id="map">
 <h3><a href="#map">map</a> <i>function</i></h3>
 <pre>map&lt;T, F&gt;(xs T[:])</pre>
 <p>Returns a new array holding the block's result for each element of a slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L294">hc/lib/std.he:294</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L294">hc/lib/std.he:294</a>
 </article>
 <article class="sym" id="filter">
 <h3><a href="#filter">filter</a> <i>function</i></h3>
 <pre>filter&lt;T, F&gt;(xs T[:]) T[&gt;..]</pre>
 <p>Returns a new array of the elements for which the block returns true, in order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L298">hc/lib/std.he:298</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L298">hc/lib/std.he:298</a>
 </article>
 <article class="sym" id="fold">
 <h3><a href="#fold">fold</a> <i>function</i></h3>
 <pre>fold&lt;T, A, F&gt;(xs T[:], acc A) A</pre>
 <p>Combines the elements of a slice into one value by applying the block to a running accumulator, starting from acc.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L302">hc/lib/std.he:302</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L302">hc/lib/std.he:302</a>
 </article>
 <article class="sym" id="concat">
 <h3><a href="#concat">concat</a> <i>function, 5 forms</i></h3>
@@ -585,13 +585,13 @@ and the helpers the Python dialect lowers to.
 <p>Returns a new array holding a followed by the byte b.</p>
 <pre>concat(a byte, b byte) byte[&gt;..]</pre>
 <p>Returns a new array holding the two bytes a and b.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L322">hc/lib/std.he:322</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L322">hc/lib/std.he:322</a>
 </article>
 <article class="sym" id="reversed">
 <h3><a href="#reversed">reversed</a> <i>function</i></h3>
 <pre>reversed&lt;T&gt;(xs T[:]) T[&gt;..]</pre>
 <p>Returns a new array with the elements of a slice in reverse order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L335">hc/lib/std.he:335</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L335">hc/lib/std.he:335</a>
 </article>
 <article class="sym" id="list">
 <h3><a href="#list">list</a> <i>function, 2 forms</i></h3>
@@ -599,71 +599,71 @@ and the helpers the Python dialect lowers to.
 <p>Returns a new growable array copied from a slice.</p>
 <pre>list(xs const byte[:][:]) byte[&gt;..][&gt;..]</pre>
 <p>Returns a growable list of owned strings copied from a list of string slices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L348">hc/lib/std.he:348</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L348">hc/lib/std.he:348</a>
 </article>
 <article class="sym" id="zip">
 <h3><a href="#zip">zip</a> <i>function</i></h3>
 <pre>zip&lt;A, B&gt;(a A[:], b B[:]) tuple2&lt;A, B&gt;[&gt;..]</pre>
 <p>Returns an array of pairs from two slices, stopping at the shorter length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L357">hc/lib/std.he:357</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L357">hc/lib/std.he:357</a>
 </article>
 <h2 id="slice-statistics">Slice Statistics <span class="n">4</span></h2>
 <article class="sym" id="sum">
 <h3><a href="#sum">sum</a> <i>function</i></h3>
 <pre>sum&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the sum of all elements, or the default value of the type for an empty slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L306">hc/lib/std.he:306</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L306">hc/lib/std.he:306</a>
 </article>
 <article class="sym" id="prod">
 <h3><a href="#prod">prod</a> <i>function</i></h3>
 <pre>prod&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the product of all elements, or one for an empty slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L310">hc/lib/std.he:310</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L310">hc/lib/std.he:310</a>
 </article>
 <article class="sym" id="mean">
 <h3><a href="#mean">mean</a> <i>function</i></h3>
 <pre>mean&lt;T&gt;(xs T[:]) real</pre>
 <p>Returns the arithmetic mean of the elements as a real number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L314">hc/lib/std.he:314</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L314">hc/lib/std.he:314</a>
 </article>
 <article class="sym" id="median">
 <h3><a href="#median">median</a> <i>function</i></h3>
 <pre>median&lt;T&gt;(xs T[:]) real</pre>
 <p>Returns the median of the elements as a real, averaging the two middle values for even lengths.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L318">hc/lib/std.he:318</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L318">hc/lib/std.he:318</a>
 </article>
 <h2 id="slice-editing">Slice Editing <span class="n">4</span></h2>
 <article class="sym" id="fill">
 <h3><a href="#fill">fill</a> <i>function</i></h3>
 <pre>fill&lt;T&gt;(xs T[:], v T)</pre>
 <p>Sets every element of a slice to the given value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L327">hc/lib/std.he:327</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L327">hc/lib/std.he:327</a>
 </article>
 <article class="sym" id="copy_into">
 <h3><a href="#copy_into">copy_into</a> <i>function</i></h3>
 <pre>copy_into&lt;T&gt;(dst T[:], src T[:])</pre>
 <p>Copies elements from src into dst, stopping at the shorter of the two lengths.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L328">hc/lib/std.he:328</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L328">hc/lib/std.he:328</a>
 </article>
 <article class="sym" id="reverse">
 <h3><a href="#reverse">reverse</a> <i>function</i></h3>
 <pre>reverse&lt;T&gt;(xs T[:])</pre>
 <p>Reverses the elements of a slice in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L329">hc/lib/std.he:329</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L329">hc/lib/std.he:329</a>
 </article>
 <article class="sym" id="swap_at">
 <h3><a href="#swap_at">swap_at</a> <i>function</i></h3>
 <pre>swap_at&lt;T&gt;(xs T[:], i int, j int)</pre>
 <p>Swaps the elements at two indices of a slice by moving them without extra copies.</p>
 <p class="note">elements move with .= (rebinding), so owned elements are not copied twice</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L340">hc/lib/std.he:340</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L340">hc/lib/std.he:340</a>
 </article>
 <h2 id="array-edits">Array Edits <span class="n">11</span></h2>
 <article class="sym" id="push_n">
 <h3><a href="#push_n">push_n</a> <i>function</i></h3>
 <pre>push_n&lt;A, T&gt;(xs A&amp;, v T, n int)</pre>
 <p>Appends n copies of a value to a growable array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L364">hc/lib/std.he:364</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L364">hc/lib/std.he:364</a>
 </article>
 <article class="sym" id="extend">
 <h3><a href="#extend">extend</a> <i>function, 2 forms</i></h3>
@@ -671,27 +671,27 @@ and the helpers the Python dialect lowers to.
 <p>Appends all elements of a slice to a growable array.</p>
 <pre>extend(s byte[&gt;..]&amp;, c int)</pre>
 <p>Appends one byte, given as an int, to a growable byte array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L365">hc/lib/std.he:365</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L365">hc/lib/std.he:365</a>
 </article>
 <article class="sym" id="insert_at">
 <h3><a href="#insert_at">insert_at</a> <i>function</i></h3>
 <pre>insert_at&lt;A, T&gt;(xs A&amp;, i int, v T)</pre>
 <p>Inserts a value at index i of a growable array, shifting later elements up.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L367">hc/lib/std.he:367</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L367">hc/lib/std.he:367</a>
 </article>
 <article class="sym" id="remove_at">
 <h3><a href="#remove_at">remove_at</a> <i>function</i></h3>
 <pre>remove_at&lt;A&gt;(xs A&amp;, i int)</pre>
 <p>Removes the element at index i, closing the gap, and returns it.</p>
 <p class="note">removes element i, closing the gap, and returns it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L376">hc/lib/std.he:376</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L376">hc/lib/std.he:376</a>
 </article>
 <article class="sym" id="swap_remove">
 <h3><a href="#swap_remove">swap_remove</a> <i>function</i></h3>
 <pre>swap_remove&lt;A&gt;(xs A&amp;, i int)</pre>
 <p>Removes the element at index i by moving the last element into its place, and returns it.</p>
 <p class="note">removes element i by moving the last element into its place; returns it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L382">hc/lib/std.he:382</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L382">hc/lib/std.he:382</a>
 </article>
 <article class="sym" id="pop_at">
 <h3><a href="#pop_at">pop_at</a> <i>function, 2 forms</i></h3>
@@ -699,39 +699,39 @@ and the helpers the Python dialect lowers to.
 <p>Removes and returns the element at index i of a growable array.</p>
 <pre>pop_at&lt;T&gt;(xs T[&gt;..]&amp;) T</pre>
 <p>Removes and returns the last element of a growable array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L387">hc/lib/std.he:387</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L387">hc/lib/std.he:387</a>
 </article>
 <article class="sym" id="pop_front">
 <h3><a href="#pop_front">pop_front</a> <i>function</i></h3>
 <pre>pop_front&lt;T&gt;(xs T[&gt;..]&amp;) T</pre>
 <p>Removes and returns the first element of a growable array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L389">hc/lib/std.he:389</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L389">hc/lib/std.he:389</a>
 </article>
 <article class="sym" id="push_front">
 <h3><a href="#push_front">push_front</a> <i>function</i></h3>
 <pre>push_front&lt;T&gt;(xs T[&gt;..]&amp;, v T)</pre>
 <p>Inserts a value at the front of a growable array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L390">hc/lib/std.he:390</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L390">hc/lib/std.he:390</a>
 </article>
 <article class="sym" id="remove_value">
 <h3><a href="#remove_value">remove_value</a> <i>function</i></h3>
 <pre>remove_value&lt;T&gt;(xs T[&gt;..]&amp;, v T)</pre>
 <p>Removes the first element equal to the given value, doing nothing if none is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L391">hc/lib/std.he:391</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L391">hc/lib/std.he:391</a>
 </article>
 <article class="sym" id="retain">
 <h3><a href="#retain">retain</a> <i>function</i></h3>
 <pre>retain&lt;A, F&gt;(xs A&amp;)</pre>
 <p>Keeps only the elements the block accepts, preserving their order.</p>
 <p class="note">keeps the elements the block accepts, in order</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L395">hc/lib/std.he:395</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L395">hc/lib/std.he:395</a>
 </article>
 <article class="sym" id="dedup">
 <h3><a href="#dedup">dedup</a> <i>function</i></h3>
 <pre>dedup&lt;A&gt;(xs A&amp;)</pre>
 <p>Drops each element equal to the one just before it, collapsing runs of duplicates.</p>
 <p class="note">drops elements equal to the one before them</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L403">hc/lib/std.he:403</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L403">hc/lib/std.he:403</a>
 </article>
 <h2 id="sorting">Sorting <span class="n">3</span></h2>
 <article class="sym" id="sort">
@@ -756,7 +756,7 @@ and the helpers the Python dialect lowers to.
 <p>Sorts a slice of u64 values in ascending order.</p>
 <pre>sort(xs i64[:])</pre>
 <p>Sorts a slice of i64 values in ascending order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L417">hc/lib/std.he:417</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L417">hc/lib/std.he:417</a>
 </article>
 <article class="sym" id="stable_sort">
 <h3><a href="#stable_sort">stable_sort</a> <i>function, 2 forms</i></h3>
@@ -765,7 +765,7 @@ and the helpers the Python dialect lowers to.
 <pre>stable_sort&lt;T&gt;(xs T[:])</pre>
 <p>Sorts a slice in place in ascending order, keeping equal elements in their original order.</p>
 <p class="note">stable_sort: merges runs of doubling width through one scratch copy</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L496">hc/lib/std.he:496</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L496">hc/lib/std.he:496</a>
 </article>
 <article class="sym" id="sorted">
 <h3><a href="#sorted">sorted</a> <i>function, 2 forms</i></h3>
@@ -773,7 +773,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a new array with the elements of a slice in ascending order, leaving the original unchanged.</p>
 <pre>sorted&lt;T, F&gt;(xs T[:]) T[&gt;..]</pre>
 <p>Returns a new array sorted by the block's ordering, leaving the original slice unchanged.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L516">hc/lib/std.he:516</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L516">hc/lib/std.he:516</a>
 </article>
 <h2 id="recurrences-and-tables">Recurrences and Tables <span class="n">3</span></h2>
 <article class="sym" id="seq">
@@ -783,7 +783,7 @@ and the helpers the Python dialect lowers to.
 <pre>seq&lt;T, F&gt;(n int, a0 T) T</pre>
 <p>Returns term n of a recurrence where each term is the block applied to the previous one.</p>
 <p class="note">recurrences and tables: each value is computed once seq: x0 = a0, x1 = a1, x(k) = F(x(k - 2), x(k - 1)); returns x(n) after n - 1 steps (seq(n, 0, 1) { a, b =&gt; a + b } is fib(n)). The one-start form steps x(k) = F(x(k - 1)).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L531">hc/lib/std.he:531</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L531">hc/lib/std.he:531</a>
 </article>
 <article class="sym" id="tab">
 <h3><a href="#tab">tab</a> <i>function, 2 forms</i></h3>
@@ -792,27 +792,27 @@ and the helpers the Python dialect lowers to.
 <pre>tab&lt;F&gt;(n int, m int)</pre>
 <p>Builds an n by m table in row order by calling the block with each row and column index.</p>
 <p class="note">tab: fills a table once from a pure index function: out[i] = F(i), or out[i * m + j] = F(i, j) for the two-index form, row by row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L543">hc/lib/std.he:543</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L543">hc/lib/std.he:543</a>
 </article>
 <article class="sym" id="each_sum">
 <h3><a href="#each_sum">each_sum</a> <i>function</i></h3>
 <pre>each_sum&lt;T, F&gt;(out T[:], m int)</pre>
 <p>Fills each output element with the sum of the block's values over m columns, matching a nested loop exactly.</p>
 <p class="note">each_sum: out[i] = F(i, 0) + F(i, 1) + ... + F(i, m - 1), added from zero in j order, so it is bit-identical to the nested loop even for reals. The rows run eight at a time, each with its own sum, so the eight additions in flight are independent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L556">hc/lib/std.he:556</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L556">hc/lib/std.he:556</a>
 </article>
 <h2 id="heaps">Heaps <span class="n">5</span></h2>
 <article class="sym" id="heap_up">
 <h3><a href="#heap_up">heap_up</a> <i>function</i></h3>
 <pre>heap_up&lt;T, F&gt;(xs T[:], at int)</pre>
 <p>Moves the element at an index up a binary heap until the block's ordering is satisfied.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L578">hc/lib/std.he:578</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L578">hc/lib/std.he:578</a>
 </article>
 <article class="sym" id="heap_down">
 <h3><a href="#heap_down">heap_down</a> <i>function</i></h3>
 <pre>heap_down&lt;T, F&gt;(xs T[:], at int)</pre>
 <p>Moves the element at an index down a binary heap until the block's ordering is satisfied.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L585">hc/lib/std.he:585</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L585">hc/lib/std.he:585</a>
 </article>
 <article class="sym" id="heap_push">
 <h3><a href="#heap_push">heap_push</a> <i>function, 2 forms</i></h3>
@@ -820,7 +820,7 @@ and the helpers the Python dialect lowers to.
 <p>Pushes a value onto a binary heap ordered by the block.</p>
 <pre>heap_push&lt;A, T&gt;(xs A&amp;, v T)</pre>
 <p>Pushes a value onto a min-heap.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L595">hc/lib/std.he:595</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L595">hc/lib/std.he:595</a>
 </article>
 <article class="sym" id="heap_pop">
 <h3><a href="#heap_pop">heap_pop</a> <i>function, 2 forms</i></h3>
@@ -829,7 +829,7 @@ and the helpers the Python dialect lowers to.
 <pre>heap_pop&lt;A&gt;(xs A&amp;)</pre>
 <p>Removes and returns the smallest element of a min-heap.</p>
 <p class="note">removes and returns xs[0]</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L600">hc/lib/std.he:600</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L600">hc/lib/std.he:600</a>
 </article>
 <article class="sym" id="make_heap">
 <h3><a href="#make_heap">make_heap</a> <i>function, 2 forms</i></h3>
@@ -837,20 +837,20 @@ and the helpers the Python dialect lowers to.
 <p>Rearranges a growable array into a binary heap ordered by the block.</p>
 <pre>make_heap&lt;A&gt;(xs A&amp;)</pre>
 <p>Rearranges a growable array into a min-heap.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L607">hc/lib/std.he:607</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L607">hc/lib/std.he:607</a>
 </article>
 <h2 id="character-tests">Character Tests <span class="n">7</span></h2>
 <article class="sym" id="is_space">
 <h3><a href="#is_space">is_space</a> <i>function</i></h3>
 <pre>is_space(c byte) bool</pre>
 <p>Reports whether a byte is whitespace: a space or a control character from 9 to 13.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L616">hc/lib/std.he:616</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L616">hc/lib/std.he:616</a>
 </article>
 <article class="sym" id="isspace">
 <h3><a href="#isspace">isspace</a> <i>function</i></h3>
 <pre>isspace(c byte) bool</pre>
 <p>Reports whether a byte is whitespace, as a Python-style alias of is_space.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L617">hc/lib/std.he:617</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L617">hc/lib/std.he:617</a>
 </article>
 <article class="sym" id="isdigit">
 <h3><a href="#isdigit">isdigit</a> <i>function, 2 forms</i></h3>
@@ -858,7 +858,7 @@ and the helpers the Python dialect lowers to.
 <p>Reports whether a byte is an ASCII digit.</p>
 <pre>isdigit(s byte[:]) bool</pre>
 <p>Reports whether a string is non-empty and made only of ASCII digits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L618">hc/lib/std.he:618</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L618">hc/lib/std.he:618</a>
 </article>
 <article class="sym" id="islower">
 <h3><a href="#islower">islower</a> <i>function, 2 forms</i></h3>
@@ -866,7 +866,7 @@ and the helpers the Python dialect lowers to.
 <p>Reports whether a byte is a lowercase ASCII letter.</p>
 <pre>islower(s byte[:]) bool</pre>
 <p>Reports whether a string has a lowercase letter and no uppercase letters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L619">hc/lib/std.he:619</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L619">hc/lib/std.he:619</a>
 </article>
 <article class="sym" id="isupper">
 <h3><a href="#isupper">isupper</a> <i>function, 2 forms</i></h3>
@@ -874,7 +874,7 @@ and the helpers the Python dialect lowers to.
 <p>Reports whether a byte is an uppercase ASCII letter.</p>
 <pre>isupper(s byte[:]) bool</pre>
 <p>Reports whether a string has an uppercase letter and no lowercase letters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L620">hc/lib/std.he:620</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L620">hc/lib/std.he:620</a>
 </article>
 <article class="sym" id="isalpha">
 <h3><a href="#isalpha">isalpha</a> <i>function, 2 forms</i></h3>
@@ -882,13 +882,13 @@ and the helpers the Python dialect lowers to.
 <p>Reports whether a byte is an ASCII letter.</p>
 <pre>isalpha(s byte[:]) bool</pre>
 <p>Reports whether a string is non-empty and made only of ASCII letters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L621">hc/lib/std.he:621</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L621">hc/lib/std.he:621</a>
 </article>
 <article class="sym" id="isalnum">
 <h3><a href="#isalnum">isalnum</a> <i>function</i></h3>
 <pre>isalnum(c byte) bool</pre>
 <p>Reports whether a byte is an ASCII letter or digit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L622">hc/lib/std.he:622</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L622">hc/lib/std.he:622</a>
 </article>
 <h2 id="character-conversion">Character Conversion <span class="n">5</span></h2>
 <article class="sym" id="lower">
@@ -897,7 +897,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns the lowercase form of an ASCII letter, or the byte unchanged otherwise.</p>
 <pre>lower(s byte[:]) byte[&gt;..]</pre>
 <p>Returns a lowercase copy of s as a new array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L642">hc/lib/std.he:642</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L642">hc/lib/std.he:642</a>
 </article>
 <article class="sym" id="upper">
 <h3><a href="#upper">upper</a> <i>function, 2 forms</i></h3>
@@ -905,7 +905,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns the uppercase form of an ASCII letter, or the byte unchanged otherwise.</p>
 <pre>upper(s byte[:]) byte[&gt;..]</pre>
 <p>Returns an uppercase copy of s as a new array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L643">hc/lib/std.he:643</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L643">hc/lib/std.he:643</a>
 </article>
 <article class="sym" id="ord">
 <h3><a href="#ord">ord</a> <i>function, 3 forms</i></h3>
@@ -915,13 +915,13 @@ and the helpers the Python dialect lowers to.
 <p>Returns an int code unchanged, so ord accepts ints as well as bytes.</p>
 <pre>ord(s byte[:]) int</pre>
 <p>Returns the first byte of a string as an int, or 0 for an empty string.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L644">hc/lib/std.he:644</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L644">hc/lib/std.he:644</a>
 </article>
 <article class="sym" id="chr">
 <h3><a href="#chr">chr</a> <i>function</i></h3>
 <pre>chr(n int) byte[&gt;..]</pre>
 <p>Returns a new string holding the UTF-8 encoding of the given code point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L647">hc/lib/std.he:647</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L647">hc/lib/std.he:647</a>
 </article>
 <article class="sym" id="to_int">
 <h3><a href="#to_int">to_int</a> <i>function, 6 forms</i></h3>
@@ -937,26 +937,26 @@ and the helpers the Python dialect lowers to.
 <p>Converts a value of any type to an int by casting.</p>
 <pre>to_int(x real) int</pre>
 <p>Converts a real to an int, with the cast unchecked; the result is undefined when out of range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L651">hc/lib/std.he:651</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L651">hc/lib/std.he:651</a>
 </article>
 <h2 id="trimming">Trimming <span class="n">6</span></h2>
 <article class="sym" id="trim_start">
 <h3><a href="#trim_start">trim_start</a> <i>function</i></h3>
 <pre>trim_start(s byte[:]) byte[:]</pre>
 <p>Returns a slice of the string with leading whitespace removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L655">hc/lib/std.he:655</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L655">hc/lib/std.he:655</a>
 </article>
 <article class="sym" id="trim_end">
 <h3><a href="#trim_end">trim_end</a> <i>function</i></h3>
 <pre>trim_end(s byte[:]) byte[:]</pre>
 <p>Returns a slice of the string with trailing whitespace removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L659">hc/lib/std.he:659</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L659">hc/lib/std.he:659</a>
 </article>
 <article class="sym" id="trim">
 <h3><a href="#trim">trim</a> <i>function</i></h3>
 <pre>trim(s byte[:]) byte[:]</pre>
 <p>Returns a slice of the string with leading and trailing whitespace removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L663">hc/lib/std.he:663</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L663">hc/lib/std.he:663</a>
 </article>
 <article class="sym" id="strip">
 <h3><a href="#strip">strip</a> <i>function, 2 forms</i></h3>
@@ -964,7 +964,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a slice with leading and trailing whitespace removed, as a Python-style alias of trim.</p>
 <pre>strip(s byte[:], cs byte[:]) byte[:]</pre>
 <p>Returns the slice of s with bytes found in cs removed from both ends.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L664">hc/lib/std.he:664</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L664">hc/lib/std.he:664</a>
 </article>
 <article class="sym" id="lstrip">
 <h3><a href="#lstrip">lstrip</a> <i>function, 2 forms</i></h3>
@@ -972,7 +972,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a slice with leading whitespace removed, as a Python-style alias of trim_start.</p>
 <pre>lstrip(s byte[:], cs byte[:]) byte[:]</pre>
 <p>Returns the slice of s with any leading bytes found in cs removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L665">hc/lib/std.he:665</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L665">hc/lib/std.he:665</a>
 </article>
 <article class="sym" id="rstrip">
 <h3><a href="#rstrip">rstrip</a> <i>function, 2 forms</i></h3>
@@ -980,7 +980,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a slice with trailing whitespace removed, as a Python-style alias of trim_end.</p>
 <pre>rstrip(s byte[:], cs byte[:]) byte[:]</pre>
 <p>Returns the slice of s with any trailing bytes found in cs removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L666">hc/lib/std.he:666</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L666">hc/lib/std.he:666</a>
 </article>
 <h2 id="splitting">Splitting <span class="n">5</span></h2>
 <article class="sym" id="each_split">
@@ -989,13 +989,13 @@ and the helpers the Python dialect lowers to.
 <p>Calls the block with each piece of a string split at a separator byte, including empty pieces.</p>
 <pre>each_split&lt;F&gt;(s byte[:], sep byte[:])</pre>
 <p>Calls the block with each piece of s between occurrences of the separator slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L676">hc/lib/std.he:676</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L676">hc/lib/std.he:676</a>
 </article>
 <article class="sym" id="each_word">
 <h3><a href="#each_word">each_word</a> <i>function</i></h3>
 <pre>each_word&lt;F&gt;(s byte[:])</pre>
 <p>Calls the block with each run of non-space bytes in s, skipping whitespace.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L720">hc/lib/std.he:720</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L720">hc/lib/std.he:720</a>
 </article>
 <article class="sym" id="split">
 <h3><a href="#split">split</a> <i>function, 4 forms</i></h3>
@@ -1007,19 +1007,19 @@ and the helpers the Python dialect lowers to.
 <p>Returns the whitespace-separated words of s, the same as words.</p>
 <pre>split(s byte[:], sep byte[:], n int) const byte[:][&gt;..]</pre>
 <p>Splits a string on a separator into slices, stopping after n splits unless n is negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L736">hc/lib/std.he:736</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L736">hc/lib/std.he:736</a>
 </article>
 <article class="sym" id="words">
 <h3><a href="#words">words</a> <i>function</i></h3>
 <pre>words(s byte[:]) const byte[:][&gt;..]</pre>
 <p>Returns the whitespace-separated words of s as slices of s.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L744">hc/lib/std.he:744</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L744">hc/lib/std.he:744</a>
 </article>
 <article class="sym" id="partition">
 <h3><a href="#partition">partition</a> <i>function</i></h3>
 <pre>partition(s byte[:], sep byte[:]) tuple3&lt;const byte[:], const byte[:], const byte[:]&gt;</pre>
 <p>Splits a string at the first separator into the part before, the separator and the part after.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1417">hc/lib/std.he:1417</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1417">hc/lib/std.he:1417</a>
 </article>
 <h2 id="byte-sets">Byte Sets <span class="n">6</span></h2>
 <article class="sym" id="order16">
@@ -1027,20 +1027,20 @@ and the helpers the Python dialect lowers to.
 <pre>inline order16(out byte[:], keys const byte[:])</pre>
 <p>Writes into out the indices of sixteen little-endian 16-bit keys in ascending order, keeping index order for equal keys.</p>
 <p class="note">order16: sorts sixteen keys without moving them. keys holds the sixteen as little-endian 16-bit numbers; out[i] becomes the index (0 to 15) of the i-th smallest, and equal keys keep their index order</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L694">hc/lib/std.he:694</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L694">hc/lib/std.he:694</a>
 </article>
 <article class="sym" id="xor_bytes">
 <h3><a href="#xor_bytes">xor_bytes</a> <i>function</i></h3>
 <pre>inline xor_bytes(dst byte[:], src const byte[:])</pre>
 <p>XORs each byte of src into the matching byte of dst, requiring src to be at least as long as dst.</p>
 <p class="note">xor_bytes: dst[i] ^= src[i] for every byte of dst; src must be at least as long as dst and must not partly overlap it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L709">hc/lib/std.he:709</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L709">hc/lib/std.he:709</a>
 </article>
 <article class="sym" id="ByteSet">
 <h3><a href="#ByteSet">ByteSet</a> <i>type</i></h3>
 <pre>struct ByteSet { members bool[256] }</pre>
 <p>Set of byte values, with one membership flag for each of the 256 possible bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1313">hc/lib/std.he:1313</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1313">hc/lib/std.he:1313</a>
 </article>
 <article class="sym" id="byte_set">
 <h3><a href="#byte_set">byte_set</a> <i>function, 2 forms</i></h3>
@@ -1048,20 +1048,20 @@ and the helpers the Python dialect lowers to.
 <p>Returns a byte set containing the bytes listed in the slice.</p>
 <pre>byte_set(members bool[256]) ByteSet</pre>
 <p>Returns a byte set built from an array of 256 membership flags.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1314">hc/lib/std.he:1314</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1314">hc/lib/std.he:1314</a>
 </article>
 <article class="sym" id="find_any">
 <h3><a href="#find_any">find_any</a> <i>function</i></h3>
 <pre>find_any(s byte[:], set const ByteSet&amp;) int</pre>
 <p>Returns the index of the first byte of s in the set, or -1 if none.</p>
 <p class="note">first position in s holding a member, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1320">hc/lib/std.he:1320</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1320">hc/lib/std.he:1320</a>
 </article>
 <article class="sym" id="find_pair">
 <h3><a href="#find_pair">find_pair</a> <i>function</i></h3>
 <pre>find_pair(s byte[:], a const ByteSet&amp;, d int, b const ByteSet&amp;) int</pre>
 <p>Returns the first index i where s[i] is in a and s[i + d] is in b, or -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1330">hc/lib/std.he:1330</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1330">hc/lib/std.he:1330</a>
 </article>
 <h2 id="string-building">String Building <span class="n">3</span></h2>
 <article class="sym" id="join">
@@ -1076,7 +1076,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns the bytes of parts joined into a new array with the separator slice between them.</p>
 <pre>join(sep int, parts byte[:]) byte[&gt;..]</pre>
 <p>Returns the bytes of parts joined into a new array with a single separator byte between them.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L749">hc/lib/std.he:749</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L749">hc/lib/std.he:749</a>
 </article>
 <article class="sym" id="replace">
 <h3><a href="#replace">replace</a> <i>function, 2 forms</i></h3>
@@ -1084,7 +1084,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a copy of s with every occurrence of old replaced by with.</p>
 <pre>replace(s byte[:], old int, with int) byte[&gt;..]</pre>
 <p>Returns a copy of s with every byte equal to old replaced by the byte with.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L799">hc/lib/std.he:799</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L799">hc/lib/std.he:799</a>
 </article>
 <article class="sym" id="repeat">
 <h3><a href="#repeat">repeat</a> <i>function, 2 forms</i></h3>
@@ -1092,7 +1092,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a new array holding s repeated n times.</p>
 <pre>repeat&lt;T&gt;(xs T[:], n int) T[&gt;..]</pre>
 <p>Returns a new array holding the slice's elements repeated n times in order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L807">hc/lib/std.he:807</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L807">hc/lib/std.he:807</a>
 </article>
 <h2 id="string-case">String Case <span class="n">5</span></h2>
 <article class="sym" id="compare">
@@ -1100,71 +1100,71 @@ and the helpers the Python dialect lowers to.
 <pre>compare(a byte[:], b byte[:]) int</pre>
 <p>Returns a negative, zero or positive int as a sorts before, equal to, or after b.</p>
 <p class="note">negative, zero or positive as a sorts before, with, or after b</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L770">hc/lib/std.he:770</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L770">hc/lib/std.he:770</a>
 </article>
 <article class="sym" id="to_lower">
 <h3><a href="#to_lower">to_lower</a> <i>function</i></h3>
 <pre>to_lower(s byte[:])</pre>
 <p>Converts every byte of s to lowercase in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L774">hc/lib/std.he:774</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L774">hc/lib/std.he:774</a>
 </article>
 <article class="sym" id="to_upper">
 <h3><a href="#to_upper">to_upper</a> <i>function</i></h3>
 <pre>to_upper(s byte[:])</pre>
 <p>Converts every byte of s to uppercase in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L775">hc/lib/std.he:775</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L775">hc/lib/std.he:775</a>
 </article>
 <article class="sym" id="capitalize">
 <h3><a href="#capitalize">capitalize</a> <i>function</i></h3>
 <pre>capitalize(s byte[:]) byte[&gt;..]</pre>
 <p>Returns a copy of s with the first byte uppercase and the rest lowercase.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L784">hc/lib/std.he:784</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L784">hc/lib/std.he:784</a>
 </article>
 <article class="sym" id="title">
 <h3><a href="#title">title</a> <i>function</i></h3>
 <pre>title(s byte[:]) byte[&gt;..]</pre>
 <p>Returns a copy of s with each word's first letter uppercase and other letters lowercase.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L788">hc/lib/std.he:788</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L788">hc/lib/std.he:788</a>
 </article>
 <h2 id="string-padding">String Padding <span class="n">4</span></h2>
 <article class="sym" id="ljust">
 <h3><a href="#ljust">ljust</a> <i>function</i></h3>
 <pre>ljust(s byte[:], w int, f byte = ' ') byte[&gt;..]</pre>
 <p>Returns s padded on the right with the fill byte up to width w.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L826">hc/lib/std.he:826</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L826">hc/lib/std.he:826</a>
 </article>
 <article class="sym" id="rjust">
 <h3><a href="#rjust">rjust</a> <i>function</i></h3>
 <pre>rjust(s byte[:], w int, f byte = ' ') byte[&gt;..]</pre>
 <p>Returns s padded on the left with the fill byte up to width w.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L831">hc/lib/std.he:831</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L831">hc/lib/std.he:831</a>
 </article>
 <article class="sym" id="center">
 <h3><a href="#center">center</a> <i>function</i></h3>
 <pre>center(s byte[:], w int, f byte = ' ') byte[&gt;..]</pre>
 <p>Returns s centered within width w using the fill byte, with any odd extra padding placed on the left when w is odd.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L836">hc/lib/std.he:836</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L836">hc/lib/std.he:836</a>
 </article>
 <article class="sym" id="zfill">
 <h3><a href="#zfill">zfill</a> <i>function</i></h3>
 <pre>zfill(s byte[:], w int) byte[&gt;..]</pre>
 <p>Returns s padded on the left with zeros to width w, keeping a leading sign in front.</p>
 <p class="note">zero padding that keeps a leading sign in front</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L845">hc/lib/std.he:845</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L845">hc/lib/std.he:845</a>
 </article>
 <h2 id="utf-8">UTF-8 <span class="n">2</span></h2>
 <article class="sym" id="push_utf8">
 <h3><a href="#push_utf8">push_utf8</a> <i>function</i></h3>
 <pre>push_utf8(out byte[&gt;..]&amp;, cp int)</pre>
 <p>Appends the UTF-8 encoding of code point cp to out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L855">hc/lib/std.he:855</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L855">hc/lib/std.he:855</a>
 </article>
 <article class="sym" id="each_utf8">
 <h3><a href="#each_utf8">each_utf8</a> <i>function</i></h3>
 <pre>each_utf8&lt;F&gt;(s byte[:])</pre>
 <p>Calls the block with each code point decoded from the UTF-8 bytes of s.</p>
 <p class="note">calls the block with each code point</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L872">hc/lib/std.he:872</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L872">hc/lib/std.he:872</a>
 </article>
 <h2 id="integer-parsing">Integer Parsing <span class="n">1</span></h2>
 <article class="sym" id="parse_int">
@@ -1172,7 +1172,7 @@ and the helpers the Python dialect lowers to.
 <pre>parse_int(s byte[:], base int = 10) int, bool</pre>
 <p>Parses all of s as a signed integer in base 2 to 36, returning false and 0 if invalid or out of range.</p>
 <p class="note">the whole of s as an integer in base 2..36, with an optional sign; false (and 0) when anything else is there or the value does not fit</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L891">hc/lib/std.he:891</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L891">hc/lib/std.he:891</a>
 </article>
 <h2 id="real-parsing">Real Parsing <span class="n">2</span></h2>
 <article class="sym" id="parse_flt">
@@ -1180,7 +1180,7 @@ and the helpers the Python dialect lowers to.
 <pre>parse_flt(s byte[:]) real, bool</pre>
 <p>Parses all of s as a decimal, inf or nan with optional sign and exponent, returning false if invalid.</p>
 <p class="note">a decimal or &quot;inf&quot;/&quot;nan&quot; with optional sign and exponent; the whole of s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1018">hc/lib/std.he:1018</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1018">hc/lib/std.he:1018</a>
 </article>
 <article class="sym" id="to_real">
 <h3><a href="#to_real">to_real</a> <i>function, 3 forms</i></h3>
@@ -1190,7 +1190,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns a growable byte array parsed as a real, or 0.0 if parsing fails.</p>
 <pre>to_real&lt;T&gt;(x T) real</pre>
 <p>Converts a value of any type to a real by casting.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1066">hc/lib/std.he:1066</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1066">hc/lib/std.he:1066</a>
 </article>
 <h2 id="byte-encoding">Byte Encoding <span class="n">4</span></h2>
 <article class="sym" id="parse_uleb">
@@ -1198,129 +1198,129 @@ and the helpers the Python dialect lowers to.
 <pre>parse_uleb(s byte[:]) int, int</pre>
 <p>Decodes an unsigned LEB128 value at the start of s, returning the value and bytes consumed.</p>
 <p class="note">unsigned LEB128 at the start of s: the value and how many bytes it took</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1072">hc/lib/std.he:1072</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1072">hc/lib/std.he:1072</a>
 </article>
 <article class="sym" id="format_uleb">
 <h3><a href="#format_uleb">format_uleb</a> <i>function</i></h3>
 <pre>format_uleb(out byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the unsigned LEB128 encoding of v to out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1109">hc/lib/std.he:1109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1109">hc/lib/std.he:1109</a>
 </article>
 <article class="sym" id="hex_encode">
 <h3><a href="#hex_encode">hex_encode</a> <i>function</i></h3>
 <pre>hex_encode(out byte[&gt;..]&amp;, b const byte[:])</pre>
 <p>Appends the lowercase hex encoding of b to out, two digits per byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1130">hc/lib/std.he:1130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1130">hc/lib/std.he:1130</a>
 </article>
 <article class="sym" id="hex_decode">
 <h3><a href="#hex_decode">hex_decode</a> <i>function</i></h3>
 <pre>hex_decode(s const byte[:], out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes hex digits of either case from s into out, returning false and leaving out unchanged on odd length or invalid characters.</p>
 <p class="note">hex digits (either case) to bytes; false, with out unchanged, on an odd length or a non-hex character</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1151">hc/lib/std.he:1151</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1151">hc/lib/std.he:1151</a>
 </article>
 <h2 id="number-formatting">Number Formatting <span class="n">8</span></h2>
 <article class="sym" id="format_uint">
 <h3><a href="#format_uint">format_uint</a> <i>function</i></h3>
 <pre>format_uint&lt;B&gt;(out B&amp;, v uint, base int = 10, width int = 0, padc byte = ' ')</pre>
 <p>Appends an unsigned integer to out in the given base, left-padded with padc to the given width.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1085">hc/lib/std.he:1085</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1085">hc/lib/std.he:1085</a>
 </article>
 <article class="sym" id="format_int">
 <h3><a href="#format_int">format_int</a> <i>function</i></h3>
 <pre>format_int&lt;B&gt;(out B&amp;, v int, base int = 10, width int = 0, padc byte = ' ')</pre>
 <p>Appends a signed integer to out in the given base, padded to the given width, with zero padding placed after the sign.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1098">hc/lib/std.he:1098</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1098">hc/lib/std.he:1098</a>
 </article>
 <article class="sym" id="to_base">
 <h3><a href="#to_base">to_base</a> <i>function</i></h3>
 <pre>to_base(n int, b int) byte[&gt;..]</pre>
 <p>Returns the integer written in base b as a new byte array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1115">hc/lib/std.he:1115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1115">hc/lib/std.he:1115</a>
 </article>
 <article class="sym" id="hex">
 <h3><a href="#hex">hex</a> <i>function</i></h3>
 <pre>hex(n int) byte[&gt;..]</pre>
 <p>Returns the integer as a hexadecimal string with a 0x prefix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1190">hc/lib/std.he:1190</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1190">hc/lib/std.he:1190</a>
 </article>
 <article class="sym" id="oct">
 <h3><a href="#oct">oct</a> <i>function</i></h3>
 <pre>oct(n int) byte[&gt;..]</pre>
 <p>Returns the integer as an octal string with a 0o prefix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1191">hc/lib/std.he:1191</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1191">hc/lib/std.he:1191</a>
 </article>
 <article class="sym" id="bin">
 <h3><a href="#bin">bin</a> <i>function</i></h3>
 <pre>bin(n int) byte[&gt;..]</pre>
 <p>Returns the integer as a binary string with a 0b prefix.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1192">hc/lib/std.he:1192</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1192">hc/lib/std.he:1192</a>
 </article>
 <article class="sym" id="format_flt">
 <h3><a href="#format_flt">format_flt</a> <i>function</i></h3>
 <pre>format_flt(out byte[&gt;..]&amp;, v real, decimals int, away bool = false)</pre>
 <p>Appends v to out with exactly the given decimals, rounding half to even or away from zero if away is set.</p>
 <p class="note">v with exactly `decimals` digits after the point. Exact: the double is m * 2^e2, so v * 10^d is computed as a big integer and rounded half to even once (away from zero with away, as JavaScript's toFixed does); a negative count prints the shortest form instead</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1231">hc/lib/std.he:1231</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1231">hc/lib/std.he:1231</a>
 </article>
 <article class="sym" id="fmt">
 <h3><a href="#fmt">fmt</a> <i>function</i></h3>
 <pre>fmt(x real, d int, away bool = false) byte[&gt;..]</pre>
 <p>Returns v as a new string with the given number of decimals, rounding away from zero if away is set.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1274">hc/lib/std.he:1274</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1274">hc/lib/std.he:1274</a>
 </article>
 <h2 id="random-numbers">Random Numbers <span class="n">5</span></h2>
 <article class="sym" id="rng">
 <h3><a href="#rng">rng</a> <i>type</i></h3>
 <pre>struct rng { s uint }</pre>
 <p>Random number generator state, a splitmix64 counter advanced on each draw.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1285">hc/lib/std.he:1285</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1285">hc/lib/std.he:1285</a>
 </article>
 <article class="sym" id="rand_u64">
 <h3><a href="#rand_u64">rand_u64</a> <i>function</i></h3>
 <pre>rand_u64(r rng&amp;) uint</pre>
 <p>Returns the next 64 random bits from the generator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1286">hc/lib/std.he:1286</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1286">hc/lib/std.he:1286</a>
 </article>
 <article class="sym" id="rand_int">
 <h3><a href="#rand_int">rand_int</a> <i>function</i></h3>
 <pre>rand_int(r rng&amp;, n int) int</pre>
 <p>Returns a uniformly distributed random integer from 0 up to n, where n must be positive.</p>
 <p class="note">uniform in 0..n, n &gt; 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1293">hc/lib/std.he:1293</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1293">hc/lib/std.he:1293</a>
 </article>
 <article class="sym" id="rand_flt">
 <h3><a href="#rand_flt">rand_flt</a> <i>function</i></h3>
 <pre>rand_flt(r rng&amp;) real</pre>
 <p>Returns a uniformly distributed random real in the range from 0 up to but not including 1.</p>
 <p class="note">uniform in [0, 1)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1301">hc/lib/std.he:1301</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1301">hc/lib/std.he:1301</a>
 </article>
 <article class="sym" id="shuffle">
 <h3><a href="#shuffle">shuffle</a> <i>function</i></h3>
 <pre>shuffle&lt;T&gt;(xs T[:], r rng&amp;)</pre>
 <p>Shuffles the elements of xs in place using the generator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1302">hc/lib/std.he:1302</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1302">hc/lib/std.he:1302</a>
 </article>
 <h2 id="tuples">Tuples <span class="n">2</span></h2>
 <article class="sym" id="tuple2">
 <h3><a href="#tuple2">tuple2</a> <i>type</i></h3>
 <pre>struct tuple2&lt;A, B&gt; { f0 A, f1 B }</pre>
 <p>Pair type with fields f0 and f1, used for the Python dialect's two-element tuples.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1350">hc/lib/std.he:1350</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1350">hc/lib/std.he:1350</a>
 </article>
 <article class="sym" id="tuple3">
 <h3><a href="#tuple3">tuple3</a> <i>type</i></h3>
 <pre>struct tuple3&lt;A, B, C&gt; { f0 A, f1 B, f2 C }</pre>
 <p>Triple type with fields f0, f1 and f2, used for the Python dialect's three-element tuples.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1351">hc/lib/std.he:1351</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1351">hc/lib/std.he:1351</a>
 </article>
 <h2 id="tuple-comparison">Tuple Comparison <span class="n">2</span></h2>
 <article class="sym" id="tuple4">
 <h3><a href="#tuple4">tuple4</a> <i>type</i></h3>
 <pre>struct tuple4&lt;A, B, C, D&gt; { f0 A, f1 B, f2 C, f3 D }</pre>
 <p>A four-field tuple holding values of possibly different types in fields f0 through f3.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1352">hc/lib/std.he:1352</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1352">hc/lib/std.he:1352</a>
 </article>
 <article class="sym" id="tuple_lt">
 <h3><a href="#tuple_lt">tuple_lt</a> <i>function, 3 forms</i></h3>
@@ -1330,7 +1330,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns whether the first triple orders before the second, comparing fields f0, f1, f2 in order.</p>
 <pre>tuple_lt&lt;A, B, C, D&gt;(a tuple4&lt;A, B, C, D&gt;, b tuple4&lt;A, B, C, D&gt;) bool</pre>
 <p>Returns whether the first four-field tuple orders before the second, comparing fields f0 through f3 in order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1353">hc/lib/std.he:1353</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1353">hc/lib/std.he:1353</a>
 </article>
 <h2 id="python-helpers">Python Helpers <span class="n">1</span></h2>
 <article class="sym" id="range">
@@ -1341,7 +1341,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns an array of integers from a up to but excluding b, stepping by 1.</p>
 <pre>range(a int, b int, s int) int[&gt;..]</pre>
 <p>Returns an array of integers from a toward b, excluding b, advancing by step s which may be negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1367">hc/lib/std.he:1367</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1367">hc/lib/std.he:1367</a>
 </article>
 <h2 id="python-division">Python Division <span class="n">3</span></h2>
 <article class="sym" id="truediv">
@@ -1354,7 +1354,7 @@ and the helpers the Python dialect lowers to.
 <p>Returns the real quotient of a real divided by an integer.</p>
 <pre>truediv(a real, b real) real</pre>
 <p>Returns the real quotient of two reals.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1435">hc/lib/std.he:1435</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1435">hc/lib/std.he:1435</a>
 </article>
 <article class="sym" id="floor_div">
 <h3><a href="#floor_div">floor_div</a> <i>function, 2 forms</i></h3>
@@ -1362,13 +1362,13 @@ and the helpers the Python dialect lowers to.
 <p>Returns the quotient of two reals rounded down to a whole-valued real.</p>
 <pre>floor_div(a int, b int) int</pre>
 <p>Returns the integer quotient rounded toward negative infinity, as Python's // does, unlike the truncating / operator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1439">hc/lib/std.he:1439</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1439">hc/lib/std.he:1439</a>
 </article>
 <article class="sym" id="pydivmod">
 <h3><a href="#pydivmod">pydivmod</a> <i>function</i></h3>
 <pre>pydivmod(a int, b int) tuple2&lt;int, int&gt;</pre>
 <p>Returns a pair of the floored quotient and the matching remainder, as Python's divmod does.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1448">hc/lib/std.he:1448</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1448">hc/lib/std.he:1448</a>
 </article>
 <h2 id="python-rounding">Python Rounding <span class="n">1</span></h2>
 <article class="sym" id="pyround">
@@ -1380,7 +1380,7 @@ and the helpers the Python dialect lowers to.
 <pre>pyround(x real, nd int) real</pre>
 <p>Returns a real rounded to nd decimal places, halves to even; a negative nd rounds to tens, hundreds and so on.</p>
 <p class="note">round half to even, as Python's round does</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1452">hc/lib/std.he:1452</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1452">hc/lib/std.he:1452</a>
 </article>
 <h2 id="python-formatting">Python Formatting <span class="n">2</span></h2>
 <article class="sym" id="pyfmt">
@@ -1402,7 +1402,7 @@ and the helpers the Python dialect lowers to.
 <pre>pyfmt&lt;A, B, C&gt;(t tuple3&lt;A, B, C&gt;) byte[&gt;..]</pre>
 <p>Returns a parenthesized text of a triple, with each element formatted as by repr.</p>
 <p class="note">str() of a value, the way Python prints it</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1467">hc/lib/std.he:1467</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1467">hc/lib/std.he:1467</a>
 </article>
 <article class="sym" id="pyrepr">
 <h3><a href="#pyrepr">pyrepr</a> <i>function, 4 forms</i></h3>
@@ -1415,7 +1415,7 @@ and the helpers the Python dialect lowers to.
 <pre>pyrepr(c byte) byte[&gt;..]</pre>
 <p>Returns the Python repr form of a single byte, as a quoted string.</p>
 <p class="note">repr(): strings get quotes, everything else prints as str() would</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1488">hc/lib/std.he:1488</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1488">hc/lib/std.he:1488</a>
 </article>
 <h2 id="string-constants">String Constants <span class="n">4</span></h2>
 <article class="sym" id="STR_ascii_lowercase">
@@ -1423,25 +1423,25 @@ and the helpers the Python dialect lowers to.
 <pre>STR_ascii_lowercase := &quot;abcdefghijklmnopqrstuvwxyz&quot;</pre>
 <p>The lowercase ASCII letters a to z, as in Python's string module.</p>
 <p class="note">the string module's constants</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1523">hc/lib/std.he:1523</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1523">hc/lib/std.he:1523</a>
 </article>
 <article class="sym" id="STR_ascii_uppercase">
 <h3><a href="#STR_ascii_uppercase">STR_ascii_uppercase</a> <i>constant</i></h3>
 <pre>STR_ascii_uppercase := &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</pre>
 <p>The uppercase ASCII letters A to Z, as in Python's string module.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1524">hc/lib/std.he:1524</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1524">hc/lib/std.he:1524</a>
 </article>
 <article class="sym" id="STR_ascii_letters">
 <h3><a href="#STR_ascii_letters">STR_ascii_letters</a> <i>constant</i></h3>
 <pre>STR_ascii_letters := str(STR_ascii_lowercase, STR_ascii_uppercase)</pre>
 <p>All ASCII letters, lowercase followed by uppercase, as in Python's string module.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1525">hc/lib/std.he:1525</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1525">hc/lib/std.he:1525</a>
 </article>
 <article class="sym" id="STR_digits">
 <h3><a href="#STR_digits">STR_digits</a> <i>constant</i></h3>
 <pre>STR_digits := &quot;0123456789&quot;</pre>
 <p>The decimal digits 0 to 9, as in Python's string module.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1526">hc/lib/std.he:1526</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1526">hc/lib/std.he:1526</a>
 </article>
 <h2 id="bisection">Bisection <span class="n">3</span></h2>
 <article class="sym" id="bisect_left">
@@ -1449,322 +1449,322 @@ and the helpers the Python dialect lowers to.
 <pre>bisect_left&lt;T&gt;(xs T[:], v T) int</pre>
 <p>Returns the first index at which v can be inserted into a sorted slice, keeping order and going before equal values.</p>
 <p class="note">bisect: insertion points in a sorted slice, before or after equal values</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1528">hc/lib/std.he:1528</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1528">hc/lib/std.he:1528</a>
 </article>
 <article class="sym" id="bisect_right">
 <h3><a href="#bisect_right">bisect_right</a> <i>function</i></h3>
 <pre>bisect_right&lt;T&gt;(xs T[:], v T) int</pre>
 <p>Returns the index after any values equal to v at which v can be inserted into a sorted slice, keeping order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1534">hc/lib/std.he:1534</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1534">hc/lib/std.he:1534</a>
 </article>
 <article class="sym" id="bisect">
 <h3><a href="#bisect">bisect</a> <i>function</i></h3>
 <pre>bisect&lt;T&gt;(xs T[:], v T) int</pre>
 <p>Returns the insertion index for v in a sorted slice, placing it after equal values, same as bisect_right.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1540">hc/lib/std.he:1540</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1540">hc/lib/std.he:1540</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (73)</summary>
 <article class="sym" id="match32_at">
 <h3><a href="#match32_at">match32_at</a> <i>function</i></h3>
 <pre>match32_at(s const byte[:], i int, w int) int</pre>
 <p>Thin C binding that returns a match result for a 32-byte-wide comparison at index i of a byte slice, used by this module's own byte set code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L14">hc/lib/std.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L14">hc/lib/std.he:14</a>
 </article>
 <article class="sym" id="std_fabs">
 <h3><a href="#std_fabs">std_fabs</a> <i>function</i></h3>
 <pre>std_fabs(x real) real</pre>
 <p>Thin binding to the C fabs function returning the absolute value of a real.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L17">hc/lib/std.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L17">hc/lib/std.he:17</a>
 </article>
 <article class="sym" id="std_fabsf">
 <h3><a href="#std_fabsf">std_fabsf</a> <i>function</i></h3>
 <pre>std_fabsf(x f32) f32</pre>
 <p>Thin binding to the C fabsf function returning the absolute value of an f32.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L18">hc/lib/std.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L18">hc/lib/std.he:18</a>
 </article>
 <article class="sym" id="std_floor">
 <h3><a href="#std_floor">std_floor</a> <i>function</i></h3>
 <pre>std_floor(x real) real</pre>
 <p>Thin binding to the C floor function, wrapped by ifloor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L19">hc/lib/std.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L19">hc/lib/std.he:19</a>
 </article>
 <article class="sym" id="std_ceil">
 <h3><a href="#std_ceil">std_ceil</a> <i>function</i></h3>
 <pre>std_ceil(x real) real</pre>
 <p>Thin binding to the C ceil function, wrapped by iceil.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L20">hc/lib/std.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L20">hc/lib/std.he:20</a>
 </article>
 <article class="sym" id="std_round">
 <h3><a href="#std_round">std_round</a> <i>function</i></h3>
 <pre>std_round(x real) real</pre>
 <p>Thin binding to the C round function returning a real rounded to the nearest integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L21">hc/lib/std.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L21">hc/lib/std.he:21</a>
 </article>
 <article class="sym" id="std_bits">
 <h3><a href="#std_bits">std_bits</a> <i>function</i></h3>
 <pre>std_bits(x real) uint</pre>
 <p>Thin binding returning the raw 64-bit IEEE pattern of a real, used by hashing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L22">hc/lib/std.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L22">hc/lib/std.he:22</a>
 </article>
 <article class="sym" id="float_dec">
 <h3><a href="#float_dec">float_dec</a> <i>function</i></h3>
 <pre>float_dec(v real, e int&amp;) uint</pre>
 <p>Thin binding that returns decimal digits of a real and writes the exponent through e.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L23">hc/lib/std.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L23">hc/lib/std.he:23</a>
 </article>
 <article class="sym" id="pyout">
 <h3><a href="#pyout">pyout</a> <i>function</i></h3>
 <pre>pyout(s const byte[:])</pre>
 <p>Binds the C runtime routine that writes a byte string to output for Python-dialect printing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L24">hc/lib/std.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L24">hc/lib/std.he:24</a>
 </article>
 <article class="sym" id="store_u64le">
 <h3><a href="#store_u64le">store_u64le</a> <i>function</i></h3>
 <pre>store_u64le(s byte[:], at int, v uint)</pre>
 <p>Thin binding that stores a 64-bit unsigned value into a byte slice at an offset in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L25">hc/lib/std.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L25">hc/lib/std.he:25</a>
 </article>
 <article class="sym" id="load_u64le">
 <h3><a href="#load_u64le">load_u64le</a> <i>function</i></h3>
 <pre>load_u64le(s const byte[:], at int) uint</pre>
 <p>Thin binding that loads a 64-bit unsigned value from a byte slice at an offset in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L26">hc/lib/std.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L26">hc/lib/std.he:26</a>
 </article>
 <article class="sym" id="std_from_bits">
 <h3><a href="#std_from_bits">std_from_bits</a> <i>function</i></h3>
 <pre>std_from_bits(b uint) real</pre>
 <p>Thin binding that builds a real from a raw 64-bit IEEE bit pattern.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L27">hc/lib/std.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L27">hc/lib/std.he:27</a>
 </article>
 <article class="sym" id="std_mulhi">
 <h3><a href="#std_mulhi">std_mulhi</a> <i>function</i></h3>
 <pre>std_mulhi(a uint, b uint) uint</pre>
 <p>Multiplies two unsigned integers and returns the high 64 bits of the product; a thin C binding for internal use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L28">hc/lib/std.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L28">hc/lib/std.he:28</a>
 </article>
 <article class="sym" id="std_vk_cpu">
 <h3><a href="#std_vk_cpu">std_vk_cpu</a> <i>function</i></h3>
 <pre>std_vk_cpu() int</pre>
 <p>Returns the CPU capability flag, 1 when the vectorized string routines are usable; a thin C binding behind hxk.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L29">hc/lib/std.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L29">hc/lib/std.he:29</a>
 </article>
 <article class="sym" id="std_ptr">
 <h3><a href="#std_ptr">std_ptr</a> <i>function</i></h3>
 <pre>std_ptr(s const byte[:]) uint</pre>
 <p>Returns the raw address of a byte slice as an unsigned integer for use with low-level C bindings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L30">hc/lib/std.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L30">hc/lib/std.he:30</a>
 </article>
 <article class="sym" id="std_ld8">
 <h3><a href="#std_ld8">std_ld8</a> <i>function</i></h3>
 <pre>std_ld8(p int) uint</pre>
 <p>Loads an unsigned 64-bit value from the raw memory address p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L31">hc/lib/std.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L31">hc/lib/std.he:31</a>
 </article>
 <article class="sym" id="std_st8">
 <h3><a href="#std_st8">std_st8</a> <i>function</i></h3>
 <pre>std_st8(p int, v uint)</pre>
 <p>Stores the unsigned 64-bit value v at the raw memory address p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L32">hc/lib/std.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L32">hc/lib/std.he:32</a>
 </article>
 <article class="sym" id="std_st1">
 <h3><a href="#std_st1">std_st1</a> <i>function</i></h3>
 <pre>std_st1(p int, v int)</pre>
 <p>Stores the low byte of integer v at the raw memory address p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L33">hc/lib/std.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L33">hc/lib/std.he:33</a>
 </article>
 <article class="sym" id="std_zdec">
 <h3><a href="#std_zdec">std_zdec</a> <i>function</i></h3>
 <pre>std_zdec(b uint, e int&amp;) uint</pre>
 <p>Decodes the unsigned value b into digits and writes the decimal exponent through e; a thin C binding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L34">hc/lib/std.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L34">hc/lib/std.he:34</a>
 </article>
 <article class="sym" id="std_vk_span">
 <h3><a href="#std_vk_span">std_vk_span</a> <i>function</i></h3>
 <pre>std_vk_span(p uint, n int) int</pre>
 <p>Scans n bytes starting at address p with vector code and returns how many bytes to skip; used by each_word.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L35">hc/lib/std.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L35">hc/lib/std.he:35</a>
 </article>
 <article class="sym" id="std_vk_hexenc">
 <h3><a href="#std_vk_hexenc">std_vk_hexenc</a> <i>function</i></h3>
 <pre>std_vk_hexenc(d uint, s uint, n int)</pre>
 <p>Encodes n bytes at address s as hexadecimal text written to address d; a thin C binding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L36">hc/lib/std.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L36">hc/lib/std.he:36</a>
 </article>
 <article class="sym" id="std_vk_hexdec">
 <h3><a href="#std_vk_hexdec">std_vk_hexdec</a> <i>function</i></h3>
 <pre>std_vk_hexdec(d uint, s uint, n int) int</pre>
 <p>Decodes n hexadecimal characters at address s into bytes at address d and returns a status result; a thin C binding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L37">hc/lib/std.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L37">hc/lib/std.he:37</a>
 </article>
 <article class="sym" id="std_vk_ord16">
 <h3><a href="#std_vk_ord16">std_vk_ord16</a> <i>function</i></h3>
 <pre>std_vk_ord16(d uint, s uint)</pre>
 <p>Raw C binding that sorts sixteen 16-bit keys at pointer addresses, wrapped by order16.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L38">hc/lib/std.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L38">hc/lib/std.he:38</a>
 </article>
 <article class="sym" id="std_vk_xor">
 <h3><a href="#std_vk_xor">std_vk_xor</a> <i>function</i></h3>
 <pre>std_vk_xor(d uint, s uint, n int)</pre>
 <p>Raw C binding that XORs n bytes from a source address into a destination address, wrapped by xor_bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L39">hc/lib/std.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L39">hc/lib/std.he:39</a>
 </article>
 <article class="sym" id="radix_key">
 <h3><a href="#radix_key">radix_key</a> <i>function</i></h3>
 <pre>radix_key(k u64, d int, top int) int</pre>
 <p>Returns the radix bucket for byte position d of a key, flipping the top byte's high bit for signed keys.</p>
 <p class="note">Fixed-width integer keys sort by value, not by comparison: an LSD radix sort on bytes. One read counts every byte position, a position whose bytes are all the same is skipped, and each other one is a single stable pass through a scratch copy. Signed keys flip their top bit so negatives come first. Short ranges use the comparison sort above.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L462">hc/lib/std.he:462</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L462">hc/lib/std.he:462</a>
 </article>
 <article class="sym" id="radix_sort">
 <h3><a href="#radix_sort">radix_sort</a> <i>function</i></h3>
 <pre>radix_sort&lt;T&gt;(xs T[:], nb int, sgn bool)</pre>
 <p>Sorts a fixed-width integer slice by byte-wise radix passes, falling back to comparison sort for short slices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L465">hc/lib/std.he:465</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L465">hc/lib/std.he:465</a>
 </article>
 <article class="sym" id="counter">
 <h3><a href="#counter">counter</a> <i>function</i></h3>
 <pre>counter() int</pre>
 <p>Returns the starting value of a count, used when the compiler lowers push-and-measure collections to plain counters.</p>
 <p class="note">counter: the start of a count; hc lowers a local collection that is only pushed and measured to one (x.push(v) becomes x++, x.len becomes x).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L573">hc/lib/std.he:573</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L573">hc/lib/std.he:573</a>
 </article>
 <article class="sym" id="HXK">
 <h3><a href="#HXK">HXK</a> <i>constant</i></h3>
 <pre>HXK ~= -1</pre>
 <p>Cached CPU capability value, initialized to -1 until first checked by hxk.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L687">hc/lib/std.he:687</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L687">hc/lib/std.he:687</a>
 </article>
 <article class="sym" id="hxk">
 <h3><a href="#hxk">hxk</a> <i>function</i></h3>
 <pre>inline hxk() bool</pre>
 <p>Returns true when the vectorized string fast path is available, checking the CPU once and caching the result.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L688">hc/lib/std.he:688</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L688">hc/lib/std.he:688</a>
 </article>
 <article class="sym" id="format_replaced">
 <h3><a href="#format_replaced">format_replaced</a> <i>function</i></h3>
 <pre>format_replaced(out byte[&gt;..]&amp;, s byte[:], old byte[:], with byte[:])</pre>
 <p>Appends s to out with every occurrence of old replaced by with; an empty old matches nothing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L795">hc/lib/std.he:795</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L795">hc/lib/std.he:795</a>
 </article>
 <article class="sym" id="utf8_cont">
 <h3><a href="#utf8_cont">utf8_cont</a> <i>function</i></h3>
 <pre>utf8_cont(s byte[:], i int) int</pre>
 <p>Returns the byte length of the UTF-8 sequence starting at index i, or 1 for a stray or invalid byte.</p>
 <p class="note">how many bytes the sequence starting at s[i] takes (1 for a stray byte)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L865">hc/lib/std.he:865</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L865">hc/lib/std.he:865</a>
 </article>
 <article class="sym" id="digit_value">
 <h3><a href="#digit_value">digit_value</a> <i>function</i></h3>
 <pre>digit_value(c byte) int</pre>
 <p>Returns the value of a digit or letter byte as a number up to 35, or 99 if it is neither.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L884">hc/lib/std.he:884</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L884">hc/lib/std.he:884</a>
 </article>
 <article class="sym" id="flt_digit">
 <h3><a href="#flt_digit">flt_digit</a> <i>function</i></h3>
 <pre>flt_digit(c byte) bool</pre>
 <p>Returns whether the byte is an ASCII decimal digit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L917">hc/lib/std.he:917</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L917">hc/lib/std.he:917</a>
 </article>
 <article class="sym" id="big_mul_add">
 <h3><a href="#big_mul_add">big_mul_add</a> <i>function</i></h3>
 <pre>big_mul_add(a uint[&gt;..]&amp;, m uint, add uint)</pre>
 <p>Multiplies a limb array by m and adds add in place, growing it on carry.</p>
 <p class="note">Decimal to binary for the cases the fast path cannot do exactly: the digits become a big integer (base 2^32 limbs, low first), the power of ten lands on the numerator or the denominator, and a bitwise long division yields 64 quotient bits plus a sticky bit, rounded to nearest even.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L923">hc/lib/std.he:923</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L923">hc/lib/std.he:923</a>
 </article>
 <article class="sym" id="big_bits">
 <h3><a href="#big_bits">big_bits</a> <i>function</i></h3>
 <pre>big_bits(a uint[&gt;..]&amp;) int</pre>
 <p>Returns the number of significant bits in a limb array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L930">hc/lib/std.he:930</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L930">hc/lib/std.he:930</a>
 </article>
 <article class="sym" id="big_shl">
 <h3><a href="#big_shl">big_shl</a> <i>function</i></h3>
 <pre>big_shl(a uint[&gt;..]&amp;, n int)</pre>
 <p>Shifts a limb array left by n bits in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L935">hc/lib/std.he:935</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L935">hc/lib/std.he:935</a>
 </article>
 <article class="sym" id="big_less">
 <h3><a href="#big_less">big_less</a> <i>function</i></h3>
 <pre>big_less(a uint[&gt;..]&amp;, b uint[&gt;..]&amp;) bool</pre>
 <p>Returns whether the first limb array is numerically less than the second.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L947">hc/lib/std.he:947</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L947">hc/lib/std.he:947</a>
 </article>
 <article class="sym" id="big_sub">
 <h3><a href="#big_sub">big_sub</a> <i>function</i></h3>
 <pre>big_sub(a uint[&gt;..]&amp;, b uint[&gt;..]&amp;)</pre>
 <p>Subtracts the second limb array from the first in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L956">hc/lib/std.he:956</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L956">hc/lib/std.he:956</a>
 </article>
 <article class="sym" id="big_zero">
 <h3><a href="#big_zero">big_zero</a> <i>function</i></h3>
 <pre>big_zero(a uint[&gt;..]&amp;) bool</pre>
 <p>Returns whether every limb of the array is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L963">hc/lib/std.he:963</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L963">hc/lib/std.he:963</a>
 </article>
 <article class="sym" id="round_bits">
 <h3><a href="#round_bits">round_bits</a> <i>function</i></h3>
 <pre>round_bits(q uint, e2 int, sticky bool) real</pre>
 <p>Returns the double nearest to q times 2 to the power e2, rounding to even and using the sticky flag.</p>
 <p class="note">2^e2 * q, with sticky set when bits below q were not zero, as the nearest double</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L967">hc/lib/std.he:967</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L967">hc/lib/std.he:967</a>
 </article>
 <article class="sym" id="slow_decimal">
 <h3><a href="#slow_decimal">slow_decimal</a> <i>function</i></h3>
 <pre>slow_decimal(digits byte[:], e10 int) real</pre>
 <p>Converts decimal digits with a power-of-ten exponent to the nearest double using big integer division.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L985">hc/lib/std.he:985</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L985">hc/lib/std.he:985</a>
 </article>
 <article class="sym" id="big_shr1">
 <h3><a href="#big_shr1">big_shr1</a> <i>function</i></h3>
 <pre>big_shr1(a uint[&gt;..]&amp;)</pre>
 <p>Shifts a limb array right by one bit in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1012">hc/lib/std.he:1012</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1012">hc/lib/std.he:1012</a>
 </article>
 <article class="sym" id="POW10">
 <h3><a href="#POW10">POW10</a> <i>constant</i></h3>
 <pre>POW10 := [1.0, 10.0, 100.0, 1.0e3, 1.0e4, 1.0e5, 1.0e6, 1.0e7, 1.0e8, 1.0e9, 1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15, 1.0e16, 1.0e17, 1.0e18, 1.0e19, 1.0e20, 1.0e21, 1.0e22]</pre>
 <p>Table of exactly representable powers of ten from 1e0 to 1e22 used by the fast parsing path.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1016">hc/lib/std.he:1016</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1016">hc/lib/std.he:1016</a>
 </article>
 <article class="sym" id="DIGITS">
 <h3><a href="#DIGITS">DIGITS</a> <i>constant</i></h3>
 <pre>DIGITS := &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;</pre>
 <p>String of digit characters for bases up to 36, indexed by digit value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1084">hc/lib/std.he:1084</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1084">hc/lib/std.he:1084</a>
 </article>
 <article class="sym" id="pyb">
 <h3><a href="#pyb">pyb</a> <i>function</i></h3>
 <pre>pyb(n int, b int, p const byte[:]) byte[&gt;..]</pre>
 <p>Returns the integer in base b as a new array with a sign, then prefix p, then digits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1119">hc/lib/std.he:1119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1119">hc/lib/std.he:1119</a>
 </article>
 <article class="sym" id="hexw">
 <h3><a href="#hexw">hexw</a> <i>function</i></h3>
 <pre>hexw(t uint) uint</pre>
 <p>Expands the low four bytes of t into eight lowercase hex digit bytes packed in a word.</p>
 <p class="note">b as lowercase hex, two digits a byte</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1126">hc/lib/std.he:1126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1126">hc/lib/std.he:1126</a>
 </article>
 <article class="sym" id="hexd">
 <h3><a href="#hexd">hexd</a> <i>function</i></h3>
 <pre>hexd(c byte) int</pre>
 <p>Returns the value of a hex digit byte, or -1 if it is not one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1189">hc/lib/std.he:1189</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1189">hc/lib/std.he:1189</a>
 </article>
 <article class="sym" id="big_div_small">
 <h3><a href="#big_div_small">big_div_small</a> <i>function</i></h3>
 <pre>big_div_small(a uint[&gt;..]&amp;, k uint) uint</pre>
 <p>Divides a limb array by k in place and returns the remainder.</p>
 <p class="note">divides a by k in place and returns the remainder</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1194">hc/lib/std.he:1194</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1194">hc/lib/std.he:1194</a>
 </article>
 <article class="sym" id="fixed_parts">
 <h3><a href="#fixed_parts">fixed_parts</a> <i>function</i></h3>
 <pre>fixed_parts(v real, decimals int, away bool = false) uint, uint, bool</pre>
 <p>Splits a real into its integer part and a rounded decimals-digit fraction as integers, ties to even or away from zero; returns false for sizes of 2^53 or more, inf, nan, or decimals outside 0 to 18.</p>
 <p class="note">the size of v rounded to `decimals` digits after the point, as its whole part and its decimals as an integer below 10^decimals. Exact: a tie goes to even, or away from zero with away. False for a size of 2^53 or more, inf, nan, or a count outside 0 to 18</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1207">hc/lib/std.he:1207</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1207">hc/lib/std.he:1207</a>
 </article>
 <article class="sym" id="fstr_w">
 <h3><a href="#fstr_w">fstr_w</a> <i>function, 2 forms</i></h3>
@@ -1773,123 +1773,123 @@ and the helpers the Python dialect lowers to.
 <pre>fstr_w&lt;T&gt;(x T, t byte[:], w int) byte[&gt;..]</pre>
 <p>Pads the text t of a non-string field on the left to width w, as an f-string does by default.</p>
 <p class="note">an f-string field of width w with no alignment given: x is the value and t its text; strings go left, everything else right, as in Python</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1280">hc/lib/std.he:1280</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1280">hc/lib/std.he:1280</a>
 </article>
 <article class="sym" id="simd256">
 <h3><a href="#simd256">simd256</a> <i>function</i></h3>
 <pre>simd256() bool</pre>
 <p>Reports whether 256-bit SIMD is available at runtime.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1309">hc/lib/std.he:1309</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1309">hc/lib/std.he:1309</a>
 </article>
 <article class="sym" id="byte_set_pair">
 <h3><a href="#byte_set_pair">byte_set_pair</a> <i>function</i></h3>
 <pre>byte_set_pair(s byte[:], a const ByteSet&amp;, d int, b const ByteSet&amp;) int</pre>
 <p>Returns the first index i where s[i] is in a and s[i + d] is in b, or -1.</p>
 <p class="note">first i with s[i] in a and s[i + d] in b, or -1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1324">hc/lib/std.he:1324</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1324">hc/lib/std.he:1324</a>
 </article>
 <article class="sym" id="match16">
 <h3><a href="#match16">match16</a> <i>function</i></h3>
 <pre>match16(s byte[:], i int, w int) int</pre>
 <p>Returns a 16-bit mask of positions in s from i that match bytes packed in w.</p>
 <p class="note">bit k set when s[i + k] equals one of the bytes packed in w: the low byte, then the next two unless bit 24 (one byte) or bit 25 (two bytes) is set</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1333">hc/lib/std.he:1333</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1333">hc/lib/std.he:1333</a>
 </article>
 <article class="sym" id="match32">
 <h3><a href="#match32">match32</a> <i>function</i></h3>
 <pre>match32(s byte[:], i int, w int) int</pre>
 <p>Returns a 32-bit mask of positions in s from i that match bytes packed in w.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1342">hc/lib/std.he:1342</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1342">hc/lib/std.he:1342</a>
 </article>
 <article class="sym" id="match_set32">
 <h3><a href="#match_set32">match_set32</a> <i>function</i></h3>
 <pre>match_set32(s byte[:], i int, set const ByteSet&amp;) int</pre>
 <p>Returns a 32-bit mask of positions in s from i whose bytes are in the set.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1343">hc/lib/std.he:1343</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1343">hc/lib/std.he:1343</a>
 </article>
 <article class="sym" id="pyrcount">
 <h3><a href="#pyrcount">pyrcount</a> <i>function</i></h3>
 <pre>inline pyrcount(a int, b int, s int) int</pre>
 <p>Counts the iterations of a Python-style range loop from start, stop and step, returning zero when the range is empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1369">hc/lib/std.he:1369</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1369">hc/lib/std.he:1369</a>
 </article>
 <article class="sym" id="pyc1">
 <h3><a href="#pyc1">pyc1</a> <i>function</i></h3>
 <pre>pyc1(s byte[:]) byte</pre>
 <p>Returns the first byte of a string slice, used when lowering Python single-character access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1370">hc/lib/std.he:1370</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1370">hc/lib/std.he:1370</a>
 </article>
 <article class="sym" id="pydigit">
 <h3><a href="#pydigit">pydigit</a> <i>function</i></h3>
 <pre>pydigit(c byte) int</pre>
 <p>Converts an ASCII digit byte to its integer value by subtracting 48, without checking the byte is a digit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1371">hc/lib/std.he:1371</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1371">hc/lib/std.he:1371</a>
 </article>
 <article class="sym" id="pyown">
 <h3><a href="#pyown">pyown</a> <i>function</i></h3>
 <pre>pyown(xs const byte[:][:]) byte[&gt;..][&gt;..]</pre>
 <p>Copies a slice of byte strings into a new growable array of independently owned strings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1372">hc/lib/std.he:1372</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1372">hc/lib/std.he:1372</a>
 </article>
 <article class="sym" id="pydel">
 <h3><a href="#pydel">pydel</a> <i>function</i></h3>
 <pre>pydel&lt;T&gt;(xs T[&gt;..]&amp;, i int)</pre>
 <p>Removes the element at an index from a growable array, where a negative index counts from the end.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1376">hc/lib/std.he:1376</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1376">hc/lib/std.he:1376</a>
 </article>
 <article class="sym" id="pybi">
 <h3><a href="#pybi">pybi</a> <i>function</i></h3>
 <pre>pybi(b bool) int</pre>
 <p>Converts a boolean to an integer, returning 1 for true and 0 for false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1377">hc/lib/std.he:1377</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1377">hc/lib/std.he:1377</a>
 </article>
 <article class="sym" id="pyf0">
 <h3><a href="#pyf0">pyf0</a> <i>function</i></h3>
 <pre>pyf0&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the first element of a slice, used when lowering Python tuple field access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1378">hc/lib/std.he:1378</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1378">hc/lib/std.he:1378</a>
 </article>
 <article class="sym" id="pyf1">
 <h3><a href="#pyf1">pyf1</a> <i>function</i></h3>
 <pre>pyf1&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the second element of a slice, used when lowering Python tuple field access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1379">hc/lib/std.he:1379</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1379">hc/lib/std.he:1379</a>
 </article>
 <article class="sym" id="pyf2">
 <h3><a href="#pyf2">pyf2</a> <i>function</i></h3>
 <pre>pyf2&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the third element of a slice, used when lowering Python tuple field access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1380">hc/lib/std.he:1380</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1380">hc/lib/std.he:1380</a>
 </article>
 <article class="sym" id="pyf3">
 <h3><a href="#pyf3">pyf3</a> <i>function</i></h3>
 <pre>pyf3&lt;T&gt;(xs T[:]) T</pre>
 <p>Returns the fourth element of a slice, used when lowering Python tuple field access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1381">hc/lib/std.he:1381</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1381">hc/lib/std.he:1381</a>
 </article>
 <article class="sym" id="pystar">
 <h3><a href="#pystar">pystar</a> <i>function</i></h3>
 <pre>pystar&lt;T&gt;(xs T[:], sep byte[:]) byte[&gt;..]</pre>
 <p>Joins the Python-style string forms of a slice's elements into a new string, separated by the given separator.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1382">hc/lib/std.he:1382</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1382">hc/lib/std.he:1382</a>
 </article>
 <article class="sym" id="pyformat">
 <h3><a href="#pyformat">pyformat</a> <i>function</i></h3>
 <pre>pyformat(n int, spec byte[:]) byte[&gt;..]</pre>
 <p>Formats an integer like a Python format spec, supporting zero fill, width and the b, o, x, X and d conversions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1386">hc/lib/std.he:1386</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1386">hc/lib/std.he:1386</a>
 </article>
 <article class="sym" id="pych">
 <h3><a href="#pych">pych</a> <i>function</i></h3>
 <pre>pych(c byte) byte[&gt;..]</pre>
 <p>Returns a new growable byte string containing the single given byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1401">hc/lib/std.he:1401</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1401">hc/lib/std.he:1401</a>
 </article>
 <article class="sym" id="pyg">
 <h3><a href="#pyg">pyg</a> <i>function</i></h3>
 <pre>pyg(x real, p int) byte[&gt;..]</pre>
 <p>Formats a real with p significant digits like Python's g conversion, trimming trailing zeros and a bare decimal point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1420">hc/lib/std.he:1420</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1420">hc/lib/std.he:1420</a>
 </article>
 <article class="sym" id="truthy">
 <h3><a href="#truthy">truthy</a> <i>function, 4 forms</i></h3>
@@ -1901,13 +1901,13 @@ and the helpers the Python dialect lowers to.
 <p>Returns whether a real is nonzero, for the Python dialect's truth tests.</p>
 <pre>truthy&lt;T&gt;(xs T[:]) bool</pre>
 <p>Returns whether a slice is nonempty, for the Python dialect's truth tests.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1440">hc/lib/std.he:1440</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1440">hc/lib/std.he:1440</a>
 </article>
 <article class="sym" id="pynone">
 <h3><a href="#pynone">pynone</a> <i>function</i></h3>
 <pre>pynone() int</pre>
 <p>Returns the sentinel integer used to represent Python's None, which is 1 shifted left by 62.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1502">hc/lib/std.he:1502</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1502">hc/lib/std.he:1502</a>
 </article>
 <article class="sym" id="pylv">
 <h3><a href="#pylv">pylv</a> <i>function, 8 forms</i></h3>
@@ -1927,13 +1927,13 @@ and the helpers the Python dialect lowers to.
 <p>Copies a slice into a new growable array for Python assignment.</p>
 <pre>pylv&lt;T&gt;(xs T[&gt;..]) T[&gt;..]</pre>
 <p>Copies a growable array into a new independent growable array for Python assignment.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1503">hc/lib/std.he:1503</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1503">hc/lib/std.he:1503</a>
 </article>
 <article class="sym" id="pystep">
 <h3><a href="#pystep">pystep</a> <i>function</i></h3>
 <pre>pystep&lt;T&gt;(xs T[:], lo int, hi int, k int) T[&gt;..]</pre>
 <p>Returns a new array of the slice elements selected by Python-style start, stop and step, with 1 shifted left by 62 meaning an omitted bound.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/35d76d53b40dd4f03f76aa90d3e10260e7379340/hc/lib/std.he#L1511">hc/lib/std.he:1511</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/std.he#L1511">hc/lib/std.he:1511</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
