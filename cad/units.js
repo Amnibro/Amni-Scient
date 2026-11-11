@@ -1,6 +1,6 @@
 import {scaleText} from './form_lang.js';
 export const MM_PER={in:25.4,mm:1};
-let SYS='us';try{SYS=localStorage.getItem('amnicad.sys')||'us';}catch{}
+let SYS='us';try{SYS=typeof window==='object'&&localStorage.getItem('amnicad.sys')||'us';}catch{}
 export const sys=()=>SYS;
 export function setSys(s){SYS=s==='si'?'si':'us';try{localStorage.setItem('amnicad.sys',SYS);}catch{}}
 export const docUnits=doc=>doc&&doc.units==='in'?'in':'mm';
