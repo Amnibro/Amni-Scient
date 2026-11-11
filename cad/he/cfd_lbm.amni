@@ -1,0 +1,205 @@
+import math;
+fn main() {}
+extern fn lb_view_f32(id i32, xs f32[:]) = "lb_view_f32";
+extern fn lb_view_u8(id i32, xs u8[:]) = "lb_view_u8";
+let EX int[19] = [0, 1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0];
+let EY int[19] = [0, 0, 0, 1, -1, 0, 0, 1, -1, -1, 1, 0, 0, 0, 0, 1, -1, 1, -1];
+let EZ int[19] = [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1, -1, 1, 1, -1, -1, 1];
+let OPP int[19] = [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17];
+let WQ real[19] = [1.0 / 3.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0];
+var NX int = 0;
+var NY int = 0;
+var NZ int = 0;
+var N int = 0;
+var SOL u8[>..];
+var FA f32[>..];
+var FB f32[>..];
+var CUR int = 0;
+var FRC f32[>..];
+var MAC f32[>..];
+var AVG f32[>..];
+var FIN real[19] = [0.0; 19];
+fn feq(i int, r real, ux real, uy real, uz real) real {
+	let eu = (EX[i] as real) * ux + (EY[i] as real) * uy + (EZ[i] as real) * uz;
+	WQ[i] * r * (1.0 + 3.0 * eu + 4.5 * eu * eu - 1.5 * (ux * ux + uy * uy + uz * uz))
+}
+fn hypot3(a real, b real, c real) real {
+	let v real[3] = [abs(a), abs(b), abs(c)];
+	var mx = 0.0;
+	for k in 3 {
+		if v[k] > mx { mx = v[k]; }
+	}
+	if mx > 1.7976931348623157e308 { return mx; }
+	for k in 3 {
+		if v[k] != v[k] { return v[k]; }
+	}
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	for k in 3 {
+		let q = v[k] / mx;
+		let summand = q * q - comp;
+		let prelim = sum + summand;
+		comp = (prelim - sum) - summand;
+		sum = prelim;
+	}
+	sqrt(sum) * mx
+}
+export fn lb_alloc(nx i32, ny i32, nz i32) {
+	NX = nx;
+	NY = ny;
+	NZ = nz;
+	N = NX * NY * NZ;
+	SOL.clear();
+	SOL.resize(N, 0);
+	FA.clear();
+	FA.resize(19 * N, 0.0);
+	FB.clear();
+	CUR = 0;
+	FRC.clear();
+	MAC.clear();
+	AVG.clear();
+	lb_view_u8(1, SOL);
+	lb_view_f32(2, FA);
+}
+export fn lb_init(u real) {
+	for i in 19 {
+		FIN[i] = feq(i, 1.0, u, 0.0, 0.0);
+	}
+	for c in N {
+		if SOL[c] == 0 {
+			for i in 19 {
+				FA[i * N + c] = FIN[i] as f32;
+			}
+		}
+	}
+	CUR = 0;
+}
+fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
+	var f real[19] = [0.0; 19];
+	for c in N {
+		let x = c % NX;
+		let y = (c / NX) % NY;
+		let z = c / (NX * NY);
+		if SOL[c] != 0 {
+			for i in 19 {
+				fb[i * N + c] = 0.0;
+			}
+			FRC[3 * c] = 0.0;
+			FRC[3 * c + 1] = 0.0;
+			FRC[3 * c + 2] = 0.0;
+			continue;
+		}
+		var Fx = 0.0;
+		var Fy = 0.0;
+		var Fz = 0.0;
+		for i in 19 {
+			let sx = x - EX[i];
+			let sy = (y - EY[i] + NY) % NY;
+			let sz = (z - EZ[i] + NZ) % NZ;
+			if sx < 0 {
+				f[i] = FIN[i];
+			} else if sx >= NX {
+				f[i] = fa[i * N + c];
+			} else {
+				let s = sx + NX * (sy + NY * sz);
+				if SOL[s] != 0 {
+					let o = OPP[i];
+					let fo real = fa[o * N + c];
+					f[i] = fo;
+					Fx += 2.0 * fo * (EX[o] as real);
+					Fy += 2.0 * fo * (EY[o] as real);
+					Fz += 2.0 * fo * (EZ[o] as real);
+				} else {
+					f[i] = fa[i * N + s];
+				}
+			}
+		}
+		var r = 0.0;
+		var mx = 0.0;
+		var my = 0.0;
+		var mz = 0.0;
+		for i in 19 {
+			r += f[i];
+			mx += f[i] * (EX[i] as real);
+			my += f[i] * (EY[i] as real);
+			mz += f[i] * (EZ[i] as real);
+		}
+		var ux = mx / r;
+		var uy = my / r;
+		var uz = mz / r;
+		let us = hypot3(ux, uy, uz);
+		if us > 0.3 {
+			ux *= 0.3 / us;
+			uy *= 0.3 / us;
+			uz *= 0.3 / us;
+		}
+		if x == 0 {
+			r = 1.0;
+			ux = u;
+			uy = 0.0;
+			uz = 0.0;
+		}
+		var qxx = 0.0;
+		var qyy = 0.0;
+		var qzz = 0.0;
+		var qxy = 0.0;
+		var qxz = 0.0;
+		var qyz = 0.0;
+		for i in 19 {
+			let d = f[i] - feq(i, r, ux, uy, uz);
+			let ex = EX[i] as real;
+			let ey = EY[i] as real;
+			let ez = EZ[i] as real;
+			qxx += d * ex * ex;
+			qyy += d * ey * ey;
+			qzz += d * ez * ez;
+			qxy += d * ex * ey;
+			qxz += d * ex * ez;
+			qyz += d * ey * ez;
+		}
+		let Q = sqrt(qxx * qxx + qyy * qyy + qzz * qzz + 2.0 * (qxy * qxy + qxz * qxz + qyz * qyz));
+		let te = 0.5 * (tau + sqrt(tau * tau + 18.0 * 1.4142135623730951 * cs * cs * Q / r));
+		for i in 19 {
+			if x == 0 {
+				fb[i * N + c] = FIN[i] as f32;
+			} else {
+				fb[i * N + c] = (f[i] - (f[i] - feq(i, r, ux, uy, uz)) / te) as f32;
+			}
+		}
+		FRC[3 * c] = Fx as f32;
+		FRC[3 * c + 1] = Fy as f32;
+		FRC[3 * c + 2] = Fz as f32;
+		MAC[4 * c] = r as f32;
+		MAC[4 * c + 1] = ux as f32;
+		MAC[4 * c + 2] = uy as f32;
+		MAC[4 * c + 3] = uz as f32;
+		if acc != 0 {
+			let a0 real = AVG[4 * c];
+			let a1 real = AVG[4 * c + 1];
+			let a2 real = AVG[4 * c + 2];
+			let a3 real = AVG[4 * c + 3];
+			AVG[4 * c] = (a0 + r) as f32;
+			AVG[4 * c + 1] = (a1 + ux) as f32;
+			AVG[4 * c + 2] = (a2 + uy) as f32;
+			AVG[4 * c + 3] = (a3 + uz) as f32;
+		}
+	}
+	CUR = 1 - CUR;
+}
+export fn lb_step(tau real, u real, cs real, acc i32) {
+	if FB.len == 0 {
+		FB.resize(19 * N, 0.0);
+		FRC.resize(3 * N, 0.0);
+		MAC.resize(4 * N, 0.0);
+		AVG.resize(4 * N, 0.0);
+		lb_view_f32(3, FRC);
+		lb_view_f32(4, MAC);
+		lb_view_f32(5, AVG);
+	}
+	if CUR == 0 {
+		lb_core(FA, FB, tau, u, cs, acc);
+	} else {
+		lb_core(FB, FA, tau, u, cs, acc);
+	}
+}

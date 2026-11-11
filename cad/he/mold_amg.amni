@@ -1,0 +1,444 @@
+import math;
+fn main() {}
+extern fn am_view_f64(id i32, xs real[:]) = "am_view_f64";
+extern fn am_view_i32(id i32, xs i32[:]) = "am_view_i32";
+struct Lv { n int, nnz int, rp int, ci int, va int, d int, r int, agg int, nc int, rb int, eb int, r2 int, e2 int, ch int, y int, gs bool }
+var IP i32[>..];
+var FP real[>..];
+var LV Lv[>..];
+var RPI i32[>..];
+var CII i32[>..];
+var VAI real[>..];
+var BI real[>..];
+var XI real[>..];
+var AG i32[>..];
+var GR i32[>..];
+var GC i32[>..];
+var GV real[>..];
+var GP i32[>..];
+var PR real[>..];
+var PZ real[>..];
+var PP real[>..];
+var PQ real[>..];
+fn ipv(off int, len int) i32[:] { IP[off..off + len] }
+fn fpv(off int, len int) real[:] { FP[off..off + len] }
+fn ip_add(len int) int {
+	let o = IP.len;
+	for i in len { IP.push(0); }
+	o
+}
+fn fp_add(len int) int {
+	let o = FP.len;
+	for i in len { FP.push(0.0); }
+	o
+}
+export fn am_alloc(n i32, nnz i32) {
+	RPI.clear();
+	CII.clear();
+	VAI.clear();
+	BI.clear();
+	XI.clear();
+	RPI.resize((n as int) + 1, 0);
+	CII.resize(nnz as int, 0);
+	VAI.resize(nnz as int, 0.0);
+	BI.resize(n as int, 0.0);
+	XI.resize(n as int, 0.0);
+	am_view_i32(1, RPI);
+	am_view_i32(2, CII);
+	am_view_f64(3, VAI);
+	am_view_f64(4, BI);
+	am_view_f64(5, XI);
+}
+fn diag_of(l int) {
+	let lv = LV[l];
+	let rp = ipv(lv.rp, lv.n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let d = fpv(lv.d, lv.n);
+	for i in lv.n {
+		var s = 0.0;
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			if j == i { s += va[k]; }
+		}
+		d[i] = s;
+	}
+}
+fn aggregate(l int, th real) int {
+	let lv = LV[l];
+	let n = lv.n;
+	let rp = ipv(lv.rp, n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let d = fpv(lv.d, n);
+	AG.clear();
+	AG.resize(n, -1);
+	var nc = 0;
+	for i in n {
+		if AG[i] < 0 {
+			var ok = true;
+			var has = false;
+			let a int = rp[i];
+			let e int = rp[i + 1];
+			for k in a..e {
+				let j int = ci[k];
+				if j != i && abs(va[k]) >= th * sqrt(abs(d[i] * d[j])) {
+					has = true;
+					if AG[j] >= 0 {
+						ok = false;
+						break;
+					}
+				}
+			}
+			if ok && has {
+				AG[i] = nc as i32;
+				for k in a..e {
+					let j int = ci[k];
+					if j != i && abs(va[k]) >= th * sqrt(abs(d[i] * d[j])) {
+						AG[j] = nc as i32;
+					}
+				}
+				nc += 1;
+			}
+		}
+	}
+	for i in n {
+		if AG[i] < 0 {
+			var best = -1;
+			var bv = 0.0;
+			let a int = rp[i];
+			let e int = rp[i + 1];
+			for k in a..e {
+				let j int = ci[k];
+				if j != i && AG[j] >= 0 && abs(va[k]) > bv {
+					bv = abs(va[k]);
+					best = AG[j];
+				}
+			}
+			if best >= 0 {
+				AG[i] = best as i32;
+			} else {
+				AG[i] = nc as i32;
+				nc += 1;
+			}
+		}
+	}
+	nc
+}
+fn galerkin(l int, nc int) {
+	let lv = LV[l];
+	let n = lv.n;
+	let rp = ipv(lv.rp, n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let agg = ipv(lv.agg, n);
+	var cnt int[>..] = [];
+	cnt.resize(nc + 1, 0);
+	for i in n {
+		let a int = agg[i];
+		cnt[a + 1] += 1;
+	}
+	for I in nc { cnt[I + 1] += cnt[I]; }
+	var mem int[>..] = [];
+	mem.resize(n, 0);
+	var f int[>..] = [];
+	for I in nc { f.push(cnt[I]); }
+	for i in n {
+		let a int = agg[i];
+		mem[f[a]] = i;
+		f[a] += 1;
+	}
+	GP.clear();
+	GP.resize(nc, -1);
+	GR.clear();
+	GR.push(0);
+	GC.clear();
+	GV.clear();
+	for I in nc {
+		let s0 = GC.len;
+		for q in cnt[I]..cnt[I + 1] {
+			let i = mem[q];
+			let ka int = rp[i];
+			let kb int = rp[i + 1];
+			for k in ka..kb {
+				let c int = ci[k];
+				let J int = agg[c];
+				if GP[J] < 0 {
+					GP[J] = GC.len as i32;
+					GC.push(J as i32);
+					GV.push(va[k]);
+				} else {
+					let p int = GP[J];
+					GV[p] += va[k];
+				}
+			}
+		}
+		for q in s0..GC.len {
+			let c int = GC[q];
+			GP[c] = -1;
+		}
+		GR.push(GC.len as i32);
+	}
+}
+fn chol(l int) {
+	let n = LV[l].n;
+	let off = fp_add(n * n);
+	LV[l].ch = off;
+	LV[l].y = fp_add(n);
+	let lv = LV[l];
+	let rp = ipv(lv.rp, n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let M = fpv(off, n * n);
+	var mx = 0.0;
+	for i in n {
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			M[i * n + j] += va[k];
+			if j == i {
+				let v = abs(va[k]);
+				if v > mx { mx = v; }
+			}
+		}
+	}
+	for i in n { M[i * n + i] += 1e-12 * mx + 1e-300; }
+	for j in n {
+		var s = M[j * n + j];
+		for k in j { s -= M[j * n + k] * M[j * n + k]; }
+		s = if s > 0.0 { sqrt(s) } else { sqrt(1e-12 * mx + 1e-300) };
+		M[j * n + j] = s;
+		for i in (j + 1)..n {
+			var t = M[i * n + j];
+			for k in j { t -= M[i * n + k] * M[j * n + k]; }
+			M[i * n + j] = t / s;
+		}
+	}
+}
+fn push_level(n int, nnz int, first bool) int {
+	let rp = ip_add(n + 1);
+	let ci = ip_add(nnz);
+	let va = fp_add(nnz);
+	let d = fp_add(n);
+	let r = fp_add(n);
+	var rb = -1;
+	var eb = -1;
+	var r2 = -1;
+	var e2 = -1;
+	if !first {
+		rb = fp_add(n);
+		eb = fp_add(n);
+		r2 = fp_add(n);
+		e2 = fp_add(n);
+	}
+	LV.push(Lv { n: n, nnz: nnz, rp: rp, ci: ci, va: va, d: d, r: r, agg: -1, nc: 0, rb: rb, eb: eb, r2: r2, e2: e2, ch: -1, y: -1, gs: false });
+	LV.len - 1
+}
+fn setup(coarse int, theta real) {
+	IP.clear();
+	FP.clear();
+	LV.clear();
+	let n0 int = RPI.len - 1;
+	let nz0 int = RPI[n0];
+	let first = push_level(n0, nz0, true);
+	let f0 = LV[first];
+	for i in n0 + 1 { IP[f0.rp + i] = RPI[i]; }
+	for k in nz0 {
+		IP[f0.ci + k] = CII[k];
+		FP[f0.va + k] = VAI[k];
+	}
+	for lev in 25 {
+		if lev > 0 {
+			let prev = LV.len - 1;
+			let ncn = LV[prev].nc;
+			let nzn = GC.len;
+			let idx = push_level(ncn, nzn, false);
+			let nl = LV[idx];
+			for i in ncn + 1 { IP[nl.rp + i] = GR[i]; }
+			for k in nzn {
+				IP[nl.ci + k] = GC[k];
+				FP[nl.va + k] = GV[k];
+			}
+		}
+		let last = LV.len - 1;
+		diag_of(last);
+		let n = LV[last].n;
+		if n <= coarse { break; }
+		var nc = aggregate(last, theta);
+		if (nc as real) > 0.5 * (n as real) { nc = aggregate(last, 0.0); }
+		if (nc as real) > 0.85 * (n as real) { break; }
+		let off = ip_add(n);
+		for i in n { IP[off + i] = AG[i]; }
+		LV[last].agg = off;
+		LV[last].nc = nc;
+		galerkin(last, nc);
+	}
+	let last = LV.len - 1;
+	if LV[last].n <= 1500 {
+		chol(last);
+	} else {
+		LV[last].gs = true;
+	}
+}
+fn gs(l int, b real[:], x real[:], back bool) {
+	let lv = LV[l];
+	let n = lv.n;
+	let rp = ipv(lv.rp, n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let d = fpv(lv.d, n);
+	for s in n {
+		let i = if back { n - 1 - s } else { s };
+		var t = b[i];
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			if j != i { t -= va[k] * x[j]; }
+		}
+		x[i] = if d[i] != 0.0 { t / d[i] } else { 0.0 };
+	}
+}
+recursive fn cyc(l int, b real[:], x real[:], w bool) {
+	let lv = LV[l];
+	let n = lv.n;
+	if lv.gs {
+		for i in n { x[i] = 0.0; }
+		for s in 10 {
+			gs(l, b, x, false);
+			gs(l, b, x, true);
+		}
+		return;
+	}
+	if lv.ch >= 0 {
+		let M = fpv(lv.ch, n * n);
+		let y = fpv(lv.y, n);
+		for i in n {
+			var t = b[i];
+			for k in i { t -= M[i * n + k] * y[k]; }
+			y[i] = t / M[i * n + i];
+		}
+		for s in n {
+			let i = n - 1 - s;
+			var t = y[i];
+			for k in (i + 1)..n { t -= M[k * n + i] * x[k]; }
+			x[i] = t / M[i * n + i];
+		}
+		return;
+	}
+	let nx = LV[l + 1];
+	let rp = ipv(lv.rp, n + 1);
+	let ci = ipv(lv.ci, lv.nnz);
+	let va = fpv(lv.va, lv.nnz);
+	let agg = ipv(lv.agg, n);
+	let r = fpv(lv.r, n);
+	let rc = fpv(nx.rb, nx.n);
+	let ec = fpv(nx.eb, nx.n);
+	let r2 = fpv(nx.r2, nx.n);
+	let e2 = fpv(nx.e2, nx.n);
+	for i in n { x[i] = 0.0; }
+	gs(l, b, x, false);
+	for i in n {
+		var t = b[i];
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			t -= va[k] * x[j];
+		}
+		r[i] = t;
+	}
+	for i in nx.n { rc[i] = 0.0; }
+	for i in n {
+		let a int = agg[i];
+		rc[a] += r[i];
+	}
+	cyc(l + 1, rc, ec, w);
+	if w && !nx.gs && nx.ch < 0 {
+		let nrp = ipv(nx.rp, nx.n + 1);
+		let nci = ipv(nx.ci, nx.nnz);
+		let nva = fpv(nx.va, nx.nnz);
+		for i in nx.n {
+			var t = rc[i];
+			let a int = nrp[i];
+			let e int = nrp[i + 1];
+			for k in a..e {
+				let j int = nci[k];
+				t -= nva[k] * ec[j];
+			}
+			r2[i] = t;
+		}
+		cyc(l + 1, r2, e2, w);
+		for i in nx.n { ec[i] += e2[i]; }
+	}
+	for i in n {
+		let a int = agg[i];
+		x[i] += ec[a];
+	}
+	gs(l, b, x, true);
+}
+fn mv(v real[:], o real[:]) {
+	let n int = RPI.len - 1;
+	for i in n {
+		var t = 0.0;
+		let a int = RPI[i];
+		let e int = RPI[i + 1];
+		for k in a..e {
+			let j int = CII[k];
+			t += VAI[k] * v[j];
+		}
+		o[i] = t;
+	}
+}
+export fn am_solve(tol real, maxit i32, coarse i32, theta real, w i32) i32 {
+	let n int = BI.len;
+	PR.clear();
+	PZ.clear();
+	PP.clear();
+	PQ.clear();
+	PR.resize(n, 0.0);
+	PZ.resize(n, 0.0);
+	PP.resize(n, 0.0);
+	PQ.resize(n, 0.0);
+	mv(XI, PQ);
+	var bn = 0.0;
+	for i in n {
+		PR[i] = BI[i] - PQ[i];
+		bn += BI[i] * BI[i];
+	}
+	bn = sqrt(bn);
+	if !(bn > 0.0) {
+		for i in n { XI[i] = 0.0; }
+		return 0;
+	}
+	setup(coarse as int, theta);
+	cyc(0, PR, PZ, w != 0);
+	for i in n { PP[i] = PZ[i]; }
+	var rz = 0.0;
+	for i in n { rz += PR[i] * PZ[i]; }
+	var it = 0;
+	while it < (maxit as int) {
+		var rn = 0.0;
+		for i in n { rn += PR[i] * PR[i]; }
+		if sqrt(rn) <= tol * bn { break; }
+		mv(PP, PQ);
+		var pq = 0.0;
+		for i in n { pq += PP[i] * PQ[i]; }
+		let a = rz / pq;
+		for i in n {
+			XI[i] += a * PP[i];
+			PR[i] -= a * PQ[i];
+		}
+		cyc(0, PR, PZ, w != 0);
+		var r2 = 0.0;
+		for i in n { r2 += PR[i] * PZ[i]; }
+		let be = r2 / rz;
+		rz = r2;
+		for i in n { PP[i] = PZ[i] + be * PP[i]; }
+		it += 1;
+	}
+	it as i32
+}

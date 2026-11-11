@@ -1,0 +1,840 @@
+=== 769486ee89587503
+import math;
+var PI32 i32[>..];
+var PF64 real[>..];
+var PF32 f32[>..];
+var PU8 u8[>..];
+fn main() {
+}
+=== -3060da181def0e9a
+struct Lev {
+	nx int, ny int, nz int, NX int, NY int, NZ int, nn int, ne int,
+	om real,
+	hasKE bool, hasDadd bool, mapped bool,
+	oE int, oSc int, oKE int, oFix int, oDadd int,
+	oDiag int, oT1 int, oT2 int, oB int, oX int,
+	mi int, mw int
+}
+=== 435d9e1b707379e7
+var LS Lev[>..];
+var ND int = 0;
+var KK real[>..];
+var KT real[>..];
+var MC real[>..];
+var DENS f32[>..];
+var GX int = 0;
+var GY int = 0;
+var GZ int = 0;
+var FIX0 u8[>..];
+var DADD0 real[>..];
+var VB real[>..];
+var VU real[>..];
+var VX real[>..];
+var VY real[>..];
+var NSW int = 1;
+var REL real = 0.0;
+fn lE(l int) i32[:] {
+	let o = LS[l].oE;
+	PI32[o..o + LS[l].ne * 8]
+}
+fn lSc(l int) real[:] {
+	let o = LS[l].oSc;
+	PF64[o..o + LS[l].ne]
+}
+fn lKE(l int) f32[:] {
+	let o = LS[l].oKE;
+	if LS[l].hasKE {
+		PF32[o..o + LS[l].ne * ND * 8 * ND * 8]
+	} else {
+		PF32[o..o]
+	}
+}
+fn lFix(l int) u8[:] {
+	let o = LS[l].oFix;
+	PU8[o..o + LS[l].nn * ND]
+}
+fn lDadd(l int) real[:] {
+	let o = LS[l].oDadd;
+	if LS[l].hasDadd {
+		PF64[o..o + LS[l].nn * ND]
+	} else {
+		PF64[0..0]
+	}
+}
+fn lDiag(l int) real[:] {
+	let o = LS[l].oDiag;
+	PF64[o..o + LS[l].nn * ND]
+}
+fn lT1(l int) real[:] {
+	let o = LS[l].oT1;
+	PF64[o..o + LS[l].nn * ND]
+}
+fn lT2(l int) real[:] {
+	let o = LS[l].oT2;
+	PF64[o..o + LS[l].nn * ND]
+}
+fn lB(l int) real[:] {
+	let o = LS[l].oB;
+	PF64[o..o + LS[l].nn * ND]
+}
+fn lX(l int) real[:] {
+	let o = LS[l].oX;
+	PF64[o..o + LS[l].nn * ND]
+}
+=== 347b3c105171dcf8
+export fn fg_grid(nx i32, ny i32, nz i32, nd i32, has_dadd i32) {
+	let nxi int = nx;
+	let nyi int = ny;
+	let nzi int = nz;
+	let ndi int = nd;
+	LS.clear();
+	PI32.clear();
+	PF64.clear();
+	PF32.clear();
+	PU8.clear();
+	GX = nxi;
+	GY = nyi;
+	GZ = nzi;
+	ND = ndi;
+	let nn = (nxi + 1) * (nyi + 1) * (nzi + 1);
+	let m = ndi * 8;
+	DENS.clear();
+	DENS.resize(nxi * nyi * nzi, 0.0);
+	KK.clear();
+	KK.resize(m * m, 0.0);
+	FIX0.clear();
+	FIX0.resize(nn * ndi, 0);
+	DADD0.clear();
+	if has_dadd != 0 { DADD0.resize(nn * ndi, 0.0); }
+	fg_view_f32(1, DENS);
+	fg_view_f64(2, KK);
+	fg_view_u8(3, FIX0);
+	if has_dadd != 0 { fg_view_f64(4, DADD0); }
+}
+=== 7c68734cbf53bc81
+fn make_level(nx int, ny int, nz int, dens f32[:]) Lev {
+	var l = default<Lev>();
+	l.nx = nx;
+	l.ny = ny;
+	l.nz = nz;
+	l.NX = nx + 1;
+	l.NY = ny + 1;
+	l.NZ = nz + 1;
+	l.nn = l.NX * l.NY * l.NZ;
+	l.oE = PI32.len;
+	l.oSc = PF64.len;
+	l.oKE = PF32.len;
+	let sx = l.NX;
+	let sxy = l.NX * l.NY;
+	var ne = 0;
+	for k in nz {
+		for j in ny {
+			for i in nx {
+				let d real = dens[(k * ny + j) * nx + i];
+				if d > 0.0 {
+					let n0 = (k * l.NY + j) * sx + i;
+					PI32.push(n0 as i32);
+					PI32.push((n0 + 1) as i32);
+					PI32.push((n0 + sx + 1) as i32);
+					PI32.push((n0 + sx) as i32);
+					PI32.push((n0 + sxy) as i32);
+					PI32.push((n0 + sxy + 1) as i32);
+					PI32.push((n0 + sxy + sx + 1) as i32);
+					PI32.push((n0 + sxy + sx) as i32);
+					PF64.push(d);
+					ne++;
+				}
+			}
+		}
+	}
+	l.ne = ne;
+	l.oFix = PU8.len;
+	for i in l.nn * ND { PU8.push(0); }
+	l.om = 0.0;
+	l
+}
+=== 5d38f143f573cff2
+fn matvec(l int, x real[:], y real[:], raw bool) {
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	let n = LS[l].nn * nd;
+	let ne = LS[l].ne;
+	let hk = LS[l].hasKE;
+	let E = lE(l);
+	let sc = lSc(l);
+	let KE = lKE(l);
+	for i in n { y[i] = 0.0; }
+	var ue real[24] = [0.0; 24];
+	var acc real[24] = [0.0; 24];
+	for q in ne {
+		var s = 1.0;
+		if !hk { s = sc[q]; }
+		for a in 8 {
+			let nb int = E[8 * q + a];
+			for c in nd { ue[nd * a + c] = x[nb * nd + c]; }
+		}
+		if hk {
+			for r in m {
+				var t = 0.0;
+				for j in m {
+					let kv real = KE[q * mm + r * m + j];
+					t += kv * ue[j];
+				}
+				acc[r] = t;
+			}
+		} else {
+			for r in m { acc[r] = 0.0; }
+			for j in m {
+				let u = ue[j];
+				for r in m { acc[r] += KT[j * m + r] * u; }
+			}
+		}
+		for a in 8 {
+			let nb int = E[8 * q + a];
+			for c in nd { y[nb * nd + c] += s * acc[nd * a + c]; }
+		}
+	}
+	if LS[l].hasDadd {
+		let da = lDadd(l);
+		for i in n { y[i] += da[i] * x[i]; }
+	}
+	if !raw {
+		let fix = lFix(l);
+		for i in n { if fix[i] != 0 { y[i] = x[i]; } }
+	}
+}
+=== 278a7caa9a35f3ec
+fn child_w(di int, dj int, dk int) real[64] {
+	var w real[64] = [0.0; 64];
+	let lx int[8] = [0, 1, 1, 0, 0, 1, 1, 0];
+	let ly int[8] = [0, 0, 1, 1, 0, 0, 1, 1];
+	let lz int[8] = [0, 0, 0, 0, 1, 1, 1, 1];
+	for a in 8 {
+		let ux real = (di + lx[a]) / 2.0;
+		let uy real = (dj + ly[a]) / 2.0;
+		let uz real = (dk + lz[a]) / 2.0;
+		for b in 8 {
+			var fx = 1.0 - ux;
+			if lx[b] == 1 { fx = ux; }
+			var fy = 1.0 - uy;
+			if ly[b] == 1 { fy = uy; }
+			var fz = 1.0 - uz;
+			if lz[b] == 1 { fz = uz; }
+			w[a * 8 + b] = fx * fy * fz;
+		}
+	}
+	w
+}
+=== -661089cb6eae1f09
+fn galerkin(kf real[:], w real[:], out real[:], scale real) {
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	var tt real[576] = [0.0; 576];
+	for pr in m {
+		for b in 8 {
+			for j in nd {
+				var t = 0.0;
+				for q in 8 {
+					let wq = w[q * 8 + b];
+					if wq == 0.0 { continue; }
+					t += kf[pr * m + nd * q + j] * wq;
+				}
+				tt[pr * m + nd * b + j] = t;
+			}
+		}
+	}
+	for a in 8 {
+		for i in nd {
+			let r = (nd * a + i) * m;
+			for p in 8 {
+				let wp = w[p * 8 + a];
+				if wp == 0.0 { continue; }
+				let rr = (nd * p + i) * m;
+				for k in m { out[r + k] += scale * wp * tt[rr + k]; }
+			}
+		}
+	}
+}
+=== -705ed2420d59296
+fn coarsen(f int) {
+	let fl = LS[f];
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	let fnx = fl.nx;
+	let fny = fl.ny;
+	let fnz = fl.nz;
+	let cx = (fnx + 1) / 2;
+	let cy = (fny + 1) / 2;
+	let cz = (fnz + 1) / 2;
+	let cn = cx * cy * cz;
+	var cell int[>..] = [];
+	cell.resize(fnx * fny * fnz, -1);
+	let e0 = lE(f);
+	for q in fl.ne {
+		let n0 int = e0[8 * q];
+		let ci = n0 % fl.NX;
+		let cj = (n0 / fl.NX) % fl.NY;
+		let ck = n0 / (fl.NX * fl.NY);
+		cell[(ck * fny + cj) * fnx + ci] = q;
+	}
+	var cnt int[>..] = [];
+	cnt.resize(cn + 1, 0);
+	for k in fnz {
+		for j in fny {
+			for i in fnx {
+				if cell[(k * fny + j) * fnx + i] >= 0 {
+					let cc = ((k >> 1) * cy + (j >> 1)) * cx + (i >> 1);
+					cnt[cc + 1] += 1;
+				}
+			}
+		}
+	}
+	for c in cn { cnt[c + 1] += cnt[c]; }
+	let total = cnt[cn];
+	var pos int[>..] = [];
+	pos.resize(cn, 0);
+	var nce = 0;
+	for c in cn {
+		pos[c] = cnt[c];
+		if cnt[c + 1] > cnt[c] { nce++; }
+	}
+	var chq int[>..] = [];
+	var chc int[>..] = [];
+	chq.resize(total, 0);
+	chc.resize(total, 0);
+	for k in fnz {
+		for j in fny {
+			for i in fnx {
+				let q = cell[(k * fny + j) * fnx + i];
+				if q >= 0 {
+					let cc = ((k >> 1) * cy + (j >> 1)) * cx + (i >> 1);
+					let p = pos[cc];
+					chq[p] = q;
+					chc[p] = (i & 1) | ((j & 1) << 1) | ((k & 1) << 2);
+					pos[cc] = p + 1;
+				}
+			}
+		}
+	}
+	var l = default<Lev>();
+	l.nx = cx;
+	l.ny = cy;
+	l.nz = cz;
+	l.NX = cx + 1;
+	l.NY = cy + 1;
+	l.NZ = cz + 1;
+	l.nn = l.NX * l.NY * l.NZ;
+	l.ne = nce;
+	l.om = 0.0;
+	l.hasKE = true;
+	l.hasDadd = fl.hasDadd;
+	l.mapped = false;
+	l.oE = PI32.len;
+	PI32.resize(PI32.len + nce * 8, 0);
+	l.oSc = PF64.len;
+	PF64.resize(PF64.len + nce, 1.0);
+	l.oKE = PF32.len;
+	PF32.resize(PF32.len + nce * mm, 0.0);
+	l.oFix = PU8.len;
+	PU8.resize(PU8.len + l.nn * nd, 0);
+	if fl.hasDadd {
+		l.oDadd = PF64.len;
+		PF64.resize(PF64.len + l.nn * nd, 0.0);
+	}
+	LS.push(l);
+	let nl = LS.len - 1;
+	let fE = lE(f);
+	let fSc = lSc(f);
+	let fKE = lKE(f);
+	let ffix = lFix(f);
+	let nE = lE(nl);
+	let nKE = lKE(nl);
+	let hk = fl.hasKE;
+	let sx = cx + 1;
+	let sxy = (cx + 1) * (cy + 1);
+	var ce = 0;
+	for cc in cn {
+		if cnt[cc + 1] == cnt[cc] { continue; }
+		let i = cc % cx;
+		let j = (cc / cx) % cy;
+		let k = cc / (cx * cy);
+		let n0 = (k * (cy + 1) + j) * sx + i;
+		nE[ce * 8] = n0 as i32;
+		nE[ce * 8 + 1] = (n0 + 1) as i32;
+		nE[ce * 8 + 2] = (n0 + sx + 1) as i32;
+		nE[ce * 8 + 3] = (n0 + sx) as i32;
+		nE[ce * 8 + 4] = (n0 + sxy) as i32;
+		nE[ce * 8 + 5] = (n0 + sxy + 1) as i32;
+		nE[ce * 8 + 6] = (n0 + sxy + sx + 1) as i32;
+		nE[ce * 8 + 7] = (n0 + sxy + sx) as i32;
+		var acc real[576] = [0.0; 576];
+		for t in cnt[cc]..cnt[cc + 1] {
+			let q = chq[t];
+			let c = chc[t];
+			let w = child_w(c & 1, (c >> 1) & 1, (c >> 2) & 1);
+			if hk {
+				var kf real[576] = [0.0; 576];
+				for t2 in mm {
+					let kv real = fKE[q * mm + t2];
+					kf[t2] = kv;
+				}
+				galerkin(kf, w, acc, 1.0);
+			} else {
+				var masked = false;
+				for a in 8 {
+					let nb int = fE[8 * q + a];
+					for c2 in nd { if ffix[nb * nd + c2] != 0 { masked = true; } }
+				}
+				if !masked {
+					for t2 in mm { acc[t2] += fSc[q] * MC[c * mm + t2]; }
+				} else {
+					var km real[576] = [0.0; 576];
+					for t2 in mm { km[t2] = KK[t2]; }
+					for a in 8 {
+						let nb int = fE[8 * q + a];
+						for c2 in nd {
+							if ffix[nb * nd + c2] != 0 {
+								let r = nd * a + c2;
+								for t2 in m {
+									km[r * m + t2] = 0.0;
+									km[t2 * m + r] = 0.0;
+								}
+							}
+						}
+					}
+					galerkin(km, w, acc, fSc[q]);
+				}
+			}
+		}
+		for t2 in mm { nKE[ce * mm + t2] = acc[t2] as f32; }
+		ce++;
+	}
+}
+=== -7b9cb86e30a72b74
+fn diag_of(l int) {
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	let n = LS[l].nn * nd;
+	let ne = LS[l].ne;
+	let hk = LS[l].hasKE;
+	let d = lDiag(l);
+	let E = lE(l);
+	let sc = lSc(l);
+	let KE = lKE(l);
+	let fix = lFix(l);
+	for i in n { d[i] = 0.0; }
+	for q in ne {
+		for a in 8 {
+			let nb int = E[8 * q + a];
+			for c in nd {
+				let idx = nb * nd + c;
+				if hk {
+					let kv real = KE[q * mm + (nd * a + c) * (m + 1)];
+					d[idx] += kv;
+				} else {
+					d[idx] += sc[q] * KK[(nd * a + c) * (m + 1)];
+				}
+			}
+		}
+	}
+	if LS[l].hasDadd {
+		let da = lDadd(l);
+		for i in n { d[i] += da[i]; }
+	}
+	for i in n { if abs(d[i]) < 1e-12 * KK[0] { d[i] = 0.0; } }
+	for i in n {
+		if fix[i] != 0 || d[i] == 0.0 {
+			d[i] = 1.0;
+			fix[i] = 1;
+		}
+	}
+}
+=== 0194036f7af4ff7d
+fn tmap(nf int, nc int) {
+	for i in nf { PI32.push((i >> 1) as i32); }
+	for i in nf { PI32.push(min((i >> 1) + (i & 1), nc - 1) as i32); }
+	for i in nf {
+		if (i & 1) == 1 { PF64.push(0.5); } else { PF64.push(1.0); }
+	}
+}
+fn build_maps(l int) {
+	let fNX = LS[l].NX;
+	let fNY = LS[l].NY;
+	let fNZ = LS[l].NZ;
+	let cNX = LS[l + 1].NX;
+	let cNY = LS[l + 1].NY;
+	let cNZ = LS[l + 1].NZ;
+	LS[l].mi = PI32.len;
+	LS[l].mw = PF64.len;
+	tmap(fNX, cNX);
+	tmap(fNY, cNY);
+	tmap(fNZ, cNZ);
+	LS[l].mapped = true;
+}
+fn ensure_maps(l int) {
+	assert(LS[l].mapped);
+}
+=== 6c5c8e9937656438
+fn transfer(l int, xf real[:], xc real[:], up bool) {
+	ensure_maps(l);
+	let nd = ND;
+	let fNX = LS[l].NX;
+	let fNY = LS[l].NY;
+	let fNZ = LS[l].NZ;
+	let cNX = LS[l + 1].NX;
+	let cNY = LS[l + 1].NY;
+	let mi = LS[l].mi;
+	let mw = LS[l].mw;
+	let fix = lFix(l);
+	let cfix = lFix(l + 1);
+	let nf = LS[l].nn * nd;
+	let nc = LS[l + 1].nn * nd;
+	if up {
+		for i in nf { xf[i] = 0.0; }
+	} else {
+		for i in nc { xc[i] = 0.0; }
+	}
+	let ox1 = mi + fNX;
+	let oy0 = mi + 2 * fNX;
+	let oy1 = oy0 + fNY;
+	let oz0 = oy1 + fNY;
+	let oz1 = oz0 + fNZ;
+	let wy = mw + fNX;
+	let wz = wy + fNY;
+	for k in fNZ {
+		var nk = 1;
+		if (k & 1) == 1 { nk = 2; }
+		for j in fNY {
+			var nj = 1;
+			if (j & 1) == 1 { nj = 2; }
+			for i in fNX {
+				var ni = 1;
+				if (i & 1) == 1 { ni = 2; }
+				let f = ((k * fNY + j) * fNX + i) * nd;
+				if !up {
+					var has = false;
+					for t in nd { if xf[f + t] != 0.0 { has = true; } }
+					if !has { continue; }
+				}
+				for a in nk {
+					var kk int = PI32[oz0 + k];
+					if a == 1 { kk = PI32[oz1 + k]; }
+					let wk = PF64[wz + k];
+					for b in nj {
+						var jj int = PI32[oy0 + j];
+						if b == 1 { jj = PI32[oy1 + j]; }
+						let wj = wk * PF64[wy + j];
+						for c in ni {
+							var ii int = PI32[mi + i];
+							if c == 1 { ii = PI32[ox1 + i]; }
+							let w = wj * PF64[mw + i];
+							let q = ((kk * cNY + jj) * cNX + ii) * nd;
+							for t in nd {
+								if up {
+									xf[f + t] += w * xc[q + t];
+								} else if fix[f + t] == 0 {
+									xc[q + t] += w * xf[f + t];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if up {
+		for i in nf { if fix[i] != 0 { xf[i] = 0.0; } }
+	} else {
+		for i in nc { if cfix[i] != 0 { xc[i] = 0.0; } }
+	}
+}
+=== 6973dc195e107159
+fn smooth(l int, b real[:], x real[:], iters int) {
+	var om = 0.5;
+	if LS[l].om != 0.0 { om = LS[l].om; }
+	let n = LS[l].nn * ND;
+	let t1 = lT1(l);
+	let d = lDiag(l);
+	for s in iters {
+		matvec(l, x, t1, false);
+		for i in n { x[i] += om * (b[i] - t1[i]) / d[i]; }
+	}
+}
+=== 4e9e17fedc7bb354
+fn lam_max(l int) real {
+	let n = LS[l].nn * ND;
+	let fix = lFix(l);
+	let d = lDiag(l);
+	var x real[>..] = [];
+	var y real[>..] = [];
+	x.resize(n, 0.0);
+	y.resize(n, 0.0);
+	var seed = 12345.0;
+	for i in n {
+		let v = seed * 1103515245.0 + 12345.0;
+		let iv int = v as int;
+		seed = (iv & 2147483647) as real;
+		if fix[i] != 0 { x[i] = 0.0; } else { x[i] = seed / 2147483647.0 - 0.5; }
+	}
+	var lam = 1.0;
+	for iter in 14 {
+		matvec(l, x, y, false);
+		var num = 0.0;
+		var den = 0.0;
+		for i in n {
+			if fix[i] != 0 {
+				y[i] = 0.0;
+			} else {
+				y[i] = y[i] / d[i];
+				num += y[i] * y[i] * d[i];
+				den += x[i] * y[i] * d[i];
+			}
+		}
+		lam = num / max(den, 1e-300);
+		var s2 = 0.0;
+		for i in n { s2 += y[i] * y[i]; }
+		var nr = sqrt(s2);
+		if nr == 0.0 { nr = 1.0; }
+		for i in n { x[i] = y[i] / nr; }
+	}
+	lam
+}
+=== -13f5cb761412ed77
+fn om_of(l int) real {
+	let lam = lam_max(l);
+	min(0.8, 1.15 / (lam * 1.05))
+}
+=== 54b5eb284a38ac0a
+recursive fn vcycle(l int, b real[:], x real[:]) {
+	let n = LS[l].nn * ND;
+	for i in n { x[i] = 0.0; }
+	if l == LS.len - 1 {
+		smooth(l, b, x, 40);
+		return;
+	}
+	smooth(l, b, x, NSW);
+	let t1 = lT1(l);
+	let t2 = lT2(l);
+	matvec(l, x, t1, false);
+	for i in n { t2[i] = b[i] - t1[i]; }
+	transfer(l, t2, lB(l + 1), false);
+	vcycle(l + 1, lB(l + 1), lX(l + 1));
+	transfer(l, t2, lX(l + 1), true);
+	for i in n { x[i] += t2[i]; }
+	smooth(l, b, x, NSW);
+}
+=== -42c6f5355df730aa
+export fn fg_setup(mg i32, lazy i32) i32 {
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	KT.clear();
+	KT.resize(mm, 0.0);
+	for r in m {
+		for j in m { KT[j * m + r] = KK[r * m + j]; }
+	}
+	var l0 = make_level(GX, GY, GZ, DENS);
+	l0.hasKE = false;
+	l0.hasDadd = DADD0.len > 0;
+	if l0.hasDadd {
+		l0.oDadd = PF64.len;
+		for i in DADD0.len { PF64.push(DADD0[i]); }
+	}
+	LS.push(l0);
+	let f0 = lFix(0);
+	for i in f0.len { f0[i] = FIX0[i]; }
+	MC.clear();
+	MC.resize(8 * mm, 0.0);
+	for c in 8 {
+		let w = child_w(c & 1, (c >> 1) & 1, (c >> 2) & 1);
+		galerkin(KK, w, MC[c * mm..(c + 1) * mm], 1.0);
+	}
+	while LS.len < 7 && mg != 0 {
+		let last = LS.len - 1;
+		let lv = LS[last];
+		if lv.ne < 400 || min(lv.nx, min(lv.ny, lv.nz)) < 2 { break; }
+		coarsen(last);
+	}
+	let nl = LS.len;
+	for l in nl - 1 { build_maps(l); }
+	for l in nl {
+		let n = LS[l].nn * nd;
+		LS[l].oDiag = PF64.len;
+		PF64.resize(PF64.len + n, 0.0);
+		LS[l].oT1 = PF64.len;
+		PF64.resize(PF64.len + n, 0.0);
+		LS[l].oT2 = PF64.len;
+		PF64.resize(PF64.len + n, 0.0);
+		LS[l].oB = PF64.len;
+		PF64.resize(PF64.len + n, 0.0);
+		LS[l].oX = PF64.len;
+		PF64.resize(PF64.len + n, 0.0);
+	}
+	if LS[0].hasDadd {
+		for l in 1..nl {
+			transfer(l - 1, lDadd(l - 1), lDadd(l), false);
+		}
+	}
+	for l in nl { diag_of(l); }
+	if nl > 1 && mg != 0 {
+		for l in nl {
+			if l == 0 && lazy != 0 { continue; }
+			let o = om_of(l);
+			LS[l].om = o;
+		}
+	}
+	let n0 = LS[0].nn * nd;
+	VB.clear();
+	VB.resize(n0, 0.0);
+	VU.clear();
+	VU.resize(n0, 0.0);
+	VX.clear();
+	VX.resize(n0, 0.0);
+	VY.clear();
+	VY.resize(n0, 0.0);
+	fg_views();
+	nl as i32
+}
+=== 16626dbb3ae53c36
+export fn fg_views() {
+	fg_view_f64(10, VB);
+	fg_view_f64(11, VU);
+	fg_view_f64(12, VX);
+	fg_view_f64(13, VY);
+	fg_view_u8(14, lFix(0));
+	fg_view_f64(15, lDiag(0));
+	fg_view_i32(16, lE(0));
+	fg_view_f64(17, lSc(0));
+}
+=== 1b8bed0c566a7a6d
+export fn fg_level(l i32) real {
+	let k int = l;
+	fg_view_i32(20, lE(k));
+	fg_view_f64(21, lSc(k));
+	fg_view_f32(22, lKE(k));
+	fg_view_u8(23, lFix(k));
+	fg_view_f64(24, lDiag(k));
+	LS[k].om
+}
+=== -3ae9882bc4653c1
+export fn fg_dim(l i32, k i32) i32 {
+	let li int = l;
+	var r int = 0;
+	if k == 0 {
+		r = LS[li].nx;
+	} else if k == 1 {
+		r = LS[li].ny;
+	} else if k == 2 {
+		r = LS[li].nz;
+	} else if k == 3 {
+		r = LS[li].nn;
+	} else {
+		r = LS[li].ne;
+	}
+	r as i32
+}
+=== 02d04b3f81a4f39f
+export fn fg_om0(om real) real {
+	if om > 0.0 {
+		LS[0].om = om;
+	} else if LS.len > 1 && !(LS[0].om > 0.0) {
+		let o = om_of(0);
+		LS[0].om = o;
+	}
+	LS[0].om
+}
+=== -7c97bcb60f189023
+export fn fg_sweeps(n i32) {
+	NSW = n;
+}
+=== -4f1c1801c29dd5ee
+export fn fg_matvec(raw i32) {
+	matvec(0, VX, VY, raw != 0);
+}
+=== 2434f8637513e191
+export fn fg_vcycle() {
+	if LS.len > 1 {
+		vcycle(0, VB, VX);
+	} else {
+		let d = lDiag(0);
+		for i in VX.len { VX[i] = VB[i] / d[i]; }
+	}
+}
+=== -35831ad47776a2a2
+var PC_U real[>..];
+var PC_R real[>..];
+var PC_Z real[>..];
+var PC_P real[>..];
+var PC_A real[>..];
+fn pcg_pre(r real[:], z real[:]) {
+	if LS.len > 1 {
+		vcycle(0, r, z);
+	} else {
+		let d = lDiag(0);
+		for i in z.len { z[i] = r[i] / d[i]; }
+	}
+}
+export fn fg_pcg(tol real, max_it i32) i32 {
+	let n = LS[0].nn * ND;
+	let multi = LS.len > 1;
+	PC_U.clear();
+	PC_U.resize(n, 0.0);
+	PC_R.clear();
+	for i in n { PC_R.push(VB[i]); }
+	PC_Z.clear();
+	PC_Z.resize(n, 0.0);
+	PC_P.clear();
+	PC_P.resize(n, 0.0);
+	PC_A.clear();
+	PC_A.resize(n, 0.0);
+	pcg_pre(PC_R, PC_Z);
+	for i in n { PC_P[i] = PC_Z[i]; }
+	var rz = 0.0;
+	for i in n { rz += PC_R[i] * PC_Z[i]; }
+	var f0s = 0.0;
+	for i in n { f0s += VB[i] * VB[i]; }
+	var f0 = sqrt(f0s);
+	if f0 == 0.0 { f0 = 1.0; }
+	var tl = tol;
+	if tl == 0.0 { tl = 1e-6; }
+	var mx int = max_it;
+	if mx == 0 {
+		if multi { mx = 400; } else { mx = 6000; }
+	}
+	var rel = 1.0;
+	var iter = 0;
+	while iter < mx {
+		matvec(0, PC_P, PC_A, false);
+		var pap = 0.0;
+		for i in n { pap += PC_P[i] * PC_A[i]; }
+		if !(pap > 0.0) { break; }
+		let al = rz / pap;
+		var rr = 0.0;
+		for i in n {
+			PC_U[i] += al * PC_P[i];
+			PC_R[i] -= al * PC_A[i];
+			rr += PC_R[i] * PC_R[i];
+		}
+		rel = sqrt(rr) / f0;
+		if iter % 5 == 0 { fg_prog(iter as i32, rel); }
+		if rel < tl { break; }
+		pcg_pre(PC_R, PC_Z);
+		var rz2 = 0.0;
+		for i in n { rz2 += PC_R[i] * PC_Z[i]; }
+		let be = rz2 / rz;
+		rz = rz2;
+		for i in n { PC_P[i] = PC_Z[i] + be * PC_P[i]; }
+		iter++;
+	}
+	for i in n { VU[i] = PC_U[i]; }
+	REL = rel;
+	iter as i32
+}
+=== -5e27a9ebb407819
+export fn fg_rel() real {
+	REL
+}

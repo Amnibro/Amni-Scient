@@ -1,5 +1,7 @@
 import {voxelize} from './fea.js';
 import {sleep} from './tick.js';
+import {helium} from './he/host.js';
+const LB=helium('cfd_lbm');
 export const EX=[0,1,-1,0,0,0,0,1,-1,1,-1,1,-1,1,-1,0,0,0,0],EY=[0,0,0,1,-1,0,0,1,-1,-1,1,0,0,0,0,1,-1,1,-1],EZ=[0,0,0,0,0,1,-1,0,0,0,0,1,-1,-1,1,1,-1,-1,1],OPP=[0,2,1,4,3,6,5,8,7,10,9,12,11,14,13,16,15,18,17],WQ=[1/3,1/18,1/18,1/18,1/18,1/18,1/18,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36];
 export const FLUIDS={air:{n:'Air (20 °C)',rho:1.204,nu:1.516e-5},water:{n:'Water (20 °C)',rho:998,nu:1.004e-6}};
 const AXI={'+X':[0,1],'-X':[0,-1],'+Y':[1,1],'-Y':[1,-1],'+Z':[2,1],'-Z':[2,-1]};
@@ -33,23 +35,11 @@ var qxx=0.;var qyy=0.;var qzz=0.;var qxy=0.;var qxz=0.;var qyz=0.;for(var i=0u;i
 let Q=sqrt(qxx*qxx+qyy*qyy+qzz*qzz+2.*(qxy*qxy+qxz*qxz+qyz*qyz));let te=0.5*(p.tau+sqrt(p.tau*p.tau+18.*1.41421356*p.cs*p.cs*Q/max(r,1e-6)));
 for(var i=0u;i<19u;i++){var o=f[i]-(f[i]-feq(i,r,u))/te;if(x==0){o=feq(i,1.,u0);}fb[i*p.n+c]=o;}
 frc[3u*c]=F.x;frc[3u*c+1u]=F.y;frc[3u*c+2u]=F.z;mac[4u*c]=r;mac[4u*c+1u]=u.x;mac[4u*c+2u]=u.y;mac[4u*c+3u]=u.z;if(p.pad>0.){avg[4u*c]+=r;avg[4u*c+1u]+=u.x;avg[4u*c+2u]+=u.y;avg[4u*c+3u]+=u.z;}}`;
-function feqJ(i,r,ux,uy,uz){const eu=EX[i]*ux+EY[i]*uy+EZ[i]*uz;return WQ[i]*r*(1+3*eu+4.5*eu*eu-1.5*(ux*ux+uy*uy+uz*uz));}
-function cpuStep(st){const{nx,ny,nz,n,tau,u:U,cs,fa,fb,sol,frc,mac}=st,f=new Float64Array(19);
-  for(let c=0;c<n;c++){const x=c%nx,y=Math.floor(c/nx)%ny,z=Math.floor(c/(nx*ny));if(sol[c]){for(let i=0;i<19;i++)fb[i*n+c]=0;frc[3*c]=frc[3*c+1]=frc[3*c+2]=0;continue;}
-    let Fx=0,Fy=0,Fz=0;
-    for(let i=0;i<19;i++){const sx=x-EX[i],sy=(y-EY[i]+ny)%ny,sz=(z-EZ[i]+nz)%nz;if(sx<0)f[i]=feqJ(i,1,U,0,0);else if(sx>=nx)f[i]=fa[i*n+c];else{const s=sx+nx*(sy+ny*sz);if(sol[s]){const o=OPP[i],fo=fa[o*n+c];f[i]=fo;Fx+=2*fo*EX[o];Fy+=2*fo*EY[o];Fz+=2*fo*EZ[o];}else f[i]=fa[i*n+s];}}
-    let r=0,mx=0,my=0,mz=0;for(let i=0;i<19;i++){r+=f[i];mx+=f[i]*EX[i];my+=f[i]*EY[i];mz+=f[i]*EZ[i];}
-    let ux=mx/r,uy=my/r,uz=mz/r;const us=Math.hypot(ux,uy,uz);if(us>0.3){ux*=0.3/us;uy*=0.3/us;uz*=0.3/us;}if(x===0){r=1;ux=U;uy=0;uz=0;}
-    let qxx=0,qyy=0,qzz=0,qxy=0,qxz=0,qyz=0;for(let i=0;i<19;i++){const d=f[i]-feqJ(i,r,ux,uy,uz);qxx+=d*EX[i]*EX[i];qyy+=d*EY[i]*EY[i];qzz+=d*EZ[i]*EZ[i];qxy+=d*EX[i]*EY[i];qxz+=d*EX[i]*EZ[i];qyz+=d*EY[i]*EZ[i];}
-    const Q=Math.sqrt(qxx*qxx+qyy*qyy+qzz*qzz+2*(qxy*qxy+qxz*qxz+qyz*qyz)),te=0.5*(tau+Math.sqrt(tau*tau+18*Math.SQRT2*cs*cs*Q/r));
-    for(let i=0;i<19;i++)fb[i*n+c]=x===0?feqJ(i,1,U,0,0):f[i]-(f[i]-feqJ(i,r,ux,uy,uz))/te;
-    frc[3*c]=Fx;frc[3*c+1]=Fy;frc[3*c+2]=Fz;mac[4*c]=r;mac[4*c+1]=ux;mac[4*c+2]=uy;mac[4*c+3]=uz;if(st.acc){const A=st.avg;A[4*c]+=r;A[4*c+1]+=ux;A[4*c+2]+=uy;A[4*c+3]+=uz;}}
-  st.fa=fb;st.fb=fa;}
 function sumF(frc){let x=0,y=0,z=0;for(let i=0;i<frc.length;i+=3){x+=frc[i];y+=frc[i+1];z+=frc[i+2];}return[x,y,z];}
 export async function runCFD(inp,prog,shouldStop){const t0=Date.now(),now=()=>performance.now();inp.gpu!==false&&prog&&prog({stage:'Starting the GPU'});const gd=inp.gpu!==false?await gpuDevice(Math.ceil(inp.cells*1.15)*76):{why:'CPU was chosen'},gpu=gd&&gd.createBuffer?gd:null,why=gpu?'':gd.why,cpuOnly=!gpu&&inp.gpu!==false,fit=gpu?Math.min(inp.cells,Math.floor(Math.min(gpu.cap,65535*64)/1.15)):inp.cpuCells||inp.cells;prog&&prog({stage:'Building the tunnel grid'+(cpuOnly?' (on the CPU at a coarser grid: '+why+')':fit<inp.cells?' (trimmed to '+Math.round(fit/1000)+'k cells to fit this GPU)':'')});
   const S=setup({...inp,cells:fit}),{G,solid}=S,n=G.nx*G.ny*G.nz,fl=FLUIDS[inp.fluid]||FLUIDS.air,U=inp.speed||10,Dm=S.D*1e-3,Re=U*Dm/fl.nu;
   const ulb=gpu?0.06:0.08,Dc=S.D/S.h,nulb=ulb*Dc/Re,tau=Math.max(0.5+3*nulb,0.5005),steps=Math.round((inp.flows||2.2)*G.nx/ulb),cs=0.17;
-  const fInit=new Float32Array(n*19);for(let c=0;c<n;c++)if(!solid[c])for(let i=0;i<19;i++)fInit[i*n+c]=feqJ(i,1,ulb,0,0);
+  const H=await LB(),L=H.ex;L.lb_alloc(G.nx,G.ny,G.nz);H.v(1).set(solid);L.lb_init(ulb);const fInit=H.v(2);
   let hist=[],mac,frcSum=[0,0,0],backend,tS=now();const live=m=>{if(!inp.live||now()-tS<1500)return null;tS=now();return fin(m);};
   if(gpu){backend='WebGPU';const dev=gpu,mk=(sz,u)=>dev.createBuffer({size:Math.max(16,sz),usage:u}),SU=GPUBufferUsage;
     const ub=mk(32,SU.UNIFORM|SU.COPY_DST),fa=mk(n*76,SU.STORAGE|SU.COPY_DST|SU.COPY_SRC),fb=mk(n*76,SU.STORAGE|SU.COPY_DST|SU.COPY_SRC),sb=mk(n*4,SU.STORAGE|SU.COPY_DST),frc=mk(n*12,SU.STORAGE|SU.COPY_SRC),mb=mk(n*16,SU.STORAGE|SU.COPY_SRC),rb=mk(n*16,SU.MAP_READ|SU.COPY_DST),ab=mk(n*16,SU.STORAGE|SU.COPY_SRC|SU.COPY_DST),rf=mk(n*12,SU.MAP_READ|SU.COPY_DST);
@@ -66,8 +56,8 @@ export async function runCFD(inp,prog,shouldStop){const t0=Date.now(),now=()=>pe
       chunk=Math.max(1,Math.min(400,Math.round(k*250/Math.max(1,now()-tc))));prog&&prog({step:s,steps,cd:hist.length?hist[hist.length-1][1]:null,backend,...(snap?{snap}:{})});}
     const enc=dev.createCommandEncoder();enc.copyBufferToBuffer(nAvg?ab:mb,0,rb,0,n*16);dev.queue.submit([enc.finish()]);await rb.mapAsync(GPUMapMode.READ);mac=new Float32Array(rb.getMappedRange()).slice();rb.unmap();if(nAvg)for(let i=0;i<mac.length;i++)mac[i]/=nAvg;
     for(const b of[ub,fa,fb,sb,frc,mb,rb,rf,ab])b.destroy();dev.destroy&&dev.destroy();
-  }else{backend=cpuOnly?'CPU ('+why+')':'CPU';let tP=now();const st={nx:G.nx,ny:G.ny,nz:G.nz,n,tau,u:ulb,cs,fa:fInit,fb:fInit.slice(),sol:solid,frc:new Float32Array(n*3),mac:new Float32Array(n*4),avg:new Float32Array(n*4),acc:false};let nAvg=0;const accFrom=Math.floor(steps*0.6);
-    for(let s=1;s<=steps;s++){st.acc=s>accFrom;if(st.acc)nAvg++;cpuStep(st);if(now()-tP>250||s===steps){tP=now();frcSum=sumF(st.frc);const cd=frcSum[0]/(0.5*ulb*ulb*S.area);hist.push([s,cd]);const snap=s<steps?live(st.mac):null;prog&&prog({step:s,steps,cd,backend,...(snap?{snap}:{})});await sleep(0);if(shouldStop&&shouldStop())break;}}mac=st.mac;if(nAvg){mac=st.avg;for(let i=0;i<mac.length;i++)mac[i]/=nAvg;}}
+  }else{backend=cpuOnly?'CPU ('+why+')':'CPU';let tP=now(),nAvg=0;const ev=Math.max(1,Math.round(steps/400));const accFrom=Math.floor(steps*0.6);
+    for(let s=1;s<=steps;s++){const acc=s>accFrom;if(acc)nAvg++;L.lb_step(tau,ulb,cs,acc?1:0);const rec=s%ev===0||s===steps;rec&&(frcSum=sumF(H.v(3)),hist.push([s,frcSum[0]/(0.5*ulb*ulb*S.area)]));if(now()-tP>250||s===steps){tP=now();rec||(frcSum=sumF(H.v(3)));const cd=frcSum[0]/(0.5*ulb*ulb*S.area);const snap=s<steps?live(H.v(4)):null;prog&&prog({step:s,steps,cd,backend,...(snap?{snap}:{})});await sleep(0);if(shouldStop&&shouldStop())break;}}mac=H.v(4).slice();if(nAvg){mac=H.v(5).slice();for(let i=0;i<mac.length;i++)mac[i]/=nAvg;}}
   return fin(mac);
   function fin(mac){const tail=hist.slice(Math.floor(hist.length*0.7)),cd=tail.reduce((a,b)=>a+b[1],0)/Math.max(tail.length,1),cl=Math.hypot(frcSum[1],frcSum[2])/(0.5*ulb*ulb*S.area);
   const block=S.area/(G.ny*G.nz),cdRaw=cd,cdC=cd/(1+2.5*cd*block),Aphys=S.area*S.h*S.h*1e-6,drag=cdC*0.5*fl.rho*U*U*Aphys,q=0.5*fl.rho*U*U;

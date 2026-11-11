@@ -3,6 +3,7 @@ import {gpuSolve,gpuContext} from './fea_gpu.js';
 import {KCOND,condK} from './thermal_data.js';
 import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
 import {voxSkin,skinU} from './fea_skin.js';
+import {helium} from './he/host.js';
 export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 function dmat(nu){const c=1/((1+nu)*(1-2*nu)),a=c*(1-nu),b=c*nu,g=c*(1-2*nu)/2;return[[a,b,b,0,0,0],[b,a,b,0,0,0],[b,b,a,0,0,0],[0,0,0,g,0,0],[0,0,0,0,g,0],[0,0,0,0,0,g]];}
@@ -59,115 +60,27 @@ export function voxelize(pos,idx,bb,h,triMask){
 }
 export function keHeat(){const g=1/Math.sqrt(3),K=new Float64Array(64);for(const xi of[-g,g])for(const et of[-g,g])for(const ze of[-g,g]){const D=NODES.map(([a,b,c])=>[a*(1+b*et)*(1+c*ze)/4,b*(1+a*xi)*(1+c*ze)/4,c*(1+a*xi)*(1+b*et)/4]);for(let a=0;a<8;a++)for(let b=0;b<8;b++)K[a*8+b]+=(D[a][0]*D[b][0]+D[a][1]*D[b][1]+D[a][2]*D[b][2])/8;}return K;}
 function densOf(G){const d=new Float32Array(G.nx*G.ny*G.nz);for(let e=0;e<d.length;e++)d[e]=G.solid[e]?Math.max(G.frac[e],0.12):0;return d;}
-function makeLevel(nx,ny,nz,dens,nd){
-  const NX=nx+1,NY=ny+1,NZ=nz+1,nn=NX*NY*NZ,els=[],sc=[];
-  for(let k=0;k<nz;k++)for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const e=(k*ny+j)*nx+i;if(dens[e]>0){els.push(e);sc.push(dens[e]);}}
-  const E=new Int32Array(els.length*8);
-  for(let q=0;q<els.length;q++){const e=els[q],i=e%nx,j=Math.floor(e/nx)%ny,k=Math.floor(e/(nx*ny)),n0=(k*NY+j)*NX+i;E.set([n0,n0+1,n0+NX+1,n0+NX,n0+NX*NY,n0+NX*NY+1,n0+NX*NY+NX+1,n0+NX*NY+NX],q*8);}
-  return{nx,ny,nz,NX,NY,NZ,nn,E,sc:new Float64Array(sc),dens,nd};
-}
-function matvec(L,K,x,y,raw){
-  const nd=L.nd,m=8*nd,mm=m*m,E=L.E,sc=L.sc,ne=sc.length,ue=new Float64Array(m),KE=L.KE;y.fill(0);
-  for(let q=0;q<ne;q++){
-    const o=q*8,s=KE?1:sc[q],Kq=KE?KE.subarray(q*mm,q*mm+mm):K;
-    if(nd===3){for(let a=0;a<8;a++){const n=E[o+a]*3;ue[3*a]=x[n];ue[3*a+1]=x[n+1];ue[3*a+2]=x[n+2];}for(let a=0;a<8;a++){const n=E[o+a]*3;for(let c=0;c<3;c++){const r=(3*a+c)*24;let t=0;for(let j=0;j<24;j++)t+=Kq[r+j]*ue[j];y[n+c]+=s*t;}}continue;}
-    for(let a=0;a<8;a++)ue[a]=x[E[o+a]];
-    for(let a=0;a<8;a++){const r=a*8;let t=0;for(let j=0;j<8;j++)t+=Kq[r+j]*ue[j];y[E[o+a]]+=s*t;}
-  }
-  const da=L.dadd;if(da)for(let i=0;i<y.length;i++)y[i]+=da[i]*x[i];
-  if(!raw){const f=L.fixed;for(let i=0;i<y.length;i++)if(f[i])y[i]=x[i];}
-}
-const LN=[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]];
-function childW(di,dj,dk){const W=new Float64Array(64);for(let a=0;a<8;a++){const u=[(di+LN[a][0])/2,(dj+LN[a][1])/2,(dk+LN[a][2])/2];for(let b=0;b<8;b++)W[a*8+b]=(LN[b][0]?u[0]:1-u[0])*(LN[b][1]?u[1]:1-u[1])*(LN[b][2]?u[2]:1-u[2]);}return W;}
-const CW=[];for(let c=0;c<8;c++)CW.push(childW(c&1,(c>>1)&1,(c>>2)&1));
-function galerkin(Kf,W,out,scale,nd){const m=8*nd,T=new Float64Array(m*m);for(let pi=0;pi<m;pi++)for(let b=0;b<8;b++)for(let j=0;j<nd;j++){let t=0;for(let q=0;q<8;q++){const w=W[q*8+b];if(w)t+=Kf[pi*m+nd*q+j]*w;}T[pi*m+nd*b+j]=t;}for(let a=0;a<8;a++)for(let i=0;i<nd;i++){const r=(nd*a+i)*m;for(let p=0;p<8;p++){const w=W[p*8+a];if(!w)continue;const rr=(nd*p+i)*m;for(let k=0;k<m;k++)out[r+k]+=scale*w*T[rr+k];}}}
-function coarsen(F,K,MC){
-  const nd=F.nd,m=8*nd,mm=m*m,nx=Math.ceil(F.nx/2),ny=Math.ceil(F.ny/2),nz=Math.ceil(F.nz/2),NX=nx+1,NY=ny+1,NZ=nz+1,nn=NX*NY*NZ,emap=new Int32Array(F.nx*F.ny*F.nz).fill(-1);
-  const fne=F.sc.length;for(let q=0;q<fne;q++){const n0=F.E[q*8],i=n0%F.NX,j=Math.floor(n0/F.NX)%F.NY,k=Math.floor(n0/(F.NX*F.NY));emap[(k*F.ny+j)*F.nx+i]=q;}
-  const cells=new Map();for(let k=0;k<F.nz;k++)for(let j=0;j<F.ny;j++)for(let i=0;i<F.nx;i++){const q=emap[(k*F.ny+j)*F.nx+i];if(q<0)continue;const ce=((k>>1)*ny+(j>>1))*nx+(i>>1);let l=cells.get(ce);if(!l)cells.set(ce,l=[]);l.push([q,(i&1)|((j&1)<<1)|((k&1)<<2)]);}
-  const ids=[...cells.keys()].sort((a,b)=>a-b),ne=ids.length,E=new Int32Array(ne*8),KE=new Float32Array(ne*mm),acc=new Float64Array(mm),Km=new Float64Array(mm),fm=F.fixed;
-  for(let e=0;e<ne;e++){const ce=ids[e],i=ce%nx,j=Math.floor(ce/nx)%ny,k=Math.floor(ce/(nx*ny)),n0=(k*NY+j)*NX+i;E.set([n0,n0+1,n0+NX+1,n0+NX,n0+NX*NY,n0+NX*NY+1,n0+NX*NY+NX+1,n0+NX*NY+NX],e*8);acc.fill(0);
-    for(const[q,c]of cells.get(ce)){
-      if(F.KE){galerkin(F.KE.subarray(q*mm,q*mm+mm),CW[c],acc,1,nd);continue;}
-      let masked=false;for(let a=0;a<8&&!masked;a++){const d0=F.E[q*8+a]*nd;for(let cc=0;cc<nd;cc++)if(fm[d0+cc])masked=true;}
-      const s=F.sc[q];if(!masked){const M=MC[c];for(let t=0;t<mm;t++)acc[t]+=s*M[t];continue;}
-      Km.set(K);for(let a=0;a<8;a++){const d0=F.E[q*8+a]*nd;for(let cc=0;cc<nd;cc++)if(fm[d0+cc]){const r=nd*a+cc;for(let t=0;t<m;t++){Km[r*m+t]=0;Km[t*m+r]=0;}}}galerkin(Km,CW[c],acc,s,nd);}
-    KE.set(acc,e*mm);}
-  const L={nx,ny,nz,NX,NY,NZ,nn,E,sc:new Float64Array(ne).fill(1),KE,nd,fixed:new Uint8Array(nn*nd)};
-  if(F.dadd){L.dadd=new Float64Array(nn*nd);transfer(F,L,F.dadd,L.dadd,false);}
-  return L;
-}
-function diagOf(L,K){const nd=L.nd,m=8*nd,mm=m*m,d=new Float64Array(L.nn*nd),E=L.E,sc=L.sc,KE=L.KE;for(let q=0;q<sc.length;q++)for(let a=0;a<8;a++){const n=E[q*8+a]*nd;for(let c=0;c<nd;c++)d[n+c]+=KE?KE[q*mm+(nd*a+c)*(m+1)]:sc[q]*K[(nd*a+c)*(m+1)];}if(L.dadd)for(let i=0;i<d.length;i++)d[i]+=L.dadd[i];for(let i=0;i<d.length;i++)if(Math.abs(d[i])<1e-12*K[0])d[i]=0;for(let i=0;i<d.length;i++)if(L.fixed[i]||d[i]===0){d[i]=1;L.fixed[i]=1;}return d;}
-function tmap(NF,NC){const a0=new Int32Array(NF),a1=new Int32Array(NF),w=new Float64Array(NF);for(let i=0;i<NF;i++){a0[i]=i>>1;a1[i]=Math.min((i>>1)+(i&1),NC-1);w[i]=i&1?0.5:1;}return{a0,a1,w};}
-function maps(Lf,Lc){return Lf.mp||(Lf.mp=[tmap(Lf.NX,Lc.NX),tmap(Lf.NY,Lc.NY),tmap(Lf.NZ,Lc.NZ)]);}
-function transfer(Lf,Lc,xf,xc,up){
-  const nd=Lf.nd,[mx,my,mz]=maps(Lf,Lc),{NX,NY,NZ}=Lf,cX=Lc.NX,cY=Lc.NY,mf=Lf.fixed;
-  if(up)xf.fill(0);else xc.fill(0);
-  for(let k=0;k<NZ;k++){const nk=k&1?2:1;
-    for(let j=0;j<NY;j++){const nj=j&1?2:1;
-      for(let i=0;i<NX;i++){const ni=i&1?2:1,f=((k*NY+j)*NX+i)*nd;
-        if(!up){let z=true;for(let c=0;c<nd;c++)if(xf[f+c])z=false;if(z)continue;}
-        for(let a=0;a<nk;a++){const kk=a?mz.a1[k]:mz.a0[k],wk=mz.w[k];
-          for(let b=0;b<nj;b++){const jj=b?my.a1[j]:my.a0[j],wj=wk*my.w[j];
-            for(let c=0;c<ni;c++){const ii=c?mx.a1[i]:mx.a0[i],w=wj*mx.w[i],q=((kk*cY+jj)*cX+ii)*nd;
-              for(let t=0;t<nd;t++)up?xf[f+t]+=w*xc[q+t]:mf[f+t]||(xc[q+t]+=w*xf[f+t]);
-            }}}
-      }}}
-  if(up){for(let i=0;i<xf.length;i++)if(mf[i])xf[i]=0;}else{const mc=Lc.fixed;for(let i=0;i<xc.length;i++)if(mc[i])xc[i]=0;}
-}
-function prolong(Lc,Lf,xc,xf){transfer(Lf,Lc,xf,xc,true);}
-function restrict(Lf,Lc,rf,rc){transfer(Lf,Lc,rf,rc,false);}
-function smooth(L,K,b,x,iters,tmp){const om=L.om||0.5;for(let s=0;s<iters;s++){matvec(L,K,x,tmp);for(let i=0;i<x.length;i++)x[i]+=om*(b[i]-tmp[i])/L.diag[i];}}
-function lamMax(L,K){const n=L.nn*L.nd;let x=new Float64Array(n),y=new Float64Array(n),lam=1;let seed=12345;for(let i=0;i<n;i++){seed=(seed*1103515245+12345)&0x7fffffff;x[i]=L.fixed[i]?0:seed/0x7fffffff-0.5;}for(let it=0;it<14;it++){matvec(L,K,x,y);let num=0,den=0;for(let i=0;i<n;i++){if(L.fixed[i]){y[i]=0;continue;}y[i]/=L.diag[i];num+=y[i]*y[i]*L.diag[i];den+=x[i]*y[i]*L.diag[i];}lam=num/Math.max(den,1e-300);let nr=0;for(let i=0;i<n;i++)nr+=y[i]*y[i];nr=Math.sqrt(nr)||1;for(let i=0;i<n;i++)x[i]=y[i]/nr;}return lam;}
-let NSW=1;export function setSweeps(n){NSW=n;}
-const omOf=(L,K)=>Math.min(0.8,1.15/(lamMax(L,K)*1.05));
-function vcycle(Ls,K,l,b,x){
-  const L=Ls[l];x.fill(0);
-  if(l===Ls.length-1){smooth(L,K,b,x,40,L.t1);return;}
-  smooth(L,K,b,x,NSW,L.t1);
-  matvec(L,K,x,L.t1);for(let i=0;i<b.length;i++)L.t2[i]=b[i]-L.t1[i];
-  const C=Ls[l+1];restrict(L,C,L.t2,C.b);vcycle(Ls,K,l+1,C.b,C.x);prolong(C,L,C.x,L.t2);
-  for(let i=0;i<x.length;i++)x[i]+=L.t2[i];
-  smooth(L,K,b,x,NSW,L.t1);
-}
-function setup(G,K,nd,fixed,dadd,mg,lazy){
-  const Ls=[makeLevel(G.nx,G.ny,G.nz,densOf(G),nd)],mm=64*nd*nd;Ls[0].fixed=fixed;Ls[0].dadd=dadd||null;
-  const MC=CW.map(W=>{const o=new Float64Array(mm);galerkin(K,W,o,1,nd);return o;});
-  while(Ls.length<7&&mg!==false){const F=Ls[Ls.length-1];if(F.sc.length<400||Math.min(F.nx,F.ny,F.nz)<2)break;Ls.push(coarsen(F,K,MC));}
-  for(const L of Ls){const n=L.nn*nd;L.diag=diagOf(L,K);L.t1=new Float64Array(n);L.t2=new Float64Array(n);L.b=new Float64Array(n);L.x=new Float64Array(n);}
-  if(Ls.length>1&&mg!==false)for(const L of Ls)if(!(lazy&&L===Ls[0]))L.om=omOf(L,K);
-  return Ls;
-}
-const nrm=v=>{let s=0;for(let i=0;i<v.length;i++)s+=v[i]*v[i];return Math.sqrt(s);};
-function pcg(Ls,K,f,opt,prog){
-  const L=Ls[0],n=f.length,u=new Float64Array(n),r=f.slice(),z=new Float64Array(n),p=new Float64Array(n),Ap=new Float64Array(n),useMG=Ls.length>1,pre=(rr,zz)=>{if(useMG)vcycle(Ls,K,0,rr,zz);else for(let i=0;i<n;i++)zz[i]=rr[i]/L.diag[i];};
-  pre(r,z);p.set(z);let rz=0;for(let i=0;i<n;i++)rz+=r[i]*z[i];
-  const fn=nrm(f)||1,tol=opt.tol||1e-6,maxIt=opt.maxIt||(useMG?400:6000);let it=0,rel=1;
-  for(;it<maxIt;it++){
-    matvec(L,K,p,Ap);let pAp=0;for(let i=0;i<n;i++)pAp+=p[i]*Ap[i];
-    if(!(pAp>0))break;const al=rz/pAp;let rr=0;
-    for(let i=0;i<n;i++){u[i]+=al*p[i];r[i]-=al*Ap[i];rr+=r[i]*r[i];}
-    rel=Math.sqrt(rr)/fn;if(prog&&it%5===0)prog(it,rel,opt.phase||'solve');if(rel<tol)break;
-    pre(r,z);let rz2=0;for(let i=0;i<n;i++)rz2+=r[i]*z[i];const be=rz2/rz;rz=rz2;for(let i=0;i<n;i++)p[i]=z[i]+be*p[i];
-  }
-  return{u,iters:it,rel};
-}
+const FG=helium('fea_grid');let NSW=1;export function setSweeps(n){NSW=n;}
+const lev=(H,l,nd)=>{const om=H.ex.fg_level(l),d=k=>H.ex.fg_dim(l,k),nx=d(0),ny=d(1),nz=d(2);return{nx,ny,nz,NX:nx+1,NY:ny+1,NZ:nz+1,nn:d(3),nd,E:H.v(20).slice(),sc:H.v(21).slice(),...(l?{KE:H.v(22).slice()}:{}),fixed:H.v(23).slice(),diag:H.v(24).slice(),om};};
+async function setup(G,K,nd,fixed,dadd,mg,lazy){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.v(1).set(densOf(G));H.v(2).set(K);H.v(3).set(fixed);if(dadd)H.v(4).set(dadd);const n=x.fg_setup(mg===false?0:1,lazy?1:0),Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));fixed.set(H.v(14));Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
+const mv=(Ls,x,y,raw)=>{const H=Ls.he;H.v(12).set(x);H.ex.fg_matvec(raw?1:0);y.set(H.v(13));},vcycle=(Ls,r,z)=>{const H=Ls.he;H.v(10).set(r);H.ex.fg_vcycle();z.set(H.v(12));},om0=Ls=>{Ls[0].om=Ls.he.ex.fg_om0(Ls[0].om>0?Ls[0].om:0)||undefined;};
+function pcg(Ls,f,opt,prog){const H=Ls.he;H.v(10).set(f);Ls.prog(prog?(i,r)=>prog(i,r,opt.phase||'solve'):null);const iters=H.ex.fg_pcg(opt.tol||0,opt.maxIt||0);Ls.prog(null);return{u:H.v(11).slice(),iters,rel:H.ex.fg_rel()};}
 async function solve(Ls,K,f,opt={},prog){
   const L=Ls[0],n=L.nn*L.nd,b=new Float64Array(n),want=opt.solver||'auto';for(let i=0;i<n;i++)b[i]=L.fixed[i]?0:f[i]||0;let gpuError;
-  if(L.nd===3&&want!=='cpu'&&(want==='gpu'||L.sc.length>(opt.gpuMin||15000)))try{const r=await gpuSolve(Ls,K,b,{tol:opt.tol||1e-6,maxIt:opt.maxIt,nsw:NSW,mv:(x,y)=>matvec(L,K,x,y)},prog);if(r)return{...r,backend:'gpu'};gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
-  if(Ls.length>1&&!(L.om>0))L.om=omOf(L,K);
-  return{...pcg(Ls,K,b,opt,prog),backend:'cpu',gpuError,why:gpuError?'':want==='cpu'?'CPU chosen':L.nd!==3?'heat solves on the CPU':opt.dadd?'springs solve on the CPU':'Auto: small enough that the CPU is quicker'};
+  if(L.nd===3&&want!=='cpu'&&(want==='gpu'||L.sc.length>(opt.gpuMin||15000)))try{const r=await gpuSolve(Ls.all(),K,b,{tol:opt.tol||1e-6,maxIt:opt.maxIt,nsw:NSW,mv:(x,y)=>mv(Ls,x,y)},prog);if(r)return{...r,backend:'gpu'};gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
+  om0(Ls);
+  return{...pcg(Ls,b,opt,prog),backend:'cpu',gpuError,why:gpuError?'':want==='cpu'?'CPU chosen':L.nd!==3?'heat solves on the CPU':opt.dadd?'springs solve on the CPU':'Auto: small enough that the CPU is quicker'};
 }
 export async function solveGrid(G,mat,dof,force,opt={},prog){
   const K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
-  const sv=opt.dadd?'cpu':opt.solver,Ls=setup(G,K,3,dof,opt.dadd||null,opt.mg,sv!=='cpu'),L=Ls[0],u0=opt.u0,y=u0?new Float64Array(force.length):null;y&&matvec(L,K,u0,y,true);const S=await solve(Ls,K,y?force.map((v,i)=>v-y[i]):force,{...opt,solver:sv},prog),u=S.u;if(u0)for(let i=0;i<u.length;i++)u[i]+=u0[i];
+  const sv=opt.dadd?'cpu':opt.solver,Ls=await setup(G,K,3,dof,opt.dadd||null,opt.mg,sv!=='cpu'),L=Ls[0],u0=opt.u0,y=u0?new Float64Array(force.length):null;y&&mv(Ls,u0,y,true);const S=await solve(Ls,K,y?force.map((v,i)=>v-y[i]):force,{...opt,solver:sv},prog),u=S.u;if(u0)for(let i=0;i<u.length;i++)u[i]+=u0[i];
   const DB=bCenter(mat.nu),ne=L.sc.length,vm=new Float32Array(ne),sig=new Float32Array(ne*6),ue=new Float64Array(24),s=mat.E/G.h;
   for(let q=0;q<ne;q++){
     for(let a=0;a<8;a++){const nd=L.E[q*8+a]*3;ue[3*a]=u[nd];ue[3*a+1]=u[nd+1];ue[3*a+2]=u[nd+2];}
     const S6=[0,0,0,0,0,0];for(let r2=0;r2<6;r2++){let t=0;for(let j=0;j<24;j++)t+=DB[r2][j]*ue[j];S6[r2]=t*s;}
     sig.set(S6,q*6);vm[q]=Math.sqrt(0.5*((S6[0]-S6[1])**2+(S6[1]-S6[2])**2+(S6[2]-S6[0])**2)+3*(S6[3]**2+S6[4]**2+S6[5]**2));
   }
-  let ku=null;return{...S,vm,sig,levels:Ls.length,L0:L,R:d=>{if(!ku){ku=new Float64Array(u.length);matvec(L,K,u,ku,true);}return ku[d]-force[d];}};
+  let ku=null;return{...S,vm,sig,levels:Ls.length,L0:L,R:d=>{if(!ku){ku=new Float64Array(u.length);mv(Ls,u,ku,true);}return ku[d]-force[d];}};
 }
 export function nodalField(G,L,elemVal){
   const v=new Float32Array(L.nn),c=new Uint16Array(L.nn);
@@ -251,11 +164,11 @@ export function rigidModes(nn,xyz,Mv){const n=3*nn,c=[0,0,0],defl=[];let mt=0;fo
   for(const v of raw){for(const R of defl){let s=0;for(let i=0;i<n;i++)s+=R[i]*v[i]*Mv[i];for(let i=0;i<n;i++)v[i]-=s*R[i];}let s=0;for(let i=0;i<n;i++)s+=v[i]*v[i]*Mv[i];s=Math.sqrt(s);if(s>0){for(let i=0;i<n;i++)v[i]/=s;defl.push(v);}}return defl;}
 export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
   const L=Ls[0],n=Mv.length,fx=L.fixed,bs=nev+Math.max(2,Math.ceil(nev/3)),mg=Ls.length>1,tol=opt.tol||1e-3,maxIt=opt.maxIt||250;
-  const A=ops&&ops.A||(async x=>{const y=new Float64Array(n);matvec(L,K,x,y);for(let i=0;i<n;i++)if(fx[i])y[i]=0;return y;});
+  const A=ops&&ops.A||(async x=>{const y=new Float64Array(n);mv(Ls,x,y);for(let i=0;i<n;i++)if(fx[i])y[i]=0;return y;});
   const md=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i]*Mv[i];return s;},dt=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i];return s;};
   const ax=(y,c,x)=>{for(let i=0;i<n;i++)y[i]-=c*x[i];};
   const cl=x=>{for(let i=0;i<n;i++)if(fx[i])x[i]=0;for(const R of defl)ax(x,md(R,x),R);return x;};
-  const T=async r=>{let z=new Float64Array(n);if(ops)z=await ops.prec(r);else if(mg)vcycle(Ls,K,0,r,z);else for(let i=0;i<n;i++)z[i]=r[i]/L.diag[i];return cl(z);},all=async(V,f)=>{const o=[];for(const v of V)o.push(await f(v));return o;};
+  const T=async r=>{let z=new Float64Array(n);if(ops)z=await ops.prec(r);else if(mg)vcycle(Ls,r,z);else for(let i=0;i<n;i++)z[i]=r[i]/L.diag[i];return cl(z);},all=async(V,f)=>{const o=[];for(const v of V)o.push(await f(v));return o;};
   const orth=(V,AV,B,AB)=>{const oV=[],oA=[];for(let j=0;j<V.length;j++){const v=V[j],av=AV?AV[j]:null,n0=Math.sqrt(md(v,v));if(!(n0>0))continue;for(let ps=0;ps<2;ps++){for(let i=0;i<B.length;i++){const c=md(B[i],v);ax(v,c,B[i]);if(av)ax(av,c,AB[i]);}for(let i=0;i<oV.length;i++){const c=md(oV[i],v);ax(v,c,oV[i]);if(av)ax(av,c,oA[i]);}}const nr=Math.sqrt(md(v,v));if(!(nr>1e-9*n0))continue;for(let i=0;i<n;i++)v[i]/=nr;if(av)for(let i=0;i<n;i++)av[i]/=nr;oV.push(v);oA.push(av);}return[oV,oA];};
   const comb=(S,C,m,j,from)=>{const y=new Float64Array(n);for(let i=from;i<S.length;i++){const c=C[i*m+j];if(c)for(let k=0;k<n;k++)y[k]+=c*S[i][k];}return y;};
   let seed=7;const rnd=()=>(seed=(seed*1103515245+12345)&0x7fffffff)/0x7fffffff-0.5;
@@ -275,11 +188,11 @@ export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
 }
 async function modal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat,nev=Math.max(1,Math.min(inp.modes||6,20)),K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
-  const dof=supportMask(inp,P,true),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
+  const dof=supportMask(inp,P,true),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=await setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
   for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)Mv[3*q+c]=L.fixed[3*q+c]?0:P.vol[q]*rho;
   const defl=free?rigidModes(P.nn,P.xyz,Mv):[];
-  let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls,K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
-  if(Ls.length>1&&!(L.om>0))L.om=omOf(L,K);
+  let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls.all(),K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
+  om0(Ls);
   const lo={tol:inp.tol,maxIt:inp.maxIt};let E,gpu=!!ctx;try{E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,ctx);}catch(e){if(!ctx)throw e;gpuError=String(e.message||e);gpu=false;E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,null);}finally{ctx&&ctx.free();}
   const {c:cnt}=nodalField(G,L,null),lmax=Math.max(...E.lam.map(Math.abs),1e-30);
   let mt=0;for(let q=0;q<P.nn;q++)mt+=P.vol[q]*rho;
@@ -299,9 +212,9 @@ async function thermal(inp,P,prog){
   const qin=flux.map(b=>{const acc=P.at(b.faces);let tot=0;for(const v of acc.values())tot+=v[0];let Q=0;for(const[n,v]of acc){const q=b.Q!=null?b.Q*v[0]/(tot||1):(b.q||0)*v[0];f[n]+=q;Q+=q;}return Q;});
   let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}
   if(!temps.length&&!conv.length)throw new Error('add a fixed-temperature or convection face');
-  const t0=Date.now(),Ls=setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);matvec(L,K,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
+  const t0=Date.now(),Ls=await setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
   const S=await solve(Ls,K,b,{tol:inp.tol||1e-7,mg:inp.mg,solver:'cpu',phase:'thermal'},prog),T=new Float64Array(nn);for(let n=0;n<nn;n++)T[n]=S.u[n]+u0[n];
-  matvec(L,K,T,y,true);const qT=temps.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)qT[tg[n]]+=y[n]-f[n];
+  mv(Ls,T,y,true);const qT=temps.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)qT[tg[n]]+=y[n]-f[n];
   const qc=cv.map((acc,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[n,v]of acc)s+=hc*v[0]*(Ti-T[n]);return s;});
   const{c:cnt}=nodalField(G,L,null),TN=new Float32Array(nn);let Tmin=Infinity,Tmax=-Infinity;for(let n=0;n<nn;n++)if(cnt[n]){TN[n]=T[n];Tmin=Math.min(Tmin,T[n]);Tmax=Math.max(Tmax,T[n]);}
   const vT=atVerts(G,L,TN,1,pos,cnt);dilate(G,cnt,[TN]);
