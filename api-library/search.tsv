@@ -2155,6 +2155,10 @@ gltf::add_texture_rgba	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_te
 gltf::find_node	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#find_node	Returns the index of the node with the given name in an asset, or -1 if none.	pub
 gltf::in_place	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#in_place	Removes horizontal root motion from an animation's node translation and returns the distance it drifted.	pub
 gltf::find_animation	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#find_animation	Returns the index of the animation with the given name in an asset, or -1 if none.	pub
+gltf::uf_root	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#uf_root	Finds the root of an element in a union-find parent array, compressing paths along the way.	int
+gltf::sph_row	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#sph_row	Returns one coefficient of a sphere-fitting row, twice the coordinate for indices 0 to 2 and 1.0 otherwise.	int
+gltf::solve4	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#solve4	Solves a 4x4 linear system with an appended right-hand side in place, returning false if singular.	int
+gltf::dome_normals	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#dome_normals	Computes normals for the named mesh's primitives in an asset by merging connected vertices, returning an integer count.	pub
 gltf::shade_preset	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#shade_preset	Returns a built-in float4 shading preset chosen by kind and part index, or all zeros when the pair has no preset.	int
 gltf::default_material	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#default_material	Returns a default material that is opaque, white, fully metallic and rough with no textures.	pub
 shapes::material	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#material	Returns a material with the given RGB base color, metallic factor and roughness factor, for use with the shape builders.	pub
