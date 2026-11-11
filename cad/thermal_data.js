@@ -1,3 +1,4 @@
+import {MORE} from './mat_lib.js';
 const MH='MatWeb/ASM Handbook typical room-temperature values (approximate)',TS='Typical heat-treated values from ASM Handbook Vol. 1 and producer datasheets (approximate; confirm with your steel supplier)',WD='USDA Forest Products Laboratory, Wood Handbook FPL-GTR-190 (2010): k from k=G(B+CM)+A across the grain at 12% moisture (ch. 4), cp from the moist specific-heat equation at 20 C, CTE along the grain (approximate)',PL='Typical manufacturer datasheet values for the unfilled polymer (approximate)',BD='EN ISO 10456 design values for wood-based boards (approximate)';
 export const THERMAL={
 al6061:{k:167,cp:896,cte:23.6,src:MH},al7075:{k:130,cp:960,cte:23.4,src:MH},steel1018:{k:51.9,cp:486,cte:11.5,src:MH},steel4140:{k:42.6,cp:473,cte:12.3,src:MH},ss304:{k:16.2,cp:500,cte:17.3,src:MH},ss316:{k:16.3,cp:500,cte:16,src:MH},ti64:{k:6.7,cp:526,cte:8.6,src:MH},brass:{k:115,cp:380,cte:20.5,src:MH},
@@ -7,5 +8,6 @@ balticply:{k:0.17,cp:1600,cte:4,src:BD},mdf:{k:0.14,cp:1600,cte:8,src:BD},bamboo
 g10:{k:0.29,cp:1100,cte:14,src:'NEMA LI 1 G10/FR4 datasheets: through-thickness conductivity, in-plane expansion (typical)'},cfrp:{k:5,cp:900,cte:2,src:'Typical quasi-isotropic carbon epoxy laminate, in-plane values (approximate manufacturer data)'},fiberglass:{k:0.3,cp:1200,cte:22,src:'Typical chopped-mat E-glass polyester laminate (approximate)'},
 p20:{k:29,cp:460,cte:12.8,src:TS},h13:{k:24.5,cp:460,cte:10.4,src:TS},s7:{k:25,cp:460,cte:12.9,src:TS},d2:{k:20.5,cp:460,cte:10.4,src:TS},a2:{k:24,cp:460,cte:10.9,src:TS},o1:{k:31,cp:460,cte:11.9,src:TS},m2:{k:21.3,cp:420,cte:11.2,src:TS},ss420m:{k:24.9,cp:460,cte:10.3,src:TS},
 becu:{k:105,cp:420,cte:17,src:'Materion C17200 TH04 typical values (approximate)'},carbide:{k:90,cp:230,cte:5.5,src:'Typical WC-10Co (C2) grade datasheet values (approximate)'}};
+for(const[id,m]of Object.entries(MORE))if(!THERMAL[id]&&m.k>0&&m.cp>0&&m.cte>0)THERMAL[id]={k:m.k,cp:m.cp,cte:m.cte,src:m.src};
 export const KCOND=Object.fromEntries(Object.entries(THERMAL).map(([k,v])=>[k,v.k]));
 export const condK=(mat,key)=>{const k=(mat&&mat.k)??KCOND[key];return{k:k??167,warn:k==null?'No thermal conductivity is on file for "'+key+'", so 167 W/m·K (aluminum) was assumed. The heat results are not valid for this material; add k to the material.':undefined};};
