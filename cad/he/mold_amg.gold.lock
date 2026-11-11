@@ -3,7 +3,7 @@ import math;
 fn main() {}
 === -56b2394d5594aeb7
 struct Lv { n int, nnz int, rp int, ci int, va int, d int, r int, agg int, nc int, rb int, eb int, r2 int, e2 int, ch int, y int, gs bool }
-=== 61e982b0347509a1
+=== 2b3dd95f0a1fa4c5
 var IP i32[>..];
 var FP real[>..];
 var LV Lv[>..];
@@ -21,16 +21,34 @@ var PR real[>..];
 var PZ real[>..];
 var PP real[>..];
 var PQ real[>..];
+var QI i32[>..];
+var QF real[>..];
 fn ipv(off int, len int) i32[:] { IP[off..off + len] }
 fn fpv(off int, len int) real[:] { FP[off..off + len] }
 fn ip_add(len int) int {
 	let o = IP.len;
-	for i in len { IP.push(0); }
+	if IP.cap < o + len {
+		QI.clear();
+		QI.append(IP);
+		IP.clear();
+		IP.reserve(2 * (o + len));
+		IP.append(QI);
+		QI.clear();
+	}
+	IP.resize(o + len, 0);
 	o
 }
 fn fp_add(len int) int {
 	let o = FP.len;
-	for i in len { FP.push(0.0); }
+	if FP.cap < o + len {
+		QF.clear();
+		QF.append(FP);
+		FP.clear();
+		FP.reserve(2 * (o + len));
+		FP.append(QF);
+		QF.clear();
+	}
+	FP.resize(o + len, 0.0);
 	o
 }
 === -545032c12ad6da61
@@ -224,70 +242,68 @@ fn chol(l int) {
 		}
 	}
 }
-=== 376b6c1851c9ef3f
-fn push_level(n int, nnz int, first bool) int {
-	let rp = ip_add(n + 1);
-	let ci = ip_add(nnz);
-	let va = fp_add(nnz);
-	let d = fp_add(n);
-	let r = fp_add(n);
-	var rb = -1;
-	var eb = -1;
-	var r2 = -1;
-	var e2 = -1;
-	if !first {
-		rb = fp_add(n);
-		eb = fp_add(n);
-		r2 = fp_add(n);
-		e2 = fp_add(n);
-	}
-	LV.push(Lv { n: n, nnz: nnz, rp: rp, ci: ci, va: va, d: d, r: r, agg: -1, nc: 0, rb: rb, eb: eb, r2: r2, e2: e2, ch: -1, y: -1, gs: false });
-	LV.len - 1
-}
+=== -1534cfbbabf7d2b4
 fn setup(coarse int, theta real) {
 	IP.clear();
 	FP.clear();
 	LV.clear();
-	let n0 int = RPI.len - 1;
-	let nz0 int = RPI[n0];
-	let first = push_level(n0, nz0, true);
-	let f0 = LV[first];
-	for i in n0 + 1 { IP[f0.rp + i] = RPI[i]; }
-	for k in nz0 {
-		IP[f0.ci + k] = CII[k];
-		FP[f0.va + k] = VAI[k];
+	let n int = RPI.len - 1;
+	let nnz int = RPI[n];
+	IP.reserve(2 * nnz + 4 * n + 64);
+	FP.reserve(2 * nnz + 16 * n + 64);
+	let rp0 = ip_add(n + 1);
+	let ci0 = ip_add(nnz);
+	let va0 = fp_add(nnz);
+	let d0 = fp_add(n);
+	let r0 = fp_add(n);
+	for i in (n + 1) { IP[rp0 + i] = RPI[i]; }
+	for k in nnz {
+		IP[ci0 + k] = CII[k];
+		FP[va0 + k] = VAI[k];
 	}
+	LV.push(Lv { n: n, nnz: nnz, rp: rp0, ci: ci0, va: va0, d: d0, r: r0, agg: -1, nc: 0, rb: -1, eb: -1, r2: -1, e2: -1, ch: -1, y: -1, gs: false });
+	var pend = 0;
 	for lev in 25 {
 		if lev > 0 {
-			let prev = LV.len - 1;
-			let ncn = LV[prev].nc;
-			let nzn = GC.len;
-			let idx = push_level(ncn, nzn, false);
-			let nl = LV[idx];
-			for i in ncn + 1 { IP[nl.rp + i] = GR[i]; }
-			for k in nzn {
-				IP[nl.ci + k] = GC[k];
-				FP[nl.va + k] = GV[k];
+			let nn = pend;
+			let nz = GC.len;
+			let rp = ip_add(nn + 1);
+			let ci = ip_add(nz);
+			let va = fp_add(nz);
+			let d = fp_add(nn);
+			let r = fp_add(nn);
+			let rb = fp_add(nn);
+			let eb = fp_add(nn);
+			let r2 = fp_add(nn);
+			let e2 = fp_add(nn);
+			for i in (nn + 1) { IP[rp + i] = GR[i]; }
+			for k in nz {
+				IP[ci + k] = GC[k];
+				FP[va + k] = GV[k];
 			}
+			LV.push(Lv { n: nn, nnz: nz, rp: rp, ci: ci, va: va, d: d, r: r, agg: -1, nc: 0, rb: rb, eb: eb, r2: r2, e2: e2, ch: -1, y: -1, gs: false });
 		}
 		let last = LV.len - 1;
 		diag_of(last);
-		let n = LV[last].n;
-		if n <= coarse { break; }
+		let ln = LV[last].n;
+		if ln <= coarse { break; }
 		var nc = aggregate(last, theta);
-		if (nc as real) > 0.5 * (n as real) { nc = aggregate(last, 0.0); }
-		if (nc as real) > 0.85 * (n as real) { break; }
-		let off = ip_add(n);
-		for i in n { IP[off + i] = AG[i]; }
-		LV[last].agg = off;
+		if (nc as real) > 0.5 * (ln as real) {
+			nc = aggregate(last, 0.0);
+		}
+		if (nc as real) > 0.85 * (ln as real) { break; }
+		let ao = ip_add(ln);
+		for i in ln { IP[ao + i] = AG[i]; }
+		LV[last].agg = ao;
 		LV[last].nc = nc;
 		galerkin(last, nc);
+		pend = nc;
 	}
-	let last = LV.len - 1;
-	if LV[last].n <= 1500 {
-		chol(last);
+	let fl = LV.len - 1;
+	if LV[fl].n <= 1500 {
+		chol(fl);
 	} else {
-		LV[last].gs = true;
+		LV[fl].gs = true;
 	}
 }
 === -59f85869e5353121

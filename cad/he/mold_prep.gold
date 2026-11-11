@@ -1,0 +1,190 @@
+use std
+into mold_prep.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its `main()` does nothing. JavaScript drives it through its exported functions (every name starting with ip_ is exported). It is a port of `prep` from cad/injmold.js, the mesh preparation for the injection-molding simulator, with its helpers `bvh`, `tri3`, `dist`, `angAt`, `refine`, `flips`, `vtri`, `featV`, `compactT`, `collapse`, `smooth`, `remesh` and `ballOf`. Results are compared bit for bit with the JavaScript version, so every floating-point formula keeps the JavaScript evaluation order exactly: arithmetic is f64, each sum starts at 0.0 and adds its terms one at a time in loop order, products and quotients group left to right as written, `a-b-c` is `(a-b)-c`, a compound addition adds the finished product, and nothing is fused, reordered or vectorized across terms. Math.atan2, Math.cos and Math.sin always go through the externs `ip_atan2`, `ip_cos` and `ip_sin`, never a Helium math function; square root and absolute value are the plain f64 operations; `x**2` is `x*x`. Wherever this file says max or min of reals it means `jmax` and `jmin`. Where this file writes "v or 1" for a real v it means 1 when v is 0 or NaN, otherwise v.
+
+```amni
+extern fn ip_view_f64(id i32, xs real[:]) = "ip_view_f64";
+extern fn ip_view_i32(id i32, xs i32[:]) = "ip_view_i32";
+extern fn ip_view_u8(id i32, xs u8[:]) = "ip_view_u8";
+extern fn ip_atan2(y real, x real) real = "ip_atan2";
+extern fn ip_cos(x real) real = "ip_cos";
+extern fn ip_sin(x real) real = "ip_sin";
+extern fn ip_onp(ph i32) = "ip_onp";
+extern fn ip_hmid(x real, y real) real = "ip_hmid";
+const KEY int = 4194304;
+const PI real = 3.141592653589793;
+var SRC real[>..];
+var IDX i32[>..];
+var TF0 i32[>..];
+var CFG real[>..];
+var P real[>..];
+var T i32[>..];
+var F i32[>..];
+var TG real[>..];
+var BP real[>..];
+var BT i32[>..];
+var CEN real[>..];
+var ORD i32[>..];
+var BLO real[>..];
+var BHI real[>..];
+var BLC i32[>..];
+var BRC i32[>..];
+var BS0 i32[>..];
+var BC0 i32[>..];
+var BST i32[>..];
+var BNN int = 0;
+var HT real = 0.0;
+var HTRI int = -1;
+var HU real = 0.0;
+var HV real = 0.0;
+var HQ real[>..];
+var HD2 real = 0.0;
+var CQ real[>..];
+var VC i32[>..];
+var VL i32[>..];
+var FE u8[>..];
+var FC u8[>..];
+var FN i32[>..];
+var LOCK u8[>..];
+var MK1 i32[>..];
+var MK2 i32[>..];
+var STAMP int = 0;
+var RK i32[>..];
+var RR i32[>..];
+var EKS int[>..];
+var EVS i32[>..];
+var ECAP int = 0;
+var NE int = 0;
+var EL0 real[>..];
+var ET0 real[>..];
+var EM0 u8[>..];
+var EMID i32[>..];
+var EOC i32[>..];
+var EA0 i32[>..];
+var EB0 i32[>..];
+var EA1 i32[>..];
+var EB1 i32[>..];
+var TE i32[>..];
+var NT2 i32[>..];
+var NF2 i32[>..];
+var NG2 real[>..];
+var USED u8[>..];
+var CURV u8[>..];
+var FNX real[>..];
+var FHAS u8[>..];
+var P0 real[>..];
+var OLD real[>..];
+var SEEN i32[>..];
+var DK0 int[>..];
+var DK1 int[>..];
+var DK2 int[>..];
+var DVS i32[>..];
+var RM i32[>..];
+var FA real[>..];
+var FB real[>..];
+var CS real[>..];
+var AR real[>..];
+var BALL real[>..];
+var TI i32[>..];
+var PF real[>..];
+var PM real[>..];
+var AA real[>..];
+var AE real[>..];
+var NN real[>..];
+var HH real[>..];
+var HE real[>..];
+var WW real[>..];
+var COSC real[>..];
+var DRAY real[>..];
+var RAP real[>..];
+var ELK i32[>..];
+var CT real[>..];
+var LE i32[>..];
+var LK real[>..];
+var GPH real[>..];
+var L0 i32[>..];
+var L1 i32[>..];
+var VV real[>..];
+var HN real[>..];
+var HNS real[>..];
+var HW real[>..];
+var ACV real[>..];
+var NV3 real[>..];
+var SKN u8[>..];
+var CI i32[>..];
+var CJ i32[>..];
+var CW real[>..];
+var CC real[>..];
+var DEG i32[>..];
+var NAL i32[>..];
+var ED i32[>..];
+var NEL i32[>..];
+var OUT real[>..];
+var QP real[>..];
+```
+
+Inputs, filled by JavaScript after `ip_alloc`: `SRC` (3 reals per source vertex, the raw positions), `IDX` (3 source vertex indices per source triangle), `TF0` (the face id of each source triangle, used only when the has-face flag is set) and `CFG` (16 reals, already resolved by JavaScript): 0 mid flag (1 for a midplane mesh), 1 scale sc, 2 size, 3 minS, 4 kh, 5 maxTri, 6 refine flag, 7 KC, 8 volume (0 when not given), 9 hnum (the midplane thickness when it is a number, NaN when missing), 10 hfun flag (the midplane thickness is a JavaScript function, called as `ip_hmid(x, y)`), 11 has-face flag. A flag is 1.0 or 0.0.
+
+`ip_alloc(n0 i32, m i32)` sizes `SRC` to 3·n0, `IDX` to 3·m and `TF0` to m (all zeros) and `CFG` to 16, then reports `ip_view_f64` 150 `SRC`, `ip_view_i32` 151 `IDX`, 152 `TF0`, `ip_view_f64` 153 `CFG`.
+
+`jmax(a, b)` and `jmin(a, b)` are JavaScript's Math.max and Math.min of two reals: NaN when either is NaN, otherwise the larger or smaller. Math.min or Math.max of more values folds them left to right the same way. `hypot3(a, b, c)` is exactly V8's Math.hypot of three numbers: the absolute values are taken and mx is the largest of them (starting from 0.0, replaced when a value is larger); when mx is infinite the result is infinity; when any input is NaN the result is NaN; when mx is 0 the result is 0. Otherwise, with Kahan summation, sum and comp start at 0.0, and for each absolute value in order: q is the value divided by mx, summand is q·q minus comp, prelim is sum plus summand, comp becomes (prelim minus sum) minus summand, and sum becomes prelim. The result is the square root of sum, times mx. `jround(x)` is JavaScript's Math.round as an int: r is floor(x); the result is r+1 when x−r is at least 0.5, else r. `ekey(a, b)` is `a*KEY+b` when a<b, else `b*KEY+a` (ints).
+
+`tri3(Q, a, b, c)` works on a point array Q (3 reals per vertex) and writes 4 reals into `CQ`: with u = Q[b]−Q[a] and v = Q[c]−Q[a] per coordinate (index 3·vertex+k), n = (uy·vz−uz·vy, uz·vx−ux·vz, ux·vy−uy·vx), l = hypot3(nx, ny, nz) and d = l or 1: `CQ[0] = l/2`, `CQ[1] = nx/d`, `CQ[2] = ny/d`, `CQ[3] = nz/d`. Callers copy what they need before the next call. `dist(Q, a, b)` is hypot3 of the three coordinate differences Q[3a+k]−Q[3b+k]. `ang_at(Q, c, a, b)`: u = Q[a]−Q[c], v = Q[b]−Q[c] per coordinate; the result is `ip_atan2(hypot3(uy·vz−uz·vy, uz·vx−ux·vz, ux·vy−uy·vx), ux·vx+uy·vy+uz·vz)`.
+
+The bounding volume hierarchy. `bvh_build(Q, Tq, nt int)`, with Q a real slice and Tq an i32 slice, copies Q into `BP` and the first 3·nt entries of Tq into `BT` (the tree keeps its own copies), then: `CEN` gets 3·nt reals and `ORD` nt ints; N is max(2, 2·ceil(nt/2)+2) (ints); `BLO` and `BHI` get 3·N reals, `BLC`, `BRC`, `BS0`, `BC0` get N ints, all zero; `BNN` is 0 and `BST` has 256 ints. For each triangle t, ORD[t] is t and for each axis k, CEN[3t+k] is `(BP[3*BT[3t]+k]+BP[3*BT[3t+1]+k]+BP[3*BT[3t+2]+k])/3`. Then node 0 is built over the range 0..nt.
+
+`bvh_sel(s, e, k, ax)` is the JavaScript quickselect on ORD by CEN[3·ORD[q]+ax]: while e−s is above 1: pv is CEN[3·ORD[(s+e)>>1]+ax]; i is s and j is e−1; while i ≤ j: while CEN[3·ORD[i]+ax] < pv, i grows; while CEN[3·ORD[j]+ax] > pv, j shrinks; then when i ≤ j, ORD[i] and ORD[j] swap, i grows and j shrinks. After that, when k ≤ j, e becomes j+1; otherwise when k ≥ i, s becomes i; otherwise it returns.
+
+`bvh_node(s, e) int` (recursive) takes id = BNN and grows BNN; BLO[3id+k] is +infinity and BHI[3id+k] is −infinity for each axis; centroid bounds cl (three +infinity) and ch (three −infinity). For each q from s to e−1 with t = ORD[q]: for each corner v of 0..2 and each axis k, x = BP[3·BT[3t+v]+k]; when x < BLO[3id+k] it becomes the low bound; when x > BHI[3id+k] it becomes the high bound; then for each axis k, c = CEN[3t+k] lowers cl[k] when smaller and raises ch[k] when larger. When e−s ≤ 4: BS0[id] is s, BC0[id] is e−s, BLC[id] is −1 and the result is id. Otherwise ax is 0 when ch[0]−cl[0] ≥ ch[1]−cl[1] and ch[0]−cl[0] ≥ ch[2]−cl[2], else 1 when ch[1]−cl[1] ≥ ch[2]−cl[2], else 2; mid is (s+e)>>1; bvh_sel(s, e, mid, ax); BLC[id] is bvh_node(s, mid), then BRC[id] is bvh_node(mid, e); the result is id.
+
+`bvh_ray(ox, oy, oz, dx, dy, dz, skip int, tmax) int` casts a ray against the tree: `HT` is tmax and `HTRI` is −1; ix, iy, iz are 1/dx, 1/dy, 1/dz; a stack in `BST` starts with node 0. While the stack is not empty, pop id. t0 = (BLO[3id]−ox)·ix, t1 = (BHI[3id]−ox)·ix, swapped when t0 > t1; u0, u1 the same with index 3id+1, oy, iy; w0, w1 with 3id+2, oz, iz. tn is the max of t0, u0, w0, 0.0 (folded left to right) and tf the min of t1, u1, w1, HT; when not tn ≤ tf, skip the node. For a leaf (BLC[id] < 0), for q from BS0[id] to BS0[id]+BC0[id]−1 with t = ORD[q], skipping t equal to skip: a, b, c are 3·BT[3t], 3·BT[3t+1], 3·BT[3t+2]; e1 = BP[b..]−BP[a..] and e2 = BP[c..]−BP[a..] per coordinate; p = (dy·e2z−dz·e2y, dz·e2x−dx·e2z, dx·e2y−dy·e2x); det = e1x·px+e1y·py+e1z·pz; skip when |det| < 1e-300; inv = 1/det; s = (ox−BP[a], oy−BP[a+1], oz−BP[a+2]); u = (sx·px+sy·py+sz·pz)·inv, skip when u < −1e-9 or u > 1+1e-9; qv = (sy·e1z−sz·e1y, sz·e1x−sx·e1z, sx·e1y−sy·e1x); v = (dx·qx+dy·qy+dz·qz)·inv, skip when v < −1e-9 or u+v > 1+1e-9; tt = (e2x·qx+e2y·qy+e2z·qz)·inv; when tt > 0 and tt < HT: HT = tt, HTRI = t, HU = u, HV = v. For an inner node push BLC[id], then BRC[id]. The result is HTRI.
+
+`bvh_cp(px, py, pz, t) real` is the closest point on triangle t of the tree to p, written to `HQ`'s scratch slots 3..5, and returns the squared distance. a, b, c are 3·BT[3t], 3·BT[3t+1], 3·BT[3t+2]; A = BP[a..]; ab = BP[b..]−A; ac = BP[c..]−A; ap = p−A; d1 = ab·ap, d2 = ac·ap (dot products summed x, y, z). When d1 ≤ 0 and d2 ≤ 0: u = 0, v = 0. Otherwise bp = p−BP[b..], d3 = ab·bp, d4 = ac·bp; when d3 ≥ 0 and d4 ≤ d3: u = 1, v = 0. Otherwise vc = d1·d4−d3·d2; when vc ≤ 0 and d1 ≥ 0 and d3 ≤ 0: u = d1/(d1−d3), v = 0. Otherwise cp = p−BP[c..], d5 = ab·cp, d6 = ac·cp; when d6 ≥ 0 and d5 ≤ d6: u = 0, v = 1. Otherwise vb = d5·d2−d1·d6; when vb ≤ 0 and d2 ≥ 0 and d6 ≤ 0: u = 0, v = d2/(d2−d6). Otherwise va = d3·d6−d5·d4; when va ≤ 0 and d4−d3 ≥ 0 and d5−d6 ≥ 0: w = (d4−d3)/((d4−d3)+(d5−d6)), u = 1−w, v = w. Otherwise dn = 1/(va+vb+vc), u = vb·dn, v = vc·dn. The point is (Ax+abx·u+acx·v, Ay+aby·u+acy·v, Az+abz·u+acz·v) (each `A+ab*u+ac*v` left to right) and the result is `(x-px)*(x-px)+(y-py)*(y-py)+(z-pz)*(z-pz)` with the point's coordinates.
+
+`bvh_near(px, py, pz, r2) int` finds the nearest triangle within squared distance r2: `HD2` is r2 and HTRI is −1; stack from node 0; for each popped id: d starts at 0.0 and for each axis k with x the k-th of px, py, pz, l = BLO[3id+k], h = BHI[3id+k]: d adds (l−x)·(l−x) when x < l, else (x−h)·(x−h) when x > h, else 0.0. When d ≥ HD2, skip. For a leaf, for each q in its range with t = ORD[q]: dd = bvh_cp(px, py, pz, t); when dd < HD2: HD2 = dd, HTRI = t and HQ[0..2] become the point. Otherwise push BLC[id], then BRC[id]. The result is HTRI.
+
+`ball_of(Q, px, py, pz, nx, ny, nz, skip int, big, eps)` writes `BALL` [r, d, hit, cosc] using the current tree. d = big; q = (px−nx·big, py−ny·big, pz−nz·big); hit = −1. When `bvh_ray(px-nx*eps, py-ny*eps, pz-nz*eps, -nx, -ny, -nz, skip, big)` ≥ 0: d = HT+eps, hit = HTRI, q = (px−nx·d, py−ny·d, pz−nz·d). r = d/2. Then up to 60 times: c = (px−nx·r, py−ny·r, pz−nz·r); s = r·(1−1e-5); when bvh_near(cx, cy, cz, s·s) < 0, stop; w = (HQ[0]−px, HQ[1]−py, HQ[2]−pz); den = −2·(nx·wx+ny·wy+nz·wz); stop when not den > 1e-300; rn = (wx·wx+wy·wy+wz·wz)/den; stop when not rn < r; r = max(rn, eps); q = (HQ[0], HQ[1], HQ[2]); stop when r ≤ eps. Finally c = (px−nx·r, py−ny·r, pz−nz·r), ql = hypot3(qx−cx, qy−cy, qz−cz) or 1, and cosc = −((qx−cx)·nx+(qy−cy)·ny+(qz−cz)·nz)/ql (negate the sum, then divide). BALL is [r, d, hit as a real, cosc].
+
+Edge table. `et_reset(n int)` makes `EKS` (int keys, −1 for empty) and `EVS` (i32 values) a power of two in size, at least 4·n+16, cleared, with `ECAP` the size, and sets `NE` to 0. `et_find(key int) int` returns the value stored for key or −1, probing linearly from slot (key·0x9E3779B97F4A7C15 as unsigned, shifted right so it indexes the table) wrapping at ECAP. `et_add(key int) int` returns the existing value for key, otherwise stores NE for it and returns NE, growing NE by one (callers push the new edge's data). The table never needs to grow because callers reset it with enough room (n is 3 times the triangle count, plus the possible additions).
+
+Room for growth: on the web a growable array that is not empty cannot grow past its `cap`, so every array that a function empties and then fills by push gets `reserve` right after it is emptied, for the most it can hold: in ip_run P 3·n0, T 3·m, F m, TG, CS and AR the triangle count; in refine EL0, ET0, EM0 and EMID 3·nt, NT2 12·nt, NF2 and NG2 4·nt; in flips EOC, EA0, EB0, EA1 and EB1 4·nt; NP in remesh P.len; in the links L0 and L1 3·nt, LE and LK 6·nt; in the connectors CI nv, CJ and CW 3·nv, CC nv. Whenever T, F, TG or P is replaced by another array it is emptied, reserved to the new length and filled with one append. In refine, just before the split, with nm the number of marked edges: when P.cap is below P.len+3·nm, P moves: `QP` is emptied and gets a copy of P with one append, P is emptied, `P.reserve(2*(QP.len+3*nm))` runs, P gets QP back with one append and QP is emptied.
+
+`refine(maxTri int, passes int, fac real)` is the JavaScript refine on `P`, `T`, `F`, `TG`, passes times at most: nt is T.len/3; et_reset(3·nt); `EL0` (edge length), `ET0` (edge target), `EM0` (mark), `EMID` (midpoint vertex) start empty; `TE` gets 3·nt ints. For each triangle t and corner c: i = et_add(ekey(T[3t+c], T[3t+(c+1)%3])); when i is new, EL0 pushes dist(P, a, b) of those two vertices (in that order), ET0 pushes +infinity, EM0 pushes 0 and EMID pushes −1; TE[3t+c] is i; when TG[t] < ET0[i], ET0[i] becomes TG[t]. Then any is false; for each edge i, when EL0[i] > ET0[i]·fac, EM0[i] is 1 and any is true. When not any, or nt > maxTri, refine stops. lng(t) is 0 when EL0[TE[3t]] ≥ EL0[TE[3t+1]] and EL0[TE[3t]] ≥ EL0[TE[3t+2]], else 1 when EL0[TE[3t+1]] ≥ EL0[TE[3t+2]], else 2. Marks spread: g counts from 0 while a change happened and g < 60 (start as if changed): for each t, when any of EM0 at TE[3t], TE[3t+1], TE[3t+2] is set, the edge l = TE[3t+lng(t)] becomes marked (a change) when it was not. Then the split: `NT2`, `NF2`, `NG2` start empty; mp(a, b) looks up i = et_find(ekey(a, b)); when EMID[i] < 0 it is P.len/3 and P pushes ((P[3a]+P[3b])/2, (P[3a+1]+P[3b+1])/2, (P[3a+2]+P[3b+2])/2); the result is EMID[i]. mk(a, b) is EM0[et_find(ekey(a, b))] ≠ 0. put(a, b, c, t) pushes a, b, c to NT2, F[t] to NF2 and TG[t] to NG2. For each t: L = lng(t); a = T[3t+L], b = T[3t+(L+1)%3], c = T[3t+(L+2)%3]; when EM0[TE[3t+L]] is 0, put(a, b, c, t) and go on. Otherwise m = mp(a, b); when mk(c, a): n = mp(c, a), put(c, n, m, t), put(n, a, m, t); else put(a, m, c, t). Then when mk(b, c): q = mp(b, c), put(b, q, m, t), put(q, c, m, t); else put(m, b, c, t). Finally T, F and TG are replaced by NT2, NF2 and NG2.
+
+`flips(ct real) int` is the JavaScript flips on `P`, `T`, `F`: nt = T.len/3 (fixed), tot = 0, up to 12 passes. Each pass: et_reset(3·nt+nt); per edge id `EOC` (occurrence count), `EA0`, `EB0` (first triangle and corner), `EA1`, `EB1` (second) start empty. For each t and corner c: i = et_add(ekey(T[3t+c], T[3t+(c+1)%3])); a new id pushes 0 to EOC and −1 to the four others; then when EOC[i] is 0, EA0[i] = t, EB0[i] = c; when it is 1, EA1[i] = t, EB1[i] = c; EOC[i] grows. `USED` gets nt zeros; nf = 0. Then for each edge id i in increasing order while i < NE (NE can grow during this loop and the new ids are visited too): skip unless EOC[i] is exactly 2; t0 = EA0[i], c0 = EB0[i], t1 = EA1[i], c1 = EB1[i]; skip when USED[t0] or USED[t1] or F[t0] ≠ F[t1]; a = T[3t0+c0], b = T[3t0+(c0+1)%3], c = T[3t0+(c0+2)%3], d = T[3t1+(c1+2)%3]; skip when T[3t1+c1] ≠ b or T[3t1+(c1+1)%3] ≠ a; n0 = tri3(P, a, b, c) and n1 = tri3(P, b, a, d) (copy each); skip when n0[1]·n1[1]+n0[2]·n1[2]+n0[3]·n1[3] < ct; skip when ang_at(P, c, a, b)+ang_at(P, d, b, a) ≤ PI+1e-9; skip when et_find(ekey(c, d)) ≥ 0; m0 = tri3(P, a, d, c), m1 = tri3(P, d, b, c); skip when m0[1]·n0[1]+m0[2]·n0[2]+m0[3]·n0[3] < 0.9 or m1[1]·n0[1]+m1[2]·n0[2]+m1[3]·n0[3] < 0.9 or m0[0] < 1e-14 or m1[0] < 1e-14. Then triangle t0 becomes (a, d, c) and t1 becomes (d, b, c), USED of both is 1, et_add(ekey(c, d)) adds the new diagonal (pushing 0 and −1s for it, so it is never flipped) and nf grows. After the pass tot adds nf; stop when nf is 0. The result is tot.
+
+`vtri(nv int)` builds the vertex→triangle lists from `T`: `VC` gets nv+1 zeros; for every entry v of T with v ≥ 0, VC[v+1] grows (all entries, also those of removed triangles); prefix sums make VC starts; `VL` gets VC[nv] zeros; f is a copy of VC's first nv; for each triangle t with T[3t] ≥ 0, for k in 0..2: VL[f[T[3t+k]]] = t and that f grows. Slots never filled stay 0, as in JavaScript.
+
+`featv(nv int)` builds `FE` (nv bytes), `FC` (nv bytes) and `FN` (2·nv ints, all −1) from `T`, `F`, `VC`, `VL`. First an edge count over live triangles (T[3t] ≥ 0): et_reset(3·nt) and a count per edge id for each edge ekey(T[3t+k], T[3t+(k+1)%3]). For each vertex v: f0 = −1; for s from VC[v] to VC[v+1]−1: f = F[VL[s]]; when f0 < 0, f0 = f; else when f ≠ f0, FE[v] = 1 and stop. Then for every edge whose count is not 2, with key q: FE[q / KEY] = 1 and FE[q % KEY] = 1 (integer division and remainder). Then for each live triangle t and k in 0..2: a = T[3t+k], b = T[3t+(k+1)%3]; skip when a > b; ot = −1; for q from VC[a] to VC[a+1]−1: u = VL[q]; when u ≠ t and T[3u] ≥ 0 and b is one of T[3u], T[3u+1], T[3u+2], ot = u and stop. When ot ≥ 0 and F[ot] ≠ F[t]: for (x, y) in order (a, b) then (b, a): when FC[x] < 2, FN[2x+FC[x]] = y; FC[x] becomes (FC[x]+1) mod 256.
+
+`compact()` keeps the triangles of `T` with T[3t] ≥ 0 in order, moving T, F and TG entries down, and truncates T to 3·j, F and TG to j.
+
+`ring(v int, out, mk)`, with out and mk growable i32 arrays passed by reference, collects into out (cleared first) the distinct vertices other than v of the live triangles in v's list (VC[v]..VC[v+1]−1 of VL, skipping triangles with T[3t] < 0), each once, using mk with a fresh `STAMP` value as the seen marker (mk entries equal to the stamp are in the set). MK1 and MK2 are nv ints set up by collapse.
+
+`try_c(keep int, rem int, tg real) bool` is JavaScript's tryC: false when LOCK[keep] or LOCK[rem]. When FE[rem]: false when FC[rem] ≠ 2 or (FN[2rem] ≠ keep and FN[2rem+1] ≠ keep); u = FN[2rem], w = FN[2rem+1]; false when PI−ang_at(P, rem, u, w) > 0.035. ring(keep, RK, MK1), then ring(rem, RR, MK2); com counts the entries of RR whose MK1 mark is the stamp used for RK; false when com ≠ 2. Then for q over rem's list with t = VL[q], skipping T[3t] < 0: v = (T[3t], T[3t+1], T[3t+2]); skip when keep is one of them; o = tri3(P, v0, v1, v2) (copy); w is v with rem replaced by keep; nn = tri3(P, w0, w1, w2); false when nn[0] < 1e-12·o[0] or nn[1]·o[1]+nn[2]·o[2]+nn[3]·o[3] < 0.5; for each x of w in order, false when x ≠ keep and dist(P, x, keep) > 1.33·tg. Then for q over rem's list again with t = VL[q], skipping T[3t] < 0: when keep is one of the three, T[3t] = −1; otherwise every corner equal to rem becomes keep. LOCK[keep], LOCK[rem], and LOCK of every vertex in RR and in RK become 1. True.
+
+`collapse(fac real) int`: nv = P.len/3; vtri(nv); featv(nv); `LOCK` nv zeros; MK1, MK2 nv zeros; n = 0. For t from 0 while t < T.len/3: skip when T[3t] < 0; for k in 0..2: a = T[3t+k], b = T[3t+(k+1)%3]; skip this k when a < 0 or b < 0 or dist(P, a, b) ≥ fac·TG[t]; when try_c(a, b, TG[t]) or (that failing) try_c(b, a, TG[t]), n grows and the k loop stops. Then compact(); the result is n.
+
+`smooth()` is JavaScript's smooth on `P`, `T`, `F` using `CURV` and the current tree (built from the original mesh): nv = P.len/3; vtri(nv); featv(nv). For each vertex v, skipping FE[v] set or VC[v] = VC[v+1]: cx, cy, cz, nx, ny, nz start 0.0 and nn at 0; `SEEN` is cleared; for q from VC[v] to VC[v+1]−1 with t = VL[q]: o = tri3(P, T[3t], T[3t+1], T[3t+2]); nx adds o[0]·o[1], ny adds o[0]·o[2], nz adds o[0]·o[3]; then for k in 0..2 with u = T[3t+k]: when u ≠ v and u is not in SEEN, SEEN pushes u, cx adds P[3u], cy adds P[3u+1], cz adds P[3u+2] and nn grows. l = hypot3(nx, ny, nz) or 1; nx, ny, nz are divided by l; dx = cx/nn−P[3v], dy = cy/nn−P[3v+1], dz = cz/nn−P[3v+2]; dn = dx·nx+dy·ny+dz·nz; dx −= dn·nx, dy −= dn·ny, dz −= dn·nz; ox, oy, oz are P[3v..3v+2]; `OLD` gets the 4 tri3 values of each triangle in v's list in order. P[3v] adds 0.5·dx, P[3v+1] adds 0.5·dy, P[3v+2] adds 0.5·dz. When CURV[F[VL[VC[v]]]] is set and bvh_near(P[3v], P[3v+1], P[3v+2], +infinity) ≥ 0, P[3v..3v+2] become HQ[0..2]. Then for each triangle in the list in order (index j from 0), o = tri3(P, ...) and p = OLD[4j..4j+3]; bad when o[0] < 0.05·p[0] or o[1]·p[1]+o[2]·p[2]+o[3]·p[3] < 0.7 (stop at the first). When bad, P[3v..3v+2] go back to ox, oy, oz.
+
+`remesh(maxTri int)`: `P0` is a copy of P; bvh_build(P0, T, T.len/3) (the tree copies the original mesh). nf is 1 plus the largest F value; `FHAS` nf zeros, `FNX` 3·nf reals, `CURV` nf zeros. For each t: o = tri3(P, T[3t], T[3t+1], T[3t+2]); f = F[t]; when FHAS[f] is 0 it becomes 1 and FNX[3f..3f+2] = o[1..3]; else when FNX[3f]·o[1]+FNX[3f+1]·o[2]+FNX[3f+2]·o[3] < 0.99999, CURV[f] = 1. Then refine(maxTri, 40, 4.0/3.0). For it from 0 to 23: nc = collapse(0.8); stop when it ≥ 4 and nc < 0.004·T.len/3 (real comparison, `0.004*T.len/3` left to right); flips(0.94); smooth(); smooth(); flips(0.94); refine(maxTri, 2, 4.0/3.0). After the loop flips(0.94). Then renumber: used is P.len/3 ints of −1 and NP empty; for each entry i of T in order: v = T[i]; when used[v] < 0, used[v] = NP.len/3 and NP pushes P[3v], P[3v+1], P[3v+2]; T[i] = used[v]. P is replaced by NP.
+
+`ip_run()` is prep. mid = CFG[0] ≠ 0, sc = CFG[1], n0 = SRC.len/3, m = IDX.len/3. mm is [+inf, +inf, +inf, −inf, −inf, −inf]; for each source vertex i and axis k: x = SRC[3i+k]·sc; x < mm[k] lowers mm[k]; x > mm[3+k] raises mm[3+k]. diag = hypot3(mm[3]−mm[0], mm[4]−mm[1], mm[5]−mm[2]) or 1; tol = diag·1e-6. Vertex merge: `RM` n0 ints; P starts empty; a hash table keyed by the triple (jround(x/tol), jround(y/tol), jround(z/tol)) of ints (`DK0`, `DK1`, `DK2` keys, `DVS` values, sized a power of two at least 2·n0+16, probing from a mix of the three keys) maps each new triple to P.len/3 when first seen (then P pushes x, y, z); RM[i] is the vertex of the triple, where x, y, z are SRC[3i..3i+2]·sc. T and F start empty; for each source triangle t: a, b, c are RM of IDX[3t], IDX[3t+1], IDX[3t+2]; skip when a = b or b = c or a = c or tri3(P, a, b, c)[0] < diag·diag·1e-14; T pushes a, b, c and F pushes TF0[t] when the has-face flag is set, else 0 when mid, else t. sv starts 0.0; for each t with a, b, c = 3·T[3t], 3·T[3t+1], 3·T[3t+2]: sv adds P[a]·(P[b+1]·P[c+2]−P[b+2]·P[c+1]) − P[a+1]·(P[b]·P[c+2]−P[b+2]·P[c]) + P[a+2]·(P[b]·P[c+1]−P[b+1]·P[c]) (the three-term expression is formed left to right, then added to sv). When not mid and sv < 0, swap T[3t+1] and T[3t+2] of every triangle. size = CFG[2], minS = CFG[3], kh = CFG[4], maxTri = CFG[5] as int, eps = diag·1e-7; TG starts empty.
+
+When mid, TG gets size for every triangle. Otherwise `ip_onp(0)`; bvh_build(P, T, nt); `CS` and `AR` start empty; nf is 1 plus the largest F; `FA` and `FB` get nf zeros; est = 0.0. For each t: tri3(P, T[3t], T[3t+1], T[3t+2]) gives A, nx, ny, nz; px = (P[3T[3t]]+P[3T[3t+1]]+P[3T[3t+2]])/3 and likewise py (+1) and pz (+2); ball_of(P, px, py, pz, nx, ny, nz, t, diag, eps); TG pushes 2·BALL[0]; CS pushes 1.0 when BALL[3] > 0.7 else 0.0; AR pushes A; FA[F[t]] adds A·CS[t]; FB[F[t]] adds A. Then for each t: g = min(size, max(minS, k·TG[t])) where k is kh when FA[F[t]] ≥ 0.5·FB[F[t]], else 4.0; TG[t] = g; est adds AR[t]/(0.433·g·g). When est > maxTri: f = sqrt(est/maxTri) and every TG[t] is multiplied by f.
+
+When the refine flag is set: `ip_onp(1)`, remesh(maxTri). Then nv = P.len/3 and nt = T.len/3; `TI` is T and `PF` is P (as their own arrays); `AA` (area), `HH` (thickness), `COSC`, `DRAY` get nt reals and `NN` 3·nt; `WW` gets nt values 1.0. For each t: tri3(PF, TI[3t], TI[3t+1], TI[3t+2]) gives AA[t] and NN[3t..3t+2]. When mid: HH[t] is `ip_hmid(cx, cy)` when the hfun flag is set, else hnum, with cx = (PF[3TI[3t]]+PF[3TI[3t+1]]+PF[3TI[3t+2]])/3 and cy likewise with +1. Otherwise: `ip_onp(0)`; bvh_build(PF, TI, nt); `RAP` nt reals; FA and FB reset to nf zeros (nf from the current F). For each t: a, b, c = 3·TI[3t], 3·TI[3t+1], 3·TI[3t+2]; n = NN[3t..3t+2]; ball_of(PF, (PF[a]+PF[b]+PF[c])/3, (PF[a+1]+PF[b+1]+PF[c+1])/3, (PF[a+2]+PF[b+2]+PF[c+2])/3, nx, ny, nz, t, diag, eps); HH[t] = 2·BALL[0]; DRAY[t] = BALL[1]; COSC[t] = BALL[3]; hit = BALL[2] as int; RAP[t] = −(NN[3hit]·nx+NN[3hit+1]·ny+NN[3hit+2]·nz) when hit ≥ 0 else 0.0; FA[F[t]] adds AA[t]·(1.0 when BALL[3] > 0.7 else 0.0); FB[F[t]] adds AA[t]. Then for each t: skin is FA[F[t]] ≥ 0.5·FB[F[t]]; WW[t] = 1.0 when skin else 0.02; when skin and COSC[t] ≤ 0.7 and RAP[t] > 0.8, HH[t] = DRAY[t].
+
+Links: `ip_onp(2)`; share = 1.0 when mid else 0.5; et_reset(3·nt); `L0`, `L1`, `LE`, `LK` start empty; `ELK` 3·nt ints, `CT` 3·nt reals, `GPH` 9·nt reals. For each t: v = (TI[3t], TI[3t+1], TI[3t+2]); n = NN[3t..3t+2]; for c in 0..2: a = v[(c+1)%3], b = v[(c+2)%3]; ang = ang_at(PF, v[c], a, b); ct = share·WW[t]·0.5·ip_cos(ang)/max(ip_sin(ang), 1e-9) (left to right: `share*WW[t]*0.5*cos` then divided); l = et_add(ekey(a, b)); when new: L0 pushes min(a, b), L1 pushes max(a, b), LE pushes t and −1, LK pushes ct and 0.0; otherwise when LE[2l+1] < 0: LE[2l+1] = t and LK[2l+1] = ct. ELK[3t+c] = l; CT[3t+c] = ct. e = (PF[3b]−PF[3a], PF[3b+1]−PF[3a+1], PF[3b+2]−PF[3a+2]); s = 1/(2·AA[t]); GPH[9t+3c] = (ny·ez−nz·ey)·s, GPH[9t+3c+1] = (nz·ex−nx·ez)·s, GPH[9t+3c+2] = (nx·ey−ny·ex)·s.
+
+Node data: `VV`, `HN`, `HW`, `ACV` get nv reals, `NV3` 3·nv reals, `SKN` nv bytes. For each t and c: i = TI[3t+c]; VV[i] adds share·WW[t]·AA[t]·HH[t]·1e-9/3 (left to right); HN[i] adds AA[t]·WW[t]·HH[t]; HW[i] adds AA[t]·WW[t]; when WW[t] > 0.5: SKN[i] = 1, ACV[i] adds AA[t]/3 and NV3[3i+k] adds AA[t]·NN[3t+k] for k 0..2. For each i: HN[i] = HN[i]/HW[i] when HW[i] > 0 else 1.0; l = hypot3(NV3[3i], NV3[3i+1], NV3[3i+2]) or 1; each NV3[3i+k] /= l. vsum = 0.0 plus every VV[i] in order; vcad = CFG[8]·sc·sc·sc·1e-9 (left to right) when CFG[8] ≠ 0, else vsum; vscale = 1.0 when mid else vcad/vsum; when not mid every VV[i] *= vscale.
+
+Connectors: `CI`, `CJ`, `CW`, `CC` start empty; ncon = 0. When not mid, with KC = CFG[7]: for each node i with SKN[i] set: n = NV3[3i..3i+2]; hh = HN[i]; tr = bvh_ray(PF[3i]−nx·eps, PF[3i+1]−ny·eps, PF[3i+2]−nz·eps, −nx, −ny, −nz, −1, 1.6·hh+eps); skip when tr < 0 or WW[tr] < 0.5 or NN[3tr]·nx+NN[3tr+1]·ny+NN[3tr+2]·nz > −0.7; u = HU, v = HV; lam = (max(0.0, 1−u−v), max(0.0, u), max(0.0, v)); ls = lam0+lam1+lam2; skip when i is one of TI[3tr], TI[3tr+1], TI[3tr+2]; ncon grows; CI pushes i; for c in 0..2: CJ pushes TI[3tr+c] and CW pushes lam[c]/ls; CC pushes KC·ACV[i]/(hh·hh).
+
+Adjacency: nl = L0.len. `DEG` nv+1 zeros: for each link l, DEG[L0[l]+1] and DEG[L1[l]+1] grow; prefix sums; `NAL` 2·nl ints; f is a copy of DEG's first nv; for each l: NAL[f[L0[l]]] = l and it grows, then NAL[f[L1[l]]] = l and it grows. `ED` nv+1 zeros: for each t and c, ED[TI[3t+c]+1] grows; prefix sums; `NEL` 3·nt ints; f2 a copy of ED's first nv; for each t and c: NEL[f2[TI[3t+c]]] = t and it grows. nneg counts the CT entries below 0. thin starts +infinity and for each t, when WW[t] > 0.5 and HH[t] < thin, thin = HH[t]. Scaled outputs: `PM` is PF·1e-3, `AE` is AA·1e-6, `HE` is HH·1e-3, GPH entries are multiplied by 1e3 in place, `HNS` is HN·1e-3 (entrywise products).
+
+`OUT` gets 16 reals: 0 nv, 1 nt, 2 nl, 3 ncon, 4 vscale, 5 vcad, 6 diag, 7 nneg, 8 thin, 9 share. Then the views are reported: `ip_view_i32` 100 `TI`, 101 `F`, 102 `ELK`, 103 `LE`, 104 `L0`, 105 `L1`, 106 `DEG`, 107 `NAL`, 108 `ED`, 109 `NEL`, 110 `CI`, 111 `CJ`; `ip_view_f64` 120 `PF`, 121 `PM`, 122 `AE`, 123 `AA`, 124 `NN`, 125 `HE`, 126 `WW`, 127 `COSC`, 128 `GPH`, 129 `CT`, 130 `LK`, 131 `VV`, 132 `HNS`, 133 `NV3`, 134 `CW`, 135 `CC`, 141 `OUT`; `ip_view_u8` 140 `SKN`.
+
+`main()` does nothing.
