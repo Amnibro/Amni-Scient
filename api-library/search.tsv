@@ -6439,10 +6439,6 @@ hair::mesh_soup	function	gfx/hair	/api-library/helium/lib/gfx-hair#mesh_soup	Fla
 hair::mesh_roots	function	gfx/hair	/api-library/helium/lib/gfx-hair#mesh_roots	Samples random strand roots and normals on a mesh node within a box, returning the count or 0 if none qualify.	pub
 hair::solid	function	gfx/hair	/api-library/helium/lib/gfx-hair#solid	Marks a mesh node as a collision solid for a groom and bakes its distance field.	pub
 hair::strand_k	function	gfx/hair	/api-library/helium/lib/gfx-hair#strand_k	Returns the number of points per strand, clamping the style's step count between 3 and 32.	int
-hair::hq	function	gfx/hair	/api-library/helium/lib/gfx-hair#hq	Converts a world-space point into the head's normalized local space by dividing out head position and scale.	int
-hair::hback	function	gfx/hair	/api-library/helium/lib/gfx-hair#hback	Converts a point from the head's normalized local space back into world space using head position and scale.	int
-hair::dr_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#dr_of	Returns the drape shell radius in head-local units, or 0 when the head size or drape is not positive.	int
-hair::shell	function	gfx/hair	/api-library/helium/lib/gfx-hair#shell	Pushes a world-space point outward onto the drape shell when it lies inside it, otherwise returns it unchanged.	int
 hair::grow	function	gfx/hair	/api-library/helium/lib/gfx-hair#grow	Generates strand control points and root axes from root positions and normals, applying length variation, droop, and curl.	int
 hair::clump	function	gfx/hair	/api-library/helium/lib/gfx-hair#clump	Pulls strand points toward the nearest clump leader strand, with the pull increasing toward the strand tips; does nothing when clumping is disabled.	int
 hair::strand_out	function	gfx/hair	/api-library/helium/lib/gfx-hair#strand_out	Appends per-point float data and segment index rows for strands, building ribbon sides and normals from tangents using the style's width.	int

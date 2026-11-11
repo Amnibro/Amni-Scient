@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/ttf">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/ttf">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=ee01562daa">
+<link rel="stylesheet" href="/api-library/lib.css?v=d1fcaf00ac">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=ee01562daa'; start({wasm: '/api-library/search.wasm?v=ee01562daa'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=d1fcaf00ac'; start({wasm: '/api-library/search.wasm?v=d1fcaf00ac'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>ttf</h1>
 <p class="lib-lede">Read TrueType fonts: metrics, glyph shapes, glyph bitmaps and packing glyphs into atlases.</p>
-<p class="lib-meta"><code>import ttf;</code> &middot; <code>ttf::</code> &middot; 73 functions, 13 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he">Source</a></p>
+<p class="lib-meta"><code>import ttf;</code> &middot; <code>ttf::</code> &middot; 73 functions, 13 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#atlas-packing">Atlas Packing <span class="n">8</span></a></li>
 <li><a href="#font-parsing">Font Parsing <span class="n">8</span></a></li>
@@ -116,527 +116,527 @@
 <h3><a href="#PC">PC</a> <i>type</i></h3>
 <pre>struct PC { x0 int = 0, y0 int = 0, x1 int = 0, y1 int = 0, xoff f32 = 0.0, yoff f32 = 0.0, xadv f32 = 0.0, xoff2 f32 = 0.0, yoff2 f32 = 0.0 }</pre>
 <p>Describes a packed glyph's atlas rectangle, offsets and advance, as produced by rendering a range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L14">hc/lib/ttf.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L14">hc/lib/ttf.he:14</a>
 </article>
 <article class="sym" id="Range">
 <h3><a href="#Range">Range</a> <i>type</i></h3>
 <pre>struct Range { size f32, first int, n int, ho int = 1, vo int = 1, cd int = 0 }</pre>
 <p>Describes a run of consecutive code points to bake at one size, with oversampling and output index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L15">hc/lib/ttf.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L15">hc/lib/ttf.he:15</a>
 </article>
 <article class="sym" id="Ctx">
 <h3><a href="#Ctx">Ctx</a> <i>type</i></h3>
 <pre>struct Ctx { pk Pk, px byte[&gt;..], w int, h int, stride int, pd int, ho int = 1, vo int = 1 }</pre>
 <p>Holds the atlas packing state, pixel buffer and oversampling settings for a baking session.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L16">hc/lib/ttf.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L16">hc/lib/ttf.he:16</a>
 </article>
 <article class="sym" id="pack_rects">
 <h3><a href="#pack_rects">pack_rects</a> <i>function</i></h3>
 <pre>pack_rects(c Pk&amp;, rs Rc[&gt;..]&amp;, lo int, n int)</pre>
 <p>Packs a range of rectangles into the atlas, marking each as packed or not.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L281">hc/lib/ttf.he:281</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L281">hc/lib/ttf.he:281</a>
 </article>
 <article class="sym" id="begin">
 <h3><a href="#begin">begin</a> <i>function</i></h3>
 <pre>begin(s Ctx&amp;, w int, h int, pa int)</pre>
 <p>Starts a packing session by setting atlas size and padding, resetting the packer and clearing pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L289">hc/lib/ttf.he:289</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L289">hc/lib/ttf.he:289</a>
 </article>
 <article class="sym" id="oversample">
 <h3><a href="#oversample">oversample</a> <i>function</i></h3>
 <pre>oversample(s Ctx&amp;, h int, v int)</pre>
 <p>Sets horizontal and vertical oversampling factors for later packing, ignoring values above 8.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L291">hc/lib/ttf.he:291</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L291">hc/lib/ttf.he:291</a>
 </article>
 <article class="sym" id="gather">
 <h3><a href="#gather">gather</a> <i>function</i></h3>
 <pre>gather(s Ctx&amp;, f Info&amp;, rg Range[&gt;..]&amp;, rlo int, nr int, rs Rc[&gt;..]&amp;, lo int) int</pre>
 <p>Fills rectangle sizes for each glyph in the given ranges and returns the number of rectangles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L293">hc/lib/ttf.he:293</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L293">hc/lib/ttf.he:293</a>
 </article>
 <article class="sym" id="render">
 <h3><a href="#render">render</a> <i>function</i></h3>
 <pre>render(s Ctx&amp;, f Info&amp;, rg Range[&gt;..]&amp;, rlo int, nr int, rs Rc[&gt;..]&amp;, lo int, cd PC[&gt;..]&amp;) bool</pre>
 <p>Renders packed glyphs into the atlas and fills their records, returning false if any glyph failed to pack.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L310">hc/lib/ttf.he:310</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L310">hc/lib/ttf.he:310</a>
 </article>
 <h2 id="font-parsing">Font Parsing <span class="n">8</span></h2>
 <article class="sym" id="font_offset">
 <h3><a href="#font_offset">font_offset</a> <i>function</i></h3>
 <pre>font_offset(d const byte[:], index int) int</pre>
 <p>Returns the byte offset of the font at the given index in a font file, or -1 if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L22">hc/lib/ttf.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L22">hc/lib/ttf.he:22</a>
 </article>
 <article class="sym" id="font_count">
 <h3><a href="#font_count">font_count</a> <i>function</i></h3>
 <pre>font_count(d const byte[:]) int</pre>
 <p>Returns how many fonts a file contains, counting collections, or 0 if the data is too short.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L26">hc/lib/ttf.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L26">hc/lib/ttf.he:26</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(f Info&amp;) bool</pre>
 <p>Parses the font tables and character map, returning false if a required table or usable map is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L30">hc/lib/ttf.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L30">hc/lib/ttf.he:30</a>
 </article>
 <article class="sym" id="glyph_index">
 <h3><a href="#glyph_index">glyph_index</a> <i>function</i></h3>
 <pre>glyph_index(f Info&amp;, cp int) int</pre>
 <p>Returns the glyph index for a Unicode code point, or 0 if the font has no glyph for it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L41">hc/lib/ttf.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L41">hc/lib/ttf.he:41</a>
 </article>
 <article class="sym" id="hmetrics">
 <h3><a href="#hmetrics">hmetrics</a> <i>function</i></h3>
 <pre>hmetrics(f Info&amp;, g int) int2</pre>
 <p>Returns a glyph's advance width and left side bearing in font units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L70">hc/lib/ttf.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L70">hc/lib/ttf.he:70</a>
 </article>
 <article class="sym" id="vmetrics">
 <h3><a href="#vmetrics">vmetrics</a> <i>function</i></h3>
 <pre>vmetrics(f Info&amp;) int2</pre>
 <p>Returns the font's ascent and descent in font units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L73">hc/lib/ttf.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L73">hc/lib/ttf.he:73</a>
 </article>
 <article class="sym" id="scale_for">
 <h3><a href="#scale_for">scale_for</a> <i>function</i></h3>
 <pre>scale_for(f Info&amp;, h f32) f32</pre>
 <p>Returns the scale factor that makes the font's ascent-to-descent height equal the given pixel height.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L74">hc/lib/ttf.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L74">hc/lib/ttf.he:74</a>
 </article>
 <article class="sym" id="kern">
 <h3><a href="#kern">kern</a> <i>function</i></h3>
 <pre>kern(f Info&amp;, g1 int, g2 int) int</pre>
 <p>Returns the kerning adjustment in font units between two glyphs, caching results, or 0 if either glyph is not positive.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L404">hc/lib/ttf.he:404</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L404">hc/lib/ttf.he:404</a>
 </article>
 <h2 id="glyph-shapes">Glyph Shapes <span class="n">2</span></h2>
 <article class="sym" id="shape">
 <h3><a href="#shape">shape</a> <i>function</i></h3>
 <pre>shape(f Info&amp;, g int) V[&gt;..]</pre>
 <p>Returns the outline vertices for a glyph, including composite glyphs, or an empty array if it has none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L81">hc/lib/ttf.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L81">hc/lib/ttf.he:81</a>
 </article>
 <article class="sym" id="bbox">
 <h3><a href="#bbox">bbox</a> <i>function</i></h3>
 <pre>bbox(f Info&amp;, g int, sx f32, sy f32, hx f32, hy f32) B4</pre>
 <p>Returns a glyph's pixel bounding box for the given scales and offsets, with y flipped downward.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L128">hc/lib/ttf.he:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L128">hc/lib/ttf.he:128</a>
 </article>
 <h2 id="glyph-rasterizing">Glyph Rasterizing <span class="n">1</span></h2>
 <article class="sym" id="glyph_bitmap">
 <h3><a href="#glyph_bitmap">glyph_bitmap</a> <i>function</i></h3>
 <pre>glyph_bitmap(f Info&amp;, px byte[&gt;..]&amp;, base int, w int, h int, stride int, sx f32, sy f32, g int)</pre>
 <p>Renders a glyph's anti-aliased coverage bitmap into a byte buffer at the given offset and stride.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L236">hc/lib/ttf.he:236</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L236">hc/lib/ttf.he:236</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (68)</summary>
 <article class="sym" id="Info">
 <h3><a href="#Info">Info</a> <i>type</i></h3>
 <pre>struct Info { d byte[&gt;..], loca int = 0, head int = 0, glyf int = 0, hhea int = 0, hmtx int = 0, imap int = 0, ngl int = 0, ilf int = 0, fo int = 0, cff int = 0, cs int = 0, gsb int = 0, sub int = 0, fda int = 0, fds int = 0, kst int = 0, kpp int[&gt;..] = [], kpl int[&gt;..] = [], kleg int = 0, kk int[&gt;..] = [], kv int[&gt;..] = [], kn int = 0 }</pre>
 <p>Holds the font data bytes and cached table offsets used by this module's TrueType parsing code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L4">hc/lib/ttf.he:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L4">hc/lib/ttf.he:4</a>
 </article>
 <article class="sym" id="V">
 <h3><a href="#V">V</a> <i>type</i></h3>
 <pre>struct V { t int, x int, y int, cx int, cy int, cx1 int = 0, cy1 int = 0 }</pre>
 <p>Raw outline vertex record used internally for glyph shapes, with a type tag and coordinates plus control points.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L5">hc/lib/ttf.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L5">hc/lib/ttf.he:5</a>
 </article>
 <article class="sym" id="Cs">
 <h3><a href="#Cs">Cs</a> <i>type</i></h3>
 <pre>struct Cs { x f32 = 0.0, y f32 = 0.0, fx f32 = 0.0, fy f32 = 0.0, vs V[&gt;..] = [] }</pre>
 <p>Internal cursor state for decoding CFF charstrings, tracking current point, contour start and accumulated vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L6">hc/lib/ttf.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L6">hc/lib/ttf.he:6</a>
 </article>
 <article class="sym" id="Pt">
 <h3><a href="#Pt">Pt</a> <i>type</i></h3>
 <pre>struct Pt { x f32, y f32 }</pre>
 <p>Represents a floating-point point used while flattening curves into line segments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L7">hc/lib/ttf.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L7">hc/lib/ttf.he:7</a>
 </article>
 <article class="sym" id="E">
 <h3><a href="#E">E</a> <i>type</i></h3>
 <pre>struct E { x0 f32, y0 f32, x1 f32, y1 f32, inv bool }</pre>
 <p>Represents a directed edge used by the scanline rasterizer, with a flag for reversed direction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L8">hc/lib/ttf.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L8">hc/lib/ttf.he:8</a>
 </article>
 <article class="sym" id="A">
 <h3><a href="#A">A</a> <i>type</i></h3>
 <pre>struct A { nx int, fx f32, fdx f32, fdy f32, dir f32, sy f32, ey f32 }</pre>
 <p>Represents an active edge tracked by the scanline rasterizer between scanlines.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L9">hc/lib/ttf.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L9">hc/lib/ttf.he:9</a>
 </article>
 <article class="sym" id="B4">
 <h3><a href="#B4">B4</a> <i>type</i></h3>
 <pre>struct B4 { x0 int, y0 int, x1 int, y1 int }</pre>
 <p>Represents an integer bounding box with minimum and maximum corners.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L10">hc/lib/ttf.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L10">hc/lib/ttf.he:10</a>
 </article>
 <article class="sym" id="Rc">
 <h3><a href="#Rc">Rc</a> <i>type</i></h3>
 <pre>struct Rc { w int = 0, h int = 0, x int = 0, y int = 0, p bool = false }</pre>
 <p>Represents a rectangle to pack into the atlas, with its size, position and packed flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L11">hc/lib/ttf.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L11">hc/lib/ttf.he:11</a>
 </article>
 <article class="sym" id="Nd">
 <h3><a href="#Nd">Nd</a> <i>type</i></h3>
 <pre>struct Nd { x int, y int, nx int }</pre>
 <p>Represents a skyline node used internally by the rectangle packer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L12">hc/lib/ttf.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L12">hc/lib/ttf.he:12</a>
 </article>
 <article class="sym" id="Pk">
 <h3><a href="#Pk">Pk</a> <i>type</i></h3>
 <pre>struct Pk { nd Nd[&gt;..], fh int = 0, ah int = 0, w int = 0, h int = 0, al int = 1 }</pre>
 <p>Holds the skyline packer state, including node list, free list head, and atlas dimensions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L13">hc/lib/ttf.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L13">hc/lib/ttf.he:13</a>
 </article>
 <article class="sym" id="MAXV">
 <h3><a href="#MAXV">MAXV</a> <i>constant</i></h3>
 <pre>MAXV := 0x7fffffff</pre>
 <p>Constant holding the largest 32-bit signed integer, used to mark rectangles that failed to pack.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L17">hc/lib/ttf.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L17">hc/lib/ttf.he:17</a>
 </article>
 <article class="sym" id="ru16">
 <h3><a href="#ru16">ru16</a> <i>function</i></h3>
 <pre>ru16(d const byte[:], o int) int</pre>
 <p>Reads an unsigned big-endian 16-bit value from font data at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L18">hc/lib/ttf.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L18">hc/lib/ttf.he:18</a>
 </article>
 <article class="sym" id="w16">
 <h3><a href="#w16">w16</a> <i>function</i></h3>
 <pre>w16(v int) int</pre>
 <p>Wraps an integer into the signed 16-bit range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L19">hc/lib/ttf.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L19">hc/lib/ttf.he:19</a>
 </article>
 <article class="sym" id="rs16">
 <h3><a href="#rs16">rs16</a> <i>function</i></h3>
 <pre>rs16(d const byte[:], o int) int</pre>
 <p>Reads a signed big-endian 16-bit value from font data at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L20">hc/lib/ttf.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L20">hc/lib/ttf.he:20</a>
 </article>
 <article class="sym" id="ru32">
 <h3><a href="#ru32">ru32</a> <i>function</i></h3>
 <pre>ru32(d const byte[:], o int) int</pre>
 <p>Reads an unsigned big-endian 32-bit value from font data at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L21">hc/lib/ttf.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L21">hc/lib/ttf.he:21</a>
 </article>
 <article class="sym" id="find_table">
 <h3><a href="#find_table">find_table</a> <i>function</i></h3>
 <pre>find_table(d const byte[:], fo int, tag const byte[:]) int</pre>
 <p>Returns the byte offset of the table with the given four-character tag, or 0 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L27">hc/lib/ttf.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L27">hc/lib/ttf.he:27</a>
 </article>
 <article class="sym" id="gofs">
 <h3><a href="#gofs">gofs</a> <i>function</i></h3>
 <pre>gofs(f Info&amp;, g int) int</pre>
 <p>Returns the offset of a glyph's data in the glyf table, or -1 if the glyph is empty or invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L62">hc/lib/ttf.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L62">hc/lib/ttf.he:62</a>
 </article>
 <article class="sym" id="gbox">
 <h3><a href="#gbox">gbox</a> <i>function</i></h3>
 <pre>gbox(f Info&amp;, g int, b B4&amp;) bool</pre>
 <p>Fills a box with a glyph's font-unit bounds, returning false if the glyph has no outline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L66">hc/lib/ttf.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L66">hc/lib/ttf.he:66</a>
 </article>
 <article class="sym" id="sv">
 <h3><a href="#sv">sv</a> <i>function</i></h3>
 <pre>sv(vs V[&gt;..]&amp;, k int, t int, x int, y int, cx int, cy int)</pre>
 <p>Stores a vertex into a vertex array slot, wrapping coordinates to 16-bit values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L75">hc/lib/ttf.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L75">hc/lib/ttf.he:75</a>
 </article>
 <article class="sym" id="close">
 <h3><a href="#close">close</a> <i>function</i></h3>
 <pre>close(vs V[&gt;..]&amp;, n int, wo bool, so bool, sx int, sy int, scx int, scy int, cx int, cy int) int</pre>
 <p>Emits the closing vertices of a contour and returns the new vertex count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L76">hc/lib/ttf.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L76">hc/lib/ttf.he:76</a>
 </article>
 <article class="sym" id="xf">
 <h3><a href="#xf">xf</a> <i>function</i></h3>
 <pre>xf(m f32, a f32, b f32, c f32, x int, y int) int</pre>
 <p>Applies one row of a composite glyph transform to a point and returns the wrapped coordinate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L80">hc/lib/ttf.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L80">hc/lib/ttf.he:80</a>
 </article>
 <article class="sym" id="curve">
 <h3><a href="#curve">curve</a> <i>function</i></h3>
 <pre>curve(ps Pt[&gt;..]&amp;, x0 f32, y0 f32, x1 f32, y1 f32, x2 f32, y2 f32, fs f32, n int)</pre>
 <p>Recursively flattens a quadratic curve into line points, stopping at a flatness threshold or depth limit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L132">hc/lib/ttf.he:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L132">hc/lib/ttf.he:132</a>
 </article>
 <article class="sym" id="cubic">
 <h3><a href="#cubic">cubic</a> <i>function</i></h3>
 <pre>cubic(ps Pt[&gt;..]&amp;, x0 f32, y0 f32, x1 f32, y1 f32, x2 f32, y2 f32, x3 f32, y3 f32, fs f32, n int)</pre>
 <p>Flattens a cubic Bézier curve into line points by recursive subdivision, appending the results to a point list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L136">hc/lib/ttf.he:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L136">hc/lib/ttf.he:136</a>
 </article>
 <article class="sym" id="lt">
 <h3><a href="#lt">lt</a> <i>function</i></h3>
 <pre>lt(a E, b E) bool</pre>
 <p>Returns whether one edge starts above another, used to order edges.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L144">hc/lib/ttf.he:144</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L144">hc/lib/ttf.he:144</a>
 </article>
 <article class="sym" id="qs">
 <h3><a href="#qs">qs</a> <i>function</i></h3>
 <pre>qs(e E[&gt;..]&amp;, b0 int, n0 int)</pre>
 <p>Quicksorts a range of edges by starting y, leaving small partitions for insertion sort.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L145">hc/lib/ttf.he:145</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L145">hc/lib/ttf.he:145</a>
 </article>
 <article class="sym" id="sort_edges">
 <h3><a href="#sort_edges">sort_edges</a> <i>function</i></h3>
 <pre>sort_edges(e E[&gt;..]&amp;, n int)</pre>
 <p>Sorts edges by starting y using quicksort followed by insertion sort.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L157">hc/lib/ttf.he:157</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L157">hc/lib/ttf.he:157</a>
 </article>
 <article class="sym" id="clip">
 <h3><a href="#clip">clip</a> <i>function</i></h3>
 <pre>clip(s f32[&gt;..]&amp;, bo int, x int, e A&amp;, x0i f32, y0i f32, x1i f32, y1i f32)</pre>
 <p>Adds an edge segment's clipped coverage contribution to a pixel cell in the accumulation buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L160">hc/lib/ttf.he:160</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L160">hc/lib/ttf.he:160</a>
 </article>
 <article class="sym" id="trap">
 <h3><a href="#trap">trap</a> <i>function</i></h3>
 <pre>trap(h f32, tx0 f32, tx1 f32, bx0 f32, bx1 f32) f32</pre>
 <p>Returns the area of a trapezoid from its height and top and bottom x spans.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L167">hc/lib/ttf.he:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L167">hc/lib/ttf.he:167</a>
 </article>
 <article class="sym" id="fill">
 <h3><a href="#fill">fill</a> <i>function</i></h3>
 <pre>fill(s f32[&gt;..]&amp;, s2 f32[&gt;..]&amp;, len int, aa A[&gt;..]&amp;, head int, yt f32)</pre>
 <p>Accumulates coverage from all active edges into the buffers for one scanline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L168">hc/lib/ttf.he:168</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L168">hc/lib/ttf.he:168</a>
 </article>
 <article class="sym" id="raster_sorted">
 <h3><a href="#raster_sorted">raster_sorted</a> <i>function</i></h3>
 <pre>raster_sorted(px byte[&gt;..]&amp;, base int, w int, h int, stride int, e E[&gt;..]&amp;, n int, ox int, oy int)</pre>
 <p>Rasterizes presorted edges into an 8-bit coverage bitmap, scanline by scanline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L196">hc/lib/ttf.he:196</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L196">hc/lib/ttf.he:196</a>
 </article>
 <article class="sym" id="raster">
 <h3><a href="#raster">raster</a> <i>function</i></h3>
 <pre>raster(px byte[&gt;..]&amp;, base int, w int, h int, stride int, vs V[:], sx f32, sy f32, hx f32, hy f32, ox int, oy int)</pre>
 <p>Converts outline vertices into flattened sorted edges and rasterizes them into a coverage bitmap.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L218">hc/lib/ttf.he:218</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L218">hc/lib/ttf.he:218</a>
 </article>
 <article class="sym" id="hpre">
 <h3><a href="#hpre">hpre</a> <i>function</i></h3>
 <pre>hpre(px byte[&gt;..]&amp;, base int, w int, h int, stride int, kw int)</pre>
 <p>Applies a horizontal box blur to a bitmap region to prepare for oversampled glyphs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L239">hc/lib/ttf.he:239</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L239">hc/lib/ttf.he:239</a>
 </article>
 <article class="sym" id="vpre">
 <h3><a href="#vpre">vpre</a> <i>function</i></h3>
 <pre>vpre(px byte[&gt;..]&amp;, base int, w int, h int, stride int, kw int)</pre>
 <p>Applies a vertical box blur to a bitmap region to prepare for oversampled glyphs.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L245">hc/lib/ttf.he:245</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L245">hc/lib/ttf.he:245</a>
 </article>
 <article class="sym" id="oshift">
 <h3><a href="#oshift">oshift</a> <i>function</i></h3>
 <pre>oshift(o int) f32</pre>
 <p>Returns the sub-pixel offset correction for a given oversampling factor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L251">hc/lib/ttf.he:251</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L251">hc/lib/ttf.he:251</a>
 </article>
 <article class="sym" id="pinit">
 <h3><a href="#pinit">pinit</a> <i>function</i></h3>
 <pre>pinit(c Pk&amp;, w int, h int, nn int)</pre>
 <p>Initializes the skyline packer with its width, height and node count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L252">hc/lib/ttf.he:252</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L252">hc/lib/ttf.he:252</a>
 </article>
 <article class="sym" id="at">
 <h3><a href="#at">at</a> <i>function</i></h3>
 <pre>at(c Pk&amp;, pv int) int</pre>
 <p>Returns the next node index following a node, or the active head when given -2.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L256">hc/lib/ttf.he:256</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L256">hc/lib/ttf.he:256</a>
 </article>
 <article class="sym" id="setl">
 <h3><a href="#setl">setl</a> <i>function</i></h3>
 <pre>setl(c Pk&amp;, pv int, v int)</pre>
 <p>Sets the next link of a node, or the active head when given -2.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L257">hc/lib/ttf.he:257</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L257">hc/lib/ttf.he:257</a>
 </article>
 <article class="sym" id="packone">
 <h3><a href="#packone">packone</a> <i>function</i></h3>
 <pre>packone(c Pk&amp;, w0 int, h int) int2</pre>
 <p>Finds a position for one rectangle, returning its coordinates or -1 for both if it does not fit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L258">hc/lib/ttf.he:258</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L258">hc/lib/ttf.he:258</a>
 </article>
 <article class="sym" id="hcmp">
 <h3><a href="#hcmp">hcmp</a> <i>function</i></h3>
 <pre>hcmp(rs Rc[&gt;..]&amp;, a int, b int) bool</pre>
 <p>Compares two rectangles, ordering taller ones first and wider ones first on ties.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L274">hc/lib/ttf.he:274</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L274">hc/lib/ttf.he:274</a>
 </article>
 <article class="sym" id="msort">
 <h3><a href="#msort">msort</a> <i>function</i></h3>
 <pre>msort(rs Rc[&gt;..]&amp;, ix int[&gt;..]&amp;, t int[&gt;..]&amp;, lo int, n int)</pre>
 <p>Merge sorts rectangle indices using the height-then-width ordering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L275">hc/lib/ttf.he:275</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L275">hc/lib/ttf.he:275</a>
 </article>
 <article class="sym" id="scale_of">
 <h3><a href="#scale_of">scale_of</a> <i>function</i></h3>
 <pre>scale_of(f Info&amp;, fh f32) f32</pre>
 <p>Returns a scale factor from a size that is a pixel height if positive, or an em height if negative.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L292">hc/lib/ttf.he:292</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L292">hc/lib/ttf.he:292</a>
 </article>
 <article class="sym" id="bits_f">
 <h3><a href="#bits_f">bits_f</a> <i>function</i></h3>
 <pre>bits_f(b u32) f32</pre>
 <p>Declares a C binding that converts raw 32-bit bits into a floating-point value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L302">hc/lib/ttf.he:302</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L302">hc/lib/ttf.he:302</a>
 </article>
 <article class="sym" id="rword">
 <h3><a href="#rword">rword</a> <i>function</i></h3>
 <pre>rword(rs Rc[&gt;..]&amp;, o int) u32</pre>
 <p>Reads a 32-bit word from the packed-rectangle array at a byte offset as if it were a flat buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L303">hc/lib/ttf.he:303</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L303">hc/lib/ttf.he:303</a>
 </article>
 <article class="sym" id="pc_at">
 <h3><a href="#pc_at">pc_at</a> <i>function</i></h3>
 <pre>pc_at(cd PC[&gt;..]&amp;, rs Rc[&gt;..]&amp;, i int) PC</pre>
 <p>Returns the packed glyph record at an index, decoding it from the rectangle array when beyond the stored records.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L306">hc/lib/ttf.he:306</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L306">hc/lib/ttf.he:306</a>
 </article>
 <article class="sym" id="cov">
 <h3><a href="#cov">cov</a> <i>function</i></h3>
 <pre>cov(d const byte[:], o int, g int) int</pre>
 <p>Looks up a glyph in a coverage table and returns its coverage index, or -1 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L327">hc/lib/ttf.he:327</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L327">hc/lib/ttf.he:327</a>
 </article>
 <article class="sym" id="cls">
 <h3><a href="#cls">cls</a> <i>function</i></h3>
 <pre>cls(d const byte[:], o int, g int) int</pre>
 <p>Returns the class value of a glyph from a class definition table, or 0 if not listed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L339">hc/lib/ttf.he:339</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L339">hc/lib/ttf.he:339</a>
 </article>
 <article class="sym" id="vsz">
 <h3><a href="#vsz">vsz</a> <i>function</i></h3>
 <pre>vsz(vf int) int</pre>
 <p>Returns the byte size of a positioning value record based on its format flags.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L347">hc/lib/ttf.he:347</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L347">hc/lib/ttf.he:347</a>
 </article>
 <article class="sym" id="xadv">
 <h3><a href="#xadv">xadv</a> <i>function</i></h3>
 <pre>xadv(d const byte[:], o int, vf int) int</pre>
 <p>Reads the horizontal advance adjustment from a positioning value record, or 0 if the format has none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L348">hc/lib/ttf.he:348</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L348">hc/lib/ttf.he:348</a>
 </article>
 <article class="sym" id="kern_setup">
 <h3><a href="#kern_setup">kern_setup</a> <i>function</i></h3>
 <pre>kern_setup(f Info&amp;)</pre>
 <p>Locates kerning tables and collects pair adjustment subtables from the font for later kerning lookups.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L349">hc/lib/ttf.he:349</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L349">hc/lib/ttf.he:349</a>
 </article>
 <article class="sym" id="pair">
 <h3><a href="#pair">pair</a> <i>function</i></h3>
 <pre>pair(d const byte[:], st int, g1 int, g2 int) int, bool</pre>
 <p>Looks up a glyph pair in a pair adjustment subtable, returning the kerning value and whether the pair was found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L366">hc/lib/ttf.he:366</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L366">hc/lib/ttf.he:366</a>
 </article>
 <article class="sym" id="legacy">
 <h3><a href="#legacy">legacy</a> <i>function</i></h3>
 <pre>legacy(d const byte[:], t int, g1 int, g2 int) int</pre>
 <p>Sums horizontal kerning values for a glyph pair from a legacy kern table, or 0 if the format is unsupported.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L381">hc/lib/ttf.he:381</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L381">hc/lib/ttf.he:381</a>
 </article>
 <article class="sym" id="kern_raw">
 <h3><a href="#kern_raw">kern_raw</a> <i>function</i></h3>
 <pre>kern_raw(f Info&amp;, g1 int, g2 int) int</pre>
 <p>Computes the uncached kerning adjustment for a glyph pair, using pair adjustment subtables or the legacy table.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L394">hc/lib/ttf.he:394</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L394">hc/lib/ttf.he:394</a>
 </article>
 <article class="sym" id="rofs">
 <h3><a href="#rofs">rofs</a> <i>function</i></h3>
 <pre>rofs(d const byte[:], p int, sz int) int</pre>
 <p>Reads a big-endian unsigned integer of the given byte size at an offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L417">hc/lib/ttf.he:417</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L417">hc/lib/ttf.he:417</a>
 </article>
 <article class="sym" id="ix_item">
 <h3><a href="#ix_item">ix_item</a> <i>function</i></h3>
 <pre>ix_item(d const byte[:], o int, i int) int, int</pre>
 <p>Returns the data offset and byte length of an item in a CFF index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L418">hc/lib/ttf.he:418</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L418">hc/lib/ttf.he:418</a>
 </article>
 <article class="sym" id="ix_end">
 <h3><a href="#ix_end">ix_end</a> <i>function</i></h3>
 <pre>ix_end(d const byte[:], o int) int</pre>
 <p>Returns the offset just past the end of a CFF index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L421">hc/lib/ttf.he:421</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L421">hc/lib/ttf.he:421</a>
 </article>
 <article class="sym" id="dnum">
 <h3><a href="#dnum">dnum</a> <i>function</i></h3>
 <pre>dnum(d const byte[:], p int) int, int</pre>
 <p>Decodes a CFF dictionary integer operand and returns its value with the offset of the next byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L422">hc/lib/ttf.he:422</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L422">hc/lib/ttf.he:422</a>
 </article>
 <article class="sym" id="dict_get">
 <h3><a href="#dict_get">dict_get</a> <i>function</i></h3>
 <pre>dict_get(d const byte[:], st int, n int, key int) int[&gt;..]</pre>
 <p>Collects the operands of a given operator from a CFF dictionary, returning an empty list if the key is missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L430">hc/lib/ttf.he:430</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L430">hc/lib/ttf.he:430</a>
 </article>
 <article class="sym" id="priv_subrs">
 <h3><a href="#priv_subrs">priv_subrs</a> <i>function</i></h3>
 <pre>priv_subrs(f Info&amp;, st int, n int) int</pre>
 <p>Returns the offset of the local subroutine index from a CFF private dictionary, or 0 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L446">hc/lib/ttf.he:446</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L446">hc/lib/ttf.he:446</a>
 </article>
 <article class="sym" id="cff_init">
 <h3><a href="#cff_init">cff_init</a> <i>function</i></h3>
 <pre>cff_init(f Info&amp;) bool</pre>
 <p>Initializes CFF data for a font by locating charstrings, subroutines and font dictionaries, returning false if unsupported or malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L451">hc/lib/ttf.he:451</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L451">hc/lib/ttf.he:451</a>
 </article>
 <article class="sym" id="subr">
 <h3><a href="#subr">subr</a> <i>function</i></h3>
 <pre>subr(d const byte[:], ix int, n0 int) int, int</pre>
 <p>Finds a subroutine in a CFF index after applying the bias, returning its offset and length, or zero if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L464">hc/lib/ttf.he:464</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L464">hc/lib/ttf.he:464</a>
 </article>
 <article class="sym" id="cid_subrs">
 <h3><a href="#cid_subrs">cid_subrs</a> <i>function</i></h3>
 <pre>cid_subrs(f Info&amp;, g int) int</pre>
 <p>Returns the local subroutine offset for a glyph in a CID-keyed CFF font, or 0 if none is selected.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L469">hc/lib/ttf.he:469</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L469">hc/lib/ttf.he:469</a>
 </article>
 <article class="sym" id="cv">
 <h3><a href="#cv">cv</a> <i>function</i></h3>
 <pre>cv(c Cs&amp;, t int, x f32, y f32, cx f32, cy f32, cx1 f32, cy1 f32)</pre>
 <p>Appends a vertex with coordinates wrapped to 16 bits to a charstring cursor's vertex list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L480">hc/lib/ttf.he:480</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L480">hc/lib/ttf.he:480</a>
 </article>
 <article class="sym" id="cclose">
 <h3><a href="#cclose">cclose</a> <i>function</i></h3>
 <pre>cclose(c Cs&amp;)</pre>
 <p>Closes the current CFF contour with a line back to its start if the pen is not already there.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L481">hc/lib/ttf.he:481</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L481">hc/lib/ttf.he:481</a>
 </article>
 <article class="sym" id="cmove">
 <h3><a href="#cmove">cmove</a> <i>function</i></h3>
 <pre>cmove(c Cs&amp;, dx f32, dy f32)</pre>
 <p>Starts a new contour by moving the pen by a relative offset after closing the previous one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L482">hc/lib/ttf.he:482</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L482">hc/lib/ttf.he:482</a>
 </article>
 <article class="sym" id="cline">
 <h3><a href="#cline">cline</a> <i>function</i></h3>
 <pre>cline(c Cs&amp;, dx f32, dy f32)</pre>
 <p>Adds a line segment from the current point by a relative offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L483">hc/lib/ttf.he:483</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L483">hc/lib/ttf.he:483</a>
 </article>
 <article class="sym" id="ccurve">
 <h3><a href="#ccurve">ccurve</a> <i>function</i></h3>
 <pre>ccurve(c Cs&amp;, a f32, b f32, p f32, q f32, e f32, h f32)</pre>
 <p>Adds a cubic curve from relative control point and end offsets, updating the current point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L484">hc/lib/ttf.he:484</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L484">hc/lib/ttf.he:484</a>
 </article>
 <article class="sym" id="cff_shape">
 <h3><a href="#cff_shape">cff_shape</a> <i>function</i></h3>
 <pre>cff_shape(f Info&amp;, g int) V[&gt;..]</pre>
 <p>Decodes a CFF glyph's charstring into outline vertices, returning an empty list if the data is malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L485">hc/lib/ttf.he:485</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L485">hc/lib/ttf.he:485</a>
 </article>
 <article class="sym" id="cff_box">
 <h3><a href="#cff_box">cff_box</a> <i>function</i></h3>
 <pre>cff_box(f Info&amp;, g int, b B4&amp;) bool</pre>
 <p>Computes a glyph's bounding box from its CFF outline including cubic control points, returning false if the glyph has no outline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/ttf.he#L573">hc/lib/ttf.he:573</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ttf.he#L573">hc/lib/ttf.he:573</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -648,7 +648,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1816</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1812</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a><ul>
 <li><a href="/api-library/helium/lib/ui">ui</a></li>
 <li><a href="/api-library/helium/lib/gfx-hud">gfx/hud</a></li>
