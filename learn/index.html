@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css?v=b268">
-<link rel="stylesheet" href="brain-gym.css?v=2">
+<link rel="stylesheet" href="brain-gym.css?v=3">
 <meta name="description" content="Amni-Learn: free, private, on-device educational games for learners from pre-K through adult. Eight age-tiered levels covering math, reading, science, music, life skills, and brain training. Fully offline-capable — works in airplane mode.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230c0f12'/%3E%3Ctext x='32' y='45' font-size='34' text-anchor='middle' font-family='monospace' font-weight='bold' fill='%234db8ff'%3EAL%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.webmanifest">
@@ -1417,7 +1417,7 @@
     .math-problem{font-size:clamp(2rem,7vw,3.2rem)!important;margin-bottom:10px!important}
   }
 </style>
-<link rel="stylesheet" href="learn-ui.css?v=4">
+<link rel="stylesheet" href="learn-ui.css?v=5">
 <script>try{(function(o){var h=document.documentElement;o.size&&o.size!==100?h.style.fontSize=o.size+"%":0;o.hc?h.classList.add("a11y-hc"):0;o.rm?h.classList.add("a11y-rm"):0;o.read?h.classList.add("a11y-read"):0;o.size>100?h.classList.add("a11y-big"):0})(JSON.parse(localStorage.getItem("amni-learn-a11y")||"{}"))}catch(e){}</script>
 </head>
 <body>
@@ -2046,15 +2046,15 @@
   <div id="flappy-view" class="view"><div class="life-title" style="color:#a29bfe">🐦 Flappy Jump</div><div id="flappy-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
   <div id="pullpin-view" class="view"><div class="life-title" style="color:#55efc4">🧷 Pull the Pin</div><div id="pullpin-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
   <div id="fillcup-view" class="view"><div class="life-title" style="color:#74b9ff">🥤 Fill the Cup</div><div id="fillcup-game" style="display:flex;flex-direction:column;align-items:center;gap:10px"></div></div>
-  <div id="clicker-view" class="view"><div class="life-title" style="color:#fdcb6e">🍪 Cookie Clicker</div><div id="clicker-game" class="idle-container"></div></div>
-  <div id="garden-view" class="view"><div class="life-title" style="color:#55efc4">🌻 Garden Grower</div><div id="garden-game" class="idle-container"></div></div>
+  <div id="clicker-view" class="view"><div class="life-title" style="color:#fdcb6e">🍪 Cookie Clicker</div><div id="clicker-game" class="idle-container" data-nogrow></div></div>
+  <div id="garden-view" class="view"><div class="life-title" style="color:#55efc4">🌻 Garden Grower</div><div id="garden-game" class="idle-container" data-nogrow></div></div>
   <div id="connect4-view" class="view"><div class="life-title" style="color:#4db8ff">🔴 Connect Four</div><div id="connect4-game"></div></div>
   <div id="colorhunt-view" class="view"><div class="life-title" style="color:#e056a0">🎨 Color Hunt</div><div id="colorhunt-game"></div></div>
   <div id="reversi-view" class="view"><div class="life-title" style="color:#2e8b57">⚫ Reversi (Othello)</div><div id="reversi-game"></div></div>
   <div id="battleship-view" class="view"><div class="life-title" style="color:#2980b9">🚢 Battleship</div><div id="battleship-game"></div></div>
   <div id="mancala-view" class="view"><div class="life-title" style="color:#c69b6d">🟤 Mancala</div><div id="mancala-game"></div></div>
   <div id="pig-view" class="view"><div class="life-title" style="color:#e74c3c">🎲 Pig Dice</div><div id="pig-game"></div></div>
-  <div id="autominer-view" class="view"><div class="life-title" style="color:#fdcb6e">⛏️ Auto Miner</div><div id="autominer-game" class="idle-container"></div></div>
+  <div id="autominer-view" class="view"><div class="life-title" style="color:#fdcb6e">⛏️ Auto Miner</div><div id="autominer-game" class="idle-container" data-nogrow></div></div>
   <div id="calculus-view" class="view"><div class="life-title" style="color:#48dbfb">∫ Calculus</div><div id="calculus-game" class="college-container"></div></div>
   <div id="linalg-view" class="view"><div class="life-title" style="color:#48dbfb">📊 Linear Algebra</div><div id="linalg-game" class="college-container"></div></div>
   <div id="stats-view" class="view"><div class="life-title" style="color:#48dbfb">📈 Statistics</div><div id="stats-game" class="college-container"></div></div>
@@ -2128,7 +2128,7 @@
 <script src="learn-standards.js?v=4" defer></script>
 <script src="learn-state-facts.js?v=1" defer></script>
 <script src="learn-state-studies.js?v=2" defer></script>
-<script src="learn-app.js?v=v1302" defer></script>
+<script src="learn-app.js?v=v1303" defer></script>
 <script src="learn-sound.js?v=1" defer></script>
 <script src="learn-hub.js?v=5" defer></script>
 <script src="learn-art.js?v=1" defer></script>

@@ -339,3 +339,16 @@ body.game-active #app .view.active:not(#menu-view){justify-content:safe center!i
 #app #quiz-choices.pk-grid .m-choice.pk-tile{min-height:clamp(100px,21dvh,210px)}
 #app #quiz-choices.pk-grid .pk-emoji{font-size:clamp(2.6rem,9dvh,5.25rem)}
 @media (max-width:540px){#app #quiz-task-area:not(.pk-mode) #quiz-choices{grid-template-columns:1fr}}
+@media (min-width:900px) and (min-aspect-ratio:5/4){body.game-active #app #sudoku-view.view.active,body.game-active #app #blocks-view.view.active{display:grid!important;grid-template-columns:auto minmax(15rem,21rem);column-gap:2rem;row-gap:.7rem;align-content:safe center;align-items:start;justify-items:center}#app #sudoku-view>*,#app #blocks-view>*{grid-column:2}#app #sudoku-view>.life-title{grid-column:1/-1}#app #sudoku-view>#sdk-board{grid-column:1;grid-row:2/span 3}#app #sudoku-view>#sdk-controls{flex-wrap:wrap;justify-content:center}#app #sudoku-view>#sdk-numpad{display:grid!important;grid-template-columns:repeat(3,1fr);gap:.5rem;width:100%}#app #sudoku-view>#sdk-numpad .sdk-num{width:auto;height:3.5rem;font-size:1.4rem}#app #blocks-view>.life-title{grid-column:1/-1;grid-row:1}#app #blocks-view>#blk-info{grid-column:1/-1;grid-row:2}#app #blocks-view>#blk-hud{grid-column:1/-1;grid-row:3}#app #blocks-view>#blk-grid{grid-column:1;grid-row:4/span 5}#app #ws-container{display:grid!important;grid-template-columns:auto minmax(15rem,22rem);column-gap:2rem;row-gap:.7rem;align-items:start;justify-items:center;justify-content:center}#app #ws-container>*{grid-column:2}#app #ws-container>.ws-topic-row{grid-column:1/-1}#app #ws-container>.ws-grid{grid-column:1;grid-row:2/span 4}#app .idle-container{display:grid!important;grid-template-columns:minmax(17rem,1fr) minmax(0,1.7fr);column-gap:2rem;row-gap:.7rem;align-items:start;align-content:center;justify-items:center;width:min(100%,72rem);max-width:none}#app .idle-container>*{grid-column:1}#app .idle-container>.idle-shop{grid-column:2;grid-row:1/span 5;align-self:stretch;justify-self:stretch;contain:size;margin-top:0}#app .idle-container>.idle-shop+div{grid-column:2;grid-row:7;justify-self:stretch;margin:0}#app .idle-container>:last-child{grid-column:1;grid-row:7;margin-top:0}}
+@media (min-width:701px){body.game-active #app .view.active>.idle-container{flex:1 1 0;min-height:0}#app .idle-container>.idle-shop{flex:1 1 0;min-height:14rem;overflow-y:auto}}
+@media (max-width:700px){#app .idle-shop{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#app .idle-item{padding:8px}}
+@media (max-width:700px){#app .ws-topic-row{flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;scrollbar-width:thin;padding-bottom:4px}#app .ws-topic-row>*{flex:none}}
+.hub-stage>.kd{flex:1 0 auto}
+.hub-stage>.kd>.kd-box{flex:1 0 auto;justify-content:center}
+.hub-stage .kd-bin{min-height:clamp(9rem,24dvh,17rem)}
+@media (min-aspect-ratio:1/1),(min-width:700px){.hub-stage .kd-bin{min-height:clamp(9rem,37dvh,22rem)}}
+.hub-stage .kd-tile{min-width:clamp(3.5rem,9dvh,5.7rem);min-height:clamp(3.5rem,9dvh,5.7rem);font-size:clamp(2.2rem,5.7dvh,3.7rem)}
+.hub-stage .kd-an{max-width:22rem}
+.hub-stage .kd-ae{font-size:clamp(3rem,min(17vw,11dvh),7rem)}
+.hub-stage .kd-bowl{min-height:clamp(4.5rem,11dvh,7.7rem)}
+.hub-stage .kd-pet{font-size:clamp(3.2rem,9dvh,5.7rem);min-width:clamp(5rem,13dvh,8rem);min-height:clamp(5rem,13dvh,8rem)}
