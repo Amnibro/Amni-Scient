@@ -152,7 +152,7 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
 <a href="#linux">Install on Linux or Mac</a>
 <a href="#windows">Install on Windows</a>
 <a href="#docker">Install with Docker</a>
-<a href="#connect">Connect your apps</a>
+<a href="#connect">Invite your people</a>
 <a href="#address">A permanent address</a>
 <a href="#haven">Sign in with Haven</a>
 <a href="#calls">Calls</a>
@@ -181,7 +181,7 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
 <li><b>Domain name.</b> Skip it and you get a free https address. Type one in and you get your own address with a real certificate.</li>
 <li><b>Haven server.</b> Paste your Haven address to let people sign in with Haven. See <a href="#haven">Sign in with Haven</a>.</li>
 </ol>
-<p>When it finishes it prints your address, for example <code>https://quiet-river-maple.trycloudflare.com</code>. It runs in the background and starts again after a reboot.</p>
+<p>When it finishes it prints your <b>invite link</b>. The relay is private: only people who open that link can join. It runs in the background and starts again after a reboot.</p>
 <p class="g-note">Run it with <code>sudo</code> to install for the whole machine (in <code>/opt</code>); without it, the relay installs for your user only.</p>
 </div>
 <div class="g-sec" id="windows">
@@ -191,7 +191,7 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
 <li>Double-click <b>Start Relay.bat</b>.</li>
 <li>Press <kbd>Enter</kbd> twice to skip the questions.</li>
 </ol>
-<p>The window shows your address and a QR code. Keep the window open while you want the relay running; close it to stop.</p>
+<p>The window shows your invite link and a QR code. Keep the window open while you want the relay running; close it to stop.</p>
 <p class="g-note">Windows may ask whether to let <b>amni-chat-server</b> use the network. Click <b>Allow</b>. Calls and devices on your home network need it.</p>
 </div>
 <div class="g-sec" id="docker">
@@ -201,24 +201,26 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
   | docker load
 docker run -d --name amni-chat-relay --restart unless-stopped \
   -v amni_chat:/data -e AMNI_CHAT_TUNNEL=cloudflare amni-chat-relay</code></pre>
-<p>Then <code>docker logs amni-chat-relay</code> shows your address and QR code. Everything the relay keeps lives in the <code>amni_chat</code> volume.</p>
+<p>Then <code>docker logs amni-chat-relay</code> shows your invite link and QR code. Everything the relay keeps lives in the <code>amni_chat</code> volume.</p>
 <p>With your own domain instead of the tunnel:</p>
 <pre class="g-code"><code>docker run -d --name amni-chat-relay --restart unless-stopped \
   -v amni_chat:/data -p 80:80 -p 443:443 \
   -e AMNI_CHAT_DOMAIN=chat.example.com amni-chat-relay</code></pre>
 </div>
 <div class="g-sec" id="connect">
-<h2>Connect your apps</h2>
+<h2>Invite your people</h2>
+<p>Send your invite link to the people you want on your relay, or show them the QR code. The link is also saved as <code>invite-link.txt</code> in the data folder.</p>
 <div class="g-grid">
-<div class="g-card"><h3>Android</h3><p>Settings &rsaquo; Advanced &rsaquo; Relay server. Paste your address. When creating an account, tap <b>Change server</b> first.</p></div>
-<div class="g-card"><h3>iPhone</h3><p>Settings &rsaquo; Relay. Paste your address. When creating an account, open <b>Advanced</b> first.</p></div>
-<div class="g-card"><h3>Web</h3><p>Open your relay&rsquo;s address in a browser. The web app is built in, and it already talks to your relay.</p></div>
+<div class="g-card"><h3>Android and iPhone</h3><p>Open the link on the phone and tap <b>Open in Amni-Chat</b>. The app asks before it joins. No app yet? The same page has the download.</p></div>
+<div class="g-card"><h3>Paste it instead</h3><p>When creating an account, paste the link under <b>Invite link or relay address</b>. Already signed in? Paste it under <b>Host your own relay</b> in Settings.</p></div>
+<div class="g-card"><h3>Web</h3><p>Open the link in a browser and choose <b>Use it in this browser</b>. The web app is built in to your relay.</p></div>
 </div>
-<p>Everyone you chat with needs to be on the same relay. Send them your address.</p>
+<p>Everyone you chat with needs to be on the same relay. People already on your relay stay on it, and can link their own tablet or computer without the invite.</p>
+<p class="g-note">Want anyone to be able to join without an invite? Add <code>AMNI_CHAT_OPEN=1</code> to <code>relay.env</code> and restart. To retire an invite link, change <code>AMNI_CHAT_INVITE_CODE</code> in <code>data/secrets.env</code> and restart; people who already joined stay.</p>
 </div>
 <div class="g-sec" id="address">
 <h2>A permanent address</h2>
-<p>The free tunnel address changes whenever the relay restarts, and the apps then need the new one. For an address that stays put, use a domain:</p>
+<p>The free tunnel address changes whenever the relay restarts. Your invite link does not: the relay signs its new address and posts it to the Amni-Scient relay directory, and the phone apps look it up on their own. The directory holds relay addresses and nothing else. The web app lives at the address itself, so for people who use the web app, or to run without the directory, use a domain:</p>
 <ol class="g-steps">
 <li>Point a domain or subdomain at your computer&rsquo;s public IP address with an <b>A record</b>, for example <code>chat.example.com</code>.</li>
 <li>Forward TCP ports <b>80</b> and <b>443</b> on your router to that computer. A cloud server usually has them open already.</li>
@@ -280,6 +282,9 @@ docker run -d --name amni-chat-relay --restart unless-stopped \
 <tr><td><code>AMNI_CHAT_HAVEN_URL</code></td><td>Your Haven server, for Sign in with Haven.</td></tr>
 <tr><td><code>AMNI_CHAT_HAVEN_ONLY</code></td><td><code>1</code> lets only Haven members use the relay.</td></tr>
 <tr><td><code>AMNI_CHAT_HAVEN_USERS</code></td><td>Comma-separated Haven usernames allowed in.</td></tr>
+<tr><td><code>AMNI_CHAT_OPEN</code></td><td><code>1</code> lets anyone join without an invite link.</td></tr>
+<tr><td><code>AMNI_CHAT_INVITE_CODE</code></td><td>The code inside the invite link. Made on first start, kept in <code>data/secrets.env</code>.</td></tr>
+<tr><td><code>AMNI_CHAT_DIRECTORY</code></td><td>Where a free-address relay posts its current address. <code>off</code> turns it off.</td></tr>
 <tr><td><code>AMNI_CHAT_DATA</code></td><td>The data folder. Set by the installer.</td></tr>
 <tr><td><code>AMNI_CHAT_BIND</code></td><td>Local address and port. Default <code>0.0.0.0:8991</code>.</td></tr>
 <tr><td><code>AMNI_CHAT_INBOX_TTL_DAYS</code></td><td>How long undelivered messages wait. Default 30.</td></tr>
@@ -292,7 +297,8 @@ docker run -d --name amni-chat-relay --restart unless-stopped \
 <h2>Troubleshooting</h2>
 <dl class="g-faq">
 <dt>The app says it can&rsquo;t reach the relay.</dt><dd>Open the address in a browser. If the web app loads, check that the app has exactly that address, starting with <code>https://</code>. If it doesn&rsquo;t load, check the logs.</dd>
-<dt>The address stopped working after a restart.</dt><dd>That&rsquo;s the free tunnel: it gets a new address each time. Look in <code>data/public-url.txt</code> for the new one, or set up <a href="#address">a permanent address</a>.</dd>
+<dt>The address stopped working after a restart.</dt><dd>That&rsquo;s the free tunnel: it gets a new address each time. Phones that joined with the invite link find the new one on their own the next time the app opens. For the web app, look in <code>data/public-url.txt</code>, or set up <a href="#address">a permanent address</a>.</dd>
+<dt>The app says the relay is invite-only.</dt><dd>Open the invite link from the relay&rsquo;s owner, or paste it in the app. A plain address is not enough for a private relay.</dd>
 <dt>No certificate for my domain.</dt><dd>Ports 80 and 443 must reach this computer, and the domain&rsquo;s A record must point at its public IP. The logs say what Let&rsquo;s Encrypt answered.</dd>
 <dt>Calls connect but there&rsquo;s no audio or video.</dt><dd>The call needed TURN and couldn&rsquo;t reach it. Forward UDP 3478 and 49160&ndash;49200, or set <code>AMNI_CHAT_TURN_PUBLIC_IP</code>.</dd>
 <dt>Sign in with Haven never finishes.</dt><dd>The person must already be logged in to Haven in that browser. Approvals expire after a minute; start again from the app.</dd>
@@ -300,7 +306,7 @@ docker run -d --name amni-chat-relay --restart unless-stopped \
 </div>
 <div class="g-sec" id="privacy">
 <h2>What the relay can see</h2>
-<p>Messages are encrypted on the phone before they reach the relay, with keys that rotate weekly. The relay stores sealed messages until they&rsquo;re delivered, public keys, hashed phone numbers and emails, Haven names of people who signed in with Haven, and timestamps. It sees when a device connects and from which IP address, and keeps that only in memory. It can&rsquo;t read messages, calls or attachments. More on the <a href="amni-chat-relay.html">relay page</a>.</p>
+<p>Messages are encrypted on the phone before they reach the relay, with keys that rotate weekly. The relay stores sealed messages until they&rsquo;re delivered, public keys, hashed phone numbers and emails, Haven names of people who signed in with Haven, and timestamps. It sees when a device connects and from which IP address, and keeps that only in memory. It can&rsquo;t read messages, calls or attachments. Sealed messages are deleted as soon as they&rsquo;re delivered and after 30 days if they never are; sealed attachments are deleted after 30 days. On a private relay only its members can store anything. More on the <a href="amni-chat-relay.html">relay page</a>.</p>
 </div>
 </article>
 </div>
