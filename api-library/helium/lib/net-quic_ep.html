@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-quic_ep">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-quic_ep">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a53ad2887f">
+<link rel="stylesheet" href="/api-library/lib.css?v=54f7d6b5b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a53ad2887f'; start({wasm: '/api-library/search.wasm?v=a53ad2887f'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=54f7d6b5b4'; start({wasm: '/api-library/search.wasm?v=54f7d6b5b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/quic_ep</h1>
 <p class="lib-lede">Lets a program run a QUIC endpoint over UDP, accepting or dialing multiple encrypted client and server connections on one socket.</p>
-<p class="lib-meta"><code>import net.quic_ep;</code> &middot; <code>net::</code> &middot; 16 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he">Source</a></p>
+<p class="lib-meta"><code>import net.quic_ep;</code> &middot; <code>net::</code> &middot; 16 functions, 1 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#quic-endpoint">QUIC Endpoint <span class="n">5</span></a></li>
 <li><a href="#connection-handling">Connection Handling <span class="n">4</span></a></li>
@@ -115,106 +115,106 @@
 <h3><a href="#QEp">QEp</a> <i>type</i></h3>
 <pre>struct QEp { fd int = -1, srv bool = false, cert byte[&gt;..] = [], key byte[&gt;..] = [], alpn byte[&gt;..] = [], c Quic[&gt;..][&gt;..] = [], to Addr[&gt;..] = [], given bool[&gt;..] = [], buf byte[&gt;..] = [], out byte[&gt;..] = [], maxc int = 200, n int = 0 }</pre>
 <p>Holds a UDP socket and the set of QUIC connections, with optional server credentials, served on one port.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L8">hc/lib/net/quic_ep.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L8">hc/lib/net/quic_ep.he:8</a>
 </article>
 <article class="sym" id="qe_bind">
 <h3><a href="#qe_bind">qe_bind</a> <i>function</i></h3>
 <pre>qe_bind(a Addr) QEp</pre>
 <p>Returns a QUIC endpoint whose UDP socket is bound to the given address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L9">hc/lib/net/quic_ep.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L9">hc/lib/net/quic_ep.he:9</a>
 </article>
 <article class="sym" id="qe_serve">
 <h3><a href="#qe_serve">qe_serve</a> <i>function</i></h3>
 <pre>qe_serve(e QEp&amp;, cert const byte[:], key const byte[:], alpn const byte[:]) bool</pre>
 <p>Enables server mode with a certificate, key and ALPN; returns false unless the key is a P-256 EC key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L10">hc/lib/net/quic_ep.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L10">hc/lib/net/quic_ep.he:10</a>
 </article>
 <article class="sym" id="qe_port">
 <h3><a href="#qe_port">qe_port</a> <i>function</i></h3>
 <pre>qe_port(e QEp&amp;) int</pre>
 <p>Returns the local UDP port the endpoint socket is bound to.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L67">hc/lib/net/quic_ep.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L67">hc/lib/net/quic_ep.he:67</a>
 </article>
 <article class="sym" id="qe_close">
 <h3><a href="#qe_close">qe_close</a> <i>function</i></h3>
 <pre>qe_close(e QEp&amp;)</pre>
 <p>Closes the endpoint's UDP socket and marks it as closed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L69">hc/lib/net/quic_ep.he:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L69">hc/lib/net/quic_ep.he:69</a>
 </article>
 <h2 id="connection-handling">Connection Handling <span class="n">4</span></h2>
 <article class="sym" id="qe_dial">
 <h3><a href="#qe_dial">qe_dial</a> <i>function</i></h3>
 <pre>qe_dial(e QEp&amp;, to Addr, host const byte[:], alpn const byte[:], pin const byte[:]) int</pre>
 <p>Starts a client connection to an address with host, ALPN and pin, returning its connection slot index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L21">hc/lib/net/quic_ep.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L21">hc/lib/net/quic_ep.he:21</a>
 </article>
 <article class="sym" id="qe_free">
 <h3><a href="#qe_free">qe_free</a> <i>function</i></h3>
 <pre>qe_free(e QEp&amp;, i int)</pre>
 <p>Releases the connection slot at the given index, ignoring indexes that are out of range or already empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L22">hc/lib/net/quic_ep.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L22">hc/lib/net/quic_ep.he:22</a>
 </article>
 <article class="sym" id="qe_next">
 <h3><a href="#qe_next">qe_next</a> <i>function</i></h3>
 <pre>qe_next(e QEp&amp;) int</pre>
 <p>Returns the index of the next newly opened connection not yet handed out, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L63">hc/lib/net/quic_ep.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L63">hc/lib/net/quic_ep.he:63</a>
 </article>
 <article class="sym" id="qe_same">
 <h3><a href="#qe_same">qe_same</a> <i>function</i></h3>
 <pre>qe_same(e QEp&amp;, a Addr) int</pre>
 <p>Returns how many active connections have the same IP address as the given address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L68">hc/lib/net/quic_ep.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L68">hc/lib/net/quic_ep.he:68</a>
 </article>
 <h2 id="packet-processing">Packet Processing <span class="n">2</span></h2>
 <article class="sym" id="qe_flush">
 <h3><a href="#qe_flush">qe_flush</a> <i>function</i></h3>
 <pre>qe_flush(e QEp&amp;, now real)</pre>
 <p>Sends all pending outgoing packets for every connection and frees closed connections that were already handed out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L49">hc/lib/net/quic_ep.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L49">hc/lib/net/quic_ep.he:49</a>
 </article>
 <article class="sym" id="qe_poll">
 <h3><a href="#qe_poll">qe_poll</a> <i>function</i></h3>
 <pre>qe_poll(e QEp&amp;, ms int) int</pre>
 <p>Waits up to the given milliseconds for datagrams, routes them, flushes output, and returns how many were received.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L54">hc/lib/net/quic_ep.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L54">hc/lib/net/quic_ep.he:54</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (6)</summary>
 <article class="sym" id="qe_slot">
 <h3><a href="#qe_slot">qe_slot</a> <i>function</i></h3>
 <pre>qe_slot(e QEp&amp;, to Addr) int</pre>
 <p>Returns the index of a free connection slot for the peer address, growing the table if needed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L16">hc/lib/net/quic_ep.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L16">hc/lib/net/quic_ep.he:16</a>
 </article>
 <article class="sym" id="qe_find">
 <h3><a href="#qe_find">qe_find</a> <i>function</i></h3>
 <pre>qe_find(e QEp&amp;, id const byte[:]) int</pre>
 <p>Returns the slot index of the connection matching a connection ID, or -1 if none matches.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L23">hc/lib/net/quic_ep.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L23">hc/lib/net/quic_ep.he:23</a>
 </article>
 <article class="sym" id="qe_vn">
 <h3><a href="#qe_vn">qe_vn</a> <i>function</i></h3>
 <pre>qe_vn(e QEp&amp;, d const byte[:], dl int, sl int, to Addr)</pre>
 <p>Sends a version negotiation packet to the peer in reply to an unsupported QUIC version.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L27">hc/lib/net/quic_ep.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L27">hc/lib/net/quic_ep.he:27</a>
 </article>
 <article class="sym" id="qe_first">
 <h3><a href="#qe_first">qe_first</a> <i>function</i></h3>
 <pre>qe_first(d const byte[:], dl int) bool</pre>
 <p>Returns whether a datagram is a valid client Initial packet that can be opened with its initial keys.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L28">hc/lib/net/quic_ep.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L28">hc/lib/net/quic_ep.he:28</a>
 </article>
 <article class="sym" id="qe_route">
 <h3><a href="#qe_route">qe_route</a> <i>function</i></h3>
 <pre>qe_route(e QEp&amp;, d const byte[:], from Addr, now real)</pre>
 <p>Routes a received datagram to its connection, creating a server connection for a valid new Initial packet.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L29">hc/lib/net/quic_ep.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L29">hc/lib/net/quic_ep.he:29</a>
 </article>
 <article class="sym" id="qe_timeout">
 <h3><a href="#qe_timeout">qe_timeout</a> <i>function</i></h3>
 <pre>qe_timeout(e QEp&amp;) real</pre>
 <p>Returns the earliest nonzero connection timeout across all connections, or 0.0 if none is pending.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/quic_ep.he#L44">hc/lib/net/quic_ep.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/quic_ep.he#L44">hc/lib/net/quic_ep.he:44</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-link">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-link">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a53ad2887f">
+<link rel="stylesheet" href="/api-library/lib.css?v=54f7d6b5b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a53ad2887f'; start({wasm: '/api-library/search.wasm?v=a53ad2887f'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=54f7d6b5b4'; start({wasm: '/api-library/search.wasm?v=54f7d6b5b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/link</h1>
 <p class="lib-lede">Reliable and unreliable game messages over UDP, with acknowledgments and round-trip timing.</p>
-<p class="lib-meta"><code>import net.link;</code> &middot; <code>net::</code> &middot; 19 functions, 4 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni">Source</a></p>
+<p class="lib-meta"><code>import net.link;</code> &middot; <code>net::</code> &middot; 19 functions, 4 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#endpoint-state">Endpoint State <span class="n">3</span></a></li>
 <li><a href="#reliable-messaging">Reliable Messaging <span class="n">2</span></a></li>
@@ -117,192 +117,192 @@
 <h3><a href="#ep_new">ep_new</a> <i>function</i></h3>
 <pre>ep_new() int</pre>
 <p>Creates a new endpoint with initial state and returns its handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L22">hc/lib/net/link.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L22">hc/lib/net/link.amni:22</a>
 </article>
 <article class="sym" id="ep_rtt">
 <h3><a href="#ep_rtt">ep_rtt</a> <i>function</i></h3>
 <pre>ep_rtt(e int) f32</pre>
 <p>Returns the smoothed round-trip time estimate for an endpoint, in milliseconds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L28">hc/lib/net/link.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L28">hc/lib/net/link.amni:28</a>
 </article>
 <article class="sym" id="ep_bytes">
 <h3><a href="#ep_bytes">ep_bytes</a> <i>function</i></h3>
 <pre>ep_bytes(e int) int, int</pre>
 <p>Returns the total bytes sent and bytes received for an endpoint, in that order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L29">hc/lib/net/link.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L29">hc/lib/net/link.amni:29</a>
 </article>
 <h2 id="reliable-messaging">Reliable Messaging <span class="n">2</span></h2>
 <article class="sym" id="send_reliable">
 <h3><a href="#send_reliable">send_reliable</a> <i>function</i></h3>
 <pre>send_reliable(e int, data const byte[:])</pre>
 <p>Queues a message for reliable delivery to an endpoint, resending until acknowledged.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L30">hc/lib/net/link.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L30">hc/lib/net/link.amni:30</a>
 </article>
 <article class="sym" id="pending">
 <h3><a href="#pending">pending</a> <i>function</i></h3>
 <pre>pending(e int) int</pre>
 <p>Returns the number of reliable messages for an endpoint not yet acknowledged.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L36">hc/lib/net/link.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L36">hc/lib/net/link.amni:36</a>
 </article>
 <h2 id="unreliable-messaging">Unreliable Messaging <span class="n">1</span></h2>
 <article class="sym" id="send_unreliable">
 <h3><a href="#send_unreliable">send_unreliable</a> <i>function</i></h3>
 <pre>send_unreliable(e int, data const byte[:])</pre>
 <p>Queues a message to an endpoint that is sent once in the next packet and never resent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L35">hc/lib/net/link.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L35">hc/lib/net/link.amni:35</a>
 </article>
 <h2 id="packet-format">Packet Format <span class="n">2</span></h2>
 <article class="sym" id="ep_write">
 <h3><a href="#ep_write">ep_write</a> <i>function</i></h3>
 <pre>ep_write(e int, now int, out byte[&gt;..]&amp;) bool</pre>
 <p>Builds the next packet for an endpoint into a buffer, returning false when nothing needs sending.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L46">hc/lib/net/link.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L46">hc/lib/net/link.amni:46</a>
 </article>
 <article class="sym" id="ep_read">
 <h3><a href="#ep_read">ep_read</a> <i>function</i></h3>
 <pre>ep_read(e int, now int, pkt const byte[:]) bool</pre>
 <p>Parses a received packet for an endpoint, returning false if it is malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L91">hc/lib/net/link.amni:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L91">hc/lib/net/link.amni:91</a>
 </article>
 <h2 id="delivery-queue">Delivery Queue <span class="n">1</span></h2>
 <article class="sym" id="poll">
 <h3><a href="#poll">poll</a> <i>function</i></h3>
 <pre>poll(e int, out byte[&gt;..]&amp;) bool</pre>
 <p>Moves the next received message for an endpoint into a buffer, returning false when none remain.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L145">hc/lib/net/link.amni:145</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L145">hc/lib/net/link.amni:145</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (22)</summary>
 <article class="sym" id="Ep">
 <h3><a href="#Ep">Ep</a> <i>type</i></h3>
 <pre>struct Ep { seq int, rack int, rbits int, next_id int, recv_next int, rtt f32, last_send int, need_ack bool, sent_bytes int, recv_bytes int, resend bool }</pre>
 <p>Per-connection state tracking sequence numbers, acknowledgments, round-trip time and byte counters for one remote peer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L3">hc/lib/net/link.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L3">hc/lib/net/link.amni:3</a>
 </article>
 <article class="sym" id="Out">
 <h3><a href="#Out">Out</a> <i>type</i></h3>
 <pre>struct Out { ep int, id int, off int, len int, sent_at int, live bool }</pre>
 <p>Queued reliable message record holding its owner endpoint, id, pool location and last send time.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L4">hc/lib/net/link.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L4">hc/lib/net/link.amni:4</a>
 </article>
 <article class="sym" id="Pk">
 <h3><a href="#Pk">Pk</a> <i>type</i></h3>
 <pre>struct Pk { ep int, seq int, at int, m0 int, mn int, acked bool }</pre>
 <p>Record of a sent packet used to match acknowledgments to the reliable messages it carried.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L5">hc/lib/net/link.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L5">hc/lib/net/link.amni:5</a>
 </article>
 <article class="sym" id="In">
 <h3><a href="#In">In</a> <i>type</i></h3>
 <pre>struct In { ep int, id int, off int, len int, live bool }</pre>
 <p>Buffered out-of-order reliable message awaiting earlier ids before it can be delivered.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L6">hc/lib/net/link.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L6">hc/lib/net/link.amni:6</a>
 </article>
 <article class="sym" id="EPS">
 <h3><a href="#EPS">EPS</a> <i>constant</i></h3>
 <pre>var EPS Ep[&gt;..] = []</pre>
 <p>Global list of all endpoint states, indexed by endpoint handle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L7">hc/lib/net/link.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L7">hc/lib/net/link.amni:7</a>
 </article>
 <article class="sym" id="OUTS">
 <h3><a href="#OUTS">OUTS</a> <i>constant</i></h3>
 <pre>var OUTS Out[&gt;..] = []; var OPOOL byte[&gt;..] = []</pre>
 <p>Global queue of outgoing reliable messages and the byte pool holding their payloads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L8">hc/lib/net/link.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L8">hc/lib/net/link.amni:8</a>
 </article>
 <article class="sym" id="PKS">
 <h3><a href="#PKS">PKS</a> <i>constant</i></h3>
 <pre>var PKS Pk[&gt;..] = []; var PKM int[&gt;..] = []; var PKR int[&gt;..] = []</pre>
 <p>Global records of sent packets, their reliable message indexes, and a per-endpoint ring of recent packets.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L9">hc/lib/net/link.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L9">hc/lib/net/link.amni:9</a>
 </article>
 <article class="sym" id="INS">
 <h3><a href="#INS">INS</a> <i>constant</i></h3>
 <pre>var INS In[&gt;..] = []; var IPOOL byte[&gt;..] = []</pre>
 <p>Global buffer of out-of-order incoming reliable messages and the byte pool holding their payloads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L10">hc/lib/net/link.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L10">hc/lib/net/link.amni:10</a>
 </article>
 <article class="sym" id="UQ_EP">
 <h3><a href="#UQ_EP">UQ_EP</a> <i>constant</i></h3>
 <pre>var UQ_EP int[&gt;..] = []; var UQ_OFF int[&gt;..] = []; var UQ_LEN int[&gt;..] = []; var UPOOL byte[&gt;..] = []</pre>
 <p>Global queue of outgoing unreliable messages and the byte pool holding their payloads.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L11">hc/lib/net/link.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L11">hc/lib/net/link.amni:11</a>
 </article>
 <article class="sym" id="DQ_EP">
 <h3><a href="#DQ_EP">DQ_EP</a> <i>constant</i></h3>
 <pre>var DQ_EP int[&gt;..] = []; var DQ_OFF int[&gt;..] = []; var DQ_LEN int[&gt;..] = []; var DPOOL byte[&gt;..] = []; var DQ_HEAD int[&gt;..] = []</pre>
 <p>Global queue of received messages awaiting polling, with per-endpoint head positions and a payload pool.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L12">hc/lib/net/link.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L12">hc/lib/net/link.amni:12</a>
 </article>
 <article class="sym" id="MTU">
 <h3><a href="#MTU">MTU</a> <i>constant</i></h3>
 <pre>let MTU = 1400</pre>
 <p>Maximum packet size in bytes that a written packet may reach.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L13">hc/lib/net/link.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L13">hc/lib/net/link.amni:13</a>
 </article>
 <article class="sym" id="RING">
 <h3><a href="#RING">RING</a> <i>constant</i></h3>
 <pre>let RING = 1024</pre>
 <p>Number of recent sent packets remembered per endpoint for matching acknowledgments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L14">hc/lib/net/link.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L14">hc/lib/net/link.amni:14</a>
 </article>
 <article class="sym" id="put8">
 <h3><a href="#put8">put8</a> <i>function</i></h3>
 <pre>put8(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the low eight bits of a value to a byte buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L15">hc/lib/net/link.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L15">hc/lib/net/link.amni:15</a>
 </article>
 <article class="sym" id="put16">
 <h3><a href="#put16">put16</a> <i>function</i></h3>
 <pre>put16(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the low sixteen bits of a value to a byte buffer in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L16">hc/lib/net/link.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L16">hc/lib/net/link.amni:16</a>
 </article>
 <article class="sym" id="put32">
 <h3><a href="#put32">put32</a> <i>function</i></h3>
 <pre>put32(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the low thirty-two bits of a value to a byte buffer in little-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L17">hc/lib/net/link.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L17">hc/lib/net/link.amni:17</a>
 </article>
 <article class="sym" id="put32_at">
 <h3><a href="#put32_at">put32_at</a> <i>function</i></h3>
 <pre>put32_at(o byte[&gt;..]&amp;, at int, v int)</pre>
 <p>Overwrites four bytes at a given position in a buffer with a little-endian value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L18">hc/lib/net/link.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L18">hc/lib/net/link.amni:18</a>
 </article>
 <article class="sym" id="get16">
 <h3><a href="#get16">get16</a> <i>function</i></h3>
 <pre>get16(b const byte[:], at int) int</pre>
 <p>Reads a little-endian sixteen-bit unsigned value from a byte slice at a position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L19">hc/lib/net/link.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L19">hc/lib/net/link.amni:19</a>
 </article>
 <article class="sym" id="get32">
 <h3><a href="#get32">get32</a> <i>function</i></h3>
 <pre>get32(b const byte[:], at int) int</pre>
 <p>Reads a little-endian thirty-two-bit value from a byte slice at a position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L20">hc/lib/net/link.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L20">hc/lib/net/link.amni:20</a>
 </article>
 <article class="sym" id="expand">
 <h3><a href="#expand">expand</a> <i>function</i></h3>
 <pre>expand(v int, r int) int</pre>
 <p>Expands a truncated sixteen-bit sequence number to a full value nearest a reference number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L21">hc/lib/net/link.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L21">hc/lib/net/link.amni:21</a>
 </article>
 <article class="sym" id="compact">
 <h3><a href="#compact">compact</a> <i>function</i></h3>
 <pre>compact()</pre>
 <p>Discards acknowledged messages from the outgoing reliable queue when it is large and mostly dead.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L37">hc/lib/net/link.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L37">hc/lib/net/link.amni:37</a>
 </article>
 <article class="sym" id="acked">
 <h3><a href="#acked">acked</a> <i>function</i></h3>
 <pre>acked(e int, s int, now int)</pre>
 <p>Processes an acknowledgment for a sent packet, updating round-trip time and retiring its reliable messages.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L81">hc/lib/net/link.amni:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L81">hc/lib/net/link.amni:81</a>
 </article>
 <article class="sym" id="deliver">
 <h3><a href="#deliver">deliver</a> <i>function</i></h3>
 <pre>deliver(e int, data const byte[:])</pre>
 <p>Appends a received message payload to the delivery queue for an endpoint.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a53ad2838c0cf01b27f34cf015a107773ab1057e/hc/lib/net/link.amni#L90">hc/lib/net/link.amni:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/54f7d6bb6c2a849d37580eac88d819245f6cee95/hc/lib/net/link.amni#L90">hc/lib/net/link.amni:90</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
