@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-meshlet">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-meshlet">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=11c0e25421">
+<link rel="stylesheet" href="/api-library/lib.css?v=ee01562daa">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=11c0e25421'; start({wasm: '/api-library/search.wasm?v=11c0e25421'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=ee01562daa'; start({wasm: '/api-library/search.wasm?v=ee01562daa'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/meshlet</h1>
 <p class="lib-lede">Builds meshlets from triangle meshes by welding vertices and grouping triangles into clusters and hierarchy levels for efficient rendering.</p>
-<p class="lib-meta"><code>import gfx.meshlet;</code> &middot; <code>meshlet::</code> &middot; 31 functions, 2 types, 35 constants &middot; <a href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.meshlet;</code> &middot; <code>meshlet::</code> &middot; 31 functions, 2 types, 35 constants &middot; <a href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#meshlet-building">Meshlet Building <span class="n">10</span></a></li>
 <li><a href="#mesh-simplification">Mesh Simplification <span class="n">1</span></a></li>
@@ -116,70 +116,70 @@
 <pre>var idx u32[&gt;..]</pre>
 <p>Growing array of triangle vertex indices for all emitted clusters.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L20">hc/lib/gfx/meshlet.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L20">hc/lib/gfx/meshlet.amni:20</a>
 </article>
 <article class="sym" id="tab">
 <h3><a href="#tab">tab</a> <i>constant</i></h3>
 <pre>var tab f32[&gt;..]</pre>
 <p>Growing float table holding one ROW-sized bounds and error record per cluster.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L21">hc/lib/gfx/meshlet.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L21">hc/lib/gfx/meshlet.amni:21</a>
 </article>
 <article class="sym" id="rng">
 <h3><a href="#rng">rng</a> <i>constant</i></h3>
 <pre>var rng u32[&gt;..]</pre>
 <p>Growing array of start and length pairs locating each cluster's indices in idx.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L22">hc/lib/gfx/meshlet.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L22">hc/lib/gfx/meshlet.amni:22</a>
 </article>
 <article class="sym" id="count">
 <h3><a href="#count">count</a> <i>constant</i></h3>
 <pre>var count int = 0</pre>
 <p>Total number of clusters emitted so far.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L23">hc/lib/gfx/meshlet.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L23">hc/lib/gfx/meshlet.amni:23</a>
 </article>
 <article class="sym" id="leaves">
 <h3><a href="#leaves">leaves</a> <i>constant</i></h3>
 <pre>var leaves int = 0</pre>
 <p>Number of leaf-level clusters built from the original mesh.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L24">hc/lib/gfx/meshlet.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L24">hc/lib/gfx/meshlet.amni:24</a>
 </article>
 <article class="sym" id="levels">
 <h3><a href="#levels">levels</a> <i>constant</i></h3>
 <pre>var levels int = 0</pre>
 <p>Number of hierarchy levels built so far.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L25">hc/lib/gfx/meshlet.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L25">hc/lib/gfx/meshlet.amni:25</a>
 </article>
 <article class="sym" id="level_tris">
 <h3><a href="#level_tris">level_tris</a> <i>constant</i></h3>
 <pre>var level_tris int[&gt;..]</pre>
 <p>Growing array of the total triangle count emitted at each hierarchy level.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L26">hc/lib/gfx/meshlet.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L26">hc/lib/gfx/meshlet.amni:26</a>
 </article>
 <article class="sym" id="weld_build">
 <h3><a href="#weld_build">weld_build</a> <i>function</i></h3>
 <pre>weld_build(pos const f32[:], stride int, at int, nv int)</pre>
 <p>Builds the weld map that merges vertices at identical quantized positions, clearing any previous map.</p>
 <p class="note">`weld_build(pos, stride int, at int, nv int)` (pos: read-only f32 slice) fills `weld` (length nv). Two vertices are at the same place when their coordinates, each taken relative to the mesh's lowest corner, divided by `max(largest side of the mesh's bounding box, 1e-30) / 1048576.0` and rounded to the nearest int, are equal on all three axes. Pack the three ints into one int key (`(qx &lt;&lt; 42) | (qy</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L31">hc/lib/gfx/meshlet.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L31">hc/lib/gfx/meshlet.amni:31</a>
 </article>
 <article class="sym" id="group">
 <h3><a href="#group">group</a> <i>function</i></h3>
 <pre>group(cur const int[:], groups int[&gt;..]&amp;, gfirst int[&gt;..]&amp;)</pre>
 <p>Partitions the current clusters into groups for the next hierarchy level.</p>
 <p class="note">`group(cur, groups, gfirst)` (cur: read-only int slice; groups and gfirst: growable int arrays by reference) partitions the clusters listed in `cur` into groups of neighbors, or, when `cur` has at most `SOLO` clusters, into a single group holding all of them in order (then nothing below runs): `groups` gets the cluster ids group after group, and `gfirst` the start of each group in `groups` plus on</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L800">hc/lib/gfx/meshlet.amni:800</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L800">hc/lib/gfx/meshlet.amni:800</a>
 </article>
 <article class="sym" id="build">
 <h3><a href="#build">build</a> <i>function</i></h3>
 <pre>build(pos f32[:], stride int, at int, nv int, indices const u32[:])</pre>
 <p>Builds the meshlet hierarchy from a vertex position buffer and triangle indices, replacing any previously built data; welds vertices and simplifies grouped clusters per level.</p>
 <p class="note">`build(pos, stride int, at int, nv int, indices)` (pos: writable f32 slice, longer than the mesh needs: its length divided by stride is the capacity in vertices, and the room after the first nv is for new vertices; indices: read-only u32 slice) builds everything for a mesh of nv vertices whose triangles are `indices` (three per triangle, values below nv). - Clear the module outputs, set `next_v` t</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L1052">hc/lib/gfx/meshlet.amni:1052</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L1052">hc/lib/gfx/meshlet.amni:1052</a>
 </article>
 <h2 id="mesh-simplification">Mesh Simplification <span class="n">1</span></h2>
 <article class="sym" id="simplify">
@@ -187,7 +187,7 @@
 <pre>simplify(tris const int[:], pos f32[:], stride int, at int, target int, out int[&gt;..]&amp;) real</pre>
 <p>Collapses edges to reduce triangles toward a target count, returning the largest geometric error introduced.</p>
 <p class="note">`simplify(tris, pos, stride int, at int, target int, out) real` (tris: read-only int slice; pos: writable f32 slice; out: growable int array by reference) reduces a triangle list (three vertex ids per triangle, a few thousand triangles at most) toward `target` triangles by collapsing edges, writes the surviving triangles to `out` (cleared first; three vertex ids each), and returns the largest erro</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L519">hc/lib/gfx/meshlet.amni:519</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L519">hc/lib/gfx/meshlet.amni:519</a>
 </article>
 <h2 id="level-selection">Level Selection <span class="n">2</span></h2>
 <article class="sym" id="cut">
@@ -195,359 +195,359 @@
 <pre>cut(e f32, out u32[&gt;..]&amp;)</pre>
 <p>Fills the output array with triangle indices of all clusters whose error range contains the given error threshold e.</p>
 <p class="note">`cut(e f32, out)` (out: growable u32 array by reference) clears `out` and appends the index values of every cluster whose own error is at most e and whose parent error is above e, in cluster order: the mesh at world-space error e.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L1177">hc/lib/gfx/meshlet.amni:1177</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L1177">hc/lib/gfx/meshlet.amni:1177</a>
 </article>
 <article class="sym" id="cut_tris">
 <h3><a href="#cut_tris">cut_tris</a> <i>function</i></h3>
 <pre>cut_tris(e f32) int</pre>
 <p>Returns the number of triangles in the clusters selected for the given error threshold e, matching what cut would output.</p>
 <p class="note">`cut_tris(e f32) int` is the number of triangles `cut` would give, without building the list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L1188">hc/lib/gfx/meshlet.amni:1188</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L1188">hc/lib/gfx/meshlet.amni:1188</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (55)</summary>
 <article class="sym" id="V3">
 <h3><a href="#V3">V3</a> <i>type</i></h3>
 <pre>struct V3 { x real, y real, z real }</pre>
 <p>Internal 3D vector of real components used by the meshlet builder's geometry routines.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L3">hc/lib/gfx/meshlet.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L3">hc/lib/gfx/meshlet.amni:3</a>
 </article>
 <article class="sym" id="vget">
 <h3><a href="#vget">vget</a> <i>function</i></h3>
 <pre>vget(pos const f32[:], stride int, at int, v int) V3</pre>
 <p>Reads the three position components of vertex v from a strided float array into a V3.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L4">hc/lib/gfx/meshlet.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L4">hc/lib/gfx/meshlet.amni:4</a>
 </article>
 <article class="sym" id="v3dot">
 <h3><a href="#v3dot">v3dot</a> <i>function</i></h3>
 <pre>v3dot(a V3, b V3) real</pre>
 <p>Returns the dot product of two vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L8">hc/lib/gfx/meshlet.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L8">hc/lib/gfx/meshlet.amni:8</a>
 </article>
 <article class="sym" id="v3len">
 <h3><a href="#v3len">v3len</a> <i>function</i></h3>
 <pre>v3len(a V3) real</pre>
 <p>Returns the Euclidean length of a vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L9">hc/lib/gfx/meshlet.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L9">hc/lib/gfx/meshlet.amni:9</a>
 </article>
 <article class="sym" id="v3cross">
 <h3><a href="#v3cross">v3cross</a> <i>function</i></h3>
 <pre>v3cross(a V3, b V3) V3</pre>
 <p>Returns the cross product of two vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L10">hc/lib/gfx/meshlet.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L10">hc/lib/gfx/meshlet.amni:10</a>
 </article>
 <article class="sym" id="MAX_TRIS">
 <h3><a href="#MAX_TRIS">MAX_TRIS</a> <i>constant</i></h3>
 <pre>let MAX_TRIS = 128</pre>
 <p>Maximum number of triangles placed in one emitted cluster.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L13">hc/lib/gfx/meshlet.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L13">hc/lib/gfx/meshlet.amni:13</a>
 </article>
 <article class="sym" id="GROUP">
 <h3><a href="#GROUP">GROUP</a> <i>constant</i></h3>
 <pre>let GROUP = 8</pre>
 <p>Target number of clusters merged into one group when building hierarchy levels.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L14">hc/lib/gfx/meshlet.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L14">hc/lib/gfx/meshlet.amni:14</a>
 </article>
 <article class="sym" id="GROUP_MAX">
 <h3><a href="#GROUP_MAX">GROUP_MAX</a> <i>constant</i></h3>
 <pre>let GROUP_MAX = 16</pre>
 <p>Upper limit on clusters allowed in one group.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L15">hc/lib/gfx/meshlet.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L15">hc/lib/gfx/meshlet.amni:15</a>
 </article>
 <article class="sym" id="SOLO">
 <h3><a href="#SOLO">SOLO</a> <i>constant</i></h3>
 <pre>let SOLO = 256</pre>
 <p>Cluster count at or below which all clusters are put into a single group.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L16">hc/lib/gfx/meshlet.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L16">hc/lib/gfx/meshlet.amni:16</a>
 </article>
 <article class="sym" id="ROW">
 <h3><a href="#ROW">ROW</a> <i>constant</i></h3>
 <pre>let ROW = 20</pre>
 <p>Number of float values stored per cluster row in the cluster table.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L17">hc/lib/gfx/meshlet.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L17">hc/lib/gfx/meshlet.amni:17</a>
 </article>
 <article class="sym" id="SAMPLES">
 <h3><a href="#SAMPLES">SAMPLES</a> <i>constant</i></h3>
 <pre>let SAMPLES = 128</pre>
 <p>Maximum number of sample vertices kept per cluster for error measurement.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L18">hc/lib/gfx/meshlet.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L18">hc/lib/gfx/meshlet.amni:18</a>
 </article>
 <article class="sym" id="FAR">
 <h3><a href="#FAR">FAR</a> <i>constant</i></h3>
 <pre>let FAR f32 = 1e30</pre>
 <p>Large sentinel float value written into the cluster table as an unset error bound.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L19">hc/lib/gfx/meshlet.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L19">hc/lib/gfx/meshlet.amni:19</a>
 </article>
 <article class="sym" id="weld">
 <h3><a href="#weld">weld</a> <i>constant</i></h3>
 <pre>var weld int[&gt;..]</pre>
 <p>Maps each vertex to the representative vertex sharing its quantized position.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L27">hc/lib/gfx/meshlet.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L27">hc/lib/gfx/meshlet.amni:27</a>
 </article>
 <article class="sym" id="smp">
 <h3><a href="#smp">smp</a> <i>constant</i></h3>
 <pre>var smp int[&gt;..]</pre>
 <p>Growing array of sample vertex ids collected across all clusters.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L28">hc/lib/gfx/meshlet.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L28">hc/lib/gfx/meshlet.amni:28</a>
 </article>
 <article class="sym" id="srng">
 <h3><a href="#srng">srng</a> <i>constant</i></h3>
 <pre>var srng int[&gt;..]</pre>
 <p>Growing array of start and length pairs locating each cluster's samples in smp.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L29">hc/lib/gfx/meshlet.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L29">hc/lib/gfx/meshlet.amni:29</a>
 </article>
 <article class="sym" id="next_v">
 <h3><a href="#next_v">next_v</a> <i>constant</i></h3>
 <pre>var next_v int = 0</pre>
 <p>Index of the next unused vertex slot where simplification writes new vertices.</p>
 <p class="note">Module constants: `MAX_TRIS = 128`, `GROUP = 8`, `GROUP_MAX = 16`, `SOLO = 256`, `ROW = 20`, `SAMPLES = 128`, `FAR f32 = 1e30`. Module vars (outputs, valid after `build`): `idx`, a growable u32 array (the triangles of every cluster, three vertex ids each, cluster after cluster), `tab`, a growable f32 array (`ROW` floats per cluster), `rng`, a growable u32 array (two per cluster: where its triangle</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L30">hc/lib/gfx/meshlet.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L30">hc/lib/gfx/meshlet.amni:30</a>
 </article>
 <article class="sym" id="radix_pass">
 <h3><a href="#radix_pass">radix_pass</a> <i>function</i></h3>
 <pre>radix_pass(keys const int[:], src const int[:], dst int[:], shift int)</pre>
 <p>Performs one 10-bit counting sort pass of indices by key at the given shift.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L76">hc/lib/gfx/meshlet.amni:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L76">hc/lib/gfx/meshlet.amni:76</a>
 </article>
 <article class="sym" id="sort_by_key">
 <h3><a href="#sort_by_key">sort_by_key</a> <i>function</i></h3>
 <pre>sort_by_key(keys const int[:], order int[&gt;..]&amp;)</pre>
 <p>Fills order with indices sorted by ascending integer key using three radix passes.</p>
 <p class="note">`sort_by_key(keys, order)` (keys: read-only int slice; order: growable int array by reference) fills `order` with 0..keys.len-1 sorted by key ascending, stable, where every key is in 0..2^30-1: an LSD radix sort in three passes of 10 bits (counting sort with 1024 buckets per pass, swapping between `order` and a temporary array).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L89">hc/lib/gfx/meshlet.amni:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L89">hc/lib/gfx/meshlet.amni:89</a>
 </article>
 <article class="sym" id="v3sc">
 <h3><a href="#v3sc">v3sc</a> <i>function</i></h3>
 <pre>v3sc(a V3, s real) V3</pre>
 <p>Returns a vector scaled by a real factor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L100">hc/lib/gfx/meshlet.amni:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L100">hc/lib/gfx/meshlet.amni:100</a>
 </article>
 <article class="sym" id="v3at">
 <h3><a href="#v3at">v3at</a> <i>function</i></h3>
 <pre>v3at(a V3, ax int) real</pre>
 <p>Returns the vector component selected by axis number 0, 1 or otherwise 2.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L101">hc/lib/gfx/meshlet.amni:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L101">hc/lib/gfx/meshlet.amni:101</a>
 </article>
 <article class="sym" id="frac">
 <h3><a href="#frac">frac</a> <i>function</i></h3>
 <pre>frac(a real, b real) real</pre>
 <p>Returns a divided by b, or zero when b is nearly zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L102">hc/lib/gfx/meshlet.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L102">hc/lib/gfx/meshlet.amni:102</a>
 </article>
 <article class="sym" id="seg_dist">
 <h3><a href="#seg_dist">seg_dist</a> <i>function</i></h3>
 <pre>seg_dist(p V3, a V3, b V3) real</pre>
 <p>Returns the distance from a point to a line segment.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L103">hc/lib/gfx/meshlet.amni:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L103">hc/lib/gfx/meshlet.amni:103</a>
 </article>
 <article class="sym" id="tri_dist">
 <h3><a href="#tri_dist">tri_dist</a> <i>function</i></h3>
 <pre>tri_dist(p V3, a V3, b V3, c V3) real</pre>
 <p>Returns the distance from a point to a triangle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L111">hc/lib/gfx/meshlet.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L111">hc/lib/gfx/meshlet.amni:111</a>
 </article>
 <article class="sym" id="nearest">
 <h3><a href="#nearest">nearest</a> <i>function</i></h3>
 <pre>nearest(samples const int[:], tris const int[:], pos const f32[:], stride int, at int, near int[&gt;..]&amp;, dist real[&gt;..]&amp;) real</pre>
 <p>Finds the nearest triangle and distance for each sample vertex, returning the largest distance.</p>
 <p class="note">`nearest(samples, tris, pos, stride int, at int, near, dist) real` (samples: read-only int slice of vertex ids; tris: read-only int slice, three vertex ids per triangle, at least one triangle; pos: read-only f32 slice; near: growable int array by reference; dist: growable real array by reference) finds, for every sample, the triangle of the list closest to the sample vertex's position: `near` gets</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L149">hc/lib/gfx/meshlet.amni:149</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L149">hc/lib/gfx/meshlet.amni:149</a>
 </article>
 <article class="sym" id="emit">
 <h3><a href="#emit">emit</a> <i>function</i></h3>
 <pre>emit(tris const int[:], pos const f32[:], stride int, at int, level int, err f32, own bool, lx f32, ly f32, lz f32, lr f32, samples const int[:], near const int[:], dist const real[:], made int[&gt;..]&amp;)</pre>
 <p>Splits triangles into spatially ordered clusters of limited size and appends their bounds, cones and samples to the tables.</p>
 <p class="note">`emit(tris, pos, stride int, at int, level int, err f32, own bool, lx f32, ly f32, lz f32, lr f32, samples, near, dist, made)` (tris: read-only int slice; pos: read-only f32 slice; samples and near: read-only int slices; dist: read-only real slice; made: growable int array by reference) turns a triangle list (`tris`: three vertex ids per triangle, at least one triangle) into clusters appended to t</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L244">hc/lib/gfx/meshlet.amni:244</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L244">hc/lib/gfx/meshlet.amni:244</a>
 </article>
 <article class="sym" id="Cand">
 <h3><a href="#Cand">Cand</a> <i>type</i></h3>
 <pre>struct Cand { a int, b int, mv bool, t real, cost real, p V3 }</pre>
 <p>Candidate edge collapse holding its vertices, move flag, interpolation parameter, cost and target position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L412">hc/lib/gfx/meshlet.amni:412</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L412">hc/lib/gfx/meshlet.amni:412</a>
 </article>
 <article class="sym" id="pmap">
 <h3><a href="#pmap">pmap</a> <i>constant</i></h3>
 <pre>var pmap int[&gt;..]</pre>
 <p>Maps weld ids to local vertex numbers during simplification, with negative meaning unassigned.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L413">hc/lib/gfx/meshlet.amni:413</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L413">hc/lib/gfx/meshlet.amni:413</a>
 </article>
 <article class="sym" id="sp_org">
 <h3><a href="#sp_org">sp_org</a> <i>constant</i></h3>
 <pre>var sp_org int[&gt;..]</pre>
 <p>Original vertex index for each triangle corner during simplification.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L414">hc/lib/gfx/meshlet.amni:414</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L414">hc/lib/gfx/meshlet.amni:414</a>
 </article>
 <article class="sym" id="sp_plc">
 <h3><a href="#sp_plc">sp_plc</a> <i>constant</i></h3>
 <pre>var sp_plc int[&gt;..]</pre>
 <p>Local welded vertex number for each triangle corner during simplification.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L415">hc/lib/gfx/meshlet.amni:415</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L415">hc/lib/gfx/meshlet.amni:415</a>
 </article>
 <article class="sym" id="sp_live">
 <h3><a href="#sp_live">sp_live</a> <i>constant</i></h3>
 <pre>var sp_live bool[&gt;..]</pre>
 <p>Flags marking which triangles are still alive during simplification.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L416">hc/lib/gfx/meshlet.amni:416</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L416">hc/lib/gfx/meshlet.amni:416</a>
 </article>
 <article class="sym" id="sp_pp">
 <h3><a href="#sp_pp">sp_pp</a> <i>constant</i></h3>
 <pre>var sp_pp V3[&gt;..]</pre>
 <p>Current position of each local vertex during simplification.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L417">hc/lib/gfx/meshlet.amni:417</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L417">hc/lib/gfx/meshlet.amni:417</a>
 </article>
 <article class="sym" id="sp_q">
 <h3><a href="#sp_q">sp_q</a> <i>constant</i></h3>
 <pre>var sp_q real[&gt;..]</pre>
 <p>Ten accumulated quadric error coefficients per local vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L418">hc/lib/gfx/meshlet.amni:418</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L418">hc/lib/gfx/meshlet.amni:418</a>
 </article>
 <article class="sym" id="sp_w">
 <h3><a href="#sp_w">sp_w</a> <i>constant</i></h3>
 <pre>var sp_w real[&gt;..]</pre>
 <p>Accumulated triangle area weight per local vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L419">hc/lib/gfx/meshlet.amni:419</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L419">hc/lib/gfx/meshlet.amni:419</a>
 </article>
 <article class="sym" id="sp_lock">
 <h3><a href="#sp_lock">sp_lock</a> <i>constant</i></h3>
 <pre>var sp_lock bool[&gt;..]</pre>
 <p>Flags marking boundary vertices that must not be collapsed away.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L420">hc/lib/gfx/meshlet.amni:420</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L420">hc/lib/gfx/meshlet.amni:420</a>
 </article>
 <article class="sym" id="sp_ts">
 <h3><a href="#sp_ts">sp_ts</a> <i>constant</i></h3>
 <pre>var sp_ts int[&gt;..]</pre>
 <p>Start offsets into sp_tl listing triangles around each vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L421">hc/lib/gfx/meshlet.amni:421</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L421">hc/lib/gfx/meshlet.amni:421</a>
 </article>
 <article class="sym" id="sp_tl">
 <h3><a href="#sp_tl">sp_tl</a> <i>constant</i></h3>
 <pre>var sp_tl int[&gt;..]</pre>
 <p>Flat list of triangle ids adjacent to each local vertex.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L422">hc/lib/gfx/meshlet.amni:422</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L422">hc/lib/gfx/meshlet.amni:422</a>
 </article>
 <article class="sym" id="sp_corner">
 <h3><a href="#sp_corner">sp_corner</a> <i>function</i></h3>
 <pre>sp_corner(t int, q int) V3</pre>
 <p>Returns the position of corner q of triangle t.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L423">hc/lib/gfx/meshlet.amni:423</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L423">hc/lib/gfx/meshlet.amni:423</a>
 </article>
 <article class="sym" id="sp_has">
 <h3><a href="#sp_has">sp_has</a> <i>function</i></h3>
 <pre>sp_has(t int, a int) bool</pre>
 <p>Returns whether triangle t uses local vertex a.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L424">hc/lib/gfx/meshlet.amni:424</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L424">hc/lib/gfx/meshlet.amni:424</a>
 </article>
 <article class="sym" id="sp_slot">
 <h3><a href="#sp_slot">sp_slot</a> <i>function</i></h3>
 <pre>sp_slot(t int, a int) int</pre>
 <p>Returns which corner of triangle t uses vertex a, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L425">hc/lib/gfx/meshlet.amni:425</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L425">hc/lib/gfx/meshlet.amni:425</a>
 </article>
 <article class="sym" id="sp_pair">
 <h3><a href="#sp_pair">sp_pair</a> <i>function</i></h3>
 <pre>sp_pair(a int, b int, oa int[&gt;..]&amp;, fa int[&gt;..]&amp;) bool</pre>
 <p>Collects the original vertices at a and their counterparts at b, returning false if the mapping is inconsistent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L431">hc/lib/gfx/meshlet.amni:431</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L431">hc/lib/gfx/meshlet.amni:431</a>
 </article>
 <article class="sym" id="sp_inverse">
 <h3><a href="#sp_inverse">sp_inverse</a> <i>function</i></h3>
 <pre>sp_inverse(oa const int[:], fa const int[:], ob const int[:], fb const int[:]) bool</pre>
 <p>Returns whether two vertex correspondence maps are exact inverses of each other.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L463">hc/lib/gfx/meshlet.amni:463</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L463">hc/lib/gfx/meshlet.amni:463</a>
 </article>
 <article class="sym" id="sp_qs">
 <h3><a href="#sp_qs">sp_qs</a> <i>function</i></h3>
 <pre>sp_qs(a int, b int, k int) real</pre>
 <p>Returns the sum of one quadric coefficient for two vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L485">hc/lib/gfx/meshlet.amni:485</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L485">hc/lib/gfx/meshlet.amni:485</a>
 </article>
 <article class="sym" id="sp_mulq">
 <h3><a href="#sp_mulq">sp_mulq</a> <i>function</i></h3>
 <pre>sp_mulq(a int, b int, v V3) V3</pre>
 <p>Multiplies the combined quadric matrix of two vertices by a vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L486">hc/lib/gfx/meshlet.amni:486</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L486">hc/lib/gfx/meshlet.amni:486</a>
 </article>
 <article class="sym" id="sp_qerr">
 <h3><a href="#sp_qerr">sp_qerr</a> <i>function</i></h3>
 <pre>sp_qerr(a int, b int, p V3) real</pre>
 <p>Returns the area-normalized quadric error of placing the merged vertex at a point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L493">hc/lib/gfx/meshlet.amni:493</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L493">hc/lib/gfx/meshlet.amni:493</a>
 </article>
 <article class="sym" id="sp_flips">
 <h3><a href="#sp_flips">sp_flips</a> <i>function</i></h3>
 <pre>sp_flips(a int, b int, p V3, snap bool) bool</pre>
 <p>Returns whether collapsing to a point would flip or degenerate any surrounding triangle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L497">hc/lib/gfx/meshlet.amni:497</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L497">hc/lib/gfx/meshlet.amni:497</a>
 </article>
 <article class="sym" id="NBR">
 <h3><a href="#NBR">NBR</a> <i>constant</i></h3>
 <pre>let NBR = 16</pre>
 <p>Maximum number of neighbors tracked per cluster when grouping.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L786">hc/lib/gfx/meshlet.amni:786</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L786">hc/lib/gfx/meshlet.amni:786</a>
 </article>
 <article class="sym" id="g_add_nb">
 <h3><a href="#g_add_nb">g_add_nb</a> <i>function</i></h3>
 <pre>g_add_nb(nbp int[&gt;..]&amp;, nbc int[&gt;..]&amp;, nbn int[&gt;..]&amp;, i int, j int)</pre>
 <p>Adds or increments a neighbor entry for cluster i, ignoring new neighbors beyond the limit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L787">hc/lib/gfx/meshlet.amni:787</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L787">hc/lib/gfx/meshlet.amni:787</a>
 </article>
 <article class="sym" id="thin_on">
 <h3><a href="#thin_on">thin_on</a> <i>constant</i></h3>
 <pre>var thin_on = false</pre>
 <p>Flag enabling thin-feature detection during simplification, false by default.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L950">hc/lib/gfx/meshlet.amni:950</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L950">hc/lib/gfx/meshlet.amni:950</a>
 </article>
 <article class="sym" id="thin_k">
 <h3><a href="#thin_k">thin_k</a> <i>constant</i></h3>
 <pre>var thin_k = 1.0</pre>
 <p>Scale factor applied to thin-feature detection, defaulting to 1.0.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L951">hc/lib/gfx/meshlet.amni:951</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L951">hc/lib/gfx/meshlet.amni:951</a>
 </article>
 <article class="sym" id="thin_isles">
 <h3><a href="#thin_isles">thin_isles</a> <i>constant</i></h3>
 <pre>var thin_isles = 0</pre>
 <p>Count of disconnected triangle islands found by the last thin-feature analysis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L952">hc/lib/gfx/meshlet.amni:952</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L952">hc/lib/gfx/meshlet.amni:952</a>
 </article>
 <article class="sym" id="thin_width">
 <h3><a href="#thin_width">thin_width</a> <i>constant</i></h3>
 <pre>var thin_width = 0.0</pre>
 <p>Width measurement recorded by the last thin-feature analysis, in mesh units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L953">hc/lib/gfx/meshlet.amni:953</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L953">hc/lib/gfx/meshlet.amni:953</a>
 </article>
 <article class="sym" id="thin_long">
 <h3><a href="#thin_long">thin_long</a> <i>constant</i></h3>
 <pre>var thin_long = 0.0</pre>
 <p>Length measurement recorded by the last thin-feature analysis, in mesh units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L954">hc/lib/gfx/meshlet.amni:954</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L954">hc/lib/gfx/meshlet.amni:954</a>
 </article>
 <article class="sym" id="tmap">
 <h3><a href="#tmap">tmap</a> <i>constant</i></h3>
 <pre>var tmap int[&gt;..]</pre>
 <p>Scratch map from vertex index to local slot, grown on demand by thin analysis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L955">hc/lib/gfx/meshlet.amni:955</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L955">hc/lib/gfx/meshlet.amni:955</a>
 </article>
 <article class="sym" id="uf">
 <h3><a href="#uf">uf</a> <i>function</i></h3>
 <pre>uf(par int[&gt;..]&amp;, i int) int</pre>
 <p>Finds the root of an element in a union-find parent array, compressing the path along the way.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L956">hc/lib/gfx/meshlet.amni:956</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L956">hc/lib/gfx/meshlet.amni:956</a>
 </article>
 <article class="sym" id="thin">
 <h3><a href="#thin">thin</a> <i>function</i></h3>
 <pre>thin(tris const int[:], pos f32[:], stride int, at int, cap int, out int[&gt;..]&amp;) real</pre>
 <p>Analyzes a triangle set for thin disconnected islands, writing results to out and returning a real score, or -1 when fewer than two islands exist.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/meshlet.amni#L963">hc/lib/gfx/meshlet.amni:963</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/ee015628f50cef36e28ad1ac3561de7ba15dd6a7/hc/lib/gfx/meshlet.amni#L963">hc/lib/gfx/meshlet.amni:963</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -559,7 +559,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1812</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1816</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
