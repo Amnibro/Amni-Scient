@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_png">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_png">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=bedc7ab4c8">
+<link rel="stylesheet" href="/api-library/lib.css?v=11c0e25421">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=bedc7ab4c8'; start({wasm: '/api-library/search.wasm?v=bedc7ab4c8'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=11c0e25421'; start({wasm: '/api-library/search.wasm?v=11c0e25421'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/codec_png</h1>
 <p class="lib-lede">Decode PNG files to RGBA pixels and write 8-bit PNG files.</p>
-<p class="lib-meta"><code>import gfx.codec_png;</code> &middot; <code>codec_png::</code> &middot; 13 functions, 0 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.codec_png;</code> &middot; <code>codec_png::</code> &middot; 13 functions, 0 types, 4 constants &middot; <a href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>codec_png: PNG decoding to 8-bit RGBA (PNG specification, ISO/IEC 15948).
 Handles every color type and bit bit_depth, palettes with tRNS, and Adam7 interlacing.
 16-bit samples keep their high byte. encode/write produce 8-bit PNGs with stored (uncompressed) deflate blocks.
@@ -118,108 +118,108 @@ Handles every color type and bit bit_depth, palettes with tRNS, and Adam7 interl
 <h3><a href="#is_png">is_png</a> <i>function</i></h3>
 <pre>is_png(b const byte[:]) bool</pre>
 <p>Returns whether the bytes begin with the eight-byte PNG signature.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L12">hc/lib/gfx/codec_png.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L12">hc/lib/gfx/codec_png.amni:12</a>
 </article>
 <article class="sym" id="size">
 <h3><a href="#size">size</a> <i>function</i></h3>
 <pre>size(b const byte[:]) int, int, bool</pre>
 <p>Returns the width and height of a PNG from its header, with false if the data is invalid or empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L16">hc/lib/gfx/codec_png.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L16">hc/lib/gfx/codec_png.amni:16</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(file const byte[:], out byte[&gt;..]&amp;) int, int, bool</pre>
 <p>Decodes a PNG file into RGBA8 pixels in out, returning width, height, and false on failure.</p>
 <p class="note">Decodes a PNG file image; returns width, height, ok. Pixels go to out as RGBA8.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L68">hc/lib/gfx/codec_png.amni:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L68">hc/lib/gfx/codec_png.amni:68</a>
 </article>
 <h2 id="png-encoding">PNG Encoding <span class="n">2</span></h2>
 <article class="sym" id="encode">
 <h3><a href="#encode">encode</a> <i>function</i></h3>
 <pre>encode(w int, h int, channels int, px const byte[:], out byte[&gt;..]&amp;)</pre>
 <p>Encodes 8-bit pixels with 1 to 4 channels into PNG bytes using uncompressed deflate blocks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L204">hc/lib/gfx/codec_png.amni:204</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L204">hc/lib/gfx/codec_png.amni:204</a>
 </article>
 <article class="sym" id="write">
 <h3><a href="#write">write</a> <i>function</i></h3>
 <pre>write(path const byte[:], w int, h int, channels int, px const byte[:]) bool</pre>
 <p>Encodes pixels as an 8-bit PNG and writes it to a file, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L257">hc/lib/gfx/codec_png.amni:257</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L257">hc/lib/gfx/codec_png.amni:257</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (12)</summary>
 <article class="sym" id="idat">
 <h3><a href="#idat">idat</a> <i>constant</i></h3>
 <pre>var idat byte[&gt;..]</pre>
 <p>Module-level buffer holding concatenated IDAT chunk data during decoding, used only internally by the decoder.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L8">hc/lib/gfx/codec_png.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L8">hc/lib/gfx/codec_png.amni:8</a>
 </article>
 <article class="sym" id="raw">
 <h3><a href="#raw">raw</a> <i>constant</i></h3>
 <pre>var raw byte[&gt;..]</pre>
 <p>Module-level buffer holding decompressed scanline bytes during decoding, used only internally by the decoder.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L9">hc/lib/gfx/codec_png.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L9">hc/lib/gfx/codec_png.amni:9</a>
 </article>
 <article class="sym" id="be32">
 <h3><a href="#be32">be32</a> <i>function</i></h3>
 <pre>be32(b const byte[:], o int) int</pre>
 <p>Reads a big-endian 32-bit integer from a byte slice at the given offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L10">hc/lib/gfx/codec_png.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L10">hc/lib/gfx/codec_png.amni:10</a>
 </article>
 <article class="sym" id="samples_per_pixel">
 <h3><a href="#samples_per_pixel">samples_per_pixel</a> <i>function</i></h3>
 <pre>samples_per_pixel(ctype int) int</pre>
 <p>Returns the number of samples per pixel for a PNG color type, or 0 if invalid.</p>
 <p class="note">Samples per pixel for each PNG colour type (PNG spec 11.2.2); 0 = invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L24">hc/lib/gfx/codec_png.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L24">hc/lib/gfx/codec_png.amni:24</a>
 </article>
 <article class="sym" id="paeth">
 <h3><a href="#paeth">paeth</a> <i>function</i></h3>
 <pre>paeth(a int, b int, c int) int</pre>
 <p>Computes the Paeth predictor value used when reversing PNG row filters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L32">hc/lib/gfx/codec_png.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L32">hc/lib/gfx/codec_png.amni:32</a>
 </article>
 <article class="sym" id="unfilter">
 <h3><a href="#unfilter">unfilter</a> <i>function</i></h3>
 <pre>unfilter(raw byte[&gt;..]&amp;, at int, rows int, stride int, bpp int) bool</pre>
 <p>Reverses the per-row PNG filters in place, returning false if a filter type is invalid.</p>
 <p class="note">Reverses the per-row filters of one (sub)image in place; rows start at `at` in raw.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L41">hc/lib/gfx/codec_png.amni:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L41">hc/lib/gfx/codec_png.amni:41</a>
 </article>
 <article class="sym" id="crc_table">
 <h3><a href="#crc_table">crc_table</a> <i>constant</i></h3>
 <pre>var crc_table u32[256]</pre>
 <p>Lookup table of precomputed CRC-32 values used when writing PNG chunks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L162">hc/lib/gfx/codec_png.amni:162</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L162">hc/lib/gfx/codec_png.amni:162</a>
 </article>
 <article class="sym" id="crc_ready">
 <h3><a href="#crc_ready">crc_ready</a> <i>constant</i></h3>
 <pre>var crc_ready bool = false</pre>
 <p>Flag recording whether the CRC-32 lookup table has been filled in.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L163">hc/lib/gfx/codec_png.amni:163</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L163">hc/lib/gfx/codec_png.amni:163</a>
 </article>
 <article class="sym" id="crc32">
 <h3><a href="#crc32">crc32</a> <i>function</i></h3>
 <pre>crc32(data const byte[:]) u32</pre>
 <p>Computes the CRC-32 checksum of the given bytes for PNG chunk integrity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L164">hc/lib/gfx/codec_png.amni:164</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L164">hc/lib/gfx/codec_png.amni:164</a>
 </article>
 <article class="sym" id="adler32">
 <h3><a href="#adler32">adler32</a> <i>function</i></h3>
 <pre>adler32(data const byte[:]) u32</pre>
 <p>Computes the Adler-32 checksum of the given bytes for the zlib stream trailer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L181">hc/lib/gfx/codec_png.amni:181</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L181">hc/lib/gfx/codec_png.amni:181</a>
 </article>
 <article class="sym" id="put_be32">
 <h3><a href="#put_be32">put_be32</a> <i>function</i></h3>
 <pre>put_be32(out byte[&gt;..]&amp;, v u32)</pre>
 <p>Appends a 32-bit value to the buffer in big-endian byte order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L190">hc/lib/gfx/codec_png.amni:190</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L190">hc/lib/gfx/codec_png.amni:190</a>
 </article>
 <article class="sym" id="put_chunk">
 <h3><a href="#put_chunk">put_chunk</a> <i>function</i></h3>
 <pre>put_chunk(out byte[&gt;..]&amp;, kind const byte[:], data const byte[:])</pre>
 <p>Appends a PNG chunk with length, type, data, and CRC to the buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/gfx/codec_png.amni#L196">hc/lib/gfx/codec_png.amni:196</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/11c0e253ab5bab8e2eb186c17b076d0a0e203b40/hc/lib/gfx/codec_png.amni#L196">hc/lib/gfx/codec_png.amni:196</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -231,7 +231,7 @@ Handles every color type and bit bit_depth, palettes with tRNS, and Adam7 interl
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1814</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1812</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
