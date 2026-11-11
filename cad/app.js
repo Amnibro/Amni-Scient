@@ -7,7 +7,7 @@ import {LineSegmentsGeometry} from './vendor/LineSegmentsGeometry.js';
 import {LineMaterial} from './vendor/LineMaterial.js';
 import {normFeature} from './normalize.js';
 import {FAMILIES,sizes,pitches,classes,callout,tapDrill,searchThreads,recentThreads,rememberThread,threadById} from './threads.js';
-import {FT,SHAPES,MATS,MGROUPS,EDGE_MODES,FACE_MODES,defaults,shapeDefaults,shapeLimits,clean,fixPre} from './schema.js';
+import {FT,SHAPES,MATS,MGROUPS,EDGE_MODES,FACE_MODES,defaults,shapeDefaults,shapeLimits,clean,fixPre,mergeMold} from './schema.js';
 import {emptySketch,withRefs,useEdges,solve as skSolve,loops as skLoops} from './sketch.js';
 import {TEMPLATES,templatesFor} from './templates.js';
 import {evalExpr,resolveParams} from './expr.js';
@@ -454,7 +454,7 @@ function applyActions(actions){const done=[],ids=new Set();S.lastWarn=[];if(!Arr
     if(a.run==='fea'){S.queueFea=true;done.push('run stress test');}if(a.run==='optimize'){S.queueOpt=a;done.push('optimize');}
     if(a.flow){for(const k of['fluid','speed','dir','mode'])if(a.flow[k]!=null)flowCfg[k]=k==='speed'?+a.flow[k]:a.flow[k];if(a.flow.internal&&typeof a.flow.internal==='object'){d.iflow={...(d.iflow||{}),...a.flow.internal};flowCfg.mode='internal';}store.set('amnicad.flow',flowCfg);done.push('flow setup');}
     if(a.run==='flow'){S.queueFlow=true;done.push('run flow');}
-    if(a.mold&&typeof a.mold==='object'){d.mold={...(d.mold||{}),...a.mold,runner:{...((d.mold||{}).runner||{}),...(a.mold.runner||{})}};if(a.mold.gates==='auto')d.mold.gates=[];if(a.mold.material){a.mold.melt==null&&delete d.mold.melt;a.mold.mold==null&&delete d.mold.mold;}S.moldSuggest=a.mold.gates==='auto';done.push('injection molding setup');}
+    if(a.mold&&typeof a.mold==='object'){S.moldSuggest=mergeMold(d,a.mold);done.push('injection molding setup');}
     if(a.run==='mold'){S.queueMold=true;done.push('run injection molding');}
     for(const[k,m]of[['steel_rule_die','rule'],['stamping_die','stamp'],['extrusion_die','extr'],['forging_die','forge']])if(a[k]&&typeof a[k]==='object'){(S.queueDies=S.queueDies||[]).push([m,a[k]]);done.push(k.replace(/_/g,' '));}
     if(a.cam&&typeof a.cam==='object'){d.make={...(d.make||{}),cam:{...((d.make||{}).cam||{}),...a.cam}};done.push('CNC toolpath setup');}

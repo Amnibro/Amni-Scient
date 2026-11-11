@@ -80,3 +80,4 @@ export function featureDocs(){
   for(const[k,t]of Object.entries(FT)){if(t.hidden)continue;L.push(`- ${k}: ${t.f.map(f=>f[0]+(Array.isArray(f[3])?'('+f[3].join('|')+')':'')).join(', ')}${t.doc?' — '+t.doc:''}`);}
   return L.join('\n');
 }
+export const mergeMold=(d,m)=>{d.mold={...(d.mold||{}),...m,runner:{...((d.mold||{}).runner||{}),...(m.runner||{})}};if(m.gates==='auto')d.mold.gates=[];if(m.material){m.melt==null&&delete d.mold.melt;m.mold==null&&delete d.mold.mold;}return m.gates==='auto';};
