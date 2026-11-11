@@ -328,3 +328,14 @@ html.a11y-rm #app .pk-gone .pk-obj{opacity:.22;filter:grayscale(1)}
 #app .pk-grow i{width:.42em;height:.42em;border-radius:50%;background:var(--ui-border)}
 #app .pk-grow i:nth-child(2){width:.72em;height:.72em}
 #app .pk-grow i:nth-child(3){width:1.15em;height:1.15em;background:var(--lv)}
+#app{--stage-w:min(920px,100%)}
+body.game-active #app .view.active:not(#menu-view){justify-content:safe center!important}
+#app #life-task-area,#app #quiz-task-area,#app .life-task-area,#app .quiz-task-area{width:var(--stage-w)!important;max-width:var(--stage-w)!important}
+#app #quiz-task-area:not(.pk-mode) #quiz-choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:none}
+#app #quiz-task-area:not(.pk-mode) #quiz-choices>.m-choice[data-say]{width:100%;min-width:0;margin:0!important}
+#app #quiz-task-area:not(.pk-mode) #quiz-choices>.quiz-explain{max-width:none!important;width:100%;box-sizing:border-box}
+#app #quiz-task-area:not(.pk-mode) #quiz-choices>:not([data-say]),#app #quiz-task-area:not(.pk-mode) #quiz-choices>.m-choice[data-say]:nth-child(odd):not(:has(~[data-say])){grid-column:1/-1}
+#app #quiz-choices.pk-grid{max-width:min(640px,100%)}
+#app #quiz-choices.pk-grid .m-choice.pk-tile{min-height:clamp(100px,21dvh,210px)}
+#app #quiz-choices.pk-grid .pk-emoji{font-size:clamp(2.6rem,9dvh,5.25rem)}
+@media (max-width:540px){#app #quiz-task-area:not(.pk-mode) #quiz-choices{grid-template-columns:1fr}}
