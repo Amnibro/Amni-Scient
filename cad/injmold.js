@@ -1,6 +1,6 @@
-import {MATERIALS} from './mold_mats.js';
+import {MATERIALS,matKey} from './mold_mats.js';
 import {amgPcg} from './mold_amg.js';
-export {MATERIALS};
+export {MATERIALS,matKey};
 export const RG=8.314462618,K0=273.15,NZ=12,NL=NZ+1,ZE=Float64Array.from({length:NL},(_,k)=>k/NZ),OM=Float64Array.from({length:NL},(_,k)=>k===0||k===NZ?0.5/NZ:1/NZ),SW=Float64Array.from({length:NL},(_,k)=>(k===0||k===NZ?1:k%2?4:2)/(3*NZ));
 let SL=0;const TABS=new Map(),LS0=-40,LSD=0.02,LSN=4001;
 function crossTab(n,form){const key=form+n;if(TABS.has(key))return TABS.get(key);const t=new Float64Array(LSN);for(let i=0;i<LSN;i++){const u=LS0+i*LSD,f=form==='carreau'?y=>y+(1-n)*Math.log1p(Math.exp(u-y)):y=>Math.exp(y)+Math.exp((1-n)*u+n*y)-1;let lo=-400,hi=0;for(let it=0;it<120;it++){const m=(lo+hi)/2;f(m)>0?hi=m:lo=m;}t[i]=(lo+hi)/2;}TABS.set(key,t);return t;}

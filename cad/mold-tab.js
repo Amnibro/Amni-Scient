@@ -1,15 +1,13 @@
 import {LineSegments2} from './vendor/LineSegments2.js';
 import {LineSegmentsGeometry} from './vendor/LineSegmentsGeometry.js';
 import {LineMaterial} from './vendor/LineMaterial.js';
-import {MATERIALS,MESHLV,runnerSize,pipeDP} from './injmold.js';
+import {MATERIALS,MESHLV,runnerSize,pipeDP,matKey} from './injmold.js';
 const ST={el:null,api:null,res:null,busy:false,prog:'',err:'',show:'fill',t:1,play:false,grp:null,geo:null,stale:false,hooked:false,w:null,seq:0,pend:new Map(),cure:'end',key:'',raf:0,base:null,ov:{weld:true,air:true,gates:true}};
 const CSS='.mo-sum{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;font-size:12.5px;align-items:baseline}.mo-sum i{width:9px;height:9px;border-radius:50%;display:inline-block}.mo-sum .v{font-family:var(--mono);text-align:right;font-size:12px}.mo-sum .n{grid-column:2/4;font-size:11px;color:var(--mut);margin-bottom:5px}.mo-chart{width:100%;height:110px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:block;margin:6px 0}.mo-src{font-size:11.5px;color:var(--mut);margin:4px 0 0 14px;padding:0}.mo-src li{margin:2px 0}.mo-g{display:flex;gap:6px;align-items:center;font-size:12.5px;margin:2px 0}.mo-g .mono{font-family:var(--mono);font-size:11.5px;flex:1}';
 const LVC={ok:'var(--ok)',warn:'var(--warn)',err:'var(--err)',info:'var(--acc)'},TON=8896.443,TONNE=9806.65;
 const isUS=A=>A.units.sys()==='us',nf=(A,v,d)=>A.units.nf(v,d),dual=(A,q,v,d)=>A.units.dual(q,v,d);
 const psi=(A,pa)=>dual(A,'press',pa/1e6,pa<1e6?2:1),degC=(A,c)=>dual(A,'temp',c,0),mm=(A,v)=>dual(A,'len',v),flow=(A,m3s)=>isUS(A)?nf(A,m3s*61023.744,3)+' in³/s ('+nf(A,m3s*1e6,2)+' cm³/s)':nf(A,m3s*1e6,2)+' cm³/s ('+nf(A,m3s*61023.744,3)+' in³/s)',tons=(A,N)=>isUS(A)?nf(A,N/TON,2)+' US tons ('+nf(A,N/TONNE,2)+' t)':nf(A,N/TONNE,2)+' t ('+nf(A,N/TON,2)+' US tons)',sec=(A,s)=>s==null||!isFinite(s)?'—':nf(A,s,s<10?3:1)+' s';
-const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''),KEYS=Object.keys(MATERIALS);
-const AL={polypropylene:'pp',polycarbonate:'pc',acetal:'pom',delrin:'pom',nylon:'pa66',pa:'pa66',polyamide:'pa66',lsr:'lsr50',silicone:'lsr50',siliconerubber:'lsr50'};
-export const matKey=s=>{const q=norm(s);return!q?'pp':MATERIALS[q]?q:AL[q]?AL[q]:KEYS.find(k=>q.startsWith(k))||KEYS.find(k=>norm(MATERIALS[k].name+MATERIALS[k].grade).includes(q))||null;};
+export {matKey};
 const CUST=(({name,grade,src,rep,melt,mold,...o})=>({name:'My grade',source:'',...o}))(MATERIALS.pp);
 export const custMat=cu=>{const l=cu.kind==='lsr';return{maxRate:Infinity,maxStress:Infinity,htc:5000,Tnf:cu.tait?cu.tait.b5-273.15:undefined,Teject:(cu.Tnf??(cu.tait?cu.tait.b5-273.15:110))-10,...cu,name:'Custom material',grade:cu.name||'Custom material',kind:l?'lsr':'thermoplastic',melt:[0,0,l?25:230],mold:[0,0,l?180:50],src:{data:'Entered by you'+(cu.source?': '+cu.source:'')},rep:{}};};
 const custErr=cu=>{const v=cu&&cu.visc;return!v||!['cross-wlf','cm','power','newton'].includes(v.model)?'visc.model must be cross-wlf, cm, power or newton':cu.kind==='lsr'&&!cu.cure?'An LSR needs cure (Kamal) constants':!(cu.rho>0&&cu.cp>0&&cu.k>0)?'rho, cp and k must be positive numbers':cu.kind!=='lsr'&&!isFinite(cu.Tnf??(cu.tait&&cu.tait.b5))?'Give Tnf (no-flow temperature, °C) or Tait data':'';};

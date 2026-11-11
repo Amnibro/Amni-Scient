@@ -1,3 +1,4 @@
+import {POLY} from './poly_lib.js';
 const SRC='Typical room-temperature values from producer datasheets, MatWeb and the ASM Handbook (approximate; confirm with your supplier)',BR='Brittle: compare the largest principal stress with the strength, not von Mises with yield',UD='Orthotropic: stiffness, strength and expansion are along the fibers';
 export const GORDER=['Carbon and alloy steel','Stainless steel','Tool steel','Cast iron','Aluminum','Titanium','Copper alloys','Nickel alloys','Magnesium','Zinc','Refractory metals','Plastics','3D printing','Composites','Ceramics and glass','Wood'];
 const L=(c,r=.4,m=1,kind)=>({kind,color:c,rough:r,metal:m});
@@ -120,8 +121,8 @@ const R=[
 ['pcpei','PEI (Ultem 1000)',3580,.36,1270,105,105,40,.22,1100,56,'pc',{q:0,look:L('#c9862e',.3,0,'plastic')}],
 ['pcpei30','PEI 30% glass (Ultem 2300)',9000,.37,1510,165,165,45,.25,1100,20,'pc',{q:0,brittle:1,look:L('#8a6a3a',.4,0,'plastic')}],
 ['pcpps40','PPS 40% glass (Ryton R-4)',14000,.37,1650,190,190,20,.3,1000,22,'pc',{q:0,brittle:1,look:L('#3d3a36',.45,0,'plastic')}],
-['pcpsu','Polysulfone (Udel)',2480,.37,1240,70,70,25,.26,1000,56,'pc',{q:0,look:L('#e3cf9e',.25,0,'plastic')}],
-['pcppsu','PPSU (Radel R)',2340,.4,1290,70,70,50,.35,1170,56,'pc',{q:0,look:L('#c7a368',.3,0,'plastic')}],
+['pcpsu','Polysulfone (Udel)',2480,.37,1240,70,70,25,.26,1000,56,'pc',{q:0,aka:['PSU','polysulfone','polysulphone','Udel'],look:L('#e3cf9e',.25,0,'plastic')}],
+['pcppsu','PPSU (Radel R)',2340,.4,1290,70,70,50,.35,1170,56,'pc',{q:0,aka:['PPSU','polyphenylsulfone','Radel','Radel R'],look:L('#c7a368',.3,0,'plastic')}],
 ['pcpa6','Nylon 6, cast (dry)',3000,.39,1150,80,80,6,.25,1600,85,'nylon',{q:0,look:L('#efe9d9',.5,0,'plastic')}],
 ['pcpa66','Nylon 6/6 (dry)',3000,.39,1140,82,82,6,.25,1670,80,'nylon',{q:0,look:L('#efe9d9',.5,0,'plastic')}],
 ['pcpa66gf','Nylon 6/6 30% glass (dry)',9500,.35,1360,180,185,6,.3,1500,23,'nylon',{q:0,look:L('#2a2a2a',.5,0,'plastic')}],
@@ -151,4 +152,6 @@ const R=[
 ['cersilica','Fused silica',72000,.17,2200,50,50,60,1.38,740,.55,'',{q:0,brittle:1,look:L('#e9f0f2',.08,0,'ceramic')}],
 ['cerboro','Borosilicate glass (Borofloat 33)',64000,.2,2230,40,40,15,1.2,830,3.3,'',{q:0,brittle:1,look:L('#e6eef0',.06,0,'ceramic')}],
 ['cersoda','Soda-lime glass (annealed)',72000,.22,2500,40,40,2,1,840,9,'',{q:0,brittle:1,look:L('#dfeae6',.06,0,'ceramic')}]]]];
-export const MORE=Object.fromEntries(R.flatMap(([g,rows])=>rows.map(([id,n,E,nu,rho,sy,su,cost,k,cp,cte,like,x={}])=>[id,{n,E,nu,rho,sy,su,cost,k,cp,cte,g,...(like?{like}:{}),...x,src:SRC+(x.brittle?'. '+BR:'')+(x.ort?'. '+UD:'')}])));
+const MORE0=Object.fromEntries(R.flatMap(([g,rows])=>rows.map(([id,n,E,nu,rho,sy,su,cost,k,cp,cte,like,x={}])=>[id,{n,E,nu,rho,sy,su,cost,k,cp,cte,g,...(like?{like}:{}),...x,src:(x.src||SRC)+(x.brittle?'. '+BR:'')+(x.ort?'. '+UD:'')}])));
+for(const p of POLY){if(MORE0[p.id])throw new Error('polymer id collides with an existing material: '+p.id);MORE0[p.id]={...p,src:p.src+(p.brittle?'. '+BR:'')+(p.ort?'. '+UD:'')};}
+export const MORE=MORE0;
