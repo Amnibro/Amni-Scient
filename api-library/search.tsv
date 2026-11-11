@@ -6417,10 +6417,11 @@ hair::bake_part	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake_part	Bak
 hair::bake	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake	Packs collision triangles and grid parameters per body part and allocates distance field buffers for a groom.	int
 hair::cards	function	gfx/hair	/api-library/helium/lib/gfx-hair#cards	Creates a groom from a named hair card mesh in a model, returning its handle or -1 on failure.	pub
 hair::live	function	gfx/hair	/api-library/helium/lib/gfx-hair#live	Returns whether a groom is loaded and visible.	int
-hair::uniforms_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#uniforms_of	Builds the shader uniform block for a groom from its look, camera, sun, and lights.	int
 hair::put_uniform	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_uniform	Uploads a uniform block to the compute stage.	int
-hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Clears a pair of buffers with a compute pass using a mode value.	int
-hair::raster_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#raster_pass	Rasterizes a groom's strands into either the camera buffers or the light shadow buffers.	int
+hair::uniforms_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#uniforms_of	Builds the shader uniform block for a groom from its look, camera, sun, and lights.	int
+hair::light_slices	function	gfx/hair	/api-library/helium/lib/gfx-hair#light_slices	Resizes a groom's light-space buffers to hold n slices, doing nothing if the count is unchanged.	int
+hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Clears two compute buffers for a render pass mode, scaling the light-slice setting when the mode is above 1.	int
+hair::raster_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#raster_pass	Dispatches the strand rasterization compute pass for a groom, using light-space buffers when the mode is above 1.	int
 hair::track	function	gfx/hair	/api-library/helium/lib/gfx-hair#track	Updates a groom's model transform and bone matrices from its followed scene item's animation.	int
 hair::put_mat	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_mat	Random number generator state used for hair style generation, starting at seed 7.	int
 hair::simulate	function	gfx/hair	/api-library/helium/lib/gfx-hair#simulate	Runs one physics step for a groom, including skinning, collision field baking, and optional statistics readback.	int

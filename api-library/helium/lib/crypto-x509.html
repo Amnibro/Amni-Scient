@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/crypto-x509">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/crypto-x509">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=99c39475b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=01fd3fd5b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=99c39475b4'; start({wasm: '/api-library/search.wasm?v=99c39475b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=01fd3fd5b4'; start({wasm: '/api-library/search.wasm?v=01fd3fd5b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>crypto/x509</h1>
 <p class="lib-lede">Parse X.509 certificates and verify certificate chains.</p>
-<p class="lib-meta"><code>import crypto.x509;</code> &middot; <code>crypto::</code> &middot; 23 functions, 2 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he">Source</a></p>
+<p class="lib-meta"><code>import crypto.x509;</code> &middot; <code>crypto::</code> &middot; 23 functions, 2 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#verification-results">Verification Results <span class="n">5</span></a></li>
 <li><a href="#certificate-parsing">Certificate Parsing <span class="n">6</span></a></li>
@@ -117,204 +117,204 @@
 <h3><a href="#X509_OK">X509_OK</a> <i>constant</i></h3>
 <pre>X509_OK := 0</pre>
 <p>Constant for a certificate chain verified successfully, returned by x509_verify when trust, name, and validity checks all pass.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L9">hc/lib/crypto/x509.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L9">hc/lib/crypto/x509.he:9</a>
 </article>
 <article class="sym" id="X509_UNTRUSTED">
 <h3><a href="#X509_UNTRUSTED">X509_UNTRUSTED</a> <i>constant</i></h3>
 <pre>X509_UNTRUSTED := 1</pre>
 <p>Constant for a chain that does not lead to any trusted root certificate, or exceeds the depth limit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L10">hc/lib/crypto/x509.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L10">hc/lib/crypto/x509.he:10</a>
 </article>
 <article class="sym" id="X509_BAD_NAME">
 <h3><a href="#X509_BAD_NAME">X509_BAD_NAME</a> <i>constant</i></h3>
 <pre>X509_BAD_NAME := 2</pre>
 <p>Constant for a chain whose leaf certificate does not match the requested host name or IP address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L11">hc/lib/crypto/x509.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L11">hc/lib/crypto/x509.he:11</a>
 </article>
 <article class="sym" id="X509_EXPIRED">
 <h3><a href="#X509_EXPIRED">X509_EXPIRED</a> <i>constant</i></h3>
 <pre>X509_EXPIRED := 3</pre>
 <p>Constant for a chain that is trusted but contains a certificate outside its validity period.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L12">hc/lib/crypto/x509.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L12">hc/lib/crypto/x509.he:12</a>
 </article>
 <article class="sym" id="X509_BAD">
 <h3><a href="#X509_BAD">X509_BAD</a> <i>constant</i></h3>
 <pre>X509_BAD := 4</pre>
 <p>Constant for a chain rejected as malformed, empty, not valid for servers, or carrying an unrecognized critical extension.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L13">hc/lib/crypto/x509.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L13">hc/lib/crypto/x509.he:13</a>
 </article>
 <h2 id="certificate-parsing">Certificate Parsing <span class="n">6</span></h2>
 <article class="sym" id="KEY_RSA">
 <h3><a href="#KEY_RSA">KEY_RSA</a> <i>constant</i></h3>
 <pre>KEY_RSA := 1</pre>
 <p>Constant identifying an RSA public key in a parsed certificate's key algorithm field.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L14">hc/lib/crypto/x509.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L14">hc/lib/crypto/x509.he:14</a>
 </article>
 <article class="sym" id="KEY_EC">
 <h3><a href="#KEY_EC">KEY_EC</a> <i>constant</i></h3>
 <pre>KEY_EC := 2</pre>
 <p>Constant identifying an elliptic curve public key in a parsed certificate's key algorithm field.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L15">hc/lib/crypto/x509.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L15">hc/lib/crypto/x509.he:15</a>
 </article>
 <article class="sym" id="KEY_ED25519">
 <h3><a href="#KEY_ED25519">KEY_ED25519</a> <i>constant</i></h3>
 <pre>KEY_ED25519 := 3</pre>
 <p>Constant identifying an Ed25519 public key in a parsed certificate's key algorithm field.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L16">hc/lib/crypto/x509.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L16">hc/lib/crypto/x509.he:16</a>
 </article>
 <article class="sym" id="Cert">
 <h3><a href="#Cert">Cert</a> <i>type</i></h3>
 <pre>struct Cert { raw byte[&gt;..] = [], tbs byte[&gt;..] = [], salg byte[&gt;..] = [], sparams byte[&gt;..] = [], sig byte[&gt;..] = [], issuer byte[&gt;..] = [], subject byte[&gt;..] = [], nb int = 0, na int = 0, kalg int = 0, kcurve int = 0, kpub byte[&gt;..] = [], rn byte[&gt;..] = [], re byte[&gt;..] = [], spki byte[&gt;..] = [], ca bool = false, plen int = -1, ku int = -1, server bool = true, dns byte[&gt;..][&gt;..] = [], ips byte[&gt;..][&gt;..] = [], crit bool = false }</pre>
 <p>Parsed X.509 certificate holding signature data, issuer, subject, validity times, public key, and extension fields.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L18">hc/lib/crypto/x509.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L18">hc/lib/crypto/x509.he:18</a>
 </article>
 <article class="sym" id="x509_parse">
 <h3><a href="#x509_parse">x509_parse</a> <i>function</i></h3>
 <pre>x509_parse(d const byte[:]) Cert, bool</pre>
 <p>Parses a DER-encoded X.509 certificate, returning the certificate and false if the encoding is invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L94">hc/lib/crypto/x509.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L94">hc/lib/crypto/x509.he:94</a>
 </article>
 <article class="sym" id="x509_pem">
 <h3><a href="#x509_pem">x509_pem</a> <i>function</i></h3>
 <pre>x509_pem(pem const byte[:]) Cert[&gt;..]</pre>
 <p>Returns all valid certificates found in PEM-encoded text, skipping blocks that fail to decode or parse.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L118">hc/lib/crypto/x509.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L118">hc/lib/crypto/x509.he:118</a>
 </article>
 <h2 id="certificate-verification">Certificate Verification <span class="n">1</span></h2>
 <article class="sym" id="x509_verify">
 <h3><a href="#x509_verify">x509_verify</a> <i>function</i></h3>
 <pre>x509_verify(chain const Cert[:], host const byte[:], now int, roots const Cert[:]) int</pre>
 <p>Verifies a certificate chain against trusted roots for a host at a given time, returning one of the X509_ result codes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L178">hc/lib/crypto/x509.he:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L178">hc/lib/crypto/x509.he:178</a>
 </article>
 <h2 id="certificate-building">Certificate Building <span class="n">1</span></h2>
 <article class="sym" id="x509_self_signed">
 <h3><a href="#x509_self_signed">x509_self_signed</a> <i>function</i></h3>
 <pre>x509_self_signed(name const byte[:], priv const byte[:], from int, days int) byte[&gt;..], bool</pre>
 <p>Builds a self-signed P-256 X.509 certificate for a name or IPv4 address, valid for the given days; false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L205">hc/lib/crypto/x509.he:205</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L205">hc/lib/crypto/x509.he:205</a>
 </article>
 <h2 id="key-encoding">Key Encoding <span class="n">2</span></h2>
 <article class="sym" id="pkcs8_ec">
 <h3><a href="#pkcs8_ec">pkcs8_ec</a> <i>function</i></h3>
 <pre>pkcs8_ec(priv const byte[:]) byte[&gt;..], bool</pre>
 <p>Encodes a P-256 or P-384 private key as PKCS#8 DER, choosing the curve by key length; false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L216">hc/lib/crypto/x509.he:216</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L216">hc/lib/crypto/x509.he:216</a>
 </article>
 <article class="sym" id="pkcs8_ec_parse">
 <h3><a href="#pkcs8_ec_parse">pkcs8_ec_parse</a> <i>function</i></h3>
 <pre>pkcs8_ec_parse(d const byte[:]) byte[&gt;..], int</pre>
 <p>Parses PKCS#8 or SEC1 EC private key DER, returning the raw key bytes and curve id, or 0 if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L221">hc/lib/crypto/x509.he:221</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L221">hc/lib/crypto/x509.he:221</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (18)</summary>
 <article class="sym" id="Der">
 <h3><a href="#Der">Der</a> <i>type</i></h3>
 <pre>struct Der { tag int = -1, i int = 0, s int = 0, n int = 0, e int = 0 }</pre>
 <p>Parsed DER element recording its tag, start offset, content offset, content length, and end offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L17">hc/lib/crypto/x509.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L17">hc/lib/crypto/x509.he:17</a>
 </article>
 <article class="sym" id="der_at">
 <h3><a href="#der_at">der_at</a> <i>function</i></h3>
 <pre>der_at(d const byte[:], i int, lim int) Der</pre>
 <p>Parses one DER element header at an offset within a limit, returning a tag of -1 if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L19">hc/lib/crypto/x509.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L19">hc/lib/crypto/x509.he:19</a>
 </article>
 <article class="sym" id="kids">
 <h3><a href="#kids">kids</a> <i>function</i></h3>
 <pre>kids(d const byte[:], p Der) Der[&gt;..], bool</pre>
 <p>Parses the child DER elements of a parent element, returning them and false if any child is malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L32">hc/lib/crypto/x509.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L32">hc/lib/crypto/x509.he:32</a>
 </article>
 <article class="sym" id="oid_is">
 <h3><a href="#oid_is">oid_is</a> <i>function</i></h3>
 <pre>oid_is(d const byte[:], k Der, hx const byte[:]) bool</pre>
 <p>Checks whether a DER element is an object identifier matching the given hex-encoded bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L39">hc/lib/crypto/x509.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L39">hc/lib/crypto/x509.he:39</a>
 </article>
 <article class="sym" id="civil_days">
 <h3><a href="#civil_days">civil_days</a> <i>function</i></h3>
 <pre>civil_days(y0 int, m int, d int) int</pre>
 <p>Converts a year, month, and day into a count of days since the Unix epoch.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L40">hc/lib/crypto/x509.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L40">hc/lib/crypto/x509.he:40</a>
 </article>
 <article class="sym" id="dig">
 <h3><a href="#dig">dig</a> <i>function</i></h3>
 <pre>dig(d const byte[:], i int, n int) int</pre>
 <p>Reads a fixed number of decimal digits from bytes, returning -1 if any character is not a digit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L43">hc/lib/crypto/x509.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L43">hc/lib/crypto/x509.he:43</a>
 </article>
 <article class="sym" id="der_time">
 <h3><a href="#der_time">der_time</a> <i>function</i></h3>
 <pre>der_time(d const byte[:], k Der) int</pre>
 <p>Converts a DER UTCTime or GeneralizedTime element to Unix seconds, returning -1 if invalid.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L44">hc/lib/crypto/x509.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L44">hc/lib/crypto/x509.he:44</a>
 </article>
 <article class="sym" id="uint_bytes">
 <h3><a href="#uint_bytes">uint_bytes</a> <i>function</i></h3>
 <pre>uint_bytes(d const byte[:], k Der) byte[&gt;..]</pre>
 <p>Returns the bytes of a DER integer with leading zero bytes removed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L50">hc/lib/crypto/x509.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L50">hc/lib/crypto/x509.he:50</a>
 </article>
 <article class="sym" id="spki_parse">
 <h3><a href="#spki_parse">spki_parse</a> <i>function</i></h3>
 <pre>spki_parse(c Cert&amp;, d const byte[:], sp Der) bool</pre>
 <p>Parses a SubjectPublicKeyInfo element into the certificate's key fields, returning false if unsupported or malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L51">hc/lib/crypto/x509.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L51">hc/lib/crypto/x509.he:51</a>
 </article>
 <article class="sym" id="ext_parse">
 <h3><a href="#ext_parse">ext_parse</a> <i>function</i></h3>
 <pre>ext_parse(c Cert&amp;, d const byte[:], ex Der) bool</pre>
 <p>Parses certificate extensions into the certificate's CA, key usage, extended usage, and alternative name fields, returning false if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L66">hc/lib/crypto/x509.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L66">hc/lib/crypto/x509.he:66</a>
 </article>
 <article class="sym" id="alg_hash">
 <h3><a href="#alg_hash">alg_hash</a> <i>function</i></h3>
 <pre>alg_hash(d const byte[:], k Der) int</pre>
 <p>Maps a SHA-2 digest algorithm identifier to its hash constant, returning 0 if unrecognized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L131">hc/lib/crypto/x509.he:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L131">hc/lib/crypto/x509.he:131</a>
 </article>
 <article class="sym" id="pss_kind">
 <h3><a href="#pss_kind">pss_kind</a> <i>function</i></h3>
 <pre>pss_kind(d const byte[:]) int, int, int</pre>
 <p>Extracts the hash, mask generation hash, and salt length from RSA-PSS signature parameters, returning zeros if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L132">hc/lib/crypto/x509.he:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L132">hc/lib/crypto/x509.he:132</a>
 </article>
 <article class="sym" id="sig_ok">
 <h3><a href="#sig_ok">sig_ok</a> <i>function</i></h3>
 <pre>sig_ok(salg const byte[:], sparams const byte[:], tbs const byte[:], sig const byte[:], k const Cert&amp;) bool</pre>
 <p>Checks a signature over signed data using the signature algorithm and the given certificate's public key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L149">hc/lib/crypto/x509.he:149</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L149">hc/lib/crypto/x509.he:149</a>
 </article>
 <article class="sym" id="signed_by">
 <h3><a href="#signed_by">signed_by</a> <i>function</i></h3>
 <pre>signed_by(c const Cert&amp;, k const Cert&amp;) bool</pre>
 <p>Returns whether a certificate's issuer matches another certificate's subject and its signature verifies with that certificate's key.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L160">hc/lib/crypto/x509.he:160</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L160">hc/lib/crypto/x509.he:160</a>
 </article>
 <article class="sym" id="ipv4">
 <h3><a href="#ipv4">ipv4</a> <i>function</i></h3>
 <pre>ipv4(h const byte[:]) byte[&gt;..]</pre>
 <p>Parses a dotted-decimal IPv4 address into four bytes, returning an empty array if malformed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L161">hc/lib/crypto/x509.he:161</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L161">hc/lib/crypto/x509.he:161</a>
 </article>
 <article class="sym" id="name_ok">
 <h3><a href="#name_ok">name_ok</a> <i>function</i></h3>
 <pre>name_ok(c const Cert&amp;, host0 const byte[:]) bool</pre>
 <p>Returns whether a certificate's DNS or IP alternative names match a host, with case-insensitive and single-label wildcard matching.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L167">hc/lib/crypto/x509.he:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L167">hc/lib/crypto/x509.he:167</a>
 </article>
 <article class="sym" id="der_tlv">
 <h3><a href="#der_tlv">der_tlv</a> <i>function</i></h3>
 <pre>der_tlv(tag int, body const byte[:]) byte[&gt;..]</pre>
 <p>Encodes a DER tag-length-value element from a tag and body, using the shortest length form up to three length bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L194">hc/lib/crypto/x509.he:194</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L194">hc/lib/crypto/x509.he:194</a>
 </article>
 <article class="sym" id="x509_date">
 <h3><a href="#x509_date">x509_date</a> <i>function</i></h3>
 <pre>x509_date(t int) byte[&gt;..]</pre>
 <p>Encodes a Unix timestamp in seconds as a DER UTCTime or GeneralizedTime value, choosing by year.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/crypto/x509.he#L199">hc/lib/crypto/x509.he:199</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/crypto/x509.he#L199">hc/lib/crypto/x509.he:199</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -326,7 +326,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1807</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1808</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
@@ -388,7 +388,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-10">2026-11-10</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-11">2026-11-11</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>

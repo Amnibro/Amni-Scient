@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-touch">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-touch">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=99c39475b4">
+<link rel="stylesheet" href="/api-library/lib.css?v=01fd3fd5b4">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=99c39475b4'; start({wasm: '/api-library/search.wasm?v=99c39475b4'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=01fd3fd5b4'; start({wasm: '/api-library/search.wasm?v=01fd3fd5b4'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/touch</h1>
 <p class="lib-lede">Turn raw touch input into gestures.</p>
-<p class="lib-meta"><code>import gfx.touch;</code> &middot; <code>touch::</code> &middot; 6 functions, 1 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.touch;</code> &middot; <code>touch::</code> &middot; 6 functions, 1 types, 9 constants &middot; <a href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#gesture-kinds">Gesture Kinds <span class="n">5</span></a></li>
 <li><a href="#recognition-tuning">Recognition Tuning <span class="n">2</span></a></li>
@@ -114,99 +114,99 @@
 <h3><a href="#TAP">TAP</a> <i>constant</i></h3>
 <pre>let TAP = 1; let DOUBLE_TAP = 2; let LONG_PRESS = 3; let PAN = 4; let PAN_END = 5; let PINCH = 6; let PINCH_END = 7; let ROTATE = 8; let ROTATE_END = 9; let SWIPE = 10</pre>
 <p>Constants identifying the gesture kind reported in a Gesture, such as tap, long press, pan, pinch, rotate and swipe.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L5">hc/lib/gfx/touch.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L5">hc/lib/gfx/touch.amni:5</a>
 </article>
 <article class="sym" id="LEFT">
 <h3><a href="#LEFT">LEFT</a> <i>constant</i></h3>
 <pre>let LEFT = 0; let UP = 1; let RIGHT = 2; let DOWN = 3</pre>
 <p>Constants for the direction of a swipe gesture: left, up, right and down.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L6">hc/lib/gfx/touch.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L6">hc/lib/gfx/touch.amni:6</a>
 </article>
 <article class="sym" id="Gesture">
 <h3><a href="#Gesture">Gesture</a> <i>type</i></h3>
 <pre>struct Gesture { kind int, x f32, y f32, dx f32, dy f32, scale f32, angle f32, dir int }</pre>
 <p>A recognized gesture with its kind, position, movement delta, pinch scale, rotation angle and swipe direction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L7">hc/lib/gfx/touch.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L7">hc/lib/gfx/touch.amni:7</a>
 </article>
 <article class="sym" id="take">
 <h3><a href="#take">take</a> <i>function</i></h3>
 <pre>take(out Gesture[&gt;..]&amp;)</pre>
 <p>Moves all queued gestures into the output array, replacing its contents, and clears the internal queue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L15">hc/lib/gfx/touch.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L15">hc/lib/gfx/touch.amni:15</a>
 </article>
 <article class="sym" id="frame">
 <h3><a href="#frame">frame</a> <i>function</i></h3>
 <pre>frame(t real, fs gfx::Finger[&gt;..]&amp;)</pre>
 <p>Processes one frame of finger data at time t, updating recognizer state and queuing any recognized gestures.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L20">hc/lib/gfx/touch.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L20">hc/lib/gfx/touch.amni:20</a>
 </article>
 <h2 id="recognition-tuning">Recognition Tuning <span class="n">2</span></h2>
 <article class="sym" id="tap_time">
 <h3><a href="#tap_time">tap_time</a> <i>constant</i></h3>
 <pre>var tap_time real = 0.3; var tap_slop f32 = 10.0; var double_gap real = 0.3; var double_slop f32 = 30.0; var long_time real = 0.5; var swipe_speed f32 = 800.0; var pinch_min f32 = 1.08; var rotate_min f32 = 0.13962634</pre>
 <p>Tunable thresholds for gesture recognition: tap and long-press times, movement slop distances, swipe speed, and pinch and rotate minimums.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L8">hc/lib/gfx/touch.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L8">hc/lib/gfx/touch.amni:8</a>
 </article>
 <article class="sym" id="reset">
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears queued gestures and returns the recognizer to its idle state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L19">hc/lib/gfx/touch.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L19">hc/lib/gfx/touch.amni:19</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="NONE">
 <h3><a href="#NONE">NONE</a> <i>constant</i></h3>
 <pre>let NONE = 0; let MAYBE = 1; let PANNING = 2; let PINCHING = 3; let ROTATING = 4; let WAIT = 5</pre>
 <p>Internal recognizer state constants for idle, undecided, panning, pinching, rotating and waiting states.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L9">hc/lib/gfx/touch.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L9">hc/lib/gfx/touch.amni:9</a>
 </article>
 <article class="sym" id="OUT">
 <h3><a href="#OUT">OUT</a> <i>constant</i></h3>
 <pre>var OUT Gesture[&gt;..] = []</pre>
 <p>Internal queue of gestures recognized so far and not yet taken by the caller.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L10">hc/lib/gfx/touch.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L10">hc/lib/gfx/touch.amni:10</a>
 </article>
 <article class="sym" id="ST">
 <h3><a href="#ST">ST</a> <i>constant</i></h3>
 <pre>var ST = 0; var T0 = 0.0; var MAXN = 0; var PREVN = 0; var ID0 = 0; var SX f32 = 0.0; var SY f32 = 0.0; var LX f32 = 0.0; var LY f32 = 0.0</pre>
 <p>Internal recognizer state tracking the current touch state, start time, finger count, and start and last positions.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L11">hc/lib/gfx/touch.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L11">hc/lib/gfx/touch.amni:11</a>
 </article>
 <article class="sym" id="IA">
 <h3><a href="#IA">IA</a> <i>constant</i></h3>
 <pre>var IA = 0; var IB = 0; var D0 f32 = 0.0; var A0 f32 = 0.0; var ANG f32 = 0.0; var PA f32 = 0.0; var SC f32 = 1.0; var TWO = false</pre>
 <p>Internal state tracking the two-finger pinch and rotate baseline distance, angles, accumulated rotation and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L12">hc/lib/gfx/touch.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L12">hc/lib/gfx/touch.amni:12</a>
 </article>
 <article class="sym" id="HT">
 <h3><a href="#HT">HT</a> <i>constant</i></h3>
 <pre>var HT real[&gt;..] = []; var HX f32[&gt;..] = []; var HY f32[&gt;..] = []</pre>
 <p>Internal history buffers of recent times and positions of the primary finger, used for swipe detection.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L13">hc/lib/gfx/touch.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L13">hc/lib/gfx/touch.amni:13</a>
 </article>
 <article class="sym" id="PEND">
 <h3><a href="#PEND">PEND</a> <i>constant</i></h3>
 <pre>var PEND = false; var PT = 0.0; var PX f32 = 0.0; var PY f32 = 0.0</pre>
 <p>Internal state holding a tap awaiting confirmation as a possible double tap, with its time and position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L14">hc/lib/gfx/touch.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L14">hc/lib/gfx/touch.amni:14</a>
 </article>
 <article class="sym" id="emit">
 <h3><a href="#emit">emit</a> <i>function</i></h3>
 <pre>emit(k int, x f32, y f32, dx f32, dy f32, s f32, a f32, d int)</pre>
 <p>Appends a gesture with the given kind, position, delta, scale, angle and direction to the internal queue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L16">hc/lib/gfx/touch.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L16">hc/lib/gfx/touch.amni:16</a>
 </article>
 <article class="sym" id="find">
 <h3><a href="#find">find</a> <i>function</i></h3>
 <pre>find(fs gfx::Finger[&gt;..]&amp;, id int) int</pre>
 <p>Returns the index of the finger with the given id in the list, or -1 if absent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L17">hc/lib/gfx/touch.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L17">hc/lib/gfx/touch.amni:17</a>
 </article>
 <article class="sym" id="hyp">
 <h3><a href="#hyp">hyp</a> <i>function</i></h3>
 <pre>hyp(x f32, y f32) f32</pre>
 <p>Returns the Euclidean length of the vector given by x and y.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/99c3947406360626419b9a39f63f32ff8f800800/hc/lib/gfx/touch.amni#L18">hc/lib/gfx/touch.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/01fd3fd6a713cc37ffbffd0742ec5b8a2845a116/hc/lib/gfx/touch.amni#L18">hc/lib/gfx/touch.amni:18</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -218,7 +218,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1807</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1808</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a><ul>
 <li><a href="/api-library/helium/lib/ui">ui</a></li>
 <li><a href="/api-library/helium/lib/gfx-hud">gfx/hud</a></li>
@@ -273,7 +273,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-10">2026-11-10</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-11">2026-11-11</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>
