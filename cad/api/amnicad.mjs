@@ -43,8 +43,14 @@ const HELP=`Amni-CAD headless API (included with Amni-CAD Pro)
   amnicad token                    print the local API token
   amnicad run <job.json> [--out <file>]
                                    run one job without a server; job.op is build, export,
-                                   stress, flow, nonlinear, quote, dxf, toolpath, art
-                                   (game-ready GLB + LODs from a sculpt) or review
+                                   stress, flow (external or internal), nonlinear, quote, dxf,
+                                   toolpath, mold (injection fill/pack), tooling (mold, die-cast
+                                   or pattern design), die (stamping, steel rule, extrusion,
+                                   forging), cutter, cutter/toolpath, cutter/profiles,
+                                   gcode/simulate, measure, optimize, drawing (PDF, SVG or
+                                   DXF sheets), assembly (asm ops, interference, mass, BOM,
+                                   DOF, motion, drawing, quote, STEP), art (game-ready GLB +
+                                   LODs from a sculpt) or review
   amnicad model status             whether a CAD-trained pack is released (it is not, until a signed manifest exists)
   amnicad model fetch [cad|bonsai] [--manifest file] [--out file]
                                    native installer. Refuses while the pack is unreleased. The browser does not install it.

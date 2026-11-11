@@ -46,3 +46,4 @@ export function measure(body,K,a,b){
 export function run({body,K},args){
   const a=args&&args.a,b=args&&args.b;if(!a)throw new Error('measure needs a');return measure(body,K,a,b);
 }
+export const report=(c,a)=>{const r=run(c,a),i=c.doc&&c.doc.units==='in';return{units:i?'in':'mm',...r,...(r.min_distance!=null?{min_distance_mm:+(r.min_distance*(i?25.4:1)).toFixed(7)}:{})};};
