@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-space">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-space">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=fdc62ad4c8">
+<link rel="stylesheet" href="/api-library/lib.css?v=bedc7ab4c8">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=fdc62ad4c8'; start({wasm: '/api-library/search.wasm?v=fdc62ad4c8'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=bedc7ab4c8'; start({wasm: '/api-library/search.wasm?v=bedc7ab4c8'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/space</h1>
 <p class="lib-lede">1D and 2D blend spaces that turn values such as speed into weights over sample clips.</p>
-<p class="lib-meta"><code>import anim.space;</code> &middot; <code>anim::</code> &middot; 7 functions, 1 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.space;</code> &middot; <code>anim::</code> &middot; 7 functions, 1 types, 2 constants &middot; <a href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/space: 1D and 2D blend spaces. A blend space turns one or two
 parameters (e.g. speed, or velocity x/z) into weights over sample clips.
  1D: samples sorted on x; piecewise-linear weights between neighbours.
@@ -122,7 +122,7 @@ parameters (e.g. speed, or velocity x/z) into weights over sample clips.
 <h3><a href="#SPACE_MAX">SPACE_MAX</a> <i>constant</i></h3>
 <pre>let SPACE_MAX = 16</pre>
 <p>Constant giving the maximum number of sample clips a blend space can hold.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L15">hc/lib/anim/space.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L15">hc/lib/anim/space.amni:15</a>
 </article>
 <article class="sym" id="Space">
 <h3><a href="#Space">Space</a> <i>type</i></h3>
@@ -135,60 +135,60 @@ parameters (e.g. speed, or velocity x/z) into weights over sample clips.
 	rate_min f32, rate_max f32,
 }</pre>
 <p>Blend space holding sample clips and their parameter positions, in either 1D or 2D form, with playback rate matching options.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L18">hc/lib/anim/space.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L18">hc/lib/anim/space.amni:18</a>
 </article>
 <article class="sym" id="space1d">
 <h3><a href="#space1d">space1d</a> <i>function</i></h3>
 <pre>space1d() Space</pre>
 <p>Returns an empty one-dimensional blend space with default playback rate limits of 0.5 to 2.5.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L26">hc/lib/anim/space.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L26">hc/lib/anim/space.amni:26</a>
 </article>
 <article class="sym" id="space2d">
 <h3><a href="#space2d">space2d</a> <i>function</i></h3>
 <pre>space2d() Space</pre>
 <p>Returns an empty two-dimensional blend space with default playback rate limits of 0.5 to 2.5.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L27">hc/lib/anim/space.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L27">hc/lib/anim/space.amni:27</a>
 </article>
 <article class="sym" id="space_add">
 <h3><a href="#space_add">space_add</a> <i>function</i></h3>
 <pre>space_add(s Space&amp;, clip int, x f32, y f32 = 0.0)</pre>
 <p>Adds a sample clip at position x, and y for 2D spaces, asserting the space is not full.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L28">hc/lib/anim/space.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L28">hc/lib/anim/space.amni:28</a>
 </article>
 <article class="sym" id="space_build">
 <h3><a href="#space_build">space_build</a> <i>function</i></h3>
 <pre>space_build(s Space&amp;)</pre>
 <p>Prepares a blend space for weighting by sorting 1D samples on x or triangulating 2D samples.</p>
 <p class="note">Sorts 1D samples by x; triangulates 2D samples.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L34">hc/lib/anim/space.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L34">hc/lib/anim/space.amni:34</a>
 </article>
 <article class="sym" id="space_weights">
 <h3><a href="#space_weights">space_weights</a> <i>function</i></h3>
 <pre>space_weights(s Space&amp;, x f32, y f32, w f32[16]&amp;)</pre>
 <p>Fills per-sample weights summing to 1 for the given parameter values, zeroing all others.</p>
 <p class="note">Weights per sample (w[i] for sample i), summing to 1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L122">hc/lib/anim/space.amni:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L122">hc/lib/anim/space.amni:122</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (3)</summary>
 <article class="sym" id="SPACE_TRI">
 <h3><a href="#SPACE_TRI">SPACE_TRI</a> <i>constant</i></h3>
 <pre>let SPACE_TRI = 48</pre>
 <p>Constant giving the capacity for triangles produced by 2D triangulation of blend space samples.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L16">hc/lib/anim/space.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L16">hc/lib/anim/space.amni:16</a>
 </article>
 <article class="sym" id="in_circle">
 <h3><a href="#in_circle">in_circle</a> <i>function</i></h3>
 <pre>in_circle(ax f32, ay f32, bx f32, by f32, cx f32, cy f32, px f32, py f32) bool</pre>
 <p>Tests whether a point lies strictly inside the circumcircle of three points, regardless of their winding order.</p>
 <p class="note">Circumcircle test: is (px, py) strictly inside the circle through a, b, c?</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L51">hc/lib/anim/space.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L51">hc/lib/anim/space.amni:51</a>
 </article>
 <article class="sym" id="delaunay">
 <h3><a href="#delaunay">delaunay</a> <i>function</i></h3>
 <pre>delaunay(s Space&amp;)</pre>
 <p>Builds the Delaunay triangulation of a 2D space's samples using Bowyer-Watson insertion, discarding degenerate triangles.</p>
 <p class="note">Bowyer-Watson: start from a super-triangle, insert each point, remove the triangles whose circumcircle contains it, re-fan the hole's boundary.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/fdc62ad4132e5d66df444df2a8fa968d72fe2db5/hc/lib/anim/space.amni#L64">hc/lib/anim/space.amni:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/bedc7ab0a8b8c684a14d6a4d3135c29a9e26f576/hc/lib/anim/space.amni#L64">hc/lib/anim/space.amni:64</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -200,7 +200,7 @@ parameters (e.g. speed, or velocity x/z) into weights over sample clips.
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1812</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1814</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a><ul>
