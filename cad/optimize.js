@@ -1,4 +1,5 @@
 import * as FZ from './freeze.js';
+import {maxOf} from './minmax.js';
 export const BUDGET={quick:15,balanced:40,thorough:90},QUICK_RES=8000,TOL=1e-9;
 export const METRICS={mass:{n:'Mass',q:'mass'},volume:{n:'Volume',q:'vol'},size:{n:'Largest dimension',q:'len'},stress:{n:'Peak stress',q:'stress',need:'static'},safety:{n:'Safety factor',need:'static'},disp:{n:'Max displacement',q:'len',need:'static'},freq:{n:'First natural frequency',q:'freq',need:'modal'},temp:{n:'Max temperature',q:'temp',need:'thermal'},cd:{n:'Drag coefficient Cd',need:'flow'},drag:{n:'Drag force',q:'force',need:'flow'},price:{n:'Unit price',u:'USD',need:'quote'},machine:{n:'Machine time',u:'min',need:'quote'},cam:{n:'CAM cycle time',u:'min',need:'cam'}};
 export const PRESETS={lighter:{n:'Lighter while strong',thr:'safety',d:2,g:t=>({obj:{m:'mass',s:'min'},cons:[{m:'safety',op:'>=',v:t}]})},stiffer:{n:'Stiffer at the same mass',g:()=>({obj:{m:'disp',s:'min'},cons:[{m:'mass',op:'<=',v:'current'}]})},drag:{n:'Lower drag, keep the volume',g:()=>({obj:{m:'cd',s:'min'},cons:[{m:'volume',op:'=',v:'current',tol:0.02}]})},cheaper:{n:'Cheaper to make',thr:'safety',d:2,g:(t,ok)=>({obj:{m:'price',s:'min'},cons:ok?[{m:'safety',op:'>=',v:t}]:[]})},frequency:{n:'Raise the first frequency',thr:'freq',d:100,g:t=>({obj:{m:'mass',s:'min'},cons:[{m:'freq',op:'>=',v:t}]})},target_mass:{n:'Hit a target mass',thr:'mass',d:null,g:t=>({obj:{m:'mass',s:'target',v:t},cons:[]})},custom:{n:'Custom goal',g:()=>null}};
@@ -16,7 +17,7 @@ export async function minimize(f,V,o={}){
     let d=o.step||0.2,last=null;
     for(let round=0;;round++){const b=best.u,S=[{u:b,r:best}],tol=o.tol||2e-3;let sp=1;since=0;
       for(let i=0;i<n;i++){const u=[...b];u[i]=b[i]+d>1?b[i]-d:b[i]+d;S.push({u,r:await ev(u)});}
-      for(;;){S.sort((p,s)=>cmp(p.r,s.r));sp=Math.max(...S.slice(1).map(s=>Math.max(...s.u.map((v,i)=>Math.abs(v-S[0].u[i])))));
+      for(;;){S.sort((p,s)=>cmp(p.r,s.r));sp=maxOf(S.slice(1).map(s=>maxOf(s.u.map((v,i)=>Math.abs(v-S[0].u[i])))));
         if(sp<tol||since>Math.max(12,4*n)||S.every(s=>key(s.r.x)===key(S[0].r.x)))break;
         const w=S[n],c=V.map((_,i)=>S.slice(0,n).reduce((a,s)=>a+s.u[i],0)/n),pt=t=>c.map((v,i)=>cl(v+t*(w.u[i]-v))),xr=pt(-1),rr=await ev(xr);
         if(cmp(rr,S[0].r)<0){const xe=pt(-2),re=await ev(xe);S[n]=cmp(re,rr)<0?{u:xe,r:re}:{u:xr,r:rr};}
@@ -49,7 +50,7 @@ export function studyGap(API,need){const s=API.doc.sim||{},F=x=>x&&API.faceIdsFo
   return need.has('static')&&!(sup.some(F)&&((s.loads||[]).some(F)||s.gravity))?{tab:'sim',msg:'This goal needs a stress study. Add at least one support and one load in the Stress tab, then start again.'}:need.has('thermal')&&![...(s.temps||[]),...(s.conv||[])].some(F)?{tab:'sim',msg:'This goal needs a heat study. Add a fixed temperature or a convection face in the Stress tab (Heat), then start again.'}:need.has('flow')&&API.flowCfg&&API.flowCfg.mode==='internal'?{tab:'flow',msg:'Drag goals need the external flow (wind tunnel) mode. Switch the Flow tab to external, then start again.'}:null;}
 const wkey=w=>w.id+'|'+(w.field||w.msg);
 async function measure(API,C,doc){const S=API.S,U=API.units;await API.trialDoc(doc);const m=S.mesh;if(C.halt())throw{stop:'stopped'};if(!m||S.errors.length>C.errs||(m.props.nSolids||1)>C.solids||!(m.props.volume>0)||(S.warnings||[]).some(w=>!C.warn.has(wkey(w))))return null;
-  const mat=API.MATS[doc.material]||API.MATS.al6061,p=m.props,b=p.bbox,M={volume:U.volMM3(p.volume,doc),mass:U.massKg(p.volume,doc,mat.rho),size:Math.max(...[0,1,2].map(i=>b.max[i]-b.min[i]))*U.mmPer(doc)};
+  const mat=API.MATS[doc.material]||API.MATS.al6061,p=m.props,b=p.bbox,M={volume:U.volMM3(p.volume,doc),mass:U.massKg(p.volume,doc,mat.rho),size:maxOf([0,1,2].map(i=>b.max[i]-b.min[i]))*U.mmPer(doc)};
   for(const t of['static','modal','thermal'])if(C.need.has(t)){doc.sim=doc.sim||{};doc.sim.type=t;doc.sim.res=QUICK_RES;API.setResults({lastFea:null});await API.runFea();const r=S.lastFea&&S.fea&&S.fea.r;if(!r)return null;t==='static'?Object.assign(M,{safety:mat.sy/Math.max(r.vmP99,1e-9),stress:r.vmP99,disp:r.uMax}):t==='modal'?M.freq=r.modes&&r.modes[0]&&r.modes[0].f:M.temp=r.Tmax;}
   if(C.need.has('flow')){API.flowCfg.res=0;API.setResults({lastFlow:null});await API.runFlow();if(C.halt())throw{stop:'stopped'};const r=S.lastFlow;if(!r)return null;Object.assign(M,{cd:r.Cd,drag:r.drag_N});}
   if(C.need.has('quote')){const r=await API.plugin('./mfg_kernel.js','quote',{req:{qty:C.qty||1,process:'auto'},shop:C.shop,mat:doc.material}),L=r.res.quotes||[],q=r.res.ok&&(L.find(x=>x.process===r.res.best&&x.ok)||L.find(x=>x.ok));if(!q)return null;Object.assign(M,{price:q.unit,machine:q.time_s/60});}

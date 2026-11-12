@@ -1,4 +1,5 @@
 import {add,sub,mul,dot,cross,len,qmul,qconj,qrot,xf,inv} from './qmath.js';
+import {pushAll} from './minmax.js';
 export const MECH={hinge:1,slider:1,gear:1,rack:1,screw:1,cam:1,universal:1,path:1,limit_distance:1,limit_angle:1};
 export const MECHLABEL={hinge:'Hinge',slider:'Slider',gear:'Gear',rack:'Rack and pinion',screw:'Screw',cam:'Cam follower',universal:'Universal joint',path:'Path',limit_distance:'Limit distance',limit_angle:'Limit angle'};
 export const KEEP=['q0','q0a','q0b','s0','pb0','sg','sg0'];
@@ -28,7 +29,7 @@ export function mech(m,E,L,X={}){const t=m.type,{a,b}=E,v=X.drive&&X.drive[m.id]
   if(t==='rack'){if(a.k!=='line'||b.k!=='line')bad('Rack and pinion needs the pinion axis (round face) and a straight edge along the rack.');const c=jc(m,E,X),rr=+m.r||a.r||1;return[(c.x-(m.sg||1)*rr*c.ta)/L];}
   if(t==='universal'){if(a.k!=='line'||b.k!=='line')bad('Universal joint needs the axis of each shaft.');const c=jc(m,E,X),cb=dot(a.d,b.d),s2=cb<0?-1:1,F=x=>Math.atan2(Math.abs(cb)*Math.sin(x),Math.cos(x)),ph=rad(+m.phase||0),pred=s2*(F(c.ta+ph)-F(ph));return[dot(sub(b.p,a.p),cross(a.d,b.d))/(L*L),wrap(c.tb-pred)];}
   if(t==='cam'){const cam=X.R&&X.R.a&&X.R.a.e;if(!cam||!cam.prof)bad('Cam follower needs the cam outline (pick the cam bore or its axis) and a point or ball on the follower.');const lp=xf(inv(E.Pa),b.p),rel=sub(lp,cam.p),rv=sub(rel,mul(cam.d,dot(rel,cam.d))),rho=len(rv),ph=Math.atan2(dot(rv,cam.prof.w),dot(rv,cam.prof.u));return[(rho-camR(cam.prof,ph)-(+m.rr||0))/L];}
-  if(t==='path'){if(!a.pts)bad('Path needs an edge on the first part as the path.');if(b.k==='plane')bad('Path needs a point, vertex, ball or axis on the second part.');const P=a.pts,q=dr?pathAt(P,+v):pathNear(P,b.p),r=[...mul(sub(b.p,q.p),1/L)];if(m.tang&&b.k==='line')r.push(...cross(b.d,q.t));lim&&r.push(rl(pathNear(P,b.p).u));return r;}
+  if(t==='path'){if(!a.pts)bad('Path needs an edge on the first part as the path.');if(b.k==='plane')bad('Path needs a point, vertex, ball or axis on the second part.');const P=a.pts,q=dr?pathAt(P,+v):pathNear(P,b.p),r=[...mul(sub(b.p,q.p),1/L)];if(m.tang&&b.k==='line')pushAll(r,cross(b.d,q.t));lim&&r.push(rl(pathNear(P,b.p).u));return r;}
   let A=a,B=b;if(RKO[A.k]>RKO[B.k])[A,B]=[B,A];
   if(t==='limit_distance'){const dl=(x,y)=>len(cross(sub(y.p,x.p),x.d)),d=A.k==='plane'?dot(sub(B.p,A.p),A.n):A.k==='line'&&B.k!=='plane'?dl(A,B):len(sub(A.p,B.p));return[rl(d)/L];}
   const x=DIR(A),y=DIR(B);if(!x||!y)bad('Limit angle needs flat faces, straight edges or axes.');return[rl(Math.atan2(len(cross(x,y)),dot(x,y)),Math.PI/180)];}

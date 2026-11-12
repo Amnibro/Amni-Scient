@@ -1,4 +1,5 @@
 import {GEO,chaoGLB} from './creature.js';
+import {maxOf,pushAll} from './minmax.js';
 const {G0,fin,sph,tubeG,vnorm,sub,add,mul,len,nrm,crs,dot,lerp}=GEO,TAU=2*Math.PI,Y=(x,y,z)=>[x,z,-y];
 export const SW=[['leaf_dark',[44,122,48]],['leaf',[74,170,60]],['leaf_light',[132,206,84]],['moss',[96,164,64]],['trunk',[170,114,66]],['trunk_dark',[122,80,46]],['wood',[218,154,74]],['wood_dark',[164,102,50]],
  ['straw',[234,184,92]],['straw_dark',[196,142,62]],['cream',[250,238,210]],['marble',[242,240,234]],['gold',[238,188,66]],['gold_dark',[192,142,42]],['stone',[152,152,158]],['stone_light',[192,192,198]],
@@ -17,11 +18,11 @@ const ball=(g,c,o,r,lv,uvf,res,th=115)=>{const u=nrm(crs(Math.abs(o[2])<.9?[0,0,
 function canopy(g,P,core,lv,uvf,res,keep,bend=.5){const v0=g.p.length/3,E=d=>add(core.c,d.map((v,i)=>v*core.s[i]));core.s&&sph(g,R3(lv,[3,3,4]),R3(lv,[7,7,10]),180,E,d=>uvf(E(d),d));for(const q of lv===0?P.filter((q,i)=>i%Math.ceil(P.length/keep)===0):P)ball(g,q.c,nrm(q.o),q.r,lv,uvf,res);(g.bend=g.bend||[]).push([v0,g.p.length/3,core.c,bend]);}
 function orient(g,j0){const c=[0,0,0],n=(g.i.length-j0);let vol=0;const P=k=>[g.p[3*k],g.p[3*k+1],g.p[3*k+2]];for(let t=j0;t<g.i.length;t++)for(let a=0;a<3;a++)c[a]+=g.p[3*g.i[t]+a]/n;for(let t=j0;t<g.i.length;t+=3)vol+=dot(sub(P(g.i[t]),c),crs(sub(P(g.i[t+1]),c),sub(P(g.i[t+2]),c)));if(vol<0)for(let t=j0;t<g.i.length;t+=3){const x=g.i[t+1];g.i[t+1]=g.i[t+2];g.i[t+2]=x;}}
 function slab(g,O,y0,y1,uv,bv=.012){const j0=g.i.length,n=O.length,c=O.reduce((a,p)=>[a[0]+p[0]/n,a[1]+p[1]/n],[0,0]),ins=(p,k)=>{const d=[p[0]-c[0],p[1]-c[1]],l=Math.hypot(...d)||1;return[p[0]-d[0]/l*k,p[1]-d[1]/l*k];},R=[[O.map(p=>ins(p,bv)),y0],[O,y0+bv],[O,y1-bv],[O.map(p=>ins(p,bv)),y1]],b=g.p.length/3;
-  for(const[Q,y]of R)for(const q of Q){g.p.push(q[0],y,q[1]);g.t.push(...U(uv));}for(let r=0;r<3;r++)for(let i=0;i<n;i++){const a=b+r*n+i,a2=b+r*n+(i+1)%n;g.i.push(a,a2,a2+n,a,a2+n,a+n);}
-  for(const[r,y]of[[0,y0],[3,y1]]){const f=g.p.length/3;g.p.push(c[0],y,c[1]);g.t.push(...U(uv));const s=g.p.length/3;for(const q of R[r][0]){g.p.push(q[0],y,q[1]);g.t.push(...U(uv));}for(let i=0;i<n;i++)r?g.i.push(f,s+i,s+(i+1)%n):g.i.push(f,s+(i+1)%n,s+i);}orient(g,j0);}
+  for(const[Q,y]of R)for(const q of Q){g.p.push(q[0],y,q[1]);pushAll(g.t,U(uv));}for(let r=0;r<3;r++)for(let i=0;i<n;i++){const a=b+r*n+i,a2=b+r*n+(i+1)%n;g.i.push(a,a2,a2+n,a,a2+n,a+n);}
+  for(const[r,y]of[[0,y0],[3,y1]]){const f=g.p.length/3;g.p.push(c[0],y,c[1]);pushAll(g.t,U(uv));const s=g.p.length/3;for(const q of R[r][0]){g.p.push(q[0],y,q[1]);pushAll(g.t,U(uv));}for(let i=0;i<n;i++)r?g.i.push(f,s+i,s+(i+1)%n):g.i.push(f,s+(i+1)%n,s+i);}orient(g,j0);}
 const cap=(g,surf,th,lv,uv,res,wav=.18,lob=5,lift=1.015)=>sph(g,res[lv][0],res[lv][1],th,d=>{const t=Math.acos(Math.max(-1,Math.min(1,d[2]))),ph=Math.atan2(d[1],d[0]),t2=t*(1+wav*Math.sin(lob*ph)),sn=Math.sin(t2);return surf([sn*Math.cos(ph),sn*Math.sin(ph),Math.cos(t2)],lift);},()=>U(uv));
 function blade(g,b,dir,side,ln,w,lv,uv='leaf_light',vein='leaf',cup=.25){const nl=R3(lv,[1,3,7]),nw=R3(lv,[1,1,3]),up=nrm(crs(side,dir)),th=.003,base=g.p.length/3,P=(s,t,sg)=>{const ww=w*Math.max(.05,1-Math.abs(2*Math.min(1,s*1.04)-1)**2.2)**.55,q=add(add(b,mul(dir,s*ln)),mul(side,t*ww));return add(q,mul(up,cup*ww*t*t+sg*th*(1-Math.abs(t))*(1-s)-.03*ww*Math.max(0,1-Math.abs(t)*nw)**7));};
-  const id=(si,ti,sg)=>base+((sg>0?0:1)*(nl+1)*(2*nw+1))+si*(2*nw+1)+ti;for(const sg of[1,-1])for(let si=0;si<=nl;si++)for(let ti=0;ti<=2*nw;ti++){const t=ti/nw-1,rim=ti===0||ti===2*nw;g.p.push(...P(si/nl,t,rim?0:sg));g.t.push(...U(ti===nw?vein:uv));}
+  const id=(si,ti,sg)=>base+((sg>0?0:1)*(nl+1)*(2*nw+1))+si*(2*nw+1)+ti;for(const sg of[1,-1])for(let si=0;si<=nl;si++)for(let ti=0;ti<=2*nw;ti++){const t=ti/nw-1,rim=ti===0||ti===2*nw;pushAll(g.p,P(si/nl,t,rim?0:sg));pushAll(g.t,U(ti===nw?vein:uv));}
   for(let si=0;si<nl;si++)for(let ti=0;ti<2*nw;ti++){const a=id(si,ti,1),b2=id(si,ti+1,1),c=id(si+1,ti+1,1),d=id(si+1,ti,1);g.i.push(a,b2,c,a,c,d);const A=id(si,ti,-1),B=id(si,ti+1,-1),Cc=id(si+1,ti+1,-1),D=id(si+1,ti,-1);g.i.push(A,Cc,B,A,D,Cc);}}
 const rbox=(g,c,s,lv,uv,e=.35,res=[[2,4],[3,7],[4,8]])=>sph(g,res[lv][0],res[lv][1],180,d=>add(c,d.map((v,i)=>Math.sign(v)*Math.abs(v)**e*s[i])),()=>U(uv));
 const tube=(g,C,r,S,uv)=>tubeG(g,C,r,S,U(uv));
@@ -63,14 +64,14 @@ export function gate(lv){const g=G0(),p=G0(),A=.95,Ra=.55,RR=Ra-.1,S=R3(lv,[4,4,
     const nf=R3(lv,[0,1,2]);for(let i=0;i<nf;i++){const q=V[Math.min(nv,Math.round((i+.7)/(nf+.4)*nv))],o=nrm([q[0]-sx*Ra,q[1],0]);flw(g,add(q,mul(o,.015)),o,lv,(i+(sx>0))%2?'white':'pink');}}
   const cz=A,bot=.08,Kr=R3(lv,[2,3,5]),Na=R3(lv,[8,14,20]),Rb=a=>Math.sin(a)>=0?RR:Math.min(RR/Math.max(1e-6,Math.abs(Math.cos(a))),(cz-bot)/Math.max(1e-6,-Math.sin(a))),uv2=[];
   p.p.push(0,0,cz);p.t.push(.5,1-(cz-bot)/(cz+RR-bot));uv2.push(0,0);const id=(k,j)=>1+(k-1)*Na+(j%Na);
-  for(let k=1;k<=Kr;k++)for(let j=0;j<Na;j++){const a=j*TAU/Na,r=Rb(a)*k/Kr,q=[Math.cos(a)*r,0,cz+Math.sin(a)*r];p.p.push(...q);p.t.push(.5+q[0]/(2*RR),1-(q[2]-bot)/(cz+RR-bot));uv2.push(j/Na,k/Kr);}
+  for(let k=1;k<=Kr;k++)for(let j=0;j<Na;j++){const a=j*TAU/Na,r=Rb(a)*k/Kr,q=[Math.cos(a)*r,0,cz+Math.sin(a)*r];pushAll(p.p,q);p.t.push(.5+q[0]/(2*RR),1-(q[2]-bot)/(cz+RR-bot));uv2.push(j/Na,k/Kr);}
   for(let j=0;j<Na;j++)p.i.push(0,id(1,j+1),id(1,j));for(let k=1;k<Kr;k++)for(let j=0;j<Na;j++)p.i.push(id(k,j),id(k,j+1),id(k+1,j+1),id(k,j),id(k+1,j+1),id(k+1,j));
   return{g,portal:p,uv2:Float32Array.from(uv2)};}
 const stem=(g,top,lv)=>{const b=sub(top,[0,0,.008]),t=add(top,[.006,0,.03]);tube(g,[b,t],[.006,.0045],R3(lv,[3,4,7]),'trunk_dark');lv>0&&blade(g,lerp(b,t,.7),nrm([1,.25,.35]),nrm([-.25,1,0]),.055,.026,lv-1,'leaf','leaf_dark');};
 const heart=d=>{const x=d[0]*1.18,z=d[2],t=z<0?1+z*.8:1;return[x*t,d[1]*.72*t,z-.32*Math.exp(-((x/.28)**2))*Math.max(0,z)+(z<0?z*.15:0)];};
 const TT=TAU/3,trig=d=>{const u=((Math.atan2(d[2],d[0])-Math.PI/6)%TT+TT*1.5)%TT-TT/2,k=1.2*(.65*(.5/Math.cos(u))+.35*.72);return[d[0]*k,d[1]*.78,d[2]*k];};
 const FR={round:['orange',d=>mul(d,1+.04*Math.cos(5*Math.atan2(d[1],d[0]))*(1-d[2]*d[2])),1],triangle:['teal',trig,1.08],square:['purple',d=>d.map(v=>Math.sign(v)*Math.abs(v)**.45*.88),.9],
- hero:['gold_pale',d=>mul(d,1+.07*Math.cos(7*Math.atan2(d[1],d[0]))*(1-d[2]*d[2])),1],dark:['dark_purple',d=>mul(d,1+.35*Math.max(0,Math.max(...[[0,0,1],[.94,0,-.33],[-.47,.82,-.33],[-.47,-.82,-.33]].map(a=>dot(d,a))))**12),1.3],strong:['red',d=>mul(d,1+.1*Math.max(0,bump(d,7))),1],
+ hero:['gold_pale',d=>mul(d,1+.07*Math.cos(7*Math.atan2(d[1],d[0]))*(1-d[2]*d[2])),1],dark:['dark_purple',d=>mul(d,1+.35*Math.max(0,maxOf([[0,0,1],[.94,0,-.33],[-.47,.82,-.33],[-.47,-.82,-.33]].map(a=>dot(d,a))))**12),1.3],strong:['red',d=>mul(d,1+.1*Math.max(0,bump(d,7))),1],
  tasty:['pink',heart,.7],heart:['red',heart,.7],elder:['cream',d=>mul(d,1+.05*Math.cos(8*Math.atan2(d[1],d[0]))*(1-d[2]*d[2])),1],gentle:['peach',d=>{const k=1-.08*Math.exp(-((d[0]/.15)**2))*(d[1]<0?1:.3);return[d[0]*k,d[1]*k,d[2]*1.05];},1.05]};
 const MUSH={stamina:['brown','cream'],brain:['grey_blue',null],clover:['green','white']};
 export function fruit(id,lv,r=.07){const g=G0();
@@ -81,7 +82,7 @@ export function fruit(id,lv,r=.07){const g=G0();
   const k=id.replace('fruit_',''),[col,f,sz]=FR[k];sph(g,R3(lv,[3,5,12]),R3(lv,[7,9,22]),180,d=>mul(f(d),r),()=>U(col));stem(g,[0,0,r*sz],lv);return{g};}
 export const SEEDS=['round','triangle','square','hero','dark','strong','tasty'].map(k=>'seed_'+k);
 export function seed(id,lv){const g=G0(),k=id.slice(5),col=FR[k][0],P=[[2,4],[2,4],[3,7]];rbox(g,[0,0,.045],[.032,.008,.04],lv,col,.3,P);lv!==1&&rbox(g,[0,0,.088],[.033,.009,.005],lv,'cream',.4,[[2,4],[2,4],[2,4]]);
-  if(lv>0){const f=fruit('fruit_'+k,0,.016).g,b=g.p.length/3;g.p.push(...f.p.map((v,i)=>i%3===1?v*.35-.012:i%3===2?v+.045:v));g.t.push(...f.t.map((v,i)=>f.t[i]));for(const v of f.i)g.i.push(v+b);}return{g};}
+  if(lv>0){const f=fruit('fruit_'+k,0,.016).g,b=g.p.length/3;pushAll(g.p,f.p.map((v,i)=>i%3===1?v*.35-.012:i%3===2?v+.045:v));pushAll(g.t,f.t.map((v,i)=>f.t[i]));for(const v of f.i)g.i.push(v+b);}return{g};}
 export const FRUITS=['fruit_round','fruit_triangle','fruit_square','fruit_hero','fruit_dark','fruit_strong','fruit_tasty','fruit_heart','fruit_elder','fruit_gentle','mushroom_stamina','mushroom_brain','mushroom_clover'];
 export function rock(kind,lv){const g=G0();
   if(kind==='boulder'){const sf=(d,l=1)=>{const w=(1+.07*bump(d,3))*l;return[d[0]*.38*w,d[1]*.33*w,.17+d[2]*.24*w];};sph(g,R3(lv,[4,7,12]),R3(lv,[9,14,24]),180,sf,()=>U('stone'));cap(g,sf,48,lv,'moss',[[1,7],[2,10],[4,20]]);}

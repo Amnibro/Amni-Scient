@@ -3,6 +3,7 @@ import {condK} from './thermal_data.js';
 import {meshSolid,HEX_FACES,HEX_NODES,surfOf,closest,thicknessStats,detectSheet} from './mesh.js';
 import {gpuAMG} from './fea_gpu.js';
 import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
+import {maxOf} from './minmax.js';
 const G3=1/Math.sqrt(3),HN=HEX_NODES,GQ=HN.map(n=>n.map(v=>v*G3)),DN=new Float64Array(192),NG=new Float64Array(64),EXT=new Float64Array(64),GB=new Float64Array(264),WB=new Float64Array(8),KF=new Float64Array(1089),YB=new Float64Array(216),LB=new Float64Array(81);
 for(let g=0;g<8;g++){const[x,y,z]=GQ[g];for(let a=0;a<8;a++){const[p,q,r]=HN[a];DN[g*24+3*a]=p*(1+q*y)*(1+r*z)/8;DN[g*24+3*a+1]=q*(1+p*x)*(1+r*z)/8;DN[g*24+3*a+2]=r*(1+p*x)*(1+q*y)/8;NG[g*8+a]=(1+p*x)*(1+q*y)*(1+r*z)/8;}}
 for(let a=0;a<8;a++)for(let g=0;g<8;g++){let w=1;for(let k=0;k<3;k++)w*=(1+HN[g][k]*HN[a][k]*Math.sqrt(3))/2;EXT[a*8+g]=w;}
@@ -265,12 +266,12 @@ async function modalMesh(inp,M,prog){
   for(let q=0;q<nn;q++){const m=vol[q]*rho;if(!m)continue;if(cm&&cm.hq[q]>=0){for(let k=cm.p[q];k<cm.p[q+1];k++)for(let c=0;c<3;c++)Mv[3*cm.i[k]+c]+=cm.w[k]*m;}else for(let c=0;c<3;c++)Mv[3*q+c]+=m;}for(let i=0;i<n;i++)if(fix[i])Mv[i]=0;
   applyBC(A,fix,new Float64Array(n));const NS=nullspace(M,fix),H=amgSetup(A,NS.B,NS.nb,{theta:inp.theta,theta2:inp.theta2,col:M.sweep&&M.sheet&&M.sheet.thin?M.sweep.N+1:1});
   const defl=free?rigidModes(nn,q=>[M.X[3*q],M.X[3*q+1],M.X[3*q+2]],Mv):[],ops={A:async x=>{const y=mv(A,x,new Float64Array(n));for(let i=0;i<n;i++)if(fix[i])y[i]=0;return y;},prec:async r=>{const z=new Float64Array(n);vcycle(H,0,r,z);return z;}};
-  const E=await lobpcg([{fixed:fix}],null,Mv,nev,defl,{tol:inp.tol,maxIt:inp.maxIt},prog,ops),lmax=Math.max(...E.lam.map(Math.abs),1e-30),sk=skinOf(M);let mt=0;for(let q=0;q<nn;q++)mt+=vol[q]*rho;
+  const E=await lobpcg([{fixed:fix}],null,Mv,nev,defl,{tol:inp.tol,maxIt:inp.maxIt},prog,ops),lmax=maxOf([...E.lam.map(Math.abs),1e-30]),sk=skinOf(M);let mt=0;for(let q=0;q<nn;q++)mt+=vol[q]*rho;
   const modes=[];let rigid=0;for(let j=0;j<E.lam.length&&modes.length<nev;j++){const lam=E.lam[j];if(lam<1e-7*lmax&&!free){rigid++;continue;}const x=hangFill(M,cm,E.X[j].slice(),3);let um=0;for(let q=0;q<nn;q++)um=Math.max(um,Math.hypot(x[3*q],x[3*q+1],x[3*q+2]));const gm=[0,0,0];for(let i=0;i<n;i++)gm[i%3]+=Mv[i]*x[i];
     const su=new Float32Array(3*sk.nodes.length),sm=new Float32Array(sk.nodes.length);sk.nodes.forEach((q,i)=>{for(let c=0;c<3;c++)su[3*i+c]=x[3*q+c]/(um||1);sm[i]=Math.hypot(su[3*i],su[3*i+1],su[3*i+2]);});const[vDisp]=toVerts(sk,inp.pos,[[su,3]]);
     modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp,skinU:su,skinMag:sm});}
   const m0=modes[0],vMag=new Float32Array(inp.pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
-  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(inp.pos.length),vmMax:1,vmP99:1,uMax:1,nEl:M.E.length/8,nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:H.length,ms:Date.now()-t0,backend:'cpu',skin:{pos:sk.pos,idx:sk.idx,vm:m0?m0.skinMag:new Float32Array(sk.nodes.length),u:m0?m0.skinU:new Float32Array(3*sk.nodes.length)}};
+  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(inp.pos.length),vmMax:1,vmP99:1,uMax:1,nEl:M.E.length/8,nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:H.length,ms:Date.now()-t0,backend:'cpu',skin:{pos:sk.pos,idx:sk.idx,vm:m0?m0.skinMag:new Float32Array(sk.nodes.length),u:m0?m0.skinU:new Float32Array(3*sk.nodes.length)}};
 }
 async function thermalMesh(inp,M,prog){
   const mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,nn=M.X.length/3,ne=M.E.length/8,cm=masters(M),pt=pattern(nn,M.E,cm),A={n:nn,m:nn,rb:1,cb:1,rp:pt.rp,ci:pt.ci,v:new Float64Array(pt.ci.length)},Ke=new Float64Array(64),x=new Float64Array(24),t0=Date.now();

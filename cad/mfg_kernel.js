@@ -1,6 +1,7 @@
 import * as R from './vendor/replicad.js';
 import {THREADSTD,HOLESTD,HOLESTD_IN} from './standards.js';
 import {MATS,matBase} from './schema.js';
+import {maxOf,minOf,pushAll} from './minmax.js';
 export const CAMV='a6b544bb1a';
 const V=v=>[v.x,v.y,v.z],P=p=>[p.X(),p.Y(),p.Z()],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return[a[0]/l,a[1]/l,a[2]/l];};
 const safe=(f,d=null)=>{try{return f();}catch{return d;}},d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),TAU=Math.PI*2;
@@ -15,7 +16,7 @@ function edgeSegs(e,pr,sz){const a=V(e.pointAt(0)),b=V(e.pointAt(1)),t=e.geomTyp
   if(t==='CIRCLE'){const M=pr(V(e.pointAt(0.5))),Q=pr(V(e.pointAt(0.25))),ci=circOf(e);if(d2(A,B)<sz*1e-6){const s=Math.sign((Q[0]-A[0])*(M[1]-A[1])-(Q[1]-A[1])*(M[0]-A[0]))||1;return[[A,M,s],[M,A,s]];}
     const c=ci?pr(ci.c):M,ang=(p,q)=>{const u=[p[0]-c[0],p[1]-c[1]],v=[q[0]-c[0],q[1]-c[1]];return Math.atan2(u[0]*v[1]-u[1]*v[0],u[0]*v[0]+u[1]*v[1]);},sw=ang(A,M)+ang(M,B);return[[A,B,Math.tan(sw/4)]];}
   const n=Math.max(8,Math.min(200,Math.ceil(safe(()=>e.length,sz)/Math.max(sz/300,1e-3)))),pts=[];for(let k=0;k<=n;k++)pts.push(pr(V(e.pointAt(k/n))));return pts.slice(1).map((q,i)=>[pts[i],q,0]);}
-function chain(segLists,tol){const left=segLists.filter(s=>s.length),loops=[];while(left.length){let cur=left.shift();const loop=[...cur];let guard=0;while(left.length&&guard++<5000){const end=loop[loop.length-1][1];if(d2(end,loop[0][0])<tol)break;let bi=-1,rev=false,bd=Infinity;left.forEach((s,i)=>{const da=d2(s[0][0],end),db=d2(s[s.length-1][1],end);if(da<bd){bd=da;bi=i;rev=false;}if(db<bd){bd=db;bi=i;rev=true;}});if(bi<0||bd>tol*50)break;let s=left.splice(bi,1)[0];if(rev)s=s.slice().reverse().map(q=>[q[1],q[0],-q[2]]);loop.push(...s);}loops.push(loop.map(q=>[q[0][0],q[0][1],q[2]]));}return loops;}
+function chain(segLists,tol){const left=segLists.filter(s=>s.length),loops=[];while(left.length){let cur=left.shift();const loop=[...cur];let guard=0;while(left.length&&guard++<5000){const end=loop[loop.length-1][1];if(d2(end,loop[0][0])<tol)break;let bi=-1,rev=false,bd=Infinity;left.forEach((s,i)=>{const da=d2(s[0][0],end),db=d2(s[s.length-1][1],end);if(da<bd){bd=da;bi=i;rev=false;}if(db<bd){bd=db;bi=i;rev=true;}});if(bi<0||bd>tol*50)break;let s=left.splice(bi,1)[0];if(rev)s=s.slice().reverse().map(q=>[q[1],q[0],-q[2]]);pushAll(loop,s);}loops.push(loop.map(q=>[q[0][0],q[0][1],q[2]]));}return loops;}
 export function analyzeBody(body,doc){
   if(memo.body===body&&memo.doc===doc&&memo.a)return memo.a;
   const k=doc&&doc.units==='in'?25.4:1,bb=body.boundingBox.bounds,size=Math.hypot(...sub(bb[1],bb[0]))||1,tol=size*1e-5+1e-7;
@@ -25,10 +26,10 @@ export function analyzeBody(body,doc){
   if(msh){const vn=msh.normals,tri=msh.triangles,vp=msh.vertices;for(const g of msh.faceGroups){const s=new Set();for(let q=g.start;q<g.start+g.count;q++)s.add(tri[q]);fn.set(g.faceId,[...s].map(v=>[vn[3*v],vn[3*v+1],vn[3*v+2]]));}}
   const planes=F.filter(q=>q.t==='PLANE'&&q.n),big=planes.reduce((a,b)=>!a||b.ar>a.ar?b:a,null);
   let sheet=null,frame=null,plate=null;
-  if(big){const n=big.n,caps=planes.filter(q=>Math.abs(Math.abs(dot(q.n,n))-1)<1e-4),offs=caps.map(q=>dot(q.c,n)),top=Math.max(...offs),bot=Math.min(...offs),t=top-bot,capSet=new Set(caps.map(q=>q.i));
+  if(big){const n=big.n,caps=planes.filter(q=>Math.abs(Math.abs(dot(q.n,n))-1)<1e-4),offs=caps.map(q=>dot(q.c,n)),top=maxOf(offs),bot=minOf(offs),t=top-bot,capSet=new Set(caps.map(q=>q.i));
     const capsOK=offs.every(o=>Math.abs(o-top)<tol*10||Math.abs(o-bot)<tol*10),walls=F.filter(q=>!capSet.has(q.i)),wallsOK=walls.every(q=>{const ns=fn.get(q.h);return ns?ns.every(v=>Math.abs(dot(v,n))<0.03):q.t==='PLANE'&&q.n&&Math.abs(dot(q.n,n))<1e-3;});
     const topA=caps.filter((q,i)=>Math.abs(offs[i]-top)<tol*10).reduce((s,q)=>s+q.ar,0),botA=caps.filter((q,i)=>Math.abs(offs[i]-bot)<tol*10).reduce((s,q)=>s+q.ar,0);
-    const fl=(fs,nn,o)=>{const ref=Math.abs(nn[2])>0.9?[1,0,0]:[0,0,1],ex=Math.abs(nn[2])>0.9?nrm(sub(ref,nn.map(v=>v*dot(ref,nn)))):nrm(cross(ref,nn)),ey=cross(nn,ex),pr=p=>{const d=sub(p,o);return[dot(d,ex)*k,dot(d,ey)*k];},loops=[];for(const q of fs){const ws=[q.f.clone().outerWire(),...q.f.clone().innerWires()];for(const w of ws)loops.push(...chain(w.edges.map(e=>edgeSegs(e,pr,size*k)),size*k*1e-5+1e-6));}return{loops,frame:{o,ex,ey,n:nn,k}};};
+    const fl=(fs,nn,o)=>{const ref=Math.abs(nn[2])>0.9?[1,0,0]:[0,0,1],ex=Math.abs(nn[2])>0.9?nrm(sub(ref,nn.map(v=>v*dot(ref,nn)))):nrm(cross(ref,nn)),ey=cross(nn,ex),pr=p=>{const d=sub(p,o);return[dot(d,ex)*k,dot(d,ey)*k];},loops=[];for(const q of fs){const ws=[q.f.clone().outerWire(),...q.f.clone().innerWires()];for(const w of ws)pushAll(loops,chain(w.edges.map(e=>edgeSegs(e,pr,size*k)),size*k*1e-5+1e-6));}return{loops,frame:{o,ex,ey,n:nn,k}};};
     if(t>tol&&capsOK&&wallsOK&&Math.abs(topA-botA)<0.01*topA&&Math.abs(vol-topA*t)<0.012*vol){const up=caps.find((q,i)=>Math.abs(offs[i]-top)<tol*10&&dot(q.n,n)>0)||big,g=fl(caps.filter((q,i)=>Math.abs(offs[i]-top)<tol*10),up.n,up.c);
       sheet={t:t*k,loops:g.loops,bends:0,cut_len:0,blank:topA*k*k,pierces:g.loops.length};frame=g.frame;}
     else{const cand=[];for(const a of planes)for(const b of planes){if(a.i>=b.i||dot(a.n,b.n)>-0.9999)continue;const d=dot(sub(a.c,b.c),a.n);if(d>tol*10)cand.push(+(d*k).toFixed(4));}
@@ -46,7 +47,7 @@ export function analyzeBody(body,doc){
   const setups=Math.max(1,cover.size+(cover.has(1)?0:1));
   let over=0;if(msh){const vp=msh.vertices,tri=msh.triangles,zmin=bb[0][2];for(let q=0;q<tri.length;q+=3){const A=[vp[3*tri[q]],vp[3*tri[q]+1],vp[3*tri[q]+2]],B=[vp[3*tri[q+1]],vp[3*tri[q+1]+1],vp[3*tri[q+1]+2]],C=[vp[3*tri[q+2]],vp[3*tri[q+2]+1],vp[3*tri[q+2]+2]],cr=cross(sub(B,A),sub(C,A)),l=Math.hypot(...cr);if(l<1e-12)continue;if(cr[2]/l<-0.707&&(A[2]+B[2]+C[2])/3>zmin+size*0.002)over+=l/2;}}
   const threads=((doc&&doc.features)||[]).filter(f=>!f.suppressed&&(f.type==='thread'||f.type==='hole'&&(f.tap||f.thread))).reduce((s,f)=>s+Math.max(1,(f.pts&&f.pts.length)||1),0);
-  const part={name:(doc&&doc.name)||'part',volume:vol*k**3,area:area*k*k,bbox:[0,1,2].map(i=>(bb[1][i]-bb[0][i])*k),faces:F.length,holes,threads,setups,min_r:concR.length?Math.min(...concR):0,sharp,overhang:over*k*k,sheet};
+  const part={name:(doc&&doc.name)||'part',volume:vol*k**3,area:area*k*k,bbox:[0,1,2].map(i=>(bb[1][i]-bb[0][i])*k),faces:F.length,holes,threads,setups,min_r:concR.length?minOf(concR):0,sharp,overhang:over*k*k,sheet};
   const a={part,frame,plate,kind:sheet?(sheet.bends?'bent sheet':'flat sheet'):'solid',units:doc&&doc.units==='in'?'in':'mm'};memo={body,doc,a,F};return a;}
 export function to3d(fr,uv){return fr?add(add(fr.o,fr.ex,uv[0]/fr.k),fr.ey,uv[1]/fr.k):null;}
 export async function quote({body,doc},a={}){if(!body)throw new Error('Build a part first');const t0=Date.now(),an=analyzeBody(body,doc),L=await camLib(),dm=a.mat||doc&&doc.material,qm=!(a.req&&a.req.material)&&dm?quoteMat(dm,!!an.part.sheet):null,res=JSON.parse(L.quote(JSON.stringify(an.part),JSON.stringify({...(a.req||{}),...(qm?{material:qm.id||'al6061'}:{})}),a.shop||''));qm&&qm.note&&Object.assign(res,{ok:false,quotes:[],best:null,errors:[qm.note],no_stock:true});if(an.plate&&!(qm&&qm.note)){const pm=quoteMat(dm,true),r2=JSON.parse(L.quote(JSON.stringify({...an.part,sheet:{t:an.plate.t,loops:an.plate.loops,bends:0,cut_len:0,blank:an.plate.blank,pierces:an.plate.pierces}}),JSON.stringify({...(a.req||{}),...(pm&&!pm.note?{material:pm.id}:{})}),a.shop||'')),add=(r2.quotes||[]).filter(q=>!(res.quotes||[]).some(x=>x.process===q.process)).map(q=>({...q,notes:[...(q.notes||[]),'Cut as a flat plate'+(an.plate.trim>0.05?'; the edge chamfers and fillets are not included':'')+'.']}));if(add.length){res.quotes=[...(res.quotes||[]),...add].sort((x,y)=>(y.ok-x.ok)||x.unit-y.unit);res.ok=true;res.best=res.quotes[0].process;res.errors=[];}}
@@ -64,7 +65,7 @@ export function holeList({body,doc}){
   analyzeBody(body,doc);const F=memo.F,k=doc&&doc.units==='in'?25.4:1,bb=body.boundingBox.bounds,size=Math.hypot(...sub(bb[1],bb[0]))||1,tl=size*1e-4+1e-7,segs=[];
   for(const q of F){if(!q.cyl||!q.n)continue;const w=sub(q.c,q.cyl.p);if(dot(q.n,sub(w,q.cyl.d.map(v=>v*dot(w,q.cyl.d))))>=0)continue;
     const {p,d}=q.cyl,ce=safe(()=>q.f.edges.filter(e=>e.geomType==='CIRCLE'),[]).map(e=>({e,ci:circOf(e)})).filter(x=>x.ci).map(x=>({...x,t:dot(sub(x.ci.c,p),d)}));if(ce.length<2)continue;
-    const lo=Math.min(...ce.map(x=>x.t)),hi=Math.max(...ce.map(x=>x.t));if(hi-lo<tl*20)continue;
+    const lo=minOf(ce.map(x=>x.t)),hi=maxOf(ce.map(x=>x.t));if(hi-lo<tl*20)continue;
     const grp=[ce.filter(x=>x.t-lo<tl*20),ce.filter(x=>hi-x.t<tl*20)];if(!grp.every(g=>Math.abs(g.reduce((s2,x)=>s2+safe(()=>x.e.length,0),0)-TAU*q.cyl.r)<TAU*q.cyl.r*2e-3))continue;
     const ends=grp.map((g,i)=>{const hs=new Set(g.map(x=>x.e.hashCode)),adj=F.find(r=>r!==q&&[...r.eh].some(h=>hs.has(h))),hiE=i===1,s2=hiE?d:d.map(v=>-v),t=hiE?hi:lo;let kind='bottom',extra=null;
       if(adj&&adj.t==='PLANE'&&adj.n&&dot(adj.n,s2)>0.5)kind='mouth';
@@ -75,7 +76,7 @@ export function holeList({body,doc}){
   for(let i=0;i<segs.length;i++){if(used.has(i))continue;const g=[segs[i]],ref=segs[i];used.add(i);
     for(let j=i+1;j<segs.length;j++){if(used.has(j))continue;const o=segs[j],c=cross(ref.d,o.d),dp=sub(o.p,ref.p),off=sub(dp,ref.d.map(v=>v*dot(dp,ref.d)));if(Math.hypot(...c)<1e-3&&Math.hypot(...off)<Math.max(tl*50,1e-3*size)){g.push(o);used.add(j);}}
     const dd=ref.d,sg=g.map(o=>{const sh=dot(sub(o.p,ref.p),dd);return{...o,t0:o.t0+sh,t1:o.t1+sh,ends:o.ends.map(x=>({...x,t:x.t+sh,extra:x.extra&&{...x.extra,t:x.extra.t+sh}}))};});
-    const tmin=Math.min(...sg.map(o=>o.t0)),tmax=Math.max(...sg.map(o=>o.t1)),en=sg.flatMap(o=>o.ends.map(x=>({...x,r:o.r}))),top=en.filter(x=>Math.abs(x.t-tmax)<tl*20),bot=en.filter(x=>Math.abs(x.t-tmin)<tl*20),open=a=>a.find(x=>x.kind==='mouth'||x.kind==='csink');
+    const tmin=minOf(sg.map(o=>o.t0)),tmax=maxOf(sg.map(o=>o.t1)),en=sg.flatMap(o=>o.ends.map(x=>({...x,r:o.r}))),top=en.filter(x=>Math.abs(x.t-tmax)<tl*20),bot=en.filter(x=>Math.abs(x.t-tmin)<tl*20),open=a=>a.find(x=>x.kind==='mouth'||x.kind==='csink');
     const oT=open(top),oB=open(bot);if(!oT&&!oB)continue;
     const thru=!!(oT&&oB),atTop=oT&&oB?(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r>sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1.001||Math.abs(sg.find(o=>Math.abs(o.t1-tmax)<tl*20).r-sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r)<=sg.find(o=>Math.abs(o.t0-tmin)<tl*20).r*1e-3&&dot(dd,[0.001,0.01,1])>=0):!!oT,mouthT=atTop?tmax:tmin,sgn=atTop?-1:1,prim=sg.reduce((a,b)=>b.r<a.r?b:a),rr=prim.r;
     const cb=sg.filter(o=>o.r>rr*1.05&&Math.abs((atTop?o.t1:o.t0)-mouthT)<tl*20)[0],cbS=cb&&{dia:2*cb.r*k,depth:(cb.t1-cb.t0)*k};

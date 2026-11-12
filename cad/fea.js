@@ -3,6 +3,7 @@ import {gpuSolve,gpuContext} from './fea_gpu.js';
 import {KCOND,condK} from './thermal_data.js';
 import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
 import {voxSkin,skinU} from './fea_skin.js';
+import {maxOf} from './minmax.js';
 export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 function dmat(nu){const c=1/((1+nu)*(1-2*nu)),a=c*(1-nu),b=c*nu,g=c*(1-2*nu)/2;return[[a,b,b,0,0,0],[b,a,b,0,0,0],[b,b,a,0,0,0],[0,0,0,g,0,0],[0,0,0,0,g,0],[0,0,0,0,0,g]];}
@@ -266,7 +267,7 @@ export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
   for(;it<maxIt;it++){
     const R=X.map((x,j)=>{const r=AX[j].slice();for(let i=0;i<n;i++)r[i]-=lam[j]*Mv[i]*x[i];return r;});
     res=R.map((r,j)=>{let s=0;for(let i=0;i<n;i++)if(Mv[i])s+=r[i]*r[i]/Mv[i];return Math.sqrt(s)/Math.max(Math.abs(lam[j]),1e-30);});
-    const worst=Math.max(...res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;if(!best||worst<best.w)best={w:worst,lam:lam.slice(),X:X.map(v=>v.slice()),res:res.slice(),it};else if(best.w<30*tol&&worst>20*best.w)return{lam:best.lam,X:best.X,iters:it,res:best.res};
+    const worst=maxOf(res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;if(!best||worst<best.w)best={w:worst,lam:lam.slice(),X:X.map(v=>v.slice()),res:res.slice(),it};else if(best.w<30*tol&&worst>20*best.w)return{lam:best.lam,X:best.X,iters:it,res:best.res};
     let[W]=orth(await all(R.filter((_,j)=>res[j]>=tol*0.1),T),null,X,null);const AW=await all(W,A);
     [P,AP]=orth(P,AP,[...X,...W],[...AX,...AW]);
     const S=[...X,...W,...P],AS=[...AX,...AW,...AP];({X,AX,P,AP,lam}=rr(S,AS,X.length));
@@ -281,7 +282,7 @@ async function modal(inp,P,prog){
   let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls,K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
   if(Ls.length>1&&!(L.om>0))L.om=omOf(L,K);
   const lo={tol:inp.tol,maxIt:inp.maxIt};let E,gpu=!!ctx;try{E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,ctx);}catch(e){if(!ctx)throw e;gpuError=String(e.message||e);gpu=false;E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,null);}finally{ctx&&ctx.free();}
-  const {c:cnt}=nodalField(G,L,null),lmax=Math.max(...E.lam.map(Math.abs),1e-30);
+  const {c:cnt}=nodalField(G,L,null),lmax=maxOf([...E.lam.map(Math.abs),1e-30]);
   let mt=0;for(let q=0;q<P.nn;q++)mt+=P.vol[q]*rho;
   const modes=[],wire=voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz);let rigid=0;
   for(let j=0;j<E.lam.length&&modes.length<nev;j++){const lam=E.lam[j];if(lam<1e-7*lmax&&!free){rigid++;continue;}const x=E.X[j],u=new Float32Array(P.nn);let um=0;for(let q=0;q<P.nn;q++){u[q]=Math.hypot(x[3*q],x[3*q+1],x[3*q+2]);um=Math.max(um,u[q]);}
@@ -289,7 +290,7 @@ async function modal(inp,P,prog){
     const ux=new Float32Array(n);for(let i=0;i<n;i++)ux[i]=x[i]/(um||1);for(let q=0;q<P.nn;q++)u[q]/=um||1;
     modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0],wireU:skinU(wire,ux)});}
   const m0=modes[0],vMag=new Float32Array(pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
-  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire};
+  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire};
 }
 async function thermal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,K=keHeat();for(let i=0;i<64;i++)K[i]*=k*G.h;

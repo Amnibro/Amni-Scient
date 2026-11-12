@@ -2,6 +2,7 @@ import {PROFILES,profile,profileSVG,bitSpec,knifeSpec,report,checkBit,maxRpm,cop
 import {cncPlan,knifeDxf,dxfToProfile} from './cutter_out.js';
 import {picker,dims,css,kOf,ulab,safe} from './cutter_field.js';
 import {sketchShapes} from './sketch.js';
+import {maxOf,minOf} from './minmax.js';
 const DEF=()=>({prof:'roundover',pp:{},type:'bit',bit:{shank:'1/4',brg:'1/2x3/16',hook:0,relief:10,wings:2,shear:0,body:true},shaper:{spindle:'3/4',wings:3,stack:1,hook:10,relief:10,shear:0},knife:{hook:20,head:'auto',bevel:15,corr:false},mold:{},rpm:0,cnc:{mode:'ball',post:'grbl',units:'in'},fid:{}});
 export const cfgOf=doc=>{const d=doc.cutter||{},D=DEF();return{...D,...d,pp:{...d.pp},bit:{...D.bit,...d.bit},shaper:{...D.shaper,...d.shaper},knife:{...D.knife,...d.knife},mold:{...D.mold,...d.mold},cnc:{...D.cnc,...d.cnc},fid:{...d.fid}};};
 const ST={el:null,API:null,hooked:false,plan:null,busy:false,msg:'',err:'',grp:null,sk:''};
@@ -24,7 +25,7 @@ function sketchPaths(API){
   const out=[];for(const f of API.doc.features){const sh=f.sketch&&f.sketch.ents&&f.sketch.ents.length?(()=>{try{return sketchShapes(f.sketch);}catch{return[];}})():f.shapes;for(const s of sh||[])if(s&&s.k==='path'&&(s.pts||[]).length>=2&&s.pts.every(p=>p.every(v=>isFinite(+v))))out.push({label:(f.name||f.type)+' ('+s.pts.length+' points)',s});}
   return out;
 }
-const normPts=(P)=>{const mx=Math.max(...P.map(p=>p[0])),my=Math.max(...P.map(p=>p[1]));return P.map(p=>[+(p[0]-mx).toFixed(5),+(p[1]-my).toFixed(5)]);};
+const normPts=(P)=>{const mx=maxOf(P.map(p=>p[0])),my=maxOf(P.map(p=>p[1]));return P.map(p=>[+(p[0]-mx).toFixed(5),+(p[1]-my).toFixed(5)]);};
 function bitSVG(s,K){
   const w=s.wing,P=flat(w,0.0005*K,true),r=s.rmax,top=s.z0+s.H+s.neck+Math.min(s.sl,s.sl),pad=0.1*r,f=v=>+v.toFixed(4),pt=(x,z)=>f(x)+' '+f(-z);
   const prof='M'+P.map(q=>pt(q[0],q[1]+s.z0)).join('L')+'Z',sh='M'+pt(s.sd/2,s.z0+s.H)+'L'+pt(s.sd/2,top)+'L'+pt(-s.sd/2,top)+'L'+pt(-s.sd/2,s.z0+s.H)+'Z',mir='M'+P.map(q=>pt(-q[0],q[1]+s.z0)).join('L')+'Z';
@@ -32,7 +33,7 @@ function bitSVG(s,K){
   return'<svg class="cu-svg" viewBox="'+f(-r-pad)+' '+f(-top-pad)+' '+f(2*r+2*pad)+' '+f(top+2*pad)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cutter silhouette" style="max-height:270px"><path d="'+sh+'" style="fill:#aab2bf;stroke:none"/><path d="'+prof+'" style="fill:#59b6ff66;stroke:var(--cu-line,#1d6fd8);stroke-width:'+f(r/45)+'"/><path d="'+mir+'" style="fill:#59b6ff66;stroke:var(--cu-line,#1d6fd8);stroke-width:'+f(r/45)+'"/>'+brg+'</svg>';
 }
 function knifeSVG(ks){
-  const O=ks.outline,xs=O.map(p=>p[0]),ys=O.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys),W=Math.max(...xs)-x0,H=Math.max(...ys)-y0,pad=0.07*Math.max(W,H),f=v=>+v.toFixed(4);
+  const O=ks.outline,xs=O.map(p=>p[0]),ys=O.map(p=>p[1]),x0=minOf(xs),y0=minOf(ys),W=maxOf(xs)-x0,H=maxOf(ys)-y0,pad=0.07*Math.max(W,H),f=v=>+v.toFixed(4);
   return'<svg class="cu-svg" viewBox="'+f(x0-pad)+' '+f(-(y0+H)-pad)+' '+f(W+2*pad)+' '+f(H+2*pad)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Knife blank and ground profile"><path d="M'+O.map(p=>f(p[0])+' '+f(-p[1])).join('L')+'Z" style="fill:#aab2bf88;stroke:var(--cu-line,#1d6fd8);stroke-width:'+f(Math.max(W,H)/180)+'"/></svg>';
 }
 const fld=(h,label,...k)=>h('label',null,label,...k);

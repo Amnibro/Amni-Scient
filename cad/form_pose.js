@@ -1,6 +1,7 @@
 import {parse,expand} from './form_lang.js';
 import {EASE,quatXYZ,camLerp} from './form_sdf.js';
 import {XFORM,kelvin} from './form_kinds.js';
+import {maxOf,minOf} from './minmax.js';
 const cl=(v,a,b)=>v<a?a:v>b?b:v,add=(a,b)=>a.map((v,i)=>v+b[i]),sub=(a,b)=>a.map((v,i)=>v-b[i]),scl=(a,k)=>a.map(v=>v*k),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],len=a=>Math.hypot(a[0],a[1],a[2]),nrm=a=>{const l=len(a)||1;return a.map(v=>v/l);},crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],mul3=(a,b)=>a.map((v,i)=>v*b[i]),hex=c=>{const n=parseInt((c||'#ffffff').slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255];};
 export const QI=[0,0,0,1],CONS=['ik','copyrot','trackto','limitrot'];
 export const qmul=(a,b)=>[a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]],qinv=q=>[-q[0],-q[1],-q[2],q[3]],qn=q=>{const l=Math.hypot(...q)||1;return q.map(v=>v/l);};
@@ -18,11 +19,11 @@ export function sampleAnim(a,t){if(a.quat&&a.ch==='rot')return eulerXYZ(sampleQu
 export function sampleQuat(a,t){if(!a.quat)return quatXYZ(sampleAnim(a,t));const K=a.keys,T0=K[0][0],T1=K[K.length-1][0];t=wrap(a,t);if(t<=T0)return quatXYZ(K[0][1]);if(t>=T1)return quatXYZ(K[K.length-1][1]);let i=0;while(i+1<K.length&&K[i+1][0]<t)i++;const[t0,v0,e0]=K[i],[t1,v1]=K[i+1],e=e0||a.ease;return slerp(quatXYZ(v0),quatXYZ(v1),(EASE[e]||EASE.ease)((t-t0)/((t1-t0)||1)));}
 const TK=new WeakMap(),RG=new WeakMap();
 export function tracksOf(sc){let T=TK.get(sc);if(!T){T=new Map();for(const a of sc.items)if(a.kind==='anim'){const k=a.act||'Action';T.has(k)||T.set(k,[]);T.get(k).push(a);}TK.set(sc,T);}return T;}
-export const rangeOf=tr=>{const ts=(tr||[]).flatMap(a=>a.keys.map(k=>k[0]));return ts.length?[Math.min(...ts),Math.max(...ts)]:[0,0];};
+export const rangeOf=tr=>{const ts=(tr||[]).flatMap(a=>a.keys.map(k=>k[0]));return ts.length?[minOf(ts),maxOf(ts)]:[0,0];};
 export function stripTime(s,lo,hi,t){const L=Math.max(hi-lo,1e-9),x=s.x||1,n=Math.max(1,s.n||1),at=s.at||0,end=at+L*x*n,w0=s.w??1;if(t<at||t>end)return s.hold?{lt:t<at?lo:hi,w:w0,end}:null;const r=(t-at)/x,lt=r>=L*n-1e-9?hi:lo+r%L;let w=w0;if(s.in>0&&t-at<s.in)w*=(t-at)/s.in;if(s.out>0&&end-t<s.out)w*=(end-t)/s.out;return{lt,w,end};}
 export const stripsOf=sc=>sc.items.filter(x=>x.kind==='strip');
 export function rigOf(sc){let R=RG.get(sc);if(R)return R;const its=sc.items,bones=its.filter(x=>x.kind==='bone'),bn=new Map(bones.map(b=>[b.name,b])),order=[],seen=new Set(),visit=b=>{if(seen.has(b.name))return;seen.add(b.name);const p=b.parent&&bn.get(b.parent);if(p)visit(p);order.push(b);};bones.forEach(visit);
-  const cen=it=>{const P=it.pts;return['capsule','cyl','cone','prism'].includes(it.kind)?[0,1,2].map(i=>(P[0][i]+P[1][i])/2):it.kind==='tube'?[0,1,2].map(i=>(Math.min(...P.map(p=>p[i]))+Math.max(...P.map(p=>p[i])))/2):P[0].slice(0,3);},piv=new Map(),byName=new Map();for(const it of its)if(it.kind!=='anim'&&it.kind!=='bone'){byName.has(it.name)||byName.set(it.name,it);if(it.pts&&it.pts.length&&!piv.has(it.name))piv.set(it.name,cen(it));}
+  const cen=it=>{const P=it.pts;return['capsule','cyl','cone','prism'].includes(it.kind)?[0,1,2].map(i=>(P[0][i]+P[1][i])/2):it.kind==='tube'?[0,1,2].map(i=>(minOf(P.map(p=>p[i]))+maxOf(P.map(p=>p[i])))/2):P[0].slice(0,3);},piv=new Map(),byName=new Map();for(const it of its)if(it.kind!=='anim'&&it.kind!=='bone'){byName.has(it.name)||byName.set(it.name,it);if(it.pts&&it.pts.length&&!piv.has(it.name))piv.set(it.name,cen(it));}
   for(const g of its.filter(x=>x.kind==='group')){const c=g.members.map(m=>piv.get(m)).filter(Boolean);if(c.length)piv.set(g.name,[0,1,2].map(i=>c.reduce((a,p)=>a+p[i],0)/c.length));}
   R={order,bn,piv,byName,cons:its.filter(x=>CONS.includes(x.kind)&&bn.has(x.on))};RG.set(sc,R);return R;}
 export function restV(sc,n,ch){const it=rigOf(sc).byName.get(n)||{};return ch==='scale'?[1,1,1]:ch==='inf'?[it.w??1]:ch==='power'?[it.w??(it.type==='sun'?3:10)]:ch==='kelvin'?[it.kel??6500]:ch==='color'?hex(it.col):ch==='cone'?[it.c??45]:ch==='focal'?[it.mm||50]:ch==='cam'?[...(it.pts||[[0,0,0],[0,0,0]]).flat().slice(0,6),it.mm||50]:[0,0,0];}
@@ -35,7 +36,7 @@ export function poseAt(sc,t,o={}){const R=rigOf(sc),C=o.chan||chanAt(sc,t,o),g=(
   const W=()=>{const w=new Map();for(const b of R.order){const l=L.get(b.name),pw=b.parent&&w.get(b.parent);w.set(b.name,pw?{p:add(pw.p,qrot(pw.q,mul3(l.p,pw.s))),q:qmul(pw.q,l.q),s:mul3(l.s,pw.s)}:{p:l.p,q:l.q,s:l.s});}return w;};let w=W();
   const tail=n=>{const b=R.bn.get(n),x=w.get(n);return add(x.p,qrot(x.q,mul3(sub(b.pts[1],b.pts[0]),x.s)));},obj=n=>{const it=R.byName.get(n),c=R.piv.get(n)||[0,0,0],lc=g(n,'loc'),p=lc?add(c,lc.v):c;if(it&&it.bone&&w.has(it.bone)){const b=R.bn.get(it.bone),x=w.get(it.bone);return add(x.p,qrot(x.q,mul3(sub(p,b.pts[0]),x.s)));}return p;},pos=r=>Array.isArray(r)?r:R.bn.has(r)?w.get(r).p:obj(r),setW=(n,qw)=>{const b=R.bn.get(n),pw=b.parent&&w.get(b.parent);L.get(n).q=qn(pw?qmul(qinv(pw.q),qw):qw);w=W();};
   for(const c of R.cons){const inf=g(c.name,'inf'),k=cl(inf?inf.v[0]:c.w??1,0,1);if(k<=0)continue;const n=c.on,x=w.get(n);
-    if(c.kind==='limitrot'){const l=L.get(n),e=eulerXYZ(l.q).map((v,i)=>{const r=c['xyz'[i]];return r?cl(v,Math.min(...r),Math.max(...r)):v;});l.q=slerp(l.q,quatXYZ(e),k);w=W();}
+    if(c.kind==='limitrot'){const l=L.get(n),e=eulerXYZ(l.q).map((v,i)=>{const r=c['xyz'[i]];return r?cl(v,minOf(r),maxOf(r)):v;});l.q=slerp(l.q,quatXYZ(e),k);w=W();}
     else if(c.kind==='copyrot')setW(n,slerp(x.q,R.bn.has(c.target)?w.get(c.target).q:(g(c.target,'rot')||{}).q||QI,k));
     else if(c.kind==='trackto')setW(n,qmul(slerp(QI,fromUnit(nrm(sub(tail(n),x.p)),nrm(sub(pos(c.target),x.p))),k),x.q));
     else{const ch=chainOf(c,R),m=ch.length,J=[...ch.map(q=>w.get(q).p),tail(n)],ln=J.slice(1).map((p,i)=>len(sub(p,J[i]))),T=pos(c.target),P=c.pole!=null?pos(c.pole):null,root=J[0],o0=ch.map(q=>L.get(q).q);let N;if(ln.some(v=>v<1e-9))continue;

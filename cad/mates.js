@@ -2,6 +2,7 @@ import {lsolve,nullInfo} from './sketch.js';
 export const ORIGIN='@origin';
 import {add,sub,mul,dot,cross,len,nrm,mid,ss,qmul,qconj,qn,qrot,qexp,qlog,xf,inv,compose,poseOf,eig3} from './qmath.js';
 import {MECH,MECHLABEL,mech,gmech,jc,joints as jointOf,atLimit,camProfile,reset as resetMate0} from './mech.js';
+import {pushAll} from './minmax.js';
 export * from './qmath.js';
 export {MECH,pathNear} from './mech.js';
 export const resetMate=resetMate0;
@@ -92,7 +93,7 @@ export function solve(st,opt={}){const t0=performance.now(),L=st.L||1,C=new Map(
   const clusters=new Map();for(const c of par.keys()){const r=find(c);clusters.has(r)||clusters.set(r,{comps:[],mates:[]});clusters.get(r).comps.push(c);}for(const l of live)if(l.free.length)clusters.get(find(l.free[0])).mates.push(l);
   const conflicts=[],redundant=[],dof={},info={};let iters=0,ok=true,tot=0;
   for(const l of live)if(!l.free.length){const r=mres(l.m,world(l.m,l.R,pose),L,{rt,drive,R:l.R});if(Math.sqrt(ss(r))>tol*10){ok=false;conflicts.push({id:l.m.id,with:[],msg:'Both components are fixed, so this mate cannot move them. Float one of them.'});}else if(opt.analyze)redundant.push(l.m.id);}
-  for(const cl of clusters.values()){const res=solveCluster(cl,pose,L,opt,tol);iters+=res.it;cl.comps.forEach((c,i)=>pose.set(c,res.P[i]));if(!res.ok){ok=false;for(const k of res.conflicts)conflicts.push(k);}redundant.push(...res.redundant);Object.assign(dof,res.dof);Object.assign(info,res.info);tot+=res.nul;}
+  for(const cl of clusters.values()){const res=solveCluster(cl,pose,L,opt,tol);iters+=res.it;cl.comps.forEach((c,i)=>pose.set(c,res.P[i]));if(!res.ok){ok=false;for(const k of res.conflicts)conflicts.push(k);}pushAll(redundant,res.redundant);Object.assign(dof,res.dof);Object.assign(info,res.info);tot+=res.nul;}
   const joint={},limits=[];for(const l of live)if(MECH[l.m.type])try{const X={rt,drive,R:l.R},E=world(l.m,l.R,pose),j=jointOf(l.m,E,X),at=atLimit(l.m,j);joint[l.m.id]=j;at&&limits.push({id:l.m.id,at});if(rt&&ok&&!conflicts.length){const c=jc(l.m,E,X);for(const k in c)rt[l.m.id+'.'+k]=c[k];}}catch{}
   for(const c of st.comps)if(!(c.id in dof)){dof[c.id]=c.fix?0:6;tot+=dof[c.id];}
   return{ok:ok&&!conflicts.length,poses:pose,dof,info,joint,limits,warnings,total:tot,errors,conflicts,redundant,it:iters,ms:performance.now()-t0,clusters:clusters.size};}

@@ -1,12 +1,13 @@
 import {GEO} from './creature.js';
 import {KIT,toMesh,glb,on,skinGlb} from './garden.js';
 import {TK} from './toys.js';
+import {pushAll} from './minmax.js';
 const {G0,sph,add,mul,sub,nrm,crs,lerp,dot}=GEO,{PR,U,R3,tube,blade,flw,TAU,canopy,puffs,lg,GR,cap,SI}=KIT,{xf,turn,flip,box,ball,disc,cyl,ring,grid,arc,BS}=TK,Y=(x,y,z)=>[x,z,-y];
 const CG=t=>{const a=((SI.cloud_shade%8)+.5)/8,b=((SI.cloud%8)+.5)/8;return[a+(b-a)*Math.min(1,Math.max(0,t)),((SI.cloud>>3)+.5)/PR];};
-const prism=(g,c,r,h,n,uv,top=uv,a0=0,tip=0)=>{const P=(k,z)=>{const a=a0+k*TAU/n;return add(c,[Math.cos(a)*r,Math.sin(a)*r,z]);};for(let k=0;k<n;k++){const b=g.p.length/3;for(const q of[P(k,0),P(k+1,0),P(k+1,h),P(k,h)]){g.p.push(...q);g.t.push(...U(uv));}g.i.push(b,b+1,b+2,b,b+2,b+3);}
-  for(const[z,uu,up]of[[0,uv,-1],[h,top,1]]){const f=g.p.length/3;g.p.push(...add(c,[0,0,z+(up>0?tip:0)]));g.t.push(...U(uu));for(let k=0;k<n;k++){g.p.push(...P(k,z));g.t.push(...U(uu));}for(let k=0;k<n;k++)up>0?g.i.push(f,f+1+k,f+1+(k+1)%n):g.i.push(f,f+1+(k+1)%n,f+1+k);}};
+const prism=(g,c,r,h,n,uv,top=uv,a0=0,tip=0)=>{const P=(k,z)=>{const a=a0+k*TAU/n;return add(c,[Math.cos(a)*r,Math.sin(a)*r,z]);};for(let k=0;k<n;k++){const b=g.p.length/3;for(const q of[P(k,0),P(k+1,0),P(k+1,h),P(k,h)]){pushAll(g.p,q);pushAll(g.t,U(uv));}g.i.push(b,b+1,b+2,b,b+2,b+3);}
+  for(const[z,uu,up]of[[0,uv,-1],[h,top,1]]){const f=g.p.length/3;pushAll(g.p,add(c,[0,0,z+(up>0?tip:0)]));pushAll(g.t,U(uu));for(let k=0;k<n;k++){pushAll(g.p,P(k,z));pushAll(g.t,U(uu));}for(let k=0;k<n;k++)up>0?g.i.push(f,f+1+k,f+1+(k+1)%n):g.i.push(f,f+1+(k+1)%n,f+1+k);}};
 const shaft=(g,lv,h,top)=>{const nu=R3(lv,[7,12,24]),j0=g.i.length,r=a=>.12*(1-.07*Math.abs(Math.sin(4*a)));grid(g,nu,1,(u,v)=>{const a=u*TAU,z=v?(top?top(a):h):.09;return[r(a)*Math.cos(a),r(a)*Math.sin(a),z];},'marble');flip(g,j0);
-  if(top){const f=g.p.length/3;g.p.push(0,0,h);g.t.push(...U('marble'));for(let k=0;k<=nu;k++){const a=k/nu*TAU;g.p.push(r(a)*Math.cos(a),r(a)*Math.sin(a),top(a));g.t.push(...U('marble'));}for(let k=0;k<nu;k++)g.i.push(f,f+1+k,f+2+k);}};
+  if(top){const f=g.p.length/3;g.p.push(0,0,h);pushAll(g.t,U('marble'));for(let k=0;k<=nu;k++){const a=k/nu*TAU;g.p.push(r(a)*Math.cos(a),r(a)*Math.sin(a),top(a));pushAll(g.t,U('marble'));}for(let k=0;k<nu;k++)g.i.push(f,f+1+k,f+2+k);}};
 const tilt=(g,f,ax,a,pv)=>{const v0=g.p.length/3;f();turn(g,v0,ax,a,pv);};
 const D={
  dawn_column:(g,lv)=>{box(g,[0,0,.05],[.2,.2,.05],lv,'marble',.25);shaft(g,lv,1);for(const z of[.13,.97].slice(lv===2?0:1,lv?2:1))ring(g,[0,0,z],.125,.016,lv,'gold',[5,8,12],[3,3,3]);box(g,[0,0,1.04],[.17,.17,.045],lv,'marble',.25);},

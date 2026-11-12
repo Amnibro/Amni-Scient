@@ -1,4 +1,5 @@
 import HK from './fea_kernels.js';
+import {pushAll} from './minmax.js';
 const IDX='let n=g.x+g.y*nw.x*64u;';
 const EL=(b,body)=>`struct U{n:u32,m:u32,a:u32,b:u32,c:u32,d:u32,e:u32,f:u32};
 @group(0)@binding(0) var<uniform> u:U;
@@ -131,7 +132,7 @@ export async function gpuContext(Ls,K,opt={}){
     if(GL.length>1)vc(0);else{D(pre,'mv',mvb(0,3,Ap,r,g0.X[0]),g0.wN);g0.cur=0;}
     const z=g0.X[g0.cur];
     const init=[...pre],iter=[];D(init,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(init,'fin',bg('fin','f2',[fU[2],part,S]),[1]);D(init,'pu',bg('pu','pu',[uE,S,z,p]),wD);
-    D(iter,'mv',mvb(0,0,p,r,Ap),g0.wN);D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);iter.push(...pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    D(iter,'mv',mvb(0,0,p,r,Ap),g0.wN);D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);pushAll(iter,pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
     const io=async(list,inB,x,outB)=>{d.queue.writeBuffer(inB,0,Float32Array.from(x));await run(list,1);return Float64Array.from(await rd(outB));};
     await run(init,1);await run(iter,1);await pop();
     const solve=pcgLoop(d,{n,r,u,p,init,iter,run,rd,mv:opt.mv,tol:opt.tol,maxIt:opt.maxIt,multi:GL.length>1,levels:GL.length});
@@ -159,7 +160,7 @@ export async function gpuAMG(H,b,opt={},prog){
     const pre=[];vc(pre,0,r);const z=g0.x;
     const fU=[0,1,2,3].map(m=>ub(new Uint32Array([0,m,0,0]))),dU=ub(new Uint32Array([n,0,0,0])),init=[...pre],iter=[];
     D(init,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(init,'fin',bg('fin','f2',[fU[2],part,S]),[1]);D(init,'pu',bg('pu','pu',[uE,S,z,p]),wD);
-    spmv(iter,g0.A0,p,null,Ap,0,'A0x');D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);iter.push(...pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    spmv(iter,g0.A0,p,null,Ap,0,'A0x');D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);pushAll(iter,pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
     await run(init,1);await pop();
     const tol=opt.tol||1e-8,maxIt=opt.maxIt||3000,CH=10,fn=Math.sqrt(b.reduce((a,v)=>a+v*v,0))||1,U=new Float64Array(n),y=new Float64Array(n),t0=Date.now(),hist=[];let rhs=b,rel=1,its=0,outer=0;
     for(;outer<8;outer++){
@@ -175,8 +176,8 @@ export async function gpuAMG(H,b,opt={},prog){
 export async function gpuCsr(rp,ci,va,diag,opt={}){const d=await gpuDevice();if(!d)return null;const n=diag.length,kt=kit(d),{all,US,sb,ub,bg,free}=kt;d.pushErrorScope('out-of-memory');d.pushErrorScope('validation');let popped=false;
   try{const P=kt.P=pipesOf(d),D=(L,pipe,g,c)=>L.push([P[pipe],g,c]),wD=wg(Math.ceil(n/64)),rpB=sb(Uint32Array.from(rp)),ciB=sb(Uint32Array.from(ci)),vaB=sb(Float32Array.from(va)),di=sb(Float32Array.from(diag,v=>v?1/v:0)),r=sb(n),z=sb(n),p=sb(n),Ap=sb(n),u=sb(n),S=sb(8),part=sb(512),uE=ub(new Uint32Array([n,0,0,0,0,0,0,0])),dU=ub(new Uint32Array([n,0,0,0])),fU=[0,1,2].map(m=>ub(new Uint32Array([0,m,0,0])));
     const{run,rd}=runner(d,S,n,all,US),pre=[],init=[],iter=[];D(pre,'jac',bg('jac','j',[uE,di,r,z]),wD);
-    init.push(...pre);D(init,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(init,'fin',bg('fin','f2',[fU[2],part,S]),[1]);D(init,'pu',bg('pu','pu',[uE,S,z,p]),wD);
-    D(iter,'csr',bg('csr','mv',[uE,rpB,ciB,vaB,p,Ap]),wD);D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);iter.push(...pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    pushAll(init,pre);D(init,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(init,'fin',bg('fin','f2',[fU[2],part,S]),[1]);D(init,'pu',bg('pu','pu',[uE,S,z,p]),wD);
+    D(iter,'csr',bg('csr','mv',[uE,rpB,ciB,vaB,p,Ap]),wD);D(iter,'dot',bg('dot','pa',[dU,p,Ap,part]),[256]);D(iter,'fin',bg('fin','f0',[fU[0],part,S]),[1]);D(iter,'axpy',bg('axpy','ax',[uE,S,p,Ap,u,r]),wD);pushAll(iter,pre);D(iter,'dot',bg('dot','rz',[dU,r,z,part]),[256]);D(iter,'fin',bg('fin','f1',[fU[1],part,S]),[1]);D(iter,'pu',bg('pu','pu',[uE,S,z,p]),wD);
     await run(init,1);popped=true;const a=await d.popErrorScope(),c2=await d.popErrorScope();if(a||c2)throw new Error('WebGPU: '+(a||c2).message);
     const mv=(x,y)=>{for(let i=0;i<n;i++){let s2=0;for(let k=rp[i];k<rp[i+1];k++)s2+=va[k]*x[ci[k]];y[i]=s2;}};
     return{n,solve:pcgLoop(d,{n,r,u,p,init,iter,run,rd,mv,tol:opt.tol,maxIt:opt.maxIt,multi:false,levels:1}),free};

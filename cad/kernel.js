@@ -11,6 +11,7 @@ import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
 import {chamferSides,alongFaces,FEAT2,solidsOf} from './features2.js';
 import {vec as V} from './qmath.js';
+import {maxOf,minOf,pushAll} from './minmax.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
@@ -124,7 +125,7 @@ function airDraw(s){
   return bezChain(pen,lr,un([lr[1][0]-lr[0][0],lr[1][1]-lr[0][1]]),[0,1]).close();
 }
 function splineDraw(s,pre){
-  const raw=(s.pts||[]).map(p=>[+p[0],+p[1]]),t=Math.max(1e-9,...raw.map(p=>Math.hypot(...p)))*1e-7,P=raw.filter((p,i)=>i===0||Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])>t);P.length>1&&Math.hypot(P[0][0]-P[P.length-1][0],P[0][1]-P[P.length-1][1])<=t&&P.pop();
+  const raw=(s.pts||[]).map(p=>[+p[0],+p[1]]),t=maxOf([1e-9,...raw.map(p=>Math.hypot(...p))])*1e-7,P=raw.filter((p,i)=>i===0||Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])>t);P.length>1&&Math.hypot(P[0][0]-P[P.length-1][0],P[0][1]-P[P.length-1][1])<=t&&P.pop();
   if(P.length<3)throw new ProfileError('spline needs 3+ distinct points');if(P.some(p=>!isFinite(p[0])||!isFinite(p[1])))throw new ProfileError('spline has a point that is not a number');
   const n=P.length,T=P.map((p,i)=>{const a=P[(i+n-1)%n],b=P[(i+1)%n];return[(b[0]-a[0])/2,(b[1]-a[1])/2];}),C=P.map((p,i)=>{const q=P[(i+1)%n];return[p,[p[0]+T[i][0]/3,p[1]+T[i][1]/3],[q[0]-T[(i+1)%n][0]/3,q[1]-T[(i+1)%n][1]/3],q];}),smp=[];
   for(const[a,b,c,d]of C)for(let k=0;k<12;k++){const u=k/12,v=1-u;smp.push([v*v*v*a[0]+3*v*v*u*b[0]+3*v*u*u*c[0]+u*u*u*d[0],v*v*v*a[1]+3*v*v*u*b[1]+3*v*u*u*c[1]+u*u*u*d[1]]);}
@@ -190,7 +191,7 @@ export function coneSolid(r1,r2,h,c,ax){
 function holeStd(f){const inch=HOLESTD_IN[f.std],t0=f.std&&f.std!=='custom'&&(inch||HOLESTD[f.std]);if(!t0)return f;const k=ucv(inch?'in':'mm'),t=t0.map(v=>v*k),fit=f.fit||'clearance';return{...f,d:fit==='tapped'?t[1]:t[0],cb_d:fit==='cbore'?t[2]:0,cb_h:fit==='cbore'?t[3]:0,cs_d:fit==='csink'?t[4]:0,cs_ang:fit==='csink'?(inch?82:90):f.cs_ang};}
 function holeTool(f0,body){
   const f=holeStd(f0),P=planeFrom(f,body),d=f.d??M(5),thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth??M(10);
-  if(!thru&&body){const b=bboxOf(body),th=Math.max(...Array.from({length:8},(_,q)=>dot(sub(P.o,[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]),P.n)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
+  if(!thru&&body){const b=bboxOf(body),th=maxOf(Array.from({length:8},(_,q)=>dot(sub(P.o,[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]),P.n)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
   f.cb_d>0&&f.cb_h>0&&f.cb_d<=d&&NOTES.push({k:'cb_d',field:'cb_d',msg:'Counterbore Ø '+fu(f.cb_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*1.75,UNITS)),k:'cb_d',v:clean(d*1.75,UNITS)}]});f.cs_d>0&&f.cs_d<=d&&NOTES.push({k:'cs_d',field:'cs_d',msg:'Countersink Ø '+fu(f.cs_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*2,UNITS)),k:'cs_d',v:clean(d*2,UNITS)}]});
   let cbh=f.cb_h;
   if(body&&f.cb_d>d&&f.cb_h>0){const bb=body.boundingBox.bounds,T=Math.abs(P.n.reduce((t,v,i)=>t+v*(bb[1][i]-bb[0][i]),0));if(T>0&&f.cb_h>=T*0.999){cbh=T*0.75;TNOTE='the counterbore ('+f.cb_h.toFixed(3)+' deep) is not shallower than the plate ('+T.toFixed(3)+'), which would turn the hole into a plain Ø'+f.cb_d.toFixed(3)+' through hole. The counterbore depth was limited to '+cbh.toFixed(3)+' so the Ø'+d.toFixed(3)+' hole and the counterbore both stay; make the plate thicker or the counterbore shallower.';}}
@@ -306,7 +307,7 @@ function knifeTool(f){
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
 const nSol=b=>{const L=solidsOf(b),n=L.length;L.forEach(del);return n;},smemo=new WeakMap(),nsol=b=>{let v=smemo.get(b);v===undefined&&smemo.set(b,v=nSol(b));return v;},volOf=b=>R.measureShapeVolumeProperties(b).volume,vmemo=new WeakMap(),vol=b=>{let v=vmemo.get(b);v===undefined&&vmemo.set(b,v=Math.abs(volOf(b)));return v;},cap=t=>t[0].toUpperCase()+t.slice(1);
-function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const tn=threadNums(f),p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
+function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const tn=threadNums(f),p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=minOf(pr),hi2=maxOf(pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
   if(p<0.5&&!f.up){const u=25.4,g={...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u};delete g.threadId;const r=threadCut(body.clone().scale(u,[0,0,0]),g);return r.scale(1/u,[0,0,0]);}
   const rate=(ext?0.3197*2*Math.PI*(d/2-0.2373*p):0.2369*2*Math.PI*(d/2-0.5413*p+0.2062*p))*p,v0=volOf(body),S=a1-a0+2*p,at=t=>c.map((v,i)=>v+ax[i]*(t-t0)),REV={X:'-X',Y:'-Y',Z:'-Z','+X':'-X','+Y':'-Y','+Z':'-Z','-X':'X','-Y':'Y','-Z':'Z'},seg=(t,h,dir=1)=>threadTool({...f,axis:dir>0?f.axis||'Z':REV[f.axis||'Z'],...Object.fromEntries(['x','y','z'].map((q,i)=>[q,at(t)[i]])),length:h-2*p}),want=rate*(Math.min(hi2,a1+p)-Math.max(lo,a0-p)),err=r=>Math.abs((v0-volOf(r))/want-1);
   for(const dir of[1,-1])for(const a of[0,37])try{const t=seg(dir>0?a0:a1,S,dir),r=body.cut(a?t.rotate(a,at(a0),ax):t);if(err(r)<0.02)return r;}catch{}
@@ -348,7 +349,7 @@ export async function build(doc,opt={}){
   let body=null,prevKey='',reused=0,sk=0,i0=0,fk=null;
   datReset();
   const tools={},nz=Math.min(feats.length,(doc.features||[]).slice(0,Math.max(0,doc.freeze|0)).filter(f=>!f.suppressed).length);
-  if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?warnings.push(...e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
+  if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?pushAll(warnings,e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
   cache.fk=null;
   for(let j=0;j<i0;j++)cache[j].dat&&datPut(feats[j].id,cache[j].dat);
   for(let i=i0;i<Math.min(upto,feats.length);i++){
@@ -373,7 +374,7 @@ export async function build(doc,opt={}){
     }
     try{f=res(raw,scope);key=prevKey+'|'+JSON.stringify(f)+(raw.type==='import'?raw.id:raw.type==='edgeprofile'?doc.material:'');}catch(e){perr={id:raw.id,name:raw.name,type:raw.type,msg:e.message};errors.push(perr);key=prevKey+'|ERR'+i+JSON.stringify(raw);f=null;}
     const c=cache[i];
-    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.dat&&datPut(raw.id,c.dat);c.err&&errors.push(c.err);c.warn&&warnings.push(...c.warn);prevKey=key;reused++;continue;}
+    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.dat&&datPut(raw.id,c.dat);c.err&&errors.push(c.err);c.warn&&pushAll(warnings,c.warn);prevKey=key;reused++;continue;}
     truncate(i,cache);
     let next=body,tool=null,dat=null,ferr=perr;const fw=[],W=(msg,x)=>fw.push({id:raw.id,name:raw.name,type:raw.type,msg,...x});NOTES=[];
     if(f)try{
@@ -424,7 +425,7 @@ export async function build(doc,opt={}){
       if(body&&next&&next!==body&&f.type!=='combine'){const n0=nsol(body),n1=nsol(next);n1>n0&&W(cap(f.type)+" '"+(f.name||f.id)+"' made "+(n1-n0>1?(n1-n0)+' separate bodies':'a separate body')+(f.op==='new'?' (New body)':(f.op==='cut'||f.type==='hole'?': the cut split the part':': it does not touch the part'))+', so the part now has '+n1+' bodies. '+(f.op==='cut'||f.type==='hole'?'Check the cut.':'Make it touch the part, or add a Combine bodies feature to merge, subtract or intersect them.'),{bodies:n1});if(f.op==='new'&&n1===n0+nsol(tool)){const ov=vol(body.intersect(tool));ov>1e-7*Math.max(vol(body),1e-12)&&W(cap(f.type)+" '"+(f.name||f.id)+"' (New body) overlaps an existing body by "+(+ov.toPrecision(3))+' '+UNITS+'³; mass and volume count the overlap twice. Use Combine bodies to merge or subtract.',{bodies:n1});}}
       if(body&&next!==body&&TOOLMAKERS[f.type]&&f.type!=='thread'&&(f.op||'add')!=='intersect'){const v0=vol(body),v1=vol(next);if(Math.abs(v1-v0)<=1e-7*Math.max(v0,1e-12)){const cut=f.type==='hole'||f.op==='cut';W(cap(f.type)+" '"+(f.name||f.id)+"' changed nothing: "+(cut?'it does not touch the part':'it lies entirely inside existing material')+'; check offset/plane.');}}
     }catch(e){ferr={id:raw.id,name:raw.name,type:raw.type,msg:friendly(e,f)};errors.push(ferr);next=body;tool=null;}
-    for(const q of NOTES)W(cap(raw.type)+" '"+(raw.name||raw.id)+"': "+q.msg,{note:q.msg,field:q.field,...(q.v!=null?{limit:q.v}:{}),fix:q.fix});NOTES=[];warnings.push(...fw);
+    for(const q of NOTES)W(cap(raw.type)+" '"+(raw.name||raw.id)+"': "+q.msg,{note:q.msg,field:q.field,...(q.v!=null?{limit:q.v}:{}),fix:q.fix});NOTES=[];pushAll(warnings,fw);
     if(tool)tools[raw.id]=tool;
     cache[i]={key,shape:next,tool,err:ferr,warn:fw,dat};
     body=next;prevKey=key;

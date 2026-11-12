@@ -3,6 +3,7 @@ import {packStatus,isCadTag} from './model_pack.js';
 import * as REFS from './refs.js';
 import * as AISEE from './aisee.js';
 import {POL,allow,managed,keep as keepLocal} from './policy.js';
+import {pushAll} from './minmax.js';
 const CSS=`#tab-ai.on{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .as-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:9px 10px 4px 12px;flex:none}
 .as-chip{flex:1;min-width:0;display:flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--line2);border-radius:calc(99px*var(--rk,1));background:var(--bg2);color:var(--ink);font-size:12.5px;text-align:left}
@@ -239,7 +240,7 @@ function paintCtx(){const c=$('.as-ctx');if(!c)return;const L=selChips();c.repla
 function suggestions(){const inch=A.units.docUnits(A.doc)==='in',nf=S.sel.faces.size,ne=S.sel.edges.size,F=S.doc.features,ws=A.ws,r=inch?'1/8 in':'3 mm',w=inch?'0.08 in':'2 mm',o=[],R=(S.doc.refs||[]).filter(x=>x.ai!==false);
   if(ws==='asm')return['Which parts interfere with each other?','List the bill of materials','Make this assembly lighter'].map(t=>({t}));if(ws==='form')return['Make the head a little bigger','Add a tail','Give it a friendlier face'].map(t=>({t}));if(ws==='tool')return['Is this part moldable? List the problems','Design the mold for this part','Add 2 degrees of draft to the walls'].map(t=>({t}));
   S.errors.length&&o.push({t:'Fix this error'});ne&&o.push({t:'Fillet '+(ne>1?'these '+ne+' edges ':'this edge ')+r});nf&&o.push({t:nf>1?'Add holes on these '+nf+' faces':'Add holes on this face'});S.lastFea&&o.push({t:'Make it lighter but keep FOS ≥ 2'});R.length&&o.push({t:'Model from my references',text:REFS.PROMPT,force:true});
-  F.length?o.push({t:'Round all vertical edges '+r},{t:'Hollow it with '+w+' walls, open on top'},{t:'Add four '+(inch?'#10':'M5')+' mounting holes'},{t:'Test it with '+(inch?'50 lbf':'200 N')+' pushing down on the top'}):o.push(...(inch?['A 4 × 2 in bracket with two 1/4 in holes','A 3D-printable phone stand','A 2 in cube with a 1 in hole through it','A hex nut for a 3/8 in bolt']:['A 100 × 50 mm bracket with two 5 mm holes','A 3D-printable phone stand','A 50 mm cube with a 25 mm hole through it','A hex nut for an M10 bolt']).map(t=>({t})));
+  F.length?o.push({t:'Round all vertical edges '+r},{t:'Hollow it with '+w+' walls, open on top'},{t:'Add four '+(inch?'#10':'M5')+' mounting holes'},{t:'Test it with '+(inch?'50 lbf':'200 N')+' pushing down on the top'}):pushAll(o,(inch?['A 4 × 2 in bracket with two 1/4 in holes','A 3D-printable phone stand','A 2 in cube with a 1 in hole through it','A hex nut for a 3/8 in bolt']:['A 100 × 50 mm bracket with two 5 mm holes','A 3D-printable phone stand','A 50 mm cube with a 25 mm hole through it','A hex nut for an M10 bolt']).map(t=>({t})));
   return o.slice(0,4);}
 function paintSugg(){const c=$('.chips');if(!c)return;c.replaceChildren(...suggestions().map(x=>h('button',{onclick:()=>send({text:x.text||x.t,force:x.force})},x.t)));}
 const sigOf=()=>[...S.sel.faces.keys()].join()+'|'+[...S.sel.edges.keys()].join()+'|'+S.errors.length+'|'+(S.lastFea?1:0)+'|'+S.doc.features.length+'|'+(S.doc.refs||[]).filter(x=>x.ai!==false).length+'|'+A.ws+'|'+A.units.docUnits(A.doc);

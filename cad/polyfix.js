@@ -1,5 +1,6 @@
 import PC from './vendor/polygon-clipping.js';
-const cr=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]),area=r=>r.reduce((s,p,i)=>{const q=r[(i+1)%r.length];return s+p[0]*q[1]-q[0]*p[1];},0)/2,same=(a,b,t)=>Math.hypot(a[0]-b[0],a[1]-b[1])<=t,scaleOf=P=>Math.max(1e-9,...P.map(p=>Math.max(Math.abs(p[0]),Math.abs(p[1]))));
+import {maxOf,pushAll} from './minmax.js';
+const cr=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]),area=r=>r.reduce((s,p,i)=>{const q=r[(i+1)%r.length];return s+p[0]*q[1]-q[0]*p[1];},0)/2,same=(a,b,t)=>Math.hypot(a[0]-b[0],a[1]-b[1])<=t,scaleOf=P=>maxOf([1e-9,...P.map(p=>Math.max(Math.abs(p[0]),Math.abs(p[1])))]);
 const SAG=1;
 export class ProfileError extends Error{}
 export function arcFlat(a,b,s,n=18){
@@ -7,7 +8,7 @@ export function arcFlat(a,b,s,n=18){
   for(let i=1;i<k;i++)o.push([C[0]+r*Math.cos(a0+sw*i/k),C[1]+r*Math.sin(a0+sw*i/k)]);
   return o;
 }
-function flatten(pts,bz){const o=[];pts.forEach((p,i)=>{o.push(p);const b=bz[i],q=pts[(i+1)%pts.length];b&&!same(p,q,1e-12)&&o.push(...arcFlat(p,q,b));});return o;}
+function flatten(pts,bz){const o=[];pts.forEach((p,i)=>{o.push(p);const b=bz[i],q=pts[(i+1)%pts.length];b&&!same(p,q,1e-12)&&pushAll(o,arcFlat(p,q,b));});return o;}
 function clean(pts,bz){
   let P=pts.map(p=>[+p[0],+p[1]]),B=pts.map((_,i)=>+bz[i]||0);const t=scaleOf(P)*1e-9;
   P.length>1&&same(P[0],P[P.length-1],t)&&!B[P.length-1]&&(P.pop(),B.pop());

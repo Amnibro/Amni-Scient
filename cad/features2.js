@@ -2,6 +2,7 @@ import * as R from './vendor/replicad.js';
 import {add,mul,dot,cross,vec} from './qmath.js';
 import {pullSel} from './schema2.js';
 import * as D from './datum.js';
+import {maxOf,minOf} from './minmax.js';
 export function chamferSides(body,es,f){
   const a=+f.angle||0,d2=+f.d2||0;if(a<0||a>=90)throw new Error('chamfer angle must be above 0 and below 90 degrees');if(d2<0)throw new Error('second chamfer distance must be 0 or more');
   const hs=new Set(es.map(q=>q.e.hashCode)),adj=new Map();
@@ -12,7 +13,7 @@ export function chamferSides(body,es,f){
 export const alongFaces=(oc,F,ax)=>F.filter(q=>q.type==='PLANE'?q.n&&Math.abs(dot(q.n,ax))<1e-7:q.type==='CYLINDRE'&&Math.abs(Math.abs(dot(D.cylGeom(oc,q.f,'CYLINDRE').d,ax))-1)<1e-7);
 function draft(f,body,K){
   const oc=R.getOC(),p=K.AXV(f.pull||'+Z'),a=+f.angle;if(!isFinite(a)||Math.abs(a)>=90)throw new Error('draft angle must be between -90 and 90 degrees');if(!a)return{shape:body};
-  const bb=K.bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?bb.max[0]:bb.min[0],q&2?bb.max[1]:bb.min[1],q&4?bb.max[2]:bb.min[2]],p)),lo=Math.min(...pr),hi=Math.max(...pr),nf=f.neutral==='face'?K.selectFaces(body,f.nface||{side:'-Z'})[0]:null;
+  const bb=K.bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?bb.max[0]:bb.min[0],q&2?bb.max[1]:bb.min[1],q&4?bb.max[2]:bb.min[2]],p)),lo=minOf(pr),hi=maxOf(pr),nf=f.neutral==='face'?K.selectFaces(body,f.nface||{side:'-Z'})[0]:null;
   if(f.neutral==='face'&&!nf)throw new Error('the neutral face was not found');
   const h=f.neutral==='top'?hi:f.neutral==='mid'?(lo+hi)/2:f.neutral==='offset'?lo+(+f.offset||0):nf?dot(nf.c,p):lo,o=p.map(v=>v*h);
   const all=K.selectFaces(body,pullSel({faces:f.faces,pull:p})),fs=all.filter(q=>!(q.type==='PLANE'&&q.n&&Math.abs(Math.abs(dot(q.n,p))-1)<1e-7));
@@ -31,9 +32,9 @@ function rib(f,body,K){
   const pl=pts.reduce((s,p,i)=>i?s+Math.hypot(p[0]-pts[i-1][0],p[1]-pts[i-1][1]):0,0),D=3*(size+pl),t0=tn(pts[0],pts[1]),t1=tn(pts[pts.length-2],pts[pts.length-1]),n=pts.length,L=pts.map(p=>p.slice());
   L[0]=[pts[0][0]-t0[0]*D,pts[0][1]-t0[1]*D];L[n-1]=[pts[n-1][0]+t1[0]*D,pts[n-1][1]+t1[1]*D];
   const ch=Math.hypot(pts[n-1][0]-pts[0][0],pts[n-1][1]-pts[0][1])>size*1e-7?tn(pts[0],pts[n-1]):t0,left=[-ch[1],ch[0]],base=new R.Plane(add(P.o,mul(P.n,sd[0])),P.x,P.n),tol=size*1e-7+1e-9;
-  const mids=pts.slice(1).map((p,i)=>W([(p[0]+pts[i][0])/2,(p[1]+pts[i][1])/2])),lineMax=(d)=>Math.max(...pts.map(p=>dot(W(p),d)));
+  const mids=pts.slice(1).map((p,i)=>W([(p[0]+pts[i][0])/2,(p[1]+pts[i][1])/2])),lineMax=(d)=>maxOf(pts.map(p=>dot(W(p),d)));
   const slab=dir=>{const sol=[];for(let i=0;i+1<n;i++){const a=L[i],b=L[i+1],Q=[a,b,[b[0]+dir[0]*D,b[1]+dir[1]*D],[a[0]+dir[0]*D,a[1]+dir[1]*D]],ar=Q.reduce((s,p,j)=>s+p[0]*Q[(j+1)%4][1]-Q[(j+1)%4][0]*p[1],0);if(Math.abs(ar)<1e-12*D*D)continue;const O=ar<0?Q.slice().reverse():Q;let pen=R.draw(O[0]);for(let j=1;j<4;j++)pen=pen.lineTo(O[j]);sol.push(pen.close().sketchOnPlane(base).extrude(sd[1]-sd[0]));}if(!sol.length)throw new Error('the rib line cannot grow in that direction');return sol.reduce((u,v)=>u.fuse(v));};
-  const grow=dir=>{const S=slab(dir),rest=S.cut(body),sol=solidsOf(rest),wd=add(mul(P.x,dir[0]),mul(y,dir[1])),lim=lineMax(wd)+0.9*D,hit=sol.filter(s=>mids.some(m=>K.pdist(m,s)<tol)),bb=hit.map(s=>s.boundingBox.bounds),far=bb.some(b=>Math.max(...[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b[1][0]:b[0][0],q&2?b[1][1]:b[0][1],q&4?b[1][2]:b[0][2]],wd)))>lim);S.delete();return{hit,ok:hit.length>0&&!far,vol:hit.reduce((s,h)=>s+Math.abs(K.volOf(h)),0)};};
+  const grow=dir=>{const S=slab(dir),rest=S.cut(body),sol=solidsOf(rest),wd=add(mul(P.x,dir[0]),mul(y,dir[1])),lim=lineMax(wd)+0.9*D,hit=sol.filter(s=>mids.some(m=>K.pdist(m,s)<tol)),bb=hit.map(s=>s.boundingBox.bounds),far=bb.some(b=>maxOf([0,1,2,3,4,5,6,7].map(q=>dot([q&1?b[1][0]:b[0][0],q&2?b[1][1]:b[0][1],q&4?b[1][2]:b[0][2]],wd)))>lim);S.delete();return{hit,ok:hit.length>0&&!far,vol:hit.reduce((s,h)=>s+Math.abs(K.volOf(h)),0)};};
   const cand=f.dir==='+'?[left]:f.dir==='-'?[[-left[0],-left[1]]]:[left,[-left[0],-left[1]]],res=cand.map(grow),good=res.filter(r=>r.ok),use=f.dir==='both'?good:f.dir==='auto'||!f.dir?good.sort((a,b)=>a.vol-b.vol).slice(0,1):good;
   if(!use.length)throw new Error('the rib does not reach the part: move or lengthen the line, or change Grow toward');
   const picks=use.flatMap(r=>r.hit),out=picks.reduce((acc,h)=>acc.fuse(h),body);return{shape:out,tool:picks.length===1?picks[0]:R.makeCompound(picks)};
@@ -45,8 +46,8 @@ function pickBodies(sel,L,K,tools){
     if(typeof s==='number'){out.push(s);continue;}if(!s||typeof s!=='object')continue;
     if(s.index!=null)out.push(+s.index);
     else if(s.by==='all')L.forEach((_,i)=>out.push(i));
-    else if(s.feature!=null){const t=tools[s.feature];if(!t)throw new Error('feature "'+s.feature+'" made no body to select');const v=L.map(b=>ivol(b,t)),m=Math.max(...v);if(!(m>1e-9))throw new Error('no body contains the geometry of feature "'+s.feature+'" any more');out.push(v.indexOf(m));}
-    else if(s.largest||s.smallest){const v=L.map(b=>Math.abs(K.volOf(b))),m=s.largest?Math.max(...v):Math.min(...v);out.push(v.indexOf(m));}
+    else if(s.feature!=null){const t=tools[s.feature];if(!t)throw new Error('feature "'+s.feature+'" made no body to select');const v=L.map(b=>ivol(b,t)),m=maxOf(v);if(!(m>1e-9))throw new Error('no body contains the geometry of feature "'+s.feature+'" any more');out.push(v.indexOf(m));}
+    else if(s.largest||s.smallest){const v=L.map(b=>Math.abs(K.volOf(b))),m=s.largest?maxOf(v):minOf(v);out.push(v.indexOf(m));}
     else if(s.pts||s.by==='pick'){for(const p of s.pts||[]){let bi=-1,bd=1e18;L.forEach((b,i)=>{const d=K.pdist(p,b);d<bd&&(bd=d,bi=i);});bi>=0&&out.push(bi);}}
   }
   return[...new Set(out)];

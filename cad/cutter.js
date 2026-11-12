@@ -1,4 +1,5 @@
 import PC from './vendor/polygon-clipping.js';
+import {maxOf,minOf} from './minmax.js';
 const D=Math.PI/180;
 export const SHANKS={'1/4':6.35,'1/2':12.7,'8mm':8,'12mm':12};
 export const BEARINGS={none:null,'3/8x1/8':[0.375,0.125],'1/2x3/16':[0.5,0.1875],'5/8x1/4':[0.625,0.25],'3/4x1/4':[0.75,0.25],'1x1/4':[1,0.25]};
@@ -67,14 +68,14 @@ export const PROFILE_GROUPS=['Edge','Groove','Joint','Molding','Custom'];
 export function profile(id,pp={},K=1,o={}){
   const d=PROFILES[id];if(!d)throw new Error('unknown profile "'+id+'"; known: '+Object.keys(PROFILES).join(', '));
   const p={},w=[];for(const[k,v]of Object.entries(d.defs)){const x=pp&&pp[k]!=null&&pp[k]!==''?+pp[k]:v[2]?v[1]:v[1]*K;if(!isFinite(x)||x<0)throw new Error(d.name+': '+v[0]+' must be a number of zero or more');p[k]=x;}
-  const r=d.fn(p,o.m||0,K,w,pp||{}),Q=flat(r.cur,1e-4),xs=Q.map(q=>q[0]),ys=Q.map(q=>q[1]),bb={minx:Math.min(...xs),maxx:Math.max(...xs),miny:Math.min(...ys),maxy:Math.max(...ys)};
+  const r=d.fn(p,o.m||0,K,w,pp||{}),Q=flat(r.cur,1e-4),xs=Q.map(q=>q[0]),ys=Q.map(q=>q[1]),bb={minx:minOf(xs),maxx:maxOf(xs),miny:minOf(ys),maxy:maxOf(ys)};
   return{id,name:d.name,group:d.group,kind:d.kind,p,defs:d.defs,K,cur:r.cur,half:r.half||null,rings:(r.rings||[]).map(dd),sec:r.sec?dd(r.sec):null,bb,w:bb.maxx-bb.minx,h:bb.maxy-bb.miny,warns:w};
 }
 export const secArea=pr=>pr.sec?ringArea(pr.sec):null;
 export const cutArea=pr=>pr.rings.reduce((s,r)=>s+ringArea(r),0);
 function segDist(q,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,((q[0]-a[0])*dx+(q[1]-a[1])*dy)/l)):0;return Math.hypot(q[0]-a[0]-t*dx,q[1]-a[1]-t*dy);}
 const dens=(P,h)=>{const o=[];for(let i=0;i+1<P.length;i++){const n=Math.max(1,Math.ceil(Math.hypot(P[i+1][0]-P[i][0],P[i+1][1]-P[i][1])/h));for(let j=0;j<n;j++)o.push([P[i][0]+(P[i+1][0]-P[i][0])*j/n,P[i][1]+(P[i+1][1]-P[i][1])*j/n]);}o.push(P[P.length-1]);return o;};
-export const hausdorff=(A,B,h=0.001)=>{const d=(X,Y)=>Math.max(...dens(X,h).map(q=>Math.min(...Y.slice(1).map((b,i)=>segDist(q,Y[i],b)))));return Math.max(d(A,B),d(B,A));};
+export const hausdorff=(A,B,h=0.001)=>{const d=(X,Y)=>maxOf(dens(X,h).map(q=>minOf(Y.slice(1).map((b,i)=>segDist(q,Y[i],b)))));return Math.max(d(A,B),d(B,A));};
 export function copeFit(stickPr,copePr,K=1){const g=Math.max(copePr.p.gd,copePr.p.pr),A=flat(stickPr.cur,1e-4),B=flat(copePr.cur,1e-4).map(q=>[-q[0]-g,q[1]]),gap=hausdorff(A,B,0.001*K);return{gap,gap_in:gap/K,clr_in:copePr.p.clr/K,ok:gap/K<=0.002+1e-9};}
 export function bitCurve(pr,mode='router',A=0,Rmax=0){
   const k=pr.kind,mx=pr.bb.minx,my=pr.bb.miny,fl=c=>({pts:c.pts,bulge:c.bulge});
@@ -89,10 +90,10 @@ export function bitSpec(f,K=1){
   let A=0,Rmax=0,bore=0;
   if(kind==='shaper'){bore=(SPINDLES[f.spindle]||0.75)*K;Rmax=(f.dia>0?+f.dia:3.5*K)/2;A=edge?Rmax-wx:0;}
   else if(pr.kind!=='center'){A=br?od/2:f.dia>0?f.dia/2-wx:sd/2+0.07*K;br&&f.dia>0&&Math.abs(f.dia/2-wx-A)>1e-6*K&&w.push('The bearing sets the pilot radius, so the cutting diameter follows the profile.');}
-  const bc=bitCurve(pr,kind,A,Rmax),Q=flat(bc.path,1e-4*K),zs=Q.map(q=>q[1]),rs=Q.map(q=>q[0]),zmax=Math.max(...zs),rmin=Math.min(...rs),rmax=Math.max(...rs),H=zmax,flute=Math.max(0,(f.len>0?+f.len:0)-H);
+  const bc=bitCurve(pr,kind,A,Rmax),Q=flat(bc.path,1e-4*K),zs=Q.map(q=>q[1]),rs=Q.map(q=>q[0]),zmax=maxOf(zs),rmin=minOf(rs),rmax=maxOf(rs),H=zmax,flute=Math.max(0,(f.len>0?+f.len:0)-H);
   kind==='shaper'&&rmin<bore/2+0.1*K&&w.push('The cutter leaves under 1/10 in of body around the bore; increase the diameter.');
   const wc=0.1*K,Rc0=kind==='shaper'?Math.max(bore/2+0.05*K,rmin-wc):sd/2+0.03*K,z0=kind==='shaper'?0:bt,rin=Math.min(kind==='shaper'?Math.max(bore/2+0.02*K,Rc0-0.1*K):0.5*Rc0,rmin);
-  const zv=[...new Set(Q.map(q=>+q[1].toFixed(7)))].sort((a,b)=>a-b),env=zv.map(z=>[Math.max(...Q.filter(q=>Math.abs(q[1]-z)<1e-6).map(q=>q[0])),z]),core=[];
+  const zv=[...new Set(Q.map(q=>+q[1].toFixed(7)))].sort((a,b)=>a-b),env=zv.map(z=>[maxOf(Q.filter(q=>Math.abs(q[1]-z)<1e-6).map(q=>q[0])),z]),core=[];
   for(const q of kind==='shaper'?[[Rc0+wc,0],[Rc0+wc,H+flute]]:[...env,...(flute>0?[[env[env.length-1][0],H+flute]]:[])]){const r=Math.max(0,Math.min(Rc0,q[0]-wc)),a=core[core.length-2],b=core[core.length-1];b&&a&&Math.abs((b[0]-a[0])*(q[1]-a[1])-(r-a[0])*(b[1]-a[1]))<1e-9?core[core.length-1]=[r,q[1]]:core.push([r,q[1]]);}
   const clean=core,ord=Q,undercut=env.some((e,i)=>i&&e[0]<env[i-1][0]-1e-6);
   const last=bc.path.pts[bc.path.pts.length-1],first=bc.path.pts[0],hi=last[1]>=first[1]?last:first,lo=hi===last?first:last;
@@ -124,7 +125,7 @@ export function checkBit(s,rpm,K=1){
   o.push({lvl:want>lim?'err':'ok',key:'rpm',msg:(want>lim?'Too fast: ':'Rim speed ')+Math.round(rim).toLocaleString('en-US')+' ft/min ('+(rim*0.3048).toFixed(0)+' m/min) at '+want.toLocaleString('en-US')+' rpm. Limit for a '+dIn.toFixed(3)+' in ('+(dIn*25.4).toFixed(1)+' mm) cutter is '+lim.toLocaleString('en-US')+' rpm.'});
   s.kind==='router'&&o.push({lvl:s.sl/K<Math.max(0.625,1.5*s.sd/K)?'err':'ok',key:'shank',msg:'Shank engagement '+(s.sl/K).toFixed(3)+' in ('+(s.sl/K*25.4).toFixed(1)+' mm); keep at least '+Math.max(0.625,1.5*s.sd/K).toFixed(3)+' in in the collet.'});
   s.kind==='router'&&s.dia>4*s.sd&&o.push({lvl:'warn',key:'shankdia',msg:'A shank this size is light for a cutter this wide; use a 1/2 in or 12 mm shank above '+(4*s.sd/K).toFixed(2)+' in diameter.'});
-  o.push({lvl:rr.length?'err':'ok',key:'minr',msg:rr.length?'Profile radius '+(Math.min(...rr)/K).toFixed(4)+' in is below the 1/32 in minimum a carbide wing can be ground to.':'Smallest profile radius is at least 1/32 in.'});
+  o.push({lvl:rr.length?'err':'ok',key:'minr',msg:rr.length?'Profile radius '+(minOf(rr)/K).toFixed(4)+' in is below the 1/32 in minimum a carbide wing can be ground to.':'Smallest profile radius is at least 1/32 in.'});
   o.push({lvl:s.ct>s.Rc0*1.2?'warn':'ok',key:'carbide',msg:'Carbide '+(s.ct/K).toFixed(3)+' in ('+(s.ct/K*25.4).toFixed(1)+' mm) on a '+(s.Rc0*2/K).toFixed(3)+' in body.'});
   s.body&&o.push({lvl:'ok',key:'body',msg:'Steel wing body '+(s.wb/K).toFixed(3)+' in ('+(s.wb/K*25.4).toFixed(1)+' mm) thick behind a '+(s.cw/K).toFixed(3)+' in ('+(s.cw/K*25.4).toFixed(1)+' mm) wide brazed carbide seat'+(s.gw>0?'; gullet '+(s.gw/K).toFixed(3)+' in ('+(s.gw/K*25.4).toFixed(1)+' mm) in front of the carbide.':'; no gullet.')});
   s.body&&o.push({lvl:s.bite?'ok':'warn',key:'bite',msg:s.bite?'Anti-kickback limiter: bite '+(s.bite.tooth/K).toFixed(4)+' in ('+(s.bite.tooth/K*25.4).toFixed(2)+' mm) per wing and '+(s.bite.rev/K).toFixed(4)+' in ('+(s.bite.rev/K*25.4).toFixed(2)+' mm) per revolution at most.':'No anti-kickback limiter: the bite per revolution is not limited. Set a limiter (try 1/16 in or less) for hand-fed work.'});
@@ -136,7 +137,7 @@ export function knifeSpec(f,K=1){
   const pr=profile(f.prof||'roundover',f.pp,K),R=(f.rc>0?+f.rc:4*K)/2,hook=f.hook!=null&&f.hook!==''?+f.hook:20,proj=f.proj>0?+f.proj:0.5*K,kt=f.kt>0?+f.kt:0.1875*K,grip=f.grip>0?+f.grip:0.5*K,km=f.km>0?+f.km:0.25*K,w=[...pr.warns],Q=flat(pr.cur,0.0005*K);
   const mono=(P,i)=>P.every((q,j)=>!j||q[i]>=P[j-1][i]-1e-7*K),top=Q.map(q=>[q[0],-q[1]]),side=Q.map(q=>[-q[1],-q[0]]),mode=f.head==='side'?'side':f.head==='top'?'top':mono(top,0)?'top':mono(side,0)?'side':'top',U=mode==='top'?top:side;
   !mono(U,0)&&w.push('This profile undercuts, so a knife cannot cut it in one pass. Use the cope and stick bits instead.');
-  const dmax=Math.max(...U.map(q=>q[1])),Hb=knifeS(R,hook,proj)+grip,V=U.map(q=>[q[0],Hb-knifeS(R,hook,Math.max(0,q[1]))]);
+  const dmax=maxOf(U.map(q=>q[1])),Hb=knifeS(R,hook,proj)+grip,V=U.map(q=>[q[0],Hb-knifeS(R,hook,Math.max(0,q[1]))]);
   dmax>proj-0.03*K&&w.push('The profile is '+(dmax/K).toFixed(3)+' in deep but the knife projects '+(proj/K).toFixed(3)+' in; raise the projection.');
   (hook<0||hook>35)&&w.push('Hook angle outside 0 to 35 degrees.');
   const u0=V[0][0],u1=V[V.length-1][0],outline=[[u0-km,0],[u1+km,0],[u1+km,V[V.length-1][1]],...[...V].reverse(),[u0-km,V[0][1]]];
@@ -169,6 +170,6 @@ export function report(c,K=1){
   return out;
 }
 export function silhouette(s){
-  const Q=s.ord,zv=[...new Set(Q.map(q=>+q[1].toFixed(7)))].sort((a,b)=>a-b),env=zv.map(z=>[Math.max(...Q.filter(q=>Math.abs(q[1]-z)<1e-6).map(q=>q[0])),z+s.z0]),rc=s.core[s.core.length-1][0],zt=s.z0+s.H,P=[[0,0]];
+  const Q=s.ord,zv=[...new Set(Q.map(q=>+q[1].toFixed(7)))].sort((a,b)=>a-b),env=zv.map(z=>[maxOf(Q.filter(q=>Math.abs(q[1]-z)<1e-6).map(q=>q[0])),z+s.z0]),rc=s.core[s.core.length-1][0],zt=s.z0+s.H,P=[[0,0]];
   s.br&&P.push([s.od/2,0],[s.od/2,s.bt]);P.push([env[0][0],env[0][1]]);for(const e of env)P.push(e);P.push([env[env.length-1][0],zt],[rc,zt],[s.sd/2,zt+s.neck],[s.sd/2,zt+s.sl]);return P;
 }

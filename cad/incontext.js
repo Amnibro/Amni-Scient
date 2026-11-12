@@ -1,12 +1,13 @@
 import * as ASM from './assembly.js';
 import * as M from './mates.js';
 import {resolveParams} from './expr.js';
+import {maxOf} from './minmax.js';
 const {sub,mul,dot,len}=M.V3,r5=v=>+v.toFixed(5),AX={X:0,Y:1,Z:2},KIND={offset:'Offset along an axis',point:'Point',circle:'Circle (center and size)',dia:'Diameter',length:'Edge length',distance:'Distance between two',param:'Parameter of another part'};
 export const KINDS=KIND;
 const ident=s=>String(s||'ref').replace(/[^A-Za-z0-9_]/g,'_').replace(/^(\d)/,'_$1');
 export function docOf(d,pid){const A=ASM.ensure(d);if(pid===A.self)return d;const p=A.parts[pid];if(!p)throw new Error('Unknown part '+pid);if(p.derived)throw new Error(p.name+' is a derived part; edit its parent or use Edit part to make it independent');return p.doc;}
 const partOf=(d,x)=>{const A=ASM.ensure(d),c=ASM.compBy(d,x);if(c)return{c,pid:c.part};if(A.parts[x])return{c:A.comps.find(k=>k.part===x)||null,pid:x};const k=Object.keys(A.parts).find(q=>A.parts[q].name===x);if(k)return{c:A.comps.find(c2=>c2.part===k)||null,pid:k};throw new Error('No part or component "'+x+'"');};
-export function addXref(d,spec){const A=ASM.ensure(d),T=partOf(d,spec.part||spec.in);if(!T.c)throw new Error('Insert the part into the assembly first; references are measured in its position');const doc=docOf(d,T.pid),kind=KIND[spec.kind]?spec.kind:'offset',name=ident(spec.name||(kind==='offset'?'z_ref':'ref'));doc.xrefs=doc.xrefs||[];const x={id:'x'+(1+Math.max(0,...doc.xrefs.map(q=>+String(q.id).slice(1)||0))),name,kind,in:T.c.id};
+export function addXref(d,spec){const A=ASM.ensure(d),T=partOf(d,spec.part||spec.in);if(!T.c)throw new Error('Insert the part into the assembly first; references are measured in its position');const doc=docOf(d,T.pid),kind=KIND[spec.kind]?spec.kind:'offset',name=ident(spec.name||(kind==='offset'?'z_ref':'ref'));doc.xrefs=doc.xrefs||[];const x={id:'x'+(1+maxOf([0,...doc.xrefs.map(q=>+String(q.id).slice(1)||0)])),name,kind,in:T.c.id};
   if(kind==='param'){const sp=spec.from||{};const S=partOf(d,sp.part||sp.c);x.from={part:S.pid,param:sp.param||sp.name};}else{if(!spec.from)throw new Error('Pick the geometry to reference (from)');x.from=JSON.parse(JSON.stringify(spec.from));if(x.from.comp&&!x.from.c){x.from.c=x.from.comp;delete x.from.comp;}const fc=ASM.compBy(d,x.from.c);if(x.from.c!==M.ORIGIN){if(!fc)throw new Error('No component "'+x.from.c+'" to reference');x.from.c=fc.id;}}
   if(kind==='distance'){if(!spec.to)throw new Error('Distance needs two references (from and to)');x.to=JSON.parse(JSON.stringify(spec.to));const tc=ASM.compBy(d,x.to.c);x.to.c=x.to.c===M.ORIGIN?x.to.c:tc&&tc.id;}
   if(kind==='offset')x.axis=String(spec.axis||'Z').toUpperCase();doc.xrefs=doc.xrefs.filter(q=>q.name!==name);doc.xrefs.push(x);return x;}
