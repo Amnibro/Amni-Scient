@@ -60,7 +60,7 @@ export function voxelize(pos,idx,bb,h,triMask){
 }
 export function keHeat(){const g=1/Math.sqrt(3),K=new Float64Array(64);for(const xi of[-g,g])for(const et of[-g,g])for(const ze of[-g,g]){const D=NODES.map(([a,b,c])=>[a*(1+b*et)*(1+c*ze)/4,b*(1+a*xi)*(1+c*ze)/4,c*(1+a*xi)*(1+b*et)/4]);for(let a=0;a<8;a++)for(let b=0;b<8;b++)K[a*8+b]+=(D[a][0]*D[b][0]+D[a][1]*D[b][1]+D[a][2]*D[b][2])/8;}return K;}
 function densOf(G){const d=new Float32Array(G.nx*G.ny*G.nz);for(let e=0;e<d.length;e++)d[e]=G.solid[e]?Math.max(G.frac[e],0.12):0;return d;}
-const FG=helium('fea_grid');let NSW=1;export function setSweeps(n){NSW=n;}
+const FG=helium('fea_grid'),LB=helium('lob');let NSW=1;export function setSweeps(n){NSW=n;}
 const lev=(H,l,nd)=>{const om=H.ex.fg_level(l),d=k=>H.ex.fg_dim(l,k),nx=d(0),ny=d(1),nz=d(2);return{nx,ny,nz,NX:nx+1,NY:ny+1,NZ:nz+1,nn:d(3),nd,E:H.v(20).slice(),sc:H.v(21).slice(),...(l?{KE:H.v(22).slice()}:{}),fixed:H.v(23).slice(),diag:H.v(24).slice(),om};};
 async function setup(G,K,nd,fixed,dadd,mg,lazy){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.v(1).set(densOf(G));H.v(2).set(K);H.v(3).set(fixed);if(dadd)H.v(4).set(dadd);const n=x.fg_setup(mg===false?0:1,lazy?1:0),Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));fixed.set(H.v(14));Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
 const mv=(Ls,x,y,raw)=>{const H=Ls.he;H.v(12).set(x);H.ex.fg_matvec(raw?1:0);y.set(H.v(13));},vcycle=(Ls,r,z)=>{const H=Ls.he;H.v(10).set(r);H.ex.fg_vcycle();z.set(H.v(12));},om0=Ls=>{Ls[0].om=Ls.he.ex.fg_om0(Ls[0].om>0?Ls[0].om:0)||undefined;};
@@ -163,28 +163,24 @@ export function rigidModes(nn,xyz,Mv){const n=3*nn,c=[0,0,0],defl=[];let mt=0;fo
   const raw=[];for(let d=0;d<6;d++){const v=new Float64Array(n);for(let q=0;q<nn;q++)if(Mv[3*q]){const x=xyz(q),r=[x[0]-c[0],x[1]-c[1],x[2]-c[2]];if(d<3)v[3*q+d]=1;else{const a=d-3,b=(a+1)%3,e=(a+2)%3;v[3*q+b]=-r[e];v[3*q+e]=r[b];}}raw.push(v);}
   for(const v of raw){for(const R of defl){let s=0;for(let i=0;i<n;i++)s+=R[i]*v[i]*Mv[i];for(let i=0;i<n;i++)v[i]-=s*R[i];}let s=0;for(let i=0;i<n;i++)s+=v[i]*v[i]*Mv[i];s=Math.sqrt(s);if(s>0){for(let i=0;i<n;i++)v[i]/=s;defl.push(v);}}return defl;}
 export async function lobpcg(Ls,K,Mv,nev,defl,opt,prog,ops){
-  const L=Ls[0],n=Mv.length,fx=L.fixed,bs=nev+Math.max(2,Math.ceil(nev/3)),mg=Ls.length>1,tol=opt.tol||1e-3,maxIt=opt.maxIt||250;
-  const A=ops&&ops.A||(async x=>{const y=new Float64Array(n);mv(Ls,x,y);for(let i=0;i<n;i++)if(fx[i])y[i]=0;return y;});
-  const md=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i]*Mv[i];return s;},dt=(a,b)=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i];return s;};
-  const ax=(y,c,x)=>{for(let i=0;i<n;i++)y[i]-=c*x[i];};
-  const cl=x=>{for(let i=0;i<n;i++)if(fx[i])x[i]=0;for(const R of defl)ax(x,md(R,x),R);return x;};
-  const T=async r=>{let z=new Float64Array(n);if(ops)z=await ops.prec(r);else if(mg)vcycle(Ls,r,z);else for(let i=0;i<n;i++)z[i]=r[i]/L.diag[i];return cl(z);},all=async(V,f)=>{const o=[];for(const v of V)o.push(await f(v));return o;};
-  const orth=(V,AV,B,AB)=>{const oV=[],oA=[];for(let j=0;j<V.length;j++){const v=V[j],av=AV?AV[j]:null,n0=Math.sqrt(md(v,v));if(!(n0>0))continue;for(let ps=0;ps<2;ps++){for(let i=0;i<B.length;i++){const c=md(B[i],v);ax(v,c,B[i]);if(av)ax(av,c,AB[i]);}for(let i=0;i<oV.length;i++){const c=md(oV[i],v);ax(v,c,oV[i]);if(av)ax(av,c,oA[i]);}}const nr=Math.sqrt(md(v,v));if(!(nr>1e-9*n0))continue;for(let i=0;i<n;i++)v[i]/=nr;if(av)for(let i=0;i<n;i++)av[i]/=nr;oV.push(v);oA.push(av);}return[oV,oA];};
-  const comb=(S,C,m,j,from)=>{const y=new Float64Array(n);for(let i=from;i<S.length;i++){const c=C[i*m+j];if(c)for(let k=0;k<n;k++)y[k]+=c*S[i][k];}return y;};
-  let seed=7;const rnd=()=>(seed=(seed*1103515245+12345)&0x7fffffff)/0x7fffffff-0.5;
-  let X=[];for(let j=0;j<bs;j++){const v=new Float64Array(n);for(let i=0;i<n;i++)v[i]=fx[i]||!Mv[i]?0:rnd();X.push(await T(cl(v)));}
+  const L=Ls[0],n=Mv.length,fx=L.fixed,bs=nev+Math.max(2,Math.ceil(nev/3)),mg=Ls.length>1,tol=opt.tol||1e-3,maxIt=opt.maxIt||250,nd=defl.length,cap=12*bs+nd+2,dg=!ops&&!mg;
+  const Q=await LB(),H=Q.ex;H.lb_init(n,cap,nd,3*bs,dg?1:0);Q.v(2).set(Mv);Q.v(3).set(fx);dg&&Q.v(12).set(L.diag);let VP=Q.v(1);
+  const vw=s=>(VP.buffer===Q.mem.buffer||(VP=Q.v(1)),VP.subarray(s*n,s*n+n)),FR=[];for(let s=cap-1;s>=0;s--)FR.push(s);const al=()=>FR.pop(),fr=a=>{for(const s of a)FR.push(s);},ls=(i,a)=>Q.v(i).set(a);
+  defl.forEach((v,d)=>{const s=al();vw(s).set(v);Q.v(4)[d]=s;});
+  const A=async s=>{const d=al();if(ops&&ops.A)vw(d).set(await ops.A(vw(s)));else{mv(Ls,vw(s),vw(d));H.lb_fx(d);}return d;},T=async s=>{if(ops)vw(s).set(await ops.prec(vw(s)));else if(mg)vcycle(Ls,vw(s),vw(s));else H.lb_dg(s);H.lb_cl(s);return s;},all=async(V,f)=>{const o=[];for(const v of V)o.push(await f(v));return o;};
+  const orth=(V,AV,B,AB)=>{ls(5,V);AV&&ls(6,AV);ls(7,B);AB&&ls(8,AB);const k=H.lb_orth(V.length,AV?1:0,B.length),K=Q.v(11).slice(0,k),oV=[],oA=[],kp=new Uint8Array(V.length);for(const j of K){kp[j]=1;oV.push(V[j]);AV&&oA.push(AV[j]);}for(let j=0;j<V.length;j++)if(!kp[j]){FR.push(V[j]);AV&&FR.push(AV[j]);}return[oV,oA];};
+  const rr=(S,AS,keepP)=>{const m=S.length,k=Math.min(bs,m),o=[];for(let i=0;i<(keepP?4:2)*k;i++)o.push(al());ls(5,S);ls(6,AS);ls(7,o.slice(0,2*k));keepP&&ls(8,o.slice(2*k));H.lb_rr(m,keepP,k);fr(S);fr(AS);return{X:o.slice(0,k),AX:o.slice(k,2*k),P:keepP?o.slice(2*k,3*k):[],AP:keepP?o.slice(3*k):[],lam:Array.from(Q.v(9).subarray(0,k))};};
+  let X=[];for(let j=0;j<bs;j++){const s=al();H.lb_rnd(s);H.lb_cl(s);X.push(await T(s));}
   [X]=orth(X,null,[],null);let AX=await all(X,A),P=[],AP=[],lam=[],res=[],it=0;
-  const rr=(S,AS,keepP)=>{const m=S.length,G=new Float64Array(m*m);for(let i=0;i<m;i++)for(let j=i;j<m;j++)G[i*m+j]=G[j*m+i]=(dt(S[i],AS[j])+dt(S[j],AS[i]))/2;const{w,V,ord}=jacobiEig(G,m),C=new Float64Array(m*m);for(let i=0;i<m;i++)for(let j=0;j<m;j++)C[i*m+j]=V[i*m+ord[j]];const k=Math.min(bs,m),nx=[],nax=[],np=[],nap=[];for(let j=0;j<k;j++){nx.push(comb(S,C,m,j,0));nax.push(comb(AS,C,m,j,0));if(keepP){np.push(comb(S,C,m,j,keepP));nap.push(comb(AS,C,m,j,keepP));}}return{X:nx,AX:nax,P:np,AP:nap,lam:w.slice(0,k)};};
-  ({X,AX,lam}=rr(X,AX,0));let best=null;
+  ({X,AX,lam}=rr(X,AX,0));let best=null;const out=V=>V.map(s=>vw(s).slice());
   for(;it<maxIt;it++){
-    const R=X.map((x,j)=>{const r=AX[j].slice();for(let i=0;i<n;i++)r[i]-=lam[j]*Mv[i]*x[i];return r;});
-    res=R.map((r,j)=>{let s=0;for(let i=0;i<n;i++)if(Mv[i])s+=r[i]*r[i]/Mv[i];return Math.sqrt(s)/Math.max(Math.abs(lam[j]),1e-30);});
-    const worst=Math.max(...res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;if(!best||worst<best.w)best={w:worst,lam:lam.slice(),X:X.map(v=>v.slice()),res:res.slice(),it};else if(best.w<30*tol&&worst>20*best.w)return{lam:best.lam,X:best.X,iters:it,res:best.res};
-    let[W]=orth(await all(R.filter((_,j)=>res[j]>=tol*0.1),T),null,X,null);const AW=await all(W,A);
+    const R=X.map(()=>al());ls(5,X);ls(6,AX);ls(7,R);H.lb_res(X.length);res=Array.from(Q.v(10).subarray(0,X.length));
+    const worst=Math.max(...res.slice(0,nev));if(prog&&it%2===0)prog(it,worst,'modal');if(worst<tol)break;if(!best||worst<best.w){const bx=X.map(s=>{const d=al();H.lb_cp(s,d);return d;});best&&fr(best.X);best={w:worst,lam:lam.slice(),X:bx,res:res.slice(),it};}else if(best.w<30*tol&&worst>20*best.w)return{lam:best.lam,X:out(best.X),iters:it,res:best.res};
+    const ok=j=>res[j]>=tol*0.1;fr(R.filter((_,j)=>!ok(j)));let[W]=orth(await all(R.filter((_,j)=>ok(j)),T),null,X,null);const AW=await all(W,A);
     [P,AP]=orth(P,AP,[...X,...W],[...AX,...AW]);
-    const S=[...X,...W,...P],AS=[...AX,...AW,...AP];({X,AX,P,AP,lam}=rr(S,AS,X.length));
+    ({X,AX,P,AP,lam}=rr([...X,...W,...P],[...AX,...AW,...AP],X.length));
   }
-  return{lam,X,iters:it,res};
+  return{lam,X:out(X),iters:it,res};
 }
 async function modal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat,nev=Math.max(1,Math.min(inp.modes||6,20)),K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
