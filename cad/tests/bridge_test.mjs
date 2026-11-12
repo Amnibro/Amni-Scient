@@ -34,7 +34,7 @@ try{
   const t0=Date.now(),np=await call('get_state');assert.equal(np.isError,true);assert.match(np.content[0].text,/No Amni-CAD page is connected[\s\S]*pairing code|type \d{6}/);ok('no page → helpful error',(Date.now()-t0)+' ms');
   const cs=T(await call('connection_status'));assert.equal(cs.connected,false);assert.match(cs.pairing_code,/^\d{6}$/);const code=cs.pairing_code;ok('connection_status gives code');
   assert.match((await wsConnect({origin:'https://evil.example'})).rejected,/403/);ok('bad origin rejected');
-  assert.match((await wsConnect({origin:'null'})).rejected,/403/);ok('null origin rejected');
+  {const n=await wsConnect({origin:'null'});assert.ok(!n.rejected);n.send({t:'hello',v:1,app:'amnicad',token:'x'.repeat(43)});assert.equal((await n.next()).t,'need-code');n.send({t:'req',id:1,method:'x'});assert.ok(T(await call('connection_status')).connected===false);ok('a local file page (null origin) still needs the pairing code');}
   assert.match((await wsConnect({host:'evil.example:'+PORT})).rejected,/421/);ok('bad host (DNS rebinding) rejected');
   const g=await wsConnect();g.send({t:'hello',v:1,app:'amnicad'});assert.equal((await g.next()).t,'need-code');g.send({t:'pair',code:code==='000000'?'111111':'000000'});assert.match((await g.next()).reason,/did not match/);
   g.send({t:'req',id:1,method:'x'});assert.ok(T(await call('connection_status')).connected===false);ok('unpaired page cannot act');
