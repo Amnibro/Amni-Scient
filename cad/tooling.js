@@ -46,7 +46,7 @@ export const xPose=X=>v=>add(mul(qrot(X.q,v),X.k??1),X.p);
 export function mergeMesh(L){const np=L.reduce((s,m)=>s+m.pos.length,0),ni=L.reduce((s,m)=>s+m.idx.length,0),P=new Float32Array(np),I=new Uint32Array(ni),G=[];let a=0,b=0;for(const m of L){P.set(m.pos,a);for(let i=0;i<m.idx.length;i++)I[b+i]=m.idx[i]+a/3;for(const g of m.groups||[])G.push([g[0]+b,g[1],g[2]]);a+=m.pos.length;b+=m.idx.length;}return{pos:P,idx:I,groups:G};}
 const cen=(S,t)=>[S.C[3*t],S.C[3*t+1],S.C[3*t+2]],vtx=(S,i)=>[S.V[3*i],S.V[3*i+1],S.V[3*i+2]],nor=(S,t)=>[S.N[3*t],S.N[3*t+1],S.N[3*t+2]];
 export function hitT(S,t,o,d){const a=vtx(S,S.T[3*t]),n=nor(S,t),q=dot(d,n);return Math.abs(q)<1e-15?Infinity:dot(sub(a,o),n)/q;}
-export function ray(S,o,d,tmax,skip){const t=raycast(S,o[0],o[1],o[2],d[0],d[1],d[2],tmax??S.diag*4,skip==null?null:u=>u!==skip);return t<0?null:{t,s:hitT(S,t,o,d)};}
+export function ray(S,o,d,tmax,skip){const t=raycast(S,o[0],o[1],o[2],d[0],d[1],d[2],tmax??S.diag*4,skip??null);return t<0?null:{t,s:hitT(S,t,o,d)};}
 function freeRay(S,t,p,d,tmax){const e=S.diag*2e-5;return!ray(S,add(p,mul(nor(S,t),e)),d,tmax,t);}
 const smp=(S,t,full)=>{const c=cen(S,t);return full?[c,...[0,1,2].map(k=>mul(add(c,vtx(S,S.T[3*t+k])),0.5))]:[c];};
 export function scan(S,sn,full){const nt=S.nt,cls=new Int8Array(nt),und=new Uint8Array(nt),A={pos:0,neg:0,ins:0,und:0,total:0},U=[0,0,1],Dn=[0,0,-1];for(let t=0;t<nt;t++){const nz=S.N[3*t+2],ar=S.Ar[t],c=nz>sn?1:nz<-sn?-1:0,ds=nz>1e-3?[U]:nz<-1e-3?[Dn]:[U,Dn],bl=smp(S,t,full).filter(p=>!ds.some(d=>freeRay(S,t,p,d))).length;cls[t]=c;und[t]=full?bl>=2?1:0:bl>=1?1:0;A.total+=ar;A[c>0?'pos':c<0?'neg':'ins']+=ar;if(und[t])A.und+=ar;}return{cls,und,A};}

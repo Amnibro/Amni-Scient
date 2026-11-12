@@ -21,7 +21,7 @@ function supportDofs(inp,M,cm,modal){
   const mark=(n,c)=>{if(cm&&cm.hq[n]>=0){for(let k=cm.p[n];k<cm.p[n+1];k++)fix[3*cm.i[k]+c]=1;}else fix[3*n+c]=1;};
   for(const s of sup){const sel=M.select(s.faces),acc=new Map();if(!sel.facets.length&&s.faces&&s.faces.region)throw new Error('A support area covers no part of the mesh. Place it on the supported face, make it larger, or use a finer mesh.');facetGeo(M.X,M.E,sel.facets,(i,nd,w,nv)=>{for(let k=0;k<4;k++){const v=acc.get(nd[k])||[0,0,0];for(let c=0;c<3;c++)v[c]+=nv[3*k+c];acc.set(nd[k],v);}});
     const roll=s.type==='roller'||s.type==='slider',dv=s.dir!=null?(typeof s.dir==='string'?AXI[s.dir.replace(/[+-]/,'')]:Array.isArray(s.dir)?[0,1,2].reduce((b,c)=>Math.abs(s.dir[c])>Math.abs(s.dir[b])?c:b,0):null):null;
-    const SS=roll&&dv==null?surfOf(inp):null,fs=SS?new Set(sel.faces):null,o=new Float64Array(6);for(const[n,v0]of acc){let v=v0;if(SS){const t=closest(SS,M.X[3*n],M.X[3*n+1],M.X[3*n+2],u=>fs.has(SS.fid[u]),o);if(t>=0)v=[SS.N[3*t],SS.N[3*t+1],SS.N[3*t+2]];}const a=dv!=null?dv:Math.abs(v[0])>=Math.abs(v[1])&&Math.abs(v[0])>=Math.abs(v[2])?0:Math.abs(v[1])>=Math.abs(v[2])?1:2;if(roll)mark(n,a);else for(let c=0;c<3;c++)mark(n,c);}}
+    const SS=roll&&dv==null?surfOf(inp):null,fs=SS?new Set(sel.faces):null,fm=SS?Uint8Array.from(SS.fid,f=>fs.has(f)?1:0):null,o=new Float64Array(6);for(const[n,v0]of acc){let v=v0;if(SS){const t=closest(SS,M.X[3*n],M.X[3*n+1],M.X[3*n+2],fm,o);if(t>=0)v=[SS.N[3*t],SS.N[3*t+1],SS.N[3*t+2]];}const a=dv!=null?dv:Math.abs(v[0])>=Math.abs(v[1])&&Math.abs(v[0])>=Math.abs(v[2])?0:Math.abs(v[1])>=Math.abs(v[2])?1:2;if(roll)mark(n,a);else for(let c=0;c<3;c++)mark(n,c);}}
   return fix;
 }
 function loadsOf(inp,M,mat,cm){
