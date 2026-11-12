@@ -1,0 +1,2208 @@
+import math;
+fn main() {
+}
+extern fn fm_view_f64(id i32, xs real[:]) = "fm_view_f64";
+extern fn fm_view_f32(id i32, xs f32[:]) = "fm_view_f32";
+extern fn fm_view_i32(id i32, xs i32[:]) = "fm_view_i32";
+extern fn fm_view_u8(id i32, xs u8[:]) = "fm_view_u8";
+var NN int = 0;
+var NE int = 0;
+var NH int = 0;
+var HK int = 4;
+var FL int = 0;
+var TINIT int = 0;
+var X real[>..];
+var E i32[>..];
+var CB real[>..];
+var RH real[>..];
+var HND i32[>..];
+var HMS i32[>..];
+var HWS real[>..];
+var CMP i32[>..];
+var CMI i32[>..];
+var CMW real[>..];
+var CMQ i32[>..];
+var ARP i32[>..];
+var ACI i32[>..];
+var AV real[>..];
+var EC i32[>..];
+var ELS i32[>..];
+var FPS i32[>..];
+var MK i32[>..];
+var ROW i32[>..];
+var RN int = 0;
+var HNT real[>..];
+var GQ real[>..];
+var DN real[>..];
+var NG real[>..];
+var EXT real[>..];
+var GB real[>..];
+var WB real[>..];
+var KF real[>..];
+var YB real[>..];
+var LB real[>..];
+var BB real[>..];
+var TY real[>..];
+var DQ real[>..];
+var GC real[>..];
+var DBB real[>..];
+var BCM real[>..];
+var TM real[>..];
+var AI real[>..];
+var KE real[>..];
+var KC real[>..];
+var XE real[>..];
+var UE real[>..];
+var QV real[>..];
+var SGM real[>..];
+var O48 real[>..];
+var NVOL real[>..];
+var U real[>..];
+var FIX u8[>..];
+var SIG real[>..];
+var CNT i32[>..];
+var VM f32[>..];
+var UM f32[>..];
+var EVM f32[>..];
+var ST real[>..];
+extern fn fm_prog(it i32, rel real) = "fm_prog";
+struct Mt { n int, m int, rb int, cb int, nz int, rp int, ci int, va int, kind int }
+struct Lv { a int, p int, r int, d int, ds int, dl int, sb int, lmaxp real, lmax real, t1 int, t2 int, t3 int, t4 int, b int, x int, bq int, lc int, nc int }
+var ND int = 3;
+var NBV int = 6;
+var NM int = 0;
+var NL int = 0;
+var A0 int = 0;
+var TTM int = -1;
+var DEG int = 2;
+var CDEG int = 6;
+var GAM int = 2;
+var REL real = 0.0;
+var MS Mt[>..];
+var LV Lv[>..];
+var IP i32[>..];
+var FP real[>..];
+var QI i32[>..];
+var QF real[>..];
+var U0 real[>..];
+var VF real[>..];
+var VG real[>..];
+var VS real[>..];
+var VX real[>..];
+var VY real[>..];
+var BIN real[>..];
+var AV0 real[>..];
+var RRW i32[>..];
+var RRP i32[>..];
+var RCI i32[>..];
+var RVV real[>..];
+var RQ real[>..];
+var SRP i32[>..];
+var MKS i32[>..];
+var CL i32[>..];
+var CS i32[>..];
+var ACC real[>..];
+var TF i32[>..];
+var GJ real[>..];
+var LX real[>..];
+var LY real[>..];
+var LZ real[>..];
+var DG real[>..];
+var SP i32[>..];
+var SL i32[>..];
+var SW real[>..];
+var AGG i32[>..];
+var AG1 i32[>..];
+var TCN i32[>..];
+var TND i32[>..];
+var TPS i32[>..];
+var PTR i32[>..];
+var PTC i32[>..];
+var PTV real[>..];
+var QM real[>..];
+var RR9 real[>..];
+var TRP i32[>..];
+var TCI i32[>..];
+var PR real[>..];
+var PZ real[>..];
+var PP real[>..];
+var PQ real[>..];
+var LVI real[>..];
+var GI i32[>..];
+var CINV f32[>..];
+var CD real[>..];
+var CE real[>..];
+var CX real[>..];
+let HN real[24] = [-1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0];
+fn zr(a real[>..]&, n int) {
+	a.clear();
+	a.resize(n, 0.0);
+}
+fn zi(a i32[>..]&, n int, v int) {
+	a.clear();
+	a.resize(n, v as i32);
+}
+fn jinf() real {
+	var z = 0.0;
+	1.0 / z
+}
+fn jnan() real {
+	var z = 0.0;
+	z / z
+}
+fn jmin(a real, b real) real {
+	if a != a { return a; }
+	if b != b { return b; }
+	if a < b { a } else { b }
+}
+fn jmax(a real, b real) real {
+	if a != a { return a; }
+	if b != b { return b; }
+	if a > b { a } else { b }
+}
+fn hypot3(a real, b real, c real) real {
+	let vs real[3] = [abs(a), abs(b), abs(c)];
+	var mx = 0.0;
+	var nan = false;
+	for v in vs {
+		if v != v { nan = true; }
+		if v > mx { mx = v; }
+	}
+	if mx == jinf() { return mx; }
+	if nan { return jnan(); }
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	for v in vs {
+		let q = v / mx;
+		let y = q * q - comp;
+		let t = sum + y;
+		comp = (t - sum) - y;
+		sum = t;
+	}
+	sqrt(sum) * mx
+}
+fn tables() {
+	if TINIT == 1 { return; }
+	TINIT = 1;
+	zr(HNT, 24);
+	zr(GQ, 24);
+	zr(DN, 192);
+	zr(NG, 64);
+	zr(EXT, 64);
+	zr(GB, 264);
+	zr(WB, 8);
+	zr(KF, 1089);
+	zr(YB, 216);
+	zr(LB, 81);
+	zr(BB, 1584);
+	zr(TY, 384);
+	zr(DQ, 24);
+	zr(GC, 9);
+	zr(DBB, 198);
+	zr(BCM, 144);
+	zr(TM, 36);
+	zr(AI, 9);
+	zr(KE, 576);
+	zr(KC, 576);
+	zr(XE, 24);
+	zr(UE, 24);
+	zr(QV, 33);
+	zr(SGM, 48);
+	zr(O48, 48);
+	let g3 = 1.0 / sqrt(3.0);
+	let s3 = sqrt(3.0);
+	for i in 24 { HNT[i] = HN[i]; }
+	for g in 8 {
+		for k in 3 { GQ[3 * g + k] = HNT[3 * g + k] * g3; }
+	}
+	for g in 8 {
+		let x = GQ[3 * g];
+		let y = GQ[3 * g + 1];
+		let z = GQ[3 * g + 2];
+		for a in 8 {
+			let p = HNT[3 * a];
+			let q = HNT[3 * a + 1];
+			let r = HNT[3 * a + 2];
+			DN[g * 24 + 3 * a] = p * (1.0 + q * y) * (1.0 + r * z) / 8.0;
+			DN[g * 24 + 3 * a + 1] = q * (1.0 + p * x) * (1.0 + r * z) / 8.0;
+			DN[g * 24 + 3 * a + 2] = r * (1.0 + p * x) * (1.0 + q * y) / 8.0;
+			NG[g * 8 + a] = (1.0 + p * x) * (1.0 + q * y) * (1.0 + r * z) / 8.0;
+		}
+	}
+	for a in 8 {
+		for g in 8 {
+			var w = 1.0;
+			for k in 3 {
+				w = w * ((1.0 + (HNT[3 * g + k] * HNT[3 * a + k]) * s3) / 2.0);
+			}
+			EXT[a * 8 + g] = w;
+		}
+	}
+}
+fn grads(x const real[:], nm bool) real {
+	var a00 = 0.0;
+	var a01 = 0.0;
+	var a02 = 0.0;
+	var a10 = 0.0;
+	var a11 = 0.0;
+	var a12 = 0.0;
+	var a20 = 0.0;
+	var a21 = 0.0;
+	var a22 = 0.0;
+	for a in 8 {
+		let p = HNT[3 * a];
+		let q = HNT[3 * a + 1];
+		let r = HNT[3 * a + 2];
+		let xa = x[3 * a] / 8.0;
+		let ya = x[3 * a + 1] / 8.0;
+		let za = x[3 * a + 2] / 8.0;
+		a00 += xa * p;
+		a01 += xa * q;
+		a02 += xa * r;
+		a10 += ya * p;
+		a11 += ya * q;
+		a12 += ya * r;
+		a20 += za * p;
+		a21 += za * q;
+		a22 += za * r;
+	}
+	let d0 = a00 * (a11 * a22 - a12 * a21) - a01 * (a10 * a22 - a12 * a20) + a02 * (a10 * a21 - a11 * a20);
+	AI[0] = (a11 * a22 - a12 * a21) / d0;
+	AI[1] = (a02 * a21 - a01 * a22) / d0;
+	AI[2] = (a01 * a12 - a02 * a11) / d0;
+	AI[3] = (a12 * a20 - a10 * a22) / d0;
+	AI[4] = (a00 * a22 - a02 * a20) / d0;
+	AI[5] = (a02 * a10 - a00 * a12) / d0;
+	AI[6] = (a10 * a21 - a11 * a20) / d0;
+	AI[7] = (a01 * a20 - a00 * a21) / d0;
+	AI[8] = (a00 * a11 - a01 * a10) / d0;
+	var dmin = jinf();
+	for g in 8 {
+		let o = g * 24;
+		var j00 = 0.0;
+		var j01 = 0.0;
+		var j02 = 0.0;
+		var j10 = 0.0;
+		var j11 = 0.0;
+		var j12 = 0.0;
+		var j20 = 0.0;
+		var j21 = 0.0;
+		var j22 = 0.0;
+		for a in 8 {
+			let p = DN[o + 3 * a];
+			let q = DN[o + 3 * a + 1];
+			let r = DN[o + 3 * a + 2];
+			let xa = x[3 * a];
+			let ya = x[3 * a + 1];
+			let za = x[3 * a + 2];
+			j00 += xa * p;
+			j01 += xa * q;
+			j02 += xa * r;
+			j10 += ya * p;
+			j11 += ya * q;
+			j12 += ya * r;
+			j20 += za * p;
+			j21 += za * q;
+			j22 += za * r;
+		}
+		let d = j00 * (j11 * j22 - j12 * j21) - j01 * (j10 * j22 - j12 * j20) + j02 * (j10 * j21 - j11 * j20);
+		let b00 = (j11 * j22 - j12 * j21) / d;
+		let b01 = (j02 * j21 - j01 * j22) / d;
+		let b02 = (j01 * j12 - j02 * j11) / d;
+		let b10 = (j12 * j20 - j10 * j22) / d;
+		let b11 = (j00 * j22 - j02 * j20) / d;
+		let b12 = (j02 * j10 - j00 * j12) / d;
+		let b20 = (j10 * j21 - j11 * j20) / d;
+		let b21 = (j01 * j20 - j00 * j21) / d;
+		let b22 = (j00 * j11 - j01 * j10) / d;
+		let go = g * 33;
+		for a in 8 {
+			let p = DN[o + 3 * a];
+			let q = DN[o + 3 * a + 1];
+			let r = DN[o + 3 * a + 2];
+			GB[go + 3 * a] = p * b00 + q * b10 + r * b20;
+			GB[go + 3 * a + 1] = p * b01 + q * b11 + r * b21;
+			GB[go + 3 * a + 2] = p * b02 + q * b12 + r * b22;
+		}
+		for m in 3 {
+			let c = if nm { (-2.0 * GQ[3 * g + m]) * d0 / d } else { 0.0 };
+			GB[go + 24 + 3 * m] = c * AI[3 * m];
+			GB[go + 25 + 3 * m] = c * AI[3 * m + 1];
+			GB[go + 26 + 3 * m] = c * AI[3 * m + 2];
+		}
+		WB[g] = d;
+		if d < dmin { dmin = d; }
+	}
+	dmin
+}
+fn dnat(xi real, et real, ze real) {
+	for a in 8 {
+		let p = HNT[3 * a];
+		let q = HNT[3 * a + 1];
+		let r = HNT[3 * a + 2];
+		DQ[3 * a] = p * (1.0 + q * et) * (1.0 + r * ze) / 8.0;
+		DQ[3 * a + 1] = q * (1.0 + p * xi) * (1.0 + r * ze) / 8.0;
+		DQ[3 * a + 2] = r * (1.0 + p * xi) * (1.0 + q * et) / 8.0;
+	}
+}
+fn gcov(x const real[:], d const real[:]) {
+	for i in 9 { GC[i] = 0.0; }
+	for a in 8 {
+		for i in 3 {
+			let w = d[3 * a + i];
+			GC[3 * i] = GC[3 * i] + w * x[3 * a];
+			GC[3 * i + 1] = GC[3 * i + 1] + w * x[3 * a + 1];
+			GC[3 * i + 2] = GC[3 * i + 2] + w * x[3 * a + 2];
+		}
+	}
+}
+fn is_thin(x const real[:]) bool {
+	dnat(0.0, 0.0, 0.0);
+	gcov(x, DQ);
+	let l1 = hypot3(GC[0], GC[1], GC[2]);
+	let l2 = hypot3(GC[3], GC[4], GC[5]);
+	let l3 = hypot3(GC[6], GC[7], GC[8]);
+	l3 < 0.6 * jmin(l1, l2)
+}
+fn bmat_base(x const real[:]) real {
+	for i in 1584 { BB[i] = 0.0; }
+	let dmin = grads(x, true);
+	for g in 8 {
+		let o = g * 198;
+		let go = g * 33;
+		for p in 11 {
+			let gx = GB[go + 3 * p];
+			let gy = GB[go + 3 * p + 1];
+			let gz = GB[go + 3 * p + 2];
+			let c = 3 * p;
+			BB[o + c] = gx;
+			BB[o + 34 + c] = gy;
+			BB[o + 68 + c] = gz;
+			BB[o + 99 + c] = gy;
+			BB[o + 100 + c] = gx;
+			BB[o + 133 + c] = gz;
+			BB[o + 134 + c] = gy;
+			BB[o + 165 + c] = gz;
+			BB[o + 167 + c] = gx;
+		}
+	}
+	dmin
+}
+fn bmat_tie(x const real[:]) {
+	let g3 = 1.0 / sqrt(3.0);
+	let txi real[8] = [0.0, 0.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0];
+	let tet real[8] = [-1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 1.0, 1.0];
+	let tk int[8] = [0, 0, 1, 1, 2, 2, 2, 2];
+	for s in 2 {
+		let ze = if s == 0 { -g3 } else { g3 };
+		for slot in 8 {
+			dnat(txi[slot], tet[slot], ze);
+			gcov(x, DQ);
+			let o = (s * 8 + slot) * 24;
+			let k = tk[slot];
+			for a in 8 {
+				for c in 3 {
+					TY[o + 3 * a + c] = if k == 0 {
+						GC[c] * DQ[3 * a + 2] + GC[6 + c] * DQ[3 * a]
+					} else if k == 1 {
+						GC[3 + c] * DQ[3 * a + 2] + GC[6 + c] * DQ[3 * a + 1]
+					} else {
+						GC[6 + c] * DQ[3 * a + 2]
+					};
+				}
+			}
+		}
+	}
+}
+fn crossdiv(u const real[:], v const real[:], det real, o real[:]) {
+	o[0] = (u[1] * v[2] - u[2] * v[1]) / det;
+	o[1] = (u[2] * v[0] - u[0] * v[2]) / det;
+	o[2] = (u[0] * v[1] - u[1] * v[0]) / det;
+}
+fn bmat_mix(x const real[:]) {
+	let cvk int[6] = [0, 1, 2, 0, 1, 2];
+	let cvl int[6] = [0, 1, 2, 1, 2, 0];
+	let coi int[6] = [0, 1, 2, 0, 1, 0];
+	let coj int[6] = [0, 1, 2, 1, 2, 2];
+	var h1 real[3] = [0.0; 3];
+	var h2 real[3] = [0.0; 3];
+	var h3 real[3] = [0.0; 3];
+	var ar real[9] = [0.0; 9];
+	for g in 8 {
+		let xi = GQ[3 * g];
+		let et = GQ[3 * g + 1];
+		let ze = GQ[3 * g + 2];
+		let s = if ze > 0.0 { 1 } else { 0 };
+		let d = DN[g * 24..g * 24 + 24];
+		gcov(x, d);
+		for k in 3 {
+			h1[k] = GC[k];
+			h2[k] = GC[3 + k];
+			h3[k] = GC[6 + k];
+		}
+		let det = h1[0] * (h2[1] * h3[2] - h2[2] * h3[1]) - h2[0] * (h1[1] * h3[2] - h1[2] * h3[1]) + h3[0] * (h1[1] * h2[2] - h1[2] * h2[1]);
+		crossdiv(h2[0..3], h3[0..3], det, ar[0..3]);
+		crossdiv(h3[0..3], h1[0..3], det, ar[3..6]);
+		crossdiv(h1[0..3], h2[0..3], det, ar[6..9]);
+		for q in 8 {
+			for c in 3 {
+				let k = 3 * q + c;
+				let t0 = TY[(s * 8) * 24 + k];
+				let t1 = TY[(s * 8 + 1) * 24 + k];
+				let t2 = TY[(s * 8 + 2) * 24 + k];
+				let t3 = TY[(s * 8 + 3) * 24 + k];
+				let t4 = TY[(s * 8 + 4) * 24 + k];
+				let t5 = TY[(s * 8 + 5) * 24 + k];
+				let t6 = TY[(s * 8 + 6) * 24 + k];
+				let t7 = TY[(s * 8 + 7) * 24 + k];
+				BCM[k] = h1[c] * d[3 * q];
+				BCM[24 + k] = h2[c] * d[3 * q + 1];
+				BCM[72 + k] = h1[c] * d[3 * q + 1] + h2[c] * d[3 * q];
+				BCM[120 + k] = 0.5 * (1.0 - et) * t0 + 0.5 * (1.0 + et) * t1;
+				BCM[96 + k] = 0.5 * (1.0 - xi) * t2 + 0.5 * (1.0 + xi) * t3;
+				BCM[48 + k] = 0.25 * ((1.0 - xi) * (1.0 - et) * t4 + (1.0 + xi) * (1.0 - et) * t5 + (1.0 + xi) * (1.0 + et) * t6 + (1.0 - xi) * (1.0 + et) * t7);
+			}
+		}
+		for r in 6 {
+			let k = cvk[r];
+			let l = cvl[r];
+			let sc = if k == l { 1.0 } else { 2.0 };
+			for t in 6 {
+				let i = coi[t];
+				let j = coj[t];
+				TM[6 * r + t] = if i == j {
+					sc * (ar[3 * i + k] * ar[3 * i + l])
+				} else {
+					sc * ((ar[3 * i + k] * ar[3 * j + l] + ar[3 * j + k] * ar[3 * i + l]) / 2.0)
+				};
+			}
+		}
+		let o = g * 198;
+		for r in 6 {
+			for k in 24 {
+				var v = 0.0;
+				for t in 6 { v = v + TM[6 * r + t] * BCM[24 * t + k]; }
+				BB[o + 33 * r + k] = v;
+			}
+		}
+	}
+}
+fn bmat(x const real[:], shell bool) real {
+	let dmin = bmat_base(x);
+	if shell {
+		bmat_tie(x);
+		bmat_mix(x);
+	}
+	dmin
+}
+fn chol9() {
+	for j in 9 {
+		var s = LB[9 * j + j];
+		for k in j { s = s - LB[9 * j + k] * LB[9 * j + k]; }
+		let d = if s > 1e-300 { sqrt(s) } else { 1e-150 };
+		LB[9 * j + j] = d;
+		for i in (j + 1)..9 {
+			var t = LB[9 * i + j];
+			for k in j { t = t - LB[9 * i + k] * LB[9 * j + k]; }
+			LB[9 * i + j] = t / d;
+		}
+	}
+}
+fn truthy(v real) bool {
+	v == v && v != 0.0
+}
+fn kfull(x const real[:], lam real, mu real, shell bool) real {
+	let dm = bmat(x, shell);
+	for i in 1089 { KF[i] = 0.0; }
+	for g in 8 {
+		let w = WB[g];
+		let o = g * 198;
+		for p in 33 {
+			let b0 = BB[o + p];
+			let b1 = BB[o + 33 + p];
+			let b2 = BB[o + 66 + p];
+			let tr = lam * (b0 + b1 + b2);
+			DBB[p] = w * (2.0 * mu * b0 + tr);
+			DBB[33 + p] = w * (2.0 * mu * b1 + tr);
+			DBB[66 + p] = w * (2.0 * mu * b2 + tr);
+			DBB[99 + p] = w * mu * BB[o + 99 + p];
+			DBB[132 + p] = w * mu * BB[o + 132 + p];
+			DBB[165 + p] = w * mu * BB[o + 165 + p];
+		}
+		for p in 33 {
+			let r0 = BB[o + p];
+			let r1 = BB[o + 33 + p];
+			let r2 = BB[o + 66 + p];
+			let r3 = BB[o + 99 + p];
+			let r4 = BB[o + 132 + p];
+			let r5 = BB[o + 165 + p];
+			if !(truthy(r0) || truthy(r1) || truthy(r2) || truthy(r3) || truthy(r4) || truthy(r5)) { continue; }
+			for q in p..33 {
+				KF[p * 33 + q] = KF[p * 33 + q] + (r0 * DBB[q] + r1 * DBB[33 + q] + r2 * DBB[66 + q] + r3 * DBB[99 + q] + r4 * DBB[132 + q] + r5 * DBB[165 + q]);
+			}
+		}
+	}
+	for p in 33 {
+		for q in (p + 1)..33 { KF[q * 33 + p] = KF[p * 33 + q]; }
+	}
+	for i in 9 {
+		for j in 9 { LB[9 * i + j] = KF[(24 + i) * 33 + 24 + j]; }
+	}
+	chol9();
+	for m in 9 {
+		for j in 24 { YB[m * 24 + j] = KF[(24 + m) * 33 + j]; }
+	}
+	for c in 24 {
+		for i in 9 {
+			var s = YB[i * 24 + c];
+			for k in i { s = s - LB[9 * i + k] * YB[k * 24 + c]; }
+			YB[i * 24 + c] = s / LB[9 * i + i];
+		}
+		for ii in 9 {
+			let i = 8 - ii;
+			var s = YB[i * 24 + c];
+			for k in (i + 1)..9 { s = s - LB[9 * k + i] * YB[k * 24 + c]; }
+			YB[i * 24 + c] = s / LB[9 * i + i];
+		}
+	}
+	dm
+}
+fn keqm6(x const real[:], lam real, mu real, k real[:], shell bool) real {
+	let dm = kfull(x, lam, mu, shell);
+	for i in 24 {
+		for j in 24 {
+			var s = KF[i * 33 + j];
+			for m in 9 { s = s - KF[i * 33 + 24 + m] * YB[m * 24 + j]; }
+			k[i * 24 + j] = s;
+		}
+	}
+	for i in 24 {
+		for j in i {
+			let v = (k[i * 24 + j] + k[j * 24 + i]) / 2.0;
+			k[i * 24 + j] = v;
+			k[j * 24 + i] = v;
+		}
+	}
+	dm
+}
+fn stress8(x const real[:], u const real[:], lam real, mu real, shell bool) {
+	kfull(x, lam, mu, shell);
+	for j in 24 { QV[j] = u[j]; }
+	for m in 9 {
+		var s = 0.0;
+		for j in 24 { s = s + YB[m * 24 + j] * u[j]; }
+		QV[24 + m] = -s;
+	}
+	var e real[6] = [0.0; 6];
+	for g in 8 {
+		let o = g * 198;
+		for r in 6 {
+			var s = 0.0;
+			for p in 33 { s = s + BB[o + 33 * r + p] * QV[p]; }
+			e[r] = s;
+		}
+		let tr = lam * (e[0] + e[1] + e[2]);
+		SGM[6 * g] = tr + 2.0 * mu * e[0];
+		SGM[6 * g + 1] = tr + 2.0 * mu * e[1];
+		SGM[6 * g + 2] = tr + 2.0 * mu * e[2];
+		SGM[6 * g + 3] = mu * e[3];
+		SGM[6 * g + 4] = mu * e[4];
+		SGM[6 * g + 5] = mu * e[5];
+	}
+	for a in 8 {
+		for c in 6 {
+			var s = 0.0;
+			for g in 8 { s = s + EXT[a * 8 + g] * SGM[6 * g + c]; }
+			O48[6 * a + c] = s;
+		}
+	}
+}
+fn keheat(x const real[:], k real, kk real[:]) {
+	grads(x, false);
+	for i in 64 { kk[i] = 0.0; }
+	for g in 8 {
+		let w = WB[g] * k;
+		let o = g * 33;
+		for a in 8 {
+			for b in a..8 {
+				let v = w * (GB[o + 3 * a] * GB[o + 3 * b] + GB[o + 3 * a + 1] * GB[o + 3 * b + 1] + GB[o + 3 * a + 2] * GB[o + 3 * b + 2]);
+				kk[a * 8 + b] += v;
+				if b != a { kk[b * 8 + a] += v; }
+			}
+		}
+	}
+}
+fn flag(f int) bool {
+	FL / f % 2 == 1
+}
+export fn fm_mesh(nn i32, ne i32, nh i32, hk i32, fl i32) {
+	tables();
+	NN = nn;
+	NE = ne;
+	NH = nh;
+	HK = hk;
+	FL = fl;
+	zr(X, 3 * NN);
+	zr(CB, NE);
+	RH.clear();
+	RH.resize(NE, 1.0);
+	zr(HWS, HK * NH);
+	zi(E, 8 * NE, 0);
+	zi(HND, NH, 0);
+	zi(HMS, HK * NH, 0);
+	fm_view_f64(201, X);
+	fm_view_f64(202, CB);
+	fm_view_f64(203, RH);
+	fm_view_f64(204, HWS);
+	fm_view_i32(205, E);
+	fm_view_i32(206, HND);
+	fm_view_i32(207, HMS);
+}
+fn masters() {
+	if !flag(8) { return; }
+	zi(CMP, NN + 1, 0);
+	zi(CMQ, NN, -1);
+	var cn int[>..] = [];
+	cn.resize(NN, 1);
+	for q in NH {
+		var c = 0;
+		for j in HK {
+			if HMS[HK * q + j] >= 0 { c += 1; }
+		}
+		cn[HND[q] as int] = c;
+	}
+	for i in NN { CMP[i + 1] = (CMP[i] + cn[i]) as i32; }
+	zi(CMI, CMP[NN] as int, 0);
+	zr(CMW, CMP[NN] as int);
+	for q in NH { CMQ[HND[q] as int] = q as i32; }
+	for i in NN {
+		let base = CMP[i] as int;
+		if CMQ[i] < 0 {
+			CMI[base] = i as i32;
+			CMW[base] = 1.0;
+		} else {
+			let q = CMQ[i] as int;
+			var c = 0;
+			for j in HK {
+				let m = HMS[HK * q + j];
+				if m >= 0 {
+					CMI[base + c] = m;
+					CMW[base + c] = HWS[HK * q + j];
+					c += 1;
+				}
+			}
+		}
+	}
+	fm_view_i32(210, CMP);
+	fm_view_i32(211, CMI);
+	fm_view_i32(213, CMQ);
+	fm_view_f64(212, CMW);
+}
+fn mcnt(n int) int {
+	if flag(8) { (CMP[n + 1] - CMP[n]) as int } else { 1 }
+}
+fn mnode(n int, j int) int {
+	if flag(8) { CMI[(CMP[n] as int) + j] as int } else { n }
+}
+fn mwt(n int, j int) real {
+	if flag(8) { CMW[(CMP[n] as int) + j] } else { 1.0 }
+}
+fn build_row(i int) {
+	RN = 0;
+	for k in (EC[i] as int)..(EC[i + 1] as int) {
+		let el = ELS[k] as int;
+		for b in 8 {
+			let nb = E[8 * el + b] as int;
+			for ib in mcnt(nb) {
+				let m = mnode(nb, ib);
+				if MK[m] != i as i32 {
+					MK[m] = i as i32;
+					ROW[RN] = m as i32;
+					RN += 1;
+				}
+			}
+		}
+	}
+	if RN == 0 {
+		ROW[RN] = i as i32;
+		RN += 1;
+	}
+	if MK[i] != i as i32 {
+		ROW[RN] = i as i32;
+		RN += 1;
+	}
+}
+fn pattern() {
+	zi(EC, NN + 1, 0);
+	for e in NE {
+		for a in 8 {
+			let n = E[8 * e + a] as int;
+			for ia in mcnt(n) {
+				let m = mnode(n, ia);
+				EC[m + 1] += 1;
+			}
+		}
+	}
+	for i in NN { EC[i + 1] = EC[i] + EC[i + 1]; }
+	zi(ELS, EC[NN] as int, 0);
+	FPS.clear();
+	for i in NN { FPS.push(EC[i]); }
+	for e in NE {
+		for a in 8 {
+			let n = E[8 * e + a] as int;
+			for ia in mcnt(n) {
+				let m = mnode(n, ia);
+				ELS[FPS[m] as int] = e as i32;
+				FPS[m] += 1;
+			}
+		}
+	}
+	zi(ROW, NN + 8, 0);
+	zi(MK, NN, -1);
+	zi(ARP, NN + 1, 0);
+	for i in NN {
+		build_row(i);
+		ARP[i + 1] = (ARP[i] as int + RN) as i32;
+	}
+	zi(ACI, ARP[NN] as int, 0);
+	zi(MK, NN, -1);
+	for i in NN {
+		build_row(i);
+		sort(ROW[0..RN]) { a, b => a < b };
+		let base = ARP[i] as int;
+		for j in RN { ACI[base + j] = ROW[j]; }
+	}
+}
+fn find(c const i32[:], a int, b int, j int) int {
+	var lo = a;
+	var hi = b - 1;
+	while lo <= hi {
+		let m = (lo + hi) >> 1;
+		let v = c[m] as int;
+		if v == j { return m; }
+		if v < j { lo = m + 1; } else { hi = m - 1; }
+	}
+	-1
+}
+fn scatter(e int, ke const real[:], nd int, sc real) {
+	let bb = nd * nd;
+	let m = 8 * nd;
+	for a in 8 {
+		let na = E[8 * e + a] as int;
+		for ia in mcnt(na) {
+			let ma = mnode(na, ia);
+			let wa = mwt(na, ia) * sc;
+			let r0 = ARP[ma] as int;
+			let r1 = ARP[ma + 1] as int;
+			for b in 8 {
+				let nb = E[8 * e + b] as int;
+				for ib in mcnt(nb) {
+					let mb = mnode(nb, ib);
+					let w = wa * mwt(nb, ib);
+					let p = find(ACI, r0, r1, mb);
+					if p >= 0 {
+						let pos = p * bb;
+						for i in nd {
+							for j in nd {
+								AV[pos + i * nd + j] += w * ke[(nd * a + i) * m + nd * b + j];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+fn load_xe(e int) {
+	for a in 8 {
+		for k in 3 { XE[3 * a + k] = X[3 * (E[8 * e + a] as int) + k]; }
+	}
+}
+export fn fm_system(lam real, mu real) real {
+	masters();
+	pattern();
+	AV.clear();
+	AV.resize(ACI.len * 9, 0.0);
+	var dmin = jinf();
+	var cube = false;
+	for e in NE {
+		load_xe(e);
+		if flag(2) && CB[e] > 0.0 {
+			if !cube {
+				for a in 8 {
+					for k in 3 { UE[3 * a + k] = (HNT[3 * a + k] + 1.0) / 2.0; }
+				}
+				keqm6(UE, lam, mu, KC, false);
+				cube = true;
+			}
+			for i in 576 { KE[i] = KC[i] * CB[e]; }
+		} else {
+			let s = flag(1) && is_thin(XE);
+			dmin = jmin(dmin, keqm6(XE, lam, mu, KE, s));
+		}
+		scatter(e, KE, 3, RH[e]);
+	}
+	fm_view_i32(214, ARP);
+	fm_view_i32(215, ACI);
+	fm_view_f64(216, AV);
+	dmin
+}
+export fn fm_heat(k real) {
+	masters();
+	pattern();
+	AV.clear();
+	AV.resize(ACI.len, 0.0);
+	for e in NE {
+		load_xe(e);
+		keheat(XE, k, KE);
+		scatter(e, KE, 1, RH[e]);
+	}
+	fm_view_i32(214, ARP);
+	fm_view_i32(215, ACI);
+	fm_view_f64(216, AV);
+}
+export fn fm_nvol() {
+	zr(NVOL, NN);
+	for e in NE {
+		load_xe(e);
+		grads(XE, false);
+		for a in 8 {
+			var s = 0.0;
+			for g in 8 { s = s + NG[g * 8 + a] * WB[g]; }
+			NVOL[E[8 * e + a] as int] += s * RH[e];
+		}
+	}
+	fm_view_f64(217, NVOL);
+}
+fn vmof(o int) real {
+	let s0 = SIG[o];
+	let s1 = SIG[o + 1];
+	let s2 = SIG[o + 2];
+	let s3 = SIG[o + 3];
+	let s4 = SIG[o + 4];
+	let s5 = SIG[o + 5];
+	sqrt(0.5 * ((s0 - s1) * (s0 - s1) + (s1 - s2) * (s1 - s2) + (s2 - s0) * (s2 - s0)) + 3.0 * (s3 * s3 + s4 * s4 + s5 * s5))
+}
+fn vmo48(o int) real {
+	let s0 = O48[o];
+	let s1 = O48[o + 1];
+	let s2 = O48[o + 2];
+	let s3 = O48[o + 3];
+	let s4 = O48[o + 4];
+	let s5 = O48[o + 5];
+	sqrt(0.5 * ((s0 - s1) * (s0 - s1) + (s1 - s2) * (s1 - s2) + (s2 - s0) * (s2 - s0)) + 3.0 * (s3 * s3 + s4 * s4 + s5 * s5))
+}
+export fn fm_post_in() {
+	zr(U, 3 * NN);
+	FIX.clear();
+	FIX.resize(3 * NN, 0);
+	fm_view_f64(218, U);
+	fm_view_u8(219, FIX);
+}
+export fn fm_post(lam real, mu real) {
+	if flag(8) {
+		for q in NH {
+			let n = HND[q] as int;
+			for c in 3 {
+				var s = 0.0;
+				for k in (CMP[n] as int)..(CMP[n + 1] as int) {
+					s = s + CMW[k] * U[3 * (CMI[k] as int) + c];
+				}
+				U[3 * n + c] = s;
+			}
+		}
+	}
+	zr(SIG, 6 * NN);
+	zi(CNT, NN, 0);
+	EVM.clear();
+	EVM.resize(NE, 0.0);
+	VM.clear();
+	VM.resize(NN, 0.0);
+	UM.clear();
+	UM.resize(NN, 0.0);
+	zr(ST, 4);
+	for e in NE {
+		load_xe(e);
+		for a in 8 {
+			let n = E[8 * e + a] as int;
+			for k in 3 { UE[3 * a + k] = U[3 * n + k]; }
+		}
+		let s = !flag(2) && flag(1) && is_thin(XE);
+		stress8(XE, UE, lam, mu, s);
+		var m = 0.0;
+		for a in 8 {
+			let n = E[8 * e + a] as int;
+			for c in 6 { SIG[6 * n + c] += O48[6 * a + c]; }
+			CNT[n] += 1;
+			m = jmax(m, vmo48(6 * a));
+		}
+		EVM[e] = m as f32;
+	}
+	var vmMax = 0.0;
+	var vmAway = 0.0;
+	var uMax = 0.0;
+	for n in NN {
+		if CNT[n] != 0 {
+			let cn = CNT[n] as real;
+			for c in 6 { SIG[6 * n + c] = SIG[6 * n + c] / cn; }
+			VM[n] = vmof(6 * n) as f32;
+			UM[n] = hypot3(U[3 * n], U[3 * n + 1], U[3 * n + 2]) as f32;
+			let v = VM[n] as real;
+			let w = UM[n] as real;
+			vmMax = jmax(vmMax, v);
+			uMax = jmax(uMax, w);
+			if FIX[3 * n] == 0 && FIX[3 * n + 1] == 0 && FIX[3 * n + 2] == 0 && (!flag(8) || CMQ[n] < 0) {
+				vmAway = jmax(vmAway, v);
+			}
+		}
+	}
+	ST[0] = vmMax;
+	ST[1] = vmAway;
+	ST[2] = uMax;
+	fm_view_f32(220, VM);
+	fm_view_f32(221, UM);
+	fm_view_f32(222, EVM);
+	fm_view_f64(223, ST);
+}
+fn ip_add(len int) int {
+	let o = IP.len;
+	if IP.cap < o + len {
+		QI.clear();
+		QI.reserve(o);
+		QI.append(IP);
+		IP.clear();
+		IP.reserve(o + len + (o + len) / 2);
+		IP.append(QI);
+		QI.clear();
+	}
+	IP.resize(o + len, 0);
+	o
+}
+fn fp_add(len int) int {
+	let o = FP.len;
+	if FP.cap < o + len {
+		QF.clear();
+		QF.reserve(o);
+		QF.append(FP);
+		FP.clear();
+		FP.reserve(o + len + (o + len) / 2);
+		FP.append(QF);
+		QF.clear();
+	}
+	FP.resize(o + len, 0.0);
+	o
+}
+fn ipv(off int, len int) i32[:] {
+	IP[off..off + len]
+}
+fn fpv(off int, len int) real[:] {
+	FP[off..off + len]
+}
+fn ig(a const i32[:], i int) int {
+	a[i] as int
+}
+fn mrp(k int) i32[:] {
+	let m = MS[k];
+	if m.kind == 0 {
+		IP[m.rp..m.rp + m.n + 1]
+	} else if m.kind == 1 {
+		ARP[0..m.n + 1]
+	} else {
+		PTR[0..m.n + 1]
+	}
+}
+fn mci(k int) i32[:] {
+	let m = MS[k];
+	if m.kind == 0 {
+		IP[m.ci..m.ci + m.nz]
+	} else if m.kind == 1 {
+		ACI[0..m.nz]
+	} else {
+		PTC[0..m.nz]
+	}
+}
+fn mva(k int) real[:] {
+	let m = MS[k];
+	let len = m.nz * m.rb * m.cb;
+	if m.kind == 0 {
+		FP[m.va..m.va + len]
+	} else if m.kind == 1 {
+		AV[0..len]
+	} else {
+		PTV[0..len]
+	}
+}
+fn madd(n int, m int, rb int, cb int, nz int) int {
+	let rp = ip_add(n + 1);
+	let ci = ip_add(nz);
+	let va = fp_add(nz * rb * cb);
+	MS[NM] = Mt { n: n, m: m, rb: rb, cb: cb, nz: nz, rp: rp, ci: ci, va: va, kind: 0 };
+	NM += 1;
+	NM - 1
+}
+fn mv(k int, x const real[:], y real[:], add bool) {
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	let n = MS[k].n;
+	let rb = MS[k].rb;
+	let cb = MS[k].cb;
+	let bb = rb * cb;
+	if rb == 3 && cb == 3 {
+		for i in n {
+			var s0 = 0.0;
+			var s1 = 0.0;
+			var s2 = 0.0;
+			for k2 in ig(rp, i)..ig(rp, i + 1) {
+				let j = 3 * ig(ci, k2);
+				let o = 9 * k2;
+				let x0 = x[j];
+				let x1 = x[j + 1];
+				let x2 = x[j + 2];
+				s0 += v[o] * x0 + v[o + 1] * x1 + v[o + 2] * x2;
+				s1 += v[o + 3] * x0 + v[o + 4] * x1 + v[o + 5] * x2;
+				s2 += v[o + 6] * x0 + v[o + 7] * x1 + v[o + 8] * x2;
+			}
+			if add {
+				y[3 * i] += s0;
+				y[3 * i + 1] += s1;
+				y[3 * i + 2] += s2;
+			} else {
+				y[3 * i] = s0;
+				y[3 * i + 1] = s1;
+				y[3 * i + 2] = s2;
+			}
+		}
+	} else {
+		var s real[16] = [0.0; 16];
+		for i in n {
+			for r in rb { s[r] = 0.0; }
+			for k2 in ig(rp, i)..ig(rp, i + 1) {
+				let j = ig(ci, k2) * cb;
+				let o = k2 * bb;
+				for r in rb {
+					var t = 0.0;
+					for c in cb { t += v[o + r * cb + c] * x[j + c]; }
+					s[r] += t;
+				}
+			}
+			for r in rb {
+				if add { y[i * rb + r] = y[i * rb + r] + s[r]; } else { y[i * rb + r] = s[r]; }
+			}
+		}
+	}
+}
+fn mvt(k int, x const real[:], y real[:]) {
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	let n = MS[k].n;
+	let m = MS[k].m;
+	let rb = MS[k].rb;
+	let cb = MS[k].cb;
+	for i in m * cb { y[i] = 0.0; }
+	for i in n {
+		for k2 in ig(rp, i)..ig(rp, i + 1) {
+			let kc = ig(ci, k2);
+			let o = k2 * rb * cb;
+			for r in cb {
+				var t = 0.0;
+				for c in rb { t += v[o + c * cb + r] * x[i * rb + c]; }
+				y[kc * cb + r] += t;
+			}
+		}
+	}
+}
+fn mtrans(k int) int {
+	let n = MS[k].n;
+	let m = MS[k].m;
+	let rb = MS[k].rb;
+	let cb = MS[k].cb;
+	let nz = MS[k].nz;
+	let bb = rb * cb;
+	let t = madd(m, n, cb, rb, nz);
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	let c = mrp(t);
+	let ti = mci(t);
+	let tv = mva(t);
+	for k2 in ig(rp, n) { c[ig(ci, k2) + 1] += 1; }
+	for j in m { c[j + 1] += c[j]; }
+	TF.clear();
+	TF.resize(m, 0);
+	for j in m { TF[j] = c[j]; }
+	for i in n {
+		for k2 in ig(rp, i)..ig(rp, i + 1) {
+			let j = ig(ci, k2);
+			let q = TF[j] as int;
+			TF[j] += 1;
+			ti[q] = i as i32;
+			for r in rb {
+				for s in cb { tv[q * bb + s * rb + r] = v[k2 * bb + r * cb + s]; }
+			}
+		}
+	}
+	t
+}
+fn sp_count(a int, b int) int {
+	let arp = mrp(a);
+	let aci = mci(a);
+	let brp = mrp(b);
+	let bci = mci(b);
+	let an = MS[a].n;
+	let bm = MS[b].m;
+	zi(SRP, an + 1, 0);
+	zi(MKS, bm, -1);
+	zi(CL, bm, 0);
+	for i in an {
+		var cnt = 0;
+		for k in ig(arp, i)..ig(arp, i + 1) {
+			let kk = ig(aci, k);
+			for l in ig(brp, kk)..ig(brp, kk + 1) {
+				let j = ig(bci, l);
+				if MKS[j] < 0 {
+					MKS[j] = 0;
+					CL[cnt] = j as i32;
+					cnt += 1;
+				}
+			}
+		}
+		for t in cnt { MKS[CL[t] as int] = -1; }
+		SRP[i + 1] = SRP[i] + (cnt as i32);
+	}
+	SRP[an] as int
+}
+fn sp_fill(a int, b int, c int) {
+	let arp = mrp(a);
+	let aci = mci(a);
+	let av = mva(a);
+	let brp = mrp(b);
+	let bci = mci(b);
+	let bv = mva(b);
+	let cr = mrp(c);
+	let cc = mci(c);
+	let cv = mva(c);
+	let an = MS[a].n;
+	let bm = MS[b].m;
+	let ra = MS[a].rb;
+	let ca = MS[a].cb;
+	let cbk = MS[b].cb;
+	let ab = ra * ca;
+	let bbb = MS[b].rb * cbk;
+	let ob = ra * cbk;
+	for i in an + 1 { cr[i] = SRP[i]; }
+	zi(MKS, bm, -1);
+	zi(CL, bm, 0);
+	zi(CS, bm, 0);
+	zr(ACC, bm * ob);
+	for i in an {
+		var cnt = 0;
+		for k in ig(arp, i)..ig(arp, i + 1) {
+			let kk = ig(aci, k);
+			for l in ig(brp, kk)..ig(brp, kk + 1) {
+				let j = ig(bci, l);
+				var p = MKS[j] as int;
+				if p < 0 {
+					p = cnt;
+					MKS[j] = p as i32;
+					CL[cnt] = j as i32;
+					cnt += 1;
+					for t in (p * ob)..(p * ob + ob) { ACC[t] = 0.0; }
+				}
+				let ao = k * ab;
+				let bo = l * bbb;
+				let co = p * ob;
+				for r in ra {
+					for q in ca {
+						let avv = av[ao + r * ca + q];
+						if avv == 0.0 { continue; }
+						for s in cbk { ACC[co + r * cbk + s] += avv * bv[bo + q * cbk + s]; }
+					}
+				}
+			}
+		}
+		for t in cnt { CS[t] = CL[t]; }
+		sort(CS[0..cnt]) { s1, s2 => s1 < s2 };
+		var w = ig(cr, i);
+		for t in cnt {
+			let j = CS[t] as int;
+			let p = MKS[j] as int;
+			cc[w] = j as i32;
+			for y in ob { cv[w * ob + y] = ACC[p * ob + y]; }
+			MKS[j] = -1;
+			w += 1;
+		}
+	}
+}
+fn spgemm(a int, b int) int {
+	let z = sp_count(a, b);
+	let c = madd(MS[a].n, MS[b].m, MS[a].rb, MS[b].cb, z);
+	sp_fill(a, b, c);
+	c
+}
+fn binv(k int, g int, o int) {
+	let n = MS[k].n;
+	let rb = MS[k].rb;
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	let bb = rb * rb;
+	let sb = g * rb;
+	let ns = (n + g - 1) / g;
+	let w = 2 * sb;
+	let dd = fpv(o, ns * sb * sb);
+	zr(GJ, sb * w);
+	for s in ns {
+		for t in GJ.len { GJ[t] = 0.0; }
+		let n0 = s * g;
+		let n1 = min(n, n0 + g);
+		let m = (n1 - n0) * rb;
+		var sc = 0.0;
+		for i in n0..n1 {
+			for k2 in ig(rp, i)..ig(rp, i + 1) {
+				let j = ig(ci, k2);
+				if j < n0 || j >= n1 { continue; }
+				for r in rb {
+					for c in rb {
+						GJ[((i - n0) * rb + r) * w + (j - n0) * rb + c] = v[k2 * bb + r * rb + c];
+					}
+				}
+			}
+		}
+		for r in m {
+			GJ[r * w + sb + r] = 1.0;
+			sc = jmax(sc, abs(GJ[r * w + r]));
+		}
+		for c in m {
+			var p = c;
+			for r in (c + 1)..m {
+				if abs(GJ[r * w + c]) > abs(GJ[p * w + c]) { p = r; }
+			}
+			if p != c {
+				for t in w {
+					let tmp = GJ[c * w + t];
+					GJ[c * w + t] = GJ[p * w + t];
+					GJ[p * w + t] = tmp;
+				}
+			}
+			let d = GJ[c * w + c];
+			let sc1 = if truthy(sc) { sc } else { 1.0 };
+			if abs(d) < 1e-14 * sc1 {
+				for t in w {
+					GJ[c * w + t] = if t == c || t == sb + c { 1.0 } else { 0.0 };
+				}
+				continue;
+			}
+			for t in w { GJ[c * w + t] = GJ[c * w + t] / d; }
+			for r in m {
+				if r == c { continue; }
+				let f = GJ[r * w + c];
+				if truthy(f) {
+					for t in w { GJ[r * w + t] = GJ[r * w + t] - f * GJ[c * w + t]; }
+				}
+			}
+		}
+		for r in sb {
+			for c in sb {
+				dd[s * sb * sb + r * sb + c] = if r < m && c < m { GJ[r * w + sb + c] } else { 0.0 };
+			}
+		}
+	}
+}
+fn dapply(o int, sb int, r const real[:], z real[:]) {
+	let n = r.len;
+	let ns = (n + sb - 1) / sb;
+	let bb = sb * sb;
+	for s in ns {
+		let off = s * sb;
+		let m = min(sb, n - off);
+		for a in m {
+			var t = 0.0;
+			for b in m { t += FP[o + s * bb + a * sb + b] * r[off + b]; }
+			z[off + a] = t;
+		}
+	}
+}
+fn lam_max(k int, o int, sb int) real {
+	let n = MS[k].n * MS[k].rb;
+	zr(LX, n);
+	zr(LY, n);
+	zr(LZ, n);
+	var seed = 7.0;
+	for i in n {
+		let t = seed * 1103515245.0 + 12345.0;
+		seed = ((t as int) & 0x7fffffff) as real;
+		LX[i] = seed / 2147483647.0 - 0.5;
+	}
+	var l = 1.0;
+	for rep in 12 {
+		mv(k, LX, LY, false);
+		dapply(o, sb, LY, LZ);
+		var nr = 0.0;
+		var xs = 0.0;
+		for i in n { nr += LZ[i] * LZ[i]; }
+		for i in n { xs += LX[i] * LX[i]; }
+		if xs == 0.0 || xs != xs { xs = 1.0; }
+		l = sqrt(nr) / sqrt(xs);
+		var q = sqrt(nr);
+		if q == 0.0 || q != q { q = 1.0; }
+		for i in n { LX[i] = LZ[i] / q; }
+	}
+	l
+}
+fn nrm(v const real[:], k2 int, bb int) real {
+	var s = 0.0;
+	for t in bb { s += v[k2 * bb + t] * v[k2 * bb + t]; }
+	sqrt(s)
+}
+fn aggregate(k int, th real) int {
+	let n = MS[k].n;
+	let rb = MS[k].rb;
+	let bb = rb * rb;
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	zr(DG, n);
+	for i in n {
+		let f = find(ci, ig(rp, i), ig(rp, i + 1), i);
+		DG[i] = if f < 0 { 0.0 } else { nrm(v, f, bb) };
+	}
+	zi(SP, n + 1, 0);
+	for i in n {
+		var c = 0;
+		for k2 in ig(rp, i)..ig(rp, i + 1) {
+			let j = ig(ci, k2);
+			if j != i {
+				let s = nrm(v, k2, bb);
+				if s > 0.0 && s >= th * sqrt(DG[i] * DG[j]) { c += 1; }
+			}
+		}
+		SP[i + 1] = SP[i] + (c as i32);
+	}
+	let tot = SP[n] as int;
+	zi(SL, tot, 0);
+	zr(SW, tot);
+	for i in n {
+		var w = SP[i] as int;
+		for k2 in ig(rp, i)..ig(rp, i + 1) {
+			let j = ig(ci, k2);
+			if j != i {
+				let s = nrm(v, k2, bb);
+				if s > 0.0 && s >= th * sqrt(DG[i] * DG[j]) {
+					SL[w] = j as i32;
+					SW[w] = s;
+					w += 1;
+				}
+			}
+		}
+	}
+	zi(AGG, n, -1);
+	var na = 0;
+	for i in n {
+		if AGG[i] >= 0 || SP[i] == SP[i + 1] { continue; }
+		let a0 = SP[i] as int;
+		let a1 = SP[i + 1] as int;
+		var free = true;
+		for k2 in a0..a1 {
+			if AGG[SL[k2] as int] >= 0 { free = false; }
+		}
+		if free {
+			AGG[i] = na as i32;
+			for k2 in a0..a1 { AGG[SL[k2] as int] = na as i32; }
+			na += 1;
+		}
+	}
+	zi(AG1, n, 0);
+	for i in n { AG1[i] = AGG[i]; }
+	for i in n {
+		if AGG[i] >= 0 || SP[i] == SP[i + 1] { continue; }
+		var best = -1;
+		var bw = 0.0;
+		for k2 in (SP[i] as int)..(SP[i + 1] as int) {
+			let t = AG1[SL[k2] as int] as int;
+			if t >= 0 && SW[k2] > bw {
+				bw = SW[k2];
+				best = t;
+			}
+		}
+		if best >= 0 { AGG[i] = best as i32; }
+	}
+	for i in n {
+		if AGG[i] >= 0 || SP[i] == SP[i + 1] { continue; }
+		AGG[i] = na as i32;
+		for k2 in (SP[i] as int)..(SP[i + 1] as int) {
+			if AGG[SL[k2] as int] < 0 { AGG[SL[k2] as int] = na as i32; }
+		}
+		na += 1;
+	}
+	na
+}
+fn tentative(l int, na int, bq int) int {
+	let lv = LV[l];
+	let n = MS[lv.a].n;
+	let bs = MS[lv.a].rb;
+	let nb = NBV;
+	let bsl const real[:] = if lv.bq < 0 { BIN[0..n * bs * nb] } else { fpv(lv.bq, n * bs * nb) };
+	let bc = fpv(bq, na * nb * nb);
+	zi(TCN, na + 1, 0);
+	for i in n {
+		if AGG[i] >= 0 { TCN[(AGG[i] as int) + 1] += 1; }
+	}
+	for a in na { TCN[a + 1] += TCN[a]; }
+	let tot = TCN[na] as int;
+	zi(TND, tot, 0);
+	zi(TPS, na, 0);
+	for a in na { TPS[a] = TCN[a]; }
+	for i in n {
+		if AGG[i] >= 0 {
+			let g = AGG[i] as int;
+			TND[TPS[g] as int] = i as i32;
+			TPS[g] += 1;
+		}
+	}
+	zi(PTR, n + 1, 0);
+	zi(PTC, tot, 0);
+	zr(PTV, tot * bs * nb);
+	zi(MKS, n, -1);
+	var q = 0;
+	for i in n {
+		if AGG[i] >= 0 {
+			MKS[i] = q as i32;
+			PTC[q] = AGG[i];
+			q += 1;
+		}
+		PTR[i + 1] = q as i32;
+	}
+	var mx = 0;
+	for a in na { mx = max(mx, (TCN[a + 1] - TCN[a]) as int); }
+	zr(QM, mx * bs * nb);
+	zr(RR9, nb * nb);
+	for a in na {
+		let s0 = TCN[a] as int;
+		let cnt = (TCN[a + 1] as int) - s0;
+		let m = cnt * bs;
+		for t in nb * nb { RR9[t] = 0.0; }
+		for r in cnt {
+			for d in bs {
+				for c in nb {
+					QM[(r * bs + d) * nb + c] = bsl[((TND[s0 + r] as int) * bs + d) * nb + c];
+				}
+			}
+		}
+		for c in nb {
+			var ss = 0.0;
+			for r in m { ss += QM[r * nb + c] * QM[r * nb + c]; }
+			let n0 = sqrt(ss);
+			for pass in 2 {
+				for k in c {
+					var s = 0.0;
+					for r in m { s += QM[r * nb + k] * QM[r * nb + c]; }
+					RR9[k * nb + c] += s;
+					for r in m { QM[r * nb + c] = QM[r * nb + c] - s * QM[r * nb + k]; }
+				}
+			}
+			var sn = 0.0;
+			for r in m { sn += QM[r * nb + c] * QM[r * nb + c]; }
+			let nr = sqrt(sn);
+			if nr > 1e-9 * n0 && nr > 0.0 {
+				RR9[c * nb + c] = nr;
+				for r in m { QM[r * nb + c] = QM[r * nb + c] / nr; }
+			} else {
+				for r in m { QM[r * nb + c] = 0.0; }
+			}
+		}
+		for r in cnt {
+			let o = (MKS[TND[s0 + r] as int] as int) * bs * nb;
+			for d in bs {
+				for c in nb { PTV[o + d * nb + c] = QM[(r * bs + d) * nb + c]; }
+			}
+		}
+		for t in nb * nb { bc[a * nb * nb + t] = RR9[t]; }
+	}
+	MS[NM] = Mt { n: n, m: na, rb: bs, cb: nb, nz: tot, rp: 0, ci: 0, va: 0, kind: 2 };
+	NM += 1;
+	NM - 1
+}
+fn smooth_p(l int, pt int) int {
+	let om = (4.0 / 3.0) / LV[l].lmaxp;
+	let ap = spgemm(LV[l].a, pt);
+	let bs = MS[LV[l].a].rb;
+	let nb = MS[pt].cb;
+	let ob = bs * nb;
+	let bb = bs * bs;
+	let dd = fpv(LV[l].d, MS[LV[l].a].n * bb);
+	let arp = mrp(ap);
+	let aci = mci(ap);
+	let av = mva(ap);
+	let prp = mrp(pt);
+	let pci = mci(pt);
+	let pv = mva(pt);
+	var t real[81] = [0.0; 81];
+	for i in MS[ap].n {
+		for k in ig(arp, i)..ig(arp, i + 1) {
+			let o = k * ob;
+			for r in bs {
+				for s in nb {
+					var x = 0.0;
+					for q in bs { x += dd[i * bb + r * bs + q] * av[o + q * nb + s]; }
+					t[r * nb + s] = (-om) * x;
+				}
+			}
+			for y in ob { av[o + y] = t[y]; }
+		}
+		for l2 in ig(prp, i)..ig(prp, i + 1) {
+			let k = find(aci, ig(arp, i), ig(arp, i + 1), ig(pci, l2));
+			let o = k * ob;
+			for y in ob { av[o + y] += pv[l2 * ob + y]; }
+		}
+	}
+	ap
+}
+fn rap_pat(p int) {
+	let n = MS[p].n;
+	let m = MS[p].m;
+	let nz = MS[p].nz;
+	let rp = mrp(p);
+	let ci = mci(p);
+	zi(TRP, m + 1, 0);
+	zi(TCI, nz, 0);
+	for k in ig(rp, n) { TRP[ig(ci, k) + 1] += 1; }
+	for j in m { TRP[j + 1] += TRP[j]; }
+	zi(TF, m, 0);
+	for j in m { TF[j] = TRP[j]; }
+	for i in n {
+		for k in ig(rp, i)..ig(rp, i + 1) {
+			let c = ig(ci, k);
+			TCI[TF[c] as int] = i as i32;
+			TF[c] += 1;
+		}
+	}
+}
+fn rap_count(p int, a int) int {
+	let m = MS[p].m;
+	let arp = mrp(a);
+	let aci = mci(a);
+	let prp = mrp(p);
+	let pci = mci(p);
+	zi(MKS, m, -1);
+	zi(SRP, m + 1, 0);
+	for kc in m {
+		var cnt = 0;
+		for q in (TRP[kc] as int)..(TRP[kc + 1] as int) {
+			let i = TCI[q] as int;
+			for k in ig(arp, i)..ig(arp, i + 1) {
+				let kk = ig(aci, k);
+				for l in ig(prp, kk)..ig(prp, kk + 1) {
+					let j = ig(pci, l);
+					if MKS[j] != kc as i32 {
+						MKS[j] = kc as i32;
+						cnt += 1;
+					}
+				}
+			}
+		}
+		SRP[kc + 1] = SRP[kc] + (cnt as i32);
+	}
+	SRP[m] as int
+}
+fn rap_fill(p int, a int, c int) {
+	let m = MS[p].m;
+	let nb = MS[p].cb;
+	let bs = MS[p].rb;
+	let bc = nb * nb;
+	let ob = bs * nb;
+	let cr = mrp(c);
+	let cc = mci(c);
+	let cv = mva(c);
+	let arp = mrp(a);
+	let aci = mci(a);
+	let av = mva(a);
+	let prp = mrp(p);
+	let pci = mci(p);
+	let pv = mva(p);
+	for kc in m + 1 { cr[kc] = SRP[kc]; }
+	zi(MKS, m, -1);
+	for kc in m {
+		var w = ig(cr, kc);
+		for q in (TRP[kc] as int)..(TRP[kc + 1] as int) {
+			let i = TCI[q] as int;
+			for k in ig(arp, i)..ig(arp, i + 1) {
+				let kk = ig(aci, k);
+				for l in ig(prp, kk)..ig(prp, kk + 1) {
+					let j = ig(pci, l);
+					if MKS[j] != kc as i32 {
+						MKS[j] = kc as i32;
+						cc[w] = j as i32;
+						w += 1;
+					}
+				}
+			}
+		}
+		sort(cc[ig(cr, kc)..ig(cr, kc + 1)]) { s1, s2 => s1 < s2 };
+	}
+	zi(MKS, m, -1);
+	zi(CL, m, 0);
+	zr(ACC, m * ob);
+	for i in MS[p].n {
+		if prp[i] == prp[i + 1] { continue; }
+		var cnt = 0;
+		for k in ig(arp, i)..ig(arp, i + 1) {
+			let kk = ig(aci, k);
+			let ao = k * bs * bs;
+			for l in ig(prp, kk)..ig(prp, kk + 1) {
+				let j = ig(pci, l);
+				var pp = MKS[j] as int;
+				if pp < 0 {
+					pp = cnt;
+					MKS[j] = pp as i32;
+					CL[cnt] = j as i32;
+					cnt += 1;
+					for t in (pp * ob)..(pp * ob + ob) { ACC[t] = 0.0; }
+				}
+				let bo = l * ob;
+				let co = pp * ob;
+				for r in bs {
+					for q in bs {
+						let avv = av[ao + r * bs + q];
+						if avv == 0.0 { continue; }
+						for s in nb { ACC[co + r * nb + s] += avv * pv[bo + q * nb + s]; }
+					}
+				}
+			}
+		}
+		for l in ig(prp, i)..ig(prp, i + 1) {
+			let kc = ig(pci, l);
+			let po = l * ob;
+			let r0 = ig(cr, kc);
+			let r1 = ig(cr, kc + 1);
+			for pp in cnt {
+				let pos = find(cc, r0, r1, CL[pp] as int) * bc;
+				let co = pp * ob;
+				for a2 in nb {
+					for r in bs {
+						let pvv = pv[po + r * nb + a2];
+						if pvv == 0.0 { continue; }
+						for s in nb { cv[pos + a2 * nb + s] += pvv * ACC[co + r * nb + s]; }
+					}
+				}
+			}
+		}
+		for pp in cnt { MKS[CL[pp] as int] = -1; }
+	}
+	var dmax = 0.0;
+	for i in m {
+		let dd = find(cc, ig(cr, i), ig(cr, i + 1), i) * bc;
+		for a2 in nb { dmax = jmax(dmax, abs(cv[dd + a2 * nb + a2])); }
+	}
+	for i in m {
+		let dd = find(cc, ig(cr, i), ig(cr, i + 1), i) * bc;
+		for a2 in nb {
+			if abs(cv[dd + a2 * nb + a2]) < 1e-13 * dmax {
+				var z = true;
+				for k in ig(cr, i)..ig(cr, i + 1) {
+					if !z { break; }
+					for s in nb {
+						if abs(cv[k * bc + a2 * nb + s]) > 1e-13 * dmax {
+							z = false;
+							break;
+						}
+					}
+				}
+				if z { cv[dd + a2 * nb + a2] = dmax * 1e-6; }
+			}
+		}
+	}
+}
+fn rap(p int, a int) int {
+	rap_pat(p);
+	let z = rap_count(p, a);
+	let m = MS[p].m;
+	let nb = MS[p].cb;
+	let c = madd(m, m, nb, nb, z);
+	rap_fill(p, a, c);
+	c
+}
+fn dense(k int, d real[:]) {
+	let n = MS[k].n;
+	let rb = MS[k].rb;
+	let rp = mrp(k);
+	let ci = mci(k);
+	let v = mva(k);
+	let nn = n * rb;
+	for i in n {
+		for k2 in ig(rp, i)..ig(rp, i + 1) {
+			let j = ig(ci, k2);
+			for r in rb {
+				for c in rb { d[(i * rb + r) * nn + j * rb + c] = v[k2 * rb * rb + r * rb + c]; }
+			}
+		}
+	}
+}
+fn chol(d real[:], nn int) {
+	var mx = 0.0;
+	for i in nn { mx = jmax(mx, abs(d[i * nn + i])); }
+	for j in nn {
+		var s = d[j * nn + j];
+		for k in j { s = s - d[j * nn + k] * d[j * nn + k]; }
+		let dj = if s > 1e-12 * mx { sqrt(s) } else { sqrt(mx) };
+		d[j * nn + j] = dj;
+		for i in (j + 1)..nn {
+			var t = d[i * nn + j];
+			for k in j { t = t - d[i * nn + k] * d[j * nn + k]; }
+			d[i * nn + j] = t / dj;
+		}
+	}
+}
+fn csolve(d const real[:], nn int, b const real[:], x real[:]) {
+	for i in nn {
+		var s = b[i];
+		for k in i { s = s - d[i * nn + k] * x[k]; }
+		x[i] = s / d[i * nn + i];
+	}
+	for ii in nn {
+		let i = nn - 1 - ii;
+		var s = x[i];
+		for k in (i + 1)..nn { s = s - d[k * nn + i] * x[k]; }
+		x[i] = s / d[i * nn + i];
+	}
+}
+fn cheb(l int, b const real[:], x real[:], zero bool, deg int) {
+	let lv = LV[l];
+	let a = lv.a;
+	let n = b.len;
+	let r = fpv(lv.t1, n);
+	let z = fpv(lv.t2, n);
+	let d = fpv(lv.t3, n);
+	let lmax = lv.lmax * 1.1;
+	let lmin = lmax / 30.0;
+	let th = (lmax + lmin) / 2.0;
+	let de = (lmax - lmin) / 2.0;
+	let sg = th / de;
+	var rho = 1.0 / sg;
+	if zero {
+		for i in n { r[i] = b[i]; }
+	} else {
+		mv(a, x, r, false);
+		for i in n { r[i] = b[i] - r[i]; }
+	}
+	dapply(lv.ds, lv.sb, r, z);
+	for i in n {
+		d[i] = z[i] / th;
+		if zero { x[i] = d[i]; } else { x[i] = x[i] + d[i]; }
+	}
+	for k in 1..deg {
+		mv(a, x, r, false);
+		for i in n { r[i] = b[i] - r[i]; }
+		dapply(lv.ds, lv.sb, r, z);
+		let r1 = 1.0 / (2.0 * sg - rho);
+		for i in n {
+			d[i] = (r1 * rho) * d[i] + ((2.0 * r1) / de) * z[i];
+			x[i] = x[i] + d[i];
+		}
+		rho = r1;
+	}
+}
+recursive fn vcycle(l int, b const real[:], x real[:]) {
+	if l == NL - 1 {
+		let nc = LV[l].nc;
+		csolve(fpv(LV[l].lc, nc * nc), nc, b, x);
+		return;
+	}
+	let dg = if l > 0 { CDEG } else { DEG };
+	let a = LV[l].a;
+	let p = LV[l].p;
+	let n = b.len;
+	let t4 = fpv(LV[l].t4, n);
+	let n1 = MS[LV[l + 1].a].n * MS[LV[l + 1].a].rb;
+	let cb = fpv(LV[l + 1].b, n1);
+	let cx = fpv(LV[l + 1].x, n1);
+	cheb(l, b, x, true, dg);
+	let times = if l > 0 { GAM } else { 1 };
+	for t in times {
+		mv(a, x, t4, false);
+		for i in n { t4[i] = b[i] - t4[i]; }
+		mvt(p, t4, cb);
+		vcycle(l + 1, cb, cx);
+		mv(p, cx, x, true);
+	}
+	cheb(l, b, x, false, dg);
+}
+export fn fm_bc_in(nd i32) {
+	ND = nd as int;
+	let n = NN * ND;
+	FIX.clear();
+	FIX.resize(n, 0);
+	zr(U0, n);
+	zr(VF, n);
+	zr(VG, n);
+	zr(VS, n);
+	zr(VX, n);
+	zr(VY, n);
+	MS.clear();
+	MS.resize(48, default<Mt>());
+	NM = 1;
+	MS[0] = Mt { n: NN, m: NN, rb: ND, cb: ND, nz: ACI.len, rp: 0, ci: 0, va: 0, kind: 1 };
+	fm_view_u8(219, FIX);
+	fm_view_f64(224, U0);
+	fm_view_f64(225, VF);
+	fm_view_f64(227, VG);
+	fm_view_f64(228, VS);
+	fm_view_f64(229, VX);
+	fm_view_f64(230, VY);
+}
+export fn fm_dadd() {
+	for i in NN {
+		let k = find(ACI, ARP[i] as int, ARP[i + 1] as int, i);
+		for c in 3 { AV[9 * k + 4 * c] += VX[3 * i + c]; }
+	}
+}
+export fn fm_keep() {
+	AV0.clear();
+	AV0.resize(AV.len, 0.0);
+	for i in AV.len { AV0[i] = AV[i]; }
+}
+fn fixed_row(i int, d int) bool {
+	var any = false;
+	for c in d {
+		if FIX[d * i + c] != 0 { any = true; }
+	}
+	any
+}
+export fn fm_bc(rs i32) {
+	let d = ND;
+	let bb = d * d;
+	if rs == 1 {
+		for i in AV.len { AV[i] = AV0[i]; }
+	}
+	mv(0, U0, VY, false);
+	for i in VF.len { VF[i] = VF[i] - VY[i]; }
+	var nr = 0;
+	for i in NN {
+		if fixed_row(i, d) { nr += 1; }
+	}
+	zi(RRW, nr, 0);
+	zi(RRP, nr + 1, 0);
+	var q = 0;
+	for i in NN {
+		if fixed_row(i, d) {
+			RRW[q] = i as i32;
+			RRP[q + 1] = RRP[q] + (ARP[i + 1] - ARP[i]);
+			q += 1;
+		}
+	}
+	zi(RCI, RRP[nr] as int, 0);
+	zr(RVV, (RRP[nr] as int) * bb);
+	for q2 in nr {
+		let i = RRW[q2] as int;
+		for t in ((ARP[i + 1] - ARP[i]) as int) {
+			RCI[(RRP[q2] as int) + t] = ACI[(ARP[i] as int) + t];
+			for e in bb {
+				RVV[((RRP[q2] as int) + t) * bb + e] = AV[((ARP[i] as int) + t) * bb + e];
+			}
+		}
+	}
+	for i in NN {
+		for k in (ARP[i] as int)..(ARP[i + 1] as int) {
+			let j = ACI[k] as int;
+			for a in d {
+				for b in d {
+					if FIX[d * i + a] != 0 || FIX[d * j + b] != 0 {
+						AV[bb * k + d * a + b] = if i == j && a == b { 1.0 } else { 0.0 };
+					}
+				}
+			}
+		}
+	}
+	for i in VF.len {
+		if FIX[i] != 0 { VF[i] = 0.0; }
+	}
+	for i in NN {
+		let k = find(ACI, ARP[i] as int, ARP[i + 1] as int, i);
+		for a in d {
+			if AV[bb * k + (d + 1) * a] == 0.0 { AV[bb * k + (d + 1) * a] = 1.0; }
+		}
+	}
+}
+export fn fm_reac() {
+	let d = ND;
+	let bb = d * d;
+	zr(RQ, NN * d);
+	for q in RRW.len {
+		let i = RRW[q] as int;
+		for a in d {
+			var s = 0.0;
+			for k in (RRP[q] as int)..(RRP[q + 1] as int) {
+				let j = RCI[k] as int;
+				for b in d { s += RVV[bb * k + d * a + b] * VX[d * j + b]; }
+			}
+			RQ[d * i + a] = s - VY[d * i + a];
+		}
+	}
+	fm_view_f64(236, RQ);
+}
+export fn fm_amg_in(nb i32) {
+	NBV = nb as int;
+	zr(BIN, NN * ND * NBV);
+	fm_view_f64(226, BIN);
+}
+fn tt_build(nl int, tc int) {
+	let n = nl * tc;
+	TTM = madd(n, n, 3, 3, nl * tc * (tc + 1) / 2);
+	let rp = mrp(TTM);
+	let ci = mci(TTM);
+	let v = mva(TTM);
+	var w = 0;
+	for i in nl {
+		for k in tc {
+			for j in 0..(k + 1) {
+				ci[w] = (i * tc + j) as i32;
+				let o = 9 * w;
+				v[o] = 1.0;
+				v[o + 1] = 0.0;
+				v[o + 2] = 0.0;
+				v[o + 3] = 0.0;
+				v[o + 4] = 1.0;
+				v[o + 5] = 0.0;
+				v[o + 6] = 0.0;
+				v[o + 7] = 0.0;
+				v[o + 8] = 1.0;
+				w += 1;
+			}
+			rp[i * tc + k + 1] = w as i32;
+		}
+	}
+	let tt = mtrans(TTM);
+	let at = spgemm(0, TTM);
+	let aa = spgemm(tt, at);
+	let r1 = MS[at].rp;
+	let v1 = MS[at].va;
+	let r2 = MS[aa].rp;
+	let c2 = MS[aa].ci;
+	let v2 = MS[aa].va;
+	let n2 = MS[aa].n;
+	let z = MS[aa].nz;
+	for t in n2 + 1 { IP[r1 + t] = IP[r2 + t]; }
+	for t in z { IP[r1 + n2 + 1 + t] = IP[c2 + t]; }
+	for t in 9 * z { FP[v1 + t] = FP[v2 + t]; }
+	var nm = MS[aa];
+	nm.rp = r1;
+	nm.ci = r1 + n2 + 1;
+	nm.va = v1;
+	MS[at] = nm;
+	NM -= 1;
+	IP.pop_n(IP.len - (r1 + n2 + 1 + z));
+	FP.pop_n(FP.len - (v1 + 9 * z));
+	A0 = at;
+	mv(tt, VF, VG, false);
+	for ii in NN {
+		let i = NN - 1 - ii;
+		if i % tc != 0 {
+			for j in 3 * NBV { BIN[3 * i * NBV + j] -= BIN[3 * (i - 1) * NBV + j]; }
+		}
+	}
+}
+export fn fm_amg(tnl i32, tc i32, th real, th2 real, deg i32, cdeg i32, gam i32, coarse i32, col i32) i32 {
+	DEG = deg as int;
+	CDEG = cdeg as int;
+	GAM = gam as int;
+	NM = 1;
+	TTM = -1;
+	A0 = 0;
+	LV.clear();
+	LV.resize(16, default<Lv>());
+	NL = 0;
+	var ri = 0;
+	var rf = 0;
+	if tnl > 0 {
+		ri = 3 * ACI.len + 8 * NN + 4096;
+		rf = 4 * AV.len + 16 * NN * ND + 4096;
+	} else {
+		ri = ACI.len / 2 + 8 * NN + 4096;
+		rf = (3 * AV.len) / 2 + 16 * NN * ND + 4096;
+	}
+	IP.clear();
+	IP.reserve(ri);
+	FP.clear();
+	FP.reserve(rf);
+	if tnl > 0 {
+		tt_build(tnl as int, tc as int);
+	} else {
+		for i in VG.len { VG[i] = VF[i]; }
+	}
+	var a = A0;
+	var bq = -1;
+	var l = 0;
+	loop {
+		let n = MS[a].n;
+		let bs = MS[a].rb;
+		let g = if l == 0 && (col as int) > 1 { col as int } else { 1 };
+		let d = fp_add(n * bs * bs);
+		binv(a, 1, d);
+		let lmaxp = lam_max(a, d, bs);
+		let sb = g * bs;
+		var ds = d;
+		var dl = n * bs * bs;
+		var lmax = lmaxp;
+		if g > 1 {
+			dl = ((n + g - 1) / g) * sb * sb;
+			ds = fp_add(dl);
+			binv(a, g, ds);
+			lmax = lam_max(a, ds, sb);
+		}
+		let t1 = fp_add(n * bs);
+		let t2 = fp_add(n * bs);
+		let t3 = fp_add(n * bs);
+		let t4 = fp_add(n * bs);
+		let bb = fp_add(n * bs);
+		let xx = fp_add(n * bs);
+		LV[l] = Lv { a: a, p: -1, r: -1, d: d, ds: ds, dl: dl, sb: sb, lmaxp: lmaxp, lmax: lmax, t1: t1, t2: t2, t3: t3, t4: t4, b: bb, x: xx, bq: bq, lc: -1, nc: 0 };
+		NL = l + 1;
+		if n * bs <= (coarse as int) || NL >= 12 { break; }
+		let na = if NL == 1 { aggregate(a, th) } else { aggregate(a, th2) };
+		if na == 0 || ((na * NBV) as real) >= (0.85 * (n as real)) * (bs as real) { break; }
+		let bc = fp_add(na * NBV * NBV);
+		let pt = tentative(l, na, bc);
+		let p = smooth_p(l, pt);
+		let c = rap(p, a);
+		LV[l].p = p;
+		l += 1;
+		a = c;
+		bq = bc;
+	}
+	let q = NL - 1;
+	let nq = MS[LV[q].a].n * MS[LV[q].a].rb;
+	let lc = fp_add(nq * nq);
+	dense(LV[q].a, fpv(lc, nq * nq));
+	chol(fpv(lc, nq * nq), nq);
+	LV[q].lc = lc;
+	LV[q].nc = nq;
+	zr(LVI, 8 * NL);
+	for k in NL {
+		LVI[8 * k] = (MS[LV[k].a].n * MS[LV[k].a].rb) as real;
+		LVI[8 * k + 1] = LV[k].sb as real;
+		LVI[8 * k + 2] = LV[k].lmax;
+		LVI[8 * k + 3] = LV[k].ds as real;
+		LVI[8 * k + 4] = LV[k].dl as real;
+		LVI[8 * k + 5] = LV[k].nc as real;
+	}
+	fm_view_f64(231, LVI);
+	NL as i32
+}
+export fn fm_pcg(tol real, max_it i32) i32 {
+	let n = VG.len;
+	for i in n { VS[i] = 0.0; }
+	zr(PR, n);
+	for i in n { PR[i] = VG[i]; }
+	zr(PZ, n);
+	zr(PP, n);
+	zr(PQ, n);
+	var s0 = 0.0;
+	for i in n { s0 += VG[i] * VG[i]; }
+	var f0 = sqrt(s0);
+	if f0 == 0.0 || f0 != f0 { f0 = 1.0; }
+	vcycle(0, PR, PZ);
+	for i in n { PP[i] = PZ[i]; }
+	var rz = 0.0;
+	for i in n { rz += PR[i] * PZ[i]; }
+	var iter = 0;
+	var r0 = 0.0;
+	for i in n { r0 += PR[i] * PR[i]; }
+	var rel = sqrt(r0) / f0;
+	while iter < (max_it as int) && rel > tol {
+		mv(A0, PP, PQ, false);
+		var pap = 0.0;
+		for i in n { pap += PP[i] * PQ[i]; }
+		if !(pap > 0.0) { break; }
+		let al = rz / pap;
+		var rr = 0.0;
+		for i in n {
+			VS[i] += al * PP[i];
+			PR[i] -= al * PQ[i];
+			rr += PR[i] * PR[i];
+		}
+		rel = sqrt(rr) / f0;
+		if iter % 5 == 0 { fm_prog(iter as i32, rel); }
+		if rel < tol {
+			iter += 1;
+			break;
+		}
+		vcycle(0, PR, PZ);
+		var rz2 = 0.0;
+		for i in n { rz2 += PR[i] * PZ[i]; }
+		let be = rz2 / rz;
+		rz = rz2;
+		for i in n { PP[i] = PZ[i] + be * PP[i]; }
+		iter += 1;
+	}
+	REL = rel;
+	iter as i32
+}
+export fn fm_rel() real {
+	REL
+}
+export fn fm_mvx(z i32) {
+	mv(A0, VX, VY, false);
+	if z == 1 {
+		for i in VY.len {
+			if FIX[i] != 0 { VY[i] = 0.0; }
+		}
+	}
+}
+export fn fm_vcyc() {
+	for i in VY.len { VY[i] = 0.0; }
+	vcycle(0, VX, VY);
+}
+export fn fm_fin() {
+	U.clear();
+	U.resize(VS.len, 0.0);
+	if TTM >= 0 {
+		mv(TTM, VS, U, false);
+	} else {
+		for i in VS.len { U[i] = VS[i]; }
+	}
+	for i in U.len { U[i] = U[i] + U0[i]; }
+	fm_view_f64(218, U);
+}
+export fn fm_gprep(eps real) {
+	for l in NL - 1 {
+		if LV[l].r < 0 { LV[l].r = mtrans(LV[l].p); }
+	}
+	let q = NL - 1;
+	let nn = LV[q].nc;
+	zr(CD, nn * nn);
+	dense(LV[q].a, CD);
+	for i in nn { CD[i * nn + i] = CD[i * nn + i] * (1.0 + eps); }
+	chol(CD, nn);
+	CINV.clear();
+	CINV.resize(nn * nn, 0.0);
+	zr(CE, nn);
+	zr(CX, nn);
+	for j in nn {
+		for i in nn { CE[i] = 0.0; }
+		CE[j] = 1.0;
+		csolve(CD, nn, CE, CX);
+		for i in nn { CINV[i * nn + j] = CX[i] as f32; }
+	}
+	GI.clear();
+	GI.resize(8, 0);
+	fm_view_f64(231, LVI);
+	fm_view_i32(232, GI);
+	fm_view_i32(233, IP);
+	fm_view_f64(234, FP);
+	fm_view_f32(235, CINV);
+}
+export fn fm_gx(l i32, k i32) {
+	let lv = LV[l as int];
+	let mi = if k == 0 { lv.a } else if k == 1 { lv.p } else { lv.r };
+	let m = MS[mi];
+	GI[0] = if m.kind == 1 { 1 } else { 0 };
+	GI[1] = m.n as i32;
+	GI[2] = m.rb as i32;
+	GI[3] = m.cb as i32;
+	GI[4] = m.rp as i32;
+	GI[5] = m.ci as i32;
+	GI[6] = m.va as i32;
+	GI[7] = m.nz as i32;
+}

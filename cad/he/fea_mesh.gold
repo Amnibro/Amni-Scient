@@ -1,0 +1,264 @@
+use std
+into fea_mesh.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its `main()` does nothing. JavaScript drives it through its exported functions (every name starting with fm_ is exported). It is a port of the hexahedral finite element core of cad/fea_mesh.js: the QM6 solid element with its thin-shell variant, the 8-node heat element, nodal volumes, hanging-node masters, the sparse pattern, assembly and the stress pass. Results are compared bit for bit with the JavaScript, so every floating-point formula keeps the JavaScript evaluation order exactly: arithmetic is f64, each sum starts at 0.0 and adds its terms one at a time in loop order, products and quotients group left to right as written (a·b·c is (a·b)·c and a·b/8 is (a·b)/8), a parenthesised group is computed first, and nothing is fused, reordered or vectorized. Integers from the node table are used as reals in formulas. Arrays filled by clearing and resizing get their exact size; nothing is grown by pushing except where stated.
+
+```amni
+extern fn fm_view_f64(id i32, xs real[:]) = "fm_view_f64";
+extern fn fm_view_f32(id i32, xs f32[:]) = "fm_view_f32";
+extern fn fm_view_i32(id i32, xs i32[:]) = "fm_view_i32";
+extern fn fm_view_u8(id i32, xs u8[:]) = "fm_view_u8";
+var NN int = 0;
+var NE int = 0;
+var NH int = 0;
+var HK int = 4;
+var FL int = 0;
+var TINIT int = 0;
+var X real[>..];
+var E i32[>..];
+var CB real[>..];
+var RH real[>..];
+var HND i32[>..];
+var HMS i32[>..];
+var HWS real[>..];
+var CMP i32[>..];
+var CMI i32[>..];
+var CMW real[>..];
+var CMQ i32[>..];
+var ARP i32[>..];
+var ACI i32[>..];
+var AV real[>..];
+var EC i32[>..];
+var ELS i32[>..];
+var FPS i32[>..];
+var MK i32[>..];
+var ROW i32[>..];
+var RN int = 0;
+var HNT real[>..];
+var GQ real[>..];
+var DN real[>..];
+var NG real[>..];
+var EXT real[>..];
+var GB real[>..];
+var WB real[>..];
+var KF real[>..];
+var YB real[>..];
+var LB real[>..];
+var BB real[>..];
+var TY real[>..];
+var DQ real[>..];
+var GC real[>..];
+var DBB real[>..];
+var BCM real[>..];
+var TM real[>..];
+var AI real[>..];
+var KE real[>..];
+var KC real[>..];
+var XE real[>..];
+var UE real[>..];
+var QV real[>..];
+var SGM real[>..];
+var O48 real[>..];
+var NVOL real[>..];
+var U real[>..];
+var FIX u8[>..];
+var SIG real[>..];
+var CNT i32[>..];
+var VM f32[>..];
+var UM f32[>..];
+var EVM f32[>..];
+var ST real[>..];
+extern fn fm_prog(it i32, rel real) = "fm_prog";
+struct Mt { n int, m int, rb int, cb int, nz int, rp int, ci int, va int, kind int }
+struct Lv { a int, p int, r int, d int, ds int, dl int, sb int, lmaxp real, lmax real, t1 int, t2 int, t3 int, t4 int, b int, x int, bq int, lc int, nc int }
+var ND int = 3;
+var NBV int = 6;
+var NM int = 0;
+var NL int = 0;
+var A0 int = 0;
+var TTM int = -1;
+var DEG int = 2;
+var CDEG int = 6;
+var GAM int = 2;
+var REL real = 0.0;
+var MS Mt[>..];
+var LV Lv[>..];
+var IP i32[>..];
+var FP real[>..];
+var QI i32[>..];
+var QF real[>..];
+var U0 real[>..];
+var VF real[>..];
+var VG real[>..];
+var VS real[>..];
+var VX real[>..];
+var VY real[>..];
+var BIN real[>..];
+var AV0 real[>..];
+var RRW i32[>..];
+var RRP i32[>..];
+var RCI i32[>..];
+var RVV real[>..];
+var RQ real[>..];
+var SRP i32[>..];
+var MKS i32[>..];
+var CL i32[>..];
+var CS i32[>..];
+var ACC real[>..];
+var TF i32[>..];
+var GJ real[>..];
+var LX real[>..];
+var LY real[>..];
+var LZ real[>..];
+var DG real[>..];
+var SP i32[>..];
+var SL i32[>..];
+var SW real[>..];
+var AGG i32[>..];
+var AG1 i32[>..];
+var TCN i32[>..];
+var TND i32[>..];
+var TPS i32[>..];
+var PTR i32[>..];
+var PTC i32[>..];
+var PTV real[>..];
+var QM real[>..];
+var RR9 real[>..];
+var TRP i32[>..];
+var TCI i32[>..];
+var PR real[>..];
+var PZ real[>..];
+var PP real[>..];
+var PQ real[>..];
+var LVI real[>..];
+var GI i32[>..];
+var CINV f32[>..];
+var CD real[>..];
+var CE real[>..];
+var CX real[>..];
+```
+
+The node table HN lists the eight corners of the reference hexahedron as (p, q, r): node 0 (-1,-1,-1), 1 (1,-1,-1), 2 (1,1,-1), 3 (-1,1,-1), 4 (-1,-1,1), 5 (1,-1,1), 6 (1,1,1), 7 (-1,1,1). `jmin(a, b)` and `jmax(a, b)` are JavaScript's Math.min and Math.max of two reals: NaN when either is NaN, otherwise the smaller or larger. `hypot3(a, b, c)` is exactly V8's Math.hypot of three numbers: the absolute values are taken and mx is the largest of them (starting from 0.0, replaced when a value is larger); when mx is infinite the result is infinity, when it is 0.0 the result is 0.0; otherwise with a compensated sum (sum and c both start at 0.0) each value v in order adds (v/mx)·(v/mx): y is that square minus c, t is sum plus y, c becomes (t minus sum) minus y, sum becomes t; the result is the square root of sum times mx. A NaN value makes the result NaN unless another value is infinite.
+
+`tables()` runs once (it returns at once when `TINIT` is 1, then sets it to 1). It sizes with zeros: `HNT` 24 (the node table, HNT[3·a+k] is coordinate k of node a), `GQ` 24, `DN` 192, `NG` 64, `EXT` 64, `GB` 264, `WB` 8, `KF` 1089, `YB` 216, `LB` 81, `BB` 1584, `TY` 384, `DQ` 24, `GC` 9, `DBB` 198, `BCM` 144, `TM` 36, `AI` 9, `KE` 576, `KC` 576, `XE` 24, `UE` 24, `QV` 33, `SGM` 48, `O48` 48. g3 is 1.0 divided by the square root of 3.0 and s3 is the square root of 3.0. GQ[3·g+k] is HNT[3·g+k]·g3. For each g and then each a, with (x, y, z) the three GQ of g and (p, q, r) the node a: DN[g·24+3·a] is p·(1 plus q·y)·(1 plus r·z)/8, DN[g·24+3·a+1] is q·(1 plus p·x)·(1 plus r·z)/8, DN[g·24+3·a+2] is r·(1 plus p·x)·(1 plus q·y)/8 and NG[g·8+a] is (1 plus p·x)·(1 plus q·y)·(1 plus r·z)/8. For each a and then each g: w starts at 1.0 and for k from 0 to 2 becomes w·((1 plus (HNT[3·g+k]·HNT[3·a+k])·s3)/2); EXT[a·8+g] is w.
+
+`grads(x, nm)` (x a real slice, nm a bool, returning a real) fills `GB` and `WB` from the 24 corner coordinates x and returns the smallest Jacobian determinant. a00 through a22 start at 0.0; for each node a with (p, q, r) from the table and xa, ya, za being x[3·a]/8, x[3·a+1]/8, x[3·a+2]/8: a00 gets xa·p added, a01 xa·q, a02 xa·r, a10 ya·p, a11 ya·q, a12 ya·r, a20 za·p, a21 za·q, a22 za·r. d0 is a00·(a11·a22 minus a12·a21) minus a01·(a10·a22 minus a12·a20) plus a02·(a10·a21 minus a11·a20). The inverse `AI` holds, each divided by d0: (a11·a22 minus a12·a21), (a02·a21 minus a01·a22), (a01·a12 minus a02·a11), (a12·a20 minus a10·a22), (a00·a22 minus a02·a20), (a02·a10 minus a00·a12), (a10·a21 minus a11·a20), (a01·a20 minus a00·a21), (a00·a11 minus a01·a10). dmin starts at infinity. For each g from 0 to 7 with o being g·24: j00 through j22 start at 0.0 and for each node a with p, q, r being DN[o+3·a], DN[o+3·a+1], DN[o+3·a+2] and xa, ya, za being x[3·a], x[3·a+1], x[3·a+2], j00 gets xa·p added, j01 xa·q, j02 xa·r, j10 ya·p, j11 ya·q, j12 ya·r, j20 za·p, j21 za·q, j22 za·r. d is j00·(j11·j22 minus j12·j21) minus j01·(j10·j22 minus j12·j20) plus j02·(j10·j21 minus j11·j20); b00 is (j11·j22 minus j12·j21)/d, b01 (j02·j21 minus j01·j22)/d, b02 (j01·j12 minus j02·j11)/d, b10 (j12·j20 minus j10·j22)/d, b11 (j00·j22 minus j02·j20)/d, b12 (j02·j10 minus j00·j12)/d, b20 (j10·j21 minus j11·j20)/d, b21 (j01·j20 minus j00·j21)/d, b22 (j00·j11 minus j01·j10)/d; go is g·33. For each node a with p, q, r from DN as above: GB[go+3·a] is p·b00 plus q·b10 plus r·b20, GB[go+3·a+1] is p·b01 plus q·b11 plus r·b21, GB[go+3·a+2] is p·b02 plus q·b12 plus r·b22. For m from 0 to 2: c is ((minus 2.0)·GQ[3·g+m])·d0/d when nm, else 0.0; GB[go+24+3·m] is c·AI[3·m], GB[go+25+3·m] is c·AI[3·m+1], GB[go+26+3·m] is c·AI[3·m+2]. WB[g] is d and dmin becomes d when d is below it.
+
+`dnat(xi, et, ze)` (three reals) fills `DQ`: for each node a with (p, q, r): DQ[3·a] is p·(1 plus q·et)·(1 plus r·ze)/8, DQ[3·a+1] is q·(1 plus p·xi)·(1 plus r·ze)/8, DQ[3·a+2] is r·(1 plus p·xi)·(1 plus q·et)/8.
+
+`gcov(x, d)` (two real slices) sets the 9 entries of `GC` to 0.0, then for each node a and each i from 0 to 2 with w being d[3·a+i]: GC[3·i] gets w·x[3·a] added, GC[3·i+1] gets w·x[3·a+1] added, GC[3·i+2] gets w·x[3·a+2] added.
+
+`is_thin(x)` (x a real slice, returning a bool) runs `dnat(0.0, 0.0, 0.0)` and `gcov(x, DQ)`; l1, l2 and l3 are `hypot3` of GC[0..3], GC[3..6] and GC[6..9]; the result is whether l3 is below 0.6 times `jmin(l1, l2)`.
+
+`bmat(x, shell)` (x a real slice, shell a bool) returns a real: `grads(x, true)` after filling `BB`, 8 blocks of 198 (6 strain rows of 33 columns). All 1584 entries are set to 0.0; for each g with o being g·198 and go being g·33, and for p from 0 to 10 with gx, gy, gz being GB[go+3·p], GB[go+3·p+1], GB[go+3·p+2] and c being 3·p: BB[o+c] is gx, BB[o+34+c] is gy, BB[o+68+c] is gz, BB[o+99+c] is gy, BB[o+100+c] is gx, BB[o+133+c] is gz, BB[o+134+c] is gy, BB[o+165+c] is gz, BB[o+167+c] is gx. When shell is false that is all. When shell is true the shear and thickness strains are replaced by assumed-strain tying, in two steps.
+
+First, for s being 0 and 1 (ze is minus g3 for 0 and g3 for 1, g3 being 1.0 divided by the square root of 3.0) and for each of the 8 tying slots in order, given as (xi, et, k): (0,-1,0), (0,1,0), (-1,0,1), (1,0,1), (-1,-1,2), (1,-1,2), (1,1,2), (-1,1,2): `dnat(xi, et, ze)` and `gcov(x, DQ)`; o is (s·8+slot)·24; for each node a and c from 0 to 2, TY[o+3·a+c] is GC[c]·DQ[3·a+2] plus GC[6+c]·DQ[3·a] when k is 0, GC[3+c]·DQ[3·a+2] plus GC[6+c]·DQ[3·a+1] when k is 1, and GC[6+c]·DQ[3·a+2] when k is 2.
+
+Then for each g with xi, et, ze being GQ[3·g], GQ[3·g+1], GQ[3·g+2], s being 1 when ze is above 0.0 and 0 otherwise, and d being the 24 entries of DN from g·24: `gcov(x, d)`; g1, g2, g3 are GC[0..3], GC[3..6], GC[6..9]; det is g1[0]·(g2[1]·g3[2] minus g2[2]·g3[1]) minus g2[0]·(g1[1]·g3[2] minus g1[2]·g3[1]) plus g3[0]·(g1[1]·g2[2] minus g1[2]·g2[1]). The cross product of u and v is (u[1]·v[2] minus u[2]·v[1], u[2]·v[0] minus u[0]·v[2], u[0]·v[1] minus u[1]·v[0]); the contravariant rows a0, a1, a2 are the cross products of (g2, g3), (g3, g1) and (g1, g2), each component divided by det. For each node q and c from 0 to 2 with k being 3·q+c and T(sl) being TY[(s·8+sl)·24+k]: `BCM`[k] is g1[c]·d[3·q], BCM[24+k] is g2[c]·d[3·q+1], BCM[72+k] is g1[c]·d[3·q+1] plus g2[c]·d[3·q], BCM[120+k] is 0.5·(1 minus et)·T(0) plus 0.5·(1 plus et)·T(1), BCM[96+k] is 0.5·(1 minus xi)·T(2) plus 0.5·(1 plus xi)·T(3), BCM[48+k] is 0.25·((1 minus xi)·(1 minus et)·T(4) plus (1 plus xi)·(1 minus et)·T(5) plus (1 plus xi)·(1 plus et)·T(6) plus (1 minus xi)·(1 plus et)·T(7)). The strain pairs CV are (0,0), (1,1), (2,2), (0,1), (1,2), (2,0) and the covariant pairs CO are (0,0), (1,1), (2,2), (0,1), (1,2), (0,2). For each R from 0 to 5 with (k, l) being CV[R] and sc being 1.0 when k equals l and 2.0 otherwise, and each S from 0 to 5 with (i, j) being CO[S]: `TM`[6·R+S] is sc·(ai[k]·ai[l]) when i equals j, else sc·((ai[k]·aj[l] plus aj[k]·ai[l])/2), ai and aj being the contravariant rows i and j. Then with o being g·198, for each R from 0 to 5 and k from 0 to 23: v starts at 0.0 and adds TM[6·R+S]·BCM[24·S+k] for S from 0 to 5; BB[o+33·R+k] is v. Columns 24 to 32 keep their values.
+
+`chol9()` factors `LB` (9 by 9, row major) in place: for each column j: s is LB[9·j+j] minus LB[9·j+k]·LB[9·j+k] for each k below j in order; d is the square root of s when s is above 1e-300, else 1e-150; LB[9·j+j] is d; for each row i above j: t is LB[9·i+j] minus LB[9·i+k]·LB[9·j+k] for each k below j in order, and LB[9·i+j] is t/d.
+
+`kfull(x, lam, mu, shell)` (x a real slice, lam and mu reals, shell a bool) returns a real: `bmat(x, shell)` after building `KF` (33 by 33), `LB` and `YB`. KF is set to zeros. For each g with w being WB[g] and o being g·198: for p from 0 to 32 with b0, b1, b2 being BB[o+p], BB[o+33+p], BB[o+66+p] and tr being lam·(b0 plus b1 plus b2): DBB[p] is w·(2·mu·b0 plus tr), DBB[33+p] is w·(2·mu·b1 plus tr), DBB[66+p] is w·(2·mu·b2 plus tr), DBB[99+p] is w·mu·BB[o+99+p], DBB[132+p] is w·mu·BB[o+132+p], DBB[165+p] is w·mu·BB[o+165+p]. Then for p from 0 to 32 with r0 to r5 being BB[o+p], BB[o+33+p], BB[o+66+p], BB[o+99+p], BB[o+132+p], BB[o+165+p]: skip p when every one of the six is zero or NaN (JavaScript falsy); otherwise for q from p to 32, KF[p·33+q] gets r0·DBB[q] plus r1·DBB[33+q] plus r2·DBB[66+q] plus r3·DBB[99+q] plus r4·DBB[132+q] plus r5·DBB[165+q] added (the six products summed left to right, then added). After all g, for each p and each q above p, KF[q·33+p] is KF[p·33+q]. LB[9·i+j] is KF[(24+i)·33+24+j] for i and j from 0 to 8, then `chol9()`. YB[m·24+j] is KF[(24+m)·33+j] for j from 0 to 23 and m from 0 to 8. Then each column c from 0 to 23 of YB is solved: forward, for i from 0 to 8, s is YB[i·24+c] minus LB[9·i+k]·YB[k·24+c] for each k below i in order, and YB[i·24+c] is s/LB[9·i+i]; backward, for i from 8 down to 0, s is YB[i·24+c] minus LB[9·k+i]·YB[k·24+c] for each k from i+1 to 8 in order, and YB[i·24+c] is s/LB[9·i+i].
+
+`keqm6(x, lam, mu, k, shell)` (x and k real slices, lam and mu reals, shell a bool) returns a real: `kfull(x, lam, mu, shell)` after writing the condensed 24 by 24 stiffness into k: for each i and j from 0 to 23, s is KF[i·33+j] minus KF[i·33+24+m]·YB[m·24+j] for each m from 0 to 8 in order, and k[i·24+j] is s. Then for each i and each j below i, v is (k[i·24+j] plus k[j·24+i])/2 and both entries become v.
+
+`stress8(x, u, lam, mu, shell)` (x and u real slices, lam and mu reals, shell a bool) runs `kfull(x, lam, mu, shell)` and fills `O48` with the stress at the 8 nodes. QV[j] is u[j] for j below 24; for each m from 0 to 8, s is the sum of YB[m·24+j]·u[j] over j from 0 to 23 and QV[24+m] is minus s. For each g with o being g·198: e[r] for r from 0 to 5 is the sum of BB[o+33·r+p]·QV[p] over p from 0 to 32; tr is lam·(e[0] plus e[1] plus e[2]); SGM[6·g] is tr plus 2·mu·e[0], SGM[6·g+1] is tr plus 2·mu·e[1], SGM[6·g+2] is tr plus 2·mu·e[2], SGM[6·g+3] is mu·e[3], SGM[6·g+4] is mu·e[4], SGM[6·g+5] is mu·e[5]. Then O48[6·a+c] is the sum of EXT[a·8+g]·SGM[6·g+c] over g from 0 to 7.
+
+`keheat(x, k, kk)` (x and kk real slices, k a real) runs `grads(x, false)`, sets the 64 entries of kk to 0.0, then for each g with w being WB[g]·k and o being g·33, for each a and each b from a to 7: v is w·(GB[o+3·a]·GB[o+3·b] plus GB[o+3·a+1]·GB[o+3·b+1] plus GB[o+3·a+2]·GB[o+3·b+2]); kk[a·8+b] gets v added and, when b differs from a, kk[b·8+a] gets v added.
+
+`fm_mesh(nn i32, ne i32, nh i32, hk i32, fl i32)` runs `tables()`, stores the counts in `NN`, `NE`, `NH`, `HK` and `FL` (flag bits: 1 the mesh type is sweep, 2 a cube size array is given, 4 an element scale array is given, 8 hanging nodes are given), sizes `X` (3·nn), `CB` (ne), `RH` (ne, filled with 1.0), `HWS` (hk·nh), `E` (8·ne), `HND` (nh) and `HMS` (hk·nh) with zeros unless stated, and reports views: `fm_view_f64` 201 X, 202 CB, 203 RH, 204 HWS; `fm_view_i32` 205 E, 206 HND, 207 HMS.
+
+`masters()` builds the hanging-node master lists, exactly as fea_mesh.js `masters`, when flag 8 is set (otherwise it does nothing): `CMP` gets NN+1 zeros, `CMQ` gets NN entries of minus 1, and a count per node starts at 1. For each hanging entry q in order, c is how many of HMS[HK·q+j] for j below HK are at least 0, and the count of node HND[q] becomes c. CMP[i+1] is CMP[i] plus the count of i. `CMI` and `CMW` get CMP[NN] zeros. For each q in order CMQ[HND[q]] is q. For each node i: when CMQ[i] is below 0, CMI[CMP[i]] is i and CMW[CMP[i]] is 1.0; otherwise with q being CMQ[i] and c starting at 0, for each j below HK where HMS[HK·q+j] is at least 0, CMI[CMP[i]+c] is that master, CMW[CMP[i]+c] is HWS[HK·q+j], and c grows by one. It then reports views 210 CMP, 211 CMI, 213 CMQ (i32) and 212 CMW (f64).
+
+The masters of node n are (n, weight 1.0) when flag 8 is not set, otherwise the entries CMP[n] up to CMP[n+1] of CMI with weights CMW.
+
+`pattern()` builds the block sparsity `ARP` (NN+1 row starts) and `ACI` exactly as fea_mesh.js `pattern`. `EC` gets NN+1 zeros; for each element e and corner a, each master m of E[8·e+a] adds 1 to EC[m+1]; then EC becomes its running sum. `ELS` gets EC[NN] zeros and `FPS` is a copy of the first NN entries of EC; for each element e and corner a, each master m of E[8·e+a] gets ELS[FPS[m]] set to e and FPS[m] grows by one. Row i of the pattern is built into the first `RN` entries of `ROW` (a fixed scratch of NN plus 8 entries, never pushed): RN starts at 0; for each k from EC[i] up to EC[i+1] and each corner b of element ELS[k], each master m of E[8·ELS[k]+b] with MK[m] differing from i gets MK[m] set to i and is appended (ROW[RN] becomes m and RN grows by one). When RN is 0, i is appended; then, when MK[i] differs from i, i is appended (so an isolated node gets i twice). Two passes use it so that `ACI` is sized exactly. Before the first pass ROW gets NN plus 8 zeros. First pass: `MK` gets NN entries of minus 1 and `ARP` gets NN+1 zeros; for each node i, row i is built and ARP[i+1] is ARP[i] plus RN. Then ACI gets ARP[NN] zeros and MK is set back to NN entries of minus 1. Second pass: for each node i, row i is built again, its first RN entries are sorted ascending (sorting that slice of ROW), and they are written into ACI starting at ARP[i].
+
+`find(c, a, b, j)` (c a constant i32 slice, a, b and j ints, returning an int) is a binary search for column j in c from a up to but not including b: lo is a and hi is b minus 1; while lo is at most hi, m is (lo plus hi) shifted right by one, v is c[m]; it returns m when v equals j, moves lo to m plus 1 when v is below j, else hi to m minus 1; it returns minus 1 when not found.
+
+`scatter(e, ke, nd, sc)` (e and nd ints, ke a real slice, sc a real) adds element e's matrix ke (8·nd by 8·nd, row major) into `AV`, exactly as fea_mesh.js `scatter`: bb is nd·nd and m is 8·nd. For each corner a with na being E[8·e+a] and each master ma of na with weight ca: wa is ca·sc; with r0 and r1 being ARP[ma] and ARP[ma+1], for each corner b with nb being E[8·e+b] and each master mb of nb with weight cb: w is wa·cb; p is `find(ACI, r0, r1, mb)`; when p is at least 0, with pos being p·bb, for each i and j below nd, AV[pos+i·nd+j] gets w·ke[(nd·a+i)·m+nd·b+j] added.
+
+`fm_system(lam real, mu real) real` assembles the 3 by 3 block stiffness exactly as fea_mesh.js `systemOf` and returns dmin: `masters()`, `pattern()`, then `AV` gets 9 times the length of ACI zeros. dmin starts at infinity and the cube matrix is not yet built. For each element e: `XE`[3·a+k] is X[3·E[8·e+a]+k]. When flag 2 is set and CB[e] is above 0.0: the first time, `UE`[3·a+k] is (HNT[3·a+k] plus 1)/2 and `keqm6(UE, lam, mu, KC, false)` builds the cube matrix `KC` once; then KE[i] is KC[i]·CB[e] for all 576 entries. Otherwise dmin becomes `jmin(dmin, keqm6(XE, lam, mu, KE, s))` where s is whether flag 1 is set and `is_thin(XE)`. Then `scatter(e, KE, 3, RH[e])`. Finally it reports views 214 ARP, 215 ACI (i32) and 216 AV (f64).
+
+`fm_heat(k real)` assembles the scalar conduction matrix exactly as fea_mesh.js `thermalMesh` does before its boundary terms: `masters()`, `pattern()`, `AV` gets one zero per entry of ACI, then for each element e, XE is its corner coordinates as above, `keheat(XE, k, KE)` and `scatter(e, KE, 1, RH[e])`. It reports views 214, 215 and 216 like `fm_system`.
+
+`fm_nvol()` fills `NVOL` (NN zeros) exactly as fea_mesh.js `nodalVol`: for each element e with XE its corner coordinates, `grads(XE, false)`; for each corner a, s is the sum of NG[g·8+a]·WB[g] over g from 0 to 7, and NVOL[E[8·e+a]] gets s·RH[e] added. It reports view 217 NVOL (f64).
+
+`vmof(o int) real` is the von Mises stress of the six values s0 to s5 at SIG[o] onward: the square root of 0.5·((s0 minus s1) squared plus (s1 minus s2) squared plus (s2 minus s0) squared) plus 3·(s3 squared plus s4 squared plus s5 squared), each square being the value times itself, the three squares summed left to right inside each group. `vmo48(o int) real` is the same formula over O48 from o.
+
+`fm_post_in()` sizes `U` (3·NN) and `FIX` (3·NN) with zeros and reports views 218 U (f64) and 219 FIX (u8).
+
+`fm_post(lam real, mu real)` is the stress pass of fea_mesh.js `staticMesh`. First, when flag 8 is set, for each hanging entry q with n being HND[q] and each c from 0 to 2: s is the sum of CMW[k]·U[3·CMI[k]+c] over k from CMP[n] up to CMP[n+1], and U[3·n+c] is s. `SIG` gets 6·NN zeros, `CNT` NN zeros, `EVM`, `VM` and `UM` (f32) get NE, NN and NN zeros, `ST` gets 4 zeros. For each element e: XE and UE are the corner coordinates and the displacements U[3·n+k] of its corners n; `stress8(XE, UE, lam, mu, s)` with s being whether flag 2 is not set, flag 1 is set and `is_thin(XE)`; m starts at 0.0; for each corner a with n its node, SIG[6·n+c] gets O48[6·a+c] added for c from 0 to 5, CNT[n] grows by one and m becomes `jmax(m, vmo48(6·a))`; EVM[e] is m as f32. vmMax, vmAway and uMax start at 0.0. For each node n with CNT[n] not zero: each SIG[6·n+c] becomes itself divided by CNT[n]; VM[n] is `vmof(6·n)` stored as f32 and UM[n] is `hypot3`(U[3·n], U[3·n+1], U[3·n+2]) stored as f32; with v and w being VM[n] and UM[n] read back as reals, vmMax becomes `jmax(vmMax, v)` and uMax becomes `jmax(uMax, w)`; when none of FIX[3·n], FIX[3·n+1], FIX[3·n+2] is set and node n is not hanging (flag 8 not set or CMQ[n] below 0), vmAway becomes `jmax(vmAway, v)`. ST[0] is vmMax, ST[1] is vmAway, ST[2] is uMax. It reports views 220 VM, 221 UM, 222 EVM (f32) and 223 ST (f64).
+
+The algebraic multigrid keeps its matrices, block inverses and level vectors in two pools, `IP` (i32) and `FP` (f64). Growing a pool may move it, so a function takes slices of a pool only after its last pool growth. `ip_add(len int) int` returns the old length o of `IP` and grows `IP` to o+len entries with one `resize` filled with zeros; when `IP.cap` is below o+len it first moves the pool: `QI` is emptied and then gets `reserve`(o), then gets a copy of `IP` with one `append`; `IP` is emptied and then gets `reserve`(o+len plus (o+len)/2), then gets `QI` back with one `append`, and `QI` is emptied. `fp_add(len int) int` does the same for `FP` with `QF`. `ipv(off int, len int)` returns the i32 slice of `IP` from off for len entries and `fpv(off int, len int)` the real slice of `FP` from off for len entries.
+
+A matrix is an entry of `MS` (struct `Mt`): n block rows, m block columns, blocks of rb by cb, nz blocks, and where its arrays are. kind 0 keeps its n+1 row starts in `IP` from rp, its nz block columns in `IP` from ci and its nz·rb·cb values in `FP` from va; kind 1 is the system matrix held in `ARP`, `ACI` and `AV`; kind 2 is the tentative prolongation held in `PTR`, `PTC` and `PTV`. `mrp(k int)` returns matrix k's n+1 row starts as an i32 slice, `mci(k int)` its nz block columns as an i32 slice and `mva(k int)` its nz·rb·cb values as a real slice: for kind 0 the slices of `IP` from rp and from ci and of `FP` from va, for kind 1 the first entries of `ARP`, `ACI` and `AV`, for kind 2 the first entries of `PTR`, `PTC` and `PTV`. `madd(n int, m int, rb int, cb int, nz int) int` adds a kind 0 matrix: rp is `ip_add(n+1)`, ci is `ip_add(nz)` and va is `fp_add(nz·rb·cb)`; MS[NM] becomes that matrix, NM grows by one and the old NM is returned.
+
+`mv(k int, x, y, add bool)` (x and y real slices) is fea_mesh.js `mv` for matrix k: with rp, ci and v its slices, n, rb and cb its sizes and bb being rb·cb. When rb and cb are both 3: for each row i, s0, s1 and s2 start at 0.0; for each entry k2 of row i in order, with j being 3·ci[k2], o being 9·k2 and x0, x1, x2 being x[j], x[j+1], x[j+2]: s0 gets v[o]·x0 plus v[o+1]·x1 plus v[o+2]·x2 added (the three products summed left to right, then added), s1 likewise with v[o+3], v[o+4], v[o+5], and s2 with v[o+6], v[o+7], v[o+8]; then y[3·i], y[3·i+1], y[3·i+2] get s0, s1, s2 added when add, otherwise become them. Otherwise, for each row i: a local s of 16 reals has its first rb entries set to 0.0; for each entry k2 of row i in order with j being ci[k2]·cb and o being k2·bb, for each r below rb: t starts at 0.0 and gets v[o+r·cb+c]·x[j+c] added for each c below cb in order, then s[r] gets t added; then for each r below rb, y[i·rb+r] becomes y[i·rb+r] plus s[r] when add, otherwise s[r].
+
+`mvt(k int, x, y)` (x and y real slices) multiplies by the transpose of matrix k, exactly as fea_mesh.js `mv` of its `transpose`: with n, m, rb, cb, rp, ci and v of matrix k, the first m·cb entries of y are set to 0.0; for each row i in order and each entry k2 of row i in order, with K being ci[k2] and o being k2·rb·cb, for each r below cb: t starts at 0.0 and gets v[o+c·cb+r]·x[i·rb+c] added for each c below rb in order, then y[K·cb+r] gets t added.
+
+`mtrans(k int) int` adds the transpose of matrix k, exactly as fea_mesh.js `transpose`, and returns its index: with n, m, rb, cb and nz of matrix k and bb being rb·cb, it first calls `madd(m, n, cb, rb, nz)`. Then, with rp, ci and v the slices of matrix k and c, ti and tv those of the new matrix (all taken after `madd`): for each k2 below rp[n], c[ci[k2]+1] grows by one; for j below m, c[j+1] gets c[j] added. `TF` is emptied and resized to m zeros and TF[j] is c[j] for j below m. For each row i in order and each entry k2 of row i in order, with j being ci[k2] and q being TF[j] (then TF[j] grows by one): ti[q] is i, and for each r below rb and s below cb, tv[q·bb+s·rb+r] is v[k2·bb+r·cb+s].
+
+`sp_count(a int, b int) int` is the first pass of fea_mesh.js `spgemm` for the product of matrices a and b: it fills `SRP` with the product's row starts and returns its block count. `SRP` is emptied and resized to (a's n)+1 zeros, `MKS` to b's m entries of -1 and `CL` to b's m zeros. For each row i of a: cnt starts at 0; for each entry k of row i of a in order with kk its column, and each entry l of row kk of b in order with j its column: when MKS[j] is below 0, MKS[j] becomes 0, CL[cnt] is j and cnt grows by one. Then MKS[CL[t]] becomes -1 for t below cnt, and SRP[i+1] is SRP[i] plus cnt. It returns SRP at a's n.
+
+`sp_fill(a int, b int, c int)` is the second pass of fea_mesh.js `spgemm`: matrix c was made by `madd` with a's n rows, b's m columns, blocks of a's rb by b's cb and the count of `sp_count`, and its row starts become the entries of `SRP`. With ra and ca being a's rb and cb, cb being b's cb, ab being ra·ca, bbb being (b's rb)·cb, ob being ra·cb, and the slices of a, b and c: `MKS` is emptied and resized to b's m entries of -1, `CL` and `CS` to b's m zeros and `ACC` to (b's m)·ob zeros. For each row i of a: cnt starts at 0; for each entry k of row i of a in order with kk its column, and each entry l of row kk of b in order with j its column: p is MKS[j]; when p is below 0, p becomes cnt, MKS[j] becomes p, CL[cnt] is j, cnt grows by one and ACC from p·ob below p·ob+ob is set to 0.0. Then, in every case, with ao being k·ab, bo being l·bbb and co being p·ob: for r below ra and q below ca, av is a's value at ao+r·ca+q; when av is 0.0 it is skipped, otherwise ACC[co+r·cb+s] gets av·(b's value at bo+q·cb+s) added for each s below cb in order. After row i's entries: CS gets the first cnt entries of CL and that part of CS is sorted ascending; w starts at c's row start i; for each t below cnt with j being CS[t]: p is MKS[j], c's column w is j, c's value w·ob+y is ACC[p·ob+y] for y below ob, MKS[j] becomes -1 and w grows by one.
+
+`spgemm(a int, b int) int` returns the index of the product of matrices a and b: z is `sp_count(a, b)`, c is `madd(a's n, b's m, a's rb, b's cb, z)`, then `sp_fill(a, b, c)`, and it returns c.
+
+`binv(k int, g int, o int)` writes into `FP` from o (sized by the caller) the inverses of the diagonal groups of matrix k, exactly as fea_mesh.js `binv`: with n, rb, rp, ci and v of matrix k, bb is rb·rb, sb is g·rb, ns is (n plus g minus 1)/g, w is 2·sb, and D is the real slice of `FP` from o for ns·sb·sb entries. `GJ` is emptied and resized to sb·w zeros. For each s below ns: all entries of GJ are set to 0.0; n0 is s·g, n1 is the smaller of n and n0+g, m is (n1 minus n0)·rb and sc starts at 0.0. For each i from n0 below n1 and each entry k2 of row i in order with j its column, skipped when j is below n0 or at least n1: for r and c below rb, GJ[((i minus n0)·rb+r)·w+(j minus n0)·rb+c] is v[k2·bb+r·rb+c]. For each r below m: GJ[r·w+sb+r] is 1.0 and sc becomes `jmax(sc, abs(GJ[r·w+r]))`. Then for each column c below m: p starts at c and, for each r from c+1 below m in order, becomes r when abs(GJ[r·w+c]) is above abs(GJ[p·w+c]); when p differs from c, rows c and p of GJ (w entries each) are swapped. d is GJ[c·w+c] and sc1 is sc when `truthy(sc)`, otherwise 1.0. When abs(d) is below 1e-14·sc1, each GJ[c·w+t] for t below w becomes 1.0 when t is c or t is sb+c and 0.0 otherwise, and the next column follows. Otherwise each GJ[c·w+t] for t below w becomes GJ[c·w+t]/d; then for each r below m other than c, f is GJ[r·w+c] and, when `truthy(f)`, each GJ[r·w+t] for t below w in order becomes GJ[r·w+t] minus f·GJ[c·w+t]. After the columns, for r below sb and c below sb, D[s·sb·sb+r·sb+c] is GJ[r·w+sb+c] when r and c are both below m, otherwise 0.0.
+
+`dapply(o int, sb int, r, z)` (r and z real slices) is fea_mesh.js `dapply` with the block inverse D being `FP` from o: n is the length of r, ns is (n plus sb minus 1)/sb and bb is sb·sb; for each s below ns, with off being s·sb and m being the smaller of sb and n minus off, for each a below m: t starts at 0.0 and gets FP[o+s·bb+a·sb+b]·r[off+b] added for each b below m in order, then z[off+a] is t.
+
+`lam_max(k int, o int, sb int) real` is fea_mesh.js `lamMax` for matrix k with its block inverse at `FP` offset o and block size sb: n is k's n·rb; `LX`, `LY` and `LZ` are emptied and resized to n zeros. seed starts at 7; for each i in order, seed becomes the JavaScript value of (seed·1103515245+12345)&0x7fffffff (the product and the sum are f64 operations; the result, a whole number, is converted to a 64-bit integer and masked with 0x7fffffff) and LX[i] is seed divided by 2147483647.0, minus 0.5. l starts at 1.0. 12 times: `mv(k, LX, LY, false)` and `dapply(o, sb, LY, LZ)`; nr is the sum of LZ[i]·LZ[i] and xs the sum of LX[i]·LX[i] (each from 0.0, in order); l is the square root of nr divided by the square root of xs, xs being replaced by 1.0 when it is 0.0 or NaN; q is the square root of nr, replaced by 1.0 when it is 0.0 or NaN; each LX[i] becomes LZ[i]/q. It returns l.
+
+`aggregate(k int, th real) int` is fea_mesh.js `aggregate` for matrix k (n rows of rb by rb blocks, bb being rb·rb, slices rp, ci and v); it fills `AGG` and returns na. nrm(k2) is the square root of the sum of v[k2·bb+t]·v[k2·bb+t] for t below bb (from 0.0, in order). `DG` is emptied and resized to n zeros; DG[i] is nrm(f) with f being `find(ci, rp[i], rp[i+1], i)`, or 0.0 when f is below 0. Entry k2 of row i with column j is strong when j differs from i, s being nrm(k2) is above 0.0 and s is at least th times the square root of DG[i]·DG[j]. `SP` is emptied and resized to n+1 zeros and SP[i+1] is SP[i] plus the number of strong entries of row i; `SL` (i32) and `SW` (f64) are emptied and resized to SP[n] zeros and, in a second pass over the rows in order, the strong entries of row i are written from SP[i] on in order, SL getting j and SW getting s. `AGG` is emptied and resized to n entries of -1 and na starts at 0. In each of the three passes below a row i is skipped when, at the moment it is reached, AGG[i] is at least 0 or SP[i] equals SP[i+1]; the range of row i is k2 from SP[i] below SP[i+1]. First pass, for each row i in order: when no AGG[SL[k2]] of the range is at least 0, AGG[i] becomes na, each AGG[SL[k2]] of the range becomes na, and na grows by one. `AG1` is emptied and resized to n zeros and becomes a copy of AGG. Second pass, for each row i in order: best starts at -1 and bw at 0.0; for each k2 of the range in order, when AG1[SL[k2]] is at least 0 and SW[k2] is above bw, bw becomes SW[k2] and best becomes AG1[SL[k2]]; when best is at least 0, AGG[i] becomes best. Third pass, for each row i in order: AGG[i] becomes na, each AGG[SL[k2]] of the range that is below 0 becomes na, and na grows by one. It returns na.
+
+`tentative(l int, na int, bq int) int` is fea_mesh.js `tentative` for level l with the aggregates in `AGG`: it builds the tentative prolongation as the kind 2 matrix and writes the coarse near null space into `FP` from bq (na·nb·nb entries, sized by the caller), and returns the matrix index. n and bs are the n and rb of LV[l].a, nb is NBV, B is the real slice of `BIN` when LV[l].bq is below 0 and otherwise of `FP` from LV[l].bq for n·bs·nb entries, and Bc is the real slice of `FP` from bq for na·nb·nb entries. `TCN` is emptied and resized to na+1 zeros; for each i below n with AGG[i] at least 0, TCN[AGG[i]+1] grows by one; then for a below na, TCN[a+1] gets TCN[a] added. `TND` is emptied and resized to TCN[na] zeros and `TPS` to na zeros, TPS[a] being TCN[a]; for each i in order with AGG[i] at least 0, TND[TPS[AGG[i]]] is i and TPS[AGG[i]] grows by one. `PTR` is emptied and resized to n+1 zeros, `PTC` to TCN[na] zeros and `PTV` to TCN[na]·bs·nb zeros; `MKS` is emptied and resized to n entries of -1; q starts at 0 and for each i in order: when AGG[i] is at least 0, MKS[i] is q, PTC[q] is AGG[i] and q grows by one; PTR[i+1] is q. mx is the largest TCN[a+1] minus TCN[a] over a below na (0 when there is none); `QM` is emptied and resized to mx·bs·nb zeros and `RR9` to nb·nb zeros. For each aggregate a below na, with s0 being TCN[a], cnt being TCN[a+1] minus s0 and m being cnt·bs: the nb·nb entries of RR9 are set to 0.0; for r below cnt, d below bs and c below nb, QM[(r·bs+d)·nb+c] is B[(TND[s0+r]·bs+d)·nb+c]. For each column c below nb in order: n0 is the square root of the sum of QM[r·nb+c]·QM[r·nb+c] for r below m (from 0.0, in order); then twice: for each k below c in order, s is the sum of QM[r·nb+k]·QM[r·nb+c] for r below m, RR9[k·nb+c] gets s added, and each QM[r·nb+c] for r below m becomes QM[r·nb+c] minus s·QM[r·nb+k]. nr is the square root of the sum of QM[r·nb+c]·QM[r·nb+c] for r below m. When nr is above 1e-9·n0 and nr is above 0.0: RR9[c·nb+c] is nr and each QM[r·nb+c] for r below m becomes QM[r·nb+c]/nr; otherwise each QM[r·nb+c] for r below m becomes 0.0. Then for each r below cnt with o being MKS[TND[s0+r]]·bs·nb, for d below bs and c below nb, PTV[o+d·nb+c] is QM[(r·bs+d)·nb+c]; and Bc[a·nb·nb+t] is RR9[t] for t below nb·nb. Finally MS[NM] becomes a kind 2 matrix with n rows, na columns, bs by nb blocks, TCN[na] blocks and offsets 0; NM grows by one and the old NM is returned.
+
+`smooth_p(l int, pt int) int` is fea_mesh.js `smoothP` for level l and the tentative prolongation pt, returning the smoothed prolongation's index. om is (4.0/3.0)/LV[l].lmaxp. First ap is `spgemm(LV[l].a, pt)`. After that, with bs being the rb of LV[l].a, nb being pt's cb, ob being bs·nb, bb being bs·bs, D the real slice of `FP` from LV[l].d, and arp, aci, av and prp, pci, pv the slices of ap and of pt: for each row i below ap's n, first for each entry k of row i of ap in order, with o being k·ob and a local t of 81 reals: for r below bs and s below nb, x starts at 0.0 and gets D[i·bb+r·bs+q]·av[o+q·nb+s] added for q below bs in order, and t[r·nb+s] is (minus om)·x; then av[o+y] becomes t[y] for y below ob. Then for each entry l2 of row i of pt in order: k is `find(aci, arp[i], arp[i+1], pci[l2])`, o is k·ob, and av[o+y] gets pv[l2·ob+y] added for y below ob in order. It returns ap.
+
+`rap_pat(p int)` lists, for each column K of matrix p, the rows i of p having a block in column K in increasing i, as `TRP` (m+1 starts) and `TCI`: with n, m, nz, rp and ci of p, `TRP` is emptied and resized to m+1 zeros and `TCI` to nz zeros; for each k below rp[n], TRP[ci[k]+1] grows by one; for j below m, TRP[j+1] gets TRP[j] added; `TF` is emptied and resized to m zeros with TF[j] being TRP[j]; for each row i in order and each entry k of row i in order, TCI[TF[ci[k]]] is i and TF[ci[k]] grows by one.
+
+`rap_count(p int, a int) int` is the first pattern pass of fea_mesh.js `rap` with P being matrix p, A being matrix a and R the transpose of p, whose row K is the list of `TRP` and `TCI` from `rap_pat`. It fills `SRP` and returns the block count. m is p's m. `MKS` is emptied and resized to m entries of -1 and `SRP` to m+1 zeros. For each K below m: cnt starts at 0; for each q from TRP[K] below TRP[K+1] with i being TCI[q], each entry k of row i of a in order with kk its column, and each entry l of row kk of p in order with J its column: when MKS[J] differs from K, MKS[J] becomes K and cnt grows by one. SRP[K+1] is SRP[K] plus cnt. It returns SRP[m].
+
+`rap_fill(p int, a int, c int)` fills matrix c, made by `madd` with m rows and columns, nb by nb blocks and the count of `rap_count` (its values are zeros), exactly as the rest of fea_mesh.js `rap`: m is p's m, nb is p's cb, bs is p's rb, bc is nb·nb and ob is bs·nb; cr, cc and cv are c's slices. Pattern: cr[K] is SRP[K] for K from 0 to m; `MKS` is emptied and resized to m entries of -1; for each K below m: w starts at cr[K]; the scan of `rap_count` runs again for K, and each J that gets marked (MKS[J] differing from K, then becoming K) is written as cc[w] and w grows by one; then the entries of cc from cr[K] below cr[K+1] are sorted ascending. Values: `MKS` is emptied and resized to m entries of -1, `CL` to m zeros and `ACC` to m·ob zeros. For each row i below p's n whose row starts in p at i and i+1 differ: cnt starts at 0; for each entry k of row i of a in order with kk its column and ao being k·bs·bs, and each entry l of row kk of p in order with J its column: pp is MKS[J]; when pp is below 0, pp becomes cnt, MKS[J] becomes pp, CL[cnt] is J, cnt grows by one and ACC from pp·ob below pp·ob+ob is set to 0.0; then, in every case, with bo being l·ob and co being pp·ob, for r below bs and q below bs: av is a's value at ao+r·bs+q; when av is 0.0 it is skipped, otherwise ACC[co+r·nb+s] gets av·(p's value at bo+q·nb+s) added for s below nb in order. Then for each entry l of row i of p in order, with K its column, po being l·ob, r0 being cr[K] and r1 being cr[K+1]: for each pp below cnt, pos is `find(cc, r0, r1, CL[pp])`·bc and co is pp·ob; for a2 below nb and r below bs: pv is p's value at po+r·nb+a2; when pv is 0.0 it is skipped, otherwise cv[pos+a2·nb+s] gets pv·ACC[co+r·nb+s] added for s below nb in order. Then MKS[CL[pp]] becomes -1 for each pp below cnt. Diagonal: dmax starts at 0.0; for each row i below m with dd being `find(cc, cr[i], cr[i+1], i)`·bc, for each a2 below nb, dmax becomes `jmax(dmax, abs(cv[dd+a2·nb+a2]))`. Then for each row i below m with dd as before and each a2 below nb: when abs(cv[dd+a2·nb+a2]) is below 1e-13·dmax: z starts true; for each entry k from cr[i] below cr[i+1] while z is true: for s below nb, when abs(cv[k·bc+a2·nb+s]) is above 1e-13·dmax, z becomes false and the s loop stops. When z is still true, cv[dd+a2·nb+a2] becomes dmax·1e-6.
+
+`rap(p int, a int) int` is the Galerkin product of fea_mesh.js `rap`: `rap_pat(p)`, z is `rap_count(p, a)`, c is `madd(m, m, nb, nb, z)` with m being p's m and nb p's cb, then `rap_fill(p, a, c)`, and it returns c.
+
+`dense(k int, d)` (d a real slice of N·N zeros, N being matrix k's n·rb) is fea_mesh.js `denseOf`: for each row i and each entry k2 of row i in order with j its column, for r and c below rb, d[(i·rb+r)·N+j·rb+c] is v[k2·rb·rb+r·rb+c].
+
+`chol(d, nn int)` (d a real slice) is fea_mesh.js `cholDense` in place on the nn by nn row-major d: mx starts at 0.0 and becomes `jmax(mx, abs(d[i·nn+i]))` for each i in order. For each column j: s starts at d[j·nn+j] and gets d[j·nn+k]·d[j·nn+k] subtracted for each k below j in order; dj is the square root of s when s is above 1e-12·mx, otherwise the square root of mx; d[j·nn+j] is dj; for each i from j+1 below nn: t starts at d[i·nn+j] and gets d[i·nn+k]·d[j·nn+k] subtracted for each k below j in order, and d[i·nn+j] is t/dj.
+
+`csolve(d, nn int, b, x)` (d, b and x real slices) is fea_mesh.js `cholSolve`: forward, for i below nn, s starts at b[i] and gets d[i·nn+k]·x[k] subtracted for each k below i in order, and x[i] is s/d[i·nn+i]; backward, for i from nn-1 down to 0, s starts at x[i] and gets d[k·nn+i]·x[k] subtracted for each k from i+1 below nn in order, and x[i] is s/d[i·nn+i].
+
+`cheb(l int, b, x, zero bool, deg int)` (b and x real slices) is fea_mesh.js `cheb` for level l: a is LV[l].a, n is the length of b, and r, z and d are the real slices of `FP` from LV[l].t1, LV[l].t2 and LV[l].t3 for n entries. lmax is LV[l].lmax·1.1, lmin is lmax/30.0, th is (lmax plus lmin)/2.0, de is (lmax minus lmin)/2.0, sg is th/de and rho is 1.0/sg. When zero, r[i] is b[i]; otherwise `mv(a, x, r, false)` and r[i] becomes b[i] minus r[i]. `dapply(LV[l].ds, LV[l].sb, r, z)`; for each i, d[i] is z[i]/th and x[i] becomes d[i] when zero, otherwise x[i] plus d[i]. For k from 1 below deg: `mv(a, x, r, false)`; r[i] becomes b[i] minus r[i]; `dapply(LV[l].ds, LV[l].sb, r, z)`; r1 is 1.0/(2.0·sg minus rho); for each i, d[i] becomes (r1·rho)·d[i] plus ((2.0·r1)/de)·z[i] and x[i] gets d[i] added; rho becomes r1.
+
+`vcycle(l int, b, x)` (b and x real slices) is fea_mesh.js `vcycle`: when l is NL-1, with N being LV[l].nc, `csolve(fpv(LV[l].lc, N·N), N, b, x)` and it returns. Otherwise dg is CDEG when l is above 0 and DEG when l is 0; a is LV[l].a, p is LV[l].p, n is the length of b, t4 is the real slice of `FP` from LV[l].t4 for n entries, and cb and cx are the real slices of `FP` from LV[l+1].b and LV[l+1].x for n1 entries, n1 being the n·rb of LV[l+1].a. `cheb(l, b, x, true, dg)`; then (GAM times when l is above 0, once when l is 0): `mv(a, x, t4, false)`, t4[i] becomes b[i] minus t4[i], `mvt(p, t4, cb)`, `vcycle(l+1, cb, cx)`, `mv(p, cx, x, true)`. Finally `cheb(l, b, x, false, dg)`.
+
+`fm_bc_in(nd i32)` sets ND to nd and, with n being NN·nd, sizes with n zeros `FIX` (u8), `U0`, `VF`, `VG`, `VS`, `VX` and `VY`. `MS` is emptied and resized to 48 matrices with every field 0 and NM is 1; MS[0] is the system matrix: kind 1, n and m NN, rb and cb nd, nz the length of ACI, offsets 0. It reports views 219 FIX (u8) and 224 U0, 225 VF, 227 VG, 228 VS, 229 VX, 230 VY (f64).
+
+`fm_dadd()` adds VX to the diagonal of the 3 by 3 system as fea_mesh.js `staticMesh` does for springs: for each node i below NN with k being `find(ACI, ARP[i], ARP[i+1], i)`, AV[9·k+4·c] gets VX[3·i+c] added for c from 0 to 2.
+
+`fm_keep()` makes `AV0` a copy of `AV` (emptied and resized to the length of AV, then each entry copied).
+
+`fm_bc(rs i32)` forms the right-hand side and applies the supports, exactly as fea_mesh.js `staticMesh` (and `thermalMesh`) followed by `applyBC`, on the system matrix with d being ND and bb being d·d. When rs is 1, each AV[i] becomes AV0[i]. `mv(0, U0, VY, false)` and each VF[i] becomes VF[i] minus VY[i]. Node i is a fixed row when any FIX[d·i+c] for c below d is set, and nr is how many there are. `RRW` is emptied and resized to nr zeros and `RRP` to nr+1 zeros; for the q-th fixed row i in increasing order, RRW[q] is i and RRP[q+1] is RRP[q] plus ARP[i+1] minus ARP[i]. `RCI` is emptied and resized to RRP[nr] zeros and `RVV` to RRP[nr]·bb zeros; for each q with i being RRW[q] and each t below ARP[i+1] minus ARP[i]: RCI[RRP[q]+t] is ACI[ARP[i]+t] and RVV[(RRP[q]+t)·bb+e] is AV[(ARP[i]+t)·bb+e] for e below bb. Then for each node i and each entry k of row i with j being ACI[k], for a below d and b below d: when FIX[d·i+a] is set or FIX[d·j+b] is set, AV[bb·k+d·a+b] becomes 1.0 when i equals j and a equals b, otherwise 0.0. Each VF[i] whose FIX[i] is set becomes 0.0. For each node i with k being `find(ACI, ARP[i], ARP[i+1], i)` and each a below d: when AV[bb·k+(d+1)·a] is 0.0 it becomes 1.0.
+
+`fm_reac()` is fea_mesh.js `rowReac` with u in `VX` and f0 in `VY`: d is ND and bb is d·d; `RQ` is emptied and resized to NN·d zeros; for each fixed row q with i being RRW[q] and each a below d: s starts at 0.0; for each entry k from RRP[q] below RRP[q+1] with j being RCI[k], for b below d, s gets RVV[bb·k+d·a+b]·VX[d·j+b] added; RQ[d·i+a] is s minus VY[d·i+a]. It reports view 236 RQ (f64).
+
+`fm_amg_in(nb i32)` sets NBV to nb, sizes `BIN` with NN·ND·nb zeros and reports view 226 BIN (f64).
+
+`tt_build(nl int, tc int)` builds the column transform of fea_mesh.js `colT` and the transformed system of fea_mesh.js `staticMesh`: with n being nl·tc, TTM is `madd(n, n, 3, 3, nl·tc·(tc+1)/2)`; then, with its slices rp, ci and v: w starts at 0; for each i below nl and each k below tc: for each j from 0 to k, ci[w] is i·tc+j, the 9 values from 9·w are 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 and w grows by one; then rp[i·tc+k+1] is w. tt is `mtrans(TTM)`, at is `spgemm(0, TTM)` and aa is `spgemm(tt, at)`. aa is then moved down onto at: with r1 and v1 being at's rp and va, r2, c2 and v2 being aa's rp, ci and va, n2 aa's n and z aa's nz: IP[r1+t] becomes IP[r2+t] for t below n2+1 in increasing t, then IP[r1+n2+1+t] becomes IP[c2+t] for t below z in increasing t, and FP[v1+t] becomes FP[v2+t] for t below 9·z in increasing t; MS[at] becomes aa with rp r1, ci r1+n2+1 and va v1, and NM drops by one; `IP` keeps only its first r1+n2+1+z entries and `FP` its first v1+9·z (the rest removed with `pop_n`). A0 is at. `mv(tt, VF, VG, false)`. Then for each i from NN-1 down to 0 with i mod tc not 0, BIN[3·i·NBV+j] gets BIN[3·(i-1)·NBV+j] subtracted for each j below 3·NBV.
+
+`fm_amg(tnl i32, tc i32, th real, th2 real, deg i32, cdeg i32, gam i32, coarse i32, col i32) i32` builds the hierarchy exactly as fea_mesh.js `amgSetup` and returns the number of levels. DEG, CDEG and GAM become deg, cdeg and gam; NM becomes 1 (matrix 0 stays the system), TTM is -1 and A0 is 0; `LV` is emptied and resized to 16 levels with every field 0 and NL is 0. When tnl is above 0, ri is 3·(length of ACI) plus 8·NN plus 4096 and rf is 4·(length of AV) plus 16·NN·ND plus 4096; otherwise ri is (length of ACI)/2 plus 8·NN plus 4096 and rf is (3·(length of AV))/2 plus 16·NN·ND plus 4096. `IP` is emptied and then gets `reserve`(ri) and `FP` is emptied and then gets `reserve`(rf). When tnl is above 0, `tt_build(tnl, tc)`; otherwise each VG[i] is VF[i]. Then a is A0, bq is -1 and l is 0, and repeatedly: n is a's n and bs is a's rb; g is col when l is 0 and col is above 1, otherwise 1; d is `fp_add(n·bs·bs)`, `binv(a, 1, d)`, and lmaxp is `lam_max(a, d, bs)`; sb is g·bs; when g is above 1, dl is ((n plus g minus 1)/g)·sb·sb, ds is `fp_add(dl)`, `binv(a, g, ds)` and lmax is `lam_max(a, ds, sb)`; otherwise ds is d, dl is n·bs·bs and lmax is lmaxp. t1, t2, t3, t4, b and x are each `fp_add(n·bs)`. LV[l] becomes the level with a, p -1, r -1, d, ds, dl, sb, lmaxp, lmax, t1, t2, t3, t4, b, x, bq, lc -1 and nc 0, and NL becomes l+1. The loop stops when n·bs is at most coarse or NL is at least 12. na is `aggregate(a, th)` when NL is 1 and `aggregate(a, th2)` otherwise; the loop stops when na is 0 or na·NBV as a real is at least (0.85·n)·bs computed in reals. Otherwise bc is `fp_add(na·NBV·NBV)`, pt is `tentative(l, na, bc)`, p is `smooth_p(l, pt)` and c is `rap(p, a)`; LV[l].p becomes p; then l grows by one, a becomes c and bq becomes bc. After the loop, with q being NL-1 and N being the n·rb of LV[q].a: lc is `fp_add(N·N)`, `dense(LV[q].a, fpv(lc, N·N))` and `chol(fpv(lc, N·N), N)`; LV[q].lc becomes lc and LV[q].nc becomes N. `LVI` is emptied and resized to 8·NL zeros, and for each level l: LVI[8·l] is the n·rb of LV[l].a, LVI[8·l+1] is LV[l].sb, LVI[8·l+2] is LV[l].lmax, LVI[8·l+3] is LV[l].ds, LVI[8·l+4] is LV[l].dl and LVI[8·l+5] is LV[l].nc (integers as reals). It reports view 231 LVI (f64) and returns NL.
+
+`fm_pcg(tol real, max_it i32) i32` is fea_mesh.js `pcg` (without x0) for the matrix A0 and the right-hand side `VG`, leaving u in `VS`: n is the length of VG; each VS[i] is 0.0; `PR` is emptied and resized to n zeros, then PR[i] is VG[i]; `PZ`, `PP` and `PQ` are emptied and resized to n zeros. f0 is the square root of the sum of VG[i]·VG[i] (from 0.0, in order), replaced by 1.0 when it is 0.0 or NaN. `vcycle(0, PR, PZ)`; PP[i] is PZ[i]; rz is the sum of PR[i]·PZ[i]; it starts at 0; rel is the square root of the sum of PR[i]·PR[i] divided by f0. While it is below max_it and rel is above tol: `mv(A0, PP, PQ, false)`; pAp is the sum of PP[i]·PQ[i]; the loop stops when pAp is not above 0.0; al is rz/pAp; rr starts at 0.0 and for each i in order VS[i] gets al·PP[i] added, PR[i] gets al·PQ[i] subtracted and rr gets PR[i]·PR[i] added; rel is the square root of rr divided by f0; when it mod 5 is 0, `fm_prog(it, rel)`; when rel is below tol, it grows by one and the loop stops; `vcycle(0, PR, PZ)`; rz2 is the sum of PR[i]·PZ[i]; be is rz2/rz; rz becomes rz2; PP[i] becomes PZ[i] plus be·PP[i]; it grows by one. REL becomes rel and it returns it. `fm_rel() real` returns REL.
+
+`fm_mvx(z i32)` runs `mv(A0, VX, VY, false)`; when z is 1, each VY[i] whose FIX[i] is set becomes 0.0. `fm_vcyc()` sets each VY[i] to 0.0 and runs `vcycle(0, VX, VY)`.
+
+`fm_fin()` forms the final solution in `U`: U is emptied and resized to the length of VS with zeros; when TTM is at least 0, `mv(TTM, VS, U, false)`, otherwise U[i] is VS[i]; then each U[i] becomes U[i] plus U0[i]. It reports view 218 U (f64).
+
+`fm_gprep(eps real)` prepares the hierarchy for the GPU solver: for each level l below NL-1 whose r is below 0, LV[l].r becomes `mtrans(LV[l].p)`. Then the coarse inverse, exactly as fea_mesh.js `coarseInv`: with q being NL-1 and N being LV[q].nc, `CD` is emptied and resized to N·N zeros and filled by `dense(LV[q].a, CD)`; each CD[i·N+i] is multiplied by 1.0 plus eps; `chol(CD, N)`; `CINV` (f32) is emptied and resized to N·N zeros and `CE` and `CX` to N zeros; for each j below N: every CE entry is 0.0 except CE[j] which is 1.0, `csolve(CD, N, CE, CX)`, and CINV[i·N+j] is CX[i] as f32 for each i below N. `GI` is emptied and resized to 8 zeros. It reports views 231 LVI (f64), 232 GI (i32), 233 IP (i32), 234 FP (f64) and 235 CINV (f32).
+
+`fm_gx(l i32, k i32)` describes one matrix of level l in `GI` (k 0 is LV[l].a, 1 is LV[l].p, 2 is LV[l].r): GI[0] is 1 when its kind is 1 and 0 otherwise, GI[1] is its n, GI[2] its rb, GI[3] its cb, GI[4] its rp, GI[5] its ci, GI[6] its va and GI[7] its nz.
