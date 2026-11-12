@@ -1,0 +1,426 @@
+=== -3935bb9d1d6779af
+import math;
+fn main() {
+}
+=== 29f8651827e0e8dc
+let EX int[19] = [0, 1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0];
+let EY int[19] = [0, 0, 0, 1, -1, 0, 0, 1, -1, -1, 1, 0, 0, 0, 0, 1, -1, 1, -1];
+let EZ int[19] = [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1, -1, 1, 1, -1, -1, 1];
+let OPP int[19] = [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17];
+let WQ real[19] = [1.0 / 3.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 18.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0];
+=== 35caf1274078af7f
+var NX int = 0;
+var NY int = 0;
+var NZ int = 0;
+var N int = 0;
+var PER int = 0;
+var NP int = 0;
+var DT i32[>..];
+var T i32[>..];
+var AP i32[>..];
+var AL i32[>..];
+var FA f32[>..];
+var FB f32[>..];
+var CUR int = 0;
+var MAC f32[>..];
+var PF f32[>..];
+var ST f32[>..];
+var ZF f32[>..];
+var PR f32[>..];
+var GG f32[>..];
+var FS i32[>..];
+var FF f32[>..];
+=== 53f5131aa2388cb3
+fn wr(v int, m int, b int, pm int) int {
+	if v < 0 || v >= m {
+		if (pm & b) != 0 { (v + m) % m } else { -1 }
+	} else {
+		v
+	}
+}
+=== -73d182def603f65c
+fn fl_rep(q int, n int) int {
+	if q == 0 { 1 } else if q == 2 { n - 1 } else { 0 }
+}
+export fn fl_grid(nx i32, ny i32, nz i32, per i32, np i32) {
+	NX = nx;
+	NY = ny;
+	NZ = nz;
+	N = NX * NY * NZ;
+	PER = per;
+	NP = np;
+	DT.clear();
+	DT.resize(1216, 0);
+	for q in 64 {
+		let qx = q & 3;
+		let qy = (q >> 2) & 3;
+		let qz = (q >> 4) & 3;
+		let x0 = fl_rep(qx, NX);
+		let y0 = fl_rep(qy, NY);
+		let z0 = fl_rep(qz, NZ);
+		for i in 19 {
+			let sx = wr(x0 - EX[i], NX, 1, PER);
+			let sy = wr(y0 - EY[i], NY, 2, PER);
+			let sz = wr(z0 - EZ[i], NZ, 4, PER);
+			if sx >= 0 && sy >= 0 && sz >= 0 {
+				DT[19 * q + i] = ((sx - x0) + NX * ((sy - y0) + NY * (sz - z0))) as i32;
+			} else {
+				DT[19 * q + i] = -1073741824;
+			}
+		}
+	}
+	T.clear();
+	T.resize(N, 0);
+	fl_view_i32(1, T);
+}
+=== 5bffa3e3d2c26d7c
+fn fl_port_of(c int, pa int) int {
+	let tc int = T[c];
+	if (tc & 255) != 0 { return -1; }
+	let x = c % NX;
+	let y = (c / NX) % NY;
+	let z = c / (NX * NY);
+	var k = -1;
+	var i = 1;
+	while i <= 18 && k < 0 {
+		let sx = wr(x - EX[i], NX, 1, pa);
+		let sy = wr(y - EY[i], NY, 2, pa);
+		let sz = wr(z - EZ[i], NZ, 4, pa);
+		if sx >= 0 && sy >= 0 && sz >= 0 {
+			let s = sx + NX * (sy + NY * sz);
+			let ts int = T[s];
+			if (ts & 255) == 2 { k = (ts >> 8) & 255; }
+		}
+		i += 1;
+	}
+	k
+}
+export fn fl_dirs(pa i32) i32 {
+	for c in N {
+		let t int = T[c];
+		if (t & 255) == 2 {
+			let x = c % NX;
+			let y = (c / NX) % NY;
+			let z = c / (NX * NY);
+			var d = (t >> 24) & 31;
+			if d == 0 {
+				var i = 1;
+				while i <= 6 && d == 0 {
+					let a = wr(x + EX[i], NX, 1, PER);
+					let b = wr(y + EY[i], NY, 2, PER);
+					let e = wr(z + EZ[i], NZ, 4, PER);
+					if a >= 0 && b >= 0 && e >= 0 {
+						let tn int = T[a + NX * (b + NY * e)];
+						if (tn & 255) == 0 { d = i; }
+					}
+					i += 1;
+				}
+			}
+			if d != 0 {
+				let tc int = T[c];
+				T[c] = ((tc & 16777215) | (d << 24)) as i32;
+			}
+		}
+	}
+	let pam int = pa;
+	AP.clear();
+	AP.resize(NP + 1, 0);
+	for c in N {
+		let k = fl_port_of(c, pam);
+		if k >= 0 { AP[k + 1] += 1; }
+	}
+	for k in NP {
+		AP[k + 1] += AP[k];
+	}
+	AL.clear();
+	AL.resize(AP[NP], 0);
+	var nxt int[>..] = [];
+	for k in NP { nxt.push(AP[k]); }
+	for c in N {
+		let k = fl_port_of(c, pam);
+		if k >= 0 {
+			AL[nxt[k]] = c as i32;
+			nxt[k] += 1;
+		}
+	}
+	fl_view_i32(2, AP);
+	fl_view_i32(3, AL);
+	var cnt = 0;
+	for c in N {
+		let tc int = T[c];
+		if (tc & 255) != 1 { cnt += 1; }
+	}
+	cnt as i32
+}
+=== -205b34356d540370
+export fn fl_cpu(nzn i32, ns i32) {
+	FA.clear();
+	FA.resize(19 * N, 0.0);
+	FB.clear();
+	FB.resize(19 * N, 0.0);
+	CUR = 0;
+	MAC.clear();
+	MAC.resize(4 * N, 0.0);
+	PF.clear();
+	PF.resize(N, 0.0);
+	let nst = if ns != 0 { 6 } else { 6 * N };
+	ST.clear();
+	ST.resize(nst, 0.0);
+	ZF.clear();
+	ZF.resize(8 * nzn, 0.0);
+	PR.clear();
+	PR.resize(max(1, NP), 0.0);
+	GG.clear();
+	GG.resize(3, 0.0);
+	fl_view_f32(4, ZF);
+	fl_view_f32(5, PR);
+	fl_view_f32(6, GG);
+	fl_view_f32(7, MAC);
+	fl_view_f32(8, PF);
+	fl_view_f32(9, ST);
+}
+=== 586eafb7d8770d40
+fn fl_core(fa const f32[:], fb f32[:], tt const i32[:], zf const f32[:], pr const f32[:], mac f32[:], pf f32[:], st f32[:], post i32, wp real, wm real, umax real, nu real) {
+	let cp = 1.0 - 0.5 * wp;
+	let cm = 1.0 - 0.5 * wm;
+	let g0 real = GG[0];
+	let g1 real = GG[1];
+	let g2 real = GG[2];
+	var f real[19] = [0.0; 19];
+	var fe real[19] = [0.0; 19];
+	var fo real[19] = [0.0; 19];
+	for z in NZ {
+		let zq int = (if z == 0 { 16 } else { 0 }) + (if z == NZ - 1 { 32 } else { 0 });
+		for y in NY {
+			let yq int = (if y == 0 { 4 } else { 0 }) + (if y == NY - 1 { 8 } else { 0 });
+			for x in NX {
+				let xq int = (if x == 0 { 1 } else { 0 }) + (if x == NX - 1 { 2 } else { 0 });
+				let b int = 19 * ((xq + yq) + zq);
+				let c int = x + NX * (y + NY * z);
+				let t int = tt[c];
+				let ty int = t & 255;
+				if ty == 1 { continue; }
+				var fx real = 0.0;
+				var r real = 0.0;
+				var mx real = 0.0;
+				var my real = 0.0;
+				var mz real = 0.0;
+				for i in 19 {
+					let s int = c + DT[b + i];
+					let ts int = if s < 0 { 1 } else { let q int = tt[s]; q & 255 };
+					var v real = 0.0;
+					if ts != 1 {
+						v = fa[i * N + s];
+						if ty == 0 && ts == 2 {
+							fx += v - fa[OPP[i] * N + c];
+						}
+					} else {
+						v = fa[OPP[i] * N + c];
+					}
+					f[i] = v;
+					r += v;
+					mx += v * EX[i];
+					my += v * EY[i];
+					mz += v * EZ[i];
+				}
+=== -6ce2d2b68a0850da
+				let zi = (t >> 16) & 255;
+				let ix real = zf[8 * zi + 1];
+				let iy real = zf[8 * zi + 2];
+				let iz real = zf[8 * zi + 3];
+				let be real = zf[8 * zi + 4];
+				let vx = mx + 0.5 * g0;
+				let vy = my + 0.5 * g1;
+				let vz = mz + 0.5 * g2;
+				var ux = vx;
+				var uy = vy;
+				var uz = vz;
+				if zi != 0 {
+					let ax = (0.5 * nu) * ix;
+					let ay = (0.5 * nu) * iy;
+					let az = (0.5 * nu) * iz;
+					let b = 0.5 * be;
+					let am = ((ax + ay) + az) / 3.0;
+					let vl = sqrt((vx * vx + vy * vy) + vz * vz);
+					var sp = (2.0 * vl) / ((1.0 + am) + sqrt((1.0 + am) * (1.0 + am) + (4.0 * b) * vl));
+					for it in 2 {
+						let qx = vx / ((1.0 + ax) + b * sp);
+						let qy = vy / ((1.0 + ay) + b * sp);
+						let qz = vz / ((1.0 + az) + b * sp);
+						sp = sqrt((qx * qx + qy * qy) + qz * qz);
+					}
+					ux = vx / ((1.0 + ax) + b * sp);
+					uy = vy / ((1.0 + ay) + b * sp);
+					uz = vz / ((1.0 + az) + b * sp);
+				}
+				var uu = (ux * ux + uy * uy) + uz * uz;
+				if uu > umax * umax {
+					let k = umax / sqrt(uu);
+					ux *= k;
+					uy *= k;
+					uz *= k;
+					uu = umax * umax;
+				}
+				let ua = sqrt(uu);
+				let Fx = (((-nu) * ix) * ux - (be * ua) * ux) + g0;
+				let Fy = (((-nu) * iy) * uy - (be * ua) * uy) + g1;
+				let Fz = (((-nu) * iz) * uz - (be * ua) * uz) + g2;
+				let uF = (ux * Fx + uy * Fy) + uz * Fz;
+=== -35d5896c10978a30
+				if ty == 2 {
+					let rp real = pr[(t >> 8) & 255];
+					let d = (t >> 24) & 31;
+					if d != 0 {
+						let s = wr(x + EX[d], NX, 1, PER) + NX * (wr(y + EY[d], NY, 2, PER) + NY * wr(z + EZ[d], NZ, 4, PER));
+						var rn real = 0.0;
+						var qx real = 0.0;
+						var qy real = 0.0;
+						var qz real = 0.0;
+						for i in 19 {
+							let g real = fa[i * N + s];
+							rn += g;
+							qx += g * EX[i];
+							qy += g * EY[i];
+							qz += g * EZ[i];
+						}
+						for i in 19 {
+							let fv real = fa[i * N + s];
+							fb[i * N + c] = (fv + WQ[i] * ((rp - 1.0) - rn)) as f32;
+						}
+						mac[4 * c] = (rp - 1.0) as f32;
+						mac[4 * c + 1] = qx as f32;
+						mac[4 * c + 2] = qy as f32;
+						mac[4 * c + 3] = qz as f32;
+						pf[c] = 0.0;
+						continue;
+					}
+					for i in 19 {
+						let eu = (EX[i] * ux + EY[i] * uy) + EZ[i] * uz;
+						fb[i * N + c] = (WQ[i] * ((((rp - 1.0) + 3.0 * eu) + (4.5 * eu) * eu) - 1.5 * uu)) as f32;
+					}
+					mac[4 * c] = (rp - 1.0) as f32;
+					mac[4 * c + 1] = ux as f32;
+					mac[4 * c + 2] = uy as f32;
+					mac[4 * c + 3] = uz as f32;
+					pf[c] = 0.0;
+					continue;
+				}
+=== 3cee2da3c040ec3c
+				for i in 19 {
+					let eu = (EX[i] * ux + EY[i] * uy) + EZ[i] * uz;
+					let eF = (EX[i] * Fx + EY[i] * Fy) + EZ[i] * Fz;
+					fe[i] = WQ[i] * (((r + 3.0 * eu) + (4.5 * eu) * eu) - 1.5 * uu);
+					fo[i] = WQ[i] * ((3.0 * eF + (9.0 * eu) * eF) - 3.0 * uF);
+				}
+				for i in 19 {
+					let j = OPP[i];
+					fb[i * N + c] = (((((f[i] - (0.5 * wp) * (((f[i] + f[j]) - fe[i]) - fe[j])) - (0.5 * wm) * (((f[i] - f[j]) - fe[i]) + fe[j])) + (0.5 * cp) * (fo[i] + fo[j])) + (0.5 * cm) * (fo[i] - fo[j]))) as f32;
+				}
+				mac[4 * c] = r as f32;
+				mac[4 * c + 1] = ux as f32;
+				mac[4 * c + 2] = uy as f32;
+				mac[4 * c + 3] = uz as f32;
+				pf[c] = fx as f32;
+				if post != 0 {
+					var sxx real = 0.0;
+					var syy real = 0.0;
+					var szz real = 0.0;
+					var sxy real = 0.0;
+					var sxz real = 0.0;
+					var syz real = 0.0;
+					for i in 19 {
+						let dd = f[i] - fe[i];
+						sxx += (dd * EX[i]) * EX[i];
+						syy += (dd * EY[i]) * EY[i];
+						szz += (dd * EZ[i]) * EZ[i];
+						sxy += (dd * EX[i]) * EY[i];
+						sxz += (dd * EX[i]) * EZ[i];
+						syz += (dd * EY[i]) * EZ[i];
+					}
+					let k = (-1.5) * wp;
+					st[6 * c] = (k * sxx) as f32;
+					st[6 * c + 1] = (k * syy) as f32;
+					st[6 * c + 2] = (k * szz) as f32;
+					st[6 * c + 3] = (k * sxy) as f32;
+					st[6 * c + 4] = (k * sxz) as f32;
+					st[6 * c + 5] = (k * syz) as f32;
+				}
+			}
+		}
+	}
+}
+=== -76861dfc781982cb
+export fn fl_steps(k i32, post i32, wp real, wm real, umax real, nu real) {
+	let kk int = k;
+	for it in kk {
+		if CUR == 0 {
+			fl_core(FA, FB, T, ZF, PR, MAC, PF, ST, post, wp, wm, umax, nu);
+			CUR = 1;
+		} else {
+			fl_core(FB, FA, T, ZF, PR, MAC, PF, ST, post, wp, wm, umax, nu);
+			CUR = 0;
+		}
+	}
+}
+=== 0090a3e3546cf1f3
+export fn fl_fill_in(n i32, nf i32) {
+	let nn int = n;
+	let nfi int = nf;
+	FS.clear();
+	FS.resize(nn, 0);
+	FF.clear();
+	FF.resize(nfi * nn, 0.0);
+	fl_view_i32(10, FS);
+	fl_view_f32(11, FF);
+}
+=== 7706e4aa303afa85
+export fn fl_fill(nx i32, ny i32, nz i32, nf i32, passes i32) {
+	let nxi int = nx;
+	let nyi int = ny;
+	let nzi int = nz;
+	let nfi int = nf;
+	let n = nxi * nyi * nzi;
+	var ok byte[>..] = [];
+	ok.resize(n, 0);
+	for c in n {
+		ok[c] = if FS[c] == 0 { 1 } else { 0 };
+	}
+	var nk byte[>..] = [];
+	var s real[>..] = [];
+	s.resize(nfi, 0.0);
+	let DX int[6] = [1, -1, 0, 0, 0, 0];
+	let DY int[6] = [0, 0, 1, -1, 0, 0];
+	let DZ int[6] = [0, 0, 0, 0, 1, -1];
+	for p in passes as int {
+		nk.clear();
+		nk.append(ok);
+		for kk in nzi {
+			for j in nyi {
+				for i in nxi {
+					let c = (kk * nyi + j) * nxi + i;
+					if ok[c] != 0 { continue; }
+					for q in nfi { s[q] = 0.0; }
+					var m int = 0;
+					for o in 6 {
+						let a = i + DX[o];
+						let b = j + DY[o];
+						let cc = kk + DZ[o];
+						if a < 0 || b < 0 || cc < 0 || a >= nxi || b >= nyi || cc >= nzi { continue; }
+						let e = (cc * nyi + b) * nxi + a;
+						if ok[e] != 0 {
+							for q in nfi { s[q] += FF[q * n + e]; }
+							m += 1;
+						}
+					}
+					if m > 0 {
+						let mr real = m;
+						for q in nfi { FF[q * n + c] = (s[q] / mr) as f32; }
+						nk[c] = 1;
+					}
+				}
+			}
+		}
+		ok.clear();
+		ok.append(nk);
+	}
+}

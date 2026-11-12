@@ -1,13 +1,12 @@
 import {voxelize} from './fea.js';
 import {sleep} from './tick.js';
-import {helium} from './he/host.js';
-const LB=helium('cfd_lbm');
+import {helium,heliumSync} from './he/host.js';
+const LB=helium('cfd_lbm');export const FLW=await heliumSync('flow_lbm');
 export const EX=[0,1,-1,0,0,0,0,1,-1,1,-1,1,-1,1,-1,0,0,0,0],EY=[0,0,0,1,-1,0,0,1,-1,-1,1,0,0,0,0,1,-1,1,-1],EZ=[0,0,0,0,0,1,-1,0,0,0,0,1,-1,-1,1,1,-1,-1,1],OPP=[0,2,1,4,3,6,5,8,7,10,9,12,11,14,13,16,15,18,17],WQ=[1/3,1/18,1/18,1/18,1/18,1/18,1/18,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36,1/36];
 export const FLUIDS={air:{n:'Air (20 °C)',rho:1.204,nu:1.516e-5},water:{n:'Water (20 °C)',rho:998,nu:1.004e-6}};
 const AXI={'+X':[0,1],'-X':[0,-1],'+Y':[1,1],'-Y':[1,-1],'+Z':[2,1],'-Z':[2,-1]};
 export async function gpuDevice(n0){if(typeof navigator==='undefined'||!navigator.gpu)return{why:'this browser has no WebGPU'};const need=Math.ceil(n0/256)*256;try{const ad=await navigator.gpu.requestAdapter({powerPreference:'high-performance'})||await navigator.gpu.requestAdapter();if(!ad)return{why:'WebGPU is present but no GPU adapter started (check chrome://gpu)'};const lim=Math.min(ad.limits.maxStorageBufferBindingSize,ad.limits.maxBufferSize),dev=await ad.requestDevice({requiredLimits:{maxStorageBufferBindingSize:Math.min(ad.limits.maxStorageBufferBindingSize,Math.max(need,1<<27)),maxBufferSize:Math.min(ad.limits.maxBufferSize,Math.max(need,1<<28)),maxComputeWorkgroupsPerDimension:ad.limits.maxComputeWorkgroupsPerDimension}});dev.info=ad.info||{};dev.cap=Math.floor(Math.min(lim,dev.limits.maxStorageBufferBindingSize,dev.limits.maxBufferSize)/76);return dev;}catch(e){return{why:'the GPU refused the solver ('+String(e.message||e).slice(0,120)+')'};}}
-export function fillSolid(G,solid,F,passes=3){const N=G.nx*G.ny*G.nz,ok=new Uint8Array(N);for(let c=0;c<N;c++)ok[c]=solid[c]?0:1;
-  for(let pass=0;pass<passes;pass++){const nk=ok.slice();for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const c=(k*G.ny+j)*G.nx+i;if(ok[c])continue;const s=F.map(()=>0);let m=0;for(const[di,dj,dk]of[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]){const a=i+di,b=j+dj,cc=k+dk;if(a<0||b<0||cc<0||a>=G.nx||b>=G.ny||cc>=G.nz)continue;const e=(cc*G.ny+b)*G.nx+a;if(ok[e]){F.forEach((f,q)=>s[q]+=f[e]);m++;}}if(m){F.forEach((f,q)=>f[c]=s[q]/m);nk[c]=1;}}ok.set(nk);}}
+export function fillSolid(G,solid,F,passes=3){const N=G.nx*G.ny*G.nz,H=FLW(),X=H.ex,V=H.v;X.fl_fill_in(N,F.length);V(10).set(solid);F.forEach((f,q)=>V(11).set(f,q*N));X.fl_fill(G.nx,G.ny,G.nz,F.length,passes);const R=V(11);F.forEach((f,q)=>f.set(R.subarray(q*N,q*N+N)));}
 export function frame(dir){const[k,s]=AXI[dir]||AXI['+X'],o=[0,1,2].filter(i=>i!==k);return{toL:p=>[s*p[k],p[o[0]],p[o[1]]],toW:q=>{const w=[0,0,0];w[k]=s*q[0];w[o[0]]=q[1];w[o[1]]=q[2];return w;},k,s,o};}
 export function setup(inp){
   const{pos,idx,bbox,cells,dir}=inp,F=frame(dir),nv=pos.length/3,lp=new Float32Array(pos.length);
