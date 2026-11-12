@@ -1,0 +1,1201 @@
+=== 40a29c56638d464b
+import math;
+fn main() {}
+=== -70be83a4732a3e1b
+struct Lv { n int, nnz int, rp int, ci int, va int, d int, kind int, stall bool, nc int, pnz int, prp int, pci int, pva int, wr int, b int, x int, ch int, y int }
+=== -2f419688b8315f79
+var NN int = 0;
+var NA int = 0;
+var NB int = 0;
+var NPT int = 0;
+var NU int = 0;
+var ACT u8[>..];
+var UID i32[>..];
+var POF i32[>..];
+var CE real[>..];
+var CRP i32[>..];
+var CCI i32[>..];
+var CVA real[>..];
+var BP real[>..];
+var PV real[>..];
+var PB real[>..];
+var XS real[>..];
+var RES real = 0.0;
+var IP i32[>..];
+var FP real[>..];
+var QI i32[>..];
+var QF real[>..];
+var LV Lv[>..];
+var AG i32[>..];
+var A1 i32[>..];
+var MK i32[>..];
+var RK i32[>..];
+var TRP i32[>..];
+var TCJ i32[>..];
+var PRP i32[>..];
+var PCJ i32[>..];
+var SP i32[>..];
+var SJ i32[>..];
+var APP i32[>..];
+var APJ i32[>..];
+var DF real[>..];
+var PX real[>..];
+var PY real[>..];
+var RV real[>..];
+var TCV real[>..];
+var PCV real[>..];
+var SV real[>..];
+var SA real[>..];
+var APV real[>..];
+var PR real[>..];
+var PZ real[>..];
+var PP real[>..];
+var PQ real[>..];
+fn ipv(off int, len int) i32[:] { IP[off..off + len] }
+fn fpv(off int, len int) real[:] { FP[off..off + len] }
+=== 524dd8cc6214c3d1
+fn ip_add(len int) int {
+	let o = IP.len;
+	if IP.cap < o + len {
+		QI.clear();
+		QI.append(IP);
+		IP.clear();
+		IP.reserve(2 * (o + len));
+		IP.append(QI);
+		QI.clear();
+	}
+	IP.resize(o + len, 0);
+	o
+}
+fn fp_add(len int) int {
+	let o = FP.len;
+	if FP.cap < o + len {
+		QF.clear();
+		QF.append(FP);
+		FP.clear();
+		FP.reserve(2 * (o + len));
+		FP.append(QF);
+		QF.clear();
+	}
+	FP.resize(o + len, 0.0);
+	o
+}
+=== -7fef9e973299126c
+export fn fp_grid(n i32, na i32, nb i32, np i32) {
+	NN = n;
+	NA = na;
+	NB = nb;
+	NPT = np;
+	ACT.clear();
+	ACT.resize(NN, 0);
+	UID.clear();
+	UID.resize(NN, 0);
+	POF.clear();
+	POF.resize(NN, 0);
+	CE.clear();
+	CE.resize(NN, 0.0);
+	PV.clear();
+	PV.resize(max(1, NPT), 0.0);
+	fp_view_u8(1, ACT);
+	fp_view_i32(2, UID);
+	fp_view_i32(3, POF);
+	fp_view_f64(4, CE);
+	fp_view_f64(5, PV);
+}
+=== -7ea4c53ffdedbcc0
+export fn fp_asm(nu i32) {
+	let n int = nu;
+	NU = n;
+	CRP.clear();
+	CRP.resize(n + 1, 0);
+	CCI.clear();
+	CCI.resize(5 * n, 0);
+	CVA.clear();
+	CVA.resize(5 * n, 0.0);
+	var m = 0;
+	BP.clear();
+	BP.resize(NPT * n, 0.0);
+	for j in NB {
+		for i in NA {
+			let p = j * NA + i;
+			let u int = UID[p];
+			if u < 0 { continue; }
+			var dg = 0.0;
+			for t in 0..4 {
+				var q = -1;
+				if t == 0 {
+					if i > 0 { q = p - 1; }
+				} else if t == 1 {
+					if i < NA - 1 { q = p + 1; }
+				} else if t == 2 {
+					if j > 0 { q = p - NA; }
+				} else {
+					if j < NB - 1 { q = p + NA; }
+				}
+				if q < 0 { continue; }
+				if ACT[q] == 0 { continue; }
+				let x = CE[p];
+				let y = CE[q];
+				var T = 0.0;
+				if x > 0.0 && y > 0.0 { T = ((2.0 * x) * y) / (x + y); }
+				if !(T > 0.0) { continue; }
+				dg = dg + T;
+				if UID[q] >= 0 {
+					CCI[m] = UID[q];
+					CVA[m] = 0.0 - T;
+					m += 1;
+				} else {
+					let po int = POF[q];
+					BP[po * n + u] = BP[po * n + u] + T;
+				}
+			}
+			CCI[m] = u as i32;
+			CVA[m] = dg;
+			m += 1;
+			CRP[u + 1] = m as i32;
+		}
+	}
+	CCI.resize(m, 0);
+	CVA.resize(m, 0.0);
+}
+=== 7ac7aa0c9218f69d
+export fn fp_load(n i32, nnz i32) {
+	NU = n;
+	CRP.clear();
+	CRP.resize(NU + 1, 0);
+	CCI.clear();
+	CCI.resize(nnz, 0);
+	CVA.clear();
+	CVA.resize(nnz, 0.0);
+	PB.clear();
+	PB.resize(NU, 0.0);
+	XS.clear();
+	XS.resize(NU, 0.0);
+	fp_view_i32(8, CRP);
+	fp_view_i32(9, CCI);
+	fp_view_f64(10, CVA);
+	fp_view_f64(7, PB);
+	fp_view_f64(6, XS);
+}
+=== 7d4c252e614e5e99
+fn spmm(arp const i32[:], aci const i32[:], ava const real[:], brp const i32[:], bci const i32[:], bva const real[:], n int, m int, op i32[:], oj i32[:], ov real[:]) int {
+	MK.clear();
+	MK.resize(m, -1);
+	SA.clear();
+	SA.resize(m, 0.0);
+	var nz = 0;
+	op[0] = 0;
+	for i in n {
+		let s = nz;
+		for k in arp[i]..arp[i + 1] {
+			let a = ava[k];
+			let r = aci[k];
+			for q in brp[r]..brp[r + 1] {
+				let c = bci[q];
+				if MK[c] < s {
+					MK[c] = nz as i32;
+					oj[nz] = c;
+					SA[c] = 0.0;
+					nz += 1;
+				}
+				SA[c] = SA[c] + a * bva[q];
+			}
+		}
+		for q in s..nz {
+			ov[q] = SA[oj[q]];
+		}
+		op[i + 1] = nz as i32;
+	}
+	nz
+}
+=== -d064a0ee6f927ab
+fn spcnt(arp const i32[:], aci const i32[:], brp const i32[:], bci const i32[:], n int, m int) int {
+	MK.clear();
+	MK.resize(m, -1);
+	var nz = 0;
+	for i in n {
+		for k in arp[i]..arp[i + 1] {
+			let r = aci[k];
+			for q in brp[r]..brp[r + 1] {
+				let c = bci[q];
+				if MK[c] != i {
+					MK[c] = i as i32;
+					nz += 1;
+				}
+			}
+		}
+	}
+	nz
+}
+=== -32f3a5b38019dd59
+fn chol(l int) {
+	let n = LV[l].n;
+	let ch = fp_add(n * n);
+	let y = fp_add(n);
+	LV[l].ch = ch;
+	LV[l].y = y;
+	LV[l].kind = 1;
+	let nnz = LV[l].nnz;
+	let rp = ipv(LV[l].rp, n + 1);
+	let ci = ipv(LV[l].ci, nnz);
+	let va = fpv(LV[l].va, nnz);
+	let mm = fpv(ch, n * n);
+	for i in n {
+		for k in rp[i]..rp[i + 1] {
+			mm[i * n + ci[k]] = va[k];
+		}
+	}
+	for i in n {
+		mm[i * n + i] = mm[i * n + i] + ((1e-14 * abs(mm[i * n + i])) + 1e-300);
+	}
+	for j in n {
+		var s = mm[j * n + j];
+		for k in j {
+			s = s - mm[j * n + k] * mm[j * n + k];
+		}
+		var dv = s;
+		if s == s {
+			dv = if s > 1e-300 { s } else { 1e-300 };
+		}
+		mm[j * n + j] = sqrt(dv);
+		for i in j + 1..n {
+			var t = mm[i * n + j];
+			for k in j {
+				t = t - mm[i * n + k] * mm[j * n + k];
+			}
+			mm[i * n + j] = t / mm[j * n + j];
+		}
+	}
+}
+=== 751f132963005ff6
+fn new_level_b(n int, nnz int, bx bool) int {
+	let rp = ip_add(n + 1);
+	let ci = ip_add(nnz);
+	let va = fp_add(nnz);
+	let d = fp_add(n);
+	var b = -1;
+	var x = -1;
+	if bx {
+		b = fp_add(n);
+		x = fp_add(n);
+	}
+	LV.push(Lv { n: n, nnz: nnz, rp: rp, ci: ci, va: va, d: d, kind: 0, stall: false, nc: 0, pnz: 0, prp: -1, pci: -1, pva: -1, wr: -1, b: b, x: x, ch: -1, y: -1 });
+	LV.len - 1
+}
+fn new_level(n int, nnz int) int { new_level_b(n, nnz, true) }
+=== 6645b5fdda3ea974
+export fn fp_amg(th0 real) {
+	IP.clear();
+	FP.clear();
+	LV.clear();
+	let n0 int = NU;
+	let nnz0 int = CRP[n0];
+	IP.reserve(3 * nnz0 + 8 * n0 + 4096);
+	FP.reserve(3 * nnz0 + 8 * n0 + 4096);
+	let z = new_level_b(n0, nnz0, false);
+	let o_rp = LV[z].rp;
+	let o_ci = LV[z].ci;
+	let o_va = LV[z].va;
+	for i in n0 + 1 { IP[o_rp + i] = CRP[i]; }
+	for i in nnz0 { IP[o_ci + i] = CCI[i]; }
+	for i in nnz0 { FP[o_va + i] = CVA[i]; }
+	var h = 1.0;
+	loop {
+		let l = LV.len - 1;
+		let n = LV[l].n;
+		let nnz = LV[l].nnz;
+		let rp = ipv(LV[l].rp, n + 1);
+		let ci = ipv(LV[l].ci, nnz);
+		let va = fpv(LV[l].va, nnz);
+		let d = fpv(LV[l].d, n);
+=== -573ca4e4f786d87c
+		for i in n { d[i] = 0.0; }
+		for i in n {
+			for k in rp[i]..rp[i + 1] {
+				if ci[k] == i { d[i] = va[k]; }
+			}
+		}
+		let th = th0 * h;
+		fn strong(i int, k int) bool {
+			ci[k] != i && abs(va[k]) >= th * sqrt(abs(d[i] * d[ci[k]]))
+		}
+		if n <= 400 || LV.len - 1 > 24 || (LV[l].stall && n <= 2500) {
+			chol(l);
+			break;
+		}
+		AG.clear();
+		AG.resize(n, -1);
+		var nc = 0;
+		for i in n {
+			if AG[i] < 0 {
+				var ok = true;
+				for k in rp[i]..rp[i + 1] {
+					if strong(i, k) && AG[ci[k]] >= 0 {
+						ok = false;
+						break;
+					}
+				}
+				if ok {
+					AG[i] = nc as i32;
+					for k in rp[i]..rp[i + 1] {
+						if strong(i, k) { AG[ci[k]] = nc as i32; }
+					}
+					nc += 1;
+				}
+			}
+		}
+		A1.clear();
+		A1.append(AG);
+		for i in n {
+			if A1[i] < 0 {
+				var b = -1;
+				var bv = 0.0;
+				for k in rp[i]..rp[i + 1] {
+					if strong(i, k) && A1[ci[k]] >= 0 && abs(va[k]) > bv {
+						bv = abs(va[k]);
+						b = A1[ci[k]];
+					}
+				}
+				if b >= 0 {
+					AG[i] = b as i32;
+				} else {
+					AG[i] = nc as i32;
+					nc += 1;
+				}
+			}
+		}
+		if (nc as real) >= (n as real) * 0.9 || nc < 1 {
+			if n <= 2500 {
+				LV[l].stall = true;
+				continue;
+			} else {
+				LV[l].kind = 2;
+				break;
+			}
+		}
+		DF.clear();
+		DF.resize(n, 0.0);
+		for i in n {
+			var s = d[i];
+			for k in rp[i]..rp[i + 1] {
+				if ci[k] != i && !strong(i, k) { s = s - va[k]; }
+			}
+			DF[i] = s;
+		}
+		PX.clear();
+		PX.resize(n, 0.0);
+		for i in n { PX[i] = fp_sin((i as real) * 1.7 + 0.3); }
+		PY.clear();
+		PY.resize(n, 0.0);
+		var rho = 1.0;
+		for it in 12 {
+			for i in n {
+				var s = DF[i] * PX[i];
+				for k in rp[i]..rp[i + 1] {
+					if strong(i, k) { s = s + va[k] * PX[ci[k]]; }
+				}
+				PY[i] = s / DF[i];
+			}
+			var nx = 0.0;
+			var ny = 0.0;
+			for i in n {
+				nx = nx + PX[i] * PX[i];
+				ny = ny + PY[i] * PY[i];
+			}
+			rho = sqrt(ny / nx);
+			let sc = 1.0 / sqrt(ny);
+			for i in n { PX[i] = PY[i] * sc; }
+		}
+		let om = 4.0 / (3.0 * rho);
+		PRP.clear();
+		PRP.resize(n + 1, 0);
+		PCJ.clear();
+		PCJ.reserve(nnz + n);
+		PCV.clear();
+		PCV.reserve(nnz + n);
+		var pz = 0;
+		for i in n {
+			let cnt int = rp[i + 1] - rp[i];
+			RK.clear();
+			RK.resize(cnt + 1, 0);
+			RV.clear();
+			RV.resize(cnt + 1, 0.0);
+			var rl = 1;
+			RK[0] = AG[i];
+			RV[0] = 1.0 - om;
+			for k in rp[i]..rp[i + 1] {
+				if strong(i, k) {
+					let c = AG[ci[k]];
+					var e = -1;
+					for q in rl {
+						if RK[q] == c {
+							e = q;
+							break;
+						}
+					}
+					if e >= 0 {
+						let pv = RV[e];
+						let prev = if pv != 0.0 && pv == pv { pv } else { 0.0 };
+						RV[e] = prev - ((om * va[k]) / DF[i]);
+					} else {
+						RK[rl] = c;
+						RV[rl] = 0.0 - ((om * va[k]) / DF[i]);
+						rl += 1;
+					}
+				}
+			}
+			for q in rl {
+				PCJ.push(RK[q]);
+				PCV.push(RV[q]);
+				pz += 1;
+			}
+			PRP[i + 1] = pz as i32;
+		}
+		TRP.clear();
+		TRP.resize(nc + 1, 0);
+		TCJ.clear();
+		TCJ.resize(pz, 0);
+		TCV.clear();
+		TCV.resize(pz, 0.0);
+		for k in pz { TRP[PCJ[k] + 1] += 1; }
+		for c in nc { TRP[c + 1] += TRP[c]; }
+		MK.clear();
+		MK.append(TRP[..nc]);
+		for i in n {
+			for k in PRP[i]..PRP[i + 1] {
+				let c = PCJ[k];
+				TCJ[MK[c]] = i as i32;
+				TCV[MK[c]] = PCV[k];
+				MK[c] += 1;
+			}
+		}
+		let ac = spcnt(rp, ci, PRP, PCJ, n, nc);
+		APP.clear();
+		APP.resize(n + 1, 0);
+		APJ.clear();
+		APJ.resize(ac, 0);
+		APV.clear();
+		APV.resize(ac, 0.0);
+		let anz = spmm(rp, ci, va, PRP, PCJ, PCV, n, nc, APP, APJ, APV);
+		let cc = spcnt(TRP, TCJ, APP, APJ, nc, nc);
+		SP.clear();
+		SP.resize(nc + 1, 0);
+		SJ.clear();
+		SJ.resize(cc, 0);
+		SV.clear();
+		SV.resize(cc, 0.0);
+		let cz = spmm(TRP, TCJ, TCV, APP, APJ, APV, nc, nc, SP, SJ, SV);
+		LV[l].nc = nc;
+		LV[l].pnz = pz;
+		let o_prp = ip_add(n + 1);
+		LV[l].prp = o_prp;
+		for i in n + 1 { IP[o_prp + i] = PRP[i]; }
+		let o_pci = ip_add(pz);
+		LV[l].pci = o_pci;
+		for i in pz { IP[o_pci + i] = PCJ[i]; }
+		let o_pva = fp_add(pz);
+		LV[l].pva = o_pva;
+		for i in pz { FP[o_pva + i] = PCV[i]; }
+		let o_wr = fp_add(n);
+		LV[l].wr = o_wr;
+		let nl = new_level(nc, cz);
+		let n_rp = LV[nl].rp;
+		let n_ci = LV[nl].ci;
+		let n_va = LV[nl].va;
+		for i in nc + 1 { IP[n_rp + i] = SP[i]; }
+		for i in cz { IP[n_ci + i] = SJ[i]; }
+		for i in cz { FP[n_va + i] = SV[i]; }
+		h = h * 0.5;
+	}
+}
+=== -4e0739911ee6052
+fn gs(l int, b real[:], x real[:], back bool) {
+	let n = LV[l].n;
+	let rp = ipv(LV[l].rp, n + 1);
+	let ci = ipv(LV[l].ci, LV[l].nnz);
+	let va = fpv(LV[l].va, LV[l].nnz);
+	let d = fpv(LV[l].d, n);
+	for q in n {
+		let i = if back { n - 1 - q } else { q };
+		var s = b[i];
+		for k in rp[i]..rp[i + 1] {
+			if ci[k] != i { s = s - va[k] * x[ci[k]]; }
+		}
+		x[i] = s / d[i];
+	}
+}
+=== -6ec906fc8e35c360
+recursive fn cyc(l int, b real[:], x real[:]) {
+	let n = LV[l].n;
+	let kind = LV[l].kind;
+	if kind == 1 {
+		let mm = fpv(LV[l].ch, n * n);
+		let y = fpv(LV[l].y, n);
+		for i in n {
+			var s = b[i];
+			for k in i { s = s - mm[i * n + k] * y[k]; }
+			y[i] = s / mm[i * n + i];
+		}
+		var ii = n - 1;
+		while ii >= 0 {
+			var s = y[ii];
+			for k in ii + 1..n { s = s - mm[k * n + ii] * x[k]; }
+			x[ii] = s / mm[ii * n + ii];
+			ii -= 1;
+		}
+		return;
+	}
+	if kind == 2 {
+		for i in n { x[i] = 0.0; }
+		gs(l, b, x, false);
+		gs(l, b, x, true);
+		gs(l, b, x, false);
+		gs(l, b, x, true);
+		return;
+	}
+	let nc = LV[l].nc;
+	let rp = ipv(LV[l].rp, n + 1);
+	let ci = ipv(LV[l].ci, LV[l].nnz);
+	let va = fpv(LV[l].va, LV[l].nnz);
+	let prp = ipv(LV[l].prp, n + 1);
+	let pci = ipv(LV[l].pci, LV[l].pnz);
+	let pva = fpv(LV[l].pva, LV[l].pnz);
+	let r = fpv(LV[l].wr, n);
+	let bc = fpv(LV[l + 1].b, nc);
+	let xc = fpv(LV[l + 1].x, nc);
+	for i in n { x[i] = 0.0; }
+	gs(l, b, x, false);
+	for i in n {
+		var s = 0.0;
+		for k in rp[i]..rp[i + 1] { s = s + va[k] * x[ci[k]]; }
+		r[i] = b[i] - s;
+	}
+	for c in nc { bc[c] = 0.0; }
+	for i in n {
+		for k in prp[i]..prp[i + 1] {
+			bc[pci[k]] = bc[pci[k]] + pva[k] * r[i];
+		}
+	}
+	cyc(l + 1, bc, xc);
+	for i in n {
+		var s = 0.0;
+		for k in prp[i]..prp[i + 1] { s = s + pva[k] * xc[pci[k]]; }
+		x[i] = x[i] + s;
+	}
+	gs(l, b, x, true);
+}
+=== -698a9b8409b38a44
+fn mvc(v real[:], o real[:]) {
+	for i in NU {
+		var s = 0.0;
+		for k in CRP[i]..CRP[i + 1] { s = s + CVA[k] * v[CCI[k]]; }
+		o[i] = s;
+	}
+}
+=== -54345618665633cb
+fn pcg(tol real, maxit int) int {
+	let n = NU;
+	PR.clear();
+	PR.resize(n, 0.0);
+	PZ.clear();
+	PZ.resize(n, 0.0);
+	PP.clear();
+	PP.resize(n, 0.0);
+	PQ.clear();
+	PQ.resize(n, 0.0);
+	mvc(XS, PR);
+	var bn = 0.0;
+	for i in n {
+		PR[i] = PB[i] - PR[i];
+		bn = bn + PB[i] * PB[i];
+	}
+	bn = sqrt(bn);
+	if bn == 0.0 || bn != bn {
+		for i in n { XS[i] = 0.0; }
+		RES = 0.0;
+		return 0;
+	}
+	cyc(0, PR, PZ);
+	for i in n { PP[i] = PZ[i]; }
+	var rz = 0.0;
+	for i in n { rz = rz + PR[i] * PZ[i]; }
+	var it = 0;
+	var rn = 1.0;
+	while it < maxit {
+		mvc(PP, PQ);
+		var pq = 0.0;
+		for i in n { pq = pq + PP[i] * PQ[i]; }
+		let al = rz / pq;
+		rn = 0.0;
+		for i in n {
+			XS[i] = XS[i] + al * PP[i];
+			PR[i] = PR[i] - al * PQ[i];
+			rn = rn + PR[i] * PR[i];
+		}
+		rn = sqrt(rn) / bn;
+		if rn < tol { break; }
+		cyc(0, PR, PZ);
+		var rz2 = 0.0;
+		for i in n { rz2 = rz2 + PR[i] * PZ[i]; }
+		let be = rz2 / rz;
+		rz = rz2;
+		for i in n { PP[i] = PZ[i] + be * PP[i]; }
+		it += 1;
+	}
+	RES = rn;
+	it + 1
+}
+=== 442c137c7f6f22e6
+export fn fp_pcg(tol real, maxit i32) i32 { pcg(tol, maxit) as i32 }
+export fn fp_res() real { RES }
+=== -35581088848eb02c
+export fn fp_solve(tol real, maxit i32) i32 {
+	PB.clear();
+	PB.resize(NU, 0.0);
+	for k in NPT {
+		let pv = PV[k];
+		if pv != 0.0 && pv == pv {
+			for u in NU { PB[u] = PB[u] + pv * BP[k * NU + u]; }
+		}
+	}
+	XS.clear();
+	XS.resize(NU, 0.0);
+	fp_view_f64(6, XS);
+	fp_view_f64(7, PB);
+	pcg(tol, maxit) as i32
+}
+=== 623fe307431d1d92
+var TL real[>..];
+var TI i32[>..];
+var BC i32[>..];
+var BN i32[>..];
+var BF i32[>..];
+var NF i32[>..];
+var SK i32[>..<];
+var SE u8[>..];
+var SX u8[>..];
+var EXT u8[>..];
+var PHI f32[>..];
+var DEP f32[>..];
+var PH0 f32[>..];
+var GA0 real = 0.0;
+var GB0 real = 0.0;
+var GZC real = 0.0;
+var GDX real = 0.0;
+var GNA int = 0;
+var GNB int = 0;
+fn jmax(a real, b real) real {
+	if a != a || b != b { a + b } else if b > a { b } else { a }
+}
+=== 1bbb6851e4aeed9c
+export fn fp_rast_in(nv i32, nt i32) {
+	let v int = nv;
+	let t int = nt;
+	TL.clear();
+	TL.resize(3 * v, 0.0);
+	TI.clear();
+	TI.resize(3 * t, 0);
+	fp_view_f64(11, TL);
+	fp_view_i32(12, TI);
+}
+=== 5ab7df08f5128a35
+struct Rg { ok bool, i0 int, i1 int, j0 int, j1 int }
+fn rng(t int, eps real) Rg {
+	let ia int = TI[3 * t];
+	let ib int = TI[3 * t + 1];
+	let ic int = TI[3 * t + 2];
+	let a = 3 * ia;
+	let b = 3 * ib;
+	let c = 3 * ic;
+	let ax = TL[a];
+	let ay = TL[a + 1];
+	let bx = TL[b];
+	let by = TL[b + 1];
+	let cx = TL[c];
+	let cy = TL[c + 1];
+	if abs((by - cy) * (ax - cx) + (cx - bx) * (ay - cy)) < eps {
+		return Rg { ok: false, i0: 0, i1: 0, j0: 0, j1: 0 };
+	}
+	let fi0 = floor((min(ax, min(bx, cx)) - GA0) / GDX) as int;
+	let fi1 = floor((max(ax, max(bx, cx)) - GA0) / GDX) as int;
+	let fj0 = floor((min(ay, min(by, cy)) - GB0) / GDX) as int;
+	let fj1 = floor((max(ay, max(by, cy)) - GB0) / GDX) as int;
+	Rg { ok: true, i0: max(0, fi0), i1: min(GNA - 1, fi1), j0: max(0, fj0), j1: min(GNB - 1, fj1) }
+}
+=== -463b6f101ceb2289
+fn col(p int, px real, py real) real {
+	var top = -1e30;
+	var hit = false;
+	for k in BC[p]..BC[p + 1] {
+		let t int = BN[k];
+		let ia int = TI[3 * t];
+		let ib int = TI[3 * t + 1];
+		let ic int = TI[3 * t + 2];
+		let a = 3 * ia;
+		let b = 3 * ib;
+		let c = 3 * ic;
+		let ax = TL[a];
+		let ay = TL[a + 1];
+		let bx = TL[b];
+		let by = TL[b + 1];
+		let cx = TL[c];
+		let cy = TL[c + 1];
+		let d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy);
+		let l1 = ((by - cy) * (px - cx) + (cx - bx) * (py - cy)) / d;
+		let l2 = ((cy - ay) * (px - cx) + (ax - cx) * (py - cy)) / d;
+		let l3 = (1.0 - l1) - l2;
+		if l1 < -1e-7 || l2 < -1e-7 || l3 < -1e-7 { continue; }
+		hit = true;
+		top = jmax(top, (l1 * TL[a + 2] + l2 * TL[b + 2]) + l3 * TL[c + 2]);
+	}
+	if !hit { return -1.0; }
+	jmax(0.0, GZC - top)
+}
+=== -708d72019127c63d
+export fn fp_rast(na i32, nb i32, a0 real, b0 real, zb real, zc real, dx real, eps real, ss i32) {
+	GNA = na;
+	GNB = nb;
+	GA0 = a0;
+	GB0 = b0;
+	GZC = zc;
+	GDX = dx;
+	let nai int = na;
+	let nbi int = nb;
+	let sn int = ss;
+	let n = nai * nbi;
+	let nt = TI.len / 3;
+=== 0aa7ab20124f2c22
+	BC.clear();
+	BC.resize(n + 1, 0);
+	for t in nt {
+		let r = rng(t, eps);
+		if !r.ok { continue; }
+		for j in r.j0..r.j1 + 1 {
+			for i in r.i0..r.i1 + 1 {
+				BC[j * nai + i + 1] += 1;
+			}
+		}
+	}
+	for p in n { BC[p + 1] += BC[p]; }
+	BN.clear();
+	BN.resize(BC[n], 0);
+	BF.clear();
+	BF.append(BC[..n]);
+	for t in nt {
+		let r = rng(t, eps);
+		if !r.ok { continue; }
+		for j in r.j0..r.j1 + 1 {
+			for i in r.i0..r.i1 + 1 {
+				BN[BF[j * nai + i]] = t as i32;
+				BF[j * nai + i] += 1;
+			}
+		}
+	}
+	let hh = zc - zb;
+	let tz = 1e-4 * hh + 1e-6;
+	let s2 = sn * sn;
+	let sa = nai * sn;
+	let sb = nbi * sn;
+	PHI.clear();
+	PHI.resize(n, 0.0);
+	DEP.clear();
+	DEP.resize(n, 0.0);
+	EXT.clear();
+	EXT.resize(n, 0);
+	NF.clear();
+	NF.resize(n, 0);
+	SE.clear();
+	SE.resize(sa * sb, 0);
+	for j in nbi {
+		for i in nai {
+			let p = j * nai + i;
+			var sd = 0.0;
+			for si in sn {
+				for sj in sn {
+					let d = col(p, (a0 + ((i as real) + ((si as real) + 0.5) / (sn as real)) * dx) + dx * 1.37e-5, (b0 + ((j as real) + ((sj as real) + 0.5) / (sn as real)) * dx) + dx * 2.91e-5);
+					if d < 0.0 {
+						SE[(j * sn + sj) * sa + i * sn + si] = 1;
+					} else if d > tz {
+						NF[p] += 1;
+						sd = sd + d;
+					}
+				}
+			}
+			DEP[p] = sd as f32;
+		}
+	}
+	var ne = 0;
+	for q in sa * sb {
+		if SE[q] == 1 { ne += 1; }
+	}
+	SX.clear();
+	SX.resize(sa * sb, 0);
+	SK.clear();
+	SK.reserve(ne + 2 * sa + 2 * sb);
+	fn seed(q int) {
+		if SE[q] == 1 && SX[q] == 0 {
+			SX[q] = 1;
+			SK.push(q as i32);
+		}
+	}
+	for i in sa {
+		seed(i);
+		seed((sb - 1) * sa + i);
+	}
+	for j in sb {
+		seed(j * sa);
+		seed(j * sa + sa - 1);
+	}
+	while SK.len > 0 {
+		let q int = SK.pop();
+		let i = q % sa;
+		let j = q / sa;
+		if i > 0 { seed(q - 1); }
+		if i < sa - 1 { seed(q + 1); }
+		if j > 0 { seed(q - sa); }
+		if j < sb - 1 { seed(q + sa); }
+	}
+	for j in nbi {
+		for i in nai {
+			let p = j * nai + i;
+			var nx = 0;
+			var nh = 0;
+			for si in sn {
+				for sj in sn {
+					let q = (j * sn + sj) * sa + i * sn + si;
+					if SX[q] == 1 {
+						nx += 1;
+					} else if SE[q] == 1 {
+						nh += 1;
+					}
+				}
+			}
+			let m int = NF[p] + nh;
+			if m != 0 {
+				DEP[p] = (((DEP[p] as real) + (nh as real) * hh) / (m as real)) as f32;
+			} else {
+				DEP[p] = 0.0;
+			}
+			PHI[p] = ((m as real) / (s2 as real)) as f32;
+			if nx == s2 {
+				EXT[p] = 1;
+			} else {
+				EXT[p] = 0;
+			}
+		}
+	}
+	PH0.clear();
+	PH0.append(PHI);
+	for j in nbi {
+		for i in nai {
+			let p = j * nai + i;
+			let v = PH0[p] as real;
+			var edge = v > 0.0 && v < 1.0;
+			if !edge {
+				for dj in -1..2 {
+					for di in -1..2 {
+						let a = i + di;
+						let b = j + dj;
+						if a >= 0 && a < nai && b >= 0 && b < nbi {
+							if (PH0[b * nai + a] > 0.0) != (v > 0.0) { edge = true; }
+						}
+					}
+				}
+			}
+			if EXT[p] == 0 && edge {
+				var m = 0;
+				var sd = 0.0;
+				for si in 12 {
+					for sj in 12 {
+						let u = ((si as real) + 0.5) / 12.0;
+						let vv = ((sj as real) + 0.5) / 12.0;
+						let d = col(p, (a0 + ((i as real) + u) * dx) + dx * 1.37e-5, (b0 + ((j as real) + vv) * dx) + dx * 2.91e-5);
+						let q = (j * sn + (floor(vv * (sn as real)) as int)) * sa + i * sn + (floor(u * (sn as real)) as int);
+						let counted = (d < 0.0 && SE[q] == 1 && SX[q] == 0) || (!(d < 0.0) && d > tz);
+						if counted {
+							m += 1;
+							if d < 0.0 {
+								sd = sd + hh;
+							} else {
+								sd = sd + d;
+							}
+						}
+					}
+				}
+				PHI[p] = ((m as real) / 144.0) as f32;
+				if m != 0 {
+					DEP[p] = (sd / (m as real)) as f32;
+				} else {
+					DEP[p] = 0.0;
+				}
+			}
+		}
+	}
+	fp_view_f32(13, PHI);
+	fp_view_f32(14, DEP);
+	fp_view_u8(15, EXT);
+}
+=== -204fbc2b1c28942e
+var NFP int = 0;
+var CCH real[>..];
+var CL real[>..];
+var ZB real[>..];
+var XK real[>..];
+var PRF real[>..];
+var QP real[>..];
+var PF real[>..];
+var ZF real[>..];
+var GG real[>..];
+var US real[>..];
+var ULL real[>..];
+var UA real[>..];
+var UB real[>..];
+var KP0 real[>..];
+var TH real[>..];
+var ZP i32[>..];
+var PXO i32[>..];
+var PXL i32[>..];
+fn jmin(a real, b real) real {
+	if a != a || b != b { a + b } else if b < a { b } else { a }
+}
+fn tf(p int, q int) real {
+	let x = CE[p];
+	let y = CE[q];
+	if x > 0.0 && y > 0.0 { ((2.0 * x) * y) / (x + y) } else { 0.0 }
+}
+fn hyp(a real, b real) real {
+	let x = abs(a);
+	let y = abs(b);
+	let nan = a != a || b != b;
+	let inf = 1e308 * 10.0;
+	var mx = 0.0;
+	if a == a && x > mx { mx = x; }
+	if b == b && y > mx { mx = y; }
+	if mx == inf { return inf; }
+	if nan { return inf - inf; }
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	for t in 0..2 {
+		let v = if t == 0 { x } else { y };
+		let nv = v / mx;
+		let su = nv * nv - comp;
+		let pre = sum + su;
+		comp = (pre - sum) - su;
+		sum = pre;
+	}
+	sqrt(sum) * mx
+}
+=== -71c76fc4624bbe9c
+export fn fp_pin(nz i32, npx i32, nfp i32) {
+	NFP = nfp;
+	let n = NN;
+	let nzi int = nz;
+	let npxi int = npx;
+	let nfpi int = nfp;
+	CCH.clear();
+	CCH.resize(n, 0.0);
+	CL.clear();
+	CL.resize(n, 0.0);
+	ZF.clear();
+	ZF.resize(n, 0.0);
+	ZP.clear();
+	ZP.resize(n, 0);
+	PHI.clear();
+	PHI.resize(n, 0.0);
+	DEP.clear();
+	DEP.resize(n, 0.0);
+	ZB.clear();
+	ZB.resize(max(1, nzi), 0.0);
+	PXO.clear();
+	PXO.resize(NPT + 1, 0);
+	PXL.clear();
+	PXL.resize(max(1, npxi), 0);
+	PF.clear();
+	PF.resize(max(1, nfpi), 0.0);
+	QP.clear();
+	QP.resize(max(1, NPT), 0.0);
+	fp_view_f64(16, CCH);
+	fp_view_f64(17, CL);
+	fp_view_i32(18, ZP);
+	fp_view_f32(13, PHI);
+	fp_view_f32(14, DEP);
+	fp_view_f64(19, ZB);
+	fp_view_i32(20, PXO);
+	fp_view_i32(21, PXL);
+	fp_view_f64(22, PF);
+	fp_view_f64(23, QP);
+	fp_view_f64(24, ZF);
+}
+export fn fp_pset() {
+	for p in NN { CE[p] = CCH[p] + CL[p]; }
+}
+=== -17f142c881c920ec
+fn pres(xs const real[:]) {
+	PRF.clear();
+	PRF.resize(NN, 0.0);
+	for p in NN {
+		let u int = UID[p];
+		let o int = POF[p];
+		if u >= 0 {
+			PRF[p] = xs[u];
+		} else if o >= 0 {
+			PRF[p] = PV[o];
+		} else {
+			PRF[p] = 0.0;
+		}
+	}
+	fp_view_f64(30, PRF);
+}
+fn flows() {
+	for k in NPT { QP[k] = 0.0; }
+	for k in NPT {
+		for t in PXO[k]..PXO[k + 1] {
+			let p int = PXL[t];
+			let i = p % NA;
+			let j = p / NA;
+			for d in 0..4 {
+				var q = -1;
+				if d == 0 {
+					if i > 0 { q = p - 1; }
+				} else if d == 1 {
+					if i < NA - 1 { q = p + 1; }
+				} else if d == 2 {
+					if j > 0 { q = p - NA; }
+				} else {
+					if j < NB - 1 { q = p + NA; }
+				}
+				if q < 0 { continue; }
+				let po int = POF[q];
+				if ACT[q] != 0 && po != k {
+					QP[k] = QP[k] + tf(p, q) * (PRF[p] - PRF[q]);
+				}
+			}
+		}
+	}
+}
+export fn fp_flows() { flows(); }
+=== -51a2c584607b7111
+export fn fp_solveq(tol real, maxit i32, k i32) i32 {
+	let it = fp_solve(tol, maxit);
+	if k == 0 {
+		XK.clear();
+		XK.resize((NFP + 1) * NU, 0.0);
+	}
+	let ki int = k;
+	for u in NU { XK[ki * NU + u] = XS[u]; }
+	pres(XS);
+	flows();
+	it
+}
+export fn fp_comb() {
+	for u in NU { XS[u] = XK[u]; }
+	for i in NFP {
+		for u in NU {
+			XS[u] = XS[u] + PF[i] * XK[(i + 1) * NU + u];
+		}
+	}
+	pres(XS);
+}
+=== 03e68f8828570ac9
+export fn fp_fields(dxm real, lt real, kap i32) {
+	GG.clear();
+	GG.resize(NN, 0.0);
+	US.clear();
+	US.resize(NN, 0.0);
+	ULL.clear();
+	ULL.resize(NN, 0.0);
+	UA.clear();
+	UA.resize(NN, 0.0);
+	UB.clear();
+	UB.resize(NN, 0.0);
+	fn f(p int, q int, ok bool) real {
+		if ok && ACT[q] != 0 { (tf(p, q) * (PRF[p] - PRF[q])) / dxm } else { 0.0 }
+	}
+	for p in NN {
+		if ACT[p] == 0 { continue; }
+		let i = p % NA;
+		let j = p / NA;
+		let qa = (f(p, p + 1, i < NA - 1) - f(p, p - 1, i > 0)) / 2.0;
+		let qb = (f(p, p + NA, j < NB - 1) - f(p, p - NA, j > 0)) / 2.0;
+		let q = hyp(qa, qb);
+		GG[p] = q / CE[p];
+		var s = 0.0;
+		if CCH[p] > 0.0 { s = jmin(1.0, CCH[p] / (CCH[p] + CL[p])); }
+		if CCH[p] > 0.0 && PHI[p] > 0.0 && DEP[p] > 0.0 {
+			let kk = s / (((PHI[p] as real) * (DEP[p] as real)) * 1e-3);
+			UA[p] = qa * kk;
+			UB[p] = qb * kk;
+			US[p] = q * kk;
+		}
+		if CL[p] > 0.0 { ULL[p] = (q * (1.0 - s)) / lt; }
+	}
+	if kap != 0 {
+		TH.clear();
+		TH.resize(NN, 0.0);
+		KP0.clear();
+		KP0.resize(NN, 0.0);
+		for p in NN {
+			if US[p] > 0.0 { TH[p] = fp_atan2(UB[p], UA[p]); }
+		}
+		fn nbv(q int, ok bool, th real) real, bool {
+			if ok && US[q] > 0.0 {
+				return fp_atan2(fp_sin(TH[q] - th), fp_cos(TH[q] - th)), true;
+			}
+			return 0.0, false;
+		}
+		fn cdf(v0 real, h0 bool, v1 real, h1 bool) real {
+			if h0 && h1 {
+				(v0 - v1) / (2.0 * dxm)
+			} else if h0 {
+				v0 / dxm
+			} else if h1 {
+				(-v1) / dxm
+			} else {
+				0.0
+			}
+		}
+		for p in NN {
+			if !(US[p] > 0.0) { continue; }
+			let i = p % NA;
+			let j = p / NA;
+			let th = TH[p];
+			let xv0, xh0 = nbv(p + 1, i < NA - 1, th);
+			let xv1, xh1 = nbv(p - 1, i > 0, th);
+			let yv0, yh0 = nbv(p + NA, j < NB - 1, th);
+			let yv1, yh1 = nbv(p - NA, j > 0, th);
+			let cx = cdf(xv0, xh0, xv1, xh1);
+			let cy = cdf(yv0, yh0, yv1, yh1);
+			KP0[p] = abs(UA[p] * cx + UB[p] * cy) / US[p];
+		}
+	}
+	fp_view_f64(25, GG);
+	fp_view_f64(26, US);
+	fp_view_f64(27, ULL);
+	fp_view_f64(28, UA);
+	fp_view_f64(29, UB);
+	fp_view_f64(24, ZF);
+}
+=== -79cc4548b90d4a73
+export fn fp_cupd(rho real, bend i32, bk real, bl real, lt real) {
+	for p in NN {
+		if ACT[p] == 0 {
+			CE[p] = 0.0;
+			continue;
+		}
+		var c1 = CCH[p];
+		if c1 > 0.0 {
+			let u = US[p];
+			let z int = ZP[p];
+			let e1 = if z >= 0 { (ZB[z] * rho) * u } else { 0.0 };
+			let e2 = if bend != 0 && z < 0 { ((((bk * KP0[p]) / 1.5707963267948966) * rho) * u) / 2.0 } else { 0.0 };
+			c1 = 1.0 / ((1.0 / CCH[p]) + ((e1 + e2) / (((PHI[p] as real) * (DEP[p] as real)) * 1e-3)));
+		}
+		var c2 = CL[p];
+		if c2 > 0.0 && bl > 0.0 {
+			c2 = 1.0 / ((1.0 / CL[p]) + (((bl * rho) * ULL[p]) / lt));
+		}
+		CE[p] = sqrt(CE[p] * (c1 + c2));
+		ZF[p] = c1 / jmax(c1 + c2, 1e-300);
+	}
+}
