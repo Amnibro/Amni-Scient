@@ -101,10 +101,9 @@ export function detectSheet(inp,opt={}){
 }
 function sizeField(lo,hi,h0,g,samples,maxCells=1500000){
   const ext=[0,1,2].map(k=>hi[k]-lo[k]+2*h0),hs=samples.map(q=>q[3]).sort((a,b)=>a-b);let s=Math.min(h0/2,hs.length?Math.max(hs[Math.floor(hs.length*0.05)],h0/40):h0);const nc=()=>ext.reduce((a,e)=>a*Math.max(2,Math.ceil(e/s)+1),1);while(nc()>maxCells)s*=1.25;
-  const n=ext.map(e=>Math.max(2,Math.ceil(e/s)+1)),o=lo.map(v=>v-h0),H=new Float32Array(n[0]*n[1]*n[2]).fill(h0),id=(i,j,k)=>(k*n[1]+j)*n[0]+i;
+  const n=ext.map(e=>Math.max(2,Math.ceil(e/s)+1)),o=lo.map(v=>v-h0),id=(i,j,k)=>(k*n[1]+j)*n[0]+i;const D=[];for(let dk=-1;dk<=1;dk++)for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++)if(dk*9+dj*3+di<0)D.push([di,dj,dk,g*s*Math.hypot(di,dj,dk)]);const HX=MHM(MHE);HX.ex.mh_sfi(n[0],n[1],n[2],h0,D.length);let H=HX.v(9);HX.v(10).set(D.flatMap(d=>d.slice(0,3)));HX.v(11).set(D.map(d=>d[3]));
   for(const[x,y,z,h]of samples){const i=Math.round((x-o[0])/s),j=Math.round((y-o[1])/s),k=Math.round((z-o[2])/s);if(i<0||j<0||k<0||i>=n[0]||j>=n[1]||k>=n[2])continue;const q=id(i,j,k);if(h<H[q])H[q]=h;}
-  const D=[];for(let dk=-1;dk<=1;dk++)for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++)if(dk*9+dj*3+di<0)D.push([di,dj,dk,g*s*Math.hypot(di,dj,dk)]);
-  for(let rep=0;rep<2;rep++)for(const sg of[1,-1]){const D2=D.map(([a,b,c,w])=>[a*sg,b*sg,c*sg,w]);for(let kk=0;kk<n[2];kk++){const k=sg>0?kk:n[2]-1-kk;for(let jj=0;jj<n[1];jj++){const j=sg>0?jj:n[1]-1-jj;for(let ii=0;ii<n[0];ii++){const i=sg>0?ii:n[0]-1-ii,q=id(i,j,k);let h=H[q];for(const[a,b,c,w]of D2){const x=i+a,y=j+b,z=k+c;if(x<0||y<0||z<0||x>=n[0]||y>=n[1]||z>=n[2])continue;const v=H[id(x,y,z)]+w;if(v<h)h=v;}H[q]=h;}}}}
+  HX.ex.mh_sfs(D.length);H=HX.v(9).slice();
   return(x,y,z)=>{const fx=Math.min(n[0]-1.001,Math.max(0,(x-o[0])/s)),fy=Math.min(n[1]-1.001,Math.max(0,(y-o[1])/s)),fz=Math.min(n[2]-1.001,Math.max(0,(z-o[2])/s)),i=Math.floor(fx),j=Math.floor(fy),k=Math.floor(fz),tx=fx-i,ty=fy-j,tz=fz-k;let v=0;for(let c=0;c<8;c++){const a=c&1,b=(c>>1)&1,d=c>>2;v+=(a?tx:1-tx)*(b?ty:1-ty)*(d?tz:1-tz)*H[id(i+a,j+b,k+d)];}return v;};
 }
 function patchSizes(S,sel,t,h0,opt){

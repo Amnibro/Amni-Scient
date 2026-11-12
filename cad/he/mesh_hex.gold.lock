@@ -395,3 +395,52 @@ export fn mh_smooth(nc i32, t0n i32, nh i32, hk i32, its i32) i32 {
 	}
 	moved as i32
 }
+=== -74f3800608d4349b
+var SFH f32[>..];
+var SFD i32[>..];
+var SFW real[>..];
+var SN0 int = 0;
+var SN1 int = 0;
+var SN2 int = 0;
+export fn mh_sfi(n0 i32, n1 i32, n2 i32, h0 real, nd i32) {
+	SN0 = n0 as int;
+	SN1 = n1 as int;
+	SN2 = n2 as int;
+	SFH.clear();
+	SFH.resize(SN0 * SN1 * SN2, h0 as f32);
+	SFD.clear();
+	SFD.resize(3 * (nd as int), 0);
+	SFW.clear();
+	SFW.resize(nd as int, 0.0);
+	mh_view_f32(9, SFH);
+	mh_view_i32(10, SFD);
+	mh_view_f64(11, SFW);
+}
+export fn mh_sfs(nd i32) {
+	let ndI = nd as int;
+	for rep in 2 {
+		for s in 2 {
+			let sg = if s == 0 { 1 } else { -1 };
+			for kk in SN2 {
+				let k = if sg == 1 { kk } else { SN2 - 1 - kk };
+				for jj in SN1 {
+					let j = if sg == 1 { jj } else { SN1 - 1 - jj };
+					for ii in SN0 {
+						let i = if sg == 1 { ii } else { SN0 - 1 - ii };
+						let q = (k * SN1 + j) * SN0 + i;
+						var h = SFH[q] as real;
+						for t in ndI {
+							let x = i + (SFD[3 * t] as int) * sg;
+							let y = j + (SFD[3 * t + 1] as int) * sg;
+							let z = k + (SFD[3 * t + 2] as int) * sg;
+							if x < 0 || y < 0 || z < 0 || x >= SN0 || y >= SN1 || z >= SN2 { continue; }
+							let v = (SFH[(z * SN1 + y) * SN0 + x] as real) + SFW[t];
+							if v < h { h = v; }
+						}
+						SFH[q] = h as f32;
+					}
+				}
+			}
+		}
+	}
+}
