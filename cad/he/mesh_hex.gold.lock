@@ -1,0 +1,397 @@
+=== 0738806069eaaefa
+import math;
+fn main() {}
+=== -4c8b2bc91c9a1d67
+let INF real = 1e308 * 10.0;
+let NAN real = INF - INF;
+var NN int = 0;
+var NE int = 0;
+var X real[>..];
+var R real[>..];
+var GX real[>..];
+var HW real[>..];
+var CB real[>..];
+var E i32[>..];
+var BAD i32[>..];
+var HN i32[>..];
+var HM i32[>..];
+var CNT i32[>..];
+var IE i32[>..];
+var FP i32[>..];
+var NBL i32[>..];
+var ISH byte[>..];
+var LV byte[>..];
+var MV byte[>..];
+let HXN int[24] = [-1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1];
+let HNB int[24] = [1, 3, 4, 0, 2, 5, 3, 1, 6, 2, 0, 7, 5, 7, 0, 4, 6, 1, 7, 5, 2, 6, 4, 3];
+let EDG int[24] = [0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7];
+let G2 real[2] = [-0.5773502691896258, 0.5773502691896258];
+let G5 real[5] = [-1.0, -0.5773502691896258, 0.0, 0.5773502691896258, 1.0];
+=== -9e646eadafb3809
+fn jmin(a real, b real) real {
+	if a != a || b != b { return NAN; }
+	if a == b {
+		if 1.0 / a < 0.0 { return a; }
+		return b;
+	}
+	if a < b { a } else { b }
+}
+fn jmax(a real, b real) real {
+	if a != a || b != b { return NAN; }
+	if a == b {
+		if 1.0 / a < 0.0 { return b; }
+		return a;
+	}
+	if a > b { a } else { b }
+}
+fn jabs(v real) real { if v < 0.0 { -v } else { v } }
+fn hyp3(a real, b real, c real) real {
+	var mx = 0.0;
+	if a == a && jabs(a) > mx { mx = jabs(a); }
+	if b == b && jabs(b) > mx { mx = jabs(b); }
+	if c == c && jabs(c) > mx { mx = jabs(c); }
+	if mx == INF { return INF; }
+	if a != a || b != b || c != c { return NAN; }
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	for i in 3 {
+		let v = if i == 0 { jabs(a) } else if i == 1 { jabs(b) } else { jabs(c) };
+		let nv = v / mx;
+		let su = nv * nv - comp;
+		let pre = sum + su;
+		comp = (pre - sum) - su;
+		sum = pre;
+	}
+	sqrt(sum) * mx
+}
+=== 2a612b33b5a003bb
+fn gather(e int) {
+	for a in 8 {
+		let n = 3 * (E[8 * e + a] as int);
+		GX[a] = X[n];
+		GX[8 + a] = X[n + 1];
+		GX[16 + a] = X[n + 2];
+	}
+}
+fn gq(full bool, i int) real { if full { G5[i] } else { G2[i] } }
+fn det(e int, full bool) real {
+	gather(e);
+	let cnt = if full { 5 } else { 2 };
+	var mn = INF;
+	for i0 in cnt {
+		let xi = gq(full, i0);
+		for i1 in cnt {
+			let et = gq(full, i1);
+			for i2 in cnt {
+				let ze = gq(full, i2);
+				var j00 = 0.0;
+				var j01 = 0.0;
+				var j02 = 0.0;
+				var j10 = 0.0;
+				var j11 = 0.0;
+				var j12 = 0.0;
+				var j20 = 0.0;
+				var j21 = 0.0;
+				var j22 = 0.0;
+				for a in 8 {
+					let p = HXN[3 * a] as real;
+					let q = HXN[3 * a + 1] as real;
+					let r = HXN[3 * a + 2] as real;
+					let dx = ((p * (1.0 + q * et)) * (1.0 + r * ze)) / 8.0;
+					let dy = ((q * (1.0 + p * xi)) * (1.0 + r * ze)) / 8.0;
+					let dz = ((r * (1.0 + p * xi)) * (1.0 + q * et)) / 8.0;
+					j00 += GX[a] * dx;
+					j01 += GX[a] * dy;
+					j02 += GX[a] * dz;
+					j10 += GX[8 + a] * dx;
+					j11 += GX[8 + a] * dy;
+					j12 += GX[8 + a] * dz;
+					j20 += GX[16 + a] * dx;
+					j21 += GX[16 + a] * dy;
+					j22 += GX[16 + a] * dz;
+				}
+				let d = ((j00 * (j11 * j22 - j12 * j21)) - (j01 * (j10 * j22 - j12 * j20))) + (j02 * (j10 * j21 - j11 * j20));
+				mn = jmin(mn, d);
+			}
+		}
+	}
+	mn
+}
+fn sj(e int) real {
+	gather(e);
+	var s = INF;
+	for a in 8 {
+		let b0 = HNB[3 * a];
+		let b1 = HNB[3 * a + 1];
+		let b2 = HNB[3 * a + 2];
+		let s0 = -(HXN[3 * a] as real);
+		let s1 = -(HXN[3 * a + 1] as real);
+		let s2 = -(HXN[3 * a + 2] as real);
+		let e00 = (GX[b0] - GX[a]) * s0;
+		let e01 = (GX[8 + b0] - GX[8 + a]) * s0;
+		let e02 = (GX[16 + b0] - GX[16 + a]) * s0;
+		let e10 = (GX[b1] - GX[a]) * s1;
+		let e11 = (GX[8 + b1] - GX[8 + a]) * s1;
+		let e12 = (GX[16 + b1] - GX[16 + a]) * s1;
+		let e20 = (GX[b2] - GX[a]) * s2;
+		let e21 = (GX[8 + b2] - GX[8 + a]) * s2;
+		let e22 = (GX[16 + b2] - GX[16 + a]) * s2;
+		let d = ((e00 * (e11 * e22 - e12 * e21)) - (e01 * (e10 * e22 - e12 * e20))) + (e02 * (e10 * e21 - e11 * e20));
+		let l = (hyp3(e00, e01, e02) * hyp3(e10, e11, e12)) * hyp3(e20, e21, e22);
+		s = jmin(s, if l > 0.0 { d / l } else { -1.0 });
+	}
+	s
+}
+=== 18c8b90eef06414d
+export fn mh_load(nn i32, ne i32) {
+	NN = nn as int;
+	NE = ne as int;
+	X.clear();
+	X.resize(3 * NN, 0.0);
+	E.clear();
+	E.resize(8 * NE, 0);
+	R.clear();
+	R.resize(8, 0.0);
+	GX.clear();
+	GX.resize(24, 0.0);
+	BAD.clear();
+	BAD.resize(max(1, NE), 0);
+	mh_view_f64(1, X);
+	mh_view_i32(2, E);
+	mh_view_f64(3, R);
+	mh_view_i32(4, BAD);
+}
+export fn mh_det(e i32, full i32) real { det(e as int, full != 0) }
+export fn mh_sj(e i32) real { sj(e as int) }
+=== 44de76d2966bbc75
+export fn mh_nbad(frm i32, full i32, nan i32) i32 {
+	var c = 0;
+	for e in (frm as int)..NE {
+		let d = det(e, full != 0);
+		if d <= 0.0 || (nan != 0 && d != d) {
+			BAD[c] = e as i32;
+			c += 1;
+		}
+	}
+	c as i32
+}
+export fn mh_low(frm i32, thr real) i32 {
+	var c = 0;
+	for e in (frm as int)..NE {
+		if sj(e) < thr {
+			BAD[c] = e as i32;
+			c += 1;
+		}
+	}
+	c as i32
+}
+=== -5dd118882fc35151
+fn tet(a int, b int, d int, f int) real {
+	let ux = X[b] - X[a];
+	let uy = X[b + 1] - X[a + 1];
+	let uz = X[b + 2] - X[a + 2];
+	let wx = X[d] - X[a];
+	let wy = X[d + 1] - X[a + 1];
+	let wz = X[d + 2] - X[a + 2];
+	let sx = X[f] - X[a];
+	let sy = X[f + 1] - X[a + 1];
+	let sz = X[f + 2] - X[a + 2];
+	(((ux * (wy * sz - wz * sy)) - (uy * (wx * sz - wz * sx))) + (uz * (wx * sy - wy * sx))) / 6.0
+}
+export fn mh_quality(st i32) {
+	var minSJ = INF;
+	var maxAR = 0.0;
+	var vol = 0.0;
+	var minDet = INF;
+	var low = 0;
+	var neg = 0;
+	let step = st as int;
+	for e in NE {
+		let n0 = 8 * e;
+		var lmin = INF;
+		var lmax = 0.0;
+		for i in 12 {
+			let p = 3 * (E[n0 + EDG[2 * i]] as int);
+			let q = 3 * (E[n0 + EDG[2 * i + 1]] as int);
+			let l = hyp3(X[p] - X[q], X[p + 1] - X[q + 1], X[p + 2] - X[q + 2]);
+			lmin = jmin(lmin, l);
+			lmax = jmax(lmax, l);
+		}
+		let lm = if lmin == 0.0 || lmin != lmin { 1e-300 } else { lmin };
+		maxAR = jmax(maxAR, lmax / lm);
+		if e % step == 0 {
+			let d = det(e, false);
+			let s = sj(e);
+			minDet = jmin(minDet, d);
+			if d <= 0.0 { neg += 1; }
+			minSJ = jmin(minSJ, s);
+			if s < 0.3 { low += 1; }
+		}
+		var c int[8] = [0; 8];
+		for a in 8 { c[a] = 3 * (E[n0 + a] as int); }
+		let v = (((tet(c[0], c[1], c[3], c[4]) + tet(c[1], c[2], c[3], c[6])) + tet(c[1], c[3], c[4], c[6])) + tet(c[1], c[4], c[5], c[6])) + tet(c[3], c[4], c[6], c[7]);
+		vol += v;
+	}
+	R[0] = NE as real;
+	R[1] = minSJ;
+	R[2] = low as real;
+	R[3] = neg as real;
+	R[4] = maxAR;
+	R[5] = vol;
+	R[6] = minDet;
+}
+=== -3f48c2fb2bbb9f17
+export fn mh_hin(nh i32, hk i32) {
+	let n = nh as int;
+	let k = hk as int;
+	HN.clear();
+	HN.resize(max(1, n), 0);
+	HM.clear();
+	HM.resize(max(1, n * k), 0);
+	HW.clear();
+	HW.resize(max(1, n * k), 0.0);
+	CB.clear();
+	CB.resize(max(1, NE), 0.0);
+	mh_view_i32(5, HN);
+	mh_view_i32(6, HM);
+	mh_view_f64(7, HW);
+	mh_view_f64(8, CB);
+}
+=== -108ee36d6bea0b5e
+export fn mh_smooth(nc i32, t0n i32, nh i32, hk i32, its i32) i32 {
+	if its == 0 { return 0; }
+	let ncI = nc as int;
+	let t0 = t0n as int;
+	let nhI = nh as int;
+	let hkI = hk as int;
+	let itsI = its as int;
+	ISH.clear();
+	ISH.resize(NN, 0);
+	LV.clear();
+	LV.resize(NN, 0);
+	MV.clear();
+	MV.resize(NN, 0);
+	CNT.clear();
+	CNT.resize(NN + 1, 0);
+	for k in nhI { ISH[HN[k] as int] = 1; }
+	for e in ncI..NE {
+		for a in 4 { LV[E[8 * e + a] as int] = 1; }
+	}
+	for e in ncI {
+		var any = false;
+		for a in 8 {
+			if LV[E[8 * e + a] as int] == 1 { any = true; }
+		}
+		if any {
+			for a in 8 {
+				let n = E[8 * e + a] as int;
+				if LV[n] == 0 { LV[n] = 2; }
+			}
+		}
+	}
+	for e in NE {
+		for a in 8 { CNT[(E[8 * e + a] as int) + 1] += 1; }
+	}
+	for i in NN { CNT[i + 1] += CNT[i]; }
+	IE.clear();
+	IE.resize(CNT[NN] as int, 0);
+	FP.clear();
+	FP.resize(NN, 0);
+	for i in NN { FP[i] = CNT[i]; }
+	for e in NE {
+		for a in 8 {
+			let n = E[8 * e + a] as int;
+			IE[FP[n] as int] = e as i32;
+			FP[n] += 1;
+		}
+	}
+	var md = 0;
+	for n in NN {
+		let c = (CNT[n + 1] - CNT[n]) as int;
+		if c > md { md = c; }
+	}
+	NBL.clear();
+	NBL.resize(max(1, 12 * md), 0);
+	var moved = 0;
+	for iter in itsI {
+		for n in t0 {
+			if LV[n] == 0 || ISH[n] != 0 { continue; }
+			var nbc = 0;
+			let ka = CNT[n] as int;
+			let kb = CNT[n + 1] as int;
+			for k in ka..kb {
+				let e = IE[k] as int;
+				for i in 12 {
+					let u = E[8 * e + EDG[2 * i]] as int;
+					let w = E[8 * e + EDG[2 * i + 1]] as int;
+					var cand = -1;
+					if u == n { cand = w; } else if w == n { cand = u; }
+					if cand >= 0 {
+						var found = false;
+						for j in nbc {
+							if (NBL[j] as int) == cand { found = true; }
+						}
+						if !found {
+							NBL[nbc] = cand as i32;
+							nbc += 1;
+						}
+					}
+				}
+			}
+			if nbc == 0 { continue; }
+			var x = 0.0;
+			var y = 0.0;
+			var z = 0.0;
+			for i in nbc {
+				let m = NBL[i] as int;
+				x += X[3 * m];
+				y += X[3 * m + 1];
+				z += X[3 * m + 2];
+			}
+			let k0 = nbc as real;
+			let p0 = X[3 * n];
+			let p1 = X[3 * n + 1];
+			let p2 = X[3 * n + 2];
+			var before = INF;
+			for k in ka..kb { before = jmin(before, sj(IE[k] as int)); }
+			X[3 * n] = (0.5 * p0) + ((0.5 * x) / k0);
+			X[3 * n + 1] = (0.5 * p1) + ((0.5 * y) / k0);
+			X[3 * n + 2] = (0.5 * p2) + ((0.5 * z) / k0);
+			var after = INF;
+			for k in ka..kb {
+				let e = IE[k] as int;
+				let d = det(e, false);
+				let s = sj(e);
+				after = jmin(after, if d > 0.0 { s } else { -1.0 });
+			}
+			if after < jmin(before, 0.3) + 1e-9 && !(after > before) {
+				X[3 * n] = p0;
+				X[3 * n + 1] = p1;
+				X[3 * n + 2] = p2;
+			} else if MV[n] == 0 {
+				MV[n] = 1;
+				moved += 1;
+			}
+		}
+	}
+	for k in nhI {
+		let n = HN[k] as int;
+		for c in 3 {
+			var v = 0.0;
+			for j in hkI {
+				let m = HM[hkI * k + j] as int;
+				if m >= 0 { v += HW[hkI * k + j] * X[3 * m + c]; }
+			}
+			X[3 * n + c] = v;
+		}
+	}
+	for e in ncI {
+		var any = false;
+		for a in 8 {
+			if MV[E[8 * e + a] as int] != 0 { any = true; }
+		}
+		if any { CB[e] = 0.0; }
+	}
+	moved as i32
+}

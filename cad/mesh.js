@@ -1,4 +1,6 @@
 import {region} from './region.js';
+import {heliumSync} from './he/host.js';
+const MHM=await heliumSync('mesh_hex'),MHE={},NBD=new WeakMap(),mhOf=(X,E)=>{const HX=MHM(MHE);HX.ex.mh_load(X.length/3,E.length/8);HX.v(1).set(X);HX.v(2).set(E);return HX;};
 export const HEX_FACES=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
 export const HEX_NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 const AX={X:[1,0,0],Y:[0,1,0],Z:[0,0,1],'+X':[1,0,0],'+Y':[0,1,0],'+Z':[0,0,1],'-X':[-1,0,0],'-Y':[0,-1,0],'-Z':[0,0,-1]},K26=67108864,ek=(a,b)=>a<b?a*K26+b:b*K26+a,ka=k=>Math.floor(k/K26),kb=k=>k%K26;
@@ -195,17 +197,7 @@ function quadify(R,opt={}){
   let qmin=1;for(let q=0;q<nQ;q++)qmin=Math.min(qmin,qsin(XO,Q,q));
   return{X:Float64Array.from(XO),Q:Int32Array.from(Q),nq,ntr,qmin};
 }
-function hexJac(X,E,e,full){const x=[],y=[],z=[];for(let a=0;a<8;a++){const n=3*E[8*e+a];x.push(X[n]);y.push(X[n+1]);z.push(X[n+2]);}let mn=Infinity,sj=Infinity;const g=full?[-1,-0.5773502691896258,0,0.5773502691896258,1]:[-0.5773502691896258,0.5773502691896258];
-  for(const xi of g)for(const et of g)for(const ze of g){let j00=0,j01=0,j02=0,j10=0,j11=0,j12=0,j20=0,j21=0,j22=0;for(let a=0;a<8;a++){const[p,q,r]=HEX_NODES[a],dx=p*(1+q*et)*(1+r*ze)/8,dy=q*(1+p*xi)*(1+r*ze)/8,dz=r*(1+p*xi)*(1+q*et)/8;j00+=x[a]*dx;j01+=x[a]*dy;j02+=x[a]*dz;j10+=y[a]*dx;j11+=y[a]*dy;j12+=y[a]*dz;j20+=z[a]*dx;j21+=z[a]*dy;j22+=z[a]*dz;}const d=j00*(j11*j22-j12*j21)-j01*(j10*j22-j12*j20)+j02*(j10*j21-j11*j20);mn=Math.min(mn,d);}
-  for(let a=0;a<8;a++){const[p,q,r]=HEX_NODES[a],nb=[0,1,2].map(k=>HEX_NODES.findIndex(n=>n[k]===-[p,q,r][k]&&n[(k+1)%3]===[p,q,r][(k+1)%3]&&n[(k+2)%3]===[p,q,r][(k+2)%3])),ev=nb.map((b,k)=>{const s=-[p,q,r][k];return[(x[b]-x[a])*s,(y[b]-y[a])*s,(z[b]-z[a])*s];}),d=ev[0][0]*(ev[1][1]*ev[2][2]-ev[1][2]*ev[2][1])-ev[0][1]*(ev[1][0]*ev[2][2]-ev[1][2]*ev[2][0])+ev[0][2]*(ev[1][0]*ev[2][1]-ev[1][1]*ev[2][0]),l=Math.hypot(...ev[0])*Math.hypot(...ev[1])*Math.hypot(...ev[2]);sj=Math.min(sj,l>0?d/l:-1);}
-  return{det:mn,sj};}
-export function meshQuality(X,E,sample){
-  const ne=E.length/8;let minSJ=Infinity,neg=0,low=0,maxAR=0,vol=0,minDet=Infinity;const st=sample&&ne>sample?Math.ceil(ne/sample):1;
-  for(let e=0;e<ne;e++){const n0=8*e;let lmin=Infinity,lmax=0;for(const[a,b]of[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]){const p=3*E[n0+a],q=3*E[n0+b],l=Math.hypot(X[p]-X[q],X[p+1]-X[q+1],X[p+2]-X[q+2]);lmin=Math.min(lmin,l);lmax=Math.max(lmax,l);}maxAR=Math.max(maxAR,lmax/(lmin||1e-300));
-    if(e%st===0){const J=hexJac(X,E,e,false);minDet=Math.min(minDet,J.det);if(J.det<=0)neg++;minSJ=Math.min(minSJ,J.sj);if(J.sj<0.3)low++;}
-    const c=[0,1,2,3,4,5,6,7].map(a=>3*E[n0+a]),tet=(a,b,d,f)=>{const ux=X[b]-X[a],uy=X[b+1]-X[a+1],uz=X[b+2]-X[a+2],wx=X[d]-X[a],wy=X[d+1]-X[a+1],wz=X[d+2]-X[a+2],sx=X[f]-X[a],sy=X[f+1]-X[a+1],sz=X[f+2]-X[a+2];return(ux*(wy*sz-wz*sy)-uy*(wx*sz-wz*sx)+uz*(wx*sy-wy*sx))/6;};const v=tet(c[0],c[1],c[3],c[4])+tet(c[1],c[2],c[3],c[6])+tet(c[1],c[3],c[4],c[6])+tet(c[1],c[4],c[5],c[6])+tet(c[3],c[4],c[6],c[7]);vol+=v;}
-  return{ne,minSJ,lowSJ:low,neg,maxAR,volume:vol,minDet};
-}
+export function meshQuality(X,E,sample){const ne=E.length/8,st=sample&&ne>sample?Math.ceil(ne/sample):1,HX=mhOf(X,E);HX.ex.mh_quality(st);const R=HX.v(3);return{ne,minSJ:R[1],lowSJ:R[2],neg:R[3],maxAR:R[4],volume:R[5],minDet:R[6]};}
 function tagFacets(S,X,E,bf,filt){
   const ff=new Int32Array(bf.length),o=new Float64Array(6);
   for(let i=0;i<bf.length;i++){const e=Math.floor(bf[i]/6),f=HEX_FACES[bf[i]%6],P=f.map(a=>3*E[8*e+a]);let cx=0,cy=0,cz=0;for(const p of P){cx+=X[p]/4;cy+=X[p+1]/4;cz+=X[p+2]/4;}const ux=X[P[2]]-X[P[0]],uy=X[P[2]+1]-X[P[0]+1],uz=X[P[2]+2]-X[P[0]+2],wx=X[P[3]]-X[P[1]],wy=X[P[3]+1]-X[P[1]+1],wz=X[P[3]+2]-X[P[1]+2],nx=uy*wz-uz*wy,ny=uz*wx-ux*wz,nz=ux*wy-uy*wx,l=Math.hypot(nx,ny,nz)||1,fl=filt?filt(i):null;
@@ -293,21 +285,10 @@ function features(S,crease=30){
   F={crease,seg:Int32Array.from(sg),B:bvh(ns,lo,hi),patch,np,corner};FC.set(S,F);return F;
 }
 function nearFeat(S,F,px,py,pz,o){const V=S.V,sg=F.seg,q=new Float64Array(6);const i=bnear(F.B,px,py,pz,t=>cseg(V[3*sg[2*t]],V[3*sg[2*t]+1],V[3*sg[2*t]+2],V[3*sg[2*t+1]],V[3*sg[2*t+1]+1],V[3*sg[2*t+1]+2],px,py,pz,q));if(i>=0)cseg(V[3*sg[2*i]],V[3*sg[2*i]+1],V[3*sg[2*i]+2],V[3*sg[2*i+1]],V[3*sg[2*i+1]+1],V[3*sg[2*i+1]+2],px,py,pz,o);return i<0?Infinity:Math.sqrt(BD);}
-function smoothNear(X,E,nc,t0n,hn,hm,hw,cube,its,HK){
-  if(!its)return 0;const ne=E.length/8,nn=X.length/3,isH=new Uint8Array(nn),lv=new Uint8Array(nn),cnt=new Int32Array(nn+1);for(const n of hn)isH[n]=1;for(let e=nc;e<ne;e++)for(let a=0;a<4;a++)lv[E[8*e+a]]=1;
-  for(let e=0;e<nc;e++){let t=false;for(let a=0;a<8;a++)if(lv[E[8*e+a]]===1)t=true;if(t)for(let a=0;a<8;a++)if(!lv[E[8*e+a]])lv[E[8*e+a]]=2;}
-  for(let e=0;e<ne;e++)for(let a=0;a<8;a++)cnt[E[8*e+a]+1]++;for(let i=0;i<nn;i++)cnt[i+1]+=cnt[i];const ie=new Int32Array(cnt[nn]),fp=cnt.slice(0,nn);for(let e=0;e<ne;e++)for(let a=0;a<8;a++)ie[fp[E[8*e+a]]++]=e;
-  const ED=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],q=e=>hexJac(X,E,e,false),place=()=>{for(let k=0;k<hn.length;k++){const n=hn[k];for(let c=0;c<3;c++){let v=0;for(let j=0;j<HK;j++)if(hm[HK*k+j]>=0)v+=hw[HK*k+j]*X[3*hm[HK*k+j]+c];X[3*n+c]=v;}}},mv=new Uint8Array(nn);let moved=0;
-  for(let it=0;it<its;it++)for(let n=0;n<t0n;n++){if(!lv[n]||isH[n])continue;const nb=new Set();for(let k=cnt[n];k<cnt[n+1];k++){const e=ie[k];for(const[a,b]of ED){const u=E[8*e+a],w=E[8*e+b];if(u===n)nb.add(w);else if(w===n)nb.add(u);}}if(!nb.size)continue;
-    let x=0,y=0,z=0;for(const m of nb){x+=X[3*m];y+=X[3*m+1];z+=X[3*m+2];}const k0=nb.size,p=[X[3*n],X[3*n+1],X[3*n+2]];let before=Infinity;for(let k=cnt[n];k<cnt[n+1];k++)before=Math.min(before,q(ie[k]).sj);
-    X[3*n]=0.5*p[0]+0.5*x/k0;X[3*n+1]=0.5*p[1]+0.5*y/k0;X[3*n+2]=0.5*p[2]+0.5*z/k0;let after=Infinity;for(let k=cnt[n];k<cnt[n+1];k++){const J=q(ie[k]);after=Math.min(after,J.det>0?J.sj:-1);}
-    if(after<Math.min(before,0.3)+1e-9&&!(after>before)){X[3*n]=p[0];X[3*n+1]=p[1];X[3*n+2]=p[2];}else if(!mv[n]){mv[n]=1;moved++;}}
-  place();for(let e=0;e<nc;e++)for(let a=0;a<8;a++)if(mv[E[8*e+a]]){cube[e]=0;break;}return moved;
-}
 function octreeMesh(inp,opt={}){
   const S=thickOf(surfOf(inp)),res=opt.res||30000,V=inp.volume||S.volume||1,Nt=Math.max(1,opt.layers||2),hv=Math.cbrt(V/res);let sc=opt.size?opt.size/hv:1.2,st=1,M=null;
   for(let pass=0;pass<6;pass++){M=octBuild(S,opt,hv*sc,Nt,st);M.info.passes=pass+1;const ne=M.E.length/8,r=ne/res;const hard=opt.hardMax||4*res;if(opt.size||(r<=1.6&&r>=0.5)||pass===5||(r>1.6&&ne<=hard&&sc>8))break;r>1?(ne>hard&&M.info.boundary>0.5*M.info.leaves?st*=Math.pow(ne/hard,0.5):sc*=Math.pow(r,0.4)):(st>1?st=Math.max(1,st*Math.pow(r,0.5)):sc*=Math.pow(r,0.4));}
-  const bad=m=>{let b=0;for(let e=m.info.core;e<m.E.length/8;e++)if(hexJac(m.X,m.E,e,false).det<=0)b++;return b;};let nb=bad(M),pc=M.info.passes;const cap=Math.max(opt.hardMax||4*res,1.6*M.E.length/8);for(const[a,b]of opt.size?[]:[[1,0.85],[0.9,1],[1.12,1],[1,0.72]]){if(!nb)break;const M2=octBuild(S,opt,hv*sc*a,Nt,st*b),b2=bad(M2);pc++;if(b2<nb&&M2.E.length/8<=cap){M=M2;nb=b2;}}M.info.passes=pc;M.info.inverted=nb;
+  const bad=m=>NBD.get(m);let nb=bad(M),pc=M.info.passes;const cap=Math.max(opt.hardMax||4*res,1.6*M.E.length/8);for(const[a,b]of opt.size?[]:[[1,0.85],[0.9,1],[1.12,1],[1,0.72]]){if(!nb)break;const M2=octBuild(S,opt,hv*sc*a,Nt,st*b),b2=bad(M2);pc++;if(b2<nb&&M2.E.length/8<=cap){M=M2;nb=b2;}}M.info.passes=pc;M.info.inverted=nb;
   M.warn=M.through<Nt?'thinnest walls have '+M.through.toFixed(1)+' elements through the thickness (target '+Nt+'); raise the mesh resolution':null;return M;
 }
 function octBuild(S,opt,hc,Nt,stc){
@@ -346,16 +327,16 @@ function octBuild(S,opt,hc,Nt,stc){
   const used=new Int32Array(nn0).fill(-1),XO=[],EL=[],cube=[];let nn=0;const rn=n=>{if(used[n]<0){used[n]=nn++;XO.push(X0[3*n],X0[3*n+1],X0[3*n+2]);}return used[n];};
   for(const e of ce){for(let a=0;a<8;a++)EL.push(rn(E0[8*e+a]));cube.push(HZ(lv[leaves[e]]));}for(let n=0;n<nn0;n++)if(isB[n])rn(n);const t0n=nn;for(let i=0;i<ntn;i++)XO.push(0,0,0);for(let n=0;n<nn0;n++)if(isB[n])for(let c=0;c<3;c++)XO[3*(t0n+top[n])+c]=TX[3*top[n]+c];nn+=ntn;
   const nc=ce.length,bf=[];for(let b=0;b<BQ.length;b+=2){const fq=BQ[b];EL.push(...fq.map(rn),...fq.map(n=>t0n+top[n]));cube.push(0);bf.push(6*(nc+b/2)+1);}
-  const E=Int32Array.from(EL),XF=Float64Array.from(XO),ne=E.length/8;let nbad=0,nrv=0;for(let p=0;p<(opt.revert??5);p++){nbad=0;let rv=0;for(let e=nc;e<ne;e++){if(hexJac(XF,E,e,true).det>0)continue;nbad++;for(let a=4;a<8;a++){const i=E[8*e+a]-t0n;if(mk[i]){mk[i]=0;rv++;for(let c=0;c<3;c++)TX[3*i+c]=TX0[3*i+c];}}}if(!rv)break;nrv+=rv;tint();XF.set(TX,3*t0n);}
-  let nun=0;for(let p=0;p<(opt.untangle??4);p++){const bad=[];for(let e=nc;e<ne;e++)if(hexJac(XF,E,e,false).sj<0.05)bad.push(e);if(!bad.length)break;const inc=new Map();for(const e of bad)for(let a=4;a<8;a++)inc.set(E[8*e+a],[]);for(let e=0;e<ne;e++)for(let a=0;a<8;a++){const l=inc.get(E[8*e+a]);if(l)l.push(e);}const q=n=>{let m=Infinity;for(const e of inc.get(n))m=Math.min(m,hexJac(XF,E,e,false).sj);return m;};let mv=0;
+  const E=Int32Array.from(EL),ne=E.length/8,HX=MHM(MHE);HX.ex.mh_load(XO.length/3,ne);HX.v(2).set(E);let XF=HX.v(1),nbad=0,nrv=0;XF.set(XO);for(let p=0;p<(opt.revert??5);p++){nbad=0;let rv=0;const nbq=HX.ex.mh_nbad(nc,1,1),BL=HX.v(4);for(let bq=0;bq<nbq;bq++){const e=BL[bq];nbad++;for(let a=4;a<8;a++){const i=E[8*e+a]-t0n;if(mk[i]){mk[i]=0;rv++;for(let c=0;c<3;c++)TX[3*i+c]=TX0[3*i+c];}}}if(!rv)break;nrv+=rv;tint();XF.set(TX,3*t0n);}
+  let nun=0;for(let p=0;p<(opt.untangle??4);p++){const nlo=HX.ex.mh_low(nc,0.05),bad=Array.from(HX.v(4).subarray(0,nlo));if(!bad.length)break;const inc=new Map();for(const e of bad)for(let a=4;a<8;a++)inc.set(E[8*e+a],[]);for(let e=0;e<ne;e++)for(let a=0;a<8;a++){const l=inc.get(E[8*e+a]);if(l)l.push(e);}const q=n=>{let m=Infinity;for(const e of inc.get(n))m=Math.min(m,HX.ex.mh_sj(e));return m;};let mv=0;
     for(const e of bad)for(let a=4;a<8;a++){const n=E[8*e+a],i=n-t0n;if(i<0||i>=ntn)continue;let cx=0,cy=0,cz=0;for(let b=4;b<8;b++){cx+=XF[3*E[8*e+b]]/4;cy+=XF[3*E[8*e+b]+1]/4;cz+=XF[3*E[8*e+b]+2]/4;}const p0=[XF[3*n],XF[3*n+1],XF[3*n+2]],q0=q(n);for(const w of[0.5,0.25]){closest(S,(1-w)*p0[0]+w*cx,(1-w)*p0[1]+w*cy,(1-w)*p0[2]+w*cz,null,fo);XF[3*n]=fo[0];XF[3*n+1]=fo[1];XF[3*n+2]=fo[2];if(q(n)>q0+1e-6){TX[3*i]=fo[0];TX[3*i+1]=fo[1];TX[3*i+2]=fo[2];mv++;break;}XF[3*n]=p0[0];XF[3*n+1]=p0[1];XF[3*n+2]=p0[2];}}
     if(!mv)break;nun+=mv;tint();XF.set(TX,3*t0n);}
   const hn=[],hm=[],hw=[],HK=8,pushH=(n,m,w)=>{hn.push(n);for(let j=0;j<HK;j++){hm.push(j<m.length?m[j]:-1);hw.push(j<m.length?w[j]:0);}};let hdrop=0;for(const[n,[m,w]]of H)used[n]>=0&&m.length<=HK&&m.every(v=>used[v]>=0)?pushH(used[n],m.map(v=>used[v]),w):hdrop++;for(const[n,[m,w]]of TH)m.length<=HK?pushH(t0n+top[n],m.map(v=>t0n+top[v]),w):hdrop++;
-  const CB=Float64Array.from(cube),nsm=smoothNear(XF,E,nc,t0n,hn,hm,hw,CB,opt.vsmooth??4,HK);
-  const M={X:XF,E,bf:Int32Array.from(bf)};M.ff=tagFacets(S,XF,E,M.bf);
+  HX.ex.mh_hin(hn.length,HK);HX.v(5).set(hn);HX.v(6).set(hm);HX.v(7).set(hw);HX.v(8).set(cube);const nsm=HX.ex.mh_smooth(nc,t0n,hn.length,HK,opt.vsmooth??4);XF=HX.v(1).slice();const CB=HX.v(8).slice(0,cube.length);
+  const M={X:XF,E,bf:Int32Array.from(bf)};const nb0=HX.ex.mh_nbad(nc,0,0);M.ff=tagFacets(S,XF,E,M.bf);
   const hAt=(x,y,z)=>{for(let l=Lmax;l>=0;l--){const h=HZ(l),q=idx.get(key(l,Math.floor((x-o0[0])/h),Math.floor((y-o0[1])/h),Math.floor((z-o0[2])/h)));if(q!==undefined)return h;}return hc;},TR=[];let At=0;
   for(let t=0;t<nt;t++){if(!isFinite(th[t])||!(S.Ar[t]>0))continue;const e=Math.min(th[t]/2,hsm/4);TR.push([th[t]/hAt(S.C[3*t]-S.N[3*t]*e,S.C[3*t+1]-S.N[3*t+1]*e,S.C[3*t+2]-S.N[3*t+2]*e),S.Ar[t],th[t]]);At+=S.Ar[t];}
   TR.sort((a,b)=>a[0]-b[0]);let acc=0,thr=TR.length?TR[0][0]:null;for(const r of TR){acc+=r[1];if(acc>=0.02*At){thr=r[0];break;}}let tmin=Infinity;for(const r of TR)tmin=Math.min(tmin,r[2]);
   let hmn=Infinity,lmin=99,lmax=0;for(const q of leaves){hmn=Math.min(hmn,HZ(lv[q]));lmin=Math.min(lmin,lv[q]);lmax=Math.max(lmax,lv[q]);}
-  return{...M,kind:'hex8',type:'adaptive',hang:hn.length?{node:Int32Array.from(hn),m:Int32Array.from(hm),w:Float64Array.from(hw),k:HK}:null,cube:CB,through:thr,tMin:tmin,size:{h0:hc,hmin:hmn},levels:[lmin,lmax],info:{leaves:leaves.length,boundary:nbd,coreRefined:nref,core:nc,pillow:ne-nc,rayMiss:nray,smoothed:nsm,featNodes:nfe,cornerNodes:nco,featReverted:nrv,untangled:nun,badPillow:nbad,hanging:hn.length,hangDropped:hdrop}};
+  const OM={...M,kind:'hex8',type:'adaptive',hang:hn.length?{node:Int32Array.from(hn),m:Int32Array.from(hm),w:Float64Array.from(hw),k:HK}:null,cube:CB,through:thr,tMin:tmin,size:{h0:hc,hmin:hmn},levels:[lmin,lmax],info:{leaves:leaves.length,boundary:nbd,coreRefined:nref,core:nc,pillow:ne-nc,rayMiss:nray,smoothed:nsm,featNodes:nfe,cornerNodes:nco,featReverted:nrv,untangled:nun,badPillow:nbad,hanging:hn.length,hangDropped:hdrop}};NBD.set(OM,nb0);return OM;
 }
