@@ -1,0 +1,338 @@
+import math;
+fn main() {
+}
+extern fn nt_view_f64(id i32, xs real[:]) = "nt_view_f64";
+extern fn nt_view_i32(id i32, xs i32[:]) = "nt_view_i32";
+extern fn nt_cbrt(x real) real = "nt_cbrt";
+var NP int = 0;
+var NT int = 0;
+var HH real = 0.0;
+var POS real[>..];
+var VN real[>..];
+var FN real[>..];
+var RS real[>..];
+var LO real[>..];
+var HI real[>..];
+var TQ real[>..];
+var TW real[>..];
+var BC real[>..];
+var BW real[>..];
+var IDX i32[>..];
+var NXA i32[>..];
+var CS i32[>..];
+var CL i32[>..];
+var CC i32[>..];
+let SE real[12] = [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0];
+fn nan() real { let z = 0.0; z / z }
+fn inf() real { let z = 0.0; 1.0 / z }
+fn jmin(a real, b real) real {
+	if a != a || b != b { return nan(); }
+	if a == b {
+		if 1.0 / a < 0.0 { return a; }
+		return b;
+	}
+	if a < b { a } else { b }
+}
+fn jmax(a real, b real) real {
+	if a != a || b != b { return nan(); }
+	if a == b {
+		if 1.0 / a < 0.0 { return b; }
+		return a;
+	}
+	if a > b { a } else { b }
+}
+fn hyp3(a real, b real, c real) real {
+	var mx = 0.0;
+	if a == a && abs(a) > mx { mx = abs(a); }
+	if b == b && abs(b) > mx { mx = abs(b); }
+	if c == c && abs(c) > mx { mx = abs(c); }
+	if mx == inf() { return inf(); }
+	if a != a || b != b || c != c { return nan(); }
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	let vs real[3] = [abs(a), abs(b), abs(c)];
+	for i in 3 {
+		let nv = vs[i] / mx;
+		let su = nv * nv - comp;
+		let pre = sum + su;
+		comp = (pre - sum) - su;
+		sum = pre;
+	}
+	sqrt(sum) * mx
+}
+fn toi(x real) int {
+	if x != x { return 0; }
+	floor(x) as int
+}
+export fn nt_load(np i32, nt i32) {
+	NP = np;
+	NT = nt;
+	let n = nt as int;
+	POS.clear();
+	POS.resize(NP, 0.0);
+	VN.clear();
+	VN.resize(NP, 0.0);
+	IDX.clear();
+	IDX.resize(3 * n, 0);
+	FN.clear();
+	FN.resize(3 * n, 0.0);
+	RS.clear();
+	RS.resize(4, 0.0);
+	LO.clear();
+	LO.resize(3, 0.0);
+	HI.clear();
+	HI.resize(3, 0.0);
+	TQ.clear();
+	TQ.resize(3, 0.0);
+	TW.clear();
+	TW.resize(3, 0.0);
+	BC.clear();
+	BC.resize(3, 0.0);
+	BW.clear();
+	BW.resize(3, 0.0);
+	NXA.clear();
+	NXA.resize(3, 0);
+	nt_view_f64(1, POS);
+	nt_view_i32(2, IDX);
+	nt_view_f64(3, RS);
+}
+fn cells(t int, fill bool) {
+	let a = 3 * (IDX[3 * t] as int);
+	let b = 3 * (IDX[3 * t + 1] as int);
+	let c = 3 * (IDX[3 * t + 2] as int);
+	var lo int[3] = [0; 3];
+	var hi int[3] = [0; 3];
+	for k in 3 {
+		lo[k] = toi((jmin(jmin(POS[a + k], POS[b + k]), POS[c + k]) - LO[k]) / HH);
+		hi[k] = toi((jmax(jmax(POS[a + k], POS[b + k]), POS[c + k]) - LO[k]) / HH);
+	}
+	let n0 = NXA[0] as int;
+	let n1 = NXA[1] as int;
+	for i in lo[0]..(hi[0] + 1) {
+		for j in lo[1]..(hi[1] + 1) {
+			for k in lo[2]..(hi[2] + 1) {
+				let key = (k * n1 + j) * n0 + i;
+				if fill {
+					CL[CC[key] as int] = t as i32;
+					CC[key] += 1;
+				} else {
+					CS[key + 1] += 1;
+				}
+			}
+		}
+	}
+}
+export fn nt_build() {
+	for k in 3 {
+		LO[k] = 1e30;
+		HI[k] = -1e30;
+	}
+	for i in NP {
+		let k = i % 3;
+		LO[k] = jmin(LO[k], POS[i]);
+		HI[k] = jmax(HI[k], POS[i]);
+	}
+	let mx = jmax(jmax(HI[0] - LO[0], HI[1] - LO[1]), HI[2] - LO[2]);
+	HH = mx / jmax(4.0, nt_cbrt(NT as real) * 1.5);
+	for k in 3 {
+		let g = jmax(1.0, ceil((HI[k] - LO[k]) / HH) + 1.0);
+		if g != g { NXA[k] = 1; } else { NXA[k] = g as i32; }
+	}
+	let nc = (NXA[0] as int) * (NXA[1] as int) * (NXA[2] as int);
+	CS.clear();
+	CS.resize(nc + 1, 0);
+	for t in NT {
+		let a = 3 * (IDX[3 * t] as int);
+		let b = 3 * (IDX[3 * t + 1] as int);
+		let c = 3 * (IDX[3 * t + 2] as int);
+		let u0 = POS[b] - POS[a];
+		let u1 = POS[b + 1] - POS[a + 1];
+		let u2 = POS[b + 2] - POS[a + 2];
+		let v0 = POS[c] - POS[a];
+		let v1 = POS[c + 1] - POS[a + 1];
+		let v2 = POS[c + 2] - POS[a + 2];
+		let n real[3] = [u1 * v2 - u2 * v1, u2 * v0 - u0 * v2, u0 * v1 - u1 * v0];
+		var l = hyp3(n[0], n[1], n[2]);
+		if l == 0.0 || l != l { l = 1.0; }
+		for k in 3 {
+			FN[3 * t + k] = n[k] / l;
+			VN[a + k] += n[k];
+			VN[b + k] += n[k];
+			VN[c + k] += n[k];
+		}
+		cells(t, false);
+	}
+	for i in nc {
+		CS[i + 1] += CS[i];
+	}
+	CL.clear();
+	CL.resize(CS[nc] as int, 0);
+	CC.clear();
+	CC.resize(nc, 0);
+	for i in nc {
+		CC[i] = CS[i];
+	}
+	for t in NT {
+		cells(t, true);
+	}
+}
+fn dot3(x real[:], y real[:]) real {
+	(x[0] * y[0] + x[1] * y[1]) + x[2] * y[2]
+}
+fn tri(t int, p0 real, p1 real, p2 real) real {
+	let a = 3 * (IDX[3 * t] as int);
+	let b = 3 * (IDX[3 * t + 1] as int);
+	let c = 3 * (IDX[3 * t + 2] as int);
+	let A real[3] = [POS[a], POS[a + 1], POS[a + 2]];
+	let ab real[3] = [POS[b] - A[0], POS[b + 1] - A[1], POS[b + 2] - A[2]];
+	let ac real[3] = [POS[c] - A[0], POS[c + 1] - A[1], POS[c + 2] - A[2]];
+	let p real[3] = [p0, p1, p2];
+	let ap real[3] = [p0 - A[0], p1 - A[1], p2 - A[2]];
+	let d1 = dot3(ab, ap);
+	let d2 = dot3(ac, ap);
+	let aa = dot3(ab, ab);
+	let bb = dot3(ac, ac);
+	let cc = dot3(ab, ac);
+	let den = aa * bb - cc * cc;
+	var v = (bb * d1 - cc * d2) / den;
+	var w = (aa * d2 - cc * d1) / den;
+	if !(v >= 0.0 && w >= 0.0 && v + w <= 1.0) {
+		var be = inf();
+		var bv = 0.0;
+		var bw = 0.0;
+		for e in 3 {
+			let s00 = SE[4 * e];
+			let s01 = SE[4 * e + 1];
+			let s10 = SE[4 * e + 2];
+			let s11 = SE[4 * e + 3];
+			var P0 real[3] = [0.0; 3];
+			var D real[3] = [0.0; 3];
+			for k in 3 {
+				P0[k] = (A[k] + s00 * ab[k]) + s01 * ac[k];
+				D[k] = (s10 - s00) * ab[k] + (s11 - s01) * ac[k];
+			}
+			let r real[3] = [p0 - P0[0], p1 - P0[1], p2 - P0[2]];
+			let tt = jmax(0.0, jmin(1.0, dot3(r, D) / dot3(D, D)));
+			var q real[3] = [0.0; 3];
+			for k in 3 {
+				q[k] = P0[k] + tt * D[k];
+			}
+			let dd = ((p0 - q[0]) * (p0 - q[0]) + (p1 - q[1]) * (p1 - q[1])) + (p2 - q[2]) * (p2 - q[2]);
+			if dd < be {
+				be = dd;
+				bv = s00 + tt * (s10 - s00);
+				bw = s01 + tt * (s11 - s01);
+			}
+		}
+		v = bv;
+		w = bw;
+	}
+	var Q real[3] = [0.0; 3];
+	for k in 3 {
+		Q[k] = (A[k] + v * ab[k]) + w * ac[k];
+		TQ[k] = Q[k];
+	}
+	TW[0] = (1.0 - v) - w;
+	TW[1] = v;
+	TW[2] = w;
+	((p0 - Q[0]) * (p0 - Q[0]) + (p1 - Q[1]) * (p1 - Q[1])) + (p2 - Q[2]) * (p2 - Q[2])
+}
+var BEST real = 0.0;
+var BT int = 0;
+fn look(key int, p0 real, p1 real, p2 real) {
+	for u in (CS[key] as int)..(CS[key + 1] as int) {
+		let t = CL[u] as int;
+		let r = tri(t, p0, p1, p2);
+		if r < BEST {
+			BEST = r;
+			BT = t;
+			for k in 3 {
+				BC[k] = TQ[k];
+				BW[k] = TW[k];
+			}
+		}
+	}
+}
+export fn nt_sdf(x0 real, x1 real, x2 real) {
+	let x real[3] = [x0, x1, x2];
+	var bd real[3] = [0.0; 3];
+	for k in 3 {
+		if x[k] < LO[k] { bd[k] = x[k] - LO[k]; }
+		else if x[k] > HI[k] { bd[k] = x[k] - HI[k]; }
+		else { bd[k] = 0.0; }
+	}
+	let db = hyp3(bd[0], bd[1], bd[2]);
+	if db > 2.0 * HH {
+		RS[1] = bd[0] / db;
+		RS[2] = bd[1] / db;
+		RS[3] = bd[2] / db;
+		RS[0] = db;
+		return;
+	}
+	let ci0 = toi((x0 - LO[0]) / HH);
+	let ci1 = toi((x1 - LO[1]) / HH);
+	let ci2 = toi((x2 - LO[2]) / HH);
+	BEST = inf();
+	BT = -1;
+	let nx0 = NXA[0] as int;
+	let nx1 = NXA[1] as int;
+	let nx2 = NXA[2] as int;
+	let nr = max(max(nx0, nx1), nx2) + 1;
+	for ring in nr {
+		for i in (ci0 - ring)..(ci0 + ring + 1) {
+			if i < 0 || i >= nx0 { continue; }
+			for j in (ci1 - ring)..(ci1 + ring + 1) {
+				if j < 0 || j >= nx1 { continue; }
+				if abs(i - ci0) == ring || abs(j - ci1) == ring {
+					for k in (ci2 - ring)..(ci2 + ring + 1) {
+						if k >= 0 && k < nx2 {
+							look((k * nx1 + j) * nx0 + i, x0, x1, x2);
+						}
+					}
+				} else {
+					let k1 = ci2 - ring;
+					if k1 >= 0 && k1 < nx2 {
+						look((k1 * nx1 + j) * nx0 + i, x0, x1, x2);
+					}
+					if ring > 0 {
+						let k2 = ci2 + ring;
+						if k2 >= 0 && k2 < nx2 {
+							look((k2 * nx1 + j) * nx0 + i, x0, x1, x2);
+						}
+					}
+				}
+			}
+		}
+		let rr = ring as real;
+		if BT >= 0 && BEST < ((rr * HH) * rr) * HH { break; }
+	}
+	if BT == -1 {
+		RS[0] = inf();
+		RS[1] = 0.0;
+		RS[2] = 0.0;
+		RS[3] = 0.0;
+		return;
+	}
+	let d = sqrt(BEST);
+	var dx real[3] = [0.0; 3];
+	var pn real[3] = [0.0; 3];
+	for k in 3 {
+		dx[k] = x[k] - BC[k];
+		pn[k] = 0.0;
+		for q in 3 {
+			pn[k] += BW[q] * VN[(IDX[3 * BT + q] as int) * 3 + k];
+		}
+	}
+	let inside = ((dx[0] * pn[0] + dx[1] * pn[1]) + dx[2] * pn[2]) < 0.0;
+	let face = BW[0] > 1e-6 && BW[1] > 1e-6 && BW[2] > 1e-6;
+	for k in 3 {
+		if face || d < 1e-9 {
+			RS[1 + k] = FN[3 * BT + k];
+		} else {
+			let s = if inside { -dx[k] } else { dx[k] };
+			RS[1 + k] = s / d;
+		}
+	}
+	RS[0] = if inside { -d } else { d };
+}

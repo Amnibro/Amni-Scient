@@ -813,8 +813,11 @@ fn u2(m int, j real) real {
 	}
 	k * (1.0 - nl_log(j)) / (j * j)
 }
-=== -5657ccb7a638bb7d
-fn defgrad(e int, g int, F real[:]) real {
+=== 5727e8ffad4e3355
+var NZI i32[>..];
+var NZC i32[>..];
+var DGR real = 0.0;
+fn defgrad(e int, g int, F real[:]) {
 	let base int = e * NG;
 	for i in 9 {
 		F[i] = 0.0;
@@ -837,7 +840,7 @@ fn defgrad(e int, g int, F real[:]) real {
 	if D == 2 {
 		F[8] = if AXI == 1 { r / R0[base + g] } else { 1.0 };
 	}
-	r
+	DGR = r;
 }
 export fn el_elems(wantk i32, commit i32) real {
 	for i in RR.len {
@@ -849,8 +852,12 @@ export fn el_elems(wantk i32, commit i32) real {
 		}
 	}
 	let m int = NEN * D;
-	var z = 0.0;
-	var minJ = 1.0 / z;
+	NZI.clear();
+	NZI.resize(m * NC, 0);
+	NZC.clear();
+	NZC.resize(m, 0);
+	let zero = 0.0;
+	var minJ = 1.0 / zero;
 	let eps = 1e-7;
 	for e in NE {
 		let mt int = EMAT[e];
@@ -858,10 +865,10 @@ export fn el_elems(wantk i32, commit i32) real {
 		var v = 0.0;
 		for g in NG {
 			var F = FS[g * 9..g * 9 + 9];
-			let r = defgrad(e, g, F);
+			defgrad(e, g, F);
 			let J = inv3(F, FI);
 			JS[g] = J;
-			RS[g] = r;
+			RS[g] = DGR;
 			DVS[g] = J * DV[base + g];
 			v += DVS[g];
 			if J < minJ {
@@ -908,7 +915,7 @@ export fn el_elems(wantk i32, commit i32) real {
 			SG[7] = TAU[4] / J;
 			SG[2] = TAU[5] / J;
 			SG[6] = TAU[5] / J;
-			for i in m * NC {
+			for i in WG.len {
 				WG[i] = 0.0;
 			}
 			for a in NEN {
@@ -923,15 +930,25 @@ export fn el_elems(wantk i32, commit i32) real {
 				}
 			}
 			for r in m {
-				var s = 0.0;
-				var t = 0.0;
+				var cnt i32 = 0;
 				for c in NC {
 					let w = WG[r * NC + c];
 					if w != 0.0 && w == w {
-						s += w * SG[COMPS[c]];
-						if COMPS[c] % 4 == 0 {
-							t += w;
-						}
+						NZI[r * NC + cnt] = c as i32;
+						cnt += 1;
+					}
+				}
+				NZC[r] = cnt;
+			}
+			for r in m {
+				var s = 0.0;
+				var t = 0.0;
+				for u in NZC[r] {
+					let c int = NZI[r * NC + u];
+					let w = WG[r * NC + c];
+					s += w * SG[COMPS[c]];
+					if COMPS[c] % 4 == 0 {
+						t += w;
 					}
 				}
 				FE[r] += s * DVS[g];
@@ -975,23 +992,16 @@ export fn el_elems(wantk i32, commit i32) real {
 					let pq int = COMPS[ca];
 					let p int = pq / 3;
 					let q int = pq % 3;
-					var val = (T9[pq] - T0[pq]) / (eps * J);
-					if q == k {
-						val -= SG[3 * p + l];
-					} else {
-						val -= 0.0;
-					}
-					AM[ca * NC + cb] = val;
+					let sub = if q == k { SG[3 * p + l] } else { 0.0 };
+					AM[ca * NC + cb] = (T9[pq] - T0[pq]) / (eps * J) - sub;
 				}
 			}
 			for r in m {
 				for ca in NC {
 					var s = 0.0;
-					for cb in NC {
-						let w = WG[r * NC + cb];
-						if w != 0.0 && w == w {
-							s += AM[ca * NC + cb] * w;
-						}
+					for u in NZC[r] {
+						let cb int = NZI[r * NC + u];
+						s += AM[ca * NC + cb] * WG[r * NC + cb];
 					}
 					HG[r * NC + ca] = s;
 				}
@@ -999,11 +1009,9 @@ export fn el_elems(wantk i32, commit i32) real {
 			for r in m {
 				for c in m {
 					var s = 0.0;
-					for ca in NC {
-						let w = WG[r * NC + ca];
-						if w != 0.0 && w == w {
-							s += w * HG[c * NC + ca];
-						}
+					for u in NZC[r] {
+						let ca int = NZI[r * NC + u];
+						s += WG[r * NC + ca] * HG[c * NC + ca];
 					}
 					KE[r * m + c] += s * DVS[g];
 				}
@@ -1024,8 +1032,7 @@ export fn el_elems(wantk i32, commit i32) real {
 			}
 			for a in NEN {
 				for b in NEN {
-					let emp int = EM[(e * NEN + a) * NEN + b];
-					let p int = emp * D * D;
+					let p int = EM[(e * NEN + a) * NEN + b] * D * D;
 					for i in D {
 						for j in D {
 							KV[p + i * D + j] += 0.5 * (KE[(a * D + i) * m + b * D + j] + KE[(b * D + j) * m + a * D + i]);
