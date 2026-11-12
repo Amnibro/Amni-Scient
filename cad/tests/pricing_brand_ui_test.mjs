@@ -5,7 +5,7 @@ import {serve,chrome,tally,sleep} from './shop_ui_lib.mjs';
 const {ok,done}=tally(),{srv,base}=await serve(),br=await chrome(),shots=process.argv[2];
 const c=await br.newContext({viewport:{width:1280,height:900}}),p=await c.newPage(),errs=[],sent=[];p.on('pageerror',e=>errs.push(e.message));
 let reply={url:'about:blank#stripe'};
-await p.route('https://amni-cad-pro.amnibro7.workers.dev/**',async r=>{sent.push(JSON.parse(r.request().postData()||'{}'));const bad=reply.error;await r.fulfill({status:bad?400:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(reply)});});
+await p.route('**/api/pro/**',async r=>{sent.push(JSON.parse(r.request().postData()||'{}'));const bad=reply.error;await r.fulfill({status:bad?400:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(reply)});});
 await p.goto(base.replace(/cad\/$/,'')+'amni-cad.html#pro');await sleep(600);
 ok(await p.isVisible('#branding')&&/\+\$10/.test(await p.textContent('#branding')),'branding add-on card shows the +$10/mo price');ok(/\+\$100/.test(await p.textContent('#branding')),'branding add-on card shows the +$100/yr yearly price');
 ok(!(await p.isChecked('#pro-brand'))&&!(await p.isDisabled('[data-pro-plan="year"]')),'off by default; yearly plans available');
