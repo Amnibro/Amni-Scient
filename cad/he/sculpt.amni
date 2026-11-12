@@ -1,0 +1,2963 @@
+fn main() {
+}
+extern fn sc_view_f64(id i32, xs real[:]) = "sc_view_f64";
+extern fn sc_view_f32(id i32, xs f32[:]) = "sc_view_f32";
+extern fn sc_view_i32(id i32, xs i32[:]) = "sc_view_i32";
+extern fn sc_view_u8(id i32, xs u8[:]) = "sc_view_u8";
+extern fn sc_cos(x real) real = "sc_cos";
+extern fn sc_sin(x real) real = "sc_sin";
+extern fn sc_rand() real = "sc_rand";
+extern fn sc_vcp(d i32, s i32) = "sc_vcp";
+extern fn sc_vmid(d i32, a i32, b i32) = "sc_vmid";
+extern fn sc_fcp(d i32, s i32) = "sc_fcp";
+extern fn sc_grow(tri i32, cap i32) = "sc_grow";
+var DYN int = 0;
+var NV int = 0;
+var NT int = 0;
+var CAPV int = 0;
+var CAPT int = 0;
+var NN int = 0;
+var CAPN int = 0;
+var QID int = 0;
+var DQ int = 0;
+var AK int = 0;
+var LFG int = 0;
+var SID int = 0;
+var FA int = 0;
+var OPN int = 0;
+var HASM int = 0;
+var HASS int = 0;
+var SHOW int = 0;
+var CAV int = 0;
+var CAT int = 0;
+var CAF int = 0;
+var HIDC int = 0;
+var GALL int = 0;
+var NF int = 0;
+var VEP int = 0;
+var TOP int = 0;
+var STL int = 0;
+var RPG int = 0;
+var U0 real = 0.0;
+var U1 real = 0.0;
+var U2 real = 0.0;
+var Q0 real = 0.0;
+var Q1 real = 0.0;
+var Q2 real = 0.0;
+var CO real[>..];
+var ORIG real[>..];
+var RS real[>..];
+var SNP real[>..];
+var TMP real[>..];
+var EL real[>..];
+var SF real[>..];
+var VN f32[>..];
+var POS f32[>..];
+var COL f32[>..];
+var MASK f32[>..];
+var ON f32[>..];
+var LAY f32[>..];
+var TN f32[>..];
+var NMIN f32[>..];
+var NMAX f32[>..];
+var QD f32[>..];
+var QW f32[>..];
+var CEN f32[>..];
+var SS f32[>..];
+var ST i32[>..];
+var VLEAF i32[>..];
+var VPOS i32[>..];
+var DS i32[>..];
+var NS i32[>..];
+var KS i32[>..];
+var VC i32[>..];
+var TRI i32[>..];
+var IDX i32[>..];
+var TLEAF i32[>..];
+var TPOS i32[>..];
+var TQ i32[>..];
+var OO i32[>..];
+var TSET i32[>..];
+var NL i32[>..];
+var NP i32[>..];
+var LFS i32[>..];
+var RPM i32[>..];
+var LTS i32[>..];
+var LTN i32[>..];
+var LTC i32[>..];
+var LVS i32[>..];
+var LVN i32[>..];
+var LVC i32[>..];
+var LTP i32[>..];
+var LVP i32[>..];
+var QV i32[>..];
+var STK i32[>..];
+var FB i32[>..];
+var NB i32[>..];
+var TB i32[>..];
+var LCV i32[>..];
+var LCT i32[>..];
+var LCF i32[>..];
+var LGV i32[>..];
+var LGT i32[>..];
+var MV i32[>..];
+var LFL i32[>..];
+var CHK i32[>..];
+var FSET i32[>..];
+var T2F i32[>..];
+var NBO i32[>..];
+var NBA i32[>..];
+var VTO i32[>..];
+var VT i32[>..];
+var FOI i32[>..];
+var CVI i32[>..];
+var LEI i32[>..];
+var IDS i32[>..];
+var BS i32[>..];
+var EE i32[>..];
+var QL i32[>..];
+var FL i32[>..];
+var UTL i32[>..];
+var VS i32[>..];
+var AQ i32[>..];
+var RPL i32[>..];
+var RB i32[>..];
+var RD i32[>..];
+var FBA i32[>..];
+var FDA i32[>..];
+var WL i32[>..];
+var SI i32[>..];
+var VH u8[>..];
+var VCHG u8[>..];
+var VGPU u8[>..];
+var VDEAD u8[>..];
+var VLOCK u8[>..];
+var TCHG u8[>..];
+var TGPU u8[>..];
+var TH u8[>..];
+var TDEAD u8[>..];
+var TF u8[>..];
+var FCHG u8[>..];
+var SB u8[>..];
+fn rv(x f32) real { x as real }
+fn zr(xs real[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, 0.0);
+}
+fn zr(xs f32[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, 0.0);
+}
+fn zr(xs i32[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, 0);
+}
+fn zr(xs u8[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, 0);
+}
+fn lt_at(nd int, i int) int { LTP[LTS[nd] + i] }
+fn lv_at(nd int, i int) int { LVP[LVS[nd] + i] }
+fn lt_set(nd int, i int, x int) { LTP[LTS[nd] + i] = x as i32; }
+fn lv_set(nd int, i int, x int) { LVP[LVS[nd] + i] = x as i32; }
+extern fn c_sqrt(x real) real = "sqrt";
+extern fn c_ceil(x real) real = "ceil";
+fn bad(x real) bool { x == 0.0 || x != x }
+fn inf() real { var z = 0.0; 1.0 / z }
+fn nan() real { var z = 0.0; z / z }
+fn jmin(a real, b real) real {
+	if a != a || b != b { return a + b; }
+	if a == b {
+		if 1.0 / a < 0.0 { return a; }
+		return b;
+	}
+	if a < b { a } else { b }
+}
+fn jmax(a real, b real) real {
+	if a != a || b != b { return a + b; }
+	if a == b {
+		if 1.0 / a < 0.0 { return b; }
+		return a;
+	}
+	if a > b { a } else { b }
+}
+fn hyp3(a real, b real, c real) real {
+	var mx = 0.0;
+	if a == a && abs(a) > mx { mx = abs(a); }
+	if b == b && abs(b) > mx { mx = abs(b); }
+	if c == c && abs(c) > mx { mx = abs(c); }
+	if mx > 1.7976931348623157e308 { return mx; }
+	if a != a || b != b || c != c { return a + b + c; }
+	if mx == 0.0 { return 0.0; }
+	var sum = 0.0;
+	var comp = 0.0;
+	for v in [abs(a), abs(b), abs(c)] {
+		let nv = v / mx;
+		let su = nv * nv - comp;
+		let pre = sum + su;
+		comp = (pre - sum) - su;
+		sum = pre;
+	}
+	c_sqrt(sum) * mx
+}
+fn nx(c int) int { if c % 3 == 2 { c - 2 } else { c + 1 } }
+fn pv(c int) int { if c % 3 == 0 { c + 2 } else { c - 1 } }
+fn nrm(a real, b real, c real) {
+	var l = hyp3(a, b, c);
+	if bad(l) { l = 1.0; }
+	U0 = a / l;
+	U1 = b / l;
+	U2 = c / l;
+}
+fn perp(n0 real, n1 real, n2 real) {
+	var e0 = 0.0;
+	var e1 = 0.0;
+	var e2 = 0.0;
+	if abs(n0) < 0.9 { e0 = 1.0; } else { e1 = 1.0; }
+	let x = n1 * e2 - n2 * e1;
+	let y = n2 * e0 - n0 * e2;
+	let z = n0 * e1 - n1 * e0;
+	nrm(x, y, z);
+}
+fn dot6(a0 real, a1 real, a2 real, b0 real, b1 real, b2 real) real { (a0 * b0 + a1 * b1) + a2 * b2 }
+fn gw(xs real[>..]&, m int) {
+	if m > xs.cap {
+		SF.clear();
+		SF.reserve(xs.len);
+		SF.append(xs);
+		xs.clear();
+		xs.reserve((m + m / 2) + 64);
+		xs.append(SF);
+		SF.clear();
+	}
+	if m > xs.len { xs.resize(m, 0.0); }
+}
+fn gw(xs f32[>..]&, m int) {
+	if m > xs.cap {
+		SS.clear();
+		SS.reserve(xs.len);
+		SS.append(xs);
+		xs.clear();
+		xs.reserve((m + m / 2) + 64);
+		xs.append(SS);
+		SS.clear();
+	}
+	if m > xs.len { xs.resize(m, 0.0); }
+}
+fn gw(xs i32[>..]&, m int) {
+	if m > xs.cap {
+		SI.clear();
+		SI.reserve(xs.len);
+		SI.append(xs);
+		xs.clear();
+		xs.reserve((m + m / 2) + 64);
+		xs.append(SI);
+		SI.clear();
+	}
+	if m > xs.len { xs.resize(m, 0); }
+}
+fn gw(xs u8[>..]&, m int) {
+	if m > xs.cap {
+		SB.clear();
+		SB.reserve(xs.len);
+		SB.append(xs);
+		xs.clear();
+		xs.reserve((m + m / 2) + 64);
+		xs.append(SB);
+		SB.clear();
+	}
+	if m > xs.len { xs.resize(m, 0); }
+}
+fn cw(xs i32[>..]&, m int) {
+	if m > xs.cap {
+		SI.clear();
+		SI.reserve(xs.len);
+		SI.append(xs);
+		xs.clear();
+		xs.reserve(m);
+		xs.append(SI);
+		SI.clear();
+	}
+}
+fn cw(xs real[>..]&, m int) {
+	if m > xs.cap {
+		SF.clear();
+		SF.reserve(xs.len);
+		SF.append(xs);
+		xs.clear();
+		xs.reserve(m);
+		xs.append(SF);
+		SF.clear();
+	}
+}
+fn pi(xs i32[>..]&, x int) {
+	if xs.len >= xs.cap { cw(xs, 2 * xs.len + 64); }
+	xs.push(x as i32);
+}
+fn pf(xs real[>..]&, x real) {
+	if xs.len >= xs.cap { cw(xs, 2 * xs.len + 64); }
+	xs.push(x);
+}
+fn views() {
+	sc_view_f64(1, CO);
+	sc_view_f64(9, ORIG);
+	sc_view_f64(50, RS);
+	sc_view_f32(2, VN);
+	sc_view_f32(3, POS);
+	sc_view_f32(4, COL);
+	sc_view_f32(5, MASK);
+	sc_view_f32(10, ON);
+	sc_view_f32(11, LAY);
+	sc_view_f32(25, TN);
+	sc_view_f32(38, NMIN);
+	sc_view_f32(39, NMAX);
+	sc_view_f32(44, QD);
+	sc_view_f32(45, QW);
+	sc_view_i32(8, ST);
+	sc_view_i32(12, VLEAF);
+	sc_view_i32(13, VPOS);
+	sc_view_i32(14, DS);
+	sc_view_i32(15, NS);
+	sc_view_i32(17, KS);
+	sc_view_i32(20, VC);
+	sc_view_i32(23, TRI);
+	sc_view_i32(24, IDX);
+	sc_view_i32(27, TLEAF);
+	sc_view_i32(28, TPOS);
+	sc_view_i32(29, TQ);
+	sc_view_i32(33, OO);
+	sc_view_i32(37, TSET);
+	sc_view_i32(40, NL);
+	sc_view_i32(41, NP);
+	sc_view_i32(42, LFS);
+	sc_view_i32(43, QV);
+	sc_view_i32(47, FSET);
+	sc_view_i32(48, T2F);
+	sc_view_i32(51, LCV);
+	sc_view_i32(52, LCT);
+	sc_view_i32(53, LCF);
+	sc_view_i32(54, LGV);
+	sc_view_i32(55, LGT);
+	sc_view_i32(57, MV);
+	sc_view_i32(58, LFL);
+	sc_view_i32(59, CHK);
+	sc_view_i32(70, FOI);
+	sc_view_i32(71, CVI);
+	sc_view_i32(72, LEI);
+	sc_view_i32(73, NB);
+	sc_view_i32(74, FB);
+	sc_view_i32(75, TB);
+	sc_view_i32(77, LTS);
+	sc_view_i32(78, LTN);
+	sc_view_i32(79, LTC);
+	sc_view_i32(80, LVS);
+	sc_view_i32(81, LVN);
+	sc_view_i32(82, LVC);
+	sc_view_i32(83, LTP);
+	sc_view_i32(84, LVP);
+	sc_view_i32(85, NBO);
+	sc_view_i32(87, NBA);
+	sc_view_i32(88, VTO);
+	sc_view_i32(89, VT);
+	sc_view_u8(7, VH);
+	sc_view_u8(18, VCHG);
+	sc_view_u8(19, VGPU);
+	sc_view_u8(21, VDEAD);
+	sc_view_u8(22, VLOCK);
+	sc_view_u8(30, TCHG);
+	sc_view_u8(31, TGPU);
+	sc_view_u8(32, TH);
+	sc_view_u8(34, TDEAD);
+	sc_view_u8(35, TF);
+	sc_view_u8(49, FCHG);
+	VEP += 1;
+}
+export fn sc_views() { views(); }
+export fn sc_g(k i32) i32 {
+	match k {
+		0 => NV as i32,
+		1 => NT as i32,
+		2 => CAPV as i32,
+		3 => CAPT as i32,
+		4 => NN as i32,
+		5 => CAPN as i32,
+		7 => QID as i32,
+		8 => DQ as i32,
+		9 => AK as i32,
+		10 => LFG as i32,
+		11 => SID as i32,
+		12 => FA as i32,
+		13 => OPN as i32,
+		14 => HASM as i32,
+		15 => HASS as i32,
+		17 => SHOW as i32,
+		18 => CAV as i32,
+		19 => CAT as i32,
+		20 => CAF as i32,
+		21 => HIDC as i32,
+		22 => GALL as i32,
+		23 => NF as i32,
+		24 => VEP as i32,
+		25 => LCV.len as i32,
+		27 => LCT.len as i32,
+		28 => LCF.len as i32,
+		29 => LGV.len as i32,
+		30 => LGT.len as i32,
+		31 => MV.len as i32,
+		32 => LFL.len as i32,
+		33 => CHK.len as i32,
+		_ => 0,
+	}
+}
+export fn sc_s(k i32, x i32) {
+	match k {
+		0 => { NV = x; },
+		1 => { NT = x; },
+		2 => { CAPV = x; },
+		3 => { CAPT = x; },
+		4 => { NN = x; },
+		5 => { CAPN = x; },
+		7 => { QID = x; },
+		8 => { DQ = x; },
+		9 => { AK = x; },
+		10 => { LFG = x; },
+		11 => { SID = x; },
+		12 => { FA = x; },
+		13 => { OPN = x; },
+		14 => { HASM = x; },
+		15 => { HASS = x; },
+		17 => { SHOW = x; },
+		18 => { CAV = x; },
+		19 => { CAT = x; },
+		20 => { CAF = x; },
+		21 => { HIDC = x; },
+		22 => { GALL = x; },
+		23 => { NF = x; },
+		24 => { VEP = x; },
+		_ => {},
+	}
+}
+export fn sc_lclear(k i32) {
+	match k {
+		0 => { LCV.clear(); },
+		1 => { LCT.clear(); },
+		2 => { LCF.clear(); },
+		3 => { LGV.clear(); },
+		4 => { LGT.clear(); },
+		5 => { MV.clear(); },
+		7 => { LFL.clear(); },
+		_ => {},
+	}
+}
+export fn sc_lpush(k i32, x i32) {
+	match k {
+		0 => { pi(LCV, x); },
+		1 => { pi(LCT, x); },
+		2 => { pi(LCF, x); },
+		3 => { pi(LGV, x); },
+		4 => { pi(LGT, x); },
+		5 => { pi(MV, x); },
+		7 => { pi(LFL, x); },
+		_ => {},
+	}
+}
+export fn sc_alloc(dy i32, nv i32, nt i32) {
+	let nvi int = nv;
+	let nti int = nt;
+	DYN = dy;
+	if dy == 1 {
+		CAPV = (c_ceil((nvi as real) * 1.3) as int) + 70;
+		CAPT = (c_ceil((nti as real) * 1.3) as int) + 70;
+	} else {
+		CAPV = max(1, nvi);
+		CAPT = max(1, nti);
+	}
+	zr(CO, 3 * CAPV);
+	zr(VN, 3 * CAPV);
+	zr(POS, 3 * CAPV);
+	zr(COL, 3 * CAPV);
+	zr(MASK, CAPV);
+	zr(VH, CAPV);
+	zr(ST, CAPV);
+	zr(ORIG, 3 * CAPV);
+	zr(ON, 3 * CAPV);
+	zr(LAY, CAPV);
+	zr(VLEAF, CAPV);
+	zr(VPOS, CAPV);
+	zr(DS, CAPV);
+	zr(NS, CAPV);
+	zr(KS, CAPV);
+	zr(VCHG, CAPV);
+	zr(VGPU, CAPV);
+	zr(TRI, 3 * CAPT);
+	zr(IDX, 3 * CAPT);
+	zr(TN, 3 * CAPT);
+	zr(TLEAF, CAPT);
+	zr(TPOS, CAPT);
+	zr(TQ, CAPT);
+	zr(TCHG, CAPT);
+	zr(TGPU, CAPT);
+	zr(TH, CAPT);
+	if dy == 1 {
+		zr(VC, CAPV);
+		zr(VDEAD, CAPV);
+		zr(VLOCK, CAPV);
+		zr(OO, 3 * CAPT);
+		zr(TDEAD, CAPT);
+		zr(TF, CAPT);
+		zr(TSET, CAPT);
+	} else {
+		VC.clear();
+		VDEAD.clear();
+		VLOCK.clear();
+		OO.clear();
+		TDEAD.clear();
+		TF.clear();
+		TSET.clear();
+	}
+	for i in 0..VLEAF.len { VLEAF[i] = -1; }
+	for i in 0..TLEAF.len { TLEAF[i] = -1; }
+	if dy == 1 {
+		for i in 0..VC.len { VC[i] = -1; }
+	}
+	NV = 0;
+	NT = 0;
+	NN = 0;
+	CAPN = 0;
+	QID = 0;
+	DQ = 0;
+	AK = 0;
+	SID = 0;
+	FA = 0;
+	OPN = 0;
+	HASM = 0;
+	HASS = 0;
+	SHOW = 0;
+	CAV = 0;
+	CAT = 0;
+	CAF = 0;
+	HIDC = 0;
+	GALL = 0;
+	NF = 0;
+	TOP = 0;
+	STL = 0;
+	RPG = 0;
+	LFG = 1;
+	zr(QV, 1100);
+	zr(STK, 1100);
+	zr(FB, 1100);
+	zr(NB, 1100);
+	zr(TB, 1100);
+	zr(QD, 1100);
+	zr(QW, 1100);
+	zr(RS, 16);
+	LCV.clear();
+	LCV.reserve(CAPV);
+	LGV.clear();
+	LGV.reserve(CAPV);
+	MV.clear();
+	MV.reserve(CAPV);
+	LCT.clear();
+	LCT.reserve(CAPT);
+	LGT.clear();
+	LGT.reserve(CAPT);
+	LCF.clear();
+	LFL.clear();
+	views();
+}
+fn grow(tri bool, n int) {
+	let cap = if tri { CAPT } else { CAPV };
+	if n <= cap { return; }
+	let c = max(n, (c_ceil((cap as real) * 1.5) as int) + 70);
+	if !tri {
+		if TOP == 1 && STL == 0 {
+			SNP.clear();
+			SNP.reserve(CO.len);
+			SNP.append(CO);
+			STL = 1;
+		}
+		gw(CO, 3 * c);
+		gw(VN, 3 * c);
+		gw(POS, 3 * c);
+		gw(COL, 3 * c);
+		gw(MASK, c);
+		gw(VH, c);
+		gw(ST, c);
+		gw(ORIG, 3 * c);
+		gw(ON, 3 * c);
+		gw(LAY, c);
+		gw(VLEAF, c);
+		gw(VPOS, c);
+		gw(DS, c);
+		gw(NS, c);
+		gw(KS, c);
+		gw(VCHG, c);
+		gw(VGPU, c);
+		if DYN == 1 {
+			gw(VC, c);
+			gw(VDEAD, c);
+			gw(VLOCK, c);
+		}
+		for i in cap..c { VLEAF[i] = -1; }
+		if DYN == 1 {
+			for i in cap..c { VC[i] = -1; }
+		}
+		CAPV = c;
+		cw(LCV, c);
+		cw(LGV, c);
+		cw(MV, c);
+	} else {
+		gw(TRI, 3 * c);
+		gw(IDX, 3 * c);
+		gw(TN, 3 * c);
+		gw(TLEAF, c);
+		gw(TPOS, c);
+		gw(TQ, c);
+		gw(TCHG, c);
+		gw(TGPU, c);
+		gw(TH, c);
+		if DYN == 1 {
+			gw(OO, 3 * c);
+			gw(TDEAD, c);
+			gw(TF, c);
+			gw(TSET, c);
+		}
+		for i in cap..c { TLEAF[i] = -1; }
+		CAPT = c;
+		cw(LCT, c);
+		cw(LGT, c);
+	}
+	sc_grow(if tri { 1 } else { 0 }, c as i32);
+}
+export fn sc_static(nf i32) {
+	NF = nf;
+	zr(FSET, nf);
+	zr(FCHG, nf);
+	zr(T2F, NT);
+	LCF.clear();
+	LCF.reserve(nf);
+	views();
+}
+export fn sc_csrin(nfo i32, ncv i32, nle i32) {
+	zr(FOI, nfo);
+	zr(CVI, ncv);
+	zr(LEI, nle);
+	views();
+}
+export fn sc_csr() {
+	var cnt i32[>..] = [];
+	cnt.reserve(NV + 1);
+	cnt.resize(NV + 1, 0);
+	for f in 0..NF {
+		let a int = FOI[f];
+		let b int = FOI[f + 1];
+		if b - a < 3 { continue; }
+		for i in a..b {
+			let j = if i + 1 < b { i + 1 } else { a };
+			let ci int = CVI[i];
+			let cj int = CVI[j];
+			cnt[ci + 1] += 1;
+			cnt[cj + 1] += 1;
+		}
+	}
+	var li = 0;
+	while li + 1 < LEI.len {
+		let x int = LEI[li];
+		let y int = LEI[li + 1];
+		cnt[x + 1] += 1;
+		cnt[y + 1] += 1;
+		li += 2;
+	}
+	for v in 0..NV { cnt[v + 1] += cnt[v]; }
+	zr(NBA, cnt[NV]);
+	var w i32[>..] = [];
+	w.reserve(NV);
+	w.append(cnt[0..NV]);
+	fn add(u int, x int) {
+		let p int = w[u];
+		NBA[p] = x as i32;
+		w[u] += 1;
+	}
+	for f in 0..NF {
+		let a int = FOI[f];
+		let b int = FOI[f + 1];
+		if b - a < 3 { continue; }
+		for i in a..b {
+			let j = if i + 1 < b { i + 1 } else { a };
+			let u int = CVI[i];
+			let x int = CVI[j];
+			add(u, x);
+			add(x, u);
+		}
+	}
+	var lj = 0;
+	while lj + 1 < LEI.len {
+		let x int = LEI[lj];
+		let y int = LEI[lj + 1];
+		add(x, y);
+		add(y, x);
+		lj += 2;
+	}
+	zr(NBO, NV + 1);
+	var m = 0;
+	for v in 0..NV {
+		let s int = cnt[v];
+		let e int = cnt[v + 1];
+		sort(NBA[s..e]) { a, b => a < b };
+		NBO[v] = m as i32;
+		for i in s..e {
+			if i == s || NBA[i] != NBA[i - 1] {
+				NBA[m] = NBA[i];
+				m += 1;
+			}
+		}
+	}
+	NBO[NV] = m as i32;
+	NBA.resize(m, 0);
+	zr(VTO, NV + 1);
+	for i in 0..(3 * NT) {
+		let x int = TRI[i];
+		VTO[x + 1] += 1;
+	}
+	for v in 0..NV { VTO[v + 1] += VTO[v]; }
+	zr(VT, 3 * NT);
+	var q i32[>..] = [];
+	q.reserve(NV);
+	q.append(VTO[0..NV]);
+	for i in 0..(3 * NT) {
+		let x int = TRI[i];
+		let p int = q[x];
+		VT[p] = (i / 3) as i32;
+		q[x] += 1;
+	}
+	FOI.clear();
+	CVI.clear();
+	LEI.clear();
+	views();
+}
+fn ltnew(nd int, cnt int) {
+	LTS[nd] = LTP.len as i32;
+	LTN[nd] = cnt as i32;
+	LTC[nd] = cnt as i32;
+	gw(LTP, LTP.len + cnt);
+}
+fn lvnew(nd int) {
+	LVS[nd] = LVP.len as i32;
+	LVN[nd] = 0;
+	LVC[nd] = 0;
+}
+fn ltpush(nd int, x int) {
+	if LTN[nd] == LTC[nd] {
+		let cc int = LTC[nd];
+		let nc = max(8, 2 * cc);
+		if LTS[nd] + cc == LTP.len {
+			gw(LTP, LTP.len + (nc - cc));
+		} else {
+			let s = LTP.len;
+			gw(LTP, s + nc);
+			let cn int = LTN[nd];
+			let st int = LTS[nd];
+			for i in 0..cn { LTP[s + i] = LTP[st + i]; }
+			LTS[nd] = s as i32;
+		}
+		LTC[nd] = nc as i32;
+	}
+	LTP[LTS[nd] + LTN[nd]] = x as i32;
+	LTN[nd] += 1;
+}
+fn lvpush(nd int, x int) {
+	if LVN[nd] == LVC[nd] {
+		let cc int = LVC[nd];
+		let nc = max(8, 2 * cc);
+		if LVS[nd] + cc == LVP.len {
+			gw(LVP, LVP.len + (nc - cc));
+		} else {
+			let s = LVP.len;
+			gw(LVP, s + nc);
+			let cn int = LVN[nd];
+			let st int = LVS[nd];
+			for i in 0..cn { LVP[s + i] = LVP[st + i]; }
+			LVS[nd] = s as i32;
+		}
+		LVC[nd] = nc as i32;
+	}
+	LVP[LVS[nd] + LVN[nd]] = x as i32;
+	LVN[nd] += 1;
+}
+fn node(p int) int {
+	let n = NN;
+	NN += 1;
+	if n >= CAPN {
+		let c = (c_ceil((CAPN as real) * 1.5) as int) + 70;
+		gw(NMIN, 3 * c);
+		gw(NMAX, 3 * c);
+		gw(NL, c);
+		gw(NP, c);
+		gw(LFS, c);
+		gw(RPM, c);
+		gw(LTS, c);
+		gw(LTN, c);
+		gw(LTC, c);
+		gw(LVS, c);
+		gw(LVN, c);
+		gw(LVC, c);
+		CAPN = c;
+	}
+	NP[n] = p as i32;
+	NL[n] = -1;
+	LFS[n] = 0;
+	LTC[n] = -1;
+	LVC[n] = -1;
+	LTN[n] = 0;
+	LVN[n] = 0;
+	n
+}
+fn leafB(nd int) {
+	var lo real[3] = [1e30; 3];
+	var hi real[3] = [-1e30; 3];
+	fn ad(v int) {
+		for k in 0..3 {
+			let x = CO[3 * v + k];
+			if x < lo[k] { lo[k] = x; }
+			if x > hi[k] { hi[k] = x; }
+		}
+	}
+	let tn int = LTN[nd];
+	for i in 0..tn {
+		let t int = lt_at(nd, i);
+		ad(TRI[3 * t]);
+		ad(TRI[3 * t + 1]);
+		ad(TRI[3 * t + 2]);
+	}
+	let vn int = LVN[nd];
+	for i in 0..vn { ad(lv_at(nd, i)); }
+	for k in 0..3 {
+		NMIN[3 * nd + k] = lo[k] as f32;
+		NMAX[3 * nd + k] = hi[k] as f32;
+	}
+}
+fn nodeB(nd int) {
+	let l int = 3 * NL[nd];
+	let r = l + 3;
+	let o = 3 * nd;
+	for k in 0..3 {
+		NMIN[o + k] = jmin(rv(NMIN[l + k]), rv(NMIN[r + k])) as f32;
+		NMAX[o + k] = jmax(rv(NMAX[l + k]), rv(NMAX[r + k])) as f32;
+	}
+}
+fn lfMark(nd int) {
+	if nd >= 0 && LFS[nd] != LFG {
+		LFS[nd] = LFG as i32;
+		pi(LFL, nd);
+	}
+}
+fn ownV(v int, lf int) {
+	VLEAF[v] = lf as i32;
+	VPOS[v] = LVN[lf];
+	lvpush(lf, v);
+	lfMark(lf);
+}
+fn rmT(t int) {
+	let lf int = TLEAF[t];
+	if lf < 0 { return; }
+	let i int = TPOS[t];
+	LTN[lf] -= 1;
+	let last = lt_at(lf, LTN[lf]);
+	if last != t {
+		lt_set(lf, i, last);
+		TPOS[last] = i as i32;
+	}
+	TLEAF[t] = -1;
+	lfMark(lf);
+}
+fn rmV(v int) {
+	let lf int = VLEAF[v];
+	if lf < 0 { return; }
+	let i int = VPOS[v];
+	LVN[lf] -= 1;
+	let last = lv_at(lf, LVN[lf]);
+	if last != v {
+		lv_set(lf, i, last);
+		VPOS[last] = i as i32;
+	}
+	VLEAF[v] = -1;
+	lfMark(lf);
+}
+fn ck(i int, ax int) real {
+	let t int = IDS[i];
+	rv(CEN[3 * t + ax])
+}
+fn sel(lo int, hi int, k int, ax int) {
+	var l = lo;
+	var h = hi - 1;
+	while h > l {
+		let p = ck((l + h) / 2, ax);
+		var i = l;
+		var j = h;
+		while i <= j {
+			while ck(i, ax) < p { i += 1; }
+			while ck(j, ax) > p { j -= 1; }
+			if i <= j {
+				let w = IDS[i];
+				IDS[i] = IDS[j];
+				IDS[j] = w;
+				i += 1;
+				j -= 1;
+			}
+		}
+		if k <= j {
+			h = j;
+		} else if k >= i {
+			l = i;
+		} else {
+			break;
+		}
+	}
+}
+export fn sc_bvh() {
+	zr(CEN, 3 * max(1, NT));
+	zr(IDS, NT);
+	var m = 0;
+	for t in 0..NT {
+		if DYN == 1 && TDEAD[t] != 0 { continue; }
+		IDS[m] = t as i32;
+		m += 1;
+		let a int = 3 * TRI[3 * t];
+		let b int = 3 * TRI[3 * t + 1];
+		let c int = 3 * TRI[3 * t + 2];
+		for k in 0..3 {
+			CEN[3 * t + k] = (((CO[a + k] + CO[b + k]) + CO[c + k]) / 3.0) as f32;
+		}
+	}
+	CAPN = max(7, 4 * ((m + 511) / 512) + 7);
+	NN = 0;
+	zr(NMIN, 3 * CAPN);
+	zr(NMAX, 3 * CAPN);
+	zr(NL, CAPN);
+	zr(NP, CAPN);
+	zr(LFS, CAPN);
+	zr(RPM, CAPN);
+	zr(LTS, CAPN);
+	zr(LTN, CAPN);
+	zr(LTC, CAPN);
+	zr(LVS, CAPN);
+	zr(LVN, CAPN);
+	zr(LVC, CAPN);
+	LTP.clear();
+	LVP.clear();
+	for i in 0..VLEAF.len { VLEAF[i] = -1; }
+	BS.clear();
+	let r0 = node(-1);
+	pi(BS, r0);
+	pi(BS, 0);
+	pi(BS, m);
+	while BS.len > 0 {
+		let e int = BS.pop();
+		let s int = BS.pop();
+		let nd int = BS.pop();
+		if e - s <= 512 {
+			ltnew(nd, e - s);
+			for i in 0..(e - s) { lt_set(nd, i, IDS[s + i]); }
+			for i in 0..(e - s) {
+				let t int = lt_at(nd, i);
+				TLEAF[t] = nd as i32;
+				TPOS[t] = i as i32;
+			}
+			lvnew(nd);
+			continue;
+		}
+		var lo real[3] = [1e30; 3];
+		var hi real[3] = [-1e30; 3];
+		for i in s..e {
+			for k in 0..3 {
+				let x = ck(i, k);
+				if x < lo[k] { lo[k] = x; }
+				if x > hi[k] { hi[k] = x; }
+			}
+		}
+		let ex0 = hi[0] - lo[0];
+		let ex1 = hi[1] - lo[1];
+		let ex2 = hi[2] - lo[2];
+		var ax = 2;
+		if ex0 >= ex1 && ex0 >= ex2 {
+			ax = 0;
+		} else if ex1 >= ex2 {
+			ax = 1;
+		}
+		let k = (s + e) / 2;
+		sel(s, e, k, ax);
+		let l = node(nd);
+		node(nd);
+		NL[nd] = l as i32;
+		pi(BS, l);
+		pi(BS, s);
+		pi(BS, k);
+		pi(BS, l + 1);
+		pi(BS, k);
+		pi(BS, e);
+	}
+	for nd in 0..NN {
+		if NL[nd] >= 0 { continue; }
+		let tn int = LTN[nd];
+		for i in 0..tn {
+			let t int = lt_at(nd, i);
+			for k in 0..3 {
+				let v int = TRI[3 * t + k];
+				if VLEAF[v] < 0 { ownV(v, nd); }
+			}
+		}
+	}
+	var q = NN - 1;
+	while q >= 0 {
+		if NL[q] < 0 { leafB(q); } else { nodeB(q); }
+		q -= 1;
+	}
+	LFL.clear();
+	LFL.reserve(CAPN);
+	views();
+}
+fn skey(t int, k int) real {
+	let a int = 3 * TRI[3 * t];
+	let b int = 3 * TRI[3 * t + 1];
+	let c int = 3 * TRI[3 * t + 2];
+	(CO[a + k] + CO[b + k]) + CO[c + k]
+}
+fn splitLeaf(nd int) {
+	let n int = LTN[nd];
+	let s int = LTS[nd];
+	var lo real[3] = [1e30; 3];
+	var hi real[3] = [-1e30; 3];
+	for i in 0..n {
+		let t int = lt_at(nd, i);
+		for k in 0..3 {
+			let x = skey(t, k);
+			if x < lo[k] { lo[k] = x; }
+			if x > hi[k] { hi[k] = x; }
+		}
+	}
+	let ex0 = hi[0] - lo[0];
+	let ex1 = hi[1] - lo[1];
+	let ex2 = hi[2] - lo[2];
+	var ax = 2;
+	if ex0 >= ex1 && ex0 >= ex2 {
+		ax = 0;
+	} else if ex1 >= ex2 {
+		ax = 1;
+	}
+	stable_sort(LTP[s..(s + n)]) { a, b => skey(a, ax) < skey(b, ax) };
+	let h = n / 2;
+	let l = node(nd);
+	let r = node(nd);
+	NL[nd] = l as i32;
+	ltnew(l, h);
+	for i in 0..h { lt_set(l, i, LTP[s + i]); }
+	ltnew(r, n - h);
+	for i in 0..(n - h) { lt_set(r, i, LTP[s + h + i]); }
+	lvnew(l);
+	lvnew(r);
+	for q in [l, r] {
+		let tn int = LTN[q];
+		for i in 0..tn {
+			let t int = lt_at(q, i);
+			TLEAF[t] = q as i32;
+			TPOS[t] = i as i32;
+		}
+		leafB(q);
+	}
+	let mid = (rv(NMAX[3 * l + ax]) + rv(NMIN[3 * r + ax])) / 2.0;
+	WL.clear();
+	let vn int = LVN[nd];
+	for i in 0..vn { pi(WL, lv_at(nd, i)); }
+	LTC[nd] = -1;
+	LVC[nd] = -1;
+	LTN[nd] = 0;
+	LVN[nd] = 0;
+	for x in WL {
+		let v int = x;
+		if CO[3 * v + ax] <= mid { ownV(v, l); } else { ownV(v, r); }
+	}
+	leafB(l);
+	leafB(r);
+	LFS[l] = LFG as i32;
+	LFS[r] = LFG as i32;
+}
+export fn sc_refit() {
+	if LFL.len == 0 {
+		views();
+		return;
+	}
+	var L i32[>..] = [];
+	L.reserve(LFL.len);
+	L.append(LFL);
+	LFL.clear();
+	LFG += 1;
+	RPG += 1;
+	RPL.clear();
+	fn up(nd int) {
+		var p = nd;
+		while p >= 0 && RPM[p] != RPG {
+			RPM[p] = RPG as i32;
+			pi(RPL, p);
+			let np int = NP[p];
+			p = np;
+		}
+	}
+	for x in L {
+		let nd int = x;
+		if NL[nd] >= 0 { continue; }
+		if DYN == 1 && LTN[nd] > 2048 {
+			splitLeaf(nd);
+			up(nd);
+			continue;
+		}
+		leafB(nd);
+		let pn int = NP[nd];
+		up(pn);
+	}
+	sort(RPL) { a, b => a > b };
+	for x in RPL {
+		let p int = x;
+		if NL[p] >= 0 { nodeB(p); }
+	}
+	views();
+}
+fn qgrow() {
+	let n = 2 * QV.len;
+	gw(QV, n);
+	gw(QD, n);
+	gw(QW, n);
+}
+fn range(x real, y real, z real, r real) int {
+	let r2 = r * r;
+	let pa real[3] = [x, y, z];
+	STK[0] = 0;
+	var sp = 1;
+	var n = 0;
+	while sp > 0 {
+		sp -= 1;
+		let nd int = STK[sp];
+		let o = 3 * nd;
+		var d = 0.0;
+		for k in 0..3 {
+			let pk = pa[k];
+			let lo = rv(NMIN[o + k]);
+			let hi = rv(NMAX[o + k]);
+			let q = if pk < lo { lo - pk } else if pk > hi { pk - hi } else { 0.0 };
+			d += q * q;
+		}
+		if d > r2 { continue; }
+		let l int = NL[nd];
+		if l >= 0 {
+			STK[sp] = l as i32;
+			STK[sp + 1] = (l + 1) as i32;
+			sp += 2;
+			continue;
+		}
+		let vn int = LVN[nd];
+		for i in 0..vn {
+			let v int = lv_at(nd, i);
+			if VH[v] != 0 { continue; }
+			let a = 3 * v;
+			let dx = CO[a] - x;
+			let dy = CO[a + 1] - y;
+			let dz = CO[a + 2] - z;
+			let e = (dx * dx + dy * dy) + dz * dz;
+			if e <= r2 {
+				if n >= QV.len { qgrow(); }
+				QV[n] = v as i32;
+				QD[n] = c_sqrt(e) as f32;
+				n += 1;
+			}
+		}
+	}
+	n
+}
+export fn sc_range(x real, y real, z real, r real) i32 {
+	let n = range(x, y, z, r);
+	views();
+	n as i32
+}
+export fn sc_ray(o0 real, o1 real, o2 real, d0 real, d1 real, d2 real, tmax real) i32 {
+	let ix = 1.0 / d0;
+	let iy = 1.0 / d1;
+	let iz = 1.0 / d2;
+	var bt = tmax;
+	var bi = -1;
+	var bu = 0.0;
+	var bw = 0.0;
+	STK[0] = 0;
+	var sp = 1;
+	while sp > 0 {
+		sp -= 1;
+		let nd int = STK[sp];
+		let q = 3 * nd;
+		var t0 = (rv(NMIN[q]) - o0) * ix;
+		var t1 = (rv(NMAX[q]) - o0) * ix;
+		if t0 > t1 {
+			let w = t0;
+			t0 = t1;
+			t1 = w;
+		}
+		var a = (rv(NMIN[q + 1]) - o1) * iy;
+		var b = (rv(NMAX[q + 1]) - o1) * iy;
+		if a > b {
+			let w = a;
+			a = b;
+			b = w;
+		}
+		t0 = jmax(t0, a);
+		t1 = jmin(t1, b);
+		a = (rv(NMIN[q + 2]) - o2) * iz;
+		b = (rv(NMAX[q + 2]) - o2) * iz;
+		if a > b {
+			let w = a;
+			a = b;
+			b = w;
+		}
+		t0 = jmax(t0, a);
+		t1 = jmin(t1, b);
+		if t1 < jmax(t0, 0.0) || t0 > bt { continue; }
+		let l int = NL[nd];
+		if l >= 0 {
+			STK[sp] = l as i32;
+			STK[sp + 1] = (l + 1) as i32;
+			sp += 2;
+			continue;
+		}
+		let tn int = LTN[nd];
+		for i in 0..tn {
+			let t int = lt_at(nd, i);
+			if TH[t] != 0 { continue; }
+			let ta int = 3 * TRI[3 * t];
+			let tb int = 3 * TRI[3 * t + 1];
+			let te int = 3 * TRI[3 * t + 2];
+			let ex = CO[tb] - CO[ta];
+			let ey = CO[tb + 1] - CO[ta + 1];
+			let ez = CO[tb + 2] - CO[ta + 2];
+			let fx = CO[te] - CO[ta];
+			let fy = CO[te + 1] - CO[ta + 1];
+			let fz = CO[te + 2] - CO[ta + 2];
+			let px = d1 * fz - d2 * fy;
+			let py = d2 * fx - d0 * fz;
+			let pz = d0 * fy - d1 * fx;
+			let det = (ex * px + ey * py) + ez * pz;
+			if abs(det) < 1e-30 { continue; }
+			let id = 1.0 / det;
+			let sx = o0 - CO[ta];
+			let sy = o1 - CO[ta + 1];
+			let sz = o2 - CO[ta + 2];
+			let u = ((sx * px + sy * py) + sz * pz) * id;
+			if u < 0.0 || u > 1.0 { continue; }
+			let qx = sy * ez - sz * ey;
+			let qy = sz * ex - sx * ez;
+			let qz = sx * ey - sy * ex;
+			let v = ((d0 * qx + d1 * qy) + d2 * qz) * id;
+			if v < 0.0 || u + v > 1.0 { continue; }
+			let tt = ((fx * qx + fy * qy) + fz * qz) * id;
+			if tt > 0.0 && tt < bt {
+				bt = tt;
+				bi = t;
+				bu = u;
+				bw = v;
+			}
+		}
+	}
+	if bi < 0 { return 0; }
+	let a int = 3 * TRI[3 * bi];
+	let b int = 3 * TRI[3 * bi + 1];
+	let c int = 3 * TRI[3 * bi + 2];
+	let w0 = (1.0 - bu) - bw;
+	nrm((rv(VN[a]) * w0 + rv(VN[b]) * bu) + rv(VN[c]) * bw, (rv(VN[a + 1]) * w0 + rv(VN[b + 1]) * bu) + rv(VN[c + 1]) * bw, (rv(VN[a + 2]) * w0 + rv(VN[b + 2]) * bu) + rv(VN[c + 2]) * bw);
+	RS[0] = bt;
+	RS[1] = bi as real;
+	RS[2] = o0 + d0 * bt;
+	RS[3] = o1 + d1 * bt;
+	RS[4] = o2 + d2 * bt;
+	RS[5] = U0;
+	RS[6] = U1;
+	RS[7] = U2;
+	return 1;
+}
+fn cpt(p0 real, p1 real, p2 real, a int, b int, c int) {
+	let a0 = CO[a];
+	let a1 = CO[a + 1];
+	let a2 = CO[a + 2];
+	let b0 = CO[b];
+	let b1 = CO[b + 1];
+	let b2 = CO[b + 2];
+	let c0 = CO[c];
+	let c1 = CO[c + 1];
+	let c2 = CO[c + 2];
+	let ab0 = b0 - a0;
+	let ab1 = b1 - a1;
+	let ab2 = b2 - a2;
+	let ac0 = c0 - a0;
+	let ac1 = c1 - a1;
+	let ac2 = c2 - a2;
+	let ap0 = p0 - a0;
+	let ap1 = p1 - a1;
+	let ap2 = p2 - a2;
+	let d1 = dot6(ab0, ab1, ab2, ap0, ap1, ap2);
+	let d2 = dot6(ac0, ac1, ac2, ap0, ap1, ap2);
+	if d1 <= 0.0 && d2 <= 0.0 {
+		Q0 = a0;
+		Q1 = a1;
+		Q2 = a2;
+		return;
+	}
+	let bp0 = p0 - b0;
+	let bp1 = p1 - b1;
+	let bp2 = p2 - b2;
+	let d3 = dot6(ab0, ab1, ab2, bp0, bp1, bp2);
+	let d4 = dot6(ac0, ac1, ac2, bp0, bp1, bp2);
+	if d3 >= 0.0 && d4 <= d3 {
+		Q0 = b0;
+		Q1 = b1;
+		Q2 = b2;
+		return;
+	}
+	let vc = d1 * d4 - d3 * d2;
+	if vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0 {
+		let v = d1 / (d1 - d3);
+		Q0 = a0 + ab0 * v;
+		Q1 = a1 + ab1 * v;
+		Q2 = a2 + ab2 * v;
+		return;
+	}
+	let cp0 = p0 - c0;
+	let cp1 = p1 - c1;
+	let cp2 = p2 - c2;
+	let d5 = dot6(ab0, ab1, ab2, cp0, cp1, cp2);
+	let d7 = dot6(ac0, ac1, ac2, cp0, cp1, cp2);
+	if d7 >= 0.0 && d5 <= d7 {
+		Q0 = c0;
+		Q1 = c1;
+		Q2 = c2;
+		return;
+	}
+	let vb = d5 * d2 - d1 * d7;
+	if vb <= 0.0 && d2 >= 0.0 && d7 <= 0.0 {
+		let w = d2 / (d2 - d7);
+		Q0 = a0 + ac0 * w;
+		Q1 = a1 + ac1 * w;
+		Q2 = a2 + ac2 * w;
+		return;
+	}
+	let va = d3 * d7 - d5 * d4;
+	if va <= 0.0 && d4 - d3 >= 0.0 && d5 - d7 >= 0.0 {
+		let w = (d4 - d3) / ((d4 - d3) + (d5 - d7));
+		Q0 = b0 + (c0 - b0) * w;
+		Q1 = b1 + (c1 - b1) * w;
+		Q2 = b2 + (c2 - b2) * w;
+		return;
+	}
+	let dn = 1.0 / ((va + vb) + vc);
+	let v = vb * dn;
+	let w = vc * dn;
+	Q0 = (a0 + ab0 * v) + ac0 * w;
+	Q1 = (a1 + ab1 * v) + ac1 * w;
+	Q2 = (a2 + ab2 * v) + ac2 * w;
+}
+export fn sc_closest(p0 real, p1 real, p2 real) i32 {
+	var bd = inf();
+	var found = false;
+	var bt = -1;
+	var b0 = 0.0;
+	var b1 = 0.0;
+	var b2 = 0.0;
+	let pa real[3] = [p0, p1, p2];
+	STK[0] = 0;
+	var sp = 1;
+	while sp > 0 {
+		sp -= 1;
+		let nd int = STK[sp];
+		let o = 3 * nd;
+		var d = 0.0;
+		for k in 0..3 {
+			let pk = pa[k];
+			let lo = rv(NMIN[o + k]);
+			let hi = rv(NMAX[o + k]);
+			let q = if pk < lo { lo - pk } else if pk > hi { pk - hi } else { 0.0 };
+			d += q * q;
+		}
+		if d >= bd { continue; }
+		let l int = NL[nd];
+		if l >= 0 {
+			STK[sp] = l as i32;
+			STK[sp + 1] = (l + 1) as i32;
+			sp += 2;
+			continue;
+		}
+		let tn int = LTN[nd];
+		for i in 0..tn {
+			let t int = lt_at(nd, i);
+			if TH[t] != 0 { continue; }
+			cpt(p0, p1, p2, 3 * TRI[3 * t], 3 * TRI[3 * t + 1], 3 * TRI[3 * t + 2]);
+			let e = ((Q0 - p0) * (Q0 - p0) + (Q1 - p1) * (Q1 - p1)) + (Q2 - p2) * (Q2 - p2);
+			if e < bd {
+				bd = e;
+				found = true;
+				b0 = Q0;
+				b1 = Q1;
+				b2 = Q2;
+				bt = t;
+			}
+		}
+	}
+	if !found { return 0; }
+	nrm(rv(TN[3 * bt]), rv(TN[3 * bt + 1]), rv(TN[3 * bt + 2]));
+	RS[0] = b0;
+	RS[1] = b1;
+	RS[2] = b2;
+	RS[3] = bt as real;
+	RS[4] = c_sqrt(bd);
+	RS[5] = U0;
+	RS[6] = U1;
+	RS[7] = U2;
+	return 1;
+}
+fn fan(v int) int {
+	let c0 int = VC[v];
+	FA = 0;
+	OPN = 0;
+	if c0 < 0 { return 0; }
+	var n = 0;
+	var c = c0;
+	loop {
+		FB[n] = c as i32;
+		n += 1;
+		let p int = OO[pv(c)];
+		c = if p < 0 { -1 } else { pv(p) };
+		if !(c >= 0 && c != c0 && n < 1000) { break; }
+	}
+	FA = n;
+	if c < 0 {
+		OPN = 1;
+		let p int = OO[nx(c0)];
+		c = if p < 0 { -1 } else { nx(p) };
+		while c >= 0 && n < 1000 {
+			FB[n] = c as i32;
+			n += 1;
+			let r int = OO[nx(c)];
+			c = if r < 0 { -1 } else { nx(r) };
+		}
+	}
+	n
+}
+fn nbr(v int) int {
+	if DYN == 0 {
+		let s int = NBO[v];
+		let e int = NBO[v + 1];
+		for i in s..e {
+			if i - s < 1100 { NB[i - s] = NBA[i]; }
+		}
+		return e - s;
+	}
+	let n = fan(v);
+	var m = 0;
+	for i in 0..FA {
+		NB[m] = TRI[nx(FB[i])];
+		m += 1;
+	}
+	if OPN == 1 && n > 0 {
+		NB[m] = TRI[pv(FB[0])];
+		m += 1;
+		for i in FA..n {
+			NB[m] = TRI[pv(FB[i])];
+			m += 1;
+		}
+	}
+	m
+}
+fn vtris(v int) int {
+	if DYN == 0 {
+		let s int = VTO[v];
+		let e int = VTO[v + 1];
+		for i in s..e {
+			if i - s < 1100 { TB[i - s] = VT[i]; }
+		}
+		return e - s;
+	}
+	let n = fan(v);
+	for i in 0..n { TB[i] = FB[i] / 3; }
+	n
+}
+export fn sc_fan(v i32) i32 { fan(v) as i32 }
+export fn sc_nbr(v i32) i32 { nbr(v) as i32 }
+export fn sc_vtris(v i32) i32 { vtris(v) as i32 }
+fn gpuV(v int) {
+	if VGPU[v] == 0 {
+		VGPU[v] = 1;
+		pi(LGV, v);
+	}
+}
+fn chgV(v int) {
+	if VCHG[v] == 0 {
+		VCHG[v] = 1;
+		pi(LCV, v);
+	}
+	gpuV(v);
+}
+fn gpuT(t int) {
+	if TGPU[t] == 0 {
+		TGPU[t] = 1;
+		pi(LGT, t);
+	}
+}
+fn chgT(t int) {
+	if TCHG[t] == 0 {
+		TCHG[t] = 1;
+		pi(LCT, t);
+	}
+	gpuT(t);
+}
+fn chgF(f int) {
+	if FCHG[f] == 0 {
+		FCHG[f] = 1;
+		pi(LCF, f);
+	}
+}
+export fn sc_clearChg() {
+	for x in LCV {
+		let v int = x;
+		if v < CAPV { VCHG[v] = 0; }
+	}
+	for x in LCT {
+		let t int = x;
+		if t < CAPT { TCHG[t] = 0; }
+	}
+	for x in LCF {
+		let f int = x;
+		FCHG[f] = 0;
+	}
+	LCV.clear();
+	LCT.clear();
+	LCF.clear();
+	CAV = 0;
+	CAT = 0;
+	CAF = 0;
+	HIDC = 0;
+	views();
+}
+fn addV(src int) int {
+	let v = NV;
+	NV += 1;
+	grow(false, NV);
+	let a = 3 * v;
+	let b = 3 * src;
+	for k in 0..3 {
+		CO[a + k] = CO[b + k];
+		POS[a + k] = POS[b + k];
+		VN[a + k] = VN[b + k];
+		COL[a + k] = COL[b + k];
+	}
+	MASK[v] = MASK[src];
+	sc_vcp(v as i32, src as i32);
+	VLEAF[v] = -1;
+	VDEAD[v] = 0;
+	VLOCK[v] = 0;
+	VH[v] = 0;
+	VC[v] = -1;
+	ST[v] = 0;
+	LAY[v] = 0.0;
+	chgV(v);
+	v
+}
+fn addT(src int) int {
+	let t = NT;
+	NT += 1;
+	grow(true, NT);
+	TF[t] = TF[src];
+	TSET[t] = TSET[src];
+	TH[t] = TH[src];
+	TDEAD[t] = 0;
+	sc_fcp(t as i32, src as i32);
+	let lf int = TLEAF[src];
+	TLEAF[t] = lf as i32;
+	TPOS[t] = LTN[lf];
+	ltpush(lf, t);
+	lfMark(lf);
+	chgT(t);
+	t
+}
+fn hidAll() {
+	for v in 0..NV { VH[v] = 1; }
+	for t in 0..NT {
+		if TH[t] != 0 || (DYN == 1 && TDEAD[t] != 0) { continue; }
+		VH[TRI[3 * t]] = 0;
+		VH[TRI[3 * t + 1]] = 0;
+		VH[TRI[3 * t + 2]] = 0;
+	}
+}
+fn idxT(t int) {
+	let o = 3 * t;
+	if TH[t] != 0 || (DYN == 1 && TDEAD[t] != 0) {
+		IDX[o] = TRI[o];
+		IDX[o + 1] = TRI[o];
+		IDX[o + 2] = TRI[o];
+	} else {
+		for k in 0..3 { IDX[o + k] = TRI[o + k]; }
+	}
+}
+export fn sc_hidAll() {
+	hidAll();
+	views();
+}
+export fn sc_idxAll() {
+	for t in 0..NT { idxT(t); }
+	views();
+}
+export fn sc_flush0() {
+	for x in LGT { idxT(x); }
+	if GALL != 0 {
+		for t in 0..NT { idxT(t); }
+		for x in LGV { VGPU[x] = 0; }
+		for x in LGT { TGPU[x] = 0; }
+	}
+	views();
+}
+fn triN(t int) {
+	let a int = 3 * TRI[3 * t];
+	let b int = 3 * TRI[3 * t + 1];
+	let c int = 3 * TRI[3 * t + 2];
+	let ux = CO[b] - CO[a];
+	let uy = CO[b + 1] - CO[a + 1];
+	let uz = CO[b + 2] - CO[a + 2];
+	let wx = CO[c] - CO[a];
+	let wy = CO[c + 1] - CO[a + 1];
+	let wz = CO[c + 2] - CO[a + 2];
+	let o = 3 * t;
+	TN[o] = (uy * wz - uz * wy) as f32;
+	TN[o + 1] = (uz * wx - ux * wz) as f32;
+	TN[o + 2] = (ux * wy - uy * wx) as f32;
+}
+fn vertN(v int) {
+	let n = vtris(v);
+	var x = 0.0;
+	var y = 0.0;
+	var z = 0.0;
+	for i in 0..n {
+		let o int = 3 * TB[i];
+		x += rv(TN[o]);
+		y += rv(TN[o + 1]);
+		z += rv(TN[o + 2]);
+	}
+	var l = hyp3(x, y, z);
+	if bad(l) { l = 1.0; }
+	let a = 3 * v;
+	VN[a] = (x / l) as f32;
+	VN[a + 1] = (y / l) as f32;
+	VN[a + 2] = (z / l) as f32;
+}
+export fn sc_normAll() {
+	for i in 0..(3 * NV) { VN[i] = 0.0; }
+	for t in 0..NT {
+		if DYN == 1 && TDEAD[t] != 0 { continue; }
+		triN(t);
+		let o = 3 * t;
+		for k in 0..3 {
+			let a int = 3 * TRI[o + k];
+			VN[a] = (rv(VN[a]) + rv(TN[o])) as f32;
+			VN[a + 1] = (rv(VN[a + 1]) + rv(TN[o + 1])) as f32;
+			VN[a + 2] = (rv(VN[a + 2]) + rv(TN[o + 2])) as f32;
+		}
+	}
+	for v in 0..NV {
+		let a = 3 * v;
+		var l = hyp3(rv(VN[a]), rv(VN[a + 1]), rv(VN[a + 2]));
+		if bad(l) { l = 1.0; }
+		VN[a] = (rv(VN[a]) / l) as f32;
+		VN[a + 1] = (rv(VN[a + 1]) / l) as f32;
+		VN[a + 2] = (rv(VN[a + 2]) / l) as f32;
+	}
+	views();
+}
+export fn sc_updN() {
+	QID += 1;
+	let s = QID;
+	UTL.clear();
+	for i in 0..MV.len {
+		let v int = MV[i];
+		if DYN == 1 && VDEAD[v] != 0 { continue; }
+		if VLEAF[v] >= 0 { lfMark(VLEAF[v]); }
+		let m = vtris(v);
+		for j in 0..m {
+			let t int = TB[j];
+			if TQ[t] != s {
+				TQ[t] = s as i32;
+				triN(t);
+				pi(UTL, t);
+				lfMark(TLEAF[t]);
+			}
+		}
+	}
+	for x in UTL {
+		let t int = x;
+		for k in 0..3 {
+			let v int = TRI[3 * t + k];
+			if NS[v] != s {
+				NS[v] = s as i32;
+				vertN(v);
+				gpuV(v);
+			}
+		}
+	}
+	views();
+}
+fn setOf(v int) int {
+	if DYN == 1 {
+		let c int = VC[v];
+		if c < 0 { return 0; }
+		return TSET[c / 3];
+	}
+	let i int = VTO[v];
+	if i < VTO[v + 1] { return FSET[T2F[VT[i]]]; }
+	0
+}
+fn colV(v int) {
+	let m = 1.0 - 0.7 * jmin(1.0, jmax(0.0, rv(MASK[v])));
+	let s = if SHOW != 0 { setOf(v) } else { 0 };
+	let a = 3 * v;
+	if s != 0 {
+		let h = (s * 2654435761) & 4294967295;
+		COL[a] = (m * (0.45 + 0.55 * (((h & 255) as real) / 255.0))) as f32;
+		COL[a + 1] = (m * (0.45 + 0.55 * ((((h >> 8) & 255) as real) / 255.0))) as f32;
+		COL[a + 2] = (m * (0.45 + 0.55 * ((((h >> 16) & 255) as real) / 255.0))) as f32;
+	} else {
+		let mf = m as f32;
+		COL[a] = mf;
+		COL[a + 1] = mf;
+		COL[a + 2] = mf;
+	}
+}
+export fn sc_colAll() {
+	for v in 0..NV { colV(v); }
+	GALL = 1;
+	views();
+}
+export fn sc_colv(v i32) { colV(v); }
+fn maskV(v int) {
+	HASM = 1;
+	chgV(v);
+	colV(v);
+}
+fn setFS(t int, id int) {
+	HASS = 1;
+	if DYN == 1 {
+		if TSET[t] == id { return; }
+		TSET[t] = id as i32;
+		chgT(t);
+	} else {
+		let f int = T2F[t];
+		if FSET[f] == id { return; }
+		FSET[f] = id as i32;
+		chgF(f);
+	}
+	if SHOW != 0 {
+		for k in 0..3 {
+			let v int = TRI[3 * t + k];
+			colV(v);
+			gpuV(v);
+		}
+	}
+}
+fn cap(v int) {
+	if ST[v] != SID {
+		ST[v] = SID as i32;
+		let a = 3 * v;
+		for k in 0..3 {
+			ORIG[a + k] = CO[a + k];
+			ON[a + k] = VN[a + k];
+		}
+		LAY[v] = 0.0;
+	}
+}
+fn set(v int, x real, y real, z real) {
+	let a = 3 * v;
+	CO[a] = x;
+	CO[a + 1] = y;
+	CO[a + 2] = z;
+	POS[a] = x as f32;
+	POS[a + 1] = y as f32;
+	POS[a + 2] = z as f32;
+	chgV(v);
+	if DS[v] != DQ {
+		DS[v] = DQ as i32;
+		pi(MV, v);
+	}
+}
+export fn sc_cap(v i32) { cap(v); }
+export fn sc_set(v i32, x real, y real, z real) { set(v, x, y, z); }
+export fn sc_mv0() {
+	MV.clear();
+	DQ += 1;
+}
+export fn sc_bbox() i32 {
+	var lo real[3] = [1e30; 3];
+	var hi real[3] = [-1e30; 3];
+	for v in 0..NV {
+		if DYN == 1 && VDEAD[v] != 0 { continue; }
+		for k in 0..3 {
+			let x = CO[3 * v + k];
+			if x < lo[k] { lo[k] = x; }
+			if x > hi[k] { hi[k] = x; }
+		}
+	}
+	RS[0] = lo[0];
+	RS[1] = lo[1];
+	RS[2] = lo[2];
+	RS[3] = hi[0];
+	RS[4] = hi[1];
+	RS[5] = hi[2];
+	if lo[0] > hi[0] { return 1; }
+	return 0;
+}
+fn autoMask(n int) int {
+	let s1 = AK + 1;
+	let s2 = AK + 2;
+	AK += 2;
+	var b = 0;
+	for i in 0..n {
+		let qv int = QV[i];
+		KS[qv] = s1 as i32;
+		if QD[i] < QD[b] { b = i; }
+	}
+	AQ.clear();
+	let qb int = QV[b];
+	pi(AQ, qb);
+	KS[qb] = s2 as i32;
+	var h = 0;
+	while h < AQ.len {
+		let m = nbr(AQ[h]);
+		for j in 0..m {
+			let w int = NB[j];
+			if KS[w] == s1 {
+				KS[w] = s2 as i32;
+				pi(AQ, w);
+			}
+		}
+		h += 1;
+	}
+	var m = 0;
+	for i in 0..n {
+		let qv int = QV[i];
+		if KS[qv] == s2 {
+			QV[m] = QV[i];
+			QD[m] = QD[i];
+			m += 1;
+		}
+	}
+	m
+}
+fn pick(c0 real, c1 real, c2 real, r real, w0 real, w1 real, w2 real, front int, auto int) int {
+	var n = range(c0, c1, c2, r);
+	if front != 0 {
+		var m = 0;
+		for i in 0..n {
+			let a int = 3 * QV[i];
+			if (rv(VN[a]) * w0 + rv(VN[a + 1]) * w1) + rv(VN[a + 2]) * w2 < 0.05 {
+				QV[m] = QV[i];
+				QD[m] = QD[i];
+				m += 1;
+			}
+		}
+		n = m;
+	}
+	if auto != 0 && n > 0 { return autoMask(n); }
+	n
+}
+export fn sc_pick(c0 real, c1 real, c2 real, r real, w0 real, w1 real, w2 real, front i32, auto i32) i32 {
+	let n = pick(c0, c1, c2, r, w0, w1, w2, front, auto);
+	views();
+	n as i32
+}
+fn fall(code int, x real) real {
+	match code {
+		1 => c_sqrt(jmax(0.0, 2.0 * x - x * x)),
+		2 => c_sqrt(x),
+		3 => x * (2.0 - x),
+		4 => x * x,
+		5 => x,
+		7 => 1.0,
+		8 => x * sc_rand(),
+		9 => ((x * x) * x) * (x * (x * 6.0 - 15.0) + 10.0),
+		_ => (x * x) * (3.0 - 2.0 * x),
+	}
+}
+export fn sc_one(tool i32, c0 real, c1 real, c2 real, R real, S real, w0 real, w1 real, w2 real, hd i32, d0 real, d1 real, d2 real, hl i32, l0 real, l1 real, l2 real, fc i32, inv i32, sf real, ang real, front i32, auto i32, fsid i32) {
+	let sq = tool == 8;
+	let rr = if sq { R * 1.4142135623730951 } else { R };
+	let n = pick(c0, c1, c2, rr, w0, w1, w2, front, auto);
+	if n == 0 {
+		views();
+		return;
+	}
+	let ua = tool == 1;
+	let sg = if inv != 0 { -1.0 } else { 1.0 };
+	let mk = tool == 19 || tool == 20;
+	var ax = 0.0;
+	var ay = 0.0;
+	var az = 0.0;
+	var cx = 0.0;
+	var cy = 0.0;
+	var cz = 0.0;
+	var sw = 0.0;
+	for i in 0..n {
+		let v int = QV[i];
+		let a = 3 * v;
+		let f = fall(fc, jmax(0.0, 1.0 - rv(QD[i]) / R));
+		cap(v);
+		let mm = if mk { 1.0 } else { 1.0 - rv(MASK[v]) };
+		QW[i] = (f * mm) as f32;
+		let n0 = if ua { rv(ON[a]) } else { rv(VN[a]) };
+		let n1 = if ua { rv(ON[a + 1]) } else { rv(VN[a + 1]) };
+		let n2 = if ua { rv(ON[a + 2]) } else { rv(VN[a + 2]) };
+		ax += n0 * f;
+		ay += n1 * f;
+		az += n2 * f;
+		cx += CO[a] * f;
+		cy += CO[a + 1] * f;
+		cz += CO[a + 2] * f;
+		sw += f;
+	}
+	let al = hyp3(ax, ay, az);
+	var na0 = 0.0;
+	var na1 = 0.0;
+	var na2 = 0.0;
+	if al > 1e-12 {
+		na0 = ax / al;
+		na1 = ay / al;
+		na2 = az / al;
+	} else {
+		nrm(-w0, -w1, -w2);
+		na0 = U0;
+		na1 = U1;
+		na2 = U2;
+	}
+	var ca0 = c0;
+	var ca1 = c1;
+	var ca2 = c2;
+	if sw > 1e-12 {
+		ca0 = cx / sw;
+		ca1 = cy / sw;
+		ca2 = cz / sw;
+	}
+	var t0 = 0.0;
+	var t1 = 0.0;
+	var t2 = 0.0;
+	var b0 = 0.0;
+	var b1 = 0.0;
+	var b2 = 0.0;
+	if sq || tool == 12 {
+		var e0 = 0.0;
+		var e1 = 0.0;
+		var e2 = 0.0;
+		if hd == 1 && hyp3(d0, d1, d2) > 1e-12 {
+			e0 = d0;
+			e1 = d1;
+			e2 = d2;
+		} else {
+			perp(na0, na1, na2);
+			e0 = U0;
+			e1 = U1;
+			e2 = U2;
+		}
+		let e = (e0 * na0 + e1 * na1) + e2 * na2;
+		t0 = e0 - na0 * e;
+		t1 = e1 - na1 * e;
+		t2 = e2 - na2 * e;
+		if hyp3(t0, t1, t2) > 1e-12 {
+			nrm(t0, t1, t2);
+		} else {
+			perp(na0, na1, na2);
+		}
+		t0 = U0;
+		t1 = U1;
+		t2 = U2;
+		b0 = na1 * t2 - na2 * t1;
+		b1 = na2 * t0 - na0 * t2;
+		b2 = na0 * t1 - na1 * t0;
+		if sq {
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let x = ((CO[a] - c0) * t0 + (CO[a + 1] - c1) * t1) + (CO[a + 2] - c2) * t2;
+				let y = ((CO[a] - c0) * b0 + (CO[a + 1] - c1) * b1) + (CO[a + 2] - c2) * b2;
+				let q = (jmax(abs(x), abs(y)) * 1.4142135623730951) / R;
+				if q >= 1.0 {
+					QW[i] = 0.0;
+				} else {
+					QW[i] = (fall(fc, 1.0 - q) * (1.0 - rv(MASK[v]))) as f32;
+				}
+			}
+		}
+	}
+	let k = (((R * S) * 0.5) * sf) * sg;
+	tools(tool, n, c0, c1, c2, R, S, na0, na1, na2, ca0, ca1, ca2, b0, b1, b2, hl, l0, l1, l2, sg, k, ang, fsid);
+	views();
+}
+fn tools(tool int, n int, c0 real, c1 real, c2 real, R real, S real, na0 real, na1 real, na2 real, ca0 real, ca1 real, ca2 real, b0 real, b1 real, b2 real, hl int, l0 real, l1 real, l2 real, sg real, k real, ang real, fsid int) {
+	match tool {
+		0, 1 => {
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]) * k;
+				if bad(w) { continue; }
+				set(v, CO[a] + na0 * w, CO[a + 1] + na1 * w, CO[a + 2] + na2 * w);
+			}
+		},
+		2 => {
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]) * k;
+				if bad(w) { continue; }
+				set(v, CO[a] + rv(VN[a]) * w, CO[a + 1] + rv(VN[a + 1]) * w, CO[a + 2] + rv(VN[a + 2]) * w);
+			}
+		},
+		3 => {
+			let bx = c0 - (na0 * R) * 0.5;
+			let by = c1 - (na1 * R) * 0.5;
+			let bz = c2 - (na2 * R) * 0.5;
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]) * k;
+				if bad(w) { continue; }
+				nrm(CO[a] - bx, CO[a + 1] - by, CO[a + 2] - bz);
+				let u0 = U0;
+				let u1 = U1;
+				let u2 = U2;
+				set(v, CO[a] + u0 * w, CO[a + 1] + u1 * w, CO[a + 2] + u2 * w);
+			}
+		},
+		4, 5 => {
+			let isc = tool == 4;
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]);
+				if bad(w) { continue; }
+				let px = c0 - CO[a];
+				let py = c1 - CO[a + 1];
+				let pz = c2 - CO[a + 2];
+				let pd = (px * na0 + py * na1) + pz * na2;
+				let f = jmin(1.0, (w * S) * 0.5) * (if isc { 0.5 } else { sg });
+				let h = if isc { (-w) * k } else { 0.0 };
+				set(v, (CO[a] + (px - na0 * pd) * f) + na0 * h, (CO[a + 1] + (py - na1 * pd) * f) + na1 * h, (CO[a + 2] + (pz - na2 * pd) * f) + na2 * h);
+			}
+		},
+		7, 8, 9, 10, 11 => {
+			let off = if tool == 7 { R * 0.25 } else if tool == 8 { R * 0.35 } else { 0.0 };
+			let px = ca0 + (na0 * off) * sg;
+			let py = ca1 + (na1 * off) * sg;
+			let pz = ca2 + (na2 * off) * sg;
+			let side = if tool == 10 { -sg } else if tool == 11 { sg } else if tool == 9 { 0.0 } else { -sg };
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]);
+				if bad(w) { continue; }
+				let d = ((CO[a] - px) * na0 + (CO[a + 1] - py) * na1) + (CO[a + 2] - pz) * na2;
+				if side != 0.0 && d * side <= 0.0 { continue; }
+				let f = jmin(1.0, (w * S) * 0.5) * (if tool == 9 { sg } else { 1.0 });
+				set(v, CO[a] - (na0 * d) * f, CO[a + 1] - (na1 * d) * f, CO[a + 2] - (na2 * d) * f);
+			}
+		},
+		12 => {
+			let h = ang / 2.0;
+			let cs = sc_cos(h);
+			let sn = sc_sin(h) * sg;
+			let m0 = na0 * cs + b0 * sn;
+			let m1 = na1 * cs + b1 * sn;
+			let m2 = na2 * cs + b2 * sn;
+			let g0 = na0 * cs - b0 * sn;
+			let g1 = na1 * cs - b1 * sn;
+			let g2 = na2 * cs - b2 * sn;
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]);
+				if bad(w) { continue; }
+				let rx = CO[a] - ca0;
+				let ry = CO[a + 1] - ca1;
+				let rz = CO[a + 2] - ca2;
+				var P0 = g0;
+				var P1 = g1;
+				var P2 = g2;
+				if (rx * b0 + ry * b1) + rz * b2 >= 0.0 {
+					P0 = m0;
+					P1 = m1;
+					P2 = m2;
+				}
+				let d = (rx * P0 + ry * P1) + rz * P2;
+				if d * sg <= 0.0 { continue; }
+				let f = jmin(1.0, (w * S) * 0.5);
+				set(v, CO[a] - (P0 * d) * f, CO[a + 1] - (P1 * d) * f, CO[a + 2] - (P2 * d) * f);
+			}
+		},
+		13 => {
+			zr(TMP, 3 * n);
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]);
+				let m = nbr(v);
+				var x = 0.0;
+				var y = 0.0;
+				var z = 0.0;
+				for j in 0..m {
+					let q int = 3 * NB[j];
+					x += CO[q];
+					y += CO[q + 1];
+					z += CO[q + 2];
+				}
+				let f = if m > 0 { jmin(1.0, w * S) } else { 0.0 };
+				let dv = if m > 0 { m as real } else { 1.0 };
+				TMP[3 * i] = CO[a] + (x / dv - CO[a]) * f;
+				TMP[3 * i + 1] = CO[a + 1] + (y / dv - CO[a + 1]) * f;
+				TMP[3 * i + 2] = CO[a + 2] + (z / dv - CO[a + 2]) * f;
+			}
+			for i in 0..n {
+				let v int = QV[i];
+				let w = rv(QW[i]);
+				if !bad(w) { set(v, TMP[3 * i], TMP[3 * i + 1], TMP[3 * i + 2]); }
+			}
+		},
+		14 => {
+			let h = R * 0.25;
+			for i in 0..n {
+				let v int = QV[i];
+				let a = 3 * v;
+				let w = rv(QW[i]);
+				if bad(w) { continue; }
+				let L = jmax(-1.0, jmin(1.0, rv(LAY[v]) + ((w * S) * 0.3) * sg));
+				LAY[v] = L as f32;
+				set(v, ORIG[a] + (rv(ON[a]) * L) * h, ORIG[a + 1] + (rv(ON[a + 1]) * L) * h, ORIG[a + 2] + (rv(ON[a + 2]) * L) * h);
+			}
+		},
+		15 => {
+			if hl == 1 {
+				nrm(l0, l1, l2);
+				let u0 = U0;
+				let u1 = U1;
+				let u2 = U2;
+				for i in 0..n {
+					let v int = QV[i];
+					let a = 3 * v;
+					let w = rv(QW[i]) * jmin(1.0, S);
+					if bad(w) { continue; }
+					let px = c0 - CO[a];
+					let py = c1 - CO[a + 1];
+					let pz = c2 - CO[a + 2];
+					let pd = (px * u0 + py * u1) + pz * u2;
+					set(v, (CO[a] + l0 * w) + ((px - u0 * pd) * w) * 0.3, (CO[a + 1] + l1 * w) + ((py - u1 * pd) * w) * 0.3, (CO[a + 2] + l2 * w) + ((pz - u2 * pd) * w) * 0.3);
+				}
+			}
+		},
+		17, 18 => {
+			if hl == 1 {
+				let e = (l0 * na0 + l1 * na1) + l2 * na2;
+				let tx = l0 - na0 * e;
+				let ty = l1 - na1 * e;
+				let tz = l2 - na2 * e;
+				for i in 0..n {
+					let v int = QV[i];
+					let a = 3 * v;
+					let w = rv(QW[i]) * S;
+					if bad(w) { continue; }
+					let d = if tool == 18 { (((CO[a] - ca0) * na0 + (CO[a + 1] - ca1) * na1) + (CO[a + 2] - ca2) * na2) * jmin(1.0, w * 0.3) } else { 0.0 };
+					set(v, (CO[a] + tx * w) - na0 * d, (CO[a + 1] + ty * w) - na1 * d, (CO[a + 2] + tz * w) - na2 * d);
+				}
+			}
+		},
+		19 => {
+			for i in 0..n {
+				let v int = QV[i];
+				let w = jmin(1.0, rv(QW[i]) * S);
+				if bad(w) { continue; }
+				let m = rv(MASK[v]);
+				let dm = if sg > 0.0 { 1.0 - m } else { -m };
+				MASK[v] = jmax(0.0, jmin(1.0, m + dm * w)) as f32;
+				maskV(v);
+			}
+		},
+		20 => {
+			zr(TMP, n);
+			for i in 0..n {
+				let v int = QV[i];
+				let w = rv(QW[i]);
+				let m = nbr(v);
+				var x = 0.0;
+				for j in 0..m {
+					let nb int = NB[j];
+					x += rv(MASK[nb]);
+				}
+				let mv = rv(MASK[v]);
+				TMP[i] = if m > 0 { mv + (x / (m as real) - mv) * jmin(1.0, w * S) } else { mv };
+			}
+			for i in 0..n {
+				let v int = QV[i];
+				MASK[v] = TMP[i] as f32;
+				maskV(v);
+			}
+		},
+		21 => {
+			for i in 0..n {
+				let v int = QV[i];
+				if rv(QD[i]) > R * 0.7 { continue; }
+				let m = vtris(v);
+				WL.clear();
+				for j in 0..m { pi(WL, TB[j]); }
+				for x in WL { setFS(x, fsid); }
+			}
+		},
+		_ => {},
+	}
+}
+fn edgeOk(e int, a int, b int) bool {
+	TDEAD[e / 3] == 0 && TRI[nx(e)] == a && TRI[pv(e)] == b
+}
+fn triQ(a int, b int, d int) real {
+	let A = 3 * a;
+	let B = 3 * b;
+	let D = 3 * d;
+	let u0 = CO[B] - CO[A];
+	let u1 = CO[B + 1] - CO[A + 1];
+	let u2 = CO[B + 2] - CO[A + 2];
+	let w0 = CO[D] - CO[A];
+	let w1 = CO[D + 1] - CO[A + 1];
+	let w2 = CO[D + 2] - CO[A + 2];
+	let x0 = CO[D] - CO[B];
+	let x1 = CO[D + 1] - CO[B + 1];
+	let x2 = CO[D + 2] - CO[B + 2];
+	let du = (u0 * u0 + u1 * u1) + u2 * u2;
+	let dw = (w0 * w0 + w1 * w1) + w2 * w2;
+	let dx = (x0 * x0 + x1 * x1) + x2 * x2;
+	let L = (du + dw) + dx;
+	if L > 0.0 {
+		return ((2.0 * c_sqrt(3.0)) * hyp3(u1 * w2 - u2 * w1, u2 * w0 - u0 * w2, u0 * w1 - u1 * w0)) / L;
+	}
+	0.0
+}
+fn nn(x int, y int, z int) {
+	let p = 3 * x;
+	let q = 3 * y;
+	let r = 3 * z;
+	let e0 = CO[q] - CO[p];
+	let e1 = CO[q + 1] - CO[p + 1];
+	let e2 = CO[q + 2] - CO[p + 2];
+	let f0 = CO[r] - CO[p];
+	let f1 = CO[r + 1] - CO[p + 1];
+	let f2 = CO[r + 2] - CO[p + 2];
+	U0 = e1 * f2 - e2 * f1;
+	U1 = e2 * f0 - e0 * f2;
+	U2 = e0 * f1 - e1 * f0;
+}
+fn crs9(p real[9]) {
+	let e0 = p[3] - p[0];
+	let e1 = p[4] - p[1];
+	let e2 = p[5] - p[2];
+	let f0 = p[6] - p[0];
+	let f1 = p[7] - p[1];
+	let f2 = p[8] - p[2];
+	U0 = e1 * f2 - e2 * f1;
+	U1 = e2 * f0 - e0 * f2;
+	U2 = e0 * f1 - e1 * f0;
+}
+fn ftg(x int) int {
+	if VLOCK[x] != 0 { 4 } else { 6 }
+}
+fn fdev(n int, x int) int { abs(n - ftg(x)) }
+fn flipE(c int, qm bool) bool {
+	let o int = OO[c];
+	if o < 0 { return false; }
+	let c1 = nx(c);
+	let c2 = pv(c);
+	let o1 = nx(o);
+	let o2 = pv(o);
+	let a int = TRI[c];
+	let b int = TRI[c1];
+	let d int = TRI[c2];
+	let e int = TRI[o];
+	if a == e { return false; }
+	if VLOCK[b] != 0 && VLOCK[d] != 0 { return false; }
+	let va = nbr(a);
+	for i in 0..va {
+		if NB[i] == e { return false; }
+	}
+	let vb = nbr(b);
+	let vd = nbr(d);
+	let ve = nbr(e);
+	if vb <= 3 || vd <= 3 { return false; }
+	if qm {
+		if jmin(triQ(a, b, e), triQ(e, d, a)) <= 1.2 * jmin(triQ(a, b, d), triQ(e, d, b)) { return false; }
+	} else {
+		let before = ((fdev(va, a) + fdev(ve, e)) + fdev(vb, b)) + fdev(vd, d);
+		let after = ((fdev(va + 1, a) + fdev(ve + 1, e)) + fdev(vb - 1, b)) + fdev(vd - 1, d);
+		if after >= before { return false; }
+	}
+	nn(a, b, d);
+	let n00 = U0;
+	let n01 = U1;
+	let n02 = U2;
+	nn(e, d, b);
+	let m0 = n00 + U0;
+	let m1 = n01 + U1;
+	let m2 = n02 + U2;
+	nn(a, b, e);
+	let p00 = U0;
+	let p01 = U1;
+	let p02 = U2;
+	nn(e, d, a);
+	let p10 = U0;
+	let p11 = U1;
+	let p12 = U2;
+	let lm = hyp3(m0, m1, m2);
+	if lm < 1e-30 { return false; }
+	if dot6(p00, p01, p02, m0, m1, m2) <= (0.3 * hyp3(p00, p01, p02)) * lm { return false; }
+	if dot6(p10, p11, p12, m0, m1, m2) <= (0.3 * hyp3(p10, p11, p12)) * lm { return false; }
+	let X2 int = OO[c1];
+	let Y2 int = OO[o1];
+	TRI[c2] = e as i32;
+	TRI[o2] = a as i32;
+	OO[c] = Y2 as i32;
+	if Y2 >= 0 { OO[Y2] = c as i32; }
+	OO[o] = X2 as i32;
+	if X2 >= 0 { OO[X2] = o as i32; }
+	OO[c1] = o1 as i32;
+	OO[o1] = c1 as i32;
+	VC[d] = o1 as i32;
+	VC[b] = c1 as i32;
+	chgT(c / 3);
+	chgT(o / 3);
+	for v in [a, b, d, e] {
+		if DS[v] != DQ {
+			DS[v] = DQ as i32;
+			pi(MV, v);
+		}
+	}
+	true
+}
+fn splitE(c int) int {
+	let o int = OO[c];
+	let t0 = c / 3;
+	let t1 = if o >= 0 { o / 3 } else { -1 };
+	let a0 int = TRI[c];
+	let b int = TRI[nx(c)];
+	let d int = TRI[pv(c)];
+	let m = addV(b);
+	let t2 = addT(t0);
+	let t3 = if t1 >= 0 { addT(t1) } else { -1 };
+	let c1 = nx(c);
+	let c2 = pv(c);
+	let k0 = 3 * t2;
+	let k1 = k0 + 1;
+	let k2 = k0 + 2;
+	TRI[c2] = m as i32;
+	TRI[k0] = a0 as i32;
+	TRI[k1] = m as i32;
+	TRI[k2] = d as i32;
+	let x int = OO[c1];
+	OO[k1] = x as i32;
+	if x >= 0 { OO[x] = k1 as i32; }
+	OO[c1] = k2 as i32;
+	OO[k2] = c1 as i32;
+	if o >= 0 {
+		let o1 = nx(o);
+		let o2 = pv(o);
+		let e int = TRI[o];
+		let j0 = 3 * t3;
+		let j1 = j0 + 1;
+		let j2 = j0 + 2;
+		TRI[o1] = m as i32;
+		TRI[j0] = e as i32;
+		TRI[j1] = d as i32;
+		TRI[j2] = m as i32;
+		let y int = OO[o2];
+		OO[j2] = y as i32;
+		if y >= 0 { OO[y] = j2 as i32; }
+		OO[o2] = j1 as i32;
+		OO[j1] = o2 as i32;
+		OO[k0] = j0 as i32;
+		OO[j0] = k0 as i32;
+		chgT(t1);
+	} else {
+		OO[k0] = -1;
+	}
+	VC[m] = c2 as i32;
+	VC[d] = k2 as i32;
+	chgT(t0);
+	let bb = 3 * b;
+	let dd = 3 * d;
+	MASK[m] = ((rv(MASK[b]) + rv(MASK[d])) / 2.0) as f32;
+	sc_vmid(m as i32, b as i32, d as i32);
+	set(m, (CO[bb] + CO[dd]) / 2.0, (CO[bb + 1] + CO[dd + 1]) / 2.0, (CO[bb + 2] + CO[dd + 2]) / 2.0);
+	ownV(m, TLEAF[t0]);
+	colV(m);
+	m
+}
+fn collapseE(c int) bool {
+	let o int = OO[c];
+	if o < 0 { return false; }
+	let t0 = c / 3;
+	let t1 = o / 3;
+	let a int = TRI[c];
+	let b int = TRI[nx(c)];
+	let d int = TRI[pv(c)];
+	let e int = TRI[o];
+	if a == e || VLOCK[b] != 0 || VLOCK[d] != 0 || VH[b] != 0 || VH[d] != 0 { return false; }
+	RB.clear();
+	let nbb = nbr(b);
+	for i in 0..nbb { pi(RB, NB[i]); }
+	RD.clear();
+	let nbd = nbr(d);
+	for i in 0..nbd { pi(RD, NB[i]); }
+	var sh = 0;
+	for x in RB {
+		for y in RD {
+			if y == x {
+				sh += 1;
+				break;
+			}
+		}
+	}
+	if sh != 2 || nbr(a) <= 3 || nbr(e) <= 3 { return false; }
+	let X1 int = OO[pv(c)];
+	let X2 int = OO[nx(c)];
+	let Y1 int = OO[pv(o)];
+	let Y2 int = OO[nx(o)];
+	if X1 < 0 || X2 < 0 || Y1 < 0 || Y2 < 0 { return false; }
+	let B = 3 * b;
+	let D = 3 * d;
+	let P0 = (CO[B] + CO[D]) / 2.0;
+	let P1 = (CO[B + 1] + CO[D + 1]) / 2.0;
+	let P2 = (CO[B + 2] + CO[D + 2]) / 2.0;
+	let pp real[3] = [P0, P1, P2];
+	FBA.clear();
+	let nfb = fan(b);
+	for i in 0..nfb { pi(FBA, FB[i]); }
+	FDA.clear();
+	let nfd = fan(d);
+	for i in 0..nfd { pi(FDA, FB[i]); }
+	fn chk(k int) bool {
+		let t = k / 3;
+		if t == t0 || t == t1 { return true; }
+		var qa real[9] = [0.0; 9];
+		var ra real[9] = [0.0; 9];
+		for kk in 0..3 {
+			let vv int = TRI[3 * t + kk];
+			for ax in 0..3 {
+				ra[3 * kk + ax] = CO[3 * vv + ax];
+				if vv == b || vv == d {
+					qa[3 * kk + ax] = pp[ax];
+				} else {
+					qa[3 * kk + ax] = CO[3 * vv + ax];
+				}
+			}
+		}
+		crs9(qa);
+		let n10 = U0;
+		let n11 = U1;
+		let n12 = U2;
+		crs9(ra);
+		let n00 = U0;
+		let n01 = U1;
+		let n02 = U2;
+		let l1 = hyp3(n10, n11, n12);
+		let l0 = hyp3(n00, n01, n02);
+		if l1 < 1e-30 || dot6(n00, n01, n02, n10, n11, n12) <= (0.2 * l0) * l1 { return false; }
+		true
+	}
+	for x in FBA {
+		let k int = x;
+		if !chk(k) { return false; }
+	}
+	for x in FDA {
+		let k int = x;
+		if !chk(k) { return false; }
+	}
+	OO[X1] = X2 as i32;
+	OO[X2] = X1 as i32;
+	OO[Y1] = Y2 as i32;
+	OO[Y2] = Y1 as i32;
+	for x in FDA {
+		let k int = x;
+		let t = k / 3;
+		if t != t0 && t != t1 {
+			TRI[k] = b as i32;
+			chgT(t);
+		}
+	}
+	VC[b] = nx(X1) as i32;
+	VC[a] = pv(X1) as i32;
+	VC[e] = nx(Y2) as i32;
+	for t in [t0, t1] {
+		TDEAD[t] = 1;
+		rmT(t);
+		chgT(t);
+	}
+	VDEAD[d] = 1;
+	rmV(d);
+	VC[d] = -1;
+	VH[d] = 1;
+	MASK[b] = ((rv(MASK[b]) + rv(MASK[d])) / 2.0) as f32;
+	sc_vmid(b as i32, b as i32, d as i32);
+	set(b, P0, P1, P2);
+	colV(b);
+	true
+}
+fn relax(c0 real, c1 real, c2 real, R real) {
+	let R2 = R * R;
+	WL.clear();
+	for i in 0..MV.len {
+		let v int = MV[i];
+		if VDEAD[v] != 0 || VLOCK[v] != 0 || VH[v] != 0 { continue; }
+		if ((CO[3 * v] - c0) * (CO[3 * v] - c0) + (CO[3 * v + 1] - c1) * (CO[3 * v + 1] - c1)) + (CO[3 * v + 2] - c2) * (CO[3 * v + 2] - c2) <= R2 { pi(WL, v); }
+	}
+	for wx in WL {
+		let v int = wx;
+		let m = nbr(v);
+		if m < 3 { continue; }
+		var x = 0.0;
+		var y = 0.0;
+		var z = 0.0;
+		for j in 0..m {
+			let q int = 3 * NB[j];
+			x += CO[q];
+			y += CO[q + 1];
+			z += CO[q + 2];
+		}
+		let a = 3 * v;
+		x = x / (m as real) - CO[a];
+		y = y / (m as real) - CO[a + 1];
+		z = z / (m as real) - CO[a + 2];
+		let dd = (x * rv(VN[a]) + y * rv(VN[a + 1])) + z * rv(VN[a + 2]);
+		let q0 = CO[a] + (x - rv(VN[a]) * dd) * 0.5;
+		let q1 = CO[a + 1] + (y - rv(VN[a + 1]) * dd) * 0.5;
+		let q2 = CO[a + 2] + (z - rv(VN[a + 2]) * dd) * 0.5;
+		let qs real[3] = [q0, q1, q2];
+		let k = vtris(v);
+		var ok = true;
+		for j in 0..k {
+			if !ok { break; }
+			let t int = TB[j];
+			var r0 real[9] = [0.0; 9];
+			var r1 real[9] = [0.0; 9];
+			for kk in 0..3 {
+				let vv int = TRI[3 * t + kk];
+				for ax in 0..3 {
+					r0[3 * kk + ax] = CO[3 * vv + ax];
+					r1[3 * kk + ax] = CO[3 * vv + ax];
+					if vv == v {
+						r0[3 * kk + ax] = CO[a + ax];
+						r1[3 * kk + ax] = qs[ax];
+					}
+				}
+			}
+			crs9(r1);
+			let n10 = U0;
+			let n11 = U1;
+			let n12 = U2;
+			crs9(r0);
+			let n00 = U0;
+			let n01 = U1;
+			let n02 = U2;
+			let l0 = hyp3(n00, n01, n02);
+			let l1 = hyp3(n10, n11, n12);
+			ok = l1 > 1e-30 && dot6(n00, n01, n02, n10, n11, n12) > (0.5 * l0) * l1 && (n10 * rv(VN[a]) + n11 * rv(VN[a + 1])) + n12 * rv(VN[a + 2]) > 0.5 * l1;
+		}
+		if ok { set(v, q0, q1, q2); }
+	}
+}
+fn cr(i int) real {
+	if STL == 0 { return CO[i]; }
+	if i < SNP.len { SNP[i] } else { nan() }
+}
+fn elen(a int, b int) real {
+	hyp3(cr(3 * a) - cr(3 * b), cr(3 * a + 1) - cr(3 * b + 1), cr(3 * a + 2) - cr(3 * b + 2))
+}
+fn edges(t int) {
+	for k in 0..3 {
+		let e = 3 * t + k;
+		let o int = OO[e];
+		if o >= 0 && o < e { continue; }
+		let a int = TRI[nx(e)];
+		let b int = TRI[pv(e)];
+		pi(EE, e);
+		pi(EE, a);
+		pi(EE, b);
+		pf(EL, elen(a, b));
+	}
+}
+export fn sc_topo(c0 real, c1 real, c2 real, R real, L real, simp i32, budget i32) i32 {
+	if DYN == 0 || !(L > 0.0) {
+		views();
+		return 0;
+	}
+	let n = range(c0, c1, c2, R);
+	if n == 0 {
+		views();
+		return 0;
+	}
+	TOP = 1;
+	STL = 0;
+	let n0 = MV.len;
+	QID += 1;
+	let s = QID;
+	EE.clear();
+	EL.clear();
+	let bud int = budget;
+	let hi = L;
+	let lo = L * (if simp != 0 { 0.8 } else { 0.4 });
+	let R2 = (R * R) * 1.44;
+	fn inR(a int, b int) bool {
+		let x = (cr(3 * a) + cr(3 * b)) / 2.0 - c0;
+		let y = (cr(3 * a + 1) + cr(3 * b + 1)) / 2.0 - c1;
+		let z = (cr(3 * a + 2) + cr(3 * b + 2)) / 2.0 - c2;
+		((x * x + y * y) + z * z) <= R2
+	}
+	VS.clear();
+	for i in 0..n { pi(VS, QV[i]); }
+	for x in VS {
+		let v int = x;
+		let m = vtris(v);
+		for j in 0..m {
+			let t int = TB[j];
+			if TQ[t] != s {
+				TQ[t] = s as i32;
+				edges(t);
+			}
+		}
+	}
+	var ops = 0;
+	if simp == 0 {
+		QL.clear();
+		for i in 0..EL.len {
+			if EL[i] > hi { pi(QL, i); }
+		}
+		stable_sort(QL) { a, b => EL[a] > EL[b] };
+		var ps = 0;
+		while QL.len > 0 && ps < 7 && ops < bud {
+			let ne = EL.len;
+			for x in QL {
+				if ops >= bud { break; }
+				let i int = x;
+				let e int = EE[3 * i];
+				let a int = EE[3 * i + 1];
+				let b int = EE[3 * i + 2];
+				if !(edgeOk(e, a, b) && OO[e] >= 0 && elen(a, b) > hi && inR(a, b)) { continue; }
+				let m = splitE(e);
+				ops += 1;
+				let k = vtris(m);
+				WL.clear();
+				for j in 0..k { pi(WL, TB[j]); }
+				for y in WL { edges(y); }
+			}
+			QL.clear();
+			for i in ne..EL.len {
+				if EL[i] > hi { pi(QL, i); }
+			}
+			stable_sort(QL) { a, b => EL[a] > EL[b] };
+			ps += 1;
+		}
+	}
+	QL.clear();
+	for i in 0..EL.len {
+		if EL[i] < lo { pi(QL, i); }
+	}
+	stable_sort(QL) { a, b => EL[a] < EL[b] };
+	for x in QL {
+		if ops >= bud { break; }
+		let i int = x;
+		let e int = EE[3 * i];
+		let a int = EE[3 * i + 1];
+		let b int = EE[3 * i + 2];
+		if !(edgeOk(e, a, b) && elen(a, b) < lo && inR(a, b)) { continue; }
+		if collapseE(e) { ops += 1; }
+	}
+	for ps in 0..2 {
+		QID += 1;
+		let s2 = QID;
+		FL.clear();
+		let tn = MV.len;
+		for i in 0..tn {
+			let v int = MV[i];
+			if VDEAD[v] != 0 { continue; }
+			let m = vtris(v);
+			let top = i >= n0;
+			for j in 0..m {
+				let t int = TB[j];
+				if TQ[t] == s2 { continue; }
+				TQ[t] = s2 as i32;
+				let q = triQ(TRI[3 * t], TRI[3 * t + 1], TRI[3 * t + 2]);
+				if q < 0.4 {
+					var bk = 0;
+					var bl = -1.0;
+					for kk in 0..3 {
+						let l = elen(TRI[3 * t + (kk + 1) % 3], TRI[3 * t + (kk + 2) % 3]);
+						if l > bl {
+							bl = l;
+							bk = kk;
+						}
+					}
+					pi(FL, 3 * t + bk);
+					pi(FL, TRI[3 * t + (bk + 1) % 3]);
+					pi(FL, TRI[3 * t + (bk + 2) % 3]);
+					pi(FL, 1);
+				}
+				if top {
+					for kk in 0..3 {
+						let e = 3 * t + kk;
+						let o int = OO[e];
+						if o > e {
+							pi(FL, e);
+							pi(FL, TRI[nx(e)]);
+							pi(FL, TRI[pv(e)]);
+							pi(FL, 0);
+						}
+					}
+				}
+			}
+		}
+		var f = 0;
+		let cnt = FL.len / 4;
+		for r in 0..cnt {
+			let e int = FL[4 * r];
+			let a int = FL[4 * r + 1];
+			let b int = FL[4 * r + 2];
+			let q int = FL[4 * r + 3];
+			if edgeOk(e, a, b) && flipE(e, q == 1) { f += 1; }
+		}
+		if f == 0 { break; }
+	}
+	if ops > 0 { relax(c0, c1, c2, R); }
+	TOP = 0;
+	STL = 0;
+	SNP.clear();
+	views();
+	ops as i32
+}
+fn moveT(s int, d int) {
+	for k in 0..3 {
+		let cs = 3 * s + k;
+		let cd = 3 * d + k;
+		let v int = TRI[cs];
+		let o int = OO[cs];
+		TRI[cd] = v as i32;
+		OO[cd] = o as i32;
+		if o >= 0 { OO[o] = cd as i32; }
+		if VC[v] == cs { VC[v] = cd as i32; }
+		TN[cd] = TN[cs];
+	}
+	TF[d] = TF[s];
+	TSET[d] = TSET[s];
+	TH[d] = TH[s];
+	TDEAD[d] = 0;
+	TDEAD[s] = 1;
+	sc_fcp(d as i32, s as i32);
+	let lf int = TLEAF[s];
+	let i int = TPOS[s];
+	if lf >= 0 {
+		lt_set(lf, i, d);
+		TPOS[d] = i as i32;
+	}
+	TLEAF[d] = lf as i32;
+	TLEAF[s] = -1;
+	chgT(d);
+}
+fn moveV(s int, d int) {
+	let n = fan(s);
+	for i in 0..n {
+		let cc int = FB[i];
+		TRI[cc] = d as i32;
+		chgT(cc / 3);
+	}
+	for k in 0..3 {
+		CO[3 * d + k] = CO[3 * s + k];
+		POS[3 * d + k] = POS[3 * s + k];
+		VN[3 * d + k] = VN[3 * s + k];
+		COL[3 * d + k] = COL[3 * s + k];
+	}
+	MASK[d] = MASK[s];
+	VH[d] = VH[s];
+	VLOCK[d] = VLOCK[s];
+	VC[d] = VC[s];
+	sc_vcp(d as i32, s as i32);
+	let lf int = VLEAF[s];
+	if lf >= 0 {
+		let i int = VPOS[s];
+		lv_set(lf, i, d);
+		VPOS[d] = i as i32;
+	}
+	VLEAF[d] = lf as i32;
+	VLEAF[s] = -1;
+	VDEAD[d] = 0;
+	VDEAD[s] = 1;
+	VC[s] = -1;
+	chgV(d);
+}
+export fn sc_compact() {
+	if DYN == 1 {
+		var t = NT - 1;
+		while t >= 0 {
+			if TDEAD[t] != 0 {
+				let l = NT - 1;
+				if l != t { moveT(l, t); }
+				TDEAD[l] = 0;
+				NT -= 1;
+			}
+			t -= 1;
+		}
+		var v = NV - 1;
+		while v >= 0 {
+			if VDEAD[v] != 0 {
+				let l = NV - 1;
+				if l != v { moveV(l, v); }
+				VDEAD[l] = 0;
+				NV -= 1;
+			}
+			v -= 1;
+		}
+	}
+	views();
+}
+export fn sc_buildO() {
+	let nt = NT;
+	let nv = NV;
+	var cnt i32[>..] = [];
+	cnt.reserve(nv + 1);
+	cnt.resize(nv + 1, 0);
+	for c in 0..(3 * nt) {
+		let x int = TRI[c];
+		cnt[x + 1] += 1;
+	}
+	for v in 0..nv { cnt[v + 1] += cnt[v]; }
+	var L i32[>..] = [];
+	L.reserve(3 * nt);
+	L.resize(3 * nt, 0);
+	var q i32[>..] = [];
+	q.reserve(nv);
+	q.append(cnt[0..nv]);
+	for c in 0..(3 * nt) {
+		let x int = TRI[c];
+		let p int = q[x];
+		L[p] = c as i32;
+		q[x] += 1;
+	}
+	for c in 0..(3 * nt) { OO[c] = -1; }
+	for c in 0..(3 * nt) {
+		let u int = TRI[nx(c)];
+		let w int = TRI[pv(c)];
+		var hit = -1;
+		var k = 0;
+		var s = 0;
+		let ws int = cnt[w];
+		let we int = cnt[w + 1];
+		for i in ws..we {
+			let dd int = L[i];
+			if TRI[nx(dd)] == u {
+				hit = pv(dd);
+				k += 1;
+			}
+		}
+		let us int = cnt[u];
+		let ue int = cnt[u + 1];
+		for i in us..ue {
+			let ll int = L[i];
+			if TRI[nx(ll)] == w { s += 1; }
+		}
+		if k == 1 && s == 1 { OO[c] = hit as i32; }
+	}
+	var vis u8[>..] = [];
+	vis.reserve(3 * nt);
+	vis.resize(3 * nt, 0);
+	for v in 0..nv {
+		var g = 0;
+		let s0 int = cnt[v];
+		let e0 int = cnt[v + 1];
+		for i in s0..e0 {
+			let c0 int = L[i];
+			if vis[c0] != 0 { continue; }
+			let uu = if g == 0 { v } else { addV(v) };
+			g += 1;
+			WL.clear();
+			var c = c0;
+			var open = false;
+			loop {
+				vis[c] = 1;
+				pi(WL, c);
+				let p int = OO[pv(c)];
+				c = if p < 0 { -1 } else { pv(p) };
+				if !(c >= 0 && vis[c] == 0) { break; }
+			}
+			if c < 0 {
+				open = true;
+				let p int = OO[nx(c0)];
+				c = if p < 0 { -1 } else { nx(p) };
+				while c >= 0 && vis[c] == 0 {
+					vis[c] = 1;
+					pi(WL, c);
+					let r int = OO[nx(c)];
+					c = if r < 0 { -1 } else { nx(r) };
+				}
+			}
+			for x in WL {
+				let k int = x;
+				TRI[k] = uu as i32;
+			}
+			VC[uu] = c0 as i32;
+			VLOCK[uu] = if open { 1 } else { 0 };
+		}
+		if g == 0 { VLOCK[v] = 1; }
+	}
+	CAV = 1;
+	CAT = 1;
+	views();
+}
+export fn sc_check() i32 {
+	CHK.clear();
+	if DYN == 0 { return 0; }
+	fn msg(k int, x int, y int) {
+		pi(CHK, k);
+		pi(CHK, x);
+		pi(CHK, y);
+	}
+	var c = 0;
+	while c < 3 * NT && CHK.len / 3 < 20 {
+		let t = c / 3;
+		if TDEAD[t] != 0 {
+			msg(1, t, 0);
+			c += 1;
+			continue;
+		}
+		let o int = OO[c];
+		if o >= 0 && (OO[o] != c || TRI[nx(o)] != TRI[pv(c)] || TRI[pv(o)] != TRI[nx(c)]) { msg(2, c, 0); }
+		let x int = TRI[c];
+		if x < 0 || x >= NV || VDEAD[x] != 0 { msg(3, c, 0); }
+		c += 1;
+	}
+	var v = 0;
+	while v < NV && CHK.len / 3 < 20 {
+		if VDEAD[v] != 0 {
+			msg(4, v, 0);
+			v += 1;
+			continue;
+		}
+		let cc int = VC[v];
+		if cc >= 0 && TRI[cc] != v { msg(5, v, 0); }
+		v += 1;
+	}
+	var lt = 0;
+	for nd in 0..NN {
+		if NL[nd] < 0 && LTC[nd] >= 0 { lt += LTN[nd]; }
+	}
+	if lt != NT { msg(7, lt, NT); }
+	views();
+	(CHK.len / 3) as i32
+}
