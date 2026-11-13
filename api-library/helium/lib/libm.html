@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/libm">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/libm">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=a4a00c92df">
+<link rel="stylesheet" href="/api-library/lib.css?v=f73bfc636c">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=a4a00c92df'; start({wasm: '/api-library/search.wasm?v=a4a00c92df'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=f73bfc636c'; start({wasm: '/api-library/search.wasm?v=f73bfc636c'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>libm</h1>
 <p class="lib-lede">Provides low-level math library routines such as sine, cosine, scaling, and argument reduction for floating-point calculations in programs.</p>
-<p class="lib-meta"><code>import libm;</code> &middot; <code>libm::</code> &middot; 13 functions, 1 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni">Source</a></p>
+<p class="lib-meta"><code>import libm;</code> &middot; <code>libm::</code> &middot; 13 functions, 1 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#trigonometry">Trigonometry <span class="n">6</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -114,42 +114,42 @@
 <pre>atanf(x0 f32) f32</pre>
 <p>Returns the arctangent of an f32 in radians, passing NaN through unchanged.</p>
 <p class="note">`atanf(x f32) f32` works entirely in f32, with ix=f32_bits(x), sign=ix&gt;&gt;31 != 0, then ix&amp;=0x7fffffff. The constants are: - ATAN_HI=[4.6364760399e-01, 7.8539812565e-01, 9.8279368877e-01, 1.5707962513e+00] - ATAN_LO=[5.0121582440e-09, 3.7748947079e-08, 3.4473217170e-08, 7.5497894159e-08] - A_T=[3.3333328366e-01, -1.9999158382e-01, 1.4253635705e-01, -1.0648017377e-01, 6.1687607318e-02]</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L203">hc/lib/libm.amni:203</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L203">hc/lib/libm.amni:203</a>
 </article>
 <article class="sym" id="atan2f">
 <h3><a href="#atan2f">atan2f</a> <i>function</i></h3>
 <pre>atan2f(y f32, x f32) f32</pre>
 <p>Returns the angle in radians of the point (x, y) using both signs to pick the quadrant.</p>
 <p class="note">`atan2f(y f32, x f32) f32` works in f32, with PI=3.1415927410e+00 and PI_LO=-8.7422776573e-08. The cases, in order: 1. If x or y is NaN, return y+x (y as the left operand, so with two NaNs the result carries y's quieted payload as the reference build does). 2. Let ix=f32_bits(x) and iy=f32_bits(y). If ix==0x3f800000, return atanf(y). 3. Let m=((iy&gt;&gt;31)&amp;1)|((ix&gt;&gt;30)&amp;2). Then ix&amp;=0x7fffffff and iy&amp;=</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L242">hc/lib/libm.amni:242</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L242">hc/lib/libm.amni:242</a>
 </article>
 <article class="sym" id="sinf">
 <h3><a href="#sinf">sinf</a> <i>function</i></h3>
 <pre>sinf(x f32) f32</pre>
 <p>Returns the sine of an f32 angle given in radians.</p>
 <p class="note">`sinf(x f32) f32`: - ix&lt;=0x3f490fda: return x if ix&lt;0x39800000, else k_sinf(x64). - ix&lt;=0x4016cbe3: return -k_cosf(x64+P1) if sign, else k_cosf(x64-P1). - ix&lt;=0x407b53d1: return k_sinf(-(x64+P2)) if sign, else k_sinf(-(x64-P2)). - ix&lt;=0x40afeddf: return k_cosf(x64+P3) if sign, else -k_cosf(x64-P3). - ix&lt;=0x40e231d5: return k_sinf(x64+P4) if sign, else k_sinf(x64-P4). - ix&gt;=0x7f800000: return x-x. </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L298">hc/lib/libm.amni:298</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L298">hc/lib/libm.amni:298</a>
 </article>
 <article class="sym" id="cosf">
 <h3><a href="#cosf">cosf</a> <i>function</i></h3>
 <pre>cosf(x f32) f32</pre>
 <p>Returns the cosine of an f32 angle given in radians.</p>
 <p class="note">`cosf(x f32) f32`: - ix&lt;=0x3f490fda: return 1.0 if ix&lt;0x39800000, else k_cosf(x64). - ix&lt;=0x4016cbe3: return k_sinf(x64+P1) if sign, else k_sinf(P1-x64). - ix&lt;=0x407b53d1: return -k_cosf(x64+P2) if sign, else -k_cosf(x64-P2). - ix&lt;=0x40afeddf: return k_sinf(-x64-P3) if sign, else k_sinf(x64-P3). - ix&lt;=0x40e231d5: return k_cosf(x64+P4) if sign, else k_cosf(x64-P4). - ix&gt;=0x7f800000: return x-x. - O</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L328">hc/lib/libm.amni:328</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L328">hc/lib/libm.amni:328</a>
 </article>
 <article class="sym" id="sincosf">
 <h3><a href="#sincosf">sincosf</a> <i>function</i></h3>
 <pre>sincosf(x f32) f32, f32</pre>
 <p>Returns the sine and cosine of an f32 angle in radians as a pair.</p>
 <p class="note">`sincosf(x f32) f32, f32` returns sin and cos: - ix&lt;=0x3f490fda: return (x, 1.0) if ix&lt;0x39800000, else (k_sinf(x64), k_cosf(x64)). - ix&lt;=0x4016cbe3: if sign, return (-k_cosf(x64+P1), k_sinf(x64+P1)); else return (k_cosf(P1-x64), k_sinf(P1-x64)). - ix&lt;=0x407b53d1: if sign, return (-k_sinf(x64+P2), -k_cosf(x64+P2)); else return (-k_sinf(x64-P2), -k_cosf(x64-P2)). - ix&lt;=0x40afeddf: if sign, return (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L358">hc/lib/libm.amni:358</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L358">hc/lib/libm.amni:358</a>
 </article>
 <article class="sym" id="hypotf">
 <h3><a href="#hypotf">hypotf</a> <i>function</i></h3>
 <pre>hypotf(x0 f32, y0 f32) f32</pre>
 <p>Returns the length of the hypotenuse for two f32 legs, scaling to avoid overflow and underflow.</p>
 <p class="note">`hypotf(x f32, y f32) f32` works in f32. 1. Clear the sign bit of both bit patterns, giving ux and uy. Swap them so that ux&gt;=uy. Then x=f32_from_bits(ux) and y=f32_from_bits(uy). 2. If uy==0xff&lt;&lt;23, return y. 3. If ux&gt;=0xff&lt;&lt;23, or uy==0, or ux-uy&gt;=25&lt;&lt;23, return y+x (y as the left operand, for the same NaN payload reason). 4. Scale with z=1.0: - If ux&gt;=(0x7f+60)&lt;&lt;23: z=2^90 (bits 0x6c800000), and</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L396">hc/lib/libm.amni:396</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L396">hc/lib/libm.amni:396</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (26)</summary>
 <article class="sym" id="Ipio2Row">
@@ -157,165 +157,165 @@
 <pre>struct Ipio2Row { v int }</pre>
 <p>Row type holding one 24-bit chunk of the table of 2/pi bits used for argument reduction.</p>
 <p class="note">struct `Ipio2Row` with one field `v int`. It holds one row of the 2/pi bit table. Each row is 24 bits of 2/pi: row i is the bits from 24*i to 24*i+23 after the binary point.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L4">hc/lib/libm.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L4">hc/lib/libm.amni:4</a>
 </article>
 <article class="sym" id="ipio2_table">
 <h3><a href="#ipio2_table">ipio2_table</a> <i>function</i></h3>
 <pre>ipio2_table() Ipio2Row[66]</pre>
 <p>Returns the 66-entry table of 2/pi bit chunks used by large-argument reduction.</p>
 <p class="note">The table above is the source's 66-entry variant. f32 inputs never index past entry 23 (jv &lt;= 4 and jz &lt; 20), so the source's 690-entry table gives identical results. Module-level `var IPIO2` holds `ipio2_table()`. It is filled once, on first use, and kept.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L5">hc/lib/libm.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L5">hc/lib/libm.amni:5</a>
 </article>
 <article class="sym" id="IPIO2">
 <h3><a href="#IPIO2">IPIO2</a> <i>constant</i></h3>
 <pre>var IPIO2 Ipio2Row[&gt;..]</pre>
 <p>Lazily filled cache of the 2/pi table rows, populated on first access.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L26">hc/lib/libm.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L26">hc/lib/libm.amni:26</a>
 </article>
 <article class="sym" id="ipio2_at">
 <h3><a href="#ipio2_at">ipio2_at</a> <i>function</i></h3>
 <pre>ipio2_at(i int) int</pre>
 <p>Returns the 24-bit 2/pi chunk at index i, filling the table cache on first use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L27">hc/lib/libm.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L27">hc/lib/libm.amni:27</a>
 </article>
 <article class="sym" id="PIO2">
 <h3><a href="#PIO2">PIO2</a> <i>constant</i></h3>
 <pre>let PIO2 real[8] = [1.57079625129699707031e+00, 7.54978941586159635335e-08, 5.39030252995776476554e-15, 3.28200341580791294123e-22, 1.27065575308067607349e-29, 1.22933308981111328932e-36, 2.73370053816464559624e-44, 2.16</pre>
 <p>Table of eight pi/2 pieces in decreasing magnitude used to rebuild the reduced remainder.</p>
 <p class="note">`PIO2` is a module-level real[8] constant holding pi/2 cut into 24-bit chunks, in this order: 1.57079625129699707031e+00, 7.54978941586159635335e-08, 5.39030252995776476554e-15, 3.28200341580791294123e-22, 1.27065575308067607349e-29, 1.22933308981111328932e-36, 2.73370053816464559624e-44, 2.16741683877804819444e-51.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L31">hc/lib/libm.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L31">hc/lib/libm.amni:31</a>
 </article>
 <article class="sym" id="scalbn">
 <h3><a href="#scalbn">scalbn</a> <i>function</i></h3>
 <pre>scalbn(x real, n int) real</pre>
 <p>Returns x multiplied by 2 raised to the power n, built from exponent bits.</p>
 <p class="note">`scalbn(x real, n int) real` returns x times 2^n. It multiplies x by the double whose bits are (0x3ff+n)&lt;&lt;52. This is exact here, because every caller keeps n inside the normal exponent range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L32">hc/lib/libm.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L32">hc/lib/libm.amni:32</a>
 </article>
 <article class="sym" id="k_sinf">
 <h3><a href="#k_sinf">k_sinf</a> <i>function</i></h3>
 <pre>k_sinf(x real) f32</pre>
 <p>Computes sine of a small reduced argument as a polynomial approximation, returning f32.</p>
 <p class="note">`k_sinf(x real) f32` uses S1=-0.166666666416265235595, S2=0.0083333293858894631756, S3=-0.000198393348360966317347 and S4=0.0000027183114939898219064. It computes z=x*x, w=z*z, r=S3+z*S4 and s=z*x. It returns ((x+s*(S1+z*S2))+s*w*r) rounded to f32.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L35">hc/lib/libm.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L35">hc/lib/libm.amni:35</a>
 </article>
 <article class="sym" id="k_cosf">
 <h3><a href="#k_cosf">k_cosf</a> <i>function</i></h3>
 <pre>k_cosf(x real) f32</pre>
 <p>Computes cosine of a small reduced argument as a polynomial approximation, returning f32.</p>
 <p class="note">`k_cosf(x real) f32` uses C0=-0.499999997251031003120, C1=0.0416666233237390631894, C2=-0.00138867637746099294692 and C3=0.0000243904487962774090654. It computes z=x*x, w=z*z and r=C2+z*C3. It returns (((1.0+z*C0)+w*C1)+(w*z)*r) rounded to f32.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L46">hc/lib/libm.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L46">hc/lib/libm.amni:46</a>
 </article>
 <article class="sym" id="TWO24">
 <h3><a href="#TWO24">TWO24</a> <i>constant</i></h3>
 <pre>let TWO24 real = 16777216.0</pre>
 <p>Constant 2 to the 24th power, used to split values into 24-bit chunks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L56">hc/lib/libm.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L56">hc/lib/libm.amni:56</a>
 </article>
 <article class="sym" id="TWON24">
 <h3><a href="#TWON24">TWON24</a> <i>constant</i></h3>
 <pre>let TWON24 real = 5.9604644775390625e-08</pre>
 <p>Constant 2 to the power of negative 24, used to split values into 24-bit chunks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L57">hc/lib/libm.amni:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L57">hc/lib/libm.amni:57</a>
 </article>
 <article class="sym" id="rem_pio2_large">
 <h3><a href="#rem_pio2_large">rem_pio2_large</a> <i>function</i></h3>
 <pre>rem_pio2_large(x real, e0 int) int, real</pre>
 <p>Reduces a scaled large argument modulo pi/2, returning the quadrant count modulo 8 and the remainder.</p>
 <p class="note">`rem_pio2_large(x real, e0 int) int, real` is the source's rem_pio2_large specialized to the only call it gets: one input piece (jx=0) and prec 0 (jk=jp=3). It returns n&amp;7 and the single result y. The arrays are local `f`, `q` and `fq` (real[20]) and `iq` (int[20]), all starting at zero. Integer math is i32-range `int`. A truncation from real to int truncates toward zero; every such value is in ra</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L58">hc/lib/libm.amni:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L58">hc/lib/libm.amni:58</a>
 </article>
 <article class="sym" id="INV_PIO2">
 <h3><a href="#INV_PIO2">INV_PIO2</a> <i>constant</i></h3>
 <pre>let INV_PIO2 real = 6.36619772367581382433e-01</pre>
 <p>Constant equal to 2/pi, used to estimate the quadrant of an argument.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L180">hc/lib/libm.amni:180</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L180">hc/lib/libm.amni:180</a>
 </article>
 <article class="sym" id="PIO2_1">
 <h3><a href="#PIO2_1">PIO2_1</a> <i>constant</i></h3>
 <pre>let PIO2_1 real = 1.57079631090164184570e+00</pre>
 <p>Leading part of pi/2 used to subtract multiples of pi/2 with extra precision.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L181">hc/lib/libm.amni:181</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L181">hc/lib/libm.amni:181</a>
 </article>
 <article class="sym" id="PIO2_1T">
 <h3><a href="#PIO2_1T">PIO2_1T</a> <i>constant</i></h3>
 <pre>let PIO2_1T real = 1.58932547735281966916e-08</pre>
 <p>Trailing correction to pi/2 paired with the leading part for precise reduction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L182">hc/lib/libm.amni:182</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L182">hc/lib/libm.amni:182</a>
 </article>
 <article class="sym" id="TOINT">
 <h3><a href="#TOINT">TOINT</a> <i>constant</i></h3>
 <pre>let TOINT real = 6755399441055744.0</pre>
 <p>Rounding constant added and subtracted to round a real value to the nearest integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L183">hc/lib/libm.amni:183</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L183">hc/lib/libm.amni:183</a>
 </article>
 <article class="sym" id="rem_pio2f">
 <h3><a href="#rem_pio2f">rem_pio2f</a> <i>function</i></h3>
 <pre>rem_pio2f(x f32) int, real</pre>
 <p>Reduces an f32 modulo pi/2, returning the quadrant count and the remainder; non-finite input gives a NaN remainder.</p>
 <p class="note">`rem_pio2f(x f32) int, real` uses x64=x as real and ix=f32_bits(x)&amp;0x7fffffff. The constants are: - INV_PIO2=6.36619772367581382433e-01 - PIO2_1=1.57079631090164184570e+00 - PIO2_1T=1.58932547735281966916e-08 - TOINT=6755399441055744.0 (1.5/f64::EPSILON)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L184">hc/lib/libm.amni:184</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L184">hc/lib/libm.amni:184</a>
 </article>
 <article class="sym" id="ATAN_HI">
 <h3><a href="#ATAN_HI">ATAN_HI</a> <i>constant</i></h3>
 <pre>let ATAN_HI f32[4] = [4.6364760399e-01, 7.8539812565e-01, 9.8279368877e-01, 1.5707962513e+00]</pre>
 <p>High parts of the arctangent reference values at 0.5, 1.0, 1.5 and infinity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L200">hc/lib/libm.amni:200</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L200">hc/lib/libm.amni:200</a>
 </article>
 <article class="sym" id="ATAN_LO">
 <h3><a href="#ATAN_LO">ATAN_LO</a> <i>constant</i></h3>
 <pre>let ATAN_LO f32[4] = [5.0121582440e-09, 3.7748947079e-08, 3.4473217170e-08, 7.5497894159e-08]</pre>
 <p>Low correction parts paired with the high arctangent reference values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L201">hc/lib/libm.amni:201</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L201">hc/lib/libm.amni:201</a>
 </article>
 <article class="sym" id="A_T">
 <h3><a href="#A_T">A_T</a> <i>constant</i></h3>
 <pre>let A_T f32[5] = [3.3333328366e-01, -1.9999158382e-01, 1.4253635705e-01, -1.0648017377e-01, 6.1687607318e-02]</pre>
 <p>Polynomial coefficients used to approximate arctangent on a reduced argument.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L202">hc/lib/libm.amni:202</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L202">hc/lib/libm.amni:202</a>
 </article>
 <article class="sym" id="PIF">
 <h3><a href="#PIF">PIF</a> <i>constant</i></h3>
 <pre>let PIF f32 = 3.1415927410e+00</pre>
 <p>Single-precision value of pi used by the two-argument arctangent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L240">hc/lib/libm.amni:240</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L240">hc/lib/libm.amni:240</a>
 </article>
 <article class="sym" id="PI_LO">
 <h3><a href="#PI_LO">PI_LO</a> <i>constant</i></h3>
 <pre>let PI_LO f32 = -8.7422776573e-08</pre>
 <p>Low-order correction to the single-precision value of pi.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L241">hc/lib/libm.amni:241</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L241">hc/lib/libm.amni:241</a>
 </article>
 <article class="sym" id="FRAC_PI_2">
 <h3><a href="#FRAC_PI_2">FRAC_PI_2</a> <i>constant</i></h3>
 <pre>let FRAC_PI_2 real = 1.5707963267948966</pre>
 <p>Constant pi/2 as a double-precision real.</p>
 <p class="note">Module constants: `FRAC_PI_2`=1.5707963267948966; P1=1*FRAC_PI_2, P2=2*FRAC_PI_2, P3=3*FRAC_PI_2 and P4=4*FRAC_PI_2, all real. Each of the next three functions starts from x64=x as real, ix=f32_bits(x)&amp;0x7fffffff, and sign = x's sign bit set. Each tests these cases in order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L293">hc/lib/libm.amni:293</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L293">hc/lib/libm.amni:293</a>
 </article>
 <article class="sym" id="P1">
 <h3><a href="#P1">P1</a> <i>constant</i></h3>
 <pre>let P1 real = 1.0 * FRAC_PI_2</pre>
 <p>Constant equal to one times pi/2, used as a shift in sine and cosine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L294">hc/lib/libm.amni:294</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L294">hc/lib/libm.amni:294</a>
 </article>
 <article class="sym" id="P2">
 <h3><a href="#P2">P2</a> <i>constant</i></h3>
 <pre>let P2 real = 2.0 * FRAC_PI_2</pre>
 <p>Constant equal to two times pi/2, used as a shift in sine and cosine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L295">hc/lib/libm.amni:295</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L295">hc/lib/libm.amni:295</a>
 </article>
 <article class="sym" id="P3">
 <h3><a href="#P3">P3</a> <i>constant</i></h3>
 <pre>let P3 real = 3.0 * FRAC_PI_2</pre>
 <p>Constant equal to three times pi/2, used as a shift in sine and cosine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L296">hc/lib/libm.amni:296</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L296">hc/lib/libm.amni:296</a>
 </article>
 <article class="sym" id="P4">
 <h3><a href="#P4">P4</a> <i>constant</i></h3>
 <pre>let P4 real = 4.0 * FRAC_PI_2</pre>
 <p>Constant equal to four times pi/2, used as a shift in sine and cosine.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/libm.amni#L297">hc/lib/libm.amni:297</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/libm.amni#L297">hc/lib/libm.amni:297</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -338,7 +338,7 @@
 </li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1812</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1880</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>

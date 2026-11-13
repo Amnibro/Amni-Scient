@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/hairdo | AMNI-SCIENT</title>
+<meta name="description" content="Defines a library of parameterized hairstyle presets for generating strand-based 3D hair on character models, including length, curl, bangs, and ponytails.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/hairdo">
+<meta property="og:description" content="Defines a library of parameterized hairstyle presets for generating strand-based 3D hair on character models, including length, curl, bangs, and ponytails.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-hairdo">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-hairdo">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=f73bfc636c">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=f73bfc636c'; start({wasm: '/api-library/search.wasm?v=f73bfc636c'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/hairdo</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/hairdo</h1>
+<p class="lib-lede">Defines a library of parameterized hairstyle presets for generating strand-based 3D hair on character models, including length, curl, bangs, and ponytails.</p>
+<p class="lib-meta"><code>import gfx.hairdo;</code> &middot; <code>hairdo::</code> &middot; 48 functions, 2 types, 17 constants &middot; <a href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#hairstyles">Hairstyles <span class="n">7</span></a></li>
+<li><a href="#hair-colors">Hair Colors <span class="n">5</span></a></li>
+<li><a href="#hairstyle-grid">Hairstyle Grid <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="hairstyles">Hairstyles <span class="n">7</span></h2>
+<article class="sym" id="Do">
+<h3><a href="#Do">Do</a> <i>type</i></h3>
+<pre>struct Do {
+	name const byte[:],
+	guides int,
+	strands int,
+	points int,
+	width f32,
+	comb int,
+	part f32,
+	length f32,
+	sides f32,
+	cut f32,
+	vary f32,
+	fringe f32,
+	sweep f32,
+	lift f32,
+	curl f32,
+	turns f32,
+	wave f32,
+	waves f32,
+	clump f32,
+	locks int,
+	tie int,
+	tie_y f32,
+	tie_az f32,
+	tail f32,
+	fan f32,
+	frizz f32,
+	rough f32,
+	stiff f32,
+	face f32
+}</pre>
+<p>Parameter set describing one hairstyle preset, including length, curl, bangs, tie style, and strand counts.</p>
+<p class="note">`Do` is one default hairstyle, with these fields in this order: `name` (text), ints `guides`, `strands` and `points`, f32 `width`, int `comb`, f32s `part`, `length`, `sides`, `cut`, `vary`, `fringe`, `sweep`, `lift`, `curl`, `turns`, `wave`, `waves`, `clump`, int `locks`, int `tie`, f32s `tie_y`, `tie_az`, `tail`, `fan`, `frizz`, `rough`, `stiff` and `face`.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L10">hc/lib/gfx/hairdo.amni:10</a>
+</article>
+<article class="sym" id="STYLES">
+<h3><a href="#STYLES">STYLES</a> <i>function</i></h3>
+<pre>STYLES() Do[&gt;..]</pre>
+<p>Returns the list of all built-in hairstyle presets.</p>
+<p class="note">`STYLES` is the constant table of default hairstyles, in this order: ```table STYLES Do buzz|3600|14|4|2.5|3|0|0.07|0.6|0|0.2|0|0|0|0|0|0|0|0|0|0|0|180|0|0|0|0.5|1|0 crew|3600|14|6|2.5|3|0|0.3|0.3|0|0.25|0|0|0|0|0|0|0|0.3|400|0|0|180|0|0|0|0.5|0.92|0 crop|3200|16|8|3|2|0|0.6|0.35|0|0.3|0|0.3|0.12|0|0|0.02|1.5|0.5|320|0|0|180|0|0|0.2|0.45|0.3|0 side part|3200|16|10|3|0|-0.35|0.95|0.3|0|0.2|0|0|0.1|</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L42">hc/lib/gfx/hairdo.amni:42</a>
+</article>
+<article class="sym" id="count">
+<h3><a href="#count">count</a> <i>function</i></h3>
+<pre>count() int</pre>
+<p>Returns the number of built-in hairstyle presets.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L117">hc/lib/gfx/hairdo.amni:117</a>
+</article>
+<article class="sym" id="name_of">
+<h3><a href="#name_of">name_of</a> <i>function</i></h3>
+<pre>name_of(i int) const byte[:]</pre>
+<p>Returns the name of the hairstyle at an index, or an empty string if out of range.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L119">hc/lib/gfx/hairdo.amni:119</a>
+</article>
+<article class="sym" id="find">
+<h3><a href="#find">find</a> <i>function</i></h3>
+<pre>find(name const byte[:]) int</pre>
+<p>Returns the index of the hairstyle with the given name, or -1 if none matches.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L129">hc/lib/gfx/hairdo.amni:129</a>
+</article>
+<article class="sym" id="style">
+<h3><a href="#style">style</a> <i>function</i></h3>
+<pre>style(name const byte[:]) Do</pre>
+<p>Returns the hairstyle preset with the given name, or the first preset if not found.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L136">hc/lib/gfx/hairdo.amni:136</a>
+</article>
+<article class="sym" id="wear">
+<h3><a href="#wear">wear</a> <i>function</i></h3>
+<pre>wear(item int, joint const byte[:], meshes const byte[][:], name const byte[:], shade const byte[:], seed int) int</pre>
+<p>Grows hair of a named style and color on a model's head joint and returns the groom handle, or -1 on failure.</p>
+<p class="note">`wear(item, joint, meshes, name, shade, seed)` gives the scene item a default hairstyle and returns the groom's index, or -1. item and seed are ints, joint, name and shade byte slices, and meshes a slice of byte slices as in `measure`. 1. a is the asset index (an int) of `s3d::items[item]`. Return -1 when `measure(a, joint, meshes)` fails. 2. st = style(name). Grow it with the seed into a fresh by</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L850">hc/lib/gfx/hairdo.amni:850</a>
+</article>
+<h2 id="hair-colors">Hair Colors <span class="n">5</span></h2>
+<article class="sym" id="Shade">
+<h3><a href="#Shade">Shade</a> <i>type</i></h3>
+<pre>struct Shade {
+	name const byte[:],
+	r f32,
+	g f32,
+	b f32,
+	gain f32,
+	dye f32
+}</pre>
+<p>Hair color preset with RGB values, brightness gain, and a flag for dyed shades.</p>
+<p class="note">`Shade` is one default hair color, with these fields in this order: `name` (text), f32s `r`, `g`, `b` (the linear color), `gain` and `dye` (1 for a color natural pigment cannot make).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L76">hc/lib/gfx/hairdo.amni:76</a>
+</article>
+<article class="sym" id="SHADES">
+<h3><a href="#SHADES">SHADES</a> <i>function</i></h3>
+<pre>SHADES() Shade[&gt;..]</pre>
+<p>Returns the list of all built-in hair color presets.</p>
+<p class="note">`SHADES` is the constant table of default hair colors, in this order: ```table SHADES Shade black|0.03|0.022|0.018|0.45|0 soft black|0.06|0.04|0.03|0.7|0 dark brown|0.12|0.07|0.04|1|0 brown|0.22|0.13|0.07|1.2|0 chestnut|0.3|0.15|0.07|1.3|0 auburn|0.36|0.13|0.06|1.4|0 copper|0.55|0.22|0.07|1.6|0 strawberry|0.5|0.36|0.2|1.7|0 dark blonde|0.42|0.28|0.14|1.5|0 blonde|0.63|0.41|0.2|1.8|0 golden|0.72|0.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L85">hc/lib/gfx/hairdo.amni:85</a>
+</article>
+<article class="sym" id="tones">
+<h3><a href="#tones">tones</a> <i>function</i></h3>
+<pre>tones() int</pre>
+<p>Returns the number of built-in hair color presets.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L118">hc/lib/gfx/hairdo.amni:118</a>
+</article>
+<article class="sym" id="tone_name">
+<h3><a href="#tone_name">tone_name</a> <i>function</i></h3>
+<pre>tone_name(i int) const byte[:]</pre>
+<p>Returns the name of the hair color at an index, or an empty string if out of range.</p>
+<p class="note">`count()` is the number of styles and `tones()` the number of shades. `name_of(i)` is style i's name and `tone_name(i)` shade i's name, each empty when i is out of range. `find(name)` is the index of the style with that exact name, or -1. `style(name)` is that style, or the first one when the name is unknown. `tone(name)` is the shade with that exact name, or the shade named &quot;brown&quot; when the name </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L124">hc/lib/gfx/hairdo.amni:124</a>
+</article>
+<article class="sym" id="tone">
+<h3><a href="#tone">tone</a> <i>function</i></h3>
+<pre>tone(name const byte[:]) Shade</pre>
+<p>Returns the hair color preset with the given name, or brown if not found.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L142">hc/lib/gfx/hairdo.amni:142</a>
+</article>
+<h2 id="hairstyle-grid">Hairstyle Grid <span class="n">1</span></h2>
+<article class="sym" id="ball">
+<h3><a href="#ball">ball</a> <i>function</i></h3>
+<pre>ball(center float3, r f32)</pre>
+<p>Sets the head to a plain sphere of the given center and radius instead of measuring a model.</p>
+<p class="note">`ball(center, r)` measures a plain ball as the head, for tests and heads without a mesh: `ctr` = center, `unit` = r, `top` = center.y + r, `map` = MW*MH entries of r, `sol` empty, `ok` set.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L451">hc/lib/gfx/hairdo.amni:451</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (54)</summary>
+<article class="sym" id="MW">
+<h3><a href="#MW">MW</a> <i>constant</i></h3>
+<pre>let MW = 64</pre>
+<p>Width of the head radius map grid in columns, used internally when measuring a head.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L8">hc/lib/gfx/hairdo.amni:8</a>
+</article>
+<article class="sym" id="MH">
+<h3><a href="#MH">MH</a> <i>constant</i></h3>
+<pre>let MH = 32</pre>
+<p>Height of the head radius map grid in rows, used internally when measuring a head.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L9">hc/lib/gfx/hairdo.amni:9</a>
+</article>
+<article class="sym" id="ok">
+<h3><a href="#ok">ok</a> <i>constant</i></h3>
+<pre>var ok bool = false</pre>
+<p>Flag set when a head has been measured successfully and hair can be grown.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L111">hc/lib/gfx/hairdo.amni:111</a>
+</article>
+<article class="sym" id="ctr">
+<h3><a href="#ctr">ctr</a> <i>constant</i></h3>
+<pre>var ctr float3 = float3 { 0.0, 0.0, 0.0 }</pre>
+<p>Center point of the measured head sphere in model space.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L112">hc/lib/gfx/hairdo.amni:112</a>
+</article>
+<article class="sym" id="unit">
+<h3><a href="#unit">unit</a> <i>constant</i></h3>
+<pre>var unit f32 = 0.1</pre>
+<p>Measured head size unit used to scale all hair dimensions.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L113">hc/lib/gfx/hairdo.amni:113</a>
+</article>
+<article class="sym" id="top">
+<h3><a href="#top">top</a> <i>constant</i></h3>
+<pre>var top f32 = 0.0</pre>
+<p>Height of the top of the measured head.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L114">hc/lib/gfx/hairdo.amni:114</a>
+</article>
+<article class="sym" id="map">
+<h3><a href="#map">map</a> <i>constant</i></h3>
+<pre>var map f32[&gt;..]</pre>
+<p>Grid of head radii sampled by direction around the head center.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L115">hc/lib/gfx/hairdo.amni:115</a>
+</article>
+<article class="sym" id="sol">
+<h3><a href="#sol">sol</a> <i>constant</i></h3>
+<pre>var sol float3[&gt;..]</pre>
+<p>Solid ellipsoid colliders, such as neck and shoulders, that hair is pushed out of.</p>
+<p class="note">Module vars describing the measured head: `ok` false, `ctr` (float3, the center of the skull), `unit` (f32, 0.1), `top` (f32, the highest point's y), `map` (growable f32 list: MW columns by MH rows of the distance from `ctr` to the skin), and `sol` (growable float3 list: pairs of center and radii of the ellipsoids that stand in for the neck, shoulders and chest).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L116">hc/lib/gfx/hairdo.amni:116</a>
+</article>
+<article class="sym" id="length3">
+<h3><a href="#length3">length3</a> <i>function</i></h3>
+<pre>length3(v float3) f32</pre>
+<p>Returns the length of a 3D vector.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L153">hc/lib/gfx/hairdo.amni:153</a>
+</article>
+<article class="sym" id="unit3">
+<h3><a href="#unit3">unit3</a> <i>function</i></h3>
+<pre>unit3(v float3) float3</pre>
+<p>Returns the vector scaled to unit length.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L154">hc/lib/gfx/hairdo.amni:154</a>
+</article>
+<article class="sym" id="dot3">
+<h3><a href="#dot3">dot3</a> <i>function</i></h3>
+<pre>dot3(a float3, b float3) f32</pre>
+<p>Returns the dot product of two 3D vectors.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L155">hc/lib/gfx/hairdo.amni:155</a>
+</article>
+<article class="sym" id="cross3">
+<h3><a href="#cross3">cross3</a> <i>function</i></h3>
+<pre>cross3(a float3, b float3) float3</pre>
+<p>Returns the cross product of two 3D vectors.</p>
+<p class="note">Namespace `hairdo`, importing math, gfx, gfx.linalg, gfx.gltf, gfx.scene3d and gfx.hair. Constants `MW = 64` and `MH = 32`. Shared conventions: - Vectors are f32 float3. `unit3`, `dot3`, `cross3`, `length3` and `f` are linalg's. Model space has y up and the face toward +z. - `hair::rnd()` is the hair module's random number from 0 to 1, and `hair::rs` its seed. - &quot;ss(a, b, x)&quot; is the smooth step: t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L156">hc/lib/gfx/hairdo.amni:156</a>
+</article>
+<article class="sym" id="ss">
+<h3><a href="#ss">ss</a> <i>function</i></h3>
+<pre>ss(a f32, b f32, x f32) f32</pre>
+<p>Returns a smooth Hermite interpolation of x between edges a and b, clamped to 0 through 1.</p>
+<p class="note">`ss(a, b, x)` is the smooth step and `mix(a, b, t)` the blend, both on f32, as the conventions define them.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L157">hc/lib/gfx/hairdo.amni:157</a>
+</article>
+<article class="sym" id="mix">
+<h3><a href="#mix">mix</a> <i>function</i></h3>
+<pre>mix(a f32, b f32, t f32) f32</pre>
+<p>Returns the linear interpolation between a and b by t.</p>
+<p class="note">`ss(a, b, x)` is the smooth step and `mix(a, b, t)` the blend, both on f32, as the conventions define them.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L161">hc/lib/gfx/hairdo.amni:161</a>
+</article>
+<article class="sym" id="hsqrt">
+<h3><a href="#hsqrt">hsqrt</a> <i>function</i></h3>
+<pre>hsqrt(x f32) f32</pre>
+<p>Returns the square root of a single-precision value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L162">hc/lib/gfx/hairdo.amni:162</a>
+</article>
+<article class="sym" id="hsin">
+<h3><a href="#hsin">hsin</a> <i>function</i></h3>
+<pre>hsin(x f32) f32</pre>
+<p>Returns the sine of a single-precision angle in radians.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L163">hc/lib/gfx/hairdo.amni:163</a>
+</article>
+<article class="sym" id="hcos">
+<h3><a href="#hcos">hcos</a> <i>function</i></h3>
+<pre>hcos(x f32) f32</pre>
+<p>Returns the cosine of a single-precision angle in radians.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L164">hc/lib/gfx/hairdo.amni:164</a>
+</article>
+<article class="sym" id="asin_r">
+<h3><a href="#asin_r">asin_r</a> <i>function</i></h3>
+<pre>asin_r(x real) real</pre>
+<p>Returns the arcsine of a value using an arctangent formulation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L165">hc/lib/gfx/hairdo.amni:165</a>
+</article>
+<article class="sym" id="hacos">
+<h3><a href="#hacos">hacos</a> <i>function</i></h3>
+<pre>hacos(x f32) f32</pre>
+<p>Returns the arccosine of a single-precision value, in radians.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L166">hc/lib/gfx/hairdo.amni:166</a>
+</article>
+<article class="sym" id="ceil_i">
+<h3><a href="#ceil_i">ceil_i</a> <i>function</i></h3>
+<pre>ceil_i(x f32) int</pre>
+<p>Returns the smallest integer not less than a single-precision value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L170">hc/lib/gfx/hairdo.amni:170</a>
+</article>
+<article class="sym" id="floor_i">
+<h3><a href="#floor_i">floor_i</a> <i>function</i></h3>
+<pre>floor_i(x f32) int</pre>
+<p>Returns the largest integer not greater than a single-precision value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L171">hc/lib/gfx/hairdo.amni:171</a>
+</article>
+<article class="sym" id="radius">
+<h3><a href="#radius">radius</a> <i>function</i></h3>
+<pre>radius(d float3) f32</pre>
+<p>Returns the interpolated head radius in the given direction from the head center.</p>
+<p class="note">`radius(d)` is the skin's distance from `ctr` along the unit direction d, read from `map` with bilinear blending. It returns `unit` when the map has fewer than MW*MH entries. - fx = (atan2(d.x, d.z)/6.2831853 + 0.5)*MW - 0.5 and fy = (asin(d.y clamped to -1..1)/3.14159265 + 0.5)*MH - 0.5, computed in real. - x0 = floor(fx), y0 = floor(fy), tx = fx-x0 and ty = fy-y0. Columns x0 and x0+1 wrap around</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L172">hc/lib/gfx/hairdo.amni:172</a>
+</article>
+<article class="sym" id="skin">
+<h3><a href="#skin">skin</a> <i>function</i></h3>
+<pre>skin(d float3) float3</pre>
+<p>Returns the point on the head surface in the given direction.</p>
+<p class="note">`skin(d)` is `ctr` + d*radius(d).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L188">hc/lib/gfx/hairdo.amni:188</a>
+</article>
+<article class="sym" id="keep">
+<h3><a href="#keep">keep</a> <i>function</i></h3>
+<pre>keep(p float3, gap f32) float3</pre>
+<p>Returns a point pushed outside the head and body colliders, keeping at least the given gap.</p>
+<p class="note">`keep(p, gap)` returns p moved out of the head and the body, staying gap away from them. 1. With d = p - ctr and l = length3(d): when l is above 0.000001 and d.y/l is above -0.8, let R = radius(d*(1/l)) + gap; when l is below R, p becomes ctr + d*(R/l). 2. For each pair i of `sol` (center s = sol[2i], radii r = sol[2i+1] with gap added to each): q = (p - s) divided componentwise by r and m = lengt</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L189">hc/lib/gfx/hairdo.amni:189</a>
+</article>
+<article class="sym" id="line">
+<h3><a href="#line">line</a> <i>function</i></h3>
+<pre>line(d float3) f32</pre>
+<p>Returns the hairline height for a direction, interpolated from a fixed profile of the head.</p>
+<p class="note">`line(d)` is the hairline: the lowest d.y that still grows hair for the unit direction d. With cz = d.z/(sqrt(d.x*d.x + d.z*d.z) + 0.0001), it interpolates linearly between consecutive knots (cz, value): (-1, -0.75), (-0.6, -0.56), (-0.45, -0.3), (-0.35, -0.02), (-0.25, 0.24), (-0.15, 0.36), (0, 0.38), (0.06, 0.12), (0.12, -0.05), (0.2, 0.03), (0.35, 0.14), (0.45, 0.26), (0.55, 0.4), (0.7, 0.5), (</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L223">hc/lib/gfx/hairdo.amni:223</a>
+</article>
+<article class="sym" id="scalp">
+<h3><a href="#scalp">scalp</a> <i>function</i></h3>
+<pre>scalp(d float3) f32</pre>
+<p>Returns a 0 to 1 weight for how much a direction lies on the scalp below the hairline.</p>
+<p class="note">`scalp(d)` is how densely hair grows at the unit direction d, 0 to 1: ss(t-0.02, t+0.03, d.y) with t = line(d).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L237">hc/lib/gfx/hairdo.amni:237</a>
+</article>
+<article class="sym" id="under">
+<h3><a href="#under">under</a> <i>function</i></h3>
+<pre>under(node int, head int) bool</pre>
+<p>Returns whether a node is the head node or one of its descendants.</p>
+<p class="note">`under(node, head)` is true when head is negative, or when node is head, or when following `gltf::nodes[x].parent` from node reaches head within 32 steps (stop at a negative parent).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L241">hc/lib/gfx/hairdo.amni:241</a>
+</article>
+<article class="sym" id="fill_map">
+<h3><a href="#fill_map">fill_map</a> <i>function</i></h3>
+<pre>fill_map()</pre>
+<p>Fills empty cells of the head radius map from neighbors and smooths the result.</p>
+<p class="note">`fill_map()` finishes `map` after sampling: empty entries are those equal to 0. 1. Eight times: build a copy in which every empty entry becomes the mean of its non-empty neighbors among left, right (columns wrap modulo MW), up and down (rows outside 0..MH-1 are skipped), staying empty when it has none; then the copy replaces the map. 2. Every entry still empty becomes `unit`. 3. Once: build a copy</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L252">hc/lib/gfx/hairdo.amni:252</a>
+</article>
+<article class="sym" id="vpos">
+<h3><a href="#vpos">vpos</a> <i>function</i></h3>
+<pre>vpos(v int) float3</pre>
+<p>Returns the position of a vertex from the loaded model vertex data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L300">hc/lib/gfx/hairdo.amni:300</a>
+</article>
+<article class="sym" id="measure">
+<h3><a href="#measure">measure</a> <i>function</i></h3>
+<pre>measure(asset int, joint const byte[:], meshes const byte[][:]) bool</pre>
+<p>Measures the head of a model asset, building the radius map and colliders, and returns false if no head geometry is found.</p>
+<p class="note">`measure(asset, joint, meshes)` measures a character's head for the styles and returns whether it found one. asset is the asset's index (an int, as `gltf::find_node` takes it; the asset itself is `gltf::assets[asset]`), joint is the head joint's name (a byte slice) and meshes the names of the meshes that make up the bare body (a slice of byte slices, the same type `hair::body` takes for its joints</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L304">hc/lib/gfx/hairdo.amni:304</a>
+</article>
+<article class="sym" id="hs">
+<h3><a href="#hs">hs</a> <i>function</i></h3>
+<pre>hs(a int, b int, c int, s int) f32</pre>
+<p>Returns a pseudo-random value from 0 to 1 hashed from four integers.</p>
+<p class="note">`hs(a, b, c, s)` is a hash from 0 to 1 of three ints and a seed: x = sin(a*127.1 + b*311.7 + c*74.7 + s*19.19)*43758.5453 in real, and the result is x minus its floor, as f32. `vn(p, s)` is smooth value noise from 0 to 1 at the point p: with the integer cell i = floor of each component and the fractions smoothed as t*t*(3-2*t), it blends `hs` of the eight cell corners (i.x or i.x+1, and so on) tri</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L460">hc/lib/gfx/hairdo.amni:460</a>
+</article>
+<article class="sym" id="vn">
+<h3><a href="#vn">vn</a> <i>function</i></h3>
+<pre>vn(p float3, s int) f32</pre>
+<p>Returns smooth 3D value noise between 0 and 1 for a point and seed.</p>
+<p class="note">`hs(a, b, c, s)` is a hash from 0 to 1 of three ints and a seed: x = sin(a*127.1 + b*311.7 + c*74.7 + s*19.19)*43758.5453 in real, and the result is x minus its floor, as f32. `vn(p, s)` is smooth value noise from 0 to 1 at the point p: with the integer cell i = floor of each component and the fractions smoothed as t*t*(3-2*t), it blends `hs` of the eight cell corners (i.x or i.x+1, and so on) tri</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L464">hc/lib/gfx/hairdo.amni:464</a>
+</article>
+<article class="sym" id="resample">
+<h3><a href="#resample">resample</a> <i>function</i></h3>
+<pre>resample(path const float3[:], k int, out float3[&gt;..]&amp;)</pre>
+<p>Resamples a polyline path into evenly spaced points along its length.</p>
+<p class="note">`resample(path, k, out)` appends k points spread evenly by length along the polyline path (which has at least 2 points) to out: the total length is the sum of the segment lengths; point e sits at distance total*e/(k-1) from the start, found by walking the segments and blending linearly inside one; the last point is the path's end. A path of zero total length gives k copies of its first point.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L483">hc/lib/gfx/hairdo.amni:483</a>
+</article>
+<article class="sym" id="tie_dir">
+<h3><a href="#tie_dir">tie_dir</a> <i>function</i></h3>
+<pre>tie_dir(st Do, x f32) float3</pre>
+<p>Returns the direction from the head center toward the hair tie point for a side.</p>
+<p class="note">`tie_dir(st, x)` is the unit direction from `ctr` to the tie that a root with side x belongs to: gy = st.tie_y, a = st.tie_az*3.14159265/180 times sg, where sg is -1 when st.tie is 2 or 4 and x is negative, else 1; the direction is (sin(a)*h, gy, cos(a)*h) with h = sqrt(max(1 - gy*gy, 0)).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L508">hc/lib/gfx/hairdo.amni:508</a>
+</article>
+<article class="sym" id="tie_at">
+<h3><a href="#tie_at">tie_at</a> <i>function</i></h3>
+<pre>tie_at(st Do, x f32) float3</pre>
+<p>Returns the hair tie position on the head for the given side.</p>
+<p class="note">`tie_at(st, x)` is the tie's place: with g = tie_dir(st, x), it is skin(g) + g*(0.22*unit).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L516">hc/lib/gfx/hairdo.amni:516</a>
+</article>
+<article class="sym" id="tail_line">
+<h3><a href="#tail_line">tail_line</a> <i>function</i></h3>
+<pre>tail_line(st Do, x f32, out float3[&gt;..]&amp;)</pre>
+<p>Builds the centerline of a ponytail or tail hanging from the tie point.</p>
+<p class="note">`tail_line(st, x, out)` clears out and fills it with the center line of the tail hanging from that tie, as float3 points: 1. g = tie_dir(st, x), p = tie_at(st, x), dir = unit3(g + (0, 0.6*st.stiff + 0.15, 0)), n = st.tail/0.06 rounded up and clamped to 0..400. Push p. 2. n times: dir = unit3(dir*(0.82 + 0.15*st.stiff) + (0, -1, 0)*(0.18 - 0.15*st.stiff)); p = keep(p + dir*(0.06*unit), 0.2*unit); p</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L520">hc/lib/gfx/hairdo.amni:520</a>
+</article>
+<article class="sym" id="comb_dir">
+<h3><a href="#comb_dir">comb_dir</a> <i>function</i></h3>
+<pre>comb_dir(cm int, st Do, e float3, s f32) float3</pre>
+<p>Returns the combing direction for loose hair based on the style's comb mode.</p>
+<p class="note">`comb_dir(cm, st, e, s)` is the direction a comb pulls hair lying on the head at the unit direction e, for a strand on side s (1 or -1): - cm 0 (falling from the part): a2 = (0.3 + 1.7*(e.y*1.6 clamped to 0..1))*ss(-0.55, 0.25, e.z), so the back of the head falls straight down, and the pull is (s*a2, -1, -0.15). - cm 1 (back): (0.15*s, -0.25, -1). - cm 2 (forward): (st.sweep*0.8, -0.35, 1). - any </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L533">hc/lib/gfx/hairdo.amni:533</a>
+</article>
+<article class="sym" id="loose">
+<h3><a href="#loose">loose</a> <i>function</i></h3>
+<pre>loose(st Do, d float3, fr bool, s f32, lay f32, lv f32, path float3[&gt;..]&amp;) f32</pre>
+<p>Builds the path of a loose strand and returns its length in head units.</p>
+<p class="note">`loose(st, d, fr, s, lay, lv, path)` clears path and grows one untied strand into it from the root direction d. fr says it is a fringe strand, s is its side, lay its layer and lv its length variation (both 0 to 1). 1. cm is 2 when fr, else st.comb. The length L in head units is st.fringe*2 when fr (a fringe is cut by height, below), else st.length*mix(st.sides, 1, ss(-0.2, 0.55, d.y))*(1 - st.vary</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L547">hc/lib/gfx/hairdo.amni:547</a>
+</article>
+<article class="sym" id="tied">
+<h3><a href="#tied">tied</a> <i>function</i></h3>
+<pre>tied(st Do, d float3, lay f32, lv f32, ph f32, line_pts const float3[:], path float3[&gt;..]&amp;) f32, f32</pre>
+<p>Builds the path of a tied-back strand and returns its total length and its length up to the tie.</p>
+<p class="note">`tied(st, d, lay, lv, ph, line_pts, path)` clears path and grows one tied strand into it: over the head from the root direction d to its tie, then into the tail or the bun. line_pts is the tail's center line from `tail_line` for the root's side. It returns two f32s: the strand's whole length in head units and the length of its part on the head. 1. g = tie_dir(st, d.x), T = tie_at(st, d.x), ang = a</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L609">hc/lib/gfx/hairdo.amni:609</a>
+</article>
+<article class="sym" id="dir_at">
+<h3><a href="#dir_at">dir_at</a> <i>function</i></h3>
+<pre>dir_at(az f32, y f32) float3</pre>
+<p>Returns the unit direction for an azimuth angle and a height value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L651">hc/lib/gfx/hairdo.amni:651</a>
+</article>
+<article class="sym" id="make_roots">
+<h3><a href="#make_roots">make_roots</a> <i>function</i></h3>
+<pre>make_roots(st Do, out float3[&gt;..]&amp;)</pre>
+<p>Generates strand root directions over the scalp, scaled to the style's guide count.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L655">hc/lib/gfx/hairdo.amni:655</a>
+</article>
+<article class="sym" id="s_axes">
+<h3><a href="#s_axes">s_axes</a> <i>constant</i></h3>
+<pre>var s_axes float3[&gt;..]</pre>
+<p>Working array of root direction axes for each strand.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L679">hc/lib/gfx/hairdo.amni:679</a>
+</article>
+<article class="sym" id="s_root">
+<h3><a href="#s_root">s_root</a> <i>constant</i></h3>
+<pre>var s_root float3[&gt;..]</pre>
+<p>Working array of root positions for each strand.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L680">hc/lib/gfx/hairdo.amni:680</a>
+</article>
+<article class="sym" id="s_whole">
+<h3><a href="#s_whole">s_whole</a> <i>constant</i></h3>
+<pre>var s_whole f32[&gt;..]</pre>
+<p>Working array of total strand lengths.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L681">hc/lib/gfx/hairdo.amni:681</a>
+</article>
+<article class="sym" id="s_head">
+<h3><a href="#s_head">s_head</a> <i>constant</i></h3>
+<pre>var s_head f32[&gt;..]</pre>
+<p>Working array of strand lengths from root to tie point.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L682">hc/lib/gfx/hairdo.amni:682</a>
+</article>
+<article class="sym" id="s_grp">
+<h3><a href="#s_grp">s_grp</a> <i>constant</i></h3>
+<pre>var s_grp int[&gt;..]</pre>
+<p>Working array of group ids for each strand, such as left, right, or fringe.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L683">hc/lib/gfx/hairdo.amni:683</a>
+</article>
+<article class="sym" id="s_lay">
+<h3><a href="#s_lay">s_lay</a> <i>constant</i></h3>
+<pre>var s_lay f32[&gt;..]</pre>
+<p>Working array of random layer values for each strand.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L684">hc/lib/gfx/hairdo.amni:684</a>
+</article>
+<article class="sym" id="s_pts">
+<h3><a href="#s_pts">s_pts</a> <i>constant</i></h3>
+<pre>var s_pts float3[&gt;..]</pre>
+<p>Working array of resampled strand points.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L685">hc/lib/gfx/hairdo.amni:685</a>
+</article>
+<article class="sym" id="make_strands">
+<h3><a href="#make_strands">make_strands</a> <i>function</i></h3>
+<pre>make_strands(st Do, roots const float3[:], k int)</pre>
+<p>Builds strand paths for all roots and stores them resampled to the given point count.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L686">hc/lib/gfx/hairdo.amni:686</a>
+</article>
+<article class="sym" id="s_lead">
+<h3><a href="#s_lead">s_lead</a> <i>constant</i></h3>
+<pre>var s_lead int[&gt;..]</pre>
+<p>Working array of the leader strand index for each strand.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L739">hc/lib/gfx/hairdo.amni:739</a>
+</article>
+<article class="sym" id="make_leaders">
+<h3><a href="#make_leaders">make_leaders</a> <i>function</i></h3>
+<pre>make_leaders(st Do)</pre>
+<p>Chooses a nearby leader strand in the same group for each strand.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L740">hc/lib/gfx/hairdo.amni:740</a>
+</article>
+<article class="sym" id="s_out">
+<h3><a href="#s_out">s_out</a> <i>constant</i></h3>
+<pre>var s_out float3[&gt;..]</pre>
+<p>Working array of final shaped strand points after waves, curls, and clumping.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L760">hc/lib/gfx/hairdo.amni:760</a>
+</article>
+<article class="sym" id="shape_all">
+<h3><a href="#shape_all">shape_all</a> <i>function</i></h3>
+<pre>shape_all(st Do, k int)</pre>
+<p>Applies waves, curls, clumping, and collision to all strands.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L761">hc/lib/gfx/hairdo.amni:761</a>
+</article>
+<article class="sym" id="grow">
+<h3><a href="#grow">grow</a> <i>function</i></h3>
+<pre>grow(st Do, seed int, data byte[&gt;..]&amp;) int</pre>
+<p>Generates hair strand data for a style into a byte buffer and returns the strand count, or 0 on failure.</p>
+<p class="note">`grow(st, seed, data)` grows the style on the measured head and appends the strand file `hair::load` reads to data. It returns the number of guides, or 0 when no head is measured.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/hairdo.amni#L809">hc/lib/gfx/hairdo.amni:809</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1880</span></a><ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
+<li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
+<li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
+<li><a href="/api-library/helium/lib/gfx-hair">gfx/hair</a></li>
+<li><a href="/api-library/helium/lib/gfx-hairdo" class="on">gfx/hairdo</a><ul class="lib-sub">
+<li><a href="#hairstyles">Hairstyles</a></li>
+<li><a href="#hair-colors">Hair Colors</a></li>
+<li><a href="#hairstyle-grid">Hairstyle Grid</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-13">2026-11-13</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

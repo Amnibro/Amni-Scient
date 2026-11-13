@@ -6422,6 +6422,7 @@ hair::bake	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake	Packs collisi
 hair::cards	function	gfx/hair	/api-library/helium/lib/gfx-hair#cards	Creates a groom from a named hair card mesh in a model, returning its handle or -1 on failure.	pub
 hair::live	function	gfx/hair	/api-library/helium/lib/gfx-hair#live	Returns whether a groom is loaded and visible.	int
 hair::put_uniform	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_uniform	Uploads a uniform block to the compute stage.	int
+hair::dye_ch	function	gfx/hair	/api-library/helium/lib/gfx-hair#dye_ch	Computes one color channel's dye contribution as a scaled squared log of the channel value, used by this module's dye shading.	int
 hair::uniforms_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#uniforms_of	Builds the shader uniform block for a groom from its look, camera, sun, and lights.	int
 hair::light_slices	function	gfx/hair	/api-library/helium/lib/gfx-hair#light_slices	Resizes a groom's light-space buffers to hold n slices, doing nothing if the count is unchanged.	int
 hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Clears two compute buffers for a render pass mode, scaling the light-slice setting when the mode is above 1.	int
@@ -6445,3 +6446,70 @@ hair::strand_out	function	gfx/hair	/api-library/helium/lib/gfx-hair#strand_out	A
 hair::groom	function	gfx/hair	/api-library/helium/lib/gfx-hair#groom	Generates strand data bytes from root positions, normals, and a Style.	pub
 hair::card_mesh	function	gfx/hair	/api-library/helium/lib/gfx-hair#card_mesh	Builds a hair-card mesh from packed strand data and a material, returning the new mesh id, or -1 if the data is invalid.	pub
 hair::points	function	gfx/hair	/api-library/helium/lib/gfx-hair#points	Reads a groom's simulated strand points back from the GPU into a byte buffer, 48 bytes per point; leaves it untouched if the groom is invalid or off.	pub
+hairdo::MW	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#MW	Width of the head radius map grid in columns, used internally when measuring a head.	int
+hairdo::MH	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#MH	Height of the head radius map grid in rows, used internally when measuring a head.	int
+hairdo::Do	type	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#Do	Parameter set describing one hairstyle preset, including length, curl, bangs, tie style, and strand counts.	pub
+hairdo::STYLES	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#STYLES	Returns the list of all built-in hairstyle presets.	pub
+hairdo::Shade	type	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#Shade	Hair color preset with RGB values, brightness gain, and a flag for dyed shades.	pub
+hairdo::SHADES	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#SHADES	Returns the list of all built-in hair color presets.	pub
+hairdo::ok	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ok	Flag set when a head has been measured successfully and hair can be grown.	int
+hairdo::ctr	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ctr	Center point of the measured head sphere in model space.	int
+hairdo::unit	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#unit	Measured head size unit used to scale all hair dimensions.	int
+hairdo::top	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#top	Height of the top of the measured head.	int
+hairdo::map	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#map	Grid of head radii sampled by direction around the head center.	int
+hairdo::sol	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#sol	Solid ellipsoid colliders, such as neck and shoulders, that hair is pushed out of.	int
+hairdo::count	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#count	Returns the number of built-in hairstyle presets.	pub
+hairdo::tones	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tones	Returns the number of built-in hair color presets.	pub
+hairdo::name_of	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#name_of	Returns the name of the hairstyle at an index, or an empty string if out of range.	pub
+hairdo::tone_name	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tone_name	Returns the name of the hair color at an index, or an empty string if out of range.	pub
+hairdo::find	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#find	Returns the index of the hairstyle with the given name, or -1 if none matches.	pub
+hairdo::style	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#style	Returns the hairstyle preset with the given name, or the first preset if not found.	pub
+hairdo::tone	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tone	Returns the hair color preset with the given name, or brown if not found.	pub
+hairdo::length3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#length3	Returns the length of a 3D vector.	int
+hairdo::unit3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#unit3	Returns the vector scaled to unit length.	int
+hairdo::dot3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#dot3	Returns the dot product of two 3D vectors.	int
+hairdo::cross3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#cross3	Returns the cross product of two 3D vectors.	int
+hairdo::ss	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ss	Returns a smooth Hermite interpolation of x between edges a and b, clamped to 0 through 1.	int
+hairdo::mix	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#mix	Returns the linear interpolation between a and b by t.	int
+hairdo::hsqrt	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hsqrt	Returns the square root of a single-precision value.	int
+hairdo::hsin	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hsin	Returns the sine of a single-precision angle in radians.	int
+hairdo::hcos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hcos	Returns the cosine of a single-precision angle in radians.	int
+hairdo::asin_r	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#asin_r	Returns the arcsine of a value using an arctangent formulation.	int
+hairdo::hacos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hacos	Returns the arccosine of a single-precision value, in radians.	int
+hairdo::ceil_i	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ceil_i	Returns the smallest integer not less than a single-precision value.	int
+hairdo::floor_i	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#floor_i	Returns the largest integer not greater than a single-precision value.	int
+hairdo::radius	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#radius	Returns the interpolated head radius in the given direction from the head center.	int
+hairdo::skin	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#skin	Returns the point on the head surface in the given direction.	int
+hairdo::keep	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#keep	Returns a point pushed outside the head and body colliders, keeping at least the given gap.	int
+hairdo::line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#line	Returns the hairline height for a direction, interpolated from a fixed profile of the head.	int
+hairdo::scalp	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#scalp	Returns a 0 to 1 weight for how much a direction lies on the scalp below the hairline.	int
+hairdo::under	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#under	Returns whether a node is the head node or one of its descendants.	int
+hairdo::fill_map	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#fill_map	Fills empty cells of the head radius map from neighbors and smooths the result.	int
+hairdo::vpos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#vpos	Returns the position of a vertex from the loaded model vertex data.	int
+hairdo::measure	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#measure	Measures the head of a model asset, building the radius map and colliders, and returns false if no head geometry is found.	int
+hairdo::ball	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ball	Sets the head to a plain sphere of the given center and radius instead of measuring a model.	pub
+hairdo::hs	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hs	Returns a pseudo-random value from 0 to 1 hashed from four integers.	int
+hairdo::vn	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#vn	Returns smooth 3D value noise between 0 and 1 for a point and seed.	int
+hairdo::resample	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#resample	Resamples a polyline path into evenly spaced points along its length.	int
+hairdo::tie_dir	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tie_dir	Returns the direction from the head center toward the hair tie point for a side.	int
+hairdo::tie_at	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tie_at	Returns the hair tie position on the head for the given side.	int
+hairdo::tail_line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tail_line	Builds the centerline of a ponytail or tail hanging from the tie point.	int
+hairdo::comb_dir	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#comb_dir	Returns the combing direction for loose hair based on the style's comb mode.	int
+hairdo::loose	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#loose	Builds the path of a loose strand and returns its length in head units.	int
+hairdo::tied	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tied	Builds the path of a tied-back strand and returns its total length and its length up to the tie.	int
+hairdo::dir_at	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#dir_at	Returns the unit direction for an azimuth angle and a height value.	int
+hairdo::make_roots	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_roots	Generates strand root directions over the scalp, scaled to the style's guide count.	int
+hairdo::s_axes	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_axes	Working array of root direction axes for each strand.	int
+hairdo::s_root	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_root	Working array of root positions for each strand.	int
+hairdo::s_whole	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_whole	Working array of total strand lengths.	int
+hairdo::s_head	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_head	Working array of strand lengths from root to tie point.	int
+hairdo::s_grp	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_grp	Working array of group ids for each strand, such as left, right, or fringe.	int
+hairdo::s_lay	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lay	Working array of random layer values for each strand.	int
+hairdo::s_pts	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_pts	Working array of resampled strand points.	int
+hairdo::make_strands	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_strands	Builds strand paths for all roots and stores them resampled to the given point count.	int
+hairdo::s_lead	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lead	Working array of the leader strand index for each strand.	int
+hairdo::make_leaders	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_leaders	Chooses a nearby leader strand in the same group for each strand.	int
+hairdo::s_out	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_out	Working array of final shaped strand points after waves, curls, and clumping.	int
+hairdo::shape_all	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#shape_all	Applies waves, curls, clumping, and collision to all strands.	int
+hairdo::grow	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#grow	Generates hair strand data for a style into a byte buffer and returns the strand count, or 0 on failure.	int
+hairdo::wear	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#wear	Grows hair of a named style and color on a model's head joint and returns the groom handle, or -1 on failure.	pub
