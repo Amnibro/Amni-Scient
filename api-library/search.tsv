@@ -1649,6 +1649,13 @@ s3d::cluster_words	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clus
 s3d::light_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_buf	Storage buffer holding packed light data.	int
 s3d::cluster_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_buf	Storage buffer holding clustered light assignment words.	int
 s3d::light_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_cap	Current capacity of the light storage buffer.	int
+s3d::CAST_REC	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CAST_REC	Capacity constant for the cast record buffer, set to 4096 entries.	int
+s3d::cast_want	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_want	Module-level counter holding the number of cast records requested for the current frame.	int
+s3d::cast_at	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_at	Module-level counter holding the current write position within the cast records.	int
+s3d::cast_room	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_room	Module-level counter holding the remaining space available for cast records.	int
+s3d::cast_frame	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_frame	Frame number when cast records were last written, initialized to a sentinel before any frame.	int
+s3d::cast_gen	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_gen	Module-level generation counter for the cast records.	int
+s3d::cast_live	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_live	Returns the current cast record count as a float if written within the last frame, otherwise zero.	int
 s3d::cluster_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_cap	Current capacity of the cluster storage buffer.	int
 s3d::ext_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_size	Edge size in pixels of each layer in the extended material texture arrays.	int
 s3d::ext_arr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_arr	Two texture arrays holding linear and sRGB layers for extended material maps.	int
@@ -6349,10 +6356,14 @@ hair::SIM	constant	gfx/hair	/api-library/helium/lib/gfx-hair#SIM	Number of float
 hair::PARTS	constant	gfx/hair	/api-library/helium/lib/gfx-hair#PARTS	Maximum number of body parts per groom used as collision solids.	int
 hair::BONES	constant	gfx/hair	/api-library/helium/lib/gfx-hair#BONES	Maximum number of skinning bones a groom can use.	int
 hair::LIGHT	constant	gfx/hair	/api-library/helium/lib/gfx-hair#LIGHT	Resolution in pixels of the square light-space buffers used for hair shadowing.	int
+hair::CAST	constant	gfx/hair	/api-library/helium/lib/gfx-hair#CAST	Constant giving the resolution in pixels of the square light-space buffers used for casting hair shadows or lighting.	int
 hair::HairU	type	gfx/hair	/api-library/helium/lib/gfx-hair#HairU	Uniform block passed to the hair compute and composite shaders, holding matrices, camera, lighting, and strand look parameters.	int
 hair::Look	type	gfx/hair	/api-library/helium/lib/gfx-hair#Look	Appearance settings for a groom, such as color, roughness, width, density, scatter, exposure, and ambient lighting.	pub
 hair::Physics	type	gfx/hair	/api-library/helium/lib/gfx-hair#Physics	Simulation settings for a groom, including gravity, stiffness along the strand, damping, and gap limits for collision.	pub
 hair::Groom	type	gfx/hair	/api-library/helium/lib/gfx-hair#Groom	A loaded hair instance holding its look, physics, placement, strand counts, and GPU buffers.	pub
+hair::RW	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RW	Buffer usage flags allowing compute shaders to read and write.	int
+hair::RD	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RD	Buffer usage flags allowing compute shaders to only read.	int
+hair::ident	function	gfx/hair	/api-library/helium/lib/gfx-hair#ident	Returns an identity 4x4 matrix.	int
 hair::grooms	constant	gfx/hair	/api-library/helium/lib/gfx-hair#grooms	Module-level list of hair groom records, one per loaded groom.	int
 hair::simv	constant	gfx/hair	/api-library/helium/lib/gfx-hair#simv	Packed simulation constants buffer on the CPU side, SIM float4 slots per groom.	int
 hair::part_node	constant	gfx/hair	/api-library/helium/lib/gfx-hair#part_node	Per-groom list of scene node indices for collision body parts.	int
@@ -6361,9 +6372,14 @@ hair::bone_node	constant	gfx/hair	/api-library/helium/lib/gfx-hair#bone_node	Per
 hair::bone_rest	constant	gfx/hair	/api-library/helium/lib/gfx-hair#bone_rest	Per-groom inverse world matrices of bone nodes captured at rest pose.	int
 hair::mats	constant	gfx/hair	/api-library/helium/lib/gfx-hair#mats	Per-groom current bone skinning matrices uploaded to the GPU each frame.	int
 hair::probe_v	constant	gfx/hair	/api-library/helium/lib/gfx-hair#probe_v	Per-groom debug probe values read back from the simulation statistics.	int
+hair::kept_vp	constant	gfx/hair	/api-library/helium/lib/gfx-hair#kept_vp	Module-level list of saved view-projection matrices kept for the hair light passes.	int
+hair::kept_x	constant	gfx/hair	/api-library/helium/lib/gfx-hair#kept_x	Module-level list of saved float4 values kept alongside the stored matrices for light passes.	int
 hair::w	constant	gfx/hair	/api-library/helium/lib/gfx-hair#w	Current width in pixels of the hair render buffers.	int
 hair::h	constant	gfx/hair	/api-library/helium/lib/gfx-hair#h	Current height in pixels of the hair render buffers.	int
 hair::made	constant	gfx/hair	/api-library/helium/lib/gfx-hair#made	Flag recording whether the GPU pipelines have been created.	int
+hair::detail	constant	gfx/hair	/api-library/helium/lib/gfx-hair#detail	Level-of-detail setting for camera rendering that scales how many strands are drawn; larger values draw more.	pub
+hair::light_detail	constant	gfx/hair	/api-library/helium/lib/gfx-hair#light_detail	Level-of-detail setting for light-space passes that scales how many strands are drawn; larger values draw more.	pub
+hair::light_turns	constant	gfx/hair	/api-library/helium/lib/gfx-hair#light_turns	Flag controlling whether hair light and shadow buffers are updated by rotating through lights across frames.	pub
 hair::front	constant	gfx/hair	/api-library/helium/lib/gfx-hair#front	GPU buffer holding the nearest-depth value per screen pixel for hair rasterization.	int
 hair::acc	constant	gfx/hair	/api-library/helium/lib/gfx-hair#acc	GPU buffer accumulating hair fragment colors per screen pixel.	int
 hair::hairt	constant	gfx/hair	/api-library/helium/lib/gfx-hair#hairt	Texture holding the resolved hair image before compositing onto the scene.	int
@@ -6375,11 +6391,9 @@ hair::resolve_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#resolve_p	Com
 hair::skin_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#skin_p	Compute pipeline that skins hair strand points to follow bone motion.	int
 hair::sim_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#sim_p	Compute pipeline that simulates hair strand dynamics each frame.	int
 hair::sdf_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#sdf_p	Compute pipeline that bakes the collision distance field from body triangles.	int
+hair::cast_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#cast_p	Compute pipeline used internally for the strand casting pass.	int
 hair::raw	constant	gfx/hair	/api-library/helium/lib/gfx-hair#raw	Scratch byte buffer for reading back simulation statistics from the GPU.	int
 hair::us	constant	gfx/hair	/api-library/helium/lib/gfx-hair#us	Per-groom uniform blocks computed for the current frame's draw.	int
-hair::RW	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RW	Buffer usage flags allowing compute shaders to read and write.	int
-hair::RD	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RD	Buffer usage flags allowing compute shaders to only read.	int
-hair::ident	function	gfx/hair	/api-library/helium/lib/gfx-hair#ident	Returns an identity 4x4 matrix.	int
 hair::mel_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#mel_of	Returns eumelanin and pheomelanin amounts approximating a given hair color and spread value.	int
 hair::ready	function	gfx/hair	/api-library/helium/lib/gfx-hair#ready	Creates the shared pipelines and sampler once, doing nothing on later calls.	int
 hair::size	function	gfx/hair	/api-library/helium/lib/gfx-hair#size	Resizes the screen-sized hair buffers and texture, releasing any previous ones.	int
@@ -6421,15 +6435,17 @@ hair::bake_part	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake_part	Bak
 hair::bake	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake	Packs collision triangles and grid parameters per body part and allocates distance field buffers for a groom.	int
 hair::cards	function	gfx/hair	/api-library/helium/lib/gfx-hair#cards	Creates a groom from a named hair card mesh in a model, returning its handle or -1 on failure.	pub
 hair::live	function	gfx/hair	/api-library/helium/lib/gfx-hair#live	Returns whether a groom is loaded and visible.	int
+hair::lod_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#lod_of	Returns a strand level-of-detail fraction for a groom from pixels per meter and a detail factor, clamped between one strand and all.	int
 hair::put_uniform	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_uniform	Uploads a uniform block to the compute stage.	int
-hair::dye_ch	function	gfx/hair	/api-library/helium/lib/gfx-hair#dye_ch	Computes one color channel's dye contribution as a scaled squared log of the channel value, used by this module's dye shading.	int
 hair::uniforms_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#uniforms_of	Builds the shader uniform block for a groom from its look, camera, sun, and lights.	int
 hair::light_slices	function	gfx/hair	/api-library/helium/lib/gfx-hair#light_slices	Resizes a groom's light-space buffers to hold n slices, doing nothing if the count is unchanged.	int
-hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Clears two compute buffers for a render pass mode, scaling the light-slice setting when the mode is above 1.	int
+hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Dispatches a compute pass that clears the given hair buffers for a chosen mode.	int
 hair::raster_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#raster_pass	Dispatches the strand rasterization compute pass for a groom, using light-space buffers when the mode is above 1.	int
 hair::track	function	gfx/hair	/api-library/helium/lib/gfx-hair#track	Updates a groom's model transform and bone matrices from its followed scene item's animation.	int
 hair::put_mat	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_mat	Random number generator state used for hair style generation, starting at seed 7.	int
 hair::simulate	function	gfx/hair	/api-library/helium/lib/gfx-hair#simulate	Runs one physics step for a groom, including skinning, collision field baking, and optional statistics readback.	int
+hair::cast_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#cast_pass	Dispatches the compute pass that accumulates one light slice of a groom's shadow-casting data into its light buffers.	int
+hair::cast_all	function	gfx/hair	/api-library/helium/lib/gfx-hair#cast_all	Gathers up to four live grooms with shadow casting enabled and uploads their light-slice matrices for the cast pass.	int
 hair::draw	function	gfx/hair	/api-library/helium/lib/gfx-hair#draw	Simulates and renders all visible grooms over the scene for a frame, taking the time step in seconds.	pub
 hair::Style	type	gfx/hair	/api-library/helium/lib/gfx-hair#Style	Parameters for generating strands procedurally, such as steps, length, variation, width, droop, curl, and clumps.	pub
 hair::rs	constant	gfx/hair	/api-library/helium/lib/gfx-hair#rs	Module-level state of the pseudo-random generator that rnd uses when scattering strand roots, seeded to 7.	int
@@ -6485,8 +6501,6 @@ hairdo::line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#line	Returns
 hairdo::scalp	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#scalp	Returns a 0 to 1 weight for how much a direction lies on the scalp below the hairline.	int
 hairdo::under	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#under	Returns whether a node is the head node or one of its descendants.	int
 hairdo::fill_map	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#fill_map	Fills empty cells of the head radius map from neighbors and smooths the result.	int
-hairdo::visible	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#visible	Checks whether a glTF node has a mesh that is listed in the given mesh names, so it counts toward measurement.	int
-hairdo::band	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#band	Finds vertices within a vertical band, returning whether any were found plus the half-width in x and the z extent.	int
 hairdo::measure	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#measure	Measures the head of a model asset, building the radius map and colliders, and returns false if no head geometry is found.	int
 hairdo::ball	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ball	Sets the head to a plain sphere of the given center and radius instead of measuring a model.	pub
 hairdo::hs	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hs	Returns a pseudo-random value from 0 to 1 hashed from four integers.	int

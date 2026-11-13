@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/anim-ik">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/anim-ik">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=3279d55a5e">
+<link rel="stylesheet" href="/api-library/lib.css?v=124ed8761d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=3279d55a5e'; start({wasm: '/api-library/search.wasm?v=3279d55a5e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=124ed8761d'; start({wasm: '/api-library/search.wasm?v=124ed8761d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>anim/ik</h1>
 <p class="lib-lede">Two-bone and FABRIK chain inverse kinematics, plus a foot-planting helper.</p>
-<p class="lib-meta"><code>import anim.ik;</code> &middot; <code>anim::</code> &middot; 11 functions, 3 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni">Source</a></p>
+<p class="lib-meta"><code>import anim.ik;</code> &middot; <code>anim::</code> &middot; 11 functions, 3 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>anim/ik: analytic two-bone IK (law of cosines, pole vector), FABRIK chain
 IK (Aristidou &amp; Lasenby 2011, &quot;FABRIK: A fast, iterative solver for the
 Inverse Kinematics problem&quot;, Graphical Models 73(5)), and a foot-planting
@@ -122,20 +122,20 @@ rotations back into the pose; call fk() again afterwards. Clean-room.
 <pre>two_bone_ik(sk Skeleton&amp;, p Pose&amp;, m Model&amp;, a i32, b i32, c i32, target float3, pole float3, weight f32, keep_end bool) f32</pre>
 <p>Solves two-bone IK on a joint chain toward a target and pole, returning the remaining distance.</p>
 <p class="note">Two-bone IK on the chain a -&gt; b -&gt; c (b's parent must be a, c's parent b). target: where c should go; pole: a point the middle joint should bend toward; weight blends the result; keep_end keeps c's model orientation. Returns the remaining distance |c - target| after solving (0 if reached).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L37">hc/lib/anim/ik.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L37">hc/lib/anim/ik.amni:37</a>
 </article>
 <article class="sym" id="FabrikResult">
 <h3><a href="#FabrikResult">FabrikResult</a> <i>type</i></h3>
 <pre>struct FabrikResult { error f32, iters i32 }</pre>
 <p>Result of a FABRIK solve, holding the final end-effector error and iterations used.</p>
 <p class="note">FABRIK on a joint chain (each joint's parent is the previous one). Returns the final end-effector error and the iterations used.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L115">hc/lib/anim/ik.amni:115</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L115">hc/lib/anim/ik.amni:115</a>
 </article>
 <article class="sym" id="fabrik">
 <h3><a href="#fabrik">fabrik</a> <i>function</i></h3>
 <pre>fabrik(sk Skeleton&amp;, p Pose&amp;, m Model&amp;, chain i32[:], target float3, tol f32, max_iter i32, weight f32, keep_end bool) FabrikResult</pre>
 <p>Solves a joint chain toward a target with FABRIK, returning the final error and iterations used.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L116">hc/lib/anim/ik.amni:116</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L116">hc/lib/anim/ik.amni:116</a>
 </article>
 <h2 id="foot-planting">Foot Planting <span class="n">3</span></h2>
 <article class="sym" id="Leg">
@@ -167,7 +167,7 @@ rotations back into the pose; call fk() again afterwards. Clean-room.
 }</pre>
 <p>Per-leg state for foot planting: joints, ankle height above the sole, and contact lock data.</p>
 <p class="note">foot planting -------------------------------------------------------- Per leg: joints, how high the ankle sits above the sole, and lock state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L175">hc/lib/anim/ik.amni:175</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L175">hc/lib/anim/ik.amni:175</a>
 </article>
 <article class="sym" id="PlantCfg">
 <h3><a href="#PlantCfg">PlantCfg</a> <i>type</i></h3>
@@ -181,73 +181,73 @@ rotations back into the pose; call fk() again afterwards. Clean-room.
 	pelvis i32 = -1,
 }</pre>
 <p>Settings for foot planting, such as contact thresholds, lock and release timing, and maximum pelvis drop.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L200">hc/lib/anim/ik.amni:200</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L200">hc/lib/anim/ik.amni:200</a>
 </article>
 <article class="sym" id="plant_feet">
 <h3><a href="#plant_feet">plant_feet</a> <i>function</i></h3>
 <pre>plant_feet(sk Skeleton&amp;, p Pose&amp;, m Model&amp;, legs Leg[2]&amp;, ground_y f32[2], char_xf Xf, cfg PlantCfg, dt f32) f32</pre>
 <p>Plants both feet on sampled ground heights with contact locking and pelvis drop, returning the pelvis drop used.</p>
 <p class="note">ground_y: world ground height under each leg (caller samples its terrain). char_xf: the character's world transform. Returns the pelvis drop used.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L211">hc/lib/anim/ik.amni:211</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L211">hc/lib/anim/ik.amni:211</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="safe_norm">
 <h3><a href="#safe_norm">safe_norm</a> <i>function</i></h3>
 <pre>safe_norm(v float3, fallback float3) float3</pre>
 <p>Normalizes a vector, returning the fallback when its length is nearly zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L13">hc/lib/anim/ik.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L13">hc/lib/anim/ik.amni:13</a>
 </article>
 <article class="sym" id="acos_c">
 <h3><a href="#acos_c">acos_c</a> <i>function</i></h3>
 <pre>acos_c(x f32) f32</pre>
 <p>Returns the arccosine of a value after clamping it to the range -1 to 1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L14">hc/lib/anim/ik.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L14">hc/lib/anim/ik.amni:14</a>
 </article>
 <article class="sym" id="rot_about">
 <h3><a href="#rot_about">rot_about</a> <i>function</i></h3>
 <pre>rot_about(q float4, c float3, p float3) float3</pre>
 <p>Returns a point rotated about a pivot by a quaternion.</p>
 <p class="note">Rotation that rotates point p about pivot c by q.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L16">hc/lib/anim/ik.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L16">hc/lib/anim/ik.amni:16</a>
 </article>
 <article class="sym" id="SOFT_K">
 <h3><a href="#SOFT_K">SOFT_K</a> <i>constant</i></h3>
 <pre>let SOFT_K f32 = 0.97</pre>
 <p>Fraction of limb reach beyond which the soft reach map begins smoothly compressing distances.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L18">hc/lib/anim/ik.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L18">hc/lib/anim/ik.amni:18</a>
 </article>
 <article class="sym" id="soft_reach">
 <h3><a href="#soft_reach">soft_reach</a> <i>function</i></h3>
 <pre>soft_reach(d f32, reach f32) f32</pre>
 <p>Returns a distance smoothly compressed so it stays below the limb's full reach.</p>
 <p class="note">Soft reach map, fixed per limb: d &lt;= s = SOFT_K*reach is unchanged; above it d' = s + w*tanh((d - s)/w), w = reach - s. tanh has slope 1 and curvature 0 at 0, so the map is C2 at s, monotone, and always &lt; reach.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L23">hc/lib/anim/ik.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L23">hc/lib/anim/ik.amni:23</a>
 </article>
 <article class="sym" id="knee_angle">
 <h3><a href="#knee_angle">knee_angle</a> <i>function</i></h3>
 <pre>knee_angle(l1 f32, l2 f32, d f32) f32</pre>
 <p>Returns the interior knee angle from the law of cosines for a given root-to-end distance.</p>
 <p class="note">interior knee angle (law of cosines) for a root-&gt;end distance d</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L31">hc/lib/anim/ik.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L31">hc/lib/anim/ik.amni:31</a>
 </article>
 <article class="sym" id="inert_axis">
 <h3><a href="#inert_axis">inert_axis</a> <i>function</i></h3>
 <pre>inert_axis(x0 f32, v0 f32, t f32, t1 f32) f32</pre>
 <p>Returns one axis of a quintic inertialization offset that decays smoothly to zero at the end time.</p>
 <p class="note">Inertialization offset (D. Bollo, &quot;Inertialization: High-Performance Animation Transitions in Gears of War&quot;, GDC 2016): a quintic x(t) with x(0)=x0, x'(0)=v0, x''(0)=0 and x, x', x'' all zero at t1. Per axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L302">hc/lib/anim/ik.amni:302</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L302">hc/lib/anim/ik.amni:302</a>
 </article>
 <article class="sym" id="inert_offset">
 <h3><a href="#inert_offset">inert_offset</a> <i>function</i></h3>
 <pre>inert_offset(x0 float3, v0 float3, t f32, t1 f32) float3</pre>
 <p>Returns a three-axis inertialization offset decaying smoothly to zero at the end time.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L314">hc/lib/anim/ik.amni:314</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L314">hc/lib/anim/ik.amni:314</a>
 </article>
 <article class="sym" id="approach_f">
 <h3><a href="#approach_f">approach_f</a> <i>function</i></h3>
 <pre>approach_f(x f32, target f32, rate f32, dt f32) f32</pre>
 <p>Returns a value moved toward a target at a fixed rate per second without overshooting.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/anim/ik.amni#L317">hc/lib/anim/ik.amni:317</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/anim/ik.amni#L317">hc/lib/anim/ik.amni:317</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -259,7 +259,7 @@ rotations back into the pose; call fk() again afterwards. Clean-room.
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1882</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1896</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a><ul>

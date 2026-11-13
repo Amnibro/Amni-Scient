@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-envmap">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-envmap">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=3279d55a5e">
+<link rel="stylesheet" href="/api-library/lib.css?v=124ed8761d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=3279d55a5e'; start({wasm: '/api-library/search.wasm?v=3279d55a5e'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=124ed8761d'; start({wasm: '/api-library/search.wasm?v=124ed8761d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/envmap</h1>
 <p class="lib-lede">Lets a program load environment maps and prefilter them into GGX-blurred cubemaps for image-based lighting, including sun and haze effects.</p>
-<p class="lib-meta"><code>import gfx.envmap;</code> &middot; <code>envmap::</code> &middot; 20 functions, 3 types, 27 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.envmap;</code> &middot; <code>envmap::</code> &middot; 20 functions, 3 types, 27 constants &middot; <a href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#environment-lighting">Environment Lighting <span class="n">12</span></a></li>
 <li><a href="#sky-generation">Sky Generation <span class="n">3</span></a></li>
@@ -115,84 +115,84 @@
 <pre>var on bool = false</pre>
 <p>Flag that enables image-based environment lighting, set true once an environment map or sky has been loaded.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L7">hc/lib/gfx/envmap.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L7">hc/lib/gfx/envmap.amni:7</a>
 </article>
 <article class="sym" id="intensity">
 <h3><a href="#intensity">intensity</a> <i>constant</i></h3>
 <pre>var intensity f32 = 1.0</pre>
 <p>Brightness multiplier applied to the environment lighting, defaulting to 1.0.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L9">hc/lib/gfx/envmap.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L9">hc/lib/gfx/envmap.amni:9</a>
 </article>
 <article class="sym" id="rotation">
 <h3><a href="#rotation">rotation</a> <i>constant</i></h3>
 <pre>var rotation f32 = 0.0</pre>
 <p>Rotation of the environment map, defaulting to 0.0.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L10">hc/lib/gfx/envmap.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L10">hc/lib/gfx/envmap.amni:10</a>
 </article>
 <article class="sym" id="blur">
 <h3><a href="#blur">blur</a> <i>constant</i></h3>
 <pre>var blur f32 = 0.0</pre>
 <p>Blur amount for the environment, defaulting to 0.0.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L11">hc/lib/gfx/envmap.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L11">hc/lib/gfx/envmap.amni:11</a>
 </article>
 <article class="sym" id="size">
 <h3><a href="#size">size</a> <i>constant</i></h3>
 <pre>var size int = 512</pre>
 <p>Face resolution in pixels of the prefiltered cubemap built from an equirectangular map, defaulting to 512.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L12">hc/lib/gfx/envmap.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L12">hc/lib/gfx/envmap.amni:12</a>
 </article>
 <article class="sym" id="samples">
 <h3><a href="#samples">samples</a> <i>constant</i></h3>
 <pre>var samples int = 512</pre>
 <p>Number of GGX samples used per texel when prefiltering the cubemap, defaulting to 512.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L13">hc/lib/gfx/envmap.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L13">hc/lib/gfx/envmap.amni:13</a>
 </article>
 <article class="sym" id="irr_samples">
 <h3><a href="#irr_samples">irr_samples</a> <i>constant</i></h3>
 <pre>var irr_samples int = 2048</pre>
 <p>Number of samples used when prefiltering the diffuse irradiance cubemap from an environment map; higher values give smoother results but take longer.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L14">hc/lib/gfx/envmap.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L14">hc/lib/gfx/envmap.amni:14</a>
 </article>
 <article class="sym" id="set_equirect">
 <h3><a href="#set_equirect">set_equirect</a> <i>function</i></h3>
 <pre>set_equirect(rgba const f32[:], w int, h int)</pre>
 <p>Sets the environment from raw equirectangular float RGBA pixels of the given width and height, then prefilters it.</p>
 <p class="note">`set_equirect(rgba const f32[:], w int, h int)` calls setup, converts with `codec_hdr::half_pixels` into a local byte array, makes a `gfx::RGBA16F` sampled 2D texture with `width: w as i32, height: h as i32`, uploads with `gfx::update_texture(t, bytes[..])`, makes a raw cube (kind gfx::TEXTURE_CUBE, gfx::RGBA16F, usage gfx::SAMPLED | gfx::COLOR_TARGET, width and height `size as i32`, mips (as i32)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L220">hc/lib/gfx/envmap.amni:220</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L220">hc/lib/gfx/envmap.amni:220</a>
 </article>
 <article class="sym" id="load">
 <h3><a href="#load">load</a> <i>function</i></h3>
 <pre>load(path const byte[:]) bool</pre>
 <p>Loads an HDR image file as the environment map, returning false if reading or decoding fails.</p>
 <p class="note">`load(path const byte[:]) bool` reads the file with `read_file` into a local byte array (false on failure), decodes with `codec_hdr::decode` into a local f32 array (false when not ok), calls `set_equirect` and returns true.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L236">hc/lib/gfx/envmap.amni:236</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L236">hc/lib/gfx/envmap.amni:236</a>
 </article>
 <article class="sym" id="texture">
 <h3><a href="#texture">texture</a> <i>function</i></h3>
 <pre>texture() gfx::Texture</pre>
 <p>Returns the prefiltered environment cubemap, or a black dummy cubemap when no environment is active.</p>
 <p class="note">`texture() gfx::Texture` returns `cube` when `on` and `cube.id != 0`, otherwise `dummy`; it calls `setup()` first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L245">hc/lib/gfx/envmap.amni:245</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L245">hc/lib/gfx/envmap.amni:245</a>
 </article>
 <article class="sym" id="spec_lod">
 <h3><a href="#spec_lod">spec_lod</a> <i>function</i></h3>
 <pre>spec_lod() f32</pre>
 <p>Returns the mip level used for specular reflection sampling, the second-to-last level.</p>
 <p class="note">`spec_lod() f32` returns `(lv - 2) as f32` and `irr_lod() f32` returns `(lv - 1) as f32`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L249">hc/lib/gfx/envmap.amni:249</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L249">hc/lib/gfx/envmap.amni:249</a>
 </article>
 <article class="sym" id="irr_lod">
 <h3><a href="#irr_lod">irr_lod</a> <i>function</i></h3>
 <pre>irr_lod() f32</pre>
 <p>Returns the mip level holding the diffuse irradiance, the last level.</p>
 <p class="note">`spec_lod() f32` returns `(lv - 2) as f32` and `irr_lod() f32` returns `(lv - 1) as f32`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L250">hc/lib/gfx/envmap.amni:250</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L250">hc/lib/gfx/envmap.amni:250</a>
 </article>
 <h2 id="sky-generation">Sky Generation <span class="n">3</span></h2>
 <article class="sym" id="physical">
@@ -200,21 +200,21 @@
 <pre>var physical bool = false</pre>
 <p>Flag that is true when the current environment comes from the physical sky model rather than an equirectangular image.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L8">hc/lib/gfx/envmap.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L8">hc/lib/gfx/envmap.amni:8</a>
 </article>
 <article class="sym" id="sun_color">
 <h3><a href="#sun_color">sun_color</a> <i>function</i></h3>
 <pre>sun_color(to_sun float3, power f32, haze f32) float3</pre>
 <p>Returns the sun's color for a given direction by integrating atmospheric scattering, with power and haze scaling; black if the sun is below the planet's horizon.</p>
 <p class="note">`sun_color(to_sun float3, power f32, haze f32) float3` returns the sun light that reaches 0.2 km above the ground, as `power` times the transmittance along the unit vector to_sun. With o = (0, 6360.2) in the plane (horizontal = sqrt(1 - to_sun.y^2), vertical = to_sun.y), it returns zero when the ray hits the sphere of radius 6360 before leaving (b = o.y * to_sun.y, c = 6360.2^2 - 6360^2, b &lt; 0 and</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L103">hc/lib/gfx/envmap.amni:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L103">hc/lib/gfx/envmap.amni:103</a>
 </article>
 <article class="sym" id="set_sky">
 <h3><a href="#set_sky">set_sky</a> <i>function</i></h3>
 <pre>set_sky(to_sun float3, power f32, haze f32, clouds f32, n int, wind_x f32, wind_z f32)</pre>
 <p>Generates a procedural sky cubemap from sun direction, power, haze and clouds, then prefilters it for lighting.</p>
 <p class="note">`set_sky(to_sun float3, power f32, haze f32, clouds f32, n int, wind_x f32, wind_z f32)` calls `setup()`, then fills the environment from a simulated atmosphere. It makes `ms`, a 32 by 32 RGBA16F SAMPLED | COLOR_TARGET 2D texture, and draws it in one pass with `pipe_ms` (bound with `gfx::bind`, three vertices via `gfx::draw(3)`), fragment uniform slot 0 being `EnvU { p: float4 { 0.0, 0.0, 0.18, ha</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L196">hc/lib/gfx/envmap.amni:196</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L196">hc/lib/gfx/envmap.amni:196</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (35)</summary>
 <article class="sym" id="cube">
@@ -222,226 +222,226 @@
 <pre>var cube gfx::Texture</pre>
 <p>Prefiltered GGX cubemap holding the specular and irradiance mip levels.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L15">hc/lib/gfx/envmap.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L15">hc/lib/gfx/envmap.amni:15</a>
 </article>
 <article class="sym" id="dummy">
 <h3><a href="#dummy">dummy</a> <i>constant</i></h3>
 <pre>var dummy gfx::Texture</pre>
 <p>Placeholder 1x1 black cubemap returned when no environment is active.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L16">hc/lib/gfx/envmap.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L16">hc/lib/gfx/envmap.amni:16</a>
 </article>
 <article class="sym" id="smp">
 <h3><a href="#smp">smp</a> <i>constant</i></h3>
 <pre>var smp gfx::Sampler</pre>
 <p>Clamp-addressed linear sampler used when reading cubemap sources.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L17">hc/lib/gfx/envmap.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L17">hc/lib/gfx/envmap.amni:17</a>
 </article>
 <article class="sym" id="smp_wrap">
 <h3><a href="#smp_wrap">smp_wrap</a> <i>constant</i></h3>
 <pre>var smp_wrap gfx::Sampler</pre>
 <p>Linear sampler that repeats horizontally, used for reading equirectangular maps.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L18">hc/lib/gfx/envmap.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L18">hc/lib/gfx/envmap.amni:18</a>
 </article>
 <article class="sym" id="pipe_equi">
 <h3><a href="#pipe_equi">pipe_equi</a> <i>constant</i></h3>
 <pre>var pipe_equi gfx::Pipeline</pre>
 <p>Pipeline that renders an equirectangular image into cubemap faces.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L19">hc/lib/gfx/envmap.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L19">hc/lib/gfx/envmap.amni:19</a>
 </article>
 <article class="sym" id="pipe_ggx">
 <h3><a href="#pipe_ggx">pipe_ggx</a> <i>constant</i></h3>
 <pre>var pipe_ggx gfx::Pipeline</pre>
 <p>Pipeline that renders GGX-prefiltered cubemap mip levels.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L20">hc/lib/gfx/envmap.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L20">hc/lib/gfx/envmap.amni:20</a>
 </article>
 <article class="sym" id="ready">
 <h3><a href="#ready">ready</a> <i>constant</i></h3>
 <pre>var ready bool = false</pre>
 <p>Flag recording that the shared samplers, pipelines and dummy texture have been created.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L21">hc/lib/gfx/envmap.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L21">hc/lib/gfx/envmap.amni:21</a>
 </article>
 <article class="sym" id="lv">
 <h3><a href="#lv">lv</a> <i>constant</i></h3>
 <pre>var lv int = 0</pre>
 <p>Number of mip levels in the current prefiltered cubemap.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L22">hc/lib/gfx/envmap.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L22">hc/lib/gfx/envmap.amni:22</a>
 </article>
 <article class="sym" id="cubes">
 <h3><a href="#cubes">cubes</a> <i>constant</i></h3>
 <pre>var cubes int = 0</pre>
 <p>Count of cubemap slots currently allocated in the environment cube array texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L23">hc/lib/gfx/envmap.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L23">hc/lib/gfx/envmap.amni:23</a>
 </article>
 <article class="sym" id="cube_n">
 <h3><a href="#cube_n">cube_n</a> <i>constant</i></h3>
 <pre>var cube_n int = 0</pre>
 <p>Width and height in pixels of each face in the currently allocated environment cube array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L24">hc/lib/gfx/envmap.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L24">hc/lib/gfx/envmap.amni:24</a>
 </article>
 <article class="sym" id="gen">
 <h3><a href="#gen">gen</a> <i>constant</i></h3>
 <pre>var gen int = 0</pre>
 <p>Generation counter incremented when the environment cubemap contents are replaced, so dependents can detect changes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L25">hc/lib/gfx/envmap.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L25">hc/lib/gfx/envmap.amni:25</a>
 </article>
 <article class="sym" id="pipe_copy">
 <h3><a href="#pipe_copy">pipe_copy</a> <i>constant</i></h3>
 <pre>var pipe_copy gfx::Pipeline</pre>
 <p>Pipeline used to copy existing cubemap faces and mips into a newly allocated cube array.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L26">hc/lib/gfx/envmap.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L26">hc/lib/gfx/envmap.amni:26</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>constant</i></h3>
 <pre>var clear gfx::Texture</pre>
 <p>Cube texture used as a cleared placeholder for the environment map when no sky clouds are active.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L27">hc/lib/gfx/envmap.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L27">hc/lib/gfx/envmap.amni:27</a>
 </article>
 <article class="sym" id="clear_on">
 <h3><a href="#clear_on">clear_on</a> <i>constant</i></h3>
 <pre>var clear_on bool = false</pre>
 <p>Flag set when the sky has clouds, marking the cleared placeholder texture as in use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L28">hc/lib/gfx/envmap.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L28">hc/lib/gfx/envmap.amni:28</a>
 </article>
 <article class="sym" id="CopyU">
 <h3><a href="#CopyU">CopyU</a> <i>type</i></h3>
 <pre>struct CopyU { p float4 }</pre>
 <p>Uniform block carrying the face, slot and mip indices for the cubemap copy shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L29">hc/lib/gfx/envmap.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L29">hc/lib/gfx/envmap.amni:29</a>
 </article>
 <article class="sym" id="EnvU">
 <h3><a href="#EnvU">EnvU</a> <i>type</i></h3>
 <pre>struct EnvU { p float4 }</pre>
 <p>Uniform block passed to the environment fragment shaders, packing face index, roughness, sample count and source size.</p>
 <p class="note">Namespace envmap; imports gfx, os, math, gfx.linalg, gfx.codec_hdr. Image-based lighting: a cube map whose mip levels hold the environment prefiltered for GGX roughness and, in the last level, for a cosine lobe. Module vars: `on` bool false, `physical` bool false, `intensity` f32 1.0, `rotation` f32 0.0 (radians about +y), `blur` f32 0.0 (the roughness the background is drawn at), `size` int 512, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L30">hc/lib/gfx/envmap.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L30">hc/lib/gfx/envmap.amni:30</a>
 </article>
 <article class="sym" id="setup">
 <h3><a href="#setup">setup</a> <i>function</i></h3>
 <pre>setup()</pre>
 <p>Creates the shared pipelines, samplers and dummy cubemap once; later calls do nothing.</p>
 <p class="note">`setup()` does nothing when `ready`. It builds `pipe_equi` from `embed_shader(&quot;shaders/screen.vert&quot;)` and `embed_shader(&quot;shaders/env_equi.frag&quot;)`, `pipe_ggx` from screen.vert and `embed_shader(&quot;shaders/env_ggx.frag&quot;)`, `smp = gfx::sampler(gfx::LINEAR, gfx::CLAMP)`, `smp_wrap = gfx::sampler(gfx::SamplerDesc { min_filter: gfx::LINEAR, mag_filter: gfx::LINEAR, mip_filter: gfx::LINEAR, wrap_u: gfx::RE</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L31">hc/lib/gfx/envmap.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L31">hc/lib/gfx/envmap.amni:31</a>
 </article>
 <article class="sym" id="levels">
 <h3><a href="#levels">levels</a> <i>function</i></h3>
 <pre>levels(s int) int</pre>
 <p>Returns the number of prefiltered mip levels for a cubemap of the given size, at least 2.</p>
 <p class="note">`levels(s int) int` counts mip levels from s halving down to 16 inclusive (s = 512 gives 6), at least 2.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L46">hc/lib/gfx/envmap.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L46">hc/lib/gfx/envmap.amni:46</a>
 </article>
 <article class="sym" id="faces">
 <h3><a href="#faces">faces</a> <i>function</i></h3>
 <pre>faces(t gfx::Texture, m int, p gfx::Pipeline, src gfx::Texture, s gfx::Sampler, rough f32, count f32, src_size f32, base int)</pre>
 <p>Renders all six faces of one mip level into the cube array using the given prefilter pipeline, roughness and sample count.</p>
 <p class="note">`faces(t gfx::Texture, m int, p gfx::Pipeline, src gfx::Texture, s gfx::Sampler, rough f32, count f32, src_size f32)` runs one pass per face f in 0..6 with `gfx::begin_pass(gfx::PassDesc { color: [t, gfx::Texture { 0 }, gfx::Texture { 0 }, gfx::Texture { 0 }], layer: f as i32, mip: m as i32, .. })` (skip the face when it fails, using guard), then `gfx::bind(p)`, `gfx::bind_texture(gfx::FRAGMENT, 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L52">hc/lib/gfx/envmap.amni:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L52">hc/lib/gfx/envmap.amni:52</a>
 </article>
 <article class="sym" id="make">
 <h3><a href="#make">make</a> <i>function</i></h3>
 <pre>make(n int, k int)</pre>
 <p>Allocates a cube array with the given face size and slot count, copying over existing contents when the size matches.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L62">hc/lib/gfx/envmap.amni:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L62">hc/lib/gfx/envmap.amni:62</a>
 </article>
 <article class="sym" id="reserve">
 <h3><a href="#reserve">reserve</a> <i>function</i></h3>
 <pre>reserve(k int)</pre>
 <p>Ensures the environment cube array exists and holds at least the requested number of slots.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L85">hc/lib/gfx/envmap.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L85">hc/lib/gfx/envmap.amni:85</a>
 </article>
 <article class="sym" id="filter">
 <h3><a href="#filter">filter</a> <i>function</i></h3>
 <pre>filter(raw gfx::Texture, n int, at int, irr bool)</pre>
 <p>Prefilters a raw environment texture into GGX-blurred mip levels of the cube array slot, optionally including an irradiance mip.</p>
 <p class="note">`filter(raw gfx::Texture, n int)` prefilters the fully mipped source cube `raw` of face size n into `cube`. When `cube.id` is 0 or `lv` differs from `levels(n)`, free the old cube with `gfx::release` if it exists and make a new one: kind gfx::TEXTURE_CUBE, gfx::RGBA16F, usage gfx::SAMPLED | gfx::COLOR_TARGET, width and height `n as i32`, mips `levels(n) as i32`; set `lv`. For each level m in 0..lv</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L88">hc/lib/gfx/envmap.amni:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L88">hc/lib/gfx/envmap.amni:88</a>
 </article>
 <article class="sym" id="EnvSkyU">
 <h3><a href="#EnvSkyU">EnvSkyU</a> <i>type</i></h3>
 <pre>struct EnvSkyU { p float4, sun float4, cloud float4 }</pre>
 <p>Uniform block passed to the sky fragment shader, packing face, sun direction and power, and cloud settings.</p>
 <p class="note">`set_sky(to_sun float3, power f32, haze f32, clouds f32, n int, wind_x f32, wind_z f32)` calls `setup()`, then fills the environment from a simulated atmosphere. It makes `ms`, a 32 by 32 RGBA16F SAMPLED | COLOR_TARGET 2D texture, and draws it in one pass with `pipe_ms` (bound with `gfx::bind`, three vertices via `gfx::draw(3)`), fragment uniform slot 0 being `EnvU { p: float4 { 0.0, 0.0, 0.18, ha</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L130">hc/lib/gfx/envmap.amni:130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L130">hc/lib/gfx/envmap.amni:130</a>
 </article>
 <article class="sym" id="pipe_ms">
 <h3><a href="#pipe_ms">pipe_ms</a> <i>constant</i></h3>
 <pre>var pipe_ms gfx::Pipeline</pre>
 <p>Pipeline that renders the multiple-scattering lookup texture for the sky.</p>
 <p class="note">`set_sky(to_sun float3, power f32, haze f32, clouds f32, n int, wind_x f32, wind_z f32)` calls `setup()`, then fills the environment from a simulated atmosphere. It makes `ms`, a 32 by 32 RGBA16F SAMPLED | COLOR_TARGET 2D texture, and draws it in one pass with `pipe_ms` (bound with `gfx::bind`, three vertices via `gfx::draw(3)`), fragment uniform slot 0 being `EnvU { p: float4 { 0.0, 0.0, 0.18, ha</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L131">hc/lib/gfx/envmap.amni:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L131">hc/lib/gfx/envmap.amni:131</a>
 </article>
 <article class="sym" id="pipe_sky">
 <h3><a href="#pipe_sky">pipe_sky</a> <i>constant</i></h3>
 <pre>var pipe_sky gfx::Pipeline</pre>
 <p>Pipeline that renders the procedural sky into cubemap faces.</p>
 <p class="note">`set_sky(to_sun float3, power f32, haze f32, clouds f32, n int, wind_x f32, wind_z f32)` calls `setup()`, then fills the environment from a simulated atmosphere. It makes `ms`, a 32 by 32 RGBA16F SAMPLED | COLOR_TARGET 2D texture, and draws it in one pass with `pipe_ms` (bound with `gfx::bind`, three vertices via `gfx::draw(3)`), fragment uniform slot 0 being `EnvU { p: float4 { 0.0, 0.0, 0.18, ha</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L132">hc/lib/gfx/envmap.amni:132</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L132">hc/lib/gfx/envmap.amni:132</a>
 </article>
 <article class="sym" id="noise">
 <h3><a href="#noise">noise</a> <i>constant</i></h3>
 <pre>var noise gfx::Texture</pre>
 <p>Cached 80-cube 3D noise texture lazily built and sampled by the sky shader for cloud shapes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L133">hc/lib/gfx/envmap.amni:133</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L133">hc/lib/gfx/envmap.amni:133</a>
 </article>
 <article class="sym" id="smp_noise">
 <h3><a href="#smp_noise">smp_noise</a> <i>constant</i></h3>
 <pre>var smp_noise gfx::Sampler</pre>
 <p>Repeat-wrapping linear sampler used to read the cloud noise texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L134">hc/lib/gfx/envmap.amni:134</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L134">hc/lib/gfx/envmap.amni:134</a>
 </article>
 <article class="sym" id="sky_ready">
 <h3><a href="#sky_ready">sky_ready</a> <i>constant</i></h3>
 <pre>var sky_ready bool = false</pre>
 <p>Flag recording that the sky pipelines have been created.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L135">hc/lib/gfx/envmap.amni:135</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L135">hc/lib/gfx/envmap.amni:135</a>
 </article>
 <article class="sym" id="mip_count">
 <h3><a href="#mip_count">mip_count</a> <i>function</i></h3>
 <pre>mip_count(n int) int</pre>
 <p>Returns the number of mip levels in a full chain for a texture of the given size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L136">hc/lib/gfx/envmap.amni:136</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L136">hc/lib/gfx/envmap.amni:136</a>
 </article>
 <article class="sym" id="setup_sky">
 <h3><a href="#setup_sky">setup_sky</a> <i>function</i></h3>
 <pre>setup_sky()</pre>
 <p>Creates the sky pipelines once; later calls do nothing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L142">hc/lib/gfx/envmap.amni:142</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L142">hc/lib/gfx/envmap.amni:142</a>
 </article>
 <article class="sym" id="noise_l">
 <h3><a href="#noise_l">noise_l</a> <i>function</i></h3>
 <pre>noise_l(lat const byte[:], x int, y int, z int) real</pre>
 <p>Returns a lattice noise value in 0 to 1 from a byte lattice, wrapping coordinates at 80.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L148">hc/lib/gfx/envmap.amni:148</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L148">hc/lib/gfx/envmap.amni:148</a>
 </article>
 <article class="sym" id="noise_m">
 <h3><a href="#noise_m">noise_m</a> <i>function</i></h3>
 <pre>noise_m(a real, b real, t real) real</pre>
 <p>Returns a smoothstep-eased interpolation between two values by a fraction from 0 to 1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L149">hc/lib/gfx/envmap.amni:149</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L149">hc/lib/gfx/envmap.amni:149</a>
 </article>
 <article class="sym" id="noise_o">
 <h3><a href="#noise_o">noise_o</a> <i>function</i></h3>
 <pre>noise_o(lat const byte[:], st int, sh int, i int, j int, k int, bil bool) real</pre>
 <p>Returns trilinearly interpolated lattice noise at a given cell stride and shift, optionally folded into a billowy ridge shape.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L150">hc/lib/gfx/envmap.amni:150</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L150">hc/lib/gfx/envmap.amni:150</a>
 </article>
 <article class="sym" id="noise_tex">
 <h3><a href="#noise_tex">noise_tex</a> <i>function</i></h3>
 <pre>noise_tex() gfx::Texture</pre>
 <p>Returns the shared 3D cloud noise texture, generating and uploading it on first use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L162">hc/lib/gfx/envmap.amni:162</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L162">hc/lib/gfx/envmap.amni:162</a>
 </article>
 <article class="sym" id="sky_faces">
 <h3><a href="#sky_faces">sky_faces</a> <i>function</i></h3>
 <pre>sky_faces(t gfx::Texture, ms gfx::Texture, to_sun float3, power f32, haze f32, clouds f32, wind_x f32, wind_z f32)</pre>
 <p>Renders the six faces of a sky cubemap with sun, haze, clouds and wind using the given multiple-scattering texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/envmap.amni#L184">hc/lib/gfx/envmap.amni:184</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/124ed87267a7e7ee465df27ed1cf84e8f1690443/hc/lib/gfx/envmap.amni#L184">hc/lib/gfx/envmap.amni:184</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -453,7 +453,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1882</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1896</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
