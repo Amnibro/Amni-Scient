@@ -6485,7 +6485,8 @@ hairdo::line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#line	Returns
 hairdo::scalp	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#scalp	Returns a 0 to 1 weight for how much a direction lies on the scalp below the hairline.	int
 hairdo::under	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#under	Returns whether a node is the head node or one of its descendants.	int
 hairdo::fill_map	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#fill_map	Fills empty cells of the head radius map from neighbors and smooths the result.	int
-hairdo::vpos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#vpos	Returns the position of a vertex from the loaded model vertex data.	int
+hairdo::visible	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#visible	Checks whether a glTF node has a mesh that is listed in the given mesh names, so it counts toward measurement.	int
+hairdo::band	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#band	Finds vertices within a vertical band, returning whether any were found plus the half-width in x and the z extent.	int
 hairdo::measure	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#measure	Measures the head of a model asset, building the radius map and colliders, and returns false if no head geometry is found.	int
 hairdo::ball	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ball	Sets the head to a plain sphere of the given center and radius instead of measuring a model.	pub
 hairdo::hs	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hs	Returns a pseudo-random value from 0 to 1 hashed from four integers.	int
@@ -6499,17 +6500,18 @@ hairdo::loose	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#loose	Build
 hairdo::tied	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tied	Builds the path of a tied-back strand and returns its total length and its length up to the tie.	int
 hairdo::dir_at	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#dir_at	Returns the unit direction for an azimuth angle and a height value.	int
 hairdo::make_roots	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_roots	Generates strand root directions over the scalp, scaled to the style's guide count.	int
-hairdo::s_axes	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_axes	Working array of root direction axes for each strand.	int
+hairdo::s_axis	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_axis	Per-strand root direction axes produced when building strands from roots.	int
 hairdo::s_root	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_root	Working array of root positions for each strand.	int
-hairdo::s_whole	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_whole	Working array of total strand lengths.	int
+hairdo::s_len	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_len	Per-strand total path lengths, measured in head units, produced when building strands.	int
 hairdo::s_head	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_head	Working array of strand lengths from root to tie point.	int
 hairdo::s_grp	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_grp	Working array of group ids for each strand, such as left, right, or fringe.	int
 hairdo::s_lay	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lay	Working array of random layer values for each strand.	int
 hairdo::s_pts	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_pts	Working array of resampled strand points.	int
-hairdo::make_strands	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_strands	Builds strand paths for all roots and stores them resampled to the given point count.	int
+hairdo::s_k	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_k	Number of points stored per strand, clamped between 4 and 32 when strands are built.	int
+hairdo::make_strands	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_strands	Builds strand point paths, groups, lengths and layers for each root direction according to the hairstyle settings.	int
 hairdo::s_lead	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lead	Working array of the leader strand index for each strand.	int
 hairdo::make_leaders	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_leaders	Chooses a nearby leader strand in the same group for each strand.	int
-hairdo::s_out	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_out	Working array of final shaped strand points after waves, curls, and clumping.	int
-hairdo::shape_all	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#shape_all	Applies waves, curls, clumping, and collision to all strands.	int
+hairdo::s_sh	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_sh	Per-strand shaped point positions, filled by the shaping pass after strands are built.	int
+hairdo::shape	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#shape	Shapes strands by applying waves, curls and clumping offsets to the base strand points using each strand's leader.	int
 hairdo::grow	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#grow	Generates hair strand data for a style into a byte buffer and returns the strand count, or 0 on failure.	int
 hairdo::wear	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#wear	Grows hair of a named style and color on a model's head joint and returns the groom handle, or -1 on failure.	pub

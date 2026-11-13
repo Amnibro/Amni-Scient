@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-fx">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-fx">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=f73bfc636c">
+<link rel="stylesheet" href="/api-library/lib.css?v=3279d55a5e">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=f73bfc636c'; start({wasm: '/api-library/search.wasm?v=f73bfc636c'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=3279d55a5e'; start({wasm: '/api-library/search.wasm?v=3279d55a5e'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/fx</h1>
 <p class="lib-lede">GPU particle emitters that spawn, simulate, sort and draw.</p>
-<p class="lib-meta"><code>import gfx.fx;</code> &middot; <code>fx::</code> &middot; 29 functions, 9 types, 43 constants &middot; <a href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.fx;</code> &middot; <code>fx::</code> &middot; 29 functions, 9 types, 43 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#particle-emitters">Particle Emitters <span class="n">12</span></a></li>
 <li><a href="#gpu-pipeline">GPU Pipeline <span class="n">11</span></a></li>
@@ -116,491 +116,491 @@
 <h3><a href="#Emitter">Emitter</a> <i>type</i></h3>
 <pre>struct Emitter { pos float3, shape int, size float3, rate f32, dir float3, speed_min f32, speed_max f32, life_min f32, life_max f32, spread f32, gravity f32, drag f32, curl f32, curl_scale f32, collide bool, restitution f32, soft f32, alpha bool, colors float4[4], sizes float4, on bool, stretch f32 = 0.0, wrap bool = false, follow bool = false, splash f32 = 0.0, splash_size f32 = 0.05, splash_rgba float4 = float4 { 1.0, 1.0, 1.0, 1.0 }, on_death int = -1, on_death_n int = 0, on_hit int = -1, on_hit_n int = 0, inherit f32 = 0.0, trail f32 = 0.0, mesh int = -1, spin f32 = 0.0 }</pre>
 <p>Settings describing one particle emitter: shape, rate, speed, lifetime, forces, collision, colors and sizes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L5">hc/lib/gfx/fx.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L5">hc/lib/gfx/fx.amni:5</a>
 </article>
 <article class="sym" id="gravity">
 <h3><a href="#gravity">gravity</a> <i>constant</i></h3>
 <pre>var gravity float3 = float3 { 0.0, -9.8, 0.0 }</pre>
 <p>Global gravity vector applied to particles, defaulting to 9.8 downward on the Y axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L46">hc/lib/gfx/fx.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L46">hc/lib/gfx/fx.amni:46</a>
 </article>
 <article class="sym" id="thickness">
 <h3><a href="#thickness">thickness</a> <i>constant</i></h3>
 <pre>var thickness f32 = 0.5</pre>
 <p>Thickness value passed to the simulation for depth-based particle collision.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L47">hc/lib/gfx/fx.amni:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L47">hc/lib/gfx/fx.amni:47</a>
 </article>
 <article class="sym" id="emitter">
 <h3><a href="#emitter">emitter</a> <i>function</i></h3>
 <pre>emitter() Emitter</pre>
 <p>Returns an emitter with default settings, ready to be customized and added.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L101">hc/lib/gfx/fx.amni:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L101">hc/lib/gfx/fx.amni:101</a>
 </article>
 <article class="sym" id="rain">
 <h3><a href="#rain">rain</a> <i>function</i></h3>
 <pre>rain() Emitter</pre>
 <p>Returns an emitter preset for falling rain with wrapping, camera following, streaks and splashes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L104">hc/lib/gfx/fx.amni:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L104">hc/lib/gfx/fx.amni:104</a>
 </article>
 <article class="sym" id="snow">
 <h3><a href="#snow">snow</a> <i>function</i></h3>
 <pre>snow() Emitter</pre>
 <p>Returns an emitter preset for drifting snow, based on rain with slower speed, curl noise and alpha blending.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L105">hc/lib/gfx/fx.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L105">hc/lib/gfx/fx.amni:105</a>
 </article>
 <article class="sym" id="weather_bounds">
 <h3><a href="#weather_bounds">weather_bounds</a> <i>function</i></h3>
 <pre>weather_bounds(at float3) f32, f32</pre>
 <p>Returns the horizontal extent and top height covered by active wrapping emitters around the given position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L106">hc/lib/gfx/fx.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L106">hc/lib/gfx/fx.amni:106</a>
 </article>
 <article class="sym" id="add">
 <h3><a href="#add">add</a> <i>function</i></h3>
 <pre>add(e Emitter) int</pre>
 <p>Adds an emitter and returns its index, or -1 if the maximum is reached.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L111">hc/lib/gfx/fx.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L111">hc/lib/gfx/fx.amni:111</a>
 </article>
 <article class="sym" id="remove">
 <h3><a href="#remove">remove</a> <i>function</i></h3>
 <pre>remove(i int)</pre>
 <p>Removes the emitter in a slot, turning it off and freeing it for reuse; out-of-range indexes are ignored.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L117">hc/lib/gfx/fx.amni:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L117">hc/lib/gfx/fx.amni:117</a>
 </article>
 <article class="sym" id="set">
 <h3><a href="#set">set</a> <i>function</i></h3>
 <pre>set(i int, e Emitter)</pre>
 <p>Replaces the emitter at the given index with new settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L195">hc/lib/gfx/fx.amni:195</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L195">hc/lib/gfx/fx.amni:195</a>
 </article>
 <article class="sym" id="burst">
 <h3><a href="#burst">burst</a> <i>function</i></h3>
 <pre>burst(i int, n int)</pre>
 <p>Queues a burst of the given number of particles from the emitter at the next step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L196">hc/lib/gfx/fx.amni:196</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L196">hc/lib/gfx/fx.amni:196</a>
 </article>
 <article class="sym" id="clear_emitters">
 <h3><a href="#clear_emitters">clear_emitters</a> <i>function</i></h3>
 <pre>clear_emitters()</pre>
 <p>Removes all emitters and their pending spawn state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L197">hc/lib/gfx/fx.amni:197</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L197">hc/lib/gfx/fx.amni:197</a>
 </article>
 <h2 id="gpu-pipeline">GPU Pipeline <span class="n">11</span></h2>
 <article class="sym" id="sorting">
 <h3><a href="#sorting">sorting</a> <i>constant</i></h3>
 <pre>var sorting = true</pre>
 <p>Flag enabling depth sorting of alpha-blended particles, true by default.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L48">hc/lib/gfx/fx.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L48">hc/lib/gfx/fx.amni:48</a>
 </article>
 <article class="sym" id="square">
 <h3><a href="#square">square</a> <i>constant</i></h3>
 <pre>var square = false</pre>
 <p>Flag that makes particles render as squares instead of the default shape.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L49">hc/lib/gfx/fx.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L49">hc/lib/gfx/fx.amni:49</a>
 </article>
 <article class="sym" id="ready">
 <h3><a href="#ready">ready</a> <i>function</i></h3>
 <pre>ready() bool</pre>
 <p>Returns whether the system has been initialized with particle capacity.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L56">hc/lib/gfx/fx.amni:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L56">hc/lib/gfx/fx.amni:56</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init(count int) bool</pre>
 <p>Allocates GPU buffers and pipelines for the given particle count, returning true on success or if already initialized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L58">hc/lib/gfx/fx.amni:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L58">hc/lib/gfx/fx.amni:58</a>
 </article>
 <article class="sym" id="wants_depth">
 <h3><a href="#wants_depth">wants_depth</a> <i>function</i></h3>
 <pre>wants_depth() bool</pre>
 <p>Returns whether any active emitter needs a depth texture for collision or soft particles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L198">hc/lib/gfx/fx.amni:198</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L198">hc/lib/gfx/fx.amni:198</a>
 </article>
 <article class="sym" id="simulate">
 <h3><a href="#simulate">simulate</a> <i>function</i></h3>
 <pre>simulate(dt f32, nd gfx::Texture, have_nd bool, view gfx::mat4, view_proj gfx::mat4)</pre>
 <p>Advances the particle simulation by a time step, spawning, updating and optionally sorting particles on the GPU.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L237">hc/lib/gfx/fx.amni:237</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L237">hc/lib/gfx/fx.amni:237</a>
 </article>
 <article class="sym" id="draw">
 <h3><a href="#draw">draw</a> <i>function</i></h3>
 <pre>draw(view_proj gfx::mat4, view gfx::mat4, right float3, up float3, nd gfx::Texture, have_nd bool, scale f32, w int, h int)</pre>
 <p>Draws all live particles as billboards using additive then alpha pipelines, with optional normal-depth texture and scale.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L313">hc/lib/gfx/fx.amni:313</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L313">hc/lib/gfx/fx.amni:313</a>
 </article>
 <article class="sym" id="read_parts">
 <h3><a href="#read_parts">read_parts</a> <i>function</i></h3>
 <pre>read_parts(out Part[&gt;..]&amp;) bool</pre>
 <p>Reads all particle data back from the GPU into the output array, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L356">hc/lib/gfx/fx.amni:356</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L356">hc/lib/gfx/fx.amni:356</a>
 </article>
 <article class="sym" id="alive_count">
 <h3><a href="#alive_count">alive_count</a> <i>function</i></h3>
 <pre>alive_count() int</pre>
 <p>Returns the number of live particles read from the GPU, or -1 if the read fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L357">hc/lib/gfx/fx.amni:357</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L357">hc/lib/gfx/fx.amni:357</a>
 </article>
 <article class="sym" id="reset">
 <h3><a href="#reset">reset</a> <i>function</i></h3>
 <pre>reset()</pre>
 <p>Clears all particles and resets spawn accumulators and bursts while keeping emitters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L358">hc/lib/gfx/fx.amni:358</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L358">hc/lib/gfx/fx.amni:358</a>
 </article>
 <article class="sym" id="release">
 <h3><a href="#release">release</a> <i>function</i></h3>
 <pre>release()</pre>
 <p>Releases GPU buffers and clears all emitters, returning the system to uninitialized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L369">hc/lib/gfx/fx.amni:369</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L369">hc/lib/gfx/fx.amni:369</a>
 </article>
 <h2 id="effect-scripts">Effect Scripts <span class="n">3</span></h2>
 <article class="sym" id="effect">
 <h3><a href="#effect">effect</a> <i>function</i></h3>
 <pre>effect(text const byte[:]) int</pre>
 <p>Parses effect script text into a reusable effect and returns its handle, or -1 on error with the message recorded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L126">hc/lib/gfx/fx.amni:126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L126">hc/lib/gfx/fx.amni:126</a>
 </article>
 <article class="sym" id="play">
 <h3><a href="#play">play</a> <i>function</i></h3>
 <pre>play(effect int, at float3) int</pre>
 <p>Starts a loaded effect at a world position by creating its emitters, returning a play handle or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L183">hc/lib/gfx/fx.amni:183</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L183">hc/lib/gfx/fx.amni:183</a>
 </article>
 <article class="sym" id="stop">
 <h3><a href="#stop">stop</a> <i>function</i></h3>
 <pre>stop(handle int)</pre>
 <p>Stops a playing effect by removing all of its emitters; invalid handles are ignored.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L194">hc/lib/gfx/fx.amni:194</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L194">hc/lib/gfx/fx.amni:194</a>
 </article>
 <h2 id="mesh-particles">Mesh Particles <span class="n">1</span></h2>
 <article class="sym" id="mesh">
 <h3><a href="#mesh">mesh</a> <i>function</i></h3>
 <pre>mesh(pos const f32[:], nrm const f32[:], idx const int[:]) int</pre>
 <p>Registers a mesh from positions, normals and indices for particle use, returning its id or -1 if full or uninitialized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L199">hc/lib/gfx/fx.amni:199</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L199">hc/lib/gfx/fx.amni:199</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (54)</summary>
 <article class="sym" id="Part">
 <h3><a href="#Part">Part</a> <i>type</i></h3>
 <pre>struct Part { pos float4, vel float4, misc float4 }</pre>
 <p>Raw GPU particle record holding position, velocity and misc data as float4 values, used by the simulation buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L4">hc/lib/gfx/fx.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L4">hc/lib/gfx/fx.amni:4</a>
 </article>
 <article class="sym" id="SpawnU">
 <h3><a href="#SpawnU">SpawnU</a> <i>type</i></h3>
 <pre>struct SpawnU { info float4, counts float4[8] }</pre>
 <p>Uniform block passed to the spawn compute shader with total count, frame and per-emitter counts.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L6">hc/lib/gfx/fx.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L6">hc/lib/gfx/fx.amni:6</a>
 </article>
 <article class="sym" id="SimU">
 <h3><a href="#SimU">SimU</a> <i>type</i></h3>
 <pre>struct SimU { info float4, gravity float4, view_proj gfx::mat4, view gfx::mat4, screen float4, shelter float4 }</pre>
 <p>Uniform block passed to the simulation compute shader with capacity, time step, gravity and view matrices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L7">hc/lib/gfx/fx.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L7">hc/lib/gfx/fx.amni:7</a>
 </article>
 <article class="sym" id="SortU">
 <h3><a href="#SortU">SortU</a> <i>type</i></h3>
 <pre>struct SortU { info float4 }</pre>
 <p>Uniform block passed to the clear and sort compute shaders with sizes and sort stage parameters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L8">hc/lib/gfx/fx.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L8">hc/lib/gfx/fx.amni:8</a>
 </article>
 <article class="sym" id="ViewU">
 <h3><a href="#ViewU">ViewU</a> <i>type</i></h3>
 <pre>struct ViewU { view_proj gfx::mat4, view gfx::mat4, right float4, up float4, mode float4 }</pre>
 <p>Uniform block passed to the vertex shader with view matrices, camera axes and blend mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L9">hc/lib/gfx/fx.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L9">hc/lib/gfx/fx.amni:9</a>
 </article>
 <article class="sym" id="FragU">
 <h3><a href="#FragU">FragU</a> <i>type</i></h3>
 <pre>struct FragU { screen float4, mode float4 }</pre>
 <p>Uniform block passed to the fragment shader with depth availability, scale and shape mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L10">hc/lib/gfx/fx.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L10">hc/lib/gfx/fx.amni:10</a>
 </article>
 <article class="sym" id="ArgsU">
 <h3><a href="#ArgsU">ArgsU</a> <i>type</i></h3>
 <pre>struct ArgsU { info float4, m float4[9] }</pre>
 <p>Raw uniform struct holding indirect draw arguments for the GPU pipeline, used only by this module's shaders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L11">hc/lib/gfx/fx.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L11">hc/lib/gfx/fx.amni:11</a>
 </article>
 <article class="sym" id="LitU">
 <h3><a href="#LitU">LitU</a> <i>type</i></h3>
 <pre>struct LitU { to_sun float4, sun float4, ambient float4 }</pre>
 <p>Raw uniform struct holding sun direction, sun color and ambient light passed to the mesh shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L12">hc/lib/gfx/fx.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L12">hc/lib/gfx/fx.amni:12</a>
 </article>
 <article class="sym" id="MAXE">
 <h3><a href="#MAXE">MAXE</a> <i>constant</i></h3>
 <pre>let MAXE = 32</pre>
 <p>Constant for the maximum number of emitters that can be active at once.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L13">hc/lib/gfx/fx.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L13">hc/lib/gfx/fx.amni:13</a>
 </article>
 <article class="sym" id="EVN">
 <h3><a href="#EVN">EVN</a> <i>constant</i></h3>
 <pre>let EVN = 2048</pre>
 <p>Constant for the number of event slots in the GPU event buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L14">hc/lib/gfx/fx.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L14">hc/lib/gfx/fx.amni:14</a>
 </article>
 <article class="sym" id="EVK">
 <h3><a href="#EVK">EVK</a> <i>constant</i></h3>
 <pre>let EVK = 32</pre>
 <p>Constant for the number of values stored per event in the GPU event buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L15">hc/lib/gfx/fx.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L15">hc/lib/gfx/fx.amni:15</a>
 </article>
 <article class="sym" id="TP">
 <h3><a href="#TP">TP</a> <i>constant</i></h3>
 <pre>let TP = 9</pre>
 <p>Constant for the number of trail points stored per particle in the trail buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L16">hc/lib/gfx/fx.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L16">hc/lib/gfx/fx.amni:16</a>
 </article>
 <article class="sym" id="MV">
 <h3><a href="#MV">MV</a> <i>constant</i></h3>
 <pre>let MV = 120000</pre>
 <p>Constant for the maximum number of mesh vertex indices that can be stored across all registered meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L17">hc/lib/gfx/fx.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L17">hc/lib/gfx/fx.amni:17</a>
 </article>
 <article class="sym" id="MS">
 <h3><a href="#MS">MS</a> <i>constant</i></h3>
 <pre>let MS = 8</pre>
 <p>Constant for the maximum number of meshes that can be registered for particle use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L18">hc/lib/gfx/fx.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L18">hc/lib/gfx/fx.amni:18</a>
 </article>
 <article class="sym" id="capacity">
 <h3><a href="#capacity">capacity</a> <i>constant</i></h3>
 <pre>var capacity = 0</pre>
 <p>Number of particle slots allocated on the GPU, zero until initialized.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L19">hc/lib/gfx/fx.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L19">hc/lib/gfx/fx.amni:19</a>
 </article>
 <article class="sym" id="sort_n">
 <h3><a href="#sort_n">sort_n</a> <i>constant</i></h3>
 <pre>var sort_n = 0</pre>
 <p>Power-of-two size used for the depth sorting passes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L20">hc/lib/gfx/fx.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L20">hc/lib/gfx/fx.amni:20</a>
 </article>
 <article class="sym" id="parts">
 <h3><a href="#parts">parts</a> <i>constant</i></h3>
 <pre>var parts gfx::Buffer; var dead gfx::Buffer; var alive gfx::Buffer; var keys gfx::Buffer; var emit_buf gfx::Buffer; var events gfx::Buffer; var trail gfx::Buffer; var mesh_buf gfx::Buffer; var mesh_idx gfx::Buffer; var a</pre>
 <p>Module-level GPU buffers holding particles, free and live lists, sort keys, emitters, events, trails, meshes and draw arguments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L21">hc/lib/gfx/fx.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L21">hc/lib/gfx/fx.amni:21</a>
 </article>
 <article class="sym" id="trail_full">
 <h3><a href="#trail_full">trail_full</a> <i>constant</i></h3>
 <pre>var trail_full = false</pre>
 <p>Flag set once the trail buffer has been enlarged to hold trails for every particle.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L22">hc/lib/gfx/fx.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L22">hc/lib/gfx/fx.amni:22</a>
 </article>
 <article class="sym" id="mesh_ready">
 <h3><a href="#mesh_ready">mesh_ready</a> <i>constant</i></h3>
 <pre>var mesh_ready = false</pre>
 <p>Flag set once the mesh vertex buffer has been allocated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L23">hc/lib/gfx/fx.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L23">hc/lib/gfx/fx.amni:23</a>
 </article>
 <article class="sym" id="mesh_used">
 <h3><a href="#mesh_used">mesh_used</a> <i>constant</i></h3>
 <pre>var mesh_used = 0</pre>
 <p>Count of mesh vertex indices already used by registered meshes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L24">hc/lib/gfx/fx.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L24">hc/lib/gfx/fx.amni:24</a>
 </article>
 <article class="sym" id="mesh_first">
 <h3><a href="#mesh_first">mesh_first</a> <i>constant</i></h3>
 <pre>var mesh_first int[&gt;..] = []</pre>
 <p>List of first-vertex offsets for each registered mesh in the mesh buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L25">hc/lib/gfx/fx.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L25">hc/lib/gfx/fx.amni:25</a>
 </article>
 <article class="sym" id="mesh_n">
 <h3><a href="#mesh_n">mesh_n</a> <i>constant</i></h3>
 <pre>var mesh_n int[&gt;..] = []</pre>
 <p>List of vertex counts for each registered mesh.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L26">hc/lib/gfx/fx.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L26">hc/lib/gfx/fx.amni:26</a>
 </article>
 <article class="sym" id="sun_dir">
 <h3><a href="#sun_dir">sun_dir</a> <i>constant</i></h3>
 <pre>var sun_dir float3 = float3 { 0.0, 1.0, 0.0 }</pre>
 <p>Direction vector pointing toward the sun, used to light mesh particles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L27">hc/lib/gfx/fx.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L27">hc/lib/gfx/fx.amni:27</a>
 </article>
 <article class="sym" id="sun_rgb">
 <h3><a href="#sun_rgb">sun_rgb</a> <i>constant</i></h3>
 <pre>var sun_rgb float3 = float3 { 1.0, 1.0, 1.0 }</pre>
 <p>Color of the sun light applied to mesh particles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L28">hc/lib/gfx/fx.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L28">hc/lib/gfx/fx.amni:28</a>
 </article>
 <article class="sym" id="ambient">
 <h3><a href="#ambient">ambient</a> <i>constant</i></h3>
 <pre>var ambient float3 = float3 { 0.1, 0.1, 0.1 }</pre>
 <p>Ambient light color applied to mesh particles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L29">hc/lib/gfx/fx.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L29">hc/lib/gfx/fx.amni:29</a>
 </article>
 <article class="sym" id="p_clear">
 <h3><a href="#p_clear">p_clear</a> <i>constant</i></h3>
 <pre>var p_clear gfx::ComputePipeline; var p_spawn gfx::ComputePipeline; var p_sim gfx::ComputePipeline; var p_sort gfx::ComputePipeline; var p_args gfx::ComputePipeline</pre>
 <p>Compute pipelines for clearing, spawning, simulating, sorting and building draw arguments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L30">hc/lib/gfx/fx.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L30">hc/lib/gfx/fx.amni:30</a>
 </article>
 <article class="sym" id="pipe_add">
 <h3><a href="#pipe_add">pipe_add</a> <i>constant</i></h3>
 <pre>var pipe_add gfx::Pipeline; var pipe_alpha gfx::Pipeline; var pipe_trail_add gfx::Pipeline; var pipe_trail_alpha gfx::Pipeline; var pipe_mesh gfx::Pipeline</pre>
 <p>Render pipelines for additive and alpha blended particles, their trail variants and mesh particles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L31">hc/lib/gfx/fx.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L31">hc/lib/gfx/fx.amni:31</a>
 </article>
 <article class="sym" id="smp">
 <h3><a href="#smp">smp</a> <i>constant</i></h3>
 <pre>var smp gfx::Sampler</pre>
 <p>Nearest-filter clamped sampler used for the depth texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L32">hc/lib/gfx/fx.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L32">hc/lib/gfx/fx.amni:32</a>
 </article>
 <article class="sym" id="emitters">
 <h3><a href="#emitters">emitters</a> <i>constant</i></h3>
 <pre>var emitters Emitter[&gt;..] = []</pre>
 <p>List of registered emitters, holding at most the maximum emitter count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L33">hc/lib/gfx/fx.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L33">hc/lib/gfx/fx.amni:33</a>
 </article>
 <article class="sym" id="acc">
 <h3><a href="#acc">acc</a> <i>constant</i></h3>
 <pre>var acc f32[&gt;..] = []</pre>
 <p>Per-emitter fractional spawn accumulators carried between frames.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L34">hc/lib/gfx/fx.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L34">hc/lib/gfx/fx.amni:34</a>
 </article>
 <article class="sym" id="bursts">
 <h3><a href="#bursts">bursts</a> <i>constant</i></h3>
 <pre>var bursts int[&gt;..] = []</pre>
 <p>Per-emitter pending burst particle counts consumed on the next simulation step.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L35">hc/lib/gfx/fx.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L35">hc/lib/gfx/fx.amni:35</a>
 </article>
 <article class="sym" id="gone">
 <h3><a href="#gone">gone</a> <i>constant</i></h3>
 <pre>var gone bool[&gt;..] = []</pre>
 <p>Per-emitter flags marking slots that were removed and can be reused.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L36">hc/lib/gfx/fx.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L36">hc/lib/gfx/fx.amni:36</a>
 </article>
 <article class="sym" id="error">
 <h3><a href="#error">error</a> <i>constant</i></h3>
 <pre>var error byte[&gt;..] = []</pre>
 <p>Buffer holding the most recent effect script error message.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L37">hc/lib/gfx/fx.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L37">hc/lib/gfx/fx.amni:37</a>
 </article>
 <article class="sym" id="bad">
 <h3><a href="#bad">bad</a> <i>constant</i></h3>
 <pre>var bad = false</pre>
 <p>Flag set while parsing when a value is not a valid number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L38">hc/lib/gfx/fx.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L38">hc/lib/gfx/fx.amni:38</a>
 </article>
 <article class="sym" id="fx_emits">
 <h3><a href="#fx_emits">fx_emits</a> <i>constant</i></h3>
 <pre>var fx_emits Emitter[&gt;..] = []</pre>
 <p>List of emitter templates from all loaded effect scripts.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L39">hc/lib/gfx/fx.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L39">hc/lib/gfx/fx.amni:39</a>
 </article>
 <article class="sym" id="fx_burst">
 <h3><a href="#fx_burst">fx_burst</a> <i>constant</i></h3>
 <pre>var fx_burst int[&gt;..] = []</pre>
 <p>List of burst counts for each emitter template in loaded effects.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L40">hc/lib/gfx/fx.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L40">hc/lib/gfx/fx.amni:40</a>
 </article>
 <article class="sym" id="fx_first">
 <h3><a href="#fx_first">fx_first</a> <i>constant</i></h3>
 <pre>var fx_first int[&gt;..] = []</pre>
 <p>List of indexes of each loaded effect's first emitter template.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L41">hc/lib/gfx/fx.amni:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L41">hc/lib/gfx/fx.amni:41</a>
 </article>
 <article class="sym" id="fx_n">
 <h3><a href="#fx_n">fx_n</a> <i>constant</i></h3>
 <pre>var fx_n int[&gt;..] = []</pre>
 <p>List of emitter template counts for each loaded effect.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L42">hc/lib/gfx/fx.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L42">hc/lib/gfx/fx.amni:42</a>
 </article>
 <article class="sym" id="play_slots">
 <h3><a href="#play_slots">play_slots</a> <i>constant</i></h3>
 <pre>var play_slots int[&gt;..] = []</pre>
 <p>List of emitter slots used by all playing effects.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L43">hc/lib/gfx/fx.amni:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L43">hc/lib/gfx/fx.amni:43</a>
 </article>
 <article class="sym" id="play_first">
 <h3><a href="#play_first">play_first</a> <i>constant</i></h3>
 <pre>var play_first int[&gt;..] = []</pre>
 <p>List of indexes of each playing effect's first emitter slot.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L44">hc/lib/gfx/fx.amni:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L44">hc/lib/gfx/fx.amni:44</a>
 </article>
 <article class="sym" id="play_n">
 <h3><a href="#play_n">play_n</a> <i>constant</i></h3>
 <pre>var play_n int[&gt;..] = []</pre>
 <p>List of emitter slot counts for each playing effect.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L45">hc/lib/gfx/fx.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L45">hc/lib/gfx/fx.amni:45</a>
 </article>
 <article class="sym" id="frame">
 <h3><a href="#frame">frame</a> <i>constant</i></h3>
 <pre>var frame = 0</pre>
 <p>Counter of simulation steps, used to vary spawn randomness.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L50">hc/lib/gfx/fx.amni:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L50">hc/lib/gfx/fx.amni:50</a>
 </article>
 <article class="sym" id="dirty">
 <h3><a href="#dirty">dirty</a> <i>constant</i></h3>
 <pre>var dirty = true</pre>
 <p>Flag set when emitter data changed and must be uploaded to the GPU.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L51">hc/lib/gfx/fx.amni:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L51">hc/lib/gfx/fx.amni:51</a>
 </article>
 <article class="sym" id="eye">
 <h3><a href="#eye">eye</a> <i>constant</i></h3>
 <pre>var eye float3 = float3 { 0.0, 0.0, 0.0 }</pre>
 <p>Camera position used to place follow-mode emitters, updated by the module's own simulation code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L52">hc/lib/gfx/fx.amni:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L52">hc/lib/gfx/fx.amni:52</a>
 </article>
 <article class="sym" id="shelter_tex">
 <h3><a href="#shelter_tex">shelter_tex</a> <i>constant</i></h3>
 <pre>var shelter_tex gfx::Texture</pre>
 <p>Texture holding the shelter mask sampled by the simulation shader when the shelter box is active.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L53">hc/lib/gfx/fx.amni:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L53">hc/lib/gfx/fx.amni:53</a>
 </article>
 <article class="sym" id="shelter_box">
 <h3><a href="#shelter_box">shelter_box</a> <i>constant</i></h3>
 <pre>var shelter_box float4 = float4 { 0.0, 0.0, 0.0, 0.0 }</pre>
 <p>Shelter region parameters passed to the simulation shader; a w value above 0.5 enables shelter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L54">hc/lib/gfx/fx.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L54">hc/lib/gfx/fx.amni:54</a>
 </article>
 <article class="sym" id="test_no_wrap">
 <h3><a href="#test_no_wrap">test_no_wrap</a> <i>constant</i></h3>
 <pre>var test_no_wrap = false</pre>
 <p>Debug flag that, when true, disables wrapping in the simulation shader for testing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L55">hc/lib/gfx/fx.amni:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L55">hc/lib/gfx/fx.amni:55</a>
 </article>
 <article class="sym" id="pow2">
 <h3><a href="#pow2">pow2</a> <i>function</i></h3>
 <pre>pow2(n int) int</pre>
 <p>Returns the smallest power of two, starting at 64, that is at least the given value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L57">hc/lib/gfx/fx.amni:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L57">hc/lib/gfx/fx.amni:57</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(line int, what const byte[:], word const byte[:]) int</pre>
 <p>Records a parse error with its line number and message in the error buffer, then returns -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L118">hc/lib/gfx/fx.amni:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L118">hc/lib/gfx/fx.amni:118</a>
 </article>
 <article class="sym" id="val">
 <h3><a href="#val">val</a> <i>function</i></h3>
 <pre>val(t const byte[:]) f32</pre>
 <p>Parses text as a number, setting the parse-failure flag when it is invalid, and returns it as a float.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L119">hc/lib/gfx/fx.amni:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L119">hc/lib/gfx/fx.amni:119</a>
 </article>
 <article class="sym" id="pick">
 <h3><a href="#pick">pick</a> <i>function</i></h3>
 <pre>pick(v const f32[:], k int) f32</pre>
 <p>Returns the value at an index from a list, reusing the last value when the index is past the end and 0 when empty.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L120">hc/lib/gfx/fx.amni:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L120">hc/lib/gfx/fx.amni:120</a>
 </article>
 <article class="sym" id="named">
 <h3><a href="#named">named</a> <i>function</i></h3>
 <pre>named(text const byte[:], name const byte[:]) int</pre>
 <p>Returns the position of the named emitter among the emitters in an effect script, or -1 if missing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L121">hc/lib/gfx/fx.amni:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L121">hc/lib/gfx/fx.amni:121</a>
 </article>
 <article class="sym" id="upload_emitters">
 <h3><a href="#upload_emitters">upload_emitters</a> <i>function</i></h3>
 <pre>upload_emitters()</pre>
 <p>Packs emitter settings into floats and uploads them to the GPU emitter buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L208">hc/lib/gfx/fx.amni:208</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L208">hc/lib/gfx/fx.amni:208</a>
 </article>
 <article class="sym" id="spawn_counts">
 <h3><a href="#spawn_counts">spawn_counts</a> <i>function</i></h3>
 <pre>spawn_counts(dt f32) int, float4[8]</pre>
 <p>Computes how many particles each emitter spawns this frame from rates and bursts, returning the total and per-emitter counts.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/gfx/fx.amni#L224">hc/lib/gfx/fx.amni:224</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/gfx/fx.amni#L224">hc/lib/gfx/fx.amni:224</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -612,7 +612,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1880</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>1882</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

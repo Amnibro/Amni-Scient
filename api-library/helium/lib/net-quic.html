@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-quic">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-quic">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=f73bfc636c">
+<link rel="stylesheet" href="/api-library/lib.css?v=3279d55a5e">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=f73bfc636c'; start({wasm: '/api-library/search.wasm?v=f73bfc636c'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=3279d55a5e'; start({wasm: '/api-library/search.wasm?v=3279d55a5e'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/quic</h1>
 <p class="lib-lede">Implements the QUIC transport protocol, letting a program open encrypted, multiplexed streams over UDP connections with loss recovery and congestion control.</p>
-<p class="lib-meta"><code>import net.quic;</code> &middot; <code>net::</code> &middot; 56 functions, 5 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he">Source</a></p>
+<p class="lib-meta"><code>import net.quic;</code> &middot; <code>net::</code> &middot; 56 functions, 5 types, 6 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#connection-state">Connection State <span class="n">14</span></a></li>
 <li><a href="#streams">Streams <span class="n">9</span></a></li>
@@ -114,405 +114,405 @@
 <h3><a href="#QUIC_HANDSHAKE">QUIC_HANDSHAKE</a> <i>constant</i></h3>
 <pre>QUIC_HANDSHAKE := 0</pre>
 <p>Constant for a connection still performing its handshake before application data can flow.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L8">hc/lib/net/quic.he:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L8">hc/lib/net/quic.he:8</a>
 </article>
 <article class="sym" id="QUIC_OPEN">
 <h3><a href="#QUIC_OPEN">QUIC_OPEN</a> <i>constant</i></h3>
 <pre>QUIC_OPEN := 1</pre>
 <p>Constant for a connection whose handshake finished and which can carry stream data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L9">hc/lib/net/quic.he:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L9">hc/lib/net/quic.he:9</a>
 </article>
 <article class="sym" id="QUIC_CLOSING">
 <h3><a href="#QUIC_CLOSING">QUIC_CLOSING</a> <i>constant</i></h3>
 <pre>QUIC_CLOSING := 2</pre>
 <p>Constant for a connection that sent a close and is waiting out its closing period.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L10">hc/lib/net/quic.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L10">hc/lib/net/quic.he:10</a>
 </article>
 <article class="sym" id="QUIC_DRAINING">
 <h3><a href="#QUIC_DRAINING">QUIC_DRAINING</a> <i>constant</i></h3>
 <pre>QUIC_DRAINING := 3</pre>
 <p>Constant for a connection that received a close from the peer and is draining.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L11">hc/lib/net/quic.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L11">hc/lib/net/quic.he:11</a>
 </article>
 <article class="sym" id="QUIC_CLOSED">
 <h3><a href="#QUIC_CLOSED">QUIC_CLOSED</a> <i>constant</i></h3>
 <pre>QUIC_CLOSED := 4</pre>
 <p>Constant for a connection that is fully closed and can be discarded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L12">hc/lib/net/quic.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L12">hc/lib/net/quic.he:12</a>
 </article>
 <article class="sym" id="Quic">
 <h3><a href="#Quic">Quic</a> <i>type</i></h3>
 <pre>struct Quic { srv bool = false, state int = 0, now real = 0.0, host byte[&gt;..] = [], alpn byte[&gt;..] = [], cert byte[&gt;..] = [], key byte[&gt;..] = [], pin byte[&gt;..] = [], only int = 0, tls Tls[&gt;..] = [], tls_on bool = false, hk bool = false, ak bool = false, sp QSpace[&gt;..] = [], st QStream[&gt;..] = [], scid byte[&gt;..] = [], dcid byte[&gt;..] = [], odcid byte[&gt;..] = [], lp QParams = QParams{}, pp QParams = QParams{}, pp_ok bool = false, hs bool = false, conf bool = false, valid bool = false, got1 bool = false, rxb int = 0, txb int = 0, phase int = 0, nrx QKeys = QKeys{}, srtt real = 0.333, rttvar real = 0.1665, minrtt real = 0.0, rtt1 bool = false, lrtt real = 0.0, ptoc int = 0, cwnd int = 12000, ssth int = 4611686018427387903, infl int = 0, rect real = -1.0, tlast real = 0.0, txmax int = 0, txdata int = 0, rxmax int = 0, rxdata int = 0, rxread int = 0, cwin int = 0, mxob int = 0, mxou int = 0, nob int = 0, nou int = 0, mxib int = 0, mxiu int = 0, nib int = 0, niu int = 0, pend int = 0, newst int[&gt;..] = [], prsp byte[&gt;..] = [], retire int[&gt;..] = [], dseq int = 0, err int = -1, eapp bool = false, elocal bool = false, ereason byte[&gt;..] = [], cpend bool = false, closet real = 0.0, idle real = 0.0, tidle real = 0.0, keep real = 0.0, test int = 0, rr int = 0, nacc int = 0, asr bool = false }</pre>
 <p>Connection object holding all state for one QUIC endpoint, passed to the other functions in this module.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L18">hc/lib/net/quic.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L18">hc/lib/net/quic.he:18</a>
 </article>
 <article class="sym" id="quic_client">
 <h3><a href="#quic_client">quic_client</a> <i>function</i></h3>
 <pre>quic_client(host const byte[:], alpn const byte[:], pin const byte[:], now real) Quic</pre>
 <p>Creates a client connection to a host with the given protocol name and pinned certificate value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L84">hc/lib/net/quic.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L84">hc/lib/net/quic.he:84</a>
 </article>
 <article class="sym" id="quic_server">
 <h3><a href="#quic_server">quic_server</a> <i>function</i></h3>
 <pre>quic_server(cert const byte[:], key const byte[:], alpn const byte[:], now real) Quic</pre>
 <p>Creates a server connection using the given certificate, private key and protocol name.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L87">hc/lib/net/quic.he:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L87">hc/lib/net/quic.he:87</a>
 </article>
 <article class="sym" id="quic_rekey">
 <h3><a href="#quic_rekey">quic_rekey</a> <i>function</i></h3>
 <pre>quic_rekey(q Quic&amp;) bool</pre>
 <p>Rotates the application keys to the next key phase, returning false if the handshake is not confirmed or the connection is not open.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L236">hc/lib/net/quic.he:236</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L236">hc/lib/net/quic.he:236</a>
 </article>
 <article class="sym" id="quic_recv">
 <h3><a href="#quic_recv">quic_recv</a> <i>function</i></h3>
 <pre>quic_recv(q Quic&amp;, d const byte[:], now real)</pre>
 <p>Processes a received UDP datagram at the given time, handling each coalesced packet in it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L272">hc/lib/net/quic.he:272</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L272">hc/lib/net/quic.he:272</a>
 </article>
 <article class="sym" id="quic_timeout">
 <h3><a href="#quic_timeout">quic_timeout</a> <i>function</i></h3>
 <pre>quic_timeout(q const Quic&amp;) real</pre>
 <p>Returns the time of the next event the connection needs handled, or 0.0 if closed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L366">hc/lib/net/quic.he:366</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L366">hc/lib/net/quic.he:366</a>
 </article>
 <article class="sym" id="quic_send">
 <h3><a href="#quic_send">quic_send</a> <i>function</i></h3>
 <pre>quic_send(q Quic&amp;, out byte[&gt;..]&amp;, now real) bool</pre>
 <p>Builds the next outgoing UDP datagram into the output buffer, returning false if there is nothing to send.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L375">hc/lib/net/quic.he:375</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L375">hc/lib/net/quic.he:375</a>
 </article>
 <article class="sym" id="quic_state">
 <h3><a href="#quic_state">quic_state</a> <i>function</i></h3>
 <pre>quic_state(q const Quic&amp;) int</pre>
 <p>Returns the connection's current state value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L402">hc/lib/net/quic.he:402</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L402">hc/lib/net/quic.he:402</a>
 </article>
 <article class="sym" id="quic_close">
 <h3><a href="#quic_close">quic_close</a> <i>function</i></h3>
 <pre>quic_close(q Quic&amp;, code int, why const byte[:])</pre>
 <p>Closes the connection with an application error code and reason sent to the peer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L403">hc/lib/net/quic.he:403</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L403">hc/lib/net/quic.he:403</a>
 </article>
 <h2 id="streams">Streams <span class="n">9</span></h2>
 <article class="sym" id="quic_open">
 <h3><a href="#quic_open">quic_open</a> <i>function</i></h3>
 <pre>quic_open(q Quic&amp;, bidi bool) int</pre>
 <p>Opens a new locally initiated bidirectional or unidirectional stream and returns its id, or -1 if unavailable.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L122">hc/lib/net/quic.he:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L122">hc/lib/net/quic.he:122</a>
 </article>
 <article class="sym" id="quic_write">
 <h3><a href="#quic_write">quic_write</a> <i>function</i></h3>
 <pre>quic_write(q Quic&amp;, id int, d const byte[:]) bool</pre>
 <p>Appends data to a stream's send buffer, returning false if the stream is unknown, finished, reset or the connection is closing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L404">hc/lib/net/quic.he:404</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L404">hc/lib/net/quic.he:404</a>
 </article>
 <article class="sym" id="quic_fin">
 <h3><a href="#quic_fin">quic_fin</a> <i>function</i></h3>
 <pre>quic_fin(q Quic&amp;, id int) bool</pre>
 <p>Marks the end of a stream's send side, returning false if the stream is unknown or reset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L408">hc/lib/net/quic.he:408</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L408">hc/lib/net/quic.he:408</a>
 </article>
 <article class="sym" id="quic_read">
 <h3><a href="#quic_read">quic_read</a> <i>function</i></h3>
 <pre>quic_read(q Quic&amp;, id int, out byte[&gt;..]&amp;) int</pre>
 <p>Reads available stream data into an output buffer and returns the byte count, or -1 if the stream is unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L412">hc/lib/net/quic.he:412</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L412">hc/lib/net/quic.he:412</a>
 </article>
 <article class="sym" id="quic_stream">
 <h3><a href="#quic_stream">quic_stream</a> <i>function</i></h3>
 <pre>quic_stream(q const Quic&amp;, id int) int</pre>
 <p>Returns a bit flag set describing a stream's readable, finished, reset, stop-requested and acknowledged status, or -1 if unknown.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L418">hc/lib/net/quic.he:418</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L418">hc/lib/net/quic.he:418</a>
 </article>
 <article class="sym" id="quic_unsent">
 <h3><a href="#quic_unsent">quic_unsent</a> <i>function</i></h3>
 <pre>quic_unsent(q const Quic&amp;, id int) int</pre>
 <p>Returns the number of written stream bytes not yet acknowledged by the peer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L422">hc/lib/net/quic.he:422</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L422">hc/lib/net/quic.he:422</a>
 </article>
 <article class="sym" id="quic_reset">
 <h3><a href="#quic_reset">quic_reset</a> <i>function</i></h3>
 <pre>quic_reset(q Quic&amp;, id int, code int)</pre>
 <p>Abruptly ends a stream's send side with an error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L423">hc/lib/net/quic.he:423</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L423">hc/lib/net/quic.he:423</a>
 </article>
 <article class="sym" id="quic_stop">
 <h3><a href="#quic_stop">quic_stop</a> <i>function</i></h3>
 <pre>quic_stop(q Quic&amp;, id int, code int)</pre>
 <p>Asks the peer to stop sending on a stream with an error code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L426">hc/lib/net/quic.he:426</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L426">hc/lib/net/quic.he:426</a>
 </article>
 <article class="sym" id="quic_accept">
 <h3><a href="#quic_accept">quic_accept</a> <i>function</i></h3>
 <pre>quic_accept(q Quic&amp;) int</pre>
 <p>Returns the next peer-initiated stream id not yet accepted, or -1 if none is pending.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L429">hc/lib/net/quic.he:429</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L429">hc/lib/net/quic.he:429</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (44)</summary>
 <article class="sym" id="QMAXD">
 <h3><a href="#QMAXD">QMAXD</a> <i>constant</i></h3>
 <pre>QMAXD := 1200</pre>
 <p>Maximum datagram size in bytes used when building outgoing packets and sizing congestion window steps.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L13">hc/lib/net/quic.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L13">hc/lib/net/quic.he:13</a>
 </article>
 <article class="sym" id="QStream">
 <h3><a href="#QStream">QStream</a> <i>type</i></h3>
 <pre>struct QStream { id int = 0, sbuf byte[&gt;..] = [], sh int = 0, sbase int = 0, snext int = 0, sw int = 0, sfin bool = false, fsent bool = false, facked bool = false, sack int[&gt;..] = [], rtx int[&gt;..] = [], smax int = 0, srst int = -1, sstop int = -1, rbuf byte[&gt;..] = [], rh int = 0, rbase int = 0, rgot int[&gt;..] = [], rhi int = 0, rfin int = -1, rmax int = 0, rwin int = 0, rrst int = -1, rstop int = -1, fl int = 0, freed bool = false }</pre>
 <p>Per-stream state holding send and receive buffers, acknowledged ranges, flow control limits and reset flags.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L14">hc/lib/net/quic.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L14">hc/lib/net/quic.he:14</a>
 </article>
 <article class="sym" id="QSent">
 <h3><a href="#QSent">QSent</a> <i>type</i></h3>
 <pre>struct QSent { pn int = 0, t real = 0.0, size int = 0, fr int[&gt;..] = [] }</pre>
 <p>Record of a sent packet holding its number, send time, size and the frames it carried.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L15">hc/lib/net/quic.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L15">hc/lib/net/quic.he:15</a>
 </article>
 <article class="sym" id="QRec">
 <h3><a href="#QRec">QRec</a> <i>type</i></h3>
 <pre>struct QRec { pn int = 0, t real = 0.0, size int = 0, fo int = 0, fc int = 0 }</pre>
 <p>Record of a sent packet kept for loss detection, holding its packet number, send time, size, and offset and count of its frame data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L16">hc/lib/net/quic.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L16">hc/lib/net/quic.he:16</a>
 </article>
 <article class="sym" id="QSpace">
 <h3><a href="#QSpace">QSpace</a> <i>type</i></h3>
 <pre>struct QSpace { rx QKeys = QKeys{}, tx QKeys = QKeys{}, rok bool = false, tok bool = false, npn int = 0, rlarge int = -1, rfl int = 0, rxr int[&gt;..] = [], ackn int = 0, ooo bool = false, ackt real = 0.0, rlt real = 0.0, sent QRec[&gt;..] = [], fr int[&gt;..] = [], lacked int = -1, losst real = 0.0, lastae real = 0.0, probe int = 0 }</pre>
 <p>Per-encryption-level packet space holding keys, receive ranges, sent packets and acknowledgment timing state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L17">hc/lib/net/quic.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L17">hc/lib/net/quic.he:17</a>
 </article>
 <article class="sym" id="qk_set">
 <h3><a href="#qk_set">qk_set</a> <i>function</i></h3>
 <pre>qk_set(d QKeys&amp;, s const QKeys&amp;)</pre>
 <p>Copies all key material from one packet protection key set into another.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L19">hc/lib/net/quic.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L19">hc/lib/net/quic.he:19</a>
 </article>
 <article class="sym" id="rs_add">
 <h3><a href="#rs_add">rs_add</a> <i>function</i></h3>
 <pre>rs_add(r int[&gt;..]&amp;, lo int, hi int)</pre>
 <p>Adds a half-open range of integers to a sorted range list, merging overlaps.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L20">hc/lib/net/quic.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L20">hc/lib/net/quic.he:20</a>
 </article>
 <article class="sym" id="rs_has">
 <h3><a href="#rs_has">rs_has</a> <i>function</i></h3>
 <pre>rs_has(r int[&gt;..]&amp;, v int) bool</pre>
 <p>Returns whether a value falls inside any range of a sorted range list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L30">hc/lib/net/quic.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L30">hc/lib/net/quic.he:30</a>
 </article>
 <article class="sym" id="rs_gap">
 <h3><a href="#rs_gap">rs_gap</a> <i>function</i></h3>
 <pre>rs_gap(r int[&gt;..]&amp;, lo int, hi int) int, int</pre>
 <p>Finds the first uncovered gap within a span of a range list, returning the span end pair when none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L35">hc/lib/net/quic.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L35">hc/lib/net/quic.he:35</a>
 </article>
 <article class="sym" id="rs_shift">
 <h3><a href="#rs_shift">rs_shift</a> <i>function</i></h3>
 <pre>rs_shift(r int[&gt;..]&amp;)</pre>
 <p>Removes the first range from a range list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L43">hc/lib/net/quic.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L43">hc/lib/net/quic.he:43</a>
 </article>
 <article class="sym" id="qs_new">
 <h3><a href="#qs_new">qs_new</a> <i>function</i></h3>
 <pre>qs_new(id int, smax int, rwin int) QStream</pre>
 <p>Creates a stream with the given id, send limit and receive window.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L44">hc/lib/net/quic.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L44">hc/lib/net/quic.he:44</a>
 </article>
 <article class="sym" id="qs_write">
 <h3><a href="#qs_write">qs_write</a> <i>function</i></h3>
 <pre>qs_write(s QStream&amp;, d const byte[:])</pre>
 <p>Appends data to a stream's send buffer, compacting consumed bytes when the buffer grows large.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L45">hc/lib/net/quic.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L45">hc/lib/net/quic.he:45</a>
 </article>
 <article class="sym" id="qs_acked">
 <h3><a href="#qs_acked">qs_acked</a> <i>function</i></h3>
 <pre>qs_acked(s QStream&amp;, off int, n int, fin bool)</pre>
 <p>Records that a stream byte range was acknowledged and advances the send buffer past contiguous acknowledged data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L49">hc/lib/net/quic.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L49">hc/lib/net/quic.he:49</a>
 </article>
 <article class="sym" id="qs_recv">
 <h3><a href="#qs_recv">qs_recv</a> <i>function</i></h3>
 <pre>qs_recv(s QStream&amp;, off int, d const byte[:])</pre>
 <p>Stores received stream data at its offset, ignoring bytes already consumed and tracking which ranges arrived.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L55">hc/lib/net/quic.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L55">hc/lib/net/quic.he:55</a>
 </article>
 <article class="sym" id="qs_avail">
 <h3><a href="#qs_avail">qs_avail</a> <i>function</i></h3>
 <pre>qs_avail(s const QStream&amp;) int</pre>
 <p>Returns the number of contiguous received bytes ready to be read from a stream.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L63">hc/lib/net/quic.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L63">hc/lib/net/quic.he:63</a>
 </article>
 <article class="sym" id="qs_take">
 <h3><a href="#qs_take">qs_take</a> <i>function</i></h3>
 <pre>qs_take(s QStream&amp;, out byte[&gt;..]&amp;) int</pre>
 <p>Moves contiguous received bytes from a stream into an output buffer and returns the count.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L64">hc/lib/net/quic.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L64">hc/lib/net/quic.he:64</a>
 </article>
 <article class="sym" id="q_pto">
 <h3><a href="#q_pto">q_pto</a> <i>function</i></h3>
 <pre>q_pto(q const Quic&amp;, s int) real</pre>
 <p>Returns the probe timeout in seconds for a packet space, including peer ack delay for the application level.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L71">hc/lib/net/quic.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L71">hc/lib/net/quic.he:71</a>
 </article>
 <article class="sym" id="q_end">
 <h3><a href="#q_end">q_end</a> <i>function</i></h3>
 <pre>q_end(q Quic&amp;, app bool, code int, why const byte[:])</pre>
 <p>Starts closing the connection with an error code and reason unless it is already closing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L72">hc/lib/net/quic.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L72">hc/lib/net/quic.he:72</a>
 </article>
 <article class="sym" id="q_drop">
 <h3><a href="#q_drop">q_drop</a> <i>function</i></h3>
 <pre>q_drop(q Quic&amp;, s int)</pre>
 <p>Discards the keys and sent packet tracking for a packet space, releasing its in-flight bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L75">hc/lib/net/quic.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L75">hc/lib/net/quic.he:75</a>
 </article>
 <article class="sym" id="q_new">
 <h3><a href="#q_new">q_new</a> <i>function</i></h3>
 <pre>q_new(srv bool, now real) Quic</pre>
 <p>Creates a connection with default parameters, a random connection id and transport settings for a client or server.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L79">hc/lib/net/quic.he:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L79">hc/lib/net/quic.he:79</a>
 </article>
 <article class="sym" id="q_pull">
 <h3><a href="#q_pull">q_pull</a> <i>function</i></h3>
 <pre>q_pull(q Quic&amp;)</pre>
 <p>Moves handshake output and derived keys from the TLS engine into the QUIC layer and validates peer parameters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L88">hc/lib/net/quic.he:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L88">hc/lib/net/quic.he:88</a>
 </article>
 <article class="sym" id="q_tls">
 <h3><a href="#q_tls">q_tls</a> <i>function</i></h3>
 <pre>q_tls(q Quic&amp;)</pre>
 <p>Creates and starts the TLS engine for the connection using its transport parameters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L103">hc/lib/net/quic.he:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L103">hc/lib/net/quic.he:103</a>
 </article>
 <article class="sym" id="q_find">
 <h3><a href="#q_find">q_find</a> <i>function</i></h3>
 <pre>q_find(q const Quic&amp;, id int) int</pre>
 <p>Returns the index of the stream with the given id, or -1 if not found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L107">hc/lib/net/quic.he:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L107">hc/lib/net/quic.he:107</a>
 </article>
 <article class="sym" id="q_stream">
 <h3><a href="#q_stream">q_stream</a> <i>function</i></h3>
 <pre>q_stream(q Quic&amp;, id int) int</pre>
 <p>Finds or creates a peer-initiated stream by id, closing the connection on illegal or over-limit ids.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L112">hc/lib/net/quic.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L112">hc/lib/net/quic.he:112</a>
 </article>
 <article class="sym" id="q_credit">
 <h3><a href="#q_credit">q_credit</a> <i>function</i></h3>
 <pre>q_credit(q Quic&amp;)</pre>
 <p>Raises the connection receive limit and schedules an update once enough data has been read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L129">hc/lib/net/quic.he:129</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L129">hc/lib/net/quic.he:129</a>
 </article>
 <article class="sym" id="q_done">
 <h3><a href="#q_done">q_done</a> <i>function</i></h3>
 <pre>q_done(q Quic&amp;, i int)</pre>
 <p>Frees a stream's bookkeeping and grants the peer more stream credit once both directions are finished.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L131">hc/lib/net/quic.he:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L131">hc/lib/net/quic.he:131</a>
 </article>
 <article class="sym" id="q_sdata">
 <h3><a href="#q_sdata">q_sdata</a> <i>function</i></h3>
 <pre>q_sdata(q Quic&amp;, i int, off int, d const byte[:], fin bool)</pre>
 <p>Handles received stream data, enforcing final size and flow control limits and storing the bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L139">hc/lib/net/quic.he:139</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L139">hc/lib/net/quic.he:139</a>
 </article>
 <article class="sym" id="q_requeue">
 <h3><a href="#q_requeue">q_requeue</a> <i>function</i></h3>
 <pre>q_requeue(q Quic&amp;, s int, i int)</pre>
 <p>Requeues the frames of a lost sent packet for retransmission.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L146">hc/lib/net/quic.he:146</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L146">hc/lib/net/quic.he:146</a>
 </article>
 <article class="sym" id="q_compact">
 <h3><a href="#q_compact">q_compact</a> <i>function</i></h3>
 <pre>q_compact(q Quic&amp;, s int)</pre>
 <p>Removes acknowledged or lost entries from a packet space's sent list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L156">hc/lib/net/quic.he:156</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L156">hc/lib/net/quic.he:156</a>
 </article>
 <article class="sym" id="q_lost">
 <h3><a href="#q_lost">q_lost</a> <i>function</i></h3>
 <pre>q_lost(q Quic&amp;, s int)</pre>
 <p>Declares packets lost by time or packet threshold, requeues them and reduces the congestion window.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L161">hc/lib/net/quic.he:161</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L161">hc/lib/net/quic.he:161</a>
 </article>
 <article class="sym" id="q_ack">
 <h3><a href="#q_ack">q_ack</a> <i>function</i></h3>
 <pre>q_ack(q Quic&amp;, s int, f const QFrame&amp;)</pre>
 <p>Processes an acknowledgment frame, freeing sent packets, updating round trip estimates and growing the congestion window.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L172">hc/lib/net/quic.he:172</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L172">hc/lib/net/quic.he:172</a>
 </article>
 <article class="sym" id="q_frame">
 <h3><a href="#q_frame">q_frame</a> <i>function</i></h3>
 <pre>q_frame(q Quic&amp;, s int, f const QFrame&amp;)</pre>
 <p>Handles one decoded frame according to its type, updating connection and stream state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L201">hc/lib/net/quic.he:201</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L201">hc/lib/net/quic.he:201</a>
 </article>
 <article class="sym" id="q_open">
 <h3><a href="#q_open">q_open</a> <i>function</i></h3>
 <pre>q_open(q Quic&amp;, s int, p const byte[:], pno int) QOpen</pre>
 <p>Decrypts a packet in a space, trying the next key phase when needed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L230">hc/lib/net/quic.he:230</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L230">hc/lib/net/quic.he:230</a>
 </article>
 <article class="sym" id="q_packet">
 <h3><a href="#q_packet">q_packet</a> <i>function</i></h3>
 <pre>q_packet(q Quic&amp;, p const byte[:], dlen int) int</pre>
 <p>Parses, decrypts and processes one packet from a datagram and returns the number of bytes consumed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L239">hc/lib/net/quic.he:239</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L239">hc/lib/net/quic.he:239</a>
 </article>
 <article class="sym" id="q_ackf">
 <h3><a href="#q_ackf">q_ackf</a> <i>function</i></h3>
 <pre>q_ackf(q Quic&amp;, s int, b byte[&gt;..]&amp;)</pre>
 <p>Builds an acknowledgment frame for a packet space from its received ranges.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L281">hc/lib/net/quic.he:281</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L281">hc/lib/net/quic.he:281</a>
 </article>
 <article class="sym" id="q_emit">
 <h3><a href="#q_emit">q_emit</a> <i>function</i></h3>
 <pre>q_emit(q Quic&amp;, i int, b byte[&gt;..]&amp;, room int, rec QSent&amp;)</pre>
 <p>Writes stream or crypto data frames into a packet buffer, preferring retransmissions, and records them as sent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L286">hc/lib/net/quic.he:286</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L286">hc/lib/net/quic.he:286</a>
 </article>
 <article class="sym" id="q_ctl">
 <h3><a href="#q_ctl">q_ctl</a> <i>function</i></h3>
 <pre>q_ctl(b byte[&gt;..]&amp;, ty int, x int, y int, z int)</pre>
 <p>Encodes a simple control frame with up to three integer fields into a buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L305">hc/lib/net/quic.he:305</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L305">hc/lib/net/quic.he:305</a>
 </article>
 <article class="sym" id="q_note">
 <h3><a href="#q_note">q_note</a> <i>function</i></h3>
 <pre>q_note(rec QSent&amp;, a int, x int, y int)</pre>
 <p>Records a non-stream control frame entry in a sent packet's frame list.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L306">hc/lib/net/quic.he:306</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L306">hc/lib/net/quic.he:306</a>
 </article>
 <article class="sym" id="q_app">
 <h3><a href="#q_app">q_app</a> <i>function</i></h3>
 <pre>q_app(q Quic&amp;, b byte[&gt;..]&amp;, room int, rec QSent&amp;)</pre>
 <p>Writes pending control frames and stream data for the application level into a packet payload.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L307">hc/lib/net/quic.he:307</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L307">hc/lib/net/quic.he:307</a>
 </article>
 <article class="sym" id="q_frames">
 <h3><a href="#q_frames">q_frames</a> <i>function</i></h3>
 <pre>q_frames(q Quic&amp;, s int, room int, rec QSent&amp;) byte[&gt;..]</pre>
 <p>Builds the frame payload for one packet space, including acknowledgments, data and probes, or empty if nothing to send.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L325">hc/lib/net/quic.he:325</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L325">hc/lib/net/quic.he:325</a>
 </article>
 <article class="sym" id="q_closef">
 <h3><a href="#q_closef">q_closef</a> <i>function</i></h3>
 <pre>q_closef(q Quic&amp;, s int) byte[&gt;..]</pre>
 <p>Builds a connection close frame payload for a packet space.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L336">hc/lib/net/quic.he:336</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L336">hc/lib/net/quic.he:336</a>
 </article>
 <article class="sym" id="q_min">
 <h3><a href="#q_min">q_min</a> <i>function</i></h3>
 <pre>q_min(a real, b real) real</pre>
 <p>Returns the smaller of two times, treating zero as unset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L341">hc/lib/net/quic.he:341</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L341">hc/lib/net/quic.he:341</a>
 </article>
 <article class="sym" id="q_timer">
 <h3><a href="#q_timer">q_timer</a> <i>function</i></h3>
 <pre>q_timer(q const Quic&amp;) real, int, bool</pre>
 <p>Computes the next loss or probe timer deadline, its packet space and whether it is a loss timer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L342">hc/lib/net/quic.he:342</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L342">hc/lib/net/quic.he:342</a>
 </article>
 <article class="sym" id="q_timers">
 <h3><a href="#q_timers">q_timers</a> <i>function</i></h3>
 <pre>q_timers(q Quic&amp;)</pre>
 <p>Applies expired idle, closing, loss and probe timers to the connection.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/f73bfc68ac8368406cbffadf1d95fd6ea894e818/hc/lib/net/quic.he#L354">hc/lib/net/quic.he:354</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3279d5560a6c6c608bf7d722d3456ec98b239cf3/hc/lib/net/quic.he#L354">hc/lib/net/quic.he:354</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -524,7 +524,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>1880</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1882</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
