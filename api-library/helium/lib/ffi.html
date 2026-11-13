@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/ffi">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/ffi">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=d1fcaf00ac">
+<link rel="stylesheet" href="/api-library/lib.css?v=a4a00c92df">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=d1fcaf00ac'; start({wasm: '/api-library/search.wasm?v=d1fcaf00ac'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=a4a00c92df'; start({wasm: '/api-library/search.wasm?v=a4a00c92df'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>ffi</h1>
 <p class="lib-lede">Read raw memory at addresses handed over by foreign code such as C libraries.</p>
-<p class="lib-meta"><code>import ffi;</code> &middot; <code>ffi::</code> &middot; 7 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he">Source</a></p>
+<p class="lib-meta"><code>import ffi;</code> &middot; <code>ffi::</code> &middot; 7 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#reading-memory">Reading Memory <span class="n">3</span></a></li>
 <li><a href="#writing-memory">Writing Memory <span class="n">2</span></a></li>
@@ -115,7 +115,7 @@
 <p>Reads a null-terminated C string at address p into the out buffer, returning false when it cannot.</p>
 <pre>cstr(p uint) byte[&gt;..]</pre>
 <p>Returns a copy of the null-terminated C string at address p, or an empty result when the address is null.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he#L3">hc/lib/ffi.he:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he#L3">hc/lib/ffi.he:3</a>
 </article>
 <article class="sym" id="bytes">
 <h3><a href="#bytes">bytes</a> <i>function, 2 forms</i></h3>
@@ -123,26 +123,26 @@
 <p>Reads n bytes at address p into the out buffer, returning false when it cannot.</p>
 <pre>bytes(p uint, n int) byte[&gt;..]</pre>
 <p>Returns a copy of n bytes at address p, or an empty result when the address is null.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he#L4">hc/lib/ffi.he:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he#L4">hc/lib/ffi.he:4</a>
 </article>
 <article class="sym" id="read">
 <h3><a href="#read">read</a> <i>function</i></h3>
 <pre>read(p uint, o byte[:])</pre>
 <p>Fills byte slice o with bytes read from memory starting at address p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he#L7">hc/lib/ffi.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he#L7">hc/lib/ffi.he:7</a>
 </article>
 <h2 id="writing-memory">Writing Memory <span class="n">2</span></h2>
 <article class="sym" id="ptr">
 <h3><a href="#ptr">ptr</a> <i>function</i></h3>
 <pre>ptr(s const byte[:]) uint</pre>
 <p>Returns the raw address of a byte slice's data as an unsigned integer for passing to foreign code.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he#L5">hc/lib/ffi.he:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he#L5">hc/lib/ffi.he:5</a>
 </article>
 <article class="sym" id="write">
 <h3><a href="#write">write</a> <i>function</i></h3>
 <pre>write(p uint, s const byte[:])</pre>
 <p>Writes the bytes of slice s into memory starting at address p.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/d1fcaf0e8d5c881026fc2b500243014de0c5b7a0/hc/lib/ffi.he#L6">hc/lib/ffi.he:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/a4a00c90ebca93942023be47e1ec9a97cd9d01fe/hc/lib/ffi.he#L6">hc/lib/ffi.he:6</a>
 </article>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
 
@@ -204,7 +204,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-11">2026-11-11</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-13">2026-11-13</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>
