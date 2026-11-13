@@ -13,8 +13,8 @@ export async function start(o = {}) {
   const S = (p, n) => td.decode(B(p, n)), cz = p => { const m = u8(); let e = p; while (m[e]) e++; return td.decode(m.subarray(p, e)); };
   const wst = (p, n) => { u8().fill(0, p, p + 144); dv().setUint32(p + 24, 0o100644, true); dv().setBigInt64(p + 48, BigInt(n), true); };
   const put = (r, v) => { const b = typeof v === 'string' ? te.encode(v) : v, p = ex.he_grow(r, b.length); u8().set(b, p); return b.length; };
-  const out = (s, err) => { let b = (err ? ebuf : obuf) + s, i; while ((i = b.indexOf('\n')) >= 0) { (err ? console.error : console.log)(b.slice(0, i)); b = b.slice(i + 1); } err ? ebuf = b : obuf = b; };
-  const fail = e => { if (closed) return; if (e && e.helium_exit !== undefined) { dead = true; frames = false; return; } dead = true; frames = false; console.error('helium trapped:', e); o.onerror?.(e); };
+  const out = (s, err) => { let b = (err ? ebuf : obuf) + s, i; while ((i = b.indexOf('\n')) >= 0) { { const l = b.slice(0, i); err ? console.error(o.err = l) : console.log(l); } b = b.slice(i + 1); } err ? ebuf = b : obuf = b; };
+  const fail = e => { if (closed) return; dead = true; frames = false; if (e && e.helium_exit !== undefined) { e.helium_exit && o.onerror?.(e); return; } console.error('helium trapped:', e); o.onerror?.(e); };
   const run = (f, a) => { if (dead || !ex[f]) return; busy++; let r; try { r = (px[f] || ex[f])(...a); } catch (e) { busy--; fail(e); return; } if (r instanceof Promise) return r.then(v => v, fail).finally(() => { busy--; drain(); }); busy--; return r; };
   const drain = () => { while (!busy && q.length && !dead) { const [f, a, c] = q.shift(); cur = c; run(f, a); cur = null; } };
   const fire = (tag, kind, c) => { q.push(['he_event', [tag, kind], c]); drain(); };

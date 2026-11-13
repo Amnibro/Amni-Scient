@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/net-udp">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/net-udp">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=05b08af28d">
+<link rel="stylesheet" href="/api-library/lib.css?v=2013d1d422">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=05b08af28d'; start({wasm: '/api-library/search.wasm?v=05b08af28d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=2013d1d422'; start({wasm: '/api-library/search.wasm?v=2013d1d422'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>net/udp</h1>
 <p class="lib-lede">Minimal IPv4 UDP sockets.</p>
-<p class="lib-meta"><code>import net.udp;</code> &middot; <code>net::</code> &middot; 7 functions, 0 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he">Source</a></p>
+<p class="lib-meta"><code>import net.udp;</code> &middot; <code>net::</code> &middot; 7 functions, 0 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#addressing">Addressing <span class="n">1</span></a></li>
 <li><a href="#udp-sockets">UDP Sockets <span class="n">5</span></a></li>
@@ -114,63 +114,63 @@
 <h3><a href="#ipv4">ipv4</a> <i>function</i></h3>
 <pre>ipv4(a int, b int, c int, d int) u32</pre>
 <p>Returns a packed u32 IPv4 address from four octets, with the first octet in the highest byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L17">hc/lib/net/udp.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L17">hc/lib/net/udp.he:17</a>
 </article>
 <h2 id="udp-sockets">UDP Sockets <span class="n">5</span></h2>
 <article class="sym" id="udp_open">
 <h3><a href="#udp_open">udp_open</a> <i>function</i></h3>
 <pre>udp_open(port int) int</pre>
 <p>Opens a non-blocking UDP socket bound to the given port and returns its descriptor, or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L18">hc/lib/net/udp.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L18">hc/lib/net/udp.he:18</a>
 </article>
 <article class="sym" id="udp_port">
 <h3><a href="#udp_port">udp_port</a> <i>function</i></h3>
 <pre>udp_port(fd int) int</pre>
 <p>Returns the local port the socket is bound to, or -1 if the lookup fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L22">hc/lib/net/udp.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L22">hc/lib/net/udp.he:22</a>
 </article>
 <article class="sym" id="udp_send">
 <h3><a href="#udp_send">udp_send</a> <i>function</i></h3>
 <pre>udp_send(fd int, ip u32, port int, data const byte[:]) bool</pre>
 <p>Sends data as one datagram to the given IPv4 address and port, returning true if all bytes were sent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L26">hc/lib/net/udp.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L26">hc/lib/net/udp.he:26</a>
 </article>
 <article class="sym" id="udp_recv">
 <h3><a href="#udp_recv">udp_recv</a> <i>function</i></h3>
 <pre>udp_recv(fd int, out byte[&gt;..]&amp;) int, u32, int</pre>
 <p>Receives one datagram into out, returning byte count, sender IPv4 address and sender port, with -1 count on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L28">hc/lib/net/udp.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L28">hc/lib/net/udp.he:28</a>
 </article>
 <article class="sym" id="udp_close">
 <h3><a href="#udp_close">udp_close</a> <i>function</i></h3>
 <pre>udp_close(fd int)</pre>
 <p>Closes the given socket descriptor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L34">hc/lib/net/udp.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L34">hc/lib/net/udp.he:34</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (4)</summary>
 <article class="sym" id="SA">
 <h3><a href="#SA">SA</a> <i>constant</i></h3>
 <pre>var SA byte[&gt;..]</pre>
 <p>Scratch buffer holding the sockaddr structure passed to and filled by the C socket calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L12">hc/lib/net/udp.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L12">hc/lib/net/udp.he:12</a>
 </article>
 <article class="sym" id="SL">
 <h3><a href="#SL">SL</a> <i>constant</i></h3>
 <pre>var SL byte[&gt;..]</pre>
 <p>Scratch buffer holding the address length value used by getsockname and recvfrom calls.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L13">hc/lib/net/udp.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L13">hc/lib/net/udp.he:13</a>
 </article>
 <article class="sym" id="RB">
 <h3><a href="#RB">RB</a> <i>constant</i></h3>
 <pre>var RB byte[&gt;..]</pre>
 <p>Scratch buffer that receives raw incoming datagram bytes, sized to 2048 bytes per receive.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L14">hc/lib/net/udp.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L14">hc/lib/net/udp.he:14</a>
 </article>
 <article class="sym" id="sa">
 <h3><a href="#sa">sa</a> <i>function</i></h3>
 <pre>sa(ip u32, port int)</pre>
 <p>Fills the scratch sockaddr buffer with an IPv4 address and port in network byte order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/net/udp.he#L15">hc/lib/net/udp.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/net/udp.he#L15">hc/lib/net/udp.he:15</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>

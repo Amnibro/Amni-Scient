@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_jpeg">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=05b08af28d">
+<link rel="stylesheet" href="/api-library/lib.css?v=2013d1d422">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=05b08af28d'; start({wasm: '/api-library/search.wasm?v=05b08af28d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=2013d1d422'; start({wasm: '/api-library/search.wasm?v=2013d1d422'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/codec_jpeg</h1>
 <p class="lib-lede">Decode baseline JPEG files to RGBA pixels.</p>
-<p class="lib-meta"><code>import gfx.codec_jpeg;</code> &middot; <code>codec_jpeg::</code> &middot; 7 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.codec_jpeg;</code> &middot; <code>codec_jpeg::</code> &middot; 7 functions, 2 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>codec_jpeg: baseline and progressive JPEG decoding to RGBA8 (ITU-T T.81, JFIF color).
 Huffman-coded 8-bit DCT with any sampling factors and restart intervals; grayscale or YCbCr.
 Arithmetic-coded, lossless and CMYK files are reported as not decodable.
@@ -117,19 +117,19 @@ Arithmetic-coded, lossless and CMYK files are reported as not decodable.
 <h3><a href="#is_jpeg">is_jpeg</a> <i>function</i></h3>
 <pre>is_jpeg(b const byte[:]) bool</pre>
 <p>Returns whether the bytes begin with the JPEG signature marker sequence, false for shorter or non-matching data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L42">hc/lib/gfx/codec_jpeg.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L42">hc/lib/gfx/codec_jpeg.amni:42</a>
 </article>
 <article class="sym" id="size">
 <h3><a href="#size">size</a> <i>function</i></h3>
 <pre>size(b const byte[:]) int, int, bool</pre>
 <p>Returns width, height and a success flag read from a JPEG's frame header, with false meaning invalid or unreadable data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L46">hc/lib/gfx/codec_jpeg.amni:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L46">hc/lib/gfx/codec_jpeg.amni:46</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(file const byte[:], out byte[&gt;..]&amp;) int, int, bool</pre>
 <p>Decodes a baseline JPEG file into RGBA pixels appended to the output buffer, returning width, height and false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L92">hc/lib/gfx/codec_jpeg.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L92">hc/lib/gfx/codec_jpeg.amni:92</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (9)</summary>
 <article class="sym" id="Table">
@@ -142,58 +142,58 @@ Arithmetic-coded, lossless and CMYK files are reported as not decodable.
 	ready bool,
 }</pre>
 <p>Huffman decoding table holding code ranges and symbols for one JPEG table slot, used internally while decoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L7">hc/lib/gfx/codec_jpeg.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L7">hc/lib/gfx/codec_jpeg.amni:7</a>
 </article>
 <article class="sym" id="Channel">
 <h3><a href="#Channel">Channel</a> <i>type</i></h3>
 <pre>struct Channel { ident int, hsamp int, vsamp int, qtable int, dc_table int, ac_table int, dc_prev int, blocks_x int, blocks_y int, offset int }</pre>
 <p>Per-channel frame state with sampling factors, table selectors, DC prediction and sample location, used internally by the decoder.</p>
 <p class="note">One colour channel of a frame (T.81 B.2.2): sampling factors, table selectors, running DC prediction and where its decoded samples live in `planes`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L17">hc/lib/gfx/codec_jpeg.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L17">hc/lib/gfx/codec_jpeg.amni:17</a>
 </article>
 <article class="sym" id="ZIGZAG">
 <h3><a href="#ZIGZAG">ZIGZAG</a> <i>constant</i></h3>
 <pre>let ZIGZAG = [0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28,</pre>
 <p>Lookup table mapping zigzag scan position to natural row-major coefficient index within an 8x8 block.</p>
 <p class="note">zigzag position k -&gt; natural (row-major) coefficient index</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L20">hc/lib/gfx/codec_jpeg.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L20">hc/lib/gfx/codec_jpeg.amni:20</a>
 </article>
 <article class="sym" id="planes">
 <h3><a href="#planes">planes</a> <i>constant</i></h3>
 <pre>var planes byte[&gt;..]</pre>
 <p>Global buffer holding decoded sample bytes for all channels, written by the inverse DCT during decoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L23">hc/lib/gfx/codec_jpeg.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L23">hc/lib/gfx/codec_jpeg.amni:23</a>
 </article>
 <article class="sym" id="coefs">
 <h3><a href="#coefs">coefs</a> <i>constant</i></h3>
 <pre>var coefs i16[&gt;..]</pre>
 <p>Global buffer of quantized DCT coefficients stored as 16-bit integers, used internally while decoding scans.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L24">hc/lib/gfx/codec_jpeg.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L24">hc/lib/gfx/codec_jpeg.amni:24</a>
 </article>
 <article class="sym" id="idct">
 <h3><a href="#idct">idct</a> <i>function</i></h3>
 <pre>idct(offset int, row_len int, bx int, by int, coef f32[64]&amp;, tmp f32[64]&amp;, B const f32[64]&amp;)</pre>
 <p>Performs an 8x8 inverse DCT on a coefficient block and writes clamped 0-255 samples into the plane buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L25">hc/lib/gfx/codec_jpeg.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L25">hc/lib/gfx/codec_jpeg.amni:25</a>
 </article>
 <article class="sym" id="be16">
 <h3><a href="#be16">be16</a> <i>function</i></h3>
 <pre>be16(b const byte[:], o int) int</pre>
 <p>Reads a big-endian 16-bit unsigned integer from the byte slice at the given offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L44">hc/lib/gfx/codec_jpeg.amni:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L44">hc/lib/gfx/codec_jpeg.amni:44</a>
 </article>
 <article class="sym" id="make_table">
 <h3><a href="#make_table">make_table</a> <i>function</i></h3>
 <pre>make_table(t Table&amp;, counts const byte[:], syms const byte[:])</pre>
 <p>Builds a Huffman decoding table from per-length code counts and symbol list, copying up to 256 symbols.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L63">hc/lib/gfx/codec_jpeg.amni:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L63">hc/lib/gfx/codec_jpeg.amni:63</a>
 </article>
 <article class="sym" id="basis">
 <h3><a href="#basis">basis</a> <i>function</i></h3>
 <pre>basis() f32[64]</pre>
 <p>Returns the precomputed 8x8 inverse DCT basis matrix of cosine factors used to reconstruct pixel blocks.</p>
 <p class="note">8x8 inverse DCT basis: BASIS[x * 8 + u] = c(u) / 2 * cos((2x + 1) u pi / 16)</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/05b08afd6ad8eb0c504579facbf2645966b1d03f/hc/lib/gfx/codec_jpeg.amni#L81">hc/lib/gfx/codec_jpeg.amni:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/2013d1d5a4b5d32de3b13dda2d4f4fc9b21e6d2b/hc/lib/gfx/codec_jpeg.amni#L81">hc/lib/gfx/codec_jpeg.amni:81</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
