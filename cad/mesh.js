@@ -226,7 +226,7 @@ export function faceIds(inp,spec){
     if(s.by==='pick'||s.pts){for(const p of s.pts||[]){const t=closest(S,p[0],p[1],p[2],null,o);if(t>=0)out.add(S.fid[t]);}return;}
     if(s.side){const ax=AX[s.side.length===1?'+'+s.side:s.side],i=ax.findIndex(v=>v),ext=ax[i]>0?hi[i]:lo[i];for(const[f,q]of ft)if(q.nmin>0.999&&q.n[i]*ax[i]>0.999&&Math.abs(q.c[i]-ext)<size*1e-3+1e-3)out.add(f);return;}
     if(s.normal){const ax=Array.isArray(s.normal)?s.normal:AX[s.normal],l=Math.hypot(...ax)||1;for(const[f,q]of ft)if(q.nmin>0.999&&(q.n[0]*ax[0]+q.n[1]*ax[1]+q.n[2]*ax[2])/l>0.999)out.add(f);return;}
-    if(s.type&&F){F.forEach((q,i)=>{if(q&&q.type===String(s.type).toUpperCase())out.add(i);});}};
+    if(s.type&&F){const t=String(s.type).toUpperCase().replace('CYLINDER','CYLINDRE');F.forEach((q,i)=>{if(q&&q.type===t)out.add(i);});}};
   walk(spec);return out;
 }
 function selector(inp,M){
