@@ -449,7 +449,11 @@ round_bits	function	std	/api-library/helium/lib/std#round_bits	Returns the doubl
 slow_decimal	function	std	/api-library/helium/lib/std#slow_decimal	Converts decimal digits with a power-of-ten exponent to the nearest double using big integer division.	int
 big_shr1	function	std	/api-library/helium/lib/std#big_shr1	Shifts a limb array right by one bit in place.	int
 POW10	constant	std	/api-library/helium/lib/std#POW10	Table of exactly representable powers of ten from 1e0 to 1e22 used by the fast parsing path.	int
+P5	constant	std	/api-library/helium/lib/std#P5	Lookup table of 128-bit powers of five used by the Eisel-Lemire algorithm for correctly rounded decimal-to-real conversion.	int
+mul128	function	std	/api-library/helium/lib/std#mul128	Multiplies two unsigned 64-bit values and returns the low and high halves of the 128-bit product.	int
+lemire	function	std	/api-library/helium/lib/std#lemire	Converts a decimal mantissa and power-of-ten exponent into real bits, returning a zero mantissa with exponent -1 when the fast path cannot decide.	int
 parse_flt	function	std	/api-library/helium/lib/std#parse_flt	Parses all of s as a decimal, inf or nan with optional sign and exponent, returning false if invalid.	pub
+parse_flt_big	function	std	/api-library/helium/lib/std#parse_flt_big	Parses a decimal, "inf" or "nan" with optional sign and exponent into a real, returning false if malformed.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Returns s, trimmed of whitespace, parsed as a real, or 0.0 if parsing fails.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Returns a growable byte array parsed as a real, or 0.0 if parsing fails.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Converts a value of any type to a real by casting.	pub
@@ -729,7 +733,7 @@ json::K_STR	constant	json	/api-library/helium/lib/json#K_STR	Node kind constant 
 json::K_ARR	constant	json	/api-library/helium/lib/json#K_ARR	Node kind constant for a JSON array.	pub
 json::K_OBJ	constant	json	/api-library/helium/lib/json#K_OBJ	Node kind constant for a JSON object.	pub
 json::DocNode	type	json	/api-library/helium/lib/json#DocNode	Internal index-based node record holding kind, numeric value, pool offsets for text and key, and sibling links for a parsed document.	int
-json::Doc	type	json	/api-library/helium/lib/json#Doc	Internal index-based document holding a node list and a shared byte pool for strings and keys.	int
+json::Doc	type	json	/api-library/helium/lib/json#Doc	Holds a parsed JSON document as a flat node list plus a byte pool for strings and keys, with a raw flag.	pub
 json::text_of	function	json	/api-library/helium/lib/json#text_of	Returns the string text stored for node n from the pool.	int
 json::key_of	function	json	/api-library/helium/lib/json#key_of	Returns the member name stored for node n from the pool.	int
 json::add_node	function	json	/api-library/helium/lib/json#add_node	Appends a new node of the given kind and returns its index.	int
@@ -6530,3 +6534,148 @@ hairdo::s_sh	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_sh	Per-str
 hairdo::shape	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#shape	Shapes strands by applying waves, curls and clumping offsets to the base strand points using each strand's leader.	int
 hairdo::grow	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#grow	Generates hair strand data for a style into a byte buffer and returns the strand count, or 0 on failure.	int
 hairdo::wear	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#wear	Grows hair of a named style and color on a model's head joint and returns the groom handle, or -1 on failure.	pub
+libm::TWO24	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO24	Constant 2^24 as a real, used to split values into 24-bit chunks.	int
+libm::TWOM24	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM24	Constant 2^-24 as a real, used to split values into 24-bit chunks.	int
+libm::pow2	function	tiles/libm	/api-library/helium/lib/tiles-libm#pow2	Returns 2 raised to the integer power e by building the exponent bits directly.	int
+libm::TWOM120	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM120	Constant 2^-120, a tiny value used to raise the inexact flag in edge-case results.	int
+libm::hw	function	tiles/libm	/api-library/helium/lib/tiles-libm#hw	Returns the high 32 bits of a real's IEEE 754 representation as an int.	int
+libm::lw	function	tiles/libm	/api-library/helium/lib/tiles-libm#lw	Returns the low 32 bits of a real's IEEE 754 representation as an int.	int
+libm::hs	function	tiles/libm	/api-library/helium/lib/tiles-libm#hs	Returns the high 32 bits of a real as a signed 32-bit value.	int
+libm::neg_bit	function	tiles/libm	/api-library/helium/lib/tiles-libm#neg_bit	Returns whether the sign bit of a real is set, including for negative zero.	int
+libm::mk	function	tiles/libm	/api-library/helium/lib/tiles-libm#mk	Builds a real from separate high and low 32-bit words.	int
+libm::with_hi	function	tiles/libm	/api-library/helium/lib/tiles-libm#with_hi	Returns x with its high 32-bit word replaced by h.	int
+libm::with_lo0	function	tiles/libm	/api-library/helium/lib/tiles-libm#with_lo0	Returns x with its low 32-bit word cleared to zero.	int
+libm::hi_only	function	tiles/libm	/api-library/helium/lib/tiles-libm#hi_only	Builds a real from a high word with a zero low word.	int
+libm::TWO1023	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO1023	Constant 2^1023, used to scale values up in steps.	int
+libm::TWOM969	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM969	Constant 2^-969 computed as the smallest normal times 2^53, used to scale values down in steps.	int
+libm::scalbn	function	tiles/libm	/api-library/helium/lib/tiles-libm#scalbn	Returns x multiplied by 2 raised to the integer n, clamping extreme exponents.	pub
+libm::rem_large	function	tiles/libm	/api-library/helium/lib/tiles-libm#rem_large	Reduces a large-argument chunk array by pi/2, returning the quadrant (0-7) and a two-part remainder.	int
+libm::EPS	constant	tiles/libm	/api-library/helium/lib/tiles-libm#EPS	Constant machine epsilon for doubles, 2^-52.	int
+libm::TO_INT	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TO_INT	Constant magic number used to round a real to an integer through addition.	int
+libm::INV_PIO2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#INV_PIO2	Constant 2/pi, used to estimate the multiple of pi/2.	int
+libm::PIO2_1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_1	Constant leading 33 bits of pi/2 for argument reduction.	int
+libm::PIO2_1T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_1T	Constant tail of pi/2 following the first 33-bit part.	int
+libm::PIO2_2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_2	Constant second 33-bit part of pi/2 for argument reduction.	int
+libm::PIO2_2T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_2T	Constant tail of pi/2 following the second 33-bit part.	int
+libm::PIO2_3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_3	Constant third 33-bit part of pi/2 for argument reduction.	int
+libm::PIO2_3T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_3T	Constant tail of pi/2 following the third 33-bit part.	int
+libm::rp_ey	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_ey	Returns the biased exponent field of a real.	int
+libm::rp_medium	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_medium	Reduces a medium-size argument by pi/2, returning the quadrant count and a two-part remainder.	int
+libm::rp_step	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_step	Reduces an argument by k multiples of pi/2, returning the signed count and two-part remainder.	int
+libm::rem_pio2	function	tiles/libm	/api-library/helium/lib/tiles-libm#rem_pio2	Reduces x modulo pi/2, returning the quadrant count and a two-part remainder; NaN results for infinities.	int
+libm::S1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S1	Constant first sine polynomial coefficient, about -1/6.	int
+libm::S2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S2	Constant second sine polynomial coefficient.	int
+libm::S3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S3	Constant third sine polynomial coefficient.	int
+libm::S4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S4	Constant fourth sine polynomial coefficient.	int
+libm::S5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S5	Constant fifth sine polynomial coefficient.	int
+libm::S6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S6	Constant sixth sine polynomial coefficient.	int
+libm::k_sin	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_sin	Computes sine on a reduced range of about pi/4, with a tail term used when iy is nonzero.	int
+libm::C1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C1	Constant first cosine polynomial coefficient, about 1/24.	int
+libm::C2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C2	Constant second cosine polynomial coefficient.	int
+libm::C3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C3	Constant third cosine polynomial coefficient.	int
+libm::C4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C4	Constant fourth cosine polynomial coefficient.	int
+libm::C5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C5	Constant fifth cosine polynomial coefficient.	int
+libm::C6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C6	Constant sixth cosine polynomial coefficient.	int
+libm::k_cos	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_cos	Computes cosine on a reduced range of about pi/4 using a two-part argument.	int
+libm::PIO4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO4	Constant pi/4 used by the tangent kernel.	int
+libm::PIO4_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO4_LO	Constant low-order correction term for pi/4.	int
+libm::k_tan	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_tan	Computes tangent, or its negative reciprocal when odd is nonzero, on a reduced range.	int
+libm::sin	function	tiles/libm	/api-library/helium/lib/tiles-libm#sin	Returns the sine of x in radians; NaN for infinite input.	pub
+libm::cos	function	tiles/libm	/api-library/helium/lib/tiles-libm#cos	Returns the cosine of x in radians; NaN for infinite input.	pub
+libm::tan	function	tiles/libm	/api-library/helium/lib/tiles-libm#tan	Returns the tangent of x in radians; NaN for infinite input.	pub
+libm::atan	function	tiles/libm	/api-library/helium/lib/tiles-libm#atan	Returns the arctangent of x in radians, in the range -pi/2 to pi/2.	pub
+libm::A2_PI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#A2_PI	Constant pi as a double used by atan2.	int
+libm::A2_PI_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#A2_PI_LO	Constant low-order correction term for pi used by atan2.	int
+libm::atan2	function	tiles/libm	/api-library/helium/lib/tiles-libm#atan2	Returns the angle in radians of the point (x, y), using both signs to pick the quadrant.	pub
+libm::PIO2_HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_HI	Constant high part of pi/2 used by asin and acos.	int
+libm::PIO2_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_LO	Constant low-order correction term for pi/2.	int
+libm::PS0	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS0	Constant numerator coefficient 0 of the asin rational approximation.	int
+libm::PS1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS1	Constant numerator coefficient 1 of the asin rational approximation.	int
+libm::PS2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS2	Constant numerator coefficient 2 of the asin rational approximation.	int
+libm::PS3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS3	Constant numerator coefficient 3 of the asin rational approximation.	int
+libm::PS4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS4	Constant numerator coefficient 4 of the asin rational approximation.	int
+libm::PS5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS5	Constant numerator coefficient 5 of the asin rational approximation.	int
+libm::QS1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS1	Constant denominator coefficient 1 of the asin rational approximation.	int
+libm::QS2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS2	Constant denominator coefficient 2 of the asin rational approximation.	int
+libm::QS3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS3	Constant denominator coefficient 3 of the asin rational approximation.	int
+libm::QS4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS4	Constant denominator coefficient 4 of the asin rational approximation.	int
+libm::ras_r	function	tiles/libm	/api-library/helium/lib/tiles-libm#ras_r	Evaluates the rational approximation shared by asin and acos at z.	int
+libm::asin	function	tiles/libm	/api-library/helium/lib/tiles-libm#asin	Returns the arcsine of x in radians; NaN when the magnitude of x exceeds 1.	pub
+libm::acos	function	tiles/libm	/api-library/helium/lib/tiles-libm#acos	Returns the arccosine of x in radians; NaN when the magnitude of x exceeds 1.	pub
+libm::HY_M96	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HY_M96	Constant 2^-96, used as an error margin in the fast hypot check.	int
+libm::hy_up	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_up	Returns the gap from r to the next larger double.	int
+libm::hy_dn	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_dn	Returns the gap from r to the next smaller double.	int
+libm::hypot	function	tiles/libm	/api-library/helium/lib/tiles-libm#hypot	Returns the square root of x squared plus y squared without intermediate overflow, correctly rounded.	pub
+libm::HC_M49	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M49	Constant 2^-49, a relative error threshold in the exact hypot fallback.	int
+libm::HC_M99	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M99	Constant 2^-99, a relative threshold for accepting a computed sign.	int
+libm::HC_M900	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M900	Constant 2^-900, a minimum magnitude for trusting error sums.	int
+libm::HC_M1022	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M1022	Constant 2^-1022, the smallest normal double, used to detect subnormal results.	int
+libm::HC_M374	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M374	Constant 2^-374, used as the rounding step for subnormal results.	int
+libm::HC_P700	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_P700	Constant 2^700, a scale factor for tiny inputs.	int
+libm::HC_M700	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M700	Constant 2^-700, a scale factor for huge inputs.	int
+libm::hy_sq	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_sq	Squares v exactly, returning the high and low parts of the product.	int
+libm::exact_sign	function	tiles/libm	/api-library/helium/lib/tiles-libm#exact_sign	Returns the exact sign (-1, 0 or 1) of the sum of the given terms.	int
+libm::fs_add	function	tiles/libm	/api-library/helium/lib/tiles-libm#fs_add	Adds t to a running sum state, accumulating rounding error and absolute magnitude.	int
+libm::fs_end	function	tiles/libm	/api-library/helium/lib/tiles-libm#fs_end	Finishes a running sum with two more terms, returning its sign or 2 when undecided.	int
+libm::hypot_cr	function	tiles/libm	/api-library/helium/lib/tiles-libm#hypot_cr	Computes a correctly rounded hypotenuse of x0 and y0, handling infinities, scaling and subnormals.	int
+libm::TWO53	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO53	Constant 2^53 as a real, used by the power function.	int
+libm::HUGE	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HUGE	Constant 1e300, used to force overflow in the power function.	int
+libm::TINY	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TINY	Constant 1e-300, used to force underflow in the power function.	int
+libm::L1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L1	Constant first coefficient of the logarithm polynomial used by pow.	int
+libm::L2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L2	Constant second coefficient of the logarithm polynomial used by pow.	int
+libm::L3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L3	Constant third coefficient of the logarithm polynomial used by pow.	int
+libm::L4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L4	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::L5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L5	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::L6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L6	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::P1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P1	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P2	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P3	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P4	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P5	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::PW_LG2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2	Constant equal to the natural logarithm of 2, used internally by pow.	int
+libm::PW_LG2_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2_H	Constant holding the high-order part of ln 2, used internally by pow for extra precision.	int
+libm::PW_LG2_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2_L	Constant holding the low-order correction of ln 2, used internally by pow for extra precision.	int
+libm::OVT	constant	tiles/libm	/api-library/helium/lib/tiles-libm#OVT	Overflow threshold constant used internally by pow to detect results that exceed the largest finite value.	int
+libm::CP	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP	Constant used internally by pow in the log2 computation of the base.	int
+libm::CP_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP_H	Constant holding the high-order part of CP, used internally by pow for extra precision.	int
+libm::CP_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP_L	Constant holding the low-order correction of CP, used internally by pow for extra precision.	int
+libm::IVLN2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2	Constant equal to 1/ln 2, used internally by pow.	int
+libm::IVLN2_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2_H	Constant holding the high-order part of 1/ln 2, used internally by pow for extra precision.	int
+libm::IVLN2_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2_L	Constant holding the low-order correction of 1/ln 2, used internally by pow for extra precision.	int
+libm::pow	function	tiles/libm	/api-library/helium/lib/tiles-libm#pow	Returns x raised to the power y, handling special cases such as NaN, infinities, zero, and negative bases.	pub
+libm::IVLN2HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2HI	Constant holding the high-order part of 1/ln 2, used internally by log2 for extra precision.	int
+libm::IVLN2LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2LO	Constant holding the low-order correction of 1/ln 2, used internally by log2 for extra precision.	int
+libm::IVLN10HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN10HI	Constant holding the high-order part of 1/ln 10, used internally by log10 for extra precision.	int
+libm::IVLN10LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN10LO	Constant holding the low-order correction of 1/ln 10, used internally by log10 for extra precision.	int
+libm::LOG10_2HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LOG10_2HI	Constant holding the high-order part of log10 of 2, used internally by log10 for extra precision.	int
+libm::LOG10_2LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LOG10_2LO	Constant holding the low-order correction of log10 of 2, used internally by log10 for extra precision.	int
+libm::LG1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG1	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG2	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG3	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG4	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG5	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG6	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG7	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG7	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::lg_reduce	function	tiles/libm	/api-library/helium/lib/tiles-libm#lg_reduce	Reduces x to a high and low part plus exponent for log2 and log10, flagging special cases with an early result.	int
+libm::log2	function	tiles/libm	/api-library/helium/lib/tiles-libm#log2	Returns the base-2 logarithm of x, handling zero, negative, infinite, and NaN inputs.	pub
+libm::log10	function	tiles/libm	/api-library/helium/lib/tiles-libm#log10	Returns the base-10 logarithm of x, handling zero, negative, infinite, and NaN inputs.	pub
+rs::neg_bit	function	tiles/rs	/api-library/helium/lib/tiles-rs#neg_bit	Checks whether a real's sign bit is set, treating negative zero as negative; used by the formatting and signum code.	int
+rs::dig_char	function	tiles/rs	/api-library/helium/lib/tiles-rs#dig_char	Converts a digit value below 10 to its ASCII character, leaving other bytes unchanged; internal formatting helper.	int
+rs::display	function	tiles/rs	/api-library/helium/lib/tiles-rs#display	Appends the shortest decimal text of a real to a byte buffer, handling NaN, inf, and negative zero.	pub
+rs::debug	function	tiles/rs	/api-library/helium/lib/tiles-rs#debug	Appends a debug text of a real, always showing a decimal point and using scientific notation for very small or large values.	pub
+rs::fixed	function	tiles/rs	/api-library/helium/lib/tiles-rs#fixed	Appends a real formatted with a fixed number of decimal places, writing NaN or inf for non-finite values.	pub
+rs::max	function	tiles/rs	/api-library/helium/lib/tiles-rs#max	Returns the larger of two reals, returning the first when the second is NaN.	pub
+rs::min	function	tiles/rs	/api-library/helium/lib/tiles-rs#min	Returns the smaller of two reals, returning the first when the second is NaN.	pub
+rs::clamp	function	tiles/rs	/api-library/helium/lib/tiles-rs#clamp	Returns a real limited to the range from lo to hi, passing NaN through unchanged.	pub
+rs::signum	function	tiles/rs	/api-library/helium/lib/tiles-rs#signum	Returns -1.0 for negative values including negative zero, 1.0 otherwise, and NaN for NaN.	pub
+rs::sat_int	function	tiles/rs	/api-library/helium/lib/tiles-rs#sat_int	Converts a real to an int saturated to the given bounds, mapping NaN to zero.	int
+rs::to_u32	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u32	Converts a real to an unsigned 32-bit range int, saturating at 0 and 4294967295 and mapping NaN to zero.	pub
+rs::to_usize	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_usize	Converts a real to a usize-style int by saturating it to the unsigned 32-bit range.	pub
+rs::to_u16	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u16	Converts a real to an unsigned 16-bit range int, saturating at 0 and 65535 and mapping NaN to zero.	pub
+rs::to_u8	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u8	Converts a real to an unsigned 8-bit range int, saturating at 0 and 255 and mapping NaN to zero.	pub
+rs::to_i32	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_i32	Converts a real to a signed 32-bit range int, saturating at its limits and mapping NaN to zero.	pub
+rs::to_i64	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_i64	Converts a real to a signed 64-bit range int, saturating at its limits and mapping NaN to zero.	pub
+rs::POW10	constant	tiles/rs	/api-library/helium/lib/tiles-rs#POW10	Lookup table of powers of ten from 1e0 to 1e308, filled lazily for number parsing.	int
+rs::pow10_init	function	tiles/rs	/api-library/helium/lib/tiles-rs#pow10_init	Fills the powers-of-ten table by parsing each 1e-notation string from 1e0 to 1e308.	int
+rs::serde_f64	function	tiles/rs	/api-library/helium/lib/tiles-rs#serde_f64	Parses decimal or scientific text into a real, returning false as the second result on overflow.	pub
+rs::utf8_lossy	function	tiles/rs	/api-library/helium/lib/tiles-rs#utf8_lossy	Appends text to a byte buffer, copying valid UTF-8 and handling invalid byte sequences lossily.	pub

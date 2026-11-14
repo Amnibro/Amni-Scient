@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>tiles/rs | AMNI-SCIENT</title>
+<meta name="description" content="Formats real numbers as text, producing display and debug string representations including NaN, infinity, and scientific notation handling.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="tiles/rs">
+<meta property="og:description" content="Formats real numbers as text, producing display and debug string representations including NaN, infinity, and scientific notation handling.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/tiles-rs">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/tiles-rs">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=d9c8393422">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=d9c8393422'; start({wasm: '/api-library/search.wasm?v=d9c8393422'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/data">Text &amp; Data</a> <span>&rsaquo;</span> tiles/rs</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>tiles/rs</h1>
+<p class="lib-lede">Formats real numbers as text, producing display and debug string representations including NaN, infinity, and scientific notation handling.</p>
+<p class="lib-meta"><code>import tiles.rs;</code> &middot; <code>rs::</code> &middot; 19 functions, 0 types, 1 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#float-formatting">Float Formatting <span class="n">3</span></a></li>
+<li><a href="#real-math">Real Math <span class="n">10</span></a></li>
+<li><a href="#float-parsing">Float Parsing <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="float-formatting">Float Formatting <span class="n">3</span></h2>
+<article class="sym" id="display">
+<h3><a href="#display">display</a> <i>function</i></h3>
+<pre>display(out byte[&gt;..]&amp;, x real)</pre>
+<p>Appends the shortest decimal text of a real to a byte buffer, handling NaN, inf, and negative zero.</p>
+<p class="note">`display(out, x)` appends Rust's `{}` (Display) of x: &quot;NaN&quot;, &quot;inf&quot; or &quot;-inf&quot; for those values; otherwise a minus sign when the sign bit of x is set, so -0.0 prints &quot;-0&quot;, then the shortest digits of `fabs` of x written as plain decimal, never with an exponent: when n is at least the digit count, the digits followed by n minus the count zeros and no point; when n is from 1 to one less than the count</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L8">hc/lib/tiles/rs.he:8</a>
+</article>
+<article class="sym" id="debug">
+<h3><a href="#debug">debug</a> <i>function</i></h3>
+<pre>debug(out byte[&gt;..]&amp;, x real)</pre>
+<p>Appends a debug text of a real, always showing a decimal point and using scientific notation for very small or large values.</p>
+<p class="note">`debug(out, x)` appends Rust's `{:?}` (Debug) of x: &quot;NaN&quot;, &quot;inf&quot; or &quot;-inf&quot; for those values; otherwise a minus sign when the sign bit of x is set, then the shortest digits of `fabs` of x. When x is not zero and `fabs` of x is below 1e-4, or `fabs` of x is at least 1e16, they are written in exponent form: the first digit, then a point and the other digits only when there are more digits, then &quot;e&quot; a</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L42">hc/lib/tiles/rs.he:42</a>
+</article>
+<article class="sym" id="fixed">
+<h3><a href="#fixed">fixed</a> <i>function</i></h3>
+<pre>fixed(out byte[&gt;..]&amp;, x real, decimals int)</pre>
+<p>Appends a real formatted with a fixed number of decimal places, writing NaN or inf for non-finite values.</p>
+<p class="note">`fixed(out, x, decimals)` appends Rust's `{:.N}` of x with N decimals: &quot;NaN&quot;, &quot;inf&quot; or &quot;-inf&quot; for those values, and otherwise std's `format_flt(out, x, decimals)`, which rounds the exact value half to even and writes a minus sign whenever the sign bit is set, so -0.0 and -0.001 at two decimals both print &quot;-0.00&quot;.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L86">hc/lib/tiles/rs.he:86</a>
+</article>
+<h2 id="real-math">Real Math <span class="n">10</span></h2>
+<article class="sym" id="max">
+<h3><a href="#max">max</a> <i>function</i></h3>
+<pre>max(x real, y real) real</pre>
+<p>Returns the larger of two reals, returning the first when the second is NaN.</p>
+<p class="note">`max(x, y)` is Rust's f64::max on wasm32: x when y is NaN or x is greater than y, otherwise y, so max(0.0, -0.0) is -0.0. `min(x, y)` is x when y is NaN or x is less than y, otherwise y.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L97">hc/lib/tiles/rs.he:97</a>
+</article>
+<article class="sym" id="min">
+<h3><a href="#min">min</a> <i>function</i></h3>
+<pre>min(x real, y real) real</pre>
+<p>Returns the smaller of two reals, returning the first when the second is NaN.</p>
+<p class="note">`max(x, y)` is Rust's f64::max on wasm32: x when y is NaN or x is greater than y, otherwise y, so max(0.0, -0.0) is -0.0. `min(x, y)` is x when y is NaN or x is less than y, otherwise y.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L101">hc/lib/tiles/rs.he:101</a>
+</article>
+<article class="sym" id="clamp">
+<h3><a href="#clamp">clamp</a> <i>function</i></h3>
+<pre>clamp(x real, lo real, hi real) real</pre>
+<p>Returns a real limited to the range from lo to hi, passing NaN through unchanged.</p>
+<p class="note">`clamp(x, lo, hi)` is Rust's f64::clamp: x, replaced by lo when x is less than lo, then by hi when that is greater than hi; NaN stays NaN.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L105">hc/lib/tiles/rs.he:105</a>
+</article>
+<article class="sym" id="signum">
+<h3><a href="#signum">signum</a> <i>function</i></h3>
+<pre>signum(x real) real</pre>
+<p>Returns -1.0 for negative values including negative zero, 1.0 otherwise, and NaN for NaN.</p>
+<p class="note">`signum(x)` is NaN for NaN, otherwise -1.0 when the sign bit of x is set (also for -0.0) and 1.0 when it is clear.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L112">hc/lib/tiles/rs.he:112</a>
+</article>
+<article class="sym" id="to_u32">
+<h3><a href="#to_u32">to_u32</a> <i>function</i></h3>
+<pre>to_u32(x real) int</pre>
+<p>Converts a real to an unsigned 32-bit range int, saturating at 0 and 4294967295 and mapping NaN to zero.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L126">hc/lib/tiles/rs.he:126</a>
+</article>
+<article class="sym" id="to_usize">
+<h3><a href="#to_usize">to_usize</a> <i>function</i></h3>
+<pre>to_usize(x real) int</pre>
+<p>Converts a real to a usize-style int by saturating it to the unsigned 32-bit range.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L127">hc/lib/tiles/rs.he:127</a>
+</article>
+<article class="sym" id="to_u16">
+<h3><a href="#to_u16">to_u16</a> <i>function</i></h3>
+<pre>to_u16(x real) int</pre>
+<p>Converts a real to an unsigned 16-bit range int, saturating at 0 and 65535 and mapping NaN to zero.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L128">hc/lib/tiles/rs.he:128</a>
+</article>
+<article class="sym" id="to_u8">
+<h3><a href="#to_u8">to_u8</a> <i>function</i></h3>
+<pre>to_u8(x real) int</pre>
+<p>Converts a real to an unsigned 8-bit range int, saturating at 0 and 255 and mapping NaN to zero.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L129">hc/lib/tiles/rs.he:129</a>
+</article>
+<article class="sym" id="to_i32">
+<h3><a href="#to_i32">to_i32</a> <i>function</i></h3>
+<pre>to_i32(x real) int</pre>
+<p>Converts a real to a signed 32-bit range int, saturating at its limits and mapping NaN to zero.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L130">hc/lib/tiles/rs.he:130</a>
+</article>
+<article class="sym" id="to_i64">
+<h3><a href="#to_i64">to_i64</a> <i>function</i></h3>
+<pre>to_i64(x real) int</pre>
+<p>Converts a real to a signed 64-bit range int, saturating at its limits and mapping NaN to zero.</p>
+<p class="note">Rust's float to integer casts truncate toward zero, turn NaN into 0 and saturate at the target type's limits. `to_usize(x)` is `x as usize` on wasm32, where usize is 32 bits, so its range is 0 to 4294967295. `to_u32(x)` has the same range, `to_u16(x)` 0 to 65535, `to_u8(x)` 0 to 255, `to_i32(x)` -2147483648 to 2147483647 and `to_i64(x)` -9223372036854775808 to 9223372036854775807. Each returns an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L131">hc/lib/tiles/rs.he:131</a>
+</article>
+<h2 id="float-parsing">Float Parsing <span class="n">2</span></h2>
+<article class="sym" id="serde_f64">
+<h3><a href="#serde_f64">serde_f64</a> <i>function</i></h3>
+<pre>serde_f64(s const byte[:]) real, bool</pre>
+<p>Parses decimal or scientific text into a real, returning false as the second result on overflow.</p>
+<p class="note">`serde_f64` takes one JSON number token s as a constant byte slice, returns a real and a bool, and reads s the way serde_json 1.0 without its float_roundtrip feature turns it into an f64 field; the bool is false when serde_json rejects it as out of range. It calls `pow10_init()` when `POW10` is still empty. A leading '-' makes the result negative and is skipped. sig is a u64 starting at 0 and e an</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L140">hc/lib/tiles/rs.he:140</a>
+</article>
+<article class="sym" id="utf8_lossy">
+<h3><a href="#utf8_lossy">utf8_lossy</a> <i>function</i></h3>
+<pre>utf8_lossy(out byte[&gt;..]&amp;, s const byte[:])</pre>
+<p>Appends text to a byte buffer, copying valid UTF-8 and handling invalid byte sequences lossily.</p>
+<p class="note">`utf8_lossy(out, s)` takes a growable byte array out by reference and a constant byte slice s, and appends Rust's String::from_utf8_lossy of the byte slice s to the growable byte array out. It walks s from position 0. A byte below 128 is copied as is. Any other byte starts a sequence at its position: a lead byte from 194 to 223 needs one more byte from 128 to 191; a lead byte from 224 to 239 needs</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L218">hc/lib/tiles/rs.he:218</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (5)</summary>
+<article class="sym" id="neg_bit">
+<h3><a href="#neg_bit">neg_bit</a> <i>function</i></h3>
+<pre>neg_bit(x real) bool</pre>
+<p>Checks whether a real's sign bit is set, treating negative zero as negative; used by the formatting and signum code.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L4">hc/lib/tiles/rs.he:4</a>
+</article>
+<article class="sym" id="dig_char">
+<h3><a href="#dig_char">dig_char</a> <i>function</i></h3>
+<pre>dig_char(c byte) byte</pre>
+<p>Converts a digit value below 10 to its ASCII character, leaving other bytes unchanged; internal formatting helper.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L5">hc/lib/tiles/rs.he:5</a>
+</article>
+<article class="sym" id="sat_int">
+<h3><a href="#sat_int">sat_int</a> <i>function</i></h3>
+<pre>sat_int(x real, lo int, hi int) int</pre>
+<p>Converts a real to an int saturated to the given bounds, mapping NaN to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L118">hc/lib/tiles/rs.he:118</a>
+</article>
+<article class="sym" id="POW10">
+<h3><a href="#POW10">POW10</a> <i>constant</i></h3>
+<pre>var POW10 real[..309]</pre>
+<p>Lookup table of powers of ten from 1e0 to 1e308, filled lazily for number parsing.</p>
+<p class="note">`POW10` is a global table of 309 reals where entry k is the double nearest 10 to the power k, filled once by `pow10_init()`: for each k, the first result of std's `parse_flt` (which returns a real and a bool) of the text &quot;1e&quot; followed by the decimal digits of k. The table is reserved for 309 entries before it is filled.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L132">hc/lib/tiles/rs.he:132</a>
+</article>
+<article class="sym" id="pow10_init">
+<h3><a href="#pow10_init">pow10_init</a> <i>function</i></h3>
+<pre>pow10_init()</pre>
+<p>Fills the powers-of-ten table by parsing each 1e-notation string from 1e0 to 1e308.</p>
+<p class="note">`POW10` is a global table of 309 reals where entry k is the double nearest 10 to the power k, filled once by `pow10_init()`: for each k, the first result of std's `parse_flt` (which returns a real and a bool) of the text &quot;1e&quot; followed by the decimal digits of k. The table is reserved for 309 entries before it is filled.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/rs.he#L133">hc/lib/tiles/rs.he:133</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a><ul>
+<li><a href="/api-library/helium/lib/json">json</a></li>
+<li><a href="/api-library/helium/lib/regex">regex</a></li>
+<li><a href="/api-library/helium/lib/base64">base64</a></li>
+<li><a href="/api-library/helium/lib/binary">binary</a></li>
+<li><a href="/api-library/helium/lib/gfx-zlib">gfx/zlib</a></li>
+<li><a href="/api-library/helium/lib/tiles-js">tiles/js</a></li>
+<li><a href="/api-library/helium/lib/tiles-py">tiles/py</a></li>
+<li><a href="/api-library/helium/lib/tiles-rs" class="on">tiles/rs</a><ul class="lib-sub">
+<li><a href="#float-formatting">Float Formatting</a></li>
+<li><a href="#real-math">Real Math</a></li>
+<li><a href="#float-parsing">Float Parsing</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1897</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-14">2026-11-14</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

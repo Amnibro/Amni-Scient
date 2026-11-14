@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>tiles/libm | AMNI-SCIENT</title>
+<meta name="description" content="Provides low-level floating-point math routines such as scaling by powers of two, bit manipulation, and large-argument trigonometric range reduction.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="tiles/libm">
+<meta property="og:description" content="Provides low-level floating-point math routines such as scaling by powers of two, bit manipulation, and large-argument trigonometric range reduction.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/tiles-libm">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/tiles-libm">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=d9c8393422">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=d9c8393422'; start({wasm: '/api-library/search.wasm?v=d9c8393422'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/logic">Logic &amp; Core</a> <span>&rsaquo;</span> tiles/libm</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>tiles/libm</h1>
+<p class="lib-lede">Provides low-level floating-point math routines such as scaling by powers of two, bit manipulation, and large-argument trigonometric range reduction.</p>
+<p class="lib-meta"><code>import tiles.libm;</code> &middot; <code>libm::</code> &middot; 38 functions, 0 types, 87 constants &middot; <a href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#scaling">Scaling <span class="n">1</span></a></li>
+<li><a href="#trigonometry">Trigonometry <span class="n">3</span></a></li>
+<li><a href="#inverse-trigonometry">Inverse Trigonometry <span class="n">4</span></a></li>
+<li><a href="#hypotenuse">Hypotenuse <span class="n">1</span></a></li>
+<li><a href="#exponentiation">Exponentiation <span class="n">1</span></a></li>
+<li><a href="#logarithms">Logarithms <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="scaling">Scaling <span class="n">1</span></h2>
+<article class="sym" id="scalbn">
+<h3><a href="#scalbn">scalbn</a> <i>function</i></h3>
+<pre>scalbn(x real, n int) real</pre>
+<p>Returns x multiplied by 2 raised to the integer n, clamping extreme exponents.</p>
+<p class="note">`scalbn(x, n)` with n a 32-bit int. If n is above 1023, multiply x by 2^1023 and subtract 1023. If n is still above 1023, do it again, then clamp n to 1023. Else if n is below -1022, multiply x by (2^-1022 * 2^53) and add 969. If n is still below -1022, do it again, then clamp n to -1022. The result is x times the float whose bits are (0x3ff + n) shifted left 52.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L19">hc/lib/tiles/libm.he:19</a>
+</article>
+<h2 id="trigonometry">Trigonometry <span class="n">3</span></h2>
+<article class="sym" id="sin">
+<h3><a href="#sin">sin</a> <i>function</i></h3>
+<pre>sin(x real) real</pre>
+<p>Returns the sine of x in radians; NaN for infinite input.</p>
+<p class="note">`sin(x)`: - If ix is at most 0x3fe921fb: return x when ix is below 0x3e500000, else kernel sin(x, 0.0, 0). - If ix is at least 0x7ff00000: return x - x. - Otherwise use rem_pio2, by n &amp; 3: kernel sin(y0, y1, 1), then kernel cos(y0, y1), then the negated kernel sin, then the negated kernel cos.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L282">hc/lib/tiles/libm.he:282</a>
+</article>
+<article class="sym" id="cos">
+<h3><a href="#cos">cos</a> <i>function</i></h3>
+<pre>cos(x real) real</pre>
+<p>Returns the cosine of x in radians; NaN for infinite input.</p>
+<p class="note">`cos(x)`: - If ix is at most 0x3fe921fb: return 1.0 when ix is below 0x3e46a09e, else kernel cos(x, 0.0). - If ix is at least 0x7ff00000: return x - x. - Otherwise use rem_pio2, by n &amp; 3: kernel cos, negated kernel sin(y0, y1, 1), negated kernel cos, kernel sin(y0, y1, 1).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L294">hc/lib/tiles/libm.he:294</a>
+</article>
+<article class="sym" id="tan">
+<h3><a href="#tan">tan</a> <i>function</i></h3>
+<pre>tan(x real) real</pre>
+<p>Returns the tangent of x in radians; NaN for infinite input.</p>
+<p class="note">`tan(x)`: - If ix is at most 0x3fe921fb: return x when ix is below 0x3e400000, else kernel tan(x, 0.0, 0). - If ix is at least 0x7ff00000: return x - x. - Otherwise kernel tan(y0, y1, n &amp; 1) from rem_pio2.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L306">hc/lib/tiles/libm.he:306</a>
+</article>
+<h2 id="inverse-trigonometry">Inverse Trigonometry <span class="n">4</span></h2>
+<article class="sym" id="atan">
+<h3><a href="#atan">atan</a> <i>function</i></h3>
+<pre>atan(x0 real) real</pre>
+<p>Returns the arctangent of x in radians, in the range -pi/2 to pi/2.</p>
+<p class="note">`atan(x)`: ATANHI = 4.63647609000806093515e-01, 7.85398163397448278999e-01, 9.82793723247329054082e-01, 1.57079632679489655800e+00. ATANLO = 2.26987774529616870924e-17, 3.06161699786838301793e-17, 1.39033110312309984516e-17, 6.12323399573676603587e-17. AT has 11 values: 3.33333333333329318027e-01, -1.99999999998764832476e-01, 1.42857142725034663711e-01, -1.11111104054623557880e-01, 9.0908871334365</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L317">hc/lib/tiles/libm.he:317</a>
+</article>
+<article class="sym" id="atan2">
+<h3><a href="#atan2">atan2</a> <i>function</i></h3>
+<pre>atan2(y real, x real) real</pre>
+<p>Returns the angle in radians of the point (x, y), using both signs to pick the quadrant.</p>
+<p class="note">`atan2(y, x)`: PI = 3.1415926535897931160E+00, PI_LO = 1.2246467991473531772E-16. If either argument is NaN, return x + y. Let hx, lx, hy, ly be the words of x and y. If x is exactly 1.0 (high word 0x3ff00000, low word 0), return atan(y). m = (bit 31 of hy) + 2*(bit 31 of hx). Then clear bit 31 of both high words. If y is ±0: m 0 or 1 gives y, m 2 gives PI, m 3 gives -PI. If x is ±0: return -PI/</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L352">hc/lib/tiles/libm.he:352</a>
+</article>
+<article class="sym" id="asin">
+<h3><a href="#asin">asin</a> <i>function</i></h3>
+<pre>asin(x real) real</pre>
+<p>Returns the arcsine of x in radians; NaN when the magnitude of x exceeds 1.</p>
+<p class="note">`asin(x)`: - If ix is at least 0x3ff00000: return x*PIO2_HI + 2^-120 when x is exactly ±1, else 0.0/(x - x). - If ix is below 0x3fe00000: return x when ix is from 0x00100000 up to below 0x3e500000; otherwise return x + x*R(x*x). Subnormals take this formula. - Otherwise: z = (1.0 - fabs(x))*0.5, s = sqrt(z), r = R(z). - If ix is at least 0x3fef3333: v = PIO2_HI - (2.0*(s + s*r) - PIO2_LO). - Othe</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L403">hc/lib/tiles/libm.he:403</a>
+</article>
+<article class="sym" id="acos">
+<h3><a href="#acos">acos</a> <i>function</i></h3>
+<pre>acos(x real) real</pre>
+<p>Returns the arccosine of x in radians; NaN when the magnitude of x exceeds 1.</p>
+<p class="note">`acos(x)`: - If ix is at least 0x3ff00000: when x is exactly ±1, return 2.0*PIO2_HI + 2^-120 for negative x and 0.0 for positive x; otherwise return 0.0/(x - x). - If ix is below 0x3fe00000: return PIO2_HI + 2^-120 when ix is at most 0x3c600000, else PIO2_HI - (x - (PIO2_LO - x*R(x*x))). - If x is negative: z = (1.0 + x)*0.5, s = sqrt(z), w = R(z)*s - PIO2_LO, and the result is 2.0*(PIO2_HI - (s </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L423">hc/lib/tiles/libm.he:423</a>
+</article>
+<h2 id="hypotenuse">Hypotenuse <span class="n">1</span></h2>
+<article class="sym" id="hypot">
+<h3><a href="#hypot">hypot</a> <i>function</i></h3>
+<pre>hypot(x real, y real) real</pre>
+<p>Returns the square root of x squared plus y squared without intermediate overflow, correctly rounded.</p>
+<p class="note">`hypot(x, y)`: A fused multiply-add fast path for the correctly rounded result, used only when rt_simd256() is true. rt_simd256() and rt_fma(a, b, c) are runtime prelude functions (lib/rt.he) that every module already sees: call them directly and never declare or define them. Let ea and eb be the exponent fields of x's and y's bit patterns ((bits &gt;&gt; 52) &amp; 0x7ff). When ea and eb are both from 0x3ff</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L447">hc/lib/tiles/libm.he:447</a>
+</article>
+<h2 id="exponentiation">Exponentiation <span class="n">1</span></h2>
+<article class="sym" id="pow">
+<h3><a href="#pow">pow</a> <i>function</i></h3>
+<pre>pow(x real, y real) real</pre>
+<p>Returns x raised to the power y, handling special cases such as NaN, infinities, zero, and negative bases.</p>
+<p class="note">`pow(x, y)`, constants: - BP = 1.0, 1.5; DP_H = 0.0, 5.84962487220764160156e-01; DP_L = 0.0, 1.35003920212974897128e-08. - TWO53 = 9007199254740992.0, HUGE = 1.0e300, TINY = 1.0e-300. - L1 = 5.99999999999994648725e-01, L2 = 4.28571428578550184252e-01, L3 = 3.33333329818377432918e-01, L4 = 2.72728123808534006489e-01, L5 = 2.30660745775561754067e-01, L6 = 2.06975017800338417784e-01. - P1 = 1.6666666</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L644">hc/lib/tiles/libm.he:644</a>
+</article>
+<h2 id="logarithms">Logarithms <span class="n">2</span></h2>
+<article class="sym" id="log2">
+<h3><a href="#log2">log2</a> <i>function</i></h3>
+<pre>log2(x real) real</pre>
+<p>Returns the base-2 logarithm of x, handling zero, negative, infinite, and NaN inputs.</p>
+<p class="note">`log2(x real) real`: val_hi = hi*IVLN2HI, val_lo = (lo+hi)*IVLN2LO + lo*IVLN2HI, y = k as a real, w = y + val_hi, val_lo increases by (y-w) + val_hi, and the result is val_lo + w.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L839">hc/lib/tiles/libm.he:839</a>
+</article>
+<article class="sym" id="log10">
+<h3><a href="#log10">log10</a> <i>function</i></h3>
+<pre>log10(x real) real</pre>
+<p>Returns the base-10 logarithm of x, handling zero, negative, infinite, and NaN inputs.</p>
+<p class="note">`log10(x real) real`: val_hi = hi*IVLN10HI, dk = k as a real, y = dk*LOG10_2HI, val_lo = dk*LOG10_2LO + (lo+hi)*IVLN10LO + lo*IVLN10HI, w = y + val_hi, val_lo increases by (y-w) + val_hi, and the result is val_lo + w.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L848">hc/lib/tiles/libm.he:848</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (113)</summary>
+<article class="sym" id="TWO24">
+<h3><a href="#TWO24">TWO24</a> <i>constant</i></h3>
+<pre>TWO24 := 16777216.0</pre>
+<p>Constant 2^24 as a real, used to split values into 24-bit chunks.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L5">hc/lib/tiles/libm.he:5</a>
+</article>
+<article class="sym" id="TWOM24">
+<h3><a href="#TWOM24">TWOM24</a> <i>constant</i></h3>
+<pre>TWOM24 := 5.9604644775390625e-8</pre>
+<p>Constant 2^-24 as a real, used to split values into 24-bit chunks.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L6">hc/lib/tiles/libm.he:6</a>
+</article>
+<article class="sym" id="pow2">
+<h3><a href="#pow2">pow2</a> <i>function</i></h3>
+<pre>pow2(e int) real</pre>
+<p>Returns 2 raised to the integer power e by building the exponent bits directly.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L7">hc/lib/tiles/libm.he:7</a>
+</article>
+<article class="sym" id="TWOM120">
+<h3><a href="#TWOM120">TWOM120</a> <i>constant</i></h3>
+<pre>TWOM120 := pow2(-120)</pre>
+<p>Constant 2^-120, a tiny value used to raise the inexact flag in edge-case results.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L8">hc/lib/tiles/libm.he:8</a>
+</article>
+<article class="sym" id="hw">
+<h3><a href="#hw">hw</a> <i>function</i></h3>
+<pre>hw(x real) int</pre>
+<p>Returns the high 32 bits of a real's IEEE 754 representation as an int.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L9">hc/lib/tiles/libm.he:9</a>
+</article>
+<article class="sym" id="lw">
+<h3><a href="#lw">lw</a> <i>function</i></h3>
+<pre>lw(x real) int</pre>
+<p>Returns the low 32 bits of a real's IEEE 754 representation as an int.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L10">hc/lib/tiles/libm.he:10</a>
+</article>
+<article class="sym" id="hs">
+<h3><a href="#hs">hs</a> <i>function</i></h3>
+<pre>hs(x real) int</pre>
+<p>Returns the high 32 bits of a real as a signed 32-bit value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L11">hc/lib/tiles/libm.he:11</a>
+</article>
+<article class="sym" id="neg_bit">
+<h3><a href="#neg_bit">neg_bit</a> <i>function</i></h3>
+<pre>neg_bit(x real) bool</pre>
+<p>Returns whether the sign bit of a real is set, including for negative zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L12">hc/lib/tiles/libm.he:12</a>
+</article>
+<article class="sym" id="mk">
+<h3><a href="#mk">mk</a> <i>function</i></h3>
+<pre>mk(h int, l int) real</pre>
+<p>Builds a real from separate high and low 32-bit words.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L13">hc/lib/tiles/libm.he:13</a>
+</article>
+<article class="sym" id="with_hi">
+<h3><a href="#with_hi">with_hi</a> <i>function</i></h3>
+<pre>with_hi(x real, h int) real</pre>
+<p>Returns x with its high 32-bit word replaced by h.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L14">hc/lib/tiles/libm.he:14</a>
+</article>
+<article class="sym" id="with_lo0">
+<h3><a href="#with_lo0">with_lo0</a> <i>function</i></h3>
+<pre>with_lo0(x real) real</pre>
+<p>Returns x with its low 32-bit word cleared to zero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L15">hc/lib/tiles/libm.he:15</a>
+</article>
+<article class="sym" id="hi_only">
+<h3><a href="#hi_only">hi_only</a> <i>function</i></h3>
+<pre>hi_only(h int) real</pre>
+<p>Builds a real from a high word with a zero low word.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L16">hc/lib/tiles/libm.he:16</a>
+</article>
+<article class="sym" id="TWO1023">
+<h3><a href="#TWO1023">TWO1023</a> <i>constant</i></h3>
+<pre>TWO1023 := pow2(1023)</pre>
+<p>Constant 2^1023, used to scale values up in steps.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L17">hc/lib/tiles/libm.he:17</a>
+</article>
+<article class="sym" id="TWOM969">
+<h3><a href="#TWOM969">TWOM969</a> <i>constant</i></h3>
+<pre>TWOM969 := 2.2250738585072014e-308 * 9007199254740992.0</pre>
+<p>Constant 2^-969 computed as the smallest normal times 2^53, used to scale values down in steps.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L18">hc/lib/tiles/libm.he:18</a>
+</article>
+<article class="sym" id="rem_large">
+<h3><a href="#rem_large">rem_large</a> <i>function</i></h3>
+<pre>rem_large(xs const real[:], e0 int) int, real, real</pre>
+<p>Reduces a large-argument chunk array by pi/2, returning the quadrant (0-7) and a two-part remainder.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L41">hc/lib/tiles/libm.he:41</a>
+</article>
+<article class="sym" id="EPS">
+<h3><a href="#EPS">EPS</a> <i>constant</i></h3>
+<pre>EPS := 2.2204460492503131e-16</pre>
+<p>Constant machine epsilon for doubles, 2^-52.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L154">hc/lib/tiles/libm.he:154</a>
+</article>
+<article class="sym" id="TO_INT">
+<h3><a href="#TO_INT">TO_INT</a> <i>constant</i></h3>
+<pre>TO_INT := 1.5 / EPS</pre>
+<p>Constant magic number used to round a real to an integer through addition.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L155">hc/lib/tiles/libm.he:155</a>
+</article>
+<article class="sym" id="INV_PIO2">
+<h3><a href="#INV_PIO2">INV_PIO2</a> <i>constant</i></h3>
+<pre>INV_PIO2 := 6.36619772367581382433e-01</pre>
+<p>Constant 2/pi, used to estimate the multiple of pi/2.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L156">hc/lib/tiles/libm.he:156</a>
+</article>
+<article class="sym" id="PIO2_1">
+<h3><a href="#PIO2_1">PIO2_1</a> <i>constant</i></h3>
+<pre>PIO2_1 := 1.57079632673412561417e+00</pre>
+<p>Constant leading 33 bits of pi/2 for argument reduction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L157">hc/lib/tiles/libm.he:157</a>
+</article>
+<article class="sym" id="PIO2_1T">
+<h3><a href="#PIO2_1T">PIO2_1T</a> <i>constant</i></h3>
+<pre>PIO2_1T := 6.07710050650619224932e-11</pre>
+<p>Constant tail of pi/2 following the first 33-bit part.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L158">hc/lib/tiles/libm.he:158</a>
+</article>
+<article class="sym" id="PIO2_2">
+<h3><a href="#PIO2_2">PIO2_2</a> <i>constant</i></h3>
+<pre>PIO2_2 := 6.07710050630396597660e-11</pre>
+<p>Constant second 33-bit part of pi/2 for argument reduction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L159">hc/lib/tiles/libm.he:159</a>
+</article>
+<article class="sym" id="PIO2_2T">
+<h3><a href="#PIO2_2T">PIO2_2T</a> <i>constant</i></h3>
+<pre>PIO2_2T := 2.02226624879595063154e-21</pre>
+<p>Constant tail of pi/2 following the second 33-bit part.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L160">hc/lib/tiles/libm.he:160</a>
+</article>
+<article class="sym" id="PIO2_3">
+<h3><a href="#PIO2_3">PIO2_3</a> <i>constant</i></h3>
+<pre>PIO2_3 := 2.02226624871116645580e-21</pre>
+<p>Constant third 33-bit part of pi/2 for argument reduction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L161">hc/lib/tiles/libm.he:161</a>
+</article>
+<article class="sym" id="PIO2_3T">
+<h3><a href="#PIO2_3T">PIO2_3T</a> <i>constant</i></h3>
+<pre>PIO2_3T := 8.47842766036889956997e-32</pre>
+<p>Constant tail of pi/2 following the third 33-bit part.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L162">hc/lib/tiles/libm.he:162</a>
+</article>
+<article class="sym" id="rp_ey">
+<h3><a href="#rp_ey">rp_ey</a> <i>function</i></h3>
+<pre>rp_ey(y real) int</pre>
+<p>Returns the biased exponent field of a real.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L163">hc/lib/tiles/libm.he:163</a>
+</article>
+<article class="sym" id="rp_medium">
+<h3><a href="#rp_medium">rp_medium</a> <i>function</i></h3>
+<pre>rp_medium(x real, ix int) int, real, real</pre>
+<p>Reduces a medium-size argument by pi/2, returning the quadrant count and a two-part remainder.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L164">hc/lib/tiles/libm.he:164</a>
+</article>
+<article class="sym" id="rp_step">
+<h3><a href="#rp_step">rp_step</a> <i>function</i></h3>
+<pre>rp_step(x real, k int) int, real, real</pre>
+<p>Reduces an argument by k multiples of pi/2, returning the signed count and two-part remainder.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L186">hc/lib/tiles/libm.he:186</a>
+</article>
+<article class="sym" id="rem_pio2">
+<h3><a href="#rem_pio2">rem_pio2</a> <i>function</i></h3>
+<pre>rem_pio2(x real) int, real, real</pre>
+<p>Reduces x modulo pi/2, returning the quadrant count and a two-part remainder; NaN results for infinities.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L197">hc/lib/tiles/libm.he:197</a>
+</article>
+<article class="sym" id="S1">
+<h3><a href="#S1">S1</a> <i>constant</i></h3>
+<pre>S1 := -1.66666666666666324348e-01</pre>
+<p>Constant first sine polynomial coefficient, about -1/6.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L223">hc/lib/tiles/libm.he:223</a>
+</article>
+<article class="sym" id="S2">
+<h3><a href="#S2">S2</a> <i>constant</i></h3>
+<pre>S2 := 8.33333333332248946124e-03</pre>
+<p>Constant second sine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L224">hc/lib/tiles/libm.he:224</a>
+</article>
+<article class="sym" id="S3">
+<h3><a href="#S3">S3</a> <i>constant</i></h3>
+<pre>S3 := -1.98412698298579493134e-04</pre>
+<p>Constant third sine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L225">hc/lib/tiles/libm.he:225</a>
+</article>
+<article class="sym" id="S4">
+<h3><a href="#S4">S4</a> <i>constant</i></h3>
+<pre>S4 := 2.75573137070700676789e-06</pre>
+<p>Constant fourth sine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L226">hc/lib/tiles/libm.he:226</a>
+</article>
+<article class="sym" id="S5">
+<h3><a href="#S5">S5</a> <i>constant</i></h3>
+<pre>S5 := -2.50507602534068634195e-08</pre>
+<p>Constant fifth sine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L227">hc/lib/tiles/libm.he:227</a>
+</article>
+<article class="sym" id="S6">
+<h3><a href="#S6">S6</a> <i>constant</i></h3>
+<pre>S6 := 1.58969099521155010221e-10</pre>
+<p>Constant sixth sine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L228">hc/lib/tiles/libm.he:228</a>
+</article>
+<article class="sym" id="k_sin">
+<h3><a href="#k_sin">k_sin</a> <i>function</i></h3>
+<pre>k_sin(x real, y real, iy int) real</pre>
+<p>Computes sine on a reduced range of about pi/4, with a tail term used when iy is nonzero.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L229">hc/lib/tiles/libm.he:229</a>
+</article>
+<article class="sym" id="C1">
+<h3><a href="#C1">C1</a> <i>constant</i></h3>
+<pre>C1 := 4.16666666666666019037e-02</pre>
+<p>Constant first cosine polynomial coefficient, about 1/24.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L236">hc/lib/tiles/libm.he:236</a>
+</article>
+<article class="sym" id="C2">
+<h3><a href="#C2">C2</a> <i>constant</i></h3>
+<pre>C2 := -1.38888888888741095749e-03</pre>
+<p>Constant second cosine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L237">hc/lib/tiles/libm.he:237</a>
+</article>
+<article class="sym" id="C3">
+<h3><a href="#C3">C3</a> <i>constant</i></h3>
+<pre>C3 := 2.48015872894767294178e-05</pre>
+<p>Constant third cosine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L238">hc/lib/tiles/libm.he:238</a>
+</article>
+<article class="sym" id="C4">
+<h3><a href="#C4">C4</a> <i>constant</i></h3>
+<pre>C4 := -2.75573143513906633035e-07</pre>
+<p>Constant fourth cosine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L239">hc/lib/tiles/libm.he:239</a>
+</article>
+<article class="sym" id="C5">
+<h3><a href="#C5">C5</a> <i>constant</i></h3>
+<pre>C5 := 2.08757232129817482790e-09</pre>
+<p>Constant fifth cosine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L240">hc/lib/tiles/libm.he:240</a>
+</article>
+<article class="sym" id="C6">
+<h3><a href="#C6">C6</a> <i>constant</i></h3>
+<pre>C6 := -1.13596475577881948265e-11</pre>
+<p>Constant sixth cosine polynomial coefficient.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L241">hc/lib/tiles/libm.he:241</a>
+</article>
+<article class="sym" id="k_cos">
+<h3><a href="#k_cos">k_cos</a> <i>function</i></h3>
+<pre>k_cos(x real, y real) real</pre>
+<p>Computes cosine on a reduced range of about pi/4 using a two-part argument.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L242">hc/lib/tiles/libm.he:242</a>
+</article>
+<article class="sym" id="PIO4">
+<h3><a href="#PIO4">PIO4</a> <i>constant</i></h3>
+<pre>PIO4 := 7.85398163397448278999e-01</pre>
+<p>Constant pi/4 used by the tangent kernel.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L250">hc/lib/tiles/libm.he:250</a>
+</article>
+<article class="sym" id="PIO4_LO">
+<h3><a href="#PIO4_LO">PIO4_LO</a> <i>constant</i></h3>
+<pre>PIO4_LO := 3.06161699786838301793e-17</pre>
+<p>Constant low-order correction term for pi/4.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L251">hc/lib/tiles/libm.he:251</a>
+</article>
+<article class="sym" id="k_tan">
+<h3><a href="#k_tan">k_tan</a> <i>function</i></h3>
+<pre>k_tan(x0 real, y0 real, odd int) real</pre>
+<p>Computes tangent, or its negative reciprocal when odd is nonzero, on a reduced range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L252">hc/lib/tiles/libm.he:252</a>
+</article>
+<article class="sym" id="A2_PI">
+<h3><a href="#A2_PI">A2_PI</a> <i>constant</i></h3>
+<pre>A2_PI := 3.1415926535897931160E+00</pre>
+<p>Constant pi as a double used by atan2.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L350">hc/lib/tiles/libm.he:350</a>
+</article>
+<article class="sym" id="A2_PI_LO">
+<h3><a href="#A2_PI_LO">A2_PI_LO</a> <i>constant</i></h3>
+<pre>A2_PI_LO := 1.2246467991473531772E-16</pre>
+<p>Constant low-order correction term for pi used by atan2.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L351">hc/lib/tiles/libm.he:351</a>
+</article>
+<article class="sym" id="PIO2_HI">
+<h3><a href="#PIO2_HI">PIO2_HI</a> <i>constant</i></h3>
+<pre>PIO2_HI := 1.57079632679489655800e+00</pre>
+<p>Constant high part of pi/2 used by asin and acos.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L387">hc/lib/tiles/libm.he:387</a>
+</article>
+<article class="sym" id="PIO2_LO">
+<h3><a href="#PIO2_LO">PIO2_LO</a> <i>constant</i></h3>
+<pre>PIO2_LO := 6.12323399573676603587e-17</pre>
+<p>Constant low-order correction term for pi/2.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L388">hc/lib/tiles/libm.he:388</a>
+</article>
+<article class="sym" id="PS0">
+<h3><a href="#PS0">PS0</a> <i>constant</i></h3>
+<pre>PS0 := 1.66666666666666657415e-01</pre>
+<p>Constant numerator coefficient 0 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L389">hc/lib/tiles/libm.he:389</a>
+</article>
+<article class="sym" id="PS1">
+<h3><a href="#PS1">PS1</a> <i>constant</i></h3>
+<pre>PS1 := -3.25565818622400915405e-01</pre>
+<p>Constant numerator coefficient 1 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L390">hc/lib/tiles/libm.he:390</a>
+</article>
+<article class="sym" id="PS2">
+<h3><a href="#PS2">PS2</a> <i>constant</i></h3>
+<pre>PS2 := 2.01212532134862925881e-01</pre>
+<p>Constant numerator coefficient 2 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L391">hc/lib/tiles/libm.he:391</a>
+</article>
+<article class="sym" id="PS3">
+<h3><a href="#PS3">PS3</a> <i>constant</i></h3>
+<pre>PS3 := -4.00555345006794114027e-02</pre>
+<p>Constant numerator coefficient 3 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L392">hc/lib/tiles/libm.he:392</a>
+</article>
+<article class="sym" id="PS4">
+<h3><a href="#PS4">PS4</a> <i>constant</i></h3>
+<pre>PS4 := 7.91534994289814532176e-04</pre>
+<p>Constant numerator coefficient 4 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L393">hc/lib/tiles/libm.he:393</a>
+</article>
+<article class="sym" id="PS5">
+<h3><a href="#PS5">PS5</a> <i>constant</i></h3>
+<pre>PS5 := 3.47933107596021167570e-05</pre>
+<p>Constant numerator coefficient 5 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L394">hc/lib/tiles/libm.he:394</a>
+</article>
+<article class="sym" id="QS1">
+<h3><a href="#QS1">QS1</a> <i>constant</i></h3>
+<pre>QS1 := -2.40339491173441421878e+00</pre>
+<p>Constant denominator coefficient 1 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L395">hc/lib/tiles/libm.he:395</a>
+</article>
+<article class="sym" id="QS2">
+<h3><a href="#QS2">QS2</a> <i>constant</i></h3>
+<pre>QS2 := 2.02094576023350569471e+00</pre>
+<p>Constant denominator coefficient 2 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L396">hc/lib/tiles/libm.he:396</a>
+</article>
+<article class="sym" id="QS3">
+<h3><a href="#QS3">QS3</a> <i>constant</i></h3>
+<pre>QS3 := -6.88283971605453293030e-01</pre>
+<p>Constant denominator coefficient 3 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L397">hc/lib/tiles/libm.he:397</a>
+</article>
+<article class="sym" id="QS4">
+<h3><a href="#QS4">QS4</a> <i>constant</i></h3>
+<pre>QS4 := 7.70381505559019352791e-02</pre>
+<p>Constant denominator coefficient 4 of the asin rational approximation.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L398">hc/lib/tiles/libm.he:398</a>
+</article>
+<article class="sym" id="ras_r">
+<h3><a href="#ras_r">ras_r</a> <i>function</i></h3>
+<pre>ras_r(z real) real</pre>
+<p>Evaluates the rational approximation shared by asin and acos at z.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L399">hc/lib/tiles/libm.he:399</a>
+</article>
+<article class="sym" id="HY_M96">
+<h3><a href="#HY_M96">HY_M96</a> <i>constant</i></h3>
+<pre>HY_M96 := pow2(-96)</pre>
+<p>Constant 2^-96, used as an error margin in the fast hypot check.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L444">hc/lib/tiles/libm.he:444</a>
+</article>
+<article class="sym" id="hy_up">
+<h3><a href="#hy_up">hy_up</a> <i>function</i></h3>
+<pre>hy_up(r real) real</pre>
+<p>Returns the gap from r to the next larger double.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L445">hc/lib/tiles/libm.he:445</a>
+</article>
+<article class="sym" id="hy_dn">
+<h3><a href="#hy_dn">hy_dn</a> <i>function</i></h3>
+<pre>hy_dn(r real) real</pre>
+<p>Returns the gap from r to the next smaller double.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L446">hc/lib/tiles/libm.he:446</a>
+</article>
+<article class="sym" id="HC_M49">
+<h3><a href="#HC_M49">HC_M49</a> <i>constant</i></h3>
+<pre>HC_M49 := pow2(-49)</pre>
+<p>Constant 2^-49, a relative error threshold in the exact hypot fallback.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L473">hc/lib/tiles/libm.he:473</a>
+</article>
+<article class="sym" id="HC_M99">
+<h3><a href="#HC_M99">HC_M99</a> <i>constant</i></h3>
+<pre>HC_M99 := pow2(-99)</pre>
+<p>Constant 2^-99, a relative threshold for accepting a computed sign.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L474">hc/lib/tiles/libm.he:474</a>
+</article>
+<article class="sym" id="HC_M900">
+<h3><a href="#HC_M900">HC_M900</a> <i>constant</i></h3>
+<pre>HC_M900 := pow2(-900)</pre>
+<p>Constant 2^-900, a minimum magnitude for trusting error sums.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L475">hc/lib/tiles/libm.he:475</a>
+</article>
+<article class="sym" id="HC_M1022">
+<h3><a href="#HC_M1022">HC_M1022</a> <i>constant</i></h3>
+<pre>HC_M1022 := pow2(-1022)</pre>
+<p>Constant 2^-1022, the smallest normal double, used to detect subnormal results.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L476">hc/lib/tiles/libm.he:476</a>
+</article>
+<article class="sym" id="HC_M374">
+<h3><a href="#HC_M374">HC_M374</a> <i>constant</i></h3>
+<pre>HC_M374 := pow2(-374)</pre>
+<p>Constant 2^-374, used as the rounding step for subnormal results.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L477">hc/lib/tiles/libm.he:477</a>
+</article>
+<article class="sym" id="HC_P700">
+<h3><a href="#HC_P700">HC_P700</a> <i>constant</i></h3>
+<pre>HC_P700 := pow2(700)</pre>
+<p>Constant 2^700, a scale factor for tiny inputs.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L478">hc/lib/tiles/libm.he:478</a>
+</article>
+<article class="sym" id="HC_M700">
+<h3><a href="#HC_M700">HC_M700</a> <i>constant</i></h3>
+<pre>HC_M700 := pow2(-700)</pre>
+<p>Constant 2^-700, a scale factor for huge inputs.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L479">hc/lib/tiles/libm.he:479</a>
+</article>
+<article class="sym" id="hy_sq">
+<h3><a href="#hy_sq">hy_sq</a> <i>function</i></h3>
+<pre>hy_sq(v real) real, real</pre>
+<p>Squares v exactly, returning the high and low parts of the product.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L480">hc/lib/tiles/libm.he:480</a>
+</article>
+<article class="sym" id="exact_sign">
+<h3><a href="#exact_sign">exact_sign</a> <i>function</i></h3>
+<pre>exact_sign(terms const real[:]) int</pre>
+<p>Returns the exact sign (-1, 0 or 1) of the sum of the given terms.</p>
+<p class="note">`hypot_cr(x, y)`: Clear the sign bits of both bit patterns and swap so x's is the larger. ex and ey are those patterns shifted right 52, and x and y are rebuilt from the patterns. - If ey is 0x7ff, return y. - If ex is 0x7ff or y's pattern is 0, return x. - If ex - ey is above 64, return x + y. Set z = 1.0. If ex is above 0x3ff+510: z = 2^700 and x and y are multiplied by 2^-700. Else if ey is bel</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L487">hc/lib/tiles/libm.he:487</a>
+</article>
+<article class="sym" id="fs_add">
+<h3><a href="#fs_add">fs_add</a> <i>function</i></h3>
+<pre>fs_add(st real[:], t real)</pre>
+<p>Adds t to a running sum state, accumulating rounding error and absolute magnitude.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L505">hc/lib/tiles/libm.he:505</a>
+</article>
+<article class="sym" id="fs_end">
+<h3><a href="#fs_end">fs_end</a> <i>function</i></h3>
+<pre>fs_end(s real, c real, a real, t7 real, t8 real) int</pre>
+<p>Finishes a running sum with two more terms, returning its sign or 2 when undecided.</p>
+<p class="note">`hypot_cr(x, y)`: Clear the sign bits of both bit patterns and swap so x's is the larger. ex and ey are those patterns shifted right 52, and x and y are rebuilt from the patterns. - If ey is 0x7ff, return y. - If ex is 0x7ff or y's pattern is 0, return x. - If ex - ey is above 64, return x + y. Set z = 1.0. If ex is above 0x3ff+510: z = 2^700 and x and y are multiplied by 2^-700. Else if ey is bel</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L513">hc/lib/tiles/libm.he:513</a>
+</article>
+<article class="sym" id="hypot_cr">
+<h3><a href="#hypot_cr">hypot_cr</a> <i>function</i></h3>
+<pre>hypot_cr(x0 real, y0 real) real</pre>
+<p>Computes a correctly rounded hypotenuse of x0 and y0, handling infinities, scaling and subnormals.</p>
+<p class="note">`hypot_cr(x, y)`: Clear the sign bits of both bit patterns and swap so x's is the larger. ex and ey are those patterns shifted right 52, and x and y are rebuilt from the patterns. - If ey is 0x7ff, return y. - If ex is 0x7ff or y's pattern is 0, return x. - If ex - ey is above 64, return x + y. Set z = 1.0. If ex is above 0x3ff+510: z = 2^700 and x and y are multiplied by 2^-700. Else if ey is bel</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L522">hc/lib/tiles/libm.he:522</a>
+</article>
+<article class="sym" id="TWO53">
+<h3><a href="#TWO53">TWO53</a> <i>constant</i></h3>
+<pre>TWO53 := 9007199254740992.0</pre>
+<p>Constant 2^53 as a real, used by the power function.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L620">hc/lib/tiles/libm.he:620</a>
+</article>
+<article class="sym" id="HUGE">
+<h3><a href="#HUGE">HUGE</a> <i>constant</i></h3>
+<pre>HUGE := 1.0e300</pre>
+<p>Constant 1e300, used to force overflow in the power function.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L621">hc/lib/tiles/libm.he:621</a>
+</article>
+<article class="sym" id="TINY">
+<h3><a href="#TINY">TINY</a> <i>constant</i></h3>
+<pre>TINY := 1.0e-300</pre>
+<p>Constant 1e-300, used to force underflow in the power function.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L622">hc/lib/tiles/libm.he:622</a>
+</article>
+<article class="sym" id="L1">
+<h3><a href="#L1">L1</a> <i>constant</i></h3>
+<pre>L1 := 5.99999999999994648725e-01</pre>
+<p>Constant first coefficient of the logarithm polynomial used by pow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L623">hc/lib/tiles/libm.he:623</a>
+</article>
+<article class="sym" id="L2">
+<h3><a href="#L2">L2</a> <i>constant</i></h3>
+<pre>L2 := 4.28571428578550184252e-01</pre>
+<p>Constant second coefficient of the logarithm polynomial used by pow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L624">hc/lib/tiles/libm.he:624</a>
+</article>
+<article class="sym" id="L3">
+<h3><a href="#L3">L3</a> <i>constant</i></h3>
+<pre>L3 := 3.33333329818377432918e-01</pre>
+<p>Constant third coefficient of the logarithm polynomial used by pow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L625">hc/lib/tiles/libm.he:625</a>
+</article>
+<article class="sym" id="L4">
+<h3><a href="#L4">L4</a> <i>constant</i></h3>
+<pre>L4 := 2.72728123808534006489e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L626">hc/lib/tiles/libm.he:626</a>
+</article>
+<article class="sym" id="L5">
+<h3><a href="#L5">L5</a> <i>constant</i></h3>
+<pre>L5 := 2.30660745775561754067e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L627">hc/lib/tiles/libm.he:627</a>
+</article>
+<article class="sym" id="L6">
+<h3><a href="#L6">L6</a> <i>constant</i></h3>
+<pre>L6 := 2.06975017800338417784e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L628">hc/lib/tiles/libm.he:628</a>
+</article>
+<article class="sym" id="P1">
+<h3><a href="#P1">P1</a> <i>constant</i></h3>
+<pre>P1 := 1.66666666666666019037e-01</pre>
+<p>Polynomial coefficient used internally by pow when computing the exponential of the reduced result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L629">hc/lib/tiles/libm.he:629</a>
+</article>
+<article class="sym" id="P2">
+<h3><a href="#P2">P2</a> <i>constant</i></h3>
+<pre>P2 := -2.77777777770155933842e-03</pre>
+<p>Polynomial coefficient used internally by pow when computing the exponential of the reduced result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L630">hc/lib/tiles/libm.he:630</a>
+</article>
+<article class="sym" id="P3">
+<h3><a href="#P3">P3</a> <i>constant</i></h3>
+<pre>P3 := 6.61375632143793436117e-05</pre>
+<p>Polynomial coefficient used internally by pow when computing the exponential of the reduced result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L631">hc/lib/tiles/libm.he:631</a>
+</article>
+<article class="sym" id="P4">
+<h3><a href="#P4">P4</a> <i>constant</i></h3>
+<pre>P4 := -1.65339022054652515390e-06</pre>
+<p>Polynomial coefficient used internally by pow when computing the exponential of the reduced result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L632">hc/lib/tiles/libm.he:632</a>
+</article>
+<article class="sym" id="P5">
+<h3><a href="#P5">P5</a> <i>constant</i></h3>
+<pre>P5 := 4.13813679705723846039e-08</pre>
+<p>Polynomial coefficient used internally by pow when computing the exponential of the reduced result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L633">hc/lib/tiles/libm.he:633</a>
+</article>
+<article class="sym" id="PW_LG2">
+<h3><a href="#PW_LG2">PW_LG2</a> <i>constant</i></h3>
+<pre>PW_LG2 := 6.93147180559945286227e-01</pre>
+<p>Constant equal to the natural logarithm of 2, used internally by pow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L634">hc/lib/tiles/libm.he:634</a>
+</article>
+<article class="sym" id="PW_LG2_H">
+<h3><a href="#PW_LG2_H">PW_LG2_H</a> <i>constant</i></h3>
+<pre>PW_LG2_H := 6.93147182464599609375e-01</pre>
+<p>Constant holding the high-order part of ln 2, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L635">hc/lib/tiles/libm.he:635</a>
+</article>
+<article class="sym" id="PW_LG2_L">
+<h3><a href="#PW_LG2_L">PW_LG2_L</a> <i>constant</i></h3>
+<pre>PW_LG2_L := -1.90465429995776804525e-09</pre>
+<p>Constant holding the low-order correction of ln 2, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L636">hc/lib/tiles/libm.he:636</a>
+</article>
+<article class="sym" id="OVT">
+<h3><a href="#OVT">OVT</a> <i>constant</i></h3>
+<pre>OVT := 8.0085662595372944372e-17</pre>
+<p>Overflow threshold constant used internally by pow to detect results that exceed the largest finite value.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L637">hc/lib/tiles/libm.he:637</a>
+</article>
+<article class="sym" id="CP">
+<h3><a href="#CP">CP</a> <i>constant</i></h3>
+<pre>CP := 9.61796693925975554329e-01</pre>
+<p>Constant used internally by pow in the log2 computation of the base.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L638">hc/lib/tiles/libm.he:638</a>
+</article>
+<article class="sym" id="CP_H">
+<h3><a href="#CP_H">CP_H</a> <i>constant</i></h3>
+<pre>CP_H := 9.61796700954437255859e-01</pre>
+<p>Constant holding the high-order part of CP, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L639">hc/lib/tiles/libm.he:639</a>
+</article>
+<article class="sym" id="CP_L">
+<h3><a href="#CP_L">CP_L</a> <i>constant</i></h3>
+<pre>CP_L := -7.02846165095275826516e-09</pre>
+<p>Constant holding the low-order correction of CP, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L640">hc/lib/tiles/libm.he:640</a>
+</article>
+<article class="sym" id="IVLN2">
+<h3><a href="#IVLN2">IVLN2</a> <i>constant</i></h3>
+<pre>IVLN2 := 1.44269504088896338700e+00</pre>
+<p>Constant equal to 1/ln 2, used internally by pow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L641">hc/lib/tiles/libm.he:641</a>
+</article>
+<article class="sym" id="IVLN2_H">
+<h3><a href="#IVLN2_H">IVLN2_H</a> <i>constant</i></h3>
+<pre>IVLN2_H := 1.44269502162933349609e+00</pre>
+<p>Constant holding the high-order part of 1/ln 2, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L642">hc/lib/tiles/libm.he:642</a>
+</article>
+<article class="sym" id="IVLN2_L">
+<h3><a href="#IVLN2_L">IVLN2_L</a> <i>constant</i></h3>
+<pre>IVLN2_L := 1.92596299112661746887e-08</pre>
+<p>Constant holding the low-order correction of 1/ln 2, used internally by pow for extra precision.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L643">hc/lib/tiles/libm.he:643</a>
+</article>
+<article class="sym" id="IVLN2HI">
+<h3><a href="#IVLN2HI">IVLN2HI</a> <i>constant</i></h3>
+<pre>IVLN2HI := 1.44269504072144627571e+00</pre>
+<p>Constant holding the high-order part of 1/ln 2, used internally by log2 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L794">hc/lib/tiles/libm.he:794</a>
+</article>
+<article class="sym" id="IVLN2LO">
+<h3><a href="#IVLN2LO">IVLN2LO</a> <i>constant</i></h3>
+<pre>IVLN2LO := 1.67517131648865118353e-10</pre>
+<p>Constant holding the low-order correction of 1/ln 2, used internally by log2 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L795">hc/lib/tiles/libm.he:795</a>
+</article>
+<article class="sym" id="IVLN10HI">
+<h3><a href="#IVLN10HI">IVLN10HI</a> <i>constant</i></h3>
+<pre>IVLN10HI := 4.34294481878168880939e-01</pre>
+<p>Constant holding the high-order part of 1/ln 10, used internally by log10 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L796">hc/lib/tiles/libm.he:796</a>
+</article>
+<article class="sym" id="IVLN10LO">
+<h3><a href="#IVLN10LO">IVLN10LO</a> <i>constant</i></h3>
+<pre>IVLN10LO := 2.50829467116452752298e-11</pre>
+<p>Constant holding the low-order correction of 1/ln 10, used internally by log10 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L797">hc/lib/tiles/libm.he:797</a>
+</article>
+<article class="sym" id="LOG10_2HI">
+<h3><a href="#LOG10_2HI">LOG10_2HI</a> <i>constant</i></h3>
+<pre>LOG10_2HI := 3.01029995663611771306e-01</pre>
+<p>Constant holding the high-order part of log10 of 2, used internally by log10 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L798">hc/lib/tiles/libm.he:798</a>
+</article>
+<article class="sym" id="LOG10_2LO">
+<h3><a href="#LOG10_2LO">LOG10_2LO</a> <i>constant</i></h3>
+<pre>LOG10_2LO := 3.69423907715893078616e-13</pre>
+<p>Constant holding the low-order correction of log10 of 2, used internally by log10 for extra precision.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L799">hc/lib/tiles/libm.he:799</a>
+</article>
+<article class="sym" id="LG1">
+<h3><a href="#LG1">LG1</a> <i>constant</i></h3>
+<pre>LG1 := 6.666666666666735130e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L800">hc/lib/tiles/libm.he:800</a>
+</article>
+<article class="sym" id="LG2">
+<h3><a href="#LG2">LG2</a> <i>constant</i></h3>
+<pre>LG2 := 3.999999999940941908e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L801">hc/lib/tiles/libm.he:801</a>
+</article>
+<article class="sym" id="LG3">
+<h3><a href="#LG3">LG3</a> <i>constant</i></h3>
+<pre>LG3 := 2.857142874366239149e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L802">hc/lib/tiles/libm.he:802</a>
+</article>
+<article class="sym" id="LG4">
+<h3><a href="#LG4">LG4</a> <i>constant</i></h3>
+<pre>LG4 := 2.222219843214978396e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L803">hc/lib/tiles/libm.he:803</a>
+</article>
+<article class="sym" id="LG5">
+<h3><a href="#LG5">LG5</a> <i>constant</i></h3>
+<pre>LG5 := 1.818357216161805012e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L804">hc/lib/tiles/libm.he:804</a>
+</article>
+<article class="sym" id="LG6">
+<h3><a href="#LG6">LG6</a> <i>constant</i></h3>
+<pre>LG6 := 1.531383769920937332e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L805">hc/lib/tiles/libm.he:805</a>
+</article>
+<article class="sym" id="LG7">
+<h3><a href="#LG7">LG7</a> <i>constant</i></h3>
+<pre>LG7 := 1.479819860511658591e-01</pre>
+<p>Polynomial coefficient used internally by the logarithm kernel in lg_reduce.</p>
+<p class="note">Constants: `IVLN2HI` = 1.44269504072144627571e+00, `IVLN2LO` = 1.67517131648865118353e-10, `IVLN10HI` = 4.34294481878168880939e-01, `IVLN10LO` = 2.50829467116452752298e-11, `LOG10_2HI` = 3.01029995663611771306e-01, `LOG10_2LO` = 3.69423907715893078616e-13, `LG1` = 6.666666666666735130e-01, `LG2` = 3.999999999940941908e-01, `LG3` = 2.857142874366239149e-01, `LG4` = 2.222219843214978396e-01, `LG5` =</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L806">hc/lib/tiles/libm.he:806</a>
+</article>
+<article class="sym" id="lg_reduce">
+<h3><a href="#lg_reduce">lg_reduce</a> <i>function</i></h3>
+<pre>lg_reduce(x0 real) bool, real, real, real, int</pre>
+<p>Reduces x to a high and low part plus exponent for log2 and log10, flagging special cases with an early result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/d9c8393854c5125549d36acd7db4457d07e6c54a/hc/lib/tiles/libm.he#L807">hc/lib/tiles/libm.he:807</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a><ul>
+<li><a href="/api-library/helium/lib/std">std</a></li>
+<li><a href="/api-library/helium/lib/math">math</a></li>
+<li><a href="/api-library/helium/lib/vec">vec</a></li>
+<li><a href="/api-library/helium/lib/dictionary">dictionary</a></li>
+<li><a href="/api-library/helium/lib/exception">exception</a></li>
+<li><a href="/api-library/helium/lib/libm">libm</a></li>
+<li><a href="/api-library/helium/lib/tiles-libm" class="on">tiles/libm</a><ul class="lib-sub">
+<li><a href="#scaling">Scaling</a></li>
+<li><a href="#trigonometry">Trigonometry</a></li>
+<li><a href="#inverse-trigonometry">Inverse Trigonometry</a></li>
+<li><a href="#hypotenuse">Hypotenuse</a></li>
+<li><a href="#exponentiation">Exponentiation</a></li>
+<li><a href="#logarithms">Logarithms</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1897</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-14">2026-11-14</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
