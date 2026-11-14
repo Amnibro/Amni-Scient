@@ -1,0 +1,35 @@
+import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';import {asPro} from './pro_key.mjs';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),port=process.env.PORT||'18817',P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),ud=fs.mkdtempSync(path.join(os.tmpdir(),'home-ai-')),sleep=t=>new Promise(r=>setTimeout(r,t));
+const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
+const HOST='https://cad-ai.example.test',LOGIN=HOST+'/.amni-gate/login?next=%2F.amni-gate%2Fdone';
+const STUB=(HOST,LOGIN)=>{const F=window.fetch.bind(window),J=(o,s=200)=>new Response(JSON.stringify(o),{status:s,headers:{'content-type':'application/json'}});window.__calls=[];window.__signed=false;window.__mode='ok';window.__opened=[];
+  window.open=(u)=>{window.__opened.push(String(u));return null;};
+  window.fetch=(u,o={})=>{const s=String(u&&u.url||u);if(!s.startsWith(HOST)&&!/localhost:11434|localhost:1234/.test(s))return F(u,o);if(/localhost/.test(s))return Promise.reject(new TypeError('Failed to fetch'));window.__calls.push({s,cred:o.credentials||''});
+    if(window.__mode==='down')return Promise.reject(new TypeError('Failed to fetch'));
+    if(!window.__signed)return Promise.resolve(J({error:'Sign in required',login:LOGIN},401));
+    if(/\/models$/.test(s))return Promise.resolve(J({data:[{id:'bonsai-27b'}]}));
+    if(/\/chat\/completions$/.test(s))return Promise.resolve(new Response(window.__mode==='err'?'   {"error":{"code":503,"message":"Amni-CAD AI is not running."}}':'    '+JSON.stringify({choices:[{message:{role:'assistant',content:JSON.stringify({say:'Made it on your PC.',actions:[]})}}]}),{status:200,headers:{'content-type':'application/json'}}));
+    return Promise.resolve(J({error:'nope'},404));};};
+try{
+  b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:300000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+  const p=await b.newPage();await asPro(p);const errs=[];p.on('pageerror',e=>errs.push(String(e.message)));await p.setViewport({width:1440,height:900});await p.evaluateOnNewDocument(STUB,HOST,LOGIN);
+  const ev=(f,...a)=>p.evaluate(f,...a),txt=s=>ev(s=>{const e=document.querySelector(s);return e?e.textContent:null;},s),until=async(f,a,ms=15000)=>{const t=Date.now();while(Date.now()-t<ms){if(await p.evaluate(f,a))return true;await sleep(120);}return false;};
+  await p.goto(`http://127.0.0.1:${port}/404.html`);await ev((h)=>{localStorage.clear();localStorage.setItem('amnicad.ai',JSON.stringify({kind:'local',model:'',base:h+'/v1',lmodel:'',remember:true,cm:{},chosen:true}));},HOST);
+  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.assistant,{timeout:150000,polling:150});await sleep(1200);
+  await ev(()=>document.activeElement&&document.activeElement.blur());await p.keyboard.down('Control');await p.keyboard.press('KeyK');await p.keyboard.up('Control');await sleep(600);
+  ok(await until(()=>/Sign in to your AI server/.test((document.querySelector('#tab-ai .as-err')||{}).textContent||''),null,20000),'a server behind a sign-in page asks you to sign in instead of blaming a key',await txt('#tab-ai .as-err'));
+  ok(await ev(()=>/cad-ai\.example\.test needs you to sign in/.test(document.querySelector('#tab-ai .as-err').textContent)),'the message names the server');
+  ok(await ev(()=>window.__calls.length>0&&window.__calls.every(c=>c.cred==='include')),'requests to an https server send its sign-in cookie',await ev(()=>window.__calls.map(c=>c.cred)));
+  await ev(()=>[...document.querySelectorAll('#tab-ai .as-err button')].find(x=>x.textContent==='Sign in').click());await sleep(700);
+  ok(await ev((L)=>window.__opened[0]===L,LOGIN),'Sign in opens the server sign-in page',await ev(()=>window.__opened));
+  await ev(()=>{window.__signed=true;window.dispatchEvent(new Event('focus'));});
+  ok(await until(()=>/bonsai-27b/.test(document.querySelector('#ai-chip').textContent)&&!!document.querySelector('#ai-in').offsetParent,null,15000),'coming back to the tab connects without another tap',await txt('#ai-chip'));
+  await ev(()=>window.amnicad.API.assistant.send({text:'make a cube'}));
+  ok(await until(()=>/Made it on your PC/.test(document.querySelector('#tab-ai').textContent),null,20000),'a reply padded with keep-alive spaces is read normally');
+  await ev(()=>{window.__mode='err';});await ev(()=>window.amnicad.API.assistant.send({text:'make a sphere'}));
+  ok(await until(()=>/Amni-CAD AI is not running/.test(document.querySelector('#tab-ai').textContent),null,20000),'a server error sent after the keep-alive shows as an error, not an empty reply');
+  await ev(()=>{window.__mode='down';window.amnicad.API.assistant.connect&&0;});await ev(()=>window.amnicad.API.assistant.send({text:'make a cone'}));
+  ok(await until(()=>/Cannot reach your AI server/.test(document.querySelector('#tab-ai').textContent),null,20000),'an unreachable https server says to check that computer, not Ollama',await ev(()=>[...document.querySelectorAll('#tab-ai .as-err b')].map(x=>x.textContent).join(' | ')));
+  ok(!errs.length,'no page errors',errs.slice(0,3));
+}catch(e){fail++;console.log('FAIL crashed '+(e.stack||e));}finally{b&&await b.close().catch(()=>{});srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
+console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);
