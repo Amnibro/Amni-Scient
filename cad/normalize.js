@@ -23,6 +23,7 @@ export function normFeature(a,type,cur={}){
   const known=[...T.f.map(x=>x[0]),...FKEEP,...(XTRA[type]||[])];
   for(const[x,y]of ALI)if(f[x]!==undefined&&known.includes(y)){f[y]===undefined&&(f[y]=f[x]);delete f[x];}
   type==='box'&&f.depth!==undefined&&(f.d===undefined&&(f.d=f.depth),delete f.depth);
+  if(type==='tube'&&(typeof f.id==='number'||typeof f.id==='string'&&/^-?\d*\.?\d+(e[+-]?\d+)?$/i.test(f.id.trim()))){f.di===undefined&&(f.di=+f.id);delete f.id;}
   const pl=PLN[f.plane||cur.plane||'XY'];
   if(pl&&known.includes('offset')&&!known.includes(pl[0])&&f[pl[0]]!==undefined){f.offset===undefined&&(f.offset=typeof f[pl[0]]==='number'?f[pl[0]]*pl[1]:pl[1]<0?'-('+f[pl[0]]+')':f[pl[0]]);delete f[pl[0]];}
   delete f.closed;
