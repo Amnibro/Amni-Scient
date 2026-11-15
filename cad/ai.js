@@ -131,8 +131,10 @@ export class Assistant{
     if(kind==='browser'){
       if(this.engine&&this.engine.unload)try{await this.engine.unload();}catch{}
       const m=await import('/lib/amni-llm/amni-llm.js');
+      const pc=isCadModel(cfg.model)?await m.pickCad(cfg.model):{id:cfg.model};cfg.model=pc.id;
       this.engine=await m.createEngine(cfg.model||'Qwen3.5-4B-Q4_K_M',{base:POL.llm_base,onProgress:p=>this.onStatus('Downloading model '+(p.pct??'')+'%',p.pct),onStatus:(s,msg)=>this.onStatus(msg||s)});
       const info=this.engine.getModelInfo&&this.engine.getModelInfo();this.label=(info&&info.name||cfg.model)+' · '+(info&&info.gpu?'GPU':'CPU');
+      isCadModel(cfg.model)&&(pc.update?this.pull(m,pc.update):m.purgeCad(cfg.model).catch(()=>{}));
     }else if(CLOUD[kind]){
       const C=CLOUD[kind];if(!cfg.key)throw Object.assign(new Error('paste an API key first'+(kind==='openrouter'?' or sign in with OpenRouter':'')),{status:401});this.cfg.base=C.base;
       const hd=this.cloudHeaders(kind,cfg.key),url=kind==='gemini'?C.base+'/models?pageSize=200':C.base+'/models'+(kind==='anthropic'?'?limit=100':'');
@@ -158,6 +160,7 @@ export class Assistant{
     }else throw new Error('unknown engine');
     this.kind=kind;this.trained=kind==='browser'&&isCadModel(cfg.model);this.onStatus('Ready · '+this.label);return this.label;
   }
+  async pull(m,id){const nc=globalThis.navigator&&navigator.connection||{};if(this.pulling||nc.saveData||nc.type==='cellular')return false;this.pulling=id;try{await m.pullModel(id);this.onUpdate&&this.onUpdate(id);return true;}catch{return false;}finally{this.pulling=null;}}
   cloudHeaders(kind,key){const h={'Content-Type':'application/json'};if(kind==='anthropic'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';}else if(kind==='gemini')h['x-goog-api-key']=key;else{h.Authorization='Bearer '+key;if(kind==='openrouter'){h['HTTP-Referer']='https://amni-scient.com/cad/';h['X-Title']='Amni-CAD';}}return h;}
   hdr(){const h={'Content-Type':'application/json'};if(this.cfg.key)h.Authorization='Bearer '+this.cfg.key;return h;}
   async complete(messages,o={}){
