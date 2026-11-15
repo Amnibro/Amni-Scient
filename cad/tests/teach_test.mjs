@@ -21,6 +21,9 @@ try{
   ok(await ev(()=>window.__rows.every(r=>r.request==='add box three')),'replies from before you turned it on are not sent',await ev(()=>window.__rows.map(r=>r.request)));
   const r=await ev(()=>window.__rows.filter(r=>r.ev==='turn').pop());ok(r.v===1&&/^[0-9a-f-]{36}$/.test(r.id)&&r.request==='add box three'&&/Teach box/.test(r.reply)&&typeof r.before==='string'&&typeof r.after==='string'&&r.after.length>r.before.length&&r.kind==='local'&&typeof r.model==='string','the example has the request, the reply, the part before and after, and which AI answered',Object.keys(r));
   ok(!/key|token|email|name|user/i.test(Object.keys(r).join()),'no account fields in the example');
+  const sc=await ev(async()=>{const m=await import('/cad/assistant.js');return[m.scrub('mail jo.smith@example.com or call 555-123-4567, key sk-abcdefghijklmnopqrstuvwx, file /home/jo/parts/a.step, plate 120 x 80 x 10'),m.scrub('{"name":"C:\\\\Users\\\\jo\\\\bracket.step","w":5551234567,"by":"jo@example.com"}',1)];});
+  ok(sc[0]==='mail <EMAIL> or call <PHONE>, key <KEY>, file <PATH>, plate 120 x 80 x 10','emails, phone numbers, keys and file paths are removed from the request before it is shared',sc[0]);
+  ok(/<PATH>/.test(sc[1])&&/<EMAIL>/.test(sc[1])&&/5551234567/.test(sc[1])&&(()=>{try{JSON.parse(sc[1]);return true;}catch{return false;}})(),'the part keeps its numbers and stays valid after cleaning',sc[1]);
   await sleep(400);const n0=await ev(()=>window.__rows.length);await ev(()=>[...document.querySelectorAll('#tab-ai .as-fb button')].pop().click());await sleep(400);
   ok(await ev(id=>{const x=window.__rows[window.__rows.length-1];return x.ev==='rate'&&x.good===false&&x.id===id;},r.id)&&await ev(n=>window.__rows.length===n+1,n0),'a thumb sends a rating tied to that example');
   await ev(()=>[...document.querySelectorAll('#tab-ai .as-undo')].pop().click());await sleep(500);
