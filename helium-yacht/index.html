@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Helium Yacht — Live in Your Browser | AMNI-SCIENT</title>
+<meta name="description" content="Steer a yacht across a live ocean. Every pixel is drawn by the Helium engine running in your browser on WebGPU.">
+<link rel="canonical" href="https://amni-scient.com/helium-yacht/">
+<style>
+:root{--ink:#e8f4f7;--dim:rgba(232,244,247,.62);--glass:rgba(6,30,36,.62);--rim:rgba(255,255,255,.17);--mint:#7ff2c7}
+html,body{margin:0;height:100%;background:#04161b;color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:block;touch-action:none;outline:none}
+#top{position:fixed;top:max(52px,7vh);left:16px;display:flex;gap:8px;z-index:2}
+#top a{color:var(--ink);text-decoration:none;background:var(--glass);border:1px solid var(--rim);border-radius:99px;padding:5px 12px;font-size:12px;backdrop-filter:blur(7px)}
+#msg{position:fixed;inset:0;display:grid;place-items:center;z-index:3;padding:16px;text-align:center;pointer-events:none}
+#msg div{max-width:460px;background:var(--glass);border:1px solid var(--rim);border-radius:17px;padding:21px 24px;backdrop-filter:blur(7px);pointer-events:auto}
+#msg b{display:block;font-size:18px;margin-bottom:7px}
+#msg p{margin:0;color:var(--dim)}
+#msg a{color:var(--mint)}
+.bar{height:4px;border-radius:4px;background:rgba(255,255,255,.12);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--mint);transition:width .2s}
+#turn{display:none}@media (orientation:portrait) and (max-width:700px){#turn{display:block;position:fixed;left:50%;top:42%;transform:translateX(-50%);z-index:2;background:var(--glass);border:1px solid var(--rim);border-radius:99px;padding:7px 14px;font-size:13px;pointer-events:none;white-space:nowrap;animation:fade 7s forwards}}@keyframes fade{0%,70%{opacity:1}100%{opacity:0}}
+</style>
+</head>
+<body>
+<canvas data-helium tabindex="0"></canvas>
+<div id="turn">Turn your phone sideways for the full view</div>
+<nav id="top"><a href="/helium-graphics.html">About Helium graphics</a></nav>
+<section id="msg"><div><b>Starting the engine…</b><p id="say">Downloading the Helium yacht (about 2 MB).</p><div class="bar"><i id="pct"></i></div></div></section>
+<script type="module">
+const msg = document.getElementById('msg'), say = document.getElementById('say'), pct = document.getElementById('pct');
+const stop = (t, p) => { msg.querySelector('b').textContent = t; say.innerHTML = p; pct.parentNode.remove(); };
+const ad = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) : null;
+const why = !navigator.gpu || !ad ? 'This browser has WebGPU turned off or no graphics card it can use.' : !WebAssembly.Suspending ? 'This browser can’t pause WebAssembly between frames yet (JSPI).' : '';
+if (why) stop('Your browser can’t run this yet', why + ' Open this page in Chrome or Edge (version 137 or newer) on a computer or Android phone. Or <a href="/helium-graphics.html">see screenshots and video</a>.');
+else {
+  const F = ['Inter-Medium', 'Inter-Regular', 'Inter-SemiBold', 'InterDisplay-Medium', 'InterDisplay-Light'];
+  const files = {}; let done = 0;
+  await Promise.all(F.map(async n => { files['/f/' + n + '.ttf'] = new Uint8Array(await (await fetch('f/' + n + '.ttf')).arrayBuffer()); pct.style.width = (++done * 12) + '%'; }));
+  say.textContent = 'Building the yacht and the ocean…'; pct.style.width = '80%';
+  const cv = document.querySelector("canvas"); let seen = 0; const gt = GPUCanvasContext.prototype.getCurrentTexture; GPUCanvasContext.prototype.getCurrentTexture = function () { seen++; return gt.call(this); };
+  try {
+    const { start } = await import('./helium.js?v=1');
+    const rt = await start({ wasm: 'yacht.wasm?v=1', canvas: cv, files, args: ['yacht', 'live', '896', '/f/'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '. Reload to try again.') });
+    const wait = () => seen > 1 ? (msg.style.display = "none", cv.focus()) : requestAnimationFrame(wait); requestAnimationFrame(wait);
+    rt.done.then(() => seen < 2 && stop("The engine stopped", "WebGPU could not start on this device. Try Chrome or Edge on another computer or phone.")).catch(e => stop('The engine stopped', String(e?.message || e).slice(0, 160)));
+  } catch (e) { stop('Your graphics card said no', 'WebGPU could not start here: ' + String(e?.message || e).slice(0, 160) + '. Try Chrome or Edge on another device.'); }
+}
+</script>
+</body>
+</html>
