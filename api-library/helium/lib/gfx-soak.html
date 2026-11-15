@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-soak">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-soak">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=e843cecb5f">
+<link rel="stylesheet" href="/api-library/lib.css?v=c3f6d8438d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=e843cecb5f'; start({wasm: '/api-library/search.wasm?v=e843cecb5f'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=c3f6d8438d'; start({wasm: '/api-library/search.wasm?v=c3f6d8438d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/soak</h1>
 <p class="lib-lede">Lets a program simulate water wetting and flowing down a triangle mesh, tracking per-vertex wetness with welded duplicate vertices.</p>
-<p class="lib-meta"><code>import gfx.soak;</code> &middot; <code>soak::</code> &middot; 8 functions, 0 types, 19 constants &middot; <a href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.soak;</code> &middot; <code>soak::</code> &middot; 8 functions, 0 types, 19 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#mesh-setup">Mesh Setup <span class="n">1</span></a></li>
 <li><a href="#rain-exposure">Rain Exposure <span class="n">3</span></a></li>
@@ -116,7 +116,7 @@
 <pre>setup(P const f32[:], I const u32[:], fall real)</pre>
 <p>Initializes wetness state from vertex positions and triangle indices, welding identical positions and building neighbor flow weights with the given downhill bias.</p>
 <p class="note">`setup(P, I, fall real)` (P: read-only f32 slice, three per vertex; I: read-only u32 slice, three per triangle) prepares a mesh: resize `wet` and `open` to the vertex count, all 0. Weld vertices with exactly equal positions: a hash map from a key made of the three floats' bit patterns (each read as a u32, combined as x times 1000003 squared plus y times 1000003 plus z), whose value is a list of we</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L29">hc/lib/gfx/soak.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L29">hc/lib/gfx/soak.amni:29</a>
 </article>
 <h2 id="rain-exposure">Rain Exposure <span class="n">3</span></h2>
 <article class="sym" id="rain_map">
@@ -124,21 +124,21 @@
 <pre>rain_map(dir_x real, dir_y real, dir_z real, lo_x real, lo_y real, lo_z real, hi_x real, hi_y real, hi_z real, size real)</pre>
 <p>Configures the rain projection grid from a rain direction, bounding box and cell size, and clears occluders.</p>
 <p class="note">`rain_map(dir_x real, dir_y real, dir_z real, lo_x real, lo_y real, lo_z real, hi_x real, hi_y real, hi_z real, size real)` starts a rain map for rain falling along the direction (dir_x, dir_y, dir_z) over the box from lo to hi with cells of `size`: `fw` is minus the direction scaled to length one; `fa` is the cross product of `fw` and (1, 0, 0) scaled to length one, or of `fw` and (0, 0, 1) when </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L124">hc/lib/gfx/soak.amni:124</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L124">hc/lib/gfx/soak.amni:124</a>
 </article>
 <article class="sym" id="occlude">
 <h3><a href="#occlude">occlude</a> <i>function</i></h3>
 <pre>occlude(P const f32[:], I const u32[:])</pre>
 <p>Adds the triangles of a mesh as rain occluders by projecting them into the rain grid.</p>
 <p class="note">`occlude(P, I)` (P: read-only f32 slice, three per vertex; I: read-only u32 slice) adds a mesh to the rain map: for every triangle, push each corner's a, b and h (the dot products of its position with `fa`, `fb` and `fw`) to `tri`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L178">hc/lib/gfx/soak.amni:178</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L178">hc/lib/gfx/soak.amni:178</a>
 </article>
 <article class="sym" id="expose">
 <h3><a href="#expose">expose</a> <i>function</i></h3>
 <pre>expose(P const f32[:], N const f32[:], tol real)</pre>
 <p>Computes per-vertex rain exposure from normals and occluders, treating vertices shadowed by more than the tolerance as dry.</p>
 <p class="note">`expose(P, N, tol real)` (P and N: read-only f32 slices, three per vertex) sets `open` for a mesh. First bin the triangles of `tri`: each triangle goes into every cell from the cell of its lowest a and b to the cell of its highest a and b (by `cell_of`, columns and rows in between), stored grouped by cell in `bin_at` and `bins` (count, then prefix sums, then fill). For each vertex with a, b, h its</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L191">hc/lib/gfx/soak.amni:191</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L191">hc/lib/gfx/soak.amni:191</a>
 </article>
 <h2 id="wetness-state">Wetness State <span class="n">2</span></h2>
 <article class="sym" id="step">
@@ -146,14 +146,14 @@
 <pre>step(dt real, rate real, dry real, wick real)</pre>
 <p>Advances the wetness simulation by a time step, applying rain, downhill flow, wicking and drying.</p>
 <p class="note">`step(dt real, rate real, dry real, wick real)` advances wetness by `dt` seconds. Take substeps: n is 1 plus the integer part of `dt` times `wick` times 16, h is `dt` over n. Each welded vertex's `mw` is the largest `wet` among its vertices before the first substep. Each substep: soak, with each `mw` becoming `mw` plus h times `rate` times `mo` times (1 minus `mw`); wick, computing for every welde</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L284">hc/lib/gfx/soak.amni:284</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L284">hc/lib/gfx/soak.amni:284</a>
 </article>
 <article class="sym" id="mean">
 <h3><a href="#mean">mean</a> <i>function</i></h3>
 <pre>mean() real</pre>
 <p>Returns the average wetness across all vertices, or zero when there are none.</p>
 <p class="note">`mean() real` is the mean of `wet` (0 when empty).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L316">hc/lib/gfx/soak.amni:316</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L316">hc/lib/gfx/soak.amni:316</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (21)</summary>
 <article class="sym" id="wet">
@@ -161,145 +161,145 @@
 <pre>var wet f32[&gt;..]</pre>
 <p>Holds per-vertex wetness values from 0 to 1, updated by each simulation step.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L4">hc/lib/gfx/soak.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L4">hc/lib/gfx/soak.amni:4</a>
 </article>
 <article class="sym" id="open">
 <h3><a href="#open">open</a> <i>constant</i></h3>
 <pre>var open f32[&gt;..]</pre>
 <p>Holds per-vertex exposure to rain, computed by the exposure pass and shared across welded duplicates.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L5">hc/lib/gfx/soak.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L5">hc/lib/gfx/soak.amni:5</a>
 </article>
 <article class="sym" id="rep">
 <h3><a href="#rep">rep</a> <i>constant</i></h3>
 <pre>var rep int[&gt;..]</pre>
 <p>Maps each vertex index to its welded representative vertex index.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L6">hc/lib/gfx/soak.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L6">hc/lib/gfx/soak.amni:6</a>
 </article>
 <article class="sym" id="nb_at">
 <h3><a href="#nb_at">nb_at</a> <i>constant</i></h3>
 <pre>var nb_at int[&gt;..]</pre>
 <p>Stores start offsets into the neighbor list for each welded vertex.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L7">hc/lib/gfx/soak.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L7">hc/lib/gfx/soak.amni:7</a>
 </article>
 <article class="sym" id="nb">
 <h3><a href="#nb">nb</a> <i>constant</i></h3>
 <pre>var nb int[&gt;..]</pre>
 <p>Lists neighbor vertex indices for each welded vertex in compressed adjacency form.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L8">hc/lib/gfx/soak.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L8">hc/lib/gfx/soak.amni:8</a>
 </article>
 <article class="sym" id="nb_w">
 <h3><a href="#nb_w">nb_w</a> <i>constant</i></h3>
 <pre>var nb_w real[&gt;..]</pre>
 <p>Holds flow weights for each neighbor edge, boosted for downhill directions.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L9">hc/lib/gfx/soak.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L9">hc/lib/gfx/soak.amni:9</a>
 </article>
 <article class="sym" id="ry">
 <h3><a href="#ry">ry</a> <i>constant</i></h3>
 <pre>var ry real[&gt;..]</pre>
 <p>Stores the height of each welded vertex used for slope calculations.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L10">hc/lib/gfx/soak.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L10">hc/lib/gfx/soak.amni:10</a>
 </article>
 <article class="sym" id="mw">
 <h3><a href="#mw">mw</a> <i>constant</i></h3>
 <pre>var mw real[&gt;..]</pre>
 <p>Holds working wetness values per welded vertex during a simulation step.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L11">hc/lib/gfx/soak.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L11">hc/lib/gfx/soak.amni:11</a>
 </article>
 <article class="sym" id="mo">
 <h3><a href="#mo">mo</a> <i>constant</i></h3>
 <pre>var mo real[&gt;..]</pre>
 <p>Holds per-welded-vertex rain exposure, taking the maximum across duplicates.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L12">hc/lib/gfx/soak.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L12">hc/lib/gfx/soak.amni:12</a>
 </article>
 <article class="sym" id="tri">
 <h3><a href="#tri">tri</a> <i>constant</i></h3>
 <pre>var tri real[&gt;..]</pre>
 <p>Stores occluder triangle vertices projected into rain-aligned coordinates.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L13">hc/lib/gfx/soak.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L13">hc/lib/gfx/soak.amni:13</a>
 </article>
 <article class="sym" id="bin_at">
 <h3><a href="#bin_at">bin_at</a> <i>constant</i></h3>
 <pre>var bin_at int[&gt;..]</pre>
 <p>Stores start offsets into the triangle bin list for each grid cell.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L14">hc/lib/gfx/soak.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L14">hc/lib/gfx/soak.amni:14</a>
 </article>
 <article class="sym" id="bins">
 <h3><a href="#bins">bins</a> <i>constant</i></h3>
 <pre>var bins int[&gt;..]</pre>
 <p>Lists occluder triangle indices grouped by the grid cells they overlap.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L15">hc/lib/gfx/soak.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L15">hc/lib/gfx/soak.amni:15</a>
 </article>
 <article class="sym" id="fw">
 <h3><a href="#fw">fw</a> <i>constant</i></h3>
 <pre>var fw real[3]</pre>
 <p>Holds the unit vector pointing against the rain direction.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L16">hc/lib/gfx/soak.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L16">hc/lib/gfx/soak.amni:16</a>
 </article>
 <article class="sym" id="fa">
 <h3><a href="#fa">fa</a> <i>constant</i></h3>
 <pre>var fa real[3]</pre>
 <p>Holds the first unit axis perpendicular to the rain direction.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L17">hc/lib/gfx/soak.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L17">hc/lib/gfx/soak.amni:17</a>
 </article>
 <article class="sym" id="fb">
 <h3><a href="#fb">fb</a> <i>constant</i></h3>
 <pre>var fb real[3]</pre>
 <p>Holds the second unit axis perpendicular to both the rain direction and first axis.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L18">hc/lib/gfx/soak.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L18">hc/lib/gfx/soak.amni:18</a>
 </article>
 <article class="sym" id="lo_a">
 <h3><a href="#lo_a">lo_a</a> <i>constant</i></h3>
 <pre>var lo_a real = 0.0</pre>
 <p>Stores the minimum projected coordinate along the first axis of the rain grid.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L19">hc/lib/gfx/soak.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L19">hc/lib/gfx/soak.amni:19</a>
 </article>
 <article class="sym" id="lo_b">
 <h3><a href="#lo_b">lo_b</a> <i>constant</i></h3>
 <pre>var lo_b real = 0.0</pre>
 <p>Stores the minimum projected coordinate along the second axis of the rain grid.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L20">hc/lib/gfx/soak.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L20">hc/lib/gfx/soak.amni:20</a>
 </article>
 <article class="sym" id="cell">
 <h3><a href="#cell">cell</a> <i>constant</i></h3>
 <pre>var cell real = 1.0</pre>
 <p>Stores the side length of each rain grid cell.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L21">hc/lib/gfx/soak.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L21">hc/lib/gfx/soak.amni:21</a>
 </article>
 <article class="sym" id="gn">
 <h3><a href="#gn">gn</a> <i>constant</i></h3>
 <pre>var gn int = 1</pre>
 <p>Stores the number of cells per side of the rain grid.</p>
 <p class="note">Imports: math. Namespace soak. Wet fabric over time: rain reaches the surfaces it can see, soaks in, wicks along the cloth (more readily downhill) and dries. Module vars: `wet` (f32 per vertex, 0 dry to 1 soaked), `open` (f32 per vertex, how much rain reaches it, 0 to 1), `rep` (int per vertex: the welded vertex it belongs to), `nb_at` (int, per welded vertex plus one: start of its neighbors in `n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L22">hc/lib/gfx/soak.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L22">hc/lib/gfx/soak.amni:22</a>
 </article>
 <article class="sym" id="bits32">
 <h3><a href="#bits32">bits32</a> <i>function</i></h3>
 <pre>bits32(v f32) uint</pre>
 <p>Returns the raw 32-bit pattern of a float, used to hash vertex positions when welding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L23">hc/lib/gfx/soak.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L23">hc/lib/gfx/soak.amni:23</a>
 </article>
 <article class="sym" id="cell_of">
 <h3><a href="#cell_of">cell_of</a> <i>function</i></h3>
 <pre>cell_of(a real, b real) int</pre>
 <p>Returns the grid cell index for projected coordinates, clamping to the grid edges.</p>
 <p class="note">`cell_of(a real, b real) int` is the grid cell of a point: column the integer part of (a minus `lo_a`) over `cell`, row the same for b with `lo_b`, clamped to 0 to `gn` minus 1, as row times `gn` plus column.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/e843cec7c0b23bdd88da45a1c3c94ea999c1d8e2/hc/lib/gfx/soak.amni#L173">hc/lib/gfx/soak.amni:173</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/soak.amni#L173">hc/lib/gfx/soak.amni:173</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -311,7 +311,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2042</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2045</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

@@ -6829,4 +6829,7 @@ locks::build	function	gfx/locks	/api-library/helium/lib/gfx-locks#build	Builds l
 locks::bt	function	gfx/locks	/api-library/helium/lib/gfx-locks#bt	Returns a byte from a real value, rounded and clamped to the range 0 to 255.	int
 locks::strands	function	gfx/locks	/api-library/helium/lib/gfx-locks#strands	Generates a procedural strand alpha texture of the given square size from a seed, returning its glTF texture index.	pub
 locks::material	function	gfx/locks	/api-library/helium/lib/gfx-locks#material	Returns a double-sided alpha-masked hair material with the given color and texture index.	pub
+locks::scalp_w	constant	gfx/locks	/api-library/helium/lib/gfx-locks#scalp_w	Per-vertex scalp weight buffer filled by scalp, holding one falloff value per input point.	int
+locks::scalp	function	gfx/locks	/api-library/helium/lib/gfx-locks#scalp	Fills the scalp weight buffer with a falloff from 1 to 0 for each point based on distance to the hairstyle's root positions within radius r.	int
+locks::jitter	constant	gfx/locks	/api-library/helium/lib/gfx-locks#jitter	Amount of random per-lock brightness variation applied to vertex color in mesh, as a fraction around 1.0.	pub
 locks::mesh	function	gfx/locks	/api-library/helium/lib/gfx-locks#mesh	Copies the built lock buffers into the glTF vertex and index data, returning the result of finishing the mesh with the material.	pub
