@@ -62,35 +62,37 @@ export function findings(o){
   if(o.thin&&o.thin.t<(u==='in'?0.015:0.4))F.push(`Thinnest wall is about ${o.thin.t} ${u} near [${o.thin.at}]; fine for knife edges and airfoil trailing edges, thin for anything machined or printed.`);
   return F;
 }
+function humanFocus(API){const d=API.S&&API.S.ws==='form'&&API.doc;if(!d||!d.meshes)return null;const txt=d.form||'';for(const[id,rec]of Object.entries(d.meshes)){const h=rec&&rec.meta&&rec.meta.human;if(!h||!h.landmarks)continue;const re=new RegExp('^\\S+\\s+mesh\\s+%'+id.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s+([-\\d.,]+)','m'),m=re.exec(txt),off=m?m[1].split(',').map(Number):[0,0,0],L=k=>{const p=h.landmarks[k];return p?[p[0]+(off[0]||0),p[1]+(off[1]||0),p[2]+(off[2]||0)]:null;};const cr=L('crown'),ch=L('chin'),el=L('ear_l'),er=L('ear_r'),nt=L('nose_tip'),wl=L('wrist_l'),hl=L('hand_l');if(!cr||!ch)continue;const hs=Math.max(Math.abs(cr[2]-ch[2]),1e-3),fc=[((el&&er?el[0]+er[0]:0)*0.5),nt?nt[1]*0.5+cr[1]*0.5:cr[1],(cr[2]+ch[2])*0.5],fe=hs*0.72,face={min:[fc[0]-fe,fc[1]-fe,fc[2]-fe*0.95],max:[fc[0]+fe,fc[1]+fe,fc[2]+fe*0.95]};const hc=hl&&wl?[(hl[0]*2-wl[0])*0.5+hl[0]*0.5,(hl[1]+wl[1])*0.5,(hl[2]+wl[2])*0.5]:hl||wl||fc,he=hs*0.58,hand={min:[hc[0]-he,hc[1]-he,hc[2]-he],max:[hc[0]+he,hc[1]+he,hc[2]+he]};return{id,human:h,face,hand};}return null;}
+const HTILES=[...TILES,['face','FACE PORTRAIT'],['hand','HAND DETAIL']];
 function tile(API,v,g,x,y,w,h,o){
-  const T=API.THREE,R=API.renderer,cv=R.domElement,b=o.bbox||API.S.mesh.props.bbox,c=new T.Vector3(...[0,1,2].map(i=>(b.min[i]+b.max[i])/2)),E=[0,1,2].map(i=>b.max[i]-b.min[i]),r=Math.max(1e-7,Math.hypot(...E)/2),asp=cv.width/cv.height,d=new T.Vector3(...API.VIEWS[v]).normalize(),ax={top:[0,1],front:[0,2],right:[1,2]}[v];
+  const T=API.THREE,R=API.renderer,cv=R.domElement,b=(v==='face'&&o.hf?o.hf.face:v==='hand'&&o.hf?o.hf.hand:o.bbox)||API.S.mesh.props.bbox,c=new T.Vector3(...[0,1,2].map(i=>(b.min[i]+b.max[i])/2)),E=[0,1,2].map(i=>b.max[i]-b.min[i]),r=Math.max(1e-7,Math.hypot(...E)/2),asp=cv.width/cv.height,dv=v==='face'?[0,-1,0.08]:v==='hand'?[0.55,-0.75,0.35]:API.VIEWS[v],d=new T.Vector3(...dv).normalize(),ax={top:[0,1],front:[0,2],right:[1,2]}[v];
   let cam;
-  if(v==='iso'){
-    cam=new T.PerspectiveCamera(30,asp,r/100,r*200);cam.up.set(0,0,1);let k=r*5;
-    for(let n=0;n<4;n++){cam.position.copy(c).addScaledVector(d,k);cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld(true);let m=0;for(let q=0;q<8;q++){const p=new T.Vector3(q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]).project(cam);m=Math.max(m,Math.abs(p.x),Math.abs(p.y));}k*=Math.max(0.2,m/0.8);}
+  if(v==='iso'||v==='face'||v==='hand'){
+    cam=new T.PerspectiveCamera(v==='iso'?30:25,asp,r/100,r*200);cam.up.set(0,0,1);let k=r*5;
+    for(let n=0;n<4;n++){cam.position.copy(c).addScaledVector(d,k);cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld(true);let m=0;for(let q=0;q<8;q++){const p=new T.Vector3(q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]).project(cam);m=Math.max(m,Math.abs(p.x),Math.abs(p.y));}k*=Math.max(0.2,m/(v==='iso'?0.8:0.84));}
   }else{const hw=E[ax[0]]/2,hh=E[ax[1]]/2,q=Math.max(hh*1.12,hw*1.12/asp,r*0.02);cam=new T.OrthographicCamera(-q*asp,q*asp,q,-q,-r*40,r*40);cam.position.copy(c).addScaledVector(d,r*8);}
   cam.up.set(0,Math.abs(d.z)>0.99?1:0,Math.abs(d.z)>0.99?0:1);cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld();
   R.setScissorTest(false);R.setViewport(0,0,cv.width/R.getPixelRatio(),cv.height/R.getPixelRatio());R.render(API.scene,cam);
   const k=Math.min(w/cv.width,h/cv.height),dw=cv.width*k,dh=cv.height*k;g.drawImage(cv,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
   g.strokeStyle='#9aa5b4';g.lineWidth=1;g.strokeRect(x+0.5,y+0.5,w-1,h-1);
-  const ex={iso:'',top:[0,1],front:[0,2],right:[1,2]}[v],cap=TILES.find(t=>t[0]===v)[1]+(ex?'   '+ex.map(i=>'xyz'[i]+' '+r2(b.max[i]-b.min[i])).join(' × ')+' '+o.units:'');
+  const ex={iso:'',face:'',hand:'',top:[0,1],front:[0,2],right:[1,2]}[v],cap=HTILES.find(t=>t[0]===v)[1]+(ex?'   '+ex.map(i=>'xyz'[i]+' '+r2(b.max[i]-b.min[i])).join(' × ')+' '+o.units:'');
   g.font='bold '+Math.round(w/38)+'px system-ui,sans-serif';g.textBaseline='top';g.fillStyle='rgba(255,255,255,0.8)';g.fillRect(x+7,y+7,g.measureText(cap).width+12,Math.round(w/38)+10);g.fillStyle='#1b2330';g.fillText(cap,x+12,y+11);
 }
 export async function sheet(API,o={}){
   const S=API.S,R=API.renderer,cv=R.domElement,W=Math.max(400,Math.min(+o.width||1000,2000)),hid=document.visibilityState==='hidden';
-  const fb=S.ws==='form'&&API.hooks.bounds?API.hooks.bounds():null;
+  const fb=S.ws==='form'&&API.hooks.bounds?API.hooks.bounds():null,hf=humanFocus(API),TL=hf?HTILES:TILES,cols=hf?3:2,rows=2;
   if(S.ws==='form'&&!fb)throw new Error('The form is empty; there is nothing to look at yet.');
   if(!fb&&!S.mesh)throw new Error('There is no solid to look at yet.');
   if(!fb&&S.ws&&S.ws!=='part')throw new Error('The contact sheet is for the Part and Form workspaces; the page is showing '+S.ws+'.');
   try{if(R.getContext().isContextLost())throw 0;}catch{throw new Error(hid?'The Amni-CAD page is in the background; bring it on screen and try again.':'The 3D view lost its WebGL context and could not be read. Reload the Amni-CAD page and try again.');}
   if(cv.width<2||cv.height<2)throw new Error('The 3D viewport has no size (the page is minimized or its layout collapsed). Bring the Amni-CAD page on screen and try again.');
-  const tw=Math.floor(W/2),th=Math.max(160,Math.min(Math.round(tw*cv.height/cv.width),Math.round(tw*1.1))),c=document.createElement('canvas');c.width=tw*2;c.height=th*2;
+  const tw=Math.floor(W/cols),th=Math.max(150,Math.min(Math.round(tw*cv.height/cv.width),Math.round(tw*1.1))),c=document.createElement('canvas');c.width=tw*cols;c.height=th*rows;
   const g=c.getContext('2d');g.fillStyle=BG;g.fillRect(0,0,c.width,c.height);
-  const ui={units:S.doc.units==='in'?'in':'mm',bbox:fb&&{min:fb.min,max:fb.max}};
-  try{TILES.forEach(([v],i)=>tile(API,v,g,(i%2)*tw,Math.floor(i/2)*th,tw,th,ui));}finally{API.redraw();}
+  const ui={units:S.doc.units==='in'?'in':'mm',bbox:fb&&{min:fb.min,max:fb.max},hf};
+  try{TL.forEach(([v],i)=>tile(API,v,g,(i%cols)*tw,Math.floor(i/cols)*th,tw,th,ui));}finally{API.redraw();}
   const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',+o.quality||0.82)),tn=document.createElement('canvas');tn.width=Math.min(320,c.width);tn.height=Math.round(c.height*tn.width/c.width);tn.getContext('2d').drawImage(c,0,0,tn.width,tn.height);
   const b64=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob);});
-  return{b64,mime:'image/jpeg',bytes:blob.size,width:c.width,height:c.height,thumb:tn.toDataURL('image/jpeg',0.6),views:TILES.map(t=>t[0])};
+  return{b64,mime:'image/jpeg',bytes:blob.size,width:c.width,height:c.height,thumb:tn.toDataURL('image/jpeg',0.58),views:TL.map(t=>t[0])};
 }
 export async function review(API,o={}){
   if(API.S.ws==='form')return formReview(API,o);
@@ -101,8 +103,9 @@ export async function review(API,o={}){
   try{Object.assign(out,await sheet(API,o));}catch(e){out.sheet_error=e.message;}
   return out;
 }
-async function formReview(API,o){const fm=await import('./form.js');await fm.whenMeshed(API).catch(()=>{});const info=await fm.sceneInfo(API),m=info.mesh,u=info.units,F=info.errors.slice(0,7).map(e=>'Scene line '+(e.line+1)+': '+e.msg),ev=await(await import('./poly_io.js')).evalScene(API.doc,API.doc.form||'',{rd:false}).catch(e=>(F.push(e.message),[]));if(!m||!m.triangles)F.push('The form is empty.');for(const x of info.meshes||[])x.missing&&F.push('Mesh object '+x.name+' has no data (%'+x.data+'); undo or reopen the saved file.');for(const x of ev){const s=x.stats;s&&(s.boundary||s.nonManifold)&&F.push('Mesh object '+x.it.name+' is not watertight ('+(s.boundary?s.boundary+' open edges':'')+(s.boundary&&s.nonManifold?', ':'')+(s.nonManifold?s.nonManifold+' edges shared by 3+ faces':'')+'); fine for games and renders, fix it before 3D printing.');x.warn&&x.warn.length&&F.push(x.it.name+': '+x.warn.join('; '));}
-  const size=m&&m.bbox?m.bbox.max.map((v,i)=>+(v-m.bbox.min[i]).toFixed(4)):null,out={report:{workspace:'form',units:u,size,bbox:m&&m.bbox,volume:m&&m.volume,triangles:m&&m.triangles,lines:info.lines,meshes:info.meshes,animation:info.animation,empty:!m||!m.triangles},findings:F};if(o.sheet===false||out.report.empty)return out;try{Object.assign(out,await sheet(API,o));}catch(e){out.sheet_error=e.message;}return out;}
+async function formReview(API,o){const fm=await import('./form.js');await fm.whenMeshed(API).catch(()=>{});const info=await fm.sceneInfo(API),m=info.mesh,u=info.units,F=info.errors.slice(0,7).map(e=>'Scene line '+(e.line+1)+': '+e.msg),ev=await(await import('./poly_io.js')).evalScene(API.doc,API.doc.form||'',{rd:false}).catch(e=>(F.push(e.message),[]));if(!m||!m.triangles)F.push('The form is empty.');for(const x of info.meshes||[])x.missing&&F.push('Mesh object '+x.name+' has no data (%'+x.data+'); undo or reopen the saved file.');for(const x of ev){const rec=API.doc.meshes&&API.doc.meshes[x.it.data],isG=!!(rec&&rec.meta&&rec.meta.garment),s=x.stats;s&&((!isG&&s.boundary)||s.nonManifold)&&F.push('Mesh object '+x.it.name+' is not watertight ('+(!isG&&s.boundary?s.boundary+' open edges':'')+(!isG&&s.boundary&&s.nonManifold?', ':'')+(s.nonManifold?s.nonManifold+' edges shared by 3+ faces':'')+'); fine for games and renders, fix it before 3D printing.');x.warn&&x.warn.length&&F.push(x.it.name+': '+x.warn.join('; '));}
+  const hf=humanFocus(API),ha=hf&&hf.human.audit;if(ha){ha.poke_through_verts>0&&F.push('Garment poke-through: '+ha.poke_through_verts+' vertices penetrate the body (up to '+ha.poke_through_max_in+' in / '+ha.poke_through_max_mm+' mm); increase garment offset or run mesh_edit shrinkwrap.');ha.unweighted_verts>0&&F.push('Human rig has '+ha.unweighted_verts+' unweighted vertices.');(ha.head_heights<4.5||ha.head_heights>9.5)&&F.push('Unusual head-height proportion ('+ha.head_heights+' heads tall); check stature vs head_scale.');}
+  const size=m&&m.bbox?m.bbox.max.map((v,i)=>+(v-m.bbox.min[i]).toFixed(4)):null,out={report:{workspace:'form',units:u,size,bbox:m&&m.bbox,volume:m&&m.volume,triangles:m&&m.triangles,lines:info.lines,meshes:info.meshes,animation:info.animation,human:hf?{audit:hf.human.audit,landmarks:hf.human.landmarks,regions:hf.human.regions,bones:hf.human.rig&&hf.human.rig.bones&&hf.human.rig.bones.length}:undefined,empty:!m||!m.triangles},findings:F};if(o.sheet===false||out.report.empty)return out;try{Object.assign(out,await sheet(API,o));}catch(e){out.sheet_error=e.message;}return out;}
 export const brief=o=>{const r=o.report||o,u=r.units;return r.empty?'nothing is built':`${r.solids} solid${r.solids===1?'':'s'}, ${r.size.join(' × ')} ${u}`+(r.errors&&r.errors.length?`, ${r.errors.length} feature error${r.errors.length===1?'':'s'}`:'')+(o.findings&&o.findings.length?`, ${o.findings.length} finding${o.findings.length===1?'':'s'}`:', no findings');};
 export function reviewText(o,req,round,image,params=[]){
   const rk=recipeFor(req),tip=rk&&!params.some(p=>String(p).startsWith(rk+'_'))?`\nTip: this request is a ${RECIPES[rk].n.toLowerCase()}. A recipe builds it correctly in one action, for example {"new":true} then ${JSON.stringify(RECIPES[rk].ex)}; hand-modeled versions usually come out wrong. Use the recipe and keep the sizes the user asked for.`:'';
