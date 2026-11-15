@@ -220,7 +220,7 @@ function diffDocs(a,b){const u=b.units==='in'?'in':'mm',ia=new Map(a.features.ma
   const pa=new Map((a.params||[]).map(p=>[p.name,p])),pb=new Map((b.params||[]).map(p=>[p.name,p]));
   for(const[n,p]of pb){const x=pa.get(n);x?x.expr!==p.expr&&o.push({k:'param',t:'Changed '+n+' '+x.expr+' → '+p.expr}):o.push({k:'param',t:'Added parameter '+n+' = '+p.expr});}
   for(const n of pa.keys())pb.has(n)||o.push({k:'param',t:'Removed parameter '+n});
-  a.material!==b.material&&o.push({k:'set',t:'Material → '+((A.MATS[b.material]||{}).n||b.material)});js(a.finish||null)!==js(b.finish||null)&&o.push({k:'set',t:'Finish → '+(b.finish||'machined')});a.units!==b.units&&o.push({k:'set',t:'Units → '+b.units});
+  a.material!==b.material&&o.push({k:'set',t:'Material → '+((A.MATS[b.material]||{}).n||b.material)});js(a.finish||null)!==js(b.finish||null)&&o.push({k:'set',t:'Finish → '+(A.finishes?A.finishes.label(b.finish):b.finish&&b.finish.id||'As-machined')});a.units!==b.units&&o.push({k:'set',t:'Units → '+b.units});
   return o;}
 const cardItems=(before,applied)=>{const o=diffDocs(JSON.parse(before),S.doc),ex=applied.filter(x=>!/^(new part|param |\+|edit |delete |material|finish)/.test(x)).map(x=>({k:'run',t:lbl(x)}));return[...ex.filter(x=>/^Recipe /.test(x.t)),...o,...ex.filter(x=>!/^Recipe /.test(x.t))].slice(0,8).concat(o.length+ex.length>8?[{k:'set',t:'+'+(o.length+ex.length-8)+' more changes'}]:[]);};
 function show(id){const f=S.doc.features.find(x=>x.id===id);if(!f)return A.toast('That feature no longer exists');A.active=id;const r=q('#tree .feat.on');r&&(r.scrollIntoView({block:'nearest'}),r.classList.add('as-flash'),setTimeout(()=>r.classList.remove('as-flash'),1400));}

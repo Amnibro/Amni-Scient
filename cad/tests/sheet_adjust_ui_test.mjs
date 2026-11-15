@@ -10,7 +10,7 @@ const closeAdj=async()=>{await p.keyboard.press('Escape');await sleep(500);};
 const lineUnder=(L,t)=>L.filter(q=>q.b-q.t<1.5&&q.l<t.x&&q.r>t.x&&q.t>t.y&&q.t-t.b<9).sort((a,b)=>a.t-b.t)[0];
 try{await sleep(3000);
 E.T(await E.call('apply_actions',{actions:[{new:true,units:'in'},{add:{type:'box',w:4,d:3,h:1}},{add:{type:'hole',plane:'XY',offset:1,pts:[[1,0.5]],d:0.25}}]}));await sleep(1500);
-await clickSel('#nav-now');await sleep(300);await clickSel('#ws button[data-tab=draw]');await p.waitForSelector('#tab-draw .dw-prev img',{visible:true,timeout:120000});await idle();
+await clickSel('#tool-now');await sleep(300);await clickSel('#tools button[data-tab=draw]');await p.waitForSelector('#tab-draw .dw-prev img',{visible:true,timeout:120000});await idle();
 await openAdj();let T=await texts();log('texts',T.map(t=>t.s).filter(s=>/^[\d.]/.test(s)).join(' | '));
 const count=s=>T.filter(t=>t.s===s).length,over=new Set(['4.00','3.00','1.00']),tgt=T.find(t=>/^\d*\.\d+$/.test(t.s)&&!over.has(t.s)&&count(t.s)===1);ok(!!tgt,'found a unique hole-position dimension',tgt&&tgt.s);
 await p.mouse.click(tgt.x,tgt.y);await sleep(400);const head=await A(()=>document.querySelector('.dl-ov .an-ins h4').textContent);ok(/^dim/.test(head),'clicking the number selects its dimension',head);

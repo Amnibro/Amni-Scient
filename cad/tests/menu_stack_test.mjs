@@ -14,7 +14,7 @@ await p.waitForFunction(()=>document.body.classList.contains('pro'),{timeout:300
 const tabs=['edit','ai','sim','flow','make','draw','vault'];
 for(const tab of tabs){
   if(tab==='make')await p.evaluate(()=>{const b=document.querySelector('#side-cmd [data-rc=make]')||document.querySelector('#ribbon [data-rc=make]');b&&b.click();});
-  else if(tab!=='edit')await p.evaluate(t=>{const b=document.querySelector('#ws button[data-tab='+t+']');b&&b.click();},tab);
+  else if(tab!=='edit')await p.evaluate(t=>{const b=document.querySelector('#tools button[data-tab='+t+']');b&&b.click();},tab);
   await new Promise(r=>setTimeout(r,250));
   await p.click('#ui-menu > button');
   const hit=await p.evaluate(()=>{const pop=document.querySelector('#ui-menu .pop'),b=[...pop.querySelectorAll('button')].find(x=>x.offsetParent);if(!b)return 'no item';const r=b.getBoundingClientRect(),el=document.elementFromPoint(r.left+r.width/2,r.top+Math.min(12,r.height/2));return el&&(el===b||b.contains(el)||el.closest('#ui-menu'))?'top':'under '+(el.id||el.className);});
