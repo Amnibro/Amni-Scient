@@ -9,12 +9,13 @@ try{
   const mk=async bad=>{const p=await b.newPage();await p.setRequestInterception(true);p.on('request',q=>{const u=new URL(q.url());return u.pathname==='/lib/amni-llm/registry.js'?q.respond({status:200,contentType:'text/javascript',body:REG(bad)}):F[u.pathname]?q.respond({status:200,contentType:'application/octet-stream',body:F[u.pathname]}):q.continue();});await p.goto(`http://127.0.0.1:${port}/404.html`);return p;};
   let p=await mk(false);const errs=[];p.on('pageerror',e=>errs.push(String(e.message)));
   const r=await p.evaluate(async()=>{const m=await import('/lib/amni-llm/amni-llm.js'),O='adam-3b-t8',N='adam-3b-t9',C=await caches.open('amni-llm-v1'),o={};for(const k of await C.keys())await C.delete(k);
-    o.latest=m.latestCad();o.fresh=await m.pickCad(O);await m.pullModel(O);o.oldCached=await m.isCached(O);o.plan=await m.pickCad(O);
+    o.latest=m.latestCad();o.gone=await m.pickCad('adam-3b-t1');o.fresh=await m.pickCad(O);await m.pullModel(O);o.oldCached=await m.isCached(O);o.plan=await m.pickCad(O);
     await C.put('/models/adam-3b-t7/a.gguf',new Response('stray',{headers:{'x-amni-sha256':'x'}}));await C.put('/models/other/a.gguf',new Response('keep'));
     const {Assistant}=await import('/cad/ai.js'),A=new Assistant();A.onUpdate=id=>{o.up=id;};Object.defineProperty(navigator,'connection',{value:{saveData:true},configurable:true});o.saver=await A.pull(m,N);o.afterSaver=await m.isCached(N);
     Object.defineProperty(navigator,'connection',{value:{},configurable:true});o.pulled=await A.pull(m,N);o.newCached=await m.isCached(N);o.oldGone=!await m.isCached(O);o.keys=(await C.keys()).map(k=>new URL(k.url).pathname).sort();o.after=await m.pickCad(O);o.same=await m.pickCad(N);return o;});
   ok(r.latest==='adam-3b-t9','the first Adam in the list is the latest',r.latest);
   ok(r.fresh.id==='adam-3b-t9'&&!r.fresh.update,'with no saved copy the app goes straight to the latest Adam',r.fresh);
+  ok(r.gone.id==='adam-3b-t9'&&!r.gone.update,'a saved choice that is no longer offered moves to the latest Adam',r.gone);
   ok(r.oldCached&&r.plan.id==='adam-3b-t8'&&r.plan.update==='adam-3b-t9','a saved older Adam keeps working while the latest is fetched',r.plan);
   ok(r.saver===false&&!r.afterSaver,'no background download on data saver');
   ok(r.pulled===true&&r.up==='adam-3b-t9'&&r.newCached,'the latest Adam is saved in the background and the app is told',r.up);
