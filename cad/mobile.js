@@ -1,7 +1,7 @@
 export const TABLET='(min-width:700px) and (max-width:1100px) and (pointer:coarse) and (not (any-pointer:fine))';export const SHELL='(max-width:699px),((pointer:coarse) and (not (any-pointer:fine)) and (max-width:1100px))';const PH='(max-width:699px)',SM=SHELL,CO='(pointer:coarse)',RM='(prefers-reduced-motion:reduce)',mq=q=>matchMedia(q).matches,LP=520,SLOP=9,NX=':not(#m-x):not(#m-y)';
 export const phone=()=>mq(PH),small=()=>mq(SM),touch=()=>mq(CO),ios=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
 const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):v==null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch{return null;}};
-const WSI={part:'◆',form:'❂',asm:'⚙',tool:'⧉'},TBI={edit:'✎',ai:'✦',sim:'🧱',flow:'🌬',mold:'💉',draw:'📐',make:'💲',vault:'🗄',check:'✔'};
+const WSI={part:'◆',form:'❂',human:'☺',asm:'⚙',tool:'⧉'},TBI={edit:'✎',ai:'✦',sim:'🧱',flow:'🌬',mold:'💉',draw:'📐',make:'💲',vault:'🗄',check:'✔'};
 const CSS=`:root{--hdr:52px;--navh:0px}
 .m-only,#m-tip{display:none!important}
 .m-grab{display:none;position:sticky;top:0;z-index:4;height:30px;flex:none;align-items:center;justify-content:center;width:100%;background:var(--panel);cursor:grab;touch-action:none}

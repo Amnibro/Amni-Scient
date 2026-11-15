@@ -11,7 +11,7 @@ const TOPICS={
   materials:{about:'materials and part finishes',re:/^(Materials:|Finishes depend|Wood and composite)/},
   references:{about:'working from attached sketches, photos and drawings',re:/^References:/},
   actions:{about:'only the basic actions: add, set, param, delete, new, material, finish'},
-  form:{about:'the Form workspace (human_model, mesh_edit, form_get, form_set, form_key, form_render): parametric Gold/Helium human characters (ANSUR II morphs, 52 ARKit FACS, 71-bone twist/finger/face rig, body-fitted garments, 39 landmarks, 31 regions), organic shapes, sculpting, editable polygon meshes, bones, IK and constraints, actions and NLA, bezier keys, lights, cameras and rendering'}
+  form:{about:'the Form & Character workspaces (human_model, mesh_edit, form_get, form_set, form_key, form_render): MakeHuman CC0 13,380-vert/13,378-quad characters in Gold/Helium (295 morph targets, 53-bone Amni-Companion humanoid rig, 52 ARKit FACS, 30 hair styles, 12 pattern-sewn cloth-draped garments across 8 fabrics, 39 landmarks, 31 regions), organic shapes, sculpting, editable polygon meshes, bones, IK and constraints, actions and NLA, bezier keys, lights, cameras and rendering'}
 };
 const FTRE=new RegExp('^- ('+Object.keys(FT).join('|')+'):'),CORE=/^(You are the design assistant|Actions \(applied|\{"say"| \{"(add|set|param|delete|new|material|finish|human)"|Numbers may be expressions)/;
 export const TOPIC_LIST=Object.entries(TOPICS).map(([k,v])=>({topic:k,about:v.about}));

@@ -1,0 +1,674 @@
+use std
+into mh_pack.amni
+```amni
+import os;
+import math;
+import binary;
+import json;
+let BNAMES const byte[:][53] = ["Root","pelvis","thigh_l","calf_l","foot_l","ball_l","thigh_r","calf_r","foot_r","ball_r","spine_01","spine_02","spine_03","clavicle_l","clavicle_r","upperarm_l","lowerarm_l","hand_l","upperarm_r","lowerarm_r","hand_r","neck_01","head","index_01_l","index_01_r","index_02_l","index_02_r","index_03_l","index_03_r","middle_01_l","middle_01_r","middle_02_l","middle_02_r","middle_03_l","middle_03_r","pinky_01_l","pinky_01_r","pinky_02_l","pinky_02_r","pinky_03_l","pinky_03_r","ring_01_l","ring_01_r","ring_02_l","ring_02_r","ring_03_l","ring_03_r","thumb_01_l","thumb_01_r","thumb_02_l","thumb_02_r","thumb_03_l","thumb_03_r"];
+let BPARS i32[53] = [-1,0,1,2,3,4,1,7-1,7,8,1,10,11,12,12,13,15,15+1,14,18,19,12,21,17,20,23,24,25,25+1,17,20,29,30,31,32,17,20,35,35+1,37,38,17,20,41,42,43,44,17,20,47,48,49,50];
+let BSRC const byte[:][55] = ["","root","upperleg01.L","lowerleg01.L","foot.L","toe3-1.L","upperleg01.R","lowerleg01.R","foot.R","toe3-1.R","spine04","spine03","spine02","clavicle.L","clavicle.R","upperarm01.L","lowerarm01.L","wrist.L","upperarm01.R","lowerarm01.R","wrist.R","neck01","head","finger2-1.L","finger2-1.R","finger2-2.L","finger2-2.R","finger2-3.L","finger2-3.R","finger3-1.L","finger3-1.R","finger3-2.L","finger3-2.R","finger3-3.L","finger3-3.R","finger5-1.L","finger5-1.R","finger5-2.L","finger5-2.R","finger5-3.L","finger5-3.R","finger4-1.L","finger4-1.R","finger4-2.L","finger4-2.R","finger4-3.L","finger4-3.R","finger1-1.L","finger1-1.R","finger1-2.L","finger1-2.R","finger1-3.L","finger1-3.R","eye.L","eye.R"];
+var DIR byte[>..];
+var VX f32[>..];
+var VY f32[>..];
+var VZ f32[>..];
+var TU f32[>..];
+var TV f32[>..];
+var DX f32[>..];
+var DY f32[>..];
+var DZ f32[>..];
+var OUT byte[>..];
+var TGTS int = 0;
+var MISS int = 0;
+fn put2b(b byte[>..]&, v int) {
+	b.push((v & 255) as byte);
+	b.push(((v >> 8) & 255) as byte);
+}
+fn put32(b byte[>..]&, v int) {
+	b.push((v & 255) as byte);
+	b.push(((v >> 8) & 255) as byte);
+	b.push((((v >> 8) >> 8) & 255) as byte);
+	b.push(((v >> 24) & 255) as byte);
+}
+fn putf(b byte[>..]&, v f32) { put32(b, binary::f32_bits(v) as int); }
+fn flt(s const byte[:]) f32 {
+	let v, _ = parse_flt(s);
+	v as f32
+}
+fn jnum(d json::Doc&, n int) real {
+	var b byte[>..] = [];
+	let _ = json::format_node(b, d, n);
+	let iv, iok = parse_int(b[..]);
+	if iok { return iv as real; }
+	let v, _ = parse_flt(b[..]);
+	v
+}
+fn path2(sub const byte[:], leaf const byte[:]) byte[>..] {
+	var p byte[>..] = [];
+	p.append(DIR[..]);
+	p.append(sub);
+	p.append(leaf);
+	p
+}
+fn fpair(s const byte[:]) int, int {
+	let p = split(s, '/');
+	let v, _ = parse_int(p[0]);
+	var u = 1;
+	if p.len > 1 && p[1].len > 0 { let w, _ = parse_int(p[1]); u = w; }
+	return v - 1, u - 1;
+}
+fn bidx_of(name const byte[:]) int {
+	for i in 53 { if BNAMES[i] == name { return i; } }
+	22
+}
+fn mh_cut(n const byte[:]) const byte[:] { if ends_with(n, ".L") || ends_with(n, ".R") { n[..n.len - 2] } else { n } }
+fn mh_map_bone(n const byte[:]) int {
+	let b = mh_cut(n);
+	let sd = if ends_with(n, ".L") { "_l" } else { if ends_with(n, ".R") { "_r" } else { "" } };
+	var o byte[>..] = [];
+	if starts_with(b, "finger") && b.len >= 9 && sd.len > 0 {
+		let d = (b[5 + 1] as int) - ('1' as int);
+		o.append(if d == 0 { "thumb" } else { if d == 1 { "index" } else { if d == 2 { "middle" } else { if d == 3 { "ring" } else { "pinky" } } } });
+		o.append("_0");
+		o.push(b[8]);
+		o.append(sd);
+		return bidx_of(o[..]);
+	}
+	let l = if starts_with(b, "toe") { "ball" } else { if starts_with(b, "wrist") || starts_with(b, "metacarpal") { "hand" } else { if starts_with(b, "upperarm") || starts_with(b, "shoulder") { "upperarm" } else { if starts_with(b, "lowerarm") { "lowerarm" } else { if starts_with(b, "upperleg") { "thigh" } else { if starts_with(b, "lowerleg") { "calf" } else { if b == "foot" || b == "clavicle" { b } else { "" } } } } } } };
+	if l.len > 0 && sd.len > 0 { o.append(l); o.append(sd); return bidx_of(o[..]); }
+	let c = if b == "pelvis" || b == "root" || b == "spine05" { "pelvis" } else { if b == "spine04" { "spine_01" } else { if b == "spine03" { "spine_02" } else { if b == "spine02" || b == "spine01" || b == "breast" { "spine_03" } else { if starts_with(b, "neck") { "neck_01" } else { "head" } } } } };
+	bidx_of(c)
+}
+fn zero_d() {
+	DX.clear();
+	DY.clear();
+	DZ.clear();
+	DX.resize(VX.len, 0.0);
+	DY.resize(VX.len, 0.0);
+	DZ.resize(VX.len, 0.0);
+}
+fn add_target_mode(rel const byte[:], w f32, side int) {
+	if rel.len == 0 { return; }
+	var tt byte[>..] = [];
+	if !read_file(path2("/targets/", rel)[..], tt) { print("MISS ", rel); MISS += 1; return; }
+	for tl in split(tt[..], '\n') {
+		let q = words(tl);
+		if q.len < 4 || q[0][0] == '#' { continue; }
+		let vi, _ = parse_int(q[0]);
+		if vi < 0 || vi >= VX.len { continue; }
+		var sw f32 = 1.0;
+		if side == 1 { sw = clamp(0.5 + VX[vi] / 0.018, 0.0, 1.0); }
+		if side == 2 { sw = clamp(0.5 - VX[vi] / 0.018, 0.0, 1.0); }
+		if side == 3 { sw = if VY[vi] >= (0.70 - 0.029) { 1.0 } else { 0.0 }; }
+		if side == 4 { sw = if VY[vi] < (0.70 - 0.029) { 1.0 } else { 0.0 }; }
+		let s = 0.1 * w * sw;
+		DX[vi] = DX[vi] + flt(q[1]) * s;
+		DY[vi] = DY[vi] + flt(q[2]) * s;
+		DZ[vi] = DZ[vi] + flt(q[3]) * s;
+	}
+}
+fn add_target(rel const byte[:], w f32) { add_target_mode(rel, w, 0); }
+fn emit_d() {
+	var cnt = 0;
+	let qk f32 = 10000.0;
+	for v in VX.len {
+		let ix = clamp(round((DX[v] * qk) as real) as int, -32750, 32750);
+		let iy = clamp(round((DY[v] * qk) as real) as int, -32750, 32750);
+		let iz = clamp(round((DZ[v] * qk) as real) as int, -32750, 32750);
+		if ix != 0 || iy != 0 || iz != 0 { cnt += 1; }
+	}
+	put32(OUT, cnt);
+	for v in VX.len {
+		let ix = clamp(round((DX[v] * qk) as real) as int, -32750, 32750);
+		let iy = clamp(round((DY[v] * qk) as real) as int, -32750, 32750);
+		let iz = clamp(round((DZ[v] * qk) as real) as int, -32750, 32750);
+		if ix != 0 || iy != 0 || iz != 0 {
+			put2b(OUT, v);
+			put2b(OUT, ix);
+			put2b(OUT, iy);
+			put2b(OUT, iz);
+		}
+	}
+	TGTS += 1;
+}
+fn emit_single(rel const byte[:], w f32) {
+	zero_d();
+	add_target(rel, w);
+	emit_d();
+}
+fn emit_pair(a1 const byte[:], w1 f32, a2 const byte[:], w2 f32, a3 const byte[:], w3 f32, a4 const byte[:], w4 f32) {
+	zero_d();
+	add_target(a1, w1);
+	add_target(a2, w2);
+	add_target(a3, w3);
+	add_target(a4, w4);
+	emit_d();
+}
+fn emit_sym(dir const byte[:], stem const byte[:], suf const byte[:], w f32) {
+	var l byte[>..] = [];
+	l.append(dir);
+	l.append("/l-");
+	l.append(stem);
+	l.append(suf);
+	var r byte[>..] = [];
+	r.append(dir);
+	r.append("/r-");
+	r.append(stem);
+	r.append(suf);
+	zero_d();
+	add_target(l[..], w);
+	add_target(r[..], w);
+	emit_d();
+}
+fn add_sym_into(dir const byte[:], stem const byte[:], suf const byte[:], w f32) {
+	var l byte[>..] = [];
+	l.append(dir);
+	l.append("/l-");
+	l.append(stem);
+	l.append(suf);
+	var r byte[>..] = [];
+	r.append(dir);
+	r.append("/r-");
+	r.append(stem);
+	r.append(suf);
+	add_target(l[..], w);
+	add_target(r[..], w);
+}
+fn main() {
+	let a = args();
+	if a.len < 3 { print("usage: mh_pack <makehuman_data_dir> <out.bin>"); return; }
+	DIR.append(a[1]);
+	var ot byte[>..] = [];
+	if !read_file(path2("/3dobjs/base.obj", "")[..], ot) { print("cannot read base.obj"); return; }
+	var bq int[>..] = [];
+	var eq int[>..] = [];
+	var lq int[>..] = [];
+	var tq int[>..] = [];
+	var gq int[>..] = [];
+	var sq int[>..] = [];
+	var grp = -1;
+	var vgrp int[>..] = [];
+	for l in split(ot[..], '\n') {
+		let t = words(l);
+		if t.len < 2 { continue; }
+		if t[0] == "v" {
+			VX.push(flt(t[1]) * 0.1);
+			VY.push(flt(t[2]) * 0.1);
+			VZ.push(flt(t[3]) * 0.1);
+			vgrp.push(0);
+		} else if t[0] == "vt" {
+			TU.push(flt(t[1]));
+			TV.push(flt(t[2]));
+		} else if t[0] == "g" {
+			let g = t[1];
+			grp = if g == "body" { 0 } else { if g == "helper-l-eye" { 1 } else { if g == "helper-r-eye" { 2 } else { if starts_with(g, "helper-l-eyelashes") || starts_with(g, "helper-r-eyelashes") { 3 } else { if g == "helper-upper-teeth" { 4 } else { if g == "helper-lower-teeth" { 5 } else { if g == "helper-tongue" { 7 } else { if g == "helper-hair" { 8 } else { -1 } } } } } } } };
+		} else if t[0] == "f" && grp >= 0 && t.len >= 5 {
+			var fv int[4] = [0; 4];
+			var ft int[4] = [0; 4];
+			for k in 4 {
+				let vi, ti = fpair(t[k + 1]);
+				fv[k] = vi;
+				ft[k] = ti;
+				if grp > 0 && vgrp[vi] == 0 { vgrp[vi] = grp; }
+			}
+			if grp == 0 { for k in 4 { bq.push(fv[k]); } for k in 4 { bq.push(ft[k]); } }
+			if grp == 1 || grp == 2 { for k in 4 { eq.push(fv[k]); } for k in 4 { eq.push(ft[k]); } }
+			if grp == 3 { for k in 4 { lq.push(fv[k]); } for k in 4 { lq.push(ft[k]); } }
+			if grp == 4 || grp == 5 { for k in 4 { tq.push(fv[k]); } for k in 4 { tq.push(ft[k]); } }
+			if grp == 7 { for k in 4 { gq.push(fv[k]); } for k in 4 { gq.push(ft[k]); } }
+			if grp == 8 { for k in 4 { sq.push(fv[k]); } for k in 4 { sq.push(ft[k]); } }
+		}
+	}
+	let nv = VX.len;
+	var m2b int[>..] = [];
+	m2b.resize(nv, -1);
+	var b2m int[>..] = [];
+	for q in bq.len / 8 {
+		for k in 4 {
+			let vi = bq[q * 8 + k];
+			if m2b[vi] < 0 { m2b[vi] = b2m.len; b2m.push(vi); }
+		}
+	}
+	var st byte[>..] = [];
+	if !read_file(path2("/rigs/default.mhskel", "")[..], st) { print("cannot read default.mhskel"); return; }
+	var sd json::Doc;
+	let sr, _ = json::parse(st[..], sd);
+	let jn = json::member(sd, sr, "joints");
+	let bn = json::member(sd, sr, "bones");
+	var wt byte[>..] = [];
+	if !read_file(path2("/rigs/default_weights.mhw", "")[..], wt) { print("cannot read default_weights.mhw"); return; }
+	var wd json::Doc;
+	let wr, _ = json::parse(wt[..], wd);
+	var wj int[>..] = [];
+	var ww f32[>..] = [];
+	wj.resize(nv * 4, 22);
+	ww.resize(nv * 4, 0.0);
+	json::each(wd, json::member(wd, wr, "weights")) { c =>
+		let jb = mh_map_bone(json::name_of(wd, c));
+		json::each(wd, c) { e =>
+			let vi = jnum(wd, json::element(wd, e, 0)) as int;
+			let wf = jnum(wd, json::element(wd, e, 1)) as f32;
+			if vi >= 0 && vi < nv && wf > 0.0 {
+				var slot = -1;
+				for s in 4 { if slot < 0 && ww[vi * 4 + s] > 0.0 && wj[vi * 4 + s] == jb { slot = s; } }
+				if slot >= 0 { ww[vi * 4 + slot] = ww[vi * 4 + slot] + wf; }
+				else {
+					var lo = 0;
+					for s in 1..4 { if ww[vi * 4 + s] < ww[vi * 4 + lo] { lo = s; } }
+					if wf > ww[vi * 4 + lo] { ww[vi * 4 + lo] = wf; wj[vi * 4 + lo] = jb; }
+				}
+			}
+		}
+	}
+	for v in nv {
+		let s = ww[v * 4] + ww[v * 4 + 1] + ww[v * 4 + 2] + ww[v * 4 + 3];
+		if s <= 0.0001 { wj[v * 4] = 22; ww[v * 4] = 1.0; ww[v * 4 + 1] = 0.0; ww[v * 4 + 2] = 0.0; ww[v * 4 + 3] = 0.0; }
+	}
+	zero_d();
+	add_target("mouth/mouth-upperlip-volume-incr.target", 1.0);
+	add_target("mouth/mouth-lowerlip-volume-incr.target", 1.0);
+	var lipm f32[>..] = [];
+	lipm.resize(nv, 0.0);
+	for v in nv { lipm[v] = clamp(sqrt((DX[v] * DX[v] + DY[v] * DY[v] + DZ[v] * DZ[v]) as real) as f32 / 0.0028, 0.0, 1.0); }
+	zero_d();
+	add_target("expression/units/caucasian/eyebrows-left-up.target", 1.0);
+	add_target("expression/units/caucasian/eyebrows-right-up.target", 1.0);
+	var browm f32[>..] = [];
+	browm.resize(nv, 0.0);
+	for v in nv { browm[v] = clamp(sqrt((DX[v] * DX[v] + DY[v] * DY[v] + DZ[v] * DZ[v]) as real) as f32 / 0.0045, 0.0, 1.0); }
+	zero_d();
+	add_target("expression/units/caucasian/eye-left-closure.target", 1.0);
+	add_target("expression/units/caucasian/eye-right-closure.target", 1.0);
+	var lidm f32[>..] = [];
+	lidm.resize(nv, 0.0);
+	for v in nv { lidm[v] = clamp((-DY[v]) / 0.0042, 0.0, 1.0); }
+	var elx f32 = 0.0;
+	var ely f32 = 0.0;
+	var elz f32 = 0.0;
+	var eln = 0;
+	var erx f32 = 0.0;
+	var ery f32 = 0.0;
+	var erz f32 = 0.0;
+	var ern = 0;
+	for v in nv {
+		if vgrp[v] == 1 { elx += VX[v]; ely += VY[v]; elz += VZ[v]; eln += 1; }
+		if vgrp[v] == 2 { erx += VX[v]; ery += VY[v]; erz += VZ[v]; ern += 1; }
+	}
+	elx /= max(eln, 1) as f32;
+	ely /= max(eln, 1) as f32;
+	elz /= max(eln, 1) as f32;
+	erx /= max(ern, 1) as f32;
+	ery /= max(ern, 1) as f32;
+	erz /= max(ern, 1) as f32;
+	var vreg byte[>..] = [];
+	var vmask byte[>..] = [];
+	vreg.resize(nv, 1);
+	vmask.resize(nv * 4, 0);
+	for v in nv {
+		let x = VX[v];
+		let ax = abs(x);
+		let y = VY[v];
+		let z = VZ[v];
+		var dom = wj[v * 4];
+		var dw = ww[v * 4];
+		for s in 1..4 { if ww[v * 4 + s] > dw { dw = ww[v * 4 + s]; dom = wj[v * 4 + s]; } }
+		var r = 1;
+		if vgrp[v] == 1 || vgrp[v] == 2 { r = 31; }
+		else if dom == 1 { r = 1; }
+		else if dom == 10 { r = 2; }
+		else if dom == 11 { r = if y > 0.34 { 3 } else { 2 }; }
+		else if dom == 12 { r = if y > 0.49 { 4 } else { 3 }; }
+		else if dom == 13 || dom == 14 { r = 4; }
+		else if dom == 21 { r = 5; }
+		else if dom == 15 { r = 15; }
+		else if dom == 15 + 1 { r = 15 + 1; }
+		else if dom == 17 { r = 17; }
+		else if dom >= 23 && dom <= 51 && (dom % 2) == 1 { r = 18; }
+		else if dom == 18 { r = 19; }
+		else if dom == 19 { r = 20; }
+		else if dom == 20 { r = 21; }
+		else if dom >= 24 && dom <= 52 && (dom % 2) == 0 { r = 22; }
+		else if dom == 2 { r = if y < 0.02 - 0.30 { 24 } else { 23 }; }
+		else if dom == 3 { r = if y > -0.35 { 24 } else { 25 }; }
+		else if dom == 4 || dom == 5 { r = 25 + 1; }
+		else if dom == 7 - 1 { r = if y < 0.02 - 0.30 { 28 } else { 27 }; }
+		else if dom == 7 { r = if y > -0.35 { 28 } else { 29 }; }
+		else if dom == 8 || dom == 9 { r = 30; }
+		else if dom == 22 {
+			if ax > 0.078 && y > (0.70 - 0.03) && y < 0.77 && z < 0.05 { r = 13; }
+			else if lipm[v] > 0.15 { r = 8; }
+			else if ax < 0.024 && y > (0.70 - 0.015) && y < 0.742 && z > 0.115 { r = 9; }
+			else if lidm[v] > 0.08 || (ax > 0.014 && ax < 0.055 && y > 0.712 && y < 0.744 && z > 0.105) { r = 10; }
+			else if browm[v] > 0.18 && z > 0.10 { r = 11; }
+			else if y < (0.70 - 0.012) && z > 0.04 { r = 7; }
+			else if ax > 0.024 && ax < 0.072 && y >= (0.70 - 0.018) && y < 0.722 && z > 0.075 { r = 14; }
+			else if y > 0.735 { r = 12; }
+			else { r = 5 + 1; }
+		}
+		vreg[v] = r as byte;
+		let wing = exp(-(((ax - 0.047) / 0.011) * ((ax - 0.047) / 0.011) + ((y - (ely + 0.005)) / 0.004) * ((y - (ely + 0.005)) / 0.004)) as real) as f32 * (if z > 0.112 { 1.0 } else { 0.0 });
+		let liner = clamp(lidm[v] * 1.2 + wing * 0.9, 0.0, 1.0);
+		let chk = exp(-(((ax - 0.044) / 0.024) * ((ax - 0.044) / 0.024) + ((y - 0.703) / 0.019) * ((y - 0.703) / 0.019)) as real) as f32 * (if z > 0.085 { 1.0 } else { 0.0 });
+		let nbr = exp(-((ax / 0.018) * (ax / 0.018) + ((y - 0.713) / 0.011) * ((y - 0.713) / 0.011)) as real) as f32 * (if z > 0.115 { 0.85 } else { 0.0 });
+		vmask[v * 4] = clamp((lipm[v] * 255.0 + 0.5) as int, 0, 255) as byte;
+		vmask[v * 4 + 1] = clamp((liner * 255.0 + 0.5) as int, 0, 255) as byte;
+		vmask[v * 4 + 2] = clamp((browm[v] * 255.0 + 0.5) as int, 0, 255) as byte;
+		vmask[v * 4 + 3] = clamp((max(chk, nbr) * 255.0 + 0.5) as int, 0, 255) as byte;
+	}
+	OUT.append("MHCC");
+	put32(OUT, nv);
+	put32(OUT, TU.len);
+	put32(OUT, b2m.len);
+	put32(OUT, bq.len / 8);
+	put32(OUT, eq.len / 8);
+	put32(OUT, lq.len / 8);
+	put32(OUT, tq.len / 8);
+	put32(OUT, gq.len / 8);
+	put32(OUT, sq.len / 8);
+	let tgt_count_off = OUT.len;
+	put32(OUT, 0);
+	for v in nv { putf(OUT, VX[v]); putf(OUT, VY[v]); putf(OUT, VZ[v]); }
+	for t in TU.len { putf(OUT, TU[t]); putf(OUT, TV[t]); }
+	for b in b2m { put2b(OUT, b); }
+	for m in m2b { put2b(OUT, m); }
+	for x in bq { put2b(OUT, x); }
+	for x in eq { put2b(OUT, x); }
+	for x in lq { put2b(OUT, x); }
+	for x in tq { put2b(OUT, x); }
+	for x in gq { put2b(OUT, x); }
+	for x in sq { put2b(OUT, x); }
+	let erad f32 = 0.0139;
+	for q in eq.len / 8 {
+		for k in 4 {
+			let vi = eq[q * 8 + k];
+			let cx = if VX[vi] >= 0.0 { elx } else { erx };
+			let cy = if VX[vi] >= 0.0 { ely } else { ery };
+			let u = clamp(0.5 + (VX[vi] - cx) / (2.0 * erad), 0.0, 1.0);
+			let v = clamp(0.5 + (VY[vi] - cy) / (2.0 * erad), 0.0, 1.0);
+			putf(OUT, u);
+			putf(OUT, v);
+		}
+	}
+	for b in 53 { put2b(OUT, BPARS[b]); }
+	for b in 55 {
+		if BSRC[b].len == 0 { put2b(OUT, 0); }
+		else {
+			let bobj = json::member(sd, bn, BSRC[b]);
+			let hs, _ = json::as_string(sd, json::member(sd, bobj, "head"));
+			let jobj = json::member(sd, jn, hs);
+			let cnt = json::count(sd, jobj);
+			put2b(OUT, cnt);
+			json::each(sd, jobj) { c => put2b(OUT, jnum(sd, c) as int); }
+		}
+	}
+	for v in nv {
+		let s = ww[v * 4] + ww[v * 4 + 1] + ww[v * 4 + 2] + ww[v * 4 + 3];
+		var rem = 50000;
+		for k in 4 { OUT.push(wj[v * 4 + k] as byte); }
+		for k in 4 {
+			let q = if k == 3 { rem } else { clamp(round((ww[v * 4 + k] / s * 50000.0) as real) as int, 0, rem) };
+			rem -= q;
+			put2b(OUT, q);
+		}
+	}
+	OUT.append(vreg[..]);
+	OUT.append(vmask[..]);
+	emit_pair("breast/nipple-point-decr.target", 1.0, "breast/nipple-size-decr.target", 1.0, "", 0.0, "", 0.0);
+	let phens const byte[:][3] = ["caucasian", "asian", "african"];
+	let sexes const byte[:][2] = ["female", "male"];
+	let ages const byte[:][4] = ["baby", "child", "young", "old"];
+	let musc const byte[:][3] = ["minmuscle", "averagemuscle", "maxmuscle"];
+	let wgts const byte[:][3] = ["minweight", "averageweight", "maxweight"];
+	for p in 3 { for s in 2 { for ag in 4 {
+		var nm byte[>..] = [];
+		nm.append("macrodetails/");
+		nm.append(phens[p]);
+		nm.push('-');
+		nm.append(sexes[s]);
+		nm.push('-');
+		nm.append(ages[ag]);
+		nm.append(".target");
+		emit_single(nm[..], 1.0);
+	} } }
+	for s in 2 { for ag in 4 { for m in 3 { for w in 3 {
+		var nm byte[>..] = [];
+		nm.append("macrodetails/universal-");
+		nm.append(sexes[s]);
+		nm.push('-');
+		nm.append(ages[ag]);
+		nm.push('-');
+		nm.append(musc[m]);
+		nm.push('-');
+		nm.append(wgts[w]);
+		nm.append(".target");
+		emit_single(nm[..], 1.0);
+	} } } }
+	let ages3 const byte[:][3] = ["child", "young", "old"];
+	let props const byte[:][2] = ["uncommonproportions", "idealproportions"];
+	for s in 2 { for ag in 3 { for pr in 2 {
+		var nm byte[>..] = [];
+		nm.append("macrodetails/proportions/");
+		nm.append(sexes[s]);
+		nm.push('-');
+		nm.append(ages3[ag]);
+		nm.append("-averagemuscle-averageweight-");
+		nm.append(props[pr]);
+		nm.append(".target");
+		emit_single(nm[..], 1.0);
+	} } }
+	let w2 const byte[:][2] = ["minweight", "averageweight"];
+	let cups const byte[:][3] = ["mincup", "averagecup", "maxcup"];
+	let firms const byte[:][3] = ["minfirmness", "averagefirmness", "maxfirmness"];
+	for w in 2 { for c in 3 { for f in 3 {
+		if c == 1 && f == 1 { zero_d(); emit_d(); }
+		else {
+			var nm byte[>..] = [];
+			nm.append("breast/female-young-averagemuscle-");
+			nm.append(w2[w]);
+			nm.push('-');
+			nm.append(cups[c]);
+			nm.push('-');
+			nm.append(firms[f]);
+			nm.append(".target");
+			emit_single(nm[..], 1.0);
+		}
+	} } }
+	emit_pair("measure/measure-shoulder-dist-decr.target", 1.0, "torso/torso-vshape-decr.target", 0.35, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-shoulder-dist-incr.target", 1.0, "torso/torso-vshape-incr.target", 0.35, "", 0.0, "", 0.0);
+	emit_single("measure/measure-bust-circ-decr.target", 1.0);
+	emit_single("measure/measure-bust-circ-incr.target", 1.0);
+	emit_single("measure/measure-underbust-circ-decr.target", 1.0);
+	emit_single("measure/measure-underbust-circ-incr.target", 1.0);
+	emit_pair("breast/breast-trans-down.target", 1.0, "breast/breast-point-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("breast/breast-trans-up.target", 1.0, "breast/breast-point-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("torso/torso-scale-depth-decr.target", 1.0, "torso/torso-muscle-pectoral-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("torso/torso-scale-depth-incr.target", 1.0, "torso/torso-muscle-pectoral-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("measure/measure-waist-circ-decr.target", 1.0);
+	emit_single("measure/measure-waist-circ-incr.target", 1.0);
+	emit_pair("measure/measure-hips-circ-decr.target", 1.0, "hip/hip-scale-horiz-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-hips-circ-incr.target", 1.0, "hip/hip-scale-horiz-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("buttocks/buttocks-volume-decr.target", 1.0);
+	emit_single("buttocks/buttocks-volume-incr.target", 1.0);
+	emit_single("stomach/stomach-tone-decr.target", 1.0);
+	emit_single("stomach/stomach-tone-incr.target", 1.0);
+	zero_d(); add_target("measure/measure-thigh-circ-decr.target", 1.0); add_sym_into("armslegs", "upperleg-scale-horiz", "-decr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-thigh-circ-incr.target", 1.0); add_sym_into("armslegs", "upperleg-scale-horiz", "-incr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-calf-circ-decr.target", 1.0); add_sym_into("armslegs", "lowerleg-scale-horiz", "-decr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-calf-circ-incr.target", 1.0); add_sym_into("armslegs", "lowerleg-scale-horiz", "-incr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-upperarm-circ-decr.target", 1.0); add_sym_into("armslegs", "upperarm-scale-horiz", "-decr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-upperarm-circ-incr.target", 1.0); add_sym_into("armslegs", "upperarm-scale-horiz", "-incr.target", 0.35); emit_d();
+	zero_d(); add_target("measure/measure-wrist-circ-decr.target", 0.5); add_sym_into("armslegs", "lowerarm-scale-horiz", "-decr.target", 1.0); add_sym_into("armslegs", "lowerarm-scale-depth", "-decr.target", 0.7); emit_d();
+	zero_d(); add_target("measure/measure-wrist-circ-incr.target", 0.5); add_sym_into("armslegs", "lowerarm-scale-horiz", "-incr.target", 1.0); add_sym_into("armslegs", "lowerarm-scale-depth", "-incr.target", 0.7); emit_d();
+	emit_pair("measure/measure-upperarm-length-decr.target", 1.0, "measure/measure-lowerarm-length-decr.target", 1.0, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-upperarm-length-incr.target", 1.0, "measure/measure-lowerarm-length-incr.target", 1.0, "", 0.0, "", 0.0);
+	emit_pair("armslegs/upperlegs-height-decr.target", 1.0, "armslegs/lowerlegs-height-decr.target", 1.0, "", 0.0, "", 0.0);
+	emit_pair("armslegs/upperlegs-height-incr.target", 1.0, "armslegs/lowerlegs-height-incr.target", 1.0, "", 0.0, "", 0.0);
+	emit_pair("torso/torso-scale-vert-decr.target", 1.0, "measure/measure-napetowaist-dist-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("torso/torso-scale-vert-incr.target", 1.0, "measure/measure-napetowaist-dist-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-neck-height-decr.target", 1.0, "neck/neck-scale-vert-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-neck-height-incr.target", 1.0, "neck/neck-scale-vert-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-neck-circ-decr.target", 1.0, "neck/neck-scale-horiz-decr.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("measure/measure-neck-circ-incr.target", 1.0, "neck/neck-scale-horiz-incr.target", 0.4, "", 0.0, "", 0.0);
+	zero_d(); add_sym_into("armslegs", "hand-scale", "-decr.target", 1.0); add_sym_into("armslegs", "hand-fingers-length", "-decr.target", 0.4); emit_d();
+	zero_d(); add_sym_into("armslegs", "hand-scale", "-incr.target", 1.0); add_sym_into("armslegs", "hand-fingers-length", "-incr.target", 0.4); emit_d();
+	zero_d(); add_sym_into("armslegs", "foot-scale", "-decr.target", 1.0); add_target("measure/measure-ankle-circ-decr.target", 0.3); emit_d();
+	zero_d(); add_sym_into("armslegs", "foot-scale", "-incr.target", 1.0); add_target("measure/measure-ankle-circ-incr.target", 0.3); emit_d();
+	emit_sym("eyes", "eye-scale", "-decr.target", 1.0);
+	emit_sym("eyes", "eye-scale", "-incr.target", 1.0);
+	emit_sym("eyes", "eye-trans", "-in.target", 1.0);
+	emit_sym("eyes", "eye-trans", "-out.target", 1.0);
+	emit_sym("eyes", "eye-trans", "-down.target", 1.0);
+	emit_sym("eyes", "eye-trans", "-up.target", 1.0);
+	zero_d(); add_sym_into("eyes", "eye-corner1", "-down.target", 1.0); add_sym_into("eyes", "eye-corner2", "-up.target", 0.45); emit_d();
+	zero_d(); add_sym_into("eyes", "eye-corner1", "-up.target", 1.0); add_sym_into("eyes", "eye-corner2", "-down.target", 0.45); emit_d();
+	zero_d(); add_sym_into("eyes", "eye-push1", "-in.target", 1.0); add_sym_into("eyes", "eye-push2", "-in.target", 0.5); emit_d();
+	zero_d(); add_sym_into("eyes", "eye-push1", "-out.target", 1.0); add_sym_into("eyes", "eye-push2", "-out.target", 0.5); emit_d();
+	zero_d(); add_sym_into("eyes", "eye-height2", "-decr.target", 1.0); add_sym_into("eyes", "eye-eyefold", "-down.target", 0.5); emit_d();
+	zero_d(); add_sym_into("eyes", "eye-height2", "-incr.target", 1.0); add_sym_into("eyes", "eye-eyefold", "-up.target", 0.5); emit_d();
+	emit_sym("eyes", "eye-epicanthus", "-out.target", 1.0);
+	emit_sym("eyes", "eye-epicanthus", "-in.target", 1.0);
+	emit_single("eyebrows/eyebrows-trans-down.target", 1.0);
+	emit_single("eyebrows/eyebrows-trans-up.target", 1.0);
+	emit_single("eyebrows/eyebrows-angle-down.target", 1.0);
+	emit_single("eyebrows/eyebrows-angle-up.target", 1.0);
+	emit_single("eyebrows/eyebrows-trans-backward.target", 1.0);
+	emit_single("eyebrows/eyebrows-trans-forward.target", 1.0);
+	emit_single("nose/nose-scale-vert-decr.target", 1.0);
+	emit_single("nose/nose-scale-vert-incr.target", 1.0);
+	emit_pair("nose/nose-scale-horiz-decr.target", 1.0, "nose/nose-width3-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("nose/nose-scale-horiz-incr.target", 1.0, "nose/nose-width3-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("nose/nose-scale-depth-decr.target", 1.0);
+	emit_single("nose/nose-scale-depth-incr.target", 1.0);
+	emit_pair("nose/nose-hump-decr.target", 1.0, "nose/nose-curve-concave.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("nose/nose-hump-incr.target", 1.0, "nose/nose-curve-convex.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("nose/nose-point-down.target", 1.0);
+	emit_single("nose/nose-point-up.target", 1.0);
+	emit_single("nose/nose-point-width-decr.target", 1.0);
+	emit_single("nose/nose-point-width-incr.target", 1.0);
+	emit_pair("nose/nose-nostrils-width-decr.target", 1.0, "nose/nose-flaring-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("nose/nose-nostrils-width-incr.target", 1.0, "nose/nose-flaring-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("mouth/mouth-scale-horiz-decr.target", 1.0);
+	emit_single("mouth/mouth-scale-horiz-incr.target", 1.0);
+	emit_single("mouth/mouth-trans-down.target", 1.0);
+	emit_single("mouth/mouth-trans-up.target", 1.0);
+	emit_pair("mouth/mouth-upperlip-volume-decr.target", 1.0, "mouth/mouth-upperlip-height-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("mouth/mouth-upperlip-volume-incr.target", 1.0, "mouth/mouth-upperlip-height-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("mouth/mouth-lowerlip-volume-decr.target", 1.0, "mouth/mouth-lowerlip-height-decr.target", 0.5, "", 0.0, "", 0.0);
+	emit_pair("mouth/mouth-lowerlip-volume-incr.target", 1.0, "mouth/mouth-lowerlip-height-incr.target", 0.5, "", 0.0, "", 0.0);
+	emit_single("mouth/mouth-cupidsbow-decr.target", 1.0);
+	emit_single("mouth/mouth-cupidsbow-incr.target", 1.0);
+	emit_single("mouth/mouth-angles-down.target", 1.0);
+	emit_single("mouth/mouth-angles-up.target", 1.0);
+	emit_sym("ears", "ear-scale", "-decr.target", 1.0);
+	emit_sym("ears", "ear-scale", "-incr.target", 1.0);
+	zero_d(); add_sym_into("ears", "ear-flap", "-decr.target", 1.0); add_sym_into("ears", "ear-wing", "-decr.target", 0.5); emit_d();
+	zero_d(); add_sym_into("ears", "ear-flap", "-incr.target", 1.0); add_sym_into("ears", "ear-wing", "-incr.target", 0.5); emit_d();
+	emit_sym("ears", "ear-lobe", "-decr.target", 1.0);
+	emit_sym("ears", "ear-lobe", "-incr.target", 1.0);
+	emit_sym("ears", "ear-shape", "-round.target", 1.0);
+	emit_sym("ears", "ear-shape", "-pointed.target", 1.0);
+	emit_single("chin/chin-width-decr.target", 1.0);
+	emit_single("chin/chin-width-incr.target", 1.0);
+	emit_pair("chin/chin-bones-decr.target", 1.0, "chin/chin-jaw-drop-incr.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("chin/chin-bones-incr.target", 1.0, "chin/chin-jaw-drop-decr.target", 0.4, "", 0.0, "", 0.0);
+	emit_single("chin/chin-height-decr.target", 1.0);
+	emit_single("chin/chin-height-incr.target", 1.0);
+	emit_single("chin/chin-prominent-decr.target", 1.0);
+	emit_single("chin/chin-prominent-incr.target", 1.0);
+	emit_single("chin/chin-cleft-decr.target", 1.0);
+	emit_single("chin/chin-cleft-incr.target", 1.0);
+	zero_d(); add_sym_into("cheek", "cheek-bones", "-decr.target", 1.0); add_sym_into("cheek", "cheek-trans", "-down.target", 0.35); emit_d();
+	zero_d(); add_sym_into("cheek", "cheek-bones", "-incr.target", 1.0); add_sym_into("cheek", "cheek-trans", "-up.target", 0.35); emit_d();
+	zero_d(); add_sym_into("cheek", "cheek-volume", "-decr.target", 1.0); add_sym_into("cheek", "cheek-inner", "-decr.target", 0.4); emit_d();
+	zero_d(); add_sym_into("cheek", "cheek-volume", "-incr.target", 1.0); add_sym_into("cheek", "cheek-inner", "-incr.target", 0.4); emit_d();
+	emit_single("forehead/forehead-scale-vert-decr.target", 1.0);
+	emit_single("forehead/forehead-scale-vert-incr.target", 1.0);
+	emit_pair("forehead/forehead-trans-backward.target", 1.0, "forehead/forehead-temple-decr.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("forehead/forehead-trans-forward.target", 1.0, "forehead/forehead-temple-incr.target", 0.4, "", 0.0, "", 0.0);
+	emit_single("head/head-scale-horiz-decr.target", 1.0);
+	emit_single("head/head-scale-horiz-incr.target", 1.0);
+	emit_single("head/head-round.target", 1.0);
+	emit_single("head/head-oval.target", 1.0);
+	emit_single("expression/units/caucasian/mouth-open.target", 1.0);
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-corner-puller.target", 1.0, 1); add_target_mode("expression/units/caucasian/mouth-elevation.target", 0.35, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-corner-puller.target", 1.0, 2); add_target_mode("expression/units/caucasian/mouth-elevation.target", 0.35, 2); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-depression.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-depression.target", 1.0, 2); emit_d();
+	emit_single("expression/units/caucasian/mouth-pursing.target", 1.0);
+	emit_pair("expression/units/caucasian/mouth-protusion.target", 1.0, "expression/units/caucasian/mouth-open.target", 0.32, "", 0.0, "", 0.0);
+	zero_d(); for v in nv { if lipm[v] > 0.02 { DX[v] = 0.008 * lipm[v]; } } emit_d();
+	zero_d(); for v in nv { if lipm[v] > 0.02 { DX[v] = -0.008 * lipm[v]; } } emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-upward-retraction.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-upward-retraction.target", 1.0, 2); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-depression-retraction.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-depression-retraction.target", 1.0, 2); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-compression.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-compression.target", 1.0, 2); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-retraction.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-retraction.target", 1.0, 2); emit_d();
+	emit_pair("expression/units/caucasian/eyebrows-left-inner-up.target", 1.0, "expression/units/caucasian/eyebrows-right-inner-up.target", 1.0, "", 0.0, "", 0.0);
+	emit_single("expression/units/caucasian/eyebrows-left-down.target", 1.0);
+	emit_single("expression/units/caucasian/eyebrows-right-down.target", 1.0);
+	emit_single("expression/units/caucasian/eyebrows-left-extern-up.target", 1.0);
+	emit_single("expression/units/caucasian/eyebrows-right-extern-up.target", 1.0);
+	emit_single("expression/units/caucasian/eye-left-closure.target", 1.0);
+	emit_single("expression/units/caucasian/eye-right-closure.target", 1.0);
+	emit_single("expression/units/caucasian/eye-left-opened-up.target", 1.0);
+	emit_single("expression/units/caucasian/eye-right-opened-up.target", 1.0);
+	emit_single("expression/units/caucasian/eye-left-slit.target", 1.0);
+	emit_single("expression/units/caucasian/eye-right-slit.target", 1.0);
+	zero_d(); add_sym_into("cheek", "cheek-volume", "-incr.target", 1.0); add_sym_into("cheek", "cheek-inner", "-incr.target", 0.7); emit_d();
+	emit_pair("cheek/l-cheek-trans-up.target", 0.7, "expression/units/caucasian/eye-left-slit.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("cheek/r-cheek-trans-up.target", 0.7, "expression/units/caucasian/eye-right-slit.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("expression/units/caucasian/nose-left-elevation.target", 1.0, "expression/units/caucasian/nose-left-dilatation.target", 0.4, "", 0.0, "", 0.0);
+	emit_pair("expression/units/caucasian/nose-right-elevation.target", 1.0, "expression/units/caucasian/nose-right-dilatation.target", 0.4, "", 0.0, "", 0.0);
+	emit_single("chin/chin-prognathism-incr.target", 0.7);
+	zero_d(); for v in nv { if vreg[v] == 7 || vgrp[v] == 5 { DX[v] = 0.007; } } emit_d();
+	zero_d(); for v in nv { if vreg[v] == 7 || vgrp[v] == 5 { DX[v] = -0.007; } } emit_d();
+	zero_d(); add_target_mode("mouth/mouth-dimples-in.target", 1.0, 1); emit_d();
+	zero_d(); add_target_mode("mouth/mouth-dimples-in.target", 1.0, 2); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-compression.target", 1.0, 3); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-compression.target", 1.0, 4); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-eversion.target", 1.0, 3); emit_d();
+	zero_d(); add_target_mode("expression/units/caucasian/mouth-eversion.target", 1.0, 4); emit_d();
+	emit_pair("expression/units/caucasian/mouth-compression.target", 0.5, "expression/units/caucasian/mouth-parling.target", -0.35, "", 0.0, "", 0.0);
+	zero_d(); for v in nv { if vgrp[v] == 7 { DZ[v] = 0.025; DY[v] = -0.004; } } emit_d();
+	let gyaw f32[8] = [-0.35, 0.35, 0.0, 0.0, 0.0, 0.0, 0.35, -0.35];
+	let gpit f32[8] = [0.0, 0.0, -0.30, 0.30, -0.30, 0.30, 0.0, 0.0];
+	let geye int[8] = [1, 2, 2, 2, 1, 1, 1, 2];
+	for g in 8 {
+		zero_d();
+		let eg = geye[g];
+		let cx = if eg == 1 { elx } else { erx };
+		let cy = if eg == 1 { ely } else { ery };
+		let cz = if eg == 1 { elz } else { erz };
+		let cyw = cos(gyaw[g] as real) as f32;
+		let syw = sin(gyaw[g] as real) as f32;
+		let cpt = cos(gpit[g] as real) as f32;
+		let spt = sin(gpit[g] as real) as f32;
+		for v in nv {
+			if vgrp[v] == eg {
+				let rx = VX[v] - cx;
+				let ry = VY[v] - cy;
+				let rz = VZ[v] - cz;
+				let x1 = rx * cyw + rz * syw;
+				let z1 = -rx * syw + rz * cyw;
+				let y2 = ry * cpt - z1 * spt;
+				let z2 = ry * spt + z1 * cpt;
+				DX[v] = x1 - rx;
+				DY[v] = y2 - ry;
+				DZ[v] = z2 - rz;
+			}
+		}
+		if gpit[g] < 0.0 { add_target(if eg == 1 { "expression/units/caucasian/eye-left-opened-up.target" } else { "expression/units/caucasian/eye-right-opened-up.target" }, 0.22); }
+		if gpit[g] > 0.0 { add_target(if eg == 1 { "expression/units/caucasian/eye-left-closure.target" } else { "expression/units/caucasian/eye-right-closure.target" }, 0.25); }
+		emit_d();
+	}
+	OUT[tgt_count_off] = (TGTS & 255) as byte;
+	OUT[tgt_count_off + 1] = ((TGTS >> 8) & 255) as byte;
+	OUT[tgt_count_off + 2] = (((TGTS >> 8) >> 8) & 255) as byte;
+	OUT[tgt_count_off + 3] = ((TGTS >> 24) & 255) as byte;
+	write_file(a[2], OUT[..]);
+	print("mh_pack: nv=", nv, " body_v=", b2m.len, " body_q=", bq.len / 8, " targets=", TGTS, " miss=", MISS, " bytes=", OUT.len);
+}
+```
