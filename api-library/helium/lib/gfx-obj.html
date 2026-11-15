@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/obj | AMNI-SCIENT</title>
+<meta name="description" content="Loads Wavefront OBJ model files, parsing vertices, named groups, and faces into triangle lists for rendering.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/obj">
+<meta property="og:description" content="Loads Wavefront OBJ model files, parsing vertices, named groups, and faces into triangle lists for rendering.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-obj">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-obj">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=3d165977d4">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=3d165977d4'; start({wasm: '/api-library/search.wasm?v=3d165977d4'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/obj</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/obj</h1>
+<p class="lib-lede">Loads Wavefront OBJ model files, parsing vertices, named groups, and faces into triangle lists for rendering.</p>
+<p class="lib-meta"><code>import gfx.obj;</code> &middot; <code>obj::</code> &middot; 8 functions, 0 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#model-data">Model Data <span class="n">6</span></a></li>
+<li><a href="#groups">Groups <span class="n">3</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="model-data">Model Data <span class="n">6</span></h2>
+<article class="sym" id="V">
+<h3><a href="#V">V</a> <i>constant</i></h3>
+<pre>var V f32[&gt;..]</pre>
+<p>Holds the flat list of vertex coordinates (x, y, z triplets) from the most recently loaded OBJ file.</p>
+<p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L4">hc/lib/gfx/obj.amni:4</a>
+</article>
+<article class="sym" id="tris">
+<h3><a href="#tris">tris</a> <i>constant</i></h3>
+<pre>var tris int[&gt;..]</pre>
+<p>Holds triangles of the loaded model as four ints each: group id, then three zero-based vertex indices.</p>
+<p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L6">hc/lib/gfx/obj.amni:6</a>
+</article>
+<article class="sym" id="load">
+<h3><a href="#load">load</a> <i>function</i></h3>
+<pre>load(path const byte[:]) bool</pre>
+<p>Loads an OBJ file, replacing current data, and returns false if the file cannot be read.</p>
+<p class="note">`load(path) bool` clears the module vars and reads the file. A line starting with &quot;v &quot; adds its first three numbers to `V`. A line starting with &quot;g &quot; makes its name (the text after &quot;g &quot; up to the end of the line, without trailing spaces or a carriage return) the current group, adding it to `names` when new. A line starting with &quot;f &quot; lists three or more corners, each a vertex number counting from 1</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L26">hc/lib/gfx/obj.amni:26</a>
+</article>
+<article class="sym" id="tris_of">
+<h3><a href="#tris_of">tris_of</a> <i>function</i></h3>
+<pre>tris_of(name const byte[:], out int[&gt;..]&amp;)</pre>
+<p>Fills the output array with vertex indices, three per triangle, for the named group; empty if unknown.</p>
+<p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L73">hc/lib/gfx/obj.amni:73</a>
+</article>
+<article class="sym" id="centroid">
+<h3><a href="#centroid">centroid</a> <i>function</i></h3>
+<pre>centroid(name const byte[:]) real, real, real</pre>
+<p>Returns the average x, y, z position of the distinct vertices used by the named group, or zeros if none.</p>
+<p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L85">hc/lib/gfx/obj.amni:85</a>
+</article>
+<article class="sym" id="normals">
+<h3><a href="#normals">normals</a> <i>function</i></h3>
+<pre>normals(idx const int[:], out f32[&gt;..]&amp;)</pre>
+<p>Computes per-vertex normals for the given triangle vertex indices into the output array, skipping triangles with out-of-range indices.</p>
+<p class="note">`normals(idx, out)` (idx: read-only int slice of triangles) clears out (growable f32) and fills it with three numbers per vertex of `V`: each vertex's sum of the cross products of the edges (b minus a) and (c minus a) of the triangles that use it, scaled to length one (0, 1, 0 when shorter than 1e-20).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L111">hc/lib/gfx/obj.amni:111</a>
+</article>
+<h2 id="groups">Groups <span class="n">3</span></h2>
+<article class="sym" id="names">
+<h3><a href="#names">names</a> <i>constant</i></h3>
+<pre>var names byte[][&gt;..]</pre>
+<p>Holds the group names found in the most recently loaded OBJ file, indexed by group id.</p>
+<p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L5">hc/lib/gfx/obj.amni:5</a>
+</article>
+<article class="sym" id="name_count">
+<h3><a href="#name_count">name_count</a> <i>function</i></h3>
+<pre>name_count() int</pre>
+<p>Returns the number of named groups currently loaded.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L7">hc/lib/gfx/obj.amni:7</a>
+</article>
+<article class="sym" id="group">
+<h3><a href="#group">group</a> <i>function</i></h3>
+<pre>group(name const byte[:]) int</pre>
+<p>Returns the group id for a name, or -1 if no such group exists.</p>
+<p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L70">hc/lib/gfx/obj.amni:70</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
+<article class="sym" id="find_name">
+<h3><a href="#find_name">find_name</a> <i>function</i></h3>
+<pre>find_name(name const byte[:]) int</pre>
+<p>Returns the index of a group name, or -1 if it is not loaded.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L12">hc/lib/gfx/obj.amni:12</a>
+</article>
+<article class="sym" id="add_name">
+<h3><a href="#add_name">add_name</a> <i>function</i></h3>
+<pre>add_name(name const byte[:]) int</pre>
+<p>Adds a group name if missing and returns its index, reusing the existing index when present.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/3d165971f5da6a1f13c4a2af5d5cda18e92ff69e/hc/lib/gfx/obj.amni#L20">hc/lib/gfx/obj.amni:20</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>1977</span></a><ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
+<li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
+<li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
+<li><a href="/api-library/helium/lib/gfx-hair">gfx/hair</a></li>
+<li><a href="/api-library/helium/lib/gfx-hairdo">gfx/hairdo</a></li>
+<li><a href="/api-library/helium/lib/gfx-garment">gfx/garment</a></li>
+<li><a href="/api-library/helium/lib/gfx-obj" class="on">gfx/obj</a><ul class="lib-sub">
+<li><a href="#model-data">Model Data</a></li>
+<li><a href="#groups">Groups</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1158</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-15">2026-11-15</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>

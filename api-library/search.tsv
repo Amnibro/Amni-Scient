@@ -6186,16 +6186,22 @@ cloth::bends	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bends	Flat arr
 cloth::bend_len	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bend_len	Rest lengths of the bend constraints.	int
 cloth::tris	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tris	Flat array of particle index triples, one triple per triangle.	int
 cloth::vmap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#vmap	Mapping from each source mesh vertex to its merged particle index.	int
+cloth::skin_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_on	Per-particle flags marking which cloth particles are currently constrained to a skinned target surface.	int
+cloth::skin_p	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_p	Per-particle flat array of skin target positions, three reals per particle.	int
+cloth::skin_n	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_n	Per-particle flat array of skin target normals, three reals per particle, stored normalized.	int
+cloth::skin_gap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_gap	Per-particle array of the gap distance kept from the skin target surface.	int
 cloth::balls	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#balls	Flat array of sphere colliders stored as x, y, z, radius quadruples.	int
 cloth::pills	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#pills	Flat array of capsule colliders stored as two endpoints and a radius, seven values each.	int
 cloth::floor_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_on	Flag indicating whether the ground plane collider is enabled.	int
 cloth::floor_y	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_y	Height of the ground plane collider along the y axis.	int
-cloth::key_bits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#key_bits	Hashes a vertex position into an unsigned key for merging duplicate vertices.	int
-cloth::add3	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#add3	Appends an x, y, z triple to a flat array.	int
-cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the current distance between two particles by index.	int
+cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the distance between two particles given by index.	int
+cloth::hbits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hbits	Returns the raw 32-bit pattern of a float, used for hashing vertex positions.	int
+cloth::hslot	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hslot	Returns a hash table slot for a position, masked to the table size.	int
 cloth::make	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#make	Builds a cloth from mesh vertices and triangle indices, merging duplicate positions, and returns its cloth index.	pub
 cloth::pin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pin	Pins a cloth vertex so it moves to the given world position during steps instead of simulating.	pub
 cloth::unpin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unpin	Releases a pinned cloth vertex so it simulates freely again.	pub
+cloth::skin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin	Binds a cloth vertex to a skin position, normal and gap; zero-length normals leave the previous normal unchanged.	pub
+cloth::unskin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unskin	Clears skinning on every particle of the cloth so they simulate freely again.	pub
 cloth::reset	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#reset	Clears all cloths, particle data, and colliders.	pub
 cloth::clear_colliders	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#clear_colliders	Removes all sphere and capsule colliders and disables the ground plane.	pub
 cloth::ball	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ball	Adds a sphere collider with the given center and radius.	pub
@@ -6204,7 +6210,7 @@ cloth::ground	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ground	Enable
 cloth::normals	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#normals	Recomputes smoothed per-particle normals for a cloth from its triangles.	int
 cloth::limits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#limits	Computes each unpinned particle's nearest pinned particle and its rest distance for reach limiting.	int
 cloth::contact	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#contact	Pushes a particle out of a sphere and applies friction against its sliding motion.	int
-cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a position-based distance constraint between two particles with the given rest length and softness.	int
+cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a soft distance constraint between two particles, moving each by its inverse mass share.	int
 cloth::step	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#step	Advances a cloth simulation by dt seconds under wind, applying gravity, constraints, collisions, and normals.	pub
 cloth::write	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#write	Writes simulated position and normal offsets and previous-frame offsets for each vertex into an output buffer.	pub
 cloth::count	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#count	Returns the number of simulated particles in a cloth.	pub
@@ -6679,3 +6685,83 @@ rs::POW10	constant	tiles/rs	/api-library/helium/lib/tiles-rs#POW10	Lookup table 
 rs::pow10_init	function	tiles/rs	/api-library/helium/lib/tiles-rs#pow10_init	Fills the powers-of-ten table by parsing each 1e-notation string from 1e0 to 1e308.	int
 rs::serde_f64	function	tiles/rs	/api-library/helium/lib/tiles-rs#serde_f64	Parses decimal or scientific text into a real, returning false as the second result on overflow.	pub
 rs::utf8_lossy	function	tiles/rs	/api-library/helium/lib/tiles-rs#utf8_lossy	Appends text to a byte buffer, copying valid UTF-8 and handling invalid byte sequences lossily.	pub
+garment::Spec	type	gfx/garment	/api-library/helium/lib/gfx-garment#Spec	Tunable parameters struct for garment fitting, covering ease, hem, sleeve, collar, neck and other dimensions in meters, with a unit scale.	pub
+garment::spec	function	gfx/garment	/api-library/helium/lib/gfx-garment#spec	Returns a Spec populated with default garment fitting parameters.	pub
+garment::pos	constant	gfx/garment	/api-library/helium/lib/gfx-garment#pos	Output array of garment vertex positions, three floats per vertex, produced by emit.	pub
+garment::nrm	constant	gfx/garment	/api-library/helium/lib/gfx-garment#nrm	Output array of per-vertex normals, three floats per vertex, averaged from adjacent triangles.	pub
+garment::tan	constant	gfx/garment	/api-library/helium/lib/gfx-garment#tan	Tangent array for garment vertices, declared but not filled in this source.	int
+garment::uv	constant	gfx/garment	/api-library/helium/lib/gfx-garment#uv	Output array of texture coordinates, two floats per vertex, for the garment mesh.	pub
+garment::body	constant	gfx/garment	/api-library/helium/lib/gfx-garment#body	Output triangle index list for the main garment body surface.	pub
+garment::rib	constant	gfx/garment	/api-library/helium/lib/gfx-garment#rib	Output triangle index list for ribbed trim regions such as cuffs, hem band and collar.	pub
+garment::part	constant	gfx/garment	/api-library/helium/lib/gfx-garment#part	Output array giving the region code of each garment vertex, such as torso, sleeve, hem or collar.	pub
+garment::anchor	constant	gfx/garment	/api-library/helium/lib/gfx-garment#anchor	Output array of each vertex's original fitted position, three floats per vertex, used as a cloth rest reference.	pub
+garment::anchor_n	constant	gfx/garment	/api-library/helium/lib/gfx-garment#anchor_n	Output array of each vertex's original surface normal, three floats per vertex, used as an anchor direction.	pub
+garment::held	constant	gfx/garment	/api-library/helium/lib/gfx-garment#held	Output flags marking vertices held fixed, such as neckline, cuff and hem band, during cloth simulation.	pub
+garment::goal	constant	gfx/garment	/api-library/helium/lib/gfx-garment#goal	Output array of target positions, three floats per vertex, toward which held vertices are pulled.	pub
+garment::S	constant	gfx/garment	/api-library/helium/lib/gfx-garment#S	Active Spec instance whose values drive all garment fitting steps.	pub
+garment::jt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#jt	Flat array of body joint positions, three values per joint, used by fitting.	int
+garment::sn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#sn	Working array of body surface normals per vertex, computed during classification.	int
+garment::sp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#sp	Per-vertex body part index, assigned by classification.	int
+garment::st	constant	gfx/garment	/api-library/helium/lib/gfx-garment#st	Per-vertex position along the assigned body part, in meters.	int
+garment::wp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wp	Working array of garment vertex positions during cutting and fitting.	int
+garment::wa	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wa	Working array of original garment vertex positions.	int
+garment::wn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wn	Working array of garment vertex normals.	int
+garment::wq	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wq	Working array of per-vertex body part codes for garment vertices.	int
+garment::wt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wt	Working array of per-vertex position along the body part.	int
+garment::wh	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wh	Working array of per-vertex held flags.	int
+garment::wg	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wg	Working array of per-vertex goal positions.	int
+garment::wi	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wi	Working triangle index list for the garment mesh.	int
+garment::wr	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wr	Working per-triangle flags marking triangles that belong to the rib trim.	int
+garment::ws	constant	gfx/garment	/api-library/helium/lib/gfx-garment#ws	Working per-vertex flags marking collar strip vertices.	int
+garment::wsu	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wsu	Working array of collar strip U texture coordinates.	int
+garment::wsv	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wsv	Working array of collar strip V texture coordinates.	int
+garment::wb	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wb	Working list of boundary edge endpoint pairs of the cut garment mesh.	int
+garment::len3	function	gfx/garment	/api-library/helium/lib/gfx-garment#len3	Returns the Euclidean length of a three-component vector.	int
+garment::joint	function	gfx/garment	/api-library/helium/lib/gfx-garment#joint	Returns the x, y and z position of the joint with the given index.	int
+garment::arm_len	function	gfx/garment	/api-library/helium/lib/gfx-garment#arm_len	Returns the length of one arm, shoulder to wrist, in meters; side 1 selects the first arm.	pub
+garment::on_part	function	gfx/garment	/api-library/helium/lib/gfx-garment#on_part	Returns the closest point on a body part's skeleton, its direction and distance along the part.	int
+garment::classify	function	gfx/garment	/api-library/helium/lib/gfx-garment#classify	Computes vertex normals and assigns each body mesh vertex to its nearest body part.	int
+garment::neck_m	function	gfx/garment	/api-library/helium/lib/gfx-garment#neck_m	Returns a signed margin of a point from the neckline cut, positive meaning inside the garment.	int
+garment::hem_y	function	gfx/garment	/api-library/helium/lib/gfx-garment#hem_y	Returns the hem height in skeleton units, accounting for hem offset and slack.	pub
+garment::sleeve_end	function	gfx/garment	/api-library/helium/lib/gfx-garment#sleeve_end	Returns the sleeve end distance along the arm for the given side, including sleeve slack.	pub
+garment::shell	constant	gfx/garment	/api-library/helium/lib/gfx-garment#shell	Working copy of the body mesh vertex positions that is cut into a garment.	int
+garment::keep	function	gfx/garment	/api-library/helium/lib/gfx-garment#keep	Returns a vertex's signed margin inside the garment cut and a code naming which edge limits it.	int
+garment::edge_key	function	gfx/garment	/api-library/helium/lib/gfx-garment#edge_key	Returns a single integer key identifying an undirected edge between two vertices.	int
+garment::cut	function	gfx/garment	/api-library/helium/lib/gfx-garment#cut	Cuts the body mesh along the neckline, hem and sleeve ends, building the working garment mesh.	int
+garment::chest_y	function	gfx/garment	/api-library/helium/lib/gfx-garment#chest_y	Returns the chest joint height in skeleton units.	int
+garment::edge_m	function	gfx/garment	/api-library/helium/lib/gfx-garment#edge_m	Returns a vertex's distance in meters from the nearest garment edge.	int
+garment::in_band	function	gfx/garment	/api-library/helium/lib/gfx-garment#in_band	Returns whether a vertex lies within the ribbed trim band near a hem or cuff.	int
+garment::sstep	function	gfx/garment	/api-library/helium/lib/gfx-garment#sstep	Returns a smooth Hermite interpolation between zero and one across the given edges.	int
+garment::loosen	function	gfx/garment	/api-library/helium/lib/gfx-garment#loosen	Offsets garment vertices outward for ease and sets goals and held flags for trim bands.	int
+garment::add_like	function	gfx/garment	/api-library/helium/lib/gfx-garment#add_like	Appends a new garment vertex copying another's attributes, with given position, part, and goal.	int
+garment::wdist	function	gfx/garment	/api-library/helium/lib/gfx-garment#wdist	Returns the distance in meters between two working garment vertices.	int
+garment::neck_band	function	gfx/garment	/api-library/helium/lib/gfx-garment#neck_band	Builds a raised collar strip around the neckline loop as extra triangles.	int
+garment::lip_ok	function	gfx/garment	/api-library/helium/lib/gfx-garment#lip_ok	Returns whether a vertex is held and on a hem or cuff edge that gets a lip.	int
+garment::lips	function	gfx/garment	/api-library/helium/lib/gfx-garment#lips	Adds an inward-offset lip strip along the hem and cuff boundary edges.	int
+garment::norm3	function	gfx/garment	/api-library/helium/lib/gfx-garment#norm3	Returns the input vector scaled to unit length, unchanged if near zero.	int
+garment::axis_uv	function	gfx/garment	/api-library/helium/lib/gfx-garment#axis_uv	Returns the texture coordinates of a point, wrapped around the body or arm axis.	int
+garment::accum	function	gfx/garment	/api-library/helium/lib/gfx-garment#accum	Accumulates area-weighted triangle normals into per-owner sums.	int
+garment::unit_sums	function	gfx/garment	/api-library/helium/lib/gfx-garment#unit_sums	Normalizes each three-component sum in place to unit length.	int
+garment::emit	function	gfx/garment	/api-library/helium/lib/gfx-garment#emit	Builds the final garment output arrays from the working mesh, splitting vertices by region and UV seam.	pub
+garment::grad3	function	gfx/garment	/api-library/helium/lib/gfx-garment#grad3	Returns the gradient of a scalar over a triangle, given its edges and normal.	int
+garment::relax_tris	function	gfx/garment	/api-library/helium/lib/gfx-garment#relax_tris	Collects per-triangle edge vectors measured along the UV directions for later relaxation.	int
+garment::relax_uv	function	gfx/garment	/api-library/helium/lib/gfx-garment#relax_uv	Relaxes texture coordinates over a number of rounds to reduce distortion against the real edge lengths.	int
+garment::split_once	function	gfx/garment	/api-library/helium/lib/gfx-garment#split_once	Subdivides every body and rib triangle once at edge midpoints, interpolating per-vertex attributes for the new vertices.	int
+garment::refine	function	gfx/garment	/api-library/helium/lib/gfx-garment#refine	Subdivides the garment mesh according to the fine setting and renormalizes vertex normals afterward.	int
+garment::tan_accum	function	gfx/garment	/api-library/helium/lib/gfx-garment#tan_accum	Accumulates per-vertex tangent and bitangent sums from triangle positions and UV coordinates.	int
+garment::tangents	function	gfx/garment	/api-library/helium/lib/gfx-garment#tangents	Computes per-vertex tangents with handedness sign from positions, normals and UVs for body and rib triangles.	int
+garment::clear_all	function	gfx/garment	/api-library/helium/lib/gfx-garment#clear_all	Empties all module-level garment mesh, skinning and fitting buffers.	int
+garment::make	function	gfx/garment	/api-library/helium/lib/gfx-garment#make	Builds a garment from body mesh points, indices, joint data and a spec, returning false when input is invalid or nothing is produced.	pub
+garment::f32_bits	function	gfx/garment	/api-library/helium/lib/gfx-garment#f32_bits	Returns the raw 32-bit little-endian integer representation of a single-precision float.	int
+garment::drape	function	gfx/garment	/api-library/helium/lib/gfx-garment#drape	Simulates cloth draping of the generated garment for the given steps, returning the cloth index or -1 when empty.	pub
+obj::V	constant	gfx/obj	/api-library/helium/lib/gfx-obj#V	Holds the flat list of vertex coordinates (x, y, z triplets) from the most recently loaded OBJ file.	pub
+obj::names	constant	gfx/obj	/api-library/helium/lib/gfx-obj#names	Holds the group names found in the most recently loaded OBJ file, indexed by group id.	pub
+obj::tris	constant	gfx/obj	/api-library/helium/lib/gfx-obj#tris	Holds triangles of the loaded model as four ints each: group id, then three zero-based vertex indices.	pub
+obj::name_count	function	gfx/obj	/api-library/helium/lib/gfx-obj#name_count	Returns the number of named groups currently loaded.	pub
+obj::find_name	function	gfx/obj	/api-library/helium/lib/gfx-obj#find_name	Returns the index of a group name, or -1 if it is not loaded.	int
+obj::add_name	function	gfx/obj	/api-library/helium/lib/gfx-obj#add_name	Adds a group name if missing and returns its index, reusing the existing index when present.	int
+obj::load	function	gfx/obj	/api-library/helium/lib/gfx-obj#load	Loads an OBJ file, replacing current data, and returns false if the file cannot be read.	pub
+obj::group	function	gfx/obj	/api-library/helium/lib/gfx-obj#group	Returns the group id for a name, or -1 if no such group exists.	pub
+obj::tris_of	function	gfx/obj	/api-library/helium/lib/gfx-obj#tris_of	Fills the output array with vertex indices, three per triangle, for the named group; empty if unknown.	pub
+obj::centroid	function	gfx/obj	/api-library/helium/lib/gfx-obj#centroid	Returns the average x, y, z position of the distinct vertices used by the named group, or zeros if none.	pub
+obj::normals	function	gfx/obj	/api-library/helium/lib/gfx-obj#normals	Computes per-vertex normals for the given triangle vertex indices into the output array, skipping triangles with out-of-range indices.	pub
