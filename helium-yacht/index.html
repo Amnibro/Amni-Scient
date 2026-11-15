@@ -49,8 +49,8 @@ else {
   const touch = matchMedia('(pointer:coarse)').matches || navigator.maxTouchPoints > 0 && innerWidth < 1100; const cv = document.querySelector("canvas"); let gs = 0; const seen = () => gs + (globalThis.heFrames || 0), gt = globalThis.GPUCanvasContext?.prototype.getCurrentTexture; if (gt) GPUCanvasContext.prototype.getCurrentTexture = function () { gs++; return gt.call(this); };
   const um = new URLSearchParams(location.search).get('m'), m0 = (+um || (touch ? 2949 : 896)) | (ad && fb && !ad.features.has('core-features-and-limits') ? 4096 : 0) | (!ad && wgl ? 8192 : 0);
   try {
-    const { start } = await import('./helium.js?v=6');
-    const rt = await start({ wasm: 'yacht.wasm?v=10', canvas: cv, files, args: ['yacht', 'live', String(m0), '/f/', String(Math.round((devicePixelRatio || 1) * 100)), touch ? '1' : '0'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '.' + live) });
+    const { start } = await import('./helium.js?v=7');
+    const rt = await start({ wasm: 'yacht.wasm?v=11', canvas: cv, files, args: ['yacht', 'live', String(m0), '/f/', String(Math.round((devicePixelRatio || 1) * 100)), touch ? '1' : '0'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '.' + live) });
     const wait = () => seen() > 1 ? (msg.style.display = "none", cv.focus(), um || m0 & 2048 || setTimeout(() => { const s0 = seen(), h0 = document.hidden; setTimeout(() => !h0 && !document.hidden && (seen() - s0) / 4 < 20 && location.replace('?m=' + (m0 | 2949)), 4000); }, 4000)) : requestAnimationFrame(wait); requestAnimationFrame(wait);
     rt.done.then(() => seen() < 2 && stop('The engine stopped', 'The graphics card on this device wouldn’t start the engine.' + live)).catch(e => stop('The engine stopped', String(e?.message || e).slice(0, 160) + '.' + live));
   } catch (e) { stop('Your graphics card said no', 'It couldn’t start the engine: ' + String(e?.message || e).slice(0, 160) + '.' + live); }

@@ -365,7 +365,7 @@ const cw = w => { if (!CM) return w; w = sp(w); const cv = new Set(); w = w.repl
     SDL_GetWindowSizeInPixels: (h, a, b) => { const W = win(h); if (!W) return 0; w32(a, 0, W.cv.width); w32(b, 0, W.cv.height); return 1; },
     SDL_GetWindowSafeArea: (h, r) => { const W = win(h); if (!W) return 0; w32(r, 0, 0); w32(r, 4, 0); w32(r, 8, W.w); w32(r, 12, W.h); return 1; },
     SDL_GetWindowPosition: (h, a, b) => { const W = win(h); if (!W) return 0; const r = W.cv.getBoundingClientRect(); w32(a, 0, Math.round(r.left)); w32(b, 0, Math.round(r.top)); return 1; },
-    SDL_GetWindowFlags: h => { const W = win(h); return W ? BigInt(W.f & 8192 | (W.cv.hidden ? 8 : 0) | (document.hasFocus() ? 512 : 0) | (inside ? 1024 : 0)) : 0n; },
+    SDL_GetWindowFlags: h => { const W = win(h); return W ? BigInt(W.f & 8192 | (document.fullscreenElement ? 1 : 0) | (W.cv.hidden ? 8 : 0) | (document.hasFocus() ? 512 : 0) | (inside ? 1024 : 0)) : 0n; },
     SDL_GetWindowID: h => win(h) ? 1 : 0, SDL_SetWindowTitle: (h, t) => { document.title = cs(t); return 1; },
     SDL_SetWindowFullscreen: (h, on) => { const W = win(h); if (!W) return 0; (on ? W.cv.requestFullscreen?.() : document.fullscreenElement && document.exitFullscreen())?.catch?.(() => {}); return 1; },
     SDL_GetMouseFocus: () => inside && focusW ? BigInt([...O].find(([, v]) => v === focusW)?.[0] || 0) : 0n, SDL_GetCurrentVideoDriver: () => cstr(2048, 'browser'),
