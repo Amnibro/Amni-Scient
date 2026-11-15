@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-garment">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-garment">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=c3f6d8438d">
+<link rel="stylesheet" href="/api-library/lib.css?v=1ae04976d3">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=c3f6d8438d'; start({wasm: '/api-library/search.wasm?v=c3f6d8438d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=1ae04976d3'; start({wasm: '/api-library/search.wasm?v=1ae04976d3'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/garment</h1>
 <p class="lib-lede">Fits parametric garment meshes onto a posed body skeleton, with cloth-ready geometry, so programs can generate clothing for characters.</p>
-<p class="lib-meta"><code>import gfx.garment;</code> &middot; <code>garment::</code> &middot; 38 functions, 1 types, 30 constants &middot; <a href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.garment;</code> &middot; <code>garment::</code> &middot; 38 functions, 1 types, 30 constants &middot; <a href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#garment-setup">Garment Setup <span class="n">4</span></a></li>
 <li><a href="#garment-output">Garment Output <span class="n">11</span></a></li>
@@ -117,27 +117,27 @@
 <pre>struct Spec { unit real = 0.1, ease real = 0.025, rib_ease real = 0.004, hem real = -0.03, sleeve real = 1.0, band real = 0.06, cuff real = 0.07, collar real = 0.02, neck real = 0.075, drop real = 0.07, scoop real = 0.035, blouse real = 0.05, slack real = 0.04, sleeve_slack real = 0.05, gap real = 0.002, fine real = 1.0 }</pre>
 <p>Tunable parameters struct for garment fitting, covering ease, hem, sleeve, collar, neck and other dimensions in meters, with a unit scale.</p>
 <p class="note">`Spec` is a struct of real fields with these defaults: `unit` 0.1 (meters per shell unit; MakeHuman meshes are in decimeters), `ease` 0.025 (meters of room between the shell and the main fabric), `rib_ease` 0.004 (the same for the rib bands), `hem` -0.03 (the hem's height in meters above the pelvis joint; negative is below it), `sleeve` 1.0 (the share of the arm from the shoulder joint to the wris</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L5">hc/lib/gfx/garment.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L5">hc/lib/gfx/garment.amni:5</a>
 </article>
 <article class="sym" id="spec">
 <h3><a href="#spec">spec</a> <i>function</i></h3>
 <pre>spec() Spec</pre>
 <p>Returns a Spec populated with default garment fitting parameters.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L6">hc/lib/gfx/garment.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L6">hc/lib/gfx/garment.amni:6</a>
 </article>
 <article class="sym" id="S">
 <h3><a href="#S">S</a> <i>constant</i></h3>
 <pre>var S Spec = Spec { .. }</pre>
 <p>Active Spec instance whose values drive all garment fitting steps.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L18">hc/lib/gfx/garment.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L18">hc/lib/gfx/garment.amni:18</a>
 </article>
 <article class="sym" id="make">
 <h3><a href="#make">make</a> <i>function</i></h3>
 <pre>make(P const f32[:], I const int[:], joints const f32[:], s Spec) bool</pre>
 <p>Builds a garment from body mesh points, indices, joint data and a spec, returning false when input is invalid or nothing is produced.</p>
 <p class="note">`make(P, I, joints, s Spec) bool` (P: read-only f32 slice of shell positions; I: read-only int slice of shell triangles; joints: read-only f32 slice of 30 numbers in the order of `joint`) stores s in `S` and the joints in `jt`, clears every module array, then runs `classify`, `cut`, `loosen`, `neck_band`, `lips`, `emit`, `relax_uv(400)`, `refine` and `tangents`. It returns false, leaving the resul</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L1103">hc/lib/gfx/garment.amni:1103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L1103">hc/lib/gfx/garment.amni:1103</a>
 </article>
 <h2 id="garment-output">Garment Output <span class="n">11</span></h2>
 <article class="sym" id="pos">
@@ -145,77 +145,77 @@
 <pre>var pos f32[&gt;..]</pre>
 <p>Output array of garment vertex positions, three floats per vertex, produced by emit.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L7">hc/lib/gfx/garment.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L7">hc/lib/gfx/garment.amni:7</a>
 </article>
 <article class="sym" id="nrm">
 <h3><a href="#nrm">nrm</a> <i>constant</i></h3>
 <pre>var nrm f32[&gt;..]</pre>
 <p>Output array of per-vertex normals, three floats per vertex, averaged from adjacent triangles.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L8">hc/lib/gfx/garment.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L8">hc/lib/gfx/garment.amni:8</a>
 </article>
 <article class="sym" id="uv">
 <h3><a href="#uv">uv</a> <i>constant</i></h3>
 <pre>var uv f32[&gt;..]</pre>
 <p>Output array of texture coordinates, two floats per vertex, for the garment mesh.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L10">hc/lib/gfx/garment.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L10">hc/lib/gfx/garment.amni:10</a>
 </article>
 <article class="sym" id="body">
 <h3><a href="#body">body</a> <i>constant</i></h3>
 <pre>var body u32[&gt;..]</pre>
 <p>Output triangle index list for the main garment body surface.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L11">hc/lib/gfx/garment.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L11">hc/lib/gfx/garment.amni:11</a>
 </article>
 <article class="sym" id="rib">
 <h3><a href="#rib">rib</a> <i>constant</i></h3>
 <pre>var rib u32[&gt;..]</pre>
 <p>Output triangle index list for ribbed trim regions such as cuffs, hem band and collar.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L12">hc/lib/gfx/garment.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L12">hc/lib/gfx/garment.amni:12</a>
 </article>
 <article class="sym" id="part">
 <h3><a href="#part">part</a> <i>constant</i></h3>
 <pre>var part int[&gt;..]</pre>
 <p>Output array giving the region code of each garment vertex, such as torso, sleeve, hem or collar.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L13">hc/lib/gfx/garment.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L13">hc/lib/gfx/garment.amni:13</a>
 </article>
 <article class="sym" id="anchor">
 <h3><a href="#anchor">anchor</a> <i>constant</i></h3>
 <pre>var anchor f32[&gt;..]</pre>
 <p>Output array of each vertex's original fitted position, three floats per vertex, used as a cloth rest reference.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L14">hc/lib/gfx/garment.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L14">hc/lib/gfx/garment.amni:14</a>
 </article>
 <article class="sym" id="anchor_n">
 <h3><a href="#anchor_n">anchor_n</a> <i>constant</i></h3>
 <pre>var anchor_n f32[&gt;..]</pre>
 <p>Output array of each vertex's original surface normal, three floats per vertex, used as an anchor direction.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L15">hc/lib/gfx/garment.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L15">hc/lib/gfx/garment.amni:15</a>
 </article>
 <article class="sym" id="held">
 <h3><a href="#held">held</a> <i>constant</i></h3>
 <pre>var held bool[&gt;..]</pre>
 <p>Output flags marking vertices held fixed, such as neckline, cuff and hem band, during cloth simulation.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L16">hc/lib/gfx/garment.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L16">hc/lib/gfx/garment.amni:16</a>
 </article>
 <article class="sym" id="goal">
 <h3><a href="#goal">goal</a> <i>constant</i></h3>
 <pre>var goal f32[&gt;..]</pre>
 <p>Output array of target positions, three floats per vertex, toward which held vertices are pulled.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L17">hc/lib/gfx/garment.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L17">hc/lib/gfx/garment.amni:17</a>
 </article>
 <article class="sym" id="drape">
 <h3><a href="#drape">drape</a> <i>function</i></h3>
 <pre>drape(steps int) int</pre>
 <p>Simulates cloth draping of the generated garment for the given steps, returning the cloth index or -1 when empty.</p>
 <p class="note">`drape(steps int) int` drapes the result with `gfx.cloth` and returns the cloth's number, or -1 when `pos` is empty. It builds one u32 index list of `body` then `rib`, makes the cloth with `cloth::make(pos, 3, 0, count of vertices, that list)`, and sets on `cloth::cloths[c]`: `gravity` 9.81 over `S.unit`, `thickness` 0.003 over `S.unit`, `density` 0.35 times `S.unit` squared, `bend` 0.05 (bend sof</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L1131">hc/lib/gfx/garment.amni:1131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L1131">hc/lib/gfx/garment.amni:1131</a>
 </article>
 <h2 id="skeleton-fitting">Skeleton Fitting <span class="n">1</span></h2>
 <article class="sym" id="arm_len">
@@ -223,7 +223,7 @@
 <pre>arm_len(side int) real</pre>
 <p>Returns the length of one arm, shoulder to wrist, in meters; side 1 selects the first arm.</p>
 <p class="note">`joint(k int) real, real, real` returns joint k's x, y, z from `jt`. The joints, in order: 0 pelvis, 1 spine, 2 chest, 3 neck, 4 left shoulder, 5 left elbow, 6 left wrist, 7 right shoulder, 8 right elbow, 9 right wrist. The torso polyline runs through joints 0, 1, 2, 3; the left arm polyline through 4, 5, 6 and the right arm polyline through 7, 8, 9. `arm_len(side int) real` is the length in meter</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L38">hc/lib/gfx/garment.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L38">hc/lib/gfx/garment.amni:38</a>
 </article>
 <h2 id="garment-cutting">Garment Cutting <span class="n">3</span></h2>
 <article class="sym" id="hem_y">
@@ -231,21 +231,21 @@
 <pre>hem_y() real</pre>
 <p>Returns the hem height in skeleton units, accounting for hem offset and slack.</p>
 <p class="note">`neck_m(x real, y real, z real) real` is how far a point lies outside the neck opening, in meters (negative inside it): with dx and dz the offset of x and z from the neck joint's x and z, d the length of (dx, dz) and front equal to dz over d (0 when d is below 1e-9), it is the larger of (d times `S.unit` minus (`S.neck` plus `S.scoop` times the square of the larger of front and 0)) and ((the neck </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L163">hc/lib/gfx/garment.amni:163</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L163">hc/lib/gfx/garment.amni:163</a>
 </article>
 <article class="sym" id="sleeve_end">
 <h3><a href="#sleeve_end">sleeve_end</a> <i>function</i></h3>
 <pre>sleeve_end(side int) real</pre>
 <p>Returns the sleeve end distance along the arm for the given side, including sleeve slack.</p>
 <p class="note">`neck_m(x real, y real, z real) real` is how far a point lies outside the neck opening, in meters (negative inside it): with dx and dz the offset of x and z from the neck joint's x and z, d the length of (dx, dz) and front equal to dz over d (0 when d is below 1e-9), it is the larger of (d times `S.unit` minus (`S.neck` plus `S.scoop` times the square of the larger of front and 0)) and ((the neck </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L167">hc/lib/gfx/garment.amni:167</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L167">hc/lib/gfx/garment.amni:167</a>
 </article>
 <article class="sym" id="emit">
 <h3><a href="#emit">emit</a> <i>function</i></h3>
 <pre>emit()</pre>
 <p>Builds the final garment output arrays from the working mesh, splitting vertices by region and UV seam.</p>
 <p class="note">`emit()` turns the work mesh into the results. A work triangle's code: 5 when all three corners have `ws` true; else 0 when it is a torso triangle (any corner part 3, or most corners part 0) whose corners' mean z is at least the neck joint's z (the front panel), 4 for the other torso triangles (the back panel), and otherwise the part most of its corners have (the lowest on a tie). Code 5 triangles</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L691">hc/lib/gfx/garment.amni:691</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L691">hc/lib/gfx/garment.amni:691</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (50)</summary>
 <article class="sym" id="tan">
@@ -253,332 +253,332 @@
 <pre>var tan f32[&gt;..]</pre>
 <p>Tangent array for garment vertices, declared but not filled in this source.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L9">hc/lib/gfx/garment.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L9">hc/lib/gfx/garment.amni:9</a>
 </article>
 <article class="sym" id="jt">
 <h3><a href="#jt">jt</a> <i>constant</i></h3>
 <pre>var jt real[&gt;..]</pre>
 <p>Flat array of body joint positions, three values per joint, used by fitting.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L19">hc/lib/gfx/garment.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L19">hc/lib/gfx/garment.amni:19</a>
 </article>
 <article class="sym" id="sn">
 <h3><a href="#sn">sn</a> <i>constant</i></h3>
 <pre>var sn real[&gt;..]</pre>
 <p>Working array of body surface normals per vertex, computed during classification.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L20">hc/lib/gfx/garment.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L20">hc/lib/gfx/garment.amni:20</a>
 </article>
 <article class="sym" id="sp">
 <h3><a href="#sp">sp</a> <i>constant</i></h3>
 <pre>var sp int[&gt;..]</pre>
 <p>Per-vertex body part index, assigned by classification.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L21">hc/lib/gfx/garment.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L21">hc/lib/gfx/garment.amni:21</a>
 </article>
 <article class="sym" id="st">
 <h3><a href="#st">st</a> <i>constant</i></h3>
 <pre>var st real[&gt;..]</pre>
 <p>Per-vertex position along the assigned body part, in meters.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L22">hc/lib/gfx/garment.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L22">hc/lib/gfx/garment.amni:22</a>
 </article>
 <article class="sym" id="wp">
 <h3><a href="#wp">wp</a> <i>constant</i></h3>
 <pre>var wp real[&gt;..]</pre>
 <p>Working array of garment vertex positions during cutting and fitting.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L23">hc/lib/gfx/garment.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L23">hc/lib/gfx/garment.amni:23</a>
 </article>
 <article class="sym" id="wa">
 <h3><a href="#wa">wa</a> <i>constant</i></h3>
 <pre>var wa real[&gt;..]</pre>
 <p>Working array of original garment vertex positions.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L24">hc/lib/gfx/garment.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L24">hc/lib/gfx/garment.amni:24</a>
 </article>
 <article class="sym" id="wn">
 <h3><a href="#wn">wn</a> <i>constant</i></h3>
 <pre>var wn real[&gt;..]</pre>
 <p>Working array of garment vertex normals.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L25">hc/lib/gfx/garment.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L25">hc/lib/gfx/garment.amni:25</a>
 </article>
 <article class="sym" id="wq">
 <h3><a href="#wq">wq</a> <i>constant</i></h3>
 <pre>var wq int[&gt;..]</pre>
 <p>Working array of per-vertex body part codes for garment vertices.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L26">hc/lib/gfx/garment.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L26">hc/lib/gfx/garment.amni:26</a>
 </article>
 <article class="sym" id="wt">
 <h3><a href="#wt">wt</a> <i>constant</i></h3>
 <pre>var wt real[&gt;..]</pre>
 <p>Working array of per-vertex position along the body part.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L27">hc/lib/gfx/garment.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L27">hc/lib/gfx/garment.amni:27</a>
 </article>
 <article class="sym" id="wh">
 <h3><a href="#wh">wh</a> <i>constant</i></h3>
 <pre>var wh bool[&gt;..]</pre>
 <p>Working array of per-vertex held flags.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L28">hc/lib/gfx/garment.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L28">hc/lib/gfx/garment.amni:28</a>
 </article>
 <article class="sym" id="wg">
 <h3><a href="#wg">wg</a> <i>constant</i></h3>
 <pre>var wg real[&gt;..]</pre>
 <p>Working array of per-vertex goal positions.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L29">hc/lib/gfx/garment.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L29">hc/lib/gfx/garment.amni:29</a>
 </article>
 <article class="sym" id="wi">
 <h3><a href="#wi">wi</a> <i>constant</i></h3>
 <pre>var wi int[&gt;..]</pre>
 <p>Working triangle index list for the garment mesh.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L30">hc/lib/gfx/garment.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L30">hc/lib/gfx/garment.amni:30</a>
 </article>
 <article class="sym" id="wr">
 <h3><a href="#wr">wr</a> <i>constant</i></h3>
 <pre>var wr bool[&gt;..]</pre>
 <p>Working per-triangle flags marking triangles that belong to the rib trim.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L31">hc/lib/gfx/garment.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L31">hc/lib/gfx/garment.amni:31</a>
 </article>
 <article class="sym" id="ws">
 <h3><a href="#ws">ws</a> <i>constant</i></h3>
 <pre>var ws bool[&gt;..]</pre>
 <p>Working per-vertex flags marking collar strip vertices.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L32">hc/lib/gfx/garment.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L32">hc/lib/gfx/garment.amni:32</a>
 </article>
 <article class="sym" id="wsu">
 <h3><a href="#wsu">wsu</a> <i>constant</i></h3>
 <pre>var wsu real[&gt;..]</pre>
 <p>Working array of collar strip U texture coordinates.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L33">hc/lib/gfx/garment.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L33">hc/lib/gfx/garment.amni:33</a>
 </article>
 <article class="sym" id="wsv">
 <h3><a href="#wsv">wsv</a> <i>constant</i></h3>
 <pre>var wsv real[&gt;..]</pre>
 <p>Working array of collar strip V texture coordinates.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L34">hc/lib/gfx/garment.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L34">hc/lib/gfx/garment.amni:34</a>
 </article>
 <article class="sym" id="wb">
 <h3><a href="#wb">wb</a> <i>constant</i></h3>
 <pre>var wb int[&gt;..]</pre>
 <p>Working list of boundary edge endpoint pairs of the cut garment mesh.</p>
 <p class="note">Results, module vars that `make` rebuilds from empty: `pos` and `nrm` (f32, three per vertex), `tan` (f32, four per vertex: a glTF tangent, the unit direction of increasing u along the surface and then the sign w, so that the cross product of the normal and the tangent times w points toward decreasing v), `uv` (f32, two per vertex, in meters: u runs around the body or the arm and v along it, so kn</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L35">hc/lib/gfx/garment.amni:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L35">hc/lib/gfx/garment.amni:35</a>
 </article>
 <article class="sym" id="len3">
 <h3><a href="#len3">len3</a> <i>function</i></h3>
 <pre>len3(x real, y real, z real) real</pre>
 <p>Returns the Euclidean length of a three-component vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L36">hc/lib/gfx/garment.amni:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L36">hc/lib/gfx/garment.amni:36</a>
 </article>
 <article class="sym" id="joint">
 <h3><a href="#joint">joint</a> <i>function</i></h3>
 <pre>joint(k int) real, real, real</pre>
 <p>Returns the x, y and z position of the joint with the given index.</p>
 <p class="note">`joint(k int) real, real, real` returns joint k's x, y, z from `jt`. The joints, in order: 0 pelvis, 1 spine, 2 chest, 3 neck, 4 left shoulder, 5 left elbow, 6 left wrist, 7 right shoulder, 8 right elbow, 9 right wrist. The torso polyline runs through joints 0, 1, 2, 3; the left arm polyline through 4, 5, 6 and the right arm polyline through 7, 8, 9. `arm_len(side int) real` is the length in meter</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L37">hc/lib/gfx/garment.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L37">hc/lib/gfx/garment.amni:37</a>
 </article>
 <article class="sym" id="on_part">
 <h3><a href="#on_part">on_part</a> <i>function</i></h3>
 <pre>on_part(q int, x real, y real, z real) real, real, real, real, real, real, real</pre>
 <p>Returns the closest point on a body part's skeleton, its direction and distance along the part.</p>
 <p class="note">`on_part(q int, x real, y real, z real) real, real, real, real, real, real, real` finds the point of part q's polyline nearest to (x, y, z) and returns: the nearest point's x, y, z; the unit direction x, y, z of the segment it lies on; and the place along the part in meters. For the torso (q 0 or 3) every segment is clamped to its ends and the place is y times `S.unit`. For an arm the first segmen</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L45">hc/lib/gfx/garment.amni:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L45">hc/lib/gfx/garment.amni:45</a>
 </article>
 <article class="sym" id="classify">
 <h3><a href="#classify">classify</a> <i>function</i></h3>
 <pre>classify(P const f32[:], I const int[:])</pre>
 <p>Computes vertex normals and assigns each body mesh vertex to its nearest body part.</p>
 <p class="note">`classify(P, I)` (P: read-only f32 slice of shell positions, three per vertex; I: read-only int slice, three shell vertex numbers per triangle) fills `sn`, `sp` and `st`. Shell normals: for each triangle add the cross product of its edges (b minus a) and (c minus a) to its three corners, then scale each vertex's sum to length one (leave (0, 1, 0) when its length is below 1e-20). Part: for each she</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L89">hc/lib/gfx/garment.amni:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L89">hc/lib/gfx/garment.amni:89</a>
 </article>
 <article class="sym" id="neck_m">
 <h3><a href="#neck_m">neck_m</a> <i>function</i></h3>
 <pre>neck_m(x real, y real, z real) real</pre>
 <p>Returns a signed margin of a point from the neckline cut, positive meaning inside the garment.</p>
 <p class="note">`neck_m(x real, y real, z real) real` is how far a point lies outside the neck opening, in meters (negative inside it): with dx and dz the offset of x and z from the neck joint's x and z, d the length of (dx, dz) and front equal to dz over d (0 when d is below 1e-9), it is the larger of (d times `S.unit` minus (`S.neck` plus `S.scoop` times the square of the larger of front and 0)) and ((the neck </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L152">hc/lib/gfx/garment.amni:152</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L152">hc/lib/gfx/garment.amni:152</a>
 </article>
 <article class="sym" id="shell">
 <h3><a href="#shell">shell</a> <i>constant</i></h3>
 <pre>var shell f32[&gt;..]</pre>
 <p>Working copy of the body mesh vertex positions that is cut into a garment.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L168">hc/lib/gfx/garment.amni:168</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L168">hc/lib/gfx/garment.amni:168</a>
 </article>
 <article class="sym" id="keep">
 <h3><a href="#keep">keep</a> <i>function</i></h3>
 <pre>keep(v int) real, int</pre>
 <p>Returns a vertex's signed margin inside the garment cut and a code naming which edge limits it.</p>
 <p class="note">`keep(v int) real, int` is how far shell vertex v lies inside the garment, in meters, and which cut is nearest (1 neckline, 2 hem, 3 cuff): the neckline term is `neck_m` of its position; the other term is (its y minus `hem_y()`) times `S.unit` for part 0 (cut 2) and `sleeve_end` of its part minus its `st` for parts 1 and 2 (cut 3); it returns the smaller term and that term's cut (the neckline on a</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L169">hc/lib/gfx/garment.amni:169</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L169">hc/lib/gfx/garment.amni:169</a>
 </article>
 <article class="sym" id="edge_key">
 <h3><a href="#edge_key">edge_key</a> <i>function</i></h3>
 <pre>edge_key(a int, b int) int</pre>
 <p>Returns a single integer key identifying an undirected edge between two vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L186">hc/lib/gfx/garment.amni:186</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L186">hc/lib/gfx/garment.amni:186</a>
 </article>
 <article class="sym" id="cut">
 <h3><a href="#cut">cut</a> <i>function</i></h3>
 <pre>cut(P const f32[:], I const int[:])</pre>
 <p>Cuts the body mesh along the neckline, hem and sleeve ends, building the working garment mesh.</p>
 <p class="note">`cut(P, I)` (same slices as `classify`) builds the work mesh by clipping the shell along the cuts, so every edge of the garment lies exactly on its cut line. Shell vertices with `keep` at least 0 become work vertices in shell order: `wp` and `wa` its position, `wn` its shell normal, `wq` its part, `wt` its `st`, `wh` false, `wg` its position. For every shell triangle with at least one kept corner:</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L187">hc/lib/gfx/garment.amni:187</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L187">hc/lib/gfx/garment.amni:187</a>
 </article>
 <article class="sym" id="chest_y">
 <h3><a href="#chest_y">chest_y</a> <i>function</i></h3>
 <pre>chest_y() real</pre>
 <p>Returns the chest joint height in skeleton units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L297">hc/lib/gfx/garment.amni:297</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L297">hc/lib/gfx/garment.amni:297</a>
 </article>
 <article class="sym" id="edge_m">
 <h3><a href="#edge_m">edge_m</a> <i>function</i></h3>
 <pre>edge_m(v int) real</pre>
 <p>Returns a vertex's distance in meters from the nearest garment edge.</p>
 <p class="note">`edge_m(v int) real` is how far work vertex v is from the cut it is nearest, in meters: for an arm vertex `sleeve_end` minus its `wt`; for a part 3 vertex 0; for a torso vertex the smaller of (its y minus `hem_y()`) times `S.unit` and `neck_m` of its position. A vertex is in a band when it is an arm vertex with `edge_m` at most `S.cuff`, or a torso vertex below the chest joint's y with `edge_m` at</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L301">hc/lib/gfx/garment.amni:301</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L301">hc/lib/gfx/garment.amni:301</a>
 </article>
 <article class="sym" id="in_band">
 <h3><a href="#in_band">in_band</a> <i>function</i></h3>
 <pre>in_band(v int) bool</pre>
 <p>Returns whether a vertex lies within the ribbed trim band near a hem or cuff.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L310">hc/lib/gfx/garment.amni:310</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L310">hc/lib/gfx/garment.amni:310</a>
 </article>
 <article class="sym" id="sstep">
 <h3><a href="#sstep">sstep</a> <i>function</i></h3>
 <pre>sstep(e0 real, e1 real, x real) real</pre>
 <p>Returns a smooth Hermite interpolation between zero and one across the given edges.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L316">hc/lib/gfx/garment.amni:316</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L316">hc/lib/gfx/garment.amni:316</a>
 </article>
 <article class="sym" id="loosen">
 <h3><a href="#loosen">loosen</a> <i>function</i></h3>
 <pre>loosen()</pre>
 <p>Offsets garment vertices outward for ease and sets goals and held flags for trim bands.</p>
 <p class="note">`loosen()` moves every work vertex out along its anchor normal by e over `S.unit`, where e is `S.rib_ease` plus (f minus `S.rib_ease`) times the smoothstep of `edge_m` from the edge's band height to the band height plus `S.blouse`; f is `S.ease` for the torso and 0.7 times `S.ease` for the arms; the band height is `S.cuff` for arm vertices, `S.band` for torso vertices below the chest joint's y and</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L320">hc/lib/gfx/garment.amni:320</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L320">hc/lib/gfx/garment.amni:320</a>
 </article>
 <article class="sym" id="add_like">
 <h3><a href="#add_like">add_like</a> <i>function</i></h3>
 <pre>add_like(v int, x real, y real, z real, q int, t real, h bool, gx real, gy real, gz real) int</pre>
 <p>Appends a new garment vertex copying another's attributes, with given position, part, and goal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L357">hc/lib/gfx/garment.amni:357</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L357">hc/lib/gfx/garment.amni:357</a>
 </article>
 <article class="sym" id="wdist">
 <h3><a href="#wdist">wdist</a> <i>function</i></h3>
 <pre>wdist(a int, b int) real</pre>
 <p>Returns the distance in meters between two working garment vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L379">hc/lib/gfx/garment.amni:379</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L379">hc/lib/gfx/garment.amni:379</a>
 </article>
 <article class="sym" id="neck_band">
 <h3><a href="#neck_band">neck_band</a> <i>function</i></h3>
 <pre>neck_band()</pre>
 <p>Builds a raised collar strip around the neckline loop as extra triangles.</p>
 <p class="note">`neck_band()` grows the neck band when `S.collar` is above 0, as a strip with its own coordinates. The loop is the longest closed loop of boundary edges from `wb` whose two ends are both part 3, in the edges' own order (each edge's second end is the next edge's first end; follow a table from first end to edge until the loop returns to its start); call its vertex count m. Six rings of m plus 1 new </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L382">hc/lib/gfx/garment.amni:382</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L382">hc/lib/gfx/garment.amni:382</a>
 </article>
 <article class="sym" id="lip_ok">
 <h3><a href="#lip_ok">lip_ok</a> <i>function</i></h3>
 <pre>lip_ok(v int) bool</pre>
 <p>Returns whether a vertex is held and on a hem or cuff edge that gets a lip.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L559">hc/lib/gfx/garment.amni:559</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L559">hc/lib/gfx/garment.amni:559</a>
 </article>
 <article class="sym" id="lips">
 <h3><a href="#lips">lips</a> <i>function</i></h3>
 <pre>lips()</pre>
 <p>Adds an inward-offset lip strip along the hem and cuff boundary edges.</p>
 <p class="note">`lips()` turns the hem and cuff edges in. For every boundary edge in `wb` whose two ends are both held arm or torso vertices below the chest joint's y, each end gets one lip vertex (made once per vertex): the vertex moved against its anchor normal by 0.006 over `S.unit`, then for a torso vertex raised by 0.008 over `S.unit`, and for an arm vertex moved toward the shoulder along its segment directi</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L563">hc/lib/gfx/garment.amni:563</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L563">hc/lib/gfx/garment.amni:563</a>
 </article>
 <article class="sym" id="norm3">
 <h3><a href="#norm3">norm3</a> <i>function</i></h3>
 <pre>norm3(x real, y real, z real) real, real, real</pre>
 <p>Returns the input vector scaled to unit length, unchanged if near zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L608">hc/lib/gfx/garment.amni:608</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L608">hc/lib/gfx/garment.amni:608</a>
 </article>
 <article class="sym" id="axis_uv">
 <h3><a href="#axis_uv">axis_uv</a> <i>function</i></h3>
 <pre>axis_uv(q int, x real, y real, z real) real, real</pre>
 <p>Returns the texture coordinates of a point, wrapped around the body or arm axis.</p>
 <p class="note">`axis_uv(q int, x real, y real, z real) real, real` maps a point to texture coordinates in meters for part q. Torso and neck band (q 0 or 3): with the nearest torso point from `on_part`, u is atan2 of (x minus its x) and (z minus its z) times 0.15 and v is y times `S.unit`. Arm: the arm is mapped as a cylinder bent at the elbow, so the pattern has no seam, flip or stretch there. With A, E and W th</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L613">hc/lib/gfx/garment.amni:613</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L613">hc/lib/gfx/garment.amni:613</a>
 </article>
 <article class="sym" id="accum">
 <h3><a href="#accum">accum</a> <i>function</i></h3>
 <pre>accum(tris const u32[:], p const f32[:], owner const int[:], sum real[:])</pre>
 <p>Accumulates area-weighted triangle normals into per-owner sums.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L657">hc/lib/gfx/garment.amni:657</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L657">hc/lib/gfx/garment.amni:657</a>
 </article>
 <article class="sym" id="unit_sums">
 <h3><a href="#unit_sums">unit_sums</a> <i>function</i></h3>
 <pre>unit_sums(sum real[:])</pre>
 <p>Normalizes each three-component sum in place to unit length.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L681">hc/lib/gfx/garment.amni:681</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L681">hc/lib/gfx/garment.amni:681</a>
 </article>
 <article class="sym" id="grad3">
 <h3><a href="#grad3">grad3</a> <i>function</i></h3>
 <pre>grad3(e1x real, e1y real, e1z real, e2x real, e2y real, e2z real, nx real, ny real, nz real, a2 real, f0 real, f1 real, f2 real) real, real, real</pre>
 <p>Returns the gradient of a scalar over a triangle, given its edges and normal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L793">hc/lib/gfx/garment.amni:793</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L793">hc/lib/gfx/garment.amni:793</a>
 </article>
 <article class="sym" id="relax_tris">
 <h3><a href="#relax_tris">relax_tris</a> <i>function</i></h3>
 <pre>relax_tris(tris const u32[:], ef int[&gt;..]&amp;, et int[&gt;..]&amp;, edu real[&gt;..]&amp;, edv real[&gt;..]&amp;)</pre>
 <p>Collects per-triangle edge vectors measured along the UV directions for later relaxation.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L799">hc/lib/gfx/garment.amni:799</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L799">hc/lib/gfx/garment.amni:799</a>
 </article>
 <article class="sym" id="relax_uv">
 <h3><a href="#relax_uv">relax_uv</a> <i>function</i></h3>
 <pre>relax_uv(rounds int)</pre>
 <p>Relaxes texture coordinates over a number of rounds to reduce distortion against the real edge lengths.</p>
 <p class="note">`relax_uv(rounds int)` makes the texture coordinates metric, so a stitch is the same size everywhere. For each result triangle, with e1 and e2 its positions 1 and 2 minus position 0 (times `S.unit`), the gradient in space of a value f with corner values f0, f1, f2 is computed as: with N the cross product of e1 and e2 and A2 its squared length (skip the triangle when below 1e-20), the gradient of a</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L885">hc/lib/gfx/garment.amni:885</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L885">hc/lib/gfx/garment.amni:885</a>
 </article>
 <article class="sym" id="split_once">
 <h3><a href="#split_once">split_once</a> <i>function</i></h3>
 <pre>split_once()</pre>
 <p>Subdivides every body and rib triangle once at edge midpoints, interpolating per-vertex attributes for the new vertices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L929">hc/lib/gfx/garment.amni:929</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L929">hc/lib/gfx/garment.amni:929</a>
 </article>
 <article class="sym" id="refine">
 <h3><a href="#refine">refine</a> <i>function</i></h3>
 <pre>refine()</pre>
 <p>Subdivides the garment mesh according to the fine setting and renormalizes vertex normals afterward.</p>
 <p class="note">`refine()` splits every result triangle into four through its edge midpoints, `S.fine` times (rounded to an int). A midpoint vertex is made once per undirected edge of result vertices; its position, normal, anchor, anchor normal, uv and goal are the means of the edge's two ends, its part is the first end's part and it is held only when both ends are held. Each triangle stays in its own list (`body</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L978">hc/lib/gfx/garment.amni:978</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L978">hc/lib/gfx/garment.amni:978</a>
 </article>
 <article class="sym" id="tan_accum">
 <h3><a href="#tan_accum">tan_accum</a> <i>function</i></h3>
 <pre>tan_accum(tris const u32[:], p const f32[:], uvs const f32[:], ts real[:], vs real[:])</pre>
 <p>Accumulates per-vertex tangent and bitangent sums from triangle positions and UV coordinates.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L988">hc/lib/gfx/garment.amni:988</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L988">hc/lib/gfx/garment.amni:988</a>
 </article>
 <article class="sym" id="tangents">
 <h3><a href="#tangents">tangents</a> <i>function</i></h3>
 <pre>tangents()</pre>
 <p>Computes per-vertex tangents with handedness sign from positions, normals and UVs for body and rib triangles.</p>
 <p class="note">`tangents()` fills `tan` from `pos`, `nrm`, `uv`, `body` and `rib`. For every triangle with corners 0, 1, 2: e1 and e2 are positions 1 and 2 minus position 0, (du1, dv1) and (du2, dv2) the same for the uvs; skip the triangle when the absolute value of du1 times dv2 minus du2 times dv1 is below 1e-20, else with r one over that value, add (e1 times dv2 minus e2 times dv1) times r to each corner's T </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L1027">hc/lib/gfx/garment.amni:1027</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L1027">hc/lib/gfx/garment.amni:1027</a>
 </article>
 <article class="sym" id="clear_all">
 <h3><a href="#clear_all">clear_all</a> <i>function</i></h3>
 <pre>clear_all()</pre>
 <p>Empties all module-level garment mesh, skinning and fitting buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L1075">hc/lib/gfx/garment.amni:1075</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L1075">hc/lib/gfx/garment.amni:1075</a>
 </article>
 <article class="sym" id="f32_bits">
 <h3><a href="#f32_bits">f32_bits</a> <i>function</i></h3>
 <pre>f32_bits(v f32) int</pre>
 <p>Returns the raw 32-bit little-endian integer representation of a single-precision float.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/c3f6d844a67846e4e2b40e578b370e943a6cc532/hc/lib/gfx/garment.amni#L1126">hc/lib/gfx/garment.amni:1126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/garment.amni#L1126">hc/lib/gfx/garment.amni:1126</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
