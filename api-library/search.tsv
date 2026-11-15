@@ -6795,3 +6795,38 @@ soak::occlude	function	gfx/soak	/api-library/helium/lib/gfx-soak#occlude	Adds th
 soak::expose	function	gfx/soak	/api-library/helium/lib/gfx-soak#expose	Computes per-vertex rain exposure from normals and occluders, treating vertices shadowed by more than the tolerance as dry.	pub
 soak::step	function	gfx/soak	/api-library/helium/lib/gfx-soak#step	Advances the wetness simulation by a time step, applying rain, downhill flow, wicking and drying.	pub
 soak::mean	function	gfx/soak	/api-library/helium/lib/gfx-soak#mean	Returns the average wetness across all vertices, or zero when there are none.	pub
+locks::Spec	type	gfx/locks	/api-library/helium/lib/gfx-locks#Spec	Configuration struct for lock generation, with strand subdivision, width, forking, spread, raggedness, flatness, inner layer, gap and vertex budget options.	pub
+locks::spec	function	gfx/locks	/api-library/helium/lib/gfx-locks#spec	Returns a Spec populated with default lock generation settings.	pub
+locks::P	constant	gfx/locks	/api-library/helium/lib/gfx-locks#P	Vertex position buffer, three floats per vertex, filled by build and read when creating the mesh.	int
+locks::N	constant	gfx/locks	/api-library/helium/lib/gfx-locks#N	Vertex normal buffer, three floats per vertex, filled by build and consumed by mesh.	int
+locks::T	constant	gfx/locks	/api-library/helium/lib/gfx-locks#T	Vertex tangent buffer, three floats per vertex, filled by build and consumed by mesh.	int
+locks::UV	constant	gfx/locks	/api-library/helium/lib/gfx-locks#UV	Texture coordinate buffer, two floats per vertex, filled by build and consumed by mesh.	int
+locks::I	constant	gfx/locks	/api-library/helium/lib/gfx-locks#I	Triangle index buffer for the lock mesh, filled by build and copied by mesh.	int
+locks::row_v	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_v	Per-row index of the first vertex of each emitted strip row.	int
+locks::row_lock	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_lock	Per-row lock number recording which lock each emitted row belongs to.	int
+locks::row_fork	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_fork	Per-row fork number, with -1 for rows on the main lock body.	int
+locks::row_layer	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_layer	Per-row layer number, where 0 is the outer layer and 1 is the inner layer.	int
+locks::row_guide	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_guide	Per-row source guide point index, or -1 for interpolated rows.	int
+locks::split_row	constant	gfx/locks	/api-library/helium/lib/gfx-locks#split_row	Row indices where each lock splits into forks, with -1 when forking is disabled.	int
+locks::fork_row	constant	gfx/locks	/api-library/helium/lib/gfx-locks#fork_row	Row indices where each fork strip begins.	int
+locks::hash01	function	gfx/locks	/api-library/helium/lib/gfx-locks#hash01	Returns a deterministic pseudo-random value in the range 0 to 1 from two integer inputs.	int
+locks::smooth	function	gfx/locks	/api-library/helium/lib/gfx-locks#smooth	Returns a smoothstep value between 0 and 1 for x across the range a to b.	int
+locks::profile	function	gfx/locks	/api-library/helium/lib/gfx-locks#profile	Returns the width multiplier along a lock, given normalized position t from root to tip.	int
+locks::f3	function	gfx/locks	/api-library/helium/lib/gfx-locks#f3	Creates a float3 from three real components.	int
+locks::vadd	function	gfx/locks	/api-library/helium/lib/gfx-locks#vadd	Returns the component-wise sum of two float3 vectors.	int
+locks::vsub	function	gfx/locks	/api-library/helium/lib/gfx-locks#vsub	Returns the component-wise difference of two float3 vectors.	int
+locks::vmul	function	gfx/locks	/api-library/helium/lib/gfx-locks#vmul	Returns a float3 vector scaled by a real factor.	int
+locks::vdot	function	gfx/locks	/api-library/helium/lib/gfx-locks#vdot	Returns the dot product of two float3 vectors.	int
+locks::vcross	function	gfx/locks	/api-library/helium/lib/gfx-locks#vcross	Returns the cross product of two float3 vectors.	int
+locks::vlen	function	gfx/locks	/api-library/helium/lib/gfx-locks#vlen	Returns the Euclidean length of a float3 vector.	int
+locks::vunit	function	gfx/locks	/api-library/helium/lib/gfx-locks#vunit	Returns a unit-length copy of a vector, or the input unchanged if its length is nearly zero.	int
+locks::vlerp	function	gfx/locks	/api-library/helium/lib/gfx-locks#vlerp	Returns the linear interpolation between two float3 vectors by a factor.	int
+locks::emit	function	gfx/locks	/api-library/helium/lib/gfx-locks#emit	Appends a pair of left and right strip vertices to the buffers, linking them to the previous row when it matches.	int
+locks::crom	function	gfx/locks	/api-library/helium/lib/gfx-locks#crom	Returns a Catmull-Rom spline point between p1 and p2 at parameter f.	int
+locks::lerpdir	function	gfx/locks	/api-library/helium/lib/gfx-locks#lerpdir	Returns a normalized linear interpolation between two direction vectors, or a unchanged when f is zero.	int
+locks::split_at	function	gfx/locks	/api-library/helium/lib/gfx-locks#split_at	Returns the row index where a lock splits into forks, or the last row when forking is off.	int
+locks::build	function	gfx/locks	/api-library/helium/lib/gfx-locks#build	Builds lock mesh buffers from hair data bytes and settings, returning the number of locks generated, or 0 if data is invalid.	pub
+locks::bt	function	gfx/locks	/api-library/helium/lib/gfx-locks#bt	Returns a byte from a real value, rounded and clamped to the range 0 to 255.	int
+locks::strands	function	gfx/locks	/api-library/helium/lib/gfx-locks#strands	Generates a procedural strand alpha texture of the given square size from a seed, returning its glTF texture index.	pub
+locks::material	function	gfx/locks	/api-library/helium/lib/gfx-locks#material	Returns a double-sided alpha-masked hair material with the given color and texture index.	pub
+locks::mesh	function	gfx/locks	/api-library/helium/lib/gfx-locks#mesh	Copies the built lock buffers into the glTF vertex and index data, returning the result of finishing the mesh with the material.	pub
