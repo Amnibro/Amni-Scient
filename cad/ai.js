@@ -84,6 +84,9 @@ Materials (set doc material to the id): ${MGROUPS.map(g=>g+': '+Object.entries(M
 Rules: base solids first, then cuts and holes, then fillets and chamfers last. Keep fillets smaller than half the thinnest wall. Put key dimensions in parameters. Only use feature ids that exist in the model state. If the user only asks a question, answer in "say" with an empty actions list.
 Example request: a 80 x 50 x 6 plate with four 5 mm holes 8 mm from the edges and rounded corners
 Example reply: {"say":"Here is an 80 × 50 × 6 mm plate with four Ø5 holes and 5 mm corner radii.","actions":[{"param":{"name":"w","expr":"80"}},{"param":{"name":"d","expr":"50"}},{"param":{"name":"t","expr":"6"}},{"add":{"type":"box","name":"Plate","w":"w","d":"d","h":"t"}},{"add":{"type":"hole","name":"Holes","plane":"XY","offset":"t","d":5,"thru":true,"pts":[["w/2-8","d/2-8"],["-(w/2-8)","d/2-8"],["w/2-8","-(d/2-8)"],["-(w/2-8)","-(d/2-8)"]]}},{"add":{"type":"fillet","name":"Corners","r":5,"edges":{"dir":"Z"}}}]}`;}
+export const isCadModel=m=>/^(Amni-CAD|adam)/i.test(String(m&&m.id||m||''));
+export const cadPrompt=u=>`You are the design assistant inside Amni-CAD, a parametric 3D CAD app. Lengths are in the document units (${u==='in'?'INCHES':'MILLIMETERS'}); Z is up. Simulation inputs are SI (N, MPa, N·mm, °C, W). Talk to the user in imperial first with metric in parentheses, in US English. Reply with ONE JSON object: {"say":"...","actions":[...]}. If the user only asks a question, answer in "say" with an empty actions list.`;
+export function cadState(st){const r4=v=>+(+v).toPrecision(4),z=st.size,v=z?+z.volume_mm3:0,fe=st.lastStressTest,rho=(MATS[st.material]||{}).rho||0;return{name:st.name||'Untitled part',units:st.units,material:st.material,params:(st.params||[]).map(p=>({name:p.name,expr:p.expr})),features:(st.features||[]).map(f=>Object.fromEntries(Object.entries(f).filter(([,x])=>x!==''&&x!=null&&!(Array.isArray(x)&&!x.length)))),errors:st.errors||[],size:z?{size:[0,1,2].map(i=>r4(z.max[i]-z.min[i])),volume_mm3:r4(v),mass_g:r4(v*rho*1e-6)}:null,...(st.sim?{sim:st.sim}:{}),...(fe?{lastStressTest:{peak_vonMises_MPa:fe.peak_vonMises_MPa,max_disp_mm:fe.max_disp_mm,yield_MPa:fe.yield_MPa,safety_factor:fe.safety_factor,applied_N:fe.applied_N,elements:fe.elements}}:{})};}
 export function stateMessage(st,text,refs){return 'Model state:\n'+JSON.stringify(st)+'\n\n'+(refs?refs+'\n\n':'')+'User request: '+text+'\n\nReply with the JSON object only. /no_think';}
 export const PASTE_HEAD='You are used through copy and paste. The user copies these messages from Amni-CAD into this chat and pastes your replies back, and Amni-CAD applies the JSON. Answer every message with only the JSON object described below, in one ```json code block. Later messages carry the updated model state and the next request.';
 export function pastePrompt(ms,fresh){const c=m=>String(m&&m.content||'').replace(/ \/no_think$/,''),L=c(ms[ms.length-1]),sys=ms.filter(m=>m.role==='system').map(c),rest=ms.slice(0,-1).filter(m=>m.role!=='system'),T=L+(/json/i.test(L.slice(-80))?'':'\n\nReply with the JSON object only.')+' Use one ```json code block.';return fresh?[PASTE_HEAD,...sys,rest.length?'Conversation so far:\n'+rest.map(m=>(m.role==='user'?'User: ':'You: ')+c(m)).join('\n'):'',T].filter(Boolean).join('\n\n'):T;}
@@ -129,7 +132,7 @@ export class Assistant{
       if(this.engine&&this.engine.unload)try{await this.engine.unload();}catch{}
       const m=await import('/lib/amni-llm/amni-llm.js');
       this.engine=await m.createEngine(cfg.model||'Qwen3.5-4B-Q4_K_M',{base:POL.llm_base,onProgress:p=>this.onStatus('Downloading model '+(p.pct??'')+'%',p.pct),onStatus:(s,msg)=>this.onStatus(msg||s)});
-      const info=this.engine.getModelInfo&&this.engine.getModelInfo();this.label=(info&&info.name||cfg.model)+' · '+(info&&info.backend==='amni-wgpu'?'GPU':'CPU');
+      const info=this.engine.getModelInfo&&this.engine.getModelInfo();this.label=(info&&info.name||cfg.model)+' · '+(info&&info.gpu?'GPU':'CPU');
     }else if(CLOUD[kind]){
       const C=CLOUD[kind];if(!cfg.key)throw Object.assign(new Error('paste an API key first'+(kind==='openrouter'?' or sign in with OpenRouter':'')),{status:401});this.cfg.base=C.base;
       const hd=this.cloudHeaders(kind,cfg.key),url=kind==='gemini'?C.base+'/models?pageSize=200':C.base+'/models'+(kind==='anthropic'?'?limit=100':'');
@@ -153,7 +156,7 @@ export class Assistant{
       this.engine=LM;this.label='Chrome built-in AI';
     }else if(kind==='paste'){this.label='Copy and paste';
     }else throw new Error('unknown engine');
-    this.kind=kind;this.onStatus('Ready · '+this.label);return this.label;
+    this.kind=kind;this.trained=kind==='browser'&&isCadModel(cfg.model);this.onStatus('Ready · '+this.label);return this.label;
   }
   cloudHeaders(kind,key){const h={'Content-Type':'application/json'};if(kind==='anthropic'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';}else if(kind==='gemini')h['x-goog-api-key']=key;else{h.Authorization='Bearer '+key;if(kind==='openrouter'){h['HTTP-Referer']='https://amni-scient.com/cad/';h['X-Title']='Amni-CAD';}}return h;}
   hdr(){const h={'Content-Type':'application/json'};if(this.cfg.key)h.Authorization='Bearer '+this.cfg.key;return h;}
