@@ -7,11 +7,11 @@ const load=d=>p.evaluate(async d=>{const am=window.amnicad,A=am.API;am.loadDoc(J
 const until=async(fn,arg,ms=900000)=>{const t=Date.now();for(;;){const v=await p.evaluate(fn,arg);if(v||Date.now()-t>ms)return v;await sleep(400);}};
 try{
   await p.waitForFunction(()=>window.amnicad.API.steps&&document.querySelector('#side-cmd [data-rc^=optimize]'),{timeout:70000});
-  ok(await p.evaluate(()=>!!document.querySelector('#side-cmd [data-rc^=optimize]')&&getComputedStyle(document.getElementById('ribbon')).display==='none'&&!document.getElementById('pipe')),'Optimize is in Make and check, and the ribbon and right-hand step strip are gone');
+  ok(await p.evaluate(()=>!!document.querySelector('#side-cmd [data-rc^=optimize]')&&!!document.querySelector('#ribbon [data-rc^=optimize]')&&!document.getElementById('pipe')),'Optimize is in Make and check and in the ribbon, and the right-hand step strip is gone');
   const rb=await p.evaluate(async()=>{const b=document.querySelector('#side-cmd [data-rc^=optimize]');b.click();await new Promise(r=>setTimeout(r,500));const open=getComputedStyle(document.getElementById('opt')).display!=='none';document.querySelector('#opt h3 .x').click();return{open};});
   ok(rb.open,'Optimize still opens from Make and check',JSON.stringify(rb));
   const o1=await load(BARE);
-  const g1=await p.evaluate(async()=>{document.querySelector('#pipe [data-pipe=optimize]').click();await new Promise(r=>setTimeout(r,700));const sel=document.getElementById('opt-goal');sel.value='lighter';sel.dispatchEvent(new Event('change'));await new Promise(r=>setTimeout(r,200));const gap=document.getElementById('opt-gap'),st=document.getElementById('opt-start');const txt=gap&&gap.textContent,dis=st&&st.disabled,v=[...document.querySelectorAll('#opt [data-var]')].map(e=>e.dataset.var+':'+e.checked);gap.querySelector('button').click();await new Promise(r=>setTimeout(r,300));return{txt,dis,v,tab:window.amnicad.S.tab};});
+  await p.click('#side-cmd [data-rc^=optimize]');const g1=await p.evaluate(async()=>{await new Promise(r=>setTimeout(r,700));const sel=document.getElementById('opt-goal');sel.value='lighter';sel.dispatchEvent(new Event('change'));await new Promise(r=>setTimeout(r,200));const gap=document.getElementById('opt-gap'),st=document.getElementById('opt-start');const txt=gap&&gap.textContent,dis=st&&st.disabled,v=[...document.querySelectorAll('#opt [data-var]')].map(e=>e.dataset.var+':'+e.checked);gap.querySelector('button').click();await new Promise(r=>setTimeout(r,300));return{txt,dis,v,tab:window.amnicad.S.tab};});
   ok(/needs a stress study/.test(g1.txt)&&g1.dis&&g1.tab==='sim','without supports and loads the panel says so, disables Start and opens the Stress tab',JSON.stringify(g1));
   ok(g1.v[0]==='t:true'&&g1.v.slice(1).every(x=>/:false$/.test(x))&&g1.v.length===3,'the thickness parameter is found and ticked; feature sizes are listed but left unticked',g1.v.join());
   const o2=await load(PLATE);
@@ -26,7 +26,7 @@ try{
   const r3=await p.evaluate(async o=>{const am=window.amnicad,A=am.API;document.getElementById('b-undo').click();await A.waitBuild();const t=am.S.doc.params[0].expr;document.getElementById('b-undo').click();await A.waitBuild();return{t,orig:A.docJSON===o};},o2);
   ok(r3.t!=='0.375'&&r3.orig,'Undo brings the optimized part back and undo again returns to the original',JSON.stringify(r3));
   await load(PLATE);const o4=await p.evaluate(()=>window.amnicad.API.docJSON);
-  const s4=await p.evaluate(async()=>{const op=document.querySelector('#pipe [data-pipe=optimize]');op.click();await new Promise(r=>setTimeout(r,500));const b=document.querySelector('#opt [data-budget=quick]');b&&b.click();await new Promise(r=>setTimeout(r,200));document.getElementById('opt-start').click();return true;});
+  await p.click('#side-cmd [data-rc^=optimize]');const s4=await p.evaluate(async()=>{await new Promise(r=>setTimeout(r,500));const b=document.querySelector('#opt [data-budget=quick]');b&&b.click();await new Promise(r=>setTimeout(r,200));document.getElementById('opt-start').click();return true;});
   await until(()=>{const e=document.getElementById('opt-phase');return e&&/Try [3-9]/.test(e.textContent);},null,700000);
   const mid=await p.evaluate(o=>({trial:window.amnicad.API.docJSON!==o,svg:document.querySelectorAll('#opt svg circle').length}),o4);
   await p.evaluate(()=>document.getElementById('opt-stop').click());

@@ -1,10 +1,11 @@
+import {pushAll} from './minmax.js';
 const d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),dot=(a,b)=>a[0]*b[0]+a[1]*b[1],r4=v=>+(+v).toFixed(4);
 export const PRI={cut:4,kiss:3,perf:2,crease:1},DXFCOL={cut:1,crease:5,perf:3,kiss:2};
 export function arcOf(a,b,bu){const c=d2(a,b),th=4*Math.atan(Math.abs(bu)),r=bu&&c?c/(2*Math.sin(th/2)):Infinity,s=Math.sign(bu),m=[(a[0]+b[0])/2,(a[1]+b[1])/2],h=bu&&c?s*r*Math.cos(th/2):0,n=c?[-(b[1]-a[1])/c,(b[0]-a[0])/c]:[0,0];return{c,th,r,s,ctr:[m[0]+n[0]*h,m[1]+n[1]*h],len:bu?r*th:c};}
 export const segLen=(a,b,bu)=>arcOf(a,b,bu).len;
 export const plen=(pts,closed)=>pts.reduce((s,p,i)=>s+(i<pts.length-1||closed?segLen(p,pts[(i+1)%pts.length],p[2]||0):0),0);
 export function polyArc(a,b,bu,tol=0.002){const A=arcOf(a,b,bu);if(!bu||!isFinite(A.r))return[];const n=Math.max(2,Math.ceil(A.th/(2*Math.acos(Math.max(0,1-tol/A.r))))),a0=Math.atan2(a[1]-A.ctr[1],a[0]-A.ctr[0]),o=[];for(let i=1;i<n;i++){const t=a0+A.s*A.th*i/n;o.push([A.ctr[0]+A.r*Math.cos(t),A.ctr[1]+A.r*Math.sin(t)]);}return o;}
-export const toPoly=(pts,closed,tol=0.002)=>{const o=[];pts.forEach((p,i)=>{o.push([p[0],p[1]]);(i<pts.length-1||closed)&&o.push(...polyArc(p,pts[(i+1)%pts.length],p[2]||0,tol));});return o;};
+export const toPoly=(pts,closed,tol=0.002)=>{const o=[];pts.forEach((p,i)=>{o.push([p[0],p[1]]);(i<pts.length-1||closed)&&pushAll(o,polyArc(p,pts[(i+1)%pts.length],p[2]||0,tol));});return o;};
 export const area=P=>P.reduce((s,p,i)=>{const q=P[(i+1)%P.length];return s+p[0]*q[1]-q[0]*p[1];},0)/2;
 export const loopArea=pts=>{let s=0;const n=pts.length;for(let i=0;i<n;i++){const p=pts[i],q=pts[(i+1)%n],bu=p[2]||0,A=arcOf(p,q,bu);s+=p[0]*q[1]-q[0]*p[1];bu&&isFinite(A.r)&&(s+=A.s*(A.r*A.r*(A.th-Math.sin(A.th))));}return s/2;};
 export const bbox=paths=>{let x0=1e30,y0=1e30,x1=-1e30,y1=-1e30;for(const p of paths)for(const q of toPoly(p.pts,p.closed)){x0=Math.min(x0,q[0]);x1=Math.max(x1,q[0]);y0=Math.min(y0,q[1]);y1=Math.max(y1,q[1]);}return{x0,y0,x1,y1,w:x1-x0,h:y1-y0};};

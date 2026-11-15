@@ -1,10 +1,11 @@
 import {closest} from './normalize.js';
 import {suffix} from './units.js';
+import {maxOf,minOf,pushAll} from './minmax.js';
 const r4=v=>+(+v).toFixed(4),KM=u=>u==='in'?1/25.4:1,META=new Set(['recipe','new','units','material','finish','name']),RAD=Math.PI/180,SHAFT={in:[0.125,0.1875,0.25,0.3125,0.375,0.5,0.625,0.75,0.875,1,1.25,1.5,2],mm:[3,4,5,8,10,12,14,16,20,25,30,40,50]};
 const S=(n,k,d,lo,hi,doc,al=[])=>({n,k,d,lo,hi,doc,al}),shaft=(u,mx)=>SHAFT[u].filter(x=>x<=mx).pop()??SHAFT[u][0];
 const DIN=[[8,2,1],[10,3,1.4],[12,4,1.8],[17,5,2.3],[22,6,2.8],[30,8,3.3],[38,10,3.3],[44,12,3.3],[50,14,3.8],[58,16,4.3],[65,18,4.4],[75,20,4.9],[85,22,5.4],[95,25,5.4]],ANSI=[[0.4375,0.09375],[0.5625,0.125],[0.875,0.1875],[1.25,0.25],[1.375,0.3125],[1.75,0.375],[2.25,0.5],[2.75,0.625],[3.25,0.75]];
 const keyFor=(b,u)=>{const t=u==='in'?ANSI.find(x=>b<=x[0]+1e-9)||ANSI[ANSI.length-1]:DIN.find(x=>b<=x[0]+1e-9)||DIN[DIN.length-1];return u==='in'?[t[1],t[1]/2]:[t[1],t[2]];},SCREW=(b,u)=>u==='in'?b<=0.5?0.112:b<=0.875?0.164:0.25:b<=8?3:b<=12?4:b<=20?5:8;
-const cd=(a,b)=>Math.abs(((a-b+540)%360)-180),far=(n,L)=>L.map(a=>[n?Math.min(...Array.from({length:n},(_,i)=>cd(a,360*i/n))):180,a]).sort((x,y)=>y[0]-x[0])[0][1],BOOL=x=>x===true||/^(true|yes|on|1)$/i.test(String(x)),NONE=x=>x==null||x===''||/^(auto|default|none|null)$/i.test(String(x));
+const cd=(a,b)=>Math.abs(((a-b+540)%360)-180),far=(n,L)=>L.map(a=>[n?minOf(Array.from({length:n},(_,i)=>cd(a,360*i/n))):180,a]).sort((x,y)=>y[0]-x[0])[0][1],BOOL=x=>x===true||/^(true|yes|on|1)$/i.test(String(x)),NONE=x=>x==null||x===''||/^(auto|default|none|null)$/i.test(String(x));
 const frac=t=>{const m=/^\s*(?:(\d+)\s*[- ]\s*)?(\d+)\/(\d+)\s*(mm|cm|in|inch|inches|")?\s*$/i.exec(String(t));return m?[(+m[1]||0)+m[2]/m[3],m[4]]:null;},isLen=s=>s.k==='len'||s.k==='lenopt';
 function co(s,raw,u){
   const k=s.k;
@@ -148,7 +149,7 @@ const BRG={608:[8,22,7],6000:[10,26,8],6001:[12,28,8],6002:[15,32,9],6003:[17,35
 function pillow(v,c){
   const u=c.u,k=KM(u);let id,od,bw;
   if(v.bearing!=null){const b=BRG[(/\d{3,4}/.exec(String(v.bearing))||[''])[0]];if(!b)throw new Error(`bearing ${v.bearing} is not in the table; use one of ${Object.keys(BRG).join(', ')} or give bore`);[id,od,bw]=b.map(x=>x*k);}
-  else{const want=(v.bore??(u==='in'?0.75:20))/k,b=Object.values(BRG).find(x=>x[0]>=want-1e-7&&x[1]<x[0]*2.7)||Object.values(BRG).find(x=>x[0]>=want-1e-7);if(!b)throw new Error(`no bearing in the table fits a ${show(want*k,u)} shaft (largest ${Math.max(...Object.values(BRG).map(x=>x[0]))} mm)`);[id,od,bw]=b.map(x=>x*k);}
+  else{const want=(v.bore??(u==='in'?0.75:20))/k,b=Object.values(BRG).find(x=>x[0]>=want-1e-7&&x[1]<x[0]*2.7)||Object.values(BRG).find(x=>x[0]>=want-1e-7);if(!b)throw new Error(`no bearing in the table fits a ${show(want*k,u)} shaft (largest ${maxOf(Object.values(BRG).map(x=>x[0]))} mm)`);[id,od,bw]=b.map(x=>x*k);}
   const wall=v.wall??od*0.2,W=v.width??bw+Math.max(od*0.14,3*k),L=v.length??(od+2*wall)*2.1,t=v.base??od*0.2,hc=t+od/2+wall*0.2,bd=v.bolt_hole??(od>=40*k?9*k:5.5*k),nb=v.bolts,ps=[['bearing_od',r4(od),'bearing outer diameter (the housing bore)'],['bearing_id',r4(id),'bearing inner diameter (the shaft)'],['bearing_w',r4(bw),'bearing width'],['w',v.width!==undefined?r4(W):`@bearing_w+${r4(W-bw)}`,'housing width along the shaft'],['wall',rel(v.wall,wall,'bearing_od',od),'wall around the bearing'],['l',rel(v.length,L,'bearing_od',od),'base length'],['t',rel(v.base,t,'bearing_od',od),'base thickness'],['hc','@t+@bearing_od/2+@wall*0.2','shaft centre height'],['bolt_d',r4(bd),'mounting bolt hole diameter'],['base_w',`max(@w,@bolt_d*${nb===4?3.4:2})`,'base width across the shaft (widens to fit the bolt holes)']];
   if(L<od+2*wall+bd*4.4)throw new Error(`length ${show(L,u)} is too short for the housing and bolts; use at least ${show(od+2*wall+bd*4.4,u)}`);
   const bx=(L/2+(od/2+wall))/2,fs=[{type:'box',name:`${c.t}: base`,w:'@l',d:'@base_w',h:'@t'},{type:'box',name:`${c.t}: neck`,w:'2*(@bearing_od/2+@wall)',d:'@w',h:'@hc-@t*0.5',z:'@t*0.5'},{type:'cylinder',name:`${c.t}: housing`,r:'@bearing_od/2+@wall',h:'@w',x:0,y:0,z:'@hc',axis:'Y',center:true},{type:'cylinder',name:`${c.t}: bearing seat`,r:'@bearing_od/2',h:'@bearing_w+@w*0.01',x:0,y:'-@w/2-@w*0.01',z:'@hc',axis:'Y',op:'cut'},{type:'cylinder',name:`${c.t}: shaft bore`,r:'(@bearing_od+@bearing_id)/4',h:'@w*1.2',x:0,y:0,z:'@hc',axis:'Y',center:true,op:'cut'}];
@@ -176,7 +177,7 @@ export function expandRecipes(actions,doc){
   const A=Array.isArray(actions)?actions.map(a=>asRecipe(a)||a):actions;
   if(!Array.isArray(A)||!A.some(a=>a&&typeof a==='object'&&a.recipe!==undefined))return{actions,warns:[],done:[]};
   let ids=(doc.features||[]).map(f=>f.id),names=new Set((doc.params||[]).map(p=>p.name)),u=doc.units==='in'?'in':'mm';
-  const out=[],warns=[],done=[],nid=()=>'f'+(Math.max(0,...ids.map(i=>+(/^f(\d+)$/.exec(i)||[])[1]||0))+1);
+  const out=[],warns=[],done=[],nid=()=>'f'+(maxOf([0,...ids.map(i=>+(/^f(\d+)$/.exec(i)||[])[1]||0)])+1);
   for(const a of A){
     if(!a||typeof a!=='object'||a.recipe===undefined){
       if(a&&typeof a==='object'){a.new&&(ids=[],names=new Set(),u=a.units==='in'||a.units==='mm'?a.units:u);a.param&&a.param.name&&names.add(String(a.param.name).replace(/[^\w]/g,'_'));a.add&&ids.push(nid());a.delete&&(ids=ids.filter(i=>i!==(a.delete.id||a.delete)));}
@@ -186,12 +187,12 @@ export function expandRecipes(actions,doc){
     if(!R){const c=closest(String(a.recipe),KEYS);warns.push(`Unknown recipe "${a.recipe}"${c?'; closest is "'+c+'"':''}. Recipes: ${KEYS.join(', ')}.`);done.push(`recipe ${a.recipe}: unknown`);continue;}
     try{
       const nu=a.new?(a.units==='in'||a.units==='mm'?a.units:u):u,{v,W,E}=parse(R,a,nu);
-      warns.push(...W.map(w=>`Recipe ${key}: ${w}`));
+      pushAll(warns,W.map(w=>`Recipe ${key}: ${w}`));
       if(E.length)throw new Error(E.join('; '));
       const nn=a.new?new Set():names;
       let p=key,i=1;while([...nn].some(x=>x.startsWith(p+'_')))p=key+(++i);
       const c={u:nu,p,t:a.name?String(a.name):R.n+(i>1?' '+i:''),x:s=>s.replace(/@(\w+)/g,(m,k)=>p+'_'+k)},g=R.gen(v,c),base=a.new?[]:ids,map={};
-      let cur=base;const fa=g.fs.map(f=>{const id='f'+(Math.max(0,...cur.map(q=>+(/^f(\d+)$/.exec(q)||[])[1]||0))+1);cur=[...cur,id];const{ref,...rest}=f;ref&&(map[ref]=id);return rest;});
+      let cur=base;const fa=g.fs.map(f=>{const id='f'+(maxOf([0,...cur.map(q=>+(/^f(\d+)$/.exec(q)||[])[1]||0)])+1);cur=[...cur,id];const{ref,...rest}=f;ref&&(map[ref]=id);return rest;});
       const sub=s=>/^#\w+$/.test(s)?map[s.slice(1)]||s:c.x(s);
       a.new&&out.push({new:true,...(a.units==='in'||a.units==='mm'?{units:a.units}:{})});
       a.material&&out.push({material:a.material});a.finish!==undefined&&out.push({finish:a.finish});

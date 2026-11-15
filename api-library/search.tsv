@@ -449,7 +449,11 @@ round_bits	function	std	/api-library/helium/lib/std#round_bits	Returns the doubl
 slow_decimal	function	std	/api-library/helium/lib/std#slow_decimal	Converts decimal digits with a power-of-ten exponent to the nearest double using big integer division.	int
 big_shr1	function	std	/api-library/helium/lib/std#big_shr1	Shifts a limb array right by one bit in place.	int
 POW10	constant	std	/api-library/helium/lib/std#POW10	Table of exactly representable powers of ten from 1e0 to 1e22 used by the fast parsing path.	int
+P5	constant	std	/api-library/helium/lib/std#P5	Lookup table of 128-bit powers of five used by the Eisel-Lemire algorithm for correctly rounded decimal-to-real conversion.	int
+mul128	function	std	/api-library/helium/lib/std#mul128	Multiplies two unsigned 64-bit values and returns the low and high halves of the 128-bit product.	int
+lemire	function	std	/api-library/helium/lib/std#lemire	Converts a decimal mantissa and power-of-ten exponent into real bits, returning a zero mantissa with exponent -1 when the fast path cannot decide.	int
 parse_flt	function	std	/api-library/helium/lib/std#parse_flt	Parses all of s as a decimal, inf or nan with optional sign and exponent, returning false if invalid.	pub
+parse_flt_big	function	std	/api-library/helium/lib/std#parse_flt_big	Parses a decimal, "inf" or "nan" with optional sign and exponent into a real, returning false if malformed.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Returns s, trimmed of whitespace, parsed as a real, or 0.0 if parsing fails.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Returns a growable byte array parsed as a real, or 0.0 if parsing fails.	pub
 to_real	function	std	/api-library/helium/lib/std#to_real	Converts a value of any type to a real by casting.	pub
@@ -729,7 +733,7 @@ json::K_STR	constant	json	/api-library/helium/lib/json#K_STR	Node kind constant 
 json::K_ARR	constant	json	/api-library/helium/lib/json#K_ARR	Node kind constant for a JSON array.	pub
 json::K_OBJ	constant	json	/api-library/helium/lib/json#K_OBJ	Node kind constant for a JSON object.	pub
 json::DocNode	type	json	/api-library/helium/lib/json#DocNode	Internal index-based node record holding kind, numeric value, pool offsets for text and key, and sibling links for a parsed document.	int
-json::Doc	type	json	/api-library/helium/lib/json#Doc	Internal index-based document holding a node list and a shared byte pool for strings and keys.	int
+json::Doc	type	json	/api-library/helium/lib/json#Doc	Holds a parsed JSON document as a flat node list plus a byte pool for strings and keys, with a raw flag.	pub
 json::text_of	function	json	/api-library/helium/lib/json#text_of	Returns the string text stored for node n from the pool.	int
 json::key_of	function	json	/api-library/helium/lib/json#key_of	Returns the member name stored for node n from the pool.	int
 json::add_node	function	json	/api-library/helium/lib/json#add_node	Appends a new node of the given kind and returns its index.	int
@@ -1471,6 +1475,7 @@ s3d::multiscatter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#multi
 s3d::furnace_scale	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_scale	Test hook scaling the direct light; 1.0 in normal use.	int
 s3d::furnace_mode	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#furnace_mode	Test hook selecting deliberately faulty furnace behaviors; 0 in normal use.	int
 s3d::test_rect_naive	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_rect_naive	Test hook that selects the naive rectangular light path; false in normal use.	int
+s3d::rect_detail	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#rect_detail	Test control that sets the level of detail used when evaluating rectangular area lights, intended for tests rather than normal rendering.	int
 s3d::test_all_lights	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_all_lights	Test flag that forces every light to be processed, bypassing the normal light culling, for verifying renderer behavior.	int
 s3d::test_cluster_range	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#test_cluster_range	Test scale factor for the light cluster depth range, where 1.0 is the normal setting.	int
 s3d::alpha_to_coverage	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#alpha_to_coverage	Flag enabling alpha-to-coverage for cut-out surfaces.	pub
@@ -1649,6 +1654,13 @@ s3d::cluster_words	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clus
 s3d::light_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_buf	Storage buffer holding packed light data.	int
 s3d::cluster_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_buf	Storage buffer holding clustered light assignment words.	int
 s3d::light_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#light_cap	Current capacity of the light storage buffer.	int
+s3d::CAST_REC	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CAST_REC	Capacity constant for the cast record buffer, set to 4096 entries.	int
+s3d::cast_want	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_want	Module-level counter holding the number of cast records requested for the current frame.	int
+s3d::cast_at	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_at	Module-level counter holding the current write position within the cast records.	int
+s3d::cast_room	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_room	Module-level counter holding the remaining space available for cast records.	int
+s3d::cast_frame	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_frame	Frame number when cast records were last written, initialized to a sentinel before any frame.	int
+s3d::cast_gen	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_gen	Module-level generation counter for the cast records.	int
+s3d::cast_live	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cast_live	Returns the current cast record count as a float if written within the last frame, otherwise zero.	int
 s3d::cluster_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cluster_cap	Current capacity of the cluster storage buffer.	int
 s3d::ext_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_size	Edge size in pixels of each layer in the extended material texture arrays.	int
 s3d::ext_arr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ext_arr	Two texture arrays holding linear and sRGB layers for extended material maps.	int
@@ -1871,6 +1883,9 @@ s3d::pixel_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pixe
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Creates render targets and pipelines, returns true when ready, and is safe to call again after a resize.	pub
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Initializes rendering at a render size and writes a larger output size using temporal upscaling.	pub
 s3d::forget	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forget	Releases cached textures and geometry copies after the glTF pools are reset.	pub
+s3d::vtouch_lo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vtouch_lo	Lowest vertex index modified since the last geometry upload, or -1 when no vertices are dirty.	int
+s3d::vtouch_hi	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vtouch_hi	Highest vertex index (exclusive) modified since the last geometry upload, or -1 when no vertices are dirty.	int
+s3d::touch_verts	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#touch_verts	Marks a range of vertices as modified so the next geometry upload refreshes only that part of the vertex buffer.	int
 s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#upload_geometry	Uploads glTF vertex, index and morph data to GPU buffers when their sizes change.	int
 s3d::cut_keep	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_keep	Flag that enables preserving alpha-cutout coverage when building mip levels for cutout textures.	int
 s3d::cut_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_of	Returns the alpha cutoff of the first alpha-masked material using the image, or -1 when none or disabled.	int
@@ -6174,16 +6189,22 @@ cloth::bends	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bends	Flat arr
 cloth::bend_len	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#bend_len	Rest lengths of the bend constraints.	int
 cloth::tris	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tris	Flat array of particle index triples, one triple per triangle.	int
 cloth::vmap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#vmap	Mapping from each source mesh vertex to its merged particle index.	int
+cloth::skin_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_on	Per-particle flags marking which cloth particles are currently constrained to a skinned target surface.	int
+cloth::skin_p	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_p	Per-particle flat array of skin target positions, three reals per particle.	int
+cloth::skin_n	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_n	Per-particle flat array of skin target normals, three reals per particle, stored normalized.	int
+cloth::skin_gap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_gap	Per-particle array of the gap distance kept from the skin target surface.	int
 cloth::balls	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#balls	Flat array of sphere colliders stored as x, y, z, radius quadruples.	int
 cloth::pills	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#pills	Flat array of capsule colliders stored as two endpoints and a radius, seven values each.	int
 cloth::floor_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_on	Flag indicating whether the ground plane collider is enabled.	int
 cloth::floor_y	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_y	Height of the ground plane collider along the y axis.	int
-cloth::key_bits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#key_bits	Hashes a vertex position into an unsigned key for merging duplicate vertices.	int
-cloth::add3	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#add3	Appends an x, y, z triple to a flat array.	int
-cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the current distance between two particles by index.	int
+cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the distance between two particles given by index.	int
+cloth::hbits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hbits	Returns the raw 32-bit pattern of a float, used for hashing vertex positions.	int
+cloth::hslot	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hslot	Returns a hash table slot for a position, masked to the table size.	int
 cloth::make	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#make	Builds a cloth from mesh vertices and triangle indices, merging duplicate positions, and returns its cloth index.	pub
 cloth::pin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pin	Pins a cloth vertex so it moves to the given world position during steps instead of simulating.	pub
 cloth::unpin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unpin	Releases a pinned cloth vertex so it simulates freely again.	pub
+cloth::skin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin	Binds a cloth vertex to a skin position, normal and gap; zero-length normals leave the previous normal unchanged.	pub
+cloth::unskin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unskin	Clears skinning on every particle of the cloth so they simulate freely again.	pub
 cloth::reset	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#reset	Clears all cloths, particle data, and colliders.	pub
 cloth::clear_colliders	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#clear_colliders	Removes all sphere and capsule colliders and disables the ground plane.	pub
 cloth::ball	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ball	Adds a sphere collider with the given center and radius.	pub
@@ -6192,7 +6213,7 @@ cloth::ground	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ground	Enable
 cloth::normals	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#normals	Recomputes smoothed per-particle normals for a cloth from its triangles.	int
 cloth::limits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#limits	Computes each unpinned particle's nearest pinned particle and its rest distance for reach limiting.	int
 cloth::contact	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#contact	Pushes a particle out of a sphere and applies friction against its sliding motion.	int
-cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a position-based distance constraint between two particles with the given rest length and softness.	int
+cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a soft distance constraint between two particles, moving each by its inverse mass share.	int
 cloth::step	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#step	Advances a cloth simulation by dt seconds under wind, applying gravity, constraints, collisions, and normals.	pub
 cloth::write	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#write	Writes simulated position and normal offsets and previous-frame offsets for each vertex into an output buffer.	pub
 cloth::count	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#count	Returns the number of simulated particles in a cloth.	pub
@@ -6349,10 +6370,14 @@ hair::SIM	constant	gfx/hair	/api-library/helium/lib/gfx-hair#SIM	Number of float
 hair::PARTS	constant	gfx/hair	/api-library/helium/lib/gfx-hair#PARTS	Maximum number of body parts per groom used as collision solids.	int
 hair::BONES	constant	gfx/hair	/api-library/helium/lib/gfx-hair#BONES	Maximum number of skinning bones a groom can use.	int
 hair::LIGHT	constant	gfx/hair	/api-library/helium/lib/gfx-hair#LIGHT	Resolution in pixels of the square light-space buffers used for hair shadowing.	int
+hair::CAST	constant	gfx/hair	/api-library/helium/lib/gfx-hair#CAST	Constant giving the resolution in pixels of the square light-space buffers used for casting hair shadows or lighting.	int
 hair::HairU	type	gfx/hair	/api-library/helium/lib/gfx-hair#HairU	Uniform block passed to the hair compute and composite shaders, holding matrices, camera, lighting, and strand look parameters.	int
 hair::Look	type	gfx/hair	/api-library/helium/lib/gfx-hair#Look	Appearance settings for a groom, such as color, roughness, width, density, scatter, exposure, and ambient lighting.	pub
 hair::Physics	type	gfx/hair	/api-library/helium/lib/gfx-hair#Physics	Simulation settings for a groom, including gravity, stiffness along the strand, damping, and gap limits for collision.	pub
 hair::Groom	type	gfx/hair	/api-library/helium/lib/gfx-hair#Groom	A loaded hair instance holding its look, physics, placement, strand counts, and GPU buffers.	pub
+hair::RW	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RW	Buffer usage flags allowing compute shaders to read and write.	int
+hair::RD	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RD	Buffer usage flags allowing compute shaders to only read.	int
+hair::ident	function	gfx/hair	/api-library/helium/lib/gfx-hair#ident	Returns an identity 4x4 matrix.	int
 hair::grooms	constant	gfx/hair	/api-library/helium/lib/gfx-hair#grooms	Module-level list of hair groom records, one per loaded groom.	int
 hair::simv	constant	gfx/hair	/api-library/helium/lib/gfx-hair#simv	Packed simulation constants buffer on the CPU side, SIM float4 slots per groom.	int
 hair::part_node	constant	gfx/hair	/api-library/helium/lib/gfx-hair#part_node	Per-groom list of scene node indices for collision body parts.	int
@@ -6361,9 +6386,14 @@ hair::bone_node	constant	gfx/hair	/api-library/helium/lib/gfx-hair#bone_node	Per
 hair::bone_rest	constant	gfx/hair	/api-library/helium/lib/gfx-hair#bone_rest	Per-groom inverse world matrices of bone nodes captured at rest pose.	int
 hair::mats	constant	gfx/hair	/api-library/helium/lib/gfx-hair#mats	Per-groom current bone skinning matrices uploaded to the GPU each frame.	int
 hair::probe_v	constant	gfx/hair	/api-library/helium/lib/gfx-hair#probe_v	Per-groom debug probe values read back from the simulation statistics.	int
+hair::kept_vp	constant	gfx/hair	/api-library/helium/lib/gfx-hair#kept_vp	Module-level list of saved view-projection matrices kept for the hair light passes.	int
+hair::kept_x	constant	gfx/hair	/api-library/helium/lib/gfx-hair#kept_x	Module-level list of saved float4 values kept alongside the stored matrices for light passes.	int
 hair::w	constant	gfx/hair	/api-library/helium/lib/gfx-hair#w	Current width in pixels of the hair render buffers.	int
 hair::h	constant	gfx/hair	/api-library/helium/lib/gfx-hair#h	Current height in pixels of the hair render buffers.	int
 hair::made	constant	gfx/hair	/api-library/helium/lib/gfx-hair#made	Flag recording whether the GPU pipelines have been created.	int
+hair::detail	constant	gfx/hair	/api-library/helium/lib/gfx-hair#detail	Level-of-detail setting for camera rendering that scales how many strands are drawn; larger values draw more.	pub
+hair::light_detail	constant	gfx/hair	/api-library/helium/lib/gfx-hair#light_detail	Level-of-detail setting for light-space passes that scales how many strands are drawn; larger values draw more.	pub
+hair::light_turns	constant	gfx/hair	/api-library/helium/lib/gfx-hair#light_turns	Flag controlling whether hair light and shadow buffers are updated by rotating through lights across frames.	pub
 hair::front	constant	gfx/hair	/api-library/helium/lib/gfx-hair#front	GPU buffer holding the nearest-depth value per screen pixel for hair rasterization.	int
 hair::acc	constant	gfx/hair	/api-library/helium/lib/gfx-hair#acc	GPU buffer accumulating hair fragment colors per screen pixel.	int
 hair::hairt	constant	gfx/hair	/api-library/helium/lib/gfx-hair#hairt	Texture holding the resolved hair image before compositing onto the scene.	int
@@ -6375,11 +6405,9 @@ hair::resolve_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#resolve_p	Com
 hair::skin_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#skin_p	Compute pipeline that skins hair strand points to follow bone motion.	int
 hair::sim_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#sim_p	Compute pipeline that simulates hair strand dynamics each frame.	int
 hair::sdf_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#sdf_p	Compute pipeline that bakes the collision distance field from body triangles.	int
+hair::cast_p	constant	gfx/hair	/api-library/helium/lib/gfx-hair#cast_p	Compute pipeline used internally for the strand casting pass.	int
 hair::raw	constant	gfx/hair	/api-library/helium/lib/gfx-hair#raw	Scratch byte buffer for reading back simulation statistics from the GPU.	int
 hair::us	constant	gfx/hair	/api-library/helium/lib/gfx-hair#us	Per-groom uniform blocks computed for the current frame's draw.	int
-hair::RW	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RW	Buffer usage flags allowing compute shaders to read and write.	int
-hair::RD	constant	gfx/hair	/api-library/helium/lib/gfx-hair#RD	Buffer usage flags allowing compute shaders to only read.	int
-hair::ident	function	gfx/hair	/api-library/helium/lib/gfx-hair#ident	Returns an identity 4x4 matrix.	int
 hair::mel_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#mel_of	Returns eumelanin and pheomelanin amounts approximating a given hair color and spread value.	int
 hair::ready	function	gfx/hair	/api-library/helium/lib/gfx-hair#ready	Creates the shared pipelines and sampler once, doing nothing on later calls.	int
 hair::size	function	gfx/hair	/api-library/helium/lib/gfx-hair#size	Resizes the screen-sized hair buffers and texture, releasing any previous ones.	int
@@ -6421,14 +6449,17 @@ hair::bake_part	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake_part	Bak
 hair::bake	function	gfx/hair	/api-library/helium/lib/gfx-hair#bake	Packs collision triangles and grid parameters per body part and allocates distance field buffers for a groom.	int
 hair::cards	function	gfx/hair	/api-library/helium/lib/gfx-hair#cards	Creates a groom from a named hair card mesh in a model, returning its handle or -1 on failure.	pub
 hair::live	function	gfx/hair	/api-library/helium/lib/gfx-hair#live	Returns whether a groom is loaded and visible.	int
+hair::lod_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#lod_of	Returns a strand level-of-detail fraction for a groom from pixels per meter and a detail factor, clamped between one strand and all.	int
 hair::put_uniform	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_uniform	Uploads a uniform block to the compute stage.	int
 hair::uniforms_of	function	gfx/hair	/api-library/helium/lib/gfx-hair#uniforms_of	Builds the shader uniform block for a groom from its look, camera, sun, and lights.	int
 hair::light_slices	function	gfx/hair	/api-library/helium/lib/gfx-hair#light_slices	Resizes a groom's light-space buffers to hold n slices, doing nothing if the count is unchanged.	int
-hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Clears two compute buffers for a render pass mode, scaling the light-slice setting when the mode is above 1.	int
+hair::clear_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#clear_pass	Dispatches a compute pass that clears the given hair buffers for a chosen mode.	int
 hair::raster_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#raster_pass	Dispatches the strand rasterization compute pass for a groom, using light-space buffers when the mode is above 1.	int
 hair::track	function	gfx/hair	/api-library/helium/lib/gfx-hair#track	Updates a groom's model transform and bone matrices from its followed scene item's animation.	int
 hair::put_mat	function	gfx/hair	/api-library/helium/lib/gfx-hair#put_mat	Random number generator state used for hair style generation, starting at seed 7.	int
 hair::simulate	function	gfx/hair	/api-library/helium/lib/gfx-hair#simulate	Runs one physics step for a groom, including skinning, collision field baking, and optional statistics readback.	int
+hair::cast_pass	function	gfx/hair	/api-library/helium/lib/gfx-hair#cast_pass	Dispatches the compute pass that accumulates one light slice of a groom's shadow-casting data into its light buffers.	int
+hair::cast_all	function	gfx/hair	/api-library/helium/lib/gfx-hair#cast_all	Gathers up to four live grooms with shadow casting enabled and uploads their light-slice matrices for the cast pass.	int
 hair::draw	function	gfx/hair	/api-library/helium/lib/gfx-hair#draw	Simulates and renders all visible grooms over the scene for a frame, taking the time step in seconds.	pub
 hair::Style	type	gfx/hair	/api-library/helium/lib/gfx-hair#Style	Parameters for generating strands procedurally, such as steps, length, variation, width, droop, curl, and clumps.	pub
 hair::rs	constant	gfx/hair	/api-library/helium/lib/gfx-hair#rs	Module-level state of the pseudo-random generator that rnd uses when scattering strand roots, seeded to 7.	int
@@ -6445,3 +6476,360 @@ hair::strand_out	function	gfx/hair	/api-library/helium/lib/gfx-hair#strand_out	A
 hair::groom	function	gfx/hair	/api-library/helium/lib/gfx-hair#groom	Generates strand data bytes from root positions, normals, and a Style.	pub
 hair::card_mesh	function	gfx/hair	/api-library/helium/lib/gfx-hair#card_mesh	Builds a hair-card mesh from packed strand data and a material, returning the new mesh id, or -1 if the data is invalid.	pub
 hair::points	function	gfx/hair	/api-library/helium/lib/gfx-hair#points	Reads a groom's simulated strand points back from the GPU into a byte buffer, 48 bytes per point; leaves it untouched if the groom is invalid or off.	pub
+hairdo::MW	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#MW	Width of the head radius map grid in columns, used internally when measuring a head.	int
+hairdo::MH	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#MH	Height of the head radius map grid in rows, used internally when measuring a head.	int
+hairdo::Do	type	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#Do	Parameter set describing one hairstyle preset, including length, curl, bangs, tie style, and strand counts.	pub
+hairdo::STYLES	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#STYLES	Returns the list of all built-in hairstyle presets.	pub
+hairdo::Shade	type	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#Shade	Hair color preset with RGB values, brightness gain, and a flag for dyed shades.	pub
+hairdo::SHADES	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#SHADES	Returns the list of all built-in hair color presets.	pub
+hairdo::ok	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ok	Flag set when a head has been measured successfully and hair can be grown.	int
+hairdo::ctr	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ctr	Center point of the measured head sphere in model space.	int
+hairdo::unit	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#unit	Measured head size unit used to scale all hair dimensions.	int
+hairdo::top	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#top	Height of the top of the measured head.	int
+hairdo::map	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#map	Grid of head radii sampled by direction around the head center.	int
+hairdo::sol	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#sol	Solid ellipsoid colliders, such as neck and shoulders, that hair is pushed out of.	int
+hairdo::count	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#count	Returns the number of built-in hairstyle presets.	pub
+hairdo::tones	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tones	Returns the number of built-in hair color presets.	pub
+hairdo::name_of	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#name_of	Returns the name of the hairstyle at an index, or an empty string if out of range.	pub
+hairdo::tone_name	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tone_name	Returns the name of the hair color at an index, or an empty string if out of range.	pub
+hairdo::find	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#find	Returns the index of the hairstyle with the given name, or -1 if none matches.	pub
+hairdo::style	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#style	Returns the hairstyle preset with the given name, or the first preset if not found.	pub
+hairdo::tone	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tone	Returns the hair color preset with the given name, or brown if not found.	pub
+hairdo::length3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#length3	Returns the length of a 3D vector.	int
+hairdo::unit3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#unit3	Returns the vector scaled to unit length.	int
+hairdo::dot3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#dot3	Returns the dot product of two 3D vectors.	int
+hairdo::cross3	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#cross3	Returns the cross product of two 3D vectors.	int
+hairdo::ss	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ss	Returns a smooth Hermite interpolation of x between edges a and b, clamped to 0 through 1.	int
+hairdo::mix	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#mix	Returns the linear interpolation between a and b by t.	int
+hairdo::hsqrt	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hsqrt	Returns the square root of a single-precision value.	int
+hairdo::hsin	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hsin	Returns the sine of a single-precision angle in radians.	int
+hairdo::hcos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hcos	Returns the cosine of a single-precision angle in radians.	int
+hairdo::asin_r	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#asin_r	Returns the arcsine of a value using an arctangent formulation.	int
+hairdo::hacos	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hacos	Returns the arccosine of a single-precision value, in radians.	int
+hairdo::ceil_i	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ceil_i	Returns the smallest integer not less than a single-precision value.	int
+hairdo::floor_i	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#floor_i	Returns the largest integer not greater than a single-precision value.	int
+hairdo::radius	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#radius	Returns the interpolated head radius in the given direction from the head center.	int
+hairdo::skin	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#skin	Returns the point on the head surface in the given direction.	int
+hairdo::keep	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#keep	Returns a point pushed outside the head and body colliders, keeping at least the given gap.	int
+hairdo::line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#line	Returns the hairline height for a direction, interpolated from a fixed profile of the head.	int
+hairdo::scalp	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#scalp	Returns a 0 to 1 weight for how much a direction lies on the scalp below the hairline.	int
+hairdo::under	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#under	Returns whether a node is the head node or one of its descendants.	int
+hairdo::fill_map	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#fill_map	Fills empty cells of the head radius map from neighbors and smooths the result.	int
+hairdo::measure	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#measure	Measures the head of a model asset, building the radius map and colliders, and returns false if no head geometry is found.	int
+hairdo::ball	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#ball	Sets the head to a plain sphere of the given center and radius instead of measuring a model.	pub
+hairdo::hs	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#hs	Returns a pseudo-random value from 0 to 1 hashed from four integers.	int
+hairdo::vn	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#vn	Returns smooth 3D value noise between 0 and 1 for a point and seed.	int
+hairdo::resample	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#resample	Resamples a polyline path into evenly spaced points along its length.	int
+hairdo::tie_dir	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tie_dir	Returns the direction from the head center toward the hair tie point for a side.	int
+hairdo::tie_at	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tie_at	Returns the hair tie position on the head for the given side.	int
+hairdo::tail_line	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tail_line	Builds the centerline of a ponytail or tail hanging from the tie point.	int
+hairdo::comb_dir	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#comb_dir	Returns the combing direction for loose hair based on the style's comb mode.	int
+hairdo::loose	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#loose	Builds the path of a loose strand and returns its length in head units.	int
+hairdo::tied	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#tied	Builds the path of a tied-back strand and returns its total length and its length up to the tie.	int
+hairdo::dir_at	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#dir_at	Returns the unit direction for an azimuth angle and a height value.	int
+hairdo::make_roots	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_roots	Generates strand root directions over the scalp, scaled to the style's guide count.	int
+hairdo::s_axis	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_axis	Per-strand root direction axes produced when building strands from roots.	int
+hairdo::s_root	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_root	Working array of root positions for each strand.	int
+hairdo::s_len	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_len	Per-strand total path lengths, measured in head units, produced when building strands.	int
+hairdo::s_head	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_head	Working array of strand lengths from root to tie point.	int
+hairdo::s_grp	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_grp	Working array of group ids for each strand, such as left, right, or fringe.	int
+hairdo::s_lay	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lay	Working array of random layer values for each strand.	int
+hairdo::s_pts	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_pts	Working array of resampled strand points.	int
+hairdo::s_k	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_k	Number of points stored per strand, clamped between 4 and 32 when strands are built.	int
+hairdo::make_strands	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_strands	Builds strand point paths, groups, lengths and layers for each root direction according to the hairstyle settings.	int
+hairdo::s_lead	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_lead	Working array of the leader strand index for each strand.	int
+hairdo::make_leaders	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#make_leaders	Chooses a nearby leader strand in the same group for each strand.	int
+hairdo::s_sh	constant	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#s_sh	Per-strand shaped point positions, filled by the shaping pass after strands are built.	int
+hairdo::shape	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#shape	Shapes strands by applying waves, curls and clumping offsets to the base strand points using each strand's leader.	int
+hairdo::grow	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#grow	Generates hair strand data for a style into a byte buffer and returns the strand count, or 0 on failure.	int
+hairdo::wear	function	gfx/hairdo	/api-library/helium/lib/gfx-hairdo#wear	Grows hair of a named style and color on a model's head joint and returns the groom handle, or -1 on failure.	pub
+libm::TWO24	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO24	Constant 2^24 as a real, used to split values into 24-bit chunks.	int
+libm::TWOM24	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM24	Constant 2^-24 as a real, used to split values into 24-bit chunks.	int
+libm::pow2	function	tiles/libm	/api-library/helium/lib/tiles-libm#pow2	Returns 2 raised to the integer power e by building the exponent bits directly.	int
+libm::TWOM120	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM120	Constant 2^-120, a tiny value used to raise the inexact flag in edge-case results.	int
+libm::hw	function	tiles/libm	/api-library/helium/lib/tiles-libm#hw	Returns the high 32 bits of a real's IEEE 754 representation as an int.	int
+libm::lw	function	tiles/libm	/api-library/helium/lib/tiles-libm#lw	Returns the low 32 bits of a real's IEEE 754 representation as an int.	int
+libm::hs	function	tiles/libm	/api-library/helium/lib/tiles-libm#hs	Returns the high 32 bits of a real as a signed 32-bit value.	int
+libm::neg_bit	function	tiles/libm	/api-library/helium/lib/tiles-libm#neg_bit	Returns whether the sign bit of a real is set, including for negative zero.	int
+libm::mk	function	tiles/libm	/api-library/helium/lib/tiles-libm#mk	Builds a real from separate high and low 32-bit words.	int
+libm::with_hi	function	tiles/libm	/api-library/helium/lib/tiles-libm#with_hi	Returns x with its high 32-bit word replaced by h.	int
+libm::with_lo0	function	tiles/libm	/api-library/helium/lib/tiles-libm#with_lo0	Returns x with its low 32-bit word cleared to zero.	int
+libm::hi_only	function	tiles/libm	/api-library/helium/lib/tiles-libm#hi_only	Builds a real from a high word with a zero low word.	int
+libm::TWO1023	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO1023	Constant 2^1023, used to scale values up in steps.	int
+libm::TWOM969	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWOM969	Constant 2^-969 computed as the smallest normal times 2^53, used to scale values down in steps.	int
+libm::scalbn	function	tiles/libm	/api-library/helium/lib/tiles-libm#scalbn	Returns x multiplied by 2 raised to the integer n, clamping extreme exponents.	pub
+libm::rem_large	function	tiles/libm	/api-library/helium/lib/tiles-libm#rem_large	Reduces a large-argument chunk array by pi/2, returning the quadrant (0-7) and a two-part remainder.	int
+libm::EPS	constant	tiles/libm	/api-library/helium/lib/tiles-libm#EPS	Constant machine epsilon for doubles, 2^-52.	int
+libm::TO_INT	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TO_INT	Constant magic number used to round a real to an integer through addition.	int
+libm::INV_PIO2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#INV_PIO2	Constant 2/pi, used to estimate the multiple of pi/2.	int
+libm::PIO2_1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_1	Constant leading 33 bits of pi/2 for argument reduction.	int
+libm::PIO2_1T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_1T	Constant tail of pi/2 following the first 33-bit part.	int
+libm::PIO2_2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_2	Constant second 33-bit part of pi/2 for argument reduction.	int
+libm::PIO2_2T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_2T	Constant tail of pi/2 following the second 33-bit part.	int
+libm::PIO2_3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_3	Constant third 33-bit part of pi/2 for argument reduction.	int
+libm::PIO2_3T	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_3T	Constant tail of pi/2 following the third 33-bit part.	int
+libm::rp_ey	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_ey	Returns the biased exponent field of a real.	int
+libm::rp_medium	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_medium	Reduces a medium-size argument by pi/2, returning the quadrant count and a two-part remainder.	int
+libm::rp_step	function	tiles/libm	/api-library/helium/lib/tiles-libm#rp_step	Reduces an argument by k multiples of pi/2, returning the signed count and two-part remainder.	int
+libm::rem_pio2	function	tiles/libm	/api-library/helium/lib/tiles-libm#rem_pio2	Reduces x modulo pi/2, returning the quadrant count and a two-part remainder; NaN results for infinities.	int
+libm::S1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S1	Constant first sine polynomial coefficient, about -1/6.	int
+libm::S2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S2	Constant second sine polynomial coefficient.	int
+libm::S3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S3	Constant third sine polynomial coefficient.	int
+libm::S4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S4	Constant fourth sine polynomial coefficient.	int
+libm::S5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S5	Constant fifth sine polynomial coefficient.	int
+libm::S6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#S6	Constant sixth sine polynomial coefficient.	int
+libm::k_sin	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_sin	Computes sine on a reduced range of about pi/4, with a tail term used when iy is nonzero.	int
+libm::C1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C1	Constant first cosine polynomial coefficient, about 1/24.	int
+libm::C2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C2	Constant second cosine polynomial coefficient.	int
+libm::C3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C3	Constant third cosine polynomial coefficient.	int
+libm::C4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C4	Constant fourth cosine polynomial coefficient.	int
+libm::C5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C5	Constant fifth cosine polynomial coefficient.	int
+libm::C6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#C6	Constant sixth cosine polynomial coefficient.	int
+libm::k_cos	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_cos	Computes cosine on a reduced range of about pi/4 using a two-part argument.	int
+libm::PIO4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO4	Constant pi/4 used by the tangent kernel.	int
+libm::PIO4_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO4_LO	Constant low-order correction term for pi/4.	int
+libm::k_tan	function	tiles/libm	/api-library/helium/lib/tiles-libm#k_tan	Computes tangent, or its negative reciprocal when odd is nonzero, on a reduced range.	int
+libm::sin	function	tiles/libm	/api-library/helium/lib/tiles-libm#sin	Returns the sine of x in radians; NaN for infinite input.	pub
+libm::cos	function	tiles/libm	/api-library/helium/lib/tiles-libm#cos	Returns the cosine of x in radians; NaN for infinite input.	pub
+libm::tan	function	tiles/libm	/api-library/helium/lib/tiles-libm#tan	Returns the tangent of x in radians; NaN for infinite input.	pub
+libm::atan	function	tiles/libm	/api-library/helium/lib/tiles-libm#atan	Returns the arctangent of x in radians, in the range -pi/2 to pi/2.	pub
+libm::A2_PI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#A2_PI	Constant pi as a double used by atan2.	int
+libm::A2_PI_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#A2_PI_LO	Constant low-order correction term for pi used by atan2.	int
+libm::atan2	function	tiles/libm	/api-library/helium/lib/tiles-libm#atan2	Returns the angle in radians of the point (x, y), using both signs to pick the quadrant.	pub
+libm::PIO2_HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_HI	Constant high part of pi/2 used by asin and acos.	int
+libm::PIO2_LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PIO2_LO	Constant low-order correction term for pi/2.	int
+libm::PS0	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS0	Constant numerator coefficient 0 of the asin rational approximation.	int
+libm::PS1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS1	Constant numerator coefficient 1 of the asin rational approximation.	int
+libm::PS2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS2	Constant numerator coefficient 2 of the asin rational approximation.	int
+libm::PS3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS3	Constant numerator coefficient 3 of the asin rational approximation.	int
+libm::PS4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS4	Constant numerator coefficient 4 of the asin rational approximation.	int
+libm::PS5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PS5	Constant numerator coefficient 5 of the asin rational approximation.	int
+libm::QS1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS1	Constant denominator coefficient 1 of the asin rational approximation.	int
+libm::QS2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS2	Constant denominator coefficient 2 of the asin rational approximation.	int
+libm::QS3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS3	Constant denominator coefficient 3 of the asin rational approximation.	int
+libm::QS4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#QS4	Constant denominator coefficient 4 of the asin rational approximation.	int
+libm::ras_r	function	tiles/libm	/api-library/helium/lib/tiles-libm#ras_r	Evaluates the rational approximation shared by asin and acos at z.	int
+libm::asin	function	tiles/libm	/api-library/helium/lib/tiles-libm#asin	Returns the arcsine of x in radians; NaN when the magnitude of x exceeds 1.	pub
+libm::acos	function	tiles/libm	/api-library/helium/lib/tiles-libm#acos	Returns the arccosine of x in radians; NaN when the magnitude of x exceeds 1.	pub
+libm::HY_M96	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HY_M96	Constant 2^-96, used as an error margin in the fast hypot check.	int
+libm::hy_up	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_up	Returns the gap from r to the next larger double.	int
+libm::hy_dn	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_dn	Returns the gap from r to the next smaller double.	int
+libm::hypot	function	tiles/libm	/api-library/helium/lib/tiles-libm#hypot	Returns the square root of x squared plus y squared without intermediate overflow, correctly rounded.	pub
+libm::HC_M49	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M49	Constant 2^-49, a relative error threshold in the exact hypot fallback.	int
+libm::HC_M99	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M99	Constant 2^-99, a relative threshold for accepting a computed sign.	int
+libm::HC_M900	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M900	Constant 2^-900, a minimum magnitude for trusting error sums.	int
+libm::HC_M1022	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M1022	Constant 2^-1022, the smallest normal double, used to detect subnormal results.	int
+libm::HC_M374	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M374	Constant 2^-374, used as the rounding step for subnormal results.	int
+libm::HC_P700	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_P700	Constant 2^700, a scale factor for tiny inputs.	int
+libm::HC_M700	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HC_M700	Constant 2^-700, a scale factor for huge inputs.	int
+libm::hy_sq	function	tiles/libm	/api-library/helium/lib/tiles-libm#hy_sq	Squares v exactly, returning the high and low parts of the product.	int
+libm::exact_sign	function	tiles/libm	/api-library/helium/lib/tiles-libm#exact_sign	Returns the exact sign (-1, 0 or 1) of the sum of the given terms.	int
+libm::fs_add	function	tiles/libm	/api-library/helium/lib/tiles-libm#fs_add	Adds t to a running sum state, accumulating rounding error and absolute magnitude.	int
+libm::fs_end	function	tiles/libm	/api-library/helium/lib/tiles-libm#fs_end	Finishes a running sum with two more terms, returning its sign or 2 when undecided.	int
+libm::hypot_cr	function	tiles/libm	/api-library/helium/lib/tiles-libm#hypot_cr	Computes a correctly rounded hypotenuse of x0 and y0, handling infinities, scaling and subnormals.	int
+libm::TWO53	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TWO53	Constant 2^53 as a real, used by the power function.	int
+libm::HUGE	constant	tiles/libm	/api-library/helium/lib/tiles-libm#HUGE	Constant 1e300, used to force overflow in the power function.	int
+libm::TINY	constant	tiles/libm	/api-library/helium/lib/tiles-libm#TINY	Constant 1e-300, used to force underflow in the power function.	int
+libm::L1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L1	Constant first coefficient of the logarithm polynomial used by pow.	int
+libm::L2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L2	Constant second coefficient of the logarithm polynomial used by pow.	int
+libm::L3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L3	Constant third coefficient of the logarithm polynomial used by pow.	int
+libm::L4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L4	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::L5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L5	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::L6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#L6	Polynomial coefficient used internally by the logarithm approximation in pow; not called directly.	int
+libm::P1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P1	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P2	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P3	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P4	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::P5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#P5	Polynomial coefficient used internally by pow when computing the exponential of the reduced result.	int
+libm::PW_LG2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2	Constant equal to the natural logarithm of 2, used internally by pow.	int
+libm::PW_LG2_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2_H	Constant holding the high-order part of ln 2, used internally by pow for extra precision.	int
+libm::PW_LG2_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#PW_LG2_L	Constant holding the low-order correction of ln 2, used internally by pow for extra precision.	int
+libm::OVT	constant	tiles/libm	/api-library/helium/lib/tiles-libm#OVT	Overflow threshold constant used internally by pow to detect results that exceed the largest finite value.	int
+libm::CP	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP	Constant used internally by pow in the log2 computation of the base.	int
+libm::CP_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP_H	Constant holding the high-order part of CP, used internally by pow for extra precision.	int
+libm::CP_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#CP_L	Constant holding the low-order correction of CP, used internally by pow for extra precision.	int
+libm::IVLN2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2	Constant equal to 1/ln 2, used internally by pow.	int
+libm::IVLN2_H	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2_H	Constant holding the high-order part of 1/ln 2, used internally by pow for extra precision.	int
+libm::IVLN2_L	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2_L	Constant holding the low-order correction of 1/ln 2, used internally by pow for extra precision.	int
+libm::pow	function	tiles/libm	/api-library/helium/lib/tiles-libm#pow	Returns x raised to the power y, handling special cases such as NaN, infinities, zero, and negative bases.	pub
+libm::IVLN2HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2HI	Constant holding the high-order part of 1/ln 2, used internally by log2 for extra precision.	int
+libm::IVLN2LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN2LO	Constant holding the low-order correction of 1/ln 2, used internally by log2 for extra precision.	int
+libm::IVLN10HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN10HI	Constant holding the high-order part of 1/ln 10, used internally by log10 for extra precision.	int
+libm::IVLN10LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#IVLN10LO	Constant holding the low-order correction of 1/ln 10, used internally by log10 for extra precision.	int
+libm::LOG10_2HI	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LOG10_2HI	Constant holding the high-order part of log10 of 2, used internally by log10 for extra precision.	int
+libm::LOG10_2LO	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LOG10_2LO	Constant holding the low-order correction of log10 of 2, used internally by log10 for extra precision.	int
+libm::LG1	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG1	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG2	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG2	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG3	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG3	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG4	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG4	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG5	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG5	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG6	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG6	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::LG7	constant	tiles/libm	/api-library/helium/lib/tiles-libm#LG7	Polynomial coefficient used internally by the logarithm kernel in lg_reduce.	int
+libm::lg_reduce	function	tiles/libm	/api-library/helium/lib/tiles-libm#lg_reduce	Reduces x to a high and low part plus exponent for log2 and log10, flagging special cases with an early result.	int
+libm::log2	function	tiles/libm	/api-library/helium/lib/tiles-libm#log2	Returns the base-2 logarithm of x, handling zero, negative, infinite, and NaN inputs.	pub
+libm::log10	function	tiles/libm	/api-library/helium/lib/tiles-libm#log10	Returns the base-10 logarithm of x, handling zero, negative, infinite, and NaN inputs.	pub
+rs::neg_bit	function	tiles/rs	/api-library/helium/lib/tiles-rs#neg_bit	Checks whether a real's sign bit is set, treating negative zero as negative; used by the formatting and signum code.	int
+rs::dig_char	function	tiles/rs	/api-library/helium/lib/tiles-rs#dig_char	Converts a digit value below 10 to its ASCII character, leaving other bytes unchanged; internal formatting helper.	int
+rs::display	function	tiles/rs	/api-library/helium/lib/tiles-rs#display	Appends the shortest decimal text of a real to a byte buffer, handling NaN, inf, and negative zero.	pub
+rs::debug	function	tiles/rs	/api-library/helium/lib/tiles-rs#debug	Appends a debug text of a real, always showing a decimal point and using scientific notation for very small or large values.	pub
+rs::fixed	function	tiles/rs	/api-library/helium/lib/tiles-rs#fixed	Appends a real formatted with a fixed number of decimal places, writing NaN or inf for non-finite values.	pub
+rs::max	function	tiles/rs	/api-library/helium/lib/tiles-rs#max	Returns the larger of two reals, returning the first when the second is NaN.	pub
+rs::min	function	tiles/rs	/api-library/helium/lib/tiles-rs#min	Returns the smaller of two reals, returning the first when the second is NaN.	pub
+rs::clamp	function	tiles/rs	/api-library/helium/lib/tiles-rs#clamp	Returns a real limited to the range from lo to hi, passing NaN through unchanged.	pub
+rs::signum	function	tiles/rs	/api-library/helium/lib/tiles-rs#signum	Returns -1.0 for negative values including negative zero, 1.0 otherwise, and NaN for NaN.	pub
+rs::sat_int	function	tiles/rs	/api-library/helium/lib/tiles-rs#sat_int	Converts a real to an int saturated to the given bounds, mapping NaN to zero.	int
+rs::to_u32	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u32	Converts a real to an unsigned 32-bit range int, saturating at 0 and 4294967295 and mapping NaN to zero.	pub
+rs::to_usize	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_usize	Converts a real to a usize-style int by saturating it to the unsigned 32-bit range.	pub
+rs::to_u16	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u16	Converts a real to an unsigned 16-bit range int, saturating at 0 and 65535 and mapping NaN to zero.	pub
+rs::to_u8	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_u8	Converts a real to an unsigned 8-bit range int, saturating at 0 and 255 and mapping NaN to zero.	pub
+rs::to_i32	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_i32	Converts a real to a signed 32-bit range int, saturating at its limits and mapping NaN to zero.	pub
+rs::to_i64	function	tiles/rs	/api-library/helium/lib/tiles-rs#to_i64	Converts a real to a signed 64-bit range int, saturating at its limits and mapping NaN to zero.	pub
+rs::POW10	constant	tiles/rs	/api-library/helium/lib/tiles-rs#POW10	Lookup table of powers of ten from 1e0 to 1e308, filled lazily for number parsing.	int
+rs::pow10_init	function	tiles/rs	/api-library/helium/lib/tiles-rs#pow10_init	Fills the powers-of-ten table by parsing each 1e-notation string from 1e0 to 1e308.	int
+rs::serde_f64	function	tiles/rs	/api-library/helium/lib/tiles-rs#serde_f64	Parses decimal or scientific text into a real, returning false as the second result on overflow.	pub
+rs::utf8_lossy	function	tiles/rs	/api-library/helium/lib/tiles-rs#utf8_lossy	Appends text to a byte buffer, copying valid UTF-8 and handling invalid byte sequences lossily.	pub
+garment::Spec	type	gfx/garment	/api-library/helium/lib/gfx-garment#Spec	Tunable parameters struct for garment fitting, covering ease, hem, sleeve, collar, neck and other dimensions in meters, with a unit scale.	pub
+garment::spec	function	gfx/garment	/api-library/helium/lib/gfx-garment#spec	Returns a Spec populated with default garment fitting parameters.	pub
+garment::pos	constant	gfx/garment	/api-library/helium/lib/gfx-garment#pos	Output array of garment vertex positions, three floats per vertex, produced by emit.	pub
+garment::nrm	constant	gfx/garment	/api-library/helium/lib/gfx-garment#nrm	Output array of per-vertex normals, three floats per vertex, averaged from adjacent triangles.	pub
+garment::tan	constant	gfx/garment	/api-library/helium/lib/gfx-garment#tan	Tangent array for garment vertices, declared but not filled in this source.	int
+garment::uv	constant	gfx/garment	/api-library/helium/lib/gfx-garment#uv	Output array of texture coordinates, two floats per vertex, for the garment mesh.	pub
+garment::body	constant	gfx/garment	/api-library/helium/lib/gfx-garment#body	Output triangle index list for the main garment body surface.	pub
+garment::rib	constant	gfx/garment	/api-library/helium/lib/gfx-garment#rib	Output triangle index list for ribbed trim regions such as cuffs, hem band and collar.	pub
+garment::part	constant	gfx/garment	/api-library/helium/lib/gfx-garment#part	Output array giving the region code of each garment vertex, such as torso, sleeve, hem or collar.	pub
+garment::anchor	constant	gfx/garment	/api-library/helium/lib/gfx-garment#anchor	Output array of each vertex's original fitted position, three floats per vertex, used as a cloth rest reference.	pub
+garment::anchor_n	constant	gfx/garment	/api-library/helium/lib/gfx-garment#anchor_n	Output array of each vertex's original surface normal, three floats per vertex, used as an anchor direction.	pub
+garment::held	constant	gfx/garment	/api-library/helium/lib/gfx-garment#held	Output flags marking vertices held fixed, such as neckline, cuff and hem band, during cloth simulation.	pub
+garment::goal	constant	gfx/garment	/api-library/helium/lib/gfx-garment#goal	Output array of target positions, three floats per vertex, toward which held vertices are pulled.	pub
+garment::S	constant	gfx/garment	/api-library/helium/lib/gfx-garment#S	Active Spec instance whose values drive all garment fitting steps.	pub
+garment::jt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#jt	Flat array of body joint positions, three values per joint, used by fitting.	int
+garment::sn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#sn	Working array of body surface normals per vertex, computed during classification.	int
+garment::sp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#sp	Per-vertex body part index, assigned by classification.	int
+garment::st	constant	gfx/garment	/api-library/helium/lib/gfx-garment#st	Per-vertex position along the assigned body part, in meters.	int
+garment::wp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wp	Working array of garment vertex positions during cutting and fitting.	int
+garment::wa	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wa	Working array of original garment vertex positions.	int
+garment::wn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wn	Working array of garment vertex normals.	int
+garment::wq	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wq	Working array of per-vertex body part codes for garment vertices.	int
+garment::wt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wt	Working array of per-vertex position along the body part.	int
+garment::wh	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wh	Working array of per-vertex held flags.	int
+garment::wg	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wg	Working array of per-vertex goal positions.	int
+garment::wi	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wi	Working triangle index list for the garment mesh.	int
+garment::wr	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wr	Working per-triangle flags marking triangles that belong to the rib trim.	int
+garment::ws	constant	gfx/garment	/api-library/helium/lib/gfx-garment#ws	Working per-vertex flags marking collar strip vertices.	int
+garment::wsu	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wsu	Working array of collar strip U texture coordinates.	int
+garment::wsv	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wsv	Working array of collar strip V texture coordinates.	int
+garment::wb	constant	gfx/garment	/api-library/helium/lib/gfx-garment#wb	Working list of boundary edge endpoint pairs of the cut garment mesh.	int
+garment::len3	function	gfx/garment	/api-library/helium/lib/gfx-garment#len3	Returns the Euclidean length of a three-component vector.	int
+garment::joint	function	gfx/garment	/api-library/helium/lib/gfx-garment#joint	Returns the x, y and z position of the joint with the given index.	int
+garment::arm_len	function	gfx/garment	/api-library/helium/lib/gfx-garment#arm_len	Returns the length of one arm, shoulder to wrist, in meters; side 1 selects the first arm.	pub
+garment::on_part	function	gfx/garment	/api-library/helium/lib/gfx-garment#on_part	Returns the closest point on a body part's skeleton, its direction and distance along the part.	int
+garment::classify	function	gfx/garment	/api-library/helium/lib/gfx-garment#classify	Computes vertex normals and assigns each body mesh vertex to its nearest body part.	int
+garment::neck_m	function	gfx/garment	/api-library/helium/lib/gfx-garment#neck_m	Returns a signed margin of a point from the neckline cut, positive meaning inside the garment.	int
+garment::hem_y	function	gfx/garment	/api-library/helium/lib/gfx-garment#hem_y	Returns the hem height in skeleton units, accounting for hem offset and slack.	pub
+garment::sleeve_end	function	gfx/garment	/api-library/helium/lib/gfx-garment#sleeve_end	Returns the sleeve end distance along the arm for the given side, including sleeve slack.	pub
+garment::shell	constant	gfx/garment	/api-library/helium/lib/gfx-garment#shell	Working copy of the body mesh vertex positions that is cut into a garment.	int
+garment::keep	function	gfx/garment	/api-library/helium/lib/gfx-garment#keep	Returns a vertex's signed margin inside the garment cut and a code naming which edge limits it.	int
+garment::edge_key	function	gfx/garment	/api-library/helium/lib/gfx-garment#edge_key	Returns a single integer key identifying an undirected edge between two vertices.	int
+garment::cut	function	gfx/garment	/api-library/helium/lib/gfx-garment#cut	Cuts the body mesh along the neckline, hem and sleeve ends, building the working garment mesh.	int
+garment::chest_y	function	gfx/garment	/api-library/helium/lib/gfx-garment#chest_y	Returns the chest joint height in skeleton units.	int
+garment::edge_m	function	gfx/garment	/api-library/helium/lib/gfx-garment#edge_m	Returns a vertex's distance in meters from the nearest garment edge.	int
+garment::in_band	function	gfx/garment	/api-library/helium/lib/gfx-garment#in_band	Returns whether a vertex lies within the ribbed trim band near a hem or cuff.	int
+garment::sstep	function	gfx/garment	/api-library/helium/lib/gfx-garment#sstep	Returns a smooth Hermite interpolation between zero and one across the given edges.	int
+garment::loosen	function	gfx/garment	/api-library/helium/lib/gfx-garment#loosen	Offsets garment vertices outward for ease and sets goals and held flags for trim bands.	int
+garment::add_like	function	gfx/garment	/api-library/helium/lib/gfx-garment#add_like	Appends a new garment vertex copying another's attributes, with given position, part, and goal.	int
+garment::wdist	function	gfx/garment	/api-library/helium/lib/gfx-garment#wdist	Returns the distance in meters between two working garment vertices.	int
+garment::neck_band	function	gfx/garment	/api-library/helium/lib/gfx-garment#neck_band	Builds a raised collar strip around the neckline loop as extra triangles.	int
+garment::lip_ok	function	gfx/garment	/api-library/helium/lib/gfx-garment#lip_ok	Returns whether a vertex is held and on a hem or cuff edge that gets a lip.	int
+garment::lips	function	gfx/garment	/api-library/helium/lib/gfx-garment#lips	Adds an inward-offset lip strip along the hem and cuff boundary edges.	int
+garment::norm3	function	gfx/garment	/api-library/helium/lib/gfx-garment#norm3	Returns the input vector scaled to unit length, unchanged if near zero.	int
+garment::axis_uv	function	gfx/garment	/api-library/helium/lib/gfx-garment#axis_uv	Returns the texture coordinates of a point, wrapped around the body or arm axis.	int
+garment::accum	function	gfx/garment	/api-library/helium/lib/gfx-garment#accum	Accumulates area-weighted triangle normals into per-owner sums.	int
+garment::unit_sums	function	gfx/garment	/api-library/helium/lib/gfx-garment#unit_sums	Normalizes each three-component sum in place to unit length.	int
+garment::emit	function	gfx/garment	/api-library/helium/lib/gfx-garment#emit	Builds the final garment output arrays from the working mesh, splitting vertices by region and UV seam.	pub
+garment::grad3	function	gfx/garment	/api-library/helium/lib/gfx-garment#grad3	Returns the gradient of a scalar over a triangle, given its edges and normal.	int
+garment::relax_tris	function	gfx/garment	/api-library/helium/lib/gfx-garment#relax_tris	Collects per-triangle edge vectors measured along the UV directions for later relaxation.	int
+garment::relax_uv	function	gfx/garment	/api-library/helium/lib/gfx-garment#relax_uv	Relaxes texture coordinates over a number of rounds to reduce distortion against the real edge lengths.	int
+garment::split_once	function	gfx/garment	/api-library/helium/lib/gfx-garment#split_once	Subdivides every body and rib triangle once at edge midpoints, interpolating per-vertex attributes for the new vertices.	int
+garment::refine	function	gfx/garment	/api-library/helium/lib/gfx-garment#refine	Subdivides the garment mesh according to the fine setting and renormalizes vertex normals afterward.	int
+garment::tan_accum	function	gfx/garment	/api-library/helium/lib/gfx-garment#tan_accum	Accumulates per-vertex tangent and bitangent sums from triangle positions and UV coordinates.	int
+garment::tangents	function	gfx/garment	/api-library/helium/lib/gfx-garment#tangents	Computes per-vertex tangents with handedness sign from positions, normals and UVs for body and rib triangles.	int
+garment::clear_all	function	gfx/garment	/api-library/helium/lib/gfx-garment#clear_all	Empties all module-level garment mesh, skinning and fitting buffers.	int
+garment::make	function	gfx/garment	/api-library/helium/lib/gfx-garment#make	Builds a garment from body mesh points, indices, joint data and a spec, returning false when input is invalid or nothing is produced.	pub
+garment::f32_bits	function	gfx/garment	/api-library/helium/lib/gfx-garment#f32_bits	Returns the raw 32-bit little-endian integer representation of a single-precision float.	int
+garment::drape	function	gfx/garment	/api-library/helium/lib/gfx-garment#drape	Simulates cloth draping of the generated garment for the given steps, returning the cloth index or -1 when empty.	pub
+obj::V	constant	gfx/obj	/api-library/helium/lib/gfx-obj#V	Holds the flat list of vertex coordinates (x, y, z triplets) from the most recently loaded OBJ file.	pub
+obj::names	constant	gfx/obj	/api-library/helium/lib/gfx-obj#names	Holds the group names found in the most recently loaded OBJ file, indexed by group id.	pub
+obj::tris	constant	gfx/obj	/api-library/helium/lib/gfx-obj#tris	Holds triangles of the loaded model as four ints each: group id, then three zero-based vertex indices.	pub
+obj::name_count	function	gfx/obj	/api-library/helium/lib/gfx-obj#name_count	Returns the number of named groups currently loaded.	pub
+obj::find_name	function	gfx/obj	/api-library/helium/lib/gfx-obj#find_name	Returns the index of a group name, or -1 if it is not loaded.	int
+obj::add_name	function	gfx/obj	/api-library/helium/lib/gfx-obj#add_name	Adds a group name if missing and returns its index, reusing the existing index when present.	int
+obj::load	function	gfx/obj	/api-library/helium/lib/gfx-obj#load	Loads an OBJ file, replacing current data, and returns false if the file cannot be read.	pub
+obj::group	function	gfx/obj	/api-library/helium/lib/gfx-obj#group	Returns the group id for a name, or -1 if no such group exists.	pub
+obj::tris_of	function	gfx/obj	/api-library/helium/lib/gfx-obj#tris_of	Fills the output array with vertex indices, three per triangle, for the named group; empty if unknown.	pub
+obj::centroid	function	gfx/obj	/api-library/helium/lib/gfx-obj#centroid	Returns the average x, y, z position of the distinct vertices used by the named group, or zeros if none.	pub
+obj::normals	function	gfx/obj	/api-library/helium/lib/gfx-obj#normals	Computes per-vertex normals for the given triangle vertex indices into the output array, skipping triangles with out-of-range indices.	pub
+soak::wet	constant	gfx/soak	/api-library/helium/lib/gfx-soak#wet	Holds per-vertex wetness values from 0 to 1, updated by each simulation step.	int
+soak::open	constant	gfx/soak	/api-library/helium/lib/gfx-soak#open	Holds per-vertex exposure to rain, computed by the exposure pass and shared across welded duplicates.	int
+soak::rep	constant	gfx/soak	/api-library/helium/lib/gfx-soak#rep	Maps each vertex index to its welded representative vertex index.	int
+soak::nb_at	constant	gfx/soak	/api-library/helium/lib/gfx-soak#nb_at	Stores start offsets into the neighbor list for each welded vertex.	int
+soak::nb	constant	gfx/soak	/api-library/helium/lib/gfx-soak#nb	Lists neighbor vertex indices for each welded vertex in compressed adjacency form.	int
+soak::nb_w	constant	gfx/soak	/api-library/helium/lib/gfx-soak#nb_w	Holds flow weights for each neighbor edge, boosted for downhill directions.	int
+soak::ry	constant	gfx/soak	/api-library/helium/lib/gfx-soak#ry	Stores the height of each welded vertex used for slope calculations.	int
+soak::mw	constant	gfx/soak	/api-library/helium/lib/gfx-soak#mw	Holds working wetness values per welded vertex during a simulation step.	int
+soak::mo	constant	gfx/soak	/api-library/helium/lib/gfx-soak#mo	Holds per-welded-vertex rain exposure, taking the maximum across duplicates.	int
+soak::tri	constant	gfx/soak	/api-library/helium/lib/gfx-soak#tri	Stores occluder triangle vertices projected into rain-aligned coordinates.	int
+soak::bin_at	constant	gfx/soak	/api-library/helium/lib/gfx-soak#bin_at	Stores start offsets into the triangle bin list for each grid cell.	int
+soak::bins	constant	gfx/soak	/api-library/helium/lib/gfx-soak#bins	Lists occluder triangle indices grouped by the grid cells they overlap.	int
+soak::fw	constant	gfx/soak	/api-library/helium/lib/gfx-soak#fw	Holds the unit vector pointing against the rain direction.	int
+soak::fa	constant	gfx/soak	/api-library/helium/lib/gfx-soak#fa	Holds the first unit axis perpendicular to the rain direction.	int
+soak::fb	constant	gfx/soak	/api-library/helium/lib/gfx-soak#fb	Holds the second unit axis perpendicular to both the rain direction and first axis.	int
+soak::lo_a	constant	gfx/soak	/api-library/helium/lib/gfx-soak#lo_a	Stores the minimum projected coordinate along the first axis of the rain grid.	int
+soak::lo_b	constant	gfx/soak	/api-library/helium/lib/gfx-soak#lo_b	Stores the minimum projected coordinate along the second axis of the rain grid.	int
+soak::cell	constant	gfx/soak	/api-library/helium/lib/gfx-soak#cell	Stores the side length of each rain grid cell.	int
+soak::gn	constant	gfx/soak	/api-library/helium/lib/gfx-soak#gn	Stores the number of cells per side of the rain grid.	int
+soak::bits32	function	gfx/soak	/api-library/helium/lib/gfx-soak#bits32	Returns the raw 32-bit pattern of a float, used to hash vertex positions when welding.	int
+soak::setup	function	gfx/soak	/api-library/helium/lib/gfx-soak#setup	Initializes wetness state from vertex positions and triangle indices, welding identical positions and building neighbor flow weights with the given downhill bias.	pub
+soak::rain_map	function	gfx/soak	/api-library/helium/lib/gfx-soak#rain_map	Configures the rain projection grid from a rain direction, bounding box and cell size, and clears occluders.	pub
+soak::cell_of	function	gfx/soak	/api-library/helium/lib/gfx-soak#cell_of	Returns the grid cell index for projected coordinates, clamping to the grid edges.	int
+soak::occlude	function	gfx/soak	/api-library/helium/lib/gfx-soak#occlude	Adds the triangles of a mesh as rain occluders by projecting them into the rain grid.	pub
+soak::expose	function	gfx/soak	/api-library/helium/lib/gfx-soak#expose	Computes per-vertex rain exposure from normals and occluders, treating vertices shadowed by more than the tolerance as dry.	pub
+soak::step	function	gfx/soak	/api-library/helium/lib/gfx-soak#step	Advances the wetness simulation by a time step, applying rain, downhill flow, wicking and drying.	pub
+soak::mean	function	gfx/soak	/api-library/helium/lib/gfx-soak#mean	Returns the average wetness across all vertices, or zero when there are none.	pub
+locks::Spec	type	gfx/locks	/api-library/helium/lib/gfx-locks#Spec	Configuration struct for lock generation, with strand subdivision, width, forking, spread, raggedness, flatness, inner layer, gap and vertex budget options.	pub
+locks::spec	function	gfx/locks	/api-library/helium/lib/gfx-locks#spec	Returns a Spec populated with default lock generation settings.	pub
+locks::P	constant	gfx/locks	/api-library/helium/lib/gfx-locks#P	Vertex position buffer, three floats per vertex, filled by build and read when creating the mesh.	int
+locks::N	constant	gfx/locks	/api-library/helium/lib/gfx-locks#N	Vertex normal buffer, three floats per vertex, filled by build and consumed by mesh.	int
+locks::T	constant	gfx/locks	/api-library/helium/lib/gfx-locks#T	Vertex tangent buffer, three floats per vertex, filled by build and consumed by mesh.	int
+locks::UV	constant	gfx/locks	/api-library/helium/lib/gfx-locks#UV	Texture coordinate buffer, two floats per vertex, filled by build and consumed by mesh.	int
+locks::I	constant	gfx/locks	/api-library/helium/lib/gfx-locks#I	Triangle index buffer for the lock mesh, filled by build and copied by mesh.	int
+locks::row_v	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_v	Per-row index of the first vertex of each emitted strip row.	int
+locks::row_lock	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_lock	Per-row lock number recording which lock each emitted row belongs to.	int
+locks::row_fork	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_fork	Per-row fork number, with -1 for rows on the main lock body.	int
+locks::row_layer	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_layer	Per-row layer number, where 0 is the outer layer and 1 is the inner layer.	int
+locks::row_guide	constant	gfx/locks	/api-library/helium/lib/gfx-locks#row_guide	Per-row source guide point index, or -1 for interpolated rows.	int
+locks::split_row	constant	gfx/locks	/api-library/helium/lib/gfx-locks#split_row	Row indices where each lock splits into forks, with -1 when forking is disabled.	int
+locks::fork_row	constant	gfx/locks	/api-library/helium/lib/gfx-locks#fork_row	Row indices where each fork strip begins.	int
+locks::hash01	function	gfx/locks	/api-library/helium/lib/gfx-locks#hash01	Returns a deterministic pseudo-random value in the range 0 to 1 from two integer inputs.	int
+locks::smooth	function	gfx/locks	/api-library/helium/lib/gfx-locks#smooth	Returns a smoothstep value between 0 and 1 for x across the range a to b.	int
+locks::profile	function	gfx/locks	/api-library/helium/lib/gfx-locks#profile	Returns the width multiplier along a lock, given normalized position t from root to tip.	int
+locks::f3	function	gfx/locks	/api-library/helium/lib/gfx-locks#f3	Creates a float3 from three real components.	int
+locks::vadd	function	gfx/locks	/api-library/helium/lib/gfx-locks#vadd	Returns the component-wise sum of two float3 vectors.	int
+locks::vsub	function	gfx/locks	/api-library/helium/lib/gfx-locks#vsub	Returns the component-wise difference of two float3 vectors.	int
+locks::vmul	function	gfx/locks	/api-library/helium/lib/gfx-locks#vmul	Returns a float3 vector scaled by a real factor.	int
+locks::vdot	function	gfx/locks	/api-library/helium/lib/gfx-locks#vdot	Returns the dot product of two float3 vectors.	int
+locks::vcross	function	gfx/locks	/api-library/helium/lib/gfx-locks#vcross	Returns the cross product of two float3 vectors.	int
+locks::vlen	function	gfx/locks	/api-library/helium/lib/gfx-locks#vlen	Returns the Euclidean length of a float3 vector.	int
+locks::vunit	function	gfx/locks	/api-library/helium/lib/gfx-locks#vunit	Returns a unit-length copy of a vector, or the input unchanged if its length is nearly zero.	int
+locks::vlerp	function	gfx/locks	/api-library/helium/lib/gfx-locks#vlerp	Returns the linear interpolation between two float3 vectors by a factor.	int
+locks::emit	function	gfx/locks	/api-library/helium/lib/gfx-locks#emit	Appends a pair of left and right strip vertices to the buffers, linking them to the previous row when it matches.	int
+locks::crom	function	gfx/locks	/api-library/helium/lib/gfx-locks#crom	Returns a Catmull-Rom spline point between p1 and p2 at parameter f.	int
+locks::lerpdir	function	gfx/locks	/api-library/helium/lib/gfx-locks#lerpdir	Returns a normalized linear interpolation between two direction vectors, or a unchanged when f is zero.	int
+locks::split_at	function	gfx/locks	/api-library/helium/lib/gfx-locks#split_at	Returns the row index where a lock splits into forks, or the last row when forking is off.	int
+locks::build	function	gfx/locks	/api-library/helium/lib/gfx-locks#build	Builds lock mesh buffers from hair data bytes and settings, returning the number of locks generated, or 0 if data is invalid.	pub
+locks::bt	function	gfx/locks	/api-library/helium/lib/gfx-locks#bt	Returns a byte from a real value, rounded and clamped to the range 0 to 255.	int
+locks::strands	function	gfx/locks	/api-library/helium/lib/gfx-locks#strands	Generates a procedural strand alpha texture of the given square size from a seed, returning its glTF texture index.	pub
+locks::material	function	gfx/locks	/api-library/helium/lib/gfx-locks#material	Returns a double-sided alpha-masked hair material with the given color and texture index.	pub
+locks::scalp_w	constant	gfx/locks	/api-library/helium/lib/gfx-locks#scalp_w	Per-vertex scalp weight buffer filled by scalp, holding one falloff value per input point.	int
+locks::scalp	function	gfx/locks	/api-library/helium/lib/gfx-locks#scalp	Fills the scalp weight buffer with a falloff from 1 to 0 for each point based on distance to the hairstyle's root positions within radius r.	int
+locks::jitter	constant	gfx/locks	/api-library/helium/lib/gfx-locks#jitter	Amount of random per-lock brightness variation applied to vertex color in mesh, as a fraction around 1.0.	pub
+locks::mesh	function	gfx/locks	/api-library/helium/lib/gfx-locks#mesh	Copies the built lock buffers into the glTF vertex and index data, returning the result of finishing the mesh with the material.	pub

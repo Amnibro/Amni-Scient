@@ -1,5 +1,6 @@
 import {recipeFor,RECIPES} from './recipes.js';
 import {sleep} from './tick.js';
+import {maxOf,minOf} from './minmax.js';
 const TILES=[['iso','ISO'],['top','TOP x→ y↑'],['front','FRONT x→ z↑'],['right','RIGHT y→ z↑']],BG='#eef1f5',r2=v=>+(+v).toFixed(3),r4=v=>+(+v).toFixed(4),MAXR=3;
 export const MAX_ROUNDS=MAXR;
 export function inside(m){
@@ -58,7 +59,7 @@ export function findings(o){
   for(const e of o.changed_nothing||[])F.push(`${e.name?"'"+e.name+"' ":''}(${e.id}) changed nothing: ${e.msg.replace(/^.*changed nothing: /,'')}`);
   for(const w of o.warnings||[])F.push('Build warning: '+w);
   for(const[k,v]of Object.entries(o.param_errors||{}))F.push(`Parameter ${k} is broken: ${v}`);
-  if(o.size){const mx=Math.max(...o.size),mn=Math.min(...o.size);mx>big&&F.push(`The model is ${mx} ${u} across, which is huge; check the units (the document is in ${u}).`);mx<small&&F.push(`The model is only ${mx} ${u} across, which is tiny; check the units (the document is in ${u}).`);mn>0&&mx/mn>60&&F.push(`The smallest dimension is ${mn} ${u} against ${mx} ${u}; confirm it is meant to be that thin.`);mn===0&&F.push('One dimension of the bounding box is zero: the solid is flat.');}
+  if(o.size){const mx=maxOf(o.size),mn=minOf(o.size);mx>big&&F.push(`The model is ${mx} ${u} across, which is huge; check the units (the document is in ${u}).`);mx<small&&F.push(`The model is only ${mx} ${u} across, which is tiny; check the units (the document is in ${u}).`);mn>0&&mx/mn>60&&F.push(`The smallest dimension is ${mn} ${u} against ${mx} ${u}; confirm it is meant to be that thin.`);mn===0&&F.push('One dimension of the bounding box is zero: the solid is flat.');}
   if(o.thin&&o.thin.t<(u==='in'?0.015:0.4))F.push(`Thinnest wall is about ${o.thin.t} ${u} near [${o.thin.at}]; fine for knife edges and airfoil trailing edges, thin for anything machined or printed.`);
   return F;
 }

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/graphics">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/graphics">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=d1fcaf00ac">
+<link rel="stylesheet" href="/api-library/lib.css?v=88219036d3">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=d1fcaf00ac'; start({wasm: '/api-library/search.wasm?v=d1fcaf00ac'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=88219036d3'; start({wasm: '/api-library/search.wasm?v=88219036d3'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -105,7 +105,7 @@
 <p class="lib-lede">The GPU layer, the 3D renderer, models, meshes, particles and image files.</p>
 <div class="lib-grid">
 <a class="lib-card" href="/api-library/helium/lib/gfx"><strong>gfx</strong><span>The GPU layer: windows, input events, buffers, textures, samplers, render passes, pipelines and compute.</span><small>237 functions, 44 types, 108 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-scene3d"><strong>gfx/scene3d</strong><span>A 3D renderer for glTF assets with sun shadows, ambient occlusion, temporal upscaling, bloom and color grading.</span><small>207 functions, 56 types, 466 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-scene3d"><strong>gfx/scene3d</strong><span>A 3D renderer for glTF assets with sun shadows, ambient occlusion, temporal upscaling, bloom and color grading.</span><small>209 functions, 56 types, 475 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-gltf"><strong>gfx/gltf</strong><span>Load glTF 2.0 models (<code>.glb</code> and <code>.gltf</code>) into memory pools the renderer uploads in one go.</span><small>42 functions, 13 types, 53 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-shapes"><strong>gfx/shapes</strong><span>Build spheres, planes and boxes in code. They render through <code>gfx.scene3d</code> exactly like loaded models.</span><small>11 functions, 0 types, 0 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-motion"><strong>gfx/motion</strong><span>Pose glTF scenes: sample animation channels, walk the node tree, and build joint matrices and morph weights.</span><small>10 functions, 0 types, 6 constants</small></a>
@@ -124,17 +124,22 @@
 <a class="lib-card" href="/api-library/helium/lib/gfx-bc"><strong>gfx/bc</strong><span>Decodes BC1, BC3, BC4, BC5, and BC7 block-compressed texture data into raw RGBA pixels and computes compressed sizes.</span><small>26 functions, 0 types, 21 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-ktx2"><strong>gfx/ktx2</strong><span>Parses KTX2 texture files, validating headers and reading dimensions, color space, and mip levels for block-compressed or raw images.</span><small>21 functions, 1 types, 7 constants</small></a>
 <a class="lib-card" href="/api-library/helium/lib/gfx-meshlet"><strong>gfx/meshlet</strong><span>Builds meshlets from triangle meshes by welding vertices and grouping triangles into clusters and hierarchy levels for efficient rendering.</span><small>31 functions, 2 types, 35 constants</small></a>
-<a class="lib-card" href="/api-library/helium/lib/gfx-hair"><strong>gfx/hair</strong><span>Renders simulated, physically shaded hair strands on 3D models using GPU compute, with grooming, lighting, shadows, and strand physics controls.</span><small>64 functions, 5 types, 31 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-hair"><strong>gfx/hair</strong><span>Renders simulated, physically shaded hair strands on 3D models using GPU compute, with grooming, lighting, shadows, and strand physics controls.</span><small>67 functions, 5 types, 38 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-hairdo"><strong>gfx/hairdo</strong><span>Defines a library of parameterized hairstyle presets for generating strand-based 3D hair on character models, including length, curl, bangs, and ponytails.</span><small>47 functions, 2 types, 18 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-garment"><strong>gfx/garment</strong><span>Fits parametric garment meshes onto a posed body skeleton, with cloth-ready geometry, so programs can generate clothing for characters.</span><small>38 functions, 1 types, 30 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-obj"><strong>gfx/obj</strong><span>Loads Wavefront OBJ model files, parsing vertices, named groups, and faces into triangle lists for rendering.</span><small>8 functions, 0 types, 3 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-soak"><strong>gfx/soak</strong><span>Lets a program simulate water wetting and flowing down a triangle mesh, tracking per-vertex wetness with welded duplicate vertices.</span><small>8 functions, 0 types, 19 constants</small></a>
+<a class="lib-card" href="/api-library/helium/lib/gfx-locks"><strong>gfx/locks</strong><span>Generates procedural hair lock meshes with forked strands, producing vertex, normal, tangent, and UV buffers for rendering around a hairstyle.</span><small>23 functions, 1 types, 14 constants</small></a>
 </div>
 
 </main>
 <aside class="lib-side" id="lib-side">
 <h2>Helium library</h2>
 <ul>
-<li><a href="/api-library/helium/logic">Logic &amp; Core <span>522</span></a></li>
-<li><a href="/api-library/helium/data">Text &amp; Data <span>264</span></a></li>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics" class="on">Graphics <span>1812</span></a><ul>
+<li><a href="/api-library/helium/graphics" class="on">Graphics <span>2045</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -156,12 +161,17 @@
 <li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
 <li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
 <li><a href="/api-library/helium/lib/gfx-hair">gfx/hair</a></li>
+<li><a href="/api-library/helium/lib/gfx-hairdo">gfx/hairdo</a></li>
+<li><a href="/api-library/helium/lib/gfx-garment">gfx/garment</a></li>
+<li><a href="/api-library/helium/lib/gfx-obj">gfx/obj</a></li>
+<li><a href="/api-library/helium/lib/gfx-soak">gfx/soak</a></li>
+<li><a href="/api-library/helium/lib/gfx-locks">gfx/locks</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface <span>1291</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>83</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
-<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1152</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1158</span></a></li>
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
 <li><a href="/api-library/helium/security">Security <span>189</span></a></li>
@@ -201,7 +211,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-11">2026-11-11</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-15">2026-11-15</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>

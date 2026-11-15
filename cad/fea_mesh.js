@@ -4,6 +4,7 @@ import {meshSolid,HEX_FACES,surfOf,closest,thicknessStats,detectSheet} from './m
 import {gpuAMG} from './fea_gpu.js';
 import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
 import {heliumSync} from './he/host.js';
+import {maxOf} from './minmax.js';
 const FMW=await heliumSync('fea_mesh'),G3=1/Math.sqrt(3);
 const find=(ci,a,b,j)=>{let lo=a,hi=b-1;while(lo<=hi){const m=(lo+hi)>>1,v=ci[m];if(v===j)return m;v<j?lo=m+1:hi=m-1;}return-1;};
 function facetGeo(X,E,bf,cb){
@@ -92,12 +93,12 @@ async function modalMesh(inp,M,prog){
   for(let q=0;q<nn;q++){const m=vol[q]*rho;if(!m)continue;if(cm&&cm.hq[q]>=0){for(let k=cm.p[q];k<cm.p[q+1];k++)for(let c=0;c<3;c++)Mv[3*cm.i[k]+c]+=cm.w[k]*m;}else for(let c=0;c<3;c++)Mv[3*q+c]+=m;}for(let i=0;i<n;i++)if(fix[i])Mv[i]=0;
   X.fm_bc_in(3);V(219).set(fix);X.fm_bc(0);const NS=nullspace(M,fix);X.fm_amg_in(NS.nb);V(226).set(NS.B);const nL=amg(P,{theta:inp.theta,theta2:inp.theta2},0,0,M.sweep&&M.sheet&&M.sheet.thin?M.sweep.N+1:1);
   const defl=free?rigidModes(nn,q=>[M.X[3*q],M.X[3*q+1],M.X[3*q+2]],Mv):[],ops={A:async x=>{V(229).set(x);X.fm_mvx(1);return V(230).slice();},prec:async r=>{V(229).set(r);X.fm_vcyc();return V(230).slice();}};
-  const E=await lobpcg([{fixed:fix}],null,Mv,nev,defl,{tol:inp.tol,maxIt:inp.maxIt},prog,ops),lmax=Math.max(...E.lam.map(Math.abs),1e-30),sk=skinOf(M);let mt=0;for(let q=0;q<nn;q++)mt+=vol[q]*rho;
+  const E=await lobpcg([{fixed:fix}],null,Mv,nev,defl,{tol:inp.tol,maxIt:inp.maxIt},prog,ops),lmax=maxOf([...E.lam.map(Math.abs),1e-30]),sk=skinOf(M);let mt=0;for(let q=0;q<nn;q++)mt+=vol[q]*rho;
   const modes=[];let rigid=0;for(let j=0;j<E.lam.length&&modes.length<nev;j++){const lam=E.lam[j];if(lam<1e-7*lmax&&!free){rigid++;continue;}const x=hangFill(M,cm,E.X[j].slice(),3);let um=0;for(let q=0;q<nn;q++)um=Math.max(um,Math.hypot(x[3*q],x[3*q+1],x[3*q+2]));const gm=[0,0,0];for(let i=0;i<n;i++)gm[i%3]+=Mv[i]*x[i];
     const su=new Float32Array(3*sk.nodes.length),sm=new Float32Array(sk.nodes.length);sk.nodes.forEach((q,i)=>{for(let c=0;c<3;c++)su[3*i+c]=x[3*q+c]/(um||1);sm[i]=Math.hypot(su[3*i],su[3*i+1],su[3*i+2]);});const[vDisp]=toVerts(sk,inp.pos,[[su,3]]);
     modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp,skinU:su,skinMag:sm});}
   const m0=modes[0],vMag=new Float32Array(inp.pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
-  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(inp.pos.length),vmMax:1,vmP99:1,uMax:1,nEl:M.E.length/8,nDof:n,iters:E.iters,rel:Math.max(...E.res.slice(0,nev)),levels:nL,ms:Date.now()-t0,backend:'cpu',skin:{pos:sk.pos,idx:sk.idx,vm:m0?m0.skinMag:new Float32Array(sk.nodes.length),u:m0?m0.skinU:new Float32Array(3*sk.nodes.length)}};
+  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(inp.pos.length),vmMax:1,vmP99:1,uMax:1,nEl:M.E.length/8,nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:nL,ms:Date.now()-t0,backend:'cpu',skin:{pos:sk.pos,idx:sk.idx,vm:m0?m0.skinMag:new Float32Array(sk.nodes.length),u:m0?m0.skinU:new Float32Array(3*sk.nodes.length)}};
 }
 async function thermalMesh(inp,M,prog){
   const mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,nn=M.X.length/3,ne=M.E.length/8,t0=Date.now(),W=heOf(M,X=>X.fm_heat(k)),cm=W.cm,P=W.H,X=P.ex,V=P.v,A={n:nn,m:nn,rb:1,cb:1,rp:W.rp,ci:W.ci,v:W.v};

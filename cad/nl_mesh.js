@@ -1,10 +1,11 @@
 import {prep} from './fea.js';
 import {boundary,FACES} from './nl.js';
+import {maxOf,pushAll} from './minmax.js';
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 export const grade=(r,end)=>r===1||!r?s=>s:end==='both'?s=>s<0.5?0.5*gb(2*s,r):1-0.5*gb(2-2*s,r):end===1?s=>1-gb(1-s,r):s=>gb(s,r);
 const gb=(s,r)=>(Math.pow(r,s)-1)/(r-1);
-export function merge(parts,tol=1e-7){const d=parts[0].dim||2,nen=parts[0].nen||4,X=[],E=[],map=new Map(),sc=parts.reduce((m,p)=>Math.max(m,...Array.from(p.X,Math.abs)),1)*tol,key=p=>p.map(v=>Math.round(v/sc)).join(',');
-  for(const p of parts){const loc=new Int32Array(p.X.length/d);for(let n=0;n<loc.length;n++){const q=Array.from(p.X.subarray(n*d,n*d+d)),k=key(q);let id=map.get(k);if(id==null){id=X.length/d;X.push(...q);map.set(k,id);}loc[n]=id;}for(const v of p.E)E.push(loc[v]);}
+export function merge(parts,tol=1e-7){const d=parts[0].dim||2,nen=parts[0].nen||4,X=[],E=[],map=new Map(),sc=parts.reduce((m,p)=>maxOf([m,...Array.from(p.X,Math.abs)]),1)*tol,key=p=>p.map(v=>Math.round(v/sc)).join(',');
+  for(const p of parts){const loc=new Int32Array(p.X.length/d);for(let n=0;n<loc.length;n++){const q=Array.from(p.X.subarray(n*d,n*d+d)),k=key(q);let id=map.get(k);if(id==null){id=X.length/d;pushAll(X,q);map.set(k,id);}loc[n]=id;}for(const v of p.E)E.push(loc[v]);}
   return{dim:d,nen,X:Float64Array.from(X),E:Int32Array.from(E)};}
 export function coons(B,T,L,Rt,ns,nt,gs=s=>s,gt=s=>s){const X=[],E=[],c00=B(0),c10=B(1),c01=T(0),c11=T(1);for(let j=0;j<=nt;j++)for(let i=0;i<=ns;i++){const s=gs(i/ns),t=gt(j/nt),b=B(s),tp=T(s),l=L(t),r=Rt(t);for(let k=0;k<2;k++)X.push((1-t)*b[k]+t*tp[k]+(1-s)*l[k]+s*r[k]-((1-s)*(1-t)*c00[k]+s*(1-t)*c10[k]+(1-s)*t*c01[k]+s*t*c11[k]));}
   for(let j=0;j<nt;j++)for(let i=0;i<ns;i++){const a=j*(ns+1)+i;E.push(a,a+1,a+ns+2,a+ns+1);}return orient({dim:2,nen:4,X:Float64Array.from(X),E:Int32Array.from(E)});}
@@ -15,7 +16,7 @@ export function quadDisk(c,R,n,o={}){const a=(o.core||0.42)*R,m=Math.max(1,Math.
   for(let k=0;k<4;k++){const p0=sq[k],p1=sq[(k+1)%4],A=arc(c,R,ang(k),ang(k+1));parts.push(coons(seg(p0,p1),A,seg(p0,A(0)),seg(p1,A(1)),n,m,o.gt,o.gr));}parts.push(quadGrid(c[0]-a,c[0]+a,n,c[1]-a,c[1]+a,n));const M=orient(merge(parts));return o.keep?keep(M,o.keep):M;}
 export function quarterDisk(c,R,n,ratio=1,o={}){const a=(o.core||0.45)*R,m=Math.max(1,Math.round(n*(1-a/R)/(a/R)*(o.radial||0.8))),g=grade(ratio),gr=grade(o.rr||ratio,1),A1=arc(c,R,-Math.PI/2,-Math.PI/4),A2=arc(c,R,-Math.PI/4,0),q0=[c[0],c[1]-a],q1=[c[0]+a,c[1]-a],q2=[c[0]+a,c[1]];
   return orient(merge([quadGrid(c[0],c[0]+a,n,c[1]-a,c[1],n,g,g),coons(seg(q0,q1),A1,seg(q0,A1(0)),seg(q1,A1(1)),n,m,g,gr),coons(seg(q1,q2),A2,seg(q1,A2(0)),seg(q2,A2(1)),n,m,g,gr)]));}
-export function keep(m,f){const d=m.dim,nen=m.nen,E=[],cen=new Float64Array(d);for(let e=0;e<m.E.length/nen;e++){cen.fill(0);for(let a=0;a<nen;a++)for(let k=0;k<d;k++)cen[k]+=m.X[m.E[e*nen+a]*d+k]/nen;if(f(...cen))for(let a=0;a<nen;a++)E.push(m.E[e*nen+a]);}const map=new Int32Array(m.X.length/d).fill(-1),X=[];let q=0;const E2=E.map(v=>map[v]<0?(map[v]=q++,X.push(...m.X.subarray(v*d,v*d+d)),map[v]):map[v]);return{...m,X:Float64Array.from(X),E:Int32Array.from(E2)};}
+export function keep(m,f){const d=m.dim,nen=m.nen,E=[],cen=new Float64Array(d);for(let e=0;e<m.E.length/nen;e++){cen.fill(0);for(let a=0;a<nen;a++)for(let k=0;k<d;k++)cen[k]+=m.X[m.E[e*nen+a]*d+k]/nen;if(f(...cen))for(let a=0;a<nen;a++)E.push(m.E[e*nen+a]);}const map=new Int32Array(m.X.length/d).fill(-1),X=[];let q=0;const E2=E.map(v=>map[v]<0?(map[v]=q++,pushAll(X,m.X.subarray(v*d,v*d+d)),map[v]):map[v]);return{...m,X:Float64Array.from(X),E:Int32Array.from(E2)};}
 function inLoops(x,y,L){let w=false;for(const P of L)for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])w=!w;}return w;}
 function segDist(x,y,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy||1)));return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);}
 function resample(P,h){const n=P.length,out=[];for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n],L=Math.hypot(b[0]-a[0],b[1]-a[1]),k=Math.max(1,Math.round(L/h));for(let j=0;j<k;j++)out.push(lerp(a,b,j/k));}return out;}
@@ -30,7 +31,7 @@ export function quadPoly(loops,h,o={}){const L=loops.map(P=>simplify(P,h)),bp=L.
   const pts=[...bp,...ip],tris=delaunay(pts).filter(([a,b,c])=>{const cx=(pts[a][0]+pts[b][0]+pts[c][0])/3,cy=(pts[a][1]+pts[b][1]+pts[c][1])/3;return inLoops(cx,cy,L);});
   const X=pts.map(p=>[...p]),mid=new Map(),mk=(a,b)=>{const k=a<b?a+','+b:b+','+a;let v=mid.get(k);if(v==null){v=X.length;X.push(lerp(X[a],X[b],0.5));mid.set(k,v);}return v;},E=[];
   for(const[a,b,c]of tris){const g=X.length;X.push([(X[a][0]+X[b][0]+X[c][0])/3,(X[a][1]+X[b][1]+X[c][1])/3]);const v=[a,b,c],m=[mk(a,b),mk(b,c),mk(c,a)];for(let k=0;k<3;k++)E.push(v[k],m[k],g,m[(k+2)%3]);}
-  const used=new Int32Array(X.length).fill(-1),XX=[];let q=0;for(const v of E)if(used[v]<0){used[v]=q++;XX.push(...X[v]);}const m={dim:2,nen:4,X:Float64Array.from(XX),E:Int32Array.from(E,v=>used[v])};orient(m);
+  const used=new Int32Array(X.length).fill(-1),XX=[];let q=0;for(const v of E)if(used[v]<0){used[v]=q++;pushAll(XX,X[v]);}const m={dim:2,nen:4,X:Float64Array.from(XX),E:Int32Array.from(E,v=>used[v])};orient(m);
   const bnd=new Uint8Array(q);for(const f of boundary(m))for(const v of f.f)bnd[v]=1;const nb=Array.from({length:q},()=>new Set());for(let e=0;e<m.E.length/4;e++)for(let k=0;k<4;k++){const a=m.E[4*e+k],b=m.E[4*e+(k+1)%4];nb[a].add(b);nb[b].add(a);}
   for(let it=0;it<(o.smooth??8);it++)for(let v=0;v<q;v++){if(bnd[v])continue;let sx=0,sy=0;for(const w of nb[v]){sx+=m.X[2*w];sy+=m.X[2*w+1];}const ox=m.X[2*v],oy=m.X[2*v+1];m.X[2*v]=sx/nb[v].size;m.X[2*v+1]=sy/nb[v].size;if(!quadsOk(m,v))m.X[2*v]=ox,m.X[2*v+1]=oy;}
   return m;}
@@ -47,8 +48,8 @@ export function sliceTris(pos,idx,axis,at){const[iu,iv,iw]=AX[axis],segs=[];for(
   return loops.map(L=>{let A=0;for(let i=0;i<L.length;i++){const a=L[i],b=L[(i+1)%L.length];A+=a[0]*b[1]-b[0]*a[1];}return A<0?L.reverse():L;});}
 export const loopArea=L=>{let A=0;for(let i=0;i<L.length;i++){const a=L[i],b=L[(i+1)%L.length];A+=a[0]*b[1]-b[0]*a[1];}return A/2;};
 export function contract(m){return{...m,kind:m.nen===8?'hex8':'quad4',select:spec=>{const f=typeof spec==='function'?spec:spec&&spec.side?sideFn(m,spec.side):()=>false;return facetsWhere(m,f);}};}
-function sideFn(m,side){const{lo,hi}=bbox(m),s=side.length===1?'+'+side:side,i='XYZ'.indexOf(s[1]),v=s[0]==='+'?hi[i]:lo[i],tol=(Math.max(...hi.map((h,k)=>h-lo[k])))*1e-6;return(...x)=>Math.abs(x[i]-v)<=tol;}
+function sideFn(m,side){const{lo,hi}=bbox(m),s=side.length===1?'+'+side:side,i='XYZ'.indexOf(s[1]),v=s[0]==='+'?hi[i]:lo[i],tol=(maxOf(hi.map((h,k)=>h-lo[k])))*1e-6;return(...x)=>Math.abs(x[i]-v)<=tol;}
 export async function meshSolid(input,opts={}){if(!opts.voxel)try{const M=await import('./mesh.js');if(M&&M.meshSolid){const r=await M.meshSolid(input,{...opts,type:opts.type||'sweep'});if(r&&r.X&&r.E&&r.E.length&&r.kind==='hex8'&&!(r.hang&&r.hang.node&&r.hang.node.length))return{...r,dim:3,nen:8,source:'mesh.js'};}}catch(e){}
-  const P=prep({...input,res:opts.res||input.res||6000},6000),G=P.G,map=new Int32Array(P.nn).fill(-1),X=[],E=[];let q=0;const id=n=>{if(map[n]<0){map[n]=q++;X.push(...P.xyz(n));}return map[n];};
-  for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){if(!G.solid[(k*G.ny+j)*G.nx+i])continue;const n0=(k*P.NY+j)*P.NX+i,c=[n0,n0+1,n0+P.NX+1,n0+P.NX,n0+P.NX*P.NY,n0+P.NX*P.NY+1,n0+P.NX*P.NY+P.NX+1,n0+P.NX*P.NY+P.NX];E.push(...c.map(id));}
+  const P=prep({...input,res:opts.res||input.res||6000},6000),G=P.G,map=new Int32Array(P.nn).fill(-1),X=[],E=[];let q=0;const id=n=>{if(map[n]<0){map[n]=q++;pushAll(X,P.xyz(n));}return map[n];};
+  for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){if(!G.solid[(k*G.ny+j)*G.nx+i])continue;const n0=(k*P.NY+j)*P.NX+i,c=[n0,n0+1,n0+P.NX+1,n0+P.NX,n0+P.NX*P.NY,n0+P.NX*P.NY+1,n0+P.NX*P.NY+P.NX+1,n0+P.NX*P.NY+P.NX];pushAll(E,c.map(id));}
   const m={dim:3,nen:8,X:Float64Array.from(X),E:Int32Array.from(E),kind:'hex8',source:'voxel',h:P.h};m.select=ids=>{const acc=P.at(Array.isArray(ids)?ids:[ids]),nodes=[];for(const n of acc.keys())if(map[n]>=0)nodes.push(map[n]);return{nodes:Int32Array.from(nodes),facets:new Int32Array(0)};};return m;}

@@ -38,12 +38,13 @@ try{
   await ev(()=>{window.amnicad.API.commit(dd=>{dd.features=dd.features.filter(x=>x.type!=='rib');});});await wb();
   await ev(()=>{window.amnicad.API.addFeature('rib',{plane:'YZ',offset:0,_smart:1});});await sleep(1200);
   ok(await ev(()=>!!window.amnicad.S.sketcher),'rib opens the sketcher for its line');
+  const seeded=await ev(()=>window.amnicad.S.sketcher.sketch.ents.filter(e=>!e.ref).length);ok(seeded<=1,'rib opens with at most one suggested line',seeded);
   const sc=q=>ev(q=>window.amnicad.S.sketcher.screen(q),q),clk=async q=>{const[x,y]=await sc(q);await page.mouse.move(x+3,y+3);await sleep(40);await page.mouse.move(x,y);await sleep(40);await page.mouse.down();await sleep(30);await page.mouse.up();await sleep(150);};
   await ev(()=>document.querySelector('#skx button.t[data-t=line]').click());await clk([-15,25]);await clk([5,5]);await page.keyboard.press('Escape');await sleep(100);
   const nent=await ev(()=>window.amnicad.S.sketcher.sketch.ents.filter(e=>!e.ref).length);ok(nent===1,'one line drawn in the sketcher',nent);
   await ev(()=>window.amnicad.S.sketcher.finish());await sleep(300);await wb();
-  d=await ev(()=>{const f=window.amnicad.API.doc.features.find(x=>x.type==='rib');return{pts:f.pts,sk:!!f.sketch,shapes:f.shapes};});ok(d.pts&&d.pts.length===2&&d.sk&&!d.shapes,'sketched rib stores its line as pts with the constrained sketch',d);
-  const v3=await vol();ok(Math.abs(v3-v0-200)<2,'sketched rib builds a gusset (default thickness 1)',v3-v0);
+  d=await ev(()=>{const f=window.amnicad.API.doc.features.find(x=>x.type==='rib');return{pts:f.pts,sk:!!f.sketch,shapes:f.shapes,t:f.t};});ok(d.pts&&d.pts.length===2&&d.sk&&!d.shapes,'sketched rib stores its line as pts with the constrained sketch',d);
+  const v3=await vol();ok(d.t>0&&Math.abs(v3-v0-200*d.t)<2*d.t,'sketched rib builds a 20 x 20 gusset at its default thickness',(v3-v0)+' at t '+d.t);
   await ev(()=>{window.amnicad.API.undo();});await wb();
   await act([{new:true,units:'mm'},{add:{type:'box',w:60,d:40,h:10}},{add:{type:'datum_plane',name:'Mid',plane:'XY',offset:25}},{add:{type:'datum_axis',mode:'points',pts:[[0,0,0],[0,0,40]]}},{add:{type:'datum_point',x:5,y:5,z:5}}]);
   st=T(await call('get_state'));ok(!st.errors.length&&st.datums&&st.datums.length===3,'get_state lists the datums',[st.errors,(st.datums||[]).map(d=>d.id+':'+d.kind)]);

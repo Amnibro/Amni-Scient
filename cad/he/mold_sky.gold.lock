@@ -306,7 +306,10 @@ fn tait(tk real, p real) real {
 	DVP = (-v0) * 0.0894 / (b + pp) - TP[12] * vt;
 	v0 * (1.0 - 0.0894 * im_log(1.0 + pp / b)) + vt
 }
-=== 43175b2f0462212a
+=== 407514dc3edd1b4a
+var Vt real = 0.0;
+var Qset real = 0.0;
+var tMax real = 0.0;
 var Tw real = 0.0;
 var hF real = 0.0;
 var hP real = 0.0;
@@ -321,15 +324,16 @@ var lsr bool = false;
 var iso bool = false;
 var curef bool = false;
 var indf bool = false;
-var a0c real = 0.0;
+var a0v real = 0.0;
 var tinj real = 0.0;
 var pMax real = 0.0;
-var frac real = 0.0;
+var fracq real = 0.0;
 var picTol real = 0.0;
 var pcgTol real = 0.0;
-var vp real = 0.0;
+var vpf real = 0.0;
 var packf bool = false;
 var taitf bool = false;
+var packP real = 0.0;
 var packPct real = 0.0;
 var dtMax real = 0.0;
 var amgMin real = 0.0;
@@ -337,35 +341,13 @@ var amgf bool = false;
 var rnD real = 0.0;
 var rnL real = 0.0;
 var Troom real = 0.0;
-var holdf bool = false;
 var holdT real = 0.0;
-var Qset real = 0.0;
-var Vt real = 0.0;
-var tMax real = 0.0;
+var holdf bool = false;
 var cax int = 0;
-var nAct int = 0;
-var diag bool = false;
 var ctrl int = 0;
-var sc int = 0;
-var steps int = 0;
-var pics int = 0;
-var its int = 0;
-var amgIt int = 0;
-var amgN int = 0;
-var lost real = 0.0;
-var tcur real = 0.0;
-var tFill real = 0.0;
-var vpAt real = NAN;
-var pVP real = 0.0;
-var pHold real = 0.0;
-var clampAt real = 0.0;
-var pEndT real = 0.0;
-var pInjMax real = 0.0;
-var pGateMax real = 0.0;
-var clampMax real = 0.0;
-var pPic real = 0.0;
+var nAct int = 0;
 var Gavg real = 0.0;
-var vfill real = 0.0;
+var diag bool = false;
 var DT real = 0.0;
 var QS real = 0.0;
 var QB real = 0.0;
@@ -376,9 +358,29 @@ var pk real = 0.0;
 var tpk real = 0.0;
 var tco real = 0.0;
 var vr real = 0.0;
-var sink_done bool = false;
+var sc int = 0;
 var pack_ran bool = false;
 var hold_ran bool = false;
+var tFill real = 0.0;
+var amgIt int = 0;
+var amgN int = 0;
+var pHold real = 0.0;
+var steps int = 0;
+var pics int = 0;
+var its int = 0;
+var lost real = 0.0;
+var pVP real = 0.0;
+var vpAt real = NAN;
+var pvp_set bool = false;
+var clampAt real = 0.0;
+var pEndT real = 0.0;
+var pInjMax real = 0.0;
+var pGateMax real = 0.0;
+var clampMax real = 0.0;
+var pPic real = 0.0;
+var tcur real = 0.0;
+var vfill real = 0.0;
+var nfull int = 0;
 var F real[>..];
 var FO real[>..];
 var TF real[>..];
@@ -405,7 +407,6 @@ var SNK real[>..];
 var T90 real[>..];
 var AHD real[>..];
 var CDG real[>..];
-var AW real[>..];
 var WET u8[>..];
 var SEQ i32[>..];
 var ISG i32[>..];
@@ -449,15 +450,6 @@ var NUM real[>..];
 var DEN real[>..];
 var ANUM real[>..];
 var PRF real[>..];
-var FL i32[>..];
-var TLS real[>..];
-var OVS i32[>..];
-var OVD i32[>..];
-var OVV real[>..];
-var OVC i32[>..];
-var OVR i32[>..];
-var QUI i32[>..];
-var QUX real[>..];
 var HT real[>..];
 var HP real[>..];
 var HG real[>..];
@@ -473,21 +465,30 @@ var KZ real[>..];
 var UT real[>..];
 var UA real[>..];
 var UM real[>..];
-var CM0 i32[>..];
-var CMQ i32[>..];
+var OVS i32[>..];
+var OVD i32[>..];
+var OVV real[>..];
+var QUI i32[>..];
+var QUX real[>..];
+var OVC i32[>..];
+var OVR i32[>..];
+var FL i32[>..];
+var TLS real[>..];
 var RP i32[>..];
 var RC i32[>..];
-var VA real[>..];
 var DSL i32[>..];
 var LSL i32[>..];
 var GSL i32[>..];
 var CSL i32[>..];
+var VA real[>..];
 var UX i32[>..];
 var CRP i32[>..];
 var CCI i32[>..];
 var CVA real[>..];
 var CB real[>..];
 var CX real[>..];
+var CM0 i32[>..];
+var CMQ i32[>..];
 fn load_cf() {
 	Tm = CF[0];
 	Tw = CF[1];
@@ -504,15 +505,16 @@ fn load_cf() {
 	iso = CF[12] != 0.0;
 	curef = CF[13] != 0.0;
 	indf = CF[14] != 0.0;
-	a0c = CF[15];
+	a0v = CF[15];
 	tinj = CF[17];
 	pMax = CF[18];
-	frac = CF[19];
+	fracq = CF[19];
 	picTol = CF[20];
 	pcgTol = CF[21];
-	vp = CF[23];
+	vpf = CF[23];
 	packf = CF[24] != 0.0;
 	taitf = CF[25] != 0.0;
+	packP = CF[26];
 	packPct = CF[27];
 	dtMax = CF[28];
 	amgMin = CF[29];
@@ -524,6 +526,10 @@ fn load_cf() {
 	Troom = CF[36];
 	holdT = CF[39];
 	holdf = CF[40] != 0.0;
+	let extra = if CF[10] > 0.0 { CF[10] / CF[5] } else { 0.0 };
+	THI = ((jmax(CF[0], CF[1]) + CF[18] / (CF[4] * CF[5])) + extra) + 1.0;
+	CAPT = 0.0;
+	CAPP = 1.0;
 }
 fn size_state() {
 	rr(F, NV, 0.0);
@@ -538,7 +544,7 @@ fn size_state() {
 	rr(CA, NV, 0.0);
 	rr(PEND, NV, 0.0);
 	rr(PVPN, NV, 0.0);
-	rr(TEND, NV, NAN);
+	rr(TEND, NV, 0.0);
 	rr(FRZE, NV, 0.0);
 	rr(ALE, NV, 0.0);
 	rr(ALM, NV, 0.0);
@@ -552,13 +558,13 @@ fn size_state() {
 	rr(T90, NV, INF);
 	rr(AHD, NV, 0.0);
 	rr(CDG, NV, 0.0);
-	rr(AW, NV, 0.0);
 	rb(WET, NV, 0);
 	ri(SEQ, NV, 0);
 	ri(ISG, NV, -1);
 	ri(SO, NV, 0);
 	rr(TL, NV * NL, Tm);
-	rr(AL, NV * NL, if lsr { a0c } else { 0.0 });
+	let av = if lsr { a0v } else { 0.0 };
+	rr(AL, NV * NL, av);
 	rr(IN, NV * NL, 0.0);
 	rr(PHN, NV * NL, 0.0);
 	rr(P, N1, 0.0);
@@ -612,19 +618,15 @@ fn size_state() {
 	UT.clear();
 	UA.clear();
 	UM.clear();
-	nAct = 0;
-	diag = false;
-	ctrl = 0;
-	sc = 0;
-	steps = 0;
-	pics = 0;
-	its = 0;
-	amgIt = 0;
-	amgN = 0;
-	lost = 0.0;
-	tcur = 0.0;
-	tFill = 0.0;
+	OVS.clear();
+	OVD.clear();
+	OVV.clear();
+	QUI.clear();
+	QUX.clear();
+	FL.clear();
+	TLS.clear();
 	vpAt = NAN;
+	pvp_set = false;
 	pVP = 0.0;
 	pHold = 0.0;
 	clampAt = 0.0;
@@ -634,7 +636,28 @@ fn size_state() {
 	clampMax = 0.0;
 	pPic = 0.0;
 	Gavg = 0.0;
+	tcur = 0.0;
 	vfill = 0.0;
+	lost = 0.0;
+	steps = 0;
+	pics = 0;
+	its = 0;
+	amgIt = 0;
+	amgN = 0;
+	nfull = 0;
+	nAct = 0;
+	ctrl = 0;
+	sc = 0;
+	tFill = 0.0;
+	diag = false;
+}
+=== 1255875aa2b92e0d
+fn pcl(x real, c real) real {
+	if x < c {
+		if x > 0.0 { return x; }
+		return 0.0;
+	}
+	c
 }
 === 23c68869c113f5c3
 fn elem(e int) {
@@ -1190,10 +1213,7 @@ fn cin(i int, dt real, mode int) {
 		}
 	}
 }
-=== 79708e0a228912e4
-fn pfk(useprf bool, k int) real {
-	if useprf { PRF[k] } else { OM[k] }
-}
+=== 20eff9b4594e28f2
 fn thermal(dt real) {
 	if iso { return; }
 	var nw = 0;
@@ -1205,57 +1225,61 @@ fn thermal(dt real) {
 	}
 	stable_sort(SO[..nw]) { a, b => P[a as int] > P[b as int] || (P[a as int] == P[b as int] && SEQ[a as int] < SEQ[b as int]) };
 	zr(PHN);
-	zr(AW);
+	var aw real[>..] = [];
+	rr(aw, NV, 0.0);
 	for q in nAct {
 		let e = ACTL[q] as int;
 		let wa = AE[e] * SKW[e];
 		for c in 3 {
 			let i = TT[3 * e + c] as int;
-			AW[i] += wa;
+			aw[i] += wa;
 			for k in NL { PHN[i * NL + k] += wa * PHI[e * NL + k]; }
 		}
 	}
 	for i in NV {
-		if AW[i] > 0.0 {
-			for k in NL { PHN[i * NL + k] /= AW[i]; }
+		if aw[i] > 0.0 {
+			for k in NL { PHN[i * NL + k] /= aw[i]; }
 		}
 	}
 	for n in nw {
 		let i = SO[n] as int;
 		let o = i * NL;
 		let f0 = FO[i];
-		let cap = VV[i] * f0;
+		let cpv = VV[i] * f0;
 		let s0 = NA0[i] as int;
 		let s1 = NA0[i + 1] as int;
-		let gq = if ISG[i] >= 0 { WG[ISG[i] as int] * (P[MN] - P[i]) * dt } else { 0.0 };
 		if f0 >= 1.0 - 1e-12 {
 			for k in NL {
-				NUM[k] = cap * OM[k] * TL[o + k];
-				DEN[k] = cap * OM[k];
-				if lsr { ANUM[k] = cap * OM[k] * AL[o + k]; }
+				NUM[k] = cpv * OM[k] * TL[o + k];
+				DEN[k] = cpv * OM[k];
+				if lsr { ANUM[k] = cpv * OM[k] * AL[o + k]; }
 			}
 			for s in s0..s1 {
 				let l = NAL[s] as int;
 				let w = W[l];
 				let j = if (LA[l] as int) == i { LB[l] as int } else { LA[l] as int };
+				if !(w > 0.0) { continue; }
 				let dp = P[j] - P[i];
-				if w > 0.0 && dp > 0.0 {
-					let q = w * dp * dt;
-					let useprf = LE[2 * l] >= 0;
-					if useprf { link_prof(l); }
-					for k in NL {
-						let qk = q * pfk(useprf, k);
-						NUM[k] += qk * TL[j * NL + k];
-						DEN[k] += qk;
-						if lsr { ANUM[k] += qk * AL[j * NL + k]; }
-					}
+				if !(dp > 0.0) { continue; }
+				let qq = w * dp * dt;
+				let hasp = LE[2 * l] >= 0;
+				if hasp { link_prof(l); }
+				for k in NL {
+					let pf = if hasp { PRF[k] } else { OM[k] };
+					let qk = qq * pf;
+					NUM[k] += qk * TL[j * NL + k];
+					DEN[k] += qk;
+					if lsr { ANUM[k] += qk * AL[j * NL + k]; }
 				}
 			}
 			cin(i, dt, 0);
-			if gq > 0.0 {
-				for k in NL {
-					NUM[k] += gq * OM[k] * Tm;
-					DEN[k] += gq * OM[k];
+			if ISG[i] >= 0 {
+				let qg = WG[ISG[i] as int] * (P[MN] - P[i]) * dt;
+				if qg > 0.0 {
+					for k in NL {
+						NUM[k] += qg * OM[k] * Tm;
+						DEN[k] += qg * OM[k];
+					}
 				}
 			}
 			for k in NL {
@@ -1272,41 +1296,46 @@ fn thermal(dt real) {
 				let l = NAL[s] as int;
 				let w = W[l];
 				let j = if (LA[l] as int) == i { LB[l] as int } else { LA[l] as int };
+				if !(w > 0.0) { continue; }
 				let dp = P[j] - P[i];
-				if w > 0.0 && dp > 0.0 && WET[j] != 0 {
-					let q = w * dp * dt;
-					let useprf = LE[2 * l] >= 0;
-					if useprf { link_prof(l); }
-					var tb2 = 0.0;
-					var ab = 0.0;
-					for k in NL {
-						tb2 += pfk(useprf, k) * TL[j * NL + k];
-						if lsr { ab += pfk(useprf, k) * AL[j * NL + k]; }
-					}
-					QS += q;
-					QB += q * tb2;
-					QA += q * ab;
+				if !(dp > 0.0) { continue; }
+				if WET[j] == 0 { continue; }
+				let qq = w * dp * dt;
+				let hasp = LE[2 * l] >= 0;
+				if hasp { link_prof(l); }
+				var tb2 = 0.0;
+				var ab = 0.0;
+				for k in NL {
+					let pf = if hasp { PRF[k] } else { OM[k] };
+					tb2 += pf * TL[j * NL + k];
+					if lsr { ab += pf * AL[j * NL + k]; }
 				}
+				QS += qq;
+				QB += qq * tb2;
+				QA += qq * ab;
 			}
 			cin(i, dt, 1);
-			if gq > 0.0 {
-				QS += gq;
-				QB += gq * Tm;
+			if ISG[i] >= 0 {
+				let qg = WG[ISG[i] as int] * (P[MN] - P[i]) * dt;
+				if qg > 0.0 {
+					QS += qg;
+					QB += qg * Tm;
+				}
 			}
 			let r0 = OVC[i] as int;
 			let r1 = OVC[i + 1] as int;
-			for r in r0..r1 {
-				let rec = OVR[r] as int;
-				let sx = OVS[rec] as int;
-				let vol = OVV[rec];
+			for s in r0..r1 {
+				let r = OVR[s] as int;
+				let sx = OVS[r] as int;
+				let vol = OVV[r];
 				QS += vol;
 				QB += vol * bulk(sx);
 				if lsr { QA += vol * alm(sx); }
 			}
 			if QS > 0.0 {
 				for k in NL {
-					TL[o + k] = (cap * TL[o + k] + QB) / (cap + QS);
-					if lsr { AL[o + k] = (cap * AL[o + k] + QA) / (cap + QS); }
+					TL[o + k] = (cpv * TL[o + k] + QB) / (cpv + QS);
+					if lsr { AL[o + k] = (cpv * AL[o + k] + QA) / (cpv + QS); }
 				}
 			}
 		}
@@ -1315,6 +1344,17 @@ fn thermal(dt real) {
 		let i = SO[n] as int;
 		conduct(i, dt, hF, 1);
 		cure(i, dt);
+	}
+	for n in nw {
+		let i = SO[n] as int;
+		var k = i * NL;
+		while k < i * NL + NL {
+			if !(TL[k] <= THI) {
+				if TL[k] > THI { TL[k] = THI; } else { TL[k] = Tm; }
+				CAPT += 1.0;
+			}
+			k += 1;
+		}
 	}
 }
 === -6a5d603d3579c121
@@ -1454,45 +1494,44 @@ fn setup_run() {
 	for l in NK { WGEO[l] = jmax(0.0, LK[2 * l] + LK[2 * l + 1]); }
 	im_onp(3, 0.0, 0.0, 0.0);
 }
-=== 2325965832e5fc1e
+=== -7bf1de699be86200
+import math;
 fn run_fill() {
-	var nfull = 0;
-	var sq = 0;
-	var pinj = 0.0;
-	var qtot = 0.0;
 	sc = 0;
 	while nfull < NV {
 		steps += 1;
 		for i in NV { UK[i] = FULL[i]; }
 		diag = false;
-		if !(vpAt == vpAt) && vfill >= vp * Vt && nfull != 0 {
+		if !(vpAt == vpAt) && vfill >= vpf * Vt && nfull != 0 {
 			vpAt = tcur;
 			pVP = pEndT;
 			for i in NV { PVPN[i] = P[i]; }
+			pvp_set = true;
 			if packf && !lsr && taitf && !iso {
-				pHold = if CF[26] == CF[26] { CF[26] } else { packPct * pVP };
+				if packP == packP { pHold = packP; } else { pHold = packPct * pVP; }
 			} else {
 				pHold = jmin(pVP, pMax);
 			}
 			ctrl = 2;
 		}
 		var sw = 0;
-		qtot = 0.0;
+		var qtot = 0.0;
 		while true {
-			UK[MN] = if ctrl == 0 { 1 } else { 0 };
+			UK[MN] = 0;
+			if ctrl == 0 { UK[MN] = 1; }
 			if ctrl != 0 {
-				let base = if ctrl == 2 { pHold } else { pMax };
-				let qa = if qtot != 0.0 && qtot == qtot { qtot } else { Qset };
-				P[MN] = jmax(0.0, base - dps(jmin(Qset, qa)));
+				let lim = if ctrl == 2 { pHold } else { pMax };
+				let qx = if qtot != 0.0 && qtot == qtot { qtot } else { Qset };
+				P[MN] = jmax(0.0, lim - dps(jmin(Qset, qx)));
 			}
-			for rd in 12 {
+			for round in 12 {
 				elems_all();
 				weights();
 				its += solve(0) as int;
 				pics += 1;
 				var ch = 0.0;
-				var cw = 0.0;
-				var gs = 0.0;
+				var cwt = 0.0;
+				var gsum = 0.0;
 				var amx = 0.0;
 				for q in nAct {
 					let e = ACTL[q] as int;
@@ -1504,13 +1543,13 @@ fn run_fill() {
 					if a > amx { amx = a; }
 					let gd = if g0 != 0.0 && g0 == g0 { g0 } else { gn };
 					ch += wq * abs(a * im_log(gn / gd));
-					cw += wq;
+					cwt += wq;
 					GE[e] = gn;
-					gs += im_log(gn);
+					gsum += im_log(gn);
 				}
-				if nAct != 0 { Gavg = im_exp(gs / (nAct as real)); }
+				if nAct != 0 { Gavg = im_exp(gsum / (nAct as real)); }
 				let pm = P[MN];
-				let cr = if cw > 0.0 { ch / cw } else { 0.0 };
+				let cr = if cwt > 0.0 { ch / cwt } else { 0.0 };
 				if amx == 0.0 || (cr < picTol && abs(pm - pPic) <= picTol * 0.1 * abs(pm)) {
 					pPic = pm;
 					break;
@@ -1519,8 +1558,8 @@ fn run_fill() {
 			}
 			qtot = 0.0;
 			for g in NG { qtot += WG[g] * (P[MN] - P[GT[g] as int]); }
-			pinj = P[MN] + dps(qtot);
-			if ctrl == 0 && pinj > pMax && sw < 3 {
+			let pinj0 = P[MN] + dps(qtot);
+			if ctrl == 0 && pinj0 > pMax && sw < 3 {
 				ctrl = 1;
 				sw += 1;
 				continue;
@@ -1558,26 +1597,20 @@ fn run_fill() {
 			let w = WC[q];
 			if w > 0.0 {
 				let ci = CI[q] as int;
-				let j0 = CJ[3 * q] as int;
-				let j1 = CJ[3 * q + 1] as int;
-				let j2 = CJ[3 * q + 2] as int;
-				let r = P[ci] - CW[3 * q] * P[j0] - CW[3 * q + 1] * P[j1] - CW[3 * q + 2] * P[j2];
+				let r = P[ci] - CW[3 * q] * P[CJ[3 * q] as int] - CW[3 * q + 1] * P[CJ[3 * q + 1] as int] - CW[3 * q + 2] * P[CJ[3 * q + 2] as int];
 				let v = w * r;
 				if FULL[ci] == 0 { QIN[ci] -= v; }
-				if FULL[j0] == 0 { QIN[j0] += CW[3 * q] * v; }
-				if FULL[j1] == 0 { QIN[j1] += CW[3 * q + 1] * v; }
-				if FULL[j2] == 0 { QIN[j2] += CW[3 * q + 2] * v; }
+				for c in 3 {
+					let j = CJ[3 * q + c] as int;
+					if FULL[j] == 0 { QIN[j] += CW[3 * q + c] * v; }
+				}
 			}
 		}
 		if ctrl == 0 {
 			var qs = 0.0;
-			for i in NV {
-				if FULL[i] == 0 && QIN[i] > 0.0 { qs += QIN[i]; }
-			}
+			for i in NV { if FULL[i] == 0 && QIN[i] > 0.0 { qs += QIN[i]; } }
 			if qs > 0.0 {
-				for i in NV {
-					if FULL[i] == 0 && QIN[i] > 0.0 { QIN[i] *= Qset / qs; }
-				}
+				for i in NV { if FULL[i] == 0 && QIN[i] > 0.0 { QIN[i] *= Qset / qs; } }
 			}
 		}
 		FL.clear();
@@ -1588,23 +1621,25 @@ fn run_fill() {
 				TLS.push(VV[i] * (1.0 - F[i]) / QIN[i]);
 			}
 		}
-		pinj = P[MN] + dps(qtot);
+		let pinj = P[MN] + dps(qtot);
 		var pgs = 0.0;
 		for g in NG { pgs += P[GT[g] as int]; }
 		let pg = pgs / (NG as real);
 		pInjMax = jmax(pInjMax, pinj);
 		pGateMax = jmax(pGateMax, pg);
+		let pc = P[MN];
 		var cl = 0.0;
 		for q in nAct {
 			let e = ACTL[q] as int;
-			let a = TT[3 * e] as int;
-			let b = TT[3 * e + 1] as int;
-			let c = TT[3 * e + 2] as int;
-			cl += APZ[e] * ((P[a] + P[b]) + P[c]) / 3.0;
-		}
-		if cl > clampMax {
-			clampMax = cl;
-			clampAt = tcur;
+			let a = P[TT[3 * e] as int];
+			let b = P[TT[3 * e + 1] as int];
+			let c = P[TT[3 * e + 2] as int];
+			if pc > 1e5 { CAPP = jmax(jmax(jmax(CAPP, a / pc), b / pc), c / pc); }
+			cl += APZ[e] * ((pcl(a, pc) + pcl(b, pc)) + pcl(c, pc)) / 3.0;
+			if cl > clampMax {
+				clampMax = cl;
+				clampAt = tcur;
+			}
 		}
 		HT.push(tcur);
 		HP.push(pinj);
@@ -1614,41 +1649,30 @@ fn run_fill() {
 		HC.push(cl);
 		var fz = 0.0;
 		if !iso {
-			for i in NV {
-				if WET[i] != 0 { fz += VV[i] * frz_of(i); }
-			}
+			for i in NV { if WET[i] != 0 { fz += VV[i] * frz_of(i); } }
 		}
 		HZ.push(fz / Vt);
 		pEndT = pinj;
-		if FL.len == 0 {
-			sc = if nfull != 0 { 1 } else { 2 };
-			break;
-		}
-		if qtot < Qset * 1e-5 {
-			sc = 3;
-			break;
-		}
-		if tcur >= tMax {
-			sc = 4;
-			break;
-		}
-		let count = FL.len;
-		var cpy = copy(TLS);
-		let xk = frac * (count as real);
-		var ck = xk as int;
-		if (ck as real) < xk { ck += 1; }
-		let kk = max(1, ck) - 1;
-		var dt = qsel(cpy, count, min(kk, count - 1));
+		if FL.len == 0 && nfull != 0 { sc = 1; break; }
+		if FL.len == 0 { sc = 2; break; }
+		if qtot < Qset * 1e-5 { sc = 3; break; }
+		if tcur >= tMax { sc = 4; break; }
+		let cnt = TLS.len;
+		var cpy real[>..] = [];
+		for i in cnt { cpy.push(TLS[i]); }
+		let kk = (jmax(1.0, ceil(fracq * (cnt as real))) as int) - 1;
+		let kq = if kk < cnt - 1 { kk } else { cnt - 1 };
+		let dq = qsel(cpy, cnt, kq);
 		var tmn = INF;
-		for n in count { if TLS[n] < tmn { tmn = TLS[n]; } }
-		dt = jmax(tmn, jmin(jmin(jmin(dt, dtMax), (Vt - vfill) / qtot * 1.000001), (tMax - tcur) + 1e-9));
+		for i in cnt { if TLS[i] < tmn { tmn = TLS[i]; } }
+		let dt = jmax(tmn, jmin(jmin(jmin(dq, dtMax), (Vt - vfill) / qtot * 1.000001), (tMax - tcur) + 1e-9));
 		for i in NV { FO[i] = F[i]; }
 		OVS.clear();
 		OVD.clear();
 		OVV.clear();
 		QUI.clear();
 		QUX.clear();
-		sq = 1;
+		var sq = 1;
 		for n in FL.len {
 			let i = FL[n] as int;
 			let add = QIN[i] * dt;
@@ -1731,13 +1755,14 @@ fn run_fill() {
 				}
 			}
 		}
+		let nov = OVD.len;
 		ri(OVC, NV + 1, 0);
-		ri(OVR, OVS.len, 0);
-		for r in OVS.len { OVC[(OVD[r] as int) + 1] += 1; }
+		for r in nov { OVC[(OVD[r] as int) + 1] += 1; }
 		for i in NV { OVC[i + 1] += OVC[i]; }
+		ri(OVR, nov, 0);
 		var cur i32[>..] = [];
 		for i in NV { cur.push(OVC[i]); }
-		for r in OVS.len {
+		for r in nov {
 			let d = OVD[r] as int;
 			OVR[cur[d] as int] = r as i32;
 			cur[d] += 1;
@@ -1759,9 +1784,9 @@ fn run_fill() {
 				if P[i] > PMX[i] { PMX[i] = P[i]; }
 			}
 		}
-		var vf = 0.0;
-		for i in NV { vf += VV[i] * F[i]; }
-		vfill = vf;
+		var vs2 = 0.0;
+		for i in NV { vs2 += VV[i] * F[i]; }
+		vfill = vs2;
 		if vfill >= Vt * (1.0 - 1e-11) {
 			for i in NV {
 				if FULL[i] == 0 {
@@ -1776,7 +1801,7 @@ fn run_fill() {
 		}
 		if steps % 4 == 0 { im_onp(0, vfill / Vt, tcur, pinj); }
 	}
-	if sc == 0 && HP.len > 0 {
+	if sc == 0 {
 		let lp = HP[HP.len - 1];
 		let lg = HG[HG.len - 1];
 		let lc = HC[HC.len - 1];
@@ -1790,17 +1815,24 @@ fn run_fill() {
 		HZ.push(lz);
 	}
 }
-=== -46e3a622ec8d7390
+=== 56dfb4df09cc9cb3
 fn finish_fill() {
 	tFill = tcur;
 	for i in NV { PEND[i] = P[i]; }
-	if !(vpAt == vpAt) {
-		for i in NV { PVPN[i] = P[i]; }
+	if !pvp_set {
+		for i in NV { PVPN[i] = PEND[i]; }
 	}
 	for i in NV {
-		TEND[i] = if WET[i] != 0 { bulk(i) } else { NAN };
-		FRZE[i] = if WET[i] != 0 { frz_of(i) } else { 0.0 };
-		if lsr {
+		if WET[i] != 0 {
+			TEND[i] = bulk(i);
+			FRZE[i] = frz_of(i);
+		} else {
+			TEND[i] = NAN;
+			FRZE[i] = 0.0;
+		}
+	}
+	if lsr {
+		for i in NV {
 			var mx = 0.0;
 			for k in NL { mx = jmax(mx, AL[i * NL + k]); }
 			ALE[i] = mx;
@@ -1809,7 +1841,7 @@ fn finish_fill() {
 	}
 }
 fn write_out() {
-	OUT[0] = if vpAt == vpAt && vpAt < INF { vpAt } else { NAN };
+	OUT[0] = if vpAt == vpAt && vpAt != INF { vpAt } else { NAN };
 	OUT[1] = pVP;
 	OUT[2] = pHold;
 	OUT[3] = sc as real;
@@ -1832,6 +1864,8 @@ fn write_out() {
 	OUT[20] = amgIt as real;
 	OUT[22] = if pack_ran { 1.0 } else { 0.0 };
 	OUT[23] = if hold_ran { 1.0 } else { 0.0 };
+	OUT[39] = CAPT;
+	OUT[40] = CAPP;
 }
 === -405c84e07efb74ae
 fn mass(i int, pp real) {
@@ -1920,7 +1954,7 @@ fn sink_of() {
 	}
 	for i in NV { SNK[i] = jmax(0.0, SNK[i] - med); }
 }
-=== -2f64ae9dc8d32887
+=== -4b5535183f01259e
 fn pack() {
 	pack_start();
 	for g in NG { WF[g] = WG[g]; }
@@ -1933,11 +1967,11 @@ fn pack() {
 	var w0 = 0.0;
 	var n2 = 0;
 	var cmax = clampMax;
-	sink_done = false;
+	var sinked = false;
 	while n2 < 2000 {
 		n2 += 1;
-		let inpack = !(packEnd == packEnd);
-		let hh = if inpack { hP } else { hP / 2.0 };
+		let inPack = !(packEnd == packEnd);
+		let hh = if inPack { hP } else { hP / 2.0 };
 		for i in NV { conduct(i, dt, hh, 0); }
 		for q in nAct {
 			let e = ACTL[q] as int;
@@ -1951,16 +1985,16 @@ fn pack() {
 		for q in NC { WC[q] /= VS[CI[q] as int]; }
 		let vm = tait(Tm + K0, pk);
 		for g in NG {
-			if inpack {
+			if inPack {
 				if rnD > 0.0 {
 					WG[g] = WF[g] / vm;
 				} else {
 					let n = GT[g] as int;
 					let s0 = NA0[n] as int;
 					let s1 = NA0[n + 1] as int;
-					var mx = 0.0;
-					for s in s0..s1 { mx = jmax(mx, W[NAL[s] as int]); }
-					WG[g] = 30.0 * mx;
+					var mw = 0.0;
+					for s in s0..s1 { mw = jmax(mw, W[NAL[s] as int]); }
+					WG[g] = 30.0 * mw;
 				}
 			} else {
 				WG[g] = 0.0;
@@ -1986,7 +2020,7 @@ fn pack() {
 		diag = true;
 		for i in NV { UK[i] = 1; }
 		UK[MN] = 0;
-		P[MN] = if inpack { pk } else { 0.0 };
+		P[MN] = if inPack { pk } else { 0.0 };
 		DT = dt;
 		solve(1);
 		diag = false;
@@ -2009,15 +2043,13 @@ fn pack() {
 			let w = WC[q];
 			if w > 0.0 {
 				let ci = CI[q] as int;
-				let j0 = CJ[3 * q] as int;
-				let j1 = CJ[3 * q + 1] as int;
-				let j2 = CJ[3 * q + 2] as int;
-				let r = P[ci] - CW[3 * q] * P[j0] - CW[3 * q + 1] * P[j1] - CW[3 * q + 2] * P[j2];
+				let r = P[ci] - CW[3 * q] * P[CJ[3 * q] as int] - CW[3 * q + 1] * P[CJ[3 * q + 1] as int] - CW[3 * q + 2] * P[CJ[3 * q + 2] as int];
 				let f = w * r * dt;
 				if UK[ci] == 0 { MM[ci] -= f; }
-				if UK[j0] == 0 { MM[j0] += CW[3 * q] * f; }
-				if UK[j1] == 0 { MM[j1] += CW[3 * q + 1] * f; }
-				if UK[j2] == 0 { MM[j2] += CW[3 * q + 2] * f; }
+				for c in 3 {
+					let j = CJ[3 * q + c] as int;
+					if UK[j] == 0 { MM[j] += CW[3 * q + c] * f; }
+				}
 			}
 		}
 		var m1 = 0.0;
@@ -2029,19 +2061,19 @@ fn pack() {
 		for i in NV { fz += VV[i] * frz_of(i); }
 		var fe = 0.0;
 		for i in NV {
-			var ok = 1.0;
-			for k in NL { if TL[i * NL + k] > Teje { ok = 0.0; } }
-			fe += ok * VV[i];
+			var okv = 1.0;
+			for k in NL { if TL[i * NL + k] > Teje { okv = 0.0; } }
+			fe += okv * VV[i];
 		}
 		var pgs = 0.0;
 		for g in NG { pgs += jmax(0.0, P[GT[g] as int]); }
 		let pg = pgs / (NG as real);
 		var cl = 0.0;
 		for e in NT {
-			let a = TT[3 * e] as int;
-			let b = TT[3 * e + 1] as int;
-			let c = TT[3 * e + 2] as int;
-			cl += APZ[e] * ((jmax(0.0, P[a]) + jmax(0.0, P[b])) + jmax(0.0, P[c])) / 3.0;
+			let a = P[TT[3 * e] as int];
+			let b = P[TT[3 * e + 1] as int];
+			let c = P[TT[3 * e + 2] as int];
+			cl += APZ[e] * ((pcl(a, CF[18]) + pcl(b, CF[18])) + pcl(c, CF[18])) / 3.0;
 		}
 		cmax = jmax(cmax, cl);
 		for q in nAct {
@@ -2061,21 +2093,38 @@ fn pack() {
 			for g in NG { gf = jmin(gf, frz_of(GT[g] as int)); }
 			if gf >= 0.99 || gw < 1e-4 * w0 { gateFz = tt; }
 		}
-		if inpack {
-			let done = if tpk == tpk { tt >= tFill + tpk } else { (gateFz == gateFz && tt >= jmax(gateFz, tFill + 0.5)) || tt >= tFill + 30.0 };
-			if done {
+		let tpkSet = tpk == tpk;
+		if inPack {
+			var endp = false;
+			if tpkSet {
+				endp = tt >= tFill + tpk;
+			} else {
+				if gateFz == gateFz && tt >= jmax(gateFz, tFill + 0.5) { endp = true; }
+				if tt >= tFill + 30.0 { endp = true; }
+			}
+			if endp {
 				packEnd = tt;
 				sink_of();
-				sink_done = true;
+				sinked = true;
 			}
 		} else {
-			let done = if tco == tco { tt >= packEnd + tco } else { fe >= Vt * 0.999 || tt >= packEnd + 120.0 };
-			if done {
+			var endc = false;
+			if tco == tco {
+				endc = tt >= packEnd + tco;
+			} else {
+				if fe >= Vt * 0.999 { endc = true; }
+				if tt >= packEnd + 120.0 { endc = true; }
+			}
+			if endc {
 				eject = tt;
 				break;
 			}
 		}
-		let lim = if inpack { jmax(0.02, (if tpk == tpk { tpk } else { 5.0 }) / 30.0) } else { 0.5 };
+		var lim = 0.5;
+		if inPack {
+			let tb = if tpkSet { tpk } else { 5.0 };
+			lim = jmax(0.02, tb / 30.0);
+		}
 		dt = jmin(dt * 1.15, lim);
 		if n2 % 10 == 0 { im_onp(1, 0.0, tt, 0.0); }
 	}
@@ -2086,22 +2135,22 @@ fn pack() {
 		SHR[i] = 1.0 - MM[i] * vr / VV[i];
 		sa += SHR[i] * VV[i];
 		sv += VV[i];
-		if SKIN[i] != 0 || MID == 1 { smax = jmax(smax, SHR[i]); }
+		if MID == 1 || SKIN[i] != 0 { smax = jmax(smax, SHR[i]); }
 	}
-	var mt = 0.0;
-	for i in NV { mt += MM[i]; }
+	var msum = 0.0;
+	for i in NV { msum += MM[i]; }
 	OUT[24] = pk;
 	OUT[25] = gateFz;
 	OUT[26] = packEnd;
 	OUT[27] = eject;
 	OUT[28] = if eject == eject && packEnd == packEnd { eject - packEnd } else { NAN };
 	OUT[29] = minj;
-	OUT[30] = mt;
+	OUT[30] = msum;
 	OUT[31] = sa / sv;
 	OUT[32] = smax;
 	OUT[33] = cmax;
 	OUT[34] = vr;
-	OUT[35] = if sink_done { 1.0 } else { 0.0 };
+	OUT[35] = if sinked { 1.0 } else { 0.0 };
 }
 === 275afc2d12d49deb
 
@@ -2195,8 +2244,13 @@ export fn im_run() i32 {
 	im_view_f64(80, UM);
 	0
 }
-=== 38a107a67080406d
+=== 7edd2fb68a603a5a
 import math;
+fn jround(x real) real {
+	if x != x { return x; }
+	let f = floor(x);
+	if x - f >= 0.5 { f + 1.0 } else { f }
+}
 export fn im_mat() {
 	if MV[0] == 2.0 || MV[0] == 3.0 { xtab(); }
 }
@@ -2225,10 +2279,8 @@ export fn im_cure(tk real, a real, dt real) real {
 export fn im_induct(tk real, s real, dt real) real {
 	induct(tk, s, dt)
 }
-fn jround(x real) real {
-	if x != x { return x; }
-	let f = floor(x);
-	if x - f >= 0.5 { f + 1.0 } else { f }
+export fn im_tait(tk real, p real) real {
+	tait(tk, p)
 }
 export fn im_runner(w real, l real, tm real) real {
 	let dp = hsqrt(jmax(w, 0.01)) * im_pow(l, 0.25) / 3.7;

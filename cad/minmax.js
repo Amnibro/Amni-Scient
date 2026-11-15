@@ -1,0 +1,1 @@
+export const maxOf=a=>{let m=-Infinity;for(const v of a){const x=+v;if(x!==x)return NaN;if(x>m)m=x;}return m;},minOf=a=>{let m=Infinity;for(const v of a){const x=+v;if(x!==x)return NaN;if(x<m)m=x;}return m;},pushAll=(t,a)=>{for(const v of a)t.push(v);return t.length;};

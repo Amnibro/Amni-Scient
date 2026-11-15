@@ -6,5 +6,5 @@ export function faceIds(m,sel){if(!m)return[];const F=m.faces,list=Array.isArray
     if(s.by==='pick'||s.pts){for(const p of s.pts||[]){let best=-1,bd=1e18;F.forEach((q,i)=>{const d=Math.hypot(q.c[0]-p[0],q.c[1]-p[1],q.c[2]-p[2]);if(d<bd){bd=d;best=i;}});const tri=nearestFace(m,p);if(tri>=0)out.add(tri);else if(best>=0)out.add(best);}}
     else if(s.side){const ax=AXS[s.side.length===1?'+'+s.side:s.side],i=ax.findIndex(v=>v),ext=ax[i]>0?b.max[i]:b.min[i];F.forEach((q,j)=>{if(q.n&&q.n[i]*ax[i]>0.999&&Math.abs(q.c[i]-ext)<size*1e-3+1e-3)out.add(j);});}
     else if(s.normal){const ax=AXS[s.normal];F.forEach((q,j)=>{if(q.n&&q.n[0]*ax[0]+q.n[1]*ax[1]+q.n[2]*ax[2]>0.999)out.add(j);});}
-    else if(s.type)F.forEach((q,j)=>{if(q.type===String(s.type).toUpperCase())out.add(j);});}
+    else if(s.type){const t=String(s.type).toUpperCase().replace('CYLINDER','CYLINDRE');F.forEach((q,j)=>{if(q.type===t)out.add(j);});}}
   return[...out];}

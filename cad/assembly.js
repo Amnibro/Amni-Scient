@@ -50,6 +50,7 @@ export function apply(d,ops,ctx={}){const A=ensure(d),done=[],T=ctx.templates||[
     if(o.fix||o.float){const c=need('fix',o.fix||o.float);o.fix?c.fix=true:delete c.fix;done.push((o.fix?'fix ':'float ')+c.id);}
     if(o.hide||o.show){const c=need('hide',o.hide||o.show);o.hide?c.hide=true:delete c.hide;done.push((o.hide?'hide ':'show ')+c.id);}
     if(o.delete){const c=need('delete',o.delete);removeComp(d,c.id);done.push('delete '+c.id);}
+    if(o.open){const q=String(o.open),c=compBy(d,q),pid=c?c.part:A.parts[q]?q:Object.keys(A.parts).find(k=>A.parts[k].name===q);if(!pid)throw new Error('No component or part "'+q+'" (open). Components: '+A.comps.map(z=>z.id+' '+z.name).join(', '));swap(d,pid);ctx.opened=pid;done.push('open '+pid+' '+(A.parts[pid].name||''));}
     if(o.delete_mate){const id=o.delete_mate,n=A.mates.length;A.mates=A.mates.filter(m=>m.id!==id&&m.name!==id);if(A.mates.length<n)done.push('delete '+id);}
     if(o.edit_mate){const q=o.edit_mate,m=A.mates.find(x=>x.id===q.id||x.name===q.id);if(!m)throw new Error('No mate '+q.id);for(const k in q)if(k!=='id')m[k]=['a','b','a2','b2','s'].includes(k)?nref(A,q[k]):q[k];if(q.type&&q.type!=='lock')delete m.rel;q.type&&resetMate(m);done.push('edit '+m.id);}
     for(const k of['smart_insert','aligned_holes','xref','update_xrefs','skeleton_sync'])if(o[k]){(A.pending=A.pending||[]).push({op:k,args:o[k]});done.push('queued '+k+' (runs when the parts are built)');}

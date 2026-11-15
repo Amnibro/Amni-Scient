@@ -86,13 +86,23 @@
 </nav>
 <section class="wide" style="padding-top:5rem;max-width:720px">
 <h1>Amni-Mail privacy</h1>
+<p class="effective">Last Updated: November 11, 2026</p>
 <p>Amni-Mail is a desktop client that runs on your computer. Amniscient, LLC does not operate a mail server for it and does not receive your messages.</p>
+<h2>Sharing</h2>
+<p>Amniscient, LLC does not receive your Google mail, tokens, or credentials, and does not sell or share that data. You can disconnect the account in Amni-Mail and revoke access in your Google Account’s third-party app settings.</p>
 <h2>What stays on the machine</h2>
-<p>Message bodies, headers, attachments, contacts, calendar events, rules, and search indexes live in a local SQLite file under the install directory. Passwords and OAuth tokens are stored in an encrypted credentials file keyed on that machine.</p>
+<p>Message bodies, headers, attachments, contacts, calendar events, rules, and search indexes live in a local SQLite database in the app’s data folder on your computer. Passwords and OAuth tokens are stored in an encrypted credentials file keyed on that machine.</p>
 <h2>What leaves the machine</h2>
-<p>IMAP and SMTP traffic goes to the mail host <em>you</em> configure (Google, Microsoft, Fastmail, and so on). If you paste your own OAuth client, token exchange goes to that provider. Optional AI features call only the URL you set (default a local server). The amni-scient.com website is not in that path.</p>
-<h2>What we do not do</h2>
-<p>No accounts at amni-scient. No analytics. No crash reports. No advertising identifiers. The download zip and install script are static files.</p>
+<p>IMAP and SMTP traffic goes to the mail host you configure (Google, Microsoft, Fastmail, and so on). When you connect a Google account, sign-in and token exchange go to Google. Optional AI features call only the URL you set (the default is a server on your own machine). If you point that URL at a third-party service, that service receives the prompts those features send.</p>
+<p>The app may contact amni-scient.com for a version file and to download updates. That path does not include your mail or credentials. The install script and download zip are static files.</p>
+<h2>Google accounts</h2>
+<p>When you sign in with Google, Amni-Mail uses Google’s OAuth to request access to your Gmail account (the https://mail.google.com/ scope). That permission lets the app read, send, and manage your mail over IMAP and SMTP, the way a desktop mail client does.</p>
+<ul>
+<li><strong>Access:</strong> The app talks directly to Google for sign-in, tokens, and mail. Amniscient’s servers are not in that path.</li>
+<li><strong>Use:</strong> Mail is shown in the local Amni-Mail window so you can read, search, organize, and send. Amniscient does not use Google user data for advertising, profiling, or training models.</li>
+<li><strong>Storage:</strong> As above — mail in a local database, tokens in an encrypted credentials file on your computer.</li>
+</ul>
+<p>Questions: <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a></p>
 <p style="margin-top:2rem"><a href="amni-mail.html">Back to Amni-Mail</a></p>
 </section>
 </body>

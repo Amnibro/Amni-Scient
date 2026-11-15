@@ -1,4 +1,5 @@
 import {flat,radii,ballSurface,bitTable,bitSpec,knifeSpec,profile,silhouette} from './cutter.js';
+import {maxOf,minOf} from './minmax.js';
 const f4=v=>+v.toFixed(4);
 const toU=(v,K,u)=>f4(u==='in'?v/K:v*25.4/K);
 const dxfOf=async(items,W,H,u)=>(await import('./drawing.js')).toDXF({W,H,items,ins:u==='in'?1:4});
@@ -26,7 +27,7 @@ export function dxfPolys(txt){
 }
 export function dxfToProfile(txt,K=1){
   const r=dxfPolys(txt),P=r.polys.filter(p=>p.pts.length>=3).sort((a,b)=>b.pts.length-a.pts.length)[0];if(!P)throw new Error('The DXF has no polyline with three or more points.');
-  const k=(r.units==='in'?1:1/25.4)*K,pts=P.pts.map(q=>[q[0]*k,q[1]*k]),mx=Math.max(...pts.map(q=>q[0])),my=Math.max(...pts.map(q=>q[1]));
+  const k=(r.units==='in'?1:1/25.4)*K,pts=P.pts.map(q=>[q[0]*k,q[1]*k]),mx=maxOf(pts.map(q=>q[0])),my=maxOf(pts.map(q=>q[1]));
   return pts.map(q=>[+(q[0]-mx).toFixed(5),+(q[1]-my).toFixed(5)]);
 }
 const nfmt=v=>v.toFixed(4).replace(/\.?0+$/,'')||'0';
@@ -55,7 +56,7 @@ export function cncPlan(pr,o={}){
     spec.undercut&&w.push('This profile undercuts, and the stock simulator is 2.5D, so the cut shows with straight sides.');
   }else{
     const rb=(o.ball>0?o.ball:0.25*K)/2,hs=ballSurface(pr),b=pr.bb,tip=Y=>{let m=-Infinity;for(let i=0;i<=24;i++){const u=-rb+2*rb*i/24,Yh=Y+u-yo;if(Yh<b.minx-1e-9||Yh>b.maxx+1e-9){if(Y+u>=0&&Y+u<=Wst)m=Math.max(m,-rb+Math.sqrt(Math.max(rb*rb-u*u,0)));continue;}m=Math.max(m,hs(Yh)-rb+Math.sqrt(Math.max(rb*rb-u*u,0)));}return m;};
-    const st=o.step>0?o.step:Math.max(0.01*K,rb/10),n=Math.max(1,Math.ceil(pr.w/st)),ys=Array.from({length:n+1},(_,i)=>yo+b.minx+pr.w*i/n),zs=ys.map(tip),zmin=Math.min(...zs),dc=o.doc>0?o.doc:0.125*K,levels=[];
+    const st=o.step>0?o.step:Math.max(0.01*K,rb/10),n=Math.max(1,Math.ceil(pr.w/st)),ys=Array.from({length:n+1},(_,i)=>yo+b.minx+pr.w*i/n),zs=ys.map(tip),zmin=minOf(zs),dc=o.doc>0?o.doc:0.125*K,levels=[];
     for(let l=-dc;l>zmin+1e-9;l-=dc)levels.push(l);levels.push(-Infinity);
     const ov=rb+0.1*K;let dir=1,cur=null;moves.push(['r',-ov,ys[0],safe]);
     for(const lv of levels)for(let j=0;j<ys.length;j++){const z=Math.max(zs[j],lv);if(lv>-Infinity&&zs[j]>=lv-1e-9)continue;const xa=dir>0?-ov:len+ov,xb=dir>0?len+ov:-ov;

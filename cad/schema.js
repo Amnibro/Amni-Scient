@@ -6,6 +6,7 @@ const PLANE=[['plane','Sketch on','XY',['XY','XZ','YZ','face','datum']],['face',
 export const FT={
 box:{n:'Box',g:'Solid',i:'▣',f:[['w','Width (X)',40],['d','Depth (Y)',30],['h','Height (Z)',10],['x','Center X',0],['y','Center Y',0],['z','Base Z',0],OP],doc:'axis-aligned box centered on x,y with its base at z'},
 cylinder:{n:'Cylinder',g:'Solid',i:'◯',f:[['r','Radius',10],['h','Height',20],X,Y,Z,AXIS,['center','Centered on point',false,'bool'],OP],doc:'cylinder starting at x,y,z going along axis'},
+tube:{n:'Tube',g:'Solid',i:'◉',f:[['od','Outer diameter',20],['mode','Set by','id',['id','wall']],['di','Inner diameter',12,null,s=>(s.mode||'id')!=='wall'],['t','Wall thickness',4,null,s=>s.mode==='wall'],['h','Length',20],X,Y,Z,AXIS,['center','Centered on point',false,'bool'],OP],doc:'round tube along axis, from x,y,z (or centered on that point): outer diameter od, and either inner diameter di (set by id; di must be below od; a numeric id is accepted as di because the feature id is its name) or wall thickness t (set by wall; t must be below half of od). h is the length. op cut removes the wall from an existing solid'},
 sphere:{n:'Sphere',g:'Solid',i:'●',f:[['r','Radius',10],X,Y,Z,OP]},
 cone:{n:'Cone',g:'Solid',i:'△',f:[['r1','Base radius',10],['r2','Top radius',0],['h','Height',20],X,Y,Z,AXIS,OP]},
 torus:{n:'Torus',g:'Solid',i:'◎',f:[['r1','Ring radius',20],['r2','Tube radius',3],X,Y,Z,OP]},

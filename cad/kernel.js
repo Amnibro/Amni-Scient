@@ -9,8 +9,9 @@ import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
 import {lookupThread,threadById} from './threads.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
-import {chamferSides,alongFaces,FEAT2,solidsOf} from './features2.js';
+import {chamferSides,alongFaces,FEAT2,solidsOf,ribGuess} from './features2.js';
 import {vec as V} from './qmath.js';
+import {maxOf,minOf,pushAll} from './minmax.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
@@ -105,7 +106,7 @@ function liveSketch(f,body){const has=x=>x&&x.sketch&&x.sketch.ents&&x.sketch.en
   if(an){const B=faceBox(RF(),true);if(!B)throw new Error('distances from edges need the sketch on a flat face of the part');const ax=(o,k0,k1,lo,hi)=>o[k0]!=null?lo+ +o[k0]:o[k1]!=null?hi- +o[k1]:null;f.shapes=f.shapes&&f.shapes.map(q=>{if(!q||!q.from)return q;const o=q.from,x=ax(o,'left','right',B.u0,B.u1),y=ax(o,'bottom','top',B.v0,B.v1),r={...q};delete r.from;x!=null&&(r.x=x);y!=null&&(r.y=y);return r;});f.pts&&(f.pts=f.pts.map(p=>Array.isArray(p)?p:[ax(p,'left','right',B.u0,B.u1)??0,ax(p,'bottom','top',B.v0,B.v1)??0]));}
   return f;}
 function okShape(sh){try{const b=bboxOf(sh);return[...b.min,...b.max].every(isFinite)&&isFinite(volOf(sh));}catch{return false;}}
-export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part'};}
+export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),box:faceBox(refs.filter(r=>r.k!=='pt'),true),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part',rib:f0.guess&&f0.type==='rib'&&body&&!(f.face&&!f.face.mid&&!f.face.edge)?ribGuess(f,body,KX,refs):null};}
 export function whichFeature(pt,ids){const end=shapeBefore(cache.length),tol=(end?sizeOf(end):1)*2e-3,ds=sh=>{if(!sh)return 1e9;let c=null;try{c=R.makeCompound(sh.faces);return pdist(pt,c);}catch{return 1e9;}finally{try{c&&c.delete();}catch{}}},M=new Map(),d=i=>i<1?1e9:M.has(i)?M.get(i):(M.set(i,ds(shapeBefore(i))),M.get(i)),thr=d(cache.length)+tol;for(let i=cache.length-1;i>=0;i--)if(ids[i]&&d(i+1)<=thr&&d(i)>thr)return ids[i];for(let i=cache.length-1;i>=0;i--){const c=cache[i];if(c&&c.tool&&ids[i]&&pdist(pt,c.tool)<tol)return ids[i];}return null;}
 function ringDraw(pts,bz){
   if(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+p[0]*q[1]-q[0]*p[1];},0)<0){const n=pts.length,P2=[pts[0]],B2=[];for(let i=n-1;i>=1;i--)P2.push(pts[i]);for(let i=n-1;i>=0;i--)B2.push(-(bz[i]||0));pts=P2;bz=B2;}
@@ -124,7 +125,7 @@ function airDraw(s){
   return bezChain(pen,lr,un([lr[1][0]-lr[0][0],lr[1][1]-lr[0][1]]),[0,1]).close();
 }
 function splineDraw(s,pre){
-  const raw=(s.pts||[]).map(p=>[+p[0],+p[1]]),t=Math.max(1e-9,...raw.map(p=>Math.hypot(...p)))*1e-7,P=raw.filter((p,i)=>i===0||Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])>t);P.length>1&&Math.hypot(P[0][0]-P[P.length-1][0],P[0][1]-P[P.length-1][1])<=t&&P.pop();
+  const raw=(s.pts||[]).map(p=>[+p[0],+p[1]]),t=maxOf([1e-9,...raw.map(p=>Math.hypot(...p))])*1e-7,P=raw.filter((p,i)=>i===0||Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])>t);P.length>1&&Math.hypot(P[0][0]-P[P.length-1][0],P[0][1]-P[P.length-1][1])<=t&&P.pop();
   if(P.length<3)throw new ProfileError('spline needs 3+ distinct points');if(P.some(p=>!isFinite(p[0])||!isFinite(p[1])))throw new ProfileError('spline has a point that is not a number');
   const n=P.length,T=P.map((p,i)=>{const a=P[(i+n-1)%n],b=P[(i+1)%n];return[(b[0]-a[0])/2,(b[1]-a[1])/2];}),C=P.map((p,i)=>{const q=P[(i+1)%n];return[p,[p[0]+T[i][0]/3,p[1]+T[i][1]/3],[q[0]-T[(i+1)%n][0]/3,q[1]-T[(i+1)%n][1]/3],q];}),smp=[];
   for(const[a,b,c,d]of C)for(let k=0;k<12;k++){const u=k/12,v=1-u;smp.push([v*v*v*a[0]+3*v*v*u*b[0]+3*v*u*u*c[0]+u*u*u*d[0],v*v*v*a[1]+3*v*v*u*b[1]+3*v*u*u*c[1]+u*u*u*d[1]]);}
@@ -140,7 +141,7 @@ function drawShape2(s0,pre=''){
   else if(k==='slot'){const W=pos(s.h??s.d,'slot width');d=R.drawRoundedRectangle(Math.max(s.l??0,0)+W,W,W/2-1e-6);}
   else if(k==='path'){d=pathPolys(s,UNITS).map(poly=>poly.map(r=>ringDraw(r.pts,r.bz)).reduce((a,h)=>a.cut(h))).reduce((a,b)=>a.fuse(b));}
   else if(k==='airfoil'){d=airDraw({...s,chord:pos(s.chord??M(40),'chord')});}
-  else if(k==='text'){d=R.drawText(String(s.text||'A'),{fontSize:pos(s.h??M(10),'text size')});}
+  else if(k==='text'){if(!R.getFont())throw new Error('the text font did not load, so text cannot be built; reload the page');d=R.drawText(String(s.text||'A'),{fontSize:pos(s.h??M(10),'text size')});}
   else if(k==='ellipse'){const rx=pos(s.rx??s.ry,'radius x'),ry=pos(s.ry??s.rx,'radius y');d=Math.abs(rx-ry)<=1e-9*Math.max(rx,ry)?R.drawCircle(rx):R.drawEllipse(Math.max(rx,ry),Math.min(rx,ry));if(ry>rx+1e-9*rx)d=d.rotate(90,[0,0]);}
   else if(k==='spline'){d=splineDraw(s,pre);}
   else throw new Error('unknown 2D shape '+k);
@@ -173,10 +174,31 @@ function revolveTool(f,body){
   const y=cross(P.n,P.x),axis=(f.axis||'y')==='x'?P.x:y;
   return sk.revolve(axis,{origin:P.o,angle:f.angle??360});
 }
+function tubeBore(f){if(f.di!=null&&f.di!=='')return f.di;if(typeof f.id==='number')return f.id;if(typeof f.id==='string'&&/^-?\d*\.?\d+(e[+-]?\d+)?$/i.test(f.id.trim()))return +f.id;return null;}
+function tubeDims(f){
+  const od=+f.od,h=+f.h;
+  if(!(od>0))throw new Error('outer diameter must be above 0');
+  if(!(h>0))throw new Error('length must be above 0');
+  const bore=tubeBore(f),hasId=bore!=null,hasT=f.t!=null&&f.t!=='';
+  let mode=f.mode;
+  if(mode==null||mode===''){if(hasId&&hasT)throw new Error("set bore mode to 'id' or 'wall': inner diameter and wall thickness are both set");mode=hasT&&!hasId?'wall':'id';}
+  if(mode!=='id'&&mode!=='wall')throw new Error("bore mode must be 'id' or 'wall'");
+  if(mode==='wall'){const t=+f.t;if(!(t>0))throw new Error('wall thickness must be above 0');if(!(t<od/2))throw new Error('wall thickness '+fu(t)+' must be less than half the outer diameter ('+fu(od/2)+')');return{ro:od/2,ri:od/2-t,h};}
+  const id=+bore;if(!(id>0))throw new Error('inner diameter must be above 0');if(!(id<od))throw new Error('inner diameter '+fu(id)+' must be less than the outer diameter '+fu(od));return{ro:od/2,ri:id/2,h};
+}
+function tubeSolid(ri,ro,h,base,ax){
+  const x=nrm(Math.abs(ax[2])>0.9?cross(ax,[0,1,0]):cross(ax,[0,0,1]));
+  return R.draw([ri,0]).lineTo([ro,0]).lineTo([ro,h]).lineTo([ri,h]).close().sketchOnPlane(new R.Plane(base,x,cross(x,ax))).revolve(ax,{origin:base});
+}
+function tubeTool(f){
+  const{ri,ro,h}=tubeDims(f),ax=AX[f.axis||'Z']||AX.Z,c=[f.x||0,f.y||0,f.z||0];
+  return tubeSolid(ri,ro,h,f.center?c.map((v,i)=>v-ax[i]*h/2):c,ax);
+}
 function primTool(f){
   const t=f.type;
   if(t==='box'){const w=f.w??M(10),d=f.d??w,h=f.h??w;return R.makeBox([(f.x||0)-w/2,(f.y||0)-d/2,f.z||0],[(f.x||0)+w/2,(f.y||0)+d/2,(f.z||0)+h]);}
   if(t==='cylinder'){const ax=AX[f.axis||'Z']||AX.Z,h=f.h??M(10),c=[f.x||0,f.y||0,f.z||0];return R.makeCylinder(f.r??M(5),h,f.center?c.map((v,i)=>v-ax[i]*h/2):c,ax);}
+  if(t==='tube')return tubeTool(f);
   if(t==='sphere')return R.makeSphere(f.r??M(5)).translate(f.x||0,f.y||0,f.z||0);
   if(t==='cone')return coneSolid(f.r1??M(5),f.r2??0,f.h??M(10),[f.x||0,f.y||0,f.z||0],AX[f.axis||'Z']||AX.Z);
   if(t==='torus'){const c=[f.x||0,f.y||0,f.z||0];return R.drawCircle(f.r2??M(2)).translate(f.r1??M(10),0).sketchOnPlane(new R.Plane(c,[1,0,0],[0,-1,0])).revolve([0,0,1],{origin:c});}
@@ -189,8 +211,8 @@ export function coneSolid(r1,r2,h,c,ax){
 }
 function holeStd(f){const inch=HOLESTD_IN[f.std],t0=f.std&&f.std!=='custom'&&(inch||HOLESTD[f.std]);if(!t0)return f;const k=ucv(inch?'in':'mm'),t=t0.map(v=>v*k),fit=f.fit||'clearance';return{...f,d:fit==='tapped'?t[1]:t[0],cb_d:fit==='cbore'?t[2]:0,cb_h:fit==='cbore'?t[3]:0,cs_d:fit==='csink'?t[4]:0,cs_ang:fit==='csink'?(inch?82:90):f.cs_ang};}
 function holeTool(f0,body){
-  const f=holeStd(f0),P=planeFrom(f,body),d=f.d??M(5),thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth??M(10);
-  if(!thru&&body){const b=bboxOf(body),th=Math.max(...Array.from({length:8},(_,q)=>dot(sub(P.o,[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]),P.n)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
+  const f=holeStd(f0),P=planeFrom(f,body),d=f.d??M(5),thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth??M(10),cn=body?(b=>Array.from({length:8},(_,q)=>[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]))(bboxOf(body)):[],sd=s=>maxOf(cn.map(c=>s*dot(sub(P.o,c),P.n))),dn=cn.length&&sd(1)<=1e-9*sizeOf(body)&&sd(-1)>0?P.n.map(v=>-v):P.n;
+  if(!thru&&body){const th=maxOf(cn.map(c=>dot(sub(P.o,c),dn)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
   f.cb_d>0&&f.cb_h>0&&f.cb_d<=d&&NOTES.push({k:'cb_d',field:'cb_d',msg:'Counterbore Ø '+fu(f.cb_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*1.75,UNITS)),k:'cb_d',v:clean(d*1.75,UNITS)}]});f.cs_d>0&&f.cs_d<=d&&NOTES.push({k:'cs_d',field:'cs_d',msg:'Countersink Ø '+fu(f.cs_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*2,UNITS)),k:'cs_d',v:clean(d*2,UNITS)}]});
   let cbh=f.cb_h;
   if(body&&f.cb_d>d&&f.cb_h>0){const bb=body.boundingBox.bounds,T=Math.abs(P.n.reduce((t,v,i)=>t+v*(bb[1][i]-bb[0][i]),0));if(T>0&&f.cb_h>=T*0.999){cbh=T*0.75;TNOTE='the counterbore ('+f.cb_h.toFixed(3)+' deep) is not shallower than the plate ('+T.toFixed(3)+'), which would turn the hole into a plain Ø'+f.cb_d.toFixed(3)+' through hole. The counterbore depth was limited to '+cbh.toFixed(3)+' so the Ø'+d.toFixed(3)+' hole and the counterbore both stay; make the plate thicker or the counterbore shallower.';}}
@@ -198,8 +220,8 @@ function holeTool(f0,body){
   let tool=null;
   for(const p of pts){
     const c=[0,1,2].map(i=>P.o[i]+P.x[i]*p[0]+y[i]*p[1]);
-    const down=P.n.map(v=>-v),eps=0.01*d;
-    const top=c.map((v,i)=>v+P.n[i]*eps);
+    const down=dn.map(v=>-v),eps=0.01*d;
+    const top=c.map((v,i)=>v+dn[i]*eps);
     let t=R.makeCylinder(d/2,depth+eps,top,down);
     if(f.cb_d>d&&cbh>0)t=t.fuse(R.makeCylinder(f.cb_d/2,cbh+eps,top,down));
     if(f.cs_d>d){const ta=Math.tan((f.cs_ang||90)*Math.PI/360),hh=(f.cs_d-d)/2/ta;t=t.fuse(coneSolid(f.cs_d/2+eps*ta,d/2,hh+eps,top,down));}
@@ -217,10 +239,24 @@ function pathWire(pts,rad,nk){
     E.push(R.makeLine(cur,a));cur=a;}
   return R.assembleWire(E);
 }
+const SWEEP_OPT={forceProfileSpineOthogonality:true,transitionMode:'round'};
+function sweepSketch(sk,spine){
+  if(sk&&sk.wire)return R.genericSweep(sk.wire,spine,SWEEP_OPT);
+  const parts=sk&&sk.sketches;
+  if(!parts||!parts.length)throw new Error('sweep profile has no outline');
+  if(parts[0]&&parts[0].wire&&parts.every(p=>p.wire)){
+    let solid=R.genericSweep(parts[0].wire,spine,SWEEP_OPT);
+    for(let i=1;i<parts.length;i++)solid=solid.cut(R.genericSweep(parts[i].wire,spine,SWEEP_OPT));
+    return solid;
+  }
+  let solid=null;
+  for(const p of parts){const s=sweepSketch(p,spine);solid=solid?solid.fuse(s):s;}
+  return solid;
+}
 function sweepTool(f,body){
   const sp=pathWire(f.path||[[0,0,0],[0,0,M(50)]],f.bend||0,'bend'),o=V(sp.startPoint),t=V(sp.tangentAt(1e-6));
   const prof=profileDrawing(f.shapes&&f.shapes.length?f.shapes:[{k:'circle',r:M(3)}]).sketchOnPlane(frameAt(o,t));
-  return R.genericSweep(prof.wire,sp,{forceProfileSpineOthogonality:true,transitionMode:'round'});
+  return sweepSketch(prof,sp);
 }
 function loftTool(f,body){
   const P=planeFrom(f,body),secs=f.sections&&f.sections.length>1?f.sections:[{offset:0,shapes:[{k:'rect',w:M(40),h:M(40)}]},{offset:M(30),shapes:[{k:'circle',r:M(12)}]}];
@@ -306,7 +342,7 @@ function knifeTool(f){
   return t.translate(f.x||0,f.y||0,f.z||0);
 }
 const nSol=b=>{const L=solidsOf(b),n=L.length;L.forEach(del);return n;},smemo=new WeakMap(),nsol=b=>{let v=smemo.get(b);v===undefined&&smemo.set(b,v=nSol(b));return v;},volOf=b=>R.measureShapeVolumeProperties(b).volume,vmemo=new WeakMap(),vol=b=>{let v=vmemo.get(b);v===undefined&&vmemo.set(b,v=Math.abs(volOf(b)));return v;},cap=t=>t[0].toUpperCase()+t.slice(1);
-function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const tn=threadNums(f),p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=Math.min(...pr),hi2=Math.max(...pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
+function threadCut(body,f){if(!body)throw new Error('a thread needs a body');const tn=threadNums(f),p=tn.p,d=tn.d,L=f.length??15,ext=f.kind!=='internal',c=[f.x||0,f.y||0,f.z||0],ax=AX[f.axis||'Z']||AX.Z,b=bboxOf(body),pr=[0,1,2,3,4,5,6,7].map(q=>dot([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]],ax)),lo=minOf(pr),hi2=maxOf(pr),t0=dot(c,ax),a0=Math.max(t0,lo),a1=Math.min(t0+L,hi2);if(a1<=a0)throw new Error('the thread does not reach the part');
   if(p<0.5&&!f.up){const u=25.4,g={...f,up:1,std:'custom',pitch:p*u,d:d*u,length:L*u,x:c[0]*u,y:c[1]*u,z:c[2]*u};delete g.threadId;const r=threadCut(body.clone().scale(u,[0,0,0]),g);return r.scale(1/u,[0,0,0]);}
   const rate=(ext?0.3197*2*Math.PI*(d/2-0.2373*p):0.2369*2*Math.PI*(d/2-0.5413*p+0.2062*p))*p,v0=volOf(body),S=a1-a0+2*p,at=t=>c.map((v,i)=>v+ax[i]*(t-t0)),REV={X:'-X',Y:'-Y',Z:'-Z','+X':'-X','+Y':'-Y','+Z':'-Z','-X':'X','-Y':'Y','-Z':'Z'},seg=(t,h,dir=1)=>threadTool({...f,axis:dir>0?f.axis||'Z':REV[f.axis||'Z'],...Object.fromEntries(['x','y','z'].map((q,i)=>[q,at(t)[i]])),length:h-2*p}),want=rate*(Math.min(hi2,a1+p)-Math.max(lo,a0-p)),err=r=>Math.abs((v0-volOf(r))/want-1);
   for(const dir of[1,-1])for(const a of[0,37])try{const t=seg(dir>0?a0:a1,S,dir),r=body.cut(a?t.rotate(a,at(a0),ax):t);if(err(r)<0.02)return r;}catch{}
@@ -336,7 +372,7 @@ function patternTools(f,tools){
 const HINT={fillet:'the radius is probably too big for these edges; try a smaller radius or fewer edges',chamfer:'the distance is probably too big for these edges',shell:'the wall is probably thicker than a fillet or feature allows; thin the wall or enlarge the fillets',extrude:'check that the profile is closed, has area and does not cross itself',revolve:'the profile must not cross the axis',hole:'check the hole lies on the part',pattern:'a copy may fall outside the part',mirror:'the mirror may not touch the part'};
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
 const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
-const TOOLMAKERS={box:primTool,cylinder:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
+const TOOLMAKERS={box:primTool,cylinder:primTool,tube:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
 const KX={R,planeFrom,selectFaces,selectEdges,faceList,edgeList,pdist,sizeOf,bboxOf,volOf,vol,upTo,AXV,M,fu,get NOTES(){return NOTES;},get UNITS(){return UNITS;}};
 let cache=[];
 function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<Math.min(i,C.length);j++){keep.add(C[j].shape);keep.add(C[j].tool);}for(let j=i;j<C.length;j++)for(const o of[C[j].shape,C[j].tool])if(o&&!keep.has(o)&&!gone.has(o)){gone.add(o);try{o.delete();}catch{}}C.length=Math.min(C.length,i);}
@@ -348,7 +384,7 @@ export async function build(doc,opt={}){
   let body=null,prevKey='',reused=0,sk=0,i0=0,fk=null;
   datReset();
   const tools={},nz=Math.min(feats.length,(doc.features||[]).slice(0,Math.max(0,doc.freeze|0)).filter(f=>!f.suppressed).length);
-  if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?warnings.push(...e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
+  if(nz>0&&upto>=nz){try{fk=JSON.stringify([UNITS,doc.material,feats.slice(0,nz).map(f=>res(f,scope))]);}catch{fk=null;}const c=cache[nz-1];if(fk&&cache.fk===fk&&c&&c.shape&&!c.lazy&&cache.length>=nz){for(let j=0;j<nz;j++){const e=cache[j];e.tool&&(tools[feats[j].id]=e.tool);e.err&&errors.push(e.err);Array.isArray(e.warn)?pushAll(warnings,e.warn):e.warn&&warnings.push(e.warn);}body=c.shape;prevKey=c.key;reused=sk=i0=nz;}}
   cache.fk=null;
   for(let j=0;j<i0;j++)cache[j].dat&&datPut(feats[j].id,cache[j].dat);
   for(let i=i0;i<Math.min(upto,feats.length);i++){
@@ -373,7 +409,7 @@ export async function build(doc,opt={}){
     }
     try{f=res(raw,scope);key=prevKey+'|'+JSON.stringify(f)+(raw.type==='import'?raw.id:raw.type==='edgeprofile'?doc.material:'');}catch(e){perr={id:raw.id,name:raw.name,type:raw.type,msg:e.message};errors.push(perr);key=prevKey+'|ERR'+i+JSON.stringify(raw);f=null;}
     const c=cache[i];
-    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.dat&&datPut(raw.id,c.dat);c.err&&errors.push(c.err);c.warn&&warnings.push(...c.warn);prevKey=key;reused++;continue;}
+    if(c&&c.key===key&&!c.lazy){body=c.shape;if(c.tool)tools[raw.id]=c.tool;c.dat&&datPut(raw.id,c.dat);c.err&&errors.push(c.err);c.warn&&pushAll(warnings,c.warn);prevKey=key;reused++;continue;}
     truncate(i,cache);
     let next=body,tool=null,dat=null,ferr=perr;const fw=[],W=(msg,x)=>fw.push({id:raw.id,name:raw.name,type:raw.type,msg,...x});NOTES=[];
     if(f)try{
@@ -381,10 +417,11 @@ export async function build(doc,opt={}){
       if(TOOLMAKERS[f.type]){if(!body&&(f.type==='hole'||f.type!=='thread'&&['cut','intersect'].includes(f.op)))throw new Error(f.type+' needs a body to cut into; add or unsuppress a solid before it');tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);if(PROF.has(f.type)&&!(Math.abs(volOf(tool))>1e-12))throw new Error('the profile has no area, so '+f.type+' made nothing; check it is closed and does not cross itself');next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
       else if(f.type==='fillet'||f.type==='chamfer'){
         if(!body)throw new Error(f.type+' needs a body');
-        const es=selectEdges(body,f.edges);if(!es.length)throw new Error('no edges matched');
-        const set=new Set(es.map(q=>q.e.hashCode)),fil=f.type==='fillet',r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
-        const cs=!fil&&(f.d2||f.angle)?chamferSides(body,es,f):null;
-        next=upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
+        const fil=f.type==='fillet',none=f.edges&&f.edges.by==='pick'&&!(f.edges.pts||[]).length,es=none?[]:selectEdges(body,f.edges);if(!es.length&&!none)throw new Error('no edges matched');
+        if(none)W('No edges picked yet, so nothing is '+(fil?'rounded':'beveled')+'. Click edges in the view.');
+        const set=new Set(es.map(q=>q.e.hashCode)),r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
+        const cs=!fil&&(f.d2||f.angle)&&!none?chamferSides(body,es,f):null;
+        next=none?body:upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
       }
       else if(f.type==='edgeprofile'){
         if(!body)throw new Error('edgeprofile needs a body');
@@ -424,7 +461,7 @@ export async function build(doc,opt={}){
       if(body&&next&&next!==body&&f.type!=='combine'){const n0=nsol(body),n1=nsol(next);n1>n0&&W(cap(f.type)+" '"+(f.name||f.id)+"' made "+(n1-n0>1?(n1-n0)+' separate bodies':'a separate body')+(f.op==='new'?' (New body)':(f.op==='cut'||f.type==='hole'?': the cut split the part':': it does not touch the part'))+', so the part now has '+n1+' bodies. '+(f.op==='cut'||f.type==='hole'?'Check the cut.':'Make it touch the part, or add a Combine bodies feature to merge, subtract or intersect them.'),{bodies:n1});if(f.op==='new'&&n1===n0+nsol(tool)){const ov=vol(body.intersect(tool));ov>1e-7*Math.max(vol(body),1e-12)&&W(cap(f.type)+" '"+(f.name||f.id)+"' (New body) overlaps an existing body by "+(+ov.toPrecision(3))+' '+UNITS+'³; mass and volume count the overlap twice. Use Combine bodies to merge or subtract.',{bodies:n1});}}
       if(body&&next!==body&&TOOLMAKERS[f.type]&&f.type!=='thread'&&(f.op||'add')!=='intersect'){const v0=vol(body),v1=vol(next);if(Math.abs(v1-v0)<=1e-7*Math.max(v0,1e-12)){const cut=f.type==='hole'||f.op==='cut';W(cap(f.type)+" '"+(f.name||f.id)+"' changed nothing: "+(cut?'it does not touch the part':'it lies entirely inside existing material')+'; check offset/plane.');}}
     }catch(e){ferr={id:raw.id,name:raw.name,type:raw.type,msg:friendly(e,f)};errors.push(ferr);next=body;tool=null;}
-    for(const q of NOTES)W(cap(raw.type)+" '"+(raw.name||raw.id)+"': "+q.msg,{note:q.msg,field:q.field,...(q.v!=null?{limit:q.v}:{}),fix:q.fix});NOTES=[];warnings.push(...fw);
+    for(const q of NOTES)W(cap(raw.type)+" '"+(raw.name||raw.id)+"': "+q.msg,{note:q.msg,field:q.field,...(q.v!=null?{limit:q.v}:{}),fix:q.fix});NOTES=[];pushAll(warnings,fw);
     if(tool)tools[raw.id]=tool;
     cache[i]={key,shape:next,tool,err:ferr,warn:fw,dat};
     body=next;prevKey=key;
@@ -455,4 +492,4 @@ export function exportBody(body,fmt,units){
 function cacheRef(){return cache;}
 export function shapeBefore(i){const c=i>0&&cache[i-1];if(!c)return null;if(c.shape||!c.lazy)return c.shape;let s=i-1;while(s>0&&cache[s-1]&&cache[s-1].lazy)s--;const base=s>0&&cache[s-1].shape;if(!base)return null;try{c.shape=base.cut(R.makeCompound(cache.slice(s,i).map(e=>e.tool.clone())));c.lazy=false;}catch{return null;}return c.shape;}
 export function edgePolylines(shape,sel,isFace){const out=[];const list=isFace?selectFaces(shape,sel).flatMap(q=>q.f.outerWire().edges):selectEdges(shape,sel).map(q=>q.e);for(const e of list){const p=[];for(let k=0;k<=24;k++)p.push(V(e.pointAt(k/24)));out.push(p);}return out;}
-export async function init(oc){R.setOC(oc);return true;}
+export async function init(oc){R.setOC(oc);const u=new URL('./vendor/fonts/archivo-regular.otf',import.meta.url);await(u.protocol==='file:'?import('node:fs').then(m=>m.promises.readFile(u)).then(x=>x.buffer.slice(x.byteOffset,x.byteOffset+x.length)):fetch(u).then(r=>r.arrayBuffer())).then(x=>R.loadFont(x)).catch(()=>null);return true;}

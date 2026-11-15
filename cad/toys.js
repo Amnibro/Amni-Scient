@@ -1,5 +1,6 @@
 import {GEO} from './creature.js';
 import {KIT,toMesh,glb} from './garden.js';
+import {pushAll} from './minmax.js';
 const {G0,sph,add,mul,sub,nrm,crs,rotA}=GEO,{U,R3,tube,rbox,blade,flw,slab,orient,TAU}=KIT,Y=(x,y,z)=>[x,z,-y];
 const xf=(g,v0,f)=>{for(let v=v0;v<g.p.length/3;v++){const q=f([g.p[3*v],g.p[3*v+1],g.p[3*v+2]]);g.p[3*v]=q[0];g.p[3*v+1]=q[1];g.p[3*v+2]=q[2];}};
 const turn=(g,v0,ax,a,pv)=>xf(g,v0,p=>add(pv,rotA(sub(p,pv),ax,a))),flip=(g,j0)=>{for(let t=j0;t<g.i.length;t+=3){const x=g.i[t+1];g.i[t+1]=g.i[t+2];g.i[t+2]=x;}};
@@ -8,7 +9,7 @@ const ball=(g,c,r,lv,uv,res=[[2,5],[3,7],[5,12]],sq=[1,1,1])=>sph(g,res[lv][0],r
 const disc=(g,c,nn,r,lv,uv,th=.12,ns=[5,8,14])=>{const u=nrm(crs(Math.abs(nn[2])<.9?[0,0,1]:[1,0,0],nn)),v=crs(nn,u);sph(g,2,R3(lv,ns),180,d=>add(c,add(add(mul(u,d[0]*r),mul(v,d[1]*r)),mul(nn,d[2]*r*th))),()=>U(uv));};
 const cyl=(g,a,b,r,lv,uv,s=[5,8,14])=>tube(g,[a,b],r,R3(lv,s),uv);
 const ring=(g,c,R,r,lv,uv,m=[7,10,16],s=[3,4,5],ax='z')=>{const n=R3(lv,m);tube(g,[...Array(n+1)].map((_,i)=>{const a=i*TAU/n,u=Math.cos(a)*R,v=Math.sin(a)*R;return add(c,ax==='z'?[u,v,0]:ax==='y'?[u,0,v]:[0,u,v]);}),r,R3(lv,s),uv);};
-const grid=(g,nu,nv,f,uv)=>{const b=g.p.length/3;for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){g.p.push(...f(i/nu,j/nv));g.t.push(...U(typeof uv==='function'?uv(i/nu,j/nv):uv));}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const a=b+j*(nu+1)+i;g.i.push(a,a+nu+1,a+nu+2,a,a+nu+2,a+1);}};
+const grid=(g,nu,nv,f,uv)=>{const b=g.p.length/3;for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){pushAll(g.p,f(i/nu,j/nv));pushAll(g.t,U(typeof uv==='function'?uv(i/nu,j/nv):uv));}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const a=b+j*(nu+1)+i;g.i.push(a,a+nu+1,a+nu+2,a,a+nu+2,a+1);}};
 const arc=(a,b,h,n)=>[...Array(n+1)].map((_,i)=>{const t=i/n;return add(add(mul(a,1-t),mul(b,t)),[0,0,h*Math.sin(Math.PI*t)]);});
 const T={
  ball:(g,lv)=>{const r=.14,t0=.35,nu=R3(lv,[2,3,4]),nv=R3(lv,[4,7,12]);['red','yellow','blue','green','orange'].forEach((c,k)=>grid(g,nu,nv,(u,v)=>{const ph=(k+u)*TAU/5,th=t0+(Math.PI-2*t0)*v;return[r*Math.sin(th)*Math.cos(ph),r*Math.sin(th)*Math.sin(ph),r+r*Math.cos(th)];},c));
@@ -49,7 +50,7 @@ const T={
  slide:(g,lv)=>{const nu=R3(lv,[2,4,7]),nv=R3(lv,[4,7,12]),C=v=>[-.12+.47*v,0,.5*(1-v)**1.7+.035],sec=(u,v,o)=>{const c=C(v);return[c[0],-.11+.22*u,c[2]+.055*(2*u-1)**4-.02-o];};
   grid(g,nu,nv,(u,v)=>sec(u,v,0),'blue');const j0=g.i.length;grid(g,nu,nv,(u,v)=>sec(u,v,.02),'blue');flip(g,j0);if(lv>0)for(const u of[0,1])tube(g,[...Array(nv+1)].map((_,j)=>add(sec(u,j/nv,.01),[0,0,.0])),.016,R3(lv,[3,3,4]),'sky');
   for(const s of[1,-1])cyl(g,[-.27,s*.11,0],[-.2,s*.11,.53],.016,lv,'yellow',[3,4,7]);for(let k=0;k<R3(lv,[2,3,3]);k++){const z=.12+k*.13,x=-.27+.07*z/.53;cyl(g,[x,-.11,z],[x,.11,z],.01,lv,'yellow',[3,3,5]);}box(g,[-.17,0,.52],[.06,.125,.018],lv,'yellow',.35,BS);},
- kite:(g,lv)=>{const P={t:[0,0,.75],r:[.18,0,.56],b:[0,0,.3],l:[-.18,0,.56]},c=[0,0,.56],F=[['t','r','pink'],['r','b','yellow'],['b','l','teal'],['l','t','purple']];for(const[a,b,col]of F)for(const sg of[1,-1]){const j0=g.i.length,o=[0,sg*.003,0],v=g.p.length/3;for(const q of[c,P[a],P[b]]){g.p.push(...add(q,o));g.t.push(...U(col));}g.i.push(v,v+1,v+2);sg<0&&flip(g,j0);}
+ kite:(g,lv)=>{const P={t:[0,0,.75],r:[.18,0,.56],b:[0,0,.3],l:[-.18,0,.56]},c=[0,0,.56],F=[['t','r','pink'],['r','b','yellow'],['b','l','teal'],['l','t','purple']];for(const[a,b,col]of F)for(const sg of[1,-1]){const j0=g.i.length,o=[0,sg*.003,0],v=g.p.length/3;for(const q of[c,P[a],P[b]]){pushAll(g.p,add(q,o));pushAll(g.t,U(col));}g.i.push(v,v+1,v+2);sg<0&&flip(g,j0);}
   cyl(g,[0,-.008,.75],[0,-.008,.3],.005,lv,'white',[3,3,4]);cyl(g,[-.18,-.008,.56],[.18,-.008,.56],.005,lv,'white',[3,3,4]);},
  kite_tail:(g,lv)=>{const n=R3(lv,[4,7,12]),Q=[...Array(n+1)].map((_,i)=>{const t=i/n;return[.05*Math.sin(t*TAU*1.5),0,.3-.29*t];});tube(g,Q,.004,3,'white');for(let k=0;k<R3(lv,[1,2,3]);k++){const q=Q[Math.round((k+1)*n/(R3(lv,[1,2,3])+1))];for(const s of[1,-1])blade(g,q,nrm([s,0,.25]),[0,-s,0],.035,.02,Math.max(0,lv-1),k%2?'yellow':'pink','red',.1);}},
 };

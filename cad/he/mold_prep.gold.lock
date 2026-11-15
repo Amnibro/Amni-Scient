@@ -1056,25 +1056,152 @@ fn remesh(maxTri int) {
 	P.reserve(NP.len);
 	P.append(NP);
 }
-=== 09079230302ea88a
+=== -167c21afb0d19f56
+fn uf_find(i0 int) int {
+	var i = i0;
+	while (UF[i] as int) != i {
+		UF[i] = UF[UF[i] as int];
+		i = UF[i] as int;
+	}
+	i
+}
+=== 3ce88500f1df815a
+fn weld(n0 int, wl real) {
+	let np = P.len / 3;
+	zi(UF, np);
+	for i in np { UF[i] = i as i32; }
+	var nw = 0;
+	var t = 0;
+	while 3 * t < IDX.len {
+		for c in 3 {
+			let a = uf_find(RM[IDX[3*t+c] as int] as int);
+			let b = uf_find(RM[IDX[3*t+(c+1)%3] as int] as int);
+			if a != b && hypot3(P[3*a] - P[3*b], P[3*a+1] - P[3*b+1], P[3*a+2] - P[3*b+2]) < wl {
+				UF[max(a, b)] = min(a, b) as i32;
+				nw += 1;
+			}
+		}
+		t += 1;
+	}
+	if nw > 0 {
+		NID.clear();
+		NID.resize(np, -1);
+		P2.clear();
+		P2.reserve(3 * np);
+		for i in np {
+			let r = uf_find(i);
+			if NID[r] < 0 {
+				NID[r] = (P2.len / 3) as i32;
+				P2.push(P[3*r]);
+				P2.push(P[3*r+1]);
+				P2.push(P[3*r+2]);
+			}
+		}
+		for i in n0 {
+			RM[i] = NID[uf_find(RM[i] as int)];
+		}
+		P.clear();
+		P.reserve(P2.len);
+		P.append(P2);
+		P2.clear();
+	}
+}
+=== -7703a2f2cf212a12
+fn hpush(d real, t int) {
+	var i = HPD.len;
+	HPD.push(d);
+	HPT.push(t as i32);
+	while i > 0 {
+		let p = (i - 1) / 2;
+		if HPD[p] <= d { break; }
+		HPD[i] = HPD[p];
+		HPT[i] = HPT[p];
+		i = p;
+	}
+	HPD[i] = d;
+	HPT[i] = t as i32;
+}
+=== 46f8f4fb110a216b
+fn hpop() int {
+	let t = HPT[0] as int;
+	let d = HPD[HPD.len - 1];
+	let u = HPT[HPT.len - 1];
+	HPD.pop();
+	HPT.pop();
+	let n = HPD.len;
+	if n > 0 {
+		var i = 0;
+		loop {
+			var c = 2 * i + 1;
+			if c >= n { break; }
+			if c + 1 < n && HPD[c+1] < HPD[c] { c += 1; }
+			if HPD[c] >= d { break; }
+			HPD[i] = HPD[c];
+			HPT[i] = HPT[c];
+			i = c;
+		}
+		HPD[i] = d;
+		HPT[i] = u;
+	}
+	t
+}
+=== 12753d6c7f74de78
+fn dj(nt int, mode int, same int) {
+	let I = inf();
+	for t in nt {
+		SD[t] = I;
+		SH[t] = I;
+	}
+	HPD.clear();
+	HPD.reserve(nt + (NB0[nt] as int));
+	HPT.clear();
+	HPT.reserve(nt + (NB0[nt] as int));
+	for t in nt {
+		let seed = if mode == 0 { COSC[t] > 0.7 } else { WW[t] > 0.5 };
+		if seed {
+			SD[t] = 0.0;
+			SH[t] = HH[t];
+			hpush(0.0, t);
+		}
+	}
+	while HPD.len > 0 {
+		let d0 = HPD[0];
+		let t = hpop();
+		if d0 > SD[t] { continue; }
+		let j0 = NB0[t] as int;
+		let j1 = NB0[t+1] as int;
+		for j in j0..j1 {
+			if same == 1 && NBS[j] == 0 { continue; }
+			let u = NBL[j] as int;
+			let d = d0 + hypot3(CX[3*u] - CX[3*t], CX[3*u+1] - CX[3*t+1], CX[3*u+2] - CX[3*t+2]);
+			if d < SD[u] {
+				SD[u] = d;
+				SH[u] = SH[t];
+				hpush(d, u);
+			}
+		}
+	}
+}
+=== 1d022f958468f265
 var R_MID bool = false;
-var R_SC real = 1.0;
-var R_DIAG real = 1.0;
+var R_DIAG real = 0.0;
 var R_EPS real = 0.0;
-var R_MAXTRI int = 0;
+var R_SC real = 1.0;
 var R_NF int = 0;
-var R_SHARE real = 1.0;
-var R_NV int = 0;
+var R_MAXTRI int = 0;
 var R_NT int = 0;
-var R_NCON int = 0;
-var R_VSCALE real = 1.0;
+var R_NV int = 0;
+var R_SHARE real = 0.5;
 var R_VCAD real = 0.0;
+var R_VSCALE real = 1.0;
+var R_NCON int = 0;
 var R_NNEG int = 0;
 var R_THIN real = 0.0;
 fn run_merge() {
 	R_MID = CFG[0] != 0.0;
-	R_SC = CFG[1];
-	let sc = R_SC;
+	let mid = R_MID;
+	let sc = CFG[1];
+	R_SC = sc;
 	let n0 = SRC.len / 3;
 	let m = IDX.len / 3;
 	let I = inf();
@@ -1094,9 +1221,12 @@ fn run_merge() {
 	P.reserve(3 * n0);
 	var sz = 1;
 	while sz < 2 * n0 + 16 { sz *= 2; }
-	zn(DK0, sz);
-	zn(DK1, sz);
-	zn(DK2, sz);
+	DK0.clear();
+	DK0.resize(sz, 0);
+	DK1.clear();
+	DK1.resize(sz, 0);
+	DK2.clear();
+	DK2.resize(sz, 0);
 	DVS.clear();
 	DVS.resize(sz, -1);
 	for i in n0 {
@@ -1106,28 +1236,28 @@ fn run_merge() {
 		let k0 = jround(x / tol);
 		let k1 = jround(y / tol);
 		let k2 = jround(z / tol);
-		let h = ((k0 as! u64) * 0x9E3779B97F4A7C15) ^ ((k1 as! u64) * 0xC2B2AE3D27D4EB4F) ^ ((k2 as! u64) * 0x165667B19E3779F9);
+		let h u64 = ((k0 as! u64) * 0x9E3779B97F4A7C15) ^ ((k1 as! u64) * 0xC2B2AE3D27D4EB4F) ^ ((k2 as! u64) * 0x165667B19E3779F9);
 		var s = ((h >> 32) as int) & (sz - 1);
-		var found = -1;
-		while DVS[s] >= 0 {
+		loop {
+			if DVS[s] < 0 {
+				DK0[s] = k0;
+				DK1[s] = k1;
+				DK2[s] = k2;
+				DVS[s] = (P.len / 3) as i32;
+				P.push(x);
+				P.push(y);
+				P.push(z);
+				RM[i] = DVS[s];
+				break;
+			}
 			if DK0[s] == k0 && DK1[s] == k1 && DK2[s] == k2 {
-				found = DVS[s] as int;
+				RM[i] = DVS[s];
 				break;
 			}
 			s = (s + 1) & (sz - 1);
 		}
-		if found < 0 {
-			found = P.len / 3;
-			DK0[s] = k0;
-			DK1[s] = k1;
-			DK2[s] = k2;
-			DVS[s] = found as i32;
-			P.push(x);
-			P.push(y);
-			P.push(z);
-		}
-		RM[i] = found as i32;
 	}
+	weld(n0, CFG[12]);
 	T.clear();
 	T.reserve(3 * m);
 	F.clear();
@@ -1142,9 +1272,13 @@ fn run_merge() {
 		T.push(a as i32);
 		T.push(b as i32);
 		T.push(c as i32);
-		var fv i32 = 0;
-		if CFG[11] != 0.0 { fv = TF0[t]; } else if R_MID { fv = 0; } else { fv = t as i32; }
-		F.push(fv);
+		if CFG[11] != 0.0 {
+			F.push(TF0[t]);
+		} else if mid {
+			F.push(0 as i32);
+		} else {
+			F.push(t as i32);
+		}
 	}
 	var sv = 0.0;
 	for t in T.len / 3 {
@@ -1153,7 +1287,7 @@ fn run_merge() {
 		let c = 3 * (T[3*t+2] as int);
 		sv += P[a] * (P[b+1] * P[c+2] - P[b+2] * P[c+1]) - P[a+1] * (P[b] * P[c+2] - P[b+2] * P[c]) + P[a+2] * (P[b] * P[c+1] - P[b+1] * P[c]);
 	}
-	if !R_MID && sv < 0.0 {
+	if !mid && sv < 0.0 {
 		for t in T.len / 3 {
 			let tmp = T[3*t+1];
 			T[3*t+1] = T[3*t+2];
@@ -1225,8 +1359,9 @@ fn run_sizes() {
 		}
 	}
 }
-=== -18cb87381329ee9b
+=== 2af61d49df214c3e
 fn run_thick() {
+	let mid = R_MID;
 	if CFG[6] != 0.0 {
 		ip_onp(1);
 		remesh(R_MAXTRI);
@@ -1235,13 +1370,9 @@ fn run_thick() {
 	let nt = T.len / 3;
 	R_NV = nv;
 	R_NT = nt;
-	let diag = R_DIAG;
-	let eps = R_EPS;
 	TI.clear();
-	TI.reserve(T.len);
 	TI.append(T);
 	PF.clear();
-	PF.reserve(P.len);
 	PF.append(P);
 	zr(AA, nt);
 	zr(HH, nt);
@@ -1251,30 +1382,29 @@ fn run_thick() {
 	WW.clear();
 	WW.resize(nt, 1.0);
 	for t in nt {
-		tri3(PF, TI[3*t], TI[3*t+1], TI[3*t+2]);
+		tri3(PF, TI[3*t] as int, TI[3*t+1] as int, TI[3*t+2] as int);
 		AA[t] = CQ[0];
 		NN[3*t] = CQ[1];
 		NN[3*t+1] = CQ[2];
 		NN[3*t+2] = CQ[3];
-		if R_MID {
+		if mid {
 			let ia = 3 * (TI[3*t] as int);
 			let ib = 3 * (TI[3*t+1] as int);
 			let ic = 3 * (TI[3*t+2] as int);
 			let cx = (PF[ia] + PF[ib] + PF[ic]) / 3.0;
 			let cy = (PF[ia+1] + PF[ib+1] + PF[ic+1]) / 3.0;
-			if CFG[10] != 0.0 { HH[t] = ip_hmid(cx, cy); } else { HH[t] = CFG[9]; }
+			HH[t] = if CFG[10] != 0.0 { ip_hmid(cx, cy) } else { CFG[9] };
 		}
 	}
-	if !R_MID {
+	var nf = 0;
+	if !mid {
 		ip_onp(0);
 		bvh_build(PF, TI, nt);
 		zr(RAP, nt);
-		var nf = 0;
 		for x in F {
 			let f = x as int;
 			if f + 1 > nf { nf = f + 1; }
 		}
-		R_NF = nf;
 		zr(FA, nf);
 		zr(FB, nf);
 		for t in nt {
@@ -1284,7 +1414,7 @@ fn run_thick() {
 			let nx = NN[3*t];
 			let ny = NN[3*t+1];
 			let nz = NN[3*t+2];
-			ball_of(PF, (PF[a] + PF[b] + PF[c]) / 3.0, (PF[a+1] + PF[b+1] + PF[c+1]) / 3.0, (PF[a+2] + PF[b+2] + PF[c+2]) / 3.0, nx, ny, nz, t, diag, eps);
+			ball_of(PF, (PF[a] + PF[b] + PF[c]) / 3.0, (PF[a+1] + PF[b+1] + PF[c+1]) / 3.0, (PF[a+2] + PF[b+2] + PF[c+2]) / 3.0, nx, ny, nz, t, R_DIAG, R_EPS);
 			HH[t] = 2.0 * BALL[0];
 			DRAY[t] = BALL[1];
 			COSC[t] = BALL[3];
@@ -1294,11 +1424,74 @@ fn run_thick() {
 			FA[f] += AA[t] * (if BALL[3] > 0.7 { 1.0 } else { 0.0 });
 			FB[f] += AA[t];
 		}
+	}
+	zr(CX, 3 * nt);
+	for t in nt {
+		for c in 3 {
+			let v = TI[3*t+c] as int;
+			for k in 3 { CX[3*t+k] += PF[3*v+k] / 3.0; }
+		}
+	}
+	et_reset(3 * nt);
+	ETR.clear();
+	ETR.reserve(3 * nt);
+	PR.clear();
+	PR.reserve(9 * nt);
+	zi(NB0, nt + 1);
+	for t in nt {
+		for c in 3 {
+			let a = TI[3*t+c] as int;
+			let b = TI[3*t+(c+1)%3] as int;
+			let n0 = NE;
+			let l = et_add(ekey(a, b));
+			if NE != n0 {
+				ETR.push(t as i32);
+			} else {
+				let o = ETR[l] as int;
+				PR.push(o as i32);
+				PR.push(t as i32);
+				PR.push(if F[o] == F[t] { 1 as i32 } else { 0 as i32 });
+				NB0[o+1] += 1;
+				NB0[t+1] += 1;
+			}
+		}
+	}
+	for t in nt { NB0[t+1] += NB0[t]; }
+	let tot = NB0[nt] as int;
+	zi(NBL, tot);
+	zb(NBS, tot);
+	NBF.clear();
+	NBF.append(NB0[..nt]);
+	var r = 0;
+	while 3 * r < PR.len {
+		let o = PR[3*r] as int;
+		let u = PR[3*r+1] as int;
+		let s = PR[3*r+2];
+		NBS[NBF[o] as int] = s as u8;
+		NBS[NBF[u] as int] = s as u8;
+		NBL[NBF[o] as int] = u as i32;
+		NBF[o] += 1;
+		NBL[NBF[u] as int] = o as i32;
+		NBF[u] += 1;
+		r += 1;
+	}
+	zr(SD, nt);
+	zr(SH, nt);
+	if !mid {
+		dj(nt, 0, 1);
 		for t in nt {
 			let f = F[t] as int;
-			let skin = FA[f] >= 0.5 * FB[f];
+			let skin = FA[f] >= 0.5 * FB[f] || SD[t] - 0.6 * SH[t] <= sqrt(AA[t]);
 			WW[t] = if skin { 1.0 } else { 0.02 };
-			if skin && COSC[t] <= 0.7 && RAP[t] > 0.8 { HH[t] = DRAY[t]; }
+			if skin && COSC[t] <= 0.7 && RAP[t] > 0.8 {
+				HH[t] = jmin(DRAY[t], 1.25 * SH[t]);
+			}
+		}
+		dj(nt, 1, 0);
+		for t in nt {
+			if WW[t] < 0.5 && SH[t] < inf() {
+				HH[t] = jmin(SH[t], jmax(0.5 * SH[t], HH[t]));
+			}
 		}
 	}
 }

@@ -1,3 +1,4 @@
+import {maxOf} from './minmax.js';
 // Shop quoting rules layered on top of the Amni-CAD quote engine. Rules are plain JSON matched by fixed keys; nothing is evaluated as code.
 export const EXTRA=['quoting','brand','widget'];
 const num=v=>typeof v==='number'&&isFinite(v),r2=v=>Math.round(v*100)/100,arr=v=>v==null?null:Array.isArray(v)?v.map(String):[String(v)];
@@ -18,7 +19,7 @@ export function prepare(shop){const s={...shop};for(const k of EXTRA)delete s[k]
   if(P&&A(s.materials))s.materials=s.materials.map(m=>m.procs?{...m,procs:m.procs.filter(p=>P.includes(p))}:m);return s;}
 const KIND={'flat sheet':'sheet','bent sheet':'bent',solid:'solid'};
 // ctx: {kind, part, req:{finishes,expedite}, material}
-export function facts(q,ctx){const p=ctx.part||{},b=p.bbox||[0,0,0],sh=p.sheet;return{material:ctx.material,process:q.process,kind:KIND[ctx.kind]||ctx.kind,finish:(ctx.req&&ctx.req.finishes)||[],expedite:(ctx.req&&ctx.req.expedite)||'standard',size:Math.max(...b)/25.4,t:sh&&sh.t?sh.t/25.4:null};}
+export function facts(q,ctx){const p=ctx.part||{},b=p.bbox||[0,0,0],sh=p.sheet;return{material:ctx.material,process:q.process,kind:KIND[ctx.kind]||ctx.kind,finish:(ctx.req&&ctx.req.finishes)||[],expedite:(ctx.req&&ctx.req.expedite)||'standard',size:maxOf(b)/25.4,t:sh&&sh.t?sh.t/25.4:null};}
 export function match(w,f,qty){if(!w)return true;const inL=(k,v)=>{const L=arr(w[k]);return!L||(Array.isArray(v)?v.some(x=>L.includes(x)):L.includes(v));};
   return inL('material',f.material)&&inL('process',f.process)&&inL('kind',f.kind)&&inL('finish',f.finish)&&inL('expedite',f.expedite)&&!(num(w.qty_min)&&qty<w.qty_min)&&!(num(w.qty_max)&&qty>w.qty_max)&&!(num(w.size_min)&&f.size<w.size_min)&&!(num(w.size_max)&&f.size>w.size_max)&&!(num(w.t_min)&&(f.t==null||f.t<w.t_min-1e-6))&&!(num(w.t_max)&&(f.t==null||f.t>w.t_max+1e-6));}
 const rnd=(v,R)=>{if(!R||!(R.to>0))return r2(v);const k=v/R.to,f=R.mode==='down'?Math.floor:R.mode==='nearest'?Math.round:Math.ceil;return r2(f(k-1e-9*(R.mode==='up'||!R.mode?1:0))*R.to);};
