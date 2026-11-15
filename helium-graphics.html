@@ -217,17 +217,20 @@
 <section id="features">
 <h2>WHAT IT DRAWS</h2>
 <div class="card-grid hg-feat">
-<div class="card"><h3>Materials</h3><p>Everything in the glTF metal and roughness model, plus clear coat, sheen for cloth, glass with thickness and color, adjustable index of refraction, colored highlights, oil-slick color shift, brushed metal and glowing surfaces. Texture transforms and compressed vertex data too. Baseline and progressive JPEG load, alongside PNG and HDR.</p></div>
-<div class="card"><h3>Light</h3><p>Image-based lighting from any HDR photo, with accurate reflections at every roughness. Hundreds of small lights can share a scene, including sphere and tube lights that give soft, shaped highlights. The first 16 cast shadows and light up fog.</p></div>
-<div class="card"><h3>Sky and weather</h3><p>A physically modeled sky that responds to the sun's height, so you get blue noon and orange dusk from one setting. Clouds, haze, wet surfaces and snow build-up.</p></div>
-<div class="card"><h3>Shadow and depth</h3><p>Sun shadows that sharpen near the contact point and soften with distance, tiny contact shadows, ambient occlusion in the creases, screen-space reflections, and optional bounced light on graphics cards with ray tracing.</p></div>
-<div class="card"><h3>Surface detail</h3><p>Height-mapped surfaces that keep their depth at low angles, and animated water with waves, sun glitter, foam at the shoreline and a clear view of the shallows.</p></div>
-<div class="card"><h3>Finish</h3><p>Four film responses (Reinhard, ACES, AgX and Neutral), bloom, depth of field, motion blur, vignette, color fringe, film grain, sharpening, color grading tables, and fine dither so skies don't show bands.</p></div>
+<div class="card"><h3>Materials</h3><p>Everything in the glTF metal and roughness model, plus clear coat, sheen for cloth, glass with thickness and color, adjustable index of refraction, colored highlights, oil-slick color shift, brushed metal and glowing surfaces. Texture transforms and compressed vertex data too. Height-mapped surfaces that keep their depth at low angles, decals, and leaves that let light through. JPEG, PNG, HDR and KTX2 textures load.</p></div>
+<div class="card"><h3>Light</h3><p>Image-based lighting from any HDR photo, with accurate reflections at every roughness. Thousands of small lights can share a scene, including sphere, tube and rectangle lights that give soft, shaped highlights. The first 16 cast shadows and light up fog. Reflection probes give rooms their own reflections.</p></div>
+<div class="card"><h3>Sky, water and weather</h3><p>A physically modeled sky that responds to the sun's height, so you get blue noon, orange dusk and a moonlit night from one time-of-day setting. Volumetric clouds that shade the ground, sun shafts through fog, haze, puddles that fill low ground and ripple in the rain, falling rain and snow, and snow build-up. Animated water with swell, foam, sun glitter, an underwater view and caustics on the sea floor.</p></div>
+<div class="card"><h3>Shadow and depth</h3><p>Virtual shadow maps that keep sun shadows crisp near and far, shadows that sharpen near the contact point and soften with distance, tiny contact shadows, ambient occlusion in the creases, screen-space reflections, and optional bounced light on graphics cards with ray tracing.</p></div>
+<div class="card"><h3>Finish</h3><p>Four film responses (Reinhard, ACES, AgX and Neutral), bloom, depth of field, motion blur, vignette, color fringe, film grain, sharpening, color grading tables, and fine dither so skies don't show bands. Particle effects with trails, drops on the lens and a hand-held camera.</p></div>
+<div class="card"><h3>Skin and eyes</h3><p>Skin that lets light scatter beneath the surface, with pores, fine creases and color that varies millimeter to millimeter. Eyes with a domed cornea and catchlights from the lamps in the scene.</p></div>
+<div class="card"><h3>Hair</h3><p>30 ready hairstyles in 22 natural shades, plus dye colors: bobs, pixies, curls, afros, ponytails and pigtails. Strand hair simulated on the graphics card with fiber shading and self-shadowing, or lighter card hair for phones and crowds, with a tinted scalp under the part.</p></div>
+<div class="card"><h3>Clothing</h3><p>Knit drawn stitch by stitch: stockinette, rib, garter, seed and rope cable. Sweaters are cut, sized and draped onto the body. Rain soaks in where it lands, sheltered folds stay dry, water spreads through the yarn and dries over time, and wet knit darkens but keeps its shine.</p></div>
 </div>
 <div class="hg-row hg-2">
 <figure><img src="assets/helium-graphics/shore.webp" width="1200" height="620" loading="lazy" alt="Waves running up a sandy beach, with foam at the shoreline and blue-green water beyond."><figcaption>Water reaches the sand with foam and a clear view of the shallows.</figcaption></figure>
 <figure><img src="assets/helium-graphics/depth.webp" width="1000" height="460" loading="lazy" alt="Two brick floors side by side. The right one has bricks with real-looking depth and shadowed gaps."><figcaption>The same flat floor, without and with height mapping.</figcaption></figure>
 </div>
+<figure class="hg-wide"><img src="assets/helium-graphics/wet-knit.webp" width="1600" height="375" loading="lazy" alt="The same cable-knit sweater four times: dry, damp on the shoulders, soaked dark across the top, then drying out."><figcaption>One sweater in the rain. From left: dry, after 30 seconds of rain, after 3 minutes, then after 5 minutes of drying.</figcaption></figure>
 <figure class="hg-wide"><img src="assets/helium-graphics/lights.webp" width="1500" height="500" loading="lazy" alt="A grid of metal and rough spheres lit by 8, then 64, then 512 small colored lights."><figcaption>8, 64 and 512 lights on the same scene. At 1920 × 1080 on an RX 9060 XT, a character scene takes 2.5 ms per frame with its base lights, 3.2 ms with 8 more, 5.2 ms with 64 more and 16.1 ms with 512 more. Another program was using about half the graphics card during that run, so these are upper bounds.</figcaption></figure>
 </section>
 <section id="numbers">
@@ -316,11 +319,11 @@ fn main() {
 <div class="tbl"><table class="spec-table">
 <thead><tr><th>Area</th><th>Where it stands</th></tr></thead>
 <tbody>
-<tr><td><b>Compared with Unreal Engine 5</b></td><td>No Nanite-style geometry that scales to billions of triangles, no texture or mesh streaming for open worlds, and no fully dynamic bounced light at Lumen's quality.</td></tr>
+<tr><td><b>Compared with Unreal Engine 5</b></td><td>No Nanite-style geometry that scales to billions of triangles, no mesh streaming for open worlds, and no fully dynamic bounced light at Lumen's quality.</td></tr>
 <tr><td><b>Known differences from three.js</b></td><td>Sheen on cloth looks brighter on the chair and toy car. Clear coat base colors come out brighter on one test, and we haven't found the cause yet.</td></tr>
-<tr><td><b>Missing light features</b></td><td>No rectangular area lights (sphere and tube lights stand in), no caustics, no local reflection probes. Light falloff doesn't fully match three.js's physical mode.</td></tr>
-<tr><td><b>Missing scene features</b></td><td>No decals, no alpha to coverage for foliage edges, no rain or snow particles, no hardware instancing.</td></tr>
-<tr><td><b>Missing file formats</b></td><td>No BC or KTX2 compressed textures, no WebP textures, and no Draco or meshopt compressed meshes.</td></tr>
+<tr><td><b>Light</b></td><td>Light falloff doesn't fully match three.js's physical mode. Virtual shadow maps cover the sun only.</td></tr>
+<tr><td><b>Characters</b></td><td>Clothing is draped once onto a body standing still and doesn't follow it through an animation yet. Sweaters and other tops are the only garments so far.</td></tr>
+<tr><td><b>Missing file formats</b></td><td>No WebP textures, and no Draco or meshopt compressed meshes.</td></tr>
 <tr><td><b>In Amni-CAD</b></td><td>Animations play in the live view. To save one as a video, use Path traced or Rasterized. Models and textures need to fit in the browser's memory, and Helium tells you when they don't. Reflections and bounced light are simpler than in Path traced.</td></tr>
 </tbody></table></div>
 </section>
@@ -337,7 +340,7 @@ fn main() {
 <li>The mascot, water and brick scenes are our own.</li>
 </ul>
 </section>
-<p class="page-updated">Last updated <time datetime="2026-11-09">November 9, 2026</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-15">November 15, 2026</time></p>
 <aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
 <footer>
 <div class="footer-links">
