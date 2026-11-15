@@ -174,10 +174,31 @@ function revolveTool(f,body){
   const y=cross(P.n,P.x),axis=(f.axis||'y')==='x'?P.x:y;
   return sk.revolve(axis,{origin:P.o,angle:f.angle??360});
 }
+function tubeBore(f){if(f.di!=null&&f.di!=='')return f.di;if(typeof f.id==='number')return f.id;if(typeof f.id==='string'&&/^-?\d*\.?\d+(e[+-]?\d+)?$/i.test(f.id.trim()))return +f.id;return null;}
+function tubeDims(f){
+  const od=+f.od,h=+f.h;
+  if(!(od>0))throw new Error('outer diameter must be above 0');
+  if(!(h>0))throw new Error('length must be above 0');
+  const bore=tubeBore(f),hasId=bore!=null,hasT=f.t!=null&&f.t!=='';
+  let mode=f.mode;
+  if(mode==null||mode===''){if(hasId&&hasT)throw new Error("set bore mode to 'id' or 'wall': inner diameter and wall thickness are both set");mode=hasT&&!hasId?'wall':'id';}
+  if(mode!=='id'&&mode!=='wall')throw new Error("bore mode must be 'id' or 'wall'");
+  if(mode==='wall'){const t=+f.t;if(!(t>0))throw new Error('wall thickness must be above 0');if(!(t<od/2))throw new Error('wall thickness '+fu(t)+' must be less than half the outer diameter ('+fu(od/2)+')');return{ro:od/2,ri:od/2-t,h};}
+  const id=+bore;if(!(id>0))throw new Error('inner diameter must be above 0');if(!(id<od))throw new Error('inner diameter '+fu(id)+' must be less than the outer diameter '+fu(od));return{ro:od/2,ri:id/2,h};
+}
+function tubeSolid(ri,ro,h,base,ax){
+  const x=nrm(Math.abs(ax[2])>0.9?cross(ax,[0,1,0]):cross(ax,[0,0,1]));
+  return R.draw([ri,0]).lineTo([ro,0]).lineTo([ro,h]).lineTo([ri,h]).close().sketchOnPlane(new R.Plane(base,x,cross(x,ax))).revolve(ax,{origin:base});
+}
+function tubeTool(f){
+  const{ri,ro,h}=tubeDims(f),ax=AX[f.axis||'Z']||AX.Z,c=[f.x||0,f.y||0,f.z||0];
+  return tubeSolid(ri,ro,h,f.center?c.map((v,i)=>v-ax[i]*h/2):c,ax);
+}
 function primTool(f){
   const t=f.type;
   if(t==='box'){const w=f.w??M(10),d=f.d??w,h=f.h??w;return R.makeBox([(f.x||0)-w/2,(f.y||0)-d/2,f.z||0],[(f.x||0)+w/2,(f.y||0)+d/2,(f.z||0)+h]);}
   if(t==='cylinder'){const ax=AX[f.axis||'Z']||AX.Z,h=f.h??M(10),c=[f.x||0,f.y||0,f.z||0];return R.makeCylinder(f.r??M(5),h,f.center?c.map((v,i)=>v-ax[i]*h/2):c,ax);}
+  if(t==='tube')return tubeTool(f);
   if(t==='sphere')return R.makeSphere(f.r??M(5)).translate(f.x||0,f.y||0,f.z||0);
   if(t==='cone')return coneSolid(f.r1??M(5),f.r2??0,f.h??M(10),[f.x||0,f.y||0,f.z||0],AX[f.axis||'Z']||AX.Z);
   if(t==='torus'){const c=[f.x||0,f.y||0,f.z||0];return R.drawCircle(f.r2??M(2)).translate(f.r1??M(10),0).sketchOnPlane(new R.Plane(c,[1,0,0],[0,-1,0])).revolve([0,0,1],{origin:c});}
@@ -218,10 +239,24 @@ function pathWire(pts,rad,nk){
     E.push(R.makeLine(cur,a));cur=a;}
   return R.assembleWire(E);
 }
+const SWEEP_OPT={forceProfileSpineOthogonality:true,transitionMode:'round'};
+function sweepSketch(sk,spine){
+  if(sk&&sk.wire)return R.genericSweep(sk.wire,spine,SWEEP_OPT);
+  const parts=sk&&sk.sketches;
+  if(!parts||!parts.length)throw new Error('sweep profile has no outline');
+  if(parts[0]&&parts[0].wire&&parts.every(p=>p.wire)){
+    let solid=R.genericSweep(parts[0].wire,spine,SWEEP_OPT);
+    for(let i=1;i<parts.length;i++)solid=solid.cut(R.genericSweep(parts[i].wire,spine,SWEEP_OPT));
+    return solid;
+  }
+  let solid=null;
+  for(const p of parts){const s=sweepSketch(p,spine);solid=solid?solid.fuse(s):s;}
+  return solid;
+}
 function sweepTool(f,body){
   const sp=pathWire(f.path||[[0,0,0],[0,0,M(50)]],f.bend||0,'bend'),o=V(sp.startPoint),t=V(sp.tangentAt(1e-6));
   const prof=profileDrawing(f.shapes&&f.shapes.length?f.shapes:[{k:'circle',r:M(3)}]).sketchOnPlane(frameAt(o,t));
-  return R.genericSweep(prof.wire,sp,{forceProfileSpineOthogonality:true,transitionMode:'round'});
+  return sweepSketch(prof,sp);
 }
 function loftTool(f,body){
   const P=planeFrom(f,body),secs=f.sections&&f.sections.length>1?f.sections:[{offset:0,shapes:[{k:'rect',w:M(40),h:M(40)}]},{offset:M(30),shapes:[{k:'circle',r:M(12)}]}];
@@ -337,7 +372,7 @@ function patternTools(f,tools){
 const HINT={fillet:'the radius is probably too big for these edges; try a smaller radius or fewer edges',chamfer:'the distance is probably too big for these edges',shell:'the wall is probably thicker than a fillet or feature allows; thin the wall or enlarge the fillets',extrude:'check that the profile is closed, has area and does not cross itself',revolve:'the profile must not cross the axis',hole:'check the hole lies on the part',pattern:'a copy may fall outside the part',mirror:'the mirror may not touch the part'};
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
 const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
-const TOOLMAKERS={box:primTool,cylinder:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
+const TOOLMAKERS={box:primTool,cylinder:primTool,tube:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
 const KX={R,planeFrom,selectFaces,selectEdges,faceList,edgeList,pdist,sizeOf,bboxOf,volOf,vol,upTo,AXV,M,fu,get NOTES(){return NOTES;},get UNITS(){return UNITS;}};
 let cache=[];
 function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<Math.min(i,C.length);j++){keep.add(C[j].shape);keep.add(C[j].tool);}for(let j=i;j<C.length;j++)for(const o of[C[j].shape,C[j].tool])if(o&&!keep.has(o)&&!gone.has(o)){gone.add(o);try{o.delete();}catch{}}C.length=Math.min(C.length,i);}
