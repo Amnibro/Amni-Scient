@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-locks">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-locks">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=1ae04976d3">
+<link rel="stylesheet" href="/api-library/lib.css?v=88219036d3">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=1ae04976d3'; start({wasm: '/api-library/search.wasm?v=1ae04976d3'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=88219036d3'; start({wasm: '/api-library/search.wasm?v=88219036d3'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/locks</h1>
 <p class="lib-lede">Generates procedural hair lock meshes with forked strands, producing vertex, normal, tangent, and UV buffers for rendering around a hairstyle.</p>
-<p class="lib-meta"><code>import gfx.locks;</code> &middot; <code>locks::</code> &middot; 23 functions, 1 types, 14 constants &middot; <a href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.locks;</code> &middot; <code>locks::</code> &middot; 23 functions, 1 types, 14 constants &middot; <a href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#lock-settings">Lock Settings <span class="n">3</span></a></li>
 <li><a href="#lock-building">Lock Building <span class="n">2</span></a></li>
@@ -116,21 +116,21 @@
 <pre>struct Spec { sub int = 3, width real = 1.0, split real = 0.7, forks int = 3, spread real = 2.0, ragged real = 0.2, flat bool = true, inner bool = true, gap real = 0.0015, verts int = 110000 }</pre>
 <p>Configuration struct for lock generation, with strand subdivision, width, forking, spread, raggedness, flatness, inner layer, gap and vertex budget options.</p>
 <p class="note">A struct `Spec` with fields `sub` (int, curve samples per guide segment, default 3), `width` (real, card width scale, 1.0), `split` (real, share of the length where ends split, 0.7), `forks` (int, ends per lock, 3), `spread` (real, how far the ends fan apart, 2.0), `ragged` (real, how much end lengths vary, 0.2), `flat` (bool, lie flat on the head, true), `inner` (bool, add the inner layer, true),</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L9">hc/lib/gfx/locks.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L9">hc/lib/gfx/locks.amni:9</a>
 </article>
 <article class="sym" id="spec">
 <h3><a href="#spec">spec</a> <i>function</i></h3>
 <pre>spec() Spec</pre>
 <p>Returns a Spec populated with default lock generation settings.</p>
 <p class="note">A struct `Spec` with fields `sub` (int, curve samples per guide segment, default 3), `width` (real, card width scale, 1.0), `split` (real, share of the length where ends split, 0.7), `forks` (int, ends per lock, 3), `spread` (real, how far the ends fan apart, 2.0), `ragged` (real, how much end lengths vary, 0.2), `flat` (bool, lie flat on the head, true), `inner` (bool, add the inner layer, true),</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L10">hc/lib/gfx/locks.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L10">hc/lib/gfx/locks.amni:10</a>
 </article>
 <article class="sym" id="jitter">
 <h3><a href="#jitter">jitter</a> <i>constant</i></h3>
 <pre>var jitter real = 0.18</pre>
 <p>Amount of random per-lock brightness variation applied to vertex color in mesh, as a fraction around 1.0.</p>
 <p class="note">`mesh(m gltf::Material) int` adds the result as a scene asset: remember the vertex count of `gltf::verts` (its length over `gltf::VERTEX_FLOATS`) as v0 and `gltf::indices` length as i0; `shapes::vertex(position, normal, u, v, tangent with w 1)` for every vertex (all as float3 and f32) while tracking the box, then set that vertex's color red, green and blue (offsets `gltf::AT_COL`, plus 1 and plus </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L469">hc/lib/gfx/locks.amni:469</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L469">hc/lib/gfx/locks.amni:469</a>
 </article>
 <h2 id="lock-building">Lock Building <span class="n">2</span></h2>
 <article class="sym" id="build">
@@ -138,14 +138,14 @@
 <pre>build(data const byte[:], s Spec) int</pre>
 <p>Builds lock mesh buffers from hair data bytes and settings, returning the number of locks generated, or 0 if data is invalid.</p>
 <p class="note">`build(data, s Spec) int` (data a read-only byte slice) clears every result array and returns 0 when data is shorter than 16 bytes, then collects the guides: walk the segments in order; a guide starts at a segment whose first point is not the previous segment's first point plus 1, and its points are that first point and the next point of each of its consecutive segments. Budget: with n guides and </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L112">hc/lib/gfx/locks.amni:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L112">hc/lib/gfx/locks.amni:112</a>
 </article>
 <article class="sym" id="mesh">
 <h3><a href="#mesh">mesh</a> <i>function</i></h3>
 <pre>mesh(m gltf::Material) int</pre>
 <p>Copies the built lock buffers into the glTF vertex and index data, returning the result of finishing the mesh with the material.</p>
 <p class="note">`mesh(m gltf::Material) int` adds the result as a scene asset: remember the vertex count of `gltf::verts` (its length over `gltf::VERTEX_FLOATS`) as v0 and `gltf::indices` length as i0; `shapes::vertex(position, normal, u, v, tangent with w 1)` for every vertex (all as float3 and f32) while tracking the box, then set that vertex's color red, green and blue (offsets `gltf::AT_COL`, plus 1 and plus </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L470">hc/lib/gfx/locks.amni:470</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L470">hc/lib/gfx/locks.amni:470</a>
 </article>
 <h2 id="lock-textures">Lock Textures <span class="n">2</span></h2>
 <article class="sym" id="strands">
@@ -153,14 +153,14 @@
 <pre>strands(size int, seed int) int</pre>
 <p>Generates a procedural strand alpha texture of the given square size from a seed, returning its glTF texture index.</p>
 <p class="note">`strands(size int, seed int) int` makes the strand texture and returns its index from `gltf::add_texture_rgba(px, size, size, 10497)`: px is size times size RGBA bytes, row y at v = (y plus 0.5) over size (row 0 the root), starting with red, green and blue 224 and alpha 0. Draw the rounded value of 0.75 times size strands; strand j has x center `hash01(seed, 4 j)` times size, width 0.6 plus `hash0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L297">hc/lib/gfx/locks.amni:297</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L297">hc/lib/gfx/locks.amni:297</a>
 </article>
 <article class="sym" id="material">
 <h3><a href="#material">material</a> <i>function</i></h3>
 <pre>material(r f32, g f32, b f32, tex int) gltf::Material</pre>
 <p>Returns a double-sided alpha-masked hair material with the given color and texture index.</p>
 <p class="note">`material(r f32, g f32, b f32, tex int) gltf::Material` is `shapes::material` of (r, g, b), metallic 0, roughness 0.45, with `base_tex` a `gltf::TexRef` of tex and texture coordinate set 0, `alpha_mode` `gltf::ALPHA_MASK`, `alpha_cutoff` 0.35, `double_sided` true, `shading` 7, `shade_a` (0.4, 0.08, 0.25, 0.3) and `shade_c` (-0.08, 0.12, 120, 30).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L348">hc/lib/gfx/locks.amni:348</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L348">hc/lib/gfx/locks.amni:348</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (31)</summary>
 <article class="sym" id="P">
@@ -168,204 +168,204 @@
 <pre>var P f32[&gt;..]</pre>
 <p>Vertex position buffer, three floats per vertex, filled by build and read when creating the mesh.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L11">hc/lib/gfx/locks.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L11">hc/lib/gfx/locks.amni:11</a>
 </article>
 <article class="sym" id="N">
 <h3><a href="#N">N</a> <i>constant</i></h3>
 <pre>var N f32[&gt;..]</pre>
 <p>Vertex normal buffer, three floats per vertex, filled by build and consumed by mesh.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L12">hc/lib/gfx/locks.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L12">hc/lib/gfx/locks.amni:12</a>
 </article>
 <article class="sym" id="T">
 <h3><a href="#T">T</a> <i>constant</i></h3>
 <pre>var T f32[&gt;..]</pre>
 <p>Vertex tangent buffer, three floats per vertex, filled by build and consumed by mesh.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L13">hc/lib/gfx/locks.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L13">hc/lib/gfx/locks.amni:13</a>
 </article>
 <article class="sym" id="UV">
 <h3><a href="#UV">UV</a> <i>constant</i></h3>
 <pre>var UV f32[&gt;..]</pre>
 <p>Texture coordinate buffer, two floats per vertex, filled by build and consumed by mesh.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L14">hc/lib/gfx/locks.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L14">hc/lib/gfx/locks.amni:14</a>
 </article>
 <article class="sym" id="I">
 <h3><a href="#I">I</a> <i>constant</i></h3>
 <pre>var I u32[&gt;..]</pre>
 <p>Triangle index buffer for the lock mesh, filled by build and copied by mesh.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L15">hc/lib/gfx/locks.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L15">hc/lib/gfx/locks.amni:15</a>
 </article>
 <article class="sym" id="row_v">
 <h3><a href="#row_v">row_v</a> <i>constant</i></h3>
 <pre>var row_v int[&gt;..]</pre>
 <p>Per-row index of the first vertex of each emitted strip row.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L16">hc/lib/gfx/locks.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L16">hc/lib/gfx/locks.amni:16</a>
 </article>
 <article class="sym" id="row_lock">
 <h3><a href="#row_lock">row_lock</a> <i>constant</i></h3>
 <pre>var row_lock int[&gt;..]</pre>
 <p>Per-row lock number recording which lock each emitted row belongs to.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L17">hc/lib/gfx/locks.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L17">hc/lib/gfx/locks.amni:17</a>
 </article>
 <article class="sym" id="row_fork">
 <h3><a href="#row_fork">row_fork</a> <i>constant</i></h3>
 <pre>var row_fork int[&gt;..]</pre>
 <p>Per-row fork number, with -1 for rows on the main lock body.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L18">hc/lib/gfx/locks.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L18">hc/lib/gfx/locks.amni:18</a>
 </article>
 <article class="sym" id="row_layer">
 <h3><a href="#row_layer">row_layer</a> <i>constant</i></h3>
 <pre>var row_layer int[&gt;..]</pre>
 <p>Per-row layer number, where 0 is the outer layer and 1 is the inner layer.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L19">hc/lib/gfx/locks.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L19">hc/lib/gfx/locks.amni:19</a>
 </article>
 <article class="sym" id="row_guide">
 <h3><a href="#row_guide">row_guide</a> <i>constant</i></h3>
 <pre>var row_guide int[&gt;..]</pre>
 <p>Per-row source guide point index, or -1 for interpolated rows.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L20">hc/lib/gfx/locks.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L20">hc/lib/gfx/locks.amni:20</a>
 </article>
 <article class="sym" id="split_row">
 <h3><a href="#split_row">split_row</a> <i>constant</i></h3>
 <pre>var split_row int[&gt;..]</pre>
 <p>Row indices where each lock splits into forks, with -1 when forking is disabled.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L21">hc/lib/gfx/locks.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L21">hc/lib/gfx/locks.amni:21</a>
 </article>
 <article class="sym" id="fork_row">
 <h3><a href="#fork_row">fork_row</a> <i>constant</i></h3>
 <pre>var fork_row int[&gt;..]</pre>
 <p>Row indices where each fork strip begins.</p>
 <p class="note">Module vars, the result of `build`: `P`, `N` and `T` (f32, three per vertex: position, normal, tangent along the hair from root to tip), `UV` (f32, two per vertex), `I` (u32, three per triangle); per row (every row is two vertices, left then right): `row_v` (int, its first vertex), `row_lock` (int, its guide), `row_fork` (int: minus 1 for the lock's trunk, else the fork number), `row_layer` (int: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L22">hc/lib/gfx/locks.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L22">hc/lib/gfx/locks.amni:22</a>
 </article>
 <article class="sym" id="hash01">
 <h3><a href="#hash01">hash01</a> <i>function</i></h3>
 <pre>hash01(a int, b int) real</pre>
 <p>Returns a deterministic pseudo-random value in the range 0 to 1 from two integer inputs.</p>
 <p class="note">`hash01(a int, b int) real` gives a repeatable pseudo-random number from 0 to 1 below: h is a times 73856093 bitwise xor b times 19349663, then h xor (h shifted right by 13), times 1274126177, xor (h shifted right by 16), keeping the low 31 bits; the result is that over 2147483648.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L23">hc/lib/gfx/locks.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L23">hc/lib/gfx/locks.amni:23</a>
 </article>
 <article class="sym" id="smooth">
 <h3><a href="#smooth">smooth</a> <i>function</i></h3>
 <pre>smooth(a real, b real, x real) real</pre>
 <p>Returns a smoothstep value between 0 and 1 for x across the range a to b.</p>
 <p class="note">`smooth(a real, b real, x real) real` is the smoothstep of x from a to b (t clamped 0 to 1, then t times t times (3 minus 2 t)).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L30">hc/lib/gfx/locks.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L30">hc/lib/gfx/locks.amni:30</a>
 </article>
 <article class="sym" id="profile">
 <h3><a href="#profile">profile</a> <i>function</i></h3>
 <pre>profile(t real) real</pre>
 <p>Returns the width multiplier along a lock, given normalized position t from root to tip.</p>
 <p class="note">`profile(t real) real` is the width along a lock: (0.65 plus 0.35 times `smooth(0, 0.2, t)`) times (1 minus 0.55 times `smooth(0.55, 1, t)`).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L34">hc/lib/gfx/locks.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L34">hc/lib/gfx/locks.amni:34</a>
 </article>
 <article class="sym" id="f3">
 <h3><a href="#f3">f3</a> <i>function</i></h3>
 <pre>f3(x real, y real, z real) float3</pre>
 <p>Creates a float3 from three real components.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L37">hc/lib/gfx/locks.amni:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L37">hc/lib/gfx/locks.amni:37</a>
 </article>
 <article class="sym" id="vadd">
 <h3><a href="#vadd">vadd</a> <i>function</i></h3>
 <pre>vadd(a float3, b float3) float3</pre>
 <p>Returns the component-wise sum of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L38">hc/lib/gfx/locks.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L38">hc/lib/gfx/locks.amni:38</a>
 </article>
 <article class="sym" id="vsub">
 <h3><a href="#vsub">vsub</a> <i>function</i></h3>
 <pre>vsub(a float3, b float3) float3</pre>
 <p>Returns the component-wise difference of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L39">hc/lib/gfx/locks.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L39">hc/lib/gfx/locks.amni:39</a>
 </article>
 <article class="sym" id="vmul">
 <h3><a href="#vmul">vmul</a> <i>function</i></h3>
 <pre>vmul(a float3, k real) float3</pre>
 <p>Returns a float3 vector scaled by a real factor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L40">hc/lib/gfx/locks.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L40">hc/lib/gfx/locks.amni:40</a>
 </article>
 <article class="sym" id="vdot">
 <h3><a href="#vdot">vdot</a> <i>function</i></h3>
 <pre>vdot(a float3, b float3) real</pre>
 <p>Returns the dot product of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L41">hc/lib/gfx/locks.amni:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L41">hc/lib/gfx/locks.amni:41</a>
 </article>
 <article class="sym" id="vcross">
 <h3><a href="#vcross">vcross</a> <i>function</i></h3>
 <pre>vcross(a float3, b float3) float3</pre>
 <p>Returns the cross product of two float3 vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L42">hc/lib/gfx/locks.amni:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L42">hc/lib/gfx/locks.amni:42</a>
 </article>
 <article class="sym" id="vlen">
 <h3><a href="#vlen">vlen</a> <i>function</i></h3>
 <pre>vlen(a float3) real</pre>
 <p>Returns the Euclidean length of a float3 vector.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L43">hc/lib/gfx/locks.amni:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L43">hc/lib/gfx/locks.amni:43</a>
 </article>
 <article class="sym" id="vunit">
 <h3><a href="#vunit">vunit</a> <i>function</i></h3>
 <pre>vunit(a float3) float3</pre>
 <p>Returns a unit-length copy of a vector, or the input unchanged if its length is nearly zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L44">hc/lib/gfx/locks.amni:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L44">hc/lib/gfx/locks.amni:44</a>
 </article>
 <article class="sym" id="vlerp">
 <h3><a href="#vlerp">vlerp</a> <i>function</i></h3>
 <pre>vlerp(a float3, b float3, f real) float3</pre>
 <p>Returns the linear interpolation between two float3 vectors by a factor.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L48">hc/lib/gfx/locks.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L48">hc/lib/gfx/locks.amni:48</a>
 </article>
 <article class="sym" id="emit">
 <h3><a href="#emit">emit</a> <i>function</i></h3>
 <pre>emit(p float3, side float3, hw real, nrm float3, tg float3, u0 real, u1 real, v real, s Spec, lock int, fork int, layer int, guide int)</pre>
 <p>Appends a pair of left and right strip vertices to the buffers, linking them to the previous row when it matches.</p>
 <p class="note">`emit(p float3, side float3, hw real, nrm float3, tg float3, u0 real, u1 real, v real, s Spec, lock int, fork int, layer int, guide int)` adds one row: the left vertex at p minus side times hw and the right at p plus side times hw, each passed through `hairdo::keep` with a gap (as f32): for layer 0 the smaller of `s.gap` and the larger of 0 and the center's clearance (its distance from `hairdo::ct</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L49">hc/lib/gfx/locks.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L49">hc/lib/gfx/locks.amni:49</a>
 </article>
 <article class="sym" id="crom">
 <h3><a href="#crom">crom</a> <i>function</i></h3>
 <pre>crom(p0 float3, p1 float3, p2 float3, p3 float3, f real) float3</pre>
 <p>Returns a Catmull-Rom spline point between p1 and p2 at parameter f.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L95">hc/lib/gfx/locks.amni:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L95">hc/lib/gfx/locks.amni:95</a>
 </article>
 <article class="sym" id="lerpdir">
 <h3><a href="#lerpdir">lerpdir</a> <i>function</i></h3>
 <pre>lerpdir(a float3, b float3, f real) float3</pre>
 <p>Returns a normalized linear interpolation between two direction vectors, or a unchanged when f is zero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L102">hc/lib/gfx/locks.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L102">hc/lib/gfx/locks.amni:102</a>
 </article>
 <article class="sym" id="split_at">
 <h3><a href="#split_at">split_at</a> <i>function</i></h3>
 <pre>split_at(s Spec, rr int) int</pre>
 <p>Returns the row index where a lock splits into forks, or the last row when forking is off.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L105">hc/lib/gfx/locks.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L105">hc/lib/gfx/locks.amni:105</a>
 </article>
 <article class="sym" id="bt">
 <h3><a href="#bt">bt</a> <i>function</i></h3>
 <pre>bt(x real) byte</pre>
 <p>Returns a byte from a real value, rounded and clamped to the range 0 to 255.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L296">hc/lib/gfx/locks.amni:296</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L296">hc/lib/gfx/locks.amni:296</a>
 </article>
 <article class="sym" id="scalp_w">
 <h3><a href="#scalp_w">scalp_w</a> <i>constant</i></h3>
 <pre>var scalp_w f32[&gt;..]</pre>
 <p>Per-vertex scalp weight buffer filled by scalp, holding one falloff value per input point.</p>
 <p class="note">`scalp(data, P, r real)` (data a read-only byte slice, the groom; P a read-only f32 slice, three per point) clears the module array `scalp_w` (f32) and pushes one weight per point of P. The roots: np is the u32 at byte 8 of data and ns the u32 at byte 12 (read with `hair::u32_at`); segment k's first point index is the u32 at byte 16 plus 48 times np plus 16 times k, and that point's position the t</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L359">hc/lib/gfx/locks.amni:359</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L359">hc/lib/gfx/locks.amni:359</a>
 </article>
 <article class="sym" id="scalp">
 <h3><a href="#scalp">scalp</a> <i>function</i></h3>
 <pre>scalp(data const byte[:], P const f32[:], r real)</pre>
 <p>Fills the scalp weight buffer with a falloff from 1 to 0 for each point based on distance to the hairstyle's root positions within radius r.</p>
 <p class="note">`scalp(data, P, r real)` (data a read-only byte slice, the groom; P a read-only f32 slice, three per point) clears the module array `scalp_w` (f32) and pushes one weight per point of P. The roots: np is the u32 at byte 8 of data and ns the u32 at byte 12 (read with `hair::u32_at`); segment k's first point index is the u32 at byte 16 plus 48 times np plus 16 times k, and that point's position the t</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/1ae0497a4df713c94f9e35cf34db704ebd29abec/hc/lib/gfx/locks.amni#L360">hc/lib/gfx/locks.amni:360</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/88219030a5037696f2507bba5f4e43eaf3d53660/hc/lib/gfx/locks.amni#L360">hc/lib/gfx/locks.amni:360</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
