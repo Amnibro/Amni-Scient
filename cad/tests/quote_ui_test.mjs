@@ -1,7 +1,7 @@
 // Customer quote widget (quote.html / quote-embed.js) in a real browser: DXF and STEP parts, shop link rules, branding licence, request sending, embed sizing.
 // Needs Chrome and Playwright: PLAYWRIGHT=<dir with node_modules/playwright> CHROME=/usr/bin/google-chrome node cad/tests/quote_ui_test.mjs [shotsDir]
 import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import {createRequire} from 'node:module';
-import * as SL from '../shoplink.js';import {testRoot} from './testkey.mjs';
+import * as SL from '../shoplink.js';import {testRoot} from './testkey.mjs';import {pollWait} from './shop_ui_lib.mjs';
 const root=path.resolve(new URL('../..',import.meta.url).pathname),{chromium}=createRequire(path.join(process.env.PLAYWRIGHT||process.cwd(),'x.js'))('playwright'),SHOTS=process.argv[2]||'',sleep=t=>new Promise(r=>setTimeout(r,t));
 let fail=0;const ok=(c,m)=>{c||fail++;console.log(c?'PASS':'FAIL',m);};
 const TYPES={'.js':'text/javascript','.mjs':'text/javascript','.html':'text/html','.json':'application/json','.wasm':'application/wasm','.css':'text/css','.svg':'image/svg+xml','.png':'image/png'};
@@ -15,7 +15,7 @@ const posts=[],shop=http.createServer((q,r)=>{const H={'access-control-allow-ori
 await new Promise(r=>shop.on('listening',r));const SHOP='http://localhost:'+shop.address().port;
 const DXF=path.join(root,'assets/cad/shop/mounting-plate-flat.dxf'),STEP=path.join(root,'cad/tests/fixtures/gantry_plate.step'),ASM=path.join(root,'cad/tests/fixtures/gantry_asm.step');
 const b=await chromium.launch({executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-async function page(hash='',{w=1200,h=900}={}){const c=await b.newContext({viewport:{width:w,height:h},acceptDownloads:true}),p=await c.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));await p.goto(BASE+'quote.html'+hash);await p.waitForSelector('#q-drop',{timeout:60000});return p;}
+async function page(hash='',{w=1200,h=900}={}){const c=await b.newContext({viewport:{width:w,height:h},acceptDownloads:true}),p=pollWait(await c.newPage());p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));await p.goto(BASE+'quote.html'+hash);await p.waitForSelector('#q-drop',{timeout:60000});return p;}
 const S=(p,f)=>p.evaluate(f);
 async function load(p,f){await p.setInputFiles('#q-file',f);await p.waitForFunction(n=>{const s=window.__quote;return s.file&&s.file.name===n&&!s.busy&&(s.r||s.err);},path.basename(f),{timeout:120000});await sleep(150);}
 const num=t=>+String(t).replace(/[^0-9.]/g,'');

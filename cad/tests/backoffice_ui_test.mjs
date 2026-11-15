@@ -1,9 +1,9 @@
 // Manufacture tab shop tools in a real browser: shop.json import, back office rules and branding, widget links, quote history CSV.
 // PLAYWRIGHT=<dir with node_modules/playwright> node cad/tests/backoffice_ui_test.mjs [shotsDir]
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
-import {serve,chrome,tally,root,sleep} from './shop_ui_lib.mjs';import {testRoot} from './testkey.mjs';import * as SR from '../shoprules.js';
+import {serve,chrome,tally,root,sleep,pollWait} from './shop_ui_lib.mjs';import {testRoot} from './testkey.mjs';import * as SR from '../shoprules.js';
 const {ok,done}=tally(),SHOTS=process.argv[2]||'',K=await testRoot('t1'),KEY=await K.token({id:'b1',name:'Acme',feat:['brand'],sub:'s1'}),{srv,base}=await serve(K.keys),b=await chrome(),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'bo-'));
-const c=await b.newContext({viewport:{width:1280,height:900},acceptDownloads:true}),p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+const c=await b.newContext({viewport:{width:1280,height:900},acceptDownloads:true}),p=pollWait(await c.newPage());const errs=[];p.on('pageerror',e=>errs.push(e.message));
 const shot=async(n,o={})=>SHOTS&&p.screenshot({path:path.join(SHOTS,n),...o});
 await p.goto(base);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,null,{timeout:120000});await sleep(2000);
 await p.evaluate(()=>{const A=window.amnicad;A.loadDoc(JSON.parse(JSON.stringify(A.TEMPLATES[0].doc)));});await sleep(1200);

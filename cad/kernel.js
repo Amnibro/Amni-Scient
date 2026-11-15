@@ -190,8 +190,8 @@ export function coneSolid(r1,r2,h,c,ax){
 }
 function holeStd(f){const inch=HOLESTD_IN[f.std],t0=f.std&&f.std!=='custom'&&(inch||HOLESTD[f.std]);if(!t0)return f;const k=ucv(inch?'in':'mm'),t=t0.map(v=>v*k),fit=f.fit||'clearance';return{...f,d:fit==='tapped'?t[1]:t[0],cb_d:fit==='cbore'?t[2]:0,cb_h:fit==='cbore'?t[3]:0,cs_d:fit==='csink'?t[4]:0,cs_ang:fit==='csink'?(inch?82:90):f.cs_ang};}
 function holeTool(f0,body){
-  const f=holeStd(f0),P=planeFrom(f,body),d=f.d??M(5),thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth??M(10);
-  if(!thru&&body){const b=bboxOf(body),th=maxOf(Array.from({length:8},(_,q)=>dot(sub(P.o,[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]),P.n)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
+  const f=holeStd(f0),P=planeFrom(f,body),d=f.d??M(5),thru=f.thru!==false,depth=thru?sizeOf(body||R.makeBox([0,0,0],[1,1,1]))*3:f.depth??M(10),cn=body?(b=>Array.from({length:8},(_,q)=>[q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]]))(bboxOf(body)):[],sd=s=>maxOf(cn.map(c=>s*dot(sub(P.o,c),P.n))),dn=cn.length&&sd(1)<=1e-9*sizeOf(body)&&sd(-1)>0?P.n.map(v=>-v):P.n;
+  if(!thru&&body){const th=maxOf(cn.map(c=>dot(sub(P.o,c),dn)));depth>th+1e-9*sizeOf(body)&&th>0&&NOTES.push({k:'depth',field:'depth',v:th,msg:'Hole depth '+fu(depth)+' goes past the '+fu(th)+' of part under it, so it cuts through',fix:[{t:'Through all',k:'thru',v:true},{t:'Use '+fu(clean(th,UNITS)),k:'depth',v:clean(th,UNITS)}]});}
   f.cb_d>0&&f.cb_h>0&&f.cb_d<=d&&NOTES.push({k:'cb_d',field:'cb_d',msg:'Counterbore Ø '+fu(f.cb_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*1.75,UNITS)),k:'cb_d',v:clean(d*1.75,UNITS)}]});f.cs_d>0&&f.cs_d<=d&&NOTES.push({k:'cs_d',field:'cs_d',msg:'Countersink Ø '+fu(f.cs_d)+' is not larger than the '+fu(d)+' hole, so it is left out',fix:[{t:'Use '+fu(clean(d*2,UNITS)),k:'cs_d',v:clean(d*2,UNITS)}]});
   let cbh=f.cb_h;
   if(body&&f.cb_d>d&&f.cb_h>0){const bb=body.boundingBox.bounds,T=Math.abs(P.n.reduce((t,v,i)=>t+v*(bb[1][i]-bb[0][i]),0));if(T>0&&f.cb_h>=T*0.999){cbh=T*0.75;TNOTE='the counterbore ('+f.cb_h.toFixed(3)+' deep) is not shallower than the plate ('+T.toFixed(3)+'), which would turn the hole into a plain Ø'+f.cb_d.toFixed(3)+' through hole. The counterbore depth was limited to '+cbh.toFixed(3)+' so the Ø'+d.toFixed(3)+' hole and the counterbore both stay; make the plate thicker or the counterbore shallower.';}}
@@ -199,8 +199,8 @@ function holeTool(f0,body){
   let tool=null;
   for(const p of pts){
     const c=[0,1,2].map(i=>P.o[i]+P.x[i]*p[0]+y[i]*p[1]);
-    const down=P.n.map(v=>-v),eps=0.01*d;
-    const top=c.map((v,i)=>v+P.n[i]*eps);
+    const down=dn.map(v=>-v),eps=0.01*d;
+    const top=c.map((v,i)=>v+dn[i]*eps);
     let t=R.makeCylinder(d/2,depth+eps,top,down);
     if(f.cb_d>d&&cbh>0)t=t.fuse(R.makeCylinder(f.cb_d/2,cbh+eps,top,down));
     if(f.cs_d>d){const ta=Math.tan((f.cs_ang||90)*Math.PI/360),hh=(f.cs_d-d)/2/ta;t=t.fuse(coneSolid(f.cs_d/2+eps*ta,d/2,hh+eps,top,down));}
