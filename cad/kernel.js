@@ -106,7 +106,7 @@ function liveSketch(f,body){const has=x=>x&&x.sketch&&x.sketch.ents&&x.sketch.en
   if(an){const B=faceBox(RF(),true);if(!B)throw new Error('distances from edges need the sketch on a flat face of the part');const ax=(o,k0,k1,lo,hi)=>o[k0]!=null?lo+ +o[k0]:o[k1]!=null?hi- +o[k1]:null;f.shapes=f.shapes&&f.shapes.map(q=>{if(!q||!q.from)return q;const o=q.from,x=ax(o,'left','right',B.u0,B.u1),y=ax(o,'bottom','top',B.v0,B.v1),r={...q};delete r.from;x!=null&&(r.x=x);y!=null&&(r.y=y);return r;});f.pts&&(f.pts=f.pts.map(p=>Array.isArray(p)?p:[ax(p,'left','right',B.u0,B.u1)??0,ax(p,'bottom','top',B.v0,B.v1)??0]));}
   return f;}
 function okShape(sh){try{const b=bboxOf(sh);return[...b.min,...b.max].every(isFinite)&&isFinite(volOf(sh));}catch{return false;}}
-export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part'};}
+export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),box:faceBox(refs.filter(r=>r.k!=='pt'),true),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part'};}
 export function whichFeature(pt,ids){const end=shapeBefore(cache.length),tol=(end?sizeOf(end):1)*2e-3,ds=sh=>{if(!sh)return 1e9;let c=null;try{c=R.makeCompound(sh.faces);return pdist(pt,c);}catch{return 1e9;}finally{try{c&&c.delete();}catch{}}},M=new Map(),d=i=>i<1?1e9:M.has(i)?M.get(i):(M.set(i,ds(shapeBefore(i))),M.get(i)),thr=d(cache.length)+tol;for(let i=cache.length-1;i>=0;i--)if(ids[i]&&d(i+1)<=thr&&d(i)>thr)return ids[i];for(let i=cache.length-1;i>=0;i--){const c=cache[i];if(c&&c.tool&&ids[i]&&pdist(pt,c.tool)<tol)return ids[i];}return null;}
 function ringDraw(pts,bz){
   if(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+p[0]*q[1]-q[0]*p[1];},0)<0){const n=pts.length,P2=[pts[0]],B2=[];for(let i=n-1;i>=1;i--)P2.push(pts[i]);for(let i=n-1;i>=0;i--)B2.push(-(bz[i]||0));pts=P2;bz=B2;}
@@ -141,7 +141,7 @@ function drawShape2(s0,pre=''){
   else if(k==='slot'){const W=pos(s.h??s.d,'slot width');d=R.drawRoundedRectangle(Math.max(s.l??0,0)+W,W,W/2-1e-6);}
   else if(k==='path'){d=pathPolys(s,UNITS).map(poly=>poly.map(r=>ringDraw(r.pts,r.bz)).reduce((a,h)=>a.cut(h))).reduce((a,b)=>a.fuse(b));}
   else if(k==='airfoil'){d=airDraw({...s,chord:pos(s.chord??M(40),'chord')});}
-  else if(k==='text'){d=R.drawText(String(s.text||'A'),{fontSize:pos(s.h??M(10),'text size')});}
+  else if(k==='text'){if(!R.getFont())throw new Error('the text font did not load, so text cannot be built; reload the page');d=R.drawText(String(s.text||'A'),{fontSize:pos(s.h??M(10),'text size')});}
   else if(k==='ellipse'){const rx=pos(s.rx??s.ry,'radius x'),ry=pos(s.ry??s.rx,'radius y');d=Math.abs(rx-ry)<=1e-9*Math.max(rx,ry)?R.drawCircle(rx):R.drawEllipse(Math.max(rx,ry),Math.min(rx,ry));if(ry>rx+1e-9*rx)d=d.rotate(90,[0,0]);}
   else if(k==='spline'){d=splineDraw(s,pre);}
   else throw new Error('unknown 2D shape '+k);
@@ -382,10 +382,11 @@ export async function build(doc,opt={}){
       if(TOOLMAKERS[f.type]){if(!body&&(f.type==='hole'||f.type!=='thread'&&['cut','intersect'].includes(f.op)))throw new Error(f.type+' needs a body to cut into; add or unsuppress a solid before it');tool=f.type==='thread'?null:TOOLMAKERS[f.type](f,body);if(PROF.has(f.type)&&!(Math.abs(volOf(tool))>1e-12))throw new Error('the profile has no area, so '+f.type+' made nothing; check it is closed and does not cross itself');next=f.type==='thread'?threadCut(body,f):applyOp(body,tool,f.type==='hole'?'cut':(f.op||'add'));}
       else if(f.type==='fillet'||f.type==='chamfer'){
         if(!body)throw new Error(f.type+' needs a body');
-        const es=selectEdges(body,f.edges);if(!es.length)throw new Error('no edges matched');
-        const set=new Set(es.map(q=>q.e.hashCode)),fil=f.type==='fillet',r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
-        const cs=!fil&&(f.d2||f.angle)?chamferSides(body,es,f):null;
-        next=upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
+        const fil=f.type==='fillet',none=f.edges&&f.edges.by==='pick'&&!(f.edges.pts||[]).length,es=none?[]:selectEdges(body,f.edges);if(!es.length&&!none)throw new Error('no edges matched');
+        if(none)W('No edges picked yet, so nothing is '+(fil?'rounded':'beveled')+'. Click edges in the view.');
+        const set=new Set(es.map(q=>q.e.hashCode)),r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
+        const cs=!fil&&(f.d2||f.angle)&&!none?chamferSides(body,es,f):null;
+        next=none?body:upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
       }
       else if(f.type==='edgeprofile'){
         if(!body)throw new Error('edgeprofile needs a body');
@@ -456,4 +457,4 @@ export function exportBody(body,fmt,units){
 function cacheRef(){return cache;}
 export function shapeBefore(i){const c=i>0&&cache[i-1];if(!c)return null;if(c.shape||!c.lazy)return c.shape;let s=i-1;while(s>0&&cache[s-1]&&cache[s-1].lazy)s--;const base=s>0&&cache[s-1].shape;if(!base)return null;try{c.shape=base.cut(R.makeCompound(cache.slice(s,i).map(e=>e.tool.clone())));c.lazy=false;}catch{return null;}return c.shape;}
 export function edgePolylines(shape,sel,isFace){const out=[];const list=isFace?selectFaces(shape,sel).flatMap(q=>q.f.outerWire().edges):selectEdges(shape,sel).map(q=>q.e);for(const e of list){const p=[];for(let k=0;k<=24;k++)p.push(V(e.pointAt(k/24)));out.push(p);}return out;}
-export async function init(oc){R.setOC(oc);return true;}
+export async function init(oc){R.setOC(oc);const u=new URL('./vendor/fonts/archivo-regular.otf',import.meta.url);await(u.protocol==='file:'?import('node:fs').then(m=>m.promises.readFile(u)).then(x=>x.buffer.slice(x.byteOffset,x.byteOffset+x.length)):fetch(u).then(r=>r.arrayBuffer())).then(x=>R.loadFont(x)).catch(()=>null);return true;}
