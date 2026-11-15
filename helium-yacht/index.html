@@ -36,7 +36,7 @@ const msg = document.getElementById('msg'), say = document.getElementById('say')
 const vid = document.getElementById('vid');
 const stop = (t, p) => { msg.querySelector('b').textContent = t; say.innerHTML = p; pct.parentNode?.remove(); msg.style.display = ''; msg.classList.add('fb'); document.querySelector('canvas').style.display = 'none'; vid.src = 'v/yacht.mp4'; vid.style.display = 'block'; vid.play().catch(() => {}); };
 const live = ' Here’s a recording instead. It runs live in Chrome or Edge on Windows, Mac and Android. <a href="/helium-graphics.html">More about Helium graphics</a>.';
-const ad = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) : null;
+let fb = false; const ad = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) || (fb = true, await navigator.gpu.requestAdapter({ featureLevel: 'compatibility' }).catch(() => null)) : null;
 const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || /Macintosh/.test(ua) && navigator.maxTouchPoints > 1, saf = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua), ff = /Firefox/.test(ua), lin = /Linux/.test(ua) && !/Android/.test(ua);
 const why = !navigator.gpu || !ad || !WebAssembly.Suspending ? (ios ? 'On iPhone and iPad every browser is built on Safari, which can’t run the live engine yet.' : saf ? 'Safari can’t run the live engine yet.' : ff ? 'Firefox can’t run the live engine yet.' : lin && navigator.gpu ? 'Chrome on Linux keeps WebGPU, the graphics feature this needs, switched off for most graphics cards.' : 'This browser can’t run the live engine yet.') : '';
 if (why) stop('This browser can’t run it live', why + live);
@@ -46,10 +46,11 @@ else {
   await Promise.all(F.map(async n => { files['/f/' + n + '.ttf'] = new Uint8Array(await (await fetch('f/' + n + '.ttf')).arrayBuffer()); pct.style.width = (++done * 12) + '%'; }));
   say.textContent = 'Building the yacht and the ocean…'; pct.style.width = '80%';
   const touch = matchMedia('(pointer:coarse)').matches || navigator.maxTouchPoints > 0 && innerWidth < 1100; const cv = document.querySelector("canvas"); let seen = 0; const gt = GPUCanvasContext.prototype.getCurrentTexture; GPUCanvasContext.prototype.getCurrentTexture = function () { seen++; return gt.call(this); };
+  const um = new URLSearchParams(location.search).get('m'), m0 = (+um || (touch ? 2949 : 896)) | (ad && fb && !ad.features.has('core-features-and-limits') ? 4096 : 0);
   try {
-    const { start } = await import('./helium.js?v=1');
-    const rt = await start({ wasm: 'yacht.wasm?v=8', canvas: cv, files, args: ['yacht', 'live', (new URLSearchParams(location.search).get('m') || String(touch ? 2949 : 896)), '/f/', String(Math.round((devicePixelRatio || 1) * 100)), touch ? '1' : '0'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '.' + live) });
-    const wait = () => seen > 1 ? (msg.style.display = "none", cv.focus()) : requestAnimationFrame(wait); requestAnimationFrame(wait);
+    const { start } = await import('./helium.js?v=5');
+    const rt = await start({ wasm: 'yacht.wasm?v=9', canvas: cv, files, args: ['yacht', 'live', String(m0), '/f/', String(Math.round((devicePixelRatio || 1) * 100)), touch ? '1' : '0'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '.' + live) });
+    const wait = () => seen > 1 ? (msg.style.display = "none", cv.focus(), um || m0 & 2048 || setTimeout(() => { const s0 = seen, h0 = document.hidden; setTimeout(() => !h0 && !document.hidden && (seen - s0) / 4 < 20 && location.replace('?m=' + (m0 | 2949)), 4000); }, 4000)) : requestAnimationFrame(wait); requestAnimationFrame(wait);
     rt.done.then(() => seen < 2 && stop('The engine stopped', 'The graphics card on this device wouldn’t start the engine.' + live)).catch(e => stop('The engine stopped', String(e?.message || e).slice(0, 160) + '.' + live));
   } catch (e) { stop('Your graphics card said no', 'It couldn’t start the engine: ' + String(e?.message || e).slice(0, 160) + '.' + live); }
 }
