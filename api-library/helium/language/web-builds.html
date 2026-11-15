@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/language/web-builds">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/language/web-builds">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=d9c8393422">
+<link rel="stylesheet" href="/api-library/lib.css?v=b45a2800db">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=d9c8393422'; start({wasm: '/api-library/search.wasm?v=d9c8393422'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b45a2800db'; start({wasm: '/api-library/search.wasm?v=b45a2800db'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -107,6 +107,8 @@
 <li><code>import web;</code> (<code>web::</code>): elements are <code>i32</code> handles: <code>el(id) query(h, sel) query_all list_at create append insert_before remove clear text html attr get_attr style cls has_cls prop prop_num get_prop get_num call scroll_into rect listen(h, &quot;click&quot;, TAG, flags)</code>; event fields while <code>he_event</code> runs: <code>ev_x ev_y ev_dx ev_dy ev_button ev_buttons ev_mods ev_key(out) ev_value(out) ev_touches ev_touch_x ev_target ev_prevent ev_id ev_status</code>; <code>fetch(url, TAG)</code> / <code>request(...)</code> then <code>fetch_take(ev_id(), out)</code>; <code>timer(ms, TAG)</code>, <code>now</code>, <code>win_w win_h dpr param(name, out) store_get store_set log</code>; <code>js_import js_call js_result</code> for other JS libraries.</li>
 <li><code>import webgl;</code> (<code>gl::</code>): WebGL2 on a canvas handle: <code>init(canvas, aa, alpha) create_shader shader_source compile_shader create_program link_program uniform_loc uniform1f uniform_mat4 create_buffer buffer_data(target, bytes_of(xs), usage) create_vao attrib_ptr draw_arrays</code>, and the GL constants.</li>
 <li>No threads or files on the web; <code>print</code> goes to the browser console. See <code>samples_web/demo</code>.</li>
+<li>Memory on the web: wasm cannot reserve address space, so build with <code>-DGS_WEB_MOVE=1</code> to let <code>[&gt;..]</code> arrays start small and move as they grow. An array is pinned the first time one of its elements is referenced or sliced; a pinned array that outgrows its block continues in a new block and the earlier blocks stay valid until it is cleared or dropped, so keep long-lived slices of an array that still grows to a minimum. Without the switch every <code>[&gt;..]</code> array takes a fixed region and the program stops with <code>array grew past its region</code> when one fills. <code>-DGS_WEB_STACK=&lt;bytes&gt;</code> sets the stack (default 64 MB; 4 MB suits most programs).</li>
+<li>Web builds leave out functions nothing calls and inline a helper that has one call site (up to 1200 IR instructions). <code>HC_NOWDF=1</code> keeps unused functions, <code>HC_NOWSI=1</code> turns that inlining off, <code>HC_ILW=&lt;n&gt;</code> sets its limit, and <code>HC_IR=&lt;function&gt;</code> prints one function's optimized IR.</li>
 </ul>
 <nav class="lib-pn">
 <a class="prev" href="/api-library/helium/language/compact-constructs-and-warnings">&larr; Compact constructs and warnings</a>
