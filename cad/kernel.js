@@ -9,7 +9,7 @@ import {HOLESTD_IN,THREADSTD,HOLESTD} from './standards.js';
 import {lookupThread,threadById} from './threads.js';
 import {profile,bitSpec,bitVolume,knifeSpec,flat,edgeFrame} from './cutter.js';
 import {MATS,shapeLimits,clean,fixPre} from './schema.js';
-import {chamferSides,alongFaces,FEAT2,solidsOf} from './features2.js';
+import {chamferSides,alongFaces,FEAT2,solidsOf,ribGuess} from './features2.js';
 import {vec as V} from './qmath.js';
 import {maxOf,minOf,pushAll} from './minmax.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
@@ -106,7 +106,7 @@ function liveSketch(f,body){const has=x=>x&&x.sketch&&x.sketch.ents&&x.sketch.en
   if(an){const B=faceBox(RF(),true);if(!B)throw new Error('distances from edges need the sketch on a flat face of the part');const ax=(o,k0,k1,lo,hi)=>o[k0]!=null?lo+ +o[k0]:o[k1]!=null?hi- +o[k1]:null;f.shapes=f.shapes&&f.shapes.map(q=>{if(!q||!q.from)return q;const o=q.from,x=ax(o,'left','right',B.u0,B.u1),y=ax(o,'bottom','top',B.v0,B.v1),r={...q};delete r.from;x!=null&&(r.x=x);y!=null&&(r.y=y);return r;});f.pts&&(f.pts=f.pts.map(p=>Array.isArray(p)?p:[ax(p,'left','right',B.u0,B.u1)??0,ax(p,'bottom','top',B.v0,B.v1)??0]));}
   return f;}
 function okShape(sh){try{const b=bboxOf(sh);return[...b.min,...b.max].every(isFinite)&&isFinite(volOf(sh));}catch{return false;}}
-export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),box:faceBox(refs.filter(r=>r.k!=='pt'),true),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part'};}
+export function frameInfo(f0,body,scope={}){const f=res(f0,scope),P=planeFrom(f,body),y=cross(P.n,P.x),uv=p=>{const d=sub(p,P.o);return[dot(d,P.x),dot(d,y),dot(d,P.n)];},refs=body?projRefs(body,P):[],c=uv(P.c),po=uv(projOnPlane([0,0,0],P.c,P.n));let th=0,ah=0;if(body){const b=bboxOf(body);for(let q=0;q<8;q++){const w=uv([q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]])[2];th=Math.max(th,-w);ah=Math.max(ah,w);}}return{o:P.o,x:P.x,y,n:P.n,refs,face:faceBox(refs.filter(r=>r.k!=='pt')),box:faceBox(refs.filter(r=>r.k!=='pt'),true),cuv:[c[0],c[1]],puv:[po[0],po[1]],thick:th,ahead:ah,origin:f.face&&f.face.origin==='center'?'center':'part',rib:f0.guess&&f0.type==='rib'&&body&&!(f.face&&!f.face.mid&&!f.face.edge)?ribGuess(f,body,KX,refs):null};}
 export function whichFeature(pt,ids){const end=shapeBefore(cache.length),tol=(end?sizeOf(end):1)*2e-3,ds=sh=>{if(!sh)return 1e9;let c=null;try{c=R.makeCompound(sh.faces);return pdist(pt,c);}catch{return 1e9;}finally{try{c&&c.delete();}catch{}}},M=new Map(),d=i=>i<1?1e9:M.has(i)?M.get(i):(M.set(i,ds(shapeBefore(i))),M.get(i)),thr=d(cache.length)+tol;for(let i=cache.length-1;i>=0;i--)if(ids[i]&&d(i+1)<=thr&&d(i)>thr)return ids[i];for(let i=cache.length-1;i>=0;i--){const c=cache[i];if(c&&c.tool&&ids[i]&&pdist(pt,c.tool)<tol)return ids[i];}return null;}
 function ringDraw(pts,bz){
   if(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+p[0]*q[1]-q[0]*p[1];},0)<0){const n=pts.length,P2=[pts[0]],B2=[];for(let i=n-1;i>=1;i--)P2.push(pts[i]);for(let i=n-1;i>=0;i--)B2.push(-(bz[i]||0));pts=P2;bz=B2;}

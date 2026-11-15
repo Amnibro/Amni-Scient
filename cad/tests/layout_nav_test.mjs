@@ -3,13 +3,13 @@ import {createRequire} from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
 const req=createRequire(import.meta.url);
-const P=req(process.env.PUPPETEER||'/tmp/pptr/node_modules/puppeteer-core');
+const P=req(process.env.PUPPETEER||process.env.HOME+'/.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core');
 const chrome=process.env.CHROME||'/usr/bin/google-chrome-stable';
 const root=path.resolve(new URL('../..',import.meta.url).pathname);
 const port=process.env.PORT||'8765';
 const shots=process.env.SHOTS||'';
 let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!=null&&x!==''?' ('+x+')':''));};
-if(!fs.existsSync(chrome)||!fs.existsSync(path.dirname(process.env.PUPPETEER||'/tmp/pptr/node_modules/puppeteer-core'))){console.log('SKIP: chrome or puppeteer missing');process.exit(0);}
+if(!fs.existsSync(chrome)||!fs.existsSync(path.dirname(process.env.PUPPETEER||process.env.HOME+'/.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core'))){console.log('SKIP: chrome or puppeteer missing');process.exit(0);}
 const {spawn}=await import('node:child_process');
 const own=!process.env.PORT;const srv=own&&spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});
 const sleep=t=>new Promise(r=>setTimeout(r,t));

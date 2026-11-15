@@ -1,14 +1,15 @@
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
 const req=createRequire(import.meta.url);
-const P=req(process.env.PUPPETEER||'/tmp/pptr/node_modules/puppeteer-core');
+const P=req(process.env.PUPPETEER||process.env.HOME+'/.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core');
 const chrome=process.env.CHROME||'/usr/bin/google-chrome-stable';
 if(!fs.existsSync(chrome)){console.log('SKIP: no chrome');process.exit(0);}
+const port=process.env.PORT||'8765',own=!process.env.PORT,srv=own&&(await import('node:child_process')).spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:new URL('../..',import.meta.url).pathname,stdio:'ignore'});own&&await new Promise(r=>setTimeout(r,700));
 let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!=null?' ('+x+')':''));};
 const b=await P.launch({executablePath:chrome,headless:'new',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const p=await b.newPage();
 await p.setViewport({width:1280,height:800});
-await p.goto('http://127.0.0.1:'+(process.env.PORT||8765)+'/cad/',{waitUntil:'domcontentloaded',timeout:60000});
+await p.goto('http://127.0.0.1:'+port+'/cad/',{waitUntil:'domcontentloaded',timeout:60000});
 await p.waitForFunction(()=>document.body.classList.contains('pro'),{timeout:30000});
 const tabs=['edit','ai','sim','flow','make','draw','vault'];
 for(const tab of tabs){
@@ -21,6 +22,6 @@ for(const tab of tabs){
   await p.keyboard.press('Escape');
   await p.evaluate(()=>document.querySelectorAll('.menu').forEach(m=>m.classList.remove('open')));
 }
-await b.close();
+await b.close();own&&srv&&srv.kill();
 console.log(fail?fail+' FAILED':'ALL PASS');
 process.exit(fail?1:0);
