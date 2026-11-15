@@ -19,32 +19,39 @@ canvas{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:blo
 #msg a{color:var(--mint)}
 .bar{height:4px;border-radius:4px;background:rgba(255,255,255,.12);margin-top:14px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--mint);transition:width .2s}
+@media (max-width:560px){#top{top:12px}}
+#vid{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;object-fit:cover;display:none;z-index:1;background:#04161b}
+#msg.fb{place-items:end center;padding-bottom:max(24px,env(safe-area-inset-bottom))}
 #turn{display:none}@media (orientation:portrait) and (max-width:700px){#turn{display:block;position:fixed;left:50%;top:42%;transform:translateX(-50%);z-index:2;background:var(--glass);border:1px solid var(--rim);border-radius:99px;padding:7px 14px;font-size:13px;pointer-events:none;white-space:nowrap;animation:fade 7s forwards}}@keyframes fade{0%,70%{opacity:1}100%{opacity:0}}
 </style>
 </head>
 <body>
 <canvas data-helium tabindex="0"></canvas>
+<video id="vid" muted loop playsinline preload="none" poster="v/poster.jpg" aria-label="A recording of the Helium yacht under way on open water"></video>
 <div id="turn">Turn your phone sideways for the full view</div>
 <nav id="top"><a href="/helium-graphics.html">About Helium graphics</a></nav>
 <section id="msg"><div><b>Starting the engine…</b><p id="say">Downloading the Helium yacht (about 2 MB).</p><div class="bar"><i id="pct"></i></div></div></section>
 <script type="module">
 const msg = document.getElementById('msg'), say = document.getElementById('say'), pct = document.getElementById('pct');
-const stop = (t, p) => { msg.querySelector('b').textContent = t; say.innerHTML = p; pct.parentNode.remove(); };
+const vid = document.getElementById('vid');
+const stop = (t, p) => { msg.querySelector('b').textContent = t; say.innerHTML = p; pct.parentNode?.remove(); msg.style.display = ''; msg.classList.add('fb'); document.querySelector('canvas').style.display = 'none'; vid.src = 'v/yacht.mp4'; vid.style.display = 'block'; vid.play().catch(() => {}); };
+const live = ' Here’s a recording instead. It runs live in Chrome or Edge on Windows, Mac and Android. <a href="/helium-graphics.html">More about Helium graphics</a>.';
 const ad = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) : null;
-const why = !navigator.gpu || !ad ? 'This browser has WebGPU turned off or no graphics card it can use.' : !WebAssembly.Suspending ? 'This browser can’t pause WebAssembly between frames yet (JSPI).' : '';
-if (why) stop('Your browser can’t run this yet', why + ' Open this page in Chrome or Edge (version 137 or newer) on a computer or Android phone. Or <a href="/helium-graphics.html">see screenshots and video</a>.');
+const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || /Macintosh/.test(ua) && navigator.maxTouchPoints > 1, saf = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua), ff = /Firefox/.test(ua), lin = /Linux/.test(ua) && !/Android/.test(ua);
+const why = !navigator.gpu || !ad || !WebAssembly.Suspending ? (ios ? 'On iPhone and iPad every browser is built on Safari, which can’t run the live engine yet.' : saf ? 'Safari can’t run the live engine yet.' : ff ? 'Firefox can’t run the live engine yet.' : lin && navigator.gpu ? 'Chrome on Linux keeps WebGPU, the graphics feature this needs, switched off for most graphics cards.' : 'This browser can’t run the live engine yet.') : '';
+if (why) stop('This browser can’t run it live', why + live);
 else {
   const F = ['Inter-Medium', 'Inter-Regular', 'Inter-SemiBold', 'InterDisplay-Medium', 'InterDisplay-Light'];
   const files = {}; let done = 0;
   await Promise.all(F.map(async n => { files['/f/' + n + '.ttf'] = new Uint8Array(await (await fetch('f/' + n + '.ttf')).arrayBuffer()); pct.style.width = (++done * 12) + '%'; }));
   say.textContent = 'Building the yacht and the ocean…'; pct.style.width = '80%';
-  const cv = document.querySelector("canvas"); let seen = 0; const gt = GPUCanvasContext.prototype.getCurrentTexture; GPUCanvasContext.prototype.getCurrentTexture = function () { seen++; return gt.call(this); };
+  const touch = matchMedia('(pointer:coarse)').matches || navigator.maxTouchPoints > 0 && innerWidth < 1100; const cv = document.querySelector("canvas"); let seen = 0; const gt = GPUCanvasContext.prototype.getCurrentTexture; GPUCanvasContext.prototype.getCurrentTexture = function () { seen++; return gt.call(this); };
   try {
     const { start } = await import('./helium.js?v=1');
-    const rt = await start({ wasm: 'yacht.wasm?v=1', canvas: cv, files, args: ['yacht', 'live', '896', '/f/'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '. Reload to try again.') });
+    const rt = await start({ wasm: 'yacht.wasm?v=8', canvas: cv, files, args: ['yacht', 'live', (new URLSearchParams(location.search).get('m') || String(touch ? 2949 : 896)), '/f/', String(Math.round((devicePixelRatio || 1) * 100)), touch ? '1' : '0'], onerror: e => stop('The engine stopped', 'Something went wrong on this device: ' + String(e?.message || e).slice(0, 160) + '.' + live) });
     const wait = () => seen > 1 ? (msg.style.display = "none", cv.focus()) : requestAnimationFrame(wait); requestAnimationFrame(wait);
-    rt.done.then(() => seen < 2 && stop("The engine stopped", "WebGPU could not start on this device. Try Chrome or Edge on another computer or phone.")).catch(e => stop('The engine stopped', String(e?.message || e).slice(0, 160)));
-  } catch (e) { stop('Your graphics card said no', 'WebGPU could not start here: ' + String(e?.message || e).slice(0, 160) + '. Try Chrome or Edge on another device.'); }
+    rt.done.then(() => seen < 2 && stop('The engine stopped', 'The graphics card on this device wouldn’t start the engine.' + live)).catch(e => stop('The engine stopped', String(e?.message || e).slice(0, 160) + '.' + live));
+  } catch (e) { stop('Your graphics card said no', 'It couldn’t start the engine: ' + String(e?.message || e).slice(0, 160) + '.' + live); }
 }
 </script>
 </body>
