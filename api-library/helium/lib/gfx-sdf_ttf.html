@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-sdf_ttf">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-sdf_ttf">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=48f0e8c899">
+<link rel="stylesheet" href="/api-library/lib.css?v=8954c56598">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=48f0e8c899'; start({wasm: '/api-library/search.wasm?v=48f0e8c899'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=8954c56598'; start({wasm: '/api-library/search.wasm?v=8954c56598'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/sdf_ttf</h1>
 <p class="lib-lede">Builds signed distance field font atlases from TrueType font data so programs can render crisp scalable text.</p>
-<p class="lib-meta"><code>import gfx.sdf_ttf;</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/sdf_ttf.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.sdf_ttf;</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/sdf_ttf.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#truetype-fonts">TrueType Fonts <span class="n">2</span></a></li>
 <li><a href="#internal">Internal helpers</a></li>
@@ -114,28 +114,28 @@
 <pre>sdf_use_ttf(bytes const byte[:]) bool</pre>
 <p>Builds the SDF font atlas and kerning table from TrueType bytes, returning false if the font cannot be parsed.</p>
 <p class="note">`sdf_use_ttf(bytes) bool` (bytes: a read-only byte slice) loads a TrueType font from its file bytes and returns false when it is not one: info is a ttf::Info with d a copy of bytes; info.fo = ttf::font_offset(bytes, 0) and return false when it is below 0 or ttf::init(info) fails. Let cap be the top (y1) of the glyph box of &quot;H&quot; from ttf::gbox (for glyph ttf::glyph_index(info, 72)), or 70 percent of</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/sdf_ttf.amni#L50">hc/lib/gfx/sdf_ttf.amni:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/sdf_ttf.amni#L50">hc/lib/gfx/sdf_ttf.amni:50</a>
 </article>
 <article class="sym" id="sdf_use_ttf_file">
 <h3><a href="#sdf_use_ttf_file">sdf_use_ttf_file</a> <i>function</i></h3>
 <pre>sdf_use_ttf_file(path const byte[:]) bool</pre>
 <p>Reads a TrueType file from a path and builds the SDF font atlas from it, returning false if reading fails.</p>
 <p class="note">`sdf_use_ttf_file(path) bool` (path: a read-only byte slice) reads the file with the built-in read_file(path, buf) into a growable byte list and returns false when that fails, else sdf_use_ttf of the bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/sdf_ttf.amni#L134">hc/lib/gfx/sdf_ttf.amni:134</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/sdf_ttf.amni#L134">hc/lib/gfx/sdf_ttf.amni:134</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
 <article class="sym" id="sdf_ttf_dt1">
 <h3><a href="#sdf_ttf_dt1">sdf_ttf_dt1</a> <i>function</i></h3>
 <pre>sdf_ttf_dt1(f real[&gt;..]&amp;, d real[&gt;..]&amp;, v int[&gt;..]&amp;, z real[&gt;..]&amp;, n int)</pre>
 <p>Runs a one-dimensional squared Euclidean distance transform along a line, as a building block for the two-dimensional transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/sdf_ttf.amni#L6">hc/lib/gfx/sdf_ttf.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/sdf_ttf.amni#L6">hc/lib/gfx/sdf_ttf.amni:6</a>
 </article>
 <article class="sym" id="sdf_ttf_dt">
 <h3><a href="#sdf_ttf_dt">sdf_ttf_dt</a> <i>function</i></h3>
 <pre>sdf_ttf_dt(g f32[&gt;..]&amp;, w int, h int)</pre>
 <p>Computes an in-place two-dimensional squared distance transform over a w by h grid by transforming columns, then rows.</p>
 <p class="note">`sdf_ttf_dt(g, w, h)` (g: a growable f32 list passed by reference, w and h ints) turns g (w times h values, row major, 0 at feature pixels and 1e20 elsewhere) into the squared Euclidean distance to the nearest feature pixel, in place, with the Felzenszwalb and Huttenlocher 1D lower envelope transform run down every column and then along every row (scratch lists f, d and v of max(w, h) values and z</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/sdf_ttf.amni#L29">hc/lib/gfx/sdf_ttf.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/sdf_ttf.amni#L29">hc/lib/gfx/sdf_ttf.amni:29</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -229,7 +229,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-15">2026-11-15</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-16">2026-11-16</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>
