@@ -7708,8 +7708,19 @@ pathtrace::SCATTER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#
 pathtrace::PHASE_G	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PHASE_G	Phase function asymmetry parameter for water scattering.	pub
 pathtrace::ETA	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ETA	Index of refraction used for water, 1.33 by default.	pub
 pathtrace::TK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TK	Scalar parameter passed through to the render shader's water settings.	int
-pathtrace::NWAVE	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#NWAVE	Number of wave octaves summed when computing water surface height.	pub
 pathtrace::UNDER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#UNDER	Flag indicating the camera is underwater, set from the scene's sea state.	pub
+pathtrace::SKYC	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYC	Buffer of captured environment-map cube face pixels, filled by sky_cube for use in rendering.	int
+pathtrace::SKYN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYN	Edge size in pixels of each captured sky cube face, or 0 when no cube is captured.	int
+pathtrace::SKYI	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYI	Intensity multiplier copied from the environment map for the captured sky cube.	int
+pathtrace::SKYR	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYR	Rotation of the environment map recorded with the captured sky cube.	int
+pathtrace::CLD	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLD	Pixel data of the cloud texture and cloud shadow texture captured from the scene.	int
+pathtrace::CW	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CW	Width in pixels of the captured cloud texture.	int
+pathtrace::CH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CH	Height in pixels of the captured cloud texture.	int
+pathtrace::CSN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CSN	Width in pixels of the captured cloud shadow texture, or 0 when none is captured.	int
+pathtrace::CSK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CSK	Cloud shadow strength copied from the scene cloud settings.	int
+pathtrace::CLU	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLU	Four-component cloud shadow projection vector for the U axis.	int
+pathtrace::CLV	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLV	Four-component cloud shadow projection vector for the V axis.	int
+pathtrace::CubeU	type	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CubeU	Uniform block carrying the cube face index to the environment copy shader.	int
 pathtrace::Mat	type	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#Mat	Material description with base color, emission, metalness, roughness, textures, alpha mode and water flag.	pub
 pathtrace::clear	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#clear	Clears all accumulated triangles, materials, textures, lights and flags to start a new scene.	pub
 pathtrace::mat	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#mat	Adds a material and returns its index for use when adding triangles.	pub
@@ -7719,7 +7730,9 @@ pathtrace::tri	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#tri	
 pathtrace::ico	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ico	Returns triangle vertex positions of a unit icosphere subdivided the given number of levels.	pub
 pathtrace::sphere	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#sphere	Adds a sphere of given center and radius, built from subdivided icosphere triangles, using a material index.	pub
 pathtrace::v3	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#v3	Converts a float3 vector into a real array of three components.	int
-pathtrace::wave	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#wave	Returns the water surface height at an x, z position by summing wave octaves.	pub
+pathtrace::lift	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#lift	Displaces the y coordinates of the given points in place by the sea wave function on the GPU, returning false on failure.	int
+pathtrace::sky_cube	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#sky_cube	Captures the environment map into six cube faces of the given size, returning false if unavailable or a read fails.	int
+pathtrace::clouds_of	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#clouds_of	Reads the scene's cloud and cloud shadow textures into the capture buffers, counting skipped reads on failure.	int
 pathtrace::texof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#texof	Returns the uploaded texture index for a glTF texture reference, uploading its image on first use, or -1 if none.	int
 pathtrace::matof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#matof	Returns the material index for a scene primitive, creating it from the glTF material on first use.	int
 pathtrace::from_scene	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#from_scene	Rebuilds the path tracing scene from the current scene3d camera, sun, sky, lights and geometry.	pub
