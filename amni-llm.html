@@ -153,12 +153,12 @@
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
 <h4>HUGGINGFACE SEARCH</h4>
-<p>Live search of `huggingface.co/api/models?library=gguf`, built right into the app. Type any keyword, expand a result to see its GGUF files with quantization labels and sizes, then Load or Install. The Installed tab keeps your picks under `localStorage`.</p>
+<p>Live search of `huggingface.co/api/models?library=gguf`, built right into the app. Type any keyword, expand a result to see its GGUF files with quantization labels and sizes, then Load or Install. Install downloads the file once into your browser's own storage (OPFS), so installed models load and chat with no internet at all. The app itself is cached too, so the page opens offline.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="16"/><rect x="12" y="4" width="7" height="16"/><path d="M3 9h7M12 9h7"/></svg></div>
-<h4>3 SOTA DEFAULTS</h4>
-<p>Don't want to search? Here's a short, curated list of current Qwen GGUF builds, from phone-sized up to desktop-class: Qwen 3.5 in 0.8B, 4B and 9B, three in all. One click to load. For math/engineering or any other niche, use the built-in HF search.</p>
+<h4>CURATED DEFAULTS</h4>
+<p>Don't want to search? Here's a short, curated list of current GGUF builds, from phone-sized up to desktop-class: Qwen 3.5 in 0.8B, 4B and 9B, plus IBM Granite 4.2 3B. One click to load, and the file stays saved for offline use. Qwen 3.8 27B is listed for reference but is too large for any browser runtime (4 GB memory cap); run it with desktop Amni-AI. For math/engineering or any other niche, use the built-in HF search.</p>
 </div>
 <div class="feature">
 <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13l3 3v13H4z"/><rect x="8" y="4" width="8" height="6"/><rect x="7" y="14" width="10" height="6"/></svg></div>
@@ -249,9 +249,11 @@
 <a href="privacy.html">PRIVACY</a>
 <a href="terms.html">TERMS</a>
 <a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. Amni-LLM is open source under the MIT License.</p>
 </footer>
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

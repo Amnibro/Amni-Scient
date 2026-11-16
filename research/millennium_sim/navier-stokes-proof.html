@@ -595,5 +595,6 @@ window.addEventListener('resize',()=>{plotsDirty=true;});
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.08});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

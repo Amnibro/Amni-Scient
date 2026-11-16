@@ -53,7 +53,7 @@ self.addEventListener('activate', (e) => {
   // Drop stale caches from older versions.
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => k !== CACHE && k.startsWith('amni-learn-')).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
@@ -63,7 +63,11 @@ self.addEventListener('fetch', (e) => {
   // Only intercept same-origin requests under our scope. Don't fight with
   // Google Fonts CSS / fonts.gstatic.com — those are best-effort and the
   // page already falls back to system fonts via display=swap.
-  if (url.origin !== location.origin) return;
+  if (url.origin !== location.origin) {
+    // Fonts: when the network is gone, use the copy the site worker (/sw.js) kept, if there is one.
+    if (/^(fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net|unpkg\.com|cdnjs\.cloudflare\.com|cdn\.plot\.ly)$/.test(url.hostname)) e.respondWith(fetch(e.request).catch(() => caches.match(e.request.url).then(r => r || Response.error())));
+    return;
+  }
   const save = (req, resp) => { if (resp && resp.status === 200 && resp.type === 'basic') { const clone = resp.clone(); caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {}); } return resp; };
   // The APP CODE (index.html + learn-app.js + the page itself) is NETWORK-FIRST
   // so a fresh deploy always reaches the user when online — cache-first here
@@ -83,7 +87,8 @@ self.addEventListener('fetch', (e) => {
       if (cached) return cached;
       return fetch(e.request).then(resp => save(e.request, resp)).catch(() => {
         if (e.request.mode === 'navigate') return caches.match('./index.html');
-        return new Response('', { status: 504, statusText: 'offline' });
+        // files kept by the site worker or saved from /offline.html may differ only in their ?v= tag
+        return caches.match(e.request, { ignoreSearch: true }).then(c => c || new Response('', { status: 504, statusText: 'offline' }));
       });
     })
   );

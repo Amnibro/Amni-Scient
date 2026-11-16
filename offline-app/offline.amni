@@ -1,0 +1,550 @@
+// Amni-Scient offline support for pages. Helium, built for the web:
+//   hc build --web -DGS_WEB_MOVE=1 -DGS_WEB_STACK=4194304 offline-app/offline.amni -o offline-app/offline.wasm
+// Every page loads it. It
+//   - registers the site service worker (/sw.js) and asks it to keep the files this page already loaded
+//   - saves small apps whole, and the code of large apps, the first time they are opened
+//   - shows a small notice when the connection drops or returns
+//   - on /offline.html, draws the list of apps and saves or removes them on request
+// The file lists it reads (/offline-packs/apps.txt and one <id>.txt per app) are written by tools/build-offline.
+import web;
+
+let T_REG i32 = 1;
+let T_WARM i32 = 2;
+let T_PERF i32 = 3;
+let T_APPS i32 = 4;
+let T_PACK i32 = 5;
+let T_OPEN i32 = 6;
+let T_ADD i32 = 7;
+let T_ONLINE i32 = 8;
+let T_OFFLINE i32 = 9;
+let T_HIDE i32 = 10;
+let T_CLOSE i32 = 11;
+let T_EST i32 = 12;
+let T_NOP i32 = 13;
+let T_AUTO i32 = 14;
+let T_DEL i32 = 15;
+let T_SAVE i32 = 1000;
+let T_RM i32 = 2000;
+
+let MODE_ASK i32 = 0;     // saved only from /offline.html
+let MODE_AUTO i32 = 1;    // small: saved whole on first visit
+let MODE_CODE i32 = 2;    // large: its code is saved on first visit, the rest on request
+let WORKERS = 6;
+let CODE_FILE_MAX = 6291456;
+
+struct App { bytes int, files int, mode i32, badge i32, msg i32, save i32, rm i32, open i32, bar i32, fill i32, err bool, id byte[..24], title byte[..48], url byte[..48], v byte[..16] }
+struct Saved { ok bool, current bool, t real, failed int }
+struct Slot { id i32, tries i32, url byte[..400] }
+
+var apps App[>..];
+var slots Slot[6];
+var pack byte[>..];
+var path byte[>..];
+var nav i32 = 0;
+var sw i32 = 0;
+var reg i32 = 0;
+var cache_store i32 = 0;
+var cache i32 = 0;
+var grid i32 = 0;
+var pill i32 = 0;
+var hide_timer i32 = 0;
+var controlled = false;
+var warms = 0;
+var busy = false;
+var quota = false;
+var code_only = false;
+var cur = 0;
+var auto_app = -1;
+var pos = 0;
+var inflight = 0;
+var done = 0;
+var total = 0;
+var failed = 0;
+
+fn online() bool { web::get_bool(nav, "onLine") }
+fn jstr(out byte[>..]&, s const byte[:]) {
+	out.push('"');
+	for c in s { if c == '"' || c == 92 { out.push(92); } out.push(c); }
+	out.push('"');
+}
+fn field(line const byte[:], n int, sep byte) const byte[:] {
+	var a = 0;
+	var k = 0;
+	for c, i in line {
+		if c == sep { if k == n { return line[a..i]; } k++; a = i + 1; }
+	}
+	if k == n { return line[a..]; }
+	return line[..0];
+}
+fn mb(out byte[>..]&, n int) {
+	if n >= 1048576 {
+		format_flt(out, n as real / 1048576.0, if n >= 104857600 { 0 } else { 1 });
+		out.append(" MB");
+	} else {
+		format(out, max(1, n / 1024), " KB");
+	}
+}
+fn date(out byte[>..]&, ms real) {
+	let z = (ms / 86400000.0) as int + 719468;
+	let era = z / 146097;
+	let doe = z - era * 146097;
+	let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+	let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+	let mp = (5 * doy + 2) / 153;
+	let d = doy - (153 * mp + 2) / 5 + 1;
+	let m = if mp < 10 { mp + 3 } else { mp - 9 };
+	let y = yoe + era * 400 + (if m <= 2 { 1 } else { 0 });
+	format_int(out, y, 10, 4, '0');
+	out.push('-');
+	format_int(out, m, 10, 2, '0');
+	out.push('-');
+	format_int(out, d, 10, 2, '0');
+}
+fn key(out byte[>..]&, a App&, code bool) {
+	out.append("amni-offline:");
+	out.append(a.id);
+	if code { out.append(":code"); }
+}
+// What the browser remembers about a save: "version|time|files|bytes|failed".
+fn saved(a App&, code bool) Saved {
+	var k byte[>..] = [];
+	key(k, a, code);
+	var s byte[>..] = [];
+	if !web::store_get(k, s) { return Saved { ok: false, current: false, t: 0.0, failed: 0 }; }
+	let t, ok1 = parse_int(field(s, 1, '|'));
+	let f, ok2 = parse_int(field(s, 4, '|'));
+	return Saved { ok: true, current: field(s, 0, '|') == a.v, t: t as real, failed: f };
+}
+fn mk(tag const byte[:], class const byte[:], txt const byte[:]) i32 {
+	let e = web::create(tag);
+	if class.len > 0 { web::attr(e, "class", class); }
+	if txt.len > 0 { web::text(e, txt); }
+	e
+}
+
+// ---- connection notice ----
+fn notice(txt const byte[:], link bool, ms real) {
+	if pill == 0 {
+		pill = web::create("div");
+		web::attr(pill, "role", "status");
+		web::attr(pill, "style", "position:fixed;left:12px;bottom:12px;z-index:2147483000;max-width:calc(100vw - 24px);padding:9px 12px;border-radius:6px;background:#14161a;color:#f1f2f4;font:500 13px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.28);display:flex;gap:10px;align-items:center;transition:opacity .25s");
+		web::append(web::BODY, pill);
+	}
+	web::clear(pill);
+	let dot = web::create("span");
+	web::attr(dot, "style", if online() { "width:8px;height:8px;border-radius:50%;flex:none;background:#4fbf7a" } else { "width:8px;height:8px;border-radius:50%;flex:none;background:#e0a534" });
+	web::append(pill, dot);
+	web::append(pill, mk("span", "", txt));
+	if link {
+		let a = mk("a", "", "What is saved");
+		web::attr(a, "href", "/offline.html");
+		web::attr(a, "style", "color:#e7c27a;text-decoration:underline;white-space:nowrap");
+		web::append(pill, a);
+	}
+	let x = mk("button", "", "x");
+	web::attr(x, "type", "button");
+	web::attr(x, "aria-label", "Dismiss");
+	web::attr(x, "style", "background:none;border:0;color:#aab0b8;font-size:15px;line-height:1;cursor:pointer;padding:0 2px");
+	web::listen(x, "click", T_CLOSE, 0);
+	web::append(pill, x);
+	web::style(pill, "opacity", "1");
+	web::style(pill, "pointer-events", "auto");
+	if hide_timer != 0 { web::clear_timer(hide_timer); }
+	hide_timer = web::timer(ms, T_HIDE);
+}
+fn hide_notice() {
+	hide_timer = 0;
+	if pill != 0 { web::style(pill, "opacity", "0"); web::style(pill, "pointer-events", "none"); }
+}
+
+// ---- the list on /offline.html ----
+fn paint(i int) {
+	let a .= apps[i];
+	if a.badge == 0 { return; }
+	let s = saved(a, false);
+	let on = online();
+	let mine = busy && cur == i && !code_only;
+	web::attr(a.badge, "class", if !s.ok { "off-badge" } else if s.current { "off-badge saved" } else { "off-badge stale" });
+	web::text(a.badge, if !s.ok { "Not saved" } else if s.current { "Saved" } else { "Saved, update ready" });
+	web::text(a.save, if mine { "Saving" } else if !s.ok { "Save for offline" } else if s.current { "Save again" } else { "Update" });
+	web::prop_bool(a.save, "disabled", busy || !on || cache_store == 0);
+	web::style(a.rm, "display", if s.ok && !mine { "" } else { "none" });
+	web::style(a.bar, "display", if mine { "" } else { "none" });
+	web::style(a.open, "display", if on || s.ok { "" } else { "none" });
+	if mine || a.err { return; }
+	var m byte[>..] = [];
+	if s.ok {
+		m.append("Saved ");
+		date(m, s.t);
+		if s.failed > 0 { format(m, " (", s.failed, " files missing)"); }
+	} else if !on {
+		m.append("Connect to save this app.");
+	}
+	web::attr(a.msg, "class", "off-msg");
+	web::text(a.msg, m);
+}
+fn paint_all() { for i in apps.len { paint(i); } }
+fn card(i int, desc const byte[:]) {
+	let a .= apps[i];
+	let d = mk("div", "off-card", "");
+	a.badge = mk("span", "off-badge", "Not saved");
+	web::append(d, a.badge);
+	web::append(d, mk("h3", "", a.title));
+	web::append(d, mk("p", "", desc));
+	var meta byte[>..] = [];
+	mb(meta, a.bytes);
+	format(meta, ", ", a.files, " files");
+	web::append(d, mk("div", "off-meta", meta));
+	a.bar = mk("div", "off-bar", "");
+	a.fill = web::create("i");
+	web::append(a.bar, a.fill);
+	web::append(d, a.bar);
+	a.msg = mk("div", "off-msg", "");
+	web::append(d, a.msg);
+	let row = mk("div", "off-actions", "");
+	a.save = mk("button", "btn btn-primary", "Save for offline");
+	web::attr(a.save, "type", "button");
+	web::listen(a.save, "click", T_SAVE + i as i32, 0);
+	a.open = mk("a", "btn btn-outline", "Open");
+	web::attr(a.open, "href", a.url);
+	a.rm = mk("button", "btn btn-outline", "Remove");
+	web::attr(a.rm, "type", "button");
+	web::listen(a.rm, "click", T_RM + i as i32, 0);
+	web::append(row, a.save);
+	web::append(row, a.open);
+	web::append(row, a.rm);
+	web::append(d, row);
+	web::append(grid, d);
+}
+fn show_conn() {
+	let dot = web::el("off-dot");
+	if dot == 0 { return; }
+	let on = online();
+	web::attr(dot, "class", if on { "off-dot" } else { "off-dot off" });
+	web::text(web::el("off-conn"), if on { "Connected" } else { "No connection. Saved apps below still open." });
+	paint_all();
+}
+fn ask_storage() {
+	if grid == 0 { return; }
+	let st = web::js_global("navigator.storage");
+	if st != 0 { web::js_call(st, "estimate", "[]", T_EST); }
+}
+fn num_after(j const byte[:], name const byte[:]) int {
+	let p = find(j, name);
+	if p < 0 { return 0; }
+	var n = 0;
+	for c in j[p + name.len..] {
+		if c >= '0' && c <= '9' { n = n * 10 + (c - '0') as int; } else if c == '.' || c == ',' || c == '}' { return n; }
+	}
+	n
+}
+fn show_storage() {
+	var j byte[>..] = [];
+	if !web::js_result(web::ev_id(), j) { return; }
+	let quota_b = num_after(j, "\"quota\":");
+	if quota_b <= 0 { return; }
+	var s byte[>..] = [];
+	s.append("Storage used by this site: ");
+	mb(s, num_after(j, "\"usage\":"));
+	s.append(" of about ");
+	mb(s, quota_b);
+	s.append(" available");
+	web::text(web::el("off-store"), s);
+}
+
+// ---- saving an app ----
+fn code_file(u const byte[:], size int) bool {
+	if size > CODE_FILE_MAX { return false; }
+	starts_with(u, "http") || ends_with(u, "/") || ends_with(u, ".html") || ends_with(u, ".js") || ends_with(u, ".mjs") || ends_with(u, ".css") || ends_with(u, ".json") || ends_with(u, ".wasm") || ends_with(u, ".webmanifest") || ends_with(u, ".svg") || ends_with(u, ".woff2") || ends_with(u, ".woff") || ends_with(u, ".ttf") || ends_with(u, ".otf")
+}
+// The next address in the file list that this save wants. Lines are "address<TAB>size".
+fn next_url(out byte[>..]&) bool {
+	while pos < pack.len {
+		let e0 = find(pack[..], "\n", pos);
+		let e = if e0 < 0 { pack.len } else { e0 };
+		let a = pos;
+		pos = e + 1;
+		let t = find(pack[a..e], "\t");
+		if t <= 0 { continue; }
+		let size, ok = parse_int(pack[a + t + 1..e]);
+		if code_only && !code_file(pack[a..a + t], size) { continue; }
+		out.clear();
+		out.append(pack[a..a + t]);
+		return true;
+	}
+	false
+}
+fn progress() {
+	let a .= apps[cur];
+	if a.badge == 0 || code_only { return; }
+	var w byte[>..] = [];
+	format(w, if total > 0 { done * 100 / total } else { 0 }, "%");
+	web::style(a.fill, "width", w);
+	var m byte[>..] = [];
+	format(m, done, " of ", total, " files");
+	web::attr(a.msg, "class", "off-msg");
+	web::text(a.msg, m);
+}
+fn fail(why const byte[:]) {
+	let a .= apps[cur];
+	busy = false;
+	if a.badge != 0 && !code_only {
+		a.err = true;
+		web::attr(a.msg, "class", "off-msg err");
+		web::text(a.msg, why);
+	}
+	paint_all();
+}
+fn finish() {
+	let a .= apps[cur];
+	var k byte[>..] = [];
+	key(k, a, code_only);
+	var v byte[>..] = [];
+	format(v, a.v, "|", web::epoch_ms() as int, "|", total - failed, "|", a.bytes, "|", failed);
+	web::store_set(k, v);
+	if quota {
+		fail("This device is out of storage space for the site. Remove a saved app and try again.");
+	} else if failed > max(3, total / 50) {
+		var m byte[>..] = [];
+		format(m, failed, " of ", total, " files could not be saved. Check the connection and try again.");
+		fail(m);
+	} else {
+		busy = false;
+		a.err = false;
+		paint_all();
+	}
+	ask_storage();
+}
+fn pump() {
+	var u byte[>..] = [];
+	var args byte[>..] = [];
+	while inflight < WORKERS && !quota && next_url(u) {
+		args.clear();
+		args.push('[');
+		jstr(args, u);
+		args.push(']');
+		let id = web::js_call(cache, "add", args, T_ADD);
+		for &s in slots {
+			if s.id == 0 { s.id = id; s.tries = 0; s.url.clear(); s.url.append(u[..min(u.len, 400)]); break; }
+		}
+		inflight++;
+	}
+	if inflight == 0 { finish(); }
+}
+fn start_save(i int, code bool) {
+	if busy || cache_store == 0 { return; }
+	busy = true;
+	quota = false;
+	code_only = code;
+	cur = i;
+	pos = 0;
+	inflight = 0;
+	done = 0;
+	total = 0;
+	failed = 0;
+	apps[i].err = false;
+	paint_all();
+	var u byte[>..] = [];
+	format(u, "/offline-packs/", apps[i].id, ".txt");
+	web::fetch(u, T_PACK);
+}
+fn got_pack() {
+	let id = web::ev_id();
+	pack.clear();
+	let ok = web::fetch_take(id, pack);
+	web::fetch_free(id);
+	if !ok || web::ev_status() != 200 { fail("The file list could not be read. Check the connection and try again."); return; }
+	var u byte[>..] = [];
+	while next_url(u) { total++; }
+	pos = 0;
+	let st = web::js_global("navigator.storage");
+	if st != 0 && !code_only { web::js_call(st, "persist", "[]", T_NOP); }
+	var args byte[>..] = [];
+	format(args, "[\"amni-app-", apps[cur].id, "\"]");
+	web::js_call(cache_store, "open", args, T_OPEN);
+}
+fn added() {
+	let id = web::ev_id();
+	let bad = web::ev_status() == 0;
+	var e byte[>..] = [];
+	if bad {
+		web::js_result(id, e);
+		if contains(e, "uota") { quota = true; }
+	}
+	for &s in slots {
+		if s.id == id {
+			// a file that fails is asked for twice more before it counts as missing
+			if bad && !quota && s.tries < 2 && s.url.len < 400 {
+				s.tries++;
+				var args byte[>..] = [];
+				args.push('[');
+				jstr(args, s.url);
+				args.push(']');
+				s.id = web::js_call(cache, "add", args, T_ADD);
+				return;
+			}
+			if bad { var w byte[>..] = []; format(w, "offline: could not save ", s.url, " (", e, ")"); web::warn(w); }
+			s.id = 0;
+			break;
+		}
+	}
+	if bad { failed++; }
+	inflight--;
+	done++;
+	progress();
+	pump();
+}
+fn remove_app(i int) {
+	let a .= apps[i];
+	var k byte[>..] = [];
+	key(k, a, false);
+	web::store_del(k);
+	k.clear();
+	key(k, a, true);
+	web::store_del(k);
+	a.err = false;
+	var args byte[>..] = [];
+	format(args, "[\"amni-app-", a.id, "\"]");
+	web::js_call(cache_store, "delete", args, T_DEL);
+	paint(i);
+}
+
+// ---- the app list ----
+// One app per line: id, title, description, address, version, bytes, files, mode, then the paths that count as inside it.
+fn got_apps() {
+	let id = web::ev_id();
+	var txt byte[>..] = [];
+	let ok = web::fetch_take(id, txt);
+	web::fetch_free(id);
+	if !ok || web::ev_status() != 200 {
+		if grid != 0 { web::append(grid, mk("p", "", if online() { "The list of apps could not be loaded. Reload to try again." } else { "The list of apps has not been saved yet. Connect and open this page once." })); }
+		return;
+	}
+	var a0 = 0;
+	while a0 < txt.len {
+		let e0 = find(txt[..], "\n", a0);
+		let e = if e0 < 0 { txt.len } else { e0 };
+		let line = txt[a0..e];
+		a0 = e + 1;
+		if field(line, 4, '\t').len == 0 { continue; }
+		let b, ok1 = parse_int(field(line, 5, '\t'));
+		let n, ok2 = parse_int(field(line, 6, '\t'));
+		let m = field(line, 7, '\t');
+		let a .= apps.push(App { bytes: b, files: n, mode: if m == "auto" { MODE_AUTO } else if m == "code" { MODE_CODE } else { MODE_ASK }, .. });
+		a.id.append(field(line, 0, '\t'));
+		a.title.append(field(line, 1, '\t'));
+		a.url.append(field(line, 3, '\t'));
+		a.v.append(field(line, 4, '\t'));
+		let i = apps.len - 1;
+		if grid != 0 {
+			card(i, field(line, 2, '\t'));
+		} else if a.mode != MODE_ASK && auto_app < 0 {
+			let scopes = field(line, 8, '\t');
+			var k = 0;
+			loop {
+				let s = field(scopes, k, ',');
+				if s.len == 0 { break; }
+				if path == s || (ends_with(s, "/") && starts_with(path, s)) { auto_app = i; }
+				k++;
+			}
+		}
+	}
+	if grid != 0 { paint_all(); return; }
+	if auto_app < 0 || cache_store == 0 || !online() { return; }
+	let conn = web::js_get(nav, "connection");
+	if conn != 0 && web::get_bool(conn, "saveData") { return; }
+	let a .= apps[auto_app];
+	let whole = saved(a, false);
+	let code = saved(a, true);
+	if (whole.ok && whole.current) || (a.mode == MODE_CODE && code.ok && code.current) { return; }
+	web::timer(4000.0, T_AUTO);
+}
+
+// ---- keeping what this page already loaded ----
+fn warm() {
+	if reg == 0 || web::js_get(reg, "active") == 0 { return; }
+	web::js_call(web::js_global("performance"), "getEntriesByType", "[\"resource\"]", T_PERF);
+}
+fn send_warm() {
+	let act = web::js_get(reg, "active");
+	var j byte[>..] = [];
+	if act == 0 || !web::js_result(web::ev_id(), j) { return; }
+	var href byte[>..] = [];
+	web::location("href", href);
+	var args byte[>..] = [];
+	args.append("[{\"type\":\"WARM\",\"urls\":[");
+	jstr(args, href);
+	let mark = "\"name\":\"";
+	var p = 0;
+	var n = 0;
+	while n < 600 {
+		let a = find(j[..], mark, p);
+		if a < 0 { break; }
+		let b = find(j[..], "\"", a + mark.len);
+		if b < 0 { break; }
+		args.push(',');
+		args.push('"');
+		args.append(j[a + mark.len..b]);
+		args.push('"');
+		p = b + 1;
+		n++;
+	}
+	args.append("]}]");
+	web::js_call(act, "postMessage", args, T_NOP);
+}
+
+export fn he_event(tag i32, kind i32) {
+	if tag >= T_RM { remove_app((tag - T_RM) as int); }
+	else if tag >= T_SAVE { start_save((tag - T_SAVE) as int, false); }
+	else if tag == T_REG {
+		if web::ev_status() != 0 {
+			reg = web::js_handle(web::ev_id());
+			if !controlled { web::timer(1500.0, T_WARM); web::timer(12000.0, T_WARM); }
+		}
+	}
+	else if tag == T_WARM { warm(); }
+	else if tag == T_PERF { send_warm(); }
+	else if tag == T_APPS { if kind == web::EV_FETCH { got_apps(); } }
+	else if tag == T_PACK { if kind == web::EV_FETCH { got_pack(); } }
+	else if tag == T_OPEN {
+		cache = if web::ev_status() != 0 { web::js_handle(web::ev_id()) } else { 0 };
+		if cache == 0 { fail("This browser would not open its offline storage."); } else { progress(); pump(); }
+	}
+	else if tag == T_ADD { added(); }
+	else if tag == T_ONLINE { show_conn(); notice("Back online.", false, 3000.0); }
+	else if tag == T_OFFLINE { show_conn(); if grid == 0 { notice("You are offline. This is a saved copy.", true, 9000.0); } }
+	else if tag == T_HIDE || tag == T_CLOSE { hide_notice(); }
+	else if tag == T_EST { show_storage(); }
+	else if tag == T_AUTO { if auto_app >= 0 { start_save(auto_app, apps[auto_app].mode == MODE_CODE); } }
+	else if tag == T_DEL { ask_storage(); }
+}
+
+fn main() {
+	nav = web::js_global("navigator");
+	web::location("pathname", path);
+	grid = web::el("off-grid");
+	cache_store = web::js_global("caches");
+	sw = web::js_global("navigator.serviceWorker");
+	web::listen(web::WINDOW, "online", T_ONLINE, 0);
+	web::listen(web::WINDOW, "offline", T_OFFLINE, 0);
+	if sw != 0 && web::secure() {
+		controlled = web::js_get(sw, "controller") != 0;
+		web::js_call(sw, "register", "[\"/sw.js\",{\"scope\":\"/\"}]", T_REG);
+	}
+	if grid != 0 {
+		// Shown in place of a page that was asked for with no connection and was never saved.
+		if !(path == "/offline" || path == "/offline.html" || path == "/offline/") {
+			let miss = web::el("off-miss");
+			var m byte[>..] = [];
+			format(m, "There is no connection, and ", path, " has not been saved on this device yet. Connect once and open it, or save its app below while you are connected.");
+			web::text(miss, m);
+			web::style(miss, "display", "block");
+		}
+		if cache_store == 0 || sw == 0 { web::append(grid, mk("p", "", "This browser cannot save pages for offline use (private windows often cannot). Pages still work while you are connected.")); }
+		show_conn();
+		ask_storage();
+	} else if !online() {
+		notice("You are offline. This is a saved copy.", true, 9000.0);
+	}
+	web::fetch("/offline-packs/apps.txt", T_APPS);
+}

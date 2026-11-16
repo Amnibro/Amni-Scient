@@ -145,5 +145,6 @@
 fetch('symphony/version.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(v){var e=document.getElementById('ver'),a=document.getElementById('apk-dl');if(e&&v&&v.versionName)e.textContent='v'+v.versionName;if(a&&v&&v.url)a.href=v.url;}).catch(function(){});
 </script>
 <script src="js/shots.js?v=1"></script>
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

@@ -69,6 +69,7 @@ function footer() {
 <a href="/privacy.html">PRIVACY</a>
 <a href="/terms.html">TERMS</a>
 <a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
@@ -110,6 +111,7 @@ ${themeBoot()}
 ${nav('blog')}
 ${inner}
 ${footer()}
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>
 `;

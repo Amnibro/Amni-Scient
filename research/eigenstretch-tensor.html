@@ -378,6 +378,7 @@ python3 eigenstretch.py demo --kind swap --seed 0              # one run, digits
 <a href="../terms.html">TERMS</a>
 <a href="/">AMNI-SCIENT</a>
 <a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
@@ -411,5 +412,6 @@ function example(){var x=E.example_run,ts=E.evaluation.checkpoints,b='';x.digits
 fetch('eigenstretch_results.json').then(function(r){return r.json()}).then(function(j){E=j;table();esDrift();esRoc();share();example()}).catch(function(){gi('es-table').querySelector('tbody').innerHTML='<tr><td colspan="5">Could not load eigenstretch_results.json.</td></tr>'});
 })();
 </script>
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

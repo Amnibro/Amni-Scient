@@ -1,0 +1,239 @@
+// Writes the "save for offline" file lists in /offline-packs/ that the page program (offline-app/offline.amni) reads.
+// Run from the site root after staging new files (the lists come from the git index):
+//   hc run tools/build-offline.amni
+// Output:
+//   offline-packs/apps.txt   one app per line: id, title, description, address, version, bytes, files, mode, paths inside it
+//   offline-packs/<id>.txt   one file per line: address, tab, size. Library files from CDNs follow with size 0.
+// tools/offline-probe.txt (written by tests/offline_probe.mjs, which opens every app in a headless browser)
+// lists what each app loads from outside its own folders; those files are added to its list.
+import os;
+
+let AUTO_MAX = 8388608;        // apps up to this size are saved whole on first visit
+let CODE_MAX = 33554432;       // larger apps whose code fits in this get their code saved on first visit
+let CODE_FILE_MAX = 6291456;   // keep in step with offline-app/offline.amni
+let ASSET_MAX = 6291456;       // bigger images and videos on site pages are not saved
+
+struct File { a int, b int, size int, h uint }
+var listing byte[>..];
+var files File[>..];
+var probe byte[>..];
+var table byte[>..];
+
+fn path_of(i int) const byte[:] { listing[files[i].a..files[i].b] }
+fn fnv(h0 uint, s const byte[:]) uint {
+	var h = h0;
+	for c in s { h = (h ^ (c as uint)) * 0x100000001b3; }
+	h
+}
+fn field(line const byte[:], n int, sep byte) const byte[:] {
+	var a = 0;
+	var k = 0;
+	for c, i in line {
+		if c == sep { if k == n { return line[a..i]; } k++; a = i + 1; }
+	}
+	if k == n { return line[a..]; }
+	return line[..0];
+}
+fn ext(f const byte[:]) const byte[:] {
+	let d = rfind(f, ".");
+	let s = rfind(f, "/");
+	if d < 0 || d < s { return f[..0]; }
+	return f[d + 1..];
+}
+fn lookup(f const byte[:]) int {
+	for i in files.len { if path_of(i) == f { return i; } }
+	-1
+}
+// The file an address names: /a/ is a/index.html, /a may be a.html or a/index.html.
+fn resolve(u const byte[:]) int {
+	var f byte[>..] = [];
+	var i = if u.len > 0 && u[0] == '/' { 1 } else { 0 };
+	while i < u.len && u[i] != '?' && u[i] != '#' {
+		if u[i] == '%' && i + 2 < u.len && u[i + 1] == '2' && u[i + 2] == '0' { f.push(' '); i += 3; } else { f.push(u[i]); i++; }
+	}
+	if f.len == 0 || ends_with(f[..], "/") { f.append("index.html"); }
+	let x = lookup(f);
+	if x >= 0 { return x; }
+	var g byte[>..] = [];
+	format(g, f, ".html");
+	let y = lookup(g);
+	if y >= 0 { return y; }
+	g.clear();
+	format(g, f, "/index.html");
+	lookup(g)
+}
+fn skip(f const byte[:]) bool {
+	if starts_with(f, "offline-packs/") || ends_with(f, ".amni") || ends_with(f, ".test.js") || ends_with(f, ".test.mjs") || ends_with(f, "sketch.demo.html") || ends_with(f, ".tar.gz") { return true; }
+	if starts_with(f, "tests/") || starts_with(f, "test/") || starts_with(f, "backups/") || starts_with(f, "backup/") || starts_with(f, "node_modules/") || starts_with(f, "src/") { return true; }
+	if contains(f, "/tests/") || contains(f, "/test/") || contains(f, "/backups/") || contains(f, "/backup/") || contains(f, "/node_modules/") || contains(f, "/src/") { return true; }
+	let x = ext(f);
+	x == "md" || x == "map" || x == "py" || x == "ps1" || x == "bat" || x == "cmd" || x == "sh" || x == "exe" || x == "zip" || x == "apk" || x == "dmg" || x == "msi" || x == "deb" || x == "diff" || x == "toml" || x == "gitignore"
+}
+fn url_of(out byte[>..]&, f const byte[:]) {
+	let n = if f == "index.html" { 0 } else if ends_with(f, "/index.html") { f.len - 10 } else { f.len };
+	out.push('/');
+	for c in f[..n] { if c == ' ' { out.append("%20"); } else { out.push(c); } }
+}
+fn code_file(u const byte[:], size int) bool {
+	if size > CODE_FILE_MAX { return false; }
+	ends_with(u, "/") || ends_with(u, ".html") || ends_with(u, ".js") || ends_with(u, ".mjs") || ends_with(u, ".css") || ends_with(u, ".json") || ends_with(u, ".wasm") || ends_with(u, ".webmanifest") || ends_with(u, ".svg") || ends_with(u, ".woff2") || ends_with(u, ".woff") || ends_with(u, ".ttf") || ends_with(u, ".otf")
+}
+fn word(c byte) bool { (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' }
+fn stop(c byte) bool { c == '"' || c == 39 || c == '(' || c == ')' || c == '?' || c == '#' || c == ' ' || c == '<' || c == '>' || c == ',' || c == 92 || c == 9 || c == 10 || c == 13 }
+fn asset_ext(x const byte[:]) bool { x == "png" || x == "jpg" || x == "jpeg" || x == "webp" || x == "avif" || x == "svg" || x == "gif" || x == "woff2" || x == "woff" || x == "ttf" || x == "ico" || x == "css" || x == "js" || x == "json" }
+// Mark the images and fonts under /assets/ that a page or stylesheet points at.
+fn scan_assets(src const byte[:], sel byte[:]) {
+	var p = 0;
+	loop {
+		let a = find(src, "assets/", p);
+		if a < 0 { break; }
+		p = a + 7;
+		if a >= 1 && word(src[a - 1]) { continue; }
+		if a >= 2 && src[a - 1] == '/' && word(src[a - 2]) { continue; }
+		var e = a;
+		while e < src.len && !stop(src[e]) { e++; }
+		let i = lookup(src[a..e]);
+		if i >= 0 && files[i].size <= ASSET_MAX && asset_ext(ext(src[a..e])) { sel[i] = 1; }
+	}
+}
+fn app(id const byte[:], title const byte[:], desc const byte[:], url const byte[:], dirs const byte[:], extra const byte[:], scope const byte[:]) {
+	format(table, id, "|", title, "|", desc, "|", url, "|", dirs, "|", extra, "|", scope, "\n");
+}
+fn build(line const byte[:], apps_out byte[>..]&) {
+	let id = field(line, 0, '|');
+	let dirs = field(line, 4, '|');
+	let extra = field(line, 5, '|');
+	let site = id == "site";
+	var sel byte[>..] = [];
+	sel.resize(files.len, 0);
+	var k = 0;
+	loop {
+		let d = field(dirs, k, ',');
+		if d.len == 0 { break; }
+		for i in files.len {
+			let f = path_of(i);
+			if f.len > d.len && f[d.len] == '/' && starts_with(f, d) { sel[i] = 1; }
+		}
+		k++;
+	}
+	k = 0;
+	loop {
+		let f = field(extra, k, ',');
+		if f.len == 0 { break; }
+		let i = lookup(f);
+		if i >= 0 { sel[i] = 1; }
+		k++;
+	}
+	if site {
+		var src byte[>..] = [];
+		for i in files.len {
+			let f = path_of(i);
+			let x = ext(f);
+			let root = find(f, "/") < 0;
+			if root && (x == "html" || x == "ico" || x == "svg" || x == "png" || x == "txt" || x == "xml" || x == "webmanifest") { sel[i] = 1; }
+			if (root && x == "html") || (starts_with(f, "css/") && x == "css") || (starts_with(f, "blog/") && (x == "html" || x == "css")) {
+				src.clear();
+				if read_file(f, src) { scan_assets(src, sel); }
+			}
+		}
+	}
+	// what the headless-browser probe saw this app load: "id<TAB>same|cdn<TAB>address"
+	var cdn byte[>..] = [];
+	var ncdn = 0;
+	var p = 0;
+	while p < probe.len {
+		let e0 = find(probe[..], "\n", p);
+		let e = if e0 < 0 { probe.len } else { e0 };
+		let row = probe[p..e];
+		p = e + 1;
+		if field(row, 0, '\t') != id { continue; }
+		if field(row, 1, '\t') == "cdn" {
+			format(cdn, field(row, 2, '\t'), "\t0\n");
+			ncdn++;
+		} else {
+			let i = resolve(field(row, 2, '\t'));
+			if i >= 0 { sel[i] = 1; }
+		}
+	}
+	var out byte[>..] = [];
+	var u byte[>..] = [];
+	var bytes = 0;
+	var code_bytes = 0;
+	var count = 0;
+	var h uint = 0xcbf29ce484222325;
+	for i in files.len {
+		if sel[i] == 0 { continue; }
+		let f = path_of(i);
+		if skip(f) { continue; }
+		u.clear();
+		url_of(u, f);
+		format(out, u, "\t", files[i].size, "\n");
+		bytes += files[i].size;
+		if code_file(u, files[i].size) { code_bytes += files[i].size; }
+		count++;
+		h = fnv(h, f) ^ files[i].h;
+	}
+	h = fnv(h, cdn);
+	out.append(cdn);
+	var name byte[>..] = [];
+	format(name, "offline-packs/", id, ".txt");
+	if !write_file(name, out) { print("build-offline: could not write ", name); exit(1); }
+	let mode = if site { "ask" } else if bytes <= AUTO_MAX { "auto" } else if code_bytes <= CODE_MAX { "code" } else { "ask" };
+	format(apps_out, id, "\t", field(line, 1, '|'), "\t", field(line, 2, '|'), "\t", field(line, 3, '|'), "\t");
+	format_int(apps_out, (h & 0xffffffffffff) as! int, 16, 12, '0');
+	format(apps_out, "\t", bytes, "\t", count + ncdn, "\t", mode, "\t", field(line, 6, '|'), "\n");
+	var mbs byte[>..] = [];
+	format_flt(mbs, bytes as real / 1048576.0, 1);
+	print(id, ": ", count, " files, ", mbs, " MB, ", ncdn, " cdn, ", mode);
+}
+fn main() {
+	if run_command("git -c core.quotepath=off ls-files --format='%(objectname)%x09%(objectsize)%x09%(path)' > offline-packs/.index") != 0 || !read_file("offline-packs/.index", listing) {
+		print("build-offline: could not list the git index. Run from the site root; offline-packs/ must exist.");
+		exit(1);
+	}
+	delete_file("offline-packs/.index");
+	var p = 0;
+	while p < listing.len {
+		let e0 = find(listing[..], "\n", p);
+		let e = if e0 < 0 { listing.len } else { e0 };
+		let t1 = find(listing[p..e], "\t");
+		if t1 > 0 {
+			let t2 = find(listing[p + t1 + 1..e], "\t");
+			if t2 > 0 {
+				let size, ok = parse_int(listing[p + t1 + 1..p + t1 + 1 + t2]);
+				files.push(File { a: p + t1 + t2 + 2, b: e, size: size, h: fnv(0xcbf29ce484222325, listing[p..p + t1]) });
+			}
+		}
+		p = e + 1;
+	}
+	read_file("tools/offline-probe.txt", probe);
+	// id | title | description | address | folders saved whole | extra files | paths that count as inside the app
+	app("site", "Site pages", "Home, product pages, FAQ, blog and legal pages.", "/", "css,js,blog,offline-app", "", "");
+	app("calc", "Amni-Calc", "Engineering calculators: beams, springs, bolts, gears, fluids, thermal.", "/calc/", "calc", "", "/calc/");
+	app("cad", "Amni-CAD", "Parametric CAD with stress, flow and CAM. The AI assistant link and cloud features need a connection.", "/cad/", "cad", "lib/amni-llm/amni-llm.js,lib/amni-llm/registry.js,lib/amni-llm/ptex.js,lib/amni-llm/vendor/wllama-3.13.0/index.js,lib/amni-llm/vendor/wllama-3.13.0/wllama.wasm", "/cad/");
+	app("cad-reference", "Amni-CAD reference", "Every feature, recipe, assistant tool and API route.", "/amni-cad-reference/", "amni-cad-reference", "", "/amni-cad-reference/");
+	app("construct", "Construct", "Deck, roof, framing, floor, patio, pool, plan, garden, electrical, plumbing and HVAC planners.", "/construct/", "construct,deck,elec,floor,frame,garden,hvac,patio,plan,plumb,pool,roof,_shared", "", "/construct/,/deck/,/elec/,/floor/,/frame/,/garden/,/hvac/,/patio/,/plan/,/plumb/,/pool/,/roof/");
+	app("learn", "Amni-Learn", "Learning games from pre-K to test prep, with voice and art.", "/learn/", "learn", "", "/learn/");
+	app("weather", "Amni-Weather", "Weather globe. Offline it shows the last forecast pack that was saved.", "/weather/", "weather", "", "/weather/");
+	app("explore", "Amni-Explore", "Galaxy map, rocket lab and colonies.", "/explore/", "explore,assets/explore", "", "/explore/");
+	app("game", "Amni-Game", "The current build of the game.", "/game/revamp/", "game/revamp", "", "/game/revamp/");
+	app("companion", "Amni-Companion", "The 3D companion. Talking to a cloud AI needs a connection; a local model does not.", "/companion/", "companion", "", "/companion/");
+	app("prayer", "Amni-Prayer", "Prayers and readings.", "/prayer/", "prayer", "", "/prayer/");
+	app("life", "Amni-Life", "Life planner. Runs on this device.", "/amni-life/", "amni-life", "", "/amni-life/");
+	app("phone", "Amni-Phone", "Phone studio.", "/amni-phone/", "amni-phone", "", "/amni-phone/");
+	app("llm", "Amni-LLM", "Run AI models in the browser. Models you install are kept on this device separately.", "/lib/amni-llm/", "lib/amni-llm", "", "/lib/amni-llm/");
+	app("golf", "Mini golf", "Solo play works offline; playing with others needs a connection.", "/golf/", "golf", "", "/golf/");
+	app("yacht", "Helium Yacht", "Helium graphics demo.", "/helium-yacht/", "helium-yacht", "", "/helium-yacht/");
+	app("api-library", "Gold and Helium API library", "Every Gold command and Helium function, searchable.", "/api-library/", "api-library", "", "/api-library/");
+	app("research", "Research", "Papers, proofs and simulations.", "/research.html", "research", "research.html", "/research/,/research,/research.html");
+	app("os-docs", "Amni-OS docs", "Amni-OS guides.", "/amni-os/docs/", "amni-os", "", "/amni-os/");
+	var apps_out byte[>..] = [];
+	p = 0;
+	while p < table.len {
+		let e0 = find(table[..], "\n", p);
+		let e = if e0 < 0 { table.len } else { e0 };
+		if e > p { build(table[p..e], apps_out); }
+		p = e + 1;
+	}
+	if !write_file("offline-packs/apps.txt", apps_out) { print("build-offline: could not write offline-packs/apps.txt"); exit(1); }
+}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Use Amni-Scient offline | AMNI-SCIENT</title>
+<meta name="description" content="Save Amni-Scient web apps on this device and keep using them with no connection: Amni-CAD, Amni-Calc, Construct, Amni-Learn, Amni-Weather and more.">
+<meta property="og:title" content="Use Amni-Scient offline">
+<meta property="og:description" content="Save the web apps on this device and keep using them with no connection.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/offline.html">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<link rel="canonical" href="https://amni-scient.com/offline.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<style>
+.off-state{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center;font-size:.85rem;color:var(--dim);margin-top:1.1rem}
+.off-dot{display:inline-block;width:.6rem;height:.6rem;border-radius:50%;background:#3fa56b;margin-right:.45rem;vertical-align:baseline}
+.off-dot.off{background:#d39a2a}
+.off-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1rem;margin-top:1.25rem}
+.off-card{display:flex;flex-direction:column;gap:.55rem;background:var(--glass),var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem 1.2rem;box-shadow:var(--elev-1);min-width:0}
+.off-card h3{margin:0;font-size:1rem;letter-spacing:.04em}
+.off-card p{margin:0;font-size:.85rem;line-height:1.55;color:var(--dim)}
+.off-meta{font-size:.75rem;color:var(--dim);font-variant-numeric:tabular-nums}
+.off-badge{align-self:flex-start;font-size:.62rem;font-weight:650;letter-spacing:.14em;text-transform:uppercase;padding:.2rem .55rem;border-radius:2px;border:1px solid var(--border2);color:var(--dim)}
+.off-badge.saved{border-color:#3fa56b;color:#2f8a57}
+.off-badge.stale{border-color:#d39a2a;color:#a8771a}
+[data-theme=dark] .off-badge.saved{color:#6fd39a}
+[data-theme=dark] .off-badge.stale{color:#e9b95a}
+.off-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:auto;padding-top:.35rem}
+.off-actions .btn{padding:.55rem .95rem;font-size:.66rem}
+.off-actions .btn[disabled]{opacity:.55;cursor:default}
+.off-bar{height:4px;border-radius:2px;background:var(--border);overflow:hidden}
+.off-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.off-msg{font-size:.78rem;color:var(--dim);min-height:1.1em;overflow-wrap:anywhere}
+.off-msg.err{color:#c0392b}
+.off-list{max-width:800px;line-height:1.8;color:var(--dim);font-size:.9rem;margin:1rem 0 0 1.2rem}
+.off-list li{margin-bottom:.35rem}
+#off-miss{display:none;border:1px solid var(--border2);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1.2rem;max-width:800px;font-size:.9rem;line-height:1.6}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amnitex.html">AMNITEX</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<section class="hero" style="min-height:auto;padding:8rem 2rem 2rem">
+<h1>OFFLINE</h1>
+<p class="subtitle">USE AMNI-SCIENT WITH NO CONNECTION</p>
+<p class="tagline">Save an app on this device once. After that it opens and works without the internet.</p>
+<div id="off-miss" role="status"></div>
+<div class="off-state" aria-live="polite">
+<span><span class="off-dot" id="off-dot"></span><span id="off-conn">Checking connection</span></span>
+<span id="off-store"></span>
+</div>
+</section>
+<section style="padding-top:1rem">
+<h2>SAVE AN APP</h2>
+<p style="max-width:800px;color:var(--dim);font-size:.9rem;line-height:1.7">Each app is downloaded in full and kept in this browser. Small apps are also saved by themselves the first time you open them.</p>
+<noscript><p>Saving apps for offline use needs scripting turned on.</p></noscript>
+<div class="off-grid" id="off-grid"></div>
+</section>
+<section>
+<h2>HOW IT WORKS</h2>
+<ul class="off-list">
+<li>Every page you open while connected is kept, so it opens again with no connection.</li>
+<li>Saving an app above keeps all of its files, including parts you have not opened yet.</li>
+<li>Your work in an app (drawings, calculations, progress) is stored on this device and never needed the internet.</li>
+<li>When you are connected the site always loads the newest version. Saved copies are only used when the network cannot be reached.</li>
+<li>Saved apps live in this browser on this device. Clearing the browser&rsquo;s site data removes them. Each browser and device saves its own.</li>
+</ul>
+</section>
+<section>
+<h2>WHAT STILL NEEDS A CONNECTION</h2>
+<ul class="off-list">
+<li>Anything that talks to another computer: cloud AI assistants, the Amni-CAD remote link, license checks, multiplayer, live weather updates, downloads and sign-in.</li>
+<li>Amni-Weather shows the most recent forecast pack saved on this device, with its date.</li>
+<li>Amni-LLM runs models on this device. A model has to be installed while connected; after that it runs offline.</li>
+</ul>
+</section>
+<section>
+<h2>APPS YOU INSTALL</h2>
+<ul class="off-list">
+<li><a href="/amni-ai.html">Amni-AI (Adam)</a> runs on your own PC. Once a model is installed it answers with no connection.</li>
+<li><a href="/amni-chat.html">Amni-Chat</a> on Android can pass messages phone to phone over Bluetooth when there is no network, and holds unsent messages until a path opens.</li>
+<li><a href="/amni-haven.html">Amni-Haven</a> talks to a Haven server you run. A server on your home network keeps working for everyone on that network when the internet is down.</li>
+<li><a href="/amni-code.html">Amni-Code</a> works with a model running on your own computer.</li>
+</ul>
+</section>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>

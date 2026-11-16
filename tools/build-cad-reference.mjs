@@ -50,6 +50,7 @@ ${nav}
 ${body}
 <p class="page-updated">Last updated <time datetime="${today}">${new Date(today+'T12:00:00Z').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})}</time></p>
 ${foot}
+<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>
 `);return url};
