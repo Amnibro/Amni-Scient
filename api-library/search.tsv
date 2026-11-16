@@ -3680,6 +3680,9 @@ SDF_FIRST	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_FIRST	P
 SDF_COUNT	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_COUNT	Per-glyph number of strokes, for ASCII 32 to 126.	int
 SDF_ADV	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_ADV	Per-glyph advance width in font units, for ASCII 32 to 126.	int
 SDF_OFF	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_OFF	Per-glyph horizontal shift in font units that centres the ink within its advance.	int
+SDF_TTF_PIX	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_TTF_PIX	Buffer of raw TrueType pixel bytes used internally by the font module, empty until populated.	int
+SDF_KERN	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_KERN	Growable table of pairwise kerning adjustments, indexed by previous and next glyph, empty until populated.	int
+sdf_kern	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_kern	Returns the kerning adjustment in font units between the characters at index i and i+1 of text, or 0 if unavailable.	pub
 sdf_seg	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_seg	Appends a line segment stroke between two points to the global stroke list.	int
 sdf_arc	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_arc	Appends a circular arc stroke with the given centre, radius and start and end angles in radians.	int
 sdf_circle	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_circle	Appends a full circle stroke by adding an arc sweeping the whole turn.	int
@@ -7628,3 +7631,7 @@ video::finish	function	gfx/video	/api-library/helium/lib/gfx-video#finish	Assemb
 video::save	function	gfx/video	/api-library/helium/lib/gfx-video#save	Writes the encoded MP4 file to the given path, returning false with an error if encoding or writing fails.	pub
 video::frame_bytes	function	gfx/video	/api-library/helium/lib/gfx-video#frame_bytes	Returns the encoded size in bytes of the frame at the given index, or 0 if out of range.	pub
 video::psnr_y	function	gfx/video	/api-library/helium/lib/gfx-video#psnr_y	Returns the luma peak signal-to-noise ratio in decibels between source and reconstruction, or 99 if identical.	pub
+sdf_ttf_dt1	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt1	Runs a one-dimensional squared Euclidean distance transform along a line, as a building block for the two-dimensional transform.	int
+sdf_ttf_dt	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt	Computes an in-place two-dimensional squared distance transform over a w by h grid by transforming columns, then rows.	int
+sdf_use_ttf	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf	Builds the SDF font atlas and kerning table from TrueType bytes, returning false if the font cannot be parsed.	pub
+sdf_use_ttf_file	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf_file	Reads a TrueType file from a path and builds the SDF font atlas from it, returning false if reading fails.	pub

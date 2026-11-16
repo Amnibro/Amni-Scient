@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-meshopt">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-meshopt">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=87be5b0b46">
+<link rel="stylesheet" href="/api-library/lib.css?v=8dacfedbe5">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=87be5b0b46'; start({wasm: '/api-library/search.wasm?v=87be5b0b46'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=8dacfedbe5'; start({wasm: '/api-library/search.wasm?v=8dacfedbe5'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/meshopt</h1>
 <p class="lib-lede">Decodes meshoptimizer-compressed vertex, triangle, and index buffers, with optional filters, so programs can load compact 3D mesh data.</p>
-<p class="lib-meta"><code>import gfx.meshopt;</code> &middot; <code>meshopt::</code> &middot; 25 functions, 0 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.meshopt;</code> &middot; <code>meshopt::</code> &middot; 25 functions, 0 types, 8 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#decode-modes">Decode Modes <span class="n">8</span></a></li>
 <li><a href="#filters">Filters <span class="n">10</span></a></li>
@@ -115,56 +115,56 @@
 <pre>let MODE_ATTRIBUTES = 0</pre>
 <p>Mode constant selecting the vertex attribute decoder for the decode function.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L3">hc/lib/gfx/meshopt.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L3">hc/lib/gfx/meshopt.amni:3</a>
 </article>
 <article class="sym" id="MODE_TRIANGLES">
 <h3><a href="#MODE_TRIANGLES">MODE_TRIANGLES</a> <i>constant</i></h3>
 <pre>let MODE_TRIANGLES = 1</pre>
 <p>Mode constant selecting the triangle index decoder for the decode function.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L4">hc/lib/gfx/meshopt.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L4">hc/lib/gfx/meshopt.amni:4</a>
 </article>
 <article class="sym" id="MODE_INDICES">
 <h3><a href="#MODE_INDICES">MODE_INDICES</a> <i>constant</i></h3>
 <pre>let MODE_INDICES = 2</pre>
 <p>Mode constant selecting the index sequence decoder for the decode function.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L5">hc/lib/gfx/meshopt.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L5">hc/lib/gfx/meshopt.amni:5</a>
 </article>
 <article class="sym" id="mode_of">
 <h3><a href="#mode_of">mode_of</a> <i>function</i></h3>
 <pre>mode_of(name const byte[:]) int</pre>
 <p>Returns the mode constant for a mode name such as &quot;TRIANGLES&quot;, or -1 if unknown.</p>
 <p class="note">`mode_of` takes a name and gives 0 for &quot;ATTRIBUTES&quot;, 1 for &quot;TRIANGLES&quot;, 2 for &quot;INDICES&quot; and -1 for anything else. `filter_of` takes a name and gives 0 for an empty name or &quot;NONE&quot;, 1 for &quot;OCTAHEDRAL&quot;, 2 for &quot;QUATERNION&quot;, 3 for &quot;EXPONENTIAL&quot;, 4 for &quot;COLOR&quot; and -1 for anything else.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L11">hc/lib/gfx/meshopt.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L11">hc/lib/gfx/meshopt.amni:11</a>
 </article>
 <article class="sym" id="attributes">
 <h3><a href="#attributes">attributes</a> <i>function</i></h3>
 <pre>attributes(s const byte[:], count int, stride int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a compressed attribute buffer into the output, returning false and leaving the output unchanged on failure.</p>
 <p class="note">`attributes` takes a stream, a count, a stride and an output byte list, decodes mode 0, appends count times stride bytes to the output and gives true when it worked; on any failure it gives false and the output keeps no new bytes. It fails when stride is not a multiple of 4, is below 4 or above 256, when count is below zero, or when the stream is empty. The first byte gives the version: 0xa0 is ve</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L79">hc/lib/gfx/meshopt.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L79">hc/lib/gfx/meshopt.amni:79</a>
 </article>
 <article class="sym" id="triangles">
 <h3><a href="#triangles">triangles</a> <i>function</i></h3>
 <pre>triangles(s const byte[:], count int, size int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a compressed triangle buffer into two- or four-byte indices, returning false and leaving the output unchanged on failure.</p>
 <p class="note">`triangles` takes a stream, a count, an index size and an output byte list, decodes mode 1 and appends count indices of the given size each (via `put_index`), giving true when it worked; on any failure it gives false and the output keeps no new bytes. It fails when count is below zero or not a multiple of 3, size is not 2 or 4, the stream is shorter than 17 plus count divided by 3 bytes, or its fi</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L328">hc/lib/gfx/meshopt.amni:328</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L328">hc/lib/gfx/meshopt.amni:328</a>
 </article>
 <article class="sym" id="indices">
 <h3><a href="#indices">indices</a> <i>function</i></h3>
 <pre>indices(s const byte[:], count int, size int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a compressed index sequence buffer into two- or four-byte indices, returning false and leaving the output unchanged on failure.</p>
 <p class="note">`indices` takes a stream, a count, an index size and an output byte list, decodes mode 2 and appends count indices of the given size each, giving true when it worked; on any failure it gives false and the output keeps no new bytes. It fails when count is below zero, size is not 2 or 4, the stream is shorter than 5 bytes or its first byte is not 0xd1. Two baselines start at 0. For each index it rea</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L352">hc/lib/gfx/meshopt.amni:352</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L352">hc/lib/gfx/meshopt.amni:352</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(s const byte[:], count int, stride int, mode int, flt int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a compressed buffer using a mode and filter into the output, returning false and leaving the output unchanged on failure.</p>
 <p class="note">`decode` takes a stream, a count, a stride, a mode, a filter and an output byte list, appends the decoded view to the output and gives true when it worked. It remembers the output's length first. Mode 0 calls `attributes`, then for filter 1, 2, 3 or 4 the matching filter on the new bytes (starting at the remembered length); filter 0 does nothing more and any other filter fails. Mode 1 calls `trian</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L481">hc/lib/gfx/meshopt.amni:481</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L481">hc/lib/gfx/meshopt.amni:481</a>
 </article>
 <h2 id="filters">Filters <span class="n">10</span></h2>
 <article class="sym" id="FILTER_NONE">
@@ -172,70 +172,70 @@
 <pre>let FILTER_NONE = 0</pre>
 <p>Filter constant meaning no post-decode filter is applied to the decoded attributes.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L6">hc/lib/gfx/meshopt.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L6">hc/lib/gfx/meshopt.amni:6</a>
 </article>
 <article class="sym" id="FILTER_OCTAHEDRAL">
 <h3><a href="#FILTER_OCTAHEDRAL">FILTER_OCTAHEDRAL</a> <i>constant</i></h3>
 <pre>let FILTER_OCTAHEDRAL = 1</pre>
 <p>Filter constant selecting octahedral decoding of normal-style attribute data.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L7">hc/lib/gfx/meshopt.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L7">hc/lib/gfx/meshopt.amni:7</a>
 </article>
 <article class="sym" id="FILTER_QUATERNION">
 <h3><a href="#FILTER_QUATERNION">FILTER_QUATERNION</a> <i>constant</i></h3>
 <pre>let FILTER_QUATERNION = 2</pre>
 <p>Filter constant selecting quaternion decoding of rotation attribute data.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L8">hc/lib/gfx/meshopt.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L8">hc/lib/gfx/meshopt.amni:8</a>
 </article>
 <article class="sym" id="FILTER_EXPONENTIAL">
 <h3><a href="#FILTER_EXPONENTIAL">FILTER_EXPONENTIAL</a> <i>constant</i></h3>
 <pre>let FILTER_EXPONENTIAL = 3</pre>
 <p>Filter constant selecting exponential decoding of packed floating-point attribute data.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L9">hc/lib/gfx/meshopt.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L9">hc/lib/gfx/meshopt.amni:9</a>
 </article>
 <article class="sym" id="FILTER_COLOR">
 <h3><a href="#FILTER_COLOR">FILTER_COLOR</a> <i>constant</i></h3>
 <pre>let FILTER_COLOR = 4</pre>
 <p>Filter constant selecting color decoding of packed YCoCg-style color attribute data.</p>
 <p class="note">Constants: `MODE_ATTRIBUTES = 0`, `MODE_TRIANGLES = 1`, `MODE_INDICES = 2`, `FILTER_NONE = 0`, `FILTER_OCTAHEDRAL = 1`, `FILTER_QUATERNION = 2`, `FILTER_EXPONENTIAL = 3`, `FILTER_COLOR = 4`.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L10">hc/lib/gfx/meshopt.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L10">hc/lib/gfx/meshopt.amni:10</a>
 </article>
 <article class="sym" id="filter_of">
 <h3><a href="#filter_of">filter_of</a> <i>function</i></h3>
 <pre>filter_of(name const byte[:]) int</pre>
 <p>Returns the filter constant for a filter name, treating an empty name as none, or -1 if unknown.</p>
 <p class="note">`mode_of` takes a name and gives 0 for &quot;ATTRIBUTES&quot;, 1 for &quot;TRIANGLES&quot;, 2 for &quot;INDICES&quot; and -1 for anything else. `filter_of` takes a name and gives 0 for an empty name or &quot;NONE&quot;, 1 for &quot;OCTAHEDRAL&quot;, 2 for &quot;QUATERNION&quot;, 3 for &quot;EXPONENTIAL&quot;, 4 for &quot;COLOR&quot; and -1 for anything else.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L17">hc/lib/gfx/meshopt.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L17">hc/lib/gfx/meshopt.amni:17</a>
 </article>
 <article class="sym" id="octahedral">
 <h3><a href="#octahedral">octahedral</a> <i>function</i></h3>
 <pre>octahedral(buf byte[:], start int, count int, stride int) bool</pre>
 <p>Decodes octahedral-encoded normals in place for four- or eight-byte elements, returning false on invalid arguments or data.</p>
 <p class="note">`octahedral` applies filter 1 in place to an output byte list, given a start byte, a count and a stride, and gives false when stride is not 4 or 8. Each element has four components, signed 8-bit for stride 4 and signed 16-bit little-endian for stride 8; let max be 127 or 32767. With one as the third component (false when it is 0): x is the first component over one and y the second over one, as rea</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L387">hc/lib/gfx/meshopt.amni:387</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L387">hc/lib/gfx/meshopt.amni:387</a>
 </article>
 <article class="sym" id="quaternion">
 <h3><a href="#quaternion">quaternion</a> <i>function</i></h3>
 <pre>quaternion(buf byte[:], start int, count int, stride int) bool</pre>
 <p>Decodes quaternion-encoded rotations in place for eight-byte elements, returning false on invalid arguments.</p>
 <p class="note">`quaternion` applies filter 2 in place the same way and gives false when stride is not 8. Each element has four signed 16-bit little-endian components; w0 is the fourth. m is w0 bitwise-and 3; s is the real number 0.7071067811865476 (the square root of 2, halved) divided by the real value of (w0 bitwise-or 3), with no square root taken of that quotient and no failure for any value of w0; x, y and </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L411">hc/lib/gfx/meshopt.amni:411</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L411">hc/lib/gfx/meshopt.amni:411</a>
 </article>
 <article class="sym" id="exponential">
 <h3><a href="#exponential">exponential</a> <i>function</i></h3>
 <pre>exponential(buf byte[:], start int, count int, stride int) bool</pre>
 <p>Decodes exponential-encoded values in place into 32-bit floats, returning false on invalid arguments.</p>
 <p class="note">`exponential` applies filter 3 in place the same way and gives false when stride is not a multiple of 4. Every 4-byte little-endian group of the count times stride bytes is a signed 32-bit number v: e is v arithmetic-shifted right by 24 and m is the low 24 bits of v as a signed 24-bit number; the group is replaced by the IEEE single-precision float bits, little-endian, of 2 to the power e times m </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L433">hc/lib/gfx/meshopt.amni:433</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L433">hc/lib/gfx/meshopt.amni:433</a>
 </article>
 <article class="sym" id="color">
 <h3><a href="#color">color</a> <i>function</i></h3>
 <pre>color(buf byte[:], start int, count int, stride int) bool</pre>
 <p>Decodes color-encoded elements in place for four- or eight-byte elements, returning false on invalid arguments.</p>
 <p class="note">`color` applies filter 4 in place the same way and gives false when stride is not 4 or 8. Each element has four components, 8-bit for stride 4 and 16-bit little-endian for stride 8; let max be 255 or 65535. y is the first component unsigned, co and cg the second and third as signed numbers, and a0 the fourth unsigned. b is the index of a0's highest set bit (-1 when a0 is 0) and as is 2 to the powe</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L455">hc/lib/gfx/meshopt.amni:455</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L455">hc/lib/gfx/meshopt.amni:455</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (15)</summary>
 <article class="sym" id="unzig">
@@ -243,95 +243,95 @@
 <pre>unzig(v int) int</pre>
 <p>Converts a zigzag-encoded unsigned value into its signed integer.</p>
 <p class="note">`unzig` of a whole number v undoes zigzag coding: when the lowest bit of v is set it is minus one minus (v shifted right by one), otherwise v shifted right by one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L25">hc/lib/gfx/meshopt.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L25">hc/lib/gfx/meshopt.amni:25</a>
 </article>
 <article class="sym" id="read_varint">
 <h3><a href="#read_varint">read_varint</a> <i>function</i></h3>
 <pre>read_varint(s const byte[:], pos int) int, int</pre>
 <p>Reads a variable-length integer at a position, returning the value and next position, or -1 position on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L28">hc/lib/gfx/meshopt.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L28">hc/lib/gfx/meshopt.amni:28</a>
 </article>
 <article class="sym" id="put_index">
 <h3><a href="#put_index">put_index</a> <i>function</i></h3>
 <pre>put_index(out byte[&gt;..]&amp;, v int, size int)</pre>
 <p>Appends an index to the output as little-endian bytes, two or four wide.</p>
 <p class="note">`put_index` appends the low 32 bits of a whole number to an output byte list little-endian, as 2 bytes when the given size is 2 and as 4 bytes otherwise.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L40">hc/lib/gfx/meshopt.amni:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L40">hc/lib/gfx/meshopt.amni:40</a>
 </article>
 <article class="sym" id="attr_run">
 <h3><a href="#attr_run">attr_run</a> <i>function</i></h3>
 <pre>attr_run(s const byte[:], count int, stride int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes an attribute stream into the output buffer, returning false on malformed data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L49">hc/lib/gfx/meshopt.amni:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L49">hc/lib/gfx/meshopt.amni:49</a>
 </article>
 <article class="sym" id="attr_width">
 <h3><a href="#attr_width">attr_width</a> <i>function</i></h3>
 <pre>attr_width(v1 bool, ctl int, mode int) int</pre>
 <p>Returns the delta bit width for a group given the format version, control value and mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L85">hc/lib/gfx/meshopt.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L85">hc/lib/gfx/meshopt.amni:85</a>
 </article>
 <article class="sym" id="attr_block">
 <h3><a href="#attr_block">attr_block</a> <i>function</i></h3>
 <pre>attr_block(s const byte[:], pos int&amp;, limit int, v1 bool, stride int, n int, deltas byte[:]) bool</pre>
 <p>Reads one block of attribute delta data into the deltas buffer, returning false if data is truncated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L94">hc/lib/gfx/meshopt.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L94">hc/lib/gfx/meshopt.amni:94</a>
 </article>
 <article class="sym" id="attr_element">
 <h3><a href="#attr_element">attr_element</a> <i>function</i></h3>
 <pre>attr_element(prev byte[:], deltas const byte[:], n int, e int, stride int, v1 bool, chan const byte[:]) bool</pre>
 <p>Applies one element's deltas to the previous values per channel, returning false for an invalid channel mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L158">hc/lib/gfx/meshopt.amni:158</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L158">hc/lib/gfx/meshopt.amni:158</a>
 </article>
 <article class="sym" id="tri_run">
 <h3><a href="#tri_run">tri_run</a> <i>function</i></h3>
 <pre>tri_run(s const byte[:], count int, size int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a triangle stream into index bytes, returning false on malformed data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L199">hc/lib/gfx/meshopt.amni:199</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L199">hc/lib/gfx/meshopt.amni:199</a>
 </article>
 <article class="sym" id="idx_run">
 <h3><a href="#idx_run">idx_run</a> <i>function</i></h3>
 <pre>idx_run(s const byte[:], count int, size int, out byte[&gt;..]&amp;) bool</pre>
 <p>Decodes an index sequence stream into index bytes, returning false on malformed data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L337">hc/lib/gfx/meshopt.amni:337</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L337">hc/lib/gfx/meshopt.amni:337</a>
 </article>
 <article class="sym" id="s8">
 <h3><a href="#s8">s8</a> <i>function</i></h3>
 <pre>s8(v int) int</pre>
 <p>Sign-extends the low eight bits of a value into a signed integer.</p>
 <p class="note">`s8` and `s16` read the low 8 or 16 bits of a whole number as a signed two's complement number. `rnd` of a real is like JavaScript's Math.round (the floor of the value plus 0.5) as a whole number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L361">hc/lib/gfx/meshopt.amni:361</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L361">hc/lib/gfx/meshopt.amni:361</a>
 </article>
 <article class="sym" id="s16">
 <h3><a href="#s16">s16</a> <i>function</i></h3>
 <pre>s16(v int) int</pre>
 <p>Sign-extends the low sixteen bits of a value into a signed integer.</p>
 <p class="note">`s8` and `s16` read the low 8 or 16 bits of a whole number as a signed two's complement number. `rnd` of a real is like JavaScript's Math.round (the floor of the value plus 0.5) as a whole number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L365">hc/lib/gfx/meshopt.amni:365</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L365">hc/lib/gfx/meshopt.amni:365</a>
 </article>
 <article class="sym" id="rnd">
 <h3><a href="#rnd">rnd</a> <i>function</i></h3>
 <pre>rnd(x real) int</pre>
 <p>Rounds a real number to the nearest integer.</p>
 <p class="note">`s8` and `s16` read the low 8 or 16 bits of a whole number as a signed two's complement number. `rnd` of a real is like JavaScript's Math.round (the floor of the value plus 0.5) as a whole number.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L369">hc/lib/gfx/meshopt.amni:369</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L369">hc/lib/gfx/meshopt.amni:369</a>
 </article>
 <article class="sym" id="get_u">
 <h3><a href="#get_u">get_u</a> <i>function</i></h3>
 <pre>get_u(buf const byte[:], at int, w int) int</pre>
 <p>Reads an unsigned one- or two-byte little-endian value from a buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L372">hc/lib/gfx/meshopt.amni:372</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L372">hc/lib/gfx/meshopt.amni:372</a>
 </article>
 <article class="sym" id="get_s">
 <h3><a href="#get_s">get_s</a> <i>function</i></h3>
 <pre>get_s(buf const byte[:], at int, w int) int</pre>
 <p>Reads a signed one- or two-byte little-endian value from a buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L379">hc/lib/gfx/meshopt.amni:379</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L379">hc/lib/gfx/meshopt.amni:379</a>
 </article>
 <article class="sym" id="put_u">
 <h3><a href="#put_u">put_u</a> <i>function</i></h3>
 <pre>put_u(buf byte[:], at int, w int, v int)</pre>
 <p>Writes a one- or two-byte little-endian value into a buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/87be5b09ca9b19d8cfaecaf8520749d4ff68096d/hc/lib/gfx/meshopt.amni#L383">hc/lib/gfx/meshopt.amni:383</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/meshopt.amni#L383">hc/lib/gfx/meshopt.amni:383</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -343,7 +343,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2706</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2710</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -378,9 +378,10 @@
 <li><a href="#internal">Internal helpers</a></li>
 </ul></li>
 <li><a href="/api-library/helium/lib/gfx-video">gfx/video</a></li>
+<li><a href="/api-library/helium/lib/gfx-sdf_ttf">gfx/sdf_ttf</a></li>
 </ul>
 </li>
-<li><a href="/api-library/helium/ui">User Interface <span>1293</span></a></li>
+<li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>211</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
 <li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1162</span></a></li>

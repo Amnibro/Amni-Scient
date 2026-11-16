@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/sdf_ttf | AMNI-SCIENT</title>
+<meta name="description" content="Builds signed distance field font atlases from TrueType font data so programs can render crisp scalable text.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/sdf_ttf">
+<meta property="og:description" content="Builds signed distance field font atlases from TrueType font data so programs can render crisp scalable text.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-sdf_ttf">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-sdf_ttf">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=8dacfedbe5">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=8dacfedbe5'; start({wasm: '/api-library/search.wasm?v=8dacfedbe5'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/sdf_ttf</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/sdf_ttf</h1>
+<p class="lib-lede">Builds signed distance field font atlases from TrueType font data so programs can render crisp scalable text.</p>
+<p class="lib-meta"><code>import gfx.sdf_ttf;</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/sdf_ttf.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#truetype-fonts">TrueType Fonts <span class="n">2</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="truetype-fonts">TrueType Fonts <span class="n">2</span></h2>
+<article class="sym" id="sdf_use_ttf">
+<h3><a href="#sdf_use_ttf">sdf_use_ttf</a> <i>function</i></h3>
+<pre>sdf_use_ttf(bytes const byte[:]) bool</pre>
+<p>Builds the SDF font atlas and kerning table from TrueType bytes, returning false if the font cannot be parsed.</p>
+<p class="note">`sdf_use_ttf(bytes) bool` (bytes: a read-only byte slice) loads a TrueType font from its file bytes and returns false when it is not one: info is a ttf::Info with d a copy of bytes; info.fo = ttf::font_offset(bytes, 0) and return false when it is below 0 or ttf::init(info) fails. Let cap be the top (y1) of the glyph box of &quot;H&quot; from ttf::gbox (for glyph ttf::glyph_index(info, 72)), or 70 percent of</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/sdf_ttf.amni#L50">hc/lib/gfx/sdf_ttf.amni:50</a>
+</article>
+<article class="sym" id="sdf_use_ttf_file">
+<h3><a href="#sdf_use_ttf_file">sdf_use_ttf_file</a> <i>function</i></h3>
+<pre>sdf_use_ttf_file(path const byte[:]) bool</pre>
+<p>Reads a TrueType file from a path and builds the SDF font atlas from it, returning false if reading fails.</p>
+<p class="note">`sdf_use_ttf_file(path) bool` (path: a read-only byte slice) reads the file with the built-in read_file(path, buf) into a growable byte list and returns false when that fails, else sdf_use_ttf of the bytes.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/sdf_ttf.amni#L134">hc/lib/gfx/sdf_ttf.amni:134</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
+<article class="sym" id="sdf_ttf_dt1">
+<h3><a href="#sdf_ttf_dt1">sdf_ttf_dt1</a> <i>function</i></h3>
+<pre>sdf_ttf_dt1(f real[&gt;..]&amp;, d real[&gt;..]&amp;, v int[&gt;..]&amp;, z real[&gt;..]&amp;, n int)</pre>
+<p>Runs a one-dimensional squared Euclidean distance transform along a line, as a building block for the two-dimensional transform.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/sdf_ttf.amni#L6">hc/lib/gfx/sdf_ttf.amni:6</a>
+</article>
+<article class="sym" id="sdf_ttf_dt">
+<h3><a href="#sdf_ttf_dt">sdf_ttf_dt</a> <i>function</i></h3>
+<pre>sdf_ttf_dt(g f32[&gt;..]&amp;, w int, h int)</pre>
+<p>Computes an in-place two-dimensional squared distance transform over a w by h grid by transforming columns, then rows.</p>
+<p class="note">`sdf_ttf_dt(g, w, h)` (g: a growable f32 list passed by reference, w and h ints) turns g (w times h values, row major, 0 at feature pixels and 1e20 elsewhere) into the squared Euclidean distance to the nearest feature pixel, in place, with the Felzenszwalb and Huttenlocher 1D lower envelope transform run down every column and then along every row (scratch lists f, d and v of max(w, h) values and z</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/8dacfed7fe055524950d7cd946becfc02bb79671/hc/lib/gfx/sdf_ttf.amni#L29">hc/lib/gfx/sdf_ttf.amni:29</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>2710</span></a><ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
+<li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
+<li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
+<li><a href="/api-library/helium/lib/gfx-hair">gfx/hair</a></li>
+<li><a href="/api-library/helium/lib/gfx-hairdo">gfx/hairdo</a></li>
+<li><a href="/api-library/helium/lib/gfx-garment">gfx/garment</a></li>
+<li><a href="/api-library/helium/lib/gfx-obj">gfx/obj</a></li>
+<li><a href="/api-library/helium/lib/gfx-soak">gfx/soak</a></li>
+<li><a href="/api-library/helium/lib/gfx-locks">gfx/locks</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_webp">gfx/codec_webp</a></li>
+<li><a href="/api-library/helium/lib/gfx-draco">gfx/draco</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshopt">gfx/meshopt</a></li>
+<li><a href="/api-library/helium/lib/gfx-video">gfx/video</a></li>
+<li><a href="/api-library/helium/lib/gfx-sdf_ttf" class="on">gfx/sdf_ttf</a><ul class="lib-sub">
+<li><a href="#truetype-fonts">TrueType Fonts</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>211</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1162</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-15">2026-11-15</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
