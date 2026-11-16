@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FBFAF8">
 <title>Amni-Companion &mdash; A 3D AI Companion in Your Browser | AMNI-SCIENT</title>
 <meta name="description" content="Amni-Companion is a free, open-source 3D AI companion for your browser. Bring your own GLB or VRM model and your own AI key, talk by voice, and see it in AR with body tracking and gesture recognition. Runs on your device.">
-<meta name="keywords" content="ai companion,3d companion,vrm,glb,webxr,ar companion,body tracking,gesture recognition,bring your own model,claude,grok,ollama,amni-scient">
+<meta name="keywords" content="ai companion,3d companion,vrm,glb,webgpu,ar companion,body tracking,gesture recognition,bring your own model,claude,grok,ollama,amni-scient">
 <meta property="og:title" content="Amni-Companion &mdash; A 3D AI Companion in Your Browser">
 <meta property="og:description" content="Bring your own model and AI key. Talk to it, show it things, and see it in AR with body tracking. Free, open source and private.">
 <meta property="og:type" content="website">
@@ -122,7 +122,7 @@
 <div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h1V4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h-1V4z"/></svg></div><h4>BRING YOUR OWN BRAIN</h4><p>Claude, OpenAI, Grok, Gemini, OpenRouter, Ollama, LM Studio or any OpenAI-compatible endpoint, called straight from your browser with your key. An offline brain works with no key at all.</p></div>
 <div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div><h4>CAMERA AR + BODY TRACKING</h4><p>Your companion stands over your camera feed and can mirror your body like a reflection, tracked on-device with MediaPipe.</p></div>
 <div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11V6a2 2 0 0 1 4 0v5M11 10V4a2 2 0 0 1 4 0v6M15 10V6a2 2 0 0 1 4 0v8a7 7 0 0 1-14 0v-3a2 2 0 0 1 4 0"/></svg></div><h4>IT NOTICES YOU</h4><p>Waves, claps, pointing, hands up, thumbs up, peace signs, smiles, winks, nods and head shakes, plus objects you hold up. It reacts out loud if you let it.</p></div>
-<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg></div><h4>IN YOUR ROOM</h4><p>On WebXR phones and headsets, place it on your floor and it walks over when you call it.</p></div>
+<div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg></div><h4>DRAWN IN HELIUM</h4><p>Holo and Dex are drawn by our own WebGPU engine: strand hair, a cloth-simulated skirt, skin shading, and animation with foot IK, smooth blends and eyes that lead the head.</p></div>
 <div class="feature"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>PRIVATE BY DESIGN</h4><p>No accounts, servers or analytics. Models, keys, settings and history stay in your browser, and one button erases them all.</p></div>
 </div>
 </section>
@@ -131,7 +131,7 @@
 <div class="cshots">
 <figure class="cshot"><img src="assets/amni-companion/camera.jpg" alt="The companion standing over a live camera feed, mirroring the person behind it" loading="lazy" width="900" height="700"><figcaption>Camera AR: tap the camera, then <b>Mirror me</b> to have it copy your moves.</figcaption></figure>
 <figure class="cshot"><img src="assets/amni-companion/byo.jpg" alt="A VRoid model loaded into Amni-Companion, waving" loading="lazy" width="900" height="900"><figcaption>Bring your own: a VRoid <code>.vrm</code> dropped in and dancing within seconds.</figcaption></figure>
-<figure class="cshot"><img src="assets/amni-companion/dex.jpg" alt="Dex, the engineer companion, in the room view" loading="lazy" width="900" height="900"><figcaption>Dex: calm engineer, dry wit, black glasses and a charcoal hoodie.</figcaption></figure>
+<figure class="cshot"><img src="assets/amni-companion/dex.jpg" alt="Dex, the engineer companion, telling a joke in the room view" loading="lazy" width="900" height="900"><figcaption>Dex: calm engineer, dry wit, glasses and a gray hoodie.</figcaption></figure>
 </div>
 </section>
 <section>
@@ -147,7 +147,7 @@
 <tr><td>Models</td><td>Rigged humanoid <code>.glb</code> / <code>.vrm</code> (VRM 0.x and 1.0 with node constraints); auto skeleton matching across 22 body parts; mouth, blink and expression blend shapes</td></tr>
 <tr><td>Brains</td><td>Claude (default <code>claude-opus-5-5</code>), OpenAI, Grok, Gemini, OpenRouter, Ollama, LM Studio, any OpenAI-compatible endpoint, or offline</td></tr>
 <tr><td>Recognition</td><td>On-device MediaPipe pose, hand gestures, face blend shapes and object detection</td></tr>
-<tr><td>AR</td><td>Camera AR on any device with a camera; WebXR room placement where supported</td></tr>
+<tr><td>AR</td><td>Camera AR on any device with a camera</td></tr>
 <tr><td>Voice</td><td>Web Speech recognition (on-device where the browser offers it) and speech synthesis</td></tr>
 <tr><td>Core</td><td>Written in Gold, compiled to checked Helium and WebAssembly: skeleton matching, retargeting, pose solving, tracking filters, recognition and the offline brain</td></tr>
 <tr><td>Animation</td><td>Quaternius Universal Animation Library (CC0)</td></tr>
