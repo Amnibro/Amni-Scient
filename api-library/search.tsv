@@ -7635,3 +7635,94 @@ sdf_ttf_dt1	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt1
 sdf_ttf_dt	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt	Computes an in-place two-dimensional squared distance transform over a w by h grid by transforming columns, then rows.	int
 sdf_use_ttf	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf	Builds the SDF font atlas and kerning table from TrueType bytes, returning false if the font cannot be parsed.	pub
 sdf_use_ttf_file	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf_file	Reads a TrueType file from a path and builds the SDF font atlas from it, returning false if reading fails.	pub
+hwrt::cc3	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc3	Thin binding to a C call helper taking a function pointer and three integer arguments, returning an integer.	int
+hwrt::cc4	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc4	Thin binding to a C call helper taking a function pointer and four integer arguments, returning an integer.	int
+hwrt::cc5	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc5	Thin binding to a C call helper taking a function pointer and five integer arguments, returning an integer.	int
+hwrt::ST	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ST	Module state flag tracking whether initialization is untried, succeeded, or failed.	int
+hwrt::INST	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#INST	Handle of the Vulkan instance created during initialization.	int
+hwrt::PHYS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#PHYS	Handle of the physical GPU selected for ray tracing.	int
+hwrt::DEV	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#DEV	Handle of the logical Vulkan device used for all GPU work.	int
+hwrt::QUEUE	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#QUEUE	Handle of the compute queue used to submit command buffers.	int
+hwrt::CPOOL	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#CPOOL	Handle of the command pool that owns the shared command buffer.	int
+hwrt::CB	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#CB	Handle of the shared command buffer used for recording GPU work.	int
+hwrt::MEMP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MEMP	Raw memory properties of the selected GPU, used to choose memory types.	int
+hwrt::NAME	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#NAME	Cached device name of the selected GPU as bytes.	int
+hwrt::DTY	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#DTY	Cached Vulkan device type code of the selected GPU.	int
+hwrt::FN	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#FN	Table of loaded acceleration structure function pointers.	int
+hwrt::BUF	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#BUF	List of Vulkan buffer handles, indexed by buffer id.	int
+hwrt::MEM	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MEM	List of device memory handles backing each buffer, indexed by buffer id.	int
+hwrt::MAP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MAP	List of host-mapped memory addresses for each buffer, zero if not mapped.	int
+hwrt::ADR	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ADR	List of GPU device addresses for each buffer, indexed by buffer id.	int
+hwrt::AS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#AS	List of created acceleration structure handles.	int
+hwrt::PP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#PP	Flat table of pipeline objects, seven entries per compute pipeline.	int
+hwrt::EXTS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#EXTS	Device extension names required for ray query and acceleration structure support.	int
+hwrt::pt	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#pt	Converts a byte slice to its raw memory address.	int
+hwrt::ok	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ok	Returns whether a Vulkan result code indicates success.	int
+hwrt::name	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#name	Returns the name of the selected GPU as bytes.	pub
+hwrt::is_cpu	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#is_cpu	Returns whether the selected GPU is a software CPU device.	pub
+hwrt::hasx	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#hasx	Returns whether a physical device supports the named extension.	int
+hwrt::feats	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#feats	Builds a feature structure chain, with ray tracing features enabled when requested.	int
+hwrt::init	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#init	Initializes Vulkan and selects a ray-query-capable GPU, returning false if unavailable or disabled.	pub
+hwrt::begin	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#begin	Starts recording the shared command buffer, returning whether it succeeded.	int
+hwrt::bar	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#bar	Records a memory barrier with the given pipeline stages and access masks.	int
+hwrt::submit	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#submit	Ends and submits the shared command buffer, waiting for completion and returning whether it succeeded.	int
+hwrt::mtype	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#mtype	Returns the first memory type index matching the type bits and wanted property flags, or -1.	int
+hwrt::buf	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#buf	Creates a GPU buffer of the given size and usage, returning its id or -1 on failure.	pub
+hwrt::drop	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#drop	Frees the buffer and its memory for the given id.	pub
+hwrt::put	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#put	Copies data from a slice into a host-mapped buffer.	pub
+hwrt::get	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#get	Copies data from a host-mapped buffer into a slice.	pub
+hwrt::asbuild	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#asbuild	Builds an acceleration structure from geometry, returning its handle or 0 on failure.	int
+hwrt::scene	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#scene	Builds a bottom and top level acceleration structure from triangle floats, returning false on failure.	pub
+hwrt::pipe	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#pipe	Creates a compute pipeline from a shader blob, returning its id or -1 on failure.	pub
+hwrt::run	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#run	Dispatches a compute pipeline over the given grid with the listed buffers, returning whether it succeeded.	pub
+hwrt::done	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#done	Destroys all pipelines, acceleration structures, and buffers, and shuts down Vulkan.	pub
+pathtrace::TRI	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TRI	Packed triangle buffer of per-vertex normals, UVs, tangents, material index and color, consumed by the render shader.	int
+pathtrace::POS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#POS	Packed triangle vertex positions used to build the hardware ray tracing acceleration structure.	int
+pathtrace::MAT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MAT	Packed material parameter buffer with 20 floats per material, uploaded to the renderer.	int
+pathtrace::TXH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TXH	Texture header table holding pixel offset, width and height for each uploaded image.	int
+pathtrace::TXP	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TXP	Packed RGBA pixel data for all uploaded textures, one u32 per pixel.	int
+pathtrace::LIT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#LIT	Packed point light buffer holding position, color and range, eight floats per light.	int
+pathtrace::IMG	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#IMG	Cache mapping glTF image indices to uploaded texture indices, with -1 meaning not yet uploaded.	int
+pathtrace::PMAT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PMAT	Cache mapping scene primitives to created material indices, with -1 meaning not yet created.	int
+pathtrace::MASK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MASK	Flag set when any triangle uses an alpha-masked material, which disables opaque-only acceleration.	int
+pathtrace::EYE	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#EYE	Camera eye position as x, y, z world coordinates used by the next render.	pub
+pathtrace::TGT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TGT	Camera look-at target position as x, y, z world coordinates.	pub
+pathtrace::UP	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#UP	Camera up direction vector used to orient the rendered view.	pub
+pathtrace::FOV	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#FOV	Vertical field of view of the camera, in radians.	pub
+pathtrace::TO_SUN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TO_SUN	Direction vector pointing toward the sun, normalized before rendering.	pub
+pathtrace::SUN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SUN	Sun radiance color as red, green, blue; all zeros disables the sun.	pub
+pathtrace::SUN_COS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SUN_COS	Cosine of the sun's angular radius, controlling the sun disc size.	pub
+pathtrace::ZEN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ZEN	Sky color at the zenith as red, green, blue.	pub
+pathtrace::HOR	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#HOR	Sky color at the horizon as red, green, blue.	pub
+pathtrace::GND	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#GND	Ground color used below the horizon as red, green, blue.	pub
+pathtrace::SKY	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKY	Sky brightness multiplier applied during rendering.	pub
+pathtrace::FURN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#FURN	White furnace test value; a nonnegative value enables the furnace test, negative disables it.	pub
+pathtrace::MS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MS	Flag enabling multiple scattering in material shading; true by default.	pub
+pathtrace::PDFK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PDFK	Probability density scaling factor passed to the render shader.	pub
+pathtrace::DEPTH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#DEPTH	Maximum path bounce depth per ray.	pub
+pathtrace::MAXMS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MAXMS	Slowest dispatch time in milliseconds recorded during the last render.	int
+pathtrace::SKIPPED	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKIPPED	Count of scene lights and instanced batches that from_scene could not convert and skipped.	pub
+pathtrace::WAVES	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#WAVES	Wave parameters: base frequency, amplitude, speed scale and time used by the water surface.	pub
+pathtrace::ABSORB	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ABSORB	Water absorption color coefficients as red, green, blue.	pub
+pathtrace::SCATTER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SCATTER	Water scattering color coefficients as red, green, blue.	pub
+pathtrace::PHASE_G	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PHASE_G	Phase function asymmetry parameter for water scattering.	pub
+pathtrace::ETA	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ETA	Index of refraction used for water, 1.33 by default.	pub
+pathtrace::TK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TK	Scalar parameter passed through to the render shader's water settings.	int
+pathtrace::NWAVE	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#NWAVE	Number of wave octaves summed when computing water surface height.	pub
+pathtrace::UNDER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#UNDER	Flag indicating the camera is underwater, set from the scene's sea state.	pub
+pathtrace::Mat	type	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#Mat	Material description with base color, emission, metalness, roughness, textures, alpha mode and water flag.	pub
+pathtrace::clear	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#clear	Clears all accumulated triangles, materials, textures, lights and flags to start a new scene.	pub
+pathtrace::mat	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#mat	Adds a material and returns its index for use when adding triangles.	pub
+pathtrace::image	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#image	Adds an RGBA8 image of the given size and returns its texture index.	pub
+pathtrace::light	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#light	Adds a point light at a position with RGB color and range.	pub
+pathtrace::tri	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#tri	Adds a triangle from positions, normals, UVs and vertex color with a material index, skipping degenerate ones.	pub
+pathtrace::ico	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ico	Returns triangle vertex positions of a unit icosphere subdivided the given number of levels.	pub
+pathtrace::sphere	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#sphere	Adds a sphere of given center and radius, built from subdivided icosphere triangles, using a material index.	pub
+pathtrace::v3	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#v3	Converts a float3 vector into a real array of three components.	int
+pathtrace::wave	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#wave	Returns the water surface height at an x, z position by summing wave octaves.	pub
+pathtrace::texof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#texof	Returns the uploaded texture index for a glTF texture reference, uploading its image on first use, or -1 if none.	int
+pathtrace::matof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#matof	Returns the material index for a scene primitive, creating it from the glTF material on first use.	int
+pathtrace::from_scene	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#from_scene	Rebuilds the path tracing scene from the current scene3d camera, sun, sky, lights and geometry.	pub
+pathtrace::render	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#render	Renders the scene at the given size and samples per pixel, returning accumulated float data, or empty on failure.	pub
+pathtrace::bad	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#bad	Returns the total count of flagged bad samples in an accumulation buffer.	pub
+pathtrace::save	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#save	Tone maps an accumulation buffer with exposure and writes it as a PNG, returning false on failure.	pub
