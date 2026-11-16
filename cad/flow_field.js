@@ -1,10 +1,12 @@
 import {zipSync} from './vendor/fflate.module.js';
 import {maxOf,minOf} from './minmax.js';
+import {dual} from './units.js';
+const FT=3.2808399,PSI=1.4503774e-4,PSF=0.020885434;
 const ramp=t=>{t=Math.min(1,Math.max(0,t));const C=[[43,89,195],[43,181,195],[63,208,122],[242,210,46],[242,131,46],[224,50,46]];const x=t*5,i=Math.min(4,Math.floor(x)),f=x-i,a=C[i],b=C[i+1];return[0,1,2].map(k=>(a[k]+(b[k]-a[k])*f)/255);};
 export function fieldOf(r){return r&&r.field;}
 export function exportCSV(r){const f=r.field;if(!f)throw new Error('This result has no field to export. Run an internal flow first.');
-  const {Na,Nb,dx,a0,b0}=f,rows=['i,j,x_mm,y_mm,mask,gap_mm,p_Pa,u_m_s,v_m_s,shear_Pa,port'];
-  for(let j=0;j<Nb;j++)for(let i=0;i<Na;i++){const p=j*Na+i;rows.push([i,j,(a0+(i+0.5)*dx).toFixed(5),(b0+(j+0.5)*dx).toFixed(5),f.mask[p],f.gap[p].toExponential(4),f.p[p].toExponential(5),f.u[p].toExponential(4),f.v[p].toExponential(4),f.shear[p].toExponential(4),f.port[p]].join(','));}
+  const {Na,Nb,dx,a0,b0}=f,rows=['i,j,x_mm,y_mm,x_in,y_in,mask,gap_mm,gap_in,p_Pa,p_psi,u_m_s,u_ft_s,v_m_s,v_ft_s,shear_Pa,shear_psf,port'];
+  for(let j=0;j<Nb;j++)for(let i=0;i<Na;i++){const p=j*Na+i,x=a0+(i+0.5)*dx,y=b0+(j+0.5)*dx;rows.push([i,j,x.toFixed(5),y.toFixed(5),(x/25.4).toFixed(6),(y/25.4).toFixed(6),f.mask[p],f.gap[p].toExponential(4),(f.gap[p]/25.4).toExponential(4),f.p[p].toExponential(5),(f.p[p]*PSI).toExponential(4),f.u[p].toExponential(4),(f.u[p]*FT).toExponential(4),f.v[p].toExponential(4),(f.v[p]*FT).toExponential(4),f.shear[p].toExponential(4),(f.shear[p]*PSF).toExponential(4),f.port[p]].join(','));}
   return rows.join('\n')+'\n';}
 function npy(name,arr,shape,descr){const dict=`{'descr':'${descr}','fortran_order':False,'shape':(${shape.join(',')}${shape.length<2?',':''}), }`;
   let h=dict;const base=10+h.length+1,pad=(64-(base%64))%64;h=h+' '.repeat(pad)+'\n';const o=new Uint8Array(10+h.length+arr.byteLength),dv=new DataView(o.buffer);
@@ -24,14 +26,14 @@ function rangeOf(f,key,o){let lo=o.min,hi=o.max;if(lo==null||hi==null){let a=Inf
 function sample(f,key,x,y){const L=locate(f,x,y);if(!L)return null;const{i0,j0,tx,ty}=L,at=(i,j)=>f[key][j*f.Na+i],m=at(i0,j0)*(1-tx)*(1-ty)+at(i0+1,j0)*tx*(1-ty)+at(i0,j0+1)*(1-tx)*ty+at(i0+1,j0+1)*tx*ty;return m;}
 export function probePoints(r,pts){const f=r.field;if(!f)throw new Error('No flow field. Run an internal flow first.');
   return pts.map(p=>{const x=+p[0],y=+p[1],z=p[2]!=null?+p[2]:null,u=sample(f,'u',x,y),v=sample(f,'v',x,y),pr=sample(f,'p',x,y),s=sample(f,'shear',x,y),mk=sample(f,'mask',x,y);
-    return{x,y,z,in_fluid:mk!=null&&mk>0.5,u,v,speed:u==null?null:Math.hypot(u,v),p:pr,shear:s};});}
+    const sp=u==null?null:Math.hypot(u,v);return{x,y,z,in_fluid:mk!=null&&mk>0.5,u,v,speed:sp,speed_m_s:sp,speed_ft_s:sp==null?null:sp*FT,p:pr,p_Pa:pr,p_psi:pr==null?null:pr*PSI,shear:s,shear_Pa:s,shear_psf:s==null?null:s*PSF};});}
 export function probeLine(r,a,b,n=40){const f=r.field;if(!f)throw new Error('No flow field. Run an internal flow first.');const N=Math.max(2,n|0),dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,dl=len/(N-1),pts=[];
   let flow=0,sp=0,ns=0;const mm=f.mm||1;
   for(let i=0;i<N;i++){const t=i/(N-1),x=a[0]+dx*t,y=a[1]+dy*t;pts.push([x,y]);const m=sample(f,'mask',x,y),gap=sample(f,'gap',x,y)||0,u=sample(f,'u',x,y)||0,v=sample(f,'v',x,y)||0;
     if(m>0.5){const un=u*nx+v*ny;flow+=un*(gap*mm*1e-3)*(dl*mm*1e-3);sp+=Math.hypot(u,v);ns++;}}
-  return{points:probePoints(r,pts),samples:ns,mean_speed_m_s:ns?sp/ns:0,flow_m3_s:flow};}
+  const ms=ns?sp/ns:0;return{points:probePoints(r,pts),samples:ns,mean_speed_m_s:ms,mean_speed_ft_s:ms*FT,flow_m3_s:flow};}
 function scalarKey(o){return o.scalar==='u'||o.scalar==='speed'?'speed':o.scalar==='shear'?'shear':'p';}
-function legendFor(key,lo,hi){const unit=key==='p'?'Pa':key==='shear'?'Pa':'m/s',title=key==='p'?'Pressure':key==='shear'?'Wall shear':'Speed';return{t:title,min:0,max:1,l0:fmt(lo)+' '+unit,l1:fmt(hi)+' '+unit,lo,hi,scalar:key};}
+function legendFor(key,lo,hi){const q=key==='speed'?'vel':key==='shear'?'pa':'dpress',title=key==='p'?'Pressure':key==='shear'?'Wall shear':'Speed';return{t:title,min:0,max:1,l0:dual(q,lo),l1:dual(q,hi),lo,hi,scalar:key};}
 export function fieldSurface(r,o={}){const f=r.field;if(!f||!f.mask)return null;const key=scalarKey(o),{lo,hi}=rangeOf(f,key,o),ax=r.axes||[[0,1],[1,1],[2,1]],toW=(a,b,h)=>{const q=[a,b,h],w=[0,0,0];ax.forEach(([k,sg],j)=>w[k]=sg*q[j]);return w;};
   const {Na,Nb,dx,a0,b0,zc}=f,pos=[],col=[],inl=new Set();(r.ports||[]).forEach((p,k)=>{if(p.kind==='inlet')inl.add(k);});
   const lift=(gap,k)=>zc-(gap||0)+dx*k;
@@ -55,9 +57,7 @@ export function flowColors(pos,r,o={}){const f=r.field,n=pos.length/3,col=new Fl
         if(po!=null&&po>=-0.2){const pc=po<0.5?[0.2,0.85,0.95]:[0.95,0.45,0.15];c[0]=c[0]*0.55+pc[0]*0.45;c[1]=c[1]*0.55+pc[1]*0.45;c[2]=c[2]*0.55+pc[2]*0.45;}
         col[3*i]=c[0];col[3*i+1]=c[1];col[3*i+2]=c[2];continue;}}
     col[3*i]=base[0];col[3*i+1]=base[1];col[3*i+2]=base[2];}
-  const unit=key==='p'?'Pa':key==='shear'?'Pa':'m/s',title=key==='p'?'Pressure':key==='shear'?'Wall shear':'Speed';
-  return{colors:col,legend:{t:title,min:0,max:1,l0:fmt(lo)+' '+unit,l1:fmt(hi)+' '+unit,lo,hi,scalar:key}};}
-const fmt=v=>Math.abs(v)>=1000|| (Math.abs(v)>0&&Math.abs(v)<0.01)?v.toExponential(2):v.toPrecision(4);
+  return{colors:col,legend:legendFor(key,lo,hi)};}
 function friction(Q,area,Dh,L,K,rho,mu){const V=Q/Math.max(area,1e-12),Re=rho*Math.abs(V)*Dh/Math.max(mu,1e-12),f=Re<1e-6?0:Re<2300?64/Math.max(Re,1):0.316*Math.pow(Re,-0.25);
   return (f*L/Math.max(Dh,1e-9)+K)*0.5*rho*V*Math.abs(V);}
 export function solveNetwork(spec){const N=Math.max(1,spec.cells|0),fl=spec.fluid;if(!fl||!(fl.rho>0))throw new Error('The network needs a fluid (rho, mu).');

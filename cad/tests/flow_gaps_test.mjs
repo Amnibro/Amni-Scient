@@ -4,6 +4,7 @@ import * as P from '../porous.js';
 import {solvePlate} from '../flow_plate.js';
 import {runInternal} from '../flow_lbm.js';
 import {exportCSV,exportVTK,exportNPZ,probePoints,probeLine,solveNetwork,fieldSurface} from '../flow_field.js';
+import {summary} from '../flow_tab.js';
 import {inflateSync} from '../vendor/fflate.module.js';
 import {eta,taitV,MATERIALS} from '../injmold.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});
@@ -47,6 +48,9 @@ const water=P.fluidAt('water',25);
   const across=probeLine(R,[0,-2],[0,2],21);ok(Math.abs(across.flow_m3_s)>0&&Math.abs(Math.abs(across.flow_m3_s)/Q-1)<0.35,'flow across a cut line is the channel flow','Qline/Q '+(across.flow_m3_s/Q).toFixed(2));
   const surf=fieldSurface(R,{scalar:'p'});let redIn=0,nIn=0,redOut=0,nOut=0,cyan=0,orange=0;for(let i=0;i<surf.pos.length;i+=3){const x=surf.pos[i],cr=surf.color[i],cg=surf.color[i+1],cb=surf.color[i+2];if(cb>0.9&&cg>0.7)cyan++;else if(cr>0.9&&cg<0.55)orange++;else if(x<-1.5){redIn+=cr;nIn++;}else if(x>1.5){redOut+=cr;nOut++;}}
   ok(surf.pos.length>200&&surf.lines.length>20&&nIn&&nOut&&redIn/nIn>redOut/nOut+0.15&&cyan>0&&orange>0,'the field surface runs from high pressure at the inlet to low at the outlet, with port masks and streamlines','in '+(redIn/nIn).toFixed(2)+' out '+(redOut/nOut).toFixed(2)+', lines '+surf.lines.length/6);
+  const sum=summary(R),spd=fieldSurface(R,{scalar:'speed'}).legend;
+  ok(sum.pressure_drop_psi>0&&Math.abs(sum.mean_channel_velocity_ft_s/sum.mean_channel_velocity_m_s-3.2808399)<5e-3&&sum.ports[0].area_in2>0&&Math.abs(sum.ports[0].area_in2/(sum.ports[0].area_mm2/645.16)-1)<5e-3,'the result reports psi, ft/s and square inches beside the SI values',JSON.stringify({psi:sum.pressure_drop_psi,kPa:sum.pressure_drop_kPa,fts:sum.mean_channel_velocity_ft_s,in2:sum.ports[0].area_in2}));
+  ok(/psi/.test(surf.legend.l1)&&/kPa/.test(surf.legend.l1)&&/ft\/s/.test(spd.l1)&&/m\/s/.test(spd.l1),'the color legend shows psi with kPa, and ft/s with m/s',surf.legend.l1+' · '+spd.l1);
   let buried='';try{solvePlate({pos:m.pos,idx:m.idx,cover:'+Z',fluid:water,px:0.15,ports:[port(m,'-Z','inlet','flow',Q),port(m,'+X','outlet','pressure',0)],bend:false});}catch(e){buried=e.message;}
   ok(/cannot reach/.test(buried),'a port on the back face, under the channel floor, is reported as unreachable',buried.slice(0,90));
   const hi=Q*200,lam=solvePlate({pos:m.pos,idx:m.idx,cover:'+Z',fluid:water,px:0.15,ports:[port(m,'-X','inlet','flow',hi),port(m,'+X','outlet','pressure',0)],bend:false}),turb=solvePlate({pos:m.pos,idx:m.idx,cover:'+Z',fluid:water,px:0.15,turbulence:'friction',ports:[port(m,'-X','inlet','flow',hi),port(m,'+X','outlet','pressure',0)],bend:false});
