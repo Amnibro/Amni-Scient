@@ -1208,6 +1208,7 @@ gfx::scancode	function	gfx	/api-library/helium/lib/gfx#scancode	Returns the scan
 gfx::key_name	function	gfx	/api-library/helium/lib/gfx#key_name	Returns the name of the key with the given scancode, or empty when it is out of range.	pub
 gfx::clipboard	function	gfx	/api-library/helium/lib/gfx#clipboard	Returns the clipboard text, or an internal copy when running without a window.	pub
 gfx::set_clipboard	function	gfx	/api-library/helium/lib/gfx#set_clipboard	Sets the clipboard text up to the first zero byte, returning false on failure.	pub
+gfx::pref_path	function	gfx	/api-library/helium/lib/gfx#pref_path	Returns the platform-specific per-user writable directory for an organization and application name, creating no assumptions about its contents.	pub
 gfx::transfer	function	gfx	/api-library/helium/lib/gfx#transfer	Creates a GPU transfer buffer for uploading or downloading data, returning 0 on failure.	int
 gfx::copy_cmd	function	gfx	/api-library/helium/lib/gfx#copy_cmd	Returns a command buffer for a copy, either fresh or the current one, refusing inside a pass.	int
 gfx::copy_done	function	gfx	/api-library/helium/lib/gfx#copy_done	Submits a fresh copy command buffer if one was used, returning false on failure.	int
@@ -1333,10 +1334,10 @@ s3d::CASCADES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CASCADES	
 s3d::MAX_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_LIGHTS	Maximum number of point lights the renderer uses in a frame.	pub
 s3d::MAX_FOG_VOLUMES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_FOG_VOLUMES	Constant giving the maximum number of fog volumes that can be active in the scene at once.	pub
 s3d::MAX_PROBES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MAX_PROBES	Maximum number of reflection probes the scene can hold at once.	pub
-s3d::GI_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GI_LIGHTS	Maximum number of lights passed to the global illumination probe update.	pub
+s3d::GI_LIGHTS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GI_LIGHTS	Sets the number of lights the global illumination probe update accepts, fixed at 16.	int
 s3d::GLOW_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GLOW_LEVELS	Number of reduction levels in the bloom chain.	int
-s3d::MSAA	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MSAA	Number of samples per pixel used by the multisampled color pass.	pub
-s3d::LOCAL_LAYERS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#LOCAL_LAYERS	Number of depth layers in the local light shadow map array, matching the local matrix count in the frame uniforms.	int
+s3d::MSAA	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MSAA	Sets the multisample count for the color pass, defaulting to 4 samples per pixel.	pub
+s3d::LOCAL_FACES	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#LOCAL_FACES	Sets the number of faces in the local light shadow atlas, fixed at 96.	int
 s3d::HIZ_LEVELS	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HIZ_LEVELS	Number of reduced depth mip levels built for tracing screen space reflections.	int
 s3d::Camera	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Camera	Camera description with eye, target, up vector, vertical field of view and near and far planes.	pub
 s3d::Sun	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Sun	Sun description with direction toward the sun, color, shadow settings and shadow map size.	pub
@@ -1396,6 +1397,7 @@ s3d::gtao_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gtao_st
 s3d::gtao_falloff	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gtao_falloff	Falloff value applied by the ground-truth ambient occlusion pass.	pub
 s3d::spec_occlusion	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#spec_occlusion	Switch enabling specular occlusion, on by default.	pub
 s3d::ssr_on	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_on	Switch enabling screen space reflections, off by default.	pub
+s3d::lite	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lite	Toggles a lighter rendering mode when set to true.	pub
 s3d::ssr_steps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_steps	Number of steps taken when tracing each reflection ray, 48 by default.	pub
 s3d::ssr_thickness	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_thickness	Assumed depth thickness of surfaces when testing reflection ray hits, 0.05 by default.	pub
 s3d::ssr_max_dist	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ssr_max_dist	Maximum distance a reflection ray travels, 3.0 by default.	pub
@@ -1436,6 +1438,10 @@ s3d::dof_aperture	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_a
 s3d::dof_focus	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_focus	Focus distance for depth of field.	pub
 s3d::dof_max_px	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_max_px	Maximum blur radius in pixels for depth of field.	pub
 s3d::dof_samples	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_samples	Number of samples taken by the depth of field pass.	pub
+s3d::dof_bokeh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_bokeh	Sets the bokeh strength of depth of field, where 0.0 disables the bokeh effect.	pub
+s3d::dof_bokeh_cut	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_bokeh_cut	Sets the cutoff brightness for bokeh highlights in depth of field, defaulting to 1.0.	pub
+s3d::dof_band	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_band	Sets the width of the in-focus band for depth of field, defaulting to 0.0.	pub
+s3d::dof_near	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#dof_near	Sets the near-field blur scale for depth of field, defaulting to 1.0.	pub
 s3d::lens_offset	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_offset	Lens offset used internally by the lens passes.	int
 s3d::fx_dt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fx_dt	Frame time value stored for the post-processing effects.	int
 s3d::nd_ran	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#nd_ran	Flag recording whether the neighborhood pass ran this frame.	int
@@ -1456,6 +1462,21 @@ s3d::gi_updates_per_frame	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene
 s3d::gi_interval	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_interval	Interval in frames between probe updates.	pub
 s3d::shadow_reach	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_reach	Shadow reach distance; 0 is the default setting.	pub
 s3d::gi_built	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_built	Flag recording whether the probe resources have been built.	int
+s3d::gi_refit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_refit	Toggles refitting of the ray tracing structure instead of a full rebuild when geometry moves.	pub
+s3d::gi_adaptive	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_adaptive	Toggles adaptive choice between refitting and rebuilding the global illumination acceleration structure.	pub
+s3d::gi_rebuilds	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rebuilds	Counts full acceleration structure rebuilds performed for global illumination, kept for statistics.	int
+s3d::gi_refits	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_refits	Counts acceleration structure refits performed for global illumination, kept for statistics.	int
+s3d::gi_refit_ms	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_refit_ms	Records the milliseconds spent on the latest global illumination refit.	int
+s3d::gi_build_ms	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_build_ms	Records the milliseconds spent on the latest global illumination structure build.	int
+s3d::gi_moved	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_moved	Counts moved sources found during the latest global illumination update.	int
+s3d::gi_stamp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_stamp	Holds a frame stamp used internally to track global illumination source changes.	int
+s3d::gi_src	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src	Maps source keys to entries in the global illumination source tables.	int
+s3d::gi_src_first	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_first	Lists the first primitive index for each global illumination source.	int
+s3d::gi_src_cnt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_cnt	Lists the primitive count for each global illumination source.	int
+s3d::gi_src_prim	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_prim	Lists the primitive indices used by global illumination sources.	int
+s3d::gi_src_seen	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_seen	Tracks the stamp when each global illumination source was last seen.	int
+s3d::gi_src_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_live	Flags which global illumination sources are still live this frame.	int
+s3d::gi_src_model	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_src_model	Stores each global illumination source's last model matrix for movement detection.	int
 s3d::gi_np	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_np	Count of probes in the current volume.	int
 s3d::gi_nr	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_nr	Count of rays in the current probe update.	int
 s3d::gi_updates	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_updates	Count of probe updates performed so far.	int
@@ -1529,6 +1550,8 @@ s3d::pipe_lit	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit	
 s3d::pipe_lit_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_lit_two	GPU pipeline for lit double-sided surfaces.	int
 s3d::pipe_cut	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cut	Pipeline for drawing cut-out surfaces.	int
 s3d::pipe_cut_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_cut_two	Pipeline for drawing double-sided cut-out surfaces.	int
+s3d::pipe_full	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_full	Holds the GPU pipeline for drawing opaque surfaces with full shading.	int
+s3d::pipe_full_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_full_two	Holds the double-sided GPU pipeline for drawing opaque surfaces with full shading.	int
 s3d::pipe_blend	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend	GPU pipeline for blended surfaces.	int
 s3d::pipe_blend_back	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_blend_back	Pipeline drawing blended surface back faces.	int
 s3d::pipe_trans_copy	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_trans_copy	Pipeline that copies the scene color for transmissive surfaces to sample.	int
@@ -1626,8 +1649,26 @@ s3d::shadow_map	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_
 s3d::local_map	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_map	Shadow map array for local lights.	int
 s3d::local_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_size	Current resolution of the local light shadow map.	int
 s3d::local_shadow_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_shadow_size	Resolution in texels of local light shadow maps, 1024 by default.	pub
+s3d::local_atlas	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_atlas	Sets the pixel size of the local light shadow atlas, defaulting to 4096.	pub
+s3d::local_auto	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_auto	Toggles automatic resolution selection for local light shadows, on by default.	pub
+s3d::local_res	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_res	Scales local light shadow resolution, defaulting to 1.0.	pub
+s3d::local_min	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_min	Sets the minimum shadow tile size in pixels for local lights, defaulting to 128.	pub
+s3d::local_cache	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_cache	Toggles caching of local light shadow faces between frames, on by default.	pub
+s3d::local_drawn	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_drawn	Counts local light shadow faces drawn in the latest frame.	int
+s3d::local_fresh	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_fresh	Flags that the local shadow cache holds no valid data yet.	int
 s3d::local_used	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_used	Count of local shadow layers used this frame.	int
 s3d::local_vp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_vp	View-projection matrices for local light shadow layers.	int
+s3d::local_rc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_rc	Stores the atlas rectangle of each local shadow face.	int
+s3d::local_ts	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_ts	Stores per-face timestamps used by the local shadow cache.	int
+s3d::local_id	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_id	Stores light identifiers for local shadow faces.	int
+s3d::local_lk	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_lk	Stores per-light cache keys for local shadow faces.	int
+s3d::local_lf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_lf	Stores per-light face counts used by local shadow allocation.	int
+s3d::local_ls	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_ls	Stores per-light size values used by local shadow allocation.	int
+s3d::local_ord	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_ord	Stores the priority order of local shadow faces for rendering.	int
+s3d::local_todo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_todo	Lists local shadow faces that still need to be drawn.	int
+s3d::local_bc	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_bc	Stores per-light bounding values used to prioritize local shadow faces.	int
+s3d::local_last	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_last	Stores the last frame each light's shadow faces were drawn.	int
+s3d::local_key	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_key	Stores the cache key of each local shadow face, with -1 meaning empty.	int
 s3d::shadow_size	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_size	Resolution in texels of each shadow map layer.	int
 s3d::glow	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#glow	Chain of reduced-size textures used for bloom.	int
 s3d::white	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#white	Fallback one-pixel white texture for materials without a texture.	int
@@ -1792,6 +1833,10 @@ s3d::ppush_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ppush_u	Pr
 s3d::uploaded_verts	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_verts	Vertex count last uploaded to the GPU, or -1 if none.	int
 s3d::uploaded_indices	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_indices	Index count last uploaded to the GPU, or -1 if none.	int
 s3d::uploaded_morphs	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#uploaded_morphs	Morph data count last uploaded to the GPU, or -1 if none.	int
+s3d::vbuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vbuf_cap	Records the current capacity of the vertex buffer.	int
+s3d::ibuf_cap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ibuf_cap	Records the current capacity of the index buffer.	int
+s3d::verts_dirty_lo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#verts_dirty_lo	Marks the low end of the vertex range needing re-upload, with -1 meaning none.	int
+s3d::verts_dirty_hi	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#verts_dirty_hi	Marks the high end of the vertex range needing re-upload.	int
 s3d::joints	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#joints	Joint matrices gathered for all skinned instances this frame.	int
 s3d::frame_u	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#frame_u	Per-frame uniform data passed to shaders.	int
 s3d::view_mat	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#view_mat	Global camera view matrix computed each frame for rendering passes.	int
@@ -1849,6 +1894,7 @@ s3d::add_probe	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_prob
 s3d::clear_probes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clear_probes	Removes all reflection probes and schedules a recapture.	pub
 s3d::add_decal	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_decal	Adds a decal to the scene and returns its index.	pub
 s3d::clear_decals	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clear_decals	Removes all decals from the scene.	pub
+s3d::clear_scene	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#clear_scene	Removes all items, lights, quads, decals, probes and instances, and resets temporal history on the next frame.	pub
 s3d::recapture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#recapture	Schedules all reflection probes to be captured again on the next frame.	pub
 s3d::probe_vol	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#probe_vol	Returns the volume of a probe's bounding box in cubic world units.	int
 s3d::add_light	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#add_light	Adds a point light with position, color and range to the scene.	pub
@@ -1884,8 +1930,7 @@ s3d::pixel_texture	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pixe
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Creates render targets and pipelines, returns true when ready, and is safe to call again after a resize.	pub
 s3d::init	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#init	Initializes rendering at a render size and writes a larger output size using temporal upscaling.	pub
 s3d::forget	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#forget	Releases cached textures and geometry copies after the glTF pools are reset.	pub
-s3d::vtouch_lo	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vtouch_lo	Lowest vertex index modified since the last geometry upload, or -1 when no vertices are dirty.	int
-s3d::vtouch_hi	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vtouch_hi	Highest vertex index (exclusive) modified since the last geometry upload, or -1 when no vertices are dirty.	int
+s3d::pool_upload	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pool_upload	Uploads bytes into a growing GPU buffer, appending only changed tail when possible; returns true when the whole buffer was rewritten.	int
 s3d::touch_verts	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#touch_verts	Marks a range of vertices as modified so the next geometry upload refreshes only that part of the vertex buffer.	int
 s3d::upload_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#upload_geometry	Uploads glTF vertex, index and morph data to GPU buffers when their sizes change.	int
 s3d::cut_keep	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_keep	Flag that enables preserving alpha-cutout coverage when building mip levels for cutout textures.	int
@@ -1923,6 +1968,12 @@ s3d::warm_textures	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#warm
 s3d::wrap_mode	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#wrap_mode	Converts a glTF wrap constant to a gfx wrap mode.	int
 s3d::texture_sampler	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#texture_sampler	Returns a cached sampler matching a glTF texture's filtering and wrapping.	int
 s3d::bind_slot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bind_slot	Binds a material texture slot, using a fallback texture when the reference has no image.	int
+s3d::item_remap	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_remap	Table mapping each item's material slots to global material indices, used for per-item material overrides.	int
+s3d::remap_new	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#remap_new	Appends a per-item material remap table for an asset's materials and returns the index of its first entry.	int
+s3d::item_mat	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_mat	Returns the global material index for a primitive of an item, honoring any per-item material override.	int
+s3d::item_material	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#item_material	Returns the material of an item's k-th asset material slot, including any recolor override applied to it.	pub
+s3d::recolor	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#recolor	Overrides the k-th material slot of one item with a new material, leaving other items sharing the asset unchanged.	pub
+s3d::bmat	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bmat	Returns the material used by a batch entry, falling back to the default material when none is assigned.	int
 s3d::material_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#material_of	Returns the material for a primitive, or the default material when none is set.	int
 s3d::cut_of	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#cut_of	Builds the alpha cutout uniform data from a material.	int
 s3d::find_prev	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#find_prev	Returns the index of a node key in last frame's list, or -1 if absent.	int
@@ -1956,6 +2007,14 @@ s3d::setup_view	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#setup_v
 s3d::setup_cascades	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#setup_cascades	Fits orthographic shadow cascades to view frustum slices with texel snapping.	int
 s3d::fill_frame	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fill_frame	Fills the per-frame uniform block with cascades, sun, sky, lights and global illumination settings.	int
 s3d::image_avg	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#image_avg	Returns an image's mean linear color from sparse samples, used as bounce albedo.	int
+s3d::gi_takes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_takes	Returns whether a batch is included in the ray-traced scene, excluding blended, skinned, instanced and morphed draws or materials opting out of GI.	int
+s3d::gi_key	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_key	Returns the key identifying a batch's item and node, used to look up its source triangles.	int
+s3d::gi_pos	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_pos	Returns the world-space position of an indexed vertex in a primitive after applying a model matrix.	int
+s3d::gi_same	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_same	Returns whether two matrices have identical rotation and translation columns.	int
+s3d::gi_rebuild	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rebuild	Marks the ray-traced scene as stale so it is fully rebuilt on the next GI pass.	pub
+s3d::gi_stats	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_stats	Returns the GI rebuild count, refit count, last refit time in milliseconds and last build time in milliseconds.	pub
+s3d::gi_read	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_read	Reads the irradiance probe buffer into the output array, returning false when no probe data exists.	pub
+s3d::gi_track	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_track	Updates moved triangles in the ray-traced scene by refitting its acceleration structure, or flags a full rebuild when needed.	int
 s3d::gi_scene	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_scene	Builds the ray-tracing scene from batch geometry and sets up the irradiance probe grid.	int
 s3d::gi_rot	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_rot	Returns a pseudo-random rotation uniform for the given probe update index.	int
 s3d::gi_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_pass	Runs compute passes that trace probe rays and update irradiance and distance data.	int
@@ -2019,7 +2078,13 @@ s3d::vsm_test_blank	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#vsm
 s3d::gi_bind	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#gi_bind	Binds ray-tracing and probe storage buffers, or dummy buffers when unavailable.	int
 s3d::shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shadow_pass	Renders the sun shadow cascades into the depth map from the batch.	int
 s3d::shelter_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#shelter_pass	Renders a top-down depth map around the eye so weather effects can tell which pixels are sheltered from above.	int
+s3d::local_pick	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_pick	Returns the shadow map resolution chosen for a local light, adapting to its projected size on screen when auto sizing is on.	int
+s3d::local_zbits	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_zbits	Returns the value with its low bits spread to even bit positions, used for Morton-order atlas placement.	int
+s3d::local_units	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_units	Returns the number of atlas tiles a local light's shadow map occupies, counting one for spots and six for point lights.	int
+s3d::local_layout	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_layout	Assigns atlas tiles, view-projection matrices and sizes to every local shadow-casting light, shrinking maps when the atlas is full.	int
+s3d::local_hits	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_hits	Returns whether a batch can be seen by a local light's shadow face, using a frustum test or a range test for skinned and instanced draws.	int
 s3d::local_shadow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_shadow_pass	Renders depth layers for shadow-casting local lights, skipping blended and no-shadow materials and off-screen geometry.	int
+s3d::local_stats	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#local_stats	Returns the number of local shadow faces drawn this frame and the number queued for redraw.	pub
 s3d::fullscreen	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fullscreen	Binds a pipeline for a fullscreen draw.	int
 s3d::sky_u	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sky_u	Builds the sky uniform data from the view and sun settings.	int
 s3d::ao_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ao_pass	Runs the prepass for normals, depth and motion, then computes and blurs ambient occlusion.	int
@@ -2135,6 +2200,7 @@ gltf::view_at	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#view_at	Scratch
 gltf::view_len	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#view_len	Scratch list of each buffer view's length in bytes.	int
 gltf::view_stride	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#view_stride	Scratch list of each buffer view's byte stride, with 0 meaning tightly packed.	int
 gltf::accessor_node	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#accessor_node	Scratch list of JSON node indices for each accessor of the asset being read.	int
+gltf::acc_view	constant	gfx/gltf	/api-library/helium/lib/gfx-gltf#acc_view	Pool mapping each accessor index to an override buffer view, or -1, used for Draco-decoded data.	int
 gltf::error	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#error	Returns the message describing the most recent load failure.	pub
 gltf::skipped	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#skipped	Returns how many point and line primitives were skipped because they are not loaded.	pub
 gltf::fail	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#fail	Records an error message and returns -1.	int
@@ -2163,6 +2229,9 @@ gltf::image_file	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#image_file	R
 gltf::decode_image	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#decode_image	Decodes a PNG or JPEG image into the pixel pool, using a white 1x1 image on failure.	int
 gltf::presize	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#presize	Reserves vertex and index pool capacity for large assets before parsing, based on accessor counts.	int
 gltf::load_bytes	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#load_bytes	Loads glTF or GLB data from memory into the pools, returning its asset index or -1 on failure.	pub
+gltf::put_value	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#put_value	Appends one number to the working blob in the byte format of the given glTF component type.	int
+gltf::draco_view	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#draco_view	Points an accessor at a new buffer view covering blob bytes from the given offset to the current end.	int
+gltf::unpack_draco	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#unpack_draco	Decodes a primitive's Draco-compressed attributes into accessor-backed blob views, returning false and setting the problem text on failure.	int
 gltf::add_primitive	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_primitive	Reads one mesh primitive into the vertex, index and morph pools, returning false on error.	int
 gltf::add_texture_file	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_texture_file	Loads an image file as a new repeating, mipmapped texture and returns its index, or -1 on failure.	pub
 gltf::add_image	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#add_image	Registers an already decoded image in the global pools with the given wrap mode and returns its new texture index.	int
@@ -2180,6 +2249,7 @@ gltf::default_material	function	gfx/gltf	/api-library/helium/lib/gfx-gltf#defaul
 shapes::material	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#material	Returns a material with the given RGB base color, metallic factor and roughness factor, for use with the shape builders.	pub
 shapes::vertex	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#vertex	Appends one vertex with position, normal, texture coordinates and tangent to the shared glTF vertex pool.	int
 shapes::finish	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish	Wraps the most recently added vertices and indices into a one-node asset and returns its asset index.	int
+shapes::finish_groups	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#finish_groups	Wraps vertices and indices from the given starts into a one-node asset with one material per index group, returning the new asset's index.	int
 shapes::sphere	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sphere	Builds a UV sphere with the given segment counts in longitude and latitude, returning its asset index.	pub
 shapes::plane	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#plane	Builds a square plane in the xz plane facing +y with the given half-width, returning its asset index.	pub
 shapes::sheet	function	gfx/shapes	/api-library/helium/lib/gfx-shapes#sheet	Builds an n-by-n grid quad patch from origin o spanning edge vectors u and v, with material m, returning the new asset id.	pub
@@ -2342,6 +2412,17 @@ rt::nodes	constant	gfx/rt	/api-library/helium/lib/gfx-rt#nodes	Flattened array o
 rt::tris	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tris	Flattened array of reordered triangle data with edge vectors and albedo, produced by build.	int
 rt::order	constant	gfx/rt	/api-library/helium/lib/gfx-rt#order	Working array of triangle indices reordered during splitting so each leaf covers a contiguous range.	int
 rt::cen	constant	gfx/rt	/api-library/helium/lib/gfx-rt#cen	Working array of triangle centroids, three floats per triangle, used when binning splits.	int
+rt::pos_of	constant	gfx/rt	/api-library/helium/lib/gfx-rt#pos_of	Per-leaf-slot index mapping each triangle to its position in the tree's sorted order, used for incremental updates.	int
+rt::parent	constant	gfx/rt	/api-library/helium/lib/gfx-rt#parent	Per-node parent index array, with -1 for the root, used when refitting bounds upward.	int
+rt::leaf_of	constant	gfx/rt	/api-library/helium/lib/gfx-rt#leaf_of	Array mapping each sorted triangle position to the leaf node that contains it.	int
+rt::dirty	constant	gfx/rt	/api-library/helium/lib/gfx-rt#dirty	List of leaf nodes whose triangles moved and need their bounds refit.	int
+rt::mark	constant	gfx/rt	/api-library/helium/lib/gfx-rt#mark	Per-node stamp array that prevents the same leaf being added to the dirty list twice.	int
+rt::stamp	constant	gfx/rt	/api-library/helium/lib/gfx-rt#stamp	Counter incremented on each refit to distinguish dirty marks from earlier passes.	int
+rt::tri_lo	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tri_lo	Lowest sorted triangle position changed since the last upload, or -1 when nothing changed.	int
+rt::tri_hi	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tri_hi	One past the highest sorted triangle position changed since the last upload, used to bound the partial upload.	int
+rt::node_lo	constant	gfx/rt	/api-library/helium/lib/gfx-rt#node_lo	Lowest node index whose bounds changed since the last upload, or -1 when none changed.	int
+rt::node_hi	constant	gfx/rt	/api-library/helium/lib/gfx-rt#node_hi	One past the highest node index changed since the last upload, bounding the partial buffer update.	int
+rt::built_area	constant	gfx/rt	/api-library/helium/lib/gfx-rt#built_area	Surface area of the root bounds recorded at build time, kept as a quality baseline.	int
 rt::node_buf	constant	gfx/rt	/api-library/helium/lib/gfx-rt#node_buf	GPU buffer holding the node array after upload.	int
 rt::tri_buf	constant	gfx/rt	/api-library/helium/lib/gfx-rt#tri_buf	GPU buffer holding the triangle array after upload.	int
 rt::has_bufs	constant	gfx/rt	/api-library/helium/lib/gfx-rt#has_bufs	Flag recording whether GPU buffers currently exist and must be released before replacement.	int
@@ -2357,6 +2438,11 @@ rt::new_node	function	gfx/rt	/api-library/helium/lib/gfx-rt#new_node	Appends a z
 rt::bounds	function	gfx/rt	/api-library/helium/lib/gfx-rt#bounds	Returns the bounds of a triangle range and the bounds of its centroids.	int
 rt::split	function	gfx/rt	/api-library/helium/lib/gfx-rt#split	Finds the best binned surface-area-heuristic split, returning axis, bin and cost, with axis negative when no split helps.	int
 rt::build	function	gfx/rt	/api-library/helium/lib/gfx-rt#build	Builds the bounding volume tree and triangle arrays from the added triangles, leaving the tree unready if there are none.	pub
+rt::root_area	function	gfx/rt	/api-library/helium/lib/gfx-rt#root_area	Returns the surface-area measure of the root node's bounding box, or 0 when the tree is empty.	int
+rt::set_tri	function	gfx/rt	/api-library/helium/lib/gfx-rt#set_tri	Moves an existing triangle to new vertex positions, marking its leaf dirty so a later refit updates the bounds.	pub
+rt::refit_node	function	gfx/rt	/api-library/helium/lib/gfx-rt#refit_node	Recomputes one node's bounds from its triangles or child nodes and records it as changed for upload.	int
+rt::refit	function	gfx/rt	/api-library/helium/lib/gfx-rt#refit	Refits bounds of all nodes affected by moved triangles, doing a full bottom-up pass when many are dirty.	pub
+rt::update	function	gfx/rt	/api-library/helium/lib/gfx-rt#update	Uploads only the changed ranges of node and triangle data to the GPU buffers, then clears the change tracking.	pub
 rt::upload	function	gfx/rt	/api-library/helium/lib/gfx-rt#upload	Uploads the built node and triangle arrays to GPU storage buffers, replacing earlier buffers, and does nothing if not built.	pub
 rt::release	function	gfx/rt	/api-library/helium/lib/gfx-rt#release	Releases the GPU buffers if they exist.	pub
 rt::hit	function	gfx/rt	/api-library/helium/lib/gfx-rt#hit	Tests a ray against the tree and returns the closest hit distance and triangle index, or the maximum distance and -1 if none.	pub
@@ -3528,6 +3614,8 @@ hud::lo	function	gfx/hud	/api-library/helium/lib/gfx-hud#lo	Returns a node's min
 hud::hi	function	gfx/hud	/api-library/helium/lib/gfx-hud#hi	Returns a node's maximum size on the given axis, where negative means unset.	int
 hud::clampv	function	gfx/hud	/api-library/helium/lib/gfx-hud#clampv	Clamps a size to the node's minimum and maximum on an axis, never below its padding total.	int
 hud::spec	function	gfx/hud	/api-library/helium/lib/gfx-hud#spec	Returns a node's explicitly specified size on an axis, or -1 when automatic or unresolvable.	int
+hud::TEXT_DROP	constant	gfx/hud	/api-library/helium/lib/gfx-hud#TEXT_DROP	Tunable fraction of text height used as drop offset, applied as a module-level variable for text rendering.	pub
+hud::text_size	function	gfx/hud	/api-library/helium/lib/gfx-hud#text_size	Measures the rich-text size of a node's localized string, returning width and height (line height 1.55 times the tallest glyph) for layout.	int
 hud::intrinsic	function	gfx/hud	/api-library/helium/lib/gfx-hud#intrinsic	Computes a node's content-based size on an axis from its children, gaps and padding.	int
 hud::contrib	function	gfx/hud	/api-library/helium/lib/gfx-hud#contrib	Returns a child's clamped outer size contribution on an axis, including margins, for intrinsic sizing.	int
 hud::layout_root	function	gfx/hud	/api-library/helium/lib/gfx-hud#layout_root	Sets the root node's rectangle and lays out the whole tree beneath it.	pub
@@ -3592,6 +3680,9 @@ SDF_FIRST	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_FIRST	P
 SDF_COUNT	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_COUNT	Per-glyph number of strokes, for ASCII 32 to 126.	int
 SDF_ADV	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_ADV	Per-glyph advance width in font units, for ASCII 32 to 126.	int
 SDF_OFF	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_OFF	Per-glyph horizontal shift in font units that centres the ink within its advance.	int
+SDF_TTF_PIX	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_TTF_PIX	Buffer of raw TrueType pixel bytes used internally by the font module, empty until populated.	int
+SDF_KERN	constant	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#SDF_KERN	Growable table of pairwise kerning adjustments, indexed by previous and next glyph, empty until populated.	int
+sdf_kern	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_kern	Returns the kerning adjustment in font units between the characters at index i and i+1 of text, or 0 if unavailable.	pub
 sdf_seg	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_seg	Appends a line segment stroke between two points to the global stroke list.	int
 sdf_arc	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_arc	Appends a circular arc stroke with the given centre, radius and start and end angles in radians.	int
 sdf_circle	function	gfx/sdf_font	/api-library/helium/lib/gfx-sdf_font#sdf_circle	Appends a full circle stroke by adding an arc sweeping the whole turn.	int
@@ -6194,18 +6285,22 @@ cloth::skin_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_on	Per-
 cloth::skin_p	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_p	Per-particle flat array of skin target positions, three reals per particle.	int
 cloth::skin_n	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_n	Per-particle flat array of skin target normals, three reals per particle, stored normalized.	int
 cloth::skin_gap	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin_gap	Per-particle array of the gap distance kept from the skin target surface.	int
+cloth::tie_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tie_on	Per-vertex flag array marking which particles are tied to a point by a tether.	int
+cloth::tie_p	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tie_p	Per-vertex array of tether anchor positions, stored as x, y, z triples.	int
+cloth::tie_len	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#tie_len	Per-vertex array of maximum tether lengths for tied particles.	int
 cloth::balls	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#balls	Flat array of sphere colliders stored as x, y, z, radius quadruples.	int
 cloth::pills	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#pills	Flat array of capsule colliders stored as two endpoints and a radius, seven values each.	int
 cloth::floor_on	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_on	Flag indicating whether the ground plane collider is enabled.	int
 cloth::floor_y	constant	gfx/cloth	/api-library/helium/lib/gfx-cloth#floor_y	Height of the ground plane collider along the y axis.	int
 cloth::pdist	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pdist	Returns the distance between two particles given by index.	int
-cloth::hbits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hbits	Returns the raw 32-bit pattern of a float, used for hashing vertex positions.	int
-cloth::hslot	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#hslot	Returns a hash table slot for a position, masked to the table size.	int
+cloth::add3	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#add3	Appends x, y and z values to a flat real array as three consecutive entries.	int
 cloth::make	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#make	Builds a cloth from mesh vertices and triangle indices, merging duplicate positions, and returns its cloth index.	pub
 cloth::pin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#pin	Pins a cloth vertex so it moves to the given world position during steps instead of simulating.	pub
 cloth::unpin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unpin	Releases a pinned cloth vertex so it simulates freely again.	pub
 cloth::skin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#skin	Binds a cloth vertex to a skin position, normal and gap; zero-length normals leave the previous normal unchanged.	pub
 cloth::unskin	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#unskin	Clears skinning on every particle of the cloth so they simulate freely again.	pub
+cloth::tie	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#tie	Tethers a cloth vertex to a world point, limiting its distance to len, which is clamped to zero or more.	pub
+cloth::untie	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#untie	Removes the tethers from every vertex of the given cloth.	pub
 cloth::reset	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#reset	Clears all cloths, particle data, and colliders.	pub
 cloth::clear_colliders	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#clear_colliders	Removes all sphere and capsule colliders and disables the ground plane.	pub
 cloth::ball	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ball	Adds a sphere collider with the given center and radius.	pub
@@ -6214,7 +6309,7 @@ cloth::ground	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#ground	Enable
 cloth::normals	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#normals	Recomputes smoothed per-particle normals for a cloth from its triangles.	int
 cloth::limits	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#limits	Computes each unpinned particle's nearest pinned particle and its rest distance for reach limiting.	int
 cloth::contact	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#contact	Pushes a particle out of a sphere and applies friction against its sliding motion.	int
-cloth::solve	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#solve	Applies a soft distance constraint between two particles, moving each by its inverse mass share.	int
+cloth::rule	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#rule	Moves two particles along their connecting line to satisfy a rest length with softness, scaled by inverse masses.	int
 cloth::step	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#step	Advances a cloth simulation by dt seconds under wind, applying gravity, constraints, collisions, and normals.	pub
 cloth::write	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#write	Writes simulated position and normal offsets and previous-frame offsets for each vertex into an output buffer.	pub
 cloth::count	function	gfx/cloth	/api-library/helium/lib/gfx-cloth#count	Returns the number of simulated particles in a cloth.	pub
@@ -6758,6 +6853,24 @@ garment::clear_all	function	gfx/garment	/api-library/helium/lib/gfx-garment#clea
 garment::make	function	gfx/garment	/api-library/helium/lib/gfx-garment#make	Builds a garment from body mesh points, indices, joint data and a spec, returning false when input is invalid or nothing is produced.	pub
 garment::f32_bits	function	gfx/garment	/api-library/helium/lib/gfx-garment#f32_bits	Returns the raw 32-bit little-endian integer representation of a single-precision float.	int
 garment::drape	function	gfx/garment	/api-library/helium/lib/gfx-garment#drape	Simulates cloth draping of the generated garment for the given steps, returning the cloth index or -1 when empty.	pub
+garment::bt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#bt	Per-vertex index of the body triangle each garment vertex is bound to.	int
+garment::bw	constant	gfx/garment	/api-library/helium/lib/gfx-garment#bw	Per-vertex barycentric weights of the bound body triangle for each garment vertex.	int
+garment::bo	constant	gfx/garment	/api-library/helium/lib/gfx-garment#bo	Per-vertex offsets of garment vertices in the bound triangle's tangent, bitangent and normal frame.	int
+garment::pt	constant	gfx/garment	/api-library/helium/lib/gfx-garment#pt	Storage for garment vertex positions captured when binding to the body.	int
+garment::qn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#qn	Scratch per-vertex normals computed for the body mesh being fitted.	int
+garment::rp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#rp	Copy of the rest-pose body vertex positions used as the binding reference.	int
+garment::targets	constant	gfx/garment	/api-library/helium/lib/gfx-garment#targets	Target positions for each garment vertex, as xyz triples, updated when the body is posed.	pub
+garment::bi	constant	gfx/garment	/api-library/helium/lib/gfx-garment#bi	Copy of the body triangle index list used for binding and posing.	int
+garment::unit_len	function	gfx/garment	/api-library/helium/lib/gfx-garment#unit_len	Normalizes a vector, returning its unit components and original length, or zeros if the length is near zero.	int
+garment::perp3	function	gfx/garment	/api-library/helium/lib/gfx-garment#perp3	Returns a unit vector perpendicular to the given normal, falling back to the x axis when degenerate.	int
+garment::normals_of	function	gfx/garment	/api-library/helium/lib/gfx-garment#normals_of	Computes area-weighted, normalized per-vertex normals for the body mesh into scratch storage.	int
+garment::frame	function	gfx/garment	/api-library/helium/lib/gfx-garment#frame	Builds a position, normal and tangent frame at a barycentric point on a body triangle, rotated to match the rest pose.	int
+garment::bary_of	function	gfx/garment	/api-library/helium/lib/gfx-garment#bary_of	Returns barycentric weights of the point on a triangle closest to the given point.	int
+garment::near_tri	function	gfx/garment	/api-library/helium/lib/gfx-garment#near_tri	Returns squared distance and barycentric weights of the closest point on a body triangle to the given point.	int
+garment::bind	function	gfx/garment	/api-library/helium/lib/gfx-garment#bind	Binds garment vertices to the nearest triangles of a rest-pose body mesh, returning false if inputs are invalid or mismatched.	pub
+garment::gp	constant	gfx/garment	/api-library/helium/lib/gfx-garment#gp	Storage for garment vertex positions on the posed body surface.	int
+garment::gn	constant	gfx/garment	/api-library/helium/lib/gfx-garment#gn	Storage for body surface normals at each garment vertex after posing.	int
+garment::pose	function	gfx/garment	/api-library/helium/lib/gfx-garment#pose	Poses the bound garment onto a new body vertex set, updating targets, and returns -1 if unbound or mismatched.	pub
 obj::V	constant	gfx/obj	/api-library/helium/lib/gfx-obj#V	Holds the flat list of vertex coordinates (x, y, z triplets) from the most recently loaded OBJ file.	pub
 obj::names	constant	gfx/obj	/api-library/helium/lib/gfx-obj#names	Holds the group names found in the most recently loaded OBJ file, indexed by group id.	pub
 obj::tris	constant	gfx/obj	/api-library/helium/lib/gfx-obj#tris	Holds triangles of the loaded model as four ints each: group id, then three zero-based vertex indices.	pub
@@ -6834,3 +6947,795 @@ locks::scalp_w	constant	gfx/locks	/api-library/helium/lib/gfx-locks#scalp_w	Per-
 locks::scalp	function	gfx/locks	/api-library/helium/lib/gfx-locks#scalp	Fills the scalp weight buffer with a falloff from 1 to 0 for each point based on distance to the hairstyle's root positions within radius r.	int
 locks::jitter	constant	gfx/locks	/api-library/helium/lib/gfx-locks#jitter	Amount of random per-lock brightness variation applied to vertex color in mesh, as a fraction around 1.0.	pub
 locks::mesh	function	gfx/locks	/api-library/helium/lib/gfx-locks#mesh	Copies the built lock buffers into the glTF vertex and index data, returning the result of finishing the mesh with the material.	pub
+codec_vorbis::INVDB	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#INVDB	Lookup table of 256 floor amplitude multipliers, converting integer floor values to linear gain.	int
+codec_vorbis::why	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#why	Buffer holding the text of the most recent decoding failure.	int
+codec_vorbis::src	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#src	Buffer holding the raw bytes of the Ogg Vorbis file being decoded.	int
+codec_vorbis::fail	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#fail	Records a failure reason in the error buffer and returns false.	int
+codec_vorbis::error	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#error	Returns the message describing the most recent decoding failure.	pub
+codec_vorbis::sb	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#sb	Returns the source byte at the given offset as an integer.	int
+codec_vorbis::pkt	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pkt	Buffer holding the concatenated data of all packets extracted from Ogg pages.	int
+codec_vorbis::pk_at	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pk_at	Per-packet start offsets into the packet data buffer.	int
+codec_vorbis::pk_len	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pk_len	Per-packet byte lengths.	int
+codec_vorbis::pk_gran	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pk_gran	Per-packet granule positions, or -1 when a page gives none for that packet.	int
+codec_vorbis::pk_last	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pk_last	Per-packet flags marking packets that end the logical stream.	int
+codec_vorbis::cur	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cur	Scratch buffer accumulating a packet that spans multiple lacing segments.	int
+codec_vorbis::pages	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#pages	Parses Ogg pages of the first stream into packets, returning false if none or too few headers exist.	int
+codec_vorbis::bp	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#bp	Current bit position within the active packet.	int
+codec_vorbis::bend	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#bend	Bit position marking the end of the active packet.	int
+codec_vorbis::pbase	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#pbase	Byte offset in the packet buffer where the active packet begins.	int
+codec_vorbis::eop	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#eop	Flag set when a read ran past the end of the active packet.	int
+codec_vorbis::bstart	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#bstart	Begins bit reading on a packet, skipping the given number of leading bytes.	int
+codec_vorbis::peek32	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#peek32	Returns the next 32 bits at the current position without advancing.	int
+codec_vorbis::bits	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#bits	Reads and consumes the given number of bits, returning 0 and setting end-of-packet on overrun.	int
+codec_vorbis::ilog	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#ilog	Returns the number of bits needed to represent a non-negative integer.	int
+codec_vorbis::unpack	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#unpack	Converts a packed Vorbis float value into a real number.	int
+codec_vorbis::cb_dim	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_dim	Per-codebook vector dimensions.	int
+codec_vorbis::cb_n	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_n	Per-codebook entry counts.	int
+codec_vorbis::cb_len	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_len	Per-codebook start offsets into the codeword length array.	int
+codec_vorbis::cb_code	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_code	Per-codebook start offsets into the codeword value array.	int
+codec_vorbis::cb_fast	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_fast	Per-codebook start offsets into the fast lookup table.	int
+codec_vorbis::cb_long	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_long	Per-codebook start offsets into the list of long codeword entries.	int
+codec_vorbis::cb_nlong	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_nlong	Per-codebook counts of entries with codewords longer than the fast lookup.	int
+codec_vorbis::cb_vq	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cb_vq	Per-codebook start offsets into vector quantization values, or -1 when absent.	int
+codec_vorbis::clen	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#clen	Codeword lengths for all codebook entries.	int
+codec_vorbis::ccode	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#ccode	Assigned codeword values for all codebook entries.	int
+codec_vorbis::cfast	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cfast	Fast lookup tables mapping 10-bit prefixes to entries plus one.	int
+codec_vorbis::clong	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#clong	Entry indices of codewords too long for the fast lookup.	int
+codec_vorbis::cvq	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cvq	Vector quantization values for all codebook entries.	int
+codec_vorbis::pow_fits	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#pow_fits	Checks whether the radix raised to the dimension stays within the given limit.	int
+codec_vorbis::book	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#book	Reads one codebook from the setup header, returning false on malformed data.	int
+codec_vorbis::decode_entry	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#decode_entry	Decodes one entry from the given codebook, returning -1 and setting end-of-packet on failure.	int
+codec_vorbis::fl_np	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fl_np	Per-floor counts of partitions.	int
+codec_vorbis::fl_pc	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fl_pc	Per-floor start offsets into the partition class list.	int
+codec_vorbis::fl_mult	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fl_mult	Per-floor multiplier values.	int
+codec_vorbis::fl_x	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fl_x	Per-floor start offsets into the X coordinate list.	int
+codec_vorbis::fl_nx	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fl_nx	Per-floor counts of X coordinates.	int
+codec_vorbis::fpc	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fpc	Partition class assignments for all floors.	int
+codec_vorbis::fx	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fx	X coordinates for all floor points.	int
+codec_vorbis::fsort	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fsort	Indices of floor points sorted by X coordinate.	int
+codec_vorbis::flo	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#flo	Index of the nearest lower-X neighbor for each floor point.	int
+codec_vorbis::fhi	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fhi	Index of the nearest higher-X neighbor for each floor point.	int
+codec_vorbis::fcdim	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fcdim	Per-class dimensions for floor partition classes.	int
+codec_vorbis::fcsub	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fcsub	Per-class subclass bit counts for floor partition classes.	int
+codec_vorbis::fcmaster	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fcmaster	Per-class master codebook numbers for floor partition classes.	int
+codec_vorbis::fcbook	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fcbook	Per-subclass codebook numbers for floor partition classes, with -1 for none.	int
+codec_vorbis::floor	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#floor	Reads a type 1 floor from the setup header, returning false if unsupported or malformed.	int
+codec_vorbis::fy	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fy	Decoded Y values for each channel's floor points.	int
+codec_vorbis::fused	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fused	Per-channel flags marking whether a floor was successfully read for the packet.	int
+codec_vorbis::floor_read	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#floor_read	Reads one channel's floor Y values from the current packet.	int
+codec_vorbis::render_point	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#render_point	Returns the interpolated Y value at X on the line between two points.	int
+codec_vorbis::render_line	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#render_line	Renders a line of floor amplitudes into the output buffer, clipped to the given length.	int
+codec_vorbis::floor_curve	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#floor_curve	Builds the floor amplitude curve for a channel into the output buffer.	int
+codec_vorbis::rs_type	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_type	Per-residue type numbers.	int
+codec_vorbis::rs_begin	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_begin	Per-residue starting positions.	int
+codec_vorbis::rs_end	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_end	Per-residue ending positions.	int
+codec_vorbis::rs_psize	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_psize	Per-residue partition sizes.	int
+codec_vorbis::rs_ncls	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_ncls	Per-residue classification counts.	int
+codec_vorbis::rs_book	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_book	Per-residue classification codebook numbers.	int
+codec_vorbis::rs_books	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rs_books	Codebook numbers per residue class and pass, with -1 for none.	int
+codec_vorbis::residue	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#residue	Reads one residue configuration from the setup header, returning false on malformed data.	int
+codec_vorbis::chans	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#chans	Number of audio channels in the stream.	int
+codec_vorbis::mp_sub	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#mp_sub	Per-mapping submap counts.	int
+codec_vorbis::mp_ncp	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#mp_ncp	Per-mapping counts of channel coupling steps.	int
+codec_vorbis::mp_cp	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#mp_cp	Per-mapping start offsets into the coupling arrays.	int
+codec_vorbis::cmag	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cmag	Magnitude channel indices for all coupling steps.	int
+codec_vorbis::cang	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#cang	Angle channel indices for all coupling steps.	int
+codec_vorbis::mux	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#mux	Per-mapping, per-channel submap assignments.	int
+codec_vorbis::smfloor	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#smfloor	Floor numbers for each mapping submap.	int
+codec_vorbis::smres	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#smres	Residue numbers for each mapping submap.	int
+codec_vorbis::mapping	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#mapping	Reads one channel mapping from the setup header, returning false on malformed data.	int
+codec_vorbis::md_block	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#md_block	Per-mode block size flags selecting short or long blocks.	int
+codec_vorbis::md_map	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#md_map	Per-mode mapping numbers.	int
+codec_vorbis::mode	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#mode	Reads one mode from the setup header, returning false on malformed data.	int
+codec_vorbis::rate	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rate	Sample rate of the stream in hertz.	int
+codec_vorbis::bs0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#bs0	Short block size in samples.	int
+codec_vorbis::bs1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#bs1	Long block size in samples.	int
+codec_vorbis::nmodes	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#nmodes	Number of modes defined in the setup header.	int
+codec_vorbis::pb	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#pb	Returns the byte at the given index within the given packet as an integer.	int
+codec_vorbis::vtag	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#vtag	Checks whether the packet begins with the Vorbis signature after its type byte.	int
+codec_vorbis::headers	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#headers	Parses the identification, comment and setup headers, returning false with an error set on invalid data.	pub
+codec_vorbis::win0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#win0	Short-block window slope table.	int
+codec_vorbis::win1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#win1	Long-block window slope table.	int
+codec_vorbis::slope	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#slope	Builds the rising half of a Vorbis power-sine window slope for the given block size.	int
+codec_vorbis::tab_n0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#tab_n0	Counts the block size for which the first cached IMDCT twiddle table set was built, or zero when unset.	int
+codec_vorbis::tab_n1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#tab_n1	Counts the block size for which the second cached IMDCT twiddle table set was built, or zero when unset.	int
+codec_vorbis::fc0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fc0	Holds cosine twiddle factors for the FFT in the first cached table slot.	int
+codec_vorbis::fs0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fs0	Holds sine twiddle factors for the FFT in the first cached table slot.	int
+codec_vorbis::fc1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fc1	Holds cosine twiddle factors for the FFT in the second cached table slot.	int
+codec_vorbis::fs1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fs1	Holds sine twiddle factors for the FFT in the second cached table slot.	int
+codec_vorbis::wc0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#wc0	Holds cosine pre- and post-rotation weights for the IMDCT in the first cached table slot.	int
+codec_vorbis::ws0	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#ws0	Holds sine pre- and post-rotation weights for the IMDCT in the first cached table slot.	int
+codec_vorbis::wc1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#wc1	Holds cosine pre- and post-rotation weights for the IMDCT in the second cached table slot.	int
+codec_vorbis::ws1	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#ws1	Holds sine pre- and post-rotation weights for the IMDCT in the second cached table slot.	int
+codec_vorbis::fre	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fre	Holds the real scratch buffer used by the FFT inside the IMDCT.	int
+codec_vorbis::fim	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#fim	Holds the imaginary scratch buffer used by the FFT inside the IMDCT.	int
+codec_vorbis::ftab	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#ftab	Builds a table of cosine or sine twiddle factors for an FFT of the given block size.	int
+codec_vorbis::wtab	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#wtab	Builds a table of cosine or sine rotation weights for an IMDCT of the given block size.	int
+codec_vorbis::tables	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#tables	Ensures twiddle and weight tables exist for the given block size, filling an empty cache slot.	int
+codec_vorbis::fft	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#fft	Performs an in-place complex FFT of power-of-two length using the supplied twiddle tables.	int
+codec_vorbis::imdct_core	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#imdct_core	Computes an inverse MDCT using the supplied twiddle and weight tables, writing a block of n samples to out.	int
+codec_vorbis::imdct	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#imdct	Computes an inverse MDCT of block size n from a spectrum at an offset, using cached tables.	int
+codec_vorbis::imdct_into	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#imdct_into	Computes an inverse MDCT of a spectrum, producing twice as many output samples as input values.	int
+codec_vorbis::dnd	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#dnd	Holds per-channel flags marking channels whose floor is unused and whose residue is skipped.	int
+codec_vorbis::rv	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rv	Holds the decoded residue vectors for all channels.	int
+codec_vorbis::rtmp	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rtmp	Holds the temporary interleaved residue buffer used for type 2 residues.	int
+codec_vorbis::rcls	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rcls	Holds the residue classification values decoded for each vector and partition.	int
+codec_vorbis::rvec	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#rvec	Holds the offsets of the residue vectors currently being decoded.	int
+codec_vorbis::to_tmp	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#to_tmp	Flags whether residue values are accumulated into the temporary buffer instead of the main residue vectors.	int
+codec_vorbis::tadd	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#tadd	Adds a value to the current residue target at the given index, ignoring out-of-range indices.	int
+codec_vorbis::decode_part	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#decode_part	Decodes one residue partition using a codebook and adds the vectors, returning false on failure or an unusable book.	int
+codec_vorbis::res_decode	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#res_decode	Decodes the residue classes and partitions for a set of vectors across all eight passes.	int
+codec_vorbis::residue_read	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#residue_read	Reads the residue for the given channels, handling format types 0, 1 and 2 and skipping unused channels.	int
+codec_vorbis::flr	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#flr	Holds the floor curves for all channels of the current packet.	int
+codec_vorbis::ibuf	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#ibuf	Holds the inverse MDCT output for the channel currently being processed.	int
+codec_vorbis::ovl	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#ovl	Holds the overlapping second half of each channel's previous block for windowed overlap-add.	int
+codec_vorbis::prev	constant	codec_vorbis	/api-library/helium/lib/codec_vorbis#prev	Holds the previous block size, or zero before any block has been decoded.	int
+codec_vorbis::clampf	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#clampf	Clamps a sample value to the range from negative one to one.	int
+codec_vorbis::put	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#put	Stores a sample into the output buffer at the given index after clamping it.	int
+codec_vorbis::packet	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#packet	Decodes one audio packet into the output buffer and returns the number of frames produced, or zero if none.	int
+codec_vorbis::decode	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#decode	Decodes a whole Ogg Vorbis file into interleaved float samples, returning channel count, sample rate and success.	pub
+codec_vorbis::is_vorbis	function	codec_vorbis	/api-library/helium/lib/codec_vorbis#is_vorbis	Returns true when the bytes begin with an Ogg page header carrying a Vorbis identification packet.	pub
+codec_webp::PLANE	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#PLANE	Table mapping short lossless distance codes to two-dimensional neighbor offsets, used when resolving backward-copy distances.	int
+codec_webp::COEF0	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#COEF0	Table of default initial probabilities for lossy coefficient decoding, indexed by band, context and token position.	int
+codec_webp::COEFU	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#COEFU	Table of coefficient probability update thresholds used when reading lossy frame headers.	int
+codec_webp::BMODEP	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#BMODEP	Table of fixed probabilities for decoding 4x4 intra prediction block modes in lossy frames.	int
+codec_webp::DCTAB	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#DCTAB	Table mapping a quantizer index to its DC dequantization step for lossy frames.	int
+codec_webp::ACTAB	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ACTAB	Table mapping a quantizer index to its AC dequantization step for lossy frames.	int
+codec_webp::PRED4	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#PRED4	Table of packed values describing 4x4 intra prediction modes in lossy frames.	int
+codec_webp::ZIGZAG	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ZIGZAG	Table giving the zigzag scan order of the 16 coefficients in a transform block.	int
+codec_webp::BANDS	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#BANDS	Table mapping coefficient position to its probability band for lossy token decoding.	int
+codec_webp::CATP	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#CATP	Table of probabilities for decoding the extra bits of large lossy coefficient categories.	int
+codec_webp::CLORDER	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#CLORDER	Table giving the order in which code length code lengths are stored in lossless Huffman headers.	int
+codec_webp::why	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#why	Buffer holding the text of the most recent decoding failure message.	int
+codec_webp::src	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#src	Buffer holding the WebP file bytes currently being parsed and decoded.	int
+codec_webp::fail	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fail	Records a failure message and returns false so callers can report errors in one step.	int
+codec_webp::error	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#error	Returns the message describing the most recent decoding failure.	pub
+codec_webp::sb	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#sb	Returns the byte at the given offset of the source data as an integer.	int
+codec_webp::le16	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#le16	Reads a little-endian 16-bit unsigned value at the given offset of the source data.	int
+codec_webp::le24	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#le24	Reads a little-endian 24-bit unsigned value at the given offset of the source data.	int
+codec_webp::le32	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#le32	Reads a little-endian 32-bit unsigned value at the given offset of the source data.	int
+codec_webp::img_at	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#img_at	Offset of the image chunk payload within the file.	int
+codec_webp::img_len	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#img_len	Size in bytes of the image chunk payload.	int
+codec_webp::alph_at	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#alph_at	Offset of the alpha chunk payload, or -1 when the file has none.	int
+codec_webp::alph_len	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#alph_len	Size in bytes of the alpha chunk payload.	int
+codec_webp::width	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#width	Width in pixels of the parsed image.	int
+codec_webp::height	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#height	Height in pixels of the parsed image.	int
+codec_webp::lossless	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lossless	Flag set when the image chunk is lossless rather than lossy.	int
+codec_webp::has_alpha	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#has_alpha	Flag set when the parsed image carries transparency data.	int
+codec_webp::tag_is	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tag_is	Returns whether the four bytes at an offset match the given chunk tag.	int
+codec_webp::parse	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#parse	Validates the RIFF container and image headers, returning false and recording an error if the file is unsupported or malformed.	int
+codec_webp::lb_pos	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lb_pos	Current read position of the lossless bit reader within the source data.	int
+codec_webp::lb_end	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lb_end	End position of the data the lossless bit reader may consume.	int
+codec_webp::lb_val	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lb_val	Bit buffer holding bits fetched but not yet consumed by the lossless reader.	int
+codec_webp::lb_n	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lb_n	Number of valid bits currently in the lossless bit buffer.	int
+codec_webp::lb_over	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lb_over	Flag set when the lossless reader tried to read past the end of its data.	int
+codec_webp::lbegin	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lbegin	Starts the lossless bit reader over the given byte range and clears its state.	int
+codec_webp::lfill	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lfill	Refills the lossless bit buffer with whole bytes while data remains.	int
+codec_webp::lpeek	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lpeek	Returns the next n bits without consuming them.	int
+codec_webp::lskip	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lskip	Consumes n bits, flagging overrun if too few remain.	int
+codec_webp::lbits	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lbits	Reads and consumes n bits, returning them as an integer.	int
+codec_webp::ht	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ht	Storage for all built Huffman lookup tables used by lossless decoding.	int
+codec_webp::hrev	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#hrev	Scratch array holding bit-reversed Huffman codes while a table is built.	int
+codec_webp::brev	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#brev	Reverses the low l bits of a code so it matches LSB-first reading.	int
+codec_webp::hbuild	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#hbuild	Builds a Huffman lookup table from code lengths, returning its offset or -1 if the lengths are invalid.	int
+codec_webp::hread	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#hread	Decodes one symbol from the lossless bit stream using the table at the given offset.	int
+codec_webp::lcl	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lcl	Scratch array holding code lengths while a Huffman code is read.	int
+codec_webp::lcode	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lcode	Reads a Huffman code for the given symbol count from the stream, returning its table offset or -1 on error.	int
+codec_webp::tr_type	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tr_type	List of transform types read from the lossless stream, in order of appearance.	int
+codec_webp::tr_bits	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tr_bits	List of block size bit counts for each lossless transform.	int
+codec_webp::tr_w	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tr_w	List of image widths at which each lossless transform applies.	int
+codec_webp::tr_off	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tr_off	List of offsets into transform pixel data for each lossless transform.	int
+codec_webp::tr_px	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tr_px	Combined pixel data for all lossless transforms.	int
+codec_webp::scr	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#scr	Scratch pixel array used while decoding transform sub-images.	int
+codec_webp::ent	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ent	Pixel array holding the entropy image that selects Huffman groups per block.	int
+codec_webp::gt	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#gt	Storage for Huffman table offsets of every Huffman group.	int
+codec_webp::argb	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#argb	Decoded lossless image pixels in packed ARGB form.	int
+codec_webp::tmp2	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tmp2	Temporary pixel array used while undoing color-indexing transforms.	int
+codec_webp::cache	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#cache	Color cache holding recently decoded pixels for lossless decoding.	int
+codec_webp::cdiv	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#cdiv	Divides a value by 2^b, rounding up.	int
+codec_webp::padd	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#padd	Adds two packed ARGB pixels channel by channel with wraparound.	int
+codec_webp::stream	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#stream	Decodes one lossless image stream, including transforms at the top level, into pixels; returns false on error.	int
+codec_webp::copylen	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#copylen	Converts a length or distance prefix symbol into its actual value, reading extra bits.	int
+codec_webp::cput	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#cput	Stores a pixel in the output and updates the color cache.	int
+codec_webp::pixels	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#pixels	Decodes entropy-coded pixels, backward copies and cache references into the output; returns false on error.	int
+codec_webp::clampb	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#clampb	Clamps a value to the range 0 to 255.	int
+codec_webp::sext8	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#sext8	Interprets the low 8 bits of a value as a signed integer.	int
+codec_webp::avg2	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#avg2	Averages two packed ARGB pixels channel by channel.	int
+codec_webp::sel	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#sel	Picks the left or top pixel, whichever is closer to the gradient estimate.	int
+codec_webp::addsub	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#addsub	Computes left plus top minus top-left per channel, clamped to 0 to 255.	int
+codec_webp::halfadd	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#halfadd	Computes a per-channel average of left and top adjusted by half the gap to top-left.	int
+codec_webp::predict	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#predict	Returns the predicted pixel for the given predictor mode from neighboring pixels.	int
+codec_webp::inverse	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#inverse	Undoes the lossless transforms in reverse order; returns false if the final size is wrong.	int
+codec_webp::lreset	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#lreset	Clears the Huffman table storage before decoding a new lossless image.	int
+codec_webp::vp8l	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#vp8l	Decodes the lossless image into RGBA bytes in the output buffer, returning false on error.	int
+codec_webp::bd_pos	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_pos	Current read positions of the boolean decoders.	int
+codec_webp::bd_end	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_end	End positions of the data for each boolean decoder.	int
+codec_webp::bd_val	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_val	Value registers of the boolean decoders.	int
+codec_webp::bd_rng	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_rng	Range registers of the boolean decoders.	int
+codec_webp::bd_cnt	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_cnt	Bit counters of the boolean decoders.	int
+codec_webp::bd_eof	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bd_eof	Flags marking boolean decoders that have run past their data.	int
+codec_webp::bload	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bload	Loads the next byte into the given boolean decoder, handling end of data.	int
+codec_webp::binit	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#binit	Initializes the given boolean decoder over a byte range.	int
+codec_webp::bit	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bit	Decodes one boolean from the given decoder using probability p out of 256.	int
+codec_webp::bsign	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bsign	Decodes a sign bit at even probability and returns the value negated if set.	int
+codec_webp::bval	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bval	Reads an n-bit unsigned value from the given boolean decoder.	int
+codec_webp::bsval	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#bsval	Reads an n-bit magnitude followed by a sign bit and returns the signed value.	int
+codec_webp::mb_w	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mb_w	Width of the lossy frame in 16-pixel macroblocks.	int
+codec_webp::mb_h	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mb_h	Height of the lossy frame in 16-pixel macroblocks.	int
+codec_webp::seg_on	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#seg_on	Flag set when segmentation is enabled for the lossy frame.	int
+codec_webp::seg_map	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#seg_map	Flag set when the frame carries a per-macroblock segment map.	int
+codec_webp::abs_d	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#abs_d	Flag selecting whether segment values are absolute or deltas, defaulting to absolute.	int
+codec_webp::seg_q	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#seg_q	Per-segment quantizer values read from the frame header, used when segmentation is enabled.	int
+codec_webp::seg_f	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#seg_f	Per-segment loop filter levels read from the frame header, used when segmentation is enabled.	int
+codec_webp::seg_p	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#seg_p	Probabilities for decoding each macroblock's segment index, defaulting to 255 when not sent.	int
+codec_webp::fl_simple	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fl_simple	Flag set when the frame header selects the simple loop filter instead of the normal one.	int
+codec_webp::fl_level	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fl_level	Base loop filter strength read from the frame header, where 0 disables filtering.	int
+codec_webp::fl_sharp	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fl_sharp	Loop filter sharpness value read from the frame header.	int
+codec_webp::fl_deltas	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fl_deltas	Flag set when the header enables reference and mode based loop filter level adjustments.	int
+codec_webp::ref_d	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ref_d	Loop filter level adjustments indexed by reference frame, read from the frame header.	int
+codec_webp::mode_d	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mode_d	Loop filter level adjustments indexed by prediction mode, read from the frame header.	int
+codec_webp::ftype	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ftype	Selected loop filter type: 0 for none, 1 for simple, 2 for normal.	int
+codec_webp::nparts	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#nparts	Number of token partitions in the current lossy frame.	int
+codec_webp::dq	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#dq	Dequantization factors, six per segment, covering luma, second-order and chroma coefficients.	int
+codec_webp::cprob	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#cprob	Working table of coefficient token probabilities, initialized from defaults and updated by the frame header.	int
+codec_webp::skip_on	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#skip_on	Flag set when macroblocks may carry a skip-residual bit.	int
+codec_webp::skip_p	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#skip_p	Probability used to decode each macroblock's skip bit.	int
+codec_webp::clampm	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#clampm	Clamps a value into the range zero through the given maximum and returns it.	int
+codec_webp::vp8_head	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#vp8_head	Parses the lossy frame header, sets up partitions, quantizers and probabilities, and returns false on malformed data.	int
+codec_webp::mr_seg	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_seg	Per-macroblock segment indices for the current macroblock row.	int
+codec_webp::mr_skip	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_skip	Per-macroblock skip flags for the current macroblock row.	int
+codec_webp::mr_i4	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_i4	Per-macroblock flags marking 4x4 subblock prediction for the current row.	int
+codec_webp::mr_ym	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_ym	Per-macroblock 16x16 luma prediction modes for the current row.	int
+codec_webp::mr_cm	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_cm	Per-macroblock chroma prediction modes for the current row.	int
+codec_webp::mr_sub	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_sub	Per-subblock luma prediction modes for the current macroblock row.	int
+codec_webp::top_m	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#top_m	Subblock modes of the row above, used as context when decoding modes.	int
+codec_webp::left_m	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#left_m	Subblock modes of the macroblock to the left, used as context when decoding modes.	int
+codec_webp::tree4	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#tree4	Decodes one 4x4 subblock prediction mode using the probabilities at the given base offset.	int
+codec_webp::modes_row	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#modes_row	Decodes segment, skip and prediction modes for one macroblock row, returning false if data is truncated.	int
+codec_webp::co	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#co	Buffer of decoded and dequantized transform coefficients for the macroblocks being processed.	int
+codec_webp::wrap16	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#wrap16	Wraps a value into the signed 16-bit range.	int
+codec_webp::large	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#large	Decodes the magnitude of a coefficient token larger than one.	int
+codec_webp::coeffs	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#coeffs	Decodes one block's coefficients into the buffer and returns the position after the last one decoded.	int
+codec_webp::nz_top	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#nz_top	Per-macroblock nonzero flags for blocks along the top edge, used as token context.	int
+codec_webp::dnz_top	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#dnz_top	Per-macroblock top nonzero flags for the second-order luma block.	int
+codec_webp::nz_left	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#nz_left	Nonzero flags for blocks along the left edge, used as token context.	int
+codec_webp::dnz_left	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#dnz_left	Left nonzero flag for the second-order luma block.	int
+codec_webp::mr_code	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_code	Per-block residual codes for the current row, selecting no transform, DC only, or full inverse transform.	int
+codec_webp::mr_has	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mr_has	Per-macroblock flags marking whether any nonzero residual was decoded in the current row.	int
+codec_webp::setb	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#setb	Returns a bit mask with the bit at the given index set to the given flag.	int
+codec_webp::codeof	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#codeof	Returns a residual code from the nonzero count and DC value of a block.	int
+codec_webp::wht	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#wht	Applies the inverse Walsh-Hadamard transform, spreading second-order values into each luma block's DC coefficient.	int
+codec_webp::resid	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#resid	Decodes all residual coefficients for one macroblock, returning false if token data is truncated.	int
+codec_webp::wk	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#wk	Working buffer holding the macroblock being predicted and reconstructed, with border pixels.	int
+codec_webp::top_y	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#top_y	Bottom luma pixel row of the macroblock row above, used for prediction.	int
+codec_webp::top_u	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#top_u	Bottom U chroma pixel row of the macroblock row above, used for prediction.	int
+codec_webp::top_v	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#top_v	Bottom V chroma pixel row of the macroblock row above, used for prediction.	int
+codec_webp::pl	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#pl	Planar output buffer holding the Y, U and V planes of the decoded frame.	int
+codec_webp::ysz	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#ysz	Size in bytes of the luma plane.	int
+codec_webp::usz	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#usz	Size in bytes of each chroma plane.	int
+codec_webp::recon_row	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#recon_row	Predicts and reconstructs every macroblock in one row and writes the results into the planes.	int
+codec_webp::pred_big	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#pred_big	Fills a 16x16 or 8x8 block using DC, TrueMotion, vertical or horizontal prediction.	int
+codec_webp::nb	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#nb	Returns the neighboring edge pixel with the given index around a 4x4 block.	int
+codec_webp::pred4	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#pred4	Fills a 4x4 luma subblock using the given intra prediction mode.	int
+codec_webp::m1	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#m1	Multiplies a value by roughly 1.306 as used in the inverse transform.	int
+codec_webp::m2	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#m2	Multiplies a value by roughly 0.541 as used in the inverse transform.	int
+codec_webp::wadd	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#wadd	Adds a residual to a working-buffer pixel, clamping to the byte range.	int
+codec_webp::idct	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#idct	Applies the full 4x4 inverse DCT and adds the result to the predicted block.	int
+codec_webp::dcadd	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#dcadd	Adds a DC-only residual to every pixel of a 4x4 block.	int
+codec_webp::dotrans	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#dotrans	Applies the transform chosen by the residual code to a 4x4 block.	int
+codec_webp::uvtrans	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#uvtrans	Applies residual transforms to the four 4x4 blocks of one chroma plane in a macroblock.	int
+codec_webp::f_seg	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#f_seg	Per-macroblock segment indices saved for the whole frame for loop filtering.	int
+codec_webp::f_i4	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#f_i4	Per-macroblock 4x4 prediction flags saved for the whole frame for loop filtering.	int
+codec_webp::f_has	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#f_has	Per-macroblock residual presence flags saved for the whole frame for loop filtering.	int
+codec_webp::fs_lim	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fs_lim	Edge limit thresholds indexed by segment and prediction type.	int
+codec_webp::fs_il	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fs_il	Interior limit thresholds indexed by segment and prediction type.	int
+codec_webp::fs_hev	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fs_hev	High edge variance thresholds indexed by segment and prediction type.	int
+codec_webp::s1	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#s1	Clamps a value to the signed 8-bit range.	int
+codec_webp::s2	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#s2	Clamps a value to the range -16 through 15.	int
+codec_webp::put	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#put	Stores a pixel value into the plane buffer, clamped to the byte range.	int
+codec_webp::two	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#two	Adjusts the two pixels nearest an edge using the common filter.	int
+codec_webp::four	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#four	Adjusts four pixels around an edge using the subblock filter.	int
+codec_webp::six	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#six	Adjusts six pixels around an edge using the macroblock filter.	int
+codec_webp::edge	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#edge	Filters a run of pixels along one edge, skipping positions that exceed the thresholds.	int
+codec_webp::fprep	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#fprep	Computes per-segment filter limits and thresholds from the header settings.	int
+codec_webp::loop_filter	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#loop_filter	Applies the loop filter across all macroblocks of the decoded frame planes.	int
+codec_webp::up_u	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#up_u	Row buffer of upsampled U chroma values for the current output row.	int
+codec_webp::up_v	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#up_v	Row buffer of upsampled V chroma values for the current output row.	int
+codec_webp::g	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#g	Returns the plane buffer byte at the given index as an integer.	int
+codec_webp::mh	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#mh	Multiplies a value by a fixed-point factor with eight fractional bits.	int
+codec_webp::clip8c	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#clip8c	Converts a fixed-point color value to a byte, clamping out-of-range results.	int
+codec_webp::upsample	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#upsample	Fills a destination row with chroma values upsampled to full width by interpolating two chroma rows.	int
+codec_webp::to_rgba	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#to_rgba	Converts the decoded YUV planes into opaque RGBA pixels in the output buffer.	int
+codec_webp::al	constant	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#al	Decoded alpha values, one per pixel, of the current image.	int
+codec_webp::alpha	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#alpha	Decodes and unfilters the alpha plane into the pixels' alpha bytes, returning false if absent or invalid.	int
+codec_webp::rz	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#rz	Clears an integer array and resizes it to the given length filled with zeros.	int
+codec_webp::vp8	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#vp8	Decodes a lossy frame into RGBA pixels, returning false on error.	int
+codec_webp::is_webp	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#is_webp	Returns whether the bytes begin with a RIFF container carrying the WebP signature.	pub
+codec_webp::load	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#load	Copies the given file data into the decoder's internal source buffer.	int
+codec_webp::size	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#size	Returns the image width, height and a success flag, or zeros and false if parsing fails.	pub
+codec_webp::decode	function	gfx/codec_webp	/api-library/helium/lib/gfx-codec_webp#decode	Decodes a lossy or lossless WebP into RGBA pixels, returning width, height and false on failure.	pub
+draco::w32	function	gfx/draco	/api-library/helium/lib/gfx-draco#w32	Wraps an integer to a signed 32-bit value for decoder arithmetic.	int
+draco::u32of	function	gfx/draco	/api-library/helium/lib/gfx-draco#u32of	Masks an integer down to its unsigned 32-bit value.	int
+draco::idiv	function	gfx/draco	/api-library/helium/lib/gfx-draco#idiv	Divides two integers using integer division.	int
+draco::faces	constant	gfx/draco	/api-library/helium/lib/gfx-draco#faces	Triangle face corner indices of the decoded mesh, stored as unsigned 32-bit values.	pub
+draco::points	constant	gfx/draco	/api-library/helium/lib/gfx-draco#points	Number of points in the decoded mesh.	pub
+draco::att_type	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_type	Per-attribute type codes for the decoded vertex attributes.	pub
+draco::att_dtype	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_dtype	Per-attribute data type codes for the decoded vertex attributes.	pub
+draco::att_comps	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_comps	Per-attribute component counts, such as three for a position.	pub
+draco::att_norm	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_norm	Per-attribute flags marking whether values are normalized.	pub
+draco::att_uid	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_uid	Per-attribute unique ids used to look up an attribute.	pub
+draco::att_first	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_first	Per-attribute index of the first entry in the shared values array.	pub
+draco::values	constant	gfx/draco	/api-library/helium/lib/gfx-draco#values	Decoded attribute values stored as reals for all attributes.	pub
+draco::why	constant	gfx/draco	/api-library/helium/lib/gfx-draco#why	Bytes of the message describing why decoding failed.	pub
+draco::error	function	gfx/draco	/api-library/helium/lib/gfx-draco#error	Returns the message describing the most recent decoding failure.	pub
+draco::find	function	gfx/draco	/api-library/helium/lib/gfx-draco#find	Returns the index of the attribute with the given unique id, or -1 if none matches.	pub
+draco::fail	function	gfx/draco	/api-library/helium/lib/gfx-draco#fail	Records a failure message and returns false.	int
+draco::buf	constant	gfx/draco	/api-library/helium/lib/gfx-draco#buf	Input byte buffer being decoded.	int
+draco::pos	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pos	Current read position within the input buffer.	int
+draco::bad	constant	gfx/draco	/api-library/helium/lib/gfx-draco#bad	Flag set when a read runs past the data or is malformed.	int
+draco::left	function	gfx/draco	/api-library/helium/lib/gfx-draco#left	Returns the number of unread bytes remaining in the buffer.	int
+draco::bt	function	gfx/draco	/api-library/helium/lib/gfx-draco#bt	Returns the byte at the given index as an integer.	int
+draco::u8v	function	gfx/draco	/api-library/helium/lib/gfx-draco#u8v	Reads an unsigned 8-bit value and advances, flagging an error at end of data.	int
+draco::i8v	function	gfx/draco	/api-library/helium/lib/gfx-draco#i8v	Reads a signed 8-bit value and advances the position.	int
+draco::u16v	function	gfx/draco	/api-library/helium/lib/gfx-draco#u16v	Reads a little-endian unsigned 16-bit value, flagging an error if too few bytes remain.	int
+draco::u32v	function	gfx/draco	/api-library/helium/lib/gfx-draco#u32v	Reads a little-endian unsigned 32-bit value, flagging an error if too few bytes remain.	int
+draco::i32v	function	gfx/draco	/api-library/helium/lib/gfx-draco#i32v	Reads a little-endian signed 32-bit value and advances the position.	int
+draco::f32v	function	gfx/draco	/api-library/helium/lib/gfx-draco#f32v	Reads a little-endian 32-bit float from the buffer and advances the position.	int
+draco::varintv	function	gfx/draco	/api-library/helium/lib/gfx-draco#varintv	Reads a variable-length integer of at most the given number of bytes, flagging an error if malformed.	int
+draco::bit_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#bit_at	Current byte offset where the bit reader starts.	int
+draco::bit_end	constant	gfx/draco	/api-library/helium/lib/gfx-draco#bit_end	Byte offset at which bit reading must stop.	int
+draco::bit_off	constant	gfx/draco	/api-library/helium/lib/gfx-draco#bit_off	Current bit offset relative to the bit reader's start.	int
+draco::bits_begin	function	gfx/draco	/api-library/helium/lib/gfx-draco#bits_begin	Starts bit reading over the given byte range from the first bit.	int
+draco::bits	function	gfx/draco	/api-library/helium/lib/gfx-draco#bits	Reads the given number of bits, up to 32, least significant first.	int
+draco::bits_bytes	function	gfx/draco	/api-library/helium/lib/gfx-draco#bits_bytes	Returns the number of whole bytes consumed by the bits read so far.	int
+draco::rb_data	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rb_data	Data start positions for each binary rANS bit decoder.	int
+draco::rb_off	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rb_off	Remaining byte offsets for each binary rANS bit decoder.	int
+draco::rb_state	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rb_state	Current states of each binary rANS bit decoder.	int
+draco::rb_p0	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rb_p0	Zero-bit probabilities for each binary rANS bit decoder.	int
+draco::rbit_start	function	gfx/draco	/api-library/helium/lib/gfx-draco#rbit_start	Parses a binary rANS decoder header and returns its index, or -1 on failure.	int
+draco::rbit	function	gfx/draco	/api-library/helium/lib/gfx-draco#rbit	Decodes the next bit from the given binary rANS decoder.	int
+draco::rs_prob	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_prob	Symbol probabilities of the current rANS table.	int
+draco::rs_cum	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_cum	Cumulative probabilities of the current rANS table.	int
+draco::rs_lut	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_lut	Lookup table mapping probability slots to symbols.	int
+draco::rs_precision	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_precision	Total probability precision of the current rANS table.	int
+draco::rs_data	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_data	Data start position of the current rANS stream.	int
+draco::rs_off	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_off	Remaining byte offset within the current rANS stream.	int
+draco::rs_state	constant	gfx/draco	/api-library/helium/lib/gfx-draco#rs_state	Current state of the rANS symbol decoder.	int
+draco::rans_table	function	gfx/draco	/api-library/helium/lib/gfx-draco#rans_table	Reads a rANS probability table and returns its symbol count, or -1 on failure.	int
+draco::rans_begin	function	gfx/draco	/api-library/helium/lib/gfx-draco#rans_begin	Initializes the rANS symbol decoder from the stream header, returning false on failure.	int
+draco::rans_next	function	gfx/draco	/api-library/helium/lib/gfx-draco#rans_next	Decodes and returns the next symbol from the rANS stream.	int
+draco::symbols	function	gfx/draco	/api-library/helium/lib/gfx-draco#symbols	Decodes the given number of symbols into the output array, returning false on failure.	int
+draco::skip_bytes	function	gfx/draco	/api-library/helium/lib/gfx-draco#skip_bytes	Advances the read position by the given bytes, flagging an error if out of range.	int
+draco::skip_tree	function	gfx/draco	/api-library/helium/lib/gfx-draco#skip_tree	Skips a metadata tree, returning false if it is malformed.	int
+draco::skip_meta	function	gfx/draco	/api-library/helium/lib/gfx-draco#skip_meta	Skips all metadata blocks, returning false if malformed.	int
+draco::c2v	constant	gfx/draco	/api-library/helium/lib/gfx-draco#c2v	Maps each corner to its vertex index.	int
+draco::opp	constant	gfx/draco	/api-library/helium/lib/gfx-draco#opp	Maps each corner to its opposite corner, or -1 if none.	int
+draco::lmc	constant	gfx/draco	/api-library/helium/lib/gfx-draco#lmc	Maps each vertex to its leftmost corner.	int
+draco::n_ad	constant	gfx/draco	/api-library/helium/lib/gfx-draco#n_ad	Number of additional attribute connectivity decoders.	int
+draco::nc	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nc	Total number of corners in the mesh.	int
+draco::a_c2v	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_c2v	Per-attribute corner to vertex mappings.	int
+draco::a_seam	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_seam	Per-attribute flags marking corners whose opposite edge is a seam.	int
+draco::a_vseam	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_vseam	Per-attribute flags marking vertices that lie on a seam.	int
+draco::a_lmc	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_lmc	Per-attribute vertex to leftmost corner mappings.	int
+draco::a_lmc_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_lmc_at	Starting offsets of each attribute's leftmost corner data.	int
+draco::a_nv	constant	gfx/draco	/api-library/helium/lib/gfx-draco#a_nv	Vertex counts for each attribute connectivity.	int
+draco::nxt	function	gfx/draco	/api-library/helium/lib/gfx-draco#nxt	Returns the next corner within the same triangle.	int
+draco::prv	function	gfx/draco	/api-library/helium/lib/gfx-draco#prv	Returns the previous corner within the same triangle.	int
+draco::vert	function	gfx/draco	/api-library/helium/lib/gfx-draco#vert	Returns the vertex at a corner, or -1 if invalid.	int
+draco::oppo	function	gfx/draco	/api-library/helium/lib/gfx-draco#oppo	Returns the opposite corner, or -1 if none or across a seam.	int
+draco::lm	function	gfx/draco	/api-library/helium/lib/gfx-draco#lm	Returns the leftmost corner of a vertex, or -1 if invalid.	int
+draco::nverts	function	gfx/draco	/api-library/helium/lib/gfx-draco#nverts	Returns the number of vertices in the given connectivity.	int
+draco::swl	function	gfx/draco	/api-library/helium/lib/gfx-draco#swl	Returns the corner reached by swinging left around a vertex, or -1 at a boundary.	int
+draco::swr	function	gfx/draco	/api-library/helium/lib/gfx-draco#swr	Returns the corner reached by swinging right around a vertex, or -1 at a boundary.	int
+draco::boundary	function	gfx/draco	/api-library/helium/lib/gfx-draco#boundary	Returns whether the vertex lies on a mesh boundary.	int
+draco::on_seam	function	gfx/draco	/api-library/helium/lib/gfx-draco#on_seam	Returns whether the corner's vertex lies on a seam for the given attribute.	int
+draco::set_opp	function	gfx/draco	/api-library/helium/lib/gfx-draco#set_opp	Links two corners as opposites of each other, ignoring invalid indices.	int
+draco::around	function	gfx/draco	/api-library/helium/lib/gfx-draco#around	Fills the output array with all corners around a corner's vertex.	int
+draco::valence	constant	gfx/draco	/api-library/helium/lib/gfx-draco#valence	Flag indicating valence-based traversal is used.	int
+draco::ev	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ev	Vertex count read from the edgebreaker header.	int
+draco::ef	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ef	Face count read from the edgebreaker header.	int
+draco::es	constant	gfx/draco	/api-library/helium/lib/gfx-draco#es	Symbol count read from the edgebreaker header.	int
+draco::eq	constant	gfx/draco	/api-library/helium/lib/gfx-draco#eq	Split symbol count read from the edgebreaker header.	int
+draco::maxv	constant	gfx/draco	/api-library/helium/lib/gfx-draco#maxv	Maximum vertex count including split vertices.	int
+draco::hole	constant	gfx/draco	/api-library/helium/lib/gfx-draco#hole	Flags marking vertex slots not yet assigned.	int
+draco::sp_src	constant	gfx/draco	/api-library/helium/lib/gfx-draco#sp_src	Source symbol positions of split events.	int
+draco::sp_split	constant	gfx/draco	/api-library/helium/lib/gfx-draco#sp_split	Split target positions of split events.	int
+draco::sp_edge	constant	gfx/draco	/api-library/helium/lib/gfx-draco#sp_edge	Edge side bits for split events.	int
+draco::edgebreaker	function	gfx/draco	/api-library/helium/lib/gfx-draco#edgebreaker	Reads and validates the edgebreaker header and split data, returning false on failure.	int
+draco::start_dec	constant	gfx/draco	/api-library/helium/lib/gfx-draco#start_dec	Index of the start-face bit decoder, or -1 if unset.	int
+draco::seam_dec	constant	gfx/draco	/api-library/helium/lib/gfx-draco#seam_dec	Indices of the seam bit decoders for each attribute.	int
+draco::valences	constant	gfx/draco	/api-library/helium/lib/gfx-draco#valences	Per-vertex valence counters used while decoding valence-based Edgebreaker symbols.	int
+draco::ctx_sym	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ctx_sym	Buffer of decoded symbols for each of the six valence contexts.	int
+draco::ctx_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ctx_at	Start offsets into the context symbol buffer, one per valence context.	int
+draco::ctx_left	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ctx_left	Remaining symbol counts for each valence context while decoding.	int
+draco::active	constant	gfx/draco	/api-library/helium/lib/gfx-draco#active	Index of the currently active valence context, or -1 when none is selected.	int
+draco::att_start	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_start	Byte position where attribute data begins after the traversal section.	int
+draco::traversal_start	function	gfx/draco	/api-library/helium/lib/gfx-draco#traversal_start	Reads symbol and seam decoder setup and valence contexts, returning false on failure.	int
+draco::next_symbol	function	gfx/draco	/api-library/helium/lib/gfx-draco#next_symbol	Returns the next Edgebreaker symbol, from bits or valence contexts, or 99 if invalid.	int
+draco::addval	function	gfx/draco	/api-library/helium/lib/gfx-draco#addval	Adds an amount to the valence counter of the vertex at a corner.	int
+draco::reached	function	gfx/draco	/api-library/helium/lib/gfx-draco#reached	Updates vertex valences for a decoded symbol and selects the next valence context.	int
+draco::stk	constant	gfx/draco	/api-library/helium/lib/gfx-draco#stk	Stack of corners for open faces during Edgebreaker symbol decoding.	int
+draco::sp_corner	constant	gfx/draco	/api-library/helium/lib/gfx-draco#sp_corner	Corners recorded for pending split symbols, indexed by symbol position.	int
+draco::removed	constant	gfx/draco	/api-library/helium/lib/gfx-draco#removed	List of vertices merged away during S symbol handling, awaiting compaction.	int
+draco::nfaces	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nfaces	Count of faces decoded so far in the connectivity pass.	int
+draco::tmp	constant	gfx/draco	/api-library/helium/lib/gfx-draco#tmp	Scratch list of corners used during vertex compaction.	int
+draco::conn_nv	constant	gfx/draco	/api-library/helium/lib/gfx-draco#conn_nv	Vertex count of the decoded connectivity after compaction.	int
+draco::split_check	function	gfx/draco	/api-library/helium/lib/gfx-draco#split_check	Resolves pending split symbols for the current symbol index, returning false on invalid data.	int
+draco::symbol_loop	function	gfx/draco	/api-library/helium/lib/gfx-draco#symbol_loop	Decodes all Edgebreaker symbols to build face connectivity, returning false on malformed data.	int
+draco::finish_connectivity	function	gfx/draco	/api-library/helium/lib/gfx-draco#finish_connectivity	Decodes start faces, checks face count and compacts vertices, returning false on failure.	int
+draco::mark_seam	function	gfx/draco	/api-library/helium/lib/gfx-draco#mark_seam	Marks a corner, its opposite corner and their vertices as seams for an attribute.	int
+draco::seams	function	gfx/draco	/api-library/helium/lib/gfx-draco#seams	Reads seam flags and builds per-attribute corner-to-vertex maps, returning false on failure.	int
+draco::cp	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cp	Scratch map from corner to output point index.	int
+draco::assign_points	function	gfx/draco	/api-library/helium/lib/gfx-draco#assign_points	Fills the face list and point count from connectivity and seams, returning false on failure.	int
+draco::sequential	function	gfx/draco	/api-library/helium/lib/gfx-draco#sequential	Decodes sequentially encoded faces and point count, returning false on malformed data.	int
+draco::dec_slot	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dec_slot	Per-decoder slot index of the connectivity an attribute decoder uses, or -1 for positions.	int
+draco::dec_type	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dec_type	Per-decoder type code, distinguishing standard decoders from corner-based decoders.	int
+draco::dec_trav	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dec_trav	Per-decoder traversal method code, selecting depth-first or prediction-degree ordering.	int
+draco::dec_first	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dec_first	Per-decoder index of its first attribute in the global attribute list.	int
+draco::dec_cnt	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dec_cnt	Per-decoder count of attributes it handles.	int
+draco::att_dkind	constant	gfx/draco	/api-library/helium/lib/gfx-draco#att_dkind	Per-attribute decoder kind code, such as generic, quantized or normal.	int
+draco::port_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#port_at	Per-attribute index into the portable data buffer, or -1 when unset.	int
+draco::pmap_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pmap_at	Per-attribute index into the stored point-to-entry maps, or -1 when unset.	int
+draco::gen_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#gen_at	Per-attribute offset into the generic value buffer, or -1 when unset.	int
+draco::port_pc	constant	gfx/draco	/api-library/helium/lib/gfx-draco#port_pc	Per-attribute count of prediction-related components for portable data.	int
+draco::read_decoders	function	gfx/draco	/api-library/helium/lib/gfx-draco#read_decoders	Reads decoder headers and attribute descriptions, allocating value storage, returning false on failure.	int
+draco::v2d	constant	gfx/draco	/api-library/helium/lib/gfx-draco#v2d	Maps each vertex to its position in the attribute traversal sequence.	int
+draco::d2c	constant	gfx/draco	/api-library/helium/lib/gfx-draco#d2c	Maps each traversal sequence entry to its source corner.	int
+draco::seq	constant	gfx/draco	/api-library/helium/lib/gfx-draco#seq	Sequence of point indices in the order attributes are encoded.	int
+draco::vis_f	constant	gfx/draco	/api-library/helium/lib/gfx-draco#vis_f	Flags marking which faces the traversal has already visited.	int
+draco::vis_v	constant	gfx/draco	/api-library/helium/lib/gfx-draco#vis_v	Flags marking which vertices the traversal has already visited.	int
+draco::dstk	constant	gfx/draco	/api-library/helium/lib/gfx-draco#dstk	Stack of corners for the depth-first traversal.	int
+draco::pst0	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pst0	Highest-priority stack of pending corners for degree-based traversal.	int
+draco::pst1	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pst1	Medium-priority stack of pending corners for degree-based traversal.	int
+draco::pst2	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pst2	Lowest-priority stack of pending corners for degree-based traversal.	int
+draco::pbest	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pbest	Best non-empty priority level currently tracked by degree-based traversal.	int
+draco::pdegree	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pdegree	Per-vertex visit counts used to assign priorities in degree-based traversal.	int
+draco::pmap	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pmap	Map from point index to its position in the attribute sequence.	int
+draco::pmaps	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pmaps	Concatenated point-to-entry maps for all attribute decoders.	int
+draco::nent	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nent	Number of entries in the current attribute sequence.	int
+draco::tt	constant	gfx/draco	/api-library/helium/lib/gfx-draco#tt	Connectivity table index of the current traversal, or -1 for the default.	int
+draco::fvis	function	gfx/draco	/api-library/helium/lib/gfx-draco#fvis	Returns whether the face of a corner is already visited, treating invalid corners as visited.	int
+draco::visit	function	gfx/draco	/api-library/helium/lib/gfx-draco#visit	Records a vertex in the traversal sequence at a corner, returning false on invalid indices.	int
+draco::dfs	function	gfx/draco	/api-library/helium/lib/gfx-draco#dfs	Runs depth-first traversal from a corner, returning false on invalid connectivity.	int
+draco::ppush	function	gfx/draco	/api-library/helium/lib/gfx-draco#ppush	Pushes a corner onto the priority stack for a given level.	int
+draco::pnext	function	gfx/draco	/api-library/helium/lib/gfx-draco#pnext	Pops the next corner from the best non-empty priority stack, or -1 if none remain.	int
+draco::ppri	function	gfx/draco	/api-library/helium/lib/gfx-draco#ppri	Returns the traversal priority of a corner and counts its vertex's visits, or -1 if invalid.	int
+draco::pdeg_trav	function	gfx/draco	/api-library/helium/lib/gfx-draco#pdeg_trav	Runs prediction-degree-prioritized traversal from a corner, returning false on invalid connectivity.	int
+draco::build_sequence	function	gfx/draco	/api-library/helium/lib/gfx-draco#build_sequence	Builds the attribute sequence and point map for a decoder, returning false on failure.	int
+draco::cor	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cor	Buffer of corrected values read for the current attribute before prediction.	int
+draco::port	constant	gfx/draco	/api-library/helium/lib/gfx-draco#port	Buffer of portable attribute data for the current decoder.	int
+draco::gen	constant	gfx/draco	/api-library/helium/lib/gfx-draco#gen	Buffer of raw values read for generic attributes, stored as reals.	int
+draco::p2	function	gfx/draco	/api-library/helium/lib/gfx-draco#p2	Returns two raised to an integer power as a real.	int
+draco::f64_of	function	gfx/draco	/api-library/helium/lib/gfx-draco#f64_of	Converts 64-bit IEEE double bits stored in an integer into a real.	int
+draco::gen_read	function	gfx/draco	/api-library/helium/lib/gfx-draco#gen_read	Reads generic attribute values of the declared type into the generic buffer, returning false on failure.	int
+draco::pick_kind	function	gfx/draco	/api-library/helium/lib/gfx-draco#pick_kind	Chooses a prediction scheme kind from the method code, or -1 if unsupported.	int
+draco::first_pos	function	gfx/draco	/api-library/helium/lib/gfx-draco#first_pos	Returns the index of the first position attribute, or -1 if none exists.	int
+draco::read_cor	function	gfx/draco	/api-library/helium/lib/gfx-draco#read_cor	Reads correction values, raw or symbol-coded, optionally zigzag decoded, returning false on failure.	int
+draco::wmin	constant	gfx/draco	/api-library/helium/lib/gfx-draco#wmin	Minimum of the wrap-around prediction range.	int
+draco::wmax	constant	gfx/draco	/api-library/helium/lib/gfx-draco#wmax	Maximum of the wrap-around prediction range.	int
+draco::wdif	constant	gfx/draco	/api-library/helium/lib/gfx-draco#wdif	Size of the wrap-around prediction range, maximum minus minimum plus one.	int
+draco::nmq	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nmq	Quantization bit mask for normal octahedron decoding.	int
+draco::nmv	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nmv	Maximum quantized value for normal octahedron decoding.	int
+draco::nce	constant	gfx/draco	/api-library/helium/lib/gfx-draco#nce	Center quantized value for normal octahedron decoding.	int
+draco::read_wrap	function	gfx/draco	/api-library/helium/lib/gfx-draco#read_wrap	Reads the wrap-around range bounds, returning false if invalid.	int
+draco::wrap_apply	function	gfx/draco	/api-library/helium/lib/gfx-draco#wrap_apply	Applies a correction to a predicted value, wrapping within the range and returning the result.	int
+draco::read_norm	function	gfx/draco	/api-library/helium/lib/gfx-draco#read_norm	Reads the normal octahedron quantization parameters from the stream, returning false if they are invalid.	int
+draco::modmax	function	gfx/draco	/api-library/helium/lib/gfx-draco#modmax	Wraps a value into the signed range used by octahedral normal coordinates.	int
+draco::rot2	function	gfx/draco	/api-library/helium/lib/gfx-draco#rot2	Rotates an octahedral coordinate pair by the given number of quarter turns.	int
+draco::invert	function	gfx/draco	/api-library/helium/lib/gfx-draco#invert	Inverts an octahedral coordinate pair across the diamond boundary.	int
+draco::norm_apply	function	gfx/draco	/api-library/helium/lib/gfx-draco#norm_apply	Applies a correction to a predicted octahedral normal and returns the resulting coordinate pair.	int
+draco::pbad	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pbad	Flag set when attribute prediction reads invalid data.	int
+draco::pbase	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pbase	Offset into the portable value array where the current attribute begins.	int
+draco::pos_ai	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pos_ai	Index of the position attribute used by texture and geometric normal predictors, or -1 if none.	int
+draco::pred	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pred	Predicted value components for the current entry.	int
+draco::wmul	function	gfx/draco	/api-library/helium/lib/gfx-draco#wmul	Multiplies two integers with 64-bit wraparound on overflow.	int
+draco::wadd	function	gfx/draco	/api-library/helium/lib/gfx-draco#wadd	Adds two integers with 64-bit wraparound on overflow.	int
+draco::wsub	function	gfx/draco	/api-library/helium/lib/gfx-draco#wsub	Subtracts two integers with 64-bit wraparound on overflow.	int
+draco::wabs	function	gfx/draco	/api-library/helium/lib/gfx-draco#wabs	Returns the absolute value of an integer using wraparound arithmetic.	int
+draco::idw	function	gfx/draco	/api-library/helium/lib/gfx-draco#idw	Divides two integers, negating the first when the divisor is -1 to avoid overflow.	int
+draco::zero_pred	function	gfx/draco	/api-library/helium/lib/gfx-draco#zero_pred	Fills the prediction with zeros for the given component count.	int
+draco::dat	function	gfx/draco	/api-library/helium/lib/gfx-draco#dat	Returns a value from the current attribute's portable data, flagging an error if out of range.	int
+draco::prev_pred	function	gfx/draco	/api-library/helium/lib/gfx-draco#prev_pred	Sets the prediction to the previous entry's values.	int
+draco::ent	function	gfx/draco	/api-library/helium/lib/gfx-draco#ent	Returns the entry index for a corner's vertex, flagging an error if invalid.	int
+draco::posc	function	gfx/draco	/api-library/helium/lib/gfx-draco#posc	Returns one component of an entry's decoded position, flagging an error if unavailable.	int
+draco::posof	function	gfx/draco	/api-library/helium/lib/gfx-draco#posof	Returns the x, y, and z position components of an entry.	int
+draco::pred_delta	function	gfx/draco	/api-library/helium/lib/gfx-draco#pred_delta	Sets the prediction to zero for the first entry or the previous entry otherwise.	int
+draco::cf_data	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cf_data	Flat array of crease flags read for constrained multi-parallelogram prediction.	int
+draco::cf_at	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cf_at	Start offsets of each context's flags within the crease flag array.	int
+draco::cf_cnt	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cf_cnt	Number of crease flags stored for each context.	int
+draco::cf_used	constant	gfx/draco	/api-library/helium/lib/gfx-draco#cf_used	Number of crease flags already consumed for each context.	int
+draco::pall	constant	gfx/draco	/api-library/helium/lib/gfx-draco#pall	Scratch array holding all parallelogram predictions gathered for the current entry.	int
+draco::psum	constant	gfx/draco	/api-library/helium/lib/gfx-draco#psum	Scratch array accumulating the sum of accepted parallelogram predictions.	int
+draco::para	function	gfx/draco	/api-library/helium/lib/gfx-draco#para	Computes a parallelogram prediction across a corner's opposite edge, returning false if unavailable.	int
+draco::pred_para	function	gfx/draco	/api-library/helium/lib/gfx-draco#pred_para	Sets the prediction using parallelogram prediction, falling back to the previous entry's values.	int
+draco::cmp_data	function	gfx/draco	/api-library/helium/lib/gfx-draco#cmp_data	Reads the crease flag data for each context, returning false if the stream is invalid.	int
+draco::pred_cmp	function	gfx/draco	/api-library/helium/lib/gfx-draco#pred_cmp	Sets the prediction by averaging parallelograms around the vertex, skipping those flagged as creases.	int
+draco::orient	constant	gfx/draco	/api-library/helium/lib/gfx-draco#orient	Orientation bits read for texture coordinate prediction.	int
+draco::tex_data	function	gfx/draco	/api-library/helium/lib/gfx-draco#tex_data	Reads texture orientation bits for the given entry count, returning false if the stream is invalid.	int
+draco::isqrt	function	gfx/draco	/api-library/helium/lib/gfx-draco#isqrt	Returns the integer square root of a non-negative value.	int
+draco::pred_tex	function	gfx/draco	/api-library/helium/lib/gfx-draco#pred_tex	Sets the predicted texture coordinates from neighboring vertices' positions and UVs.	int
+draco::flip_dec	constant	gfx/draco	/api-library/helium/lib/gfx-draco#flip_dec	Bit decoder handle for the normal flip flags, or -1 if unset.	int
+draco::ar	constant	gfx/draco	/api-library/helium/lib/gfx-draco#ar	Scratch array of corners around the current vertex.	int
+draco::pred_geo	function	gfx/draco	/api-library/helium/lib/gfx-draco#pred_geo	Sets the predicted octahedral normal from the area-weighted face normals around a vertex.	int
+draco::compute	function	gfx/draco	/api-library/helium/lib/gfx-draco#compute	Decodes prediction values and corrections for one attribute, returning false if the stream is invalid.	int
+draco::portable	function	gfx/draco	/api-library/helium/lib/gfx-draco#portable	Reads one attribute's portable values and prediction scheme, returning false if invalid.	int
+draco::conv	function	gfx/draco	/api-library/helium/lib/gfx-draco#conv	Converts a raw integer to the attribute's integer data type by masking and sign-extending.	int
+draco::finalize	function	gfx/draco	/api-library/helium/lib/gfx-draco#finalize	Converts decoded portable values into the attribute's final real values for each point.	pub
+draco::soft	function	gfx/draco	/api-library/helium/lib/gfx-draco#soft	Records an error message only if none is set, then returns false.	int
+draco::attributes	function	gfx/draco	/api-library/helium/lib/gfx-draco#attributes-2	Decodes all attribute decoders and their values, returning false on failure.	int
+draco::clear_outputs	function	gfx/draco	/api-library/helium/lib/gfx-draco#clear_outputs	Clears the decoded faces, points, and attribute outputs.	int
+draco::reset	function	gfx/draco	/api-library/helium/lib/gfx-draco#reset	Resets all decoder state so a new stream can be decoded.	int
+draco::body	function	gfx/draco	/api-library/helium/lib/gfx-draco#body	Parses the header and runs the connectivity and attribute decoding stages.	int
+draco::decode	function	gfx/draco	/api-library/helium/lib/gfx-draco#decode	Decodes a Draco byte stream into faces, points, and attributes, returning false on failure.	pub
+meshopt::MODE_ATTRIBUTES	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#MODE_ATTRIBUTES	Mode constant selecting the vertex attribute decoder for the decode function.	pub
+meshopt::MODE_TRIANGLES	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#MODE_TRIANGLES	Mode constant selecting the triangle index decoder for the decode function.	pub
+meshopt::MODE_INDICES	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#MODE_INDICES	Mode constant selecting the index sequence decoder for the decode function.	pub
+meshopt::FILTER_NONE	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#FILTER_NONE	Filter constant meaning no post-decode filter is applied to the decoded attributes.	pub
+meshopt::FILTER_OCTAHEDRAL	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#FILTER_OCTAHEDRAL	Filter constant selecting octahedral decoding of normal-style attribute data.	pub
+meshopt::FILTER_QUATERNION	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#FILTER_QUATERNION	Filter constant selecting quaternion decoding of rotation attribute data.	pub
+meshopt::FILTER_EXPONENTIAL	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#FILTER_EXPONENTIAL	Filter constant selecting exponential decoding of packed floating-point attribute data.	pub
+meshopt::FILTER_COLOR	constant	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#FILTER_COLOR	Filter constant selecting color decoding of packed YCoCg-style color attribute data.	pub
+meshopt::mode_of	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#mode_of	Returns the mode constant for a mode name such as "TRIANGLES", or -1 if unknown.	pub
+meshopt::filter_of	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#filter_of	Returns the filter constant for a filter name, treating an empty name as none, or -1 if unknown.	pub
+meshopt::unzig	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#unzig	Converts a zigzag-encoded unsigned value into its signed integer.	int
+meshopt::read_varint	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#read_varint	Reads a variable-length integer at a position, returning the value and next position, or -1 position on failure.	int
+meshopt::put_index	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#put_index	Appends an index to the output as little-endian bytes, two or four wide.	int
+meshopt::attr_run	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#attr_run	Decodes an attribute stream into the output buffer, returning false on malformed data.	int
+meshopt::attributes	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#attributes	Decodes a compressed attribute buffer into the output, returning false and leaving the output unchanged on failure.	pub
+meshopt::attr_width	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#attr_width	Returns the delta bit width for a group given the format version, control value and mode.	int
+meshopt::attr_block	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#attr_block	Reads one block of attribute delta data into the deltas buffer, returning false if data is truncated.	int
+meshopt::attr_element	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#attr_element	Applies one element's deltas to the previous values per channel, returning false for an invalid channel mode.	int
+meshopt::tri_run	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#tri_run	Decodes a triangle stream into index bytes, returning false on malformed data.	int
+meshopt::triangles	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#triangles	Decodes a compressed triangle buffer into two- or four-byte indices, returning false and leaving the output unchanged on failure.	pub
+meshopt::idx_run	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#idx_run	Decodes an index sequence stream into index bytes, returning false on malformed data.	int
+meshopt::indices	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#indices	Decodes a compressed index sequence buffer into two- or four-byte indices, returning false and leaving the output unchanged on failure.	pub
+meshopt::s8	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#s8	Sign-extends the low eight bits of a value into a signed integer.	int
+meshopt::s16	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#s16	Sign-extends the low sixteen bits of a value into a signed integer.	int
+meshopt::rnd	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#rnd	Rounds a real number to the nearest integer.	int
+meshopt::get_u	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#get_u	Reads an unsigned one- or two-byte little-endian value from a buffer.	int
+meshopt::get_s	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#get_s	Reads a signed one- or two-byte little-endian value from a buffer.	int
+meshopt::put_u	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#put_u	Writes a one- or two-byte little-endian value into a buffer.	int
+meshopt::octahedral	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#octahedral	Decodes octahedral-encoded normals in place for four- or eight-byte elements, returning false on invalid arguments or data.	pub
+meshopt::quaternion	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#quaternion	Decodes quaternion-encoded rotations in place for eight-byte elements, returning false on invalid arguments.	pub
+meshopt::exponential	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#exponential	Decodes exponential-encoded values in place into 32-bit floats, returning false on invalid arguments.	pub
+meshopt::color	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#color	Decodes color-encoded elements in place for four- or eight-byte elements, returning false on invalid arguments.	pub
+meshopt::decode	function	gfx/meshopt	/api-library/helium/lib/gfx-meshopt#decode	Decodes a compressed buffer using a mode and filter into the output, returning false and leaving the output unchanged on failure.	pub
+video::clip255	function	gfx/video	/api-library/helium/lib/gfx-video#clip255	Clamps an integer to the 0–255 range used for 8-bit sample values.	int
+video::cl	function	gfx/video	/api-library/helium/lib/gfx-video#cl	Clamps an integer to the inclusive range between the given low and high bounds.	int
+video::CBPINTER	constant	gfx/video	/api-library/helium/lib/gfx-video#CBPINTER	Lookup table mapping coded block pattern codes to macroblock values for inter-predicted blocks.	int
+video::CTLEN	constant	gfx/video	/api-library/helium/lib/gfx-video#CTLEN	Table of code lengths for coefficient token coding, indexed by context, trailing ones, and coefficient count.	int
+video::CTBITS	constant	gfx/video	/api-library/helium/lib/gfx-video#CTBITS	Table of code bit values for coefficient token coding, paired with the token length table.	int
+video::CDCLEN	constant	gfx/video	/api-library/helium/lib/gfx-video#CDCLEN	Table of code lengths for chroma DC coefficient tokens.	int
+video::CDCBITS	constant	gfx/video	/api-library/helium/lib/gfx-video#CDCBITS	Table of code bit values for chroma DC coefficient tokens, paired with the chroma DC length table.	int
+video::TZLEN	constant	gfx/video	/api-library/helium/lib/gfx-video#TZLEN	Table of code lengths for total-zeros coding of 4x4 blocks, indexed by coefficient count and zeros.	int
+video::TZBITS	constant	gfx/video	/api-library/helium/lib/gfx-video#TZBITS	Table of code bit values for total-zeros coding of 4x4 blocks, paired with the length table.	int
+video::CTZLEN	constant	gfx/video	/api-library/helium/lib/gfx-video#CTZLEN	Table of code lengths for total-zeros coding of chroma DC blocks.	int
+video::CTZBITS	constant	gfx/video	/api-library/helium/lib/gfx-video#CTZBITS	Table of code bit values for total-zeros coding of chroma DC blocks, paired with the length table.	int
+video::RUNLEN	constant	gfx/video	/api-library/helium/lib/gfx-video#RUNLEN	Table of code lengths for run-before coding, indexed by zeros remaining and run value.	int
+video::RUNBITS	constant	gfx/video	/api-library/helium/lib/gfx-video#RUNBITS	Table of code bit values for run-before coding, paired with the run length table.	int
+video::ZZ	constant	gfx/video	/api-library/helium/lib/gfx-video#ZZ	Zigzag scan order mapping scan position to index within a 4x4 coefficient block.	int
+video::MF	constant	gfx/video	/api-library/helium/lib/gfx-video#MF	Quantization multiplier factors indexed by quantizer remainder and coefficient position class.	int
+video::DQ	constant	gfx/video	/api-library/helium/lib/gfx-video#DQ	Dequantization scale factors indexed by quantizer remainder and coefficient position class.	int
+video::CQP	constant	gfx/video	/api-library/helium/lib/gfx-video#CQP	Table mapping luma quantizer values of 30 and above to chroma quantizer values.	int
+video::LEVELS	constant	gfx/video	/api-library/helium/lib/gfx-video#LEVELS	Table of level limits as triples of level code, maximum macroblock rate, and maximum frame size.	int
+video::cqp	function	gfx/video	/api-library/helium/lib/gfx-video#cqp	Returns the chroma quantizer for a luma quantizer, using the lookup table at 30 and above.	int
+video::why	constant	gfx/video	/api-library/helium/lib/gfx-video#why	Buffer holding the most recent error message text.	int
+video::fail	function	gfx/video	/api-library/helium/lib/gfx-video#fail	Records the given reason as the error message and returns false.	int
+video::error	function	gfx/video	/api-library/helium/lib/gfx-video#error	Returns the message describing the most recent failure from starting or adding frames.	pub
+video::bs	constant	gfx/video	/api-library/helium/lib/gfx-video#bs	Working buffer that accumulates bytes of the NAL unit payload being written.	int
+video::acc	constant	gfx/video	/api-library/helium/lib/gfx-video#acc	Partial byte accumulator holding bits not yet flushed to the bitstream buffer.	int
+video::nacc	constant	gfx/video	/api-library/helium/lib/gfx-video#nacc	Count of bits currently held in the partial byte accumulator.	int
+video::nbits	function	gfx/video	/api-library/helium/lib/gfx-video#nbits	Returns the number of bits needed to represent a non-negative integer.	int
+video::put	function	gfx/video	/api-library/helium/lib/gfx-video#put	Appends the low n bits of a value to the bitstream, most significant bit first.	int
+video::ue	function	gfx/video	/api-library/helium/lib/gfx-video#ue	Writes an unsigned value using Exp-Golomb coding.	int
+video::se	function	gfx/video	/api-library/helium/lib/gfx-video#se	Writes a signed value using signed Exp-Golomb coding.	int
+video::trailing	function	gfx/video	/api-library/helium/lib/gfx-video#trailing	Writes the stop bit and zero padding to align the bitstream to a byte boundary.	int
+video::nal	function	gfx/video	/api-library/helium/lib/gfx-video#nal	Wraps the pending bitstream as a NAL unit with emulation prevention bytes, appending it to the output buffer.	int
+video::width	constant	gfx/video	/api-library/helium/lib/gfx-video#width	Width of the input picture in pixels, set by a successful start.	pub
+video::height	constant	gfx/video	/api-library/helium/lib/gfx-video#height	Height of the input picture in pixels, set by a successful start.	pub
+video::cw	constant	gfx/video	/api-library/helium/lib/gfx-video#cw	Picture width in pixels padded up to a multiple of 16 macroblock units.	int
+video::ch	constant	gfx/video	/api-library/helium/lib/gfx-video#ch	Picture height in pixels padded up to a multiple of 16 macroblock units.	int
+video::mbw	constant	gfx/video	/api-library/helium/lib/gfx-video#mbw	Number of macroblock columns in the padded picture.	int
+video::mbh	constant	gfx/video	/api-library/helium/lib/gfx-video#mbh	Number of macroblock rows in the padded picture.	int
+video::fps	constant	gfx/video	/api-library/helium/lib/gfx-video#fps	Frame rate in frames per second, set by a successful start.	pub
+video::qp	constant	gfx/video	/api-library/helium/lib/gfx-video#qp	Quantizer value used for encoding, clamped between 10 and 51.	pub
+video::gop	constant	gfx/video	/api-library/helium/lib/gfx-video#gop	Group of pictures length, the number of frames between keyframes.	pub
+video::frames	constant	gfx/video	/api-library/helium/lib/gfx-video#frames	Count of frames encoded so far.	pub
+video::frame_num	constant	gfx/video	/api-library/helium/lib/gfx-video#frame_num	Frame number written into slice headers, reset at each keyframe.	int
+video::idrs	constant	gfx/video	/api-library/helium/lib/gfx-video#idrs	Count of keyframes encoded so far, used to alternate the keyframe identifier.	int
+video::ready	constant	gfx/video	/api-library/helium/lib/gfx-video#ready	Flag that is true once start has succeeded and frames may be added.	int
+video::sps	constant	gfx/video	/api-library/helium/lib/gfx-video#sps	Buffer holding the encoded sequence parameter set NAL unit.	pub
+video::pps	constant	gfx/video	/api-library/helium/lib/gfx-video#pps	Buffer holding the encoded picture parameter set NAL unit.	pub
+video::samples	constant	gfx/video	/api-library/helium/lib/gfx-video#samples	Buffer holding all encoded frame NAL units concatenated in order.	pub
+video::sizes	constant	gfx/video	/api-library/helium/lib/gfx-video#sizes	List of byte sizes of each encoded frame within the samples buffer.	pub
+video::keys	constant	gfx/video	/api-library/helium/lib/gfx-video#keys	List of flags marking whether each encoded frame is a keyframe.	pub
+video::cy	constant	gfx/video	/api-library/helium/lib/gfx-video#cy	Current frame's luma plane samples converted from the input image.	int
+video::cu	constant	gfx/video	/api-library/helium/lib/gfx-video#cu	Current frame's blue-difference chroma plane samples converted from the input image.	int
+video::cv	constant	gfx/video	/api-library/helium/lib/gfx-video#cv	Current frame's red-difference chroma plane samples converted from the input image.	int
+video::ry	constant	gfx/video	/api-library/helium/lib/gfx-video#ry	Reconstructed luma plane of the frame being encoded.	int
+video::ru	constant	gfx/video	/api-library/helium/lib/gfx-video#ru	Reconstructed blue-difference chroma plane of the frame being encoded.	int
+video::rv	constant	gfx/video	/api-library/helium/lib/gfx-video#rv	Reconstructed red-difference chroma plane of the frame being encoded.	int
+video::py	constant	gfx/video	/api-library/helium/lib/gfx-video#py	Luma plane of the previous reconstructed frame used for prediction.	int
+video::pu	constant	gfx/video	/api-library/helium/lib/gfx-video#pu	Blue-difference chroma plane of the previous reconstructed frame used for prediction.	int
+video::pv	constant	gfx/video	/api-library/helium/lib/gfx-video#pv	Red-difference chroma plane of the previous reconstructed frame used for prediction.	int
+video::keep_recon	constant	gfx/video	/api-library/helium/lib/gfx-video#keep_recon	Flag that, when true, makes each added frame's reconstruction be saved to the recon buffer.	pub
+video::recon	constant	gfx/video	/api-library/helium/lib/gfx-video#recon	Buffer of reconstructed frames as planar luma, blue chroma and red chroma bytes, filled when keep_recon is set.	pub
+video::skip_run	constant	gfx/video	/api-library/helium/lib/gfx-video#skip_run	Count of consecutive skipped macroblocks not yet written to the bitstream.	int
+video::mb_kind	constant	gfx/video	/api-library/helium/lib/gfx-video#mb_kind	Per-macroblock prediction kind recorded during encoding.	int
+video::mb_mx	constant	gfx/video	/api-library/helium/lib/gfx-video#mb_mx	Per-macroblock horizontal motion vector component.	int
+video::mb_my	constant	gfx/video	/api-library/helium/lib/gfx-video#mb_my	Per-macroblock vertical motion vector component.	int
+video::mb_tc	constant	gfx/video	/api-library/helium/lib/gfx-video#mb_tc	Per-macroblock coefficient counts for each of its 24 blocks.	int
+video::lev_y	constant	gfx/video	/api-library/helium/lib/gfx-video#lev_y	Scratch array of quantized luma coefficient levels for a macroblock.	int
+video::lev_ydc	constant	gfx/video	/api-library/helium/lib/gfx-video#lev_ydc	Scratch array of quantized luma DC levels for an intra macroblock.	int
+video::lev_cdc	constant	gfx/video	/api-library/helium/lib/gfx-video#lev_cdc	Scratch array of quantized chroma DC levels for both chroma planes.	int
+video::lev_cac	constant	gfx/video	/api-library/helium/lib/gfx-video#lev_cac	Scratch array of quantized chroma AC levels for both chroma planes.	int
+video::pr_y	constant	gfx/video	/api-library/helium/lib/gfx-video#pr_y	Scratch array holding the 16x16 luma prediction for a macroblock.	int
+video::pr_u	constant	gfx/video	/api-library/helium/lib/gfx-video#pr_u	Scratch array holding the 8x8 blue chroma prediction for a macroblock.	int
+video::pr_v	constant	gfx/video	/api-library/helium/lib/gfx-video#pr_v	Scratch array holding the 8x8 red chroma prediction for a macroblock.	int
+video::tmp_y	constant	gfx/video	/api-library/helium/lib/gfx-video#tmp_y	Scratch array of luma samples used during transform work.	int
+video::tmp_c	constant	gfx/video	/api-library/helium/lib/gfx-video#tmp_c	Scratch array of chroma samples used during transform work.	int
+video::start	function	gfx/video	/api-library/helium/lib/gfx-video#start	Begins a new encoding session with size, frame rate, quantizer and keyframe interval; returns false on invalid parameters.	pub
+video::convert	function	gfx/video	/api-library/helium/lib/gfx-video#convert	Converts an RGBA frame into luma and subsampled chroma planes padded to macroblock size.	int
+video::add	function	gfx/video	/api-library/helium/lib/gfx-video#add	Encodes one RGBA frame and appends it to the output; returns false if start failed or data is too short.	pub
+video::slice_header	function	gfx/video	/api-library/helium/lib/gfx-video#slice_header	Writes the slice header fields for a keyframe or predicted frame.	int
+video::encode_frame	function	gfx/video	/api-library/helium/lib/gfx-video#encode_frame	Encodes every macroblock of the current frame as one slice, using intra prediction for keyframes.	int
+video::blkx	function	gfx/video	/api-library/helium/lib/gfx-video#blkx	Returns the horizontal pixel offset of a luma 4x4 block within its macroblock.	int
+video::blky	function	gfx/video	/api-library/helium/lib/gfx-video#blky	Returns the vertical pixel offset of a luma 4x4 block within its macroblock.	int
+video::blkof	function	gfx/video	/api-library/helium/lib/gfx-video#blkof	Returns the block index for a luma 4x4 block at the given grid position.	int
+video::cblkx	function	gfx/video	/api-library/helium/lib/gfx-video#cblkx	Returns the horizontal pixel offset of a chroma 4x4 block within its macroblock.	int
+video::cblky	function	gfx/video	/api-library/helium/lib/gfx-video#cblky	Returns the vertical pixel offset of a chroma 4x4 block within its macroblock.	int
+video::pcls	function	gfx/video	/api-library/helium/lib/gfx-video#pcls	Returns the position class of a coefficient index within a 4x4 block, selecting the quantization column.	int
+video::fwd4	function	gfx/video	/api-library/helium/lib/gfx-video#fwd4	Applies the forward 4x4 integer transform to a block in place.	int
+video::had4	function	gfx/video	/api-library/helium/lib/gfx-video#had4	Applies a 4x4 Hadamard transform to a block in place.	int
+video::qz	function	gfx/video	/api-library/helium/lib/gfx-video#qz	Quantizes a coefficient using multiplier, rounding offset and shift, preserving sign and capping magnitude at 2047.	int
+video::tq_luma	function	gfx/video	/api-library/helium/lib/gfx-video#tq_luma	Transforms and quantizes the luma residual of a macroblock, filling luma level arrays including DC levels for intra.	int
+video::tq_c	function	gfx/video	/api-library/helium/lib/gfx-video#tq_c	Transforms and quantizes one chroma plane's residual of a macroblock, storing AC levels and starting the chroma DC levels.	int
+video::inv4	function	gfx/video	/api-library/helium/lib/gfx-video#inv4	Applies an in-place 4x4 inverse integer transform to a block of dequantized coefficients.	int
+video::rec_luma	function	gfx/video	/api-library/helium/lib/gfx-video#rec_luma	Reconstructs a 16x16 luma macroblock from prediction plus dequantized residual, with optional intra DC handling.	int
+video::rec_c	function	gfx/video	/api-library/helium/lib/gfx-video#rec_c	Reconstructs one 8x8 chroma plane macroblock from prediction plus dequantized DC and AC residual levels.	int
+video::pp	function	gfx/video	/api-library/helium/lib/gfx-video#pp	Returns the sample at the given column and row of a plane with the given width.	int
+video::ipred_y	function	gfx/video	/api-library/helium/lib/gfx-video#ipred_y	Fills a 16x16 luma intra prediction from neighboring samples using vertical, horizontal, DC, or plane mode.	int
+video::sad_y	function	gfx/video	/api-library/helium/lib/gfx-video#sad_y	Returns the sum of absolute differences between a source luma macroblock and a prediction.	int
+video::best_intra_y	function	gfx/video	/api-library/helium/lib/gfx-video#best_intra_y	Returns the best luma intra mode and its SAD cost among the modes available at the position.	int
+video::ipred_c	function	gfx/video	/api-library/helium/lib/gfx-video#ipred_c	Fills an 8x8 chroma intra prediction from neighboring samples using DC, horizontal, vertical, or plane mode.	int
+video::sad_c	function	gfx/video	/api-library/helium/lib/gfx-video#sad_c	Returns the sum of absolute differences between an 8x8 chroma block of a source plane and a prediction.	int
+video::best_intra_c	function	gfx/video	/api-library/helium/lib/gfx-video#best_intra_c	Returns the chroma intra mode with the lowest combined U and V SAD among the available modes.	int
+video::inter_c	function	gfx/video	/api-library/helium/lib/gfx-video#inter_c	Computes an 8x8 chroma motion-compensated prediction using bilinear interpolation in eighth-sample units with edge clamping.	int
+video::inter_pred	function	gfx/video	/api-library/helium/lib/gfx-video#inter_pred	Builds the luma and chroma inter predictions for a macroblock from a motion vector in quarter-sample units.	int
+video::nbr	function	gfx/video	/api-library/helium/lib/gfx-video#nbr	Returns whether a neighboring macroblock is available, plus its reference index and motion vector for prediction.	int
+video::mvp	function	gfx/video	/api-library/helium/lib/gfx-video#mvp	Returns the predicted motion vector and the skip motion vector for a macroblock from its neighbors.	int
+video::any_nz	function	gfx/video	/api-library/helium/lib/gfx-video#any_nz	Returns true if any element of the array is nonzero.	int
+video::se_bits	function	gfx/video	/api-library/helium/lib/gfx-video#se_bits	Returns the bit length of the signed Exp-Golomb code for a value.	int
+video::sad_mv	function	gfx/video	/api-library/helium/lib/gfx-video#sad_mv	Returns the SAD between a luma macroblock and its motion-displaced reference block, clamped at frame edges.	int
+video::mv_cost	function	gfx/video	/api-library/helium/lib/gfx-video#mv_cost	Returns a rate-distortion motion vector cost combining SAD with a lambda-weighted bit estimate of the vector difference.	int
+video::store_pred	function	gfx/video	/api-library/helium/lib/gfx-video#store_pred	Copies the current inter prediction into the reconstruction planes for a macroblock.	int
+video::write_inter	function	gfx/video	/api-library/helium/lib/gfx-video#write_inter	Writes the syntax elements for a coded inter macroblock, including motion vector difference, coded block pattern and residual blocks.	int
+video::enc_p_coded	function	gfx/video	/api-library/helium/lib/gfx-video#enc_p_coded	Encodes a P macroblock with residual by searching for a motion vector and choosing between intra and inter coding.	int
+video::enc_p	function	gfx/video	/api-library/helium/lib/gfx-video#enc_p	Encodes a P-frame macroblock, either as a skip or as a coded macroblock when the prediction leaves residual.	int
+video::write_chroma	function	gfx/video	/api-library/helium/lib/gfx-video#write_chroma	Writes chroma DC and, when present, AC residual blocks for a macroblock using CAVLC.	int
+video::write_intra	function	gfx/video	/api-library/helium/lib/gfx-video#write_intra	Writes the syntax elements and residual blocks for an intra 16x16 macroblock, optionally flushing a pending skip run.	int
+video::enc_intra	function	gfx/video	/api-library/helium/lib/gfx-video#enc_intra	Encodes an intra 16x16 macroblock by predicting, transforming, reconstructing and writing it in the chosen luma mode.	int
+video::nc_luma	function	gfx/video	/api-library/helium/lib/gfx-video#nc_luma	Returns the CAVLC context value for a luma block from the nonzero counts of its left and upper neighbors.	int
+video::nc_chroma	function	gfx/video	/api-library/helium/lib/gfx-video#nc_chroma	Returns the CAVLC context value for a chroma block from the nonzero counts of its left and upper neighbors.	int
+video::cavlc	function	gfx/video	/api-library/helium/lib/gfx-video#cavlc	Writes one block of coefficient levels using CAVLC and returns the number of nonzero coefficients.	int
+video::w8	function	gfx/video	/api-library/helium/lib/gfx-video#w8	Appends the low byte of a value to a byte buffer.	int
+video::w16	function	gfx/video	/api-library/helium/lib/gfx-video#w16	Appends the low 16 bits of a value to a byte buffer in big-endian order.	int
+video::w32	function	gfx/video	/api-library/helium/lib/gfx-video#w32	Appends a 32-bit value to a byte buffer in big-endian order.	int
+video::wz	function	gfx/video	/api-library/helium/lib/gfx-video#wz	Appends the given number of zero bytes to a byte buffer.	int
+video::box_open	function	gfx/video	/api-library/helium/lib/gfx-video#box_open	Starts an MP4 box with the given type and returns its start offset for later closing.	int
+video::full_open	function	gfx/video	/api-library/helium/lib/gfx-video#full_open	Starts an MP4 full box with the given type and version and flags word, returning its start offset.	int
+video::box_close	function	gfx/video	/api-library/helium/lib/gfx-video#box_close	Patches the size field of an MP4 box opened at the given offset to cover its contents.	int
+video::matrix	function	gfx/video	/api-library/helium/lib/gfx-video#matrix	Appends the identity transformation matrix used in MP4 headers.	int
+video::build_moov	function	gfx/video	/api-library/helium/lib/gfx-video#build_moov	Builds the MP4 movie metadata box describing the video track, sample sizes, keyframes and chunk offset.	int
+video::finish	function	gfx/video	/api-library/helium/lib/gfx-video#finish	Assembles the encoded frames into an MP4 file in the buffer, returning false with an error if none exist or it would reach 4 GiB.	pub
+video::save	function	gfx/video	/api-library/helium/lib/gfx-video#save	Writes the encoded MP4 file to the given path, returning false with an error if encoding or writing fails.	pub
+video::frame_bytes	function	gfx/video	/api-library/helium/lib/gfx-video#frame_bytes	Returns the encoded size in bytes of the frame at the given index, or 0 if out of range.	pub
+video::psnr_y	function	gfx/video	/api-library/helium/lib/gfx-video#psnr_y	Returns the luma peak signal-to-noise ratio in decibels between source and reconstruction, or 99 if identical.	pub
+sdf_ttf_dt1	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt1	Runs a one-dimensional squared Euclidean distance transform along a line, as a building block for the two-dimensional transform.	int
+sdf_ttf_dt	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_ttf_dt	Computes an in-place two-dimensional squared distance transform over a w by h grid by transforming columns, then rows.	int
+sdf_use_ttf	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf	Builds the SDF font atlas and kerning table from TrueType bytes, returning false if the font cannot be parsed.	pub
+sdf_use_ttf_file	function	gfx/sdf_ttf	/api-library/helium/lib/gfx-sdf_ttf#sdf_use_ttf_file	Reads a TrueType file from a path and builds the SDF font atlas from it, returning false if reading fails.	pub
+hwrt::cc3	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc3	Thin binding to a C call helper taking a function pointer and three integer arguments, returning an integer.	int
+hwrt::cc4	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc4	Thin binding to a C call helper taking a function pointer and four integer arguments, returning an integer.	int
+hwrt::cc5	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#cc5	Thin binding to a C call helper taking a function pointer and five integer arguments, returning an integer.	int
+hwrt::ST	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ST	Module state flag tracking whether initialization is untried, succeeded, or failed.	int
+hwrt::INST	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#INST	Handle of the Vulkan instance created during initialization.	int
+hwrt::PHYS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#PHYS	Handle of the physical GPU selected for ray tracing.	int
+hwrt::DEV	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#DEV	Handle of the logical Vulkan device used for all GPU work.	int
+hwrt::QUEUE	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#QUEUE	Handle of the compute queue used to submit command buffers.	int
+hwrt::CPOOL	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#CPOOL	Handle of the command pool that owns the shared command buffer.	int
+hwrt::CB	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#CB	Handle of the shared command buffer used for recording GPU work.	int
+hwrt::MEMP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MEMP	Raw memory properties of the selected GPU, used to choose memory types.	int
+hwrt::NAME	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#NAME	Cached device name of the selected GPU as bytes.	int
+hwrt::DTY	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#DTY	Cached Vulkan device type code of the selected GPU.	int
+hwrt::FN	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#FN	Table of loaded acceleration structure function pointers.	int
+hwrt::BUF	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#BUF	List of Vulkan buffer handles, indexed by buffer id.	int
+hwrt::MEM	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MEM	List of device memory handles backing each buffer, indexed by buffer id.	int
+hwrt::MAP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#MAP	List of host-mapped memory addresses for each buffer, zero if not mapped.	int
+hwrt::ADR	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ADR	List of GPU device addresses for each buffer, indexed by buffer id.	int
+hwrt::AS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#AS	List of created acceleration structure handles.	int
+hwrt::PP	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#PP	Flat table of pipeline objects, seven entries per compute pipeline.	int
+hwrt::EXTS	constant	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#EXTS	Device extension names required for ray query and acceleration structure support.	int
+hwrt::pt	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#pt	Converts a byte slice to its raw memory address.	int
+hwrt::ok	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#ok	Returns whether a Vulkan result code indicates success.	int
+hwrt::name	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#name	Returns the name of the selected GPU as bytes.	pub
+hwrt::is_cpu	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#is_cpu	Returns whether the selected GPU is a software CPU device.	pub
+hwrt::hasx	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#hasx	Returns whether a physical device supports the named extension.	int
+hwrt::feats	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#feats	Builds a feature structure chain, with ray tracing features enabled when requested.	int
+hwrt::init	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#init	Initializes Vulkan and selects a ray-query-capable GPU, returning false if unavailable or disabled.	pub
+hwrt::begin	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#begin	Starts recording the shared command buffer, returning whether it succeeded.	int
+hwrt::bar	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#bar	Records a memory barrier with the given pipeline stages and access masks.	int
+hwrt::submit	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#submit	Ends and submits the shared command buffer, waiting for completion and returning whether it succeeded.	int
+hwrt::mtype	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#mtype	Returns the first memory type index matching the type bits and wanted property flags, or -1.	int
+hwrt::buf	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#buf	Creates a GPU buffer of the given size and usage, returning its id or -1 on failure.	pub
+hwrt::drop	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#drop	Frees the buffer and its memory for the given id.	pub
+hwrt::put	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#put	Copies data from a slice into a host-mapped buffer.	pub
+hwrt::get	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#get	Copies data from a host-mapped buffer into a slice.	pub
+hwrt::asbuild	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#asbuild	Builds an acceleration structure from geometry, returning its handle or 0 on failure.	int
+hwrt::scene	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#scene	Builds a bottom and top level acceleration structure from triangle floats, returning false on failure.	pub
+hwrt::pipe	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#pipe	Creates a compute pipeline from a shader blob, returning its id or -1 on failure.	pub
+hwrt::run	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#run	Dispatches a compute pipeline over the given grid with the listed buffers, returning whether it succeeded.	pub
+hwrt::done	function	gfx/hwrt	/api-library/helium/lib/gfx-hwrt#done	Destroys all pipelines, acceleration structures, and buffers, and shuts down Vulkan.	pub
+pathtrace::TRI	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TRI	Packed triangle buffer of per-vertex normals, UVs, tangents, material index and color, consumed by the render shader.	int
+pathtrace::POS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#POS	Packed triangle vertex positions used to build the hardware ray tracing acceleration structure.	int
+pathtrace::MAT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MAT	Packed material parameter buffer with 20 floats per material, uploaded to the renderer.	int
+pathtrace::TXH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TXH	Texture header table holding pixel offset, width and height for each uploaded image.	int
+pathtrace::TXP	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TXP	Packed RGBA pixel data for all uploaded textures, one u32 per pixel.	int
+pathtrace::LIT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#LIT	Packed point light buffer holding position, color and range, eight floats per light.	int
+pathtrace::IMG	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#IMG	Cache mapping glTF image indices to uploaded texture indices, with -1 meaning not yet uploaded.	int
+pathtrace::PMAT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PMAT	Cache mapping scene primitives to created material indices, with -1 meaning not yet created.	int
+pathtrace::MASK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MASK	Flag set when any triangle uses an alpha-masked material, which disables opaque-only acceleration.	int
+pathtrace::EYE	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#EYE	Camera eye position as x, y, z world coordinates used by the next render.	pub
+pathtrace::TGT	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TGT	Camera look-at target position as x, y, z world coordinates.	pub
+pathtrace::UP	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#UP	Camera up direction vector used to orient the rendered view.	pub
+pathtrace::FOV	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#FOV	Vertical field of view of the camera, in radians.	pub
+pathtrace::TO_SUN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TO_SUN	Direction vector pointing toward the sun, normalized before rendering.	pub
+pathtrace::SUN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SUN	Sun radiance color as red, green, blue; all zeros disables the sun.	pub
+pathtrace::SUN_COS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SUN_COS	Cosine of the sun's angular radius, controlling the sun disc size.	pub
+pathtrace::ZEN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ZEN	Sky color at the zenith as red, green, blue.	pub
+pathtrace::HOR	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#HOR	Sky color at the horizon as red, green, blue.	pub
+pathtrace::GND	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#GND	Ground color used below the horizon as red, green, blue.	pub
+pathtrace::SKY	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKY	Sky brightness multiplier applied during rendering.	pub
+pathtrace::FURN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#FURN	White furnace test value; a nonnegative value enables the furnace test, negative disables it.	pub
+pathtrace::MS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MS	Flag enabling multiple scattering in material shading; true by default.	pub
+pathtrace::PDFK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PDFK	Probability density scaling factor passed to the render shader.	pub
+pathtrace::DEPTH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#DEPTH	Maximum path bounce depth per ray.	pub
+pathtrace::MAXMS	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#MAXMS	Slowest dispatch time in milliseconds recorded during the last render.	int
+pathtrace::SKIPPED	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKIPPED	Count of scene lights and instanced batches that from_scene could not convert and skipped.	pub
+pathtrace::WAVES	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#WAVES	Wave parameters: base frequency, amplitude, speed scale and time used by the water surface.	pub
+pathtrace::ABSORB	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ABSORB	Water absorption color coefficients as red, green, blue.	pub
+pathtrace::SCATTER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SCATTER	Water scattering color coefficients as red, green, blue.	pub
+pathtrace::PHASE_G	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#PHASE_G	Phase function asymmetry parameter for water scattering.	pub
+pathtrace::ETA	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ETA	Index of refraction used for water, 1.33 by default.	pub
+pathtrace::TK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#TK	Scalar parameter passed through to the render shader's water settings.	int
+pathtrace::UNDER	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#UNDER	Flag indicating the camera is underwater, set from the scene's sea state.	pub
+pathtrace::SKYC	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYC	Buffer of captured environment-map cube face pixels, filled by sky_cube for use in rendering.	int
+pathtrace::SKYN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYN	Edge size in pixels of each captured sky cube face, or 0 when no cube is captured.	int
+pathtrace::SKYI	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYI	Intensity multiplier copied from the environment map for the captured sky cube.	int
+pathtrace::SKYR	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#SKYR	Rotation of the environment map recorded with the captured sky cube.	int
+pathtrace::CLD	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLD	Pixel data of the cloud texture and cloud shadow texture captured from the scene.	int
+pathtrace::CW	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CW	Width in pixels of the captured cloud texture.	int
+pathtrace::CH	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CH	Height in pixels of the captured cloud texture.	int
+pathtrace::CSN	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CSN	Width in pixels of the captured cloud shadow texture, or 0 when none is captured.	int
+pathtrace::CSK	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CSK	Cloud shadow strength copied from the scene cloud settings.	int
+pathtrace::CLU	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLU	Four-component cloud shadow projection vector for the U axis.	int
+pathtrace::CLV	constant	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CLV	Four-component cloud shadow projection vector for the V axis.	int
+pathtrace::CubeU	type	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#CubeU	Uniform block carrying the cube face index to the environment copy shader.	int
+pathtrace::Mat	type	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#Mat	Material description with base color, emission, metalness, roughness, textures, alpha mode and water flag.	pub
+pathtrace::clear	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#clear	Clears all accumulated triangles, materials, textures, lights and flags to start a new scene.	pub
+pathtrace::mat	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#mat	Adds a material and returns its index for use when adding triangles.	pub
+pathtrace::image	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#image	Adds an RGBA8 image of the given size and returns its texture index.	pub
+pathtrace::light	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#light	Adds a point light at a position with RGB color and range.	pub
+pathtrace::tri	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#tri	Adds a triangle from positions, normals, UVs and vertex color with a material index, skipping degenerate ones.	pub
+pathtrace::ico	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#ico	Returns triangle vertex positions of a unit icosphere subdivided the given number of levels.	pub
+pathtrace::sphere	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#sphere	Adds a sphere of given center and radius, built from subdivided icosphere triangles, using a material index.	pub
+pathtrace::v3	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#v3	Converts a float3 vector into a real array of three components.	int
+pathtrace::lift	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#lift	Displaces the y coordinates of the given points in place by the sea wave function on the GPU, returning false on failure.	int
+pathtrace::sky_cube	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#sky_cube	Captures the environment map into six cube faces of the given size, returning false if unavailable or a read fails.	int
+pathtrace::clouds_of	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#clouds_of	Reads the scene's cloud and cloud shadow textures into the capture buffers, counting skipped reads on failure.	int
+pathtrace::texof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#texof	Returns the uploaded texture index for a glTF texture reference, uploading its image on first use, or -1 if none.	int
+pathtrace::matof	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#matof	Returns the material index for a scene primitive, creating it from the glTF material on first use.	int
+pathtrace::from_scene	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#from_scene	Rebuilds the path tracing scene from the current scene3d camera, sun, sky, lights and geometry.	pub
+pathtrace::render	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#render	Renders the scene at the given size and samples per pixel, returning accumulated float data, or empty on failure.	pub
+pathtrace::bad	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#bad	Returns the total count of flagged bad samples in an accumulation buffer.	pub
+pathtrace::save	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#save	Tone maps an accumulation buffer with exposure and writes it as a PNG, returning false on failure.	pub

@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>gfx/draco | AMNI-SCIENT</title>
+<meta name="description" content="Decodes Draco-compressed 3D mesh files into faces, points, and vertex attributes a program can use for rendering.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="gfx/draco">
+<meta property="og:description" content="Decodes Draco-compressed 3D mesh files into faces, points, and vertex attributes a program can use for rendering.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-draco">
+<link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-draco">
+<link rel="stylesheet" href="/css/style.css?v=b268">
+<link rel="stylesheet" href="/api-library/lib.css?v=48f0e8c899">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<script type="module">import {start} from '/api-library/helium.js?v=48f0e8c899'; start({wasm: '/api-library/search.wasm?v=48f0e8c899'});</script>
+</head>
+<body class="theme-gold lib">
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more" open><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html" class="active">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="lib-bar">
+<p class="lib-crumbs"><a href="/api-library/">API Library</a> <span>&rsaquo;</span> <a href="/api-library/helium/">Helium</a> <span>&rsaquo;</span> <a href="/api-library/helium/graphics">Graphics</a> <span>&rsaquo;</span> gfx/draco</p>
+<div class="lib-search">
+<input id="lib-q" type="search" placeholder="Search every function, type and command" autocomplete="off" aria-label="Search the API library">
+<div id="lib-results" class="lib-results" hidden></div>
+</div>
+</div>
+<div class="lib-wrap">
+<main class="lib-main" id="lib-main">
+<a class="lib-skip" href="#lib-side">All sections</a>
+<h1>gfx/draco</h1>
+<p class="lib-lede">Decodes Draco-compressed 3D mesh files into faces, points, and vertex attributes a program can use for rendering.</p>
+<p class="lib-meta"><code>import gfx.draco;</code> &middot; <code>draco::</code> &middot; 103 functions, 0 types, 110 constants &middot; <a href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni">Source</a></p>
+<ul class="lib-pills">
+<li><a href="#decoded-mesh">Decoded Mesh <span class="n">3</span></a></li>
+<li><a href="#attributes">Attributes <span class="n">8</span></a></li>
+<li><a href="#errors">Errors <span class="n">2</span></a></li>
+<li><a href="#attribute-decoding">Attribute Decoding <span class="n">1</span></a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul>
+<h2 id="decoded-mesh">Decoded Mesh <span class="n">3</span></h2>
+<article class="sym" id="faces">
+<h3><a href="#faces">faces</a> <i>constant</i></h3>
+<pre>var faces u32[&gt;..]</pre>
+<p>Triangle face corner indices of the decoded mesh, stored as unsigned 32-bit values.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L7">hc/lib/gfx/draco.amni:7</a>
+</article>
+<article class="sym" id="points">
+<h3><a href="#points">points</a> <i>constant</i></h3>
+<pre>var points int = 0</pre>
+<p>Number of points in the decoded mesh.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L8">hc/lib/gfx/draco.amni:8</a>
+</article>
+<article class="sym" id="decode">
+<h3><a href="#decode">decode</a> <i>function</i></h3>
+<pre>decode(src const byte[:]) bool</pre>
+<p>Decodes a Draco byte stream into faces, points, and attributes, returning false on failure.</p>
+<p class="note">`decode(src)` takes a read-only byte slice, empties every output and state list, copies src to `buf` and sets `pos` 0. The header is &quot;DRACO&quot;, major and minor bytes that must both be 2, an encoder type byte that must be 1 (triangle mesh), a method byte (0 sequential, 1 edgebreaker, else fail) and flags (`u16v()`); metadata is skipped when flags bitwise-and 0x8000 is set. Edgebreaker reads the trave</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L2082">hc/lib/gfx/draco.amni:2082</a>
+</article>
+<h2 id="attributes">Attributes <span class="n">8</span></h2>
+<article class="sym" id="att_type">
+<h3><a href="#att_type">att_type</a> <i>constant</i></h3>
+<pre>var att_type int[&gt;..]</pre>
+<p>Per-attribute type codes for the decoded vertex attributes.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L9">hc/lib/gfx/draco.amni:9</a>
+</article>
+<article class="sym" id="att_dtype">
+<h3><a href="#att_dtype">att_dtype</a> <i>constant</i></h3>
+<pre>var att_dtype int[&gt;..]</pre>
+<p>Per-attribute data type codes for the decoded vertex attributes.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L10">hc/lib/gfx/draco.amni:10</a>
+</article>
+<article class="sym" id="att_comps">
+<h3><a href="#att_comps">att_comps</a> <i>constant</i></h3>
+<pre>var att_comps int[&gt;..]</pre>
+<p>Per-attribute component counts, such as three for a position.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L11">hc/lib/gfx/draco.amni:11</a>
+</article>
+<article class="sym" id="att_norm">
+<h3><a href="#att_norm">att_norm</a> <i>constant</i></h3>
+<pre>var att_norm int[&gt;..]</pre>
+<p>Per-attribute flags marking whether values are normalized.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L12">hc/lib/gfx/draco.amni:12</a>
+</article>
+<article class="sym" id="att_uid">
+<h3><a href="#att_uid">att_uid</a> <i>constant</i></h3>
+<pre>var att_uid int[&gt;..]</pre>
+<p>Per-attribute unique ids used to look up an attribute.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L13">hc/lib/gfx/draco.amni:13</a>
+</article>
+<article class="sym" id="att_first">
+<h3><a href="#att_first">att_first</a> <i>constant</i></h3>
+<pre>var att_first int[&gt;..]</pre>
+<p>Per-attribute index of the first entry in the shared values array.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L14">hc/lib/gfx/draco.amni:14</a>
+</article>
+<article class="sym" id="values">
+<h3><a href="#values">values</a> <i>constant</i></h3>
+<pre>var values real[&gt;..]</pre>
+<p>Decoded attribute values stored as reals for all attributes.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L15">hc/lib/gfx/draco.amni:15</a>
+</article>
+<article class="sym" id="find">
+<h3><a href="#find">find</a> <i>function</i></h3>
+<pre>find(uid int) int</pre>
+<p>Returns the index of the attribute with the given unique id, or -1 if none matches.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L18">hc/lib/gfx/draco.amni:18</a>
+</article>
+<h2 id="errors">Errors <span class="n">2</span></h2>
+<article class="sym" id="why">
+<h3><a href="#why">why</a> <i>constant</i></h3>
+<pre>var why byte[&gt;..]</pre>
+<p>Bytes of the message describing why decoding failed.</p>
+<p class="note">Namespace draco; imports math and binary. Decodes Draco compressed triangle meshes (bitstream version 2.2, the one every current encoder writes, including the glTF extension KHR_draco_mesh_compression), written to match the Draco reference decoder value for value: the same points in the same order, the same faces and the same attribute values. Nothing here may crash, loop forever or read past the </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L16">hc/lib/gfx/draco.amni:16</a>
+</article>
+<article class="sym" id="error">
+<h3><a href="#error">error</a> <i>function</i></h3>
+<pre>error() const byte[:]</pre>
+<p>Returns the message describing the most recent decoding failure.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L17">hc/lib/gfx/draco.amni:17</a>
+</article>
+<h2 id="attribute-decoding">Attribute Decoding <span class="n">1</span></h2>
+<article class="sym" id="finalize">
+<h3><a href="#finalize">finalize</a> <i>function</i></h3>
+<pre>finalize(ai int) bool</pre>
+<p>Converts decoded portable values into the attribute's final real values for each point.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1861">hc/lib/gfx/draco.amni:1861</a>
+</article>
+<details class="lib-int" id="internal"><summary>Internal helpers (199)</summary>
+<article class="sym" id="w32">
+<h3><a href="#w32">w32</a> <i>function</i></h3>
+<pre>w32(x int) int</pre>
+<p>Wraps an integer to a signed 32-bit value for decoder arithmetic.</p>
+<p class="note">Whole numbers here are 64-bit `int`. Where the reference uses 32-bit integers the value is kept to 32 bits at the points named below with `w32`, which gives the low 32 bits of a whole number as a signed two's complement number; `u32of` gives the low 32 bits as an unsigned number. `idiv` is C integer division (the quotient truncated toward zero; division by zero never happens because callers check)</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L4">hc/lib/gfx/draco.amni:4</a>
+</article>
+<article class="sym" id="u32of">
+<h3><a href="#u32of">u32of</a> <i>function</i></h3>
+<pre>u32of(x int) int</pre>
+<p>Masks an integer down to its unsigned 32-bit value.</p>
+<p class="note">Whole numbers here are 64-bit `int`. Where the reference uses 32-bit integers the value is kept to 32 bits at the points named below with `w32`, which gives the low 32 bits of a whole number as a signed two's complement number; `u32of` gives the low 32 bits as an unsigned number. `idiv` is C integer division (the quotient truncated toward zero; division by zero never happens because callers check)</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L5">hc/lib/gfx/draco.amni:5</a>
+</article>
+<article class="sym" id="idiv">
+<h3><a href="#idiv">idiv</a> <i>function</i></h3>
+<pre>idiv(a int, b int) int</pre>
+<p>Divides two integers using integer division.</p>
+<p class="note">Whole numbers here are 64-bit `int`. Where the reference uses 32-bit integers the value is kept to 32 bits at the points named below with `w32`, which gives the low 32 bits of a whole number as a signed two's complement number; `u32of` gives the low 32 bits as an unsigned number. `idiv` is C integer division (the quotient truncated toward zero; division by zero never happens because callers check)</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L6">hc/lib/gfx/draco.amni:6</a>
+</article>
+<article class="sym" id="fail">
+<h3><a href="#fail">fail</a> <i>function</i></h3>
+<pre>fail(msg const byte[:]) bool</pre>
+<p>Records a failure message and returns false.</p>
+<p class="note">Output (public module state, filled by `decode`): `faces`, a list of `u32`, three point numbers per triangle; `points`, the number of points; and one entry per decoded attribute in the order the stream declares them, in the int lists `att_type` (0 position, 1 normal, 2 color, 3 texture coordinate, 4 generic, 5 to 8 other named kinds), `att_dtype` (the Draco data type: 1 int8, 2 uint8, 3 int16, 4 u</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L24">hc/lib/gfx/draco.amni:24</a>
+</article>
+<article class="sym" id="buf">
+<h3><a href="#buf">buf</a> <i>constant</i></h3>
+<pre>var buf byte[&gt;..]</pre>
+<p>Input byte buffer being decoded.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L29">hc/lib/gfx/draco.amni:29</a>
+</article>
+<article class="sym" id="pos">
+<h3><a href="#pos">pos</a> <i>constant</i></h3>
+<pre>var pos int = 0</pre>
+<p>Current read position within the input buffer.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L30">hc/lib/gfx/draco.amni:30</a>
+</article>
+<article class="sym" id="bad">
+<h3><a href="#bad">bad</a> <i>constant</i></h3>
+<pre>var bad bool = false</pre>
+<p>Flag set when a read runs past the data or is malformed.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L31">hc/lib/gfx/draco.amni:31</a>
+</article>
+<article class="sym" id="left">
+<h3><a href="#left">left</a> <i>function</i></h3>
+<pre>left() int</pre>
+<p>Returns the number of unread bytes remaining in the buffer.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L32">hc/lib/gfx/draco.amni:32</a>
+</article>
+<article class="sym" id="bt">
+<h3><a href="#bt">bt</a> <i>function</i></h3>
+<pre>bt(i int) int</pre>
+<p>Returns the byte at the given index as an integer.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L33">hc/lib/gfx/draco.amni:33</a>
+</article>
+<article class="sym" id="u8v">
+<h3><a href="#u8v">u8v</a> <i>function</i></h3>
+<pre>u8v() int</pre>
+<p>Reads an unsigned 8-bit value and advances, flagging an error at end of data.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L34">hc/lib/gfx/draco.amni:34</a>
+</article>
+<article class="sym" id="i8v">
+<h3><a href="#i8v">i8v</a> <i>function</i></h3>
+<pre>i8v() int</pre>
+<p>Reads a signed 8-bit value and advances the position.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L40">hc/lib/gfx/draco.amni:40</a>
+</article>
+<article class="sym" id="u16v">
+<h3><a href="#u16v">u16v</a> <i>function</i></h3>
+<pre>u16v() int</pre>
+<p>Reads a little-endian unsigned 16-bit value, flagging an error if too few bytes remain.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L44">hc/lib/gfx/draco.amni:44</a>
+</article>
+<article class="sym" id="u32v">
+<h3><a href="#u32v">u32v</a> <i>function</i></h3>
+<pre>u32v() int</pre>
+<p>Reads a little-endian unsigned 32-bit value, flagging an error if too few bytes remain.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L50">hc/lib/gfx/draco.amni:50</a>
+</article>
+<article class="sym" id="i32v">
+<h3><a href="#i32v">i32v</a> <i>function</i></h3>
+<pre>i32v() int</pre>
+<p>Reads a little-endian signed 32-bit value and advances the position.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L56">hc/lib/gfx/draco.amni:56</a>
+</article>
+<article class="sym" id="f32v">
+<h3><a href="#f32v">f32v</a> <i>function</i></h3>
+<pre>f32v() f32</pre>
+<p>Reads a little-endian 32-bit float from the buffer and advances the position.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L57">hc/lib/gfx/draco.amni:57</a>
+</article>
+<article class="sym" id="varintv">
+<h3><a href="#varintv">varintv</a> <i>function</i></h3>
+<pre>varintv(limit int) int</pre>
+<p>Reads a variable-length integer of at most the given number of bytes, flagging an error if malformed.</p>
+<p class="note">Reader state: `buf`, a growable byte list holding a copy of the stream, `pos`, the read position, and `bad`, a bool. `u8v()` gives the byte at `pos` and moves on, or sets `bad` and gives 0 when `pos` is at or past the end of `buf`; `i8v()` is the same read as a signed byte. `u16v()`, `i32v()`, `u32v()` read 2 or 4 bytes little-endian (unsigned, signed, unsigned) and `f32v()` reads 4 bytes as the I</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L61">hc/lib/gfx/draco.amni:61</a>
+</article>
+<article class="sym" id="bit_at">
+<h3><a href="#bit_at">bit_at</a> <i>constant</i></h3>
+<pre>var bit_at int = 0</pre>
+<p>Current byte offset where the bit reader starts.</p>
+<p class="note">Bit reader state (the reference's bit mode on a byte buffer): `bit_at` (the first byte), `bit_end` (one past the last byte it may read) and `bit_off` (bits used so far). `bits_begin(at, end)` sets them and zeroes `bit_off`. `bits(n)` gives an n-bit unsigned number built from single bits, lowest bit first: bit number `bit_off` is bit (`bit_off` mod 8) of byte `bit_at` plus `bit_off` integer-divided</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L75">hc/lib/gfx/draco.amni:75</a>
+</article>
+<article class="sym" id="bit_end">
+<h3><a href="#bit_end">bit_end</a> <i>constant</i></h3>
+<pre>var bit_end int = 0</pre>
+<p>Byte offset at which bit reading must stop.</p>
+<p class="note">Bit reader state (the reference's bit mode on a byte buffer): `bit_at` (the first byte), `bit_end` (one past the last byte it may read) and `bit_off` (bits used so far). `bits_begin(at, end)` sets them and zeroes `bit_off`. `bits(n)` gives an n-bit unsigned number built from single bits, lowest bit first: bit number `bit_off` is bit (`bit_off` mod 8) of byte `bit_at` plus `bit_off` integer-divided</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L76">hc/lib/gfx/draco.amni:76</a>
+</article>
+<article class="sym" id="bit_off">
+<h3><a href="#bit_off">bit_off</a> <i>constant</i></h3>
+<pre>var bit_off int = 0</pre>
+<p>Current bit offset relative to the bit reader's start.</p>
+<p class="note">Bit reader state (the reference's bit mode on a byte buffer): `bit_at` (the first byte), `bit_end` (one past the last byte it may read) and `bit_off` (bits used so far). `bits_begin(at, end)` sets them and zeroes `bit_off`. `bits(n)` gives an n-bit unsigned number built from single bits, lowest bit first: bit number `bit_off` is bit (`bit_off` mod 8) of byte `bit_at` plus `bit_off` integer-divided</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L77">hc/lib/gfx/draco.amni:77</a>
+</article>
+<article class="sym" id="bits_begin">
+<h3><a href="#bits_begin">bits_begin</a> <i>function</i></h3>
+<pre>bits_begin(at int, end int)</pre>
+<p>Starts bit reading over the given byte range from the first bit.</p>
+<p class="note">Bit reader state (the reference's bit mode on a byte buffer): `bit_at` (the first byte), `bit_end` (one past the last byte it may read) and `bit_off` (bits used so far). `bits_begin(at, end)` sets them and zeroes `bit_off`. `bits(n)` gives an n-bit unsigned number built from single bits, lowest bit first: bit number `bit_off` is bit (`bit_off` mod 8) of byte `bit_at` plus `bit_off` integer-divided</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L78">hc/lib/gfx/draco.amni:78</a>
+</article>
+<article class="sym" id="bits">
+<h3><a href="#bits">bits</a> <i>function</i></h3>
+<pre>bits(n int) int</pre>
+<p>Reads the given number of bits, up to 32, least significant first.</p>
+<p class="note">`next_symbol()`: standard reads `bits(1)`, and when it is 1 reads `bits(2)` and gives 1 bitwise-or that shifted left by 1 (so C 0, S 1, L 3, R 5, E 7). Valence: when `active` is -1 it gives E (7); otherwise `ctx_left[active]` goes down by one, and when it is below 0 or the symbol there is above 4 it gives 99 (invalid); the symbol 0, 1, 2, 3, 4 maps to C, S, L, R, E. `reached(c)` (valence only, aft</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L83">hc/lib/gfx/draco.amni:83</a>
+</article>
+<article class="sym" id="bits_bytes">
+<h3><a href="#bits_bytes">bits_bytes</a> <i>function</i></h3>
+<pre>bits_bytes() int</pre>
+<p>Returns the number of whole bytes consumed by the bits read so far.</p>
+<p class="note">Bit reader state (the reference's bit mode on a byte buffer): `bit_at` (the first byte), `bit_end` (one past the last byte it may read) and `bit_off` (bits used so far). `bits_begin(at, end)` sets them and zeroes `bit_off`. `bits(n)` gives an n-bit unsigned number built from single bits, lowest bit first: bit number `bit_off` is bit (`bit_off` mod 8) of byte `bit_at` plus `bit_off` integer-divided</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L95">hc/lib/gfx/draco.amni:95</a>
+</article>
+<article class="sym" id="rb_data">
+<h3><a href="#rb_data">rb_data</a> <i>constant</i></h3>
+<pre>var rb_data int[&gt;..]</pre>
+<p>Data start positions for each binary rANS bit decoder.</p>
+<p class="note">Bit decoders (the reference's RAnsBitDecoder; several are in use at once, so they live in parallel int lists `rb_data` (the first byte of the decoder's data in `buf`), `rb_off`, `rb_state` and `rb_p0`, emptied by `decode`). `rbit_start()` reads the zero probability with `u8v()` and a 32-bit `varintv` size; it fails (gives -1) when `bad` is set, the size is 0 or larger than `left()`. Let b be the l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L96">hc/lib/gfx/draco.amni:96</a>
+</article>
+<article class="sym" id="rb_off">
+<h3><a href="#rb_off">rb_off</a> <i>constant</i></h3>
+<pre>var rb_off int[&gt;..]</pre>
+<p>Remaining byte offsets for each binary rANS bit decoder.</p>
+<p class="note">Bit decoders (the reference's RAnsBitDecoder; several are in use at once, so they live in parallel int lists `rb_data` (the first byte of the decoder's data in `buf`), `rb_off`, `rb_state` and `rb_p0`, emptied by `decode`). `rbit_start()` reads the zero probability with `u8v()` and a 32-bit `varintv` size; it fails (gives -1) when `bad` is set, the size is 0 or larger than `left()`. Let b be the l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L97">hc/lib/gfx/draco.amni:97</a>
+</article>
+<article class="sym" id="rb_state">
+<h3><a href="#rb_state">rb_state</a> <i>constant</i></h3>
+<pre>var rb_state int[&gt;..]</pre>
+<p>Current states of each binary rANS bit decoder.</p>
+<p class="note">Bit decoders (the reference's RAnsBitDecoder; several are in use at once, so they live in parallel int lists `rb_data` (the first byte of the decoder's data in `buf`), `rb_off`, `rb_state` and `rb_p0`, emptied by `decode`). `rbit_start()` reads the zero probability with `u8v()` and a 32-bit `varintv` size; it fails (gives -1) when `bad` is set, the size is 0 or larger than `left()`. Let b be the l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L98">hc/lib/gfx/draco.amni:98</a>
+</article>
+<article class="sym" id="rb_p0">
+<h3><a href="#rb_p0">rb_p0</a> <i>constant</i></h3>
+<pre>var rb_p0 int[&gt;..]</pre>
+<p>Zero-bit probabilities for each binary rANS bit decoder.</p>
+<p class="note">Bit decoders (the reference's RAnsBitDecoder; several are in use at once, so they live in parallel int lists `rb_data` (the first byte of the decoder's data in `buf`), `rb_off`, `rb_state` and `rb_p0`, emptied by `decode`). `rbit_start()` reads the zero probability with `u8v()` and a 32-bit `varintv` size; it fails (gives -1) when `bad` is set, the size is 0 or larger than `left()`. Let b be the l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L99">hc/lib/gfx/draco.amni:99</a>
+</article>
+<article class="sym" id="rbit_start">
+<h3><a href="#rbit_start">rbit_start</a> <i>function</i></h3>
+<pre>rbit_start() int</pre>
+<p>Parses a binary rANS decoder header and returns its index, or -1 on failure.</p>
+<p class="note">Bit decoders (the reference's RAnsBitDecoder; several are in use at once, so they live in parallel int lists `rb_data` (the first byte of the decoder's data in `buf`), `rb_off`, `rb_state` and `rb_p0`, emptied by `decode`). `rbit_start()` reads the zero probability with `u8v()` and a 32-bit `varintv` size; it fails (gives -1) when `bad` is set, the size is 0 or larger than `left()`. Let b be the l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L100">hc/lib/gfx/draco.amni:100</a>
+</article>
+<article class="sym" id="rbit">
+<h3><a href="#rbit">rbit</a> <i>function</i></h3>
+<pre>rbit(k int) bool</pre>
+<p>Decodes the next bit from the given binary rANS decoder.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L132">hc/lib/gfx/draco.amni:132</a>
+</article>
+<article class="sym" id="rs_prob">
+<h3><a href="#rs_prob">rs_prob</a> <i>constant</i></h3>
+<pre>var rs_prob int[&gt;..]</pre>
+<p>Symbol probabilities of the current rANS table.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L147">hc/lib/gfx/draco.amni:147</a>
+</article>
+<article class="sym" id="rs_cum">
+<h3><a href="#rs_cum">rs_cum</a> <i>constant</i></h3>
+<pre>var rs_cum int[&gt;..]</pre>
+<p>Cumulative probabilities of the current rANS table.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L148">hc/lib/gfx/draco.amni:148</a>
+</article>
+<article class="sym" id="rs_lut">
+<h3><a href="#rs_lut">rs_lut</a> <i>constant</i></h3>
+<pre>var rs_lut int[&gt;..]</pre>
+<p>Lookup table mapping probability slots to symbols.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L149">hc/lib/gfx/draco.amni:149</a>
+</article>
+<article class="sym" id="rs_precision">
+<h3><a href="#rs_precision">rs_precision</a> <i>constant</i></h3>
+<pre>var rs_precision int = 0</pre>
+<p>Total probability precision of the current rANS table.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L150">hc/lib/gfx/draco.amni:150</a>
+</article>
+<article class="sym" id="rs_data">
+<h3><a href="#rs_data">rs_data</a> <i>constant</i></h3>
+<pre>var rs_data int = 0</pre>
+<p>Data start position of the current rANS stream.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L151">hc/lib/gfx/draco.amni:151</a>
+</article>
+<article class="sym" id="rs_off">
+<h3><a href="#rs_off">rs_off</a> <i>constant</i></h3>
+<pre>var rs_off int = 0</pre>
+<p>Remaining byte offset within the current rANS stream.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L152">hc/lib/gfx/draco.amni:152</a>
+</article>
+<article class="sym" id="rs_state">
+<h3><a href="#rs_state">rs_state</a> <i>constant</i></h3>
+<pre>var rs_state int = 0</pre>
+<p>Current state of the rANS symbol decoder.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L153">hc/lib/gfx/draco.amni:153</a>
+</article>
+<article class="sym" id="rans_table">
+<h3><a href="#rans_table">rans_table</a> <i>function</i></h3>
+<pre>rans_table(nb int) int</pre>
+<p>Reads a rANS probability table and returns its symbol count, or -1 on failure.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L154">hc/lib/gfx/draco.amni:154</a>
+</article>
+<article class="sym" id="rans_begin">
+<h3><a href="#rans_begin">rans_begin</a> <i>function</i></h3>
+<pre>rans_begin() bool</pre>
+<p>Initializes the rANS symbol decoder from the stream header, returning false on failure.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L194">hc/lib/gfx/draco.amni:194</a>
+</article>
+<article class="sym" id="rans_next">
+<h3><a href="#rans_next">rans_next</a> <i>function</i></h3>
+<pre>rans_next() int</pre>
+<p>Decodes and returns the next symbol from the rANS stream.</p>
+<p class="note">Symbol decoder (the reference's RAnsSymbolDecoder; one at a time, module state `rs_prob`, `rs_cum` and `rs_lut` int lists, `rs_precision`, `rs_data`, `rs_off`, `rs_state`). `rans_table(bits)` reads a probability table: the precision exponent P is 3 times bits integer-divided by 2, at least 12 and at most 20, and `rs_precision` is 2 to the P. The symbol count n is a 32-bit `varintv`; it fails when </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L226">hc/lib/gfx/draco.amni:226</a>
+</article>
+<article class="sym" id="symbols">
+<h3><a href="#symbols">symbols</a> <i>function</i></h3>
+<pre>symbols(n int, comps int, out int[&gt;..]&amp;) bool</pre>
+<p>Decodes the given number of symbols into the output array, returning false on failure.</p>
+<p class="note">`symbols(n, comps, out)` decodes n unsigned values into the int list out (appending) and gives true when it worked. n 0 gives true at once. Otherwise it reads a scheme byte. Scheme 0 (tagged): `rans_table(5)` then `rans_begin()`, failing when either fails or the table has no symbols; then `bits_begin(pos, length of buf)`; for each group of comps values (while fewer than n values are out) the bit l</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L240">hc/lib/gfx/draco.amni:240</a>
+</article>
+<article class="sym" id="skip_bytes">
+<h3><a href="#skip_bytes">skip_bytes</a> <i>function</i></h3>
+<pre>skip_bytes(n int)</pre>
+<p>Advances the read position by the given bytes, flagging an error if out of range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L276">hc/lib/gfx/draco.amni:276</a>
+</article>
+<article class="sym" id="skip_tree">
+<h3><a href="#skip_tree">skip_tree</a> <i>function</i></h3>
+<pre>skip_tree() bool</pre>
+<p>Skips a metadata tree, returning false if it is malformed.</p>
+<p class="note">Metadata (header flag 0x8000) is skipped, not kept: `skip_meta()` reads a 32-bit `varintv` count of attribute entries; each is a 32-bit `varintv` id followed by one metadata tree; then one more tree for the whole mesh. `skip_tree()` keeps a count of pending blocks starting at 1 (the root, which has no name); while blocks are pending it takes one, reads its name when it is not the root (a length by</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L280">hc/lib/gfx/draco.amni:280</a>
+</article>
+<article class="sym" id="skip_meta">
+<h3><a href="#skip_meta">skip_meta</a> <i>function</i></h3>
+<pre>skip_meta() bool</pre>
+<p>Skips all metadata blocks, returning false if malformed.</p>
+<p class="note">Metadata (header flag 0x8000) is skipped, not kept: `skip_meta()` reads a 32-bit `varintv` count of attribute entries; each is a 32-bit `varintv` id followed by one metadata tree; then one more tree for the whole mesh. `skip_tree()` keeps a count of pending blocks starting at 1 (the root, which has no name); while blocks are pending it takes one, reads its name when it is not the root (a length by</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L305">hc/lib/gfx/draco.amni:305</a>
+</article>
+<article class="sym" id="c2v">
+<h3><a href="#c2v">c2v</a> <i>constant</i></h3>
+<pre>var c2v int[&gt;..]</pre>
+<p>Maps each corner to its vertex index.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L315">hc/lib/gfx/draco.amni:315</a>
+</article>
+<article class="sym" id="opp">
+<h3><a href="#opp">opp</a> <i>constant</i></h3>
+<pre>var opp int[&gt;..]</pre>
+<p>Maps each corner to its opposite corner, or -1 if none.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L316">hc/lib/gfx/draco.amni:316</a>
+</article>
+<article class="sym" id="lmc">
+<h3><a href="#lmc">lmc</a> <i>constant</i></h3>
+<pre>var lmc int[&gt;..]</pre>
+<p>Maps each vertex to its leftmost corner.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L317">hc/lib/gfx/draco.amni:317</a>
+</article>
+<article class="sym" id="n_ad">
+<h3><a href="#n_ad">n_ad</a> <i>constant</i></h3>
+<pre>var n_ad int = 0</pre>
+<p>Number of additional attribute connectivity decoders.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L318">hc/lib/gfx/draco.amni:318</a>
+</article>
+<article class="sym" id="nc">
+<h3><a href="#nc">nc</a> <i>constant</i></h3>
+<pre>var nc int = 0</pre>
+<p>Total number of corners in the mesh.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L319">hc/lib/gfx/draco.amni:319</a>
+</article>
+<article class="sym" id="a_c2v">
+<h3><a href="#a_c2v">a_c2v</a> <i>constant</i></h3>
+<pre>var a_c2v int[&gt;..]</pre>
+<p>Per-attribute corner to vertex mappings.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L320">hc/lib/gfx/draco.amni:320</a>
+</article>
+<article class="sym" id="a_seam">
+<h3><a href="#a_seam">a_seam</a> <i>constant</i></h3>
+<pre>var a_seam bool[&gt;..]</pre>
+<p>Per-attribute flags marking corners whose opposite edge is a seam.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L321">hc/lib/gfx/draco.amni:321</a>
+</article>
+<article class="sym" id="a_vseam">
+<h3><a href="#a_vseam">a_vseam</a> <i>constant</i></h3>
+<pre>var a_vseam bool[&gt;..]</pre>
+<p>Per-attribute flags marking vertices that lie on a seam.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L322">hc/lib/gfx/draco.amni:322</a>
+</article>
+<article class="sym" id="a_lmc">
+<h3><a href="#a_lmc">a_lmc</a> <i>constant</i></h3>
+<pre>var a_lmc int[&gt;..]</pre>
+<p>Per-attribute vertex to leftmost corner mappings.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L323">hc/lib/gfx/draco.amni:323</a>
+</article>
+<article class="sym" id="a_lmc_at">
+<h3><a href="#a_lmc_at">a_lmc_at</a> <i>constant</i></h3>
+<pre>var a_lmc_at int[&gt;..]</pre>
+<p>Starting offsets of each attribute's leftmost corner data.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L324">hc/lib/gfx/draco.amni:324</a>
+</article>
+<article class="sym" id="a_nv">
+<h3><a href="#a_nv">a_nv</a> <i>constant</i></h3>
+<pre>var a_nv int[&gt;..]</pre>
+<p>Vertex counts for each attribute connectivity.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L325">hc/lib/gfx/draco.amni:325</a>
+</article>
+<article class="sym" id="nxt">
+<h3><a href="#nxt">nxt</a> <i>function</i></h3>
+<pre>nxt(c int) int</pre>
+<p>Returns the next corner within the same triangle.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L326">hc/lib/gfx/draco.amni:326</a>
+</article>
+<article class="sym" id="prv">
+<h3><a href="#prv">prv</a> <i>function</i></h3>
+<pre>prv(c int) int</pre>
+<p>Returns the previous corner within the same triangle.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L330">hc/lib/gfx/draco.amni:330</a>
+</article>
+<article class="sym" id="vert">
+<h3><a href="#vert">vert</a> <i>function</i></h3>
+<pre>vert(t int, c int) int</pre>
+<p>Returns the vertex at a corner, or -1 if invalid.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L334">hc/lib/gfx/draco.amni:334</a>
+</article>
+<article class="sym" id="oppo">
+<h3><a href="#oppo">oppo</a> <i>function</i></h3>
+<pre>oppo(t int, c int) int</pre>
+<p>Returns the opposite corner, or -1 if none or across a seam.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L344">hc/lib/gfx/draco.amni:344</a>
+</article>
+<article class="sym" id="lm">
+<h3><a href="#lm">lm</a> <i>function</i></h3>
+<pre>lm(t int, v int) int</pre>
+<p>Returns the leftmost corner of a vertex, or -1 if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L352">hc/lib/gfx/draco.amni:352</a>
+</article>
+<article class="sym" id="nverts">
+<h3><a href="#nverts">nverts</a> <i>function</i></h3>
+<pre>nverts(t int) int</pre>
+<p>Returns the number of vertices in the given connectivity.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L361">hc/lib/gfx/draco.amni:361</a>
+</article>
+<article class="sym" id="swl">
+<h3><a href="#swl">swl</a> <i>function</i></h3>
+<pre>swl(t int, c int) int</pre>
+<p>Returns the corner reached by swinging left around a vertex, or -1 at a boundary.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L362">hc/lib/gfx/draco.amni:362</a>
+</article>
+<article class="sym" id="swr">
+<h3><a href="#swr">swr</a> <i>function</i></h3>
+<pre>swr(t int, c int) int</pre>
+<p>Returns the corner reached by swinging right around a vertex, or -1 at a boundary.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L363">hc/lib/gfx/draco.amni:363</a>
+</article>
+<article class="sym" id="boundary">
+<h3><a href="#boundary">boundary</a> <i>function</i></h3>
+<pre>boundary(t int, v int) bool</pre>
+<p>Returns whether the vertex lies on a mesh boundary.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L364">hc/lib/gfx/draco.amni:364</a>
+</article>
+<article class="sym" id="on_seam">
+<h3><a href="#on_seam">on_seam</a> <i>function</i></h3>
+<pre>on_seam(k int, c int) bool</pre>
+<p>Returns whether the corner's vertex lies on a seam for the given attribute.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L365">hc/lib/gfx/draco.amni:365</a>
+</article>
+<article class="sym" id="set_opp">
+<h3><a href="#set_opp">set_opp</a> <i>function</i></h3>
+<pre>set_opp(a int, b int)</pre>
+<p>Links two corners as opposites of each other, ignoring invalid indices.</p>
+<p class="note">Corner tables. Corners are numbered 3 times the face plus 0, 1 or 2; -1 means no corner or no vertex. `nxt(c)` is -1 for c below 0, c minus 2 when c mod 3 is 2 and c plus 1 otherwise; `prv(c)` is -1 for c below 0, c plus 2 when c mod 3 is 0 and c minus 1 otherwise. The main table is `c2v` (corner to vertex), `opp` (corner to opposite corner) and `lmc` (vertex to its left-most corner; its length is</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L372">hc/lib/gfx/draco.amni:372</a>
+</article>
+<article class="sym" id="around">
+<h3><a href="#around">around</a> <i>function</i></h3>
+<pre>around(t int, c int, out int[&gt;..]&amp;)</pre>
+<p>Fills the output array with all corners around a corner's vertex.</p>
+<p class="note">`around(t, c, out)` clears the int list out and appends the corners around the vertex of corner c in the reference's VertexCornersIterator order: c first; then repeatedly `swl` from the last corner while it is not -1 and not c; when that walk ends at -1 (not back at c), continue from c with `swr` repeatedly until -1. Every corner appended is valid. A guard of 3 times `nc` plus 3 steps stops a dama</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L377">hc/lib/gfx/draco.amni:377</a>
+</article>
+<article class="sym" id="valence">
+<h3><a href="#valence">valence</a> <i>constant</i></h3>
+<pre>var valence bool = false</pre>
+<p>Flag indicating valence-based traversal is used.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L403">hc/lib/gfx/draco.amni:403</a>
+</article>
+<article class="sym" id="ev">
+<h3><a href="#ev">ev</a> <i>constant</i></h3>
+<pre>var ev int = 0</pre>
+<p>Vertex count read from the edgebreaker header.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L404">hc/lib/gfx/draco.amni:404</a>
+</article>
+<article class="sym" id="ef">
+<h3><a href="#ef">ef</a> <i>constant</i></h3>
+<pre>var ef int = 0</pre>
+<p>Face count read from the edgebreaker header.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L405">hc/lib/gfx/draco.amni:405</a>
+</article>
+<article class="sym" id="es">
+<h3><a href="#es">es</a> <i>constant</i></h3>
+<pre>var es int = 0</pre>
+<p>Symbol count read from the edgebreaker header.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L406">hc/lib/gfx/draco.amni:406</a>
+</article>
+<article class="sym" id="eq">
+<h3><a href="#eq">eq</a> <i>constant</i></h3>
+<pre>var eq int = 0</pre>
+<p>Split symbol count read from the edgebreaker header.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L407">hc/lib/gfx/draco.amni:407</a>
+</article>
+<article class="sym" id="maxv">
+<h3><a href="#maxv">maxv</a> <i>constant</i></h3>
+<pre>var maxv int = 0</pre>
+<p>Maximum vertex count including split vertices.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L408">hc/lib/gfx/draco.amni:408</a>
+</article>
+<article class="sym" id="hole">
+<h3><a href="#hole">hole</a> <i>constant</i></h3>
+<pre>var hole bool[&gt;..]</pre>
+<p>Flags marking vertex slots not yet assigned.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L409">hc/lib/gfx/draco.amni:409</a>
+</article>
+<article class="sym" id="sp_src">
+<h3><a href="#sp_src">sp_src</a> <i>constant</i></h3>
+<pre>var sp_src int[&gt;..&lt;]</pre>
+<p>Source symbol positions of split events.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L410">hc/lib/gfx/draco.amni:410</a>
+</article>
+<article class="sym" id="sp_split">
+<h3><a href="#sp_split">sp_split</a> <i>constant</i></h3>
+<pre>var sp_split int[&gt;..&lt;]</pre>
+<p>Split target positions of split events.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L411">hc/lib/gfx/draco.amni:411</a>
+</article>
+<article class="sym" id="sp_edge">
+<h3><a href="#sp_edge">sp_edge</a> <i>constant</i></h3>
+<pre>var sp_edge int[&gt;..&lt;]</pre>
+<p>Edge side bits for split events.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L412">hc/lib/gfx/draco.amni:412</a>
+</article>
+<article class="sym" id="edgebreaker">
+<h3><a href="#edgebreaker">edgebreaker</a> <i>function</i></h3>
+<pre>edgebreaker() bool</pre>
+<p>Reads and validates the edgebreaker header and split data, returning false on failure.</p>
+<p class="note">Edgebreaker connectivity, `edgebreaker()`, after the header and the traversal type byte (0 standard, 2 valence, saved in `valence`). Read with 32-bit `varintv`s: the encoded vertex count V and face count F; fail when V is above 3 times F, or when V times (V minus 1) integer-divided by 2 is below 3 times F integer-divided by 2. Then the attribute-data count `n_ad` (a byte), the symbol count S and t</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L413">hc/lib/gfx/draco.amni:413</a>
+</article>
+<article class="sym" id="start_dec">
+<h3><a href="#start_dec">start_dec</a> <i>constant</i></h3>
+<pre>var start_dec int = -1</pre>
+<p>Index of the start-face bit decoder, or -1 if unset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L461">hc/lib/gfx/draco.amni:461</a>
+</article>
+<article class="sym" id="seam_dec">
+<h3><a href="#seam_dec">seam_dec</a> <i>constant</i></h3>
+<pre>var seam_dec int[&gt;..]</pre>
+<p>Indices of the seam bit decoders for each attribute.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L462">hc/lib/gfx/draco.amni:462</a>
+</article>
+<article class="sym" id="valences">
+<h3><a href="#valences">valences</a> <i>constant</i></h3>
+<pre>var valences int[&gt;..]</pre>
+<p>Per-vertex valence counters used while decoding valence-based Edgebreaker symbols.</p>
+<p class="note">Traversal start. Standard: a 64-bit `varintv` size z that must not be above `left()`; the symbol bits start at `pos` (`bits_begin(pos, length of buf)`, so a damaged count reads on into later bytes like the reference) and `pos` moves on by z. Then (both kinds) the start-face decoder `rbit_start()`, then one seam decoder per attribute-data slot with `rbit_start()`, all failing on -1. Valence only: `</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L463">hc/lib/gfx/draco.amni:463</a>
+</article>
+<article class="sym" id="ctx_sym">
+<h3><a href="#ctx_sym">ctx_sym</a> <i>constant</i></h3>
+<pre>var ctx_sym int[&gt;..]</pre>
+<p>Buffer of decoded symbols for each of the six valence contexts.</p>
+<p class="note">Traversal start. Standard: a 64-bit `varintv` size z that must not be above `left()`; the symbol bits start at `pos` (`bits_begin(pos, length of buf)`, so a damaged count reads on into later bytes like the reference) and `pos` moves on by z. Then (both kinds) the start-face decoder `rbit_start()`, then one seam decoder per attribute-data slot with `rbit_start()`, all failing on -1. Valence only: `</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L464">hc/lib/gfx/draco.amni:464</a>
+</article>
+<article class="sym" id="ctx_at">
+<h3><a href="#ctx_at">ctx_at</a> <i>constant</i></h3>
+<pre>var ctx_at int[&gt;..]</pre>
+<p>Start offsets into the context symbol buffer, one per valence context.</p>
+<p class="note">Traversal start. Standard: a 64-bit `varintv` size z that must not be above `left()`; the symbol bits start at `pos` (`bits_begin(pos, length of buf)`, so a damaged count reads on into later bytes like the reference) and `pos` moves on by z. Then (both kinds) the start-face decoder `rbit_start()`, then one seam decoder per attribute-data slot with `rbit_start()`, all failing on -1. Valence only: `</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L465">hc/lib/gfx/draco.amni:465</a>
+</article>
+<article class="sym" id="ctx_left">
+<h3><a href="#ctx_left">ctx_left</a> <i>constant</i></h3>
+<pre>var ctx_left int[&gt;..]</pre>
+<p>Remaining symbol counts for each valence context while decoding.</p>
+<p class="note">Traversal start. Standard: a 64-bit `varintv` size z that must not be above `left()`; the symbol bits start at `pos` (`bits_begin(pos, length of buf)`, so a damaged count reads on into later bytes like the reference) and `pos` moves on by z. Then (both kinds) the start-face decoder `rbit_start()`, then one seam decoder per attribute-data slot with `rbit_start()`, all failing on -1. Valence only: `</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L466">hc/lib/gfx/draco.amni:466</a>
+</article>
+<article class="sym" id="active">
+<h3><a href="#active">active</a> <i>constant</i></h3>
+<pre>var active int = -1</pre>
+<p>Index of the currently active valence context, or -1 when none is selected.</p>
+<p class="note">Traversal start. Standard: a 64-bit `varintv` size z that must not be above `left()`; the symbol bits start at `pos` (`bits_begin(pos, length of buf)`, so a damaged count reads on into later bytes like the reference) and `pos` moves on by z. Then (both kinds) the start-face decoder `rbit_start()`, then one seam decoder per attribute-data slot with `rbit_start()`, all failing on -1. Valence only: `</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L467">hc/lib/gfx/draco.amni:467</a>
+</article>
+<article class="sym" id="att_start">
+<h3><a href="#att_start">att_start</a> <i>constant</i></h3>
+<pre>var att_start int = 0</pre>
+<p>Byte position where attribute data begins after the traversal section.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L468">hc/lib/gfx/draco.amni:468</a>
+</article>
+<article class="sym" id="traversal_start">
+<h3><a href="#traversal_start">traversal_start</a> <i>function</i></h3>
+<pre>traversal_start() bool</pre>
+<p>Reads symbol and seam decoder setup and valence contexts, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L469">hc/lib/gfx/draco.amni:469</a>
+</article>
+<article class="sym" id="next_symbol">
+<h3><a href="#next_symbol">next_symbol</a> <i>function</i></h3>
+<pre>next_symbol() int</pre>
+<p>Returns the next Edgebreaker symbol, from bits or valence contexts, or 99 if invalid.</p>
+<p class="note">`next_symbol()`: standard reads `bits(1)`, and when it is 1 reads `bits(2)` and gives 1 bitwise-or that shifted left by 1 (so C 0, S 1, L 3, R 5, E 7). Valence: when `active` is -1 it gives E (7); otherwise `ctx_left[active]` goes down by one, and when it is below 0 or the symbol there is above 4 it gives 99 (invalid); the symbol 0, 1, 2, 3, 4 maps to C, S, L, R, E. `reached(c)` (valence only, aft</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L502">hc/lib/gfx/draco.amni:502</a>
+</article>
+<article class="sym" id="addval">
+<h3><a href="#addval">addval</a> <i>function</i></h3>
+<pre>addval(c int, k int)</pre>
+<p>Adds an amount to the valence counter of the vertex at a corner.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L519">hc/lib/gfx/draco.amni:519</a>
+</article>
+<article class="sym" id="reached">
+<h3><a href="#reached">reached</a> <i>function</i></h3>
+<pre>reached(c int, sym int)</pre>
+<p>Updates vertex valences for a decoded symbol and selects the next valence context.</p>
+<p class="note">`next_symbol()`: standard reads `bits(1)`, and when it is 1 reads `bits(2)` and gives 1 bitwise-or that shifted left by 1 (so C 0, S 1, L 3, R 5, E 7). Valence: when `active` is -1 it gives E (7); otherwise `ctx_left[active]` goes down by one, and when it is below 0 or the symbol there is above 4 it gives 99 (invalid); the symbol 0, 1, 2, 3, 4 maps to C, S, L, R, E. `reached(c)` (valence only, aft</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L524">hc/lib/gfx/draco.amni:524</a>
+</article>
+<article class="sym" id="stk">
+<h3><a href="#stk">stk</a> <i>constant</i></h3>
+<pre>var stk int[&gt;..&lt;]</pre>
+<p>Stack of corners for open faces during Edgebreaker symbol decoding.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L548">hc/lib/gfx/draco.amni:548</a>
+</article>
+<article class="sym" id="sp_corner">
+<h3><a href="#sp_corner">sp_corner</a> <i>constant</i></h3>
+<pre>var sp_corner int[&gt;..]</pre>
+<p>Corners recorded for pending split symbols, indexed by symbol position.</p>
+<p class="note">The symbol loop runs S times with symbol id i and new face f (counting from 0, corner g is 3 times f), keeping a corner stack and a map from decoder symbol id to a corner (`sp_corner`, -1 when unset). Every corner taken from the stack or computed must be valid (0 or more) before use or it fails. C: a is the top; x is `vert(-1, nxt(a))`; b is `nxt(lm(-1, x))`; fail when a equals b or either has an </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L549">hc/lib/gfx/draco.amni:549</a>
+</article>
+<article class="sym" id="removed">
+<h3><a href="#removed">removed</a> <i>constant</i></h3>
+<pre>var removed int[&gt;..]</pre>
+<p>List of vertices merged away during S symbol handling, awaiting compaction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L550">hc/lib/gfx/draco.amni:550</a>
+</article>
+<article class="sym" id="nfaces">
+<h3><a href="#nfaces">nfaces</a> <i>constant</i></h3>
+<pre>var nfaces int = 0</pre>
+<p>Count of faces decoded so far in the connectivity pass.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L551">hc/lib/gfx/draco.amni:551</a>
+</article>
+<article class="sym" id="tmp">
+<h3><a href="#tmp">tmp</a> <i>constant</i></h3>
+<pre>var tmp int[&gt;..]</pre>
+<p>Scratch list of corners used during vertex compaction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L552">hc/lib/gfx/draco.amni:552</a>
+</article>
+<article class="sym" id="conn_nv">
+<h3><a href="#conn_nv">conn_nv</a> <i>constant</i></h3>
+<pre>var conn_nv int = 0</pre>
+<p>Vertex count of the decoded connectivity after compaction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L553">hc/lib/gfx/draco.amni:553</a>
+</article>
+<article class="sym" id="split_check">
+<h3><a href="#split_check">split_check</a> <i>function</i></h3>
+<pre>split_check(i int) bool</pre>
+<p>Resolves pending split symbols for the current symbol index, returning false on invalid data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L554">hc/lib/gfx/draco.amni:554</a>
+</article>
+<article class="sym" id="symbol_loop">
+<h3><a href="#symbol_loop">symbol_loop</a> <i>function</i></h3>
+<pre>symbol_loop() bool</pre>
+<p>Decodes all Edgebreaker symbols to build face connectivity, returning false on malformed data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L571">hc/lib/gfx/draco.amni:571</a>
+</article>
+<article class="sym" id="finish_connectivity">
+<h3><a href="#finish_connectivity">finish_connectivity</a> <i>function</i></h3>
+<pre>finish_connectivity() bool</pre>
+<p>Decodes start faces, checks face count and compacts vertices, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L663">hc/lib/gfx/draco.amni:663</a>
+</article>
+<article class="sym" id="mark_seam">
+<h3><a href="#mark_seam">mark_seam</a> <i>function</i></h3>
+<pre>mark_seam(k int, c int)</pre>
+<p>Marks a corner, its opposite corner and their vertices as seams for an attribute.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L717">hc/lib/gfx/draco.amni:717</a>
+</article>
+<article class="sym" id="seams">
+<h3><a href="#seams">seams</a> <i>function</i></h3>
+<pre>seams() bool</pre>
+<p>Reads seam flags and builds per-attribute corner-to-vertex maps, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L733">hc/lib/gfx/draco.amni:733</a>
+</article>
+<article class="sym" id="cp">
+<h3><a href="#cp">cp</a> <i>constant</i></h3>
+<pre>var cp int[&gt;..]</pre>
+<p>Scratch map from corner to output point index.</p>
+<p class="note">Points (the reference's AssignPointsToCorners). When `n_ad` is 0 the faces are the corner vertices and `points` is the connectivity vertex count. Otherwise `cp` (corner to point) has `nc` entries and points are counted from 0: for each main vertex v with `lmc[v]` c not -1: d is c; when `hole[v]` is false, for each slot k in order with `on_seam(k, c)`: walk a from `swr(-1, c)` while a is not c, fai</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L790">hc/lib/gfx/draco.amni:790</a>
+</article>
+<article class="sym" id="assign_points">
+<h3><a href="#assign_points">assign_points</a> <i>function</i></h3>
+<pre>assign_points() bool</pre>
+<p>Fills the face list and point count from connectivity and seams, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L791">hc/lib/gfx/draco.amni:791</a>
+</article>
+<article class="sym" id="sequential">
+<h3><a href="#sequential">sequential</a> <i>function</i></h3>
+<pre>sequential() bool</pre>
+<p>Decodes sequentially encoded faces and point count, returning false on malformed data.</p>
+<p class="note">Sequential connectivity, `sequential()`: 32-bit `varintv`s F and P (the point count); fail when F is above `left()` integer-divided by 3 or P is above 256 times the stream length plus 1024. A method byte: 0 reads `symbols(3 times F, 1)`; walking the values with last starting 0, each value u gives d as u shifted right by 1, negated (failing when it is above last) when u is odd; the index is last pl</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L852">hc/lib/gfx/draco.amni:852</a>
+</article>
+<article class="sym" id="dec_slot">
+<h3><a href="#dec_slot">dec_slot</a> <i>constant</i></h3>
+<pre>var dec_slot int[&gt;..]</pre>
+<p>Per-decoder slot index of the connectivity an attribute decoder uses, or -1 for positions.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L897">hc/lib/gfx/draco.amni:897</a>
+</article>
+<article class="sym" id="dec_type">
+<h3><a href="#dec_type">dec_type</a> <i>constant</i></h3>
+<pre>var dec_type int[&gt;..]</pre>
+<p>Per-decoder type code, distinguishing standard decoders from corner-based decoders.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L898">hc/lib/gfx/draco.amni:898</a>
+</article>
+<article class="sym" id="dec_trav">
+<h3><a href="#dec_trav">dec_trav</a> <i>constant</i></h3>
+<pre>var dec_trav int[&gt;..]</pre>
+<p>Per-decoder traversal method code, selecting depth-first or prediction-degree ordering.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L899">hc/lib/gfx/draco.amni:899</a>
+</article>
+<article class="sym" id="dec_first">
+<h3><a href="#dec_first">dec_first</a> <i>constant</i></h3>
+<pre>var dec_first int[&gt;..]</pre>
+<p>Per-decoder index of its first attribute in the global attribute list.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L900">hc/lib/gfx/draco.amni:900</a>
+</article>
+<article class="sym" id="dec_cnt">
+<h3><a href="#dec_cnt">dec_cnt</a> <i>constant</i></h3>
+<pre>var dec_cnt int[&gt;..]</pre>
+<p>Per-decoder count of attributes it handles.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L901">hc/lib/gfx/draco.amni:901</a>
+</article>
+<article class="sym" id="att_dkind">
+<h3><a href="#att_dkind">att_dkind</a> <i>constant</i></h3>
+<pre>var att_dkind int[&gt;..]</pre>
+<p>Per-attribute decoder kind code, such as generic, quantized or normal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L902">hc/lib/gfx/draco.amni:902</a>
+</article>
+<article class="sym" id="port_at">
+<h3><a href="#port_at">port_at</a> <i>constant</i></h3>
+<pre>var port_at int[&gt;..]</pre>
+<p>Per-attribute index into the portable data buffer, or -1 when unset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L903">hc/lib/gfx/draco.amni:903</a>
+</article>
+<article class="sym" id="pmap_at">
+<h3><a href="#pmap_at">pmap_at</a> <i>constant</i></h3>
+<pre>var pmap_at int[&gt;..]</pre>
+<p>Per-attribute index into the stored point-to-entry maps, or -1 when unset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L904">hc/lib/gfx/draco.amni:904</a>
+</article>
+<article class="sym" id="gen_at">
+<h3><a href="#gen_at">gen_at</a> <i>constant</i></h3>
+<pre>var gen_at int[&gt;..]</pre>
+<p>Per-attribute offset into the generic value buffer, or -1 when unset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L905">hc/lib/gfx/draco.amni:905</a>
+</article>
+<article class="sym" id="port_pc">
+<h3><a href="#port_pc">port_pc</a> <i>constant</i></h3>
+<pre>var port_pc int[&gt;..]</pre>
+<p>Per-attribute count of prediction-related components for portable data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L906">hc/lib/gfx/draco.amni:906</a>
+</article>
+<article class="sym" id="read_decoders">
+<h3><a href="#read_decoders">read_decoders</a> <i>function</i></h3>
+<pre>read_decoders(edge bool) bool</pre>
+<p>Reads decoder headers and attribute descriptions, allocating value storage, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L907">hc/lib/gfx/draco.amni:907</a>
+</article>
+<article class="sym" id="v2d">
+<h3><a href="#v2d">v2d</a> <i>constant</i></h3>
+<pre>var v2d int[&gt;..]</pre>
+<p>Maps each vertex to its position in the attribute traversal sequence.</p>
+<p class="note">A decoder's sequence. For a sequential mesh the entries are the points 0 to `points` minus 1 and every attribute maps each point to itself. For an edgebreaker mesh the table t is the slot for a corner-type decoder and -1 otherwise; `v2d` gets the larger of `nverts(t)` and the main vertex count entries of -1, and `d2c` and `seq` start empty. Visiting vertex v from corner c appends the point of corn</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L981">hc/lib/gfx/draco.amni:981</a>
+</article>
+<article class="sym" id="d2c">
+<h3><a href="#d2c">d2c</a> <i>constant</i></h3>
+<pre>var d2c int[&gt;..]</pre>
+<p>Maps each traversal sequence entry to its source corner.</p>
+<p class="note">A decoder's sequence. For a sequential mesh the entries are the points 0 to `points` minus 1 and every attribute maps each point to itself. For an edgebreaker mesh the table t is the slot for a corner-type decoder and -1 otherwise; `v2d` gets the larger of `nverts(t)` and the main vertex count entries of -1, and `d2c` and `seq` start empty. Visiting vertex v from corner c appends the point of corn</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L982">hc/lib/gfx/draco.amni:982</a>
+</article>
+<article class="sym" id="seq">
+<h3><a href="#seq">seq</a> <i>constant</i></h3>
+<pre>var seq int[&gt;..]</pre>
+<p>Sequence of point indices in the order attributes are encoded.</p>
+<p class="note">A decoder's sequence. For a sequential mesh the entries are the points 0 to `points` minus 1 and every attribute maps each point to itself. For an edgebreaker mesh the table t is the slot for a corner-type decoder and -1 otherwise; `v2d` gets the larger of `nverts(t)` and the main vertex count entries of -1, and `d2c` and `seq` start empty. Visiting vertex v from corner c appends the point of corn</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L983">hc/lib/gfx/draco.amni:983</a>
+</article>
+<article class="sym" id="vis_f">
+<h3><a href="#vis_f">vis_f</a> <i>constant</i></h3>
+<pre>var vis_f bool[&gt;..]</pre>
+<p>Flags marking which faces the traversal has already visited.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L984">hc/lib/gfx/draco.amni:984</a>
+</article>
+<article class="sym" id="vis_v">
+<h3><a href="#vis_v">vis_v</a> <i>constant</i></h3>
+<pre>var vis_v bool[&gt;..]</pre>
+<p>Flags marking which vertices the traversal has already visited.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L985">hc/lib/gfx/draco.amni:985</a>
+</article>
+<article class="sym" id="dstk">
+<h3><a href="#dstk">dstk</a> <i>constant</i></h3>
+<pre>var dstk int[&gt;..&lt;]</pre>
+<p>Stack of corners for the depth-first traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L986">hc/lib/gfx/draco.amni:986</a>
+</article>
+<article class="sym" id="pst0">
+<h3><a href="#pst0">pst0</a> <i>constant</i></h3>
+<pre>var pst0 int[&gt;..&lt;]</pre>
+<p>Highest-priority stack of pending corners for degree-based traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L987">hc/lib/gfx/draco.amni:987</a>
+</article>
+<article class="sym" id="pst1">
+<h3><a href="#pst1">pst1</a> <i>constant</i></h3>
+<pre>var pst1 int[&gt;..&lt;]</pre>
+<p>Medium-priority stack of pending corners for degree-based traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L988">hc/lib/gfx/draco.amni:988</a>
+</article>
+<article class="sym" id="pst2">
+<h3><a href="#pst2">pst2</a> <i>constant</i></h3>
+<pre>var pst2 int[&gt;..&lt;]</pre>
+<p>Lowest-priority stack of pending corners for degree-based traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L989">hc/lib/gfx/draco.amni:989</a>
+</article>
+<article class="sym" id="pbest">
+<h3><a href="#pbest">pbest</a> <i>constant</i></h3>
+<pre>var pbest int = 0</pre>
+<p>Best non-empty priority level currently tracked by degree-based traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L990">hc/lib/gfx/draco.amni:990</a>
+</article>
+<article class="sym" id="pdegree">
+<h3><a href="#pdegree">pdegree</a> <i>constant</i></h3>
+<pre>var pdegree int[&gt;..]</pre>
+<p>Per-vertex visit counts used to assign priorities in degree-based traversal.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L991">hc/lib/gfx/draco.amni:991</a>
+</article>
+<article class="sym" id="pmap">
+<h3><a href="#pmap">pmap</a> <i>constant</i></h3>
+<pre>var pmap int[&gt;..]</pre>
+<p>Map from point index to its position in the attribute sequence.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L992">hc/lib/gfx/draco.amni:992</a>
+</article>
+<article class="sym" id="pmaps">
+<h3><a href="#pmaps">pmaps</a> <i>constant</i></h3>
+<pre>var pmaps int[&gt;..]</pre>
+<p>Concatenated point-to-entry maps for all attribute decoders.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L993">hc/lib/gfx/draco.amni:993</a>
+</article>
+<article class="sym" id="nent">
+<h3><a href="#nent">nent</a> <i>constant</i></h3>
+<pre>var nent int = 0</pre>
+<p>Number of entries in the current attribute sequence.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L994">hc/lib/gfx/draco.amni:994</a>
+</article>
+<article class="sym" id="tt">
+<h3><a href="#tt">tt</a> <i>constant</i></h3>
+<pre>var tt int = -1</pre>
+<p>Connectivity table index of the current traversal, or -1 for the default.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L995">hc/lib/gfx/draco.amni:995</a>
+</article>
+<article class="sym" id="fvis">
+<h3><a href="#fvis">fvis</a> <i>function</i></h3>
+<pre>fvis(c int) bool</pre>
+<p>Returns whether the face of a corner is already visited, treating invalid corners as visited.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L996">hc/lib/gfx/draco.amni:996</a>
+</article>
+<article class="sym" id="visit">
+<h3><a href="#visit">visit</a> <i>function</i></h3>
+<pre>visit(v int, c int) bool</pre>
+<p>Records a vertex in the traversal sequence at a corner, returning false on invalid indices.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L997">hc/lib/gfx/draco.amni:997</a>
+</article>
+<article class="sym" id="dfs">
+<h3><a href="#dfs">dfs</a> <i>function</i></h3>
+<pre>dfs(t int, c0 int) bool</pre>
+<p>Runs depth-first traversal from a corner, returning false on invalid connectivity.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1005">hc/lib/gfx/draco.amni:1005</a>
+</article>
+<article class="sym" id="ppush">
+<h3><a href="#ppush">ppush</a> <i>function</i></h3>
+<pre>ppush(p int, c int)</pre>
+<p>Pushes a corner onto the priority stack for a given level.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1066">hc/lib/gfx/draco.amni:1066</a>
+</article>
+<article class="sym" id="pnext">
+<h3><a href="#pnext">pnext</a> <i>function</i></h3>
+<pre>pnext() int</pre>
+<p>Pops the next corner from the best non-empty priority stack, or -1 if none remain.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1076">hc/lib/gfx/draco.amni:1076</a>
+</article>
+<article class="sym" id="ppri">
+<h3><a href="#ppri">ppri</a> <i>function</i></h3>
+<pre>ppri(t int, c int) int</pre>
+<p>Returns the traversal priority of a corner and counts its vertex's visits, or -1 if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1095">hc/lib/gfx/draco.amni:1095</a>
+</article>
+<article class="sym" id="pdeg_trav">
+<h3><a href="#pdeg_trav">pdeg_trav</a> <i>function</i></h3>
+<pre>pdeg_trav(t int, c0 int) bool</pre>
+<p>Runs prediction-degree-prioritized traversal from a corner, returning false on invalid connectivity.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1102">hc/lib/gfx/draco.amni:1102</a>
+</article>
+<article class="sym" id="build_sequence">
+<h3><a href="#build_sequence">build_sequence</a> <i>function</i></h3>
+<pre>build_sequence(d int, edge bool) bool</pre>
+<p>Builds the attribute sequence and point map for a decoder, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1166">hc/lib/gfx/draco.amni:1166</a>
+</article>
+<article class="sym" id="cor">
+<h3><a href="#cor">cor</a> <i>constant</i></h3>
+<pre>var cor int[&gt;..]</pre>
+<p>Buffer of corrected values read for the current attribute before prediction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1216">hc/lib/gfx/draco.amni:1216</a>
+</article>
+<article class="sym" id="port">
+<h3><a href="#port">port</a> <i>constant</i></h3>
+<pre>var port int[&gt;..]</pre>
+<p>Buffer of portable attribute data for the current decoder.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1217">hc/lib/gfx/draco.amni:1217</a>
+</article>
+<article class="sym" id="gen">
+<h3><a href="#gen">gen</a> <i>constant</i></h3>
+<pre>var gen real[&gt;..]</pre>
+<p>Buffer of raw values read for generic attributes, stored as reals.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1218">hc/lib/gfx/draco.amni:1218</a>
+</article>
+<article class="sym" id="p2">
+<h3><a href="#p2">p2</a> <i>function</i></h3>
+<pre>p2(k int) real</pre>
+<p>Returns two raised to an integer power as a real.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1219">hc/lib/gfx/draco.amni:1219</a>
+</article>
+<article class="sym" id="f64_of">
+<h3><a href="#f64_of">f64_of</a> <i>function</i></h3>
+<pre>f64_of(x int) real</pre>
+<p>Converts 64-bit IEEE double bits stored in an integer into a real.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1228">hc/lib/gfx/draco.amni:1228</a>
+</article>
+<article class="sym" id="gen_read">
+<h3><a href="#gen_read">gen_read</a> <i>function</i></h3>
+<pre>gen_read(ai int) bool</pre>
+<p>Reads generic attribute values of the declared type into the generic buffer, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1243">hc/lib/gfx/draco.amni:1243</a>
+</article>
+<article class="sym" id="pick_kind">
+<h3><a href="#pick_kind">pick_kind</a> <i>function</i></h3>
+<pre>pick_kind(pm int, isnorm bool, edge bool) int</pre>
+<p>Chooses a prediction scheme kind from the method code, or -1 if unsupported.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1290">hc/lib/gfx/draco.amni:1290</a>
+</article>
+<article class="sym" id="first_pos">
+<h3><a href="#first_pos">first_pos</a> <i>function</i></h3>
+<pre>first_pos() int</pre>
+<p>Returns the index of the first position attribute, or -1 if none exists.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1303">hc/lib/gfx/draco.amni:1303</a>
+</article>
+<article class="sym" id="read_cor">
+<h3><a href="#read_cor">read_cor</a> <i>function</i></h3>
+<pre>read_cor(n int, pc int, zig bool) bool</pre>
+<p>Reads correction values, raw or symbol-coded, optionally zigzag decoded, returning false on failure.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1309">hc/lib/gfx/draco.amni:1309</a>
+</article>
+<article class="sym" id="wmin">
+<h3><a href="#wmin">wmin</a> <i>constant</i></h3>
+<pre>var wmin int = 0</pre>
+<p>Minimum of the wrap-around prediction range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1341">hc/lib/gfx/draco.amni:1341</a>
+</article>
+<article class="sym" id="wmax">
+<h3><a href="#wmax">wmax</a> <i>constant</i></h3>
+<pre>var wmax int = 0</pre>
+<p>Maximum of the wrap-around prediction range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1342">hc/lib/gfx/draco.amni:1342</a>
+</article>
+<article class="sym" id="wdif">
+<h3><a href="#wdif">wdif</a> <i>constant</i></h3>
+<pre>var wdif int = 1</pre>
+<p>Size of the wrap-around prediction range, maximum minus minimum plus one.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1343">hc/lib/gfx/draco.amni:1343</a>
+</article>
+<article class="sym" id="nmq">
+<h3><a href="#nmq">nmq</a> <i>constant</i></h3>
+<pre>var nmq int = 0</pre>
+<p>Quantization bit mask for normal octahedron decoding.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1344">hc/lib/gfx/draco.amni:1344</a>
+</article>
+<article class="sym" id="nmv">
+<h3><a href="#nmv">nmv</a> <i>constant</i></h3>
+<pre>var nmv int = 0</pre>
+<p>Maximum quantized value for normal octahedron decoding.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1345">hc/lib/gfx/draco.amni:1345</a>
+</article>
+<article class="sym" id="nce">
+<h3><a href="#nce">nce</a> <i>constant</i></h3>
+<pre>var nce int = 0</pre>
+<p>Center quantized value for normal octahedron decoding.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1346">hc/lib/gfx/draco.amni:1346</a>
+</article>
+<article class="sym" id="read_wrap">
+<h3><a href="#read_wrap">read_wrap</a> <i>function</i></h3>
+<pre>read_wrap() bool</pre>
+<p>Reads the wrap-around range bounds, returning false if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1347">hc/lib/gfx/draco.amni:1347</a>
+</article>
+<article class="sym" id="wrap_apply">
+<h3><a href="#wrap_apply">wrap_apply</a> <i>function</i></h3>
+<pre>wrap_apply(pv int, e int) int</pre>
+<p>Applies a correction to a predicted value, wrapping within the range and returning the result.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1356">hc/lib/gfx/draco.amni:1356</a>
+</article>
+<article class="sym" id="read_norm">
+<h3><a href="#read_norm">read_norm</a> <i>function</i></h3>
+<pre>read_norm() bool</pre>
+<p>Reads the normal octahedron quantization parameters from the stream, returning false if they are invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1366">hc/lib/gfx/draco.amni:1366</a>
+</article>
+<article class="sym" id="modmax">
+<h3><a href="#modmax">modmax</a> <i>function</i></h3>
+<pre>modmax(x int) int</pre>
+<p>Wraps a value into the signed range used by octahedral normal coordinates.</p>
+<p class="note">Transforms (each prediction has one; all values are 32-bit). Wrap: data is min and max (`i32v()` each), fail when min is above max or max minus min is at least 2147483647; dif is max minus min plus 1. A value from prediction p and correction e: p is clamped to min..max, v is p plus e (as 64-bit), then v minus dif when v is above max, v plus dif when v is below min. Normal: data is a value m (`i32v</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1382">hc/lib/gfx/draco.amni:1382</a>
+</article>
+<article class="sym" id="rot2">
+<h3><a href="#rot2">rot2</a> <i>function</i></h3>
+<pre>rot2(r int, s int, t int) int, int</pre>
+<p>Rotates an octahedral coordinate pair by the given number of quarter turns.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1385">hc/lib/gfx/draco.amni:1385</a>
+</article>
+<article class="sym" id="invert">
+<h3><a href="#invert">invert</a> <i>function</i></h3>
+<pre>invert(s int, t int) int, int</pre>
+<p>Inverts an octahedral coordinate pair across the diamond boundary.</p>
+<p class="note">Transforms (each prediction has one; all values are 32-bit). Wrap: data is min and max (`i32v()` each), fail when min is above max or max minus min is at least 2147483647; dif is max minus min plus 1. A value from prediction p and correction e: p is clamped to min..max, v is p plus e (as 64-bit), then v minus dif when v is above max, v plus dif when v is below min. Normal: data is a value m (`i32v</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1391">hc/lib/gfx/draco.amni:1391</a>
+</article>
+<article class="sym" id="norm_apply">
+<h3><a href="#norm_apply">norm_apply</a> <i>function</i></h3>
+<pre>norm_apply(ps int, pt int, e int, f int) int, int</pre>
+<p>Applies a correction to a predicted octahedral normal and returns the resulting coordinate pair.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1422">hc/lib/gfx/draco.amni:1422</a>
+</article>
+<article class="sym" id="pbad">
+<h3><a href="#pbad">pbad</a> <i>constant</i></h3>
+<pre>var pbad bool = false</pre>
+<p>Flag set when attribute prediction reads invalid data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1459">hc/lib/gfx/draco.amni:1459</a>
+</article>
+<article class="sym" id="pbase">
+<h3><a href="#pbase">pbase</a> <i>constant</i></h3>
+<pre>var pbase int = 0</pre>
+<p>Offset into the portable value array where the current attribute begins.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1460">hc/lib/gfx/draco.amni:1460</a>
+</article>
+<article class="sym" id="pos_ai">
+<h3><a href="#pos_ai">pos_ai</a> <i>constant</i></h3>
+<pre>var pos_ai int = -1</pre>
+<p>Index of the position attribute used by texture and geometric normal predictors, or -1 if none.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1461">hc/lib/gfx/draco.amni:1461</a>
+</article>
+<article class="sym" id="pred">
+<h3><a href="#pred">pred</a> <i>constant</i></h3>
+<pre>var pred int[&gt;..]</pre>
+<p>Predicted value components for the current entry.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1462">hc/lib/gfx/draco.amni:1462</a>
+</article>
+<article class="sym" id="wmul">
+<h3><a href="#wmul">wmul</a> <i>function</i></h3>
+<pre>wmul(a int, b int) int</pre>
+<p>Multiplies two integers with 64-bit wraparound on overflow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1463">hc/lib/gfx/draco.amni:1463</a>
+</article>
+<article class="sym" id="wadd">
+<h3><a href="#wadd">wadd</a> <i>function</i></h3>
+<pre>wadd(a int, b int) int</pre>
+<p>Adds two integers with 64-bit wraparound on overflow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1464">hc/lib/gfx/draco.amni:1464</a>
+</article>
+<article class="sym" id="wsub">
+<h3><a href="#wsub">wsub</a> <i>function</i></h3>
+<pre>wsub(a int, b int) int</pre>
+<p>Subtracts two integers with 64-bit wraparound on overflow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1465">hc/lib/gfx/draco.amni:1465</a>
+</article>
+<article class="sym" id="wabs">
+<h3><a href="#wabs">wabs</a> <i>function</i></h3>
+<pre>wabs(a int) int</pre>
+<p>Returns the absolute value of an integer using wraparound arithmetic.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1466">hc/lib/gfx/draco.amni:1466</a>
+</article>
+<article class="sym" id="idw">
+<h3><a href="#idw">idw</a> <i>function</i></h3>
+<pre>idw(a int, b int) int</pre>
+<p>Divides two integers, negating the first when the divisor is -1 to avoid overflow.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1467">hc/lib/gfx/draco.amni:1467</a>
+</article>
+<article class="sym" id="zero_pred">
+<h3><a href="#zero_pred">zero_pred</a> <i>function</i></h3>
+<pre>zero_pred(pc int)</pre>
+<p>Fills the prediction with zeros for the given component count.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1468">hc/lib/gfx/draco.amni:1468</a>
+</article>
+<article class="sym" id="dat">
+<h3><a href="#dat">dat</a> <i>function</i></h3>
+<pre>dat(k int) int</pre>
+<p>Returns a value from the current attribute's portable data, flagging an error if out of range.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1472">hc/lib/gfx/draco.amni:1472</a>
+</article>
+<article class="sym" id="prev_pred">
+<h3><a href="#prev_pred">prev_pred</a> <i>function</i></h3>
+<pre>prev_pred(p int, pc int)</pre>
+<p>Sets the prediction to the previous entry's values.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1477">hc/lib/gfx/draco.amni:1477</a>
+</article>
+<article class="sym" id="ent">
+<h3><a href="#ent">ent</a> <i>function</i></h3>
+<pre>ent(t int, c int) int</pre>
+<p>Returns the entry index for a corner's vertex, flagging an error if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1481">hc/lib/gfx/draco.amni:1481</a>
+</article>
+<article class="sym" id="posc">
+<h3><a href="#posc">posc</a> <i>function</i></h3>
+<pre>posc(e int, k int) int</pre>
+<p>Returns one component of an entry's decoded position, flagging an error if unavailable.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1488">hc/lib/gfx/draco.amni:1488</a>
+</article>
+<article class="sym" id="posof">
+<h3><a href="#posof">posof</a> <i>function</i></h3>
+<pre>posof(e int) int, int, int</pre>
+<p>Returns the x, y, and z position components of an entry.</p>
+<p class="note">Predictions, given the corrections, the entry count, pc, `seq`, `d2c`, `v2d` and the table t. `posof(e)` is the position of entry e: the first position attribute's portable values at its point map entry for the point `seq[e]`, as three 64-bit numbers. Let `data(k)` read the decoded value k, which is only allowed for k already decoded; a vertex-to-entry lookup outside `v2d` or giving -1, or a corne</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1498">hc/lib/gfx/draco.amni:1498</a>
+</article>
+<article class="sym" id="pred_delta">
+<h3><a href="#pred_delta">pred_delta</a> <i>function</i></h3>
+<pre>pred_delta(p int, pc int)</pre>
+<p>Sets the prediction to zero for the first entry or the previous entry otherwise.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1504">hc/lib/gfx/draco.amni:1504</a>
+</article>
+<article class="sym" id="cf_data">
+<h3><a href="#cf_data">cf_data</a> <i>constant</i></h3>
+<pre>var cf_data int[&gt;..]</pre>
+<p>Flat array of crease flags read for constrained multi-parallelogram prediction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1507">hc/lib/gfx/draco.amni:1507</a>
+</article>
+<article class="sym" id="cf_at">
+<h3><a href="#cf_at">cf_at</a> <i>constant</i></h3>
+<pre>var cf_at int[&gt;..]</pre>
+<p>Start offsets of each context's flags within the crease flag array.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1508">hc/lib/gfx/draco.amni:1508</a>
+</article>
+<article class="sym" id="cf_cnt">
+<h3><a href="#cf_cnt">cf_cnt</a> <i>constant</i></h3>
+<pre>var cf_cnt int[&gt;..]</pre>
+<p>Number of crease flags stored for each context.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1509">hc/lib/gfx/draco.amni:1509</a>
+</article>
+<article class="sym" id="cf_used">
+<h3><a href="#cf_used">cf_used</a> <i>constant</i></h3>
+<pre>var cf_used int[&gt;..]</pre>
+<p>Number of crease flags already consumed for each context.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1510">hc/lib/gfx/draco.amni:1510</a>
+</article>
+<article class="sym" id="pall">
+<h3><a href="#pall">pall</a> <i>constant</i></h3>
+<pre>var pall int[&gt;..]</pre>
+<p>Scratch array holding all parallelogram predictions gathered for the current entry.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1511">hc/lib/gfx/draco.amni:1511</a>
+</article>
+<article class="sym" id="psum">
+<h3><a href="#psum">psum</a> <i>constant</i></h3>
+<pre>var psum int[&gt;..]</pre>
+<p>Scratch array accumulating the sum of accepted parallelogram predictions.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1512">hc/lib/gfx/draco.amni:1512</a>
+</article>
+<article class="sym" id="para">
+<h3><a href="#para">para</a> <i>function</i></h3>
+<pre>para(t int, p int, c int, pc int) bool</pre>
+<p>Computes a parallelogram prediction across a corner's opposite edge, returning false if unavailable.</p>
+<p class="note">`para(p, c, out)` is the parallelogram prediction for entry p at corner c: o is `oppo(t, c)`; with o valid, the entries of the vertices of o, `nxt(o)` and `prv(o)` (in that order: opposite, next, previous) must all be 0 or more and below p, and then each component is next plus previous minus opposite, kept with `w32`; otherwise it gives false. Parallelogram: entry 0 from a zero prediction; each la</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1513">hc/lib/gfx/draco.amni:1513</a>
+</article>
+<article class="sym" id="pred_para">
+<h3><a href="#pred_para">pred_para</a> <i>function</i></h3>
+<pre>pred_para(p int, pc int)</pre>
+<p>Sets the prediction using parallelogram prediction, falling back to the previous entry's values.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1525">hc/lib/gfx/draco.amni:1525</a>
+</article>
+<article class="sym" id="cmp_data">
+<h3><a href="#cmp_data">cmp_data</a> <i>function</i></h3>
+<pre>cmp_data() bool</pre>
+<p>Reads the crease flag data for each context, returning false if the stream is invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1530">hc/lib/gfx/draco.amni:1530</a>
+</article>
+<article class="sym" id="pred_cmp">
+<h3><a href="#pred_cmp">pred_cmp</a> <i>function</i></h3>
+<pre>pred_cmp(p int, pc int)</pre>
+<p>Sets the prediction by averaging parallelograms around the vertex, skipping those flagged as creases.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1549">hc/lib/gfx/draco.amni:1549</a>
+</article>
+<article class="sym" id="orient">
+<h3><a href="#orient">orient</a> <i>constant</i></h3>
+<pre>var orient int[&gt;..&lt;]</pre>
+<p>Orientation bits read for texture coordinate prediction.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1593">hc/lib/gfx/draco.amni:1593</a>
+</article>
+<article class="sym" id="tex_data">
+<h3><a href="#tex_data">tex_data</a> <i>function</i></h3>
+<pre>tex_data(n int) bool</pre>
+<p>Reads texture orientation bits for the given entry count, returning false if the stream is invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1594">hc/lib/gfx/draco.amni:1594</a>
+</article>
+<article class="sym" id="isqrt">
+<h3><a href="#isqrt">isqrt</a> <i>function</i></h3>
+<pre>isqrt(n int) int</pre>
+<p>Returns the integer square root of a non-negative value.</p>
+<p class="note">Texture coordinates data: a count (`i32v()`, from 0 to the value count) and a bit decoder; with last starting true, each of count bits flips last when the bit is 0, and the orientation list gets last. Values (pc must be 2), for each p from 0 with c `d2c[p]`: nd and pd are the entries of the vertices of `nxt(c)` and `prv(c)`. When nd and pd are both below p: nu and pu are their decoded values; when</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1607">hc/lib/gfx/draco.amni:1607</a>
+</article>
+<article class="sym" id="pred_tex">
+<h3><a href="#pred_tex">pred_tex</a> <i>function</i></h3>
+<pre>pred_tex(p int, pc int)</pre>
+<p>Sets the predicted texture coordinates from neighboring vertices' positions and UVs.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1622">hc/lib/gfx/draco.amni:1622</a>
+</article>
+<article class="sym" id="flip_dec">
+<h3><a href="#flip_dec">flip_dec</a> <i>constant</i></h3>
+<pre>var flip_dec int = -1</pre>
+<p>Bit decoder handle for the normal flip flags, or -1 if unset.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1700">hc/lib/gfx/draco.amni:1700</a>
+</article>
+<article class="sym" id="ar">
+<h3><a href="#ar">ar</a> <i>constant</i></h3>
+<pre>var ar int[&gt;..]</pre>
+<p>Scratch array of corners around the current vertex.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1701">hc/lib/gfx/draco.amni:1701</a>
+</article>
+<article class="sym" id="pred_geo">
+<h3><a href="#pred_geo">pred_geo</a> <i>function</i></h3>
+<pre>pred_geo(p int, pc int)</pre>
+<p>Sets the predicted octahedral normal from the area-weighted face normals around a vertex.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1702">hc/lib/gfx/draco.amni:1702</a>
+</article>
+<article class="sym" id="compute">
+<h3><a href="#compute">compute</a> <i>function</i></h3>
+<pre>compute(ai int, kind int, xf int, pc int) bool</pre>
+<p>Decodes prediction values and corrections for one attribute, returning false if the stream is invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1777">hc/lib/gfx/draco.amni:1777</a>
+</article>
+<article class="sym" id="portable">
+<h3><a href="#portable">portable</a> <i>function</i></h3>
+<pre>portable(ai int, edge bool) bool</pre>
+<p>Reads one attribute's portable values and prediction scheme, returning false if invalid.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1825">hc/lib/gfx/draco.amni:1825</a>
+</article>
+<article class="sym" id="conv">
+<h3><a href="#conv">conv</a> <i>function</i></h3>
+<pre>conv(dt int, v int) int</pre>
+<p>Converts a raw integer to the attribute's integer data type by masking and sign-extending.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1853">hc/lib/gfx/draco.amni:1853</a>
+</article>
+<article class="sym" id="soft">
+<h3><a href="#soft">soft</a> <i>function</i></h3>
+<pre>soft(msg const byte[:]) bool</pre>
+<p>Records an error message only if none is set, then returns false.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1930">hc/lib/gfx/draco.amni:1930</a>
+</article>
+<article class="sym" id="attributes-2">
+<h3><a href="#attributes-2">attributes</a> <i>function</i></h3>
+<pre>attributes(edge bool) bool</pre>
+<p>Decodes all attribute decoders and their values, returning false on failure.</p>
+<p class="note">Attributes. `attributes(edge)` reads the attribute-decoder count (a byte). For an edgebreaker mesh each decoder first reads its slot (`i8v()`), a type byte and a traversal byte: a slot of 0 or more must be below `n_ad` and not already taken, a negative slot means the position data and may appear once; type 0 (vertex) allows traversal 0 (depth first) or 1 (prediction degree), type 1 (corner) needs </p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1934">hc/lib/gfx/draco.amni:1934</a>
+</article>
+<article class="sym" id="clear_outputs">
+<h3><a href="#clear_outputs">clear_outputs</a> <i>function</i></h3>
+<pre>clear_outputs()</pre>
+<p>Clears the decoded faces, points, and attribute outputs.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1950">hc/lib/gfx/draco.amni:1950</a>
+</article>
+<article class="sym" id="reset">
+<h3><a href="#reset">reset</a> <i>function</i></h3>
+<pre>reset()</pre>
+<p>Resets all decoder state so a new stream can be decoded.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L1961">hc/lib/gfx/draco.amni:1961</a>
+</article>
+<article class="sym" id="body">
+<h3><a href="#body">body</a> <i>function</i></h3>
+<pre>body() bool</pre>
+<p>Parses the header and runs the connectivity and attribute decoding stages.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/48f0e8c50de28ffd60edf522636fb470ebcdf0fd/hc/lib/gfx/draco.amni#L2045">hc/lib/gfx/draco.amni:2045</a>
+</article>
+</details>
+<p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
+
+</main>
+<aside class="lib-side" id="lib-side">
+<h2>Helium library</h2>
+<ul>
+<li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
+<li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
+<li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>2814</span></a><ul>
+<li><a href="/api-library/helium/lib/gfx">gfx</a></li>
+<li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
+<li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
+<li><a href="/api-library/helium/lib/gfx-shapes">gfx/shapes</a></li>
+<li><a href="/api-library/helium/lib/gfx-motion">gfx/motion</a></li>
+<li><a href="/api-library/helium/lib/gfx-linalg">gfx/linalg</a></li>
+<li><a href="/api-library/helium/lib/gfx-fx">gfx/fx</a></li>
+<li><a href="/api-library/helium/lib/gfx-sparks">gfx/sparks</a></li>
+<li><a href="/api-library/helium/lib/gfx-rt">gfx/rt</a></li>
+<li><a href="/api-library/helium/lib/gfx-scalability">gfx/scalability</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_png">gfx/codec_png</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg">gfx/codec_jpeg</a></li>
+<li><a href="/api-library/helium/lib/gfx-cornell">gfx/cornell</a></li>
+<li><a href="/api-library/helium/lib/gfx-clusters">gfx/clusters</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_hdr">gfx/codec_hdr</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_jpeg_enc">gfx/codec_jpeg_enc</a></li>
+<li><a href="/api-library/helium/lib/gfx-envmap">gfx/envmap</a></li>
+<li><a href="/api-library/helium/lib/gfx-bc">gfx/bc</a></li>
+<li><a href="/api-library/helium/lib/gfx-ktx2">gfx/ktx2</a></li>
+<li><a href="/api-library/helium/lib/gfx-meshlet">gfx/meshlet</a></li>
+<li><a href="/api-library/helium/lib/gfx-hair">gfx/hair</a></li>
+<li><a href="/api-library/helium/lib/gfx-hairdo">gfx/hairdo</a></li>
+<li><a href="/api-library/helium/lib/gfx-garment">gfx/garment</a></li>
+<li><a href="/api-library/helium/lib/gfx-obj">gfx/obj</a></li>
+<li><a href="/api-library/helium/lib/gfx-soak">gfx/soak</a></li>
+<li><a href="/api-library/helium/lib/gfx-locks">gfx/locks</a></li>
+<li><a href="/api-library/helium/lib/gfx-codec_webp">gfx/codec_webp</a></li>
+<li><a href="/api-library/helium/lib/gfx-draco" class="on">gfx/draco</a><ul class="lib-sub">
+<li><a href="#decoded-mesh">Decoded Mesh</a></li>
+<li><a href="#attributes">Attributes</a></li>
+<li><a href="#errors">Errors</a></li>
+<li><a href="#attribute-decoding">Attribute Decoding</a></li>
+<li><a href="#internal">Internal helpers</a></li>
+</ul></li>
+<li><a href="/api-library/helium/lib/gfx-meshopt">gfx/meshopt</a></li>
+<li><a href="/api-library/helium/lib/gfx-video">gfx/video</a></li>
+<li><a href="/api-library/helium/lib/gfx-sdf_ttf">gfx/sdf_ttf</a></li>
+<li><a href="/api-library/helium/lib/gfx-hwrt">gfx/hwrt</a></li>
+<li><a href="/api-library/helium/lib/gfx-pathtrace">gfx/pathtrace</a></li>
+</ul>
+</li>
+<li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
+<li><a href="/api-library/helium/audio">Audio <span>211</span></a></li>
+<li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
+<li><a href="/api-library/helium/physics">Physics &amp; Navigation <span>1162</span></a></li>
+<li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
+<li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
+<li><a href="/api-library/helium/security">Security <span>189</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+</ul>
+<details class="lib-g"><summary>Gold</summary>
+<ul>
+<li><a href="/api-library/gold/">Get started with Gold</a></li>
+<li><a href="/api-library/gold/commands">Commands</a></li>
+<li><a href="/api-library/gold/format">File format</a></li>
+<li><a href="/api-library/gold/settings">Settings</a></li>
+<li><a href="/api-library/gold/dialects">Dialects</a></li>
+<li><a href="/api-library/gold/packs">Packs</a></li>
+<li><a href="/api-library/gold/writing">Writing good Gold</a></li>
+<li><a href="/api-library/gold/how">How a build works</a></li>
+</ul>
+</details>
+<details class="lib-g"><summary>Helium language</summary>
+<ul>
+<li><a href="/api-library/helium/">Helium</a></li>
+<li><a href="/api-library/helium/language/commands">Commands and options</a></li>
+<li><a href="/api-library/helium/language/builtins">Built-in functions</a></li>
+<li><a href="/api-library/helium/language/amni-basics">.amni basics</a></li>
+<li><a href="/api-library/helium/language/core-language">Core language</a></li>
+<li><a href="/api-library/helium/language/arrays-and-strings">Arrays and strings</a></li>
+<li><a href="/api-library/helium/language/control-flow">Control flow</a></li>
+<li><a href="/api-library/helium/language/structs-enums-match">Structs, enums, match</a></li>
+<li><a href="/api-library/helium/language/references-and-optionals">References and optionals</a></li>
+<li><a href="/api-library/helium/language/functions-generics-blocks">Functions, generics, blocks</a></li>
+<li><a href="/api-library/helium/language/lookup-table-functions">Lookup-table functions</a></li>
+<li><a href="/api-library/helium/language/program-modules-threads">Program, modules, threads</a></li>
+<li><a href="/api-library/helium/language/the-standard-library-at-a-glance">The standard library at a glance</a></li>
+<li><a href="/api-library/helium/language/compact-constructs-and-warnings">Compact constructs and warnings</a></li>
+<li><a href="/api-library/helium/language/web-builds">Web builds</a></li>
+</ul>
+</details>
+
+</aside>
+</div>
+<p class="page-updated">Last updated <time datetime="2026-11-15">2026-11-15</time></p>
+<footer>
+<div class="footer-links">
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="/privacy.html">PRIVACY</a>
+<a href="/terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
