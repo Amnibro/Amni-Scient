@@ -122,6 +122,11 @@ if(want('crash')){
   const af=await ev(()=>({name:window.amnicad.S.doc.name,f:window.amnicad.S.doc.features.length,tri:window.amnicad.S.mesh&&window.amnicad.S.mesh.idx.length,k:document.querySelector('#kstat').textContent}));
   ok(/crashed/.test(t)&&af.name===b4.name&&af.f===b4.f&&af.tri===b4.tri&&b4.tri>0,'B31 a kernel crash restarts the kernel, rebuilds and keeps the design',JSON.stringify([t,b4,af]));
 }
+if(want('sealstress')){
+  await E.call('load_template',{key:'bracket'});E.T(await E.call('run_nonlinear',{type:'seal'}));
+  const r=E.T(await E.call('run_stress',{fixed:{side:'-Z'},loads:[{faces:{side:'+X'},F:[0,0,-445]}]}));
+  ok(r.peak_vonMises_MPa>0&&await ev(()=>window.amnicad.S.doc.sim.type==='static'),'run_stress after a seal study switches back to a stress study: peak '+r.peak_vonMises_MPa);
+}
 }catch(e){fail++;console.log('FAIL '+e.stack);}
 finally{await E.close();}
 console.log(`${pass} passed, ${fail} failed`);process.exit(fail?1:0);

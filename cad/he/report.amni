@@ -1,0 +1,2344 @@
+import json;
+import base64;
+
+extern fn rp_view_u8(id i32, xs u8[:]) = "rp_view_u8";
+extern fn rp_view_f64(id i32, xs real[:]) = "rp_view_f64";
+let HELV int[224] = [278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278, 556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556, 1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778, 667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556, 333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556, 556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584, 350, 556, 350, 222, 556, 333, 1000, 556, 556, 333, 1000, 667, 333, 1000, 350, 611, 350, 350, 222, 222, 333, 333, 350, 556, 1000, 333, 1000, 500, 333, 944, 350, 500, 667, 278, 333, 556, 556, 556, 556, 260, 556, 333, 737, 370, 556, 584, 333, 737, 333, 400, 584, 333, 333, 333, 556, 537, 278, 333, 333, 365, 556, 834, 834, 834, 611, 667, 667, 667, 667, 667, 667, 1000, 722, 667, 667, 667, 667, 278, 278, 278, 278, 722, 722, 778, 778, 778, 778, 778, 584, 778, 722, 722, 722, 722, 667, 667, 611, 556, 556, 556, 556, 556, 556, 889, 500, 556, 556, 556, 556, 278, 278, 278, 278, 556, 556, 556, 556, 556, 556, 556, 584, 611, 556, 556, 556, 556, 500, 556, 500];
+let HELVB int[224] = [278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 333, 278, 278, 556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 333, 333, 584, 584, 584, 611, 975, 722, 722, 722, 722, 667, 611, 778, 722, 278, 556, 722, 611, 833, 722, 778, 667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 333, 278, 333, 584, 556, 333, 556, 611, 556, 611, 556, 333, 611, 611, 278, 278, 556, 278, 889, 611, 611, 611, 611, 389, 556, 333, 611, 556, 778, 556, 556, 500, 389, 280, 389, 584, 350, 556, 350, 278, 556, 500, 1000, 556, 556, 333, 1000, 667, 333, 1000, 350, 611, 350, 350, 278, 278, 500, 500, 350, 556, 1000, 333, 1000, 556, 333, 944, 350, 500, 667, 278, 333, 556, 556, 556, 556, 280, 556, 333, 737, 370, 556, 584, 333, 737, 333, 400, 584, 333, 333, 333, 611, 556, 278, 333, 333, 365, 556, 834, 834, 834, 611, 722, 722, 722, 722, 722, 722, 1000, 722, 667, 667, 667, 667, 278, 278, 278, 278, 722, 722, 778, 778, 778, 778, 778, 584, 778, 722, 722, 722, 722, 667, 667, 611, 556, 556, 556, 556, 556, 556, 889, 556, 556, 556, 556, 556, 278, 278, 278, 278, 611, 611, 611, 611, 611, 611, 611, 584, 611, 611, 611, 611, 611, 556, 611, 556];
+let WINHI int[32] = [8364, 0, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 0, 381, 0, 0, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 339, 0, 382, 376];
+let SYM int[246] = [913, 65, 722, 914, 66, 667, 915, 71, 603, 916, 68, 612, 917, 69, 611, 918, 90, 611, 919, 72, 722, 920, 81, 741, 921, 73, 333, 922, 75, 722, 923, 76, 686, 924, 77, 889, 925, 78, 722, 926, 88, 645, 927, 79, 722, 928, 80, 768, 929, 82, 556, 931, 83, 592, 932, 84, 611, 933, 85, 690, 934, 70, 763, 935, 67, 722, 936, 89, 795, 937, 87, 768, 945, 97, 631, 946, 98, 549, 947, 103, 411, 948, 100, 494, 949, 101, 439, 950, 122, 494, 951, 104, 603, 952, 113, 521, 953, 105, 329, 954, 107, 549, 955, 108, 549, 956, 109, 576, 957, 110, 521, 958, 120, 493, 959, 111, 549, 960, 112, 549, 961, 114, 549, 962, 86, 439, 963, 115, 603, 964, 116, 439, 965, 117, 576, 966, 102, 521, 967, 99, 549, 968, 121, 686, 969, 119, 686, 977, 74, 631, 981, 106, 603, 8486, 87, 768, 8710, 68, 612, 8722, 45, 549, 8869, 94, 658, 8764, 126, 549, 8242, 162, 247, 8243, 178, 411, 8804, 163, 549, 8734, 165, 713, 8596, 171, 1042, 8592, 172, 987, 8593, 173, 603, 8594, 174, 987, 8595, 175, 603, 8805, 179, 549, 8733, 181, 713, 8706, 182, 494, 8800, 185, 549, 8801, 186, 549, 8776, 187, 549, 8709, 198, 823, 8712, 206, 713, 8736, 208, 768, 8711, 209, 713, 8719, 213, 823, 8730, 214, 549, 8901, 215, 250, 8743, 217, 603, 8744, 218, 603, 8721, 229, 713, 8747, 242, 274];
+var TB byte[>..];
+var IN byte[>..];
+var IMG byte[>..];
+var DAT real[>..];
+var OUT byte[>..];
+var D json::Doc;
+var ROOT int = -1;
+var BLK int = -1;
+fn refresh_views() {
+	rp_view_u8(1, IN);
+	rp_view_u8(2, IMG);
+	rp_view_f64(3, DAT);
+	rp_view_u8(4, OUT);
+}
+export fn rp_in(n i32) {
+	IN.clear();
+	IN.reserve(n);
+	IN.resize(n, 0);
+	refresh_views();
+}
+export fn rp_img(n i32) {
+	IMG.clear();
+	IMG.reserve(n);
+	IMG.resize(n, 0);
+	refresh_views();
+}
+export fn rp_dat(n i32) {
+	DAT.clear();
+	DAT.reserve(n);
+	DAT.resize(n, 0.0);
+	refresh_views();
+}
+fn prepare() bool {
+	reset();
+	ROOT = json::parse(IN[..], D);
+	if ROOT < 0 {
+		OUT.clear();
+		OUT.append("report: ");
+		OUT.append("invalid JSON");
+		ROOT = -1;
+		return false;
+	}
+	BLK = jm(ROOT, "blocks");
+	if BLK >= 0 && D.nodes[BLK].kind != json::K_ARR { BLK = -1; }
+	set_paper();
+	true
+}
+fn reset() {
+	OUT.clear();
+	OUT.reserve(IN.len + IMG.len * 2 + DAT.len * 24 + 65536);
+	PC.clear();
+	PC.reserve(1048576);
+	PART.clear();
+	PART.reserve(1048576);
+	DN.clear();
+	DN.reserve(65536);
+	DTX.clear();
+	DTX.reserve(16384);
+	OT.clear();
+	OT.reserve(16384);
+	ZN.clear();
+	ZN.reserve(16384);
+	LS.clear();
+	LS.reserve(16384);
+	DL.clear();
+	DL.reserve(4096);
+	PS.clear();
+	PS.reserve(256);
+	MK.clear();
+	MK.reserve(256);
+	IM.clear();
+	IM.reserve(256);
+	ZE.clear();
+	ZE.reserve(256);
+	XO.clear();
+	XO.reserve(256);
+	TW.clear();
+	TW.reserve(256);
+	TQ.clear();
+	TQ.reserve(256);
+	TM.clear();
+	TM.reserve(256);
+	TB.clear();
+	NP = 0;
+	NSEC = 0;
+	NFIG = 0;
+	NTAB = 0;
+	WID = 0;
+	ZT = 0;
+	ZD = 0;
+	ROOT = -1;
+	BLK = -1;
+}
+fn jm(n int, key const byte[:]) int {
+	if n < 0 { return -1; }
+	json::member(D, n, key)
+}
+fn js(n int, key const byte[:]) const byte[:] {
+	let m = jm(n, key);
+	if m >= 0 && D.nodes[m].kind == json::K_STR { return json::text_of(D, m); }
+	""
+}
+fn jn(n int, key const byte[:], dflt real) real {
+	let m = jm(n, key);
+	if m >= 0 && (D.nodes[m].kind == json::K_INT || D.nodes[m].kind == json::K_NUM) { return D.nodes[m].num; }
+	dflt
+}
+fn jb(n int, key const byte[:]) bool {
+	let m = jm(n, key);
+	m >= 0 && D.nodes[m].kind == json::K_BOOL && D.nodes[m].whole == 1
+}
+fn jcount(n int) int {
+	if n >= 0 && D.nodes[n].kind == json::K_ARR { return D.nodes[n].count; }
+	0
+}
+fn first_of(n int) int {
+	if jcount(n) > 0 { return D.nodes[n].first; }
+	-1
+}
+fn nnum(e int) real {
+	if e >= 0 && (D.nodes[e].kind == json::K_INT || D.nodes[e].kind == json::K_NUM) { return D.nodes[e].num; }
+	0.0
+}
+fn jtext(n int) const byte[:] {
+	if n < 0 { return ""; }
+	let k = D.nodes[n].kind;
+	if k == json::K_STR { return json::text_of(D, n); }
+	if k == json::K_INT {
+		TB.clear();
+		format(TB, D.nodes[n].num as int);
+		return TB[..];
+	}
+	if k == json::K_NUM {
+		TB.clear();
+		format(TB, D.nodes[n].num);
+		return TB[..];
+	}
+	""
+}
+fn utf8_at(s const byte[:], i int) int, int {
+	if i >= s.len { return 63, i + 1; }
+	let c int = s[i];
+	if c < 0x80 { return c, i + 1; }
+	var n = 0;
+	var cp = 0;
+	var lo = 0;
+	if c >= 0xC2 && c <= 0xDF {
+		n = 1;
+		cp = c & 0x1F;
+		lo = 0x80;
+	} else if c >= 0xE0 && c <= 0xEF {
+		n = 2;
+		cp = c & 0x0F;
+		lo = 0x800;
+	} else if c >= 0xF0 && c <= 0xF4 {
+		n = 3;
+		cp = c & 0x07;
+		lo = 0x10000;
+	} else {
+		return 63, i + 1;
+	}
+	if i + n >= s.len { return 63, i + 1; }
+	for k in 1..(n + 1) {
+		let d int = s[i + k];
+		if (d & 0xC0) != 0x80 { return 63, i + 1; }
+		cp = (cp << 6) | (d & 63);
+	}
+	if cp < lo || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF) { return 63, i + 1; }
+	return cp, i + n + 1;
+}
+fn glyph_w(b int, font int) int {
+	if font == 1 { HELVB[b - 32] } else { HELV[b - 32] }
+}
+fn glyph(cp int, font int) int, int, int {
+	var b = -1;
+	if cp == 9 || cp == 8194 || cp == 8195 || cp == 8201 || cp == 8239 {
+		b = 32;
+	} else if cp == 8208 || cp == 8209 {
+		b = 45;
+	} else if cp == 8960 {
+		b = 216;
+	} else if cp == 9679 || cp == 9632 {
+		b = 149;
+	} else if cp == 9675 || cp == 9633 {
+		b = 111;
+	} else if cp >= 10005 && cp <= 10008 {
+		b = 215;
+	} else if cp == 9733 || cp == 9734 {
+		b = 42;
+	} else if cp == 10003 || cp == 10004 {
+		return 3, 214, 549;
+	} else if (cp >= 32 && cp <= 126) || (cp >= 160 && cp <= 255) {
+		b = cp;
+	} else {
+		for k in 32 {
+			if b < 0 && WINHI[k] != 0 && WINHI[k] == cp { b = 128 + k; }
+		}
+		if b < 0 {
+			for j in 82 {
+				if SYM[3 * j] == cp { return 3, SYM[3 * j + 1], SYM[3 * j + 2]; }
+			}
+			b = 63;
+		}
+	}
+	return font, b, glyph_w(b, font);
+}
+fn text_w(s const byte[:], font int, size real) real {
+	var t = 0;
+	var i = 0;
+	while i < s.len {
+		let cp, nx = utf8_at(s, i);
+		i = nx;
+		if cp != 10 {
+			let f, b, w = glyph(cp, font);
+			t += w;
+		}
+	}
+	t / 1000.0 * size
+}
+fn fix_neg0(out byte[>..]&, s int) {
+	if out.len <= s || out[s] != '-' { return; }
+	for i in (s + 1)..out.len {
+		if out[i] != '0' && out[i] != '.' { return; }
+	}
+	for i in s..(out.len - 1) { out[i] = out[i + 1]; }
+	out.pop();
+}
+fn trim_num(out byte[>..]&, s int) {
+	var dot = false;
+	for i in s..out.len {
+		if out[i] == '.' { dot = true; }
+	}
+	if dot {
+		while out[out.len - 1] == '0' { out.pop(); }
+		if out[out.len - 1] == '.' { out.pop(); }
+	}
+	fix_neg0(out, s);
+}
+fn pnum(out byte[>..]&, v real) {
+	let s = out.len;
+	format_flt(out, v, 2);
+	trim_num(out, s);
+}
+fn pcol(out byte[>..]&, c int, stroke bool) {
+	for k in 3 {
+		if k > 0 { out.push(' '); }
+		let v = (c >> (16 - 8 * k)) & 255;
+		let s = out.len;
+		format_flt(out, v / 255.0, 3);
+		trim_num(out, s);
+	}
+	if stroke { out.append(" RG\n"); } else { out.append(" rg\n"); }
+}
+fn hex6(out byte[>..]&, c int) {
+	let H = "0123456789ABCDEF";
+	var k = 20;
+	while k >= 0 {
+		out.push(H[(c >> k) & 15]);
+		k -= 4;
+	}
+}
+var PC byte[>..];
+var FS = 10.0;
+fn pdf_str(out byte[>..]&, s const byte[:], font int) {
+	var i = 0;
+	var cur = -1;
+	while i < s.len {
+		let cp, nx = utf8_at(s, i);
+		i = nx;
+		if cp != 10 {
+			let f, b, w = glyph(cp, font);
+			if f != cur {
+				if cur >= 0 { out.append(") Tj\n"); }
+				out.append("/F");
+				format(out, f + 1);
+				out.push(' ');
+				pnum(out, FS);
+				out.append(" Tf (");
+				cur = f;
+			}
+			if b == 40 || b == 41 || b == 92 { out.push(92); }
+			out.push(b as byte);
+		}
+	}
+	if cur >= 0 { out.append(") Tj\n"); }
+}
+fn pdf_text(x real, y real, s const byte[:], font int, size real, c int, anchor int) {
+	PC.append("BT\n");
+	pcol(PC, c, false);
+	var xx = x;
+	if anchor == 1 {
+		xx -= text_w(s, font, size) * 0.5;
+	} else if anchor == 2 {
+		xx -= text_w(s, font, size);
+	}
+	pnum(PC, xx);
+	PC.push(' ');
+	pnum(PC, y);
+	PC.append(" Td\n");
+	FS = size;
+	pdf_str(PC, s, font);
+	PC.append("ET\n");
+}
+var PW = 612.0;
+var PH = 792.0;
+var X0 = 54.0;
+var X1 = 558.0;
+var TOP = 726.0;
+var BOT = 58.0;
+var CW = 504.0;
+var Y = 0.0;
+let C_INK = 0x1C1F24;
+let C_GREY = 0x5B6370;
+let C_RULE = 0xD5D9DF;
+let C_DARK = 0x8A919C;
+let C_ACCENT = 0xC89B4E;
+let C_HEAD = 0xEEF0F3;
+let C_ZEBRA = 0xF7F8FA;
+fn set_paper() {
+	if js(ROOT, "paper") == "a4" {
+		PW = 595.28;
+		PH = 841.89;
+	} else {
+		PW = 612.0;
+		PH = 792.0;
+	}
+	X0 = 54.0;
+	X1 = PW - 54.0;
+	TOP = PH - 66.0;
+	BOT = 58.0;
+	CW = X1 - X0;
+}
+var PS int[>..];
+var NP = 0;
+fn pp(x real, y real) {
+	pnum(PC, x);
+	PC.push(' ');
+	pnum(PC, y);
+	PC.push(' ');
+}
+fn pdf_line(x1 real, y1 real, x2 real, y2 real, w real, c int) {
+	pcol(PC, c, true);
+	pnum(PC, w);
+	PC.append(" w ");
+	pp(x1, y1);
+	PC.append("m ");
+	pp(x2, y2);
+	PC.append("l S\n");
+}
+fn pdf_rect(x real, y real, w real, h real, c int) {
+	pcol(PC, c, false);
+	pp(x, y);
+	pnum(PC, w);
+	PC.push(' ');
+	pnum(PC, h);
+	PC.append(" re f\n");
+}
+fn new_page() {
+	PS.push(PC.len);
+	NP += 1;
+	Y = TOP;
+	if NP > 1 {
+		pdf_text(X0, PH - 40.0, js(ROOT, "title"), 0, 8.0, C_GREY, 0);
+		pdf_text(X1, PH - 40.0, js(ROOT, "header"), 0, 8.0, C_GREY, 2);
+		pdf_line(X0, PH - 46.0, X1, PH - 46.0, 0.5, C_RULE);
+	}
+}
+fn need(h real) {
+	if Y - h < BOT { new_page(); }
+}
+var LS int[>..];
+fn wrap_piece(s const byte[:], ps int, pe int, font int, size real, width real) int {
+	var i = ps;
+	while i < pe && s[i] == 32 { i++; }
+	if i >= pe {
+		LS.push(ps);
+		LS.push(ps);
+		return 1;
+	}
+	var lines = 0;
+	while i < pe {
+		var end = i;
+		var j = i;
+		var any = false;
+		var go = true;
+		while go && j < pe {
+			var we = j;
+			while we < pe && s[we] != 32 { we++; }
+			if text_w(s[i..we], font, size) <= width {
+				end = we;
+				any = true;
+				j = we;
+				while j < pe && s[j] == 32 { j++; }
+			} else {
+				go = false;
+			}
+		}
+		if !any {
+			var k = i;
+			var e = i;
+			var first = true;
+			var more = true;
+			while more && k < pe && s[k] != 32 {
+				let cp, nx = utf8_at(s, k);
+				if !first && text_w(s[i..nx], font, size) > width {
+					more = false;
+				} else {
+					first = false;
+					e = nx;
+					k = nx;
+				}
+			}
+			end = e;
+		}
+		LS.push(i);
+		LS.push(end);
+		lines++;
+		i = end;
+		while i < pe && s[i] == 32 { i++; }
+	}
+	lines
+}
+fn wrap(s const byte[:], font int, size real, width real) int {
+	LS.clear();
+	var n = 0;
+	var ps = 0;
+	var done = false;
+	while !done {
+		var pe = ps;
+		while pe < s.len && s[pe] != 10 { pe++; }
+		n += wrap_piece(s, ps, pe, font, size, width);
+		if pe >= s.len { done = true; } else { ps = pe + 1; }
+	}
+	n
+}
+fn para(s const byte[:], font int, size real, lead real, c int, x real, width real, anchor int) {
+	let n = wrap(s, font, size, width);
+	for k in n {
+		let a = LS[2 * k];
+		let e = LS[2 * k + 1];
+		need(lead);
+		Y -= lead;
+		let ax = if anchor == 1 { x + width / 2.0 } else if anchor == 2 { x + width } else { x };
+		pdf_text(ax, Y, s[a..e], font, size, c, anchor);
+	}
+}
+var NSEC = 0;
+var NFIG = 0;
+var NTAB = 0;
+struct Mark { at int, len int, page int, y real }
+var MK Mark[>..];
+var OT byte[>..];
+fn pdf_title_block() {
+	new_page();
+	para(js(ROOT, "title"), 1, 20.0, 25.0, C_INK, X0, CW, 0);
+	let sub = js(ROOT, "subtitle");
+	if sub.len > 0 { para(sub, 0, 11.0, 15.0, C_GREY, X0, CW, 0); }
+	Y -= 8.0;
+	let meta = jm(ROOT, "meta");
+	if jcount(meta) > 0 { kv_table(meta); }
+	pdf_line(X0, Y - 6.0, X1, Y - 6.0, 2.0, C_ACCENT);
+	Y -= 18.0;
+}
+fn keep_h(b int) real {
+	var t = 0.0;
+	var e = D.nodes[b].next;
+	while e >= 0 {
+		let k = js(e, "t");
+		if k == "h2" {
+			t += 24.0;
+		} else if k == "scale" {
+			t += 50.0;
+		} else if k == "fig" {
+			t += fig_h(e);
+			return t;
+		} else if k == "chart" {
+			t += 234.0;
+			return t;
+		} else {
+			return t;
+		}
+		e = D.nodes[e].next;
+	}
+	t
+}
+fn pdf_heading(b int, level int) {
+	var t byte[>..] = [];
+	if level == 1 {
+		NSEC += 1;
+		format(t, NSEC, ". ");
+	}
+	t.append(js(b, "text"));
+	let base = if level == 1 { 36.0 } else { 24.0 };
+	need(min(TOP - BOT, max(64.0, base + keep_h(b))));
+	if level == 1 {
+		Y -= 10.0;
+		MK.push(Mark { at: OT.len, len: t.len, page: NP - 1, y: Y + 4.0 });
+		OT.append(t);
+		para(t, 1, 13.0, 17.0, C_INK, X0, CW, 0);
+		pdf_line(X0, Y - 5.0, X1, Y - 5.0, 0.75, C_ACCENT);
+		Y -= 9.0;
+	} else {
+		Y -= 6.0;
+		para(t, 1, 11.0, 15.0, C_INK, X0, CW, 0);
+		Y -= 3.0;
+	}
+}
+fn pdf_par(b int) {
+	para(js(b, "text"), 0, 10.0, 13.5, C_INK, X0, CW, 0);
+	Y -= 6.0;
+}
+fn pdf_note(b int) {
+	para(js(b, "text"), 2, 8.5, 11.0, C_GREY, X0, CW, 0);
+	Y -= 5.0;
+}
+fn verdict_cols(b int) int, int {
+	let l = js(b, "level");
+	if l == "ok" { return 0x2E9E5B, 0xE5F5EC; }
+	if l == "err" { return 0xD33A3A, 0xFDE7E7; }
+	return 0xC98A0B, 0xFDF3DC;
+}
+fn pdf_verdict(b int) {
+	let bar, fill = verdict_cols(b);
+	let s = js(b, "text");
+	let n = wrap(s, 1, 10.0, CW - 22.0);
+	let h = n * 13.5 + 12.0;
+	need(h + 8.0);
+	Y -= 4.0;
+	pdf_rect(X0, Y - h, CW, h, fill);
+	pdf_rect(X0, Y - h, 3.0, h, bar);
+	for k in n {
+		pdf_text(X0 + 12.0, Y - 6.0 - 10.5 - 13.5 * k, s[LS[2 * k]..LS[2 * k + 1]], 1, 10.0, C_INK, 0);
+	}
+	Y -= h + 8.0;
+}
+var TW real[>..];
+var TQ real[>..];
+var TM int[>..];
+fn cell(row int, c int) const byte[:] {
+	if jcount(row) == 0 { return ""; }
+	var e = D.nodes[row].first;
+	var i = 0;
+	while e >= 0 {
+		if i == c { return jtext(e); }
+		i++;
+		e = D.nodes[e].next;
+	}
+	""
+}
+fn ncols(cols int, rows int) int {
+	if jcount(cols) > 0 { return jcount(cols); }
+	var m = 0;
+	var r = first_of(rows);
+	while r >= 0 {
+		m = max(m, jcount(r));
+		r = D.nodes[r].next;
+	}
+	m
+}
+fn nat_w(s const byte[:], font int) real {
+	var best = 0.0;
+	var a = 0;
+	for i in s.len + 1 {
+		if i == s.len || s[i] == 10 {
+			best = max(best, text_w(s[a..i], font, 9.0));
+			a = i + 1;
+		}
+	}
+	best + 10.0
+}
+fn word_w(s const byte[:], font int) real {
+	var best = 0.0;
+	var a = 0;
+	for i in s.len + 1 {
+		if i == s.len || s[i] == 10 || s[i] == 32 {
+			best = max(best, text_w(s[a..i], font, 9.0));
+			a = i + 1;
+		}
+	}
+	best + 10.0
+}
+fn num_start(s const byte[:]) bool {
+	var i = 0;
+	if s.len > 0 && (s[0] == '+' || s[0] == '-') {
+		i = 1;
+	} else if s.len >= 3 && s[0] == 0xE2 && s[1] == 0x88 && s[2] == 0x92 {
+		i = 3;
+	}
+	if i < s.len && s[i] >= '0' && s[i] <= '9' { return true; }
+	if i + 1 < s.len && s[i] == '.' && s[i + 1] >= '0' && s[i + 1] <= '9' { return true; }
+	false
+}
+fn cell_stats(row int, c int, font int) real, real, int {
+	var s byte[>..] = [];
+	s.append(cell(row, c));
+	let nw = nat_w(s, font);
+	let ww = word_w(s, font);
+	let kind = if s.len == 0 { 0 } else if num_start(s) { 1 } else { 2 };
+	return nw, ww, kind;
+}
+fn col_widths(cols int, rows int, kv bool, width real) {
+	TW.clear();
+	TQ.clear();
+	TM.clear();
+	let n = ncols(cols, rows);
+	let hascols = jcount(cols) > 0;
+	for c in n {
+		var nw = 0.0;
+		var ww = 0.0;
+		if hascols {
+			let hn, hw, hk = cell_stats(cols, c, 1);
+			nw = max(nw, hn);
+			ww = max(ww, hw);
+		}
+		var any = false;
+		var allnum = true;
+		var r = first_of(rows);
+		while r >= 0 {
+			let f = if kv && c == 0 { 1 } else { 0 };
+			let bn, bw, bk = cell_stats(r, c, f);
+			nw = max(nw, bn);
+			ww = max(ww, bw);
+			if bk != 0 {
+				any = true;
+				if bk == 2 { allnum = false; }
+			}
+			r = D.nodes[r].next;
+		}
+		TW.push(nw);
+		TQ.push(min(ww, 110.0));
+		TM.push(if any && allnum && !kv { 1 } else { 0 });
+	}
+	if n == 0 { return; }
+	if kv {
+		TW[0] = min(TW[0], 0.42 * width);
+		if n >= 2 { TW[1] = width - TW[0]; }
+		return;
+	}
+	var total = 0.0;
+	for w in TW { total += w; }
+	if total <= width {
+		for c in n { TW[c] += (width - total) * TW[c] / total; }
+	} else {
+		for c in n { TW[c] = max(TW[c] * width / total, min(TQ[c], TW[c])); }
+		var t2 = 0.0;
+		for w in TW { t2 += w; }
+		for c in n { TW[c] = TW[c] * width / t2; }
+	}
+}
+fn cell_font(kv bool, bold bool, c int) int {
+	if bold || (kv && c == 0) { 1 } else { 0 }
+}
+fn row_h(row int, kv bool, bold bool) real {
+	var m = 0;
+	for c in TW.len {
+		var s byte[>..] = [];
+		s.append(cell(row, c));
+		let n = wrap(s, cell_font(kv, bold, c), 9.0, TW[c] - 10.0);
+		m = max(m, n);
+	}
+	m * 11.5 + 8.0
+}
+fn pdf_row(row int, kv bool, bold bool, fill int, rule real, rc int) {
+	let h = row_h(row, kv, bold);
+	if fill != -1 { pdf_rect(X0, Y - h, CW, h, fill); }
+	var x = X0;
+	for c in TW.len {
+		var s byte[>..] = [];
+		s.append(cell(row, c));
+		let f = cell_font(kv, bold, c);
+		let n = wrap(s, f, 9.0, TW[c] - 10.0);
+		for k in n {
+			let a = LS[2 * k];
+			let e = LS[2 * k + 1];
+			let y = Y - 12.5 - 11.5 * k;
+			if TM[c] == 1 {
+				pdf_text(x + TW[c] - 5.0, y, s[a..e], f, 9.0, C_INK, 2);
+			} else {
+				pdf_text(x + 5.0, y, s[a..e], f, 9.0, C_INK, 0);
+			}
+		}
+		x += TW[c];
+	}
+	pdf_line(X0, Y - h, X1, Y - h, rule, rc);
+	Y -= h;
+}
+fn pdf_grid(cols int, rows int, kv bool, cap const byte[:]) {
+	if cap.len > 0 {
+		NTAB += 1;
+		need(40.0);
+		Y -= 4.0;
+		var t byte[>..] = [];
+		format(t, "Table ", NTAB, ". ");
+		t.append(cap);
+		para(t, 1, 9.0, 12.0, C_INK, X0, CW, 0);
+	}
+	col_widths(cols, rows, kv, CW);
+	let head = jcount(cols) > 0 && !kv;
+	let r0 = first_of(rows);
+	if head {
+		let extra = if r0 >= 0 { row_h(r0, kv, false) } else { 0.0 };
+		need(row_h(cols, kv, true) + extra);
+		pdf_row(cols, kv, true, C_HEAD, 0.75, C_DARK);
+	}
+	var r = r0;
+	var k = 0;
+	while r >= 0 {
+		if Y - row_h(r, kv, false) < BOT {
+			new_page();
+			if head { pdf_row(cols, kv, true, C_HEAD, 0.75, C_DARK); }
+		}
+		pdf_row(r, kv, false, if k % 2 == 1 { C_ZEBRA } else { -1 }, 0.4, C_RULE);
+		r = D.nodes[r].next;
+		k++;
+	}
+	Y -= 8.0;
+}
+fn kv_table(rows int) {
+	pdf_grid(-1, rows, true, "");
+}
+struct Img { off int, len int, w int, h int, png bool }
+var IM Img[>..];
+fn img_span(off int, len int) int, int {
+	let s = clamp(off, 0, IMG.len);
+	let e = clamp(off + len, s, IMG.len);
+	return s, e;
+}
+fn img_id(r int) int {
+	let off = jn(r, "off", 0.0) as int;
+	for k in IM.len {
+		if IM[k].off == off { return k; }
+	}
+	IM.push(Img { off: off, len: jn(r, "len", 0.0) as int, w: jn(r, "w", 0.0) as int, h: jn(r, "h", 0.0) as int, png: js(r, "fmt") == "png" });
+	IM.len - 1
+}
+fn fig_dims(n int) real, real {
+	let gap = 12.0;
+	let cw = if n > 0 { (CW - gap * (n - 1)) / n } else { CW };
+	let mh = (TOP - BOT) * (if n == 1 { 0.46 } else { 0.36 });
+	return cw, mh;
+}
+fn img_scale(e int, cw real, mh real) real, real {
+	var w = jn(e, "w", 1.0);
+	var h = jn(e, "h", 1.0);
+	if !(w > 0.0) { w = 1.0; }
+	if !(h > 0.0) { h = 1.0; }
+	let s = min(cw / w, mh / h);
+	return w * s, h * s;
+}
+fn fig_h(b int) real {
+	let imgs = jm(b, "imgs");
+	let n = jcount(imgs);
+	let cw, mh = fig_dims(n);
+	var tall = 0.0;
+	var lines = 0;
+	var e = first_of(imgs);
+	while e >= 0 {
+		let dw, dh = img_scale(e, cw, mh);
+		tall = max(tall, dh);
+		let cap = js(e, "cap");
+		if cap.len > 0 {
+			var t byte[>..] = [];
+			t.append("Figure 00. ");
+			t.append(cap);
+			lines = max(lines, wrap(t, 0, 8.5, cw));
+		}
+		e = D.nodes[e].next;
+	}
+	tall + 6.0 + lines * 11.0 + 4.0
+}
+fn fig_plan(b int, refs int[>..]&, dws real[>..]&, dhs real[>..]&, caps byte[>..]&, co int[>..]&) real {
+	let imgs = jm(b, "imgs");
+	let n = jcount(imgs);
+	let cw, mh = fig_dims(n);
+	var e = first_of(imgs);
+	while e >= 0 {
+		refs.push(e);
+		let dw, dh = img_scale(e, cw, mh);
+		dws.push(dw);
+		dhs.push(dh);
+		let a = caps.len;
+		let cap = js(e, "cap");
+		if cap.len > 0 {
+			NFIG += 1;
+			format(caps, "Figure ", NFIG, ". ");
+			caps.append(cap);
+		}
+		co.push(a);
+		co.push(caps.len);
+		e = D.nodes[e].next;
+	}
+	cw
+}
+fn pdf_fig(b int) {
+	var refs int[>..] = [];
+	var dws real[>..] = [];
+	var dhs real[>..] = [];
+	var caps byte[>..] = [];
+	var co int[>..] = [];
+	let cw = fig_plan(b, refs, dws, dhs, caps, co);
+	let n = refs.len;
+	let gap = 12.0;
+	var tall = 0.0;
+	var lines = 0;
+	for i in n {
+		tall = max(tall, dhs[i]);
+		let a = co[2 * i];
+		let z = co[2 * i + 1];
+		if z > a { lines = max(lines, wrap(caps[a..z], 0, 8.5, cw)); }
+	}
+	let ch = lines * 11.0;
+	need(tall + 6.0 + ch + 4.0);
+	Y -= 2.0;
+	for i in n {
+		let r = refs[i];
+		let dw = dws[i];
+		let dh = dhs[i];
+		let x = X0 + i * (cw + gap) + (cw - dw) / 2.0;
+		let y = Y - dh;
+		if js(r, "fmt") != "png" {
+			let id = img_id(r);
+			PC.append("q ");
+			pnum(PC, dw);
+			PC.append(" 0 0 ");
+			pnum(PC, dh);
+			PC.push(' ');
+			pp(x, y);
+			format(PC, "cm /Im", id, " Do Q\n");
+		}
+		pcol(PC, C_RULE, true);
+		PC.append("0.5 w ");
+		pp(x, y);
+		pnum(PC, dw);
+		PC.push(' ');
+		pnum(PC, dh);
+		PC.append(" re S\n");
+	}
+	Y -= tall + 6.0;
+	for i in n {
+		let a = co[2 * i];
+		let z = co[2 * i + 1];
+		if z > a {
+			let s = caps[a..z];
+			let cx = X0 + i * (cw + gap) + cw / 2.0;
+			let m = wrap(s, 0, 8.5, cw);
+			for k in m {
+				let la = LS[2 * k];
+				let le2 = LS[2 * k + 1];
+				pdf_text(cx, Y - 9.0 - 11.0 * k, s[la..le2], 0, 8.5, C_GREY, 1);
+			}
+		}
+	}
+	Y -= ch + 10.0;
+}
+struct Prim { kind int, a int, n int, t int, tl int, c int, font int, anchor int, rot int, size real }
+var DL Prim[>..];
+var DN real[>..];
+var DTX byte[>..];
+fn dl_clear() {
+	DL.clear();
+	DN.clear();
+	DTX.clear();
+}
+fn dl_add(kind int, c int) {
+	DL.push(Prim { kind: kind, a: DN.len, n: 0, t: DTX.len, tl: 0, c: c, font: 0, anchor: 0, rot: 0, size: 0.0 });
+}
+fn dl_num(v real) {
+	DN.push(v);
+	DL[DL.len - 1].n += 1;
+}
+fn dl_rect(x real, y real, w real, h real, c int) {
+	dl_add(1, c);
+	dl_num(x);
+	dl_num(y);
+	dl_num(w);
+	dl_num(h);
+}
+fn dl_line(x1 real, y1 real, x2 real, y2 real, w real, c int) {
+	dl_add(2, c);
+	dl_num(x1);
+	dl_num(y1);
+	dl_num(x2);
+	dl_num(y2);
+	dl_num(w);
+}
+fn dl_dot(x real, y real, r real, c int) {
+	dl_add(4, c);
+	dl_num(x);
+	dl_num(y);
+	dl_num(r);
+}
+fn dl_text(x real, y real, s const byte[:], font int, size real, c int, anchor int, rot int) {
+	DL.push(Prim { kind: 5, a: DN.len, n: 0, t: DTX.len, tl: s.len, c: c, font: font, anchor: anchor, rot: rot, size: size });
+	DTX.append(s);
+	dl_num(x);
+	dl_num(y);
+}
+fn dl_poly(width real, c int) {
+	dl_add(3, c);
+	dl_num(width);
+}
+fn dl_pt(x real, y real) {
+	dl_num(x);
+	dl_num(y);
+}
+var DW = 0.0;
+fn nth(a int, j int) int {
+	var e = first_of(a);
+	var i = 0;
+	while e >= 0 && i < j {
+		e = D.nodes[e].next;
+		i++;
+	}
+	e
+}
+fn lerp_stops(st int, t real) int {
+	let k = jcount(st);
+	if k == 0 { return 0; }
+	var a = nth(st, 0);
+	var b = a;
+	var f = 0.0;
+	if k > 1 {
+		let pos = clamp(t, 0.0, 1.0) * (k - 1);
+		var j = pos as int;
+		if j >= k - 1 { j = k - 2; }
+		f = pos - j;
+		a = nth(st, j);
+		b = nth(st, j + 1);
+	}
+	var c = 0;
+	for i in 3 {
+		let va = nnum(nth(a, i));
+		let vb = nnum(nth(b, i));
+		let v = va + (vb - va) * f;
+		let iv = clamp((v + 0.5) as int, 0, 255);
+		c = (c << 8) | iv;
+	}
+	c
+}
+fn scale_dl(b int, width real) real {
+	dl_clear();
+	let bw = min(width, 360.0);
+	dl_text(0.0, 9.0, js(b, "label"), 1, 9.0, C_INK, 0, 0);
+	let st = jm(b, "stops");
+	for i in 96 {
+		let xa = bw * i / 96.0;
+		let xb = bw * (i + 1) / 96.0;
+		dl_rect(xa, 14.0, xb - xa, 12.0, lerp_stops(st, (i + 0.5) / 96.0));
+	}
+	dl_line(0.0, 14.0, bw, 14.0, 0.5, C_DARK);
+	dl_line(0.0, 26.0, bw, 26.0, 0.5, C_DARK);
+	dl_line(0.0, 14.0, 0.0, 26.0, 0.5, C_DARK);
+	dl_line(bw, 14.0, bw, 26.0, 0.5, C_DARK);
+	let mid = jm(b, "mid");
+	let m = jcount(mid);
+	dl_line(0.0, 26.0, 0.0, 29.0, 0.5, C_DARK);
+	dl_line(bw, 26.0, bw, 29.0, 0.5, C_DARK);
+	for j in m {
+		let x = bw * (j + 1) / (m + 1);
+		dl_line(x, 26.0, x, 29.0, 0.5, C_DARK);
+	}
+	dl_text(0.0, 38.0, js(b, "lo"), 0, 8.0, C_GREY, 0, 0);
+	dl_text(bw, 38.0, js(b, "hi"), 0, 8.0, C_GREY, 2, 0);
+	var e = first_of(mid);
+	var j = 1;
+	while e >= 0 {
+		dl_text(bw * j / (m + 1), 38.0, jtext(e), 0, 8.0, C_GREY, 1, 0);
+		e = D.nodes[e].next;
+		j++;
+	}
+	DW = bw;
+	42.0
+}
+fn nice_step(span real, target int) real {
+	let raw = span / target;
+	if !(raw > 0.0) || raw > 1e300 { return 1.0; }
+	var p = 1.0;
+	while p > raw { p /= 10.0; }
+	while p * 10.0 <= raw { p *= 10.0; }
+	for m in [1.0, 2.0, 2.5, 5.0, 10.0] {
+		if m * p >= raw { return m * p; }
+	}
+	10.0 * p
+}
+fn tick_text(out byte[>..]&, v real, step real) {
+	var d = 0;
+	if step < 1.0 {
+		var t byte[>..] = [];
+		format(t, step);
+		var dot = -1;
+		var ex = false;
+		for c, i in t {
+			if c == '.' && dot < 0 { dot = i; }
+			if c == 'e' || c == 'E' { ex = true; }
+		}
+		d = if ex { 7 } else if dot >= 0 { min(t.len - dot - 1, 7) } else { 0 };
+	}
+	let s = out.len;
+	format_flt(out, v, d);
+	fix_neg0(out, s);
+}
+let CHART_PAL int[6] = [0x2B59C3, 0xE0322E, 0x3FA34D, 0xC89B4E, 0x7B4FC9, 0x2BB5C3];
+fn chart_floor(v real) real {
+	let f = (v as int) as real;
+	if f > v { f - 1.0 } else { f }
+}
+fn chart_dl(b int, width real, height real) {
+	dl_clear();
+	let ser = jm(b, "series");
+	var sl int[>..] = [];
+	var any = false;
+	var named = false;
+	var xa = 0.0;
+	var xb = 0.0;
+	var ya = 0.0;
+	var yb = 0.0;
+	var s = first_of(ser);
+	while s >= 0 {
+		sl.push(s);
+		if js(s, "name").len > 0 { named = true; }
+		var ex = first_of(jm(s, "x"));
+		var ey = first_of(jm(s, "y"));
+		while ex >= 0 && ey >= 0 {
+			let x = nnum(ex);
+			let y = nnum(ey);
+			if !any {
+				xa = x;
+				xb = x;
+				ya = y;
+				yb = y;
+				any = true;
+			} else {
+				xa = min(xa, x);
+				xb = max(xb, x);
+				ya = min(ya, y);
+				yb = max(yb, y);
+			}
+			ex = D.nodes[ex].next;
+			ey = D.nodes[ey].next;
+		}
+		s = D.nodes[s].next;
+	}
+	if !any {
+		xa = 0.0;
+		xb = 1.0;
+		ya = 0.0;
+		yb = 1.0;
+	}
+	if !(xb > xa) {
+		xa -= 1.0;
+		xb += 1.0;
+	}
+	if !(yb > ya) {
+		ya -= 1.0;
+		yb += 1.0;
+	}
+	let xs = nice_step(xb - xa, 5);
+	let ys = nice_step(yb - ya, 5);
+	let x0 = chart_floor(xa / xs) * xs;
+	let x1 = -chart_floor(-xb / xs) * xs;
+	let y0 = chart_floor(ya / ys) * ys;
+	let y1 = -chart_floor(-yb / ys) * ys;
+	let L = 58.0;
+	let R = width - 12.0;
+	let T = if named { 26.0 } else { 10.0 };
+	let B = height - 34.0;
+	let ny = ((y1 - y0) / ys + 0.5) as int;
+	for i in ny + 1 {
+		let v = y0 + i * ys;
+		let py = B - (v - y0) / (y1 - y0) * (B - T);
+		dl_line(L, py, R, py, 0.4, 0xE1E4E8);
+		var tt byte[>..] = [];
+		tick_text(tt, v, ys);
+		dl_text(L - 5.0, py + 3.0, tt, 0, 8.0, C_GREY, 2, 0);
+	}
+	let nx = ((x1 - x0) / xs + 0.5) as int;
+	for i in nx + 1 {
+		let v = x0 + i * xs;
+		let px = L + (v - x0) / (x1 - x0) * (R - L);
+		dl_line(px, T, px, B, 0.4, 0xE1E4E8);
+		var tt byte[>..] = [];
+		tick_text(tt, v, xs);
+		dl_text(px, B + 12.0, tt, 0, 8.0, C_GREY, 1, 0);
+	}
+	dl_line(L, T, L, B, 0.75, C_DARK);
+	dl_line(L, B, R, B, 0.75, C_DARK);
+	for si in sl.len {
+		let sn = sl[si];
+		let c = CHART_PAL[si % 6];
+		let dots = jb(sn, "dots");
+		var np = 0;
+		var ex = first_of(jm(sn, "x"));
+		var ey = first_of(jm(sn, "y"));
+		while ex >= 0 && ey >= 0 {
+			np++;
+			ex = D.nodes[ex].next;
+			ey = D.nodes[ey].next;
+		}
+		if !dots && np > 0 {
+			dl_poly(1.5, c);
+			ex = first_of(jm(sn, "x"));
+			ey = first_of(jm(sn, "y"));
+			while ex >= 0 && ey >= 0 {
+				let px = L + (nnum(ex) - x0) / (x1 - x0) * (R - L);
+				let py = B - (nnum(ey) - y0) / (y1 - y0) * (B - T);
+				dl_pt(px, py);
+				ex = D.nodes[ex].next;
+				ey = D.nodes[ey].next;
+			}
+		}
+		if dots || np == 1 {
+			ex = first_of(jm(sn, "x"));
+			ey = first_of(jm(sn, "y"));
+			while ex >= 0 && ey >= 0 {
+				let px = L + (nnum(ex) - x0) / (x1 - x0) * (R - L);
+				let py = B - (nnum(ey) - y0) / (y1 - y0) * (B - T);
+				dl_dot(px, py, 2.0, c);
+				ex = D.nodes[ex].next;
+				ey = D.nodes[ey].next;
+			}
+		}
+	}
+	if named {
+		var rx = R;
+		var i = sl.len - 1;
+		while i >= 0 {
+			let sn = sl[i];
+			let nm = js(sn, "name");
+			if nm.len > 0 {
+				let c = CHART_PAL[i % 6];
+				dl_text(rx, 13.0, nm, 0, 8.0, C_GREY, 2, 0);
+				let se = rx - text_w(nm, 0, 8.0) - 4.0;
+				let ss = se - 14.0;
+				if jb(sn, "dots") {
+					dl_dot(ss + 7.0, 10.0, 2.5, c);
+				} else {
+					dl_line(ss, 10.0, se, 10.0, 2.0, c);
+				}
+				rx = ss - 12.0;
+			}
+			i -= 1;
+		}
+	}
+	dl_text((L + R) / 2.0, height - 6.0, js(b, "xl"), 0, 8.5, C_INK, 1, 0);
+	dl_text(14.0, (T + B) / 2.0, js(b, "yl"), 0, 8.5, C_INK, 1, 1);
+}
+fn dl_pdf(ox real, oy real) {
+	for p in DL {
+		let a = p.a;
+		if p.kind == 1 {
+			pcol(PC, p.c, false);
+			pp(ox + DN[a], oy - DN[a + 1] - DN[a + 3]);
+			pnum(PC, DN[a + 2]);
+			PC.push(' ');
+			pnum(PC, DN[a + 3]);
+			PC.append(" re f\n");
+		} else if p.kind == 2 {
+			pcol(PC, p.c, true);
+			pnum(PC, DN[a + 4]);
+			PC.append(" w ");
+			pp(ox + DN[a], oy - DN[a + 1]);
+			PC.append("m ");
+			pp(ox + DN[a + 2], oy - DN[a + 3]);
+			PC.append("l S\n");
+		} else if p.kind == 3 {
+			PC.append("1 J 1 j\n");
+			pcol(PC, p.c, true);
+			pnum(PC, DN[a]);
+			PC.append(" w\n");
+			let np = (p.n - 1) / 2;
+			for i in np {
+				pp(ox + DN[a + 1 + 2 * i], oy - DN[a + 2 + 2 * i]);
+				if i == 0 { PC.append("m\n"); } else { PC.append("l\n"); }
+			}
+			PC.append("S\n0 J 0 j\n");
+		} else if p.kind == 4 {
+			let cx = ox + DN[a];
+			let cy = oy - DN[a + 1];
+			let r = DN[a + 2];
+			let k = 0.5523 * r;
+			pcol(PC, p.c, false);
+			pp(cx + r, cy);
+			PC.append("m\n");
+			pp(cx + r, cy + k);
+			pp(cx + k, cy + r);
+			pp(cx, cy + r);
+			PC.append("c\n");
+			pp(cx - k, cy + r);
+			pp(cx - r, cy + k);
+			pp(cx - r, cy);
+			PC.append("c\n");
+			pp(cx - r, cy - k);
+			pp(cx - k, cy - r);
+			pp(cx, cy - r);
+			PC.append("c\n");
+			pp(cx + k, cy - r);
+			pp(cx + r, cy - k);
+			pp(cx + r, cy);
+			PC.append("c\nf\n");
+		} else if p.kind == 5 {
+			let s = DTX[p.t..p.t + p.tl];
+			let tw = text_w(s, p.font, p.size);
+			let sh = if p.anchor == 1 { tw * 0.5 } else if p.anchor == 2 { tw } else { 0.0 };
+			PC.append("BT\n");
+			pcol(PC, p.c, false);
+			if p.rot == 1 {
+				PC.append("0 1 -1 0 ");
+				pp(ox + DN[a], oy - DN[a + 1] - sh);
+				PC.append("Tm\n");
+			} else {
+				pp(ox + DN[a] - sh, oy - DN[a + 1]);
+				PC.append("Td\n");
+			}
+			FS = p.size;
+			pdf_str(PC, s, p.font);
+			PC.append("ET\n");
+		}
+	}
+}
+fn sa(out byte[>..]&, name const byte[:], v real) {
+	out.push(' ');
+	out.append(name);
+	out.append("=\"");
+	pnum(out, v);
+	out.push('"');
+}
+fn scol(out byte[>..]&, name const byte[:], c int) {
+	out.push(' ');
+	out.append(name);
+	out.append("=\"#");
+	hex6(out, c);
+	out.push('"');
+}
+fn dl_svg(out byte[>..]&, w real, h real, standalone bool) {
+	if standalone { out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); }
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\"");
+	sa(out, "width", w);
+	sa(out, "height", h);
+	out.append(" viewBox=\"0 0 ");
+	pnum(out, w);
+	out.push(' ');
+	pnum(out, h);
+	out.append("\" font-family=\"Helvetica, Arial, sans-serif\">");
+	out.append("<rect");
+	sa(out, "x", 0.0);
+	sa(out, "y", 0.0);
+	sa(out, "width", w);
+	sa(out, "height", h);
+	scol(out, "fill", 0xFFFFFF);
+	out.append("/>");
+	for p in DL {
+		let a = p.a;
+		if p.kind == 1 {
+			out.append("<rect");
+			sa(out, "x", DN[a]);
+			sa(out, "y", DN[a + 1]);
+			sa(out, "width", DN[a + 2]);
+			sa(out, "height", DN[a + 3]);
+			scol(out, "fill", p.c);
+			out.append("/>");
+		} else if p.kind == 2 {
+			out.append("<line");
+			sa(out, "x1", DN[a]);
+			sa(out, "y1", DN[a + 1]);
+			sa(out, "x2", DN[a + 2]);
+			sa(out, "y2", DN[a + 3]);
+			scol(out, "stroke", p.c);
+			sa(out, "stroke-width", DN[a + 4]);
+			out.append("/>");
+		} else if p.kind == 3 {
+			out.append("<polyline points=\"");
+			let np = (p.n - 1) / 2;
+			for i in np {
+				if i > 0 { out.push(' '); }
+				pnum(out, DN[a + 1 + 2 * i]);
+				out.push(',');
+				pnum(out, DN[a + 2 + 2 * i]);
+			}
+			out.append("\" fill=\"none\"");
+			scol(out, "stroke", p.c);
+			sa(out, "stroke-width", DN[a]);
+			out.append(" stroke-linejoin=\"round\" stroke-linecap=\"round\"/>");
+		} else if p.kind == 4 {
+			out.append("<circle");
+			sa(out, "cx", DN[a]);
+			sa(out, "cy", DN[a + 1]);
+			sa(out, "r", DN[a + 2]);
+			scol(out, "fill", p.c);
+			out.append("/>");
+		} else if p.kind == 5 {
+			out.append("<text");
+			sa(out, "x", DN[a]);
+			sa(out, "y", DN[a + 1]);
+			sa(out, "font-size", p.size);
+			scol(out, "fill", p.c);
+			if p.anchor == 1 { out.append(" text-anchor=\"middle\""); }
+			if p.anchor == 2 { out.append(" text-anchor=\"end\""); }
+			if p.font == 1 { out.append(" font-weight=\"bold\""); }
+			if p.font == 2 { out.append(" font-style=\"italic\""); }
+			if p.rot == 1 {
+				out.append(" transform=\"rotate(-90 ");
+				pnum(out, DN[a]);
+				out.push(' ');
+				pnum(out, DN[a + 1]);
+				out.append(")\"");
+			}
+			out.push('>');
+			xesc(out, DTX[p.t..p.t + p.tl]);
+			out.append("</text>");
+		}
+	}
+	out.append("</svg>");
+}
+fn pdf_scale(b int) {
+	let h = scale_dl(b, CW);
+	need(h + 6.0);
+	dl_pdf(X0, Y - 2.0);
+	Y -= h + 8.0;
+}
+fn chart_cap(b int, t byte[>..]&) {
+	let cap = js(b, "cap");
+	if cap.len > 0 {
+		NFIG += 1;
+		format(t, "Figure ", NFIG, ". ");
+		t.append(cap);
+	}
+}
+fn pdf_chart(b int) {
+	var t byte[>..] = [];
+	chart_cap(b, t);
+	let ch = if t.len > 0 { wrap(t, 0, 8.5, CW) * 11.0 } else { 0.0 };
+	need(224.0 + ch);
+	chart_dl(b, CW, 220.0);
+	dl_pdf(X0, Y - 2.0);
+	Y -= 224.0;
+	if t.len > 0 { para(t, 0, 8.5, 11.0, C_GREY, X0, CW, 1); }
+	Y -= 10.0;
+}
+fn pdf_layout() {
+	pdf_title_block();
+	var b = first_of(BLK);
+	while b >= 0 {
+		let t = js(b, "t");
+		if t == "h" {
+			pdf_heading(b, 1);
+		} else if t == "h2" {
+			pdf_heading(b, 2);
+		} else if t == "p" {
+			pdf_par(b);
+		} else if t == "note" {
+			pdf_note(b);
+		} else if t == "verdict" {
+			pdf_verdict(b);
+		} else if t == "kv" {
+			kv_table(jm(b, "rows"));
+		} else if t == "table" {
+			pdf_grid(jm(b, "cols"), jm(b, "rows"), false, js(b, "cap"));
+		} else if t == "fig" {
+			pdf_fig(b);
+		} else if t == "scale" {
+			pdf_scale(b);
+		} else if t == "chart" {
+			pdf_chart(b);
+		} else if t == "br" {
+			if Y != TOP { new_page(); }
+		}
+		b = D.nodes[b].next;
+	}
+	PS.push(PC.len);
+}
+fn hex4(out byte[>..]&, v int) {
+	let H = "0123456789ABCDEF";
+	var k = 12;
+	while k >= 0 {
+		out.push(H[(v >> k) & 15]);
+		k -= 4;
+	}
+}
+fn pdf_lit(out byte[>..]&, s const byte[:]) {
+	out.append("<FEFF");
+	var i = 0;
+	while i < s.len {
+		let cp, nx = utf8_at(s, i);
+		i = nx;
+		if cp > 65535 {
+			let v = cp - 65536;
+			hex4(out, 55296 + (v >> 10));
+			hex4(out, 56320 + (v & 1023));
+		} else {
+			hex4(out, cp);
+		}
+	}
+	out.push('>');
+}
+var XO int[>..];
+fn obj_begin(num int) {
+	while XO.len <= num { XO.push(0); }
+	XO[num] = OUT.len;
+	format(OUT, num, " 0 obj\n");
+}
+fn obj_end() {
+	OUT.append("\nendobj\n");
+}
+fn pad10(out byte[>..]&, v int) {
+	var t byte[>..] = [];
+	format(t, v);
+	var k = t.len;
+	while k < 10 {
+		out.push('0');
+		k++;
+	}
+	out.append(t);
+}
+fn font_name(i int) const byte[:] {
+	if i == 0 { return "Helvetica"; }
+	if i == 1 { return "Helvetica-Bold"; }
+	"Helvetica-Oblique"
+}
+fn write_pdf() {
+	pdf_layout();
+	let ni = IM.len;
+	let nm = MK.len;
+	let OL = 9 + ni;
+	let PG0 = if nm > 0 { OL + 1 + nm } else { OL };
+	let nobj = PG0 + 2 * NP - 1;
+	XO.clear();
+	XO.push(0);
+	OUT.append("%PDF-1.4\n%");
+	OUT.push(226);
+	OUT.push(227);
+	OUT.push(207);
+	OUT.push(211);
+	OUT.push(10);
+	obj_begin(1);
+	OUT.append("<< /Type /Catalog /Pages 2 0 R");
+	if nm > 0 { format(OUT, " /Outlines ", OL, " 0 R /PageMode /UseOutlines"); }
+	OUT.append(" >>");
+	obj_end();
+	obj_begin(2);
+	OUT.append("<< /Type /Pages /Kids [");
+	for p in NP { format(OUT, PG0 + 2 * p, " 0 R "); }
+	format(OUT, "] /Count ", NP, " >>");
+	obj_end();
+	obj_begin(3);
+	OUT.append("<< /Title ");
+	pdf_lit(OUT, js(ROOT, "title"));
+	OUT.append(" /Producer (Amni-CAD) /Creator (Amni-CAD)");
+	let st = js(ROOT, "stamp");
+	if st.len == 14 {
+		OUT.append(" /CreationDate (D:");
+		OUT.append(st);
+		OUT.append("Z)");
+	}
+	OUT.append(" >>");
+	obj_end();
+	obj_begin(4);
+	OUT.append("<< /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R /F4 8 0 R >> /XObject << ");
+	for k in ni { format(OUT, "/Im", k, " ", 9 + k, " 0 R "); }
+	OUT.append(">> /ProcSet [/PDF /Text /ImageC] >>");
+	obj_end();
+	for i in 3 {
+		obj_begin(5 + i);
+		OUT.append("<< /Type /Font /Subtype /Type1 /BaseFont /");
+		OUT.append(font_name(i));
+		OUT.append(" /Encoding /WinAnsiEncoding >>");
+		obj_end();
+	}
+	obj_begin(8);
+	OUT.append("<< /Type /Font /Subtype /Type1 /BaseFont /Symbol >>");
+	obj_end();
+	for k in ni {
+		let m = IM[k];
+		let s, e = img_span(m.off, m.len);
+		obj_begin(9 + k);
+		format(OUT, "<< /Type /XObject /Subtype /Image /Width ", m.w, " /Height ", m.h, " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ", e - s, " >>\nstream\n");
+		OUT.append(IMG[s..e]);
+		OUT.append("\nendstream");
+		obj_end();
+	}
+	if nm > 0 {
+		obj_begin(OL);
+		format(OUT, "<< /Type /Outlines /First ", OL + 1, " 0 R /Last ", OL + nm, " 0 R /Count ", nm, " >>");
+		obj_end();
+		for i in nm {
+			let m = MK[i];
+			obj_begin(OL + 1 + i);
+			OUT.append("<< /Title ");
+			pdf_lit(OUT, OT[m.at..m.at + m.len]);
+			format(OUT, " /Parent ", OL, " 0 R");
+			if i > 0 { format(OUT, " /Prev ", OL + i, " 0 R"); }
+			if i + 1 < nm { format(OUT, " /Next ", OL + 2 + i, " 0 R"); }
+			format(OUT, " /Dest [", PG0 + 2 * m.page, " 0 R /XYZ 0 ");
+			pnum(OUT, m.y);
+			OUT.append(" 0] >>");
+			obj_end();
+		}
+	}
+	let ftr = js(ROOT, "footer");
+	for p in NP {
+		obj_begin(PG0 + 2 * p);
+		OUT.append("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ");
+		pnum(OUT, PW);
+		OUT.push(' ');
+		pnum(OUT, PH);
+		format(OUT, "] /Resources 4 0 R /Contents ", PG0 + 2 * p + 1, " 0 R >>");
+		obj_end();
+		let m = PC.len;
+		pdf_line(X0, 46.0, X1, 46.0, 0.5, C_RULE);
+		pdf_text(X0, 34.0, ftr, 0, 8.0, C_GREY, 0);
+		var pg byte[>..] = [];
+		format(pg, "Page ", p + 1, " of ", NP);
+		pdf_text(X1, 34.0, pg, 0, 8.0, C_GREY, 2);
+		PART.clear();
+		PART.append(PC[m..PC.len]);
+		PC.resize(m, 0);
+		let a = PS[p];
+		let e = PS[p + 1];
+		obj_begin(PG0 + 2 * p + 1);
+		format(OUT, "<< /Length ", e - a + PART.len, " >>\nstream\n");
+		OUT.append(PC[a..e]);
+		OUT.append(PART);
+		OUT.append("\nendstream");
+		obj_end();
+	}
+	let xr = OUT.len;
+	format(OUT, "xref\n0 ", nobj + 1, "\n0000000000 65535 f \n");
+	for i in nobj {
+		pad10(OUT, XO[i + 1]);
+		OUT.append(" 00000 n \n");
+	}
+	format(OUT, "trailer\n<< /Size ", nobj + 1, " /Root 1 0 R /Info 3 0 R >>\nstartxref\n", xr, "\n%%EOF\n");
+}
+fn xesc(out byte[>..]&, s const byte[:]) {
+	for c in s {
+		if c == '&' {
+			out.append("&amp;");
+		} else if c == '<' {
+			out.append("&lt;");
+		} else if c == '>' {
+			out.append("&gt;");
+		} else if c == '"' {
+			out.append("&quot;");
+		} else if c < 32 && c != 9 && c != 10 {
+		} else {
+			out.push(c);
+		}
+	}
+}
+var CRC u32[256] = [0; 256];
+var CRC_OK = false;
+fn crc32(s const byte[:]) u32 {
+	if !CRC_OK {
+		for n in 256 {
+			var c = n as u32;
+			for k in 8 {
+				if (c & 1) != 0 { c = 0xEDB88320 ^ (c >> 1); } else { c = c >> 1; }
+			}
+			CRC[n] = c;
+		}
+		CRC_OK = true;
+	}
+	var c u32 = 0xFFFFFFFF;
+	for b in s {
+		let bv u32 = b;
+		c = CRC[((c ^ bv) & 255) as int] ^ (c >> 8);
+	}
+	c ^ 0xFFFFFFFF
+}
+struct Zent { name int, nlen int, crc u32, size int, at int }
+var ZE Zent[>..];
+var ZN byte[>..];
+var ZT = 0;
+var ZD = 0;
+fn dig(s const byte[:], a int, n int) int {
+	var v = 0;
+	for i in n {
+		let c int = s[a + i];
+		v = v * 10 + c - 48;
+	}
+	v
+}
+fn zip_time() {
+	let s = js(ROOT, "stamp");
+	if s.len == 14 {
+		ZD = (dig(s, 0, 4) - 1980) * 512 + dig(s, 4, 2) * 32 + dig(s, 6, 2);
+		ZT = dig(s, 8, 2) * 2048 + dig(s, 10, 2) * 32 + dig(s, 12, 2) / 2;
+	} else {
+		ZD = 33;
+		ZT = 0;
+	}
+}
+fn le(out byte[>..]&, v int, nb int) {
+	for i in nb { out.push(((v >> (8 * i)) & 255) as byte); }
+}
+fn zip_add(name const byte[:], data const byte[:]) {
+	let crc = crc32(data);
+	ZE.push(Zent { name: ZN.len, nlen: name.len, crc: crc, size: data.len, at: OUT.len });
+	ZN.append(name);
+	le(OUT, 0x04034B50, 4);
+	le(OUT, 20, 2);
+	le(OUT, 0, 2);
+	le(OUT, 0, 2);
+	le(OUT, ZT, 2);
+	le(OUT, ZD, 2);
+	le(OUT, crc as int, 4);
+	le(OUT, data.len, 4);
+	le(OUT, data.len, 4);
+	le(OUT, name.len, 2);
+	le(OUT, 0, 2);
+	OUT.append(name);
+	OUT.append(data);
+}
+fn zip_end() {
+	let start = OUT.len;
+	for e in ZE {
+		le(OUT, 0x02014B50, 4);
+		le(OUT, 20, 2);
+		le(OUT, 20, 2);
+		le(OUT, 0, 2);
+		le(OUT, 0, 2);
+		le(OUT, ZT, 2);
+		le(OUT, ZD, 2);
+		le(OUT, e.crc as int, 4);
+		le(OUT, e.size, 4);
+		le(OUT, e.size, 4);
+		le(OUT, e.nlen, 2);
+		le(OUT, 0, 2);
+		le(OUT, 0, 2);
+		le(OUT, 0, 2);
+		le(OUT, 0, 2);
+		le(OUT, 0, 4);
+		le(OUT, e.at, 4);
+		OUT.append(ZN[e.name..e.name + e.nlen]);
+	}
+	let size = OUT.len - start;
+	le(OUT, 0x06054B50, 4);
+	le(OUT, 0, 2);
+	le(OUT, 0, 2);
+	le(OUT, ZE.len, 2);
+	le(OUT, ZE.len, 2);
+	le(OUT, size, 4);
+	le(OUT, start, 4);
+	le(OUT, 0, 2);
+}
+
+let X_HEAD const byte[:] = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n";
+let X_TYPES const byte[:] = "<Types xmlns='http://schemas.openxmlformats.org/package/2006/content-types'><Default Extension='rels' ContentType='application/vnd.openxmlformats-package.relationships+xml'/><Default Extension='xml' ContentType='application/xml'/><Default Extension='jpeg' ContentType='image/jpeg'/><Default Extension='png' ContentType='image/png'/><Override PartName='/word/document.xml' ContentType='application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'/><Override PartName='/word/styles.xml' ContentType='application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml'/><Override PartName='/word/footer1.xml' ContentType='application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml'/><Override PartName='/docProps/core.xml' ContentType='application/vnd.openxmlformats-package.core-properties+xml'/></Types>";
+let X_RELS const byte[:] = "<Relationships xmlns='http://schemas.openxmlformats.org/package/2006/relationships'><Relationship Id='rId1' Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument' Target='word/document.xml'/><Relationship Id='rId2' Type='http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties' Target='docProps/core.xml'/></Relationships>";
+let X_CORE const byte[:] = "<cp:coreProperties xmlns:cp='http://schemas.openxmlformats.org/package/2006/metadata/core-properties' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:dcterms='http://purl.org/dc/terms/' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+let X_DOCRELS const byte[:] = "<Relationships xmlns='http://schemas.openxmlformats.org/package/2006/relationships'><Relationship Id='rId1' Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles' Target='styles.xml'/><Relationship Id='rId2' Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer' Target='footer1.xml'/>";
+let X_IMGREL const byte[:] = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+let X_STYLES const byte[:] = "<w:styles xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii='Arial' w:hAnsi='Arial' w:eastAsia='Arial' w:cs='Arial'/><w:color w:val='1C1F24'/><w:sz w:val='20'/><w:szCs w:val='20'/><w:lang w:val='en-US'/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after='120' w:line='264' w:lineRule='auto'/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type='paragraph' w:default='1' w:styleId='Normal'><w:name w:val='Normal'/><w:qFormat/></w:style><w:style w:type='paragraph' w:styleId='Title'><w:name w:val='Title'/><w:basedOn w:val='Normal'/><w:next w:val='Normal'/><w:qFormat/><w:pPr><w:spacing w:after='60'/></w:pPr><w:rPr><w:b/><w:sz w:val='40'/><w:szCs w:val='40'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Subtitle'><w:name w:val='Subtitle'/><w:basedOn w:val='Normal'/><w:next w:val='Normal'/><w:qFormat/><w:pPr><w:spacing w:after='200'/></w:pPr><w:rPr><w:color w:val='5B6370'/><w:sz w:val='22'/><w:szCs w:val='22'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Heading1'><w:name w:val='heading 1'/><w:basedOn w:val='Normal'/><w:next w:val='Normal'/><w:qFormat/><w:pPr><w:keepNext/><w:pBdr><w:bottom w:val='single' w:sz='6' w:space='2' w:color='C89B4E'/></w:pBdr><w:spacing w:before='360' w:after='120'/><w:outlineLvl w:val='0'/></w:pPr><w:rPr><w:b/><w:sz w:val='26'/><w:szCs w:val='26'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Heading2'><w:name w:val='heading 2'/><w:basedOn w:val='Normal'/><w:next w:val='Normal'/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before='240' w:after='80'/><w:outlineLvl w:val='1'/></w:pPr><w:rPr><w:b/><w:sz w:val='22'/><w:szCs w:val='22'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Caption'><w:name w:val='caption'/><w:basedOn w:val='Normal'/><w:next w:val='Normal'/><w:qFormat/><w:pPr><w:spacing w:before='40' w:after='200'/><w:jc w:val='center'/></w:pPr><w:rPr><w:color w:val='5B6370'/><w:sz w:val='17'/><w:szCs w:val='17'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Note'><w:name w:val='Note'/><w:basedOn w:val='Normal'/><w:qFormat/><w:rPr><w:i/><w:color w:val='5B6370'/><w:sz w:val='17'/><w:szCs w:val='17'/></w:rPr></w:style><w:style w:type='paragraph' w:styleId='Footer'><w:name w:val='footer'/><w:basedOn w:val='Normal'/><w:pPr><w:spacing w:after='0'/></w:pPr><w:rPr><w:color w:val='5B6370'/><w:sz w:val='16'/><w:szCs w:val='16'/></w:rPr></w:style><w:style w:type='table' w:default='1' w:styleId='TableNormal'><w:name w:val='Normal Table'/><w:tblPr><w:tblInd w:w='0' w:type='dxa'/><w:tblCellMar><w:top w:w='0' w:type='dxa'/><w:left w:w='108' w:type='dxa'/><w:bottom w:w='0' w:type='dxa'/><w:right w:w='108' w:type='dxa'/></w:tblCellMar></w:tblPr></w:style></w:styles>";
+let X_DOC const byte[:] = "<w:document xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' xmlns:r='http://schemas.openxmlformats.org/officeDocument/2006/relationships' xmlns:wp='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing' xmlns:a='http://schemas.openxmlformats.org/drawingml/2006/main' xmlns:pic='http://schemas.openxmlformats.org/drawingml/2006/picture'><w:body>";
+let X_FTR const byte[:] = "<w:ftr xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' xmlns:r='http://schemas.openxmlformats.org/officeDocument/2006/relationships'>";
+let X_TBL const byte[:] = "<w:tblPr><w:tblW w:w='5000' w:type='pct'/><w:tblBorders><w:bottom w:val='single' w:sz='4' w:space='0' w:color='D5D9DF'/><w:insideH w:val='single' w:sz='4' w:space='0' w:color='D5D9DF'/></w:tblBorders><w:tblLayout w:type='fixed'/><w:tblCellMar><w:top w:w='60' w:type='dxa'/><w:left w:w='80' w:type='dxa'/><w:bottom w:w='60' w:type='dxa'/><w:right w:w='80' w:type='dxa'/></w:tblCellMar><w:tblLook w:val='04A0'/></w:tblPr>";
+let X_TBLPLAIN const byte[:] = "<w:tblPr><w:tblW w:w='5000' w:type='pct'/><w:tblLayout w:type='fixed'/><w:tblLook w:val='0000'/></w:tblPr>";
+let H_CSS const byte[:] = "body{margin:0;background:#fff;color:#1c1f24;font:15px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}main{max-width:8.5in;margin:0 auto;padding:28px 20px 48px}h1{font-size:26px;line-height:1.2;margin:0 0 4px}.sub{color:#5b6370;margin:0 0 12px}.rule{height:3px;background:#c89b4e;border-radius:2px;margin:14px 0 18px}h2{font-size:19px;margin:28px 0 10px;padding-bottom:4px;border-bottom:1px solid #c89b4e}h3{font-size:16px;margin:18px 0 6px}p{margin:0 0 10px}.note{color:#5b6370;font-size:13px;font-style:italic}table{border-collapse:collapse;width:100%;margin:6px 0 16px;font-size:13.5px}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid #dfe2e7;vertical-align:top}thead th{background:#eef0f3;border-bottom:1px solid #8a919c}tbody tr:nth-child(even){background:#f7f8fa}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}table.kv td:first-child{font-weight:600;width:38%}.cap{font-weight:600;font-size:13.5px;margin:14px 0 2px}.verdict{border-left:4px solid;border-radius:4px;padding:9px 12px;margin:10px 0 14px;font-weight:600}.ok{background:#e5f5ec;border-color:#2e9e5b}.warn{background:#fdf3dc;border-color:#c98a0b}.err{background:#fde7e7;border-color:#d33a3a}.figs{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0 16px}figure{margin:0}figure img,figure svg{display:block;width:100%;height:auto;border:1px solid #d5d9df;border-radius:4px;background:#fff}figure.scale svg{border:0;max-width:360px}figcaption{color:#5b6370;font-size:13px;text-align:center;margin-top:4px}nav.toc{background:#f7f8fa;border-radius:6px;padding:10px 16px;margin:0 0 18px;font-size:14px}nav.toc ol{margin:4px 0 0;padding-left:22px}nav.toc a{color:#1c1f24}footer{margin-top:32px;padding-top:8px;border-top:1px solid #dfe2e7;color:#5b6370;font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}@media print{main{max-width:none;padding:0}h2,h3,.cap{break-after:avoid}figure,tr,.verdict{break-inside:avoid}nav.toc{display:none}}";
+var PART byte[>..];
+fn w_run(s const byte[:], bold bool, italic bool, size int) {
+	var a = 0;
+	for i in s.len + 1 {
+		if i == s.len || s[i] == 10 {
+			if a > 0 { PART.append("<w:r><w:br/></w:r>"); }
+			PART.append("<w:r>");
+			if bold || italic || size > 0 {
+				PART.append("<w:rPr>");
+				if bold { PART.append("<w:b/>"); }
+				if italic { PART.append("<w:i/>"); }
+				if size > 0 { format(PART, "<w:sz w:val='", size, "'/>"); }
+				PART.append("</w:rPr>");
+			}
+			PART.append("<w:t xml:space='preserve'>");
+			xesc(PART, s[a..i]);
+			PART.append("</w:t></w:r>");
+			a = i + 1;
+		}
+	}
+}
+fn w_par(s const byte[:], style const byte[:], bold bool, center bool, size int) {
+	PART.append("<w:p><w:pPr>");
+	if style.len > 0 {
+		PART.append("<w:pStyle w:val='");
+		PART.append(style);
+		PART.append("'/>");
+	}
+	if center { PART.append("<w:jc w:val='center'/>"); }
+	PART.append("</w:pPr>");
+	w_run(s, bold, false, size);
+	PART.append("</w:p>");
+}
+fn w_cell(text const byte[:], tw int, fill int, bold bool, right bool) {
+	format(PART, "<w:tc><w:tcPr><w:tcW w:w='", tw, "' w:type='dxa'/>");
+	if fill != -1 {
+		PART.append("<w:shd w:val='clear' w:color='auto' w:fill='");
+		hex6(PART, fill);
+		PART.append("'/>");
+	}
+	PART.append("</w:tcPr><w:p><w:pPr><w:spacing w:after='0'/>");
+	if right { PART.append("<w:jc w:val='right'/>"); }
+	PART.append("</w:pPr>");
+	w_run(text, bold, false, 18);
+	PART.append("</w:p></w:tc>");
+}
+fn w_table(cols int, rows int, kv bool, cap const byte[:]) {
+	if cap.len > 0 {
+		NTAB += 1;
+		var t byte[>..] = [];
+		format(t, "Table ", NTAB, ". ");
+		t.append(cap);
+		PART.append("<w:p><w:pPr><w:keepNext/></w:pPr>");
+		w_run(t, true, false, 18);
+		PART.append("</w:p>");
+	}
+	col_widths(cols, rows, kv, CW);
+	var tw int[>..] = [];
+	for w in TW { tw.push((w * 20.0 + 0.5) as int); }
+	PART.append("<w:tbl>");
+	PART.append(X_TBL);
+	PART.append("<w:tblGrid>");
+	for w in tw { format(PART, "<w:gridCol w:w='", w, "'/>"); }
+	PART.append("</w:tblGrid>");
+	if jcount(cols) > 0 && !kv {
+		PART.append("<w:tr><w:trPr><w:tblHeader/></w:trPr>");
+		for c in tw.len { w_cell(cell(cols, c), tw[c], 0xEEF0F3, true, TM[c] == 1); }
+		PART.append("</w:tr>");
+	}
+	var r = first_of(rows);
+	var k = 0;
+	while r >= 0 {
+		PART.append("<w:tr>");
+		for c in tw.len {
+			w_cell(cell(r, c), tw[c], if k % 2 == 1 { 0xF7F8FA } else { -1 }, kv && c == 0, TM[c] == 1);
+		}
+		PART.append("</w:tr>");
+		r = D.nodes[r].next;
+		k++;
+	}
+	PART.append("</w:tbl><w:p><w:pPr><w:spacing w:after='60'/></w:pPr></w:p>");
+}
+var WID = 0;
+fn emu(v real) int {
+	(v * 12700.0 + 0.5) as int
+}
+fn w_img(k int, cx int, cy int) {
+	WID += 1;
+	format(PART, "<w:r><w:drawing><wp:inline distT='0' distB='0' distL='0' distR='0'><wp:extent cx='", cx, "' cy='", cy, "'/><wp:docPr id='", WID, "' name='Picture ", WID, "'/><a:graphic><a:graphicData uri='http://schemas.openxmlformats.org/drawingml/2006/picture'><pic:pic><pic:nvPicPr><pic:cNvPr id='", WID, "' name='image'/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed='rId", k + 10, "'/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x='0' y='0'/><a:ext cx='", cx, "' cy='", cy, "'/></a:xfrm><a:prstGeom prst='rect'><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>");
+}
+fn w_fig(b int) {
+	var refs int[>..] = [];
+	var dws real[>..] = [];
+	var dhs real[>..] = [];
+	var caps byte[>..] = [];
+	var co int[>..] = [];
+	let cw = fig_plan(b, refs, dws, dhs, caps, co);
+	let n = refs.len;
+	if n == 0 { return; }
+	if n == 1 {
+		let id = img_id(refs[0]);
+		let a = co[0];
+		let z = co[1];
+		PART.append("<w:p><w:pPr>");
+		if z > a { PART.append("<w:keepNext/>"); }
+		PART.append("<w:jc w:val='center'/></w:pPr>");
+		w_img(id, emu(dws[0]), emu(dhs[0]));
+		PART.append("</w:p>");
+		if z > a { w_par(caps[a..z], "Caption", false, false, 0); }
+		return;
+	}
+	let tw = (cw * 20.0 + 0.5) as int;
+	PART.append("<w:tbl>");
+	PART.append(X_TBLPLAIN);
+	PART.append("<w:tblGrid>");
+	for i in n { format(PART, "<w:gridCol w:w='", tw, "'/>"); }
+	PART.append("</w:tblGrid><w:tr>");
+	for i in n {
+		let id = img_id(refs[i]);
+		let a = co[2 * i];
+		let z = co[2 * i + 1];
+		format(PART, "<w:tc><w:tcPr><w:tcW w:w='", tw, "' w:type='dxa'/></w:tcPr>");
+		PART.append("<w:p><w:pPr>");
+		if z > a { PART.append("<w:keepNext/>"); }
+		PART.append("<w:jc w:val='center'/></w:pPr>");
+		w_img(id, emu(dws[i]), emu(dhs[i]));
+		PART.append("</w:p>");
+		if z > a { w_par(caps[a..z], "Caption", false, false, 0); }
+		PART.append("</w:tc>");
+	}
+	PART.append("</w:tr></w:tbl>");
+}
+fn w_pic(b int, wpt real, hpt real, cap const byte[:]) {
+	let r = jm(b, "png");
+	if r >= 0 && D.nodes[r].kind != json::K_STR && jm(r, "off") >= 0 {
+		let id = img_id(r);
+		PART.append("<w:p><w:pPr>");
+		if js(b, "t") == "scale" { PART.append("<w:keepNext/>"); }
+		PART.append("<w:jc w:val='center'/></w:pPr>");
+		w_img(id, emu(wpt), emu(hpt));
+		PART.append("</w:p>");
+	} else {
+		w_par("(picture not available)", "Note", false, false, 0);
+	}
+	if cap.len > 0 { w_par(cap, "Caption", false, false, 0); }
+}
+fn w_verdict(b int) {
+	let bar, fill = verdict_cols(b);
+	PART.append("<w:p><w:pPr><w:pBdr><w:left w:val='single' w:sz='24' w:space='8' w:color='");
+	hex6(PART, bar);
+	PART.append("'/></w:pBdr><w:shd w:val='clear' w:color='auto' w:fill='");
+	hex6(PART, fill);
+	PART.append("'/><w:spacing w:before='120' w:after='120'/><w:ind w:left='160' w:right='160'/></w:pPr>");
+	w_run(js(b, "text"), true, false, 0);
+	PART.append("</w:p>");
+}
+fn write_docx() {
+	zip_time();
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_DOC);
+	w_par(js(ROOT, "title"), "Title", false, false, 0);
+	let sub = js(ROOT, "subtitle");
+	if sub.len > 0 { w_par(sub, "Subtitle", false, false, 0); }
+	let meta = jm(ROOT, "meta");
+	if jcount(meta) > 0 { w_table(-1, meta, true, ""); }
+	var b = first_of(BLK);
+	while b >= 0 {
+		let t = js(b, "t");
+		if t == "h" {
+			NSEC += 1;
+			var h byte[>..] = [];
+			format(h, NSEC, ". ");
+			h.append(js(b, "text"));
+			w_par(h, "Heading1", false, false, 0);
+		} else if t == "h2" {
+			w_par(js(b, "text"), "Heading2", false, false, 0);
+		} else if t == "p" {
+			w_par(js(b, "text"), "", false, false, 0);
+		} else if t == "note" {
+			w_par(js(b, "text"), "Note", false, false, 0);
+		} else if t == "verdict" {
+			w_verdict(b);
+		} else if t == "kv" {
+			w_table(-1, jm(b, "rows"), true, "");
+		} else if t == "table" {
+			w_table(jm(b, "cols"), jm(b, "rows"), false, js(b, "cap"));
+		} else if t == "fig" {
+			w_fig(b);
+		} else if t == "chart" {
+			var c byte[>..] = [];
+			chart_cap(b, c);
+			w_pic(b, CW, 220.0, c);
+		} else if t == "scale" {
+			w_pic(b, min(CW, 360.0), 42.0, "");
+		} else if t == "br" {
+			PART.append("<w:p><w:r><w:br w:type='page'/></w:r></w:p>");
+		}
+		b = D.nodes[b].next;
+	}
+	let a4 = js(ROOT, "paper") == "a4";
+	let pgw = if a4 { 11906 } else { 12240 };
+	let pgh = if a4 { 16838 } else { 15840 };
+	format(PART, "<w:sectPr><w:footerReference w:type='default' r:id='rId2'/><w:pgSz w:w='", pgw, "' w:h='", pgh, "'/><w:pgMar w:top='1080' w:right='1080' w:bottom='1080' w:left='1080' w:header='540' w:footer='540' w:gutter='0'/></w:sectPr></w:body></w:document>");
+	zip_add("word/document.xml", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_TYPES);
+	zip_add("[Content_Types].xml", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_RELS);
+	zip_add("_rels/.rels", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_CORE);
+	PART.append("<dc:title>");
+	xesc(PART, js(ROOT, "title"));
+	PART.append("</dc:title><dc:creator>Amni-CAD</dc:creator>");
+	let st = js(ROOT, "stamp");
+	if st.len == 14 {
+		PART.append("<dcterms:created xsi:type='dcterms:W3CDTF'>");
+		PART.append(st[0..4]);
+		PART.push('-');
+		PART.append(st[4..6]);
+		PART.push('-');
+		PART.append(st[6..8]);
+		PART.push('T');
+		PART.append(st[8..10]);
+		PART.push(':');
+		PART.append(st[10..12]);
+		PART.push(':');
+		PART.append(st[12..14]);
+		PART.append("Z</dcterms:created>");
+	}
+	PART.append("</cp:coreProperties>");
+	zip_add("docProps/core.xml", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_STYLES);
+	zip_add("word/styles.xml", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_FTR);
+	format(PART, "<w:p><w:pPr><w:pStyle w:val='Footer'/><w:tabs><w:tab w:val='right' w:pos='", pgw - 2160, "'/></w:tabs></w:pPr>");
+	w_run(js(ROOT, "footer"), false, false, 0);
+	PART.append("<w:r><w:tab/></w:r><w:r><w:t xml:space='preserve'>Page </w:t></w:r><w:fldSimple w:instr=' PAGE '><w:r><w:t>1</w:t></w:r></w:fldSimple><w:r><w:t xml:space='preserve'> of </w:t></w:r><w:fldSimple w:instr=' NUMPAGES '><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p></w:ftr>");
+	zip_add("word/footer1.xml", PART);
+	PART.clear();
+	PART.append(X_HEAD);
+	PART.append(X_DOCRELS);
+	for k in IM.len {
+		format(PART, "<Relationship Id='rId", k + 10, "' Type='");
+		PART.append(X_IMGREL);
+		format(PART, "' Target='media/image", k, ".");
+		if IM[k].png { PART.append("png"); } else { PART.append("jpeg"); }
+		PART.append("'/>");
+	}
+	PART.append("</Relationships>");
+	zip_add("word/_rels/document.xml.rels", PART);
+	for k in IM.len {
+		let m = IM[k];
+		var nm byte[>..] = [];
+		format(nm, "word/media/image", k, ".");
+		if m.png { nm.append("png"); } else { nm.append("jpeg"); }
+		let s, e = img_span(m.off, m.len);
+		zip_add(nm, IMG[s..e]);
+	}
+	zip_end();
+}
+fn hesc(out byte[>..]&, s const byte[:]) {
+	var a = 0;
+	for i in s.len + 1 {
+		if i == s.len || s[i] == 10 {
+			if a > 0 { out.append("<br>"); }
+			xesc(out, s[a..i]);
+			a = i + 1;
+		}
+	}
+}
+fn h_kv(rows int) {
+	OUT.append("<table class=\"kv\"><tbody>");
+	var r = first_of(rows);
+	while r >= 0 {
+		OUT.append("<tr><td>");
+		hesc(OUT, cell(r, 0));
+		OUT.append("</td><td>");
+		hesc(OUT, cell(r, 1));
+		OUT.append("</td></tr>");
+		r = D.nodes[r].next;
+	}
+	OUT.append("</tbody></table>");
+}
+fn h_table(cols int, rows int, cap const byte[:]) {
+	if cap.len > 0 {
+		NTAB += 1;
+		format(OUT, "<div class=\"cap\">Table ", NTAB, ". ");
+		hesc(OUT, cap);
+		OUT.append("</div>");
+	}
+	col_widths(cols, rows, false, CW);
+	let n = TW.len;
+	OUT.append("<table><thead><tr>");
+	for c in n {
+		if TM[c] == 1 { OUT.append("<th class=\"n\">"); } else { OUT.append("<th>"); }
+		hesc(OUT, cell(cols, c));
+		OUT.append("</th>");
+	}
+	OUT.append("</tr></thead><tbody>");
+	var r = first_of(rows);
+	while r >= 0 {
+		OUT.append("<tr>");
+		for c in n {
+			if TM[c] == 1 { OUT.append("<td class=\"n\">"); } else { OUT.append("<td>"); }
+			hesc(OUT, cell(r, c));
+			OUT.append("</td>");
+		}
+		OUT.append("</tr>");
+		r = D.nodes[r].next;
+	}
+	OUT.append("</tbody></table>");
+}
+fn h_fig(b int) {
+	var refs int[>..] = [];
+	var dws real[>..] = [];
+	var dhs real[>..] = [];
+	var caps byte[>..] = [];
+	var co int[>..] = [];
+	let cw = fig_plan(b, refs, dws, dhs, caps, co);
+	OUT.append("<div class=\"figs\">");
+	for i in refs.len {
+		let r = refs[i];
+		OUT.append("<figure><img src=\"data:image/");
+		if js(r, "fmt") == "png" { OUT.append("png"); } else { OUT.append("jpeg"); }
+		OUT.append(";base64,");
+		let s, e = img_span(jn(r, "off", 0.0) as int, jn(r, "len", 0.0) as int);
+		base64::encode(OUT, IMG[s..e]);
+		format(OUT, "\" width=\"", jn(r, "w", 0.0) as int, "\" height=\"", jn(r, "h", 0.0) as int, "\" alt=\"");
+		xesc(OUT, js(r, "cap"));
+		OUT.append("\">");
+		let a = co[2 * i];
+		let z = co[2 * i + 1];
+		if z > a {
+			OUT.append("<figcaption>");
+			hesc(OUT, caps[a..z]);
+			OUT.append("</figcaption>");
+		}
+		OUT.append("</figure>");
+	}
+	OUT.append("</div>");
+}
+fn write_html() {
+	let title = js(ROOT, "title");
+	OUT.append("<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"generator\" content=\"Amni-CAD\"><title>");
+	xesc(OUT, title);
+	OUT.append("</title><style>");
+	OUT.append(H_CSS);
+	OUT.append("</style></head><body><main><h1>");
+	hesc(OUT, title);
+	OUT.append("</h1>");
+	let sub = js(ROOT, "subtitle");
+	if sub.len > 0 {
+		OUT.append("<p class=\"sub\">");
+		hesc(OUT, sub);
+		OUT.append("</p>");
+	}
+	let meta = jm(ROOT, "meta");
+	if jcount(meta) > 0 { h_kv(meta); }
+	OUT.append("<div class=\"rule\"></div>");
+	var nh = 0;
+	var b = first_of(BLK);
+	while b >= 0 {
+		if js(b, "t") == "h" { nh++; }
+		b = D.nodes[b].next;
+	}
+	if nh >= 2 {
+		OUT.append("<nav class=\"toc\"><b>Contents</b><ol>");
+		var k = 0;
+		b = first_of(BLK);
+		while b >= 0 {
+			if js(b, "t") == "h" {
+				k++;
+				format(OUT, "<li><a href=\"#s", k, "\">");
+				hesc(OUT, js(b, "text"));
+				OUT.append("</a></li>");
+			}
+			b = D.nodes[b].next;
+		}
+		OUT.append("</ol></nav>");
+	}
+	b = first_of(BLK);
+	while b >= 0 {
+		let t = js(b, "t");
+		if t == "h" {
+			NSEC += 1;
+			format(OUT, "<h2 id=\"s", NSEC, "\">", NSEC, ". ");
+			hesc(OUT, js(b, "text"));
+			OUT.append("</h2>");
+		} else if t == "h2" {
+			OUT.append("<h3>");
+			hesc(OUT, js(b, "text"));
+			OUT.append("</h3>");
+		} else if t == "p" {
+			OUT.append("<p>");
+			hesc(OUT, js(b, "text"));
+			OUT.append("</p>");
+		} else if t == "note" {
+			OUT.append("<p class=\"note\">");
+			hesc(OUT, js(b, "text"));
+			OUT.append("</p>");
+		} else if t == "verdict" {
+			let l = js(b, "level");
+			OUT.append("<div class=\"verdict ");
+			if l == "ok" || l == "err" { OUT.append(l); } else { OUT.append("warn"); }
+			OUT.append("\">");
+			hesc(OUT, js(b, "text"));
+			OUT.append("</div>");
+		} else if t == "kv" {
+			h_kv(jm(b, "rows"));
+		} else if t == "table" {
+			h_table(jm(b, "cols"), jm(b, "rows"), js(b, "cap"));
+		} else if t == "fig" {
+			h_fig(b);
+		} else if t == "scale" {
+			OUT.append("<figure class=\"scale\">");
+			let h = scale_dl(b, CW);
+			dl_svg(OUT, DW, h, false);
+			OUT.append("</figure>");
+		} else if t == "chart" {
+			var c byte[>..] = [];
+			chart_cap(b, c);
+			OUT.append("<div class=\"figs\"><figure>");
+			chart_dl(b, CW, 220.0);
+			dl_svg(OUT, CW, 220.0, false);
+			if c.len > 0 {
+				OUT.append("<figcaption>");
+				hesc(OUT, c);
+				OUT.append("</figcaption>");
+			}
+			OUT.append("</figure></div>");
+		} else if t == "br" {
+			OUT.append("<div style=\"break-after:page\"></div>");
+		}
+		b = D.nodes[b].next;
+	}
+	OUT.append("<footer><span>");
+	hesc(OUT, js(ROOT, "footer"));
+	OUT.append("</span><span>Made with Amni-CAD</span></footer></main></body></html>\n");
+}
+fn csv_field(out byte[>..]&, s const byte[:]) {
+	var q = s.len > 0 && (s[0] == 32 || s[s.len - 1] == 32);
+	for c in s {
+		if c == ',' || c == '"' || c == 13 || c == 10 { q = true; }
+	}
+	if !q {
+		out.append(s);
+		return;
+	}
+	out.push('"');
+	for c in s {
+		if c == '"' { out.push('"'); }
+		out.push(c);
+	}
+	out.push('"');
+}
+fn crlf(out byte[>..]&) {
+	out.push(13);
+	out.push(10);
+}
+fn csv_bom() {
+	OUT.push(239);
+	OUT.push(187);
+	OUT.push(191);
+}
+fn num7(out byte[>..]&, v real) {
+	if v != v || v - v != 0.0 { return; }
+	if v == 0.0 {
+		out.push('0');
+		return;
+	}
+	let a = abs(v);
+	var e = 0;
+	var p = 1.0;
+	if a >= 1.0 {
+		while p * 10.0 <= a {
+			p *= 10.0;
+			e++;
+		}
+	} else {
+		while p > a {
+			p /= 10.0;
+			e--;
+		}
+	}
+	let d = clamp(6 - e, 0, 15);
+	let s = out.len;
+	format_flt(out, v, d);
+	trim_num(out, s);
+}
+fn csv_row(row int) {
+	var e = first_of(row);
+	var first = true;
+	while e >= 0 {
+		if !first { OUT.push(','); }
+		first = false;
+		csv_field(OUT, jtext(e));
+		e = D.nodes[e].next;
+	}
+	crlf(OUT);
+}
+fn csv_pair(a const byte[:], b const byte[:]) {
+	csv_field(OUT, a);
+	OUT.push(',');
+	csv_field(OUT, b);
+	crlf(OUT);
+}
+fn write_csv() {
+	csv_bom();
+	csv_field(OUT, js(ROOT, "title"));
+	crlf(OUT);
+	let sub = js(ROOT, "subtitle");
+	if sub.len > 0 {
+		csv_field(OUT, sub);
+		crlf(OUT);
+	}
+	var r = first_of(jm(ROOT, "meta"));
+	while r >= 0 {
+		var l byte[>..] = [];
+		l.append(cell(r, 0));
+		csv_pair(l, cell(r, 1));
+		r = D.nodes[r].next;
+	}
+	var b = first_of(BLK);
+	while b >= 0 {
+		let t = js(b, "t");
+		if t == "h" {
+			crlf(OUT);
+			NSEC += 1;
+			var h byte[>..] = [];
+			format(h, NSEC, ". ");
+			h.append(js(b, "text"));
+			csv_field(OUT, h);
+			crlf(OUT);
+		} else if t == "h2" {
+			csv_field(OUT, js(b, "text"));
+			crlf(OUT);
+		} else if t == "verdict" {
+			csv_pair("Result", js(b, "text"));
+		} else if t == "kv" {
+			r = first_of(jm(b, "rows"));
+			while r >= 0 {
+				var l byte[>..] = [];
+				l.append(cell(r, 0));
+				csv_pair(l, cell(r, 1));
+				r = D.nodes[r].next;
+			}
+		} else if t == "table" {
+			let cap = js(b, "cap");
+			if cap.len > 0 {
+				NTAB += 1;
+				var c byte[>..] = [];
+				format(c, "Table ", NTAB, ". ");
+				c.append(cap);
+				csv_field(OUT, c);
+				crlf(OUT);
+			}
+			csv_row(jm(b, "cols"));
+			r = first_of(jm(b, "rows"));
+			while r >= 0 {
+				csv_row(r);
+				r = D.nodes[r].next;
+			}
+		} else if t == "fig" {
+			var e = first_of(jm(b, "imgs"));
+			while e >= 0 {
+				if js(e, "cap").len > 0 { NFIG += 1; }
+				e = D.nodes[e].next;
+			}
+		} else if t == "chart" {
+			var c byte[>..] = [];
+			chart_cap(b, c);
+			var s = first_of(jm(b, "series"));
+			while s >= 0 {
+				var line byte[>..] = [];
+				line.append(c);
+				let nm = js(s, "name");
+				if nm.len > 0 {
+					if line.len > 0 { line.push(' '); }
+					line.push('(');
+					line.append(nm);
+					line.push(')');
+				}
+				csv_field(OUT, line);
+				crlf(OUT);
+				csv_pair(js(b, "xl"), js(b, "yl"));
+				var ex = first_of(jm(s, "x"));
+				var ey = first_of(jm(s, "y"));
+				while ex >= 0 && ey >= 0 {
+					num7(OUT, nnum(ex));
+					OUT.push(',');
+					num7(OUT, nnum(ey));
+					crlf(OUT);
+					ex = D.nodes[ex].next;
+					ey = D.nodes[ey].next;
+				}
+				s = D.nodes[s].next;
+			}
+		}
+		b = D.nodes[b].next;
+	}
+}
+fn write_data() {
+	csv_bom();
+	let d = jm(ROOT, "data");
+	let cols = jm(d, "cols");
+	let nc = jcount(cols);
+	csv_row(cols);
+	let nr = jn(d, "rows", 0.0) as int;
+	if nc == 0 || nr <= 0 || DAT.len < nr * nc { return; }
+	for r in nr {
+		for c in nc {
+			if c > 0 { OUT.push(','); }
+			num7(OUT, DAT[r * nc + c]);
+		}
+		crlf(OUT);
+	}
+}
+fn main() {
+}
+export fn rp_make(fmt i32) i32 {
+	if !prepare() {
+		refresh_views();
+		return -1;
+	}
+	OUT.clear();
+	if fmt == 1 {
+		write_pdf();
+	} else if fmt == 2 {
+		write_docx();
+	} else if fmt == 3 {
+		write_html();
+	} else if fmt == 4 {
+		write_csv();
+	} else if fmt == 5 {
+		write_data();
+	} else {
+		OUT.append("report: unknown format");
+		refresh_views();
+		return -1;
+	}
+	refresh_views();
+	OUT.len as i32
+}
+export fn rp_svg(k i32) i32 {
+	if !prepare() {
+		refresh_views();
+		return -1;
+	}
+	OUT.clear();
+	var b = first_of(BLK);
+	var i = 0;
+	while b >= 0 && i < k {
+		b = D.nodes[b].next;
+		i++;
+	}
+	if b >= 0 && js(b, "t") == "chart" {
+		chart_dl(b, CW, 220.0);
+		dl_svg(OUT, CW, 220.0, true);
+	} else if b >= 0 && js(b, "t") == "scale" {
+		let h = scale_dl(b, CW);
+		dl_svg(OUT, DW, h, true);
+	} else {
+		refresh_views();
+		return -1;
+	}
+	refresh_views();
+	OUT.len as i32
+}
