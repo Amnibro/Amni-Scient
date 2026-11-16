@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amnitex (atex) &mdash; Save Context and Tokens in Claude Code &amp; Cursor | AMNI-SCIENT</title>
+<meta name="description" content="Amnitex is a free, local tool that saves context and tokens in Claude Code, Cursor, Codex and other AI coding assistants. One-command install on Windows, macOS and Linux.">
+<meta name="keywords" content="amnitex,atex,claude code context,save tokens claude code,claude code compaction,context window,cursor mcp,mcp memory server,ai coding assistant memory,token savings">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amnitex &mdash; Save Context and Tokens in Claude Code &amp; Cursor">
+<meta property="og:description" content="Free and local. Keeps your AI coding assistant's context small: compacts sooner, keeps long output on disk, and remembers every turn. Windows, macOS and Linux.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amnitex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Amnitex &mdash; Save Context and Tokens in Claude Code &amp; Cursor">
+<meta name="twitter:description" content="Free and local. Keeps your AI coding assistant's context small on Windows, macOS and Linux.">
+<link rel="canonical" href="https://amni-scient.com/amnitex">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amnitex","alternateName":["atex","amni-tex"],"url":"https://amni-scient.com/amnitex","description":"Saves context and tokens in Claude Code, Cursor and other AI coding assistants. Free, local and MIT-licensed.","applicationCategory":"DeveloperApplication","operatingSystem":"Windows, macOS, Linux","license":"https://opensource.org/licenses/MIT","downloadUrl":"https://github.com/Amnibro/amnitex/releases/latest","sameAs":["https://github.com/Amnibro/amnitex"],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>body.theme-amnitex{--accent:#E0B85C;--accent-soft:#f0d08a;--accent-dim:rgba(224,184,92,.11);--accent-glow:rgba(224,184,92,.26);--accent-ink:#1f1400}[data-theme="light"] body.theme-amnitex{--accent:#8C6514;--accent-dim:rgba(140,101,20,.09);--accent-glow:rgba(140,101,20,.2);--accent-ink:#fff}.faq details{border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1.1rem;margin-top:.7rem;background:var(--panel)}.faq summary{cursor:pointer;font-weight:700;color:var(--text);font-size:.92rem}.faq details p{margin-top:.6rem;color:var(--dim);font-size:.88rem;line-height:1.7;max-width:800px}.cmd{display:block;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem .9rem;margin:.7rem 0;font-family:var(--font-mono);font-size:.78rem;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}.lead{color:var(--dim);margin-bottom:1.2rem;font-size:.9rem;max-width:800px;line-height:1.7}.fine{color:var(--dim);margin:1.2rem 0;font-size:.88rem;max-width:800px;line-height:1.7}.row{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;margin-top:.7rem}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.tbl{overflow-x:auto;max-width:100%}</style>
+</head>
+<body class="pp theme-amnitex">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amnitex.html" class="active">AMNITEX</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="22" y="22" width="56" height="20" rx="4" stroke="var(--accent)" stroke-width="2.4" fill="var(--accent-dim)"/>
+<rect x="22" y="50" width="56" height="20" rx="4" stroke="var(--accent)" stroke-width="2.4" fill="var(--accent-dim)"/>
+<rect x="22" y="78" width="56" height="20" rx="4" stroke="var(--accent)" stroke-width="2.4" fill="var(--accent-dim)"/>
+<circle cx="66" cy="60" r="5" fill="var(--accent)"/>
+</svg>
+</div>
+<h1>AMNITEX</h1>
+<p class="desc">SAVE CONTEXT AND TOKENS IN CLAUDE CODE, CURSOR &amp; OTHER AI CODING ASSISTANTS &bull; FREE &amp; LOCAL &bull; WINDOWS, MAC &amp; LINUX</p>
+<div style="margin-top:2rem" class="row">
+<a href="#install" class="btn btn-primary">INSTALL FREE &rarr;</a>
+<a href="https://github.com/Amnibro/amnitex" class="btn btn-outline">GITHUB</a>
+</div>
+</div>
+<section>
+<h2>WHAT IT DOES</h2>
+<p class="lead">Every reply from an AI coding assistant re-reads the whole conversation, so a long session gets slower and more expensive, until the assistant compacts it and loses details. Amnitex (the <code>atex</code> program) keeps that context small. It runs on your computer, needs no account and sends nothing anywhere.</p>
+<div class="card-grid">
+<div class="card"><h3>COMPACTS SOONER</h3><p>Sets Claude Code to compact at about 250K tokens, and at about 67K on Claude Haiku 5.5, before its price per request jumps. After <code>/clear</code> or a compaction it puts your last three turns back.</p></div>
+<div class="card"><h3>KEEPS LONG OUTPUT ON DISK</h3><p>When a command prints thousands of lines, the assistant sees the start, the end and the error lines, plus the path to the full output.</p></div>
+<div class="card"><h3>FINDS THE LINES, NOT THE FILE</h3><p>The assistant asks which file and line holds something and reads just those lines. In the lookup benchmark that took 94&ndash;96% fewer characters than reading whole files.</p></div>
+<div class="card"><h3>REMEMBERS EVERY TURN</h3><p>Each finished turn is saved word for word on your computer, so an earlier port, hash or rule is looked up exactly instead of explained again.</p></div>
+</div>
+</section>
+<section>
+<h2>MEASURED</h2>
+<h3>Your own sessions, replayed</h3>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Setting</th><th class="n">Input saved</th><th class="n">Cost saved</th></tr></thead>
+<tbody>
+<tr><td>Compact at 250K tokens</td><td class="n">36.6%</td><td class="n">21.2%</td></tr>
+<tr><td>That, plus long Bash output kept on disk</td><td class="n">36.8%</td><td class="n">22.2%</td></tr>
+</tbody>
+</table></div>
+<p class="fine">Replayed over one person&rsquo;s 20 most recent long Claude Code sessions (66,241 requests, 18.5 billion input tokens). This is a model built from the usage Claude Code logged, not a live run. <code>atex replay</code> shows the same numbers for your own sessions and makes no model calls, so it costs nothing to run.</p>
+<h3 style="margin-top:1.6rem">Fewer replies</h3>
+<div class="tbl"><table class="spec-table">
+<thead><tr><th>Claude Code on a 40-module bug-fix task</th><th class="n">Requests</th><th class="n">Input tokens</th><th class="n">API price</th></tr></thead>
+<tbody>
+<tr><td>Claude Opus 5.5</td><td class="n">85</td><td class="n">5.68M</td><td class="n">$2.77</td></tr>
+<tr><td>Claude Opus 5.5 with Amnitex</td><td class="n">43</td><td class="n">2.74M</td><td class="n">$2.08</td></tr>
+<tr><td>Claude Haiku 5.5</td><td class="n">105</td><td class="n">9.39M</td><td class="n">$0.46</td></tr>
+<tr><td>Claude Haiku 5.5 with Amnitex</td><td class="n">42</td><td class="n">3.75M</td><td class="n">$0.26</td></tr>
+</tbody>
+</table></div>
+<p class="fine">Amnitex asks the assistant to put its edits, the command that checks them and its next reads in one reply. Each row is the mean of two or three runs, and every run passed the same 360 hidden checks. Price falls less than input because cached input is the cheapest part of a request. The method and raw results are <a href="https://github.com/Amnibro/amnitex#numbers">on GitHub</a>.</p>
+</section>
+<section id="install">
+<h2>INSTALL</h2>
+<p class="lead">One command installs the <code>atex</code> program, adds it to your PATH, runs a self-test and wires every AI app it finds: Claude Code, Claude Desktop, Cursor, Windsurf, Gemini CLI, OpenAI Codex and Grok Build. There is nothing to compile and no account to make.</p>
+<h3>WINDOWS</h3>
+<p class="fine" style="margin:.4rem 0">Paste into PowerShell. No WSL or administrator rights needed. Windows 10 and 11, including Windows 11 on ARM.</p>
+<code class="cmd" id="cmd-win">irm https://amni-scient.com/atex-install.ps1 | iex</code>
+<div class="row" style="margin-top:0"><button class="btn btn-outline" data-copy="cmd-win">COPY</button></div>
+<h3 style="margin-top:1.4rem">MAC</h3>
+<p class="fine" style="margin:.4rem 0">Paste into Terminal. Apple Silicon (macOS 11 or newer) and Intel (macOS 10.15 or newer). No Xcode tools needed.</p>
+<code class="cmd" id="cmd-mac">curl -fsSL https://amni-scient.com/atex-install.sh | sh</code>
+<div class="row" style="margin-top:0"><button class="btn btn-outline" data-copy="cmd-mac">COPY</button></div>
+<h3 style="margin-top:1.4rem">LINUX</h3>
+<code class="cmd" id="cmd-linux">curl -fsSL https://amni-scient.com/atex-install.sh | sh</code>
+<div class="row" style="margin-top:0"><button class="btn btn-outline" data-copy="cmd-linux">COPY</button></div>
+<p class="fine">Then restart Claude Code, Claude Desktop or Cursor. Check the wiring any time with <code>atex doctor</code>. <code>atex uninstall</code> removes it and leaves what Amnitex has stored in place.</p>
+<div class="card-grid">
+<div class="card"><h3>CLAUDE CODE PLUGIN</h3><p>After the install command above, you can also add the plugin from Claude Code:</p><code class="cmd">/plugin marketplace add Amnibro/amnitex
+/plugin install amnitex@amnitex-marketplace</code></div>
+<div class="card"><h3>CLAUDE DESKTOP</h3><p>Download the extension and open it. Claude Desktop asks to install it.</p><p style="margin-top:.8rem"><a href="https://github.com/Amnibro/amnitex/releases/latest/download/amnitex.mcpb" class="btn btn-primary">DOWNLOAD EXTENSION</a></p></div>
+</div>
+</section>
+<section class="faq">
+<h2>QUESTIONS</h2>
+<details><summary>Is it free?</summary><p>Yes. Amnitex is MIT-licensed and the source is on <a href="https://github.com/Amnibro/amnitex">GitHub</a>. There is no account, plan or license key.</p></details>
+<details><summary>Does it send my code anywhere?</summary><p>No. Everything Amnitex stores stays in a folder on your computer (<code>~/.atex</code>). The installer downloads the program from GitHub, and that is the only time it goes online.</p></details>
+<details><summary>What does it change in Claude Code?</summary><p>It registers its MCP server and adds three hooks and a compact window to <code>~/.claude/settings.json</code>. Everything else in that file is kept, and the old file is saved as <code>settings.json.atex-backup</code>. <code>atex install --no-compact-window</code> leaves the compact window alone, and <code>atex uninstall</code> takes it all out.</p></details>
+<details><summary>How is it different from a vector database or a memory plugin?</summary><p>It uses no embeddings and no model. Lookups are exact, so a port, a hash or a rule comes back byte for byte, and a 15 MB knowledge base loads in 22 ms.</p></details>
+<details><summary>Is this the same as AmniTex Railgun?</summary><p>No. <a href="/research/amnitex-railgun.html">AmniTex Railgun</a> is separate research on fitting AI model weights into less GPU memory, offered under <a href="/licensing.html">evaluation licenses</a>. Amnitex, on this page, is the free context saver for AI coding assistants, and it needs no license.</p></details>
+<details><summary>Where are the details?</summary><p>The <a href="https://github.com/Amnibro/amnitex#readme">README</a> covers every setting and measurement, and the <a href="/amnitex-lut.html">conversation store benchmark</a> has the earlier recall tests.</p></details>
+</section>
+<script>document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent).then(()=>{const t=b.textContent;b.textContent='COPIED';setTimeout(()=>b.textContent=t,1400);}));</script>
+<p class="page-updated">Last updated <time datetime="2026-11-16">November 16, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+</body>
+</html>
