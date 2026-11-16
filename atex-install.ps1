@@ -5,5 +5,14 @@
 & {
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
     $repo = if ($env:ATEX_REPO) { $env:ATEX_REPO } else { 'Amnibro/amnitex' }
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString("https://github.com/$repo/releases/latest/download/install.ps1"))
+    $url = "https://github.com/$repo/releases/latest/download/install.ps1"
+    try {
+        $script = (New-Object System.Net.WebClient).DownloadString($url)
+    } catch {
+        Write-Host "[amnitex] Could not download the Windows installer from $url"
+        Write-Host "[amnitex] $($_.Exception.Message)"
+        Write-Host "[amnitex] Releases: https://github.com/$repo/releases"
+        return
+    }
+    Invoke-Expression $script
 }
