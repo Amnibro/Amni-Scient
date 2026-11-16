@@ -51,59 +51,67 @@ export async function loadAvatar(core,src,lib){
   holder.add(g.scene);root.add(holder);json.extensions?.VRM&&(holder.rotation.y=Math.PI)
   await skinTex();g.scene.traverse(o=>{o.isMesh&&(o.castShadow=true,o.receiveShadow=true,o.frustumCulled=false,look(o))})
   const f=frame(core,g,holder,root,HEIGHT);if(!f.humanoid)throw new Error(`This model has no humanoid skeleton the companion can drive (${f.count}/22 body parts found). Try a rigged .glb or .vrm.`)
-  const mixer=new THREE.AnimationMixer(g.scene),actions={},restQ=f.bones.map(b=>b.quaternion.clone()),hips=f.bones[f.slot[0]],pinv=new THREE.Matrix4().copy(hips.parent.matrixWorld).invert(),tmp=new THREE.Vector3()
-  for(const c of lib.clips){const out=core.retarget(lib.slot,lib.rest,f.slot,f.rest,c.frames,c.nf),nf=out.length/91,times=Float32Array.from({length:nf},(_,i)=>i/FPS),tracks=[]
-    f.slot.forEach((bi,k)=>{if(bi<0||lib.slot[k]<0)return;const vals=new Float32Array(4*nf);for(let i=0;i<nf;i++)vals.set(out.subarray(91*i+4*k,91*i+4*k+4),4*i);tracks.push(new THREE.QuaternionKeyframeTrack(f.bones[bi].uuid+'.quaternion',times,vals))})
-    const pv=new Float32Array(3*nf);for(let i=0;i<nf;i++){tmp.set(out[91*i+88],out[91*i+89],out[91*i+90]).applyMatrix4(pinv);pv.set([tmp.x,tmp.y,tmp.z],3*i)}tracks.push(new THREE.VectorKeyframeTrack(hips.uuid+'.position',times,pv))
-    const a=mixer.clipAction(new THREE.AnimationClip(c.name,c.duration,tracks));a.loop=c.loop?THREE.LoopRepeat:THREE.LoopOnce;a.clampWhenFinished=!c.loop;actions[c.name]=a}
+  const clips=[],restQ=f.bones.map(b=>b.quaternion.clone()),hips=f.bones[f.slot[0]],pinv=new THREE.Matrix4().copy(hips.parent.matrixWorld).invert(),tmp=new THREE.Vector3()
+  for(const c of lib.clips){const out=core.retarget(lib.slot,lib.rest,f.slot,f.rest,c.frames,c.nf),nf=out.length/91,fr=new Float32Array(91*nf)
+    for(let i=0;i<nf;i++){f.slot.forEach((bi,k)=>fr.set(bi>=0&&lib.slot[k]>=0?out.subarray(91*i+4*k,91*i+4*k+4):bi>=0?restQ[bi].toArray():[0,0,0,1],91*i+4*k));tmp.set(out[91*i+88],out[91*i+89],out[91*i+90]).applyMatrix4(pinv);fr.set([tmp.x,tmp.y,tmp.z],91*i+88)}
+    clips.push({name:c.name,nf,loop:c.loop,fr})}
   const byNode=new Map();g.scene.traverse(o=>{const a=g.parser.associations.get(o);a?.nodes!==undefined&&!byNode.has(a.nodes)&&byNode.set(a.nodes,o)})
   const cs=(json.nodes||[]).flatMap((n,i)=>{const c=n.extensions?.VRMC_node_constraint?.constraint,d=byNode.get(i),[kind,v]=c?Object.entries(c)[0]||[]:[],src=v&&byNode.get(v.source);return d&&src?[{kind,d,s:src,w:v.weight??1,axis:v.rollAxis||v.aimAxis,dr:d.quaternion.clone(),sr:src.quaternion.clone()}]:[]}),cons=[];while(cs.length){const i=cs.findIndex(c=>!cs.some(o=>o!==c&&o.d===c.s));cons.push(...cs.splice(Math.max(0,i),1))}
-  const morphs={};g.scene.traverse(o=>{if(!o.morphTargetDictionary)return;for(const[n,i]of Object.entries(o.morphTargetDictionary))for(const[k,re]of Object.entries(MORPH))re.test(n)&&(morphs[k]=morphs[k]||[]).push([o,i])})
-  return new Avatar({core,g,root,holder,mixer,actions,f,restQ,morphs,lib,cons})
+  const mw=new Map(),ak={},morphs={};(json.nodes||[]).forEach((n,i)=>{const m=json.meshes?.[n.mesh],nt=m?.primitives?.[0]?.targets?.length||0;if(!nt)return;mw.set(i,Float32Array.from({length:nt},(_,t)=>n.weights?.[t]??m.weights?.[t]??0));(m.extras?.targetNames||[]).forEach((x,t)=>{(ak[x]=ak[x]||[]).push([i,t]);for(const[k,re]of Object.entries(MORPH))re.test(x)&&(morphs[k]=morphs[k]||[]).push([i,t])})})
+  const ec=(k,ax)=>{const[i,t]=ak[k]?.[0]||[],o=byNode.get(i),m=o?.isMesh?o:o?.children?.find(c=>c.isMesh),gm=m?.geometry,d=gm?.morphAttributes?.position?.[t],p=gm?.attributes?.position;return d&&p&&gm.morphTargetsRelative&&!d.isInterleavedBufferAttribute&&!p.isInterleavedBufferAttribute?core.eyeCal(p.array,d.array,ax):0}
+  return new Avatar({core,g,root,holder,clips,f,restQ,morphs,ak,mw,lib,cons,byNode,eye:[ec('eyeLookOutLeft',0),ec('eyeLookUpLeft',1)]})
 }
+const MC=['jawOpen','mouthFunnel','mouthPucker','mouthPressLeft','mouthPressRight','mouthStretchLeft','mouthStretchRight','mouthSmileLeft','mouthSmileRight','mouthUpperUpLeft','mouthUpperUpRight','mouthShrugLower'],EC=['eyeLookOutLeft','eyeLookInLeft','eyeLookUpLeft','eyeLookDownLeft','eyeLookOutRight','eyeLookInRight','eyeLookUpRight','eyeLookDownRight'],BR=[[2,'x',-.007],[3,'x',-.009],[4,'x',.012],[6,'z',.035],[10,'z',-.035]]
 class Avatar{
-  constructor(o){Object.assign(this,o);this.slot=o.f.slot;this.bones=o.f.bones;this.rest=o.f.rest;this.cur=null;this.queue=[];this.emotes=[];this.face={};this.faceT={};this.talk=0;this.blinkT=2;this.look=null;this.lookW=0;this.live=new Float64Array(264);this.want=new Float64Array(110);this.track=null;this.trackW=0;this.time=0;this.relax()
-    this.mixer.addEventListener('finished',e=>{if(e.action!==this.cur)return;const n=this.queue.shift();n?this.playClip(n,.2):this.base()});this.base(0)}
-  has(n){return!!this.actions[n]}
+  constructor(o){Object.assign(this,o);this.slot=o.f.slot;this.bones=o.f.bones;this.rest=o.f.rest;this.cur=null;this.queue=[];this.emotes=[];this.face={};this.faceT={};this.talk=0;this.lin=new Float64Array(11);const[eh,ev]=o.eye||[0,0],ok=x=>Math.abs(x)>.05&&Math.abs(x)<.7;this.eyeH=ok(eh)?Math.abs(eh):.21;this.eyeV=ok(ev)?Math.abs(ev):.17;this.eyeS=ok(ev)&&ev<0?-1:1;this.breath=1;this.ec=ok(eh)&&eh<0?EC.map(k=>k.replace(/Out|In/,x=>x==='Out'?'In':'Out')):EC;o.core.lifeReset((Math.random()*2147483647)|0);this.look=null;this.lookW=0;this.live=new Float64Array(264);this.want=new Float64Array(110);this.O=new Float32Array(110);this.ids={};this.names=[];this.track=null;this.trackW=0;this.time=0;this.headP=[0,1.5,0]}
+  attach(v){this.v=v;const ln=v.lib?.();if(ln)ln.forEach((n,i)=>{this.ids[n]=i;this.names[i]=n});else{const nodeOf=new Map([...this.byNode].map(([i,o])=>[o,i]));v.rig(this.slot.map(bi=>bi<0?-1:nodeOf.get(this.bones[bi])??-1));for(const c of this.clips)this.addClip(c.name,c.fr,c.nf,c.loop)}this.relax();this.base(0)}
+  addClip(n,fr,nf,loop){const id=this.v.clip(fr,nf,loop);this.ids[n]=id;this.names[id]=n}
+  head(){return v3(...this.headP)}
+  has(n){return this.ids[n]!==undefined}
   base(fade=.35){this.playClip(this.sitting?'Sitting_Idle_Loop':this.talk>0?'Relax_Talk_Loop':'Relax_Loop',fade)}
-  relax(){const s=this.slot,B=this.bones,hips=B[s[0]],hp=hips.position.clone(),nf=4*FPS+1,times=Float32Array.from({length:nf},(_,i)=>i/FPS),W=new Float64Array(110),Q=THREE.Quaternion,rr=this.root.quaternion.clone(),keep=B.map(b=>b.quaternion.clone());this.root.quaternion.identity()
-    for(const talk of[0,1]){const vals=s.map(()=>new Float32Array(4*nf)),pv=new Float32Array(3*nf)
-      for(let i=0;i<nf;i++){const ph=Math.PI*2*i/(nf-1),g=k=>talk?Math.max(0,Math.sin(ph*2+k*Math.PI)):0;B.forEach((b,k)=>b.quaternion.copy(this.restQ[k]));const L=this.livePack();W.fill(0)
+  relax(){const s=this.slot,hp=this.bones[s[0]].position,nf=4*FPS+1,W=new Float64Array(110),Q=THREE.Quaternion,rr=this.root.quaternion.clone();this.root.quaternion.identity();this.v.rest();const L=Float64Array.from(this.livePack());this.root.quaternion.copy(rr)
+    for(const talk of[0,1]){const fr=new Float32Array(91*nf)
+      for(let i=0;i<nf;i++){const ph=Math.PI*2*i/(nf-1),g=k=>talk?Math.max(0,Math.sin(ph*2+k*Math.PI)):0;W.fill(0)
         for(const[u,f,x,k]of[[7,8,1,0],[11,12,-1,1]]){const d=v3(x*.15,-.985,.1+.02*Math.sin(ph+k)).normalize(),e=v3(x*(.05-.1*g(k)),-.92+.62*g(k),.38+.45*g(k)).normalize();W.set([d.x,d.y,d.z,0,2],5*u);W.set([e.x,e.y,e.z,0,2],5*f)}
         for(const[k,a,ax]of[[3,.012*Math.sin(ph),'x'],[5,talk?.05*Math.sin(ph*3):.015*Math.sin(ph+1),'x']]){const q=new Q().setFromAxisAngle(v3(ax==='x'?1:0,0,0),a).multiply(new Q().fromArray(L,12*k));W.set([q.x,q.y,q.z,q.w,1],5*k)}
-        const out=this.core.solve(s,L,W);s.forEach((bi,k)=>{bi>=0&&vals[k].set(out[5*k+4]>.5?out.subarray(5*k,5*k+4):this.restQ[bi].toArray(),4*i)});pv.set([hp.x,hp.y,hp.z],3*i)}
-      const tracks=s.flatMap((bi,k)=>bi<0?[]:[new THREE.QuaternionKeyframeTrack(B[bi].uuid+'.quaternion',times,vals[k])]).concat(new THREE.VectorKeyframeTrack(hips.uuid+'.position',times,pv)),a=this.mixer.clipAction(new THREE.AnimationClip(talk?'Relax_Talk_Loop':'Relax_Loop',(nf-1)/FPS,tracks));a.loop=THREE.LoopRepeat;this.actions[a.getClip().name]=a}
-    B.forEach((b,k)=>b.quaternion.copy(keep[k]));this.root.quaternion.copy(rr)}
-  playClip(name,fade=.3){const a=this.actions[name];if(!a||a===this.cur&&a.isRunning())return!!a;a.reset().setEffectiveWeight(1).play();this.cur?a.crossFadeFrom(this.cur,fade,false):a.fadeIn(fade);this.cur=a;return true}
+        const out=this.core.solve(s,L.slice(),W);s.forEach((bi,k)=>fr.set(bi>=0&&out[5*k+4]>.5?out.subarray(5*k,5*k+4):bi>=0?this.restQ[bi].toArray():[0,0,0,1],91*i+4*k));fr.set([hp.x,hp.y,hp.z],91*i+88)}
+      this.addClip(talk?'Relax_Talk_Loop':'Relax_Loop',fr,nf,true)}}
+  playClip(name,fade=.3){const id=this.ids[name];if(id===undefined||!this.v)return false;this.v.play(id,fade);this.cur=name;return true}
   anim(n){if(n==='spin'){this.spin=1.2;return true}if(n==='idle'||n==='stand'){const was=this.sitting;this.sitting=false;this.queue=[];was&&this.has('Sitting_Exit')?this.playClip('Sitting_Exit'):this.base();return true}const s=ANIM[n];if(!s)return false;const l=[].concat(s).filter(x=>this.has(x));if(!l.length)return false;this.sitting=n==='sit';this.queue=l.slice(1);return this.playClip(l[0])}
-  loco(on,run){on?this.playClip(run&&this.has('Jog_Fwd_Loop')?'Jog_Fwd_Loop':'Walk_Loop',.25):(this.cur===this.actions.Walk_Loop||this.cur===this.actions.Jog_Fwd_Loop)&&this.base(.3)}
+  loco(on,run){on?this.playClip(run&&this.has('Jog_Fwd_Loop')?'Jog_Fwd_Loop':'Walk_Loop',.25):(this.cur==='Walk_Loop'||this.cur==='Jog_Fwd_Loop')&&this.base(.3)}
   emote(n){if(n==='tpose')return this.anim('tpose');const e=EMOTE[n];if(!e)return false;this.emotes=this.emotes.filter(x=>x.n!==n);this.emotes.push({n,e,t:0});return true}
   setFace(n,v=1,hold=2.5){this.faceT[n]=v;hold&&setTimeout(()=>this.faceT[n]=0,hold*1000)}
-  speaking(on){this.talk=on?1:0;!this.sitting&&(this.cur===this.actions.Relax_Loop||this.cur===this.actions.Relax_Talk_Loop)&&this.base(.5)}
+  speaking(on){this.talk=on?1:0;!this.sitting&&(this.cur==='Relax_Loop'||this.cur==='Relax_Talk_Loop')&&this.base(.5)}
   lookAt(p,w=1){this.look=p;this.lookTarget=w}
   pose(out,w=1){this.track=out;this.trackTarget=w}
-  applyCons(){const Q=THREE.Quaternion,V=THREE.Vector3;for(const c of this.cons){const ds=new Q().copy(c.sr).invert().multiply(c.s.quaternion)
-    if(c.kind==='rotation')c.d.quaternion.copy(c.dr).multiply(new Q().slerp(ds,c.w))
-    else if(c.kind==='roll'){const inD=new Q().copy(c.dr).invert().multiply(new Q().copy(c.sr).multiply(ds).multiply(new Q().copy(c.sr).invert())).multiply(c.dr),ax=new V(c.axis==='X'?1:0,c.axis==='Y'?1:0,c.axis==='Z'?1:0),tw=new Q().setFromUnitVectors(ax,ax.clone().applyQuaternion(inD)).invert().multiply(inD);c.d.quaternion.copy(c.dr).multiply(new Q().slerp(tw,c.w))}
-    else if(c.kind==='aim'){const pw=c.d.parent.getWorldQuaternion(new Q()),m=/^Negative/.test(c.axis)?-1:1,a=c.axis.slice(-1),from=new V(a==='X'?m:0,a==='Y'?m:0,a==='Z'?m:0).applyQuaternion(pw.clone().multiply(c.dr)),to=c.s.getWorldPosition(new V()).sub(c.d.getWorldPosition(new V())).normalize(),t=new Q().slerp(new Q().setFromUnitVectors(from,to),c.w).multiply(pw).multiply(c.dr);c.d.quaternion.copy(pw.invert().multiply(t))}}}
-  setMorph(k,v){for(const[o,i]of this.morphs[k]||[])o.morphTargetInfluences[i]=v}
-  livePack(){const q=new THREE.Quaternion(),w=new THREE.Vector3(),L=this.live;this.root.updateMatrixWorld(true);this.slot.forEach((bi,k)=>{if(bi<0){L[12*k+11]=0;return}const b=this.bones[bi];b.getWorldQuaternion(q);L.set([q.x,q.y,q.z,q.w],12*k);b.getWorldPosition(w);L.set([w.x,w.y,w.z],12*k+4);b.parent.getWorldQuaternion(q);L.set([q.x,q.y,q.z,q.w],12*k+7);L[12*k+11]=1});return L}
+  setMorph(k,v){for(const[i,t]of this.morphs[k]||[])this.mw.get(i)[t]=v}
+  setA(k,v){for(const[i,t]of this.ak[k]||[])this.mw.get(i)[t]=v}
+  lipStart(text,rate=1){this.core.say(text,this.time+.05,rate)}
+  lip(text,ci,n,rate=1){this.core.lip((text.slice(ci).match(/^\S+/)||[''])[0].slice(0,n||undefined),this.time,rate)}
+  livePack(){this.root.updateMatrixWorld(true);this.v.place(this.g.scene.matrixWorld.elements);const L=this.v.live();this.live.set(L.subarray(0,264));this.headP=[L[264],L[265],L[266]];return this.live}
   update(dt){
-    this.time+=dt;this.mixer.update(dt);this.spin>0&&(this.spin-=dt,this.holder.rotation.y+=dt*Math.PI*2/1.2,this.spin<=0&&(this.holder.rotation.y=Math.round(this.holder.rotation.y/Math.PI)*Math.PI))
+    this.time+=dt;if(!this.v)return;const fin=this.v.advance(dt);if(fin>=0&&this.names[fin]===this.cur){const n=this.queue.shift();n?this.playClip(n,.2):this.base()}this.spin>0&&(this.spin-=dt,this.holder.rotation.y+=dt*Math.PI*2/1.2,this.spin<=0&&(this.holder.rotation.y=Math.round(this.holder.rotation.y/Math.PI)*Math.PI))
     this.trackW+=((this.track?this.trackTarget:0)-this.trackW)*Math.min(1,dt*7)
-    if(this.track&&this.trackW>.01){const q=new THREE.Quaternion();this.slot.forEach((bi,k)=>{bi>=0&&this.track[5*k+4]>.5&&this.bones[bi].quaternion.slerp(q.fromArray(this.track,5*k),this.trackW)})}
+    if(this.track&&this.trackW>.01){const O=this.O;O.fill(0);this.slot.forEach((bi,k)=>{bi>=0&&this.track[5*k+4]>.5&&(O.set(this.track.subarray(5*k,5*k+4),5*k),O[5*k+4]=this.trackW)});this.v.apply(O)}
     this.lookW+=((this.look?this.lookTarget:0)-this.lookW)*Math.min(1,dt*4)
-    const W=this.want;W.fill(0);let any=false;const rq=this.root.getWorldQuaternion(new THREE.Quaternion()),L=this.emotes.length||this.lookW>.01?this.livePack():null,wt=new Float64Array(22)
+    const W=this.want;W.fill(0);let any=false;const rq=this.root.getWorldQuaternion(new THREE.Quaternion()),L=this.livePack(),wt=new Float64Array(22)
     for(const x of this.emotes){x.t+=dt;const env=sm(x.t/.3)*sm((x.e.d-x.t)/.35);for(const[k,v]of x.e.w(x.t)){if(this.slot[k]<0)continue;any=true;wt[k]=Math.max(wt[k],env);if(Array.isArray(v)){const ax=v3(v[0]==='x'?1:0,v[0]==='y'?1:0,v[0]==='z'?1:0).applyQuaternion(rq),qq=new THREE.Quaternion().setFromAxisAngle(ax,v[1]).multiply(new THREE.Quaternion().fromArray(L,12*k));W.set([qq.x,qq.y,qq.z,qq.w,1],5*k)}else{const d=v.clone().normalize().applyQuaternion(rq);W.set([d.x,d.y,d.z,0,2],5*k)}}}
     this.emotes=this.emotes.filter(x=>x.t<x.e.d)
-    if(this.lookW>.01&&this.look&&this.slot[5]>=0&&!W[5*5+4]){const hq=new THREE.Quaternion().fromArray(L,60),h0=new THREE.Quaternion().fromArray(this.rest,60),fwd=v3(0,0,1).applyQuaternion(hq.clone().multiply(h0.invert())),hp=v3(L[64],L[65],L[66]),to=this.look.clone().sub(hp).normalize(),qf=new THREE.Quaternion().setFromUnitVectors(fwd,to),ang=2*Math.acos(Math.min(1,Math.abs(qf.w))),lim=1.05;ang>lim&&qf.slerp(new THREE.Quaternion(),1-lim/ang);for(const[k,s]of[[4,.4],[5,.7]]){if(this.slot[k]<0||W[5*k+4])continue;const qq=new THREE.Quaternion().slerp(qf,s).multiply(new THREE.Quaternion().fromArray(L,12*k));W.set([qq.x,qq.y,qq.z,qq.w,1],5*k);wt[k]=Math.max(wt[k],this.lookW);any=true}}
-    if(any){const out=this.core.solve(this.slot,L,W),q=new THREE.Quaternion();this.slot.forEach((bi,k)=>{bi>=0&&out[5*k+4]>.5&&wt[k]>0&&this.bones[bi].quaternion.slerp(q.fromArray(out,5*k),wt[k])})}
-    this.cons.length&&this.applyCons()
-    this.blinkT-=dt;const bl=this.blinkT<0?1:0;this.blinkT<-.12&&(this.blinkT=2+Math.random()*3.5)
-    const mouth=this.talk?Math.max(0,.35+.35*Math.sin(this.time*17)+.2*Math.sin(this.time*29)):0
+    const cl=(x,a,b)=>Math.max(a,Math.min(b,x)),LI=this.lin;let on=0,yt=0,pt=0,dist=0,hf=null
+    if(this.look&&this.slot[5]>=0){const hq=new THREE.Quaternion().fromArray(L,60),h0=new THREE.Quaternion().fromArray(this.rest,60),fwd=v3(0,0,1).applyQuaternion(hq.clone().multiply(h0.invert())),dv=this.look.clone().sub(v3(L[64],L[65],L[66]));dist=dv.length();const d=dv.normalize(),yf=Math.atan2(fwd.x,fwd.z),pf=Math.asin(cl(fwd.y,-1,1)),y0=Math.atan2(d.x,d.z)-yf;yt=Math.atan2(Math.sin(y0),Math.cos(y0));pt=cl(Math.asin(cl(d.y,-1,1)),-.5,.5)-pf;on=this.lookW>.5&&Math.abs(yt)<2.2?1:0;hf=[fwd,yf,pf]}
+    LI.set([dt,on,yt,pt,dist,this.talk?1:0,on,this.time,this.eyeH,this.eyeV,this.eyeS]);const o=this.core.life(LI)
+    if(this.lookW>.01&&hf&&!W[5*5+4]){const[fwd,yf,pf]=hf,ya=yf+cl(o[10],-1.05,1.05),pa=pf+cl(o[11],-.5,.5),to=v3(Math.sin(ya)*Math.cos(pa),Math.sin(pa),Math.cos(ya)*Math.cos(pa)),qf=new THREE.Quaternion().setFromUnitVectors(fwd,to);for(const[k,s]of[[4,.45],[5,1]]){if(this.slot[k]<0||W[5*k+4])continue;const qq=new THREE.Quaternion().slerp(qf,s).multiply(new THREE.Quaternion().fromArray(L,12*k));W.set([qq.x,qq.y,qq.z,qq.w,1],5*k);wt[k]=Math.max(wt[k],this.lookW);any=true}}
+    if(this.breath)for(const[k,x,a]of BR){if(this.slot[k]<0||W[5*k+4]===2||k===4&&W[24])continue;const had=W[5*k+4],qq=new THREE.Quaternion().setFromAxisAngle(v3(x==='x'?1:0,0,x==='z'?1:0).applyQuaternion(rq),a*o[32]*this.breath).multiply(new THREE.Quaternion().fromArray(had?W:L,had?5*k:12*k));W.set([qq.x,qq.y,qq.z,qq.w,1],5*k);had||(wt[k]=1);any=true}
+    if(any){const out=this.core.solve(this.slot,L,W),O=this.O;O.fill(0);this.slot.forEach((bi,k)=>{bi>=0&&out[5*k+4]>.5&&wt[k]>0&&(O.set(out.subarray(5*k,5*k+4),5*k),O[5*k+4]=wt[k])});this.v.apply(O)}
     for(const k of['smile','surprised','sad','wink'])this.face[k]=(this.face[k]||0)+((this.faceT[k]||0)-(this.face[k]||0))*Math.min(1,dt*8),this.setMorph(k,this.face[k])
-    this.setMorph('open',mouth);this.setMorph('blink',Math.max(bl,this.face.wink>.5?0:0))
+    const ak=this.ak,f=this.face,tk=this.tk=(this.tk||0)+((this.talk?1:0)-(this.tk||0))*Math.min(1,dt*12)
+    ak.eyeBlinkLeft?(this.setA('eyeBlinkLeft',Math.max(o[0],f.wink||0)),this.setA('eyeBlinkRight',o[1])):this.setMorph('blink',Math.max(o[0],o[1]))
+    ak.jawOpen?MC.forEach((k,j)=>this.setA(k,Math.min(1,(k.startsWith('mouthSmile')?f.smile||0:0)+o[16+j]*tk))):this.setMorph('open',o[16]*tk)
+    ak.eyeLookUpLeft&&this.ec.forEach((k,j)=>this.setA(k,o[2+j]));ak.eyeWideLeft&&['Left','Right'].forEach((sd,j)=>this.setA('eyeWide'+sd,Math.max(o[28+j],f.surprised||0)))
+    this.vw={jawOpen:o[16]*tk,mouthUpperUpLeft:o[25]*tk,mouthUpperUpRight:o[26]*tk}
+    this.teeth()
   }
-  dispose(){this.mixer.stopAllAction();this.root.removeFromParent();this.root.traverse(o=>{o.geometry?.dispose();[].concat(o.material||[]).forEach(m=>{for(const v of Object.values(m))v?.isTexture&&v.dispose();m.dispose()})})}
+  teeth(){if(!this.tm){this.tm=[];this.g.scene.traverse(o=>o.isMesh&&o.name==='teeth'&&[].concat(o.material).forEach(m=>this.tm.push([m,m.color.clone(),m.roughness])))}if(!this.tm.length)return;const v=this.vw||{},f=this.face||{},o=Math.min(1,3*(v.jawOpen||0)+1.5*((v.mouthUpperUpLeft||0)+(v.mouthUpperUpRight||0)+(v.mouthLowerDownLeft||0)+(v.mouthLowerDownRight||0))+.7*(f.smile||0)+(f.surprised||0)),s=o*o*(3-2*o),b=this.teethB=.4+.6*s;this.teethR=.75-.43*s}
+  dispose(){this.root.removeFromParent();this.root.traverse(o=>{o.geometry?.dispose();[].concat(o.material||[]).forEach(m=>{for(const v of Object.values(m))v?.isTexture&&v.dispose();m.dispose()})})}
 }
 export const ANIMS=Object.keys(ANIM).concat(['spin']),EMOTES=Object.keys(EMOTE).concat(['tpose'])

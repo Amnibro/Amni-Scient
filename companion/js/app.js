@@ -8,21 +8,28 @@ import * as voice from './voice.js'
 import {Senses} from './senses.js'
 import * as store from './store.js'
 import {arSupported,startAR} from './xr.js'
-const VERSION='1.2.0',$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],BASE=new URL('../',import.meta.url),now=()=>performance.now()
-const STOCK={holo:{name:'Holo',file:'models/holo.glb',img:'models/holo.webp',persona:'holo',blurb:'Bubbly punk-pop holo buddy'},dex:{name:'Dex',file:'models/dex.glb',img:'models/dex.webp',persona:'dex',blurb:'Calm engineer, dry wit'},mannequin:{name:'Mannequin',cname:'Amni',file:'anim/AnimationLibrary_Godot_Standard.gltf',img:'models/mannequin.webp',persona:'neutral',blurb:'Plain and simple'}}
+const VERSION='1.4.0',$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],BASE=new URL('../',import.meta.url),now=()=>performance.now()
+const STOCK={holo:{name:'Holo',file:'models/holo.glb',img:'models/holo.webp',hair:'models/holo.hair',persona:'holo',blurb:'Bubbly punk-pop holo buddy',look:{liner:1,lids:1,clean:1,nose:1,hair:'0.63 0.41 0.2 1.82'}},dex:{name:'Dex',file:'models/dex.glb',img:'models/dex.webp',hair:'models/dex.hair',persona:'dex',blurb:'Calm engineer, dry wit',look:{hair:'0.03 0.022 0.018 0.45'}},mannequin:{name:'Mannequin',cname:'Amni',file:'anim/AnimationLibrary_Godot_Standard.gltf',img:'models/mannequin.webp',persona:'neutral',blurb:'Plain and simple'}}
 const COOL={wave:7000,clap:7000,hands_up:7000,thumbs_up:7000,thumbs_down:7000,peace:7000,love:7000,fist:7000,pointing_up:7000,point:7000,wink:10000,nod:14000,head_shake:14000,object:4000},reacted={}
-let S=store.load(),core,lib,av=null,avMeta={name:'',persona:'neutral'},senses=null,listener=null,xr=null,mode='room',busy=false,talking=false,lastReact=0,home=new THREE.Vector3(),go=null,roam=0,lookOff=null,history=S.remember?S.history||[]:[],ctrl=null,roomView=null,greeted=false
+let HE=!!navigator.gpu
+let hm=null,S=store.load(),core,lib,av=null,avMeta={name:'',persona:'neutral'},senses=null,listener=null,xr=null,mode='room',busy=false,talking=false,lastReact=0,home=new THREE.Vector3(),go=null,roam=0,lookOff=null,history=S.remember?S.history||[]:[],ctrl=null,roomView=null,greeted=false
 const save=()=>{S.history=history;store.save(S)}
-const canvas=$('#stage'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap
+const DOS=['buzz','crew','crop','side part','slick back','spiky','curly top','afro','pixie','bowl','bob','bob bangs','lob','shag','wavy','curly','long straight','long side part','long layers','long waves','long curls','long bangs','ponytail','low ponytail','ponytail bangs','top bun','low bun','twin tails','pigtails','space buns'],SHADES=['black','soft black','dark brown','brown','chestnut','auburn','copper','strawberry','dark blonde','blonde','golden','platinum','gray','silver','white','pink','red','blue','teal','green','purple','lavender'],LOOK0={liner:0,thick:1,wing:1,lids:0,clean:0,nose:0,do:'',shade:'',extra:''},LK=['liner','thick','wing','lids','clean','nose'],lookOf=id=>({...LOOK0,...STOCK[id.replace('stock:','')]?.look,...S.looks?.[id]}),lookText=l=>[l.clean>0&&`clean ${l.clean} 12 0.85`,l.lids>0&&`lids ${l.lids} ${l.lids} 25 1`,l.nose>0&&`nose ${l.nose} 25 1`,l.liner>0&&`liner ${l.liner} ${(.05*l.thick).toFixed(3)} ${(.185*l.thick).toFixed(3)} ${(.3*l.wing).toFixed(3)} 22 0.075 18`,l.hair&&`hair ${l.hair}`,l.do&&`do ${l.do}`,l.shade&&`shade ${l.shade}`,l.extra].filter(Boolean).join('\n')
+const meshNames=b=>{try{const u=new Uint8Array(b),d=new DataView(u.buffer,u.byteOffset);return d.getUint32(0,true)===0x46546C67?[...new Set(JSON.parse(new TextDecoder().decode(u.subarray(20,20+d.getUint32(12,true)))).meshes?.map(m=>m.name).filter(Boolean))]:[]}catch{return[]}}
+let parts=[]
+function renderLook(){const l=lookOf(S.model_id);$('#look').hidden=!HE;for(const k of LK)$('#lk-'+k).value=l[k];$('#lk-do').value=l.do;$('#lk-shade').value=l.shade;$('#lk-text').value=l.extra;$('#lk-parts').textContent=parts.join(', ')||'none found'}
+function setLook(){S.looks={...S.looks,[S.model_id]:{...Object.fromEntries(LK.map(k=>[k,+$('#lk-'+k).value])),do:$('#lk-do').value,shade:$('#lk-shade').value,extra:$('#lk-text').value.trim()}};save()}
+const canvas=$('#stage');let renderer=null
+const loop=()=>requestAnimationFrame(function f(t){tick(t);requestAnimationFrame(f)})
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(35,1,.05,100),clock=new THREE.Clock();camera.position.set(0,1.27,4.7)
-scene.environment=new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(),.04).texture;scene.environmentIntensity=.3
-const keyL=new THREE.DirectionalLight(0xffffff,2.8);keyL.position.set(1.4,3.2,2.1);keyL.castShadow=true;keyL.shadow.mapSize.set(2048,2048);keyL.shadow.normalBias=.02;Object.assign(keyL.shadow.camera,{left:-2,right:2,top:2,bottom:-2,near:.5,far:10});keyL.shadow.radius=4;scene.add(keyL)
-const rim=new THREE.DirectionalLight(0xa98bff,1.1);rim.position.set(-2,2.4,-2.8);const fillL=new THREE.DirectionalLight(0xdfe8ff,.45);fillL.position.set(-2.4,1.2,2.2);scene.add(rim,fillL,new THREE.HemisphereLight(0xc4dcff,0x1e1530,.22))
+scene.environmentIntensity=.2
+const keyL=new THREE.DirectionalLight(0xffffff,3.1);keyL.position.set(2.3,3,1.3);keyL.castShadow=true;keyL.shadow.mapSize.set(2048,2048);keyL.shadow.normalBias=.02;Object.assign(keyL.shadow.camera,{left:-2,right:2,top:2,bottom:-2,near:.5,far:10});keyL.shadow.radius=4;scene.add(keyL)
+const rim=new THREE.DirectionalLight(0xa98bff,1.5);rim.position.set(-2,2.4,-2.8);const fillL=new THREE.DirectionalLight(0xdfe8ff,.27);fillL.position.set(-2.4,1.2,2.2);scene.add(rim,fillL,new THREE.HemisphereLight(0xc4dcff,0x1e1530,.22))
 const pad=new THREE.Group(),shadow=new THREE.Mesh(new THREE.CircleGeometry(1.7,70).rotateX(-Math.PI/2),new THREE.ShadowMaterial({opacity:.35}));shadow.receiveShadow=true
 const ringM=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{t:{value:0}},vertexShader:'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec2 v;uniform float t;void main(){float r=length(v-.5)*2.;float g=smoothstep(.97,.9,r)*smoothstep(.7,.9,r)+.35*smoothstep(1.,.2,r)*(.5+.5*sin(r*28.-t*1.7))*smoothstep(.97,.8,r)*.35;vec3 c=mix(vec3(.5,.95,1.),vec3(.66,.55,1.),v.x);gl_FragColor=vec4(c*g,g);}'})
 const ring=new THREE.Mesh(new THREE.PlaneGeometry(2.1,2.1).rotateX(-Math.PI/2),ringM);ring.position.y=.003;pad.add(shadow,ring);scene.add(pad)
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,.95,0);controls.enableDamping=true;controls.minDistance=1.1;controls.maxDistance=8;controls.maxPolarAngle=Math.PI*.57;controls.enablePan=false;controls.update()
-function resize(){const w=innerWidth,h=innerHeight,lift=Math.min(140,h*.11);renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w<h?42:35;mode==='xr'?camera.clearViewOffset():camera.setViewOffset(w,h,0,lift,w,h);camera.updateProjectionMatrix()}
+function resize(){const w=innerWidth,h=innerHeight,lift=Math.min(140,h*.11);renderer?.setSize(w,h,false);camera.aspect=w/h;camera.fov=w<h?42:35;mode==='xr'?camera.clearViewOffset():camera.setViewOffset(w,h,0,lift,w,h);camera.updateProjectionMatrix()}
 addEventListener('resize',resize);resize()
 const status=(t,ms)=>{const e=$('#status');e.textContent=t||'';e.hidden=!t;clearTimeout(status.h);t&&ms&&(status.h=setTimeout(()=>e.hidden=true,ms))}
 const toast=(t,ms=5000)=>{const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,ms)}
@@ -46,8 +53,8 @@ function nextRoam(){if(roam-->0){const a=Math.random()*Math.PI*2,r=.5+Math.rando
 function respond(reply,record){
   if(!reply)return;const{clean,tags}=core.tags(reply);record&&(history.push({role:'assistant',content:reply}),save());tags.forEach(t=>act(t.kind,t.arg))
   if(!clean)return;bubble(clean);logLine('bot',clean)
-  if(S.speak&&voice.canSpeak){listener?.pause(true);voice.speak(clean,{voice:S.voice,persona:persona(),rate:S.rate,onstart:()=>{talking=true;av?.speaking(true)},onend:()=>{talking=false;av?.speaking(false);listener?.pause(false)}})}
-  else{av?.speaking(true);setTimeout(()=>av?.speaking(false),Math.min(7000,clean.length*55))}
+  if(S.speak&&voice.canSpeak){listener?.pause(true);voice.speak(clean,{voice:S.voice,persona:persona(),rate:S.rate,onstart:()=>{talking=true;av?.speaking(true);av?.lipStart(clean,S.rate||1)},onword:(ci,n)=>av?.lip(clean,ci,n,S.rate||1),onend:()=>{talking=false;av?.speaking(false);listener?.pause(false)}})}
+  else{av?.speaking(true);av?.lipStart(clean,1);setTimeout(()=>av?.speaking(false),Math.min(7000,clean.length*55))}
 }
 async function send(text){
   text=(text||'').trim();if(!text||!core)return;greeted=true;voice.hush();logLine('user',text);history.push({role:'user',content:text});save()
@@ -71,7 +78,7 @@ async function setCamera(on){
 function updateMirror(){const c=$('#mirrorChip');c.hidden=mode!=='camera';c.classList.toggle('on',!!S.track);c.textContent=S.track?'Stop mirroring':'Mirror me'}
 async function toggleAR(){
   if(xr){xr.end();return}
-  try{setCamera(false);xr=await startAR(renderer,scene,$('#hud'),p=>{av&&(av.root.position.copy(p),home.copy(p),pad.position.copy(p),go=null)},()=>{xr=null;mode='room';av&&av.root.position.set(0,0,0);home.set(0,0,0);pad.position.set(0,0,0);ring.visible=true;$('#arBtn').classList.remove('on');document.body.classList.remove('xr')});mode='xr';ring.visible=false;$('#arBtn').classList.add('on');document.body.classList.add('xr');status('Point at the floor, then tap to place',5000)}
+  try{setCamera(false);three();xr=await startAR(renderer,scene,$('#hud'),p=>{av&&(av.root.position.copy(p),home.copy(p),pad.position.copy(p),go=null)},()=>{xr=null;mode='room';av&&av.root.position.set(0,0,0);home.set(0,0,0);pad.position.set(0,0,0);ring.visible=true;$('#arBtn').classList.remove('on');document.body.classList.remove('xr')});mode='xr';ring.visible=false;$('#arBtn').classList.add('on');document.body.classList.add('xr');status('Point at the floor, then tap to place',5000)}
   catch(e){toast('AR could not start: '+e.message,7000)}
 }
 let yaw=0;function tick(t,frame){
@@ -85,12 +92,12 @@ let yaw=0;function tick(t,frame){
     av.lookAt(lp,go?0:.95)
     if(mode==='camera'&&S.track&&senses?.world){const res=core.pose(senses.world,S.mirror,now()/1000,av.slot,av.rest);av.pose(res.out,res.n?1:0)}else av.pose(null)
     av.update(dt)
-    const b=$('#bubble');if(!b.hidden){const hb=av.bones[av.slot[5]],p=hb.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,.32*r.scale.x,0)).project(xr?renderer.xr.getCamera():camera),x=(p.x*.5+.5)*innerWidth,y=(-p.y*.5+.5)*innerHeight;b.style.left=Math.max(110,Math.min(innerWidth-110,x))+'px';b.style.top=Math.max(120,Math.min(innerHeight-170,y))+'px';now()>bubbleT&&(b.style.opacity=0,now()>bubbleT+400&&(b.hidden=true))}}
-  xr||controls.update();renderer.render(scene,camera)
+    const b=$('#bubble');if(!b.hidden){const p=av.head().add(new THREE.Vector3(0,.32*r.scale.x,0)).project(xr?renderer.xr.getCamera():camera),x=(p.x*.5+.5)*innerWidth,y=(-p.y*.5+.5)*innerHeight;b.style.left=Math.max(110,Math.min(innerWidth-110,x))+'px';b.style.top=Math.max(120,Math.min(innerHeight-170,y))+'px';now()>bubbleT&&(b.style.opacity=0,now()>bubbleT+400&&(b.hidden=true))}}
+  xr||controls.update();renderer?.render(scene,camera);xr||hm?.sync(camera,pad.position)
 }
 async function modelBytes(id){if(id.startsWith('user:')){const m=await store.models.get(id);if(!m)throw new Error('That model is no longer saved here.');avMeta={name:m.name.replace(/\.(glb|vrm)$/i,''),persona:m.persona||'neutral'};return m.blob.arrayBuffer()}const k=id.replace('stock:',''),s=STOCK[k]||STOCK.holo;avMeta={name:s.cname||s.name,persona:s.persona};if(k==='mannequin')return new URL(s.file,BASE).href;const r=await fetch(new URL(s.file,BASE));if(!r.ok)throw new Error(`${s.name} isn't available yet.`);return r.arrayBuffer()}
 async function useModel(id,quiet){
-  status('Loading model…');try{const src=await modelBytes(id),next=await loadAvatar(core,src,lib);av?.dispose();av=next;scene.add(av.root);av.root.position.copy(home);av.root.scale.setScalar(S.scale);yaw=Math.atan2(camera.position.x,camera.position.z);S.model_id=id;save();$('#who').textContent=cname();renderModels();$('#rig').textContent=`Body parts matched: ${av.f.count} of 22.${av.morphs.open?' Talking mouth found.':''}${av.morphs.blink?' Blinks.':''}`;status('');quiet||respond(core.reply(context(),'who are you'),false)}
+  status('Loading model…');try{const src=await modelBytes(id),hb=typeof src==='string'?await(await import('./heview.js')).glbOf(src):src.slice(0),_p=(parts=meshNames(hb)),next=await loadAvatar(core,src,lib);av?.dispose();hm?.dispose();hm=null;av=next;{const st=STOCK[id.replace('stock:','')],get=async u=>{const r=u&&await fetch(new URL(u,BASE)).catch(()=>null);return r?.ok?new Uint8Array(await r.arrayBuffer()):null};hm=await(await import('./heview.js')).heMirror(av,new Uint8Array(hb),await get(lookOf(id).do?null:st?.hair),await get(st?.cloth),new TextEncoder().encode(lookText(lookOf(id))))}scene.add(av.root);av.root.position.copy(home);av.root.scale.setScalar(S.scale);yaw=Math.atan2(camera.position.x,camera.position.z);S.model_id=id;save();$('#who').textContent=cname();renderModels();$('#rig').textContent=`Body parts matched: ${av.f.count} of 22.${av.morphs.open?' Talking mouth found.':''}${av.morphs.blink?' Blinks.':''}`;status('');quiet||respond(core.reply(context(),'who are you'),false)}
   catch(e){status('');toast(e.message,8000);if(!av&&id!=='stock:mannequin')return useModel(id==='stock:holo'?'stock:mannequin':'stock:holo',true)}
 }
 async function addFile(f){
@@ -98,6 +105,7 @@ async function addFile(f){
   status('Checking your model…');const buf=await f.arrayBuffer();try{const test=await loadAvatar(core,buf.slice(0),lib);test.dispose();const id=await store.models.put(f.name,buf);await useModel(id)}catch(e){status('');toast(e.message,9000)}
 }
 async function renderModels(){
+  renderLook()
   $('#stock').innerHTML='';for(const[k,s]of Object.entries(STOCK)){const b=document.createElement('button');b.className='card'+(S.model_id==='stock:'+k?' on':'');b.innerHTML=`<img alt="" src="${s.img}" onerror="this.outerHTML='<div class=ph></div>'"><b>${s.name}</b><br><small>${s.blurb}</small>`;b.onclick=()=>useModel('stock:'+k);$('#stock').append(b)}
   const mine=await store.models.list(),l=$('#mine');l.innerHTML=mine.length?'':'<p class="hint">None yet.</p>';for(const m of mine){const d=document.createElement('div');d.className='item'+(S.model_id===m.id?' on':'');d.innerHTML=`<span></span><small>${(m.size/1048576).toFixed(1)} MB</small><button class="ghost" aria-label="Delete">Delete</button>`;d.querySelector('span').textContent=m.name;d.querySelector('span').onclick=()=>useModel(m.id);d.querySelector('button').onclick=async()=>{await store.models.del(m.id);S.model_id===m.id?useModel('stock:holo'):renderModels()};l.append(d)}
 }
@@ -109,6 +117,7 @@ function bindSettings(){
   $('#personality').value=S.personality;$('#personality').oninput=e=>{S.personality=e.target.value;save()}
   $('#remember').checked=S.remember;$('#remember').onchange=e=>{S.remember=e.target.checked;save()};$('#forget').onclick=()=>{history=[];save();$('#log').innerHTML='';toast('Conversation cleared.')}
   $('#testBrain').onclick=async()=>{if(S.provider==='offline')return toast('The offline brain is always ready.');status('Testing…');try{const r=await ask({...S,key:S.keys[S.provider]||''},context(),[{role:'user',content:'Say hello in five words or fewer.'}]);status('');toast('Connected: '+core.tags(r).clean,7000)}catch(e){status('');toast('Failed: '+e.message,9000)}}
+  for(const k of LK)$('#lk-'+k).oninput=setLook;for(const[k,v]of[['do',DOS],['shade',SHADES]]){const e=$('#lk-'+k);for(const n of v)e.add(new Option(n[0].toUpperCase()+n.slice(1),n));e.onchange=()=>{setLook();useModel(S.model_id,true)}}$('#lk-text').onchange=setLook;$('#lk-apply').onclick=()=>{setLook();useModel(S.model_id,true)};$('#lk-reset').onclick=()=>{const{[S.model_id]:_,...o}=S.looks||{};S.looks=o;save();renderLook();useModel(S.model_id,true)}
   $('#scale').value=S.scale;$('#scale').oninput=e=>{S.scale=+e.target.value;av?.root.scale.setScalar(S.scale);save()}
   $('#cname').value=S.cname;$('#cname').oninput=e=>{S.cname=e.target.value.trim();$('#who').textContent=cname();save()}
   $('#persona').value=S.persona;$('#persona').onchange=e=>{S.persona=e.target.value;save()}
@@ -138,12 +147,12 @@ function bindUI(){
 }
 async function boot(){
   try{
-    $('#loadMsg').textContent='Starting the Helium core…';core=await loadCore(new URL('companion.wasm',BASE));globalThis.amniCore=core
+    $('#loadMsg').textContent='Starting the Helium core…';HE&&=!!await navigator.gpu.requestAdapter().catch(()=>null);if(!HE)throw new Error('this browser has no WebGPU. Use a current Chrome, Edge or Safari.');core=await loadCore(new URL('companion.wasm',BASE));globalThis.amniCore=core
     $('#loadMsg').textContent='Loading animations…';lib=await loadLibrary(core,new URL('anim/AnimationLibrary_Godot_Standard.gltf',BASE).href)
     bindUI();bindSettings();$('#loadMsg').textContent='Bringing your companion in…';await useModel(S.model_id,true)
-    renderer.setAnimationLoop(tick);$('#loading').classList.add('done');setTimeout(()=>greeted||respond(core.reply(context(),'hello'),false),700)
+    loop();$('#loading').classList.add('done');setTimeout(()=>greeted||respond(core.reply(context(),'hello'),false),700)
     history.forEach(h=>logLine(h.role==='user'?'user':'bot',h.role==='user'?h.content:core.tags(h.content).clean))
-    arSupported().then(ok=>$('#arBtn').hidden=!ok)
+    $('#arBtn').hidden=true
     'serviceWorker'in navigator&&location.protocol==='https:'&&navigator.serviceWorker.register('sw.js').catch(()=>{})
   }catch(e){console.error(e);$('#loadMsg').textContent='Could not start: '+e.message}
 }
