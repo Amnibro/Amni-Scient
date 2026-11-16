@@ -2,6 +2,7 @@ import {systemPrompt} from './ai.js';
 import {FT} from './schema.js';
 import {recipePrompt,listRecipes} from './recipes.js';
 import {SPEC,MESH_GUIDE} from './form_lang.js';
+import {CHAR} from './beta.js';
 const TOPICS={
   recipes:{about:'ready-made generators (fan, propeller, impeller, gear, sprocket, heat sink, flange, pillow block) with their options'},
   sketch:{about:'feature types and fields, 2D profile shapes, sketch planes, holes, face and edge selectors, parameters and rules',re:/^(Feature types|Profiles \(|Sketch planes:|Hole:|Holes:|Edge selectors|Face selectors|op: |Numbers may be|Rules:|Example request|Example reply|Limits:|Tooling \(wood\))/},
@@ -11,7 +12,7 @@ const TOPICS={
   materials:{about:'materials and part finishes',re:/^(Materials:|Finishes depend|Wood and composite)/},
   references:{about:'working from attached sketches, photos and drawings',re:/^References:/},
   actions:{about:'only the basic actions: add, set, param, delete, new, material, finish'},
-  form:{about:'the Form & Character workspaces (human_model, mesh_edit, form_get, form_set, form_key, form_render): MakeHuman CC0 13,380-vert/13,378-quad characters in Gold/Helium (295 morph targets, 53-bone Amni-Companion humanoid rig, 52 ARKit FACS, 30 hair styles, 12 pattern-sewn cloth-draped garments across 8 fabrics, 39 landmarks, 31 regions), organic shapes, sculpting, editable polygon meshes, bones, IK and constraints, actions and NLA, bezier keys, lights, cameras and rendering'}
+  form:{about:CHAR?'the Form & Character workspaces (human_model, mesh_edit, form_get, form_set, form_key, form_render): MakeHuman CC0 13,380-vert/13,378-quad characters in Gold/Helium (295 morph targets, 53-bone Amni-Companion humanoid rig, 52 ARKit FACS, 30 hair styles, 12 pattern-sewn cloth-draped garments across 8 fabrics, 39 landmarks, 31 regions), organic shapes, sculpting, editable polygon meshes, bones, IK and constraints, actions and NLA, bezier keys, lights, cameras and rendering':'the Form workspace (form_get, form_set, form_key, form_render, mesh_edit): organic shapes, sculpting, editable polygon meshes, bones, IK and constraints, actions and NLA, bezier keys, lights, cameras and rendering'}
 };
 const FTRE=new RegExp('^- ('+Object.keys(FT).join('|')+'):'),CORE=/^(You are the design assistant|Actions \(applied|\{"say"| \{"(add|set|param|delete|new|material|finish|human)"|Numbers may be expressions)/;
 export const TOPIC_LIST=Object.entries(TOPICS).map(([k,v])=>({topic:k,about:v.about}));
@@ -20,7 +21,7 @@ export function language(units,topic){
   if(t==='all'||t==='full')return{text:systemPrompt(units),topics:TOPIC_LIST,recipes:listRecipes(units).map(r=>({key:r.key,summary:r.summary,aliases:r.aliases,example:r.example})),note:'Full reference. Pass topic (recipes, sketch, assembly, sim, tooling, materials, references, actions or form) for a short section.'};
   if(!t)return{...language(units,'sketch'),topic:'start',recipes:listRecipes(units).map(r=>({key:r.key,summary:r.summary})),note:'Modeling essentials only. Before simulations, assemblies, tooling, materials, characters/form or a recipe, read that topic; topic "all" returns the full reference (about 50 KB).'};
   const T=TOPICS[t==='recipe'?'recipes':t==='simulation'?'sim':t==='human'||t==='character'?'form':t];
-  if(t==='form'||t==='human'||t==='character')return{topic:'form',text:'Form & character workspace (use human_model, mesh_edit, form_get, form_set, form_key and form_render, or {"human":{...}} in apply_actions; review_design shows a 3×2 contact sheet with FACE PORTRAIT and HAND DETAIL closeups for humans):\n'+SPEC+'\n'+MESH_GUIDE,topics:TOPIC_LIST};
+  if(t==='form'||t==='human'||t==='character')return{topic:'form',text:(CHAR?'Form & character workspace (use human_model, mesh_edit, form_get, form_set, form_key and form_render, or {"human":{...}} in apply_actions; review_design shows a 3×2 contact sheet with FACE PORTRAIT and HAND DETAIL closeups for humans):\n':'Form workspace (use form_get, form_set, form_key, form_render and mesh_edit, not apply_actions; review_design shows a contact sheet of the form):\n')+SPEC+'\n'+MESH_GUIDE,topics:TOPIC_LIST};
   if(!T)return{text:'Unknown topic "'+topic+'". Topics: '+Object.keys(TOPICS).join(', ')+'.',topics:TOPIC_LIST};
   if(T.text)return{topic:t,text:T.text(units),topics:TOPIC_LIST};
   const out=[];let on=false;

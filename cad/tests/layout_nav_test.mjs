@@ -42,7 +42,7 @@ try{
   const k1=await p.evaluate(()=>({open:document.getElementById('nav-menu').classList.contains('open'),focus:document.activeElement.textContent.trim(),exp:document.getElementById('nav-now').getAttribute('aria-expanded')}));
   ok(k1.open&&k1.exp==='true'&&(k1.focus==='Part'||k1.focus==='Form'),'keyboard opens the menu and moves through it',JSON.stringify(k1));
   const menu=await p.evaluate(()=>{const bs=[...document.querySelectorAll('#ws button')];return{texts:bs.map(b=>b.textContent.trim()),clip:bs.filter(b=>{const r=b.getBoundingClientRect();return r.width>1&&(b.scrollWidth>b.clientWidth+2||r.right>innerWidth+2);}).map(b=>b.textContent.trim())};});
-  ok(menu.texts.join(',')==='Part,Form,Character,Assembly,Tooling'&&!menu.clip.length,'the workspace menu lists Part, Form, Character, Assembly and Tooling and does not clip',menu.texts.join(','));
+  ok(menu.texts.join(',')==='Part,Form,Assembly,Tooling'&&!menu.clip.length,'the workspace menu lists Part, Form, Assembly and Tooling and does not clip',menu.texts.join(','));
   if(shots)await p.screenshot({path:path.join(shots,'after_d1440_menu.png')});
   await p.keyboard.press('Escape');
   ok(await p.evaluate(()=>!document.getElementById('nav-menu').classList.contains('open')&&document.activeElement.id==='nav-now'),'Escape closes the menu and returns focus');

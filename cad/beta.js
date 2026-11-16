@@ -1,0 +1,1 @@
+export const CHAR=(()=>{try{return typeof location==='undefined'?typeof process!=='undefined'&&process.env.AMNICAD_CHARACTER==='1':new URLSearchParams(location.search).has('character')||localStorage.getItem('amnicad.character')==='1';}catch{return false;}})(),NOCHAR='The character creator is not available yet.';
