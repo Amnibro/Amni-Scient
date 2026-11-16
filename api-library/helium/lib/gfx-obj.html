@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-obj">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-obj">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=8954c56598">
+<link rel="stylesheet" href="/api-library/lib.css?v=b695c15faf">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=8954c56598'; start({wasm: '/api-library/search.wasm?v=8954c56598'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b695c15faf'; start({wasm: '/api-library/search.wasm?v=b695c15faf'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,7 +103,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/obj</h1>
 <p class="lib-lede">Loads Wavefront OBJ model files, parsing vertices, named groups, and faces into triangle lists for rendering.</p>
-<p class="lib-meta"><code>import gfx.obj;</code> &middot; <code>obj::</code> &middot; 8 functions, 0 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.obj;</code> &middot; <code>obj::</code> &middot; 8 functions, 0 types, 3 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#model-data">Model Data <span class="n">6</span></a></li>
 <li><a href="#groups">Groups <span class="n">3</span></a></li>
@@ -115,42 +115,42 @@
 <pre>var V f32[&gt;..]</pre>
 <p>Holds the flat list of vertex coordinates (x, y, z triplets) from the most recently loaded OBJ file.</p>
 <p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L4">hc/lib/gfx/obj.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L4">hc/lib/gfx/obj.amni:4</a>
 </article>
 <article class="sym" id="tris">
 <h3><a href="#tris">tris</a> <i>constant</i></h3>
 <pre>var tris int[&gt;..]</pre>
 <p>Holds triangles of the loaded model as four ints each: group id, then three zero-based vertex indices.</p>
 <p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L6">hc/lib/gfx/obj.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L6">hc/lib/gfx/obj.amni:6</a>
 </article>
 <article class="sym" id="load">
 <h3><a href="#load">load</a> <i>function</i></h3>
 <pre>load(path const byte[:]) bool</pre>
 <p>Loads an OBJ file, replacing current data, and returns false if the file cannot be read.</p>
 <p class="note">`load(path) bool` clears the module vars and reads the file. A line starting with &quot;v &quot; adds its first three numbers to `V`. A line starting with &quot;g &quot; makes its name (the text after &quot;g &quot; up to the end of the line, without trailing spaces or a carriage return) the current group, adding it to `names` when new. A line starting with &quot;f &quot; lists three or more corners, each a vertex number counting from 1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L26">hc/lib/gfx/obj.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L26">hc/lib/gfx/obj.amni:26</a>
 </article>
 <article class="sym" id="tris_of">
 <h3><a href="#tris_of">tris_of</a> <i>function</i></h3>
 <pre>tris_of(name const byte[:], out int[&gt;..]&amp;)</pre>
 <p>Fills the output array with vertex indices, three per triangle, for the named group; empty if unknown.</p>
 <p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L73">hc/lib/gfx/obj.amni:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L73">hc/lib/gfx/obj.amni:73</a>
 </article>
 <article class="sym" id="centroid">
 <h3><a href="#centroid">centroid</a> <i>function</i></h3>
 <pre>centroid(name const byte[:]) real, real, real</pre>
 <p>Returns the average x, y, z position of the distinct vertices used by the named group, or zeros if none.</p>
 <p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L85">hc/lib/gfx/obj.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L85">hc/lib/gfx/obj.amni:85</a>
 </article>
 <article class="sym" id="normals">
 <h3><a href="#normals">normals</a> <i>function</i></h3>
 <pre>normals(idx const int[:], out f32[&gt;..]&amp;)</pre>
 <p>Computes per-vertex normals for the given triangle vertex indices into the output array, skipping triangles with out-of-range indices.</p>
 <p class="note">`normals(idx, out)` (idx: read-only int slice of triangles) clears out (growable f32) and fills it with three numbers per vertex of `V`: each vertex's sum of the cross products of the edges (b minus a) and (c minus a) of the triangles that use it, scaled to length one (0, 1, 0 when shorter than 1e-20).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L111">hc/lib/gfx/obj.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L111">hc/lib/gfx/obj.amni:111</a>
 </article>
 <h2 id="groups">Groups <span class="n">3</span></h2>
 <article class="sym" id="names">
@@ -158,33 +158,33 @@
 <pre>var names byte[][&gt;..]</pre>
 <p>Holds the group names found in the most recently loaded OBJ file, indexed by group id.</p>
 <p class="note">Imports: os. Namespace obj. Reads Wavefront OBJ meshes with named groups, with no dependency on the renderer. Module vars: `V` (f32, three per vertex), `names` (a list of group names in order of appearance, each a growable byte array) and `tris` (int, four per triangle: the group's index in `names`, then three vertex numbers counting from 0).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L5">hc/lib/gfx/obj.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L5">hc/lib/gfx/obj.amni:5</a>
 </article>
 <article class="sym" id="name_count">
 <h3><a href="#name_count">name_count</a> <i>function</i></h3>
 <pre>name_count() int</pre>
 <p>Returns the number of named groups currently loaded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L7">hc/lib/gfx/obj.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L7">hc/lib/gfx/obj.amni:7</a>
 </article>
 <article class="sym" id="group">
 <h3><a href="#group">group</a> <i>function</i></h3>
 <pre>group(name const byte[:]) int</pre>
 <p>Returns the group id for a name, or -1 if no such group exists.</p>
 <p class="note">`group(name) int` is the index of the name in `names`, or -1. `tris_of(name, out)` clears out (a growable int array) and fills it with the three vertex numbers of every triangle of that group. `centroid(name) real, real, real` is the mean position of the distinct vertices used by that group's triangles, or 0, 0, 0 when the group has none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L70">hc/lib/gfx/obj.amni:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L70">hc/lib/gfx/obj.amni:70</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (2)</summary>
 <article class="sym" id="find_name">
 <h3><a href="#find_name">find_name</a> <i>function</i></h3>
 <pre>find_name(name const byte[:]) int</pre>
 <p>Returns the index of a group name, or -1 if it is not loaded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L12">hc/lib/gfx/obj.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L12">hc/lib/gfx/obj.amni:12</a>
 </article>
 <article class="sym" id="add_name">
 <h3><a href="#add_name">add_name</a> <i>function</i></h3>
 <pre>add_name(name const byte[:]) int</pre>
 <p>Adds a group name if missing and returns its index, reusing the existing index when present.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/obj.amni#L20">hc/lib/gfx/obj.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/obj.amni#L20">hc/lib/gfx/obj.amni:20</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -196,7 +196,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2814</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2820</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>

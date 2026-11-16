@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-pathtrace">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-pathtrace">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=8954c56598">
+<link rel="stylesheet" href="/api-library/lib.css?v=b695c15faf">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=8954c56598'; start({wasm: '/api-library/search.wasm?v=8954c56598'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b695c15faf'; start({wasm: '/api-library/search.wasm?v=b695c15faf'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -103,12 +103,12 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/pathtrace</h1>
 <p class="lib-lede">Lets a program build a 3D scene of triangles, materials, textures, and lights, then render it with hardware path tracing.</p>
-<p class="lib-meta"><code>import gfx.pathtrace;</code> &middot; <code>pathtrace::</code> &middot; 17 functions, 2 types, 44 constants &middot; <a href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he">Source</a></p>
+<p class="lib-meta"><code>import gfx.pathtrace;</code> &middot; <code>pathtrace::</code> &middot; 18 functions, 2 types, 47 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#camera-and-sky">Camera and Sky <span class="n">15</span></a></li>
 <li><a href="#scene-data">Scene Data <span class="n">4</span></a></li>
 <li><a href="#water">Water <span class="n">6</span></a></li>
-<li><a href="#materials">Materials <span class="n">2</span></a></li>
+<li><a href="#materials">Materials <span class="n">3</span></a></li>
 <li><a href="#textures">Textures <span class="n">1</span></a></li>
 <li><a href="#lights">Lights <span class="n">1</span></a></li>
 <li><a href="#meshes">Meshes <span class="n">2</span></a></li>
@@ -120,387 +120,411 @@
 <h3><a href="#EYE">EYE</a> <i>constant</i></h3>
 <pre>var EYE = [0.0, 1.5, 5.0]</pre>
 <p>Camera eye position as x, y, z world coordinates used by the next render.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L19">hc/lib/gfx/pathtrace.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L24">hc/lib/gfx/pathtrace.he:24</a>
 </article>
 <article class="sym" id="TGT">
 <h3><a href="#TGT">TGT</a> <i>constant</i></h3>
 <pre>var TGT = [0.0, 0.5, 0.0]</pre>
 <p>Camera look-at target position as x, y, z world coordinates.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L20">hc/lib/gfx/pathtrace.he:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L25">hc/lib/gfx/pathtrace.he:25</a>
 </article>
 <article class="sym" id="UP">
 <h3><a href="#UP">UP</a> <i>constant</i></h3>
 <pre>var UP = [0.0, 1.0, 0.0]</pre>
 <p>Camera up direction vector used to orient the rendered view.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L21">hc/lib/gfx/pathtrace.he:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L26">hc/lib/gfx/pathtrace.he:26</a>
 </article>
 <article class="sym" id="FOV">
 <h3><a href="#FOV">FOV</a> <i>constant</i></h3>
 <pre>var FOV = 0.9</pre>
 <p>Vertical field of view of the camera, in radians.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L22">hc/lib/gfx/pathtrace.he:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L27">hc/lib/gfx/pathtrace.he:27</a>
 </article>
 <article class="sym" id="TO_SUN">
 <h3><a href="#TO_SUN">TO_SUN</a> <i>constant</i></h3>
 <pre>var TO_SUN = [0.4, 0.8, 0.45]</pre>
 <p>Direction vector pointing toward the sun, normalized before rendering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L23">hc/lib/gfx/pathtrace.he:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L28">hc/lib/gfx/pathtrace.he:28</a>
 </article>
 <article class="sym" id="SUN">
 <h3><a href="#SUN">SUN</a> <i>constant</i></h3>
 <pre>var SUN = [3.0, 2.85, 2.6]</pre>
 <p>Sun radiance color as red, green, blue; all zeros disables the sun.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L24">hc/lib/gfx/pathtrace.he:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L29">hc/lib/gfx/pathtrace.he:29</a>
 </article>
 <article class="sym" id="SUN_COS">
 <h3><a href="#SUN_COS">SUN_COS</a> <i>constant</i></h3>
 <pre>var SUN_COS = 1.0</pre>
 <p>Cosine of the sun's angular radius, controlling the sun disc size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L25">hc/lib/gfx/pathtrace.he:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L30">hc/lib/gfx/pathtrace.he:30</a>
 </article>
 <article class="sym" id="ZEN">
 <h3><a href="#ZEN">ZEN</a> <i>constant</i></h3>
 <pre>var ZEN = [0.25, 0.42, 0.75]</pre>
 <p>Sky color at the zenith as red, green, blue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L26">hc/lib/gfx/pathtrace.he:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L31">hc/lib/gfx/pathtrace.he:31</a>
 </article>
 <article class="sym" id="HOR">
 <h3><a href="#HOR">HOR</a> <i>constant</i></h3>
 <pre>var HOR = [0.65, 0.72, 0.8]</pre>
 <p>Sky color at the horizon as red, green, blue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L27">hc/lib/gfx/pathtrace.he:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L32">hc/lib/gfx/pathtrace.he:32</a>
 </article>
 <article class="sym" id="GND">
 <h3><a href="#GND">GND</a> <i>constant</i></h3>
 <pre>var GND = [0.2, 0.18, 0.16]</pre>
 <p>Ground color used below the horizon as red, green, blue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L28">hc/lib/gfx/pathtrace.he:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L33">hc/lib/gfx/pathtrace.he:33</a>
 </article>
 <article class="sym" id="SKY">
 <h3><a href="#SKY">SKY</a> <i>constant</i></h3>
 <pre>var SKY = 1.0</pre>
 <p>Sky brightness multiplier applied during rendering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L29">hc/lib/gfx/pathtrace.he:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L34">hc/lib/gfx/pathtrace.he:34</a>
 </article>
 <article class="sym" id="FURN">
 <h3><a href="#FURN">FURN</a> <i>constant</i></h3>
 <pre>var FURN = -1.0</pre>
 <p>White furnace test value; a nonnegative value enables the furnace test, negative disables it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L30">hc/lib/gfx/pathtrace.he:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L35">hc/lib/gfx/pathtrace.he:35</a>
 </article>
 <article class="sym" id="MS">
 <h3><a href="#MS">MS</a> <i>constant</i></h3>
 <pre>var MS = true</pre>
 <p>Flag enabling multiple scattering in material shading; true by default.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L31">hc/lib/gfx/pathtrace.he:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L36">hc/lib/gfx/pathtrace.he:36</a>
 </article>
 <article class="sym" id="PDFK">
 <h3><a href="#PDFK">PDFK</a> <i>constant</i></h3>
 <pre>var PDFK = 1.0</pre>
 <p>Probability density scaling factor passed to the render shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L32">hc/lib/gfx/pathtrace.he:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L37">hc/lib/gfx/pathtrace.he:37</a>
 </article>
 <article class="sym" id="DEPTH">
 <h3><a href="#DEPTH">DEPTH</a> <i>constant</i></h3>
 <pre>var DEPTH = 32</pre>
 <p>Maximum path bounce depth per ray.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L33">hc/lib/gfx/pathtrace.he:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L38">hc/lib/gfx/pathtrace.he:38</a>
 </article>
 <h2 id="scene-data">Scene Data <span class="n">4</span></h2>
 <article class="sym" id="SKIPPED">
 <h3><a href="#SKIPPED">SKIPPED</a> <i>constant</i></h3>
 <pre>var SKIPPED = 0</pre>
 <p>Count of scene lights and instanced batches that from_scene could not convert and skipped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L35">hc/lib/gfx/pathtrace.he:35</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L40">hc/lib/gfx/pathtrace.he:40</a>
 </article>
 <article class="sym" id="clear">
 <h3><a href="#clear">clear</a> <i>function</i></h3>
 <pre>clear()</pre>
 <p>Clears all accumulated triangles, materials, textures, lights and flags to start a new scene.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L56">hc/lib/gfx/pathtrace.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L61">hc/lib/gfx/pathtrace.he:61</a>
 </article>
 <article class="sym" id="tri">
 <h3><a href="#tri">tri</a> <i>function</i></h3>
 <pre>tri(p const real[:], n const real[:], uv const real[:], col const real[:], m int)</pre>
 <p>Adds a triangle from positions, normals, UVs and vertex color with a material index, skipping degenerate ones.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L65">hc/lib/gfx/pathtrace.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L73">hc/lib/gfx/pathtrace.he:73</a>
 </article>
 <article class="sym" id="from_scene">
 <h3><a href="#from_scene">from_scene</a> <i>function</i></h3>
 <pre>from_scene()</pre>
 <p>Rebuilds the path tracing scene from the current scene3d camera, sun, sky, lights and geometry.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L137">hc/lib/gfx/pathtrace.he:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L145">hc/lib/gfx/pathtrace.he:145</a>
 </article>
 <h2 id="water">Water <span class="n">6</span></h2>
 <article class="sym" id="WAVES">
 <h3><a href="#WAVES">WAVES</a> <i>constant</i></h3>
 <pre>var WAVES = [0.35, 0.0, 1.0, 0.0]</pre>
 <p>Wave parameters: base frequency, amplitude, speed scale and time used by the water surface.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L36">hc/lib/gfx/pathtrace.he:36</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L41">hc/lib/gfx/pathtrace.he:41</a>
 </article>
 <article class="sym" id="ABSORB">
 <h3><a href="#ABSORB">ABSORB</a> <i>constant</i></h3>
 <pre>var ABSORB = [0.0, 0.0, 0.0]</pre>
 <p>Water absorption color coefficients as red, green, blue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L37">hc/lib/gfx/pathtrace.he:37</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L42">hc/lib/gfx/pathtrace.he:42</a>
 </article>
 <article class="sym" id="SCATTER">
 <h3><a href="#SCATTER">SCATTER</a> <i>constant</i></h3>
 <pre>var SCATTER = [0.0, 0.0, 0.0]</pre>
 <p>Water scattering color coefficients as red, green, blue.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L38">hc/lib/gfx/pathtrace.he:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L43">hc/lib/gfx/pathtrace.he:43</a>
 </article>
 <article class="sym" id="PHASE_G">
 <h3><a href="#PHASE_G">PHASE_G</a> <i>constant</i></h3>
 <pre>var PHASE_G = 0.0</pre>
 <p>Phase function asymmetry parameter for water scattering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L39">hc/lib/gfx/pathtrace.he:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L44">hc/lib/gfx/pathtrace.he:44</a>
 </article>
 <article class="sym" id="ETA">
 <h3><a href="#ETA">ETA</a> <i>constant</i></h3>
 <pre>var ETA = 1.33</pre>
 <p>Index of refraction used for water, 1.33 by default.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L40">hc/lib/gfx/pathtrace.he:40</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L45">hc/lib/gfx/pathtrace.he:45</a>
 </article>
 <article class="sym" id="UNDER">
 <h3><a href="#UNDER">UNDER</a> <i>constant</i></h3>
 <pre>var UNDER = false</pre>
 <p>Flag indicating the camera is underwater, set from the scene's sea state.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L42">hc/lib/gfx/pathtrace.he:42</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L47">hc/lib/gfx/pathtrace.he:47</a>
 </article>
-<h2 id="materials">Materials <span class="n">2</span></h2>
+<h2 id="materials">Materials <span class="n">3</span></h2>
 <article class="sym" id="Mat">
 <h3><a href="#Mat">Mat</a> <i>type</i></h3>
-<pre>struct Mat { base real[4] = [1.0, 1.0, 1.0, 1.0], glow real[3] = [0.0, 0.0, 0.0], metal real = 0.0, rough real = 1.0, spec real = 1.0, ior real = 1.5, tb int = -1, tmr int = -1, tn int = -1, te int = -1, ns real = 1.0, mode int = 0, cut real = 0.5, unlit bool = false, water bool = false }</pre>
+<pre>struct Mat { base real[4] = [1.0, 1.0, 1.0, 1.0], glow real[3] = [0.0, 0.0, 0.0], metal real = 0.0, rough real = 1.0, spec real = 1.0, ior real = 1.5, tb int = -1, tmr int = -1, tn int = -1, te int = -1, ns real = 1.0, mode int = 0, cut real = 0.5, unlit bool = false, water bool = false, sss real[3] = [0.0, 0.0, 0.0], fiber real[3] = [0.0, 0.0, 0.0] }</pre>
 <p>Material description with base color, emission, metalness, roughness, textures, alpha mode and water flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L55">hc/lib/gfx/pathtrace.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L60">hc/lib/gfx/pathtrace.he:60</a>
 </article>
 <article class="sym" id="mat">
 <h3><a href="#mat">mat</a> <i>function</i></h3>
 <pre>mat(m Mat) int</pre>
 <p>Adds a material and returns its index for use when adding triangles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L57">hc/lib/gfx/pathtrace.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L62">hc/lib/gfx/pathtrace.he:62</a>
+</article>
+<article class="sym" id="fiber">
+<h3><a href="#fiber">fiber</a> <i>function</i></h3>
+<pre>fiber(a const real[:], b const real[:], r real, sig const real[:], m int)</pre>
+<p>Adds a fiber segment between two points with radius, per-channel signature and material index to the scene.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L69">hc/lib/gfx/pathtrace.he:69</a>
 </article>
 <h2 id="textures">Textures <span class="n">1</span></h2>
 <article class="sym" id="image">
 <h3><a href="#image">image</a> <i>function</i></h3>
 <pre>image(w int, h int, px const byte[:]) int</pre>
 <p>Adds an RGBA8 image of the given size and returns its texture index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L60">hc/lib/gfx/pathtrace.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L65">hc/lib/gfx/pathtrace.he:65</a>
 </article>
 <h2 id="lights">Lights <span class="n">1</span></h2>
 <article class="sym" id="light">
 <h3><a href="#light">light</a> <i>function</i></h3>
 <pre>light(x real, y real, z real, r real, g real, b real, range real)</pre>
 <p>Adds a point light at a position with RGB color and range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L64">hc/lib/gfx/pathtrace.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L72">hc/lib/gfx/pathtrace.he:72</a>
 </article>
 <h2 id="meshes">Meshes <span class="n">2</span></h2>
 <article class="sym" id="ico">
 <h3><a href="#ico">ico</a> <i>function</i></h3>
 <pre>ico(levels int) real[&gt;..]</pre>
 <p>Returns triangle vertex positions of a unit icosphere subdivided the given number of levels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L81">hc/lib/gfx/pathtrace.he:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L89">hc/lib/gfx/pathtrace.he:89</a>
 </article>
 <article class="sym" id="sphere">
 <h3><a href="#sphere">sphere</a> <i>function</i></h3>
 <pre>sphere(cx real, cy real, cz real, r real, levels int, m int)</pre>
 <p>Adds a sphere of given center and radius, built from subdivided icosphere triangles, using a material index.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L94">hc/lib/gfx/pathtrace.he:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L102">hc/lib/gfx/pathtrace.he:102</a>
 </article>
 <h2 id="rendering">Rendering <span class="n">3</span></h2>
 <article class="sym" id="render">
 <h3><a href="#render">render</a> <i>function</i></h3>
 <pre>render(w int, h int, spp int) f32[&gt;..]</pre>
 <p>Renders the scene at the given size and samples per pixel, returning accumulated float data, or empty on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L158">hc/lib/gfx/pathtrace.he:158</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L167">hc/lib/gfx/pathtrace.he:167</a>
 </article>
 <article class="sym" id="bad">
 <h3><a href="#bad">bad</a> <i>function</i></h3>
 <pre>bad(acc const f32[:]) int</pre>
 <p>Returns the total count of flagged bad samples in an accumulation buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L187">hc/lib/gfx/pathtrace.he:187</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L196">hc/lib/gfx/pathtrace.he:196</a>
 </article>
 <article class="sym" id="save">
 <h3><a href="#save">save</a> <i>function</i></h3>
 <pre>save(path const byte[:], acc const f32[:], w int, h int, ex real) bool</pre>
 <p>Tone maps an accumulation buffer with exposure and writes it as a PNG, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L188">hc/lib/gfx/pathtrace.he:188</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L197">hc/lib/gfx/pathtrace.he:197</a>
 </article>
-<details class="lib-int" id="internal"><summary>Internal helpers (29)</summary>
+<details class="lib-int" id="internal"><summary>Internal helpers (32)</summary>
 <article class="sym" id="TRI">
 <h3><a href="#TRI">TRI</a> <i>constant</i></h3>
 <pre>var TRI f32[&gt;..]</pre>
 <p>Packed triangle buffer of per-vertex normals, UVs, tangents, material index and color, consumed by the render shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L10">hc/lib/gfx/pathtrace.he:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L12">hc/lib/gfx/pathtrace.he:12</a>
 </article>
 <article class="sym" id="POS">
 <h3><a href="#POS">POS</a> <i>constant</i></h3>
 <pre>var POS f32[&gt;..]</pre>
 <p>Packed triangle vertex positions used to build the hardware ray tracing acceleration structure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L11">hc/lib/gfx/pathtrace.he:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L13">hc/lib/gfx/pathtrace.he:13</a>
 </article>
 <article class="sym" id="MAT">
 <h3><a href="#MAT">MAT</a> <i>constant</i></h3>
 <pre>var MAT f32[&gt;..]</pre>
 <p>Packed material parameter buffer with 20 floats per material, uploaded to the renderer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L12">hc/lib/gfx/pathtrace.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L14">hc/lib/gfx/pathtrace.he:14</a>
+</article>
+<article class="sym" id="FIB">
+<h3><a href="#FIB">FIB</a> <i>constant</i></h3>
+<pre>var FIB f32[&gt;..]</pre>
+<p>Global buffer of packed fiber primitives (12 floats each) accumulated by fiber calls for the path tracer.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L15">hc/lib/gfx/pathtrace.he:15</a>
+</article>
+<article class="sym" id="BOX">
+<h3><a href="#BOX">BOX</a> <i>constant</i></h3>
+<pre>var BOX f32[&gt;..]</pre>
+<p>Global buffer of axis-aligned bounding boxes, six floats per fiber segment, built alongside the fiber data.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L16">hc/lib/gfx/pathtrace.he:16</a>
+</article>
+<article class="sym" id="KB">
+<h3><a href="#KB">KB</a> <i>constant</i></h3>
+<pre>var KB = 1</pre>
+<p>Number of bounding box segments each fiber is split into when its boxes are generated.</p>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L17">hc/lib/gfx/pathtrace.he:17</a>
 </article>
 <article class="sym" id="TXH">
 <h3><a href="#TXH">TXH</a> <i>constant</i></h3>
 <pre>var TXH u32[&gt;..]</pre>
 <p>Texture header table holding pixel offset, width and height for each uploaded image.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L13">hc/lib/gfx/pathtrace.he:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L18">hc/lib/gfx/pathtrace.he:18</a>
 </article>
 <article class="sym" id="TXP">
 <h3><a href="#TXP">TXP</a> <i>constant</i></h3>
 <pre>var TXP u32[&gt;..]</pre>
 <p>Packed RGBA pixel data for all uploaded textures, one u32 per pixel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L14">hc/lib/gfx/pathtrace.he:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L19">hc/lib/gfx/pathtrace.he:19</a>
 </article>
 <article class="sym" id="LIT">
 <h3><a href="#LIT">LIT</a> <i>constant</i></h3>
 <pre>var LIT f32[&gt;..]</pre>
 <p>Packed point light buffer holding position, color and range, eight floats per light.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L15">hc/lib/gfx/pathtrace.he:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L20">hc/lib/gfx/pathtrace.he:20</a>
 </article>
 <article class="sym" id="IMG">
 <h3><a href="#IMG">IMG</a> <i>constant</i></h3>
 <pre>var IMG int[&gt;..]</pre>
 <p>Cache mapping glTF image indices to uploaded texture indices, with -1 meaning not yet uploaded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L16">hc/lib/gfx/pathtrace.he:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L21">hc/lib/gfx/pathtrace.he:21</a>
 </article>
 <article class="sym" id="PMAT">
 <h3><a href="#PMAT">PMAT</a> <i>constant</i></h3>
 <pre>var PMAT int[&gt;..]</pre>
 <p>Cache mapping scene primitives to created material indices, with -1 meaning not yet created.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L17">hc/lib/gfx/pathtrace.he:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L22">hc/lib/gfx/pathtrace.he:22</a>
 </article>
 <article class="sym" id="MASK">
 <h3><a href="#MASK">MASK</a> <i>constant</i></h3>
 <pre>var MASK = false</pre>
 <p>Flag set when any triangle uses an alpha-masked material, which disables opaque-only acceleration.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L18">hc/lib/gfx/pathtrace.he:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L23">hc/lib/gfx/pathtrace.he:23</a>
 </article>
 <article class="sym" id="MAXMS">
 <h3><a href="#MAXMS">MAXMS</a> <i>constant</i></h3>
 <pre>var MAXMS = 0.0</pre>
 <p>Slowest dispatch time in milliseconds recorded during the last render.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L34">hc/lib/gfx/pathtrace.he:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L39">hc/lib/gfx/pathtrace.he:39</a>
 </article>
 <article class="sym" id="TK">
 <h3><a href="#TK">TK</a> <i>constant</i></h3>
 <pre>var TK = 1.0</pre>
 <p>Scalar parameter passed through to the render shader's water settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L41">hc/lib/gfx/pathtrace.he:41</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L46">hc/lib/gfx/pathtrace.he:46</a>
 </article>
 <article class="sym" id="SKYC">
 <h3><a href="#SKYC">SKYC</a> <i>constant</i></h3>
 <pre>var SKYC f32[&gt;..]</pre>
 <p>Buffer of captured environment-map cube face pixels, filled by sky_cube for use in rendering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L43">hc/lib/gfx/pathtrace.he:43</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L48">hc/lib/gfx/pathtrace.he:48</a>
 </article>
 <article class="sym" id="SKYN">
 <h3><a href="#SKYN">SKYN</a> <i>constant</i></h3>
 <pre>var SKYN = 0</pre>
 <p>Edge size in pixels of each captured sky cube face, or 0 when no cube is captured.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L44">hc/lib/gfx/pathtrace.he:44</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L49">hc/lib/gfx/pathtrace.he:49</a>
 </article>
 <article class="sym" id="SKYI">
 <h3><a href="#SKYI">SKYI</a> <i>constant</i></h3>
 <pre>var SKYI = 1.0</pre>
 <p>Intensity multiplier copied from the environment map for the captured sky cube.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L45">hc/lib/gfx/pathtrace.he:45</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L50">hc/lib/gfx/pathtrace.he:50</a>
 </article>
 <article class="sym" id="SKYR">
 <h3><a href="#SKYR">SKYR</a> <i>constant</i></h3>
 <pre>var SKYR = 0.0</pre>
 <p>Rotation of the environment map recorded with the captured sky cube.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L46">hc/lib/gfx/pathtrace.he:46</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L51">hc/lib/gfx/pathtrace.he:51</a>
 </article>
 <article class="sym" id="CLD">
 <h3><a href="#CLD">CLD</a> <i>constant</i></h3>
 <pre>var CLD u32[&gt;..]</pre>
 <p>Pixel data of the cloud texture and cloud shadow texture captured from the scene.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L47">hc/lib/gfx/pathtrace.he:47</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L52">hc/lib/gfx/pathtrace.he:52</a>
 </article>
 <article class="sym" id="CW">
 <h3><a href="#CW">CW</a> <i>constant</i></h3>
 <pre>var CW = 0</pre>
 <p>Width in pixels of the captured cloud texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L48">hc/lib/gfx/pathtrace.he:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L53">hc/lib/gfx/pathtrace.he:53</a>
 </article>
 <article class="sym" id="CH">
 <h3><a href="#CH">CH</a> <i>constant</i></h3>
 <pre>var CH = 0</pre>
 <p>Height in pixels of the captured cloud texture.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L49">hc/lib/gfx/pathtrace.he:49</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L54">hc/lib/gfx/pathtrace.he:54</a>
 </article>
 <article class="sym" id="CSN">
 <h3><a href="#CSN">CSN</a> <i>constant</i></h3>
 <pre>var CSN = 0</pre>
 <p>Width in pixels of the captured cloud shadow texture, or 0 when none is captured.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L50">hc/lib/gfx/pathtrace.he:50</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L55">hc/lib/gfx/pathtrace.he:55</a>
 </article>
 <article class="sym" id="CSK">
 <h3><a href="#CSK">CSK</a> <i>constant</i></h3>
 <pre>var CSK = 0.0</pre>
 <p>Cloud shadow strength copied from the scene cloud settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L51">hc/lib/gfx/pathtrace.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L56">hc/lib/gfx/pathtrace.he:56</a>
 </article>
 <article class="sym" id="CLU">
 <h3><a href="#CLU">CLU</a> <i>constant</i></h3>
 <pre>var CLU = [0.0, 0.0, 0.0, 0.0]</pre>
 <p>Four-component cloud shadow projection vector for the U axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L52">hc/lib/gfx/pathtrace.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L57">hc/lib/gfx/pathtrace.he:57</a>
 </article>
 <article class="sym" id="CLV">
 <h3><a href="#CLV">CLV</a> <i>constant</i></h3>
 <pre>var CLV = [0.0, 0.0, 0.0, 0.0]</pre>
 <p>Four-component cloud shadow projection vector for the V axis.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L53">hc/lib/gfx/pathtrace.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L58">hc/lib/gfx/pathtrace.he:58</a>
 </article>
 <article class="sym" id="CubeU">
 <h3><a href="#CubeU">CubeU</a> <i>type</i></h3>
 <pre>struct CubeU { p float4 }</pre>
 <p>Uniform block carrying the cube face index to the environment copy shader.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L54">hc/lib/gfx/pathtrace.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L59">hc/lib/gfx/pathtrace.he:59</a>
 </article>
 <article class="sym" id="v3">
 <h3><a href="#v3">v3</a> <i>function</i></h3>
 <pre>v3(a float3) real[&gt;..]</pre>
 <p>Converts a float3 vector into a real array of three components.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L97">hc/lib/gfx/pathtrace.he:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L105">hc/lib/gfx/pathtrace.he:105</a>
 </article>
 <article class="sym" id="lift">
 <h3><a href="#lift">lift</a> <i>function</i></h3>
 <pre>lift(p real[&gt;..]&amp;) bool</pre>
 <p>Displaces the y coordinates of the given points in place by the sea wave function on the GPU, returning false on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L98">hc/lib/gfx/pathtrace.he:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L106">hc/lib/gfx/pathtrace.he:106</a>
 </article>
 <article class="sym" id="sky_cube">
 <h3><a href="#sky_cube">sky_cube</a> <i>function</i></h3>
 <pre>sky_cube(n int) bool</pre>
 <p>Captures the environment map into six cube faces of the given size, returning false if unavailable or a read fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L111">hc/lib/gfx/pathtrace.he:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L119">hc/lib/gfx/pathtrace.he:119</a>
 </article>
 <article class="sym" id="clouds_of">
 <h3><a href="#clouds_of">clouds_of</a> <i>function</i></h3>
 <pre>clouds_of()</pre>
 <p>Reads the scene's cloud and cloud shadow textures into the capture buffers, counting skipped reads on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L120">hc/lib/gfx/pathtrace.he:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L128">hc/lib/gfx/pathtrace.he:128</a>
 </article>
 <article class="sym" id="texof">
 <h3><a href="#texof">texof</a> <i>function</i></h3>
 <pre>texof(r gltf::TexRef) int</pre>
 <p>Returns the uploaded texture index for a glTF texture reference, uploading its image on first use, or -1 if none.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L125">hc/lib/gfx/pathtrace.he:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L133">hc/lib/gfx/pathtrace.he:133</a>
 </article>
 <article class="sym" id="matof">
 <h3><a href="#matof">matof</a> <i>function</i></h3>
 <pre>matof(prim int) int</pre>
 <p>Returns the material index for a scene primitive, creating it from the glTF material on first use.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/8954c56c4521c7b5e16d88c56e7710d7f5a2f98e/hc/lib/gfx/pathtrace.he#L131">hc/lib/gfx/pathtrace.he:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/gfx/pathtrace.he#L139">hc/lib/gfx/pathtrace.he:139</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -512,7 +536,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2814</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2820</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
