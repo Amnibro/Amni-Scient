@@ -81,7 +81,12 @@ button.pri:disabled{opacity:.55;cursor:progress}
 #shot-ov svg{width:100%;height:100%}
 #shot-ov .tr{fill:rgba(47,111,237,.12);stroke:#2f6fed;stroke-width:1.6;vector-effect:non-scaling-stroke}
 #shot-ov .tc{stroke:#c43c3c;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+#shot-ov .fx{fill:none;stroke:#ff9d00;stroke-width:2;vector-effect:non-scaling-stroke}
+#shot-ov .fc{fill:rgba(255,255,255,.18);stroke:#fff;stroke-width:1.6;vector-effect:non-scaling-stroke}
 .check{display:flex;gap:8px;align-items:center;font-size:13px}
+.toolbar .check input[type=number]{width:78px;min-height:32px;padding:4px 7px}
+.fab-rep{width:100%;border:1px solid var(--line);border-radius:10px;background-size:50% 50%;background-repeat:repeat;background-color:var(--field)}
+#fab-msg{font-size:13px;margin:8px 0 0;min-height:1.2em}
 .sub{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
 .sub h3{margin-top:0}
 #key-box{display:flex;gap:6px;margin-top:8px}
@@ -156,6 +161,8 @@ button.pri:disabled{opacity:.55;cursor:progress}
     <div id="view-pane" role="tabpanel" class="hidden">
       <div class="toolbar">
         <button id="v-front">Front</button><button id="v-side">Side</button><button id="v-back">Back</button>
+        <label class="check"><input type="checkbox" id="fab-on" disabled> Fabric</label>
+        <label class="check">Tile <input type="number" id="fab-size" step="0.5" min="1" inputmode="decimal" disabled aria-label="Fabric tile width" title="Fabric tile width"> <span class="unit">in</span></label>
         <span class="info">Drag to turn. Your measurements, with the garment's ease.</span>
       </div>
       <div class="stage"><canvas id="c3d" aria-label="3D view of the garment on a figure with your measurements"></canvas></div>
@@ -177,8 +184,14 @@ button.pri:disabled{opacity:.55;cursor:progress}
     <p id="gen-status" role="status" aria-live="polite"></p>
     <div id="shot" class="hidden">
       <div class="shot-box"><img id="shot-img" alt="Generated outfit sample"><div id="shot-ov"></div></div>
-      <div class="actions" style="margin-top:8px"><button id="trace" class="pri">Trace into a pattern</button><button id="dl-img">Save picture</button></div>
+      <div class="actions" style="margin-top:8px"><button id="trace" class="pri">Trace into a pattern</button><button id="dl-img">Save picture</button><button id="fab-use" disabled>Use as fabric</button></div>
       <label class="check"><input type="checkbox" id="add-traced" checked> Add the traced outline as a pattern piece</label>
+      <p id="fab-msg" role="status" aria-live="polite"></p>
+      <div id="fab-out" class="hidden">
+        <p class="note">The fabric tile, repeated 2 × 2:</p>
+        <div id="fab-rep" class="fab-rep" role="img" aria-label="The fabric tile repeated two by two"></div>
+        <div class="actions" style="margin-top:8px"><button id="fab-dl">Download fabric tile (PNG)</button></div>
+      </div>
     </div>
     <div class="actions"><button id="upload">Trace your own photo</button></div>
     <p id="trace-msg" role="status" aria-live="polite"></p>

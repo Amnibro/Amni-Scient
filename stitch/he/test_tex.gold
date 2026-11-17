@@ -1,0 +1,46 @@
+use std
+into test_tex.amni
+
+Imports: math, os, gfx.codec_png, st_geom, st_body, st_draft, st_svg, st_guide, st_trace and st_tex.
+
+Facts every block shares. The picture lives in the `st_trace` globals `IW`, `IH`, `IMG` (RGBA bytes) and `MASK`; `st_tex` has `tex_build()`, which turns it into the fabric tile, and the results `TEX_OK`, `TEX_X0`, `TEX_Y0`, `TEX_SW` (the picked square), `TEX_CX`, `TEX_CY`, `TEX_CW`, `TEX_CH` (the crop), `TEX_PX`, `TEX_PY`, `TEX_CMPX`, `TEX_CM`, `TEX_WRAP`, `TEX_INNER`, `TEX_RAWWRAP`, `TEX_LF0`, `TEX_LF1`, `TILE` (RGBA bytes), `TN` and `tex_png(out)`. `st_draft` has the global `D` (a `Draft` struct), the global `O` (an `Opt` struct with the fields garment, fit, knit, sleeve, neck, skirt and leg), `apply_preset(i)` and `draft_all()`. A whole division rounds down. Reals are 64-bit floats.
+
+```amni
+var FAIL = 0;
+```
+
+`check(c, what)` adds 1 to `FAIL` and prints "FAIL " and what when c is false.
+
+`hash01(x, y)` is a repeatable pseudo-random real from 0 up to 1 for two whole numbers: the fractional part of sin of (x times 12.9898 plus y times 78.233), times 43758.5453, made positive by adding 1 when negative.
+
+`set_garment(g)` sets `O` to an `Opt` with garment g, fit 1, knit true when g is 0 or 7 (otherwise false), sleeve 1, neck 0, skirt 1 and leg 0, then calls `apply_preset` with 2 and `draft_all`.
+
+`synth_inside(x, y)` says whether pixel (x, y) of the synthetic picture belongs to the garment: the body is x from 170 to 469 with y from 90 to 589, and each sleeve is x from 80 to 169 or x from 470 to 559, with y from 90 to 229.
+
+`synth_feature(x, y)` says whether the synthetic picture has something other than plain plaid at (x, y): the placket seam (x from 288 to 292, y from 90 to 589); a button (any pixel at a Euclidean distance of at most 8 from the point (290, 140 plus 60 times k) for some k from 0 to 7); or the pocket outline (x from 360 to 440 and y from 160 to 230, but not both x from 363 to 437 and y from 163 to 227).
+
+`synth_make()` builds the synthetic garment picture into `IMG`, with `IW` and `IH` both 640, RGBA with alpha 255. Outside `synth_inside` every pixel is (236, 238, 240). Inside, the fabric is a plaid with different repeats across and down: start from (58, 92, 158); when the remainder of x divided by 34 is below 9, blend 60 percent of the way toward (168, 180, 208); then, when the remainder of y divided by 38 is below 8, blend 50 percent of the way toward (168, 180, 208); then add (`hash01`(x, y) minus 0.5) times 12 to every channel. Where `synth_feature` is true inside the garment the colour is instead (238, 236, 228) for a button, which wins, and (28, 36, 60) for the seam and the pocket outline. Then every colour inside the garment is multiplied by the lighting L, the smaller of 1 and (0.35 plus 0.8 times x divided by 640 plus 0.1 times (1 minus y divided by 640)). Clamp to 0 to 255 and round.
+
+`square_inside()` says whether every pixel of the picked square (`TEX_X0`, `TEX_Y0`, side `TEX_SW`) has `MASK` equal to 1 and the crop rectangle (`TEX_CX`, `TEX_CY`, `TEX_CW`, `TEX_CH`) lies inside that square.
+
+`crop_clear()` says whether no pixel of the crop rectangle satisfies `synth_feature`.
+
+`near_multiple(len, period)` says whether len is within 2 of a whole multiple of period (the multiple being at least 1).
+
+`tile_repeat(out)` clears the byte list out and fills it with the 2 by 2 repeat of the tile as RGB bytes: 2 times `TN` pixels square, pixel (x, y) being the red, green and blue of `TILE` at (x remainder `TN`, y remainder `TN`).
+
+`square_overlay(out)` clears the byte list out and fills it with the picture as RGB bytes (`IW` by `IH`) with the picked square outlined 3 pixels thick in (255, 157, 0) and the crop rectangle outlined 2 pixels thick in (255, 255, 255) just inside it.
+
+`dump(prefix)` writes three PNG files: the bytes `tex_png` gives (already a PNG file) saved with `write_file` to the prefix followed by "-tile.png"; `tile_repeat` to the prefix followed by "-repeat.png" and `square_overlay` to the prefix followed by "-square.png", both through `save_png`. It prints "wrote " and the prefix.
+
+`save_png(prefix, suffix, px, w, h, ch)` calls `codec_png::write` with the path (the prefix followed by the suffix) first, then w, h, ch and the bytes px.
+
+`report(name)` prints one line: the name, then " square " with `TEX_X0`, `TEX_Y0` and `TEX_SW`, " crop " with `TEX_CW` and `TEX_CH`, " period " with `TEX_PX` and `TEX_PY`, " seam wrap " with `TEX_WRAP`, " inner " with `TEX_INNER`, " ratio " with `TEX_WRAP` divided by `TEX_INNER`, " raw wrap " with `TEX_RAWWRAP`, " lowfreq " with `TEX_LF0`, " to " with `TEX_LF1`, " cm per px " with `TEX_CMPX` and " tile cm " with `TEX_CM`.
+
+`check_seam(name)` calls `check` that `TEX_OK` is true, that `TEX_WRAP` is at most 1.5 times `TEX_INNER`, and that `square_inside` holds, each with the name in its message.
+
+`run_picture(path, g, prefix)` loads the PNG file at path with `read_file` and `codec_png::decode` into `IMG`, `IW` and `IH` (printing "cannot read " and the path and counting a failure when that fails), calls `set_garment` with g, `tex_build`, prints `TEX_MSG`, calls `report` with the path, `check_seam` with the path, and, when prefix is not empty, `dump` with it.
+
+`run_synth(prefix)` is the synthetic test. Call `synth_make`, `set_garment` with 0 and `tex_build`; call `report` with "synthetic" and `check_seam` with "synthetic". Then check, each with a message: the crop is clear of features (`crop_clear`); `TEX_CW` is `near_multiple` of 34 and `TEX_CH` of 38 (the plaid repeats snapped to); `TEX_LF0` is at least 3 times `TEX_LF1` (lighting flattened); `TEX_RAWWRAP` is above `TEX_WRAP` (the seamless step helped). For the scale: the body is 300 pixels wide over the middle rows, so the expected centimetres per pixel is half of `D.chest_w` divided by 300; print "scale expected ", the expected value, " got ", `TEX_CMPX`, " error percent ", the relative error times 100; check that `TEX_CMPX` is within 3 percent of it and that `TEX_CM` is within 0.01 of `TEX_CW` times `TEX_CMPX`. Then set `D` to an empty `Draft`, call `tex_build` again and check that `TEX_CMPX` is 0 and `TEX_CM` is 15 (the fallback). When prefix is not empty, call `tex_build` once more after `set_garment` with 0 and write the original picture to the prefix followed by "-input.png" with `save_png` (4 channels, `IW` by `IH`, `IMG` as the bytes) before calling `dump` with the prefix.
+
+`main()`: with no arguments after the program name it calls `run_synth` with an empty prefix. With the first argument "synth" it calls `run_synth` with the second argument (empty when absent). Otherwise the first argument is a PNG path, the second the garment number (0 when absent or not a number) and the third the output prefix (empty when absent), and it calls `run_picture`. Finally it prints "tex checks failed " and `FAIL`, and calls `exit` with 1 when `FAIL` is above 0.

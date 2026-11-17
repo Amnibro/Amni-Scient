@@ -12,6 +12,7 @@ var V_YAW = 0.35;
 var V_PITCH = 0.08;
 var V_DIRTY = true;
 var V_R = 0.17; var V_G = 0.36; var V_B = 0.62;
+var V_TEX: i32 = 0; var V_FAB = false; var V_TEX_NEW = false;
 var LOC i32[>..];   // uniform locations, by name order below
 let U_RES = 0; let U_YAW = 1; let U_PITCH = 2; let U_DIST = 3; let U_CY = 4; let U_NT = 5; let U_NL = 6;
 let U_SH = 7; let U_EL = 8; let U_WR = 9; let U_AR = 10; let U_HD = 11; let U_NK = 12; let U_NGT = 13; let U_NGL = 14;
@@ -20,6 +21,7 @@ let U_T0 = 20;      // 12 torso rings
 let U_L0 = 32;      // 6 leg rings
 let U_GT0 = 38;     // 12 garment torso rings
 let U_GL0 = 50;     // 6 garment leg rings
+let U_FAB = 56; let U_FTEX = 57;
 
 fn vs_src(s byte[>..]&) {
 	s.append("#version 300 es\nlayout(location=0) in vec2 p;\nout vec2 uv;\nvoid main(){ uv=p; gl_Position=vec4(p,0.0,1.0); }\n");
@@ -28,7 +30,7 @@ fn fs_src(s byte[>..]&) {
 	s.append("#version 300 es\nprecision highp float;\nin vec2 uv;\nout vec4 o;\n");
 	s.append("uniform vec2 uRes; uniform float uYaw,uPitch,uDist,uCy; uniform int uNT,uNL,uNGT,uNGL,uGK;\n");
 	s.append("uniform vec3 uT[12]; uniform vec4 uL[6]; uniform vec3 uGT[12]; uniform vec4 uGL[6];\n");
-	s.append("uniform vec3 uSh,uEl,uWr,uAR,uNk,uGC; uniform vec4 uHd,uGA,uFt,uHood;\n");
+	s.append("uniform vec3 uSh,uEl,uWr,uAR,uNk,uGC; uniform vec4 uHd,uGA,uFt,uHood,uFab; uniform sampler2D uTex;\n");
 	s.append("float sdEll(vec2 p,vec2 ab){ab=max(ab,vec2(0.3));float k0=length(p/ab);float k1=length(p/(ab*ab));return k0*(k0-1.0)/max(k1,1e-4);}\n");
 	s.append("float sdEllipsoid(vec3 p,vec3 r){float k0=length(p/r);float k1=length(p/(r*r));return k0*(k0-1.0)/max(k1,1e-4);}\n");
 	s.append("float smin(float a,float b,float k){float h=clamp(0.5+0.5*(b-a)/k,0.0,1.0);return mix(b,a,h)-k*h*(1.0-h);}\n");
@@ -36,18 +38,9 @@ fn fs_src(s byte[>..]&) {
 	s.append("vec4 cr(vec4 p0,vec4 p1,vec4 p2,vec4 p3,float t){float t2=t*t,t3=t2*t;return 0.5*(2.0*p1+(-p0+p2)*t+(2.0*p0-5.0*p1+4.0*p2-p3)*t2+(-p0+3.0*p1-3.0*p2+p3)*t3);}\n");
 	// one lofted solid per ring array (GLSL cannot pass uniform arrays around cheaply)
 	fn loft(s byte[>..]&, name const byte[:], arr const byte[:], n const byte[:], vec4 bool) {
-		s.append("float "); s.append(name); s.append("(vec3 p){int n="); s.append(n); s.append(";if(n<2)return 1e5;");
-		s.append("float y0="); s.append(arr); s.append("[0].x,y1="); s.append(arr); s.append("[n-1].x;float yc=clamp(p.y,y0,y1);int i=0;");
-		s.append("for(int k=0;k<11;k++){if(k>=n-1)break;if(yc>="); s.append(arr); s.append("[k].x)i=k;}");
-		s.append("int a=max(i-1,0),b=i,c=min(i+1,n-1),d=min(i+2,n-1);");
-		if vec4 {
-			s.append("vec4 r0="); s.append(arr); s.append("[a],r1="); s.append(arr); s.append("[b],r2="); s.append(arr); s.append("[c],r3="); s.append(arr); s.append("[d];");
-		} else {
-			s.append("vec4 r0=vec4("); s.append(arr); s.append("[a],0.0),r1=vec4("); s.append(arr); s.append("[b],0.0),r2=vec4("); s.append(arr); s.append("[c],0.0),r3=vec4("); s.append(arr); s.append("[d],0.0);");
-		}
-		s.append("float t=clamp((yc-r1.x)/max(r2.x-r1.x,1e-3),0.0,1.0);vec4 r=cr(r0,r1,r2,r3,t);");
-		s.append("vec2 q=vec2(abs(p.x)-r.w,p.z);");
-		s.append("float dd=sdEll(q,r.yz);float dy=max(y0-p.y,p.y-y1);return dy>0.0?length(vec2(max(dd,0.0),dy)):dd;}\n");
+		let pre = if vec4 { "" } else { "vec4(" }; let post = if vec4 { "" } else { ",0.0)" };
+		format(s, "vec4 ", name, "R(float yy){int n=", n, ";if(n<2)return vec4(0.0,9.0,9.0,0.0);float y0=", arr, "[0].x,y1=", arr, "[n-1].x;float yc=clamp(yy,y0,y1);int i=0;for(int k=0;k<11;k++){if(k>=n-1)break;if(yc>=", arr, "[k].x)i=k;}int a=max(i-1,0),b=i,c=min(i+1,n-1),d=min(i+2,n-1);vec4 r0=", pre, arr, "[a]", post, ",r1=", pre, arr, "[b]", post, ",r2=", pre, arr, "[c]", post, ",r3=", pre, arr, "[d]", post, ";float t=clamp((yc-r1.x)/max(r2.x-r1.x,1e-3),0.0,1.0);return cr(r0,r1,r2,r3,t);}\n");
+		format(s, "float ", name, "(vec3 p){int n=", n, ";if(n<2)return 1e5;float y0=", arr, "[0].x,y1=", arr, "[n-1].x;vec4 r=", name, "R(p.y);vec2 q=vec2(abs(p.x)-r.w,p.z);float dd=sdEll(q,r.yz);float dy=max(y0-p.y,p.y-y1);return dy>0.0?length(vec2(max(dd,0.0),dy)):dd;}\n");
 	}
 	loft(s, "torso", "uT", "uNT", false);
 	loft(s, "legs", "uL", "uNL", true);
@@ -64,6 +57,18 @@ fn fs_src(s byte[>..]&) {
 	s.append(" vec3 e=uEl+(uWr-uEl)*((s-l1)/max(l2,1e-3));return min(cone(q,uSh,uEl,uAR.x+r,uAR.y+r*0.9),cone(q,uEl,e,uAR.y+r*0.9,mix(uAR.y,uAR.z,(s-l1)/max(l2,1e-3))+r*0.8));}\n");
 	s.append("float garment(vec3 p){float d=1e5;if((uGK&1)!=0)d=min(d,gtorso(p));if((uGK&2)!=0)d=smin(d,glegs(p),2.0);\n");
 	s.append(" if((uGK&4)!=0)d=smin(d,sleeve(vec3(abs(p.x),p.y,p.z)),2.0);if((uGK&8)!=0)d=smin(d,sdEllipsoid(p-uHood.xyz,vec3(uHood.w,uHood.w*0.62,uHood.w*0.7)),3.0);return d;}\n");
+	s.append("const float PI=3.14159265;vec3 fabTex(vec2 c,float fp){return textureGrad(uTex,c/uFab.yz,vec2(fp/uFab.y,0.0),vec2(0.0,fp/uFab.z)).rgb;}\n");
+	s.append("float seamW(float f){return smoothstep(PI-0.3,PI-0.02,abs(f));}\n");
+	s.append("vec3 fabPhase(float f1,float f2,float er,float v,float fp){float w=seamW(f1);vec3 c=fabTex(vec2(f1*er,v),fp);return w>0.001?mix(c,fabTex(vec2(f2*er,v),fp),w):c;}\n");
+	s.append("vec3 fabric(vec3 p,float fp){float dT=(uGK&1)!=0?gtorso(p):1e5,dL=(uGK&2)!=0?glegs(p):1e5,dS=1e5,dH=1e5;vec3 q=vec3(abs(p.x),p.y,p.z);\n");
+	s.append(" float l1=length(uEl-uSh),l2=length(uWr-uEl),sl=uGA.y*(l1+l2);vec3 e=sl<=l1?uSh+(uEl-uSh)*(sl/max(l1,1e-3)):uEl+(uWr-uEl)*((sl-l1)/max(l2,1e-3));\n");
+	s.append(" if((uGK&4)!=0)dS=sleeve(q);if((uGK&8)!=0)dH=sdEllipsoid(p-uHood.xyz,vec3(uHood.w,uHood.w*0.62,uHood.w*0.7));float m=min(min(dT,dL),min(dS,dH));\n");
+	s.append(" if(m==dT||m==dL){vec4 r=m==dT?gtorsoR(p.y):glegsR(p.y);float X=m==dT?p.x:q.x-r.w;float a=max(r.y,0.3),b=max(r.z,0.3),er=0.5*(3.0*(a+b)-sqrt((3.0*a+b)*(a+3.0*b)));\n");
+	s.append("  return fabPhase(atan(p.z/b,X/a),atan(-p.z/b,-X/a),er,-p.y,fp);}\n");
+	s.append(" if(m==dS){vec3 a1=sl<=l1?e:uEl,ba=a1-uSh,bb=e-uEl;float ta=clamp(dot(q-uSh,ba)/max(dot(ba,ba),1e-4),0.0,1.0),tb=clamp(dot(q-uEl,bb)/max(dot(bb,bb),1e-4),0.0,1.0);vec3 ca=uSh+ba*ta,cb=uEl+bb*tb;\n");
+	s.append("  bool ub=sl>l1&&length(q-cb)<length(q-ca);vec3 ax=normalize(ub?bb:ba),d=q-(ub?cb:ca);float sv=ub?l1+tb*length(bb):ta*length(ba);\n");
+	s.append("  vec3 e1=normalize(vec3(1.0,0.0,0.0)-ax*ax.x),e2=cross(ax,e1);float x=dot(d,e1),y=dot(d,e2);return fabPhase(atan(y,x),atan(-y,-x),length(d),uSh.y-sv,fp);}\n");
+	s.append(" return fabTex(vec2(p.x,-p.y),fp);}\n");
 	s.append("vec2 map(vec3 p){float b=body(p);float g=uGK!=0?garment(p):1e5;return g<b+0.05?vec2(g,1.0):vec2(b,0.0);}\n");
 	s.append("vec3 nrm(vec3 p){const vec2 e=vec2(0.04,-0.04);return normalize(e.xyy*map(p+e.xyy).x+e.yyx*map(p+e.yyx).x+e.yxy*map(p+e.yxy).x+e.xxx*map(p+e.xxx).x);}\n");
 	s.append("void main(){vec2 f=uv*vec2(uRes.x/uRes.y,1.0);vec3 ta=vec3(0.0,uCy,0.0);\n");
@@ -76,7 +81,7 @@ fn fs_src(s byte[>..]&) {
 	s.append(" else if(hit){vec3 p=ro+rd*t;vec3 n=nrm(p);vec3 l=normalize(vec3(-0.5,0.8,0.6));float dif=clamp(dot(n,l),0.0,1.0);\n");
 	s.append("  float fil=clamp(dot(n,normalize(vec3(0.7,0.2,0.4))),0.0,1.0);float rim=pow(1.0-clamp(dot(n,-rd),0.0,1.0),3.0);\n");
 	s.append("  float ao=clamp(0.5+0.5*map(p+n*3.0).x/3.0,0.35,1.0);vec3 base;\n");
-	s.append("  if(h.y>0.5){float w=0.9+0.1*sin(p.y*9.0+sin(p.x*3.0))*sin(p.x*9.0+p.z*9.0);base=uGC*w;}else{base=vec3(0.86,0.80,0.74);}\n");
+	s.append("  if(h.y>0.5){float w=0.9+0.1*sin(p.y*9.0+sin(p.x*3.0))*sin(p.x*9.0+p.z*9.0);base=uFab.x>0.5?fabric(p,t*(2.0/uRes.y)/2.6/max(abs(dot(n,rd)),0.3)):uGC*w;}else{base=vec3(0.86,0.80,0.74);}\n");
 	s.append("  col=base*(0.28+0.72*dif)*ao+base*0.18*fil+vec3(0.25)*rim;vec3 hv=normalize(l-rd);col+=vec3(0.08)*pow(clamp(dot(n,hv),0.0,1.0),24.0)*(h.y>0.5?0.6:1.0);}\n");
 	s.append(" o=vec4(pow(col,vec3(0.95)),1.0);}\n");
 }
@@ -103,6 +108,7 @@ fn view_init(canvas i32) bool {
 	for i in 6 { LOC.push(gl::uniform_loc(V_PROG, str("uL[", i, "]")[..])); }
 	for i in 12 { LOC.push(gl::uniform_loc(V_PROG, str("uGT[", i, "]")[..])); }
 	for i in 6 { LOC.push(gl::uniform_loc(V_PROG, str("uGL[", i, "]")[..])); }
+	for nm in ["uFab", "uTex"] { LOC.push(gl::uniform_loc(V_PROG, nm)); }
 	var tri f32[>..] = [];
 	tri.append([-1.0 as f32, -1.0, 3.0, -1.0, -1.0, 3.0]);
 	V_VBO = gl::create_buffer();
@@ -235,6 +241,20 @@ fn set_rings4(base int, rs Ring[>..]&, count_loc int) {
 	gl::uniform1i(LOC[count_loc], n as i32);
 	for i in n { gl::uniform4f(LOC[base + i], rs[i].y, rs[i].a, rs[i].b, rs[i].cx); }
 }
+fn view_fabric_new() { V_TEX_NEW = true; V_FAB = true; V_DIRTY = true; }
+fn view_fabric_on(on bool) { V_FAB = on; V_DIRTY = true; }
+fn upload_fabric() {
+	if V_TEX == 0 { V_TEX = gl::create_texture(); }
+	gl::active_texture(gl::TEXTURE0);
+	gl::bind_texture(gl::TEXTURE_2D, V_TEX);
+	gl::tex_rgba(TN as i32, TN as i32, TILE[..]);
+	gl::tex_param(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR_MIPMAP_LINEAR);
+	gl::tex_param(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR);
+	gl::tex_param(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::REPEAT);
+	gl::tex_param(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::REPEAT);
+	gl::generate_mipmap(gl::TEXTURE_2D);
+	V_TEX_NEW = false;
+}
 fn view_draw() {
 	if !V_OK { return; }
 	let d = min(web::dpr(), 1.5);
@@ -245,6 +265,12 @@ fn view_draw() {
 	web::prop_num(V_CANVAS, "height", floor(r.h * d));
 	gl::viewport(0, 0, gl::drawing_w(), gl::drawing_h());
 	gl::use_program(V_PROG);
+	if V_TEX_NEW && TEX_OK { upload_fabric(); }
+	let fab = V_FAB && V_TEX != 0 && TEX_OK;
+	gl::active_texture(gl::TEXTURE0);
+	gl::bind_texture(gl::TEXTURE_2D, V_TEX);
+	gl::uniform1i(LOC[U_FTEX], 0);
+	gl::uniform4f(LOC[U_FAB], if fab { 1.0 } else { 0.0 }, TEX_CM, TEX_CM * TEX_AR, 0.0);
 	gl::uniform2f(LOC[U_RES], gl::drawing_w() as real, gl::drawing_h() as real);
 	gl::uniform1f(LOC[U_YAW], V_YAW); gl::uniform1f(LOC[U_PITCH], V_PITCH);
 	gl::uniform1f(LOC[U_DIST], V_DIST); gl::uniform1f(LOC[U_CY], V_CY);

@@ -11,6 +11,7 @@ import st_draft;
 import st_svg;
 import st_guide;
 import st_trace;
+import st_tex;
 import st_view3d;
 
 let T_MEAS: i32 = 100;
@@ -21,6 +22,7 @@ let T_GEN: i32 = 20; let T_GEN_DONE: i32 = 21; let T_POLL: i32 = 22; let T_POLL_
 let T_TRACE: i32 = 30; let T_PIXELS: i32 = 31; let T_UPLOAD: i32 = 32; let T_PICKED: i32 = 33; let T_DL_IMG: i32 = 34; let T_ADD_TRACED: i32 = 35;
 let T_BUY: i32 = 40; let T_BUY_DONE: i32 = 41; let T_CLAIM: i32 = 42; let T_CLAIM_DONE: i32 = 43; let T_KEY_SAVE: i32 = 44; let T_BILLING: i32 = 45; let T_BILLING_DONE: i32 = 46; let T_KEY_FORGET: i32 = 47; let T_RENEW_DONE: i32 = 48;
 let T_PDOWN: i32 = 50; let T_PMOVE: i32 = 51; let T_PUP: i32 = 52; let T_FRONT: i32 = 53; let T_SIDE: i32 = 54; let T_BACK: i32 = 55;
+let T_FABRIC: i32 = 80; let T_FAB_PIXELS: i32 = 81; let T_FAB_DL: i32 = 82; let T_FAB_ON: i32 = 83; let T_FAB_SIZE: i32 = 84;
 let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61; let T_IGNORE: i32 = 99;
 
 var GATE byte[>..];
@@ -35,6 +37,7 @@ var JOB byte[>..];
 var POLLS = 0;
 var SHOT byte[>..];       // the current picture (data URL)
 var KEY byte[>..];
+var FAB_URL byte[>..];
 var DEVICE byte[>..];
 var CLAIM_ID byte[>..];
 var CLAIM_TRIES = 0;
@@ -102,6 +105,7 @@ fn fill_measure_inputs() {
 	for i in NM { set_num(str("m-", M_KEYS[i])[..], disp(BASE[i])); }
 	let units = web::query_all(web::DOCUMENT, ".unit");
 	for i in units { web::text(web::list_at(i as i32), unit_label()); }
+	set_num("fab-size", disp(TEX_CM));
 	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
 	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
 }
@@ -221,6 +225,37 @@ fn file_stem(out byte[>..]&) {
 	for c in G_NAMES[O.garment] { if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') { out.push(to_lower_c(c)); } else if c == ' ' || c == '-' { out.push('-'); } }
 }
 fn to_lower_c(c byte) byte { if c >= 'A' && c <= 'Z' { c + 32 } else { c } }
+fn load_pixels(max int, tag i32) { var a byte[>..] = []; a.push('['); json_str(a, SHOT[..]); format(a, ",", max, "]"); host_call("pixels", a[..], tag); }
+fn save_url(suffix const byte[:], url const byte[:]) { var a byte[>..] = []; a.push('['); var n byte[>..] = []; file_stem(n); n.append(suffix); json_str(a, n[..]); a.push(','); json_str(a, url); a.push(']'); host_call("saveUrl", a[..], T_IGNORE); }
+fn read_pixels() bool {
+	var r byte[>..] = [];
+	if !web::js_result(web::ev_id(), r) { return false; }
+	var w byte[>..] = []; var h byte[>..] = []; var b byte[>..] = [];
+	if !jget(r[..], "w", w) || !jget(r[..], "h", h) || !jget(r[..], "b64", b) { return false; }
+	let wi, okw = parse_int(w[..], 10); let hi, okh = parse_int(h[..], 10);
+	IMG.clear();
+	if !okw || !okh || !base64::decode(IMG, b[..]) || IMG.len != wi * hi * 4 { return false; }
+	IW = wi; IH = hi;
+	true
+}
+fn fabric_build() {
+	if !read_pixels() { set_text("fab-msg", "Could not read that picture."); return; }
+	let ok = tex_build();
+	set_text("fab-msg", TEX_MSG[..]);
+	show("fab-out", ok);
+	if !ok { return; }
+	var ov byte[>..] = []; tex_overlay_svg(ov); web::html(el("shot-ov"), ov[..]);
+	tex_data_url(FAB_URL);
+	var css byte[>..] = []; format(css, "url(", FAB_URL[..], ")");
+	web::style(el("fab-rep"), "background-image", css[..]);
+	var ar byte[>..] = []; format(ar, "1 / "); format_flt(ar, TEX_AR, 3);
+	web::style(el("fab-rep"), "aspect-ratio", ar[..]);
+	view_fabric_new();
+	for id in ["fab-on", "fab-size"] { web::prop_bool(el(id), "disabled", false); }
+	web::prop_bool(el("fab-on"), "checked", true);
+	set_num("fab-size", disp(TEX_CM));
+	if TAB == 1 { view_draw(); }
+}
 fn download(name const byte[:], mime const byte[:], body const byte[:]) {
 	var a byte[>..] = [];
 	a.push('['); json_str(a, name); a.push(','); json_str(a, mime); a.push(','); json_str(a, body); a.push(']');
@@ -293,6 +328,7 @@ fn poll() {
 }
 fn show_shot(src const byte[:]) {
 	SHOT.clear(); SHOT.append(src);
+	web::prop_bool(el("fab-use"), "disabled", false);
 	web::attr(el("shot-img"), "src", src);
 	web::html(el("shot-ov"), "");
 	show("shot", true);
@@ -441,18 +477,10 @@ export fn he_event(tag i32, kind i32) {
 		30 => {
 			if SHOT.len == 0 { set_text("trace-msg", "Generate or upload a picture first."); return; }
 			set_text("trace-msg", "Tracing…");
-			var a byte[>..] = []; a.push('['); json_str(a, SHOT[..]); a.append(",320]");
-			host_call("pixels", a[..], T_PIXELS);
+			load_pixels(320, T_PIXELS);
 		},
 		31 => {
-			var r byte[>..] = [];
-			if !web::js_result(web::ev_id(), r) { set_text("trace-msg", "Could not read that picture."); return; }
-			var w byte[>..] = []; var h byte[>..] = []; var b byte[>..] = [];
-			if !jget(r[..], "w", w) || !jget(r[..], "h", h) || !jget(r[..], "b64", b) { set_text("trace-msg", "Could not read that picture."); return; }
-			let wi, okw = parse_int(w[..], 10); let hi, okh = parse_int(h[..], 10);
-			IMG.clear();
-			if !okw || !okh || !base64::decode(IMG, b[..]) || IMG.len != wi * hi * 4 { set_text("trace-msg", "Could not read that picture."); return; }
-			IW = wi; IH = hi;
+			if !read_pixels() { set_text("trace-msg", "Could not read that picture."); return; }
 			let want = O.garment;
 			if trace_image(want) {
 				var ov byte[>..] = []; overlay_svg(ov); web::html(el("shot-ov"), ov[..]);
@@ -471,7 +499,7 @@ export fn he_event(tag i32, kind i32) {
 				status("Picture loaded. Press Trace to turn it into a pattern.");
 			}
 		},
-		34 => { if SHOT.len > 0 { var a byte[>..] = []; a.push('['); var n byte[>..] = []; file_stem(n); n.append("-sample.webp"); json_str(a, n[..]); a.push(','); json_str(a, SHOT[..]); a.push(']'); host_call("saveUrl", a[..], T_IGNORE); } },
+		34 => { if SHOT.len > 0 { save_url("-sample.webp", SHOT[..]); } },
 		35 => { ADD_TRACED = web::get_bool(el("add-traced"), "checked"); rebuild(); },
 		40 => {
 			if PRO.len == 0 { set_text("sub-status", "Subscriptions are not open yet."); return; }
@@ -522,6 +550,11 @@ export fn he_event(tag i32, kind i32) {
 		},
 		52 => { DRAG = false; },
 		53 => { V_YAW = 0.0; view_draw(); }, 54 => { V_YAW = PI * 0.5; view_draw(); }, 55 => { V_YAW = PI; view_draw(); },
+		80 => { if SHOT.len == 0 { set_text("fab-msg", "Generate or upload a picture first."); return; } set_text("fab-msg", "Reading the picture…"); load_pixels(1024, T_FAB_PIXELS); },
+		81 => fabric_build(),
+		82 => { if TEX_OK { save_url("-fabric.png", FAB_URL[..]); } },
+		83 => { view_fabric_on(web::get_bool(el("fab-on"), "checked")); if TAB == 1 { view_draw(); } },
+		84 => { TEX_CM = clamp(from_disp(get_num("fab-size", disp(TEX_CM))), 3.0, 120.0); if TAB == 1 { view_draw(); } },
 		60 => { if TAB == 1 { view_draw(); } },
 		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); var s byte[>..] = []; if SCALE_PCT > 0.0 { s.push('+'); } fmt1(s, SCALE_PCT); s.push('%'); set_text("scale-val", s[..]); rebuild(); },
 		_ => {},
@@ -564,6 +597,7 @@ fn main() {
 	listen_id("dl-svg", "click", T_DL_SVG); listen_id("print-a4", "click", T_PRINT_A4); listen_id("print-letter", "click", T_PRINT_LTR); listen_id("dl-guide", "click", T_DL_GUIDE);
 	listen_id("gen", "click", T_GEN); listen_id("trace", "click", T_TRACE); listen_id("upload", "click", T_UPLOAD); listen_id("dl-img", "click", T_DL_IMG);
 	listen_id("add-traced", "change", T_ADD_TRACED);
+	listen_id("fab-use", "click", T_FABRIC); listen_id("fab-dl", "click", T_FAB_DL); listen_id("fab-on", "change", T_FAB_ON); listen_id("fab-size", "change", T_FAB_SIZE);
 	listen_id("buy", "click", T_BUY); listen_id("key-save", "click", T_KEY_SAVE); listen_id("billing", "click", T_BILLING); listen_id("key-forget", "click", T_KEY_FORGET);
 	listen_id("c3d", "pointerdown", T_PDOWN); listen_id("c3d", "pointermove", T_PMOVE); listen_id("c3d", "pointerup", T_PUP); listen_id("c3d", "pointercancel", T_PUP);
 	listen_id("v-front", "click", T_FRONT); listen_id("v-side", "click", T_SIDE); listen_id("v-back", "click", T_BACK);
