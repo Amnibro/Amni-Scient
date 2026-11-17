@@ -1,0 +1,1492 @@
+=== -5fdd42bfe3ede6d9
+import web;
+import math;
+import json;
+import style;
+import mvt;
+import raster;
+import glyphs;
+import labels;
+import view;
+=== -6df21776a7287122
+
+=== 74deed47393dfcf9
+fn el(id const byte[:]) i32 { web::el(id) }
+fn show(id const byte[:], on bool) {
+	web::cls(web::el(id), "on", on);
+	body_update();
+}
+fn body_update() {
+	let busy = web::has_cls(el("res"), "on") || web::has_cls(el("place"), "on") || web::has_cls(el("dir"), "on") || web::has_cls(el("areas"), "on");
+	web::cls(el_body, "none", !busy);
+	if web::win_w() > 700 {
+		let p = el("panel");
+		pad_l = web::get_num(p, "offsetLeft") + web::get_num(p, "offsetWidth");
+	} else {
+		pad_l = 0.0;
+	}
+	pad_b = 0.0;
+}
+=== 5b4f1eca2ce2fbda
+var toast_at real = 0.0;
+fn toast(msg const byte[:]) {
+	web::text(el_status, msg);
+	web::cls(el_status, "on", true);
+	toast_at = web::now() + 4000.0;
+	toast_timer = web::timer(4000, T_TOAST);
+}
+=== 5437db08070438d7
+fn fixed(out byte[>..]&, v real, d int) {
+	let s = js::to_fixed(v, d);
+	out.append(s);
+}
+fn grouped(out byte[>..]&, n int) {
+	let s = js::locale_string(n, 0);
+	out.append(s);
+}
+fn fmt_dist(out byte[>..]&, m real) {
+	if m < 160.9344 {
+		let ft = (round(m * 3.28084 / 10.0) as int) * 10;
+		format(out, ft, " ft");
+	} else if m < 16093.44 {
+		fixed(out, m / 1609.344, 1);
+		out.append(" mi");
+	} else {
+		grouped(out, round(m / 1609.344) as int);
+		out.append(" mi");
+	}
+}
+fn fmt_km(out byte[>..]&, m real) {
+	if m < 10000.0 {
+		fixed(out, m / 1000.0, 1);
+	} else {
+		grouped(out, round(m / 1000.0) as int);
+	}
+	out.append(" km");
+}
+fn fmt_dur(out byte[>..]&, s real) {
+	var mins = round(s / 60.0) as int;
+	if mins < 1 { mins = 1; }
+	if mins < 60 {
+		format(out, mins, " min");
+	} else {
+		format(out, mins / 60, " h ", mins % 60, " min");
+	}
+}
+fn fmt_coord(out byte[>..]&, lat real, lon real) {
+	fixed(out, abs(lat), 5);
+	if lat < 0.0 { out.append("° S, "); } else { out.append("° N, "); }
+	fixed(out, abs(lon), 5);
+	if lon < 0.0 { out.append("° W"); } else { out.append("° E"); }
+}
+fn month_name(m int) const byte[:] {
+	match m {
+		1 => "Jan",
+		2 => "Feb",
+		3 => "Mar",
+		4 => "Apr",
+		5 => "May",
+		6 => "Jun",
+		7 => "Jul",
+		8 => "Aug",
+		9 => "Sep",
+		10 => "Oct",
+		11 => "Nov",
+		_ => "Dec",
+	}
+}
+fn fmt_date(out byte[>..]&, ms real) {
+	let z = (floor(ms / 86400000.0) as int) + 719468;
+	let era = div_euclid(z, 146097);
+	let doe = z - era * 146097;
+	let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+	let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+	let mp = (5 * doy + 2) / 153;
+	let d = doy - (153 * mp + 2) / 5 + 1;
+	var m = mp - 9;
+	if mp < 10 { m = mp + 3; }
+	var y = yoe + era * 400;
+	if m <= 2 { y += 1; }
+	format(out, month_name(m), " ", d, ", ", y);
+}
+fn url_enc(out byte[>..]&, s const byte[:]) {
+	let hex = "0123456789ABCDEF";
+	for c in s {
+		let keep = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '!' || c == '~' || c == '*' || c == 39 || c == '(' || c == ')';
+		if keep {
+			out.push(c);
+		} else {
+			out.push('%');
+			out.push(hex[(c >> 4) as int]);
+			out.push(hex[(c & 15) as int]);
+		}
+	}
+}
+=== 10cab3b5cf467b2c
+fn put<T>(dst T&, s const byte[:]) {
+	dst.clear();
+	let n = min(s.len, dst.cap);
+	dst.append(s[..n]);
+}
+fn load_areas() {
+	areas.clear();
+	var s byte[>..] = [];
+	if !web::store_get("amni-map-areas", s) { return; }
+	let lines = split(s, '\n');
+	for line in lines {
+		let f = split(line, '|');
+		if f.len < 10 { continue; }
+		let id, k1 = parse_int(f[0]);
+		let w, k2 = parse_flt(f[2]);
+		let so, k3 = parse_flt(f[3]);
+		let e, k4 = parse_flt(f[4]);
+		let n, k5 = parse_flt(f[5]);
+		let tiles, k6 = parse_int(f[7]);
+		let failed, k7 = parse_int(f[8]);
+		let saved, k8 = parse_flt(f[9]);
+		if !(k1 && k2 && k3 && k4 && k5 && k6 && k7 && k8) { continue; }
+		var a = Area { id: id, w: w, s: so, e: e, n: n, tiles: tiles, failed: failed, saved: saved, .. };
+		put(a.name, f[1]);
+		put(a.tpl, f[6]);
+		areas.push(a);
+	}
+}
+fn save_areas() {
+	var out byte[>..] = [];
+	for &a in areas {
+		format(out, a.id, "|");
+		for c in a.name { out.push(if c == '|' || c == 10 || c == 13 { ' ' } else { c }); }
+		out.push('|');
+		fixed(out, a.w, 6);
+		out.push('|');
+		fixed(out, a.s, 6);
+		out.push('|');
+		fixed(out, a.e, 6);
+		out.push('|');
+		fixed(out, a.n, 6);
+		out.push('|');
+		out.append(a.tpl[..]);
+		format(out, "|", a.tiles, "|", a.failed, "|");
+		fixed(out, a.saved, 0);
+		out.push('\n');
+	}
+	web::store_set("amni-map-areas", out);
+}
+fn refresh_alts() {
+	alt_tpls.clear();
+	for &a in areas {
+		let t = a.tpl[..];
+		if t.len == 0 || t == tpl { continue; }
+		var dup = false;
+		let lines = split(alt_tpls, '\n');
+		for l in lines { if l == t { dup = true; } }
+		if !dup {
+			if alt_tpls.len > 0 { alt_tpls.push('\n'); }
+			alt_tpls.append(t);
+		}
+	}
+}
+=== 77dbc83d889e38b2
+fn font_name(f int) const byte[:] {
+	match f {
+		0 => "Noto%20Sans%20Regular",
+		1 => "Noto%20Sans%20Bold",
+		_ => "Noto%20Sans%20Italic",
+	}
+}
+fn range_name(r int) const byte[:] {
+	match r {
+		0 => "0-255",
+		1 => "256-511",
+		_ => "8192-8447",
+	}
+}
+fn add_url(s const byte[:]) {
+	dl_starts.push(dl_urls.len);
+	dl_urls.append(s);
+	dl_urls.push('\n');
+}
+fn url_at(i int) const byte[:] {
+	let a = dl_starts[i];
+	let b = if i + 1 < dl_starts.len { dl_starts[i + 1] - 1 } else { dl_urls.len - 1 };
+	dl_urls[a..b]
+}
+fn area_tiles(w real, s real, e real, n real, out_count bool) int, real {
+	if out_count {
+		dl_urls.clear();
+		dl_starts.clear();
+	}
+	var count = 0;
+	var bytes = 0.0;
+	var u byte[>..] = [];
+	for z in 15 {
+		let m = 1 << z;
+		let mr = m as real;
+		let x0 = clamp(floor(lon2x(w) * mr) as int, 0, m - 1);
+		let x1 = clamp(floor(lon2x(e) * mr) as int, 0, m - 1);
+		let y0 = clamp(floor(lat2y(n) * mr) as int, 0, m - 1);
+		let y1 = clamp(floor(lat2y(s) * mr) as int, 0, m - 1);
+		var per = 50000.0;
+		if z <= 7 { per = 400000.0; } else if z <= 11 { per = 150000.0; }
+		if x1 >= x0 && y1 >= y0 {
+			let cnt = (x1 - x0 + 1) * (y1 - y0 + 1);
+			count += cnt;
+			bytes += per * cnt;
+			if out_count {
+				for y in y0..y1 + 1 {
+					for x in x0..x1 + 1 {
+						tpl_url(tpl, z, x, y, u);
+						add_url(u);
+					}
+				}
+			}
+		}
+	}
+	if out_count {
+		add_url(TJ_URL);
+		for f in 3 {
+			for r in 3 {
+				u.clear();
+				format(u, "https://tiles.openfreemap.org/fonts/", font_name(f), "/", range_name(r), ".pbf");
+				add_url(u);
+			}
+		}
+	}
+	return count, bytes;
+}
+=== -2ad92e0518fdfca2
+var bw real = 0.0;
+var bs real = 0.0;
+var be real = 0.0;
+var bn real = 0.0;
+fn view_bounds() {
+	bw = clamp(x2lon(px_wx(0.0)), -180.0, 180.0);
+	be = clamp(x2lon(px_wx(vw)), -180.0, 180.0);
+	bs = y2lat(px_wy(vh));
+	bn = y2lat(px_wy(0.0));
+}
+=== 7b092df7df447699
+fn mk(parent i32, tag const byte[:], cls const byte[:], text const byte[:]) i32 {
+	let h = web::create(tag);
+	if cls.len > 0 { web::cls(h, cls, true); }
+	if text.len > 0 { web::text(h, text); }
+	web::append(parent, h);
+	h
+}
+fn add(parent i32, tag const byte[:], cls const byte[:], text const byte[:]) {
+	let h = mk(parent, tag, cls, text);
+	web::release(h);
+}
+fn area_btn(row i32, label const byte[:], act const byte[:], id int) {
+	let b = mk(row, "button", "btn", label);
+	web::attr(b, "data-act", act);
+	var s byte[>..] = [];
+	format(s, id);
+	web::attr(b, "data-id", s);
+	web::release(b);
+}
+fn areas_render() {
+	let list = el("area-list");
+	web::clear(list);
+	if areas.len == 0 { add(list, "li", "", "No saved areas yet."); }
+	for k in areas.len {
+		let a .= areas[areas.len - 1 - k];
+		let li = mk(list, "li", "", "");
+		add(li, "div", "t1", a.name[..]);
+		var s byte[>..] = [];
+		grouped(s, a.tiles);
+		let c, b = area_tiles(a.w, a.s, a.e, a.n, false);
+		format(s, " tiles · about ", round(b / 1000000.0) as int, " MB · saved ");
+		fmt_date(s, a.saved);
+		if a.failed > 0 { format(s, " · ", a.failed, " missing"); }
+		add(li, "div", "t2", s);
+		let row = mk(li, "div", "row", "");
+		area_btn(row, "View", "view", a.id);
+		area_btn(row, "Update", "update", a.id);
+		area_btn(row, "Delete", "delete", a.id);
+		web::release(row);
+		web::release(li);
+	}
+	area_estimate();
+}
+fn area_estimate() {
+	view_bounds();
+	let c, b = area_tiles(bw, bs, be, bn, false);
+	var s byte[>..] = [];
+	if c > 7000 {
+		s.append("This view is too large to save (about ");
+		grouped(s, c);
+		s.append(" tiles). Zoom in to a city or region; up to 7,000 tiles fit in one area.");
+	} else {
+		let mb = max(1, round(b / 1000000.0) as int);
+		s.append("This view: about ");
+		grouped(s, c);
+		format(s, " tiles, about ", mb, " MB.");
+	}
+	web::text(el("area-est"), s);
+	let off = c > 7000 || dl_busy;
+	web::prop_num(el("area-go"), "disabled", if off { 1.0 } else { 0.0 });
+	let st = web::js_global("navigator.storage");
+	if st != 0 { web::js_call(st, "estimate", "[]", T_EST); }
+}
+=== 43e3f99aa7fc08f4
+fn set_hidden(id const byte[:], on bool) {
+	web::prop_num(el(id), "hidden", if on { 1.0 } else { 0.0 });
+}
+fn area_msg(s const byte[:]) { web::text(el("area-msg"), s); }
+fn cache_delete(id int) {
+	if cache_store == 0 { return; }
+	var a byte[>..] = [];
+	format(a, "[\"amni-map-area-", id, "\"]");
+	web::js_call(cache_store, "delete", a, T_NOP);
+}
+fn end_save() {
+	dl_busy = false;
+	batches.clear();
+	set_hidden("area-bar", true);
+	set_hidden("area-stop", true);
+	web::prop_num(el("area-go"), "disabled", 0.0);
+	if cache_h != 0 {
+		web::release(cache_h);
+		cache_h = 0;
+	}
+}
+fn area_remove(id int) {
+	var idx = -1;
+	for k in areas.len { if areas[k].id == id { idx = k; } }
+	if idx >= 0 { areas.remove_at(idx); }
+}
+fn area_start(name const byte[:], w real, s real, e real, n real, replace_id int) {
+	if dl_busy { return; }
+	if cache_store == 0 {
+		area_msg("This browser cannot save map areas (private windows often cannot).");
+		return;
+	}
+	let c, b = area_tiles(w, s, e, n, true);
+	dl_area = Area {};
+	dl_area.id = round(web::epoch_ms()) as int;
+	if name.len == 0 { put(dl_area.name, "Saved area"); } else { put(dl_area.name, name); }
+	dl_area.w = w;
+	dl_area.s = s;
+	dl_area.e = e;
+	dl_area.n = n;
+	put(dl_area.tpl, tpl);
+	dl_area.tiles = c;
+	dl_replace = replace_id;
+	dl_busy = true;
+	dl_next = 0;
+	dl_done = 0;
+	dl_failed = 0;
+	batches.clear();
+	set_hidden("area-bar", false);
+	set_hidden("area-stop", false);
+	web::prop_num(el("area-go"), "disabled", 1.0);
+	area_progress();
+	let st = web::js_global("navigator.storage");
+	if st != 0 { web::js_call(st, "persist", "[]", T_NOP); }
+	var args byte[>..] = [];
+	format(args, "[\"amni-map-area-", dl_area.id, "\"]");
+	web::js_call(cache_store, "open", args, T_CACHE_OPEN);
+}
+fn cache_opened() {
+	cache_h = web::js_handle(web::ev_id());
+	if cache_h == 0 {
+		end_save();
+		area_msg("Could not open storage for this area.");
+		return;
+	}
+	pump();
+}
+fn send_batch(pos int, count int) i32 {
+	var a byte[>..] = [];
+	a.append("[[");
+	for i in count {
+		if i > 0 { a.push(','); }
+		a.push(34);
+		a.append(url_at(pos + i));
+		a.push(34);
+	}
+	a.append("]]");
+	web::js_call(cache_h, "addAll", a, T_ADDALL)
+}
+fn pump() {
+	while batches.len < 4 && dl_next < dl_starts.len {
+		let cnt = min(20, dl_starts.len - dl_next);
+		let id = send_batch(dl_next, cnt);
+		batches.push(Batch { id: id, pos: dl_next, count: cnt, tries: 0 });
+		dl_next += cnt;
+	}
+}
+fn batch_done() {
+	if !dl_busy { return; }
+	let id = web::ev_id();
+	var idx = -1;
+	for k in batches.len { if batches[k].id == id { idx = k; } }
+	if idx < 0 { return; }
+	let b = batches[idx];
+	let failed = web::ev_status() == 0;
+	if failed && b.tries < 2 {
+		batches[idx].id = send_batch(b.pos, b.count);
+		batches[idx].tries = b.tries + 1;
+		return;
+	}
+	if failed { dl_failed += b.count; } else { dl_done += b.count; }
+	batches.remove_at(idx);
+	area_progress();
+	pump();
+	if batches.len == 0 && dl_next >= dl_starts.len { area_finish(); }
+}
+fn area_progress() {
+	let total = max(1, dl_starts.len);
+	let pct = (dl_done + dl_failed) * 100 / total;
+	var w byte[>..] = [];
+	format(w, pct, "%");
+	web::style(el("area-fill"), "width", w);
+	var s byte[>..] = [];
+	s.append("Saving… ");
+	grouped(s, dl_done + dl_failed);
+	s.append(" of ");
+	grouped(s, total);
+	s.append(" files");
+	area_msg(s);
+}
+fn area_finish() {
+	dl_area.failed = dl_failed;
+	dl_area.saved = dl_area.id as real;
+	if dl_replace != 0 {
+		area_remove(dl_replace);
+		cache_delete(dl_replace);
+	}
+	areas.push(dl_area);
+	save_areas();
+	refresh_alts();
+	end_save();
+	if dl_failed > 0 {
+		var s byte[>..] = [];
+		format(s, "Saved, but ", dl_failed, " files could not be downloaded. Use Update to try again.");
+		area_msg(s);
+	} else {
+		area_msg("Saved. This area now works with no connection.");
+	}
+	areas_render();
+}
+fn area_stop() {
+	if !dl_busy { return; }
+	let id = dl_area.id;
+	end_save();
+	cache_delete(id);
+	area_msg("Stopped. Nothing was kept.");
+}
+fn area_click() {
+	let t = web::ev_target();
+	let b = web::closest(t, "button");
+	if b == 0 { return; }
+	var act byte[>..] = [];
+	var ids byte[>..] = [];
+	web::get_attr(b, "data-act", act);
+	web::get_attr(b, "data-id", ids);
+	web::release(b);
+	let id, ok = parse_int(ids);
+	if !ok { return; }
+	var idx = -1;
+	for k in areas.len { if areas[k].id == id { idx = k; } }
+	if idx < 0 { return; }
+	let a = areas[idx];
+	if act == "view" {
+		fit_world(lon2x(a.w), lat2y(a.n), lon2x(a.e), lat2y(a.s), 15.0);
+	} else if act == "update" {
+		area_start(a.name[..], a.w, a.s, a.e, a.n, a.id);
+	} else if act == "delete" {
+		cache_delete(id);
+		area_remove(id);
+		save_areas();
+		refresh_alts();
+		areas_render();
+	}
+}
+=== 5fb4ec5527319ed0
+fn jws(d const byte[:], i int) int {
+	var k = i;
+	while k < d.len && (d[k] == 32 || d[k] == 10 || d[k] == 13 || d[k] == 9) { k++; }
+	k
+}
+fn jstr_end(d const byte[:], i int) int {
+	if i < 0 || i >= d.len || d[i] != 34 { return -1; }
+	var k = i + 1;
+	while k < d.len {
+		if d[k] == 92 {
+			k += 2;
+		} else if d[k] == 34 {
+			return k + 1;
+		} else {
+			k++;
+		}
+	}
+	return -1;
+}
+recursive fn jend(d const byte[:], i int) int {
+	if i < 0 || i >= d.len { return -1; }
+	let c = d[i];
+	if c == 34 { return jstr_end(d, i); }
+	if c == 123 || c == 91 {
+		var close = 93;
+		if c == 123 { close = 125; }
+		var k = jws(d, i + 1);
+		if k < d.len && d[k] == close { return k + 1; }
+		while k < d.len {
+			if c == 123 {
+				k = jstr_end(d, k);
+				if k < 0 { return -1; }
+				k = jws(d, k);
+				if k >= d.len || d[k] != 58 { return -1; }
+				k = jws(d, k + 1);
+			}
+			k = jend(d, k);
+			if k < 0 { return -1; }
+			k = jws(d, k);
+			if k >= d.len { return -1; }
+			if d[k] == close { return k + 1; }
+			if d[k] != 44 { return -1; }
+			k = jws(d, k + 1);
+		}
+		return -1;
+	}
+	var k = i;
+	while k < d.len && d[k] != 44 && d[k] != 93 && d[k] != 125 && d[k] != 32 && d[k] != 10 && d[k] != 13 && d[k] != 9 { k++; }
+	if k == i { return -1; }
+	k
+}
+fn jroot(d const byte[:]) int { jws(d, 0) }
+fn jvalid(d const byte[:]) bool { jend(d, jws(d, 0)) >= 0 }
+fn jget(d const byte[:], n int, k const byte[:]) int {
+	if n < 0 || n >= d.len || d[n] != 123 { return -1; }
+	var p = jws(d, n + 1);
+	while p < d.len && d[p] == 34 {
+		let ke = jstr_end(d, p);
+		if ke < 0 { return -1; }
+		let c = jws(d, ke);
+		if c >= d.len || d[c] != 58 { return -1; }
+		let v = jws(d, c + 1);
+		if d[p + 1..ke - 1] == k { return v; }
+		let ve = jend(d, v);
+		if ve < 0 { return -1; }
+		p = jws(d, ve);
+		if p < d.len && d[p] == 44 { p = jws(d, p + 1); } else { return -1; }
+	}
+	-1
+}
+fn jat(d const byte[:], n int, i int) int {
+	if n < 0 || n >= d.len || d[n] != 91 { return -1; }
+	var p = jws(d, n + 1);
+	var idx = 0;
+	while p < d.len && d[p] != 93 {
+		if idx == i { return p; }
+		let e = jend(d, p);
+		if e < 0 { return -1; }
+		p = jws(d, e);
+		if p < d.len && d[p] == 44 { p = jws(d, p + 1); } else { return -1; }
+		idx++;
+	}
+	-1
+}
+fn jlen(d const byte[:], n int) int {
+	if n < 0 || n >= d.len || d[n] != 91 { return 0; }
+	var p = jws(d, n + 1);
+	var cnt = 0;
+	while p < d.len && d[p] != 93 {
+		let e = jend(d, p);
+		if e < 0 { return cnt; }
+		cnt++;
+		p = jws(d, e);
+		if p < d.len && d[p] == 44 { p = jws(d, p + 1); } else { return cnt; }
+	}
+	cnt
+}
+fn jfirst(d const byte[:], n int) int {
+	if n < 0 || n >= d.len || d[n] != 91 { return -1; }
+	let p = jws(d, n + 1);
+	if p >= d.len || d[p] == 93 { return -1; }
+	p
+}
+fn jnext(d const byte[:], p int) int {
+	let e = jend(d, p);
+	if e < 0 { return -1; }
+	let c = jws(d, e);
+	if c < d.len && d[c] == 44 {
+		let q = jws(d, c + 1);
+		if q < d.len && d[q] != 93 { return q; }
+	}
+	-1
+}
+fn jnum(d const byte[:], n int) real {
+	if n < 0 || n >= d.len || d[n] == 34 { return 0.0; }
+	let e = jend(d, n);
+	if e < 0 { return 0.0; }
+	let v, ok = parse_flt(d[n..e]);
+	if ok { v } else { 0.0 }
+}
+fn jreal(d const byte[:], n int, k const byte[:]) real { jnum(d, jget(d, n, k)) }
+fn jtext(d const byte[:], n int, k const byte[:]) byte[>..] {
+	var o byte[>..] = [];
+	let c = jget(d, n, k);
+	if c < 0 || c >= d.len || d[c] != 34 { return o; }
+	let e = jstr_end(d, c);
+	if e < 0 { return o; }
+	var i = c + 1;
+	while i < e - 1 {
+		let ch = d[i];
+		if ch == 92 && i + 1 < e - 1 {
+			let x = d[i + 1];
+			i += 2;
+			if x == 'n' {
+				o.push(10);
+			} else if x == 't' {
+				o.push(9);
+			} else if x == 'r' {
+				o.push(13);
+			} else if x == 'b' {
+				o.push(8);
+			} else if x == 'f' {
+				o.push(12);
+			} else if x == 'u' && i + 4 <= e - 1 {
+				let hv, hk = parse_int(d[i..i + 4], 16);
+				if hk { push_utf8(o, hv); }
+				i += 4;
+			} else {
+				o.push(x);
+			}
+		} else {
+			o.push(ch);
+			i++;
+		}
+	}
+	o
+}
+fn take_fetch(id i32, out byte[>..]&) {
+	out = [];
+	web::fetch_take(id, out);
+}
+fn est_done() {
+	var s byte[>..] = [];
+	if !web::js_result(web::ev_id(), s) { return; }
+	if !jvalid(s) { return; }
+	let usage = jreal(s, jroot(s), "usage");
+	var t byte[>..] = [];
+	format(t, "Map data and site files use about ", round(usage / 1000000.0) as int, " MB of this device's storage.");
+	web::text(el("area-use"), t);
+}
+=== 6708c9633aea7175
+fn search_send() {
+	var u byte[>..] = [];
+	format(u, GW, "/photon/api?q=");
+	url_enc(u, search_text);
+	u.append("&limit=8&lat=");
+	fixed(u, y2lat(cy), 4);
+	u.append("&lon=");
+	fixed(u, x2lon(cx), 4);
+	search_id = web::fetch(u, T_SEARCH);
+}
+fn search_go(text const byte[:], target int) {
+	if text.len == 0 {
+		show("res", false);
+		return;
+	}
+	search_text.clear();
+	search_text.append(text);
+	search_retry = 0;
+	search_wait = false;
+	search_target = target as i32;
+	search_send();
+}
+fn add_part(sub byte[>..]&, p const byte[:], title const byte[:]) {
+	if p.len > 0 && p != title {
+		if sub.len > 0 { sub.append(", "); }
+		sub.append(p);
+	}
+}
+fn parse_hits(d const byte[:]) {
+	let feats = jget(d, jroot(d), "features");
+	let cnt = min(8, jlen(d, feats));
+	for i in cnt {
+		let f = jat(d, feats, i);
+		let co = jget(d, jget(d, f, "geometry"), "coordinates");
+		let pr = jget(d, f, "properties");
+		let name = jtext(d, pr, "name");
+		let hn = jtext(d, pr, "housenumber");
+		let road = jtext(d, pr, "street");
+		let city = jtext(d, pr, "city");
+		let district = jtext(d, pr, "district");
+		let county = jtext(d, pr, "county");
+		let state = jtext(d, pr, "state");
+		let country = jtext(d, pr, "country");
+		let ty = jtext(d, pr, "type");
+		var h = Hit {};
+		h.lon = jnum(d, jat(d, co, 0));
+		h.lat = jnum(d, jat(d, co, 1));
+		var t byte[>..] = [];
+		if name.len > 0 {
+			t.append(name);
+		} else if hn.len > 0 && road.len > 0 {
+			format(t, hn, " ", road);
+		} else if road.len > 0 {
+			t.append(road);
+		} else if city.len > 0 {
+			t.append(city);
+		} else if state.len > 0 {
+			t.append(state);
+		} else {
+			t.append(country);
+		}
+		var sub byte[>..] = [];
+		if name.len > 0 {
+			var line byte[>..] = [];
+			if hn.len > 0 {
+				format(line, hn, " ", road);
+			} else {
+				line.append(road);
+			}
+			add_part(sub, line, t);
+		}
+		if city.len > 0 {
+			add_part(sub, city, t);
+		} else if district.len > 0 {
+			add_part(sub, district, t);
+		} else {
+			add_part(sub, county, t);
+		}
+		add_part(sub, state, t);
+		add_part(sub, country, t);
+		let ex = jget(d, pr, "extent");
+		if jlen(d, ex) == 4 {
+			h.ext = true;
+			h.x1 = jnum(d, jat(d, ex, 0));
+			h.y1 = jnum(d, jat(d, ex, 1));
+			h.x2 = jnum(d, jat(d, ex, 2));
+			h.y2 = jnum(d, jat(d, ex, 3));
+		}
+		if ty == "city" || ty == "locality" {
+			h.zoom = 12.0;
+		} else if ty == "district" {
+			h.zoom = 13.0;
+		} else if ty == "county" {
+			h.zoom = 10.0;
+		} else if ty == "state" {
+			h.zoom = 7.0;
+		} else if ty == "country" {
+			h.zoom = 4.0;
+		} else {
+			h.zoom = 17.0;
+		}
+		put(h.title, t);
+		put(h.sub, sub);
+		hits.push(h);
+	}
+}
+fn search_arrived() {
+	let id = web::ev_id();
+	if id != search_id {
+		web::fetch_free(id);
+		return;
+	}
+	let st = web::ev_status();
+	take_fetch(id, buf);
+	let ok = st == 200 && jvalid(buf);
+	if !ok && st != 0 && search_retry < 3 {
+		search_retry += 1;
+		search_wait = true;
+		web::timer(500 * search_retry, T_S_RETRY);
+		return;
+	}
+	hits.clear();
+	let res = el_results;
+	web::clear(res);
+	var good = false;
+	if st == 200 && jvalid(buf) {
+		good = true;
+		parse_hits(buf);
+	}
+	if !good {
+		if st == 0 {
+			add(res, "li", "", "Search needs a connection.");
+		} else {
+			add(res, "li", "", "Search is busy right now. Try again in a moment.");
+		}
+	} else {
+		for i in hits.len {
+			let h .= hits[i];
+			let li = mk(res, "li", "", "");
+			var s byte[>..] = [];
+			format(s, i);
+			web::attr(li, "data-i", s);
+			add(li, "div", "t1", h.title[..]);
+			add(li, "div", "t2", h.sub[..]);
+			web::release(li);
+		}
+		if hits.len == 0 { add(res, "li", "", "No places found."); }
+	}
+	show("res", true);
+	if search_pick {
+		search_pick = false;
+		if hits.len > 0 { pick(0); }
+	}
+}
+fn res_click() {
+	let t = web::ev_target();
+	let li = web::closest(t, "li");
+	if li == 0 { return; }
+	var s byte[>..] = [];
+	web::get_attr(li, "data-i", s);
+	web::release(li);
+	let i, ok = parse_int(s);
+	if ok && i >= 0 && i < hits.len { pick(i); }
+}
+fn pick(i int) {
+	let h = hits[i];
+	show("res", false);
+	if search_target == 0 {
+		web::prop(el_q, "value", h.title[..]);
+		place_show(h.title[..], h.sub[..], h.lon, h.lat);
+		if h.ext {
+			fit_world(lon2x(h.x1), lat2y(h.y1), lon2x(h.x2), lat2y(h.y2), 17.0);
+		} else {
+			var z = h.zoom;
+			if h.zoom < 17.0 { z = max(h.zoom, zoom); }
+			fly_to(lon2x(h.lon), lat2y(h.lat), z, 700.0);
+		}
+	} else {
+		web::prop(el_from, "value", h.title[..]);
+		from_lon = h.lon;
+		from_lat = h.lat;
+		from_set = true;
+		route_go();
+	}
+}
+=== 6234e2ef47560b78
+fn place_show(name const byte[:], sub const byte[:], lon real, lat real) {
+	place_name.clear();
+	place_name.append(name);
+	place_lon = lon;
+	place_lat = lat;
+	has_place = true;
+	has_pin = true;
+	pin_x = lon2x(lon);
+	pin_y = lat2y(lat);
+	route_changed();
+	web::text(el("pl-name"), name);
+	web::text(el("pl-addr"), sub);
+	var c byte[>..] = [];
+	fmt_coord(c, lat, lon);
+	web::text(el("pl-coord"), c);
+	show("place", true);
+	show("dir", false);
+	body_update();
+}
+fn place_close() {
+	show("place", false);
+	has_place = false;
+	has_pin = false;
+	route_changed();
+	body_update();
+}
+fn drop_pin(sx real, sy real) {
+	let lon = x2lon(px_wx(sx));
+	let lat = y2lat(px_wy(sy));
+	place_show("Dropped pin", "Looking up the address…", lon, lat);
+	var u byte[>..] = [];
+	format(u, GW, "/nominatim/reverse?lat=");
+	fixed(u, lat, 6);
+	u.append("&lon=");
+	fixed(u, lon, 6);
+	u.append("&format=json");
+	rev_id = web::fetch(u, T_REV);
+}
+fn rev_arrived() {
+	let id = web::ev_id();
+	if id != rev_id {
+		web::fetch_free(id);
+		return;
+	}
+	let st = web::ev_status();
+	take_fetch(id, buf);
+	var done = false;
+	if st == 200 && jvalid(buf) {
+		let root = jroot(buf);
+		let dn = jtext(buf, root, "display_name");
+		if dn.len > 0 {
+			let nm = jtext(buf, root, "name");
+			let k = find(dn[..], ",");
+			var first = dn[..];
+			var rest = dn[..0];
+			if k >= 0 {
+				first = dn[..k];
+				rest = trim(dn[k + 1..]);
+			}
+			var tb byte[>..] = [];
+			var title = first;
+			if nm.len > 0 {
+				title = nm[..];
+			} else if first.len > 0 && first[0] >= '0' && first[0] <= '9' {
+				let k2 = find(rest, ",");
+				if k2 >= 0 {
+					format(tb, first, " ", trim(rest[..k2]));
+					rest = trim(rest[k2 + 1..]);
+					title = tb[..];
+				}
+			}
+			place_name.clear();
+			place_name.append(title);
+			web::text(el("pl-name"), title);
+			web::text(el("pl-addr"), rest);
+			done = true;
+		}
+	}
+	if !done {
+		if web::get_bool(web::js_global("navigator"), "onLine") {
+			web::text(el("pl-addr"), "No address found here.");
+		} else {
+			web::text(el("pl-addr"), "Address unavailable offline.");
+		}
+	}
+}
+=== 61af6cb1a39ac262
+fn dir_open() {
+	if !has_place { return; }
+	show("dir", true);
+	show("place", false);
+	show("res", false);
+	web::text(el("dir-to"), place_name);
+	web::prop(el_from, "value", "");
+	from_set = false;
+	web::text(el("route-sum"), "");
+	web::clear(el("steps"));
+	route_go();
+	body_update();
+}
+fn route_go() {
+	var slon = 0.0;
+	var slat = 0.0;
+	var have = false;
+	if from_set {
+		slon = from_lon;
+		slat = from_lat;
+		have = true;
+	} else if has_me {
+		slon = x2lon(me_x);
+		slat = y2lat(me_y);
+		have = true;
+	}
+	if !have {
+		want_route = true;
+		locate(false);
+		web::text(el("dir-note"), "Finding your location… or type a start above.");
+		return;
+	}
+	web::text(el("dir-note"), "Finding a route…");
+	var u byte[>..] = [];
+	format(u, GW, "/route/");
+	if walk { u.append("foot"); } else { u.append("driving"); }
+	u.push('/');
+	fixed(u, slon, 5);
+	u.push(',');
+	fixed(u, slat, 5);
+	u.push(';');
+	fixed(u, place_lon, 5);
+	u.push(',');
+	fixed(u, place_lat, 5);
+	u.append("?geometries=geojson&overview=full&steps=true&alternatives=false");
+	route_id = web::fetch(u, T_ROUTE);
+}
+fn show_route(d const byte[:], r int) {
+	route_x.clear();
+	route_y.clear();
+	var x0 = 1.0;
+	var y0 = 1.0;
+	var x1 = 0.0;
+	var y1 = 0.0;
+	let co = jget(d, jget(d, r, "geometry"), "coordinates");
+	var p = jfirst(d, co);
+	while p >= 0 {
+		let x = lon2x(jnum(d, jat(d, p, 0)));
+		let y = lat2y(jnum(d, jat(d, p, 1)));
+		route_x.push(x);
+		route_y.push(y);
+		x0 = min(x0, x);
+		y0 = min(y0, y);
+		x1 = max(x1, x);
+		y1 = max(y1, y);
+		p = jnext(d, p);
+	}
+	route_changed();
+	let dist = jreal(d, r, "distance");
+	let dur = jreal(d, r, "duration");
+	var s byte[>..] = [];
+	fmt_dist(s, dist);
+	let sum = el("route-sum");
+	web::text(sum, s);
+	var t byte[>..] = [];
+	t.append(" (");
+	fmt_km(t, dist);
+	t.append(") · ");
+	fmt_dur(t, dur);
+	add(sum, "span", "", t);
+	web::text(el("dir-note"), "");
+	let list = el("steps");
+	web::clear(list);
+	step_lon.clear();
+	step_lat.clear();
+	let legs = jget(d, r, "legs");
+	var lg = jfirst(d, legs);
+	while lg >= 0 {
+		let steps = jget(d, lg, "steps");
+		var sp = jfirst(d, steps);
+		while sp >= 0 {
+			let li = mk(list, "li", "", "");
+			var si byte[>..] = [];
+			format(si, step_lon.len);
+			web::attr(li, "data-i", si);
+			var tx byte[>..] = [];
+			instruction(tx, d, sp);
+			web::text(li, tx);
+			let sd = jreal(d, sp, "distance");
+			if sd > 0.0 {
+				var ds byte[>..] = [];
+				fmt_dist(ds, sd);
+				add(li, "i", "", ds);
+			}
+			web::release(li);
+			let loc = jget(d, jget(d, sp, "maneuver"), "location");
+			step_lon.push(jnum(d, jat(d, loc, 0)));
+			step_lat.push(jnum(d, jat(d, loc, 1)));
+			sp = jnext(d, sp);
+		}
+		lg = jnext(d, lg);
+	}
+	if route_x.len > 0 { fit_world(x0, y0, x1, y1, 17.0); }
+}
+fn route_arrived() {
+	let id = web::ev_id();
+	if id != route_id {
+		web::fetch_free(id);
+		return;
+	}
+	let st = web::ev_status();
+	take_fetch(id, buf);
+	var good = false;
+	if st == 200 && jvalid(buf) {
+		let root = jroot(buf);
+		let code = jtext(buf, root, "code");
+		let routes = jget(buf, root, "routes");
+		if code == "Ok" && jlen(buf, routes) > 0 {
+			good = true;
+			show_route(buf, jat(buf, routes, 0));
+		}
+	}
+	if !good {
+		if st == 0 {
+			web::text(el("dir-note"), "Directions need a connection.");
+		} else {
+			web::text(el("dir-note"), "No route found.");
+		}
+	}
+}
+fn step_click() {
+	let t = web::ev_target();
+	let li = web::closest(t, "li");
+	if li == 0 { return; }
+	var s byte[>..] = [];
+	web::get_attr(li, "data-i", s);
+	web::release(li);
+	let i, ok = parse_int(s);
+	if ok && i >= 0 && i < step_lon.len { fly_to(lon2x(step_lon[i]), lat2y(step_lat[i]), 17.0, 700.0); }
+}
+=== 5da1c6bd14cf963a
+fn compass(b real) const byte[:] {
+	let k = (floor((b + 22.5) / 45.0) as int) % 8;
+	match k {
+		0 => "north",
+		1 => "northeast",
+		2 => "east",
+		3 => "southeast",
+		4 => "south",
+		5 => "southwest",
+		6 => "west",
+		_ => "northwest",
+	}
+}
+fn instruction(out byte[>..]&, d const byte[:], st int) {
+	var nm byte[>..] = [];
+	nm.append(jtext(d, st, "name"));
+	if nm.len == 0 { nm.append(jtext(d, st, "ref")); }
+	let m = jget(d, st, "maneuver");
+	let ty = jtext(d, m, "type");
+	let md = jtext(d, m, "modifier");
+	if ty == "depart" {
+		format(out, "Head ", compass(jreal(d, m, "bearing_after")));
+		if nm.len > 0 { format(out, " on ", nm); }
+		return;
+	}
+	if ty == "arrive" {
+		out.append("Arrive at your destination");
+		if md == "left" {
+			out.append(" on the left");
+		} else if md == "right" {
+			out.append(" on the right");
+		}
+		return;
+	}
+	if ty == "roundabout" || ty == "rotary" {
+		if jget(d, m, "exit") >= 0 {
+			format(out, "At the roundabout, take exit ", jreal(d, m, "exit") as int);
+		} else {
+			out.append("Enter the roundabout");
+		}
+	} else if ty == "merge" {
+		out.append("Merge");
+	} else if ty == "on ramp" {
+		out.append("Take the ramp");
+	} else if ty == "off ramp" {
+		out.append("Take the exit");
+	} else if ty == "fork" {
+		if md == "left" || md == "slight left" || md == "sharp left" {
+			out.append("Keep left");
+		} else if md == "right" || md == "slight right" || md == "sharp right" {
+			out.append("Keep right");
+		} else {
+			out.append("Keep straight");
+		}
+		out.append(" at the fork");
+	} else if ty == "end of road" || ty == "turn" {
+		if md == "left" {
+			out.append("Turn left");
+		} else if md == "right" {
+			out.append("Turn right");
+		} else if md == "sharp left" {
+			out.append("Turn sharp left");
+		} else if md == "sharp right" {
+			out.append("Turn sharp right");
+		} else if md == "slight left" {
+			out.append("Turn slight left");
+		} else if md == "slight right" {
+			out.append("Turn slight right");
+		} else if md == "uturn" {
+			out.append("Make a U-turn");
+		} else if md == "straight" {
+			out.append("Continue straight");
+		} else {
+			out.append("Turn");
+		}
+	} else {
+		if md == "slight left" {
+			out.append("Keep slight left");
+		} else if md == "slight right" {
+			out.append("Keep slight right");
+		} else {
+			out.append("Continue");
+		}
+	}
+	if nm.len > 0 { format(out, " onto ", nm); }
+}
+=== 6c9b8beda28be06e
+var loc_fly = false;
+fn locate(fly bool) {
+	loc_fly = fly;
+	let g = web::js_global("navigator.geolocation");
+	if g == 0 {
+		toast("Location is not available in this browser.");
+		return;
+	}
+	var a byte[>..] = [];
+	format(a, "[{\"$cb\":", T_GEO, "},{\"$cb\":", T_GEOERR, "},{\"enableHighAccuracy\":true,\"timeout\":12000,\"maximumAge\":30000}]");
+	web::js_call(g, "getCurrentPosition", a, T_NOP);
+}
+fn geo_ok() {
+	var s byte[>..] = [];
+	web::ev_json(s);
+	if !jvalid(s) { return; }
+	let first = jat(s, jroot(s), 0);
+	let co = jget(s, first, "coords");
+	let lat = jreal(s, co, "latitude");
+	let lon = jreal(s, co, "longitude");
+	has_me = true;
+	me_x = lon2x(lon);
+	me_y = lat2y(lat);
+	route_changed();
+	if loc_fly { fly_to(me_x, me_y, max(zoom, 15.0), 700.0); }
+	if want_route {
+		want_route = false;
+		route_go();
+	}
+}
+fn geo_err() {
+	toast("Could not get your location. Check that this site may use it.");
+	if want_route {
+		want_route = false;
+		web::text(el("dir-note"), "Your location is not available. Type a start above.");
+	}
+}
+=== 18f9147e0c11fbc5
+fn theme_apply(d bool) {
+	theme_dark = d;
+	web::cls(web::BODY, "dark", d);
+	set_dark(d);
+}
+fn theme_toggle() {
+	theme_apply(!theme_dark);
+	if theme_dark { web::store_set("amni-map-theme", "dark"); } else { web::store_set("amni-map-theme", "light"); }
+}
+=== -6f907897401167ae
+fn ui_after() {
+	let t = view_take_tap();
+	if t == 1 {
+		if web::has_cls(el("res"), "on") { show("res", false); }
+		body_update();
+	} else if t == 2 {
+		drop_pin(press_x, press_y);
+	}
+}
+=== 0f0c1a2921056986
+fn on_click(id const byte[:], tag i32) { web::listen(el(id), "click", tag, 0); }
+fn main() {
+	gl_init();
+	load_areas();
+	view_init();
+	var th byte[>..] = [];
+	let got = web::store_get("amni-map-theme", th);
+	if got && th == "dark" {
+		theme_apply(true);
+	} else if got && th == "light" {
+		theme_apply(false);
+	} else {
+		theme_apply(web::prefers_dark());
+	}
+	var hs byte[>..] = [];
+	web::location("hash", hs);
+	var placed = load_view(hs);
+	if !placed {
+		var vs byte[>..] = [];
+		if web::store_get("amni-map-view", vs) { placed = load_view(vs); }
+	}
+	if !placed {
+		cx = lon2x(-98.35);
+		cy = lat2y(39.5);
+		zoom = 3.7;
+	}
+	var tp byte[>..] = [];
+	if web::store_get("amni-map-tpl", tp) { set_tpl(tp); }
+	refresh_alts();
+	view_changed();
+	cache_store = web::js_global("caches");
+	for f in 3 { glyph_request(f, 0); }
+	el_q = el("q");
+	el_from = el("from");
+	el_body = el("body");
+	el_results = el("results");
+	el_status = el("status");
+	web::listen(el_q, "input", T_Q_IN, 0);
+	web::listen(el_q, "keydown", T_Q_KEY, 0);
+	web::listen(el_from, "input", T_FROM_IN, 0);
+	web::listen(el_from, "keydown", T_FROM_KEY, 0);
+	on_click("results", T_RES);
+	on_click("qx", T_QX);
+	on_click("zin", T_ZIN);
+	on_click("zout", T_ZOUT);
+	on_click("loc", T_LOC);
+	on_click("pl-x", T_PL_X);
+	on_click("pl-dir", T_PL_DIR);
+	on_click("pl-save", T_PL_SAVE);
+	on_click("m-drive", T_DRIVE);
+	on_click("m-walk", T_WALK);
+	on_click("dir-x", T_DIR_X);
+	on_click("steps", T_STEP);
+	on_click("theme", T_THEME);
+	on_click("areas-btn", T_AREAS);
+	on_click("areas-x", T_AREAS_X);
+	on_click("area-go", T_AREA_GO);
+	on_click("area-stop", T_AREA_STOP);
+	on_click("area-list", T_AREA_LIST);
+	web::listen(web::WINDOW, "online", T_ONLINE, 0);
+	web::listen(web::WINDOW, "offline", T_OFFLINE, 0);
+	if !web::get_bool(web::js_global("navigator"), "onLine") { web::cls(web::BODY, "offline", true); }
+	web::cls(web::BODY, "ready", true);
+}
+=== 6f9e67b32f48b076
+var q_last real = 0.0;
+fn fetch_event(tag i32) {
+	if tag == T_TJ {
+		let id = web::ev_id();
+		let st = web::ev_status();
+		var b byte[>..] = [];
+		web::fetch_take(id, b);
+		var got = false;
+		if st == 200 { got = tj_loaded(b); }
+		if !got { got = tj_failed(); }
+		if !got { toast("The map server could not be reached. Connect once to load the map."); }
+	} else if tag == T_TILE {
+		tile_arrived();
+	} else if tag == T_GLYPH {
+		glyph_arrived();
+	} else if tag == T_SEARCH {
+		search_arrived();
+	} else if tag == T_REV {
+		rev_arrived();
+	} else if tag == T_ROUTE {
+		route_arrived();
+	}
+}
+fn q_input(target int) {
+	q_text.clear();
+	web::ev_value(q_text);
+	search_target = target as i32;
+	if q_text.len == 0 {
+		show("res", false);
+		body_update();
+	}
+	q_last = web::now();
+	q_timer = web::timer(280, T_Q_TIMER);
+}
+fn q_key(target int) {
+	var k byte[>..] = [];
+	web::ev_key(k);
+	if k == "Enter" {
+		q_last = web::now() + 1000000000.0;
+		search_target = target as i32;
+		search_pick = true;
+		search_go(q_text, target);
+	} else if k == "Escape" {
+		show("res", false);
+		body_update();
+	}
+}
+fn dom_event(tag i32) {
+	if tag == T_PDOWN || tag == T_PMOVE || tag == T_PUP {
+		on_pointer(tag);
+	} else if tag == T_WHEEL {
+		on_wheel();
+	} else if tag == T_KEY {
+		on_key();
+	} else if tag == T_CTX {
+		on_ctx();
+	} else if tag == T_RESIZE {
+		view_resize();
+		body_update();
+	} else if tag == T_Q_IN {
+		q_input(0);
+	} else if tag == T_Q_KEY {
+		q_key(0);
+	} else if tag == T_FROM_IN {
+		q_input(1);
+	} else if tag == T_FROM_KEY {
+		q_key(1);
+	} else if tag == T_RES {
+		res_click();
+	} else if tag == T_QX {
+		web::prop(el_q, "value", "");
+		show("res", false);
+		place_close();
+		web::call(el_q, "focus");
+	} else if tag == T_ZIN {
+		fly_to(cx, cy, clamp(zoom + 1.0, 1.0, 19.0), 250.0);
+	} else if tag == T_ZOUT {
+		fly_to(cx, cy, clamp(zoom - 1.0, 1.0, 19.0), 250.0);
+	} else if tag == T_LOC {
+		locate(true);
+	} else if tag == T_PL_X {
+		place_close();
+	} else if tag == T_PL_DIR {
+		dir_open();
+	} else if tag == T_PL_SAVE {
+		show("areas", true);
+		areas_render();
+		web::prop(el("area-name"), "value", place_name);
+		body_update();
+	} else if tag == T_DRIVE || tag == T_WALK {
+		walk = tag == T_WALK;
+		web::cls(el("m-drive"), "on", !walk);
+		web::cls(el("m-walk"), "on", walk);
+		if web::has_cls(el("dir"), "on") { route_go(); }
+	} else if tag == T_DIR_X {
+		show("dir", false);
+		route_x.clear();
+		route_y.clear();
+		route_changed();
+		body_update();
+	} else if tag == T_STEP {
+		step_click();
+	} else if tag == T_THEME {
+		theme_toggle();
+	} else if tag == T_AREAS {
+		let on = !web::has_cls(el("areas"), "on");
+		show("areas", on);
+		if on { areas_render(); }
+		body_update();
+	} else if tag == T_AREAS_X {
+		show("areas", false);
+		body_update();
+	} else if tag == T_AREA_GO {
+		view_bounds();
+		var nm byte[>..] = [];
+		web::get_prop(el("area-name"), "value", nm);
+		area_start(nm, bw, bs, be, bn, 0);
+	} else if tag == T_AREA_STOP {
+		area_stop();
+	} else if tag == T_AREA_LIST {
+		area_click();
+	} else if tag == T_ONLINE {
+		web::cls(web::BODY, "offline", false);
+		retry_failed();
+		want_frames();
+		toast("Back online.");
+	} else if tag == T_OFFLINE {
+		web::cls(web::BODY, "offline", true);
+		toast("You are offline. Saved areas still work.");
+	}
+}
+fn timer_event(tag i32) {
+	if tag == T_LONG {
+		on_long();
+	} else if tag == T_RETRY {
+		retry_failed();
+		want_frames();
+	} else if tag == T_Q_TIMER {
+		if web::now() - q_last >= 275.0 {
+			search_go(q_text, search_target);
+		}
+	} else if tag == T_S_RETRY {
+		if search_wait {
+			search_wait = false;
+			search_send();
+		}
+	} else if tag == T_TOAST {
+		if web::now() >= toast_at - 50.0 {
+			web::cls(el_status, "on", false);
+		}
+	}
+}
+export fn he_event(tag i32, kind i32) {
+	if kind == web::EV_FETCH {
+		fetch_event(tag);
+	} else if kind == web::EV_DOM {
+		dom_event(tag);
+	} else if kind == web::EV_TIMER {
+		timer_event(tag);
+	} else if kind == web::EV_JS {
+		if tag == T_CACHE_OPEN {
+			cache_opened();
+		} else if tag == T_ADDALL {
+			batch_done();
+		} else if tag == T_EST {
+			est_done();
+		}
+	} else if kind == web::EV_CALLBACK {
+		if tag == T_GEO {
+			geo_ok();
+		} else if tag == T_GEOERR {
+			geo_err();
+		}
+	}
+	ui_after();
+}
+=== 72e43099a36f4c2a
+export fn he_frame(t real) {
+	frame(t);
+}

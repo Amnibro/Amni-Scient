@@ -1,0 +1,256 @@
+import math;
+let L_WATER i32 = 0;
+let L_WATERWAY i32 = 1;
+let L_LANDCOVER i32 = 2;
+let L_LANDUSE i32 = 3;
+let L_PARK i32 = 4;
+let L_BOUNDARY i32 = 5;
+let L_AEROWAY i32 = 7;
+let L_TRANSPORTATION i32 = 8;
+let L_BUILDING i32 = 9;
+let L_WATER_NAME i32 = 10;
+let L_TRANSPORTATION_NAME i32 = 11;
+let L_PLACE i32 = 12;
+let L_HOUSENUMBER i32 = 13;
+let L_POI i32 = 14;
+let L_MOUNTAIN_PEAK i32 = 15;
+let L_AERODROME_LABEL i32 = 17;
+let G_POINT i32 = 1;
+let G_LINE i32 = 2;
+let G_POLY i32 = 3;
+let GEOM_FILL i32 = 1;
+let GEOM_LINE i32 = 2;
+let GEOM_EDGE i32 = 3;
+let F_REGULAR i32 = 0;
+let F_BOLD i32 = 1;
+let F_ITALIC i32 = 2;
+struct Row { name byte[..24], layer byte[..24], geom byte[..8], classes byte[..64], brunnel byte[..8], ramp byte[..4], amin i32, amax i32, minz f32, maxz f32, color u32, dark u32, alpha f32, za f32, wa f32, zb f32, wb f32, zc f32, wc f32, base f32, dash f32, gap f32 }
+struct Rule { layer i32, geom i32, classes u64, brunnel i32, ramp i32, amin i32, amax i32, minz f32, maxz f32, color u32, dark u32, alpha f32, za f32, wa f32, zb f32, wb f32, zc f32, wc f32, base f32, dash f32, gap f32 }
+struct Attrs { cls i32 = -1, cls_s const byte[:] = "", sub_s const byte[:] = "", brunnel i32 = 0, ramp bool = false, admin i32 = 0, maritime bool = false, rank i32 = 0, capital i32 = 0, ele_ft int = -1, name const byte[:] = "", name_latin const byte[:] = "", name_en const byte[:] = "", hn const byte[:] = "", ref const byte[:] = "" }
+struct LabelStyle { ok bool = false, pri i32 = 0, minz f32 = 0.0, maxz f32 = 24.0, font i32 = 0, size f32 = 12.0, color u32 = 0, dark u32 = 0, dot u32 = 0, line bool = false }
+var rules Rule[>..] = [];
+fn rows() Row[>..] {
+	var r Row[>..] = [];
+	r.push(Row{"residential", "landuse", "fill", "residential", "any", "any", 0, 99, 0, 24, 0xe9dfd4, 0x262b33, 0.55, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"park", "park", "fill", "any", "any", "any", 0, 99, 0, 24, 0xd8e8c8, 0x213a2b, 0.7, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"wood", "landcover", "fill", "wood", "any", "any", 0, 99, 0, 24, 0xace38c, 0x2f5a3a, 0.28, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"grass", "landcover", "fill", "grass", "any", "any", 0, 99, 0, 24, 0xb0d59a, 0x2f4c37, 0.3, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"wetland", "landcover", "fill", "wetland", "any", "any", 0, 99, 12, 24, 0xc9e0d4, 0x22383a, 0.6, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"ice", "landcover", "fill", "ice", "any", "any", 0, 99, 0, 24, 0xe0ecec, 0x2a3338, 0.8, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"sand", "landcover", "fill", "sand", "any", "any", 0, 99, 0, 24, 0xf7efc3, 0x302d24, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"cemetery", "landuse", "fill", "cemetery", "any", "any", 0, 99, 0, 24, 0xd8e0bd, 0x2a362c, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"hospital", "landuse", "fill", "hospital", "any", "any", 0, 99, 0, 24, 0xffddee, 0x3a2a33, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"school", "landuse", "fill", "school university college kindergarten", "any", "any", 0, 99, 0, 24, 0xeceecc, 0x30302a, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"pitch", "landuse", "fill", "pitch track", "any", "any", 0, 99, 0, 24, 0xdee3cd, 0x2a3229, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"aeroway_fill", "aeroway", "fill", "any", "any", "any", 0, 99, 11, 24, 0xe5e4e0, 0x2b2f36, 0.7, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"river", "waterway", "line", "river", "surface", "any", 0, 99, 0, 24, 0xa0c8f0, 0x1d4566, 1, 11, 0.5, 20, 6, 20, 6, 1.2, 0, 0});
+	r.push(Row{"stream", "waterway", "line", "canal stream ditch drain", "surface", "any", 0, 99, 0, 24, 0xa0c8f0, 0x1d4566, 1, 13, 0.5, 20, 6, 20, 6, 1.3, 0, 0});
+	r.push(Row{"water", "water", "fill", "any", "any", "any", 0, 99, 0, 24, 0x9ebdff, 0x12304a, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"runway", "aeroway", "line", "runway", "any", "any", 0, 99, 11, 24, 0xf0ede9, 0x3a3f47, 1, 11, 3, 20, 16, 20, 16, 1.2, 0, 0});
+	r.push(Row{"taxiway", "aeroway", "line", "taxiway", "any", "any", 0, 99, 11, 24, 0xf0ede9, 0x3a3f47, 1, 11, 0.5, 20, 6, 20, 6, 1.2, 0, 0});
+	r.push(Row{"building", "building", "fill", "any", "any", "any", 0, 99, 13, 24, 0xdcd9d6, 0x2b3038, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0});
+	r.push(Row{"building_edge", "building", "edge", "any", "any", "any", 0, 99, 14, 24, 0xcbc5be, 0x363c45, 1, 14, 0.5, 20, 1, 20, 1, 1, 0, 0});
+	r.push(Row{"c_service", "transportation", "line", "service track", "surface", "any", 0, 99, 15, 24, 0xcfcdca, 0x2a2f36, 1, 15, 1, 16, 4, 20, 11, 1.2, 0, 0});
+	r.push(Row{"c_minor", "transportation", "line", "minor", "surface", "no", 0, 99, 12, 24, 0xcfcdca, 0x2a2f36, 1, 12, 0.5, 14, 4, 20, 20, 1.2, 0, 0});
+	r.push(Row{"c_link", "transportation", "line", "trunk primary secondary tertiary", "surface", "yes", 0, 99, 13, 24, 0xe9ac77, 0x4a3a28, 1, 12, 1, 14, 4, 20, 15, 1.2, 0, 0});
+	r.push(Row{"c_mlink", "transportation", "line", "motorway", "surface", "yes", 0, 99, 12, 24, 0xe9ac77, 0x5a4228, 1, 12, 1, 14, 4, 20, 15, 1.2, 0, 0});
+	r.push(Row{"c_sectert", "transportation", "line", "secondary tertiary", "surface", "no", 0, 99, 8, 24, 0xe9ac77, 0x403428, 1, 8, 1.5, 20, 17, 20, 17, 1.2, 0, 0});
+	r.push(Row{"c_trunkprim", "transportation", "line", "trunk primary", "surface", "no", 0, 99, 5, 24, 0xe9ac77, 0x4a3a28, 1, 5, 0.4, 7, 1.75, 20, 22, 1.2, 0, 0});
+	r.push(Row{"c_motorway", "transportation", "line", "motorway", "surface", "no", 0, 99, 5, 24, 0xe9ac77, 0x5a4228, 1, 5, 0.4, 7, 1.75, 20, 22, 1.2, 0, 0});
+	r.push(Row{"path", "transportation", "line", "path", "surface", "any", 0, 99, 14, 24, 0xd2c4b0, 0x5e584e, 1, 14, 1, 20, 10, 20, 10, 1.2, 1, 0.7});
+	r.push(Row{"f_service", "transportation", "line", "service track", "surface", "any", 0, 99, 15.5, 24, 0xffffff, 0x3a4048, 1, 15.5, 0, 16, 2, 20, 7.5, 1.2, 0, 0});
+	r.push(Row{"f_minor", "transportation", "line", "minor", "surface", "no", 0, 99, 13.5, 24, 0xffffff, 0x3c424b, 1, 13.5, 0, 14, 2.5, 20, 18, 1.2, 0, 0});
+	r.push(Row{"f_link", "transportation", "line", "trunk primary secondary tertiary", "surface", "yes", 0, 99, 13, 24, 0xffeeaa, 0x5c5442, 1, 12.5, 0, 14, 2.5, 20, 11.5, 1.2, 0, 0});
+	r.push(Row{"f_mlink", "transportation", "line", "motorway", "surface", "yes", 0, 99, 12, 24, 0xffcc88, 0x8a6234, 1, 12.5, 0, 14, 2.5, 20, 11.5, 1.2, 0, 0});
+	r.push(Row{"f_sectert", "transportation", "line", "secondary tertiary", "surface", "no", 0, 99, 7, 24, 0xffeeaa, 0x5a5446, 1, 7, 0.3, 8, 0.5, 20, 13, 1.2, 0, 0});
+	r.push(Row{"f_trunkprim", "transportation", "line", "trunk primary", "surface", "no", 0, 99, 5, 24, 0xffeeaa, 0x6e6450, 1, 5, 0, 7, 1, 20, 18, 1.2, 0, 0});
+	r.push(Row{"f_motorway", "transportation", "line", "motorway", "surface", "no", 0, 99, 5, 24, 0xffcc88, 0xa0743f, 1, 5, 0, 7, 1, 20, 18, 1.2, 0, 0});
+	r.push(Row{"rail", "transportation", "line", "rail transit", "any", "any", 0, 99, 13, 24, 0xbbbbbb, 0x59606a, 1, 14, 0.4, 15, 0.75, 20, 2, 1.4, 0, 0});
+	r.push(Row{"rail_hatch", "transportation", "line", "rail transit", "any", "any", 0, 99, 14.5, 24, 0xbbbbbb, 0x59606a, 1, 14.5, 0, 15, 3, 20, 8, 1.4, 0.2, 8});
+	r.push(Row{"b_c_minor", "transportation", "line", "minor service track", "bridge", "any", 0, 99, 13, 24, 0xcfcdca, 0x2a2f36, 1, 12, 0.5, 14, 4, 20, 20, 1.2, 0, 0});
+	r.push(Row{"b_c_sectert", "transportation", "line", "secondary tertiary", "bridge", "any", 0, 99, 8, 24, 0xe9ac77, 0x403428, 1, 8, 1.5, 20, 17, 20, 17, 1.2, 0, 0});
+	r.push(Row{"b_c_trunkprim", "transportation", "line", "trunk primary", "bridge", "any", 0, 99, 5, 24, 0xe9ac77, 0x4a3a28, 1, 5, 0.4, 7, 1.75, 20, 22, 1.2, 0, 0});
+	r.push(Row{"b_c_motorway", "transportation", "line", "motorway", "bridge", "any", 0, 99, 5, 24, 0xe9ac77, 0x5a4228, 1, 5, 0.4, 7, 1.75, 20, 22, 1.2, 0, 0});
+	r.push(Row{"b_f_minor", "transportation", "line", "minor service track", "bridge", "any", 0, 99, 13.5, 24, 0xffffff, 0x3c424b, 1, 13.5, 0, 14, 2.5, 20, 18, 1.2, 0, 0});
+	r.push(Row{"b_f_sectert", "transportation", "line", "secondary tertiary", "bridge", "any", 0, 99, 7, 24, 0xffeeaa, 0x5a5446, 1, 7, 0.3, 8, 0.5, 20, 13, 1.2, 0, 0});
+	r.push(Row{"b_f_trunkprim", "transportation", "line", "trunk primary", "bridge", "any", 0, 99, 5, 24, 0xffeeaa, 0x6e6450, 1, 5, 0, 7, 1, 20, 18, 1.2, 0, 0});
+	r.push(Row{"b_f_motorway", "transportation", "line", "motorway", "bridge", "any", 0, 99, 5, 24, 0xffcc88, 0xa0743f, 1, 5, 0, 7, 1, 20, 18, 1.2, 0, 0});
+	r.push(Row{"state_line", "boundary", "line", "any", "any", "any", 3, 4, 5, 24, 0xb3b3b3, 0x4f5560, 1, 7, 1, 11, 2, 11, 2, 1, 1, 1});
+	r.push(Row{"country_line", "boundary", "line", "any", "any", "any", 2, 2, 0, 24, 0x68686a, 0x8a909a, 1, 3, 1, 5, 1.2, 12, 3, 1, 0, 0});
+	r
+}
+let CLASS_NAMES = ["wood", "grass", "wetland", "sand", "ice", "farmland", "rock", "residential", "pitch", "track", "cemetery", "hospital", "school", "university", "college", "kindergarten", "river", "canal", "stream", "ditch", "drain", "motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service", "path", "rail", "transit", "raceway", "busway", "pier", "ferry", "runway", "taxiway"];
+fn class_id(name const byte[:]) int {
+	for n, i in CLASS_NAMES { if n == name { return i; } }
+	return -1;
+}
+fn layer_id(name const byte[:]) i32 {
+	if name == "water" { return L_WATER; }
+	if name == "waterway" { return L_WATERWAY; }
+	if name == "landcover" { return L_LANDCOVER; }
+	if name == "landuse" { return L_LANDUSE; }
+	if name == "park" { return L_PARK; }
+	if name == "boundary" { return L_BOUNDARY; }
+	if name == "aeroway" { return L_AEROWAY; }
+	if name == "transportation" { return L_TRANSPORTATION; }
+	if name == "building" { return L_BUILDING; }
+	if name == "water_name" { return L_WATER_NAME; }
+	if name == "transportation_name" { return L_TRANSPORTATION_NAME; }
+	if name == "place" { return L_PLACE; }
+	if name == "housenumber" { return L_HOUSENUMBER; }
+	if name == "poi" { return L_POI; }
+	if name == "mountain_peak" { return L_MOUNTAIN_PEAK; }
+	if name == "aerodrome_label" { return L_AERODROME_LABEL; }
+	return -1;
+}
+fn style_init() {
+	if rules.len > 0 { return; }
+	let rs = rows();
+	let one u64 = 1;
+	for &r in rs {
+		let g i32 = if r.geom == "fill" { GEOM_FILL } else if r.geom == "line" { GEOM_LINE } else { GEOM_EDGE };
+		var mask u64 = 0;
+		for w in words(r.classes) {
+			if w == "any" { continue; }
+			let c = class_id(w);
+			if c >= 0 { mask |= one << (c as u64); }
+		}
+		let b i32 = if r.brunnel == "surface" { 1 } else if r.brunnel == "bridge" { 2 } else { 0 };
+		let rp i32 = if r.ramp == "no" { 1 } else if r.ramp == "yes" { 2 } else { 0 };
+		rules.push(Rule { layer_id(r.layer), g, mask, b, rp, r.amin, r.amax, r.minz, r.maxz, r.color, r.dark, r.alpha, r.za, r.wa, r.zb, r.wb, r.zc, r.wc, r.base, r.dash, r.gap });
+	}
+}
+fn rule_matches(r Rule, layer i32, gtype i32, a Attrs) bool {
+	if r.layer != layer { return false; }
+	if r.geom == GEOM_LINE { if gtype != G_LINE { return false; } } else if gtype != G_POLY { return false; }
+	if r.classes != 0 {
+		if a.cls < 0 { return false; }
+		let one u64 = 1;
+		if (r.classes & (one << (a.cls as u64))) == 0 { return false; }
+	}
+	if r.brunnel == 1 && a.brunnel == 1 { return false; }
+	if r.brunnel == 2 && a.brunnel != 1 { return false; }
+	if r.ramp == 1 && a.ramp { return false; }
+	if r.ramp == 2 && !a.ramp { return false; }
+	if layer == L_BOUNDARY {
+		if a.admin < r.amin || a.admin > r.amax || a.maritime { return false; }
+	}
+	true
+}
+fn feature_mask(layer i32, gtype i32, a Attrs) u64 {
+	var m u64 = 0;
+	let one u64 = 1;
+	for i in rules.len { if rule_matches(rules[i], layer, gtype, a) { m |= one << (i as u64); } }
+	m
+}
+fn expo(p real, d real, base real) real {
+	if d <= 0.0 { return 1.0; }
+	if base == 1.0 { return p / d; }
+	(pow(base, p) - 1.0) / (pow(base, d) - 1.0)
+}
+fn rule_width(r Rule, z real) real {
+	let za real = r.za;
+	let zb real = r.zb;
+	let zc real = r.zc;
+	let wa real = r.wa;
+	let wb real = r.wb;
+	let wc real = r.wc;
+	let base real = r.base;
+	var w real = wc;
+	if z < za { w = wa; }
+	else if z > zc { w = wc; }
+	else if za != zb && z <= zb { w = wa + (wb - wa) * expo(z - za, zb - za, base); }
+	else { w = wb + (wc - wb) * expo(z - zb, zc - zb, base); }
+	max(w, 0.0)
+}
+fn rule_color(r Rule, dark bool) u32 { if dark { r.dark } else { r.color } }
+fn label_text(layer i32, a Attrs, out byte[>..]&) {
+	if layer == L_HOUSENUMBER { out.append(a.hn); return; }
+	if a.name_latin.len > 0 { out.append(a.name_latin); }
+	else if a.name.len > 0 { out.append(a.name); }
+	else if a.name_en.len > 0 { out.append(a.name_en); }
+	else if layer == L_TRANSPORTATION_NAME { out.append(a.ref); }
+	if layer == L_MOUNTAIN_PEAK && a.ele_ft >= 0 {
+		out.push('\n');
+		let s = str(a.ele_ft);
+		for i in s.len {
+			if i > 0 && (s.len - i) % 3 == 0 { out.push(','); }
+			out.push(s[i]);
+		}
+		out.append(" ft");
+	}
+}
+fn poi_dot(cls const byte[:]) u32 {
+	if cls == "restaurant" || cls == "fast_food" || cls == "cafe" || cls == "bar" || cls == "pub" || cls == "ice_cream" || cls == "bakery" || cls == "beer" || cls == "food" { return 0xe07b3a; }
+	if cls == "shop" || cls == "grocery" || cls == "supermarket" || cls == "clothing_store" || cls == "convenience" || cls == "mall" || cls == "alcohol_shop" || cls == "department_store" || cls == "jewelry" { return 0x9b59c7; }
+	if cls == "hospital" || cls == "pharmacy" || cls == "doctors" || cls == "dentist" || cls == "clinic" || cls == "veterinary" { return 0xd9534f; }
+	if cls == "school" || cls == "college" || cls == "university" || cls == "library" || cls == "kindergarten" || cls == "museum" { return 0x9c7a4a; }
+	if cls == "bus" || cls == "railway" || cls == "airport" || cls == "ferry_terminal" || cls == "fuel" || cls == "parking" || cls == "bicycle_rental" || cls == "car" || cls == "aerialway" || cls == "harbor" { return 0x3b7dd8; }
+	if cls == "park" || cls == "playground" || cls == "garden" || cls == "sports" || cls == "pitch" || cls == "zoo" || cls == "campsite" || cls == "golf" || cls == "swimming" || cls == "stadium" || cls == "attraction" { return 0x4a9e5c; }
+	if cls == "lodging" { return 0x8a5cc7; }
+	if cls == "place_of_worship" { return 0x777777; }
+	0x8a8f99
+}
+fn mk_label(pri i32, size f32, minz f32, maxz f32, color u32, dark u32, font i32) LabelStyle {
+	LabelStyle { ok: true, pri: pri, minz: minz, maxz: maxz, font: font, size: size, color: color, dark: dark, dot: 0, line: false }
+}
+fn label_style(layer i32, gtype i32, a Attrs) LabelStyle {
+	let c = a.cls_s;
+	let r i32 = if a.rank == 0 { 10 } else { a.rank };
+	if layer == L_PLACE {
+		if c == "continent" { return mk_label(0, 14.0, 0.0, 2.0, 0x333333, 0xe6e8eb, F_BOLD); }
+		if c == "country" {
+			let sz f32 = if r <= 2 { 15.0 } else { 13.0 };
+			let mz f32 = if r == 1 { 1.0 } else if r == 2 { 2.0 } else { 3.0 };
+			return mk_label(10 + r, sz, mz, 9.0, 0x334455, 0xd8dde4, F_BOLD);
+		}
+		if c == "state" || c == "province" { return mk_label(30 + r, 12.0, 5.0, 10.0, 0x667788, 0xa9b2bd, F_REGULAR); }
+		if c == "city" {
+			let p i32 = if a.capital == 2 { 20 + r - 1 } else { 20 + r };
+			let sz f32 = if r <= 3 { 16.0 } else { 14.0 };
+			let mz f32 = if r <= 3 { 3.0 } else if r <= 7 { 5.0 } else if r <= 9 { 7.0 } else { 8.0 };
+			return mk_label(p, sz, mz, 15.0, 0x333333, 0xe6e8eb, F_REGULAR);
+		}
+		if c == "town" { return mk_label(40 + r, 13.0, 7.0, 17.0, 0x333333, 0xe6e8eb, F_REGULAR); }
+		if c == "village" { return mk_label(50 + r, 12.0, 9.0, 18.0, 0x333333, 0xe6e8eb, F_REGULAR); }
+		if c == "suburb" || c == "quarter" { return mk_label(60 + r, 12.0, 11.0, 18.0, 0x555555, 0xc5cad1, F_REGULAR); }
+		if c == "neighbourhood" { return mk_label(65, 11.0, 13.0, 19.0, 0x666666, 0xb2b8c0, F_REGULAR); }
+		if c == "hamlet" || c == "isolated_dwelling" || c == "locality" { return mk_label(70, 11.0, 12.0, 19.0, 0x333333, 0xe6e8eb, F_REGULAR); }
+		if c == "island" { return mk_label(55, 12.0, 9.0, 24.0, 0x333333, 0xe6e8eb, F_ITALIC); }
+		return LabelStyle { .. };
+	}
+	if layer == L_WATER_NAME {
+		if c == "ocean" { return mk_label(5, 14.0, 0.0, 8.0, 0x495e91, 0x8fb4d8, F_ITALIC); }
+		if c == "sea" || c == "bay" || c == "strait" { return mk_label(35, 12.0, 3.0, 14.0, 0x495e91, 0x8fb4d8, F_ITALIC); }
+		return mk_label(45, 12.0, 9.0, 24.0, 0x495e91, 0x8fb4d8, F_ITALIC);
+	}
+	if layer == L_TRANSPORTATION_NAME {
+		var s = LabelStyle { .. };
+		if c == "motorway" || c == "trunk" { s = mk_label(100, 12.0, 13.0, 24.0, 0x555555, 0xc8ccd2, F_REGULAR); }
+		else if c == "primary" { s = mk_label(101, 12.0, 13.0, 24.0, 0x555555, 0xc8ccd2, F_REGULAR); }
+		else if c == "secondary" || c == "tertiary" { s = mk_label(103, 12.0, 13.0, 24.0, 0x555555, 0xc8ccd2, F_REGULAR); }
+		else if c == "minor" || c == "service" { s = mk_label(110, 11.0, 15.0, 24.0, 0x555555, 0xc8ccd2, F_REGULAR); }
+		else if c == "path" || c == "track" { s = mk_label(120, 11.0, 16.0, 24.0, 0x555555, 0xc8ccd2, F_REGULAR); }
+		else { return s; }
+		s.line = true;
+		return s;
+	}
+	if layer == L_POI {
+		let mz f32 = if r <= 7 { 15.0 } else if r <= 20 { 16.0 } else { 17.0 };
+		var s = mk_label(200 + r, 11.0, mz, 24.0, 0x666666, 0xb8bcc4, F_REGULAR);
+		s.dot = poi_dot(c);
+		return s;
+	}
+	if layer == L_HOUSENUMBER { return mk_label(400, 10.0, 17.0, 24.0, 0x888888, 0x9aa0a8, F_REGULAR); }
+	if layer == L_MOUNTAIN_PEAK {
+		var s = mk_label(150 + r, 11.0, 12.0, 24.0, 0x725a3a, 0xc9b08a, F_REGULAR);
+		s.dot = 0x8a6a44;
+		return s;
+	}
+	if layer == L_AERODROME_LABEL {
+		var s = mk_label(140, 11.0, 10.0, 24.0, 0x555555, 0xc5cad1, F_REGULAR);
+		s.dot = 0x3b7dd8;
+		return s;
+	}
+	LabelStyle { .. }
+}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Amni-Map: maps, search and directions in your browser</title>
+<meta name="description" content="Amni-Map in the browser: a fast vector map with place search, driving and walking directions, dark mode and offline areas you can save on this device. No account, no tracking.">
+<meta name="theme-color" content="#1c2026">
+<link rel="canonical" href="https://amni-scient.com/map/">
+<meta property="og:title" content="Amni-Map in your browser">
+<meta property="og:description" content="Vector maps, search, directions and offline areas. No account, no tracking.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/map/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{--bg:#f8f4f0;--card:#ffffff;--ink:#22262c;--sub:#5d6670;--line:#e3ded8;--hover:#f1ece7;--acc:#ff6b35;--blue:#2f7de1;--shadow:0 3px 14px rgba(20,24,30,.17)}
+body.dark{--bg:#1c2026;--card:#252a31;--ink:#e8eaed;--sub:#a3abb5;--line:#353b44;--hover:#2e343c;--shadow:0 3px 14px rgba(0,0,0,.47)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;-webkit-tap-highlight-color:transparent}
+#map{position:fixed;inset:0;overflow:hidden;touch-action:none;outline:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#map.drag{cursor:grabbing}
+#tiles{position:absolute;inset:0}
+#tiles canvas,#ov{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none}
+#ov{z-index:5}
+.card{position:fixed;z-index:20;background:var(--card);color:var(--ink);border-radius:14px;box-shadow:var(--shadow)}
+#panel{left:14px;top:14px;width:387px;max-height:calc(100% - 28px);display:flex;flex-direction:column;overflow:hidden}
+#sbar{display:flex;align-items:center;gap:7px;padding:7px 7px 7px 14px}
+#sbar svg{flex:none;opacity:.7}
+#q,#from,#area-name{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:17px;padding:7px 0;outline:none}#q::-webkit-search-cancel-button,#q::-webkit-search-decoration,#from::-webkit-search-cancel-button,#from::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+.ib{flex:none;width:37px;height:37px;border:0;border-radius:10px;background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;font:inherit}
+.ib:hover{background:var(--hover)}
+.ib svg{width:21px;height:21px}
+#body{overflow:auto;border-top:1px solid var(--line)}
+#body:empty,#body.none{display:none}
+.sec{display:none;padding:7px 0}
+.sec.on{display:block}
+#results{list-style:none;margin:0;padding:0}
+#results li,#steps li,#area-list li{padding:10px 17px;cursor:pointer;border-bottom:1px solid var(--line)}
+#results li:last-child,#steps li:last-child,#area-list li:last-child{border-bottom:0}
+#results li:hover,#steps li:hover{background:var(--hover)}
+.t1{font-weight:600}
+.t2{color:var(--sub);font-size:13px}
+#place .pad,#dir .pad,#areas .pad{padding:7px 17px}
+#pl-name{font-size:19px;font-weight:700;margin:3px 0}
+#pl-addr{color:var(--sub)}
+#pl-coord{color:var(--sub);font-size:13px;margin-top:4px;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.on{border-color:var(--blue);color:var(--blue)}
+.btn:disabled{opacity:.47;cursor:default}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.hd h2{font-size:17px;margin:0}
+.field{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:10px;padding:0 10px;margin-top:7px}
+.field b{font-size:12px;color:var(--sub);width:37px}.field>span{flex:1;min-width:0;padding:7px 0;font-size:17px;line-height:1.4}
+#route-sum{font-size:17px;font-weight:700;margin-top:10px}
+#route-sum span{font-weight:400;color:var(--sub);font-size:13px}
+#steps{list-style:none;margin:7px 0 0;padding:0;border-top:1px solid var(--line)}
+#steps li{display:flex;justify-content:space-between;gap:10px}
+#steps li i{font-style:normal;color:var(--sub);font-size:13px;white-space:nowrap}
+#area-list{list-style:none;margin:7px 0 0;padding:0;border-top:1px solid var(--line)}
+#area-list li{cursor:default}
+#area-list .row{margin-top:7px}
+.bar{height:7px;border-radius:7px;background:var(--line);overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+.note{color:var(--sub);font-size:13px;margin-top:7px}
+#ctrl{position:fixed;right:14px;bottom:37px;z-index:20;display:flex;flex-direction:column;gap:7px}
+#ctrl .ib{width:44px;height:44px;background:var(--card);box-shadow:var(--shadow);border-radius:12px}
+#ctrl .ib:hover{background:var(--hover)}
+#ctrl .grp{display:flex;flex-direction:column;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+#ctrl .grp .ib{box-shadow:none;border-radius:0}
+#ctrl .grp .ib+.ib{border-top:1px solid var(--line)}
+#brand{position:fixed;top:14px;right:14px;z-index:20;padding:7px 14px;font-size:13px;display:flex;gap:10px;align-items:center}
+#brand a{color:var(--ink);text-decoration:none;font-weight:700}
+#brand a+a{color:var(--blue);font-weight:600}
+#off{display:none;color:#fff;background:#b0472a;border-radius:7px;padding:1px 7px;font-size:12px;font-weight:700}
+body.offline #off{display:inline}
+#foot{position:fixed;left:14px;bottom:7px;z-index:20;display:flex;align-items:flex-end;gap:10px;pointer-events:none}
+#scale{border:2px solid var(--ink);border-top:0;height:10px;font-size:11px;line-height:1;padding:0 4px;color:var(--ink);text-shadow:0 0 3px var(--bg),0 0 3px var(--bg);display:flex;align-items:flex-end;min-width:20px;opacity:.87}
+#attrib{font-size:11px;color:var(--sub);background:color-mix(in srgb,var(--card) 77%,transparent);padding:2px 7px;border-radius:7px;pointer-events:auto}
+#attrib a{color:inherit}
+#status{position:fixed;left:50%;top:14px;transform:translate(-50%,-237px);visibility:hidden;z-index:30;padding:10px 17px;transition:transform .25s,visibility .25s;max-width:calc(100% - 28px)}
+#status.on{transform:translate(-50%,0);visibility:visible}
+#boot{position:fixed;inset:0;display:grid;place-items:center;z-index:4;color:var(--sub);pointer-events:none}
+body.ready #boot{display:none}
+@media (max-width:700px){
+#panel{left:7px;right:7px;top:7px;width:auto;max-height:57%}
+#brand{display:none}
+#ctrl{right:10px;bottom:47px}
+#foot{left:7px}
+#status{top:77px}
+}
+</style>
+</head>
+<body>
+<div id="map" tabindex="0" aria-label="Map. Drag to move, scroll or pinch to zoom, long-press or right-click to drop a pin."><div id="tiles"></div><canvas id="ov"></canvas></div>
+<div id="boot">Loading the map…</div>
+<div id="panel" class="card">
+<div id="sbar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search places and addresses" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Search places and addresses"><button id="qx" class="ib" type="button" aria-label="Clear search" title="Clear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<div id="body" class="none">
+<div id="res" class="sec"><ul id="results"></ul></div>
+<div id="place" class="sec"><div class="pad"><div class="hd"><div id="pl-name"></div><button id="pl-x" class="ib" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div><div id="pl-addr"></div><div id="pl-coord"></div><div class="row"><button id="pl-dir" class="btn pri" type="button">Directions</button><button id="pl-save" class="btn" type="button">Save area offline</button></div></div></div>
+<div id="dir" class="sec"><div class="pad"><div class="hd"><h2>Directions</h2><button id="dir-x" class="ib" type="button" aria-label="Close directions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div><label class="field"><b>From</b><input id="from" type="search" placeholder="Your location" autocomplete="off" spellcheck="false" aria-label="Start"></label><div class="field"><b>To</b><span id="dir-to" class="t1"></span></div><div class="row"><button id="m-drive" class="btn on" type="button">Drive</button><button id="m-walk" class="btn" type="button">Walk</button></div><div id="route-sum"></div><div id="dir-note" class="note"></div></div><ul id="steps"></ul></div>
+<div id="areas" class="sec"><div class="pad"><div class="hd"><h2>Offline areas</h2><button id="areas-x" class="ib" type="button" aria-label="Close offline areas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div><div class="note">Save the map of the area on screen to this device. Saved areas open, pan and zoom with no connection. Search and directions still need one.</div><label class="field"><input id="area-name" type="text" placeholder="Name this area" autocomplete="off" aria-label="Area name"></label><div id="area-est" class="note"></div><div class="row"><button id="area-go" class="btn pri" type="button">Save this view</button><button id="area-stop" class="btn" type="button" hidden>Stop</button></div><div class="bar" id="area-bar" hidden><i id="area-fill"></i></div><div id="area-msg" class="note"></div></div><ul id="area-list"></ul><div class="pad"><div id="area-use" class="note"></div></div></div>
+</div>
+</div>
+<div id="brand" class="card"><a href="/beta.html#app-map">Amni-Map</a><span id="off">Offline</span><a href="/beta.html#app-map">Get the app</a></div>
+<div id="ctrl">
+<div class="grp"><button id="zin" class="ib" type="button" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button id="zout" class="ib" type="button" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button></div>
+<button id="loc" class="ib" type="button" aria-label="Show my location" title="My location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+<button id="theme" class="ib" type="button" aria-label="Light or dark map" title="Light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+<button id="areas-btn" class="ib" type="button" aria-label="Offline areas" title="Offline areas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+</div>
+<div id="foot"><div id="scale"></div><div id="attrib"><a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openmaptiles.org" target="_blank" rel="noopener">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · <a href="/privacy-map.html">Privacy</a></div></div>
+<div id="status" class="card" role="status" aria-live="polite"></div>
+<script type="module" src="start.js"></script>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+use amnimap
+into mvt.amni
+lang amni
+
+Module header: the lines "import math;" and "import style;". No namespace. The Helium has no blank lines and no comments anywhere. This module decodes Mapbox Vector Tiles (protobuf, already un-gzipped) from OpenMapTiles into flat arrays the renderer and the label placer read. It must be fast: one pass over the bytes, no per-feature allocation besides pushing onto the tile's lists, slices into the input instead of copies while decoding.
+
+```amni
+struct Feat { layer i32, gtype i32, mask u64, r0 i32, r1 i32, x0 f32, y0 f32, x1 f32, y1 f32 }
+struct Lab { layer i32, gtype i32, pri i32, minz f32, maxz f32, font i32, size f32, color u32, dark u32, dot u32, line bool, r0 i32, r1 i32, t0 i32, t1 i32 }
+struct Tile { pts f32[>..] = [], rings i32[>..] = [], feats Feat[>..] = [], labs Lab[>..] = [], text byte[>..] = [], bytes int = 0 }
+struct Val { kind i32, a int, b int, num real }
+struct Pb { b const byte[:], pos int, end int }
+let K_CLASS i32 = 1;
+let K_SUBCLASS i32 = 2;
+let K_BRUNNEL i32 = 3;
+let K_RAMP i32 = 4;
+let K_ADMIN i32 = 5;
+let K_MARITIME i32 = 7;
+let K_RANK i32 = 8;
+let K_CAPITAL i32 = 9;
+let K_ELE i32 = 10;
+let K_NAME i32 = 11;
+let K_LATIN i32 = 12;
+let K_EN i32 = 13;
+let K_HN i32 = 14;
+let K_REF i32 = 15;
+var keys_buf i32[>..] = [];
+var vals_buf Val[>..] = [];
+var vcls_buf i32[>..] = [];
+var feat_buf int[>..] = [];
+```
+
+A tile keeps every point as two f32 numbers in `pts` (x then y, in tile units where the tile spans 0 to 1 and buffer geometry falls a little outside). A ring is two entries in `rings`: the index of its first point and its point count; ring k is at rings[2k] and rings[2k+1]. A Feat owns rings r0 up to but not including r1 and keeps its style mask from `feature_mask` and the bounding box of its points. A Lab is a label candidate: the fields of its LabelStyle, its rings r0 to r1 (one ring of one point for point features), and its text as the byte range t0 to t1 of the tile's `text`.
+
+`pb_varint(p)` reads a protobuf base-128 varint at p.pos as a u64 and moves p.pos past it (seven bits per byte, low group first, high bit set means more bytes follow; it never reads past p.end).
+
+`pb_zz(v)` is the zigzag decode of v as a signed int: v shifted right by one, xor the negation of its lowest bit.
+
+`pb_skip(p, wire)` moves past a field value of the given wire type: 0 reads a varint, 1 skips 8 bytes, 2 reads a varint length and skips that many bytes, 5 skips 4 bytes; any other wire type moves p.pos to p.end.
+
+`key_code(name)` maps a layer key name to its K_ constant: "class", "subclass", "brunnel", "ramp", "admin_level", "maritime", "rank", "capital", "ele_ft", "name", "name:latin", "name_en", "housenumber", "ref"; anything else is 0.
+
+`read_value(b, start, end)` decodes one protobuf Value message from b between start and end into a Val: field 1 is a string (kind 1, a and b are the byte range of the text in b); field 2 a little-endian f32 (kind 2, num); field 3 a little-endian f64 (kind 2, num); fields 4 and 5 a varint (kind 2, num is it as a signed number); field 6 a zigzag varint (kind 2); field 7 a varint bool (kind 2, num 1 or 0). Unknown fields are skipped. An empty message gives kind 0.
+
+`decode_tile(b, t)` clears every list of tile t, sets t.bytes to the length of b, calls `style_init`, then walks the top-level fields of b and calls `decode_layer` for every field 3 (a length-delimited layer), skipping all other fields.
+
+`decode_layer(b, start, end, t)` decodes one layer message. A first pass over its fields records the name (field 1, a string), the extent (field 5, a varint, 4096 when absent), every key (field 3, a string) as its `key_code` in `keys_buf`, every value (field 4) as `read_value` in `vals_buf`, and every feature (field 2) as its start and end offsets pushed in pairs onto `feat_buf`; the three buffers are module lists cleared at the start of each layer. Then the layer id is `layer_id` of the name, and the layer is skipped when that is -1. `vcls_buf` gets one entry per value set to -2, used as a cache of `class_id` per value index. Each feature is then decoded: field 2 holds packed varint tag pairs (key index, value index), field 3 the geometry type as a varint, field 4 the packed varint geometry commands; other fields are skipped. The tags fill an Attrs: K_CLASS sets cls_s to the value's text and cls to its cached class id (computed with `class_id` the first time that value index is seen); K_SUBCLASS sets sub_s; K_BRUNNEL sets brunnel to 1 for "bridge", 2 for "tunnel", else 0; K_RAMP and K_MARITIME are true when the number is not 0; K_ADMIN, K_RANK, K_CAPITAL and K_ELE take the number as an int; K_NAME, K_LATIN, K_EN, K_HN and K_REF take the value's text. Tag indexes out of range are ignored. The mask is `feature_mask(layer id, type, attrs)` and the label is `label_style(layer id, type, attrs)`; when the mask is 0 and the label is not ok the feature's geometry is not decoded at all. Otherwise the geometry is decoded with `decode_geometry` into new rings, scaled by 1 divided by the extent. When the mask is not 0 a Feat is pushed with those rings and their bounding box. When the label is ok its text is appended to t.text with `label_text`, and when that added at least one byte a Lab is pushed with the label style's fields, the rings and the text range.
+
+`decode_geometry(b, start, end, gtype, scale, t)` reads packed command integers between start and end (each a varint) and appends rings to t, returning the number of rings added. The command id is the low 3 bits and the count is the rest. The cursor x and y start at 0 and each parameter pair is two zigzag varints added to it. MoveTo (id 1) starts a new ring at the moved point, for each of its count points, so every point of a multipoint becomes a ring of one point. LineTo (id 2) appends each moved point to the current ring. ClosePath (id 7) has no parameters and adds nothing, since polygon rings are always drawn closed. Any other id stops decoding. Points are stored as the cursor times scale. Rings that end with no points are dropped.

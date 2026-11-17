@@ -23,9 +23,9 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <body>
 <main>
 <h1>Amni-Map Privacy Policy</h1>
-<p class="muted">Apps: Amni-Map for Android (package com.amniscient.map) and Amni-Map for iPhone and iPad (bundle ID com.amniscient.map). Effective: November 17, 2026 (added offline maps on Android). Publisher: Amniscient, LLC. Contact: <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a>.</p>
+<p class="muted">Apps: Amni-Map for Android (package com.amniscient.map) and Amni-Map for iPhone and iPad (bundle ID com.amniscient.map), and Amni-Map on the web at amni-scient.com/map/. Effective: November 17, 2026 (added offline maps on Android and Amni-Map on the web). Publisher: Amniscient, LLC. Contact: <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a>.</p>
 <p>Amni-Map is a navigation app. It has no accounts, no ads, no analytics, no crash reporting and no tracking or advertising SDKs. It does not collect your name, email, phone number or contacts, and neither the app nor any library inside it sends a device ID or advertising ID. This policy explains what the app sends, to whom, and why.</p>
-<p>The sections from "Location" to "Permissions" describe the Android app. The iPhone and iPad app is described in <a href="#ios">Amni-Map for iOS</a>. "Children", "Your choices", "Security" and "Changes" apply to both.</p>
+<p>The sections from "Location" to "Permissions" describe the Android app. The iPhone and iPad app is described in <a href="#ios">Amni-Map for iOS</a>, and the browser version in <a href="#web">Amni-Map on the web</a>. "Children", "Your choices", "Security" and "Changes" apply to all three.</p>
 
 <h2>Location</h2>
 <p>Amni-Map uses your phone's location while the app is open and while a trip you started is running (shown by the "Amni-Map is guiding you" notification). It does not use location in the background at any other time, and it never shares your location with other apps on your phone.</p>
@@ -35,7 +35,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <div class="tw"><table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
 <tr><td>Trip start (your position), stops and destination</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes so a repeat request is fast.</td></tr>
-<tr><td>Search text and your exact position (to rank places near you first), and positions to name the town or street near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results near you</td><td>Not stored</td></tr>
+<tr><td>Search text and your exact position (to rank places near you first), and positions to name the town or street near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results near you</td><td>Not stored by us. The gateway caches the search answer for 10 minutes so a repeat search is fast.</td></tr>
 <tr><td>Map questions with coordinates: the speed limit where you are, cameras and traffic lights along your route, nearby gas, coffee and other places, place details, and copilot stops along your route</td><td>Gateway, then public Overpass servers</td><td>Speed limits, camera alerts, traffic-light timing, nearby places, opening hours, copilot tips</td><td>The gateway caches the public answer for up to a day; nothing about you</td></tr>
 <tr><td>Traffic area numbers (city-sized squares) and traffic tile numbers along your route</td><td>Gateway, which asks TomTom for traffic tiles and incidents for the area (never while Android Auto is connected) and reads public feeds (511NY, USDOT work-zone feeds, NYC DOT traffic speeds). TomTom and those feeds see the gateway, not you or your phone</td><td>Traffic colors, work zones and delays</td><td>Shared cache of the public answers for a few minutes; nothing about you</td></tr>
 <tr><td>Road reports you post and votes</td><td>Gateway</td><td>Show other drivers what is on the road</td><td>Shown until they expire: 45 minutes to 12 hours depending on the kind, and 30 days for speed and red-light cameras. Expired reports are dropped from storage within 31 days. No identity attached.</td></tr>
@@ -78,7 +78,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <div class="tw"><table>
 <tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
 <tr><td>Trip start (your position), stops, destination, and your avoid-highways and avoid-tolls choices</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and arrival times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes.</td></tr>
-<tr><td>Search text and your exact position (to rank places near you first), and positions to name the town, street or dropped pin near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results and place names</td><td>Not stored</td></tr>
+<tr><td>Search text and your exact position (to rank places near you first), and positions to name the town, street or dropped pin near you</td><td>Gateway, then Photon (komoot) and Nominatim (OpenStreetMap Foundation)</td><td>Search results and place names</td><td>Not stored by us. The gateway caches the search answer for 10 minutes so a repeat search is fast.</td></tr>
 <tr><td>Map questions with coordinates: the speed limit where you are, speed cameras along your route, nearby gas, coffee, food and other places, and place details such as opening hours</td><td>Gateway, then public Overpass servers (and Nominatim for place details)</td><td>Speed limits, camera alerts, nearby places, opening hours</td><td>The gateway caches the public answer for up to a day; nothing about you</td></tr>
 <tr><td>For driving routes (not walking): traffic area numbers (city-sized squares) along the route, used for arrival times and faster-route offers. With <em>Live traffic</em> on (on by default; switch in Menu and in trip options), also traffic tile numbers along your route for the colored overlay</td><td>Gateway, which asks TomTom for traffic tiles and incidents and reads public traffic feeds. TomTom and those feeds see the gateway, not you or your device</td><td>Traffic colors, incidents and delays</td><td>Shared cache of the public answers for a few minutes; nothing about you</td></tr>
 <tr><td>Your position, to load road reports near you</td><td>Gateway</td><td>Show reports from other drivers</td><td>Not stored</td></tr>
@@ -103,11 +103,31 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <h3>App Store privacy label</h3>
 <p>Data collected, none of it linked to you and none used for tracking, all for app functionality: precise location (route points, search and lookup positions, traffic areas and report locations), search history (search text sent to find places), other user content (road reports and votes) and customer support (feedback text). Data used to track you: none.</p>
 
+<h2 id="web">Amni-Map on the web</h2>
+<p>The web map at <a href="/map/">amni-scient.com/map/</a> runs in your browser. It has no accounts, no ads, no analytics, no crash reporting and no cookies, and it loads no third-party scripts. It uses the same Amni-Map gateway as the apps, handled the same way: no request logs and no IP addresses stored.</p>
+<h3>Location</h3>
+<p>The page asks your browser for your position only when you press the location button, or when you open directions without typing a start. Your browser asks you first. The position is used to show your dot and, for directions, as the start of the route; it is not sent anywhere else.</p>
+<h3>What is sent, and where</h3>
+<div class="tw"><table>
+<tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept</th></tr>
+<tr><td>Search text and the center of the map on screen (to rank places near the area you are looking at)</td><td>Gateway, then Photon (komoot)</td><td>Search results</td><td>Not stored by us. The gateway caches the search answer for 10 minutes so a repeat search is fast.</td></tr>
+<tr><td>A point you press and hold, or right-click</td><td>Gateway, then Nominatim (OpenStreetMap Foundation)</td><td>Name the street or address there</td><td>Not stored</td></tr>
+<tr><td>Route start (your position or a place you picked) and destination</td><td>Gateway, then public OSRM, FOSSGIS and Valhalla routing servers</td><td>Routes and travel times</td><td>Not stored by us. The gateway caches the route answer for 10 minutes.</td></tr>
+<tr><td>Map tiles and label fonts for the area on screen, and every map tile of an area you save for offline use</td><td>Directly to OpenFreeMap</td><td>Draw the map, and keep saved areas on this device</td><td>Governed by OpenFreeMap; it sees your IP address and the map area</td></tr>
+</table></div>
+<h3>On this device only</h3>
+<ul>
+<li>The last map view, your light or dark choice, the map server address and the list of your saved areas (name, outline, date and size) are kept in this browser's storage for amni-scient.com.</li>
+<li>Saved areas: the map tiles and fonts of each area you save are kept in this browser's cache storage for amni-scient.com and are never uploaded. Delete an area under Offline areas, or clear amni-scient.com's site data in your browser, to remove them.</li>
+<li>The site also keeps copies of its own pages and files in this browser so they open with no connection.</li>
+</ul>
+
 <h2>Children</h2>
 <p>Amni-Map is a driving app meant for adults. It is not directed at children under 13, and we do not knowingly collect data from children.</p>
 
 <h2>Your choices</h2>
 <ul>
+<li>On the web, delete saved areas under Offline areas, or clear amni-scient.com's site data in your browser to remove everything the web map keeps.</li>
 <li>Turn off "Help map traffic" in Menu › Privacy &amp; data to stop sending speed data.</li>
 <li>Clear saved routes and recent searches in Menu › Privacy &amp; data.</li>
 <li>On iOS, turn off <em>Live traffic</em> in the menu to stop loading the traffic overlay tiles.</li>

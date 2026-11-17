@@ -1,0 +1,130 @@
+use amnimap
+into map.amni
+lang amni
+
+Module header: the lines "import web;", "import math;", "import json;", "import style;", "import mvt;", "import raster;", "import glyphs;", "import labels;" and "import view;". No namespace. The Helium has no blank lines and no comments anywhere. This is the main module of the Amni-Map browser page (web target): it wires the page's panel (search, place card, directions, offline areas), dispatches every browser event to the view module, and saves map areas for offline use with the Cache API. All browser access goes through the `web` module with the web:: prefix. Text that came from the network is only ever put on the page with `web::text` or as attribute values, never as HTML. Handles from `web::ev_target`, `web::closest` and `web::create` that are not kept are released with `web::release`.
+
+```amni
+struct Area { id int = 0, name byte[..64] = "", w real = 0.0, s real = 0.0, e real = 0.0, n real = 0.0, tpl byte[..200] = "", tiles int = 0, failed int = 0, saved real = 0.0 }
+struct Hit { title byte[..120] = "", sub byte[..200] = "", lon real = 0.0, lat real = 0.0, ext bool = false, x1 real = 0.0, y1 real = 0.0, x2 real = 0.0, y2 real = 0.0, zoom real = 17.0 }
+struct Batch { id i32, pos int, count int, tries i32 }
+let T_Q_IN i32 = 100;
+let T_Q_KEY i32 = 101;
+let T_Q_TIMER i32 = 102;
+let T_SEARCH i32 = 103;
+let T_RES i32 = 104;
+let T_QX i32 = 105;
+let T_ZIN i32 = 107;
+let T_ZOUT i32 = 108;
+let T_LOC i32 = 109;
+let T_GEO i32 = 110;
+let T_GEOERR i32 = 111;
+let T_PL_X i32 = 112;
+let T_PL_DIR i32 = 113;
+let T_PL_SAVE i32 = 114;
+let T_REV i32 = 115;
+let T_DRIVE i32 = 117;
+let T_WALK i32 = 118;
+let T_ROUTE i32 = 119;
+let T_DIR_X i32 = 120;
+let T_STEP i32 = 121;
+let T_FROM_IN i32 = 122;
+let T_FROM_KEY i32 = 123;
+let T_THEME i32 = 124;
+let T_AREAS i32 = 125;
+let T_AREAS_X i32 = 127;
+let T_AREA_GO i32 = 128;
+let T_AREA_STOP i32 = 129;
+let T_AREA_LIST i32 = 130;
+let T_CACHE_OPEN i32 = 131;
+let T_ADDALL i32 = 132;
+let T_EST i32 = 133;
+let T_NOP i32 = 134;
+let T_TOAST i32 = 135;
+let T_ONLINE i32 = 137;
+let T_OFFLINE i32 = 138;
+let T_S_RETRY i32 = 139;
+var areas Area[>..] = [];
+var hits Hit[>..] = [];
+var batches Batch[>..] = [];
+var dl_urls byte[>..] = [];
+var dl_starts int[>..] = [];
+var step_lon real[>..] = [];
+var step_lat real[>..] = [];
+var q_text byte[>..] = [];
+var buf byte[>..] = [];
+var el_q i32 = 0;
+var el_from i32 = 0;
+var el_body i32 = 0;
+var el_results i32 = 0;
+var el_status i32 = 0;
+var search_id i32 = 0;
+var search_text byte[>..] = [];
+var search_retry int = 0;
+var search_wait = false;
+var search_target i32 = 0;
+var search_pick = false;
+var q_timer i32 = 0;
+var toast_timer i32 = 0;
+var rev_id i32 = 0;
+var route_id i32 = 0;
+var walk = false;
+var place_name byte[>..] = [];
+var place_lon real = 0.0;
+var place_lat real = 0.0;
+var has_place = false;
+var from_set = false;
+var from_lon real = 0.0;
+var from_lat real = 0.0;
+var want_route = false;
+var cache_store i32 = 0;
+var cache_h i32 = 0;
+var dl_busy = false;
+var dl_next = 0;
+var dl_done = 0;
+var dl_failed = 0;
+var dl_area Area = Area {};
+var dl_replace int = 0;
+var theme_dark = false;
+var started = false;
+```
+
+An Area is a saved offline area: id (the time it was saved in ms), name, bounds in degrees (west, south, east, north), the tile URL template it was saved with, its tile count, how many tiles failed, and when it was saved (epoch ms). A Hit is a search result: title and subtitle lines, its point, its extent (x1, y1 west and north, x2, y2 east and south, in degrees) when it has one, and the zoom to show it at. A Batch is one Cache API addAll call in flight: the js call id, the first index into `dl_starts` and how many URLs it holds, and how many times it was tried.
+
+`el(id)` is `web::el(id)`. `show(id, on)` toggles the class "on" of the element with that id and then calls `body_update`, so the panel body appears and hides with its sections. `body_update()` gives the element "body" the class "none" when none of "res", "place", "dir" and "areas" has the class "on", then sets view's pad_l to the right edge of the "panel" element's rect when `web::win_w()` is above 700 and 0 otherwise, and sets pad_b to 0.
+
+`toast(msg)` sets the text of "status", adds its class "on", clears any running toast timer and starts a 4000 ms `web::timer` with tag T_TOAST that removes the class.
+
+`fixed(out, v, d)` appends v with d decimals like JavaScript's toFixed. `grouped(out, n)` appends a whole number with commas between groups of three digits like toLocaleString('en-US'). `fmt_dist(out, m)` appends a distance given in meters in US units: under 0.1 mile it is the feet (m times 3.28084) rounded to the nearest 10 with "ft"; under 10 miles it is the miles with one decimal and "mi"; otherwise whole miles (grouped) and "mi". `fmt_km(out, m)` appends kilometers with one decimal under 10 km and whole (grouped) otherwise, then " km". `fmt_dur(out, s)` appends the minutes (seconds divided by 60, rounded, at least 1) as "N min" under 60 minutes and otherwise "H h M min". `fmt_coord(out, lat, lon)` appends for example "39.96118° N, 82.99879° W" (absolute values with five decimals, N or S, E or W). `fmt_date(out, ms)` appends a UTC epoch in milliseconds as for example "Nov 17, 2026" (civil date from days since 1970 with the usual algorithm). `url_enc(out, s)` appends s percent-encoded like encodeURIComponent.
+
+`load_areas()` reads "amni-map-areas" with `web::store_get` (absent means none): each line is id|name|w|s|e|n|tpl|tiles|failed|saved and malformed lines are skipped. `save_areas()` writes them back in the same form (names have "|" and line breaks replaced by spaces when saved). `refresh_alts()` rebuilds view's alt_tpls: one line for each distinct area template that differs from view's tpl.
+
+`area_tiles(w, s, e, n, out_count)` counts the data tiles from zoom 0 to 14 covering the bounds: at each zoom z with m equal to 2 to the z, columns from the floor of lon2x(w) times m to the floor of lon2x(e) times m and rows from the floor of lat2y(n) times m to the floor of lat2y(s) times m, each clamped to 0 through m minus 1. It returns the count and the estimated bytes: 400000 per tile at zooms up to 7, 150000 at 8 to 11 and 50000 at 12 and above. When out_count is true the function also fills dl_urls with every tile URL (the view's `tpl_url` of the main template) as text lines and dl_starts with the start offset of each line; after the tiles it adds TJ_URL and, for each font name "Noto%20Sans%20Regular", "Noto%20Sans%20Bold" and "Noto%20Sans%20Italic", the glyph URLs for ranges 0-255, 256-511 and 8192-8447 under "https://tiles.openfreemap.org/fonts/".
+
+`view_bounds()` sets four module reals bw, bs, be, bn to the bounds of the visible map: x2lon of px_wx(0) and px_wx(vw), y2lat of px_wy(vh) and px_wy(0), with the longitudes clamped to plus or minus 180.
+
+`areas_render()` clears "area-list" and adds one li per area (newest first) with a div of class "t1" holding the name, a div of class "t2" with the tile count (grouped) " tiles · about " the estimated size in MB rounded " MB · saved " the date, plus " · " the failed count " missing" when it is above 0, and a div of class "row" with three buttons of class "btn" whose text is "View", "Update" and "Delete" and whose attributes data-act are "view", "update" and "delete" and data-id the area id. When there are no areas the list holds one li with the text "No saved areas yet." Then it calls `area_estimate`. `area_estimate()` uses `view_bounds` and `area_tiles` without URLs and writes into "area-est" "This view: about N tiles, about X MB." (N grouped, X rounded to whole MB, at least 1); when the count is above 7000 it writes "This view is too large to save (about N tiles). Zoom in to a city or region; up to 7,000 tiles fit in one area." and disables "area-go" (the "disabled" property), otherwise enables it unless dl_busy. It also calls the storage estimate: `web::js_call` on `web::js_global("navigator.storage")` with method "estimate", args "[]" and tag T_EST, when that global exists.
+
+`area_start(name, w, s, e, n, replace_id)` begins saving: when dl_busy it returns; when cache_store is 0 it shows in "area-msg" "This browser cannot save map areas (private windows often cannot)." and returns. It fills dl_urls with `area_tiles`, sets dl_area (id `web::epoch_ms()` rounded, the calendar clock and never `web::now()`, which counts from page load, the name or "Saved area" when empty, the bounds, view's tpl, the tile count), dl_replace to replace_id, dl_busy true, dl_next, dl_done and dl_failed 0, clears batches, shows "area-bar" (removes its hidden attribute) and "area-stop", disables "area-go", asks for persistent storage (js_call on "navigator.storage" method "persist" with tag T_NOP), and opens the cache named "amni-map-area-" plus the id with `web::js_call(cache_store, "open", that name as a JSON array, T_CACHE_OPEN)`. `cache_opened()` takes `web::js_handle(web::ev_id())` as cache_h; when it is 0 it ends the save with the message "Could not open storage for this area."; otherwise it calls `pump`. `pump()` keeps up to 4 batches in flight: while fewer than 4 are in flight and dl_next is below the URL count, it starts a batch of up to 20 URLs from dl_next as a JSON array of strings inside an array (the addAll argument list) with `web::js_call(cache_h, "addAll", args, T_ADDALL)` and moves dl_next on. `batch_done()` finds the batch by `web::ev_id()`; when `web::ev_status()` is 0 and its tries are below 2 it starts it again with the same URLs and tries plus 1; when it still failed it adds its count to dl_failed; otherwise it adds its count to dl_done. It removes finished batches, updates the progress (`area_progress`), calls `pump`, and when no batch is left and dl_next reached the end it calls `area_finish`. `area_progress()` sets the width style of "area-fill" to the percent of (done plus failed) over the total and writes "Saving… D of T files" (grouped) into "area-msg". `area_finish()` sets dl_area.failed to dl_failed, appends it to areas (after removing the area with id dl_replace and deleting its cache "amni-map-area-" plus that id with js_call(cache_store, "delete", …, T_NOP) when dl_replace is not 0), saves the areas, refreshes alts, ends the save (dl_busy false, hides "area-bar" and "area-stop" with the hidden attribute, enables "area-go", releases cache_h), writes "Saved. This area now works with no connection." or, when some failed, "Saved, but N files could not be downloaded. Use Update to try again." into "area-msg", and calls `areas_render`. `area_stop()` ends the save the same way without recording it, deletes the half-saved cache, and writes "Stopped. Nothing was kept." `area_click()` handles a click inside "area-list": the closest button of the event target gives data-act and data-id (it releases only that button handle and never the event target handle, which may be the "area-list" element itself); "view" fits the map to that area's bounds (fit_world with lon2x and lat2y of its corners, max zoom 15); "update" calls `area_start` with the area's name and bounds and its id as replace_id; "delete" deletes its cache, removes it, saves, refreshes alts and re-renders.
+
+`est_done()` reads the JSON result of the storage estimate (`web::js_result(web::ev_id(), …)`) and writes into "area-use" "Map data and site files use about X MB of this device's storage." with X the usage in MB rounded (or nothing when the result failed). JSON replies are read in place from the fetched bytes by small helpers with no parse tree: `jws(d, i)` skips whitespace, `jend(d, i)` returns the index just after the JSON value starting at i or -1, `jroot(d)` and `jvalid(d)` the root value and whether the text is one valid value, `jget(d, n, key)` the start of a key's value in the object at n or -1, `jat(d, n, i)` element i of the array at n or -1, `jlen(d, n)` an array's length, `jnum(d, n)` a number, `jreal(d, n, key)` and `jtext(d, n, key)` a member as a real or as decoded string bytes, `jfirst(d, n)` the start of the first element of the array at n or -1 when it is empty, and `jnext(d, p)` the start of the element after the one starting at p or -1 when p was the last. A loop over a JSON array always walks it with jfirst and jnext, never with jat inside the loop (jat rescans from the start of the array, which is quadratic on long routes). `take_fetch(id, out)` assigns a new empty list to out and then takes the fetch body into it with `web::fetch_take` (a reused list could not grow past the memory region it got for an earlier, smaller body).
+
+`search_go(text, target)` searches: when the text is empty it hides "res"; otherwise it copies the text into search_text, sets search_retry to 0 and search_wait to false, remembers the target and calls `search_send()`. `search_send()` fetches GW plus "/photon/api?q=" plus the encoded text plus "&limit=8&lat=" plus the center latitude with four decimals plus "&lon=" plus the center longitude with four decimals, with tag T_SEARCH, and remembers the fetch id in search_id (the target is 0 for the main search box and 1 for the "from" box). `search_arrived()` ignores a fetch whose id is not search_id (but always frees it). A failed fetch whose status is not 0 (the search service answered but was busy) while search_retry is below 3 adds 1 to search_retry, sets search_wait to true and starts a `web::timer` of 500 times search_retry ms with tag T_S_RETRY, and changes nothing else (the search service refuses bursts, so retries are spaced out). Any other failed fetch shows a single result line in "results": "Search needs a connection." when the status is 0, else "Search is busy right now. Try again in a moment.". Otherwise it parses the JSON and fills hits from up to 8 features: lon and lat from geometry.coordinates; properties name, housenumber, street, city, district, county, state, country, type and extent. The title is the name, else housenumber and street joined by a space, else the street, else the city, else the state, else the country; the subtitle joins with ", " these non-empty parts: when the name is set, one part made of the housenumber, a single space and the street (just the street when there is no housenumber; this replaces adding housenumber and street as two separate parts), the city or else district or else county, the state and the country, skipping parts equal to the title. A four-number extent fills x1, y1, x2, y2. The zoom is 12 for type city or locality, 13 for district, 10 for county, 7 for state, 4 for country, and 17 otherwise. It renders the results into "results" (one li per hit with data-i the index and divs of class "t1" and "t2"; "No places found." as a single li when there are none) and shows "res"; when search_pick is true it clears it and picks hit 0 when there is one. `res_click()` reads data-i from the closest li of the event target and calls `pick(i)`; it releases only that li handle and never the event target handle (handles are shared per element and the target may be the cached "results" list itself). `pick(i)` hides "res". For target 0 it sets the "q" value to the title, calls `place_show` with the title, subtitle and point, and moves the map: with an extent it calls fit_world with lon2x of x1, lat2y of y1, lon2x of x2, lat2y of y2 and max zoom 17, otherwise it flies to the point at the larger of the hit's zoom and the current zoom when the hit is a city or broader (types city, locality, district, county, state, country), else at the hit zoom, over 700 ms. For target 1 it sets the "from" value to the title, from_lon and from_lat to the point, from_set true, and calls `route_go`.
+
+`place_show(name, sub, lon, lat)` stores the place, sets view's pin to the point in world units (has_pin, pin_x, pin_y) and calls route_changed so the overlay redraws, fills "pl-name" with the name, "pl-addr" with sub and "pl-coord" with `fmt_coord`, shows "place", hides "dir" and calls `body_update`. `place_close()` hides "place", clears has_place and the pin, calls route_changed and `body_update`. `drop_pin(sx, sy)` converts CSS pixel (sx, sy) to degrees, calls `place_show` with "Dropped pin", "Looking up the address…" and the point, and fetches GW plus "/nominatim/reverse?lat=" plus the latitude (six decimals) "&lon=" the longitude "&format=json" with tag T_REV kept in rev_id. `rev_arrived()` ignores other ids; on success it parses the JSON and, when it has a display_name, sets "pl-name" to its "name" member when not empty or else the part of display_name before its first comma, and "pl-addr" to the rest of display_name after that comma (trimmed); but when the name is empty and that first part is a house number (it starts with a digit) and display_name has a second comma, the title is the first part, a space and the trimmed second part (such as "3383 Willington Drive") and "pl-addr" is the rest after the second comma (trimmed); the title also goes into place_name; on failure "pl-addr" becomes "Address unavailable offline." when the browser is offline, else "No address found here.".
+
+`dir_open()` needs a place: it shows "dir", hides "place" and "res", sets "dir-to" to the place name, clears "from" to empty with placeholder text kept, sets from_set false, clears "route-sum" and "steps", and calls `route_go`. `route_go()`: when the view has a location (has_me) and from_set is false the start is the location; when there is no start yet it sets want_route, asks for the location with `locate(false)` and writes "Finding your location… or type a start above." into "dir-note", and returns. Otherwise it writes "Finding a route…" into "dir-note" and fetches GW plus "/route/" plus "foot" when walk else "driving" plus "/" start longitude "," start latitude ";" place longitude "," place latitude (five decimals each) plus "?geometries=geojson&overview=full&steps=true&alternatives=false" with tag T_ROUTE kept in route_id. `route_arrived()` ignores other ids. On a failed fetch, or a JSON reply whose "code" is not "Ok" or that has no routes, it writes "No route found." (or "Directions need a connection." when the fetch status is 0) into "dir-note" and returns. For the first route it fills view's route_x and route_y from geometry.coordinates (lon2x, lat2y; the coordinates walked with jfirst and jnext), calls route_changed, writes into "route-sum" the `fmt_dist` of the distance followed by a span with " (" fmt_km ") · " fmt_dur of the duration, clears "dir-note", and fills "steps" with one li per step of every leg (legs and steps walked with jfirst and jnext; data-i the step index, the instruction text then an i element with `fmt_dist` of the step distance, the i omitted for zero distance), recording each step's maneuver location in step_lon and step_lat. Then it fits the map to the route's bounding box (max zoom 17). `step_click()` reads data-i from the closest li of the event target and flies to that step's location at zoom 17 over 700 ms; it releases only that li handle and never the event target handle (the target may be the cached "steps" list itself).
+
+`instruction(out, step)` writes a step of an OSRM JSON route as English text. name is the step's "name", or its "ref" when the name is empty. The maneuver's "type" and "modifier" choose the text: "depart" gives "Head " plus the compass word of maneuver.bearing_after (north, northeast, east, southeast, south, southwest, west, northwest by 45 degree sectors) plus " on " name when there is a name; "arrive" gives "Arrive at your destination" plus " on the left" or " on the right" for those modifiers; "roundabout" and "rotary" give "At the roundabout, take exit " plus maneuver.exit (just "Enter the roundabout" without an exit); "merge" gives "Merge"; "on ramp" gives "Take the ramp"; "off ramp" gives "Take the exit"; "fork" gives "Keep " plus left or right (from the modifier, "Keep straight" otherwise) " at the fork"; "end of road" and "turn" give, by modifier, "Turn left", "Turn right", "Turn sharp left", "Turn sharp right", "Turn slight left", "Turn slight right", "Make a U-turn" for uturn and "Continue straight" for straight; "new name" and "continue" give "Continue" (or "Keep slight left" or "Keep slight right" for those modifiers). Every type other than depart and arrive then adds " onto " name when there is a name.
+
+`locate(fly)` asks for the position with `web::js_call` on `web::js_global("navigator.geolocation")`, method "getCurrentPosition", args JSON of a callback with tag T_GEO, a callback with tag T_GEOERR and the options enableHighAccuracy true, timeout 12000 and maximumAge 30000 (callbacks are written {"$cb": tag}), tag T_NOP; a module bool loc_fly remembers fly. When the geolocation global is missing it toasts "Location is not available in this browser.". `geo_ok()` reads `web::ev_json`, a JSON array whose first element has coords.latitude and coords.longitude; it sets view's has_me, me_x, me_y, calls route_changed, flies to it at the larger of zoom and 15 over 700 ms when loc_fly, and when want_route is true clears it and calls `route_go`. `geo_err()` toasts "Could not get your location. Check that this site may use it." and, when want_route, clears it and writes "Your location is not available. Type a start above." into "dir-note".
+
+`theme_apply(d)` sets theme_dark, gives the page body (web::BODY) the class "dark" when d, and calls view's `set_dark(d)`. `theme_toggle()` applies the opposite and stores "dark" or "light" under "amni-map-theme".
+
+`ui_after()` runs after every event: it takes `view_take_tap()`; 1 hides "res" when it is shown and calls `body_update`; 2 calls `drop_pin(press_x, press_y)`.
+
+`main()` runs once at page start. It calls `gl_init`, `load_areas`, then `view_init`. It picks the theme: "amni-map-theme" stored as "dark" or "light" wins, else `web::prefers_dark()`, and applies it. It sets the view from the URL hash (`web::location("hash", …)` and `load_view`), else from "amni-map-view" in storage, else to latitude 39.5, longitude -98.35 at zoom 3.7. It reads "amni-map-tpl" from storage into the view's template when present (so a cached template works at once), refreshes alts, and calls view_changed. It sets cache_store to `web::js_global("caches")`. It calls view's `glyph_request(f, 0)` for fonts 0, 1 and 2. It gets el_q ("q"), el_from ("from"), el_body (the element with id "body", the panel body div, never web::BODY), el_results ("results") and el_status, and listens: "q" input T_Q_IN and keydown T_Q_KEY; "from" input T_FROM_IN and keydown T_FROM_KEY; click on "results" T_RES, "qx" T_QX, "zin" T_ZIN, "zout" T_ZOUT, "loc" T_LOC, "pl-x" T_PL_X, "pl-dir" T_PL_DIR, "pl-save" T_PL_SAVE, "m-drive" T_DRIVE, "m-walk" T_WALK, "dir-x" T_DIR_X, "steps" T_STEP, "theme" T_THEME, "areas-btn" T_AREAS, "areas-x" T_AREAS_X, "area-go" T_AREA_GO, "area-stop" T_AREA_STOP and "area-list" T_AREA_LIST; and web::WINDOW "online" T_ONLINE and "offline" T_OFFLINE. It gives the body the class "offline" when navigator.onLine is false (`web::get_bool(web::js_global("navigator"), "onLine")`). Finally it gives the body the class "ready".
+
+`export fn he_event(tag i32, kind i32)` dispatches. Fetch events (web::EV_FETCH): T_TJ calls tj_loaded on the taken bytes when the status is 200, and otherwise tj_failed; when neither gave a template it toasts "The map server could not be reached. Connect once to load the map."; the fetch is freed. T_TILE calls tile_arrived, T_GLYPH glyph_arrived, T_SEARCH search_arrived, T_REV rev_arrived and T_ROUTE route_arrived. DOM events: T_PDOWN, T_PMOVE and T_PUP call on_pointer(tag); T_WHEEL on_wheel; T_KEY on_key; T_CTX on_ctx; T_RESIZE view_resize and body_update; T_Q_IN reads the input value into q_text, sets search_target 0 and restarts a 280 ms T_Q_TIMER (hiding "res" when the text is empty); T_Q_KEY on "Enter" searches q_text right away with search_pick true and on "Escape" hides "res"; T_FROM_IN and T_FROM_KEY do the same with target 1 for the from box; T_RES res_click; T_QX empties "q", hides "res", closes the place card and focuses "q"; T_ZIN and T_ZOUT zoom by plus or minus 1 at the view center over 250 ms; T_LOC locate(true); T_PL_X place_close; T_PL_DIR dir_open; T_PL_SAVE opens the areas panel with the place's name in "area-name"; T_DRIVE and T_WALK set walk, move the class "on" between "m-drive" and "m-walk" and call route_go when the directions panel is open; T_DIR_X hides "dir", clears the route (route_x, route_y emptied, route_changed) and calls body_update; T_STEP step_click; T_THEME theme_toggle; T_AREAS toggles the "areas" section (rendering it when shown) and calls body_update; T_AREAS_X hides it; T_AREA_GO calls view_bounds and area_start with the "area-name" value, the bounds and 0; T_AREA_STOP area_stop; T_AREA_LIST area_click; T_ONLINE removes the body class "offline", calls retry_failed and want_frames, and toasts "Back online."; T_OFFLINE adds it and toasts "You are offline. Saved areas still work.". Timer events: T_LONG on_long, T_RETRY retry_failed and want_frames, T_Q_TIMER search_go(q_text, search_target), T_S_RETRY sets search_wait to false and calls `search_send()` only when search_wait was true (a newer search clears it), T_TOAST removes the class "on" of "status". JS events: T_CACHE_OPEN cache_opened, T_ADDALL batch_done, T_EST est_done. Callback events: T_GEO geo_ok, T_GEOERR geo_err. After every event it calls `ui_after`.
+
+`export fn he_frame(t f64)` calls view's `frame(t)`.

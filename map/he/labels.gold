@@ -1,0 +1,40 @@
+use amnimap
+into labels.amni
+lang amni
+
+Module header: the lines "import math;", "import style;", "import mvt;", "import raster;" and "import glyphs;". No namespace. The Helium has no blank lines and no comments anywhere. This module places map labels over the visible tiles without overlaps and draws them, with the route line and point markers, into one straight-alpha RGBA overlay image the size of the map view in device pixels. It runs on the page's main thread after the map stops moving, so it must stay fast for a few thousand candidates.
+
+```amni
+struct Cand { pri i32, font i32, size f32, color u32, dark u32, dot u32, line bool, x f32, y f32, ang f32, t0 int, t1 int, ord int }
+struct Box { x0 f32, y0 f32, x1 f32, y1 f32 }
+var cands Cand[>..] = [];
+var ctext byte[>..] = [];
+var boxes Box[>..] = [];
+var grid_cells i32[>..] = [];
+var grid_next i32[>..] = [];
+var lab_missing i32[>..] = [];
+var lines_done Box[>..] = [];
+var lines_hash u64[>..] = [];
+var ov_w int = 0;
+var ov_h int = 0;
+var ov_dpr real = 1.0;
+var ov_zoom real = 0.0;
+var ov_dark bool = false;
+var ov_pts f32[>..] = [];
+var acc_ov Acc = Acc {};
+let CELL int = 72;
+```
+
+A Cand is a label candidate already in overlay pixels: its anchor (x, y) is where the text's center goes (for point labels with a dot, the dot's center), ang is the text rotation in radians, t0 to t1 is its text in `ctext`, ord is the order it was added. `boxes` are the placed collision boxes; the collision grid has one cell per 72 by 72 pixels, `grid_cells` holds the first box index of each cell's chain (-1 for none) and `grid_next` the next box of the same cell for each chain entry, with the chain entries stored as pairs in a module list of box index and next entry. `lab_missing` collects font times 256 plus range for glyph ranges a label needed that are not loaded yet. `lines_done` and `lines_hash` remember where line labels were placed and a hash of their text, to avoid repeating the same road name close by.
+
+`lab_begin(w, h, dpr, zoom, dark)` starts a new overlay of w by h device pixels for a view zoom, clearing `cands`, `ctext`, `lab_missing`, `lines_done` and `lines_hash`, storing the five values in the ov_ variables.
+
+`lab_add_tile(t, sx, sy, size, tile_scale)` adds the label candidates of tile t, whose top left corner is at overlay pixel (sx, sy) and which spans size overlay pixels. For every Lab of t whose minz is at most `ov_zoom` and whose maxz is above it: a point label (line false) uses the first point of its first ring and is skipped unless that point lies in the tile (x and y at least 0 and below 1), so labels repeated in neighbouring tiles' buffers appear once; its anchor is (sx plus x times size, sy plus y times size), angle 0, and it is skipped when the anchor is more than 70 pixels outside the overlay. A line label uses its first ring mapped the same way and calls `line_anchor` for it; when that gives no place the label is skipped. Once `cands` holds 40000 candidates every further label is skipped. The candidate copies the Lab's style fields, appends the label's text bytes to `ctext`, and is pushed with the next ord. tile_scale is unused.
+
+`line_anchor(n)` looks at the first n points of the module f32 list `ov_pts` (pairs of overlay pixels) and the width wpx in pixels the text needs (a module real `need_w` set by the caller) and returns true after setting the module reals `la_x`, `la_y`, `la_ang` when the text fits: the total length L of the polyline must be at least need_w plus 24; the point at distance L divided by 2 along the line is the center; the points at distances L divided by 2 minus need_w divided by 2 and plus need_w divided by 2 are the ends of the chord, which must be at least 0.85 times need_w long; the angle is the chord's direction, turned by pi when its cosine is negative so text is never upside down; the center must lie within the overlay grown by 17 pixels. Otherwise it returns false. For a line label `lab_add_tile` first computes need_w with `text_layout` of the label's text (font from the label, max_em 0) when `text_ready` is true for it, as lay_w times the label's size divided by 24 times `ov_dpr`; when the text is not ready the candidate is still pushed with anchor (-1000, -1000) so `lab_draw` notes its missing glyphs, and nothing else is done for it.
+
+`grid_hit(b)` is true when box b overlaps any placed box in the cells it touches (cells outside the grid are clamped to it), and `grid_put(b)` appends b to `boxes` and links it into every cell it touches. `grid_reset()` makes `grid_cells` the right size for the overlay ((ov_w plus 71) divided by 72 times (ov_h plus 71) divided by 72 entries) all -1 and clears the boxes and chain entries.
+
+`lab_draw(img, route_n)` resizes img to ov_w times ov_h times 4 zero bytes (when img is shorter than that, it is first replaced by a new empty list, because a growable list can never grow past the memory region it got when it first grew), draws the route when route_n is above 1, then places and draws labels and returns the number placed. The route is the first route_n points of `ov_pts` (overlay pixels), stroked open with round caps and no dash using `acc_ov` (prepared with `acc_init` for the overlay size) and the Xf with ox 0, oy 0, sc 1, bx 0, by 0: first a casing 9 times `ov_dpr` wide in 0x1a4fa0 (0x0b2f6a when dark) with alpha 1, composited with over true, then a line 6 times `ov_dpr` wide in 0x3b8cff (0x5aa0ff when dark) with alpha 1, composited with over true. Then `grid_reset`, and the candidates are sorted by pri ascending, ties by ord ascending (sort an index list, do not move the Cands). For each candidate in that order, stopping after 700 placed: when `text_ready` is false for its font and text, every range `text_missing` reports for it is pushed onto `lab_missing` (once each, and only while lab_missing has fewer than 32 entries) and the candidate is skipped. Otherwise lay out its text with `text_layout` (max_em 0 for line labels, 8 for point labels); the scale is its size divided by 24 times `ov_dpr`; the half width hw is lay_w times scale divided by 2 plus 2 times ov_dpr and the half height hh is lay_h times scale divided by 2 plus 2 times ov_dpr. A point label with a dot draws the dot of radius 3.5 times ov_dpr at the anchor and puts the text center 4 times ov_dpr plus lay_h times scale divided by 2 below it, and its box covers both the dot and the text. A line label's box is the axis-aligned bounds of its rotated text rectangle; a line label is also skipped when a line label with the same text hash (FNV-1a 64 of the text bytes) was already placed with its center within 270 times ov_dpr pixels. A candidate whose box hits a placed box, or whose box is not entirely inside the overlay, is skipped. Placed candidates are `grid_put`, then drawn: the dot with `fill_circle` in the dot color with a 1.5 times ov_dpr rim of 0xffffff (0x1c2026 when dark); the text with `draw_layout` at the text center with the scale, the cosine and sine of its angle, its color (the dark color when ov_dark), halo color 0xffffff (0x1c2026 when dark) and halo width 1.5 times ov_dpr.
+
+`marker(img, x, y, color)` draws a location marker into the overlay image at (x, y): a disc of radius 7 times ov_dpr in color with a 2.5 times ov_dpr rim of 0xffffff, using `fill_circle`.

@@ -1,0 +1,117 @@
+use std
+into style.amni
+lang amni
+
+Module header: the single line "import math;". No namespace. The Helium has no blank lines and no comments anywhere, and keeps statements short and dense. This module is the map look of Amni-Map on the web: which OpenMapTiles features get drawn, in what order, colors for the light and the dark look, line widths by zoom, and how labels are chosen.
+
+```amni
+let L_WATER i32 = 0;
+let L_WATERWAY i32 = 1;
+let L_LANDCOVER i32 = 2;
+let L_LANDUSE i32 = 3;
+let L_PARK i32 = 4;
+let L_BOUNDARY i32 = 5;
+let L_AEROWAY i32 = 7;
+let L_TRANSPORTATION i32 = 8;
+let L_BUILDING i32 = 9;
+let L_WATER_NAME i32 = 10;
+let L_TRANSPORTATION_NAME i32 = 11;
+let L_PLACE i32 = 12;
+let L_HOUSENUMBER i32 = 13;
+let L_POI i32 = 14;
+let L_MOUNTAIN_PEAK i32 = 15;
+let L_AERODROME_LABEL i32 = 17;
+let G_POINT i32 = 1;
+let G_LINE i32 = 2;
+let G_POLY i32 = 3;
+let GEOM_FILL i32 = 1;
+let GEOM_LINE i32 = 2;
+let GEOM_EDGE i32 = 3;
+let F_REGULAR i32 = 0;
+let F_BOLD i32 = 1;
+let F_ITALIC i32 = 2;
+struct Row { name byte[..24], layer byte[..24], geom byte[..8], classes byte[..64], brunnel byte[..8], ramp byte[..4], amin i32, amax i32, minz f32, maxz f32, color u32, dark u32, alpha f32, za f32, wa f32, zb f32, wb f32, zc f32, wc f32, base f32, dash f32, gap f32 }
+struct Rule { layer i32, geom i32, classes u64, brunnel i32, ramp i32, amin i32, amax i32, minz f32, maxz f32, color u32, dark u32, alpha f32, za f32, wa f32, zb f32, wb f32, zc f32, wc f32, base f32, dash f32, gap f32 }
+struct Attrs { cls i32 = -1, cls_s const byte[:] = "", sub_s const byte[:] = "", brunnel i32 = 0, ramp bool = false, admin i32 = 0, maritime bool = false, rank i32 = 0, capital i32 = 0, ele_ft int = -1, name const byte[:] = "", name_latin const byte[:] = "", name_en const byte[:] = "", hn const byte[:] = "", ref const byte[:] = "" }
+struct LabelStyle { ok bool = false, pri i32 = 0, minz f32 = 0.0, maxz f32 = 24.0, font i32 = 0, size f32 = 12.0, color u32 = 0, dark u32 = 0, dot u32 = 0, line bool = false }
+var rules Rule[>..] = [];
+```
+
+```table rows Row
+residential|landuse|fill|residential|any|any|0|99|0|24|0xe9dfd4|0x262b33|0.55|0|0|0|0|0|0|1|0|0
+park|park|fill|any|any|any|0|99|0|24|0xd8e8c8|0x213a2b|0.7|0|0|0|0|0|0|1|0|0
+wood|landcover|fill|wood|any|any|0|99|0|24|0xace38c|0x2f5a3a|0.28|0|0|0|0|0|0|1|0|0
+grass|landcover|fill|grass|any|any|0|99|0|24|0xb0d59a|0x2f4c37|0.3|0|0|0|0|0|0|1|0|0
+wetland|landcover|fill|wetland|any|any|0|99|12|24|0xc9e0d4|0x22383a|0.6|0|0|0|0|0|0|1|0|0
+ice|landcover|fill|ice|any|any|0|99|0|24|0xe0ecec|0x2a3338|0.8|0|0|0|0|0|0|1|0|0
+sand|landcover|fill|sand|any|any|0|99|0|24|0xf7efc3|0x302d24|1|0|0|0|0|0|0|1|0|0
+cemetery|landuse|fill|cemetery|any|any|0|99|0|24|0xd8e0bd|0x2a362c|1|0|0|0|0|0|0|1|0|0
+hospital|landuse|fill|hospital|any|any|0|99|0|24|0xffddee|0x3a2a33|1|0|0|0|0|0|0|1|0|0
+school|landuse|fill|school university college kindergarten|any|any|0|99|0|24|0xeceecc|0x30302a|1|0|0|0|0|0|0|1|0|0
+pitch|landuse|fill|pitch track|any|any|0|99|0|24|0xdee3cd|0x2a3229|1|0|0|0|0|0|0|1|0|0
+aeroway_fill|aeroway|fill|any|any|any|0|99|11|24|0xe5e4e0|0x2b2f36|0.7|0|0|0|0|0|0|1|0|0
+river|waterway|line|river|surface|any|0|99|0|24|0xa0c8f0|0x1d4566|1|11|0.5|20|6|20|6|1.2|0|0
+stream|waterway|line|canal stream ditch drain|surface|any|0|99|0|24|0xa0c8f0|0x1d4566|1|13|0.5|20|6|20|6|1.3|0|0
+water|water|fill|any|any|any|0|99|0|24|0x9ebdff|0x12304a|1|0|0|0|0|0|0|1|0|0
+runway|aeroway|line|runway|any|any|0|99|11|24|0xf0ede9|0x3a3f47|1|11|3|20|16|20|16|1.2|0|0
+taxiway|aeroway|line|taxiway|any|any|0|99|11|24|0xf0ede9|0x3a3f47|1|11|0.5|20|6|20|6|1.2|0|0
+building|building|fill|any|any|any|0|99|13|24|0xdcd9d6|0x2b3038|1|0|0|0|0|0|0|1|0|0
+building_edge|building|edge|any|any|any|0|99|14|24|0xcbc5be|0x363c45|1|14|0.5|20|1|20|1|1|0|0
+c_service|transportation|line|service track|surface|any|0|99|15|24|0xcfcdca|0x2a2f36|1|15|1|16|4|20|11|1.2|0|0
+c_minor|transportation|line|minor|surface|no|0|99|12|24|0xcfcdca|0x2a2f36|1|12|0.5|14|4|20|20|1.2|0|0
+c_link|transportation|line|trunk primary secondary tertiary|surface|yes|0|99|13|24|0xe9ac77|0x4a3a28|1|12|1|14|4|20|15|1.2|0|0
+c_mlink|transportation|line|motorway|surface|yes|0|99|12|24|0xe9ac77|0x5a4228|1|12|1|14|4|20|15|1.2|0|0
+c_sectert|transportation|line|secondary tertiary|surface|no|0|99|8|24|0xe9ac77|0x403428|1|8|1.5|20|17|20|17|1.2|0|0
+c_trunkprim|transportation|line|trunk primary|surface|no|0|99|5|24|0xe9ac77|0x4a3a28|1|5|0.4|7|1.75|20|22|1.2|0|0
+c_motorway|transportation|line|motorway|surface|no|0|99|5|24|0xe9ac77|0x5a4228|1|5|0.4|7|1.75|20|22|1.2|0|0
+path|transportation|line|path|surface|any|0|99|14|24|0xd2c4b0|0x5e584e|1|14|1|20|10|20|10|1.2|1|0.7
+f_service|transportation|line|service track|surface|any|0|99|15.5|24|0xffffff|0x3a4048|1|15.5|0|16|2|20|7.5|1.2|0|0
+f_minor|transportation|line|minor|surface|no|0|99|13.5|24|0xffffff|0x3c424b|1|13.5|0|14|2.5|20|18|1.2|0|0
+f_link|transportation|line|trunk primary secondary tertiary|surface|yes|0|99|13|24|0xffeeaa|0x5c5442|1|12.5|0|14|2.5|20|11.5|1.2|0|0
+f_mlink|transportation|line|motorway|surface|yes|0|99|12|24|0xffcc88|0x8a6234|1|12.5|0|14|2.5|20|11.5|1.2|0|0
+f_sectert|transportation|line|secondary tertiary|surface|no|0|99|7|24|0xffeeaa|0x5a5446|1|7|0.3|8|0.5|20|13|1.2|0|0
+f_trunkprim|transportation|line|trunk primary|surface|no|0|99|5|24|0xffeeaa|0x6e6450|1|5|0|7|1|20|18|1.2|0|0
+f_motorway|transportation|line|motorway|surface|no|0|99|5|24|0xffcc88|0xa0743f|1|5|0|7|1|20|18|1.2|0|0
+rail|transportation|line|rail transit|any|any|0|99|13|24|0xbbbbbb|0x59606a|1|14|0.4|15|0.75|20|2|1.4|0|0
+rail_hatch|transportation|line|rail transit|any|any|0|99|14.5|24|0xbbbbbb|0x59606a|1|14.5|0|15|3|20|8|1.4|0.2|8
+b_c_minor|transportation|line|minor service track|bridge|any|0|99|13|24|0xcfcdca|0x2a2f36|1|12|0.5|14|4|20|20|1.2|0|0
+b_c_sectert|transportation|line|secondary tertiary|bridge|any|0|99|8|24|0xe9ac77|0x403428|1|8|1.5|20|17|20|17|1.2|0|0
+b_c_trunkprim|transportation|line|trunk primary|bridge|any|0|99|5|24|0xe9ac77|0x4a3a28|1|5|0.4|7|1.75|20|22|1.2|0|0
+b_c_motorway|transportation|line|motorway|bridge|any|0|99|5|24|0xe9ac77|0x5a4228|1|5|0.4|7|1.75|20|22|1.2|0|0
+b_f_minor|transportation|line|minor service track|bridge|any|0|99|13.5|24|0xffffff|0x3c424b|1|13.5|0|14|2.5|20|18|1.2|0|0
+b_f_sectert|transportation|line|secondary tertiary|bridge|any|0|99|7|24|0xffeeaa|0x5a5446|1|7|0.3|8|0.5|20|13|1.2|0|0
+b_f_trunkprim|transportation|line|trunk primary|bridge|any|0|99|5|24|0xffeeaa|0x6e6450|1|5|0|7|1|20|18|1.2|0|0
+b_f_motorway|transportation|line|motorway|bridge|any|0|99|5|24|0xffcc88|0xa0743f|1|5|0|7|1|20|18|1.2|0|0
+state_line|boundary|line|any|any|any|3|4|5|24|0xb3b3b3|0x4f5560|1|7|1|11|2|11|2|1|1|1
+country_line|boundary|line|any|any|any|2|2|0|24|0x68686a|0x8a909a|1|3|1|5|1.2|12|3|1|0|0
+```
+
+`CLASS_NAMES` is the module constant list of class names whose position is the class id: "wood", "grass", "wetland", "sand", "ice", "farmland", "rock", "residential", "pitch", "track", "cemetery", "hospital", "school", "university", "college", "kindergarten", "river", "canal", "stream", "ditch", "drain", "motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service", "path", "rail", "transit", "raceway", "busway", "pier", "ferry", "runway" and "taxiway".
+
+`class_id(name)` gives the position of the name in `CLASS_NAMES`, or -1 when it is not there.
+
+`layer_id(name)` maps an OpenMapTiles layer name to its L_ constant ("water", "waterway", "landcover", "landuse", "park", "boundary", "aeroway", "transportation", "building", "water_name", "transportation_name", "place", "housenumber", "poi", "mountain_peak", "aerodrome_label"), or -1 for any other name.
+
+`style_init()` fills the module list `rules` from `rows` once (it does nothing when `rules` is already filled). For each row: layer is `layer_id` of the row's layer; geom is GEOM_FILL for "fill", GEOM_LINE for "line" and GEOM_EDGE for "edge"; classes is a bit mask with bit `class_id` set for every space-separated name in the row's classes (the word "any" gives 0, meaning any class); brunnel is 0 for "any", 1 for "surface" and 2 for "bridge"; ramp is 0 for "any", 1 for "no" and 2 for "yes"; amin and amax are copied. Every number field is copied as it is.
+
+`rule_matches(r, layer, gtype, a)` says whether a feature of that layer and geometry type with those attributes is drawn by rule r: the layer must equal; a GEOM_FILL or GEOM_EDGE rule takes only G_POLY features and a GEOM_LINE rule takes only G_LINE features; when classes is not 0 the feature's class id must be 0 or more and its bit must be set; brunnel 1 refuses features whose brunnel is 1 (a bridge) and brunnel 2 takes only features whose brunnel is 1; ramp 1 refuses ramps and ramp 2 takes only ramps; on the boundary layer the feature's admin level must be within amin and amax and maritime features are refused.
+
+`feature_mask(layer, gtype, a)` is the 64 bit mask with bit i set for every rule i in `rules` that `rule_matches` the feature.
+
+`rule_width(r, z)` is the line width in CSS pixels at zoom z from the three stops (za, wa), (zb, wb), (zc, wc): below za it is wa, above zc it is wc, and between two neighbouring stops it interpolates with base `base` the way MapLibre's exponential interpolation does: with d the stop gap and p the zoom past the lower stop, the fraction is p divided by d when base is 1, otherwise base to the power p minus 1, divided by base to the power d minus 1. When za equals zb it skips straight to the second gap. The result is never below 0.
+
+`rule_color(r, dark)` is the rule's dark color when dark is true, else its light color.
+
+`label_text(layer, a, out)` appends the text a label shows to out: for the housenumber layer the house number; otherwise the latin name when it is not empty, else the name, else the English name; for the transportation_name layer, when all three are empty, the ref. For the mountain_peak layer, when ele_ft is 0 or more, a newline and the elevation with thousands separators and " ft" follow the name (so "Mount Hood", newline, "11,249 ft").
+
+`poi_dot(cls)` is the dot color for a POI class string: 0xe07b3a for restaurant, fast_food, cafe, bar, pub, ice_cream, bakery, beer and food; 0x9b59c7 for shop, grocery, supermarket, clothing_store, convenience, mall, alcohol_shop, department_store and jewelry; 0xd9534f for hospital, pharmacy, doctors, dentist, clinic and veterinary; 0x9c7a4a for school, college, university, library, kindergarten and museum; 0x3b7dd8 for bus, railway, airport, ferry_terminal, fuel, parking, bicycle_rental, car, aerialway and harbor; 0x4a9e5c for park, playground, garden, sports, pitch, zoo, campsite, golf, swimming, stadium and attraction; 0x8a5cc7 for lodging; 0x777777 for place_of_worship; 0x8a8f99 for anything else.
+
+`label_style(layer, gtype, a)` picks how a feature is labelled, as a LabelStyle whose ok is false when it is not labelled. Colors given as one value apply to both looks unless a dark value is named; the default color is 0x333333 with dark 0xe6e8eb, and fonts default to F_REGULAR. Rules by layer, using the class string cls_s and rank (a rank of 0 counts as 10):
+- place: "continent" minz 0 maxz 2 size 14 bold pri 0; "country" bold pri 10 plus rank, size 15 when rank is 2 or less else 13, minz 1 for rank 1, 2 for rank 2, 3 otherwise, maxz 9, color 0x334455 dark 0xd8dde4; "state" and "province" pri 30 plus rank, minz 5, maxz 10, size 12, color 0x667788 dark 0xa9b2bd; "city" pri 20 plus rank (pri minus 1 when capital is 2), size 16 when rank is 3 or less else 14, minz 3 for rank 3 or less, 5 for rank up to 7, 7 for rank up to 9, else 8, maxz 15; "town" pri 40 plus rank, size 13, minz 7, maxz 17; "village" pri 50 plus rank, size 12, minz 9, maxz 18; "suburb" and "quarter" pri 60 plus rank, size 12, minz 11, maxz 18, color 0x555555 dark 0xc5cad1; "neighbourhood" pri 65, size 11, minz 13, maxz 19, color 0x666666 dark 0xb2b8c0; "hamlet", "isolated_dwelling" and "locality" pri 70, size 11, minz 12, maxz 19; "island" italic pri 55, size 12, minz 9; any other class is not labelled.
+- water_name: italic with color 0x495e91 dark 0x8fb4d8; "ocean" pri 5 size 14 minz 0 maxz 8; "sea", "bay" and "strait" pri 35 size 12 minz 3 maxz 14; anything else pri 45 size 12 minz 9.
+- transportation_name: line true, color 0x555555 dark 0xc8ccd2; "motorway" and "trunk" pri 100 size 12 minz 13; "primary" pri 101 size 12 minz 13; "secondary" and "tertiary" pri 103 size 12 minz 13; "minor" and "service" pri 110 size 11 minz 15; "path" and "track" pri 120 size 11 minz 16; anything else is not labelled.
+- poi: pri 200 plus rank, size 11, color 0x666666 dark 0xb8bcc4, dot `poi_dot(cls_s)`, minz 15 when rank is 7 or less, 16 when it is 20 or less, else 17.
+- housenumber: pri 400, size 10, minz 17, color 0x888888 dark 0x9aa0a8.
+- mountain_peak: pri 150 plus rank, size 11, minz 12, color 0x725a3a dark 0xc9b08a, dot 0x8a6a44.
+- aerodrome_label: pri 140, size 11, minz 10, color 0x555555 dark 0xc5cad1, dot 0x3b7dd8.
+- every other layer is not labelled.

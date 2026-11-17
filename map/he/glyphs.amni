@@ -1,0 +1,380 @@
+import math;
+struct G { w i32, h i32, left i32, top i32, adv i32, off int }
+struct U8 { cp i32, n int }
+struct LG { g i32, x f32, y f32 }
+var gl_list G[>..] = [];
+var gl_bits byte[>..] = [];
+var gl_map i32[>..] = [];
+var gl_base i32[>..] = [];
+var gl_state byte[>..] = [];
+var lay LG[>..] = [];
+var lay_w f32 = 0.0;
+var lay_h f32 = 0.0;
+fn gl_init() {
+	if gl_state.len == 768 { return; }
+	gl_state.clear();
+	gl_base.clear();
+	for i in 768 {
+		gl_state.push(0);
+		gl_base.push(-1);
+	}
+	gl_bits.resize(16777216, 0);
+	gl_bits.clear();
+}
+fn gl_get_state(font int, range int) int {
+	gl_init();
+	if font < 0 || font > 2 || range < 0 || range > 255 { return 3; }
+	gl_state[font * 256 + range] as int
+}
+fn gl_set_state(font int, range int, s int) {
+	gl_init();
+	if font < 0 || font > 2 || range < 0 || range > 255 { return; }
+	gl_state[font * 256 + range] = s as! byte;
+}
+fn gl_varint(b const byte[:], p int&, end int) int {
+	var v = 0;
+	var sh = 0;
+	while p < end {
+		let c = b[p] as int;
+		p += 1;
+		if sh < 63 { v = v | ((c & 127) << sh); }
+		sh += 7;
+		if c < 128 { break; }
+	}
+	v
+}
+fn gl_skip(b const byte[:], p int&, end int, wire int) {
+	if wire == 0 {
+		gl_varint(b, p, end);
+	} else if wire == 1 {
+		p += 8;
+	} else if wire == 2 {
+		let n = gl_varint(b, p, end);
+		if n < 0 || n > end - p { p = end; } else { p += n; }
+	} else if wire == 5 {
+		p += 4;
+	} else {
+		p = end;
+	}
+	if p > end { p = end; }
+}
+fn gl_zz(z int) int { (z >> 1) ^ -(z & 1) }
+fn gl_load(font int, range int, b const byte[:]) {
+	gl_init();
+	var p = 0;
+	let end = b.len;
+	while p < end {
+		let tag = gl_varint(b, p, end);
+		let f = tag >> 3;
+		let w = tag & 7;
+		if f == 1 && w == 2 {
+			let n = gl_varint(b, p, end);
+			let fe = if n < 0 || n > end - p { end } else { p + n };
+			while p < fe {
+				let t2 = gl_varint(b, p, fe);
+				let f2 = t2 >> 3;
+				let w2 = t2 & 7;
+				if f2 == 3 && w2 == 2 {
+					let m = gl_varint(b, p, fe);
+					let ge = if m < 0 || m > fe - p { fe } else { p + m };
+					var id = -1;
+					var gw = 0;
+					var gh = 0;
+					var gleft = 0;
+					var gtop = 0;
+					var gadv = 0;
+					var bs = 0;
+					var be = 0;
+					var q = p;
+					while q < ge {
+						let t3 = gl_varint(b, q, ge);
+						let f3 = t3 >> 3;
+						let w3 = t3 & 7;
+						if f3 == 1 && w3 == 0 {
+							id = gl_varint(b, q, ge);
+						} else if f3 == 2 && w3 == 2 {
+							let n2 = gl_varint(b, q, ge);
+							let e2 = if n2 < 0 || n2 > ge - q { ge } else { q + n2 };
+							bs = q;
+							be = e2;
+							q = e2;
+						} else if f3 == 3 && w3 == 0 {
+							gw = gl_varint(b, q, ge);
+						} else if f3 == 4 && w3 == 0 {
+							gh = gl_varint(b, q, ge);
+						} else if f3 == 5 && w3 == 0 {
+							gleft = gl_zz(gl_varint(b, q, ge));
+						} else if f3 == 6 && w3 == 0 {
+							gtop = gl_zz(gl_varint(b, q, ge));
+						} else if f3 == 7 && w3 == 0 {
+							gadv = gl_varint(b, q, ge);
+						} else {
+							gl_skip(b, q, ge, w3);
+						}
+					}
+					if id >= 0 && id < 65536 {
+						let need = (gw + 6) * (gh + 6);
+						let ok = gw > 0 && gh > 0 && gw < 100000 && gh < 100000 && be - bs >= need;
+						let off = gl_bits.len;
+						var sw = 0;
+						var sh = 0;
+						if ok {
+							sw = gw;
+							sh = gh;
+							gl_bits.append(b[bs..bs + need]);
+						}
+						let idx = gl_list.len;
+						gl_list.push(G { w: sw as! i32, h: sh as! i32, left: gleft as! i32, top: gtop as! i32, adv: gadv as! i32, off: off });
+						let ri = font * 256 + (id >> 8);
+						if gl_base[ri] < 0 {
+							gl_base[ri] = gl_map.len as! i32;
+							for k in 256 { gl_map.push(-1); }
+						}
+						gl_map[(gl_base[ri] as int) + (id & 255)] = idx as! i32;
+					}
+					p = ge;
+				} else {
+					gl_skip(b, p, fe, w2);
+				}
+			}
+			p = fe;
+		} else {
+			gl_skip(b, p, end, w);
+		}
+	}
+	let rr = font * 256 + range;
+	if gl_base[rr] < 0 {
+		gl_base[rr] = gl_map.len as! i32;
+		for k in 256 { gl_map.push(-1); }
+	}
+	gl_state[rr] = 2;
+}
+fn utf8_at(s const byte[:], i int) U8 {
+	let c = s[i] as int;
+	if c < 128 { return U8 { cp: c as! i32, n: 1 }; }
+	var need = 0;
+	var cp = 0;
+	var lo = 0;
+	if c >= 194 && c <= 223 {
+		need = 1;
+		cp = c & 31;
+		lo = 128;
+	} else if (c >> 4) == 14 {
+		need = 2;
+		cp = c & 15;
+		lo = 2048;
+	} else if (c >> 3) == 30 {
+		need = 3;
+		cp = c & 7;
+		lo = 65536;
+	} else {
+		return U8 { cp: 65533, n: 1 };
+	}
+	if i + need >= s.len + 0 && i + need > s.len - 1 { return U8 { cp: 65533, n: 1 }; }
+	for k in need {
+		let cc = s[i + 1 + k] as int;
+		if (cc >> 6) != 2 { return U8 { cp: 65533, n: 1 }; }
+		cp = (cp << 6) | (cc & 63);
+	}
+	if cp < lo || cp > 1114111 || (cp >= 55296 && cp <= 57343) { return U8 { cp: 65533, n: 1 }; }
+	U8 { cp: cp as! i32, n: need + 1 }
+}
+fn glyph_of(font int, cp int) int {
+	if cp < 0 || cp >= 65536 || font < 0 || font > 2 { return -1; }
+	gl_init();
+	let base = gl_base[font * 256 + (cp >> 8)] as int;
+	if base < 0 { return -1; }
+	gl_map[base + (cp & 255)] as int
+}
+fn text_missing(font int, s const byte[:]) int {
+	var i = 0;
+	while i < s.len {
+		let u = utf8_at(s, i);
+		let cp = u.cp as int;
+		i += u.n;
+		if cp == 10 { continue; }
+		let r = cp >> 8;
+		if gl_get_state(font, r) == 0 { return r; }
+	}
+	return -1;
+}
+fn text_ready(font int, s const byte[:]) bool {
+	var i = 0;
+	while i < s.len {
+		let u = utf8_at(s, i);
+		let cp = u.cp as int;
+		i += u.n;
+		if cp == 10 { continue; }
+		let st = gl_get_state(font, cp >> 8);
+		if st != 2 && st != 3 { return false; }
+	}
+	return true;
+}
+fn text_layout(font int, s const byte[:], max_em real) int {
+	lay.clear();
+	var nl = 0;
+	var lw = 0.0;
+	var maxw = 0.0;
+	var ls = 0;
+	var used = false;
+	fn adv_of(cp int) real {
+		let g = glyph_of(font, cp);
+		if g >= 0 { gl_list[g].adv as real } else if cp == 32 { 7.0 } else { 0.0 }
+	}
+	fn place(cp int) {
+		let g = glyph_of(font, cp);
+		if g >= 0 {
+			let gg = gl_list[g];
+			if gg.w > 0 {
+				lay.push(LG { g: g as! i32, x: (lw + (gg.left as real) - 3.0) as f32, y: nl as f32 });
+			}
+			lw += gg.adv as real;
+		} else if cp == 32 {
+			lw += 7.0;
+		}
+	}
+	fn finish_line() {
+		for q in ls..lay.len {
+			lay[q].x -= (lw / 2.0) as f32;
+		}
+		maxw = max(maxw, lw);
+		nl += 1;
+		lw = 0.0;
+		ls = lay.len;
+		used = false;
+	}
+	var i = 0;
+	while i < s.len {
+		let u = utf8_at(s, i);
+		let cp = u.cp as int;
+		if cp == 10 {
+			finish_line();
+			i += u.n;
+			continue;
+		}
+		if cp == 32 {
+			place(cp);
+			used = true;
+			i += u.n;
+			continue;
+		}
+		var j = i;
+		var ww = 0.0;
+		while j < s.len {
+			let v = utf8_at(s, j);
+			let c2 = v.cp as int;
+			if c2 == 32 || c2 == 10 { break; }
+			ww += adv_of(c2);
+			j += v.n;
+		}
+		if max_em > 0.0 && used && lw + ww > max_em * 24.0 { finish_line(); }
+		var k = i;
+		while k < j {
+			let v = utf8_at(s, k);
+			place(v.cp as int);
+			k += v.n;
+		}
+		used = true;
+		i = j;
+	}
+	finish_line();
+	for &e in lay {
+		let line = e.y as int;
+		let g = gl_list[e.g as int];
+		let base = ((line as real) - ((nl - 1) as real) / 2.0) * 28.8 + 9.0;
+		e.y = (base - ((g.top as real) + 26.0) - 3.0) as f32;
+	}
+	lay_w = maxw as f32;
+	lay_h = ((nl as real) * 28.8) as f32;
+	lay.len
+}
+fn px_over(img byte[:], o int, color int, cov real) {
+	let oa = (img[o + 3] as real) / 255.0;
+	let ra = cov + oa * (1.0 - cov);
+	if ra <= 0.0 { return; }
+	for c in 3 {
+		let sc = ((color >> (16 - 8 * c)) & 255) as real;
+		let old = img[o + c] as real;
+		let res = (sc * cov + old * oa * (1.0 - cov)) / ra;
+		img[o + c] = clamp(round(res), 0.0, 255.0) as! byte;
+	}
+	img[o + 3] = clamp(round(ra * 255.0), 0.0, 255.0) as! byte;
+}
+fn glyph_pass(img byte[:], iw int, ih int, cx real, cy real, scale real, cs real, sn real, color int, grow real) {
+	for e in lay {
+		let g = gl_list[e.g as int];
+		let bw = (g.w as int) + 6;
+		let bh = (g.h as int) + 6;
+		let ex = e.x as real;
+		let ey = e.y as real;
+		var minx = 1.0e30;
+		var maxx = -1.0e30;
+		var miny = 1.0e30;
+		var maxy = -1.0e30;
+		for c in 4 {
+			let px = ex + (if c % 2 == 1 { bw as real } else { 0.0 });
+			let py = ey + (if c >= 2 { bh as real } else { 0.0 });
+			let X = cx + (px * cs - py * sn) * scale;
+			let Y = cy + (px * sn + py * cs) * scale;
+			minx = min(minx, X);
+			maxx = max(maxx, X);
+			miny = min(miny, Y);
+			maxy = max(maxy, Y);
+		}
+		let x0 = max(floor(minx) as int, 0);
+		let x1 = min(ceil(maxx) as int, iw - 1);
+		let y0 = max(floor(miny) as int, 0);
+		let y1 = min(ceil(maxy) as int, ih - 1);
+		for y in y0..y1 + 1 {
+			for x in x0..x1 + 1 {
+				let dx = ((x as real) + 0.5 - cx) / scale;
+				let dy = ((y as real) + 0.5 - cy) / scale;
+				let px = dx * cs + dy * sn;
+				let py = -dx * sn + dy * cs;
+				let u = px - ex;
+				let v = py - ey;
+				if u < 0.0 || v < 0.0 || u > (bw - 1) as real || v > (bh - 1) as real { continue; }
+				let ux = floor(u) as int;
+				let vy = floor(v) as int;
+				let fx = u - (ux as real);
+				let fy = v - (vy as real);
+				let ux1 = min(ux + 1, bw - 1);
+				let vy1 = min(vy + 1, bh - 1);
+				let b00 = gl_bits[g.off + vy * bw + ux] as real;
+				let b10 = gl_bits[g.off + vy * bw + ux1] as real;
+				let b01 = gl_bits[g.off + vy1 * bw + ux] as real;
+				let b11 = gl_bits[g.off + vy1 * bw + ux1] as real;
+				let d = lerp(lerp(b00, b10, fx), lerp(b01, b11, fx), fy);
+				let dist = (d - 192.0) / 32.0 * scale;
+				let cov = clamp(dist + grow + 0.5, 0.0, 1.0);
+				if cov < 1.0 / 255.0 { continue; }
+				px_over(img, (y * iw + x) * 4, color, cov);
+			}
+		}
+	}
+}
+fn draw_layout(img byte[:], iw int, ih int, cx real, cy real, scale real, cs real, sn real, color int, halo int, halo_px real) {
+	if halo_px > 0.0 {
+		glyph_pass(img, iw, ih, cx, cy, scale, cs, sn, halo, halo_px);
+	}
+	glyph_pass(img, iw, ih, cx, cy, scale, cs, sn, color, 0.0);
+}
+fn fill_circle(img byte[:], iw int, ih int, cx real, cy real, r real, color int, edge int, edge_px real) {
+	let x0 = max(floor(cx - r - 1.0) as int, 0);
+	let x1 = min(ceil(cx + r + 1.0) as int, iw - 1);
+	let y0 = max(floor(cy - r - 1.0) as int, 0);
+	let y1 = min(ceil(cy + r + 1.0) as int, ih - 1);
+	for y in y0..y1 + 1 {
+		for x in x0..x1 + 1 {
+			let dx = (x as real) + 0.5 - cx;
+			let dy = (y as real) + 0.5 - cy;
+			let dist = sqrt(dx * dx + dy * dy);
+			if dist > r + 1.0 { continue; }
+			let o = (y * iw + x) * 4;
+			let cov = clamp(r - dist + 0.5, 0.0, 1.0);
+			if cov > 0.0 { px_over(img, o, edge, cov); }
+			let inner = clamp(r - edge_px - dist + 0.5, 0.0, 1.0);
+			if inner > 0.0 { px_over(img, o, color, inner); }
+		}
+	}
+}

@@ -1,0 +1,272 @@
+import math;
+import style;
+import mvt;
+import raster;
+import glyphs;
+struct Cand { pri i32, font i32, size f32, color u32, dark u32, dot u32, line bool, x f32, y f32, ang f32, t0 int, t1 int, ord int }
+struct Box { x0 f32, y0 f32, x1 f32, y1 f32 }
+var cands Cand[>..] = [];
+var ctext byte[>..] = [];
+var boxes Box[>..] = [];
+var grid_cells i32[>..] = [];
+var grid_next i32[>..] = [];
+var lab_missing i32[>..] = [];
+var lines_done Box[>..] = [];
+var lines_hash u64[>..] = [];
+var ov_w int = 0;
+var ov_h int = 0;
+var ov_dpr real = 1.0;
+var ov_zoom real = 0.0;
+var ov_dark bool = false;
+var ov_pts f32[>..] = [];
+var acc_ov Acc = Acc {};
+let CELL int = 72;
+fn lab_begin(w int, h int, dpr real, zoom real, dark bool) {
+	cands.clear();
+	ctext.clear();
+	lab_missing.clear();
+	lines_done.clear();
+	lines_hash.clear();
+	ov_w = w;
+	ov_h = h;
+	ov_dpr = dpr;
+	ov_zoom = zoom;
+	ov_dark = dark;
+}
+fn lab_add_tile(t Tile&, sx real, sy real, size real, tile_scale real) {
+	for &l in t.labs {
+		if cands.len >= 40000 { continue; }
+		if l.minz > ov_zoom || l.maxz <= ov_zoom { continue; }
+		let ri = l.r0 as int;
+		let rs = t.rings[2 * ri] as int;
+		let rc = t.rings[2 * ri + 1] as int;
+		if rc < 1 { continue; }
+		let px = t.pts[2 * rs] as real;
+		let py = t.pts[2 * rs + 1] as real;
+		var c = Cand { pri: l.pri, font: l.font, size: l.size, color: l.color, dark: l.dark, dot: l.dot, line: l.line, x: 0.0, y: 0.0, ang: 0.0, t0: ctext.len, t1: 0, ord: cands.len };
+		if !l.line {
+			if px < 0.0 || px >= 1.0 || py < 0.0 || py >= 1.0 { continue; }
+			let ax = sx + px * size;
+			let ay = sy + py * size;
+			if ax < -70.0 || ay < -70.0 || ax > (ov_w as real) + 70.0 || ay > (ov_h as real) + 70.0 { continue; }
+			c.x = ax as f32;
+			c.y = ay as f32;
+		} else {
+			ov_pts.clear();
+			for i in rc {
+				ov_pts.push((sx + (t.pts[2 * (rs + i)] as real) * size) as f32);
+				ov_pts.push((sy + (t.pts[2 * (rs + i) + 1] as real) * size) as f32);
+			}
+			let text = t.text[l.t0..l.t1];
+			if text_ready(l.font, text) {
+				text_layout(l.font, text, 0.0);
+				need_w = lay_w * (l.size as real) / 24.0 * ov_dpr;
+				if !line_anchor(rc) { continue; }
+				c.x = la_x as f32;
+				c.y = la_y as f32;
+				c.ang = la_ang as f32;
+			} else {
+				c.x = -1000.0;
+				c.y = -1000.0;
+			}
+		}
+		ctext.append(t.text[l.t0..l.t1]);
+		c.t1 = ctext.len;
+		cands.push(c);
+	}
+}
+var need_w real = 0.0;
+var la_x real = 0.0;
+var la_y real = 0.0;
+var la_ang real = 0.0;
+fn line_anchor(n int) bool {
+	if n < 2 { return false; }
+	var total = 0.0;
+	for i in n - 1 {
+		let dx = (ov_pts[2 * (i + 1)] - ov_pts[2 * i]) as real;
+		let dy = (ov_pts[2 * (i + 1) + 1] - ov_pts[2 * i + 1]) as real;
+		total += sqrt(dx * dx + dy * dy);
+	}
+	if total < need_w + 24.0 { return false; }
+	fn at(d real) real, real {
+		var acc = 0.0;
+		for i in n - 1 {
+			let x0 = ov_pts[2 * i] as real;
+			let y0 = ov_pts[2 * i + 1] as real;
+			let dx = (ov_pts[2 * (i + 1)] as real) - x0;
+			let dy = (ov_pts[2 * (i + 1) + 1] as real) - y0;
+			let len = sqrt(dx * dx + dy * dy);
+			if len > 0.0 && acc + len >= d {
+				let f = (d - acc) / len;
+				return x0 + dx * f, y0 + dy * f;
+			}
+			acc += len;
+		}
+		return ov_pts[2 * (n - 1)] as real, ov_pts[2 * (n - 1) + 1] as real;
+	}
+	let half = total / 2.0;
+	let ax, ay = at(half - need_w / 2.0);
+	let bx, by = at(half + need_w / 2.0);
+	let cx, cy = at(half);
+	let dx = bx - ax;
+	let dy = by - ay;
+	let clen = sqrt(dx * dx + dy * dy);
+	if clen < 0.85 * need_w { return false; }
+	var ang = atan2(dy, dx);
+	if cos(ang) < 0.0 { ang += PI; }
+	if cx < -17.0 || cy < -17.0 || cx > (ov_w as real) + 17.0 || cy > (ov_h as real) + 17.0 { return false; }
+	la_x = cx;
+	la_y = cy;
+	la_ang = ang;
+	return true;
+}
+fn cell_range(b Box) int, int, int, int {
+	let gw = (ov_w + CELL - 1) / CELL;
+	let gh = (ov_h + CELL - 1) / CELL;
+	let cx0 = clamp((b.x0 as int) / CELL, 0, gw - 1);
+	let cx1 = clamp((b.x1 as int) / CELL, 0, gw - 1);
+	let cy0 = clamp((b.y0 as int) / CELL, 0, gh - 1);
+	let cy1 = clamp((b.y1 as int) / CELL, 0, gh - 1);
+	return cx0, cx1, cy0, cy1;
+}
+fn grid_hit(b Box) bool {
+	let gw = (ov_w + CELL - 1) / CELL;
+	let gh = (ov_h + CELL - 1) / CELL;
+	if gw <= 0 || gh <= 0 { return false; }
+	let cx0, cx1, cy0, cy1 = cell_range(b);
+	for cy in cy0..cy1 + 1 {
+		for cx in cx0..cx1 + 1 {
+			var e = grid_cells[cy * gw + cx] as int;
+			while e >= 0 {
+				let o = boxes[grid_next[2 * e] as int];
+				if b.x0 < o.x1 && o.x0 < b.x1 && b.y0 < o.y1 && o.y0 < b.y1 { return true; }
+				e = grid_next[2 * e + 1] as int;
+			}
+		}
+	}
+	return false;
+}
+fn grid_put(b Box) {
+	let gw = (ov_w + CELL - 1) / CELL;
+	let gh = (ov_h + CELL - 1) / CELL;
+	let bi = boxes.len;
+	boxes.push(b);
+	if gw <= 0 || gh <= 0 { return; }
+	let cx0, cx1, cy0, cy1 = cell_range(b);
+	for cy in cy0..cy1 + 1 {
+		for cx in cx0..cx1 + 1 {
+			let idx = cy * gw + cx;
+			let e = grid_next.len / 2;
+			grid_next.push(bi as i32);
+			grid_next.push(grid_cells[idx]);
+			grid_cells[idx] = e as i32;
+		}
+	}
+}
+fn grid_reset() {
+	let gw = (ov_w + CELL - 1) / CELL;
+	let gh = (ov_h + CELL - 1) / CELL;
+	grid_cells.clear();
+	grid_cells.resize(max(gw * gh, 0), -1);
+	boxes.clear();
+	grid_next.clear();
+}
+var order int[>..] = [];
+fn lab_draw(img byte[>..]&, route_n int) int {
+	if img.len < ov_w * ov_h * 4 { img = []; }
+	img.clear();
+	img.resize(ov_w * ov_h * 4, 0);
+	if route_n > 1 {
+		acc_init(acc_ov, ov_w, ov_h);
+		let xf = Xf { ox: 0.0, oy: 0.0, sc: 1.0, bx: 0.0, by: 0.0 };
+		stroke_ring(acc_ov, ov_pts, 0, route_n, xf, (9.0 * ov_dpr) as f32, false, 0.0, 0.0, true);
+		composite(acc_ov, img, if ov_dark { 0x0b2f6a } else { 0x1a4fa0 }, 1.0, true);
+		stroke_ring(acc_ov, ov_pts, 0, route_n, xf, (6.0 * ov_dpr) as f32, false, 0.0, 0.0, true);
+		composite(acc_ov, img, if ov_dark { 0x5aa0ff } else { 0x3b8cff }, 1.0, true);
+	}
+	grid_reset();
+	order.clear();
+	for i in cands.len { order.push(i); }
+	sort(order) { a, b => cands[a].pri < cands[b].pri || (cands[a].pri == cands[b].pri && cands[a].ord < cands[b].ord) };
+	var placed = 0;
+	for k in order {
+		if placed >= 700 { break; }
+		let c = cands[k];
+		let text = ctext[c.t0..c.t1];
+		if !text_ready(c.font as int, text) {
+			let m = text_missing(c.font as int, text);
+			if m >= 0 {
+				let key = ((c.font as int) * 256 + m) as i32;
+				if lab_missing.len < 32 && !contains(lab_missing, key) { lab_missing.push(key); }
+			}
+			continue;
+		}
+		text_layout(c.font as int, text, if c.line { 0.0 } else { 8.0 });
+		let scale = (c.size as real) / 24.0 * ov_dpr;
+		let tw = lay_w * scale;
+		let th = lay_h * scale;
+		let hw = tw / 2.0 + 2.0 * ov_dpr;
+		let hh = th / 2.0 + 2.0 * ov_dpr;
+		let ang = c.ang as real;
+		let cs = cos(ang);
+		let sn = sin(ang);
+		let ax = c.x as real;
+		let ay = c.y as real;
+		var cx = ax;
+		var cy = ay;
+		var x0 = 0.0;
+		var y0 = 0.0;
+		var x1 = 0.0;
+		var y1 = 0.0;
+		let has_dot = !c.line && c.dot != 0;
+		var h u64 = 14695981039346656037;
+		if c.line {
+			let ex = abs(cs) * hw + abs(sn) * hh;
+			let ey = abs(sn) * hw + abs(cs) * hh;
+			x0 = cx - ex;
+			x1 = cx + ex;
+			y0 = cy - ey;
+			y1 = cy + ey;
+			for ch in text { h = (h ^ (ch as u64)) * 1099511628211; }
+			var dup = false;
+			let lim = 270.0 * ov_dpr;
+			for i in lines_hash.len {
+				if lines_hash[i] == h {
+					let dx = (lines_done[i].x0 as real) - cx;
+					let dy = (lines_done[i].y0 as real) - cy;
+					if dx * dx + dy * dy < lim * lim { dup = true; break; }
+				}
+			}
+			if dup { continue; }
+		} else if has_dot {
+			cy = ay + 4.0 * ov_dpr + th / 2.0;
+			let dr = 3.5 * ov_dpr;
+			x0 = cx - max(hw, dr);
+			x1 = cx + max(hw, dr);
+			y0 = min(ay - dr, cy - hh);
+			y1 = max(ay + dr, cy + hh);
+		} else {
+			x0 = cx - hw;
+			x1 = cx + hw;
+			y0 = cy - hh;
+			y1 = cy + hh;
+		}
+		if x0 < 0.0 || y0 < 0.0 || x1 > (ov_w as real) || y1 > (ov_h as real) { continue; }
+		let b = Box { x0: x0 as f32, y0: y0 as f32, x1: x1 as f32, y1: y1 as f32 };
+		if grid_hit(b) { continue; }
+		grid_put(b);
+		if c.line {
+			lines_hash.push(h);
+			lines_done.push(Box { x0: cx as f32, y0: cy as f32, x1: cx as f32, y1: cy as f32 });
+		}
+		if has_dot {
+			fill_circle(img, ov_w, ov_h, ax, ay, 3.5 * ov_dpr, c.dot as int, if ov_dark { 0x1c2026 } else { 0xffffff }, 1.5 * ov_dpr);
+		}
+		draw_layout(img, ov_w, ov_h, cx, cy, scale, cs, sn, if ov_dark { c.dark as int } else { c.color as int }, if ov_dark { 0x1c2026 } else { 0xffffff }, 1.5 * ov_dpr);
+		placed += 1;
+	}
+	return placed;
+}
+fn marker(img byte[:], x real, y real, color int) {
+	fill_circle(img, ov_w, ov_h, x, y, 7.0 * ov_dpr, color, 0xffffff, 2.5 * ov_dpr);
+}
