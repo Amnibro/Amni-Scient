@@ -1,0 +1,40 @@
+# gold sync: rebuild Amni-CAD's Helium modules with the newest Helium, repair what the new compiler rejects, and
+# commit the result to the helium-sync branch only when the tests below pass. Deploying the site stays manual.
+gold cad/he/*.gold
+build cad/he/cfd_lbm.amni cad/he/cfd_lbm.wasm --web
+build cad/he/fea_grid.amni cad/he/fea_grid.wasm --web
+build cad/he/fea_mesh.amni cad/he/fea_mesh.wasm --web
+build cad/he/flow_lbm.amni cad/he/flow_lbm.wasm --web
+build cad/he/flow_oct.amni cad/he/flow_oct.wasm --web
+build cad/he/flow_plate.amni cad/he/flow_plate.wasm --web
+build cad/he/form_sdf.amni cad/he/form_sdf.wasm --web
+build cad/he/human_cad.amni cad/he/human_cad.wasm --web
+build cad/he/lob.amni cad/he/lob.wasm --web
+build cad/he/mesh_hex.amni cad/he/mesh_hex.wasm --web
+build cad/he/mesh_surf.amni cad/he/mesh_surf.wasm --web
+build cad/he/mold_prep.amni cad/he/mold_prep.wasm --web
+build cad/he/mold_sky.amni cad/he/mold_sky.wasm --web
+build cad/he/nl_sky.amni cad/he/nl_sky.wasm --web
+build cad/he/nl_tool.amni cad/he/nl_tool.wasm --web
+build cad/he/report.amni cad/he/report.wasm --web
+build cad/he/sculpt.amni cad/he/sculpt.wasm --web
+# cfd_lbm, flow_lbm
+test cd cad && node tests/cfd_test.mjs
+# fea_grid, lob
+test cd cad && node tests/fea_test.mjs
+# fea_mesh
+test cd cad && node tests/fea_bc_test.mjs
+# flow_plate, mold_prep, mold_sky
+test cd cad && node tests/flow_gaps_test.mjs
+# flow_oct
+test cd cad && ONLY=bore,long node tests/flow_oct_test.mjs
+# form_sdf
+test cd cad && node tests/form_test.mjs
+# human_cad
+test cd cad && node tests/human_he_test.mjs
+# mesh_hex, mesh_surf
+test cd cad && node tests/tooling_test.mjs
+# sculpt
+test cd cad && node tests/sculpt_test.mjs
+# nl_sky, nl_tool (the seal case also checks wall time, which depends on the machine)
+test cd cad && node tests/nl_test.mjs --quick --only=hyper,patch,j2,hertz,oring,hill,formAxi,formPlane,section
