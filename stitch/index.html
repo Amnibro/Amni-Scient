@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Amni-Stitch</title>
-<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a 3D fit view and AI outfit samples you can trace into a pattern.">
+<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a 3D fit view, and tracing from your own garment photos.">
 <meta property="og:title" content="Amni-Stitch: sewing patterns drafted to your size">
-<meta property="og:description" content="Enter your measurements, pick a garment, print a pattern that fits. Or describe an outfit, generate a sample and trace it into a pattern.">
+<meta property="og:description" content="Enter your measurements, pick a garment, print a pattern that fits. Or trace a photo of a garment into a pattern piece.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amni-scient.com/stitch/">
 <link rel="canonical" href="https://amni-scient.com/stitch/">
@@ -116,7 +116,7 @@ button.pri:disabled{opacity:.55;cursor:progress}
   <nav><a href="#how" id="how-link">How to measure</a><a href="/privacy-stitch.html">Privacy</a><a href="/">Amni-Scient</a></nav>
 </header>
 <noscript><p class="loading">Amni-Stitch needs JavaScript and WebAssembly.</p></noscript>
-<main id="app" class="app" data-acct="https://account.amni-scient.com" data-gate="https://amni-stitch.amnibro7.workers.dev" data-pro="https://amni-stitch-pro.amnibro7.workers.dev">
+<main id="app" class="app" data-acct="https://account.amni-scient.com" data-gate="" data-pro="">
   <div class="side">
     <section class="card" aria-labelledby="h-meas">
       <h2 id="h-meas"><b>1</b>Your measurements</h2>
@@ -177,13 +177,16 @@ button.pri:disabled{opacity:.55;cursor:progress}
   </section>
 
   <aside class="ai card" aria-labelledby="h-ai">
-    <h2 id="h-ai"><b>3</b>AI outfit sample</h2>
+    <h2 id="h-ai"><b>3</b><span id="h-ai-t">AI outfit sample</span></h2>
+    <p id="trace-note" class="note hidden">Have a photo of a garment laid flat? Trace its outline into a pattern piece at your size, or turn its fabric into a tile for the 3D model.</p>
+    <div id="gen-box">
     <p class="note">Describe a garment. Amni-Gen (MOSS-Image) draws a sample of it; trace the sample and it becomes a pattern at your size.</p>
     <label for="prompt" class="note">Describe it</label>
     <textarea id="prompt" maxlength="400" placeholder="A linen summer dress with puff sleeves and a square neckline, sage green"></textarea>
     <label class="f">Picture <select id="style"><option value="flat">Flat lay</option><option value="form">On a dress form</option></select></label>
     <div class="actions"><button id="gen" class="pri">Generate sample</button><span id="quota"></span></div>
     <p id="gen-status" role="status" aria-live="polite"></p>
+    </div>
     <div id="shot" class="hidden">
       <div class="shot-box"><img id="shot-img" alt="Generated outfit sample"><div id="shot-ov"></div></div>
       <div class="actions" style="margin-top:8px"><button id="trace" class="pri">Trace into a pattern</button><button id="dl-img">Save picture</button><button id="fab-use" disabled>Use as fabric</button></div>
@@ -197,17 +200,18 @@ button.pri:disabled{opacity:.55;cursor:progress}
     </div>
     <div class="actions"><button id="upload">Trace your own photo</button></div>
     <p id="trace-msg" role="status" aria-live="polite"></p>
-    <div class="sub">
+    <div class="sub" id="sub-box">
       <h3>More samples</h3>
       <p id="sub-status" class="note"></p>
       <div class="actions"><button id="buy" class="pri">Subscribe, $9 a month</button><button id="billing" class="hidden">Manage billing</button><button id="key-forget" class="hidden">Remove key</button></div>
       <div id="key-box"><input type="text" id="key" placeholder="Paste a key: AMNIPRO1…" aria-label="Subscription key" spellcheck="false" autocomplete="off"><button id="key-save">Save</button></div>
     </div>
-    <p class="fine">Samples are for clothing only. Every picture is checked on our PC before it is shown; pictures with nudity are blocked and never shown, and we keep a record of the blocked picture with the requesting IP address. Repeated blocked requests ban the IP. See the <a href="/privacy-stitch.html">privacy notice</a> and <a href="/terms.html">terms</a>.</p>
+    <p class="fine" id="gen-fine">Samples are for clothing only. Every picture is checked on our PC before it is shown; pictures with nudity are blocked and never shown, and we keep a record of the blocked picture with the requesting IP address. Repeated blocked requests ban the IP. See the <a href="/privacy-stitch.html">privacy notice</a> and <a href="/terms.html">terms</a>.</p>
   </aside>
 </main>
 <div id="print"></div>
 <script>
+document.getElementById('app').dataset.units = /-(US|LR|MM)$/i.test(navigator.language || '') ? '1' : '0';
 window.stitchHost = (() => {
   const dl = (url, name) => { const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
   const load = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('bad image')); i.src = src; })

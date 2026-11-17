@@ -29,6 +29,7 @@ let T_ACCT_ME: i32 = 120; let T_ACCT_LIST: i32 = 121; let T_ACCT_SAVE: i32 = 122
 
 var GATE byte[>..];
 var PRO byte[>..];
+var PIC byte[>..];
 var ACCT byte[>..];
 var ACCT_IDS byte[>..][>..];
 var ACCT_NAMES byte[>..][>..];
@@ -194,7 +195,7 @@ fn rebuild() {
 		offset_all();
 	}
 	if PIECES.len == 0 {
-		web::html(el("pattern"), "<p class=\"empty\">Generate or upload a picture of a garment, then press <b>Trace into a pattern</b>. The traced outline becomes a pattern at your size.</p>");
+		web::html(el("pattern"), str(str("<p class=\"empty\">", PIC[..])[..], " a picture of a garment, then press <b>Trace into a pattern</b>. The traced outline becomes a pattern at your size.</p>")[..]);
 		web::html(el("guide"), "");
 		show_rows();
 		return;
@@ -483,7 +484,7 @@ export fn he_event(tag i32, kind i32) {
 			}
 		},
 		30 => {
-			if SHOT.len == 0 { set_text("trace-msg", "Generate or upload a picture first."); return; }
+			if SHOT.len == 0 { set_text("trace-msg", str(PIC[..], " a picture first.")[..]); return; }
 			set_text("trace-msg", "Tracing…");
 			load_pixels(320, T_PIXELS);
 		},
@@ -558,7 +559,7 @@ export fn he_event(tag i32, kind i32) {
 		},
 		52 => { DRAG = false; },
 		53 => { V_YAW = 0.0; view_draw(); }, 54 => { V_YAW = PI * 0.5; view_draw(); }, 55 => { V_YAW = PI; view_draw(); },
-		80 => { if SHOT.len == 0 { set_text("fab-msg", "Generate or upload a picture first."); return; } set_text("fab-msg", "Reading the picture…"); load_pixels(1024, T_FAB_PIXELS); },
+		80 => { if SHOT.len == 0 { set_text("fab-msg", str(PIC[..], " a picture first.")[..]); return; } set_text("fab-msg", "Reading the picture…"); load_pixels(1024, T_FAB_PIXELS); },
 		81 => fabric_build(),
 		82 => { if TEX_OK { save_url("-fabric.png", FAB_URL[..]); } },
 		83 => { view_fabric_on(web::get_bool(el("fab-on"), "checked")); if TAB == 1 { view_draw(); } },
@@ -583,6 +584,7 @@ fn main() {
 	while ACCT.len > 0 && ACCT[ACCT.len - 1] == '/' { let _c = ACCT.pop(); }
 	while GATE.len > 0 && GATE[GATE.len - 1] == '/' { let _c = GATE.pop(); }
 	while PRO.len > 0 && PRO[PRO.len - 1] == '/' { let _c = PRO.pop(); }
+	let gen = GATE.len > 0; if gen { PIC.append("Generate or upload"); } else { PIC.append("Upload"); } show("gen-box", gen); show("gen-fine", gen); show("trace-note", !gen); show("sub-box", gen && PRO.len > 0); if !gen { set_text("h-ai-t", "Trace a picture"); }
 	HOST = web::js_global("stitchHost");
 	// device id: a random-looking id kept in this browser (the server counts by IP as well)
 	if !web::store_get("amni.stitch.dev", DEVICE) || DEVICE.len < 8 {
@@ -594,7 +596,7 @@ fn main() {
 	let _k = web::store_get("amni.stitch.key", KEY);
 	fill_select("preset", PRESET_NAMES[..], PRESET);
 	fill_select("garment", G_NAMES[..], O.garment);
-	if !load_state() { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } }
+	if !load_state() { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } var u byte[>..] = []; if web::get_attr(app, "data-units", u) && u.len > 0 && u[0] == '1' { UNITS = 1; } }
 	set_value("preset", str(PRESET)[..]);
 	set_value("units", str(UNITS)[..]);
 	set_value("scale", str(SCALE_PCT as int)[..]); show_scale();
