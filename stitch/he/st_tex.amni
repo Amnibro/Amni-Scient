@@ -1,0 +1,787 @@
+import math;
+import base64;
+import gfx.codec_png;
+import st_geom;
+import st_body;
+import st_draft;
+import st_svg;
+import st_guide;
+import st_trace;
+let TN: int = 512;
+var TX real[>..];
+var TILE byte[>..];
+var LUMA real[>..];
+var ENG real[>..];
+var ERO byte[>..];
+var TWC real[>..];
+var TWS real[>..];
+var TEX_OK = false;
+var TEX_MSG byte[>..];
+var TEX_X0 = 0; var TEX_Y0 = 0; var TEX_SW = 0;
+var TEX_CX = 0; var TEX_CY = 0; var TEX_CW = 0; var TEX_CH = 0;
+var TEX_PX = 0.0; var TEX_PY = 0.0;
+var TEX_CMPX = 0.0; var TEX_CM = 15.0; var TEX_AR = 1.0; var TEX_DX = 0; var TEX_DY = 0; var TEX_QX = 0.0; var TEX_QY = 0.0; var INTG real[>..];
+var TEX_WRAP = 0.0; var TEX_INNER = 0.0; var TEX_RAWWRAP = 0.0; var TEX_LF0 = 0.0; var TEX_LF1 = 0.0;
+fn blur_at(line real[:], i int, odd bool) real {
+	let n = line.len;
+	if i < 0 {
+		if odd { return 2.0 * line[0] - line[min(-i, n - 1)]; }
+		return line[0];
+	}
+	if i > n - 1 {
+		if odd { return 2.0 * line[n - 1] - line[max(n - 1 - (i - (n - 1)), 0)]; }
+		return line[n - 1];
+	}
+	return line[i];
+}
+fn box_blur(a real[:], w int, h int, rx int, ry int, odd bool) {
+	if rx > 0 {
+		var row real[>..] = [];
+		for y in h {
+			row.clear();
+			for x in w { row.push(a[y * w + x]); }
+			var s = 0.0;
+			for k in -rx..rx + 1 { s += blur_at(row, k, odd); }
+			for x in w {
+				a[y * w + x] = s / (2 * rx + 1);
+				s += blur_at(row, x + rx + 1, odd) - blur_at(row, x - rx, odd);
+			}
+		}
+	}
+	if ry > 0 {
+		var col real[>..] = [];
+		for x in w {
+			col.clear();
+			for y in h { col.push(a[y * w + x]); }
+			var s = 0.0;
+			for k in -ry..ry + 1 { s += blur_at(col, k, odd); }
+			for y in h {
+				a[y * w + x] = s / (2 * ry + 1);
+				s += blur_at(col, y + ry + 1, odd) - blur_at(col, y - ry, odd);
+			}
+		}
+	}
+}
+fn tex_luma() {
+	let n = IW * IH;
+	LUMA.clear();
+	for i in n {
+		LUMA.push(0.299 * SMR[i] + 0.587 * SMG[i] + 0.114 * SMB[i]);
+	}
+}
+fn tex_energy() {
+	tex_luma();
+	let w = IW;
+	let h = IH;
+	ENG.clear();
+	for y in h {
+		for x in w {
+			let xl = max(x - 1, 0);
+			let xr = min(x + 1, w - 1);
+			let yt = max(y - 1, 0);
+			let yb = min(y + 1, h - 1);
+			var gx = 0.0;
+			var gy = 0.0;
+			for dy in -1..2 {
+				let yy = clamp(y + dy, 0, h - 1);
+				let wt = if dy == 0 { 2.0 } else { 1.0 };
+				gx += wt * (LUMA[yy * w + xr] - LUMA[yy * w + xl]);
+			}
+			for dx in -1..2 {
+				let xx = clamp(x + dx, 0, w - 1);
+				let wt = if dx == 0 { 2.0 } else { 1.0 };
+				gy += wt * (LUMA[yb * w + xx] - LUMA[yt * w + xx]);
+			}
+			ENG.push(sqrt(gx * gx + gy * gy));
+		}
+	}
+	let r = max(3, min(w, h) / 80);
+	box_blur(ENG, w, h, r, r, false);
+}
+fn tex_eroded() {
+	let w = IW;
+	let h = IH;
+	let er = max(2, min(w, h) / 34);
+	var tmp byte[>..] = [];
+	tmp.resize(w * h, 0);
+	ERO.clear();
+	ERO.resize(w * h, 0);
+	var pre int[>..] = [];
+	for y in h {
+		pre.clear();
+		pre.push(0);
+		var s = 0;
+		for x in w {
+			if MASK[y * w + x] != 1 { s += 1; }
+			pre.push(s);
+		}
+		for x in w {
+			if x - er >= 0 && x + er < w && pre[x + er + 1] - pre[x - er] == 0 { tmp[y * w + x] = 1; }
+		}
+	}
+	for x in w {
+		pre.clear();
+		pre.push(0);
+		var s = 0;
+		for y in h {
+			if tmp[y * w + x] != 1 { s += 1; }
+			pre.push(s);
+		}
+		for y in h {
+			if y - er >= 0 && y + er < h && pre[y + er + 1] - pre[y - er] == 0 { ERO[y * w + x] = 1; }
+		}
+	}
+}
+fn tex_square(mult real) int, int, int {
+	let w = IW;
+	let h = IH;
+	var sum = 0.0;
+	var cnt = 0;
+	for i in w * h {
+		if ERO[i] == 1 {
+			sum += ENG[i];
+			cnt += 1;
+		}
+	}
+	if cnt == 0 { return 0, 0, 0; }
+	let thr = mult * (sum / cnt);
+	var prev int[>..] = [];
+	var cur int[>..] = [];
+	prev.resize(w, 0);
+	cur.resize(w, 0);
+	var best = 0;
+	var bx = 0;
+	var by = 0;
+	for y in h {
+		for x in w {
+			var v = 0;
+			let i = y * w + x;
+			if ERO[i] == 1 && ENG[i] <= thr {
+				let up = if y > 0 { prev[x] } else { 0 };
+				let left = if x > 0 { cur[x - 1] } else { 0 };
+				let diag = if x > 0 && y > 0 { prev[x - 1] } else { 0 };
+				v = 1 + min(min(up, left), diag);
+			}
+			cur[x] = v;
+			if v > best {
+				best = v;
+				bx = x;
+				by = y;
+			}
+		}
+		for x in w { prev[x] = cur[x]; }
+	}
+	if best == 0 { return 0, 0, 0; }
+	return bx - best + 1, by - best + 1, best;
+}
+fn tex_pick() bool {
+	tex_energy();
+	tex_eroded();
+	let n = IW * IH;
+	var cnt = 0;
+	for i in n {
+		if MASK[i] == 1 { cnt += 1; }
+	}
+	let target = sqrt(cnt as real) / 4.0;
+	var bs = 0;
+	var bx = 0;
+	var by = 0;
+	for m in [1.5, 2.2, 3.2, 4.7] {
+		let x, y, s = tex_square(m);
+		if s > bs {
+			bs = s;
+			bx = x;
+			by = y;
+		}
+		if s >= target { break; }
+	}
+	TEX_X0 = bx;
+	TEX_Y0 = by;
+	TEX_SW = bs;
+	return bs >= 16;
+}
+fn tex_period(p real[:]) real {
+	let n = p.len;
+	var mean = 0.0;
+	for x in p { mean += x; }
+	mean /= n;
+	var q real[>..] = [];
+	var v = 0.0;
+	for x in p {
+		let d = x - mean;
+		q.push(d);
+		v += d * d;
+	}
+	v /= n;
+	if v == 0.0 { return 0.0; }
+	let kmax = 7 * n / 10;
+	var r real[>..] = [];
+	r.resize(kmax + 2, 0.0);
+	for k in 1..kmax + 1 {
+		var s = 0.0;
+		for j in n - k { s += q[j] * q[j + k]; }
+		r[k] = s / ((n - k) * v);
+	}
+	var k0 = -1;
+	for k in 1..kmax + 1 {
+		if r[k] < 0.0 {
+			k0 = k;
+			break;
+		}
+	}
+	if k0 < 0 { return 0.0; }
+	var peaks int[>..] = [];
+	var top = 0.0;
+	var has = false;
+	for k in (k0 + 1)..kmax {
+		if r[k] >= r[k - 1] && r[k] >= r[k + 1] {
+			peaks.push(k);
+			if !has || r[k] > top {
+				top = r[k];
+				has = true;
+			}
+		}
+	}
+	if !has || top < 0.45 { return 0.0; }
+	var pk = 0;
+	for k in peaks {
+		if r[k] >= 0.85 * top {
+			pk = k;
+			break;
+		}
+	}
+	let den = r[pk - 1] - 2.0 * r[pk] + r[pk + 1];
+	if den == 0.0 { return pk as real; }
+	return pk + 0.5 * (r[pk - 1] - r[pk + 1]) / den;
+}
+fn tex_snap_len(p real[:], s int) int, real {
+	let q = tex_period(p);
+	if q >= 3.0 {
+		let m = max(1.0, floor(s / q));
+		return min(s, round(m * q) as int), q;
+	}
+	return s, 0.0;
+}
+fn tex_snap() {
+	let w = IW;
+	var colp real[>..] = [];
+	var rowp real[>..] = [];
+	for i in TEX_SW {
+		var sc = 0.0;
+		var sr = 0.0;
+		for k in TEX_SW {
+			sc += LUMA[(TEX_Y0 + k) * w + TEX_X0 + i];
+			sr += LUMA[(TEX_Y0 + i) * w + TEX_X0 + k];
+		}
+		colp.push(sc / TEX_SW);
+		rowp.push(sr / TEX_SW);
+	}
+	let cw, pxp = tex_snap_len(colp, TEX_SW);
+	let ch, pyp = tex_snap_len(rowp, TEX_SW);
+	TEX_CW = cw;
+	TEX_CH = ch;
+	TEX_CX = TEX_X0 + (TEX_SW - cw) / 2;
+	TEX_CY = TEX_Y0 + (TEX_SW - ch) / 2;
+	TEX_QX = pxp;
+	TEX_QY = pyp;
+	TEX_PX = if pxp > 0.0 { pxp * TN / cw } else { 0.0 };
+	TEX_PY = if pyp > 0.0 { pyp * TN / ch } else { 0.0 };
+	TEX_AR = (TEX_CH as real) / TEX_CW;
+}
+fn tex_integral() {
+	let w = IW + 1;
+	INTG.clear();
+	INTG.resize((IW + 1) * (IH + 1), 0.0);
+	for y in IH {
+		for x in IW {
+			INTG[(y + 1) * w + x + 1] = LUMA[y * IW + x] + INTG[y * w + x + 1] + INTG[(y + 1) * w + x] - INTG[y * w + x];
+		}
+	}
+}
+fn tex_box_mean(x int, y int, w int, h int) real {
+	let x0 = max(x, 0);
+	let y0 = max(y, 0);
+	let x1 = min(x + w, IW);
+	let y1 = min(y + h, IH);
+	if x1 <= x0 || y1 <= y0 { return 1.0; }
+	let s = IW + 1;
+	let sum = INTG[y1 * s + x1] - INTG[y0 * s + x1] - INTG[y1 * s + x0] + INTG[y0 * s + x0];
+	return sum / ((x1 - x0) * (y1 - y0));
+}
+fn tex_strip_cost(x int, y int, len int, across bool, period int, shift int) real {
+	if len <= 0 { return 0.0; }
+	let q = if across { max(1, round(TEX_QX) as int) } else { max(1, round(TEX_QY) as int) };
+	var m0 = 0.0;
+	var m1 = 0.0;
+	if across {
+		m0 = tex_box_mean(x, y, q, len);
+		m1 = tex_box_mean(x + period, y + shift, q, len);
+	} else {
+		m0 = tex_box_mean(x, y, len, q);
+		m1 = tex_box_mean(x + shift, y + period, len, q);
+	}
+	let g = if m1 == 0.0 { 1.0 } else { m0 / m1 };
+	var sum = 0.0;
+	for k in 4 {
+		for i in len {
+			var ax = 0;
+			var ay = 0;
+			var bx = 0;
+			var by = 0;
+			if across {
+				ax = x + k;
+				ay = y + i;
+				bx = x + period + k;
+				by = y + i + shift;
+			} else {
+				ax = x + i;
+				ay = y + k;
+				bx = x + i + shift;
+				by = y + period + k;
+			}
+			let pa = (clamp(ay, 0, IH - 1) * IW + clamp(ax, 0, IW - 1)) * 4;
+			let pb = (clamp(by, 0, IH - 1) * IW + clamp(bx, 0, IW - 1)) * 4;
+			for c in 3 {
+				let d = (IMG[pa + c] as real) - g * (IMG[pb + c] as real);
+				sum += d * d;
+			}
+		}
+	}
+	return sum / (4 * len * 3);
+}
+fn tex_refine_h() {
+	if TEX_QX == 0.0 { return; }
+	let per = TEX_QX;
+	let m0 = max(1, floor(TEX_SW / per) as int);
+	let mlo = max(1, m0 - 1);
+	var found = false;
+	var best = 0.0;
+	var bx = 0;
+	var bw = 0;
+	var bm = 1;
+	for mi in m0 - mlo + 1 {
+		let m = m0 - mi;
+		let c = round(m * per) as int;
+		let e = max(3, round(0.02 * c) as int);
+		for w in c - e..c + e + 1 {
+			if w > TEX_SW || w < 8 { continue; }
+			for x in TEX_X0..TEX_X0 + TEX_SW - w + 1 {
+				let score = tex_strip_cost(x, TEX_CY, TEX_CH, true, w, TEX_DY) * (1.0 + 0.04 * (m0 - m));
+				if !found || score < best {
+					found = true;
+					best = score;
+					bx = x;
+					bw = w;
+					bm = m;
+				}
+			}
+		}
+	}
+	if found {
+		TEX_CX = bx;
+		TEX_CW = bw;
+		TEX_PX = (TN as real) / bm;
+	}
+}
+fn tex_refine_v() {
+	if TEX_QY == 0.0 { return; }
+	let per = TEX_QY;
+	let m0 = max(1, floor(TEX_SW / per) as int);
+	let mlo = max(1, m0 - 1);
+	var found = false;
+	var best = 0.0;
+	var by = 0;
+	var bh = 0;
+	var bm = 1;
+	for mi in m0 - mlo + 1 {
+		let m = m0 - mi;
+		let c = round(m * per) as int;
+		let e = max(3, round(0.02 * c) as int);
+		for h in c - e..c + e + 1 {
+			if h > TEX_SW || h < 8 { continue; }
+			for y in TEX_Y0..TEX_Y0 + TEX_SW - h + 1 {
+				let score = tex_strip_cost(TEX_CX, y, TEX_CW, false, h, TEX_DX) * (1.0 + 0.15 * (m0 - m));
+				if !found || score < best {
+					found = true;
+					best = score;
+					by = y;
+					bh = h;
+					bm = m;
+				}
+			}
+		}
+	}
+	if found {
+		TEX_CY = by;
+		TEX_CH = bh;
+		TEX_PY = (TN as real) / bm;
+	}
+}
+fn tex_refine_shear() {
+	if TEX_QX > 0.0 {
+		var best = 0.0;
+		var bd = 0;
+		for i in 9 {
+			let d = if i % 2 == 1 { (i + 1) / 2 } else { -(i / 2) };
+			let c = tex_strip_cost(TEX_CX, TEX_CY, TEX_CH, true, TEX_CW, d);
+			if i == 0 || c < best {
+				best = c;
+				bd = d;
+			}
+		}
+		TEX_DY = bd;
+	}
+	if TEX_QY > 0.0 {
+		var best = 0.0;
+		var bd = 0;
+		for i in 9 {
+			let d = if i % 2 == 1 { (i + 1) / 2 } else { -(i / 2) };
+			let c = tex_strip_cost(TEX_CX, TEX_CY, TEX_CW, false, TEX_CH, d);
+			if i == 0 || c < best {
+				best = c;
+				bd = d;
+			}
+		}
+		TEX_DX = bd;
+	}
+}
+fn tex_refine() {
+	tex_integral();
+	TEX_DX = 0;
+	TEX_DY = 0;
+	for pass in 2 {
+		tex_refine_h();
+		tex_refine_v();
+		tex_refine_shear();
+	}
+	TEX_AR = (TEX_CH as real) / TEX_CW;
+}
+fn tex_bilinear(fx real, fy real, c int) real {
+	let w = IW;
+	let h = IH;
+	let x = clamp(fx, 0.0, w as real) - 0.5;
+	let y = clamp(fy, 0.0, h as real) - 0.5;
+	let xf = floor(x);
+	let yf = floor(y);
+	let tx = x - xf;
+	let ty = y - yf;
+	let x0 = clamp(xf as int, 0, w - 1);
+	let x1 = clamp(xf as int + 1, 0, w - 1);
+	let y0 = clamp(yf as int, 0, h - 1);
+	let y1 = clamp(yf as int + 1, 0, h - 1);
+	let p00 = IMG[(y0 * w + x0) * 4 + c] as real;
+	let p10 = IMG[(y0 * w + x1) * 4 + c] as real;
+	let p01 = IMG[(y1 * w + x0) * 4 + c] as real;
+	let p11 = IMG[(y1 * w + x1) * 4 + c] as real;
+	let top = p00 + (p10 - p00) * tx;
+	let bot = p01 + (p11 - p01) * tx;
+	return top + (bot - top) * ty;
+}
+fn tex_resample() {
+	TX.clear();
+	TX.resize(TN * TN * 3, 0.0);
+	let nx = max(1, (TEX_CW + TN - 1) / TN);
+	let ny = max(1, (TEX_CH + TN - 1) / TN);
+	let nxr real = nx as real;
+	let nyr real = ny as real;
+	let tnr real = TN as real;
+	let cxr real = TEX_CX as real;
+	let cyr real = TEX_CY as real;
+	let cwr real = TEX_CW as real;
+	let chr real = TEX_CH as real;
+	let dxr real = TEX_DX as real;
+	let dyr real = TEX_DY as real;
+	for j in TN {
+		for i in TN {
+			var sr = 0.0;
+			var sg = 0.0;
+			var sb = 0.0;
+			for b in ny {
+				let v real = ((j as real) + ((b as real) + 0.5) / nyr) / tnr;
+				for a in nx {
+					let u real = ((i as real) + ((a as real) + 0.5) / nxr) / tnr;
+					let sx real = cxr + u * cwr + v * dxr;
+					let sy real = cyr + v * chr + u * dyr;
+					sr += tex_bilinear(sx, sy, 0);
+					sg += tex_bilinear(sx, sy, 1);
+					sb += tex_bilinear(sx, sy, 2);
+				}
+			}
+			let cnt real = (nx * ny) as real;
+			let o = (j * TN + i) * 3;
+			TX[o] = sr / cnt;
+			TX[o + 1] = sg / cnt;
+			TX[o + 2] = sb / cnt;
+		}
+	}
+}
+fn tex_window(q real) real {
+	if q == 0.0 { return (TN / 3) as real; }
+	return q * max(1.0, round(((TN / 3) as real) / q));
+}
+fn tex_lowpass(a real[:]) real[>..] {
+	let n = TN * TN;
+	var l real[>..] = [];
+	for i in n {
+		l.push(0.299 * a[i * 3] + 0.587 * a[i * 3 + 1] + 0.114 * a[i * 3 + 2]);
+	}
+	let rx = max(1, round(tex_window(TEX_PX) / 2.0) as int);
+	let ry = max(1, round(tex_window(TEX_PY) / 2.0) as int);
+	box_blur(l, TN, TN, rx, ry, true);
+	box_blur(l, TN, TN, rx, ry, true);
+	return l;
+}
+fn tex_flatten() {
+	let n = TN * TN;
+	var old real[>..] = [];
+	for c in 3 {
+		var s = 0.0;
+		for i in n { s += TX[i * 3 + c]; }
+		old.push(s / n);
+	}
+	let lp = tex_lowpass(TX);
+	var lm = 0.0;
+	for i in n { lm += lp[i]; }
+	lm /= n;
+	for i in n {
+		let d = max(lp[i] / lm, 0.2);
+		for c in 3 { TX[i * 3 + c] /= d; }
+	}
+	for c in 3 {
+		var s = 0.0;
+		for i in n { s += TX[i * 3 + c]; }
+		let nm = s / n;
+		let f = if nm > 0.0 { old[c] / nm } else { 1.0 };
+		for i in n { TX[i * 3 + c] = clamp(TX[i * 3 + c] * f, 0.0, 255.0); }
+	}
+}
+fn tex_lowrange(a real[:]) real {
+	let lp = tex_lowpass(a);
+	var lo = lp[0];
+	var hi = lp[0];
+	for v in lp {
+		lo = min(lo, v);
+		hi = max(hi, v);
+	}
+	return hi - lo;
+}
+fn tex_jump(a real[:], i int, j int) real {
+	return (abs(a[i] - a[j]) + abs(a[i + 1] - a[j + 1]) + abs(a[i + 2] - a[j + 2])) / 3.0;
+}
+fn tex_jumps(a real[:]) real, real {
+	var wrap = 0.0;
+	for k in TN {
+		wrap += tex_jump(a, (k * TN + TN - 1) * 3, (k * TN) * 3);
+		wrap += tex_jump(a, ((TN - 1) * TN + k) * 3, k * 3);
+	}
+	wrap /= 2 * TN;
+	var inside = 0.0;
+	for y in TN {
+		for x in TN - 1 { inside += tex_jump(a, (y * TN + x) * 3, (y * TN + x + 1) * 3); }
+	}
+	for y in TN - 1 {
+		for x in TN { inside += tex_jump(a, (y * TN + x) * 3, ((y + 1) * TN + x) * 3); }
+	}
+	inside /= 2 * TN * (TN - 1);
+	return wrap, inside;
+}
+fn tex_twiddles() {
+	if TWC.len == 0 {
+		for k in TN / 2 {
+			TWC.push(cos(TAU * k / TN));
+			TWS.push(sin(TAU * k / TN));
+		}
+	}
+}
+fn fft_line(re real[:], im real[:], start int, step int, inv bool) {
+	let n = TN;
+	var j = 0;
+	for i in 1..n {
+		var bit = n >> 1;
+		while (j & bit) != 0 {
+			j ^= bit;
+			bit >>= 1;
+		}
+		j ^= bit;
+		if i < j {
+			let a = start + i * step;
+			let b = start + j * step;
+			let tr = re[a];
+			let ti = im[a];
+			re[a] = re[b];
+			im[a] = im[b];
+			re[b] = tr;
+			im[b] = ti;
+		}
+	}
+	var len = 2;
+	while len <= n {
+		let half = len / 2;
+		let stride = n / len;
+		var i = 0;
+		while i < n {
+			for jj in half {
+				let wr = TWC[jj * stride];
+				let ws = TWS[jj * stride];
+				let wi = if inv { ws } else { -ws };
+				let a = start + (i + jj) * step;
+				let b = start + (i + jj + half) * step;
+				let tr = re[b] * wr - im[b] * wi;
+				let ti = re[b] * wi + im[b] * wr;
+				re[b] = re[a] - tr;
+				im[b] = im[a] - ti;
+				re[a] += tr;
+				im[a] += ti;
+			}
+			i += len;
+		}
+		len *= 2;
+	}
+}
+fn fft2(re real[:], im real[:], inv bool) {
+	tex_twiddles();
+	for y in TN { fft_line(re, im, y * TN, 1, inv); }
+	for x in TN { fft_line(re, im, x, TN, inv); }
+	if inv {
+		let d = (TN * TN) as real;
+		for i in TN * TN {
+			re[i] /= d;
+			im[i] /= d;
+		}
+	}
+}
+fn tex_periodic() {
+	let n = TN;
+	var u real[>..] = [];
+	var re real[>..] = [];
+	var im real[>..] = [];
+	for c in 3 {
+		u.clear();
+		for i in n * n { u.push(TX[i * 3 + c]); }
+		re.clear();
+		re.resize(n * n, 0.0);
+		im.clear();
+		im.resize(n * n, 0.0);
+		for y in n {
+			let d = u[y * n + n - 1] - u[y * n];
+			re[y * n] += d;
+			re[y * n + n - 1] -= d;
+		}
+		for x in n {
+			let d = u[(n - 1) * n + x] - u[x];
+			re[x] += d;
+			re[(n - 1) * n + x] -= d;
+		}
+		fft2(re, im, false);
+		for b in n {
+			for a in n {
+				let i = b * n + a;
+				if a == 0 && b == 0 {
+					re[i] = 0.0;
+					im[i] = 0.0;
+				} else {
+					let d = 2.0 * cos(TAU * a / n) + 2.0 * cos(TAU * b / n) - 4.0;
+					re[i] /= d;
+					im[i] /= d;
+				}
+			}
+		}
+		fft2(re, im, true);
+		for i in n * n { TX[i * 3 + c] = u[i] - re[i]; }
+	}
+	for i in n * n * 3 { TX[i] = clamp(TX[i], 0.0, 255.0); }
+}
+fn tex_finish() {
+	TILE.clear();
+	for i in TN * TN {
+		for c in 3 { TILE.push(clamp(round(TX[i * 3 + c]) as int, 0, 255) as byte); }
+		TILE.push(255);
+	}
+}
+fn tex_scale() real {
+	let d .= D;
+	var pw = 0.0;
+	var rw = 0.0;
+	if d.has_top && !d.has_skirt && !d.has_legs {
+		pw = avg_width(0.5, 0.7);
+		rw = d.chest_w / 2.0;
+	} else if d.has_top && d.has_skirt {
+		pw = width_at(0.25);
+		for i in 31 { pw = min(pw, width_at(0.25 + i * 0.01)); }
+		rw = d.waist_w / 2.0;
+	} else if (d.has_skirt || d.has_legs) && !d.has_top {
+		pw = avg_width(0.02, 0.06);
+		rw = d.waist_w / 2.0;
+	} else {
+		return 0.0;
+	}
+	if pw < 4.0 || rw <= 0.0 { return 0.0; }
+	return rw / pw;
+}
+fn tex_build() bool {
+	TEX_OK = false;
+	TEX_MSG.clear();
+	if !segment() {
+		TEX_MSG.append("Could not find a garment against the background. Use a picture with a plain, light background and the whole garment in frame.");
+		return false;
+	}
+	if !tex_pick() {
+		TEX_MSG.append("No clean patch of fabric was found. Seams, buttons and collars fill the garment, so try a picture with more plain fabric showing.");
+		return false;
+	}
+	tex_snap();
+	tex_refine();
+	TEX_CMPX = tex_scale();
+	let c = TEX_CW * TEX_CMPX;
+	if TEX_CMPX > 0.0 && c >= 3.0 && c <= 60.0 {
+		TEX_CM = c;
+	} else {
+		TEX_CMPX = 0.0;
+		TEX_CM = 15.0;
+	}
+	tex_resample();
+	let w0, i0 = tex_jumps(TX);
+	TEX_RAWWRAP = w0;
+	TEX_LF0 = tex_lowrange(TX);
+	tex_flatten();
+	tex_periodic();
+	let w1, i1 = tex_jumps(TX);
+	TEX_WRAP = w1;
+	TEX_INNER = i1;
+	TEX_LF1 = tex_lowrange(TX);
+	tex_finish();
+	TEX_MSG.append("Fabric tile ready, ");
+	format_flt(TEX_MSG, TEX_CM / 2.54, 1);
+	TEX_MSG.append(" in (");
+	format_flt(TEX_MSG, TEX_CM, 1);
+	TEX_MSG.append(" cm) wide, ");
+	if TEX_CMPX > 0.0 {
+		TEX_MSG.append("scaled from the garment's size.");
+	} else {
+		TEX_MSG.append("at the default size; set the real size in the 3D tab.");
+	}
+	TEX_OK = true;
+	return true;
+}
+fn tex_png(out byte[>..]&) {
+	var rgb byte[>..] = [];
+	for i in TN * TN {
+		rgb.push(TILE[i * 4]);
+		rgb.push(TILE[i * 4 + 1]);
+		rgb.push(TILE[i * 4 + 2]);
+	}
+	codec_png::encode(TN, TN, 3, rgb, out);
+}
+fn tex_data_url(out byte[>..]&) {
+	out.clear();
+	out.append("data:image/png;base64,");
+	var png byte[>..] = [];
+	tex_png(png);
+	base64::encode(out, png);
+}
+fn tex_overlay_svg(out byte[>..]&) {
+	format(out, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 ", IW, " ", IH, "\" preserveAspectRatio=\"none\">");
+	format(out, "<rect class=\"fx\" x=\"", TEX_X0, "\" y=\"", TEX_Y0, "\" width=\"", TEX_SW, "\" height=\"", TEX_SW, "\"/>");
+	format(out, "<polygon class=\"fc\" points=\"", TEX_CX, ",", TEX_CY, " ", TEX_CX + TEX_CW, ",", TEX_CY + TEX_DY, " ", TEX_CX + TEX_CW + TEX_DX, ",", TEX_CY + TEX_DY + TEX_CH, " ", TEX_CX + TEX_DX, ",", TEX_CY + TEX_CH, "\"/>");
+	out.append("</svg>");
+}

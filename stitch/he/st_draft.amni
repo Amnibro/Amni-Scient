@@ -486,8 +486,8 @@ fn draft_skirt_pieces(len real, kind int, back_seam bool, prefix const byte[:]) 
 		let qh = H / 4.0 + (if side == 0 { -0.5 } else { 0.5 });
 		let qw = W / 4.0 + (if side == 0 { -0.5 } else { 0.5 });
 		let dq = max(qh - qw, 0.0);
-		var dart = if kind == 1 { min(dq * 0.35, if side == 0 { 2.0 } else { 3.0 }) } else { min(dq * 0.55, if side == 0 { 3.5 } else { 4.5 }) };
-		let side_take = dq - dart;
+		var dartw = if kind == 1 { min(dq * 0.35, if side == 0 { 2.0 } else { 3.0 }) } else { min(dq * 0.55, if side == 0 { 3.5 } else { 4.5 }) };
+		let side_take = dq - dartw;
 		let wx = qh - side_take;
 		let lift = if kind == 1 { flare * 0.3 } else { 0.0 };
 		let hem_x = max(qh + flare, qw + 2.0);
@@ -507,10 +507,10 @@ fn draft_skirt_pieces(len real, kind int, back_seam bool, prefix const byte[:]) 
 		let pk = commit(nm[..], note, if back && back_seam { 2 } else { 1 }, P(qh * 0.5, hd), P(qh * 0.5, len - 6.0));
 		if !(back && back_seam) { mark(MK_FOLD, P(0.0, 0.0), P(0.0, len), P(0.0, 0.0)); }
 		else { notch(P(0.0, 20.0), P(-1.0, 0.0)); if kind == 0 { notch(P(0.0, len - 18.0), P(-1.0, 0.0)); } }
-		if dart > 0.3 {
+		if dartw > 0.3 {
 			let dx = qh * (if back { 0.5 } else { 0.45 });
 			let dl = if back { 13.0 } else { 9.5 };
-			dart(P(dx - dart / 2.0, -0.4), P(dx, dl), P(dx + dart / 2.0, -0.4));
+			dart(P(dx - dartw / 2.0, -0.4), P(dx, dl), P(dx + dartw / 2.0, -0.4));
 		}
 		notch(P(qh, hd), P(1.0, 0.0));
 		if side == 1 { D.skirt_hem += hem_x * 4.0; }

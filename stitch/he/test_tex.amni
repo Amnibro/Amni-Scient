@@ -1,0 +1,263 @@
+import math;
+import os;
+import gfx.codec_png;
+import st_geom;
+import st_body;
+import st_draft;
+import st_svg;
+import st_guide;
+import st_trace;
+import st_tex;
+var FAIL = 0;
+fn check(c bool, what const byte[:]) {
+	if !c {
+		FAIL += 1;
+		print("FAIL ", what);
+	}
+}
+fn hash01(x int, y int) real {
+	let v = sin((x as real) * 12.9898 + (y as real) * 78.233) * 43758.5453;
+	var f = v - ((v as int) as real);
+	if f < 0.0 { f += 1.0; }
+	f
+}
+fn set_garment(g int) {
+	O = Opt { garment: g, fit: 1, knit: g == 0 || g == 7, sleeve: 1, neck: 0, skirt: 1, leg: 0 };
+	apply_preset(2);
+	draft_all();
+}
+fn synth_inside(x int, y int) bool {
+	let body = x >= 170 && x <= 469 && y >= 90 && y <= 589;
+	let sleeve = ((x >= 80 && x <= 169) || (x >= 470 && x <= 559)) && y >= 90 && y <= 229;
+	body || sleeve
+}
+fn synth_button(x int, y int) bool {
+	for k in 8 {
+		let dx = x - 290;
+		let dy = y - (140 + 60 * k);
+		if dx * dx + dy * dy <= 64 { return true; }
+	}
+	return false;
+}
+fn synth_feature(x int, y int) bool {
+	if x >= 288 && x <= 292 && y >= 90 && y <= 589 { return true; }
+	if synth_button(x, y) { return true; }
+	let outer = x >= 360 && x <= 440 && y >= 160 && y <= 230;
+	let inner = x >= 363 && x <= 437 && y >= 163 && y <= 227;
+	return outer && !inner;
+}
+fn to_byte(v real) byte {
+	(clamp(round(v), 0.0, 255.0) as int) as byte
+}
+fn synth_make() {
+	IW = 640;
+	IH = 640;
+	IMG.clear();
+	IMG.resize(640 * 640 * 4, 0);
+	for y in 640 {
+		for x in 640 {
+			var r = 236.0;
+			var g = 238.0;
+			var b = 240.0;
+			if synth_inside(x, y) {
+				r = 58.0;
+				g = 92.0;
+				b = 158.0;
+				if x % 34 < 9 {
+					r += (168.0 - r) * 0.6;
+					g += (180.0 - g) * 0.6;
+					b += (208.0 - b) * 0.6;
+				}
+				if y % 38 < 8 {
+					r += (168.0 - r) * 0.5;
+					g += (180.0 - g) * 0.5;
+					b += (208.0 - b) * 0.5;
+				}
+				let nz = (hash01(x, y) - 0.5) * 12.0;
+				r += nz;
+				g += nz;
+				b += nz;
+				if synth_button(x, y) {
+					r = 238.0;
+					g = 236.0;
+					b = 228.0;
+				} else if synth_feature(x, y) {
+					r = 28.0;
+					g = 36.0;
+					b = 60.0;
+				}
+				let l = min(1.0, 0.35 + 0.8 * (x as real) / 640.0 + 0.1 * (1.0 - (y as real) / 640.0));
+				r *= l;
+				g *= l;
+				b *= l;
+			}
+			let i = (y * 640 + x) * 4;
+			IMG[i] = to_byte(r);
+			IMG[i + 1] = to_byte(g);
+			IMG[i + 2] = to_byte(b);
+			IMG[i + 3] = 255;
+		}
+	}
+}
+fn square_inside() bool {
+	if TEX_X0 < 0 || TEX_Y0 < 0 || TEX_SW <= 0 { return false; }
+	if TEX_X0 + TEX_SW > IW || TEX_Y0 + TEX_SW > IH { return false; }
+	for y in TEX_Y0..TEX_Y0 + TEX_SW {
+		for x in TEX_X0..TEX_X0 + TEX_SW {
+			if MASK[y * IW + x] != 1 { return false; }
+		}
+	}
+	return TEX_CX >= TEX_X0 && TEX_CY >= TEX_Y0 && TEX_CX + TEX_CW <= TEX_X0 + TEX_SW && TEX_CY + TEX_CH <= TEX_Y0 + TEX_SW;
+}
+fn crop_clear() bool {
+	for y in TEX_CY..TEX_CY + TEX_CH {
+		for x in TEX_CX..TEX_CX + TEX_CW {
+			if synth_feature(x, y) { return false; }
+		}
+	}
+	return true;
+}
+fn near_multiple(n int, period int) bool {
+	if period <= 0 { return false; }
+	let m = max(1, (n + period / 2) / period);
+	abs(n - m * period) <= 2
+}
+fn tile_repeat(out byte[>..]&) {
+	out.clear();
+	for y in 2 * TN {
+		for x in 2 * TN {
+			let i = ((y % TN) * TN + (x % TN)) * 4;
+			out.push(TILE[i]);
+			out.push(TILE[i + 1]);
+			out.push(TILE[i + 2]);
+		}
+	}
+}
+fn square_overlay(out byte[>..]&) {
+	out.clear();
+	for y in IH {
+		for x in IW {
+			let i = (y * IW + x) * 4;
+			var r = IMG[i];
+			var g = IMG[i + 1];
+			var b = IMG[i + 2];
+			let in_sq = x >= TEX_X0 && x < TEX_X0 + TEX_SW && y >= TEX_Y0 && y < TEX_Y0 + TEX_SW;
+			let in_sq_in = x >= TEX_X0 + 3 && x < TEX_X0 + TEX_SW - 3 && y >= TEX_Y0 + 3 && y < TEX_Y0 + TEX_SW - 3;
+			if in_sq && !in_sq_in {
+				r = 255;
+				g = 157;
+				b = 0;
+			}
+			let in_cr = x >= TEX_CX && x < TEX_CX + TEX_CW && y >= TEX_CY && y < TEX_CY + TEX_CH;
+			let in_cr_in = x >= TEX_CX + 2 && x < TEX_CX + TEX_CW - 2 && y >= TEX_CY + 2 && y < TEX_CY + TEX_CH - 2;
+			if in_cr && !in_cr_in {
+				r = 255;
+				g = 255;
+				b = 255;
+			}
+			out.push(r);
+			out.push(g);
+			out.push(b);
+		}
+	}
+}
+fn dump(prefix const byte[:]) {
+	var png byte[>..] = [];
+	tex_png(png);
+	write_file(str(prefix, "-tile.png"), png);
+	var rep byte[>..] = [];
+	tile_repeat(rep);
+	save_png(prefix, "-repeat.png", rep, 2 * TN, 2 * TN, 3);
+	var sq byte[>..] = [];
+	square_overlay(sq);
+	save_png(prefix, "-square.png", sq, IW, IH, 3);
+	print("wrote ", prefix);
+}
+fn save_png(prefix const byte[:], suffix const byte[:], px const byte[:], w int, h int, ch int) {
+	codec_png::write(str(prefix, suffix), w, h, ch, px);
+}
+fn report(name const byte[:]) {
+	print(name, " square ", TEX_X0, " ", TEX_Y0, " ", TEX_SW, " crop ", TEX_CW, " ", TEX_CH, " period ", TEX_PX, " ", TEX_PY, " seam wrap ", TEX_WRAP, " inner ", TEX_INNER, " ratio ", TEX_WRAP / TEX_INNER, " raw wrap ", TEX_RAWWRAP, " lowfreq ", TEX_LF0, " to ", TEX_LF1, " cm per px ", TEX_CMPX, " tile cm ", TEX_CM);
+}
+fn check_seam(name const byte[:]) {
+	check(TEX_OK, str(name, ": tex_build failed"));
+	check(TEX_WRAP <= 1.5 * TEX_INNER, str(name, ": seam wrap too high"));
+	check(square_inside(), str(name, ": square not inside garment"));
+}
+fn run_picture(path const byte[:], g int, prefix const byte[:]) {
+	var data byte[>..] = [];
+	let ok = read_file(path, data);
+	var good = ok;
+	if good {
+		let w, h, ok2 = codec_png::decode(data, IMG);
+		good = ok2;
+		IW = w;
+		IH = h;
+	}
+	if !good {
+		print("cannot read ", path);
+		FAIL += 1;
+		return;
+	}
+	set_garment(g);
+	tex_build();
+	print(TEX_MSG);
+	report(path);
+	check_seam(path);
+	if prefix.len > 0 { dump(prefix); }
+}
+fn run_synth(prefix const byte[:]) {
+	synth_make();
+	set_garment(0);
+	tex_build();
+	report("synthetic");
+	check_seam("synthetic");
+	check(crop_clear(), "synthetic: crop has features");
+	check(near_multiple(TEX_CW, 34), "synthetic: crop width not a plaid repeat");
+	check(near_multiple(TEX_CH, 38), "synthetic: crop height not a plaid repeat");
+	check(TEX_LF0 >= 3.0 * TEX_LF1, "synthetic: lighting not flattened");
+	check(TEX_RAWWRAP > TEX_WRAP, "synthetic: seamless step did not help");
+	let expected = D.chest_w / 2.0 / 300.0;
+	print("scale expected ", expected, " got ", TEX_CMPX, " error percent ", abs(TEX_CMPX - expected) / expected * 100.0);
+	check(abs(TEX_CMPX - expected) <= 0.03 * expected, "synthetic: cm per pixel off");
+	check(abs(TEX_CM - TEX_CW * TEX_CMPX) <= 0.01, "synthetic: tile cm off");
+	D = default<Draft>();
+	tex_build();
+	check(TEX_CMPX == 0.0, "synthetic: fallback cm per pixel");
+	check(TEX_CM == 15.0, "synthetic: fallback tile cm");
+	if prefix.len > 0 {
+		set_garment(0);
+		tex_build();
+		save_png(prefix, "-input.png", IMG, IW, IH, 4);
+		dump(prefix);
+	}
+}
+fn main() {
+	let all = args();
+	var first byte[>..] = [];
+	var second byte[>..] = [];
+	var third byte[>..] = [];
+	var n = 0;
+	for s, i in all {
+		if i == 1 { first.append(s); }
+		if i == 2 { second.append(s); }
+		if i == 3 { third.append(s); }
+		n = i + 1;
+	}
+	if n <= 1 {
+		run_synth("");
+	} else if first == "synth" {
+		run_synth(second);
+	} else {
+		var g = 0;
+		if second.len > 0 {
+			let v, ok = parse_int(trim(second));
+			if ok { g = v; }
+		}
+		run_picture(first, g, third);
+	}
+	if FAIL > 0 {
+		print("tex checks failed ", FAIL);
+		exit(1);
+	}
+}
