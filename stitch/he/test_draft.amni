@@ -1,0 +1,37 @@
+// Native checks for the drafting code: hc stitch/he/test_draft.amni
+import math;
+import st_geom;
+import st_body;
+import st_draft;
+
+var FAIL = 0;
+fn check(c bool, what const byte[:]) { if !c { FAIL += 1; print("FAIL ", what); } }
+fn finite(v real) bool { v == v && abs(v) < 1.0e7 }
+
+fn main() {
+	var total = 0;
+	for pr in NPRESET {
+		apply_preset(pr);
+		for g in 8 {
+			for fit in 4 {
+				O = Opt { garment: g, fit: fit, knit: g == 0 || g == 7, sleeve: if g == 2 { 0 } else { 3 }, neck: fit % 3, skirt: fit, leg: fit % 3 };
+				draft_all();
+				check(PIECES.len >= 2, str("pieces for ", G_NAMES[g], " ", PRESET_NAMES[pr])[..]);
+				for pc, k in PIECES {
+					total += 1;
+					check(pc.n >= 4, str("points ", pc.name[..])[..]);
+					let w = piece_w(k); let h = piece_h(k);
+					check(finite(w) && finite(h) && w > 2.0 && h > 2.0 && w < 260.0 && h < 260.0, str("size ", G_NAMES[g], "/", pc.name[..], " ", PRESET_NAMES[pr], " w=", w, " h=", h)[..]);
+					check(abs(piece_area(k)) > 4.0, str("area ", pc.name[..])[..]);
+					for i in pc.n { let p = OFF[pc.first + i]; check(finite(p.x) && finite(p.y), str("offset nan ", pc.name[..])[..]); }
+				}
+				if g == 0 && fit == 1 && (pr == 2 || pr == 9 || pr == 16) {
+					print(PRESET_NAMES[pr], " tee: armhole f ", D.ah_f, " b ", D.ah_b, " chest ", D.chest_w, " sleeve ", D.sleeve_len, " bicep ", D.bicep_w);
+					for pc, k in PIECES { print("  ", pc.name[..], " ", pc.note[..], " ", piece_w(k), " x ", piece_h(k), " pts ", pc.n); }
+				}
+			}
+		}
+	}
+	print("pieces checked ", total, " failures ", FAIL);
+	if FAIL > 0 { exit(1); }
+}

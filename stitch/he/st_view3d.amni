@@ -1,0 +1,291 @@
+// Amni-Stitch 3D view: a mannequin built from the measurements, wearing the drafted garment.
+// Raymarched signed distance fields in one WebGL2 fragment shader; Helium sets the shape.
+import math;
+import web;
+import webgl;
+
+var V_OK = false;
+var V_CANVAS: i32 = 0;
+var V_PROG: i32 = 0;
+var V_VBO: i32 = 0;
+var V_YAW = 0.35;
+var V_PITCH = 0.08;
+var V_DIRTY = true;
+var V_R = 0.17; var V_G = 0.36; var V_B = 0.62;
+var LOC i32[>..];   // uniform locations, by name order below
+let U_RES = 0; let U_YAW = 1; let U_PITCH = 2; let U_DIST = 3; let U_CY = 4; let U_NT = 5; let U_NL = 6;
+let U_SH = 7; let U_EL = 8; let U_WR = 9; let U_AR = 10; let U_HD = 11; let U_NK = 12; let U_NGT = 13; let U_NGL = 14;
+let U_GA = 15; let U_GC = 16; let U_GK = 17; let U_FT = 18; let U_HOOD = 19;
+let U_T0 = 20;      // 12 torso rings
+let U_L0 = 32;      // 6 leg rings
+let U_GT0 = 38;     // 12 garment torso rings
+let U_GL0 = 50;     // 6 garment leg rings
+
+fn vs_src(s byte[>..]&) {
+	s.append("#version 300 es\nlayout(location=0) in vec2 p;\nout vec2 uv;\nvoid main(){ uv=p; gl_Position=vec4(p,0.0,1.0); }\n");
+}
+fn fs_src(s byte[>..]&) {
+	s.append("#version 300 es\nprecision highp float;\nin vec2 uv;\nout vec4 o;\n");
+	s.append("uniform vec2 uRes; uniform float uYaw,uPitch,uDist,uCy; uniform int uNT,uNL,uNGT,uNGL,uGK;\n");
+	s.append("uniform vec3 uT[12]; uniform vec4 uL[6]; uniform vec3 uGT[12]; uniform vec4 uGL[6];\n");
+	s.append("uniform vec3 uSh,uEl,uWr,uAR,uNk,uGC; uniform vec4 uHd,uGA,uFt,uHood;\n");
+	s.append("float sdEll(vec2 p,vec2 ab){ab=max(ab,vec2(0.3));float k0=length(p/ab);float k1=length(p/(ab*ab));return k0*(k0-1.0)/max(k1,1e-4);}\n");
+	s.append("float sdEllipsoid(vec3 p,vec3 r){float k0=length(p/r);float k1=length(p/(r*r));return k0*(k0-1.0)/max(k1,1e-4);}\n");
+	s.append("float smin(float a,float b,float k){float h=clamp(0.5+0.5*(b-a)/k,0.0,1.0);return mix(b,a,h)-k*h*(1.0-h);}\n");
+	s.append("float cone(vec3 p,vec3 a,vec3 b,float ra,float rb){vec3 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/max(dot(ba,ba),1e-4),0.0,1.0);return length(pa-ba*h)-mix(ra,rb,h);}\n");
+	s.append("vec4 cr(vec4 p0,vec4 p1,vec4 p2,vec4 p3,float t){float t2=t*t,t3=t2*t;return 0.5*(2.0*p1+(-p0+p2)*t+(2.0*p0-5.0*p1+4.0*p2-p3)*t2+(-p0+3.0*p1-3.0*p2+p3)*t3);}\n");
+	// one lofted solid per ring array (GLSL cannot pass uniform arrays around cheaply)
+	fn loft(s byte[>..]&, name const byte[:], arr const byte[:], n const byte[:], vec4 bool) {
+		s.append("float "); s.append(name); s.append("(vec3 p){int n="); s.append(n); s.append(";if(n<2)return 1e5;");
+		s.append("float y0="); s.append(arr); s.append("[0].x,y1="); s.append(arr); s.append("[n-1].x;float yc=clamp(p.y,y0,y1);int i=0;");
+		s.append("for(int k=0;k<11;k++){if(k>=n-1)break;if(yc>="); s.append(arr); s.append("[k].x)i=k;}");
+		s.append("int a=max(i-1,0),b=i,c=min(i+1,n-1),d=min(i+2,n-1);");
+		if vec4 {
+			s.append("vec4 r0="); s.append(arr); s.append("[a],r1="); s.append(arr); s.append("[b],r2="); s.append(arr); s.append("[c],r3="); s.append(arr); s.append("[d];");
+		} else {
+			s.append("vec4 r0=vec4("); s.append(arr); s.append("[a],0.0),r1=vec4("); s.append(arr); s.append("[b],0.0),r2=vec4("); s.append(arr); s.append("[c],0.0),r3=vec4("); s.append(arr); s.append("[d],0.0);");
+		}
+		s.append("float t=clamp((yc-r1.x)/max(r2.x-r1.x,1e-3),0.0,1.0);vec4 r=cr(r0,r1,r2,r3,t);");
+		s.append("vec2 q=vec2(abs(p.x)-r.w,p.z);");
+		s.append("float dd=sdEll(q,r.yz);float dy=max(y0-p.y,p.y-y1);return dy>0.0?length(vec2(max(dd,0.0),dy)):dd;}\n");
+	}
+	loft(s, "torso", "uT", "uNT", false);
+	loft(s, "legs", "uL", "uNL", true);
+	loft(s, "gtorso", "uGT", "uNGT", false);
+	loft(s, "glegs", "uGL", "uNGL", true);
+	s.append("float arm(vec3 q){return min(cone(q,uSh,uEl,uAR.x,uAR.y),cone(q,uEl,uWr,uAR.y,uAR.z));}\n");
+	s.append("float body(vec3 p){float d=smin(torso(p),legs(p),3.0);vec3 q=vec3(abs(p.x),p.y,p.z);\n");
+	s.append(" float a=arm(q);vec3 hd=normalize(uWr-uEl);a=min(a,sdEllipsoid(q-uWr-hd*uAR.z*2.2,vec3(uAR.z*1.15,uAR.z*2.4,uAR.z*0.55)));d=smin(d,a,2.2);\n");
+	s.append(" d=smin(d,cone(p,vec3(0.0,uNk.x,-0.6),vec3(0.0,uNk.y,0.2),uNk.z,uNk.z*0.9),2.5);\n");
+	s.append(" d=smin(d,sdEllipsoid(p-vec3(0.0,uHd.x,0.6),uHd.yzw),2.0);\n");
+	s.append(" d=smin(d,sdEllipsoid(vec3(abs(p.x),p.y,p.z)-vec3(uFt.x,uFt.y,uFt.z*0.45),vec3(uFt.w,uFt.y,uFt.z)),2.0);return d;}\n");
+	s.append("float sleeve(vec3 q){float l1=length(uEl-uSh),l2=length(uWr-uEl),s=uGA.y*(l1+l2);float r=uGA.z;\n");
+	s.append(" if(s<=l1){vec3 e=uSh+(uEl-uSh)*(s/max(l1,1e-3));return cone(q,uSh,e,uAR.x+r,mix(uAR.x,uAR.y,s/max(l1,1e-3))+r*0.9);}\n");
+	s.append(" vec3 e=uEl+(uWr-uEl)*((s-l1)/max(l2,1e-3));return min(cone(q,uSh,uEl,uAR.x+r,uAR.y+r*0.9),cone(q,uEl,e,uAR.y+r*0.9,mix(uAR.y,uAR.z,(s-l1)/max(l2,1e-3))+r*0.8));}\n");
+	s.append("float garment(vec3 p){float d=1e5;if((uGK&1)!=0)d=min(d,gtorso(p));if((uGK&2)!=0)d=smin(d,glegs(p),2.0);\n");
+	s.append(" if((uGK&4)!=0)d=smin(d,sleeve(vec3(abs(p.x),p.y,p.z)),2.0);if((uGK&8)!=0)d=smin(d,sdEllipsoid(p-uHood.xyz,vec3(uHood.w,uHood.w*0.62,uHood.w*0.7)),3.0);return d;}\n");
+	s.append("vec2 map(vec3 p){float b=body(p);float g=uGK!=0?garment(p):1e5;return g<b+0.05?vec2(g,1.0):vec2(b,0.0);}\n");
+	s.append("vec3 nrm(vec3 p){const vec2 e=vec2(0.04,-0.04);return normalize(e.xyy*map(p+e.xyy).x+e.yyx*map(p+e.yyx).x+e.yxy*map(p+e.yxy).x+e.xxx*map(p+e.xxx).x);}\n");
+	s.append("void main(){vec2 f=uv*vec2(uRes.x/uRes.y,1.0);vec3 ta=vec3(0.0,uCy,0.0);\n");
+	s.append(" vec3 ro=ta+uDist*vec3(sin(uYaw)*cos(uPitch),sin(uPitch),cos(uYaw)*cos(uPitch));vec3 ww=normalize(ta-ro),uu=normalize(cross(ww,vec3(0,1,0))),vv=cross(uu,ww);\n");
+	s.append(" vec3 rd=normalize(f.x*uu+f.y*vv+2.6*ww);vec3 bg=mix(vec3(0.93,0.94,0.96),vec3(0.80,0.83,0.88),clamp(uv.y*0.5+0.5,0.0,1.0));\n");
+	s.append(" float t=max(uDist-120.0,1.0),tmax=uDist+120.0;vec2 h=vec2(0.0,-1.0);bool hit=false;\n");
+	s.append(" for(int i=0;i<180;i++){vec3 p=ro+rd*t;h=map(p);if(h.x<0.02){hit=true;break;}t+=h.x*0.75;if(t>tmax)break;}\n");
+	s.append(" float tf=-ro.y/rd.y;vec3 col=bg;\n");
+	s.append(" if(rd.y<0.0&&(!hit||tf<t)){vec3 fp=ro+rd*tf;float sh=smoothstep(0.0,30.0,length(fp.xz*vec2(0.8,1.3)));col=mix(vec3(0.70,0.72,0.76),vec3(0.86,0.87,0.90),sh);col=mix(col,bg,smoothstep(150.0,320.0,length(fp.xz)));}\n");
+	s.append(" else if(hit){vec3 p=ro+rd*t;vec3 n=nrm(p);vec3 l=normalize(vec3(-0.5,0.8,0.6));float dif=clamp(dot(n,l),0.0,1.0);\n");
+	s.append("  float fil=clamp(dot(n,normalize(vec3(0.7,0.2,0.4))),0.0,1.0);float rim=pow(1.0-clamp(dot(n,-rd),0.0,1.0),3.0);\n");
+	s.append("  float ao=clamp(0.5+0.5*map(p+n*3.0).x/3.0,0.35,1.0);vec3 base;\n");
+	s.append("  if(h.y>0.5){float w=0.9+0.1*sin(p.y*9.0+sin(p.x*3.0))*sin(p.x*9.0+p.z*9.0);base=uGC*w;}else{base=vec3(0.86,0.80,0.74);}\n");
+	s.append("  col=base*(0.28+0.72*dif)*ao+base*0.18*fil+vec3(0.25)*rim;vec3 hv=normalize(l-rd);col+=vec3(0.08)*pow(clamp(dot(n,hv),0.0,1.0),24.0)*(h.y>0.5?0.6:1.0);}\n");
+	s.append(" o=vec4(pow(col,vec3(0.95)),1.0);}\n");
+}
+fn shader(kind i32, src const byte[:]) i32 {
+	let sh = gl::create_shader(kind);
+	gl::shader_source(sh, src);
+	if !gl::compile_shader(sh) { var log byte[>..] = []; gl::shader_log(sh, log); web::error(log[..]); }
+	sh
+}
+fn view_init(canvas i32) bool {
+	V_CANVAS = canvas;
+	if !gl::init(canvas, true, false) { return false; }
+	var vs byte[>..] = []; var fs byte[>..] = [];
+	vs_src(vs); fs_src(fs);
+	V_PROG = gl::create_program();
+	gl::attach_shader(V_PROG, shader(gl::VERTEX_SHADER, vs[..]));
+	gl::attach_shader(V_PROG, shader(gl::FRAGMENT_SHADER, fs[..]));
+	gl::bind_attrib(V_PROG, 0, "p");
+	if !gl::link_program(V_PROG) { var log byte[>..] = []; gl::program_log(V_PROG, log); web::error(log[..]); return false; }
+	let names = ["uRes", "uYaw", "uPitch", "uDist", "uCy", "uNT", "uNL", "uSh", "uEl", "uWr", "uAR", "uHd", "uNk", "uNGT", "uNGL", "uGA", "uGC", "uGK", "uFt", "uHood"];
+	LOC.clear();
+	for nm in names { LOC.push(gl::uniform_loc(V_PROG, nm)); }
+	for i in 12 { LOC.push(gl::uniform_loc(V_PROG, str("uT[", i, "]")[..])); }
+	for i in 6 { LOC.push(gl::uniform_loc(V_PROG, str("uL[", i, "]")[..])); }
+	for i in 12 { LOC.push(gl::uniform_loc(V_PROG, str("uGT[", i, "]")[..])); }
+	for i in 6 { LOC.push(gl::uniform_loc(V_PROG, str("uGL[", i, "]")[..])); }
+	var tri f32[>..] = [];
+	tri.append([-1.0 as f32, -1.0, 3.0, -1.0, -1.0, 3.0]);
+	V_VBO = gl::create_buffer();
+	gl::bind_buffer(gl::ARRAY_BUFFER, V_VBO);
+	gl::buffer_data(gl::ARRAY_BUFFER, bytes_of(tri), gl::STATIC_DRAW);
+	V_OK = true;
+	true
+}
+// ellipse semi-axes (a across, b front to back) for a circumference and a depth ratio
+fn ell(circ real, k real) real, real {
+	let a = circ / (PI * (3.0 * (1.0 + k) - sqrt((3.0 + k) * (1.0 + 3.0 * k))));
+	return a, a * k;
+}
+struct Ring { y real, a real, b real, cx real }
+var BR Ring[>..];   // body torso rings
+var LR Ring[>..];   // body leg rings
+var GR Ring[>..];   // garment torso rings
+var GLR Ring[>..];  // garment leg rings
+fn ring(rs Ring[>..]&, y real, circ real, k real, cx real) { let a, b = ell(circ, k); rs.push(Ring { y, a, b, cx }); }
+fn sort_rings(rs Ring[>..]&) { sort(rs) { a, b => a.y < b.y }; }
+// body circumference at height y, interpolated through the body rings
+fn body_circ(y real) real, real {
+	if BR.len == 0 { return 60.0, 0.7; }
+	var i = 0;
+	for r, k in BR { if y >= r.y { i = k; } }
+	let j = min(i + 1, BR.len - 1);
+	let r0 = BR[i]; let r1 = BR[j];
+	let t = if r1.y > r0.y { clamp((y - r0.y) / (r1.y - r0.y), 0.0, 1.0) } else { 0.0 };
+	let a = lerp(r0.a, r1.a, t); let b = lerp(r0.b, r1.b, t);
+	return PI * (3.0 * (a + b) - sqrt((3.0 * a + b) * (a + 3.0 * b))), b / max(a, 0.1);
+}
+var V_CY = 90.0;
+var V_DIST = 380.0;
+var Y_WAIST = 0.0; var Y_HIP = 0.0; var Y_CROTCH = 0.0; var Y_ARMPIT = 0.0; var Y_NAPE = 0.0; var Y_SH = 0.0; var Y_BUST = 0.0; var Y_UB = 0.0; var Y_KNEE = 0.0;
+fn view_shape() {
+	let ht = M[M_HEIGHT]; let inseam = M[M_INSEAM]; let rise = M[M_RISE];
+	let C = M[M_CHEST]; let W = M[M_WAIST]; let H = M[M_HIP]; let S = M[M_SHOULDER];
+	Y_CROTCH = inseam; Y_WAIST = inseam + rise; Y_HIP = inseam + rise * 0.38;
+	Y_NAPE = min(Y_WAIST + M[M_BACKLEN], ht * 0.9);
+	Y_SH = Y_NAPE - 3.0;
+	Y_ARMPIT = Y_NAPE - (C / 8.0 + 9.5);
+	Y_BUST = Y_ARMPIT - 4.0; Y_UB = Y_BUST - (if O.sex == 0 { 9.0 } else { 7.0 });
+	Y_KNEE = 0.285 * ht;
+	let ha, hb = ell(H, 0.72);
+	BR.clear(); LR.clear();
+	let kb = if O.sex == 0 { 0.74 } else { 0.68 };
+	BR.push(Ring { Y_CROTCH - 1.5, ha * 0.8, hb * 0.86, 0.0 });
+	ring(BR, Y_HIP, H, 0.72, 0.0);
+	ring(BR, (Y_HIP + Y_WAIST) * 0.5, (H + W) * 0.5, 0.72, 0.0);
+	ring(BR, Y_WAIST, W, 0.74, 0.0);
+	ring(BR, Y_UB, M[M_UNDERBUST], 0.72, 0.0);
+	ring(BR, Y_BUST, C, kb, 0.0);
+	ring(BR, Y_ARMPIT, C * 0.97, 0.62, 0.0);
+	let pa = BR[BR.len - 1];
+	BR.push(Ring { (Y_ARMPIT + Y_SH) * 0.5, max(S * 0.5 * 0.86, pa.a * 0.97), pa.b * 0.92, 0.0 });
+	BR.push(Ring { Y_SH, S * 0.5 * 0.8, C / 13.0, 0.0 });
+	let nr = M[M_NECK] / (2.0 * PI);
+	BR.push(Ring { Y_NAPE + 1.0, nr * 1.35, nr * 1.2, 0.0 });
+	// legs
+	let ankle_y = 0.045 * ht;
+	fn leg(y real, circ real, k real, cx real) { ring(LR, y, circ, k, cx); }
+	leg(ankle_y, M[M_ANKLE], 0.85, ha * 0.36);
+	leg(Y_KNEE * 0.62, M[M_CALF], 0.9, ha * 0.38);
+	leg(Y_KNEE, M[M_KNEE], 0.92, ha * 0.41);
+	leg((Y_KNEE + Y_CROTCH) * 0.5, (M[M_THIGH] + M[M_KNEE]) * 0.55, 0.92, ha * 0.45);
+	leg(Y_CROTCH - 2.0, M[M_THIGH], 0.92, ha * 0.49);
+	leg(Y_CROTCH + 3.0, M[M_THIGH], 0.92, ha * 0.5);
+	V_CY = ht * 0.52;
+	V_DIST = ht * 1.62 + 30.0;
+	// the garment
+	GR.clear(); GLR.clear();
+	let ease_d = 0.7;
+	if D.has_top {
+		let hem_y = Y_NAPE + 2.0 - D.top_len;
+		var ys real[>..] = [];
+		ys.push(hem_y);
+		for r in BR { if r.y > hem_y + 2.0 && r.y < Y_ARMPIT - 0.5 { ys.push(r.y); } }
+		ys.push(Y_ARMPIT);
+		for y in ys {
+			let bc, k = body_circ(y);
+			var c = bc + ease_d * 2.0 * PI;
+			if y >= Y_BUST - 1.0 { c = max(c, D.chest_w); }
+			else if O.fit == 0 || O.garment == G_BODICE || O.garment == G_DRESS {
+				let t = clamp((Y_BUST - y) / max(Y_BUST - Y_WAIST, 1.0), 0.0, 1.0);
+				c = max(c, lerp(D.chest_w, max(D.waist_w, bc + 2.0), t));
+				if y < Y_WAIST { c = max(c, lerp(max(D.waist_w, bc), D.hem_circ, clamp((Y_WAIST - y) / max(Y_WAIST - hem_y, 1.0), 0.0, 1.0))); }
+			} else {
+				let t = clamp((Y_ARMPIT - y) / max(Y_ARMPIT - hem_y, 1.0), 0.0, 1.0);
+				c = max(c, lerp(D.chest_w, max(D.hem_circ, D.chest_w * 0.96), t));
+			}
+			ring(GR, y, c, lerp(k, 0.84, clamp((c - bc) / 40.0, 0.0, 0.6)), 0.0);
+		}
+		for r in BR { if r.y > Y_ARMPIT + 0.5 { GR.push(Ring { r.y, r.a + ease_d + D.ease_c * 0.02, r.b + ease_d, 0.0 }); } }
+	}
+	if D.has_skirt {
+		let hem_y = max(Y_WAIST - D.skirt_len, 2.0);
+		if !D.has_top { ring(GR, Y_WAIST + 3.0, D.waist_w + 3.0, 0.74, 0.0); }
+		ring(GR, Y_WAIST, max(D.waist_w, M[M_WAIST] + 2.0), 0.74, 0.0);
+		let hipc = max(D.hip_w, M[M_HIP] + 3.0);
+		let hem = max(D.skirt_hem * (if O.skirt >= 2 { 0.62 } else { 0.95 }), hipc * 0.9);
+		if hem_y < Y_HIP - 2.0 {
+			ring(GR, Y_HIP, max(hipc, lerp(hipc, hem, (Y_WAIST - Y_HIP) / max(D.skirt_len, 1.0) * (if O.skirt >= 2 { 1.0 } else { 0.4 }))), 0.75, 0.0);
+			ring(GR, (Y_HIP + hem_y) * 0.5, lerp(hipc, hem, 0.55), 0.8, 0.0);
+		}
+		ring(GR, hem_y, hem, 0.84, 0.0);
+	}
+	if D.has_legs {
+		ring(GR, Y_WAIST + 1.5, D.waist_w + 1.0, 0.74, 0.0);
+		ring(GR, Y_WAIST, D.waist_w, 0.74, 0.0);
+		ring(GR, Y_HIP, D.hip_w, 0.72, 0.0);
+		GR.push(Ring { Y_CROTCH - 1.0, ha * 0.84 + 1.0, hb * 0.9 + 1.0, 0.0 });
+		let hem_y = max(Y_CROTCH - D.inseam, 1.0);
+		let thigh = max(D.hip_w * 0.6, M[M_THIGH] + 6.0);
+		ring(GLR, hem_y, max(D.leg_hem, M[M_ANKLE] + 4.0), 0.86, ha * 0.38);
+		if hem_y < Y_KNEE - 2.0 { ring(GLR, Y_KNEE, max(D.knee_w, M[M_KNEE] + 4.0), 0.9, ha * 0.42); }
+		ring(GLR, Y_CROTCH - 2.0, thigh, 0.92, ha * 0.5);
+		ring(GLR, Y_CROTCH + 4.0, thigh, 0.92, ha * 0.5);
+	}
+	sort_rings(GR); sort_rings(GLR);
+	while GR.len > 12 { remove_at(GR, 1); }
+	V_DIRTY = true;
+}
+fn set_rings3(base int, rs Ring[>..]&, count_loc int) {
+	let n = min(rs.len, 12);
+	gl::uniform1i(LOC[count_loc], n as i32);
+	for i in n { gl::uniform3f(LOC[base + i], rs[i].y, rs[i].a, rs[i].b); }
+}
+fn set_rings4(base int, rs Ring[>..]&, count_loc int) {
+	let n = min(rs.len, 6);
+	gl::uniform1i(LOC[count_loc], n as i32);
+	for i in n { gl::uniform4f(LOC[base + i], rs[i].y, rs[i].a, rs[i].b, rs[i].cx); }
+}
+fn view_draw() {
+	if !V_OK { return; }
+	let d = min(web::dpr(), 1.5);
+	var r = web::Rect { 0.0, 0.0, 0.0, 0.0 };
+	web::rect(V_CANVAS, r);
+	if r.w < 10.0 || r.h < 10.0 { return; }
+	web::prop_num(V_CANVAS, "width", floor(r.w * d));
+	web::prop_num(V_CANVAS, "height", floor(r.h * d));
+	gl::viewport(0, 0, gl::drawing_w(), gl::drawing_h());
+	gl::use_program(V_PROG);
+	gl::uniform2f(LOC[U_RES], gl::drawing_w() as real, gl::drawing_h() as real);
+	gl::uniform1f(LOC[U_YAW], V_YAW); gl::uniform1f(LOC[U_PITCH], V_PITCH);
+	gl::uniform1f(LOC[U_DIST], V_DIST); gl::uniform1f(LOC[U_CY], V_CY);
+	set_rings3(U_T0, BR, U_NT);
+	set_rings4(U_L0, LR, U_NL);
+	set_rings3(U_GT0, GR, U_NGT);
+	set_rings4(U_GL0, GLR, U_NGL);
+	let S = M[M_SHOULDER]; let al = M[M_ARMLEN];
+	let sx = S * 0.5 - 2.5; let sy = Y_SH - 2.5;
+	let a1 = 0.21; let a2 = 0.16;
+	let ex = sx + sin(a1) * al * 0.56; let ey = sy - cos(a1) * al * 0.56;
+	let wx = ex + sin(a2) * al * 0.44; let wy = ey - cos(a2) * al * 0.44;
+	gl::uniform3f(LOC[U_SH], sx, sy, 0.0);
+	gl::uniform3f(LOC[U_EL], ex, ey, 0.5);
+	gl::uniform3f(LOC[U_WR], wx, wy, 3.0);
+	gl::uniform3f(LOC[U_AR], M[M_BICEP] / (2.0 * PI) * 1.05, M[M_BICEP] * 0.8 / (2.0 * PI), M[M_WRIST] / (2.0 * PI) * 1.05);
+	let ht = M[M_HEIGHT];
+	let hr = M[M_HEAD] / (2.0 * PI);
+	gl::uniform4f(LOC[U_HD], ht - ht * 0.066, hr * 0.9, ht * 0.064, hr * 1.08);
+	gl::uniform3f(LOC[U_NK], Y_NAPE - 2.0, ht * 0.885, M[M_NECK] / (2.0 * PI) * 0.95);
+	let ha, hb = ell(M[M_HIP], 0.72);
+	gl::uniform4f(LOC[U_FT], ha * 0.36, ht * 0.022, 11.0, 4.6 * ht / 170.0);
+	var gk = 0;
+	if GR.len >= 2 { gk |= 1; }
+	if GLR.len >= 2 { gk |= 2; }
+	if D.has_top && D.sleeve_len > 0.0 { gk |= 4; }
+	if D.has_hood { gk |= 8; }
+	gl::uniform1i(LOC[U_GK], gk as i32);
+	gl::uniform4f(LOC[U_GA], 1.0, clamp(D.sleeve_len / max(al, 1.0), 0.05, 1.0), max((D.bicep_w - M[M_BICEP]) / (2.0 * PI), 0.4), 0.0);
+	gl::uniform3f(LOC[U_GC], V_R, V_G, V_B);
+	gl::uniform4f(LOC[U_HOOD], 0.0, Y_NAPE + 3.0, -10.0, M[M_HEAD] * 0.2);
+	gl::bind_buffer(gl::ARRAY_BUFFER, V_VBO);
+	gl::enable_attrib(0);
+	gl::attrib_ptr(0, 2, gl::FLOAT, false, 8, 0);
+	gl::draw_arrays(gl::TRIANGLES, 0, 3);
+	V_DIRTY = false;
+}
+fn hexval(c byte) int { if c >= '0' && c <= '9' { (c - '0') as int } else if c >= 'a' && c <= 'f' { (c - 'a') as int + 10 } else if c >= 'A' && c <= 'F' { (c - 'A') as int + 10 } else { 0 } }
+fn view_color(hex const byte[:]) {
+	if hex.len < 7 { return; }
+	fn ch(i int) real { (hexval(hex[i]) * 16 + hexval(hex[i + 1])) as real / 255.0 }
+	V_R = ch(1); V_G = ch(3); V_B = ch(5);
+	V_DIRTY = true;
+}

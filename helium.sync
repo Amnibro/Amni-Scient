@@ -40,3 +40,4 @@ test cd cad && node tests/tooling_test.mjs
 test cd cad && node tests/sculpt_test.mjs
 # nl_sky, nl_tool (the seal case also checks wall time, which depends on the machine)
 test cd cad && node tests/nl_test.mjs --quick --only=hyper,patch,j2,hertz,oring,hill,formAxi,formPlane,section
+build stitch/he/stitch.amni stitch/stitch.wasm --web -DGS_WEB_MOVE=1 -DGS_WEB_STACK=8388608

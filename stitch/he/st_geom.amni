@@ -1,0 +1,220 @@
+// Amni-Stitch geometry: points, curves, the pattern piece pool, clipping and seam allowance.
+// Units are centimetres, x to the right, y down (paper coordinates).
+import math;
+
+struct Pt { x real, y real }
+fn P(x real, y real) Pt { Pt { x, y } }
+fn padd(a Pt, b Pt) Pt { Pt { a.x + b.x, a.y + b.y } }
+fn psub(a Pt, b Pt) Pt { Pt { a.x - b.x, a.y - b.y } }
+fn pmul(a Pt, k real) Pt { Pt { a.x * k, a.y * k } }
+fn plen(a Pt) real { sqrt(a.x * a.x + a.y * a.y) }
+fn pdist(a Pt, b Pt) real { plen(psub(b, a)) }
+fn plerp(a Pt, b Pt, t real) Pt { Pt { a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t } }
+fn pnorm(a Pt) Pt { let l = plen(a); if l < 1.0e-9 { Pt { 0.0, 0.0 } } else { Pt { a.x / l, a.y / l } } }
+fn pperp(a Pt) Pt { Pt { -a.y, a.x } }
+fn cross2(a Pt, b Pt) real { a.x * b.y - a.y * b.x }
+
+fn bez(p0 Pt, p1 Pt, p2 Pt, p3 Pt, t real) Pt {
+	let u = 1.0 - t;
+	let a = u * u * u; let b = 3.0 * u * u * t; let c = 3.0 * u * t * t; let d = t * t * t;
+	Pt { a * p0.x + b * p1.x + c * p2.x + d * p3.x, a * p0.y + b * p1.y + c * p2.y + d * p3.y }
+}
+fn bez_steps(p0 Pt, p1 Pt, p2 Pt, p3 Pt) int {
+	let l = pdist(p0, p1) + pdist(p1, p2) + pdist(p2, p3);
+	clamp((l / 0.6) as int, 6, 80)
+}
+// length of a cubic, measured on its flattened polyline
+fn bez_len(p0 Pt, p1 Pt, p2 Pt, p3 Pt) real {
+	let n = bez_steps(p0, p1, p2, p3) * 2;
+	var l = 0.0; var q = p0;
+	for i in n { let r = bez(p0, p1, p2, p3, (i + 1) as real / n as real); l += pdist(q, r); q = r; }
+	l
+}
+// the point at arc length s along a cubic (clamped to its ends)
+fn bez_at(p0 Pt, p1 Pt, p2 Pt, p3 Pt, s real) Pt {
+	let n = bez_steps(p0, p1, p2, p3) * 2;
+	var l = 0.0; var q = p0;
+	for i in n {
+		let r = bez(p0, p1, p2, p3, (i + 1) as real / n as real);
+		let d = pdist(q, r);
+		if l + d >= s && d > 0.0 { return plerp(q, r, (s - l) / d); }
+		l += d; q = r;
+	}
+	p3
+}
+
+// ---- pieces -------------------------------------------------------------------------------
+// A piece is a closed outline (the stitching line). SAS[i] is the seam allowance of the edge
+// from point i to point i + 1 (0 on a fold). Marks (notches, darts, buttons, fold arrows) follow
+// the piece that was committed last.
+let MK_NOTCH = 1;      // a: point on the stitching line, b: unit normal pointing out
+let MK_DART = 2;       // a, c: legs on the edge, b: apex
+let MK_BUTTON = 3;     // a: centre
+let MK_LINE = 4;       // a to b, dashed (fold line, placement line)
+let MK_DOT = 5;        // a
+let MK_FOLD = 6;       // a to b: the fold edge (drawn with arrows)
+let MK_DART2 = 7;      // fish-eye dart: a top apex, b, c widest legs, then the next mark holds the bottom apex in a
+struct Mark { kind int, a Pt, b Pt, c Pt }
+struct Piece {
+	name byte[..48], note byte[..72],
+	first int = 0, n int = 0, cut int = 2, fold bool = false,
+	g0 Pt = Pt { 0.0, 0.0 }, g1 Pt = Pt { 0.0, 0.0 },
+	minx real = 0.0, miny real = 0.0, maxx real = 0.0, maxy real = 0.0,
+	ox real = 0.0, oy real = 0.0,
+	mfirst int = 0, mn int = 0,
+	interfacing bool = false
+}
+var PTS Pt[>..];
+var SAS real[>..];
+var PIECES Piece[>..];
+var MARKS Mark[>..];
+var OFF Pt[>..];          // cutting lines, parallel to PTS
+// scratch outline being drafted
+var TP Pt[>..];
+var TS real[>..];
+var CP Pt[>..];
+var CS real[>..];
+
+fn pieces_clear() { PTS.clear(); SAS.clear(); PIECES.clear(); MARKS.clear(); OFF.clear(); }
+fn tp_clear() { TP.clear(); TS.clear(); }
+// starts an edge at p; sa is the allowance of the edge that runs from p to the next point
+fn tp_add(p Pt, sa real) { TP.push(p); TS.push(sa); }
+// adds a cubic edge from p0 towards p3 (p3 itself starts the next edge)
+fn tp_curve(p0 Pt, p1 Pt, p2 Pt, p3 Pt, sa real) {
+	let n = bez_steps(p0, p1, p2, p3);
+	for i in n { tp_add(bez(p0, p1, p2, p3, i as real / n as real), sa); }
+}
+// the same cubic walked from p3 back to p0
+fn tp_curve_rev(p0 Pt, p1 Pt, p2 Pt, p3 Pt, sa real) {
+	let n = bez_steps(p0, p1, p2, p3);
+	for i in n { tp_add(bez(p0, p1, p2, p3, 1.0 - i as real / n as real), sa); }
+}
+fn tp_area() real {
+	var a = 0.0;
+	for i in TP.len { let p = TP[i]; let q = TP[(i + 1) % TP.len]; a += p.x * q.y - q.x * p.y; }
+	a * 0.5
+}
+// keeps the part of the scratch outline on one side of a line; new edges along the line get sa_new.
+// side: 0 keep y <= v, 1 keep y >= v, 2 keep x <= v, 3 keep x >= v
+fn tp_clip(side int, v real, sa_new real) {
+	fn coord(p Pt) real { if side < 2 { p.y } else { p.x } }
+	fn inside(p Pt) bool { if side == 0 || side == 2 { coord(p) <= v + 1.0e-9 } else { coord(p) >= v - 1.0e-9 } }
+	fn cut(a Pt, b Pt) Pt { let ca = coord(a); let cb = coord(b); let t = if abs(cb - ca) < 1.0e-12 { 0.0 } else { (v - ca) / (cb - ca) }; plerp(a, b, t) }
+	CP.clear(); CS.clear();
+	let n = TP.len;
+	for i in n {
+		let a = TP[i]; let b = TP[(i + 1) % n];
+		let s = TS[i]; let sb = TS[(i + 1) % n];
+		let ia = inside(a); let ib = inside(b);
+		if ia && ib { CP.push(b); CS.push(sb); }
+		else if ia && !ib { CP.push(cut(a, b)); CS.push(sa_new); }
+		else if !ia && ib { CP.push(cut(a, b)); CS.push(s); CP.push(b); CS.push(sb); }
+	}
+	TP.clear(); TS.clear();
+	TP.append(CP[..]); TS.append(CS[..]);
+}
+// mirrors the scratch outline across x = 0 (and restores the drawing order)
+fn tp_mirror_x() {
+	CP.clear(); CS.clear();
+	let n = TP.len;
+	for k in n {
+		let i = n - 1 - k;
+		CP.push(Pt { -TP[i].x, TP[i].y });
+		CS.push(TS[(i + n - 1) % n]);
+	}
+	TP.clear(); TS.clear();
+	TP.append(CP[..]); TS.append(CS[..]);
+}
+fn copy_name(dst byte[..48]&, s const byte[:]) { dst.clear(); dst.append(s[..min(s.len, 48)]); }
+fn copy_note(dst byte[..72]&, s const byte[:]) { dst.clear(); dst.append(s[..min(s.len, 72)]); }
+
+// commits the scratch outline as a piece and returns its index
+fn commit(name const byte[:], note const byte[:], cut int, g0 Pt, g1 Pt) int {
+	// drop repeated points
+	CP.clear(); CS.clear();
+	for i in TP.len {
+		let p = TP[i];
+		if CP.len > 0 && pdist(CP[CP.len - 1], p) < 0.02 { CS[CS.len - 1] = TS[i]; continue; }
+		CP.push(p); CS.push(TS[i]);
+	}
+	if CP.len > 2 && pdist(CP[0], CP[CP.len - 1]) < 0.02 { CP.pop(); CS.pop(); }
+	var pc = Piece { name: "", note: "", first: PTS.len, n: CP.len, cut: cut, g0: g0, g1: g1, mfirst: MARKS.len };
+	copy_name(pc.name, name);
+	copy_note(pc.note, note);
+	for s in CS { if s <= 0.0 { pc.fold = true; } }
+	PTS.append(CP[..]);
+	SAS.append(CS[..]);
+	PIECES.push(pc);
+	PIECES.len - 1
+}
+fn last_piece() int { PIECES.len - 1 }
+fn mark(kind int, a Pt, b Pt, c Pt) {
+	MARKS.push(Mark { kind, a, b, c });
+	PIECES[PIECES.len - 1].mn += 1;
+}
+fn notch(a Pt, out_dir Pt) { mark(MK_NOTCH, a, pnorm(out_dir), a); }
+fn dart(leg1 Pt, apex Pt, leg2 Pt) { mark(MK_DART, leg1, apex, leg2); }
+fn button(a Pt) { mark(MK_BUTTON, a, a, a); }
+fn dashed(a Pt, b Pt) { mark(MK_LINE, a, b, a); }
+fn dot(a Pt) { mark(MK_DOT, a, a, a); }
+
+// outward normal of the edge a -> b of piece k (by the outline's winding)
+fn piece_area(k int) real {
+	let pc = PIECES[k];
+	var a = 0.0;
+	for i in pc.n { let p = PTS[pc.first + i]; let q = PTS[pc.first + (i + 1) % pc.n]; a += p.x * q.y - q.x * p.y; }
+	a * 0.5
+}
+fn out_normal(a Pt, b Pt, area real) Pt {
+	let d = pnorm(psub(b, a));
+	if area > 0.0 { Pt { d.y, -d.x } } else { Pt { -d.y, d.x } }
+}
+// the cutting line of every piece: each edge pushed out by its allowance, corners mitred
+fn offset_all() {
+	OFF.clear();
+	for &pc in PIECES {
+		let n = pc.n; let f = pc.first;
+		let area = piece_area(PIECES.index_of(pc));
+		var minx = 1.0e9; var miny = 1.0e9; var maxx = -1.0e9; var maxy = -1.0e9;
+		for i in n {
+			let ip = (i + n - 1) % n; let inx = (i + 1) % n;
+			let a = PTS[f + ip]; let p = PTS[f + i]; let b = PTS[f + inx];
+			let s0 = SAS[f + ip]; let s1 = SAS[f + i];
+			let n0 = out_normal(a, p, area); let n1 = out_normal(p, b, area);
+			let d0 = pnorm(psub(p, a)); let d1 = pnorm(psub(b, p));
+			let q0 = padd(a, pmul(n0, s0)); let q1 = padd(p, pmul(n1, s1));
+			let den = cross2(d0, d1);
+			var r = padd(p, pmul(n1, s1));
+			if abs(den) > 1.0e-4 {
+				let t = cross2(psub(q1, q0), d1) / den;
+				r = padd(q0, pmul(d0, t));
+				let lim = 3.0 * max(s0, s1) + 0.05;
+				if pdist(r, p) > lim { r = padd(p, pmul(pnorm(padd(n0, n1)), max(s0, s1))); }
+			} else if s0 > s1 { r = padd(p, pmul(n0, s0)); }
+			OFF.push(r);
+			minx = min(minx, min(r.x, p.x)); miny = min(miny, min(r.y, p.y));
+			maxx = max(maxx, max(r.x, p.x)); maxy = max(maxy, max(r.y, p.y));
+		}
+		pc.minx = minx; pc.miny = miny; pc.maxx = maxx; pc.maxy = maxy;
+	}
+}
+// total length of a piece's edges of a given allowance class: 0 fold, 1 seams, 2 all
+fn piece_edge_len(k int, which int) real {
+	let pc = PIECES[k];
+	var l = 0.0;
+	for i in pc.n {
+		let s = SAS[pc.first + i];
+		let d = pdist(PTS[pc.first + i], PTS[pc.first + (i + 1) % pc.n]);
+		if which == 2 || (which == 0 && s <= 0.0) || (which == 1 && s > 0.0) { l += d; }
+	}
+	l
+}
+fn piece_w(k int) real { PIECES[k].maxx - PIECES[k].minx }
+fn piece_h(k int) real { PIECES[k].maxy - PIECES[k].miny }
+// polygon area of the cutting line (cm^2)
+fn piece_cut_area(k int) real {
+	let pc = PIECES[k];
+	var a = 0.0;
+	for i in pc.n { let p = OFF[pc.first + i]; let q = OFF[pc.first + (i + 1) % pc.n]; a += p.x * q.y - q.x * p.y; }
+	abs(a * 0.5)
+}

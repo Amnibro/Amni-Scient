@@ -1,0 +1,324 @@
+// Amni-Stitch outfit tracing: from a garment picture (flat lay or dress form on a plain
+// background) to a silhouette, pattern settings that match it, and a traced pattern piece.
+import math;
+
+var IW = 0;
+var IH = 0;
+var IMG byte[>..];       // RGBA
+var MASK byte[>..];      // 1 = garment
+var SMR i32[>..];
+var SMG i32[>..];
+var SMB i32[>..];
+var STK i32[>..];
+var LAB i32[>..];
+var CONTOUR Pt[>..];     // simplified outline, pixel coordinates
+var RAW Pt[>..];
+var TRACE_OK = false;
+var TRACE_KIND = 0;      // 0 top, 1 skirt, 2 trousers, 3 dress
+var TRACE_XC = 0.0;
+var TRACE_Y0 = 0.0;
+var TRACE_SCALE = 0.0;   // cm per pixel
+var TRACE_MSG byte[>..];
+var BX0 = 0; var BX1 = 0; var BY0 = 0; var BY1 = 0;
+
+fn px(i int, c int) int { IMG[i * 4 + c] as int }
+fn maxdiff3(r0 int, g0 int, b0 int, r1 int, g1 int, b1 int) int { max(abs(r0 - r1), max(abs(g0 - g1), abs(b0 - b1))) }
+
+fn median_of(xs i32[>..]&) int {
+	if xs.len == 0 { return 0; }
+	sort(xs);
+	xs[xs.len / 2] as int
+}
+fn segment() bool {
+	let n = IW * IH;
+	if n < 64 { return false; }
+	// background colour: the median of the border pixels
+	var br i32[>..] = []; var bg_ i32[>..] = []; var bb i32[>..] = [];
+	for x in IW { for yy in 2 { let y = if yy == 0 { 0 } else { IH - 1 }; let i = y * IW + x; br.push(px(i, 0) as i32); bg_.push(px(i, 1) as i32); bb.push(px(i, 2) as i32); } }
+	for y in IH { for xx in 2 { let x = if xx == 0 { 0 } else { IW - 1 }; let i = y * IW + x; br.push(px(i, 0) as i32); bg_.push(px(i, 1) as i32); bb.push(px(i, 2) as i32); } }
+	let r0 = median_of(br); let g0 = median_of(bg_); let b0 = median_of(bb);
+	// 3x3 smoothing against generation grain
+	SMR.clear(); SMG.clear(); SMB.clear();
+	SMR.resize(n, 0); SMG.resize(n, 0); SMB.resize(n, 0);
+	for y in IH {
+		for x in IW {
+			var r = 0; var g = 0; var b = 0; var c = 0;
+			for dy in 3 { for dx in 3 {
+				let xx = x + dx - 1; let yy = y + dy - 1;
+				if xx >= 0 && yy >= 0 && xx < IW && yy < IH { let j = yy * IW + xx; r += px(j, 0); g += px(j, 1); b += px(j, 2); c += 1; }
+			} }
+			let i = y * IW + x;
+			SMR[i] = (r / c) as i32; SMG[i] = (g / c) as i32; SMB[i] = (b / c) as i32;
+		}
+	}
+	// flood fill the background in from the border
+	MASK.clear(); MASK.resize(n, 1);
+	STK.clear();
+	fn seed(i int) { if MASK[i] == 1 && (px(i, 3) < 16 || maxdiff3(SMR[i] as int, SMG[i] as int, SMB[i] as int, r0, g0, b0) <= 46) { MASK[i] = 0; STK.push(i as i32); } }
+	for x in IW { seed(x); seed((IH - 1) * IW + x); }
+	for y in IH { seed(y * IW); seed(y * IW + IW - 1); }
+	while STK.len > 0 {
+		let i = STK.pop() as int;
+		let x = i % IW; let y = i / IW;
+		for k in 4 {
+			let xx = x + (if k == 0 { 1 } else if k == 1 { -1 } else { 0 });
+			let yy = y + (if k == 2 { 1 } else if k == 3 { -1 } else { 0 });
+			if xx < 0 || yy < 0 || xx >= IW || yy >= IH { continue; }
+			let j = yy * IW + xx;
+			if MASK[j] == 0 { continue; }
+			let transparent = px(j, 3) < 16;
+			let near_bg = maxdiff3(SMR[j] as int, SMG[j] as int, SMB[j] as int, r0, g0, b0) <= 46;
+			let smooth = maxdiff3(SMR[j] as int, SMG[j] as int, SMB[j] as int, SMR[i] as int, SMG[i] as int, SMB[i] as int) <= 12;
+			if transparent || (near_bg && smooth) { MASK[j] = 0; STK.push(j as i32); }
+		}
+	}
+	// opening (erode then dilate) to drop specks and threads
+	var tmp byte[>..] = [];
+	tmp.resize(n, 0);
+	for y in IH { for x in IW {
+		let i = y * IW + x;
+		var all = MASK[i] == 1;
+		if all && (x == 0 || y == 0 || x == IW - 1 || y == IH - 1 || MASK[i - 1] == 0 || MASK[i + 1] == 0 || MASK[i - IW] == 0 || MASK[i + IW] == 0) { all = false; }
+		tmp[i] = if all { 1 } else { 0 };
+	} }
+	for y in IH { for x in IW {
+		let i = y * IW + x;
+		var any = tmp[i] == 1;
+		if !any && ((x > 0 && tmp[i - 1] == 1) || (x < IW - 1 && tmp[i + 1] == 1) || (y > 0 && tmp[i - IW] == 1) || (y < IH - 1 && tmp[i + IW] == 1)) { any = true; }
+		MASK[i] = if any { 1 } else { 0 };
+	} }
+	// keep the largest connected part
+	LAB.clear(); LAB.resize(n, 0);
+	var best = 0; var best_n = 0; var lab = 0;
+	for s in n {
+		if MASK[s] == 0 || LAB[s] != 0 { continue; }
+		lab += 1; var cnt = 0;
+		STK.clear(); STK.push(s as i32); LAB[s] = lab as i32;
+		while STK.len > 0 {
+			let i = STK.pop() as int; cnt += 1;
+			let x = i % IW; let y = i / IW;
+			if x > 0 && MASK[i - 1] == 1 && LAB[i - 1] == 0 { LAB[i - 1] = lab as i32; STK.push((i - 1) as i32); }
+			if x < IW - 1 && MASK[i + 1] == 1 && LAB[i + 1] == 0 { LAB[i + 1] = lab as i32; STK.push((i + 1) as i32); }
+			if y > 0 && MASK[i - IW] == 1 && LAB[i - IW] == 0 { LAB[i - IW] = lab as i32; STK.push((i - IW) as i32); }
+			if y < IH - 1 && MASK[i + IW] == 1 && LAB[i + IW] == 0 { LAB[i + IW] = lab as i32; STK.push((i + IW) as i32); }
+		}
+		if cnt > best_n { best_n = cnt; best = lab; }
+	}
+	if best_n < n / 200 { return false; }
+	BX0 = IW; BX1 = 0; BY0 = IH; BY1 = 0;
+	for i in n {
+		if LAB[i] as int == best { MASK[i] = 1; let x = i % IW; let y = i / IW; BX0 = min(BX0, x); BX1 = max(BX1, x); BY0 = min(BY0, y); BY1 = max(BY1, y); }
+		else { MASK[i] = 0; }
+	}
+	// a garment touching the whole frame is not separable from the background
+	!(BX0 == 0 && BX1 == IW - 1 && BY0 == 0 && BY1 == IH - 1)
+}
+fn fg(x int, y int) bool { x >= 0 && y >= 0 && x < IW && y < IH && MASK[y * IW + x] == 1 }
+let DXS = [1, 1, 0, -1, -1, -1, 0, 1];
+let DYS = [0, 1, 1, 1, 0, -1, -1, -1];
+fn dir_of(dx int, dy int) int { var d = 0; for k in 8 { if DXS[k] == dx && DYS[k] == dy { d = k; } } d }
+// Moore-neighbour boundary trace of the mask, clockwise, into RAW (pixel centres)
+fn trace_contour() {
+	RAW.clear();
+	var sx = -1; var sy = -1;
+	for y in IH { if sx >= 0 { break; } for x in IW { if MASK[y * IW + x] == 1 { sx = x; sy = y; break; } } }
+	if sx < 0 { return; }
+	var x = sx; var y = sy; var bdir = 4;   // came from the west
+	let limit = IW * IH * 4;
+	var steps = 0;
+	loop {
+		RAW.push(P(x as real + 0.5, y as real + 0.5));
+		var found = false;
+		var k = 1;
+		while k <= 8 {
+			let d = (bdir + k) % 8;
+			let nx = x + DXS[d]; let ny = y + DYS[d];
+			if fg(nx, ny) {
+				let pd = (bdir + k - 1) % 8;
+				let bx = x + DXS[pd]; let by = y + DYS[pd];
+				x = nx; y = ny;
+				bdir = dir_of(bx - x, by - y);
+				found = true;
+				break;
+			}
+			k += 1;
+		}
+		steps += 1;
+		if !found || steps > limit || (x == sx && y == sy) { break; }
+	}
+}
+// Ramer-Douglas-Peucker on the closed RAW outline (iterative)
+fn simplify(eps real) {
+	CONTOUR.clear();
+	let n = RAW.len;
+	if n < 8 { CONTOUR.append(RAW[..]); return; }
+	// split at the point farthest from the start so the closed curve becomes two open ones
+	var far = 0; var fd = 0.0;
+	for i in n { let d = pdist(RAW[0], RAW[i]); if d > fd { fd = d; far = i; } }
+	var keep byte[>..] = []; keep.resize(n + 1, 0);
+	keep[0] = 1; keep[far] = 1; keep[n] = 1;
+	var st int[>..<] = [];
+	st.push(0); st.push(far); st.push(far); st.push(n);
+	fn at(i int) Pt { RAW[i % n] }
+	while st.len >= 2 {
+		let b = st.pop(); let a = st.pop();
+		if b - a < 2 { continue; }
+		let pa = at(a); let pb = at(b);
+		let d = psub(pb, pa); let l = max(plen(d), 1.0e-9);
+		var best = -1; var bd = 0.0;
+		var i = a + 1;
+		while i < b { let q = psub(at(i), pa); let dist = abs(cross2(d, q)) / l; if dist > bd { bd = dist; best = i; } i += 1; }
+		if bd > eps && best > 0 { keep[best] = 1; st.push(a); st.push(best); st.push(best); st.push(b); }
+	}
+	for i in n { if keep[i] == 1 { CONTOUR.push(RAW[i]); } }
+}
+// the left and right edges of the mask on row y; false when the row is empty
+fn row_span(y int) int, int, bool {
+	var l = -1; var r = -1;
+	for x in IW { if MASK[y * IW + x] == 1 { if l < 0 { l = x; } r = x; } }
+	return l, r, l >= 0;
+}
+fn row_runs(y int) int {
+	var runs = 0; var inside = false;
+	for x in IW { let m = MASK[y * IW + x] == 1; if m && !inside { runs += 1; } inside = m; }
+	runs
+}
+fn width_at(f real) real {
+	let y = clamp(BY0 + ((BY1 - BY0) as real * f) as int, BY0, BY1);
+	let l, r, ok = row_span(y);
+	if ok { (r - l + 1) as real } else { 0.0 }
+}
+fn avg_width(f0 real, f1 real) real {
+	var s = 0.0; var c = 0;
+	var f = f0;
+	while f <= f1 { s += width_at(f); c += 1; f += 0.01; }
+	if c == 0 { 0.0 } else { s / c as real }
+}
+// works out the garment family and the settings that reproduce the silhouette
+fn analyse(want int) {
+	TRACE_MSG.clear();
+	let h = (BY1 - BY0 + 1) as real;
+	// centre line: the mean of the row centres over the middle of the garment
+	var cs = 0.0; var cn = 0;
+	var y = BY0 + ((BY1 - BY0) as real * 0.2) as int;
+	while y <= BY0 + ((BY1 - BY0) as real * 0.6) as int { let l, r, ok = row_span(y); if ok { cs += (l + r) as real * 0.5 + 0.5; cn += 1; } y += 1; }
+	TRACE_XC = if cn > 0 { cs / cn as real } else { (BX0 + BX1) as real * 0.5 };
+	TRACE_Y0 = BY0 as real;
+	let legs = row_runs(BY0 + ((BY1 - BY0) as real * 0.85) as int) >= 2 && row_runs(BY0 + ((BY1 - BY0) as real * 0.95) as int) >= 2;
+	let top_w = avg_width(0.02, 0.06);
+	let body_w = avg_width(0.5, 0.7);
+	let hem_w = avg_width(0.93, 0.98);
+	var upper_max = 0.0; var f = 0.0;
+	while f < 0.45 { upper_max = max(upper_max, width_at(f)); f += 0.01; }
+	var narrow = 1.0e9; var narrow_f = 0.4; f = 0.25;
+	while f <= 0.55 { let w = width_at(f); if w < narrow { narrow = w; narrow_f = f; } f += 0.01; }
+	var kind = 0;
+	if want == G_TROUSERS || want == G_SHORTS || (want == G_TRACED && legs) { kind = 2; }
+	else if want == G_SKIRT { kind = 1; }
+	else if want == G_DRESS { kind = 3; }
+	else if want == G_TRACED { kind = if hem_w > top_w * 1.3 && upper_max < body_w * 1.15 { 1 } else if hem_w > narrow * 1.6 && narrow_f > 0.28 { 3 } else { 0 }; }
+	TRACE_KIND = kind;
+	if kind == 0 {
+		// tops: sleeves stick out above the body
+		let has_sleeves = upper_max > body_w * 1.12;
+		var sleeve_rows = 0;
+		var yy = BY0;
+		while yy <= BY1 { let l, r, ok = row_span(yy); if ok && (r - l + 1) as real > body_w * 1.12 { sleeve_rows += 1; } yy += 1; }
+		let sleeve_frac = sleeve_rows as real / h;
+		let reach = (upper_max - body_w) * 0.5 / max(body_w, 1.0);
+		if !has_sleeves { O.sleeve = 0; } else if sleeve_frac > 0.5 || reach > 0.75 { O.sleeve = 3; } else if sleeve_frac > 0.32 || reach > 0.5 { O.sleeve = 2; } else { O.sleeve = 1; }
+		// fit: compare the flat width / length ratio with each fit of the template
+		let ratio = body_w / h;
+		var best = 1; var bd = 1.0e9;
+		let save_fit = O.fit;
+		let save_len = O.length;
+		O.length = 0.0;
+		for fit in 4 {
+			O.fit = fit;
+			let t = frame(Top { ease_chest(), ease_waist(), ease_hip(), default_length(O.garment), 0.0, 0.0, false, false, 0, 0.0, true, 0.0, 0.0, 0.0 });
+			let tr = (t.qc * 2.0) / (t.hem - 0.0);
+			let d = abs(log(tr / max(ratio, 1.0e-6)));
+			if d < bd { bd = d; best = fit; }
+		}
+		O.fit = best; O.length = save_len;
+		TRACE_SCALE = (M[M_CHEST] + ease_chest()) * 0.5 / max(body_w, 1.0);
+		let len_cm = h * TRACE_SCALE;
+		O.length = clamp(len_cm - M[M_BACKLEN] - 2.0, 0.0, 80.0);
+		format(TRACE_MSG, "Top: ", SLEEVE_NAMES[O.sleeve], " sleeves, ", FIT_NAMES[O.fit], " fit, about ");
+		len_str(TRACE_MSG, len_cm); TRACE_MSG.append(" long from the shoulder.");
+	} else if kind == 1 {
+		let flare = hem_w / max(top_w, 1.0);
+		O.skirt = if flare < 1.3 { 0 } else if flare < 1.95 { 1 } else if flare < 2.9 { 2 } else { 3 };
+		TRACE_SCALE = (M[M_WAIST] + 1.5) * 0.5 / max(top_w, 1.0);
+		let len_cm = h * TRACE_SCALE;
+		O.length = clamp(len_cm, 25.0, 120.0);
+		format(TRACE_MSG, "Skirt: ", SKIRT_NAMES[O.skirt], " (hem ");
+		format_flt(TRACE_MSG, flare, 1); TRACE_MSG.append("x the waist), "); len_str(TRACE_MSG, O.length); TRACE_MSG.append(" long.");
+	} else if kind == 3 {
+		let skirt_top = narrow;
+		let flare = hem_w / max(skirt_top, 1.0);
+		O.skirt = if flare < 1.3 { 0 } else if flare < 2.0 { 1 } else if flare < 3.0 { 2 } else { 3 };
+		O.sleeve = if upper_max > body_w * 1.6 { 1 } else { 0 };
+		TRACE_SCALE = (M[M_WAIST] + 4.0) * 0.5 / max(skirt_top, 1.0);
+		let skirt_len = (1.0 - narrow_f) * h * TRACE_SCALE;
+		O.length = clamp(skirt_len, 25.0, 120.0);
+		format(TRACE_MSG, "Dress: ", SKIRT_NAMES[O.skirt], " skirt "); len_str(TRACE_MSG, O.length);
+		TRACE_MSG.append(" long, "); TRACE_MSG.append(SLEEVE_NAMES[O.sleeve]); TRACE_MSG.append(" bodice.");
+	} else {
+		// trousers: the crotch is the first row (from the top) where the legs separate
+		var crotch = BY1;
+		var yy = BY0 + ((BY1 - BY0) as real * 0.15) as int;
+		while yy <= BY1 { if row_runs(yy) >= 2 { crotch = yy; break; } yy += 1; }
+		TRACE_SCALE = (M[M_WAIST] + 2.0) * 0.5 / max(top_w, 1.0);
+		let inseam = (BY1 - crotch) as real * TRACE_SCALE;
+		// one leg's opening, measured on the bottom row
+		let yb = BY1 - 2;
+		var run = 0; var best_run = 0; var inside = false;
+		for x in IW { let m = MASK[yb * IW + x] == 1; if m { run += 1; best_run = max(best_run, run); } else { run = 0; } inside = m; }
+		let opening = best_run as real * TRACE_SCALE * 2.0;
+		if inseam < 35.0 { O.garment = G_SHORTS; O.length = clamp(inseam, 3.0, 35.0); }
+		else { O.garment = G_TROUSERS; O.length = clamp(inseam, 35.0, M[M_INSEAM] + 3.0); O.leg = if opening < 38.0 { 1 } else if opening > 52.0 { 2 } else { 0 }; }
+		format(TRACE_MSG, if O.garment == G_SHORTS { "Shorts" } else { "Trousers" }, ": inseam "); len_str(TRACE_MSG, O.length);
+		TRACE_MSG.append(", leg opening "); len_str(TRACE_MSG, opening);
+		if O.garment == G_TROUSERS { TRACE_MSG.append(" ("); TRACE_MSG.append(LEG_NAMES[O.leg]); TRACE_MSG.append(" leg)"); }
+		TRACE_MSG.push('.');
+	}
+}
+// runs the whole trace on IMG; want is the garment the person picked
+fn trace_image(want int) bool {
+	TRACE_OK = false;
+	if !segment() { TRACE_MSG.clear(); TRACE_MSG.append("Could not find a garment against the background. Use a picture with a plain, light background and the whole garment in frame."); return false; }
+	trace_contour();
+	simplify(max(IW, IH) as real * 0.004 + 0.6);
+	if CONTOUR.len < 6 { TRACE_MSG.clear(); TRACE_MSG.append("The outline was too small to trace."); return false; }
+	analyse(want);
+	TRACE_OK = true;
+	true
+}
+// adds the traced silhouette as a front (and a back) piece, half on the fold, at the person's size
+fn add_traced_pieces(both bool) {
+	if !TRACE_OK || CONTOUR.len < 6 { return; }
+	let s = TRACE_SCALE;
+	for side in (if both { 2 } else { 1 }) {
+		tp_clear();
+		for p in CONTOUR { tp_add(P((p.x - TRACE_XC) * s, (p.y - TRACE_Y0) * s), O.sa); }
+		tp_clip(3, 0.0, 0.0);
+		// the hem: edges along the lowest part get the hem allowance
+		var maxy = 0.0; for p in TP { maxy = max(maxy, p.y); }
+		for i in TP.len { let a = TP[i]; let b = TP[(i + 1) % TP.len]; if TS[i] > 0.0 && a.y > maxy - 2.0 && b.y > maxy - 2.0 { TS[i] = O.hem; } }
+		if TP.len < 3 { return; }
+		var minx = 1.0e9; var maxx = -1.0e9; for p in TP { minx = min(minx, p.x); maxx = max(maxx, p.x); }
+		let gx = (minx + maxx) * 0.5;
+		let pk = commit(if side == 0 { "Traced front" } else { "Traced back" }, "Cut 1 on fold. Silhouette: check the fit in muslin first", 1, P(gx, maxy * 0.25), P(gx, maxy * 0.8));
+		var y0 = 1.0e9; var y1 = -1.0e9;
+		for i in PIECES[last_piece()].n { let p = PTS[PIECES[last_piece()].first + i]; if abs(p.x) < 0.01 { y0 = min(y0, p.y); y1 = max(y1, p.y); } }
+		if y1 > y0 { mark(MK_FOLD, P(0.0, y0), P(0.0, y1), P(0.0, 0.0)); }
+	}
+}
+// the outline over the picture, in image pixels
+fn overlay_svg(out byte[>..]&) {
+	out.append("<svg viewBox=\"0 0 "); format(out, IW, " ", IH); out.append("\" preserveAspectRatio=\"none\"><path class=\"tr\" d=\"");
+	for p, i in CONTOUR { out.push(if i == 0 { 'M' } else { 'L' }); format_flt(out, p.x, 1); out.push(' '); format_flt(out, p.y, 1); out.push(' '); }
+	out.append("Z\"/><line class=\"tc\" x1=\""); format_flt(out, TRACE_XC, 1); out.append("\" y1=\""); format(out, BY0); out.append("\" x2=\"");
+	format_flt(out, TRACE_XC, 1); out.append("\" y2=\""); format(out, BY1); out.append("\"/></svg>");
+}

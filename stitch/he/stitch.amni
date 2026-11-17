@@ -1,0 +1,582 @@
+// Amni-Stitch: custom sewing patterns from your measurements, written in Helium.
+// Build: hc stitch/he/stitch.amni stitch/stitch.wasm --web -DGS_WEB_MOVE=1
+import math;
+import web;
+import webgl;
+import json;
+import base64;
+import st_geom;
+import st_body;
+import st_draft;
+import st_svg;
+import st_guide;
+import st_trace;
+import st_view3d;
+
+let T_MEAS: i32 = 100;
+let T_PRESET: i32 = 2; let T_UNITS: i32 = 3; let T_GARMENT: i32 = 4; let T_OPT: i32 = 5; let T_COLOR: i32 = 6;
+let T_TAB_PAT: i32 = 7; let T_TAB_3D: i32 = 8; let T_TAB_GUIDE: i32 = 9;
+let T_DL_SVG: i32 = 10; let T_PRINT_A4: i32 = 11; let T_PRINT_LTR: i32 = 12; let T_DL_GUIDE: i32 = 13;
+let T_GEN: i32 = 20; let T_GEN_DONE: i32 = 21; let T_POLL: i32 = 22; let T_POLL_DONE: i32 = 23; let T_QUOTA: i32 = 24;
+let T_TRACE: i32 = 30; let T_PIXELS: i32 = 31; let T_UPLOAD: i32 = 32; let T_PICKED: i32 = 33; let T_DL_IMG: i32 = 34; let T_ADD_TRACED: i32 = 35;
+let T_BUY: i32 = 40; let T_BUY_DONE: i32 = 41; let T_CLAIM: i32 = 42; let T_CLAIM_DONE: i32 = 43; let T_KEY_SAVE: i32 = 44; let T_BILLING: i32 = 45; let T_BILLING_DONE: i32 = 46; let T_KEY_FORGET: i32 = 47; let T_RENEW_DONE: i32 = 48;
+let T_PDOWN: i32 = 50; let T_PMOVE: i32 = 51; let T_PUP: i32 = 52; let T_FRONT: i32 = 53; let T_SIDE: i32 = 54; let T_BACK: i32 = 55;
+let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61; let T_IGNORE: i32 = 99;
+
+var GATE byte[>..];
+var PRO byte[>..];
+var HOST: i32 = 0;
+var TAB = 0;
+var PRESET = 2;
+var SCALE_PCT = 0.0;
+var BASE real[18];        // measurements before the scale slider
+var ADD_TRACED = true;
+var JOB byte[>..];
+var POLLS = 0;
+var SHOT byte[>..];       // the current picture (data URL)
+var KEY byte[>..];
+var DEVICE byte[>..];
+var CLAIM_ID byte[>..];
+var CLAIM_TRIES = 0;
+var DRAG = false;
+var DRAG_X = 0.0; var DRAG_Y = 0.0;
+var BUSY = false;
+
+fn el(id const byte[:]) i32 { web::el(id) }
+fn set_text(id const byte[:], s const byte[:]) { web::text(el(id), s); }
+fn show(id const byte[:], on bool) { web::cls(el(id), "hidden", !on); }
+fn fmt1(out byte[>..]&, v real) { format_flt(out, v, 1); }
+fn disp(cm real) real { if UNITS == 1 { cm / 2.54 } else { cm } }
+fn from_disp(v real) real { if UNITS == 1 { v * 2.54 } else { v } }
+fn unit_label() const byte[:] { if UNITS == 1 { "in" } else { "cm" } }
+fn get_value(id const byte[:], out byte[>..]&) { out.clear(); let _ok = web::get_prop(el(id), "value", out); }
+fn get_num(id const byte[:], dflt real) real {
+	var s byte[>..] = []; get_value(id, s);
+	let v, ok = parse_flt(trim(s[..]));
+	if ok { v } else { dflt }
+}
+fn get_int(id const byte[:]) int { var s byte[>..] = []; get_value(id, s); let v, ok = parse_int(trim(s[..]), 10); if ok { v } else { 0 } }
+fn set_value(id const byte[:], s const byte[:]) { web::prop(el(id), "value", s); }
+fn set_num(id const byte[:], v real) { var s byte[>..] = []; fmt1(s, v); set_value(id, s[..]); }
+
+// ---- persistence ----------------------------------------------------------------------------
+fn save_state() {
+	var s byte[>..] = [];
+	for i in NM { s.append(M_KEYS[i]); s.push('='); format_flt(s, BASE[i], 1); s.push(';'); }
+	format(s, "o_preset=", PRESET, ";o_units=", UNITS, ";o_scale="); format_flt(s, SCALE_PCT, 1);
+	format(s, ";o_garment=", O.garment, ";o_fit=", O.fit, ";o_knit=", if O.knit { 1 } else { 0 }, ";o_sleeve=", O.sleeve, ";o_neck=", O.neck, ";o_skirt=", O.skirt, ";o_leg=", O.leg, ";o_sex=", O.sex, ";o_length=");
+	format_flt(s, O.length, 1); s.append(";o_sa="); format_flt(s, O.sa, 2); s.append(";o_hem="); format_flt(s, O.hem, 2); s.push(';');
+	web::store_set("amni.stitch.v2", s[..]);
+}
+fn load_state() bool {
+	var s byte[>..] = [];
+	if !web::store_get("amni.stitch.v2", s) { return false; }
+	var seen bool[18];
+	each_split(s[..], ';') {
+		let eq = find_index(it) { c => c == '=' };
+		if eq >= 0 {
+			let k = it[..eq]; let vs = it[eq + 1..];
+			let v, ok = parse_flt(vs);
+			if ok {
+				for i in NM { if k == M_KEYS[i] { BASE[i] = v; seen[i] = true; } }
+				if k == "o_preset" { PRESET = v as int; } else if k == "o_units" { UNITS = v as int; } else if k == "o_scale" { SCALE_PCT = v; }
+				else if k == "o_garment" { O.garment = clamp(v as int, 0, NG - 1); } else if k == "o_fit" { O.fit = clamp(v as int, 0, 3); } else if k == "o_knit" { O.knit = v > 0.5; }
+				else if k == "o_sleeve" { O.sleeve = clamp(v as int, 0, 3); } else if k == "o_neck" { O.neck = clamp(v as int, 0, 2); } else if k == "o_skirt" { O.skirt = clamp(v as int, 0, 3); }
+				else if k == "o_leg" { O.leg = clamp(v as int, 0, 2); } else if k == "o_sex" { O.sex = clamp(v as int, 0, 1); } else if k == "o_length" { O.length = clamp(v, 0.0, 200.0); }
+				else if k == "o_sa" { O.sa = clamp(v, 0.0, 4.0); } else if k == "o_hem" { O.hem = clamp(v, 0.0, 8.0); }
+			}
+		}
+	};
+	var all_seen = true;
+	for b in seen { if !b { all_seen = false; } }
+	all_seen
+}
+
+// ---- measurements -------------------------------------------------------------------------
+fn apply_scale() {
+	for i in NM { M[i] = BASE[i]; }
+	if SCALE_PCT != 0.0 { grade(1.0 + SCALE_PCT / 100.0); }
+	clamp_measurements();
+}
+fn fill_measure_inputs() {
+	for i in NM { set_num(str("m-", M_KEYS[i])[..], disp(BASE[i])); }
+	let units = web::query_all(web::DOCUMENT, ".unit");
+	for i in units { web::text(web::list_at(i as i32), unit_label()); }
+	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
+	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
+}
+fn build_measure_form() {
+	let box = el("meas");
+	web::clear(box);
+	for i in NM {
+		let row = web::create("label"); web::cls(row, "m", true);
+		web::attr(row, "title", M_HINTS[i]);
+		let name = web::create("span"); web::text(name, M_LABELS[i]); web::append(row, name);
+		let inp = web::create("input");
+		web::attr(inp, "type", "number"); web::attr(inp, "step", "0.5"); web::attr(inp, "inputmode", "decimal");
+		web::attr(inp, "id", str("m-", M_KEYS[i])[..]);
+		web::attr(inp, "aria-describedby", str("h-", M_KEYS[i])[..]);
+		web::append(row, inp);
+		let u = web::create("span"); web::cls(u, "unit", true); web::text(u, unit_label()); web::append(row, u);
+		let hint = web::create("small"); web::attr(hint, "id", str("h-", M_KEYS[i])[..]); web::text(hint, M_HINTS[i]); web::append(row, hint);
+		web::append(box, row);
+		web::listen(inp, "input", T_MEAS + i as i32, 0);
+	}
+}
+fn fill_select(id const byte[:], names const byte[:][:], sel int) {
+	let s = el(id);
+	web::clear(s);
+	for nm, i in names {
+		let o = web::create("option"); web::attr(o, "value", str(i)[..]); web::text(o, nm);
+		if i == sel { web::attr(o, "selected", ""); }
+		web::append(s, o);
+	}
+}
+
+// ---- options ----------------------------------------------------------------------------
+fn read_options() {
+	O.fit = clamp(get_int("fit"), 0, 3);
+	O.knit = get_int("fabric") == 1;
+	O.sleeve = clamp(get_int("sleeve"), 0, 3);
+	O.neck = clamp(get_int("neck"), 0, 2);
+	O.skirt = clamp(get_int("skirt"), 0, 3);
+	O.leg = clamp(get_int("leg"), 0, 2);
+	O.sex = clamp(get_int("shape"), 0, 1);
+	let l = from_disp(get_num("length", 0.0));
+	O.length = if abs(l - default_length(O.garment)) < 0.06 { 0.0 } else { clamp(l, 0.0, 200.0) };
+	O.sa = clamp(from_disp(get_num("sa", 1.5)), 0.0, 4.0);
+	O.hem = clamp(from_disp(get_num("hem", 3.0)), 0.0, 8.0);
+}
+fn write_options() {
+	set_value("garment", str(O.garment)[..]); set_value("fit", str(O.fit)[..]); set_value("fabric", if O.knit { "1" } else { "0" });
+	set_value("sleeve", str(O.sleeve)[..]); set_value("neck", str(O.neck)[..]); set_value("skirt", str(O.skirt)[..]);
+	set_value("leg", str(O.leg)[..]); set_value("shape", str(O.sex)[..]);
+	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
+	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
+}
+fn show_rows() {
+	let g = O.garment;
+	let top = g == G_TEE || g == G_SHIRT || g == G_BODICE || g == G_DRESS || g == G_HOODIE;
+	show("row-fit", g != G_TRACED);
+	show("row-sleeve", g == G_TEE || g == G_SHIRT || g == G_BODICE || g == G_DRESS);
+	show("row-neck", g == G_TEE || g == G_BODICE || g == G_DRESS);
+	show("row-skirt", g == G_SKIRT || g == G_DRESS);
+	show("row-leg", g == G_TROUSERS);
+	show("row-length", g != G_BODICE && g != G_TRACED);
+	show("row-shape", top);
+	set_text("length-label", match g { 3 => "Skirt length", 4 => "Inseam", 5 => "Inseam", 6 => "Skirt length", _ => "Length below waist" });
+}
+
+// ---- drawing ----------------------------------------------------------------------------
+fn title() {
+	TITLE.clear();
+	TITLE.append("Amni-Stitch: "); TITLE.append(G_NAMES[O.garment]);
+	if O.garment != G_TRACED { TITLE.append(" ("); TITLE.append(FIT_NAMES[O.fit]); TITLE.append(if O.knit { ", knit" } else { ", woven" }); TITLE.push(')'); }
+	TITLE.append(" for chest "); len_str(TITLE, M[M_CHEST]); TITLE.append(", waist "); len_str(TITLE, M[M_WAIST]); TITLE.append(", hip "); len_str(TITLE, M[M_HIP]);
+}
+fn rebuild() {
+	apply_scale();
+	draft_all();
+	if TRACE_OK && (O.garment == G_TRACED || ADD_TRACED) {
+		add_traced_pieces(O.garment == G_TRACED);
+		offset_all();
+	}
+	if PIECES.len == 0 {
+		web::html(el("pattern"), "<p class=\"empty\">Generate or upload a picture of a garment, then press <b>Trace into a pattern</b>. The traced outline becomes a pattern at your size.</p>");
+		web::html(el("guide"), "");
+		show_rows();
+		return;
+	}
+	title();
+	layout(150.0);
+	var s byte[>..] = [];
+	svg_screen(s);
+	web::html(el("pattern"), s[..]);
+	s.clear();
+	guide_html(s);
+	web::html(el("guide"), s[..]);
+	var info byte[>..] = [];
+	format(info, PIECES.len, " pieces · layout ");
+	len_str(info, LAY_W); info.append(" × "); len_str(info, LAY_H);
+	set_text("pat-info", info[..]);
+	show_rows();
+	view_shape();
+	if TAB == 1 { view_draw(); }
+	save_state();
+}
+fn set_tab(t int) {
+	TAB = t;
+	show("pattern-pane", t == 0); show("view-pane", t == 1); show("guide-pane", t == 2);
+	web::attr(el("tab-pat"), "aria-selected", if t == 0 { "true" } else { "false" });
+	web::attr(el("tab-3d"), "aria-selected", if t == 1 { "true" } else { "false" });
+	web::attr(el("tab-guide"), "aria-selected", if t == 2 { "true" } else { "false" });
+	if t == 1 { if !V_OK { if !view_init(el("c3d")) { set_text("view-msg", "3D needs WebGL 2, which this browser does not offer."); } } view_shape(); view_draw(); }
+}
+
+// ---- JS host calls ------------------------------------------------------------------------
+fn host_call(method const byte[:], args const byte[:], tag i32) { let _id = web::js_call(HOST, method, args, tag); }
+fn json_str(out byte[>..]&, s const byte[:]) { json::format_string(out, s); }
+fn file_stem(out byte[>..]&) {
+	out.append("amni-stitch-");
+	for c in G_NAMES[O.garment] { if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') { out.push(to_lower_c(c)); } else if c == ' ' || c == '-' { out.push('-'); } }
+}
+fn to_lower_c(c byte) byte { if c >= 'A' && c <= 'Z' { c + 32 } else { c } }
+fn download(name const byte[:], mime const byte[:], body const byte[:]) {
+	var a byte[>..] = [];
+	a.push('['); json_str(a, name); a.push(','); json_str(a, mime); a.push(','); json_str(a, body); a.push(']');
+	host_call("save", a[..], T_IGNORE);
+}
+
+// ---- server calls -------------------------------------------------------------------------
+fn post(base const byte[:], path const byte[:], body const byte[:], tag i32, ms real) {
+	var u byte[>..] = []; u.append(base); u.append(path);
+	let _id = web::request(u[..], "POST", "{\"content-type\":\"application/json\"}", body, tag, ms);
+}
+fn take(out byte[>..]&) int {
+	out.clear();
+	let id = web::ev_id();
+	let _ok = web::fetch_take(id, out);
+	web::fetch_free(id);
+	web::ev_status() as int
+}
+// a string member of a JSON object text ("" when missing)
+fn jget(text const byte[:], key const byte[:], out byte[>..]&) bool {
+	out.clear();
+	var d = json::Doc {};
+	let root, err = json::parse(text, d);
+	if err.len > 0 || root < 0 { return false; }
+	var k byte[>..] = []; k.append(key);
+	let n = json::member(d, root, k[..]);
+	if n < 0 { return false; }
+	let s, ok = json::as_string(d, n);
+	if ok { out.append(s); return true; }
+	let v, okn = json::as_f64(d, n);
+	if okn { format(out, v as int); return true; }
+	let b, okb = json::as_bool(d, n);
+	if okb { out.append(if b { "true" } else { "false" }); return true; }
+	false
+}
+fn ident(out byte[>..]&) {
+	out.append("\"device\":"); json_str(out, DEVICE[..]);
+	if KEY.len > 0 { out.append(",\"key\":"); json_str(out, KEY[..]); }
+}
+fn ask_quota() {
+	if GATE.len == 0 { return; }
+	var b byte[>..] = []; b.push('{'); ident(b); b.push('}');
+	post(GATE[..], "/quota", b[..], T_QUOTA, 15000.0);
+}
+fn status(s const byte[:]) { set_text("gen-status", s); }
+fn generate() {
+	if BUSY { return; }
+	if GATE.len == 0 { status("The generator is not configured on this site yet."); return; }
+	var p byte[>..] = []; get_value("prompt", p);
+	let pt = trim(p[..]);
+	if pt.len < 3 { status("Describe the garment first, for example: a linen summer dress with puff sleeves."); return; }
+	var style byte[>..] = []; get_value("style", style);
+	var color byte[>..] = []; get_value("color", color);
+	var b byte[>..] = [];
+	b.append("{\"prompt\":"); json_str(b, pt[..min(pt.len, 400)]);
+	b.append(",\"garment\":"); json_str(b, G_NAMES[O.garment]);
+	b.append(",\"fabric\":"); json_str(b, if O.knit { "knit" } else { "woven" });
+	b.append(",\"style\":"); json_str(b, style[..]);
+	b.append(",\"color\":"); json_str(b, color[..]);
+	b.push(','); ident(b); b.push('}');
+	BUSY = true;
+	web::prop_bool(el("gen"), "disabled", true);
+	status("Sending your request…");
+	post(GATE[..], "/generate", b[..], T_GEN_DONE, 30000.0);
+}
+fn gen_done(ok bool) { BUSY = false; web::prop_bool(el("gen"), "disabled", false); if ok { web::cls(el("shot"), "fresh", true); } }
+fn poll() {
+	var u byte[>..] = []; u.append(GATE[..]); u.append("/job?id="); u.append(JOB[..]);
+	let _id = web::request(u[..], "GET", "", "", T_POLL_DONE, 20000.0);
+}
+fn show_shot(src const byte[:]) {
+	SHOT.clear(); SHOT.append(src);
+	web::attr(el("shot-img"), "src", src);
+	web::html(el("shot-ov"), "");
+	show("shot", true);
+	set_text("trace-msg", "");
+}
+
+// ---- licence ----------------------------------------------------------------------------
+fn b64url_json(tok const byte[:], out byte[>..]&) bool {
+	out.clear();
+	let parts = split(tok, '.');
+	var i = 0; var payload byte[>..] = [];
+	for p in parts { if i == 1 { payload.append(p); } i += 1; }
+	if payload.len == 0 { return false; }
+	for &c in payload { if c == '-' { c = '+'; } else if c == '_' { c = '/'; } }
+	while payload.len % 4 != 0 { payload.push('='); }
+	base64::decode(out, payload[..])
+}
+fn show_key() {
+	if KEY.len == 0 {
+		set_text("sub-status", "Free: 3 samples a day. A subscription key raises the limit.");
+		show("key-box", true); show("billing", false); show("key-forget", false);
+		return;
+	}
+	var js byte[>..] = [];
+	var s byte[>..] = [];
+	if b64url_json(KEY[..], js) {
+		var exp byte[>..] = [];
+		if jget(js[..], "exp", exp) {
+			let e, ok = parse_flt(exp[..]);
+			if ok {
+				let days = ((e - web::epoch_ms()) / 86400000.0) as int;
+				if days >= 0 { format(s, "Subscription active, renews or ends in ", days, " days."); } else { s.append("This subscription key has expired. Renew it below."); }
+			}
+		}
+	}
+	if s.len == 0 { s.append("Subscription key saved on this device."); }
+	set_text("sub-status", s[..]);
+	show("key-box", false); show("billing", true); show("key-forget", true);
+}
+// days until the saved key expires (a large number when it has no expiry or cannot be read)
+fn key_days() real {
+	var js byte[>..] = []; var exp byte[>..] = [];
+	if KEY.len == 0 || !b64url_json(KEY[..], js) || !jget(js[..], "exp", exp) { return 1.0e9; }
+	let e, ok = parse_flt(exp[..]);
+	if ok { (e - web::epoch_ms()) / 86400000.0 } else { 1.0e9 }
+}
+// subscription keys run to the end of the paid period plus 7 days; fetch a fresh one near the end
+fn renew_if_due() {
+	if KEY.len == 0 || PRO.len == 0 || key_days() > 10.0 { return; }
+	var b byte[>..] = []; b.append("{\"key\":"); json_str(b, KEY[..]); b.push('}');
+	post(PRO[..], "/renew", b[..], T_RENEW_DONE, 20000.0);
+}
+fn claim() {
+	if PRO.len == 0 || CLAIM_ID.len == 0 { return; }
+	var u byte[>..] = []; u.append(PRO[..]); u.append("/license?session="); u.append(CLAIM_ID[..]);
+	let _id = web::request(u[..], "GET", "", "", T_CLAIM_DONE, 20000.0);
+}
+
+// ---- events -----------------------------------------------------------------------------
+export fn he_event(tag i32, kind i32) {
+	if tag >= T_MEAS && tag < T_MEAS + NM as i32 {
+		let i = (tag - T_MEAS) as int;
+		var s byte[>..] = []; web::ev_value(s);
+		let v, ok = parse_flt(trim(s[..]));
+		if ok && v > 0.0 { BASE[i] = clamp(from_disp(v), M_MIN[i], M_MAX[i]); set_text("preset-note", "Custom measurements"); rebuild(); }
+		return;
+	}
+	match tag {
+		2 => {
+			PRESET = get_int("preset");
+			if PRESET >= 0 && PRESET < NPRESET { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } O.sex = if preset_kind(PRESET) == 1 { 1 } else { 0 }; set_value("shape", str(O.sex)[..]); }
+			set_text("preset-note", "");
+			fill_measure_inputs(); rebuild();
+		},
+		3 => { UNITS = get_int("units"); fill_measure_inputs(); write_options(); rebuild(); },
+		4 => { O.garment = clamp(get_int("garment"), 0, NG - 1); O.length = 0.0; O.knit = O.garment == G_TEE || O.garment == G_HOODIE; write_options(); rebuild(); },
+		5 => { read_options(); rebuild(); },
+		6 => { var c byte[>..] = []; get_value("color", c); view_color(c[..]); if TAB == 1 { view_draw(); } },
+		7 => set_tab(0), 8 => set_tab(1), 9 => set_tab(2),
+		10 => { var s byte[>..] = []; svg_file(s); var n byte[>..] = []; file_stem(n); n.append(".svg"); download(n[..], "image/svg+xml", s[..]); },
+		11 => { var s byte[>..] = []; print_html(s, 0); web::html(el("print"), s[..]); host_call("print", "[\"A4\"]", T_IGNORE); },
+		12 => { var s byte[>..] = []; print_html(s, 1); web::html(el("print"), s[..]); host_call("print", "[\"letter\"]", T_IGNORE); },
+		13 => {
+			var s byte[>..] = [];
+			s.append("<!doctype html><meta charset=\"utf-8\"><title>"); esc(s, TITLE[..]); s.append("</title><style>body{font:15px/1.5 system-ui,sans-serif;max-width:760px;margin:24px auto;padding:0 16px}table{border-collapse:collapse}th,td{text-align:left;padding:3px 10px 3px 0;vertical-align:top}</style><h1>");
+			esc(s, TITLE[..]); s.append("</h1>"); guide_html(s);
+			var n byte[>..] = []; file_stem(n); n.append("-guide.html");
+			download(n[..], "text/html", s[..]);
+		},
+		20 => generate(),
+		21 => {
+			var r byte[>..] = []; let st = take(r);
+			var v byte[>..] = [];
+			if st == 200 && jget(r[..], "job", JOB) {
+				POLLS = 0;
+				if jget(r[..], "remaining", v) { var q byte[>..] = []; q.append(v[..]); q.append(" left today"); set_text("quota", q[..]); }
+				status("Queued on the Amni-Gen PC…");
+				let _t = web::timer(1500.0, T_POLL);
+			} else {
+				gen_done(false);
+				if jget(r[..], "error", v) { status(v[..]); } else if st == 0 { status("Could not reach the generator. Check your connection and try again."); } else { status(str("The generator answered ", st, ".")[..]); }
+				ask_quota();
+			}
+		},
+		22 => poll(),
+		23 => {
+			var r byte[>..] = []; let st = take(r);
+			var state byte[>..] = []; var v byte[>..] = [];
+			POLLS += 1;
+			if st == 200 && jget(r[..], "state", state) {
+				if state[..] == "done" {
+					if jget(r[..], "image", v) { show_shot(v[..]); status("Done. Press Trace to turn it into a pattern at your size."); }
+					gen_done(true); ask_quota();
+				} else if state[..] == "blocked" {
+					gen_done(false);
+					if jget(r[..], "error", v) { status(v[..]); } else { status("That picture was blocked by the safety check and was not shown."); }
+					ask_quota();
+				} else if state[..] == "error" {
+					gen_done(false);
+					if jget(r[..], "error", v) { status(v[..]); } else { status("Generation failed. Your free sample was not used."); }
+					ask_quota();
+				} else {
+					var m byte[>..] = [];
+					if state[..] == "running" { m.append("Generating on the Amni-Gen PC (about 20 seconds)…"); }
+					else if jget(r[..], "position", v) { m.append("Waiting in line, position "); m.append(v[..]); m.append("…"); }
+					else { m.append("Waiting…"); }
+					status(m[..]);
+					if POLLS < 150 { let _t = web::timer(2000.0, T_POLL); } else { gen_done(false); status("This is taking too long. Try again later."); }
+				}
+			} else if POLLS < 150 { let _t = web::timer(3000.0, T_POLL); }
+			else { gen_done(false); status("Lost track of the request. Try again."); }
+		},
+		24 => {
+			var r byte[>..] = []; let st = take(r);
+			var v byte[>..] = [];
+			if st == 200 {
+				var q byte[>..] = [];
+				if jget(r[..], "remaining", v) { q.append(v[..]); q.append(" left today"); }
+				var on byte[>..] = [];
+				if jget(r[..], "online", on) && on[..] == "false" { q.append(" · the Amni-Gen PC is offline right now"); }
+				set_text("quota", q[..]);
+			} else if st == 402 && jget(r[..], "error", v) {
+				set_text("sub-status", v[..]); set_text("quota", "");
+			}
+		},
+		30 => {
+			if SHOT.len == 0 { set_text("trace-msg", "Generate or upload a picture first."); return; }
+			set_text("trace-msg", "Tracing…");
+			var a byte[>..] = []; a.push('['); json_str(a, SHOT[..]); a.append(",320]");
+			host_call("pixels", a[..], T_PIXELS);
+		},
+		31 => {
+			var r byte[>..] = [];
+			if !web::js_result(web::ev_id(), r) { set_text("trace-msg", "Could not read that picture."); return; }
+			var w byte[>..] = []; var h byte[>..] = []; var b byte[>..] = [];
+			if !jget(r[..], "w", w) || !jget(r[..], "h", h) || !jget(r[..], "b64", b) { set_text("trace-msg", "Could not read that picture."); return; }
+			let wi, okw = parse_int(w[..], 10); let hi, okh = parse_int(h[..], 10);
+			IMG.clear();
+			if !okw || !okh || !base64::decode(IMG, b[..]) || IMG.len != wi * hi * 4 { set_text("trace-msg", "Could not read that picture."); return; }
+			IW = wi; IH = hi;
+			let want = O.garment;
+			if trace_image(want) {
+				var ov byte[>..] = []; overlay_svg(ov); web::html(el("shot-ov"), ov[..]);
+				write_options();
+				set_text("trace-msg", TRACE_MSG[..]);
+				rebuild();
+				set_tab(0);
+			} else { set_text("trace-msg", TRACE_MSG[..]); }
+		},
+		32 => host_call("pick", "[]", T_PICKED),
+		33 => {
+			var r byte[>..] = [];
+			if web::js_result(web::ev_id(), r) && r.len > 12 {
+				// the result is a JSON string: strip the quotes (data URLs have nothing to unescape)
+				show_shot(r[1..r.len - 1]);
+				status("Picture loaded. Press Trace to turn it into a pattern.");
+			}
+		},
+		34 => { if SHOT.len > 0 { var a byte[>..] = []; a.push('['); var n byte[>..] = []; file_stem(n); n.append("-sample.webp"); json_str(a, n[..]); a.push(','); json_str(a, SHOT[..]); a.push(']'); host_call("saveUrl", a[..], T_IGNORE); } },
+		35 => { ADD_TRACED = web::get_bool(el("add-traced"), "checked"); rebuild(); },
+		40 => {
+			if PRO.len == 0 { set_text("sub-status", "Subscriptions are not open yet."); return; }
+			set_text("sub-status", "Opening secure checkout…");
+			post(PRO[..], "/checkout", "{\"plan\":\"monthly\"}", T_BUY_DONE, 20000.0);
+		},
+		41 => {
+			var r byte[>..] = []; let st = take(r); var u byte[>..] = [];
+			if st == 200 && jget(r[..], "url", u) && starts_with(u[..], "https://checkout.stripe.com/") { web::navigate(u[..]); }
+			else { var e byte[>..] = []; if jget(r[..], "error", e) { set_text("sub-status", e[..]); } else { set_text("sub-status", "Checkout did not start. Try again."); } }
+		},
+		42 => claim(),
+		43 => {
+			var r byte[>..] = []; let st = take(r); var k byte[>..] = [];
+			if st == 200 && jget(r[..], "key", k) {
+				KEY.clear(); KEY.append(k[..]); web::store_set("amni.stitch.key", KEY[..]);
+				web::set_url("./", true); CLAIM_ID.clear(); show_key(); ask_quota();
+			} else if st == 409 && CLAIM_TRIES < 8 {
+				CLAIM_TRIES += 1; set_text("sub-status", "Payment received, waiting for Stripe to confirm…");
+				let _t = web::timer(1500.0 * CLAIM_TRIES as real, T_CLAIM);
+			} else { var e byte[>..] = []; if jget(r[..], "error", e) { set_text("sub-status", e[..]); } else { set_text("sub-status", "Could not fetch your key yet. Reload this page in a minute."); } }
+		},
+		44 => {
+			var k byte[>..] = []; get_value("key", k);
+			var t byte[>..] = []; for c in k { if c != ' ' && c != '\n' && c != '\r' && c != '\t' { t.push(c); } }
+			if !starts_with(t[..], "AMNIPRO") { set_text("sub-status", "Keys start with AMNIPRO. Copy the whole key from your receipt page or email."); return; }
+			KEY.clear(); KEY.append(t[..]); web::store_set("amni.stitch.key", KEY[..]); show_key(); ask_quota();
+		},
+		45 => {
+			if KEY.len == 0 || PRO.len == 0 { return; }
+			var b byte[>..] = []; b.append("{\"key\":"); json_str(b, KEY[..]); b.push('}');
+			post(PRO[..], "/portal", b[..], T_BILLING_DONE, 20000.0);
+		},
+		46 => { var r byte[>..] = []; let st = take(r); var u byte[>..] = []; if st == 200 && jget(r[..], "url", u) { web::navigate(u[..]); } else { var e byte[>..] = []; if jget(r[..], "error", e) { set_text("sub-status", e[..]); } } },
+		47 => { KEY.clear(); web::store_del("amni.stitch.key"); show_key(); ask_quota(); },
+		48 => {
+			var r byte[>..] = []; let st = take(r); var k byte[>..] = [];
+			if st == 200 && jget(r[..], "key", k) && starts_with(k[..], "AMNIPRO") { KEY.clear(); KEY.append(k[..]); web::store_set("amni.stitch.key", KEY[..]); show_key(); ask_quota(); }
+			else if key_days() < 0.0 { var e byte[>..] = []; if jget(r[..], "error", e) { set_text("sub-status", e[..]); } }
+		},
+		50 => { DRAG = true; DRAG_X = web::ev_x(); DRAG_Y = web::ev_y(); web::capture_pointer(el("c3d"), web::ev_pointer()); },
+		51 => {
+			if DRAG {
+				let x = web::ev_x(); let y = web::ev_y();
+				V_YAW -= (x - DRAG_X) * 0.01; V_PITCH = clamp(V_PITCH + (y - DRAG_Y) * 0.005, -0.3, 0.6);
+				DRAG_X = x; DRAG_Y = y; view_draw();
+			}
+		},
+		52 => { DRAG = false; },
+		53 => { V_YAW = 0.0; view_draw(); }, 54 => { V_YAW = PI * 0.5; view_draw(); }, 55 => { V_YAW = PI; view_draw(); },
+		60 => { if TAB == 1 { view_draw(); } },
+		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); var s byte[>..] = []; if SCALE_PCT > 0.0 { s.push('+'); } fmt1(s, SCALE_PCT); s.push('%'); set_text("scale-val", s[..]); rebuild(); },
+		_ => {},
+	}
+}
+fn listen_id(id const byte[:], ev const byte[:], tag i32) { let h = el(id); if h != 0 { web::listen(h, ev, tag, 0); } }
+
+fn main() {
+	let app = el("app");
+	let _g = web::get_attr(app, "data-gate", GATE);
+	let _p = web::get_attr(app, "data-pro", PRO);
+	while GATE.len > 0 && GATE[GATE.len - 1] == '/' { let _c = GATE.pop(); }
+	while PRO.len > 0 && PRO[PRO.len - 1] == '/' { let _c = PRO.pop(); }
+	HOST = web::js_global("stitchHost");
+	// device id: a random-looking id kept in this browser (the server counts by IP as well)
+	if !web::store_get("amni.stitch.dev", DEVICE) || DEVICE.len < 8 {
+		DEVICE.clear();
+		var x = (web::epoch_ms() as int) ^ ((web::now() * 1000003.0) as int);
+		for i in 16 { x = x * 6364136223846793005 + 1442695040888963407; DEVICE.push("0123456789abcdef"[((x >> 33) & 15) as int]); }
+		web::store_set("amni.stitch.dev", DEVICE[..]);
+	}
+	let _k = web::store_get("amni.stitch.key", KEY);
+	fill_select("preset", PRESET_NAMES[..], PRESET);
+	fill_select("garment", G_NAMES[..], O.garment);
+	if !load_state() { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } }
+	set_value("preset", str(PRESET)[..]);
+	set_value("units", str(UNITS)[..]);
+	set_value("scale", str(SCALE_PCT as int)[..]);
+	build_measure_form();
+	fill_measure_inputs();
+	write_options();
+	listen_id("preset", "change", T_PRESET);
+	listen_id("units", "change", T_UNITS);
+	listen_id("garment", "change", T_GARMENT);
+	let opts = ["fit", "fabric", "sleeve", "neck", "skirt", "leg", "shape", "length", "sa", "hem"];
+	for id in opts { listen_id(id, "change", T_OPT); }
+	listen_id("color", "input", T_COLOR);
+	listen_id("scale", "input", T_SCALE);
+	listen_id("tab-pat", "click", T_TAB_PAT); listen_id("tab-3d", "click", T_TAB_3D); listen_id("tab-guide", "click", T_TAB_GUIDE);
+	listen_id("dl-svg", "click", T_DL_SVG); listen_id("print-a4", "click", T_PRINT_A4); listen_id("print-letter", "click", T_PRINT_LTR); listen_id("dl-guide", "click", T_DL_GUIDE);
+	listen_id("gen", "click", T_GEN); listen_id("trace", "click", T_TRACE); listen_id("upload", "click", T_UPLOAD); listen_id("dl-img", "click", T_DL_IMG);
+	listen_id("add-traced", "change", T_ADD_TRACED);
+	listen_id("buy", "click", T_BUY); listen_id("key-save", "click", T_KEY_SAVE); listen_id("billing", "click", T_BILLING); listen_id("key-forget", "click", T_KEY_FORGET);
+	listen_id("c3d", "pointerdown", T_PDOWN); listen_id("c3d", "pointermove", T_PMOVE); listen_id("c3d", "pointerup", T_PUP); listen_id("c3d", "pointercancel", T_PUP);
+	listen_id("v-front", "click", T_FRONT); listen_id("v-side", "click", T_SIDE); listen_id("v-back", "click", T_BACK);
+	web::listen(web::WINDOW, "resize", T_RESIZE, 0);
+	var c byte[>..] = []; get_value("color", c); view_color(c[..]);
+	// back from Stripe checkout: #pro-session=cs_...
+	var h byte[>..] = []; web::location("hash", h);
+	let at = find(h[..], "pro-session=");
+	if at >= 0 { CLAIM_ID.append(h[at + 12..]); CLAIM_TRIES = 0; set_text("sub-status", "Fetching your subscription key…"); claim(); }
+	show_key();
+	renew_if_due();
+	set_tab(0);
+	rebuild();
+	ask_quota();
+	web::cls(el("app"), "ready", true);
+}

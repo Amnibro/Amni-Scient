@@ -1,0 +1,89 @@
+// Amni-Stitch body measurements (centimetres) and standard size presets.
+import math;
+
+let NM = 18;
+let M_HEIGHT = 0; let M_NECK = 1; let M_SHOULDER = 2; let M_CHEST = 3; let M_UNDERBUST = 4; let M_WAIST = 5;
+let M_HIP = 6; let M_BACKLEN = 7; let M_ARMLEN = 8; let M_BICEP = 9; let M_WRIST = 10; let M_RISE = 11;
+let M_INSEAM = 12; let M_THIGH = 13; let M_KNEE = 14; let M_CALF = 15; let M_ANKLE = 16; let M_HEAD = 17;
+let M_KEYS const byte[:][18] = ["height", "neck", "shoulder", "chest", "underbust", "waist", "hip", "backlen", "armlen", "bicep", "wrist", "rise", "inseam", "thigh", "knee", "calf", "ankle", "head"];
+let M_LABELS const byte[:][18] = ["Height", "Neck", "Shoulder width", "Chest / bust", "Under-bust", "Waist", "Hip", "Back length", "Arm length", "Upper arm", "Wrist", "Rise", "Inseam", "Thigh", "Knee", "Calf", "Ankle", "Head"];
+let M_HINTS const byte[:][18] = [
+	"Barefoot, standing against a wall, floor to the top of the head.",
+	"Around the base of the neck, over the bump at the back of the neck.",
+	"Across the back from one shoulder point (the bony tip) to the other.",
+	"Around the fullest part of the chest or bust, tape level under the arms.",
+	"Around the rib cage right under the bust.",
+	"Around the natural waist, the narrowest part of the torso. Bend sideways: the crease is the waist.",
+	"Around the fullest part of the hips and seat, feet together.",
+	"From the bump at the back of the neck down the spine to the waist.",
+	"From the shoulder point over a slightly bent elbow to the wrist bone.",
+	"Around the fullest part of the upper arm, arm relaxed.",
+	"Around the wrist bone.",
+	"Sit on a hard flat chair: from the side of the waist down to the seat.",
+	"From the crotch down the inside of the leg to the floor, barefoot.",
+	"Around the fullest part of the upper thigh.",
+	"Around the knee, leg straight.",
+	"Around the fullest part of the calf.",
+	"Around the ankle bone.",
+	"Around the head above the ears and eyebrows."
+];
+// sensible ranges (cm) used to clamp what people type
+let M_MIN real[18] = [80.0, 20.0, 22.0, 50.0, 45.0, 40.0, 50.0, 22.0, 30.0, 14.0, 10.0, 15.0, 35.0, 30.0, 22.0, 20.0, 14.0, 44.0];
+let M_MAX real[18] = [230.0, 60.0, 70.0, 180.0, 170.0, 180.0, 190.0, 60.0, 85.0, 60.0, 30.0, 45.0, 110.0, 100.0, 70.0, 70.0, 45.0, 66.0];
+
+var M real[18];
+
+let NPRESET = 21;
+let PRESET_NAMES const byte[:][21] = [
+	"Women XS", "Women S", "Women M", "Women L", "Women XL", "Women 2XL", "Women 3XL",
+	"Men XS", "Men S", "Men M", "Men L", "Men XL", "Men 2XL", "Men 3XL",
+	"Kids 4", "Kids 6", "Kids 8", "Kids 10", "Kids 12", "Teen 14", "Teen 16"
+];
+// chest/bust, waist, hip, height
+let PRESET_CORE real[84] = [
+	80.0, 62.0, 88.0, 164.0,   86.0, 68.0, 94.0, 165.0,   92.0, 74.0, 100.0, 166.0,   100.0, 82.0, 108.0, 167.0,
+	108.0, 90.0, 116.0, 168.0,   116.0, 99.0, 124.0, 168.0,   124.0, 108.0, 132.0, 168.0,
+	86.0, 72.0, 88.0, 174.0,   92.0, 78.0, 94.0, 176.0,   100.0, 86.0, 100.0, 178.0,   108.0, 94.0, 106.0, 180.0,
+	116.0, 102.0, 112.0, 181.0,   124.0, 112.0, 118.0, 182.0,   132.0, 122.0, 124.0, 182.0,
+	57.0, 53.0, 60.0, 104.0,   62.0, 55.0, 65.0, 116.0,   67.0, 58.0, 71.0, 128.0,   72.0, 61.0, 77.0, 140.0,
+	77.0, 64.0, 83.0, 152.0,   82.0, 66.0, 88.0, 160.0,   86.0, 68.0, 92.0, 164.0
+];
+fn preset_kind(i int) int { if i < 7 { 0 } else if i < 14 { 1 } else { 2 } }
+// fills M from a preset: the four core sizes come from the table, the rest from proportions
+fn apply_preset(i int) {
+	let k = preset_kind(i);
+	let c = PRESET_CORE[i * 4]; let w = PRESET_CORE[i * 4 + 1]; let h = PRESET_CORE[i * 4 + 2]; let ht = PRESET_CORE[i * 4 + 3];
+	M[M_HEIGHT] = ht; M[M_CHEST] = c; M[M_WAIST] = w; M[M_HIP] = h;
+	if k == 0 {
+		M[M_NECK] = 0.24 * c + 13.0; M[M_SHOULDER] = 0.17 * c + 23.0; M[M_UNDERBUST] = c - 12.0;
+		M[M_BACKLEN] = 0.25 * ht; M[M_ARMLEN] = 0.35 * ht; M[M_BICEP] = 0.36 * c - 4.5; M[M_WRIST] = 0.06 * c + 10.0;
+		M[M_RISE] = 0.12 * ht + 0.06 * h; M[M_INSEAM] = 0.455 * ht; M[M_THIGH] = 0.6 * h - 2.0; M[M_KNEE] = 0.2 * h + 17.0;
+		M[M_CALF] = 0.2 * h + 15.0; M[M_ANKLE] = 0.06 * h + 16.5; M[M_HEAD] = 56.0;
+	} else if k == 1 {
+		M[M_NECK] = 0.25 * c + 13.5; M[M_SHOULDER] = 0.2 * c + 26.0; M[M_UNDERBUST] = c - 6.0;
+		M[M_BACKLEN] = 0.25 * ht; M[M_ARMLEN] = 0.345 * ht; M[M_BICEP] = 0.3 * c + 2.0; M[M_WRIST] = 0.06 * c + 11.5;
+		M[M_RISE] = 0.12 * ht + 0.05 * h; M[M_INSEAM] = 0.455 * ht; M[M_THIGH] = 0.55 * h; M[M_KNEE] = 0.2 * h + 18.0;
+		M[M_CALF] = 0.2 * h + 17.0; M[M_ANKLE] = 0.06 * h + 17.0; M[M_HEAD] = 57.5;
+	} else {
+		M[M_NECK] = 0.2 * c + 15.5; M[M_SHOULDER] = 0.22 * c + 12.5; M[M_UNDERBUST] = c - 2.0;
+		M[M_BACKLEN] = 0.24 * ht; M[M_ARMLEN] = 0.34 * ht; M[M_BICEP] = 0.3 * c; M[M_WRIST] = 0.08 * c + 6.5;
+		M[M_RISE] = 0.13 * ht + 2.0; M[M_INSEAM] = 0.43 * ht; M[M_THIGH] = 0.58 * h; M[M_KNEE] = 0.22 * h + 12.0;
+		M[M_CALF] = 0.22 * h + 10.0; M[M_ANKLE] = 0.08 * h + 12.0; M[M_HEAD] = 0.06 * ht + 44.0;
+	}
+	for j in NM { M[j] = round(M[j] * 2.0) / 2.0; }
+}
+fn clamp_measurements() { for j in NM { M[j] = clamp(M[j], M_MIN[j], M_MAX[j]); } }
+// scales every circumference by f (grading); lengths scale by the square root, as in a size run
+fn grade(f real) {
+	let g = sqrt(f);
+	for j in NM {
+		let is_len = j == M_HEIGHT || j == M_BACKLEN || j == M_ARMLEN || j == M_RISE || j == M_INSEAM || j == M_SHOULDER;
+		M[j] = M[j] * (if is_len { g } else { f });
+	}
+	clamp_measurements();
+}
+// the waist height above the floor, used by the 3D view and by skirt lengths
+fn waist_height() real { M[M_INSEAM] + M[M_RISE] }
+fn knee_height() real { 0.285 * M[M_HEIGHT] }
+fn waist_to_knee() real { max(waist_height() - knee_height(), 30.0) }
+fn waist_to_floor() real { waist_height() }

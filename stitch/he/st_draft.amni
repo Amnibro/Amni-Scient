@@ -1,0 +1,628 @@
+// Amni-Stitch pattern drafting: block patterns drafted from body measurements.
+// Every draft writes pieces into the pool in st_geom. Units: cm, y down.
+import math;
+
+let G_TEE = 0; let G_SHIRT = 1; let G_BODICE = 2; let G_SKIRT = 3; let G_TROUSERS = 4; let G_SHORTS = 5;
+let G_DRESS = 6; let G_HOODIE = 7; let G_TRACED = 8;
+let NG = 9;
+let G_NAMES const byte[:][9] = ["T-shirt", "Button-up shirt", "Fitted bodice block", "Skirt", "Trousers", "Shorts", "Dress", "Hoodie", "Traced from image"];
+let FIT_NAMES const byte[:][4] = ["Fitted", "Regular", "Relaxed", "Oversized"];
+let SKIRT_NAMES const byte[:][4] = ["Pencil", "A-line", "Half circle", "Full circle"];
+let LEG_NAMES const byte[:][3] = ["Straight", "Tapered", "Wide"];
+let SLEEVE_NAMES const byte[:][4] = ["Sleeveless", "Short", "Three-quarter", "Long"];
+let NECK_NAMES const byte[:][3] = ["Crew", "V-neck", "Scoop"];
+
+struct Opt {
+	garment int = 0, fit int = 1, knit bool = true, sleeve int = 1, neck int = 0, skirt int = 1, leg int = 0,
+	length real = 0.0,        // garment length setting in cm (0 = the template's default)
+	sa real = 1.5,            // seam allowance
+	hem real = 3.0,           // hem allowance
+	sex int = 0               // 0 shaped for a bust, 1 flat chest (fewer darts)
+}
+var O = Opt {};
+
+// results the guide and the 3D view read back
+struct Draft {
+	ease_c real = 0.0, ease_w real = 0.0, ease_h real = 0.0,
+	ah_f real = 0.0, ah_b real = 0.0,         // armhole lengths
+	neck_f real = 0.0, neck_b real = 0.0,     // half neckline lengths
+	top_len real = 0.0,                       // nape to hem (tops)
+	below_waist real = 0.0,
+	hem_circ real = 0.0,                      // garment circumference at the hem
+	chest_w real = 0.0,                       // finished chest circumference
+	waist_w real = 0.0, hip_w real = 0.0,
+	sleeve_len real = 0.0, bicep_w real = 0.0, cuff_w real = 0.0,
+	skirt_len real = 0.0, skirt_hem real = 0.0,
+	knee_w real = 0.0, leg_hem real = 0.0, inseam real = 0.0,
+	has_top bool = false, has_skirt bool = false, has_legs bool = false, has_hood bool = false
+}
+var D = Draft {};
+
+fn by_fit(a real, b real, c real, d real) real { match O.fit { 0 => a, 1 => b, 2 => c, _ => d } }
+fn ease_chest() real {
+	let w = [6.0, 10.0, 16.0, 26.0]; let k = [0.0, 5.0, 12.0, 22.0];
+	if O.knit { k[O.fit] } else { w[O.fit] }
+}
+fn ease_waist() real {
+	let w = [3.0, 6.0, 12.0, 22.0]; let k = [0.0, 4.0, 10.0, 20.0];
+	if O.knit { k[O.fit] } else { w[O.fit] }
+}
+fn ease_hip() real {
+	let w = [4.0, 6.0, 10.0, 18.0]; let k = [0.0, 4.0, 8.0, 16.0];
+	if O.knit { k[O.fit] } else { w[O.fit] }
+}
+fn ease_bicep() real {
+	let w = [5.0, 7.0, 10.0, 14.0]; let k = [2.0, 4.0, 7.0, 10.0];
+	if O.knit { k[O.fit] } else { w[O.fit] }
+}
+fn default_length(g int) real {
+	match g {
+		0 => 20.0, 1 => 24.0, 2 => 0.0, 3 => waist_to_knee() - 2.0,
+		4 => M[M_INSEAM] - 1.0, 5 => 12.0, 6 => waist_to_knee() + 4.0, 7 => 22.0,
+		_ => 0.0,
+	}
+}
+fn length_or_default() real { if O.length > 0.0 { O.length } else { default_length(O.garment) } }
+
+// ---- bodice ---------------------------------------------------------------------------------
+struct Top {
+	ec real, ew real, eh real,
+	below real,          // hem below the waist (0 = cut at the waist)
+	shoulder_add real,   // dropped shoulder
+	drop real,           // extra armhole depth
+	shaped bool,         // waist shaping on the side seam
+	darts bool,          // waist darts (and a bust dart on the front)
+	neck int, widen real,
+	back_fold bool,      // centre back on the fold (else a centre back seam)
+	ext real,            // button extension at centre front (0 = front on the fold)
+	facing real,         // grown-on facing width beyond the extension
+	yoke real            // > 0: split a back yoke this far below the nape
+}
+// key points shared by front and back
+struct Frame {
+	nw real, bnd real, fnd real, ss real, spx real, ad real, qc real, qw real, qh real,
+	waist real, hip real, hem real, xb real, yb real, xf real, yf real, hem_x real, xw real,
+	dart_b real, dart_f real, bust real
+}
+fn frame(t Top) Frame {
+	let C = M[M_CHEST]; let W = M[M_WAIST]; let H = M[M_HIP]; let N = M[M_NECK]; let S = M[M_SHOULDER];
+	var f = Frame { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+	f.nw = N / 6.0 + 0.5 + t.widen;
+	f.bnd = 2.0;
+	f.fnd = match t.neck { 1 => clamp(M[M_BACKLEN] * 0.4, 12.0, 20.0), 2 => f.nw + 5.5, _ => f.nw + 1.2 };
+	if t.neck == 2 { f.nw += 2.0; }
+	f.ss = clamp(S * 0.11, 3.5, 6.0);
+	f.spx = S / 2.0 + t.shoulder_add;
+	f.ad = C / 8.0 + 11.5 + t.ec * 0.06 + t.drop;
+	f.qc = C / 4.0 + t.ec / 4.0;
+	f.qw = W / 4.0 + t.ew / 4.0;
+	f.qh = H / 4.0 + t.eh / 4.0;
+	f.waist = f.bnd + M[M_BACKLEN];
+	f.hip = f.waist + clamp(M[M_HEIGHT] * 0.12, 14.0, 23.0);
+	f.hem = f.waist + t.below;
+	f.xb = min(S / 2.0 - 1.5 + t.shoulder_add * 0.8, f.qc - 1.0);
+	f.yb = f.ss + (f.ad - f.ss) * 0.55;
+	f.xf = min(S / 2.0 - 2.3 + t.shoulder_add * 0.8, f.qc - 1.5);
+	f.yf = f.ss + (f.ad - f.ss) * 0.6;
+	// side seam
+	let hipw = if t.below >= f.hip - f.waist { f.qh } else { lerp(f.qw, f.qh, max(t.below, 0.0) / (f.hip - f.waist)) };
+	f.hem_x = if t.shaped { hipw } else { max(f.qc, hipw) };
+	f.xw = f.qc;
+	f.dart_b = 0.0; f.dart_f = 0.0;
+	if t.shaped {
+		let dq = f.qc - f.qw;
+		if dq > 0.0 {
+			var side = if t.darts { min(dq * 0.45, 3.0) } else { min(dq, 4.0) };
+			let rest = dq - side;
+			if t.darts {
+				f.dart_f = min(rest, 4.0); f.dart_b = min(rest * 1.15, 4.5);
+				side = dq - min(f.dart_f, f.dart_b);
+				side = min(side, 4.5);
+			}
+			f.xw = f.qc - side;
+		} else { f.xw = f.qw; }
+	}
+	f.bust = 0.0;
+	if t.darts && O.sex == 0 { f.bust = clamp((M[M_CHEST] - M[M_UNDERBUST] - 5.0) * 0.35, 0.0, 5.0); if f.bust < 1.0 { f.bust = 0.0; } }
+	f
+}
+// adds a side seam from the underarm to the hem (front pieces pass the bust dart)
+fn side_seam(f Frame, t Top, sa real, dy real, bust_at real, bust real) {
+	let ua = P(f.qc, f.ad);
+	if bust > 0.0 {
+		let d0 = P(f.qc - (f.qc - f.xw) * (bust_at - f.ad) / (f.waist + dy - f.ad), bust_at);
+		tp_add(ua, sa); tp_add(d0, sa); tp_add(P(d0.x, bust_at + bust), sa);
+	} else { tp_add(ua, sa); }
+	if t.below <= 0.0 { tp_add(P(f.xw, f.waist + dy), sa); return; }
+	if t.shaped {
+		let w = P(f.xw, f.waist + dy);
+		tp_add(w, sa);
+		let hy = min(f.hip, f.hem) + dy;
+		let h = P(f.hem_x, hy);
+		if f.hem > f.waist + 1.0 {
+			tp_curve(w, P(w.x, w.y + (hy - w.y) * 0.35), P(h.x, hy - (hy - w.y) * 0.45), h, sa);
+		}
+		if f.hem > f.hip + 0.5 { tp_add(P(f.hem_x, f.hip + dy), sa); }
+	}
+	tp_add(P(f.hem_x, f.hem + dy), O.hem);
+}
+// back bodice; returns the armhole length
+fn draft_back(t Top, name const byte[:], cut int) real {
+	let f = frame(t);
+	let sa = O.sa; let sn = min(O.sa, 1.0);
+	tp_clear();
+	let cbn = P(0.0, f.bnd); let hnp = P(f.nw, 0.0); let sp = P(f.spx, f.ss + t.shoulder_add * 0.15);
+	tp_curve(cbn, P(f.nw * 0.55, f.bnd), P(f.nw, f.bnd * 0.5), hnp, sn);
+	tp_add(hnp, sa);
+	let s = pnorm(psub(sp, hnp)); let down = P(-s.y, s.x);
+	let xb = P(f.xb, f.yb); let ua = P(f.qc, f.ad);
+	let a1 = padd(sp, pmul(down, (f.yb - sp.y) * 0.45)); let a2 = P(f.xb, f.yb - (f.yb - sp.y) * 0.3);
+	let b1 = P(f.xb, f.yb + (f.ad - f.yb) * 0.5); let b2 = P(f.xb + (f.qc - f.xb) * 0.4, f.ad);
+	tp_curve(sp, a1, a2, xb, sa);
+	tp_curve(xb, b1, b2, ua, sa);
+	side_seam(f, t, sa, 0.0, 0.0, 0.0);
+	let bottom = if t.below <= 0.0 { f.waist } else { f.hem };
+	tp_add(P(0.0, bottom), if t.back_fold { 0.0 } else { sa });
+	let ah = bez_len(sp, a1, a2, xb) + bez_len(xb, b1, b2, ua);
+	D.neck_b = bez_len(cbn, P(f.nw * 0.55, f.bnd), P(f.nw, f.bnd * 0.5), hnp);
+	if t.yoke > 0.0 {
+		// yoke above, back body below; both on the fold
+		var keep_p Pt[>..] = []; var keep_s real[>..] = [];
+		keep_p.append(TP[..]); keep_s.append(TS[..]);
+		tp_clip(0, f.bnd + t.yoke, sa);
+		let yk = commit("Back yoke", "Cut 2 on fold (outer and lining)", 2, P(0.0, 0.0), P(0.0, 0.0));
+		PIECES[yk].g0 = P(f.nw * 0.6, f.bnd + 0.8); PIECES[yk].g1 = P(f.nw * 0.6 + 6.0, f.bnd + 0.8);
+		mark(MK_FOLD, P(0.0, f.bnd), P(0.0, f.bnd + t.yoke), P(0.0, 0.0));
+		TP.clear(); TS.clear(); TP.append(keep_p[..]); TS.append(keep_s[..]);
+		tp_clip(1, f.bnd + t.yoke, sa);
+	}
+	let pk = commit(name, if t.back_fold { "Cut 1 on fold" } else { "Cut 2 (a pair)" }, if t.back_fold { 1 } else { 2 }, P(f.qc * 0.5, f.ad), P(f.qc * 0.5, bottom - 5.0));
+	if t.back_fold { mark(MK_FOLD, P(0.0, if t.yoke > 0.0 { f.bnd + t.yoke } else { f.bnd }), P(0.0, bottom), P(0.0, 0.0)); }
+	notch(P(f.xb, f.yb), P(-1.0, 0.0)); notch(P(f.xb, f.yb + 0.6), P(-1.0, 0.0));
+	if t.shaped && t.below > 0.0 { notch(P(f.xw, f.waist), P(1.0, 0.0)); }
+	if f.dart_b > 0.2 && t.darts {
+		let x = f.qc * 0.47;
+		if t.below > 6.0 {
+			mark(MK_DART2, P(x, f.ad + 2.0), P(x - f.dart_b / 2.0, f.waist), P(x + f.dart_b / 2.0, f.waist));
+			mark(MK_DART2, P(x, min(f.waist + 13.0, f.hem - 3.0)), P(0.0, 0.0), P(0.0, 0.0));
+		} else {
+			dart(P(x - f.dart_b / 2.0, f.waist), P(x, f.ad + 2.0), P(x + f.dart_b / 2.0, f.waist));
+		}
+	}
+	ah
+}
+// front bodice; returns the armhole length
+fn draft_front(t Top, name const byte[:]) real {
+	let f = frame(t);
+	let sa = O.sa; let sn = min(O.sa, 1.0);
+	let dy = f.bust;
+	let bust_at = f.ad + 4.0;
+	let bp = P(clamp(M[M_CHEST] * 0.1, 6.0, 12.0), f.ad + 3.0);
+	tp_clear();
+	let hnp = P(f.nw, 0.0); let sp = P(f.spx, f.ss + t.shoulder_add * 0.15);
+	let cfn = P(0.0, f.fnd);
+	let n1 = if t.neck == 1 { P(f.nw * 0.35, f.fnd * 0.7) } else { P(f.nw * 0.55, f.fnd) };
+	let n2 = if t.neck == 1 { P(f.nw * 0.85, f.fnd * 0.25) } else { P(f.nw, f.fnd * 0.45) };
+	// neckline from the shoulder towards centre front is drawn last; start at the shoulder
+	tp_add(hnp, sa);
+	let s = pnorm(psub(sp, hnp)); let down = P(-s.y, s.x);
+	let xf = P(f.xf, f.yf); let ua = P(f.qc, f.ad);
+	let a1 = padd(sp, pmul(down, (f.yf - sp.y) * 0.45)); let a2 = P(f.xf, f.yf - (f.yf - sp.y) * 0.3);
+	let b1 = P(f.xf, f.yf + (f.ad - f.yf) * 0.45); let b2 = P(f.xf + (f.qc - f.xf) * 0.3, f.ad);
+	tp_curve(sp, a1, a2, xf, sa);
+	tp_curve(xf, b1, b2, ua, sa);
+	side_seam(f, t, sa, dy, bust_at, f.bust);
+	let bottom = (if t.below <= 0.0 { f.waist } else { f.hem }) + dy;
+	let ext = t.ext; let fw = t.facing;
+	if ext > 0.0 {
+		tp_add(P(0.0, bottom), O.hem);
+		tp_add(P(-ext, bottom), O.hem);
+		tp_add(P(-ext - fw, bottom), sa);
+		tp_add(P(-ext - fw, f.fnd), sn);
+		tp_add(P(-ext, f.fnd), sn);
+	} else {
+		tp_add(P(0.0, bottom), 0.0);
+	}
+	tp_curve(cfn, n1, n2, hnp, sn);
+	let ah = bez_len(sp, a1, a2, xf) + bez_len(xf, b1, b2, ua);
+	D.neck_f = bez_len(cfn, n1, n2, hnp);
+	let pk = commit(name, if ext > 0.0 { "Cut 2 (a pair)" } else { "Cut 1 on fold" }, if ext > 0.0 { 2 } else { 1 }, P(f.qc * 0.55, f.ad), P(f.qc * 0.55, bottom - 5.0));
+	if ext <= 0.0 { mark(MK_FOLD, P(0.0, f.fnd), P(0.0, bottom), P(0.0, 0.0)); }
+	else {
+		dashed(P(-ext, f.fnd), P(-ext, bottom));
+		dashed(P(0.0, f.fnd), P(0.0, bottom));
+		let n = max(((bottom - f.fnd - 8.0) / 9.0) as int, 3);
+		for i in n + 1 { button(P(0.0, f.fnd + 1.6 + (bottom - f.fnd - 10.0) * i as real / n as real)); }
+	}
+	notch(P(f.xf, f.yf), P(-1.0, 0.0));
+	if t.shaped && t.below > 0.0 { notch(P(f.xw, f.waist + dy), P(1.0, 0.0)); }
+	if f.bust > 0.0 {
+		let d0x = f.qc - (f.qc - f.xw) * (bust_at - f.ad) / (f.waist + dy - f.ad);
+		dart(P(d0x, bust_at), P(bp.x + 2.5, bp.y), P(d0x, bust_at + f.bust));
+	}
+	if f.dart_f > 0.2 && t.darts {
+		let x = bp.x;
+		if t.below > 6.0 {
+			mark(MK_DART2, P(x, bp.y + 2.0), P(x - f.dart_f / 2.0, f.waist + dy), P(x + f.dart_f / 2.0, f.waist + dy));
+			mark(MK_DART2, P(x, min(f.waist + dy + 10.0, f.hem + dy - 3.0)), P(0.0, 0.0), P(0.0, 0.0));
+		} else {
+			dart(P(x - f.dart_f / 2.0, f.waist + dy), P(x, bp.y + 2.0), P(x + f.dart_f / 2.0, f.waist + dy));
+		}
+	}
+	if f.bust > 0.0 || t.darts { dot(bp); }
+	D.chest_w = f.qc * 4.0;
+	D.waist_w = (f.xw - f.dart_f) * 2.0 + (f.xw - f.dart_b) * 2.0;
+	D.hem_circ = f.hem_x * 4.0;
+	D.top_len = bottom;
+	ah
+}
+
+// ---- sleeve ---------------------------------------------------------------------------------
+// half cap from the top (0, 0) out to the underarm (w, ch), as two cubics
+struct Cap { a0 Pt, a1 Pt, a2 Pt, a3 Pt, b1 Pt, b2 Pt, b3 Pt }
+fn cap(w real, ch real) Cap {
+	let u = P(w, ch); let t = P(0.0, 0.0);
+	let m = P(w * 0.5, ch * 0.47);
+	let dir = pnorm(psub(u, t));
+	// a: top -> middle (convex), b: middle -> underarm (concave)
+	Cap { t, P(w * 0.32, 0.0), psub(m, pmul(dir, pdist(m, t) * 0.38)), m, padd(m, pmul(dir, pdist(u, m) * 0.35)), P(w * 0.8, ch * 0.98), u }
+}
+fn cap_len(w real, ch real) real { let c = cap(w, ch); bez_len(c.a0, c.a1, c.a2, c.a3) + bez_len(c.a3, c.b1, c.b2, c.b3) }
+// the point at arc length s from the underarm, along the cap
+fn cap_from_under(w real, ch real, s real) Pt {
+	let c = cap(w, ch);
+	let lb = bez_len(c.a3, c.b1, c.b2, c.b3);
+	if s <= lb { bez_at(c.b3, c.b2, c.b1, c.a3, s) } else { bez_at(c.a3, c.a2, c.a1, c.a0, s - lb) }
+}
+fn solve_w(target real, ch real) real {
+	var lo = 2.0; var hi = 60.0;
+	for i in 40 { let mid = (lo + hi) * 0.5; if cap_len(mid, ch) < target { lo = mid; } else { hi = mid; } }
+	(lo + hi) * 0.5
+}
+// ah_f, ah_b: bodice armholes; seg_f/seg_b: armhole length from the underarm to the notch
+fn draft_sleeve(ah_f real, ah_b real, seg_f real, seg_b real, len real, cuff real, name const byte[:]) {
+	let sa = O.sa;
+	let ce = if O.knit { 0.0 } else { by_fit(1.2, 1.8, 2.2, 2.2) };
+	let lf = ah_f + ce * 0.5; let lb = ah_b + ce * 0.5;
+	var bw = M[M_BICEP] + ease_bicep();
+	// the cap height that makes a cap of this width as long as the armhole
+	var lo = 2.0; var hi = 30.0;
+	for i in 40 { let mid = (lo + hi) * 0.5; if cap_len(bw * 0.5, mid) < (lf + lb) * 0.5 { lo = mid; } else { hi = mid; } }
+	var ch = (lo + hi) * 0.5;
+	let max_ch = (ah_f + ah_b) * (if O.fit >= 2 { 0.28 } else { 0.34 });
+	if ch > max_ch { ch = max_ch; }
+	if ch < 3.0 { ch = 3.0; }
+	let wf = solve_w(lf, ch); let wb = solve_w(lb, ch);
+	bw = wf + wb;
+	let arm = M[M_ARMLEN];
+	let sl = max(len - cuff, ch + 4.0);
+	let wr = M[M_WRIST] + (if cuff > 0.0 { 6.0 } else if O.knit { 5.0 } else { 9.0 });
+	let full = max(arm - cuff, ch + 4.0);
+	let t = clamp((sl - ch) / max(full - ch, 1.0), 0.0, 1.0);
+	let hw = min(lerp(bw * 0.5, wr * 0.5, t), bw * 0.5);
+	let cb = cap(wb, ch); let cf = cap(wf, ch);
+	tp_clear();
+	// back half (x > 0): top -> underarm
+	tp_curve(cb.a0, cb.a1, cb.a2, cb.a3, sa);
+	tp_curve(cb.a3, cb.b1, cb.b2, cb.b3, sa);
+	tp_add(P(wb, ch), sa);
+	tp_add(P(hw, sl), O.hem);
+	tp_add(P(-hw, sl), sa);
+	// front half (x < 0): underarm -> middle -> top, the cap mirrored
+	tp_curve(P(-cf.b3.x, cf.b3.y), P(-cf.b2.x, cf.b2.y), P(-cf.b1.x, cf.b1.y), P(-cf.a3.x, cf.a3.y), sa);
+	tp_curve(P(-cf.a3.x, cf.a3.y), P(-cf.a2.x, cf.a2.y), P(-cf.a1.x, cf.a1.y), P(0.0, 0.0), sa);
+	let pk = commit(name, "Cut 2 (a pair)", 2, P(0.0, ch + 2.0), P(0.0, sl - 4.0));
+	notch(P(0.0, 0.0), P(0.0, -1.0));
+	let nb = cap_from_under(wb, ch, seg_b + ce * 0.2);
+	notch(nb, psub(nb, P(0.0, ch))); notch(padd(nb, pmul(pnorm(psub(P(0.0, 0.0), nb)), 0.6)), psub(nb, P(0.0, ch)));
+	let nf = cap_from_under(wf, ch, seg_f + ce * 0.2);
+	notch(P(-nf.x, nf.y), P(-nf.x, nf.y - ch));
+	if cuff > 0.0 { dashed(P(hw * 0.5, sl), P(hw * 0.5, sl - 10.0)); }
+	D.sleeve_len = sl + cuff; D.bicep_w = bw; D.cuff_w = hw * 2.0;
+}
+
+// ---- rectangles: bands, cuffs, waistbands ---------------------------------------------------
+fn rect_piece(name const byte[:], note const byte[:], cut int, w real, h real, fold_long bool, interf bool) {
+	let sa = O.sa;
+	tp_clear();
+	tp_add(P(0.0, 0.0), sa); tp_add(P(w, 0.0), sa); tp_add(P(w, h), sa); tp_add(P(0.0, h), sa);
+	let pk = commit(name, note, cut, P(w * 0.2, h * 0.5), P(w * 0.8, h * 0.5));
+	if fold_long { dashed(P(0.0, h * 0.5), P(w, h * 0.5)); }
+	PIECES[pk].interfacing = interf;
+}
+
+// ---- tops -----------------------------------------------------------------------------------
+fn top_base() Top {
+	Top { ease_chest(), ease_waist(), ease_hip(), 20.0, 0.0, 0.0, false, false, O.neck, 0.0, true, 0.0, 0.0, 0.0 }
+}
+fn sleeve_length() real {
+	let arm = M[M_ARMLEN];
+	match O.sleeve { 1 => max(arm * 0.33, 14.0), 2 => arm * 0.75, 3 => arm + (if O.knit { 0.0 } else { 1.0 }), _ => 0.0 }
+}
+// the armhole lengths from the underarm to the cross-back / cross-front notch
+fn armhole_parts(t Top) real, real {
+	let f = frame(t);
+	let lb = bez_len(P(f.xb, f.yb), P(f.xb, f.yb + (f.ad - f.yb) * 0.5), P(f.xb + (f.qc - f.xb) * 0.4, f.ad), P(f.qc, f.ad));
+	let lf = bez_len(P(f.xf, f.yf), P(f.xf, f.yf + (f.ad - f.yf) * 0.45), P(f.xf + (f.qc - f.xf) * 0.3, f.ad), P(f.qc, f.ad));
+	return lf, lb;
+}
+fn finish_top(t Top) {
+	let f = frame(t);
+	D.ease_c = t.ec; D.ease_w = t.ew; D.ease_h = t.eh; D.below_waist = t.below; D.has_top = true;
+	D.hip_w = f.qh * 4.0;
+}
+fn draft_tee() {
+	var t = top_base();
+	t.below = length_or_default(); t.widen = if O.knit { 1.0 } else { 0.5 };
+	t.shaped = O.fit == 0;
+	let ab = draft_back(t, "Back", 1);
+	let af = draft_front(t, "Front");
+	D.ah_b = ab; D.ah_f = af;
+	if O.sleeve > 0 {
+		let sf, sb = armhole_parts(t);
+		draft_sleeve(af, ab, sf, sb, sleeve_length(), 0.0, "Sleeve");
+	}
+	let nl = (D.neck_f + D.neck_b) * 2.0;
+	if O.knit { rect_piece("Neckband", "Cut 1 (rib or self fabric, stretch across)", 1, nl * 0.85, 5.0, true, false); }
+	else { rect_piece("Neck binding", "Cut 1 on the bias", 1, nl + 2.0, 4.0, true, false); }
+	if O.sleeve == 0 {
+		let lb = (D.ah_f + D.ah_b) * 2.0;
+		rect_piece("Armhole binding", "Cut 2 (bias or rib)", 2, lb * (if O.knit { 0.9 } else { 0.55 }), 4.0, true, false);
+	}
+	finish_top(t);
+}
+fn draft_shirt() {
+	var t = top_base();
+	t.below = length_or_default(); t.ext = 2.0; t.facing = 5.0; t.yoke = 7.0; t.neck = 0;
+	t.shaped = O.fit == 0;
+	let ab = draft_back(t, "Back", 1);
+	let af = draft_front(t, "Front");
+	D.ah_b = ab; D.ah_f = af;
+	let cuff = if O.sleeve == 3 { 6.0 } else { 0.0 };
+	if O.sleeve > 0 {
+		let sf, sb = armhole_parts(t);
+		draft_sleeve(af, ab, sf, sb, sleeve_length(), cuff, "Sleeve");
+	}
+	if cuff > 0.0 { rect_piece("Cuff", "Cut 2 + 2 interfacing (fold along the dashed line)", 2, M[M_WRIST] + 8.0, cuff * 2.0, true, true); }
+	// collar stand and collar, half length (centre back on the fold)
+	let half = D.neck_f + D.neck_b;
+	let sa = min(O.sa, 1.0);
+	tp_clear();
+	let L = half + t.ext;
+	tp_curve(P(0.0, 0.0), P(L * 0.5, 0.0), P(L * 0.8, -0.3), P(L, -1.2), sa);
+	tp_curve(P(L, -1.2), P(L + 0.6, -1.6), P(L + 0.4, -3.6), P(L - 0.6, -4.0), sa);
+	tp_curve(P(L - 0.6, -4.0), P(L * 0.75, -3.6), P(L * 0.4, -3.3), P(0.0, -3.3), sa);
+	tp_add(P(0.0, -3.3), 0.0);
+	let ps = commit("Collar stand", "Cut 2 on fold + 1 interfacing", 2, P(L * 0.3, -1.6), P(L * 0.7, -1.6));
+	PIECES[ps].interfacing = true;
+	mark(MK_FOLD, P(0.0, -3.3), P(0.0, 0.0), P(0.0, 0.0));
+	button(P(half + t.ext * 0.4, -1.7));
+	tp_clear();
+	let cl = half - 0.3;
+	tp_curve(P(0.0, 0.0), P(cl * 0.5, 0.0), P(cl * 0.85, -0.5), P(cl, -1.5), sa);
+	tp_add(P(cl, -1.5), sa);
+	tp_curve(P(cl + 2.2, -7.8), P(cl * 0.7, -7.2), P(cl * 0.35, -7.0), P(0.0, -7.0), sa);
+	tp_add(P(0.0, -7.0), 0.0);
+	let pc = commit("Collar", "Cut 2 on fold + 1 interfacing", 2, P(cl * 0.3, -3.5), P(cl * 0.7, -3.5));
+	PIECES[pc].interfacing = true;
+	mark(MK_FOLD, P(0.0, -7.0), P(0.0, 0.0), P(0.0, 0.0));
+	finish_top(t);
+}
+fn draft_bodice() {
+	var t = top_base();
+	t.ec = by_fit(6.0, 8.0, 10.0, 14.0); t.ew = by_fit(3.0, 4.0, 6.0, 10.0);
+	t.below = 0.0; t.shaped = true; t.darts = true; t.back_fold = false;
+	let ab = draft_back(t, "Bodice back", 2);
+	let af = draft_front(t, "Bodice front");
+	D.ah_b = ab; D.ah_f = af;
+	if O.sleeve > 0 { let sf, sb = armhole_parts(t); draft_sleeve(af, ab, sf, sb, sleeve_length(), 0.0, "Sleeve"); }
+	finish_top(t);
+}
+fn draft_hoodie() {
+	var t = top_base();
+	t.ec = if O.knit { by_fit(8.0, 14.0, 20.0, 30.0) } else { by_fit(12.0, 18.0, 24.0, 34.0) };
+	t.below = length_or_default(); t.shoulder_add = 3.0; t.drop = 3.0; t.widen = 1.5; t.neck = 0;
+	let ab = draft_back(t, "Back", 1);
+	let af = draft_front(t, "Front");
+	D.ah_b = ab; D.ah_f = af;
+	let cuff = 7.0;
+	let sf, sb = armhole_parts(t);
+	let save = O.sleeve; O.sleeve = 3;
+	draft_sleeve(af, ab, sf, sb, M[M_ARMLEN] + 2.0, cuff, "Sleeve");
+	O.sleeve = save;
+	rect_piece("Cuff", "Cut 2 in rib (stretch across, fold along the dashed line)", 2, (M[M_WRIST] + 5.0) * 0.9, cuff * 2.0, true, false);
+	let f = frame(t);
+	rect_piece("Waistband", "Cut 2 in rib (front and back)", 2, f.hem_x * 2.0 * 0.85, 14.0, true, false);
+	// hood
+	let sa = O.sa;
+	let nl = D.neck_f + D.neck_b;
+	let hh = max(M[M_HEAD] * 0.62, 30.0); let hd = M[M_HEAD] * 0.46 + 2.0;
+	tp_clear();
+	let fnk = P(0.0, hh); let bn = P(nl, hh - 1.5);
+	tp_curve(fnk, P(nl * 0.4, hh + 0.6), P(nl * 0.75, hh), bn, sa);
+	tp_curve(bn, P(nl + 3.5, hh * 0.72), P(hd + 2.5, hh * 0.35), P(hd * 0.62, 0.0), sa);
+	tp_curve(P(hd * 0.62, 0.0), P(hd * 0.35, -0.4), P(2.0, 0.0), P(0.0, 2.0), sa);
+	tp_add(P(0.0, 2.0), 3.0);
+	let ph = commit("Hood", "Cut 2 (a pair) + 2 lining", 2, P(hd * 0.35, hh * 0.3), P(hd * 0.35, hh * 0.8));
+	dashed(P(3.0, 2.0), P(3.0, hh));
+	// kangaroo pocket
+	let pw = f.qc * 1.25; let pkh = 20.0;
+	tp_clear();
+	tp_add(P(0.0, 0.0), sa); tp_add(P(pw * 0.62, 0.0), 1.5); tp_add(P(pw, pkh * 0.55), sa); tp_add(P(pw, pkh), sa); tp_add(P(0.0, pkh), 0.0);
+	let pp = commit("Pocket", "Cut 1 on fold", 1, P(pw * 0.3, 3.0), P(pw * 0.3, pkh - 3.0));
+	mark(MK_FOLD, P(0.0, pkh), P(0.0, 0.0), P(0.0, 0.0));
+	finish_top(t);
+	D.has_hood = true;
+}
+
+// ---- skirts ---------------------------------------------------------------------------------
+fn draft_skirt_pieces(len real, kind int, back_seam bool, prefix const byte[:]) {
+	let sa = O.sa; let sw = min(O.sa, 1.0);
+	let W = M[M_WAIST] + (if O.knit { 0.0 } else { 1.5 });
+	let H = M[M_HIP] + ease_hip();
+	let hd = clamp(M[M_HEIGHT] * 0.12, 14.0, 23.0);
+	D.has_skirt = true; D.skirt_len = len;
+	if kind >= 2 {
+		let full = kind == 3;
+		let r = if full { W / (2.0 * PI) } else { W / PI };
+		let theta = if full { PI * 0.5 } else { PI * 0.25 };
+		let hemw = 1.0;
+		tp_clear();
+		tp_add(P(0.0, r), 0.0);
+		let n = 40;
+		for i in n { let a = theta * i as real / n as real; tp_add(P(sin(a) * (r + len), cos(a) * (r + len)), hemw); }
+		tp_add(P(sin(theta) * (r + len), cos(theta) * (r + len)), sa);
+		for i in n { let a = theta * (1.0 - i as real / n as real); tp_add(P(sin(a) * r, cos(a) * r), sw); }
+		let nm = str(prefix, if full { "Circle skirt" } else { "Half-circle skirt" });
+		let pk = commit(nm[..], "Cut 2 on fold (front and back)", 2, P(sin(theta * 0.5) * (r + len * 0.3), cos(theta * 0.5) * (r + len * 0.3)), P(sin(theta * 0.5) * (r + len * 0.85), cos(theta * 0.5) * (r + len * 0.85)));
+		mark(MK_FOLD, P(0.0, r), P(0.0, r + len), P(0.0, 0.0));
+		D.skirt_hem = 2.0 * theta * (r + len) * 2.0;
+		D.waist_w = W; D.hip_w = H;
+		return;
+	}
+	let flare = if kind == 1 { (len - hd) * 0.2 } else { -1.5 };
+	// front (on the fold) and back (centre back seam for the zip)
+	for side in 2 {
+		let qh = H / 4.0 + (if side == 0 { -0.5 } else { 0.5 });
+		let qw = W / 4.0 + (if side == 0 { -0.5 } else { 0.5 });
+		let dq = max(qh - qw, 0.0);
+		var dart = if kind == 1 { min(dq * 0.35, if side == 0 { 2.0 } else { 3.0 }) } else { min(dq * 0.55, if side == 0 { 3.5 } else { 4.5 }) };
+		let side_take = dq - dart;
+		let wx = qh - side_take;
+		let lift = if kind == 1 { flare * 0.3 } else { 0.0 };
+		let hem_x = max(qh + flare, qw + 2.0);
+		tp_clear();
+		tp_curve(P(0.0, 0.0), P(wx * 0.5, 0.0), P(wx * 0.85, -0.5), P(wx, -1.0), sw);
+		if kind == 1 {
+			tp_curve(P(wx, -1.0), P(wx + (qh - wx) * 0.6, hd * 0.35), P(qh, hd * 0.65), P(qh + flare * hd / len, hd), sa);
+		} else {
+			tp_curve(P(wx, -1.0), P(wx + (qh - wx) * 0.7, hd * 0.3), P(qh, hd * 0.6), P(qh, hd), sa);
+		}
+		tp_add(P(if kind == 1 { qh + flare * hd / len } else { qh }, hd), sa);
+		tp_curve(P(hem_x, len - lift), P(hem_x * 0.7, len - lift * 0.2), P(hem_x * 0.3, len), P(0.0, len), O.hem);
+		let back = side == 1;
+		tp_add(P(0.0, len), if back && back_seam { sa } else { 0.0 });
+		let nm = str(prefix, if back { "Skirt back" } else { "Skirt front" });
+		let note = if back && back_seam { "Cut 2 (a pair)" } else { "Cut 1 on fold" };
+		let pk = commit(nm[..], note, if back && back_seam { 2 } else { 1 }, P(qh * 0.5, hd), P(qh * 0.5, len - 6.0));
+		if !(back && back_seam) { mark(MK_FOLD, P(0.0, 0.0), P(0.0, len), P(0.0, 0.0)); }
+		else { notch(P(0.0, 20.0), P(-1.0, 0.0)); if kind == 0 { notch(P(0.0, len - 18.0), P(-1.0, 0.0)); } }
+		if dart > 0.3 {
+			let dx = qh * (if back { 0.5 } else { 0.45 });
+			let dl = if back { 13.0 } else { 9.5 };
+			dart(P(dx - dart / 2.0, -0.4), P(dx, dl), P(dx + dart / 2.0, -0.4));
+		}
+		notch(P(qh, hd), P(1.0, 0.0));
+		if side == 1 { D.skirt_hem += hem_x * 4.0; }
+	}
+	D.waist_w = W; D.hip_w = H;
+}
+fn draft_waistband(circ real) {
+	rect_piece("Waistband", "Cut 1 + 1 interfacing (fold along the dashed line)", 1, circ + 3.0, 8.0, true, true);
+}
+fn draft_skirt() {
+	let len = length_or_default();
+	draft_skirt_pieces(len, O.skirt, O.skirt < 2, "");
+	draft_waistband(M[M_WAIST] + (if O.knit { 0.0 } else { 1.5 }));
+}
+
+// ---- trousers -------------------------------------------------------------------------------
+fn draft_trousers(shorts bool) {
+	let sa = O.sa; let sc = min(O.sa, 1.0);
+	let H = M[M_HIP]; let W = M[M_WAIST];
+	let eh = ease_hip(); let ew = if O.knit { 0.0 } else { 2.0 };
+	let R = M[M_RISE] + (if O.knit { 0.0 } else { 1.0 });
+	let inseam = if shorts { length_or_default() } else { length_or_default() };
+	let ycr = R; let yhip = R * 0.62; let yhem = R + inseam;
+	let ykn = R + (M[M_INSEAM] * 0.5) - 5.0;
+	let legs = [42.0, 34.0, 58.0];
+	let opening = if shorts { M[M_THIGH] + by_fit(6.0, 10.0, 16.0, 22.0) } else { legs[O.leg] + (M[M_HIP] - 100.0) * 0.2 + by_fit(0.0, 2.0, 4.0, 8.0) };
+	let kneew = max(M[M_KNEE] + 10.0, if O.leg == 1 { opening + 6.0 } else { opening + 2.0 });
+	D.has_legs = true; D.inseam = inseam; D.leg_hem = opening; D.knee_w = kneew;
+	D.waist_w = W + ew; D.hip_w = H + eh;
+	for side in 2 {
+		let back = side == 1;
+		let w = H / 4.0 + eh / 4.0 + (if back { 1.0 } else { -1.0 });
+		let ext = if back { H / 8.0 } else { H / 16.0 };
+		let drop = if back { 0.8 } else { 0.0 };
+		let xc = (w - ext) * 0.5 + (if back { 0.6 } else { 0.0 });
+		let hn = opening / 4.0 + (if back { 1.0 } else { -1.0 });
+		let kn = kneew / 4.0 + (if back { 1.0 } else { -1.0 });
+		let wq = W / 4.0 + ew / 4.0 + (if back { 1.0 } else { -1.0 });
+		let dartw = if back { clamp((w - wq) * 0.5, 0.0, 3.0) } else { clamp((w - wq) * 0.35, 0.0, 2.0) };
+		let cbx = if back { 3.0 } else { 1.0 };
+		let cby = if back { -2.5 } else { 0.0 };
+		// side waist sits where the waist (plus dart) measures out from the centre waist point
+		let wl = wq + dartw;
+		let sx = cbx + sqrt(max(wl * wl - cby * cby, 1.0));
+		tp_clear();
+		tp_curve(P(cbx, cby), P(cbx + (sx - cbx) * 0.5, cby * 0.6), P(sx - 2.0, 0.0), P(sx, 0.0), sc);
+		tp_curve(P(sx, 0.0), P(sx + (w - sx) * 0.5, yhip * 0.4), P(w, yhip * 0.7), P(w, yhip), sa);
+		if shorts {
+			tp_add(P(w, yhip), sa);
+			tp_add(P(xc + hn, yhem), O.hem);
+			tp_add(P(xc - hn, yhem), sa);
+		} else {
+			tp_curve(P(w, yhip), P(w, ycr), P(xc + kn, ykn - (ykn - ycr) * 0.4), P(xc + kn, ykn), sa);
+			tp_add(P(xc + kn, ykn), sa);
+			tp_add(P(xc + hn, yhem), O.hem);
+			tp_add(P(xc - hn, yhem), sa);
+			tp_curve(P(xc - kn, ykn), P(xc - kn, ykn - (ykn - ycr) * 0.45), P(-ext + ext * 0.35, ycr + drop + 1.0), P(-ext, ycr + drop), sc);
+		}
+		if shorts { tp_add(P(-ext, ycr + drop), sc); }
+		// crotch curve up to the centre seam
+		let cdir = pnorm(psub(P(cbx, cby), P(0.0, yhip)));
+		tp_curve(P(-ext, ycr + drop), P(-ext * 0.45, ycr + drop), padd(P(0.0, yhip), pmul(cdir, -(ycr - yhip) * 0.5)), P(0.0, yhip), sc);
+		tp_add(P(0.0, yhip), sc);
+		let nm = if back { if shorts { "Shorts back" } else { "Trouser back" } } else { if shorts { "Shorts front" } else { "Trouser front" } };
+		let pk = commit(nm, "Cut 2 (a pair)", 2, P(xc, yhip + 4.0), P(xc, yhem - 6.0));
+		if !shorts { notch(P(xc + kn, ykn), P(1.0, 0.0)); notch(P(xc - kn, ykn), P(-1.0, 0.0)); }
+		if back { notch(P(-ext * 0.6, ycr + drop - 0.3), P(0.0, 1.0)); notch(P(-ext * 0.6 + 0.6, ycr + drop - 0.2), P(0.0, 1.0)); }
+		else { notch(P(-ext * 0.5, ycr - 0.2), P(0.0, 1.0)); }
+		dashed(P(xc, 2.0), P(xc, yhem - 1.0));
+		if dartw > 0.3 {
+			let dx = if back { cbx + (sx - cbx) * 0.5 } else { xc };
+			let dy0 = cby + (0.0 - cby) * (dx - cbx) / max(sx - cbx, 1.0);
+			dart(P(dx - dartw / 2.0, dy0), P(dx, dy0 + (if back { 12.0 } else { 8.0 })), P(dx + dartw / 2.0, dy0));
+		}
+		notch(P(w, yhip), P(1.0, 0.0));
+	}
+	draft_waistband(W + ew);
+}
+
+fn draft_dress() {
+	var t = top_base();
+	t.ec = by_fit(6.0, 8.0, 12.0, 18.0); t.ew = by_fit(3.0, 4.0, 8.0, 14.0);
+	t.below = 0.0; t.shaped = true; t.darts = true; t.back_fold = false; t.neck = O.neck;
+	let ab = draft_back(t, "Bodice back", 2);
+	let af = draft_front(t, "Bodice front");
+	D.ah_b = ab; D.ah_f = af;
+	if O.sleeve > 0 { let sf, sb = armhole_parts(t); draft_sleeve(af, ab, sf, sb, sleeve_length(), 0.0, "Sleeve"); }
+	else {
+		rect_piece("Armhole facing", "Cut 2 on the bias", 2, (af + ab) * 0.95, 3.5, true, false);
+	}
+	let nl = (D.neck_f + D.neck_b) * 2.0;
+	rect_piece("Neck facing", "Cut 1 on the bias", 1, nl * 0.95, 3.5, true, false);
+	finish_top(t);
+	let len = length_or_default();
+	draft_skirt_pieces(len, O.skirt, O.skirt < 2, "");
+	D.waist_w = M[M_WAIST] + t.ew;
+}
+
+// drafts the selected garment into the pool
+fn draft_all() {
+	pieces_clear();
+	D = Draft {};
+	match O.garment {
+		0 => draft_tee(),
+		1 => draft_shirt(),
+		2 => draft_bodice(),
+		3 => draft_skirt(),
+		4 => draft_trousers(false),
+		5 => draft_trousers(true),
+		6 => draft_dress(),
+		7 => draft_hoodie(),
+		_ => {},
+	}
+	offset_all();
+}

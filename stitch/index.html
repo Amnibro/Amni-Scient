@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amni-Stitch</title>
+<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a 3D fit view and AI outfit samples you can trace into a pattern.">
+<meta property="og:title" content="Amni-Stitch: sewing patterns drafted to your size">
+<meta property="og:description" content="Enter your measurements, pick a garment, print a pattern that fits. Or describe an outfit, generate a sample and trace it into a pattern.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/stitch/">
+<link rel="canonical" href="https://amni-scient.com/stitch/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f4f2ee">
+<script>
+(function(){var h=document.documentElement,s=null;try{s=localStorage.getItem('amni-theme')}catch(e){}if(s==='dark'||s==='light')h.dataset.theme=s;})();
+</script>
+<style>
+:root{--bg:#f4f2ee;--fg:#1b1d22;--dim:#5b6170;--card:#fff;--line:#dcd8d0;--acc:#2f6fed;--acc-fg:#fff;--warn:#b5462f;--ok:#2e7d4f;--paper:#fbfaf6;--field:#fbfaf8;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--paper:#f3f1ec;--field:#15181d;--shadow:none}}
+:root[data-theme="dark"]{--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--paper:#f3f1ec;--field:#15181d;--shadow:none}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--acc)}
+.hidden{display:none!important}
+header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+header.top .brand{font-weight:750;font-size:18px;letter-spacing:.01em;text-decoration:none;color:var(--fg)}
+header.top .brand span{color:var(--acc)}
+header.top .tag{color:var(--dim);font-size:14px;flex:1;min-width:200px}
+header.top nav a{margin-left:14px;font-size:14px;color:var(--dim);text-decoration:none}
+header.top nav a:hover{color:var(--fg)}
+.app{display:grid;grid-template-columns:340px minmax(0,1fr) 340px;gap:16px;padding:16px 20px;align-items:start;max-width:1720px;margin:0 auto}
+@media (max-width:1280px){.app{grid-template-columns:330px minmax(0,1fr)}.app>.ai{grid-column:1 / -1}}
+@media (max-width:820px){.app{grid-template-columns:minmax(0,1fr);padding:12px 16px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.side{display:flex;flex-direction:column;gap:16px}
+h2{font-size:15px;margin:0 0 12px;letter-spacing:.01em}
+h2 b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc);color:var(--acc-fg);font-size:12px;margin-right:8px}
+h3{font-size:14px;margin:18px 0 8px}
+label.f,.row{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:8px;margin:8px 0;font-size:14px}
+select,input[type=number],input[type=text],textarea{width:100%;font:inherit;font-size:14px;color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-height:36px}
+textarea{resize:vertical;min-height:72px}
+select:focus,input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input[type=color]{width:52px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--field);padding:2px}
+input[type=range]{width:100%}
+.m{display:grid;grid-template-columns:minmax(0,1fr) 84px 22px;align-items:center;gap:6px;margin:5px 0;font-size:14px}
+.m input{padding:5px 7px;min-height:32px;text-align:right}
+.m .unit{color:var(--dim);font-size:12px}
+.m small{grid-column:1 / -1;color:var(--dim);font-size:12px;line-height:1.35;margin:-2px 0 4px;display:none}
+.m:focus-within small{display:block}
+#meas{max-height:520px;overflow:auto;padding-right:4px;margin-top:6px}
+.note{color:var(--dim);font-size:13px;margin:6px 0 0}
+button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--field);color:var(--fg);border-radius:8px;padding:8px 13px;cursor:pointer;min-height:36px}
+button:hover{border-color:var(--acc)}
+button.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-fg)}
+button.pri:disabled{opacity:.55;cursor:progress}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border-radius:999px}
+.tabs button[aria-selected=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .info{color:var(--dim);font-size:13px;margin-left:auto}
+.paper{background:var(--paper);border-radius:10px;border:1px solid var(--line);overflow:auto;max-height:calc(100vh - 210px);min-height:340px}
+.paper svg.pat{display:block;width:100%;height:auto;min-width:640px}
+.paper .empty{color:#5b6170;padding:40px 24px;text-align:center}
+#view-pane .stage{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#e9ebef}
+#c3d{display:block;width:100%;height:min(72vh,720px);touch-action:none;cursor:grab}
+#c3d:active{cursor:grabbing}
+#view-msg{color:var(--warn)}
+#guide{font-size:14px}
+#guide table{border-collapse:collapse;width:100%;margin:4px 0}
+#guide th,#guide td{text-align:left;vertical-align:top;padding:5px 10px 5px 0;border-bottom:1px solid var(--line)}
+#guide table.kv th{width:200px;color:var(--dim);font-weight:600}
+#guide ol.steps li{margin:6px 0}
+.ai{display:flex;flex-direction:column;gap:10px}
+.ai .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#quota{color:var(--dim);font-size:13px}
+#gen-status,#trace-msg{font-size:13px;margin:0;min-height:1.2em}
+.shot-box{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#eee}
+.shot-box img{display:block;width:100%;height:auto}
+#shot-ov{position:absolute;inset:0;pointer-events:none}
+#shot-ov svg{width:100%;height:100%}
+#shot-ov .tr{fill:rgba(47,111,237,.12);stroke:#2f6fed;stroke-width:1.6;vector-effect:non-scaling-stroke}
+#shot-ov .tc{stroke:#c43c3c;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+.check{display:flex;gap:8px;align-items:center;font-size:13px}
+.sub{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.sub h3{margin-top:0}
+#key-box{display:flex;gap:6px;margin-top:8px}
+#key-box input{font:12px/1.3 ui-monospace,Consolas,monospace}
+.fine{color:var(--dim);font-size:12px;line-height:1.45;margin:0}
+.loading{padding:60px 20px;text-align:center;color:var(--dim)}
+.app:not(.ready) .work .paper{opacity:.5}
+#print{display:none}
+.pdefs{position:absolute;width:0;height:0;overflow:hidden}
+@media print{
+  body>*:not(#print){display:none!important}
+  html,body{background:#fff}
+  #print{display:block}
+  #print .page{page-break-after:always;break-after:page;margin:0}
+  #print .page:last-child{page-break-after:auto;break-after:auto}
+  #print .cover{font:12pt/1.5 system-ui,sans-serif;color:#000}
+  #print .cover .map svg{width:100%;height:auto;max-height:200mm}
+  #print svg{display:block}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./">Amni-<span>Stitch</span></a>
+  <div class="tag">Sewing patterns drafted to your measurements. Written in Helium, runs in your browser.</div>
+  <nav><a href="#how" id="how-link">How to measure</a><a href="/privacy-stitch.html">Privacy</a><a href="/">Amni-Scient</a></nav>
+</header>
+<noscript><p class="loading">Amni-Stitch needs JavaScript and WebAssembly.</p></noscript>
+<main id="app" class="app" data-gate="https://amni-stitch.amnibro7.workers.dev" data-pro="https://amni-stitch-pro.amnibro7.workers.dev">
+  <div class="side">
+    <section class="card" aria-labelledby="h-meas">
+      <h2 id="h-meas"><b>1</b>Your measurements</h2>
+      <label class="f">Start from <select id="preset" aria-label="Size preset"></select></label>
+      <label class="f">Units <select id="units"><option value="0">Centimetres</option><option value="1">Inches</option></select></label>
+      <label class="f">Grade <span><input type="range" id="scale" min="-20" max="20" step="1" value="0" aria-describedby="scale-val"> <small id="scale-val" class="note">0%</small></span></label>
+      <p class="note" id="preset-note"></p>
+      <div id="meas" role="group" aria-label="Body measurements"></div>
+      <p class="note" id="how">Measure over underwear with a soft tape, snug but not tight. Focus a field to see where to measure.</p>
+    </section>
+    <section class="card" aria-labelledby="h-garment">
+      <h2 id="h-garment"><b>2</b>Garment</h2>
+      <label class="f">Template <select id="garment"></select></label>
+      <label class="f" id="row-fit">Fit <select id="fit"><option value="0">Fitted</option><option value="1">Regular</option><option value="2">Relaxed</option><option value="3">Oversized</option></select></label>
+      <label class="f">Fabric <select id="fabric"><option value="0">Woven</option><option value="1">Knit (stretch)</option></select></label>
+      <label class="f" id="row-shape">Shaping <select id="shape"><option value="0">Bust darts</option><option value="1">Flat chest</option></select></label>
+      <label class="f" id="row-sleeve">Sleeves <select id="sleeve"><option value="0">Sleeveless</option><option value="1">Short</option><option value="2">Three-quarter</option><option value="3">Long</option></select></label>
+      <label class="f" id="row-neck">Neckline <select id="neck"><option value="0">Crew</option><option value="1">V-neck</option><option value="2">Scoop</option></select></label>
+      <label class="f" id="row-skirt">Skirt <select id="skirt"><option value="0">Pencil</option><option value="1">A-line</option><option value="2">Half circle</option><option value="3">Full circle</option></select></label>
+      <label class="f" id="row-leg">Leg <select id="leg"><option value="0">Straight</option><option value="1">Tapered</option><option value="2">Wide</option></select></label>
+      <label class="f" id="row-length"><span id="length-label">Length below waist</span><input type="number" id="length" step="0.5" min="0" inputmode="decimal"></label>
+      <label class="f">Seam allowance <input type="number" id="sa" step="0.1" min="0" inputmode="decimal"></label>
+      <label class="f">Hem allowance <input type="number" id="hem" step="0.1" min="0" inputmode="decimal"></label>
+      <label class="f">Colour (3D) <input type="color" id="color" value="#6d8fbf"></label>
+    </section>
+  </div>
+
+  <section class="work card" aria-label="Pattern">
+    <div class="tabs" role="tablist">
+      <button id="tab-pat" role="tab" aria-selected="true" aria-controls="pattern-pane">Pattern</button>
+      <button id="tab-3d" role="tab" aria-selected="false" aria-controls="view-pane">3D fit</button>
+      <button id="tab-guide" role="tab" aria-selected="false" aria-controls="guide-pane">Sewing guide</button>
+    </div>
+    <div id="pattern-pane" role="tabpanel">
+      <div class="toolbar">
+        <button id="dl-svg">Download SVG (full size)</button>
+        <button id="print-a4">Print A4</button>
+        <button id="print-letter">Print Letter</button>
+        <span class="info" id="pat-info"></span>
+      </div>
+      <div id="pattern" class="paper"><p class="loading">Loading the pattern engine…</p></div>
+    </div>
+    <div id="view-pane" role="tabpanel" class="hidden">
+      <div class="toolbar">
+        <button id="v-front">Front</button><button id="v-side">Side</button><button id="v-back">Back</button>
+        <span class="info">Drag to turn. Your measurements, with the garment's ease.</span>
+      </div>
+      <div class="stage"><canvas id="c3d" aria-label="3D view of the garment on a figure with your measurements"></canvas></div>
+      <p id="view-msg" class="note"></p>
+    </div>
+    <div id="guide-pane" role="tabpanel" class="hidden">
+      <div class="toolbar"><button id="dl-guide">Download the guide</button></div>
+      <div id="guide"></div>
+    </div>
+  </section>
+
+  <aside class="ai card" aria-labelledby="h-ai">
+    <h2 id="h-ai"><b>3</b>AI outfit sample</h2>
+    <p class="note">Describe a garment. Amni-Gen (MOSS-Image) draws a sample of it; trace the sample and it becomes a pattern at your size.</p>
+    <label for="prompt" class="note">Describe it</label>
+    <textarea id="prompt" maxlength="400" placeholder="A linen summer dress with puff sleeves and a square neckline, sage green"></textarea>
+    <label class="f">Picture <select id="style"><option value="flat">Flat lay</option><option value="form">On a dress form</option></select></label>
+    <div class="actions"><button id="gen" class="pri">Generate sample</button><span id="quota"></span></div>
+    <p id="gen-status" role="status" aria-live="polite"></p>
+    <div id="shot" class="hidden">
+      <div class="shot-box"><img id="shot-img" alt="Generated outfit sample"><div id="shot-ov"></div></div>
+      <div class="actions" style="margin-top:8px"><button id="trace" class="pri">Trace into a pattern</button><button id="dl-img">Save picture</button></div>
+      <label class="check"><input type="checkbox" id="add-traced" checked> Add the traced outline as a pattern piece</label>
+    </div>
+    <div class="actions"><button id="upload">Trace your own photo</button></div>
+    <p id="trace-msg" role="status" aria-live="polite"></p>
+    <div class="sub">
+      <h3>More samples</h3>
+      <p id="sub-status" class="note"></p>
+      <div class="actions"><button id="buy" class="pri">Subscribe, $9 a month</button><button id="billing" class="hidden">Manage billing</button><button id="key-forget" class="hidden">Remove key</button></div>
+      <div id="key-box"><input type="text" id="key" placeholder="Paste a key: AMNIPRO1…" aria-label="Subscription key" spellcheck="false" autocomplete="off"><button id="key-save">Save</button></div>
+    </div>
+    <p class="fine">Samples are for clothing only. Every picture is checked on our PC before it is shown; pictures with nudity are blocked and never shown, and we keep a record of the blocked picture with the requesting IP address. Repeated blocked requests ban the IP. See the <a href="/privacy-stitch.html">privacy notice</a> and <a href="/terms.html">terms</a>.</p>
+  </aside>
+</main>
+<div id="print"></div>
+<script>
+window.stitchHost = (() => {
+  const dl = (url, name) => { const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+  const load = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('bad image')); i.src = src; })
+  const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s) }
+  const shrink = async (src, max, type) => { const i = await load(src), k = Math.min(1, max / Math.max(i.naturalWidth, i.naturalHeight)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(i.naturalWidth * k)); c.height = Math.max(1, Math.round(i.naturalHeight * k)); const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(i, 0, 0, c.width, c.height); return { c, x } }
+  return {
+    async pixels(src, max) { const { c, x } = await shrink(src, max); const d = x.getImageData(0, 0, c.width, c.height).data; return { w: c.width, h: c.height, b64: b64(new Uint8Array(d.buffer)) } },
+    save(name, mime, text) { const u = URL.createObjectURL(new Blob([text], { type: mime })); dl(u, name); setTimeout(() => URL.revokeObjectURL(u), 4000) },
+    saveUrl(name, url) { dl(url, name) },
+    pick() {
+      return new Promise((ok, no) => {
+        const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+        i.onchange = () => { const f = i.files && i.files[0]; if (!f) return no(new Error('no file')); const r = new FileReader(); r.onload = async () => { try { const { c } = await shrink(r.result, 1024); ok(c.toDataURL('image/png')) } catch (e) { no(e) } }; r.onerror = () => no(r.error); r.readAsDataURL(f) };
+        i.click();
+      })
+    },
+    print(paper) { let s = document.getElementById('page-size'); if (!s) { s = document.createElement('style'); s.id = 'page-size'; document.head.appendChild(s) } s.textContent = '@page{size:' + (paper === 'letter' ? 'letter' : 'A4') + ';margin:10mm}'; setTimeout(() => print(), 60) }
+  }
+})();
+</script>
+<script type="module">
+import { start } from './helium.js?v=1';
+start({ wasm: 'stitch.wasm?v=1', onerror: e => { const p = document.getElementById('pattern'); if (p) p.innerHTML = '<p class="empty">The pattern engine stopped: ' + String(e && e.message || e).replace(/[<&]/g, '') + '. Reload the page.</p>' } });
+</script>
+</body>
+</html>

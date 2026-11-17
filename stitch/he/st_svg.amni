@@ -1,0 +1,209 @@
+// Amni-Stitch rendering: the pattern as SVG (1 user unit = 1 cm), and tiled print pages.
+import math;
+
+var LAY_W = 0.0;
+var LAY_H = 0.0;
+let HEAD = 9.0;   // top band for the title and the test squares
+var TITLE byte[>..];
+
+fn num(out byte[>..]&, v real) { format_flt(out, v, 2); }
+fn esc(out byte[>..]&, s const byte[:]) {
+	for c in s {
+		if c == '&' { out.append("&amp;"); } else if c == '<' { out.append("&lt;"); } else if c == '>' { out.append("&gt;"); } else if c == '"' { out.append("&quot;"); } else { out.push(c); }
+	}
+}
+// lays the pieces out in shelves no wider than lw; sets each piece's origin
+fn layout(lw real) {
+	var order int[>..] = [];
+	for k in PIECES.len { order.push(k); }
+	sort(order) { a, b => piece_h(a) > piece_h(b) };
+	var width = lw;
+	for k in PIECES.len { width = max(width, piece_w(k) + 4.0); }
+	var x = 2.0; var y = HEAD + 2.0; var row = 0.0; var wmax = 0.0;
+	for k in order {
+		let w = piece_w(k); let h = piece_h(k);
+		if x + w > width - 2.0 && x > 2.0 { x = 2.0; y += row + 3.0; row = 0.0; }
+		PIECES[k].ox = x; PIECES[k].oy = y;
+		x += w + 3.0; row = max(row, h); wmax = max(wmax, x);
+	}
+	LAY_W = max(wmax + 1.0, 40.0);
+	LAY_H = y + row + 3.0;
+}
+fn path_of(out byte[>..]&, pts const Pt[:], f int, n int, dx real, dy real) {
+	for i in n {
+		let p = pts[f + i];
+		out.push(if i == 0 { 'M' } else { 'L' });
+		num(out, p.x + dx); out.push(' '); num(out, p.y + dy); out.push(' ');
+	}
+	out.push('Z');
+}
+fn line(out byte[>..]&, a Pt, b Pt, cls const byte[:]) {
+	out.append("<line class=\""); out.append(cls); out.append("\" x1=\""); num(out, a.x); out.append("\" y1=\""); num(out, a.y);
+	out.append("\" x2=\""); num(out, b.x); out.append("\" y2=\""); num(out, b.y); out.append("\"/>");
+}
+fn circle(out byte[>..]&, c Pt, r real, cls const byte[:]) {
+	out.append("<circle class=\""); out.append(cls); out.append("\" cx=\""); num(out, c.x); out.append("\" cy=\""); num(out, c.y);
+	out.append("\" r=\""); num(out, r); out.append("\"/>");
+}
+fn text(out byte[>..]&, at Pt, size real, cls const byte[:], s const byte[:], rot real) {
+	out.append("<text class=\""); out.append(cls); out.append("\" x=\""); num(out, at.x); out.append("\" y=\""); num(out, at.y);
+	out.append("\" font-size=\""); num(out, size); out.append("\"");
+	if rot != 0.0 { out.append(" transform=\"rotate("); num(out, rot); out.push(' '); num(out, at.x); out.push(' '); num(out, at.y); out.append(")\""); }
+	out.push('>'); esc(out, s); out.append("</text>");
+}
+fn arrow_head(out byte[>..]&, tip Pt, dir Pt, s real, cls const byte[:]) {
+	let d = pnorm(dir); let n = pperp(d);
+	line(out, tip, padd(psub(tip, pmul(d, s)), pmul(n, s * 0.5)), cls);
+	line(out, tip, psub(psub(tip, pmul(d, s)), pmul(n, s * 0.5)), cls);
+}
+fn style(out byte[>..]&) {
+	out.append("<style>.cut{fill:#fbfaf6;stroke:#16181d;stroke-width:.07}.st{fill:none;stroke:#2f6fed;stroke-width:.045;stroke-dasharray:.35 .22}");
+	out.append(".fold{stroke:#c43c3c;stroke-width:.14;stroke-dasharray:1.2 .35 .25 .35}.mk{stroke:#16181d;stroke-width:.06;fill:none}.mkf{fill:#16181d}");
+	out.append(".dart{stroke:#7a3fd1;stroke-width:.05;fill:none}.gr{stroke:#16181d;stroke-width:.06}.pl{stroke:#16181d;stroke-width:.04;stroke-dasharray:.6 .3}");
+	out.append(".t{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;fill:#16181d}.tb{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;fill:#16181d;font-weight:700}");
+	out.append(".tf{font-family:system-ui,sans-serif;fill:#c43c3c;font-weight:600}.sq{fill:none;stroke:#16181d;stroke-width:.05}.tile{fill:none;stroke:#9aa1ad;stroke-width:.03;stroke-dasharray:.5 .5}</style>");
+}
+// the pattern drawing (no outer <svg>), in layout coordinates
+fn pattern_body(out byte[>..]&) {
+	// title and test squares
+	text(out, P(2.0, 2.6), 1.4, "tb", TITLE[..], 0.0);
+	var sub byte[>..] = [];
+	format(sub, "Seam allowance "); format_flt(sub, O.sa, 1); format(sub, " cm included (hems "); format_flt(sub, O.hem, 1); format(sub, " cm). Print at 100% and check the squares.");
+	text(out, P(2.0, 4.3), 0.75, "t", sub[..], 0.0);
+	out.append("<rect class=\"sq\" x=\"2\" y=\"5.2\" width=\"5\" height=\"5\"/>");
+	text(out, P(4.5, 8.1), 0.9, "tb", "5 cm", 0.0);
+	out.append("<rect class=\"sq\" x=\"8.5\" y=\"5.2\" width=\"5.08\" height=\"5.08\"/>");
+	text(out, P(11.04, 8.1), 0.9, "tb", "2 in", 0.0);
+	for &pc in PIECES {
+		let k = PIECES.index_of(pc);
+		let dx = pc.ox - pc.minx; let dy = pc.oy - pc.miny;
+		out.append("<g transform=\"translate("); num(out, dx); out.push(' '); num(out, dy); out.append(")\">");
+		out.append("<path class=\"cut\" d=\""); path_of(out, OFF[..], pc.first, pc.n, 0.0, 0.0); out.append("\"/>");
+		out.append("<path class=\"st\" d=\""); path_of(out, PTS[..], pc.first, pc.n, 0.0, 0.0); out.append("\"/>");
+		// fold edges
+		for i in pc.n {
+			if SAS[pc.first + i] <= 0.0 { line(out, PTS[pc.first + i], PTS[pc.first + (i + 1) % pc.n], "fold"); }
+		}
+		// marks
+		var mi = pc.mfirst;
+		while mi < pc.mfirst + pc.mn {
+			let m = MARKS[mi];
+			match m.kind {
+				1 => line(out, m.a, padd(m.a, pmul(m.b, min(O.sa, 1.2))), "mk"),
+				2 => { line(out, m.a, m.b, "dart"); line(out, m.b, m.c, "dart"); circle(out, m.b, 0.15, "mkf"); },
+				3 => { circle(out, m.a, 0.55, "mk"); line(out, P(m.a.x - 0.35, m.a.y), P(m.a.x + 0.35, m.a.y), "mk"); },
+				4 => line(out, m.a, m.b, "pl"),
+				5 => circle(out, m.a, 0.18, "mkf"),
+				6 => {
+					let d = psub(m.b, m.a); let l = plen(d); let u = pnorm(d); let nrm = pperp(u);
+					let side = if nrm.x > 0.0 || (nrm.x == 0.0 && nrm.y > 0.0) { 1.0 } else { -1.0 };
+					let inward = pmul(nrm, side * 1.4);
+					let a = padd(padd(m.a, pmul(u, l * 0.15)), inward); let b = padd(padd(m.a, pmul(u, l * 0.85)), inward);
+					line(out, padd(m.a, pmul(u, l * 0.15)), a, "mk"); line(out, a, b, "mk"); line(out, b, padd(m.a, pmul(u, l * 0.85)), "mk");
+					arrow_head(out, padd(m.a, pmul(u, l * 0.15)), pmul(inward, -1.0), 0.6, "mk");
+					arrow_head(out, padd(m.a, pmul(u, l * 0.85)), pmul(inward, -1.0), 0.6, "mk");
+					let mid = padd(padd(m.a, pmul(u, l * 0.5)), pmul(inward, 1.7));
+					let ang = atan2(u.y, u.x) * 180.0 / PI;
+					text(out, mid, 0.7, "tf", "PLACE ON FOLD", if abs(ang) > 90.0 { ang + 180.0 } else { ang });
+				},
+				7 => {
+					if mi + 1 < pc.mfirst + pc.mn {
+						let lo = MARKS[mi + 1].a;
+						line(out, m.a, m.b, "dart"); line(out, m.b, lo, "dart"); line(out, lo, m.c, "dart"); line(out, m.c, m.a, "dart");
+						mi += 1;
+					}
+				},
+				_ => {},
+			}
+			mi += 1;
+		}
+		// grainline
+		if pdist(pc.g0, pc.g1) > 1.0 {
+			line(out, pc.g0, pc.g1, "gr");
+			arrow_head(out, pc.g0, psub(pc.g0, pc.g1), 0.8, "gr");
+			arrow_head(out, pc.g1, psub(pc.g1, pc.g0), 0.8, "gr");
+		}
+		// labels in the middle of the piece
+		var cx = 0.0; var cy = 0.0;
+		for i in pc.n { cx += PTS[pc.first + i].x; cy += PTS[pc.first + i].y; }
+		cx /= pc.n as real; cy /= pc.n as real;
+		let fs = clamp(min(piece_w(k), piece_h(k)) * 0.09, 0.7, 2.0);
+		let tx = if pdist(pc.g0, pc.g1) > 1.0 { (pc.g0.x + pc.g1.x) * 0.5 + fs * 0.6 } else { cx };
+		text(out, P(tx, cy - fs * 0.6), fs, "tb", pc.name[..], 0.0);
+		text(out, P(tx, cy + fs * 0.6), fs * 0.62, "t", pc.note[..], 0.0);
+		if pc.interfacing { text(out, P(tx, cy + fs * 1.5), fs * 0.55, "t", "Interfacing: cut 1 per piece", 0.0); }
+		out.append("</g>");
+	}
+}
+fn svg_open(out byte[>..]&, x real, y real, w real, h real, mm bool) {
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"");
+	num(out, x); out.push(' '); num(out, y); out.push(' '); num(out, w); out.push(' '); num(out, h); out.append("\"");
+	if mm { out.append(" width=\""); num(out, w * 10.0); out.append("mm\" height=\""); num(out, h * 10.0); out.append("mm\""); }
+	out.append(">");
+}
+// a complete SVG file at true size
+fn svg_file(out byte[>..]&) {
+	out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	svg_open(out, 0.0, 0.0, LAY_W, LAY_H, true);
+	style(out);
+	out.append("<rect x=\"0\" y=\"0\" width=\""); num(out, LAY_W); out.append("\" height=\""); num(out, LAY_H); out.append("\" fill=\"#fff\"/>");
+	pattern_body(out);
+	out.append("</svg>\n");
+}
+// the on-screen preview (scales to its box)
+fn svg_screen(out byte[>..]&) {
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pat\" role=\"img\" aria-label=\"Sewing pattern pieces\" viewBox=\"0 0 ");
+	num(out, LAY_W); out.push(' '); num(out, LAY_H); out.append("\">");
+	style(out);
+	pattern_body(out);
+	out.append("</svg>");
+}
+// print pages: paper 0 = A4, 1 = US Letter; 10 mm margins, 1 cm overlap between tiles
+fn tiles(paper int) real, real, int, int {
+	let tw = if paper == 0 { 19.0 } else { 19.59 };
+	let th = if paper == 0 { 27.7 } else { 25.94 };
+	let cols = max(((LAY_W - 1.0) / (tw - 1.0)) as int + 1, 1);
+	let rows = max(((LAY_H - 1.0) / (th - 1.0)) as int + 1, 1);
+	return tw, th, cols, rows;
+}
+fn print_html(out byte[>..]&, paper int) {
+	let tw, th, cols, rows = tiles(paper);
+	// the drawing once, reused by every tile
+	out.append("<svg class=\"pdefs\" width=\"0\" height=\"0\" aria-hidden=\"true\"><defs><g id=\"st-pat\">");
+	pattern_body(out);
+	out.append("</g></defs>");
+	style(out);
+	out.append("</svg>");
+	// a cover page with the tile map
+	out.append("<section class=\"page cover\"><h1>");
+	esc(out, TITLE[..]);
+	out.append("</h1><p>Print every page at <b>100% / actual size</b> (no \"fit to page\"). Check the 5 cm square on page A1, then trim each page along the grey dashed line on its right and bottom edges, overlap the next page by 1 cm and tape. Letters are rows, numbers are columns.</p>");
+	format(out, "<p>", rows * cols, " pages, ", rows, " rows by ", cols, " columns.</p>");
+	out.append("<div class=\"map\">");
+	svg_open(out, 0.0, 0.0, LAY_W, LAY_H, false);
+	out.append("<use href=\"#st-pat\"/>");
+	for r in rows {
+		for c in cols {
+			let x = c as real * (tw - 1.0); let y = r as real * (th - 1.0);
+			out.append("<rect class=\"tile\" x=\""); num(out, x); out.append("\" y=\""); num(out, y); out.append("\" width=\""); num(out, tw); out.append("\" height=\""); num(out, th); out.append("\"/>");
+			var lab byte[>..] = []; lab.push(('A' + r) as byte); format(lab, c + 1);
+			text(out, P(x + tw * 0.5, y + th * 0.5), 3.0, "tf", lab[..], 0.0);
+		}
+	}
+	out.append("</svg></div></section>");
+	for r in rows {
+		for c in cols {
+			let x = c as real * (tw - 1.0); let y = r as real * (th - 1.0);
+			out.append("<section class=\"page\">");
+			out.append("<svg viewBox=\""); num(out, x); out.push(' '); num(out, y); out.push(' '); num(out, tw); out.push(' '); num(out, th);
+			out.append("\" width=\""); num(out, tw * 10.0); out.append("mm\" height=\""); num(out, th * 10.0); out.append("mm\">");
+			out.append("<use href=\"#st-pat\"/>");
+			// overlap guides and the page label
+			line(out, P(x + tw - 1.0, y), P(x + tw - 1.0, y + th), "tile");
+			line(out, P(x, y + th - 1.0), P(x + tw, y + th - 1.0), "tile");
+			var lab byte[>..] = []; lab.push(('A' + r) as byte); format(lab, c + 1);
+			text(out, P(x + 0.4, y + th - 0.3), 0.6, "tf", lab[..], 0.0);
+			out.append("</svg></section>");
+		}
+	}
+}
