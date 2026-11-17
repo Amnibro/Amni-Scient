@@ -1,0 +1,360 @@
+import math;
+import style;
+struct Feat { layer i32, gtype i32, mask u64, r0 i32, r1 i32, x0 f32, y0 f32, x1 f32, y1 f32 }
+struct Lab { layer i32, gtype i32, pri i32, minz f32, maxz f32, font i32, size f32, color u32, dark u32, dot u32, line bool, r0 i32, r1 i32, t0 i32, t1 i32 }
+struct Tile { pts f32[>..] = [], rings i32[>..] = [], feats Feat[>..] = [], labs Lab[>..] = [], text byte[>..] = [], bytes int = 0 }
+struct Val { kind i32, a int, b int, num real }
+struct Pb { b const byte[:], pos int, end int }
+let K_CLASS i32 = 1;
+let K_SUBCLASS i32 = 2;
+let K_BRUNNEL i32 = 3;
+let K_RAMP i32 = 4;
+let K_ADMIN i32 = 5;
+let K_MARITIME i32 = 7;
+let K_RANK i32 = 8;
+let K_CAPITAL i32 = 9;
+let K_ELE i32 = 10;
+let K_NAME i32 = 11;
+let K_LATIN i32 = 12;
+let K_EN i32 = 13;
+let K_HN i32 = 14;
+let K_REF i32 = 15;
+var keys_buf i32[>..] = [];
+var vals_buf Val[>..] = [];
+var vcls_buf i32[>..] = [];
+var feat_buf int[>..] = [];
+fn pb_varint(p Pb&) u64 {
+	var r u64 = 0;
+	var sh u64 = 0;
+	while p.pos < p.end {
+		let c int = p.b[p.pos];
+		p.pos += 1;
+		if sh < 64 { r |= ((c & 127) as u64) << sh; }
+		if c < 128 { break; }
+		sh += 7;
+	}
+	r
+}
+fn pb_zz(v u64) int {
+	((v >> 1) as! int) ^ -((v & 1) as! int)
+}
+fn pb_skip(p Pb&, wire int) {
+	if wire == 0 {
+		pb_varint(p);
+	} else if wire == 1 {
+		p.pos = min(p.pos + 8, p.end);
+	} else if wire == 2 {
+		let n = pb_varint(p) as! int;
+		if n < 0 || n > p.end - p.pos { p.pos = p.end; } else { p.pos += n; }
+	} else if wire == 5 {
+		p.pos = min(p.pos + 4, p.end);
+	} else {
+		p.pos = p.end;
+	}
+}
+fn pb_bytes(p Pb&) int, int {
+	let n = pb_varint(p) as! int;
+	let s = p.pos;
+	var e = s + n;
+	if n < 0 || e > p.end { e = p.end; }
+	p.pos = e;
+	return s, e;
+}
+fn key_code(name const byte[:]) i32 {
+	if name == "class" { return K_CLASS; }
+	if name == "subclass" { return K_SUBCLASS; }
+	if name == "brunnel" { return K_BRUNNEL; }
+	if name == "ramp" { return K_RAMP; }
+	if name == "admin_level" { return K_ADMIN; }
+	if name == "maritime" { return K_MARITIME; }
+	if name == "rank" { return K_RANK; }
+	if name == "capital" { return K_CAPITAL; }
+	if name == "ele_ft" { return K_ELE; }
+	if name == "name" { return K_NAME; }
+	if name == "name:latin" { return K_LATIN; }
+	if name == "name_en" { return K_EN; }
+	if name == "housenumber" { return K_HN; }
+	if name == "ref" { return K_REF; }
+	0
+}
+fn rd_le(b const byte[:], at int, n int) u64 {
+	var r u64 = 0;
+	for i in n {
+		let c u64 = b[at + n - 1 - i];
+		r = (r << 8) | c;
+	}
+	r
+}
+fn f32_of(bits u64) real {
+	let e = ((bits >> 23) & 255) as int;
+	let m = (bits & 8388607) as int;
+	var v = 0.0;
+	if e == 255 {
+		v = 0.0;
+	} else if e == 0 {
+		v = (m as real) * pow(2.0, -149.0);
+	} else {
+		v = (1.0 + (m as real) / 8388608.0) * pow(2.0, (e - 127) as real);
+	}
+	if ((bits >> 31) & 1) == 1 { v = -v; }
+	v
+}
+fn f64_of(bits u64) real {
+	let e = ((bits >> 52) & 2047) as int;
+	let m = (bits & 4503599627370495) as int;
+	var v = 0.0;
+	if e == 2047 {
+		v = 0.0;
+	} else if e == 0 {
+		v = (m as real) * pow(2.0, -1074.0);
+	} else {
+		v = (1.0 + (m as real) / 4503599627370496.0) * pow(2.0, (e - 1023) as real);
+	}
+	if ((bits >> 63) & 1) == 1 { v = -v; }
+	v
+}
+fn read_value(b const byte[:], start int, end int) Val {
+	var p = Pb { b: b, pos: start, end: end };
+	var v = Val { kind: 0, a: 0, b: 0, num: 0.0 };
+	while p.pos < p.end {
+		let tag = pb_varint(p) as! int;
+		let f = tag >> 3;
+		let w = tag & 7;
+		if f == 1 && w == 2 {
+			let s, e = pb_bytes(p);
+			v.kind = 1;
+			v.a = s;
+			v.b = e;
+		} else if f == 2 && w == 5 {
+			if p.pos + 4 > p.end { break; }
+			v.kind = 2;
+			v.num = f32_of(rd_le(b, p.pos, 4));
+			p.pos += 4;
+		} else if f == 3 && w == 1 {
+			if p.pos + 8 > p.end { break; }
+			v.kind = 2;
+			v.num = f64_of(rd_le(b, p.pos, 8));
+			p.pos += 8;
+		} else if (f == 4 || f == 5) && w == 0 {
+			v.kind = 2;
+			v.num = (pb_varint(p) as! int) as real;
+		} else if f == 6 && w == 0 {
+			v.kind = 2;
+			v.num = pb_zz(pb_varint(p)) as real;
+		} else if f == 7 && w == 0 {
+			v.kind = 2;
+			v.num = if pb_varint(p) != 0 { 1.0 } else { 0.0 };
+		} else {
+			pb_skip(p, w);
+		}
+	}
+	v
+}
+fn decode_tile(b const byte[:], t Tile&) {
+	t.pts.clear();
+	t.rings.clear();
+	t.feats.clear();
+	t.labs.clear();
+	t.text.clear();
+	t.bytes = b.len;
+	style_init();
+	var p = Pb { b: b, pos: 0, end: b.len };
+	while p.pos < p.end {
+		let tag = pb_varint(p) as! int;
+		let f = tag >> 3;
+		let w = tag & 7;
+		if f == 3 && w == 2 {
+			let s, e = pb_bytes(p);
+			decode_layer(b, s, e, t);
+		} else {
+			pb_skip(p, w);
+		}
+	}
+}
+fn decode_layer(b const byte[:], start int, end int, t Tile&) {
+	keys_buf.clear();
+	vals_buf.clear();
+	feat_buf.clear();
+	var p = Pb { b: b, pos: start, end: end };
+	var na = 0;
+	var nb = 0;
+	var extent = 4096;
+	while p.pos < p.end {
+		let tag = pb_varint(p) as! int;
+		let f = tag >> 3;
+		let w = tag & 7;
+		if f == 1 && w == 2 {
+			let s, e = pb_bytes(p);
+			na = s;
+			nb = e;
+		} else if f == 5 && w == 0 {
+			extent = pb_varint(p) as! int;
+		} else if f == 3 && w == 2 {
+			let s, e = pb_bytes(p);
+			keys_buf.push(key_code(b[s..e]));
+		} else if f == 4 && w == 2 {
+			let s, e = pb_bytes(p);
+			vals_buf.push(read_value(b, s, e));
+		} else if f == 2 && w == 2 {
+			let s, e = pb_bytes(p);
+			feat_buf.push(s);
+			feat_buf.push(e);
+		} else {
+			pb_skip(p, w);
+		}
+	}
+	let lid = layer_id(b[na..nb]);
+	if lid < 0 { return; }
+	vcls_buf.clear();
+	for i in vals_buf.len { vcls_buf.push(-2); }
+	let ext int = if extent > 0 { extent } else { 4096 };
+	let scale = 1.0 / (ext as real);
+	var fi = 0;
+	while fi < feat_buf.len {
+		let s = feat_buf[fi];
+		let e = feat_buf[fi + 1];
+		fi += 2;
+		var a = Attrs { .. };
+		a.cls = -1;
+		a.ele_ft = -1;
+		var gtype i32 = 0;
+		var gs = 0;
+		var ge = 0;
+		var fp = Pb { b: b, pos: s, end: e };
+		while fp.pos < fp.end {
+			let tag = pb_varint(fp) as! int;
+			let f = tag >> 3;
+			let w = tag & 7;
+			if f == 2 && w == 2 {
+				let ts, te = pb_bytes(fp);
+				var tp = Pb { b: b, pos: ts, end: te };
+				while tp.pos < tp.end {
+					let ki = pb_varint(tp) as! int;
+					if tp.pos >= tp.end { break; }
+					let vi = pb_varint(tp) as! int;
+					if ki < 0 || ki >= keys_buf.len || vi < 0 || vi >= vals_buf.len { continue; }
+					let k = keys_buf[ki];
+					let v = vals_buf[vi];
+					let txt = if v.kind == 1 { b[v.a..v.b] } else { b[0..0] };
+					let num = if v.kind == 2 { v.num } else { 0.0 };
+					if k == K_CLASS {
+						a.cls_s = txt;
+						if vcls_buf[vi] == -2 { vcls_buf[vi] = class_id(txt) as! i32; }
+						a.cls = vcls_buf[vi];
+					} else if k == K_SUBCLASS {
+						a.sub_s = txt;
+					} else if k == K_BRUNNEL {
+						a.brunnel = if txt == "bridge" { 1 } else if txt == "tunnel" { 2 } else { 0 };
+					} else if k == K_RAMP {
+						a.ramp = num != 0.0;
+					} else if k == K_MARITIME {
+						a.maritime = num != 0.0;
+					} else if k == K_ADMIN {
+						a.admin = (num as int) as! i32;
+					} else if k == K_RANK {
+						a.rank = (num as int) as! i32;
+					} else if k == K_CAPITAL {
+						a.capital = (num as int) as! i32;
+					} else if k == K_ELE {
+						a.ele_ft = (num as int) as! i32;
+					} else if k == K_NAME {
+						a.name = txt;
+					} else if k == K_LATIN {
+						a.name_latin = txt;
+					} else if k == K_EN {
+						a.name_en = txt;
+					} else if k == K_HN {
+						a.hn = txt;
+					} else if k == K_REF {
+						a.ref = txt;
+					}
+				}
+			} else if f == 3 && w == 0 {
+				gtype = pb_varint(fp) as! i32;
+			} else if f == 4 && w == 2 {
+				let s2, e2 = pb_bytes(fp);
+				gs = s2;
+				ge = e2;
+			} else {
+				pb_skip(fp, w);
+			}
+		}
+		let mask = feature_mask(lid, gtype, a);
+		let lab = label_style(lid, gtype, a);
+		if mask == 0 && !lab.ok { continue; }
+		let r0 = t.rings.len / 2;
+		let added = decode_geometry(b, gs, ge, gtype, scale, t);
+		let r1 = r0 + added;
+		if mask != 0 {
+			var x0 f32 = 1e30;
+			var y0 f32 = 1e30;
+			var x1 f32 = -1e30;
+			var y1 f32 = -1e30;
+			for k in r0..r1 {
+				let first = t.rings[2 * k] as int;
+				let cnt = t.rings[2 * k + 1] as int;
+				for j in cnt {
+					let px = t.pts[2 * (first + j)];
+					let py = t.pts[2 * (first + j) + 1];
+					x0 = min(x0, px);
+					y0 = min(y0, py);
+					x1 = max(x1, px);
+					y1 = max(y1, py);
+				}
+			}
+			t.feats.push(Feat { layer: lid, gtype: gtype, mask: mask, r0: r0 as i32, r1: r1 as i32, x0: x0, y0: y0, x1: x1, y1: y1 });
+		}
+		if lab.ok {
+			let t0 = t.text.len;
+			label_text(lid, a, t.text);
+			if t.text.len > t0 {
+				t.labs.push(Lab { layer: lid, gtype: gtype, pri: lab.pri, minz: lab.minz, maxz: lab.maxz, font: lab.font, size: lab.size, color: lab.color, dark: lab.dark, dot: lab.dot, line: lab.line, r0: r0 as i32, r1: r1 as i32, t0: t0 as i32, t1: t.text.len as i32 });
+			}
+		}
+	}
+}
+fn decode_geometry(b const byte[:], start int, end int, gtype i32, scale real, t Tile&) int {
+	var p = Pb { b: b, pos: start, end: end };
+	var x = 0;
+	var y = 0;
+	var rings = 0;
+	var first = 0;
+	var cnt = 0;
+	var done = false;
+	while p.pos < p.end && !done {
+		let ci = pb_varint(p) as! int;
+		let id = ci & 7;
+		let n = ci >> 3;
+		if id == 1 || id == 2 {
+			for i in n {
+				if p.pos >= p.end { break; }
+				let dx = pb_zz(pb_varint(p));
+				let dy = pb_zz(pb_varint(p));
+				x += dx;
+				y += dy;
+				if id == 1 {
+					if cnt > 0 {
+						t.rings.push(first as i32);
+						t.rings.push(cnt as i32);
+						rings += 1;
+					}
+					first = t.pts.len / 2;
+					cnt = 0;
+				} else if cnt == 0 {
+					first = t.pts.len / 2;
+				}
+				t.pts.push(((x as real) * scale) as f32);
+				t.pts.push(((y as real) * scale) as f32);
+				cnt += 1;
+			}
+		} else if id != 7 {
+			done = true;
+		}
+	}
+	if cnt > 0 {
+		t.rings.push(first as i32);
+		t.rings.push(cnt as i32);
+		rings += 1;
+	}
+	rings
+}

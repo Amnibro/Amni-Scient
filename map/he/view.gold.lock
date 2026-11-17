@@ -1,0 +1,894 @@
+=== 48ef7a3a109a49d5
+import web;
+import math;
+import style;
+import mvt;
+import raster;
+import glyphs;
+import labels;
+=== -816f1d546284d2b
+
+=== -2e2fa1cc672bb8f6
+fn lon2x(lon real) real { (lon + 180.0) / 360.0 }
+fn lat2y(lat real) real {
+	let r = clamp(lat, -85.0511, 85.0511) * PI / 180.0;
+	(1.0 - log(tan(r) + 1.0 / cos(r)) / PI) / 2.0
+}
+fn x2lon(x real) real { x * 360.0 - 180.0 }
+fn y2lat(y real) real {
+	let u = PI * (1.0 - 2.0 * y);
+	let s = (exp(u) - exp(-u)) / 2.0;
+	atan2(s, 1.0) * 180.0 / PI
+}
+fn world_size() real { 512.0 * pow(2.0, zoom) }
+fn pt_x(wx real) real { (wx - cx) * world_size() + vw / 2.0 }
+fn pt_y(wy real) real { (wy - cy) * world_size() + vh / 2.0 }
+fn px_wx(sx real) real { (sx - vw / 2.0) / world_size() + cx }
+fn px_wy(sy real) real { (sy - vh / 2.0) / world_size() + cy }
+=== -18cea2101249b9f1
+fn clamp_view() {
+	zoom = clamp(zoom, 1.0, 19.0);
+	if cx < 0.0 { cx += 1.0; }
+	if cx >= 1.0 { cx -= 1.0; }
+	cy = clamp(cy, 0.0, 1.0);
+}
+fn want_frames() {
+	if !frames_on {
+		web::frames(true);
+		frames_on = true;
+	}
+}
+fn view_changed() {
+	clamp_view();
+	dirty = true;
+	labels_stale = true;
+	last_move = web::now();
+	want_frames();
+}
+=== 2248c182313bdc1a
+fn view_init() {
+	map_el = web::el("map");
+	tiles_el = web::el("tiles");
+	ov_el = web::el("ov");
+	dpr = clamp(web::dpr(), 1.0, 2.0);
+	if pool.len == 0 { pool.resize(POOL, 0); }
+	view_resize();
+	web::listen(map_el, "pointerdown", T_PDOWN, web::PREVENT);
+	web::listen(map_el, "pointermove", T_PMOVE, 0);
+	web::listen(map_el, "pointerup", T_PUP, 0);
+	web::listen(map_el, "pointercancel", T_PUP, 0);
+	web::listen(map_el, "wheel", T_WHEEL, web::PREVENT);
+	web::listen(map_el, "contextmenu", T_CTX, web::PREVENT);
+	web::listen(map_el, "keydown", T_KEY, 0);
+	web::listen(web::WINDOW, "resize", T_RESIZE, 0);
+	web::fetch(TJ_URL, T_TJ);
+}
+=== -2e22fb5be954ddc7
+fn view_resize() {
+	let rw = web::get_num(map_el, "clientWidth") as real;
+	let rh = web::get_num(map_el, "clientHeight") as real;
+	vw = if rw > 0.0 { rw } else { web::win_w() as real };
+	vh = if rh > 0.0 { rh } else { web::win_h() as real };
+	web::style(ov_el, "width", str(vw, "px"));
+	web::style(ov_el, "height", str(vh, "px"));
+	view_changed();
+}
+=== 2b6feb9bad24e839
+fn set_tpl(s const byte[:]) {
+	tpl.clear();
+	tpl.append(s);
+}
+fn tpl_url(t const byte[:], z int, x int, y int, out byte[>..]&) {
+	out.clear();
+	var i = 0;
+	while i < t.len {
+		let r = t[i..];
+		if starts_with(r, "{z}") {
+			format(out, z);
+			i += 3;
+		} else if starts_with(r, "{x}") {
+			format(out, x);
+			i += 3;
+		} else if starts_with(r, "{y}") {
+			format(out, y);
+			i += 3;
+		} else {
+			out.push(t[i]);
+			i++;
+		}
+	}
+}
+fn tj_loaded(b const byte[:]) bool {
+	var ok = false;
+	let k = find(b, "\"tiles\"");
+	if k >= 0 {
+		var i = k + 7;
+		while i < b.len && b[i] != 91 { i++; }
+		while i < b.len && b[i] != 93 && b[i] != 34 { i++; }
+		if i < b.len && b[i] == 34 {
+			var s byte[>..] = [];
+			i++;
+			while i < b.len && b[i] != 34 {
+				if b[i] == 92 && i + 1 < b.len { i++; }
+				s.push(b[i]);
+				i++;
+			}
+			set_tpl(s);
+			web::store_set("amni-map-tpl", s);
+			ok = true;
+		}
+	}
+	view_changed();
+	ok
+}
+fn tj_failed() bool {
+	var s byte[>..] = [];
+	let ok = web::store_get("amni-map-tpl", s);
+	if ok { set_tpl(s); }
+	view_changed();
+	ok
+}
+=== -5604bac0b526b8bd
+fn line_count(s const byte[:]) int {
+	var n = 0;
+	var start = 0;
+	for i in s.len {
+		if s[i] == 10 {
+			n++;
+			start = i + 1;
+		}
+	}
+	if start < s.len { n++; }
+	n
+}
+fn line_at(s const byte[:], n int) const byte[:] {
+	var start = 0;
+	var k = 0;
+	for i in s.len {
+		if s[i] == 10 {
+			if k == n { return s[start..i]; }
+			k++;
+			start = i + 1;
+		}
+	}
+	if k == n { return s[start..]; }
+	s[0..0]
+}
+fn dt_find(z int, x int, y int) int {
+	let xw = x % (1 << z);
+	for &d, i in dts {
+		if d.z == z && d.x == xw && d.y == y { return i; }
+	}
+	-1
+}
+fn dt_get(z int, x int, y int) int {
+	let found = dt_find(z, x, y);
+	if found >= 0 { return found; }
+	var slot = -1;
+	for &d, i in dts {
+		if d.state == 0 {
+			slot = i;
+			break;
+		}
+	}
+	if slot < 0 && dts.len < 70 {
+		dts.push(DT {});
+		slot = dts.len - 1;
+	}
+	if slot < 0 {
+		var best = 0;
+		for &d, i in dts {
+			if d.state != 1 && (slot < 0 || d.used < best) {
+				slot = i;
+				best = d.used;
+			}
+		}
+	}
+	if slot < 0 { return -1; }
+	let d .= dts[slot];
+	d.z = z as i32;
+	d.x = (x % (1 << z)) as i32;
+	d.y = y as i32;
+	d.state = 0;
+	d.alt = -1;
+	d.len = 0;
+	if cur_dt == slot { cur_dt = -1; }
+	slot
+}
+fn dt_request(i int) {
+	if tpl.len == 0 { return; }
+	let d .= dts[i];
+	if d.state != 0 || inflight >= 8 { return; }
+	var url byte[>..] = [];
+	if d.alt >= 0 {
+		tpl_url(line_at(alt_tpls, d.alt), d.z, d.x, d.y, url);
+	} else {
+		tpl_url(tpl, d.z, d.x, d.y, url);
+	}
+	let id = web::fetch(url, T_TILE);
+	d.fid = id as i32;
+	d.state = 1;
+	inflight++;
+}
+=== -5fc69b75ffa8bedc
+fn cur_tz() int { clamp(round(zoom) as int, 0, 19) }
+fn pool_put(i int) {
+	let d .= dts[i];
+	if fbuf.len > POOL / 4 {
+		d.state = 3;
+		return;
+	}
+	if pool_head + fbuf.len > POOL { pool_head = 0; }
+	let a = pool_head;
+	let b = pool_head + fbuf.len;
+	for &o, j in dts {
+		if j != i && o.state == 2 && o.len > 0 && o.off < b && o.off + o.len > a {
+			o.state = 0;
+			if cur_dt == j { cur_dt = -1; }
+		}
+	}
+	for k in fbuf.len { pool[a + k] = fbuf[k]; }
+	d.off = a;
+	d.len = fbuf.len;
+	if cur_dt == i { cur_dt = -1; }
+	pool_head = b;
+}
+fn dt_tile(i int) Tile& {
+	if cur_dt != i {
+		let d .= dts[i];
+		decode_tile(pool[d.off..d.off + d.len], cur);
+		cur_dt = i;
+	}
+	cur
+}
+fn tile_arrived() {
+	let id = web::ev_id();
+	var s = -1;
+	for &d, i in dts {
+		if d.state == 1 && d.fid == id {
+			s = i;
+			break;
+		}
+	}
+	if s < 0 {
+		web::fetch_free(id);
+		return;
+	}
+	inflight--;
+	fbuf.clear();
+	web::fetch_take(id, fbuf);
+	web::fetch_free(id);
+	let status = web::ev_status();
+	let d .= dts[s];
+	if status == 200 {
+		pool_put(s);
+		if d.state != 3 { d.state = 2; }
+	} else if status == 204 || status == 404 {
+		d.len = 0;
+		if cur_dt == s { cur_dt = -1; }
+		d.state = 2;
+	} else if d.alt + 1 < line_count(alt_tpls) {
+		d.alt += 1;
+		d.state = 0;
+	} else {
+		d.state = 3;
+		web::timer(15000, T_RETRY);
+	}
+	if d.state == 2 && (d.z as int) == data_zoom(cur_tz()) { labels_stale = true; }
+	dirty = true;
+	want_frames();
+}
+fn retry_failed() {
+	for &d in dts {
+		if d.state == 3 {
+			d.state = 0;
+			d.alt = -1;
+		}
+	}
+	dirty = true;
+}
+=== 746149510988ba6c
+struct NK { x int, y int, d real }
+fn data_zoom(tz int) int { min(tz, 14) }
+fn render_px() int { round(512.0 * dpr) as int }
+fn vt_dt(z int, x int, y int) int {
+	let dz = data_zoom(z);
+	let k = z - dz;
+	dt_find(dz, (x % (1 << z)) >> k, y >> k)
+}
+fn update_tiles() {
+	if !dirty { return; }
+	let tz = cur_tz();
+	let n = 1 << tz;
+	let nr = n as real;
+	let ws = world_size();
+	let c0 = floor((cx - vw / 2.0 / ws) * nr) as int;
+	let c1 = floor((cx + vw / 2.0 / ws) * nr) as int;
+	let r0 = clamp(floor((cy - vh / 2.0 / ws) * nr) as int, 0, n - 1);
+	let r1 = clamp(floor((cy + vh / 2.0 / ws) * nr) as int, 0, n - 1);
+	var nk NK[>..] = [];
+	for x in c0..c1 + 1 {
+		for y in r0..r1 + 1 {
+			let dx = ((x as real) + 0.5) / nr - cx;
+			let dy = ((y as real) + 0.5) / nr - cy;
+			nk.push(NK { x: x, y: y, d: dx * dx + dy * dy });
+		}
+	}
+	sort(nk) { a, b => a.d < b.d };
+	var nv int[>..] = [];
+	for &q in nk {
+		var idx = -1;
+		for &v, i in vts {
+			if v.z == tz && v.x == q.x && v.y == q.y {
+				idx = i;
+				break;
+			}
+		}
+		if idx >= 0 { vts[idx].used = frame_no; }
+		nv.push(idx);
+	}
+	for j in nv.len {
+		if nv[j] >= 0 { continue; }
+		let q .= nk[j];
+		var idx = -1;
+		if vts.len < 70 {
+			let cv = web::create("canvas");
+			web::append(tiles_el, cv);
+			vts.push(VT { canvas: cv });
+			idx = vts.len - 1;
+		} else {
+			var best = 0;
+			for &v, i in vts {
+				if v.used != frame_no && !v.shown && (idx < 0 || v.used < best) {
+					idx = i;
+					best = v.used;
+				}
+			}
+		}
+		if idx < 0 { continue; }
+		let v .= vts[idx];
+		v.z = tz as i32;
+		v.x = q.x as i32;
+		v.y = q.y as i32;
+		v.state = 0;
+		v.used = frame_no;
+		nv[j] = idx;
+	}
+	let dzv = data_zoom(tz);
+	let kk = tz - dzv;
+	var all_ready = true;
+	for j in nv.len {
+		let vi = nv[j];
+		if vi < 0 {
+			all_ready = false;
+			continue;
+		}
+		let v .= vts[vi];
+		let xw int = v.x % n;
+		let yy int = v.y;
+		let di = dt_get(dzv, xw >> kk, yy >> kk);
+		if di >= 0 {
+			dts[di].used = frame_no;
+			dt_request(di);
+		}
+		if v.state != 1 { all_ready = false; }
+	}
+	let psz = render_px();
+	for &v in vts {
+		if v.z < 0 { continue; }
+		let needed = v.used == frame_no;
+		let k2 = pow(2.0, v.z as real);
+		let size = ws / k2;
+		let left = (((v.x as real) / k2) - cx) * ws + vw / 2.0;
+		let top = (((v.y as real) / k2) - cy) * ws + vh / 2.0;
+		var show = needed;
+		if !needed && !all_ready && v.state == 1 && v.z != tz && left < vw && left + size > 0.0 && top < vh && top + size > 0.0 { show = true; }
+		if show {
+			let s = size / 512.0;
+			let off = 2.0 * 512.0 / (psz as real) * s;
+			web::style(v.canvas, "transform", str("translate(", left - off, "px,", top - off, "px) scale(", s, ")"));
+			let zi i32 = if v.z == tz { 2 } else { 1 };
+			if v.zi != zi {
+				web::style(v.canvas, "z-index", str(zi));
+				v.zi = zi;
+			}
+			if !v.shown { web::style(v.canvas, "display", "block"); }
+			v.shown = true;
+		} else if v.shown {
+			web::style(v.canvas, "display", "none");
+			v.shown = false;
+		}
+	}
+	dirty = false;
+	ov_follow();
+}
+=== 597d939db13927b8
+fn render_some(budget_ms real) int {
+	let t0 = web::now();
+	let psz = render_px();
+	var nk NK[>..] = [];
+	for &v, i in vts {
+		if v.state != 0 || v.used != frame_no { continue; }
+		let di = vt_dt(v.z, v.x, v.y);
+		if di < 0 || dts[di].state != 2 { continue; }
+		let k2 = pow(2.0, v.z as real);
+		let dx = ((v.x as real) + 0.5) / k2 - cx;
+		let dy = ((v.y as real) + 0.5) / k2 - cy;
+		nk.push(NK { x: i, y: di, d: dx * dx + dy * dy });
+	}
+	sort(nk) { a, b => a.d < b.d };
+	var done = 0;
+	for &q in nk {
+		if done > 0 && web::now() - t0 >= budget_ms { break; }
+		let v .= vts[q.x];
+		let zi int = v.z;
+		let dz = data_zoom(zi);
+		let k = zi - dz;
+		let kk = 1 << k;
+		let wsize = 1.0 / (kk as real);
+		let xw int = v.x % (1 << zi);
+		let yy int = v.y;
+		let wx = ((xw % kk) as real) * wsize;
+		let wy = ((yy % kk) as real) * wsize;
+		render_tile(dt_tile(q.y), wx, wy, wsize, zi as real, psz, 2, dark, img);
+		let side i32 = (psz + 4) as i32;
+		web::put_pixels(v.canvas, side, side, img);
+		let css = ((psz + 4) as real) * 512.0 / (psz as real);
+		web::style(v.canvas, "width", str(css, "px"));
+		web::style(v.canvas, "height", str(css, "px"));
+		v.state = 1;
+		done++;
+	}
+	if done > 0 { dirty = true; }
+	done
+}
+=== -5a9761c0ca88787d
+fn marker(w int, h int, x real, y real, color int) {
+	fill_circle(ovimg, w, h, x, y, 8.0 * dpr, color, 0xffffff, 2.5 * dpr);
+}
+fn glyph_request(font int, range int) {
+	if gl_get_state(font, range) != 0 { return; }
+	gl_set_state(font, range, 1);
+	let name = match font {
+		0 => "Noto%20Sans%20Regular",
+		1 => "Noto%20Sans%20Bold",
+		_ => "Noto%20Sans%20Italic",
+	};
+	var url byte[>..] = [];
+	format(url, "https://tiles.openfreemap.org/fonts/", name, "/", range * 256, "-", range * 256 + 255, ".pbf");
+	let id = web::fetch(url, T_GLYPH);
+	glyph_fids.push(id as i32);
+	glyph_fids.push(font as i32);
+	glyph_fids.push(range as i32);
+}
+fn relabel() {
+	let w = round(vw * dpr) as int;
+	let h = round(vh * dpr) as int;
+	lab_begin(w, h, dpr, zoom, dark);
+	let tz = cur_tz();
+	let dz = data_zoom(tz);
+	let n2 = 1 << dz;
+	let nr = n2 as real;
+	let ws = world_size();
+	let c0 = floor((cx - vw / 2.0 / ws) * nr) as int;
+	let c1 = floor((cx + vw / 2.0 / ws) * nr) as int;
+	let r0 = clamp(floor((cy - vh / 2.0 / ws) * nr) as int, 0, n2 - 1);
+	let r1 = clamp(floor((cy + vh / 2.0 / ws) * nr) as int, 0, n2 - 1);
+	for col in c0..c1 + 1 {
+		for row in r0..r1 + 1 {
+			let di = dt_find(dz, col, row);
+			if di >= 0 && dts[di].state == 2 {
+				let sx = (((col as real) / nr - cx) * ws + vw / 2.0) * dpr;
+				let sy = (((row as real) / nr - cy) * ws + vh / 2.0) * dpr;
+				lab_add_tile(dt_tile(di), sx, sy, ws / nr * dpr, 1.0);
+			} else if di >= 0 && dts[di].state == 0 {
+				dt_request(di);
+			}
+		}
+	}
+	ov_pts.clear();
+	for i in route_x.len {
+		ov_pts.push((pt_x(route_x[i]) * dpr) as f32);
+		ov_pts.push((pt_y(route_y[i]) * dpr) as f32);
+	}
+	lab_draw(ovimg, route_x.len);
+	if has_pin { marker(w, h, pt_x(pin_x) * dpr, pt_y(pin_y) * dpr, 0xe0452b); }
+	if has_me { marker(w, h, pt_x(me_x) * dpr, pt_y(me_y) * dpr, 0x2f80ed); }
+	for m in lab_missing {
+		let font = (m as int) / 256;
+		let range = (m as int) % 256;
+		glyph_request(font, range);
+	}
+	web::put_pixels(ov_el, w as i32, h as i32, ovimg);
+	ov_cx = cx;
+	ov_cy = cy;
+	ov_z = zoom;
+	ov_ok = true;
+	labels_stale = false;
+	web::style(ov_el, "transform", "none");
+	save_view();
+}
+fn glyph_arrived() {
+	let id = web::ev_id();
+	var j = -1;
+	var i = 0;
+	while i + 2 < glyph_fids.len {
+		if glyph_fids[i] == id {
+			j = i;
+			break;
+		}
+		i += 3;
+	}
+	if j < 0 { return; }
+	let font = glyph_fids[j + 1] as int;
+	let range = glyph_fids[j + 2] as int;
+	fbuf.clear();
+	web::fetch_take(id, fbuf);
+	web::fetch_free(id);
+	if web::ev_status() == 200 {
+		gl_load(font, range, fbuf);
+	} else {
+		gl_set_state(font, range, 3);
+	}
+	remove_at(glyph_fids, j);
+	remove_at(glyph_fids, j);
+	remove_at(glyph_fids, j);
+	labels_stale = true;
+	want_frames();
+}
+=== -5c843e443b9a2f07
+fn ov_follow() {
+	if !ov_ok { return; }
+	let k = pow(2.0, zoom - ov_z);
+	let ws = world_size();
+	let tx = (ov_cx - cx) * ws + vw / 2.0 * (1.0 - k);
+	let ty = (ov_cy - cy) * ws + vh / 2.0 * (1.0 - k);
+	web::style(ov_el, "transform", str("translate(", tx, "px,", ty, "px) scale(", k, ")"));
+}
+=== -3ac33e7ccfc9fba7
+import tiles.js;
+fn save_view() {
+	var s byte[>..] = [];
+	s.append(js::to_fixed(zoom, 2));
+	s.push('/');
+	s.append(js::to_fixed(y2lat(cy), 5));
+	s.push('/');
+	s.append(js::to_fixed(x2lon(cx), 5));
+	web::store_set("amni-map-view", s);
+	var u byte[>..] = [];
+	u.push('#');
+	u.append(s);
+	web::set_url(u, true);
+}
+fn load_view(s const byte[:]) bool {
+	var t = s;
+	if s.len > 0 && s[0] == '#' { t = s[1..]; }
+	var ia = -1;
+	var ib = -1;
+	for i in t.len {
+		if t[i] == '/' {
+			if ia < 0 {
+				ia = i;
+			} else if ib < 0 {
+				ib = i;
+			}
+		}
+	}
+	guard ia >= 0 && ib >= 0 else { return false; }
+	let z, okz = parse_flt(t[0..ia]);
+	let lat, okt = parse_flt(t[ia + 1..ib]);
+	let lon, okn = parse_flt(t[ib + 1..]);
+	guard okz && okt && okn else { return false; }
+	zoom = z;
+	cx = lon2x(lon);
+	cy = lat2y(lat);
+	true
+}
+=== -771ded777638d40c
+fn fly_to(wx real, wy real, z real, ms real) {
+	inertia = false;
+	if ms <= 0.0 || web::reduced_motion() {
+		anim = false;
+		cx = wx;
+		cy = wy;
+		zoom = z;
+		view_changed();
+		return;
+	}
+	a_t0 = web::now();
+	a_ms = ms;
+	a_x0 = cx;
+	a_y0 = cy;
+	a_z0 = zoom;
+	a_x1 = wx;
+	a_y1 = wy;
+	a_z1 = z;
+	anim = true;
+	want_frames();
+}
+fn fit_world(x0 real, y0 real, x1 real, y1 real, max_z real) {
+	let uw = max(vw - pad_l - 48.0, 50.0);
+	let uh = max(vh - pad_b - 48.0, 50.0);
+	let bw = x1 - x0;
+	let bh = y1 - y0;
+	var r = 1e30;
+	if bw > 0.0 { r = min(r, uw / (bw * 512.0)); }
+	if bh > 0.0 { r = min(r, uh / (bh * 512.0)); }
+	let z = if r >= 1e30 { max_z } else { clamp(log(r) / log(2.0), 1.0, max_z) };
+	let ws = 512.0 * pow(2.0, z);
+	let mx = (x0 + x1) / 2.0 - pad_l / 2.0 / ws;
+	let my = (y0 + y1) / 2.0 + pad_b / 2.0 / ws;
+	fly_to(mx, my, z, 700.0);
+}
+=== 48a0f6d0d8f68089
+fn zoom_at(sx real, sy real, z1 real) {
+	let wx = px_wx(sx);
+	let wy = px_wy(sy);
+	zoom = clamp(z1, 1.0, 19.0);
+	let ws = world_size();
+	cx = wx - (sx - vw / 2.0) / ws;
+	cy = wy - (sy - vh / 2.0) / ws;
+	view_changed();
+}
+=== -5fe3bfcb9d6ec5a
+fn frame(t real) {
+	frame_no++;
+	let dtms = if last_ft == 0.0 { 16.0 } else { max(t - last_ft, 1.0) };
+	if anim {
+		let f = clamp((web::now() - a_t0) / a_ms, 0.0, 1.0);
+		let e = if f < 0.5 { 4.0 * f * f * f } else { 1.0 - pow(-2.0 * f + 2.0, 3.0) / 2.0 };
+		var d = a_x1 - a_x0;
+		if d > 0.5 { d -= 1.0; }
+		if d < -0.5 { d += 1.0; }
+		cx = a_x0 + d * e;
+		cy = a_y0 + (a_y1 - a_y0) * e;
+		zoom = a_z0 + (a_z1 - a_z0) * e;
+		if f >= 1.0 { anim = false; }
+		view_changed();
+	}
+	if inertia {
+		let ws = world_size();
+		cx -= vx * dtms / ws;
+		cy -= vy * dtms / ws;
+		let fr = pow(0.95, dtms / 17.0);
+		vx *= fr;
+		vy *= fr;
+		if sqrt(vx * vx + vy * vy) < 0.02 { inertia = false; }
+		view_changed();
+	}
+	if dirty { update_tiles(); }
+	render_some(9.0);
+	scale_bar();
+	if !anim && !inertia && ptrs.len == 0 && labels_stale && web::now() - last_move >= 150.0 { relabel(); }
+	var waiting = false;
+	for &v in vts {
+		if v.used == frame_no && v.state == 0 {
+			let di = vt_dt(v.z, v.x, v.y);
+			if di >= 0 && dts[di].state == 2 { waiting = true; }
+		}
+	}
+	if !(anim || inertia || ptrs.len > 0 || labels_stale || dirty || waiting) {
+		web::frames(false);
+		frames_on = false;
+	}
+	last_ft = t;
+}
+=== 5b279c9783f652ca
+fn scale_bar() {
+	let mpp = 40075016.686 * cos(y2lat(cy) * PI / 180.0) / world_size();
+	let feet = [10, 20, 50, 100, 200, 500, 1000, 2000];
+	let miles = [0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0];
+	var best = 0.0;
+	var txt byte[>..] = [];
+	for f in feet {
+		let px = (f as real) * 0.3048 / mpp;
+		if px <= 100.0 && px > best {
+			best = px;
+			txt.clear();
+			format(txt, f, " ft");
+		}
+	}
+	for m in miles {
+		let px = m * 1609.344 / mpp;
+		if px <= 100.0 && px > best {
+			best = px;
+			txt.clear();
+			if m < 1.0 {
+				format_flt(txt, m, 1);
+				txt.append(" mi");
+			} else {
+				format(txt, m as int, " mi");
+			}
+		}
+	}
+	let wpx = round(best) as int;
+	var key byte[>..] = [];
+	format(key, txt, "|", wpx);
+	if key == scale_txt { return; }
+	scale_txt.clear();
+	scale_txt.append(key);
+	let el = web::el("scale");
+	web::text(el, txt);
+	web::style(el, "width", str(wpx, "px"));
+}
+=== -54b0f5e4b7cef574
+fn ptr_index(id int) int {
+	for &p, i in ptrs {
+		if p.id == id { return i; }
+	}
+	-1
+}
+fn long_clear() {
+	long_id = 0;
+}
+fn on_pointer(kind int) {
+	let id = web::ev_pointer() as int;
+	let ex = web::ev_x() as real;
+	let ey = web::ev_y() as real;
+	if kind == T_PDOWN {
+		web::capture_pointer(map_el, id as i32);
+		if ptr_index(id) < 0 { ptrs.push(Ptr { id: id as i32, x: ex, y: ey }); }
+		anim = false;
+		inertia = false;
+		web::cls(map_el, "drag", true);
+		if ptrs.len == 1 {
+			down_x = ex;
+			down_y = ey;
+			down_t = web::now();
+			moved = false;
+			pressed = true;
+			vx = 0.0;
+			vy = 0.0;
+			web::timer(550, T_LONG);
+			long_id = 1;
+		} else if ptrs.len == 2 {
+			long_clear();
+			moved = true;
+			pressed = false;
+			let p0 .= ptrs[0];
+			let p1 .= ptrs[1];
+			let ddx = p1.x - p0.x;
+			let ddy = p1.y - p0.y;
+			pinch_d = max(sqrt(ddx * ddx + ddy * ddy), 1.0);
+			pinch_z = zoom;
+			pinch_wx = px_wx((p0.x + p1.x) / 2.0);
+			pinch_wy = px_wy((p0.y + p1.y) / 2.0);
+		}
+	} else if kind == T_PMOVE {
+		let i = ptr_index(id);
+		if i < 0 { return; }
+		let p .= ptrs[i];
+		if ptrs.len == 1 {
+			let dx = ex - p.x;
+			let dy = ey - p.y;
+			let ws = world_size();
+			cx -= dx / ws;
+			cy -= dy / ws;
+			let ox = ex - down_x;
+			let oy = ey - down_y;
+			if sqrt(ox * ox + oy * oy) > 7.0 {
+				moved = true;
+				long_clear();
+			}
+			let dtm = max(web::now() - last_move, 1.0);
+			vx = 0.7 * dx / dtm + 0.3 * vx;
+			vy = 0.7 * dy / dtm + 0.3 * vy;
+			p.x = ex;
+			p.y = ey;
+			view_changed();
+		} else if ptrs.len >= 2 {
+			p.x = ex;
+			p.y = ey;
+			let p0 .= ptrs[0];
+			let p1 .= ptrs[1];
+			let ddx = p1.x - p0.x;
+			let ddy = p1.y - p0.y;
+			let d = max(sqrt(ddx * ddx + ddy * ddy), 1.0);
+			zoom = clamp(pinch_z + log(d / pinch_d) / log(2.0), 1.0, 19.0);
+			let ws = world_size();
+			cx = pinch_wx - ((p0.x + p1.x) / 2.0 - vw / 2.0) / ws;
+			cy = pinch_wy - ((p0.y + p1.y) / 2.0 - vh / 2.0) / ws;
+			view_changed();
+		}
+	} else if kind == T_PUP {
+		let i = ptr_index(id);
+		if i < 0 { return; }
+		remove_at(ptrs, i);
+		if ptrs.len == 0 {
+			pressed = false;
+			web::cls(map_el, "drag", false);
+			long_clear();
+			let now = web::now();
+			if moved {
+				if sqrt(vx * vx + vy * vy) > 0.25 && now - last_move < 70.0 {
+					inertia = true;
+					want_frames();
+				}
+			} else if now - down_t < 300.0 {
+				let qx = tap_x - ex;
+				let qy = tap_y - ey;
+				if tap_t > 0.0 && now - tap_t < 300.0 && sqrt(qx * qx + qy * qy) < 30.0 {
+					let z1 = clamp(zoom + 1.0, 1.0, 19.0);
+					let ws1 = 512.0 * pow(2.0, z1);
+					fly_to(px_wx(ex) - (ex - vw / 2.0) / ws1, px_wy(ey) - (ey - vh / 2.0) / ws1, z1, 250.0);
+					tap_t = 0.0;
+				} else {
+					tap_t = now;
+					tap_x = ex;
+					tap_y = ey;
+					tap_cb = 1;
+				}
+			}
+		} else if ptrs.len == 1 {
+			down_x = ptrs[0].x;
+			down_y = ptrs[0].y;
+			moved = true;
+			vx = 0.0;
+			vy = 0.0;
+		}
+	}
+}
+=== 768b464b80ca5349
+fn on_long() {
+	if pressed && !moved {
+		press_x = down_x;
+		press_y = down_y;
+		tap_cb = 2;
+		pressed = false;
+	}
+	long_id = 0;
+}
+fn on_ctx() {
+	press_x = web::ev_x();
+	press_y = web::ev_y();
+	tap_cb = 2;
+}
+=== 5eaa5654fd406b7e
+fn on_wheel() {
+	let ctrl = ((web::ev_mods() as int) & 2) != 0;
+	let dy = web::ev_dy();
+	let d = if ctrl { -dy / 100.0 } else { -dy / 300.0 };
+	zoom_at(web::ev_x(), web::ev_y(), zoom + clamp(d, -1.0, 1.0));
+}
+fn on_key() {
+	var k byte[>..] = [];
+	web::ev_key(k);
+	let ws = world_size();
+	if k == "+" || k == "=" {
+		fly_to(cx, cy, clamp(zoom + 1.0, 1.0, 19.0), 250.0);
+		web::ev_prevent();
+	} else if k == "-" || k == "_" {
+		fly_to(cx, cy, clamp(zoom - 1.0, 1.0, 19.0), 250.0);
+		web::ev_prevent();
+	} else if k == "ArrowLeft" {
+		fly_to(cx - 100.0 / ws, cy, zoom, 200.0);
+		web::ev_prevent();
+	} else if k == "ArrowRight" {
+		fly_to(cx + 100.0 / ws, cy, zoom, 200.0);
+		web::ev_prevent();
+	} else if k == "ArrowUp" {
+		fly_to(cx, cy - 100.0 / ws, zoom, 200.0);
+		web::ev_prevent();
+	} else if k == "ArrowDown" {
+		fly_to(cx, cy + 100.0 / ws, zoom, 200.0);
+		web::ev_prevent();
+	}
+}
+=== 2a1a136cae759bf8
+fn view_take_tap() int {
+	let t = tap_cb;
+	tap_cb = 0;
+	t
+}
+=== -6018aa7fe0b0f96a
+fn route_changed() {
+	labels_stale = true;
+	want_frames();
+}
+fn set_dark(d bool) {
+	dark = d;
+	for &v in vts { v.state = 0; }
+	dirty = true;
+	labels_stale = true;
+	want_frames();
+}

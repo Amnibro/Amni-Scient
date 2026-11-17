@@ -1,0 +1,143 @@
+use amnimap
+into view.amni
+lang amni
+
+Module header: the lines "import web;", "import math;", "import style;", "import mvt;", "import raster;", "import glyphs;" and "import labels;". No namespace. The Helium has no blank lines and no comments anywhere. This module is the map view of a browser page built for the web target: it keeps the camera, fetches and decodes vector tiles, renders them into canvas elements positioned with CSS transforms, handles drag, pinch, wheel, keyboard and animated moves, and redraws the label overlay when the map settles. The page markup has a full-window element "map" holding the element "tiles" and the canvas "ov". All browser access goes through the `web` module (its functions are written with the web:: prefix). Camera positions are Web Mercator world units from 0 to 1 (x east, y south) and are kept as real (f64) values because f32 is too coarse at street zoom.
+
+```amni
+struct DT { z i32 = -1, x i32 = 0, y i32 = 0, state i32 = 0, fid i32 = 0, alt i32 = -1, used int = 0, off int = 0, len int = 0 }
+struct VT { z i32 = -1, x i32 = 0, y i32 = 0, canvas i32 = 0, state i32 = 0, used int = 0, shown bool = false, zi i32 = 0 }
+struct Ptr { id i32, x real, y real }
+let T_TJ i32 = 1;
+let T_TILE i32 = 2;
+let T_GLYPH i32 = 3;
+let T_RESIZE i32 = 4;
+let T_PDOWN i32 = 5;
+let T_PMOVE i32 = 7;
+let T_PUP i32 = 8;
+let T_WHEEL i32 = 9;
+let T_KEY i32 = 10;
+let T_CTX i32 = 11;
+let T_LONG i32 = 12;
+let T_RETRY i32 = 13;
+let TJ_URL const byte[:] = "https://tiles.openfreemap.org/planet";
+let GW const byte[:] = "https://amni-map.amni-map-gateway.workers.dev";
+var dts DT[>..] = [];
+var vts VT[>..] = [];
+var ptrs Ptr[>..] = [];
+var tpl byte[>..] = [];
+var alt_tpls byte[>..] = [];
+var img byte[>..] = [];
+var pool byte[>..] = [];
+var pool_head = 0;
+var cur Tile = Tile {};
+var cur_dt = -1;
+let POOL int = 33554432;
+var ovimg byte[>..] = [];
+var fbuf byte[>..] = [];
+var glyph_fids i32[>..] = [];
+var route_x real[>..] = [];
+var route_y real[>..] = [];
+var cx real = 0.5;
+var cy real = 0.5;
+var zoom real = 2.0;
+var vw real = 1024.0;
+var vh real = 768.0;
+var dpr real = 1.0;
+var dark bool = false;
+var frame_no int = 0;
+var frames_on = false;
+var dirty = true;
+var labels_stale = true;
+var last_move real = 0.0;
+var inflight = 0;
+var map_el i32 = 0;
+var tiles_el i32 = 0;
+var ov_el i32 = 0;
+var ov_cx real = 0.5;
+var ov_cy real = 0.5;
+var ov_z real = 2.0;
+var ov_ok = false;
+var anim = false;
+var a_t0 real = 0.0;
+var a_ms real = 0.0;
+var a_x0 real = 0.0;
+var a_y0 real = 0.0;
+var a_z0 real = 0.0;
+var a_x1 real = 0.0;
+var a_y1 real = 0.0;
+var a_z1 real = 0.0;
+var inertia = false;
+var vx real = 0.0;
+var vy real = 0.0;
+var last_ft real = 0.0;
+var down_x real = 0.0;
+var down_y real = 0.0;
+var down_t real = 0.0;
+var moved = false;
+var long_id i32 = 0;
+var tap_t real = 0.0;
+var tap_x real = 0.0;
+var tap_y real = 0.0;
+var pinch_d real = 0.0;
+var pinch_z real = 0.0;
+var pinch_wx real = 0.0;
+var pinch_wy real = 0.0;
+var has_pin = false;
+var pin_x real = 0.0;
+var pin_y real = 0.0;
+var has_me = false;
+var me_x real = 0.0;
+var me_y real = 0.0;
+var pad_l real = 0.0;
+var pad_b real = 0.0;
+var tap_cb i32 = 0;
+var press_x real = 0.0;
+var press_y real = 0.0;
+var pressed = false;
+var scale_txt byte[>..] = [];
+```
+
+A DT is a data tile slot: zoom, column, row, state (0 unused, 1 loading, 2 ready, 3 failed), the fetch id while loading, which alternate template index is being tried (-1 for the main one), a use stamp, and where its raw tile bytes sit in `pool` (off and len). Tile bytes live in one ring pool and are decoded on demand into the single scratch Tile `cur` (cur_dt is the DT decoded there, -1 for none), because the web runtime gives every growable list its own memory region, so a decoded Tile per cached tile would use up the address space. A VT is a display tile: zoom, column (not wrapped, so tiles left or right of the world keep their own place), row, its canvas element, state (0 waiting for data, 1 rendered), use stamp, whether it is shown, and the z-index last set. `tpl` is the tile URL template from the TileJSON (with {z}, {x} and {y}); `alt_tpls` holds other templates, one per line, used to reach tiles saved under an older template. `route_x` and `route_y` are the route in world units. pad_l and pad_b are the CSS pixels covered by the side panel on the left (wide screens) or the bottom (narrow ones), used when fitting things into view. `pressed` is true between a pointer press and its release, press_x and press_y are where the long press or right click happened (CSS pixels), and `tap_cb` is set by the app (see `view_take_tap`).
+
+`lon2x(lon)` is (lon plus 180) divided by 360. `lat2y(lat)` clamps lat to plus or minus 85.0511 and is (1 minus the natural log of (tan of lat in radians plus 1 over cos of it) divided by pi) divided by 2. `x2lon(x)` and `y2lat(y)` are their inverses (lat is the arctangent of sinh of pi times (1 minus 2 y), in degrees). `world_size()` is 512 times 2 to the power zoom. `pt_x(wx)` is the CSS pixel x of world x: (wx minus cx) times world_size plus vw divided by 2, and `pt_y(wy)` likewise with cy and vh. `px_wx(sx)` and `px_wy(sy)` are the inverses.
+
+`clamp_view()` keeps zoom between 1 and 19, wraps cx into 0 up to 1 (adding or subtracting 1), and clamps cy to between 0 and 1. `view_changed()` calls `clamp_view`, sets dirty and labels_stale to true, last_move to `web::now()`, and calls `want_frames`. `want_frames()` turns frames on with `web::frames(true)` when frames_on is false and sets frames_on.
+
+`view_init()` reads the elements "map", "tiles" and "ov" with `web::el`, sets dpr to `web::dpr()` clamped to between 1 and 2, resizes `pool` to POOL zero bytes (once), calls `view_resize`, and listens on the map element for "pointerdown" (T_PDOWN, web::PREVENT), "pointermove" (T_PMOVE), "pointerup" and "pointercancel" (T_PUP), "wheel" (T_WHEEL, web::PREVENT), "contextmenu" (T_CTX, web::PREVENT) and "keydown" (T_KEY), and on web::WINDOW for "resize" (T_RESIZE). It then fetches TJ_URL with tag T_TJ.
+
+`view_resize()` sets vw and vh to the map element's size from `web::rect` (falling back to `web::win_w` and `web::win_h` when 0), sets the overlay element's CSS width and height to vw and vh in px, and calls `view_changed`.
+
+`set_tpl(s)` stores s as the main template; `tpl_url(t, z, x, y, out)` writes template t with {z}, {x} and {y} replaced by the numbers. `tj_loaded(bytes)` parses the TileJSON text and, when its "tiles" array has a first string, stores it with `set_tpl` and with `web::store_set` under "amni-map-tpl", and returns true; otherwise it returns false. `tj_failed()` loads "amni-map-tpl" with `web::store_get` into the template when present and returns whether it found one. Both then call `view_changed`.
+
+`dt_find(z, x, y)` returns the DT index with that zoom, column and row (column already wrapped into 0 up to 2 to the z) or -1. `dt_get(z, x, y)` returns `dt_find` or, when missing, a slot: an unused one (state 0), else a new one when there are fewer than 70, else the ready or failed slot with the oldest use stamp that is not loading; the slot is reset to that key with state 0, alt -1 and len 0, and cur_dt becomes -1 when it was that slot. It returns -1 only when every slot is loading. `dt_request(i)` does nothing unless the template is known, the slot's state is 0 and inflight is below 8; then it builds the URL from the main template (or, when alt is 0 or more, from line alt of alt_tpls), fetches it with tag T_TILE, stores the fetch id, sets state 1 and adds 1 to inflight.
+
+`tile_arrived()` handles a T_TILE fetch event: it finds the loading DT whose fid is `web::ev_id()` (when none, it just frees the fetch); subtracts 1 from inflight; takes the bytes with `web::fetch_take` into fbuf and frees the fetch. With `web::ev_status()` 200 it calls `pool_put` for the slot and sets state 2, unless pool_put marked it failed. With status 204 or 404 it sets len 0 and state 2. `pool_put(i)` stores fbuf for DT i: when fbuf is longer than a quarter of POOL it sets state 3 and returns; when pool_head plus the length passes POOL, pool_head goes back to 0; every other DT in state 2 whose bytes overlap the range from pool_head to pool_head plus the length is set back to state 0 (it is fetched again when needed) and cur_dt becomes -1 when it was that DT; then the bytes are copied into pool at pool_head, the DT gets off and len, cur_dt becomes -1 when it was i, and pool_head moves past the bytes. `dt_tile(i)` returns a reference to `cur` after decoding the pool bytes of DT i (off up to off plus len; none when len is 0) into it with `decode_tile`, skipping the decode when cur_dt already is i, and sets cur_dt to i. Otherwise, when alt_tpls has a line after the current alt it moves alt to the next line and sets state 0 so it is fetched again from there; else it sets state 3 and starts a 15000 ms `web::timer` with tag T_RETRY. A ready tile whose zoom is the data zoom of the current view sets labels_stale. It always sets dirty and calls `want_frames`. `retry_failed()` sets every failed DT back to state 0 with alt -1 and sets dirty.
+
+`data_zoom(tz)` is the smaller of tz and 14. `update_tiles()` runs when dirty and does this. tz is zoom rounded to the nearest whole number, clamped to 0 to 19, and n is 2 to the tz. ws is world_size and ts is ws divided by n (the CSS size of a tile). The needed columns run from the floor of (cx minus vw divided by 2 divided by ws) times n through the floor of (cx plus vw divided by 2 divided by ws) times n, and rows likewise with cy and vh, clamped to 0 through n minus 1. Every needed (tz, column, row) gets a VT: an existing one with that key, or a free slot (a VT not needed this frame and not shown, oldest use stamp first, or a new one while there are fewer than 70 VTs, whose canvas is made with `web::create` of "canvas" and appended to the tiles element); a reused or new VT gets the key and state 0. Each needed VT's use stamp is frame_no. For a needed VT, dz is `data_zoom(tz)`, k is tz minus dz, and its data tile is (dz, the column wrapped into 0 up to n, shifted right by k, the row shifted right by k), fetched with `dt_get` and `dt_request` and its use stamp set to frame_no; tiles nearer the view center are requested first (sort the needed list by distance from the center before requesting). all_ready is whether every needed VT has state 1. Then every VT is positioned: a VT is shown when it is needed, or when not all_ready and it is rendered and its zoom differs from tz and its square overlaps the view. A shown VT at zoom z with column x and row y has scale s equal to ws divided by 2 to the z divided by 512, left at (x divided by 2 to the z minus cx) times ws plus vw divided by 2, top likewise; with P the render size (see `render_some`) and b equal to 2, its CSS transform is "translate(" left minus b times 512 divided by P times s "px," top minus b times 512 divided by P times s "px) scale(" s ")" set with `web::style`, its z-index is 2 when its zoom is tz and 1 otherwise (set only when it changes), and its display is set to "block" when it was not shown. A VT that stops being shown gets display "none". Finally dirty is false and the overlay transform is updated with `ov_follow`.
+
+`render_some(budget_ms)` renders waiting VTs that are needed (use stamp equal to frame_no) and whose data tile is ready, nearest the view center first, until budget_ms has passed since it started (always at least one). P is the rounded 512 times dpr. For a VT at zoom z, dz, k, its data tile and the window: wsize is 1 divided by 2 to the k, wx is (the wrapped column modulo 2 to the k) times wsize and wy is (row modulo 2 to the k) times wsize. It calls `render_tile` with `dt_tile` of the data tile, wx, wy, wsize, z as the style zoom, P, bleed 2, dark and img, then `web::put_pixels` with the canvas, P plus 4, P plus 4 and img, sets the canvas's CSS width and height to (P plus 4) times 512 divided by P px the first time, and sets state 1. It sets dirty afterwards when anything was rendered so positions refresh. It returns the number rendered.
+
+`relabel()` redraws the overlay. w and h are vw times dpr and vh times dpr rounded. It calls `lab_begin(w, h, dpr, zoom, dark)`. tz and dz as in `update_tiles`, n2 is 2 to the dz, ws is world_size; for every data column and row covering the view at dz (columns not wrapped, the DT looked up with the wrapped column) whose DT is ready, it calls `lab_add_tile` with `dt_tile` of that DT (a DT found in state 0 is requested with `dt_request` instead), ((column divided by n2 minus cx) times ws plus vw divided by 2) times dpr, the same for the row, ws divided by n2 times dpr, and 1. Then `ov_pts` is cleared and filled with the route points as device pixels (pt_x times dpr, pt_y times dpr) as f32, and `lab_draw(ovimg, route length)` draws. Then `marker` draws the pin in 0xe0452b when has_pin and the location dot in 0x2f80ed when has_me, at their device pixel positions. Every font and range in `lab_missing` is passed to `glyph_request`. It puts ovimg on the overlay canvas with `web::put_pixels` (w, h), sets ov_cx, ov_cy and ov_z to the view, ov_ok to true, clears labels_stale, sets the overlay's transform to "none", and calls `save_view`. `glyph_request(font, range)` does nothing unless `gl_get_state(font, range)` is 0; then it sets it loading with `gl_set_state(font, range, 1)`, fetches "https://tiles.openfreemap.org/fonts/" plus "Noto%20Sans%20Regular", "Noto%20Sans%20Bold" or "Noto%20Sans%20Italic" for fonts 0, 1, 2, then "/", range times 256, "-", range times 256 plus 255, ".pbf", with tag T_GLYPH, and pushes the fetch id, the font and the range onto glyph_fids as three entries. `glyph_arrived()` finds the T_GLYPH fetch by `web::ev_id()` in glyph_fids, takes its bytes and frees it, calls `gl_load` with them when the status is 200 and otherwise `gl_set_state(font, range, 3)`, removes the three entries, and sets labels_stale and calls `want_frames`.
+
+`ov_follow()` sets the overlay's CSS transform so the last drawn overlay stays glued to the map while it moves: with k equal to 2 to the (zoom minus ov_z) and ws the current world_size, it is "translate(" (ov_cx minus cx) times ws plus vw divided by 2 times (1 minus k) "px," the same for y with vh "px) scale(" k ")". It does nothing until ov_ok.
+
+`save_view()` writes zoom (two decimals), latitude and longitude of the center (five decimals, formatted like JavaScript's toFixed) as "z/lat/lon" to `web::store_set` under "amni-map-view" and sets the page URL to "#" plus that text with `web::set_url(…, true)`. `load_view(s)` parses such a "z/lat/lon" text (a leading "#" is skipped) and, when all three numbers are valid, sets zoom, cx and cy from them and returns true.
+
+`fly_to(wx, wy, z, ms)` starts an animated move from the current camera to world point (wx, wy) at zoom z over ms milliseconds (immediately when ms is 0 or `web::reduced_motion()` is true): it stores the start and end in the a_ variables, sets anim, stops inertia, and calls `want_frames`. `fit_world(x0, y0, x1, y1, max_z)` flies over 700 ms to show the world box in the part of the view not covered by the panel: usable width is vw minus pad_l minus 48 and usable height is vh minus pad_b minus 48 (each at least 50); the zoom is the base 2 log of the smaller of usable width divided by (box width times 512) and usable height divided by (box height times 512), clamped to 1 through max_z (a box of zero size uses max_z); the center is the box center moved left by pad_l divided by 2 and down by pad_b divided by 2 CSS pixels at that zoom (so the box lands in the middle of the free area).
+
+`zoom_at(sx, sy, z1)` zooms to z1 (clamped to 1 through 19) keeping the world point under CSS pixel (sx, sy) where it is, then calls `view_changed`.
+
+`frame(t)` is called every animation frame. It adds 1 to frame_no. When anim is true it eases with the cubic ease in out of the elapsed fraction, setting cx, cy and zoom between the a_ values (x interpolated along the shorter way around the world), ends anim when done, and calls `view_changed`. When inertia is true it moves the center by vx and vy (CSS pixels per millisecond) times the milliseconds since the last frame divided by world_size, multiplies both by 0.95 to the power (milliseconds divided by 17), stops when the speed is below 0.02, and calls `view_changed`. Then `update_tiles` when dirty, `render_some(9)`, and `scale_bar`. When nothing is animating, no pointer is down, labels_stale is true and at least 150 ms passed since last_move, it calls `relabel`. Frames stay on while anim, inertia, a pointer is down, labels_stale, dirty, or any needed VT is waiting for a ready data tile; otherwise it turns them off with `web::frames(false)` and clears frames_on. last_ft is set to t.
+
+`scale_bar()` updates the element "scale": meters per CSS pixel at the center is 40075016.686 times the cosine of the center latitude divided by world_size; the bar is the largest of 10, 20, 50, 100, 200, 500, 1000 and 2000 feet and 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 and 2000 miles (5280 feet each) that is at most 100 CSS pixels long, written as for example "500 ft" or "2 mi" and its width in px; the DOM is only touched when the text or the rounded width changed (compare with scale_txt plus the width).
+
+`on_pointer(kind)` handles T_PDOWN, T_PMOVE and T_PUP. Down: `web::capture_pointer` on the map element, adds the pointer (id `web::ev_pointer()`, position `web::ev_x()`, `web::ev_y()`) to ptrs, stops anim and inertia, focuses nothing, adds the class "drag" to the map. With one pointer it records down_x, down_y, down_t (now), moved false, pressed true, vx and vy 0, and starts a 550 ms timer T_LONG stored in long_id. With two pointers it cancels the long press timer and starts a pinch: pinch_d is the distance between them, pinch_z is zoom, and pinch_wx, pinch_wy are the world point under their midpoint. Move: updates the pointer's position (unknown ids are ignored). With one pointer: the change since its last position pans the map (cx minus dx divided by world_size, same for y); when the distance from the down point exceeds 7 pixels moved becomes true and the long press timer is cleared; vx and vy track the pointer velocity as a running blend (0.7 of the new sample in pixels per millisecond plus 0.3 of the old); then `view_changed`. With two pointers: zoom becomes pinch_z plus the base 2 log of the new distance over pinch_d, and the center is set so pinch_wx, pinch_wy sits under the new midpoint; then `view_changed`. Up: removes the pointer. When none are left: pressed is false, the class "drag" is removed and the long press timer cleared; when moved is true and the speed of vx, vy is above 0.25 and the last move was less than 70 ms ago, inertia starts; when moved is false and the press lasted under 300 ms it is a tap: when the previous tap was less than 300 ms ago and within 30 pixels it zooms in by 1 at that point with an animation of 250 ms (`fly_to` to the point that keeps the tapped spot still) and resets tap_t to 0, otherwise it records tap_t, tap_x, tap_y and sets tap_cb to 1. When one pointer is left after a pinch, the drag restarts from that pointer's position with moved true.
+
+`on_long()` runs on the T_LONG timer: when pressed and not moved, press_x and press_y are set to down_x and down_y, tap_cb is set to 2, pressed becomes false, and the long press timer id is cleared. `on_ctx()` sets press_x and press_y to the event position and tap_cb to 2.
+
+`on_wheel()` zooms at the event position by minus `web::ev_dy()` divided by 300 (by minus ev_dy divided by 100 when the ctrl modifier is held, which is how trackpad pinches arrive), each event limited to plus or minus 1. `on_key()` reads `web::ev_key`: "+" or "=" zoom in by 1 at the view center with a 250 ms animation, "-" or "_" zoom out the same way, and the arrow keys pan by 100 CSS pixels with a 200 ms animation; the event's default is prevented for these keys.
+
+`view_take_tap()` returns tap_cb and resets it to 0 (1 means a tap on the map, 2 a long press or right click at press_x, press_y).
+
+`set_route(json_coords)` is not used; instead the app fills route_x and route_y directly and calls `route_changed()`, which sets labels_stale and calls `want_frames`. `set_dark(d)` sets dark, marks every VT as waiting (state 0) so tiles render again, sets dirty and labels_stale and calls `want_frames`.

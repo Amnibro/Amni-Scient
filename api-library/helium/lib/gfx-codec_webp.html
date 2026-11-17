@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-codec_webp">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-codec_webp">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=631fc0c67d">
+<link rel="stylesheet" href="/api-library/lib.css?v=b9642ce67d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=631fc0c67d'; start({wasm: '/api-library/search.wasm?v=631fc0c67d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b9642ce67d'; start({wasm: '/api-library/search.wasm?v=b9642ce67d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/codec_webp</h1>
 <p class="lib-lede">Decodes WebP image files, both lossy and lossless, into pixel data with optional alpha transparency for use in programs.</p>
-<p class="lib-meta"><code>import gfx.codec_webp;</code> &middot; <code>codec_webp::</code> &middot; 82 functions, 0 types, 97 constants &middot; <a href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.codec_webp;</code> &middot; <code>codec_webp::</code> &middot; 82 functions, 0 types, 97 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#error-reporting">Error Reporting <span class="n">1</span></a></li>
 <li><a href="#image-decoding">Image Decoding <span class="n">3</span></a></li>
@@ -116,7 +116,7 @@
 <pre>error() const byte[:]</pre>
 <p>Returns the message describing the most recent decoding failure.</p>
 <p class="note">Namespace codec_webp. Decodes WebP still pictures to RGBA8 (4 bytes per pixel, top row first): lossy VP8 with or without an ALPH alpha chunk, lossless VP8L, in the simple and the extended (VP8X) RIFF container. The result matches libwebp's `WebPDecodeRGBA` byte for byte: colors are not premultiplied and alpha is 255 when the file has none. Nothing here may crash, loop forever or read past the end </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L21">hc/lib/gfx/codec_webp.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L21">hc/lib/gfx/codec_webp.amni:21</a>
 </article>
 <h2 id="image-decoding">Image Decoding <span class="n">3</span></h2>
 <article class="sym" id="is_webp">
@@ -124,21 +124,21 @@
 <pre>is_webp(b const byte[:]) bool</pre>
 <p>Returns whether the bytes begin with a RIFF container carrying the WebP signature.</p>
 <p class="note">`is_webp(b)` gives whether b is at least 12 bytes with &quot;RIFF&quot; at 0 and &quot;WEBP&quot; at 8. `size(b)` copies b to src and runs `parse`, giving width, height and the result. `decode(data, px)` empties px, copies data to src, parses, and runs `vp8l` or `vp8`; on success px holds width times height times 4 bytes and it gives width, height, true; on failure px is emptied and it gives 0, 0, false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1514">hc/lib/gfx/codec_webp.amni:1514</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1514">hc/lib/gfx/codec_webp.amni:1514</a>
 </article>
 <article class="sym" id="size">
 <h3><a href="#size">size</a> <i>function</i></h3>
 <pre>size(b const byte[:]) int, int, bool</pre>
 <p>Returns the image width, height and a success flag, or zeros and false if parsing fails.</p>
 <p class="note">`is_webp(b)` gives whether b is at least 12 bytes with &quot;RIFF&quot; at 0 and &quot;WEBP&quot; at 8. `size(b)` copies b to src and runs `parse`, giving width, height and the result. `decode(data, px)` empties px, copies data to src, parses, and runs `vp8l` or `vp8`; on success px holds width times height times 4 bytes and it gives width, height, true; on failure px is emptied and it gives 0, 0, false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1521">hc/lib/gfx/codec_webp.amni:1521</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1521">hc/lib/gfx/codec_webp.amni:1521</a>
 </article>
 <article class="sym" id="decode">
 <h3><a href="#decode">decode</a> <i>function</i></h3>
 <pre>decode(data const byte[:], px byte[&gt;..]&amp;) int, int, bool</pre>
 <p>Decodes a lossy or lossless WebP into RGBA pixels, returning width, height and false on failure.</p>
 <p class="note">`is_webp(b)` gives whether b is at least 12 bytes with &quot;RIFF&quot; at 0 and &quot;WEBP&quot; at 8. `size(b)` copies b to src and runs `parse`, giving width, height and the result. `decode(data, px)` empties px, copies data to src, parses, and runs `vp8l` or `vp8`; on success px holds width times height times 4 bytes and it gives width, height, true; on failure px is emptied and it gives 0, 0, false.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1527">hc/lib/gfx/codec_webp.amni:1527</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1527">hc/lib/gfx/codec_webp.amni:1527</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (175)</summary>
 <article class="sym" id="PLANE">
@@ -146,1103 +146,1103 @@
 <pre>let PLANE int[120] = [24, 7, 23, 25, 40, 6, 39, 41, 22, 26, 38, 42, 56, 5, 55, 57, 21, 27, 54, 58, 37, 43, 72, 4, 71, 73, 20, 28, 53, 59, 70, 74, 36, 44, 88, 69, 75, 52, 60, 3, 87, 89, 19, 29, 86, 90, 35, 45, 68, 76, 85,</pre>
 <p>Table mapping short lossless distance codes to two-dimensional neighbor offsets, used when resolving backward-copy distances.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L2">hc/lib/gfx/codec_webp.amni:2</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L2">hc/lib/gfx/codec_webp.amni:2</a>
 </article>
 <article class="sym" id="COEF0">
 <h3><a href="#COEF0">COEF0</a> <i>constant</i></h3>
 <pre>let COEF0 int[1056] = [128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 253, 136, 254, 255, 228, 219, 12</pre>
 <p>Table of default initial probabilities for lossy coefficient decoding, indexed by band, context and token position.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L3">hc/lib/gfx/codec_webp.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L3">hc/lib/gfx/codec_webp.amni:3</a>
 </article>
 <article class="sym" id="COEFU">
 <h3><a href="#COEFU">COEFU</a> <i>constant</i></h3>
 <pre>let COEFU int[1056] = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 176, 246, 255, 255, 255, 255, 25</pre>
 <p>Table of coefficient probability update thresholds used when reading lossy frame headers.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L4">hc/lib/gfx/codec_webp.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L4">hc/lib/gfx/codec_webp.amni:4</a>
 </article>
 <article class="sym" id="BMODEP">
 <h3><a href="#BMODEP">BMODEP</a> <i>constant</i></h3>
 <pre>let BMODEP int[900] = [231, 120, 48, 89, 115, 113, 120, 152, 112, 152, 179, 64, 126, 170, 118, 46, 70, 95, 175, 69, 143, 80, 85, 82, 72, 155, 103, 56, 58, 10, 171, 218, 189, 17, 13, 152, 114, 26, 17, 163, 44, 195, 21, 10</pre>
 <p>Table of fixed probabilities for decoding 4x4 intra prediction block modes in lossy frames.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L5">hc/lib/gfx/codec_webp.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L5">hc/lib/gfx/codec_webp.amni:5</a>
 </article>
 <article class="sym" id="DCTAB">
 <h3><a href="#DCTAB">DCTAB</a> <i>constant</i></h3>
 <pre>let DCTAB int[128] = [4, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13, 14, 15, 16, 17, 17, 18, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 25, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,</pre>
 <p>Table mapping a quantizer index to its DC dequantization step for lossy frames.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L6">hc/lib/gfx/codec_webp.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L6">hc/lib/gfx/codec_webp.amni:6</a>
 </article>
 <article class="sym" id="ACTAB">
 <h3><a href="#ACTAB">ACTAB</a> <i>constant</i></h3>
 <pre>let ACTAB int[128] = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,</pre>
 <p>Table mapping a quantizer index to its AC dequantization step for lossy frames.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L7">hc/lib/gfx/codec_webp.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L7">hc/lib/gfx/codec_webp.amni:7</a>
 </article>
 <article class="sym" id="PRED4">
 <h3><a href="#PRED4">PRED4</a> <i>constant</i></h3>
 <pre>let PRED4 int[128] = [13398, 13671, 13944, 14217, 13398, 13671, 13944, 14217, 13398, 13671, 13944, 14217, 13398, 13671, 13944, 14217, 12548, 12548, 12548, 12548, 12306, 12306, 12306, 12306, 12579, 12579, 12579, 12579, 12</pre>
 <p>Table of packed values describing 4x4 intra prediction modes in lossy frames.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L8">hc/lib/gfx/codec_webp.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L8">hc/lib/gfx/codec_webp.amni:8</a>
 </article>
 <article class="sym" id="ZIGZAG">
 <h3><a href="#ZIGZAG">ZIGZAG</a> <i>constant</i></h3>
 <pre>let ZIGZAG int[16] = [0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15]</pre>
 <p>Table giving the zigzag scan order of the 16 coefficients in a transform block.</p>
 <p class="note">Lossy coefficients (`coeffs(r, type, ctx, dq_dc, dq_ac, first, at)` gives the count n as in the reference and writes into the module int list `co` at at). The probability set for position n is band `BANDS[n]` of the type. p starts as context ctx of position first's band. For n from first while n is below 16: when a bit with p's probability 0 is 0, give n; then while a bit with probability 1 is 0, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L9">hc/lib/gfx/codec_webp.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L9">hc/lib/gfx/codec_webp.amni:9</a>
 </article>
 <article class="sym" id="BANDS">
 <h3><a href="#BANDS">BANDS</a> <i>constant</i></h3>
 <pre>let BANDS int[17] = [0, 1, 2, 3, 6, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 0]</pre>
 <p>Table mapping coefficient position to its probability band for lossy token decoding.</p>
 <p class="note">Lossy coefficients (`coeffs(r, type, ctx, dq_dc, dq_ac, first, at)` gives the count n as in the reference and writes into the module int list `co` at at). The probability set for position n is band `BANDS[n]` of the type. p starts as context ctx of position first's band. For n from first while n is below 16: when a bit with p's probability 0 is 0, give n; then while a bit with probability 1 is 0, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L10">hc/lib/gfx/codec_webp.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L10">hc/lib/gfx/codec_webp.amni:10</a>
 </article>
 <article class="sym" id="CATP">
 <h3><a href="#CATP">CATP</a> <i>constant</i></h3>
 <pre>let CATP int[23] = [173, 148, 140, 176, 155, 140, 135, 180, 157, 141, 134, 130, 254, 254, 243, 230, 196, 177, 153, 140, 133, 130, 129]</pre>
 <p>Table of probabilities for decoding the extra bits of large lossy coefficient categories.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L11">hc/lib/gfx/codec_webp.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L11">hc/lib/gfx/codec_webp.amni:11</a>
 </article>
 <article class="sym" id="CLORDER">
 <h3><a href="#CLORDER">CLORDER</a> <i>constant</i></h3>
 <pre>let CLORDER int[19] = [17, 18, 0, 1, 2, 3, 4, 5, 16, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</pre>
 <p>Table giving the order in which code length code lengths are stored in lossless Huffman headers.</p>
 <p class="note">The tables above: `PLANE` maps lossless distance codes 1 to 120 (entry code minus 1) to a plane offset; `COEF0` and `COEFU` are the VP8 default and update probabilities indexed by type (4), band (8), context (3) and probability (11) in that nesting; `BMODEP` the 4 by 4 mode probabilities indexed by the mode above (10), the mode to the left (10) and the probability (9); `DCTAB` and `ACTAB` the VP8 </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L12">hc/lib/gfx/codec_webp.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L12">hc/lib/gfx/codec_webp.amni:12</a>
 </article>
 <article class="sym" id="why">
 <h3><a href="#why">why</a> <i>constant</i></h3>
 <pre>var why byte[&gt;..]</pre>
 <p>Buffer holding the text of the most recent decoding failure message.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L14">hc/lib/gfx/codec_webp.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L14">hc/lib/gfx/codec_webp.amni:14</a>
 </article>
 <article class="sym" id="src">
 <h3><a href="#src">src</a> <i>constant</i></h3>
 <pre>var src byte[&gt;..]</pre>
 <p>Buffer holding the WebP file bytes currently being parsed and decoded.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L15">hc/lib/gfx/codec_webp.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L15">hc/lib/gfx/codec_webp.amni:15</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(reason const byte[:]) bool</pre>
 <p>Records a failure message and returns false so callers can report errors in one step.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L16">hc/lib/gfx/codec_webp.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L16">hc/lib/gfx/codec_webp.amni:16</a>
 </article>
 <article class="sym" id="sb">
 <h3><a href="#sb">sb</a> <i>function</i></h3>
 <pre>sb(at int) int</pre>
 <p>Returns the byte at the given offset of the source data as an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L22">hc/lib/gfx/codec_webp.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L22">hc/lib/gfx/codec_webp.amni:22</a>
 </article>
 <article class="sym" id="le16">
 <h3><a href="#le16">le16</a> <i>function</i></h3>
 <pre>le16(at int) int</pre>
 <p>Reads a little-endian 16-bit unsigned value at the given offset of the source data.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L23">hc/lib/gfx/codec_webp.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L23">hc/lib/gfx/codec_webp.amni:23</a>
 </article>
 <article class="sym" id="le24">
 <h3><a href="#le24">le24</a> <i>function</i></h3>
 <pre>le24(at int) int</pre>
 <p>Reads a little-endian 24-bit unsigned value at the given offset of the source data.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L24">hc/lib/gfx/codec_webp.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L24">hc/lib/gfx/codec_webp.amni:24</a>
 </article>
 <article class="sym" id="le32">
 <h3><a href="#le32">le32</a> <i>function</i></h3>
 <pre>le32(at int) int</pre>
 <p>Reads a little-endian 32-bit unsigned value at the given offset of the source data.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding a copy of the file being decoded. `le16(at)`, `le24(at)` and `le32(at)` read little-endian unsigned numbers from src; callers check the bounds first.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L25">hc/lib/gfx/codec_webp.amni:25</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L25">hc/lib/gfx/codec_webp.amni:25</a>
 </article>
 <article class="sym" id="img_at">
 <h3><a href="#img_at">img_at</a> <i>constant</i></h3>
 <pre>var img_at int = 0</pre>
 <p>Offset of the image chunk payload within the file.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L26">hc/lib/gfx/codec_webp.amni:26</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L26">hc/lib/gfx/codec_webp.amni:26</a>
 </article>
 <article class="sym" id="img_len">
 <h3><a href="#img_len">img_len</a> <i>constant</i></h3>
 <pre>var img_len int = 0</pre>
 <p>Size in bytes of the image chunk payload.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L27">hc/lib/gfx/codec_webp.amni:27</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L27">hc/lib/gfx/codec_webp.amni:27</a>
 </article>
 <article class="sym" id="alph_at">
 <h3><a href="#alph_at">alph_at</a> <i>constant</i></h3>
 <pre>var alph_at int = -1</pre>
 <p>Offset of the alpha chunk payload, or -1 when the file has none.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L28">hc/lib/gfx/codec_webp.amni:28</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L28">hc/lib/gfx/codec_webp.amni:28</a>
 </article>
 <article class="sym" id="alph_len">
 <h3><a href="#alph_len">alph_len</a> <i>constant</i></h3>
 <pre>var alph_len int = 0</pre>
 <p>Size in bytes of the alpha chunk payload.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L29">hc/lib/gfx/codec_webp.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L29">hc/lib/gfx/codec_webp.amni:29</a>
 </article>
 <article class="sym" id="width">
 <h3><a href="#width">width</a> <i>constant</i></h3>
 <pre>var width int = 0</pre>
 <p>Width in pixels of the parsed image.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L30">hc/lib/gfx/codec_webp.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L30">hc/lib/gfx/codec_webp.amni:30</a>
 </article>
 <article class="sym" id="height">
 <h3><a href="#height">height</a> <i>constant</i></h3>
 <pre>var height int = 0</pre>
 <p>Height in pixels of the parsed image.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L31">hc/lib/gfx/codec_webp.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L31">hc/lib/gfx/codec_webp.amni:31</a>
 </article>
 <article class="sym" id="lossless">
 <h3><a href="#lossless">lossless</a> <i>constant</i></h3>
 <pre>var lossless bool = false</pre>
 <p>Flag set when the image chunk is lossless rather than lossy.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L32">hc/lib/gfx/codec_webp.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L32">hc/lib/gfx/codec_webp.amni:32</a>
 </article>
 <article class="sym" id="has_alpha">
 <h3><a href="#has_alpha">has_alpha</a> <i>constant</i></h3>
 <pre>var has_alpha bool = false</pre>
 <p>Flag set when the parsed image carries transparency data.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L33">hc/lib/gfx/codec_webp.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L33">hc/lib/gfx/codec_webp.amni:33</a>
 </article>
 <article class="sym" id="tag_is">
 <h3><a href="#tag_is">tag_is</a> <i>function</i></h3>
 <pre>tag_is(at int, s const byte[:]) bool</pre>
 <p>Returns whether the four bytes at an offset match the given chunk tag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L34">hc/lib/gfx/codec_webp.amni:34</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L34">hc/lib/gfx/codec_webp.amni:34</a>
 </article>
 <article class="sym" id="parse">
 <h3><a href="#parse">parse</a> <i>function</i></h3>
 <pre>parse() bool</pre>
 <p>Validates the RIFF container and image headers, returning false and recording an error if the file is unsupported or malformed.</p>
 <p class="note">Container (`parse()` gives a bool, filling module ints `img_at`, `img_len`, `alph_at`, `alph_len`, `width`, `height`, and module bools `lossless` and `has_alpha`): the file must be at least 20 bytes, start &quot;RIFF&quot; and have &quot;WEBP&quot; at byte 8. The RIFF size at byte 4 must be at least 12, at most 0xfffffff6, and at most the file length minus 8. alph_at is -1 and alph_len 0 until an ALPH chunk is found.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L38">hc/lib/gfx/codec_webp.amni:38</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L38">hc/lib/gfx/codec_webp.amni:38</a>
 </article>
 <article class="sym" id="lb_pos">
 <h3><a href="#lb_pos">lb_pos</a> <i>constant</i></h3>
 <pre>var lb_pos int = 0</pre>
 <p>Current read position of the lossless bit reader within the source data.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L107">hc/lib/gfx/codec_webp.amni:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L107">hc/lib/gfx/codec_webp.amni:107</a>
 </article>
 <article class="sym" id="lb_end">
 <h3><a href="#lb_end">lb_end</a> <i>constant</i></h3>
 <pre>var lb_end int = 0</pre>
 <p>End position of the data the lossless bit reader may consume.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L108">hc/lib/gfx/codec_webp.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L108">hc/lib/gfx/codec_webp.amni:108</a>
 </article>
 <article class="sym" id="lb_val">
 <h3><a href="#lb_val">lb_val</a> <i>constant</i></h3>
 <pre>var lb_val int = 0</pre>
 <p>Bit buffer holding bits fetched but not yet consumed by the lossless reader.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L109">hc/lib/gfx/codec_webp.amni:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L109">hc/lib/gfx/codec_webp.amni:109</a>
 </article>
 <article class="sym" id="lb_n">
 <h3><a href="#lb_n">lb_n</a> <i>constant</i></h3>
 <pre>var lb_n int = 0</pre>
 <p>Number of valid bits currently in the lossless bit buffer.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L110">hc/lib/gfx/codec_webp.amni:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L110">hc/lib/gfx/codec_webp.amni:110</a>
 </article>
 <article class="sym" id="lb_over">
 <h3><a href="#lb_over">lb_over</a> <i>constant</i></h3>
 <pre>var lb_over bool = false</pre>
 <p>Flag set when the lossless reader tried to read past the end of its data.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L111">hc/lib/gfx/codec_webp.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L111">hc/lib/gfx/codec_webp.amni:111</a>
 </article>
 <article class="sym" id="lbegin">
 <h3><a href="#lbegin">lbegin</a> <i>function</i></h3>
 <pre>lbegin(at int, end int)</pre>
 <p>Starts the lossless bit reader over the given byte range and clears its state.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L112">hc/lib/gfx/codec_webp.amni:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L112">hc/lib/gfx/codec_webp.amni:112</a>
 </article>
 <article class="sym" id="lfill">
 <h3><a href="#lfill">lfill</a> <i>function</i></h3>
 <pre>lfill()</pre>
 <p>Refills the lossless bit buffer with whole bytes while data remains.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L119">hc/lib/gfx/codec_webp.amni:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L119">hc/lib/gfx/codec_webp.amni:119</a>
 </article>
 <article class="sym" id="lpeek">
 <h3><a href="#lpeek">lpeek</a> <i>function</i></h3>
 <pre>lpeek(n int) int</pre>
 <p>Returns the next n bits without consuming them.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L126">hc/lib/gfx/codec_webp.amni:126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L126">hc/lib/gfx/codec_webp.amni:126</a>
 </article>
 <article class="sym" id="lskip">
 <h3><a href="#lskip">lskip</a> <i>function</i></h3>
 <pre>lskip(n int)</pre>
 <p>Consumes n bits, flagging overrun if too few remain.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L130">hc/lib/gfx/codec_webp.amni:130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L130">hc/lib/gfx/codec_webp.amni:130</a>
 </article>
 <article class="sym" id="lbits">
 <h3><a href="#lbits">lbits</a> <i>function</i></h3>
 <pre>lbits(n int) int</pre>
 <p>Reads and consumes n bits, returning them as an integer.</p>
 <p class="note">Lossless bit reader (module ints `lb_pos` next byte of src to load, `lb_end` end byte, `lb_val` unread bits lowest first, `lb_n` their count, module bool `lb_over`). `lbegin(at, end)` sets them to start reading at at. `lfill()`: while lb_n is at most 48 and bytes are left, add the next byte shifted left by lb_n to lb_val and count 8 more bits. `lpeek(n)` for n from 0 to 24: fill when fewer than n </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L141">hc/lib/gfx/codec_webp.amni:141</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L141">hc/lib/gfx/codec_webp.amni:141</a>
 </article>
 <article class="sym" id="ht">
 <h3><a href="#ht">ht</a> <i>constant</i></h3>
 <pre>var ht int[&gt;..]</pre>
 <p>Storage for all built Huffman lookup tables used by lossless decoding.</p>
 <p class="note">Huffman tables live in one module int list `ht`; a table is named by the index of its first entry. `hbuild(lens, n)` takes an int list of n code lengths (one per symbol) and gives a table index, or -1 when the lengths are not a usable code: any length above 15 fails, all lengths zero fails. When exactly one symbol has a nonzero length, the table is 256 entries all holding that symbol with length 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L146">hc/lib/gfx/codec_webp.amni:146</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L146">hc/lib/gfx/codec_webp.amni:146</a>
 </article>
 <article class="sym" id="hrev">
 <h3><a href="#hrev">hrev</a> <i>constant</i></h3>
 <pre>var hrev int[&gt;..]</pre>
 <p>Scratch array holding bit-reversed Huffman codes while a table is built.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L147">hc/lib/gfx/codec_webp.amni:147</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L147">hc/lib/gfx/codec_webp.amni:147</a>
 </article>
 <article class="sym" id="brev">
 <h3><a href="#brev">brev</a> <i>function</i></h3>
 <pre>brev(c int, l int) int</pre>
 <p>Reverses the low l bits of a code so it matches LSB-first reading.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L148">hc/lib/gfx/codec_webp.amni:148</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L148">hc/lib/gfx/codec_webp.amni:148</a>
 </article>
 <article class="sym" id="hbuild">
 <h3><a href="#hbuild">hbuild</a> <i>function</i></h3>
 <pre>hbuild(lens const int[:], n int) int</pre>
 <p>Builds a Huffman lookup table from code lengths, returning its offset or -1 if the lengths are invalid.</p>
 <p class="note">Huffman tables live in one module int list `ht`; a table is named by the index of its first entry. `hbuild(lens, n)` takes an int list of n code lengths (one per symbol) and gives a table index, or -1 when the lengths are not a usable code: any length above 15 fails, all lengths zero fails. When exactly one symbol has a nonzero length, the table is 256 entries all holding that symbol with length 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L157">hc/lib/gfx/codec_webp.amni:157</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L157">hc/lib/gfx/codec_webp.amni:157</a>
 </article>
 <article class="sym" id="hread">
 <h3><a href="#hread">hread</a> <i>function</i></h3>
 <pre>hread(t int) int</pre>
 <p>Decodes one symbol from the lossless bit stream using the table at the given offset.</p>
 <p class="note">Huffman tables live in one module int list `ht`; a table is named by the index of its first entry. `hbuild(lens, n)` takes an int list of n code lengths (one per symbol) and gives a table index, or -1 when the lengths are not a usable code: any length above 15 fails, all lengths zero fails. When exactly one symbol has a nonzero length, the table is 256 entries all holding that symbol with length 0</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L239">hc/lib/gfx/codec_webp.amni:239</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L239">hc/lib/gfx/codec_webp.amni:239</a>
 </article>
 <article class="sym" id="lcl">
 <h3><a href="#lcl">lcl</a> <i>constant</i></h3>
 <pre>var lcl int[&gt;..]</pre>
 <p>Scratch array holding code lengths while a Huffman code is read.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L251">hc/lib/gfx/codec_webp.amni:251</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L251">hc/lib/gfx/codec_webp.amni:251</a>
 </article>
 <article class="sym" id="lcode">
 <h3><a href="#lcode">lcode</a> <i>function</i></h3>
 <pre>lcode(nsym int) int</pre>
 <p>Reads a Huffman code for the given symbol count from the stream, returning its table offset or -1 on error.</p>
 <p class="note">Reading one lossless code (`lcode(size)` gives a table index or -1; it uses a module int list of size code lengths, all zero first). A first bit 1 is a simple code: the symbol count is 1 plus one bit; the first symbol is 1 bit long when the next bit is 0 and 8 bits long otherwise, the second symbol (when there are two) is 8 bits; each named symbol below size gets length 1 (symbols at or above size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L252">hc/lib/gfx/codec_webp.amni:252</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L252">hc/lib/gfx/codec_webp.amni:252</a>
 </article>
 <article class="sym" id="tr_type">
 <h3><a href="#tr_type">tr_type</a> <i>constant</i></h3>
 <pre>var tr_type int[&gt;..]</pre>
 <p>List of transform types read from the lossless stream, in order of appearance.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L310">hc/lib/gfx/codec_webp.amni:310</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L310">hc/lib/gfx/codec_webp.amni:310</a>
 </article>
 <article class="sym" id="tr_bits">
 <h3><a href="#tr_bits">tr_bits</a> <i>constant</i></h3>
 <pre>var tr_bits int[&gt;..]</pre>
 <p>List of block size bit counts for each lossless transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L311">hc/lib/gfx/codec_webp.amni:311</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L311">hc/lib/gfx/codec_webp.amni:311</a>
 </article>
 <article class="sym" id="tr_w">
 <h3><a href="#tr_w">tr_w</a> <i>constant</i></h3>
 <pre>var tr_w int[&gt;..]</pre>
 <p>List of image widths at which each lossless transform applies.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L312">hc/lib/gfx/codec_webp.amni:312</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L312">hc/lib/gfx/codec_webp.amni:312</a>
 </article>
 <article class="sym" id="tr_off">
 <h3><a href="#tr_off">tr_off</a> <i>constant</i></h3>
 <pre>var tr_off int[&gt;..]</pre>
 <p>List of offsets into transform pixel data for each lossless transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L313">hc/lib/gfx/codec_webp.amni:313</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L313">hc/lib/gfx/codec_webp.amni:313</a>
 </article>
 <article class="sym" id="tr_px">
 <h3><a href="#tr_px">tr_px</a> <i>constant</i></h3>
 <pre>var tr_px int[&gt;..]</pre>
 <p>Combined pixel data for all lossless transforms.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L314">hc/lib/gfx/codec_webp.amni:314</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L314">hc/lib/gfx/codec_webp.amni:314</a>
 </article>
 <article class="sym" id="scr">
 <h3><a href="#scr">scr</a> <i>constant</i></h3>
 <pre>var scr int[&gt;..]</pre>
 <p>Scratch pixel array used while decoding transform sub-images.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L315">hc/lib/gfx/codec_webp.amni:315</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L315">hc/lib/gfx/codec_webp.amni:315</a>
 </article>
 <article class="sym" id="ent">
 <h3><a href="#ent">ent</a> <i>constant</i></h3>
 <pre>var ent int[&gt;..]</pre>
 <p>Pixel array holding the entropy image that selects Huffman groups per block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L316">hc/lib/gfx/codec_webp.amni:316</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L316">hc/lib/gfx/codec_webp.amni:316</a>
 </article>
 <article class="sym" id="gt">
 <h3><a href="#gt">gt</a> <i>constant</i></h3>
 <pre>var gt int[&gt;..]</pre>
 <p>Storage for Huffman table offsets of every Huffman group.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L317">hc/lib/gfx/codec_webp.amni:317</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L317">hc/lib/gfx/codec_webp.amni:317</a>
 </article>
 <article class="sym" id="argb">
 <h3><a href="#argb">argb</a> <i>constant</i></h3>
 <pre>var argb int[&gt;..]</pre>
 <p>Decoded lossless image pixels in packed ARGB form.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L318">hc/lib/gfx/codec_webp.amni:318</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L318">hc/lib/gfx/codec_webp.amni:318</a>
 </article>
 <article class="sym" id="tmp2">
 <h3><a href="#tmp2">tmp2</a> <i>constant</i></h3>
 <pre>var tmp2 int[&gt;..]</pre>
 <p>Temporary pixel array used while undoing color-indexing transforms.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L319">hc/lib/gfx/codec_webp.amni:319</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L319">hc/lib/gfx/codec_webp.amni:319</a>
 </article>
 <article class="sym" id="cache">
 <h3><a href="#cache">cache</a> <i>constant</i></h3>
 <pre>var cache int[&gt;..]</pre>
 <p>Color cache holding recently decoded pixels for lossless decoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L320">hc/lib/gfx/codec_webp.amni:320</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L320">hc/lib/gfx/codec_webp.amni:320</a>
 </article>
 <article class="sym" id="cdiv">
 <h3><a href="#cdiv">cdiv</a> <i>function</i></h3>
 <pre>cdiv(v int, b int) int</pre>
 <p>Divides a value by 2^b, rounding up.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L321">hc/lib/gfx/codec_webp.amni:321</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L321">hc/lib/gfx/codec_webp.amni:321</a>
 </article>
 <article class="sym" id="padd">
 <h3><a href="#padd">padd</a> <i>function</i></h3>
 <pre>padd(a int, b int) int</pre>
 <p>Adds two packed ARGB pixels channel by channel with wraparound.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L322">hc/lib/gfx/codec_webp.amni:322</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L322">hc/lib/gfx/codec_webp.amni:322</a>
 </article>
 <article class="sym" id="stream">
 <h3><a href="#stream">stream</a> <i>function</i></h3>
 <pre>recursive fn stream(w int, h int, top bool, out int[&gt;..]&amp;) bool</pre>
 <p>Decodes one lossless image stream, including transforms at the top level, into pixels; returns false on error.</p>
 <p class="note">Lossless image stream (`stream(w, h, top, out)` gives a bool and replaces the int list out with w times h pixels, each 32-bit ARGB as alpha, red, green, blue from the top byte down). The decoding width starts at w. When top is true the module transform list is emptied and, while a bit is 1, a transform is read: its type is 2 bits and each type may appear once (else fail). Types 0 (predictor) and 1</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L323">hc/lib/gfx/codec_webp.amni:323</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L323">hc/lib/gfx/codec_webp.amni:323</a>
 </article>
 <article class="sym" id="copylen">
 <h3><a href="#copylen">copylen</a> <i>function</i></h3>
 <pre>copylen(s int) int</pre>
 <p>Converts a length or distance prefix symbol into its actual value, reading extra bits.</p>
 <p class="note">Lossless pixels. Positions go from 0 to the pixel count with a column x and row y. The group used for a symbol is the one at the current position: with meta codes, the entropy pixel at (y shifted right by meta bits) times the entropy width plus (x shifted right by meta bits), shifted right by 8, low 16 bits (it only changes when x crosses a multiple of 2 to the meta bits, at a new row or after a c</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L391">hc/lib/gfx/codec_webp.amni:391</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L391">hc/lib/gfx/codec_webp.amni:391</a>
 </article>
 <article class="sym" id="cput">
 <h3><a href="#cput">cput</a> <i>function</i></h3>
 <pre>cput(out int[&gt;..]&amp;, pos int, px int, cbits int)</pre>
 <p>Stores a pixel in the output and updates the color cache.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L396">hc/lib/gfx/codec_webp.amni:396</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L396">hc/lib/gfx/codec_webp.amni:396</a>
 </article>
 <article class="sym" id="pixels">
 <h3><a href="#pixels">pixels</a> <i>function</i></h3>
 <pre>pixels(dw int, h int, gbase int, mbits int, ew int, cbits int, out int[&gt;..]&amp;) bool</pre>
 <p>Decodes entropy-coded pixels, backward copies and cache references into the output; returns false on error.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L400">hc/lib/gfx/codec_webp.amni:400</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L400">hc/lib/gfx/codec_webp.amni:400</a>
 </article>
 <article class="sym" id="clampb">
 <h3><a href="#clampb">clampb</a> <i>function</i></h3>
 <pre>clampb(v int) int</pre>
 <p>Clamps a value to the range 0 to 255.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L464">hc/lib/gfx/codec_webp.amni:464</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L464">hc/lib/gfx/codec_webp.amni:464</a>
 </article>
 <article class="sym" id="sext8">
 <h3><a href="#sext8">sext8</a> <i>function</i></h3>
 <pre>sext8(v int) int</pre>
 <p>Interprets the low 8 bits of a value as a signed integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L465">hc/lib/gfx/codec_webp.amni:465</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L465">hc/lib/gfx/codec_webp.amni:465</a>
 </article>
 <article class="sym" id="avg2">
 <h3><a href="#avg2">avg2</a> <i>function</i></h3>
 <pre>avg2(a int, b int) int</pre>
 <p>Averages two packed ARGB pixels channel by channel.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L466">hc/lib/gfx/codec_webp.amni:466</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L466">hc/lib/gfx/codec_webp.amni:466</a>
 </article>
 <article class="sym" id="sel">
 <h3><a href="#sel">sel</a> <i>function</i></h3>
 <pre>sel(l int, t int, tl int) int</pre>
 <p>Picks the left or top pixel, whichever is closer to the gradient estimate.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L467">hc/lib/gfx/codec_webp.amni:467</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L467">hc/lib/gfx/codec_webp.amni:467</a>
 </article>
 <article class="sym" id="addsub">
 <h3><a href="#addsub">addsub</a> <i>function</i></h3>
 <pre>addsub(l int, t int, tl int) int</pre>
 <p>Computes left plus top minus top-left per channel, clamped to 0 to 255.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L478">hc/lib/gfx/codec_webp.amni:478</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L478">hc/lib/gfx/codec_webp.amni:478</a>
 </article>
 <article class="sym" id="halfadd">
 <h3><a href="#halfadd">halfadd</a> <i>function</i></h3>
 <pre>halfadd(l int, t int, tl int) int</pre>
 <p>Computes a per-channel average of left and top adjusted by half the gap to top-left.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L486">hc/lib/gfx/codec_webp.amni:486</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L486">hc/lib/gfx/codec_webp.amni:486</a>
 </article>
 <article class="sym" id="predict">
 <h3><a href="#predict">predict</a> <i>function</i></h3>
 <pre>predict(m int, l int, t int, tl int, tr int) int</pre>
 <p>Returns the predicted pixel for the given predictor mode from neighboring pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L497">hc/lib/gfx/codec_webp.amni:497</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L497">hc/lib/gfx/codec_webp.amni:497</a>
 </article>
 <article class="sym" id="inverse">
 <h3><a href="#inverse">inverse</a> <i>function</i></h3>
 <pre>inverse(w int, h int, out int[&gt;..]&amp;) bool</pre>
 <p>Undoes the lossless transforms in reverse order; returns false if the final size is wrong.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L515">hc/lib/gfx/codec_webp.amni:515</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L515">hc/lib/gfx/codec_webp.amni:515</a>
 </article>
 <article class="sym" id="lreset">
 <h3><a href="#lreset">lreset</a> <i>function</i></h3>
 <pre>lreset()</pre>
 <p>Clears the Huffman table storage before decoding a new lossless image.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L588">hc/lib/gfx/codec_webp.amni:588</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L588">hc/lib/gfx/codec_webp.amni:588</a>
 </article>
 <article class="sym" id="vp8l">
 <h3><a href="#vp8l">vp8l</a> <i>function</i></h3>
 <pre>vp8l(px byte[&gt;..]&amp;) bool</pre>
 <p>Decodes the lossless image into RGBA bytes in the output buffer, returning false on error.</p>
 <p class="note">Lossless picture (`vp8l(px)`): bit reading starts after the 5-byte header, `stream(width, height, true, ...)`, and each ARGB pixel is written as red, green, blue, alpha bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L592">hc/lib/gfx/codec_webp.amni:592</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L592">hc/lib/gfx/codec_webp.amni:592</a>
 </article>
 <article class="sym" id="bd_pos">
 <h3><a href="#bd_pos">bd_pos</a> <i>constant</i></h3>
 <pre>var bd_pos int[9] = [0; 9]</pre>
 <p>Current read positions of the boolean decoders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L608">hc/lib/gfx/codec_webp.amni:608</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L608">hc/lib/gfx/codec_webp.amni:608</a>
 </article>
 <article class="sym" id="bd_end">
 <h3><a href="#bd_end">bd_end</a> <i>constant</i></h3>
 <pre>var bd_end int[9] = [0; 9]</pre>
 <p>End positions of the data for each boolean decoder.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L609">hc/lib/gfx/codec_webp.amni:609</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L609">hc/lib/gfx/codec_webp.amni:609</a>
 </article>
 <article class="sym" id="bd_val">
 <h3><a href="#bd_val">bd_val</a> <i>constant</i></h3>
 <pre>var bd_val int[9] = [0; 9]</pre>
 <p>Value registers of the boolean decoders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L610">hc/lib/gfx/codec_webp.amni:610</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L610">hc/lib/gfx/codec_webp.amni:610</a>
 </article>
 <article class="sym" id="bd_rng">
 <h3><a href="#bd_rng">bd_rng</a> <i>constant</i></h3>
 <pre>var bd_rng int[9] = [0; 9]</pre>
 <p>Range registers of the boolean decoders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L611">hc/lib/gfx/codec_webp.amni:611</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L611">hc/lib/gfx/codec_webp.amni:611</a>
 </article>
 <article class="sym" id="bd_cnt">
 <h3><a href="#bd_cnt">bd_cnt</a> <i>constant</i></h3>
 <pre>var bd_cnt int[9] = [0; 9]</pre>
 <p>Bit counters of the boolean decoders.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L612">hc/lib/gfx/codec_webp.amni:612</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L612">hc/lib/gfx/codec_webp.amni:612</a>
 </article>
 <article class="sym" id="bd_eof">
 <h3><a href="#bd_eof">bd_eof</a> <i>constant</i></h3>
 <pre>var bd_eof int[9] = [0; 9]</pre>
 <p>Flags marking boolean decoders that have run past their data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L613">hc/lib/gfx/codec_webp.amni:613</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L613">hc/lib/gfx/codec_webp.amni:613</a>
 </article>
 <article class="sym" id="bload">
 <h3><a href="#bload">bload</a> <i>function</i></h3>
 <pre>bload(r int)</pre>
 <p>Loads the next byte into the given boolean decoder, handling end of data.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L614">hc/lib/gfx/codec_webp.amni:614</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L614">hc/lib/gfx/codec_webp.amni:614</a>
 </article>
 <article class="sym" id="binit">
 <h3><a href="#binit">binit</a> <i>function</i></h3>
 <pre>binit(r int, at int, size int)</pre>
 <p>Initializes the given boolean decoder over a byte range.</p>
 <p class="note">Lossy bool decoders: 9 at once (0 the first partition, 1 to 8 the token partitions), kept in parallel module int lists: next byte, end byte, value, range (stored minus 1), bit count and an end flag. `binit(r, at, size)`: range 254, value 0, bit count -8, flag clear, then one load. Load: when a byte is left, the bit count grows by 8 and the value becomes itself shifted left by 8 plus the byte; else</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L627">hc/lib/gfx/codec_webp.amni:627</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L627">hc/lib/gfx/codec_webp.amni:627</a>
 </article>
 <article class="sym" id="bit">
 <h3><a href="#bit">bit</a> <i>function</i></h3>
 <pre>bit(r int, p int) int</pre>
 <p>Decodes one boolean from the given decoder using probability p out of 256.</p>
 <p class="note">Lossy bool decoders: 9 at once (0 the first partition, 1 to 8 the token partitions), kept in parallel module int lists: next byte, end byte, value, range (stored minus 1), bit count and an end flag. `binit(r, at, size)`: range 254, value 0, bit count -8, flag clear, then one load. Load: when a byte is left, the bit count grows by 8 and the value becomes itself shifted left by 8 plus the byte; else</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L636">hc/lib/gfx/codec_webp.amni:636</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L636">hc/lib/gfx/codec_webp.amni:636</a>
 </article>
 <article class="sym" id="bsign">
 <h3><a href="#bsign">bsign</a> <i>function</i></h3>
 <pre>bsign(r int, v int) int</pre>
 <p>Decodes a sign bit at even probability and returns the value negated if set.</p>
 <p class="note">Lossy bool decoders: 9 at once (0 the first partition, 1 to 8 the token partitions), kept in parallel module int lists: next byte, end byte, value, range (stored minus 1), bit count and an end flag. `binit(r, at, size)`: range 254, value 0, bit count -8, flag clear, then one load. Load: when a byte is left, the bit count grows by 8 and the value becomes itself shifted left by 8 plus the byte; else</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L659">hc/lib/gfx/codec_webp.amni:659</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L659">hc/lib/gfx/codec_webp.amni:659</a>
 </article>
 <article class="sym" id="bval">
 <h3><a href="#bval">bval</a> <i>function</i></h3>
 <pre>bval(r int, n int) int</pre>
 <p>Reads an n-bit unsigned value from the given boolean decoder.</p>
 <p class="note">Lossy bool decoders: 9 at once (0 the first partition, 1 to 8 the token partitions), kept in parallel module int lists: next byte, end byte, value, range (stored minus 1), bit count and an end flag. `binit(r, at, size)`: range 254, value 0, bit count -8, flag clear, then one load. Load: when a byte is left, the bit count grows by 8 and the value becomes itself shifted left by 8 plus the byte; else</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L674">hc/lib/gfx/codec_webp.amni:674</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L674">hc/lib/gfx/codec_webp.amni:674</a>
 </article>
 <article class="sym" id="bsval">
 <h3><a href="#bsval">bsval</a> <i>function</i></h3>
 <pre>bsval(r int, n int) int</pre>
 <p>Reads an n-bit magnitude followed by a sign bit and returns the signed value.</p>
 <p class="note">Lossy bool decoders: 9 at once (0 the first partition, 1 to 8 the token partitions), kept in parallel module int lists: next byte, end byte, value, range (stored minus 1), bit count and an end flag. `binit(r, at, size)`: range 254, value 0, bit count -8, flag clear, then one load. Load: when a byte is left, the bit count grows by 8 and the value becomes itself shifted left by 8 plus the byte; else</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L679">hc/lib/gfx/codec_webp.amni:679</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L679">hc/lib/gfx/codec_webp.amni:679</a>
 </article>
 <article class="sym" id="mb_w">
 <h3><a href="#mb_w">mb_w</a> <i>constant</i></h3>
 <pre>var mb_w int = 0</pre>
 <p>Width of the lossy frame in 16-pixel macroblocks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L683">hc/lib/gfx/codec_webp.amni:683</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L683">hc/lib/gfx/codec_webp.amni:683</a>
 </article>
 <article class="sym" id="mb_h">
 <h3><a href="#mb_h">mb_h</a> <i>constant</i></h3>
 <pre>var mb_h int = 0</pre>
 <p>Height of the lossy frame in 16-pixel macroblocks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L684">hc/lib/gfx/codec_webp.amni:684</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L684">hc/lib/gfx/codec_webp.amni:684</a>
 </article>
 <article class="sym" id="seg_on">
 <h3><a href="#seg_on">seg_on</a> <i>constant</i></h3>
 <pre>var seg_on bool = false</pre>
 <p>Flag set when segmentation is enabled for the lossy frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L685">hc/lib/gfx/codec_webp.amni:685</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L685">hc/lib/gfx/codec_webp.amni:685</a>
 </article>
 <article class="sym" id="seg_map">
 <h3><a href="#seg_map">seg_map</a> <i>constant</i></h3>
 <pre>var seg_map bool = false</pre>
 <p>Flag set when the frame carries a per-macroblock segment map.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L686">hc/lib/gfx/codec_webp.amni:686</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L686">hc/lib/gfx/codec_webp.amni:686</a>
 </article>
 <article class="sym" id="abs_d">
 <h3><a href="#abs_d">abs_d</a> <i>constant</i></h3>
 <pre>var abs_d bool = true</pre>
 <p>Flag selecting whether segment values are absolute or deltas, defaulting to absolute.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L687">hc/lib/gfx/codec_webp.amni:687</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L687">hc/lib/gfx/codec_webp.amni:687</a>
 </article>
 <article class="sym" id="seg_q">
 <h3><a href="#seg_q">seg_q</a> <i>constant</i></h3>
 <pre>var seg_q int[4] = [0; 4]</pre>
 <p>Per-segment quantizer values read from the frame header, used when segmentation is enabled.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L688">hc/lib/gfx/codec_webp.amni:688</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L688">hc/lib/gfx/codec_webp.amni:688</a>
 </article>
 <article class="sym" id="seg_f">
 <h3><a href="#seg_f">seg_f</a> <i>constant</i></h3>
 <pre>var seg_f int[4] = [0; 4]</pre>
 <p>Per-segment loop filter levels read from the frame header, used when segmentation is enabled.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L689">hc/lib/gfx/codec_webp.amni:689</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L689">hc/lib/gfx/codec_webp.amni:689</a>
 </article>
 <article class="sym" id="seg_p">
 <h3><a href="#seg_p">seg_p</a> <i>constant</i></h3>
 <pre>var seg_p int[3] = [255; 3]</pre>
 <p>Probabilities for decoding each macroblock's segment index, defaulting to 255 when not sent.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L690">hc/lib/gfx/codec_webp.amni:690</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L690">hc/lib/gfx/codec_webp.amni:690</a>
 </article>
 <article class="sym" id="fl_simple">
 <h3><a href="#fl_simple">fl_simple</a> <i>constant</i></h3>
 <pre>var fl_simple bool = false</pre>
 <p>Flag set when the frame header selects the simple loop filter instead of the normal one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L691">hc/lib/gfx/codec_webp.amni:691</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L691">hc/lib/gfx/codec_webp.amni:691</a>
 </article>
 <article class="sym" id="fl_level">
 <h3><a href="#fl_level">fl_level</a> <i>constant</i></h3>
 <pre>var fl_level int = 0</pre>
 <p>Base loop filter strength read from the frame header, where 0 disables filtering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L692">hc/lib/gfx/codec_webp.amni:692</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L692">hc/lib/gfx/codec_webp.amni:692</a>
 </article>
 <article class="sym" id="fl_sharp">
 <h3><a href="#fl_sharp">fl_sharp</a> <i>constant</i></h3>
 <pre>var fl_sharp int = 0</pre>
 <p>Loop filter sharpness value read from the frame header.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L693">hc/lib/gfx/codec_webp.amni:693</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L693">hc/lib/gfx/codec_webp.amni:693</a>
 </article>
 <article class="sym" id="fl_deltas">
 <h3><a href="#fl_deltas">fl_deltas</a> <i>constant</i></h3>
 <pre>var fl_deltas bool = false</pre>
 <p>Flag set when the header enables reference and mode based loop filter level adjustments.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L694">hc/lib/gfx/codec_webp.amni:694</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L694">hc/lib/gfx/codec_webp.amni:694</a>
 </article>
 <article class="sym" id="ref_d">
 <h3><a href="#ref_d">ref_d</a> <i>constant</i></h3>
 <pre>var ref_d int[4] = [0; 4]</pre>
 <p>Loop filter level adjustments indexed by reference frame, read from the frame header.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L695">hc/lib/gfx/codec_webp.amni:695</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L695">hc/lib/gfx/codec_webp.amni:695</a>
 </article>
 <article class="sym" id="mode_d">
 <h3><a href="#mode_d">mode_d</a> <i>constant</i></h3>
 <pre>var mode_d int[4] = [0; 4]</pre>
 <p>Loop filter level adjustments indexed by prediction mode, read from the frame header.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L696">hc/lib/gfx/codec_webp.amni:696</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L696">hc/lib/gfx/codec_webp.amni:696</a>
 </article>
 <article class="sym" id="ftype">
 <h3><a href="#ftype">ftype</a> <i>constant</i></h3>
 <pre>var ftype int = 0</pre>
 <p>Selected loop filter type: 0 for none, 1 for simple, 2 for normal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L697">hc/lib/gfx/codec_webp.amni:697</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L697">hc/lib/gfx/codec_webp.amni:697</a>
 </article>
 <article class="sym" id="nparts">
 <h3><a href="#nparts">nparts</a> <i>constant</i></h3>
 <pre>var nparts int = 1</pre>
 <p>Number of token partitions in the current lossy frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L698">hc/lib/gfx/codec_webp.amni:698</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L698">hc/lib/gfx/codec_webp.amni:698</a>
 </article>
 <article class="sym" id="dq">
 <h3><a href="#dq">dq</a> <i>constant</i></h3>
 <pre>var dq int[24] = [0; 24]</pre>
 <p>Dequantization factors, six per segment, covering luma, second-order and chroma coefficients.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L699">hc/lib/gfx/codec_webp.amni:699</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L699">hc/lib/gfx/codec_webp.amni:699</a>
 </article>
 <article class="sym" id="cprob">
 <h3><a href="#cprob">cprob</a> <i>constant</i></h3>
 <pre>var cprob int[1056] = [0; 1056]</pre>
 <p>Working table of coefficient token probabilities, initialized from defaults and updated by the frame header.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L700">hc/lib/gfx/codec_webp.amni:700</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L700">hc/lib/gfx/codec_webp.amni:700</a>
 </article>
 <article class="sym" id="skip_on">
 <h3><a href="#skip_on">skip_on</a> <i>constant</i></h3>
 <pre>var skip_on bool = false</pre>
 <p>Flag set when macroblocks may carry a skip-residual bit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L701">hc/lib/gfx/codec_webp.amni:701</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L701">hc/lib/gfx/codec_webp.amni:701</a>
 </article>
 <article class="sym" id="skip_p">
 <h3><a href="#skip_p">skip_p</a> <i>constant</i></h3>
 <pre>var skip_p int = 0</pre>
 <p>Probability used to decode each macroblock's skip bit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L702">hc/lib/gfx/codec_webp.amni:702</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L702">hc/lib/gfx/codec_webp.amni:702</a>
 </article>
 <article class="sym" id="clampm">
 <h3><a href="#clampm">clampm</a> <i>function</i></h3>
 <pre>clampm(v int, m int) int</pre>
 <p>Clamps a value into the range zero through the given maximum and returns it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L703">hc/lib/gfx/codec_webp.amni:703</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L703">hc/lib/gfx/codec_webp.amni:703</a>
 </article>
 <article class="sym" id="vp8_head">
 <h3><a href="#vp8_head">vp8_head</a> <i>function</i></h3>
 <pre>vp8_head() bool</pre>
 <p>Parses the lossy frame header, sets up partitions, quantizers and probabilities, and returns false on malformed data.</p>
 <p class="note">Lossy headers (`vp8_head()` gives a bool). From img_at: the 3-byte tag and 7 bytes of key frame header are already checked; the picture is width by height, mb_w and mb_h are (width plus 15) shifted right by 4 and the same for height. The first partition (length tag shifted right by 5) starts at img_at plus 10 and must fit in the chunk; when mb_w times mb_h is above 8 times the first partition leng</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L704">hc/lib/gfx/codec_webp.amni:704</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L704">hc/lib/gfx/codec_webp.amni:704</a>
 </article>
 <article class="sym" id="mr_seg">
 <h3><a href="#mr_seg">mr_seg</a> <i>constant</i></h3>
 <pre>var mr_seg int[&gt;..]</pre>
 <p>Per-macroblock segment indices for the current macroblock row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L787">hc/lib/gfx/codec_webp.amni:787</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L787">hc/lib/gfx/codec_webp.amni:787</a>
 </article>
 <article class="sym" id="mr_skip">
 <h3><a href="#mr_skip">mr_skip</a> <i>constant</i></h3>
 <pre>var mr_skip int[&gt;..]</pre>
 <p>Per-macroblock skip flags for the current macroblock row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L788">hc/lib/gfx/codec_webp.amni:788</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L788">hc/lib/gfx/codec_webp.amni:788</a>
 </article>
 <article class="sym" id="mr_i4">
 <h3><a href="#mr_i4">mr_i4</a> <i>constant</i></h3>
 <pre>var mr_i4 int[&gt;..]</pre>
 <p>Per-macroblock flags marking 4x4 subblock prediction for the current row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L789">hc/lib/gfx/codec_webp.amni:789</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L789">hc/lib/gfx/codec_webp.amni:789</a>
 </article>
 <article class="sym" id="mr_ym">
 <h3><a href="#mr_ym">mr_ym</a> <i>constant</i></h3>
 <pre>var mr_ym int[&gt;..]</pre>
 <p>Per-macroblock 16x16 luma prediction modes for the current row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L790">hc/lib/gfx/codec_webp.amni:790</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L790">hc/lib/gfx/codec_webp.amni:790</a>
 </article>
 <article class="sym" id="mr_cm">
 <h3><a href="#mr_cm">mr_cm</a> <i>constant</i></h3>
 <pre>var mr_cm int[&gt;..]</pre>
 <p>Per-macroblock chroma prediction modes for the current row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L791">hc/lib/gfx/codec_webp.amni:791</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L791">hc/lib/gfx/codec_webp.amni:791</a>
 </article>
 <article class="sym" id="mr_sub">
 <h3><a href="#mr_sub">mr_sub</a> <i>constant</i></h3>
 <pre>var mr_sub int[&gt;..]</pre>
 <p>Per-subblock luma prediction modes for the current macroblock row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L792">hc/lib/gfx/codec_webp.amni:792</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L792">hc/lib/gfx/codec_webp.amni:792</a>
 </article>
 <article class="sym" id="top_m">
 <h3><a href="#top_m">top_m</a> <i>constant</i></h3>
 <pre>var top_m int[&gt;..]</pre>
 <p>Subblock modes of the row above, used as context when decoding modes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L793">hc/lib/gfx/codec_webp.amni:793</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L793">hc/lib/gfx/codec_webp.amni:793</a>
 </article>
 <article class="sym" id="left_m">
 <h3><a href="#left_m">left_m</a> <i>constant</i></h3>
 <pre>var left_m int[4] = [0; 4]</pre>
 <p>Subblock modes of the macroblock to the left, used as context when decoding modes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L794">hc/lib/gfx/codec_webp.amni:794</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L794">hc/lib/gfx/codec_webp.amni:794</a>
 </article>
 <article class="sym" id="tree4">
 <h3><a href="#tree4">tree4</a> <i>function</i></h3>
 <pre>tree4(base int) int</pre>
 <p>Decodes one 4x4 subblock prediction mode using the probabilities at the given base offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L795">hc/lib/gfx/codec_webp.amni:795</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L795">hc/lib/gfx/codec_webp.amni:795</a>
 </article>
 <article class="sym" id="modes_row">
 <h3><a href="#modes_row">modes_row</a> <i>function</i></h3>
 <pre>modes_row() bool</pre>
 <p>Decodes segment, skip and prediction modes for one macroblock row, returning false if data is truncated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L807">hc/lib/gfx/codec_webp.amni:807</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L807">hc/lib/gfx/codec_webp.amni:807</a>
 </article>
 <article class="sym" id="co">
 <h3><a href="#co">co</a> <i>constant</i></h3>
 <pre>var co int[&gt;..]</pre>
 <p>Buffer of decoded and dequantized transform coefficients for the macroblocks being processed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L851">hc/lib/gfx/codec_webp.amni:851</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L851">hc/lib/gfx/codec_webp.amni:851</a>
 </article>
 <article class="sym" id="wrap16">
 <h3><a href="#wrap16">wrap16</a> <i>function</i></h3>
 <pre>wrap16(v int) int</pre>
 <p>Wraps a value into the signed 16-bit range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L852">hc/lib/gfx/codec_webp.amni:852</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L852">hc/lib/gfx/codec_webp.amni:852</a>
 </article>
 <article class="sym" id="large">
 <h3><a href="#large">large</a> <i>function</i></h3>
 <pre>large(r int, p int) int</pre>
 <p>Decodes the magnitude of a coefficient token larger than one.</p>
 <p class="note">Lossy coefficients (`coeffs(r, type, ctx, dq_dc, dq_ac, first, at)` gives the count n as in the reference and writes into the module int list `co` at at). The probability set for position n is band `BANDS[n]` of the type. p starts as context ctx of position first's band. For n from first while n is below 16: when a bit with p's probability 0 is 0, give n; then while a bit with probability 1 is 0, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L853">hc/lib/gfx/codec_webp.amni:853</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L853">hc/lib/gfx/codec_webp.amni:853</a>
 </article>
 <article class="sym" id="coeffs">
 <h3><a href="#coeffs">coeffs</a> <i>function</i></h3>
 <pre>coeffs(r int, ty int, ctx int, dqdc int, dqac int, first int, at int) int</pre>
 <p>Decodes one block's coefficients into the buffer and returns the position after the last one decoded.</p>
 <p class="note">Lossy coefficients (`coeffs(r, type, ctx, dq_dc, dq_ac, first, at)` gives the count n as in the reference and writes into the module int list `co` at at). The probability set for position n is band `BANDS[n]` of the type. p starts as context ctx of position first's band. For n from first while n is below 16: when a bit with p's probability 0 is 0, give n; then while a bit with probability 1 is 0, </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L873">hc/lib/gfx/codec_webp.amni:873</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L873">hc/lib/gfx/codec_webp.amni:873</a>
 </article>
 <article class="sym" id="nz_top">
 <h3><a href="#nz_top">nz_top</a> <i>constant</i></h3>
 <pre>var nz_top int[&gt;..]</pre>
 <p>Per-macroblock nonzero flags for blocks along the top edge, used as token context.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L898">hc/lib/gfx/codec_webp.amni:898</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L898">hc/lib/gfx/codec_webp.amni:898</a>
 </article>
 <article class="sym" id="dnz_top">
 <h3><a href="#dnz_top">dnz_top</a> <i>constant</i></h3>
 <pre>var dnz_top int[&gt;..]</pre>
 <p>Per-macroblock top nonzero flags for the second-order luma block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L899">hc/lib/gfx/codec_webp.amni:899</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L899">hc/lib/gfx/codec_webp.amni:899</a>
 </article>
 <article class="sym" id="nz_left">
 <h3><a href="#nz_left">nz_left</a> <i>constant</i></h3>
 <pre>var nz_left int = 0</pre>
 <p>Nonzero flags for blocks along the left edge, used as token context.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L900">hc/lib/gfx/codec_webp.amni:900</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L900">hc/lib/gfx/codec_webp.amni:900</a>
 </article>
 <article class="sym" id="dnz_left">
 <h3><a href="#dnz_left">dnz_left</a> <i>constant</i></h3>
 <pre>var dnz_left int = 0</pre>
 <p>Left nonzero flag for the second-order luma block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L901">hc/lib/gfx/codec_webp.amni:901</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L901">hc/lib/gfx/codec_webp.amni:901</a>
 </article>
 <article class="sym" id="mr_code">
 <h3><a href="#mr_code">mr_code</a> <i>constant</i></h3>
 <pre>var mr_code int[&gt;..]</pre>
 <p>Per-block residual codes for the current row, selecting no transform, DC only, or full inverse transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L902">hc/lib/gfx/codec_webp.amni:902</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L902">hc/lib/gfx/codec_webp.amni:902</a>
 </article>
 <article class="sym" id="mr_has">
 <h3><a href="#mr_has">mr_has</a> <i>constant</i></h3>
 <pre>var mr_has int[&gt;..]</pre>
 <p>Per-macroblock flags marking whether any nonzero residual was decoded in the current row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L903">hc/lib/gfx/codec_webp.amni:903</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L903">hc/lib/gfx/codec_webp.amni:903</a>
 </article>
 <article class="sym" id="setb">
 <h3><a href="#setb">setb</a> <i>function</i></h3>
 <pre>setb(v int, i int, f int) int</pre>
 <p>Returns a bit mask with the bit at the given index set to the given flag.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L904">hc/lib/gfx/codec_webp.amni:904</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L904">hc/lib/gfx/codec_webp.amni:904</a>
 </article>
 <article class="sym" id="codeof">
 <h3><a href="#codeof">codeof</a> <i>function</i></h3>
 <pre>codeof(nz int, dc int) int</pre>
 <p>Returns a residual code from the nonzero count and DC value of a block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L905">hc/lib/gfx/codec_webp.amni:905</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L905">hc/lib/gfx/codec_webp.amni:905</a>
 </article>
 <article class="sym" id="wht">
 <h3><a href="#wht">wht</a> <i>function</i></h3>
 <pre>wht(sc int, base int)</pre>
 <p>Applies the inverse Walsh-Hadamard transform, spreading second-order values into each luma block's DC coefficient.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L906">hc/lib/gfx/codec_webp.amni:906</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L906">hc/lib/gfx/codec_webp.amni:906</a>
 </article>
 <article class="sym" id="resid">
 <h3><a href="#resid">resid</a> <i>function</i></h3>
 <pre>resid(mx int, tp int) bool</pre>
 <p>Decodes all residual coefficients for one macroblock, returning false if token data is truncated.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L930">hc/lib/gfx/codec_webp.amni:930</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L930">hc/lib/gfx/codec_webp.amni:930</a>
 </article>
 <article class="sym" id="wk">
 <h3><a href="#wk">wk</a> <i>constant</i></h3>
 <pre>var wk int[832] = [0; 832]</pre>
 <p>Working buffer holding the macroblock being predicted and reconstructed, with border pixels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1002">hc/lib/gfx/codec_webp.amni:1002</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1002">hc/lib/gfx/codec_webp.amni:1002</a>
 </article>
 <article class="sym" id="top_y">
 <h3><a href="#top_y">top_y</a> <i>constant</i></h3>
 <pre>var top_y int[&gt;..]</pre>
 <p>Bottom luma pixel row of the macroblock row above, used for prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1003">hc/lib/gfx/codec_webp.amni:1003</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1003">hc/lib/gfx/codec_webp.amni:1003</a>
 </article>
 <article class="sym" id="top_u">
 <h3><a href="#top_u">top_u</a> <i>constant</i></h3>
 <pre>var top_u int[&gt;..]</pre>
 <p>Bottom U chroma pixel row of the macroblock row above, used for prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1004">hc/lib/gfx/codec_webp.amni:1004</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1004">hc/lib/gfx/codec_webp.amni:1004</a>
 </article>
 <article class="sym" id="top_v">
 <h3><a href="#top_v">top_v</a> <i>constant</i></h3>
 <pre>var top_v int[&gt;..]</pre>
 <p>Bottom V chroma pixel row of the macroblock row above, used for prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1005">hc/lib/gfx/codec_webp.amni:1005</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1005">hc/lib/gfx/codec_webp.amni:1005</a>
 </article>
 <article class="sym" id="pl">
 <h3><a href="#pl">pl</a> <i>constant</i></h3>
 <pre>var pl byte[&gt;..]</pre>
 <p>Planar output buffer holding the Y, U and V planes of the decoded frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1006">hc/lib/gfx/codec_webp.amni:1006</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1006">hc/lib/gfx/codec_webp.amni:1006</a>
 </article>
 <article class="sym" id="ysz">
 <h3><a href="#ysz">ysz</a> <i>constant</i></h3>
 <pre>var ysz int = 0</pre>
 <p>Size in bytes of the luma plane.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1007">hc/lib/gfx/codec_webp.amni:1007</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1007">hc/lib/gfx/codec_webp.amni:1007</a>
 </article>
 <article class="sym" id="usz">
 <h3><a href="#usz">usz</a> <i>constant</i></h3>
 <pre>var usz int = 0</pre>
 <p>Size in bytes of each chroma plane.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1008">hc/lib/gfx/codec_webp.amni:1008</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1008">hc/lib/gfx/codec_webp.amni:1008</a>
 </article>
 <article class="sym" id="recon_row">
 <h3><a href="#recon_row">recon_row</a> <i>function</i></h3>
 <pre>recon_row(my int)</pre>
 <p>Predicts and reconstructs every macroblock in one row and writes the results into the planes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1009">hc/lib/gfx/codec_webp.amni:1009</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1009">hc/lib/gfx/codec_webp.amni:1009</a>
 </article>
 <article class="sym" id="pred_big">
 <h3><a href="#pred_big">pred_big</a> <i>function</i></h3>
 <pre>pred_big(o int, s int, mode int, tp bool, lf bool)</pre>
 <p>Fills a 16x16 or 8x8 block using DC, TrueMotion, vertical or horizontal prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1093">hc/lib/gfx/codec_webp.amni:1093</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1093">hc/lib/gfx/codec_webp.amni:1093</a>
 </article>
 <article class="sym" id="nb">
 <h3><a href="#nb">nb</a> <i>function</i></h3>
 <pre>nb(o int, n int) int</pre>
 <p>Returns the neighboring edge pixel with the given index around a 4x4 block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1123">hc/lib/gfx/codec_webp.amni:1123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1123">hc/lib/gfx/codec_webp.amni:1123</a>
 </article>
 <article class="sym" id="pred4">
 <h3><a href="#pred4">pred4</a> <i>function</i></h3>
 <pre>pred4(o int, mode int)</pre>
 <p>Fills a 4x4 luma subblock using the given intra prediction mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1126">hc/lib/gfx/codec_webp.amni:1126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1126">hc/lib/gfx/codec_webp.amni:1126</a>
 </article>
 <article class="sym" id="m1">
 <h3><a href="#m1">m1</a> <i>function</i></h3>
 <pre>m1(a int) int</pre>
 <p>Multiplies a value by roughly 1.306 as used in the inverse transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1157">hc/lib/gfx/codec_webp.amni:1157</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1157">hc/lib/gfx/codec_webp.amni:1157</a>
 </article>
 <article class="sym" id="m2">
 <h3><a href="#m2">m2</a> <i>function</i></h3>
 <pre>m2(a int) int</pre>
 <p>Multiplies a value by roughly 0.541 as used in the inverse transform.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1158">hc/lib/gfx/codec_webp.amni:1158</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1158">hc/lib/gfx/codec_webp.amni:1158</a>
 </article>
 <article class="sym" id="wadd">
 <h3><a href="#wadd">wadd</a> <i>function</i></h3>
 <pre>wadd(p int, v int)</pre>
 <p>Adds a residual to a working-buffer pixel, clamping to the byte range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1159">hc/lib/gfx/codec_webp.amni:1159</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1159">hc/lib/gfx/codec_webp.amni:1159</a>
 </article>
 <article class="sym" id="idct">
 <h3><a href="#idct">idct</a> <i>function</i></h3>
 <pre>idct(cb int, o int)</pre>
 <p>Applies the full 4x4 inverse DCT and adds the result to the predicted block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1160">hc/lib/gfx/codec_webp.amni:1160</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1160">hc/lib/gfx/codec_webp.amni:1160</a>
 </article>
 <article class="sym" id="dcadd">
 <h3><a href="#dcadd">dcadd</a> <i>function</i></h3>
 <pre>dcadd(cb int, o int)</pre>
 <p>Adds a DC-only residual to every pixel of a 4x4 block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1185">hc/lib/gfx/codec_webp.amni:1185</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1185">hc/lib/gfx/codec_webp.amni:1185</a>
 </article>
 <article class="sym" id="dotrans">
 <h3><a href="#dotrans">dotrans</a> <i>function</i></h3>
 <pre>dotrans(code int, cb int, o int)</pre>
 <p>Applies the transform chosen by the residual code to a 4x4 block.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1191">hc/lib/gfx/codec_webp.amni:1191</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1191">hc/lib/gfx/codec_webp.amni:1191</a>
 </article>
 <article class="sym" id="uvtrans">
 <h3><a href="#uvtrans">uvtrans</a> <i>function</i></h3>
 <pre>uvtrans(cd int, cb int, o int)</pre>
 <p>Applies residual transforms to the four 4x4 blocks of one chroma plane in a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1198">hc/lib/gfx/codec_webp.amni:1198</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1198">hc/lib/gfx/codec_webp.amni:1198</a>
 </article>
 <article class="sym" id="f_seg">
 <h3><a href="#f_seg">f_seg</a> <i>constant</i></h3>
 <pre>var f_seg int[&gt;..]</pre>
 <p>Per-macroblock segment indices saved for the whole frame for loop filtering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1216">hc/lib/gfx/codec_webp.amni:1216</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1216">hc/lib/gfx/codec_webp.amni:1216</a>
 </article>
 <article class="sym" id="f_i4">
 <h3><a href="#f_i4">f_i4</a> <i>constant</i></h3>
 <pre>var f_i4 int[&gt;..]</pre>
 <p>Per-macroblock 4x4 prediction flags saved for the whole frame for loop filtering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1217">hc/lib/gfx/codec_webp.amni:1217</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1217">hc/lib/gfx/codec_webp.amni:1217</a>
 </article>
 <article class="sym" id="f_has">
 <h3><a href="#f_has">f_has</a> <i>constant</i></h3>
 <pre>var f_has int[&gt;..]</pre>
 <p>Per-macroblock residual presence flags saved for the whole frame for loop filtering.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1218">hc/lib/gfx/codec_webp.amni:1218</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1218">hc/lib/gfx/codec_webp.amni:1218</a>
 </article>
 <article class="sym" id="fs_lim">
 <h3><a href="#fs_lim">fs_lim</a> <i>constant</i></h3>
 <pre>var fs_lim int[8] = [0; 8]</pre>
 <p>Edge limit thresholds indexed by segment and prediction type.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1219">hc/lib/gfx/codec_webp.amni:1219</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1219">hc/lib/gfx/codec_webp.amni:1219</a>
 </article>
 <article class="sym" id="fs_il">
 <h3><a href="#fs_il">fs_il</a> <i>constant</i></h3>
 <pre>var fs_il int[8] = [0; 8]</pre>
 <p>Interior limit thresholds indexed by segment and prediction type.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1220">hc/lib/gfx/codec_webp.amni:1220</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1220">hc/lib/gfx/codec_webp.amni:1220</a>
 </article>
 <article class="sym" id="fs_hev">
 <h3><a href="#fs_hev">fs_hev</a> <i>constant</i></h3>
 <pre>var fs_hev int[8] = [0; 8]</pre>
 <p>High edge variance thresholds indexed by segment and prediction type.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1221">hc/lib/gfx/codec_webp.amni:1221</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1221">hc/lib/gfx/codec_webp.amni:1221</a>
 </article>
 <article class="sym" id="s1">
 <h3><a href="#s1">s1</a> <i>function</i></h3>
 <pre>s1(v int) int</pre>
 <p>Clamps a value to the signed 8-bit range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1222">hc/lib/gfx/codec_webp.amni:1222</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1222">hc/lib/gfx/codec_webp.amni:1222</a>
 </article>
 <article class="sym" id="s2">
 <h3><a href="#s2">s2</a> <i>function</i></h3>
 <pre>s2(v int) int</pre>
 <p>Clamps a value to the range -16 through 15.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1223">hc/lib/gfx/codec_webp.amni:1223</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1223">hc/lib/gfx/codec_webp.amni:1223</a>
 </article>
 <article class="sym" id="put">
 <h3><a href="#put">put</a> <i>function</i></h3>
 <pre>put(o int, v int)</pre>
 <p>Stores a pixel value into the plane buffer, clamped to the byte range.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1224">hc/lib/gfx/codec_webp.amni:1224</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1224">hc/lib/gfx/codec_webp.amni:1224</a>
 </article>
 <article class="sym" id="two">
 <h3><a href="#two">two</a> <i>function</i></h3>
 <pre>two(o int, st int, p1 int, p0 int, q0 int, q1 int)</pre>
 <p>Adjusts the two pixels nearest an edge using the common filter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1225">hc/lib/gfx/codec_webp.amni:1225</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1225">hc/lib/gfx/codec_webp.amni:1225</a>
 </article>
 <article class="sym" id="four">
 <h3><a href="#four">four</a> <i>function</i></h3>
 <pre>four(o int, st int, p1 int, p0 int, q0 int, q1 int)</pre>
 <p>Adjusts four pixels around an edge using the subblock filter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1232">hc/lib/gfx/codec_webp.amni:1232</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1232">hc/lib/gfx/codec_webp.amni:1232</a>
 </article>
 <article class="sym" id="six">
 <h3><a href="#six">six</a> <i>function</i></h3>
 <pre>six(o int, st int)</pre>
 <p>Adjusts six pixels around an edge using the macroblock filter.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1242">hc/lib/gfx/codec_webp.amni:1242</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1242">hc/lib/gfx/codec_webp.amni:1242</a>
 </article>
 <article class="sym" id="edge">
 <h3><a href="#edge">edge</a> <i>function</i></h3>
 <pre>edge(pos int, step int, lstep int, cnt int, thr int, il int, hv int, kind int)</pre>
 <p>Filters a run of pixels along one edge, skipping positions that exceed the thresholds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1260">hc/lib/gfx/codec_webp.amni:1260</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1260">hc/lib/gfx/codec_webp.amni:1260</a>
 </article>
 <article class="sym" id="fprep">
 <h3><a href="#fprep">fprep</a> <i>function</i></h3>
 <pre>fprep()</pre>
 <p>Computes per-segment filter limits and thresholds from the header settings.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1287">hc/lib/gfx/codec_webp.amni:1287</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1287">hc/lib/gfx/codec_webp.amni:1287</a>
 </article>
 <article class="sym" id="loop_filter">
 <h3><a href="#loop_filter">loop_filter</a> <i>function</i></h3>
 <pre>loop_filter()</pre>
 <p>Applies the loop filter across all macroblocks of the decoded frame planes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1317">hc/lib/gfx/codec_webp.amni:1317</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1317">hc/lib/gfx/codec_webp.amni:1317</a>
 </article>
 <article class="sym" id="up_u">
 <h3><a href="#up_u">up_u</a> <i>constant</i></h3>
 <pre>var up_u int[&gt;..]</pre>
 <p>Row buffer of upsampled U chroma values for the current output row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1367">hc/lib/gfx/codec_webp.amni:1367</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1367">hc/lib/gfx/codec_webp.amni:1367</a>
 </article>
 <article class="sym" id="up_v">
 <h3><a href="#up_v">up_v</a> <i>constant</i></h3>
 <pre>var up_v int[&gt;..]</pre>
 <p>Row buffer of upsampled V chroma values for the current output row.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1368">hc/lib/gfx/codec_webp.amni:1368</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1368">hc/lib/gfx/codec_webp.amni:1368</a>
 </article>
 <article class="sym" id="g">
 <h3><a href="#g">g</a> <i>function</i></h3>
 <pre>g(i int) int</pre>
 <p>Returns the plane buffer byte at the given index as an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1369">hc/lib/gfx/codec_webp.amni:1369</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1369">hc/lib/gfx/codec_webp.amni:1369</a>
 </article>
 <article class="sym" id="mh">
 <h3><a href="#mh">mh</a> <i>function</i></h3>
 <pre>mh(v int, k int) int</pre>
 <p>Multiplies a value by a fixed-point factor with eight fractional bits.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1370">hc/lib/gfx/codec_webp.amni:1370</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1370">hc/lib/gfx/codec_webp.amni:1370</a>
 </article>
 <article class="sym" id="clip8c">
 <h3><a href="#clip8c">clip8c</a> <i>function</i></h3>
 <pre>clip8c(v int) int</pre>
 <p>Converts a fixed-point color value to a byte, clamping out-of-range results.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1371">hc/lib/gfx/codec_webp.amni:1371</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1371">hc/lib/gfx/codec_webp.amni:1371</a>
 </article>
 <article class="sym" id="upsample">
 <h3><a href="#upsample">upsample</a> <i>function</i></h3>
 <pre>upsample(pb int, nr int, fr int, dst int[&gt;..]&amp;)</pre>
 <p>Fills a destination row with chroma values upsampled to full width by interpolating two chroma rows.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1372">hc/lib/gfx/codec_webp.amni:1372</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1372">hc/lib/gfx/codec_webp.amni:1372</a>
 </article>
 <article class="sym" id="to_rgba">
 <h3><a href="#to_rgba">to_rgba</a> <i>function</i></h3>
 <pre>to_rgba(px byte[&gt;..]&amp;)</pre>
 <p>Converts the decoded YUV planes into opaque RGBA pixels in the output buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1389">hc/lib/gfx/codec_webp.amni:1389</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1389">hc/lib/gfx/codec_webp.amni:1389</a>
 </article>
 <article class="sym" id="al">
 <h3><a href="#al">al</a> <i>constant</i></h3>
 <pre>var al int[&gt;..]</pre>
 <p>Decoded alpha values, one per pixel, of the current image.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1418">hc/lib/gfx/codec_webp.amni:1418</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1418">hc/lib/gfx/codec_webp.amni:1418</a>
 </article>
 <article class="sym" id="alpha">
 <h3><a href="#alpha">alpha</a> <i>function</i></h3>
 <pre>alpha(px byte[&gt;..]&amp;) bool</pre>
 <p>Decodes and unfilters the alpha plane into the pixels' alpha bytes, returning false if absent or invalid.</p>
 <p class="note">Lossy alpha (`alpha(px)` gives a bool, writing every 4th byte from 3). The ALPH data's first byte: method its low 2 bits, filter the next 2, preprocessing the next 2, the top 2 bits reserved; fail when the data is shorter than 2 bytes, the method is above 1, the preprocessing above 1 or the reserved bits are not 0. Method 0 needs width times height bytes after that byte, taken as the rows. Method </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1419">hc/lib/gfx/codec_webp.amni:1419</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1419">hc/lib/gfx/codec_webp.amni:1419</a>
 </article>
 <article class="sym" id="rz">
 <h3><a href="#rz">rz</a> <i>function</i></h3>
 <pre>rz(a int[&gt;..]&amp;, n int)</pre>
 <p>Clears an integer array and resizes it to the given length filled with zeros.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1464">hc/lib/gfx/codec_webp.amni:1464</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1464">hc/lib/gfx/codec_webp.amni:1464</a>
 </article>
 <article class="sym" id="vp8">
 <h3><a href="#vp8">vp8</a> <i>function</i></h3>
 <pre>vp8(px byte[&gt;..]&amp;) bool</pre>
 <p>Decodes a lossy frame into RGBA pixels, returning false on error.</p>
 <p class="note">`vp8(px)` decodes the lossy picture: `vp8_head`, then for each macroblock row the modes, each macroblock's residuals from token partition (row bitwise-and (partition count minus 1)), then the row's reconstruction; then the loop filter when the filter type is above 0; then the RGBA conversion of the width by height picture; then the alpha when has_alpha (failing with &quot;bad alpha&quot; when it fails).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1468">hc/lib/gfx/codec_webp.amni:1468</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1468">hc/lib/gfx/codec_webp.amni:1468</a>
 </article>
 <article class="sym" id="load">
 <h3><a href="#load">load</a> <i>function</i></h3>
 <pre>load(data const byte[:])</pre>
 <p>Copies the given file data into the decoder's internal source buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/codec_webp.amni#L1517">hc/lib/gfx/codec_webp.amni:1517</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/codec_webp.amni#L1517">hc/lib/gfx/codec_webp.amni:1517</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -1254,7 +1254,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2831</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2856</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -1292,6 +1292,7 @@
 <li><a href="/api-library/helium/lib/gfx-sdf_ttf">gfx/sdf_ttf</a></li>
 <li><a href="/api-library/helium/lib/gfx-hwrt">gfx/hwrt</a></li>
 <li><a href="/api-library/helium/lib/gfx-pathtrace">gfx/pathtrace</a></li>
+<li><a href="/api-library/helium/lib/gfx-impostor">gfx/impostor</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
@@ -1301,7 +1302,7 @@
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
 <li><a href="/api-library/helium/security">Security <span>189</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>154</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
@@ -1337,7 +1338,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-16">2026-11-16</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-17">2026-11-17</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>

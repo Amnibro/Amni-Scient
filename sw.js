@@ -10,6 +10,7 @@
      amni-rt-<V>     copies of what was loaded while online
      amni-cdn-<V>    copies of library files from the public CDNs the pages use
      amni-app-<id>   whole apps saved from /offline.html (written by the page program in /offline-app/, never cleared here)
+     amni-map-area-<id>  map areas saved in /map/ (written by that page, never cleared here; tiles.openfreemap.org requests are answered from them first)
 
    Apps that ship their own worker in a narrower scope (/learn/, /construct/,
    /companion/, /amni-life/, /lib/amni-llm/) are controlled by that worker, not this one. */
@@ -53,6 +54,8 @@ self.addEventListener('fetch', e => {
     e.respondWith(req.mode === 'navigate' ? page(e, req, url) : asset(e, req, url));
   } else if (CDN_HOSTS.has(url.hostname)) {
     e.respondWith(cdn(e, req, url));
+  } else if (url.hostname === 'tiles.openfreemap.org') {
+    e.respondWith(url.pathname === '/planet' ? fetch(req).catch(async () => (await caches.match(url.href, { ignoreVary: true })) || Response.error()) : caches.match(url.href, { ignoreVary: true }).then(r => r || fetch(req)));
   }
 });
 

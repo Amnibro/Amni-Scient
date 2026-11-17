@@ -64,7 +64,7 @@ export async function runClosedOct(inp,prog,stop){
   let umax=0;for(let a=0;a<F.n;a++)if(F.kind[a]<0)umax=Math.max(umax,Math.hypot(F.u[a],F.v[a],F.w[a]));
   const nw=F.ws.length/2,wi=[...Array(nw).keys()].sort((a,b)=>F.ws[2*a]-F.ws[2*b]);let wa=0,wt=0;for(let e=0;e<nw;e++){wa+=F.ws[2*e]*F.ws[2*e+1];wt+=F.ws[2*e+1];}let acc=0,p99=0;for(const e of wi){acc+=F.ws[2*e+1];if(acc>=0.99*wt){p99=F.ws[2*e];break;}}
   const shear={mean:wt?wa/wt:0,p99},lenmm=F.vfluid/Math.max(Ain,1e-18)*1e3;
-  const cS=fl.c||Math.sqrt((fl.gamma||1.4)*Math.max(fl.p||101325,1)/Math.max(fl.rho,1e-9)),Ma=umax/cS;
+  const cS=fl.c||(fl.gas===false?1497:Math.sqrt((fl.gamma||1.4)*Math.max(fl.p||101325,1)/Math.max(fl.rho,1e-9))),Ma=umax/cS;
   if(Ma>0.3)warn.push('Mach '+Ma.toFixed(2)+' is above the low-Mach limit of about 0.3, so density change along the passage is not solved.');
   const T=S.turbulence,fB=0.316*Math.pow(Math.max(Re,1),-0.25),fApp=dp*Dh/Math.max(lenmm*1e-3,1e-9)/Math.max(0.5*fl.rho*U*U,1e-30);let turbulent=null;
   if(T.model==='k-omega SST'){turbulent={model:'k-omega SST',solved:true,wall_treatment:T.wall_treatment,Re,Dh_mm:Dh*1e3,U_m_s:U,yplus:T.yplus,nut_ratio:T.nut_ratio,intensity:T.intensity,f_apparent:fApp,f_blasius:fB,from_iteration:T.from_iteration};

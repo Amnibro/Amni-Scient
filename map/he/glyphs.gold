@@ -1,0 +1,39 @@
+use amnimap
+into glyphs.amni
+lang amni
+
+Module header: the line "import math;". No namespace. The Helium has no blank lines and no comments anywhere. This module keeps map label glyphs (signed distance field bitmaps from Mapbox glyph protobuf files, 24 pixel base size with a 3 pixel border), lays out label text, and draws it with a halo into a straight-alpha RGBA overlay. It runs in WebAssembly on the page's main thread, so drawing loops work by index and allocate nothing per pixel.
+
+```amni
+struct G { w i32, h i32, left i32, top i32, adv i32, off int }
+struct U8 { cp i32, n int }
+struct LG { g i32, x f32, y f32 }
+var gl_list G[>..] = [];
+var gl_bits byte[>..] = [];
+var gl_map i32[>..] = [];
+var gl_base i32[>..] = [];
+var gl_state byte[>..] = [];
+var lay LG[>..] = [];
+var lay_w f32 = 0.0;
+var lay_h f32 = 0.0;
+```
+
+There are 3 fonts (0 regular, 1 bold, 2 italic) and each font's Basic Multilingual Plane is split into 256 ranges of 256 code points. `gl_state` holds one byte per font and range (index font times 256 plus range): 0 not asked for, 1 loading, 2 loaded, 3 failed. `gl_base` holds, per font and range, the start of that range's 256 glyph slots in `gl_map` (-1 until loaded), and each slot is an index into `gl_list` or -1 when the font has no such glyph. A G keeps the glyph's metrics in base pixels and `off`, where its bitmap of (w plus 6) times (h plus 6) bytes starts in `gl_bits`. `lay` is the layout made by `text_layout`: each entry is a glyph index and the top left corner of its bitmap box in base pixels relative to the text's center; lay_w and lay_h are the laid out width and height in base pixels.
+
+`gl_init()` does nothing when `gl_state` already has 768 entries; otherwise it makes `gl_state` 768 zeros and `gl_base` 768 entries of -1, and resizes `gl_bits` to 16777216 zero bytes and then clears it, so its memory region is sized once (a growable list can never grow past the region it got when it first grew). A glyph whose bitmap would make `gl_bits` longer than 16777216 bytes is stored with w and h 0 and no bitmap.
+
+`gl_get_state(font, range)` returns the state byte as an int (after `gl_init`), or 3 when the font is not 0 to 2 or the range is not 0 to 255 (code points beyond the Basic Multilingual Plane, such as emoji, have no glyph files and count as failed); `gl_set_state(font, range, s)` sets it and does nothing for such pairs, and `gl_load` returns at once for them.
+
+`gl_load(font, range, b)` reads a glyph protobuf file b. Field 1 of the top level is a length-delimited fontstack message; inside it field 3 is a length-delimited glyph message and every other field is skipped by its wire type. Inside a glyph: field 1 id (varint), 2 bitmap (bytes), 3 width, 4 height, 5 left (zigzag varint), 6 top (zigzag varint), 7 advance (varint); unknown fields are skipped by wire type. A glyph whose id is below 65536 is stored: its bitmap bytes are appended to `gl_bits` (when the bitmap is shorter than (width plus 6) times (height plus 6) bytes, or the width or height is 0, it is stored with w and h 0 and no bitmap), a G is pushed, and the slot for its id is set, creating the 256 slots of the id's range (filled with -1) in `gl_map` and recording their start in `gl_base` the first time that range gets a glyph. Afterwards the state of (font, range) is 2, and when no glyph of that range was found its base is still set to 256 new slots of -1 so lookups work. The protobuf reading is written here as local helpers (a varint reader returning the value and moving a position, and a skipper by wire type) that never read past the end.
+
+`utf8_at(s, i)` decodes the UTF-8 code point starting at byte i of s into a U8 (the code point and its byte length); a byte that does not start a valid sequence, or a sequence cut off by the end, gives code point 65533 and length 1.
+
+`glyph_of(font, cp)` is the glyph index for code point cp or -1 (when cp is 65536 or more, the range is not loaded, or the slot is -1).
+
+`text_missing(font, s)` returns the first range number that the text needs (by its code points other than newline) whose state for the font is 0, or -1 when every needed range is loading, loaded or failed. `text_ready(font, s)` is true when every needed range is loaded or failed.
+
+`text_layout(font, s, max_em)` lays out text s for a font at the 24 pixel base size into `lay`, lay_w and lay_h, and returns the number of glyphs placed. Newline bytes force a line break. When max_em is above 0, words (split at spaces) also wrap: a word that would make the current line wider than max_em times 24 base pixels starts a new line, unless the line is empty. The width of a line is the sum of its glyphs' advances (a code point with no glyph adds nothing and places nothing; a space with no glyph adds 7). Each line is centered horizontally on 0. Lines are 28.8 base pixels apart and the block of lines is centered vertically on 0, with the baseline of line k at (k minus (line count minus 1) divided by 2) times 28.8 plus 9. A glyph with pen position x on a line with baseline y is placed with its box's top left at (x plus left minus 3, y minus (top plus 26) minus 3), and only glyphs with w above 0 are added to `lay`. lay_w is the widest line's width and lay_h is the line count times 28.8.
+
+`draw_layout(img, iw, ih, cx, cy, scale, cs, sn, color, halo, halo_px)` draws the current `lay` into img, an RGBA byte list for an image iw by ih pixels with straight alpha. A base pixel point (px, py) of the layout lands on the image at (cx plus (px times cs minus py times sn) times scale, cy plus (px times sn plus py times cs) times scale), so cs and sn are the cosine and sine of the text's rotation. It makes two passes over the glyphs: first the halo for all glyphs in color halo (0xRRGGBB) when halo_px is above 0, then the fill for all glyphs in color color. For each glyph it takes the image bounding box of its rotated bitmap box, clipped to the image, and for each pixel center in it maps back to bitmap coordinates (u, v) with the inverse rotation and scale; pixels whose (u, v) fall outside the box from 0 to bitmap width minus 1 and 0 to bitmap height minus 1 are skipped. The distance value d is the bilinear sample of the bitmap bytes at (u, v), and the distance in image pixels is (d minus 192) divided by 32 times scale (the bitmaps hold 32 units per base pixel, edge at 192). The fill coverage is that distance plus 0.5 clamped to 0 to 1; the halo coverage is that distance plus halo_px plus 0.5 clamped to 0 to 1. Coverage below 1 over 255 draws nothing; otherwise the color is drawn over the pixel with that coverage as its alpha using straight-alpha source-over: result alpha is the coverage plus the old alpha times one minus the coverage, and each channel is the color channel times the coverage plus the old channel times the old alpha times one minus the coverage, divided by the result alpha, with alpha in 0 to 1 and every byte rounded.
+
+`fill_circle(img, iw, ih, cx, cy, r, color, edge, edge_px)` draws an anti-aliased disc of radius r into the same kind of straight-alpha image: for pixel centers within r plus 1 of (cx, cy), with dist their distance from the center, the disc coverage is r minus dist plus 0.5 clamped to 0 to 1, drawn over in color edge, then the inner coverage, r minus edge_px minus dist plus 0.5 clamped, drawn over in color color (so the disc has an edge_px wide rim in color edge).
