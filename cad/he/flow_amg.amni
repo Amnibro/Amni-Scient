@@ -1,0 +1,460 @@
+import math;
+fn main() {}
+extern fn fa_am_view_f64(id i32, xs real[:]) = "fa_am_view_f64";
+extern fn fa_am_view_i32(id i32, xs i32[:]) = "fa_am_view_i32";
+struct fa_Lv { n int, nnz int, rp int, ci int, va int, d int, r int, agg int, nc int, rb int, eb int, r2 int, e2 int, ch int, y int, gs bool }
+var fa_IP i32[>..];
+var fa_FP real[>..];
+var fa_LV fa_Lv[>..];
+var fa_RPI i32[>..];
+var fa_CII i32[>..];
+var fa_VAI real[>..];
+var fa_BI real[>..];
+var fa_XI real[>..];
+var fa_AG i32[>..];
+var fa_GR i32[>..];
+var fa_GC i32[>..];
+var fa_GV real[>..];
+var fa_GP i32[>..];
+var fa_PR real[>..];
+var fa_PZ real[>..];
+var fa_PP real[>..];
+var fa_PQ real[>..];
+var fa_QI i32[>..];
+var fa_QF real[>..];
+fn fa_ipv(off int, len int) i32[:] { fa_IP[off..off + len] }
+fn fa_fpv(off int, len int) real[:] { fa_FP[off..off + len] }
+fn fa_ip_add(len int) int {
+	let o = fa_IP.len;
+	if fa_IP.cap < o + len {
+		fa_QI.clear();
+		fa_QI.append(fa_IP);
+		fa_IP.clear();
+		fa_IP.reserve(2 * (o + len));
+		fa_IP.append(fa_QI);
+		fa_QI.clear();
+	}
+	fa_IP.resize(o + len, 0);
+	o
+}
+fn fa_fp_add(len int) int {
+	let o = fa_FP.len;
+	if fa_FP.cap < o + len {
+		fa_QF.clear();
+		fa_QF.append(fa_FP);
+		fa_FP.clear();
+		fa_FP.reserve(2 * (o + len));
+		fa_FP.append(fa_QF);
+		fa_QF.clear();
+	}
+	fa_FP.resize(o + len, 0.0);
+	o
+}
+export fn fa_am_alloc(n i32, nnz i32) {
+	fa_RPI.clear();
+	fa_CII.clear();
+	fa_VAI.clear();
+	fa_BI.clear();
+	fa_XI.clear();
+	fa_RPI.resize((n as int) + 1, 0);
+	fa_CII.resize(nnz as int, 0);
+	fa_VAI.resize(nnz as int, 0.0);
+	fa_BI.resize(n as int, 0.0);
+	fa_XI.resize(n as int, 0.0);
+	fa_am_view_i32(1, fa_RPI);
+	fa_am_view_i32(2, fa_CII);
+	fa_am_view_f64(3, fa_VAI);
+	fa_am_view_f64(4, fa_BI);
+	fa_am_view_f64(5, fa_XI);
+}
+fn fa_diag_of(l int) {
+	let lv = fa_LV[l];
+	let rp = fa_ipv(lv.rp, lv.n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let d = fa_fpv(lv.d, lv.n);
+	for i in lv.n {
+		var s = 0.0;
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			if j == i { s += va[k]; }
+		}
+		d[i] = s;
+	}
+}
+fn fa_aggregate(l int, th real) int {
+	let lv = fa_LV[l];
+	let n = lv.n;
+	let rp = fa_ipv(lv.rp, n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let d = fa_fpv(lv.d, n);
+	fa_AG.clear();
+	fa_AG.resize(n, -1);
+	var nc = 0;
+	for i in n {
+		if fa_AG[i] < 0 {
+			var ok = true;
+			var has = false;
+			let a int = rp[i];
+			let e int = rp[i + 1];
+			for k in a..e {
+				let j int = ci[k];
+				if j != i && abs(va[k]) >= th * sqrt(abs(d[i] * d[j])) {
+					has = true;
+					if fa_AG[j] >= 0 {
+						ok = false;
+						break;
+					}
+				}
+			}
+			if ok && has {
+				fa_AG[i] = nc as i32;
+				for k in a..e {
+					let j int = ci[k];
+					if j != i && abs(va[k]) >= th * sqrt(abs(d[i] * d[j])) {
+						fa_AG[j] = nc as i32;
+					}
+				}
+				nc += 1;
+			}
+		}
+	}
+	for i in n {
+		if fa_AG[i] < 0 {
+			var best = -1;
+			var bv = 0.0;
+			let a int = rp[i];
+			let e int = rp[i + 1];
+			for k in a..e {
+				let j int = ci[k];
+				if j != i && fa_AG[j] >= 0 && abs(va[k]) > bv {
+					bv = abs(va[k]);
+					best = fa_AG[j];
+				}
+			}
+			if best >= 0 {
+				fa_AG[i] = best as i32;
+			} else {
+				fa_AG[i] = nc as i32;
+				nc += 1;
+			}
+		}
+	}
+	nc
+}
+fn fa_galerkin(l int, nc int) {
+	let lv = fa_LV[l];
+	let n = lv.n;
+	let rp = fa_ipv(lv.rp, n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let agg = fa_ipv(lv.agg, n);
+	var cnt int[>..] = [];
+	cnt.resize(nc + 1, 0);
+	for i in n {
+		let a int = agg[i];
+		cnt[a + 1] += 1;
+	}
+	for I in nc { cnt[I + 1] += cnt[I]; }
+	var mem int[>..] = [];
+	mem.resize(n, 0);
+	var f int[>..] = [];
+	for I in nc { f.push(cnt[I]); }
+	for i in n {
+		let a int = agg[i];
+		mem[f[a]] = i;
+		f[a] += 1;
+	}
+	fa_GP.clear();
+	fa_GP.resize(nc, -1);
+	fa_GR.clear();
+	fa_GR.push(0);
+	fa_GC.clear();
+	fa_GV.clear();
+	for I in nc {
+		let s0 = fa_GC.len;
+		for q in cnt[I]..cnt[I + 1] {
+			let i = mem[q];
+			let ka int = rp[i];
+			let kb int = rp[i + 1];
+			for k in ka..kb {
+				let c int = ci[k];
+				let J int = agg[c];
+				if fa_GP[J] < 0 {
+					fa_GP[J] = fa_GC.len as i32;
+					fa_GC.push(J as i32);
+					fa_GV.push(va[k]);
+				} else {
+					let p int = fa_GP[J];
+					fa_GV[p] += va[k];
+				}
+			}
+		}
+		for q in s0..fa_GC.len {
+			let c int = fa_GC[q];
+			fa_GP[c] = -1;
+		}
+		fa_GR.push(fa_GC.len as i32);
+	}
+}
+fn fa_chol(l int) {
+	let n = fa_LV[l].n;
+	let off = fa_fp_add(n * n);
+	fa_LV[l].ch = off;
+	fa_LV[l].y = fa_fp_add(n);
+	let lv = fa_LV[l];
+	let rp = fa_ipv(lv.rp, n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let M = fa_fpv(off, n * n);
+	var mx = 0.0;
+	for i in n {
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			M[i * n + j] += va[k];
+			if j == i {
+				let v = abs(va[k]);
+				if v > mx { mx = v; }
+			}
+		}
+	}
+	for i in n { M[i * n + i] += 1e-12 * mx + 1e-300; }
+	for j in n {
+		var s = M[j * n + j];
+		for k in j { s -= M[j * n + k] * M[j * n + k]; }
+		s = if s > 0.0 { sqrt(s) } else { sqrt(1e-12 * mx + 1e-300) };
+		M[j * n + j] = s;
+		for i in (j + 1)..n {
+			var t = M[i * n + j];
+			for k in j { t -= M[i * n + k] * M[j * n + k]; }
+			M[i * n + j] = t / s;
+		}
+	}
+}
+fn fa_setup(coarse int, theta real) {
+	fa_IP.clear();
+	fa_FP.clear();
+	fa_LV.clear();
+	let n int = fa_RPI.len - 1;
+	let nnz int = fa_RPI[n];
+	fa_IP.reserve(2 * nnz + 4 * n + 64);
+	fa_FP.reserve(2 * nnz + 16 * n + 64);
+	let rp0 = fa_ip_add(n + 1);
+	let ci0 = fa_ip_add(nnz);
+	let va0 = fa_fp_add(nnz);
+	let d0 = fa_fp_add(n);
+	let r0 = fa_fp_add(n);
+	for i in (n + 1) { fa_IP[rp0 + i] = fa_RPI[i]; }
+	for k in nnz {
+		fa_IP[ci0 + k] = fa_CII[k];
+		fa_FP[va0 + k] = fa_VAI[k];
+	}
+	fa_LV.push(fa_Lv { n: n, nnz: nnz, rp: rp0, ci: ci0, va: va0, d: d0, r: r0, agg: -1, nc: 0, rb: -1, eb: -1, r2: -1, e2: -1, ch: -1, y: -1, gs: false });
+	var pend = 0;
+	for lev in 25 {
+		if lev > 0 {
+			let nn = pend;
+			let nz = fa_GC.len;
+			let rp = fa_ip_add(nn + 1);
+			let ci = fa_ip_add(nz);
+			let va = fa_fp_add(nz);
+			let d = fa_fp_add(nn);
+			let r = fa_fp_add(nn);
+			let rb = fa_fp_add(nn);
+			let eb = fa_fp_add(nn);
+			let r2 = fa_fp_add(nn);
+			let e2 = fa_fp_add(nn);
+			for i in (nn + 1) { fa_IP[rp + i] = fa_GR[i]; }
+			for k in nz {
+				fa_IP[ci + k] = fa_GC[k];
+				fa_FP[va + k] = fa_GV[k];
+			}
+			fa_LV.push(fa_Lv { n: nn, nnz: nz, rp: rp, ci: ci, va: va, d: d, r: r, agg: -1, nc: 0, rb: rb, eb: eb, r2: r2, e2: e2, ch: -1, y: -1, gs: false });
+		}
+		let last = fa_LV.len - 1;
+		fa_diag_of(last);
+		let ln = fa_LV[last].n;
+		if ln <= coarse { break; }
+		var nc = fa_aggregate(last, theta);
+		if (nc as real) > 0.5 * (ln as real) {
+			nc = fa_aggregate(last, 0.0);
+		}
+		if (nc as real) > 0.85 * (ln as real) { break; }
+		let ao = fa_ip_add(ln);
+		for i in ln { fa_IP[ao + i] = fa_AG[i]; }
+		fa_LV[last].agg = ao;
+		fa_LV[last].nc = nc;
+		fa_galerkin(last, nc);
+		pend = nc;
+	}
+	let fl = fa_LV.len - 1;
+	if fa_LV[fl].n <= 1500 {
+		fa_chol(fl);
+	} else {
+		fa_LV[fl].gs = true;
+	}
+}
+fn fa_gs(l int, b real[:], x real[:], back bool) {
+	let lv = fa_LV[l];
+	let n = lv.n;
+	let rp = fa_ipv(lv.rp, n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let d = fa_fpv(lv.d, n);
+	for s in n {
+		let i = if back { n - 1 - s } else { s };
+		var t = b[i];
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			if j != i { t -= va[k] * x[j]; }
+		}
+		x[i] = if d[i] != 0.0 { t / d[i] } else { 0.0 };
+	}
+}
+recursive fn fa_cyc(l int, b real[:], x real[:], w bool) {
+	let lv = fa_LV[l];
+	let n = lv.n;
+	if lv.gs {
+		for i in n { x[i] = 0.0; }
+		for s in 10 {
+			fa_gs(l, b, x, false);
+			fa_gs(l, b, x, true);
+		}
+		return;
+	}
+	if lv.ch >= 0 {
+		let M = fa_fpv(lv.ch, n * n);
+		let y = fa_fpv(lv.y, n);
+		for i in n {
+			var t = b[i];
+			for k in i { t -= M[i * n + k] * y[k]; }
+			y[i] = t / M[i * n + i];
+		}
+		for s in n {
+			let i = n - 1 - s;
+			var t = y[i];
+			for k in (i + 1)..n { t -= M[k * n + i] * x[k]; }
+			x[i] = t / M[i * n + i];
+		}
+		return;
+	}
+	let nx = fa_LV[l + 1];
+	let rp = fa_ipv(lv.rp, n + 1);
+	let ci = fa_ipv(lv.ci, lv.nnz);
+	let va = fa_fpv(lv.va, lv.nnz);
+	let agg = fa_ipv(lv.agg, n);
+	let r = fa_fpv(lv.r, n);
+	let rc = fa_fpv(nx.rb, nx.n);
+	let ec = fa_fpv(nx.eb, nx.n);
+	let r2 = fa_fpv(nx.r2, nx.n);
+	let e2 = fa_fpv(nx.e2, nx.n);
+	for i in n { x[i] = 0.0; }
+	fa_gs(l, b, x, false);
+	for i in n {
+		var t = b[i];
+		let a int = rp[i];
+		let e int = rp[i + 1];
+		for k in a..e {
+			let j int = ci[k];
+			t -= va[k] * x[j];
+		}
+		r[i] = t;
+	}
+	for i in nx.n { rc[i] = 0.0; }
+	for i in n {
+		let a int = agg[i];
+		rc[a] += r[i];
+	}
+	fa_cyc(l + 1, rc, ec, w);
+	if w && !nx.gs && nx.ch < 0 {
+		let nrp = fa_ipv(nx.rp, nx.n + 1);
+		let nci = fa_ipv(nx.ci, nx.nnz);
+		let nva = fa_fpv(nx.va, nx.nnz);
+		for i in nx.n {
+			var t = rc[i];
+			let a int = nrp[i];
+			let e int = nrp[i + 1];
+			for k in a..e {
+				let j int = nci[k];
+				t -= nva[k] * ec[j];
+			}
+			r2[i] = t;
+		}
+		fa_cyc(l + 1, r2, e2, w);
+		for i in nx.n { ec[i] += e2[i]; }
+	}
+	for i in n {
+		let a int = agg[i];
+		x[i] += ec[a];
+	}
+	fa_gs(l, b, x, true);
+}
+fn fa_mv(v real[:], o real[:]) {
+	let n int = fa_RPI.len - 1;
+	for i in n {
+		var t = 0.0;
+		let a int = fa_RPI[i];
+		let e int = fa_RPI[i + 1];
+		for k in a..e {
+			let j int = fa_CII[k];
+			t += fa_VAI[k] * v[j];
+		}
+		o[i] = t;
+	}
+}
+export fn fa_am_solve(tol real, maxit i32, coarse i32, theta real, w i32) i32 {
+	let n int = fa_BI.len;
+	fa_PR.clear();
+	fa_PZ.clear();
+	fa_PP.clear();
+	fa_PQ.clear();
+	fa_PR.resize(n, 0.0);
+	fa_PZ.resize(n, 0.0);
+	fa_PP.resize(n, 0.0);
+	fa_PQ.resize(n, 0.0);
+	fa_mv(fa_XI, fa_PQ);
+	var bn = 0.0;
+	for i in n {
+		fa_PR[i] = fa_BI[i] - fa_PQ[i];
+		bn += fa_BI[i] * fa_BI[i];
+	}
+	bn = sqrt(bn);
+	if !(bn > 0.0) {
+		for i in n { fa_XI[i] = 0.0; }
+		return 0;
+	}
+	fa_setup(coarse as int, theta);
+	fa_cyc(0, fa_PR, fa_PZ, w != 0);
+	for i in n { fa_PP[i] = fa_PZ[i]; }
+	var rz = 0.0;
+	for i in n { rz += fa_PR[i] * fa_PZ[i]; }
+	var it = 0;
+	while it < (maxit as int) {
+		var rn = 0.0;
+		for i in n { rn += fa_PR[i] * fa_PR[i]; }
+		if sqrt(rn) <= tol * bn { break; }
+		fa_mv(fa_PP, fa_PQ);
+		var pq = 0.0;
+		for i in n { pq += fa_PP[i] * fa_PQ[i]; }
+		let a = rz / pq;
+		for i in n {
+			fa_XI[i] += a * fa_PP[i];
+			fa_PR[i] -= a * fa_PQ[i];
+		}
+		fa_cyc(0, fa_PR, fa_PZ, w != 0);
+		var r2 = 0.0;
+		for i in n { r2 += fa_PR[i] * fa_PZ[i]; }
+		let be = r2 / rz;
+		rz = r2;
+		for i in n { fa_PP[i] = fa_PZ[i] + be * fa_PP[i]; }
+		it += 1;
+	}
+	it as i32
+}
