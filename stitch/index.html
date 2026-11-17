@@ -90,6 +90,17 @@ button.pri:disabled{opacity:.55;cursor:progress}
 .loading{padding:60px 20px;text-align:center;color:var(--dim)}
 .app:not(.ready) .work .paper{opacity:.5}
 #print{display:none}
+.cutfiles{margin-top:16px;padding-top:4px;border-top:1px solid var(--line)}
+.cutfiles .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 20px}
+.cutfiles .row .cutsz{display:flex;gap:6px;align-items:center}.cutfiles .row .cutsz select{width:84px}
+.cutfiles .check{margin:8px 0}
+.cutbox{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:560px;padding:8px;margin:8px 0}
+.cutsvg{display:block;margin:0 auto;max-width:100%;max-height:520px;width:auto;height:auto}
+.cutsvg .cutsheet{fill:#fff;stroke:#8d93a0;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.cutsvg g{stroke-width:1.2;vector-effect:non-scaling-stroke}
+.cutsvg path,.cutsvg circle{vector-effect:non-scaling-stroke}
+.cutsvg text{fill:#000;stroke:none}
+.cutbox .empty{color:#5b6170;padding:24px;text-align:center}
 .pdefs{position:absolute;width:0;height:0;overflow:hidden}
 @media print{
   body>*:not(#print){display:none!important}
@@ -152,6 +163,28 @@ button.pri:disabled{opacity:.55;cursor:progress}
         <span class="info" id="pat-info"></span>
       </div>
       <div id="pattern" class="paper"><p class="loading">Loading the pattern engine…</p></div>
+      <section class="cutfiles" aria-labelledby="h-cut">
+        <h3 id="h-cut">Cut files / stencils</h3>
+        <p class="note">Cut-ready outlines for a laser, a CNC or vinyl cutter, or a plotter: cut lines only, no fills, nested on your sheet.</p>
+        <div class="grid">
+          <div>
+            <label class="f">Machine <select id="cut-fmt"><option value="0">Laser / CNC (DXF)</option><option value="1">Cutter (SVG)</option><option value="2">Plotter (PLT)</option></select></label>
+            <label class="f">Sheet <select id="cut-sheet"></select></label>
+            <div class="row hidden" id="row-cut-custom"><span>Custom size</span><span class="cutsz"><input type="number" id="cut-w" value="12" min="1" step="0.5" inputmode="decimal" aria-label="Sheet width"> × <input type="number" id="cut-h" value="18" min="1" step="0.5" inputmode="decimal" aria-label="Sheet height"><select id="cut-cu" aria-label="Custom size unit"><option value="1">in</option><option value="0">mm</option></select></span></div>
+            <label class="f"><span>Margin (<span id="cut-mu">in</span>)</span><input type="number" id="cut-margin" min="0" step="0.05" inputmode="decimal"></label>
+            <label class="f"><span>Gap (<span id="cut-gu">in</span>)</span><input type="number" id="cut-gap" min="0" step="0.05" inputmode="decimal"></label>
+          </div>
+          <div>
+            <label class="check"><input type="checkbox" id="cut-seam" checked> Cut on the seam allowance (off: cut on the stitch line)</label>
+            <label class="check"><input type="checkbox" id="cut-grain" checked> Keep the grainline straight (off: turn pieces in 90° steps)</label>
+            <label class="check"><input type="checkbox" id="cut-layers" checked> Include score and engrave layers (stitch line, grainline, labels)</label>
+            <p class="note">Notches become small slots; darts, buttons and drill marks become punch holes. Interfacing is not included. Plotter labels use the plotter's own font.</p>
+          </div>
+        </div>
+        <div class="toolbar"><button id="cut-prev">Previous sheet</button><button id="cut-next">Next sheet</button><span class="info" id="cut-which"></span></div>
+        <div id="cut-preview" class="cutbox"></div>
+        <div class="toolbar"><button id="cut-dl" class="pri">Download this sheet</button><button id="cut-all">Download all sheets</button><span class="info" id="cut-info"></span></div>
+      </section>
     </div>
     <div id="view-pane" role="tabpanel" class="hidden">
       <div class="toolbar">
@@ -215,7 +248,7 @@ window.stitchHost = (() => {
 </script>
 <script type="module">
 import { start } from './helium.js?v=1';
-start({ wasm: 'stitch.wasm?v=1', onerror: e => { const p = document.getElementById('pattern'); if (p) p.innerHTML = '<p class="empty">The pattern engine stopped: ' + String(e && e.message || e).replace(/[<&]/g, '') + '. Reload the page.</p>' } });
+start({ wasm: 'stitch.wasm?v=2', onerror: e => { const p = document.getElementById('pattern'); if (p) p.innerHTML = '<p class="empty">The pattern engine stopped: ' + String(e && e.message || e).replace(/[<&]/g, '') + '. Reload the page.</p>' } });
 </script>
 </body>
 </html>

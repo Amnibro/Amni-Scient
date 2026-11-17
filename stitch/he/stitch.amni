@@ -9,6 +9,7 @@ import st_geom;
 import st_body;
 import st_draft;
 import st_svg;
+import st_cut;
 import st_guide;
 import st_trace;
 import st_view3d;
@@ -21,7 +22,9 @@ let T_GEN: i32 = 20; let T_GEN_DONE: i32 = 21; let T_POLL: i32 = 22; let T_POLL_
 let T_TRACE: i32 = 30; let T_PIXELS: i32 = 31; let T_UPLOAD: i32 = 32; let T_PICKED: i32 = 33; let T_DL_IMG: i32 = 34; let T_ADD_TRACED: i32 = 35;
 let T_BUY: i32 = 40; let T_BUY_DONE: i32 = 41; let T_CLAIM: i32 = 42; let T_CLAIM_DONE: i32 = 43; let T_KEY_SAVE: i32 = 44; let T_BILLING: i32 = 45; let T_BILLING_DONE: i32 = 46; let T_KEY_FORGET: i32 = 47; let T_RENEW_DONE: i32 = 48;
 let T_PDOWN: i32 = 50; let T_PMOVE: i32 = 51; let T_PUP: i32 = 52; let T_FRONT: i32 = 53; let T_SIDE: i32 = 54; let T_BACK: i32 = 55;
-let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61; let T_IGNORE: i32 = 99;
+let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61;
+let T_CUT_OPT: i32 = 70; let T_CUT_PREV: i32 = 71; let T_CUT_NEXT: i32 = 72; let T_CUT_DL: i32 = 73; let T_CUT_ALL: i32 = 74; let T_CUT_Q: i32 = 75;
+let T_IGNORE: i32 = 99;
 
 var GATE byte[>..];
 var PRO byte[>..];
@@ -41,6 +44,8 @@ var CLAIM_TRIES = 0;
 var DRAG = false;
 var DRAG_X = 0.0; var DRAG_Y = 0.0;
 var BUSY = false;
+var CUT_VIEW = 0;
+var CUT_Q = 0;
 
 fn el(id const byte[:]) i32 { web::el(id) }
 fn set_text(id const byte[:], s const byte[:]) { web::text(el(id), s); }
@@ -58,6 +63,19 @@ fn get_num(id const byte[:], dflt real) real {
 fn get_int(id const byte[:]) int { var s byte[>..] = []; get_value(id, s); let v, ok = parse_int(trim(s[..]), 10); if ok { v } else { 0 } }
 fn set_value(id const byte[:], s const byte[:]) { web::prop(el(id), "value", s); }
 fn set_num(id const byte[:], v real) { var s byte[>..] = []; fmt1(s, v); set_value(id, s[..]); }
+fn get_chk(id const byte[:]) bool { web::get_bool(el(id), "checked") }
+fn fill_cut_inputs() {
+	set_text("cut-mu", unit_label()); set_text("cut-gu", unit_label());
+	for id, i in ["cut-margin", "cut-gap"] { var s byte[>..] = []; format_flt(s, disp((if i == 0 { CU.margin } else { CU.gap }) / 10.0), 2); set_value(id, s[..]); }
+}
+fn read_cut() {
+	CU.fmt = clamp(get_int("cut-fmt"), 0, 2); CU.sheet = clamp(get_int("cut-sheet"), 0, CU_PRESETS - 1);
+	let k = if get_int("cut-cu") == 1 { 25.4 } else { 1.0 };
+	CU.cw = max(get_num("cut-w", 12.0) * k, 20.0); CU.ch = max(get_num("cut-h", 18.0) * k, 20.0);
+	CU.margin = clamp(from_disp(get_num("cut-margin", disp(CU.margin / 10.0))) * 10.0, 0.0, 70.0); CU.gap = clamp(from_disp(get_num("cut-gap", disp(CU.gap / 10.0))) * 10.0, 0.0, 70.0);
+	CU.grain = get_chk("cut-grain"); CU.seam = get_chk("cut-seam"); CU.layers = get_chk("cut-layers");
+	show("row-cut-custom", CU.sheet == 12);
+}
 
 // ---- persistence ----------------------------------------------------------------------------
 fn save_state() {
@@ -104,6 +122,7 @@ fn fill_measure_inputs() {
 	for i in units { web::text(web::list_at(i as i32), unit_label()); }
 	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
 	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
+	fill_cut_inputs();
 }
 fn build_measure_form() {
 	let box = el("meas");
@@ -168,6 +187,21 @@ fn show_rows() {
 }
 
 // ---- drawing ----------------------------------------------------------------------------
+fn cut_render() {
+	var s byte[>..] = []; cu_info(s); set_text("cut-info", s[..]);
+	let n = CUS.len;
+	CUT_VIEW = clamp(CUT_VIEW, 0, max(n - 1, 0));
+	web::prop_bool(el("cut-prev"), "disabled", CUT_VIEW == 0); web::prop_bool(el("cut-next"), "disabled", CUT_VIEW + 1 >= n);
+	web::prop_bool(el("cut-dl"), "disabled", n == 0); web::prop_bool(el("cut-all"), "disabled", n == 0);
+	if n == 0 { web::html(el("cut-preview"), "<p class=\"empty\">No pieces to cut yet.</p>"); set_text("cut-which", ""); set_text("cut-all", "Download all sheets"); return; }
+	s.clear(); cu_preview(s, CUT_VIEW); web::html(el("cut-preview"), s[..]);
+	let sh = CUS[CUT_VIEW];
+	var w byte[>..] = []; format(w, "Sheet ", CUT_VIEW + 1, " of ", n, " · "); format_flt(w, sh.w / 25.4, 1); w.append(" × "); format_flt(w, sh.h / 25.4, 1); w.append(" in ("); format_flt(w, sh.w, 0); w.append(" × "); format_flt(w, sh.h, 0); w.append(" mm)");
+	set_text("cut-which", w[..]);
+	var a byte[>..] = []; format(a, "Download all sheets (", n, ")"); set_text("cut-all", a[..]);
+}
+fn cut_refresh() { cu_build(); cut_render(); }
+fn cut_download(i int) { var s byte[>..] = []; cu_file(s, i); var st byte[>..] = []; file_stem(st); var n byte[>..] = []; cu_filename(n, st[..], i); download(n[..], cu_mime(), s[..]); }
 fn title() {
 	TITLE.clear();
 	TITLE.append("Amni-Stitch: "); TITLE.append(G_NAMES[O.garment]);
@@ -185,6 +219,7 @@ fn rebuild() {
 		web::html(el("pattern"), "<p class=\"empty\">Generate or upload a picture of a garment, then press <b>Trace into a pattern</b>. The traced outline becomes a pattern at your size.</p>");
 		web::html(el("guide"), "");
 		show_rows();
+		cut_refresh();
 		return;
 	}
 	title();
@@ -202,6 +237,7 @@ fn rebuild() {
 	show_rows();
 	view_shape();
 	if TAB == 1 { view_draw(); }
+	cut_refresh();
 	save_state();
 }
 fn set_tab(t int) {
@@ -523,6 +559,12 @@ export fn he_event(tag i32, kind i32) {
 		52 => { DRAG = false; },
 		53 => { V_YAW = 0.0; view_draw(); }, 54 => { V_YAW = PI * 0.5; view_draw(); }, 55 => { V_YAW = PI; view_draw(); },
 		60 => { if TAB == 1 { view_draw(); } },
+		70 => { read_cut(); CUT_VIEW = 0; cut_refresh(); },
+		71 => { CUT_VIEW -= 1; cut_render(); },
+		72 => { CUT_VIEW += 1; cut_render(); },
+		73 => { if CUT_VIEW < CUS.len { cut_download(CUT_VIEW); } },
+		74 => { CUT_Q = 1; if CUS.len > 0 { cut_download(0); if CUS.len > 1 { let _t = web::timer(400.0, T_CUT_Q); } } },
+		75 => { if CUT_Q < CUS.len { cut_download(CUT_Q); CUT_Q += 1; if CUT_Q < CUS.len { let _t = web::timer(400.0, T_CUT_Q); } } },
 		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); var s byte[>..] = []; if SCALE_PCT > 0.0 { s.push('+'); } fmt1(s, SCALE_PCT); s.push('%'); set_text("scale-val", s[..]); rebuild(); },
 		_ => {},
 	}
@@ -567,6 +609,9 @@ fn main() {
 	listen_id("buy", "click", T_BUY); listen_id("key-save", "click", T_KEY_SAVE); listen_id("billing", "click", T_BILLING); listen_id("key-forget", "click", T_KEY_FORGET);
 	listen_id("c3d", "pointerdown", T_PDOWN); listen_id("c3d", "pointermove", T_PMOVE); listen_id("c3d", "pointerup", T_PUP); listen_id("c3d", "pointercancel", T_PUP);
 	listen_id("v-front", "click", T_FRONT); listen_id("v-side", "click", T_SIDE); listen_id("v-back", "click", T_BACK);
+	fill_select("cut-sheet", CU_NAMES[..], CU.sheet);
+	for id in ["cut-fmt", "cut-sheet", "cut-w", "cut-h", "cut-cu", "cut-margin", "cut-gap", "cut-grain", "cut-seam", "cut-layers"] { listen_id(id, "change", T_CUT_OPT); }
+	listen_id("cut-prev", "click", T_CUT_PREV); listen_id("cut-next", "click", T_CUT_NEXT); listen_id("cut-dl", "click", T_CUT_DL); listen_id("cut-all", "click", T_CUT_ALL);
 	web::listen(web::WINDOW, "resize", T_RESIZE, 0);
 	var c byte[>..] = []; get_value("color", c); view_color(c[..]);
 	// back from Stripe checkout: #pro-session=cs_...

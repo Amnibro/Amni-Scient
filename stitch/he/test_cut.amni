@@ -1,0 +1,609 @@
+import math;
+import st_geom;
+import st_body;
+import st_draft;
+import st_cut;
+var FAIL = 0;
+var CHK = 0;
+fn check(c bool, what const byte[:]) { CHK += 1; if !c { FAIL += 1; print("FAIL ", what); } }
+struct En { kind int, layer int, closed bool, first int, n int, r real, rot real, tx int, tn int }
+struct Dx { sect int, endsec int, eof bool, units int, acad int, layers int, poly int, seq int, bad int }
+struct Sv { w real, h real, vw real, vh real, groups int, ink int, fills int, dashes int }
+struct St { loops int, paths int, circs int, texts int, perim real, x0 real, y0 real, x1 real, y1 real }
+var EN En[>..];
+var EP Pt[>..];
+var TB byte[>..];
+var DX = Dx { sect: 0, endsec: 0, eof: false, units: 0, acad: 0, layers: 0, poly: 0, seq: 0, bad: 0 };
+var SV = Sv { w: 0.0, h: 0.0, vw: 0.0, vh: 0.0, groups: 0, ink: 0, fills: 0, dashes: 0 };
+var PLD = 0;
+var ST = St { loops: 0, paths: 0, circs: 0, texts: 0, perim: 0.0, x0: 0.0, y0: 0.0, x1: 0.0, y1: 0.0 };
+fn layer_of(name const byte[:]) int { if name == "CUT" { 0 } else if name == "SCORE" { 1 } else if name == "ENGRAVE" { 2 } else { -1 } }
+fn en_new(kind int, layer int, closed bool) int {
+	EN.push(En { kind: kind, layer: layer, closed: closed, first: EP.len, n: 0, r: 0.0, rot: 0.0, tx: 0, tn: 0 });
+	EN.len - 1
+}
+fn en_pt(i int, p Pt) { EP.push(p); EN[i].n += 1; }
+fn fval(s const byte[:]) real { let v, ok = parse_flt(trim(s)); if ok { v } else { 0.0 } }
+fn attr(tag const byte[:], name const byte[:]) const byte[:] {
+	var pat byte[>..] = [];
+	format(pat, " ", name, "=\"");
+	let i = find(tag, pat);
+	guard i >= 0 else { return tag[0..0]; }
+	let r = tag[i + pat.len..];
+	let e = find(r, "\"");
+	if e < 0 { r[0..0] } else { r[..e] }
+}
+fn parse_dxf(s const byte[:], h real) {
+	EN.clear(); EP.clear(); TB.clear();
+	DX = Dx { sect: 0, endsec: 0, eof: false, units: 0, acad: 0, layers: 0, poly: 0, seq: 0, bad: 0 };
+	var sec byte[>..] = [];
+	var typ byte[>..] = [];
+	var hv byte[>..] = [];
+	var cur = -1; var x = 0.0; var x2 = 0.0; var pend = false; var code = 0; var ok = false;
+	let parts = split(s, '\n');
+	let np = if parts.len > 0 && parts[parts.len - 1].len == 0 { parts.len - 1 } else { parts.len };
+	for l, li in parts {
+		if li >= np { continue; }
+		let t = trim(l);
+		if !pend { let c, k = parse_int(t); code = c; ok = k; pend = true; if !k { DX.bad += 1; } continue; }
+		pend = false;
+		if !ok { continue; }
+		if code == 0 {
+			typ.clear(); typ.append(t);
+			if t == "SECTION" { DX.sect += 1; }
+			else if t == "ENDSEC" { DX.endsec += 1; }
+			else if t == "EOF" { DX.eof = true; }
+			else if t == "LAYER" { DX.layers += 1; }
+			else if t == "SEQEND" { DX.seq += 1; cur = -1; }
+			else if t == "POLYLINE" { DX.poly += 1; cur = en_new(0, -1, false); }
+			else if t == "LINE" { cur = en_new(0, -1, false); }
+			else if t == "CIRCLE" { cur = en_new(1, -1, false); }
+			else if t == "TEXT" { cur = en_new(2, -1, false); }
+		} else if code == 2 { if typ == "SECTION" { sec.clear(); sec.append(t); } }
+		else if code == 9 { hv.clear(); hv.append(t); }
+		else if sec == "HEADER" {
+			if code == 70 && hv == "$INSUNITS" { let v, k = parse_int(t); DX.units = if k { v } else { 0 }; }
+			else if code == 1 && hv == "$ACADVER" && t.len >= 2 { let v, k = parse_int(t[2..]); DX.acad = if k { v } else { 0 }; }
+		} else if sec == "ENTITIES" {
+			if code == 8 { if cur >= 0 && typ != "VERTEX" && typ != "SEQEND" { EN[cur].layer = layer_of(t); } }
+			else if code == 70 { if typ == "POLYLINE" && cur >= 0 { let v, k = parse_int(t); EN[cur].closed = k && (v & 1) != 0; } }
+			else if code == 10 { x = fval(t); }
+			else if code == 20 {
+				var y = fval(t);
+				if h > 0.0 { y = h - y; }
+				if cur >= 0 && (typ == "VERTEX" || typ == "LINE" || typ == "CIRCLE" || typ == "TEXT") { en_pt(cur, P(x, y)); }
+			}
+			else if code == 11 { x2 = fval(t); }
+			else if code == 21 { if typ == "LINE" && cur >= 0 { en_pt(cur, P(x2, if h > 0.0 { h - fval(t) } else { fval(t) })); } }
+			else if code == 40 { if cur >= 0 { EN[cur].r = fval(t); } }
+			else if code == 50 { if cur >= 0 { EN[cur].rot = fval(t); } }
+			else if code == 1 { if cur >= 0 { let t0 = TB.len; TB.append(t); EN[cur].tx = t0; EN[cur].tn = TB.len - t0; } }
+		}
+	}
+}
+fn parse_svg(s const byte[:]) {
+	EN.clear(); EP.clear(); TB.clear();
+	SV = Sv { w: 0.0, h: 0.0, vw: 0.0, vh: 0.0, groups: 0, ink: 0, fills: 0, dashes: 0 };
+	fn occ_at(tag const byte[:], pat const byte[:], from int) int { let k = find(tag[from..], pat); if k < 0 { -1 } else { from + k } }
+	fn mm(v const byte[:]) real { let k = find(v, "mm"); fval(if k < 0 { v } else { v[..k] }) }
+	var lay = -1; var i = 0;
+	while i < s.len {
+		let a = find(s[i..], "<");
+		if a < 0 { break; }
+		let b0 = i + a + 1;
+		let e = find(s[b0..], ">");
+		if e < 0 { break; }
+		let tag = s[b0..b0 + e];
+		let t0 = b0 + e + 1;
+		let f = find(s[t0..], "<");
+		let body = if f < 0 { s[t0..] } else { s[t0..t0 + f] };
+		i = t0;
+		var p = occ_at(tag, "fill=\"", 0);
+		while p >= 0 { if !starts_with(tag[p + 6..], "none\"") { SV.fills += 1; } p = occ_at(tag, "fill=\"", p + 6); }
+		p = occ_at(tag, "dasharray", 0);
+		while p >= 0 { SV.dashes += 1; p = occ_at(tag, "dasharray", p + 9); }
+		if starts_with(tag, "svg ") {
+			SV.w = mm(attr(tag, "width")); SV.h = mm(attr(tag, "height"));
+			for t, j in words(attr(tag, "viewBox")) { if j == 2 { SV.vw = fval(t); } else if j == 3 { SV.vh = fval(t); } }
+		} else if starts_with(tag, "g ") {
+			SV.groups += 1;
+			lay = layer_of(attr(tag, "id"));
+			if attr(tag, "inkscape:groupmode") == "layer" && attr(tag, "inkscape:label") == attr(tag, "id") { SV.ink += 1; }
+		} else if starts_with(tag, "path ") {
+			let en = en_new(0, lay, false);
+			var havex = false; var xv = 0.0;
+			for t in words(attr(tag, "d")) {
+				if t == "M" || t == "L" { continue; }
+				if t == "Z" { EN[en].closed = true; continue; }
+				if !havex { xv = fval(t); havex = true; } else { en_pt(en, P(xv, fval(t))); havex = false; }
+			}
+		} else if starts_with(tag, "circle ") {
+			let en = en_new(1, lay, false);
+			en_pt(en, P(fval(attr(tag, "cx")), fval(attr(tag, "cy"))));
+			EN[en].r = fval(attr(tag, "r"));
+		} else if starts_with(tag, "text ") {
+			let en = en_new(2, lay, false);
+			en_pt(en, P(fval(attr(tag, "x")), fval(attr(tag, "y"))));
+			EN[en].r = fval(attr(tag, "font-size"));
+			let tr = attr(tag, "transform");
+			let k = find(tr, "rotate(");
+			EN[en].rot = if k < 0 { 0.0 } else {
+				let r = tr[k + 7..];
+				var j = 0;
+				while j < r.len && (r[j] == '-' || r[j] == '.' || (r[j] >= '0' && r[j] <= '9')) { j += 1; }
+				fval(r[..j])
+			};
+			EN[en].tx = TB.len; TB.append(body); EN[en].tn = body.len;
+		}
+	}
+}
+fn parse_plt(s const byte[:], h real) {
+	EN.clear(); EP.clear(); TB.clear(); PLD = 0;
+	var lay = -1; var pend = P(0.0, 0.0); var th = 0.0; var rot = 0.0;
+	for ct in split(s, ';') {
+		var a = 0;
+		while a < ct.len && (ct[a] == '\n' || ct[a] == '\r') { a += 1; }
+		let cmd = ct[a..];
+		if starts_with(cmd, "LT") { PLD += 1; }
+		if cmd.len < 2 { continue; }
+		let op = cmd[..2];
+		var nums real[>..] = [];
+		for t in split(cmd[2..], ',') { nums.push(fval(t)); }
+		if op == "SP" { let v, k = parse_int(trim(cmd[2..])); lay = if k { v - 1 } else { lay }; }
+		else if op == "PU" { if nums.len >= 2 { pend = P(nums[0] / 40.0, h - nums[1] / 40.0); } }
+		else if op == "PD" {
+			let e = en_new(0, lay, false);
+			en_pt(e, pend);
+			for i in nums.len / 2 { en_pt(e, P(nums[2 * i] / 40.0, h - nums[2 * i + 1] / 40.0)); }
+			let f = EN[e].first; let n = EN[e].n;
+			if n >= 4 && pdist(EP[f + n - 1], EP[f]) < 0.000001 {
+				EN[e].closed = true; EP.pop(); EN[e].n -= 1;
+				if n - 1 == 24 {
+					var c0 = P(0.0, 0.0);
+					for i in 24 { c0 = padd(c0, EP[f + i]); }
+					c0 = pmul(c0, 1.0 / 24.0);
+					var m = 0.0;
+					for i in 24 { m += pdist(EP[f + i], c0); }
+					m /= 24.0;
+					var okc = true;
+					for i in 24 { if abs(pdist(EP[f + i], c0) - m) > 0.05 { okc = false; } }
+					if okc { EP.pop_n(24); EN[e].n = 0; EN[e].kind = 1; EN[e].closed = false; en_pt(e, c0); EN[e].r = m; }
+				}
+			}
+		}
+		else if op == "SI" { if nums.len >= 2 { th = nums[1] * 10.0; } }
+		else if op == "DI" { if nums.len >= 2 { rot = -atan2(nums[1], nums[0]) * 180.0 / PI; } }
+		else if op == "LB" {
+			let txt = cmd[2..];
+			var j = 0;
+			while j < txt.len && txt[j] != 3 { j += 1; }
+			let e = en_new(2, lay, false);
+			en_pt(e, pend);
+			EN[e].r = th; EN[e].rot = rot; EN[e].tx = TB.len;
+			TB.append(txt[..j]);
+			EN[e].tn = j;
+		}
+	}
+}
+fn lstat(layer int) {
+	ST = St { loops: 0, paths: 0, circs: 0, texts: 0, perim: 0.0, x0: 0.0, y0: 0.0, x1: 0.0, y1: 0.0 };
+	var got = false;
+	fn ext(x real, y real) {
+		if !got { ST.x0 = x; ST.x1 = x; ST.y0 = y; ST.y1 = y; got = true; }
+		else { ST.x0 = min(ST.x0, x); ST.x1 = max(ST.x1, x); ST.y0 = min(ST.y0, y); ST.y1 = max(ST.y1, y); }
+	}
+	for e in EN {
+		if layer >= 0 && e.layer != layer { continue; }
+		if e.kind == 0 {
+			if e.closed { ST.loops += 1; } else { ST.paths += 1; }
+			for i in e.n {
+				let p = EP[e.first + i];
+				ext(p.x, p.y);
+				if e.closed { ST.perim += pdist(p, EP[e.first + (i + 1) % e.n]); }
+			}
+		} else if e.kind == 1 {
+			ST.circs += 1;
+			let c = EP[e.first];
+			ext(c.x - e.r, c.y - e.r); ext(c.x + e.r, c.y + e.r);
+		} else if e.kind == 2 { ST.texts += 1; }
+	}
+}
+fn set_garment(g int) {
+	apply_preset(2);
+	O = Opt { garment: g, fit: 1, knit: g == 0 || g == 7, sleeve: if g == 2 { 0 } else { 3 }, neck: 0, skirt: 1, leg: 0 };
+	draft_all();
+}
+fn near(a real, b real, tol real) bool { abs(a - b) <= tol }
+fn square(sa real) {
+	pieces_clear(); tp_clear();
+	for p in [P(0.0, 0.0), P(10.0, 0.0), P(10.0, 10.0), P(0.0, 10.0)] { tp_add(p, sa); }
+	commit("Test", "", 1, P(5.0, 2.0), P(5.0, 8.0));
+	offset_all();
+}
+fn render(out byte[>..]&, fmt int) { out.clear(); CU.fmt = fmt; cu_file(out, 0); }
+fn parse_any(fmt int, s const byte[:]) { if fmt == 0 { parse_dxf(s, CUS[0].h); } else if fmt == 1 { parse_svg(s); } else { parse_plt(s, CUS[0].h); } }
+fn reset_cut() {
+	CU.fmt = 0; CU.sheet = 10; CU.cw = 304.8; CU.ch = 457.2; CU.margin = 7.0; CU.gap = 5.0;
+	CU.grain = true; CU.seam = true; CU.layers = true;
+}
+fn t_square() {
+	for cs in 0..2 {
+		square(0.5); reset_cut(); CU.seam = cs == 1; CU.layers = false; CU.sheet = 10; cu_build();
+		let want = if cs == 1 { 110.0 } else { 100.0 };
+		for fmt in 0..3 {
+			let tag = str("square fmt ", fmt, " seam ", cs);
+			var o byte[>..] = [];
+			render(o, fmt); parse_any(fmt, o); lstat(0);
+			check(ST.loops == 1 && ST.paths == 0 && ST.circs == 0 && ST.texts == 0, str(tag, " counts"));
+			check(EN.len == 1 && EN[0].closed, str(tag, " closed"));
+			check(find(o, "SCORE") < 0 && find(o, "ENGRAVE") < 0, str(tag, " layers"));
+			check(near(ST.x1 - ST.x0, want, 0.01) && near(ST.y1 - ST.y0, want, 0.01), str(tag, " size"));
+			check(near(ST.perim, want * 4.0, 0.05), str(tag, " perimeter"));
+			if fmt == 1 {
+				check(near(SV.w, CUS[0].w, 0.01) && near(SV.vw, CUS[0].w, 0.01) && near(SV.h, CUS[0].h, 0.01) && near(SV.vh, CUS[0].h, 0.01), str(tag, " svg sheet"));
+				check(near(CUS[0].w, 914.4, 0.01), str(tag, " roll width"));
+			}
+		}
+	}
+}
+fn t_dxf() {
+	fn grab(o Pt[>..]&) {
+		o.clear();
+		for e in EN { if e.kind == 0 && e.closed && e.layer == 1 { for i in e.n { o.push(EP[e.first + i]); } break; } }
+	}
+	square(0.5); reset_cut(); cu_build();
+	let ht = CUS[0].h;
+	var d byte[>..] = [];
+	render(d, 0);
+	check(starts_with(d, "0\nSECTION\n2\nHEADER\n"), "dxf start");
+	check(ends_with(d, "0\nEOF\n"), "dxf end");
+	check(find(d, "$INSUNITS") >= 0, "dxf insunits");
+	parse_dxf(d, 0.0);
+	check(DX.bad == 0 && DX.sect == DX.endsec && DX.sect == 4 && DX.eof && DX.units == 4 && DX.acad == 1009 && DX.layers == 3 && DX.poly == DX.seq, "dxf structure");
+	var inside = true;
+	for p in EP { if p.y < -0.000001 || p.y > ht + 0.000001 { inside = false; } }
+	check(inside, "dxf y range");
+	var dp Pt[>..] = [];
+	var sp Pt[>..] = [];
+	grab(dp);
+	render(d, 1); parse_svg(d); grab(sp);
+	check(dp.len == 4 && sp.len == 4, "dxf svg point count");
+	var same = dp.len == sp.len;
+	for i in min(dp.len, sp.len) { if !(near(dp[i].x, sp[i].x, 0.01) && near(dp[i].y + sp[i].y, ht, 0.01)) { same = false; } }
+	check(same, "dxf svg points");
+	CU.layers = false; cu_build();
+	render(d, 0); parse_dxf(d, 0.0);
+	check(DX.layers == 1, "dxf one layer");
+}
+fn t_layers() {
+	square(0.5); reset_cut();
+	for pass in 0..2 {
+		let on = pass == 0;
+		CU.layers = on; cu_build();
+		for fmt in 0..3 {
+			let tag = str("layers ", on, " fmt ", fmt);
+			var o byte[>..] = [];
+			render(o, fmt); parse_any(fmt, o);
+			lstat(0);
+			check(ST.loops == 1 && ST.texts == 0, str(tag, " cut"));
+			lstat(1); let s1 = ST;
+			lstat(2); let s2 = ST;
+			if on {
+				check(s1.loops == 1 && near(s1.x1 - s1.x0, 100.0, 0.01) && near(s1.y1 - s1.y0, 100.0, 0.01), str(tag, " score"));
+				check(s2.paths == 3 && s2.texts == 1, str(tag, " engrave"));
+				var tok = false;
+				for e in EN { if e.kind == 2 && e.layer == 2 && TB[e.tx..e.tx + e.tn] == "Test" { tok = true; } }
+				check(tok, str(tag, " text"));
+				if fmt == 1 { check(SV.groups == 3 && SV.ink == 3 && SV.fills == 0 && SV.dashes == 0, str(tag, " svg groups")); }
+				if fmt == 2 { check(PLD == 0 && starts_with(o, "IN;") && find(o, "SP1;") >= 0, str(tag, " plt")); }
+			} else {
+				check(s1.loops + s1.paths + s1.circs + s1.texts == 0 && s2.loops + s2.paths + s2.circs + s2.texts == 0, str(tag, " empty layers"));
+				lstat(-1);
+				check(ST.loops == 1, str(tag, " all loops"));
+				if fmt == 1 { check(find(o, "SCORE") < 0 && find(o, "ENGRAVE") < 0, str(tag, " svg names")); }
+				if fmt == 2 { check(find(o, "SP2") < 0 && find(o, "SP3") < 0, str(tag, " plt pens")); }
+			}
+		}
+	}
+}
+fn t_marks() {
+	fn slot(tag const byte[:], size real, depth real) {
+		cu_fold(0); cu_prepare(0);
+		check(CULP.len == 8, str(tag, " points"));
+		let x0, y0, x1, y1 = cu_bbox(CULP);
+		check(near(x1 - x0, size, 0.01) && near(y1 - y0, size, 0.01), str(tag, " bbox"));
+		var sl Pt[>..] = [];
+		for p in CULP { if !((near(p.x, x0, 0.001) || near(p.x, x1, 0.001)) && (near(p.y, y0, 0.001) || near(p.y, y1, 0.001))) { sl.push(p); } }
+		check(sl.len == 4, str(tag, " slot points"));
+		var a = 0; var b = 0; var c = 0;
+		for i in sl.len { for j in i + 1..sl.len {
+			let d = pdist(sl[i], sl[j]);
+			if near(d, CU_SLOT, 0.01) { a += 1; }
+			if near(d, depth, 0.01) { b += 1; }
+			if near(d, sqrt(CU_SLOT * CU_SLOT + depth * depth), 0.01) { c += 1; }
+		} }
+		check(a == 2 && b == 2 && c == 2, str(tag, " distances"));
+	}
+	reset_cut(); CU.layers = true; CU.seam = true;
+	square(1.0); notch(P(5.0, 0.0), P(0.0, -1.0));
+	check(near(CU_NOTCH, 7.0, 0.01) && near(CU_NOTCH0, 3.0, 0.01) && near(CU_SLOT, 2.0, 0.01), "notch constants");
+	slot("marks seam", 120.0, CU_NOTCH);
+	CU.seam = false;
+	slot("marks no seam", 100.0, CU_NOTCH0);
+	CU.seam = true;
+	square(0.5);
+	button(P(3.0, 3.0)); dot(P(7.0, 7.0)); dart(P(4.0, 10.0), P(6.0, 10.0), P(5.0, 6.0));
+	cu_build();
+	var rc real[>..] = [];
+	var nl = 0;
+	for r in CUR { if r.sheet == 0 && r.layer == LY_CUT { if r.kind == PK_CIRC { rc.push(r.r); } else if r.kind == PK_LOOP { nl += 1; } } }
+	var nb = 0; var nh = 0;
+	for r in rc { if near(r, CU_BTN, 0.001) { nb += 1; } if near(r, CU_HOLE, 0.001) { nh += 1; } }
+	check(rc.len == 3 && nb == 1 && nh == 2, "marks circles");
+	check(nl == 1, "marks loops");
+	sort(rc) { a, b => a < b };
+	for fmt in 0..3 {
+		let tag = str("marks fmt ", fmt);
+		var o byte[>..] = [];
+		render(o, fmt); parse_any(fmt, o); lstat(0);
+		check(ST.circs == 3, str(tag, " circs"));
+		var rr real[>..] = [];
+		for e in EN { if e.kind == 1 { rr.push(e.r); } }
+		sort(rr) { a, b => a < b };
+		var ok = rr.len == rc.len;
+		if ok { for i in rc.len { if !near(rr[i], rc[i], 0.05) { ok = false; } } }
+		check(ok, str(tag, " radii"));
+	}
+}
+fn dpoly(a Pt, b Pt, c Pt, d Pt) bool {
+	fn opp(u real, v real) bool { (u > 1e-9 && v < -1e-9) || (u < -1e-9 && v > 1e-9) }
+	let o1 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+	let o2 = (b.x - a.x) * (d.y - a.y) - (b.y - a.y) * (d.x - a.x);
+	let o3 = (d.x - c.x) * (a.y - c.y) - (d.y - c.y) * (a.x - c.x);
+	let o4 = (d.x - c.x) * (b.y - c.y) - (d.y - c.y) * (b.x - c.x);
+	opp(o1, o2) && opp(o3, o4)
+}
+fn polys_overlap(f0 int, n0 int, f1 int, n1 int) bool {
+	let ax0, ay0, ax1, ay1 = cu_bbox(CUP[f0..f0 + n0]);
+	let bx0, by0, bx1, by1 = cu_bbox(CUP[f1..f1 + n1]);
+	if ax1 < bx0 || bx1 < ax0 || ay1 < by0 || by1 < ay0 { return false; }
+	for i in n0 { for j in n1 {
+		if dpoly(CUP[f0 + i], CUP[f0 + (i + 1) % n0], CUP[f1 + j], CUP[f1 + (j + 1) % n1]) { return true; }
+	} }
+	if cu_inside(CUP[f1..f1 + n1], CUP[f0]) { return true; }
+	cu_inside(CUP[f0..f0 + n0], CUP[f1])
+}
+fn check_nest(tag const byte[:]) {
+	var bad3 = false;
+	for it in CUI { if it.sheet == -3 { bad3 = true; } }
+	check(!bad3, str(tag, " sheet -3"));
+	let p = CU.sheet;
+	var dims = true;
+	for s in CUS { if !s.roll {
+		if p == 12 { dims = dims && near(s.w, CU.cw, 0.01) && near(s.h, CU.ch, 0.01); }
+		else { dims = dims && near(s.w, CU_PW[p], 0.01) && near(s.h, CU_PH[p], 0.01); }
+	} }
+	check(dims, str(tag, " sheet size"));
+	if p == 10 || p == 11 { check(CUS.len == 1 && CUS[0].h >= CU.margin * 2.0, str(tag, " roll")); }
+	var inr = true; var inm = true;
+	for r in CUR { if r.sheet >= 0 {
+		let s = CUS[r.sheet];
+		let lp = r.kind == PK_LOOP && r.layer == LY_CUT;
+		for i in r.n {
+			let q = CUP[r.first + i];
+			if q.x < -0.001 || q.x > s.w + 0.001 || q.y < -0.001 || q.y > s.h + 0.001 { inr = false; }
+			if lp && (q.x < CU.margin - 0.01 || q.x > s.w - CU.margin + 0.01 || q.y < CU.margin - 0.01 || q.y > s.h - CU.margin + 0.01) { inm = false; }
+		}
+	} }
+	check(inr, str(tag, " in sheet"));
+	check(inm, str(tag, " margin"));
+	var ov = false;
+	for i in CUR.len {
+		let a = CUR[i];
+		if a.sheet < 0 || a.kind != PK_LOOP || a.layer != LY_CUT { continue; }
+		for j in i + 1..CUR.len {
+			let b = CUR[j];
+			if b.sheet == a.sheet && b.kind == PK_LOOP && b.layer == LY_CUT && polys_overlap(a.first, a.n, b.first, b.n) { ov = true; }
+		}
+	}
+	check(!ov, str(tag, " overlap"));
+	var pc = true; var kn = 0;
+	for it in CUI { kn = max(kn, it.piece + 1); }
+	for k in kn {
+		var cnt = 0;
+		for it in CUI { if it.piece == k && it.sheet >= 0 { cnt = it.copies; } }
+		if cnt == 0 { pc = false; }
+		for c in cnt {
+			var f = false;
+			for it in CUI { if it.piece == k && it.copy == c && it.sheet >= 0 { f = true; if it.copies != cnt { pc = false; } } }
+			if !f { pc = false; }
+		}
+	}
+	check(pc, str(tag, " copies"));
+	if CU.grain {
+		var gr = true;
+		for it in CUI { if it.sheet >= 0 && it.grain && !(it.rot == 0 || it.rot == 2) { gr = false; } }
+		check(gr, str(tag, " grain"));
+	}
+}
+fn t_nest() {
+	var nn = 0; var sh = 0; var tl = 0;
+	for g in 8 {
+		set_garment(g);
+		var nm byte[>..] = [];
+		if g == 0 { nm.append("T-shirt"); } else if g == 4 { nm.append("Trousers"); } else { format(nm, "garment ", g); }
+		let pairs = if g == 0 || g == 4 { 2 } else { 1 };
+		for p in 13 { for gr in 2 { for q in pairs {
+			let m = if q == 0 { 7 } else { 20 };
+			let gp = if q == 0 { 5 } else { 12 };
+			reset_cut(); CU.sheet = p; CU.cw = 500.0; CU.ch = 700.0;
+			CU.grain = gr == 1; CU.margin = m; CU.gap = gp;
+			cu_build();
+			let tag = str(nm, " preset ", p, " grain ", gr, " m", m, " g", gp);
+			check_nest(tag);
+			nn += 1; sh += CUS.len;
+			var tiled = 0; var area = 0.0;
+			for it in CUI { if it.tiled { tiled += 1; } if it.sheet >= 0 { area += it.area; } }
+			tl += tiled;
+			if (g == 0 || g == 4) && p == 10 && gr == 1 && q == 0 {
+				check(tiled == 0, str(tag, " no tiles"));
+				let ratio = area / (CUS[0].w * CUS[0].h);
+				check(ratio > 0.4 && ratio < 0.9, str(tag, " fill"));
+			}
+		} } }
+	}
+	print("nests ", nn, " sheets ", sh, " tiles ", tl);
+}
+fn t_tiles() {
+	set_garment(4); reset_cut(); CU.sheet = 3; CU.grain = true; CU.margin = 7.0; CU.gap = 5.0; CU.layers = true;
+	cu_build();
+	let uw = CUS[0].w - 2.0 * CU.margin - CU_CW;
+	let uh = CUS[0].h - 2.0 * CU.margin;
+	let ov = cu_ov(uw, uh);
+	fn tid(tr int, tc int) byte[>..] { var o byte[>..] = []; cu_tile_id(o, tr, tc); o }
+	fn ntext(i int, s const byte[:]) int {
+		var c = 0;
+		let it = CUI[i];
+		for j in it.n { let r = CUR[it.first + j]; if r.kind == PK_TEXT && r.layer == LY_SCORE && CUB[r.tx..r.tx + r.tn] == s { c += 1; } }
+		c
+	}
+	var nt = 0; var szok = true;
+	for it in CUI { if it.tiled { nt += 1; if it.w > uw + 0.01 || it.h > uh + 0.01 { szok = false; } } }
+	check(nt >= 1, "tiles exist");
+	check(szok, "tile sizes");
+	var reach = true;
+	for a in CUI.len {
+		let src = CUI[a];
+		if src.tiled || src.sheet != -2 { continue; }
+		var cnt = 0; var x0 = 1e18; var y0 = 1e18; var x1 = -1e18; var y1 = -1e18;
+		for t in CUI { if t.tiled && t.piece == src.piece && t.copy == src.copy {
+			cnt += 1;
+			let r = CUR[t.cut];
+			for i in r.n {
+				let p = CUP[r.first + i];
+				x0 = min(x0, p.x + t.ox); y0 = min(y0, p.y + t.oy); x1 = max(x1, p.x + t.ox); y1 = max(y1, p.y + t.oy);
+			}
+		} }
+		if cnt > 0 && !(near(x0, 0.0, 0.001) && near(y0, 0.0, 0.001) && near(x1, src.w, 0.001) && near(y1, src.h, 0.001)) { reach = false; }
+	}
+	check(reach, "tile reach");
+	var adj = true;
+	for a in CUI.len { for b in CUI.len {
+		let ia = CUI[a]; let ib = CUI[b];
+		if ia.tiled && ib.tiled && ia.piece == ib.piece && ia.copy == ib.copy && ia.tr == ib.tr && ib.tc == ia.tc + 1 && !near(ib.ox - ia.ox, uw - ov, 0.001) { adj = false; }
+	} }
+	check(adj, "tile step");
+	var reg = true; var crossok = true;
+	for a in CUI.len {
+		let ia = CUI[a];
+		if !ia.tiled { continue; }
+		for j in ia.n {
+			let r = CUR[ia.first + j];
+			if !(r.kind == PK_TEXT && r.layer == LY_SCORE) { continue; }
+			let tx = CUB[r.tx..r.tx + r.tn];
+			let k = find(tx, "/");
+			if k < 0 { continue; }
+			let own = tid(ia.tr, ia.tc);
+			let n1 = tx[..k];
+			let n2 = tx[k + 1..];
+			let oth = if own == n1 { n2 } else { n1 };
+			var b = -1;
+			for c in CUI.len { let ic = CUI[c]; if ic.tiled && ic.piece == ia.piece && ic.copy == ia.copy && tid(ic.tr, ic.tc) == oth { b = c; } }
+			if b < 0 { reg = false; continue; }
+			let ib = CUI[b];
+			if ntext(a, tx) != ntext(b, tx) { reg = false; }
+			let q = CUP[r.first];
+			var found = false;
+			for j2 in ib.n {
+				let r2 = CUR[ib.first + j2];
+				if r2.kind == PK_TEXT && r2.layer == LY_SCORE && CUB[r2.tx..r2.tx + r2.tn] == tx {
+					let q2 = CUP[r2.first];
+					if near(q2.x + ib.ox, q.x + ia.ox, 0.001) && near(q2.y + ib.oy, q.y + ia.oy, 0.001) { found = true; }
+				}
+			}
+			if !found { reg = false; }
+			let lr = CUR[ia.cut];
+			if !cu_inside(CUP[lr.first..lr.first + lr.n], P(q.x - 4.0, q.y + 2.0)) { crossok = false; }
+		}
+	}
+	check(reg, "tile registration");
+	check(crossok, "tile cross inside");
+	CU.layers = false; cu_build();
+	var nsc = 0;
+	for it in CUI { if it.tiled { for j in it.n { let r = CUR[it.first + j]; if r.kind == PK_TEXT && r.layer == LY_SCORE { nsc += 1; } } } }
+	check(nsc == 0, "tile no marks without layers");
+}
+fn t_names() {
+	CUS.clear();
+	for i in 3 { CUS.push(CuSheet { w: 1.0, h: 1.0, roll: false, used: 0.0, sky: 0, count: 0 }); }
+	for f in 0..3 {
+		CU.fmt = f;
+		let ext = match f { 0 => "dxf", 1 => "svg", _ => "plt" };
+		let mime = match f { 0 => "image/vnd.dxf", 1 => "image/svg+xml", _ => "application/vnd.hp-HPGL" };
+		var o byte[>..] = [];
+		cu_filename(o, "amni-stitch-t-shirt", 1);
+		var want byte[>..] = [];
+		format(want, "amni-stitch-t-shirt-cut-sheet-2-of-3.", ext);
+		check(o == want, str("filename ", f));
+		check(cu_mime() == mime, str("mime ", f));
+		check(cu_ext() == ext, str("ext ", f));
+	}
+	square(0.5); reset_cut(); cu_build();
+	var info byte[>..] = [];
+	cu_info(info);
+	check(starts_with(info, "1 sheet ") && find(info, "% of the material used") >= 0, "info");
+	CUS.clear(); info.clear(); cu_info(info);
+	check(info == "Nothing to cut", "info empty");
+	CU.cw = 500.0; CU.ch = 700.0;
+	for i in 0..13 {
+		CU.sheet = i;
+		let w, h = cu_dims();
+		if i < 12 { check(near(w, CU_PW[i], 0.001) && near(h, CU_PH[i], 0.001), str("dims ", i)); }
+		else { check(near(w, CU.cw, 0.001) && near(h, CU.ch, 0.001), "dims custom"); }
+	}
+	check(near(CU_PW[0], 215.9, 0.001) && near(CU_PW[5], 594.0, 0.001) && near(CU_PH[6], 1189.0, 0.001), "preset values");
+	check(CU_PRESETS == 13 && CU_NAMES.len == 13, "preset count");
+}
+fn texts_of(out byte[>..]&) {
+	for e in EN { if e.kind == 2 { out.append(TB[e.tx..e.tx + e.tn]); out.push('|'); } }
+}
+fn t_files() {
+	for g in [0, 4] {
+		set_garment(g); reset_cut(); CU.sheet = 10; CU.grain = true; CU.layers = true;
+		cu_build();
+		let nm = if g == 0 { "T-shirt" } else { "trousers" };
+		var all St[9] = [ST; 9];
+		var cc int[12] = [0; 12];
+		for r in CUR { if r.sheet == 0 && r.layer >= 0 && r.layer < 3 {
+			let k = if r.kind == PK_LOOP { 0 } else if r.kind == PK_PATH { 1 } else if r.kind == PK_CIRC { 2 } else if r.kind == PK_TEXT { 3 } else { -1 };
+			if k >= 0 { cc[r.layer * 4 + k] += 1; }
+		} }
+		var tsvg byte[>..] = [];
+		var tcur byte[>..] = [];
+		for fmt in [1, 0, 2] {
+			let tag = str(nm, " fmt ", fmt);
+			var o byte[>..] = [];
+			render(o, fmt); parse_any(fmt, o);
+			for l in 3 { lstat(l); all[fmt * 3 + l] = ST; }
+			tcur.clear(); texts_of(tcur);
+			if fmt == 1 { tsvg.append(tcur); }
+			check(tcur == tsvg, str(tag, " texts"));
+			for l in 3 {
+				let a = all[fmt * 3 + l]; let b = all[3 + l];
+				check(a.loops == b.loops && a.paths == b.paths && a.circs == b.circs && a.texts == b.texts, str(tag, " layer ", l, " counts"));
+				check(near(a.perim, b.perim, 0.5 + 0.0005 * b.perim), str(tag, " layer ", l, " perimeter"));
+				check(near(a.x0, b.x0, 0.2) && near(a.y0, b.y0, 0.2) && near(a.x1, b.x1, 0.2) && near(a.y1, b.y1, 0.2), str(tag, " layer ", l, " box"));
+				print(tag, " layer ", l, " loops ", a.loops, " paths ", a.paths, " circs ", a.circs, " texts ", a.texts);
+			}
+		}
+		for l in 3 {
+			let b = all[3 + l];
+			check(b.loops == cc[l * 4] && b.paths == cc[l * 4 + 1] && b.circs == cc[l * 4 + 2] && b.texts == cc[l * 4 + 3], str(nm, " layer ", l, " primitives"));
+		}
+	}
+}
+fn main() {
+	t_square(); t_dxf(); t_layers(); t_marks(); t_nest(); t_tiles(); t_names(); t_files();
+	print("cut checks ", CHK, " failures ", FAIL);
+	if FAIL > 0 { exit(1); }
+}
