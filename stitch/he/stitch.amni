@@ -1,5 +1,3 @@
-// Amni-Stitch: custom sewing patterns from your measurements, written in Helium.
-// Build: hc stitch/he/stitch.amni stitch/stitch.wasm --web -DGS_WEB_MOVE=1
 import math;
 import web;
 import webgl;
@@ -9,12 +7,12 @@ import st_geom;
 import st_body;
 import st_draft;
 import st_svg;
+import st_cut;
 import st_guide;
 import st_trace;
 import st_tex;
 import st_view3d;
 import st_account;
-
 let T_MEAS: i32 = 100;
 let T_PRESET: i32 = 2; let T_UNITS: i32 = 3; let T_GARMENT: i32 = 4; let T_OPT: i32 = 5; let T_COLOR: i32 = 6;
 let T_TAB_PAT: i32 = 7; let T_TAB_3D: i32 = 8; let T_TAB_GUIDE: i32 = 9;
@@ -26,7 +24,7 @@ let T_PDOWN: i32 = 50; let T_PMOVE: i32 = 51; let T_PUP: i32 = 52; let T_FRONT: 
 let T_FABRIC: i32 = 80; let T_FAB_PIXELS: i32 = 81; let T_FAB_DL: i32 = 82; let T_FAB_ON: i32 = 83; let T_FAB_SIZE: i32 = 84;
 let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61; let T_IGNORE: i32 = 99;
 let T_ACCT_ME: i32 = 120; let T_ACCT_LIST: i32 = 121; let T_ACCT_SAVE: i32 = 122; let T_ACCT_SAVED: i32 = 123; let T_ACCT_PICK: i32 = 124;
-
+let T_CUT_OPT: i32 = 70; let T_CUT_PREV: i32 = 71; let T_CUT_NEXT: i32 = 72; let T_CUT_DL: i32 = 73; let T_CUT_ALL: i32 = 74; let T_CUT_Q: i32 = 75;
 var GATE byte[>..];
 var PRO byte[>..];
 var PIC byte[>..];
@@ -53,7 +51,8 @@ var CLAIM_TRIES = 0;
 var DRAG = false;
 var DRAG_X = 0.0; var DRAG_Y = 0.0;
 var BUSY = false;
-
+var CUT_VIEW = 0;
+var CUT_Q = 0;
 fn el(id const byte[:]) i32 { web::el(id) }
 fn set_text(id const byte[:], s const byte[:]) { web::text(el(id), s); }
 fn show(id const byte[:], on bool) { web::cls(el(id), "hidden", !on); }
@@ -70,8 +69,19 @@ fn get_num(id const byte[:], dflt real) real {
 fn get_int(id const byte[:]) int { var s byte[>..] = []; get_value(id, s); let v, ok = parse_int(trim(s[..]), 10); if ok { v } else { 0 } }
 fn set_value(id const byte[:], s const byte[:]) { web::prop(el(id), "value", s); }
 fn set_num(id const byte[:], v real) { var s byte[>..] = []; fmt1(s, v); set_value(id, s[..]); }
-
-// ---- persistence ----------------------------------------------------------------------------
+fn get_chk(id const byte[:]) bool { web::get_bool(el(id), "checked") }
+fn fill_cut_inputs() {
+	set_text("cut-mu", unit_label()); set_text("cut-gu", unit_label());
+	for id, i in ["cut-margin", "cut-gap"] { var s byte[>..] = []; format_flt(s, disp((if i == 0 { CU.margin } else { CU.gap }) / 10.0), 2); set_value(id, s[..]); }
+}
+fn read_cut() {
+	CU.fmt = clamp(get_int("cut-fmt"), 0, 2); CU.sheet = clamp(get_int("cut-sheet"), 0, CU_PRESETS - 1);
+	let k = if get_int("cut-cu") == 1 { 25.4 } else { 1.0 };
+	CU.cw = max(get_num("cut-w", 12.0) * k, 20.0); CU.ch = max(get_num("cut-h", 18.0) * k, 20.0);
+	CU.margin = clamp(from_disp(get_num("cut-margin", disp(CU.margin / 10.0))) * 10.0, 0.0, 70.0); CU.gap = clamp(from_disp(get_num("cut-gap", disp(CU.gap / 10.0))) * 10.0, 0.0, 70.0);
+	CU.grain = get_chk("cut-grain"); CU.seam = get_chk("cut-seam"); CU.layers = get_chk("cut-layers");
+	show("row-cut-custom", CU.sheet == 12);
+}
 fn save_state() { var s byte[>..] = []; state_text(s); web::store_set("amni.stitch.v2", s[..]); }
 fn state_text(s byte[>..]&) {
 	s.clear();
@@ -102,8 +112,6 @@ fn apply_state(s const byte[:]) bool {
 	for b in seen { if !b { all_seen = false; } }
 	all_seen
 }
-
-// ---- measurements -------------------------------------------------------------------------
 fn apply_scale() {
 	for i in NM { M[i] = BASE[i]; }
 	if SCALE_PCT != 0.0 { grade(1.0 + SCALE_PCT / 100.0); }
@@ -116,6 +124,7 @@ fn fill_measure_inputs() {
 	set_num("fab-size", disp(TEX_CM));
 	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
 	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
+	fill_cut_inputs();
 }
 fn build_measure_form() {
 	let box = el("meas");
@@ -144,8 +153,6 @@ fn fill_select(id const byte[:], names const byte[:][:], sel int) {
 		web::append(s, o);
 	}
 }
-
-// ---- options ----------------------------------------------------------------------------
 fn read_options() {
 	O.fit = clamp(get_int("fit"), 0, 3);
 	O.knit = get_int("fabric") == 1;
@@ -178,8 +185,21 @@ fn show_rows() {
 	show("row-shape", top);
 	set_text("length-label", match g { 3 => "Skirt length", 4 => "Inseam", 5 => "Inseam", 6 => "Skirt length", _ => "Length below waist" });
 }
-
-// ---- drawing ----------------------------------------------------------------------------
+fn cut_render() {
+	var s byte[>..] = []; cu_info(s); set_text("cut-info", s[..]);
+	let n = CUS.len;
+	CUT_VIEW = clamp(CUT_VIEW, 0, max(n - 1, 0));
+	web::prop_bool(el("cut-prev"), "disabled", CUT_VIEW == 0); web::prop_bool(el("cut-next"), "disabled", CUT_VIEW + 1 >= n);
+	web::prop_bool(el("cut-dl"), "disabled", n == 0); web::prop_bool(el("cut-all"), "disabled", n == 0);
+	if n == 0 { web::html(el("cut-preview"), "<p class=\"empty\">No pieces to cut yet.</p>"); set_text("cut-which", ""); set_text("cut-all", "Download all sheets"); return; }
+	s.clear(); cu_preview(s, CUT_VIEW); web::html(el("cut-preview"), s[..]);
+	let sh = CUS[CUT_VIEW];
+	var w byte[>..] = []; format(w, "Sheet ", CUT_VIEW + 1, " of ", n, " · "); format_flt(w, sh.w / 25.4, 1); w.append(" × "); format_flt(w, sh.h / 25.4, 1); w.append(" in ("); format_flt(w, sh.w, 0); w.append(" × "); format_flt(w, sh.h, 0); w.append(" mm)");
+	set_text("cut-which", w[..]);
+	var a byte[>..] = []; format(a, "Download all sheets (", n, ")"); set_text("cut-all", a[..]);
+}
+fn cut_refresh() { cu_build(); cut_render(); }
+fn cut_download(i int) { var s byte[>..] = []; cu_file(s, i); var st byte[>..] = []; file_stem(st); var n byte[>..] = []; cu_filename(n, st[..], i); download(n[..], cu_mime(), s[..]); }
 fn title() {
 	TITLE.clear();
 	TITLE.append("Amni-Stitch: "); TITLE.append(G_NAMES[O.garment]);
@@ -198,6 +218,7 @@ fn rebuild() {
 		web::html(el("pattern"), str(str("<p class=\"empty\">", PIC[..])[..], " a picture of a garment, then press <b>Trace into a pattern</b>. The traced outline becomes a pattern at your size.</p>")[..]);
 		web::html(el("guide"), "");
 		show_rows();
+		cut_refresh();
 		return;
 	}
 	title();
@@ -215,6 +236,7 @@ fn rebuild() {
 	show_rows();
 	view_shape();
 	if TAB == 1 { view_draw(); }
+	cut_refresh();
 	save_state();
 }
 fn set_tab(t int) {
@@ -225,8 +247,6 @@ fn set_tab(t int) {
 	web::attr(el("tab-guide"), "aria-selected", if t == 2 { "true" } else { "false" });
 	if t == 1 { if !V_OK { if !view_init(el("c3d")) { set_text("view-msg", "3D needs WebGL 2, which this browser does not offer."); } } view_shape(); view_draw(); }
 }
-
-// ---- JS host calls ------------------------------------------------------------------------
 fn host_call(method const byte[:], args const byte[:], tag i32) { let _id = web::js_call(HOST, method, args, tag); }
 fn json_str(out byte[>..]&, s const byte[:]) { json::format_string(out, s); }
 fn file_stem(out byte[>..]&) {
@@ -270,8 +290,6 @@ fn download(name const byte[:], mime const byte[:], body const byte[:]) {
 	a.push('['); json_str(a, name); a.push(','); json_str(a, mime); a.push(','); json_str(a, body); a.push(']');
 	host_call("save", a[..], T_IGNORE);
 }
-
-// ---- server calls -------------------------------------------------------------------------
 fn post(base const byte[:], path const byte[:], body const byte[:], tag i32, ms real) {
 	var u byte[>..] = []; u.append(base); u.append(path);
 	let _id = web::request(u[..], "POST", "{\"content-type\":\"application/json\"}", body, tag, ms);
@@ -283,7 +301,6 @@ fn take(out byte[>..]&) int {
 	web::fetch_free(id);
 	web::ev_status() as int
 }
-// a string member of a JSON object text ("" when missing)
 fn jget(text const byte[:], key const byte[:], out byte[>..]&) bool {
 	out.clear();
 	var d = json::Doc {};
@@ -343,8 +360,6 @@ fn show_shot(src const byte[:]) {
 	show("shot", true);
 	set_text("trace-msg", "");
 }
-
-// ---- licence ----------------------------------------------------------------------------
 fn b64url_json(tok const byte[:], out byte[>..]&) bool {
 	out.clear();
 	let parts = split(tok, '.');
@@ -377,14 +392,12 @@ fn show_key() {
 	set_text("sub-status", s[..]);
 	show("key-box", false); show("billing", true); show("key-forget", true);
 }
-// days until the saved key expires (a large number when it has no expiry or cannot be read)
 fn key_days() real {
 	var js byte[>..] = []; var exp byte[>..] = [];
 	if KEY.len == 0 || !b64url_json(KEY[..], js) || !jget(js[..], "exp", exp) { return 1.0e9; }
 	let e, ok = parse_flt(exp[..]);
 	if ok { (e - web::epoch_ms()) / 86400000.0 } else { 1.0e9 }
 }
-// subscription keys run to the end of the paid period plus 7 days; fetch a fresh one near the end
 fn renew_if_due() {
 	if KEY.len == 0 || PRO.len == 0 || key_days() > 10.0 { return; }
 	var b byte[>..] = []; b.append("{\"key\":"); json_str(b, KEY[..]); b.push('}');
@@ -395,8 +408,6 @@ fn claim() {
 	var u byte[>..] = []; u.append(PRO[..]); u.append("/license?session="); u.append(CLAIM_ID[..]);
 	let _id = web::request(u[..], "GET", "", "", T_CLAIM_DONE, 20000.0);
 }
-
-// ---- events -----------------------------------------------------------------------------
 export fn he_event(tag i32, kind i32) {
 	if tag >= T_MEAS && tag < T_MEAS + NM as i32 {
 		let i = (tag - T_MEAS) as int;
@@ -503,7 +514,6 @@ export fn he_event(tag i32, kind i32) {
 		33 => {
 			var r byte[>..] = [];
 			if web::js_result(web::ev_id(), r) && r.len > 12 {
-				// the result is a JSON string: strip the quotes (data URLs have nothing to unescape)
 				show_shot(r[1..r.len - 1]);
 				status("Picture loaded. Press Trace to turn it into a pattern.");
 			}
@@ -571,11 +581,16 @@ export fn he_event(tag i32, kind i32) {
 		122 => { var s byte[>..] = []; state_text(s); var nm byte[>..] = []; for id, i in ACCT_IDS { if id[..] == ACCT_CUR[..] { nm.append(ACCT_NAMES[i][..]); } } if nm.len == 0 { nm.append("My measurements"); if ACCT_NAMES.len > 0 { format(nm, " ", ACCT_NAMES.len + 1); } } var b byte[>..] = []; acct_profile_body(ACCT_CUR[..], nm[..], s[..], b); set_text("acct-who", "Saving…"); acct_request(ACCT[..], "/v1/profiles", "POST", b[..], T_ACCT_SAVED); },
 		123 => { var r byte[>..] = []; let st = take(r); if st == 200 { let _ok = acct_saved_id(r[..], ACCT_CUR); set_text("acct-who", str("Signed in as ", ACCT_WHO[..], " · saved")[..]); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); } else { var e byte[>..] = []; if !jget(r[..], "error", e) { e.append("your account did not answer"); } set_text("acct-who", str("Not saved: ", e[..])[..]); } },
 		124 => { let i = get_int("acct-list"); if i >= 0 && i < ACCT_STATES.len && apply_state(ACCT_STATES[i][..]) { ACCT_CUR.clear(); ACCT_CUR.append(ACCT_IDS[i][..]); set_value("preset", str(PRESET)[..]); set_value("units", str(UNITS)[..]); set_value("scale", str(SCALE_PCT as int)[..]); show_scale(); fill_measure_inputs(); write_options(); set_text("preset-note", "Loaded from your Amni account"); rebuild(); } },
+		70 => { read_cut(); CUT_VIEW = 0; cut_refresh(); },
+		71 => { CUT_VIEW -= 1; cut_render(); },
+		72 => { CUT_VIEW += 1; cut_render(); },
+		73 => { if CUT_VIEW < CUS.len { cut_download(CUT_VIEW); } },
+		74 => { CUT_Q = 1; if CUS.len > 0 { cut_download(0); if CUS.len > 1 { let _t = web::timer(400.0, T_CUT_Q); } } },
+		75 => { if CUT_Q < CUS.len { cut_download(CUT_Q); CUT_Q += 1; if CUT_Q < CUS.len { let _t = web::timer(400.0, T_CUT_Q); } } },
 		_ => {},
 	}
 }
 fn listen_id(id const byte[:], ev const byte[:], tag i32) { let h = el(id); if h != 0 { web::listen(h, ev, tag, 0); } }
-
 fn main() {
 	let app = el("app");
 	let _g = web::get_attr(app, "data-gate", GATE);
@@ -586,7 +601,6 @@ fn main() {
 	while PRO.len > 0 && PRO[PRO.len - 1] == '/' { let _c = PRO.pop(); }
 	let gen = GATE.len > 0; if gen { PIC.append("Generate or upload"); } else { PIC.append("Upload"); } show("gen-box", gen); show("gen-fine", gen); show("trace-note", !gen); show("sub-box", gen && PRO.len > 0); if !gen { set_text("h-ai-t", "Trace a picture"); }
 	HOST = web::js_global("stitchHost");
-	// device id: a random-looking id kept in this browser (the server counts by IP as well)
 	if !web::store_get("amni.stitch.dev", DEVICE) || DEVICE.len < 8 {
 		DEVICE.clear();
 		var x = (web::epoch_ms() as int) ^ ((web::now() * 1000003.0) as int);
@@ -620,9 +634,11 @@ fn main() {
 	listen_id("v-front", "click", T_FRONT); listen_id("v-side", "click", T_SIDE); listen_id("v-back", "click", T_BACK);
 	listen_id("acct-save", "click", T_ACCT_SAVE); listen_id("acct-list", "change", T_ACCT_PICK);
 	acct_request(ACCT[..], "/v1/me", "GET", "", T_ACCT_ME);
+	fill_select("cut-sheet", CU_NAMES[..], CU.sheet);
+	for id in ["cut-fmt", "cut-sheet", "cut-w", "cut-h", "cut-cu", "cut-margin", "cut-gap", "cut-grain", "cut-seam", "cut-layers"] { listen_id(id, "change", T_CUT_OPT); }
+	listen_id("cut-prev", "click", T_CUT_PREV); listen_id("cut-next", "click", T_CUT_NEXT); listen_id("cut-dl", "click", T_CUT_DL); listen_id("cut-all", "click", T_CUT_ALL);
 	web::listen(web::WINDOW, "resize", T_RESIZE, 0);
 	var c byte[>..] = []; get_value("color", c); view_color(c[..]);
-	// back from Stripe checkout: #pro-session=cs_...
 	var h byte[>..] = []; web::location("hash", h);
 	let at = find(h[..], "pro-session=");
 	if at >= 0 { CLAIM_ID.append(h[at + 12..]); CLAIM_TRIES = 0; set_text("sub-status", "Fetching your subscription key…"); claim(); }

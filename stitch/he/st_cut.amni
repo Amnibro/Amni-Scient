@@ -1,0 +1,1031 @@
+import math;
+import st_geom;
+import st_body;
+import st_draft;
+import st_svg;
+let LY_CUT = 0; let LY_SCORE = 1; let LY_ENGRAVE = 2;
+let PK_PATH = 0; let PK_LOOP = 1; let PK_CIRC = 2; let PK_TEXT = 3;
+let CU_CW = 2.0;
+let CU_TW = 0.275;
+let CU_HOLE = 1.5;
+let CU_BTN = 2.0;
+let CU_SLOT = 2.0;
+let CU_OVER = 10.0;
+let CU_NOTCH = 7.0;
+let CU_NOTCH0 = 3.0;
+let CU_PRESETS = 13;
+let CU_NAMES const byte[:][13] = ["Letter 8.5 × 11 in (216 × 279 mm)", "Legal 8.5 × 14 in (216 × 356 mm)", "Tabloid 11 × 17 in (279 × 432 mm)", "A4 8.3 × 11.7 in (210 × 297 mm)", "A3 11.7 × 16.5 in (297 × 420 mm)", "A1 23.4 × 33.1 in (594 × 841 mm)", "A0 33.1 × 46.8 in (841 × 1189 mm)", "Cutting mat 12 × 12 in (305 × 305 mm)", "Cutting mat 12 × 24 in (305 × 610 mm)", "Sheet 24 × 36 in (610 × 914 mm)", "Roll 36 in (914 mm), any length", "Fabric 60 in (1524 mm), any length", "Custom size"];
+let CU_PW const real[13] = [215.9, 215.9, 279.4, 210.0, 297.0, 594.0, 841.0, 304.8, 304.8, 609.6, 914.4, 1524.0, 0.0];
+let CU_PH const real[13] = [279.4, 355.6, 431.8, 297.0, 420.0, 841.0, 1189.0, 304.8, 609.6, 914.4, 0.0, 0.0, 0.0];
+struct CuSet { fmt int = 0, sheet int = 10, cw real = 304.8, ch real = 457.2, margin real = 7.0, gap real = 5.0, grain bool = true, seam bool = true, layers bool = true }
+var CU = CuSet {};
+struct CuPrim { kind int, layer int, first int, n int, r real, rot real, sheet int, tx int, tn int }
+struct CuItem { piece int, copy int, copies int, first int, n int, cut int, w real, h real, area real, grain bool, lx real, ly real, lh real, ox real, oy real, tr int, tc int, tiled bool, sheet int, rot int, px real, py real }
+struct CuSheet { w real, h real, roll bool, used real, sky int, count int }
+var CUP Pt[>..];
+var CUB byte[>..];
+var CUR CuPrim[>..];
+var CUI CuItem[>..];
+var CUS CuSheet[>..];
+var CUK real[>..];
+var CULP Pt[>..];
+var CUSP Pt[>..];
+var CUNQ Pt[>..];
+var CUNB Pt[>..];
+var CUHQ Pt[>..];
+var CUHR real[>..];
+var CUC1 Pt[>..];
+var CUC2 Pt[>..];
+var CUTOP real[>..];
+var CUBOT real[>..];
+var CURT real[>..];
+var CURB real[>..];
+var CU_FS = -1;
+var CU_FE = -1;
+var CU_FA = Pt { x: 0.0, y: 0.0 };
+var CU_FD = Pt { x: 1.0, y: 0.0 };
+var CU_DG = 0;
+var CU_TOTAL = 0.0;
+var CU_USED = 0.0;
+fn cu_rot(p Pt, r int) Pt {
+	match r {
+		0 => p,
+		1 => Pt { x: -p.y, y: p.x },
+		2 => Pt { x: -p.x, y: -p.y },
+		_ => Pt { x: p.y, y: -p.x },
+	}
+}
+fn cu_num(out byte[>..]&, v real, dec int) {
+	var p = 1.0;
+	for i in dec { p *= 10.0; }
+	if abs(v) < 0.5 / p {
+		format_flt(out, 0.0, dec);
+	} else {
+		format_flt(out, v, dec);
+	}
+}
+fn cu_sarea(pts const Pt[:]) real {
+	var s = 0.0;
+	let n = pts.len;
+	for i in n {
+		let a = pts[i];
+		let b = pts[(i + 1) % n];
+		s += a.x * b.y - b.x * a.y;
+	}
+	s / 2.0
+}
+fn cu_bbox(pts const Pt[:]) real, real, real, real {
+	if pts.len == 0 { return 0.0, 0.0, 0.0, 0.0; }
+	var x0 = pts[0].x;
+	var y0 = pts[0].y;
+	var x1 = x0;
+	var y1 = y0;
+	for q in pts {
+		if q.x < x0 { x0 = q.x; }
+		if q.y < y0 { y0 = q.y; }
+		if q.x > x1 { x1 = q.x; }
+		if q.y > y1 { y1 = q.y; }
+	}
+	return x0, y0, x1, y1;
+}
+fn cu_inside(pts const Pt[:], p Pt) bool {
+	var inside = false;
+	let n = pts.len;
+	for i in n {
+		let a = pts[i];
+		let b = pts[(i + n - 1) % n];
+		if (a.y > p.y) != (b.y > p.y) {
+			let xc = (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x;
+			if p.x < xc { inside = !inside; }
+		}
+	}
+	inside
+}
+fn pr_new(kind int, layer int, r real) int {
+	CUR.push(CuPrim { kind: kind, layer: layer, first: CUP.len, n: 0, r: r, rot: 0.0, sheet: -1, tx: 0, tn: 0 });
+	CUR.len - 1
+}
+fn pr_pt(i int, p Pt) {
+	CUP.push(p);
+	CUR[i].n += 1;
+}
+fn pr_text(layer int, at Pt, h real, rot real, s const byte[:]) {
+	let i = pr_new(PK_TEXT, layer, h);
+	pr_pt(i, at);
+	CUR[i].rot = rot;
+	CUR[i].tx = CUB.len;
+	CUB.append(s);
+	CUR[i].tn = s.len;
+}
+fn pr_line(layer int, a Pt, b Pt) {
+	let i = pr_new(PK_PATH, layer, 0.0);
+	pr_pt(i, a);
+	pr_pt(i, b);
+}
+fn pr_circ(layer int, c Pt, r real) {
+	let i = pr_new(PK_CIRC, layer, r);
+	pr_pt(i, c);
+}
+fn cu_fold(k int) {
+	CU_FS = -1;
+	CU_FE = -1;
+	let pc .= PIECES[k];
+	if !pc.fold { return; }
+	let n = pc.n;
+	let f = pc.first;
+	var s = 0;
+	while s < n && !(SAS[f + s] <= 0.0 && SAS[f + (s + n - 1) % n] > 0.0) { s++; }
+	if s >= n { return; }
+	var e = s;
+	var c = 0;
+	while SAS[f + e] <= 0.0 {
+		e = (e + 1) % n;
+		c++;
+		if c >= n { return; }
+	}
+	let a = PTS[f + s];
+	let b = PTS[f + e];
+	if pdist(a, b) < 0.0001 { return; }
+	CU_FS = s;
+	CU_FE = e;
+	CU_FA = a;
+	CU_FD = pnorm(psub(b, a));
+}
+fn cu_reflect_dir(v Pt) Pt {
+	psub(pmul(CU_FD, 2.0 * (v.x * CU_FD.x + v.y * CU_FD.y)), v)
+}
+fn cu_reflect(p Pt) Pt {
+	padd(CU_FA, cu_reflect_dir(psub(p, CU_FA)))
+}
+fn cu_loop(k int, off bool, out Pt[>..]&) {
+	let pc .= PIECES[k];
+	let n = pc.n;
+	let f = pc.first;
+	fn get(i int) Pt { if off { OFF[i] } else { PTS[i] } }
+	if CU_FS == -1 {
+		for i in n { out.push(get(f + i)); }
+		return;
+	}
+	let m = ((CU_FS - CU_FE + n) % n) + 1;
+	fn h(j int) Pt {
+		let p = get(f + (CU_FE + j) % n);
+		let d = psub(p, CU_FA);
+		if off && (j == 0 || j == m - 1) { padd(CU_FA, pmul(CU_FD, d.x * CU_FD.x + d.y * CU_FD.y)) } else { p }
+	}
+	for j in m { out.push(h(j)); }
+	for q in 1..m - 1 { out.push(cu_reflect(h(m - 1 - q))); }
+}
+fn cu_marks(k int) {
+	CUNQ.clear();
+	CUNB.clear();
+	CUHQ.clear();
+	CUHR.clear();
+	let mf = PIECES[k].mfirst;
+	let mn = PIECES[k].mn;
+	var i = 0;
+	while i < mn {
+		let m = MARKS[mf + i];
+		if m.kind == MK_NOTCH {
+			CUNQ.push(m.a);
+			CUNB.push(m.b);
+		} else if m.kind == MK_DART {
+			CUHQ.push(m.b);
+			CUHR.push(CU_HOLE);
+		} else if m.kind == MK_BUTTON {
+			CUHQ.push(m.a);
+			CUHR.push(CU_BTN);
+		} else if m.kind == MK_DOT {
+			CUHQ.push(m.a);
+			CUHR.push(CU_HOLE);
+		} else if m.kind == MK_DART2 {
+			CUHQ.push(m.a);
+			CUHR.push(CU_HOLE);
+			if i + 1 < mn {
+				CUHQ.push(MARKS[mf + i + 1].a);
+				CUHR.push(CU_HOLE);
+				i++;
+			}
+		}
+		i++;
+	}
+	if CU_FS != -1 {
+		let nn = CUNQ.len;
+		let nh = CUHQ.len;
+		for j in nn {
+			let a = CUNQ[j];
+			let r = cu_reflect(a);
+			if pdist(a, r) >= 0.1 {
+				CUNQ.push(r);
+				CUNB.push(cu_reflect_dir(CUNB[j]));
+			}
+		}
+		for j in nh {
+			let a = CUHQ[j];
+			let r = cu_reflect(a);
+			if pdist(a, r) >= 0.05 {
+				CUHQ.push(r);
+				CUHR.push(CUHR[j]);
+			}
+		}
+	}
+}
+struct CuSlot { e int, t real, d real }
+fn cu_slots() {
+	let n = CULP.len;
+	if n < 2 { return; }
+	let ar = cu_sarea(CULP);
+	var slots CuSlot[>..] = [];
+	for q in CUNQ.len {
+		let a = CUNQ[q];
+		let b = CUNB[q];
+		var be = -1;
+		var bd = 0.0;
+		var bt = 0.0;
+		var bl = 0.0;
+		for i in n {
+			let p0 = CULP[i];
+			let p1 = CULP[(i + 1) % n];
+			let ev = psub(p1, p0);
+			let len = plen(ev);
+			let on = out_normal(p0, p1, ar);
+			if len > 0.0 && on.x * b.x + on.y * b.y >= 0.3 {
+				let u = pmul(ev, 1.0 / len);
+				let tt = clamp((a.x - p0.x) * u.x + (a.y - p0.y) * u.y, 0.0, len);
+				let d = pdist(a, padd(p0, pmul(u, tt)));
+				if be < 0 || d < bd {
+					be = i;
+					bd = d;
+					bt = tt;
+					bl = len;
+				}
+			}
+		}
+		if be >= 0 && bd <= 40.0 && bl >= 4.0 {
+			let dep = if bd >= 2.0 && CU.seam { min(CU_NOTCH, 0.7 * bd) } else { CU_NOTCH0 };
+			slots.push(CuSlot { e: be, t: clamp(bt, 1.0, bl - 1.0), d: dep });
+		}
+	}
+	sort(slots) { a, b => a.e < b.e || (a.e == b.e && a.t < b.t) };
+	var nl Pt[>..] = [];
+	var j = 0;
+	let hs = CU_SLOT / 2.0;
+	for i in n {
+		let p0 = CULP[i];
+		let p1 = CULP[(i + 1) % n];
+		nl.push(p0);
+		let u = pnorm(psub(p1, p0));
+		let w = pmul(out_normal(p0, p1, ar), -1.0);
+		var last = -1.0e9;
+		while j < slots.len && slots[j].e == i {
+			let s = slots[j];
+			j++;
+			if s.t - last >= CU_SLOT {
+				last = s.t;
+				let foot = padd(p0, pmul(u, s.t));
+				let dw = pmul(w, s.d);
+				let p2 = psub(foot, pmul(u, hs));
+				let p3 = padd(foot, pmul(u, hs));
+				nl.push(p2);
+				nl.push(padd(p2, dw));
+				nl.push(padd(p3, dw));
+				nl.push(p3);
+			}
+		}
+	}
+	CULP.clear();
+	CULP.append(nl);
+}
+fn cu_grain(g0 Pt, g1 Pt) {
+	pr_line(LY_ENGRAVE, g0, g1);
+	for e in 2 {
+		let tip = if e == 0 { g0 } else { g1 };
+		let other = if e == 0 { g1 } else { g0 };
+		let d = pnorm(psub(tip, other));
+		let nrm = pperp(d);
+		let base = psub(tip, pmul(d, 8.0));
+		let i = pr_new(PK_PATH, LY_ENGRAVE, 0.0);
+		pr_pt(i, padd(base, pmul(nrm, 4.0)));
+		pr_pt(i, tip);
+		pr_pt(i, psub(base, pmul(nrm, 4.0)));
+	}
+}
+fn cu_x10(a Pt[>..]&) { for i in a.len { a[i] = pmul(a[i], 10.0); } }
+fn cu_prepare(k int) {
+	cu_fold(k);
+	CULP.clear();
+	CUSP.clear();
+	cu_loop(k, CU.seam, CULP);
+	if CU.seam { cu_loop(k, false, CUSP); }
+	cu_marks(k);
+	cu_x10(CULP);
+	cu_x10(CUSP);
+	cu_x10(CUNQ);
+	cu_x10(CUHQ);
+	cu_slots();
+}
+fn cu_label(i int, tile const byte[:]) {
+	let it = CUI[i];
+	var s byte[>..] = [];
+	s.append(PIECES[it.piece].name);
+	if it.copies > 1 { format(s, " ", it.copy + 1, "/", it.copies); }
+	if tile.len > 0 { format(s, " ", tile); }
+	let cp = CUR[it.cut];
+	let x0, y0, x1, y1 = cu_bbox(CUP[cp.first..cp.first + cp.n]);
+	var h = it.lh;
+	if 2.0 * s.len * CU_TW * h > 0.9 * (x1 - x0) { h = 0.9 * (x1 - x0) / (2.0 * s.len * CU_TW); }
+	h = min(h, 0.8 * (y1 - y0));
+	let tw = 2.0 * s.len * CU_TW * h;
+	pr_text(LY_ENGRAVE, Pt { x: clamp(it.lx - tw / 2.0, x0, x1 - tw), y: clamp(it.ly + 0.35 * h, y0 + h, y1) }, h, 0.0, s);
+}
+fn cu_base(k int) int {
+	cu_prepare(k);
+	let x0, y0, x1, y1 = cu_bbox(CULP);
+	let sh = Pt { x: x0, y: y0 };
+	let first = CUR.len;
+	let c = pr_new(PK_LOOP, LY_CUT, 0.0);
+	for i in CULP.len { pr_pt(c, psub(CULP[i], sh)); }
+	var cnt = 1;
+	for i in CUHQ.len {
+		pr_circ(LY_CUT, psub(CUHQ[i], sh), CUHR[i]);
+		cnt++;
+	}
+	if CU.seam {
+		let s = pr_new(PK_LOOP, LY_SCORE, 0.0);
+		for i in CUSP.len { pr_pt(s, psub(CUSP[i], sh)); }
+		cnt++;
+	}
+	let pg0 = PIECES[k].g0;
+	let pg1 = PIECES[k].g1;
+	let grain = pdist(pg0, pg1) > 1.0;
+	let g0 = psub(pmul(pg0, 10.0), sh);
+	let g1 = psub(pmul(pg1, 10.0), sh);
+	if grain {
+		cu_grain(g0, g1);
+		cnt += 3;
+	}
+	let w = x1 - x0;
+	let h = y1 - y0;
+	var lh = clamp(min(w, h) * 0.09, 7.0, 20.0);
+	let ll = PIECES[k].name.len + (if PIECES[k].cut > 1 { 4 } else { 0 });
+	let nlen = ll * 2.0 * CU_TW;
+	if nlen * lh > 0.7 * w { lh = max(4.0, 0.7 * w / nlen); }
+	let n2 = if CU.seam { CUSP.len } else { CULP.len };
+	var ax = 0.0;
+	var ay = 0.0;
+	for i in n2 {
+		let p = if CU.seam { CUSP[i] } else { CULP[i] };
+		ax += p.x;
+		ay += p.y;
+	}
+	let dn = max(n2, 1) as real;
+	var lx = ax / dn - sh.x;
+	var ly = ay / dn - sh.y;
+	let hw = ll * CU_TW * lh;
+	let gmx = (g0.x + g1.x) / 2.0;
+	let gmy = (g0.y + g1.y) / 2.0;
+	if grain && abs(g0.y - g1.y) >= abs(g0.x - g1.x) && abs(lx - gmx) < hw + lh {
+		fn pp(i int) Pt { psub(if CU.seam { CUSP[i] } else { CULP[i] }, sh) }
+		var xl = 0.0;
+		var xr = w;
+		var fl = false;
+		var fr = false;
+		for i in n2 {
+			let a = pp(i);
+			let b = pp((i + 1) % n2);
+			if (a.y > ly) != (b.y > ly) {
+				let x = a.x + (b.x - a.x) * (ly - a.y) / (b.y - a.y);
+				if x < gmx {
+					if !fl || x > xl { xl = x; fl = true; }
+				} else if !fr || x < xr { xr = x; fr = true; }
+			}
+		}
+		let rs = xr - gmx - lh;
+		let ls = gmx - xl - lh;
+		let right = rs >= ls;
+		let sp = max(rs, ls);
+		if 2.0 * hw > sp { lh = max(4.0, lh * sp / (2.0 * hw)); }
+		let hw2 = ll * CU_TW * lh;
+		lx = if right { gmx + hw2 + lh } else { gmx - hw2 - lh };
+	} else if grain && abs(g0.x - g1.x) > abs(g0.y - g1.y) && abs(ly - gmy) < lh {
+		ly = if gmy >= 1.5 * lh { gmy - lh } else { gmy + lh };
+	}
+	CUI.push(CuItem { piece: k, copy: 0, copies: 1, first: first, n: cnt, cut: c, w: w, h: h, area: abs(cu_sarea(CULP)), grain: grain, lx: lx, ly: ly, lh: lh, ox: 0.0, oy: 0.0, tr: 0, tc: 0, tiled: false, sheet: -1, rot: 0, px: 0.0, py: 0.0 });
+	CUI.len - 1
+}
+fn cu_clone(src int, mirror bool, copy int, copies int) int {
+	let s = CUI[src];
+	var it = s;
+	let first = CUR.len;
+	var cut = -1;
+	for j in s.n {
+		let pi = s.first + j;
+		let pr = CUR[pi];
+		if pr.kind != PK_TEXT {
+			let ni = pr_new(pr.kind, pr.layer, pr.r);
+			for q in pr.n {
+				var p = CUP[pr.first + q];
+				if mirror { p.x = s.w - p.x; }
+				pr_pt(ni, p);
+			}
+			if pi == s.cut { cut = ni; }
+		}
+	}
+	it.copy = copy;
+	it.copies = copies;
+	it.first = first;
+	it.cut = cut;
+	if mirror { it.lx = s.w - s.lx; }
+	CUI.push(it);
+	let idx = CUI.len - 1;
+	cu_label(idx, "");
+	CUI[idx].n = CUR.len - first;
+	idx
+}
+fn cu_cols(w real) int { (floor(w / CU_CW) as int) + 1 }
+fn cu_dims() real, real {
+	if CU.sheet == 12 { return max(CU.cw, 20.0), max(CU.ch, 20.0); }
+	return CU_PW[CU.sheet], CU_PH[CU.sheet];
+}
+fn cu_ov(uw real, uh real) real { min(CU_OVER, 0.25 * (if uh > 0.0 { min(uw, uh) } else { uw })) }
+fn cu_fits(i int, uw real, uh real) bool {
+	let it = CUI[i];
+	(it.w <= uw && (uh <= 0.0 || it.h <= uh)) || ((!CU.grain || !it.grain) && it.h <= uw && (uh <= 0.0 || it.w <= uh))
+}
+fn cu_cv(p Pt, side int) real { if side < 2 { p.x } else { p.y } }
+fn cu_clip_loop(first int, n int, x0 real, y0 real, x1 real, y1 real) {
+	CUC1.clear();
+	for i in n { CUC1.push(CUP[first + i]); }
+	let lim real[4] = [x0, x1, y0, y1];
+	for side in 4 {
+		CUC2.clear();
+		let m = CUC1.len;
+		let v = lim[side];
+		fn ins(c real) bool { if side % 2 == 0 { c >= v } else { c <= v } }
+		for i in m {
+			let cur = CUC1[i];
+			let nxt = CUC1[(i + 1) % m];
+			let a = cu_cv(cur, side);
+			let b = cu_cv(nxt, side);
+			let ni = ins(b);
+			if ins(a) != ni { CUC2.push(plerp(cur, nxt, (v - a) / (b - a))); }
+			if ni { CUC2.push(nxt); }
+		}
+		CUC1.clear();
+		CUC1.append(CUC2);
+	}
+}
+fn cu_clip_path(first int, n int, closed bool, layer int, x0 real, y0 real, x1 real, y1 real) {
+	let ne = if closed { n } else { n - 1 };
+	var cur = -1;
+	for i in ne {
+		let a = CUP[first + i];
+		let b = CUP[first + (i + 1) % n];
+		let dx = b.x - a.x;
+		let dy = b.y - a.y;
+		let p real[4] = [-dx, dx, -dy, dy];
+		let q real[4] = [a.x - x0, x1 - a.x, a.y - y0, y1 - a.y];
+		var t0 = 0.0;
+		var t1 = 1.0;
+		var ok = true;
+		for k in 4 {
+			if ok {
+				if p[k] == 0.0 {
+					if q[k] < 0.0 { ok = false; }
+				} else {
+					let r = q[k] / p[k];
+					if p[k] < 0.0 {
+						if r > t1 { ok = false; } else if r > t0 { t0 = r; }
+					} else {
+						if r < t0 { ok = false; } else if r < t1 { t1 = r; }
+					}
+				}
+			}
+		}
+		if ok {
+			let s = Pt { x: a.x + dx * t0 - x0, y: a.y + dy * t0 - y0 };
+			let e = Pt { x: a.x + dx * t1 - x0, y: a.y + dy * t1 - y0 };
+			if cur < 0 || pdist(CUP[CUR[cur].first + CUR[cur].n - 1], s) > 0.001 {
+				cur = pr_new(PK_PATH, layer, 0.0);
+				pr_pt(cur, s);
+			}
+			pr_pt(cur, e);
+		}
+	}
+}
+fn cu_tile_id(out byte[>..]&, r int, c int) {
+	out.push(('A' + r) as byte);
+	format(out, c + 1);
+}
+fn cu_cross(at Pt, text const byte[:]) {
+	pr_line(LY_SCORE, Pt { x: at.x - 3.5, y: at.y }, Pt { x: at.x + 3.5, y: at.y });
+	pr_line(LY_SCORE, Pt { x: at.x, y: at.y - 3.5 }, Pt { x: at.x, y: at.y + 3.5 });
+	pr_text(LY_SCORE, Pt { x: at.x + 4.0, y: at.y - 2.0 }, 3.5, 0.0, text);
+}
+fn cu_regs(src int, r int, c int, rows int, cols int, sx real, sy real, ov real, x0 real, y0 real, x1 real, y1 real) {
+	if !CU.layers { return; }
+	let cp = CUR[CUI[src].cut];
+	fn mark(p Pt, ra int, ca int, rb int, cb int) {
+		if cu_inside(CUP[cp.first..cp.first + cp.n], p) {
+			var s byte[>..] = [];
+			cu_tile_id(s, ra, ca);
+			s.push('/');
+			cu_tile_id(s, rb, cb);
+			cu_cross(Pt { x: p.x - x0, y: p.y - y0 }, s);
+		}
+	}
+	for q in 3 {
+		let f = 0.25 * (q + 1);
+		let fx = x0 + (x1 - x0) * f;
+		let fy = y0 + (y1 - y0) * f;
+		if c + 1 < cols { mark(Pt { x: (c + 1) * sx + ov / 2.0, y: fy }, r, c, r, c + 1); }
+		if c > 0 { mark(Pt { x: c * sx + ov / 2.0, y: fy }, r, c - 1, r, c); }
+		if r + 1 < rows { mark(Pt { x: fx, y: (r + 1) * sy + ov / 2.0 }, r, c, r + 1, c); }
+		if r > 0 { mark(Pt { x: fx, y: r * sy + ov / 2.0 }, r - 1, c, r, c); }
+	}
+}
+fn cu_tile(src int, r int, c int, rows int, cols int, uw real, uh real) bool {
+	let s = CUI[src];
+	let ov = cu_ov(uw, uh);
+	let sx = uw - ov;
+	let sy = if uh > 0.0 { uh - ov } else { 0.0 };
+	let x0 = c * sx;
+	let x1 = min(x0 + uw, s.w);
+	let y0 = if uh > 0.0 { r * sy } else { 0.0 };
+	let y1 = if uh > 0.0 { min(y0 + uh, s.h) } else { s.h };
+	let cp = CUR[s.cut];
+	cu_clip_loop(cp.first, cp.n, x0, y0, x1, y1);
+	let bx0, by0, bx1, by1 = cu_bbox(CUC1);
+	let area = abs(cu_sarea(CUC1));
+	if CUC1.len < 3 || area < 1.0 { return false; }
+	let first = CUR.len;
+	let sh = Pt { x: x0, y: y0 };
+	let cut = pr_new(PK_LOOP, LY_CUT, 0.0);
+	for i in CUC1.len { pr_pt(cut, psub(CUC1[i], sh)); }
+	for j in s.n {
+		let pi = s.first + j;
+		let pr = CUR[pi];
+		if pi != s.cut && pr.kind != PK_TEXT {
+			if pr.kind == PK_CIRC {
+				let ce = CUP[pr.first];
+				if pr.layer == LY_CUT && ce.x - pr.r >= x0 && ce.x + pr.r <= x1 && ce.y - pr.r >= y0 && ce.y + pr.r <= y1 { pr_circ(LY_CUT, psub(ce, sh), pr.r); }
+			} else {
+				cu_clip_path(pr.first, pr.n, pr.kind == PK_LOOP, pr.layer, x0, y0, x1, y1);
+			}
+		}
+	}
+	cu_regs(src, r, c, rows, cols, sx, sy, ov, x0, y0, x1, y1);
+	var it = s;
+	it.first = first;
+	it.cut = cut;
+	it.tr = r;
+	it.tc = c;
+	it.tiled = true;
+	it.ox = x0;
+	it.oy = y0;
+	it.w = bx1 - bx0;
+	it.h = by1 - by0;
+	it.area = area;
+	it.sheet = -1;
+	it.lx = (bx0 + bx1) / 2.0 - x0;
+	it.ly = (by0 + by1) / 2.0 - y0;
+	var t byte[>..] = [];
+	cu_tile_id(t, r, c);
+	CUI.push(it);
+	let idx = CUI.len - 1;
+	cu_label(idx, t);
+	CUI[idx].n = CUR.len - first;
+	true
+}
+fn cu_split(src int, uw real, uh real) {
+	let it = CUI[src];
+	let ov = cu_ov(uw, uh);
+	let cols = min(40, max(1, ceil((it.w - ov) / (uw - ov)) as int));
+	let rows = if uh <= 0.0 { 1 } else { min(40, max(1, ceil((it.h - ov) / (uh - ov)) as int)) };
+	for r in rows { for c in cols { cu_tile(src, r, c, rows, cols, uw, uh); } }
+	CUI[src].sheet = -2;
+}
+fn cu_rotbox(i int, rot int) real, real, real, real {
+	let pr = CUR[CUI[i].cut];
+	if pr.n == 0 { return 0.0, 0.0, 0.0, 0.0; }
+	let p0 = cu_rot(CUP[pr.first], rot);
+	var x0 = p0.x;
+	var y0 = p0.y;
+	var x1 = x0;
+	var y1 = y0;
+	for j in pr.n {
+		let p = cu_rot(CUP[pr.first + j], rot);
+		x0 = min(x0, p.x);
+		y0 = min(y0, p.y);
+		x1 = max(x1, p.x);
+		y1 = max(y1, p.y);
+	}
+	return x0, y0, x1, y1;
+}
+fn cu_profile(i int, rot int) real, real {
+	let pr = CUR[CUI[i].cut];
+	let bx0, by0, bx1, by1 = cu_rotbox(i, rot);
+	let w = bx1 - bx0;
+	let h = by1 - by0;
+	CU_DG = ceil(CU.gap / CU_CW) as int;
+	let raw = (floor(w / CU_CW) as int) + 1;
+	let cnt = raw + 2 * CU_DG;
+	CURT.clear();
+	CURB.clear();
+	for j in cnt {
+		CURT.push(1.0e18);
+		CURB.push(-1.0e18);
+	}
+	let n = pr.n;
+	let org = Pt { x: bx0, y: by0 };
+	fn tp(k int) Pt { psub(cu_rot(CUP[pr.first + k % n], rot), org) }
+	for e in n {
+		let a = tp(e);
+		let b = tp(e + 1);
+		let lo = min(a.x, b.x);
+		let hi = max(a.x, b.x);
+		let j0 = max(0, floor(lo / CU_CW) as int);
+		let j1 = min(floor(hi / CU_CW) as int, raw - 1) + 1;
+		for jj in j0..j1 {
+			let xa = max(lo, jj * CU_CW);
+			let xb = min(hi, (jj + 1) * CU_CW);
+			let flat = hi - lo < 1.0e-9;
+			let ya = if flat { a.y } else { a.y + (b.y - a.y) * (xa - a.x) / (b.x - a.x) };
+			let yb = if flat { b.y } else { a.y + (b.y - a.y) * (xb - a.x) / (b.x - a.x) };
+			CURT[jj + CU_DG] = min(CURT[jj + CU_DG], min(ya, yb));
+			CURB[jj + CU_DG] = max(CURB[jj + CU_DG], max(ya, yb));
+		}
+	}
+	CUTOP.clear();
+	CUBOT.clear();
+	for j in cnt {
+		var t = 1.0e18;
+		var b = -1.0e18;
+		let k0 = max(0, j - CU_DG);
+		let k1 = min(cnt - 1, j + CU_DG) + 1;
+		for k in k0..k1 {
+			t = min(t, CURT[k]);
+			b = max(b, CURB[k]);
+		}
+		CUTOP.push(t);
+		CUBOT.push(b);
+	}
+	return w, h;
+}
+fn cu_find(i int, s int, rot int) bool, real, int, real {
+	let wr, hr = cu_profile(i, rot);
+	let sh = CUS[s];
+	let m = CU.margin;
+	let xi0 = ceil(m / CU_CW - 1.0e-9) as int;
+	let xi1 = floor((sh.w - m - wr) / CU_CW + 1.0e-9) as int;
+	if wr > sh.w - 2.0 * m + 0.001 || (sh.h > 0.0 && hr > sh.h - 2.0 * m + 0.001) || xi0 > xi1 { return false, 0.0, 0, 0.0; }
+	let nc = cu_cols(sh.w);
+	var found = false;
+	var bb = 0.0;
+	var bx = 0;
+	var by = 0.0;
+	let xe = xi1 + 1;
+	for xi in xi0..xe {
+		var y = m;
+		for j in CUTOP.len {
+			if CUTOP[j] < 1.0e17 {
+				let c = xi + j - CU_DG;
+				if c >= 0 && c <= nc - 1 { y = max(y, CUK[sh.sky + c] - CUTOP[j]); }
+			}
+		}
+		let bot = y + hr;
+		if !(sh.h > 0.0 && bot > sh.h - m + 0.001) {
+			if !found || bot < bb - 0.0001 || (bot < bb + 0.0001 && y < by) {
+				found = true;
+				bb = bot;
+				bx = xi;
+				by = y;
+			}
+		}
+	}
+	return found, bb, bx, by;
+}
+fn cu_try(i int, s int) bool, int, int, real {
+	let nrot = if CU.grain && CUI[i].grain { 2 } else { 4 };
+	let stp = 4 / nrot;
+	var found = false;
+	var bb = 0.0;
+	var br = 0;
+	var bx = 0;
+	var by = 0.0;
+	for q in nrot {
+		let rot = q * stp;
+		let ok, bot, xi, y = cu_find(i, s, rot);
+		if ok && (!found || bot < bb - 0.0001) {
+			found = true;
+			bb = bot;
+			br = rot;
+			bx = xi;
+			by = y;
+		}
+	}
+	return found, br, bx, by;
+}
+fn cu_place(i int, s int, rot int, xi int, y real) {
+	let wr, hr = cu_profile(i, rot);
+	let bx0, by0, bx1, by1 = cu_rotbox(i, rot);
+	let sh = CUS[s];
+	let nc = cu_cols(sh.w);
+	for j in CUBOT.len {
+		if CUBOT[j] > -1.0e17 {
+			let c = xi + j - CU_DG;
+			if c >= 0 && c <= nc - 1 { CUK[sh.sky + c] = max(CUK[sh.sky + c], y + CUBOT[j] + CU.gap); }
+		}
+	}
+	CUS[s].used = max(CUS[s].used, y + hr);
+	CUS[s].count += 1;
+	let it = CUI[i];
+	let dx = xi * CU_CW;
+	for j in it.n {
+		let pr = CUR[it.first + j];
+		let ni = pr_new(pr.kind, pr.layer, pr.r);
+		CUR[ni].sheet = s;
+		CUR[ni].tx = pr.tx;
+		CUR[ni].tn = pr.tn;
+		CUR[ni].rot = pr.rot + 90.0 * rot;
+		for q in pr.n {
+			let p = cu_rot(CUP[pr.first + q], rot);
+			pr_pt(ni, Pt { x: p.x - bx0 + dx, y: p.y - by0 + y });
+		}
+	}
+	CUI[i].sheet = s;
+	CUI[i].rot = rot;
+	CUI[i].px = dx;
+	CUI[i].py = y;
+}
+fn cu_sheet_new() int {
+	let w, h = cu_dims();
+	CUS.push(CuSheet { w: w, h: h, roll: h <= 0.0, used: 0.0, sky: CUK.len, count: 0 });
+	for c in cu_cols(w) { CUK.push(CU.margin); }
+	CUS.len - 1
+}
+fn cu_nest() {
+	CUS.clear();
+	CUK.clear();
+	var order int[>..] = [];
+	for i in CUI.len { if CUI[i].sheet == -1 { order.push(i); } }
+	sort(order) { a, b => CUI[a].w * CUI[a].h > CUI[b].w * CUI[b].h || (CUI[a].w * CUI[a].h == CUI[b].w * CUI[b].h && a < b) };
+	for i in order {
+		var done = false;
+		for s in CUS.len {
+			if !done {
+				let ok, rot, xi, y = cu_try(i, s);
+				if ok {
+					cu_place(i, s, rot, xi, y);
+					done = true;
+				}
+			}
+		}
+		if !done {
+			let s = cu_sheet_new();
+			let ok, rot, xi, y = cu_try(i, s);
+			if ok { cu_place(i, s, rot, xi, y); } else { CUI[i].sheet = -3; }
+		}
+	}
+	for s in CUS.len { if CUS[s].roll { CUS[s].h = ceil(CUS[s].used + CU.margin); } }
+}
+fn cu_build() {
+	CUP.clear();
+	CUB.clear();
+	CUR.clear();
+	CUI.clear();
+	CUS.clear();
+	CUK.clear();
+	if PIECES.len == 0 { return; }
+	let w, h = cu_dims();
+	let uw = max(w - 2.0 * CU.margin - CU_CW, 20.0);
+	let uh = if h > 0.0 { max(h - 2.0 * CU.margin, 20.0) } else { 0.0 };
+	for k in PIECES.len {
+		let b = cu_base(k);
+		let fold = PIECES[k].fold;
+		let cn = max(PIECES[k].cut, 1);
+		for c in cn {
+			let cl = cu_clone(b, !fold && c % 2 == 1, c, cn);
+			if !cu_fits(cl, uw, uh) { cu_split(cl, uw, uh); }
+		}
+		CUI[b].sheet = -2;
+	}
+	cu_nest();
+}
+fn cu_on(layer int) bool { layer == LY_CUT || CU.layers }
+let CU_LN const byte[:][3] = ["CUT", "SCORE", "ENGRAVE"];
+let CU_SC const byte[:][3] = ["#ff0000", "#0000ff", "#000000"];
+fn cu_ap(out byte[>..]&, a const byte[:], v real) {
+	out.append(a);
+	cu_num(out, v, 2);
+}
+fn cu_body_svg(out byte[>..]&, s int) {
+	for l in 3 {
+		if cu_on(l) {
+			format(out, "<g id=\"", CU_LN[l], "\" inkscape:groupmode=\"layer\" inkscape:label=\"", CU_LN[l], "\" fill=\"none\" stroke=\"", CU_SC[l], "\" stroke-width=\"0.1\">\n");
+			for i in CUR.len {
+				let pr = CUR[i];
+				if pr.layer == l && pr.sheet == s {
+					let c = CUP[pr.first];
+					if pr.kind == PK_CIRC {
+						cu_ap(out, "<circle cx=\"", c.x);
+						cu_ap(out, "\" cy=\"", c.y);
+						cu_ap(out, "\" r=\"", pr.r);
+						out.append("\"/>\n");
+					} else if pr.kind == PK_TEXT {
+						cu_ap(out, "<text x=\"", c.x);
+						cu_ap(out, "\" y=\"", c.y);
+						cu_ap(out, "\" font-size=\"", pr.r);
+						out.append("\" font-family=\"sans-serif\"");
+						if pr.rot != 0.0 {
+							cu_ap(out, " transform=\"rotate(", pr.rot);
+							cu_ap(out, " ", c.x);
+							cu_ap(out, " ", c.y);
+							out.append(")\"");
+						}
+						out.append(">");
+						esc(out, CUB[pr.tx..pr.tx + pr.tn]);
+						out.append("</text>\n");
+					} else {
+						out.append("<path d=\"");
+						for q in pr.n {
+							let p = CUP[pr.first + q];
+							cu_ap(out, if q == 0 { "M " } else { " L " }, p.x);
+							cu_ap(out, " ", p.y);
+						}
+						out.append(if pr.kind == PK_LOOP { " Z\"/>\n" } else { "\"/>\n" });
+					}
+				}
+			}
+			out.append("</g>\n");
+		}
+	}
+}
+fn cu_svg(out byte[>..]&, s int) {
+	let sh = CUS[s];
+	out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\" width=\"");
+	cu_num(out, sh.w, 2);
+	cu_ap(out, "mm\" height=\"", sh.h);
+	cu_ap(out, "mm\" viewBox=\"0 0 ", sh.w);
+	cu_ap(out, " ", sh.h);
+	out.append("\">\n");
+	cu_body_svg(out, s);
+	out.append("</svg>\n");
+}
+fn cu_preview(out byte[>..]&, s int) {
+	let sh = CUS[s];
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\" class=\"cutsvg\" role=\"img\" aria-label=\"Nesting preview\" viewBox=\"0 0 ");
+	cu_num(out, sh.w, 2);
+	cu_ap(out, " ", sh.h);
+	cu_ap(out, "\"><rect class=\"cutsheet\" x=\"0\" y=\"0\" width=\"", sh.w);
+	cu_ap(out, "\" height=\"", sh.h);
+	out.append("\"/>");
+	cu_body_svg(out, s);
+	out.append("</svg>");
+}
+fn dxs(out byte[>..]&, code int, s const byte[:]) { format(out, code, "\n"); out.append(s); out.push('\n'); }
+fn dxi(out byte[>..]&, code int, v int) { format(out, code, "\n", v, "\n"); }
+fn dxr(out byte[>..]&, code int, v real) { format(out, code, "\n"); cu_num(out, v, 3); out.push('\n'); }
+let CU_DC int[3] = [1, 5, 7];
+fn cu_dxf(out byte[>..]&, s int) {
+	let sh = CUS[s];
+	var nl = 0;
+	for l in 3 { if cu_on(l) { nl++; } }
+	dxs(out, 0, "SECTION"); dxs(out, 2, "HEADER");
+	dxs(out, 9, "$ACADVER"); dxs(out, 1, "AC1009");
+	dxs(out, 9, "$INSUNITS"); dxi(out, 70, 4);
+	dxs(out, 9, "$MEASUREMENT"); dxi(out, 70, 1);
+	dxs(out, 9, "$EXTMIN"); dxr(out, 10, 0.0); dxr(out, 20, 0.0);
+	dxs(out, 9, "$EXTMAX"); dxr(out, 10, sh.w); dxr(out, 20, sh.h);
+	dxs(out, 0, "ENDSEC");
+	dxs(out, 0, "SECTION"); dxs(out, 2, "TABLES");
+	dxs(out, 0, "TABLE"); dxs(out, 2, "LTYPE"); dxi(out, 70, 1);
+	dxs(out, 0, "LTYPE"); dxs(out, 2, "CONTINUOUS"); dxi(out, 70, 0); dxs(out, 3, "Solid line"); dxi(out, 72, 65); dxi(out, 73, 0); dxr(out, 40, 0.0);
+	dxs(out, 0, "ENDTAB");
+	dxs(out, 0, "TABLE"); dxs(out, 2, "LAYER"); dxi(out, 70, nl);
+	for l in 3 {
+		if cu_on(l) { dxs(out, 0, "LAYER"); dxs(out, 2, CU_LN[l]); dxi(out, 70, 0); dxi(out, 62, CU_DC[l]); dxs(out, 6, "CONTINUOUS"); }
+	}
+	dxs(out, 0, "ENDTAB");
+	dxs(out, 0, "TABLE"); dxs(out, 2, "STYLE"); dxi(out, 70, 1);
+	dxs(out, 0, "STYLE"); dxs(out, 2, "STANDARD"); dxi(out, 70, 0); dxr(out, 40, 0.0); dxr(out, 41, 1.0); dxr(out, 50, 0.0); dxi(out, 71, 0); dxr(out, 42, 2.5); dxs(out, 3, "txt");
+	dxs(out, 0, "ENDTAB");
+	dxs(out, 0, "ENDSEC");
+	dxs(out, 0, "SECTION"); dxs(out, 2, "BLOCKS"); dxs(out, 0, "ENDSEC");
+	dxs(out, 0, "SECTION"); dxs(out, 2, "ENTITIES");
+	for l in 3 {
+		if cu_on(l) {
+			let nm = CU_LN[l];
+			for i in CUR.len {
+				let pr = CUR[i];
+				if pr.layer == l && pr.sheet == s {
+					let c = CUP[pr.first];
+					if pr.kind == PK_CIRC {
+						dxs(out, 0, "CIRCLE"); dxs(out, 8, nm); dxr(out, 10, c.x); dxr(out, 20, sh.h - c.y); dxr(out, 30, 0.0); dxr(out, 40, pr.r);
+					} else if pr.kind == PK_TEXT {
+						var t byte[>..] = [];
+						for q in pr.tn {
+							let b = CUB[pr.tx + q];
+							t.push(if b >= 32 && b <= 126 { b } else { '?' });
+						}
+						let a = -pr.rot;
+						dxs(out, 0, "TEXT"); dxs(out, 8, nm); dxr(out, 10, c.x); dxr(out, 20, sh.h - c.y); dxr(out, 30, 0.0); dxr(out, 40, pr.r); dxs(out, 1, t); dxr(out, 50, a - 360.0 * floor(a / 360.0)); dxs(out, 7, "STANDARD");
+					} else if pr.kind == PK_PATH && pr.n == 2 {
+						let d = CUP[pr.first + 1];
+						dxs(out, 0, "LINE"); dxs(out, 8, nm); dxr(out, 10, c.x); dxr(out, 20, sh.h - c.y); dxr(out, 30, 0.0); dxr(out, 11, d.x); dxr(out, 21, sh.h - d.y); dxr(out, 31, 0.0);
+					} else {
+						dxs(out, 0, "POLYLINE"); dxs(out, 8, nm); dxi(out, 66, 1); dxr(out, 10, 0.0); dxr(out, 20, 0.0); dxr(out, 30, 0.0); dxi(out, 70, if pr.kind == PK_LOOP { 1 } else { 0 });
+						for q in pr.n {
+							let p = CUP[pr.first + q];
+							dxs(out, 0, "VERTEX"); dxs(out, 8, nm); dxr(out, 10, p.x); dxr(out, 20, sh.h - p.y); dxr(out, 30, 0.0);
+						}
+						dxs(out, 0, "SEQEND"); dxs(out, 8, nm);
+					}
+				}
+			}
+		}
+	}
+	dxs(out, 0, "ENDSEC");
+	dxs(out, 0, "EOF");
+}
+fn cu_hp(out byte[>..]&, p Pt, h real) { format(out, round(p.x * 40.0) as int, ",", round((h - p.y) * 40.0) as int); }
+fn cu_plt(out byte[>..]&, s int) {
+	let sh = CUS[s];
+	out.append("IN;\n");
+	for l in 3 {
+		if cu_on(l) {
+			format(out, "SP", l + 1, ";\n");
+			for i in CUR.len {
+				let pr = CUR[i];
+				if pr.layer == l && pr.sheet == s {
+					if pr.kind == PK_TEXT {
+						let th = pr.r / 10.0;
+						let a = -pr.rot * PI / 180.0;
+						out.append("PU");
+						cu_hp(out, CUP[pr.first], sh.h);
+						out.append(";SI");
+						cu_num(out, 0.7 * th, 3);
+						out.push(',');
+						cu_num(out, th, 3);
+						out.append(";DI");
+						cu_num(out, cos(a), 3);
+						out.push(',');
+						cu_num(out, sin(a), 3);
+						out.append(";LB");
+						out.append(CUB[pr.tx..pr.tx + pr.tn]);
+						out.push(3);
+						out.append(";\n");
+					} else {
+						let circ = pr.kind == PK_CIRC;
+						let nn = if circ { 25 } else if pr.n == 0 { 0 } else if pr.kind == PK_LOOP { pr.n + 1 } else { pr.n };
+						if nn > 0 {
+							fn pt(k int) Pt {
+								if circ {
+									let c = CUP[pr.first];
+									let a = TAU * k / 24.0;
+									Pt { x: c.x + pr.r * cos(a), y: c.y + pr.r * sin(a) }
+								} else { CUP[pr.first + k % pr.n] }
+							}
+							out.append("PU");
+							cu_hp(out, pt(0), sh.h);
+							out.append(";PD");
+							for k in 1..nn {
+								if k > 1 { out.push(','); }
+								cu_hp(out, pt(k), sh.h);
+							}
+							out.append(";\n");
+						}
+					}
+				}
+			}
+		}
+	}
+	out.append("PU;\n");
+	out.append("SP0;\n");
+}
+fn cu_ext() const byte[:] { if CU.fmt == 0 { "dxf" } else if CU.fmt == 1 { "svg" } else { "plt" } }
+fn cu_mime() const byte[:] { if CU.fmt == 0 { "image/vnd.dxf" } else if CU.fmt == 1 { "image/svg+xml" } else { "application/vnd.hp-HPGL" } }
+fn cu_file(out byte[>..]&, s int) {
+	if CU.fmt == 0 { cu_dxf(out, s); } else if CU.fmt == 1 { cu_svg(out, s); } else { cu_plt(out, s); }
+}
+fn cu_filename(out byte[>..]&, stem const byte[:], s int) {
+	out.append(stem);
+	format(out, "-cut-sheet-", s + 1, "-of-", CUS.len, ".", cu_ext());
+}
+fn cu_info(out byte[>..]&) {
+	if CUS.len == 0 { out.append("Nothing to cut"); return; }
+	var ar = 0.0;
+	var placed = 0;
+	var tiles = 0;
+	var lost = 0;
+	var tot = 0.0;
+	for it in CUI {
+		if it.sheet >= 0 { ar += it.area; placed++; if it.tiled { tiles++; } }
+		if it.sheet == -3 { lost++; }
+	}
+	for sh in CUS { tot += sh.w * sh.h; }
+	let pct = if tot > 0.0 { round(ar / tot * 100.0) as int } else { 0 };
+	format(out, CUS.len, if CUS.len == 1 { " sheet" } else { " sheets" }, " · ", pct, "% of the material used · ", placed, " parts");
+	if tiles > 0 { format(out, ", ", tiles, " of them tiles of oversize pieces"); }
+	if lost > 0 { format(out, " · ", lost, " did not fit"); }
+}
