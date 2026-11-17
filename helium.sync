@@ -18,6 +18,8 @@ build cad/he/nl_sky.amni cad/he/nl_sky.wasm --web
 build cad/he/nl_tool.amni cad/he/nl_tool.wasm --web
 build cad/he/report.amni cad/he/report.wasm --web
 build cad/he/sculpt.amni cad/he/sculpt.wasm --web
+# the site's offline lists record each app's files and sizes (from the git index), so rebuilt modules need new ones
+step git add -u cad && "$HC" tools/build-offline.amni
 # cfd_lbm, flow_lbm
 test cd cad && node tests/cfd_test.mjs
 # fea_grid, lob
