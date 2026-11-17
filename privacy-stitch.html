@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
 <title>Amni-Stitch Privacy Policy | Amniscient, LLC</title>
-<meta name="description" content="Privacy policy for Amni-Stitch. Measurements and traced photos stay in your browser. Outfit-sample requests go to our own generator with your IP address, every picture is checked for nudity, and blocked pictures and refused requests are kept for review, bans and legally required reports.">
+<meta name="description" content="Privacy policy for Amni-Stitch. Measurements and traced photos stay in your browser. Outfit samples need an Amni account and are drawn and checked for nudity on our own computer, and blocked pictures and refused requests are kept for review, bans and legally required reports.">
 <link rel="canonical" href="https://amni-scient.com/privacy-stitch">
 <link rel="stylesheet" href="css/style.css?v=b268">
 <script>
@@ -101,42 +101,42 @@
 <tr><td>Body measurements, size choices, garment options</td><td>Local storage on your device</td></tr>
 <tr><td>Photos you upload to trace or to turn into a fabric tile, and the tiles made from them</td><td>Processed in the page; never uploaded</td></tr>
 <tr><td>Generated sample pictures, patterns, print pages, sewing guides, cut files</td><td>Kept in the page until you save or close it</td></tr>
-<tr><td>A random device identifier</td><td>Local storage; sent only with sample requests (Section 2)</td></tr>
-<tr><td>Your subscription key, if you have one</td><td>Local storage; sent with sample requests and to the license service</td></tr>
+<tr><td>A random device identifier</td><td>Local storage; used only by subscriptions, which are not open yet</td></tr>
+<tr><td>Your subscription key, if you have one</td><td>Local storage; sent only to the license service</td></tr>
 </tbody>
 </table>
 <h2>2. Outfit-sample requests</h2>
-<p><strong>Not open yet.</strong> The outfit-sample generator and subscriptions are not open yet. Until they open, Amni-Stitch sends no sample requests and takes no payments. Sections 2, 3 and 5 describe how they will work, and we will update this policy when they open.</p>
-<p>When you press <em>Generate sample</em>, your browser sends a request to our generation service, which runs on Cloudflare. The request contains:</p>
+<p>Outfit samples need an Amni account (Section 6). When you press <em>Generate sample</em>, your browser sends a request to the account service at account.amni-scient.com, which runs on a computer that Amniscient operates, reached through Cloudflare. The request contains:</p>
 <ul>
 <li>the description you typed, the garment type, the picture style and the fabric type;</li>
-<li>the device identifier and, if you have one, your subscription key;</li>
-<li>your <strong>IP address</strong>, the country Cloudflare derives from it, and your browser&rsquo;s user-agent string.</li>
+<li>your sign-in cookie, which tells us which Amni account is asking;</li>
+<li>your <strong>IP address</strong> and your browser&rsquo;s user-agent string, as with any web request.</li>
 </ul>
-<p>The picture is drawn on a computer that Amniscient operates, using our own image generator (Amni-Gen with the MOSS-Image model). No third-party AI provider receives your request.</p>
-<p>We count requests per day to enforce the free limit of 3 samples a day. Free requests are counted against a salted hash of your IP address; subscribers are counted against their subscription key.</p>
+<p>The picture is drawn on that same computer by our own image generator (Amni-Gen with the MOSS-Image model) and checked there by our own vision model. No third-party AI provider receives your description or the picture.</p>
+<p>Each account gets 3 free samples a day. We count them against your account. Your IP address is used only in the service&rsquo;s memory to limit how many samples one network can ask for in a day; it is never written to disk.</p>
 <h2>3. Safety checks, blocked pictures and bans</h2>
 <p>Amni-Stitch generates pictures of clothing only. To keep it that way:</p>
 <ul>
-<li><strong>Requests</strong> asking for nudity or sexual content are refused before generation. We log the refused text with the IP address, time and reason.</li>
-<li><strong>Every generated picture</strong> is checked by automated nudity detection on our computer before it is shown. A flagged picture is never shown to you. We keep it, together with the IP address, time, country, user agent, device identifier and request text, for review by a person.</li>
-<li><strong>Strikes and bans.</strong> Each blocked picture counts as a strike against the IP address. Three strikes in 30 days ban that address from the generator. A request that sexualises a minor is refused and the address is banned at once. You can ask for a review at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>.</li>
-<li><strong>Reporting.</strong> If a request or picture appears to involve the sexual exploitation of a child, we report it, including the IP address and request details, to the National Center for Missing &amp; Exploited Children (NCMEC), as U.S. law requires (18 U.S.C. &sect; 2258A). NCMEC may share reports with law enforcement. We also respond to valid legal process.</li>
+<li><strong>Requests</strong> asking for nudity or sexual content are refused before generation. We keep the refused text with your account, the time and the reason.</li>
+<li><strong>Every generated picture</strong> is checked by a vision model on our computer before it is shown. A picture that shows a person is not shown and is deleted. A picture with nudity is never shown; we keep it, with your account, the time and the request text, for review by a person.</li>
+<li><strong>Strikes and bans.</strong> Each refused request and each picture blocked for nudity counts as a strike against your account. Three strikes in 30 days turn outfit samples off for the account. A request that sexualizes a minor is refused and samples are turned off at once. A ban covers every sign-in linked to the account and stays even if you delete the account. You can ask for a review at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>.</li>
+<li><strong>Reporting.</strong> If a request or picture appears to involve the sexual exploitation of a child, we report it, including the account details and request text, to the National Center for Missing &amp; Exploited Children (NCMEC), as U.S. law requires (18 U.S.C. &sect; 2258A). NCMEC may share reports with law enforcement. We also respond to valid legal process.</li>
 </ul>
 <h2>4. Retention</h2>
 <table class="spec-table">
 <thead><tr><th>Record</th><th>Kept for</th></tr></thead>
 <tbody>
-<tr><td>Sample request (text, IP address, country, user agent, device identifier)</td><td>2 days</td></tr>
+<tr><td>Sample request (description, options, account)</td><td>Deleted 20 minutes after the sample finishes</td></tr>
 <tr><td>Generated picture on our service</td><td>Deleted 20 minutes after it is ready; we keep no copy of pictures that were shown</td></tr>
-<tr><td>Daily usage counters</td><td>3 days</td></tr>
-<tr><td>Refused requests (text, IP address)</td><td>90 days</td></tr>
-<tr><td>Strikes (IP address, time, detection scores)</td><td>365 days</td></tr>
-<tr><td>Bans (IP address, reason)</td><td>Until lifted</td></tr>
+<tr><td>Daily sample count (account, date, count)</td><td>Replaced each day; deleted with the account</td></tr>
+<tr><td>Refused requests (text, account, time, reason)</td><td>90 days</td></tr>
+<tr><td>Strikes (account, time)</td><td>365 days</td></tr>
+<tr><td>Bans (a fingerprint of each sign-in, account, reason)</td><td>Until lifted</td></tr>
 <tr><td>Blocked pictures and their request details</td><td>Reviewed, then deleted within 90 days, unless reported under Section 3, in which case they are preserved for at least one year as the law requires</td></tr>
 </tbody>
 </table>
 <h2>5. Subscriptions and payments</h2>
+<p><strong>Not open yet.</strong> Subscriptions are not open yet, and Amni-Stitch takes no payments. This section describes how they will work; we will update this policy when they open.</p>
 <p>Subscriptions are sold through Stripe Checkout. Stripe processes your payment details under its own privacy policy; we do not receive your card number. After payment we receive your name, email address and subscription status from Stripe and issue a signed subscription key. The key contains your name, email address and the end of your paid period in readable form, so treat it like a password and do not post it publicly. Your browser sends the key to our license service to renew it and to open the Stripe billing portal.</p>
 <h2>6. Amni account (optional)</h2>
 <p>You can sign in to an Amni account to keep your measurements across devices. The account service runs at <a href="https://account.amni-scient.com/">account.amni-scient.com</a> on our own server, reached through Cloudflare.</p>

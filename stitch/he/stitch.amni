@@ -322,35 +322,32 @@ fn ident(out byte[>..]&) {
 	if KEY.len > 0 { out.append(",\"key\":"); json_str(out, KEY[..]); }
 }
 fn ask_quota() {
-	if GATE.len == 0 { return; }
-	var b byte[>..] = []; b.push('{'); ident(b); b.push('}');
-	post(GATE[..], "/quota", b[..], T_QUOTA, 15000.0);
+	if GATE.len == 0 || ACCT_WHO.len == 0 { return; }
+	acct_request(GATE[..], "/quota", "POST", "{}", T_QUOTA);
 }
 fn status(s const byte[:]) { set_text("gen-status", s); }
 fn generate() {
 	if BUSY { return; }
 	if GATE.len == 0 { status("The generator is not configured on this site yet."); return; }
+	if ACCT_WHO.len == 0 { status("Sign in to your Amni account first. Samples are free, 3 a day."); return; }
 	var p byte[>..] = []; get_value("prompt", p);
 	let pt = trim(p[..]);
 	if pt.len < 3 { status("Describe the garment first, for example: a linen summer dress with puff sleeves."); return; }
 	var style byte[>..] = []; get_value("style", style);
-	var color byte[>..] = []; get_value("color", color);
 	var b byte[>..] = [];
 	b.append("{\"prompt\":"); json_str(b, pt[..min(pt.len, 400)]);
 	b.append(",\"garment\":"); json_str(b, G_NAMES[O.garment]);
 	b.append(",\"fabric\":"); json_str(b, if O.knit { "knit" } else { "woven" });
 	b.append(",\"style\":"); json_str(b, style[..]);
-	b.append(",\"color\":"); json_str(b, color[..]);
-	b.push(','); ident(b); b.push('}');
+	b.push('}');
 	BUSY = true;
 	web::prop_bool(el("gen"), "disabled", true);
 	status("Sending your request…");
-	post(GATE[..], "/generate", b[..], T_GEN_DONE, 30000.0);
+	acct_request(GATE[..], "/generate", "POST", b[..], T_GEN_DONE);
 }
 fn gen_done(ok bool) { BUSY = false; web::prop_bool(el("gen"), "disabled", false); if ok { web::cls(el("shot"), "fresh", true); } }
 fn poll() {
-	var u byte[>..] = []; u.append(GATE[..]); u.append("/job?id="); u.append(JOB[..]);
-	let _id = web::request(u[..], "GET", "", "", T_POLL_DONE, 20000.0);
+	acct_request(GATE[..], str("/job?id=", JOB[..])[..], "GET", "", T_POLL_DONE);
 }
 fn show_shot(src const byte[:]) {
 	SHOT.clear(); SHOT.append(src);
@@ -472,13 +469,14 @@ export fn he_event(tag i32, kind i32) {
 					ask_quota();
 				} else {
 					var m byte[>..] = [];
-					if state[..] == "running" { m.append("Generating on the Amni-Gen PC (about 20 seconds)…"); }
+					if state[..] == "running" { m.append("Generating on the Amni-Gen PC (about 30 seconds)…"); }
+					else if jget(r[..], "detail", v) { m.append(v[..]); }
 					else if jget(r[..], "position", v) { m.append("Waiting in line, position "); m.append(v[..]); m.append("…"); }
 					else { m.append("Waiting…"); }
 					status(m[..]);
-					if POLLS < 150 { let _t = web::timer(2000.0, T_POLL); } else { gen_done(false); status("This is taking too long. Try again later."); }
+					if POLLS < 340 { let _t = web::timer(2000.0, T_POLL); } else { gen_done(false); status("This is taking too long. Try again later."); }
 				}
-			} else if POLLS < 150 { let _t = web::timer(3000.0, T_POLL); }
+			} else if POLLS < 340 { let _t = web::timer(3000.0, T_POLL); }
 			else { gen_done(false); status("Lost track of the request. Try again."); }
 		},
 		24 => {
@@ -489,10 +487,11 @@ export fn he_event(tag i32, kind i32) {
 				if jget(r[..], "remaining", v) { q.append(v[..]); q.append(" left today"); }
 				var on byte[>..] = [];
 				if jget(r[..], "online", on) && on[..] == "false" { q.append(" · the Amni-Gen PC is offline right now"); }
+				else if jget(r[..], "busy", on) && on[..] == "true" { q.append(" · the GPU is busy, so samples may wait"); }
 				set_text("quota", q[..]);
 			} else if st == 402 && jget(r[..], "error", v) {
 				set_text("sub-status", v[..]); set_text("quota", "");
-			}
+			} else if st == 403 && jget(r[..], "error", v) { status(v[..]); set_text("quota", ""); web::prop_bool(el("gen"), "disabled", true); }
 		},
 		30 => {
 			if SHOT.len == 0 { set_text("trace-msg", str(PIC[..], " a picture first.")[..]); return; }
@@ -576,7 +575,7 @@ export fn he_event(tag i32, kind i32) {
 		84 => { TEX_CM = clamp(from_disp(get_num("fab-size", disp(TEX_CM))), 3.0, 120.0); if TAB == 1 { view_draw(); } },
 		60 => { if TAB == 1 { view_draw(); } },
 		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); show_scale(); rebuild(); },
-		120 => { var r byte[>..] = []; let st = take(r); var nm byte[>..] = []; if st == 200 && acct_me(r[..], nm) { ACCT_WHO.clear(); ACCT_WHO.append(nm[..]); set_text("acct-who", str("Signed in as ", nm[..])[..]); web::cls(el("acct-in"), "hidden", true); web::cls(el("acct-save"), "hidden", false); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); } else if st == 200 { set_text("acct-who", "Keep your measurements in an Amni account."); var here byte[>..] = []; web::location("href", here); var u byte[>..] = []; acct_signin_url(ACCT[..], here[..], u); web::attr(el("acct-in"), "href", u[..]); web::cls(el("acct-in"), "hidden", false); } else { set_text("acct-who", "Your Amni account is unreachable right now. Measurements stay saved in this browser."); } },
+		120 => { var r byte[>..] = []; let st = take(r); var nm byte[>..] = []; if st == 200 && acct_me(r[..], nm) { ACCT_WHO.clear(); ACCT_WHO.append(nm[..]); set_text("acct-who", str("Signed in as ", nm[..])[..]); web::cls(el("acct-in"), "hidden", true); web::cls(el("acct-save"), "hidden", false); web::cls(el("gen-in"), "hidden", true); web::cls(el("gen"), "hidden", false); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); ask_quota(); } else if st == 200 { set_text("acct-who", "Keep your measurements in an Amni account."); var here byte[>..] = []; web::location("href", here); var u byte[>..] = []; acct_signin_url(ACCT[..], here[..], u); web::attr(el("acct-in"), "href", u[..]); web::cls(el("acct-in"), "hidden", false); web::attr(el("gen-in"), "href", u[..]); web::cls(el("gen-in"), "hidden", false); web::cls(el("gen"), "hidden", true); set_text("quota", "Free with an Amni account: 3 samples a day."); } else { set_text("acct-who", "Your Amni account is unreachable right now. Measurements stay saved in this browser."); } },
 		121 => { var r byte[>..] = []; let _st = take(r); let n = acct_profiles(r[..], ACCT_IDS, ACCT_NAMES, ACCT_STATES); let s = el("acct-list"); web::clear(s); let o = web::create("option"); web::attr(o, "value", "-1"); web::text(o, "Load saved measurements…"); web::append(s, o); for nm, i in ACCT_NAMES { let p = web::create("option"); web::attr(p, "value", str(i)[..]); web::text(p, nm[..]); if ACCT_IDS[i][..] == ACCT_CUR[..] { web::attr(p, "selected", ""); } web::append(s, p); } web::cls(s, "hidden", n == 0); },
 		122 => { var s byte[>..] = []; state_text(s); var nm byte[>..] = []; for id, i in ACCT_IDS { if id[..] == ACCT_CUR[..] { nm.append(ACCT_NAMES[i][..]); } } if nm.len == 0 { nm.append("My measurements"); if ACCT_NAMES.len > 0 { format(nm, " ", ACCT_NAMES.len + 1); } } var b byte[>..] = []; acct_profile_body(ACCT_CUR[..], nm[..], s[..], b); set_text("acct-who", "Saving…"); acct_request(ACCT[..], "/v1/profiles", "POST", b[..], T_ACCT_SAVED); },
 		123 => { var r byte[>..] = []; let st = take(r); if st == 200 { let _ok = acct_saved_id(r[..], ACCT_CUR); set_text("acct-who", str("Signed in as ", ACCT_WHO[..], " · saved")[..]); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); } else { var e byte[>..] = []; if !jget(r[..], "error", e) { e.append("your account did not answer"); } set_text("acct-who", str("Not saved: ", e[..])[..]); } },
