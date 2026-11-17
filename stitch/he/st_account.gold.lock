@@ -1,0 +1,133 @@
+=== -447397c574fc6c06
+import web;
+import json;
+=== 105abca0c4fe63df
+let ACCT_DEFAULT = "https://account.amni-scient.com";
+fn acct_base(out byte[>..]&) {
+	out.clear();
+	var tmp byte[>..] = [];
+	let h = web::el("app");
+	web::get_attr(h, "data-acct", tmp);
+	if tmp.len > 0 { out.append(tmp); } else { out.append(ACCT_DEFAULT); }
+}
+=== 1e4056309e0bfc32
+fn acct_headers(out byte[>..]&) {
+	out.clear();
+	out.append("{\"$credentials\":\"include\",\"x-amni-account\":\"1\",\"content-type\":\"application/json\"}");
+}
+=== 5e125b25b69c6273
+fn acct_request(base const byte[:], path const byte[:], method const byte[:], body const byte[:], tag i32) {
+	var url byte[>..] = [];
+	url.append(base);
+	url.append(path);
+	var hd byte[>..] = [];
+	acct_headers(hd);
+	var b byte[>..] = [];
+	if method != "GET" && method != "DELETE" { b.append(body); }
+	web::request(url, method, hd, b, tag, 15000);
+}
+=== -612e6041810beb1e
+fn acct_me(text const byte[:], name byte[>..]&) bool {
+	name.clear();
+	var d json::Doc;
+	let root, err = json::parse(text, d);
+	guard err.len == 0 else { return false; }
+	let signed = json::member(d, root, "signed_in");
+	guard signed >= 0 else { return false; }
+	guard json::as_bool(d, signed) else { return false; }
+	let n = json::member(d, root, "name");
+	if n >= 0 { name.append(json::as_string(d, n)); }
+	return true;
+}
+=== -5dc87caf11f5e0f
+fn acct_signin_url(base const byte[:], here const byte[:], out byte[>..]&) {
+	out.clear();
+	out.append(base);
+	out.append("/?next=");
+	let hex = "0123456789ABCDEF";
+	for c in here {
+		let keep = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '.' || c == '_' || c == '~';
+		if keep {
+			out.push(c);
+		} else {
+			out.push('%');
+			out.push(hex[(c as int) >> 4]);
+			out.push(hex[(c as int) & 15]);
+		}
+	}
+}
+=== 22fa60128a6711c4
+fn acct_profiles(text const byte[:], ids byte[>..][>..]&, names byte[>..][>..]&, states byte[>..][>..]&) int {
+	ids.clear();
+	names.clear();
+	states.clear();
+	var r json::Doc;
+	let rr, rerr = json::parse("{\"o\":{},\"a\":[],\"s\":\"\"}", r);
+	let k_obj = json::kind(r, json::member(r, rr, "o"));
+	let k_arr = json::kind(r, json::member(r, rr, "a"));
+	let k_str = json::kind(r, json::member(r, rr, "s"));
+	var d json::Doc;
+	let root, err = json::parse(text, d);
+	guard err.len == 0 else { return 0; }
+	guard json::kind(d, root) == k_obj else { return 0; }
+	let arr = json::member(d, root, "profiles");
+	guard arr >= 0 else { return 0; }
+	guard json::kind(d, arr) == k_arr else { return 0; }
+	var count = 0;
+	for i in json::count(d, arr) {
+		let p = json::element(d, arr, i);
+		guard p >= 0 else { continue; }
+		guard json::kind(d, p) == k_obj else { continue; }
+		let data = json::member(d, p, "data");
+		guard data >= 0 else { continue; }
+		guard json::kind(d, data) == k_obj else { continue; }
+		let st = json::member(d, data, "state");
+		guard st >= 0 else { continue; }
+		guard json::kind(d, st) == k_str else { continue; }
+		let idn = json::member(d, p, "id");
+		let nn = json::member(d, p, "name");
+		let a .= ids.push([]);
+		if idn >= 0 { a.append(json::as_string(d, idn)); }
+		let b .= names.push([]);
+		if nn >= 0 { b.append(json::as_string(d, nn)); }
+		let c .= states.push([]);
+		c.append(json::as_string(d, st));
+		count++;
+	}
+	return count;
+}
+=== 70c5ded83a6af8d3
+fn acct_profile_body(id const byte[:], name const byte[:], state const byte[:], out byte[>..]&) {
+	out.clear();
+	out.append("{");
+	if id.len > 0 {
+		out.append("\"id\":");
+		json::format_string(out, id);
+		out.append(",");
+	}
+	out.append("\"app\":\"stitch\",\"name\":");
+	json::format_string(out, name);
+	out.append(",\"data\":{\"v\":2,\"state\":");
+	json::format_string(out, state);
+	out.append("}}");
+}
+=== -17dbcd845803d8e7
+fn acct_saved_id(text const byte[:], out byte[>..]&) bool {
+	out.clear();
+	var r json::Doc;
+	let rr, rerr = json::parse("{\"o\":{},\"s\":\"\"}", r);
+	let k_obj = json::kind(r, json::member(r, rr, "o"));
+	let k_str = json::kind(r, json::member(r, rr, "s"));
+	var d json::Doc;
+	let root, err = json::parse(text, d);
+	guard err.len == 0 else { return false; }
+	guard json::kind(d, root) == k_obj else { return false; }
+	let p = json::member(d, root, "profile");
+	guard p >= 0 else { return false; }
+	guard json::kind(d, p) == k_obj else { return false; }
+	let idn = json::member(d, p, "id");
+	guard idn >= 0 else { return false; }
+	guard json::kind(d, idn) == k_str else { return false; }
+	out.append(json::as_string(d, idn));
+	return true;
+}

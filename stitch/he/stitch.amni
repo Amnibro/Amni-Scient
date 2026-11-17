@@ -12,6 +12,7 @@ import st_svg;
 import st_guide;
 import st_trace;
 import st_view3d;
+import st_account;
 
 let T_MEAS: i32 = 100;
 let T_PRESET: i32 = 2; let T_UNITS: i32 = 3; let T_GARMENT: i32 = 4; let T_OPT: i32 = 5; let T_COLOR: i32 = 6;
@@ -22,9 +23,16 @@ let T_TRACE: i32 = 30; let T_PIXELS: i32 = 31; let T_UPLOAD: i32 = 32; let T_PIC
 let T_BUY: i32 = 40; let T_BUY_DONE: i32 = 41; let T_CLAIM: i32 = 42; let T_CLAIM_DONE: i32 = 43; let T_KEY_SAVE: i32 = 44; let T_BILLING: i32 = 45; let T_BILLING_DONE: i32 = 46; let T_KEY_FORGET: i32 = 47; let T_RENEW_DONE: i32 = 48;
 let T_PDOWN: i32 = 50; let T_PMOVE: i32 = 51; let T_PUP: i32 = 52; let T_FRONT: i32 = 53; let T_SIDE: i32 = 54; let T_BACK: i32 = 55;
 let T_RESIZE: i32 = 60; let T_SCALE: i32 = 61; let T_IGNORE: i32 = 99;
+let T_ACCT_ME: i32 = 120; let T_ACCT_LIST: i32 = 121; let T_ACCT_SAVE: i32 = 122; let T_ACCT_SAVED: i32 = 123; let T_ACCT_PICK: i32 = 124;
 
 var GATE byte[>..];
 var PRO byte[>..];
+var ACCT byte[>..];
+var ACCT_IDS byte[>..][>..];
+var ACCT_NAMES byte[>..][>..];
+var ACCT_STATES byte[>..][>..];
+var ACCT_CUR byte[>..];
+var ACCT_WHO byte[>..];
 var HOST: i32 = 0;
 var TAB = 0;
 var PRESET = 2;
@@ -60,19 +68,18 @@ fn set_value(id const byte[:], s const byte[:]) { web::prop(el(id), "value", s);
 fn set_num(id const byte[:], v real) { var s byte[>..] = []; fmt1(s, v); set_value(id, s[..]); }
 
 // ---- persistence ----------------------------------------------------------------------------
-fn save_state() {
-	var s byte[>..] = [];
+fn save_state() { var s byte[>..] = []; state_text(s); web::store_set("amni.stitch.v2", s[..]); }
+fn state_text(s byte[>..]&) {
+	s.clear();
 	for i in NM { s.append(M_KEYS[i]); s.push('='); format_flt(s, BASE[i], 1); s.push(';'); }
 	format(s, "o_preset=", PRESET, ";o_units=", UNITS, ";o_scale="); format_flt(s, SCALE_PCT, 1);
 	format(s, ";o_garment=", O.garment, ";o_fit=", O.fit, ";o_knit=", if O.knit { 1 } else { 0 }, ";o_sleeve=", O.sleeve, ";o_neck=", O.neck, ";o_skirt=", O.skirt, ";o_leg=", O.leg, ";o_sex=", O.sex, ";o_length=");
 	format_flt(s, O.length, 1); s.append(";o_sa="); format_flt(s, O.sa, 2); s.append(";o_hem="); format_flt(s, O.hem, 2); s.push(';');
-	web::store_set("amni.stitch.v2", s[..]);
 }
-fn load_state() bool {
-	var s byte[>..] = [];
-	if !web::store_get("amni.stitch.v2", s) { return false; }
+fn load_state() bool { var s byte[>..] = []; if !web::store_get("amni.stitch.v2", s) { return false; } apply_state(s[..]) }
+fn apply_state(s const byte[:]) bool {
 	var seen bool[18];
-	each_split(s[..], ';') {
+	each_split(s, ';') {
 		let eq = find_index(it) { c => c == '=' };
 		if eq >= 0 {
 			let k = it[..eq]; let vs = it[eq + 1..];
@@ -174,6 +181,7 @@ fn title() {
 	if O.garment != G_TRACED { TITLE.append(" ("); TITLE.append(FIT_NAMES[O.fit]); TITLE.append(if O.knit { ", knit" } else { ", woven" }); TITLE.push(')'); }
 	TITLE.append(" for chest "); len_str(TITLE, M[M_CHEST]); TITLE.append(", waist "); len_str(TITLE, M[M_WAIST]); TITLE.append(", hip "); len_str(TITLE, M[M_HIP]);
 }
+fn show_scale() { var s byte[>..] = []; if SCALE_PCT > 0.0 { s.push('+'); } fmt1(s, SCALE_PCT); s.push('%'); set_text("scale-val", s[..]); }
 fn rebuild() {
 	apply_scale();
 	draft_all();
@@ -523,7 +531,12 @@ export fn he_event(tag i32, kind i32) {
 		52 => { DRAG = false; },
 		53 => { V_YAW = 0.0; view_draw(); }, 54 => { V_YAW = PI * 0.5; view_draw(); }, 55 => { V_YAW = PI; view_draw(); },
 		60 => { if TAB == 1 { view_draw(); } },
-		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); var s byte[>..] = []; if SCALE_PCT > 0.0 { s.push('+'); } fmt1(s, SCALE_PCT); s.push('%'); set_text("scale-val", s[..]); rebuild(); },
+		61 => { SCALE_PCT = clamp(get_num("scale", 0.0), -20.0, 20.0); show_scale(); rebuild(); },
+		120 => { var r byte[>..] = []; let st = take(r); var nm byte[>..] = []; if st == 200 && acct_me(r[..], nm) { ACCT_WHO.clear(); ACCT_WHO.append(nm[..]); set_text("acct-who", str("Signed in as ", nm[..])[..]); web::cls(el("acct-in"), "hidden", true); web::cls(el("acct-save"), "hidden", false); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); } else if st == 200 { set_text("acct-who", "Keep your measurements in an Amni account."); var here byte[>..] = []; web::location("href", here); var u byte[>..] = []; acct_signin_url(ACCT[..], here[..], u); web::attr(el("acct-in"), "href", u[..]); web::cls(el("acct-in"), "hidden", false); } else { set_text("acct-who", "Your Amni account is unreachable right now. Measurements stay saved in this browser."); } },
+		121 => { var r byte[>..] = []; let _st = take(r); let n = acct_profiles(r[..], ACCT_IDS, ACCT_NAMES, ACCT_STATES); let s = el("acct-list"); web::clear(s); let o = web::create("option"); web::attr(o, "value", "-1"); web::text(o, "Load saved measurements…"); web::append(s, o); for nm, i in ACCT_NAMES { let p = web::create("option"); web::attr(p, "value", str(i)[..]); web::text(p, nm[..]); if ACCT_IDS[i][..] == ACCT_CUR[..] { web::attr(p, "selected", ""); } web::append(s, p); } web::cls(s, "hidden", n == 0); },
+		122 => { var s byte[>..] = []; state_text(s); var nm byte[>..] = []; for id, i in ACCT_IDS { if id[..] == ACCT_CUR[..] { nm.append(ACCT_NAMES[i][..]); } } if nm.len == 0 { nm.append("My measurements"); if ACCT_NAMES.len > 0 { format(nm, " ", ACCT_NAMES.len + 1); } } var b byte[>..] = []; acct_profile_body(ACCT_CUR[..], nm[..], s[..], b); set_text("acct-who", "Saving…"); acct_request(ACCT[..], "/v1/profiles", "POST", b[..], T_ACCT_SAVED); },
+		123 => { var r byte[>..] = []; let st = take(r); if st == 200 { let _ok = acct_saved_id(r[..], ACCT_CUR); set_text("acct-who", str("Signed in as ", ACCT_WHO[..], " · saved")[..]); acct_request(ACCT[..], "/v1/profiles?app=stitch", "GET", "", T_ACCT_LIST); } else { var e byte[>..] = []; if !jget(r[..], "error", e) { e.append("your account did not answer"); } set_text("acct-who", str("Not saved: ", e[..])[..]); } },
+		124 => { let i = get_int("acct-list"); if i >= 0 && i < ACCT_STATES.len && apply_state(ACCT_STATES[i][..]) { ACCT_CUR.clear(); ACCT_CUR.append(ACCT_IDS[i][..]); set_value("preset", str(PRESET)[..]); set_value("units", str(UNITS)[..]); set_value("scale", str(SCALE_PCT as int)[..]); show_scale(); fill_measure_inputs(); write_options(); set_text("preset-note", "Loaded from your Amni account"); rebuild(); } },
 		_ => {},
 	}
 }
@@ -533,6 +546,8 @@ fn main() {
 	let app = el("app");
 	let _g = web::get_attr(app, "data-gate", GATE);
 	let _p = web::get_attr(app, "data-pro", PRO);
+	acct_base(ACCT);
+	while ACCT.len > 0 && ACCT[ACCT.len - 1] == '/' { let _c = ACCT.pop(); }
 	while GATE.len > 0 && GATE[GATE.len - 1] == '/' { let _c = GATE.pop(); }
 	while PRO.len > 0 && PRO[PRO.len - 1] == '/' { let _c = PRO.pop(); }
 	HOST = web::js_global("stitchHost");
@@ -549,7 +564,7 @@ fn main() {
 	if !load_state() { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } }
 	set_value("preset", str(PRESET)[..]);
 	set_value("units", str(UNITS)[..]);
-	set_value("scale", str(SCALE_PCT as int)[..]);
+	set_value("scale", str(SCALE_PCT as int)[..]); show_scale();
 	build_measure_form();
 	fill_measure_inputs();
 	write_options();
@@ -567,6 +582,8 @@ fn main() {
 	listen_id("buy", "click", T_BUY); listen_id("key-save", "click", T_KEY_SAVE); listen_id("billing", "click", T_BILLING); listen_id("key-forget", "click", T_KEY_FORGET);
 	listen_id("c3d", "pointerdown", T_PDOWN); listen_id("c3d", "pointermove", T_PMOVE); listen_id("c3d", "pointerup", T_PUP); listen_id("c3d", "pointercancel", T_PUP);
 	listen_id("v-front", "click", T_FRONT); listen_id("v-side", "click", T_SIDE); listen_id("v-back", "click", T_BACK);
+	listen_id("acct-save", "click", T_ACCT_SAVE); listen_id("acct-list", "change", T_ACCT_PICK);
+	acct_request(ACCT[..], "/v1/me", "GET", "", T_ACCT_ME);
 	web::listen(web::WINDOW, "resize", T_RESIZE, 0);
 	var c byte[>..] = []; get_value("color", c); view_color(c[..]);
 	// back from Stripe checkout: #pro-session=cs_...

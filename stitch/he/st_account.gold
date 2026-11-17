@@ -1,0 +1,20 @@
+use std
+into st_account.amni
+
+Imports: web, json. This module talks to the Amni account service (account.amni-scient.com) for Amni-Stitch: who is signed in, and the measurement profiles saved under the app "stitch". Every request carries the browser's cookies for that site, asked for with the extra header "$credentials" set to "include" in the headers JSON, which the page's runtime turns into fetch's credentials option.
+
+`ACCT_DEFAULT` is "https://account.amni-scient.com". `acct_base(out)` clears out and fills it with the "data-acct" attribute of the element with id "app" when it is set and not empty, else `ACCT_DEFAULT`.
+
+`acct_headers(out)` clears out and writes the headers JSON {"$credentials":"include","x-amni-account":"1","content-type":"application/json"}.
+
+`acct_request(base, path, method, body, tag)` sends a web request to base followed by path with that method, `acct_headers`, the body (empty for GET and DELETE), the event tag and a 15000 ms timeout, using web's `request`.
+
+`acct_me(text, name)` reads the JSON text from /v1/me. It returns true when the object's "signed_in" is true, filling name with its "name" member (empty when missing); otherwise false with name empty.
+
+`acct_signin_url(base, here, out)` clears out and writes base followed by "/?next=" and here percent-encoded (ASCII letters, digits, minus, period, underscore and tilde stay; every other byte becomes percent and two uppercase hex digits).
+
+`acct_profiles(text, ids, names, states) int` reads the JSON text from /v1/profiles: {"profiles": [...]}. It clears the three text lists and, for each profile object whose "data" member is an object with a string "state", appends its "id", "name" and that state, and returns how many were added; 0 when the text isn't such an object.
+
+`acct_profile_body(id, name, state, out)` clears out and writes the JSON object {"app":"stitch","name":name,"data":{"v":2,"state":state}} with an "id" member added first when id is not empty, every string written with json's `format_string`.
+
+`acct_saved_id(text, out) bool` clears out and fills it with the "id" of the "profile" object in the JSON text answered by a save, true when there is one.

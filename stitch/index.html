@@ -23,6 +23,7 @@
 html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 a{color:var(--acc)}
 .hidden{display:none!important}
+.acct{display:flex;flex-wrap:wrap;align-items:center;gap:7px 10px;margin:0 0 10px;padding:0 0 10px;border-bottom:1px solid var(--line)}.acct .note{margin:0;flex:1 1 140px}.acct select{flex:1 1 160px;width:auto}.acct a{font-size:14px;font-weight:600;color:var(--acc)}
 header.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card)}
 header.top .brand{font-weight:750;font-size:18px;letter-spacing:.01em;text-decoration:none;color:var(--fg)}
 header.top .brand span{color:var(--acc)}
@@ -110,12 +111,13 @@ button.pri:disabled{opacity:.55;cursor:progress}
   <nav><a href="#how" id="how-link">How to measure</a><a href="/privacy-stitch.html">Privacy</a><a href="/">Amni-Scient</a></nav>
 </header>
 <noscript><p class="loading">Amni-Stitch needs JavaScript and WebAssembly.</p></noscript>
-<main id="app" class="app" data-gate="https://amni-stitch.amnibro7.workers.dev" data-pro="https://amni-stitch-pro.amnibro7.workers.dev">
+<main id="app" class="app" data-acct="https://account.amni-scient.com" data-gate="https://amni-stitch.amnibro7.workers.dev" data-pro="https://amni-stitch-pro.amnibro7.workers.dev">
   <div class="side">
     <section class="card" aria-labelledby="h-meas">
       <h2 id="h-meas"><b>1</b>Your measurements</h2>
+      <div class="acct" id="acct"><span id="acct-who" class="note">Checking your Amni account…</span><a id="acct-in" class="hidden" href="https://account.amni-scient.com/">Sign in to save measurements</a><select id="acct-list" class="hidden" aria-label="Saved measurements"></select><button id="acct-save" class="hidden">Save to account</button></div>
       <label class="f">Start from <select id="preset" aria-label="Size preset"></select></label>
-      <label class="f">Units <select id="units"><option value="0">Centimetres</option><option value="1">Inches</option></select></label>
+      <label class="f">Units <select id="units"><option value="0">Centimeters</option><option value="1">Inches</option></select></label>
       <label class="f">Grade <span><input type="range" id="scale" min="-20" max="20" step="1" value="0" aria-describedby="scale-val"> <small id="scale-val" class="note">0%</small></span></label>
       <p class="note" id="preset-note"></p>
       <div id="meas" role="group" aria-label="Body measurements"></div>

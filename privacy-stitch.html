@@ -22,7 +22,7 @@
 <a href="/amni-learn.html">LEARN</a>
 <a href="/blog/">BLOG</a>
 <a href="/research.html">RESEARCH</a>
-<div class="nav-dd nav-dd--active">
+<div class="nav-dd">
 <button class="nav-dd-trigger">PROJECTS</button>
 <div class="nav-dd-menu nav-dd-menu--groups">
 <div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
@@ -93,7 +93,7 @@
 <p>This Privacy Policy describes how <strong>Amniscient, LLC</strong> (&ldquo;Amniscient&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) handles information in connection with <strong>Amni-Stitch</strong> at <a href="/stitch/">amni-scient.com/stitch</a>, which drafts sewing patterns from body measurements and can generate sample pictures of garments.</p>
 <p>Related documents: <a href="privacy.html">product privacy index</a> &middot; <a href="/stitch/">Amni-Stitch</a> &middot; <a href="terms.html">Terms</a>.</p>
 <h2>1. What stays in your browser</h2>
-<p>The pattern engine runs entirely in your browser. The following is stored only in your browser&rsquo;s local storage, and we never receive it:</p>
+<p>The pattern engine runs entirely in your browser. The following is stored only in your browser&rsquo;s local storage, and we never receive it unless you choose to save measurements to an Amni account (Section 6):</p>
 <table class="spec-table">
 <thead><tr><th>Category</th><th>Handling</th></tr></thead>
 <tbody>
@@ -136,17 +136,32 @@
 </table>
 <h2>5. Subscriptions and payments</h2>
 <p>Subscriptions are sold through Stripe Checkout. Stripe processes your payment details under its own privacy policy; we do not receive your card number. After payment we receive your name, email address and subscription status from Stripe and issue a signed subscription key. The key contains your name, email address and the end of your paid period in readable form, so treat it like a password and do not post it publicly. Your browser sends the key to our licence service to renew it and to open the Stripe billing portal.</p>
-<h2>6. Service providers</h2>
-<p>Cloudflare hosts the page and runs the generation and licence services, and processes the request data in Sections 2 to 5 on our behalf. Stripe handles payments as described in Section 5.</p>
-<h2>7. Your choices and rights</h2>
+<h2>6. Amni account (optional)</h2>
+<p>You can sign in to an Amni account to keep your measurements across devices. The account service runs at <a href="https://account.amni-scient.com/">account.amni-scient.com</a> on our own server, reached through Cloudflare.</p>
+<table class="spec-table">
+<thead><tr><th>What</th><th>What we receive and keep</th></tr></thead>
+<tbody>
+<tr><td>Signing in with Haven</td><td>Your Haven username, display name and a link to your profile picture. We never see your Haven password.</td></tr>
+<tr><td>Signing in with Google</td><td>Google&rsquo;s identifier for your account, your email address, your name and a link to your profile picture. We never see your Google password.</td></tr>
+<tr><td>Saved measurements</td><td>Only when you press <em>Save to account</em>: your measurements, size choices and garment options, the name of the saved set and the date. Nothing else from the page is copied.</td></tr>
+<tr><td>Access keys you create</td><td>A fingerprint of each key (not the key itself), its first few characters, its label, and when it was created and last used.</td></tr>
+<tr><td>Sign-in cookie</td><td>One cookie on account.amni-scient.com that keeps you signed in for 30 days. There are no advertising or analytics cookies.</td></tr>
+</tbody>
+</table>
+<p>The <a href="privacy-account.html">Amni account privacy policy</a> covers the account in full. Each time Amni-Stitch opens, your browser asks the account service whether you are signed in. That request carries the sign-in cookie if you have one and, like any web request, your IP address and browser user-agent. The account service does not write requests to a log. If you have an Amni-CAD Pro licence under the same email address, your account page lists it. Our staff can see each account&rsquo;s name, email address, sign-in methods, creation date and how many saved sets and keys it has on an admin page, to handle support and licences; they can turn an account off, sign it out or delete it.</p>
+<p>On the account page you can download everything the account holds, sign out on every device, revoke keys, delete saved measurements or delete the account. Account records are kept until you delete them or the account.</p>
+<h2>7. Service providers</h2>
+<p>Cloudflare hosts the page and runs the generation and licence services, and processes the request data in Sections 2 to 5 on our behalf. Requests to the Amni account service (Section 6) pass through Cloudflare to our own server. Stripe handles payments as described in Section 5.</p>
+<h2>8. Your choices and rights</h2>
 <ul>
 <li>You can use every pattern, tracing, printing and 3D feature without sending us anything: just don&rsquo;t press <em>Generate sample</em>.</li>
 <li>Clearing your browser&rsquo;s site data deletes everything in Section 1.</li>
+<li>Signing in is optional. Without an account, nothing in Section 6 is stored, apart from the signed-in check described there, which is not logged.</li>
 <li>You can ask for access to, or deletion of, the records in Section 4 at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>. We may keep safety records, and records we must preserve by law, for the periods above.</li>
 </ul>
-<h2>8. Children</h2>
+<h2>9. Children</h2>
 <p>Amni-Stitch can draft patterns for children&rsquo;s clothes, but the service is not directed to children under 13, and we do not knowingly collect personal information from them.</p>
-<h2>9. Changes</h2>
+<h2>10. Changes</h2>
 <p>We will post changes here and update the date above.</p>
 </div>
 <footer>
