@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-video">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-video">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=631fc0c67d">
+<link rel="stylesheet" href="/api-library/lib.css?v=b9642ce67d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=631fc0c67d'; start({wasm: '/api-library/search.wasm?v=631fc0c67d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b9642ce67d'; start({wasm: '/api-library/search.wasm?v=b9642ce67d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/video</h1>
 <p class="lib-lede">Encodes video frames into an H.264-style bitstream using NAL units, quantization, and entropy coding tables.</p>
-<p class="lib-meta"><code>import gfx.video;</code> &middot; <code>video::</code> &middot; 68 functions, 0 types, 63 constants &middot; <a href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni">Source</a></p>
+<p class="lib-meta"><code>import gfx.video;</code> &middot; <code>video::</code> &middot; 68 functions, 0 types, 63 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#stream-setup">Stream Setup <span class="n">13</span></a></li>
 <li><a href="#frame-encoding">Frame Encoding <span class="n">6</span></a></li>
@@ -117,91 +117,91 @@
 <pre>error() const byte[:]</pre>
 <p>Returns the message describing the most recent failure from starting or adding frames.</p>
 <p class="note">Namespace video; imports os. A CPU-only H.264 video encoder and MP4 writer for exporting rendered animations: frames go in as RGBA8 pictures and come out as one .mp4 file that phones, browsers and players open. The stream is H.264 Constrained Baseline (profile 66 with constraint flags 0 and 1, CAVLC entropy coding, 8-bit 4:2:0), one slice per frame, every frame a reference frame, picture order typ</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L29">hc/lib/gfx/video.amni:29</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L29">hc/lib/gfx/video.amni:29</a>
 </article>
 <article class="sym" id="width">
 <h3><a href="#width">width</a> <i>constant</i></h3>
 <pre>var width int = 0</pre>
 <p>Width of the input picture in pixels, set by a successful start.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L71">hc/lib/gfx/video.amni:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L71">hc/lib/gfx/video.amni:71</a>
 </article>
 <article class="sym" id="height">
 <h3><a href="#height">height</a> <i>constant</i></h3>
 <pre>var height int = 0</pre>
 <p>Height of the input picture in pixels, set by a successful start.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L72">hc/lib/gfx/video.amni:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L72">hc/lib/gfx/video.amni:72</a>
 </article>
 <article class="sym" id="fps">
 <h3><a href="#fps">fps</a> <i>constant</i></h3>
 <pre>var fps int = 0</pre>
 <p>Frame rate in frames per second, set by a successful start.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L77">hc/lib/gfx/video.amni:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L77">hc/lib/gfx/video.amni:77</a>
 </article>
 <article class="sym" id="qp">
 <h3><a href="#qp">qp</a> <i>constant</i></h3>
 <pre>var qp int = 0</pre>
 <p>Quantizer value used for encoding, clamped between 10 and 51.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L78">hc/lib/gfx/video.amni:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L78">hc/lib/gfx/video.amni:78</a>
 </article>
 <article class="sym" id="gop">
 <h3><a href="#gop">gop</a> <i>constant</i></h3>
 <pre>var gop int = 1</pre>
 <p>Group of pictures length, the number of frames between keyframes.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L79">hc/lib/gfx/video.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L79">hc/lib/gfx/video.amni:79</a>
 </article>
 <article class="sym" id="frames">
 <h3><a href="#frames">frames</a> <i>constant</i></h3>
 <pre>var frames int = 0</pre>
 <p>Count of frames encoded so far.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L80">hc/lib/gfx/video.amni:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L80">hc/lib/gfx/video.amni:80</a>
 </article>
 <article class="sym" id="sps">
 <h3><a href="#sps">sps</a> <i>constant</i></h3>
 <pre>var sps byte[&gt;..]</pre>
 <p>Buffer holding the encoded sequence parameter set NAL unit.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L84">hc/lib/gfx/video.amni:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L84">hc/lib/gfx/video.amni:84</a>
 </article>
 <article class="sym" id="pps">
 <h3><a href="#pps">pps</a> <i>constant</i></h3>
 <pre>var pps byte[&gt;..]</pre>
 <p>Buffer holding the encoded picture parameter set NAL unit.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L85">hc/lib/gfx/video.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L85">hc/lib/gfx/video.amni:85</a>
 </article>
 <article class="sym" id="start">
 <h3><a href="#start">start</a> <i>function</i></h3>
 <pre>start(w int, h int, rate int, q int, g int) bool</pre>
 <p>Begins a new encoding session with size, frame rate, quantizer and keyframe interval; returns false on invalid parameters.</p>
 <p class="note">`start(w, h, rate, q, g)` resets everything and gives false when w or h is not positive, odd, above 8192, when the macroblock count is above 36864, when rate is not 1 to 240, or when g is below 1. qp is q limited to 10 to 51. The level is the first entry of the level list whose macroblocks per second (macroblocks per frame times rate) and macroblocks per frame both fit, else 52. SPS into bs: profi</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L114">hc/lib/gfx/video.amni:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L114">hc/lib/gfx/video.amni:114</a>
 </article>
 <article class="sym" id="finish">
 <h3><a href="#finish">finish</a> <i>function</i></h3>
 <pre>finish(out byte[&gt;..]&amp;) bool</pre>
 <p>Assembles the encoded frames into an MP4 file in the buffer, returning false with an error if none exist or it would reach 4 GiB.</p>
 <p class="note">MP4 (`finish(out)`): false when no frames were added. Boxes are a 32-bit big-endian size, a 4-letter type and the contents; full boxes add a version byte and 3 flag bytes. ftyp: &quot;isom&quot;, 512, then &quot;isom&quot;, &quot;iso2&quot;, &quot;avc1&quot;, &quot;mp41&quot;. moov: mvhd version 0 (two zero times, timescale 1000, duration frames times 1000 divided by fps, rate 0x00010000, volume 0x0100, 10 zero bytes, the unity matrix 0x00010000,</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L1128">hc/lib/gfx/video.amni:1128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L1128">hc/lib/gfx/video.amni:1128</a>
 </article>
 <article class="sym" id="save">
 <h3><a href="#save">save</a> <i>function</i></h3>
 <pre>save(path const byte[:]) bool</pre>
 <p>Writes the encoded MP4 file to the given path, returning false with an error if encoding or writing fails.</p>
 <p class="note">`save(path)` runs `finish` and writes the file with `os::write_file`, giving false with a reason when either fails. `frame_bytes(i)` gives frame i's coded size. `psnr_y()` gives the luma PSNR in dB (a real) of the last added frame's reconstruction against its source over the picture area, or 99 when they are equal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L1162">hc/lib/gfx/video.amni:1162</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L1162">hc/lib/gfx/video.amni:1162</a>
 </article>
 <article class="sym" id="frame_bytes">
 <h3><a href="#frame_bytes">frame_bytes</a> <i>function</i></h3>
 <pre>frame_bytes(i int) int</pre>
 <p>Returns the encoded size in bytes of the frame at the given index, or 0 if out of range.</p>
 <p class="note">`save(path)` runs `finish` and writes the file with `os::write_file`, giving false with a reason when either fails. `frame_bytes(i)` gives frame i's coded size. `psnr_y()` gives the luma PSNR in dB (a real) of the last added frame's reconstruction against its source over the picture area, or 99 when they are equal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L1168">hc/lib/gfx/video.amni:1168</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L1168">hc/lib/gfx/video.amni:1168</a>
 </article>
 <h2 id="frame-encoding">Frame Encoding <span class="n">6</span></h2>
 <article class="sym" id="samples">
@@ -209,42 +209,42 @@
 <pre>var samples byte[&gt;..]</pre>
 <p>Buffer holding all encoded frame NAL units concatenated in order.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L86">hc/lib/gfx/video.amni:86</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L86">hc/lib/gfx/video.amni:86</a>
 </article>
 <article class="sym" id="sizes">
 <h3><a href="#sizes">sizes</a> <i>constant</i></h3>
 <pre>var sizes int[&gt;..]</pre>
 <p>List of byte sizes of each encoded frame within the samples buffer.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L87">hc/lib/gfx/video.amni:87</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L87">hc/lib/gfx/video.amni:87</a>
 </article>
 <article class="sym" id="keys">
 <h3><a href="#keys">keys</a> <i>constant</i></h3>
 <pre>var keys int[&gt;..]</pre>
 <p>List of flags marking whether each encoded frame is a keyframe.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L88">hc/lib/gfx/video.amni:88</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L88">hc/lib/gfx/video.amni:88</a>
 </article>
 <article class="sym" id="keep_recon">
 <h3><a href="#keep_recon">keep_recon</a> <i>constant</i></h3>
 <pre>var keep_recon bool = false</pre>
 <p>Flag that, when true, makes each added frame's reconstruction be saved to the recon buffer.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L98">hc/lib/gfx/video.amni:98</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L98">hc/lib/gfx/video.amni:98</a>
 </article>
 <article class="sym" id="recon">
 <h3><a href="#recon">recon</a> <i>constant</i></h3>
 <pre>var recon byte[&gt;..]</pre>
 <p>Buffer of reconstructed frames as planar luma, blue chroma and red chroma bytes, filled when keep_recon is set.</p>
 <p class="note">Namespace video; imports os. A CPU-only H.264 video encoder and MP4 writer for exporting rendered animations: frames go in as RGBA8 pictures and come out as one .mp4 file that phones, browsers and players open. The stream is H.264 Constrained Baseline (profile 66 with constraint flags 0 and 1, CAVLC entropy coding, 8-bit 4:2:0), one slice per frame, every frame a reference frame, picture order typ</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L99">hc/lib/gfx/video.amni:99</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L99">hc/lib/gfx/video.amni:99</a>
 </article>
 <article class="sym" id="add">
 <h3><a href="#add">add</a> <i>function</i></h3>
 <pre>add(rgba const byte[:]) bool</pre>
 <p>Encodes one RGBA frame and appends it to the output; returns false if start failed or data is too short.</p>
 <p class="note">`add(rgba)` gives false when rgba is shorter than width times height times 4 or `start` did not succeed. It converts the frame; the frame is an IDR when the frame count is a multiple of gop, which also sets frame_num to 0. It encodes the slice into bs, `nal` type 5 (IDR) or 1 into samples, records its size and key flag, appends the cropped reconstruction to recon (Y width by height, then U, then V</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L266">hc/lib/gfx/video.amni:266</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L266">hc/lib/gfx/video.amni:266</a>
 </article>
 <h2 id="encoder-math">Encoder Math <span class="n">1</span></h2>
 <article class="sym" id="psnr_y">
@@ -252,714 +252,714 @@
 <pre>psnr_y() real</pre>
 <p>Returns the luma peak signal-to-noise ratio in decibels between source and reconstruction, or 99 if identical.</p>
 <p class="note">`save(path)` runs `finish` and writes the file with `os::write_file`, giving false with a reason when either fails. `frame_bytes(i)` gives frame i's coded size. `psnr_y()` gives the luma PSNR in dB (a real) of the last added frame's reconstruction against its source over the picture area, or 99 when they are equal.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L1171">hc/lib/gfx/video.amni:1171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L1171">hc/lib/gfx/video.amni:1171</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (111)</summary>
 <article class="sym" id="clip255">
 <h3><a href="#clip255">clip255</a> <i>function</i></h3>
 <pre>clip255(v int) int</pre>
 <p>Clamps an integer to the 0–255 range used for 8-bit sample values.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L4">hc/lib/gfx/video.amni:4</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L4">hc/lib/gfx/video.amni:4</a>
 </article>
 <article class="sym" id="cl">
 <h3><a href="#cl">cl</a> <i>function</i></h3>
 <pre>cl(v int, lo int, hi int) int</pre>
 <p>Clamps an integer to the inclusive range between the given low and high bounds.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L5">hc/lib/gfx/video.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L5">hc/lib/gfx/video.amni:5</a>
 </article>
 <article class="sym" id="CBPINTER">
 <h3><a href="#CBPINTER">CBPINTER</a> <i>constant</i></h3>
 <pre>let CBPINTER int[48] = [0, 2, 3, 7, 4, 8, 17, 13, 5, 18, 9, 14, 10, 15, 16, 11, 1, 32, 33, 36, 34, 37, 44, 40, 35, 45, 38, 41, 39, 42, 43, 19, 6, 24, 25, 20, 26, 21, 46, 28, 27, 47, 22, 29, 23, 30, 31, 12]</pre>
 <p>Lookup table mapping coded block pattern codes to macroblock values for inter-predicted blocks.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L6">hc/lib/gfx/video.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L6">hc/lib/gfx/video.amni:6</a>
 </article>
 <article class="sym" id="CTLEN">
 <h3><a href="#CTLEN">CTLEN</a> <i>constant</i></h3>
 <pre>let CTLEN int[272] = [1, 0, 0, 0, 6, 2, 0, 0, 8, 6, 3, 0, 9, 8, 7, 5, 10, 9, 8, 6, 11, 10, 9, 7, 13, 11, 10, 8, 13, 13, 11, 9, 13, 13, 13, 10, 14, 14, 13, 11, 14, 14, 14, 13, 15, 15, 14, 14, 15, 15, 15, 14, 16, 15, 15, 1</pre>
 <p>Table of code lengths for coefficient token coding, indexed by context, trailing ones, and coefficient count.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L7">hc/lib/gfx/video.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L7">hc/lib/gfx/video.amni:7</a>
 </article>
 <article class="sym" id="CTBITS">
 <h3><a href="#CTBITS">CTBITS</a> <i>constant</i></h3>
 <pre>let CTBITS int[272] = [1, 0, 0, 0, 5, 1, 0, 0, 7, 4, 1, 0, 7, 6, 5, 3, 7, 6, 5, 3, 7, 6, 5, 4, 15, 6, 5, 4, 11, 14, 5, 4, 8, 10, 13, 4, 15, 14, 9, 4, 11, 10, 13, 12, 15, 14, 9, 12, 11, 10, 13, 8, 15, 1, 9, 12, 11, 14, 13</pre>
 <p>Table of code bit values for coefficient token coding, paired with the token length table.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L8">hc/lib/gfx/video.amni:8</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L8">hc/lib/gfx/video.amni:8</a>
 </article>
 <article class="sym" id="CDCLEN">
 <h3><a href="#CDCLEN">CDCLEN</a> <i>constant</i></h3>
 <pre>let CDCLEN int[20] = [2, 0, 0, 0, 6, 1, 0, 0, 6, 6, 3, 0, 6, 7, 7, 6, 6, 8, 8, 7]</pre>
 <p>Table of code lengths for chroma DC coefficient tokens.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L9">hc/lib/gfx/video.amni:9</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L9">hc/lib/gfx/video.amni:9</a>
 </article>
 <article class="sym" id="CDCBITS">
 <h3><a href="#CDCBITS">CDCBITS</a> <i>constant</i></h3>
 <pre>let CDCBITS int[20] = [1, 0, 0, 0, 7, 1, 0, 0, 4, 6, 1, 0, 3, 3, 2, 5, 2, 3, 2, 0]</pre>
 <p>Table of code bit values for chroma DC coefficient tokens, paired with the chroma DC length table.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L10">hc/lib/gfx/video.amni:10</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L10">hc/lib/gfx/video.amni:10</a>
 </article>
 <article class="sym" id="TZLEN">
 <h3><a href="#TZLEN">TZLEN</a> <i>constant</i></h3>
 <pre>let TZLEN int[256] = [1, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 0, 4, 3, 3, 3, 4, 4, 3, 3, 4, 5, 5, 6, 5, 6, 0, 0, 5, 3, 4, 4, 3, 3, 3, 4, 3, 4, 5, 5, 5, 0, 0, 0, 4, 4,</pre>
 <p>Table of code lengths for total-zeros coding of 4x4 blocks, indexed by coefficient count and zeros.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L11">hc/lib/gfx/video.amni:11</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L11">hc/lib/gfx/video.amni:11</a>
 </article>
 <article class="sym" id="TZBITS">
 <h3><a href="#TZBITS">TZBITS</a> <i>constant</i></h3>
 <pre>let TZBITS int[256] = [1, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 1, 7, 6, 5, 4, 3, 5, 4, 3, 2, 3, 2, 3, 2, 1, 0, 0, 5, 7, 6, 5, 4, 3, 4, 3, 2, 3, 2, 1, 1, 0, 0, 0, 3, 7, 5, 4, 6, 5, 4, 3, 3, 2, 2, 1, 0, 0, 0, 0, 5, 4,</pre>
 <p>Table of code bit values for total-zeros coding of 4x4 blocks, paired with the length table.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L12">hc/lib/gfx/video.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L12">hc/lib/gfx/video.amni:12</a>
 </article>
 <article class="sym" id="CTZLEN">
 <h3><a href="#CTZLEN">CTZLEN</a> <i>constant</i></h3>
 <pre>let CTZLEN int[12] = [1, 2, 3, 3, 1, 2, 2, 0, 1, 1, 0, 0]</pre>
 <p>Table of code lengths for total-zeros coding of chroma DC blocks.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L13">hc/lib/gfx/video.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L13">hc/lib/gfx/video.amni:13</a>
 </article>
 <article class="sym" id="CTZBITS">
 <h3><a href="#CTZBITS">CTZBITS</a> <i>constant</i></h3>
 <pre>let CTZBITS int[12] = [1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0]</pre>
 <p>Table of code bit values for total-zeros coding of chroma DC blocks, paired with the length table.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L14">hc/lib/gfx/video.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L14">hc/lib/gfx/video.amni:14</a>
 </article>
 <article class="sym" id="RUNLEN">
 <h3><a href="#RUNLEN">RUNLEN</a> <i>constant</i></h3>
 <pre>let RUNLEN int[112] = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2,</pre>
 <p>Table of code lengths for run-before coding, indexed by zeros remaining and run value.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L15">hc/lib/gfx/video.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L15">hc/lib/gfx/video.amni:15</a>
 </article>
 <article class="sym" id="RUNBITS">
 <h3><a href="#RUNBITS">RUNBITS</a> <i>constant</i></h3>
 <pre>let RUNBITS int[112] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2</pre>
 <p>Table of code bit values for run-before coding, paired with the run length table.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L16">hc/lib/gfx/video.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L16">hc/lib/gfx/video.amni:16</a>
 </article>
 <article class="sym" id="ZZ">
 <h3><a href="#ZZ">ZZ</a> <i>constant</i></h3>
 <pre>let ZZ int[16] = [0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15]</pre>
 <p>Zigzag scan order mapping scan position to index within a 4x4 coefficient block.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L17">hc/lib/gfx/video.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L17">hc/lib/gfx/video.amni:17</a>
 </article>
 <article class="sym" id="MF">
 <h3><a href="#MF">MF</a> <i>constant</i></h3>
 <pre>let MF int[18] = [13107, 5243, 8066, 11916, 4660, 7490, 10082, 4194, 6554, 9362, 3647, 5825, 8192, 3355, 5243, 7282, 2893, 4559]</pre>
 <p>Quantization multiplier factors indexed by quantizer remainder and coefficient position class.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L18">hc/lib/gfx/video.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L18">hc/lib/gfx/video.amni:18</a>
 </article>
 <article class="sym" id="DQ">
 <h3><a href="#DQ">DQ</a> <i>constant</i></h3>
 <pre>let DQ int[18] = [10, 16, 13, 11, 18, 14, 13, 20, 16, 14, 23, 18, 16, 25, 20, 18, 29, 23]</pre>
 <p>Dequantization scale factors indexed by quantizer remainder and coefficient position class.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L19">hc/lib/gfx/video.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L19">hc/lib/gfx/video.amni:19</a>
 </article>
 <article class="sym" id="CQP">
 <h3><a href="#CQP">CQP</a> <i>constant</i></h3>
 <pre>let CQP int[22] = [29, 30, 31, 32, 32, 33, 34, 34, 35, 35, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 39]</pre>
 <p>Table mapping luma quantizer values of 30 and above to chroma quantizer values.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L20">hc/lib/gfx/video.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L20">hc/lib/gfx/video.amni:20</a>
 </article>
 <article class="sym" id="LEVELS">
 <h3><a href="#LEVELS">LEVELS</a> <i>constant</i></h3>
 <pre>let LEVELS int[42] = [10, 1485, 99, 11, 3000, 396, 12, 6000, 396, 13, 11880, 396, 21, 19800, 792, 22, 20250, 1620, 30, 40500, 1620, 31, 108000, 3600, 32, 216000, 5120, 40, 245760, 8192, 42, 522240, 8704, 50, 589824, 2208</pre>
 <p>Table of level limits as triples of level code, maximum macroblock rate, and maximum frame size.</p>
 <p class="note">Tables: `CBPINTER` gives the Exp-Golomb code number of a P macroblock's coded block pattern (luma bits 0 to 3 plus 16 times the chroma value). `CTLEN` and `CTBITS` are the coeff_token codes: 4 tables of 68 (table t starts at 68 t; table 0 for nC 0 to 1, 1 for 2 to 3, 2 for 4 to 7, 3 for 8 or more), entry trailing ones plus 4 times total coefficients; `CDCLEN` and `CDCBITS` the same for chroma DC (</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L21">hc/lib/gfx/video.amni:21</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L21">hc/lib/gfx/video.amni:21</a>
 </article>
 <article class="sym" id="cqp">
 <h3><a href="#cqp">cqp</a> <i>function</i></h3>
 <pre>cqp(q int) int</pre>
 <p>Returns the chroma quantizer for a luma quantizer, using the lookup table at 30 and above.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L22">hc/lib/gfx/video.amni:22</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L22">hc/lib/gfx/video.amni:22</a>
 </article>
 <article class="sym" id="why">
 <h3><a href="#why">why</a> <i>constant</i></h3>
 <pre>var why byte[&gt;..]</pre>
 <p>Buffer holding the most recent error message text.</p>
 <p class="note">Errors: a module text `why`; `fail(reason)` stores it and gives false; `error()` gives it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L23">hc/lib/gfx/video.amni:23</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L23">hc/lib/gfx/video.amni:23</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(reason const byte[:]) bool</pre>
 <p>Records the given reason as the error message and returns false.</p>
 <p class="note">Errors: a module text `why`; `fail(reason)` stores it and gives false; `error()` gives it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L24">hc/lib/gfx/video.amni:24</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L24">hc/lib/gfx/video.amni:24</a>
 </article>
 <article class="sym" id="bs">
 <h3><a href="#bs">bs</a> <i>constant</i></h3>
 <pre>var bs byte[&gt;..]</pre>
 <p>Working buffer that accumulates bytes of the NAL unit payload being written.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L30">hc/lib/gfx/video.amni:30</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L30">hc/lib/gfx/video.amni:30</a>
 </article>
 <article class="sym" id="acc">
 <h3><a href="#acc">acc</a> <i>constant</i></h3>
 <pre>var acc int = 0</pre>
 <p>Partial byte accumulator holding bits not yet flushed to the bitstream buffer.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L31">hc/lib/gfx/video.amni:31</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L31">hc/lib/gfx/video.amni:31</a>
 </article>
 <article class="sym" id="nacc">
 <h3><a href="#nacc">nacc</a> <i>constant</i></h3>
 <pre>var nacc int = 0</pre>
 <p>Count of bits currently held in the partial byte accumulator.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L32">hc/lib/gfx/video.amni:32</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L32">hc/lib/gfx/video.amni:32</a>
 </article>
 <article class="sym" id="nbits">
 <h3><a href="#nbits">nbits</a> <i>function</i></h3>
 <pre>nbits(x int) int</pre>
 <p>Returns the number of bits needed to represent a non-negative integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L33">hc/lib/gfx/video.amni:33</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L33">hc/lib/gfx/video.amni:33</a>
 </article>
 <article class="sym" id="put">
 <h3><a href="#put">put</a> <i>function</i></h3>
 <pre>put(v int, n int)</pre>
 <p>Appends the low n bits of a value to the bitstream, most significant bit first.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L39">hc/lib/gfx/video.amni:39</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L39">hc/lib/gfx/video.amni:39</a>
 </article>
 <article class="sym" id="ue">
 <h3><a href="#ue">ue</a> <i>function</i></h3>
 <pre>ue(v int)</pre>
 <p>Writes an unsigned value using Exp-Golomb coding.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L48">hc/lib/gfx/video.amni:48</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L48">hc/lib/gfx/video.amni:48</a>
 </article>
 <article class="sym" id="se">
 <h3><a href="#se">se</a> <i>function</i></h3>
 <pre>se(v int)</pre>
 <p>Writes a signed value using signed Exp-Golomb coding.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L54">hc/lib/gfx/video.amni:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L54">hc/lib/gfx/video.amni:54</a>
 </article>
 <article class="sym" id="trailing">
 <h3><a href="#trailing">trailing</a> <i>function</i></h3>
 <pre>trailing()</pre>
 <p>Writes the stop bit and zero padding to align the bitstream to a byte boundary.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L55">hc/lib/gfx/video.amni:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L55">hc/lib/gfx/video.amni:55</a>
 </article>
 <article class="sym" id="nal">
 <h3><a href="#nal">nal</a> <i>function</i></h3>
 <pre>nal(ty int, out byte[&gt;..]&amp;)</pre>
 <p>Wraps the pending bitstream as a NAL unit with emulation prevention bytes, appending it to the output buffer.</p>
 <p class="note">Bit writer: module byte list `bs`, int `acc` and int `nacc` (bits held, below 8). `put(v, n)` appends the low n bits of v (n from 0 to 32), highest first. `ue(v)` writes the unsigned Exp-Golomb code of v: with m the number of bits of v plus 1, m minus 1 zero bits then v plus 1 in m bits. `se(v)` writes `ue` of 2 v minus 1 for positive v and of minus 2 v otherwise. `trailing()` writes a 1 bit then </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L59">hc/lib/gfx/video.amni:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L59">hc/lib/gfx/video.amni:59</a>
 </article>
 <article class="sym" id="cw">
 <h3><a href="#cw">cw</a> <i>constant</i></h3>
 <pre>var cw int = 0</pre>
 <p>Picture width in pixels padded up to a multiple of 16 macroblock units.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L73">hc/lib/gfx/video.amni:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L73">hc/lib/gfx/video.amni:73</a>
 </article>
 <article class="sym" id="ch">
 <h3><a href="#ch">ch</a> <i>constant</i></h3>
 <pre>var ch int = 0</pre>
 <p>Picture height in pixels padded up to a multiple of 16 macroblock units.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L74">hc/lib/gfx/video.amni:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L74">hc/lib/gfx/video.amni:74</a>
 </article>
 <article class="sym" id="mbw">
 <h3><a href="#mbw">mbw</a> <i>constant</i></h3>
 <pre>var mbw int = 0</pre>
 <p>Number of macroblock columns in the padded picture.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L75">hc/lib/gfx/video.amni:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L75">hc/lib/gfx/video.amni:75</a>
 </article>
 <article class="sym" id="mbh">
 <h3><a href="#mbh">mbh</a> <i>constant</i></h3>
 <pre>var mbh int = 0</pre>
 <p>Number of macroblock rows in the padded picture.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L76">hc/lib/gfx/video.amni:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L76">hc/lib/gfx/video.amni:76</a>
 </article>
 <article class="sym" id="frame_num">
 <h3><a href="#frame_num">frame_num</a> <i>constant</i></h3>
 <pre>var frame_num int = 0</pre>
 <p>Frame number written into slice headers, reset at each keyframe.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L81">hc/lib/gfx/video.amni:81</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L81">hc/lib/gfx/video.amni:81</a>
 </article>
 <article class="sym" id="idrs">
 <h3><a href="#idrs">idrs</a> <i>constant</i></h3>
 <pre>var idrs int = 0</pre>
 <p>Count of keyframes encoded so far, used to alternate the keyframe identifier.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L82">hc/lib/gfx/video.amni:82</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L82">hc/lib/gfx/video.amni:82</a>
 </article>
 <article class="sym" id="ready">
 <h3><a href="#ready">ready</a> <i>constant</i></h3>
 <pre>var ready bool = false</pre>
 <p>Flag that is true once start has succeeded and frames may be added.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L83">hc/lib/gfx/video.amni:83</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L83">hc/lib/gfx/video.amni:83</a>
 </article>
 <article class="sym" id="cy">
 <h3><a href="#cy">cy</a> <i>constant</i></h3>
 <pre>var cy int[&gt;..]</pre>
 <p>Current frame's luma plane samples converted from the input image.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L89">hc/lib/gfx/video.amni:89</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L89">hc/lib/gfx/video.amni:89</a>
 </article>
 <article class="sym" id="cu">
 <h3><a href="#cu">cu</a> <i>constant</i></h3>
 <pre>var cu int[&gt;..]</pre>
 <p>Current frame's blue-difference chroma plane samples converted from the input image.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L90">hc/lib/gfx/video.amni:90</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L90">hc/lib/gfx/video.amni:90</a>
 </article>
 <article class="sym" id="cv">
 <h3><a href="#cv">cv</a> <i>constant</i></h3>
 <pre>var cv int[&gt;..]</pre>
 <p>Current frame's red-difference chroma plane samples converted from the input image.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L91">hc/lib/gfx/video.amni:91</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L91">hc/lib/gfx/video.amni:91</a>
 </article>
 <article class="sym" id="ry">
 <h3><a href="#ry">ry</a> <i>constant</i></h3>
 <pre>var ry int[&gt;..]</pre>
 <p>Reconstructed luma plane of the frame being encoded.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L92">hc/lib/gfx/video.amni:92</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L92">hc/lib/gfx/video.amni:92</a>
 </article>
 <article class="sym" id="ru">
 <h3><a href="#ru">ru</a> <i>constant</i></h3>
 <pre>var ru int[&gt;..]</pre>
 <p>Reconstructed blue-difference chroma plane of the frame being encoded.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L93">hc/lib/gfx/video.amni:93</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L93">hc/lib/gfx/video.amni:93</a>
 </article>
 <article class="sym" id="rv">
 <h3><a href="#rv">rv</a> <i>constant</i></h3>
 <pre>var rv int[&gt;..]</pre>
 <p>Reconstructed red-difference chroma plane of the frame being encoded.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L94">hc/lib/gfx/video.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L94">hc/lib/gfx/video.amni:94</a>
 </article>
 <article class="sym" id="py">
 <h3><a href="#py">py</a> <i>constant</i></h3>
 <pre>var py int[&gt;..]</pre>
 <p>Luma plane of the previous reconstructed frame used for prediction.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L95">hc/lib/gfx/video.amni:95</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L95">hc/lib/gfx/video.amni:95</a>
 </article>
 <article class="sym" id="pu">
 <h3><a href="#pu">pu</a> <i>constant</i></h3>
 <pre>var pu int[&gt;..]</pre>
 <p>Blue-difference chroma plane of the previous reconstructed frame used for prediction.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L96">hc/lib/gfx/video.amni:96</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L96">hc/lib/gfx/video.amni:96</a>
 </article>
 <article class="sym" id="pv">
 <h3><a href="#pv">pv</a> <i>constant</i></h3>
 <pre>var pv int[&gt;..]</pre>
 <p>Red-difference chroma plane of the previous reconstructed frame used for prediction.</p>
 <p class="note">Session state (module): `width`, `height` (the picture, both even), `cw` and `ch` (rounded up to multiples of 16), `mbw` and `mbh` (macroblocks across and down), `fps`, `qp`, `gop`, frame count `frames`, `frame_num`, IDR count; `sps` and `pps` byte lists (complete NAL units); `samples` (every coded frame's NAL unit, one after another) with int lists `sizes` and `keys` (whether each frame is an IDR</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L97">hc/lib/gfx/video.amni:97</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L97">hc/lib/gfx/video.amni:97</a>
 </article>
 <article class="sym" id="skip_run">
 <h3><a href="#skip_run">skip_run</a> <i>constant</i></h3>
 <pre>var skip_run int = 0</pre>
 <p>Count of consecutive skipped macroblocks not yet written to the bitstream.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L100">hc/lib/gfx/video.amni:100</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L100">hc/lib/gfx/video.amni:100</a>
 </article>
 <article class="sym" id="mb_kind">
 <h3><a href="#mb_kind">mb_kind</a> <i>constant</i></h3>
 <pre>var mb_kind int[&gt;..]</pre>
 <p>Per-macroblock prediction kind recorded during encoding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L101">hc/lib/gfx/video.amni:101</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L101">hc/lib/gfx/video.amni:101</a>
 </article>
 <article class="sym" id="mb_mx">
 <h3><a href="#mb_mx">mb_mx</a> <i>constant</i></h3>
 <pre>var mb_mx int[&gt;..]</pre>
 <p>Per-macroblock horizontal motion vector component.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L102">hc/lib/gfx/video.amni:102</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L102">hc/lib/gfx/video.amni:102</a>
 </article>
 <article class="sym" id="mb_my">
 <h3><a href="#mb_my">mb_my</a> <i>constant</i></h3>
 <pre>var mb_my int[&gt;..]</pre>
 <p>Per-macroblock vertical motion vector component.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L103">hc/lib/gfx/video.amni:103</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L103">hc/lib/gfx/video.amni:103</a>
 </article>
 <article class="sym" id="mb_tc">
 <h3><a href="#mb_tc">mb_tc</a> <i>constant</i></h3>
 <pre>var mb_tc int[&gt;..]</pre>
 <p>Per-macroblock coefficient counts for each of its 24 blocks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L104">hc/lib/gfx/video.amni:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L104">hc/lib/gfx/video.amni:104</a>
 </article>
 <article class="sym" id="lev_y">
 <h3><a href="#lev_y">lev_y</a> <i>constant</i></h3>
 <pre>var lev_y int[256] = [0; 256]</pre>
 <p>Scratch array of quantized luma coefficient levels for a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L105">hc/lib/gfx/video.amni:105</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L105">hc/lib/gfx/video.amni:105</a>
 </article>
 <article class="sym" id="lev_ydc">
 <h3><a href="#lev_ydc">lev_ydc</a> <i>constant</i></h3>
 <pre>var lev_ydc int[16] = [0; 16]</pre>
 <p>Scratch array of quantized luma DC levels for an intra macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L106">hc/lib/gfx/video.amni:106</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L106">hc/lib/gfx/video.amni:106</a>
 </article>
 <article class="sym" id="lev_cdc">
 <h3><a href="#lev_cdc">lev_cdc</a> <i>constant</i></h3>
 <pre>var lev_cdc int[8] = [0; 8]</pre>
 <p>Scratch array of quantized chroma DC levels for both chroma planes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L107">hc/lib/gfx/video.amni:107</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L107">hc/lib/gfx/video.amni:107</a>
 </article>
 <article class="sym" id="lev_cac">
 <h3><a href="#lev_cac">lev_cac</a> <i>constant</i></h3>
 <pre>var lev_cac int[128] = [0; 128]</pre>
 <p>Scratch array of quantized chroma AC levels for both chroma planes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L108">hc/lib/gfx/video.amni:108</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L108">hc/lib/gfx/video.amni:108</a>
 </article>
 <article class="sym" id="pr_y">
 <h3><a href="#pr_y">pr_y</a> <i>constant</i></h3>
 <pre>var pr_y int[256] = [0; 256]</pre>
 <p>Scratch array holding the 16x16 luma prediction for a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L109">hc/lib/gfx/video.amni:109</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L109">hc/lib/gfx/video.amni:109</a>
 </article>
 <article class="sym" id="pr_u">
 <h3><a href="#pr_u">pr_u</a> <i>constant</i></h3>
 <pre>var pr_u int[64] = [0; 64]</pre>
 <p>Scratch array holding the 8x8 blue chroma prediction for a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L110">hc/lib/gfx/video.amni:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L110">hc/lib/gfx/video.amni:110</a>
 </article>
 <article class="sym" id="pr_v">
 <h3><a href="#pr_v">pr_v</a> <i>constant</i></h3>
 <pre>var pr_v int[64] = [0; 64]</pre>
 <p>Scratch array holding the 8x8 red chroma prediction for a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L111">hc/lib/gfx/video.amni:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L111">hc/lib/gfx/video.amni:111</a>
 </article>
 <article class="sym" id="tmp_y">
 <h3><a href="#tmp_y">tmp_y</a> <i>constant</i></h3>
 <pre>var tmp_y int[256] = [0; 256]</pre>
 <p>Scratch array of luma samples used during transform work.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L112">hc/lib/gfx/video.amni:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L112">hc/lib/gfx/video.amni:112</a>
 </article>
 <article class="sym" id="tmp_c">
 <h3><a href="#tmp_c">tmp_c</a> <i>constant</i></h3>
 <pre>var tmp_c int[64] = [0; 64]</pre>
 <p>Scratch array of chroma samples used during transform work.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L113">hc/lib/gfx/video.amni:113</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L113">hc/lib/gfx/video.amni:113</a>
 </article>
 <article class="sym" id="convert">
 <h3><a href="#convert">convert</a> <i>function</i></h3>
 <pre>convert(rgba const byte[:])</pre>
 <p>Converts an RGBA frame into luma and subsampled chroma planes padded to macroblock size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L230">hc/lib/gfx/video.amni:230</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L230">hc/lib/gfx/video.amni:230</a>
 </article>
 <article class="sym" id="slice_header">
 <h3><a href="#slice_header">slice_header</a> <i>function</i></h3>
 <pre>slice_header(idr bool)</pre>
 <p>Writes the slice header fields for a keyframe or predicted frame.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L294">hc/lib/gfx/video.amni:294</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L294">hc/lib/gfx/video.amni:294</a>
 </article>
 <article class="sym" id="encode_frame">
 <h3><a href="#encode_frame">encode_frame</a> <i>function</i></h3>
 <pre>encode_frame(idr bool)</pre>
 <p>Encodes every macroblock of the current frame as one slice, using intra prediction for keyframes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L305">hc/lib/gfx/video.amni:305</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L305">hc/lib/gfx/video.amni:305</a>
 </article>
 <article class="sym" id="blkx">
 <h3><a href="#blkx">blkx</a> <i>function</i></h3>
 <pre>blkx(k int) int</pre>
 <p>Returns the horizontal pixel offset of a luma 4x4 block within its macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L323">hc/lib/gfx/video.amni:323</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L323">hc/lib/gfx/video.amni:323</a>
 </article>
 <article class="sym" id="blky">
 <h3><a href="#blky">blky</a> <i>function</i></h3>
 <pre>blky(k int) int</pre>
 <p>Returns the vertical pixel offset of a luma 4x4 block within its macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L324">hc/lib/gfx/video.amni:324</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L324">hc/lib/gfx/video.amni:324</a>
 </article>
 <article class="sym" id="blkof">
 <h3><a href="#blkof">blkof</a> <i>function</i></h3>
 <pre>blkof(gx int, gy int) int</pre>
 <p>Returns the block index for a luma 4x4 block at the given grid position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L325">hc/lib/gfx/video.amni:325</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L325">hc/lib/gfx/video.amni:325</a>
 </article>
 <article class="sym" id="cblkx">
 <h3><a href="#cblkx">cblkx</a> <i>function</i></h3>
 <pre>cblkx(k int) int</pre>
 <p>Returns the horizontal pixel offset of a chroma 4x4 block within its macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L326">hc/lib/gfx/video.amni:326</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L326">hc/lib/gfx/video.amni:326</a>
 </article>
 <article class="sym" id="cblky">
 <h3><a href="#cblky">cblky</a> <i>function</i></h3>
 <pre>cblky(k int) int</pre>
 <p>Returns the vertical pixel offset of a chroma 4x4 block within its macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L327">hc/lib/gfx/video.amni:327</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L327">hc/lib/gfx/video.amni:327</a>
 </article>
 <article class="sym" id="pcls">
 <h3><a href="#pcls">pcls</a> <i>function</i></h3>
 <pre>pcls(i int) int</pre>
 <p>Returns the position class of a coefficient index within a 4x4 block, selecting the quantization column.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L328">hc/lib/gfx/video.amni:328</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L328">hc/lib/gfx/video.amni:328</a>
 </article>
 <article class="sym" id="fwd4">
 <h3><a href="#fwd4">fwd4</a> <i>function</i></h3>
 <pre>fwd4(t int[:])</pre>
 <p>Applies the forward 4x4 integer transform to a block in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L333">hc/lib/gfx/video.amni:333</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L333">hc/lib/gfx/video.amni:333</a>
 </article>
 <article class="sym" id="had4">
 <h3><a href="#had4">had4</a> <i>function</i></h3>
 <pre>had4(t int[:])</pre>
 <p>Applies a 4x4 Hadamard transform to a block in place.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L349">hc/lib/gfx/video.amni:349</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L349">hc/lib/gfx/video.amni:349</a>
 </article>
 <article class="sym" id="qz">
 <h3><a href="#qz">qz</a> <i>function</i></h3>
 <pre>qz(c int, mf int, ad int, sh int) int</pre>
 <p>Quantizes a coefficient using multiplier, rounding offset and shift, preserving sign and capping magnitude at 2047.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L365">hc/lib/gfx/video.amni:365</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L365">hc/lib/gfx/video.amni:365</a>
 </article>
 <article class="sym" id="tq_luma">
 <h3><a href="#tq_luma">tq_luma</a> <i>function</i></h3>
 <pre>tq_luma(x0 int, y0 int, pred const int[:], intra bool, q int)</pre>
 <p>Transforms and quantizes the luma residual of a macroblock, filling luma level arrays including DC levels for intra.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L369">hc/lib/gfx/video.amni:369</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L369">hc/lib/gfx/video.amni:369</a>
 </article>
 <article class="sym" id="tq_c">
 <h3><a href="#tq_c">tq_c</a> <i>function</i></h3>
 <pre>tq_c(src const int[:], pl int, x0 int, y0 int, pred const int[:], intra bool, q int)</pre>
 <p>Transforms and quantizes one chroma plane's residual of a macroblock, storing AC levels and starting the chroma DC levels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L394">hc/lib/gfx/video.amni:394</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L394">hc/lib/gfx/video.amni:394</a>
 </article>
 <article class="sym" id="inv4">
 <h3><a href="#inv4">inv4</a> <i>function</i></h3>
 <pre>inv4(d int[:])</pre>
 <p>Applies an in-place 4x4 inverse integer transform to a block of dequantized coefficients.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L424">hc/lib/gfx/video.amni:424</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L424">hc/lib/gfx/video.amni:424</a>
 </article>
 <article class="sym" id="rec_luma">
 <h3><a href="#rec_luma">rec_luma</a> <i>function</i></h3>
 <pre>rec_luma(x0 int, y0 int, pred const int[:], intra bool, q int)</pre>
 <p>Reconstructs a 16x16 luma macroblock from prediction plus dequantized residual, with optional intra DC handling.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L444">hc/lib/gfx/video.amni:444</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L444">hc/lib/gfx/video.amni:444</a>
 </article>
 <article class="sym" id="rec_c">
 <h3><a href="#rec_c">rec_c</a> <i>function</i></h3>
 <pre>rec_c(dst int[:], pl int, x0 int, y0 int, pred const int[:], q int)</pre>
 <p>Reconstructs one 8x8 chroma plane macroblock from prediction plus dequantized DC and AC residual levels.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L478">hc/lib/gfx/video.amni:478</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L478">hc/lib/gfx/video.amni:478</a>
 </article>
 <article class="sym" id="pp">
 <h3><a href="#pp">pp</a> <i>function</i></h3>
 <pre>pp(p const int[:], w int, x int, y int) int</pre>
 <p>Returns the sample at the given column and row of a plane with the given width.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L510">hc/lib/gfx/video.amni:510</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L510">hc/lib/gfx/video.amni:510</a>
 </article>
 <article class="sym" id="ipred_y">
 <h3><a href="#ipred_y">ipred_y</a> <i>function</i></h3>
 <pre>ipred_y(mode int, mbx int, mby int, p const int[:], out int[:])</pre>
 <p>Fills a 16x16 luma intra prediction from neighboring samples using vertical, horizontal, DC, or plane mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L511">hc/lib/gfx/video.amni:511</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L511">hc/lib/gfx/video.amni:511</a>
 </article>
 <article class="sym" id="sad_y">
 <h3><a href="#sad_y">sad_y</a> <i>function</i></h3>
 <pre>sad_y(x0 int, y0 int, pred const int[:]) int</pre>
 <p>Returns the sum of absolute differences between a source luma macroblock and a prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L541">hc/lib/gfx/video.amni:541</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L541">hc/lib/gfx/video.amni:541</a>
 </article>
 <article class="sym" id="best_intra_y">
 <h3><a href="#best_intra_y">best_intra_y</a> <i>function</i></h3>
 <pre>best_intra_y(mbx int, mby int) int, int</pre>
 <p>Returns the best luma intra mode and its SAD cost among the modes available at the position.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L546">hc/lib/gfx/video.amni:546</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L546">hc/lib/gfx/video.amni:546</a>
 </article>
 <article class="sym" id="ipred_c">
 <h3><a href="#ipred_c">ipred_c</a> <i>function</i></h3>
 <pre>ipred_c(mode int, mbx int, mby int, p const int[:], out int[:])</pre>
 <p>Fills an 8x8 chroma intra prediction from neighboring samples using DC, horizontal, vertical, or plane mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L559">hc/lib/gfx/video.amni:559</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L559">hc/lib/gfx/video.amni:559</a>
 </article>
 <article class="sym" id="sad_c">
 <h3><a href="#sad_c">sad_c</a> <i>function</i></h3>
 <pre>sad_c(src const int[:], x0 int, y0 int, pred const int[:]) int</pre>
 <p>Returns the sum of absolute differences between an 8x8 chroma block of a source plane and a prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L600">hc/lib/gfx/video.amni:600</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L600">hc/lib/gfx/video.amni:600</a>
 </article>
 <article class="sym" id="best_intra_c">
 <h3><a href="#best_intra_c">best_intra_c</a> <i>function</i></h3>
 <pre>best_intra_c(mbx int, mby int) int</pre>
 <p>Returns the chroma intra mode with the lowest combined U and V SAD among the available modes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L606">hc/lib/gfx/video.amni:606</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L606">hc/lib/gfx/video.amni:606</a>
 </article>
 <article class="sym" id="inter_c">
 <h3><a href="#inter_c">inter_c</a> <i>function</i></h3>
 <pre>inter_c(src const int[:], x0 int, y0 int, mx int, my int, out int[:])</pre>
 <p>Computes an 8x8 chroma motion-compensated prediction using bilinear interpolation in eighth-sample units with edge clamping.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L621">hc/lib/gfx/video.amni:621</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L621">hc/lib/gfx/video.amni:621</a>
 </article>
 <article class="sym" id="inter_pred">
 <h3><a href="#inter_pred">inter_pred</a> <i>function</i></h3>
 <pre>inter_pred(mbx int, mby int, mx int, my int)</pre>
 <p>Builds the luma and chroma inter predictions for a macroblock from a motion vector in quarter-sample units.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L642">hc/lib/gfx/video.amni:642</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L642">hc/lib/gfx/video.amni:642</a>
 </article>
 <article class="sym" id="nbr">
 <h3><a href="#nbr">nbr</a> <i>function</i></h3>
 <pre>nbr(x int, y int) bool, int, int, int</pre>
 <p>Returns whether a neighboring macroblock is available, plus its reference index and motion vector for prediction.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L654">hc/lib/gfx/video.amni:654</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L654">hc/lib/gfx/video.amni:654</a>
 </article>
 <article class="sym" id="mvp">
 <h3><a href="#mvp">mvp</a> <i>function</i></h3>
 <pre>mvp(mbx int, mby int) int, int, int, int</pre>
 <p>Returns the predicted motion vector and the skip motion vector for a macroblock from its neighbors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L660">hc/lib/gfx/video.amni:660</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L660">hc/lib/gfx/video.amni:660</a>
 </article>
 <article class="sym" id="any_nz">
 <h3><a href="#any_nz">any_nz</a> <i>function</i></h3>
 <pre>any_nz(a const int[:]) bool</pre>
 <p>Returns true if any element of the array is nonzero.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L698">hc/lib/gfx/video.amni:698</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L698">hc/lib/gfx/video.amni:698</a>
 </article>
 <article class="sym" id="se_bits">
 <h3><a href="#se_bits">se_bits</a> <i>function</i></h3>
 <pre>se_bits(v int) int</pre>
 <p>Returns the bit length of the signed Exp-Golomb code for a value.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L702">hc/lib/gfx/video.amni:702</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L702">hc/lib/gfx/video.amni:702</a>
 </article>
 <article class="sym" id="sad_mv">
 <h3><a href="#sad_mv">sad_mv</a> <i>function</i></h3>
 <pre>sad_mv(x0 int, y0 int, mx int, my int) int</pre>
 <p>Returns the SAD between a luma macroblock and its motion-displaced reference block, clamped at frame edges.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L706">hc/lib/gfx/video.amni:706</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L706">hc/lib/gfx/video.amni:706</a>
 </article>
 <article class="sym" id="mv_cost">
 <h3><a href="#mv_cost">mv_cost</a> <i>function</i></h3>
 <pre>mv_cost(x0 int, y0 int, mx int, my int, pmx int, pmy int, lam int) int</pre>
 <p>Returns a rate-distortion motion vector cost combining SAD with a lambda-weighted bit estimate of the vector difference.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L718">hc/lib/gfx/video.amni:718</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L718">hc/lib/gfx/video.amni:718</a>
 </article>
 <article class="sym" id="store_pred">
 <h3><a href="#store_pred">store_pred</a> <i>function</i></h3>
 <pre>store_pred(mbx int, mby int)</pre>
 <p>Copies the current inter prediction into the reconstruction planes for a macroblock.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L721">hc/lib/gfx/video.amni:721</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L721">hc/lib/gfx/video.amni:721</a>
 </article>
 <article class="sym" id="write_inter">
 <h3><a href="#write_inter">write_inter</a> <i>function</i></h3>
 <pre>write_inter(mbi int, mbx int, mby int, dx int, dy int)</pre>
 <p>Writes the syntax elements for a coded inter macroblock, including motion vector difference, coded block pattern and residual blocks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L731">hc/lib/gfx/video.amni:731</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L731">hc/lib/gfx/video.amni:731</a>
 </article>
 <article class="sym" id="enc_p_coded">
 <h3><a href="#enc_p_coded">enc_p_coded</a> <i>function</i></h3>
 <pre>enc_p_coded(mbi int, mbx int, mby int, pmx int, pmy int, sx int, sy int)</pre>
 <p>Encodes a P macroblock with residual by searching for a motion vector and choosing between intra and inter coding.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L760">hc/lib/gfx/video.amni:760</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L760">hc/lib/gfx/video.amni:760</a>
 </article>
 <article class="sym" id="enc_p">
 <h3><a href="#enc_p">enc_p</a> <i>function</i></h3>
 <pre>enc_p(mbi int, mbx int, mby int)</pre>
 <p>Encodes a P-frame macroblock, either as a skip or as a coded macroblock when the prediction leaves residual.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L808">hc/lib/gfx/video.amni:808</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L808">hc/lib/gfx/video.amni:808</a>
 </article>
 <article class="sym" id="write_chroma">
 <h3><a href="#write_chroma">write_chroma</a> <i>function</i></h3>
 <pre>write_chroma(mbi int, mbx int, mby int, cvl int)</pre>
 <p>Writes chroma DC and, when present, AC residual blocks for a macroblock using CAVLC.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L824">hc/lib/gfx/video.amni:824</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L824">hc/lib/gfx/video.amni:824</a>
 </article>
 <article class="sym" id="write_intra">
 <h3><a href="#write_intra">write_intra</a> <i>function</i></h3>
 <pre>write_intra(mbi int, mbx int, mby int, lmode int, cmode int, isp bool)</pre>
 <p>Writes the syntax elements and residual blocks for an intra 16x16 macroblock, optionally flushing a pending skip run.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L838">hc/lib/gfx/video.amni:838</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L838">hc/lib/gfx/video.amni:838</a>
 </article>
 <article class="sym" id="enc_intra">
 <h3><a href="#enc_intra">enc_intra</a> <i>function</i></h3>
 <pre>enc_intra(mbi int, mbx int, mby int, isp bool, lmode int)</pre>
 <p>Encodes an intra 16x16 macroblock by predicting, transforming, reconstructing and writing it in the chosen luma mode.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L861">hc/lib/gfx/video.amni:861</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L861">hc/lib/gfx/video.amni:861</a>
 </article>
 <article class="sym" id="nc_luma">
 <h3><a href="#nc_luma">nc_luma</a> <i>function</i></h3>
 <pre>nc_luma(mbi int, mbx int, mby int, k int) int</pre>
 <p>Returns the CAVLC context value for a luma block from the nonzero counts of its left and upper neighbors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L881">hc/lib/gfx/video.amni:881</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L881">hc/lib/gfx/video.amni:881</a>
 </article>
 <article class="sym" id="nc_chroma">
 <h3><a href="#nc_chroma">nc_chroma</a> <i>function</i></h3>
 <pre>nc_chroma(mbi int, mbx int, mby int, pl int, k int) int</pre>
 <p>Returns the CAVLC context value for a chroma block from the nonzero counts of its left and upper neighbors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L890">hc/lib/gfx/video.amni:890</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L890">hc/lib/gfx/video.amni:890</a>
 </article>
 <article class="sym" id="cavlc">
 <h3><a href="#cavlc">cavlc</a> <i>function</i></h3>
 <pre>cavlc(lv const int[:], n int, nc int) int</pre>
 <p>Writes one block of coefficient levels using CAVLC and returns the number of nonzero coefficients.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L900">hc/lib/gfx/video.amni:900</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L900">hc/lib/gfx/video.amni:900</a>
 </article>
 <article class="sym" id="w8">
 <h3><a href="#w8">w8</a> <i>function</i></h3>
 <pre>w8(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the low byte of a value to a byte buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L974">hc/lib/gfx/video.amni:974</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L974">hc/lib/gfx/video.amni:974</a>
 </article>
 <article class="sym" id="w16">
 <h3><a href="#w16">w16</a> <i>function</i></h3>
 <pre>w16(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends the low 16 bits of a value to a byte buffer in big-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L975">hc/lib/gfx/video.amni:975</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L975">hc/lib/gfx/video.amni:975</a>
 </article>
 <article class="sym" id="w32">
 <h3><a href="#w32">w32</a> <i>function</i></h3>
 <pre>w32(o byte[&gt;..]&amp;, v int)</pre>
 <p>Appends a 32-bit value to a byte buffer in big-endian order.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L976">hc/lib/gfx/video.amni:976</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L976">hc/lib/gfx/video.amni:976</a>
 </article>
 <article class="sym" id="wz">
 <h3><a href="#wz">wz</a> <i>function</i></h3>
 <pre>wz(o byte[&gt;..]&amp;, n int)</pre>
 <p>Appends the given number of zero bytes to a byte buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L977">hc/lib/gfx/video.amni:977</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L977">hc/lib/gfx/video.amni:977</a>
 </article>
 <article class="sym" id="box_open">
 <h3><a href="#box_open">box_open</a> <i>function</i></h3>
 <pre>box_open(o byte[&gt;..]&amp;, ty const byte[:]) int</pre>
 <p>Starts an MP4 box with the given type and returns its start offset for later closing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L978">hc/lib/gfx/video.amni:978</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L978">hc/lib/gfx/video.amni:978</a>
 </article>
 <article class="sym" id="full_open">
 <h3><a href="#full_open">full_open</a> <i>function</i></h3>
 <pre>full_open(o byte[&gt;..]&amp;, ty const byte[:], vf int) int</pre>
 <p>Starts an MP4 full box with the given type and version and flags word, returning its start offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L984">hc/lib/gfx/video.amni:984</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L984">hc/lib/gfx/video.amni:984</a>
 </article>
 <article class="sym" id="box_close">
 <h3><a href="#box_close">box_close</a> <i>function</i></h3>
 <pre>box_close(o byte[&gt;..]&amp;, st int)</pre>
 <p>Patches the size field of an MP4 box opened at the given offset to cover its contents.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L989">hc/lib/gfx/video.amni:989</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L989">hc/lib/gfx/video.amni:989</a>
 </article>
 <article class="sym" id="matrix">
 <h3><a href="#matrix">matrix</a> <i>function</i></h3>
 <pre>matrix(o byte[&gt;..]&amp;)</pre>
 <p>Appends the identity transformation matrix used in MP4 headers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L996">hc/lib/gfx/video.amni:996</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L996">hc/lib/gfx/video.amni:996</a>
 </article>
 <article class="sym" id="build_moov">
 <h3><a href="#build_moov">build_moov</a> <i>function</i></h3>
 <pre>build_moov(o byte[&gt;..]&amp;, offset int)</pre>
 <p>Builds the MP4 movie metadata box describing the video track, sample sizes, keyframes and chunk offset.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/video.amni#L1007">hc/lib/gfx/video.amni:1007</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/video.amni#L1007">hc/lib/gfx/video.amni:1007</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -971,7 +971,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2831</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2856</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -1010,6 +1010,7 @@
 <li><a href="/api-library/helium/lib/gfx-sdf_ttf">gfx/sdf_ttf</a></li>
 <li><a href="/api-library/helium/lib/gfx-hwrt">gfx/hwrt</a></li>
 <li><a href="/api-library/helium/lib/gfx-pathtrace">gfx/pathtrace</a></li>
+<li><a href="/api-library/helium/lib/gfx-impostor">gfx/impostor</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
@@ -1019,7 +1020,7 @@
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
 <li><a href="/api-library/helium/security">Security <span>189</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>154</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
@@ -1055,7 +1056,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-16">2026-11-16</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-17">2026-11-17</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>

@@ -15,6 +15,7 @@ gold find	guide	Commands	/api-library/gold/commands#gold-find	Show which functio
 gold compact	guide	Commands	/api-library/gold/commands#gold-compact	Pack data tables into fewer tokens, or write them back out in full. No model call.	pub
 gold squeeze	guide	Commands	/api-library/gold/commands#gold-squeeze	Rewrite the Gold as shorter plain English and keep it only if it still passes.	pub
 gold lint	guide	Commands	/api-library/gold/commands#gold-lint	List lines that read as code instead of English.	pub
+gold sync	guide	Commands	/api-library/gold/commands#gold-sync	Rebuild a product with the newest Helium, repair what the new compiler rejects, and commit only if its tests pass.	pub
 Build and run	guide	Commands	/api-library/gold/commands#build-and-run		pub
 Bring in existing code	guide	Commands	/api-library/gold/commands#bring-in-existing-code		pub
 use=	guide	Commands	/api-library/gold/commands#gold-port	Packs the new code may call, separated by commas.	pub
@@ -26,6 +27,7 @@ Work with packs	guide	Commands	/api-library/gold/commands#work-with-packs		pub
 main=	guide	Commands	/api-library/gold/commands#gold-pack	The product's root file, used to check new code in place.	pub
 test=	guide	Commands	/api-library/gold/commands#gold-pack	The command gold test runs.	pub
 skip=	guide	Commands	/api-library/gold/commands#gold-pack	A regular expression of files to leave out.	pub
+Keep a product current	guide	Commands	/api-library/gold/commands#keep-a-product-current		pub
 Environment variables	guide	Commands	/api-library/gold/commands#environment-variables		pub
 Models	guide	Commands	/api-library/gold/commands#models		pub
 GOLD_MODEL	guide	Commands	/api-library/gold/commands#models	The model that translates and repairs. granite or local:<name> uses the local llama-server.	pub
@@ -33,6 +35,7 @@ GOLD_MODEL_HARD	guide	Commands	/api-library/gold/commands#models	The model used 
 GOLD_MODEL_PORT	guide	Commands	/api-library/gold/commands#models	The model used by gold port.	pub
 GOLD_MODEL_FALLBACK	guide	Commands	/api-library/gold/commands#models	The model that takes over after the local model's repair rounds.	pub
 GOLD_TRIES	guide	Commands	/api-library/gold/commands#models	How many repair rounds to try. The limit extends up to 10 while each round changes the errors.	pub
+GOLD_SYNC_TRIES	guide	Commands	/api-library/gold/commands#models	An integer that sets the number of repair rounds for gold sync.	pub
 GOLD_K	guide	Commands	/api-library/gold/commands#models	An integer setting read at startup.	pub
 Local model	guide	Commands	/api-library/gold/commands#local-model		pub
 GOLD_LOCAL_URL	guide	Commands	/api-library/gold/commands#local-model	The address of the local llama-server.	pub
@@ -67,7 +70,7 @@ e9	guide	File format	/api-library/gold/format#packed-tables	Every number gets th
 Expected output	guide	File format	/api-library/gold/format#expected-output		pub
 Comments	guide	File format	/api-library/gold/format#comments		pub
 File format	guide	Gold	/api-library/gold/format	Headers, paragraphs, exact code, data tables and expected output.	pub
-GOLD_HELIUM	guide	Settings	/api-library/gold/settings	Which Helium checkout to check against.	pub
+GOLD_HELIUM	guide	Settings	/api-library/gold/settings	Which Helium checkout to check against. gold sync also uses it.	pub
 GOLD_HC	guide	Settings	/api-library/gold/settings	The Helium compiler to use.	pub
 GOLD_HC_LIB	guide	Settings	/api-library/gold/settings	The Helium library folder to use.	pub
 GOLD_ROOT	guide	Settings	/api-library/gold/settings	Where Gold's files are found.	pub
@@ -80,10 +83,12 @@ GOLD_LOCAL_UNIT	guide	Settings	/api-library/gold/settings	The service that start
 GOLD_LOCAL_WAIT	guide	Settings	/api-library/gold/settings	Seconds to wait for the GPU before using the local model.	pub
 GOLD_LOCAL_ROUNDS	guide	Settings	/api-library/gold/settings	How many repair rounds the local model gets.	pub
 GOLD_TRIES	guide	Settings	/api-library/gold/settings	Repair rounds. This extends up to 10 while each round changes the errors.	pub
+GOLD_SYNC_TRIES	guide	Settings	/api-library/gold/settings	How many repair rounds gold sync gets.	pub
 GOLD_K	guide	Settings	/api-library/gold/settings	How many product functions the model sees per build.	pub
 GOLD_CACHE	guide	Settings	/api-library/gold/settings	The cache folder.	pub
 GOLD_VERBOSE	guide	Settings	/api-library/gold/settings	Print each step. Set it to any non-empty value to turn it on.	pub
 GOLD_LINT	guide	Settings	/api-library/gold/settings	Set it to warn to build lines that still read as code instead of stopping.	pub
+GOLD_DUMP	guide	Settings	/api-library/gold/settings	A debugging aid. When it is set, Gold prints each block's source and Helium to standard error and then stops without building.	pub
 Settings	guide	Gold	/api-library/gold/settings	The environment variables that choose models, compilers and limits.	pub
 Rust	guide	Dialects	/api-library/gold/dialects#rust		pub
 Python	guide	Dialects	/api-library/gold/dialects#python		pub
@@ -1355,6 +1360,9 @@ s3d::Clouds	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Clouds	Settings
 s3d::CloudU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CloudU	Uniform block passed to the cloud shader holding camera, sun, wind, environment and ambient data.	int
 s3d::CloudShadowU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#CloudShadowU	Uniform block passed to the cloud shadow shader holding the shadow area, sun direction, slab and wind data.	int
 s3d::Batch	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Batch	Flattened per-primitive draw record with matrices and sort depth, built from the item list each frame.	int
+s3d::Impostor	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#Impostor	Describes a baked impostor billboard set for an asset, with its textures, bounds and ray-march settings.	int
+s3d::ImpU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ImpU	Uniform block passed to impostor shaders, holding view-projection matrices, instance data and ray-march parameters.	int
+s3d::ImpDownU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#ImpDownU	Uniform block for the impostor downsample pass, holding a single parameter vector.	int
 s3d::DrawU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#DrawU	Uniform block holding per-draw matrices, deformation and motion data for the shader.	int
 s3d::FrameU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#FrameU	Uniform block of per-frame data: cascades, sun, sky, lights and probe volume.	int
 s3d::GiU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#GiU	Uniform block for the probe update pass with volume layout, rotation, sun, sky and lights.	int
@@ -1770,6 +1778,19 @@ s3d::inst_t0	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t0	Pe
 s3d::inst_t1	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t1	Per-instance data array for the second texture-related shader input.	int
 s3d::inst_t2	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t2	Per-instance data array for the third texture-related shader input.	int
 s3d::inst_t3	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t3	Per-instance data array for the fourth texture-related shader input.	int
+s3d::inst_t4	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t4	Internal per-instance float data array, one of several texture channels used when uploading instance sets.	int
+s3d::inst_t5	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_t5	Internal per-instance float data array, one of several texture channels used when uploading instance sets.	int
+s3d::imps	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#imps	Internal list of registered impostors for the scene.	int
+s3d::pipe_imp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp	Internal pipeline that draws impostors in the color pass.	int
+s3d::pipe_imp_depth	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp_depth	Internal pipeline that draws impostors into the depth pass.	int
+s3d::pipe_imp_nd	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp_nd	Internal pipeline that draws impostors into the normal and depth prepass.	int
+s3d::pipe_imp_bake	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp_bake	Internal pipeline that bakes impostor views from the source asset.	int
+s3d::pipe_imp_bake_two	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp_bake_two	Internal pipeline that bakes impostor views for double-sided surfaces.	int
+s3d::pipe_imp_down	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_imp_down	Internal pipeline that downsamples baked impostor textures.	int
+s3d::imp_kind	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#imp_kind	Internal tracker for the impostor pipeline variant currently in use, with -1 meaning none.	int
+s3d::imp_back	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#imp_back	Internal pipeline for drawing impostors with back-face handling.	int
+s3d::pipe_fade	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_fade	Internal list of pipelines for drawing surfaces that fade, such as level-of-detail transitions.	int
+s3d::last_vp	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#last_vp	Internal copy of the most recent view-projection matrix, starting as identity.	int
 s3d::inst_dirty	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_dirty	Flag marking instance data as needing re-upload or re-culling.	int
 s3d::inst_all	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#inst_all	Flag that draws every instance, bypassing culling results.	int
 s3d::meshlets	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#meshlets	Flag that turns on meshlet-based rendering of large meshes, off by default.	pub
@@ -2011,6 +2032,12 @@ s3d::mw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#mw	Returns a mo
 s3d::draw_uniforms	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_uniforms	Builds per-draw uniform data for a batch, including morph weights and previous transforms.	int
 s3d::bind_geometry	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#bind_geometry	Binds the shared vertex, index and storage buffers for geometry drawing.	int
 s3d::draw_prim	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#draw_prim	Draws one primitive's indexed geometry from a batch.	int
+s3d::asset_batches	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#asset_batches	Builds the list of draw batches for every static, non-skinned mesh node of an asset, used when baking impostors.	int
+s3d::imp_pipes	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#imp_pipes	Creates the render pipelines used to bake and draw impostors, doing nothing once they already exist.	int
+s3d::impostor	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#impostor	Bakes an impostor of an asset with default settings of 12 views per side and 176-pixel tiles, returning its handle.	pub
+s3d::impostor	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#impostor	Bakes a view-angle atlas impostor of an asset using n by n views of the given tile size, returning its handle or -1 on failure.	pub
+s3d::impostor_release	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#impostor_release	Releases the textures of an impostor and detaches it from any instances that were using it.	pub
+s3d::imp_draw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#imp_draw	Draws the impostor billboards for an instanced batch using the current impostor pass kind, skipping batches without instances or impostor.	int
 s3d::halton	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#halton	Returns the Halton sequence value of an index in a base, used for jitter.	int
 s3d::setup_view	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#setup_view	Computes view and projection matrices, lens offset and temporal sub-pixel jitter for the frame.	int
 s3d::setup_cascades	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#setup_cascades	Fits orthographic shadow cascades to view frustum slices with texel snapping.	int
@@ -5912,6 +5939,8 @@ web::fetch	function	web	/api-library/helium/lib/web#fetch	Starts an HTTP fetch o
 web::request	function	web	/api-library/helium/lib/web#request	Starts an HTTP request with custom method, JSON headers, body and timeout in milliseconds, returning an id.	pub
 web::fetch_take	function	web	/api-library/helium/lib/web#fetch_take	Copies a finished fetch response into the output buffer, returning false if it is not ready.	pub
 web::fetch_free	function	web	/api-library/helium/lib/web#fetch_free	Releases the resources held for a fetch id once its response is no longer needed.	pub
+web::stream	function	web	/api-library/helium/lib/web#stream	Starts a streaming HTTP request and returns an id; response data arrives as chunk events tagged with the given tag.	pub
+web::fetch_abort	function	web	/api-library/helium/lib/web#fetch_abort	Aborts an in-flight fetch or stream identified by its id.	pub
 web::js_global	function	web	/api-library/helium/lib/web#js_global	Returns a handle to a global JavaScript object found by its dotted path.	pub
 web::js_get	function	web	/api-library/helium/lib/web#js_get	Returns a handle to a property of a JavaScript object, found by path.	pub
 web::js_import	function	web	/api-library/helium/lib/web#js_import	Starts importing a JavaScript module from a URL, returning an id; completion arrives as a JS event with the tag.	pub
@@ -7756,3 +7785,6 @@ pathtrace::from_scene	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtra
 pathtrace::render	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#render	Renders the scene at the given size and samples per pixel, returning accumulated float data, or empty on failure.	pub
 pathtrace::bad	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#bad	Returns the total count of flagged bad samples in an accumulation buffer.	pub
 pathtrace::save	function	gfx/pathtrace	/api-library/helium/lib/gfx-pathtrace#save	Tone maps an accumulation buffer with exposure and writes it as a PNG, returning false on failure.	pub
+imp::view_dir	function	gfx/impostor	/api-library/helium/lib/gfx-impostor#view_dir	Returns a unit view direction for grid cell (i, j) of an n-by-n octahedral-style hemisphere grid.	pub
+imp::basis	function	gfx/impostor	/api-library/helium/lib/gfx-impostor#basis	Returns the right and up unit vectors of a camera basis perpendicular to the given view direction.	pub
+imp::bake_proj	function	gfx/impostor	/api-library/helium/lib/gfx-impostor#bake_proj	Returns an orthographic projection matrix for baking a sprite from direction d, framing a bounding sphere of center c and radius r.	pub

@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/gfx-hwrt">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/gfx-hwrt">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=631fc0c67d">
+<link rel="stylesheet" href="/api-library/lib.css?v=b9642ce67d">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=631fc0c67d'; start({wasm: '/api-library/search.wasm?v=631fc0c67d'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=b9642ce67d'; start({wasm: '/api-library/search.wasm?v=b9642ce67d'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>gfx/hwrt</h1>
 <p class="lib-lede">Lets a program use Vulkan hardware ray tracing and compute pipelines on the GPU, including device setup, buffers, and dispatching shaders.</p>
-<p class="lib-meta"><code>import gfx.hwrt;</code> &middot; <code>hwrt::</code> &middot; 23 functions, 0 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he">Source</a></p>
+<p class="lib-meta"><code>import gfx.hwrt;</code> &middot; <code>hwrt::</code> &middot; 23 functions, 0 types, 18 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#vulkan-setup">Vulkan Setup <span class="n">3</span></a></li>
 <li><a href="#buffers-and-dispatch">Buffers and Dispatch <span class="n">7</span></a></li>
@@ -116,250 +116,250 @@
 <h3><a href="#name">name</a> <i>function</i></h3>
 <pre>name() const byte[:]</pre>
 <p>Returns the name of the selected GPU as bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L74">hc/lib/gfx/hwrt.he:74</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L74">hc/lib/gfx/hwrt.he:74</a>
 </article>
 <article class="sym" id="is_cpu">
 <h3><a href="#is_cpu">is_cpu</a> <i>function</i></h3>
 <pre>is_cpu() bool</pre>
 <p>Returns whether the selected GPU is a software CPU device.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L75">hc/lib/gfx/hwrt.he:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L75">hc/lib/gfx/hwrt.he:75</a>
 </article>
 <article class="sym" id="init">
 <h3><a href="#init">init</a> <i>function</i></h3>
 <pre>init() bool</pre>
 <p>Initializes Vulkan and selects a ray-query-capable GPU, returning false if unavailable or disabled.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L84">hc/lib/gfx/hwrt.he:84</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L84">hc/lib/gfx/hwrt.he:84</a>
 </article>
 <h2 id="buffers-and-dispatch">Buffers and Dispatch <span class="n">7</span></h2>
 <article class="sym" id="buf">
 <h3><a href="#buf">buf</a> <i>function</i></h3>
 <pre>buf(size int, use int, local bool) int</pre>
 <p>Creates a GPU buffer of the given size and usage, returning its id or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L118">hc/lib/gfx/hwrt.he:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L118">hc/lib/gfx/hwrt.he:118</a>
 </article>
 <article class="sym" id="drop">
 <h3><a href="#drop">drop</a> <i>function</i></h3>
 <pre>drop(b int)</pre>
 <p>Frees the buffer and its memory for the given id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L128">hc/lib/gfx/hwrt.he:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L128">hc/lib/gfx/hwrt.he:128</a>
 </article>
 <article class="sym" id="put">
 <h3><a href="#put">put</a> <i>function</i></h3>
 <pre>put&lt;T&gt;(b int, d const T[:])</pre>
 <p>Copies data from a slice into a host-mapped buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L129">hc/lib/gfx/hwrt.he:129</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L129">hc/lib/gfx/hwrt.he:129</a>
 </article>
 <article class="sym" id="get">
 <h3><a href="#get">get</a> <i>function</i></h3>
 <pre>get&lt;T&gt;(b int, d T[:])</pre>
 <p>Copies data from a host-mapped buffer into a slice.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L130">hc/lib/gfx/hwrt.he:130</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L130">hc/lib/gfx/hwrt.he:130</a>
 </article>
 <article class="sym" id="pipe">
 <h3><a href="#pipe">pipe</a> <i>function</i></h3>
 <pre>pipe(blob const byte[:], nb int) int</pre>
 <p>Creates a compute pipeline from a shader blob, returning its id or -1 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L156">hc/lib/gfx/hwrt.he:156</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L156">hc/lib/gfx/hwrt.he:156</a>
 </article>
 <article class="sym" id="run">
 <h3><a href="#run">run</a> <i>function</i></h3>
 <pre>run(p int, bufs const int[:], gx int, gy int, gz int) bool</pre>
 <p>Dispatches a compute pipeline over the given grid with the listed buffers, returning whether it succeeded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L171">hc/lib/gfx/hwrt.he:171</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L171">hc/lib/gfx/hwrt.he:171</a>
 </article>
 <article class="sym" id="done">
 <h3><a href="#done">done</a> <i>function</i></h3>
 <pre>done()</pre>
 <p>Destroys all pipelines, acceleration structures, and buffers, and shuts down Vulkan.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L181">hc/lib/gfx/hwrt.he:181</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L181">hc/lib/gfx/hwrt.he:181</a>
 </article>
 <h2 id="ray-tracing-scene">Ray Tracing Scene <span class="n">1</span></h2>
 <article class="sym" id="scene">
 <h3><a href="#scene">scene</a> <i>function</i></h3>
 <pre>scene(tris const f32[:], boxes const f32[:], opaque bool) bool</pre>
 <p>Builds a ray tracing acceleration structure from triangle and box data, returning false if setup or any build step fails.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L144">hc/lib/gfx/hwrt.he:144</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L144">hc/lib/gfx/hwrt.he:144</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (30)</summary>
 <article class="sym" id="cc3">
 <h3><a href="#cc3">cc3</a> <i>function</i></h3>
 <pre>cc3(f int, a int, b int, c int) int</pre>
 <p>Thin binding to a C call helper taking a function pointer and three integer arguments, returning an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L51">hc/lib/gfx/hwrt.he:51</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L51">hc/lib/gfx/hwrt.he:51</a>
 </article>
 <article class="sym" id="cc4">
 <h3><a href="#cc4">cc4</a> <i>function</i></h3>
 <pre>cc4(f int, a int, b int, c int, d int) int</pre>
 <p>Thin binding to a C call helper taking a function pointer and four integer arguments, returning an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L52">hc/lib/gfx/hwrt.he:52</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L52">hc/lib/gfx/hwrt.he:52</a>
 </article>
 <article class="sym" id="cc5">
 <h3><a href="#cc5">cc5</a> <i>function</i></h3>
 <pre>cc5(f int, a int, b int, c int, d int, e int) int</pre>
 <p>Thin binding to a C call helper taking a function pointer and five integer arguments, returning an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L53">hc/lib/gfx/hwrt.he:53</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L53">hc/lib/gfx/hwrt.he:53</a>
 </article>
 <article class="sym" id="ST">
 <h3><a href="#ST">ST</a> <i>constant</i></h3>
 <pre>var ST = 0</pre>
 <p>Module state flag tracking whether initialization is untried, succeeded, or failed.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L54">hc/lib/gfx/hwrt.he:54</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L54">hc/lib/gfx/hwrt.he:54</a>
 </article>
 <article class="sym" id="INST">
 <h3><a href="#INST">INST</a> <i>constant</i></h3>
 <pre>var INST uint = 0</pre>
 <p>Handle of the Vulkan instance created during initialization.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L55">hc/lib/gfx/hwrt.he:55</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L55">hc/lib/gfx/hwrt.he:55</a>
 </article>
 <article class="sym" id="PHYS">
 <h3><a href="#PHYS">PHYS</a> <i>constant</i></h3>
 <pre>var PHYS uint = 0</pre>
 <p>Handle of the physical GPU selected for ray tracing.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L56">hc/lib/gfx/hwrt.he:56</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L56">hc/lib/gfx/hwrt.he:56</a>
 </article>
 <article class="sym" id="DEV">
 <h3><a href="#DEV">DEV</a> <i>constant</i></h3>
 <pre>var DEV uint = 0</pre>
 <p>Handle of the logical Vulkan device used for all GPU work.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L57">hc/lib/gfx/hwrt.he:57</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L57">hc/lib/gfx/hwrt.he:57</a>
 </article>
 <article class="sym" id="QUEUE">
 <h3><a href="#QUEUE">QUEUE</a> <i>constant</i></h3>
 <pre>var QUEUE uint = 0</pre>
 <p>Handle of the compute queue used to submit command buffers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L58">hc/lib/gfx/hwrt.he:58</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L58">hc/lib/gfx/hwrt.he:58</a>
 </article>
 <article class="sym" id="CPOOL">
 <h3><a href="#CPOOL">CPOOL</a> <i>constant</i></h3>
 <pre>var CPOOL uint = 0</pre>
 <p>Handle of the command pool that owns the shared command buffer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L59">hc/lib/gfx/hwrt.he:59</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L59">hc/lib/gfx/hwrt.he:59</a>
 </article>
 <article class="sym" id="CB">
 <h3><a href="#CB">CB</a> <i>constant</i></h3>
 <pre>var CB uint = 0</pre>
 <p>Handle of the shared command buffer used for recording GPU work.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L60">hc/lib/gfx/hwrt.he:60</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L60">hc/lib/gfx/hwrt.he:60</a>
 </article>
 <article class="sym" id="MEMP">
 <h3><a href="#MEMP">MEMP</a> <i>constant</i></h3>
 <pre>var MEMP byte[&gt;..]</pre>
 <p>Raw memory properties of the selected GPU, used to choose memory types.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L61">hc/lib/gfx/hwrt.he:61</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L61">hc/lib/gfx/hwrt.he:61</a>
 </article>
 <article class="sym" id="NAME">
 <h3><a href="#NAME">NAME</a> <i>constant</i></h3>
 <pre>var NAME byte[&gt;..]</pre>
 <p>Cached device name of the selected GPU as bytes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L62">hc/lib/gfx/hwrt.he:62</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L62">hc/lib/gfx/hwrt.he:62</a>
 </article>
 <article class="sym" id="DTY">
 <h3><a href="#DTY">DTY</a> <i>constant</i></h3>
 <pre>var DTY = 0</pre>
 <p>Cached Vulkan device type code of the selected GPU.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L63">hc/lib/gfx/hwrt.he:63</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L63">hc/lib/gfx/hwrt.he:63</a>
 </article>
 <article class="sym" id="FN">
 <h3><a href="#FN">FN</a> <i>constant</i></h3>
 <pre>var FN int[&gt;..]</pre>
 <p>Table of loaded acceleration structure function pointers.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L64">hc/lib/gfx/hwrt.he:64</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L64">hc/lib/gfx/hwrt.he:64</a>
 </article>
 <article class="sym" id="BUF">
 <h3><a href="#BUF">BUF</a> <i>constant</i></h3>
 <pre>var BUF uint[&gt;..]</pre>
 <p>List of Vulkan buffer handles, indexed by buffer id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L65">hc/lib/gfx/hwrt.he:65</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L65">hc/lib/gfx/hwrt.he:65</a>
 </article>
 <article class="sym" id="MEM">
 <h3><a href="#MEM">MEM</a> <i>constant</i></h3>
 <pre>var MEM uint[&gt;..]</pre>
 <p>List of device memory handles backing each buffer, indexed by buffer id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L66">hc/lib/gfx/hwrt.he:66</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L66">hc/lib/gfx/hwrt.he:66</a>
 </article>
 <article class="sym" id="MAP">
 <h3><a href="#MAP">MAP</a> <i>constant</i></h3>
 <pre>var MAP uint[&gt;..]</pre>
 <p>List of host-mapped memory addresses for each buffer, zero if not mapped.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L67">hc/lib/gfx/hwrt.he:67</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L67">hc/lib/gfx/hwrt.he:67</a>
 </article>
 <article class="sym" id="ADR">
 <h3><a href="#ADR">ADR</a> <i>constant</i></h3>
 <pre>var ADR uint[&gt;..]</pre>
 <p>List of GPU device addresses for each buffer, indexed by buffer id.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L68">hc/lib/gfx/hwrt.he:68</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L68">hc/lib/gfx/hwrt.he:68</a>
 </article>
 <article class="sym" id="AS">
 <h3><a href="#AS">AS</a> <i>constant</i></h3>
 <pre>var AS uint[&gt;..]</pre>
 <p>List of created acceleration structure handles.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L69">hc/lib/gfx/hwrt.he:69</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L69">hc/lib/gfx/hwrt.he:69</a>
 </article>
 <article class="sym" id="PP">
 <h3><a href="#PP">PP</a> <i>constant</i></h3>
 <pre>var PP uint[&gt;..]</pre>
 <p>Flat table of pipeline objects, seven entries per compute pipeline.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L70">hc/lib/gfx/hwrt.he:70</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L70">hc/lib/gfx/hwrt.he:70</a>
 </article>
 <article class="sym" id="EXTS">
 <h3><a href="#EXTS">EXTS</a> <i>constant</i></h3>
 <pre>EXTS := [&quot;VK_KHR_acceleration_structure&quot;, &quot;VK_KHR_ray_query&quot;, &quot;VK_KHR_deferred_host_operations&quot;]</pre>
 <p>Device extension names required for ray query and acceleration structure support.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L71">hc/lib/gfx/hwrt.he:71</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L71">hc/lib/gfx/hwrt.he:71</a>
 </article>
 <article class="sym" id="pt">
 <h3><a href="#pt">pt</a> <i>function</i></h3>
 <pre>pt(b const byte[:]) uint</pre>
 <p>Converts a byte slice to its raw memory address.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L72">hc/lib/gfx/hwrt.he:72</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L72">hc/lib/gfx/hwrt.he:72</a>
 </article>
 <article class="sym" id="ok">
 <h3><a href="#ok">ok</a> <i>function</i></h3>
 <pre>ok(r int) bool</pre>
 <p>Returns whether a Vulkan result code indicates success.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L73">hc/lib/gfx/hwrt.he:73</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L73">hc/lib/gfx/hwrt.he:73</a>
 </article>
 <article class="sym" id="hasx">
 <h3><a href="#hasx">hasx</a> <i>function</i></h3>
 <pre>hasx(pd uint, x const byte[:]) bool</pre>
 <p>Returns whether a physical device supports the named extension.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L76">hc/lib/gfx/hwrt.he:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L76">hc/lib/gfx/hwrt.he:76</a>
 </article>
 <article class="sym" id="feats">
 <h3><a href="#feats">feats</a> <i>function</i></h3>
 <pre>feats(on bool) byte[&gt;..]</pre>
 <p>Builds a feature structure chain, with ray tracing features enabled when requested.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L80">hc/lib/gfx/hwrt.he:80</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L80">hc/lib/gfx/hwrt.he:80</a>
 </article>
 <article class="sym" id="begin">
 <h3><a href="#begin">begin</a> <i>function</i></h3>
 <pre>begin() bool</pre>
 <p>Starts recording the shared command buffer, returning whether it succeeded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L111">hc/lib/gfx/hwrt.he:111</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L111">hc/lib/gfx/hwrt.he:111</a>
 </article>
 <article class="sym" id="bar">
 <h3><a href="#bar">bar</a> <i>function</i></h3>
 <pre>bar(s int, d int, sa int, da int)</pre>
 <p>Records a memory barrier with the given pipeline stages and access masks.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L112">hc/lib/gfx/hwrt.he:112</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L112">hc/lib/gfx/hwrt.he:112</a>
 </article>
 <article class="sym" id="submit">
 <h3><a href="#submit">submit</a> <i>function</i></h3>
 <pre>submit() bool</pre>
 <p>Ends and submits the shared command buffer, waiting for completion and returning whether it succeeded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L113">hc/lib/gfx/hwrt.he:113</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L113">hc/lib/gfx/hwrt.he:113</a>
 </article>
 <article class="sym" id="mtype">
 <h3><a href="#mtype">mtype</a> <i>function</i></h3>
 <pre>mtype(bits int, wants const int[:]) int</pre>
 <p>Returns the first memory type index matching the type bits and wanted property flags, or -1.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L114">hc/lib/gfx/hwrt.he:114</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L114">hc/lib/gfx/hwrt.he:114</a>
 </article>
 <article class="sym" id="asbuild">
 <h3><a href="#asbuild">asbuild</a> <i>function</i></h3>
 <pre>asbuild(ty int, geo const byte[:], count int) uint</pre>
 <p>Builds an acceleration structure from geometry, returning its handle or 0 on failure.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/631fc0cb92d50b29d4ebdd35de3305db67e72652/hc/lib/gfx/hwrt.he#L131">hc/lib/gfx/hwrt.he:131</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/b9642ce6e49e94b05ee21cae78df8df1f0b73889/hc/lib/gfx/hwrt.he#L131">hc/lib/gfx/hwrt.he:131</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -371,7 +371,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2831</span></a><ul>
+<li><a href="/api-library/helium/graphics">Graphics <span>2856</span></a><ul>
 <li><a href="/api-library/helium/lib/gfx">gfx</a></li>
 <li><a href="/api-library/helium/lib/gfx-scene3d">gfx/scene3d</a></li>
 <li><a href="/api-library/helium/lib/gfx-gltf">gfx/gltf</a></li>
@@ -410,6 +410,7 @@
 <li><a href="#internal">Internal helpers</a></li>
 </ul></li>
 <li><a href="/api-library/helium/lib/gfx-pathtrace">gfx/pathtrace</a></li>
+<li><a href="/api-library/helium/lib/gfx-impostor">gfx/impostor</a></li>
 </ul>
 </li>
 <li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
@@ -419,7 +420,7 @@
 <li><a href="/api-library/helium/world">Worlds &amp; Editors <span>93</span></a></li>
 <li><a href="/api-library/helium/network">Networking <span>395</span></a></li>
 <li><a href="/api-library/helium/security">Security <span>189</span></a></li>
-<li><a href="/api-library/helium/web">Web Pages <span>152</span></a></li>
+<li><a href="/api-library/helium/web">Web Pages <span>154</span></a></li>
 </ul>
 <details class="lib-g"><summary>Gold</summary>
 <ul>
@@ -455,7 +456,7 @@
 
 </aside>
 </div>
-<p class="page-updated">Last updated <time datetime="2026-11-16">2026-11-16</time></p>
+<p class="page-updated">Last updated <time datetime="2026-11-17">2026-11-17</time></p>
 <footer>
 <div class="footer-links">
 <a href="/about.html">ABOUT</a>
