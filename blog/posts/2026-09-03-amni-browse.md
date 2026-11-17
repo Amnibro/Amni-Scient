@@ -10,7 +10,7 @@ cta_label: Amni-Browse
 
 # Amni-Browse on the phone and on Windows
 
-Both are on the product page, and neither one phones home. Zero telemetry on both!
+Both are on the product page, and neither one sends anything back to me. No tracking on either!
 
 Android is 0.16.9 on the system WebView, Android 8+. It's private by default, with tabs, collapsible groups, and per-tab favicons. Sideload it from [amni-browse.html](/amni-browse.html).
 
