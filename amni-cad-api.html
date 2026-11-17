@@ -135,10 +135,11 @@ node amnicad.mjs serve</div>
 <tr><td>GET /v1/health</td><td class="l">none, no token needed</td><td class="l">status</td></tr>
 <tr><td>GET /v1/license</td><td class="l">none</td><td class="l">name, organization, plan, seats, paid-through date</td></tr>
 <tr><td>GET /v1/catalog</td><td class="l">none</td><td class="l">materials, fluids, CAM machines, tools and stock</td></tr>
+<tr><td>GET /v1/guide</td><td class="l">optional <code>?topic=</code></td><td class="l">solver playbook for AI agents: which solver, resolution ladder, convergence checks, closed-passage turbulence (k-ω SST), reading results</td></tr>
 <tr><td>POST /v1/build</td><td class="l">job JSON, or a STEP file (<code>?faces=1</code> lists faces)</td><td class="l">size, bounding box, volume, area, mass, faces</td></tr>
 <tr><td>POST /v1/export</td><td class="l">job with <code>"format":"step"</code>, <code>"stl"</code> or <code>"brep"</code></td><td class="l">the file (<code>?json=1</code> for base64 in JSON)</td></tr>
 <tr><td>POST /v1/stress</td><td class="l">job with <code>sim</code></td><td class="l">peak stress, displacement, safety factor, reactions; modes; temperatures</td></tr>
-<tr><td>POST /v1/flow</td><td class="l">job with <code>flow</code>; <code>"mode":"internal"</code> with <code>internal.ports</code> for channels</td><td class="l">Cd, Cl, drag in N, Reynolds number; or pressure drop, flow rate and velocities</td></tr>
+<tr><td>POST /v1/flow</td><td class="l">job with <code>flow</code>; <code>"mode":"internal"</code> with <code>internal.ports</code> for channels</td><td class="l">Cd, Cl, drag in N, Reynolds number; or pressure drop, flow rate and velocities. Closed passages (<code>"cover":"none"</code>) solve on a 3D adaptive octree, laminar below Re 2300 and k-ω SST above it (<code>internal.turbulence</code> auto, sst or laminar), with wall y+ and eddy viscosity in a <code>turbulence</code> block</td></tr>
 <tr><td>POST /v1/nonlinear</td><td class="l">job with <code>sim</code> and <code>params</code></td><td class="l">displacement, stress, plastic strain, reactions, contact</td></tr>
 <tr><td>POST /v1/quote</td><td class="l">job with <code>qty</code>, <code>material</code>, <code>finishes</code></td><td class="l">a quote for every process, DFM issues</td></tr>
 <tr><td>POST /v1/dxf</td><td class="l">job with <code>units</code></td><td class="l">flat-pattern DXF</td></tr>

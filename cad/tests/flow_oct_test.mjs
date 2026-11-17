@@ -62,4 +62,20 @@ if(want('big')){
   ok(O.stats.cells<uniform/1000,'a 1 mm bore through a 300 mm block needs a thousandth of the uniform grid',O.stats.cells+' cells vs '+(uniform/1e9).toFixed(1)+' billion');
   ok(S.converged&&Math.abs(dp/dpEx-1)<0.1,'and still matches Hagen-Poiseuille within 10 %',(100*(dp/dpEx-1)).toFixed(2)+' %');
 }
+if(want('turb')){
+  const L=120,D=6,m=await build({units:'mm',params:[],features:[{id:'b',type:'box',w:L,d:14,h:14},{id:'h',type:'hole',plane:'YZ',offset:L/2,d:D,thru:true,pts:[[0,7]]}]});
+  const A=(14*14-side(m,'-X').area)*1e-6,Dm=2*Math.sqrt(A/Math.PI);
+  const colebrook=Re=>{let f=0.02;for(let i=0;i<50;i++)f=Math.pow(-2*Math.log10(2.51/(Re*Math.sqrt(f))),-2);return f;};
+  for(const Re of(process.env.RE?process.env.RE.split(',').map(Number):[2e4,1e5])){
+    const U=Re*water.mu/(water.rho*Dm),Q=U*A,t0=Date.now();
+    const{O,S}=await run(m,[port(m,'-X','inlet','flow',Q),port(m,'+X','outlet','pressure',0)],{maxIter:+(process.env.MAXIT||3000),dpEst:0.03*L/D*0.5*water.rho*U*U});
+    const{octFields}=await import('../flow_oct.js'),F=octFields(O);let x0=1e9,x1=-1e9;for(let a=0;a<F.n;a++)if(F.kind[a]<0){x0=Math.min(x0,F.xc[3*a]);x1=Math.max(x1,F.xc[3*a]);}
+    const slab=xs=>{let s=0,v=0;for(let a=0;a<F.n;a++)if(F.kind[a]<0&&Math.abs(F.xc[3*a]-xs)<0.6*F.h[a]){const w=F.h[a]**3;s+=w*F.p[a];v+=w;}return s/v;};
+    const xa=x0+0.5*(x1-x0),xb=x0+0.9*(x1-x0),g=(slab(xa)-slab(xb))/((xb-xa)*1e-3),f=g*Dm/(0.5*water.rho*U*U),fc=colebrook(Re),fb=0.316*Math.pow(Re,-0.25),T=S.turbulence;
+    console.log('  turb Re',Re,JSON.stringify({cells:O.stats.cells,it:S.iterations,conv:S.converged,res:+S.res.toExponential(2),f:+f.toFixed(5),colebrook:+fc.toFixed(5),blasius:+fb.toFixed(5),yplus:T.yplus&&[+T.yplus.mean.toFixed(1),+T.yplus.max.toFixed(1)],nut:T.nut_ratio&&[+T.nut_ratio.mean.toFixed(1),+T.nut_ratio.max.toFixed(1)],model:T.model,ms:Date.now()-t0}));
+    ok(T.model==='k-omega SST','Re '+Re+' switches the octree to k-omega SST on its own',T.model);
+    ok(S.converged,'the turbulent bore converges at Re '+Re,S.iterations+' iterations');
+    ok(Math.abs(f/fc-1)<0.15,'developed Darcy factor matches Colebrook within 15 % at Re '+Re,(100*(f/fc-1)).toFixed(1)+' %');
+  }
+}
 console.log(fail?fail+' FAILED':'all passed');process.exit(fail?1:0);

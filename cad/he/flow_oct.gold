@@ -119,6 +119,20 @@ var YBX real[>..];
 var YBY real[>..];
 var YBZ real[>..];
 var YIT int = 0;
+var YTK real[>..];
+var YTW real[>..];
+var YMT real[>..];
+var YWD real[>..];
+var YTF real[>..];
+var YSS real[>..];
+var YTB real[>..];
+var YTA real[>..];
+var YTP real[>..];
+var YMW real[>..];
+var YUP real[>..];
+var YPI real[>..];
+var YWF i32[>..];
+var YTON int = 0;
 
 fn yzf(xs real[>..]&, n int) { zf(xs, n); }
 fn yzi(xs i32[>..]&, n int, x int) { zi(xs, n, x); }
@@ -1053,7 +1067,9 @@ fn ysweep(u real[>..]&, b real[>..]&, rev bool) {
 // Runs n SIMPLE iterations. Stats: 11 mass residual (relative), 12 velocity change, 13 iterations, 14 AMG iterations.
 export fn fo_iter(n i32) i32 {
 	let rho = YCF[4];
+	let mul = YCF[5];
 	let mu = YCF[5] + YCF[4] * max(YCF[17], 0.0);
+	let tu = YTON != 0;
 	let au = YCF[6];
 	let ap = YCF[7];
 	let sweeps = max(YCF[8] as int, 1);
@@ -1072,13 +1088,13 @@ export fn fo_iter(n i32) i32 {
 		for f in YNF {
 			let o = YFO[f] as int;
 			let nb = YFN[f] as int;
-			let D = mu * YFA[f] / YFD[f];
 			if nb < 0 {
-				YAP[o] += D;
+				if !tu { YAP[o] += mu * YFA[f] / YFD[f]; }
 				YAO[f] = 0.0;
 				YAB[f] = 0.0;
 				continue;
 			}
+			let D = (mu + (if tu { YFW[f] * YMT[o] + (1.0 - YFW[f]) * YMT[nb] } else { 0.0 })) * YFA[f] / YFD[f];
 			let m = YMF[f];
 			let op = YUX[o] < 0;
 			let np = YUX[nb] < 0;
@@ -1109,6 +1125,12 @@ export fn fo_iter(n i32) i32 {
 					let s = m * (sg * vm);
 					if ax == 0 { YBX[nb] += s; } else if ax == 1 { YBY[nb] += s; } else { YBZ[nb] += s; }
 				}
+			}
+		}
+		if tu {
+			for e in YWF.len {
+				let f = YWF[e] as int;
+				YAP[YFO[f] as int] += (YMW[e] + mu - mul) * YFA[f] / YFD[f];
 			}
 		}
 		let simplec = YCF[16] != 0.0;
@@ -1302,17 +1324,15 @@ export fn fo_iter(n i32) i32 {
 		YST[20] = qref;
 		YIT += 1;
 		done += 1;
+		if tu { yturb(); }
 	}
 	done as i32
 }
-
-// Gives each port cell the area-weighted velocity of the fluid cells beside it, for display.
-export fn fo_fin() {
+fn ytanh(x real) real { 1.0 - 2.0 / (exp(2.0 * min(x, 300.0)) + 1.0) }
+fn yport1(phi real[>..]&) {
 	for a in YNA {
 		if YUX[a] < 0 {
-			YU[a] = 0.0;
-			YV[a] = 0.0;
-			YW[a] = 0.0;
+			phi[a] = 0.0;
 			YPC[a] = 0.0;
 		}
 	}
@@ -1320,29 +1340,317 @@ export fn fo_fin() {
 		let nb = YFN[f] as int;
 		if nb < 0 { continue; }
 		let o = YFO[f] as int;
-		var pc = -1;
-		var fc = -1;
-		if YUX[o] < 0 && YUX[nb] >= 0 {
-			pc = o;
-			fc = nb;
-		} else if YUX[nb] < 0 && YUX[o] >= 0 {
-			pc = nb;
-			fc = o;
-		}
+		let pc = if YUX[o] < 0 && YUX[nb] >= 0 { o } else if YUX[nb] < 0 && YUX[o] >= 0 { nb } else { -1 };
 		if pc < 0 { continue; }
-		let A = YFA[f];
-		YU[pc] += A * YU[fc];
-		YV[pc] += A * YV[fc];
-		YW[pc] += A * YW[fc];
-		YPC[pc] += A;
+		let fc = if pc == o { nb } else { o };
+		phi[pc] += YFA[f] * phi[fc];
+		YPC[pc] += YFA[f];
 	}
+	for a in YNA { if YUX[a] < 0 && YPC[a] > 0.0 { phi[a] /= YPC[a]; } }
+}
+fn yinl() {
+	let it = if YCF[19] > 0.0 { YCF[19] } else { 0.05 };
+	for k in YNP {
+		let A = max(YPV[8 * k + 3], 1e-300);
+		let q = if YPP[16 * k + 13] != 0.0 { YPP[16 * k + 14] } else { YPV[8 * k + 1] };
+		let u = abs(q) / A;
+		let kk = max(1.5 * (it * u) * (it * u), 1e-14);
+		let L = if YCF[20] > 0.0 { YCF[20] } else { 0.14 * sqrt(A / 3.141592653589793) };
+		YPI[2 * k] = kk;
+		YPI[2 * k + 1] = max(sqrt(kk) / (0.5477226 * L), 1e-6);
+	}
+}
+fn yupl(rey real, u0 real) real {
+	if !(rey > 1e-12) { return 0.0; }
+	let hi = min(sqrt(rey), 50.0);
+	var u = if u0 > 0.0 && u0 <= hi { u0 } else { hi };
+	for i in 40 {
+		let kp = 0.41 * u;
+		let ex = exp(kp);
+		let yp = u + 0.10204 * (ex - 1.0 - kp - 0.5 * kp * kp - kp * kp * kp / 6.0);
+		let dy = 1.0 + 0.041837 * (ex - 1.0 - kp - 0.5 * kp * kp);
+		let du = (u * yp - rey) / (yp + u * dy);
+		u = min(max(u - du, 1e-4 * hi), hi);
+		if abs(du) < 1e-10 * u { break; }
+	}
+	u
+}
+fn ywallfn(mu real, nu real) {
 	for a in YNA {
-		if YUX[a] < 0 && YPC[a] > 0.0 {
-			YU[a] /= YPC[a];
-			YV[a] /= YPC[a];
-			YW[a] /= YPC[a];
+		YTB[a] = 0.0;
+		YTP[a] = 0.0;
+	}
+	var sa = 0.0;
+	var sy = 0.0;
+	var ymx = 0.0;
+	var sb = 0.0;
+	for e in YWF.len {
+		let f = YWF[e] as int;
+		let o = YFO[f] as int;
+		let ax = YFX[f] as int;
+		let ut = if ax == 0 { sqrt(YV[o] * YV[o] + YW[o] * YW[o]) } else if ax == 1 { sqrt(YU[o] * YU[o] + YW[o] * YW[o]) } else { sqrt(YU[o] * YU[o] + YV[o] * YV[o]) };
+		let y = min(YWD[o], YFD[f]);
+		let up = yupl(ut * y / nu, YUP[e]);
+		YUP[e] = up;
+		let us = if up > 1e-12 { ut / up } else { 0.0 };
+		let yp = y * us / nu;
+		YMW[e] = if up > 1e-12 { mu * yp / up } else { mu };
+		let kp = 0.41 * up;
+		let g = us * us / (nu * (1.0 + 0.041837 * (exp(kp) - 1.0 - kp - 0.5 * kp * kp)));
+		YSS[o] = max(YSS[o], g * g);
+		let wv = 80.0 * nu / (y * y);
+		let wl = us / (0.123 * y);
+		YTB[o] += YFA[f] * sqrt(wv * wv + wl * wl) / YTA[o];
+		YTP[o] += YFA[f] * us * us * g / YTA[o];
+		sa += YFA[f];
+		sy += YFA[f] * yp;
+		ymx = max(ymx, yp);
+		if yp > 5.0 && yp < 30.0 { sb += YFA[f]; }
+	}
+	YST[40] = sy / max(sa, 1e-300);
+	YST[41] = ymx;
+	YST[42] = sb / max(sa, 1e-300);
+}
+fn yf2(a int, nu real) real {
+	let y = YWD[a];
+	let w = YTW[a];
+	let r = min(max(2.0 * sqrt(YTK[a]) / (0.09 * w * y), 500.0 * nu / (y * y * w)), 100.0);
+	ytanh(r * r)
+}
+fn yblend(rho real, mu real, nu real) {
+	var mx = 0.0;
+	var sm = 0.0;
+	var vs = 0.0;
+	for a in YNA {
+		if YUX[a] < 0 { continue; }
+		let k = YTK[a];
+		let w = YTW[a];
+		let y = YWD[a];
+		let a1 = min(min(max(sqrt(k) / (0.09 * w * y), 500.0 * nu / (y * y * w)), 3.424 * k / (max(YPC[a], 1e-10) * y * y)), 10.0);
+		YTF[a] = ytanh(a1 * a1 * a1 * a1);
+		YMT[a] = min(rho * 0.31 * k / max(0.31 * w, yf2(a, nu) * sqrt(YSS[a])), 1e5 * mu);
+		let r = YMT[a] / mu;
+		mx = max(mx, r);
+		sm += r * YVO[a];
+		vs += YVO[a];
+	}
+	YST[43] = sm / max(vs, 1e-300);
+	YST[44] = mx;
+}
+fn ysig(a int, s1 real, s2 real) real { YTF[a] * s1 + (1.0 - YTF[a]) * s2 }
+fn yteq(phi real[>..]&, isw bool, rho real, mu real, al real) {
+	let na = YNA;
+	let nu = mu / rho;
+	let s1 = if isw { 0.5 } else { 0.85 };
+	let s2 = if isw { 0.856 } else { 1.0 };
+	let j = if isw { 1 } else { 0 };
+	for a in na {
+		YAP[a] = 0.0;
+		YBX[a] = 0.0;
+	}
+	for f in YNF {
+		let o = YFO[f] as int;
+		let nb = YFN[f] as int;
+		YAO[f] = 0.0;
+		YAB[f] = 0.0;
+		if nb < 0 { continue; }
+		let m = YMF[f];
+		let op = YUX[o] < 0;
+		let np = YUX[nb] < 0;
+		let g = YFA[f] / YFD[f];
+		if !op && !np {
+			let D = (mu + YFW[f] * ysig(o, s1, s2) * YMT[o] + (1.0 - YFW[f]) * ysig(nb, s1, s2) * YMT[nb]) * g;
+			YAP[o] += D + max(m, 0.0);
+			YAO[f] = D + max(-m, 0.0);
+			YAP[nb] += D + max(-m, 0.0);
+			YAB[f] = D + max(m, 0.0);
+		} else if !op {
+			if m > 0.0 { YAP[o] += m; } else {
+				let c = (mu + ysig(o, s1, s2) * YMT[o]) * g - m;
+				YAP[o] += c;
+				YBX[o] += c * YPI[2 * (YPK[YAN[nb] as int] as int) + j];
+			}
+		} else if !np {
+			if m < 0.0 { YAP[nb] += -m; } else {
+				let c = (mu + ysig(nb, s1, s2) * YMT[nb]) * g + m;
+				YAP[nb] += c;
+				YBX[nb] += c * YPI[2 * (YPK[YAN[o] as int] as int) + j];
+			}
 		}
 	}
+	for a in na {
+		if YUX[a] < 0 { continue; }
+		if isw && YTB[a] > 0.0 {
+			YAP[a] = 1e30;
+			YBX[a] = 1e30 * YTB[a];
+			continue;
+		}
+		let V = YVO[a];
+		let k = YTK[a];
+		let w = YTW[a];
+		if isw {
+			let f1 = YTF[a];
+			let gbn = min(YSS[a], 2.9032 * w * max(0.31 * w, yf2(a, nu) * sqrt(YSS[a])));
+			YBX[a] += (f1 * 0.5555556 + (1.0 - f1) * 0.44) * rho * gbn * V;
+			let c = (f1 - 1.0) * YPC[a] / w;
+			if c > 0.0 { YAP[a] += rho * c * V; } else { YBX[a] -= rho * c * w * V; }
+			YAP[a] += rho * (f1 * 0.075 + (1.0 - f1) * 0.0828) * w * V;
+		} else {
+			YBX[a] += (if YTB[a] > 0.0 { rho * YTP[a] } else { min(YMT[a] * YSS[a], 0.9 * rho * k * w) }) * V;
+			YAP[a] += 0.09 * rho * w * V;
+		}
+		let ar = YAP[a] / al;
+		YBX[a] += (1.0 - al) * ar * phi[a];
+		YAP[a] = ar;
+	}
+	for s in 2 {
+		ysweep(phi, YBX, false);
+		ysweep(phi, YBX, true);
+	}
+	let fl = if isw { 1e-6 } else { 1e-16 };
+	for a in na { if YUX[a] >= 0 { phi[a] = max(phi[a], fl); } }
+}
+fn yturb() {
+	let rho = YCF[4];
+	let mu = YCF[5];
+	let nu = mu / rho;
+	let na = YNA;
+	let al = if YCF[21] > 0.0 { YCF[21] } else { 0.7 };
+	yinl();
+	yport1(YU);
+	yport1(YV);
+	yport1(YW);
+	yport1(YTK);
+	yport1(YTW);
+	for a in na {
+		if YUX[a] < 0 {
+			let k = YPK[YAN[a] as int] as int;
+			let q = if YPP[16 * k + 13] != 0.0 { YPP[16 * k + 14] } else { YPV[8 * k + 1] };
+			if q > 0.0 {
+				YTK[a] = YPI[2 * k];
+				YTW[a] = YPI[2 * k + 1];
+			}
+		}
+	}
+	ygrad(YU);
+	for a in na {
+		YSS[a] = 2.0 * YGX[a] * YGX[a];
+		YBX[a] = YGY[a];
+		YBY[a] = YGZ[a];
+	}
+	ygrad(YV);
+	for a in na {
+		let c = YBX[a] + YGX[a];
+		YSS[a] += 2.0 * YGY[a] * YGY[a] + c * c;
+		YBX[a] = YGZ[a];
+	}
+	ygrad(YW);
+	for a in na {
+		let c1 = YBY[a] + YGX[a];
+		let c2 = YBX[a] + YGY[a];
+		YSS[a] += 2.0 * YGZ[a] * YGZ[a] + c1 * c1 + c2 * c2;
+	}
+	ywallfn(mu, nu);
+	ygrad(YTK);
+	for a in na {
+		YBX[a] = YGX[a];
+		YBY[a] = YGY[a];
+		YBZ[a] = YGZ[a];
+	}
+	ygrad(YTW);
+	for a in na { YPC[a] = 1.712 * (YBX[a] * YGX[a] + YBY[a] * YGY[a] + YBZ[a] * YGZ[a]) / YTW[a]; }
+	yblend(rho, mu, nu);
+	for a in na { YDV[a] = YTK[a]; }
+	yteq(YTW, true, rho, mu, al);
+	yteq(YTK, false, rho, mu, al);
+	var dk = 0.0;
+	var km = 0.0;
+	for a in na {
+		if YUX[a] >= 0 {
+			dk = max(dk, abs(YTK[a] - YDV[a]));
+			km = max(km, YTK[a]);
+		}
+	}
+	yblend(rho, mu, nu);
+	YST[45] = dk / max(km, 1e-300);
+	YST[46] = 1.0;
+}
+export fn fo_turb(on i32) i32 {
+	YTON = on as int;
+	YST[46] = 0.0;
+	if YTON == 0 { return 0; }
+	let na = YNA;
+	let rho = YCF[4];
+	let mu = YCF[5];
+	var nw = 0;
+	for f in YNF { if (YFN[f] as int) < 0 { nw += 1; } }
+	YWF.clear();
+	YWF.reserve(nw);
+	for f in YNF { if (YFN[f] as int) < 0 { YWF.push(f as i32); } }
+	yzf(YMW, nw);
+	yzf(YUP, nw);
+	yzf(YTK, na);
+	yzf(YTW, na);
+	yzf(YMT, na);
+	yzf(YWD, na);
+	yzf(YTF, na);
+	yzf(YSS, na);
+	yzf(YTB, na);
+	yzf(YTA, na);
+	yzf(YTP, na);
+	yzf(YPI, 2 * (YNP + 1));
+	for e in nw {
+		let f = YWF[e] as int;
+		YTA[YFO[f] as int] += YFA[f];
+		YMW[e] = mu;
+	}
+	if MK.len < NT { zu(MK, NT); }
+	for t in NT { MK[t] = if YPT[t] > 0 { 0 } else { 1 }; }
+	for a in na {
+		let j = tnear(YXC[3 * a], YXC[3 * a + 1], YXC[3 * a + 2], 0, -1, false, 0.0, 0.0, 0.0, 0.0);
+		YWD[a] = if j >= 0 { max(sqrt(R[6]) * 1e-3, 1e-9) } else { 1.0 };
+	}
+	for e in nw {
+		let f = YWF[e] as int;
+		let o = YFO[f] as int;
+		YWD[o] = min(YWD[o], YFD[f]);
+	}
+	yinl();
+	var um = 0.0;
+	var lk = -1;
+	for k in YNP {
+		let q = if YPP[16 * k + 13] != 0.0 { YPP[16 * k + 14] } else { YPV[8 * k + 1] };
+		let u = abs(q) / max(YPV[8 * k + 3], 1e-300);
+		if u > um {
+			um = u;
+			lk = k;
+		}
+	}
+	if um <= 0.0 { for a in na { if YUX[a] >= 0 { um = max(um, sqrt(YU[a] * YU[a] + YV[a] * YV[a] + YW[a] * YW[a])); } } }
+	um = max(um, 1e-3);
+	let it = if YCF[19] > 0.0 { YCF[19] } else { 0.05 };
+	let k0 = max(1.5 * (it * um) * (it * um), 1e-14);
+	let L = if YCF[20] > 0.0 { YCF[20] } else if lk >= 0 { 0.14 * sqrt(max(YPV[8 * lk + 3], 1e-300) / 3.141592653589793) } else { 1e-3 };
+	let w0 = sqrt(k0) / (0.5477226 * L);
+	for a in na {
+		YTK[a] = k0;
+		YTW[a] = w0;
+		YMT[a] = min(rho * k0 / w0, 1e5 * mu);
+		YTF[a] = 1.0;
+	}
+	YST[46] = 1.0;
+	fo_view_f64(125, YTK);
+	fo_view_f64(126, YTW);
+	fo_view_f64(127, YMT);
+	fo_view_f64(128, YWD);
+	nw as i32
+}
+
+// Gives each port cell the area-weighted velocity of the fluid cells beside it, for display.
+export fn fo_fin() {
+	yport1(YU);
+	yport1(YV);
+	yport1(YW);
 	// Wall shear on every wall face: viscosity times the speed along the wall over the wall distance.
 	var nw = 0;
 	for f in YNF { if (YFN[f] as int) < 0 { nw += 1; } }
@@ -1353,7 +1661,7 @@ export fn fo_fin() {
 		let o = YFO[f] as int;
 		let ax = YFX[f] as int;
 		let ut = if ax == 0 { sqrt(YV[o] * YV[o] + YW[o] * YW[o]) } else if ax == 1 { sqrt(YU[o] * YU[o] + YW[o] * YW[o]) } else { sqrt(YU[o] * YU[o] + YV[o] * YV[o]) };
-		YWS[2 * e] = YCF[5] * ut / YFD[f];
+		YWS[2 * e] = (if YTON != 0 { YMW[e] } else { YCF[5] }) * ut / YFD[f];
 		YWS[2 * e + 1] = YFA[f];
 		e += 1;
 	}

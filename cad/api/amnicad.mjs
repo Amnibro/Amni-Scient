@@ -28,8 +28,8 @@ export async function serve(o={}){const{E,P,dir}=o.engine||await engine(o),lic=o
       if(loop&&!/^(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/.test(req.headers.host||''))return send(res,421,{ok:false,error:'This API only answers on localhost'});
       if(k==='GET /v1/health')return send(res,200,{ok:true,service:'amni-cad',api:1,engine:path.basename(dir)});
       if(req.headers.authorization!=='Bearer '+token)return send(res,401,{ok:false,error:'Send the local API token as "Authorization: Bearer <token>" (run: amnicad token)'});
-      const L=await lic.load();if(k==='GET /v1/license')return send(res,200,{ok:true,...lic.info(L)});if(k==='GET /v1/catalog')return send(res,200,await E.catalog());
-      const fn=req.method==='POST'&&u.pathname.startsWith('/v1/')&&opOf(E,u.pathname.slice(4));if(!fn)return send(res,404,{ok:false,error:'Routes: GET /v1/health, /v1/license, /v1/catalog; POST '+Object.keys(E.OPS).map(r=>'/v1/'+r).join(', ')});
+      const L=await lic.load();if(k==='GET /v1/license')return send(res,200,{ok:true,...lic.info(L)});if(k==='GET /v1/catalog')return send(res,200,await E.catalog());if(k==='GET /v1/guide')return send(res,200,{ok:true,...await E.guide(u.searchParams.get('topic'))});
+      const fn=req.method==='POST'&&u.pathname.startsWith('/v1/')&&opOf(E,u.pathname.slice(4));if(!fn)return send(res,404,{ok:false,error:'Routes: GET /v1/health, /v1/license, /v1/catalog, /v1/guide; POST '+Object.keys(E.OPS).map(r=>'/v1/'+r).join(', ')});
       const body=await read(req);if(!body.length)return send(res,400,{ok:false,error:'Send a JSON job ({"doc":{...}}) or a STEP file as the request body'});const j=job(body,req.headers['content-type']||'',u.searchParams),r=await E[fn](j);
       if(r.bytes)return u.searchParams.get('json')?send(res,200,{ok:true,name:r.name,type:r.type,base64:Buffer.from(r.bytes).toString('base64')}):send(res,200,Buffer.from(r.bytes),r.type,{'content-disposition':'attachment; filename="'+r.name.replace(/[^\w.-]/g,'_')+'"'});
       if(r.text!=null)return send(res,200,r.text,r.type);send(res,200,{ok:true,...r});}
@@ -41,6 +41,8 @@ const HELP=`Amni-CAD headless API (included with Amni-CAD Pro)
   amnicad serve [--port 41800] [--host 127.0.0.1] [--cors <origin>]
                                    run the local HTTP API (Bearer token: amnicad token)
   amnicad token                    print the local API token
+  amnicad guide [topic]            print the solver playbook for AI agents (also GET /v1/guide);
+                                   topics: solvers (default), sim, recipes, sketch, assembly, tooling
   amnicad run <job.json> [--out <file>]
                                    run one job without a server; job.op is build, export,
                                    stress, flow (external or internal), nonlinear, quote, dxf,
@@ -63,6 +65,7 @@ export async function main(argv=process.argv.slice(2)){const[cmd,...a]=argv,opt=
   if(cmd==='model'){const M=await import(pathToFileURL(path.join(path.dirname(fileURLToPath(import.meta.url)),'model_fetch.mjs')).href);return M.cli(a,say);}
   if(cmd==='update')return void await sync();
   const{E,P,dir}=await engine(),lic=licenser(P);
+  if(cmd==='guide')return say((await E.guide(a[0])).text);
   if(cmd==='activate'){const x=await lic.activate(a[0]||'');return say('Amni-CAD Pro is active for '+(x.org||x.name||x.email)+(x.exp?' until '+new Date(x.exp).toLocaleDateString('en-US'):''));}
   if(cmd==='deactivate'){lic.remove();return say('License removed from this computer');}
   if(cmd==='status'){let s;try{s=lic.info(await lic.load(true));}catch(e){s={error:e.message};}return console.log(JSON.stringify({license:s,engine:dir,api_token_file:path.join(cfgDir(),'api-token')},null,1));}
