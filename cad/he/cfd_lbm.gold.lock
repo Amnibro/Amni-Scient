@@ -80,7 +80,7 @@ export fn lb_init(u real) {
 	}
 	CUR = 0;
 }
-=== -152a3e0f59a1e80e
+=== 3d532900f5615f54
 import math;
 fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 	var f real[19] = [0.0; 19];
@@ -167,11 +167,17 @@ fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 		}
 		let Q = sqrt(qxx * qxx + qyy * qyy + qzz * qzz + 2.0 * (qxy * qxy + qxz * qxz + qyz * qyz));
 		let te = 0.5 * (tau + sqrt(tau * tau + 18.0 * 1.4142135623730951 * cs * cs * Q / r));
+		let om = 1.0 - 1.0 / te;
 		for i in 19 {
 			if x == 0 {
 				fb[i * N + c] = FIN[i] as f32;
 			} else {
-				fb[i * N + c] = (f[i] - (f[i] - feq(i, r, ux, uy, uz)) / te) as f32;
+				let ex = EX[i] as real;
+				let ey = EY[i] as real;
+				let ez = EZ[i] as real;
+				let fe = feq(i, r, ux, uy, uz);
+				let t = 1.0 / 3.0;
+				fb[i * N + c] = (fe + om * WQ[i] * 4.5 * ((ex * ex - t) * qxx + (ey * ey - t) * qyy + (ez * ez - t) * qzz + 2.0 * (ex * ey * qxy + ex * ez * qxz + ey * ez * qyz))) as f32;
 			}
 		}
 		FRC[3 * c] = Fx as f32;
