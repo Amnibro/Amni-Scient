@@ -1034,7 +1034,7 @@ fn ysweep(u real[>..]&, b real[>..]&, rev bool) {
 // Runs n SIMPLE iterations. Stats: 11 mass residual (relative), 12 velocity change, 13 iterations, 14 AMG iterations.
 export fn fo_iter(n i32) i32 {
 	let rho = YCF[4];
-	let mu = YCF[5];
+	let mu = YCF[5] + YCF[4] * max(YCF[17], 0.0);
 	let au = YCF[6];
 	let ap = YCF[7];
 	let sweeps = max(YCF[8] as int, 1);
@@ -1342,4 +1342,32 @@ export fn fo_fin() {
 	var vf = 0.0;
 	for a in YNA { if YUX[a] >= 0 { vf += YVO[a]; } }
 	YST[35] = vf;
+}
+
+// The rms vorticity over the fluid cells, for the enstrophy-feedback viscosity of the Master Momentum closure
+// (Eq. 11', nu_glob = gamma_1 times the L2 norm of vorticity). YST[36] gets the rms, YST[37] the L2 norm.
+export fn fo_omega() {
+	ygrad(YU);
+	for a in YNA {
+		YBX[a] = YGY[a];
+		YBY[a] = YGZ[a];
+	}
+	ygrad(YV);
+	for a in YNA {
+		YBZ[a] = YGX[a];
+		YPC[a] = YGZ[a];
+	}
+	ygrad(YW);
+	var z = 0.0;
+	var vol = 0.0;
+	for a in YNA {
+		if YUX[a] < 0 { continue; }
+		let ox = YGY[a] - YPC[a];
+		let oy = YBY[a] - YGX[a];
+		let oz = YBZ[a] - YBX[a];
+		z += YVO[a] * (ox * ox + oy * oy + oz * oz);
+		vol += YVO[a];
+	}
+	YST[36] = sqrt(z / max(vol, 1e-300));
+	YST[37] = sqrt(z);
 }

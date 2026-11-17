@@ -31,6 +31,18 @@ if(want('bore')){
   }
 }
 
+if(want('fast')){
+  // Re 2000 in the 6 mm bore: the enstrophy-feedback continuation (Master Momentum closure, Eq. 11') must cut the
+  // iterations without moving the answer, because its viscosity is zero before convergence is accepted.
+  const L=20,D=6,m=await build({units:'mm',params:[],features:[{id:'b',type:'box',w:L,d:14,h:14},{id:'h',type:'hole',plane:'YZ',offset:L/2,d:D,thru:true,pts:[[0,7]]}]});
+  const A=(14*14-side(m,'-X').area)*1e-6,Q=2000*water.mu/(water.rho*D*1e-3)*A,ports=[port(m,'-X','inlet','flow',Q),port(m,'+X','outlet','pressure',0)];
+  const plain=await run(m,ports,{glob:false,maxIter:4000}),fast=await run(m,ports,{maxIter:4000}),dp0=plain.S.P[0]-plain.S.P[1],dp1=fast.S.P[0]-fast.S.P[1];
+  console.log('  Re 2000',JSON.stringify({plain:{it:plain.S.iterations,ms:plain.S.ms,dp:+dp0.toPrecision(6)},continuation:{it:fast.S.iterations,ms:fast.S.ms,dp:+dp1.toPrecision(6),...fast.S.continuation}}));
+  ok(plain.S.converged&&fast.S.converged&&fast.S.continuation.used,'at Re 2000 the continuation switches on and both runs converge',fast.S.iterations+' vs '+plain.S.iterations+' iterations');
+  ok(fast.S.iterations<0.5*plain.S.iterations,'the continuation needs under half the iterations',(plain.S.iterations/fast.S.iterations).toFixed(1)+'× fewer');
+  ok(Math.abs(dp1/dp0-1)<1e-3,'and gives the same pressure drop',(100*(dp1/dp0-1)).toExponential(1)+' %');
+}
+
 if(want('long')){
   // A 2 mm bore 100 mm long (50 diameters) at Re about 5: fully developed over nearly its whole length.
   const L=100,D=2,m=await build({units:'mm',params:[],features:[{id:'b',type:'box',w:L,d:20,h:20},{id:'h',type:'hole',plane:'YZ',offset:L/2,d:D,thru:true,pts:[[0,10]]}]});
