@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/codec_vorbis">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/codec_vorbis">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=b695c15faf">
+<link rel="stylesheet" href="/api-library/lib.css?v=231086f5fe">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=b695c15faf'; start({wasm: '/api-library/search.wasm?v=b695c15faf'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=231086f5fe'; start({wasm: '/api-library/search.wasm?v=231086f5fe'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>codec_vorbis</h1>
 <p class="lib-lede">Decodes Ogg Vorbis audio files into raw sample data, parsing Ogg pages and packets so programs can play compressed sound.</p>
-<p class="lib-meta"><code>import codec_vorbis;</code> &middot; <code>codec_vorbis::</code> &middot; 40 functions, 0 types, 88 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni">Source</a></p>
+<p class="lib-meta"><code>import codec_vorbis;</code> &middot; <code>codec_vorbis::</code> &middot; 40 functions, 0 types, 88 constants &middot; <a href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni">Source</a></p>
 <ul class="lib-pills">
 <li><a href="#error-reporting">Error Reporting <span class="n">1</span></a></li>
 <li><a href="#ogg-parsing">Ogg Parsing <span class="n">1</span></a></li>
@@ -117,7 +117,7 @@
 <pre>error() const byte[:]</pre>
 <p>Returns the message describing the most recent decoding failure.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding the file being decoded; `sb(at)` gives the byte at at as an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L12">hc/lib/codec_vorbis.amni:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L12">hc/lib/codec_vorbis.amni:12</a>
 </article>
 <h2 id="ogg-parsing">Ogg Parsing <span class="n">1</span></h2>
 <article class="sym" id="headers">
@@ -125,7 +125,7 @@
 <pre>headers() bool</pre>
 <p>Parses the identification, comment and setup headers, returning false with an error set on invalid data.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L613">hc/lib/codec_vorbis.amni:613</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L613">hc/lib/codec_vorbis.amni:613</a>
 </article>
 <h2 id="ogg-vorbis-decoding">Ogg Vorbis Decoding <span class="n">2</span></h2>
 <article class="sym" id="decode">
@@ -133,14 +133,14 @@
 <pre>decode(data const byte[:], pcm f32[&gt;..]&amp;) int, int, bool</pre>
 <p>Decodes a whole Ogg Vorbis file into interleaved float samples, returning channel count, sample rate and success.</p>
 <p class="note">`decode(data, pcm)` gives channels, rate and a bool: empty pcm, copy data to src, run pages and headers (any failure gives 0, 0, false), set prev to 0, reset tab_n0 and tab_n1 to 0, build the windows, then decode audio packets from 3 on into pcm, keeping a frame total. Trimming: at the first audio packet whose pk_gran is not minus 1, with s the total so far: when the packet is not on the last page</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L1089">hc/lib/codec_vorbis.amni:1089</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L1089">hc/lib/codec_vorbis.amni:1089</a>
 </article>
 <article class="sym" id="is_vorbis">
 <h3><a href="#is_vorbis">is_vorbis</a> <i>function</i></h3>
 <pre>is_vorbis(b const byte[:]) bool</pre>
 <p>Returns true when the bytes begin with an Ogg page header carrying a Vorbis identification packet.</p>
 <p class="note">`decode(data, pcm)` gives channels, rate and a bool: empty pcm, copy data to src, run pages and headers (any failure gives 0, 0, false), set prev to 0, reset tab_n0 and tab_n1 to 0, build the windows, then decode audio packets from 3 on into pcm, keeping a frame total. Trimming: at the first audio packet whose pk_gran is not minus 1, with s the total so far: when the packet is not on the last page</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L1143">hc/lib/codec_vorbis.amni:1143</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L1143">hc/lib/codec_vorbis.amni:1143</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (124)</summary>
 <article class="sym" id="INVDB">
@@ -148,853 +148,853 @@
 <pre>let INVDB f32[256] = [1.0649863e-07, 1.1341951e-07, 1.2079015e-07, 1.2863978e-07, 1.3699951e-07, 1.4590251e-07, 1.5538408e-07, 1.6548181e-07, 1.7623575e-07, 1.8768855e-07, 1.9988561e-07, 2.1287530e-07, 2.2670913e-07, 2.4</pre>
 <p>Lookup table of 256 floor amplitude multipliers, converting integer floor values to linear gain.</p>
 <p class="note">`INVDB` is the Vorbis floor 1 inverse decibel table, indexed by a floor value from 0 to 255.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L3">hc/lib/codec_vorbis.amni:3</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L3">hc/lib/codec_vorbis.amni:3</a>
 </article>
 <article class="sym" id="why">
 <h3><a href="#why">why</a> <i>constant</i></h3>
 <pre>var why byte[&gt;..]</pre>
 <p>Buffer holding the text of the most recent decoding failure.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding the file being decoded; `sb(at)` gives the byte at at as an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L5">hc/lib/codec_vorbis.amni:5</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L5">hc/lib/codec_vorbis.amni:5</a>
 </article>
 <article class="sym" id="src">
 <h3><a href="#src">src</a> <i>constant</i></h3>
 <pre>var src byte[&gt;..]</pre>
 <p>Buffer holding the raw bytes of the Ogg Vorbis file being decoded.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding the file being decoded; `sb(at)` gives the byte at at as an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L6">hc/lib/codec_vorbis.amni:6</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L6">hc/lib/codec_vorbis.amni:6</a>
 </article>
 <article class="sym" id="fail">
 <h3><a href="#fail">fail</a> <i>function</i></h3>
 <pre>fail(reason const byte[:]) bool</pre>
 <p>Records a failure reason in the error buffer and returns false.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding the file being decoded; `sb(at)` gives the byte at at as an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L7">hc/lib/codec_vorbis.amni:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L7">hc/lib/codec_vorbis.amni:7</a>
 </article>
 <article class="sym" id="sb">
 <h3><a href="#sb">sb</a> <i>function</i></h3>
 <pre>sb(at int) int</pre>
 <p>Returns the source byte at the given offset as an integer.</p>
 <p class="note">Errors: a module text `why` holds the reason of the last failure; `fail(reason)` stores it and gives false; `error()` gives it. Module `src` is a byte list holding the file being decoded; `sb(at)` gives the byte at at as an int.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L13">hc/lib/codec_vorbis.amni:13</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L13">hc/lib/codec_vorbis.amni:13</a>
 </article>
 <article class="sym" id="pkt">
 <h3><a href="#pkt">pkt</a> <i>constant</i></h3>
 <pre>var pkt byte[&gt;..]</pre>
 <p>Buffer holding the concatenated data of all packets extracted from Ogg pages.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L14">hc/lib/codec_vorbis.amni:14</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L14">hc/lib/codec_vorbis.amni:14</a>
 </article>
 <article class="sym" id="pk_at">
 <h3><a href="#pk_at">pk_at</a> <i>constant</i></h3>
 <pre>var pk_at int[&gt;..]</pre>
 <p>Per-packet start offsets into the packet data buffer.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L15">hc/lib/codec_vorbis.amni:15</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L15">hc/lib/codec_vorbis.amni:15</a>
 </article>
 <article class="sym" id="pk_len">
 <h3><a href="#pk_len">pk_len</a> <i>constant</i></h3>
 <pre>var pk_len int[&gt;..]</pre>
 <p>Per-packet byte lengths.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L16">hc/lib/codec_vorbis.amni:16</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L16">hc/lib/codec_vorbis.amni:16</a>
 </article>
 <article class="sym" id="pk_gran">
 <h3><a href="#pk_gran">pk_gran</a> <i>constant</i></h3>
 <pre>var pk_gran int[&gt;..]</pre>
 <p>Per-packet granule positions, or -1 when a page gives none for that packet.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L17">hc/lib/codec_vorbis.amni:17</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L17">hc/lib/codec_vorbis.amni:17</a>
 </article>
 <article class="sym" id="pk_last">
 <h3><a href="#pk_last">pk_last</a> <i>constant</i></h3>
 <pre>var pk_last bool[&gt;..]</pre>
 <p>Per-packet flags marking packets that end the logical stream.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L18">hc/lib/codec_vorbis.amni:18</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L18">hc/lib/codec_vorbis.amni:18</a>
 </article>
 <article class="sym" id="cur">
 <h3><a href="#cur">cur</a> <i>constant</i></h3>
 <pre>var cur byte[&gt;..]</pre>
 <p>Scratch buffer accumulating a packet that spans multiple lacing segments.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L19">hc/lib/codec_vorbis.amni:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L19">hc/lib/codec_vorbis.amni:19</a>
 </article>
 <article class="sym" id="pages">
 <h3><a href="#pages">pages</a> <i>function</i></h3>
 <pre>pages() bool</pre>
 <p>Parses Ogg pages of the first stream into packets, returning false if none or too few headers exist.</p>
 <p class="note">Ogg pages (`pages()` gives a bool). It fills module lists: `pkt` (byte list, every packet's bytes one after another), `pk_at` and `pk_len` (int lists, each packet's start in pkt and its length), `pk_gran` (int list, per packet the granule position of the page on which the packet ends when it is the last packet ending on that page, otherwise minus 1) and `pk_last` (bool list, true when the packet e</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L20">hc/lib/codec_vorbis.amni:20</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L20">hc/lib/codec_vorbis.amni:20</a>
 </article>
 <article class="sym" id="bp">
 <h3><a href="#bp">bp</a> <i>constant</i></h3>
 <pre>var bp int = 0</pre>
 <p>Current bit position within the active packet.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L75">hc/lib/codec_vorbis.amni:75</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L75">hc/lib/codec_vorbis.amni:75</a>
 </article>
 <article class="sym" id="bend">
 <h3><a href="#bend">bend</a> <i>constant</i></h3>
 <pre>var bend int = 0</pre>
 <p>Bit position marking the end of the active packet.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L76">hc/lib/codec_vorbis.amni:76</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L76">hc/lib/codec_vorbis.amni:76</a>
 </article>
 <article class="sym" id="pbase">
 <h3><a href="#pbase">pbase</a> <i>constant</i></h3>
 <pre>var pbase int = 0</pre>
 <p>Byte offset in the packet buffer where the active packet begins.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L77">hc/lib/codec_vorbis.amni:77</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L77">hc/lib/codec_vorbis.amni:77</a>
 </article>
 <article class="sym" id="eop">
 <h3><a href="#eop">eop</a> <i>constant</i></h3>
 <pre>var eop bool = false</pre>
 <p>Flag set when a read ran past the end of the active packet.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L78">hc/lib/codec_vorbis.amni:78</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L78">hc/lib/codec_vorbis.amni:78</a>
 </article>
 <article class="sym" id="bstart">
 <h3><a href="#bstart">bstart</a> <i>function</i></h3>
 <pre>bstart(k int, skip int)</pre>
 <p>Begins bit reading on a packet, skipping the given number of leading bytes.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L79">hc/lib/codec_vorbis.amni:79</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L79">hc/lib/codec_vorbis.amni:79</a>
 </article>
 <article class="sym" id="peek32">
 <h3><a href="#peek32">peek32</a> <i>function</i></h3>
 <pre>peek32() int</pre>
 <p>Returns the next 32 bits at the current position without advancing.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L85">hc/lib/codec_vorbis.amni:85</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L85">hc/lib/codec_vorbis.amni:85</a>
 </article>
 <article class="sym" id="bits">
 <h3><a href="#bits">bits</a> <i>function</i></h3>
 <pre>bits(n int) int</pre>
 <p>Reads and consumes the given number of bits, returning 0 and setting end-of-packet on overrun.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L94">hc/lib/codec_vorbis.amni:94</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L94">hc/lib/codec_vorbis.amni:94</a>
 </article>
 <article class="sym" id="ilog">
 <h3><a href="#ilog">ilog</a> <i>function</i></h3>
 <pre>ilog(x int) int</pre>
 <p>Returns the number of bits needed to represent a non-negative integer.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L104">hc/lib/codec_vorbis.amni:104</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L104">hc/lib/codec_vorbis.amni:104</a>
 </article>
 <article class="sym" id="unpack">
 <h3><a href="#unpack">unpack</a> <i>function</i></h3>
 <pre>unpack(x int) real</pre>
 <p>Converts a packed Vorbis float value into a real number.</p>
 <p class="note">Bit reader over one packet (module ints `bp` bit position from the packet start, `bend` the packet's length in bits, `pbase` the packet's start in pkt, module bool `eop`). `bstart(k, skip)` points them at packet k with bp at skip bytes times 8 and eop false. `peek32()` gives the next 32 bits lowest first as a non-negative int, taking bits past the packet end as zero: build it from the five bytes s</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L110">hc/lib/codec_vorbis.amni:110</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L110">hc/lib/codec_vorbis.amni:110</a>
 </article>
 <article class="sym" id="cb_dim">
 <h3><a href="#cb_dim">cb_dim</a> <i>constant</i></h3>
 <pre>var cb_dim int[&gt;..]</pre>
 <p>Per-codebook vector dimensions.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L116">hc/lib/codec_vorbis.amni:116</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L116">hc/lib/codec_vorbis.amni:116</a>
 </article>
 <article class="sym" id="cb_n">
 <h3><a href="#cb_n">cb_n</a> <i>constant</i></h3>
 <pre>var cb_n int[&gt;..]</pre>
 <p>Per-codebook entry counts.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L117">hc/lib/codec_vorbis.amni:117</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L117">hc/lib/codec_vorbis.amni:117</a>
 </article>
 <article class="sym" id="cb_len">
 <h3><a href="#cb_len">cb_len</a> <i>constant</i></h3>
 <pre>var cb_len int[&gt;..]</pre>
 <p>Per-codebook start offsets into the codeword length array.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L118">hc/lib/codec_vorbis.amni:118</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L118">hc/lib/codec_vorbis.amni:118</a>
 </article>
 <article class="sym" id="cb_code">
 <h3><a href="#cb_code">cb_code</a> <i>constant</i></h3>
 <pre>var cb_code int[&gt;..]</pre>
 <p>Per-codebook start offsets into the codeword value array.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L119">hc/lib/codec_vorbis.amni:119</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L119">hc/lib/codec_vorbis.amni:119</a>
 </article>
 <article class="sym" id="cb_fast">
 <h3><a href="#cb_fast">cb_fast</a> <i>constant</i></h3>
 <pre>var cb_fast int[&gt;..]</pre>
 <p>Per-codebook start offsets into the fast lookup table.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L120">hc/lib/codec_vorbis.amni:120</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L120">hc/lib/codec_vorbis.amni:120</a>
 </article>
 <article class="sym" id="cb_long">
 <h3><a href="#cb_long">cb_long</a> <i>constant</i></h3>
 <pre>var cb_long int[&gt;..]</pre>
 <p>Per-codebook start offsets into the list of long codeword entries.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L121">hc/lib/codec_vorbis.amni:121</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L121">hc/lib/codec_vorbis.amni:121</a>
 </article>
 <article class="sym" id="cb_nlong">
 <h3><a href="#cb_nlong">cb_nlong</a> <i>constant</i></h3>
 <pre>var cb_nlong int[&gt;..]</pre>
 <p>Per-codebook counts of entries with codewords longer than the fast lookup.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L122">hc/lib/codec_vorbis.amni:122</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L122">hc/lib/codec_vorbis.amni:122</a>
 </article>
 <article class="sym" id="cb_vq">
 <h3><a href="#cb_vq">cb_vq</a> <i>constant</i></h3>
 <pre>var cb_vq int[&gt;..]</pre>
 <p>Per-codebook start offsets into vector quantization values, or -1 when absent.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L123">hc/lib/codec_vorbis.amni:123</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L123">hc/lib/codec_vorbis.amni:123</a>
 </article>
 <article class="sym" id="clen">
 <h3><a href="#clen">clen</a> <i>constant</i></h3>
 <pre>var clen int[&gt;..]</pre>
 <p>Codeword lengths for all codebook entries.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L124">hc/lib/codec_vorbis.amni:124</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L124">hc/lib/codec_vorbis.amni:124</a>
 </article>
 <article class="sym" id="ccode">
 <h3><a href="#ccode">ccode</a> <i>constant</i></h3>
 <pre>var ccode int[&gt;..]</pre>
 <p>Assigned codeword values for all codebook entries.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L125">hc/lib/codec_vorbis.amni:125</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L125">hc/lib/codec_vorbis.amni:125</a>
 </article>
 <article class="sym" id="cfast">
 <h3><a href="#cfast">cfast</a> <i>constant</i></h3>
 <pre>var cfast int[&gt;..]</pre>
 <p>Fast lookup tables mapping 10-bit prefixes to entries plus one.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L126">hc/lib/codec_vorbis.amni:126</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L126">hc/lib/codec_vorbis.amni:126</a>
 </article>
 <article class="sym" id="clong">
 <h3><a href="#clong">clong</a> <i>constant</i></h3>
 <pre>var clong int[&gt;..]</pre>
 <p>Entry indices of codewords too long for the fast lookup.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L127">hc/lib/codec_vorbis.amni:127</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L127">hc/lib/codec_vorbis.amni:127</a>
 </article>
 <article class="sym" id="cvq">
 <h3><a href="#cvq">cvq</a> <i>constant</i></h3>
 <pre>var cvq f32[&gt;..]</pre>
 <p>Vector quantization values for all codebook entries.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L128">hc/lib/codec_vorbis.amni:128</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L128">hc/lib/codec_vorbis.amni:128</a>
 </article>
 <article class="sym" id="pow_fits">
 <h3><a href="#pow_fits">pow_fits</a> <i>function</i></h3>
 <pre>pow_fits(r int, d int, n int) bool</pre>
 <p>Checks whether the radix raised to the dimension stays within the given limit.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L129">hc/lib/codec_vorbis.amni:129</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L129">hc/lib/codec_vorbis.amni:129</a>
 </article>
 <article class="sym" id="book">
 <h3><a href="#book">book</a> <i>function</i></h3>
 <pre>book(b int) bool</pre>
 <p>Reads one codebook from the setup header, returning false on malformed data.</p>
 <p class="note">Codebooks live in module lists indexed by book number: ints `cb_dim`, `cb_n` (entries), `cb_len` (offset of its first entry in the int list `clen`, code lengths with 0 for an unused entry), `cb_code` (offset in the int list `ccode`, each entry's codeword already bit-reversed so it matches the stream read lowest bit first), `cb_fast` (offset in the int list `cfast`, 1024 slots), `cb_long` and `cb_n</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L137">hc/lib/codec_vorbis.amni:137</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L137">hc/lib/codec_vorbis.amni:137</a>
 </article>
 <article class="sym" id="decode_entry">
 <h3><a href="#decode_entry">decode_entry</a> <i>function</i></h3>
 <pre>decode_entry(b int) int</pre>
 <p>Decodes one entry from the given codebook, returning -1 and setting end-of-packet on failure.</p>
 <p class="note">`decode_entry(b)` reads one entry with book b and gives it, or minus 1 at the end of the packet or when no code matches: v is peek32; f is cfast at the book's fast offset plus the low 10 bits of v; when f is above 0 the entry is f minus 1, its length l, and when bp plus l is past bend set eop and give minus 1, otherwise move bp on by l and give the entry. Otherwise check each long entry in order: </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L265">hc/lib/codec_vorbis.amni:265</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L265">hc/lib/codec_vorbis.amni:265</a>
 </article>
 <article class="sym" id="fl_np">
 <h3><a href="#fl_np">fl_np</a> <i>constant</i></h3>
 <pre>var fl_np int[&gt;..]</pre>
 <p>Per-floor counts of partitions.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L293">hc/lib/codec_vorbis.amni:293</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L293">hc/lib/codec_vorbis.amni:293</a>
 </article>
 <article class="sym" id="fl_pc">
 <h3><a href="#fl_pc">fl_pc</a> <i>constant</i></h3>
 <pre>var fl_pc int[&gt;..]</pre>
 <p>Per-floor start offsets into the partition class list.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L294">hc/lib/codec_vorbis.amni:294</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L294">hc/lib/codec_vorbis.amni:294</a>
 </article>
 <article class="sym" id="fl_mult">
 <h3><a href="#fl_mult">fl_mult</a> <i>constant</i></h3>
 <pre>var fl_mult int[&gt;..]</pre>
 <p>Per-floor multiplier values.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L295">hc/lib/codec_vorbis.amni:295</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L295">hc/lib/codec_vorbis.amni:295</a>
 </article>
 <article class="sym" id="fl_x">
 <h3><a href="#fl_x">fl_x</a> <i>constant</i></h3>
 <pre>var fl_x int[&gt;..]</pre>
 <p>Per-floor start offsets into the X coordinate list.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L296">hc/lib/codec_vorbis.amni:296</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L296">hc/lib/codec_vorbis.amni:296</a>
 </article>
 <article class="sym" id="fl_nx">
 <h3><a href="#fl_nx">fl_nx</a> <i>constant</i></h3>
 <pre>var fl_nx int[&gt;..]</pre>
 <p>Per-floor counts of X coordinates.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L297">hc/lib/codec_vorbis.amni:297</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L297">hc/lib/codec_vorbis.amni:297</a>
 </article>
 <article class="sym" id="fpc">
 <h3><a href="#fpc">fpc</a> <i>constant</i></h3>
 <pre>var fpc int[&gt;..]</pre>
 <p>Partition class assignments for all floors.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L298">hc/lib/codec_vorbis.amni:298</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L298">hc/lib/codec_vorbis.amni:298</a>
 </article>
 <article class="sym" id="fx">
 <h3><a href="#fx">fx</a> <i>constant</i></h3>
 <pre>var fx int[&gt;..]</pre>
 <p>X coordinates for all floor points.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L299">hc/lib/codec_vorbis.amni:299</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L299">hc/lib/codec_vorbis.amni:299</a>
 </article>
 <article class="sym" id="fsort">
 <h3><a href="#fsort">fsort</a> <i>constant</i></h3>
 <pre>var fsort int[&gt;..]</pre>
 <p>Indices of floor points sorted by X coordinate.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L300">hc/lib/codec_vorbis.amni:300</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L300">hc/lib/codec_vorbis.amni:300</a>
 </article>
 <article class="sym" id="flo">
 <h3><a href="#flo">flo</a> <i>constant</i></h3>
 <pre>var flo int[&gt;..]</pre>
 <p>Index of the nearest lower-X neighbor for each floor point.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L301">hc/lib/codec_vorbis.amni:301</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L301">hc/lib/codec_vorbis.amni:301</a>
 </article>
 <article class="sym" id="fhi">
 <h3><a href="#fhi">fhi</a> <i>constant</i></h3>
 <pre>var fhi int[&gt;..]</pre>
 <p>Index of the nearest higher-X neighbor for each floor point.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L302">hc/lib/codec_vorbis.amni:302</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L302">hc/lib/codec_vorbis.amni:302</a>
 </article>
 <article class="sym" id="fcdim">
 <h3><a href="#fcdim">fcdim</a> <i>constant</i></h3>
 <pre>var fcdim int[&gt;..]</pre>
 <p>Per-class dimensions for floor partition classes.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L303">hc/lib/codec_vorbis.amni:303</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L303">hc/lib/codec_vorbis.amni:303</a>
 </article>
 <article class="sym" id="fcsub">
 <h3><a href="#fcsub">fcsub</a> <i>constant</i></h3>
 <pre>var fcsub int[&gt;..]</pre>
 <p>Per-class subclass bit counts for floor partition classes.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L304">hc/lib/codec_vorbis.amni:304</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L304">hc/lib/codec_vorbis.amni:304</a>
 </article>
 <article class="sym" id="fcmaster">
 <h3><a href="#fcmaster">fcmaster</a> <i>constant</i></h3>
 <pre>var fcmaster int[&gt;..]</pre>
 <p>Per-class master codebook numbers for floor partition classes.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L305">hc/lib/codec_vorbis.amni:305</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L305">hc/lib/codec_vorbis.amni:305</a>
 </article>
 <article class="sym" id="fcbook">
 <h3><a href="#fcbook">fcbook</a> <i>constant</i></h3>
 <pre>var fcbook int[&gt;..]</pre>
 <p>Per-subclass codebook numbers for floor partition classes, with -1 for none.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L306">hc/lib/codec_vorbis.amni:306</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L306">hc/lib/codec_vorbis.amni:306</a>
 </article>
 <article class="sym" id="floor">
 <h3><a href="#floor">floor</a> <i>function</i></h3>
 <pre>floor(f int) bool</pre>
 <p>Reads a type 1 floor from the setup header, returning false if unsupported or malformed.</p>
 <p class="note">Floors live in module lists indexed by floor number: ints `fl_np` (partition count), `fl_pc` (offset of its partition classes in the int list `fpc`), `fl_mult` (multiplier 1 to 4), `fl_x` (offset of its X values in the int list `fx`; the int lists `fsort`, `flo` and `fhi` use the same offsets) and `fl_nx` (number of X values). Per floor f and class c below 16, the int lists `fcdim`, `fcsub` and `f</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L307">hc/lib/codec_vorbis.amni:307</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L307">hc/lib/codec_vorbis.amni:307</a>
 </article>
 <article class="sym" id="fy">
 <h3><a href="#fy">fy</a> <i>constant</i></h3>
 <pre>var fy int[&gt;..]</pre>
 <p>Decoded Y values for each channel's floor points.</p>
 <p class="note">`floor_read(f, ch)` reads channel ch's floor 1 values for the current packet into the int list `fy` at ch times 72 plus i, and sets the bool list `fused` at ch. One bit 0 means unused (false). The range is 256, 128, 86 or 64 for multiplier 1 to 4. fy at 0 and 1 are each ilog(range minus 1) bits. Then for each partition with class c: cbits is the class's subclasses, csub is 1 shifted left by cbits </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L392">hc/lib/codec_vorbis.amni:392</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L392">hc/lib/codec_vorbis.amni:392</a>
 </article>
 <article class="sym" id="fused">
 <h3><a href="#fused">fused</a> <i>constant</i></h3>
 <pre>var fused bool[&gt;..]</pre>
 <p>Per-channel flags marking whether a floor was successfully read for the packet.</p>
 <p class="note">`floor_read(f, ch)` reads channel ch's floor 1 values for the current packet into the int list `fy` at ch times 72 plus i, and sets the bool list `fused` at ch. One bit 0 means unused (false). The range is 256, 128, 86 or 64 for multiplier 1 to 4. fy at 0 and 1 are each ilog(range minus 1) bits. Then for each partition with class c: cbits is the class's subclasses, csub is 1 shifted left by cbits </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L393">hc/lib/codec_vorbis.amni:393</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L393">hc/lib/codec_vorbis.amni:393</a>
 </article>
 <article class="sym" id="floor_read">
 <h3><a href="#floor_read">floor_read</a> <i>function</i></h3>
 <pre>floor_read(f int, ch int)</pre>
 <p>Reads one channel's floor Y values from the current packet.</p>
 <p class="note">`floor_read(f, ch)` reads channel ch's floor 1 values for the current packet into the int list `fy` at ch times 72 plus i, and sets the bool list `fused` at ch. One bit 0 means unused (false). The range is 256, 128, 86 or 64 for multiplier 1 to 4. fy at 0 and 1 are each ilog(range minus 1) bits. Then for each partition with class c: cbits is the class's subclasses, csub is 1 shifted left by cbits </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L394">hc/lib/codec_vorbis.amni:394</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L394">hc/lib/codec_vorbis.amni:394</a>
 </article>
 <article class="sym" id="render_point">
 <h3><a href="#render_point">render_point</a> <i>function</i></h3>
 <pre>render_point(x0 int, y0 int, x1 int, y1 int, x int) int</pre>
 <p>Returns the interpolated Y value at X on the line between two points.</p>
 <p class="note">`render_point(x0, y0, x1, y1, x)` gives y0 plus (or minus when y1 is below y0) the integer part of the absolute difference of y1 and y0 times (x minus x0) divided by (x1 minus x0). `render_line(x0, y0, x1, y1, out, at, n)` writes INVDB values into the f32 list out at at plus x for x from x0 below x1 and below n: with dy the difference y1 minus y0, adx x1 minus x0, ady the absolute dy, base dy divi</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L423">hc/lib/codec_vorbis.amni:423</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L423">hc/lib/codec_vorbis.amni:423</a>
 </article>
 <article class="sym" id="render_line">
 <h3><a href="#render_line">render_line</a> <i>function</i></h3>
 <pre>render_line(x0 int, y0 int, x1 int, y1 int, out f32[&gt;..]&amp;, at int, n int)</pre>
 <p>Renders a line of floor amplitudes into the output buffer, clipped to the given length.</p>
 <p class="note">`render_point(x0, y0, x1, y1, x)` gives y0 plus (or minus when y1 is below y0) the integer part of the absolute difference of y1 and y0 times (x minus x0) divided by (x1 minus x0). `render_line(x0, y0, x1, y1, out, at, n)` writes INVDB values into the f32 list out at at plus x for x from x0 below x1 and below n: with dy the difference y1 minus y0, adx x1 minus x0, ady the absolute dy, base dy divi</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L428">hc/lib/codec_vorbis.amni:428</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L428">hc/lib/codec_vorbis.amni:428</a>
 </article>
 <article class="sym" id="floor_curve">
 <h3><a href="#floor_curve">floor_curve</a> <i>function</i></h3>
 <pre>floor_curve(f int, ch int, n2 int, out f32[&gt;..]&amp;, at int)</pre>
 <p>Builds the floor amplitude curve for a channel into the output buffer.</p>
 <p class="note">`floor_curve(f, ch, n2, out, at)` builds channel ch's floor curve of n2 values into out at at. With range as above: step flags start false except at 0 and 1; final values at 0 and 1 are fy at 0 and 1. For each i from 2: low flo at i, high fhi at i, predicted render_point of the X and final values of low and high at X at i; val is fy at i, highroom is range minus predicted, lowroom is predicted, ro</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L451">hc/lib/codec_vorbis.amni:451</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L451">hc/lib/codec_vorbis.amni:451</a>
 </article>
 <article class="sym" id="rs_type">
 <h3><a href="#rs_type">rs_type</a> <i>constant</i></h3>
 <pre>var rs_type int[&gt;..]</pre>
 <p>Per-residue type numbers.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L500">hc/lib/codec_vorbis.amni:500</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L500">hc/lib/codec_vorbis.amni:500</a>
 </article>
 <article class="sym" id="rs_begin">
 <h3><a href="#rs_begin">rs_begin</a> <i>constant</i></h3>
 <pre>var rs_begin int[&gt;..]</pre>
 <p>Per-residue starting positions.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L501">hc/lib/codec_vorbis.amni:501</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L501">hc/lib/codec_vorbis.amni:501</a>
 </article>
 <article class="sym" id="rs_end">
 <h3><a href="#rs_end">rs_end</a> <i>constant</i></h3>
 <pre>var rs_end int[&gt;..]</pre>
 <p>Per-residue ending positions.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L502">hc/lib/codec_vorbis.amni:502</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L502">hc/lib/codec_vorbis.amni:502</a>
 </article>
 <article class="sym" id="rs_psize">
 <h3><a href="#rs_psize">rs_psize</a> <i>constant</i></h3>
 <pre>var rs_psize int[&gt;..]</pre>
 <p>Per-residue partition sizes.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L503">hc/lib/codec_vorbis.amni:503</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L503">hc/lib/codec_vorbis.amni:503</a>
 </article>
 <article class="sym" id="rs_ncls">
 <h3><a href="#rs_ncls">rs_ncls</a> <i>constant</i></h3>
 <pre>var rs_ncls int[&gt;..]</pre>
 <p>Per-residue classification counts.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L504">hc/lib/codec_vorbis.amni:504</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L504">hc/lib/codec_vorbis.amni:504</a>
 </article>
 <article class="sym" id="rs_book">
 <h3><a href="#rs_book">rs_book</a> <i>constant</i></h3>
 <pre>var rs_book int[&gt;..]</pre>
 <p>Per-residue classification codebook numbers.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L505">hc/lib/codec_vorbis.amni:505</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L505">hc/lib/codec_vorbis.amni:505</a>
 </article>
 <article class="sym" id="rs_books">
 <h3><a href="#rs_books">rs_books</a> <i>constant</i></h3>
 <pre>var rs_books int[&gt;..]</pre>
 <p>Codebook numbers per residue class and pass, with -1 for none.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L506">hc/lib/codec_vorbis.amni:506</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L506">hc/lib/codec_vorbis.amni:506</a>
 </article>
 <article class="sym" id="residue">
 <h3><a href="#residue">residue</a> <i>function</i></h3>
 <pre>residue(r int) bool</pre>
 <p>Reads one residue configuration from the setup header, returning false on malformed data.</p>
 <p class="note">Residues live in module int lists indexed by residue number: `rs_type`, `rs_begin`, `rs_end`, `rs_psize`, `rs_ncls` and `rs_book` (the classbook), and the int list `rs_books` holding residue r's book for class c and pass j at (r times 64 plus c) times 8 plus j, minus 1 meaning none. `residue(r)` reads one: type 16 bits (above 2 fails, &quot;bad residue type&quot;), begin 24 bits, end 24 bits, partition size</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L507">hc/lib/codec_vorbis.amni:507</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L507">hc/lib/codec_vorbis.amni:507</a>
 </article>
 <article class="sym" id="chans">
 <h3><a href="#chans">chans</a> <i>constant</i></h3>
 <pre>var chans int = 0</pre>
 <p>Number of audio channels in the stream.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L540">hc/lib/codec_vorbis.amni:540</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L540">hc/lib/codec_vorbis.amni:540</a>
 </article>
 <article class="sym" id="mp_sub">
 <h3><a href="#mp_sub">mp_sub</a> <i>constant</i></h3>
 <pre>var mp_sub int[&gt;..]</pre>
 <p>Per-mapping submap counts.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L541">hc/lib/codec_vorbis.amni:541</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L541">hc/lib/codec_vorbis.amni:541</a>
 </article>
 <article class="sym" id="mp_ncp">
 <h3><a href="#mp_ncp">mp_ncp</a> <i>constant</i></h3>
 <pre>var mp_ncp int[&gt;..]</pre>
 <p>Per-mapping counts of channel coupling steps.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L542">hc/lib/codec_vorbis.amni:542</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L542">hc/lib/codec_vorbis.amni:542</a>
 </article>
 <article class="sym" id="mp_cp">
 <h3><a href="#mp_cp">mp_cp</a> <i>constant</i></h3>
 <pre>var mp_cp int[&gt;..]</pre>
 <p>Per-mapping start offsets into the coupling arrays.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L543">hc/lib/codec_vorbis.amni:543</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L543">hc/lib/codec_vorbis.amni:543</a>
 </article>
 <article class="sym" id="cmag">
 <h3><a href="#cmag">cmag</a> <i>constant</i></h3>
 <pre>var cmag int[&gt;..]</pre>
 <p>Magnitude channel indices for all coupling steps.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L544">hc/lib/codec_vorbis.amni:544</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L544">hc/lib/codec_vorbis.amni:544</a>
 </article>
 <article class="sym" id="cang">
 <h3><a href="#cang">cang</a> <i>constant</i></h3>
 <pre>var cang int[&gt;..]</pre>
 <p>Angle channel indices for all coupling steps.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L545">hc/lib/codec_vorbis.amni:545</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L545">hc/lib/codec_vorbis.amni:545</a>
 </article>
 <article class="sym" id="mux">
 <h3><a href="#mux">mux</a> <i>constant</i></h3>
 <pre>var mux int[&gt;..]</pre>
 <p>Per-mapping, per-channel submap assignments.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L546">hc/lib/codec_vorbis.amni:546</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L546">hc/lib/codec_vorbis.amni:546</a>
 </article>
 <article class="sym" id="smfloor">
 <h3><a href="#smfloor">smfloor</a> <i>constant</i></h3>
 <pre>var smfloor int[&gt;..]</pre>
 <p>Floor numbers for each mapping submap.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L547">hc/lib/codec_vorbis.amni:547</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L547">hc/lib/codec_vorbis.amni:547</a>
 </article>
 <article class="sym" id="smres">
 <h3><a href="#smres">smres</a> <i>constant</i></h3>
 <pre>var smres int[&gt;..]</pre>
 <p>Residue numbers for each mapping submap.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L548">hc/lib/codec_vorbis.amni:548</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L548">hc/lib/codec_vorbis.amni:548</a>
 </article>
 <article class="sym" id="mapping">
 <h3><a href="#mapping">mapping</a> <i>function</i></h3>
 <pre>mapping(m int) bool</pre>
 <p>Reads one channel mapping from the setup header, returning false on malformed data.</p>
 <p class="note">Mappings live in module int lists indexed by mapping number: `mp_sub` (submap count), `mp_ncp` (coupling steps), `mp_cp` (offset in the int lists `cmag` and `cang`), with `mux` holding the submap of channel ch at mapping times 255 plus ch, and `smfloor` and `smres` holding submap s's floor and residue at mapping times 16 plus s. `mapping(m)` reads one: type 16 bits must be 0 (&quot;bad mapping type&quot;); </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L549">hc/lib/codec_vorbis.amni:549</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L549">hc/lib/codec_vorbis.amni:549</a>
 </article>
 <article class="sym" id="md_block">
 <h3><a href="#md_block">md_block</a> <i>constant</i></h3>
 <pre>var md_block int[&gt;..]</pre>
 <p>Per-mode block size flags selecting short or long blocks.</p>
 <p class="note">Modes: module int lists `md_block` (block flag) and `md_map` (mapping); `mode(i)` reads a block flag of 1 bit, window type 16 bits and transform type 16 bits (both must be 0, &quot;bad mode&quot;), and a mapping of 8 bits (not below the mapping count fails).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L592">hc/lib/codec_vorbis.amni:592</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L592">hc/lib/codec_vorbis.amni:592</a>
 </article>
 <article class="sym" id="md_map">
 <h3><a href="#md_map">md_map</a> <i>constant</i></h3>
 <pre>var md_map int[&gt;..]</pre>
 <p>Per-mode mapping numbers.</p>
 <p class="note">Modes: module int lists `md_block` (block flag) and `md_map` (mapping); `mode(i)` reads a block flag of 1 bit, window type 16 bits and transform type 16 bits (both must be 0, &quot;bad mode&quot;), and a mapping of 8 bits (not below the mapping count fails).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L593">hc/lib/codec_vorbis.amni:593</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L593">hc/lib/codec_vorbis.amni:593</a>
 </article>
 <article class="sym" id="mode">
 <h3><a href="#mode">mode</a> <i>function</i></h3>
 <pre>mode(i int) bool</pre>
 <p>Reads one mode from the setup header, returning false on malformed data.</p>
 <p class="note">Modes: module int lists `md_block` (block flag) and `md_map` (mapping); `mode(i)` reads a block flag of 1 bit, window type 16 bits and transform type 16 bits (both must be 0, &quot;bad mode&quot;), and a mapping of 8 bits (not below the mapping count fails).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L594">hc/lib/codec_vorbis.amni:594</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L594">hc/lib/codec_vorbis.amni:594</a>
 </article>
 <article class="sym" id="rate">
 <h3><a href="#rate">rate</a> <i>constant</i></h3>
 <pre>var rate int = 0</pre>
 <p>Sample rate of the stream in hertz.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L605">hc/lib/codec_vorbis.amni:605</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L605">hc/lib/codec_vorbis.amni:605</a>
 </article>
 <article class="sym" id="bs0">
 <h3><a href="#bs0">bs0</a> <i>constant</i></h3>
 <pre>var bs0 int = 0</pre>
 <p>Short block size in samples.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L606">hc/lib/codec_vorbis.amni:606</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L606">hc/lib/codec_vorbis.amni:606</a>
 </article>
 <article class="sym" id="bs1">
 <h3><a href="#bs1">bs1</a> <i>constant</i></h3>
 <pre>var bs1 int = 0</pre>
 <p>Long block size in samples.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L607">hc/lib/codec_vorbis.amni:607</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L607">hc/lib/codec_vorbis.amni:607</a>
 </article>
 <article class="sym" id="nmodes">
 <h3><a href="#nmodes">nmodes</a> <i>constant</i></h3>
 <pre>var nmodes int = 0</pre>
 <p>Number of modes defined in the setup header.</p>
 <p class="note">`headers()` gives a bool after pages(). Packet 0 must be at least 30 bytes with byte 0 equal to 1 and &quot;vorbis&quot; at 1 (&quot;not a Vorbis stream&quot;); version is the 32-bit little-endian value at 7 and must be 0; module int `chans` is the byte at 11 (0 fails); module int `rate` is the 32-bit little-endian value at 12 (0 fails); the byte at 28 gives module ints `bs0` as 1 shifted left by its low 4 bits and `</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L608">hc/lib/codec_vorbis.amni:608</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L608">hc/lib/codec_vorbis.amni:608</a>
 </article>
 <article class="sym" id="pb">
 <h3><a href="#pb">pb</a> <i>function</i></h3>
 <pre>pb(k int, i int) int</pre>
 <p>Returns the byte at the given index within the given packet as an integer.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L609">hc/lib/codec_vorbis.amni:609</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L609">hc/lib/codec_vorbis.amni:609</a>
 </article>
 <article class="sym" id="vtag">
 <h3><a href="#vtag">vtag</a> <i>function</i></h3>
 <pre>vtag(k int) bool</pre>
 <p>Checks whether the packet begins with the Vorbis signature after its type byte.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L610">hc/lib/codec_vorbis.amni:610</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L610">hc/lib/codec_vorbis.amni:610</a>
 </article>
 <article class="sym" id="win0">
 <h3><a href="#win0">win0</a> <i>constant</i></h3>
 <pre>var win0 f32[&gt;..]</pre>
 <p>Short-block window slope table.</p>
 <p class="note">Windows: `slope(n)` gives an f32 list of n halved values, value i being the sine of half pi times the square of the sine of half pi times (i plus 0.5) divided by n halved, worked out in reals. Module f32 lists `win0` and `win1` hold slope(bs0) and slope(bs1).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L700">hc/lib/codec_vorbis.amni:700</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L700">hc/lib/codec_vorbis.amni:700</a>
 </article>
 <article class="sym" id="win1">
 <h3><a href="#win1">win1</a> <i>constant</i></h3>
 <pre>var win1 f32[&gt;..]</pre>
 <p>Long-block window slope table.</p>
 <p class="note">Windows: `slope(n)` gives an f32 list of n halved values, value i being the sine of half pi times the square of the sine of half pi times (i plus 0.5) divided by n halved, worked out in reals. Module f32 lists `win0` and `win1` hold slope(bs0) and slope(bs1).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L701">hc/lib/codec_vorbis.amni:701</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L701">hc/lib/codec_vorbis.amni:701</a>
 </article>
 <article class="sym" id="slope">
 <h3><a href="#slope">slope</a> <i>function</i></h3>
 <pre>slope(n int) f32[&gt;..]</pre>
 <p>Builds the rising half of a Vorbis power-sine window slope for the given block size.</p>
 <p class="note">Windows: `slope(n)` gives an f32 list of n halved values, value i being the sine of half pi times the square of the sine of half pi times (i plus 0.5) divided by n halved, worked out in reals. Module f32 lists `win0` and `win1` hold slope(bs0) and slope(bs1).</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L702">hc/lib/codec_vorbis.amni:702</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L702">hc/lib/codec_vorbis.amni:702</a>
 </article>
 <article class="sym" id="tab_n0">
 <h3><a href="#tab_n0">tab_n0</a> <i>constant</i></h3>
 <pre>var tab_n0 int = 0</pre>
 <p>Counts the block size for which the first cached IMDCT twiddle table set was built, or zero when unset.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L711">hc/lib/codec_vorbis.amni:711</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L711">hc/lib/codec_vorbis.amni:711</a>
 </article>
 <article class="sym" id="tab_n1">
 <h3><a href="#tab_n1">tab_n1</a> <i>constant</i></h3>
 <pre>var tab_n1 int = 0</pre>
 <p>Counts the block size for which the second cached IMDCT twiddle table set was built, or zero when unset.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L712">hc/lib/codec_vorbis.amni:712</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L712">hc/lib/codec_vorbis.amni:712</a>
 </article>
 <article class="sym" id="fc0">
 <h3><a href="#fc0">fc0</a> <i>constant</i></h3>
 <pre>var fc0 f32[&gt;..]</pre>
 <p>Holds cosine twiddle factors for the FFT in the first cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L713">hc/lib/codec_vorbis.amni:713</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L713">hc/lib/codec_vorbis.amni:713</a>
 </article>
 <article class="sym" id="fs0">
 <h3><a href="#fs0">fs0</a> <i>constant</i></h3>
 <pre>var fs0 f32[&gt;..]</pre>
 <p>Holds sine twiddle factors for the FFT in the first cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L714">hc/lib/codec_vorbis.amni:714</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L714">hc/lib/codec_vorbis.amni:714</a>
 </article>
 <article class="sym" id="fc1">
 <h3><a href="#fc1">fc1</a> <i>constant</i></h3>
 <pre>var fc1 f32[&gt;..]</pre>
 <p>Holds cosine twiddle factors for the FFT in the second cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L715">hc/lib/codec_vorbis.amni:715</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L715">hc/lib/codec_vorbis.amni:715</a>
 </article>
 <article class="sym" id="fs1">
 <h3><a href="#fs1">fs1</a> <i>constant</i></h3>
 <pre>var fs1 f32[&gt;..]</pre>
 <p>Holds sine twiddle factors for the FFT in the second cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L716">hc/lib/codec_vorbis.amni:716</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L716">hc/lib/codec_vorbis.amni:716</a>
 </article>
 <article class="sym" id="wc0">
 <h3><a href="#wc0">wc0</a> <i>constant</i></h3>
 <pre>var wc0 f32[&gt;..]</pre>
 <p>Holds cosine pre- and post-rotation weights for the IMDCT in the first cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L717">hc/lib/codec_vorbis.amni:717</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L717">hc/lib/codec_vorbis.amni:717</a>
 </article>
 <article class="sym" id="ws0">
 <h3><a href="#ws0">ws0</a> <i>constant</i></h3>
 <pre>var ws0 f32[&gt;..]</pre>
 <p>Holds sine pre- and post-rotation weights for the IMDCT in the first cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L718">hc/lib/codec_vorbis.amni:718</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L718">hc/lib/codec_vorbis.amni:718</a>
 </article>
 <article class="sym" id="wc1">
 <h3><a href="#wc1">wc1</a> <i>constant</i></h3>
 <pre>var wc1 f32[&gt;..]</pre>
 <p>Holds cosine pre- and post-rotation weights for the IMDCT in the second cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L719">hc/lib/codec_vorbis.amni:719</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L719">hc/lib/codec_vorbis.amni:719</a>
 </article>
 <article class="sym" id="ws1">
 <h3><a href="#ws1">ws1</a> <i>constant</i></h3>
 <pre>var ws1 f32[&gt;..]</pre>
 <p>Holds sine pre- and post-rotation weights for the IMDCT in the second cached table slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L720">hc/lib/codec_vorbis.amni:720</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L720">hc/lib/codec_vorbis.amni:720</a>
 </article>
 <article class="sym" id="fre">
 <h3><a href="#fre">fre</a> <i>constant</i></h3>
 <pre>var fre f32[&gt;..]</pre>
 <p>Holds the real scratch buffer used by the FFT inside the IMDCT.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L721">hc/lib/codec_vorbis.amni:721</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L721">hc/lib/codec_vorbis.amni:721</a>
 </article>
 <article class="sym" id="fim">
 <h3><a href="#fim">fim</a> <i>constant</i></h3>
 <pre>var fim f32[&gt;..]</pre>
 <p>Holds the imaginary scratch buffer used by the FFT inside the IMDCT.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L722">hc/lib/codec_vorbis.amni:722</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L722">hc/lib/codec_vorbis.amni:722</a>
 </article>
 <article class="sym" id="ftab">
 <h3><a href="#ftab">ftab</a> <i>function</i></h3>
 <pre>ftab(n int, sine bool) f32[&gt;..]</pre>
 <p>Builds a table of cosine or sine twiddle factors for an FFT of the given block size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L723">hc/lib/codec_vorbis.amni:723</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L723">hc/lib/codec_vorbis.amni:723</a>
 </article>
 <article class="sym" id="wtab">
 <h3><a href="#wtab">wtab</a> <i>function</i></h3>
 <pre>wtab(n int, sine bool) f32[&gt;..]</pre>
 <p>Builds a table of cosine or sine rotation weights for an IMDCT of the given block size.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L733">hc/lib/codec_vorbis.amni:733</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L733">hc/lib/codec_vorbis.amni:733</a>
 </article>
 <article class="sym" id="tables">
 <h3><a href="#tables">tables</a> <i>function</i></h3>
 <pre>tables(n int)</pre>
 <p>Ensures twiddle and weight tables exist for the given block size, filling an empty cache slot.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L742">hc/lib/codec_vorbis.amni:742</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L742">hc/lib/codec_vorbis.amni:742</a>
 </article>
 <article class="sym" id="fft">
 <h3><a href="#fft">fft</a> <i>function</i></h3>
 <pre>fft(re f32[:], im f32[:], n int, c const f32[:], s const f32[:])</pre>
 <p>Performs an in-place complex FFT of power-of-two length using the supplied twiddle tables.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L758">hc/lib/codec_vorbis.amni:758</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L758">hc/lib/codec_vorbis.amni:758</a>
 </article>
 <article class="sym" id="imdct_core">
 <h3><a href="#imdct_core">imdct_core</a> <i>function</i></h3>
 <pre>imdct_core(x const f32[:], xat int, n int, out f32[&gt;..]&amp;, c const f32[:], s const f32[:], wcs const f32[:], wss const f32[:])</pre>
 <p>Computes an inverse MDCT using the supplied twiddle and weight tables, writing a block of n samples to out.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L801">hc/lib/codec_vorbis.amni:801</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L801">hc/lib/codec_vorbis.amni:801</a>
 </article>
 <article class="sym" id="imdct">
 <h3><a href="#imdct">imdct</a> <i>function</i></h3>
 <pre>imdct(x const f32[:], xat int, n int, out f32[&gt;..]&amp;)</pre>
 <p>Computes an inverse MDCT of block size n from a spectrum at an offset, using cached tables.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L840">hc/lib/codec_vorbis.amni:840</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L840">hc/lib/codec_vorbis.amni:840</a>
 </article>
 <article class="sym" id="imdct_into">
 <h3><a href="#imdct_into">imdct_into</a> <i>function</i></h3>
 <pre>imdct_into(x const f32[:], out f32[&gt;..]&amp;)</pre>
 <p>Computes an inverse MDCT of a spectrum, producing twice as many output samples as input values.</p>
 <p class="note">Inverse MDCT. Twiddle tables are made once per block size, never inside a transform: `tables(n)` (n a block size; it does nothing when module int `tab_n0` or `tab_n1` already equals n, filling slot 0 the first time and slot 1 the next) stores, for h equal to n divided by 4: the f32 lists `fc` and `fs` (slot 0 in `fc0`/`fs0`, slot 1 in `fc1`/`fs1`) of h halved values, value k being the cosine and m</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L849">hc/lib/codec_vorbis.amni:849</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L849">hc/lib/codec_vorbis.amni:849</a>
 </article>
 <article class="sym" id="dnd">
 <h3><a href="#dnd">dnd</a> <i>constant</i></h3>
 <pre>var dnd bool[&gt;..]</pre>
 <p>Holds per-channel flags marking channels whose floor is unused and whose residue is skipped.</p>
 <p class="note">`residue_read(r, chs, n2)` decodes residue r for the channels listed in the int list chs (each with a bool in the bool list `dnd`, do not decode) into the f32 list `rv` (channel ch's n2 values at ch times bs1 halved; already zero). Type 2: when every listed channel is marked do not decode, do nothing; otherwise decode one vector of chs length times n2 values into the f32 list `rtmp` (zeroed) as fo</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L852">hc/lib/codec_vorbis.amni:852</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L852">hc/lib/codec_vorbis.amni:852</a>
 </article>
 <article class="sym" id="rv">
 <h3><a href="#rv">rv</a> <i>constant</i></h3>
 <pre>var rv f32[&gt;..]</pre>
 <p>Holds the decoded residue vectors for all channels.</p>
 <p class="note">`residue_read(r, chs, n2)` decodes residue r for the channels listed in the int list chs (each with a bool in the bool list `dnd`, do not decode) into the f32 list `rv` (channel ch's n2 values at ch times bs1 halved; already zero). Type 2: when every listed channel is marked do not decode, do nothing; otherwise decode one vector of chs length times n2 values into the f32 list `rtmp` (zeroed) as fo</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L853">hc/lib/codec_vorbis.amni:853</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L853">hc/lib/codec_vorbis.amni:853</a>
 </article>
 <article class="sym" id="rtmp">
 <h3><a href="#rtmp">rtmp</a> <i>constant</i></h3>
 <pre>var rtmp f32[&gt;..]</pre>
 <p>Holds the temporary interleaved residue buffer used for type 2 residues.</p>
 <p class="note">`residue_read(r, chs, n2)` decodes residue r for the channels listed in the int list chs (each with a bool in the bool list `dnd`, do not decode) into the f32 list `rv` (channel ch's n2 values at ch times bs1 halved; already zero). Type 2: when every listed channel is marked do not decode, do nothing; otherwise decode one vector of chs length times n2 values into the f32 list `rtmp` (zeroed) as fo</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L854">hc/lib/codec_vorbis.amni:854</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L854">hc/lib/codec_vorbis.amni:854</a>
 </article>
 <article class="sym" id="rcls">
 <h3><a href="#rcls">rcls</a> <i>constant</i></h3>
 <pre>var rcls int[&gt;..]</pre>
 <p>Holds the residue classification values decoded for each vector and partition.</p>
 <p class="note">`residue_read(r, chs, n2)` decodes residue r for the channels listed in the int list chs (each with a bool in the bool list `dnd`, do not decode) into the f32 list `rv` (channel ch's n2 values at ch times bs1 halved; already zero). Type 2: when every listed channel is marked do not decode, do nothing; otherwise decode one vector of chs length times n2 values into the f32 list `rtmp` (zeroed) as fo</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L855">hc/lib/codec_vorbis.amni:855</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L855">hc/lib/codec_vorbis.amni:855</a>
 </article>
 <article class="sym" id="rvec">
 <h3><a href="#rvec">rvec</a> <i>constant</i></h3>
 <pre>var rvec int[&gt;..]</pre>
 <p>Holds the offsets of the residue vectors currently being decoded.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L856">hc/lib/codec_vorbis.amni:856</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L856">hc/lib/codec_vorbis.amni:856</a>
 </article>
 <article class="sym" id="to_tmp">
 <h3><a href="#to_tmp">to_tmp</a> <i>constant</i></h3>
 <pre>var to_tmp bool = false</pre>
 <p>Flags whether residue values are accumulated into the temporary buffer instead of the main residue vectors.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L857">hc/lib/codec_vorbis.amni:857</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L857">hc/lib/codec_vorbis.amni:857</a>
 </article>
 <article class="sym" id="tadd">
 <h3><a href="#tadd">tadd</a> <i>function</i></h3>
 <pre>tadd(i int, v f32)</pre>
 <p>Adds a value to the current residue target at the given index, ignoring out-of-range indices.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L858">hc/lib/codec_vorbis.amni:858</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L858">hc/lib/codec_vorbis.amni:858</a>
 </article>
 <article class="sym" id="decode_part">
 <h3><a href="#decode_part">decode_part</a> <i>function</i></h3>
 <pre>decode_part(bk int, fmt int, v int, off int, psize int) bool</pre>
 <p>Decodes one residue partition using a codebook and adds the vectors, returning false on failure or an unusable book.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L865">hc/lib/codec_vorbis.amni:865</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L865">hc/lib/codec_vorbis.amni:865</a>
 </article>
 <article class="sym" id="res_decode">
 <h3><a href="#res_decode">res_decode</a> <i>function</i></h3>
 <pre>res_decode(r int, fmt int, nvec int, size int)</pre>
 <p>Decodes the residue classes and partitions for a set of vectors across all eight passes.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L888">hc/lib/codec_vorbis.amni:888</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L888">hc/lib/codec_vorbis.amni:888</a>
 </article>
 <article class="sym" id="residue_read">
 <h3><a href="#residue_read">residue_read</a> <i>function</i></h3>
 <pre>residue_read(r int, chs const int[:], n2 int)</pre>
 <p>Reads the residue for the given channels, handling format types 0, 1 and 2 and skipping unused channels.</p>
 <p class="note">`residue_read(r, chs, n2)` decodes residue r for the channels listed in the int list chs (each with a bool in the bool list `dnd`, do not decode) into the f32 list `rv` (channel ch's n2 values at ch times bs1 halved; already zero). Type 2: when every listed channel is marked do not decode, do nothing; otherwise decode one vector of chs length times n2 values into the f32 list `rtmp` (zeroed) as fo</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L927">hc/lib/codec_vorbis.amni:927</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L927">hc/lib/codec_vorbis.amni:927</a>
 </article>
 <article class="sym" id="flr">
 <h3><a href="#flr">flr</a> <i>constant</i></h3>
 <pre>var flr f32[&gt;..]</pre>
 <p>Holds the floor curves for all channels of the current packet.</p>
 <p class="note">`packet(k, out)` decodes audio packet k and appends its frames to the f32 list out interleaved by channel; it gives the frame count appended. An empty packet, or a first bit of 1, gives 0 and changes nothing. Mode is ilog(nmodes minus 1) bits (not below nmodes gives 0); blockflag md_block of the mode; n is bs1 when it is 1, else bs0; a long block skips two window bits; n2 is n halved; the mapping </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L956">hc/lib/codec_vorbis.amni:956</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L956">hc/lib/codec_vorbis.amni:956</a>
 </article>
 <article class="sym" id="ibuf">
 <h3><a href="#ibuf">ibuf</a> <i>constant</i></h3>
 <pre>var ibuf f32[&gt;..]</pre>
 <p>Holds the inverse MDCT output for the channel currently being processed.</p>
 <p class="note">`packet(k, out)` decodes audio packet k and appends its frames to the f32 list out interleaved by channel; it gives the frame count appended. An empty packet, or a first bit of 1, gives 0 and changes nothing. Mode is ilog(nmodes minus 1) bits (not below nmodes gives 0); blockflag md_block of the mode; n is bs1 when it is 1, else bs0; a long block skips two window bits; n2 is n halved; the mapping </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L957">hc/lib/codec_vorbis.amni:957</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L957">hc/lib/codec_vorbis.amni:957</a>
 </article>
 <article class="sym" id="ovl">
 <h3><a href="#ovl">ovl</a> <i>constant</i></h3>
 <pre>var ovl f32[&gt;..]</pre>
 <p>Holds the overlapping second half of each channel's previous block for windowed overlap-add.</p>
 <p class="note">`packet(k, out)` decodes audio packet k and appends its frames to the f32 list out interleaved by channel; it gives the frame count appended. An empty packet, or a first bit of 1, gives 0 and changes nothing. Mode is ilog(nmodes minus 1) bits (not below nmodes gives 0); blockflag md_block of the mode; n is bs1 when it is 1, else bs0; a long block skips two window bits; n2 is n halved; the mapping </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L958">hc/lib/codec_vorbis.amni:958</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L958">hc/lib/codec_vorbis.amni:958</a>
 </article>
 <article class="sym" id="prev">
 <h3><a href="#prev">prev</a> <i>constant</i></h3>
 <pre>var prev int = 0</pre>
 <p>Holds the previous block size, or zero before any block has been decoded.</p>
 <p class="note">`packet(k, out)` decodes audio packet k and appends its frames to the f32 list out interleaved by channel; it gives the frame count appended. An empty packet, or a first bit of 1, gives 0 and changes nothing. Mode is ilog(nmodes minus 1) bits (not below nmodes gives 0); blockflag md_block of the mode; n is bs1 when it is 1, else bs0; a long block skips two window bits; n2 is n halved; the mapping </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L959">hc/lib/codec_vorbis.amni:959</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L959">hc/lib/codec_vorbis.amni:959</a>
 </article>
 <article class="sym" id="clampf">
 <h3><a href="#clampf">clampf</a> <i>function</i></h3>
 <pre>clampf(v f32) f32</pre>
 <p>Clamps a sample value to the range from negative one to one.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L960">hc/lib/codec_vorbis.amni:960</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L960">hc/lib/codec_vorbis.amni:960</a>
 </article>
 <article class="sym" id="put">
 <h3><a href="#put">put</a> <i>function</i></h3>
 <pre>put(out f32[&gt;..]&amp;, at int, v f32)</pre>
 <p>Stores a sample into the output buffer at the given index after clamping it.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L963">hc/lib/codec_vorbis.amni:963</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L963">hc/lib/codec_vorbis.amni:963</a>
 </article>
 <article class="sym" id="packet">
 <h3><a href="#packet">packet</a> <i>function</i></h3>
 <pre>packet(k int, out f32[&gt;..]&amp;) int</pre>
 <p>Decodes one audio packet into the output buffer and returns the number of frames produced, or zero if none.</p>
 <p class="note">`packet(k, out)` decodes audio packet k and appends its frames to the f32 list out interleaved by channel; it gives the frame count appended. An empty packet, or a first bit of 1, gives 0 and changes nothing. Mode is ilog(nmodes minus 1) bits (not below nmodes gives 0); blockflag md_block of the mode; n is bs1 when it is 1, else bs0; a long block skips two window bits; n2 is n halved; the mapping </p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/codec_vorbis.amni#L966">hc/lib/codec_vorbis.amni:966</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/codec_vorbis.amni#L966">hc/lib/codec_vorbis.amni:966</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -1006,7 +1006,7 @@
 <li><a href="/api-library/helium/logic">Logic &amp; Core <span>651</span></a></li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2820</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>2831</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>211</span></a><ul>
 <li><a href="/api-library/helium/lib/audio">audio</a></li>
@@ -1067,11 +1067,9 @@
 <a href="/privacy.html">PRIVACY</a>
 <a href="/terms.html">TERMS</a>
 <a href="/contact.html">CONTACT</a>
-<a href="/offline.html">OFFLINE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

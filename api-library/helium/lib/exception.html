@@ -13,11 +13,11 @@
 <meta property="og:url" content="https://amni-scient.com/api-library/helium/lib/exception">
 <link rel="canonical" href="https://amni-scient.com/api-library/helium/lib/exception">
 <link rel="stylesheet" href="/css/style.css?v=b268">
-<link rel="stylesheet" href="/api-library/lib.css?v=b695c15faf">
+<link rel="stylesheet" href="/api-library/lib.css?v=231086f5fe">
 <script>
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
-<script type="module">import {start} from '/api-library/helium.js?v=b695c15faf'; start({wasm: '/api-library/search.wasm?v=b695c15faf'});</script>
+<script type="module">import {start} from '/api-library/helium.js?v=231086f5fe'; start({wasm: '/api-library/search.wasm?v=231086f5fe'});</script>
 </head>
 <body class="theme-gold lib">
 <nav>
@@ -104,7 +104,7 @@
 <a class="lib-skip" href="#lib-side">All sections</a>
 <h1>exception</h1>
 <p class="lib-lede">Try a block of code and throw a value out of any depth beneath it.</p>
-<p class="lib-meta"><code>import exception;</code> &middot; <code>exception::</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/exception.he">Source</a></p>
+<p class="lib-meta"><code>import exception;</code> &middot; <code>exception::</code> &middot; 4 functions, 0 types, 0 constants &middot; <a href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/exception.he">Source</a></p>
 <details class="lib-notes"><summary>Notes from the source</summary><pre>exception: try a body, throw a value out of any depth beneath it.
 throw returns straight from the innermost active landing frame (Helium's
 `return value from f`), so nothing between the throw and the try runs on.
@@ -122,14 +122,14 @@ throw returns straight from the innermost active landing frame (Helium's
 <pre>try&lt;E, Body&gt;()</pre>
 <p>Runs a body and silently stops it if a value of type E is thrown, with no handler.</p>
 <p class="note">exception::try&lt;E&gt;(body) { e =&gt; ... } calls the block with the thrown value</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/exception.he#L12">hc/lib/exception.he:12</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/exception.he#L12">hc/lib/exception.he:12</a>
 </article>
 <h2 id="throwing">Throwing <span class="n">1</span></h2>
 <article class="sym" id="throw">
 <h3><a href="#throw">throw</a> <i>function</i></h3>
 <pre>throw(value)</pre>
 <p>Throws a value out of any depth, returning immediately to the innermost active try and skipping code in between.</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/exception.he#L19">hc/lib/exception.he:19</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/exception.he#L19">hc/lib/exception.he:19</a>
 </article>
 <details class="lib-int" id="internal"><summary>Internal helpers (1)</summary>
 <article class="sym" id="landing">
@@ -137,7 +137,7 @@ throw returns straight from the innermost active landing frame (Helium's
 <pre>landing&lt;E, Body&gt;() E[]</pre>
 <p>Runs a body and returns a one-element array holding the thrown value, or an empty array if nothing was thrown.</p>
 <p class="note">runs the body; a throw lands here with the thrown value as the one element</p>
-<a class="src" href="https://github.com/Amnibro/helium/blob/b695c154e83148cc45b041a484ba4630653fc325/hc/lib/exception.he#L7">hc/lib/exception.he:7</a>
+<a class="src" href="https://github.com/Amnibro/helium/blob/231086facf168f93a3e10a9d10d27529d1a7b489/hc/lib/exception.he#L7">hc/lib/exception.he:7</a>
 </article>
 </details>
 <p class="note">Descriptions and topics were drafted by AI from the source code. Signatures, types and source links come straight from the code.</p>
@@ -162,7 +162,7 @@ throw returns straight from the innermost active landing frame (Helium's
 </li>
 <li><a href="/api-library/helium/data">Text &amp; Data <span>284</span></a></li>
 <li><a href="/api-library/helium/system">Files &amp; System <span>43</span></a></li>
-<li><a href="/api-library/helium/graphics">Graphics <span>2820</span></a></li>
+<li><a href="/api-library/helium/graphics">Graphics <span>2831</span></a></li>
 <li><a href="/api-library/helium/ui">User Interface <span>1296</span></a></li>
 <li><a href="/api-library/helium/audio">Audio <span>211</span></a></li>
 <li><a href="/api-library/helium/animation">Animation <span>252</span></a></li>
@@ -214,11 +214,9 @@ throw returns straight from the innermost active landing frame (Helium's
 <a href="/privacy.html">PRIVACY</a>
 <a href="/terms.html">TERMS</a>
 <a href="/contact.html">CONTACT</a>
-<a href="/offline.html">OFFLINE</a>
 <a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
 </div>
 <p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
 </footer>
-<script type="module" src="/offline-app/start.js"></script>
 </body>
 </html>

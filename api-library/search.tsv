@@ -1387,6 +1387,7 @@ s3d::SsgiAU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SsgiAU	Uniform 
 s3d::SsgiUpU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#SsgiUpU	Uniform block passed to the screen-space global illumination upsample compute pass.	int
 s3d::HizU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#HizU	Uniform block holding the parameters for building one hierarchical depth level.	int
 s3d::TemporalU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#TemporalU	Uniform block with input and output sizes, jitter and tuning values for the temporal pass.	int
+s3d::MatteU	type	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#MatteU	Uniform struct holding the tuning parameters passed to the matte pass shader.	int
 s3d::view	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#view	Global camera the caller edits between frames to position and aim the view.	pub
 s3d::sun	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sun	Global sun settings the caller edits between frames, including direction, color and shadows.	pub
 s3d::sky	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sky-2	Global sky settings the caller edits between frames for gradient colors and ambient strength.	pub
@@ -1617,6 +1618,7 @@ s3d::pipe_down	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_dow
 s3d::pipe_up	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_up	GPU pipeline that upsamples the bloom chain back up.	int
 s3d::pipe_grade	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_grade	GPU pipeline that applies exposure, tone curve and sRGB conversion.	int
 s3d::pipe_temporal	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_temporal	GPU pipeline that accumulates jittered frames into the history image.	int
+s3d::pipe_matte	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_matte	GPU pipeline that draws the see-through matte layer used internally by the renderer.	int
 s3d::pipe_hist	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_hist	Compute pipeline that builds the luminance histogram for auto exposure.	int
 s3d::pipe_adapt	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#pipe_adapt	Compute pipeline that adapts exposure toward the target using the histogram.	int
 s3d::hist_buf	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hist_buf	Storage buffer holding the luminance histogram bins.	int
@@ -1634,6 +1636,13 @@ s3d::motion_tex	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#motion_
 s3d::history	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#history	Textures holding the accumulated history images at output size.	int
 s3d::hist_cur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hist_cur	Index of the history texture currently being written.	int
 s3d::hist_valid	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#hist_valid	Flag that records whether the history image holds usable data.	int
+s3d::see_through	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#see_through	Flag that enables see-through rendering, so the matte layer lets content behind the scene show.	pub
+s3d::matte_layer	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_layer	Texture holding the matte layer for the current frame, managed by the renderer.	int
+s3d::matte_cur	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_cur	Texture holding the current frame's matte result before it is stored in the history.	int
+s3d::matte_hist	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_hist	List of history textures that carry the matte across frames for temporal accumulation.	int
+s3d::matte_at	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_at	Index of the matte history texture currently in use.	int
+s3d::matte_valid	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_valid	Flag that marks whether the matte history holds usable data from a previous frame.	int
+s3d::matte_live	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_live	Flag that records whether the matte pass is active for the current frame.	int
 s3d::out_width	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#out_width	Output width in pixels for the final image.	int
 s3d::out_height	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#out_height	Output height in pixels for the final image.	int
 s3d::jitter	constant	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#jitter	Current sub-pixel camera jitter offset.	int
@@ -2120,6 +2129,8 @@ s3d::sea_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#sea_pass	
 s3d::fog_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#fog_pass	Raymarches volumetric fog through the scene, lit by the sun cascades and point lights, then swaps buffers.	int
 s3d::lens_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#lens_pass	Applies motion blur from motion vectors and depth of field to the HDR image when each effect is enabled.	int
 s3d::temporal_draw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_draw	Draws one temporal accumulation pass into the inactive history image and makes it current.	int
+s3d::temporal_draw	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_draw	Runs one temporal accumulation pass blending the current image with history into a target, returning false if the pass could not begin.	int
+s3d::matte_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#matte_pass	Renders the matte mask from motion data and the current layer, accumulating it temporally when enabled, then marks the matte live.	int
 s3d::temporal_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_pass	Runs the temporal accumulation decision, skipping and invalidating history when temporal is off, otherwise drawing and validating it.	int
 s3d::temporal_repeat	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#temporal_repeat	Repeats only the temporal pass a given number of times on the last frame's inputs, for timing.	int
 s3d::glow_pass	function	gfx/scene3d	/api-library/helium/lib/gfx-scene3d#glow_pass	Builds the bloom chain by thresholding the resolved image, downsampling, then upsampling back to full size.	int
