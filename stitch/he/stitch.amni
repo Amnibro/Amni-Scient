@@ -265,8 +265,8 @@ fn try_move() { if TRY_G != 0 { var t byte[>..] = []; fit_tf(t, TRY_X, TRY_Y, tr
 fn try_prompt(out byte[>..]&) {
 	let g = O.garment; var cc byte[>..] = []; get_value("color", cc); let c = color_name(cc[..]); let plural = g == G_TROUSERS || g == G_SHORTS;
 	if !plural { out.append(if c[0] == 'a' || c[0] == 'e' || c[0] == 'i' || c[0] == 'o' || c[0] == 'u' { "an " } else { "a " }); }
-	out.append(c); out.push(' '); for ch in style_name() { out.push(to_lower_c(ch)); }
-	if g != G_SKIRT && !plural { out.append(match O.sleeve { 0 => ", sleeveless", 1 => ", short sleeves", 2 => ", three-quarter sleeves", _ => ", long sleeves" }); }
+	out.append(c); out.push(' '); let l = length_or_default(); let wk = waist_to_knee(); if g == G_DRESS || g == G_SKIRT { out.append(if l < wk * 0.6 { "mini " } else if l < wk * 0.87 { "above-the-knee " } else if l < wk * 1.17 { "knee-length " } else if l < waist_to_floor() * 0.87 { "midi " } else { "ankle-length " }); } for ch in style_name() { out.push(to_lower_c(ch)); }
+	if g != G_SKIRT && !plural { out.append(match O.sleeve { 0 => ", sleeveless", 1 => ", short sleeves", 2 => ", three-quarter sleeves", _ => ", long sleeves" }); if g != G_SHIRT { out.append(match O.neck { 1 => ", V-neck", 2 => ", scoop neck", _ => ", crew neck" }); } }
 	out.append(", "); for ch in FIT_NAMES[O.fit] { out.push(to_lower_c(ch)); } if O.fit > 0 { out.append(" fit"); }
 	if TEX_OK && web::get_bool(el("fab-on"), "checked") { out.append(", printed fabric"); }
 }

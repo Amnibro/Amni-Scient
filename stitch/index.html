@@ -278,10 +278,10 @@ window.stitchHost = (() => {
       })
     },
     async tryon(src, svg) {
-      const W = 768, H = 1152, p = await load(src), o = await load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)), cv = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return [c, c.getContext('2d')] };
+      const W = 768, H = 1152, u = t => load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(t)), p = await load(src), n = await u(svg.replace('.nk{fill:none}', '.nk{fill:#000}')), cv = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return [c, c.getContext('2d')] };
       const [a, ax] = cv(), k = Math.max(W / p.naturalWidth, H / p.naturalHeight), pw = p.naturalWidth * k, ph = p.naturalHeight * k;
-      ax.fillStyle = '#fff'; ax.fillRect(0, 0, W, H); ax.drawImage(p, (W - pw) / 2, (H - ph) / 2, pw, ph); ax.drawImage(o, 0, 0, W, H);
-      const [s, sx] = cv(); for (let i = 0; i < 16; i++) sx.drawImage(o, Math.cos(i * Math.PI / 8) * 9, Math.sin(i * Math.PI / 8) * 9, W, H); sx.globalCompositeOperation = 'source-in'; sx.fillStyle = '#fff'; sx.fillRect(0, 0, W, H);
+      ax.fillStyle = '#fff'; ax.fillRect(0, 0, W, H); ax.drawImage(p, (W - pw) / 2, (H - ph) / 2, pw, ph);
+      const [s, sx] = cv(); for (let i = 0; i < 16; i++) sx.drawImage(n, Math.cos(i * Math.PI / 8) * 9, Math.sin(i * Math.PI / 8) * 9, W, H); sx.globalCompositeOperation = 'source-in'; sx.fillStyle = '#fff'; sx.fillRect(0, 0, W, H);
       const [m, mx] = cv(); mx.fillStyle = '#000'; mx.fillRect(0, 0, W, H); mx.filter = 'blur(5px)'; mx.drawImage(s, 0, 0);
       let q = 0.9, image = a.toDataURL('image/jpeg', q); while (image.length > 600000 && q > 0.5) { q -= 0.1; image = a.toDataURL('image/jpeg', q) }
       return { image, mask: m.toDataURL('image/jpeg', 0.9) }

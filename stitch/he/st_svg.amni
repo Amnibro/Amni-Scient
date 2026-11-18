@@ -287,7 +287,7 @@ fn sk_top(out byte[>..]&, s int) {
 	sk_l(out, nw, 0.0);
 	let nd = match nk { 1 => 17.0, 2 => 13.0, _ => if shirt { 4.0 } else { 7.0 } };
 	if nk == 1 { sk_l(out, 0.0, nd); sk_l(out, -nw, 0.0); } else { sk_c(out, nw * 0.55, nd * 1.33, -nw * 0.55, nd * 1.33, -nw, 0.0); }
-	sk_z(out, true);
+	sk_z(out, true); if s < 0 { sk_m(out, "nk", -nw - 0.5, -1.0); sk_l(out, nw + 0.5, -1.0); sk_l(out, nw + 0.5, nd); sk_l(out, -nw - 0.5, nd); sk_z(out, true); }
 	if hoodie {
 		sk_rect(out, -hw + 1.0, hy, hw - 1.0, hy + 5.0);
 		if hood { sk_m(out, "pc", -13.0, hy - 1.0); sk_l(out, -9.0, hy - 13.0); sk_l(out, 9.0, hy - 13.0); sk_l(out, 13.0, hy - 1.0); sk_z(out, true); line(out, P(-3.0, 2.0), P(-3.5, 13.0), "ln"); line(out, P(3.0, 2.0), P(3.5, 13.0), "ln"); }
@@ -312,11 +312,11 @@ fn hex_rgb(hex const byte[:]) int, int, int { if hex.len < 7 { return 109, 143, 
 let CN_NAMES const byte[:][27] = ["black", "charcoal", "gray", "light gray", "white", "cream", "beige", "tan", "brown", "burgundy", "red", "coral", "pink", "hot pink", "orange", "mustard", "yellow", "olive", "green", "sage green", "teal", "sky blue", "dusty blue", "blue", "navy", "lavender", "purple"];
 let CN_RGB const int[81] = [25, 25, 25, 64, 64, 70, 128, 128, 128, 200, 200, 200, 245, 245, 245, 240, 232, 205, 215, 195, 160, 190, 150, 100, 110, 70, 40, 120, 25, 45, 200, 35, 45, 240, 120, 100, 240, 165, 190, 230, 60, 140, 240, 130, 40, 205, 165, 40, 245, 220, 70, 110, 115, 50, 45, 140, 70, 155, 175, 135, 30, 128, 128, 135, 195, 235, 110, 140, 180, 45, 90, 190, 25, 35, 80, 185, 165, 220, 110, 50, 140];
 fn color_name(hex const byte[:]) const byte[:] { let r, g, b = hex_rgb(hex); var best = 0; var bd = 1 << 40; for i in 27 { let dr = r - CN_RGB[i * 3]; let dg = g - CN_RGB[i * 3 + 1]; let db = b - CN_RGB[i * 3 + 2]; let d = 2 * dr * dr + 4 * dg * dg + 3 * db * db; if d < bd { bd = d; best = i; } } CN_NAMES[best] }
-fn fit_tf(out byte[>..]&, x real, y real, k real) { FIT_SY = M[M_BACKLEN] / 41.0; FIT_SX = (M[M_CHEST] + M[M_WAIST] + M[M_HIP]) / 266.0 * 0.87; let sx = FIT_SX; out.append("translate("); num(out, x); out.push(' '); num(out, y); out.append(") scale("); num(out, k * sx); out.push(' '); num(out, k * FIT_SY); out.push(')'); }
+fn fit_tf(out byte[>..]&, x real, y real, k real) { FIT_SY = max(0.834 * M[M_HEIGHT] - waist_height(), 25.0) / 41.0; FIT_SX = (M[M_CHEST] + M[M_WAIST] + M[M_HIP]) / 266.0 * 0.87; let sx = FIT_SX; out.append("translate("); num(out, x); out.push(' '); num(out, y); out.append(") scale("); num(out, k * sx); out.push(' '); num(out, k * FIT_SY); out.push(')'); }
 fn fit_svg(out byte[>..]&, x real, y real, k real, hex const byte[:], fab const byte[:], tile real, ar real) {
 	let r, g, b = hex_rgb(hex); var sh byte[>..] = []; format(sh, "rgb(", r * 11 / 20, ",", g * 11 / 20, ",", b * 11 / 20, ")");
 	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 768 1152\" width=\"768\" height=\"1152\"><style>.pc{fill:"); out.append(if fab.len > 0 { "url(#fab)" } else if hex.len >= 7 { hex[..7] } else { "#6d8fbf" });
-	out.append(";stroke:"); out.append(sh[..]); out.append(";stroke-width:.3;stroke-linejoin:round}.ln{fill:none;stroke:"); out.append(sh[..]); out.append(";stroke-width:.3}.bt{fill:"); out.append(sh[..]); out.append("}</style>");
+	out.append(";stroke:"); out.append(sh[..]); out.append(";stroke-width:.3;stroke-linejoin:round}.ln{fill:none;stroke:"); out.append(sh[..]); out.append(";stroke-width:.3}.bt{fill:"); out.append(sh[..]); out.append("}.nk{fill:none}</style>");
 	if fab.len > 0 { out.append("<defs><pattern id=\"fab\" patternUnits=\"userSpaceOnUse\" width=\""); num(out, tile); out.append("\" height=\""); num(out, tile * ar); out.append("\"><image href=\""); out.append(fab); out.append("\" width=\""); num(out, tile); out.append("\" height=\""); num(out, tile * ar); out.append("\" preserveAspectRatio=\"none\"/></pattern></defs>"); }
 	out.append("<g id=\"try-g\" transform=\""); fit_tf(out, x, y, k); out.append("\">"); sk_body(out, -1); out.append("</g></svg>");
 }
