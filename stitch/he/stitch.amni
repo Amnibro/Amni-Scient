@@ -14,7 +14,7 @@ import st_tex;
 import st_view3d;
 import st_account;
 let T_MEAS: i32 = 100;
-let T_PRESET: i32 = 2; let T_UNITS: i32 = 3; let T_GARMENT: i32 = 4; let T_OPT: i32 = 5; let T_COLOR: i32 = 6;
+let T_PRESET: i32 = 2; let T_UNITS: i32 = 3; let T_STYLE: i32 = 200; let T_CAT: i32 = 300; let T_OPT: i32 = 5; let T_COLOR: i32 = 6;
 let T_TAB_PAT: i32 = 7; let T_TAB_3D: i32 = 8; let T_TAB_GUIDE: i32 = 9;
 let T_DL_SVG: i32 = 10; let T_PRINT_A4: i32 = 11; let T_PRINT_LTR: i32 = 12; let T_DL_GUIDE: i32 = 13;
 let T_GEN: i32 = 20; let T_GEN_DONE: i32 = 21; let T_POLL: i32 = 22; let T_POLL_DONE: i32 = 23; let T_QUOTA: i32 = 24;
@@ -38,7 +38,7 @@ var HOST: i32 = 0;
 var TAB = 0;
 var PRESET = 2;
 var SCALE_PCT = 0.0;
-var BASE real[18];        // measurements before the scale slider
+var BASE real[18];
 var ADD_TRACED = true;
 var JOB byte[>..];
 var POLLS = 0;
@@ -87,7 +87,7 @@ fn state_text(s byte[>..]&) {
 	s.clear();
 	for i in NM { s.append(M_KEYS[i]); s.push('='); format_flt(s, BASE[i], 1); s.push(';'); }
 	format(s, "o_preset=", PRESET, ";o_units=", UNITS, ";o_scale="); format_flt(s, SCALE_PCT, 1);
-	format(s, ";o_garment=", O.garment, ";o_fit=", O.fit, ";o_knit=", if O.knit { 1 } else { 0 }, ";o_sleeve=", O.sleeve, ";o_neck=", O.neck, ";o_skirt=", O.skirt, ";o_leg=", O.leg, ";o_sex=", O.sex, ";o_length=");
+	format(s, ";o_garment=", O.garment, ";o_fit=", O.fit, ";o_knit=", if O.knit { 1 } else { 0 }, ";o_sleeve=", O.sleeve, ";o_neck=", O.neck, ";o_skirt=", O.skirt, ";o_leg=", O.leg, ";o_sex=", O.sex, ";o_style=", O.style, ";o_hood=", if O.hood { 1 } else { 0 }, ";o_cuff=", if O.cuff { 1 } else { 0 }, ";o_elastic=", if O.elastic { 1 } else { 0 }, ";o_length=");
 	format_flt(s, O.length, 1); s.append(";o_sa="); format_flt(s, O.sa, 2); s.append(";o_hem="); format_flt(s, O.hem, 2); s.push(';');
 }
 fn load_state() bool { var s byte[>..] = []; if !web::store_get("amni.stitch.v2", s) { return false; } apply_state(s[..]) }
@@ -102,9 +102,10 @@ fn apply_state(s const byte[:]) bool {
 				for i in NM { if k == M_KEYS[i] { BASE[i] = v; seen[i] = true; } }
 				if k == "o_preset" { PRESET = v as int; } else if k == "o_units" { UNITS = v as int; } else if k == "o_scale" { SCALE_PCT = v; }
 				else if k == "o_garment" { O.garment = clamp(v as int, 0, NG - 1); } else if k == "o_fit" { O.fit = clamp(v as int, 0, 3); } else if k == "o_knit" { O.knit = v > 0.5; }
-				else if k == "o_sleeve" { O.sleeve = clamp(v as int, 0, 3); } else if k == "o_neck" { O.neck = clamp(v as int, 0, 2); } else if k == "o_skirt" { O.skirt = clamp(v as int, 0, 3); }
-				else if k == "o_leg" { O.leg = clamp(v as int, 0, 2); } else if k == "o_sex" { O.sex = clamp(v as int, 0, 1); } else if k == "o_length" { O.length = clamp(v, 0.0, 200.0); }
+				else if k == "o_sleeve" { O.sleeve = clamp(v as int, 0, 3); } else if k == "o_neck" { O.neck = clamp(v as int, 0, 2); } else if k == "o_skirt" { O.skirt = clamp(v as int, 0, 4); }
+				else if k == "o_leg" { O.leg = clamp(v as int, 0, 2); } else if k == "o_sex" { O.sex = clamp(v as int, 0, 1); } else if k == "o_length" { O.length = clamp(v, -20.0, 200.0); }
 				else if k == "o_sa" { O.sa = clamp(v, 0.0, 4.0); } else if k == "o_hem" { O.hem = clamp(v, 0.0, 8.0); }
+				else if k == "o_style" { O.style = clamp(v as int, 0, NS - 1); } else if k == "o_hood" { O.hood = v > 0.5; } else if k == "o_cuff" { O.cuff = v > 0.5; } else if k == "o_elastic" { O.elastic = v > 0.5; }
 			}
 		}
 	};
@@ -122,7 +123,7 @@ fn fill_measure_inputs() {
 	let units = web::query_all(web::DOCUMENT, ".unit");
 	for i in units { web::text(web::list_at(i as i32), unit_label()); }
 	set_num("fab-size", disp(TEX_CM));
-	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
+	set_num("length", disp(length_or_default()));
 	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
 	fill_cut_inputs();
 }
@@ -158,19 +159,19 @@ fn read_options() {
 	O.knit = get_int("fabric") == 1;
 	O.sleeve = clamp(get_int("sleeve"), 0, 3);
 	O.neck = clamp(get_int("neck"), 0, 2);
-	O.skirt = clamp(get_int("skirt"), 0, 3);
+	O.skirt = clamp(get_int("skirt"), 0, 4);
 	O.leg = clamp(get_int("leg"), 0, 2);
 	O.sex = clamp(get_int("shape"), 0, 1);
 	let l = from_disp(get_num("length", 0.0));
-	O.length = if abs(l - default_length(O.garment)) < 0.06 { 0.0 } else { clamp(l, 0.0, 200.0) };
+	O.length = if abs(l - default_length(O.garment)) < 0.06 { 0.0 } else { clamp(l, if O.garment == G_TEE || O.garment == G_HOODIE { -20.0 } else { 0.0 }, 200.0) };
 	O.sa = clamp(from_disp(get_num("sa", 1.5)), 0.0, 4.0);
 	O.hem = clamp(from_disp(get_num("hem", 3.0)), 0.0, 8.0);
 }
 fn write_options() {
-	set_value("garment", str(O.garment)[..]); set_value("fit", str(O.fit)[..]); set_value("fabric", if O.knit { "1" } else { "0" });
+	set_value("fit", str(O.fit)[..]); set_value("fabric", if O.knit { "1" } else { "0" });
 	set_value("sleeve", str(O.sleeve)[..]); set_value("neck", str(O.neck)[..]); set_value("skirt", str(O.skirt)[..]);
 	set_value("leg", str(O.leg)[..]); set_value("shape", str(O.sex)[..]);
-	set_num("length", disp(if O.length > 0.0 { O.length } else { default_length(O.garment) }));
+	set_num("length", disp(length_or_default()));
 	set_num("sa", disp(O.sa)); set_num("hem", disp(O.hem));
 }
 fn show_rows() {
@@ -202,7 +203,7 @@ fn cut_refresh() { cu_build(); cut_render(); }
 fn cut_download(i int) { var s byte[>..] = []; cu_file(s, i); var st byte[>..] = []; file_stem(st); var n byte[>..] = []; cu_filename(n, st[..], i); download(n[..], cu_mime(), s[..]); }
 fn title() {
 	TITLE.clear();
-	TITLE.append("Amni-Stitch: "); TITLE.append(G_NAMES[O.garment]);
+	TITLE.append("Amni-Stitch: "); TITLE.append(style_name());
 	if O.garment != G_TRACED { TITLE.append(" ("); TITLE.append(FIT_NAMES[O.fit]); TITLE.append(if O.knit { ", knit" } else { ", woven" }); TITLE.push(')'); }
 	TITLE.append(" for chest "); len_str(TITLE, M[M_CHEST]); TITLE.append(", waist "); len_str(TITLE, M[M_WAIST]); TITLE.append(", hip "); len_str(TITLE, M[M_HIP]);
 }
@@ -251,7 +252,7 @@ fn host_call(method const byte[:], args const byte[:], tag i32) { let _id = web:
 fn json_str(out byte[>..]&, s const byte[:]) { json::format_string(out, s); }
 fn file_stem(out byte[>..]&) {
 	out.append("amni-stitch-");
-	for c in G_NAMES[O.garment] { if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') { out.push(to_lower_c(c)); } else if c == ' ' || c == '-' { out.push('-'); } }
+	for c in style_name() { if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') { out.push(to_lower_c(c)); } else if c == ' ' || c == '-' { out.push('-'); } }
 }
 fn to_lower_c(c byte) byte { if c >= 'A' && c <= 'Z' { c + 32 } else { c } }
 fn load_pixels(max int, tag i32) { var a byte[>..] = []; a.push('['); json_str(a, SHOT[..]); format(a, ",", max, "]"); host_call("pixels", a[..], tag); }
@@ -405,7 +406,26 @@ fn claim() {
 	var u byte[>..] = []; u.append(PRO[..]); u.append("/license?session="); u.append(CLAIM_ID[..]);
 	let _id = web::request(u[..], "GET", "", "", T_CLAIM_DONE, 20000.0);
 }
+var CHIPS i32[>..] = [];
+var CARDS i32[>..] = [];
+var CAT = 0;
+fn mark_picker() {
+	for b, c in CHIPS { web::attr(b, "aria-pressed", if c == CAT { "true" } else { "false" }); }
+	for b, s in CARDS { web::attr(b, "aria-pressed", if s == O.style && si(s, 1) == O.garment { "true" } else { "false" }); web::cls(b, "hidden", si(s, 0) != CAT); }
+}
+fn build_picker() {
+	for nm, c in CAT_NAMES { let b = web::create("button"); web::attr(b, "type", "button"); web::text(b, nm); web::listen(b, "click", T_CAT + c as i32, 0); web::append(el("cats"), b); CHIPS.push(b); }
+	for s in NS {
+		let b = web::create("button"); web::attr(b, "type", "button");
+		var h byte[>..] = []; style_svg(h, s); h.append("<span>"); esc(h, S_NAMES[s]); h.append("</span>"); web::html(b, h[..]);
+		web::listen(b, "click", T_STYLE + s as i32, 0); web::append(el("styles"), b); CARDS.push(b);
+	}
+	CAT = si(style_of(O.garment), 0);
+	mark_picker();
+}
 export fn he_event(tag i32, kind i32) {
+	if tag >= T_STYLE && tag < T_STYLE + NS as i32 { apply_style((tag - T_STYLE) as int); write_options(); mark_picker(); rebuild(); return; }
+	if tag >= T_CAT && tag < T_CAT + 7 { CAT = (tag - T_CAT) as int; mark_picker(); return; }
 	if tag >= T_MEAS && tag < T_MEAS + NM as i32 {
 		let i = (tag - T_MEAS) as int;
 		var s byte[>..] = []; web::ev_value(s);
@@ -421,7 +441,6 @@ export fn he_event(tag i32, kind i32) {
 			fill_measure_inputs(); rebuild();
 		},
 		3 => { UNITS = get_int("units"); fill_measure_inputs(); write_options(); rebuild(); },
-		4 => { O.garment = clamp(get_int("garment"), 0, NG - 1); O.length = 0.0; O.knit = O.garment == G_TEE || O.garment == G_HOODIE; write_options(); rebuild(); },
 		5 => { read_options(); rebuild(); },
 		6 => { var c byte[>..] = []; get_value("color", c); view_color(c[..]); if TAB == 1 { view_draw(); } },
 		7 => set_tab(0), 8 => set_tab(1), 9 => set_tab(2),
@@ -608,17 +627,16 @@ fn main() {
 	}
 	let _k = web::store_get("amni.stitch.key", KEY);
 	fill_select("preset", PRESET_NAMES[..], PRESET);
-	fill_select("garment", G_NAMES[..], O.garment);
 	if !load_state() { apply_preset(PRESET); for i in NM { BASE[i] = M[i]; } var u byte[>..] = []; if web::get_attr(app, "data-units", u) && u.len > 0 && u[0] == '1' { UNITS = 1; } }
 	set_value("preset", str(PRESET)[..]);
 	set_value("units", str(UNITS)[..]);
 	set_value("scale", str(SCALE_PCT as int)[..]); show_scale();
 	build_measure_form();
 	fill_measure_inputs();
-	write_options();
+	apply_scale(); write_options();
 	listen_id("preset", "change", T_PRESET);
 	listen_id("units", "change", T_UNITS);
-	listen_id("garment", "change", T_GARMENT);
+	build_picker();
 	let opts = ["fit", "fabric", "sleeve", "neck", "skirt", "leg", "shape", "length", "sa", "hem"];
 	for id in opts { listen_id(id, "change", T_OPT); }
 	listen_id("color", "input", T_COLOR);

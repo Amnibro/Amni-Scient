@@ -205,10 +205,10 @@ fn view_shape() {
 	}
 	if D.has_skirt {
 		let hem_y = max(Y_WAIST - D.skirt_len, 2.0);
-		if !D.has_top { ring(GR, Y_WAIST + 3.0, D.waist_w + 3.0, 0.74, 0.0); }
-		ring(GR, Y_WAIST, max(D.waist_w, M[M_WAIST] + 2.0), 0.74, 0.0);
+		if !D.has_top { ring(GR, Y_WAIST + 3.0, worn_waist() + 3.0, 0.74, 0.0); }
+		ring(GR, Y_WAIST, max(worn_waist(), M[M_WAIST] + 2.0), 0.74, 0.0);
 		let hipc = max(D.hip_w, M[M_HIP] + 3.0);
-		let hem = max(D.skirt_hem * (if O.skirt >= 2 { 0.62 } else { 0.95 }), hipc * 0.9);
+		let hem = max(D.skirt_hem * (if O.skirt == 4 { 0.87 } else if O.skirt >= 2 { 0.62 } else { 0.95 }), hipc * 0.9);
 		if hem_y < Y_HIP - 2.0 {
 			ring(GR, Y_HIP, max(hipc, lerp(hipc, hem, (Y_WAIST - Y_HIP) / max(D.skirt_len, 1.0) * (if O.skirt >= 2 { 1.0 } else { 0.4 }))), 0.75, 0.0);
 			ring(GR, (Y_HIP + hem_y) * 0.5, lerp(hipc, hem, 0.55), 0.8, 0.0);
@@ -216,8 +216,8 @@ fn view_shape() {
 		ring(GR, hem_y, hem, 0.84, 0.0);
 	}
 	if D.has_legs {
-		ring(GR, Y_WAIST + 1.5, D.waist_w + 1.0, 0.74, 0.0);
-		ring(GR, Y_WAIST, D.waist_w, 0.74, 0.0);
+		ring(GR, Y_WAIST + 1.5, worn_waist() + 1.0, 0.74, 0.0);
+		ring(GR, Y_WAIST, worn_waist(), 0.74, 0.0);
 		ring(GR, Y_HIP, D.hip_w, 0.72, 0.0);
 		GR.push(Ring { Y_CROTCH - 1.0, ha * 0.84 + 1.0, hb * 0.9 + 1.0, 0.0 });
 		let hem_y = max(Y_CROTCH - D.inseam, 1.0);
@@ -315,3 +315,4 @@ fn view_color(hex const byte[:]) {
 	V_R = ch(1); V_G = ch(3); V_B = ch(5);
 	V_DIRTY = true;
 }
+fn worn_waist() real { if O.elastic { M[M_WAIST] + 3.0 } else { D.waist_w } }

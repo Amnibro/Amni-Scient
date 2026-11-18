@@ -1,37 +1,61 @@
-// Native checks for the drafting code: hc stitch/he/test_draft.amni
 import math;
 import st_geom;
 import st_body;
 import st_draft;
-
 var FAIL = 0;
+var TOTAL = 0;
 fn check(c bool, what const byte[:]) { if !c { FAIL += 1; print("FAIL ", what); } }
 fn finite(v real) bool { v == v && abs(v) < 1.0e7 }
-
+fn piece_named(name const byte[:]) int { for pc, k in PIECES { if pc.name[..] == name { return k; } } -1 }
+fn check_pieces(what const byte[:]) {
+	draft_all();
+	check(PIECES.len >= 2, str("pieces for ", what)[..]);
+	for pc, k in PIECES {
+		TOTAL += 1;
+		check(pc.n >= 4, str("points ", what, "/", pc.name[..])[..]);
+		let w = piece_w(k); let h = piece_h(k);
+		check(finite(w) && finite(h) && w > 2.0 && h > 2.0 && w < 260.0 && h < 260.0, str("size ", what, "/", pc.name[..], " w=", w, " h=", h)[..]);
+		check(abs(piece_area(k)) > 4.0, str("area ", what, "/", pc.name[..])[..]);
+		for i in pc.n { let p = OFF[pc.first + i]; check(finite(p.x) && finite(p.y), str("offset nan ", what, "/", pc.name[..])[..]); }
+	}
+}
 fn main() {
-	var total = 0;
 	for pr in NPRESET {
 		apply_preset(pr);
 		for g in 8 {
 			for fit in 4 {
 				O = Opt { garment: g, fit: fit, knit: g == 0 || g == 7, sleeve: if g == 2 { 0 } else { 3 }, neck: fit % 3, skirt: fit, leg: fit % 3 };
-				draft_all();
-				check(PIECES.len >= 2, str("pieces for ", G_NAMES[g], " ", PRESET_NAMES[pr])[..]);
-				for pc, k in PIECES {
-					total += 1;
-					check(pc.n >= 4, str("points ", pc.name[..])[..]);
-					let w = piece_w(k); let h = piece_h(k);
-					check(finite(w) && finite(h) && w > 2.0 && h > 2.0 && w < 260.0 && h < 260.0, str("size ", G_NAMES[g], "/", pc.name[..], " ", PRESET_NAMES[pr], " w=", w, " h=", h)[..]);
-					check(abs(piece_area(k)) > 4.0, str("area ", pc.name[..])[..]);
-					for i in pc.n { let p = OFF[pc.first + i]; check(finite(p.x) && finite(p.y), str("offset nan ", pc.name[..])[..]); }
-				}
+				check_pieces(str(G_NAMES[g], " ", PRESET_NAMES[pr])[..]);
 				if g == 0 && fit == 1 && (pr == 2 || pr == 9 || pr == 16) {
 					print(PRESET_NAMES[pr], " tee: armhole f ", D.ah_f, " b ", D.ah_b, " chest ", D.chest_w, " sleeve ", D.sleeve_len, " bicep ", D.bicep_w);
 					for pc, k in PIECES { print("  ", pc.name[..], " ", pc.note[..], " ", piece_w(k), " x ", piece_h(k), " pts ", pc.n); }
 				}
 			}
 		}
+		for s in NS - 1 {
+			O = Opt {};
+			apply_style(s);
+			let nm = str(S_NAMES[s], " ", PRESET_NAMES[pr]);
+			check_pieces(nm[..]);
+			check(O.garment != G_TRACED && style_name() == S_NAMES[s], str("style name ", nm[..])[..]);
+			let waist_y = M[M_BACKLEN] + 2.0;
+			if s == 5 || s == 15 { check(D.top_len < waist_y - 1.0 && D.top_len > waist_y - 9.0, str("crop hem ", nm[..], " ", D.top_len)[..]); }
+			if s == 14 { check(!D.has_hood && piece_named("Hood") < 0 && piece_named("Neckband") >= 0, str("sweatshirt ", nm[..])[..]); }
+			if s == 12 { check(D.has_hood && piece_named("Hood") >= 0, str("hoodie ", nm[..])[..]); }
+			if O.cuff { check(piece_named("Ankle cuff") >= 0, str("cuffs ", nm[..])[..]); }
+			if O.elastic {
+				let k = piece_named("Waist casing");
+				check(k >= 0 && piece_w(k) - 2.0 * O.sa >= M[M_HIP], str("casing passes the hips ", nm[..])[..]);
+				check(piece_named("Waistband") < 0, str("no waistband with elastic ", nm[..])[..]);
+			}
+			if O.skirt == 4 && D.has_skirt { check(piece_named("Gathered skirt") >= 0 && D.skirt_hem > M[M_HIP] * 1.4, str("gathered ", nm[..], " ", D.skirt_hem)[..]); }
+			if D.has_skirt { check(abs(D.skirt_len - default_length(O.garment)) < 0.01 && D.skirt_len > 4.0, str("skirt length ", nm[..])[..]); }
+		}
 	}
-	print("pieces checked ", total, " failures ", FAIL);
+	apply_preset(2);
+	let adult = default_length(G_TEE);
+	apply_preset(14);
+	check(default_length(G_TEE) < adult * 0.8, "tee length follows the body");
+	print("pieces checked ", TOTAL, " failures ", FAIL);
 	if FAIL > 0 { exit(1); }
 }

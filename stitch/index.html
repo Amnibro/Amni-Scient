@@ -16,9 +16,9 @@
 (function(){var h=document.documentElement,s=null;try{s=localStorage.getItem('amni-theme')}catch(e){}if(s==='dark'||s==='light')h.dataset.theme=s;})();
 </script>
 <style>
-:root{--bg:#f4f2ee;--fg:#1b1d22;--dim:#5b6170;--card:#fff;--line:#dcd8d0;--acc:#2f6fed;--acc-fg:#fff;--warn:#b5462f;--ok:#2e7d4f;--paper:#fbfaf6;--field:#fbfaf8;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--paper:#f3f1ec;--field:#15181d;--shadow:none}}
-:root[data-theme="dark"]{--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--paper:#f3f1ec;--field:#15181d;--shadow:none}
+:root{--bg:#f4f2ee;--fg:#1b1d22;--dim:#5b6170;--card:#fff;--line:#dcd8d0;--acc:#2f6fed;--acc-fg:#fff;--warn:#b5462f;--ok:#2e7d4f;--sk:#e8eef8;--paper:#fbfaf6;--field:#fbfaf8;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--sk:#28313f;--paper:#f3f1ec;--field:#15181d;--shadow:none}}
+:root[data-theme="dark"]{--bg:#121418;--fg:#e8eaee;--dim:#9aa1ad;--card:#1b1e24;--line:#2e333c;--acc:#6b95ff;--acc-fg:#0d1016;--warn:#ff8a73;--ok:#6fd39a;--sk:#28313f;--paper:#f3f1ec;--field:#15181d;--shadow:none}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 a{color:var(--acc)}
@@ -59,6 +59,19 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
 .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .tabs button{border-radius:999px}
 .tabs button[aria-selected=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.cats{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 10px}
+.cats button{border-radius:999px;padding:5px 12px;min-height:32px;font-size:13px}
+.cats button[aria-pressed=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:7px;margin:0 0 10px}
+.styles button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:8px 5px;min-height:0;font-size:12px;line-height:1.25;text-align:center}
+.styles button[aria-pressed=true]{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.sk{display:block;width:100%;height:72px;color:var(--fg)}
+.sk path,.sk circle{fill:var(--sk);stroke:currentColor;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.sk .ln{fill:none}
+.sk line{stroke:currentColor;stroke-width:1;opacity:.7;vector-effect:non-scaling-stroke}
+.sk .bt{fill:currentColor;stroke:none}
+.more{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.more summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--dim);padding:4px 0}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .toolbar .info{color:var(--dim);font-size:13px;margin-left:auto}
 .paper{background:var(--paper);border-radius:10px;border:1px solid var(--line);overflow:auto;max-height:calc(100vh - 210px);min-height:340px}
@@ -142,18 +155,21 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
     </section>
     <section class="card" aria-labelledby="h-garment">
       <h2 id="h-garment"><b>2</b>Garment</h2>
-      <label class="f">Template <select id="garment"></select></label>
+      <div class="cats" id="cats" role="group" aria-label="Kind of garment"></div>
+      <div class="styles" id="styles" role="group" aria-label="Templates"></div>
       <label class="f" id="row-fit">Fit <select id="fit"><option value="0">Fitted</option><option value="1">Regular</option><option value="2">Relaxed</option><option value="3">Oversized</option></select></label>
+      <label class="f" id="row-length"><span id="length-label">Length below waist</span><input type="number" id="length" step="0.5" inputmode="decimal"></label>
+      <details class="more"><summary>More options</summary>
       <label class="f">Fabric <select id="fabric"><option value="0">Woven</option><option value="1">Knit (stretch)</option></select></label>
       <label class="f" id="row-shape">Shaping <select id="shape"><option value="0">Bust darts</option><option value="1">Flat chest</option></select></label>
       <label class="f" id="row-sleeve">Sleeves <select id="sleeve"><option value="0">Sleeveless</option><option value="1">Short</option><option value="2">Three-quarter</option><option value="3">Long</option></select></label>
       <label class="f" id="row-neck">Neckline <select id="neck"><option value="0">Crew</option><option value="1">V-neck</option><option value="2">Scoop</option></select></label>
-      <label class="f" id="row-skirt">Skirt <select id="skirt"><option value="0">Pencil</option><option value="1">A-line</option><option value="2">Half circle</option><option value="3">Full circle</option></select></label>
+      <label class="f" id="row-skirt">Skirt <select id="skirt"><option value="0">Pencil</option><option value="1">A-line</option><option value="2">Half circle</option><option value="3">Full circle</option><option value="4">Gathered</option></select></label>
       <label class="f" id="row-leg">Leg <select id="leg"><option value="0">Straight</option><option value="1">Tapered</option><option value="2">Wide</option></select></label>
-      <label class="f" id="row-length"><span id="length-label">Length below waist</span><input type="number" id="length" step="0.5" min="0" inputmode="decimal"></label>
       <label class="f">Seam allowance <input type="number" id="sa" step="0.1" min="0" inputmode="decimal"></label>
       <label class="f">Hem allowance <input type="number" id="hem" step="0.1" min="0" inputmode="decimal"></label>
       <label class="f">Color (3D) <input type="color" id="color" value="#6d8fbf"></label>
+      </details>
     </section>
   </div>
 

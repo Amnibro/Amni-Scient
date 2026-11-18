@@ -65,7 +65,7 @@ fn guide_html(out byte[>..]&) {
 	fn row(label const byte[:], cm real) { if cm > 0.0 { out.append("<tr><th>"); out.append(label); out.append("</th><td>"); len_str(out, cm); out.append("</td></tr>"); } }
 	if D.has_top {
 		row("Chest", D.chest_w); row("Ease at chest", D.ease_c);
-		if D.below_waist > 0.0 { row("Hem width (around)", D.hem_circ); row("Back length, nape to hem", D.top_len - 2.0); }
+		if D.below_waist != 0.0 { row("Hem width (around)", D.hem_circ); row("Back length, nape to hem", D.top_len - 2.0); }
 		else { row("Back length, nape to waist", M[M_BACKLEN]); }
 		if D.sleeve_len > 0.0 { row("Sleeve length", D.sleeve_len); row("Sleeve at upper arm", D.bicep_w); }
 	}
@@ -108,10 +108,12 @@ fn guide_html(out byte[>..]&) {
 	}
 	let nb = count_buttons();
 	if nb > 0 { var s byte[>..] = []; format(s, nb + (if O.sleeve == 3 { 2 } else { 0 }), " buttons, 1 to 1.2 cm across."); li(out, s[..]); }
-	if O.garment == G_SKIRT || O.garment == G_DRESS || O.garment == G_TROUSERS || O.garment == G_SHORTS {
+	if !O.elastic && (O.garment == G_SKIRT || O.garment == G_DRESS || O.garment == G_TROUSERS || O.garment == G_SHORTS) {
 		li(out, if O.garment == G_DRESS { "An invisible zip, 50 to 55 cm, for the centre back (side seam for circle skirts)." } else { "A zip, 18 to 20 cm (invisible for skirts, fly zip for trousers), and a hook and bar or a button for the waistband." });
 	}
-	if O.garment == G_HOODIE { li(out, "Ribbing for the cuffs and waistband (about 0.3 m), and optionally cord and two eyelets for the hood."); }
+	if O.garment == G_HOODIE { li(out, if O.hood { "Ribbing for the cuffs and waistband (about 0.3 m), and optionally cord and two eyelets for the hood." } else { "Ribbing for the neckband, cuffs and waistband (about 0.3 m)." }); }
+	if O.elastic { var s byte[>..] = []; s.append("Elastic "); len_str(s, 3.0); s.append(" wide, "); len_str(s, M[M_WAIST] * 0.9); s.append(" long."); li(out, s[..]); }
+	if O.cuff { li(out, "Ribbing for the ankle cuffs (about 0.2 m)."); }
 	out.append("</ul>");
 
 	out.append("<h3>Machine settings</h3><table class=\"kv\">");
@@ -135,8 +137,8 @@ fn guide_html(out byte[>..]&) {
 		} else {
 			step("Sew the front to the back at the shoulders, right sides together.");
 		}
-		if O.garment == G_TEE { step(if O.knit { "Fold the neckband in half lengthwise, quarter-mark it and the neckline, and sew it on stretching only the band (not the neckline). Press the seam toward the body and topstitch with a twin needle." } else { "Press the bias binding in half, sew it to the neckline right sides together, wrap it to the inside and edgestitch." }); }
-		if O.garment == G_HOODIE { step("Sew the two hood pieces along the back curve (and the lining the same way). Put lining inside hood, right sides together, sew along the front edge, turn, and baste the neck edges together. Sew the hood to the neckline, matching the centre back."); step("Sew the kangaroo pocket: hem the angled openings, press the other edges under, and topstitch it to the front 6 cm above the hem."); }
+		if O.garment == G_TEE || (O.garment == G_HOODIE && !O.hood) { step(if O.knit { "Fold the neckband in half lengthwise, quarter-mark it and the neckline, and sew it on stretching only the band (not the neckline). Press the seam toward the body and topstitch with a twin needle." } else { "Press the bias binding in half, sew it to the neckline right sides together, wrap it to the inside and edgestitch." }); }
+		if O.garment == G_HOODIE && O.hood { step("Sew the two hood pieces along the back curve (and the lining the same way). Put lining inside hood, right sides together, sew along the front edge, turn, and baste the neck edges together. Sew the hood to the neckline, matching the centre back."); step("Sew the kangaroo pocket: hem the angled openings, press the other edges under, and topstitch it to the front 6 cm above the hem."); }
 		if O.sleeve > 0 || O.garment == G_HOODIE {
 			step("Set the sleeves: match the single notch to the front, the double notch to the back and the top notch to the shoulder seam. Ease the cap in (woven: run two rows of long stitches over the cap first) and sew.");
 			step("Sew each side seam and sleeve seam in one pass, from the hem through the underarm to the cuff.");
@@ -145,16 +147,18 @@ fn guide_html(out byte[>..]&) {
 		if O.garment == G_HOODIE { step("Fold the cuffs and waistband in half, quarter-mark, and sew them on, stretching the rib to fit."); }
 	}
 	if D.has_skirt {
-		if O.garment == G_DRESS { step("Sew the skirt darts (if any) and the skirt side seams. Sew the bodice to the skirt at the waist, matching side seams and darts."); }
+		if O.skirt == 4 { step(if O.elastic { "Sew the side seams." } else { "Sew the skirt side seams. Run two rows of long stitches along the skirt waist, pull them up to fit the bodice, and sew the bodice to the skirt." }); }
+		else if O.garment == G_DRESS { step("Sew the skirt darts (if any) and the skirt side seams. Sew the bodice to the skirt at the waist, matching side seams and darts."); }
 		else { step("Sew the darts, then the side seams."); }
-		if O.skirt < 2 { step("Put the zip in the centre back seam, then sew the rest of the seam below it."); } else { step("Leave the left side seam open 20 cm below the waist for the zip. Hang the circle skirt for a day before hemming: the bias stretches."); }
+		if !O.elastic { if O.skirt == 4 { step("Leave the left side seam open 20 cm below the waist and put in the zip."); } else if O.skirt < 2 { step("Put the zip in the centre back seam, then sew the rest of the seam below it."); } else { step("Leave the left side seam open 20 cm below the waist for the zip. Hang the circle skirt for a day before hemming: the bias stretches."); } }
 	}
 	if D.has_legs {
-		step("Sew the darts. Sew each front to its back along the side seam and the inseam.");
-		step("Turn one leg right side out and slip it inside the other. Sew the crotch seam from the centre front through to the centre back, leaving the zip opening; sew it twice through the curve and clip the allowance.");
-		step("Put in the zip (fly or invisible).");
+		step(if O.elastic { "Sew each front to its back along the side seam and the inseam." } else { "Sew the darts. Sew each front to its back along the side seam and the inseam." });
+		step(if O.elastic { "Turn one leg right side out and slip it inside the other. Sew the crotch seam from the centre front through to the centre back; sew it twice through the curve and clip the allowance." } else { "Turn one leg right side out and slip it inside the other. Sew the crotch seam from the centre front through to the centre back, leaving the zip opening; sew it twice through the curve and clip the allowance." });
+		if !O.elastic { step("Put in the zip (fly or invisible)."); }
+		if O.cuff { step("Sew each ankle cuff into a loop, fold it in half, quarter-mark it and the leg hem, and sew it on, stretching the rib to fit."); }
 	}
-	if O.garment == G_SKIRT || D.has_legs { step("Interface the waistband, sew it to the waist, fold it along the dashed line, and stitch in the ditch from the outside. Add the hook and bar or a buttonhole and button."); }
+	if O.garment == G_SKIRT || D.has_legs { step(if O.elastic { "Sew the casing into a loop, fold it in half along the dashed line, and sew it to the waist, leaving 5 cm open. Thread the elastic through, overlap the ends 2 cm, stitch them, and close the gap." } else { "Interface the waistband, sew it to the waist, fold it along the dashed line, and stitch in the ditch from the outside. Add the hook and bar or a buttonhole and button." }); }
 	if O.garment == G_DRESS { step("Finish the neckline with the facing, understitch it, and tack it to the zip tape."); }
 	step(stitch_hem());
 	step("Press everything, with a press cloth on the right side.");

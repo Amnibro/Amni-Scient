@@ -207,3 +207,100 @@ fn print_html(out byte[>..]&, paper int) {
 		}
 	}
 }
+var SK_X0 = 0.0; var SK_Y0 = 0.0; var SK_X1 = 0.0; var SK_Y1 = 0.0;
+fn sk_pt(out byte[>..]&, x real, y real) { format_flt(out, x, 1); out.push(','); format_flt(out, y, 1); out.push(' '); SK_X0 = min(SK_X0, x); SK_Y0 = min(SK_Y0, y); SK_X1 = max(SK_X1, x); SK_Y1 = max(SK_Y1, y); }
+fn sk_m(out byte[>..]&, cls const byte[:], x real, y real) { out.append("<path class=\""); out.append(cls); out.append("\" d=\"M"); sk_pt(out, x, y); }
+fn sk_l(out byte[>..]&, x real, y real) { out.push('L'); sk_pt(out, x, y); }
+fn sk_c(out byte[>..]&, ax real, ay real, bx real, by real, x real, y real) { out.push('C'); sk_pt(out, ax, ay); sk_pt(out, bx, by); sk_pt(out, x, y); }
+fn sk_z(out byte[>..]&, closed bool) { if closed { out.push('Z'); } out.append("\"/>"); }
+fn sk_rect(out byte[>..]&, x0 real, y0 real, x1 real, y1 real) { sk_m(out, "pc", x0, y0); sk_l(out, x1, y0); sk_l(out, x1, y1); sk_l(out, x0, y1); sk_z(out, true); }
+fn sk_len(s int) real { let f = S_DEF[s * 13 + 12]; match si(s, 11) { 1 => 41.0 * f, 2 => 58.0 * f, 3 => 104.0 * f, 4 => 79.0 * f, _ => 0.0 } }
+fn sk_hem(out byte[>..]&, x0 real, x1 real, y real, n int, dip real) { let q = (x1 - x0) / n as real; for i in n { let a = x0 + q * i as real; sk_c(out, a + q * 0.3, y + dip, a + q * 0.7, y + dip, a + q, y); } }
+fn sk_ripples(out byte[>..]&, w0 real, y0 real) { for i in 7 { let x = -w0 + (i as real + 0.5) * w0 * 2.0 / 7.0; line(out, P(x, y0 - 3.3), P(x, y0 - 0.7), "ln"); } }
+fn sk_skirt(out byte[>..]&, kind int, len real, elastic bool, band bool) {
+	let y0 = 41.0; let w0 = 17.0; let y1 = y0 + len; let yh = y0 + min(19.0, len * 0.5);
+	let hh = match kind { 0 => 21.5, 1 => 23.0 + len * 0.15, 2 => 22.0 + len * 0.22, 3 => 22.0 + len * 0.32, _ => 21.0 + len * 0.2 };
+	let n = match kind { 2 => 3, 3 => 5, 4 => 4, _ => 1 };
+	sk_m(out, "pc", -w0, y0);
+	if kind <= 1 { sk_c(out, -21.0, y0 + 3.0, -23.5, yh - 9.0, -23.5, yh); }
+	sk_l(out, -hh, y1);
+	sk_hem(out, -hh, hh, y1, n, if n == 1 { 1.5 } else { 3.5 });
+	if kind <= 1 { sk_l(out, 23.5, yh); sk_c(out, 23.5, yh - 9.0, 21.0, y0 + 3.0, w0, y0); } else { sk_l(out, w0, y0); }
+	sk_z(out, true);
+	for j in n - 1 { let t = (j + 1) as real / n as real; line(out, P(-w0 + 2.0 * w0 * t, y0 + 1.0), P(-hh + 2.0 * hh * t, y1 - 0.5), "ln"); }
+	if band { sk_rect(out, -w0 - 0.5, y0 - 4.0, w0 + 0.5, y0); if elastic { sk_ripples(out, w0, y0); } }
+}
+fn sk_pants(out byte[>..]&, s int) {
+	let fit = si(s, 2) as real; let leg = si(s, 7); let shorts = si(s, 1) == G_SHORTS; let elastic = si(s, 10) == 1;
+	let y0 = 41.0; let w0 = 17.0 + (if elastic { 1.0 } else { 0.0 }); let yh = 60.0; let hw = 24.0 + fit * 0.7; let yc = 67.0; let y1 = yc + sk_len(s);
+	let lw = if shorts { 12.0 + fit * 0.7 } else { (match leg { 1 => 7.0, 2 => 13.5, _ => 9.5 }) + fit * 0.5 };
+	let cx = max(14.0, lw + 4.5);
+	sk_m(out, "pc", -w0, y0); sk_l(out, w0, y0); sk_c(out, w0 + 4.0, y0 + 3.0, hw, yh - 9.0, hw, yh);
+	sk_l(out, cx + lw, y1); sk_l(out, cx - lw, y1); sk_l(out, 0.0, yc); sk_l(out, -cx + lw, y1); sk_l(out, -cx - lw, y1);
+	sk_l(out, -hw, yh); sk_c(out, -hw, yh - 9.0, -w0 - 4.0, y0 + 3.0, -w0, y0); sk_z(out, true);
+	sk_rect(out, -w0 - 0.3, y0 - 4.0, w0 + 0.3, y0);
+	if elastic { sk_ripples(out, w0, y0); } else { line(out, P(0.0, y0), P(0.0, yc - 3.0), "ln"); sk_m(out, "ln", 3.5, y0); sk_l(out, 3.5, yc - 8.0); sk_c(out, 3.5, yc - 5.0, 2.0, yc - 3.5, 0.0, yc - 3.5); sk_z(out, false); }
+	if si(s, 9) == 1 { for side in 2 { let sg = if side == 0 { -1.0 } else { 1.0 }; sk_rect(out, sg * cx - lw + 0.3, y1 - 5.0, sg * cx + lw - 0.3, y1); } }
+}
+fn sk_top(out byte[>..]&, s int) {
+	let g = si(s, 1); let fit = si(s, 2) as real; let sl = si(s, 4); let nk = si(s, 5);
+	let hoodie = g == G_HOODIE; let shirt = g == G_SHIRT; let hood = hoodie && si(s, 8) == 1;
+	let fitted = si(s, 2) == 0 || g == G_BODICE || g == G_DRESS;
+	let below = if g == G_DRESS || g == G_BODICE { 0.0 } else { sk_len(s) };
+	let nw = 7.0 + (if nk == 2 { 3.0 } else { 0.0 }) + (if hoodie { 1.0 } else { 0.0 });
+	let sw = if sl == 0 && !shirt { 14.0 } else { 18.0 + (if fit >= 3.0 { 4.0 } else { 0.0 }) + (if hoodie { 2.0 } else { 0.0 }) };
+	let sy = if fit >= 3.0 { 7.0 } else { 4.0 };
+	let ay = 21.0 + fit * 1.5 + (if hoodie { 2.0 } else { 0.0 });
+	let bw = 21.0 + fit * 1.7 + (if hoodie { 2.0 } else { 0.0 });
+	let ww = if fitted { 17.0 } else { bw };
+	let hy = 41.0 + below;
+	let hw = if below <= 0.0 { bw + (ww - bw) * (hy - ay) / (41.0 - ay) } else if below < 19.0 { ww + (max(bw, 24.0) - ww) * below / 19.0 } else { max(bw, 24.0) + (below - 19.0) * 0.12 };
+	if hood {
+		sk_m(out, "pc", -nw - 1.0, 2.0); sk_c(out, -15.0, -5.0, -11.0, -23.0, 0.0, -23.0); sk_c(out, 11.0, -23.0, 15.0, -5.0, nw + 1.0, 2.0); sk_z(out, true);
+		sk_m(out, "ln", -nw + 1.0, 1.0); sk_c(out, -9.0, -9.0, -5.0, -17.0, 0.0, -17.0); sk_c(out, 5.0, -17.0, 9.0, -9.0, nw - 1.0, 1.0); sk_z(out, false);
+	}
+	if sl > 0 {
+		let th = match sl { 1 => 0.44, 2 => 0.7, _ => 0.87 };
+		let ex = match sl { 1 => 9.0, 2 => 22.0, _ => 38.0 };
+		for side in 2 {
+			let sg = if side == 0 { -1.0 } else { 1.0 };
+			let dx = sg * cos(th); let dy = sin(th); let nx = -sg * sin(th); let ny = cos(th);
+			let ax = sg * (bw - sw); let ad = ay - sy;
+			let along = ax * dx + ad * dy; let top = ax * nx + ad * ny;
+			let ln = along + ex;
+			let w = if sl == 1 { top * 0.88 } else { (if sl == 2 { 9.5 } else { 7.5 }) + fit * 0.7 };
+			let ox = sg * sw + ln * dx; let oy = sy + ln * dy; let ix = ox + w * nx; let iy = oy + w * ny;
+			sk_m(out, "pc", sg * sw, sy); sk_l(out, ox, oy); sk_l(out, ix, iy); sk_l(out, sg * bw, ay); sk_z(out, true);
+			if hoodie || (shirt && sl == 3) { line(out, P(ox - 5.0 * dx, oy - 5.0 * dy), P(ix - 5.0 * dx, iy - 5.0 * dy), "ln"); }
+		}
+	}
+	sk_m(out, "pc", -nw, 0.0); sk_l(out, -sw, sy);
+	if sl == 0 && !shirt { sk_c(out, -sw + 1.0, ay - 9.0, -bw + 3.0, ay - 1.0, -bw, ay); } else { sk_l(out, -bw, ay); }
+	if below > 0.0 { sk_l(out, -ww, 41.0); }
+	sk_l(out, -hw, hy); sk_l(out, hw, hy);
+	if below > 0.0 { sk_l(out, ww, 41.0); }
+	if sl == 0 && !shirt { sk_l(out, bw, ay); sk_c(out, bw - 3.0, ay - 1.0, sw - 1.0, ay - 9.0, sw, sy); } else { sk_l(out, bw, ay); sk_l(out, sw, sy); }
+	sk_l(out, nw, 0.0);
+	let nd = match nk { 1 => 17.0, 2 => 13.0, _ => if shirt { 4.0 } else { 7.0 } };
+	if nk == 1 { sk_l(out, 0.0, nd); sk_l(out, -nw, 0.0); } else { sk_c(out, nw * 0.55, nd * 1.33, -nw * 0.55, nd * 1.33, -nw, 0.0); }
+	sk_z(out, true);
+	if hoodie {
+		sk_rect(out, -hw + 1.0, hy, hw - 1.0, hy + 5.0);
+		if hood { sk_m(out, "pc", -13.0, hy - 1.0); sk_l(out, -9.0, hy - 13.0); sk_l(out, 9.0, hy - 13.0); sk_l(out, 13.0, hy - 1.0); sk_z(out, true); line(out, P(-3.0, 2.0), P(-3.5, 13.0), "ln"); line(out, P(3.0, 2.0), P(3.5, 13.0), "ln"); }
+	}
+	if shirt {
+		line(out, P(0.0, 5.0), P(0.0, hy), "ln");
+		var y = 9.0; while y < hy - 2.0 { circle(out, P(0.0, y), 0.9, "bt"); y += 8.0; }
+		for side in 2 { let sg = if side == 0 { -1.0 } else { 1.0 }; sk_m(out, "pc", sg * (nw + 0.5), -0.8); sk_l(out, sg * 0.3, 5.0); sk_l(out, sg * 4.5, 10.0); sk_z(out, true); }
+	}
+	if g == G_BODICE { for side in 2 { let sg = if side == 0 { -1.0 } else { 1.0 }; sk_m(out, "ln", sg * 10.5, 41.0); sk_l(out, sg * 9.0, 28.0); sk_l(out, sg * 7.5, 41.0); sk_z(out, false); } }
+}
+fn sk_picture(out byte[>..]&) { sk_rect(out, 0.0, 0.0, 60.0, 46.0); sk_m(out, "ln", 5.0, 40.0); sk_l(out, 20.0, 21.0); sk_l(out, 30.0, 32.0); sk_l(out, 38.0, 25.0); sk_l(out, 55.0, 40.0); sk_z(out, false); circle(out, P(44.0, 13.0), 5.0, "ln"); }
+fn style_svg(out byte[>..]&, s int) {
+	SK_X0 = 1.0e9; SK_Y0 = 1.0e9; SK_X1 = -1.0e9; SK_Y1 = -1.0e9;
+	var b byte[>..] = [];
+	let g = si(s, 1);
+	if g == G_TRACED { sk_picture(b); } else if g == G_SKIRT { sk_skirt(b, si(s, 6), sk_len(s), si(s, 10) == 1, true); } else if g == G_TROUSERS || g == G_SHORTS { sk_pants(b, s); } else { if g == G_DRESS { sk_skirt(b, si(s, 6), sk_len(s), false, false); } sk_top(b, s); }
+	out.append("<svg class=\"sk\" viewBox=\""); num(out, SK_X0 - 2.0); out.push(' '); num(out, SK_Y0 - 2.0); out.push(' '); num(out, SK_X1 - SK_X0 + 4.0); out.push(' '); num(out, SK_Y1 - SK_Y0 + 4.0);
+	out.append("\" aria-hidden=\"true\" focusable=\"false\">"); out.append(b[..]); out.append("</svg>");
+}
