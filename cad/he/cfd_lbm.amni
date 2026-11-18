@@ -19,6 +19,7 @@ var FRC f32[>..];
 var MAC f32[>..];
 var AVG f32[>..];
 var FIN real[19] = [0.0; 19];
+var QD f32[>..];
 fn feq(i int, r real, ux real, uy real, uz real) real {
 	let eu = (EX[i] as real) * ux + (EY[i] as real) * uy + (EZ[i] as real) * uz;
 	WQ[i] * r * (1.0 + 3.0 * eu + 4.5 * eu * eu - 1.5 * (ux * ux + uy * uy + uz * uz))
@@ -59,8 +60,16 @@ export fn lb_alloc(nx i32, ny i32, nz i32) {
 	FRC.clear();
 	MAC.clear();
 	AVG.clear();
+	QD.clear();
 	lb_view_u8(1, SOL);
 	lb_view_f32(2, FA);
+}
+export fn lb_walls(on i32) {
+	QD.clear();
+	if on != 0 {
+		QD.resize(19 * N, 0.0);
+		lb_view_f32(6, QD);
+	}
 }
 export fn lb_init(u real) {
 	for i in 19 {
@@ -75,7 +84,7 @@ export fn lb_init(u real) {
 	}
 	CUR = 0;
 }
-fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
+fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32, a real) {
 	var f real[19] = [0.0; 19];
 	for c in N {
 		let x = c % NX;
@@ -93,7 +102,12 @@ fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 		var Fx = 0.0;
 		var Fy = 0.0;
 		var Fz = 0.0;
+		var nw = false;
 		for i in 19 {
+			var q real = 0.0;
+			if QD.len != 0 {
+				q = QD[i * N + c];
+			}
 			let sx = x - EX[i];
 			let sy = (y - EY[i] + NY) % NY;
 			let sz = (z - EZ[i] + NZ) % NZ;
@@ -103,13 +117,28 @@ fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 				f[i] = fa[i * N + c];
 			} else {
 				let s = sx + NX * (sy + NY * sz);
-				if SOL[s] != 0 {
+				if q > 0.0 || SOL[s] != 0 {
 					let o = OPP[i];
 					let fo real = fa[o * N + c];
-					f[i] = fo;
-					Fx += 2.0 * fo * (EX[o] as real);
-					Fy += 2.0 * fo * (EY[o] as real);
-					Fz += 2.0 * fo * (EZ[o] as real);
+					var fw real = fo;
+					if q > 0.0 && q < 0.5 {
+						let xn = x + EX[i];
+						if xn >= 0 && xn < NX {
+							let cn = xn + NX * ((y + EY[i] + NY) % NY + NY * ((z + EZ[i] + NZ) % NZ));
+							if SOL[cn] == 0 {
+								let fn2 real = fa[o * N + cn];
+								fw = 2.0 * q * fo + (1.0 - 2.0 * q) * fn2;
+							}
+						}
+					} else if q >= 0.5 {
+						let fi real = fa[i * N + c];
+						fw = (fo + (2.0 * q - 1.0) * fi) / (2.0 * q);
+					}
+					f[i] = fw;
+					nw = true;
+					Fx += (fo + fw) * (EX[o] as real);
+					Fy += (fo + fw) * (EY[o] as real);
+					Fz += (fo + fw) * (EZ[o] as real);
 				} else {
 					f[i] = fa[i * N + s];
 				}
@@ -159,7 +188,8 @@ fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 			qyz += d * ey * ez;
 		}
 		let Q = sqrt(qxx * qxx + qyy * qyy + qzz * qzz + 2.0 * (qxy * qxy + qxz * qxz + qyz * qyz));
-		let te = 0.5 * (tau + sqrt(tau * tau + 18.0 * 1.4142135623730951 * cs * cs * Q / r));
+		let w = if nw { a * a } else { 1.0 };
+		let te = 0.5 * (tau + sqrt(tau * tau + 18.0 * 1.4142135623730951 * cs * cs * w * Q / r));
 		let om = 1.0 - 1.0 / te;
 		for i in 19 {
 			if x == 0 {
@@ -193,7 +223,7 @@ fn lb_core(fa const f32[:], fb f32[:], tau real, u real, cs real, acc i32) {
 	}
 	CUR = 1 - CUR;
 }
-export fn lb_step(tau real, u real, cs real, acc i32) {
+export fn lb_step(tau real, u real, cs real, acc i32, a real) {
 	if FB.len == 0 {
 		FB.resize(19 * N, 0.0);
 		FRC.resize(3 * N, 0.0);
@@ -204,8 +234,8 @@ export fn lb_step(tau real, u real, cs real, acc i32) {
 		lb_view_f32(5, AVG);
 	}
 	if CUR == 0 {
-		lb_core(FA, FB, tau, u, cs, acc);
+		lb_core(FA, FB, tau, u, cs, acc, a);
 	} else {
-		lb_core(FB, FA, tau, u, cs, acc);
+		lb_core(FB, FA, tau, u, cs, acc, a);
 	}
 }
