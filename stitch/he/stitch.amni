@@ -52,7 +52,7 @@ var BUSY = false;
 var TRY_PHOTO byte[>..]; var TRY_SHOWN byte[>..]; var TRY_OUT byte[>..];
 var TRY_OWN = false; var JOB_TRY = false; var TRY_X = 384.0; var TRY_Y = 200.0; var TRY_PCT = 100.0; var TRY_G: i32 = 0;
 let MODEL_X real[2] = [383.0, 378.0]; let MODEL_Y real[2] = [200.0, 190.0]; let MODEL_PX real[2] = [1090.0, 1075.0];
-var CUT_VIEW = 0;
+var CUT_VIEW = 0; var CUT_DEV = 1;
 var CUT_Q = 0;
 fn el(id const byte[:]) i32 { web::el(id) }
 fn set_text(id const byte[:], s const byte[:]) { web::text(el(id), s); }
@@ -76,7 +76,9 @@ fn fill_cut_inputs() {
 	for id, i in ["cut-margin", "cut-gap"] { var s byte[>..] = []; format_flt(s, disp((if i == 0 { CU.margin } else { CU.gap }) / 10.0), 2); set_value(id, s[..]); }
 }
 fn read_cut() {
-	CU.fmt = clamp(get_int("cut-fmt"), 0, 2); CU.sheet = clamp(get_int("cut-sheet"), 0, CU_PRESETS - 1);
+	let d = clamp(get_int("cut-fmt"), 0, 4); CU.fmt = match d { 3 => 1, 4 => 0, _ => d };
+	if d != CUT_DEV && d != 3 { var s byte[>..] = []; format(s, if d == 1 || d == 4 { 8 } else { 10 }); set_value("cut-sheet", s[..]); }
+	CUT_DEV = d; show("cut-mach", d != 3); show("cut-hand", d == 3); CU.sheet = clamp(get_int("cut-sheet"), 0, CU_PRESETS - 1);
 	let k = if get_int("cut-cu") == 1 { 25.4 } else { 1.0 };
 	CU.cw = max(get_num("cut-w", 12.0) * k, 20.0); CU.ch = max(get_num("cut-h", 18.0) * k, 20.0);
 	CU.margin = clamp(from_disp(get_num("cut-margin", disp(CU.margin / 10.0))) * 10.0, 0.0, 70.0); CU.gap = clamp(from_disp(get_num("cut-gap", disp(CU.gap / 10.0))) * 10.0, 0.0, 70.0);
@@ -690,9 +692,9 @@ fn main() {
 	listen_id("try-cam", "click", T_TRY_CAM); listen_id("try-up", "click", T_TRY_UP); listen_id("try-model", "click", T_TRY_MODEL); listen_id("try-go", "click", T_TRY_GO); listen_id("try-save", "click", T_TRY_SAVE); listen_id("try-back", "click", T_TRY_BACK); listen_id("try-size", "input", T_TRY_SIZE);
 	listen_id("acct-save", "click", T_ACCT_SAVE); listen_id("acct-list", "change", T_ACCT_PICK);
 	acct_request(ACCT[..], "/v1/me", "GET", "", T_ACCT_ME);
-	fill_select("cut-sheet", CU_NAMES[..], CU.sheet);
+	CU.fmt = 1; CU.sheet = 8; fill_select("cut-sheet", CU_NAMES[..], CU.sheet);
 	for id in ["cut-fmt", "cut-sheet", "cut-w", "cut-h", "cut-cu", "cut-margin", "cut-gap", "cut-grain", "cut-seam", "cut-layers"] { listen_id(id, "change", T_CUT_OPT); }
-	listen_id("cut-prev", "click", T_CUT_PREV); listen_id("cut-next", "click", T_CUT_NEXT); listen_id("cut-dl", "click", T_CUT_DL); listen_id("cut-all", "click", T_CUT_ALL);
+	listen_id("cut-prev", "click", T_CUT_PREV); listen_id("cut-next", "click", T_CUT_NEXT); listen_id("cut-dl", "click", T_CUT_DL); listen_id("cut-all", "click", T_CUT_ALL); listen_id("hand-letter", "click", T_PRINT_LTR); listen_id("hand-a4", "click", T_PRINT_A4);
 	var h byte[>..] = []; web::location("hash", h);
 	let at = find(h[..], "pro-session=");
 	if at >= 0 { CLAIM_ID.append(h[at + 12..]); CLAIM_TRIES = 0; set_text("sub-status", "Fetching your subscription key…"); claim(); }

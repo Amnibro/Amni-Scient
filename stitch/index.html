@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Amni-Stitch</title>
-<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a photo try-on, cut files for lasers, vinyl cutters and plotters, and tracing from your own garment photos.">
+<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a photo try-on, cut files for Cricut and other cutting machines, and tracing from your own garment photos.">
 <meta property="og:title" content="Amni-Stitch: sewing patterns drafted to your size">
 <meta property="og:description" content="Enter your measurements, pick a garment, print a pattern that fits. Or trace a photo of a garment into a pattern piece.">
 <meta property="og:type" content="website">
@@ -127,7 +127,7 @@ a.pri{display:inline-flex;align-items:center;border:1px solid var(--acc);border-
 .cutfiles{margin-top:16px;padding-top:4px;border-top:1px solid var(--line)}
 .cutfiles .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 20px}
 .cutfiles .row .cutsz{display:flex;gap:6px;align-items:center}.cutfiles .row .cutsz select{width:84px}
-.cutfiles .check{margin:8px 0}
+.cutfiles .check{margin:8px 0}#cut-dev{max-width:470px}
 .cutbox{background:var(--paper);border:1px solid var(--line);border-radius:3px;overflow:auto;max-height:560px;padding:8px;margin:8px 0}
 .cutsvg{display:block;margin:0 auto;max-width:100%;max-height:520px;width:auto;height:auto}
 .cutsvg .cutsheet{fill:#fff;stroke:#8d93a0;stroke-width:1.2;vector-effect:non-scaling-stroke}
@@ -202,10 +202,12 @@ a.pri{display:inline-flex;align-items:center;border:1px solid var(--acc);border-
       <div id="pattern" class="paper"><p class="loading">Loading the pattern engine…</p></div>
       <section class="cutfiles" aria-labelledby="h-cut">
         <h3 id="h-cut">Cut files / stencils</h3>
-        <p class="note">Cut-ready outlines for a laser, a CNC or vinyl cutter, or a plotter: cut lines only, no fills, nested on your sheet.</p>
+        <p class="note">Cut-ready outlines for a Cricut or other cutting machine: cut lines only, no fills, nested on your mat or sheet.</p>
+        <label class="f" id="cut-dev">Machine <select id="cut-fmt"><option value="1">Cricut or ScanNCut (SVG)</option><option value="3">Scissors (print full size)</option><option value="4">Silhouette (DXF)</option><option value="2">Pen plotter (PLT)</option><option value="0">Laser / CNC (DXF)</option></select></label>
+        <div id="cut-hand" class="hidden"><p class="note">Print the pattern full size, tape the pages together, pin them to your fabric and cut.</p><div class="toolbar"><button id="hand-letter" class="pri">Print Letter</button><button id="hand-a4">Print A4</button></div></div>
+        <div id="cut-mach">
         <div class="grid">
           <div>
-            <label class="f">Machine <select id="cut-fmt"><option value="0">Laser / CNC (DXF)</option><option value="1">Cutter (SVG)</option><option value="2">Plotter (PLT)</option></select></label>
             <label class="f">Sheet <select id="cut-sheet"></select></label>
             <div class="row hidden" id="row-cut-custom"><span>Custom size</span><span class="cutsz"><input type="number" id="cut-w" value="12" min="1" step="0.5" inputmode="decimal" aria-label="Sheet width"> × <input type="number" id="cut-h" value="18" min="1" step="0.5" inputmode="decimal" aria-label="Sheet height"><select id="cut-cu" aria-label="Custom size unit"><option value="1">in</option><option value="0">mm</option></select></span></div>
             <label class="f"><span>Margin (<span id="cut-mu">in</span>)</span><input type="number" id="cut-margin" min="0" step="0.05" inputmode="decimal"></label>
@@ -221,6 +223,7 @@ a.pri{display:inline-flex;align-items:center;border:1px solid var(--acc);border-
         <div class="toolbar"><button id="cut-prev">Previous sheet</button><button id="cut-next">Next sheet</button><span class="info" id="cut-which"></span></div>
         <div id="cut-preview" class="cutbox"></div>
         <div class="toolbar"><button id="cut-dl" class="pri">Download this sheet</button><button id="cut-all">Download all sheets</button><span class="info" id="cut-info"></span></div>
+        </div>
       </section>
     </div>
     <div id="try-pane" role="tabpanel" class="hidden">
