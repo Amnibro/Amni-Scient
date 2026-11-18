@@ -214,7 +214,9 @@ fn sk_l(out byte[>..]&, x real, y real) { out.push('L'); sk_pt(out, x, y); }
 fn sk_c(out byte[>..]&, ax real, ay real, bx real, by real, x real, y real) { out.push('C'); sk_pt(out, ax, ay); sk_pt(out, bx, by); sk_pt(out, x, y); }
 fn sk_z(out byte[>..]&, closed bool) { if closed { out.push('Z'); } out.append("\"/>"); }
 fn sk_rect(out byte[>..]&, x0 real, y0 real, x1 real, y1 real) { sk_m(out, "pc", x0, y0); sk_l(out, x1, y0); sk_l(out, x1, y1); sk_l(out, x0, y1); sk_z(out, true); }
-fn sk_len(s int) real { let f = S_DEF[s * 13 + 12]; match si(s, 11) { 1 => 41.0 * f, 2 => 58.0 * f, 3 => 104.0 * f, 4 => 79.0 * f, _ => 0.0 } }
+var FIT_SY = 1.0; var FIT_SX = 1.0;
+fn sv(s int, k int) int { if s >= 0 { return si(s, k); } match k { 1 => O.garment, 2 => O.fit, 3 => if O.knit { 1 } else { 0 }, 4 => O.sleeve, 5 => O.neck, 6 => O.skirt, 7 => O.leg, 8 => if O.hood { 1 } else { 0 }, 9 => if O.cuff { 1 } else { 0 }, 10 => if O.elastic { 1 } else { 0 }, _ => 0 } }
+fn sk_len(s int) real { if s < 0 { return length_or_default() / FIT_SY; } let f = S_DEF[s * 13 + 12]; match si(s, 11) { 1 => 41.0 * f, 2 => 58.0 * f, 3 => 104.0 * f, 4 => 79.0 * f, _ => 0.0 } }
 fn sk_hem(out byte[>..]&, x0 real, x1 real, y real, n int, dip real) { let q = (x1 - x0) / n as real; for i in n { let a = x0 + q * i as real; sk_c(out, a + q * 0.3, y + dip, a + q * 0.7, y + dip, a + q, y); } }
 fn sk_ripples(out byte[>..]&, w0 real, y0 real) { for i in 7 { let x = -w0 + (i as real + 0.5) * w0 * 2.0 / 7.0; line(out, P(x, y0 - 3.3), P(x, y0 - 0.7), "ln"); } }
 fn sk_skirt(out byte[>..]&, kind int, len real, elastic bool, band bool) {
@@ -231,7 +233,7 @@ fn sk_skirt(out byte[>..]&, kind int, len real, elastic bool, band bool) {
 	if band { sk_rect(out, -w0 - 0.5, y0 - 4.0, w0 + 0.5, y0); if elastic { sk_ripples(out, w0, y0); } }
 }
 fn sk_pants(out byte[>..]&, s int) {
-	let fit = si(s, 2) as real; let leg = si(s, 7); let shorts = si(s, 1) == G_SHORTS; let elastic = si(s, 10) == 1;
+	let fit = sv(s, 2) as real; let leg = sv(s, 7); let shorts = sv(s, 1) == G_SHORTS; let elastic = sv(s, 10) == 1;
 	let y0 = 41.0; let w0 = 17.0 + (if elastic { 1.0 } else { 0.0 }); let yh = 60.0; let hw = 24.0 + fit * 0.7; let yc = 67.0; let y1 = yc + sk_len(s);
 	let lw = if shorts { 12.0 + fit * 0.7 } else { (match leg { 1 => 7.0, 2 => 13.5, _ => 9.5 }) + fit * 0.5 };
 	let cx = max(14.0, lw + 4.5);
@@ -240,35 +242,37 @@ fn sk_pants(out byte[>..]&, s int) {
 	sk_l(out, -hw, yh); sk_c(out, -hw, yh - 9.0, -w0 - 4.0, y0 + 3.0, -w0, y0); sk_z(out, true);
 	sk_rect(out, -w0 - 0.3, y0 - 4.0, w0 + 0.3, y0);
 	if elastic { sk_ripples(out, w0, y0); } else { line(out, P(0.0, y0), P(0.0, yc - 3.0), "ln"); sk_m(out, "ln", 3.5, y0); sk_l(out, 3.5, yc - 8.0); sk_c(out, 3.5, yc - 5.0, 2.0, yc - 3.5, 0.0, yc - 3.5); sk_z(out, false); }
-	if si(s, 9) == 1 { for side in 2 { let sg = if side == 0 { -1.0 } else { 1.0 }; sk_rect(out, sg * cx - lw + 0.3, y1 - 5.0, sg * cx + lw - 0.3, y1); } }
+	if sv(s, 9) == 1 { for side in 2 { let sg = if side == 0 { -1.0 } else { 1.0 }; sk_rect(out, sg * cx - lw + 0.3, y1 - 5.0, sg * cx + lw - 0.3, y1); } }
 }
 fn sk_top(out byte[>..]&, s int) {
-	let g = si(s, 1); let fit = si(s, 2) as real; let sl = si(s, 4); let nk = si(s, 5);
-	let hoodie = g == G_HOODIE; let shirt = g == G_SHIRT; let hood = hoodie && si(s, 8) == 1;
-	let fitted = si(s, 2) == 0 || g == G_BODICE || g == G_DRESS;
+	let g = sv(s, 1); let fit = sv(s, 2) as real; let sl = sv(s, 4); let nk = sv(s, 5);
+	let hoodie = g == G_HOODIE; let shirt = g == G_SHIRT; let hood = hoodie && sv(s, 8) == 1;
+	let fitted = sv(s, 2) == 0 || g == G_BODICE || g == G_DRESS;
 	let below = if g == G_DRESS || g == G_BODICE { 0.0 } else { sk_len(s) };
 	let nw = 7.0 + (if nk == 2 { 3.0 } else { 0.0 }) + (if hoodie { 1.0 } else { 0.0 });
-	let sw = if sl == 0 && !shirt { 14.0 } else { 18.0 + (if fit >= 3.0 { 4.0 } else { 0.0 }) + (if hoodie { 2.0 } else { 0.0 }) };
+	let fx = 1.0 / FIT_SX; let so = M[M_SHOULDER] * 0.55 + (if fit >= 3.0 { 2.0 } else { 0.0 }) + fit * 0.5 + (if hoodie { 1.0 } else { 0.0 }); let aw = M[M_CHEST] * 0.087;
+	let sw = if s < 0 { (if sl == 0 && !shirt { so - aw * 0.8 } else { so }) * fx } else if sl == 0 && !shirt { 14.0 } else { 18.0 + (if fit >= 3.0 { 4.0 } else { 0.0 }) + (if hoodie { 2.0 } else { 0.0 }) };
 	let sy = if fit >= 3.0 { 7.0 } else { 4.0 };
 	let ay = 21.0 + fit * 1.5 + (if hoodie { 2.0 } else { 0.0 });
-	let bw = 21.0 + fit * 1.7 + (if hoodie { 2.0 } else { 0.0 });
-	let ww = if fitted { 17.0 } else { bw };
+	let bw = if s < 0 { (so - aw + fit * 1.2 + (if hoodie { 1.0 } else { 0.0 })) * fx } else { 21.0 + fit * 1.7 + (if hoodie { 2.0 } else { 0.0 }) };
+	let ww = if !fitted { bw } else if s < 0 { min(bw, (M[M_WAIST] * 0.19 + 1.0) * fx) } else { 17.0 };
+	let hp = if s < 0 { (M[M_HIP] * 0.18 + 1.0 + fit) * fx } else { 24.0 };
 	let hy = 41.0 + below;
-	let hw = if below <= 0.0 { bw + (ww - bw) * (hy - ay) / (41.0 - ay) } else if below < 19.0 { ww + (max(bw, 24.0) - ww) * below / 19.0 } else { max(bw, 24.0) + (below - 19.0) * 0.12 };
-	if hood {
+	let hw = if below <= 0.0 { bw + (ww - bw) * (hy - ay) / (41.0 - ay) } else if below < 19.0 { ww + (max(bw, hp) - ww) * below / 19.0 } else { max(bw, hp) + (below - 19.0) * 0.12 };
+	if hood && s >= 0 {
 		sk_m(out, "pc", -nw - 1.0, 2.0); sk_c(out, -15.0, -5.0, -11.0, -23.0, 0.0, -23.0); sk_c(out, 11.0, -23.0, 15.0, -5.0, nw + 1.0, 2.0); sk_z(out, true);
 		sk_m(out, "ln", -nw + 1.0, 1.0); sk_c(out, -9.0, -9.0, -5.0, -17.0, 0.0, -17.0); sk_c(out, 5.0, -17.0, 9.0, -9.0, nw - 1.0, 1.0); sk_z(out, false);
 	}
 	if sl > 0 {
-		let th = match sl { 1 => 0.44, 2 => 0.7, _ => 0.87 };
+		let th = if s < 0 { 1.52 } else { match sl { 1 => 0.44, 2 => 0.7, _ => 0.87 } };
 		let ex = match sl { 1 => 9.0, 2 => 22.0, _ => 38.0 };
 		for side in 2 {
 			let sg = if side == 0 { -1.0 } else { 1.0 };
 			let dx = sg * cos(th); let dy = sin(th); let nx = -sg * sin(th); let ny = cos(th);
 			let ax = sg * (bw - sw); let ad = ay - sy;
 			let along = ax * dx + ad * dy; let top = ax * nx + ad * ny;
-			let ln = along + ex;
-			let w = if sl == 1 { top * 0.88 } else { (if sl == 2 { 9.5 } else { 7.5 }) + fit * 0.7 };
+			let ln = if s < 0 { M[M_ARMLEN] / FIT_SY * (match sl { 1 => 0.33, 2 => 0.73, _ => 1.02 }) } else { along + ex };
+			let w = if s < 0 { (match sl { 1 => aw + 2.5 + fit, 2 => 8.0 + fit * 0.7, _ => 7.0 + fit * 0.7 }) * fx } else if sl == 1 { top * 0.88 } else { (if sl == 2 { 9.5 } else { 7.5 }) + fit * 0.7 };
 			let ox = sg * sw + ln * dx; let oy = sy + ln * dy; let ix = ox + w * nx; let iy = oy + w * ny;
 			sk_m(out, "pc", sg * sw, sy); sk_l(out, ox, oy); sk_l(out, ix, iy); sk_l(out, sg * bw, ay); sk_z(out, true);
 			if hoodie || (shirt && sl == 3) { line(out, P(ox - 5.0 * dx, oy - 5.0 * dy), P(ix - 5.0 * dx, iy - 5.0 * dy), "ln"); }
@@ -298,9 +302,21 @@ fn sk_top(out byte[>..]&, s int) {
 fn sk_picture(out byte[>..]&) { sk_rect(out, 0.0, 0.0, 60.0, 46.0); sk_m(out, "ln", 5.0, 40.0); sk_l(out, 20.0, 21.0); sk_l(out, 30.0, 32.0); sk_l(out, 38.0, 25.0); sk_l(out, 55.0, 40.0); sk_z(out, false); circle(out, P(44.0, 13.0), 5.0, "ln"); }
 fn style_svg(out byte[>..]&, s int) {
 	SK_X0 = 1.0e9; SK_Y0 = 1.0e9; SK_X1 = -1.0e9; SK_Y1 = -1.0e9;
-	var b byte[>..] = [];
-	let g = si(s, 1);
-	if g == G_TRACED { sk_picture(b); } else if g == G_SKIRT { sk_skirt(b, si(s, 6), sk_len(s), si(s, 10) == 1, true); } else if g == G_TROUSERS || g == G_SHORTS { sk_pants(b, s); } else { if g == G_DRESS { sk_skirt(b, si(s, 6), sk_len(s), false, false); } sk_top(b, s); }
+	var b byte[>..] = []; sk_body(b, s);
 	out.append("<svg class=\"sk\" viewBox=\""); num(out, SK_X0 - 2.0); out.push(' '); num(out, SK_Y0 - 2.0); out.push(' '); num(out, SK_X1 - SK_X0 + 4.0); out.push(' '); num(out, SK_Y1 - SK_Y0 + 4.0);
 	out.append("\" aria-hidden=\"true\" focusable=\"false\">"); out.append(b[..]); out.append("</svg>");
+}
+fn sk_body(b byte[>..]&, s int) { let g = sv(s, 1); if g == G_TRACED { sk_picture(b); } else if g == G_SKIRT { sk_skirt(b, sv(s, 6), sk_len(s), sv(s, 10) == 1, true); } else if g == G_TROUSERS || g == G_SHORTS { sk_pants(b, s); } else { if g == G_DRESS { sk_skirt(b, sv(s, 6), sk_len(s), false, false); } sk_top(b, s); } }
+fn hexv(c byte) int { if c >= '0' && c <= '9' { (c - '0') as int } else if c >= 'a' && c <= 'f' { (c - 'a') as int + 10 } else if c >= 'A' && c <= 'F' { (c - 'A') as int + 10 } else { 0 } }
+fn hex_rgb(hex const byte[:]) int, int, int { if hex.len < 7 { return 109, 143, 191; } return hexv(hex[1]) * 16 + hexv(hex[2]), hexv(hex[3]) * 16 + hexv(hex[4]), hexv(hex[5]) * 16 + hexv(hex[6]); }
+let CN_NAMES const byte[:][27] = ["black", "charcoal", "gray", "light gray", "white", "cream", "beige", "tan", "brown", "burgundy", "red", "coral", "pink", "hot pink", "orange", "mustard", "yellow", "olive", "green", "sage green", "teal", "sky blue", "dusty blue", "blue", "navy", "lavender", "purple"];
+let CN_RGB const int[81] = [25, 25, 25, 64, 64, 70, 128, 128, 128, 200, 200, 200, 245, 245, 245, 240, 232, 205, 215, 195, 160, 190, 150, 100, 110, 70, 40, 120, 25, 45, 200, 35, 45, 240, 120, 100, 240, 165, 190, 230, 60, 140, 240, 130, 40, 205, 165, 40, 245, 220, 70, 110, 115, 50, 45, 140, 70, 155, 175, 135, 30, 128, 128, 135, 195, 235, 110, 140, 180, 45, 90, 190, 25, 35, 80, 185, 165, 220, 110, 50, 140];
+fn color_name(hex const byte[:]) const byte[:] { let r, g, b = hex_rgb(hex); var best = 0; var bd = 1 << 40; for i in 27 { let dr = r - CN_RGB[i * 3]; let dg = g - CN_RGB[i * 3 + 1]; let db = b - CN_RGB[i * 3 + 2]; let d = 2 * dr * dr + 4 * dg * dg + 3 * db * db; if d < bd { bd = d; best = i; } } CN_NAMES[best] }
+fn fit_tf(out byte[>..]&, x real, y real, k real) { FIT_SY = M[M_BACKLEN] / 41.0; FIT_SX = (M[M_CHEST] + M[M_WAIST] + M[M_HIP]) / 266.0 * 0.87; let sx = FIT_SX; out.append("translate("); num(out, x); out.push(' '); num(out, y); out.append(") scale("); num(out, k * sx); out.push(' '); num(out, k * FIT_SY); out.push(')'); }
+fn fit_svg(out byte[>..]&, x real, y real, k real, hex const byte[:], fab const byte[:], tile real, ar real) {
+	let r, g, b = hex_rgb(hex); var sh byte[>..] = []; format(sh, "rgb(", r * 11 / 20, ",", g * 11 / 20, ",", b * 11 / 20, ")");
+	out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 768 1152\" width=\"768\" height=\"1152\"><style>.pc{fill:"); out.append(if fab.len > 0 { "url(#fab)" } else if hex.len >= 7 { hex[..7] } else { "#6d8fbf" });
+	out.append(";stroke:"); out.append(sh[..]); out.append(";stroke-width:.3;stroke-linejoin:round}.ln{fill:none;stroke:"); out.append(sh[..]); out.append(";stroke-width:.3}.bt{fill:"); out.append(sh[..]); out.append("}</style>");
+	if fab.len > 0 { out.append("<defs><pattern id=\"fab\" patternUnits=\"userSpaceOnUse\" width=\""); num(out, tile); out.append("\" height=\""); num(out, tile * ar); out.append("\"><image href=\""); out.append(fab); out.append("\" width=\""); num(out, tile); out.append("\" height=\""); num(out, tile * ar); out.append("\" preserveAspectRatio=\"none\"/></pattern></defs>"); }
+	out.append("<g id=\"try-g\" transform=\""); fit_tf(out, x, y, k); out.append("\">"); sk_body(out, -1); out.append("</g></svg>");
 }

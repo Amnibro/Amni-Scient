@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Amni-Stitch</title>
-<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a 3D fit view, cut files for lasers, vinyl cutters and plotters, and tracing from your own garment photos.">
+<meta name="description" content="Custom sewing patterns drafted to your measurements: T-shirts, shirts, skirts, trousers, dresses and hoodies, with seam allowance, tiled print pages, a sewing guide, a photo try-on, cut files for lasers, vinyl cutters and plotters, and tracing from your own garment photos.">
 <meta property="og:title" content="Amni-Stitch: sewing patterns drafted to your size">
 <meta property="og:description" content="Enter your measurements, pick a garment, print a pattern that fits. Or trace a photo of a garment into a pattern piece.">
 <meta property="og:type" content="website">
@@ -77,9 +77,9 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
 .paper{background:var(--paper);border-radius:10px;border:1px solid var(--line);overflow:auto;max-height:calc(100vh - 210px);min-height:340px}
 .paper svg.pat{display:block;width:100%;height:auto;min-width:640px}
 .paper .empty{color:#5b6170;padding:40px 24px;text-align:center}
-#view-pane .stage{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#e9ebef}
-#c3d{display:block;width:100%;height:min(72vh,720px);touch-action:none;cursor:grab}
-#c3d:active{cursor:grabbing}
+#try-stage{position:relative;aspect-ratio:2/3;width:min(100%,calc(min(78vh,820px)*2/3));margin:0 auto;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#e9ebef;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#try-stage img,#try-fit,#try-fit svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}#try-stage img{object-fit:cover}#try-fit{opacity:.87}#try-fit.hidden,#try-stage img.hidden{display:none}#try-acts{margin-top:10px;align-items:center}#try-size{vertical-align:middle}#try-msg{font-size:13px;margin:7px 0 0;min-height:1.2em}
+#try-stage:active{cursor:grabbing}@media (pointer:fine){#try-cam{display:none}}
 #view-msg{color:var(--warn)}
 #guide{font-size:14px}
 #guide table{border-collapse:collapse;width:100%;margin:4px 0}
@@ -168,7 +168,6 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
       <label class="f" id="row-leg">Leg <select id="leg"><option value="0">Straight</option><option value="1">Tapered</option><option value="2">Wide</option></select></label>
       <label class="f">Seam allowance <input type="number" id="sa" step="0.1" min="0" inputmode="decimal"></label>
       <label class="f">Hem allowance <input type="number" id="hem" step="0.1" min="0" inputmode="decimal"></label>
-      <label class="f">Color (3D) <input type="color" id="color" value="#6d8fbf"></label>
       </details>
     </section>
   </div>
@@ -176,7 +175,7 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
   <section class="work card" aria-label="Pattern">
     <div class="tabs" role="tablist">
       <button id="tab-pat" role="tab" aria-selected="true" aria-controls="pattern-pane">Pattern</button>
-      <button id="tab-3d" role="tab" aria-selected="false" aria-controls="view-pane">3D fit</button>
+      <button id="tab-try" role="tab" aria-selected="false" aria-controls="try-pane">Try on</button>
       <button id="tab-guide" role="tab" aria-selected="false" aria-controls="guide-pane">Sewing guide</button>
     </div>
     <div id="pattern-pane" role="tabpanel">
@@ -210,15 +209,16 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
         <div class="toolbar"><button id="cut-dl" class="pri">Download this sheet</button><button id="cut-all">Download all sheets</button><span class="info" id="cut-info"></span></div>
       </section>
     </div>
-    <div id="view-pane" role="tabpanel" class="hidden">
+    <div id="try-pane" role="tabpanel" class="hidden">
       <div class="toolbar">
-        <button id="v-front">Front</button><button id="v-side">Side</button><button id="v-back">Back</button>
-        <label class="check"><input type="checkbox" id="fab-on" disabled> Fabric</label>
-        <label class="check">Tile <input type="number" id="fab-size" step="0.5" min="1" inputmode="decimal" disabled aria-label="Fabric tile width" title="Fabric tile width"> <span class="unit">in</span></label>
-        <span class="info">Drag to turn. Your measurements, with the garment's ease.</span>
+        <button id="try-cam">Take photo</button><button id="try-up">Upload photo</button><button id="try-model">Our model</button>
+        <label class="check">Color <input type="color" id="color" value="#6d8fbf"></label>
+        <span id="fab-ctl" class="hidden"><label class="check"><input type="checkbox" id="fab-on" disabled> Fabric</label> <label class="check">Tile <input type="number" id="fab-size" step="0.5" min="1" inputmode="decimal" disabled aria-label="Fabric tile width" title="Fabric tile width"> <span class="unit">in</span></label></span>
       </div>
-      <div class="stage"><canvas id="c3d" aria-label="3D view of the garment on a figure with your measurements"></canvas></div>
-      <p id="view-msg" class="note"></p>
+      <div class="stage" id="try-stage"><img id="try-photo" alt="Try-on photo" draggable="false"><div id="try-fit"></div><img id="try-out" class="hidden" alt="The garment on the photo" draggable="false"></div>
+      <div class="actions" id="try-acts"><label class="f" id="try-size-row">Size <input type="range" id="try-size" min="60" max="150" value="100"></label><button id="try-go" class="pri">Make picture</button><a id="try-in" class="pri hidden" href="https://account.amni-scient.com/">Sign in to make a picture</a><button id="try-save" class="hidden">Save picture</button><button id="try-back" class="hidden">Back</button></div>
+      <p id="try-msg" role="status" aria-live="polite">Drag the garment into place.</p>
+      <p class="fine">Use a photo of yourself or an adult who agreed: one person, standing, arms a little out. It stays on this device until you tap Make picture, then it's checked, used once and deleted. <a href="/privacy-stitch.html">Privacy</a></p>
     </div>
     <div id="guide-pane" role="tabpanel" class="hidden">
       <div class="toolbar"><button id="dl-guide">Download the guide</button></div>
@@ -228,7 +228,7 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
 
   <aside class="ai card" aria-labelledby="h-ai">
     <h2 id="h-ai"><b>3</b><span id="h-ai-t">AI outfit sample</span></h2>
-    <p id="trace-note" class="note hidden">Have a photo of a garment laid flat? Trace its outline into a pattern piece at your size, or turn its fabric into a tile for the 3D model.</p>
+    <p id="trace-note" class="note hidden">Have a photo of a garment laid flat? Trace its outline into a pattern piece at your size, or turn its fabric into a tile for try-on.</p>
     <div id="gen-box">
     <p class="note">Describe a garment. We draw it, you trace it into a pattern.</p>
     <textarea id="prompt" maxlength="400" aria-label="Describe a garment" placeholder="Linen summer dress, puff sleeves, sage green"></textarea>
@@ -270,12 +270,21 @@ window.stitchHost = (() => {
     async pixels(src, max) { const { c, x } = await shrink(src, max); const d = x.getImageData(0, 0, c.width, c.height).data; return { w: c.width, h: c.height, b64: b64(new Uint8Array(d.buffer)) } },
     save(name, mime, text) { const u = URL.createObjectURL(new Blob([text], { type: mime })); dl(u, name); setTimeout(() => URL.revokeObjectURL(u), 4000) },
     saveUrl(name, url) { dl(url, name) },
-    pick() {
+    pick(cam, max) {
       return new Promise((ok, no) => {
-        const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
-        i.onchange = () => { const f = i.files && i.files[0]; if (!f) return no(new Error('no file')); const r = new FileReader(); r.onload = async () => { try { const { c } = await shrink(r.result, 1024); ok(c.toDataURL('image/png')) } catch (e) { no(e) } }; r.onerror = () => no(r.error); r.readAsDataURL(f) };
+        const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; if (cam) i.setAttribute('capture', 'user');
+        i.onchange = () => { const f = i.files && i.files[0]; if (!f) return no(new Error('no file')); const r = new FileReader(); r.onload = async () => { try { const { c } = await shrink(r.result, max || 1024); ok(max ? c.toDataURL('image/jpeg', 0.92) : c.toDataURL('image/png')) } catch (e) { no(e) } }; r.onerror = () => no(r.error); r.readAsDataURL(f) };
         i.click();
       })
+    },
+    async tryon(src, svg) {
+      const W = 768, H = 1152, p = await load(src), o = await load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)), cv = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return [c, c.getContext('2d')] };
+      const [a, ax] = cv(), k = Math.max(W / p.naturalWidth, H / p.naturalHeight), pw = p.naturalWidth * k, ph = p.naturalHeight * k;
+      ax.fillStyle = '#fff'; ax.fillRect(0, 0, W, H); ax.drawImage(p, (W - pw) / 2, (H - ph) / 2, pw, ph); ax.drawImage(o, 0, 0, W, H);
+      const [s, sx] = cv(); for (let i = 0; i < 16; i++) sx.drawImage(o, Math.cos(i * Math.PI / 8) * 9, Math.sin(i * Math.PI / 8) * 9, W, H); sx.globalCompositeOperation = 'source-in'; sx.fillStyle = '#fff'; sx.fillRect(0, 0, W, H);
+      const [m, mx] = cv(); mx.fillStyle = '#000'; mx.fillRect(0, 0, W, H); mx.filter = 'blur(5px)'; mx.drawImage(s, 0, 0);
+      let q = 0.9, image = a.toDataURL('image/jpeg', q); while (image.length > 600000 && q > 0.5) { q -= 0.1; image = a.toDataURL('image/jpeg', q) }
+      return { image, mask: m.toDataURL('image/jpeg', 0.9) }
     },
     print(paper) { let s = document.getElementById('page-size'); if (!s) { s = document.createElement('style'); s.id = 'page-size'; document.head.appendChild(s) } s.textContent = '@page{size:' + (paper === 'letter' ? 'letter' : 'A4') + ';margin:10mm}'; setTimeout(() => print(), 60) }
   }

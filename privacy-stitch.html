@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#F3F2EF">
 <title>Amni-Stitch Privacy Policy | Amniscient, LLC</title>
-<meta name="description" content="Privacy policy for Amni-Stitch. Measurements and traced photos stay in your browser. Outfit samples need an Amni account and are drawn and checked for nudity on our own computer, and blocked pictures and refused requests are kept for review, bans and legally required reports.">
+<meta name="description" content="Privacy policy for Amni-Stitch. Measurements and traced photos stay in your browser. Outfit samples and photo try-ons need an Amni account and are drawn and checked on our own computer. Try-on photos are used once and deleted, never kept for review. Blocked sample pictures and refused requests are kept for review, bans and legally required reports.">
 <link rel="canonical" href="https://amni-scient.com/privacy-stitch">
 <link rel="stylesheet" href="css/style.css?v=b268">
 <script>
@@ -100,25 +100,29 @@
 <tbody>
 <tr><td>Body measurements, size choices, garment options</td><td>Local storage on your device</td></tr>
 <tr><td>Photos you upload to trace or to turn into a fabric tile, and the tiles made from them</td><td>Processed in the page; never uploaded</td></tr>
-<tr><td>Generated sample pictures, patterns, print pages, sewing guides, cut files</td><td>Kept in the page until you save or close it</td></tr>
+<tr><td>Your try-on photo</td><td>Kept in the page; sent to us only when you press <em>Make picture</em> (Section 2)</td></tr>
+<tr><td>Generated sample and try-on pictures, patterns, print pages, sewing guides, cut files</td><td>Kept in the page until you save or close it</td></tr>
 <tr><td>A random device identifier</td><td>Local storage; used only by subscriptions, which are not open yet</td></tr>
 <tr><td>Your subscription key, if you have one</td><td>Local storage; sent only to the license service</td></tr>
 </tbody>
 </table>
-<h2>2. Outfit-sample requests</h2>
+<h2>2. Outfit-sample and try-on requests</h2>
 <p>Outfit samples need an Amni account (Section 6). When you press <em>Make sample</em>, your browser sends a request to the account service at account.amni-scient.com, which runs on a computer that Amniscient operates, reached through Cloudflare. The request contains:</p>
 <ul>
 <li>the description you typed, the garment type, the picture style and the fabric type;</li>
 <li>your sign-in cookie, which tells us which Amni account is asking;</li>
 <li>your <strong>IP address</strong> and your browser&rsquo;s user-agent string, as with any web request.</li>
 </ul>
-<p>The picture is drawn on that same computer by our own image generator (Amni-Gen with the MOSS-Image model) and checked there by our own vision model. No third-party AI provider receives your description or the picture.</p>
-<p>Each account gets 3 free samples a day. We count them against your account. Your IP address is used only in the service&rsquo;s memory to limit how many samples one network can ask for in a day; it is never written to disk.</p>
+<p>For a <strong>try-on</strong>, pressing <em>Make picture</em> also sends the photo you chose (or our model photo) with the garment drawing laid over it, a mask showing where the garment goes, and a short description made from your options, such as color, style, sleeves and fit. Use only a photo of yourself, or of an adult who agreed to it. The photo and mask are stored on that computer only until the picture is finished or the request is dropped, at most about 10 minutes, and are then deleted. We don&rsquo;t use them for anything else and we don&rsquo;t train models on them.</p>
+<p>The picture is drawn on that same computer by our own image generator (Amni-Gen with the MOSS-Image model) and checked there by our own vision model. No third-party AI provider receives your description, your photo or the picture.</p>
+<p>Each account gets 3 free pictures a day, shared between samples and try-ons. We count them against your account. Your IP address is used only in the service&rsquo;s memory to limit how many samples one network can ask for in a day; it is never written to disk.</p>
 <h2>3. Safety checks, blocked pictures and bans</h2>
 <p>Amni-Stitch generates pictures of clothing only. To keep it that way:</p>
 <ul>
 <li><strong>Requests</strong> asking for nudity or sexual content are refused before generation. We keep the refused text with your account, the time and the reason.</li>
-<li><strong>Every generated picture</strong> is checked by a vision model on our computer before it is shown. A picture that shows a person is not shown and is deleted. A picture with nudity is never shown; we keep it, with your account, the time and the request text, for review by a person.</li>
+<li><strong>Try-on photos</strong> are checked before anything is drawn. A photo of a child, of more than one person, or with no person in it is refused and not counted. A photo with nudity is refused and counts as a strike; we record your account, the time and the reason, but not the photo.</li>
+<li><strong>Try-on pictures</strong> are checked again before they are shown. One with nudity is not shown, is deleted, and counts as a strike.</li>
+<li><strong>Every generated sample picture</strong> is checked by a vision model on our computer before it is shown. A picture that shows a person is not shown and is deleted. A picture with nudity is never shown; we keep it, with your account, the time and the request text, for review by a person.</li>
 <li><strong>Strikes and bans.</strong> Each refused request and each picture blocked for nudity counts as a strike against your account. Three strikes in 30 days turn outfit samples off for the account. A request that sexualizes a minor is refused and samples are turned off at once. A ban covers every sign-in linked to the account and stays even if you delete the account. You can ask for a review at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>.</li>
 <li><strong>Reporting.</strong> If a request or picture appears to involve the sexual exploitation of a child, we report it, including the account details and request text, to the National Center for Missing &amp; Exploited Children (NCMEC), as U.S. law requires (18 U.S.C. &sect; 2258A). NCMEC may share reports with law enforcement. We also respond to valid legal process.</li>
 </ul>
@@ -128,6 +132,9 @@
 <tbody>
 <tr><td>Sample request (description, options, account)</td><td>Deleted 20 minutes after the sample finishes</td></tr>
 <tr><td>Generated picture on our service</td><td>Deleted 20 minutes after it is ready; we keep no copy of pictures that were shown</td></tr>
+<tr><td>Try-on photo and mask on our service</td><td>Deleted when the picture is finished or the request is dropped, at most about 10 minutes</td></tr>
+<tr><td>Try-on picture on our service</td><td>Deleted as soon as your browser receives it, or 20 minutes after it is ready if it never does</td></tr>
+<tr><td>Safety records for blocked try-on photos and pictures (account, time, reason; no picture)</td><td>90 days</td></tr>
 <tr><td>Daily sample count (account, date, count)</td><td>Replaced each day; deleted with the account</td></tr>
 <tr><td>Refused requests (text, account, time, reason)</td><td>90 days</td></tr>
 <tr><td>Strikes (account, time)</td><td>365 days</td></tr>
@@ -156,7 +163,7 @@
 <p>Cloudflare hosts the page and runs the generation and license services, and processes the request data in Sections 2 to 5 on our behalf. Requests to the Amni account service (Section 6) pass through Cloudflare to our own server. Stripe handles payments as described in Section 5.</p>
 <h2>8. Your choices and rights</h2>
 <ul>
-<li>You can use every pattern, tracing, printing and 3D feature without sending us anything: just don&rsquo;t press <em>Make sample</em>.</li>
+<li>You can use every pattern, tracing and printing feature, and line up a garment on your photo, without sending us anything: just don&rsquo;t press <em>Make sample</em> or <em>Make picture</em>.</li>
 <li>Clearing your browser&rsquo;s site data deletes everything in Section 1.</li>
 <li>Signing in is optional. Without an account, nothing in Section 6 is stored, apart from the signed-in check described there, which is not logged.</li>
 <li>You can ask for access to, or deletion of, the records in Section 4 at <a href="mailto:hello@amni-scient.com">hello@amni-scient.com</a>. We may keep safety records, and records we must preserve by law, for the periods above.</li>
