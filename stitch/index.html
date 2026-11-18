@@ -214,11 +214,10 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
     <h2 id="h-ai"><b>3</b><span id="h-ai-t">AI outfit sample</span></h2>
     <p id="trace-note" class="note hidden">Have a photo of a garment laid flat? Trace its outline into a pattern piece at your size, or turn its fabric into a tile for the 3D model.</p>
     <div id="gen-box">
-    <p class="note">Describe a garment. Amni-Gen (MOSS-Image) draws a sample of it on our own PC; trace the sample and it becomes a pattern at your size. Free with an Amni account, 3 samples a day.</p>
-    <label for="prompt" class="note">Describe it</label>
-    <textarea id="prompt" maxlength="400" placeholder="A linen summer dress with puff sleeves and a square neckline, sage green"></textarea>
-    <label class="f">Picture <select id="style"><option value="flat">Flat lay</option><option value="form">On a dress form</option></select></label>
-    <div class="actions"><button id="gen" class="pri">Generate sample</button><a id="gen-in" class="pri hidden" href="https://account.amni-scient.com/">Sign in to make samples</a><span id="quota"></span></div>
+    <p class="note">Describe a garment. We draw it, you trace it into a pattern.</p>
+    <textarea id="prompt" maxlength="400" aria-label="Describe a garment" placeholder="Linen summer dress, puff sleeves, sage green"></textarea>
+    <label class="f hidden">Picture <select id="style"><option value="flat">Flat lay</option><option value="form">On a dress form</option></select></label>
+    <div class="actions"><button id="gen" class="pri">Make sample</button><a id="gen-in" class="pri hidden" href="https://account.amni-scient.com/">Sign in to start</a><span id="quota"></span></div>
     <p id="gen-status" role="status" aria-live="polite"></p>
     </div>
     <div id="shot" class="hidden">
@@ -240,7 +239,7 @@ a.pri{display:inline-flex;align-items:center;font-size:14px;font-weight:600;bord
       <div class="actions"><button id="buy" class="pri">Subscribe, $9 a month</button><button id="billing" class="hidden">Manage billing</button><button id="key-forget" class="hidden">Remove key</button></div>
       <div id="key-box"><input type="text" id="key" placeholder="Paste a key: AMNIPRO1…" aria-label="Subscription key" spellcheck="false" autocomplete="off"><button id="key-save">Save</button></div>
     </div>
-    <p class="fine" id="gen-fine">Samples are for clothing only and need an Amni account. Your description goes only to our own PC, never to an outside AI service. Every picture is checked there before it is shown: pictures with a person are not shown, and pictures with nudity are blocked and kept with your account for review. Refused requests and pictures blocked for nudity count as strikes; 3 strikes in 30 days, or any request that sexualizes a minor, turn samples off for the account. See the <a href="/privacy-stitch.html">privacy notice</a> and <a href="/terms.html">terms</a>.</p>
+    <p class="fine" id="gen-fine">Clothing only. Pictures with people or nudity are blocked, and breaking the rules turns samples off. <a href="/privacy-stitch.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
   </aside>
 </main>
 <div id="print"></div>
