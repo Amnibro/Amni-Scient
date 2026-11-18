@@ -1,0 +1,830 @@
+import math;
+fn main() {}
+extern fn df_view_f64(id i32, xs real[:]) = "df_view_f64";
+extern fn df_view_i32(id i32, xs i32[:]) = "df_view_i32";
+let TR real[10] = [0.396875, 0.79375, 1.190625, 1.5875, 2.38125, 3.175, 4.7625, 6.35, 9.525, 12.7];
+var NV int = 0;
+var NT int = 0;
+var NH int = 0;
+var NE int = 0;
+var NB int = 0;
+var NX int = 0;
+var NY int = 0;
+var GA int = 0;
+var GD int = 0;
+var NL int = 0;
+var WX int = 0;
+var WY int = 0;
+var I0 int = 0;
+var J0 int = 0;
+var GS real = 0.0;
+var HH real = 0.0;
+var OU real = 0.0;
+var OV real = 0.0;
+var TOP real = 0.0;
+var BOT real = 0.0;
+var V real[>..];
+var TH real[>..];
+var TC real[>..];
+var AR real[>..];
+var C real[>..];
+var HL real[>..];
+var EG real[>..];
+var BD real[>..];
+var PR real[>..];
+var OUT real[>..];
+var CR real[>..];
+var LO real[>..];
+var HI real[>..];
+var HF real[>..];
+var WK real[>..];
+var MA real[>..];
+var DP real[>..];
+var RT real[>..];
+var WD real[>..];
+var LH real[>..];
+var E1 real[>..];
+var E2 real[>..];
+var EP real[>..];
+var FZ real[>..];
+var FB real[>..];
+var FD real[>..];
+var T i32[>..];
+var TT i32[>..];
+var TK i32[>..];
+var FL i32[>..];
+var CL i32[>..];
+var MK i32[>..];
+var ST i32[>..];
+var OD i32[>..];
+var EV i32[>..];
+var VS i32[>..];
+var FV i32[>..];
+var DQ i32[>..];
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x as i32);
+}
+fn rs(xs real[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+}
+fn ri(xs i32[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+}
+export fn df_views() {
+	df_view_f64(1, V);
+	df_view_f64(3, TH);
+	df_view_f64(4, TC);
+	df_view_f64(5, C);
+	df_view_f64(6, AR);
+	df_view_f64(8, HL);
+	df_view_f64(9, EG);
+	df_view_f64(10, BD);
+	df_view_f64(11, PR);
+	df_view_f64(12, OUT);
+	df_view_i32(2, T);
+	df_view_i32(7, TT);
+}
+export fn df_load(nv i32, nt i32, nh i32, ne i32, nb i32) {
+	NV = nv;
+	NT = nt;
+	NH = nh;
+	NE = ne;
+	NB = nb;
+	zf(V, 3 * NV, 0.0);
+	zi(T, 3 * NT, 0);
+	zi(TT, 3 * NT, 0);
+	zf(C, 3 * NT, 0.0);
+	zf(TH, NT, 0.0);
+	zf(TC, NT, 0.0);
+	zf(AR, NT, 0.0);
+	zf(HL, 8 * NH, 0.0);
+	zf(EG, 12 * NE, 0.0);
+	zi(EV, NE, 0);
+	zf(BD, 12 * NB, 0.0);
+	zf(PR, 12, 0.0);
+	rs(OUT, 12 * 128);
+	rs(CR, 12 * 128);
+	df_views();
+}
+fn add(code int, sev int, value real, limit real, x real, y real, z real, dir int, a real, b real, c real, key real) {
+	CR.push(code);
+	CR.push(sev);
+	CR.push(value);
+	CR.push(limit);
+	CR.push(x);
+	CR.push(y);
+	CR.push(z);
+	CR.push(dir);
+	CR.push(a);
+	CR.push(b);
+	CR.push(c);
+	CR.push(key);
+}
+fn bounds() {
+	zf(LO, 3, 0.0);
+	zf(HI, 3, 0.0);
+	if NV == 0 { return; }
+	for a in 3 {
+		var lo = 1e30;
+		var hi = -1e30;
+		for i in NV {
+			let c = V[3 * i + a];
+			if c < lo { lo = c; }
+			if c > hi { hi = c; }
+		}
+		LO[a] = lo;
+		HI[a] = hi;
+	}
+}
+fn axv(x real, y real, z real, a int) real {
+	if a == 0 { x } else if a == 1 { y } else { z }
+}
+fn hof(x real, y real, z real) real {
+	GS * axv(x, y, z, GA)
+}
+fn uof(x real, y real, z real) real {
+	axv(x, y, z, (GA + 1) % 3)
+}
+fn vof(x real, y real, z real) real {
+	axv(x, y, z, (GA + 2) % 3)
+}
+fn cellof(x real, y real, z real) int {
+	let i = floor((uof(x, y, z) - OU) / HH) as int;
+	let j = floor((vof(x, y, z) - OV) / HH) as int;
+	if i < 0 || i >= NX || j < 0 || j >= NY { return -1; }
+	j * NX + i
+}
+fn setgrid(d int) {
+	GD = d;
+	GA = d / 2;
+	GS = if d % 2 == 0 { 1.0 } else { -1.0 };
+	let u = (GA + 1) % 3;
+	let v = (GA + 2) % 3;
+	var n = PR[4];
+	if n <= 0.0 { n = 256.0; }
+	let su = HI[u] - LO[u];
+	let sv = HI[v] - LO[v];
+	let s = max(su, sv);
+	let margin = min(TR[9], s / 2.0);
+	HH = max(0.0001, (s + 2.0 * margin) / n);
+	let pc = (ceil(margin / HH) as int) + 3;
+	NX = (ceil(su / HH) as int) + 2 * pc + 1;
+	NY = (ceil(sv / HH) as int) + 2 * pc + 1;
+	OU = LO[u] - (pc as real) * HH;
+	OV = LO[v] - (pc as real) * HH;
+	var bot = 1e30;
+	for i in NV {
+		let h = hof(V[3 * i], V[3 * i + 1], V[3 * i + 2]);
+		if h < bot { bot = h; }
+	}
+	if NV == 0 { bot = 0.0; }
+	BOT = bot;
+	let m = NX * NY;
+	zf(HF, m, -1e30);
+	zi(TK, m, -1);
+	zi(CL, m, -1);
+	zi(FL, m, 0);
+	zi(MK, m, 0);
+	zf(DP, m, 0.0);
+	zf(RT, m, 0.0);
+	zf(WD, m, 0.0);
+	zf(WK, m, 0.0);
+	ri(ST, m);
+	ri(OD, m);
+}
+fn raster() {
+	for t in NT {
+		let ia int = T[3 * t];
+		let ib int = T[3 * t + 1];
+		let ic int = T[3 * t + 2];
+		let ua = uof(V[3 * ia], V[3 * ia + 1], V[3 * ia + 2]);
+		let va = vof(V[3 * ia], V[3 * ia + 1], V[3 * ia + 2]);
+		let ha = hof(V[3 * ia], V[3 * ia + 1], V[3 * ia + 2]);
+		let ub = uof(V[3 * ib], V[3 * ib + 1], V[3 * ib + 2]);
+		let vb = vof(V[3 * ib], V[3 * ib + 1], V[3 * ib + 2]);
+		let hb = hof(V[3 * ib], V[3 * ib + 1], V[3 * ib + 2]);
+		let uc = uof(V[3 * ic], V[3 * ic + 1], V[3 * ic + 2]);
+		let vc = vof(V[3 * ic], V[3 * ic + 1], V[3 * ic + 2]);
+		let hc = hof(V[3 * ic], V[3 * ic + 1], V[3 * ic + 2]);
+		let s = (ub - ua) * (vc - va) - (uc - ua) * (vb - va);
+		if abs(s) <= 1e-12 * HH * HH { continue; }
+		let umin = min(ua, min(ub, uc));
+		let umax = max(ua, max(ub, uc));
+		let vmin = min(va, min(vb, vc));
+		let vmax = max(va, max(vb, vc));
+		let i0 = max(0, floor((umin - OU) / HH - 0.5) as int);
+		let i1 = min(NX - 1, ceil((umax - OU) / HH - 0.5) as int);
+		let j0 = max(0, floor((vmin - OV) / HH - 0.5) as int);
+		let j1 = min(NY - 1, ceil((vmax - OV) / HH - 0.5) as int);
+		var j = j0;
+		while j <= j1 {
+			var i = i0;
+			while i <= i1 {
+				let px = OU + ((i as real) + 0.5) * HH;
+				let py = OV + ((j as real) + 0.5) * HH;
+				let l0 = ((ub - px) * (vc - py) - (uc - px) * (vb - py)) / s;
+				let l1 = ((uc - px) * (va - py) - (ua - px) * (vc - py)) / s;
+				let l2 = 1.0 - l0 - l1;
+				if l0 >= -1e-7 && l1 >= -1e-7 && l2 >= -1e-7 {
+					let h = l0 * ha + l1 * hb + l2 * hc;
+					let k = j * NX + i;
+					if h > HF[k] { HF[k] = h; }
+				}
+				i += 1;
+			}
+			j += 1;
+		}
+	}
+}
+fn enclose() {
+	ST.clear();
+	for j in NY {
+		for i in NX {
+			if i == 0 || j == 0 || i == NX - 1 || j == NY - 1 {
+				let k = j * NX + i;
+				if HF[k] <= -1e29 {
+					MK[k] = MK[k] | 1;
+					ST.push(k as i32);
+				}
+			}
+		}
+	}
+	let dx int[4] = [1, -1, 0, 0];
+	let dy int[4] = [0, 0, 1, -1];
+	while ST.len > 0 {
+		let c int = ST.pop();
+		let ci = c % NX;
+		let cj = c / NX;
+		for m in 4 {
+			let ni = ci + dx[m];
+			let nj = cj + dy[m];
+			if ni >= 0 && ni < NX && nj >= 0 && nj < NY {
+				let k = nj * NX + ni;
+				if HF[k] <= -1e29 && (MK[k] & 1) == 0 {
+					MK[k] = MK[k] | 1;
+					ST.push(k as i32);
+				}
+			}
+		}
+	}
+	var top = -1e30;
+	for k in NX * NY {
+		if HF[k] <= -1e29 && (MK[k] & 1) == 0 {
+			HF[k] = BOT;
+			MK[k] = MK[k] | 2;
+		}
+		if HF[k] > top { top = HF[k]; }
+	}
+	TOP = top;
+}
+fn drilled() {
+	for h in NH {
+		let b = 8 * h;
+		if abs(HL[b + 5 + GA]) > 0.999 {
+			let cx = HL[b + 2];
+			let cy = HL[b + 3];
+			let cz = HL[b + 4];
+			let r = HL[b] / 2.0 + HH;
+			let cu = uof(cx, cy, cz);
+			let cv = vof(cx, cy, cz);
+			let i0 = max(0, floor((cu - r - OU) / HH - 0.5) as int);
+			let i1 = min(NX - 1, ceil((cu + r - OU) / HH + 0.5) as int);
+			let j0 = max(0, floor((cv - r - OV) / HH - 0.5) as int);
+			let j1 = min(NY - 1, ceil((cv + r - OV) / HH + 0.5) as int);
+			var j = j0;
+			while j <= j1 {
+				var i = i0;
+				while i <= i1 {
+					let dx = OU + ((i as real) + 0.5) * HH - cu;
+					let dy = OV + ((j as real) + 0.5) * HH - cv;
+					if dx * dx + dy * dy <= r * r {
+						let k = j * NX + i;
+						MK[k] = MK[k] | 4;
+					}
+					i += 1;
+				}
+				j += 1;
+			}
+		}
+	}
+}
+fn seen() {
+	for e in NE {
+		let b = 12 * e;
+		let px = EG[b + 3] + 2.0 * HH * EG[b + 6];
+		let py = EG[b + 4] + 2.0 * HH * EG[b + 7];
+		let pz = EG[b + 5] + 2.0 * HH * EG[b + 8];
+		let k = cellof(px, py, pz);
+		if k == -1 || HF[k] <= hof(px, py, pz) + HH {
+			EV[e] = EV[e] | ((1 << GD) as i32);
+		}
+	}
+}
+fn sepf(q int, p int) real {
+	((FB[q] + ((q * q) as real)) - (FB[p] + ((p * p) as real))) / (2.0 * ((q - p) as real))
+}
+fn edt1(n int) {
+	if n <= 0 { return; }
+	var k = 0;
+	FV[0] = 0;
+	FZ[0] = -1e30;
+	FZ[1] = 1e30;
+	for q in 1..n {
+		var vk int = FV[k];
+		var s = sepf(q, vk);
+		while s <= FZ[k] {
+			k -= 1;
+			vk = FV[k];
+			s = sepf(q, vk);
+		}
+		k += 1;
+		FV[k] = q as i32;
+		FZ[k] = s;
+		FZ[k + 1] = 1e30;
+	}
+	k = 0;
+	for q in n {
+		while FZ[k + 1] < (q as real) { k += 1; }
+		let vk int = FV[k];
+		FD[q] = (((q - vk) * (q - vk)) as real) + FB[vk];
+	}
+}
+fn edt() {
+	let m = max(WX, WY) + 1;
+	zf(FB, m, 0.0);
+	zf(FD, m, 0.0);
+	zi(FV, m, 0);
+	zf(FZ, m + 1, 0.0);
+	for i in WX {
+		for j in WY { FB[j] = EP[j * WX + i]; }
+		edt1(WY);
+		for j in WY { EP[j * WX + i] = FD[j]; }
+	}
+	for j in WY {
+		for i in WX { FB[i] = EP[j * WX + i]; }
+		edt1(WX);
+		for i in WX { EP[j * WX + i] = FD[i]; }
+	}
+}
+fn levels() {
+	rs(LH, 64);
+	OD.clear();
+	let lim = TOP - HH;
+	for k in NX * NY {
+		if HF[k] > -1e29 && HF[k] < lim { OD.push(k as i32); }
+	}
+	stable_sort(OD) { a, b => HF[a] > HF[b] };
+	let g = max(HH, (TOP - BOT) / 40.0);
+	var first = 0.0;
+	for q in OD.len {
+		let k int = OD[q];
+		if LH.len == 0 || HF[k] < first - g {
+			first = HF[k];
+			LH.push(HF[k]);
+		}
+		CL[k] = (LH.len - 1) as i32;
+	}
+	NL = LH.len;
+}
+fn cover(c int) {
+	let L = LH[c];
+	var imin = NX;
+	var imax = -1;
+	var jmin = NY;
+	var jmax = -1;
+	var left = 0;
+	for j in NY {
+		for i in NX {
+			if CL[j * NX + i] == c {
+				left += 1;
+				if i < imin { imin = i; }
+				if i > imax { imax = i; }
+				if j < jmin { jmin = j; }
+				if j > jmax { jmax = j; }
+			}
+		}
+	}
+	if imax < 0 { return; }
+	let grow = (ceil(2.0 * TR[9] / HH) as int) + 2;
+	let i0 = max(0, imin - grow);
+	let i1 = min(NX - 1, imax + grow);
+	let j0 = max(0, jmin - grow);
+	let j1 = min(NY - 1, jmax + grow);
+	I0 = i0;
+	J0 = j0;
+	WX = i1 - i0 + 1;
+	WY = j1 - j0 + 1;
+	let wn = WX * WY;
+	zf(E1, wn, 0.0);
+	zf(E2, wn, 0.0);
+	zf(EP, wn, 0.0);
+	for j in WY {
+		for i in WX {
+			EP[j * WX + i] = if HF[(J0 + j) * NX + I0 + i] > L + HH { 0.0 } else { 1e20 };
+		}
+	}
+	edt();
+	for q in wn { E1[q] = EP[q]; }
+	var kp = -1;
+	var kmin = -1;
+	var k = 9;
+	while k >= 0 && left > 0 {
+		let rp = TR[k] / HH;
+		if rp < 0.75 { break; }
+		kmin = k;
+		let r2 = rp * rp;
+		for q in wn {
+			EP[q] = if E1[q] > r2 { 0.0 } else { 1e20 };
+		}
+		edt();
+		var any = false;
+		for j in WY {
+			for i in WX {
+				let g = (J0 + j) * NX + I0 + i;
+				let q = j * WX + i;
+				if CL[g] == c && TK[g] == -1 && EP[q] <= r2 + 1e-9 {
+					TK[g] = k as i32;
+					left -= 1;
+					any = true;
+					if kp >= 0 && sqrt(E2[q]) - TR[kp] / HH <= 0.5 * TR[kp] / HH {
+						MK[g] = MK[g] | 8;
+					}
+				}
+			}
+		}
+		if any {
+			for q in wn { E2[q] = EP[q]; }
+			kp = k;
+		}
+		k -= 1;
+	}
+	for j in WY {
+		for i in WX {
+			let g = (J0 + j) * NX + I0 + i;
+			let q = j * WX + i;
+			if CL[g] == c && TK[g] == -1 {
+				WD[g] = 2.0 * sqrt(E1[q]) * HH;
+				if kmin == 0 {
+					var corner = false;
+					if kp >= 0 {
+						corner = sqrt(E2[q]) - TR[kp] / HH <= 0.5 * TR[kp] / HH;
+					}
+					if !corner { FL[g] = 2; }
+				}
+			}
+		}
+	}
+}
+fn maxfilter(r int) {
+	let n = NX * NY;
+	zf(MA, n, 0.0);
+	zf(WK, n, 0.0);
+	zi(DQ, max(NX, NY) + 1, 0);
+	for j in NY {
+		var head = 0;
+		var tail = 0;
+		var nxt = 0;
+		for i in NX {
+			let hi = min(NX - 1, i + r);
+			while nxt <= hi {
+				let v = HF[j * NX + nxt];
+				while tail > head {
+					let q int = DQ[tail - 1];
+					if HF[j * NX + q] <= v { tail -= 1; } else { break; }
+				}
+				DQ[tail] = nxt as i32;
+				tail += 1;
+				nxt += 1;
+			}
+			var h0 int = DQ[head];
+			while h0 < i - r {
+				head += 1;
+				h0 = DQ[head];
+			}
+			MA[j * NX + i] = HF[j * NX + h0];
+		}
+	}
+	for i in NX {
+		var head = 0;
+		var tail = 0;
+		var nxt = 0;
+		for j in NY {
+			let hi = min(NY - 1, j + r);
+			while nxt <= hi {
+				let v = MA[nxt * NX + i];
+				while tail > head {
+					let q int = DQ[tail - 1];
+					if MA[q * NX + i] <= v { tail -= 1; } else { break; }
+				}
+				DQ[tail] = nxt as i32;
+				tail += 1;
+				nxt += 1;
+			}
+			var h0 int = DQ[head];
+			while h0 < j - r {
+				head += 1;
+				h0 = DQ[head];
+			}
+			WK[j * NX + i] = MA[h0 * NX + i];
+		}
+	}
+}
+fn flags() {
+	let tz = 4.0;
+	let n = NX * NY;
+	for k in 10 {
+		var has = false;
+		for g in n {
+			if TK[g] == k && (MK[g] & 12) == 0 && (TOP - HF[g]) / (2.0 * TR[k]) > tz {
+				has = true;
+				break;
+			}
+		}
+		if has {
+			maxfilter((ceil(3.0 * TR[k] / HH) as int) + 1);
+			for g in n {
+				if TK[g] == k && (MK[g] & 12) == 0 && (TOP - HF[g]) / (2.0 * TR[k]) > tz {
+					var depth = min(WK[g], TOP) - HF[g];
+					if (MK[g] & 2) != 0 {
+						if GD % 2 == 1 { continue; }
+						depth = depth / 2.0;
+					}
+					let ratio = depth / (2.0 * TR[k]);
+					if ratio > tz {
+						FL[g] = 1;
+						DP[g] = depth;
+						RT[g] = ratio;
+					}
+				}
+			}
+		}
+	}
+	var any = false;
+	for g in n {
+		if FL[g] == 2 { any = true; break; }
+	}
+	if any {
+		maxfilter((ceil(3.0 * TR[0] / HH) as int) + 1);
+		for g in n {
+			if FL[g] == 2 {
+				var depth = min(WK[g], TOP) - HF[g];
+				let through = (MK[g] & 2) != 0;
+				if through { depth = depth / 2.0; }
+				if (MK[g] & 4) != 0 || (through && GD % 2 == 1) || depth <= HH {
+					FL[g] = 0;
+				} else {
+					DP[g] = depth;
+				}
+			}
+		}
+	}
+}
+fn components() {
+	let n = NX * NY;
+	let dx int[4] = [1, -1, 0, 0];
+	let dy int[4] = [0, 0, 1, -1];
+	for s in n {
+		if FL[s] > 0 && (MK[s] & 16) == 0 {
+			let kind = FL[s];
+			ST.clear();
+			MK[s] = MK[s] | 16;
+			ST.push(s as i32);
+			var cnt = 0;
+			var w = s;
+			while ST.len > 0 {
+				let c int = ST.pop();
+				cnt += 1;
+				if kind == 1 {
+					if RT[c] > RT[w] { w = c; }
+				} else {
+					if DP[c] > DP[w] { w = c; }
+				}
+				let ci = c % NX;
+				let cj = c / NX;
+				for m in 4 {
+					let ni = ci + dx[m];
+					let nj = cj + dy[m];
+					if ni >= 0 && ni < NX && nj >= 0 && nj < NY {
+						let k = nj * NX + ni;
+						if FL[k] == kind && (MK[k] & 16) == 0 {
+							MK[k] = MK[k] | 16;
+							ST.push(k as i32);
+						}
+					}
+				}
+			}
+			if cnt < 3 { continue; }
+			var p real[3] = [0.0; 3];
+			p[GA] = GS * HF[w];
+			p[(GA + 1) % 3] = OU + (((w % NX) as real) + 0.5) * HH;
+			p[(GA + 2) % 3] = OV + (((w / NX) as real) + 0.5) * HH;
+			let area = (cnt as real) * HH * HH;
+			if kind == 1 {
+				let tk int = TK[w];
+				let sev = if RT[w] > 10.0 { 2 } else { 1 };
+				let lim = if sev == 2 { 10.0 } else { 4.0 };
+				add(1, sev, RT[w], lim, p[0], p[1], p[2], GD, 2.0 * TR[tk], DP[w], area, RT[w]);
+			} else {
+				add(2, 2, WD[w], 2.0 * TR[0], p[0], p[1], p[2], GD, 0.0, DP[w], area, DP[w]);
+			}
+		}
+	}
+}
+fn corners() {
+	for e in NE {
+		let b = 12 * e;
+		let kind = EG[b] as int;
+		let rad = EG[b + 1];
+		let len = EG[b + 2];
+		let ax = EG[b + 9] as int;
+		let d1 = EG[b + 10] as int;
+		let d2 = EG[b + 11] as int;
+		let ev int = EV[e];
+		var open = -1;
+		if (ev & (1 << (2 * ax))) != 0 {
+			open = 2 * ax;
+		} else if (ev & (1 << (2 * ax + 1))) != 0 {
+			open = 2 * ax + 1;
+		}
+		if kind == 0 {
+			let fine = (d1 >= 0 && (ev & (1 << d1)) != 0) || (d2 >= 0 && (ev & (1 << d2)) != 0);
+			if !fine {
+				add(3, 2, 0.0, 0.0, EG[b + 3], EG[b + 4], EG[b + 5], open, len, 0.0, 0.0, len);
+			}
+		} else if kind == 1 {
+			if open == -1 || rad * 3.0 >= len { continue; }
+			let ratio = len / (2.0 * rad);
+			let sev = if ratio > 10.0 { 2 } else if ratio > 4.0 { 1 } else { 0 };
+			add(4, sev, rad, len / 3.0, EG[b + 3], EG[b + 4], EG[b + 5], open, ratio, len, 0.0, ratio);
+		}
+	}
+}
+fn thin_t(t int, w real) bool {
+	TH[t] > 0.0 && TH[t] < w && TH[t] < 1e29 && TC[t] < -0.5
+}
+fn thin() {
+	let w = PR[1];
+	let e = PR[2];
+	zi(VS, NT, 0);
+	ri(ST, NT);
+	for t0 in NT {
+		if VS[t0] == 0 && thin_t(t0, w) {
+			ST.clear();
+			VS[t0] = 1;
+			ST.push(t0 as i32);
+			var area = 0.0;
+			var best = t0;
+			while ST.len > 0 {
+				let t int = ST.pop();
+				area += AR[t];
+				if TH[t] < TH[best] { best = t; }
+				for m in 3 {
+					let nb int = TT[3 * t + m];
+					if nb >= 0 && VS[nb] == 0 && thin_t(nb, w) {
+						VS[nb] = 1;
+						ST.push(nb as i32);
+					}
+				}
+			}
+			if area >= 0.5 * w * w {
+				let th = TH[best];
+				let sev = if th < e { 2 } else { 1 };
+				add(5, sev, th, w, C[3 * best], C[3 * best + 1], C[3 * best + 2], -1, area, e, 0.0, -th);
+			}
+		}
+	}
+}
+fn deep() {
+	for h in NH {
+		let b = 8 * h;
+		let d = HL[b];
+		let dep = HL[b + 1];
+		if d > 0.0 {
+			let ratio = dep / d;
+			if ratio > 10.0 {
+				let sev = if ratio > 40.0 { 2 } else { 1 };
+				let lim = if ratio > 40.0 { 40.0 } else { 10.0 };
+				let px = HL[b + 2] + 0.5 * dep * HL[b + 5];
+				let py = HL[b + 3] + 0.5 * dep * HL[b + 6];
+				let pz = HL[b + 4] + 0.5 * dep * HL[b + 7];
+				add(6, sev, ratio, lim, px, py, pz, -1, d, dep, 0.0, ratio);
+			}
+		}
+	}
+}
+fn sheet() {
+	let t = PR[3];
+	for b in NB {
+		let o = 12 * b;
+		let rad = BD[o];
+		let fl = BD[o + 1];
+		let sx = BD[o + 9];
+		let sy = BD[o + 10];
+		let sz = BD[o + 11];
+		if rad < t {
+			add(7, 1, rad, t, sx, sy, sz, -1, 0.0, 0.0, 0.0, -rad);
+		}
+		if fl >= 0.0 && fl + rad + t < 4.0 * t {
+			add(8, 1, fl, 4.0 * t, sx, sy, sz, -1, 0.0, 0.0, 0.0, -fl);
+		}
+	}
+	for h in NH {
+		let o = 8 * h;
+		let dia = HL[o];
+		let dep = HL[o + 1];
+		let dx = HL[o + 5];
+		let dy = HL[o + 6];
+		let dz = HL[o + 7];
+		let px = HL[o + 2] + 0.5 * dep * dx;
+		let py = HL[o + 3] + 0.5 * dep * dy;
+		let pz = HL[o + 4] + 0.5 * dep * dz;
+		if PR[5] > 0.0 && dia < t {
+			add(10, 1, dia, t, px, py, pz, -1, 0.0, 0.0, 0.0, -dia);
+		}
+		for b in NB {
+			let q0 = 12 * b;
+			let ax = BD[q0 + 5];
+			let ay = BD[q0 + 6];
+			let az = BD[q0 + 7];
+			let dot = dx * ax + dy * ay + dz * az;
+			if abs(dot) < 0.1 {
+				let rx = px - BD[q0 + 2];
+				let ry = py - BD[q0 + 3];
+				let rz = pz - BD[q0 + 4];
+				let along = rx * ax + ry * ay + rz * az;
+				if abs(along) <= 0.5 * BD[q0 + 8] + dia {
+					let vx = rx - ax * along;
+					let vy = ry - ay * along;
+					let vz = rz - az * along;
+					let q = sqrt(vx * vx + vy * vy + vz * vz);
+					let m = BD[q0] + 0.5 * t;
+					if q > m {
+						let s = sqrt(q * q - m * m) - 0.5 * dia;
+						let lim = 2.0 * t + BD[q0];
+						if s < lim {
+							add(9, 1, max(s, 0.0), lim, px, py, pz, -1, dia, 0.0, 0.0, -s);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+fn flush() {
+	let n = CR.len / 12;
+	var taken i32[>..] = [];
+	zi(taken, n, 0);
+	for code in 1..11 {
+		for rep in 7 {
+			var best = -1;
+			for f in n {
+				if taken[f] == 0 && CR[12 * f] == (code as real) {
+					if best < 0 || CR[12 * f + 1] > CR[12 * best + 1] || (CR[12 * f + 1] == CR[12 * best + 1] && CR[12 * f + 11] > CR[12 * best + 11]) {
+						best = f;
+					}
+				}
+			}
+			if best < 0 { break; }
+			taken[best] = 1;
+			for q in 12 { OUT.push(CR[12 * best + q]); }
+		}
+	}
+}
+export fn df_run() i32 {
+	rs(OUT, 12 * 128);
+	rs(CR, 12 * 128);
+	bounds();
+	if PR[0] == 1.0 {
+		if PR[1] > 0.0 { thin(); }
+		deep();
+		zi(EV, NE, 0);
+		for d in 6 {
+			setgrid(d);
+			raster();
+			enclose();
+			seen();
+			if TOP - BOT >= 2.0 * HH {
+				drilled();
+				levels();
+				for c in NL { cover(c); }
+				flags();
+				components();
+			}
+		}
+		corners();
+	} else if PR[0] == 2.0 {
+		sheet();
+	}
+	flush();
+	df_views();
+	(OUT.len / 12) as i32
+}
