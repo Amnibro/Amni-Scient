@@ -2,7 +2,7 @@ const TAU=Math.PI*2,cl=x=>x<0?0:x>1?1:x,ss=(a,b,x)=>{const t=cl((x-a)/(b-a));ret
 const hx=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)/255),mix=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)],mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k],P=L=>L.map(hx);
 const ramp=(L,t)=>{t=cl(t)*(L.length-1);const i=Math.min(L.length-2,Math.floor(t));return mix(L[i],L[i+1],t-i);};
 const hash=(x,y,s)=>{let h=Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(s+1,1442695041)|0;h=Math.imul(h^h>>>13,1274126177);return((h^h>>>16)>>>0)/4294967296;};
-const GX=[1,-1,0,0,.7071,-.7071,.7071,-.7071],GY=[0,0,1,-1,.7071,.7071,-.7071,-.7071],gd=(x,y,s,dx,dy)=>{const k=hash(x,y,s)*8|0;return GX[k]*dx+GY[k]*dy;},fade=t=>t*t*t*(t*(t*6-15)+10);
+const GX=[1,-1,0,0,.7071,-.7071,.7071,-.7071],GY=[0,0,1,-1,.7071,.7071,-.7071,-.7071],gd=(x,y,s,dx,dy)=>{const k=hash(x,y,s)*8|0;return GX[k]*dx+GY[k]*dy;},fade=t=>t*t*t*(t*(t*6-15)+10),FD=[[1,0],[0,1],[1,1],[1,-1],[2,1],[1,2],[2,-1],[1,-2]];
 const perlin=(u,v,fx,fy,s)=>{const x=u*fx,y=v*fy,ix=Math.floor(x),iy=Math.floor(y),dx=x-ix,dy=y-iy,x0=md(ix,fx),x1=md(ix+1,fx),y0=md(iy,fy),y1=md(iy+1,fy),a=gd(x0,y0,s,dx,dy),b=gd(x1,y0,s,dx-1,dy),c=gd(x0,y1,s,dx,dy-1),d=gd(x1,y1,s,dx-1,dy-1),sx=fade(dx),sy=fade(dy);return lerp(lerp(a,b,sx),lerp(c,d,sx),sy);};
 const n=(u,v,f,o=4,s=0,fy=f)=>{let t=0,a=1,w=0;for(let k=0;k<o;k++,a*=.5){t+=a*perlin(u,v,f<<k,fy<<k,s*7+k*31);w+=a;}return t/w;},n1=(u,v,f,o,s,fy)=>cl(.5+n(u,v,f,o,s,fy)*1.4);
 let F1=0,F2=0,ID=0,BE=0,BID=0,BLX=0,BLY=0;
@@ -34,8 +34,20 @@ const R={
  metal:{name:'Brushed metal',bump:.0005,ao:0,f:(u,v,s)=>{const t=n(u,v,2,3,s,256);return[.5+.1*t,...mix(hx('#a9adb3'),hx('#c4c8ce'),cl(.5+t*2)),.3+.15*cl(.5+t),1];}},
  fabric:{name:'Woven fabric',bump:.002,ao:.6,f:(u,v,s)=>{const k=64,x=u*k,y=v*k,cx=Math.floor(x),cy=Math.floor(y),a=Math.sin(Math.PI*(x-cx)),b=Math.sin(Math.PI*(y-cy)),h=(cx+cy)&1?a*(.6+.4*b):b*(.6+.4*a);return[h,...mul(hx('#5b6f8f'),(.75+.25*h)*(.92+.15*n(u,v,32,2,s,256))),.9];}},
  snow:{name:'Snow',bump:.003,ao:.3,f:(u,v,s)=>{const a=n(u,v,4,5,s);return[.5+.3*a+.1*n(u,v,32,2,s+1),...mix(hx('#dfe7f2'),hx('#ffffff'),cl(.5+a*1.5)),.6];}},
+ carbon:{name:'Carbon twill',gray:1,bump:.004,ao:.5,f:(u,v,s)=>{const k=8,x=u*k,y=v*k,cx=Math.floor(x),cy=Math.floor(y),w=md(cx-cy,4)<2,p=Math.sin(Math.PI*(w?y-cy:x-cx)),t=w?n(u,v,2,2,s,256):n(u,v,256,2,s,2),c=(w?.62+.38*p:.3+.3*p)*(.9+.1*t);return[p*(.85+.15*t),c,c,c,w?.45+.15*t:.95+.05*t,1];}},
+ forged:{name:'Forged carbon',gray:1,bump:.0006,ao:.3,f:(u,v,s)=>{wor(u,v,9,s,.95);const id=ID,e=F2-F1,D=FD[(id*8)|0],sp=.5+.5*Math.sin(TAU*48*(D[0]*u+D[1]*v)),g=ss(0,.06,e),c=(.3+.6*fr(id*7.13))*(.82+.18*sp)*(.55+.45*g);return[.5*sp*g,c,c,c,.45+.55*fr(id*3.71),1];}},
+ knurl:{name:'Diamond knurl',gray:1,bump:.004,ao:.7,f:(u,v)=>{const k=16,a=.5-Math.abs(fr(k*(u+v))-.5),b=.5-Math.abs(fr(k*(u-v))-.5),h=2*Math.min(a,b),c=.7+.3*h;return[h,c,c,c,.85+.15*(1-h),1];}},
+ leather:{name:'Leather grain',gray:1,bump:.003,ao:.6,f:(u,v,s)=>{wor(u,v,40,s,.9);const g=ss(0,.12,F2-F1),t=n(u,v,16,3,s+3),h=g*(.8+.2*t),c=.78+.22*h+.06*t;return[h,c,c,c,.85+.15*(1-g),1];}},
+ stipple:{name:'Molded texture',gray:1,bump:.0012,ao:.3,f:(u,v,s)=>{const t=n(u,v,64,3,s),h=cl(.5+t*1.5)*.7+.3*hash(Math.floor(u*512),Math.floor(v*512),s+5),c=.9+.1*h;return[h,c,c,c,.85+.15*h,1];}},
+ sandcast:{name:'Sand cast',gray:1,bump:.0025,ao:.5,f:(u,v,s)=>{const h=cl(.5+n(u,v,24,4,s))*.6+.4*hash(Math.floor(u*384),Math.floor(v*384),s+9),c=.75+.25*h;return[h,c,c,c,1,1];}},
+ hammered:{name:'Hammered',gray:1,bump:.006,ao:.4,f:(u,v,s)=>{wor(u,v,7,s,.9);const h=ss(0,.75,F1),c=.88+.12*h;return[h,c,c,c,.7+.3*(1-h),1];}},
+ grain:{name:'Wood grain',gray:1,bump:.0012,ao:.3,f:(u,v,s)=>{const r=fr(v*24+1.6*n(u,v,2,3,s,4)),l=ss(.6,.85,r)*(1-ss(.92,1,r)),p=n(u,v,1,2,s+4,96),c=.6+.4*(1-l)+.06*p;return[.5*l+.2*p,c,c,c,.9+.1*l,1];}},
+ grip:{name:'Grip dots',gray:1,bump:.005,ao:.6,f:(u,v)=>{const k=20,d=Math.hypot(fr(u*k)-.5,fr(v*k+(Math.floor(u*k)&1)*.5)-.5),h=1-ss(.28,.34,d),c=.85+.15*h;return[h,c,c,c,1,1];}},
+ perf:{name:'Perforated',gray:1,bump:.003,ao:.8,f:(u,v)=>{const k=16,d=Math.hypot(fr(u*k)-.5,fr(v*k+(Math.floor(u*k)&1)*.5)-.5),h=ss(.3,.34,d),c=.08+.92*h;return[h,c,c,c,1,1];}},
+ bead:{name:'Bead blast',gray:1,bump:.0006,ao:.2,f:(u,v,s)=>{const h=.5*hash(Math.floor(u*512),Math.floor(v*512),s+2)+.5*cl(.5+n(u,v,48,2,s)),c=.93+.07*h;return[h,c,c,c,1,1];}},
+ brush:{name:'Brushed',gray:1,bump:.0004,ao:0,f:(u,v,s)=>{const t=n(u,v,2,3,s,256),c=.86+.14*cl(.5+t*2);return[.5+.1*t,c,c,c,.75+.25*cl(.5+t),1];}},
 };
-export const TEXGEN=Object.fromEntries(Object.entries(R).map(([k,r])=>[k,{name:r.name,bump:r.bump}])),TEXGEN_KINDS=Object.keys(R);
+export const TEXGEN=Object.fromEntries(Object.entries(R).map(([k,r])=>[k,{name:r.name,bump:r.bump,gray:!!r.gray}])),TEXGEN_KINDS=Object.keys(R);
 const blur=(h,N,r)=>{const t=new Float32Array(N*N),o=new Float32Array(N*N),k=1/(2*r+1);for(const[a,b,sx,sy]of[[h,t,1,N],[t,o,N,1]])for(let j=0;j<N;j++){let acc=0;for(let i=-r;i<=r;i++)acc+=a[j*sy+md(i,N)*sx];for(let i=0;i<N;i++){b[j*sy+i*sx]=acc*k;acc+=a[j*sy+md(i+r+1,N)*sx]-a[j*sy+md(i-r,N)*sx];}}return o;};
 export function texgen(kind,o={}){const r=R[kind];if(!r)throw new Error('unknown surface '+kind+' (use '+TEXGEN_KINDS.join(', ')+')');const N=Math.max(16,Math.min(4096,o.size|0||512)),s=(o.seed|0)>>>0,tint=o.tint?hx(o.tint):null,bump=r.bump*(o.bump??1),H=new Float32Array(N*N),color=new Uint8ClampedArray(N*N*4),normal=new Uint8ClampedArray(N*N*4),orm=new Uint8ClampedArray(N*N*4),RO=new Float32Array(N*N),ME=new Float32Array(N*N);
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x,q=r.f((x+.5)/N,(y+.5)/N,s);H[i]=q[0];RO[i]=cl(q[4]+(o.rough||0));ME[i]=q[5]||0;for(let c=0;c<3;c++)color[4*i+c]=255*cl(tint?q[1+c]*tint[c]:q[1+c]);color[4*i+3]=255;}

@@ -1,0 +1,65 @@
+import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),port=process.env.PORT||'18717',ud=fs.mkdtempSync(path.join(os.tmpdir(),'looks-ui-')),sleep=t=>new Promise(r=>setTimeout(r,t)),shots=process.env.SHOTS;
+const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});
+let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
+try{
+  for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${port}/cad/`)).ok)break;}catch{}await sleep(250);}
+  b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+  const shot=async n=>{shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));};
+  const built=async()=>{await p.evaluate(()=>window.amnicad.API.waitBuild());await sleep(400);};
+  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});
+  await p.evaluate(()=>window.amnicad.applyActions([{new:true,units:'in'},{material:'al6061'},{add:{type:'box',name:'Plate',w:4,d:2,h:0.75}},{add:{type:'cylinder',name:'Boss',r:0.6,h:1,x:1,y:0,z:0.75}},{add:{type:'hole',name:'Holes',plane:'XY',offset:1.75,d:0.25,thru:true,pts:[[-1.4,0]]}}]));await built();
+  ok(await p.evaluate(()=>!!document.querySelector('#tools [data-tab="looks"]')),'Looks button is in the tools bar');
+  await p.evaluate(()=>window.amnicad.setTab('looks'));await p.waitForSelector('#tab-looks .lk-sw');
+  const n=await p.evaluate(()=>[document.querySelectorAll('#tab-looks .lk-sw').length,document.querySelectorAll('#tab-looks .lk-col').length]);
+  ok(n[0]>=60&&n[1]>=30,'Library swatches and palette render',n);
+  ok(await p.evaluate(()=>[...document.querySelectorAll('#tab-looks .lk-sw img')].every(i=>i.src.startsWith('data:image/png'))),'Swatch thumbnails are rendered images');
+  await p.evaluate(()=>{document.querySelector('#tab-looks .lk-q').value='carbon';document.querySelector('#tab-looks .lk-q').dispatchEvent(new Event('input'));});
+  ok(await p.evaluate(()=>[...document.querySelectorAll('#tab-looks .lk-sw span')].map(s=>s.textContent).join('|')).then(s=>/Carbon twill/.test(s)&&!/Walnut/.test(s)),'Search filters the library');
+  await p.evaluate(()=>[...document.querySelectorAll('#tab-looks .lk-sw')].find(e=>e.textContent==='Carbon twill').click());await sleep(300);
+  const L1=await p.evaluate(()=>window.amnicad.S.doc.looks);
+  ok(L1&&L1.length===1&&L1[0].all&&L1[0].look.tx==='carbon','Click with nothing selected paints the whole part',L1&&L1[0]);
+  ok(await p.evaluate(()=>{const o=window.amnicad.API.lookObj;return!!o&&o.material.length===1&&!!o.material[0].map&&!!o.geometry.attributes.uv;}),'Viewport overlay has a textured material with UVs',errs.slice(0,3).join(' | '));
+  await sleep(300);await shot('1-carbon-all');
+  const top=await p.evaluate(()=>{const A=window.amnicad,m=A.S.mesh,ids=A.faceIdsFor({side:'+Z'});return ids.map(i=>({i,c:m.faces[i].c}));});
+  ok(top.length>=1,'Found +Z faces',top.length);
+  await p.evaluate(t=>{const A=window.amnicad;A.S.sel.faces.clear();for(const f of t)A.S.sel.faces.set(f.i,f.c);A.API.refreshSel();},top);await sleep(200);
+  ok(await p.evaluate(()=>document.querySelector('#tab-looks .lk-tgt b').textContent).then(s=>/selected/.test(s)),'Target line follows the selection');
+  await p.evaluate(()=>document.querySelector('#tab-looks .lk-col[style*="rgb(224, 57, 62)"],#tab-looks .lk-col[style*="#e0393e"]').click());await sleep(300);
+  const R1=await p.evaluate(()=>import('./looks.js').then(L=>{const A=window.amnicad,r=L.resolve(A.S.mesh,A.S.doc.looks),ids=A.faceIdsFor({side:'+Z'}),side=A.faceIdsFor({side:'-Y'});return{top:ids.map(i=>r.list[r.fl[i]]),side:side.map(i=>r.list[r.fl[i]])};}));
+  ok(R1.top.every(q=>q&&q.c==='#e0393e'&&q.tx==='carbon'),'Color click recolors the selected faces and keeps the carbon texture',R1.top[0]);
+  ok(R1.side.every(q=>q&&q.c!=='#e0393e'&&q.tx==='carbon'),'Other faces keep the whole-part look');
+  await p.evaluate(()=>{const A=window.amnicad;A.S.sel.faces.clear();A.API.refreshSel();document.querySelector('#tab-looks .lk-q').value='walnut';document.querySelector('#tab-looks .lk-q').dispatchEvent(new Event('input'));});await sleep(200);
+  await p.evaluate(()=>window.amnicad.view&&window.amnicad.view('front'));await sleep(700);
+  const sw=await p.evaluate(()=>{const r=document.querySelector('#tab-looks .lk-sw').getBoundingClientRect();return[r.x+r.width/2,r.y+r.height/2];});
+  const tgt=await p.evaluate(()=>{const A=window.amnicad,cv=A.API.renderer.domElement,r=cv.getBoundingClientRect();for(let dy=0;dy<200;dy+=7)for(const s of[1,-1]){const x=r.x+r.width/2,y=r.y+r.height/2+s*dy,h=A.API.hit({clientX:x,clientY:y},'face');if(h&&h.kind==='face'&&Math.abs(A.S.mesh.faces[h.id].n[2])<.5&&A.S.mesh.faces[h.id].type==='PLANE')return{x,y,id:h.id};}return null;});
+  ok(!!tgt,'Found a side face under the cursor for the drop',tgt);
+  if(tgt){await p.mouse.move(sw[0],sw[1]);await p.mouse.down();for(let k=1;k<=12;k++){await p.mouse.move(sw[0]+(tgt.x-sw[0])*k/12,sw[1]+(tgt.y-sw[1])*k/12);await sleep(30);}
+   ok(await p.evaluate(()=>!!document.querySelector('.lk-ghost')),'Drag shows a ghost swatch');await shot('2-dragging');await p.mouse.up();await sleep(400);
+   const R2=await p.evaluate(id=>import('./looks.js').then(L=>{const A=window.amnicad,r=L.resolve(A.S.mesh,A.S.doc.looks),q=r.list[r.fl[id]];return{q,n:r.fl.filter(i=>i>=0&&r.list[i].src==='wd-walnut').length};}),tgt.id);
+   ok(R2.q&&R2.q.src==='wd-walnut'&&R2.n===1,'Drop paints exactly the face under the cursor with walnut',R2);
+   ok(await p.evaluate(()=>!document.querySelector('.lk-ghost')),'Ghost is removed after the drop');}
+  await p.evaluate(()=>window.amnicad.view&&window.amnicad.view('iso'));await sleep(500);await shot('3-mixed');
+  const cyl=await p.evaluate(()=>{const A=window.amnicad;return A.faceIdsFor({type:'CYLINDER'});});
+  const a1=await p.evaluate(()=>window.amnicad.applyActions([{look:{faces:{type:'CYLINDER'},lib:'mt-knurl'}}]));
+  ok(a1.some(s=>/Knurled steel on \d+ face/.test(s)),'AI look action paints faces by selector',a1);
+  ok(await p.evaluate(()=>{const o=window.amnicad.API.lookObj,u=o.geometry.attributes.uv.array;let ok=true;for(let i=0;i<u.length;i++)if(!isFinite(u[i]))ok=false;return ok;}),'Cylindrical UVs are finite');
+  const st=await p.evaluate(()=>window.amnicad.API.modelState?window.amnicad.API.modelState():null);
+  ok(!st||Array.isArray(st.looks)&&st.looks.length>=3,'Model state lists looks',st&&st.looks);
+  const before=await p.evaluate(()=>import('./looks.js').then(L=>{const A=window.amnicad,r=L.resolve(A.S.mesh,A.S.doc.looks);return A.faceIdsFor({side:'+Z'}).map(i=>r.list[r.fl[i]].c);}));
+  const fid=await p.evaluate(()=>window.amnicad.S.doc.features.find(f=>f.name==='Plate').id);
+  await p.evaluate(id=>window.amnicad.applyActions([{set:{id,w:5,h:1}}]),fid);await built();
+  const after=await p.evaluate(()=>import('./looks.js').then(L=>{const A=window.amnicad,r=L.resolve(A.S.mesh,A.S.doc.looks);return{top:A.faceIdsFor({side:'+Z'}).map(i=>r.list[r.fl[i]]&&r.list[r.fl[i]].c),cyl:A.faceIdsFor({type:'CYLINDER'}).map(i=>r.list[r.fl[i]]&&r.list[r.fl[i]].src)};}));
+  ok(after.top.length&&after.top.every(c=>c==='#e0393e'),'Looks stay on the same faces after a resize rebuild',{before,after:after.top});
+  ok(after.cyl.filter(s=>s==='mt-knurl').length>=1,'Knurl stays on the boss after the rebuild',after.cyl);
+  await shot('4-after-resize');
+  const nl=await p.evaluate(()=>window.amnicad.S.doc.looks.length);await p.evaluate(()=>document.querySelector('#b-undo').click());await sleep(300);await p.evaluate(()=>document.querySelector('#b-undo').click());await built();
+  ok(await p.evaluate(()=>(window.amnicad.S.doc.looks||[]).length)<nl,'Undo removes the last look');
+  await p.evaluate(()=>document.querySelector('#b-redo').click());await built();
+  const items=await p.evaluate(()=>import('./looks.js').then(L=>{const A=window.amnicad,it=L.renderItems(A.S.mesh,A.S.doc.looks,{color:'#ccc',metal:1,rough:.3},25.4);return it.map(x=>({uv:!!x.geo.attributes.uv,map:!!(x.mtl&&x.mtl.map),n:x.geo.attributes.position.count}));}));
+  ok(items.length>=3&&items.slice(1).every(x=>x.uv)&&items.some(x=>x.map),'Photo render items carry UVs and textures',items);
+  await p.evaluate(()=>window.amnicad.applyActions([{look:{clear:true}}]));await sleep(300);
+  ok(await p.evaluate(()=>!window.amnicad.S.doc.looks&&!window.amnicad.API.lookObj),'Clear removes every look and the overlay');
+  ok(!errs.length,'No page errors',errs.slice(0,3).join(' | '));
+}catch(e){fail++;console.log('FAIL exception '+(e.stack||e));}finally{b&&await b.close();srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
+console.log(fail?fail+' failed':'all passed');process.exit(fail?1:0);
