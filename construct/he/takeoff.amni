@@ -1,0 +1,65 @@
+// Footprint quantities for an Amni-Construct AI suggestion.
+// Lengths are feet. Waste fractions are the field-guide adders on the Construct home page.
+// The page runs construct/takeoff.js with these same rules. Helium cannot be compiled
+// in this checkout (no hc), and the browser has no wasm for this file yet.
+fn main() {}
+
+export fn shoelace(xs real[:], ys real[:], n int) real {
+	var m = n;
+	if m < 3 { return 0.0; }
+	var a = 0.0;
+	var i = 0;
+	while i < m {
+		var j = i + 1;
+		if j == m { j = 0; }
+		a = a + xs[i] * ys[j] - xs[j] * ys[i];
+		i = i + 1;
+	}
+	if a < 0.0 { a = -a; }
+	return a * 0.5;
+}
+
+export fn perimeter(xs real[:], ys real[:], n int) real {
+	if n < 2 { return 0.0; }
+	var p = 0.0;
+	var i = 0;
+	while i < n {
+		var j = i + 1;
+		if j == n { j = 0; }
+		var dx = xs[j] - xs[i];
+		var dy = ys[j] - ys[i];
+		p = p + sqrt(dx * dx + dy * dy);
+		i = i + 1;
+	}
+	return p;
+}
+
+export fn with_waste(qty real, rate real) real {
+	return qty * (1.0 + rate);
+}
+
+export fn concrete_yd(area real, thick_in real) real {
+	if area <= 0.0 || thick_in <= 0.0 { return 0.0; }
+	return area * (thick_in / 12.0) / 27.0;
+}
+
+export fn pieces(length_ft real, piece_ft real) int {
+	if length_ft <= 0.0 || piece_ft <= 0.0 { return 0; }
+	var covered = 0.0;
+	var n = 0;
+	while covered < length_ft {
+		covered = covered + piece_ft;
+		n = n + 1;
+		if n > 1000000 { return n; }
+	}
+	return n;
+}
+
+export fn waste_framing() real { return 0.10; }
+export fn waste_deck() real { return 0.10; }
+export fn waste_deck_diagonal() real { return 0.15; }
+export fn waste_concrete() real { return 0.10; }
+export fn waste_paver() real { return 0.10; }
+export fn waste_tile() real { return 0.15; }
+export fn waste_tile_diagonal() real { return 0.20; }
+export fn waste_gravel() real { return 0.15; }

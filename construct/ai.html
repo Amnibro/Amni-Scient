@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI review — Amni-Construct</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Amni-Construct AI reads a photo, sketch, or plan and suggests a layout, takeoff, estimate, schedule, code review, or safety checklist. Suggestions to verify. Same allowance as Amni-CAD: on-device AI is free, server prompts are 5 a day.">
+<link rel="canonical" href="https://amni-scient.com/construct/ai.html">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
+:root{--bg:#08090B;--panel:#111418;--ink:#E7E4DC;--mut:#8E959E;--acc:#C89B4E;--line:#20242B;--stop:#e07b6a;--check:#e0b15a;--info:#8eb4d4;--sans:"Archivo","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans)}
+a{color:var(--acc)}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px 64px}
+.back{color:var(--mut);font-size:13px;text-decoration:none}
+h1{font-size:clamp(26px,5vw,36px);letter-spacing:-.02em;margin:.4rem 0 .3rem}
+.lede{color:var(--mut);max-width:62ch}
+.banner{border:1px solid rgba(200,155,78,.55);background:rgba(200,155,78,.08);border-radius:4px;padding:10px 12px;color:#f0e2c4;font-size:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;margin-top:14px}
+label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:10px 0 4px}
+select,textarea,input[type=text],input[type=password]{width:100%;background:#0c0e11;color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:8px 10px;font:15px var(--sans)}
+textarea{min-height:88px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row > *{flex:1 1 200px}
+button,.go{background:var(--acc);color:#14100a;border:0;border-radius:3px;padding:10px 16px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.file{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:3px;padding:8px 12px;cursor:pointer}
+.file input{display:none}
+#meter{color:var(--mut);font-size:13px;margin-top:8px}
+#err{color:#ffb4a8;min-height:1.2em}
+#status{color:var(--mut);font-size:13px}
+#out{margin-top:16px}
+#out h2{font-size:18px;margin:12px 0 4px}
+.meta,.qty,.say{color:var(--mut)}
+.say{color:var(--ink)}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.safe{margin:8px 0 0;padding-left:1.1rem}
+.safe li{margin:.25rem 0}
+#open-trade{display:inline-block;margin-top:8px}
+#open-trade[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Amni-Construct</a>
+<h1>AI review</h1>
+<p class="lede">Upload a photo, sketch, or plan. Amni-Construct asks the same engines as Amni-CAD and suggests a layout, a code review, a takeoff, an estimate, a schedule, or a safety checklist.</p>
+<p class="banner" id="banner">Suggestion. Verify this against the drawings, the local code, and a licensed professional before you build, bid, or schedule.</p>
+<div class="panel">
+<div class="row">
+<div>
+<label for="task">Job</label>
+<select id="task"></select>
+</div>
+<div>
+<label for="engine">Engine</label>
+<select id="engine">
+<option value="local">On this computer (Ollama or LM Studio) · unlimited</option>
+<option value="browser">Adam / on-device model · unlimited</option>
+<option value="chrome">Chrome built-in AI · unlimited</option>
+<option value="paste">Copy and paste · unlimited</option>
+<option value="anthropic">Claude, your key · not counted</option>
+<option value="openai">OpenAI, your key · not counted</option>
+<option value="gemini">Gemini, your key · not counted</option>
+<option value="openrouter">OpenRouter, your key · not counted</option>
+</select>
+</div>
+</div>
+<div id="key-row" hidden>
+<label for="key">API key</label>
+<input id="key" type="password" autocomplete="off" placeholder="Stays in this page. Amni-Scient does not receive it.">
+</div>
+<label for="file">Photo, sketch, or plan</label>
+<label class="file">Choose image<input id="file" type="file" accept="image/*"></label>
+<span id="file-name"></span>
+<label for="notes">Notes</label>
+<textarea id="notes" placeholder="Trade, size, town, or what you want checked. Example: 16 by 12 deck, 30 inches off the ground, Albany NY."></textarea>
+<p id="meter" aria-live="polite"></p>
+<div class="row" style="margin-top:12px">
+<button id="go" type="button">Run suggestion</button>
+</div>
+<p id="err" role="alert"></p>
+<p id="status"></p>
+<p class="meta">On-device AI and a key you bring are not counted. Server prompts, when a model runs on our computers, use the Amni-CAD allowance: 5 a day on a free account, unlimited on Amni-CAD Pro. A model on your own computer stays unlimited either way.</p>
+</div>
+<div id="paste-box" class="panel" hidden>
+<label for="paste-prompt">Prompt to copy</label>
+<textarea id="paste-prompt" readonly></textarea>
+<label for="paste-reply">Paste the JSON reply</label>
+<textarea id="paste-reply"></textarea>
+<button id="apply-paste" type="button" class="ghost">Apply reply</button>
+</div>
+<div id="out" hidden></div>
+<p><a id="open-trade" hidden href="./">Open the estimator</a></p>
+</div>
+<script type="module" src="ai.js"></script>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>

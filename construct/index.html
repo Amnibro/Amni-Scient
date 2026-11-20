@@ -10,7 +10,7 @@
 <style>
 @font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(/assets/fonts/archivo-var.woff2) format('woff2')}
 
-:root{--bg:#08090B;--bg2:#0D0F12;--panel:#111418;--panel2:#161A20;--ink:#E7E4DC;--mut:#8E959E;--acc:#C89B4E;--deck:#e8a33d;--patio:#8fa8b8;--pool:#2f9bd6;--floor:#b5894e;--roof:#7d93a4;--frame:#caa46a;--plumb:#2db4e0;--elec:#e8c33d;--plan:#9a8cf0;--garden:#5fae5f;--hvac:#e07b4a;--line:#20242B;--line2:#2E343D;--radius:4px;--shadow:0 10px 26px -18px rgba(0,0,0,.55);--glass:none;--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,'SF Mono',Consolas,monospace}
+:root{--bg:#08090B;--bg2:#0D0F12;--panel:#111418;--panel2:#161A20;--ink:#E7E4DC;--mut:#8E959E;--acc:#C89B4E;--deck:#e8a33d;--patio:#8fa8b8;--pool:#2f9bd6;--floor:#b5894e;--roof:#7d93a4;--frame:#caa46a;--plumb:#2db4e0;--elec:#e8c33d;--plan:#9a8cf0;--garden:#5fae5f;--hvac:#e07b4a;--ai:#c9a4ff;--line:#20242B;--line2:#2E343D;--radius:4px;--shadow:0 10px 26px -18px rgba(0,0,0,.55);--glass:none;--sans:"Archivo","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,'SF Mono',Consolas,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{overscroll-behavior-y:none}
 body{background-color:var(--bg);background-repeat:no-repeat;color:var(--ink);font:15px/1.6 var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -33,6 +33,7 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .app.plan:hover{border-color:var(--plan)}
 .app.garden:hover{border-color:var(--garden)}
 .app.hvac:hover{border-color:var(--hvac)}
+.app.ai:hover{border-color:var(--ai)}
 .app h2{font-family:var(--sans);font-size:19px;letter-spacing:.5px;margin-bottom:5px}
 .app.deck h2{color:var(--deck)}
 .app.patio h2{color:var(--patio)}
@@ -45,6 +46,7 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .app.plan h2{color:var(--plan)}
 .app.garden h2{color:var(--garden)}
 .app.hvac h2{color:var(--hvac)}
+.app.ai h2{color:var(--ai)}
 .app .sub{color:var(--mut);font-size:13px;margin-bottom:14px}
 .app ul{list-style:none;font-size:13.5px;color:var(--mut)}
 .app li{padding:4px 0 4px 22px;position:relative}
@@ -62,6 +64,7 @@ header p{color:var(--mut);max-width:660px;margin:14px auto 0;line-height:1.65}
 .app.plan .go{background:var(--plan)}
 .app.garden .go{background:var(--garden)}
 .app.hvac .go{background:var(--hvac)}
+.app.ai .go{background:var(--ai)}
 .shared{max-width:820px;margin:14px auto 60px;padding:0 20px}
 .shared h3{font-family:var(--sans);color:var(--acc);font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:30px 0 12px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px}
@@ -154,6 +157,17 @@ header.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);ga
 <p class="intro">Design any work on your house before you swing a hammer. Trace from a photo or satellite, model it in 3D, print real construction plans, price every board, bag and fixture, and know what your town requires — free, in your browser. Building toward the whole house: decks, patios, pools, flooring, framing, roofing, plumbing &amp; electrical. New — <a href="../scan/" style="color:#6cc0d8;text-decoration:none">scan a space with your phone</a> and drop the real dimensions into any project.</p>
 <a href="pro.html" class="pro-strip"><span class="pro-strip-badge">💼 NEW</span><span><b>Amni-Construct Pro</b> — contractor mode: branded client quotes with your rates &amp; markup, permit packets, showcases. <u>Free 14-day trial</u> in every estimator.</span><span class="pro-strip-go">→</span></a>
 <div class="apps">
+  <a class="app ai" href="ai.html">
+    <h2>AI REVIEW</h2>
+    <div class="sub">A photo, sketch, or plan becomes a suggestion you can check</div>
+    <ul>
+      <li>Build a layout, takeoff, and estimate from an image</li>
+      <li>Code and spec review, schedule, safety checklist</li>
+      <li>On-device AI is unlimited. Server prompts follow Amni-CAD: 5 a day, Pro unlimited</li>
+      <li>Labeled as a suggestion. Verify before you build or bid</li>
+    </ul>
+    <span class="go">Open AI review →</span>
+  </a>
   <a class="app deck" href="../deck/">
     <h2>DECK</h2>
     <div class="sub">Framed wood decks — ledger or freestanding</div>
@@ -336,6 +350,7 @@ header.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);ga
 <a href="hvac.html">HVAC costs</a>
 <a href="plan.html">Whole-house planning</a>
 <a href="garden.html">Garden bed costs</a>
+<a href="ai.html">AI review</a>
 </div>
 </div>
 <footer><a href="../">amni-scient.com</a> · free forever · no accounts · designs stay on your device · <a href="../about.html">About</a> · <a href="../privacy.html">Privacy</a> · <a href="../contact.html">Contact</a></footer>
