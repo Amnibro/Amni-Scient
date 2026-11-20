@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Tesseract &mdash; Linux integrity and audit | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Tesseract is an experimental, audit-only Linux integrity tool. Signed baselines, drift rechecks, a four-axis access audit, and a network watchdog. It does not block. Apache-2.0.">
+<meta property="og:title" content="Amni-Tesseract">
+<meta property="og:description" content="Experimental shadow mode for Linux. It records integrity and access. It does not block.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-tesseract.html">
+<link rel="canonical" href="https://amni-scient.com/amni-tesseract.html">
+<link rel="stylesheet" href="css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.lede{color:var(--dim);font-size:.95rem;line-height:1.6;margin:-.3rem 0 1.1rem;max-width:720px}
+.pl{margin:.8rem 0 .4rem 1.1rem;display:grid;gap:.4rem;color:var(--dim);font-size:.88rem;line-height:1.5}
+.note{color:var(--dim);font-size:.85rem}
+.faq details{border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1.1rem;margin-top:.7rem;background:var(--panel)}
+.faq summary{cursor:pointer;font-weight:700;color:var(--text);font-size:.92rem}
+.faq details p{margin-top:.6rem;color:var(--dim);font-size:.88rem;line-height:1.7}
+.card p.price{font-size:1.4rem;font-weight:800;line-height:1.3}
+</style>
+</head>
+<body class="pp">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/stitch/">AMNI-STITCH</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-tesseract.html" class="active">AMNI-TESSERACT</a>
+<a href="/amnitex.html">AMNITEX</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/revamp/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<h1>AMNI-TESSERACT</h1>
+<p class="desc">EXPERIMENTAL SHADOW MODE &bull; LINUX INTEGRITY AND AUDIT &bull; DOES NOT BLOCK</p>
+<div style="margin-top:2rem;display:flex;gap:.8rem;flex-wrap:wrap">
+<a href="https://github.com/Amnibro/amni-tesseract" class="btn btn-primary">SOURCE ON GITHUB</a>
+<a href="#what" class="btn btn-outline">WHAT IT WATCHES</a>
+</div>
+</div>
+<section id="what">
+<h2>WHAT IT IS</h2>
+<p class="lede">Amni-Tesseract is an open-source Linux tool for integrity and audit. It is experimental. It runs in shadow mode: it records what changed and who touched it, and it does not block the action. The license is <a href="https://github.com/Amnibro/amni-tesseract">Apache-2.0</a>.</p>
+<div class="card-grid">
+<div class="card"><h3>SIGNED BASELINE</h3><p>A signed baseline of system files, then a drift recheck against that baseline.</p></div>
+<div class="card"><h3>FOUR-AXIS AUDIT</h3><p>Each access is recorded on four axes: who, what, how, and when.</p></div>
+<div class="card"><h3>NETWORK WATCHDOG</h3><p>Flags unexpected outbound connections. It reports them. It does not drop them.</p></div>
+<div class="card"><h3>eBPF TRACEPOINTS</h3><p>The watch uses eBPF tracepoints on Linux. There is no second agent in user space rewriting policy.</p></div>
+</div>
+</section>
+<section id="model">
+<h2>THREAT MODEL</h2>
+<p class="lede">The threat model assumes passwords and the TPM are already compromised. A signature check that trusts those alone is not the control. The baseline, the drift recheck, and the four-axis record are what the operator reviews after the fact.</p>
+<ul class="pl">
+<li>Audit only. A finding does not stop the process, the file write, or the connection.</li>
+<li>Shadow mode is the current mode. There is no enforce switch in this release.</li>
+<li>Signing-key protection is future work. The key that signs the baseline is not yet held in a way this page can call protected.</li>
+</ul>
+</section>
+<section id="numbers">
+<h2>WHAT WAS MEASURED</h2>
+<p class="lede">On a test virtual machine, one four-axis evaluation took about 6 to 7 nanoseconds. Rechecking 13 files took about 45 milliseconds. Those are measurements from that run, not a guarantee on other hardware.</p>
+<div class="card-grid">
+<div class="card"><h3>FOUR AXES</h3><p class="price">6–7 ns</p><p class="note">per evaluation, on the test VM</p></div>
+<div class="card"><h3>DRIFT RECHECK</h3><p class="price">~45 ms</p><p class="note">13 files, on the test VM</p></div>
+</div>
+</section>
+<section id="status">
+<h2>STATUS</h2>
+<p class="lede">Experimental. Read the repository before you put it on a machine you care about. It will not stop an attacker who is already on the box. It gives you a record to read.</p>
+<div class="faq">
+<details><summary>Does it block anything?</summary><p>No. Shadow mode is audit-only. Unexpected outbound connections are flagged, not dropped. File changes are recorded against the signed baseline, not rolled back.</p></details>
+<details><summary>Where is the source?</summary><p><a href="https://github.com/Amnibro/amni-tesseract">github.com/Amnibro/amni-tesseract</a>, Apache-2.0.</p></details>
+<details><summary>What is not done yet?</summary><p>Signing-key protection is future work. Until that exists, treat the baseline signing key as unprotected.</p></details>
+</div>
+</section>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>
