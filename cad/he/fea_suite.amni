@@ -1,0 +1,71 @@
+import math;
+fn ln(x real) real {
+	var y = x;
+	var k = 0;
+	while y > 1.41421356237 { y = y * 0.5; k = k + 1; }
+	while y < 0.70710678118 { y = y * 2.0; k = k - 1; }
+	let z = (y - 1.0) / (y + 1.0);
+	let z2 = z * z;
+	var s = 0.0;
+	var p = z;
+	var i = 0;
+	while i < 17 { s = s + p / ((2 * i + 1) as real); p = p * z2; i = i + 1; }
+	2.0 * s + (k as real) * 0.6931471805599453
+}
+fn expo(x real) real {
+	let ln2 = 0.6931471805599453;
+	var n = 0;
+	var r = x;
+	while r > 0.34657359028 { r = r - ln2; n = n + 1; }
+	while r < -0.34657359028 { r = r + ln2; n = n - 1; }
+	var t = 1.0;
+	var s = 1.0;
+	var i = 1;
+	while i < 17 { t = t * r / (i as real); s = s + t; i = i + 1; }
+	var p = s;
+	while n > 0 { p = p * 2.0; n = n - 1; }
+	while n < 0 { p = p * 0.5; n = n + 1; }
+	p
+}
+fn pw(a real, b real) real { expo(b * ln(a)) }
+export fn von_mises(xx real, yy real, zz real, xy real, yz real, zx real) real {
+	let dx = xx - yy;
+	let dy = yy - zz;
+	let dz = zz - xx;
+	sqrt(0.5 * (dx * dx + dy * dy + dz * dz) + 3.0 * (xy * xy + yz * yz + zx * zx))
+}
+export fn miles(freq real, zeta real, psd real) real {
+	let wn = 6.283185307179586 * freq;
+	sqrt(psd * 3.141592653589793 / (4.0 * zeta * wn * wn * wn))
+}
+export fn frf_amp(mf real, wn real, w real, zeta real) real {
+	let d = wn * wn - w * w;
+	let c = 2.0 * zeta * w * wn;
+	let den0 = d * d + c * c;
+	let den = if den0 < 1e-30 { 1e-30 } else { den0 };
+	abs(mf) / sqrt(den)
+}
+export fn sn_life(sa real, s1 real, n1 real, s2 real, n2 real, knee i32) real {
+	if sa <= 0.0 { return 1e30; }
+	if knee != 0 && sa <= s2 { return 1e30; }
+	let b = ln(s1 / s2) / ln(n2 / n1);
+	n1 * pw(s1 / sa, 1.0 / b)
+}
+export fn goodman(sa real, sm real, se real, sut real) real {
+	let q = sa / se + sm / sut;
+	if q <= 0.0 { 1e30 } else { 1.0 / q }
+}
+export fn gerber(sa real, sm real, se real, sut real) real {
+	let a = (sm / sut) * (sm / sut);
+	let b = sa / se;
+	if a < 1e-14 { 1.0 / b } else { (-b + sqrt(b * b + 4.0 * a)) / (2.0 * a) }
+}
+export fn soderberg(sa real, sm real, se real, sy real) real {
+	let q = sa / se + sm / sy;
+	if q <= 0.0 { 1e30 } else { 1.0 / q }
+}
+export fn asme(sa real, sm real, se real, sut real) real {
+	let q = (sa / se) * (sa / se) + (sm / sut) * (sm / sut);
+	if q <= 0.0 { 1e30 } else { 1.0 / sqrt(q) }
+}
+fn main() {}

@@ -1,0 +1,16 @@
+const buf=typeof process!=='undefined'&&process.versions&&process.versions.node?await (await import('node:fs/promises')).readFile(new URL('./fea_suite.wasm',import.meta.url)):await (await fetch(new URL('./fea_suite.wasm',import.meta.url))).arrayBuffer();
+const mod=await WebAssembly.compile(buf);
+const meta=new Uint8Array(WebAssembly.Module.customSections(mod,'he.mem')[0]||new Uint8Array(5));
+const pages=meta[0]|meta[1]<<8|meta[2]<<16|meta[3]<<24;
+const memory=new WebAssembly.Memory({initial:pages||1,maximum:65536});
+const inst=await WebAssembly.instantiate(mod,{env:{memory,sys:()=>0n}});
+const e=inst.exports||inst.instance.exports;
+const fin=v=>v>=1e20?Infinity:v;
+export const vonMises=(xx,yy,zz,xy,yz,zx)=>e.von_mises(xx,yy,zz,xy,yz,zx);
+export const milesHe=(fn,zeta,psd)=>e.miles(fn,zeta,psd);
+export const frfAmp=(mf,wn,w,zeta)=>e.frf_amp(mf,wn,w,zeta);
+export const snHe=(sa,s1,n1,s2,n2,knee)=>fin(e.sn_life(sa,s1,n1,s2,n2,knee?1:0));
+export const goodmanHe=(sa,sm,se,sut)=>fin(e.goodman(sa,sm,se,sut));
+export const gerberHe=(sa,sm,se,sut)=>fin(e.gerber(sa,sm,se,sut));
+export const soderbergHe=(sa,sm,se,sy)=>fin(e.soderberg(sa,sm,se,sy));
+export const asmeHe=(sa,sm,se,sut)=>fin(e.asme(sa,sm,se,sut));
