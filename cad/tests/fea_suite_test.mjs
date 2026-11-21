@@ -1,5 +1,6 @@
 import {principals,strainOf,hexStress,thermalForce,probe,pathPlot} from '../fea_post.js';
-import {rainflow,snLife,equivAmp,fatigueSF,miner,enLife,fatigueField,modalNewmark,frf,reversals} from '../fea_fatigue.js';
+import {rainflow,snLife,equivAmp,fatigueSF,miner,enLife,fatigueField,modalNewmark,frf,reversals,miles} from '../fea_fatigue.js';
+import {vonMises} from '../he/suite.js';
 import {snOf,FATIGUE} from '../fatigue_data.js';
 let pass=0,fail=0;const ok=(c,m,x)=>{c?pass++:(fail++,console.log('FAIL',m,x??''));};
 const near=(a,b,t=1e-6)=>Math.abs(a-b)<=t*Math.max(1,Math.abs(b));
@@ -32,6 +33,10 @@ const seq=[0,100,0,100,0],rf=rainflow(seq),D=miner(rf,(amp)=>snLife(equivAmp(amp
 ok(rf.length>=1&&D.D>=0,'Miner sums cycle ratios');
 const en={sf:900,b:-0.1,ef:0.4,c:-0.5},twoN=2*2e4,ea=(en.sf/Emod)*Math.pow(twoN,en.b)+en.ef*Math.pow(twoN,en.c),Nback=enLife(ea,Emod,en,0);
 ok(near(Nback,2e4,1e-3),'strain-life inverts Coffin-Manson',Nback);
+const smM=100,mor=1-smM/en.sf,eaM=(en.sf/Emod)*Math.pow(twoN,en.b)*mor+en.ef*Math.pow(twoN,en.c);
+ok(near(enLife(eaM,Emod,en,smM),2e4,1e-3),'Morrow mean-stress strain life',enLife(eaM,Emod,en,smM));
+const sig=300,swtEa=(en.sf*en.sf*Math.pow(twoN,2*en.b)+en.sf*en.ef*Emod*Math.pow(twoN,en.b+en.c))/(sig*Emod);
+ok(near(enLife(swtEa,Emod,{...en,swt:1},sig),2e4,1e-3),'SWT strain life',enLife(swtEa,Emod,{...en,swt:1},sig));
 const fld=fatigueField(Float32Array.from([200,400]),sn,{corr:'none'});
 ok(near(fld.life[1],snLife(400,sn),1e-5)&&near(fld.sf[0],fatigueSF(200,0,sn,'none')),'life contour uses the local alternating stress');
 const w=2*Math.PI,q=modalNewmark([w],()=>[w*w],1/200,400,0).map(s=>s[0]),peak=Math.max(...q.map(Math.abs));
@@ -42,4 +47,7 @@ const pts=probe(X,{vm:{data:Float32Array.from([1,2,3,4,5,6,7,8]),stride:1}},[[1,
 ok(pts[0].node===6&&near(pts[0].vm,7),'probe hits the nearest node',JSON.stringify(pts[0]));
 const path=pathPlot(X,{vm:{data:Float32Array.from([0,0,0,0,0,0,0,10]),stride:1}},[-1,-1,-1],[1,1,1],5);
 ok(path.length===5&&path[0].node===0&&path[4].node===6,'path plot samples from start to end');
+ok(Math.abs(fatigueSF(100,50,{S2:200,sut:400,sy:300},'asme')-1/Math.sqrt(0.25+0.015625))<1e-9,'ASME-elliptic safety factor');
+ok(Math.abs(miles(10,0.02,1)-Math.sqrt(Math.PI/(4*0.02*(2*Math.PI*10)**3)))<1e-12,'Miles RMS displacement');
+ok(Math.abs(vonMises(100,0,0,0,0,0)-100)<1e-9,'Helium von Mises');
 console.log(pass+' passed, '+fail+' failed');process.exitCode=fail?1:0;

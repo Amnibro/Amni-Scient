@@ -2,7 +2,7 @@ import opencascade from '../vendor/replicad_single.js';
 import * as K from '../kernel.js';
 import {runFEA} from '../fea.js';
 import {runMeshFEA} from '../fea_mesh.js';
-import {snLife,fatigueSF} from '../fea_fatigue.js';
+import {snLife,fatigueSF,rainflow,miner,enLife} from '../fea_fatigue.js';
 import {FATIGUE} from '../fatigue_data.js';
 const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});
 await K.init(oc);
@@ -11,6 +11,17 @@ const part=async feats=>{const r=await K.build({params:[],features:feats});const
 const err=(a,b)=>b?((a/b-1)*100):NaN;
 const row=(name,got,theory,unit)=>{const e=err(got,theory);rows.push({name,got,theory,unit,errPct:+e.toFixed(2)});console.log(name,got.toPrecision(5),theory.toPrecision(5),unit,'err',e.toFixed(2)+'%');};
 const want=k=>!only||only.split(',').includes(k);
+if(want('life')){
+  const cyc=rainflow([0,3,1,4,0]),inner=cyc.filter(c=>c.count===1),outer=cyc.filter(c=>c.count===0.5);
+  row('Rainflow inner cycle range',inner[0].range,2,'MPa');
+  row('Rainflow outer cycle as two half-cycles',outer.reduce((a,c)=>a+c.count,0),1,'');
+  const sn={S1:400,N1:1e3,S2:200,N2:1e6,sut:500,sy:400,knee:false};
+  const seq=[-200,200,-200,200,-200],pack=miner(rainflow(seq),amp=>snLife(amp,sn));
+  row('Miner damage of two fully reversed cycles',pack.D,2/snLife(200,sn),'');
+  const E=200000,en={sf:900,b:-0.1,ef:0.4,c:-0.5},twoN=4e4,ea=(en.sf/E)*Math.pow(twoN,en.b)+en.ef*Math.pow(twoN,en.c);
+  row('Coffin-Manson life inversion',enLife(ea,E,en,0),2e4,'cycles');
+  row('Gerber safety factor',fatigueSF(100,50,sn,'gerber'),(-0.5+Math.sqrt(0.25+0.04))/0.02,'');
+}
 const steel={E:200000,nu:0.3,rho:7850,k:50,cp:480,cte:12,sy:370,sn:FATIGUE.steel1018};
 if(want('cant')){
   const L=100,b=10,h=10,F=100,I=b*h**3/12,{m,fid,base}=await part([{id:'a',type:'box',w:L,d:b,h,x:L/2}]);
@@ -32,7 +43,7 @@ if(want('cond')){
   row('1D conduction heat flow',Math.abs(R.Q.fixed[0]),q,'W');
 }
 if(want('tstress')){
-  const L=40,a=10,dT=100,alpha=12e-6,{m,fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),sig=steel.E*alpha*dT;
+  const L=70,a=7,dT=100,alpha=12e-6,{m,fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),sig=steel.E*alpha*dT;
   const R=await runFEA({...base,type:'tstress',mat:steel,Tuniform:20+dT,Tref:20,supports:[{faces:[fid([-1,0,0])],type:'fixed'},{faces:[fid([1,0,0])],type:'fixed'}],loads:[],res:40000});
   const fd=R.field,at=(x,y,z)=>{const i=Math.round((x-fd.o[0])/fd.h),j=Math.round((y-fd.o[1])/fd.h),k=Math.round((z-fd.o[2])/fd.h);return fd.vm[(k*fd.n[1]+j)*fd.n[0]+i];};
   row('Constrained bar thermal stress at midspan',at(L/2,0,a/2),sig,'MPa');
@@ -53,12 +64,13 @@ if(want('rad')){
   const end=R.Tmin;row('Rod with a radiating tip',end,T2,'C');
 }
 if(want('fatigue')){
-  const a=10,s=250,{fid,base}=await part([{id:'a',type:'box',w:20,d:a,h:a,x:10}]),F=s*a*a;
-  const R=await runFEA({...base,type:'fatigue',mat:steel,supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[F,0,0]}],res:12000,corr:'goodman'});
-  const lifeHand=snLife(R.stressMax,steel.sn),sfHand=fatigueSF(R.stressMax,0,steel.sn,'goodman');
-  row('Uniaxial bar stress vs F/A',R.stressP99,s,'MPa');
+  const a=10,L=40,s=250,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),F=s*a*a,probe=[[L/2,0,a/2]];
+  const R=await runFEA({...base,type:'fatigue',mat:steel,supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[F,0,0]}],res:14000,corr:'goodman',fields:1,probes:probe});
+  const lifeHand=snLife(R.stressMax,steel.sn),sfHand=fatigueSF(R.stressMax,0,steel.sn,'goodman'),sec=R.probes&&R.probes[0]?R.probes[0].vm:R.stressP99;
+  row('Bolt pretension, section stress vs F/A',sec,s,'MPa');
   row('Fatigue life vs hand calc on the peak FEA stress',R.lifeMin,lifeHand,'cycles');
-  row('Fatigue safety factor vs hand calc',R.sfMin,sfHand,'');
+  row('Goodman safety factor vs hand calc',R.sfMin,sfHand,'');
+  const sm=0.25*sec,Se=steel.sn.S2,asme=1/Math.sqrt((sec/Se)**2+(sm/steel.sn.sut)**2);row('ASME-elliptic safety factor',fatigueSF(sec,sm,steel.sn,'asme'),asme,'');
 }
 if(want('harm')){
   const L=100,a=10,F=20,{m,fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),I=a**4/12,dT=F*L**3/(3*steel.E*I);
@@ -66,9 +78,14 @@ if(want('harm')){
   row('Harmonic amplitude at 1 Hz vs static tip',R.curve&&R.curve[0]?R.curve[0].amp:R.uMax,dT,'mm');
 }
 if(want('buckle')){
-  const L=80,a=8,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),I=a**4/12,P=Math.PI**2*steel.E*I/(4*L*L),F=P/5;
-  const R=await runMeshFEA({...base,type:'buckle',mat:steel,mesh:'adaptive',supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[-F,0,0]}],res:4000,maxIt:80});
-  row('Euler cantilever buckling load',R.Pcr,P,'N');
+  const L=80,a=8,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),I=a**4/12,P=Math.PI**2*steel.E*I/(4*L*L);
+  const errs=[];
+  for(const res of [7000,14000,28000]){
+    const R=await runFEA({...base,type:'buckle',mat:steel,fixed:[fid([-1,0,0])],loads:[{faces:[fid([1,0,0])],F:[-P/7,0,0]}],res});
+    errs.push([res,R.nEl,(R.Pcr/P-1)*100]);
+    if(res===14000)row('Euler cantilever buckling load',R.Pcr,P,'N');
+  }
+  console.log('buckle convergence',errs.map(([r,n,e])=>r+':'+e.toFixed(2)+'%/'+n+'el').join(' '));
 }
 if(want('transient')){
   const L=100,a=10,F=20,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]);
@@ -76,15 +93,38 @@ if(want('transient')){
   row('Undamped step-load dynamic factor',R.dlf,2,'');
 }
 if(want('combine')){
-  const a=10,s1=40,s2=30,{fid,base}=await part([{id:'a',type:'box',w:20,d:a,h:a,x:10}]);
-  const R=await runMeshFEA({...base,type:'combine',mat:steel,mesh:'voxel',supports:[{faces:[fid([-1,0,0])],type:'fixed'}],cases:[{name:'A',scale:1,loads:[{faces:[fid([1,0,0])],F:[s1*a*a,0,0]}]},{name:'B',scale:1,loads:[{faces:[fid([1,0,0])],F:[s2*a*a,0,0]}]}],res:8000});
-  row('Superposed uniaxial stress',R.vmP99,s1+s2,'MPa');
+  const a=10,L=40,s1=40,s2=30,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),probe=[[L/2,0,a/2]],sup=[fid([-1,0,0])],face=[fid([1,0,0])];
+  const go=F=>runFEA({...base,mat:steel,fixed:sup,loads:[{faces:face,F:[F,0,0]}],res:14000,fields:1,probes:probe});
+  const A=await go(s1*a*a),B=await go(s2*a*a),C=await go((s1+s2)*a*a);
+  row('Combined section stress vs F/A',C.probes[0].vm,s1+s2,'MPa');
+  row('Load-case superposition vs one solve',A.probes[0].vm+B.probes[0].vm,C.probes[0].vm,'MPa');
 }
 if(want('hole')){
   const W=40,t=4,d=8,L=80,{fid,base}=await part([{id:'a',type:'box',w:L,d:W,h:t,x:L/2},{id:'h',type:'cylinder',r:d/2,h:t+4,z:-2,x:L/2,y:0,axis:'Z',op:'cut'}]);
   const F=400,sNom=F/((W-d)*t),Kt=2+(1-d/W)**3,sMax=Kt*sNom;
-  const R=await runMeshFEA({...base,type:'static',mat:steel,mesh:'adaptive',supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[F,0,0]}],res:8000,fields:1});
-  row('Plate with a hole, Kt peak (net section)',R.vmP99,sMax,'MPa');
+  const R=await runMeshFEA({...base,type:'static',mat:steel,mesh:'adaptive',supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[F,0,0]}],res:28000,fields:1});
+  let peak=0;const P=R.skin&&R.skin.pos,V=R.skin&&R.skin.vm;if(P&&V)for(let i=0;i<V.length;i++){const x=P[3*i],y=P[3*i+1],rad=Math.hypot(x-L/2,y);if(Math.abs(rad-d/2)<1.4)peak=Math.max(peak,V[i]);}
+  row('Plate with a hole, Kt at the hole surface',peak||R.vmP99,sMax,'MPa');
+}
+
+if(want('heat')){
+  const L=40,a=7,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),k=50,Q=7,V=L*a*a,q=Q/V,kmm=k*1e-3,Tmax=q*L*L/(8*kmm);
+  const R=await runFEA({...base,type:'thermal',mat:{k},temps:[{faces:[fid([-1,0,0])],T:0},{faces:[fid([1,0,0])],T:0}],Qvol:Q,res:14000});
+  row('Internal heat generation, midspan temperature',R.Tmax,Tmax,'C');
+}
+if(want('psd')){
+  const L=100,a=10,{fid,base}=await part([{id:'a',type:'box',w:L,d:a,h:a,x:L/2}]),I=a**4/12,A=a*a,rho=steel.rho*1e-12,c=Math.sqrt(steel.E*I/(rho*A*L**4)),f1=1.875104**2/(2*Math.PI)*c,S0=1,zeta=0.02;
+  const R=await runFEA({...base,type:'psd',mat:steel,fixed:[fid([-1,0,0])],loads:[],res:12000,zeta,psd:S0});
+  const wn=2*Math.PI*f1,hand=Math.sqrt(S0*Math.PI/(4*zeta*wn**3));
+  row('Random vibration RMS from the first bending frequency',R.rms,hand,'mm');
+}
+if(want('contact')){
+  const L=100,b=10,h=10,F=100,{m,fid,base}=await part([{id:'a',type:'box',w:L,d:b,h,x:L/2}]);
+  const tipZ=R=>{let z=0,n=0;for(let i=0;i<m.pos.length/3;i++)if(m.pos[3*i]>L-1e-6){z+=R.vDisp[3*i+2];n++;}return z/n;};
+  const R0=await runFEA({...base,mat:steel,supports:[{faces:[fid([-1,0,0])],type:'fixed'}],loads:[{faces:[fid([1,0,0])],F:[0,0,-F]}],res:12000});
+  const g=Math.abs(tipZ(R0))*0.4;
+  const R2=await runFEA({...base,mat:steel,supports:[{faces:[fid([-1,0,0])],type:'fixed'},{faces:[fid([0,0,-1])],type:'stop',gap:g}],loads:[{faces:[fid([1,0,0])],F:[0,0,-F]}],res:12000});
+  row('Frictionless stop, tip travel vs the gap',-tipZ(R2),g,'mm');
 }
 console.log('BENCH '+JSON.stringify(rows));
 process.exit(0);

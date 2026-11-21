@@ -70,10 +70,10 @@ export function pickMesh(inp){
   const res=inp.res||30000,hv=Math.cbrt(Math.max(inp.volume,1e-9)/Math.max(2000,Math.min(res,800000))),st=thicknessStats(inp);
   if(!(st.p02<3*hv))return null;const sh=detectSheet(inp);return sh.ok?'sweep':'adaptive';
 }
-const SUITE=new Set(['buckle','combine']);
+const SUITE=new Set(['combine']);
 export async function runMeshFEA(inp,prog){
   const type=inp.type||'static';if(type==='tstress'||(type==='thermal'&&(inp.transient||(inp.rad&&inp.rad.length)||(inp.steps|0)>1)))return runFEA(inp,prog);
-  let kind=pickMesh(inp);if((type==='fatigue'||type==='harmonic'||type==='transient')&&!kind)return runFEA(inp,prog);if(!kind&&SUITE.has(type))kind='adaptive';if(!kind)return runFEA(inp,prog);
+  let kind=pickMesh(inp);if((type==='fatigue'||type==='harmonic'||type==='transient'||type==='buckle'||type==='psd')&&!kind)return runFEA(inp,prog);if(!kind&&SUITE.has(type))kind='adaptive';if(!kind)return runFEA(inp,prog);
   const t0=Date.now();prog&&prog(0,1,'mesh');
   const M=inp.M||meshSolid(inp,{type:kind,res:Math.round((inp.res||30000)*(type==='modal'||type==='harmonic'||type==='transient'?0.6:1)),size:inp.meshSize||inp.size,layers:inp.layers,...(inp.meshOpt||{})}),tm=Date.now()-t0;if(inp.meshOnly){const sk=skinOf(M);return{type:'mesh',skin:{pos:sk.pos,idx:sk.idx},nEl:M.E.length/8,h:M.size?M.size.h0:M.h0,mesh:{...meshInfo(M),ms:tm}};}if(M.E.length/8>(inp.maxEls||600000))throw new Error('The '+M.type+' mesh has '+(M.E.length/8).toLocaleString()+' elements, more than this browser can solve; choose a coarser mesh or a larger element size');
   const r=type==='modal'?await modalMesh(inp,M,prog):type==='thermal'?await thermalMesh(inp,M,prog):type==='harmonic'?await harmonicMesh(inp,M,prog):type==='fatigue'?await fatigueMesh(inp,M,prog):type==='buckle'?await buckleMesh(inp,M,prog):type==='transient'?await transientMesh(inp,M,prog):type==='combine'?await combineMesh(inp,M,prog):await staticMesh(inp,M,prog);

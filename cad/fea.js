@@ -5,8 +5,8 @@ import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
 import {voxSkin,skinU} from './fea_skin.js';
 import {helium} from './he/host.js';
 import {maxOf} from './minmax.js';
-import {principals,probe,pathPlot} from './fea_post.js';
-import {fatigueField,modalNewmark,frf} from './fea_fatigue.js';
+import {principals,probe,pathPlot,kgMul} from './fea_post.js';
+import {fatigueField,modalNewmark,frf,miles} from './fea_fatigue.js';
 import {snOf} from './fatigue_data.js';
 export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
@@ -156,7 +156,7 @@ async function statik(inp,P,prog){
   let nFixed=0;for(let n=0;n<nnod;n++)if(dof[3*n]||dof[3*n+1]||dof[3*n+2])nFixed++;
   const reaction=[0,0,0];for(let i=0;i<dof.length;i++)if(dof[i])reaction[i%3]+=S.R(i);
   let extra={};if(inp.fields&&S.sig){const p1=new Float32Array(nnod),tr=new Float32Array(nnod),cc=new Uint16Array(nnod);for(let q=0;q<S.sig.length/6;q++){const m=principals(S.sig.subarray(q*6,q*6+6));for(let a=0;a<8;a++){const n=S.L0.E[q*8+a];p1[n]+=m.p1;tr[n]+=m.tresca;cc[n]++;}}let p1Max=-Infinity,trMax=0;for(let n=0;n<nnod;n++)if(cc[n]){p1[n]/=cc[n];tr[n]/=cc[n];p1Max=Math.max(p1Max,p1[n]);trMax=Math.max(trMax,tr[n]);}extra={p1,tresca:tr,p1Max,trescaMax:trMax,nodeVm:fVm};}
-  if(inp.probes||inp.path){const X=new Float32Array(nnod*3);for(let n=0;n<nnod;n++){const p=P.xyz(n);X[3*n]=p[0];X[3*n+1]=p[1];X[3*n+2]=p[2];}const fields={u:{data:S.u,stride:3},vm:{data:fVm,stride:1},...(extra.p1?{p1:{data:extra.p1,stride:1},tresca:{data:extra.tresca,stride:1}}:{})};if(inp.probes)extra.probes=probe(X,fields,inp.probes,P.h*2);if(inp.path)extra.path=pathPlot(X,fields,inp.path.a,inp.path.b,inp.path.n||21,P.h*2);}
+  if(inp.probes||inp.path){const X=new Float32Array(nnod*3);for(let n=0;n<nnod;n++){const p=P.xyz(n);X[3*n]=p[0];X[3*n+1]=p[1];X[3*n+2]=p[2];}const fields={u:{data:S.u,stride:3},vm:{data:fVm,stride:1},...(extra.p1?{p1:{data:extra.p1,stride:1},tresca:{data:extra.tresca,stride:1}}:{})};if(inp.probes)extra.probes=probe(X,fields,inp.probes,P.h*2);if(inp.path){const a=inp.path.a,b=inp.path.b,mid=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];let cx=0,cy=0,cz=0;for(let n=0;n<nnod;n++){cx+=X[3*n];cy+=X[3*n+1];cz+=X[3*n+2];}cx=cx/nnod-mid[0];cy=cy/nnod-mid[1];cz=cz/nnod-mid[2];const ln=Math.hypot(cx,cy,cz)||1;extra.path=pathPlot(X,fields,a,b,inp.path.n||21,P.h*2,[cx/ln*P.h,cy/ln*P.h,cz/ln*P.h]);}}
   return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU,...(extra.p1?{p1:extra.p1,tr:extra.tresca}:{})}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,reaction,nFixed,backend:S.backend,gpuError:S.gpuError,why:S.why,hist:S.hist,wire,contact:S.contact,held:B.grp.size?heldBy(B,S.R):undefined,u:inp.keepU?S.u:undefined,...extra};
 }
 export function jacobiEig(A,m,Vo){
@@ -263,6 +263,8 @@ function voxelStress(P,u,mat,T,alpha,Tref){
 }
 export async function runFEA(inp,prog){
   const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  if(type==='buckle')return buckleVoxel(inp,P,prog);
+  if(type==='psd')return psdVoxel(inp,P,prog);
   if(type==='fatigue')return fatigueVoxel(inp,P,prog);
   if(type==='harmonic')return harmonicVoxel(inp,P,prog);
   if(type==='transient')return transientVoxel(inp,P,prog);
@@ -288,11 +290,36 @@ async function transientVoxel(inp,P,prog){
   const ustat=amp(qstat);
   return{...modalR,modes:modalR.modes.map(m=>({f:m.f,omega:m.omega,meff:m.meff})),type:'transient',peak,staticAmp:ustat,dlf:ustat?peak/ustat:0,tPeak:(iat+1)*dt,dt,zeta:z,curve:hist.filter((_,i)=>i%Math.ceil(hist.length/30)===0).map((q,i)=>({t:(i+1)*dt,amp:amp(q)})),vmMax:peak,vmP99:peak,uMax:peak,legendTitle:'Transient displacement (mm)',legendUnit:'len'};
 }
+async function psdVoxel(inp,P,prog){
+  const modalR=await modal({...inp,keepVec:false,modes:1},P,prog),f0=modalR.freqs&&modalR.freqs[0];if(!(f0>0))throw new Error('no elastic mode; add a support');
+  const zeta=inp.zeta!=null?+inp.zeta:0.02,S0=inp.psd!=null?+inp.psd:1,rms=miles(f0,zeta,S0),peak=modalR.uMax||1,k=rms/peak;
+  const scale=a=>a&&a.length?Float32Array.from(a,v=>v*k):a;
+  return{...modalR,type:'psd',freq:f0,zeta,psd:S0,rms,uMax:rms,vmMax:rms,vmP99:rms,vDisp:scale(modalR.vDisp),vStress:scale(modalR.vStress),legendTitle:'RMS displacement (mm)',legendUnit:'len'};
+}
+async function buckleVoxel(inp,P,prog){
+  const mat=inp.mat,dof=supportMask(inp,P),{f,ap}=loadVec(inp,P,mat);if(!dof.some(Boolean))throw new Error('add at least one fixed face');
+  const S=await solveGrid(P.G,mat,dof,f,{tol:inp.tol||1e-7,solver:'cpu',mg:inp.mg},prog),X=new Float64Array(P.nn*3);
+  for(let n=0;n<P.nn;n++){const q=P.xyz(n);X[3*n]=q[0];X[3*n+1]=q[1];X[3*n+2]=q[2];}
+  const E=S.L0.E,sig=S.sig,nd=f.length,x=new Float64Array(nd),ne=sig.length/6,sc=S.L0.sc,ax=Math.abs(ap[1])>Math.abs(ap[0])&&Math.abs(ap[1])>=Math.abs(ap[2])?1:Math.abs(ap[2])>Math.abs(ap[0])?2:0,slab=new Map();
+  for(let q=0;q<ne;q++){let c0=0;for(let a=0;a<8;a++)c0+=X[3*E[q*8+a]+ax];c0/=8;const k=Math.round(c0/P.h),g=slab.get(k)||[0,0,0,0,0,0,0];for(let c=0;c<6;c++)g[c]+=sig[q*6+c];g[6]++;slab.set(k,g);}
+  for(let q=0;q<ne;q++){let c0=0;for(let a=0;a<8;a++)c0+=X[3*E[q*8+a]+ax];const g=slab.get(Math.round(c0/8/P.h)),w=sc[q]||1;for(let c=0;c<6;c++)sig[q*6+c]=c===ax?w*g[c]/g[6]:0;}
+  for(let i=0;i<nd;i++)x[i]=dof[i]||i%3===ax?0:Math.sin((i%97)*0.17);
+  let lam=0,prev=0,it=0;
+  for(;it<7;it++){
+    const gx=kgMul(X,E,sig,x);for(let i=0;i<nd;i++)gx[i]=dof[i]?0:-gx[i];
+    const Y=await solveGrid(P.G,mat,dof,gx,{tol:1e-7,solver:'cpu',mg:inp.mg},prog),y=Y.u,gy=kgMul(X,E,sig,y);
+    let num=0,den=0;for(let i=0;i<nd;i++){const g=dof[i]?0:-gy[i];num+=y[i]*gx[i];den+=y[i]*g;}
+    lam=den?num/den:0;let m=0;for(let i=0;i<nd;i++)m=Math.max(m,Math.abs(y[i]));if(!(m>0))break;
+    for(let i=0;i<nd;i++)x[i]=y[i]/m;if(it>1&&Math.abs(lam-prev)<1e-3*Math.max(1,Math.abs(lam))){it++;break;}prev=lam;
+  }
+  const Pref=Math.hypot(ap[0],ap[1],ap[2])||1
+  return{type:'buckle',factor:lam,Pcr:lam*Pref,Pref,iters:it,applied:ap,vmMax:1,vmP99:1,uMax:1,nEl:ne,...gridOut(P),legendTitle:'Buckling mode (relative)',legendUnit:'raw'};
+}
 async function fatigueVoxel(inp,P,prog){
   const r=await statik({...inp,fields:1},P,prog),sn=inp.mat&&(inp.mat.sn||snOf(inp.mat));if(!sn)throw new Error('no fatigue data for this material');
-  const sig=r.nodeVm||r.p1,fat=fatigueField(sig,sn,{corr:inp.corr||'goodman',mean:inp.mean,hist:inp.hist,repeats:inp.repeats||1});
+  const sig=r.nodeVm||r.field&&r.field.vm||r.p1,fat=fatigueField(sig,sn,{corr:inp.corr||'goodman',mean:inp.mean,hist:inp.hist,repeats:inp.repeats||1});let sMax=0;if(sig)for(const v of sig)sMax=Math.max(sMax,v);
   const life=Float32Array.from(fat.life,v=>Math.log10(Math.max(isFinite(v)?v:1e12,1))),lo=Math.log10(Math.max(fat.lifeMin,1));
-  return{...r,type:'fatigue',stressP99:r.vmP99,stressMax:r.vmMax,lifeMin:fat.lifeMin,damageMax:fat.damageMax,sfMin:fat.sfMin,corr:inp.corr||'goodman',sn,vStress:life,vmMax:lo+3,vmP99:lo+3,legendTitle:'log10 cycles to crack initiation',legendUnit:'raw',legendLo:lo,legendHi:lo+3,field:{...r.field,vm:life}};
+  return{...r,type:'fatigue',stressP99:sMax,stressMax:sMax,lifeMin:fat.lifeMin,damageMax:fat.damageMax,sfMin:fat.sfMin,corr:inp.corr||'goodman',sn,vStress:life,vmMax:lo+3,vmP99:lo+3,legendTitle:'log10 cycles to crack initiation',legendUnit:'raw',legendLo:lo,legendHi:lo+3,field:{...r.field,vm:life}};
 }
 function edt1(f,n,d,v,z){let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;for(let q=1;q<n;q++){let s;while(true){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0){k--;continue;}if(s<=z[k]){k--;}break;}k++;v[k]=q;z[k]=s;z[k+1]=1e20;}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];}}
 export function wallThickness(inp){

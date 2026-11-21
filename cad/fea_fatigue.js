@@ -1,3 +1,4 @@
+import {snHe,goodmanHe,gerberHe,soderbergHe,asmeHe,milesHe} from './he/suite.js';
 export function reversals(x){const o=[];for(let i=0;i<x.length;i++){if(i>0&&x[i]===x[i-1])continue;if(o.length>=2){const a=o[o.length-2],b=o[o.length-1],c=x[i];if((b-a)*(c-b)>0)o.pop();}o.push(x[i]);}return o;}
 export function rainflow(series){
   const p=reversals(series),s=[],cycles=[];
@@ -8,7 +9,7 @@ export function rainflow(series){
 export function snPoints(sn){const Sut=sn.sut||sn.Sut||0,S1=sn.S1!=null?sn.S1:0.9*Sut,N1=sn.N1||1e3,S2=sn.S2!=null?sn.S2:(sn.se!=null?sn.se:sn.Se),N2=sn.N2||sn.Nse||1e6;return{S1,N1,S2,N2,knee:sn.knee!==false,sut:Sut,sy:sn.sy||sn.Sy||Sut,sf:sn.sf||sn.sfPrime||Sut};}
 export function snLife(sa,sn){
   if(!(sa>0))return Infinity;const{S1,N1,S2,N2,knee}=snPoints(sn);if(!(S1>0)||!(S2>0)||!(N2>N1))return sa>0?1:Infinity;
-  const b=Math.log(S2/S1)/Math.log(N2/N1);if(sa>=S1)return Math.max(1,N1*Math.pow(sa/S1,1/b));if(knee&&sa<=S2)return Infinity;return N1*Math.pow(sa/S1,1/b);
+  const n=snHe(sa,S1,N1,S2,N2,knee);return n===Infinity?Infinity:sa>=S1?Math.max(1,n):n;
 }
 export function equivAmp(sa,sm,sn,corr){
   const{sut,sy,sf}=snPoints(sn),m=Math.max(0,sm||0),name=corr||'goodman';
@@ -19,8 +20,8 @@ export function equivAmp(sa,sm,sn,corr){
 export function fatigueSF(sa,sm,sn,corr){
   const{S2,sut,sy,sf}=snPoints(sn),m=Math.max(0,sm||0),Se=S2,name=corr||'goodman';if(!(sa>0))return Infinity;if(!(Se>0))return 0;
   if(name==='none'||!(m>0))return Se/sa;
-  if(name==='gerber'){const A=(m/sut)**2,B=sa/Se;if(A<1e-14)return 1/B;return (-B+Math.sqrt(B*B+4*A))/(2*A);}
-  const den=name==='soderberg'?sa/Se+m/sy:name==='morrow'?sa/Se+m/sf:sa/Se+m/sut;return den>0?1/den:0;
+  const n=name==='asme'?asmeHe(sa,m,Se,sut):name==='gerber'?gerberHe(sa,m,Se,sut):name==='soderberg'?soderbergHe(sa,m,Se,sy):name==='morrow'?soderbergHe(sa,m,Se,sf):goodmanHe(sa,m,Se,sut);
+  return n;
 }
 export function miner(cycles,lifeOf){let D=0;const rows=[];for(const c of cycles){const N=lifeOf(c.amp,c.mean),d=!isFinite(N)?0:c.count*(c.repeats||1)/N;D+=d;rows.push({range:c.range,amp:c.amp,mean:c.mean,count:c.count,N,d});}return{D,rows,life:D>0?1/D:Infinity};}
 function enEq(twoN,E,p,sm){const sf=p.sf,b=p.b,ef=p.ef,c=p.c,mor=p.swt?1:Math.max(0,1-(sm||0)/sf);return (sf/E)*Math.pow(twoN,b)*mor+ef*Math.pow(twoN,c);}
@@ -65,3 +66,4 @@ export function modalNewmark(omega,force,dt,steps,zeta){
   return out;
 }
 export function frf(mf,wN,w,zeta){const w2=wN*wN,d=w2-w*w,c=2*(zeta||0)*w*wN,den=d*d+c*c||1e-30;return{re:mf*d/den,im:-mf*c/den,amp:Math.abs(mf)/Math.sqrt(den)};}
+export function miles(fn,zeta,psd){return milesHe(fn,zeta,psd);}

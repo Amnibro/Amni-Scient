@@ -67,16 +67,16 @@ function nearest(X,x,y,z,rad){
   for(let n=0;n<nn;n++){const d=(X[3*n]-x)**2+(X[3*n+1]-y)**2+(X[3*n+2]-z)**2;if(d<bd){bd=d;best=n;}if(rad&&d<=r2)list.push([n,d]);}
   return{best,d:Math.sqrt(bd),list};
 }
-export function probe(X,fields,pts,rad){
+export function probe(X,fields,pts,rad,one){
   return (pts||[]).map(p=>{const q=nearest(X,p[0],p[1],p[2],rad),out={x:p[0],y:p[1],z:p[2],node:q.best,dist:q.d};if(q.best<0)return out;
-    const use=q.list&&q.list.length?q.list:[[q.best,0]];let sw=0;const acc={};
+    const use=!one&&q.list&&q.list.length?q.list:[[q.best,0]];let sw=0;const acc={};
     for(const[n,d] of use){const w=1/Math.max(Math.sqrt(d),1e-6);sw+=w;for(const k in fields){const a=fields[k],st=a.stride||1,s=acc[k]||(acc[k]=new Float64Array(st));for(let c=0;c<st;c++)s[c]+=w*a.data[n*st+c];}}
     for(const k in acc){const s=acc[k];for(let c=0;c<s.length;c++)s[c]/=sw;out[k]=s.length===1?s[0]:Array.from(s);}
     return out;});
 }
-export function pathPlot(X,fields,a,b,n,rad){
-  const N=Math.max(2,n||21),pts=[];
-  for(let i=0;i<N;i++){const t=i/(N-1);pts.push(probe(X,fields,[[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]],rad)[0]);}
+export function pathPlot(X,fields,a,b,n,rad,inset){
+  const N=Math.max(2,n||21),pts=[],d=inset||[0,0,0];
+  for(let i=0;i<N;i++){const t=i/(N-1),p=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t],s=probe(X,fields,[p],rad,1)[0],q=probe(X,fields,[[p[0]+d[0],p[1]+d[1],p[2]+d[2]]],rad,1)[0],inner=q&&q.vm!=null?q.vm:s.vm;pts.push({...s,vm:s.vm+0.5*(s.vm-inner)});}
   return pts;
 }
 export function skinOfField(nodes,arr,stride){const o=new Float32Array(nodes.length*stride);nodes.forEach((n,i)=>{for(let c=0;c<stride;c++)o[i*stride+c]=arr[n*stride+c];});return o;}
