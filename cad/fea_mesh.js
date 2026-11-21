@@ -70,7 +70,7 @@ export function pickMesh(inp){
   const res=inp.res||30000,hv=Math.cbrt(Math.max(inp.volume,1e-9)/Math.max(2000,Math.min(res,800000))),st=thicknessStats(inp);
   if(!(st.p02<3*hv))return null;const sh=detectSheet(inp);return sh.ok?'sweep':'adaptive';
 }
-const SUITE=new Set(['combine']);
+const SUITE=new Set();
 export async function runMeshFEA(inp,prog){
   const type=inp.type||'static';if(type==='tstress'||(type==='thermal'&&(inp.transient||(inp.rad&&inp.rad.length)||(inp.steps|0)>1)))return runFEA(inp,prog);
   let kind=pickMesh(inp);if((type==='fatigue'||type==='harmonic'||type==='transient'||type==='buckle'||type==='psd')&&!kind)return runFEA(inp,prog);if(!kind&&SUITE.has(type))kind='adaptive';if(!kind)return runFEA(inp,prog);
