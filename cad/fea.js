@@ -5,6 +5,9 @@ import {ADV,bcOf,contactSolve,heldBy,distLoad} from './fea_bc.js';
 import {voxSkin,skinU} from './fea_skin.js';
 import {helium} from './he/host.js';
 import {maxOf} from './minmax.js';
+import {principals,probe,pathPlot} from './fea_post.js';
+import {fatigueField,modalNewmark,frf} from './fea_fatigue.js';
+import {snOf} from './fatigue_data.js';
 export {KCOND};
 const NODES=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
 function dmat(nu){const c=1/((1+nu)*(1-2*nu)),a=c*(1-nu),b=c*nu,g=c*(1-2*nu)/2;return[[a,b,b,0,0,0],[b,a,b,0,0,0],[b,b,a,0,0,0],[0,0,0,g,0,0],[0,0,0,0,g,0],[0,0,0,0,0,g]];}
@@ -31,6 +34,7 @@ export function keHex(nu){
   return K;
 }
 export function bCenter(nu){const{B}=bAt(0,0,0),D=dmat(nu);const DB=Array.from({length:6},()=>new Float64Array(24));for(let r=0;r<6;r++)for(let k=0;k<6;k++)for(let j=0;j<24;j++)DB[r][j]+=D[r][k]*B[k][j];return DB;}
+export function feThermal(nu){const D=dmat(nu),g=1/Math.sqrt(3),ev=[1,1,1,0,0,0],De=new Float64Array(6),f=new Float64Array(24),w=1/8;for(let r=0;r<6;r++)for(let c=0;c<6;c++)De[r]+=D[r][c]*ev[c];for(const xi of[-g,g])for(const et of[-g,g])for(const ze of[-g,g]){const{B}=bAt(xi,et,ze);for(let i=0;i<24;i++){let s=0;for(let r=0;r<6;r++)s+=B[r][i]*De[r];f[i]+=w*s;}}return f;}
 export function voxelize(pos,idx,bb,h,triMask){
   const ox=bb.min[0]-h*0.5,oy=bb.min[1]-h*0.5,oz=bb.min[2]-h*0.5,nx=Math.max(1,Math.ceil((bb.max[0]-ox)/h+0.5)),ny=Math.max(1,Math.ceil((bb.max[1]-oy)/h+0.5)),nz=Math.max(1,Math.ceil((bb.max[2]-oz)/h+0.5));
   const solid=new Uint8Array(nx*ny*nz),nt=idx.length/3,bins=new Map();
@@ -135,6 +139,7 @@ function loadVec(inp,P,mat){
   }
   const g=inp.accel||(mat.g?mat.g.map(v=>v*9.80665):null);
   if(g&&mat.rho){const k=mat.rho*1e-9;for(let n=0;n<P.nn;n++)if(P.vol[n])add(n,[g[0]*k*P.vol[n],g[1]*k*P.vol[n],g[2]*k*P.vol[n]]);}
+  if(inp.nodalF)for(let i=0;i<inp.nodalF.length&&i<f.length;i++){f[i]+=inp.nodalF[i];ap[i%3]+=inp.nodalF[i];}
   return{f,ap};
 }
 function gridOut(P){const G=P.G;return{h:P.h,nEl:P.nAct,grid:{nx:G.nx,ny:G.ny,nz:G.nz}};}
@@ -149,7 +154,10 @@ async function statik(inp,P,prog){
   let vmMax=0,uMax=0;const sorted=Float32Array.from(S.vm).sort();for(const v of S.vm)vmMax=Math.max(vmMax,v);
   for(let i=0;i<S.u.length;i+=3)uMax=Math.max(uMax,Math.hypot(S.u[i],S.u[i+1],S.u[i+2]));
   let nFixed=0;for(let n=0;n<nnod;n++)if(dof[3*n]||dof[3*n+1]||dof[3*n+2])nFixed++;
-  return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,nFixed,backend:S.backend,gpuError:S.gpuError,why:S.why,hist:S.hist,wire,contact:S.contact,held:B.grp.size?heldBy(B,S.R):undefined};
+  const reaction=[0,0,0];for(let i=0;i<dof.length;i++)if(dof[i])reaction[i%3]+=S.R(i);
+  let extra={};if(inp.fields&&S.sig){const p1=new Float32Array(nnod),tr=new Float32Array(nnod),cc=new Uint16Array(nnod);for(let q=0;q<S.sig.length/6;q++){const m=principals(S.sig.subarray(q*6,q*6+6));for(let a=0;a<8;a++){const n=S.L0.E[q*8+a];p1[n]+=m.p1;tr[n]+=m.tresca;cc[n]++;}}let p1Max=-Infinity,trMax=0;for(let n=0;n<nnod;n++)if(cc[n]){p1[n]/=cc[n];tr[n]/=cc[n];p1Max=Math.max(p1Max,p1[n]);trMax=Math.max(trMax,tr[n]);}extra={p1,tresca:tr,p1Max,trescaMax:trMax,nodeVm:fVm};}
+  if(inp.probes||inp.path){const X=new Float32Array(nnod*3);for(let n=0;n<nnod;n++){const p=P.xyz(n);X[3*n]=p[0];X[3*n+1]=p[1];X[3*n+2]=p[2];}const fields={u:{data:S.u,stride:3},vm:{data:fVm,stride:1},...(extra.p1?{p1:{data:extra.p1,stride:1},tresca:{data:extra.tresca,stride:1}}:{})};if(inp.probes)extra.probes=probe(X,fields,inp.probes,P.h*2);if(inp.path)extra.path=pathPlot(X,fields,inp.path.a,inp.path.b,inp.path.n||21,P.h*2);}
+  return{type:'static',vStress,vDisp,field:fieldOut(P,{vm:fVm,u:fU,...(extra.p1?{p1:extra.p1,tr:extra.tresca}:{})}),vmMax,vmP99:sorted[Math.floor(sorted.length*0.995)]||vmMax,uMax,...gridOut(P),nDof:nnod*3,iters:S.iters,rel:S.rel,levels:S.levels,ms,applied:ap,reaction,nFixed,backend:S.backend,gpuError:S.gpuError,why:S.why,hist:S.hist,wire,contact:S.contact,held:B.grp.size?heldBy(B,S.R):undefined,u:inp.keepU?S.u:undefined,...extra};
 }
 export function jacobiEig(A,m,Vo){
   const V=Vo?Vo.fill(0):new Float64Array(m*m);for(let i=0;i<m;i++)V[i*m+i]=1;let nf=0;for(let i=0;i<m*m;i++)nf+=A[i]*A[i];
@@ -197,29 +205,94 @@ async function modal(inp,P,prog){
   for(let j=0;j<E.lam.length&&modes.length<nev;j++){const lam=E.lam[j];if(lam<1e-7*lmax&&!free){rigid++;continue;}const x=E.X[j],u=new Float32Array(P.nn);let um=0;for(let q=0;q<P.nn;q++){u[q]=Math.hypot(x[3*q],x[3*q+1],x[3*q+2]);um=Math.max(um,u[q]);}
     const gm=[0,0,0];for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)gm[c]+=Mv[3*q+c]*x[3*q+c];
     const ux=new Float32Array(n);for(let i=0;i<n;i++)ux[i]=x[i]/(um||1);for(let q=0;q<P.nn;q++)u[q]/=um||1;
-    modes.push({f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0],wireU:skinU(wire,ux)});}
+    const rec={f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0],wireU:skinU(wire,ux)};if(inp.keepVec)rec.vec=x.slice();modes.push(rec);}
   const m0=modes[0],vMag=new Float32Array(pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
   return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire};
 }
+const SIGMA=5.670374419e-8;
 async function thermal(inp,P,prog){
   const{G,pos}=P,mat=inp.mat||{},ck=condK(mat,inp.matKey),k=ck.k*1e-3,K=keHeat();for(let i=0;i<64;i++)K[i]*=k*G.h;
-  const nn=P.nn,fixed=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),dadd=new Float64Array(nn),tg=new Int16Array(nn).fill(-1),temps=inp.temps||[],conv=inp.conv||[],flux=inp.flux||[];
-  temps.forEach((b,bi)=>{for(const n of P.at(b.faces).keys()){fixed[n]=1;u0[n]=b.T;tg[n]=bi;}});
-  const cv=conv.map(b=>{const acc=P.at(b.faces),hc=(b.h||10)*1e-6;for(const[n,v]of acc){dadd[n]+=hc*v[0];f[n]+=hc*v[0]*(b.Tinf??20);}return acc;});
-  const qin=flux.map(b=>{const acc=P.at(b.faces);let tot=0;for(const v of acc.values())tot+=v[0];let Q=0;for(const[n,v]of acc){const q=b.Q!=null?b.Q*v[0]/(tot||1):(b.q||0)*v[0];f[n]+=q;Q+=q;}return Q;});
-  let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}
-  if(!temps.length&&!conv.length)throw new Error('add a fixed-temperature or convection face');
-  const t0=Date.now(),Ls=await setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
-  const S=await solve(Ls,K,b,{tol:inp.tol||1e-7,mg:inp.mg,solver:'cpu',phase:'thermal'},prog),T=new Float64Array(nn);for(let n=0;n<nn;n++)T[n]=S.u[n]+u0[n];
-  mv(Ls,T,y,true);const qT=temps.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)qT[tg[n]]+=y[n]-f[n];
+  const nn=P.nn,temps=inp.temps||[],conv=inp.conv||[],flux=inp.flux||[],rad=inp.rad||[],useC=!!(inp.transient||(inp.steps|0)>1),steps=Math.max(1,useC?(inp.steps|0||20):1),dt=inp.dt||1,rho=(mat.rho||2700)*1e-9,cp=mat.cp||900;
+  const C=new Float64Array(nn);if(useC)for(let n=0;n<nn;n++)C[n]=P.vol[n]*rho*cp;
+  const areas={temps:temps.map(b=>P.at(b.faces)),conv:conv.map(b=>P.at(b.faces)),flux:flux.map(b=>P.at(b.faces)),rad:rad.map(b=>P.at(b.faces))};
+  if(!temps.length&&!conv.length&&!rad.length)throw new Error('add a fixed-temperature, convection or radiation face');
+  const T0=inp.T0!=null?+inp.T0:(conv[0]&&conv[0].Tinf!=null?conv[0].Tinf:20);let Told=new Float64Array(nn);Told.fill(T0);
+  const once=async Tprev=>{
+    const fixed=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),dadd=new Float64Array(nn),tg=new Int16Array(nn).fill(-1);
+    temps.forEach((b,bi)=>{for(const n of areas.temps[bi].keys()){fixed[n]=1;u0[n]=b.T;tg[n]=bi;}});
+    const cv=areas.conv.map((acc,i)=>{const hc=(conv[i].h||10)*1e-6;for(const[n,v]of acc){dadd[n]+=hc*v[0];f[n]+=hc*v[0]*(conv[i].Tinf??20);}return acc;});
+    areas.rad.forEach((acc,i)=>{const eps=rad[i].eps!=null?+rad[i].eps:0.8,Ti=rad[i].Tinf??20;for(const[n,v]of acc){const Tn=Tprev[n]||Ti,hr=eps*SIGMA*(Tn*Tn+Ti*Ti)*(Tn+Ti)*1e-6;dadd[n]+=hr*v[0];f[n]+=hr*v[0]*Ti;}});
+    const qin=areas.flux.map((acc,i)=>{let tot=0;for(const v of acc.values())tot+=v[0];let Q=0;for(const[n,v]of acc){const q=flux[i].Q!=null?flux[i].Q*v[0]/(tot||1):(flux[i].q||0)*v[0];f[n]+=q;Q+=q;}return Q;});
+    let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}
+    if(useC)for(let n=0;n<nn;n++)if(C[n]&&!fixed[n]){const a=C[n]/dt;dadd[n]+=a;f[n]+=a*Tprev[n];}
+    const Ls=await setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
+    const S=await solve(Ls,K,b,{tol:inp.tol||1e-7,mg:inp.mg,solver:'cpu',phase:'thermal'},prog),Tn=new Float64Array(nn);for(let n=0;n<nn;n++)Tn[n]=S.u[n]+u0[n];
+    return{Tn,S,Ls,L,f,tg,cv,qin,qv};
+  };
+  const t0=Date.now(),pic=rad.length?7:1,hist=[];let last=null,T=Told;
+  for(let s=0;s<steps;s++){let guess=Told;for(let p=0;p<pic;p++){last=await once(guess);guess=last.Tn;}T=last.Tn;Told=T;let a=Infinity,b=-Infinity;for(let n=0;n<nn;n++){a=Math.min(a,T[n]);b=Math.max(b,T[n]);}hist.push({t:useC?(s+1)*dt:0,Tmin:a,Tmax:b});}
+  const{S,Ls,L,f,tg,cv,qin,qv}=last,y=new Float64Array(nn);mv(Ls,T,y,true);const qT=temps.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)qT[tg[n]]+=y[n]-f[n];
   const qc=cv.map((acc,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[n,v]of acc)s+=hc*v[0]*(Ti-T[n]);return s;});
+  const qr=rad.map((b,i)=>{let s=0;const eps=b.eps!=null?+b.eps:0.8,Ti=b.Tinf??20;for(const[n,v]of areas.rad[i]){const hr=eps*SIGMA*(T[n]*T[n]+Ti*Ti)*(T[n]+Ti)*1e-6;s+=hr*v[0]*(Ti-T[n]);}return s;});
   const{c:cnt}=nodalField(G,L,null),TN=new Float32Array(nn);let Tmin=Infinity,Tmax=-Infinity;for(let n=0;n<nn;n++)if(cnt[n]){TN[n]=T[n];Tmin=Math.min(Tmin,T[n]);Tmax=Math.max(Tmax,T[n]);}
   const vT=atVerts(G,L,TN,1,pos,cnt);dilate(G,cnt,[TN]);
-  return{type:'thermal',wire:(w=>(w.vm=Float32Array.from(w.nodes,n=>TN[n]),w))(voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz)),vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
+  return{type:'thermal',transient:useC,radiation:!!rad.length,hist,wire:(w=>(w.vm=Float32Array.from(w.nodes,n=>TN[n]),w))(voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz)),vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,rad:qr,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qr.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend,...(inp.keepT?{T}:{})};
+}
+async function voxelThermal(P,T,mat,alpha,Tref){
+  const u=new Float64Array(P.nn*3);for(let n=0;n<P.nn;n++){const x=P.xyz(n),eth=alpha*((T[n]||0)-(Tref||0));u[3*n]=eth*x[0];u[3*n+1]=eth*x[1];u[3*n+2]=eth*x[2];}
+  const K=keHex(mat.nu);for(let i=0;i<576;i++)K[i]*=mat.E*P.G.h;const Ls=await setup(P.G,K,3,new Uint8Array(P.nn*3),null,true),ku=new Float64Array(u.length);mv(Ls,u,ku,true);return ku;
+}
+async function tstress(inp,P,prog){
+  const mat=inp.mat||{},alpha=(mat.cte||0)*1e-6,Tref=inp.Tref!=null?+inp.Tref:20;if(!(alpha>0)||!(mat.E>0))throw new Error('the material needs a thermal expansion coefficient and a modulus');
+  let T,th=null;if(inp.Tuniform!=null){T=new Float64Array(P.nn);T.fill(+inp.Tuniform);}else{th=await thermal({...inp,keepT:true,type:'thermal'},P,prog);T=th.T;}
+  const ft=await voxelThermal(P,T,mat,alpha,Tref),r=await statik({...inp,nodalF:ft,keepU:true,fields:inp.fields!==false},P,prog),ts=voxelStress(P,r.u,mat,T,alpha,Tref);let Tmin=Infinity,Tmax=-Infinity;for(const v of T){Tmin=Math.min(Tmin,v);Tmax=Math.max(Tmax,v);}
+  const wire=r.wire;if(wire)wire.vm=Float32Array.from(wire.nodes,n=>ts.vm[n]||0);if(r.field){r.field.vm=ts.vm;r.field.p1=ts.p1;}
+  return{...r,u:undefined,type:'tstress',vStress:ts.vStress||r.vStress,vmMax:ts.vmMax,vmP99:ts.vmAway||ts.vmMax,p1Max:ts.p1Max,trescaMax:ts.trescaMax,Tmin,Tmax,Tref,alpha,k:th&&th.k,warn:th&&th.warn,legendTitle:'Von Mises from temperature (MPa)',legendUnit:'stress'};
+}
+function voxelStress(P,u,mat,T,alpha,Tref){
+  const G=P.G,DB=bCenter(mat.nu),s=mat.E/G.h,NX=P.NX,NY=P.NY,vm=new Float32Array(P.nn),p1=new Float32Array(P.nn),tr=new Float32Array(P.nn),cc=new Uint16Array(P.nn),ue=new Float64Array(24);
+  const lam=mat.E*mat.nu/((1+mat.nu)*(1-2*mat.nu)),mu=mat.E/(2*(1+mat.nu));
+  for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const e=(k*G.ny+j)*G.nx+i;if(!G.solid[e])continue;
+    const nd=[(k*NY+j)*NX+i,(k*NY+j)*NX+i+1,(k*NY+(j+1))*NX+i+1,(k*NY+(j+1))*NX+i,((k+1)*NY+j)*NX+i,((k+1)*NY+j)*NX+i+1,((k+1)*NY+(j+1))*NX+i+1,((k+1)*NY+(j+1))*NX+i];
+    for(let a=0;a<8;a++){ue[3*a]=u[3*nd[a]];ue[3*a+1]=u[3*nd[a]+1];ue[3*a+2]=u[3*nd[a]+2];}
+    const S6=[0,0,0,0,0,0];for(let r=0;r<6;r++){let t=0;for(let c=0;c<24;c++)t+=DB[r][c]*ue[c];S6[r]=t*s;}
+    let Te=0;for(const n of nd)Te+=T[n]||0;const eth=alpha*(Te/8-(Tref||0));if(eth){const trE=3*eth,sx=lam*trE+2*mu*eth;S6[0]-=sx;S6[1]-=sx;S6[2]-=sx;}
+    const m=principals(S6);for(const n of nd){vm[n]+=m.vm;p1[n]+=m.p1;tr[n]+=m.tresca;cc[n]++;}}
+  let vmMax=0,vmAway=0,p1Max=-Infinity,trMax=0;for(let n=0;n<P.nn;n++)if(cc[n]){vm[n]/=cc[n];p1[n]/=cc[n];tr[n]/=cc[n];vmMax=Math.max(vmMax,vm[n]);p1Max=Math.max(p1Max,p1[n]);trMax=Math.max(trMax,tr[n]);vmAway=vmMax;}
+  return{vm,p1,vmMax,vmAway,p1Max,trescaMax:trMax};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
-  return type==='modal'?modal(inp,P,prog):type==='thermal'?thermal(inp,P,prog):statik(inp,P,prog);
+  const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  if(type==='fatigue')return fatigueVoxel(inp,P,prog);
+  if(type==='harmonic')return harmonicVoxel(inp,P,prog);
+  if(type==='transient')return transientVoxel(inp,P,prog);
+  return type==='modal'?modal(inp,P,prog):type==='thermal'?thermal(inp,P,prog):type==='tstress'?tstress(inp,P,prog):statik(inp,P,prog);
+}
+async function harmonicVoxel(inp,P,prog){
+  const modalR=await modal({...inp,keepVec:true,modes:Math.max(1,Math.min(inp.modes||4,8))},P,prog),{f}=loadVec(inp,P,inp.mat),rho=(inp.mat.rho||7850)*1e-12,zeta=inp.zeta!=null?+inp.zeta:0.02;
+  const modes=modalR.modes.filter(m=>m.vec).map(m=>{let s=0;const x=m.vec;for(let q=0;q<P.nn;q++){const mv=P.vol[q]*rho;if(mv)s+=mv*(x[3*q]**2+x[3*q+1]**2+x[3*q+2]**2);}const sc=1/Math.sqrt(s||1);let mf=0;for(let i=0;i<x.length;i++)mf+=x[i]*sc*(f[i]||0);return{f:m.f,omega:m.omega,mf,sc,vec:x};});
+  const f0=inp.f0!=null?+inp.f0:1,f1=inp.f1||(modes[0]?modes[0].f*0.5:10),np=Math.max(2,inp.nFreq||8),curve=[];
+  const ampAt=hz=>{const w=2*Math.PI*hz;let m=0;
+    for(let q=0;q<P.nn;q++){let x=0,y=0,z=0,xi=0,yi=0,zi=0;for(const md of modes){const qq=frf(md.mf,md.omega,w,zeta),c=md.sc;x+=qq.re*c*md.vec[3*q];y+=qq.re*c*md.vec[3*q+1];z+=qq.re*c*md.vec[3*q+2];xi+=qq.im*c*md.vec[3*q];yi+=qq.im*c*md.vec[3*q+1];zi+=qq.im*c*md.vec[3*q+2];}m=Math.max(m,Math.hypot(x,y,z,xi,yi,zi));}return m;};
+  for(let i=0;i<np;i++){const hz=f0+(f1-f0)*i/(np-1);curve.push({f:hz,amp:ampAt(hz)});}
+  const at=inp.at||f0,a0=ampAt(at);
+  return{...modalR,modes:modes.map(m=>({f:m.f,omega:m.omega,mf:m.mf})),type:'harmonic',curve,zeta,at,vmMax:a0,vmP99:a0,uMax:a0,legendTitle:'Displacement amplitude (mm)',legendUnit:'len',legendLo:0,legendHi:Math.max(a0,1e-9)};
+}
+async function transientVoxel(inp,P,prog){
+  const modalR=await modal({...inp,keepVec:true,modes:Math.max(1,Math.min(inp.modes||4,8))},P,prog),{f}=loadVec(inp,P,inp.mat),rho=(inp.mat.rho||7850)*1e-12,z=inp.zeta||0;
+  const modes=modalR.modes.filter(m=>m.vec).map(m=>{let s=0;const x=m.vec;for(let q=0;q<P.nn;q++){const mv=P.vol[q]*rho;if(mv)s+=mv*(x[3*q]**2+x[3*q+1]**2+x[3*q+2]**2);}const sc=1/Math.sqrt(s||1);let mf=0;for(let i=0;i<x.length;i++)mf+=x[i]*sc*(f[i]||0);return{omega:m.omega,f:m.f,mf,sc,vec:x};});
+  const dt=inp.dt||(modes[0]&&modes[0].f?1/(40*modes[0].f):1e-4),steps=Math.max(4,Math.min(inp.steps|0||50,200));
+  const hist=modalNewmark(modes.map(m=>m.omega),()=>modes.map(m=>m.mf),dt,steps,z);
+  const amp=q=>{let m=0;for(let n=0;n<P.nn;n+=Math.max(1,P.nn/400|0)){let x=0,y=0,zz=0;for(let j=0;j<modes.length;j++){const c=q[j]*modes[j].sc;x+=c*modes[j].vec[3*n];y+=c*modes[j].vec[3*n+1];zz+=c*modes[j].vec[3*n+2];}m=Math.max(m,Math.hypot(x,y,zz));}return m;};
+  const qstat=modes.map(m=>m.omega>1e-8?m.mf/(m.omega*m.omega):0);let peak=0,iat=0;hist.forEach((q,i)=>{const a=amp(q);if(a>peak){peak=a;iat=i;}});
+  const ustat=amp(qstat);
+  return{...modalR,modes:modalR.modes.map(m=>({f:m.f,omega:m.omega,meff:m.meff})),type:'transient',peak,staticAmp:ustat,dlf:ustat?peak/ustat:0,tPeak:(iat+1)*dt,dt,zeta:z,curve:hist.filter((_,i)=>i%Math.ceil(hist.length/30)===0).map((q,i)=>({t:(i+1)*dt,amp:amp(q)})),vmMax:peak,vmP99:peak,uMax:peak,legendTitle:'Transient displacement (mm)',legendUnit:'len'};
+}
+async function fatigueVoxel(inp,P,prog){
+  const r=await statik({...inp,fields:1},P,prog),sn=inp.mat&&(inp.mat.sn||snOf(inp.mat));if(!sn)throw new Error('no fatigue data for this material');
+  const sig=r.nodeVm||r.p1,fat=fatigueField(sig,sn,{corr:inp.corr||'goodman',mean:inp.mean,hist:inp.hist,repeats:inp.repeats||1});
+  const life=Float32Array.from(fat.life,v=>Math.log10(Math.max(isFinite(v)?v:1e12,1))),lo=Math.log10(Math.max(fat.lifeMin,1));
+  return{...r,type:'fatigue',stressP99:r.vmP99,stressMax:r.vmMax,lifeMin:fat.lifeMin,damageMax:fat.damageMax,sfMin:fat.sfMin,corr:inp.corr||'goodman',sn,vStress:life,vmMax:lo+3,vmP99:lo+3,legendTitle:'log10 cycles to crack initiation',legendUnit:'raw',legendLo:lo,legendHi:lo+3,field:{...r.field,vm:life}};
 }
 function edt1(f,n,d,v,z){let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;for(let q=1;q<n;q++){let s;while(true){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0){k--;continue;}if(s<=z[k]){k--;}break;}k++;v[k]=q;z[k]=s;z[k+1]=1e20;}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];}}
 export function wallThickness(inp){
