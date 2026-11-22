@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-CAD FEA Validation | Cantilever and Plate With a Hole vs Textbook | AMNI-SCIENT</title>
+<meta name="description" content="Amni-CAD stress solver results for a cantilever beam and a plate with a central hole, next to the textbook answers, across five mesh refinement levels with element counts, errors and solve times.">
+<meta name="author" content="Amni-Scient">
+<meta property="og:title" content="Amni-CAD FEA Validation | Cantilever and Plate With a Hole vs Textbook | AMNI-SCIENT">
+<meta property="og:description" content="Amni-CAD stress solver results for a cantilever beam and a plate with a central hole, next to the textbook answers, across five mesh refinement levels with element counts, errors and solve times.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-cad-validation.html">
+<meta property="og:image" content="https://amni-scient.com/assets/cad/og-cad.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://amni-scient.com/amni-cad-validation.html">
+<link rel="stylesheet" href="css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>body.theme-cad{--accent:#59B6FF;--accent-soft:#8ccbff;--accent-dim:rgba(89,182,255,.11);--accent-glow:rgba(89,182,255,.26);--accent-ink:#04121f}[data-theme="light"] body.theme-cad{--accent:#1F7AE0;--accent-dim:rgba(31,122,224,.09);--accent-glow:rgba(31,122,224,.2);--accent-ink:#fff}.tw{overflow-x:auto;margin:1.1rem 0;-webkit-overflow-scrolling:touch}.tw .spec-table{margin:0;min-width:560px}.tw .spec-table td,.tw .spec-table th{white-space:nowrap;vertical-align:top}.tw .spec-table td.l,.tw .spec-table th.l{white-space:normal;min-width:15rem}.tw .spec-table .n{text-align:right;font-variant-numeric:tabular-nums}.shot{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--elev-1)}.prose{max-width:820px;line-height:1.85;color:var(--dim);font-size:.9rem}.prose p+p{margin-top:1rem}.prose strong,.prose b{color:var(--text)}.pl{margin:.8rem 0 .8rem 1.1rem;display:grid;gap:.45rem;color:var(--dim);font-size:.9rem;line-height:1.65;max-width:820px}.pl b{color:var(--text)}.pass{color:#1b7f4b;font-weight:700}[data-theme=dark] .pass{color:#5fd08f}.fail{color:#c0392b;font-weight:700}[data-theme=dark] .fail{color:#ff8a7a}.eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;line-height:1.8;color:var(--text);overflow-x:auto;white-space:pre;max-width:820px}.note{font-size:.8rem;color:var(--dim);max-width:820px;line-height:1.7}.sw{display:none}@media(max-width:700px){.sw{display:block;font-size:.76rem;color:var(--dim);margin-top:.9rem}}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:1.2rem;align-items:start}.cv{margin:1.2rem 0;max-width:820px;overflow-x:auto}.cv svg{width:100%;min-width:560px;height:auto;display:block;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius)}.cv text{fill:var(--dim);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.cv .g{stroke:var(--border);stroke-width:1}.cv .z{stroke:var(--text);stroke-width:1.2;opacity:.6}.cv .bd{stroke:var(--dim);stroke-width:1;stroke-dasharray:5 4}.cv figcaption{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:.6rem;font-size:.8rem;color:var(--dim)}.cv figcaption i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:.45rem;vertical-align:middle}.cv .bdk{border-top:2px dashed var(--dim);height:0}</style>
+</head>
+<body class="pp theme-cad">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html" class="active">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/stitch/">AMNI-STITCH</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-tesseract.html">AMNI-TESSERACT</a>
+<a href="/amnitex.html">AMNITEX</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<h1>FEA VALIDATION</h1>
+<p class="desc">CANTILEVER BEAM &bull; PLATE WITH A HOLE &bull; FIVE MESH LEVELS EACH</p>
+<div class="cta-row" style="margin-top:2rem;gap:1rem;flex-wrap:wrap">
+<a href="assets/cad/amni-cad-validation.csv" class="btn btn-primary" download>DOWNLOAD THE DATA (CSV)</a>
+<a href="amni-cad-verification.html" class="btn btn-outline">ALL VERIFICATION TESTS</a>
+</div>
+</div>
+<section>
+<h2>SUMMARY</h2>
+<div class="prose"><p>Two textbook cases, each solved by the Amni-CAD stress solver on five meshes from coarse to fine. Every number on this page is the solver&rsquo;s own output, recorded on November 22, 2026. The full data is in the <a href="assets/cad/amni-cad-validation.csv" download>CSV</a>.</p></div>
+<ul class="pl">
+<li><b>Cantilever tip deflection:</b> +0.13 % on the finest adaptive hex mesh and &minus;0.29 % on the finest voxel mesh, against PL&sup3;/3EI. Every level of both meshers is within 0.62 %.</li>
+<li><b>Cantilever bending stress</b> one beam depth from the wall: +0.25 % on the finest mesh against M(x)c/I, and within 0.28 % at every level.</li>
+<li><b>Plate with a hole, peak stress:</b> &minus;1.09 % on the finest mesh against Peterson&rsquo;s finite-width K<sub>t</sub>, and within 3.44 % at every level.</li>
+</ul>
+</section>
+<section>
+<h2>CASE 1: CANTILEVER BEAM WITH AN END LOAD</h2>
+<div class="prose"><p>A square steel bar, fully fixed on one end face, with a downward force spread evenly over the free end face. The bar is built in the CAD kernel and meshed by Amni-CAD; the solver sees the same model a user would.</p></div>
+<div class="eq">Bar:   L = 200 mm (7.874 in), b = h = 20 mm (0.787 in)
+Steel: E = 200,000 MPa (29.0 Msi), &nu; = 0.3, G = E / 2.6 = 76,923 MPa
+Load:  F = 700 N (157.4 lbf) down on the free end face
+I = b h&sup3; / 12 = 13,333.3 mm&#8308;
+
+Tip deflection (Euler-Bernoulli)   &delta; = F L&sup3; / (3 E I) = 0.7000 mm
+With shear (Timoshenko, &kappa; = 5/6) &delta; + F L / (&kappa; G A) = 0.7055 mm
+Root bending stress                &sigma; = M c / I = F L (h/2) / I = 105.0 MPa (15,229 psi)
+Bending stress at distance x       &sigma;(x) = F (L &minus; x)(h/2) / I</div>
+<div class="prose"><p>Section stress is the solver&rsquo;s von Mises value at the top-surface node closest to x = 20 mm (one beam depth from the wall, on the centerline), compared with &sigma;(x) at that node&rsquo;s exact position. On the outer fiber the stress is uniaxial, so von Mises equals the bending stress. The clamp-edge peak is the largest von Mises value the app reports away from the supports. A fully fixed face also locks the Poisson contraction at the wall, which makes the stress at the clamped edge singular, so that peak keeps rising as the mesh refines. The section one depth away is where beam theory applies.</p></div>
+<h3 style="margin:1.6rem 0 .4rem">ADAPTIVE BODY-FITTED HEX MESH</h3>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Mesh</th><th class="n">Elements</th><th class="n">Element size</th><th class="n">Tip deflection</th><th class="n">vs PL&sup3;/3EI</th><th class="n">vs Timoshenko</th><th class="n">Solve time</th></tr></thead><tbody><tr><td class="l">Level 1</td><td class="n">4,392</td><td class="n">2.70 mm</td><td class="n">0.6964 mm</td><td class="n">&minus;0.51 %</td><td class="n">&minus;1.28 %</td><td class="n">1.1 s</td></tr><tr><td class="l">Level 2</td><td class="n">8,960</td><td class="n">2.15 mm</td><td class="n">0.7001 mm</td><td class="n">+0.02 %</td><td class="n">&minus;0.75 %</td><td class="n">1.3 s</td></tr><tr><td class="l">Level 3</td><td class="n">16,440</td><td class="n">1.70 mm</td><td class="n">0.7005 mm</td><td class="n">+0.06 %</td><td class="n">&minus;0.71 %</td><td class="n">2.8 s</td></tr><tr><td class="l">Level 4</td><td class="n">37,184</td><td class="n">1.35 mm</td><td class="n">0.6991 mm</td><td class="n">&minus;0.13 %</td><td class="n">&minus;0.91 %</td><td class="n">5.1 s</td></tr><tr><td class="l">Level 5</td><td class="n">73,512</td><td class="n">1.07 mm</td><td class="n">0.7009 mm</td><td class="n">+0.13 %</td><td class="n">&minus;0.64 %</td><td class="n">11.4 s</td></tr></tbody></table></div>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Mesh</th><th class="n">Elements</th><th class="n">Node x</th><th class="n">Section stress</th><th class="n">M(x)c/I there</th><th class="n">Error</th><th class="n">Clamp-edge peak</th><th class="n">vs root Mc/I</th></tr></thead><tbody><tr><td class="l">Level 1</td><td class="n">4,392</td><td class="n">18.91 mm</td><td class="n">95.34 MPa</td><td class="n">95.07 MPa</td><td class="n">+0.28 %</td><td class="n">107.4 MPa</td><td class="n">+2.28 %</td></tr><tr><td class="l">Level 2</td><td class="n">8,960</td><td class="n">20.62 mm</td><td class="n">94.39 MPa</td><td class="n">94.17 MPa</td><td class="n">+0.23 %</td><td class="n">106.3 MPa</td><td class="n">+1.20 %</td></tr><tr><td class="l">Level 3</td><td class="n">16,440</td><td class="n">19.97 mm</td><td class="n">94.75 MPa</td><td class="n">94.52 MPa</td><td class="n">+0.25 %</td><td class="n">107.6 MPa</td><td class="n">+2.44 %</td></tr><tr><td class="l">Level 4</td><td class="n">37,184</td><td class="n">20.26 mm</td><td class="n">94.56 MPa</td><td class="n">94.36 MPa</td><td class="n">+0.21 %</td><td class="n">123.8 MPa</td><td class="n">+17.86 %</td></tr><tr><td class="l">Level 5</td><td class="n">73,512</td><td class="n">19.55 mm</td><td class="n">94.97 MPa</td><td class="n">94.74 MPa</td><td class="n">+0.25 %</td><td class="n">132.5 MPa</td><td class="n">+26.17 %</td></tr></tbody></table></div>
+<h3 style="margin:1.6rem 0 .4rem">VOXEL HEX MESH (THE AUTO CHOICE FOR THIS PART)</h3>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Mesh</th><th class="n">Elements</th><th class="n">Element size</th><th class="n">Tip deflection</th><th class="n">vs PL&sup3;/3EI</th><th class="n">vs Timoshenko</th><th class="n">Solve time</th></tr></thead><tbody><tr><td class="l">Level 1</td><td class="n">8,986</td><td class="n">2.25 mm</td><td class="n">0.7000 mm</td><td class="n">&minus;0.01 %</td><td class="n">&minus;0.78 %</td><td class="n">1.2 s</td></tr><tr><td class="l">Level 2</td><td class="n">16,270</td><td class="n">1.79 mm</td><td class="n">0.6957 mm</td><td class="n">&minus;0.62 %</td><td class="n">&minus;1.39 %</td><td class="n">2.2 s</td></tr><tr><td class="l">Level 3</td><td class="n">31,948</td><td class="n">1.42 mm</td><td class="n">0.6982 mm</td><td class="n">&minus;0.26 %</td><td class="n">&minus;1.03 %</td><td class="n">3.2 s</td></tr><tr><td class="l">Level 4</td><td class="n">64,078</td><td class="n">1.13 mm</td><td class="n">0.7002 mm</td><td class="n">+0.04 %</td><td class="n">&minus;0.74 %</td><td class="n">7.2 s</td></tr><tr><td class="l">Level 5</td><td class="n">119,024</td><td class="n">0.89 mm</td><td class="n">0.6980 mm</td><td class="n">&minus;0.29 %</td><td class="n">&minus;1.06 %</td><td class="n">14.0 s</td></tr></tbody></table></div>
+<p class="note">Voxel tip deflection is the mean vertical displacement at the CAD model&rsquo;s tip-face vertices; adaptive tip deflection is the mean over every surface node on the tip face. The voxel mesh does not put nodes on the exact part surface, so its section stress is not listed.</p>
+<figure class="cv"><svg viewBox="0 0 640 300" role="img" aria-label="Cantilever convergence"><title>Cantilever convergence</title><line x1="56" x2="624" y1="254.0" y2="254.0" class="g"/><text x="48" y="258.0" text-anchor="end">-6%</text><line x1="56" x2="624" y1="234.3" y2="234.3" class="g"/><text x="48" y="238.3" text-anchor="end">-5%</text><line x1="56" x2="624" y1="214.7" y2="214.7" class="g"/><text x="48" y="218.7" text-anchor="end">-4%</text><line x1="56" x2="624" y1="195.0" y2="195.0" class="g"/><text x="48" y="199.0" text-anchor="end">-3%</text><line x1="56" x2="624" y1="175.3" y2="175.3" class="g"/><text x="48" y="179.3" text-anchor="end">-2%</text><line x1="56" x2="624" y1="155.7" y2="155.7" class="g"/><text x="48" y="159.7" text-anchor="end">-1%</text><line x1="56" x2="624" y1="136.0" y2="136.0" class="z"/><text x="48" y="140.0" text-anchor="end">0%</text><line x1="56" x2="624" y1="116.3" y2="116.3" class="g"/><text x="48" y="120.3" text-anchor="end">+1%</text><line x1="56" x2="624" y1="96.7" y2="96.7" class="g"/><text x="48" y="100.7" text-anchor="end">+2%</text><line x1="56" x2="624" y1="77.0" y2="77.0" class="g"/><text x="48" y="81.0" text-anchor="end">+3%</text><line x1="56" x2="624" y1="57.3" y2="57.3" class="g"/><text x="48" y="61.3" text-anchor="end">+4%</text><line x1="56" x2="624" y1="37.7" y2="37.7" class="g"/><text x="48" y="41.7" text-anchor="end">+5%</text><line x1="56" x2="624" y1="18.0" y2="18.0" class="g"/><text x="48" y="22.0" text-anchor="end">+6%</text><line x1="56" x2="624" y1="234.3" y2="234.3" class="bd"/><line x1="56" x2="624" y1="37.7" y2="37.7" class="bd"/><line x1="214.6" x2="214.6" y1="18" y2="254" class="g"/><text x="214.6" y="272" text-anchor="middle">10k</text><line x1="381.2" x2="381.2" y1="18" y2="254" class="g"/><text x="381.2" y="272" text-anchor="middle">30k</text><line x1="563.8" x2="563.8" y1="18" y2="254" class="g"/><text x="563.8" y="272" text-anchor="middle">100k</text><text x="340" y="292" text-anchor="middle">Elements (log scale)</text><text x="14" y="136" text-anchor="middle" transform="rotate(-90 14 136)">Error vs theory</text><polyline fill="none" stroke="var(--accent)" stroke-width="2.2" points="89.8,146.1 198.0,135.6 290.0,134.7 413.7,138.6 517.1,133.4"/><circle cx="89.8" cy="146.1" r="4" fill="var(--accent)"><title>Tip deflection, adaptive hex: 4,392 elements, -0.51 %</title></circle><circle cx="198.0" cy="135.6" r="4" fill="var(--accent)"><title>Tip deflection, adaptive hex: 8,960 elements, +0.02 %</title></circle><circle cx="290.0" cy="134.7" r="4" fill="var(--accent)"><title>Tip deflection, adaptive hex: 16,440 elements, +0.06 %</title></circle><circle cx="413.7" cy="138.6" r="4" fill="var(--accent)"><title>Tip deflection, adaptive hex: 37,184 elements, -0.13 %</title></circle><circle cx="517.1" cy="133.4" r="4" fill="var(--accent)"><title>Tip deflection, adaptive hex: 73,512 elements, +0.13 %</title></circle><polyline fill="none" stroke="#E0791F" stroke-width="2.2" points="198.4,136.1 288.4,148.1 390.7,141.1 496.3,135.3 590.2,141.6"/><circle cx="198.4" cy="136.1" r="4" fill="#E0791F"><title>Tip deflection, voxel hex: 8,986 elements, -0.01 %</title></circle><circle cx="288.4" cy="148.1" r="4" fill="#E0791F"><title>Tip deflection, voxel hex: 16,270 elements, -0.62 %</title></circle><circle cx="390.7" cy="141.1" r="4" fill="#E0791F"><title>Tip deflection, voxel hex: 31,948 elements, -0.26 %</title></circle><circle cx="496.3" cy="135.3" r="4" fill="#E0791F"><title>Tip deflection, voxel hex: 64,078 elements, +0.04 %</title></circle><circle cx="590.2" cy="141.6" r="4" fill="#E0791F"><title>Tip deflection, voxel hex: 119,024 elements, -0.29 %</title></circle><polyline fill="none" stroke="#1B7F4B" stroke-width="2.2" points="89.8,130.6 198.0,131.5 290.0,131.1 413.7,131.9 517.1,131.1"/><circle cx="89.8" cy="130.6" r="4" fill="#1B7F4B"><title>Section stress at x &asymp; 20 mm: 4,392 elements, +0.28 %</title></circle><circle cx="198.0" cy="131.5" r="4" fill="#1B7F4B"><title>Section stress at x &asymp; 20 mm: 8,960 elements, +0.23 %</title></circle><circle cx="290.0" cy="131.1" r="4" fill="#1B7F4B"><title>Section stress at x &asymp; 20 mm: 16,440 elements, +0.25 %</title></circle><circle cx="413.7" cy="131.9" r="4" fill="#1B7F4B"><title>Section stress at x &asymp; 20 mm: 37,184 elements, +0.21 %</title></circle><circle cx="517.1" cy="131.1" r="4" fill="#1B7F4B"><title>Section stress at x &asymp; 20 mm: 73,512 elements, +0.25 %</title></circle></svg><figcaption><span><i style="background:var(--accent)"></i>Tip deflection, adaptive hex</span><span><i style="background:#E0791F"></i>Tip deflection, voxel hex</span><span><i style="background:#1B7F4B"></i>Section stress at x &asymp; 20 mm</span><span><i class="bdk"></i>&plusmn;5 % band</span></figcaption></figure>
+</section>
+<section>
+<h2>CASE 2: PLATE WITH A CENTRAL HOLE IN TENSION</h2>
+<div class="prose"><p>A thin steel strip with a round hole through the middle, fully fixed on one end and pulled by an even force on the other. The hole sits 140 mm (two widths) from each end, so the end conditions do not reach it.</p></div>
+<div class="eq">Plate: L = 280 mm (11.02 in), W = 70 mm (2.756 in), t = 3.5 mm (0.138 in)
+Hole:  d = 14 mm (0.551 in) at the center, d/W = 0.2
+Steel: E = 200,000 MPa (29.0 Msi), &nu; = 0.3
+Load:  F = 7,000 N (1,574 lbf) tension on the free end face
+
+Gross stress    &sigma;gross = F / (W t)       = 28.57 MPa
+Net stress      &sigma;net   = F / ((W &minus; d) t) = 35.71 MPa (5,180 psi)
+Peterson / Howland finite-width factor, net section:
+Kt = 2 + 0.284 (1 &minus; d/W) &minus; 0.600 (1 &minus; d/W)&sup2; + 1.32 (1 &minus; d/W)&sup3; = 2.519
+Peak stress     &sigma;max = Kt &sigma;net = 89.97 MPa (13,048 psi)</div>
+<div class="prose"><p>The peak is the largest von Mises value on the hole surface, which is also the peak the app reports away from the supports for every mesh here. At the hole edge the stress is uniaxial, so von Mises equals the hoop stress that K<sub>t</sub> predicts. The swept hex mesh is what Auto picks for this plate.</p></div>
+<p class="sw">Swipe sideways to see every column.</p><div class="tw"><table class="spec-table"><thead><tr><th class="l">Mesh</th><th class="n">Elements</th><th class="n">Element size</th><th class="n">Peak von Mises at the hole</th><th class="n">Handbook peak</th><th class="n">Error</th><th class="n">Peak / net stress</th><th class="n">Solve time</th></tr></thead><tbody><tr><td class="l">Level 1</td><td class="n">8,478</td><td class="n">2.36 mm</td><td class="n">89.50 MPa</td><td class="n">89.97 MPa</td><td class="n">&minus;0.52 %</td><td class="n">2.506</td><td class="n">2.1 s</td></tr><tr><td class="l">Level 2</td><td class="n">16,040</td><td class="n">1.69 mm</td><td class="n">86.87 MPa</td><td class="n">89.97 MPa</td><td class="n">&minus;3.44 %</td><td class="n">2.432</td><td class="n">3.3 s</td></tr><tr><td class="l">Level 3</td><td class="n">39,888</td><td class="n">1.34 mm</td><td class="n">90.01 MPa</td><td class="n">89.97 MPa</td><td class="n">+0.05 %</td><td class="n">2.520</td><td class="n">8.9 s</td></tr><tr><td class="l">Level 4</td><td class="n">58,338</td><td class="n">1.07 mm</td><td class="n">92.49 MPa</td><td class="n">89.97 MPa</td><td class="n">+2.81 %</td><td class="n">2.590</td><td class="n">13.3 s</td></tr><tr><td class="l">Level 5</td><td class="n">129,488</td><td class="n">0.85 mm</td><td class="n">88.98 MPa</td><td class="n">89.97 MPa</td><td class="n">&minus;1.09 %</td><td class="n">2.492</td><td class="n">31.4 s</td></tr></tbody></table></div>
+<figure class="cv"><svg viewBox="0 0 640 300" role="img" aria-label="Plate with a hole convergence"><title>Plate with a hole convergence</title><line x1="56" x2="624" y1="254.0" y2="254.0" class="g"/><text x="48" y="258.0" text-anchor="end">-6%</text><line x1="56" x2="624" y1="234.3" y2="234.3" class="g"/><text x="48" y="238.3" text-anchor="end">-5%</text><line x1="56" x2="624" y1="214.7" y2="214.7" class="g"/><text x="48" y="218.7" text-anchor="end">-4%</text><line x1="56" x2="624" y1="195.0" y2="195.0" class="g"/><text x="48" y="199.0" text-anchor="end">-3%</text><line x1="56" x2="624" y1="175.3" y2="175.3" class="g"/><text x="48" y="179.3" text-anchor="end">-2%</text><line x1="56" x2="624" y1="155.7" y2="155.7" class="g"/><text x="48" y="159.7" text-anchor="end">-1%</text><line x1="56" x2="624" y1="136.0" y2="136.0" class="z"/><text x="48" y="140.0" text-anchor="end">0%</text><line x1="56" x2="624" y1="116.3" y2="116.3" class="g"/><text x="48" y="120.3" text-anchor="end">+1%</text><line x1="56" x2="624" y1="96.7" y2="96.7" class="g"/><text x="48" y="100.7" text-anchor="end">+2%</text><line x1="56" x2="624" y1="77.0" y2="77.0" class="g"/><text x="48" y="81.0" text-anchor="end">+3%</text><line x1="56" x2="624" y1="57.3" y2="57.3" class="g"/><text x="48" y="61.3" text-anchor="end">+4%</text><line x1="56" x2="624" y1="37.7" y2="37.7" class="g"/><text x="48" y="41.7" text-anchor="end">+5%</text><line x1="56" x2="624" y1="18.0" y2="18.0" class="g"/><text x="48" y="22.0" text-anchor="end">+6%</text><line x1="56" x2="624" y1="234.3" y2="234.3" class="bd"/><line x1="56" x2="624" y1="37.7" y2="37.7" class="bd"/><line x1="125.5" x2="125.5" y1="18" y2="254" class="g"/><text x="125.5" y="272" text-anchor="middle">10k</text><line x1="322.2" x2="322.2" y1="18" y2="254" class="g"/><text x="322.2" y="272" text-anchor="middle">30k</text><line x1="537.8" x2="537.8" y1="18" y2="254" class="g"/><text x="537.8" y="272" text-anchor="middle">100k</text><text x="340" y="292" text-anchor="middle">Elements (log scale)</text><text x="14" y="136" text-anchor="middle" transform="rotate(-90 14 136)">Error vs handbook peak</text><polyline fill="none" stroke="var(--accent)" stroke-width="2.2" points="96.0,146.1 210.1,203.7 373.2,134.9 441.3,80.8 584.0,157.5"/><circle cx="96.0" cy="146.1" r="4" fill="var(--accent)"><title>Peak stress at the hole, swept hex: 8,478 elements, -0.52 %</title></circle><circle cx="210.1" cy="203.7" r="4" fill="var(--accent)"><title>Peak stress at the hole, swept hex: 16,040 elements, -3.44 %</title></circle><circle cx="373.2" cy="134.9" r="4" fill="var(--accent)"><title>Peak stress at the hole, swept hex: 39,888 elements, +0.05 %</title></circle><circle cx="441.3" cy="80.8" r="4" fill="var(--accent)"><title>Peak stress at the hole, swept hex: 58,338 elements, +2.81 %</title></circle><circle cx="584.0" cy="157.5" r="4" fill="var(--accent)"><title>Peak stress at the hole, swept hex: 129,488 elements, -1.09 %</title></circle></svg><figcaption><span><i style="background:var(--accent)"></i>Peak stress at the hole, swept hex</span><span><i class="bdk"></i>&plusmn;5 % band</span></figcaption></figure>
+<p class="note">The peak moves by a few percent between levels rather than settling in one direction, because each refinement places the nodes around the hole at different angles and the peak is read at a node. All five levels are within 3.44 % of the handbook value.</p>
+</section>
+<section>
+<h2>METHODS</h2>
+<ul class="pl">
+<li><b>Solver:</b> Amni-CAD linear static solver from the Amni-CAD source at commit c3b1d7c5, the same code that runs in the browser, run in Node.js 24 on an 8-vCPU Intel Xeon with the CPU backend. The equations are solved by conjugate gradients with a multigrid preconditioner; every solve converged to a relative residual below 1&times;10<sup>&minus;6</sup>.</li>
+<li><b>Element:</b> 8-node linear hexahedron with incompatible bending modes (QM6). The adaptive and swept meshers fit the part surface; the voxel mesher fills the part with equal cubes.</li>
+<li><b>Refinement:</b> each case runs at the app&rsquo;s mesh-resolution targets of 7,000, 14,000, 28,000, 56,000 and 112,000 elements. The table lists the element count each mesher actually produced.</li>
+<li><b>Stress:</b> von Mises, averaged at the nodes, as shown in the app&rsquo;s stress plot. Displacements are read at the surface nodes.</li>
+<li><b>Loads and supports:</b> a total force spread evenly over a face, and a fully fixed face. Reactions balance the applied force to within 10<sup>&minus;5</sup> N in every run.</li>
+<li><b>Solve time:</b> wall clock on the machine above. Adaptive and swept times include meshing; voxel times cover the solve.</li>
+<li><b>Data:</b> <a href="assets/cad/amni-cad-validation.csv" download>amni-cad-validation.csv</a> holds every run on this page with element count, node count, element size, solver value, textbook value, error, solve time and solver iterations.</li>
+</ul>
+</section>
+<section>
+<h2>TRY IT ON YOUR OWN PART</h2>
+<p class="prose">Amni-CAD is free, needs no account and runs in Chrome or Edge on a computer with a mouse. The <a href="amni-cad-verification.html">verification page</a> lists every automated solver test.</p>
+<div class="cta-row" style="gap:1rem;flex-wrap:wrap;margin-top:1.2rem">
+<a href="cad/" class="btn btn-primary">START FREE &rarr;</a>
+<a href="amni-cad.html" class="btn btn-outline">AMNI-CAD</a>
+<a href="amni-cad-verification.html" class="btn btn-outline">VERIFICATION</a>
+<a href="contact.html" class="btn btn-outline">CONTACT</a>
+</div>
+</section>
+<p class="page-updated">Last updated <time datetime="2026-11-22">November 22, 2026</time></p>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>
