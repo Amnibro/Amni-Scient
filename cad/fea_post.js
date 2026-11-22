@@ -23,17 +23,17 @@ export function principals(s){
 function finish(p,s){const vm=Math.sqrt(Math.max(0,0.5*((s[0]-s[1])**2+(s[1]-s[2])**2+(s[2]-s[0])**2)+3*(s[3]**2+s[4]**2+s[5]**2)));return{p1:p[0],p2:p[1],p3:p[2],vm,tresca:p[0]-p[2]};}
 export function strainOf(s,E,nu){const e=(a,b,c)=>(a-nu*(b+c))/E,g=t=>2*(1+nu)*t/E;return[e(s[0],s[1],s[2]),e(s[1],s[0],s[2]),e(s[2],s[0],s[1]),g(s[3]),g(s[4]),g(s[5])];}
 function readU(u,nd,ue){for(let a=0;a<8;a++){const n=nd[a];ue[3*a]=u[3*n];ue[3*a+1]=u[3*n+1];ue[3*a+2]=u[3*n+2];}}
-export function hexStress(X,Econn,u,Emod,nu){
+export function hexStress(X,Econn,u,Emod,nu,sc){
   const ne=Econn.length/8,nn=X.length/3,elem=new Float64Array(ne*6),node=new Float64Array(nn*6),una=new Float64Array(nn*6),cnt=new Uint16Array(nn),ue=new Float64Array(24),acc=new Float64Array(6);
   let p1Max=-Infinity,p3Min=Infinity,trMax=0,vmMax=0;
   for(let e=0;e<ne;e++){
     const nd=[0,1,2,3,4,5,6,7].map(a=>Econn[8*e+a]);readU(u,nd,ue);const sg=new Float64Array(48);acc.fill(0);
-    for(let g=0;g<8;g++){const fr=frame(X,nd,ND[g][0]*GP,ND[g][1]*GP,ND[g][2]*GP);if(!fr)continue;const ev=strainAt(fr,ue),sgv=Dmul(Emod,nu,ev);for(let c=0;c<6;c++){sg[6*g+c]=sgv[c];acc[c]+=sgv[c];}}
-    for(let c=0;c<6;c++)elem[6*e+c]=acc[c]/8;
-    for(let a=0;a<8;a++){const xi=ND[a][0]/GP,et=ND[a][1]/GP,ze=ND[a][2]/GP,s=[0,0,0,0,0,0];
-      for(let g=0;g<8;g++){const w=(1+ND[g][0]*xi)*(1+ND[g][1]*et)*(1+ND[g][2]*ze)/8;for(let c=0;c<6;c++)s[c]+=w*sg[6*g+c];}
+    if(!sc)for(let g=0;g<8;g++){const fr=frame(X,nd,ND[g][0]*GP,ND[g][1]*GP,ND[g][2]*GP);if(!fr)continue;const ev=strainAt(fr,ue),sgv=Dmul(Emod,nu,ev);for(let c=0;c<6;c++){sg[6*g+c]=sgv[c];acc[c]+=sgv[c];}}
+    for(let a=0;a<8;a++){const xi=ND[a][0]/GP,et=ND[a][1]/GP,ze=ND[a][2]/GP,s=sc?Array.from(sc.subarray(48*e+6*a,48*e+6*a+6)):[0,0,0,0,0,0];
+      if(!sc)for(let g=0;g<8;g++){const w=(1+ND[g][0]*xi)*(1+ND[g][1]*et)*(1+ND[g][2]*ze)/8;for(let c=0;c<6;c++)s[c]+=w*sg[6*g+c];}else for(let c=0;c<6;c++)acc[c]+=s[c];
       const n=nd[a],q=principals(s);p1Max=Math.max(p1Max,q.p1);p3Min=Math.min(p3Min,q.p3);trMax=Math.max(trMax,q.tresca);vmMax=Math.max(vmMax,q.vm);
       for(let c=0;c<6;c++){node[6*n+c]+=s[c];if(q.vm>=(una[6*n]||0))una[6*n+c]=s[c];}cnt[n]++;}
+    for(let c=0;c<6;c++)elem[6*e+c]=acc[c]/8;
   }
   for(let n=0;n<nn;n++)if(cnt[n])for(let c=0;c<6;c++)node[6*n+c]/=cnt[n];
   return{elem,node,una,cnt,p1Max,p3Min,trMax,vmMax};

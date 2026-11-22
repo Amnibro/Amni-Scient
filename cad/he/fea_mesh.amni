@@ -64,6 +64,7 @@ var CNT i32[>..];
 var VM f32[>..];
 var UM f32[>..];
 var EVM f32[>..];
+var SE f32[>..];
 var ST real[>..];
 extern fn fm_prog(it i32, rel real) = "fm_prog";
 struct Mt { n int, m int, rb int, cb int, nz int, rp int, ci int, va int, kind int }
@@ -921,6 +922,8 @@ export fn fm_post(lam real, mu real) {
 	VM.resize(NN, 0.0);
 	UM.clear();
 	UM.resize(NN, 0.0);
+	SE.clear();
+	SE.resize(48 * NE, 0.0);
 	zr(ST, 4);
 	for e in NE {
 		load_xe(e);
@@ -933,7 +936,10 @@ export fn fm_post(lam real, mu real) {
 		var m = 0.0;
 		for a in 8 {
 			let n = E[8 * e + a] as int;
-			for c in 6 { SIG[6 * n + c] += O48[6 * a + c]; }
+			for c in 6 {
+				SIG[6 * n + c] += O48[6 * a + c];
+				SE[48 * e + 6 * a + c] = O48[6 * a + c] as f32;
+			}
 			CNT[n] += 1;
 			m = jmax(m, vmo48(6 * a));
 		}
@@ -963,6 +969,7 @@ export fn fm_post(lam real, mu real) {
 	fm_view_f32(220, VM);
 	fm_view_f32(221, UM);
 	fm_view_f32(222, EVM);
+	fm_view_f32(237, SE);
 	fm_view_f64(223, ST);
 }
 fn ip_add(len int) int {
