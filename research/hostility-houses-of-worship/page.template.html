@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Hostility against houses of worship | AMNI-SCIENT Research</title>
+<meta name="description" content="Family Research Council church incidents for 2018–2024, FB-ISAO house-of-worship attacks by faith, and FBI religious-bias hate crimes, with state rates joined to population, poverty, and foreign-born share.">
+<meta property="og:title" content="Hostility against houses of worship — AMNI-SCIENT Research">
+<meta property="og:description" content="Open-source church incidents, attacks by faith, and FBI religious-bias counts. Area-level associations are labeled as associations.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amni-scient.com/research/hostility-houses-of-worship">
+<meta property="og:image" content="https://amni-scient.com/assets/explore/og-explore.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hostility against houses of worship">
+<meta name="twitter:description" content="415 church incidents in 2024, 1,384 since 2018, FBI religious-bias counts, and state-level associations.">
+<link rel="canonical" href="https://amni-scient.com/research/hostility-houses-of-worship">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Hostility against houses of worship","headline":"Open-source incidents against churches and houses of worship, 2018–2024","author":{"@type":"Person","name":"Anthony Reffelt"},"description":"Charts of the Family Research Council church-incident series, FB-ISAO house-of-worship attacks, and FBI religious-bias hate crimes, with ecological state associations.","url":"https://amni-scient.com/research/hostility-houses-of-worship","publisher":{"@type":"Organization","name":"AMNI-SCIENT"},"datePublished":"2026-11-22","dateModified":"2026-11-22"}</script>
+<link rel="stylesheet" href="../css/style.css?v=b268">
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+<style>
+.note-wrap{max-width:none;width:100%;margin:0;padding:.2rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1100px)/2)) 3.5rem}
+.note-wrap h2{text-align:left;margin:2.3rem 0 .55rem;font-size:1.28rem}
+.note-wrap h3{text-align:left;margin:1.2rem 0 .35rem;font-size:1rem}
+.note-wrap p,.note-wrap li{color:var(--text-soft);font-size:.95rem;line-height:1.65;max-width:44rem}
+.note-wrap ul{max-width:44rem;padding-left:1.15rem;margin:.3rem 0 1rem}
+.note-wrap strong{color:var(--text)}
+.hero .tagline{max-width:44rem}
+.hero .crumb{order:-2;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 .85rem;position:relative;z-index:1}
+.crumb a{color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:1rem 0 1.3rem;max-width:980px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.9rem .95rem .8rem}
+.stat .k{display:block;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.stat .v{display:block;margin-top:.28rem;font-size:1.7rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat .s{display:block;margin-top:.35rem;font-size:.78rem;color:var(--text-soft);line-height:1.35}
+.chart-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.7rem .7rem .45rem;margin:.7rem 0 .35rem;max-width:980px;position:relative}
+.chart{width:100%;height:auto;display:block}
+.chart .tick{fill:var(--text-soft);font-size:12px;font-family:var(--font-sans,Archivo,sans-serif)}
+.chart .grid{stroke:var(--border);stroke-dasharray:3 4}
+.chart .axis{stroke:var(--border2)}
+.chart .lab{fill:var(--text);font-size:12px;font-family:var(--font-sans,Archivo,sans-serif);font-weight:650}
+svg.chart text{font-variant-numeric:tabular-nums}
+.axis-name{display:flex;justify-content:space-between;gap:1rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);max-width:980px;padding:0 .15rem .15rem}
+.legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;max-width:980px;margin:.15rem 0 .7rem}
+.legend span{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--text)}
+.legend i{width:14px;height:8px;border-radius:2px;display:inline-block}
+.switch{display:flex;flex-wrap:wrap;gap:.45rem;margin:.2rem 0 .55rem}
+.switch button,.filters button,.filters select,.filters input{font:inherit;font-size:.78rem;color:var(--text);background:var(--panel);border:1px solid var(--border2);border-radius:3px;padding:.42rem .7rem}
+.switch button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.switch button:focus-visible,.filters button:focus-visible,.filters select:focus-visible,.filters input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0 .7rem;max-width:980px}
+.filters input[type="search"]{min-width:14rem}
+.fine{font-size:.8rem;color:var(--dim);max-width:44rem}
+table.cmp{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);font-size:.82rem;margin:.6rem 0 1rem;max-width:980px}
+table.cmp th,table.cmp td{padding:.42rem .55rem;text-align:right;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+table.cmp th{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);background:var(--panel2)}
+#state-table th{cursor:pointer}
+#incident-table th,#incident-table td{text-align:left}
+table.cmp tr:last-child td{border-bottom:0}
+table.cmp a{color:var(--accent)}
+.table-scroll{overflow-x:auto;max-width:980px}
+.gap-card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;padding:.85rem 1rem;margin:.8rem 0 1rem;max-width:980px}
+.gap-card p{margin:0}
+.src{margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.82rem;color:var(--dim);max-width:44rem}
+.src a{color:var(--accent)}
+.dl-row{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 1rem}
+.tip{position:fixed;z-index:40;pointer-events:none;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:.35rem .5rem;font-size:.75rem;line-height:1.35;max-width:16rem;box-shadow:var(--elev-2);display:none}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:980px}
+.pair .chart-card{max-width:none;margin:0}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.pair{grid-template-columns:1fr}}
+@media(max-width:520px){.stats{grid-template-columns:1fr}}
+a.btn,button.btn{text-decoration:none}
+a.btn::before,button.btn::before{display:none}
+a.btn.btn-outline,button.btn.btn-outline{background:var(--panel);border-color:var(--text);color:var(--text)}
+a.btn.btn-outline:hover,a.btn.btn-outline:focus-visible,button.btn.btn-outline:hover,button.btn.btn-outline:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.theme-toggle{background:var(--panel);border-color:var(--border2);color:var(--text)}
+button.theme-toggle:hover,button.theme-toggle:focus-visible{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.nav-dd-trigger,button.nav-dd-trigger:hover,button.nav-dd-trigger:focus-visible{color:var(--text)}
+footer a.kofi-link,footer a.kofi-link:hover{color:var(--text)!important}
+</style>
+</head>
+<body class="pp">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+__NAV__
+<section class="hero" style="min-height:auto;padding:7rem 2rem 1.4rem">
+<p class="crumb"><a href="/research.html">Research</a> · Houses of worship</p>
+<h1>HOSTILITY AGAINST HOUSES OF WORSHIP</h1>
+<p class="subtitle">OPEN-SOURCE INCIDENTS AND FBI BIAS COUNTS, 2018–2024</p>
+<p class="tagline">Three published series, kept separate: Family Research Council incidents against churches, FB-ISAO attacks on houses of worship of any faith, and FBI crimes reported as religious-bias hate crimes.</p>
+</section>
+<main class="note-wrap">
+<p>The 2024 church file has <strong>415 incidents</strong> at <strong>383 churches</strong> in <strong>43 states and the District of Columbia</strong>. The revised annual series sums to <strong>1,384</strong> incidents from January 2018 through December 2024, and to <strong>1,196</strong> from 2021 through 2024. Category marks in 2024 sum to 428 because <strong>13 incidents sit in two categories</strong>.</p>
+<div class="stats" id="stats"></div>
+<div class="dl-row">
+<a class="btn btn-outline" href="hostility-houses-of-worship/frc_2024_incidents.csv">2024 incident CSV</a>
+<a class="btn btn-outline" href="hostility-houses-of-worship/state_join.csv">State join CSV</a>
+<button type="button" class="btn btn-outline" id="download-view">Download filtered rows</button>
+</div>
+
+<h2 id="limits">What the sources record</h2>
+<div class="gap-card">
+<p>Perpetrator religion, political party, medication, and immigration status are absent from the Family Research Council incident file, from FBI Table 1, and from the FB-ISAO year-in-review summary. The state charts use the 2024 resident population, the 2023 poverty rate, and the 2023 foreign-born share. Those are area-level associations. They do not identify a cause. The foreign-born share is a stock of residents, not an immigration rate in the weeks before an incident.</p>
+</div>
+<div class="table-scroll">
+<table class="cmp">
+<thead><tr><th>Requested field</th><th>Published record</th></tr></thead>
+<tbody>
+<tr><td>Perpetrator religion</td><td>No field in these three publications</td></tr>
+<tr><td>Political party</td><td>FB-ISAO marks 36% of <em>identified</em> suspects as ideological or political. Party is not recorded. On Protestant churches, political ideology is under 8% of all attacks</td></tr>
+<tr><td>Medication status</td><td>Not recorded. Mental illness is 10% of identified FB-ISAO suspects</td></tr>
+<tr><td>Perpetrator immigration status</td><td>Not recorded</td></tr>
+<tr><td>Immigration rate before the incident</td><td>Not recorded. The scatter uses each state’s 2023 foreign-born percent</td></tr>
+<tr><td>Local poverty</td><td>Not on the incident row. The scatter uses the 2023 state poverty rate</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="annual">Churches, by year</h2>
+<p>Family Research Council revised the 2020–2023 totals upward in the August 2025 edition after more open-source incidents were identified. The bars use the revised series: 50, 83, 55, 98, 198, 485, 415. The count is incidents found in news and public reports. It is not a census of offenses, and underreporting is expected.</p>
+<div class="chart-card" id="chart-annual"></div>
+
+<h2 id="categories">2024 church incidents by type</h2>
+<p>Vandalism is 284 of 415 incidents. Arson, including attempts and fires of unknown cause, is 55. Gun-related incidents are 28, up from 12 in 2023. Bomb threats are 14. Other aggression is 47. Thirteen incidents carry two marks, so the five marks sum to 428.</p>
+<div class="chart-card" id="chart-cats"></div>
+<div class="chart-card" id="chart-months"></div>
+<p class="fine">Each bar is a month of 2024. The tallest bar is June.</p>
+<p class="fine">June is the high month in this file. September through November are the low months. About 22% of the June incidents were described as related to LGBT issues in the Family Research Council narrative. That share is not a column in the spreadsheet.</p>
+
+<h2 id="states">States</h2>
+<p>Larger states contribute more incidents. The correlation of the incident count with the log of the July 1, 2024 population is <strong id="r-logpop">__R_LOGPOP__</strong> across 50 states and the District of Columbia, with seven jurisdictions at zero. California has the most incidents (40) and a rate of 0.10 per 100,000 residents. West Virginia has the highest rate in this file, 15 incidents and 0.85 per 100,000. Hawaii, Idaho, Montana, Nevada, New Mexico, Wisconsin, and Wyoming have no row in the 2024 file.</p>
+<div class="switch" role="group" aria-label="State chart">
+<button type="button" id="mode-count" aria-pressed="true">Count</button>
+<button type="button" id="mode-rate" aria-pressed="false">Per 100,000</button>
+<button type="button" id="span-top" aria-pressed="true">Top 15</button>
+<button type="button" id="span-all" aria-pressed="false">All jurisdictions</button>
+</div>
+<div class="chart-card" id="chart-states"></div>
+<p class="fine">Choose a bar to filter the incident table.</p>
+<div class="table-scroll">
+<table class="cmp" id="state-table">
+<thead><tr>
+<th data-k="state">State</th>
+<th data-k="incidents">Incidents</th>
+<th data-k="incidents_per_100k">Per 100k</th>
+<th data-k="population_2024">Population</th>
+<th data-k="poverty_percent_2023">Poverty %</th>
+<th data-k="foreign_born_percent_2023">Foreign-born %</th>
+</tr></thead>
+<tbody></tbody>
+</table>
+</div>
+
+<h2 id="area">Population, poverty, and foreign-born share</h2>
+<p>Each point is a state or the District of Columbia. The vertical axis is 2024 church incidents per 100,000 residents. Zeros stay in the fit. The least-squares line is the association in this cross-section.</p>
+<div class="pair">
+<div>
+<h3>Poverty rate, 2023</h3>
+<div class="chart-card" id="chart-pov"></div>
+<p class="fine">Horizontal axis: 2023 poverty percent. Vertical axis: incidents per 100,000.</p>
+</div>
+<div>
+<h3>Foreign-born share, 2023</h3>
+<div class="chart-card" id="chart-fb"></div>
+<p class="fine">Horizontal axis: 2023 foreign-born percent. Vertical axis: incidents per 100,000.</p>
+</div>
+</div>
+<p>Per 100,000 residents, the correlation with the poverty rate is <strong id="r-pov-rate">__R_POV_RATE__</strong> and the correlation with the foreign-born share is <strong id="r-fb-rate">__R_FB_RATE__</strong>. The raw incident count correlates <strong id="r-pov-count">__R_POV_COUNT__</strong> with poverty and <strong id="r-fb-count">__R_FB_COUNT__</strong> with the foreign-born share. The count association with foreign-born share shrinks and changes sign once population is in the denominator, which is what a size confound looks like. Reporting effort, media coverage, and the open-source search also vary by state. None of these coefficients is a cause, and none of them is a perpetrator’s immigration status.</p>
+
+<h2 id="motives">Identified themes in the church file</h2>
+<p>Most 2024 incidents have an unknown perpetrator and no confirmed theme. The counts below are the themes Family Research Council published. They are not a partition of the 415, and a 2022 anti-LGBTQ+ count is not in the 2025 narrative.</p>
+<div class="chart-card" id="chart-motives"></div>
+<div class="legend" id="legend-motives"></div>
+
+<h2 id="faith">Houses of worship, any faith</h2>
+<p>FB-ISAO counted <strong>841</strong> open-source attacks on U.S. houses of worship in 2024, down from <strong>1,027</strong> in 2023. Bomb threats fell from 214 to 86 and account for most of that decline. In 2024, 49% of attacks were on Protestant churches (415 in the appendix), 21% on Jewish congregations, 16% on Catholic churches, and 7% on Muslim congregations. Hindu facilities rose from 2 to 14. FB-ISAO compares those shares with a 2022 Duke count of the house-of-worship stock: 85% Protestant, 6% Catholic, 3.2% Jewish, and 0.7% Muslim.</p>
+<div class="chart-card" id="chart-faith"></div>
+<div class="legend"><span><i style="background:var(--accent)"></i>Share of 2024 attacks</span><span><i style="background:#3E6B8A"></i>Share of houses of worship</span></div>
+<p class="fine">Attack shares are the published percentages. Jewish, Catholic, and Muslim counts are not printed as integers in the summary, so this chart stays in percent. Protestant’s 49% rounds the appendix count of 415 out of 841.</p>
+
+<h2 id="fbi">FBI religious-bias hate crimes</h2>
+<p>These are offenses that participating agencies submitted as motivated by religious bias. A victim can be a person, a religious organization, or the public. The series is not a count of attacks on buildings, and agency participation is voluntary. In 2024, 16,419 agencies covered 95.1% of the population and reported 2,783 single-bias religious incidents.</p>
+<div class="chart-card" id="chart-fbi"></div>
+<p class="fine">Bar length is the 2024 incident count for that bias motivation.</p>
+<p>Anti-Jewish and anti-Islamic incident counts, every year from the same table family:</p>
+<div class="chart-card" id="chart-fbi-line"></div>
+<div class="legend"><span><i style="background:var(--accent)"></i>Anti-Jewish</span><span><i style="background:#3E6B8A"></i>Anti-Islamic</span></div>
+<p>Catholic, Protestant, Sikh, Hindu, and Buddhist rows for the four Table 1 years read directly for this page. 2020–2022 for these five rows are not drawn, because those workbook rows were not re-copied here.</p>
+<div class="chart-card" id="chart-fbi-partial"></div>
+<div class="legend" id="legend-partial"></div>
+<p class="fine">The 2024 anti-Jewish incident count used here is 1,938, the Table 1 figure that sums with the other religious rows to 2,783. A secondary compilation prints 1,968 for that cell.</p>
+
+<h2 id="suspects">Who FB-ISAO could classify</h2>
+<p>In 62% of the 841 house-of-worship attacks, no perpetrator is identified. Among the identified 38%, FB-ISAO reports about 36% ideological or political, 10% mental illness, 9% homelessness, and 9% insiders (26 incidents). Categories can overlap. Mental illness in that summary is not a medication record.</p>
+<div class="pair">
+<div>
+<div class="chart-card" id="chart-known"></div>
+<p class="fine">Share of all 841 attacks.</p>
+</div>
+<div>
+<div class="chart-card" id="chart-suspects"></div>
+<p class="fine">Share of the identified subset. These slices can overlap.</p>
+</div>
+</div>
+
+<h2 id="incidents">2024 church incident file</h2>
+<p>Each row is one incident from the Family Research Council spreadsheet published with the 2025 report. Flags are the spreadsheet marks. A source link is the outlet FRC cited. The spreadsheet contains two identical rows for Community of Grace Presbyterian Church in Sandy, Utah. Both are kept, so the file still sums to 415.</p>
+<div class="filters">
+<label>Search <input type="search" id="q" placeholder="Church, city, or state"></label>
+<label>State
+<select id="state-filter"><option value="">All</option></select>
+</label>
+<label>Type
+<select id="cat-filter">
+<option value="">All</option>
+<option value="vandalism">Vandalism</option>
+<option value="arson">Arson</option>
+<option value="gun_related">Gun-related</option>
+<option value="bomb_threat">Bomb threat</option>
+<option value="other">Other</option>
+</select>
+</label>
+<span class="fine" id="row-count"></span>
+</div>
+<div class="table-scroll">
+<table class="cmp" id="incident-table">
+<thead><tr><th>Church</th><th>Place</th><th>Date</th><th>Types</th><th>Source</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+
+<h2 id="sources">Sources</h2>
+<div class="src">
+<p>Family Research Council, <a href="https://downloads.frc.org/EF/EF25H55.pdf">Hostility Against Churches in the United States: Analyzing Incidents from 2024</a> (August 2025). Incident rows from the spreadsheet linked in that report. Revised annual totals are the ones printed in the 2025 narrative.</p>
+<p>Faith-Based Information Sharing and Analysis Organization, <a href="https://faithbased-isao.org/wp-content/uploads/2025/09/FB-ISAO-2024-Year-in-Review.pdf">Attacks on Houses of Worship: 2024 Year in Review</a>. The Duke house-of-worship stock shares are cited there, and this page does not re-tabulate the Duke study.</p>
+<p>FBI Uniform Crime Reporting Program, Hate Crime Statistics, Table 1, for 2018, 2019, 2023, and 2024. Anti-Jewish and anti-Islamic counts for 2020–2022 are the FBI Table 1 figures as compiled by the <a href="https://jewishvirtuallibrary.org/statistics-on-religious-hate-crimes">Jewish Virtual Library</a>. The 2024 religious rows are the Table 1 cells, including anti-Jewish 1,938.</p>
+<p>U.S. Census Bureau, Population Division, NST-EST2024-POP, resident population on July 1, 2024. Small Area Income and Poverty Estimates, 2023 all-ages poverty percent, state rows, December 2024 release. American Community Survey 2023 1-year, percent foreign-born, ranking table R0501.</p>
+<p class="cite">Reffelt, A. (2026). <em>Hostility against houses of worship, 2018–2024.</em> AMNI-SCIENT Research. https://amni-scient.com/research/hostility-houses-of-worship</p>
+</div>
+<noscript><p>Charts on this page are drawn with JavaScript. The counts in the text are the published figures.</p></noscript>
+</main>
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="../about.html">ABOUT</a>
+<a href="../faq.html">FAQ</a>
+<a href="../privacy.html">PRIVACY</a>
+<a href="../terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<div class="tip" id="tip" role="tooltip"></div>
+<script type="module" src="/offline-app/start.js"></script>
+<script>
+const INC = __INC_JSON__;
+const STATES = __STATE_JSON__;
+const ANNUAL = [[2018,50],[2019,83],[2020,55],[2021,98],[2022,198],[2023,485],[2024,415]];
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const CATS = [["Vandalism","vandalism"],["Arson","arson"],["Gun-related","gun_related"],["Bomb threat","bomb_threat"],["Other","other"]];
+const MOTIVES = [
+  {name:"Pro-abortion", points:[[2022,59],[2023,11],[2024,2]]},
+  {name:"Anti-LGBTQ+", points:[[2023,42],[2024,33]]},
+  {name:"Satanic", points:[[2023,12],[2024,1]]}
+];
+const FAITH = [
+  {name:"Protestant", attack:49, stock:85},
+  {name:"Jewish", attack:21, stock:3.2},
+  {name:"Catholic", attack:16, stock:6},
+  {name:"Muslim", attack:7, stock:0.7}
+];
+const FBI2024 = [["Anti-Jewish",1938],["Anti-Islamic",228],["Anti-Sikh",142],["Anti-Other Religion",104],["Anti-Other Christian",71],["Anti-Catholic",55],["Anti-Multiple Religions",55],["Anti-Protestant",46],["Anti-Eastern Orthodox",46],["Anti-Buddhist",26],["Anti-Hindu",25],["Anti-Church of Jesus Christ",22],["Anti-Atheism / Agnosticism",13],["Anti-Jehovah's Witness",12]];
+const FBI_LINE = {
+  "Anti-Jewish": {2018:835,2019:953,2020:787,2021:817,2022:1122,2023:1832,2024:1938},
+  "Anti-Islamic": {2018:188,2019:176,2020:104,2021:152,2022:158,2023:236,2024:228}
+};
+const FBI_PART = [
+  {name:"Anti-Catholic", color:"var(--accent)", y:{2018:53,2019:64,2023:77,2024:55}},
+  {name:"Anti-Protestant", color:"#8C5A2B", y:{2018:34,2019:24,2023:27,2024:46}},
+  {name:"Anti-Sikh", color:"#3E6B8A", y:{2018:60,2019:49,2023:156,2024:142}},
+  {name:"Anti-Hindu", color:"#6B5B95", y:{2018:12,2019:7,2023:27,2024:25}},
+  {name:"Anti-Buddhist", color:"#3D7A6A", y:{2018:10,2019:5,2023:22,2024:26}}
+];
+const tip = document.getElementById("tip");
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function svgEl(n,a){const e=document.createElementNS("http://www.w3.org/2000/svg",n);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function showTip(ev,text){tip.textContent=text;tip.style.display="block";tip.style.left=Math.min(ev.clientX+14,innerWidth-220)+"px";tip.style.top=(ev.clientY+16)+"px";}
+function hideTip(){tip.style.display="none";}
+function pearson(xs,ys){const n=xs.length;const mx=xs.reduce((a,b)=>a+b,0)/n;const my=ys.reduce((a,b)=>a+b,0)/n;let num=0,dx=0,dy=0;for(let i=0;i<n;i++){const a=xs[i]-mx,b=ys[i]-my;num+=a*b;dx+=a*a;dy+=b*b;}return num/Math.sqrt(dx*dy);}
+function fmtR(v){const s=(v<0?"−":"")+Math.abs(v).toFixed(2);return s;}
+function hbars(host, rows, opt){
+  host.innerHTML="";
+  const labelW=opt.labelW||168, rh=26, W=740, H=rows.length*rh+10;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":opt.aria||"Bar chart"});
+  const max=Math.max(...rows.map(r=>r.value),0.0001);
+  rows.forEach((r,i)=>{
+    const y=6+i*rh;
+    const bw=Math.max(0,(r.value/max)*(W-labelW-78));
+    const g=svgEl("g",{tabindex:"0"});
+    g.appendChild(svgEl("text",{x:labelW-8,y:y+15,"text-anchor":"end",class:"tick"})).textContent=r.label;
+    g.appendChild(svgEl("rect",{x:labelW,y:y+4,width:String(r.value?Math.max(bw,2):0),height:"14",rx:"2",fill:r.fill||"var(--accent)"}));
+    g.appendChild(svgEl("text",{x:labelW+bw+8,y:y+15,class:"lab"})).textContent=opt.fmt?opt.fmt(r.value):String(r.value);
+    const text=r.tip||(r.label+": "+(opt.fmt?opt.fmt(r.value):r.value));
+    g.addEventListener("mouseenter",ev=>showTip(ev,text));
+    g.addEventListener("mousemove",ev=>showTip(ev,text));
+    g.addEventListener("mouseleave",hideTip);
+    g.addEventListener("focus",ev=>showTip(ev,text));
+    g.addEventListener("blur",hideTip);
+    if(r.onClick)g.addEventListener("click",()=>r.onClick(r));
+    g.style.cursor=r.onClick?"pointer":"default";
+    svg.appendChild(g);
+  });
+  host.appendChild(svg);
+}
+function vbars(host, rows, aria){
+  host.innerHTML="";
+  const W=740,H=280,L=36,B=28,T=12,R=10;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":aria});
+  const max=Math.max(...rows.map(r=>r.value));
+  const iw=W-L-R, ih=H-T-B, bw=iw/rows.length*0.62;
+  for(let g=0;g<=4;g++){
+    const val=max*g/4, y=T+ih-(val/max)*ih;
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=Math.round(val);
+  }
+  rows.forEach((r,i)=>{
+    const x=L+(i+0.5)*(iw/rows.length)-bw/2;
+    const h=(r.value/max)*ih;
+    const rect=svgEl("rect",{x,y:T+ih-h,width:bw,height:h,rx:"2",fill:"var(--accent)"});
+    svg.appendChild(rect);
+    svg.appendChild(svgEl("text",{x:x+bw/2,y:H-8,"text-anchor":"middle",class:"tick"})).textContent=r.label;
+    const text=r.label+": "+r.value;
+    rect.addEventListener("mouseenter",ev=>showTip(ev,text));
+    rect.addEventListener("mousemove",ev=>showTip(ev,text));
+    rect.addEventListener("mouseleave",hideTip);
+  });
+  host.appendChild(svg);
+}
+function lineChart(host){
+  host.innerHTML="";
+  const years=[2018,2019,2020,2021,2022,2023,2024];
+  const series=[{key:"Anti-Jewish",color:"var(--accent)"},{key:"Anti-Islamic",color:"#3E6B8A"}];
+  const W=740,H=280,L=46,B=28,T=16,R=12;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Anti-Jewish and anti-Islamic hate crime incidents, 2018 to 2024"});
+  const max=2000, iw=W-L-R, ih=H-T-B;
+  for(let g=0;g<=4;g++){
+    const val=max*g/4, y=T+ih-(val/max)*ih;
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=val;
+  }
+  years.forEach((y,i)=>{
+    const x=L+i*(iw/(years.length-1));
+    svg.appendChild(svgEl("text",{x,y:H-8,"text-anchor":"middle",class:"tick"})).textContent=y;
+  });
+  series.forEach(s=>{
+    const pts=years.map((y,i)=>{
+      const x=L+i*(iw/(years.length-1));
+      const v=FBI_LINE[s.key][y];
+      const py=T+ih-(v/max)*ih;
+      return [x,py,v,y];
+    });
+    svg.appendChild(svgEl("polyline",{points:pts.map(p=>p[0]+","+p[1]).join(" "),fill:"none",stroke:s.color,"stroke-width":"2.4"}));
+    pts.forEach(p=>{
+      const c=svgEl("circle",{cx:p[0],cy:p[1],r:"4",fill:s.color});
+      const text=s.key+" "+p[3]+": "+p[2].toLocaleString()+" incidents";
+      c.addEventListener("mouseenter",ev=>showTip(ev,text));
+      c.addEventListener("mousemove",ev=>showTip(ev,text));
+      c.addEventListener("mouseleave",hideTip);
+      svg.appendChild(c);
+    });
+  });
+  host.appendChild(svg);
+}
+function grouped(host, groups, years, aria){
+  host.innerHTML="";
+  const W=740,H=300,L=42,B=28,T=12,R=10;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":aria});
+  const max=Math.max(...groups.flatMap(g=>years.map(y=>g.y[y]||0)));
+  const iw=W-L-R, ih=H-T-B;
+  for(let g=0;g<=4;g++){
+    const val=max*g/4, y=T+ih-(val/max)*ih;
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=Math.round(val);
+  }
+  const gw=iw/years.length;
+  years.forEach((year,i)=>{
+    const x0=L+i*gw;
+    svg.appendChild(svgEl("text",{x:x0+gw/2,y:H-8,"text-anchor":"middle",class:"tick"})).textContent=year;
+    groups.forEach((g,j)=>{
+      if(!(year in g.y)) return;
+      const bw=gw/(groups.length+1);
+      const v=g.y[year];
+      const h=(v/max)*ih;
+      const x=x0+bw*(j+0.5);
+      const rect=svgEl("rect",{x,y:T+ih-h,width:bw*0.8,height:h,fill:g.color||"var(--accent)"});
+      const text=g.name+" "+year+": "+v;
+      rect.addEventListener("mouseenter",ev=>showTip(ev,text));
+      rect.addEventListener("mousemove",ev=>showTip(ev,text));
+      rect.addEventListener("mouseleave",hideTip);
+      svg.appendChild(rect);
+    });
+  });
+  host.appendChild(svg);
+}
+function scatter(host, xKey, xLabel){
+  host.innerHTML="";
+  const W=460,H=280,L=42,B=32,T=12,R=12;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Incidents per 100,000 against "+xLabel});
+  const xs=STATES.map(s=>s[xKey]), ys=STATES.map(s=>s.incidents_per_100k);
+  const xmin=0, xmax=Math.max(...xs)*1.08, ymin=0, ymax=Math.max(...ys)*1.12;
+  const X=v=>L+(v-xmin)/(xmax-xmin)*(W-L-R);
+  const Y=v=>T+(1-(v-ymin)/(ymax-ymin))*(H-T-B);
+  for(let g=0;g<=4;g++){
+    const yv=ymax*g/4, y=Y(yv);
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+3,"text-anchor":"end",class:"tick"})).textContent=yv.toFixed(2);
+  }
+  const n=xs.length, mx=xs.reduce((a,b)=>a+b,0)/n, my=ys.reduce((a,b)=>a+b,0)/n;
+  let num=0, den=0;
+  for(let i=0;i<n;i++){num+=(xs[i]-mx)*(ys[i]-my);den+=(xs[i]-mx)**2;}
+  const b=num/den, a=my-b*mx;
+  const defs=svgEl("defs",{});
+  const clip=svgEl("clipPath",{id:host.id+"-clip"});
+  clip.appendChild(svgEl("rect",{x:L,y:T,width:W-L-R,height:H-T-B}));
+  defs.appendChild(clip);
+  svg.appendChild(defs);
+  const line=svgEl("line",{x1:X(xmin),y1:Y(a+b*xmin),x2:X(xmax),y2:Y(a+b*xmax),stroke:"var(--accent)","stroke-width":"1.6","clip-path":"url(#"+host.id+"-clip)"});
+  svg.appendChild(line);
+  STATES.forEach(s=>{
+    const c=svgEl("circle",{cx:X(s[xKey]),cy:Y(s.incidents_per_100k),r:s.incidents?4.2:3,fill:"var(--accent)",opacity:s.incidents?"0.9":"0.45"});
+    const text=s.state+": "+s.incidents+" incidents, "+s.incidents_per_100k.toFixed(2)+" per 100k, "+xLabel+" "+s[xKey];
+    c.addEventListener("mouseenter",ev=>showTip(ev,text));
+    c.addEventListener("mousemove",ev=>showTip(ev,text));
+    c.addEventListener("mouseleave",hideTip);
+    svg.appendChild(c);
+  });
+  host.appendChild(svg);
+}
+function placeName(s){return s==="DC"?"District of Columbia":s;}
+let mode="count", span="top", stateSort={k:"incidents",dir:-1};
+function drawStates(){
+  const rows=STATES.slice().sort((a,b)=>(mode==="count"?b.incidents-a.incidents:b.incidents_per_100k-a.incidents_per_100k));
+  const shown=span==="top"?rows.slice(0,15):rows;
+  hbars(document.getElementById("chart-states"), shown.map(s=>({
+    label:s.state.replace("District of Columbia","D.C."),
+    value:mode==="count"?s.incidents:s.incidents_per_100k,
+    tip:s.state+": "+s.incidents+" incidents, "+s.incidents_per_100k.toFixed(2)+" per 100,000",
+    onClick:()=>{
+      document.getElementById("state-filter").value=s.state;
+      renderIncidents();
+      document.getElementById("incidents").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  })), {labelW:150, aria:"Church incidents by state", fmt:v=>mode==="count"?String(v):v.toFixed(2)});
+}
+function renderStateTable(){
+  const body=document.querySelector("#state-table tbody");
+  const rows=STATES.slice().sort((a,b)=>{
+    const av=a[stateSort.k], bv=b[stateSort.k];
+    if(typeof av==="string") return av.localeCompare(bv)*stateSort.dir;
+    return (av-bv)*stateSort.dir;
+  });
+  body.innerHTML=rows.map(s=>`<tr><td>${esc(s.state)}</td><td>${s.incidents}</td><td>${s.incidents_per_100k.toFixed(2)}</td><td>${s.population_2024.toLocaleString()}</td><td>${s.poverty_percent_2023.toFixed(1)}</td><td>${s.foreign_born_percent_2023.toFixed(1)}</td></tr>`).join("");
+}
+function incidentTypes(r){
+  return CATS.filter(c=>r[c[1]]==="1").map(c=>c[0]);
+}
+function filtered(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const st=document.getElementById("state-filter").value;
+  const cat=document.getElementById("cat-filter").value;
+  return INC.filter(r=>{
+    if(st && placeName(r.state)!==st) return false;
+    if(cat && r[cat]!=="1") return false;
+    if(q){
+      const blob=(r.church+" "+r.city+" "+r.state).toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+}
+function renderIncidents(){
+  const rows=filtered();
+  document.getElementById("row-count").textContent=rows.length+" of "+INC.length;
+  const body=document.querySelector("#incident-table tbody");
+  body.innerHTML=rows.map(r=>{
+    const src=/^https?:\/\//i.test(r.source)?`<a href="${esc(r.source)}" target="_blank" rel="noopener noreferrer">Source</a>`:"";
+    return `<tr><td>${esc(r.church)}</td><td>${esc(r.city)}, ${esc(r.state)}</td><td>${esc(r.month)} ${esc(r.day)}</td><td>${esc(incidentTypes(r).join(", "))}</td><td>${src}</td></tr>`;
+  }).join("");
+}
+function downloadView(){
+  const rows=filtered();
+  const header=["church","city","state","month","day","year","vandalism","arson","gun_related","bomb_threat","other","source"];
+  const lines=[header.join(",")];
+  rows.forEach(r=>{
+    lines.push(header.map(k=>{
+      const v=String(r[k]??"");
+      return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+    }).join(","));
+  });
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/csv"}));
+  a.download="frc_2024_incidents_filtered.csv";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function setPressed(id,on){document.getElementById(id).setAttribute("aria-pressed",on?"true":"false");}
+function init(){
+  const sum=a=>a.reduce((x,y)=>x+y,0);
+  document.getElementById("stats").innerHTML=[
+    ["1,384","Incidents, 2018–2024","Revised FRC annual totals"],
+    ["415","Incidents in 2024","383 churches"],
+    ["1,196","Incidents, 2021–2024","98 + 198 + 485 + 415"],
+    ["43 + D.C.","Jurisdictions in 2024","Seven states have no row"]
+  ].map(s=>`<div class="stat"><span class="k">${s[1]}</span><span class="v">${s[0]}</span><span class="s">${s[2]}</span></div>`).join("");
+  vbars(document.getElementById("chart-annual"), ANNUAL.map(p=>({label:String(p[0]),value:p[1]})), "Church incidents by year, 2018 to 2024");
+  const catCounts=CATS.map(([label,key])=>({label, value:INC.filter(r=>r[key]==="1").length}));
+  hbars(document.getElementById("chart-cats"), catCounts, {aria:"2024 incidents by type"});
+  const monthCounts=MONTHS.map(m=>({label:m.slice(0,3), value:INC.filter(r=>r.month===m).length, tip:m+": "+INC.filter(r=>r.month===m).length}));
+  vbars(document.getElementById("chart-months"), monthCounts, "Church incidents by month in 2024");
+  const colors=["var(--accent)","#3E6B8A","#8C5A2B"];
+  grouped(document.getElementById("chart-motives"), MOTIVES.map((m,i)=>({name:m.name,color:colors[i],y:Object.fromEntries(m.points)})), [2022,2023,2024], "Identified motive themes");
+  document.getElementById("legend-motives").innerHTML=MOTIVES.map((m,i)=>`<span><i style="background:${colors[i]}"></i>${esc(m.name)}</span>`).join("");
+  hbars(document.getElementById("chart-faith"), FAITH.flatMap(f=>[
+    {label:f.name+" attacks", value:f.attack, fill:"var(--accent)", tip:f.name+" share of attacks: "+f.attack+"%"},
+    {label:f.name+" stock", value:f.stock, fill:"#3E6B8A", tip:f.name+" share of houses of worship: "+f.stock+"%"}
+  ]), {labelW:150, aria:"Attack share and house-of-worship stock", fmt:v=>v+"%"});
+  hbars(document.getElementById("chart-fbi"), FBI2024.map(r=>({label:r[0],value:r[1],tip:r[0]+": "+r[1].toLocaleString()+" incidents"})), {labelW:210, aria:"FBI religious bias incidents, 2024", fmt:v=>v.toLocaleString()});
+  lineChart(document.getElementById("chart-fbi-line"));
+  grouped(document.getElementById("chart-fbi-partial"), FBI_PART, [2018,2019,2023,2024], "Selected religious bias series");
+  document.getElementById("legend-partial").innerHTML=FBI_PART.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
+  hbars(document.getElementById("chart-known"), [{label:"Unidentified",value:62},{label:"Identified",value:38}], {aria:"Share of attacks with an identified perpetrator", fmt:v=>v+"%"});
+  hbars(document.getElementById("chart-suspects"), [
+    {label:"Ideological or political",value:36},
+    {label:"Mental illness",value:10},
+    {label:"Homelessness",value:9},
+    {label:"Insider",value:9}
+  ], {labelW:180, aria:"Composition of identified suspects", fmt:v=>v+"%"});
+  scatter(document.getElementById("chart-pov"), "poverty_percent_2023", "poverty percent");
+  scatter(document.getElementById("chart-fb"), "foreign_born_percent_2023", "foreign-born percent");
+  const xsLog=STATES.map(s=>Math.log(s.population_2024));
+  const counts=STATES.map(s=>s.incidents);
+  const rates=STATES.map(s=>s.incidents_per_100k);
+  const pov=STATES.map(s=>s.poverty_percent_2023);
+  const fb=STATES.map(s=>s.foreign_born_percent_2023);
+  document.getElementById("r-logpop").textContent=fmtR(pearson(xsLog,counts));
+  document.getElementById("r-pov-rate").textContent=fmtR(pearson(pov,rates));
+  document.getElementById("r-fb-rate").textContent=fmtR(pearson(fb,rates));
+  document.getElementById("r-pov-count").textContent=fmtR(pearson(pov,counts));
+  document.getElementById("r-fb-count").textContent=fmtR(pearson(fb,counts));
+  const sel=document.getElementById("state-filter");
+  STATES.slice().sort((a,b)=>a.state.localeCompare(b.state)).forEach(s=>{
+    const o=document.createElement("option");o.value=s.state;o.textContent=s.state;sel.appendChild(o);
+  });
+  document.querySelectorAll("#state-table th").forEach(th=>{
+    th.addEventListener("click",()=>{
+      const k=th.dataset.k;
+      stateSort={k, dir:stateSort.k===k?-stateSort.dir: (k==="state"?1:-1)};
+      renderStateTable();
+    });
+  });
+  document.getElementById("q").addEventListener("input", renderIncidents);
+  sel.addEventListener("change", renderIncidents);
+  document.getElementById("cat-filter").addEventListener("change", renderIncidents);
+  document.getElementById("download-view").addEventListener("click", downloadView);
+  document.getElementById("mode-count").addEventListener("click",()=>{mode="count";setPressed("mode-count",true);setPressed("mode-rate",false);drawStates();});
+  document.getElementById("mode-rate").addEventListener("click",()=>{mode="rate";setPressed("mode-count",false);setPressed("mode-rate",true);drawStates();});
+  document.getElementById("span-top").addEventListener("click",()=>{span="top";setPressed("span-top",true);setPressed("span-all",false);drawStates();});
+  document.getElementById("span-all").addEventListener("click",()=>{span="all";setPressed("span-top",false);setPressed("span-all",true);drawStates();});
+  drawStates();
+  renderStateTable();
+  renderIncidents();
+  const catSum=catCounts.reduce((a,r)=>a+r.value,0);
+  if(INC.length!==415 || catSum!==428) console.error("Incident totals drifted", INC.length, catSum);
+}
+init();
+</script>
+</body>
+</html>
