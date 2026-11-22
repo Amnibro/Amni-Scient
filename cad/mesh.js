@@ -239,9 +239,9 @@ function features(S,crease=30){
 }
 function nearFeat(F,px,py,pz,o){gset(F.G);const i=MX.ms_gn(px,py,pz,0,0),R=rv();BD=R[6];if(i>=0){o[0]=R[0];o[1]=R[1];o[2]=R[2];o[4]=R[4];}return i<0?Infinity:Math.sqrt(BD);}
 function octreeMesh(inp,opt={}){
-  const S=thickOf(surfOf(inp)),res=opt.res||30000,V=inp.volume||S.volume||1,Nt=Math.max(1,opt.layers||2),hv=Math.cbrt(V/res);let sc=opt.size?opt.size/hv:1.2,st=1,M=null;
-  for(let pass=0;pass<6;pass++){M=octBuild(S,opt,hv*sc,Nt,st);M.info.passes=pass+1;const ne=M.E.length/8,r=ne/res;const hard=opt.hardMax||4*res;if(opt.size||(r<=1.6&&r>=0.5)||pass===5||(r>1.6&&ne<=hard&&sc>8))break;r>1?(ne>hard&&M.info.boundary>0.5*M.info.leaves?st*=Math.pow(ne/hard,0.5):sc*=Math.pow(r,0.4)):(st>1?st=Math.max(1,st*Math.pow(r,0.5)):sc*=Math.pow(r,0.4));}
-  const bad=m=>NBD.get(m);let nb=bad(M),pc=M.info.passes;const cap=Math.max(opt.hardMax||4*res,1.6*M.E.length/8);for(const[a,b]of opt.size?[]:[[1,0.85],[0.9,1],[1.12,1],[1,0.72]]){if(!nb)break;const M2=octBuild(S,opt,hv*sc*a,Nt,st*b),b2=bad(M2);pc++;if(b2<nb&&M2.E.length/8<=cap){M=M2;nb=b2;}}M.info.passes=pc;M.info.inverted=nb;
+  const S=thickOf(surfOf(inp)),res=opt.res||30000,V=inp.volume||S.volume||1,Nt=Math.max(1,opt.layers||2),hv=Math.cbrt(V/res);let sc=opt.size?opt.size/hv:1.2,st=1,sp=1,M=null;
+  for(let pass=0;pass<6;pass++){const M1=octBuild(S,opt,hv*sc,Nt,st);if(M&&!M1.E.length){st=(st+sp)/2;continue;}M=M1;sp=st;M.info.passes=pass+1;const ne=M.E.length/8,r=ne/res;const hard=opt.hardMax||4*res;if(opt.size||(r<=1.6&&r>=0.5)||pass===5||(r>1.6&&ne<=hard&&sc>8))break;r>1?(ne>hard&&M.info.boundary>0.5*M.info.leaves?st*=Math.pow(ne/hard,0.5):sc*=Math.pow(r,0.4)):(st>1?st=Math.max(1,st*Math.pow(r,0.5)):sc*=Math.pow(r,0.4));}
+  const bad=m=>NBD.get(m);let nb=bad(M),pc=M.info.passes;const cap=Math.max(opt.hardMax||4*res,1.6*M.E.length/8);for(const[a,b]of opt.size?[]:[[1,0.85],[0.9,1],[1.12,1],[1,0.72]]){if(!nb)break;const M2=octBuild(S,opt,hv*sc*a,Nt,st*b),b2=bad(M2);pc++;if(M2.E.length&&b2<nb&&M2.E.length/8<=cap){M=M2;nb=b2;}}M.info.passes=pc;M.info.inverted=nb;
   M.warn=M.through<Nt?'thinnest walls have '+M.through.toFixed(1)+' elements through the thickness (target '+Nt+'); raise the mesh resolution':null;msNew();return M;
 }
 function octBuild(S,opt,hc,Nt,stc){
