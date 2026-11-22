@@ -105,18 +105,20 @@ __NAV__
 
 <h2 id="limits">What the sources record</h2>
 <div class="gap-card">
-<p>Perpetrator religion, political party, medication, and immigration status are absent from the Family Research Council incident file, from the FBI religion tables, and from both FB-ISAO year-in-review summaries. The state charts stay on the 2024 church file, joined to the 2024 resident population, the 2023 poverty rate, and the 2023 foreign-born share. Those are area-level associations. They do not identify a cause. The foreign-born share is a stock of residents, not an immigration rate in the weeks before an incident.</p>
+<p>Perpetrator religion, political party, medication, and immigration status are absent from the Family Research Council incident file, from the FBI religion tables, and from both FB-ISAO year-in-review summaries. The state charts stay on the 2024 church file and use the same calendar year for every covariate: the July 1, 2024 population, the 2024 poverty rate, the 2024 foreign-born share, and the 2024 presidential popular-vote share. Those are properties of the place, not of the person. The foreign-born share is a stock of residents, not an immigration rate in the weeks before an incident. The vote share is the locality’s political affiliation. It is not the perpetrator’s party.</p>
 </div>
 <div class="table-scroll">
 <table class="cmp">
 <thead><tr><th>Requested field</th><th>Published record</th></tr></thead>
 <tbody>
 <tr><td>Perpetrator religion</td><td>No field in these three publications</td></tr>
-<tr><td>Political party</td><td>Not recorded. In the 2024 FB-ISAO review, 36% of <em>identified</em> suspects are ideological or political, and political ideology is under 8% of all Protestant attacks. The 2025 review does not reprint that split</td></tr>
+<tr><td>Political party of the person</td><td>Not recorded. In the 2024 FB-ISAO review, 36% of <em>identified</em> suspects are ideological or political, and political ideology is under 8% of all Protestant attacks. The 2025 review does not reprint that split</td></tr>
+<tr><td>Political affiliation of the locality</td><td>2024 presidential popular-vote share in the state where the church incident was recorded. Harris’s share of all votes, not a two-party recode</td></tr>
 <tr><td>Medication status</td><td>Not recorded. In the 2024 review, mental illness is 10% of identified suspects. The 2025 review does not reprint that split</td></tr>
 <tr><td>Perpetrator immigration status</td><td>Not recorded</td></tr>
-<tr><td>Immigration rate before the incident</td><td>Not recorded. The scatter uses each state’s 2023 foreign-born percent</td></tr>
-<tr><td>Local poverty</td><td>Not on the incident row. The scatter uses the 2023 state poverty rate</td></tr>
+<tr><td>Locality foreign-born share</td><td>2024 American Community Survey, percent foreign-born. A stock of residents, not arrivals before the incident</td></tr>
+<tr><td>Local poverty</td><td>2024 Small Area Income and Poverty Estimates, all-ages poverty percent, same year as the church file</td></tr>
+<tr><td>Perpetrator race</td><td>FBI offender-race tally for calendar 2025, by bias. Race the agency recorded, including Unknown. Not party and not religion</td></tr>
 </tbody>
 </table>
 </div>
@@ -160,28 +162,33 @@ __NAV__
 <th data-k="incidents">Incidents</th>
 <th data-k="incidents_per_100k">Per 100k</th>
 <th data-k="population_2024">Population</th>
-<th data-k="poverty_percent_2023">Poverty %</th>
-<th data-k="foreign_born_percent_2023">Foreign-born %</th>
+<th data-k="poverty_percent_2024">Poverty %, 2024</th>
+<th data-k="foreign_born_percent_2024">Foreign-born %, 2024</th>
+<th data-k="dem_share_2024">Harris %</th>
 </tr></thead>
 <tbody></tbody>
 </table>
 </div>
 
-<h2 id="area">Population, poverty, and foreign-born share</h2>
-<p>Each point is a state or the District of Columbia. The vertical axis is 2024 church incidents per 100,000 residents. Zeros stay in the fit. The least-squares line is the association in this cross-section.</p>
+<h2 id="area">Same-year locality: poverty, foreign-born share, and the 2024 vote</h2>
+<p>Each point is a state or the District of Columbia. The vertical axis is 2024 church incidents per 100,000 residents. The horizontal axes are 2024 measures, the same year as the incident file. Zeros stay in the fit. The least-squares line is the association in this cross-section.</p>
 <div class="pair">
 <div>
-<h3>Poverty rate, 2023</h3>
+<h3>Poverty rate, 2024</h3>
 <div class="chart-card" id="chart-pov"></div>
-<p class="fine">Horizontal axis: 2023 poverty percent. Vertical axis: incidents per 100,000.</p>
+<p class="fine">Horizontal axis: 2024 poverty percent. Vertical axis: incidents per 100,000.</p>
 </div>
 <div>
-<h3>Foreign-born share, 2023</h3>
+<h3>Foreign-born share, 2024</h3>
 <div class="chart-card" id="chart-fb"></div>
-<p class="fine">Horizontal axis: 2023 foreign-born percent. Vertical axis: incidents per 100,000.</p>
+<p class="fine">Horizontal axis: 2024 foreign-born percent. Vertical axis: incidents per 100,000.</p>
 </div>
 </div>
-<p>Per 100,000 residents, the correlation with the poverty rate is <strong id="r-pov-rate">__R_POV_RATE__</strong> and the correlation with the foreign-born share is <strong id="r-fb-rate">__R_FB_RATE__</strong>. The raw incident count correlates <strong id="r-pov-count">__R_POV_COUNT__</strong> with poverty and <strong id="r-fb-count">__R_FB_COUNT__</strong> with the foreign-born share. The count association with foreign-born share shrinks and changes sign once population is in the denominator, which is what a size confound looks like. Reporting effort, media coverage, and the open-source search also vary by state. None of these coefficients is a cause, and none of them is a perpetrator’s immigration status.</p>
+<h3>Democratic presidential share, 2024</h3>
+<div class="chart-card" id="chart-vote"></div>
+<p class="fine">Horizontal axis: Kamala Harris’s percent of the 2024 presidential popular vote. Vertical axis: church incidents per 100,000. This is the state’s vote, not the perpetrator’s party.</p>
+<p>Per 100,000 residents, the correlation with the 2024 poverty rate is <strong id="r-pov-rate">__R_POV_RATE__</strong>, with the 2024 foreign-born share <strong id="r-fb-rate">__R_FB_RATE__</strong>, and with Harris’s 2024 share of the vote <strong id="r-dem-rate">__R_DEM_RATE__</strong>. The raw incident count correlates <strong id="r-pov-count">__R_POV_COUNT__</strong> with poverty, <strong id="r-fb-count">__R_FB_COUNT__</strong> with the foreign-born share, and <strong id="r-dem-count">__R_DEM_COUNT__</strong> with the Harris share. The count association with foreign-born share changes sign once population is in the denominator. The vote association is near zero for the count and slightly negative for the rate. Poverty is the strongest of the three rate associations, and it is still weak. Reporting effort, media coverage, and the open-source search also vary by state. None of these coefficients is a cause, and none of them is an attribute of the person who committed the incident.</p>
+<p>Two further splits sit in the published national series and disappear when the series are added together. FBI religious-bias incidents are mostly anti-Jewish offenses, and a victim there can be a person, an organization, or the public. FB-ISAO’s building attacks are mostly Protestant churches, where the 2025 review describes theft as the leading motive, and describes hate or bias as the stronger factor at synagogues, mosques, and Hindu temples. In the 2025 FBI offender-race tally, the Black share of records is 32% for anti-Sikh bias and 11% for anti-Jewish bias. That is a difference in the race agencies recorded. It is not a party, a religion, or a cause.</p>
 
 <h2 id="motives">Identified themes in the church file</h2>
 <p>Most 2024 incidents have an unknown perpetrator and no confirmed theme. The counts below are the themes Family Research Council published. They are not a partition of the 415, and a 2022 anti-LGBTQ+ count is not in the 2025 narrative.</p>
@@ -193,17 +200,19 @@ __NAV__
 <div class="chart-card" id="chart-how"></div>
 <p class="fine">Each bar is FB-ISAO’s later count of attacks. The 2025 review prints 1,030 for 2023; the 2024 review printed 1,027.</p>
 <div class="chart-card" id="chart-faith"></div>
-<div class="legend"><span><i style="background:var(--accent)"></i>Share of 2025 attacks</span><span><i style="background:#3E6B8A"></i>Share of houses of worship</span></div>
-<p class="fine">Attack shares are the percentages printed in the 2025 review. They are not converted to integer counts.</p>
+<p class="fine">Each bar is the 2025 attack share divided by the congregation share. A value of 1 means the faith was attacked in proportion to its share of houses of worship. Protestant churches are 63% of attacks and 85% of the stock, so the ratio is 0.74. Muslim sites are 5% of attacks and 0.7% of the stock, so the ratio is 7.14. The ratio is a comparison of two published shares. It is not a rate per building, and it is not a cause.</p>
 
 <h2 id="fbi">FBI religious-bias hate crimes</h2>
 <p>These are incidents that participating agencies submitted as motivated by religious bias. A victim can be a person, a religious organization, or the public. The series is not a count of attacks on buildings, and agency participation is voluntary. The FBI released the 2025 file on August 14, 2026: <strong>10,881</strong> hate-crime incidents in all, from 16,791 agencies covering about 95% of the population. The religious rows below sum to <strong>2,408</strong>.</p>
 <div class="chart-card" id="chart-fbi"></div>
 <p class="fine">Bar length is the 2025 incident count for that bias motivation. The fourteen rows sum to 2,408.</p>
-<p>Anti-Jewish and anti-Islamic incident counts, 2018 through 2025, from one compilation of the FBI file so the 2024-to-2025 step uses the same vintage:</p>
+<p>Anti-Jewish, anti-Islamic, and a grouped Christian series, 2018 through 2025, from one compilation of the FBI file so the 2024-to-2025 step uses the same vintage. The Christian line is the sum of six rows: Catholic, Protestant, Eastern Orthodox, other Christian, Church of Jesus Christ, and Jehovah’s Witness. In 2025 those six rows are 73, 55, 59, 76, 14, and 10, and they sum to 287.</p>
 <div class="chart-card" id="chart-fbi-line"></div>
-<div class="legend"><span><i style="background:var(--accent)"></i>Anti-Jewish</span><span><i style="background:#3E6B8A"></i>Anti-Islamic</span></div>
-<p>Catholic, Protestant, Sikh, Hindu, and Buddhist rows from that same compilation, now including 2020–2022 and 2025:</p>
+<div class="legend"><span><i style="background:var(--accent)"></i>Anti-Jewish</span><span><i style="background:#3E6B8A"></i>Anti-Islamic</span><span><i style="background:#8C5A2B"></i>Christian, six rows</span></div>
+<p>The six Christian rows, kept separate:</p>
+<div class="chart-card" id="chart-fbi-christian"></div>
+<div class="legend" id="legend-christian"></div>
+<p>Sikh, Hindu, and Buddhist rows from that same compilation:</p>
 <div class="chart-card" id="chart-fbi-partial"></div>
 <div class="legend" id="legend-partial"></div>
 <p class="fine">The line and the grouped bars use the Arab American Institute table of FBI incident counts published with the August 2026 release. That table revises earlier years. The first annual Table 1 cell for anti-Jewish incidents in 2024 was 1,938, and it summed with the other religious rows to 2,783. The updated 2024 cell in this compilation is 2,095. Calendar 2026 is not on this line. It is in the year-to-date section, because the year is open and October’s coverage is 56%.</p>
@@ -223,6 +232,30 @@ __NAV__
 <p class="fine">Share of the identified subset. These slices can overlap.</p>
 </div>
 </div>
+
+<h2 id="other-counts">Other published counts</h2>
+<p>These series are not the FBI file and not the church spreadsheet. They use different rules, so they are not added to the charts above.</p>
+<p>The Anti-Defamation League’s 2025 audit counts antisemitic incidents of harassment, vandalism, and assault, including incidents that are not crimes and incidents that are not at a building. The 2025 total is <strong>6,274</strong>, down from <strong>9,354</strong> in 2024. Incidents at Jewish institutions are 1,129, down from 1,702. Bomb threats against Jewish institutions are 59 in 2025, 627 in 2024, and 996 in 2023. Assaults with a deadly weapon rose from 23 in 2024 to 32 in 2025. Israel- or Zionism-related incidents are 2,847 (45%) in 2025 and 5,452 (58%) in 2024. Earlier annual totals are not drawn, because this page does not carry a complete 2018–2023 ADL table.</p>
+<div class="pair">
+<div>
+<div class="chart-card" id="chart-adl"></div>
+<p class="fine">All ADL audit incidents. Not a house-of-worship census.</p>
+</div>
+<div>
+<div class="chart-card" id="chart-adl-bomb"></div>
+<p class="fine">Bomb threats against Jewish institutions.</p>
+</div>
+</div>
+<p>The Council on American-Islamic Relations received <strong>8,683</strong> civil-rights complaints in 2025 and <strong>8,658</strong> in 2024. Complaints are not attacks. The 2026 report types 198 of the 2025 complaints as hate crimes and counts <strong>33</strong> incidents at Islamic places of worship in 2025, with one multi-video California series counted as one incident. A 2024 mosque integer is not in that report, so it is not drawn. CAIR cites a different FBI vintage (anti-Islamic 191 in 2025 and 260 in 2024) from the Arab American Institute table used on the line above (205 and 261). Those two FBI vintages stay apart.</p>
+<div class="chart-card" id="chart-cair"></div>
+<p class="fine">CAIR civil-rights complaints. The 33 place-of-worship incidents are a different count and are stated in the paragraph, not added onto these bars.</p>
+<p>The Hindu American Foundation has described about 20 temple vandalism incidents since 2022, and a media guide lists at least 19 across the United States, Canada, and Australia. That is a partial chronicle, not a U.S. annual census, so it is not drawn beside the FBI’s 28 anti-Hindu incidents in 2025.</p>
+
+<h2 id="offenders">Who the FBI recorded, calendar 2025</h2>
+<p>The Crime Data Explorer publishes the race of known offenders for each bias. The categories are the race the agency recorded. Unknown is a category. The bias-specific tally includes multiple-bias incidents that include that motivation, so the number of offender records is not the single-bias incident count. For 2025 the records are 932 anti-Jewish, 231 across the six Christian rows, 215 anti-Islamic, 152 anti-Sikh, and 34 anti-Hindu. Party, religion, medication, and immigration status are still not in this file. The chart is the percent of each bias’s offender-race records.</p>
+<div class="chart-card" id="chart-offenders"></div>
+<div class="legend" id="legend-offenders"></div>
+<p class="fine">White, Black, and Unknown are the three largest published categories. Other is Asian, American Indian or Alaska Native, Native Hawaiian or Other Pacific Islander, and Multiple, added together. Anti-Sikh records are 32% Black. Anti-Jewish records are 11% Black and 37% Unknown.</p>
 
 <h2 id="incidents">2024 church incident file</h2>
 <p>Each row is one incident from the Family Research Council spreadsheet published with the 2025 report. Flags are the spreadsheet marks. A source link is the outlet FRC cited. The spreadsheet contains two identical rows for Community of Grace Presbyterian Church in Sandy, Utah. Both are kept, so the file still sums to 415.</p>
@@ -255,7 +288,9 @@ __NAV__
 <p>Family Research Council, <a href="https://downloads.frc.org/EF/EF25H55.pdf">Hostility Against Churches in the United States: Analyzing Incidents from 2024</a> (August 2025). Incident rows from the spreadsheet linked in that report. Revised annual totals are the ones printed in the 2025 narrative.</p>
 <p>Faith-Based Information Sharing and Analysis Organization, <a href="https://faithbased-isao.org/wp-content/uploads/2026/10/FB-ISAO-2025-Threat-Data-Year-in-Review.pdf">Attacks on Houses of Worship: 2025 Year in Review</a>, including the revised 2023 total of 1,030 and the 2024 total of 841. The 2024 suspect split is from the <a href="https://faithbased-isao.org/wp-content/uploads/2025/09/FB-ISAO-2024-Year-in-Review.pdf">2024 Year in Review</a>. The Duke house-of-worship stock shares are the ones FB-ISAO cites, and this page does not re-tabulate the Duke study.</p>
 <p>FBI Crime Data Explorer, national hate-crime file refreshed November 15, 2026, for the January–October 2026 counts and the matching 2025 window. November 2026 is omitted. Closed-year counts for 2018–2025 are the <a href="https://www.aaiusa.org/library/2025hatecrime">Arab American Institute</a> table of FBI incident counts published with the August 14, 2026 release. The 2025 religious rows in that table sum to 2,408. The first annual Table 1 anti-Jewish cell for 2024 remains 1,938.</p>
-<p>U.S. Census Bureau, Population Division, NST-EST2024-POP, resident population on July 1, 2024. Small Area Income and Poverty Estimates, 2023 all-ages poverty percent, state rows, December 2024 release. American Community Survey 2023 1-year, percent foreign-born, ranking table R0501.</p>
+<p>U.S. Census Bureau, Population Division, NST-EST2024-POP, resident population on July 1, 2024. Small Area Income and Poverty Estimates, 2024 all-ages poverty percent, state rows, January 2026 release. American Community Survey 2024 1-year, percent foreign-born, geographic comparison table GCT0501.</p>
+<p>2024 presidential popular-vote shares by state, Harris and Trump percent of all votes, from the <a href="https://www.pollcheck.com/results/president/2024/">PollCheck compilation of certified state returns</a>. The national popular vote on that compilation is Trump 49.8% and Harris 48.3%. State percents are used as published, including third-party votes in the denominator.</p>
+<p>Anti-Defamation League, <a href="https://www.adl.org/resources/report/audit-antisemitic-incidents-2025">Audit of Antisemitic Incidents 2025</a>. Council on American-Islamic Relations, <em>The Right to Be Different</em> (2026), for the 2025 complaint total and the 33 incidents at Islamic places of worship. Hindu American Foundation notes on temple vandalism since 2022 are cited as a partial chronicle and are not charted.</p>
 <p class="cite">Reffelt, A. (2026). <em>Hostility against houses of worship, through October 2026.</em> AMNI-SCIENT Research. https://amni-scient.com/research/hostility-houses-of-worship</p>
 </div>
 <noscript><p>Charts on this page are drawn with JavaScript. The counts in the text are the published figures.</p></noscript>
@@ -306,14 +341,27 @@ const FAITH = [
 const FBI2025 = [["Anti-Jewish",1528],["Anti-Islamic",205],["Anti-Sikh",177],["Anti-Other Religion",98],["Anti-Other Christian",76],["Anti-Catholic",73],["Anti-Eastern Orthodox",59],["Anti-Protestant",55],["Anti-Multiple Religions",43],["Anti-Buddhist",28],["Anti-Hindu",28],["Anti-Atheism / Agnosticism",14],["Anti-Church of Jesus Christ",14],["Anti-Jehovah's Witness",10]];
 const FBI_LINE = {
   "Anti-Jewish": {2018:880,2019:1172,2020:979,2021:918,2022:1276,2023:2000,2024:2095,2025:1528},
-  "Anti-Islamic": {2018:198,2019:217,2020:163,2021:164,2022:176,2023:283,2024:261,2025:205}
+  "Anti-Islamic": {2018:198,2019:217,2020:163,2021:164,2022:176,2023:283,2024:261,2025:205},
+  "Christian, six rows": {2018:184,2019:237,2020:252,2021:282,2022:423,2023:278,2024:261,2025:287}
 };
+const FBI_CHRISTIAN = [
+  {name:"Catholic", color:"var(--accent)", y:{2018:50,2019:74,2020:79,2021:102,2022:112,2023:82,2024:55,2025:73}},
+  {name:"Protestant", color:"#8C5A2B", y:{2018:35,2019:28,2020:41,2021:42,2022:66,2023:25,2024:43,2025:55}},
+  {name:"Eastern Orthodox", color:"#3E6B8A", y:{2018:31,2019:54,2020:53,2021:55,2022:85,2023:64,2024:44,2025:59}},
+  {name:"Other Christian", color:"#6B5B95", y:{2018:50,2019:61,2020:61,2021:60,2022:111,2023:76,2024:77,2025:76}},
+  {name:"Latter-day Saint", color:"#3D7A6A", y:{2018:8,2019:13,2020:11,2021:17,2022:34,2023:15,2024:30,2025:14}},
+  {name:"Jehovah's Witness", color:"#8A3E4B", y:{2018:10,2019:7,2020:7,2021:6,2022:15,2023:16,2024:12,2025:10}}
+];
 const FBI_PART = [
-  {name:"Anti-Catholic", color:"var(--accent)", y:{2018:50,2019:74,2020:79,2021:102,2022:112,2023:82,2024:55,2025:73}},
-  {name:"Anti-Protestant", color:"#8C5A2B", y:{2018:35,2019:28,2020:41,2021:42,2022:66,2023:25,2024:43,2025:55}},
   {name:"Anti-Sikh", color:"#3E6B8A", y:{2018:41,2019:57,2020:95,2021:191,2022:192,2023:163,2024:146,2025:177}},
   {name:"Anti-Hindu", color:"#6B5B95", y:{2018:13,2019:8,2020:16,2021:14,2022:25,2023:32,2024:26,2025:28}},
   {name:"Anti-Buddhist", color:"#3D7A6A", y:{2018:9,2019:7,2020:21,2021:32,2022:20,2023:24,2024:29,2025:28}}
+];
+const OFFENDERS = [
+  {name:"White", color:"#C4A46A", y:{Jewish:43.8, Christian:63.6, Muslim:56.3, Sikh:45.4, Hindu:64.7}},
+  {name:"Black", color:"#3E6B8A", y:{Jewish:10.9, Christian:15.6, Muslim:15.3, Sikh:32.2, Hindu:8.8}},
+  {name:"Unknown", color:"#8A8A8A", y:{Jewish:36.9, Christian:12.6, Muslim:15.8, Sikh:13.2, Hindu:20.6}},
+  {name:"Other", color:"#8C5A2B", y:{Jewish:8.4, Christian:8.2, Muslim:12.6, Sikh:9.2, Hindu:5.9}}
 ];
 const tip = document.getElementById("tip");
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -373,9 +421,9 @@ function vbars(host, rows, aria){
 function lineChart(host){
   host.innerHTML="";
   const years=[2018,2019,2020,2021,2022,2023,2024,2025];
-  const series=[{key:"Anti-Jewish",color:"var(--accent)"},{key:"Anti-Islamic",color:"#3E6B8A"}];
+  const series=[{key:"Anti-Jewish",color:"var(--accent)"},{key:"Anti-Islamic",color:"#3E6B8A"},{key:"Christian, six rows",color:"#8C5A2B"}];
   const W=740,H=280,L=46,B=28,T=16,R=28;
-  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Anti-Jewish and anti-Islamic hate crime incidents, 2018 to 2025"});
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Anti-Jewish, anti-Islamic, and grouped Christian hate crime incidents, 2018 to 2025"});
   const max=2200, iw=W-L-R, ih=H-T-B;
   for(let g=0;g<=4;g++){
     const val=max*g/4, y=T+ih-(val/max)*ih;
@@ -493,7 +541,7 @@ function renderStateTable(){
     if(typeof av==="string") return av.localeCompare(bv)*stateSort.dir;
     return (av-bv)*stateSort.dir;
   });
-  body.innerHTML=rows.map(s=>`<tr><td>${esc(s.state)}</td><td>${s.incidents}</td><td>${s.incidents_per_100k.toFixed(2)}</td><td>${s.population_2024.toLocaleString()}</td><td>${s.poverty_percent_2023.toFixed(1)}</td><td>${s.foreign_born_percent_2023.toFixed(1)}</td></tr>`).join("");
+  body.innerHTML=rows.map(s=>`<tr><td>${esc(s.state)}</td><td>${s.incidents}</td><td>${s.incidents_per_100k.toFixed(2)}</td><td>${s.population_2024.toLocaleString()}</td><td>${s.poverty_percent_2024.toFixed(1)}</td><td>${s.foreign_born_percent_2024.toFixed(1)}</td><td>${s.dem_share_2024.toFixed(1)}</td></tr>`).join("");
 }
 function incidentTypes(r){
   return CATS.filter(c=>r[c[1]]==="1").map(c=>c[0]);
@@ -561,14 +609,21 @@ function init(){
   grouped(document.getElementById("chart-motives"), MOTIVES.map((m,i)=>({name:m.name,color:colors[i],y:Object.fromEntries(m.points)})), [2022,2023,2024], "Identified motive themes");
   document.getElementById("legend-motives").innerHTML=MOTIVES.map((m,i)=>`<span><i style="background:${colors[i]}"></i>${esc(m.name)}</span>`).join("");
   vbars(document.getElementById("chart-how"), HOW.map(p=>({label:String(p[0]),value:p[1]})), "House-of-worship attacks, 2023 to 2025");
-  hbars(document.getElementById("chart-faith"), FAITH.flatMap(f=>[
-    {label:f.name+" attacks", value:f.attack, fill:"var(--accent)", tip:f.name+" share of 2025 attacks: "+f.attack+"%"},
-    {label:f.name+" stock", value:f.stock, fill:"#3E6B8A", tip:f.name+" share of houses of worship: "+f.stock+"%"}
-  ]), {labelW:160, aria:"2025 attack share and house-of-worship stock", fmt:v=>v+"%"});
+  hbars(document.getElementById("chart-faith"), FAITH.map(f=>({
+    label:f.name, value:Math.round((f.attack/f.stock)*100)/100,
+    tip:f.name+": "+f.attack+"% of attacks, "+f.stock+"% of congregations, ratio "+(f.attack/f.stock).toFixed(2)
+  })), {labelW:140, aria:"2025 attack share divided by congregation share", fmt:v=>v.toFixed(2)});
   hbars(document.getElementById("chart-fbi"), FBI2025.map(r=>({label:r[0],value:r[1],tip:r[0]+": "+r[1].toLocaleString()+" incidents in 2025"})), {labelW:210, aria:"FBI religious bias incidents, 2025", fmt:v=>v.toLocaleString()});
   lineChart(document.getElementById("chart-fbi-line"));
-  grouped(document.getElementById("chart-fbi-partial"), FBI_PART, [2018,2019,2020,2021,2022,2023,2024,2025], "Selected religious bias series through 2025");
+  grouped(document.getElementById("chart-fbi-christian"), FBI_CHRISTIAN, [2018,2019,2020,2021,2022,2023,2024,2025], "Six Christian bias rows, 2018 to 2025");
+  document.getElementById("legend-christian").innerHTML=FBI_CHRISTIAN.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
+  grouped(document.getElementById("chart-fbi-partial"), FBI_PART, [2018,2019,2020,2021,2022,2023,2024,2025], "Anti-Sikh, anti-Hindu, and anti-Buddhist incidents through 2025");
   document.getElementById("legend-partial").innerHTML=FBI_PART.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
+  vbars(document.getElementById("chart-adl"), [[2024,9354],[2025,6274]].map(p=>({label:String(p[0]),value:p[1]})), "ADL antisemitic incidents, 2024 and 2025");
+  vbars(document.getElementById("chart-adl-bomb"), [[2023,996],[2024,627],[2025,59]].map(p=>({label:String(p[0]),value:p[1]})), "Bomb threats against Jewish institutions");
+  vbars(document.getElementById("chart-cair"), [[2024,8658],[2025,8683]].map(p=>({label:String(p[0]),value:p[1]})), "CAIR civil-rights complaints");
+  grouped(document.getElementById("chart-offenders"), OFFENDERS, ["Jewish","Christian","Muslim","Sikh","Hindu"], "Percent of 2025 offender-race records by bias");
+  document.getElementById("legend-offenders").innerHTML=OFFENDERS.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
   hbars(document.getElementById("chart-motive-2025"), [
     {label:"Hate or bias",value:32},
     {label:"Criminal",value:36}
@@ -580,18 +635,22 @@ function init(){
     {label:"Homelessness",value:9},
     {label:"Insider",value:9}
   ], {labelW:180, aria:"Composition of identified suspects", fmt:v=>v+"%"});
-  scatter(document.getElementById("chart-pov"), "poverty_percent_2023", "poverty percent");
-  scatter(document.getElementById("chart-fb"), "foreign_born_percent_2023", "foreign-born percent");
+  scatter(document.getElementById("chart-pov"), "poverty_percent_2024", "2024 poverty percent");
+  scatter(document.getElementById("chart-fb"), "foreign_born_percent_2024", "2024 foreign-born percent");
+  scatter(document.getElementById("chart-vote"), "dem_share_2024", "2024 Harris percent of the vote");
   const xsLog=STATES.map(s=>Math.log(s.population_2024));
   const counts=STATES.map(s=>s.incidents);
   const rates=STATES.map(s=>s.incidents_per_100k);
-  const pov=STATES.map(s=>s.poverty_percent_2023);
-  const fb=STATES.map(s=>s.foreign_born_percent_2023);
+  const pov=STATES.map(s=>s.poverty_percent_2024);
+  const fb=STATES.map(s=>s.foreign_born_percent_2024);
+  const dem=STATES.map(s=>s.dem_share_2024);
   document.getElementById("r-logpop").textContent=fmtR(pearson(xsLog,counts));
   document.getElementById("r-pov-rate").textContent=fmtR(pearson(pov,rates));
   document.getElementById("r-fb-rate").textContent=fmtR(pearson(fb,rates));
   document.getElementById("r-pov-count").textContent=fmtR(pearson(pov,counts));
   document.getElementById("r-fb-count").textContent=fmtR(pearson(fb,counts));
+  document.getElementById("r-dem-rate").textContent=fmtR(pearson(dem,rates));
+  document.getElementById("r-dem-count").textContent=fmtR(pearson(dem,counts));
   const sel=document.getElementById("state-filter");
   STATES.slice().sort((a,b)=>a.state.localeCompare(b.state)).forEach(s=>{
     const o=document.createElement("option");o.value=s.state;o.textContent=s.state;sel.appendChild(o);
@@ -615,6 +674,9 @@ function init(){
   renderStateTable();
   renderIncidents();
   const catSum=catCounts.reduce((a,r)=>a+r.value,0);
+  const christian2025=FBI_CHRISTIAN.reduce((a,g)=>a+g.y[2025],0);
+  if(christian2025!==287 || FBI_LINE["Christian, six rows"][2025]!==287) console.error("Christian group", christian2025);
+  if(FBI2025.reduce((a,r)=>a+r[1],0)!==2408) console.error("2025 religion rows");
   if(INC.length!==415 || catSum!==428) console.error("Incident totals drifted", INC.length, catSum);
 }
 init();

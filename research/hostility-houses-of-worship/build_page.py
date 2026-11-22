@@ -42,8 +42,10 @@ def main():
         row["incidents"] = int(row["incidents"])
         row["population_2024"] = int(row["population_2024"])
         row["incidents_per_100k"] = float(row["incidents_per_100k"])
-        row["poverty_percent_2023"] = float(row["poverty_percent_2023"])
-        row["foreign_born_percent_2023"] = float(row["foreign_born_percent_2023"])
+        row["poverty_percent_2024"] = float(row["poverty_percent_2024"])
+        row["foreign_born_percent_2024"] = float(row["foreign_born_percent_2024"])
+        row["dem_share_2024"] = float(row["dem_share_2024"])
+        row["rep_share_2024"] = float(row["rep_share_2024"])
 
     if len(incidents) != 415:
         raise SystemExit(f"expected 415 incidents, got {len(incidents)}")
@@ -59,14 +61,17 @@ def main():
     counts = [s["incidents"] for s in states]
     rates = [s["incidents_per_100k"] for s in states]
     logs = [math.log(s["population_2024"]) for s in states]
-    pov = [s["poverty_percent_2023"] for s in states]
-    fb = [s["foreign_born_percent_2023"] for s in states]
+    pov = [s["poverty_percent_2024"] for s in states]
+    fb = [s["foreign_born_percent_2024"] for s in states]
+    dem = [s["dem_share_2024"] for s in states]
     tokens = {
         "__R_LOGPOP__": fmt_r(pearson(logs, counts)),
         "__R_POV_RATE__": fmt_r(pearson(pov, rates)),
         "__R_FB_RATE__": fmt_r(pearson(fb, rates)),
         "__R_POV_COUNT__": fmt_r(pearson(pov, counts)),
         "__R_FB_COUNT__": fmt_r(pearson(fb, counts)),
+        "__R_DEM_RATE__": fmt_r(pearson(dem, rates)),
+        "__R_DEM_COUNT__": fmt_r(pearson(dem, counts)),
     }
 
     sibling = (ROOT / "substance-use-vote-share.html").read_text(encoding="utf-8")
