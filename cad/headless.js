@@ -15,6 +15,7 @@ import {feaInput,feaSummary,flowSummary,toMM} from './sim_input.js';
 import {faceIds} from './facesel.js';
 import {runMeshFEA} from './fea_mesh.js';
 import {runCFD,FLUIDS} from './cfd.js';
+import {submit as ehdSubmit,status as ehdStatusOf} from './ehd.js';
 import {runInternal} from './flow_lbm.js';
 import {runStudy} from './nl_study.js';
 import * as ART from './art.js';
@@ -87,4 +88,6 @@ const b64=g=>typeof g==='string'?Uint8Array.from(Buffer.from(g,'base64')):g inst
 export const art=j=>serial(async()=>{const o=artOpts(j),r=await ART.asset(glbIn(j),o),n=String(o.name||'asset').replace(/[^\w.-]/g,'_'),files=[[n+'.glb',r.glb],...r.lods.map((l,i)=>[n+'.lod'+(i+1)+'.glb',l.glb]),['report.json',JSON.stringify(r.report,null,1)]];return j.report_only?r.report:{bytes:new Uint8Array(await zipStore(files).arrayBuffer()),type:'application/zip',name:n+'.zip',report:r.report};});
 export const artReview=j=>serial(async()=>{const r=await ART.review(glbIn(j),{size:Math.min(1024,+j.size||512),views:j.views});return{bytes:r.png,type:'image/png',name:String(j.name||'asset').replace(/[^\w.-]/g,'_')+'-review.png'};});
 export const human=j=>serial(async()=>{const units=j.units==='mm'?'mm':j.units==='m'?'m':'in',r=await HM.buildHuman({...j,units}),fmt=String(j.format||'').toLowerCase(),nm=String(j.name||'human').replace(/[^\w.-]/g,'_');return fmt==='glb'||j.glb===true?{bytes:await HM.toHumanGLB(r,{units,name:j.name||'human',color:j.color}),type:'model/gltf-binary',name:nm+'.glb',report:r.audit}:fmt==='obj'?{text:new TextDecoder().decode(await HM.toHumanOBJ(r)),type:'model/obj',name:nm+'.obj',report:r.audit}:fmt==='recipe'?{recipe:HM.toRecipe(r.spec),type:'application/json',name:nm+'.json',report:r.audit}:{units,stature_in:r.audit.stature_in,stature_m:r.audit.stature_m,audit:r.audit,landmarks:r.landmarks,regions:r.regions,garments:r.garments.map(g=>({kind:g.kind,name:g.name,quads:g.mesh.nf,verts:g.mesh.nv})),bones:HM.BONES.length,bone_names:HM.BONES,facs_channels:HM.FACS.length};});
-export const OPS={build:'build',export:'exportPart',stress:'stress',flow:'flow',nonlinear:'nonlinear',quote:'quote',dxf:'dxf',toolpath:'toolpath',mold:'mold',die:'die',tooling:'tooling',cutter:'cutter','cutter/toolpath':'cutterToolpath','cutter/profiles':'profiles','gcode/simulate':'simulateGcode',measure:'measure',assembly:'assembly',drawing:'drawing',optimize:'optimize',art:'art','art/review':'artReview',...(CHAR?{human:'human'}:{})};
+export const ehd=(j,prog)=>ehdSubmit(j,prog);
+export const ehdStatus=j=>ehdStatusOf(j);
+export const OPS={ehd:'ehd','ehd/status':'ehdStatus',build:'build',export:'exportPart',stress:'stress',flow:'flow',nonlinear:'nonlinear',quote:'quote',dxf:'dxf',toolpath:'toolpath',mold:'mold',die:'die',tooling:'tooling',cutter:'cutter','cutter/toolpath':'cutterToolpath','cutter/profiles':'profiles','gcode/simulate':'simulateGcode',measure:'measure',assembly:'assembly',drawing:'drawing',optimize:'optimize',art:'art','art/review':'artReview',...(CHAR?{human:'human'}:{})};
