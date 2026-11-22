@@ -21,7 +21,8 @@
 (function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
 </script>
 <style>
-.note-wrap{max-width:none;width:100%;margin:0;padding:.2rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1100px)/2)) 3.5rem}
+.note-wrap{max-width:none;width:100%;margin:0;padding:.4rem max(clamp(1.25rem,5vw,4rem),calc((100vw - 1240px)/2)) 3.5rem}
+body.pp .hero h1{max-width:18ch}
 .note-wrap h2{text-align:left;margin:2.3rem 0 .55rem;font-size:1.28rem}
 .note-wrap h3{text-align:left;margin:1.2rem 0 .35rem;font-size:1rem}
 .note-wrap p,.note-wrap li{color:var(--text-soft);font-size:.95rem;line-height:1.65;max-width:44rem}
@@ -159,7 +160,7 @@ footer a.kofi-link,footer a.kofi-link:hover{color:var(--text)!important}
 <span></span><span></span><span></span>
 </div>
 </nav>
-<section class="hero" style="min-height:auto;padding:7rem 2rem 1.4rem">
+<section class="hero">
 <p class="crumb"><a href="/research.html">Research</a> · Houses of worship</p>
 <h1>HOSTILITY AGAINST HOUSES OF WORSHIP</h1>
 <p class="subtitle">FBI COUNTS THROUGH OCTOBER 2026</p>
@@ -361,12 +362,12 @@ const MOTIVES = [
 const YTD_MONTHS = [["Jan",773],["Feb",722],["Mar",921],["Apr",912],["May",1031],["Jun",981],["Jul",938],["Aug",928],["Sep",795],["Oct",511]];
 const YTD_REL = [["Anti-Jewish",1071],["Anti-Islamic",215],["Anti-Sikh",189],["Anti-Other Religion",98],["Anti-Other Christian",73],["Anti-Multiple Religions",53],["Anti-Catholic",47],["Anti-Eastern Orthodox",41],["Anti-Protestant",35],["Anti-Church of Jesus Christ",35],["Anti-Buddhist",33],["Anti-Hindu",21],["Anti-Atheism / Agnosticism",13],["Anti-Jehovah's Witness",8]];
 const YTD_COMPARE = [
-  {name:"Anti-Islamic", color:"#3E6B8A", y:{"Jan–Oct 2025":171,"Jan–Oct 2026":215}},
-  {name:"Anti-Sikh", color:"#8C5A2B", y:{"Jan–Oct 2025":150,"Jan–Oct 2026":189}},
-  {name:"Anti-Hindu", color:"#6B5B95", y:{"Jan–Oct 2025":21,"Jan–Oct 2026":21}},
-  {name:"Anti-Catholic", color:"#3D7A6A", y:{"Jan–Oct 2025":63,"Jan–Oct 2026":47}},
-  {name:"Anti-Protestant", color:"#8A3E4B", y:{"Jan–Oct 2025":48,"Jan–Oct 2026":35}},
-  {name:"Anti-Buddhist", color:"#5C6B3E", y:{"Jan–Oct 2025":16,"Jan–Oct 2026":33}}
+  {name:"Anti-Islamic", color:"#3E6B8A", y:{"2025":171,"2026":215}},
+  {name:"Anti-Sikh", color:"#8C5A2B", y:{"2025":150,"2026":189}},
+  {name:"Anti-Hindu", color:"#6B5B95", y:{"2025":21,"2026":21}},
+  {name:"Anti-Catholic", color:"#3D7A6A", y:{"2025":63,"2026":47}},
+  {name:"Anti-Protestant", color:"#8A3E4B", y:{"2025":48,"2026":35}},
+  {name:"Anti-Buddhist", color:"#5C6B3E", y:{"2025":16,"2026":33}}
 ];
 const HOW = [[2023,1030],[2024,841],[2025,915]];
 const FAITH = [
@@ -446,7 +447,7 @@ function lineChart(host){
   host.innerHTML="";
   const years=[2018,2019,2020,2021,2022,2023,2024,2025];
   const series=[{key:"Anti-Jewish",color:"var(--accent)"},{key:"Anti-Islamic",color:"#3E6B8A"}];
-  const W=740,H=280,L=46,B=28,T=16,R=12;
+  const W=740,H=280,L=46,B=28,T=16,R=28;
   const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Anti-Jewish and anti-Islamic hate crime incidents, 2018 to 2025"});
   const max=2200, iw=W-L-R, ih=H-T-B;
   for(let g=0;g<=4;g++){
@@ -479,7 +480,7 @@ function lineChart(host){
 }
 function grouped(host, groups, years, aria){
   host.innerHTML="";
-  const W=740,H=300,L=42,B=28,T=12,R=10;
+  const W=740,H=300,L=42,B=36,T=12,R=10;
   const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":aria});
   const max=Math.max(...groups.flatMap(g=>years.map(y=>g.y[y]||0)));
   const iw=W-L-R, ih=H-T-B;
@@ -620,7 +621,7 @@ function init(){
   ].map(s=>`<div class="stat"><span class="k">${s[1]}</span><span class="v">${s[0]}</span><span class="s">${s[2]}</span></div>`).join("");
   vbars(document.getElementById("chart-ytd-months"), YTD_MONTHS.map(p=>({label:p[0],value:p[1]})), "Hate-crime incidents by month, January to October 2026");
   hbars(document.getElementById("chart-ytd-religion"), YTD_REL.map(r=>({label:r[0],value:r[1],tip:r[0]+": "+r[1].toLocaleString()+" incidents, January through October 2026"})), {labelW:210, aria:"Religious bias incidents, January through October 2026", fmt:v=>v.toLocaleString()});
-  grouped(document.getElementById("chart-ytd-compare"), YTD_COMPARE, ["Jan–Oct 2025","Jan–Oct 2026"], "January through October religious bias incidents, 2025 and 2026");
+  grouped(document.getElementById("chart-ytd-compare"), YTD_COMPARE, ["2025","2026"], "January through October religious bias incidents, 2025 and 2026");
   document.getElementById("legend-ytd").innerHTML=YTD_COMPARE.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
   if(YTD_REL.reduce((a,r)=>a+r[1],0)!==1932) console.error("2026 religion rows");
   if(YTD_MONTHS.reduce((a,r)=>a+r[1],0)!==8512) console.error("2026 month rows");
