@@ -36,7 +36,7 @@ body.pp .hero h1{max-width:18ch}
 .stat .k{display:block;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
 .stat .v{display:block;margin-top:.28rem;font-size:1.7rem;font-weight:800;letter-spacing:-.03em;line-height:1}
 .stat .s{display:block;margin-top:.35rem;font-size:.78rem;color:var(--text-soft);line-height:1.35}
-.chart-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.7rem .7rem .45rem;margin:.7rem 0 .35rem;max-width:980px;position:relative}
+.chart-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.7rem .7rem .45rem;margin:.7rem 0 .35rem;max-width:980px;position:relative;overflow:hidden;isolation:isolate;z-index:1}
 .chart{width:100%;height:auto;display:block}
 .chart .tick{fill:var(--text-soft);font-size:12px;font-family:var(--font-sans,Archivo,sans-serif)}
 .chart .grid{stroke:var(--border);stroke-dasharray:3 4}
@@ -70,8 +70,14 @@ table.cmp a{color:var(--accent)}
 .dl-row{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 1rem}
 .tip{position:fixed;z-index:40;pointer-events:none;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:.35rem .5rem;font-size:.75rem;line-height:1.35;max-width:16rem;box-shadow:var(--elev-2);display:none}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:980px}
-.pair .chart-card{max-width:none;margin:0}
-@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.pair{grid-template-columns:1fr}}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:980px}
+.pair .chart-card,.trio .chart-card{max-width:none;margin:0}
+.pair h3,.trio h3{margin:.15rem 0 .35rem}
+.chart .axis-label{fill:var(--dim);font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-sans,Archivo,sans-serif)}
+.chart .r-lab{fill:var(--text);font-size:11px;font-weight:650;font-family:var(--font-sans,Archivo,sans-serif)}
+.chart .out{fill:var(--text);font-size:10px;font-family:var(--font-sans,Archivo,sans-serif)}
+.heat-wrap{overflow-x:auto;max-width:980px}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.pair,.trio{grid-template-columns:1fr}}
 @media(max-width:520px){.stats{grid-template-columns:1fr}}
 a.btn,button.btn{text-decoration:none}
 a.btn::before,button.btn::before{display:none}
@@ -117,7 +123,9 @@ __NAV__
 <tr><td>Medication status</td><td>Not recorded. In the 2024 review, mental illness is 10% of identified suspects. The 2025 review does not reprint that split</td></tr>
 <tr><td>Perpetrator immigration status</td><td>Not recorded</td></tr>
 <tr><td>Locality foreign-born share</td><td>2024 American Community Survey, percent foreign-born. A stock of residents, not arrivals before the incident</td></tr>
-<tr><td>Local poverty</td><td>2024 Small Area Income and Poverty Estimates, all-ages poverty percent, same year as the church file</td></tr>
+<tr><td>Local poverty, income, education, age, race</td><td>2024 SAIPE poverty and median household income; 2024 ACS bachelor’s percent, median age, and Black-alone percent. Not attributes of the person</td></tr>
+<tr><td>Congregation stock</td><td>2020 U.S. Religion Census total congregations. Four years older than the incident file. Used as the exposure denominator for incidents per 1,000 congregations</td></tr>
+<tr><td>Local religiosity</td><td>Pew 2023–24 Religious Landscape Study, percent of adults classified as highly religious. A survey of residents, not of perpetrators</td></tr>
 <tr><td>Perpetrator race</td><td>FBI offender-race tally for calendar 2025, by bias. Race the agency recorded, including Unknown. Not party and not religion</td></tr>
 </tbody>
 </table>
@@ -146,10 +154,11 @@ __NAV__
 <p class="fine">June is the high month in this file. September through November are the low months. About 22% of the June incidents were described as related to LGBT issues in the Family Research Council narrative. That share is not a column in the spreadsheet.</p>
 
 <h2 id="states">States</h2>
-<p>Larger states contribute more incidents. The correlation of the incident count with the log of the July 1, 2024 population is <strong id="r-logpop">__R_LOGPOP__</strong> across 50 states and the District of Columbia, with seven jurisdictions at zero. California has the most incidents (40) and a rate of 0.10 per 100,000 residents. West Virginia has the highest rate in this file, 15 incidents and 0.85 per 100,000. Hawaii, Idaho, Montana, Nevada, New Mexico, Wisconsin, and Wyoming have no row in the 2024 file.</p>
+<p>Larger states contribute more incidents. Across 50 states and the District of Columbia, with seven jurisdictions at zero, California has the most incidents (40) and a rate of 0.10 per 100,000 residents. West Virginia has the highest rate in this file, 15 incidents and 0.85 per 100,000, and the highest rate per 1,000 congregations, 3.68. Hawaii, Idaho, Montana, Nevada, New Mexico, Wisconsin, and Wyoming have no row in the 2024 file. The size pattern is in the next section.</p>
 <div class="switch" role="group" aria-label="State chart">
 <button type="button" id="mode-count" aria-pressed="true">Count</button>
 <button type="button" id="mode-rate" aria-pressed="false">Per 100,000</button>
+<button type="button" id="mode-cong" aria-pressed="false">Per 1,000 congregations</button>
 <button type="button" id="span-top" aria-pressed="true">Top 15</button>
 <button type="button" id="span-all" aria-pressed="false">All jurisdictions</button>
 </div>
@@ -165,29 +174,68 @@ __NAV__
 <th data-k="poverty_percent_2024">Poverty %, 2024</th>
 <th data-k="foreign_born_percent_2024">Foreign-born %, 2024</th>
 <th data-k="dem_share_2024">Harris %</th>
+<th data-k="incidents_per_1000_cong">Per 1k cong.</th>
+<th data-k="highly_religious_percent">Highly religious %</th>
+<th data-k="bachelors_percent_2024">Bachelor's %</th>
 </tr></thead>
 <tbody></tbody>
 </table>
 </div>
 
-<h2 id="area">Same-year locality: poverty, foreign-born share, and the 2024 vote</h2>
-<p>Each point is a state or the District of Columbia. The vertical axis is 2024 church incidents per 100,000 residents. The horizontal axes are 2024 measures, the same year as the incident file. Zeros stay in the fit. The least-squares line is the association in this cross-section.</p>
-<div class="pair">
+<h2 id="area">What looks correlated, and what remains after size</h2>
+<p>Each point is a state or the District of Columbia. Zeros stay in the fit. Three published series look associated with the 2024 church-incident <em>count</em>: log population (<strong id="r-logpop">__R_LOGPOP__</strong>), log of 2020 congregations (<strong id="r-logcong">__R_LOGCONG__</strong>), and log of 2024 FBI religious-bias incidents in the same state (<strong id="r-fbirel">__R_FBIREL__</strong>). Foreign-born share also looks associated with the count (<strong id="r-fb-count">__R_FB_COUNT__</strong>). Hold log population constant and those partial correlations fall to <strong id="r-part-cong">__R_PART_CONG__</strong>, <strong id="r-part-fbirel">__R_PART_FBIREL__</strong>, and <strong id="r-part-fb">__R_PART_FB__</strong>. The count is the size of the state. Congregation stock and FBI reports move with size too.</p>
+<div class="trio">
 <div>
-<h3>Poverty rate, 2024</h3>
+<h3>Count vs population</h3>
+<div class="chart-card" id="chart-pop"></div>
+</div>
+<div>
+<h3>Count vs congregations</h3>
+<div class="chart-card" id="chart-cong"></div>
+</div>
+<div>
+<h3>Count vs FBI religious bias, 2024</h3>
+<div class="chart-card" id="chart-fbirel"></div>
+</div>
+</div>
+<p class="fine">Horizontal axes are logs. A straight line on a log scale is a size pattern. California, Pennsylvania, Florida, New York, and Texas sit at the high-count end because they are large.</p>
+<p>Per 100,000 residents, the strongest locality association is the 2024 poverty rate (<strong id="r-pov-rate">__R_POV_RATE__</strong>), and it is still weak. Harris’s 2024 vote share is <strong id="r-dem-rate">__R_DEM_RATE__</strong>. The highly religious share from Pew’s 2023–24 Religious Landscape Study is <strong id="r-relig-rate">__R_RELIG_RATE__</strong>. Per 1,000 congregations — the stock of buildings an open-source church search can find — the signs flip. Bachelor’s share is <strong id="r-bach-cong">__R_BACH_CONG__</strong>, Harris share is <strong id="r-dem-cong">__R_DEM_CONG__</strong>, and the highly religious share is <strong id="r-relig-cong">__R_RELIG_CONG__</strong>. More religious states do not show more incidents per congregation in this file. They show fewer. That can be exposure, reporting, or both. It is not a cause, and it is not the perpetrator’s party or religion.</p>
+<div class="heat-wrap"><div class="chart-card" id="chart-heat"></div></div>
+<p class="fine">Pearson r across 51 jurisdictions. Partial r holds log population constant. The last column uses incidents per 1,000 congregations from the 2020 U.S. Religion Census. Spearman ranks are in the table below the charts. West Virginia (15 incidents, 0.85 per 100,000, 3.68 per 1,000 congregations) is labeled on the rate charts; it is high on both denominators.</p>
+<div class="trio">
+<div>
+<h3>Rate vs poverty</h3>
 <div class="chart-card" id="chart-pov"></div>
-<p class="fine">Horizontal axis: 2024 poverty percent. Vertical axis: incidents per 100,000.</p>
 </div>
 <div>
-<h3>Foreign-born share, 2024</h3>
-<div class="chart-card" id="chart-fb"></div>
-<p class="fine">Horizontal axis: 2024 foreign-born percent. Vertical axis: incidents per 100,000.</p>
-</div>
-</div>
-<h3>Democratic presidential share, 2024</h3>
+<h3>Rate vs Harris share</h3>
 <div class="chart-card" id="chart-vote"></div>
-<p class="fine">Horizontal axis: Kamala Harris’s percent of the 2024 presidential popular vote. Vertical axis: church incidents per 100,000. This is the state’s vote, not the perpetrator’s party.</p>
-<p>Per 100,000 residents, the correlation with the 2024 poverty rate is <strong id="r-pov-rate">__R_POV_RATE__</strong>, with the 2024 foreign-born share <strong id="r-fb-rate">__R_FB_RATE__</strong>, and with Harris’s 2024 share of the vote <strong id="r-dem-rate">__R_DEM_RATE__</strong>. The raw incident count correlates <strong id="r-pov-count">__R_POV_COUNT__</strong> with poverty, <strong id="r-fb-count">__R_FB_COUNT__</strong> with the foreign-born share, and <strong id="r-dem-count">__R_DEM_COUNT__</strong> with the Harris share. The count association with foreign-born share changes sign once population is in the denominator. The vote association is near zero for the count and slightly negative for the rate. Poverty is the strongest of the three rate associations, and it is still weak. Reporting effort, media coverage, and the open-source search also vary by state. None of these coefficients is a cause, and none of them is an attribute of the person who committed the incident.</p>
+</div>
+<div>
+<h3>Rate vs highly religious share</h3>
+<div class="chart-card" id="chart-relig"></div>
+</div>
+</div>
+<div class="trio">
+<div>
+<h3>Per congregation vs bachelor’s %</h3>
+<div class="chart-card" id="chart-bach"></div>
+</div>
+<div>
+<h3>Per congregation vs Harris share</h3>
+<div class="chart-card" id="chart-demcong"></div>
+</div>
+<div>
+<h3>Per congregation vs highly religious %</h3>
+<div class="chart-card" id="chart-religcong"></div>
+</div>
+</div>
+<div class="table-scroll">
+<table class="cmp" id="corr-table">
+<thead><tr><th>Covariate</th><th>r, count</th><th>Partial r | log pop</th><th>r, per 100k</th><th>r, per 1k cong.</th><th>Spearman, count</th><th>Spearman, per 100k</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
 <p>Two further splits sit in the published national series and disappear when the series are added together. FBI religious-bias incidents are mostly anti-Jewish offenses, and a victim there can be a person, an organization, or the public. FB-ISAO’s building attacks are mostly Protestant churches, where the 2025 review describes theft as the leading motive, and describes hate or bias as the stronger factor at synagogues, mosques, and Hindu temples. In the 2025 FBI offender-race tally, the Black share of records is 32% for anti-Sikh bias and 11% for anti-Jewish bias. That is a difference in the race agencies recorded. It is not a party, a religion, or a cause.</p>
 
 <h2 id="motives">Identified themes in the church file</h2>
@@ -288,8 +336,9 @@ __NAV__
 <p>Family Research Council, <a href="https://downloads.frc.org/EF/EF25H55.pdf">Hostility Against Churches in the United States: Analyzing Incidents from 2024</a> (August 2025). Incident rows from the spreadsheet linked in that report. Revised annual totals are the ones printed in the 2025 narrative.</p>
 <p>Faith-Based Information Sharing and Analysis Organization, <a href="https://faithbased-isao.org/wp-content/uploads/2026/10/FB-ISAO-2025-Threat-Data-Year-in-Review.pdf">Attacks on Houses of Worship: 2025 Year in Review</a>, including the revised 2023 total of 1,030 and the 2024 total of 841. The 2024 suspect split is from the <a href="https://faithbased-isao.org/wp-content/uploads/2025/09/FB-ISAO-2024-Year-in-Review.pdf">2024 Year in Review</a>. The Duke house-of-worship stock shares are the ones FB-ISAO cites, and this page does not re-tabulate the Duke study.</p>
 <p>FBI Crime Data Explorer, national hate-crime file refreshed November 15, 2026, for the January–October 2026 counts and the matching 2025 window. November 2026 is omitted. Closed-year counts for 2018–2025 are the <a href="https://www.aaiusa.org/library/2025hatecrime">Arab American Institute</a> table of FBI incident counts published with the August 14, 2026 release. The 2025 religious rows in that table sum to 2,408. The first annual Table 1 anti-Jewish cell for 2024 remains 1,938.</p>
-<p>U.S. Census Bureau, Population Division, NST-EST2024-POP, resident population on July 1, 2024. Small Area Income and Poverty Estimates, 2024 all-ages poverty percent, state rows, January 2026 release. American Community Survey 2024 1-year, percent foreign-born, geographic comparison table GCT0501.</p>
+<p>U.S. Census Bureau, Population Division, NST-EST2024-POP, resident population on July 1, 2024. Small Area Income and Poverty Estimates, 2024 all-ages poverty percent and median household income, state rows, January 2026 release. American Community Survey 2024 1-year geographic comparison tables: GCT0501 foreign-born percent, GCT1502 bachelor’s percent, GCT0101 median age, GCT0202 Black-alone percent. Land area is the 2024 Census Gazetteer state file; density is 2024 population divided by land square miles.</p>
 <p>2024 presidential popular-vote shares by state, Harris and Trump percent of all votes, from the <a href="https://www.pollcheck.com/results/president/2024/">PollCheck compilation of certified state returns</a>. The national popular vote on that compilation is Trump 49.8% and Harris 48.3%. State percents are used as published, including third-party votes in the denominator.</p>
+<p>Association of Statisticians of American Religious Bodies, 2020 U.S. Religion Census (state file), downloaded from the Association of Religion Data Archives. Congregation counts and adherent rates are 2020. Pew Research Center, 2023–24 Religious Landscape Study, share of adults classified as highly religious (prayer, attendance, belief, importance). FBI Crime Data Explorer, 2024 hate-crime incidents by state and the religion bias column of that table (compilation retrieved November 3, 2026). The United States total on that table includes federal and tribal agencies and is not the sum of the state rows.</p>
 <p>Anti-Defamation League, <a href="https://www.adl.org/resources/report/audit-antisemitic-incidents-2025">Audit of Antisemitic Incidents 2025</a>. Council on American-Islamic Relations, <em>The Right to Be Different</em> (2026), for the 2025 complaint total and the 33 incidents at Islamic places of worship. Hindu American Foundation notes on temple vandalism since 2022 are cited as a partial chronicle and are not charted.</p>
 <p class="cite">Reffelt, A. (2026). <em>Hostility against houses of worship, through October 2026.</em> AMNI-SCIENT Research. https://amni-scient.com/research/hostility-houses-of-worship</p>
 </div>
@@ -368,8 +417,11 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;",
 function svgEl(n,a){const e=document.createElementNS("http://www.w3.org/2000/svg",n);for(const k in a)e.setAttribute(k,a[k]);return e;}
 function showTip(ev,text){tip.textContent=text;tip.style.display="block";tip.style.left=Math.min(ev.clientX+14,innerWidth-220)+"px";tip.style.top=(ev.clientY+16)+"px";}
 function hideTip(){tip.style.display="none";}
-function pearson(xs,ys){const n=xs.length;const mx=xs.reduce((a,b)=>a+b,0)/n;const my=ys.reduce((a,b)=>a+b,0)/n;let num=0,dx=0,dy=0;for(let i=0;i<n;i++){const a=xs[i]-mx,b=ys[i]-my;num+=a*b;dx+=a*a;dy+=b*b;}return num/Math.sqrt(dx*dy);}
-function fmtR(v){const s=(v<0?"−":"")+Math.abs(v).toFixed(2);return s;}
+function pearson(xs,ys){const n=xs.length;const mx=xs.reduce((a,b)=>a+b,0)/n;const my=ys.reduce((a,b)=>a+b,0)/n;let num=0,dx=0,dy=0;for(let i=0;i<n;i++){const a=xs[i]-mx,b=ys[i]-my;num+=a*b;dx+=a*a;dy+=b*b;}const den=Math.sqrt(dx*dy);return den?num/den:0;}
+function rank(xs){const order=xs.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]);const r=Array(xs.length);for(let i=0;i<order.length;){let j=i;while(j+1<order.length&&order[j+1][0]===order[i][0])j++;const avg=(i+j)/2+1;for(let k=i;k<=j;k++)r[order[k][1]]=avg;i=j+1;}return r;}
+function spearman(xs,ys){return pearson(rank(xs),rank(ys));}
+function partialR(xs,ys,zs){const rxy=pearson(xs,ys),rxz=pearson(xs,zs),ryz=pearson(ys,zs);const den=Math.sqrt((1-rxz*rxz)*(1-ryz*ryz));return den?(rxy-rxz*ryz)/den:0;}
+function fmtR(v){if(v==null||Number.isNaN(v)) return "—";const s=(v<0?"−":"")+Math.abs(v).toFixed(2);return s;}
 function hbars(host, rows, opt){
   host.innerHTML="";
   const labelW=opt.labelW||168, rh=26, W=740, H=rows.length*rh+10;
@@ -418,33 +470,37 @@ function vbars(host, rows, aria){
   });
   host.appendChild(svg);
 }
-function lineChart(host){
+function lineChart(host, spec){
   host.innerHTML="";
-  const years=[2018,2019,2020,2021,2022,2023,2024,2025];
-  const series=[{key:"Anti-Jewish",color:"var(--accent)"},{key:"Anti-Islamic",color:"#3E6B8A"},{key:"Christian, six rows",color:"#8C5A2B"}];
-  const W=740,H=280,L=46,B=28,T=16,R=28;
-  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Anti-Jewish, anti-Islamic, and grouped Christian hate crime incidents, 2018 to 2025"});
-  const max=2200, iw=W-L-R, ih=H-T-B;
+  const years=spec.years, series=spec.series, max=spec.max;
+  const W=740,H=280,L=46,B=36,T=16,R=28;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":spec.aria||"Line chart"});
+  const iw=W-L-R, ih=H-T-B;
   for(let g=0;g<=4;g++){
     const val=max*g/4, y=T+ih-(val/max)*ih;
     svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
-    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=val;
+    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=Math.round(val);
   }
   years.forEach((y,i)=>{
     const x=L+i*(iw/(years.length-1));
-    svg.appendChild(svgEl("text",{x,y:H-8,"text-anchor":"middle",class:"tick"})).textContent=y;
+    svg.appendChild(svgEl("text",{x,y:H-18,"text-anchor":"middle",class:"tick"})).textContent=y;
   });
+  if(spec.yLabel){
+    const lab=svgEl("text",{x:12,y:14,class:"axis-label"});
+    lab.textContent=spec.yLabel;
+    svg.appendChild(lab);
+  }
   series.forEach(s=>{
     const pts=years.map((y,i)=>{
       const x=L+i*(iw/(years.length-1));
-      const v=FBI_LINE[s.key][y];
+      const v=s.y[y];
       const py=T+ih-(v/max)*ih;
       return [x,py,v,y];
     });
-    svg.appendChild(svgEl("polyline",{points:pts.map(p=>p[0]+","+p[1]).join(" "),fill:"none",stroke:s.color,"stroke-width":"2.4"}));
+    svg.appendChild(svgEl("polyline",{points:pts.map(p=>p[0]+","+p[1]).join(" "),fill:"none",stroke:s.color,"stroke-width":s.width||"2.2"}));
     pts.forEach(p=>{
-      const c=svgEl("circle",{cx:p[0],cy:p[1],r:"4",fill:s.color});
-      const text=s.key+" "+p[3]+": "+p[2].toLocaleString()+" incidents";
+      const c=svgEl("circle",{cx:p[0],cy:p[1],r:s.r||"3.5",fill:s.color});
+      const text=s.name+" "+p[3]+": "+p[2].toLocaleString()+" incidents";
       c.addEventListener("mouseenter",ev=>showTip(ev,text));
       c.addEventListener("mousemove",ev=>showTip(ev,text));
       c.addEventListener("mouseleave",hideTip);
@@ -484,55 +540,169 @@ function grouped(host, groups, years, aria){
   });
   host.appendChild(svg);
 }
-function scatter(host, xKey, xLabel){
-  host.innerHTML="";
-  const W=460,H=280,L=42,B=32,T=12,R=12;
-  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Incidents per 100,000 against "+xLabel});
-  const xs=STATES.map(s=>s[xKey]), ys=STATES.map(s=>s.incidents_per_100k);
-  const xmin=0, xmax=Math.max(...xs)*1.08, ymin=0, ymax=Math.max(...ys)*1.12;
-  const X=v=>L+(v-xmin)/(xmax-xmin)*(W-L-R);
-  const Y=v=>T+(1-(v-ymin)/(ymax-ymin))*(H-T-B);
-  for(let g=0;g<=4;g++){
-    const yv=ymax*g/4, y=Y(yv);
-    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
-    svg.appendChild(svgEl("text",{x:L-6,y:y+3,"text-anchor":"end",class:"tick"})).textContent=yv.toFixed(2);
-  }
+function fmtTick(v){
+  const a=Math.abs(v);
+  const trim=x=>String(x).replace(/\.0$/,"");
+  if(a>=1e6){const m=v/1e6; return trim(m>=10?Math.round(m):Math.round(m*10)/10)+"M";}
+  if(a>=1000){const k=v/1000; return trim(k>=100?Math.round(k):Math.round(k*10)/10)+"k";}
+  if(a>=10) return String(Math.round(v*10)/10);
+  return String(Math.round(v*100)/100);
+}
+function residual(xs,ys){
   const n=xs.length, mx=xs.reduce((a,b)=>a+b,0)/n, my=ys.reduce((a,b)=>a+b,0)/n;
   let num=0, den=0;
   for(let i=0;i<n;i++){num+=(xs[i]-mx)*(ys[i]-my);den+=(xs[i]-mx)**2;}
   const b=num/den, a=my-b*mx;
+  return {a,b, r:pearson(xs,ys), res:ys.map((y,i)=>y-(a+b*xs[i]))};
+}
+function scatter(host, opt){
+  host.innerHTML="";
+  const W=opt.wide?740:460, H=280, L=48, B=44, T=22, R=36;
+  const xRaw=STATES.map(s=>s[opt.x]), yRaw=STATES.map(s=>s[opt.y]);
+  const xs=opt.logX?xRaw.map(v=>Math.log(v)):xRaw;
+  const ys=yRaw;
+  const pad=(min,max,p)=>[min-(max-min)*p, max+(max-min)*p||max*0.08];
+  let [xmin,xmax]=pad(Math.min(...xs), Math.max(...xs), 0.08);
+  let ymin=Math.min(...ys), ymax=Math.max(...ys);
+  if(ymin>=0){ymin=0; ymax=ymax*1.12||1;}
+  else {const p=pad(ymin,ymax,0.12); ymin=p[0]; ymax=p[1];}
+  if(ymax===ymin) ymax=ymin+1;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":opt.aria||(opt.yLabel+" against "+opt.xLabel)});
+  const X=v=>L+(v-xmin)/(xmax-xmin)*(W-L-R);
+  const Y=v=>T+(1-(v-ymin)/(ymax-ymin))*(H-T-B);
+  const yInt=ys.every(v=>Math.abs(v-Math.round(v))<1e-9);
+  for(let g=0;g<=4;g++){
+    const yv=ymin+(ymax-ymin)*g/4, y=Y(yv);
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+3,"text-anchor":"end",class:"tick"})).textContent=yInt?String(Math.round(yv)):fmtTick(yv);
+  }
+  const xTicks=[];
+  if(opt.logX){
+    const rawMin=Math.min(...xRaw), rawMax=Math.max(...xRaw);
+    const p0=Math.floor(Math.log10(rawMin)), p1=Math.ceil(Math.log10(rawMax));
+    for(let p=p0;p<=p1;p++){
+      for(const m of [1,5]){
+        const v=m*Math.pow(10,p);
+        if(v>=rawMin && v<=rawMax*1.05) xTicks.push(v);
+      }
+    }
+  } else {
+    for(let g=0;g<=4;g++) xTicks.push(xmin+(xmax-xmin)*g/4);
+  }
+  xTicks.forEach(xv=>{
+    const x=X(opt.logX?Math.log(xv):xv);
+    svg.appendChild(svgEl("text",{x,y:H-B+14,"text-anchor":"middle",class:"tick"})).textContent=fmtTick(xv);
+  });
+  const fit=residual(xs,ys);
   const defs=svgEl("defs",{});
   const clip=svgEl("clipPath",{id:host.id+"-clip"});
   clip.appendChild(svgEl("rect",{x:L,y:T,width:W-L-R,height:H-T-B}));
   defs.appendChild(clip);
   svg.appendChild(defs);
-  const line=svgEl("line",{x1:X(xmin),y1:Y(a+b*xmin),x2:X(xmax),y2:Y(a+b*xmax),stroke:"var(--accent)","stroke-width":"1.6","clip-path":"url(#"+host.id+"-clip)"});
-  svg.appendChild(line);
-  STATES.forEach(s=>{
-    const c=svgEl("circle",{cx:X(s[xKey]),cy:Y(s.incidents_per_100k),r:s.incidents?4.2:3,fill:"var(--accent)",opacity:s.incidents?"0.9":"0.45"});
-    const text=s.state+": "+s.incidents+" incidents, "+s.incidents_per_100k.toFixed(2)+" per 100k, "+xLabel+" "+s[xKey];
+  svg.appendChild(svgEl("line",{x1:X(xmin),y1:Y(fit.a+fit.b*xmin),x2:X(xmax),y2:Y(fit.a+fit.b*xmax),stroke:"var(--accent)","stroke-width":"1.6","clip-path":"url(#"+host.id+"-clip)"}));
+  const order=STATES.map((s,i)=>({s,i,abs:Math.abs(fit.res[i]), y:ys[i]}));
+  const labeled=new Set();
+  order.slice().sort((a,b)=>b.y-a.y).slice(0,1).forEach(o=>labeled.add(o.s.abbr));
+  order.slice().sort((a,b)=>b.abs-a.abs).slice(0,2).forEach(o=>labeled.add(o.s.abbr));
+  STATES.forEach((s,i)=>{
+    const c=svgEl("circle",{cx:X(xs[i]),cy:Y(ys[i]),r:s.incidents?4:3,fill:"var(--accent)",opacity:s.incidents?"0.9":"0.4"});
+    const xv=opt.logX?s[opt.x].toLocaleString():fmtTick(s[opt.x]);
+    const text=s.state+": "+s.incidents+" incidents · "+opt.xLabel+" "+xv+" · "+opt.yLabel+" "+fmtTick(s[opt.y]);
     c.addEventListener("mouseenter",ev=>showTip(ev,text));
     c.addEventListener("mousemove",ev=>showTip(ev,text));
     c.addEventListener("mouseleave",hideTip);
     svg.appendChild(c);
+    if(labeled.has(s.abbr)){
+      const t=svgEl("text",{x:X(xs[i])+6,y:Y(ys[i])-6,class:"out"});
+      t.textContent=s.abbr;
+      svg.appendChild(t);
+    }
+  });
+  const rLab=svgEl("text",{x:L+8,y:T+12,class:"r-lab"});
+  rLab.textContent="r = "+fmtR(fit.r);
+  svg.appendChild(rLab);
+  const xLab=svgEl("text",{x:(L+W-R)/2,y:H-6,"text-anchor":"middle",class:"axis-label"});
+  xLab.textContent=opt.xLabel;
+  svg.appendChild(xLab);
+  host.appendChild(svg);
+}
+function heat(host, rows){
+  host.innerHTML="";
+  const cols=["r_count","partial","r_rate","r_cong"];
+  const heads=["r, count","partial | log pop","r, per 100k","r, per 1k cong."];
+  const W=740, rh=22, L=168, T=28, H=T+rows.length*rh+8, cw=(W-L-12)/4;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":"Correlation matrix"});
+  heads.forEach((h,j)=>{
+    const t=svgEl("text",{x:L+cw*(j+0.5),y:18,"text-anchor":"middle",class:"axis-label"});
+    t.textContent=h;
+    svg.appendChild(t);
+  });
+  rows.forEach((row,i)=>{
+    const y=T+i*rh;
+    const lab=svgEl("text",{x:L-8,y:y+14,"text-anchor":"end",class:"tick"});
+    lab.textContent=row.label;
+    svg.appendChild(lab);
+    cols.forEach((k,j)=>{
+      const v=row[k];
+      const mag=v==null?0:Math.min(1,Math.abs(v));
+      const fill=v==null?"var(--panel2)":v>=0?`rgba(138,99,24,${0.12+mag*0.72})`:`rgba(62,107,138,${0.12+mag*0.72})`;
+      svg.appendChild(svgEl("rect",{x:L+cw*j+3,y:y+2,width:cw-6,height:rh-4,rx:"2",fill}));
+      const t=svgEl("text",{x:L+cw*(j+0.5),y:y+15,"text-anchor":"middle",class:"lab"});
+      t.textContent=fmtR(v);
+      svg.appendChild(t);
+    });
+  });
+  host.appendChild(svg);
+}
+function stacked(host, cats, series, aria){
+  host.innerHTML="";
+  const W=740,H=280,L=56,B=36,T=12,R=12;
+  const svg=svgEl("svg",{viewBox:`0 0 ${W} ${H}`,class:"chart",role:"img","aria-label":aria});
+  const iw=W-L-R, ih=H-T-B, bw=iw/cats.length*0.55;
+  for(let g=0;g<=4;g++){
+    const val=25*g, y=T+ih-(val/100)*ih;
+    svg.appendChild(svgEl("line",{x1:L,x2:W-R,y1:y,y2:y,class:"grid"}));
+    svg.appendChild(svgEl("text",{x:L-6,y:y+4,"text-anchor":"end",class:"tick"})).textContent=val+"%";
+  }
+  cats.forEach((cat,i)=>{
+    const x=L+(i+0.5)*(iw/cats.length)-bw/2;
+    let y=T+ih;
+    series.forEach(s=>{
+      const v=s.y[cat]||0;
+      const h=(v/100)*ih;
+      y-=h;
+      const rect=svgEl("rect",{x,y,width:bw,height:h,fill:s.color});
+      const text=cat+" · "+s.name+": "+v.toFixed(1)+"%";
+      rect.addEventListener("mouseenter",ev=>showTip(ev,text));
+      rect.addEventListener("mousemove",ev=>showTip(ev,text));
+      rect.addEventListener("mouseleave",hideTip);
+      svg.appendChild(rect);
+    });
+    svg.appendChild(svgEl("text",{x:x+bw/2,y:H-10,"text-anchor":"middle",class:"tick"})).textContent=cat;
   });
   host.appendChild(svg);
 }
 function placeName(s){return s==="DC"?"District of Columbia":s;}
 let mode="count", span="top", stateSort={k:"incidents",dir:-1};
+function stateValue(s){
+  if(mode==="count") return s.incidents;
+  if(mode==="cong") return s.incidents_per_1000_cong;
+  return s.incidents_per_100k;
+}
 function drawStates(){
-  const rows=STATES.slice().sort((a,b)=>(mode==="count"?b.incidents-a.incidents:b.incidents_per_100k-a.incidents_per_100k));
+  const rows=STATES.slice().sort((a,b)=>stateValue(b)-stateValue(a));
   const shown=span==="top"?rows.slice(0,15):rows;
+  const fmt=v=>mode==="count"?String(v):v.toFixed(2);
   hbars(document.getElementById("chart-states"), shown.map(s=>({
     label:s.state.replace("District of Columbia","D.C."),
-    value:mode==="count"?s.incidents:s.incidents_per_100k,
-    tip:s.state+": "+s.incidents+" incidents, "+s.incidents_per_100k.toFixed(2)+" per 100,000",
+    value:stateValue(s),
+    tip:s.state+": "+s.incidents+" incidents, "+s.incidents_per_100k.toFixed(2)+" per 100,000, "+s.incidents_per_1000_cong.toFixed(2)+" per 1,000 congregations",
     onClick:()=>{
       document.getElementById("state-filter").value=s.state;
       renderIncidents();
       document.getElementById("incidents").scrollIntoView({behavior:"smooth",block:"start"});
     }
-  })), {labelW:150, aria:"Church incidents by state", fmt:v=>mode==="count"?String(v):v.toFixed(2)});
+  })), {labelW:150, aria:"Church incidents by state", fmt});
 }
 function renderStateTable(){
   const body=document.querySelector("#state-table tbody");
@@ -541,7 +711,7 @@ function renderStateTable(){
     if(typeof av==="string") return av.localeCompare(bv)*stateSort.dir;
     return (av-bv)*stateSort.dir;
   });
-  body.innerHTML=rows.map(s=>`<tr><td>${esc(s.state)}</td><td>${s.incidents}</td><td>${s.incidents_per_100k.toFixed(2)}</td><td>${s.population_2024.toLocaleString()}</td><td>${s.poverty_percent_2024.toFixed(1)}</td><td>${s.foreign_born_percent_2024.toFixed(1)}</td><td>${s.dem_share_2024.toFixed(1)}</td></tr>`).join("");
+  body.innerHTML=rows.map(s=>`<tr><td>${esc(s.state)}</td><td>${s.incidents}</td><td>${s.incidents_per_100k.toFixed(2)}</td><td>${s.population_2024.toLocaleString()}</td><td>${s.poverty_percent_2024.toFixed(1)}</td><td>${s.foreign_born_percent_2024.toFixed(1)}</td><td>${s.dem_share_2024.toFixed(1)}</td><td>${s.incidents_per_1000_cong.toFixed(2)}</td><td>${s.highly_religious_percent.toFixed(1)}</td><td>${s.bachelors_percent_2024.toFixed(1)}</td></tr>`).join("");
 }
 function incidentTypes(r){
   return CATS.filter(c=>r[c[1]]==="1").map(c=>c[0]);
@@ -614,15 +784,28 @@ function init(){
     tip:f.name+": "+f.attack+"% of attacks, "+f.stock+"% of congregations, ratio "+(f.attack/f.stock).toFixed(2)
   })), {labelW:140, aria:"2025 attack share divided by congregation share", fmt:v=>v.toFixed(2)});
   hbars(document.getElementById("chart-fbi"), FBI2025.map(r=>({label:r[0],value:r[1],tip:r[0]+": "+r[1].toLocaleString()+" incidents in 2025"})), {labelW:210, aria:"FBI religious bias incidents, 2025", fmt:v=>v.toLocaleString()});
-  lineChart(document.getElementById("chart-fbi-line"));
-  grouped(document.getElementById("chart-fbi-christian"), FBI_CHRISTIAN, [2018,2019,2020,2021,2022,2023,2024,2025], "Six Christian bias rows, 2018 to 2025");
+  const years= [2018,2019,2020,2021,2022,2023,2024,2025];
+  lineChart(document.getElementById("chart-fbi-line"), {
+    years, max:2200, yLabel:"Incidents",
+    aria:"Anti-Jewish, anti-Islamic, and grouped Christian hate crime incidents, 2018 to 2025",
+    series:[
+      {name:"Anti-Jewish", color:"var(--accent)", y:FBI_LINE["Anti-Jewish"]},
+      {name:"Anti-Islamic", color:"#3E6B8A", y:FBI_LINE["Anti-Islamic"]},
+      {name:"Christian, six rows", color:"#8C5A2B", y:FBI_LINE["Christian, six rows"]}
+    ]
+  });
+  lineChart(document.getElementById("chart-fbi-christian"), {
+    years, max:120, yLabel:"Incidents",
+    aria:"Six Christian bias rows, 2018 to 2025",
+    series:FBI_CHRISTIAN.map(s=>({name:s.name, color:s.color, y:s.y, width:"1.8", r:"3"}))
+  });
   document.getElementById("legend-christian").innerHTML=FBI_CHRISTIAN.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
-  grouped(document.getElementById("chart-fbi-partial"), FBI_PART, [2018,2019,2020,2021,2022,2023,2024,2025], "Anti-Sikh, anti-Hindu, and anti-Buddhist incidents through 2025");
+  grouped(document.getElementById("chart-fbi-partial"), FBI_PART, years, "Anti-Sikh, anti-Hindu, and anti-Buddhist incidents through 2025");
   document.getElementById("legend-partial").innerHTML=FBI_PART.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
   vbars(document.getElementById("chart-adl"), [[2024,9354],[2025,6274]].map(p=>({label:String(p[0]),value:p[1]})), "ADL antisemitic incidents, 2024 and 2025");
   vbars(document.getElementById("chart-adl-bomb"), [[2023,996],[2024,627],[2025,59]].map(p=>({label:String(p[0]),value:p[1]})), "Bomb threats against Jewish institutions");
   vbars(document.getElementById("chart-cair"), [[2024,8658],[2025,8683]].map(p=>({label:String(p[0]),value:p[1]})), "CAIR civil-rights complaints");
-  grouped(document.getElementById("chart-offenders"), OFFENDERS, ["Jewish","Christian","Muslim","Sikh","Hindu"], "Percent of 2025 offender-race records by bias");
+  stacked(document.getElementById("chart-offenders"), ["Jewish","Christian","Muslim","Sikh","Hindu"], OFFENDERS, "Percent of 2025 offender-race records by bias");
   document.getElementById("legend-offenders").innerHTML=OFFENDERS.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join("");
   hbars(document.getElementById("chart-motive-2025"), [
     {label:"Hate or bias",value:32},
@@ -635,22 +818,61 @@ function init(){
     {label:"Homelessness",value:9},
     {label:"Insider",value:9}
   ], {labelW:180, aria:"Composition of identified suspects", fmt:v=>v+"%"});
-  scatter(document.getElementById("chart-pov"), "poverty_percent_2024", "2024 poverty percent");
-  scatter(document.getElementById("chart-fb"), "foreign_born_percent_2024", "2024 foreign-born percent");
-  scatter(document.getElementById("chart-vote"), "dem_share_2024", "2024 Harris percent of the vote");
+  scatter(document.getElementById("chart-pop"), {x:"population_2024", y:"incidents", logX:true, xLabel:"Population, 2024 (log)", yLabel:"Incidents", aria:"Church incidents against log population"});
+  scatter(document.getElementById("chart-cong"), {x:"congregations_2020", y:"incidents", logX:true, xLabel:"Congregations, 2020 (log)", yLabel:"Incidents", aria:"Church incidents against log congregations"});
+  scatter(document.getElementById("chart-fbirel"), {x:"fbi_religion_2024", y:"incidents", logX:true, xLabel:"FBI religious-bias incidents, 2024 (log)", yLabel:"Incidents", aria:"Church incidents against FBI religious bias"});
+  scatter(document.getElementById("chart-pov"), {x:"poverty_percent_2024", y:"incidents_per_100k", xLabel:"Poverty %, 2024", yLabel:"Per 100,000"});
+  scatter(document.getElementById("chart-vote"), {x:"dem_share_2024", y:"incidents_per_100k", xLabel:"Harris % of 2024 vote", yLabel:"Per 100,000"});
+  scatter(document.getElementById("chart-relig"), {x:"highly_religious_percent", y:"incidents_per_100k", xLabel:"Highly religious %, Pew 2023–24", yLabel:"Per 100,000"});
+  scatter(document.getElementById("chart-bach"), {x:"bachelors_percent_2024", y:"incidents_per_1000_cong", xLabel:"Bachelor's %, 2024", yLabel:"Per 1,000 congregations"});
+  scatter(document.getElementById("chart-demcong"), {x:"dem_share_2024", y:"incidents_per_1000_cong", xLabel:"Harris % of 2024 vote", yLabel:"Per 1,000 congregations"});
+  scatter(document.getElementById("chart-religcong"), {x:"highly_religious_percent", y:"incidents_per_1000_cong", xLabel:"Highly religious %, Pew 2023–24", yLabel:"Per 1,000 congregations"});
   const xsLog=STATES.map(s=>Math.log(s.population_2024));
   const counts=STATES.map(s=>s.incidents);
   const rates=STATES.map(s=>s.incidents_per_100k);
-  const pov=STATES.map(s=>s.poverty_percent_2024);
-  const fb=STATES.map(s=>s.foreign_born_percent_2024);
-  const dem=STATES.map(s=>s.dem_share_2024);
-  document.getElementById("r-logpop").textContent=fmtR(pearson(xsLog,counts));
-  document.getElementById("r-pov-rate").textContent=fmtR(pearson(pov,rates));
-  document.getElementById("r-fb-rate").textContent=fmtR(pearson(fb,rates));
-  document.getElementById("r-pov-count").textContent=fmtR(pearson(pov,counts));
-  document.getElementById("r-fb-count").textContent=fmtR(pearson(fb,counts));
-  document.getElementById("r-dem-rate").textContent=fmtR(pearson(dem,rates));
-  document.getElementById("r-dem-count").textContent=fmtR(pearson(dem,counts));
+  const perCong=STATES.map(s=>s.incidents_per_1000_cong);
+  const covars=[
+    {key:"log_pop", label:"Log population", xs:xsLog},
+    {key:"log_cong", label:"Log congregations", xs:STATES.map(s=>Math.log(s.congregations_2020))},
+    {key:"log_fbi", label:"Log FBI hate crimes", xs:STATES.map(s=>Math.log(s.fbi_hate_2024))},
+    {key:"log_fbi_rel", label:"Log FBI religious bias", xs:STATES.map(s=>Math.log(Math.max(s.fbi_religion_2024,0.5)))},
+    {key:"poverty", label:"Poverty %", xs:STATES.map(s=>s.poverty_percent_2024)},
+    {key:"foreign_born", label:"Foreign-born %", xs:STATES.map(s=>s.foreign_born_percent_2024)},
+    {key:"dem", label:"Harris %", xs:STATES.map(s=>s.dem_share_2024)},
+    {key:"income", label:"Median income", xs:STATES.map(s=>s.median_income_2024)},
+    {key:"bachelors", label:"Bachelor's %", xs:STATES.map(s=>s.bachelors_percent_2024)},
+    {key:"age", label:"Median age", xs:STATES.map(s=>s.median_age_2024)},
+    {key:"black", label:"Black %", xs:STATES.map(s=>s.black_percent_2024)},
+    {key:"density", label:"Density", xs:STATES.map(s=>s.density_per_sqmi)},
+    {key:"adherent", label:"Adherent rate", xs:STATES.map(s=>s.adherent_rate_2020)},
+    {key:"evan", label:"Evangelical rate", xs:STATES.map(s=>s.evan_rate_2020)},
+    {key:"religious", label:"Highly religious %", xs:STATES.map(s=>s.highly_religious_percent)}
+  ];
+  const corr=covars.map(c=>({
+    label:c.label,
+    r_count:pearson(c.xs,counts),
+    partial:c.key==="log_pop"?null:partialR(c.xs,counts,xsLog),
+    r_rate:pearson(c.xs,rates),
+    r_cong:pearson(c.xs,perCong),
+    rho_count:spearman(c.xs,counts),
+    rho_rate:spearman(c.xs,rates)
+  }));
+  heat(document.getElementById("chart-heat"), corr);
+  document.querySelector("#corr-table tbody").innerHTML=corr.map(r=>`<tr><td>${esc(r.label)}</td><td>${fmtR(r.r_count)}</td><td>${fmtR(r.partial)}</td><td>${fmtR(r.r_rate)}</td><td>${fmtR(r.r_cong)}</td><td>${fmtR(r.rho_count)}</td><td>${fmtR(r.rho_rate)}</td></tr>`).join("");
+  const by=k=>corr.find(r=>r.label===k);
+  document.getElementById("r-logpop").textContent=fmtR(by("Log population").r_count);
+  document.getElementById("r-logcong").textContent=fmtR(by("Log congregations").r_count);
+  document.getElementById("r-fbirel").textContent=fmtR(by("Log FBI religious bias").r_count);
+  document.getElementById("r-fb-count").textContent=fmtR(by("Foreign-born %").r_count);
+  document.getElementById("r-part-cong").textContent=fmtR(by("Log congregations").partial);
+  document.getElementById("r-part-fbirel").textContent=fmtR(by("Log FBI religious bias").partial);
+  document.getElementById("r-part-fb").textContent=fmtR(by("Foreign-born %").partial);
+  document.getElementById("r-pov-rate").textContent=fmtR(by("Poverty %").r_rate);
+  document.getElementById("r-dem-rate").textContent=fmtR(by("Harris %").r_rate);
+  document.getElementById("r-relig-rate").textContent=fmtR(by("Highly religious %").r_rate);
+  document.getElementById("r-bach-cong").textContent=fmtR(by("Bachelor's %").r_cong);
+  document.getElementById("r-dem-cong").textContent=fmtR(by("Harris %").r_cong);
+  document.getElementById("r-relig-cong").textContent=fmtR(by("Highly religious %").r_cong);
   const sel=document.getElementById("state-filter");
   STATES.slice().sort((a,b)=>a.state.localeCompare(b.state)).forEach(s=>{
     const o=document.createElement("option");o.value=s.state;o.textContent=s.state;sel.appendChild(o);
@@ -666,8 +888,9 @@ function init(){
   sel.addEventListener("change", renderIncidents);
   document.getElementById("cat-filter").addEventListener("change", renderIncidents);
   document.getElementById("download-view").addEventListener("click", downloadView);
-  document.getElementById("mode-count").addEventListener("click",()=>{mode="count";setPressed("mode-count",true);setPressed("mode-rate",false);drawStates();});
-  document.getElementById("mode-rate").addEventListener("click",()=>{mode="rate";setPressed("mode-count",false);setPressed("mode-rate",true);drawStates();});
+  document.getElementById("mode-count").addEventListener("click",()=>{mode="count";setPressed("mode-count",true);setPressed("mode-rate",false);setPressed("mode-cong",false);drawStates();});
+  document.getElementById("mode-rate").addEventListener("click",()=>{mode="rate";setPressed("mode-count",false);setPressed("mode-rate",true);setPressed("mode-cong",false);drawStates();});
+  document.getElementById("mode-cong").addEventListener("click",()=>{mode="cong";setPressed("mode-count",false);setPressed("mode-rate",false);setPressed("mode-cong",true);drawStates();});
   document.getElementById("span-top").addEventListener("click",()=>{span="top";setPressed("span-top",true);setPressed("span-all",false);drawStates();});
   document.getElementById("span-all").addEventListener("click",()=>{span="all";setPressed("span-top",false);setPressed("span-all",true);drawStates();});
   drawStates();

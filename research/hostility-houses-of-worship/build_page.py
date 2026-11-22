@@ -38,14 +38,21 @@ def load_csv(path):
 def main():
     incidents = load_csv(HERE / "frc_2024_incidents.csv")
     states = load_csv(HERE / "state_join.csv")
+    ints = (
+        "incidents", "population_2024", "median_income_2024", "congregations_2020",
+        "fbi_hate_2024", "fbi_religion_2024",
+    )
+    floats = (
+        "incidents_per_100k", "poverty_percent_2024", "foreign_born_percent_2024",
+        "dem_share_2024", "rep_share_2024", "bachelors_percent_2024", "median_age_2024",
+        "black_percent_2024", "land_sqmi", "density_per_sqmi", "adherent_rate_2020",
+        "evan_rate_2020", "highly_religious_percent", "incidents_per_1000_cong",
+    )
     for row in states:
-        row["incidents"] = int(row["incidents"])
-        row["population_2024"] = int(row["population_2024"])
-        row["incidents_per_100k"] = float(row["incidents_per_100k"])
-        row["poverty_percent_2024"] = float(row["poverty_percent_2024"])
-        row["foreign_born_percent_2024"] = float(row["foreign_born_percent_2024"])
-        row["dem_share_2024"] = float(row["dem_share_2024"])
-        row["rep_share_2024"] = float(row["rep_share_2024"])
+        for key in ints:
+            row[key] = int(float(row[key]))
+        for key in floats:
+            row[key] = float(row[key])
 
     if len(incidents) != 415:
         raise SystemExit(f"expected 415 incidents, got {len(incidents)}")
@@ -58,20 +65,39 @@ def main():
     if sum(s["incidents"] for s in states) != 415 or len(states) != 51:
         raise SystemExit("state join does not cover 415 incidents across 51 jurisdictions")
 
+    def partial(xs, ys, zs):
+        rxy, rxz, ryz = pearson(xs, ys), pearson(xs, zs), pearson(ys, zs)
+        den = math.sqrt((1 - rxz * rxz) * (1 - ryz * ryz))
+        return (rxy - rxz * ryz) / den if den else 0.0
+
     counts = [s["incidents"] for s in states]
     rates = [s["incidents_per_100k"] for s in states]
+    per_cong = [s["incidents_per_1000_cong"] for s in states]
     logs = [math.log(s["population_2024"]) for s in states]
+    logc = [math.log(s["congregations_2020"]) for s in states]
+    log_rel = [math.log(max(s["fbi_religion_2024"], 0.5)) for s in states]
     pov = [s["poverty_percent_2024"] for s in states]
     fb = [s["foreign_born_percent_2024"] for s in states]
     dem = [s["dem_share_2024"] for s in states]
+    relig = [s["highly_religious_percent"] for s in states]
+    bach = [s["bachelors_percent_2024"] for s in states]
     tokens = {
         "__R_LOGPOP__": fmt_r(pearson(logs, counts)),
+        "__R_LOGCONG__": fmt_r(pearson(logc, counts)),
+        "__R_FBIREL__": fmt_r(pearson(log_rel, counts)),
         "__R_POV_RATE__": fmt_r(pearson(pov, rates)),
         "__R_FB_RATE__": fmt_r(pearson(fb, rates)),
         "__R_POV_COUNT__": fmt_r(pearson(pov, counts)),
         "__R_FB_COUNT__": fmt_r(pearson(fb, counts)),
         "__R_DEM_RATE__": fmt_r(pearson(dem, rates)),
         "__R_DEM_COUNT__": fmt_r(pearson(dem, counts)),
+        "__R_PART_CONG__": fmt_r(partial(logc, counts, logs)),
+        "__R_PART_FBIREL__": fmt_r(partial(log_rel, counts, logs)),
+        "__R_PART_FB__": fmt_r(partial(fb, counts, logs)),
+        "__R_RELIG_RATE__": fmt_r(pearson(relig, rates)),
+        "__R_BACH_CONG__": fmt_r(pearson(bach, per_cong)),
+        "__R_DEM_CONG__": fmt_r(pearson(dem, per_cong)),
+        "__R_RELIG_CONG__": fmt_r(pearson(relig, per_cong)),
     }
 
     sibling = (ROOT / "substance-use-vote-share.html").read_text(encoding="utf-8")
