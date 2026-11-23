@@ -1,0 +1,325 @@
+=== -36db9dcb8ff6a332
+import os;
+fn fnv1a(s const byte[:]) u64 {
+	var h u64 = 14695981039346656037;
+	for c in s {
+		h = (h ^ c) * 1099511628211;
+	}
+	h
+}
+=== 6b6edcd3725e135c
+fn run_lines(command const byte[:], scratch const byte[:]) byte[][>..] {
+	var full byte[>..] = [];
+	full.append(command);
+	full.append(" > ");
+	full.append(scratch);
+	run_command(full);
+	var data byte[>..] = [];
+	read_file(scratch, data);
+	delete_file(scratch);
+	var out byte[][>..] = [];
+	for line in split(data, '\n') {
+		var l = line;
+		while l.len > 0 && l[l.len - 1] == '\r' { l = l[..l.len - 1]; }
+		if trim(l).len > 0 { out.push(copy(l)); }
+	}
+	out
+}
+=== -5ae9018bcb9faf4c
+fn bad_dir(d const byte[:]) bool {
+	if d.len > 0 && (d[0] == '_' || d[0] == '.') { return true; }
+	d == ".git" || d == ".github" || d == "node_modules" || d == "assets" || d == "tests" || d == "tools" || d == "scripts" || d == "docs" || d == "backups" || d == "x" || d == "_shared" || d == "vendor" || d == "pkg"
+}
+fn page_list() byte[][>..] {
+	let lines = run_lines("git -c core.quotepath=off ls-files -co --exclude-standard -- '*.html'", "tools/.sitemap-pages");
+	var out byte[][>..] = [];
+	for path in lines {
+		var ok = true;
+		var name const byte[:] = "";
+		let parts = split(path, '/');
+		for p, i in parts {
+			if i + 1 == parts.len { name = p; } else if bad_dir(p) { ok = false; }
+		}
+		if ok && name != "404.html" && !(name.len > 0 && name[0] == '_') { out.push(copy(path)); }
+	}
+	out
+}
+=== -16e34c57acae8ce7
+fn lc(c byte) byte { if c >= 'A' && c <= 'Z' { c + 32 } else { c } }
+fn ieq(a const byte[:], b const byte[:]) bool {
+	if a.len != b.len { return false; }
+	for i in a.len { if lc(a[i]) != lc(b[i]) { return false; } }
+	true
+}
+fn robots_rules() byte[][>..] {
+	var data byte[>..] = [];
+	read_file("robots.txt", data);
+	var out byte[][>..] = [];
+	for line in split(data, '\n') {
+		let t = trim(line);
+		if t.len >= 9 && ieq(t[..9], "disallow:") {
+			let r = trim(t[9..]);
+			if r.len > 0 { out.push(copy(r)); }
+		}
+	}
+	out
+}
+=== -1e6aa8139159ce12
+recursive fn rule_match(rule const byte[:], ri int, path const byte[:], pi int) bool {
+	if ri == rule.len { return true; }
+	let c = rule[ri];
+	if c == '*' {
+		for k in pi..path.len + 1 {
+			if rule_match(rule, ri + 1, path, k) { return true; }
+		}
+		return false;
+	}
+	if c == '$' && ri == rule.len - 1 { return pi == path.len; }
+	if pi < path.len && path[pi] == c { return rule_match(rule, ri + 1, path, pi + 1); }
+	false
+}
+fn disallowed(path, rules) bool {
+	for r in rules {
+		if rule_match(r, 0, path, 0) { return true; }
+	}
+	false
+}
+=== -6605be7dc811ce83
+fn ws(c byte) bool { c == ' ' || c == '\t' || c == '\n' || c == '\r' }
+fn tag_attr(html const byte[:], tag const byte[:], key const byte[:], value const byte[:], want const byte[:]) byte[>..] {
+	var out byte[>..] = [];
+	let n = html.len;
+	var i = 0;
+	while i < n {
+		if html[i] != '<' { i++; continue; }
+		let s = i + 1;
+		var e = s;
+		while e < n && !ws(html[e]) && html[e] != '/' && html[e] != '>' { e++; }
+		i = e;
+		if !ieq(html[s..e], tag) { continue; }
+		var matched = false;
+		var got = false;
+		var found byte[>..] = [];
+		var p = e;
+		while p < n && html[p] != '>' {
+			if ws(html[p]) || html[p] == '/' { p++; continue; }
+			let ns = p;
+			while p < n && !ws(html[p]) && html[p] != '=' && html[p] != '>' && html[p] != '/' { p++; }
+			let name = html[ns..p];
+			while p < n && ws(html[p]) { p++; }
+			var vs = p;
+			var ve = p;
+			if p < n && html[p] == '=' {
+				p++;
+				while p < n && ws(html[p]) { p++; }
+				if p < n && (html[p] == '"' || html[p] == '\'') {
+					let q = html[p];
+					p++;
+					vs = p;
+					while p < n && html[p] != q { p++; }
+					ve = p;
+					if p < n { p++; }
+				} else {
+					vs = p;
+					while p < n && !ws(html[p]) && html[p] != '>' { p++; }
+					ve = p;
+				}
+			}
+			let val = html[vs..ve];
+			if ieq(name, key) && ieq(val, value) { matched = true; }
+			if ieq(name, want) && !got {
+				got = true;
+				found.append(val);
+			}
+		}
+		i = p;
+		if matched {
+			out.append(found);
+			return out;
+		}
+	}
+	out
+}
+=== -5ffbd4500b660d17
+fn served(address const byte[:]) byte[>..] {
+	var out byte[>..] = [];
+	if ends_with(address, "index.html") {
+		out.append(address[..address.len - 10]);
+	} else if ends_with(address, ".html") {
+		out.append(address[..address.len - 5]);
+	} else {
+		out.append(address);
+	}
+	out
+}
+=== 4b7fe030dca0efe3
+fn date_num(s const byte[:]) int {
+	var n = 0;
+	for c in s {
+		if c >= '0' && c <= '9' { n = n * 10 + (c as int) - 48; }
+	}
+	n
+}
+fn find_at(s const byte[:], sub const byte[:], from int) int {
+	if s.len < sub.len { return -1; }
+	for i in from..s.len - sub.len + 1 {
+		if s[i..i + sub.len] == sub { return i; }
+	}
+	-1
+}
+fn commit_dates(today const byte[:]) dictionary<u64, int> {
+	var m = dictionary<u64, int> {};
+	let log = run_lines("git -c core.quotepath=off log --format=@%cs --name-only -- '*.html'", "tools/.sitemap-log");
+	var cur = 0;
+	for line in log {
+		if line[0] == '@' {
+			cur = date_num(line[1..]);
+		} else if !m.contains(fnv1a(line)) {
+			m.insert(fnv1a(line), cur);
+		}
+	}
+	let tn = date_num(today);
+	let st = run_lines("git -c core.quotepath=off status --porcelain --untracked-files=all -- '*.html'", "tools/.sitemap-status");
+	for line in st {
+		if line.len < 4 { continue; }
+		var p = line[3..];
+		let a = find_at(line, " -> ", 0);
+		if a >= 0 { p = line[a + 4..]; }
+		update(m, fnv1a(p), 0) { it = tn; };
+	}
+	m
+}
+=== -be3114b4e12dd86
+fn idx_ci(s const byte[:], sub const byte[:]) int {
+	if s.len < sub.len { return -1; }
+	for i in 0..s.len - sub.len + 1 {
+		if ieq(s[i..i + sub.len], sub) { return i; }
+	}
+	-1
+}
+fn entry_less(blob const byte[:], starts const int[:], lens const int[:], a int, b int) bool {
+	if lens[a] != lens[b] { return lens[a] < lens[b]; }
+	for k in lens[a] {
+		let x = blob[starts[a] + k];
+		let y = blob[starts[b] + k];
+		if x != y { return x < y; }
+	}
+	false
+}
+fn main() {
+	var check = false;
+	for a in args() { if a == "--check" { check = true; } }
+	var today byte[>..] = [];
+	let tl = run_lines("date +%F", "tools/.sitemap-today");
+	for l in tl { if today.len == 0 { today.append(l); } }
+	let tn = date_num(today);
+	let rules = robots_rules();
+	let pages = page_list();
+	var dates = commit_dates(today);
+	var m = dictionary<u64, int> {};
+	var blob byte[>..] = [];
+	var starts int[>..] = [];
+	var lens int[>..] = [];
+	var dts int[>..] = [];
+	var problems = 0;
+	for page in pages {
+		var ap byte[>..] = [];
+		ap.push('/');
+		ap.append(page);
+		if disallowed(ap, rules) { continue; }
+		var html byte[>..] = [];
+		read_file(page, html);
+		let robots = tag_attr(html, "meta", "name", "robots", "content");
+		if idx_ci(robots, "noindex") >= 0 { continue; }
+		let canon = tag_attr(html, "link", "rel", "canonical", "href");
+		var addr byte[>..] = [];
+		if starts_with(canon, "https://amni-scient.com") {
+			addr.append(canon);
+		} else {
+			addr.append("https://amni-scient.com/");
+			addr.append(page);
+		}
+		let url = served(addr);
+		var dn = tn;
+		let d = dates.get(fnv1a(page));
+		if d { dn = d; }
+		let h = fnv1a(url);
+		let e = m.get(h);
+		if e {
+			if dn > dts[e] { dts[e] = dn; }
+		} else {
+			m.insert(h, starts.len);
+			starts.push(blob.len);
+			lens.push(url.len);
+			blob.append(url);
+			dts.push(dn);
+		}
+		if check {
+			let og = tag_attr(html, "meta", "property", "og:url", "content");
+			if ends_with(canon, ".html") {
+				print("canonical points at a redirect: ", page, " ", canon);
+				problems += 1;
+			} else if ends_with(og, ".html") {
+				print("canonical points at a redirect: ", page, " ", og);
+				problems += 1;
+			}
+		}
+	}
+	var order int[>..] = [];
+	for i in starts.len { order.push(i); }
+	sort(order) { a, b => entry_less(blob, starts, lens, a, b) };
+	var xml byte[>..] = [];
+	xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	xml.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+	for o in order {
+		let dn = dts[o];
+		xml.append("<url><loc>");
+		xml.append(blob[starts[o]..starts[o] + lens[o]]);
+		xml.append("</loc><lastmod>");
+		format_int(xml, dn / 10000, 10, 4, '0');
+		xml.push('-');
+		format_int(xml, (dn / 100) % 100, 10, 2, '0');
+		xml.push('-');
+		format_int(xml, dn % 100, 10, 2, '0');
+		xml.append("</lastmod></url>\n");
+	}
+	xml.append("</urlset>\n");
+	let total = order.len;
+	if !check {
+		write_file("sitemap.xml", xml);
+		print("sitemap: ", total, " urls");
+		return;
+	}
+	var cur byte[>..] = [];
+	read_file("sitemap.xml", cur);
+	var locs byte[][>..] = [];
+	var old = dictionary<u64, int> {};
+	var pos = 0;
+	loop {
+		let a = find_at(cur, "<loc>", pos);
+		if a < 0 { break; }
+		let b = find_at(cur, "</loc>", a + 5);
+		if b < 0 { break; }
+		locs.push(copy(cur[a + 5..b]));
+		old.insert(fnv1a(cur[a + 5..b]), 1);
+		pos = b + 6;
+	}
+	for o in order {
+		let s = blob[starts[o]..starts[o] + lens[o]];
+		if !old.contains(fnv1a(s)) {
+			print("sitemap is missing ", s);
+			problems += 1;
+		}
+	}
+	for l in locs {
+		if !m.contains(fnv1a(l)) {
+			print("sitemap has extra ", l);
+			problems += 1;
+		}
+	}
+	if problems > 0 {
+		print("rebuild with: hc run tools/build-sitemap.amni");
+		exit(1);
+	}
+	print("sitemap: ok, ", total, " urls");
+}
