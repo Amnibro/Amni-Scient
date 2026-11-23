@@ -189,131 +189,248 @@ fn commit_dates(today const byte[:]) dictionary<u64, int> {
 	}
 	m
 }
-=== -be3114b4e12dd86
-fn idx_ci(s const byte[:], sub const byte[:]) int {
-	if s.len < sub.len { return -1; }
-	for i in 0..s.len - sub.len + 1 {
-		if ieq(s[i..i + sub.len], sub) { return i; }
-	}
-	-1
+=== -5099f61392413776
+fn sm_inner(s const byte[:], a const byte[:], b const byte[:]) const byte[:] {
+	let i = find_at(s, a, 0);
+	if i < 0 { return s[0..0]; }
+	let st = i + a.len;
+	let j = find_at(s, b, st);
+	if j < 0 { return s[0..0]; }
+	s[st..j]
 }
-fn entry_less(blob const byte[:], starts const int[:], lens const int[:], a int, b int) bool {
-	if lens[a] != lens[b] { return lens[a] < lens[b]; }
-	for k in lens[a] {
-		let x = blob[starts[a] + k];
-		let y = blob[starts[b] + k];
-		if x != y { return x < y; }
+fn sm_entries(text const byte[:], flat byte[][>..]&) {
+	var pos = 0;
+	loop {
+		let u = find_at(text, "<url>", pos);
+		if u < 0 { break; }
+		let ue = find_at(text, "</url>", u);
+		let end = if ue < 0 { text.len } else { ue };
+		let seg = text[u..end];
+		flat.push(copy(sm_inner(seg, "<loc>", "</loc>")));
+		flat.push(copy(sm_inner(seg, "<lastmod>", "</lastmod>")));
+		pos = end;
 	}
-	false
+}
+fn ping(state const byte[:]) {
+	var cur byte[>..] = [];
+	if file_exists("sitemap.xml") { read_file("sitemap.xml", cur); }
+	var old byte[>..] = [];
+	if file_exists(state) { read_file(state, old); }
+	var curl_list byte[][>..] = [];
+	sm_entries(cur, curl_list);
+	var oldl byte[][>..] = [];
+	sm_entries(old, oldl);
+	var seen = dictionary<u64, u64> {};
+	var oaddr const byte[:] = "";
+	for a, i in oldl {
+		if i % 2 == 0 {
+			oaddr = a;
+		} else {
+			seen.insert(fnv1a(oaddr), fnv1a(a));
+		}
+	}
+	var picked byte[][>..] = [];
+	var addr const byte[:] = "";
+	for a, i in curl_list {
+		if i % 2 == 0 {
+			addr = a;
+		} else {
+			var pick = true;
+			let g = seen.get(fnv1a(addr));
+			if g {
+				if g == fnv1a(a) { pick = false; }
+			}
+			if pick { picked.push(copy(addr)); }
+		}
+	}
+	if picked.len == 0 {
+		print("indexnow: nothing new");
+		return;
+	}
+	var keyfile byte[>..] = [];
+	read_file("indexnow.txt", keyfile);
+	var key byte[>..] = [];
+	for l in split(keyfile, '\n') {
+		key.append(trim(l));
+		break;
+	}
+	var endpoint byte[>..] = [];
+	let env_lines = run_lines("printf %s \"$INDEXNOW_ENDPOINT\"", "tools/.indexnow-endpoint");
+	for l in env_lines {
+		endpoint.append(l);
+		break;
+	}
+	if endpoint.len == 0 {
+		endpoint.append("https://api.indexnow.org/indexnow");
+	}
+	var body byte[>..] = [];
+	body.append("{\"host\":\"amni-scient.com\",\"key\":\"");
+	body.append(key);
+	body.append("\",\"keyLocation\":\"https://amni-scient.com/indexnow.txt\",\"urlList\":[");
+	for a, i in picked {
+		if i > 0 { body.push(','); }
+		body.push('"');
+		body.append(a);
+		body.push('"');
+	}
+	body.append("]}");
+	write_file("tools/.indexnow-body.json", body);
+	var cmd byte[>..] = [];
+	cmd.append("curl -s -o /dev/null -w '%{http_code}' -m 37 -H 'Content-Type: application/json; charset=utf-8' --data-binary @tools/.indexnow-body.json '");
+	cmd.append(endpoint);
+	cmd.push('\'');
+	let lines = run_lines(cmd, "tools/.indexnow-status");
+	var status byte[>..] = [];
+	for l in lines {
+		status.append(l);
+		break;
+	}
+	if status.len == 0 { status.append("000"); }
+	delete_file("tools/.indexnow-body.json");
+	if status == "200" || status == "202" {
+		write_file(state, cur);
+		print("indexnow: ", picked.len, " urls sent, status ", status);
+	} else {
+		print("indexnow: failed, status ", status);
+		exit(1);
+	}
+}
+=== -6048ec850863015f
+import dictionary;
+struct Ent { o int, n int, d int }
+fn ent_less(buf const byte[:], a Ent, b Ent) bool {
+	if a.n != b.n { return a.n < b.n; }
+	compare(buf[a.o..a.o + a.n], buf[b.o..b.o + b.n]) < 0
+}
+fn lower_of(s const byte[:]) byte[>..] {
+	var out byte[>..] = [];
+	for c in s { out.push(lc(c)); }
+	out
+}
+fn put_date(out byte[>..]&, d int) {
+	format_int(out, d / 10000, 10, 4, '0');
+	out.push('-');
+	format_int(out, (d / 100) % 100, 10, 2, '0');
+	out.push('-');
+	format_int(out, d % 100, 10, 2, '0');
+}
+fn locs_of(text const byte[:], out byte[][>..]&) {
+	var pos = 0;
+	loop {
+		let i = find_at(text, "<loc>", pos);
+		if i < 0 { break; }
+		let st = i + 5;
+		let j = find_at(text, "</loc>", st);
+		if j < 0 { break; }
+		out.push(copy(text[st..j]));
+		pos = j;
+	}
 }
 fn main() {
-	var check = false;
-	for a in args() { if a == "--check" { check = true; } }
+	var a0 byte[>..] = [];
+	var a1 byte[>..] = [];
+	for a, i in args() {
+		if i == 1 { a0.append(a); }
+		if i == 2 { a1.append(a); }
+	}
+	if a0 == "--ping" {
+		ping(a1);
+		return;
+	}
+	let check = a0 == "--check";
 	var today byte[>..] = [];
-	let tl = run_lines("date +%F", "tools/.sitemap-today");
-	for l in tl { if today.len == 0 { today.append(l); } }
+	for l in run_lines("date +%F", "tools/.sitemap-today") {
+		today.append(l);
+		break;
+	}
 	let tn = date_num(today);
-	let rules = robots_rules();
 	let pages = page_list();
-	var dates = commit_dates(today);
-	var m = dictionary<u64, int> {};
-	var blob byte[>..] = [];
-	var starts int[>..] = [];
-	var lens int[>..] = [];
-	var dts int[>..] = [];
+	let rules = robots_rules();
+	let dates = commit_dates(today);
+	var buf byte[>..] = [];
+	var ents Ent[>..] = [];
+	var index = dictionary<u64, int> {};
 	var problems = 0;
-	for page in pages {
-		var ap byte[>..] = [];
-		ap.push('/');
-		ap.append(page);
-		if disallowed(ap, rules) { continue; }
+	for path in pages {
+		var full byte[>..] = [];
+		full.push('/');
+		full.append(path);
+		if disallowed(full, rules) { continue; }
 		var html byte[>..] = [];
-		read_file(page, html);
-		let robots = tag_attr(html, "meta", "name", "robots", "content");
-		if idx_ci(robots, "noindex") >= 0 { continue; }
+		read_file(path, html);
+		let robots = lower_of(tag_attr(html, "meta", "name", "robots", "content"));
+		if find_at(robots, "noindex", 0) >= 0 { continue; }
+		let lh = lower_of(html);
+		if find_at(lh, "<title", 0) < 0 { continue; }
 		let canon = tag_attr(html, "link", "rel", "canonical", "href");
+		let ogurl = tag_attr(html, "meta", "property", "og:url", "content");
+		if check {
+			if ends_with(canon, ".html") {
+				print("canonical points at a redirect: ", path, " ", canon);
+				problems += 1;
+			}
+			if ends_with(ogurl, ".html") {
+				print("canonical points at a redirect: ", path, " ", ogurl);
+				problems += 1;
+			}
+		}
 		var addr byte[>..] = [];
 		if starts_with(canon, "https://amni-scient.com") {
 			addr.append(canon);
 		} else {
 			addr.append("https://amni-scient.com/");
-			addr.append(page);
+			addr.append(path);
 		}
-		let url = served(addr);
-		var dn = tn;
-		let d = dates.get(fnv1a(page));
-		if d { dn = d; }
-		let h = fnv1a(url);
-		let e = m.get(h);
-		if e {
-			if dn > dts[e] { dts[e] = dn; }
+		let s = served(addr);
+		var date = tn;
+		let g = dates.get(fnv1a(path));
+		if g { date = g; }
+		let h = fnv1a(s);
+		let prev = index.get(h);
+		if prev {
+			if date > ents[prev].d { ents[prev].d = date; }
 		} else {
-			m.insert(h, starts.len);
-			starts.push(blob.len);
-			lens.push(url.len);
-			blob.append(url);
-			dts.push(dn);
-		}
-		if check {
-			let og = tag_attr(html, "meta", "property", "og:url", "content");
-			if ends_with(canon, ".html") {
-				print("canonical points at a redirect: ", page, " ", canon);
-				problems += 1;
-			} else if ends_with(og, ".html") {
-				print("canonical points at a redirect: ", page, " ", og);
-				problems += 1;
-			}
+			let off = buf.len;
+			buf.append(s);
+			index.insert(h, ents.len);
+			ents.push(Ent { o: off, n: s.len, d: date });
 		}
 	}
-	var order int[>..] = [];
-	for i in starts.len { order.push(i); }
-	sort(order) { a, b => entry_less(blob, starts, lens, a, b) };
-	var xml byte[>..] = [];
-	xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-	xml.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-	for o in order {
-		let dn = dts[o];
-		xml.append("<url><loc>");
-		xml.append(blob[starts[o]..starts[o] + lens[o]]);
-		xml.append("</loc><lastmod>");
-		format_int(xml, dn / 10000, 10, 4, '0');
-		xml.push('-');
-		format_int(xml, (dn / 100) % 100, 10, 2, '0');
-		xml.push('-');
-		format_int(xml, dn % 100, 10, 2, '0');
-		xml.append("</lastmod></url>\n");
+	sort(ents) { a, b => ent_less(buf, a, b) };
+	var text byte[>..] = [];
+	text.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	text.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+	for e in ents {
+		text.append("<url><loc>");
+		text.append(buf[e.o..e.o + e.n]);
+		text.append("</loc><lastmod>");
+		put_date(text, e.d);
+		text.append("</lastmod></url>\n");
 	}
-	xml.append("</urlset>\n");
-	let total = order.len;
+	text.append("</urlset>\n");
 	if !check {
-		write_file("sitemap.xml", xml);
-		print("sitemap: ", total, " urls");
+		write_file("sitemap.xml", text);
+		print("sitemap: ", ents.len, " urls");
 		return;
 	}
 	var cur byte[>..] = [];
-	read_file("sitemap.xml", cur);
-	var locs byte[][>..] = [];
-	var old = dictionary<u64, int> {};
-	var pos = 0;
-	loop {
-		let a = find_at(cur, "<loc>", pos);
-		if a < 0 { break; }
-		let b = find_at(cur, "</loc>", a + 5);
-		if b < 0 { break; }
-		locs.push(copy(cur[a + 5..b]));
-		old.insert(fnv1a(cur[a + 5..b]), 1);
-		pos = b + 6;
-	}
-	for o in order {
-		let s = blob[starts[o]..starts[o] + lens[o]];
-		if !old.contains(fnv1a(s)) {
-			print("sitemap is missing ", s);
+	if file_exists("sitemap.xml") { read_file("sitemap.xml", cur); }
+	var olds byte[][>..] = [];
+	locs_of(cur, olds);
+	var oldset = dictionary<u64, int> {};
+	for a in olds { oldset.insert(fnv1a(a), 1); }
+	var newset = dictionary<u64, int> {};
+	for e in ents { newset.insert(fnv1a(buf[e.o..e.o + e.n]), 1); }
+	for e in ents {
+		let a = buf[e.o..e.o + e.n];
+		if !oldset.contains(fnv1a(a)) {
+			print("sitemap is missing ", a);
 			problems += 1;
 		}
 	}
-	for l in locs {
-		if !m.contains(fnv1a(l)) {
-			print("sitemap has extra ", l);
+	for a in olds {
+		if !newset.contains(fnv1a(a)) {
+			print("sitemap has extra ", a);
 			problems += 1;
 		}
 	}
@@ -321,5 +438,5 @@ fn main() {
 		print("rebuild with: hc run tools/build-sitemap.amni");
 		exit(1);
 	}
-	print("sitemap: ok, ", total, " urls");
+	print("sitemap: ok, ", ents.len, " urls");
 }
