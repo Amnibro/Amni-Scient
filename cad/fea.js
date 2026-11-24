@@ -65,16 +65,16 @@ export function voxelize(pos,idx,bb,h,triMask){
 }
 export function keHeat(){const g=1/Math.sqrt(3),K=new Float64Array(64);for(const xi of[-g,g])for(const et of[-g,g])for(const ze of[-g,g]){const D=NODES.map(([a,b,c])=>[a*(1+b*et)*(1+c*ze)/4,b*(1+a*xi)*(1+c*ze)/4,c*(1+a*xi)*(1+b*et)/4]);for(let a=0;a<8;a++)for(let b=0;b<8;b++)K[a*8+b]+=(D[a][0]*D[b][0]+D[a][1]*D[b][1]+D[a][2]*D[b][2])/8;}return K;}
 function densOf(G){const d=new Float32Array(G.nx*G.ny*G.nz);for(let e=0;e<d.length;e++)d[e]=G.solid[e]?Math.max(G.frac[e],0.12):0;return d;}
-const FG=helium('fea_grid'),LB=helium('lob');let NSW=1;export function setSweeps(n){NSW=n;}
-const lev=(H,l,nd)=>{const om=H.ex.fg_level(l),d=k=>H.ex.fg_dim(l,k),nx=d(0),ny=d(1),nz=d(2);return{nx,ny,nz,NX:nx+1,NY:ny+1,NZ:nz+1,nn:d(3),nd,E:H.v(20).slice(),sc:H.v(21).slice(),...(l?{KE:H.v(22).slice()}:{}),fixed:H.v(23).slice(),diag:H.v(24).slice(),om};};
-async function setup(G,K,nd,fixed,dadd,mg,lazy){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.v(1).set(densOf(G));H.v(2).set(K);H.v(3).set(fixed);if(dadd)H.v(4).set(dadd);const n=x.fg_setup(mg===false?0:1,lazy?1:0),Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));fixed.set(H.v(14));Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
-const mv=(Ls,x,y,raw)=>{const H=Ls.he;H.v(12).set(x);H.ex.fg_matvec(raw?1:0);y.set(H.v(13));},vcycle=(Ls,r,z)=>{const H=Ls.he;H.v(10).set(r);H.ex.fg_vcycle();z.set(H.v(12));},om0=Ls=>{Ls[0].om=Ls.he.ex.fg_om0(Ls[0].om>0?Ls[0].om:0)||undefined;};
-function pcg(Ls,f,opt,prog){const H=Ls.he;H.v(10).set(f);Ls.prog(prog?(i,r)=>prog(i,r,opt.phase||'solve'):null);const iters=H.ex.fg_pcg(opt.tol||0,opt.maxIt||0);Ls.prog(null);return{u:H.v(11).slice(),iters,rel:H.ex.fg_rel()};}
+const FG=helium('fea_grid'),LB=helium('lob');let NSW=1,RES_MAX=800000,CELL_MAX=Infinity;export function setSweeps(n){NSW=n;}export const setResMax=(n,cells=Infinity)=>{RES_MAX=n;CELL_MAX=cells;};
+const lev=(H,l,nd)=>{const om=H.ex.fg_level(l),d=k=>H.ex.fg_dim(l,k),nx=d(0),ny=d(1),nz=d(2);return{nx,ny,nz,NX:nx+1,NY:ny+1,NZ:nz+1,nn:d(3),nd,E:H.get(20),sc:H.get(21),...(l?{KE:H.get(22)}:{}),fixed:H.get(23),diag:H.get(24),om};};
+async function setup(G,K,nd,fixed,dadd,mg,lazy){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;let n;try{x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.put(1,densOf(G));H.put(2,K);H.put(3,fixed);dadd&&H.put(4,dadd);n=x.fg_setup(mg===false?0:1,lazy?1:0);}catch(e){throw/address space|past its region/.test(e.message)&&!H.native?new Error('This model is too large for the in-browser solver ('+(G.nx*G.ny*G.nz).toLocaleString('en-US')+' grid cells). Lower the resolution, or run it with the Amni-CAD headless API, which solves natively without the 4 GB browser limit.'):e;}const Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));H.into(14,fixed);Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
+const mv=(Ls,x,y,raw)=>{const H=Ls.he;H.put(12,x);H.ex.fg_matvec(raw?1:0);H.into(13,y);},vcycle=(Ls,r,z)=>{const H=Ls.he;H.put(10,r);H.ex.fg_vcycle();H.into(12,z);},om0=Ls=>{Ls[0].om=Ls.he.ex.fg_om0(Ls[0].om>0?Ls[0].om:0)||undefined;};
+function pcg(Ls,f,opt,prog){const H=Ls.he;H.put(10,f);Ls.prog(prog?(i,r)=>prog(i,r,opt.phase||'solve'):null);const iters=H.ex.fg_pcg(opt.tol||0,opt.maxIt||0);Ls.prog(null);return{u:H.get(11),iters,rel:H.ex.fg_rel()};}
 async function solve(Ls,K,f,opt={},prog){
   const L=Ls[0],n=L.nn*L.nd,b=new Float64Array(n),want=opt.solver||'auto';for(let i=0;i<n;i++)b[i]=L.fixed[i]?0:f[i]||0;let gpuError;
-  if(L.nd===3&&want!=='cpu'&&(want==='gpu'||L.sc.length>(opt.gpuMin||15000)))try{const r=await gpuSolve(Ls.all(),K,b,{tol:opt.tol||1e-6,maxIt:opt.maxIt,nsw:NSW,mv:(x,y)=>mv(Ls,x,y)},prog);if(r)return{...r,backend:'gpu'};gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
+  if(L.nd===3&&want!=='cpu'&&(want==='gpu'||L.sc.length>(opt.gpuMin||15000)))try{if(!globalThis.navigator?.gpu)throw new Error('WebGPU unavailable');const r=await gpuSolve(Ls.all(),K,b,{tol:opt.tol||1e-6,maxIt:opt.maxIt,nsw:NSW,mv:(x,y)=>mv(Ls,x,y)},prog);if(r)return{...r,backend:'gpu'};gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
   om0(Ls);
-  return{...pcg(Ls,b,opt,prog),backend:'cpu',gpuError,why:gpuError?'':want==='cpu'?'CPU chosen':L.nd!==3?'heat solves on the CPU':opt.dadd?'springs solve on the CPU':'Auto: small enough that the CPU is quicker'};
+  return{...pcg(Ls,b,opt,prog),backend:Ls.he.native?'native':'cpu',gpuError,why:Ls.he.native?'Native 64-bit solver':gpuError?'':want==='cpu'?'CPU chosen':L.nd!==3?'heat solves on the CPU':opt.dadd?'springs solve on the CPU':'Auto: small enough that the CPU is quicker'};
 }
 export async function solveGrid(G,mat,dof,force,opt={},prog){
   const K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
@@ -118,7 +118,7 @@ function sampleTris(pos,idx,tris,h,cb){
   }
 }
 export function prep(inp,def){
-  const{pos,idx,groups,bbox,volume,res}=inp,target=Math.max(2000,Math.min(res||def,800000)),h=Math.cbrt(Math.max(volume,1e-9)/target),G=voxelize(pos,idx,bbox,h);
+  const{pos,idx,groups,bbox,volume,res}=inp,target=Math.max(2000,Math.min(res||def,RES_MAX)),h=Math.cbrt(Math.max(volume,1e-9)/target),G=voxelize(pos,idx,bbox,h);if(G.nx*G.ny*G.nz>CELL_MAX)throw new Error('This model needs about '+Math.ceil(G.nx*G.ny*G.nz*950/1e9)+' GB at this resolution ('+(G.nx*G.ny*G.nz).toLocaleString('en-US')+' grid cells), more than this computer has. Lower the resolution.');
   let nAct=0;for(const v of G.solid)nAct+=v;if(nAct<8)throw new Error('part too thin for this resolution, raise resolution');
   const mask=activeNodeMask(G),NX=G.nx+1,NY=G.ny+1,NZ=G.nz+1,nn=NX*NY*NZ,dens=densOf(G),vol=new Float64Array(nn),h3=h*h*h/8;
   for(let k=0;k<G.nz;k++)for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const w=dens[(k*G.ny+j)*G.nx+i]*h3;if(w)for(let d=0;d<8;d++)vol[((k+(d>>2))*NY+(j+((d>>1)&1)))*NX+i+(d&1)]+=w;}
@@ -196,7 +196,7 @@ async function modal(inp,P,prog){
   const dof=supportMask(inp,P,true),free=!dof.some(v=>v),t0=Date.now(),want=inp.solver||'auto',Ls=await setup(G,K,3,dof,null,inp.mg,want!=='cpu'),L=Ls[0],n=L.nn*3,Mv=new Float64Array(n),rho=(mat.rho||7850)*1e-12;
   for(let q=0;q<P.nn;q++)for(let c=0;c<3;c++)Mv[3*q+c]=L.fixed[3*q+c]?0:P.vol[q]*rho;
   const defl=free?rigidModes(P.nn,P.xyz,Mv):[];
-  let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000)))try{ctx=await gpuContext(Ls.all(),K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
+  let ctx=null,gpuError;if(want!=='cpu'&&Ls.length>1&&(want==='gpu'||L.sc.length>(inp.gpuMin||15000))&&globalThis.navigator?.gpu)try{ctx=await gpuContext(Ls.all(),K,{nsw:NSW});if(!ctx)gpuError='WebGPU unavailable';}catch(e){gpuError=String(e.message||e);}
   om0(Ls);
   const lo={tol:inp.tol,maxIt:inp.maxIt};let E,gpu=!!ctx;try{E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,ctx);}catch(e){if(!ctx)throw e;gpuError=String(e.message||e);gpu=false;E=await lobpcg(Ls,K,Mv,nev,defl,lo,prog,null);}finally{ctx&&ctx.free();}
   const {c:cnt}=nodalField(G,L,null),lmax=maxOf([...E.lam.map(Math.abs),1e-30]);

@@ -1,0 +1,26 @@
+use std
+into fea_grid_native.amni
+
+```amni
+import os;
+import binary;
+import fea_grid;
+```
+
+This is the native host for the voxel multigrid solver in `fea_grid.amni` (imported above, so every fg_ function, `PIPE`, the level accessors and the module arrays are in scope). Amni-CAD's headless API runs it as a 64-bit child process so a voxel solve can use the machine's memory instead of the 4 GB of a wasm32 module. JavaScript drives it through a binary protocol on standard input and output, all little-endian. Every request is a 48-byte header: byte 0 is the operation, byte 1 is a call or view id, bytes 2 to 7 are unused, then five f64 arguments a0 to a4 at bytes 8, 16, 24, 32 and 40. Every reply starts with a 24-byte header: the tag byte, seven zero bytes, then two f64 values v0 and v1. A piece is at most 1 MiB (1048576 bytes), always a whole number of elements.
+
+`CUR` is the level that views 20 to 24 name; it starts at 0 and `fg_level` calls through `call` set it.
+
+The views and their element types are: 1 `DENS` (f32), 2 `KK` (f64), 3 `FIX0` (u8), 4 `DADD0` (f64), 10 `VB`, 11 `VU`, 12 `VX` and 13 `VY` (f64), 14 `lFix(0)` (u8), 15 `lDiag(0)` (f64), 16 `lE(0)` (i32), 17 `lSc(0)` (f64), 20 `lE(CUR)` (i32), 21 `lSc(CUR)` (f64), 22 `lKE(CUR)` (f32), 23 `lFix(CUR)` (u8) and 24 `lDiag(CUR)` (f64). Any other id is unknown.
+
+`reply(tag, v0, v1)` writes a reply header to standard output.
+
+`put_bytes(data)` writes a byte slice to standard output in pieces, using `write_stdout` on each piece.
+
+`send_view(id)` replies tag 100 with v0 the view's byte count and v1 its element count, then `put_bytes` of the view's bytes (`bytes_of` the slice); an unknown id replies tag 101 with v0 equal to id.
+
+`take_view(id, nbytes)` reads nbytes of payload from standard input in pieces with `read_bytes` into an emptied buffer, and decodes each piece's elements in order into the view, continuing at the element where the previous piece stopped: an f64 element with `binary::read_f64le`, an f32 with `binary::read_f32le` and an i32 with `binary::read_i32le` at its byte offset in the piece, and a u8 element is the byte itself (`from_bytes` is not a raw decoder, so it is never used). When the id is unknown or nbytes is not the view's byte count it still reads and drops every payload byte and replies tag 114 with v0 equal to -1; otherwise it replies tag 114 with v0 equal to 0.
+
+`call(id, a0, a1, a2, a3, a4) real` runs one exported solver function and returns a real; integer parameters get the argument converted to an integer, real parameters get it unchanged, and a function that returns nothing gives 0. The table: id 0 runs `fg_grid` on integers a0 to a4 and gives 0; id 1 gives the level count from `fg_setup` on integers a0 and a1; id 2 sets CUR to a0 as an integer, then gives the real om that `fg_level` returns for integer a0; id 3 gives `fg_dim` of integers a0 and a1; id 4 gives the real that `fg_om0` returns for the real a0; id 5 runs `fg_sweeps` on integer a0 and gives 0; id 6 runs `fg_matvec` on integer a0 and gives 0; id 7 runs `fg_vcycle` and gives 0; id 8 gives the iteration count from `fg_pcg` with the real a0 as tol and integer a1 as max_it; id 9 gives the real from `fg_rel`; id 10 runs `fg_views` and gives 0. Any other id writes "fea_grid native: unknown call" to standard error and exits with code 2.
+
+`main()` sets `PIPE` to true, then loops: it empties a header buffer and reads 48 bytes into it with `read_bytes`, stopping when fewer arrive; it decodes the op (byte 0), the id (byte 1) and a0 to a4 with `binary::read_f64le` at bytes 8, 16, 24, 32 and 40. Op 99 replies tag 114 with v0 equal to `call`(id, a0, a1, a2, a3, a4) and v1 equal to 0; op 119 runs `take_view(id, a0 as an int)`; op 103 runs `send_view(id)`; op 113 stops the loop; any other op writes "fea_grid native: bad request" to standard error and exits with code 2. It flushes standard output after every reply.

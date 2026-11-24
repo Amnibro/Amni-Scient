@@ -1,0 +1,201 @@
+=== -26d6453b5e418d30
+let PIECE = 1048576;
+=== 70a52fea3a01b7bd
+var CUR int = 0;
+=== 1358f462058c9825
+fn view_esize(id int) int {
+	match id {
+		1 => 4,
+		2 => 8,
+		3 => 1,
+		4 => 8,
+		10, 11, 12, 13 => 8,
+		14 => 1,
+		15 => 8,
+		16 => 4,
+		17 => 8,
+		20 => 4,
+		21 => 8,
+		22 => 4,
+		23 => 1,
+		24 => 8,
+		_ => 0,
+	}
+}
+fn view_count(id int) int {
+	match id {
+		1 => DENS.len,
+		2 => KK.len,
+		3 => FIX0.len,
+		4 => DADD0.len,
+		10 => VB.len,
+		11 => VU.len,
+		12 => VX.len,
+		13 => VY.len,
+		14 => lFix(0).len,
+		15 => lDiag(0).len,
+		16 => lE(0).len,
+		17 => lSc(0).len,
+		20 => lE(CUR).len,
+		21 => lSc(CUR).len,
+		22 => lKE(CUR).len,
+		23 => lFix(CUR).len,
+		24 => lDiag(CUR).len,
+		_ => 0,
+	}
+}
+=== 0c7a40f812f7aa5b
+fn reply(tag int, v0 real, v1 real) {
+	var h byte[24] = [0; 24];
+	h[0] = tag as! byte;
+	var v real[2] = [v0, v1];
+	let vb = bytes_of(v);
+	for i in 16 { h[8 + i] = vb[i]; }
+	write_stdout(h[..]);
+}
+=== 25466f4671f9aa27
+fn put_bytes(data const byte[:]) {
+	var at = 0;
+	while at < data.len {
+		let n = min(PIECE, data.len - at);
+		write_stdout(data[at..at + n]);
+		at += n;
+	}
+}
+=== 0505f1525bddc923
+fn send_view(id int) {
+	let es = view_esize(id);
+	if es == 0 {
+		reply(101, id as real, 0.0);
+		return;
+	}
+	let cnt = view_count(id);
+	reply(100, (cnt * es) as real, cnt as real);
+	match id {
+		1 => { put_bytes(bytes_of(DENS)); },
+		2 => { put_bytes(bytes_of(KK)); },
+		3 => { put_bytes(bytes_of(FIX0)); },
+		4 => { put_bytes(bytes_of(DADD0)); },
+		10 => { put_bytes(bytes_of(VB)); },
+		11 => { put_bytes(bytes_of(VU)); },
+		12 => { put_bytes(bytes_of(VX)); },
+		13 => { put_bytes(bytes_of(VY)); },
+		14 => { put_bytes(bytes_of(lFix(0))); },
+		15 => { put_bytes(bytes_of(lDiag(0))); },
+		16 => { put_bytes(bytes_of(lE(0))); },
+		17 => { put_bytes(bytes_of(lSc(0))); },
+		20 => { put_bytes(bytes_of(lE(CUR))); },
+		21 => { put_bytes(bytes_of(lSc(CUR))); },
+		22 => { put_bytes(bytes_of(lKE(CUR))); },
+		23 => { put_bytes(bytes_of(lFix(CUR))); },
+		24 => { put_bytes(bytes_of(lDiag(CUR))); },
+		_ => {},
+	}
+}
+=== -5ac8c0e0db3b5b2f
+fn fill_piece(dst real[:], at int, buf const byte[:]) int {
+	let n = buf.len / 8;
+	for i in n { dst[at + i] = binary::read_f64le(buf, i * 8); }
+	at + n
+}
+fn fill_piece(dst f32[:], at int, buf const byte[:]) int {
+	let n = buf.len / 4;
+	for i in n { dst[at + i] = binary::read_f32le(buf, i * 4); }
+	at + n
+}
+fn fill_piece(dst i32[:], at int, buf const byte[:]) int {
+	let n = buf.len / 4;
+	for i in n { dst[at + i] = binary::read_i32le(buf, i * 4); }
+	at + n
+}
+fn fill_piece(dst byte[:], at int, buf const byte[:]) int {
+	for i in buf.len { dst[at + i] = buf[i]; }
+	at + buf.len
+}
+fn take_view(id int, nbytes int) {
+	let es = view_esize(id);
+	let ok = es > 0 && nbytes == view_count(id) * es;
+	var buf byte[>..] = [];
+	var left = nbytes;
+	var at = 0;
+	while left > 0 {
+		let n = min(left, PIECE);
+		buf.clear();
+		read_bytes(n, buf);
+		if buf.len == 0 { break; }
+		left -= buf.len;
+		if ok {
+			match id {
+				1 => { at = fill_piece(DENS, at, buf); },
+				2 => { at = fill_piece(KK, at, buf); },
+				3 => { at = fill_piece(FIX0, at, buf); },
+				4 => { at = fill_piece(DADD0, at, buf); },
+				10 => { at = fill_piece(VB, at, buf); },
+				11 => { at = fill_piece(VU, at, buf); },
+				12 => { at = fill_piece(VX, at, buf); },
+				13 => { at = fill_piece(VY, at, buf); },
+				14 => { at = fill_piece(lFix(0), at, buf); },
+				15 => { at = fill_piece(lDiag(0), at, buf); },
+				16 => { at = fill_piece(lE(0), at, buf); },
+				17 => { at = fill_piece(lSc(0), at, buf); },
+				20 => { at = fill_piece(lE(CUR), at, buf); },
+				21 => { at = fill_piece(lSc(CUR), at, buf); },
+				22 => { at = fill_piece(lKE(CUR), at, buf); },
+				23 => { at = fill_piece(lFix(CUR), at, buf); },
+				24 => { at = fill_piece(lDiag(CUR), at, buf); },
+				_ => {},
+			}
+		}
+	}
+	if ok { reply(114, 0.0, 0.0); } else { reply(114, -1.0, 0.0); }
+}
+=== -6d679cdb59f0ade1
+fn call(id int, a0 real, a1 real, a2 real, a3 real, a4 real) real {
+	match id {
+		0 => fg_grid(a0 as i32, a1 as i32, a2 as i32, a3 as i32, a4 as i32) as real,
+		1 => fg_setup(a0 as i32, a1 as i32) as real,
+		2 => {
+			CUR = a0 as int;
+			fg_level(a0 as i32)
+		},
+		3 => fg_dim(a0 as i32, a1 as i32) as real,
+		4 => fg_om0(a0),
+		5 => { fg_sweeps(a0 as i32); 0.0 },
+		6 => { fg_matvec(a0 as i32); 0.0 },
+		7 => { fg_vcycle(); 0.0 },
+		8 => fg_pcg(a0, a1 as i32) as real,
+		9 => fg_rel() as real,
+		10 => fg_views() as real,
+		_ => {
+			write_stderr("fea_grid native: unknown call\n");
+			exit(2);
+			0.0
+		},
+	}
+}
+=== 6baec743d110172e
+fn main() {
+	PIPE = true;
+	var hdr byte[>..] = [];
+	var running = true;
+	while running {
+		hdr.clear();
+		read_bytes(48, hdr);
+		if hdr.len < 48 { break; }
+		let op = hdr[0] as int;
+		let id = hdr[1] as int;
+		var a real[5] = [0.0; 5];
+		for k in 5 { a[k] = binary::read_f64le(hdr, 8 + 8 * k); }
+		match op {
+			99 => { reply(114, call(id, a[0], a[1], a[2], a[3], a[4]), 0.0); },
+			119 => { take_view(id, a[0] as int); },
+			103 => { send_view(id); },
+			113 => { running = false; },
+			_ => {
+				write_stderr("fea_grid native: bad request\n");
+				exit(2);
+			},
+		}
+		flush_stdout();
+	}
+}

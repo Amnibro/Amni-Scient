@@ -1,0 +1,12 @@
+import {workerData} from 'node:worker_threads';
+import {spawn} from 'node:child_process';
+const{bin,sab,port}=workerData,F=new Int32Array(sab),send=(m,t)=>{port.postMessage(m,t);Atomics.add(F,0,1);Atomics.notify(F,0);};
+let err='',done=false,head=Buffer.alloc(0),need=null;
+const cp=spawn(bin,[],{stdio:['pipe','pipe','pipe'],windowsHide:true}),stop=m=>{done||send({e:m});done=true;};
+cp.on('spawn',()=>send({pid:cp.pid}));
+cp.on('error',e=>stop('could not start ('+e.message+')'));
+cp.on('exit',(c,s)=>stop('stopped ('+(s||'exit '+c)+')'+(err.trim()?': '+err.trim().split('\n').slice(-3).join(' ').replace(/helium runtime error: /g,''):'')));
+cp.stderr.on('data',d=>{err=(err+d).slice(-4000);});
+cp.stdin.on('error',()=>{});
+port.on('message',({h,d,k})=>k?(cp.kill('SIGKILL'),port.close()):(cp.stdin.write(new Uint8Array(h)),d&&cp.stdin.write(new Uint8Array(d))));
+cp.stdout.on('data',c=>{let o=0;while(o<c.length){if(need){const n=Math.min(need.len-need.got,c.length-o);need.u8.set(c.subarray(o,o+n),need.got);need.got+=n;o+=n;if(need.got===need.len){send({d:need.ab},[need.ab]);need=null;}continue;}const n=Math.min(24-head.length,c.length-o);head=Buffer.concat([head,c.subarray(o,o+n)]);o+=n;if(head.length<24)break;const t=head[0],v0=head.readDoubleLE(8),v1=head.readDoubleLE(16);head=Buffer.alloc(0);if(t===112)send({p:[v0,v1]});else if(t===114)send({r:v0});else if(t===101)send({bad:v0});else if(t===100){const ab=new ArrayBuffer(v0);v0?need={ab,u8:new Uint8Array(ab),got:0,len:v0}:send({d:ab},[ab]);}else stop('sent a bad reply');}});
