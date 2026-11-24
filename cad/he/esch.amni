@@ -51,6 +51,10 @@ var US i32[>..];
 var MW i32[>..];
 var ML i32[>..];
 var AD i32[>..];
+var GF i32[>..];
+var LO real[>..];
+var PB real[>..];
+var ST real[>..];
 export fn es_views() {
 	es_view_f64(1, SY);
 	es_view_f64(2, SR);
@@ -66,10 +70,14 @@ export fn es_views() {
 	es_view_f64(12, JC);
 	es_view_f64(13, AQ);
 	es_view_f64(14, BB);
+	es_view_f64(19, LO);
+	es_view_f64(20, PB);
+	es_view_f64(21, ST);
 	es_view_i32(15, NT);
 	es_view_i32(16, AN);
 	es_view_i32(17, TC);
 	es_view_i32(18, AD);
+	es_view_i32(22, GF);
 }
 fn zf(xs real[>..]&, n int, x real) {
 	xs.clear();
@@ -91,6 +99,7 @@ export fn es_setup(nq i32, nw i32, nl i32, nx i32, nt i32) i32 {
 	zf(LB, 5 * nl, 0.0);
 	zf(XF, 3 * nx, 0.0);
 	zf(QT, nt, 0.0);
+	zi(GF, nl, 0);
 	zf(BB, 4, 0.0);
 	es_views();
 	return 0;
@@ -968,4 +977,112 @@ export fn es_annot(mode i32) i32 {
 	return changed as i32;
 }
 fn main() {
+}
+export fn es_lor() i32 {
+	zf(LO, 2 * NL, 0.0);
+	es_views();
+	for i in NL {
+		let x = LB[5 * i];
+		let y = LB[5 * i + 1];
+		let s = LB[5 * i + 2];
+		let kind = LB[5 * i + 3];
+		var d = 1.0;
+		var found = false;
+		for k in NK {
+			if PN[10 * k + 2] == s && samept(PN[10 * k], PN[10 * k + 1], x, y) == 1 {
+				if PN[10 * k + 7] < -0.5 { d = -1.0; }
+				found = true;
+				break;
+			}
+		}
+		if !found {
+			for w in NW {
+				if WR[5 * w + 4] == s {
+					let first = samept(WR[5 * w], WR[5 * w + 1], x, y) == 1;
+					if first || samept(WR[5 * w + 2], WR[5 * w + 3], x, y) == 1 {
+						let ox = if first { WR[5 * w + 2] } else { WR[5 * w] };
+						if ox > x + 1e-3 { d = -1.0; }
+						break;
+					}
+				}
+			}
+		}
+		if kind == 2 {
+			let g = GF[i] == 1;
+			let b = if g { -1.0 } else { 1.0 };
+			var side = false;
+			for m in NL {
+				if m != i && LB[5 * m + 2] == s && abs(LB[5 * m] - x) < 1e-3 && (LB[5 * m + 1] - y) * b > 0.0 && abs(LB[5 * m + 1] - y) <= 3.811 {
+					side = true;
+				}
+			}
+			if side {
+				LO[2 * i] = d;
+				LO[2 * i + 1] = if g == (d < 0.0) { 3.0 } else { 1.0 };
+			} else {
+				LO[2 * i] = 0.0;
+				LO[2 * i + 1] = 0.0;
+			}
+		} else {
+			LO[2 * i] = d;
+			LO[2 * i + 1] = 0.0;
+		}
+	}
+	return NL as i32;
+}
+export fn es_pset(n i32) i32 {
+	zf(PB, 6 * n, 0.0);
+	es_views();
+	return 0;
+}
+fn gsnap(v real) real {
+	r4(floor(v / 2.54 + 0.5) * 2.54)
+}
+export fn es_pack(n i32) i32 {
+	let c int = n;
+	var total = 0.0;
+	for i in c {
+		let w = PB[6 * i + 2] - PB[6 * i] + 40.64;
+		let h = PB[6 * i + 3] - PB[6 * i + 1] + 17.78;
+		total += w * h;
+	}
+	let limit = max(101.6, sqrt(3.0 * total));
+	var x = 0.0;
+	var y = 0.0;
+	var r = 0.0;
+	for i in c {
+		let b0 = PB[6 * i];
+		let b1 = PB[6 * i + 1];
+		let b2 = PB[6 * i + 2];
+		let b3 = PB[6 * i + 3];
+		let w = b2 - b0 + 40.64;
+		let h = b3 - b1 + 17.78;
+		if x > 0.0 && x + w > limit {
+			x = 0.0;
+			y = y - r;
+			r = 0.0;
+		}
+		PB[6 * i + 4] = gsnap(x - b0 + 20.32);
+		PB[6 * i + 5] = gsnap(y - b3 - 7.62);
+		x += w;
+		r = max(r, h);
+	}
+	return n;
+}
+export fn es_row(n i32, x0 real, y0 real, step real) i32 {
+	let c int = n;
+	for i in c {
+		PB[6 * i + 4] = r4(x0 + step / 2.0 + step * i);
+		PB[6 * i + 5] = r4(y0);
+	}
+	return n;
+}
+export fn es_stubs() i32 {
+	zf(ST, 2 * NK, 0.0);
+	es_views();
+	for k in NK {
+		ST[2 * k] = r4(PN[10 * k] + 5.08 * PN[10 * k + 7]);
+		ST[2 * k + 1] = r4(PN[10 * k + 1] + 5.08 * PN[10 * k + 8]);
+	}
+	return NK as i32;
 }
