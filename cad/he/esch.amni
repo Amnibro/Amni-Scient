@@ -1,0 +1,971 @@
+import math;
+export fn es_dups() i32 {
+	AD.clear();
+	for a in NA {
+		if AQ[5 * a + 1] >= 1 {
+			for b in a {
+				if AQ[5 * b] == AQ[5 * a] && AQ[5 * b + 1] == AQ[5 * a + 1] {
+					AD.push(b as i32);
+					AD.push(a as i32);
+					break;
+				}
+			}
+		}
+	}
+	es_views();
+	return (AD.len / 2) as i32;
+}
+let GD = 2.54;
+let ETOL = 0.001;
+extern fn es_view_f64(id i32, xs real[:]) = "es_view_f64";
+extern fn es_view_i32(id i32, xs i32[:]) = "es_view_i32";
+var NQ int = 0;
+var NW int = 0;
+var NL int = 0;
+var NX int = 0;
+var NK int = 0;
+var NE int = 0;
+var NA int = 0;
+var NF int = 0;
+var SY real[>..];
+var SR real[>..];
+var QP real[>..];
+var QT real[>..];
+var WR real[>..];
+var LB real[>..];
+var XF real[>..];
+var PN real[>..];
+var QB real[>..];
+var NI real[>..];
+var ER real[>..];
+var JC real[>..];
+var AQ real[>..];
+var BB real[>..];
+var UF i32[>..];
+var RN i32[>..];
+var NT i32[>..];
+var TC i32[>..];
+var AN i32[>..];
+var AO i32[>..];
+var US i32[>..];
+var MW i32[>..];
+var ML i32[>..];
+var AD i32[>..];
+export fn es_views() {
+	es_view_f64(1, SY);
+	es_view_f64(2, SR);
+	es_view_f64(3, QP);
+	es_view_f64(4, QT);
+	es_view_f64(5, WR);
+	es_view_f64(6, LB);
+	es_view_f64(7, XF);
+	es_view_f64(8, PN);
+	es_view_f64(9, QB);
+	es_view_f64(10, NI);
+	es_view_f64(11, ER);
+	es_view_f64(12, JC);
+	es_view_f64(13, AQ);
+	es_view_f64(14, BB);
+	es_view_i32(15, NT);
+	es_view_i32(16, AN);
+	es_view_i32(17, TC);
+	es_view_i32(18, AD);
+}
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x as i32);
+}
+export fn es_setup(nq i32, nw i32, nl i32, nx i32, nt i32) i32 {
+	NQ = nq;
+	NW = nw;
+	NL = nl;
+	NX = nx;
+	zf(QP, 10 * nq, 0.0);
+	zf(WR, 5 * nw, 0.0);
+	zf(LB, 5 * nl, 0.0);
+	zf(XF, 3 * nx, 0.0);
+	zf(QT, nt, 0.0);
+	zf(BB, 4, 0.0);
+	es_views();
+	return 0;
+}
+fn spin(x real, y real, dx real, dy real, t real) {
+	SY.push(x);
+	SY.push(y);
+	SY.push(dx);
+	SY.push(dy);
+	SY.push(t);
+}
+fn sop(o real, a real, b real, c real, d real, e real, f real) {
+	SR.push(o);
+	SR.push(a);
+	SR.push(b);
+	SR.push(c);
+	SR.push(d);
+	SR.push(e);
+	SR.push(f);
+}
+fn sln(a real, b real, c real, d real) {
+	sop(1, a, b, c, d, 0, 0);
+}
+fn pinl(x real, y real, dx real, dy real, t real, ln real) {
+	spin(x, y, dx, dy, t);
+	sln(x, y, x - ln * dx, y - ln * dy);
+}
+fn arrow(tx real, ty real, dx real, dy real) {
+	let l = sqrt(dx * dx + dy * dy);
+	let ux = dx / l;
+	let uy = dy / l;
+	let bx = tx - 0.9 * ux;
+	let by = ty - 0.9 * uy;
+	sop(5, tx, ty, bx - 0.45 * uy, by + 0.45 * ux, bx + 0.45 * uy, by - 0.45 * ux);
+}
+fn dio() {
+	let g = GD;
+	pinl(2 * g, 0, 1, 0, 0, 2 * g - 1.27);
+	pinl(-2 * g, 0, -1, 0, 0, 2 * g - 1.27);
+	sln(-1.27, -1.27, -1.27, 1.27);
+	sln(-1.27, 1.27, 1.27, 0);
+	sln(1.27, 0, -1.27, -1.27);
+	sln(1.27, -1.27, 1.27, 1.27);
+}
+fn bjt(pnp int) {
+	let g = GD;
+	pinl(-2 * g, 0, -1, 0, 0, 2 * g);
+	pinl(g, 2 * g, 0, 1, 0, 2 * g - 2.3);
+	pinl(g, -2 * g, 0, -1, 0, 2 * g - 2.3);
+	sln(0, -1.9, 0, 1.9);
+	sln(0, 0.8, g, 2.3);
+	sln(0, -0.8, g, -2.3);
+	sop(3, 1.0, 0, 3.0, 0, 0, 0);
+	if pnp == 0 {
+		arrow(2.032, -2.0, 2.54, -1.5);
+	} else {
+		arrow(0.762, -1.25, -2.54, 1.5);
+	}
+}
+fn fet(pch int) {
+	let g = GD;
+	pinl(-2 * g, 0, -1, 0, 0, 2 * g - 0.9);
+	pinl(g, 2 * g, 0, 1, 0, 2 * g - 1.7);
+	pinl(g, -2 * g, 0, -1, 0, 2 * g - 1.7);
+	sln(-0.9, -1.9, -0.9, 1.9);
+	sln(0, 1.2, 0, 2.2);
+	sln(0, -0.5, 0, 0.5);
+	sln(0, -2.2, 0, -1.2);
+	sln(0, 1.7, g, 1.7);
+	sln(0, -1.7, g, -1.7);
+	sln(0, 0, g, 0);
+	sln(g, 0, g, -1.7);
+	sop(3, 1.0, 0, 3.0, 0, 0, 0);
+	if pch == 0 {
+		arrow(0.1, 0, -1, 0);
+	} else {
+		arrow(2.2, 0, 1, 0);
+	}
+}
+fn xtal() {
+	sln(-1.6, -1.5, -1.6, 1.5);
+	sln(1.6, -1.5, 1.6, 1.5);
+	sop(2, -0.9, -2.0, 0.9, 2.0, 0, 0);
+}
+fn sym(kind i32, n i32, m i32, w i32) int {
+	SY.clear();
+	SR.clear();
+	let g = GD;
+	if kind == 1 {
+		pinl(-2 * g, 0, -1, 0, 0, g);
+		pinl(2 * g, 0, 1, 0, 0, g);
+		var px = -g;
+		var py = 0.0;
+		for i in 1..7 {
+			let nx = -g + i * g / 3;
+			var ny = 0.0;
+			if i % 2 == 1 { ny = 0.9; } else if i != 6 { ny = -0.9; }
+			sln(px, py, nx, ny);
+			px = nx;
+			py = ny;
+		}
+	}
+	if kind == 2 {
+		pinl(-2 * g, 0, -1, 0, 0, 2 * g - 0.5);
+		pinl(2 * g, 0, 1, 0, 0, 2 * g - 0.5);
+		sln(-0.5, -1.6, -0.5, 1.6);
+		sln(0.5, -1.6, 0.5, 1.6);
+	}
+	if kind == 3 {
+		pinl(-2 * g, 0, -1, 0, 0, 2 * g - 0.5);
+		pinl(2 * g, 0, 1, 0, 0, 2 * g - 0.75);
+		sln(-0.5, -1.6, -0.5, 1.6);
+		sop(4, 3.2, 0, 2.45, PI - 0.6, PI + 0.6, 0);
+		sln(-2.0, 1.4, -1.2, 1.4);
+		sln(-1.6, 1.0, -1.6, 1.8);
+	}
+	if kind == 4 {
+		pinl(-2 * g, 0, -1, 0, 0, g);
+		pinl(2 * g, 0, 1, 0, 0, g);
+		for k in 0..4 {
+			sop(4, -g + g / 4 + k * g / 2, 0, g / 4, 0, PI, 0);
+		}
+	}
+	if kind == 5 {
+		dio();
+	}
+	if kind == 6 {
+		dio();
+		sln(0.2, 1.5, 1.3, 2.6);
+		sln(1.3, 1.5, 2.4, 2.6);
+		arrow(1.3, 2.6, 1, 1);
+		arrow(2.4, 2.6, 1, 1);
+	}
+	if kind == 7 {
+		dio();
+		sln(1.27, 1.27, 1.87, 1.27);
+		sln(1.87, 1.27, 1.87, 0.77);
+		sln(1.27, -1.27, 0.67, -1.27);
+		sln(0.67, -1.27, 0.67, -0.77);
+	}
+	if kind == 8 {
+		dio();
+		sln(1.27, 1.27, 0.77, 1.77);
+		sln(1.27, -1.27, 1.77, -1.77);
+	}
+	if kind == 9 {
+		bjt(0);
+	}
+	if kind == 10 {
+		bjt(1);
+	}
+	if kind == 11 {
+		fet(0);
+	}
+	if kind == 12 {
+		fet(1);
+	}
+	if kind == 13 {
+		let hw = max(w, 4) * g / 2;
+		let r = max(max(m, n - m), 1);
+		let top = ((r - 1) - (r - 1) / 2) * g;
+		for i in 0..m {
+			pinl(-hw - g, top - i * g, -1, 0, 3, g);
+		}
+		for j in 0..(n - m) {
+			pinl(hw + g, top - j * g, 1, 0, 3, g);
+		}
+		sop(2, -hw, top + g, hw, top - r * g, 0, 0);
+	}
+	if kind == 14 {
+		let top = ((n - 1) / 2) * g;
+		for i in 0..n {
+			pinl(-2 * g, top - i * g, -1, 0, 0, g);
+		}
+		sop(2, -g, top + g / 2, g, top - (n - 1) * g - g / 2, 0, 0);
+	}
+	if kind == 15 {
+		pinl(-2 * g, 0, -1, 0, 0, 2 * g - 1.6);
+		pinl(2 * g, 0, 1, 0, 0, 2 * g - 1.6);
+		xtal();
+	}
+	if kind == 16 {
+		pinl(-2 * g, 0, -1, 0, 0, 2 * g - 1.6);
+		pinl(0, -2 * g, 0, -1, 0, 2 * g - 2.0);
+		pinl(2 * g, 0, 1, 0, 0, 2 * g - 1.6);
+		pinl(0, 2 * g, 0, 1, 0, 2 * g - 2.0);
+		xtal();
+	}
+	if kind == 17 {
+		pinl(-2 * g, 0, -1, 0, 0, g);
+		pinl(2 * g, 0, 1, 0, 0, g);
+		sop(3, -2.09, 0, 0.45, 0, 0, 0);
+		sop(3, 2.09, 0, 0.45, 0, 0, 0);
+		sln(-2.6, 1.3, 2.6, 1.3);
+		sln(0, 1.3, 0, 2.5);
+		sln(-0.9, 2.5, 0.9, 2.5);
+	}
+	if kind == 18 {
+		pinl(-2 * g, 0, -1, 0, 0, g);
+		pinl(2 * g, 0, 1, 0, 0, g);
+		sop(2, -g, -0.9, g, 0.9, 0, 0);
+		sln(-g, 0, g, 0);
+	}
+	if kind == 19 {
+		pinl(-2 * g, 0, -1, 0, 0, g);
+		pinl(2 * g, 0, 1, 0, 0, g);
+		sop(2, -g, -1.0, g, 1.0, 0, 0);
+		sln(-1.6, -1.6, 1.6, 1.6);
+	}
+	if kind == 20 {
+		spin(0, 0, 0, -1, 6);
+		sln(0, 0, 0, 1.27);
+		sln(-1.27, 1.27, 1.27, 1.27);
+	}
+	if kind == 21 {
+		spin(0, 0, 0, 1, 6);
+		sln(0, 0, 0, -1.27);
+		sln(-1.9, -1.27, 1.9, -1.27);
+		sln(-1.2, -1.9, 1.2, -1.9);
+		sln(-0.5, -2.5, 0.5, -2.5);
+	}
+	if kind == 22 {
+		sop(3, 0, 0, 2.0, 0, 0, 0);
+		sop(3, 0, 0, 1.2, 0, 0, 0);
+	}
+	if kind == 23 {
+		let r = n / 2;
+		let top = ((r - 1) / 2) * g;
+		for k in 0..r {
+			pinl(-2 * g, top - k * g, -1, 0, 0, g);
+			pinl(2 * g, top - k * g, 1, 0, 0, g);
+		}
+		sop(2, -g, top + g / 2, g, top - (r - 1) * g - g / 2, 0, 0);
+	}
+	SY.len / 5
+}
+fn bbox() {
+	if BB.len < 4 { zf(BB, 4, 0.0); }
+	if SY.len == 0 && SR.len == 0 {
+		BB[0] = -GD;
+		BB[1] = -GD;
+		BB[2] = GD;
+		BB[3] = GD;
+		return;
+	}
+	var lx = 1e300;
+	var ly = 1e300;
+	var hx = -1e300;
+	var hy = -1e300;
+	fn add(x real, y real) {
+		lx = min(lx, x);
+		ly = min(ly, y);
+		hx = max(hx, x);
+		hy = max(hy, y);
+	}
+	for i in SY.len / 5 {
+		add(SY[5 * i], SY[5 * i + 1]);
+	}
+	for i in SR.len / 7 {
+		let o = 7 * i;
+		let op = SR[o] as int;
+		let a = SR[o + 1];
+		let b = SR[o + 2];
+		let c = SR[o + 3];
+		let d = SR[o + 4];
+		let e = SR[o + 5];
+		let f = SR[o + 6];
+		if op == 1 || op == 2 {
+			add(a, b);
+			add(c, d);
+		}
+		if op == 3 || op == 4 {
+			add(a - c, b - c);
+			add(a + c, b + c);
+		}
+		if op == 5 {
+			add(a, b);
+			add(c, d);
+			add(e, f);
+		}
+	}
+	BB[0] = lx;
+	BB[1] = ly;
+	BB[2] = hx;
+	BB[3] = hy;
+}
+export fn es_sym(kind i32, n i32, m i32, w i32) i32 {
+	let c = sym(kind, n, m, w);
+	bbox();
+	es_views();
+	return c as i32;
+}
+fn r4(v real) real {
+	floor(v * 10000.0 + 0.5) / 10000.0
+}
+fn rdx(q int, ux real, uy real) real {
+	let o = 10 * q;
+	let x1 = if QP[o + 7] == 1 { -ux } else { ux };
+	let r = (QP[o + 6] as int) % 4;
+	match r {
+		0 => x1,
+		1 => -uy,
+		2 => -x1,
+		_ => uy,
+	}
+}
+fn rdy(q int, ux real, uy real) real {
+	let o = 10 * q;
+	let x1 = if QP[o + 7] == 1 { -ux } else { ux };
+	let r = (QP[o + 6] as int) % 4;
+	match r {
+		0 => uy,
+		1 => x1,
+		2 => -uy,
+		_ => -x1,
+	}
+}
+fn rx(q int, px real, py real) real {
+	r4(rdx(q, px, py) + QP[10 * q + 4])
+}
+fn ry(q int, px real, py real) real {
+	r4(rdy(q, px, py) + QP[10 * q + 5])
+}
+fn samept(ax real, ay real, bx real, by real) int {
+	if abs(ax - bx) <= ETOL && abs(ay - by) <= ETOL { 1 } else { 0 }
+}
+fn onseg(px real, py real, ax real, ay real, bx real, by real) int {
+	let dx = bx - ax;
+	let dy = by - ay;
+	let l2 = dx * dx + dy * dy;
+	var t = 0.0;
+	if l2 >= 1e-18 {
+		t = clamp(((px - ax) * dx + (py - ay) * dy) / l2, 0.0, 1.0);
+	}
+	let ex = px - (ax + t * dx);
+	let ey = py - (ay + t * dy);
+	if sqrt(ex * ex + ey * ey) <= ETOL { 1 } else { 0 }
+}
+fn inner(px real, py real, ax real, ay real, bx real, by real) int {
+	if onseg(px, py, ax, ay, bx, by) == 1 && samept(px, py, ax, ay) == 0 && samept(px, py, bx, by) == 0 { 1 } else { 0 }
+}
+fn ufind(i int) int {
+	var r = i;
+	while UF[r] != r {
+		r = UF[r] as int;
+	}
+	var c = i;
+	while c != r {
+		let nx = UF[c] as int;
+		UF[c] = r as i32;
+		c = nx;
+	}
+	r
+}
+fn uunion(i int, j int) {
+	let a = ufind(i);
+	let b = ufind(j);
+	if a != b {
+		if a > b {
+			UF[a] = b as i32;
+		} else {
+			UF[b] = a as i32;
+		}
+	}
+}
+fn pins() {
+	PN.clear();
+	zf(QB, 4 * NQ, 0.0);
+	for q in NQ {
+		let o = 10 * q;
+		sym(QP[o] as i32, QP[o + 1] as i32, QP[o + 2] as i32, QP[o + 3] as i32);
+		bbox();
+		let ti = QP[o + 9] as int;
+		for k in SY.len / 5 {
+			let px = SY[5 * k];
+			let py = SY[5 * k + 1];
+			let ux = SY[5 * k + 2];
+			let uy = SY[5 * k + 3];
+			var ty = SY[5 * k + 4];
+			if ti >= 0 && ti + k < QT.len {
+				ty = QT[ti + k];
+			}
+			PN.push(rx(q, px, py));
+			PN.push(ry(q, px, py));
+			PN.push(QP[o + 8]);
+			PN.push(q);
+			PN.push(k);
+			PN.push(ty);
+			PN.push(-1);
+			PN.push(rdx(q, ux, uy));
+			PN.push(rdy(q, ux, uy));
+			PN.push(0);
+		}
+		let xs = [rx(q, BB[0], BB[1]), rx(q, BB[0], BB[3]), rx(q, BB[2], BB[1]), rx(q, BB[2], BB[3])];
+		let ys = [ry(q, BB[0], BB[1]), ry(q, BB[0], BB[3]), ry(q, BB[2], BB[1]), ry(q, BB[2], BB[3])];
+		QB[4 * q] = min(min(xs[0], xs[1]), min(xs[2], xs[3]));
+		QB[4 * q + 1] = min(min(ys[0], ys[1]), min(ys[2], ys[3]));
+		QB[4 * q + 2] = max(max(xs[0], xs[1]), max(xs[2], xs[3]));
+		QB[4 * q + 3] = max(max(ys[0], ys[1]), max(ys[2], ys[3]));
+	}
+	NK = PN.len / 10;
+}
+fn jadd(x real, y real, s real) {
+	for i in JC.len / 3 {
+		if JC[3 * i + 2] == s && samept(JC[3 * i], JC[3 * i + 1], x, y) == 1 {
+			return;
+		}
+	}
+	JC.push(x);
+	JC.push(y);
+	JC.push(s);
+}
+fn jcount(x real, y real, s real) int {
+	var c = 0;
+	for w in NW {
+		if WR[5 * w + 4] == s {
+			let ax = WR[5 * w];
+			let ay = WR[5 * w + 1];
+			let bx = WR[5 * w + 2];
+			let by = WR[5 * w + 3];
+			if samept(ax, ay, x, y) == 1 || samept(bx, by, x, y) == 1 { c += 1; }
+			if inner(x, y, ax, ay, bx, by) == 1 { c += 2; }
+		}
+	}
+	for p in NK {
+		if PN[10 * p + 2] == s && samept(PN[10 * p], PN[10 * p + 1], x, y) == 1 { c += 1; }
+	}
+	c
+}
+fn erc(code real, x real, y real, s real, a real, b real) {
+	if ER.len < 6 * 8192 {
+		ER.push(code);
+		ER.push(x);
+		ER.push(y);
+		ER.push(s);
+		ER.push(a);
+		ER.push(b);
+	}
+}
+fn touched(x real, y real, s real, w int) int {
+	for v in NW {
+		if v != w && WR[5 * v + 4] == s {
+			if onseg(x, y, WR[5 * v], WR[5 * v + 1], WR[5 * v + 2], WR[5 * v + 3]) == 1 { return 1; }
+		}
+	}
+	for p in NK {
+		if PN[10 * p + 2] == s && samept(PN[10 * p], PN[10 * p + 1], x, y) == 1 { return 1; }
+	}
+	for l in NL {
+		if LB[5 * l + 2] == s && samept(LB[5 * l], LB[5 * l + 1], x, y) == 1 { return 1; }
+	}
+	for f in NX {
+		if XF[3 * f + 2] == s && samept(XF[3 * f], XF[3 * f + 1], x, y) == 1 { return 1; }
+	}
+	0
+}
+fn onw(px real, py real, w int) int {
+	onseg(px, py, WR[5 * w], WR[5 * w + 1], WR[5 * w + 2], WR[5 * w + 3])
+}
+export fn es_net() i32 {
+	pins();
+	let nn = NK + NW + NL + NX;
+	zi(UF, nn, 0);
+	for i in nn {
+		UF[i] = i as i32;
+	}
+	zi(RN, nn, -1);
+	zi(NT, nn, -1);
+	for a in NW {
+		for b in (a + 1)..NW {
+			if WR[5 * a + 4] == WR[5 * b + 4] {
+				if onw(WR[5 * b], WR[5 * b + 1], a) == 1 || onw(WR[5 * b + 2], WR[5 * b + 3], a) == 1 || onw(WR[5 * a], WR[5 * a + 1], b) == 1 || onw(WR[5 * a + 2], WR[5 * a + 3], b) == 1 {
+					uunion(NK + a, NK + b);
+				}
+			}
+		}
+	}
+	for p in NK {
+		for w in NW {
+			if PN[10 * p + 2] == WR[5 * w + 4] && onw(PN[10 * p], PN[10 * p + 1], w) == 1 {
+				uunion(p, NK + w);
+			}
+		}
+	}
+	for a in NK {
+		for b in (a + 1)..NK {
+			if PN[10 * a + 2] == PN[10 * b + 2] && samept(PN[10 * a], PN[10 * a + 1], PN[10 * b], PN[10 * b + 1]) == 1 {
+				uunion(a, b);
+			}
+		}
+	}
+	for l in NL {
+		let lx = LB[5 * l];
+		let ly = LB[5 * l + 1];
+		let ls = LB[5 * l + 2];
+		for w in NW {
+			if WR[5 * w + 4] == ls && onw(lx, ly, w) == 1 {
+				uunion(NK + NW + l, NK + w);
+			}
+		}
+		for p in NK {
+			if PN[10 * p + 2] == ls && samept(PN[10 * p], PN[10 * p + 1], lx, ly) == 1 {
+				uunion(NK + NW + l, p);
+			}
+		}
+	}
+	for a in NL {
+		for b in (a + 1)..NL {
+			if LB[5 * a + 4] == LB[5 * b + 4] {
+				let ka = LB[5 * a + 3];
+				let kb = LB[5 * b + 3];
+				if (ka >= 1 && kb >= 1) || (ka == 0 && kb == 0 && LB[5 * a + 2] == LB[5 * b + 2]) {
+					uunion(NK + NW + a, NK + NW + b);
+				}
+			}
+		}
+	}
+	for f in NX {
+		for p in NK {
+			if XF[3 * f + 2] == PN[10 * p + 2] && samept(XF[3 * f], XF[3 * f + 1], PN[10 * p], PN[10 * p + 1]) == 1 {
+				PN[10 * p + 9] = 1;
+			}
+		}
+	}
+	NE = 0;
+	for p in NK {
+		let r = ufind(p);
+		if RN[r] == -1 {
+			RN[r] = NE as i32;
+			NE += 1;
+		}
+	}
+	for i in nn {
+		NT[i] = RN[ufind(i)];
+	}
+	for p in NK {
+		PN[10 * p + 6] = NT[p];
+	}
+	zf(NI, 8 * NE, 0.0);
+	for k in NE {
+		NI[8 * k] = -1;
+		NI[8 * k + 1] = -1;
+		NI[8 * k + 2] = -1;
+	}
+	zi(TC, 10 * NE, 0);
+	for p in NK {
+		let k = PN[10 * p + 6] as int;
+		if NI[8 * k + 2] == -1 { NI[8 * k + 2] = p; }
+		NI[8 * k + 3] += 1;
+		let ty = PN[10 * p + 5] as int;
+		TC[10 * k + ty] += 1;
+	}
+	for w in NW {
+		let k = NT[NK + w] as int;
+		if k >= 0 { NI[8 * k + 4] += 1; }
+	}
+	for l in NL {
+		let k = NT[NK + NW + l] as int;
+		if k >= 0 {
+			NI[8 * k + 5] += 1;
+			if NI[8 * k + 1] == -1 || NI[8 * k + 1] < LB[5 * l + 3] {
+				NI[8 * k] = l;
+				NI[8 * k + 1] = LB[5 * l + 3];
+			}
+		}
+	}
+	JC.clear();
+	for w in NW {
+		for e in 0..2 {
+			let x = WR[5 * w + 2 * e];
+			let y = WR[5 * w + 2 * e + 1];
+			let s = WR[5 * w + 4];
+			if jcount(x, y, s) >= 3 { jadd(x, y, s); }
+		}
+	}
+	for p in NK {
+		let x = PN[10 * p];
+		let y = PN[10 * p + 1];
+		let s = PN[10 * p + 2];
+		if jcount(x, y, s) >= 3 { jadd(x, y, s); }
+	}
+	checks();
+	es_views();
+	return NE as i32;
+}
+fn pick(k int, ta int, tb int, skip int) int {
+	var seen = 0;
+	for p in NK {
+		if PN[10 * p + 6] == k {
+			let ty = PN[10 * p + 5] as int;
+			if ty == ta || ty == tb {
+				if seen == skip { return p; }
+				seen += 1;
+			}
+		}
+	}
+	-1
+}
+fn checks() {
+	ER.clear();
+	for p in NK {
+		let x = PN[10 * p];
+		let y = PN[10 * p + 1];
+		let s = PN[10 * p + 2];
+		let k = PN[10 * p + 6] as int;
+		let ty = PN[10 * p + 5] as int;
+		let cnt = NI[8 * k + 3];
+		if cnt == 1 && ty != 8 && PN[10 * p + 9] == 0 && NI[8 * k + 1] != 2 {
+			erc(1, x, y, s, p, -1);
+		}
+		if PN[10 * p + 9] == 1 && (cnt >= 2 || NI[8 * k + 4] >= 1 || NI[8 * k + 5] >= 1) {
+			erc(2, x, y, s, p, -1);
+		}
+		if ty == 8 && cnt >= 2 {
+			erc(9, x, y, s, p, -1);
+		}
+	}
+	for k in NE {
+		if TC[10 * k + 2] + TC[10 * k + 6] >= 2 {
+			let a = pick(k, 2, 6, 0);
+			let b = pick(k, 2, 6, 1);
+			erc(3, PN[10 * b], PN[10 * b + 1], PN[10 * b + 2], a, b);
+		}
+		if TC[10 * k + 5] >= 1 && TC[10 * k + 6] == 0 && NI[8 * k + 1] != 2 {
+			let p = pick(k, 5, 5, 0);
+			erc(4, PN[10 * p], PN[10 * p + 1], PN[10 * p + 2], p, -1);
+		}
+		if TC[10 * k + 1] >= 1 && NI[8 * k + 3] >= 2 && TC[10 * k] + TC[10 * k + 2] + TC[10 * k + 3] + TC[10 * k + 4] + TC[10 * k + 6] + TC[10 * k + 7] + TC[10 * k + 9] == 0 && NI[8 * k + 1] != 2 {
+			let p = pick(k, 1, 1, 0);
+			erc(5, PN[10 * p], PN[10 * p + 1], PN[10 * p + 2], p, -1);
+		}
+	}
+	for w in NW {
+		for e in 0..2 {
+			let x = WR[5 * w + 2 * e];
+			let y = WR[5 * w + 2 * e + 1];
+			let s = WR[5 * w + 4];
+			if touched(x, y, s, w) == 0 {
+				erc(6, x, y, s, w, e);
+			}
+		}
+	}
+	for l in NL {
+		let lx = LB[5 * l];
+		let ly = LB[5 * l + 1];
+		let ls = LB[5 * l + 2];
+		var hit = false;
+		for w in NW {
+			if WR[5 * w + 4] == ls && onw(lx, ly, w) == 1 { hit = true; }
+		}
+		for p in NK {
+			if PN[10 * p + 2] == ls && samept(PN[10 * p], PN[10 * p + 1], lx, ly) == 1 { hit = true; }
+		}
+		if !hit {
+			erc(7, lx, ly, ls, l, -1);
+		}
+	}
+	for l in NL {
+		let kd = LB[5 * l + 3];
+		if kd < 2 {
+			var other = false;
+			for m in NL {
+				if m != l && LB[5 * m + 4] == LB[5 * l + 4] {
+					let km = LB[5 * m + 3];
+					if kd == 1 {
+						if km >= 1 { other = true; }
+					} else if km == 0 && LB[5 * m + 2] == LB[5 * l + 2] {
+						other = true;
+					}
+				}
+			}
+			if !other {
+				erc(8, LB[5 * l], LB[5 * l + 1], LB[5 * l + 2], l, -1);
+			}
+		}
+	}
+}
+fn segdist(px real, py real, ax real, ay real, bx real, by real) real {
+	let dx = bx - ax;
+	let dy = by - ay;
+	let l2 = dx * dx + dy * dy;
+	var t = 0.0;
+	if l2 >= 1e-18 {
+		t = clamp(((px - ax) * dx + (py - ay) * dy) / l2, 0.0, 1.0);
+	}
+	let ex = px - (ax + t * dx);
+	let ey = py - (ay + t * dy);
+	sqrt(ex * ex + ey * ey)
+}
+export fn es_hit(x real, y real, s i32, tol real) i32 {
+	let sh real = s;
+	for l in NL {
+		if LB[5 * l + 2] == sh && abs(LB[5 * l] - x) <= tol && abs(LB[5 * l + 1] - y) <= tol {
+			return (NQ + NW + l) as i32;
+		}
+	}
+	var bw = -1;
+	var bd = 1e300;
+	for w in NW {
+		if WR[5 * w + 4] == sh {
+			let d = segdist(x, y, WR[5 * w], WR[5 * w + 1], WR[5 * w + 2], WR[5 * w + 3]);
+			if d < bd {
+				bd = d;
+				bw = w;
+			}
+		}
+	}
+	if bw >= 0 && bd <= tol {
+		return (NQ + bw) as i32;
+	}
+	var bq = -1;
+	var ba = 1e300;
+	for q in NQ {
+		if QP[10 * q + 8] == sh {
+			let lo = QB[4 * q] - tol;
+			let bo = QB[4 * q + 1] - tol;
+			let hi = QB[4 * q + 2] + tol;
+			let to = QB[4 * q + 3] + tol;
+			if x >= lo && x <= hi && y >= bo && y <= to {
+				let a = (QB[4 * q + 2] - QB[4 * q]) * (QB[4 * q + 3] - QB[4 * q + 1]);
+				if a < ba {
+					ba = a;
+					bq = q;
+				}
+			}
+		}
+	}
+	return bq as i32;
+}
+export fn es_drag(q i32, ddx real, ddy real) i32 {
+	MW.clear();
+	ML.clear();
+	for p in NK {
+		if PN[10 * p + 3] == q {
+			let px = PN[10 * p];
+			let py = PN[10 * p + 1];
+			let s = PN[10 * p + 2];
+			for w in NW {
+				if WR[5 * w + 4] == s {
+					for e in 0..2 {
+						if samept(WR[5 * w + 2 * e], WR[5 * w + 2 * e + 1], px, py) == 1 {
+							let key = 2 * w + e;
+							var found = false;
+							for v in MW {
+								if v == key { found = true; }
+							}
+							if !found { MW.push(key as i32); }
+						}
+					}
+				}
+			}
+			for l in NL {
+				if LB[5 * l + 2] == s && samept(LB[5 * l], LB[5 * l + 1], px, py) == 1 {
+					var found = false;
+					for v in ML {
+						if v == l { found = true; }
+					}
+					if !found { ML.push(l as i32); }
+				}
+			}
+		}
+	}
+	for i in MW.len {
+		let v = MW[i] as int;
+		let w = v / 2;
+		let e = v % 2;
+		WR[5 * w + 2 * e] = r4(WR[5 * w + 2 * e] + ddx);
+		WR[5 * w + 2 * e + 1] = r4(WR[5 * w + 2 * e + 1] + ddy);
+	}
+	for i in ML.len {
+		let l = ML[i] as int;
+		LB[5 * l] = r4(LB[5 * l] + ddx);
+		LB[5 * l + 1] = r4(LB[5 * l + 1] + ddy);
+	}
+	let qi = q as int;
+	QP[10 * qi + 4] = r4(QP[10 * qi + 4] + ddx);
+	QP[10 * qi + 5] = r4(QP[10 * qi + 5] + ddy);
+	pins();
+	es_views();
+	return MW.len as i32;
+}
+export fn es_aset(n i32, nf i32) i32 {
+	NA = n;
+	NF = nf;
+	zf(AQ, 5 * n, 0.0);
+	zi(AN, n, 0);
+	zi(AO, n, 0);
+	es_views();
+	return 0;
+}
+fn before(a int, b int) int {
+	let sa = AQ[5 * a + 2];
+	let sb = AQ[5 * b + 2];
+	if sa != sb {
+		if sa < sb { return 1; }
+		return 0;
+	}
+	let ba = floor(-AQ[5 * a + 4] / (4 * GD));
+	let bb = floor(-AQ[5 * b + 4] / (4 * GD));
+	if ba != bb {
+		if ba < bb { return 1; }
+		return 0;
+	}
+	let xa = AQ[5 * a + 3];
+	let xb = AQ[5 * b + 3];
+	if xa != xb {
+		if xa < xb { return 1; }
+		return 0;
+	}
+	if a < b { 1 } else { 0 }
+}
+fn nextfree(p int) int {
+	var c = 1;
+	while US[p * (NA + 2) + c] != 0 {
+		c += 1;
+	}
+	US[p * (NA + 2) + c] = 1;
+	c
+}
+export fn es_annot(mode i32) i32 {
+	for i in NA {
+		AO[i] = i as i32;
+		AN[i] = 0;
+	}
+	for i in 1..NA {
+		let v = AO[i] as int;
+		var j = i - 1;
+		while j >= 0 && before(v, AO[j] as int) == 1 {
+			AO[j + 1] = AO[j];
+			j -= 1;
+		}
+		AO[j + 1] = v as i32;
+	}
+	zi(US, NF * (NA + 2), 0);
+	if mode == 1 {
+		for idx in NA {
+			let a = AO[idx] as int;
+			let pre = AQ[5 * a] as int;
+			AN[a] = nextfree(pre) as i32;
+		}
+	} else {
+		for idx in NA {
+			let a = AO[idx] as int;
+			let pre = AQ[5 * a] as int;
+			let c = AQ[5 * a + 1] as int;
+			if c >= 1 {
+				var dup = false;
+				for i2 in idx {
+					let b = AO[i2] as int;
+					if (AQ[5 * b] as int) == pre && (AN[b] as int) == c { dup = true; }
+				}
+				if dup {
+					AN[a] = 0;
+				} else {
+					AN[a] = c as i32;
+					if c <= NA + 1 { US[pre * (NA + 2) + c] = 1; }
+				}
+			} else {
+				AN[a] = 0;
+			}
+		}
+		for idx in NA {
+			let a = AO[idx] as int;
+			if AN[a] == 0 {
+				let pre = AQ[5 * a] as int;
+				AN[a] = nextfree(pre) as i32;
+			}
+		}
+	}
+	var changed = 0;
+	for a in NA {
+		if (AN[a] as int) != (AQ[5 * a + 1] as int) { changed += 1; }
+	}
+	es_views();
+	return changed as i32;
+}
+fn main() {
+}
