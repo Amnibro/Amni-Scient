@@ -27,4 +27,8 @@ ok(q.res.quotes[0].dfm.some(d=>d.code==='corner'),'sharp inside corner DFM warni
 const on=q.res.online;ok(on&&on.unit_usd>15&&on.unit_usd<q.res.quotes[0].unit*0.5&&on.breaks.length===q.res.quotes[0].breaks.length,'overseas online CNC estimate $'+(on&&on.unit_usd)+' vs US $'+q.res.quotes[0].unit);
 ({q}=await run(blk,{material:'al6061',qty:1,process:'cnc3'}));ok(q.res.online,'overseas line also when cnc3 is forced');
 ({q}=await run(blk,{material:'pla',qty:3}));ok(q.res.quotes[0].process==='fdm'&&q.res.quotes[0].unit>1,'PLA print quote $'+q.res.quotes[0].unit);
+ok(/^US online print/.test(q.res.shop),'print materials priced by the US online print service: '+q.res.shop);
+{const sd=(await M.catalog()).shop,bd=(await import('../templates.js')).TEMPLATES_IN.find(x=>x.key==='bracket').doc;K.resetCache();const br=await K.build(bd),cc={pla:[12.06,'fdm'],resin:[15.08,'sla'],'pa12-sls':[29.83,'sls'],'pa12-mjf':[46.21,'mjf']};for(const [mat,[y,pid]] of Object.entries(cc)){const r=await M.quote({body:br.body,doc:bd},{req:{material:mat,qty:1}}),u=r.res.quotes[0].unit;ok(r.res.quotes[0].process===pid&&Math.abs(u/y-1)<0.25,'bracket '+mat+' $'+u+' within 25% of the marketplace best offer $'+y);}
+const own=await M.quote({body:br.body,doc:bd},{req:{material:'pla',qty:1},shop:JSON.stringify(sd)});ok(own.res.quotes[0].unit>=sd.min_order&&/^Amni default shop/.test(own.res.shop),'a saved shop keeps its own print rates and $'+sd.min_order+' minimum: $'+own.res.quotes[0].unit);
+const ten=await M.quote({body:br.body,doc:bd},{req:{material:'pla',qty:10}});ok(ten.res.quotes[0].unit<12.06&&ten.res.quotes[0].unit>3,'ten PLA brackets cost less each: $'+ten.res.quotes[0].unit);}
 process.exitCode=bad?1:0;

@@ -486,7 +486,7 @@ export function exportBody(body,fmt,units){
   if(!body)throw new Error('nothing to export');
   if(fmt==='step'){const u=units==='in'?'INCH':'MM';return R.exportSTEP([{shape:body,name:'part',color:'#b8c2cc'}],{unit:u,modelUnit:u});}
   if(fmt==='brep')return new Blob([body.serialize()],{type:'model/vnd.brep'});
-  if(fmt==='stl')return body.blobSTL({binary:true,tolerance:Math.max(sizeOf(body)*1e-4,0.001),angularTolerance:0.05});
+  if(fmt==='stl'){const s=units==='in'?body.clone().scale(25.4,[0,0,0]):body;try{return s.blobSTL({binary:true,tolerance:Math.max(sizeOf(s)*1e-4,0.001),angularTolerance:0.05});}finally{s!==body&&s.delete&&s.delete();}}
   throw new Error('unknown format '+fmt);
 }
 function cacheRef(){return cache;}
