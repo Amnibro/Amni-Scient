@@ -1914,6 +1914,83 @@ export fn ms_obudget(tgt i32, fixed i32) {
 	OBG = jmin(1500000.0, 4.0 * (tgt as real)) as int;
 	OFX = fixed as int;
 }
+=== -456a18e548fe1979
+export fn ms_one() i32 {
+	ONE as i32
+}
+=== -62f4034978cf1ef2
+var OSN i32[>..];
+var OPK real[>..];
+export fn ms_osize(lx real, ly real, lz real, hx real, hy real, hz real, hv real, res real, hard real, nlay real, sc0 real, fixed i32, hmn real, dl real, refine i32, nsm i32, fe i32) i32 {
+	var sc = sc0;
+	var st = 1.0;
+	var sp = 1.0;
+	var have = false;
+	var bsc = sc0;
+	var bst = 1.0;
+	var bdist = INF;
+	var bp = -1;
+	var lastp = -1;
+	var passes = 0;
+	OSN.clear();
+	for ps in 6 {
+		let hc = hv * sc;
+		let hm = if hmn > 0.0 { hmn } else { hc / 64.0 };
+		let ne = ms_oct(lx, ly, lz, hx, hy, hz, hc, nlay, st, hm, dl, refine, nsm, fe) as int;
+		passes += 1;
+		if ne < 0 { return ne as i32; }
+		let usc = sc;
+		let ust = st;
+		lastp = ps;
+		st *= OFS;
+		sc *= OFH;
+		if have && ne == 0 {
+			st = (st + sp) / 2.0;
+			continue;
+		}
+		have = true;
+		sp = st;
+		let r = (ne as real) / res;
+		let d = abs(ms_log2(r));
+		if d < bdist {
+			bdist = d;
+			bsc = usc;
+			bst = ust;
+			bp = ps;
+		}
+		let conv = fixed != 0 || (r <= 1.6 && r >= 0.5) || (r > 1.6 && (ne as real) <= hard && sc > 8.0);
+		if conv {
+			bsc = usc;
+			bst = ust;
+			bp = ps;
+			break;
+		}
+		var seen = false;
+		for x in OSN { if (x as int) == ne { seen = true; } }
+		if ps == 5 || seen { break; }
+		pi(OSN, ne);
+		if r > 1.0 {
+			if (ne as real) > hard && ORS[4] > 0.5 * ORS[3] {
+				st *= ms_pow((ne as real) / hard, 0.5);
+			} else {
+				sc *= ms_pow(r, 0.4);
+			}
+		} else {
+			if st > 1.0 {
+				st = jmax(1.0, st * ms_pow(r, 0.5));
+			} else {
+				sc *= ms_pow(r, 0.4);
+			}
+		}
+	}
+	OPK.clear();
+	pf(OPK, bsc);
+	pf(OPK, bst);
+	pf(OPK, passes as real);
+	pf(OPK, if bp == lastp { 1.0 } else { 0.0 });
+	ms_view_f64(43, OPK);
+	passes as i32
+}
 === -45083b9429cb1afb
 export fn ms_oct(lx real, ly real, lz real, hx real, hy real, hz real, hc0 real, nlay real, stc0 real, hmin real, dl real, refine i32, nsm i32, fe i32) i32 {
 	var hc = hc0;

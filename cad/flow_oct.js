@@ -8,7 +8,7 @@ const ERR={'-1':'The part has no surface to mesh.','-2':'The flow region cannot 
 export function octBudget(q){return typeof q==='number'?q:BUDGET[q]||BUDGET.standard;}
 
 export function buildOctree(inp){
-  const X=FOF({ms_acos:Math.acos,ms_log2:Math.log2}),ex=X.ex,V=X.v,pos=inp.pos,idx=inp.idx,np=pos.length/3,nt=idx.length/3,ports=inp.ports||[];
+  const X=FOF({ms_acos:Math.acos,ms_log2:Math.log2,ms_pow:Math.pow}),ex=X.ex,V=X.v,pos=inp.pos,idx=inp.idx,np=pos.length/3,nt=idx.length/3,ports=inp.ports||[];
   ex.ms_init();ex.ms_bin(np,nt);V(1).set(pos);V(2).set(idx);ex.ms_surf(np,nt);const R=V(15),diag=R[14];
   ex.fo_setup(ports.length,nt);const CF=V(101),PT=V(103),PP=V(104),fl=inp.fluid;
   const across=inp.cellsAcross||14,hmin=inp.hmin||Math.max(diag*2e-5,0.005),hmax=inp.hmax||diag/12;
