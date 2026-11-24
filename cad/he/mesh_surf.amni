@@ -1022,6 +1022,11 @@ var OCO int = 0;
 var OHD int = 0;
 var ONN int = 0;
 var ONE int = 0;
+var OBG int = 0;
+var OBT int = 0;
+var OFX int = 0;
+var OFS real = 1.0;
+var OFH real = 1.0;
 var OX real = 0.0;
 var OY real = 0.0;
 var OZ real = 0.0;
@@ -1859,57 +1864,85 @@ export fn ms_ofeat(nt i32, nc i32) {
 	ms_view_i32(30, PT);
 	ms_view_i32(31, CO);
 }
-export fn ms_oct(lx real, ly real, lz real, hx real, hy real, hz real, hc real, nlay real, stc real, hmin real, dl real, refine i32, nsm i32, fe i32) i32 {
-	let ex0 = jmax(jmax(hx - lx, hy - ly), hz - lz) * 1.02 + 1e-9;
-	let p = jmax(0.0, ceil(ms_log2(ex0 / hc) - 1e-9)) as int;
-	var pw = 1.0;
-	for i in p { pw *= 2.0; }
-	OEX = hc * pw;
-	OX = (lx + hx) / 2.0 - OEX / 2.0;
-	OY = (ly + hy) / 2.0 - OEX / 2.0;
-	OZ = (lz + hz) / 2.0 - OEX / 2.0;
-	OHC = hc;
-	OHM = INF;
-	for t in NT {
-		HS[t] = jmax(hmin, jmin(hc, (stc * TH[t]) / jmax(2.5, nlay + 0.5)));
-		OHM = jmin(OHM, HS[t]);
-	}
-	OL = jmin(12.0, jmax(1.0, ceil(ms_log2(OEX / OHM - 1e-9)))) as int;
-	OGR = 1 << OL;
-	OQ = 0;
-	LV.clear();
-	CI.clear();
-	CJ.clear();
-	CK.clear();
-	BDV.clear();
-	AL.clear();
-	SDV.clear();
-	OS.clear();
-	WK.clear();
-	mnew(IK, IV, 1024);
-	mnew(SDK, SDI, 1024);
-	OIU = 0;
-	OSU = 0;
-	for i in 4 { pi(OS, 0); }
-	while OS.len > 0 {
-		let k = OS.pop() as int;
-		let j = OS.pop() as int;
-		let i = OS.pop() as int;
-		let l = OS.pop() as int;
-		let c = ocls(l, i, j, k);
-		if c == 0.0 { continue; }
-		let lim = (if c > 0.0 { c } else { hc }) * 1.0001;
-		if hzf(l) > lim && l < OL {
-			for a in 8 {
-				pi(OS, l + 1);
-				pi(OS, 2 * i + (a & 1));
-				pi(OS, 2 * j + ((a >> 1) & 1));
-				pi(OS, 2 * k + (a >> 2));
+export fn ms_obudget(tgt i32, fixed i32) {
+	OBT = tgt as int;
+	OBG = jmin(1500000.0, 4.0 * (tgt as real)) as int;
+	OFX = fixed as int;
+}
+export fn ms_oct(lx real, ly real, lz real, hx real, hy real, hz real, hc0 real, nlay real, stc0 real, hmin real, dl real, refine i32, nsm i32, fe i32) i32 {
+	var hc = hc0;
+	var stc = stc0;
+	OFS = 1.0;
+	OFH = 1.0;
+	var rounds = 0;
+	var again = true;
+	while again {
+		rounds += 1;
+		let ex0 = jmax(jmax(hx - lx, hy - ly), hz - lz) * 1.02 + 1e-9;
+		let p = jmax(0.0, ceil(ms_log2(ex0 / hc) - 1e-9)) as int;
+		var pw = 1.0;
+		for i in p { pw *= 2.0; }
+		OEX = hc * pw;
+		OX = (lx + hx) / 2.0 - OEX / 2.0;
+		OY = (ly + hy) / 2.0 - OEX / 2.0;
+		OZ = (lz + hz) / 2.0 - OEX / 2.0;
+		OHC = hc;
+		OHM = INF;
+		for t in NT {
+			HS[t] = jmax(hmin, jmin(hc, (stc * TH[t]) / jmax(2.5, nlay + 0.5)));
+			OHM = jmin(OHM, HS[t]);
+		}
+		OL = jmin(12.0, jmax(1.0, ceil(ms_log2(OEX / OHM - 1e-9)))) as int;
+		OGR = 1 << OL;
+		OQ = 0;
+		LV.clear();
+		CI.clear();
+		CJ.clear();
+		CK.clear();
+		BDV.clear();
+		AL.clear();
+		SDV.clear();
+		OS.clear();
+		WK.clear();
+		mnew(IK, IV, 1024);
+		mnew(SDK, SDI, 1024);
+		OIU = 0;
+		OSU = 0;
+		for r in 4 { pi(OS, 0); }
+		while OS.len > 0 {
+			let k = OS.pop() as int;
+			let j = OS.pop() as int;
+			let i = OS.pop() as int;
+			let l = OS.pop() as int;
+			let c = ocls(l, i, j, k);
+			if c == 0.0 { continue; }
+			let lim = (if c > 0.0 { c } else { hc }) * 1.0001;
+			if hzf(l) > lim && l < OL {
+				for a in 8 {
+					pi(OS, l + 1);
+					pi(OS, 2 * i + (a & 1));
+					pi(OS, 2 * j + ((a >> 1) & 1));
+					pi(OS, 2 * k + (a >> 2));
+				}
+			} else {
+				oadd(l, i, j, k, c);
+				if OBG > 0 && OQ > OBG { OS.clear(); }
 			}
-		} else {
-			oadd(l, i, j, k, c);
+		}
+		again = false;
+		if OBG > 0 && OQ > OBG && rounds < 4 {
+			let f = sqrt((OQ as real) / (OBT as real));
+			stc *= f;
+			OFS *= f;
+			if rounds >= 2 && OFX == 0 {
+				let g = exp(0.8 * log(f));
+				hc *= g;
+				OFH *= g;
+			}
+			again = true;
 		}
 	}
+	if OBG > 0 && OQ > OBG { return (-OQ) as i32; }
 	for q in OQ { pi(WK, q); }
 	obal();
 	ORF = 0;
@@ -1930,6 +1963,8 @@ export fn ms_oct(lx real, ly real, lz real, hx real, hy real, hz real, hc real, 
 	oasm();
 	ohout();
 	ostats();
+	ORS[20] = OFS;
+	ORS[21] = OFH;
 	ms_view_i32(32, EL);
 	ms_view_f64(33, XO);
 	ms_view_f64(34, CU);
