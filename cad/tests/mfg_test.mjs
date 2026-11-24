@@ -10,6 +10,7 @@ ok(s&&s.loops.length===5,'5 profile loops (outline + 4 holes): '+(s&&s.loops.len
 ok(p.holes.length===4&&p.holes.every(h=>Math.abs(h[0]-6.35)<1e-6),'4 holes of 0.25 in');
 const b=q.res.quotes&&q.res.quotes[0];
 ok(q.res.ok&&b.process==='laser','laser is best for 5052 plate: '+(b&&b.process)+' $'+(b&&b.unit)+' ea');
+ok(!q.res.online,'no overseas CNC line on a laser plate');
 const cut=b.info.cut_in,exp=2*(5.5+3.5)+TAUq(0.25)+4*Math.PI*0.25;function TAUq(r){return 2*Math.PI*r;}
 ok(Math.abs(cut-exp)<0.02,'cut length '+cut.toFixed(3)+' in vs '+exp.toFixed(3));
 ok(b.info.nest.w_in>5.99&&b.info.nest.h_in>3.99&&b.info.nest.per_sheet>200,'nest '+b.info.nest.per_sheet+' per 5x10 sheet');
@@ -23,5 +24,7 @@ ok(q.kind==='solid'&&q.res.quotes[0].process==='cnc3','pocketed block quotes as 
 ok(q.part.sharp>=4,'4 sharp pocket corners found: '+q.part.sharp);
 ok(q.part.setups===2&&q.part.holes.length===2,'setups '+q.part.setups+', holes '+q.part.holes.length);
 ok(q.res.quotes[0].dfm.some(d=>d.code==='corner'),'sharp inside corner DFM warning');
+const on=q.res.online;ok(on&&on.unit_usd>15&&on.unit_usd<q.res.quotes[0].unit*0.5&&on.breaks.length===q.res.quotes[0].breaks.length,'overseas online CNC estimate $'+(on&&on.unit_usd)+' vs US $'+q.res.quotes[0].unit);
+({q}=await run(blk,{material:'al6061',qty:1,process:'cnc3'}));ok(q.res.online,'overseas line also when cnc3 is forced');
 ({q}=await run(blk,{material:'pla',qty:3}));ok(q.res.quotes[0].process==='fdm'&&q.res.quotes[0].unit>1,'PLA print quote $'+q.res.quotes[0].unit);
 process.exitCode=bad?1:0;

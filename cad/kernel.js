@@ -13,7 +13,7 @@ import {chamferSides,alongFaces,FEAT2,solidsOf,ribGuess} from './features2.js';
 import {vec as V} from './qmath.js';
 import {maxOf,minOf,pushAll} from './minmax.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const STRKEYS=new Set(['feature','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
+const STRKEYS=new Set(['feature','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -373,7 +373,7 @@ const HINT={fillet:'the radius is probably too big for these edges; try a smalle
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
 const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
 const TOOLMAKERS={box:primTool,cylinder:primTool,tube:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
-const KX={R,planeFrom,selectFaces,selectEdges,faceList,edgeList,pdist,sizeOf,bboxOf,volOf,vol,upTo,AXV,M,fu,get NOTES(){return NOTES;},get UNITS(){return UNITS;}};
+const KX={R,planeFrom,profileDrawing,ringDraw,selectFaces,selectEdges,faceList,edgeList,pdist,sizeOf,bboxOf,volOf,vol,upTo,AXV,M,fu,get NOTES(){return NOTES;},get UNITS(){return UNITS;}};
 let cache=[];
 function truncate(i,C=cache){const keep=new Set(),gone=new Set();for(let j=0;j<Math.min(i,C.length);j++){keep.add(C[j].shape);keep.add(C[j].tool);}for(let j=i;j<C.length;j++)for(const o of[C[j].shape,C[j].tool])if(o&&!keep.has(o)&&!gone.has(o)){gone.add(o);try{o.delete();}catch{}}C.length=Math.min(C.length,i);}
 export function resetCache(C){if(C){truncate(0,C);return;}truncate(0);cache=[];}

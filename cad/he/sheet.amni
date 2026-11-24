@@ -1,0 +1,787 @@
+import math;
+fn main() {}
+extern fn sm_view_f64(id i32, xs real[:]) = "sm_view_f64";
+extern fn sm_view_i32(id i32, xs i32[:]) = "sm_view_i32";
+var NX0 real = 0.0;
+var NY0 real = 0.0;
+var NZ0 real = 0.0;
+var FX real = 0.0;
+var FY real = 0.0;
+var NF int = 0;
+var NE int = 0;
+var NP int = 0;
+var NG int = 0;
+var NL int = 0;
+var FC real[>..];
+var ED real[>..];
+var PT real[>..];
+var PR real[>..];
+var MP real[>..];
+var OS real[>..];
+var OB real[>..];
+var OI real[>..];
+var GE real[>..];
+var FL real[>..];
+var PP real[>..];
+var OF real[>..];
+var OV real[>..];
+var SE real[>..];
+var EX i32[>..];
+var QU i32[>..];
+var FE i32[>..];
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x as i32);
+}
+fn rs(xs real[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+}
+fn ri(xs i32[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+}
+export fn sm_views() {
+	sm_view_f64(1, FC);
+	sm_view_f64(2, ED);
+	sm_view_f64(3, PT);
+	sm_view_f64(4, PR);
+	sm_view_f64(5, OS);
+	sm_view_f64(6, OB);
+	sm_view_f64(7, OI);
+	sm_view_f64(8, GE);
+	sm_view_f64(9, FL);
+	sm_view_f64(10, PP);
+	sm_view_f64(11, OF);
+	sm_view_f64(12, OV);
+}
+export fn sm_load(nf i32, ne i32, np i32) {
+	NF = nf;
+	NE = ne;
+	NP = np;
+	zf(FC, 16 * NF, 0.0);
+	zf(ED, 8 * NE, 0.0);
+	zf(PT, 3 * NP, 0.0);
+	zf(PR, 12, 0.0);
+	zf(MP, 24 * NF, 0.0);
+	zf(OI, 8, 0.0);
+	zi(EX, NE, 0);
+	ri(QU, NF);
+	rs(OS, 6 * 64);
+	rs(OB, 12 * 16);
+	sm_views();
+}
+export fn sm_load_plan(ng i32, nl i32) {
+	NG = ng;
+	NL = nl;
+	zf(GE, 8 * NG, 0.0);
+	zf(FL, 20 * NL, 0.0);
+	zf(PP, 12, 0.0);
+	zf(OF, 24 * NL, 0.0);
+	zf(SE, NG, 0.0);
+	zi(FE, NG, -1);
+	rs(OV, 3 * 64);
+	sm_views();
+}
+fn fnorm(f int, x real, y real, z real) {
+	let b = 16 * f;
+	if FC[b] == 1.0 {
+		radial(f, x, y, z);
+		let s = FC[b + 8];
+		NX0 *= s;
+		NY0 *= s;
+		NZ0 *= s;
+	} else {
+		NX0 = FC[b + 4];
+		NY0 = FC[b + 5];
+		NZ0 = FC[b + 6];
+	}
+}
+fn radial(f int, x real, y real, z real) {
+	let b = 16 * f;
+	let dx = x - FC[b + 1];
+	let dy = y - FC[b + 2];
+	let dz = z - FC[b + 3];
+	let ax = FC[b + 4];
+	let ay = FC[b + 5];
+	let az = FC[b + 6];
+	let d = dx * ax + dy * ay + dz * az;
+	var rx = dx - d * ax;
+	var ry = dy - d * ay;
+	var rz = dz - d * az;
+	let l = sqrt(rx * rx + ry * ry + rz * rz);
+	if l > 0.0 {
+		rx /= l;
+		ry /= l;
+		rz /= l;
+	}
+	NX0 = rx;
+	NY0 = ry;
+	NZ0 = rz;
+}
+fn phiof(f int, x real, y real, z real) real {
+	let m = 24 * f;
+	radial(f, x, y, z);
+	let ux = NX0;
+	let uy = NY0;
+	let uz = NZ0;
+	let px = MP[m + 9];
+	let py = MP[m + 10];
+	let pz = MP[m + 11];
+	let cx = py * uz - pz * uy;
+	let cy = pz * ux - px * uz;
+	let cz = px * uy - py * ux;
+	let s = cx * MP[m + 6] + cy * MP[m + 7] + cz * MP[m + 8];
+	let c = px * ux + py * uy + pz * uz;
+	let psi = atan2(s, c);
+	var phi = MP[m + 18] * psi;
+	if phi < -0.001 { phi += TAU; }
+	phi
+}
+fn axof(f int, x real, y real, z real) real {
+	let m = 24 * f;
+	(x - MP[m + 3]) * MP[m + 6] + (y - MP[m + 4]) * MP[m + 7] + (z - MP[m + 5]) * MP[m + 8]
+}
+fn flat(f int, x real, y real, z real) {
+	let m = 24 * f;
+	if MP[m + 1] == 0.0 {
+		let dx = x - MP[m + 3];
+		let dy = y - MP[m + 4];
+		let dz = z - MP[m + 5];
+		FX = MP[m + 12] + dx * MP[m + 6] + dy * MP[m + 7] + dz * MP[m + 8];
+		FY = MP[m + 13] + dx * MP[m + 9] + dy * MP[m + 10] + dz * MP[m + 11];
+	} else {
+		let a = axof(f, x, y, z);
+		let p = phiof(f, x, y, z);
+		let rn = MP[m + 19];
+		FX = MP[m + 12] + a * MP[m + 14] + p * rn * MP[m + 16];
+		FY = MP[m + 13] + a * MP[m + 15] + p * rn * MP[m + 17];
+	}
+}
+fn fromplane(g int, f int, x real, y real, z real) {
+	let fm = 24 * f;
+	let gb = 16 * g;
+	let e1x = MP[fm + 6];
+	let e1y = MP[fm + 7];
+	let e1z = MP[fm + 8];
+	let e2x = MP[fm + 9];
+	let e2y = MP[fm + 10];
+	let e2z = MP[fm + 11];
+	flat(f, x, y, z);
+	let ox = FX;
+	let oy = FY;
+	radial(g, x, y, z);
+	let ux = NX0;
+	let uy = NY0;
+	let uz = NZ0;
+	let ax = FC[gb + 4];
+	let ay = FC[gb + 5];
+	let az = FC[gb + 6];
+	let tx = ay * uz - az * uy;
+	let ty = az * ux - ax * uz;
+	let tz = ax * uy - ay * ux;
+	let dd = (FC[gb + 12] - x) * tx + (FC[gb + 13] - y) * ty + (FC[gb + 14] - z) * tz;
+	let s = if dd > 0.0 { 1.0 } else { -1.0 };
+	let wx = s * tx;
+	let wy = s * ty;
+	let wz = s * tz;
+	let sign = FC[gb + 8];
+	var ri = FC[gb + 7];
+	if sign > 0.0 { ri -= PR[0]; }
+	var k = PR[1];
+	if k < 0.0 { k = if sign > 0.0 { FC[gb + 11] } else { FC[gb + 10] }; }
+	let m = 24 * g;
+	MP[m + 1] = 1.0;
+	MP[m + 3] = x;
+	MP[m + 4] = y;
+	MP[m + 5] = z;
+	MP[m + 6] = ax;
+	MP[m + 7] = ay;
+	MP[m + 8] = az;
+	MP[m + 9] = ux;
+	MP[m + 10] = uy;
+	MP[m + 11] = uz;
+	MP[m + 12] = ox;
+	MP[m + 13] = oy;
+	MP[m + 14] = ax * e1x + ay * e1y + az * e1z;
+	MP[m + 15] = ax * e2x + ay * e2y + az * e2z;
+	MP[m + 16] = wx * e1x + wy * e1y + wz * e1z;
+	MP[m + 17] = wx * e2x + wy * e2y + wz * e2z;
+	MP[m + 18] = s;
+	MP[m + 19] = ri + k * PR[0];
+	MP[m + 20] = ri;
+	MP[m + 21] = k;
+}
+fn fromcyl(g int, f int, x real, y real, z real) {
+	let fm = 24 * f;
+	radial(f, x, y, z);
+	let ux = NX0;
+	let uy = NY0;
+	let uz = NZ0;
+	let ax = MP[fm + 6];
+	let ay = MP[fm + 7];
+	let az = MP[fm + 8];
+	let s = MP[fm + 18];
+	let wx = s * (ay * uz - az * uy);
+	let wy = s * (az * ux - ax * uz);
+	let wz = s * (ax * uy - ay * ux);
+	let dax = MP[fm + 14];
+	let day = MP[fm + 15];
+	let dwx = MP[fm + 16];
+	let dwy = MP[fm + 17];
+	flat(f, x, y, z);
+	let m = 24 * g;
+	MP[m + 3] = x;
+	MP[m + 4] = y;
+	MP[m + 5] = z;
+	MP[m + 6] = ax * dax + wx * dwx;
+	MP[m + 7] = ay * dax + wy * dwx;
+	MP[m + 8] = az * dax + wz * dwx;
+	MP[m + 9] = ax * day + wx * dwy;
+	MP[m + 10] = ay * day + wy * dwy;
+	MP[m + 11] = az * day + wz * dwy;
+	MP[m + 12] = FX;
+	MP[m + 13] = FY;
+	MP[m + 1] = 0.0;
+}
+fn copymap(g int, f int) {
+	MP[24 * g + 1] = MP[24 * f + 1];
+	for k in 3..24 { MP[24 * g + k] = MP[24 * f + k]; }
+}
+fn transfer(g int, f int, e int) {
+	let p0 = ED[8 * e + 3] as int;
+	let x = PT[3 * p0];
+	let y = PT[3 * p0 + 1];
+	let z = PT[3 * p0 + 2];
+	let fm = 24 * f;
+	let gb = 16 * g;
+	let fplane = MP[fm + 1] == 0.0;
+	let gplane = FC[gb] == 0.0;
+	if fplane {
+		if gplane { copymap(g, f); } else { fromplane(g, f, x, y, z); }
+	} else if gplane {
+		fromcyl(g, f, x, y, z);
+	} else {
+		let fb = 16 * f;
+		let dot = FC[gb + 4] * FC[fb + 4] + FC[gb + 5] * FC[fb + 5] + FC[gb + 6] * FC[fb + 6];
+		let rg = FC[gb + 7];
+		let rf = FC[fb + 7];
+		if abs(dot) > 0.9999 && abs(rg - rf) <= 1e-6 * max(rg, rf) + 1e-9 {
+			copymap(g, f);
+		} else {
+			fromcyl(g, f, x, y, z);
+			fromplane(g, g, x, y, z);
+		}
+	}
+	let depth = MP[fm + 2];
+	MP[24 * g] = 1.0;
+	MP[24 * g + 2] = if fplane && !gplane { depth + 1.0 } else { depth };
+}
+fn pickstart() int {
+	let pr = PR[2];
+	if pr >= 0.0 && pr < (NF as real) {
+		let s = pr as int;
+		if FC[16 * s] == 0.0 { return s; }
+	}
+	var big = -1.0;
+	for f in NF {
+		if FC[16 * f] == 0.0 && FC[16 * f + 9] > big { big = FC[16 * f + 9]; }
+	}
+	var best = -1;
+	for f in NF {
+		let b = 16 * f;
+		if FC[b] == 0.0 && FC[b + 9] >= 0.999 * big {
+			if best < 0 {
+				best = f;
+			} else {
+				let c = 16 * best;
+				if FC[b + 6] > FC[c + 6] || (FC[b + 6] == FC[c + 6] && (FC[b + 5] > FC[c + 5] || (FC[b + 5] == FC[c + 5] && FC[b + 4] > FC[c + 4]))) { best = f; }
+			}
+		}
+	}
+	best
+}
+fn startmap(s int) {
+	let b = 16 * s;
+	let nx = FC[b + 4];
+	let ny = FC[b + 5];
+	let nz = FC[b + 6];
+	var xx = 1.0;
+	var xy = 0.0;
+	if abs(nx) > 0.9 {
+		xx = 0.0;
+		xy = 1.0;
+	}
+	let d = xx * nx + xy * ny;
+	var ex = xx - d * nx;
+	var ey = xy - d * ny;
+	var ez = 0.0 - d * nz;
+	let l = sqrt(ex * ex + ey * ey + ez * ez);
+	ex /= l;
+	ey /= l;
+	ez /= l;
+	let e2x = ny * ez - nz * ey;
+	let e2y = nz * ex - nx * ez;
+	let e2z = nx * ey - ny * ex;
+	let ox = FC[b + 1];
+	let oy = FC[b + 2];
+	let oz = FC[b + 3];
+	let m = 24 * s;
+	MP[m] = 1.0;
+	MP[m + 1] = 0.0;
+	MP[m + 2] = 0.0;
+	MP[m + 3] = ox;
+	MP[m + 4] = oy;
+	MP[m + 5] = oz;
+	MP[m + 6] = ex;
+	MP[m + 7] = ey;
+	MP[m + 8] = ez;
+	MP[m + 9] = e2x;
+	MP[m + 10] = e2y;
+	MP[m + 11] = e2z;
+	MP[m + 12] = ox * ex + oy * ey + oz * ez;
+	MP[m + 13] = ox * e2x + oy * e2y + oz * e2z;
+}
+fn smtol() real {
+	if PR[3] > 0.0 { PR[3] } else { 0.9999 }
+}
+fn smoothdot(e int) real {
+	let p = ED[8 * e + 1] as int;
+	if p < 0 { return -2.0; }
+	let f = ED[8 * e] as int;
+	let g = ED[8 * p] as int;
+	let mid = (ED[8 * e + 3] as int) + (ED[8 * e + 4] as int) / 2;
+	let x = PT[3 * mid];
+	let y = PT[3 * mid + 1];
+	let z = PT[3 * mid + 2];
+	fnorm(f, x, y, z);
+	let ax = NX0;
+	let ay = NY0;
+	let az = NZ0;
+	fnorm(g, x, y, z);
+	ax * NX0 + ay * NY0 + az * NZ0
+}
+fn smooth(e int) bool {
+	let p = ED[8 * e + 1] as int;
+	if p < 0 { return false; }
+	let f = ED[8 * e] as int;
+	let g = ED[8 * p] as int;
+	if FC[16 * f] > 1.5 || FC[16 * g] > 1.5 { return false; }
+	smoothdot(e) >= smtol()
+}
+fn walk() {
+	var qi = 0;
+	while qi < QU.len {
+		let f int = QU[qi];
+		qi += 1;
+		for e in NE {
+			if (ED[8 * e] as int) != f { continue; }
+			let p = ED[8 * e + 1] as int;
+			if p < 0 { continue; }
+			let g = ED[8 * p] as int;
+			if smooth(e) {
+				EX[e] = 1;
+				EX[p] = 1;
+				if MP[24 * g] == 0.0 {
+					transfer(g, f, e);
+					QU.push(g as i32);
+				}
+			} else if FC[16 * g] == 2.0 && smoothdot(e) >= smtol() {
+				OI[2] = 2.0;
+			}
+		}
+	}
+}
+fn track(x real, y real) {
+	OI[4] = min(OI[4], x);
+	OI[5] = min(OI[5], y);
+	OI[6] = max(OI[6], x);
+	OI[7] = max(OI[7], y);
+}
+fn mapped(f int, p int) {
+	flat(f, PT[3 * p], PT[3 * p + 1], PT[3 * p + 2]);
+	track(FX, FY);
+}
+fn emit() {
+	for e in NE {
+		let f = ED[8 * e] as int;
+		if MP[24 * f] == 0.0 || EX[e] != 0 { continue; }
+		let kind = ED[8 * e + 2] as int;
+		let p0 = ED[8 * e + 3] as int;
+		let cnt = ED[8 * e + 4] as int;
+		let er = e as real;
+		if kind == 0 {
+			var px = 0.0;
+			var py = 0.0;
+			for k in cnt {
+				mapped(f, p0 + k);
+				if k > 0 {
+					let dx = FX - px;
+					let dy = FY - py;
+					if sqrt(dx * dx + dy * dy) >= 1e-9 {
+						OS.push(er);
+						OS.push(px);
+						OS.push(py);
+						OS.push(FX);
+						OS.push(FY);
+						OS.push(0.0);
+					}
+				}
+				px = FX;
+				py = FY;
+			}
+		} else {
+			var k = 0;
+			while k + 2 < cnt {
+				mapped(f, p0 + k);
+				let sx = FX;
+				let sy = FY;
+				mapped(f, p0 + k + 1);
+				let mx = FX;
+				let my = FY;
+				mapped(f, p0 + k + 2);
+				let qx = FX;
+				let qy = FY;
+				let dx = qx - sx;
+				let dy = qy - sy;
+				let l2 = dx * dx + dy * dy;
+				if sqrt(l2) >= 1e-9 {
+					let cr = dx * (my - sy) - dy * (mx - sx);
+					let b = -2.0 * cr / l2;
+					OS.push(er);
+					OS.push(sx);
+					OS.push(sy);
+					OS.push(qx);
+					OS.push(qy);
+					OS.push(b);
+				}
+				k += 2;
+			}
+		}
+	}
+}
+fn bends() {
+	for f in NF {
+		let m = 24 * f;
+		if MP[m] == 0.0 || MP[m + 1] != 1.0 { continue; }
+		var p0 = 1e30;
+		var p1 = -1e30;
+		var a0 = 1e30;
+		var a1 = -1e30;
+		for e in NE {
+			if (ED[8 * e] as int) != f { continue; }
+			let q0 = ED[8 * e + 3] as int;
+			let cnt = ED[8 * e + 4] as int;
+			for k in cnt {
+				let q = q0 + k;
+				let x = PT[3 * q];
+				let y = PT[3 * q + 1];
+				let z = PT[3 * q + 2];
+				let ph = phiof(f, x, y, z);
+				let ax = axof(f, x, y, z);
+				p0 = min(p0, ph);
+				p1 = max(p1, ph);
+				a0 = min(a0, ax);
+				a1 = max(a1, ax);
+			}
+		}
+		if p0 > p1 { continue; }
+		let rn = MP[m + 19];
+		let pm = (p0 + p1) / 2.0;
+		let x0 = MP[m + 12] + a0 * MP[m + 14] + pm * rn * MP[m + 16];
+		let y0 = MP[m + 13] + a0 * MP[m + 15] + pm * rn * MP[m + 17];
+		let x1 = MP[m + 12] + a1 * MP[m + 14] + pm * rn * MP[m + 16];
+		let y1 = MP[m + 13] + a1 * MP[m + 15] + pm * rn * MP[m + 17];
+		let dir = if FC[16 * f + 8] > 0.0 { -1.0 } else { 1.0 };
+		OB.push(f as real);
+		OB.push(x0);
+		OB.push(y0);
+		OB.push(x1);
+		OB.push(y1);
+		OB.push((p1 - p0) * 180.0 / PI);
+		OB.push(dir);
+		OB.push(MP[m + 20]);
+		OB.push((p1 - p0) * rn);
+		OB.push(MP[m + 21]);
+		OB.push(a1 - a0);
+		OB.push(MP[m + 2]);
+	}
+}
+export fn sm_unfold() i32 {
+	OI[4] = 1e30;
+	OI[5] = 1e30;
+	OI[6] = -1e30;
+	OI[7] = -1e30;
+	OS.clear();
+	OB.clear();
+	zf(MP, 24 * NF, 0.0);
+	zi(EX, NE, 0);
+	QU.clear();
+	let s = pickstart();
+	if s == -1 {
+		OI[2] = 1.0;
+		sm_views();
+		return 1;
+	}
+	OI[3] = s as real;
+	startmap(s);
+	QU.push(s as i32);
+	walk();
+	emit();
+	bends();
+	var cnt = 0;
+	var area = 0.0;
+	for f in NF {
+		if MP[24 * f] != 0.0 {
+			cnt += 1;
+			area += FC[16 * f + 9];
+		}
+	}
+	OI[0] = cnt as real;
+	OI[1] = area;
+	sm_views();
+	OI[2] as i32
+}
+fn setback(r real, t real, a real, left bool) real {
+	if a >= 179.0 * PI / 180.0 {
+		r + t
+	} else if left {
+		(r + t) * tan(a / 2.0)
+	} else {
+		r * tan(a / 2.0)
+	}
+}
+fn firstsb(i int) real {
+	let t = PP[0];
+	var r = FL[20 * i + 3];
+	if r == 0.0 { r = PP[1]; }
+	setback(r, t, abs(FL[20 * i + 5]) * PI / 180.0, true)
+}
+export fn sm_plan() i32 {
+	OV.clear();
+	for i in NL {
+		let g = FL[20 * i] as int;
+		if g >= 0 && g < NG {
+			if FE[g] == -1 {
+				FE[g] = i as i32;
+			} else {
+				OF[24 * i] = 5.0;
+			}
+			SE[g] = firstsb(i);
+		}
+	}
+	for i in NL { plan1(i); }
+	sm_views();
+	var worst = 0.0;
+	for i in NL { worst = max(worst, OF[24 * i]); }
+	worst as i32
+}
+var SBK real[10] = [0.0; 10];
+var FLT real[10] = [0.0; 10];
+fn plan1(i int) {
+	let o = 24 * i;
+	if OF[o] == 5.0 { return; }
+	let g = FL[20 * i] as int;
+	if g < 0 || g >= NG {
+		OF[o] = 2.0;
+		return;
+	}
+	let t = PP[0];
+	var r = FL[20 * i + 3];
+	if r == 0.0 { r = PP[1]; }
+	let n = FL[20 * i + 2] as int;
+	if n < 1 || n > 7 {
+		OF[o] = 3.0;
+		return;
+	}
+	for j in 1..(n + 1) {
+		let a = FL[20 * i + 5 + 2 * (j - 1)];
+		if a == 0.0 || abs(a) > 180.0 {
+			OF[o] = 3.0;
+			return;
+		}
+	}
+	SBK[n + 1] = 0.0;
+	for j in 1..(n + 1) {
+		let a = FL[20 * i + 5 + 2 * (j - 1)];
+		SBK[j] = setback(r, t, abs(a) * PI / 180.0, j == 1 || a > 0.0);
+	}
+	var st = 0;
+	for j in 1..(n + 1) {
+		let len = FL[20 * i + 4 + 2 * (j - 1)];
+		let sum = SBK[j] + SBK[j + 1];
+		let fv = len - sum;
+		if fv < -1e-9 {
+			if st == 0 {
+				st = 1;
+				OF[o + 17] = j as real;
+				OF[o + 18] = sum;
+			}
+		}
+		FLT[j] = max(fv, 0.0);
+	}
+	let vs, vc = profile(i, n, t, r);
+	spanrec(i, g, SBK[1], st, vs, vc);
+}
+var CRN real[8] = [0.0; 8];
+fn profile(i int, n int, t real, r real) int, int {
+	var rx real[24] = [0.0; 24];
+	var ry real[24] = [0.0; 24];
+	var rb real[24] = [0.0; 24];
+	var hx real[24] = [0.0; 24];
+	var hy real[24] = [0.0; 24];
+	var m = 0;
+	var ax = 0.0 - SBK[1];
+	var ay = 0.0 - t;
+	var dx = 1.0;
+	var dy = 0.0;
+	for j in 1..(n + 1) {
+		let a = FL[20 * i + 5 + 2 * (j - 1)];
+		let lft = j == 1 || a > 0.0;
+		let sg = if lft { 1.0 } else { -1.0 };
+		let rho = if lft { r + t } else { r };
+		let ang = abs(a) * PI / 180.0;
+		let cx = ax + sg * rho * (0.0 - dy);
+		let cy = ay + sg * rho * dx;
+		let d2x = dx * cos(sg * ang) - dy * sin(sg * ang);
+		let d2y = dx * sin(sg * ang) + dy * cos(sg * ang);
+		let bx = cx - sg * rho * (0.0 - d2y);
+		let by = cy - sg * rho * d2x;
+		if m == 0 {
+			rx[m] = ax;
+			ry[m] = ay;
+			rb[m] = 0.0;
+			hx[m] = dx;
+			hy[m] = dy;
+			m += 1;
+		}
+		rb[m - 1] = sg * tan(ang / 4.0);
+		rx[m] = bx;
+		ry[m] = by;
+		rb[m] = 0.0;
+		hx[m] = d2x;
+		hy[m] = d2y;
+		m += 1;
+		let fv = FLT[j];
+		if fv > 1e-12 {
+			rx[m] = bx + fv * d2x;
+			ry[m] = by + fv * d2y;
+			rb[m] = 0.0;
+			hx[m] = d2x;
+			hy[m] = d2y;
+			m += 1;
+		}
+		ax = rx[m - 1];
+		ay = ry[m - 1];
+		dx = d2x;
+		dy = d2y;
+	}
+	let k2 = if FLT[1] > 1e-12 { 2 } else { 1 };
+	CRN[0] = rx[1];
+	CRN[1] = ry[1];
+	CRN[2] = rx[k2];
+	CRN[3] = ry[k2];
+	CRN[4] = rx[k2] - t * hy[k2];
+	CRN[5] = ry[k2] + t * hx[k2];
+	CRN[6] = rx[1] - t * hy[1];
+	CRN[7] = ry[1] + t * hx[1];
+	let vs = OV.len / 3;
+	for k in m {
+		OV.push(rx[k]);
+		OV.push(ry[k]);
+		OV.push(rb[k]);
+	}
+	for kk in m {
+		let k = m - 1 - kk;
+		OV.push(rx[k] - t * hy[k]);
+		OV.push(ry[k] + t * hx[k]);
+		OV.push(if k == 0 { 0.0 } else { 0.0 - rb[k - 1] });
+	}
+	return vs, 2 * m;
+}
+fn elen(g int) real {
+	let dx = GE[8 * g + 2] - GE[8 * g];
+	let dy = GE[8 * g + 3] - GE[8 * g + 1];
+	sqrt(dx * dx + dy * dy)
+}
+fn edir(g int) real, real {
+	let l = elen(g);
+	if l > 0.0 {
+		return (GE[8 * g + 2] - GE[8 * g]) / l, (GE[8 * g + 3] - GE[8 * g + 1]) / l;
+	}
+	return 0.0, 0.0;
+}
+fn overlaps(g int, h int, el real) bool {
+	let lh = elen(h);
+	el > lh + 1e-9 || (abs(el - lh) <= 1e-9 && g < h)
+}
+fn corner(i int, h int, ux real, uy real) bool {
+	let fp int = FE[h];
+	if fp < 0 { return false; }
+	let hx, hy = edir(h);
+	if FL[20 * fp + 1] != FL[20 * i + 1] { return false; }
+	if abs(ux * hx + uy * hy) >= 1e-6 { return false; }
+	abs(FL[20 * i + 5] - 90.0) <= 0.01 && abs(FL[20 * fp + 5] - 90.0) <= 0.01
+}
+fn spanrec(i int, g int, s1 real, st int, vs int, vc int) {
+	let o = 24 * i;
+	let t = PP[0];
+	let el = elen(g);
+	let ux, uy = edir(g);
+	let nix = 0.0 - uy;
+	let niy = ux;
+	let pg = if g == 0 { NG - 1 } else { g - 1 };
+	let nxt = if g == NG - 1 { 0 } else { g + 1 };
+	let startl = GE[8 * g + 4] > 0.5;
+	let endl = GE[8 * g + 5] > 0.5;
+	var e0 = 0.0;
+	if startl {
+		let upx, upy = edir(pg);
+		let npx = 0.0 - upy;
+		let npy = upx;
+		let sn = SE[pg];
+		let d = ux * npx + uy * npy;
+		if abs(d) > 1e-9 { e0 = max(0.0, (sn - s1 * (nix * npx + niy * npy)) / d); }
+	}
+	var e1 = el;
+	if endl {
+		let nx, ny = edir(nxt);
+		let nnx = 0.0 - ny;
+		let nny = nx;
+		let sn = SE[nxt];
+		let d = ux * nnx + uy * nny;
+		var gap = 0.0;
+		if abs(d) > 1e-9 { gap = max(0.0, (s1 * (nix * nnx + niy * nny) - sn) / d); }
+		e1 = el - gap;
+	}
+	var stat = st;
+	if e1 - e0 <= 1e-9 { stat = max(stat, 4); }
+	var x0 = 0.0;
+	var x1 = 0.0;
+	if PP[2] == 1.0 {
+		if startl && corner(i, pg, ux, uy) {
+			x0 = if overlaps(g, pg, el) { e0 } else { max(0.0, e0 - t - PP[3]) };
+		}
+		if endl && corner(i, nxt, ux, uy) {
+			x1 = if overlaps(g, nxt, el) { el - e1 } else { max(0.0, el - e1 - t - PP[3]) };
+		}
+	}
+	OF[o] = stat as real;
+	OF[o + 1] = s1;
+	OF[o + 2] = e0;
+	OF[o + 3] = e1;
+	OF[o + 4] = x0;
+	OF[o + 5] = x1;
+	OF[o + 6] = vs as real;
+	OF[o + 7] = vc as real;
+	for k in 8 {
+		OF[o + 8 + k] = CRN[k];
+	}
+	OF[o + 16] = el;
+}

@@ -8,7 +8,7 @@ export const clearance=(mat,t)=>{const M=STAMP_MATS[mat]||STAMP_MATS.mild,c=M.a*
 export const webFor=t=>r4(Math.max(1.2*t,0.05)),edgeFor=t=>r4(Math.max(1.25*t,0.07));
 export const webTable=()=>[0.01,0.02,0.03,0.05,0.075,0.1,0.125,0.1875].map(t=>({t,web:webFor(t),edge:edgeFor(t)}));
 export const kFactor=(R,t)=>R<t?0.33:R<3*t?0.4:0.5;
-export const bendAllow=(R,t,angDeg)=>rad(angDeg)*(R+kFactor(R,t)*t),bendDeduct=(R,t,angDeg)=>2*(R+t)*Math.tan(rad(angDeg)/2)-bendAllow(R,t,angDeg);
+export const bendAllow=(R,t,angDeg,K=kFactor(R,t))=>rad(angDeg)*(R+K*t),bendDeduct=(R,t,angDeg,K)=>2*(R+t)*Math.tan(rad(angDeg)/2)-bendAllow(R,t,angDeg,K);
 export function springback(mat,t,Rf,angF){const M=STAMP_MATS[mat]||STAMP_MATS.mild,Y=M.sy*1000,E=M.E*1000,f=Ri=>{const x=Ri*Y/(E*t);return Ri/Rf-(4*x**3-3*x+1);};let lo=0,hi=Rf;for(let i=0;i<70;i++){const m=(lo+hi)/2;f(m)<0?lo=m:hi=m;}const Ri=(lo+hi)/2,aI=angF*(Rf+t/2)/(Ri+t/2);return{Ri:r4(Ri),angleTool:r3(aI),overbend:r3(aI-angF),ratio:r4(Ri/Rf),source:SOURCES.springback};}
 export function blankDev(s={}){const k=s.units==='mm'?1/25.4:1,t=(s.t||0.05)*k;let outer,holes=[];
   const ty=s.type||(s.od?'washer':s.legs?'bracket':s.loops&&s.loops.length?'loops':'rect');if(ty==='washer'){const od=(s.od||1)*k,id=(s.id??0.5)*k;outer=[[od/2,0,1],[-od/2,0,1]];id>0&&holes.push([[id/2,0,1],[-id/2,0,1]]);}

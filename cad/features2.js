@@ -1,6 +1,7 @@
 import * as R from './vendor/replicad.js';
 import {add,mul,dot,cross,vec} from './qmath.js';
 import {pullSel} from './schema2.js';
+import {sheetPart} from './sheet.js';
 import * as D from './datum.js';
 import {maxOf,minOf} from './minmax.js';
 export function chamferSides(body,es,f){
@@ -76,4 +77,4 @@ function combine(f,body,K,doc,tools){
   return{shape:out.length===1?out[0]:R.makeCompound(out),warn};
 }
 const datum=(kind,fr)=>(f,body,K)=>({shape:body,dat:{kind,...fr(f,body,K)}});
-export const FEAT2={draft,rib,combine,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};
+export const FEAT2={draft,rib,combine,sheet:sheetPart,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};
