@@ -154,12 +154,18 @@ log "Upgrading Amni OS core system packages..."
 CORE_PKGS=(amni-os-core amnios-keyring amni-browse haven-desktop amni-mail amni-space amni-connect amni-chat-desktop amni-crypt)
 pacman -S --needed --noconfirm --noprogressbar --overwrite '*' "${CORE_PKGS[@]}" 2>/dev/null || true
 
+if pacman -Q plasma-x11-session >/dev/null 2>&1 && pacman -Si plasma-workspace 2>/dev/null | grep -q '^Conflicts With.*plasma-x11-session'; then
+  log "Removing the retired Plasma X11 session so Plasma can update..."
+  pacman -R --noconfirm plasma-x11-session || true
+fi
+
 # 8. Full system upgrade
 log "Performing complete system upgrade..."
+UPGRADE_OK=1
 if [[ -x /usr/lib/amni-os/amni-upgrade ]]; then
-  /usr/lib/amni-os/amni-upgrade || pacman -Syu --noconfirm --noprogressbar --overwrite '*' || true
+  /usr/lib/amni-os/amni-upgrade || pacman -Syu --noconfirm --noprogressbar --overwrite '*' || UPGRADE_OK=0
 else
-  pacman -Syu --noconfirm --noprogressbar --overwrite '*' || true
+  pacman -Syu --noconfirm --noprogressbar --overwrite '*' || UPGRADE_OK=0
 fi
 
 # 9. Update Flatpak applications
@@ -177,10 +183,19 @@ if [[ -x /usr/local/bin/amni-system-setup ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}=====================================================${NC}"
-echo -e "${GREEN}      AMNI OS UPGRADE & REPAIR COMPLETED!            ${NC}"
-echo -e "${GREEN}=====================================================${NC}"
-echo ""
-log "Your system is up to date."
-log "If kernel or GPU driver packages were updated, restart your computer to run the new versions."
+if [[ "$UPGRADE_OK" -eq 1 ]]; then
+  echo -e "${GREEN}=====================================================${NC}"
+  echo -e "${GREEN}      AMNI OS UPGRADE & REPAIR COMPLETED!            ${NC}"
+  echo -e "${GREEN}=====================================================${NC}"
+  echo ""
+  log "Your system is up to date."
+  log "If kernel or GPU driver packages were updated, restart your computer to run the new versions."
+else
+  echo -e "${RED}=====================================================${NC}"
+  echo -e "${RED}      SOME UPDATES COULD NOT BE INSTALLED            ${NC}"
+  echo -e "${RED}=====================================================${NC}"
+  echo ""
+  warn "The repairs above were applied, but part of the system upgrade failed."
+  warn "Run this updater again. If it still fails, email the messages above to hello@amni-scient.com."
+fi
 echo ""
