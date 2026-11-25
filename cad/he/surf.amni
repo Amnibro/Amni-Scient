@@ -1,0 +1,453 @@
+import math;
+extern fn sf_view_f64(id i32, xs real[:]) = "sf_view_f64";
+extern fn sf_view_i32(id i32, xs i32[:]) = "sf_view_i32";
+var NV int = 0;
+var NT int = 0;
+var NG int = 0;
+var P f64[>..];
+var N f64[>..];
+var VAL f64[>..];
+var TV f64[>..];
+var UV f64[>..];
+var HV f64[>..];
+var KV f64[>..];
+var W f64[>..];
+var ST f64[>..];
+var FS f64[>..];
+var IX i32[>..];
+var TF i32[>..];
+var FC i32[>..];
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+export fn sf_views() i32 {
+    sf_view_f64(1 as i32, P);
+    sf_view_f64(2 as i32, N);
+    sf_view_f64(3 as i32, VAL);
+    sf_view_f64(4 as i32, TV);
+    sf_view_f64(5 as i32, UV);
+    sf_view_f64(6 as i32, ST);
+    sf_view_f64(7 as i32, FS);
+    sf_view_f64(8 as i32, HV);
+    sf_view_f64(9 as i32, KV);
+    sf_view_i32(10 as i32, IX);
+    sf_view_i32(11 as i32, TF);
+    sf_view_i32(12 as i32, FC);
+    return 0 as i32;
+}
+export fn sf_setup(nv i32, nt i32, ng i32) i32 {
+    NV = nv as int;
+    NT = nt as int;
+    NG = ng as int;
+    zf(P, 3 * NV, 0.0);
+    zf(N, 3 * NV, 0.0);
+    zf(VAL, NV, 0.0);
+    zf(TV, NV, 0.0);
+    zf(HV, NV, 0.0);
+    zf(KV, NV, 0.0);
+    zf(W, NV, 0.0);
+    zf(UV, 2 * NV, 0.0);
+    zf(ST, 24, 0.0);
+    zf(FS, 4 * NG, 0.0);
+    zi(IX, 3 * NT, 0);
+    zi(TF, NT, -1);
+    zi(FC, NG, 0);
+    sf_views();
+    return nv;
+}
+fn tri(t i32, o f64[>..]&) int {
+    let k = t as int;
+    let a = IX[3 * k] as int;
+    let b = IX[3 * k + 1] as int;
+    let c = IX[3 * k + 2] as int;
+    let e1x = P[3 * b] - P[3 * a];
+    let e1y = P[3 * b + 1] - P[3 * a + 1];
+    let e1z = P[3 * b + 2] - P[3 * a + 2];
+    let e2x = P[3 * c] - P[3 * a];
+    let e2y = P[3 * c + 1] - P[3 * a + 1];
+    let e2z = P[3 * c + 2] - P[3 * a + 2];
+    let cx = e1y * e2z - e1z * e2y;
+    let cy = e1z * e2x - e1x * e2z;
+    let cz = e1x * e2y - e1y * e2x;
+    let cl = sqrt(cx * cx + cy * cy + cz * cz);
+    let el = sqrt(e1x * e1x + e1y * e1y + e1z * e1z);
+    var nx f64 = 0.0;
+    var ny f64 = 0.0;
+    var nz f64 = 0.0;
+    if (cl > 1e-30) {
+        nx = cx / cl;
+        ny = cy / cl;
+        nz = cz / cl;
+    }
+    var ux f64 = 0.0;
+    var uy f64 = 0.0;
+    var uz f64 = 0.0;
+    if (el > 1e-30) {
+        ux = e1x / el;
+        uy = e1y / el;
+        uz = e1z / el;
+    }
+    o[0] = 0.5 * cl;
+    o[1] = nx;
+    o[2] = ny;
+    o[3] = nz;
+    o[4] = ux;
+    o[5] = uy;
+    o[6] = uz;
+    o[7] = ny * uz - nz * uy;
+    o[8] = nz * ux - nx * uz;
+    o[9] = nx * uy - ny * ux;
+    return 0;
+}
+export fn sf_curv(kind i32, expo real, contrast real) i32 {
+    zf(HV, NV, 0.0);
+    zf(KV, NV, 0.0);
+    zf(W, NV, 0.0);
+    var i int = 0;
+    while (i < 14) {
+        ST[i] = 0.0;
+        i += 1;
+    }
+    i = 0;
+    while (i < 4 * NG) {
+        FS[i] = 0.0;
+        i += 1;
+    }
+    var o f64[>..];
+    zf(o, 10, 0.0);
+    var t int = 0;
+    while (t < NT) {
+        tri(t as i32, o);
+        if (o[0] <= 1e-30) {
+            t += 1;
+            continue;
+        }
+        ST[13] = ST[13] + o[0];
+        let ux = o[4];
+        let uy = o[5];
+        let uz = o[6];
+        let vx = o[7];
+        let vy = o[8];
+        let vz = o[9];
+        var m00 f64 = 0.0;
+        var m01 f64 = 0.0;
+        var m11 f64 = 0.0;
+        var m12 f64 = 0.0;
+        var m22 f64 = 0.0;
+        var r0 f64 = 0.0;
+        var r1 f64 = 0.0;
+        var r2 f64 = 0.0;
+        var e int = 0;
+        while (e < 3) {
+            let p = IX[3 * t + e] as int;
+            let q = IX[3 * t + (e + 1) % 3] as int;
+            let ex = P[3 * q] - P[3 * p];
+            let ey = P[3 * q + 1] - P[3 * p + 1];
+            let ez = P[3 * q + 2] - P[3 * p + 2];
+            let nx = N[3 * q] - N[3 * p];
+            let ny = N[3 * q + 1] - N[3 * p + 1];
+            let nz = N[3 * q + 2] - N[3 * p + 2];
+            let eu = ex * ux + ey * uy + ez * uz;
+            let ev = ex * vx + ey * vy + ez * vz;
+            let du = nx * ux + ny * uy + nz * uz;
+            let dv = nx * vx + ny * vy + nz * vz;
+            m00 += eu * eu;
+            m01 += eu * ev;
+            m11 += eu * eu + ev * ev;
+            m12 += eu * ev;
+            m22 += ev * ev;
+            r0 += eu * du;
+            r1 += ev * du + eu * dv;
+            r2 += ev * dv;
+            e += 1;
+        }
+        let det = m00 * (m11 * m22 - m12 * m12) - m01 * m01 * m22;
+        let tr = m00 + m11 + m22;
+        if (fabs(det) <= 1e-12 * tr * tr * tr) {
+            t += 1;
+            continue;
+        }
+        let l = (r0 * (m11 * m22 - m12 * m12) - m01 * (r1 * m22 - m12 * r2)) / det;
+        let m = (m00 * (r1 * m22 - m12 * r2) - r0 * (m01 * m22)) / det;
+        let n = (m00 * (m11 * r2 - r1 * m12) - m01 * (m01 * r2) + r0 * (m01 * m12)) / det;
+        let thm = (l + n) * 0.5;
+        let tgk = l * n - m * m;
+        let w = o[0] / 3.0;
+        var j int = 0;
+        while (j < 3) {
+            let c = IX[3 * t + j] as int;
+            HV[c] = HV[c] + w * thm;
+            KV[c] = KV[c] + w * tgk;
+            W[c] = W[c] + w;
+            j += 1;
+        }
+        t += 1;
+    }
+    i = 0;
+    while (i < NV) {
+        if (W[i] > 0.0) {
+            HV[i] = HV[i] / W[i];
+            KV[i] = KV[i] / W[i];
+        }
+        i += 1;
+    }
+    i = 0;
+    while (i < NV) {
+        let hm = HV[i];
+        let gk = KV[i];
+        var d f64 = hm * hm - gk;
+        if (!(d > 0.0)) {
+            d = 0.0;
+        }
+        let sq = sqrt(d);
+        let k1 = hm + sq;
+        let k2 = hm - sq;
+        if (k1 > ST[0]) {
+            ST[0] = k1;
+            ST[1] = P[3 * i];
+            ST[2] = P[3 * i + 1];
+            ST[3] = P[3 * i + 2];
+        }
+        if (-k2 > ST[4]) {
+            ST[4] = -k2;
+            ST[5] = P[3 * i];
+            ST[6] = P[3 * i + 1];
+            ST[7] = P[3 * i + 2];
+        }
+        if (i == 0 || hm < ST[8]) {
+            ST[8] = hm;
+        }
+        if (i == 0 || hm > ST[9]) {
+            ST[9] = hm;
+        }
+        if (i == 0 || gk < ST[10]) {
+            ST[10] = gk;
+        }
+        if (i == 0 || gk > ST[11]) {
+            ST[11] = gk;
+        }
+        if (kind as int == 0) {
+            let a1 = fabs(k1);
+            let a2 = fabs(k2);
+            if (a1 > a2) {
+                VAL[i] = a1;
+            } else {
+                VAL[i] = a2;
+            }
+        } else if (kind as int == 1) {
+            VAL[i] = hm;
+        } else {
+            VAL[i] = gk;
+        }
+        i += 1;
+    }
+    t = 0;
+    while (t < NT) {
+        let g = TF[t] as int;
+        if (g >= 0 && g < NG) {
+            tri(t as i32, o);
+            var j int = 0;
+            while (j < 3) {
+                let c = IX[3 * t + j] as int;
+                let hm = HV[c];
+                var d f64 = hm * hm - KV[c];
+                if (!(d > 0.0)) {
+                    d = 0.0;
+                }
+                let sq = sqrt(d);
+                let k1 = hm + sq;
+                let k2 = hm - sq;
+                if (k1 > FS[4 * g]) {
+                    FS[4 * g] = k1;
+                }
+                if (-k2 > FS[4 * g + 1]) {
+                    FS[4 * g + 1] = -k2;
+                }
+                j += 1;
+            }
+            FS[4 * g + 2] = FS[4 * g + 2] + o[0];
+        }
+        t += 1;
+    }
+    var top f64 = 0.0;
+    i = 0;
+    while (i < NV) {
+        if (fabs(VAL[i]) > top) {
+            top = fabs(VAL[i]);
+        }
+        i += 1;
+    }
+    var div f64 = 1.0;
+    if (contrast > 0.0) {
+        div = contrast;
+    }
+    var hi f64 = top / div;
+    if (!(hi > 0.0)) {
+        hi = 1.0;
+    }
+    ST[12] = hi;
+    i = 0;
+    while (i < NV) {
+        var a f64 = pow(fabs(VAL[i]) / hi, expo);
+        if (a > 1.0) {
+            a = 1.0;
+        }
+        if (kind as int == 0) {
+            TV[i] = a;
+        } else if (VAL[i] >= 0.0) {
+            TV[i] = 0.5 + 0.5 * a;
+        } else {
+            TV[i] = 0.5 - 0.5 * a;
+        }
+        UV[2 * i] = 0.5;
+        UV[2 * i + 1] = 0.5;
+        i += 1;
+    }
+    return NV as i32;
+}
+export fn sf_draft(dx real, dy real, dz real, req real) i32 {
+    var px f64 = 0.0;
+    var py f64 = 0.0;
+    var pz f64 = 1.0;
+    let len = sqrt(dx * dx + dy * dy + dz * dz);
+    if (len > 1e-12) {
+        px = dx / len;
+        py = dy / len;
+        pz = dz / len;
+    }
+    var i int = 0;
+    while (i < NV) {
+        var s f64 = N[3 * i] * px + N[3 * i + 1] * py + N[3 * i + 2] * pz;
+        if (s < -1.0) {
+            s = -1.0;
+        }
+        if (s > 1.0) {
+            s = 1.0;
+        }
+        VAL[i] = asin(s) * 180.0 / 3.141592653589793;
+        if (VAL[i] >= req) {
+            TV[i] = 0.4;
+        } else if (VAL[i] <= -req) {
+            TV[i] = 1.0;
+        } else {
+            TV[i] = 0.6;
+        }
+        UV[2 * i] = 0.5;
+        UV[2 * i + 1] = 0.5;
+        if (i == 0 || VAL[i] < ST[22]) {
+            ST[22] = VAL[i];
+        }
+        if (i == 0 || VAL[i] > ST[23]) {
+            ST[23] = VAL[i];
+        }
+        i += 1;
+    }
+    i = 13;
+    while (i < 22) {
+        ST[i] = 0.0;
+        i += 1;
+    }
+    var g int = 0;
+    while (g < NG) {
+        FS[4 * g] = 1e30;
+        FS[4 * g + 1] = -1e30;
+        FS[4 * g + 2] = 0.0;
+        g += 1;
+    }
+    var o f64[>..];
+    zf(o, 10, 0.0);
+    var t int = 0;
+    while (t < NT) {
+        let f = TF[t] as int;
+        if (f >= 0 && f < NG) {
+            tri(t as i32, o);
+            FS[4 * f + 2] = FS[4 * f + 2] + o[0];
+            ST[13] = ST[13] + o[0];
+            var j int = 0;
+            while (j < 3) {
+                let v = VAL[IX[3 * t + j] as int];
+                if (v < FS[4 * f]) {
+                    FS[4 * f] = v;
+                }
+                if (v > FS[4 * f + 1]) {
+                    FS[4 * f + 1] = v;
+                }
+                j += 1;
+            }
+        }
+        t += 1;
+    }
+    g = 0;
+    while (g < NG) {
+        if (FS[4 * g + 2] > 0.0) {
+            var c int = 1;
+            if (FS[4 * g] >= req) {
+                c = 0;
+            } else if (FS[4 * g + 1] <= -req) {
+                c = 2;
+            } else if (FS[4 * g + 1] >= req && FS[4 * g] <= -req) {
+                c = 3;
+            }
+            FC[g] = c as i32;
+            FS[4 * g + 3] = c as real;
+            ST[14 + c] = ST[14 + c] + FS[4 * g + 2];
+            ST[18 + c] = ST[18 + c] + 1.0;
+        } else {
+            FC[g] = 0 as i32;
+            FS[4 * g + 3] = -1.0;
+        }
+        g += 1;
+    }
+    return NG as i32;
+}
+export fn sf_zebra(vx real, vy real, vz real, ux real, uy real, uz real, count real) i32 {
+    var ax f64 = vx;
+    var ay f64 = vy;
+    var az f64 = vz;
+    let al = sqrt(vx * vx + vy * vy + vz * vz);
+    if (al > 1e-12) {
+        ax = vx / al;
+        ay = vy / al;
+        az = vz / al;
+    }
+    var bx f64 = ux;
+    var by f64 = uy;
+    var bz f64 = uz;
+    let bl = sqrt(ux * ux + uy * uy + uz * uz);
+    if (bl > 1e-12) {
+        bx = ux / bl;
+        by = uy / bl;
+        bz = uz / bl;
+    }
+    var i int = 0;
+    while (i < NV) {
+        let nx = N[3 * i];
+        let ny = N[3 * i + 1];
+        let nz = N[3 * i + 2];
+        let dn = ax * nx + ay * ny + az * nz;
+        let rx = ax - 2.0 * dn * nx;
+        let ry = ay - 2.0 * dn * ny;
+        let rz = az - 2.0 * dn * nz;
+        var s f64 = rx * bx + ry * by + rz * bz;
+        if (s < -1.0) {
+            s = -1.0;
+        }
+        if (s > 1.0) {
+            s = 1.0;
+        }
+        UV[2 * i] = count * (asin(s) / 3.141592653589793 + 0.5);
+        UV[2 * i + 1] = 0.5;
+        TV[i] = 0.5;
+        i += 1;
+    }
+    return NV as i32;
+}
+fn main() {
+}

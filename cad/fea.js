@@ -262,7 +262,7 @@ function voxelStress(P,u,mat,T,alpha,Tref){
   return{vm,p1,vmMax,vmAway,p1Max,trescaMax:trMax};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static',P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
   if(type==='topo')return topoVoxel(inp,P,prog);
   if(type==='current'||type==='estatic')return emVoxel(inp,P,prog);
   if(type==='buckle')return buckleVoxel(inp,P,prog);
