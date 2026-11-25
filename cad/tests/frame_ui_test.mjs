@@ -17,7 +17,7 @@ try{
   ok(new Set(legs).size===4&&legs.every(Boolean),'each view has its own legend',legs);await shot('frame_buck');
   await p.evaluate(()=>window.amnicad.API.commit(d=>{d.sim.frame.supports=[{joint:1,type:'pinned'}];},{noEdit:true}));await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(700);await click('#fr-run','the Run button on an under-supported frame');
   ok(/move freely/.test(await txt('#fr-err')),'an under-supported frame says where it can move',await txt('#fr-err'));
-  ok(await btnText('Bolted joint'),'the Bolted joint study button');await p.waitForSelector('#bo-res,#bo-err',{timeout:60000}).catch(()=>{});const B0=await txt('#bo-res');
+  ok(await p.evaluate(()=>{const s=document.getElementById('sim-study');s.value='bolt';s.dispatchEvent(new Event('change',{bubbles:true}));return s.selectedOptions[0].textContent==='Bolted joint'&&s.selectedOptions[0].parentNode.label==='Design';}),'Bolted joint sits under Design in the study list');await p.waitForSelector('#bo-res,#bo-err',{timeout:60000}).catch(()=>{});const B0=await txt('#bo-res');
   ok(/Preload/.test(B0)&&/Tightening torque/.test(B0)&&/yield safety/.test(B0),'the bolt study sizes the default M10 8.8 bolt',B0.slice(0,200));
   const pre=async()=>(await doc()).sim.bolt;await p.select('#bo-size','M12');await sleep(600);ok((await pre()).size==='M12','choosing M12 stores the size',await pre());
   await field('#bo-fa','20000');await sleep(600);ok(/the joint opens/.test(await txt('#bo-res')),'a big pull opens the joint',(await txt('#bo-res')).slice(0,240));await shot('bolt_page');

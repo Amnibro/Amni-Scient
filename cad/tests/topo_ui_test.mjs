@@ -8,7 +8,7 @@ try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'n
   const built=()=>p.waitForFunction(()=>{const S=window.amnicad.S;return S.mesh&&!S.building&&document.getElementById('busy').style.display!=='flex';},{timeout:90000}).then(()=>sleep(500));
   await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'al6061',params:[],features:[{id:'a',type:'box',w:120,d:14,h:40,x:60}],sim:{type:'topo',res:9000,supports:[{faces:{side:'-X'},type:'fixed'}],loads:[{faces:{side:'+X'},F:[0,0,-1000]}],topo:{keep:0.35,iters:20}}},null,true));await built();
   await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(800);
-  const ui=await p.evaluate(()=>{const el=document.getElementById('tab-sim'),bt=[...el.querySelectorAll('button')],tp=bt.find(x=>x.textContent.trim()==='Topology');return{has:!!tp,on:!!tp&&tp.classList.contains('on'),run:(document.getElementById('fea-run')||{}).textContent,txt:el.textContent};});
+  const ui=await p.evaluate(()=>{const el=document.getElementById('tab-sim'),st=document.getElementById('sim-study');return{has:!!st&&[...st.options].some(o=>o.value==='topo'),on:!!st&&st.value==='topo',run:(document.getElementById('fea-run')||{}).textContent,txt:el.textContent};});
   ok(ui.has&&ui.on,'Topology is a study in the Sim tab and is selected',ui);
   ok(/Keep/.test(ui.txt)&&/Smallest member/.test(ui.txt)&&/Draw direction/.test(ui.txt)&&/Mirror across/.test(ui.txt),'setup shows keep, smallest member, draw direction and mirror');
   ok(ui.run==='Run topology analysis','run button names the study',ui.run);

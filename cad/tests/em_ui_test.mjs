@@ -10,7 +10,7 @@ try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'n
   const conv=['+Y','-Y','+Z','-Z'].map(s=>({faces:{side:s},h:25,Tinf:20}));
   await p.evaluate(c=>window.amnicad.loadDoc({units:'mm',material:'cu110',params:[],features:[{id:'a',type:'box',w:100,d:10,h:10,x:50}],sim:{type:'current',res:9000,volts:[{faces:{side:'-X'},V:0}],amps:[{faces:{side:'+X'},I:500}],conv:c}},null,true),conv);await built();
   await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(800);
-  const ui=await p.evaluate(()=>{const el=document.getElementById('tab-sim'),bt=[...el.querySelectorAll('button')],c=bt.find(x=>x.textContent.trim()==='Current');return{has:!!c&&c.classList.contains('on'),es:bt.some(x=>x.textContent.trim()==='Electrostatic'),run:(document.getElementById('fea-run')||{}).textContent,txt:el.textContent};});
+  const ui=await p.evaluate(()=>{const el=document.getElementById('tab-sim'),st=document.getElementById('sim-study');return{has:!!st&&st.value==='current',es:!!st&&[...st.options].some(o=>o.value==='estatic'),run:(document.getElementById('fea-run')||{}).textContent,txt:el.textContent};});
   ok(ui.has&&ui.es,'Current and Electrostatic are studies in the Sim tab',ui.run);
   ok(/Voltage terminal 1/.test(ui.txt)&&/Current input 1/.test(ui.txt)&&/MS\/m/.test(ui.txt)&&/Convection/.test(ui.txt),'setup lists the terminals, the copper conductivity and convection');
   ok(ui.run==='Run current flow analysis','run button names the study',ui.run);
