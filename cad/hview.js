@@ -7,13 +7,13 @@ const flat=(a,s,n)=>{if(!a.isInterleavedBufferAttribute&&a.array instanceof Floa
 const put=(r,o,a,n=a.length)=>{for(let i=0;i<n;i++)r[o+i]=a[i];};
 export function heliumOk(){try{const g=document.createElement('canvas').getContext('webgl2'),ok=!!g&&!!g.getExtension('EXT_color_buffer_float');g?.getExtension('WEBGL_lose_context')?.loseContext();return ok;}catch{return false;}}
 export function heliumRenderer(cv,opt={}){
-  let pr=opt.pixelRatio||1,cb=null,pulled=false,due=false,kick=0,dead=false,TGT=null,D=null,PM=null,ST=false,CA=0,gn=0,tn=0,an=0,c2=null,rt=null,lost=false,gen=0,GL=null,LC=null,W=Math.max(1,cv.clientWidth||300),H=Math.max(1,cv.clientHeight||150),loopCb=null,HOLD=null,GC=new WeakMap(),TC=new WeakMap();
+  let pr=opt.pixelRatio||1,bp=pr,cb=null,pulled=false,due=false,kick=0,dead=false,TGT=null,D=null,PM=null,ST=false,CA=0,gn=0,tn=0,an=0,c2=null,rt=null,lost=false,gen=0,GL=null,LC=null,W=Math.max(1,cv.clientWidth||300),H=Math.max(1,cv.clientHeight||150),loopCb=null,HOLD=null,GC=new WeakMap(),TC=new WeakMap();
   const RES=[],FR=[],PL=[null],GF=[],TF=[],warned=new Set(),VP=new T.Vector4(0,0,W,H),SC=new T.Vector4(0,0,W,H),CC=new T.Color(0,0,0),tc=new T.Color(),v3=new T.Vector3(),v3b=new T.Vector3(),AI=new WeakMap(),RTO=new WeakMap(),RTV=new WeakMap();
   const pay=a=>{PL.push(a);return PL.length-1;};
   const cp=(w,p,n,X)=>{if(w===0)pulled=true;const s=PL[w];if(!s)return;const d=new X(rt.mem().buffer,Number(p),Number(n));d.set(s.length>d.length?s.subarray(0,d.length):s);};
   const sched=()=>{if(!due){due=true;queueMicrotask(flush);}};
   const flush=()=>{due=false;if(kick){cancelAnimationFrame(kick);kick=0;}if(dead||lost)return;if(FR.length)HOLD=null;else if(HOLD){for(const v of HOLD)FR.push(v);HOLD=null;}if(!(RES.length+FR.length))return;if(!cb){HOLD=FR.splice(0);kick=requestAnimationFrame(flush);return;}const s=new Float32Array(RES.length+FR.length);s.set(RES);s.set(FR,RES.length);PL[0]=s;pulled=false;const f=cb;cb=null;f(performance.now());if(!rt.alive()){dead=true;console.error('helium view stopped');return;}if(pulled){RES.length=0;FR.length=0;PL.length=1;}else kick=requestAnimationFrame(flush);};
-  const resize=()=>{cv.width=Math.max(1,Math.floor(W*pr));cv.height=Math.max(1,Math.floor(H*pr));};
+  const px=(n,p)=>Math.max(1,Math.floor(n*p)),resize=s=>{bp=s||pr>bp?pr:bp;const bw=px(W,bp),bh=px(H,bp),q=cv.dataset;cv.width!==bw&&(cv.width=bw);cv.height!==bh&&(cv.height=bh);px(W,pr)===bw&&px(H,pr)===bh?(delete q.rw,delete q.rh):(q.rw=px(W,pr),q.rh=px(H,pr));};
   const del=()=>{if(!D){D=new T.WebGLRenderer({canvas:document.createElement('canvas'),antialias:true,alpha:true,preserveDrawingBuffer:true});D.setPixelRatio(pr);PM=new T.PMREMGenerator(D).fromScene(new RoomEnvironment(),0.04).texture;}return D;};
   const sync=()=>{const d=del();for(const k of['autoClear','autoClearColor','autoClearDepth','autoClearStencil','toneMapping','toneMappingExposure','localClippingEnabled','clippingPlanes','outputColorSpace','sortObjects'])d[k]=R[k];d.shadowMap.enabled=R.shadowMap.enabled;d.shadowMap.type=R.shadowMap.type;d.setClearColor(CC,CA);return d;};
   const av=a=>a?(AI.get(a)||(AI.set(a,++an),an))+'.'+(a.isInterleavedBufferAttribute?a.data.version:a.version):'';
@@ -59,7 +59,7 @@ export function heliumRenderer(cv,opt={}){
     info:{autoReset:true,render:{frame:0,calls:0,triangles:0,points:0,lines:0},memory:{geometries:0,textures:0},programs:[],reset(){this.render.calls=0;}},capabilities:{isWebGL2:true,maxTextureSize:8192,maxSamples:4,precision:'highp',logarithmicDepthBuffer:false,getMaxAnisotropy:()=>1,getMaxPrecision:()=>'highp'},
     flush,roomEnv(){const t=new T.Texture();t.userData.hvRoom=true;return t;},getContext:()=>CTX,
     getPixelRatio:()=>pr,setPixelRatio(v){if(v===undefined)return;pr=v;cv.dataset.dprmax=v;D?.setPixelRatio(v);this.setSize(W,H,false);},
-    setSize(w,h,us=true){W=w;H=h;resize();if(us!==false){cv.style.width=w+'px';cv.style.height=h+'px';}this.setViewport(0,0,w,h);},getSize:t=>t.set(W,H),getDrawingBufferSize:t=>t.set(cv.width,cv.height),setDrawingBufferSize(w,h,p){pr=p;this.setSize(w,h,false);},
+    setSize(w,h,us=true){const s=w!==W||h!==H;W=w;H=h;resize(s);if(us!==false){cv.style.width=w+'px';cv.style.height=h+'px';}this.setViewport(0,0,w,h);},getSize:t=>t.set(W,H),getDrawingBufferSize:t=>t.set(px(W,pr),px(H,pr)),setDrawingBufferSize(w,h,p){pr=p;this.setSize(w,h,false);},
     setViewport(x,y,w,h){x.isVector4?VP.copy(x):VP.set(x,y,w,h);if(TGT)D.setViewport(VP);},getViewport:t=>t.copy(VP),getCurrentViewport:t=>t.copy(VP).multiplyScalar(pr).round(),
     setScissor(x,y,w,h){x.isVector4?SC.copy(x):SC.set(x,y,w,h);if(TGT)D.setScissor(SC);},getScissor:t=>t.copy(SC),setScissorTest(b){ST=!!b;if(TGT)D.setScissorTest(ST);},getScissorTest:()=>ST,
     setClearColor(c,a=1){CC.set(c);CA=a;},getClearColor:t=>t.copy(CC),getClearAlpha:()=>CA,setClearAlpha(a){CA=a;},
@@ -69,9 +69,9 @@ export function heliumRenderer(cv,opt={}){
     readRenderTargetPixels:(...a)=>del().readRenderTargetPixels(...a),readRenderTargetPixelsAsync:(...a)=>del().readRenderTargetPixelsAsync(...a),initTexture(){},initRenderTarget:(...a)=>del().initRenderTarget?.(...a),copyTextureToTexture:(...a)=>del().copyTextureToTexture(...a),
     compile(){},compileAsync:()=>Promise.resolve(),resetState(){},forceContextLoss(){},setAnimationLoop(f){loopCb=f;const go=t=>{if(loopCb!==f)return;f(t);requestAnimationFrame(go);};if(f)requestAnimationFrame(go);},
     dispose(){dead=true;rt?.close();D?.dispose();}};
-  cv.dataset.alpha='premultiplied';cv.dataset.preserve='1';cv.dataset.dprmax=pr;cv.dataset.size='host';resize();
+  cv.dataset.alpha='premultiplied';cv.dataset.preserve='1';cv.dataset.dprmax=pr;cv.dataset.size='host';resize(true);
   for(const f of['toBlob','toDataURL']){const o=cv[f].bind(cv);cv[f]=(...a)=>{flush();return o(...a);};}
-  const CTX={isContextLost:()=>dead||lost,getExtension:n=>n==='WEBGL_lose_context'?LC:GL?.getExtension(n)??null,canvas:cv,get drawingBufferWidth(){return cv.width;},get drawingBufferHeight(){return cv.height;}};
+  const CTX={isContextLost:()=>dead||lost,getExtension:n=>n==='WEBGL_lose_context'?LC:GL?.getExtension(n)??null,canvas:cv,get drawingBufferWidth(){return px(W,pr);},get drawingBufferHeight(){return px(H,pr);}};
   const boot=()=>(async()=>{const k=++gen;rt=await start({wasm:new URL('./helium/view/view.wasm',import.meta.url).href,canvas:cv,input:false,jspi:false,raf:f=>{cb=f;return 1;},onerror:e=>{if(k!==gen||lost)return;dead=true;console.error('helium view',e);opt.onfail?.(e);},imports:{hv_len:w=>PL[w]?.length|0,hv_getf:(w,p,n)=>cp(w,p,n,Float32Array),hv_geti:(w,p,n)=>cp(w,p,n,Uint32Array),hv_getb:(w,p,n)=>cp(w,p,n,Uint8Array)}});
     await rt.done;if(!cb||!rt.alive()||dead)throw new Error('the Helium viewport did not start');GL=globalThis.heWebGL?cv.getContext('webgl2'):null;LC=GL?.getExtension('WEBGL_lose_context')||LC;lost=false;sched();})().catch(e=>{dead=true;try{rt?.close();}catch{}opt.onfail?.(e);throw e;});
   R.ready=boot();R.ready.catch(()=>{});
