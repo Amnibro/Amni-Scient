@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amni-Drone</title>
+<meta name="theme-color" content="#08090B">
+<link rel="canonical" href="https://amni-scient.com/amni-drone/">
+<link rel="icon" href="./assets/amni-drone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="studio.css">
+</head>
+<body>
+<header>
+  <div class="brand"><b>AMNI-SCIENT</b><span>· Amni-Drone</span></div>
+  <select id="preset" aria-label="Assembly"></select>
+  <button id="conceive" class="btn" type="button">Conceive</button>
+  <button id="optimize" class="btn primary" type="button">Optimize Weight/Print</button>
+  <div class="grow"></div>
+  <button id="exp-bom" class="btn" type="button">BOM</button>
+  <button id="exp-svg" class="btn" type="button">Drawing</button>
+  <button id="exp-stl" class="btn" type="button">Frame STL</button>
+  <button id="undo" class="btn" type="button">Undo</button>
+  <button id="exp-json" class="btn" type="button">Assembly</button>
+</header>
+<div id="metrics"></div>
+<div id="main">
+  <nav id="rail">
+    <button type="button" data-step="mission" class="on">Mission</button>
+    <button type="button" data-step="parts">Parts</button>
+    <button type="button" data-step="print">Print</button>
+    <button type="button" data-step="model">Model</button>
+    <button type="button" data-step="wiring">Wiring</button>
+    <button type="button" data-step="drawing">Drawing</button>
+    <button type="button" data-step="bom">BOM</button>
+  </nav>
+  <section id="panel"></section>
+  <section id="stage"><div id="view"><div id="canvas-host"></div><div id="tools"><label>Explode <input id="explode" type="range" min="0" max="100" value="0"></label><button id="fit" class="btn sm" type="button">Fit</button><button id="wire-toggle" class="btn sm on" type="button">Wires</button></div><div id="sheet" hidden></div></div><div id="tip"></div></section>
+  <aside id="side"></aside>
+</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./lib/three/build/three.module.js",
+    "three/addons/": "./lib/three/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="./studio.js"></script>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>
