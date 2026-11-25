@@ -1,0 +1,13 @@
+import {heliumSync} from './he/host.js';
+const PF=await heliumSync('pcbsi'),STR={microstrip:0,stripline:1,cpwg:2};let H=null;
+const he=()=>H||(H=PF({}),H.ex.ps_init(),H),r=(v,n=4)=>+(+v).toPrecision(n);
+export const OZ=oz=>0.0347*oz;
+export const STRUCTS={microstrip:'Microstrip (outer layer)',stripline:'Stripline (inner layer)',cpwg:'Coplanar with ground'};
+const need=(c,m)=>{if(!c)throw new Error(m);};
+export function impedance(o={}){need(o.structure==null||o.structure in STR,'structure must be microstrip, stripline or cpwg');need([o.w??0.3,o.h1??1.5,o.t??OZ(o.oz??1)].every(v=>v>0)&&(o.structure!=='stripline'||(o.h2??o.h1??0.2)>0),'w, h1, h2 and the copper must be above 0');need((o.er1??o.er??4.4)>=1&&(o.er2??o.er1??o.er??4.4)>=1,'er must be at least 1');need(!o.pair||(o.s??0.2)>0,'a pair needs a gap s above 0');const h=he(),I=h.v(1),k=STR[o.structure]??0,t=o.t??OZ(o.oz??1);I.fill(0);I.set([k,o.pair?1:0,o.w??0.3,o.s??0.2,t,o.h1??1.5,o.h2??o.h1??0.2,o.er1??o.er??4.4,o.er2??o.er1??o.er??4.4,o.mask??0,o.er_mask??3.7,o.g??0.2,o.quality??1,o.tol??0],0);
+  const it=o.target?h.ex.ps_fit(o.target,o.pair&&o.match!=='z0'?1:0):h.ex.ps_solve(),O=Array.from(h.v(2)),w=h.v(1)[2];
+  return{structure:Object.keys(STR)[k],pair:!!o.pair,w_mm:r(w,5),t_mm:r(t),...(o.pair?{s_mm:r(o.s??0.2)}:{}),z0_ohm:r(O[0]),eeff:r(O[1]),c_pF_per_m:r(O[2]),l_nH_per_m:r(O[3]),delay_ps_per_mm:r(O[4]),...(o.pair?{zodd_ohm:r(O[5]),zeven_ohm:r(O[6]),zdiff_ohm:r(O[7]),zcomm_ohm:r(O[8]),eeff_odd:r(O[9]),eeff_even:r(O[10]),coupling:r(O[11],3)}:{}),...(o.target?{target_ohm:o.target,fit_steps:O[16],reached_ohm:r(O[17])}:{}),grid:[O[12],O[13]],iterations:it};}
+export function field(){const h=he();return{xs:Float64Array.from(h.v(3)),ys:Float64Array.from(h.v(4)),phi:Float64Array.from(h.v(5)),eps:Float64Array.from(h.v(6)),kn:Int32Array.from(h.v(10))};}
+export function traceCurrent(o={}){const h=he(),I=h.v(1),t=o.t??OZ(o.oz??1);I.set([o.w??0.3,t,o.dT??10,o.inner?1:0,o.len??50,o.I??1,o.ambient??25],16);h.ex.ps_trace();const O=h.v(2);return{w_mm:o.w??0.3,t_mm:r(t),dT_C:o.dT??10,inner:!!o.inner,capacity_A:r(O[16]),width_for_current_mm:r(O[17]),rise_C:r(O[18]),resistance_ohm:r(O[19]),drop_V:r(O[20]),power_W:r(O[21]),area_mm2:r(O[22])};}
+export function via(o={}){const h=he(),I=h.v(1);I.set([o.drill??0.3,o.plating??0.02,o.len??1.6,o.pad??0.6,o.antipad??1.0,o.er??4.4,o.I??1,o.dT??10],24);h.ex.ps_via();const O=h.v(2);return{resistance_ohm:r(O[24]),capacity_A:r(O[25]),rise_C:r(O[26]),inductance_nH:r(O[27]),capacitance_pF:r(O[28]),impedance_ohm:r(O[29])};}
+export function checkWidths(rows){const h=he(),n=rows.length;h.ex.ps_tracks(n);const W=h.v(7),L=h.v(8),U=h.v(9);rows.forEach(([w,lo,hi],i)=>{W[i]=w;L[i]=lo;U[i]=hi;});h.ex.ps_check();return Array.from(h.v(11).subarray(0,n));}
