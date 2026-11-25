@@ -1,13 +1,19 @@
 === -181136a168bca300
 
-=== -538f3ea5f6917f4
+=== -2874d8fda1d475e1
 var F real[9] = [0.0; 9];
 var OUT real[8] = [0.0; 8];
-=== 607843bb7efe7960
+var Q real[18] = [0.0; 18];
+var BB real[6] = [0.0; 6];
+var VX real[>..];
+=== -5d3d3f8d07bd2717
 extern fn kn_view_f64(id i32, a real[:]);
 export fn kn_views() {
 	kn_view_f64(1, F[..]);
 	kn_view_f64(2, OUT[..]);
+	kn_view_f64(3, Q[..]);
+	kn_view_f64(4, VX[..]);
+	kn_view_f64(5, BB[..]);
 }
 === 3815b011bbcc4ce2
 export fn kn_twist(mode i32, dir i32, depth real, turns real, pitch real, angle real, left i32, cx real, cy real) i32 {
@@ -31,6 +37,77 @@ export fn kn_twist(mode i32, dir i32, depth real, turns real, pitch real, angle 
 		OUT[5 + i] = start + cx * F[3 + i] + cy * y[i];
 	}
 	if a != 0.0 { 1 } else { 0 }
+}
+=== -6c575b5fea68b702
+import math;
+export fn kn_square(depth real, a real, cu real, cv real, tu real, tv real) i32 {
+	let x = [F[3], F[4], F[5]];
+	let n = [F[6], F[7], F[8]];
+	let y = [n[1] * x[2] - n[2] * x[1], n[2] * x[0] - n[0] * x[2], n[0] * x[1] - n[1] * x[0]];
+	var p = [0.0; 3];
+	var c = [0.0; 3];
+	var w = [0.0; 3];
+	for i in 3 {
+		p[i] = OUT[2 + i] + tu * x[i] + tv * y[i];
+		c[i] = OUT[2 + i] + cu * x[i] + cv * y[i];
+		w[i] = c[i] - p[i];
+	}
+	let r = sqrt(w[0] * w[0] + w[1] * w[1] + w[2] * w[2]);
+	if r < 1e-9 || a == 0.0 || !(depth > 0.0) { return 0; }
+	let e = [w[0] / r, w[1] / r, w[2] / r];
+	let t = [n[1] * e[2] - n[2] * e[1], n[2] * e[0] - n[0] * e[2], n[0] * e[1] - n[1] * e[0]];
+	let th = a * PI / 180.0;
+	let b = atan2(r * th, depth);
+	var u = [0.0; 3];
+	for i in 3 { u[i] = t[i] * cos(b) - n[i] * sin(b); }
+	let xe = x[0] * e[0] + x[1] * e[1] + x[2] * e[2];
+	let xt = x[0] * t[0] + x[1] * t[1] + x[2] * t[2];
+	let ye = y[0] * e[0] + y[1] * e[1] + y[2] * e[2];
+	let yt = y[0] * t[0] + y[1] * t[1] + y[2] * t[2];
+	var X = [0.0; 3];
+	var Y = [0.0; 3];
+	for i in 3 {
+		X[i] = e[i] * xe + u[i] * xt;
+		Y[i] = e[i] * ye + u[i] * yt;
+	}
+	let N = [X[1] * Y[2] - X[2] * Y[1], X[2] * Y[0] - X[0] * Y[2], X[0] * Y[1] - X[1] * Y[0]];
+	for i in 3 {
+		Q[i] = c[i] - cu * X[i] - cv * Y[i];
+		Q[3 + i] = X[i];
+		Q[6 + i] = N[i];
+		Q[12 + i] = p[i];
+		Q[15 + i] = e[i];
+	}
+	Q[9] = r;
+	Q[10] = depth * 360.0 / abs(a);
+	Q[11] = if a < 0.0 { 1.0 } else { 0.0 };
+	1
+}
+=== -257590c60dc22006
+export fn kn_verts(n i32) i32 {
+	let m = 3 * (n as int);
+	VX.clear();
+	VX.reserve(m);
+	VX.resize(m, 0.0);
+	kn_views();
+	0
+}
+=== 30fe3a1d1986296e
+export fn kn_tight(n i32, tol real) i32 {
+	if n == 0 { return 0; }
+	let count = n as int;
+	for k in 3 {
+		var lo = VX[k];
+		var hi = VX[k];
+		for i in 1..count {
+			let v = VX[3 * i + k];
+			lo = min(lo, v);
+			hi = max(hi, v);
+		}
+		if BB[k] < lo - 2.0 * tol { BB[k] = lo; }
+		if BB[3 + k] > hi + 2.0 * tol { BB[3 + k] = hi; }
+	}
+	1
 }
 === 247db022c27b8a1d
 fn main() {

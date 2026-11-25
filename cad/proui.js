@@ -27,7 +27,6 @@ const LOOKCSS=Object.entries(LOOK).map(([k,[d,l]])=>`html.pro-${k}{${d}}html[dat
 const CSS=LOOKCSS+`
 html.ui-amni{--font:"Archivo","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 html[data-mn] input[type=number],html[data-mn] .prow input,html[data-mn] .fld .ex input,html[data-mn] .prow .val,html[data-mn] .kv span:nth-child(even),html[data-mn] #pbar{font-family:var(--mono)}
-.ic24{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:var(--iw,1.8);stroke-linecap:round;stroke-linejoin:round;display:block}
 .gi .ic24{width:100%;height:100%}
 #rib-more-pop .mg+.mg{border-top:1px solid var(--line);margin-top:5px;padding-top:5px}
 #rib-more-pop .mgl{font-size:11px;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);padding:5px 10px 3px}
@@ -115,7 +114,7 @@ html[data-rp=left].pro #ribbon .rg .gl{order:-1;text-align:left;padding:0 4px 3p
 #ribbon .cmd:hover{background:var(--acc-soft);color:var(--ink);border-color:color-mix(in srgb,var(--acc) 35%,transparent)}
 #ribbon .cmd .gi{width:28px;height:28px;display:grid;place-items:center;font-size:24px;color:var(--ink2)}
 #ribbon .cmd:hover .gi{color:var(--acc)}
-#ribbon .cmd.cut .gi{color:var(--err)}
+#ribbon .cmd.cut .gi{--ic2c:var(--err);--ic2:.57}
 #ribbon .cmd .gi .gl{font-size:20px;color:var(--acc)}
 html[data-rb=i] #ribbon .cmd .cl,html[data-rb=i] #ribbon .rg .gl{display:none}
 html[data-rb=i] #ribbon .cmd{width:36px}

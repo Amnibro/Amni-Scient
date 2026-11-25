@@ -15,7 +15,7 @@ import {maxOf,minOf,pushAll} from './minmax.js';
 import {heliumSync} from './he/host.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const KN=(await heliumSync('kern'))({});KN.ex.kn_views();
-const STRKEYS=new Set(['feature','src','twist','about','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
+const STRKEYS=new Set(['feature','src','twist','about','tsec','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -163,7 +163,7 @@ function extrudeTool(f,body){
   const P=planeFrom(f,body),dir=f.dir||'+',d0=f.depth??M(10);if(!d0)throw new Error('depth must be above 0');const depth=Math.abs(d0);d0<0&&NOTES.push({k:'depth',field:'depth',v:depth,msg:'Depth '+fu(d0)+' used as '+fu(depth)+'; set Direction to change the side',fix:[{t:'Use '+fu(depth),k:'depth',v:depth}]});
   const tw={turns:1,pitch:2,degrees:3}[f.twist]||0;if(tw===2&&!(f.tpitch>0))throw new Error('twist pitch must be above 0');const c=!tw?[0,0]:f.about==='center'?profileDrawing(f.shapes).boundingBox.center:f.about==='point'?[f.tx||0,f.ty||0]:[0,0];
   KN.v(1).set([...P.o,...P.x,...P.n]);const on=KN.ex.kn_twist(tw,dir==='-'?1:dir==='both'?2:0,depth,f.turns??1,f.tpitch??0,f.angle??0,f.hand==='left'?1:0,c[0],c[1]),T=KN.v(2).slice(),pl=new R.Plane([T[2],T[3],T[4]],P.x,P.n);
-  if(on){f.draft&&NOTES.push({k:'draft',field:'draft',v:0,msg:'Draft is not applied to a twisted extrude'});const d=profileDrawing(f.shapes);return(T[1]?d.rotate(T[1],c):d).sketchOnPlane(pl).extrude(depth,{twistAngle:T[0],origin:[T[5],T[6],T[7]]});}
+  if(on){f.draft&&NOTES.push({k:'draft',field:'draft',v:0,msg:'Draft is not applied to a twisted extrude'});const d=profileDrawing(f.shapes),d1=T[1]?d.rotate(T[1],c):d,m=f.tsec==='path'?d1.boundingBox.center:null;if(m&&KN.ex.kn_square(depth,T[0],m[0],m[1],c[0],c[1])){const Q=KN.v(3).slice(),A=[Q[12],Q[13],Q[14]],hx=R.makeHelix(Q[10],depth,Q[9],A,P.n,Q[11]>0),rs=nrm(sub(V(hx.startPoint),A)),er=[Q[15],Q[16],Q[17]];return sweepSketch(d1.sketchOnPlane(new R.Plane([Q[0],Q[1],Q[2]],[Q[3],Q[4],Q[5]],[Q[6],Q[7],Q[8]])),hx.rotate(Math.atan2(dot(cross(rs,er),P.n),dot(rs,er))*180/Math.PI,A,P.n),{frenet:true,transitionMode:'right'});}m&&NOTES.push({k:'tsec',field:'tsec',v:'flat',msg:'The profile sits on the twist axis, so there is no path to square it to; it twists flat'});return d1.sketchOnPlane(pl).extrude(depth,{twistAngle:T[0],origin:[T[5],T[6],T[7]]});}
   const sk=profileDrawing(f.shapes).sketchOnPlane(pl);
   if(!f.draft)return sk.extrude(depth);
   const mk=a=>{const n0=NOTES.length,t=profileDrawing(f.shapes).sketchOnPlane(pl).extrude(depth);NOTES.length=n0;const oc=R.getOC(),xyz=v=>new oc.gp_XYZ(...v),D=new oc.BRepOffsetAPI_DraftAngle(t.wrapped),dr=new oc.gp_Dir(xyz(dir==='-'?P.n.map(v=>-v):P.n)),pln=new oc.gp_Pln(new oc.gp_Pnt(xyz(P.o)),dr);let k=0;for(const fc of t.faces){const q=fc.normalAt();Math.abs(q.x*P.n[0]+q.y*P.n[1]+q.z*P.n[2])<1e-7&&(D.Add(fc.wrapped,dr,a*Math.PI/180,pln,true),k++);}D.Build(new oc.Message_ProgressRange());if(!k||!D.IsDone())throw new Error('draft failed');const r=R.cast(D.Shape());D.delete();return r;},ok=a=>{const t=mk(a);if(!(Math.abs(volOf(t))>1e-12))throw new Error('empty');return t;};
@@ -241,17 +241,17 @@ function pathWire(pts,rad,nk){
   return R.assembleWire(E);
 }
 const SWEEP_OPT={forceProfileSpineOthogonality:true,transitionMode:'round'};
-function sweepSketch(sk,spine){
-  if(sk&&sk.wire)return R.genericSweep(sk.wire,spine,SWEEP_OPT);
+function sweepSketch(sk,spine,opt=SWEEP_OPT){
+  if(sk&&sk.wire)return R.genericSweep(sk.wire,spine,opt);
   const parts=sk&&sk.sketches;
   if(!parts||!parts.length)throw new Error('sweep profile has no outline');
   if(parts[0]&&parts[0].wire&&parts.every(p=>p.wire)){
-    let solid=R.genericSweep(parts[0].wire,spine,SWEEP_OPT);
-    for(let i=1;i<parts.length;i++)solid=solid.cut(R.genericSweep(parts[i].wire,spine,SWEEP_OPT));
+    let solid=R.genericSweep(parts[0].wire,spine,opt);
+    for(let i=1;i<parts.length;i++)solid=solid.cut(R.genericSweep(parts[i].wire,spine,opt));
     return solid;
   }
   let solid=null;
-  for(const p of parts){const s=sweepSketch(p,spine);solid=solid?solid.fuse(s):s;}
+  for(const p of parts){const s=sweepSketch(p,spine,opt);solid=solid?solid.fuse(s):s;}
   return solid;
 }
 function sweepTool(f,body){
@@ -479,7 +479,7 @@ export function meshBody(body,q=1){
   const sid=new Map();safe(()=>(body.solids&&body.solids.length>1?body.solids:[]).forEach((sd,i)=>sd.faces.forEach(g=>sid.set(g.hashCode,i))));const faces=F.map(x=>({c:x.c,n:x.n,type:x.type,area:safe(()=>R.measureArea(x.f)),...(sid.size?{solid:sid.get(x.f.hashCode)??0}:{})}));
   const edges=E.map(x=>({m:x.m,a:x.a,b:x.b,type:x.type,len:x.len}));
   let vp=null;try{const p=R.measureShapeVolumeProperties(body);vp={volume:p.volume,com:p.centerOfMass};}catch{}
-  const bb=bboxOf(body);
+  const bb=bboxOf(body),nv=m.vertices.length/3;nv&&(KN.ex.kn_verts(nv),KN.v(4).set(m.vertices),KN.v(5).set([...bb.min,...bb.max]),KN.ex.kn_tight(nv,tol),Object.assign(bb,{min:[...KN.v(5).slice(0,3)],max:[...KN.v(5).slice(3,6)]}));
   return{pos:new Float32Array(m.vertices),nrm:new Float32Array(m.normals),idx:new Uint32Array(m.triangles),groups:m.faceGroups.map(g=>[g.start,g.count,fh.get(g.faceId)??-1]),lines:new Float32Array(me.lines),egroups:me.edgeGroups.map(g=>[g.start,g.count,eh.get(g.edgeId)??-1]),faces,edges,props:{volume:vp?vp.volume:safe(()=>R.measureVolume(body)),com:vp?vp.com:null,area:safe(()=>R.measureArea(body)),bbox:bb,nFaces:F.length,nEdges:E.length,nSolids:body.solids?body.solids.length:1,...(body.solids&&body.solids.length>1?{solids:body.solids.map(sd=>{const p=R.measureShapeVolumeProperties(sd),b2=sd.boundingBox.bounds;return{volume:Math.abs(p.volume),com:V(p.centerOfMass),bbox:{min:b2[0],max:b2[1]}};})}:{})}};
 }
 function safe(f){try{return f();}catch{return null;}}

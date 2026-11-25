@@ -2,11 +2,11 @@ import {startE2E} from './e2e_lib.mjs';
 const E=await startE2E({web:+process.env.E2E_WEB||18821,mcp:+process.env.E2E_MCP||18822,width:1600,height:900,pro:false}),p=E.page,sleep=E.sleep;
 let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' · '+String(typeof x==='string'?x:JSON.stringify(x)).slice(0,240):''));};
 const wb=()=>p.evaluate(()=>window.amnicad.API.waitBuild()).then(()=>sleep(600)),doc=()=>p.evaluate(()=>JSON.parse(JSON.stringify(window.amnicad.API.doc))),sf=async()=>(await doc()).features.find(f=>f.type==='sheet');
-const el=async(sel,re)=>{for(const b of await p.$$(sel))if(re.test(await b.evaluate(x=>[x.textContent,x.title,x.getAttribute('aria-label')].join(' ').trim())))return b;return null;};
+const el=async(sel,re)=>{for(const b of await p.$$(sel))if(await b.evaluate(x=>!!x.getClientRects().length)&&re.test(await b.evaluate(x=>[x.textContent,x.title,x.getAttribute('aria-label')].join(' ').trim())))return b;return null;};
 const click=async(sel,re,what)=>{const b=await el(sel,re);ok(!!b,'found '+what);b&&await b.click();await sleep(350);return b;};
 try{
   await E.connect();await p.evaluate(()=>localStorage.setItem('amnicad.pickmode',JSON.stringify('quick')));await E.call('apply_actions',{actions:[{new:true,units:'mm'}]});await wb();
-  await click('#ribbon .cmd[data-rc="sheet"]',/Sheet Metal/,'the Sheet Metal ribbon command');await click('#pickpanel .seg button',/XY/,'the XY plane button');await wb();
+  await click('#ribbon .cmd[data-rc="sheet"]',/Sheet Metal/,'the Sheet Metal ribbon command');await click('#pickpanel .seg button',/XY/,'the XY plane button');await wb();await click('button',/^Skip sketch\b/,'Skip sketch (keep the default base outline)');await wb();
   let f=await sf();ok(f&&f.plane==='XY'&&f.flanges.length===2&&f.shapes.length===1,'clicking Sheet Metal then XY adds a sheet feature with a base outline and two flanges',f&&{plane:f.plane,fl:f.flanges});
   let ed=await p.$('.mk-flanges');if(!ed){await click('#tree .tn, #tree li, .ftree .row',/Sheet metal/i,'the sheet feature in the tree');ed=await p.$('.mk-flanges');}ok(!!ed,'the feature panel shows the flange editor');
   await click('.mk-flanges button',/^\+ Flange/,'the + Flange button');await wb();f=await sf();ok(f.flanges.length===3&&f.flanges[2].edge==='right','+ Flange adds a third flange on the next free edge (right)',f.flanges.map(q=>q.edge));

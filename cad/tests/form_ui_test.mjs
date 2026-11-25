@@ -5,7 +5,7 @@ let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!=
 const SCENE='base box 0,0,.5 2,2,1\nball sphere 2.5,0,.5 r.5\n';
 try{await sleep(700);b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   const shot=async n=>{if(shots){fs.mkdirSync(shots,{recursive:true});await p.screenshot({path:path.join(shots,n+'.png')});}};
-  await p.goto(`http://127.0.0.1:${port}/cad/#form`);await sleep(4500);
+  await p.goto(`http://127.0.0.1:${port}/cad/#form&demo`);await sleep(4500);
   await p.evaluate(()=>{window.FS=async()=>(await import('/cad/form.js')).formState();window.API=window.amnicad.API;window.it=async n=>{const F=await FS();return F.sc.items.find(x=>x.name===n&&x.kind!=='bone')||null;};window.proj=a=>{const v=new API.THREE.Vector3(...a).project(API.camera),r=API.renderer.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height];};});
   const settle=async(t=250)=>{for(let i=0;i<80;i++){const r=await p.evaluate(async()=>{const F=await FS();return F.shown>=F.seq&&!F.mo;});if(r)break;await sleep(60);}await sleep(t);};
   const setScene=async t=>{await p.evaluate(async t=>{const F=await FS();API.commit(d=>{d.form=t;});F.hidden.clear();API.view('iso',true);},t);await settle(400);await p.evaluate(()=>API.view('iso',true));await sleep(200);};
