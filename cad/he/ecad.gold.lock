@@ -2,7 +2,7 @@
 import math;
 fn am() real { ((1 << clamp(PR[11] as int, 1, 8)) - 1) as real }
 fn lbit(l int) real { (1 << l) as real }
-=== -2e62b413c40abd3a
+=== 33157764aae7deec
 var NP int = 0;
 var NT int = 0;
 var NV int = 0;
@@ -29,6 +29,7 @@ var FP real[>..];
 var ZS real[>..];
 var GA real[>..];
 var GO real[>..];
+var SP real[>..];
 var DS real[>..];
 var KY real[>..];
 var NS i32[>..];
@@ -1302,7 +1303,7 @@ fn padap(p int, e real) int {
 	}
 	return ap(2, w, h);
 }
-=== 090736151e73db54
+=== 69a7357a2ddb5688
 fn cgap(ax real, ay real, bx real, by real, r real, i int) real {
 	let o = 12 * i;
 	if CI[o] == 0.0 {
@@ -1313,50 +1314,132 @@ fn cgap(ax real, ay real, bx real, by real, r real, i int) real {
 fn egap(x real, y real) real {
 	min(min(x - PR[5], PR[7] - x), min(y - PR[6], PR[8] - y))
 }
-=== -82b01b945ebb07d
-fn hrow(x0 real, y0 real, x1 real, y1 real, w real, layer int, net int) {
+fn segok(ax real, ay real, bx real, by real, w real, layer i32, net i32) int {
+	let l = layer as int;
+	let k = net as int;
+	for q in NI {
+		if CI[12 * q + 8] != 4.0 && ilay(q, l) == 1 {
+			let nq = CI[12 * q + 2] as int;
+			if (nq != k || nq == 0) && cgap(ax, ay, bx, by, w / 2.0, q) < PR[0] - 1e-6 {
+				return 0;
+			}
+		}
+	}
+	if min(egap(ax, ay), egap(bx, by)) < PR[9] + w / 2.0 - 1e-6 {
+		return 0;
+	}
+	return 1;
+}
+fn dsign(x real) real {
+	if x > 0.0 {
+		return 1.0;
+	}
+	if x < 0.0 {
+		return -1.0;
+	}
+	return 0.0;
+}
+fn cnx(ax real, ay real, bx real, by real, p i32) real {
+	let dx = bx - ax;
+	let dy = by - ay;
+	let d = min(abs(dx), abs(dy));
+	if p == 0 {
+		return ax + dsign(dx) * d;
+	}
+	bx - dsign(dx) * d
+}
+fn cny(ax real, ay real, bx real, by real, p i32) real {
+	let dx = bx - ax;
+	let dy = by - ay;
+	let d = min(abs(dx), abs(dy));
+	if p == 0 {
+		return ay + dsign(dy) * d;
+	}
+	by - dsign(dy) * d
+}
+fn pairok(ax real, ay real, bx real, by real, p i32, w real, layer i32, net i32) int {
+	let mx = cnx(ax, ay, bx, by, p);
+	let my = cny(ax, ay, bx, by, p);
+	if segok(ax, ay, mx, my, w, layer, net) == 1 && segok(mx, my, bx, by, w, layer, net) == 1 {
+		return 1;
+	}
+	return 0;
+}
+fn addrow(x0 real, y0 real, x1 real, y1 real, w real, layer i32, net i32) {
 	RT.push(x0);
 	RT.push(y0);
 	RT.push(x1);
 	RT.push(y1);
 	RT.push(w);
-	RT.push(layer);
-	RT.push(net);
+	RT.push(layer as real);
+	RT.push(net as real);
 	RT.push(0.0);
 }
-fn hsign(v real) real {
-	if v > 0.0 {
-		return 1.0;
+fn addpair(ax real, ay real, bx real, by real, p i32, w real, layer i32, net i32) {
+	let mx = cnx(ax, ay, bx, by, p);
+	let my = cny(ax, ay, bx, by, p);
+	if sqrt((mx - ax) * (mx - ax) + (my - ay) * (my - ay)) > 1e-9 {
+		addrow(ax, ay, mx, my, w, layer, net);
 	}
-	if v < 0.0 {
-		return -1.0;
+	if sqrt((bx - mx) * (bx - mx) + (by - my) * (by - my)) > 1e-9 {
+		addrow(mx, my, bx, by, w, layer, net);
 	}
-	return 0.0;
 }
-fn hnode(x real, y real, layer int) int {
-	let i = clamp(ifl((x - PR[5]) / PR[4]), 0, GX - 1);
-	let j = clamp(ifl((y - PR[6]) / PR[4]), 0, GY - 1);
-	layer * GX * GY + j * GX + i
+=== 1e07fa4bbdcf7c39
+fn smooth(w real, layer i32, net i32) {
+	let n = RT.len / 8;
+	rs(SP, 2 * (n + 1));
+	SP.push(RT[0]);
+	SP.push(RT[1]);
+	for r in n {
+		SP.push(RT[8 * r + 2]);
+		SP.push(RT[8 * r + 3]);
+	}
+	let m = SP.len / 2;
+	RT.clear();
+	var i = 0;
+	while i < m - 1 {
+		var j = m - 1;
+		var p = 0;
+		loop {
+			if pairok(SP[2 * i], SP[2 * i + 1], SP[2 * j], SP[2 * j + 1], 0, w, layer, net) == 1 {
+				p = 0;
+				break;
+			}
+			if pairok(SP[2 * i], SP[2 * i + 1], SP[2 * j], SP[2 * j + 1], 1, w, layer, net) == 1 {
+				p = 1;
+				break;
+			}
+			if j == i + 1 {
+				p = 0;
+				break;
+			}
+			j -= 1;
+		}
+		addpair(SP[2 * i], SP[2 * i + 1], SP[2 * j], SP[2 * j + 1], p as i32, w, layer, net);
+		i = j;
+	}
 }
-export fn ec_hroute(netp i32, layerp i32, sx real, sy real, cx real, cy real, w real, modep i32) i32 {
-	let net = netp as int;
-	let layer = layerp as int;
-	let mode = modep as int;
-	var ex = cx;
-	var ey = cy;
+=== 1fe35b96c1e5213b
+export fn ec_hroute(net i32, layer i32, sx real, sy real, ex real, ey real, w real, mode i32) i32 {
+	let k = net as int;
+	let l = layer as int;
+	let md = mode as int;
 	RT.clear();
 	zf(RI, 8, 0.0);
+	var tx = ex;
+	var ty = ey;
 	for q in NI {
 		let src = CI[12 * q + 8];
-		if (src == 1.0 || src == 3.0) && net > 0 && (CI[12 * q + 2] as int) == net && ilay(q, layer) == 1 && pdist(ex, ey, q) <= 0.0 {
-			ex = (bx0(q) + bx1(q)) / 2.0;
-			ey = (by0(q) + by1(q)) / 2.0;
+		if (src == 1.0 || src == 3.0) && (CI[12 * q + 2] as int) == k && k > 0 && ilay(q, l) == 1 && pdist(tx, ty, q) <= 0.0 {
+			tx = (bx0(q) + bx1(q)) / 2.0;
+			ty = (by0(q) + by1(q)) / 2.0;
 			RI[6] = q + 1;
 			break;
 		}
 	}
 	var t = -1;
-	if (mode & 2) != 0 {
+	if (md & 2) != 0 {
 		PR[1] = w;
 		grid();
 		obstacles();
@@ -1365,86 +1448,66 @@ export fn ec_hroute(netp i32, layerp i32, sx real, sy real, cx real, cy real, w 
 		ri(PL, GX * GY * GL);
 		HV.clear();
 		SG += 1;
-		let sn = hnode(sx, sy, layer);
-		let en = hnode(ex, ey, layer);
-		touch(en);
-		TG[en] = SG as i32;
-		PN.push(sn as i32);
+		let g = PR[4];
+		let per = GX * GY;
+		let si = clamp(ifl((sx - PR[5]) / g), 0, GX - 1);
+		let sj = clamp(ifl((sy - PR[6]) / g), 0, GY - 1);
+		let ei = clamp(ifl((tx - PR[5]) / g), 0, GX - 1);
+		let ej = clamp(ifl((ty - PR[6]) / g), 0, GY - 1);
+		let nstart = l * per + sj * GX + si;
+		let nend = l * per + ej * GX + ei;
+		touch(nend);
+		TG[nend] = SG as i32;
+		PN.push(nstart as i32);
 		NOV = 1;
-		t = search(net);
+		t = search(k);
 		NOV = 0;
 	}
 	if t != -1 {
-		emit(t, net);
+		emit(t, k);
 		RI[0] = 1.0;
 		if RT.len > 0 {
 			RT[0] = sx;
 			RT[1] = sy;
 			let last = RT.len - 8;
-			RT[last + 2] = ex;
-			RT[last + 3] = ey;
+			RT[last + 2] = tx;
+			RT[last + 3] = ty;
 		} else {
-			hrow(sx, sy, ex, ey, w, layer, net);
+			addrow(sx, sy, tx, ty, w, layer, net);
 		}
+		smooth(w, layer, net);
 	} else {
-		if (mode & 2) != 0 {
+		if (md & 2) != 0 {
 			RI[1] = 1.0;
 		}
-		let dx = ex - sx;
-		let dy = ey - sy;
-		let d = min(abs(dx), abs(dy));
-		let gx = hsign(dx);
-		let gy = hsign(dy);
-		var mx = sx + gx * d;
-		var my = sy + gy * d;
-		if (mode & 1) != 0 {
-			mx = ex - gx * d;
-			my = ey - gy * d;
-		}
-		if sqrt((mx - sx) * (mx - sx) + (my - sy) * (my - sy)) > 1e-9 {
-			hrow(sx, sy, mx, my, w, layer, net);
-		}
-		if sqrt((ex - mx) * (ex - mx) + (ey - my) * (ey - my)) > 1e-9 {
-			hrow(mx, my, ex, ey, w, layer, net);
-		}
+		addpair(sx, sy, tx, ty, (md & 1) as i32, w, layer, net);
 	}
-	let rows = RT.len / 8;
+	let n = RT.len / 8;
 	var total = 0.0;
-	for r in rows {
+	for r in n {
 		let o = 8 * r;
-		let x0 = RT[o];
-		let y0 = RT[o + 1];
-		let x1 = RT[o + 2];
-		let y1 = RT[o + 3];
 		RT[o + 4] = w;
-		var bad = min(egap(x0, y0), egap(x1, y1)) < PR[9] + w / 2.0 - 1e-6;
-		for q in NI {
-			if bad {
-				break;
-			}
-			let nq = CI[12 * q + 2] as int;
-			if CI[12 * q + 8] != 4.0 && ilay(q, layer) == 1 && (nq != net || nq == 0) && cgap(x0, y0, x1, y1, w / 2.0, q) < PR[0] - 1e-6 {
-				bad = true;
-			}
-		}
-		if bad {
-			RT[o + 7] = 1.0;
+		let bad = 1 - segok(RT[o], RT[o + 1], RT[o + 2], RT[o + 3], w, layer, net);
+		RT[o + 7] = bad;
+		if bad == 1 {
 			RI[5] += 1.0;
 		}
-		total += sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
+		let dx = RT[o + 2] - RT[o];
+		let dy = RT[o + 3] - RT[o + 1];
+		total += sqrt(dx * dx + dy * dy);
 	}
 	RI[4] = total;
-	var vbad = egap(ex, ey) < PR[9] + PR[2] / 2.0 - 1e-6;
+	let rad = PR[2] / 2.0;
 	for q in NI {
-		if vbad {
-			break;
-		}
-		let nq = CI[12 * q + 2] as int;
-		if CI[12 * q + 8] != 4.0 && (nq != net || nq == 0) && cgap(ex, ey, ex, ey, PR[2] / 2.0, q) < PR[0] - 1e-6 {
-			vbad = true;
+		if CI[12 * q + 8] != 4.0 {
+			let nq = CI[12 * q + 2] as int;
+			if (nq != k || nq == 0) && cgap(tx, ty, tx, ty, rad, q) < PR[0] - 1e-6 {
+				RI[7] = 1.0;
+				break;
+			}
 		}
 	}
-	if vbad {
+	if egap(tx, ty) < PR[9] + rad - 1e-6 {
 		RI[7] = 1.0;
 	}
 	ec_views();
