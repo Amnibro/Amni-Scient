@@ -9,6 +9,7 @@ import {LineMaterial} from './vendor/LineMaterial.js';
 import {normFeature} from './normalize.js';
 import {FAMILIES,sizes,pitches,classes,callout,tapDrill,searchThreads,recentThreads,rememberThread,threadById} from './threads.js';
 import {applyCfg} from './configs.js';
+import * as WU from './weld-ui.js';
 import {FT,SHAPES,MATS,MGROUPS,EDGE_MODES,FACE_MODES,defaults,shapeDefaults,shapeLimits,clean,fixPre,mergeMold} from './schema.js';
 import {emptySketch,withRefs,useEdges,arcPoints,solve as skSolve,loops as skLoops} from './sketch.js';
 import {TEMPLATES,templatesFor} from './templates.js';
@@ -302,7 +303,8 @@ function renderEdit(keep){if(uiHooks.onEdit)uiHooks.onEdit(S.active);rebuild();
   if(err)body.append(h('div',{class:'alert err'},err.msg));for(const w of(S.warnings||[]).filter(w=>w.id===f.id&&!w.field))body.append(h('div',{class:'alert warn'},w.msg));const pb=pickBtns(f);pb&&body.append(pb);
   if(f.type==='thread')body.append(threadEditor(f,set));
   for(const fd of t.f){const[k,label,dv,kind,cond]=fd;if(f.type==='thread'&&(k==='std'||(f.threadId&&(k==='d'||k==='pitch'))))continue;if(typeof cond==='function'&&!cond(f))continue;if(typeof kind==='function'&&!kind(f))continue;
-    if(Array.isArray(kind)){if(kind.length<=4&&kind.every(o=>String(o).length<=3)){body.append(h('div',{class:'fld'},h('label',null,label),h('div',{class:'seg'},...kind.map(o=>h('button',{class:String(f[k]??dv)===String(o)?'on':'',onclick:()=>set(k,o)},OPN[o]||o)))));}else body.append(selectField(label,kind.map(o=>[o,OPN[o]||o]),f[k]??dv,v=>set(k,v)));}
+    if(Array.isArray(kind)){if(kind.length<=4&&kind.every(o=>String(o).length<=3)){body.append(h('div',{class:'fld'},h('label',null,label),h('div',{class:'seg'},...kind.map(o=>h('button',{class:String(f[k]??dv)===String(o)?'on':'',onclick:()=>set(k,o)},OPN[o]||o)))));}else body.append(selectField(label,kind.map(o=>[o,(fd[5]||{})[o]||OPN[o]||o]),f[k]??dv,v=>set(k,v)));}
+    else if(kind==='profile')body.append(WU.stdField(API,f,set,label));
     else if(kind==='cprof')body.append(profField(API,f,set,label));
     else if(kind==='cpp'){}
     else if(kind==='bool')body.append(boolField(label,f[k]??dv,v=>set(k,v)));
@@ -319,6 +321,7 @@ function renderEdit(keep){if(uiHooks.onEdit)uiHooks.onEdit(S.active);rebuild();
     else if(kind==='feats')body.append(h('div',{style:'margin:8px 0'},h('label',{class:'mut'},label),featsPicker(f[k],idx,v=>set(k,v))));
     else if(kind==='text')body.append(h('div',{class:'fld'},h('label',null,label),h('input',{type:'text',value:f[k]??'',oninput:e=>set(k,e.target.value,true)})));
     else body.append(exprField(f,k,label,v=>set(k,v,true),UNIT(k),limNote(f,k)));}
+  f.type==='frame'&&body.append(WU.panel(API,f,set));
   body.append(h('div',{class:'row',style:'margin-top:12px'},h('button',{class:'btn sm',onclick:()=>{const c=clone(f);c.id=nextId();c.name=(f.name||t.n)+' copy';commit(d=>d.features.splice(idx+1,0,c));S.active=c.id;renderEdit();}},'Duplicate'),h('button',{class:'btn sm',onclick:()=>commit(d=>{const ff=d.features.find(x=>x.id===f.id);ff.suppressed=!ff.suppressed;})},f.suppressed?'Unsuppress':'Suppress'),h('button',{class:'btn sm',onclick:()=>delFeature(f.id)},'Delete'),h('span',{class:'hr'})),h('button',{class:'btn pri done',onclick:finishEdit},'✓ Done'+(PICKT[f.type]?' · apply '+(f.name||FT[f.type].n):'')));
   body.append(h('div',{class:'note',id:'prevnote'}));
   S.pick&&body.prepend(pickPanel());el.replaceChildren(...(FZ.frozen(S.doc,f.id)?CUI.frozenEdit(body,()=>commit(d=>{const i=d.features.findIndex(x=>x.id===f.id);i>0?d.freeze=i:delete d.freeze;}),h):[body]));if(fi>=0){const ni=el.querySelectorAll('input')[fi];ni&&(ni.focus(),sel0&&ni.setSelectionRange&&ni.setSelectionRange(...sel0));}previewSel();

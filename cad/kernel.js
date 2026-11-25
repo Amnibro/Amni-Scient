@@ -13,9 +13,11 @@ import {chamferSides,alongFaces,FEAT2,solidsOf,ribGuess} from './features2.js';
 import {vec as V} from './qmath.js';
 import {maxOf,minOf,pushAll} from './minmax.js';
 import {heliumSync} from './he/host.js';
+import {SHAPES} from './frame.js';
+import {featSec,ENDS} from './profiles.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const KN=(await heliumSync('kern'))({});KN.ex.kn_views();
-const STRKEYS=new Set(['feature','src','sec','release','twist','about','tsec','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
+const KN=(await heliumSync('kern'))({});KN.ex.kn_views();const FR=(await heliumSync('frame'))({});FR.ex.fr_init();
+const STRKEYS=new Set(['feature','src','sec','ends','release','twist','about','tsec','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -372,11 +374,15 @@ function patternTools(f,tools){
 }
 const HINT={fillet:'the radius is probably too big for these edges; try a smaller radius or fewer edges',chamfer:'the distance is probably too big for these edges',shell:'the wall is probably thicker than a fillet or feature allows; thin the wall or enlarge the fillets',extrude:'check that the profile is closed, has area and does not cross itself',revolve:'the profile must not cross the axis',hole:'check the hole lies on the part',pattern:'a copy may fall outside the part',mirror:'the mirror may not touch the part'};
 function friendly(e,f){const m=String(e&&e.message||e);if(e instanceof ProfileError)return(cap(f.type)+" '"+(f.name||f.id)+"': "+m).slice(0,400);if(/WebAssembly|object Object|has been deleted|^\d+$/.test(m)||!m)return 'geometry kernel could not build this '+((f&&f.type)||'feature')+(f&&HINT[f.type]?': '+HINT[f.type]:'');return m.slice(0,300);}
-function frameProfile(f){const s=f.sec||'rtube',b=f.b??M(40),h=['tube','round'].includes(s)?b:f.h??b,t=f.t??M(3),tf=f.tf??M(5),tw=f.tw??M(4),poly=P=>P.slice(1).reduce((d,p)=>d.lineTo(p),R.draw(P[0])).close(),hw=h-2*tf,ey=(b*b*tf+hw*tw*tw/2)/(2*b*tf+hw*tw);
-  return s==='rect'?R.drawRectangle(b,h):s==='round'?R.drawCircle(b/2):s==='tube'?R.drawCircle(b/2).cut(R.drawCircle(b/2-t)):s==='rtube'?R.drawRectangle(b,h).cut(R.drawRectangle(b-2*t,h-2*t)):s==='ibeam'?poly([[-b/2,-h/2],[b/2,-h/2],[b/2,tf-h/2],[tw/2,tf-h/2],[tw/2,h/2-tf],[b/2,h/2-tf],[b/2,h/2],[-b/2,h/2],[-b/2,h/2-tf],[-tw/2,h/2-tf],[-tw/2,tf-h/2],[-b/2,tf-h/2]]):poly([[-ey,-h/2],[b-ey,-h/2],[b-ey,tf-h/2],[tw-ey,tf-h/2],[tw-ey,h/2-tf],[b-ey,h/2-tf],[b-ey,h/2],[-ey,h/2]]);}
-function frameTool(f){const P=f.pts||[];let out=null;
-  for(const[a,c]of f.members||[]){const p=P[a-1],q=P[c-1];if(!p||!q)throw new Error('Beam frame member '+a+'-'+c+' points at a joint that is not in the list');const d=[q[0]-p[0],q[1]-p[1],q[2]-p[2]],L=Math.hypot(...d);if(L<1e-9)continue;const ex=d.map(v=>v/L),r=Math.abs(ex[2])>0.999?[1,0,0]:[0,0,1],rd=r[0]*ex[0]+r[1]*ex[1]+r[2]*ex[2],ez=nrm([r[0]-rd*ex[0],r[1]-rd*ex[1],r[2]-rd*ex[2]]),ey=cross(ez,ex),bt=(f.roll||0)*Math.PI/180,x=ey.map((v,i)=>Math.cos(bt)*v+Math.sin(bt)*ez[i]);
-    const s=frameProfile(f).sketchOnPlane(new R.Plane(p,x,ex)).extrude(L);out=out?out.fuse(s):s;}
+function frameProfile(d,SX){const{shape:s,b,h,t,tf,tw}=d,poly=(P,dy=0,dz=0)=>P.slice(1).reduce((q,p)=>q.lineTo([p[0]+dy,p[1]+dz]),R.draw([P[0][0]+dy,P[0][1]+dz])).close();
+  return s==='rect'?R.drawRectangle(b,h):s==='round'?R.drawCircle(b/2):s==='tube'?R.drawCircle(b/2).cut(R.drawCircle(b/2-t)):s==='rtube'?R.drawRectangle(b,h).cut(R.drawRectangle(b-2*t,h-2*t)):s==='ibeam'?poly([[-b/2,-h/2],[b/2,-h/2],[b/2,tf-h/2],[tw/2,tf-h/2],[tw/2,h/2-tf],[b/2,h/2-tf],[b/2,h/2],[-b/2,h/2],[-b/2,h/2-tf],[-tw/2,h/2-tf],[-tw/2,tf-h/2],[-b/2,tf-h/2]]):s==='channel'?poly([[0,-h/2],[b,-h/2],[b,tf-h/2],[tw,tf-h/2],[tw,h/2-tf],[b,h/2-tf],[b,h/2],[0,h/2]],SX[5]):poly([[0,0],[b,0],[b,t],[t,t],[t,h],[0,h]],SX[5],SX[6]);}
+function frameTool(f){const P=f.pts||[],Mb=f.members||[],u=UNITS==='in'?1/25.4:1,S=featSec(f,1/u),d={...S,...Object.fromEntries(['b','h','t','tf','tw'].map(k=>[k,S[k]*u]))},H=FR.ex;let out=null;
+  for(const[a,c]of Mb)if(!P[a-1]||!P[c-1])throw new Error('Beam frame member '+a+'-'+c+' points at a joint that is not in the list');
+  H.fr_size(P.length,Mb.length,1,1);FR.v(3).set(P.flat().map(Number));FR.v(5).set([SHAPES[d.shape],d.b,d.h,d.t,d.tf,d.tw]);H.fr_sections();const MB=FR.v(20),MW=FR.v(4),I=FR.v(1);Mb.forEach(([a,c],n)=>{MB.set([a-1,c-1,0,0],4*n);MW[4*n]=f.roll||0;});I.fill(0);I[40]=ENDS[f.ends||'miter']??1;I[41]=15;H.fr_trim();
+  const CE=FR.v(16),LAM=FR.v(19),SX=Array.from(FR.v(15).slice(0,8)),big=4*(Math.max(...Mb.map((_,n)=>CE[24*n+22]),0)+Math.max(d.b,d.h));
+  Mb.forEach(([a],n)=>{const q=24*n,L=CE[q+22];if(!(CE[q+10]>1e-9))return;const ex=Array.from(LAM.slice(9*n,9*n+3)),x=Array.from(LAM.slice(9*n+3,9*n+6)),p=P[a-1].map((v,i)=>v-ex[i]*CE[q]);let s=frameProfile(d,SX).sketchOnPlane(new R.Plane(p,x,ex)).extrude(L);
+    for(const e of[q,q+12])if(CE[e+1]>0.5){const nv=Array.from(CE.slice(e+2,e+5)),o=Array.from(CE.slice(e+5,e+8)),px=nrm(cross(nv,Math.abs(nv[2])<0.9?[0,0,1]:[1,0,0]));s=s.cut(R.drawRectangle(big,big).sketchOnPlane(new R.Plane(o,px,nv.map(v=>-v))).extrude(big));}
+    out=out?out.fuse(s):s;});
   if(!out)throw new Error('Beam frame needs at least one member between two different joints');return out;}
 const BATCH=4,PROF=new Set(['extrude','revolve','sweep','loft','molding','bit','shaper','knife']);
 const TOOLMAKERS={frame:frameTool,box:primTool,cylinder:primTool,tube:primTool,sphere:primTool,cone:primTool,torus:primTool,extrude:extrudeTool,revolve:revolveTool,hole:holeTool,loft:loftTool,sweep:sweepTool,coil:coilTool,thread:threadTool,molding:moldingTool,bit:cutterTool,shaper:cutterTool,knife:knifeTool};
