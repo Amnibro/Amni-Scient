@@ -1,0 +1,31 @@
+import {startE2E} from './e2e_lib.mjs';
+const E=await startE2E({web:+process.env.E2E_WEB||18867,mcp:+process.env.E2E_MCP||18868,width:1440,height:900}),p=E.page,sleep=E.sleep,shots=process.env.SHOTS||null;
+let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' · '+String(typeof x==='string'?x:JSON.stringify(x)).slice(0,240):''));};
+const txt=()=>p.evaluate(()=>document.getElementById('tab-sim').textContent),doc=()=>p.evaluate(()=>JSON.parse(JSON.stringify(window.amnicad.API.doc))),built=()=>p.evaluate(()=>window.amnicad.API.waitBuild()).then(()=>sleep(500)),shot=async n=>shots&&await p.screenshot({path:shots+'/'+n+'.png'});
+const btn=t=>p.evaluate(t=>{const x=[...document.querySelectorAll('#tab-sim button')].find(e=>e.textContent.trim()===t);x&&x.click();return!!x;},t),lg=()=>p.evaluate(()=>(document.getElementById('lgt')||{}).textContent||'');
+const run=async()=>{await p.evaluate(()=>{window.amnicad.S.lastFea=null;document.getElementById('fea-run').click();});await p.waitForFunction(()=>{const S=window.amnicad.S;return S.fea&&S.fea.r&&S.fea.r.type==='species'&&S.lastFea;},{timeout:300000,polling:500});await sleep(900);return p.evaluate(()=>window.amnicad.S.lastFea);};
+try{
+  await E.connect();await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'steel1018',params:[],features:[{id:'a',type:'box',w:100,d:10,h:10}],sim:{type:'species',conc:[{faces:{side:'-X'},c:1}],mtrans:[{faces:{side:'+X'},km:1e-8,cinf:0}]}}));await built();
+  await p.evaluate(()=>window.amnicad.API.setTab('sim'));await p.waitForFunction(()=>/Run diffusion analysis/.test(document.getElementById('tab-sim').textContent),{timeout:60000}).catch(()=>{});const T0=await txt();
+  ok(/Diffusion/.test(T0)&&/Species A/.test(T0)&&/Diffusivity/.test(T0)&&/Concentration 1/.test(T0)&&/Mass transfer 1/.test(T0)&&/Run diffusion analysis/.test(T0),'the Diffusion study shows the species card, its faces and the run button',T0.slice(0,200));
+  ok(!/Mesher/.test(T0),'the voxel-only study hides the mesher choice');
+  const s1=await run(),a=s1.species&&s1.species[0],N=1e-4/(0.1/1e-9+1/1e-8);
+  ok(s1.type==='species'&&Math.abs(a.fixed_mol_s[0]/N-1)<0.03&&Math.abs(a.c_min-0.5)<0.02,'the run matches diffusion and film resistances in series',a);
+  const R1=await txt();ok(/Highest/.test(R1)&&/Amount in the part/.test(R1)&&/In by mass transfer/.test(R1),'results list concentrations and flows',R1.slice(R1.indexOf('Results'),R1.indexOf('Results')+220));
+  ok(/^Concentration \(A, mol\/m³\)/.test(await lg()),'the legend reads concentration of A',await lg());await shot('species_A');
+  ok(await btn('+ Species'),'the + Species button');await sleep(700);
+  await p.evaluate(()=>{const s=document.querySelector('#tab-sim select[aria-label="Parent species"]');s.value='A';s.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(700);
+  await p.evaluate(()=>{const c=[...document.querySelectorAll('#tab-sim .card')].find(c=>/^Species A/.test(c.textContent));const i=[...c.querySelectorAll('input[type=number]')][1];i.value='1e-7';i.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(700);
+  let D=await doc();ok(D.sim.species.list.length===2&&D.sim.species.list[1].from==='A'&&D.sim.species.list[0].k===1e-7,'a second species formed from A, with A decaying',D.sim.species);
+  await p.evaluate(()=>window.amnicad.API.commit(d=>{d.sim.conc.push({faces:{side:'+X'},c:0,sp:1});},{noEdit:true}));await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(900);
+  ok(!!(await p.$('#tab-sim select[aria-label="Species"]')),'faces pick their species once there are two');
+  const s2=await run(),[pA,pB]=s2.species;ok(pB&&Math.abs(pB.source_mol_s/pA.decay_mol_s-1)<1e-6&&pB.c_max>0&&pB.from==='A','B forms from what A loses',[pA.decay_mol_s,pB.source_mol_s]);
+  ok(!!(await p.$('#sp-pick')),'a species switcher appears');await p.evaluate(()=>[...document.querySelectorAll('#sp-pick button')].find(b=>b.textContent==='B').click());await sleep(1200);
+  ok(/^Concentration \(B, mol\/m³\)/.test(await lg())&&+(await p.evaluate(()=>document.getElementById('lg1').textContent)).replace(/[^0-9.eE+-]/g,'')<1&&/Formed from A/.test(await txt()),'switching to B recolors and lists its formation',await lg());await shot('species_B');
+  await p.evaluate(()=>document.querySelector('#tab-sim button[aria-label="Transient"]').click());await sleep(700);ok(/Starting concentration/.test(await txt())&&/Time step/.test(await txt()),'transient adds time steps and starting concentrations');
+  const s3=await run();ok(s3.transient&&s3.species[0].history.length===20,'a transient run keeps a history',s3.species[0].history&&s3.species[0].history.length);
+  await p.evaluate(()=>window.amnicad.API.commit(d=>{d.sim.conc=[];d.sim.mtrans=[];d.sim.transient=false;},{noEdit:true}));await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(700);
+  await p.evaluate(()=>document.getElementById('fea-run').click());await sleep(700);const ts=await p.evaluate(()=>[...document.querySelectorAll('.toast,#toast')].map(e=>e.textContent).join(' '));ok(/fixed concentration/.test(ts),'running with no faces says what to add',ts);
+  ok(!E.errs.length,'no page errors',E.errs.slice(0,3));
+}catch(e){fail++;console.log('FAIL exception '+(e.stack||e.message));}
+await E.close();console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);

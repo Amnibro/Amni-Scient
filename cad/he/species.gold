@@ -1,0 +1,25 @@
+use std
+into species.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its `main()` does nothing. JavaScript drives it through its exported functions (every name starting with sp_ is exported). It supplies the per-node terms of dilute species transport (diffusion with first-order decay, a uniform source and production from a parent species that decays into this one) on a grid whose node volumes JavaScript fills, and it sums the concentration field into the numbers a report needs. Concentrations are moles per cubic meter, volumes cubic millimeters, rates per second. Its only import line is `import math;`, ending with a semicolon. Every int used in real math is converted with `as real`, and a real used as an int with `as int`, since Helium has no real or int conversion calls.
+
+```amni
+extern fn sp_view_f64(id i32, xs real[:]) = "sp_view_f64";
+```
+
+Module state. Int `NN` (node count), starting at 0. Growable f64 arrays: `IN` (16 inputs), `OUT` (16 outputs), `V` (1 per node, node volume), `C` (1 per node, this species' concentration), `PC` (1 per node, the parent species' concentration), `DA` (1 per node, diagonal terms out) and `QF` (1 per node, source terms out).
+
+Sizing helper. `zf(xs, n, x)` takes an f64 growable array by reference: xs is emptied, then gets `reserve`(n), then is resized to n entries equal to x. On the web an array that holds entries cannot grow past the room it first reserved, so every array is emptied before it is sized again.
+
+The exported function `sp_views()`, declared with the export keyword, registers the arrays JavaScript reads or writes through sp_view_f64: 1 `IN`, 2 `OUT`, 3 `V`, 4 `C`, 5 `PC`, 7 `DA`, 8 `QF`. It returns 0.
+
+The exported function `sp_init()`, declared with the export keyword, sizes `IN` and `OUT` to 16 zeros each with zf, then calls `sp_views()` and returns 0.
+
+The exported function `sp_size(nn)`, declared with the export keyword, takes an i32 node count, sets `NN` to it, sizes `V`, `C`, `PC`, `DA` and `QF` to nn zeros each with zf, then calls `sp_views()` and returns 0.
+
+The exported function `sp_terms()`, declared with the export keyword, reads k (decay rate) from IN[0], r (uniform source) from IN[1] and kp (the parent's decay rate times the yield into this species) from IN[2]. For each node n below `NN`, with v equal to V[n]: DA[n] becomes k times v, and QF[n] becomes (r plus kp times PC[n]) times v. It then sets OUT[0] to the sum over all nodes of QF[n] and returns 0.
+
+The exported function `sp_stats()`, declared with the export keyword, sums the concentration field over nodes whose volume V[n] is above 0: lo starts at 1e300 and hi at -1e300, and amount, vol and decay start at 0.0. For each such node n with c equal to C[n]: lo becomes the smaller of lo and c, hi the larger of hi and c, amount grows by c times V[n], vol grows by V[n], and decay grows by IN[0] times c times V[n]. When vol is 0.0, lo and hi become 0.0. It sets OUT[1] to lo, OUT[2] to hi, OUT[3] to amount times 1e-9 (moles), OUT[4] to amount divided by vol when vol is above 0 and else 0.0 (the mean concentration), OUT[5] to vol and OUT[7] to decay times 1e-9 (moles per second consumed by decay), and returns 0.
+
+`main()` does nothing.

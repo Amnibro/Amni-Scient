@@ -215,28 +215,28 @@ async function thermal(inp,P,prog){
   const nn=P.nn,temps=inp.temps||[],conv=inp.conv||[],flux=inp.flux||[],rad=inp.rad||[],useC=!!(inp.transient||(inp.steps|0)>1),steps=Math.max(1,useC?(inp.steps|0||20):1),dt=inp.dt||1,rho=(mat.rho||2700)*1e-9,cp=mat.cp||900;
   const C=new Float64Array(nn);if(useC)for(let n=0;n<nn;n++)C[n]=P.vol[n]*rho*cp;
   const areas={temps:temps.map(b=>P.at(b.faces)),conv:conv.map(b=>P.at(b.faces)),flux:flux.map(b=>P.at(b.faces)),rad:rad.map(b=>P.at(b.faces))};
-  if(!temps.length&&!conv.length&&!rad.length)throw new Error('add a fixed-temperature, convection or radiation face');
+  if(!temps.length&&!conv.length&&!rad.length&&!inp.terms)throw new Error('add a fixed-temperature, convection or radiation face');
   const T0=inp.T0!=null?+inp.T0:(conv[0]&&conv[0].Tinf!=null?conv[0].Tinf:20);let Told=new Float64Array(nn);Told.fill(T0);
-  const once=async Tprev=>{
+  const once=async(Tprev,s)=>{
     const fixed=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),dadd=new Float64Array(nn),tg=new Int16Array(nn).fill(-1);
     temps.forEach((b,bi)=>{for(const n of areas.temps[bi].keys()){fixed[n]=1;u0[n]=b.T;tg[n]=bi;}});
     const cv=areas.conv.map((acc,i)=>{const hc=(conv[i].h||10)*1e-6;for(const[n,v]of acc){dadd[n]+=hc*v[0];f[n]+=hc*v[0]*(conv[i].Tinf??20);}return acc;});
     areas.rad.forEach((acc,i)=>{const eps=rad[i].eps!=null?+rad[i].eps:0.8,Ti=rad[i].Tinf??20;for(const[n,v]of acc){const Tn=Tprev[n]||Ti,hr=eps*SIGMA*(Tn*Tn+Ti*Ti)*(Tn+Ti)*1e-6;dadd[n]+=hr*v[0];f[n]+=hr*v[0]*Ti;}});
     const qin=areas.flux.map((acc,i)=>{let tot=0;for(const v of acc.values())tot+=v[0];let Q=0;for(const[n,v]of acc){const q=flux[i].Q!=null?flux[i].Q*v[0]/(tot||1):(flux[i].q||0)*v[0];f[n]+=q;Q+=q;}return Q;});
-    let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}if(inp.qNode){for(let n=0;n<nn;n++){f[n]+=inp.qNode[n];qv+=inp.qNode[n];}}
+    let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}if(inp.qNode){for(let n=0;n<nn;n++){f[n]+=inp.qNode[n];qv+=inp.qNode[n];}}if(inp.terms){const t=inp.terms(s,Tprev,P.vol);for(let n=0;n<nn;n++){dadd[n]+=t.d[n];f[n]+=t.q[n];}}
     if(useC)for(let n=0;n<nn;n++)if(C[n]&&!fixed[n]){const a=C[n]/dt;dadd[n]+=a;f[n]+=a*Tprev[n];}
     const Ls=await setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
     const S=await solve(Ls,K,b,{tol:inp.tol||1e-7,mg:inp.mg,solver:'cpu',phase:'thermal'},prog),Tn=new Float64Array(nn);for(let n=0;n<nn;n++)Tn[n]=S.u[n]+u0[n];
     return{Tn,S,Ls,L,f,tg,cv,qin,qv};
   };
   const t0=Date.now(),pic=rad.length?7:1,hist=[];let last=null,T=Told;
-  for(let s=0;s<steps;s++){let guess=Told;for(let p=0;p<pic;p++){last=await once(guess);guess=last.Tn;}T=last.Tn;Told=T;let a=Infinity,b=-Infinity;for(let n=0;n<nn;n++){a=Math.min(a,T[n]);b=Math.max(b,T[n]);}hist.push({t:useC?(s+1)*dt:0,Tmin:a,Tmax:b});}
+  for(let s=0;s<steps;s++){let guess=Told;for(let p=0;p<pic;p++){last=await once(guess,s);guess=last.Tn;}T=last.Tn;Told=T;inp.onStep&&inp.onStep(s,T);let a=Infinity,b=-Infinity;for(let n=0;n<nn;n++){a=Math.min(a,T[n]);b=Math.max(b,T[n]);}hist.push({t:useC?(s+1)*dt:0,Tmin:a,Tmax:b});}
   const{S,Ls,L,f,tg,cv,qin,qv}=last,y=new Float64Array(nn);mv(Ls,T,y,true);const qT=temps.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)qT[tg[n]]+=y[n]-f[n];
   const qc=cv.map((acc,i)=>{let s=0;const hc=(conv[i].h||10)*1e-6,Ti=conv[i].Tinf??20;for(const[n,v]of acc)s+=hc*v[0]*(Ti-T[n]);return s;});
   const qr=rad.map((b,i)=>{let s=0;const eps=b.eps!=null?+b.eps:0.8,Ti=b.Tinf??20;for(const[n,v]of areas.rad[i]){const hr=eps*SIGMA*(T[n]*T[n]+Ti*Ti)*(T[n]+Ti)*1e-6;s+=hr*v[0]*(Ti-T[n]);}return s;});
   const{c:cnt}=nodalField(G,L,null),TN=new Float32Array(nn);let Tmin=Infinity,Tmax=-Infinity;for(let n=0;n<nn;n++)if(cnt[n]){TN[n]=T[n];Tmin=Math.min(Tmin,T[n]);Tmax=Math.max(Tmax,T[n]);}
   const vT=atVerts(G,L,TN,1,pos,cnt);dilate(G,cnt,[TN]);
-  return{type:'thermal',transient:useC,radiation:!!rad.length,hist,wire:(w=>(w.vm=Float32Array.from(w.nodes,n=>TN[n]),w))(voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz)),vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,rad:qr,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qr.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend,...(inp.keepT?{T}:{})};
+  return{type:'thermal',transient:useC,radiation:!!rad.length,hist,wire:(w=>(w.vm=Float32Array.from(w.nodes,n=>TN[n]),w))(voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz)),vT,vStress:vT,vDisp:new Float32Array(pos.length),field:fieldOut(P,{T:TN,vm:TN,u:TN}),Tmin,Tmax,vmMax:Tmax,vmP99:Tmax,uMax:0,Q:{fixed:qT,conv:qc,flux:qin,rad:qr,vol:qv},balance:qT.reduce((a,c)=>a+c,0)+qc.reduce((a,c)=>a+c,0)+qin.reduce((a,c)=>a+c,0)+qr.reduce((a,c)=>a+c,0)+qv,k:k*1e3,warn:ck.warn,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend,...(inp.keepT?{T,vol:P.vol}:{})};
 }
 async function voxelThermal(P,T,mat,alpha,Tref){
   const u=new Float64Array(P.nn*3);for(let n=0;n<P.nn;n++){const x=P.xyz(n),eth=alpha*((T[n]||0)-(Tref||0));u[3*n]=eth*x[0];u[3*n+1]=eth*x[1];u[3*n+2]=eth*x[2];}
@@ -262,7 +262,8 @@ function voxelStress(P,u,mat,T,alpha,Tref){
   return{vm,p1,vmMax,vmAway,p1Max,trescaMax:trMax};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'||type==='species'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  if(type==='species')return(await import('./species.js')).speciesRun(inp,P,prog,thermal);
   if(type==='topo')return topoVoxel(inp,P,prog);
   if(type==='current'||type==='estatic')return emVoxel(inp,P,prog);
   if(type==='buckle')return buckleVoxel(inp,P,prog);
