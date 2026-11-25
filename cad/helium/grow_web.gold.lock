@@ -1,0 +1,15 @@
+=== 3656828ee2353d97
+import os;
+import grow.grow;
+import grow.forms;
+=== 1e62d42532d6e8d5
+fn main() {
+	print("grow: ready");
+}
+=== -501012e175bb8ac5
+export fn grow_make(k i32, s i32, size real) i32 {
+	guard k >= 0 && k < grow::KINDS.len else { return -1; }
+	guard grow::make(grow::KINDS[k], s, size) else { return -1; }
+	guard grow::glb("/m/grow.glb") else { return -1; }
+	grow::tcount() as i32
+}
