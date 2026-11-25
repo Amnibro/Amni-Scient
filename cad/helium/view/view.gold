@@ -1,0 +1,628 @@
+use std
+into view.amni
+
+```amni
+import web;
+import gfx;
+import gfx.envmap;
+import gfx.codec_hdr;
+import math;
+extern fn hv_len(which i32) i32;
+extern fn hv_getf(which i32, xs f32[:]);
+extern fn hv_geti(which i32, xs u32[:]);
+extern fn hv_getb(which i32, xs byte[:]);
+struct Geo { vb gfx::Buffer = gfx::Buffer { id: 0 }, ib gfx::Buffer = gfx::Buffer { id: 0 }, kind int = 0, n int = 0 }
+struct Tex { t gfx::Texture = gfx::Texture { id: 0 }, s gfx::Sampler = gfx::Sampler { id: 0 }, sr f32 = 1.0, sg f32 = 1.0 }
+struct Pipe { key int, p gfx::Pipeline }
+var GEOS Geo[>..] = [];
+var TEXS Tex[>..] = [];
+var PIPES Pipe[>..] = [];
+var BIAS f32[>..] = [];
+var CMD f32[>..] = [];
+var F f32[>..] = [];
+var I u32[>..] = [];
+var B byte[>..] = [];
+var V f32[>..] = [];
+var VI u32[>..] = [];
+var VW int[>..] = [];
+var DR int[>..] = [];
+var DV int[>..] = [];
+var Z f32[>..] = [];
+var ORD int[>..] = [];
+var UV f32[40];
+var UD f32[32];
+var FD f32[72];
+var FV f32[116];
+var CL f32[4];
+var RN real[3];
+var RE real = -1.0;
+var MC gfx::Texture;
+var MD gfx::Texture;
+var SM gfx::Texture;
+var WHITE gfx::Texture;
+var FLAT gfx::Texture;
+var DEPTH1 gfx::Texture;
+var VOL1 gfx::Texture;
+var ONE gfx::Buffer;
+var SMP gfx::Sampler;
+var SHS gfx::Sampler;
+var SMN = 0;
+var TW = 0;
+var TH = 0;
+```
+
+```amni
+fn box_t(k int, dx real, dy real, dz real, inside bool) real {
+	let RB = [-0.757, 13.219, 0.717, 0.0, 31.713, 28.305, 28.591, -1.0, -10.906, 2.009, 1.846, -0.195, 2.328, 7.905, 4.651, -1.0, -5.607, -0.754, -0.758, 0.994, 1.970, 1.534, 3.955, -1.0, 6.167, 0.857, 7.803, 0.561, 3.927, 6.285, 3.687, -1.0, -2.017, 0.018, 6.124, 0.333, 2.002, 4.566, 2.064, -1.0, 2.291, -0.756, -2.621, -0.286, 1.546, 1.552, 1.496, -1.0, -2.193, -0.369, -5.547, 0.516, 3.875, 3.487, 2.986, -1.0, -16.116, 14.37, 8.208, 0.0, 0.1, 2.428, 2.739, 50.0, -16.109, 18.021, -8.207, 0.0, 0.1, 2.425, 2.751, 50.0, 14.904, 12.198, -1.832, 0.0, 0.15, 4.265, 6.331, 17.0, -0.462, 8.89, 14.520, 0.0, 4.38, 5.441, 0.088, 43.0, 3.235, 11.486, -12.541, 0.0, 2.5, 2.0, 0.1, 20.0, 0.0, 20.0, 0.0, 0.0, 1.0, 0.1, 1.0, 100.0];
+	let o = k * 8;
+	let c = cos(RB[o + 3]);
+	let s = sin(RB[o + 3]);
+	let px = 0.0 - RB[o];
+	let py = 0.0 - RB[o + 1];
+	let pz = 0.0 - RB[o + 2];
+	let lo = [(c * px - s * pz) / RB[o + 4], py / RB[o + 5], (s * px + c * pz) / RB[o + 6]];
+	let ld = [(c * dx - s * dz) / RB[o + 4], dy / RB[o + 5], (s * dx + c * dz) / RB[o + 6]];
+	var t0 = -1.0e30;
+	var t1 = 1.0e30;
+	var a0 = 0;
+	var a1 = 0;
+	for i in 3 {
+		if max(ld[i], 0.0 - ld[i]) < 1.0e-12 {
+			if lo[i] < -0.5 || lo[i] > 0.5 { return -1.0; }
+		} else {
+			let ta = (-0.5 - lo[i]) / ld[i];
+			let tb = (0.5 - lo[i]) / ld[i];
+			if min(ta, tb) > t0 { t0 = min(ta, tb); a0 = i; }
+			if max(ta, tb) < t1 { t1 = max(ta, tb); a1 = i; }
+		}
+	}
+	if t0 > t1 || t1 < 0.0 || (!inside && t0 < 0.0) { return -1.0; }
+	let t = if inside { t1 } else { t0 };
+	let ax = if inside { a1 } else { a0 };
+	let q = lo[ax] + ld[ax] * t;
+	let sg = if (q > 0.0) != inside { 1.0 } else { -1.0 };
+	RN[0] = if ax == 0 { c * sg } else if ax == 2 { s * sg } else { 0.0 };
+	RN[1] = if ax == 1 { sg } else { 0.0 };
+	RN[2] = if ax == 0 { 0.0 - s * sg } else if ax == 2 { c * sg } else { 0.0 };
+	RE = RB[o + 7];
+	return t;
+}
+fn radiance(dx real, dy real, dz real) real {
+	var best = box_t(0, dx, dy, dz, true);
+	var em = -1.0;
+	var n = [RN[0], RN[1], RN[2]];
+	for k in 12 {
+		let t = box_t(k + 1, dx, dy, dz, false);
+		if t > 0.0 && t < best {
+			best = t;
+			em = RE;
+			n = [RN[0], RN[1], RN[2]];
+		}
+	}
+	if em >= 0.0 { return em; }
+	let lx = 0.418 - dx * best;
+	let ly = 16.199 - dy * best;
+	let lz = 0.300 - dz * best;
+	let d2 = lx * lx + ly * ly + lz * lz;
+	let d = sqrt(d2);
+	let nl = max((n[0] * lx + n[1] * ly + n[2] * lz) / d, 0.0);
+	let nv = max(0.0 - (n[0] * dx + n[1] * dy + n[2] * dz), 0.001);
+	let k = max(1.0 - (d2 / 784.0) * (d2 / 784.0), 0.0);
+	let hx = lx / d - dx;
+	let hy = ly / d - dy;
+	let hz = lz / d - dz;
+	let hl = max(sqrt(hx * hx + hy * hy + hz * hz), 1.0e-9);
+	let vh = max(0.0 - (hx * dx + hy * dy + hz * dz) / hl, 0.0);
+	let fr = pow(2.0, (-5.55473 * vh - 6.98316) * vh);
+	let f = 0.04 * (1.0 - fr) + fr;
+	return 900.0 / max(d2, 0.01) * k * k * nl * (1.0 + f * 0.5 / max(nl + nv, 1.0e-6)) / 3.141592653589793;
+}
+fn room_env() {
+	let w = 256;
+	let h = 128;
+	var px f32[>..] = [];
+	px.resize(w * h * 4);
+	for j in h {
+		for i in w {
+			var s = 0.0;
+			for q in 4 {
+				let u = ((i as real) + 0.25 + 0.5 * ((q % 2) as real)) / (w as real);
+				let v = ((j as real) + 0.25 + 0.5 * ((q / 2) as real)) / (h as real);
+				let ph = (u - 0.5) * 6.283185307179586;
+				let th = (0.5 - v) * 3.141592653589793;
+				s += radiance(cos(th) * cos(ph), sin(th), cos(th) * sin(ph));
+			}
+			let o = (j * w + i) * 4;
+			px[o] = (s * 0.25) as f32;
+			px[o + 1] = (s * 0.25) as f32;
+			px[o + 2] = (s * 0.25) as f32;
+			px[o + 3] = 1.0;
+		}
+	}
+	envmap::size = 128;
+	envmap::samples = 128;
+	envmap::irr_samples = 512;
+	envmap::set_equirect(px[..], w, h);
+}
+```
+
+```amni
+fn free_geo(id int) {
+	if id <= 0 || id >= GEOS.len { return; }
+	if GEOS[id].vb.id != 0 { gfx::release(GEOS[id].vb); }
+	if GEOS[id].ib.id != 0 { gfx::release(GEOS[id].ib); }
+	GEOS[id] = Geo {};
+}
+fn col_at(oc int, ck int, k int, at int) {
+	for c in 4 { V[at + c] = if c < ck { F[oc + k * ck + c] } else { 1.0 }; }
+}
+fn idx(k int, ni int) int { if ni > 0 { I[k] as int } else { k } }
+fn load_geo(r int) {
+	let id = CMD[r + 1] as int;
+	let kind = CMD[r + 2] as int;
+	let nv = CMD[r + 3] as int;
+	let ni = CMD[r + 4] as int;
+	let mask = CMD[r + 5] as int;
+	let ck = CMD[r + 6] as int;
+	if id <= 0 { return; }
+	while GEOS.len <= id { GEOS.push(Geo {}); }
+	free_geo(id);
+	let pf = CMD[r + 7] as i32;
+	let nf = hv_len(pf) as int;
+	F.resize(nf);
+	if nf > 0 { hv_getf(pf, F[..nf]); }
+	I.resize(ni);
+	if ni > 0 { hv_geti(CMD[r + 8] as i32, I[..ni]); }
+	var o = nv * 3;
+	let on = if (mask & 1) != 0 { o } else { -1 };
+	o += if (mask & 1) != 0 { nv * 3 } else { 0 };
+	let ou = if (mask & 2) != 0 { o } else { -1 };
+	o += if (mask & 2) != 0 { nv * 2 } else { 0 };
+	let oc = o;
+	o += nv * ck;
+	let ol = if (mask & 4) != 0 { o } else { -1 };
+	o += if (mask & 4) != 0 { nv } else { 0 };
+	let orr = if (mask & 8) != 0 { o } else { -1 };
+	o += if (mask & 8) != 0 { nv * 3 } else { 0 };
+	let od = if (mask & 16) != 0 { o } else { -1 };
+	o += if (mask & 16) != 0 { nv } else { 0 };
+	if nf < o || nv == 0 { return; }
+	if kind == 0 {
+		V.resize(nv * 16);
+		for k in nv {
+			let at = k * 16;
+			for c in 3 {
+				V[at + c] = F[k * 3 + c];
+				V[at + 3 + c] = if on >= 0 { F[on + k * 3 + c] } else { 0.0 };
+				V[at + 13 + c] = if orr >= 0 { F[orr + k * 3 + c] } else { 0.0 };
+			}
+			V[at + 6] = if ou >= 0 { F[ou + k * 2] } else { 0.0 };
+			V[at + 7] = if ou >= 0 { F[ou + k * 2 + 1] } else { 0.0 };
+			col_at(oc, ck, k, at + 8);
+			V[at + 12] = if ol >= 0 { F[ol + k] } else { 0.0 };
+		}
+		let n = if ni > 0 { ni } else { nv };
+		VI.resize(n);
+		for k in n { VI[k] = idx(k, ni) as u32; }
+		GEOS[id] = Geo { vb: gfx::vertex_buffer(bytes_of(V)[..nv * 64]), ib: gfx::index_buffer(bytes_of(VI)[..n * 4]), kind: 0, n: n };
+	} else if kind == 5 {
+		V.resize(nv * 8);
+		for k in nv {
+			for c in 3 { V[k * 8 + c] = F[k * 3 + c]; }
+			col_at(oc, ck, k, k * 8 + 3);
+			V[k * 8 + 7] = 1.0;
+		}
+		GEOS[id] = Geo { vb: gfx::vertex_buffer(bytes_of(V)[..nv * 32]), kind: 5, n: nv };
+	} else {
+		let m = if ni > 0 { ni } else { nv };
+		let ns = if kind == 2 { max(m - 1, 0) } else if kind == 3 { if m > 1 { m } else { 0 } } else if kind == 6 { m / 3 * 3 } else { m / 2 };
+		if ns == 0 { return; }
+		V.resize(ns * 16);
+		for s in ns {
+			let a = if kind == 2 || kind == 3 { idx(s, ni) } else if kind == 6 { idx(s, ni) } else { idx(s * 2, ni) };
+			let b = if kind == 2 || kind == 3 { idx((s + 1) % m, ni) } else if kind == 6 { idx(s / 3 * 3 + (s + 1) % 3, ni) } else { idx(s * 2 + 1, ni) };
+			let at = s * 16;
+			for c in 3 {
+				V[at + c] = F[a * 3 + c];
+				V[at + 3 + c] = F[b * 3 + c];
+			}
+			col_at(oc, ck, a, at + 6);
+			col_at(oc, ck, b, at + 10);
+			V[at + 14] = if od >= 0 { F[od + a] } else { 0.0 };
+			V[at + 15] = if od >= 0 { F[od + b] } else { 0.0 };
+		}
+		GEOS[id] = Geo { vb: gfx::vertex_buffer(bytes_of(V)[..ns * 64]), kind: 1, n: ns };
+	}
+}
+```
+
+```amni
+fn free_tex(id int) {
+	if id <= 0 || id >= TEXS.len { return; }
+	if TEXS[id].t.id != 0 { gfx::release(TEXS[id].t); }
+	if TEXS[id].s.id != 0 { gfx::release(TEXS[id].s); }
+	TEXS[id] = Tex {};
+}
+fn load_tex(r int) {
+	let id = CMD[r + 1] as int;
+	let w = CMD[r + 2] as int;
+	let h = CMD[r + 3] as int;
+	let d = max(CMD[r + 4] as int, 1);
+	let fl = CMD[r + 5] as int;
+	let pay = CMD[r + 6] as i32;
+	if id <= 0 || w <= 0 || h <= 0 { return; }
+	while TEXS.len <= id { TEXS.push(Tex {}); }
+	free_tex(id);
+	let n = w * h * d;
+	let kind = if (fl & 8) != 0 { gfx::TEXTURE_3D } else { gfx::TEXTURE_2D };
+	var t = Tex {};
+	if (fl & 2) != 0 {
+		if hv_len(pay) as int < n * 2 { return; }
+		F.resize(n * 2);
+		hv_getf(pay, F[..n * 2]);
+		var sr f32 = 0.0;
+		var sg f32 = 0.0;
+		for i in n {
+			sr = max(sr, max(F[i * 2], 0.0 - F[i * 2]));
+			sg = max(sg, max(F[i * 2 + 1], 0.0 - F[i * 2 + 1]));
+		}
+		t.sr = if sr > 0.0 { sr } else { 1.0 };
+		t.sg = if sg > 0.0 { sg } else { 1.0 };
+		V.resize(n * 4);
+		for i in n {
+			V[i * 4] = F[i * 2] / t.sr;
+			V[i * 4 + 1] = F[i * 2 + 1] / t.sg;
+			V[i * 4 + 2] = 0.0;
+			V[i * 4 + 3] = 1.0;
+		}
+		B.clear();
+		codec_hdr::half_pixels(V[..n * 4], B);
+		t.t = gfx::texture(gfx::TextureDesc { kind: kind, format: gfx::RGBA16F, usage: gfx::SAMPLED, width: w as i32, height: h as i32, depth: d as i32 });
+		gfx::update_texture(t.t, B[..]);
+	} else {
+		if hv_len(pay) as int < n * 4 { return; }
+		B.resize(n * 4);
+		hv_getb(pay, B[..n * 4]);
+		let mips = if (fl & 4) != 0 && d == 1 { envmap::mip_count(max(w, h)) } else { 1 };
+		t.t = gfx::texture(gfx::TextureDesc { kind: kind, format: if (fl & 1) != 0 { gfx::RGBA8_SRGB } else { gfx::RGBA8 }, usage: if mips > 1 { gfx::SAMPLED | gfx::COLOR_TARGET } else { gfx::SAMPLED }, width: w as i32, height: h as i32, depth: d as i32, mips: mips as i32 });
+		gfx::update_texture(t.t, B[..n * 4]);
+		if mips > 1 { gfx::generate_mips(t.t); }
+	}
+	let wu = if (fl & 256) != 0 { 1 } else if (fl & 64) != 0 { 0 } else { 2 };
+	let wv = if (fl & 512) != 0 { 1 } else if (fl & 128) != 0 { 0 } else { 2 };
+	t.s = gfx::sampler(gfx::SamplerDesc { min_filter: if (fl & 32) != 0 { 1 } else { 0 }, mag_filter: if (fl & 16) != 0 { 1 } else { 0 }, mip_filter: 1, wrap_u: wu as i32, wrap_v: wv as i32, wrap_w: 2 });
+	TEXS[id] = t;
+}
+```
+
+```amni
+fn bias(f f32, u f32) int {
+	if f == 0.0 && u == 0.0 { return 0; }
+	for i in BIAS.len / 2 { if BIAS[i * 2] == f && BIAS[i * 2 + 1] == u { return i + 1; } }
+	BIAS.push(f);
+	BIAS.push(u);
+	return BIAS.len / 2;
+}
+fn pipe(prog int, bl int, cull int, dt bool, dw bool, bi int, cw bool) gfx::Pipeline {
+	let key = prog | bl << 4 | cull << 7 | (if dt { 512 } else { 0 }) | (if dw { 1024 } else { 0 }) | bi << 11 | (if cw { 65536 } else { 0 });
+	for i in PIPES.len { if PIPES[i].key == key { return PIPES[i].p; } }
+	let d = gfx::PipelineDesc { cull: cull as i32, clockwise: cw, depth_test: dt || prog == 3, depth_write: dw && (dt || prog == 3), depth_compare: if prog == 3 { gfx::COMPARE_ALWAYS } else { gfx::COMPARE_LESS_EQUAL }, blend: bl as i32, instance_location: if prog == 1 || prog == 2 { 0 } else { -1 }, depth_bias: if bi > 0 { BIAS[bi * 2 - 1] } else { 0.0 }, depth_bias_slope: if bi > 0 { BIAS[bi * 2 - 2] } else { 0.0 } };
+	let p = if prog == 0 { gfx::pipeline(embed_shader("shaders/mesh.vert"), embed_shader("shaders/mesh.frag"), d) } else if prog == 1 { gfx::pipeline(embed_shader("shaders/line.vert"), embed_shader("shaders/line.frag"), d) } else if prog == 2 { gfx::pipeline(embed_shader("shaders/point.vert"), embed_shader("shaders/point.frag"), d) } else if prog == 3 { gfx::pipeline(embed_shader("shaders/clear.vert"), embed_shader("shaders/clear.frag"), d) } else { gfx::pipeline(embed_shader("shaders/mesh.vert"), embed_shader("shaders/shadow.frag"), d) };
+	PIPES.push(Pipe { key: key, p: p });
+	return p;
+}
+```
+
+```amni
+fn put_view(r int, sh bool, w f32, h f32) {
+	let vo = if sh { r + 139 } else { r + 17 };
+	let po = if sh { r + 155 } else { r + 33 };
+	for i in 16 {
+		UV[i] = CMD[vo + i];
+		UV[16 + i] = CMD[po + i];
+	}
+	for i in 3 {
+		UV[32 + i] = CMD[r + 49 + i];
+		FV[i] = CMD[r + 56 + i];
+		FV[4 + i] = CMD[r + 59 + i];
+		FV[8 + i] = CMD[r + 62 + i];
+		FV[12 + i] = CMD[r + 65 + i];
+		FV[108 + i] = CMD[r + 49 + i];
+		FV[112 + i] = CMD[r + 52 + i];
+	}
+	UV[36] = w;
+	UV[37] = h;
+	UV[38] = CMD[r + 15];
+	UV[39] = if sh { 1.0 } else { CMD[r + 16] };
+	for l in 4 {
+		for i in 4 {
+			FV[16 + l * 4 + i] = CMD[r + 70 + l * 8 + i];
+			FV[32 + l * 4 + i] = CMD[r + 74 + l * 8 + i];
+			FV[48 + l * 4 + i] = CMD[r + 102 + l * 8 + i];
+			FV[64 + l * 4 + i] = CMD[r + 106 + l * 8 + i];
+		}
+	}
+	FV[80] = CMD[r + 55];
+	FV[81] = envmap::spec_lod();
+	FV[82] = envmap::irr_lod();
+	FV[83] = CMD[r + 171];
+	FV[84] = CMD[r + 68];
+	FV[85] = CMD[r + 69];
+	FV[86] = if CMD[r + 134] > 0.5 && SMN > 0 { 1.0 } else { 0.0 };
+	FV[87] = CMD[r + 172];
+	for c in 4 {
+		for k in 4 {
+			var s f32 = 0.0;
+			for j in 4 { s += CMD[r + 155 + j * 4 + k] * CMD[r + 139 + c * 4 + j]; }
+			FV[88 + c * 4 + k] = s;
+		}
+	}
+	FV[104] = CMD[r + 135];
+	FV[105] = CMD[r + 136];
+	FV[106] = CMD[r + 137];
+	FV[107] = if CMD[r + 138] > 0.0 { 1.0 / CMD[r + 138] } else { 0.0 };
+	FV[115] = CMD[r + 16];
+}
+fn put_draw(r int) {
+	for i in 16 {
+		UD[i] = CMD[r + 15 + i];
+		FD[28 + i] = CMD[r + 74 + i];
+	}
+	for i in 3 {
+		UD[16 + i] = CMD[r + 54 + i];
+		UD[20 + i] = CMD[r + 57 + i];
+		FD[4 + i] = CMD[r + 35 + i];
+	}
+	UD[24] = CMD[r + 45];
+	UD[25] = CMD[r + 43];
+	UD[26] = CMD[r + 44];
+	UD[27] = CMD[r + 46];
+	UD[28] = if CMD[r + 2] == 3.0 { 1.0 } else { 0.0 };
+	UD[29] = CMD[r + 66];
+	UD[30] = CMD[r + 67];
+	UD[31] = CMD[r + 65];
+	for i in 4 {
+		FD[i] = CMD[r + 31 + i];
+		FD[8 + i] = CMD[r + 39 + i];
+		FD[20 + i] = CMD[r + 68 + i];
+		FD[48 + i] = CMD[r + 94 + i];
+		FD[52 + i] = CMD[r + 98 + i];
+	}
+	FD[12] = CMD[r + 3];
+	FD[13] = CMD[r + 5];
+	FD[14] = CMD[r + 4];
+	FD[15] = CMD[r + 38];
+	FD[16] = CMD[r + 52];
+	FD[17] = CMD[r + 53];
+	FD[24] = CMD[r + 72];
+	FD[25] = CMD[r + 73];
+	let m = CMD[r + 90];
+	let ft = CMD[r + 111] as int;
+	let ok = m > -0.5 && ft > 0 && ft < TEXS.len && TEXS[ft].t.id != 0;
+	FD[44] = if ok { m } else { -1.0 };
+	if ok {
+		let sr = TEXS[ft].sr;
+		let sm = if m == 1.0 || m == 4.0 { TEXS[ft].sg } else { sr };
+		FD[45] = CMD[r + 91] / sm;
+		FD[46] = CMD[r + 92] / sr;
+		FD[47] = CMD[r + 93] / sr;
+	}
+	for c in 3 { for k in 3 { FD[56 + c * 4 + k] = CMD[r + 102 + c * 3 + k]; } }
+}
+```
+
+```amni
+fn bt(slot int, id f32, d gfx::Texture) {
+	let k = id as int;
+	if k > 0 && k < TEXS.len && TEXS[k].t.id != 0 { gfx::bind_texture(gfx::FRAGMENT, slot, TEXS[k].t, TEXS[k].s); } else { gfx::bind_texture(gfx::FRAGMENT, slot, d, SMP); }
+}
+fn draw_one(r int, vr int, w f32, h f32, sh bool) {
+	let prog = CMD[r + 2] as int;
+	let g = CMD[r + 1] as int;
+	if prog != 3 && (g <= 0 || g >= GEOS.len || GEOS[g].n == 0 || GEOS[g].kind != (if prog == 0 { 0 } else if prog == 1 { 1 } else { 5 })) { return; }
+	let side = CMD[r + 6] as int;
+	let cull = if prog != 0 { 0 } else if side == 0 { 2 } else if side == 1 { 1 } else { 0 };
+	gfx::bind(if sh { pipe(4, 0, if side == 0 { 1 } else if side == 1 { 2 } else { 0 }, true, true, 0, CMD[r + 14] > 0.5) } else { pipe(if prog == 3 { 2 } else { prog }, CMD[r + 7] as int, cull, CMD[r + 8] > 0.5, CMD[r + 9] > 0.5, bias(CMD[r + 10], CMD[r + 11]), CMD[r + 14] > 0.5) });
+	put_draw(r);
+	put_view(vr, sh, w, h);
+	gfx::push_uniforms(gfx::VERTEX, 0, bytes_of(UV));
+	gfx::push_uniforms(gfx::VERTEX, 1, bytes_of(UD));
+	if !sh {
+		gfx::push_uniforms(gfx::FRAGMENT, 0, bytes_of(FD));
+		gfx::push_uniforms(gfx::FRAGMENT, 1, bytes_of(FV));
+	}
+	if prog == 0 {
+		if !sh {
+			bt(0, CMD[r + 47], WHITE);
+			bt(1, CMD[r + 48], FLAT);
+			bt(2, CMD[r + 49], WHITE);
+			bt(3, CMD[r + 50], WHITE);
+			bt(4, CMD[r + 51], WHITE);
+			gfx::bind_texture(gfx::FRAGMENT, 5, if SMN > 0 { SM } else { DEPTH1 }, SHS);
+			gfx::bind_texture(gfx::FRAGMENT, 6, envmap::texture(), SMP);
+			bt(7, CMD[r + 111], VOL1);
+		}
+		gfx::bind_vertex_buffer(0, GEOS[g].vb, 0);
+		gfx::bind_index_buffer(GEOS[g].ib, 4);
+		let n = GEOS[g].n;
+		let gs = min(max(CMD[r + 62] as int, 0), n);
+		let gc = CMD[r + 63] as int;
+		let c = if gc < 0 { n - gs } else { min(gc, n - gs) };
+		if c > 0 { gfx::draw_indexed(c, 1, gs, 0, 0); }
+	} else {
+		if prog >= 2 { bt(0, CMD[r + 47], WHITE); }
+		gfx::bind_vertex_buffer(1, if prog == 3 { ONE } else { GEOS[g].vb }, 0);
+		gfx::draw(6, if prog == 3 { 1 } else { GEOS[g].n }, 0, 0);
+	}
+}
+```
+
+```amni
+fn parse(n int) {
+	VW.clear();
+	DR.clear();
+	DV.clear();
+	var r = 0;
+	while r < n {
+		let tag = CMD[r] as int;
+		if tag == 1 {
+			load_geo(r);
+			r += 9;
+		} else if tag == 2 {
+			load_tex(r);
+			r += 7;
+		} else if tag == 3 {
+			free_geo(CMD[r + 1] as int);
+			r += 2;
+		} else if tag == 4 {
+			free_tex(CMD[r + 1] as int);
+			r += 2;
+		} else if tag == 5 {
+			VW.push(r);
+			r += 173;
+		} else if tag == 6 {
+			if VW.len > 0 {
+				DR.push(r);
+				DV.push(VW.len - 1);
+			}
+			r += 112;
+		} else {
+			r = n;
+		}
+	}
+}
+fn less(a int, b int) bool {
+	let ra = DR[a];
+	let rb = DR[b];
+	let ta = CMD[ra + 12];
+	let tb = CMD[rb + 12];
+	if ta != tb { return ta < tb; }
+	if CMD[ra + 60] != CMD[rb + 60] { return CMD[ra + 60] < CMD[rb + 60]; }
+	if ta < 0.5 && CMD[ra + 61] != CMD[rb + 61] { return CMD[ra + 61] < CMD[rb + 61]; }
+	if Z[a] != Z[b] { return if ta < 0.5 { Z[a] < Z[b] } else { Z[a] > Z[b] }; }
+	return CMD[ra + 64] < CMD[rb + 64];
+}
+fn ensure(w int, h int) {
+	if w == TW && h == TH { return; }
+	if TW > 0 {
+		gfx::release(MC);
+		gfx::release(MD);
+	}
+	TW = w;
+	TH = h;
+	MC = gfx::texture(gfx::TextureDesc { format: gfx::RGBA8, usage: gfx::COLOR_TARGET, width: w as i32, height: h as i32, samples: 4 });
+	MD = gfx::texture(gfx::TextureDesc { format: gfx::DEPTH24, usage: gfx::DEPTH_TARGET, width: w as i32, height: h as i32, samples: 4 });
+}
+fn shadow_pass() {
+	var sv = -1;
+	for i in VW.len { if sv < 0 && CMD[VW[i] + 134] > 0.5 { sv = i; } }
+	if sv < 0 { return; }
+	let r = VW[sv];
+	let ms = max(CMD[r + 138] as int, 1);
+	if ms != SMN {
+		if SMN > 0 { gfx::release(SM); }
+		SM = gfx::texture(gfx::TextureDesc { format: gfx::DEPTH32F, usage: gfx::SAMPLED | gfx::DEPTH_TARGET, width: ms as i32, height: ms as i32 });
+		SMN = ms;
+	}
+	if !gfx::begin_pass(gfx::PassDesc { depth: SM }) { return; }
+	gfx::viewport(0.0, 0.0, ms as f32, ms as f32);
+	gfx::scissor(0, 0, ms, ms);
+	for k in DR.len {
+		let d = DR[k];
+		if DV[k] == sv && CMD[d + 13] > 0.5 && CMD[d + 2] == 0.0 { draw_one(d, r, ms as f32, ms as f32, true); }
+	}
+	gfx::end_pass();
+}
+fn clear_quad(cf int, r int) {
+	let col = (cf & 1) != 0;
+	gfx::bind(pipe(3, if col { 0 } else { 1 }, 0, true, (cf & 2) != 0, 0, false));
+	for i in 4 { CL[i] = if col { CMD[r + 11 + i] } else { 0.0 }; }
+	gfx::push_uniforms(gfx::FRAGMENT, 0, bytes_of(CL));
+	gfx::draw(3, 1, 0, 0);
+}
+fn view_pass(i int, cleared bool) {
+	let r = VW[i];
+	let cf = CMD[r + 10] as int;
+	let sw = CMD[r + 7] as int;
+	let sh = CMD[r + 8] as int;
+	if CMD[r + 9] > 0.5 { gfx::scissor(CMD[r + 5] as int, TH - (CMD[r + 6] as int) - sh, sw, sh); } else { gfx::scissor(0, 0, TW, TH); }
+	if cf != 0 && !cleared {
+		gfx::viewport(0.0, 0.0, TW as f32, TH as f32);
+		clear_quad(cf, r);
+	}
+	let vw = CMD[r + 3];
+	let vh = CMD[r + 4];
+	gfx::viewport(CMD[r + 1], (TH as f32) - CMD[r + 2] - vh, vw, vh);
+	ORD.clear();
+	Z.resize(DR.len);
+	for k in DR.len {
+		if DV[k] == i {
+			ORD.push(k);
+			let d = DR[k];
+			Z[k] = (CMD[d + 27] - CMD[r + 49]) * CMD[r + 52] + (CMD[d + 28] - CMD[r + 50]) * CMD[r + 53] + (CMD[d + 29] - CMD[r + 51]) * CMD[r + 54];
+		}
+	}
+	stable_sort(ORD[..]) { a, b => less(a, b) };
+	for k in ORD.len { draw_one(DR[ORD[k]], r, vw, vh, false); }
+}
+fn render() {
+	let z = gfx::screen_size();
+	let w = z.x as int;
+	let h = z.y as int;
+	if w < 1 || h < 1 || VW.len == 0 { return; }
+	ensure(w, h);
+	shadow_pass();
+	let r0 = VW[0];
+	let c0 = CMD[r0 + 10] as int;
+	let pc = CMD[r0 + 9] < 0.5;
+	var pd = gfx::PassDesc { depth: MD, clear_color: pc && (c0 & 1) != 0, clear_depth: pc && (c0 & 2) != 0, color_value: float4 { CMD[r0 + 11], CMD[r0 + 12], CMD[r0 + 13], CMD[r0 + 14] } };
+	pd.color[0] = MC;
+	pd.resolve[0] = gfx::screen();
+	if !gfx::begin_pass(pd) { return; }
+	for i in VW.len { view_pass(i, pc && i == 0); }
+	gfx::end_pass();
+}
+```
+
+```amni
+fn tex1(r byte, g byte, b byte) gfx::Texture {
+	let t = gfx::texture(gfx::TextureDesc { format: gfx::RGBA8, usage: gfx::SAMPLED, width: 1, height: 1 });
+	var px byte[4] = [r, g, b, 255];
+	gfx::update_texture(t, px[..]);
+	return t;
+}
+fn main() {
+	if !gfx::open("amni view", 640, 480, 8192) {
+		print("view: ", gfx::error());
+		return;
+	}
+	WHITE = tex1(255, 255, 255);
+	FLAT = tex1(128, 128, 255);
+	VOL1 = gfx::texture(gfx::TextureDesc { kind: gfx::TEXTURE_3D, format: gfx::RGBA8, usage: gfx::SAMPLED, width: 1, height: 1, depth: 1 });
+	var px byte[4] = [255, 255, 255, 255];
+	gfx::update_texture(VOL1, px[..]);
+	DEPTH1 = gfx::texture(gfx::TextureDesc { format: gfx::DEPTH32F, usage: gfx::SAMPLED | gfx::DEPTH_TARGET, width: 1, height: 1 });
+	if gfx::begin_pass(gfx::PassDesc { depth: DEPTH1 }) { gfx::end_pass(); }
+	var one f32[8] = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+	ONE = gfx::vertex_buffer(bytes_of(one));
+	SMP = gfx::sampler(1 as i32, 2 as i32);
+	SHS = gfx::shadow_sampler();
+	room_env();
+	gfx::frame();
+	web::frames(true);
+}
+export fn hr_stop() {
+	web::frames(false);
+}
+export fn he_frame(t real) {
+	let n = hv_len(0) as int;
+	if n <= 0 { return; }
+	CMD.resize(n);
+	hv_getf(0, CMD[..n]);
+	parse(n);
+	gfx::sync_screen();
+	render();
+	gfx::frame();
+}
+```
+
