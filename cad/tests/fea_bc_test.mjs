@@ -20,6 +20,8 @@ for(const[nm,run,mesh]of[['voxel',runFEA,'voxel'],['sweep',runMeshFEA,'sweep']])
   const e=20,R5=await go({supports:[{faces:[root],type:'fixed'}],loads:[{faces:[tip],F:[0,0,-F],at:[L+e,b/2,hh/2]}]}),d5=tipZ(R5),dM=F*e*L*L/(2*E*I);
   console.log(nm,'remote',d5.toFixed(4),'expect',(d0-dM).toFixed(4));ok(Math.abs((d5-d0)/-dM-1)<0.12,nm+' remote load adds the offset moment');
   const R6=await go({supports:[{faces:[root],type:'fixed'}],loads:[{faces:[tip,top],F:[0,0,-F],dist:'bearing'}]});ok(Math.abs(R6.applied[2]+F)<1e-6*F,nm+' bearing load totals F');
+  const R8=await go({supports:[{faces:[root],type:'fixed'}],loads:[{faces:[root,tip],bolt:F}]});let x8=0,n8=0;for(let i=0;i<m.pos.length/3;i++)if(m.pos[3*i]>L-1e-6){x8+=R8.vDisp[3*i];n8++;}x8/=n8;const e8=-F*L/(E*b*hh);
+  console.log(nm,'bolt',x8.toExponential(3),'expect',e8.toExponential(3),'applied',R8.applied.map(v=>v.toExponential(2)).join(','));ok(Math.hypot(...R8.applied)<1e-6*F&&Math.abs(x8/e8-1)<0.1,nm+' bolt preload squeezes the two faces together and nets to zero');
   const M7=await go({meshOnly:true}),sk=M7.wire||M7.skin,seg=wireOf(sk);console.log(nm,'mesh only',M7.nEl,'nodes',sk.pos.length/3,'edges',seg.length/2);ok(M7.type==='mesh'&&seg.length>0&&sk.pos.length>0,nm+' mesh preview has nodes and edges');
   ok((R0.wire||R0.skin).u&&(R0.wire||R0.skin).u.length===(R0.wire||R0.skin).pos.length,nm+' result wire carries displacement');}
 console.log(fail?`${fail} failed, ${pass} passed`:`ALL ${pass} PASS`);process.exit(fail?1:0);

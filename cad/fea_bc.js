@@ -22,6 +22,7 @@ export function heldBy(B,R){const out=[];for(const[d,si]of B.grp){const o=out[si
 export function distLoad(ld,acc,X,add){
   let tot=0;const c=[0,0,0];for(const[n,v]of acc){tot+=v[0];const x=X(n);for(let k=0;k<3;k++)c[k]+=v[0]*x[k];}if(!tot)return 0;for(let k=0;k<3;k++)c[k]/=tot;
   if(ld.p!=null)for(const[n,v]of acc)add(n,[-ld.p*v[1],-ld.p*v[2],-ld.p*v[3]]);
+  if(ld.bolt){let a=null;for(const[,v]of acc){const l=Math.hypot(v[1],v[2],v[3]);if(l){a=[v[1]/l,v[2]/l,v[3]/l];break;}}const sd=v=>v[1]*a[0]+v[2]*a[1]+v[3]*a[2],sm=[0,0];if(a){for(const[,v]of acc)sm[sd(v)<0?1:0]+=Math.abs(sd(v));for(const[n,v]of acc){const p=ld.bolt/(sm[sd(v)<0?1:0]||1);add(n,[-p*v[1],-p*v[2],-p*v[3]]);}}}
   const F=ld.F||null,Fm=F?Math.hypot(...F):0,Mv=[0,0,0];ld.M&&ld.M.forEach((v,k)=>Mv[k]+=+v||0);if(F&&ld.at){const m=cr([ld.at[0]-c[0],ld.at[1]-c[1],ld.at[2]-c[2]],F);for(let k=0;k<3;k++)Mv[k]+=m[k];}
   if(F&&Fm){const W=new Map();let sw=0;if(ld.dist==='bearing')for(const[n,v]of acc){const l=Math.hypot(v[1],v[2],v[3])||1,w=v[0]*Math.max(0,-(v[1]*F[0]+v[2]*F[1]+v[3]*F[2])/(l*Fm));if(w>0){W.set(n,w);sw+=w;}}
     if(!sw)for(const[n,v]of acc){W.set(n,v[0]);sw+=v[0];}for(const[n,w]of W)add(n,[F[0]*w/sw,F[1]*w/sw,F[2]*w/sw]);}
