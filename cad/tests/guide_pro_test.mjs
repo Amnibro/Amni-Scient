@@ -5,7 +5,7 @@ const PART={name:'Pump bracket',units:'in',params:[],material:'al6061',features:
 if(!proKey()){console.log('SKIP: needs the license issuer');process.exit(0);}
 try{await sleep(700);br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:300000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   const p=await br.newPage();await p.setViewport({width:1440,height:900});await asPro(p);const errs=[];p.on('pageerror',e=>errs.push(e.message));const st=()=>p.evaluate(()=>window.amnicad.API.guide.state());
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.guide,{timeout:150000});
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.guide,{timeout:150000});
   await p.evaluate(async d=>{const A=window.amnicad.API;A.loadDoc(d,null);await A.waitBuild();A.applyActions([{sim:{type:'static',supports:[{faces:{side:'-X'},type:'fixed'}],loads:[{faces:{side:'+X'},p:20}]}}]);await new Promise(r=>setTimeout(r,600));A.setTab('sim');await new Promise(r=>setTimeout(r,400));await A.runFea();A.guide.enter();},PART);await sleep(2500);
   let s=await st();ok(s.step==='review','with the brief, shape, material, strength and drawing done, Sign off is the current step',s.steps.map(x=>x.k+(x.ok?'✓':'')).join(' '));
   ok(await p.evaluate(()=>/Send it to an engineer for sign-off/.test(document.querySelector('#gd-card').textContent)),'the step says an engineer signs off');

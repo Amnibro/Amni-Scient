@@ -5,7 +5,7 @@ const zipList=f=>execFileSync('python3',['-c','import sys,zipfile,json;z=zipfile
 const waitZip=async(name,ms=120000)=>{for(let t=0;t<ms;t+=300){const f=fs.existsSync(DL)&&fs.readdirSync(DL).find(x=>x.endsWith(name)&&!x.endsWith('.crdownload'));if(f)return JSON.parse(zipList(path.join(DL,f)));await sleep(300);}return null;};
 try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:path.join(T,'ud'),args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()==='error'&&!/favicon|404|Failed to load resource/.test(m.text())&&errs.push(m.text()));
   const cdp=await p.target().createCDPSession();await cdp.send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:DL});
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S&&window.amnicad.S.kernel,{timeout:90000});await p.evaluate(()=>{window.API=window.amnicad.API;});
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S&&window.amnicad.S.kernel,{timeout:90000});await p.evaluate(()=>{window.API=window.amnicad.API;});
   const pick=async f=>{const i=await p.$('#file');await i.uploadFile(f);};
   await pick(FX);await p.waitForFunction(()=>document.querySelector('#dlg').open&&/assembly/.test(document.querySelector('#dlg-b').textContent),{timeout:30000});
   ok(await p.evaluate(()=>/3 parts/.test(document.querySelector('#dlg-b').textContent)&&/7 places/.test(document.querySelector('#dlg-b').textContent)),'an assembly STEP is recognized: 3 parts in 7 places');

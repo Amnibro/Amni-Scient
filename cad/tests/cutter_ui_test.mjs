@@ -3,10 +3,10 @@ const root=path.resolve(new URL('../..',import.meta.url).pathname),P=createRequi
 const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});
 let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+x+')':''));};
 try{
-  for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${port}/cad/`)).ok)break;}catch{}await sleep(250);}
+  for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${port}/cad/#demo`)).ok)break;}catch{}await sleep(250);}
   b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   const shot=async n=>{shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));};
-  const load=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/`);await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});};
+  const load=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});};
   const ck=s=>p.evaluate(x=>document.querySelector(x).click(),s),cu=sel=>p.evaluate(s=>document.querySelector('#tab-cutters '+s),sel);
   const clickText=(sel,txt)=>p.evaluate((s,t)=>{const e=[...document.querySelectorAll('#tab-cutters '+s)].find(x=>x.textContent.trim().startsWith(t));if(!e)return false;e.click();return true;},sel,txt);
   const cfg=()=>p.evaluate(()=>window.amnicad.S.doc.cutter);

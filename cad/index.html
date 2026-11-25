@@ -70,6 +70,26 @@ aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scroll
 .feat .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .feat .ty{color:var(--mut);font-size:11px}
 .feat .dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0}
+.bod{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:calc(8px*var(--rk,1));cursor:pointer;border:1px solid transparent;user-select:none;font-weight:650;margin-top:3px}
+.bod:hover{background:var(--panel2)}
+.bod.on{background:var(--acc-soft);border-color:color-mix(in srgb,var(--acc) 40%,transparent)}
+.bod .tw{width:17px;height:17px;display:grid;place-items:center;color:var(--mut);font-size:11px;border-radius:calc(4px*var(--rk,1));flex-shrink:0}
+.bod .tw:hover{color:var(--ink);background:var(--line)}
+.bod .ic{width:22px;height:22px;border-radius:calc(7px*var(--rk,1));display:grid;place-items:center;background:var(--panel2);color:var(--acc);font-size:12px;flex-shrink:0}
+.bod .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bod .ty{color:var(--mut);font-size:11px;font-weight:400}
+.bod .dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0}
+.bod .acts{display:none;gap:2px}
+.bod:hover .acts,.bod.on .acts{display:flex}
+.bod .acts button{width:20px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
+.bod .acts button:hover{color:var(--ink);background:var(--line)}
+.feat.kid{margin-left:17px;border-left:1px solid var(--line);border-radius:0 calc(8px*var(--rk,1)) calc(8px*var(--rk,1)) 0}
+.feat.kid2{margin-left:34px}
+.tseg{display:flex;gap:2px;padding:2px;margin:0 0 7px;background:var(--panel2);border-radius:calc(8px*var(--rk,1))}
+.tseg button{flex:1;padding:4px 7px;border-radius:calc(7px*var(--rk,1));font-size:12px;color:var(--mut)}
+.tseg button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+#selband{position:fixed;z-index:40;pointer-events:none;border:1px solid var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+#selband.cross{border-style:dashed;border-color:#3fb950;background:color-mix(in srgb,#3fb950 14%,transparent)}
 .feat.sup .nm{text-decoration:line-through;color:var(--mut)}
 .feat.rolled{opacity:.42}
 #tab-ai.as-br .refgo{display:none}#tab-ai:not(.as-br) .brnote{display:none}
@@ -95,6 +115,7 @@ dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
 .rollbar .btn{height:16px;padding:0 6px;font-size:11px}
 .feat .acts{display:none;gap:2px}
 .feat:hover .acts,.feat.on .acts{display:flex}
+.feat:not(.on) .acts button:not(:nth-last-child(-n+2)){display:none}
 .feat .acts button{width:20px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
 .feat .acts button:hover{color:var(--ink);background:var(--line)}
 .empty{color:var(--mut);font-size:12.5px;padding:10px 4px}
@@ -311,7 +332,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <div class="chip" id="selinfo"></div>
 <div class="chip" id="legend"><div id="lgt" style="font-weight:600"></div><div class="bar"></div><div class="lab"><span id="lg0"></span><span id="lg1"></span></div></div>
 <div class="chip" id="mprops"></div>
-<div class="chip" id="hint"><h2>Design something real</h2><p>Sketch, pick a template, or describe it.</p><div class="row"><button class="btn pri" id="hint-new">Start from scratch</button><button class="btn" data-act="new">Templates</button><button class="btn" id="hint-ai">Ask the AI</button><button class="btn" id="hint-guide">Guided design</button></div></div>
+<div class="chip" id="hint"><h2>Design something real</h2><p>Start a blank part, pick a template, or describe it to the AI.</p><div class="row"><button class="btn pri" id="hint-new">Blank part</button><button class="btn" data-act="new">Templates</button><button class="btn" id="hint-ai">Ask the AI</button><button class="btn" id="hint-guide">Guided design</button></div></div>
 </div>
 <aside id="right" aria-label="Properties">
 <nav class="rtabs"><button data-tab="edit" class="on">Edit</button><button data-tab="dies">Dies</button><button data-tab="make">Make</button><button data-tab="cutters">Cutters</button><button data-tab="check">Review</button></nav>

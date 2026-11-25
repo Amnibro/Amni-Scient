@@ -3,16 +3,16 @@ let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==u
 const E=await startE2E({web:+process.env.E2E_WEB||18720,mcp:+process.env.E2E_MCP||18721});
 const {page,call,T,errs,sleep}=E,ev=(f,...a)=>page.evaluate(f,...a),wb=async()=>{await sleep(150);await ev(()=>window.amnicad.API.waitBuild());await sleep(250);};
 const sks=q=>ev(q=>window.amnicad.S.sketcher.screen(q),q),clk=async(q,o={})=>{const[x,y]=await sks(q);await page.mouse.move(x+3,y+3);await sleep(30);await page.mouse.move(x,y);await sleep(30);o.shift&&await page.keyboard.down('Shift');await page.mouse.down();await sleep(30);await page.mouse.up();o.shift&&await page.keyboard.up('Shift');await sleep(120);};
-const tool=async t=>{await ev(t=>document.querySelector('#skx button.t[data-t='+t+']').click(),t);await sleep(60);},skin=async v=>{await page.waitForSelector('#skx .skin',{timeout:4000});await ev(v=>{document.querySelector('#skx .skin').value=v;},v);await page.keyboard.press('Enter');await sleep(200);};
+const tool=async t=>{await ev(t=>document.querySelector('.skt button.t[data-t='+t+']').click(),t);await sleep(60);},skin=async v=>{await page.waitForSelector('#skx .skin',{timeout:4000});await ev(v=>{document.querySelector('#skx .skin').value=v;},v);await page.keyboard.press('Enter');await sleep(200);};
 const S=()=>ev(()=>{const k=window.amnicad.S.sketcher.sketch;return{ents:k.ents.map(e=>({k:e.k,cons:!!e.cons,ref:!!e.ref})),n:k.ents.filter(e=>!e.ref).length,lines:k.ents.filter(e=>e.k==='line'&&!e.ref).length,arcs:k.ents.filter(e=>e.k==='arc'&&!e.ref).length,circles:k.ents.filter(e=>e.k==='circle'&&!e.ref).length,cons:k.cons.map(c=>c.k),pts:k.pts};});
 const open=async()=>{await ev(()=>{const s=window.amnicad.S.sketcher;s&&s.close();window.amnicad.API.commit(d=>{d.features=d.features.filter(x=>x.type!=='extrude');});});await wb();await ev(()=>{window.amnicad.API.addFeature('extrude',{plane:'XY',offset:0,_smart:1,_mode:'sketch'});});await sleep(1500);await ev(()=>{window.amnicad.S.sketcher.setTool('line');});};
 try{
   await call('apply_actions',{actions:[{new:true,units:'mm'}]});await wb();
   await open();
   ok(await ev(()=>!!window.amnicad.S.sketcher),'sketcher opens');
-  const bar=await ev(()=>[...document.querySelectorAll('#skx .skt button')].map(b=>b.title));
+  const bar=await ev(()=>[...document.querySelectorAll('.skt button')].map(b=>b.title));
   for(const w of['Three-point arc','Slot','Trim','Extend','Sketch fillet','Sketch chamfer','Mirror','Offset the selected','Linear pattern','Circular pattern','Concentric','Collinear','Symmetric'])ok(bar.some(t=>t.startsWith(w)),'toolbar has '+w,bar.length);
-  const sc=await ev(()=>[...document.querySelectorAll('#skx .skt button.t[title*="("]')].length);
+  const sc=await ev(()=>[...document.querySelectorAll('.skt button.t[title*="("]')].length);
   await ev(()=>window.amnicad.S.sketcher.setTool('line'));
   await clk([-20,0]);await clk([20,0]);await page.keyboard.press('Escape');await clk([0,-15]);await clk([0,15]);await page.keyboard.press('Escape');
   let s=await S();ok(s.lines===2,'two crossing lines drawn',s);
@@ -49,7 +49,7 @@ try{
   await skin('3');await skin('10');await skin('0');s=await S();ok(s.circles===3,'linear pattern makes 2 more circles',s);
   await open();
   await tool('circle');await clk([0,0]);await clk([3,0]);await tool('circle');await clk([2,2]);await clk([2,7]);await tool('select');
-  await clk([3,0]);await clk([2,7],{shift:true});await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].find(b=>b.title==='Concentric').click());await sleep(300);s=await S();ok(s.cons.includes('conc'),'concentric relation added',s.cons);
+  await clk([3,0]);await clk([2,7],{shift:true});await ev(()=>[...document.querySelectorAll('.skt button.t')].find(b=>b.title==='Concentric').click());await sleep(300);s=await S();ok(s.cons.includes('conc'),'concentric relation added',s.cons);
   const cc=await ev(()=>{const k=window.amnicad.S.sketcher.sketch,c=k.ents.filter(e=>e.k==='circle'&&!e.ref).map(e=>k.pts[e.p[0]]);return c;});ok(cc.length===2&&Math.hypot(cc[0][0]-cc[1][0],cc[0][1]-cc[1][1])<1e-4,'the two circles now share a center',cc);
   await ev(()=>window.amnicad.S.sketcher.close());
   if(process.env.SHOTS){await open();await page.keyboard.press('3');await clk([0,0]);await clk([20,0]);await clk([10,10]);await tool('select');await page.screenshot({path:process.env.SHOTS+'/sketcher_tools.png'});await ev(()=>window.amnicad.S.sketcher.close());}
@@ -58,11 +58,11 @@ try{
   await page.reload();await page.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});await sleep(1500);
   await ev(()=>{window.amnicad.API.commit(d=>{d.features=[];});});await wb();await ev(()=>{window.amnicad.API.addFeature('extrude',{plane:'XY',offset:0,_smart:1,_mode:'sketch'});});await sleep(1800);
   ok(await ev(()=>!!window.amnicad.S.sketcher),'sketcher opens on a touch device');
-  const big=await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].filter(b=>/Trim|Extend|Slot|fillet|Offset|Concentric/.test(b.title)).map(b=>[b.title.split(':')[0],Math.round(b.getBoundingClientRect().width),Math.round(b.getBoundingClientRect().height)]));ok(big.length>=7&&big.every(b=>b[1]>=44&&b[2]>=44),'new sketch buttons are at least 44 px for touch',big);
+  const big=await ev(()=>[...document.querySelectorAll('.skt button.t')].filter(b=>/Trim|Extend|Slot|fillet|Offset|Concentric/.test(b.title)).map(b=>[b.title.split(':')[0],Math.round(b.getBoundingClientRect().width),Math.round(b.getBoundingClientRect().height)]));ok(big.length>=7&&big.every(b=>b[1]>=44&&b[2]>=44),'new sketch buttons are at least 44 px for touch',big);
   const tap=async q=>{const[x,y]=await sks(q);await page.touchscreen.tap(x,y);await sleep(220);};
-  await ev(()=>document.querySelector('#skx button.t[data-t=line]').click());await tap([-20,0]);await tap([20,0]);await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].find(b=>/Finish the line/.test(b.title)).click());await tap([0,-15]);await tap([0,15]);await ev(()=>[...document.querySelectorAll('#skx .skt button.t')].find(b=>/Finish the line/.test(b.title)).click());
+  await ev(()=>document.querySelector('.skt button.t[data-t=line]').click());await tap([-20,0]);await tap([20,0]);await ev(()=>[...document.querySelectorAll('.skt button.t')].find(b=>/Finish the line/.test(b.title)).click());await tap([0,-15]);await tap([0,15]);await ev(()=>[...document.querySelectorAll('.skt button.t')].find(b=>/Finish the line/.test(b.title)).click());
   s=await S();ok(s.lines===2,'two lines drawn by touch',s.lines);
-  await ev(()=>document.querySelector('#skx button.t[data-t=trim]').click());await tap([10,0]);
+  await ev(()=>document.querySelector('.skt button.t[data-t=trim]').click());await tap([10,0]);
   const e1=await ev(()=>{const k=window.amnicad.S.sketcher.sketch,a=k.ents.filter(e=>e.k==='line'&&!e.ref).map(e=>e.p.map(i=>k.pts[i]));return a;});ok(e1.some(l=>l.every(p=>p[0]<1))&&e1.length===2,'tapping with the trim tool removes the tapped half',e1);
   if(process.env.SHOTS)await page.screenshot({path:process.env.SHOTS+'/sketcher_touch.png'});
   ok(errs.length===0,'no page errors',errs);

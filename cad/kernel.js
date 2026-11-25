@@ -12,8 +12,10 @@ import {MATS,shapeLimits,clean,fixPre} from './schema.js';
 import {chamferSides,alongFaces,FEAT2,solidsOf,ribGuess} from './features2.js';
 import {vec as V} from './qmath.js';
 import {maxOf,minOf,pushAll} from './minmax.js';
+import {heliumSync} from './he/host.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
-const STRKEYS=new Set(['feature','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
+const KN=(await heliumSync('kern'))({});KN.ex.kn_views();
+const STRKEYS=new Set(['feature','src','twist','about','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -159,10 +161,9 @@ function profileDrawing(shapes,pre='',fp='shapes.'){
 function planeObj(P){return new R.Plane(P.o,P.x,P.n);}
 function extrudeTool(f,body){
   const P=planeFrom(f,body),dir=f.dir||'+',d0=f.depth??M(10);if(!d0)throw new Error('depth must be above 0');const depth=Math.abs(d0);d0<0&&NOTES.push({k:'depth',field:'depth',v:depth,msg:'Depth '+fu(d0)+' used as '+fu(depth)+'; set Direction to change the side',fix:[{t:'Use '+fu(depth),k:'depth',v:depth}]});
-  let o=P.o;
-  if(dir==='-')o=o.map((v,i)=>v-P.n[i]*depth);
-  else if(dir==='both')o=o.map((v,i)=>v-P.n[i]*depth/2);
-  const pl=new R.Plane(o,P.x,P.n);
+  const tw={turns:1,pitch:2,degrees:3}[f.twist]||0;if(tw===2&&!(f.tpitch>0))throw new Error('twist pitch must be above 0');const c=!tw?[0,0]:f.about==='center'?profileDrawing(f.shapes).boundingBox.center:f.about==='point'?[f.tx||0,f.ty||0]:[0,0];
+  KN.v(1).set([...P.o,...P.x,...P.n]);const on=KN.ex.kn_twist(tw,dir==='-'?1:dir==='both'?2:0,depth,f.turns??1,f.tpitch??0,f.angle??0,f.hand==='left'?1:0,c[0],c[1]),T=KN.v(2).slice(),pl=new R.Plane([T[2],T[3],T[4]],P.x,P.n);
+  if(on){f.draft&&NOTES.push({k:'draft',field:'draft',v:0,msg:'Draft is not applied to a twisted extrude'});const d=profileDrawing(f.shapes);return(T[1]?d.rotate(T[1],c):d).sketchOnPlane(pl).extrude(depth,{twistAngle:T[0],origin:[T[5],T[6],T[7]]});}
   const sk=profileDrawing(f.shapes).sketchOnPlane(pl);
   if(!f.draft)return sk.extrude(depth);
   const mk=a=>{const n0=NOTES.length,t=profileDrawing(f.shapes).sketchOnPlane(pl).extrude(depth);NOTES.length=n0;const oc=R.getOC(),xyz=v=>new oc.gp_XYZ(...v),D=new oc.BRepOffsetAPI_DraftAngle(t.wrapped),dr=new oc.gp_Dir(xyz(dir==='-'?P.n.map(v=>-v):P.n)),pln=new oc.gp_Pln(new oc.gp_Pnt(xyz(P.o)),dr);let k=0;for(const fc of t.faces){const q=fc.normalAt();Math.abs(q.x*P.n[0]+q.y*P.n[1]+q.z*P.n[2])<1e-7&&(D.Add(fc.wrapped,dr,a*Math.PI/180,pln,true),k++);}D.Build(new oc.Message_ProgressRange());if(!k||!D.IsDone())throw new Error('draft failed');const r=R.cast(D.Shape());D.delete();return r;},ok=a=>{const t=mk(a);if(!(Math.abs(volOf(t))>1e-12))throw new Error('empty');return t;};
@@ -469,7 +470,7 @@ export async function build(doc,opt={}){
   truncate(Math.min(upto,feats.length),cache);
   cache.fk=fk;
   const nfin=body?nsol(body):0;
-  return{body,errors,warnings:nfin>1?warnings:warnings.filter(w=>w.bodies==null),paramErrors:pErr,scope,reused,datums:datList(),ms:performance.now()-t0};
+  return{body,errors,warnings:nfin>1?warnings:warnings.filter(w=>w.bodies==null),paramErrors:pErr,scope,reused,solids:Object.fromEntries(feats.slice(0,Math.min(upto,feats.length)).map((f,i)=>{let n=-1;try{n=cache[i]&&cache[i].shape&&!cache[i].lazy?nsol(cache[i].shape):-1;}catch{}return[f.id,n];})),datums:datList(),ms:performance.now()-t0};
 }
 export function meshBody(body,q=1){
   if(!body)return null;

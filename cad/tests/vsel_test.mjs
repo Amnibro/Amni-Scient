@@ -1,0 +1,27 @@
+import * as THREE from '../vendor/three.module.min.js';
+import {heliumSync} from '../he/host.js';
+const h=(await heliumSync('vsel'))({}),X=h.ex;let fail=0,n=0;const ok=(c,m,x)=>{n++;c||(fail++,console.log('FAIL '+m+(x!==undefined?' · '+JSON.stringify(x):'')));};
+const W=800,H=600,cam=new THREE.PerspectiveCamera(40,W/H,0.1,1000);cam.up.set(0,0,1);
+const setCam=(p,t=[0,0,0])=>{cam.position.set(...p);cam.lookAt(...t);cam.updateMatrixWorld();cam.updateProjectionMatrix();const m=new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),mi=m.clone().invert();h.v(2).set(m.elements);h.v(3).set(mi.elements);X.vs_screen(W,H);};
+const mesh=(pos,idx,groups,nf)=>{X.vs_setup(pos.length/3,idx.length,groups.length,nf);h.v(1).set(pos);h.v(9).set(idx);h.v(10).set(groups.flat());};
+X.vs_points(4);setCam([0,0,10]);
+const sq=[-1,-1,0,1,-1,0,1,1,0,-1,1,0],far=[4,-1,0,6,-1,0,6,1,0,4,1,0];mesh([...sq,...far],[0,1,2,0,2,3,4,5,6,4,6,7],[[0,6,0],[6,6,1]],2);
+const scr=p=>{const v=new THREE.Vector3(...p).project(cam);return[(v.x+1)/2*W,(1-v.y)/2*H];},[ax,ay]=scr([-1.2,1.2,0]),[bx,by]=scr([1.2,-1.2,0]),[cx]=scr([0,0,0]),[fx,fy]=scr([7,-1.5,0]);
+ok(X.vs_box(ax,ay,bx,by,1)===1&&h.v(11)[0]===1&&h.v(11)[1]===0,'a window around the square catches only the square',Array.from(h.v(11)));
+ok(X.vs_box(cx,ay,bx,by,1)===0,'a window over half the square catches nothing');
+ok(X.vs_box(cx,ay,bx,by,0)===1&&h.v(11)[0]===1,'a crossing box over half the square catches it');
+const [ix,iy]=scr([-0.2,0.2,0]),[jx,jy]=scr([0.2,-0.2,0]);ok(X.vs_box(ix,iy,jx,jy,0)===1,'a crossing box inside a face with no corner in it still catches the face');
+ok(X.vs_box(bx,by,ax,ay,0)===1,'box corners work in either drag direction');
+ok(X.vs_box(ax,ay,fx,fy,1)===2,'a window around both faces catches both');
+const fp=Array.from(h.v(7));ok(Math.abs(fp[2])<1e-9&&Math.abs(fp[0])<=1&&Math.abs(fp[1])<=1&&fp[3]>=4,'each face gets a point on it',fp);
+setCam([3,-6,4]);h.v(4).set([0.5,0.2,0.3,1,0,0,0,0,1]);
+const pts=[[0,0],[1.5,-0.7],[-2,3],[0.25,0.125]];for(const[u,v]of pts){h.v(5).set([u,v],0);X.vs_proj(1);const o=Array.from(h.v(6)).slice(0,3);X.vs_unproj(o[0],o[1]);const r=Array.from(h.v(6)).slice(0,3);ok(o[2]===1&&r[2]===1&&Math.abs(r[0]-u)<1e-6&&Math.abs(r[1]-v)<1e-6,'plane point '+u+','+v+' maps to the screen and back',{o,r});}
+h.v(4).set([0,0,0,1,0,0,0,1,0]);setCam([0,0,10]);const s=X.vs_scale(0,0),p0=scr([0,0,0]),p1=scr([1,0,0]),pd=Math.hypot(p1[0]-p0[0],p1[1]-p0[1]);ok(Math.abs(s-pd)<0.5,'the local scale matches pixels per unit',[s,pd]);
+setCam([0,-10,0.5],[0,0,0.5]);h.v(5).set([0,-20],0);X.vs_proj(1);ok(h.v(6)[2]===0,'a plane point behind the camera is flagged');X.vs_unproj(W/2,10);ok(h.v(6)[2]===0,'a pixel above the horizon misses the ground plane');
+X.vs_feats(7);h.v(12).set([0,1,2,2,2,1,2]);h.v(13).set([0,1,0,0,0,0,0]);const c=X.vs_cascade(7),cs=Array.from(h.v(14));ok(c===3&&cs.join('')==='0011100','deleting the base solid takes the fillet, holes and chamfer but keeps the later solid and its feature',cs);
+h.v(13).set([0,0,0,0,0,0,0]);ok(X.vs_cascade(7)===0,'nothing cascades when nothing is deleted');h.v(12).set([0,1,2,1,2,0,0]);h.v(13).set([0,1,0,0,0,0,0]);ok(X.vs_cascade(7)===1&&h.v(14)[2]===1&&h.v(14)[4]===0,'a modifier after another solid survives');
+X.vs_feats(8);h.v(12).set([0,1,2,2,0,1,2,1]);h.v(15).set([0,0,0,1,0,0,0,3]);h.v(16).set([1,1,1,1,1,2,2,2]);ok(X.vs_bodies(8)===3&&Array.from(h.v(17)).join(',')==='-1,1,1,1,-1,5,5,7','features group under the body they build on; a separate solid and a new-body feature start bodies',Array.from(h.v(17)));h.v(12).set([2,1,1,2,0,0,0,0]);h.v(15).set([0,0,0,0,0,0,0,0]);h.v(16).set([-1,1,1,1,1,1,1,1]);ok(X.vs_bodies(4)===1&&Array.from(h.v(17)).slice(0,4).join(',')==='-2,1,1,1','a touching add joins the body; a modifier before any body has none',Array.from(h.v(17)).slice(0,4));
+mesh([...sq,1,-1,0,3,-1,0,3,1,0,1,1,0,...far],[0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,8,10,11],[[0,6,0],[6,6,1],[12,6,2]],3);ok(X.vs_comps()===2&&Array.from(h.v(18)).join(',')==='0,0,1','faces sharing an edge form one solid and a distant face another',Array.from(h.v(18)));
+const cube=(x,y,z)=>{const k=X.vs_cube(x,y,z);return k+':'+Array.from(h.v(6)).slice(0,3).join(',');};ok(cube(0.1,-0.2,1)==='1:0,0,1','the middle of the top face picks the top view');ok(cube(0.9,-0.1,1)==='2:1,0,1','the top-right band picks the edge view');ok(cube(-0.9,-0.9,1)==='3:-1,-1,1','a top corner picks the corner view');ok(cube(0.3,-1,0)==='1:0,-1,0','the front face picks the front view');
+const bg=(ax,ay,bx,by,s,k)=>{const c=X.vs_bulge(ax,ay,bx,by,s,k),o=h.v(6);return Array.from({length:c},(_,i)=>[+o[2*i].toFixed(9),+o[2*i+1].toFixed(9)]);},near=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1])<1e-9;let q=bg(1,0,-1,0,-1,4);ok(q.length===5&&near(q[0],[1,0])&&near(q[2],[0,1])&&near(q[4],[-1,0]),'a negative sagitta runs counterclockwise through the apex',q);q=bg(1,0,-1,0,1,4);ok(near(q[2],[0,-1])&&near(q[4],[-1,0]),'a positive sagitta runs clockwise',q);q=bg(1,0,-1,0,-0.5,2);ok(near(q[1],[0,0.5])&&near(q[2],[-1,0]),'a shallow arc passes through its apex',q);ok(X.vs_bulge(0,0,2,3,0,7)===2&&h.v(6)[3]===3,'a zero sagitta is a straight segment');
+console.log(fail?fail+' of '+n+' FAILED':'vsel_test: '+n+' checks passed');process.exit(fail?1:0);

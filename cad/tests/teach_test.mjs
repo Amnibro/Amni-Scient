@@ -7,7 +7,7 @@ try{
   const p=await b.newPage(),errs=[];p.on('pageerror',e=>errs.push(String(e.message)));await p.setViewport({width:1440,height:900});await p.evaluateOnNewDocument(STUB);
   const ev=(f,...a)=>p.evaluate(f,...a),until=async(f,a,ms=20000)=>{const t=Date.now();while(Date.now()-t<ms){if(await p.evaluate(f,a))return true;await sleep(120);}return false;},tap=t=>ev(t=>{const x=[...document.querySelectorAll('#tab-ai button')].filter(x=>x.textContent===t).pop();x&&x.click();return!!x;},t);
   await p.goto(`http://127.0.0.1:${port}/404.html`);await ev(()=>{localStorage.clear();localStorage.setItem('amnicad.ai',JSON.stringify({kind:'local',model:'',base:'http://127.0.0.1:9/v1',lmodel:'stub',remember:true,cm:{},chosen:true,check:false}));});
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.assistant,{timeout:150000,polling:150});await sleep(1200);
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.assistant,{timeout:150000,polling:150});await sleep(1200);
   await ev(()=>window.amnicad.API.assistant.open());await sleep(700);
   ok(await ev(()=>!!document.querySelector('#ai-teach-ask')&&/Help Adam learn\?/.test(document.querySelector('#ai-teach-ask').textContent)&&/never sent/.test(document.querySelector('#ai-teach-ask').textContent)),'the assistant opens with the sharing question');
   await ev(()=>window.amnicad.API.assistant.send({text:'add a small box'}));await until(()=>!window.amnicad.S.aiBusy&&window.amnicad.S.doc.features.some(f=>f.name==='Teach box'));await sleep(400);

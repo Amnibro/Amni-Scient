@@ -1,0 +1,13 @@
+use std
+into kern.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its exported functions serve the Amni-CAD modeling kernel, which runs in JavaScript beside OpenCascade.
+
+Module state: an f64 array `F` of 9 zeros (the sketch plane origin, its unit x axis and its unit normal, each as x, y, z) and an f64 array `OUT` of 8 zeros.
+
+The exported function `kn_views()` registers the arrays JavaScript reads or writes: f64 view 1 `F` and f64 view 2 `OUT`, each through the external function kn_view_f64 (import name "kn_view_f64") that takes an i32 id and the array.
+
+The exported function `kn_twist(mode, dir, depth, turns, pitch, angle, left, cx, cy)` plans an extrude that may twist as it goes. mode, dir and left are i32 and the rest are reals. mode is 0 for no twist, 1 for a number of turns, 2 for a pitch (length per turn) and 3 for a total angle in degrees; dir is 0 when the profile is pushed along the normal, 1 when against it and 2 when both ways; left is 1 for a left-hand twist. The total twist a in degrees is 0.0 for mode 0, turns times 360.0 for mode 1, depth divided by pitch times 360.0 for mode 2 when pitch is greater than 0.0 (0.0 otherwise), and angle for mode 3; a is negated when left is 1. The start shift s along the normal is 0.0 for dir 0, depth for dir 1 and depth divided by 2.0 for dir 2. With o, x and n the three vectors in `F` and y the cross product of n and x, it writes OUT[0] equal to a, OUT[1] equal to minus a times s divided by depth (0.0 when depth is 0.0), OUT[2], OUT[3], OUT[4] equal to the start origin o minus n times s, and OUT[5], OUT[6], OUT[7] equal to that start origin plus cx times x plus cy times y. It returns 1 when a is not 0.0, otherwise 0.
+
+`main()` does nothing. JavaScript drives it through its exported functions.

@@ -77,4 +77,4 @@ function combine(f,body,K,doc,tools){
   return{shape:out.length===1?out[0]:R.makeCompound(out),warn};
 }
 const datum=(kind,fr)=>(f,body,K)=>({shape:body,dat:{kind,...fr(f,body,K)}});
-export const FEAT2={draft,rib,combine,sheet:sheetPart,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};
+export const FEAT2={sketch:(f,b)=>({shape:b}),draft,rib,combine,sheet:sheetPart,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint)};

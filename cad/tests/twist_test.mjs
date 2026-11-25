@@ -1,0 +1,14 @@
+import opencascade from '../vendor/replicad_single.js';
+import * as K from '../kernel.js';
+import {fileURLToPath} from 'url';import path from 'path';
+const here=path.dirname(fileURLToPath(import.meta.url)),oc=await opencascade({locateFile:()=>path.join(here,'../vendor/replicad_single.wasm'),print:()=>{},printErr:()=>{}});await K.init(oc);
+let pass=0,fail=0;const ok=(c,m,x)=>{c?pass++:(fail++,console.log('FAIL',m,x===undefined?'':JSON.stringify(x)));};
+const B=async fs=>{K.resetCache();const r=await K.build({params:[],features:fs}),m=r.body?K.meshBody(r.body).props:null;return{v:m&&m.volume,bb:m&&[m.bbox.min,m.bbox.max].map(a=>a.map(v=>+v.toFixed(2))),e:r.errors};};
+const C=(x,y,r)=>[{k:'circle',x,y,r}],A=Math.PI*4,ex=o=>({id:'f1',type:'extrude',plane:'XY',offset:0,shapes:C(10,0,2),depth:10,dir:'+',twist:'degrees',angle:90,turns:1,tpitch:5,hand:'right',op:'add',...o}),eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+for(const[o,bb,m]of[[{twist:'off'},[[8,-2,0],[12,2,10]],'no twist stays straight'],[{},[[-2,-2,0],[12,12,10]],'right hand turns counterclockwise going up'],[{hand:'left'},[[-2,-12,0],[12,2,10]],'left hand turns clockwise'],[{dir:'-'},[[-2,-12,-10],[12,2,0]],'reverse keeps the drawn profile on the sketch plane'],[{dir:'both'},[[5.07,-9.07,-5],[12,9.07,5]],'both sides twists half each way'],[{twist:'turns',turns:1.25},[[-12,-12,0],[12,12,10]],'turns'],[{twist:'pitch',tpitch:8,hand:'left'},[[-12,-12,0],[12,12,10]],'pitch']]){const r=await B([ex(o)]);ok(!r.e.length&&Math.abs(r.v-A*10)<1e-3*A*10,m+': volume is area times depth',[r.v,r.e]);ok(eq(r.bb,bb),m+': bounding box',r.bb);}
+const p0=await B([ex({twist:'pitch',tpitch:0})]);ok(p0.e.length&&/pitch/.test(JSON.stringify(p0.e)),'zero pitch is refused',p0.e);
+const col=[{id:'f1',type:'cylinder',r:20,h:60,x:0,y:0,z:0,axis:'Z',op:'add'}],c0=(await B(col)).v,g=await B([...col,{id:'f2',type:'extrude',plane:'face',face:{side:'+Z'},shapes:C(20,0,3),depth:60,dir:'-',twist:'turns',turns:2,hand:'right',about:'origin',op:'cut'}]);
+ok(!g.e.length&&Math.abs(c0-g.v-820.4)<5,'a helical groove cut down a column removes the swept overlap',[c0-g.v,g.e]);
+const sp=await B([...col,{id:'f2',type:'extrude',plane:'face',face:{side:'+Z'},shapes:C(5,5,2),depth:20,dir:'-',twist:'degrees',angle:180,about:'point',tx:5,ty:5,op:'cut'}]);ok(!sp.e.length&&Math.abs(c0-sp.v-A*20)<1e-2,'spinning about a point through the profile removes area times depth',[c0-sp.v,sp.e]);
+const ce=await B([{id:'f1',type:'extrude',plane:'XY',offset:0,shapes:[{k:'rect',x:7,y:7,w:4,h:2}],depth:10,twist:'degrees',angle:90,about:'center',op:'add'}]);ok(!ce.e.length&&[0,1].every(i=>Math.abs(ce.bb[0][i]+ce.bb[1][i]-14)<0.02&&ce.bb[1][i]-7<=Math.sqrt(5)+0.01),'shape center twists in place',ce.bb);
+console.log(fail?fail+' FAILED, '+pass+' passed':'twist_test: '+pass+' passed');process.exit(fail?1:0);
