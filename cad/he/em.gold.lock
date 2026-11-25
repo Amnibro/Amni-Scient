@@ -1,0 +1,398 @@
+=== -6aafe93ffab10807
+import math;
+=== 38ece82a45bc08c5
+
+=== 67617c6ab7769ace
+var EX int = 0;
+var EY int = 0;
+var EZ int = 0;
+var NX int = 0;
+var NY int = 0;
+var NZ int = 0;
+var NE int = 0;
+var NN int = 0;
+var PH real[>..];
+var EF real[>..];
+var GV real[>..];
+var NF real[>..];
+var NQ real[>..];
+var NW real[>..];
+var HG real[>..];
+var FR real[>..];
+var EN real[>..];
+var DN real[>..];
+var FN real[>..];
+var PR real[>..];
+var ST real[>..];
+var MK i32[>..];
+var EI i32[>..];
+var EJ i32[>..];
+=== 6d32e256939d9ea3
+
+=== 6554ca2d194c64fa
+fn zf(xs real[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+=== -6190c3be6c57be69
+export fn em_views() {
+    em_view_f64(1, PH);
+    em_view_f64(2, EF);
+    em_view_f64(3, NF);
+    em_view_f64(4, NQ);
+    em_view_f64(5, PR);
+    em_view_f64(6, ST);
+    em_view_f64(7, GV);
+    em_view_f64(9, FR);
+    em_view_f64(10, EN);
+    em_view_f64(11, DN);
+    em_view_i32(8, MK);
+    em_view_i32(12, EI);
+}
+=== -3775ecc7181ef80b
+export fn em_grid(ex i32, ey i32, ez i32) i32 {
+    EX = ex as int;
+    EY = ey as int;
+    EZ = ez as int;
+    NX = EX + 1;
+    NY = EY + 1;
+    NZ = EZ + 1;
+    NE = EX * EY * EZ;
+    NN = NX * NY * NZ;
+    zf(EF, NE, 0.0);
+    zf(GV, 3 * NE, 0.0);
+    zi(MK, NE, 0);
+    zf(FR, NE, 0.0);
+    zf(DN, NE, 0.0);
+    zf(PH, NN, 0.0);
+    zf(NF, NN, 0.0);
+    zf(NQ, NN, 0.0);
+    zf(NW, NN, 0.0);
+    zf(EN, 3 * NN, 0.0);
+    zi(EI, NN, -1);
+    zi(EJ, NN, -1);
+    zf(FN, 3, 0.0);
+    zf(HG, 16, 0.0);
+    zf(PR, 8, 0.0);
+    zf(ST, 8, 0.0);
+    em_views();
+    return NE as i32;
+}
+=== 103e5a723b8a2772
+fn fillof(i i32, j i32, k i32) real {
+    let x = i as int;
+    let y = j as int;
+    let z = k as int;
+    if x >= 0 && x < EX && y >= 0 && y < EY && z >= 0 && z < EZ {
+        let e = (z * EY + y) * EX + x;
+        if MK[e] == 1 {
+            return FR[e];
+        }
+    }
+    return 0.0;
+}
+=== 76b65097b0db07d0
+fn abs64(x real) real {
+    if x < 0.0 {
+        return 0.0 - x;
+    }
+    return x;
+}
+fn root64(x real) real {
+    if x - x != 0.0 {
+        return x;
+    }
+    if x <= 0.0 {
+        return 0.0;
+    }
+    var m = x;
+    var s = 1.0;
+    while m > 4.0 {
+        m = m / 4.0;
+        s = s * 2.0;
+    }
+    while m < 1.0 {
+        m = m * 4.0;
+        s = s * 0.5;
+    }
+    var y = (1.0 + m) * 0.5;
+    for it in 0..6 {
+        y = 0.5 * (y + m / y);
+    }
+    return y * s;
+}
+fn fnorm(e i32) int {
+    let q = e as int;
+    let i = q % EX;
+    let j = (q / EX) % EY;
+    let k = q / (EX * EY);
+    let dx = (fillof((i + 1) as i32, j as i32, k as i32) - fillof((i - 1) as i32, j as i32, k as i32)) / 2.0;
+    let dy = (fillof(i as i32, (j + 1) as i32, k as i32) - fillof(i as i32, (j - 1) as i32, k as i32)) / 2.0;
+    let dz = (fillof(i as i32, j as i32, (k + 1) as i32) - fillof(i as i32, j as i32, (k - 1) as i32)) / 2.0;
+    let len = root64(dx * dx + dy * dy + dz * dz);
+    if len > 1e-9 {
+        FN[0] = -dx / len;
+        FN[1] = -dy / len;
+        FN[2] = -dz / len;
+        return 1;
+    }
+    FN[0] = 0.0;
+    FN[1] = 0.0;
+    FN[2] = 0.0;
+    return 0;
+}
+=== -7c6f2e6911bf15cd
+fn node_of(n0 int, q int) int {
+    var n = n0;
+    let r = q % 4;
+    if r == 1 || r == 2 {
+        n = n + 1;
+    }
+    if r >= 2 {
+        n = n + NX;
+    }
+    if q >= 4 {
+        n = n + NX * NY;
+    }
+    return n;
+}
+export fn em_prep() i32 {
+    for n in 0..NN {
+        EJ[n] = EI[n];
+    }
+    for n in 0..NN {
+        if EJ[n] >= 0 {
+            let vx = EN[3 * n];
+            let vy = EN[3 * n + 1];
+            let vz = EN[3 * n + 2];
+            if root64(vx * vx + vy * vy + vz * vz) > 1e-9 {
+                var a = 0;
+                var best = abs64(vx);
+                if abs64(vy) > best {
+                    a = 1;
+                    best = abs64(vy);
+                }
+                if abs64(vz) > best {
+                    a = 2;
+                }
+                var s = -1;
+                if EN[3 * n + a] > 0.0 {
+                    s = 1;
+                }
+                let i = n % NX;
+                let j = (n / NX) % NY;
+                let k = n / (NX * NY);
+                var mi = i;
+                var mj = j;
+                var mk = k;
+                var x0 = i - 1;
+                var x1 = i;
+                var y0 = j - 1;
+                var y1 = j;
+                var z0 = k - 1;
+                var z1 = k;
+                if a == 0 {
+                    mi = i + s;
+                    if s > 0 {
+                        x0 = i;
+                    }
+                    if s < 0 {
+                        x0 = i - 1;
+                    }
+                    x1 = x0;
+                }
+                if a == 1 {
+                    mj = j + s;
+                    if s > 0 {
+                        y0 = j;
+                    }
+                    y1 = y0;
+                }
+                if a == 2 {
+                    mk = k + s;
+                    if s > 0 {
+                        z0 = k;
+                    }
+                    z1 = z0;
+                }
+                if mi >= 0 && mi < NX && mj >= 0 && mj < NY && mk >= 0 && mk < NZ {
+                    let m = (mk * NY + mj) * NX + mi;
+                    if EJ[m] == -1 {
+                        var inside = false;
+                        for z in z0..(z1 + 1) {
+                            for y in y0..(y1 + 1) {
+                                for x in x0..(x1 + 1) {
+                                    if x >= 0 && x < EX && y >= 0 && y < EY && z >= 0 && z < EZ {
+                                        if MK[(z * EY + y) * EX + x] == 1 {
+                                            inside = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if inside {
+                            EI[m] = EJ[n];
+                            EI[n] = -1;
+                            for c in 0..3 {
+                                EN[3 * m + c] = EN[3 * n + c];
+                                EN[3 * n + c] = 0.0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for e in 0..NE {
+        if MK[e] == 0 {
+            DN[e] = 0.0;
+        } else {
+            let f = FR[e];
+            var low = f;
+            if low < 0.12 {
+                low = 0.12;
+            }
+            DN[e] = low;
+            if f < 1.0 {
+                if fnorm(e as i32) == 1 {
+                    let i = e % EX;
+                    let j = (e / EX) % EY;
+                    let k = e / (EX * EY);
+                    let n0 = (k * NY + j) * NX + i;
+                    for q in 0..8 {
+                        let n = node_of(n0, q);
+                        if EI[n] >= 0 {
+                            let vx = EN[3 * n];
+                            let vy = EN[3 * n + 1];
+                            let vz = EN[3 * n + 2];
+                            let len = root64(vx * vx + vy * vy + vz * vz);
+                            if len > 0.0 {
+                                if abs64((vx * FN[0] + vy * FN[1] + vz * FN[2]) / len) > 0.7 {
+                                    DN[e] = 1.0 / low;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    var count = 0;
+    for n in 0..NN {
+        if EI[n] >= 0 {
+            count = count + 1;
+        }
+    }
+    return count as i32;
+}
+=== 5228cefe4177978c
+export fn em_fields() real {
+    let h = PR[0];
+    let c = PR[1];
+    for n in 0..NN {
+        NF[n] = 0.0;
+        NQ[n] = 0.0;
+        NW[n] = 0.0;
+    }
+    for s in 0..8 {
+        ST[s] = 0.0;
+    }
+    for e in 0..NE {
+        if MK[e] == 1 {
+            let i = e % EX;
+            let j = (e / EX) % EY;
+            let k = e / (EX * EY);
+            let n0 = (k * NY + j) * NX + i;
+            let p0 = PH[node_of(n0, 0)];
+            let p1 = PH[node_of(n0, 1)];
+            let p2 = PH[node_of(n0, 2)];
+            let p3 = PH[node_of(n0, 3)];
+            let p4 = PH[node_of(n0, 4)];
+            let p5 = PH[node_of(n0, 5)];
+            let p6 = PH[node_of(n0, 6)];
+            let p7 = PH[node_of(n0, 7)];
+            var gx = ((p1 + p2 + p5 + p6) - (p0 + p3 + p4 + p7)) / (4.0 * h);
+            var gy = ((p2 + p3 + p6 + p7) - (p0 + p1 + p4 + p5)) / (4.0 * h);
+            var gz = ((p4 + p5 + p6 + p7) - (p0 + p1 + p2 + p3)) / (4.0 * h);
+            let pe = c * DN[e] * (gx * gx + gy * gy + gz * gz) * (h * h * h);
+            let d = DN[e];
+            if d != 1.0 {
+                if fnorm(e as i32) == 1 {
+                    let gn = gx * FN[0] + gy * FN[1] + gz * FN[2];
+                    gx = gx + (d - 1.0) * gn * FN[0];
+                    gy = gy + (d - 1.0) * gn * FN[1];
+                    gz = gz + (d - 1.0) * gn * FN[2];
+                }
+            }
+            GV[3 * e] = -gx;
+            GV[3 * e + 1] = -gy;
+            GV[3 * e + 2] = -gz;
+            EF[e] = root64(gx * gx + gy * gy + gz * gz);
+            ST[2] = ST[2] + pe;
+            ST[3] = ST[3] + 1.0;
+            ST[4] = ST[4] + FR[e] * EF[e];
+            ST[5] = ST[5] + FR[e];
+            if EF[e] > ST[0] {
+                ST[0] = EF[e];
+            }
+            for q in 0..8 {
+                let n = node_of(n0, q);
+                NF[n] = NF[n] + EF[e];
+                NQ[n] = NQ[n] + pe / 8.0;
+                NW[n] = NW[n] + 1.0;
+            }
+        } else {
+            EF[e] = 0.0;
+            GV[3 * e] = 0.0;
+            GV[3 * e + 1] = 0.0;
+            GV[3 * e + 2] = 0.0;
+        }
+    }
+    for n in 0..NN {
+        if NW[n] > 0.0 {
+            NF[n] = NF[n] / NW[n];
+        }
+    }
+    var den = ST[5];
+    if den < 1e-12 {
+        den = 1e-12;
+    }
+    ST[4] = ST[4] / den;
+    var nb = PR[2] as int;
+    if nb < 16 {
+        nb = 16;
+    }
+    zf(HG, nb, 0.0);
+    ST[1] = 0.0;
+    if ST[0] > 0.0 {
+        for e in 0..NE {
+            if MK[e] == 1 {
+                var b = (EF[e] / ST[0] * (nb as real)) as int;
+                if b > nb - 1 {
+                    b = nb - 1;
+                }
+                HG[b] = HG[b] + 1.0;
+            }
+        }
+        var acc = 0.0;
+        var top = nb - 1;
+        while top >= 0 {
+            acc = acc + HG[top];
+            if acc > 0.005 * ST[3] {
+                ST[1] = (top as real) / (nb as real) * ST[0];
+                break;
+            }
+            top = top - 1;
+        }
+    }
+    return ST[2];
+}
+=== 058925cdb7b44661
+fn main() {
+}

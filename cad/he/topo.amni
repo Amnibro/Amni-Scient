@@ -1,0 +1,1063 @@
+import math;
+extern fn tp_view_f64(id i32, xs real[:]) = "tp_view_f64";
+extern fn tp_view_f32(id i32, xs f32[:]) = "tp_view_f32";
+extern fn tp_view_i32(id i32, xs i32[:]) = "tp_view_i32";
+var EX int = 0;
+var EY int = 0;
+var EZ int = 0;
+var NX int = 0;
+var NY int = 0;
+var NZ int = 0;
+var NE int = 0;
+var NN int = 0;
+var NO int = 0;
+var NV int = 0;
+var NT int = 0;
+var X real[>..];
+var XP real[>..];
+var XT real[>..];
+var SP real[>..];
+var XN real[>..];
+var DC real[>..];
+var DV real[>..];
+var HS real[>..];
+var CE real[>..];
+var U real[>..];
+var KE real[>..];
+var PR real[>..];
+var ST real[>..];
+var W real[>..];
+var ND real[>..];
+var VP real[>..];
+var SM real[>..];
+var VV real[>..];
+var MK i32[>..];
+var NK i32[>..];
+var OF i32[>..];
+var CV i32[>..];
+var TI i32[>..];
+var CN i32[>..];
+var DN f32[>..];
+fn zf(xs real[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    var item i32 = x as i32;
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, item);
+}
+fn z32(xs f32[>..]&, n int, x real) {
+    var item f32 = x as f32;
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, item);
+}
+export fn tp_views() {
+    var v1 i32 = 1 as i32;
+    var v2 i32 = 2 as i32;
+    var v3 i32 = 3 as i32;
+    var v4 i32 = 4 as i32;
+    var v5 i32 = 5 as i32;
+    var v6 i32 = 6 as i32;
+    var v7 i32 = 7 as i32;
+    var v8 i32 = 8 as i32;
+    var v9 i32 = 9 as i32;
+    var v10 i32 = 10 as i32;
+    var v11 i32 = 11 as i32;
+    var v12 i32 = 12 as i32;
+    var v13 i32 = 13 as i32;
+    tp_view_f64(v1, X);
+    tp_view_f64(v2, XP);
+    tp_view_f64(v3, U);
+    tp_view_f64(v4, KE);
+    tp_view_f64(v5, PR);
+    tp_view_f64(v6, ST);
+    tp_view_f64(v7, VP);
+    tp_view_f64(v8, CE);
+    tp_view_f64(v13, VV);
+    tp_view_i32(v9, MK);
+    tp_view_i32(v10, NK);
+    tp_view_i32(v11, TI);
+    tp_view_f32(v12, DN);
+}
+export fn tp_grid(ex i32, ey i32, ez i32) i32 {
+    EX = ex as int;
+    EY = ey as int;
+    EZ = ez as int;
+    NX = EX + 1;
+    NY = EY + 1;
+    NZ = EZ + 1;
+    NE = EX * EY * EZ;
+    NN = NX * NY * NZ;
+    zf(X, NE, 0.0);
+    zf(XP, NE, 0.0);
+    zf(XT, NE, 0.0);
+    zf(SP, NE, 0.0);
+    zf(XN, NE, 0.0);
+    zf(DC, NE, 0.0);
+    zf(DV, NE, 0.0);
+    zf(HS, NE, 0.0);
+    zf(CE, NE, 0.0);
+    zi(MK, NE, 0);
+    zi(CV, NE, 0);
+    z32(DN, NE, 0.0);
+    zf(U, 3 * NN, 0.0);
+    zi(NK, NN, 0);
+    zf(ND, NN, 0.0);
+    zf(KE, 576, 0.0);
+    zf(PR, 16, 0.0);
+    zf(ST, 12, 0.0);
+    VP.clear();
+    SM.clear();
+    VV.clear();
+    TI.clear();
+    CN.clear();
+    NV = 0;
+    NT = 0;
+    tp_views();
+    var out i32 = NE as i32;
+    return out;
+}
+fn node0(e int) int {
+    var i int = e % EX;
+    var j int = (e / EX) % EY;
+    var k int = e / (EX * EY);
+    return (k * NY + j) * NX + i;
+}
+fn enode(e int, a int) int {
+    var n int = node0(e);
+    var q int = a % 4;
+    if (q == 1) {
+        n += 1;
+    }
+    if (q == 2) {
+        n += NX + 1;
+    }
+    if (q == 3) {
+        n += NX;
+    }
+    if (a >= 4) {
+        n += NX * NY;
+    }
+    return n;
+}
+fn cell_at(i int, j int, k int) int {
+    if (i < 0 || j < 0 || k < 0 || i >= EX || j >= EY || k >= EZ) {
+        return -1;
+    }
+    return (k * EY + j) * EX + i;
+}
+export fn tp_keep(layers i32) i32 {
+    var two i32 = 2 as i32;
+    var nl int = layers as int;
+    var front int[>..];
+    var found int[>..];
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] == 1) {
+            var touch bool = false;
+            var a int = 0;
+            while (a < 8) {
+                if (NK[enode(e, a)] == 1) {
+                    touch = true;
+                }
+                a += 1;
+            }
+            if (touch) {
+                MK[e] = two;
+                front.push(e);
+            }
+        }
+        e += 1;
+    }
+    var pass int = 1;
+    while (pass < nl) {
+        found.clear();
+        var nf int = front.len as int;
+        var s int = 0;
+        while (s < nf) {
+            var f int = front[s];
+            var i int = f % EX;
+            var j int = (f / EX) % EY;
+            var k int = f / (EX * EY);
+            var d int = 0;
+            while (d < 6) {
+                var step int = 2 * (d % 2) - 1;
+                var ni int = i;
+                var nj int = j;
+                var nk int = k;
+                if (d / 2 == 0) {
+                    ni += step;
+                }
+                if (d / 2 == 1) {
+                    nj += step;
+                }
+                if (d / 2 == 2) {
+                    nk += step;
+                }
+                var g int = cell_at(ni, nj, nk);
+                if (g >= 0) {
+                    if (MK[g] == 1) {
+                        found.push(g);
+                    }
+                }
+                d += 1;
+            }
+            s += 1;
+        }
+        front.clear();
+        var nfound int = found.len as int;
+        var t int = 0;
+        while (t < nfound) {
+            var h int = found[t];
+            if (MK[h] == 1) {
+                MK[h] = two;
+                front.push(h);
+            }
+            t += 1;
+        }
+        pass += 1;
+    }
+    var count int = 0;
+    var c int = 0;
+    while (c < NE) {
+        if (MK[c] == 2) {
+            count += 1;
+        }
+        c += 1;
+    }
+    var out i32 = count as i32;
+    return out;
+}
+fn root_of(x real) real {
+    if (x <= 0.0) {
+        return 0.0;
+    }
+    if (x > 1e308) {
+        return x;
+    }
+    var v real = x;
+    var s real = 1.0;
+    while (v > 4.0) {
+        v = v * 0.25;
+        s = s * 2.0;
+    }
+    while (v < 1.0) {
+        v = v * 4.0;
+        s = s * 0.5;
+    }
+    var y real = 0.5 * (1.0 + v);
+    var it int = 0;
+    while (it < 6) {
+        y = 0.5 * (y + v / y);
+        it += 1;
+    }
+    return y * s;
+}
+fn offset_cell(e int, o int) int {
+    var di int = OF[3 * o] as int;
+    var dj int = OF[3 * o + 1] as int;
+    var dk int = OF[3 * o + 2] as int;
+    var i int = e % EX + di;
+    var j int = (e / EX) % EY + dj;
+    var k int = e / (EX * EY) + dk;
+    return cell_at(i, j, k);
+}
+fn tanh_of(x real) real {
+    if (x != x || x == 0.0) {
+        return x;
+    }
+    var a real = x;
+    if (a < 0.0) {
+        a = -a;
+    }
+    var r real = 1.0;
+    if (a < 0.5) {
+        var term real = 1.0;
+        var sum real = 0.0;
+        var n int = 1;
+        while (n < 20) {
+            term = term * (2.0 * a) / (n as real);
+            sum += term;
+            n += 1;
+        }
+        r = sum / (sum + 2.0);
+    } else if (a < 22.0) {
+        r = 1.0 - 2.0 / (exp_of(2.0 * a) + 1.0);
+    }
+    if (x < 0.0) {
+        return -r;
+    }
+    return r;
+}
+fn proj(src real[>..]&, dst real[>..]&) {
+    var b real = ST[8];
+    var t real = PR[13];
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] == 0) {
+            dst[e] = 0.0;
+        } else if (MK[e] == 2) {
+            dst[e] = 1.0;
+        } else if (MK[e] == 1) {
+            if (b > 0.0) {
+                dst[e] = (tanh_of(b * t) + tanh_of(b * (src[e] - t))) / (tanh_of(b * t) + tanh_of(b * (1.0 - t)));
+            } else {
+                dst[e] = src[e];
+            }
+        }
+        e += 1;
+    }
+}
+fn dproj(x real) real {
+    var b real = ST[8];
+    var t real = PR[13];
+    if (b > 0.0) {
+        var th real = tanh_of(b * (x - t));
+        return b * (1.0 - th * th) / (tanh_of(b * t) + tanh_of(b * (1.0 - t)));
+    }
+    return 1.0;
+}
+export fn tp_start() i32 {
+    var nd int = 0;
+    var nk int = 0;
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] == 1) {
+            nd += 1;
+        }
+        if (MK[e] == 2) {
+            nk += 1;
+        }
+        e += 1;
+    }
+    var ndr real = nd as real;
+    var nkr real = nk as real;
+    ST[4] = ndr;
+    ST[5] = nkr;
+    var den int = nd;
+    if (den < 1) {
+        den = 1;
+    }
+    var denr real = den as real;
+    var start real = (PR[0] * (ndr + nkr) - nkr) / denr;
+    if (start > 1.0) {
+        start = 1.0;
+    }
+    if (start < 0.0) {
+        start = 0.0;
+    }
+    e = 0;
+    while (e < NE) {
+        if (MK[e] == 2) {
+            X[e] = 1.0;
+        } else if (MK[e] == 1) {
+            X[e] = start;
+        } else {
+            X[e] = 0.0;
+        }
+        e += 1;
+    }
+    var r real = PR[2];
+    if (r < 1.0) {
+        r = 1.0;
+    }
+    var rc int = r as int;
+    if ((rc as real) < r) {
+        rc += 1;
+    }
+    var m int = rc - 1;
+    OF.clear();
+    W.clear();
+    NO = 0;
+    var di int = -m;
+    while (di <= m) {
+        var dj int = -m;
+        while (dj <= m) {
+            var dk int = -m;
+            while (dk <= m) {
+                var sq int = di * di + dj * dj + dk * dk;
+                var dist real = root_of(sq as real);
+                if (dist < r) {
+                    var oi i32 = di as i32;
+                    var oj i32 = dj as i32;
+                    var ok i32 = dk as i32;
+                    OF.push(oi);
+                    OF.push(oj);
+                    OF.push(ok);
+                    W.push(r - dist);
+                    NO += 1;
+                }
+                dk += 1;
+            }
+            dj += 1;
+        }
+        di += 1;
+    }
+    e = 0;
+    while (e < NE) {
+        var sum real = 0.0;
+        if (MK[e] > 0) {
+            var o int = 0;
+            while (o < NO) {
+                var n int = offset_cell(e, o);
+                if (n >= 0) {
+                    if (MK[n] > 0) {
+                        sum += W[o];
+                    }
+                }
+                o += 1;
+            }
+        }
+        HS[e] = sum;
+        e += 1;
+    }
+    filt(X, XT);
+    if (PR[12] > 0.0) {
+        ST[8] = 1.0;
+    } else {
+        ST[8] = 0.0;
+    }
+    proj(XT, XP);
+    scales();
+    ST[7] = 0.0;
+    var out i32 = nd as i32;
+    return out;
+}
+fn filt(src real[>..]&, dst real[>..]&) {
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] == 0) {
+            dst[e] = 0.0;
+        } else if (MK[e] == 2) {
+            dst[e] = 1.0;
+        } else if (MK[e] == 1) {
+            var sum real = 0.0;
+            var o int = 0;
+            while (o < NO) {
+                var n int = offset_cell(e, o);
+                if (n >= 0) {
+                    if (MK[n] > 0) {
+                        sum += W[o] * src[n];
+                    }
+                }
+                o += 1;
+            }
+            dst[e] = sum / HS[e];
+        }
+        e += 1;
+    }
+}
+fn ln_of(x real) real {
+    var v real = x;
+    var k int = 0;
+    while (v > 1.5) {
+        v = v * 0.5;
+        k += 1;
+    }
+    while (v < 0.75) {
+        v = v * 2.0;
+        k -= 1;
+    }
+    var z real = (v - 1.0) / (v + 1.0);
+    var zz real = z * z;
+    var term real = z;
+    var sum real = 0.0;
+    var n int = 1;
+    while (n < 28) {
+        sum += term / (n as real);
+        term = term * zz;
+        n += 2;
+    }
+    return 2.0 * sum + (k as real) * 0.6931471805599453;
+}
+fn exp_of(y real) real {
+    if (y < -700.0) {
+        return 0.0;
+    }
+    var v real = y;
+    if (v > 700.0) {
+        v = 700.0;
+    }
+    var q real = v / 0.6931471805599453;
+    if (q >= 0.0) {
+        q += 0.5;
+    } else {
+        q -= 0.5;
+    }
+    var k int = q as int;
+    var f real = v - (k as real) * 0.6931471805599453;
+    var term real = 1.0;
+    var sum real = 1.0;
+    var n int = 1;
+    while (n < 18) {
+        term = term * f / (n as real);
+        sum += term;
+        n += 1;
+    }
+    while (k > 0) {
+        sum = sum * 2.0;
+        k -= 1;
+    }
+    while (k < 0) {
+        sum = sum * 0.5;
+        k += 1;
+    }
+    return sum;
+}
+fn power_of(x real, p real) real {
+    if (p == 0.0 || x == 1.0) {
+        return 1.0;
+    }
+    if (x <= 0.0) {
+        if (p > 0.0) {
+            return 0.0;
+        }
+        var zero real = 0.0;
+        return 1.0 / zero;
+    }
+    return exp_of(p * ln_of(x));
+}
+fn scales() {
+    var p real = PR[1];
+    var emin real = PR[4];
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] > 0) {
+            var v real = emin + power_of(XP[e], p) * (1.0 - emin);
+            var s f32 = v as f32;
+            DN[e] = s;
+        } else {
+            var z real = 0.0;
+            var s0 f32 = z as f32;
+            DN[e] = s0;
+        }
+        e += 1;
+    }
+}
+export fn tp_sens() real {
+    var p real = PR[1];
+    var emin real = PR[4];
+    var total real = 0.0;
+    var ue real[24];
+    var e int = 0;
+    while (e < NE) {
+        if (MK[e] > 0) {
+            var a int = 0;
+            while (a < 8) {
+                var n int = enode(e, a);
+                var c int = 0;
+                while (c < 3) {
+                    ue[3 * a + c] = U[3 * n + c];
+                    c += 1;
+                }
+                a += 1;
+            }
+            var ce real = 0.0;
+            var r int = 0;
+            while (r < 24) {
+                var q int = 0;
+                while (q < 24) {
+                    ce += ue[r] * KE[24 * r + q] * ue[q];
+                    q += 1;
+                }
+                r += 1;
+            }
+            CE[e] = ce * PR[5];
+            total += (emin + power_of(XP[e], p) * (1.0 - emin)) * CE[e];
+        }
+        e += 1;
+    }
+    ST[0] = total;
+    e = 0;
+    while (e < NE) {
+        if (MK[e] == 1) {
+            XN[e] = -p * (1.0 - emin) * power_of(XP[e], p - 1.0) * CE[e] * dproj(XT[e]);
+            SP[e] = dproj(XT[e]);
+        } else {
+            XN[e] = 0.0;
+            SP[e] = 0.0;
+        }
+        e += 1;
+    }
+    e = 0;
+    while (e < NE) {
+        var dc real = 0.0;
+        var dv real = 0.0;
+        if (MK[e] == 1) {
+            var o int = 0;
+            while (o < NO) {
+                var m int = offset_cell(e, o);
+                if (m >= 0) {
+                    if (MK[m] == 1) {
+                        dc += W[o] * XN[m] / HS[m];
+                        dv += W[o] * SP[m] / HS[m];
+                    }
+                }
+                o += 1;
+            }
+        }
+        DC[e] = dc;
+        DV[e] = dv;
+        e += 1;
+    }
+    return ST[0];
+}
+fn axis_count(ax int) int {
+    if (ax == 0) {
+        return EX;
+    }
+    if (ax == 1) {
+        return EY;
+    }
+    return EZ;
+}
+fn axis_stride(ax int) int {
+    if (ax == 0) {
+        return 1;
+    }
+    if (ax == 1) {
+        return EX;
+    }
+    return EX * EY;
+}
+fn constrain(xs real[>..]&) {
+    var pe real = PR[6];
+    if (pe == 0.0 || pe == 1.0 || pe == 2.0) {
+        var ax int = pe as int;
+        var count int = axis_count(ax);
+        var stride int = axis_stride(ax);
+        var e int = 0;
+        while (e < NE) {
+            if ((e / stride) % count == 0) {
+                var sum real = 0.0;
+                var num int = 0;
+                var t int = 0;
+                while (t < count) {
+                    var f int = e + t * stride;
+                    if (MK[f] == 1) {
+                        sum += xs[f];
+                        num += 1;
+                    }
+                    t += 1;
+                }
+                if (num > 0) {
+                    var numr real = num as real;
+                    var mean real = sum / numr;
+                    t = 0;
+                    while (t < count) {
+                        var g int = e + t * stride;
+                        if (MK[g] == 1) {
+                            xs[g] = mean;
+                        }
+                        t += 1;
+                    }
+                }
+            }
+            e += 1;
+        }
+    }
+    var ps real = PR[7];
+    if (ps == 0.0 || ps == 1.0 || ps == 2.0) {
+        var sx int = ps as int;
+        var len_s int = axis_count(sx);
+        var step int = axis_stride(sx);
+        var h int = 0;
+        while (h < NE) {
+            if (MK[h] == 1) {
+                var at int = (h / step) % len_s;
+                var m int = h + (len_s - 1 - 2 * at) * step;
+                if (MK[m] == 1) {
+                    var mid real = 0.5 * (xs[h] + xs[m]);
+                    xs[h] = mid;
+                    xs[m] = mid;
+                }
+            }
+            h += 1;
+        }
+    }
+}
+export fn tp_update() real {
+    var mv real = PR[3];
+    var target real = PR[0] * (ST[4] + ST[5]);
+    var l1 real = 0.0;
+    var l2 real = 1e9;
+    var lm real = 0.0;
+    var rounds int = 0;
+    while ((l2 - l1) / (l1 + l2 + 1e-30) > 1e-4 && rounds < 200) {
+        lm = 0.5 * (l1 + l2);
+        var e int = 0;
+        while (e < NE) {
+            if (MK[e] == 1) {
+                var top real = -DC[e];
+                if (top < 1e-30) {
+                    top = 1e-30;
+                }
+                var bot real = DV[e] * lm;
+                if (bot < 1e-30) {
+                    bot = 1e-30;
+                }
+                var v real = X[e] * root_of(top / bot);
+                var lo real = X[e] - mv;
+                if (lo < 0.0) {
+                    lo = 0.0;
+                }
+                var hi real = X[e] + mv;
+                if (hi > 1.0) {
+                    hi = 1.0;
+                }
+                if (v < lo) {
+                    v = lo;
+                }
+                if (v > hi) {
+                    v = hi;
+                }
+                XN[e] = v;
+            } else {
+                XN[e] = X[e];
+            }
+            e += 1;
+        }
+        constrain(XN);
+        zf(SM, NE, 0.0);
+        filt(XN, SM);
+        zf(SP, NE, 0.0);
+        proj(SM, SP);
+        var vol real = 0.0;
+        var s int = 0;
+        while (s < NE) {
+            if (MK[s] > 0) {
+                vol += SP[s];
+            }
+            s += 1;
+        }
+        if (vol > target) {
+            l1 = lm;
+        } else {
+            l2 = lm;
+        }
+        rounds += 1;
+    }
+    ST[6] = lm;
+    var change real = 0.0;
+    var c int = 0;
+    while (c < NE) {
+        if (MK[c] == 1) {
+            var d real = XN[c] - X[c];
+            if (d < 0.0) {
+                d = -d;
+            }
+            if (d > change) {
+                change = d;
+            }
+        }
+        c += 1;
+    }
+    ST[2] = change;
+    c = 0;
+    while (c < NE) {
+        X[c] = XN[c];
+        c += 1;
+    }
+    zf(XT, NE, 0.0);
+    filt(X, XT);
+    if (PR[12] > 0.0 && ST[8] < PR[12]) {
+        var iter int = (ST[7] + 1.0) as int;
+        var period int = PR[14] as int;
+        if (period < 1) {
+            period = 1;
+        }
+        if (iter > 0 && iter % period == 0) {
+            var beta real = 2.0 * ST[8];
+            if (beta > PR[12]) {
+                beta = PR[12];
+            }
+            ST[8] = beta;
+        }
+    }
+    zf(XP, NE, 0.0);
+    proj(XT, XP);
+    var kept real = 0.0;
+    var gray real = 0.0;
+    var nd int = 0;
+    c = 0;
+    while (c < NE) {
+        if (MK[c] > 0) {
+            kept += XP[c];
+        }
+        if (MK[c] == 1) {
+            gray += XP[c] * (1.0 - XP[c]);
+            nd += 1;
+        }
+        c += 1;
+    }
+    ST[1] = kept / (ST[4] + ST[5]);
+    if (nd > 0) {
+        ST[3] = 4.0 * gray / (nd as real);
+    } else {
+        ST[3] = 0.0;
+    }
+    scales();
+    ST[7] = ST[7] + 1.0;
+    return ST[2];
+}
+fn corner(a int, ax int) int {
+    if (ax == 0) {
+        if (a % 4 == 1 || a % 4 == 2) {
+            return 1;
+        }
+        return 0;
+    }
+    if (ax == 1) {
+        if (a % 4 >= 2) {
+            return 1;
+        }
+        return 0;
+    }
+    return a / 4;
+}
+export fn tp_mesh(iso real, passes i32) i32 {
+    zf(ND, NN, 0.0);
+    var k int = 0;
+    while (k < NZ) {
+        var j int = 0;
+        while (j < NY) {
+            var i int = 0;
+            while (i < NX) {
+                var sum real = 0.0;
+                var a int = 0;
+                while (a < 8) {
+                    var e int = cell_at(i - corner(a, 0), j - corner(a, 1), k - corner(a, 2));
+                    if (e >= 0) {
+                        sum += XP[e];
+                    }
+                    a += 1;
+                }
+                ND[(k * NY + j) * NX + i] = sum / 8.0;
+                i += 1;
+            }
+            j += 1;
+        }
+        k += 1;
+    }
+    zi(CV, NE, -1);
+    VP.clear();
+    TI.clear();
+    VV.clear();
+    var emax real = 0.0;
+    var m int = 0;
+    while (m < NE) {
+        if (MK[m] > 0) {
+            var en real = power_of(XP[m], PR[1]) * CE[m];
+            if (en > emax) {
+                emax = en;
+            }
+        }
+        m += 1;
+    }
+    var verts int = 0;
+    var tris int = 0;
+    var c int = 0;
+    while (c < NE) {
+        var ids int[8];
+        var inside int = 0;
+        var b int = 0;
+        while (b < 8) {
+            ids[b] = enode(c, b);
+            if (ND[ids[b]] > iso) {
+                inside += 1;
+            }
+            b += 1;
+        }
+        if (inside > 0 && inside < 8) {
+            var px real = 0.0;
+            var py real = 0.0;
+            var pz real = 0.0;
+            var hits int = 0;
+            var q int = 0;
+            while (q < 12) {
+                var ea int = q;
+                var eb int = (q + 1) % 4;
+                if (q >= 4) {
+                    eb = 4 + (q + 1) % 4;
+                }
+                if (q >= 8) {
+                    ea = q - 8;
+                    eb = q - 4;
+                }
+                var va real = ND[ids[ea]];
+                var vb real = ND[ids[eb]];
+                if ((va > iso) != (vb > iso)) {
+                    var t real = (iso - va) / (vb - va);
+                    if (t < 0.0) {
+                        t = 0.0;
+                    }
+                    if (t > 1.0) {
+                        t = 1.0;
+                    }
+                    px += (corner(ea, 0) as real) + t * ((corner(eb, 0) - corner(ea, 0)) as real);
+                    py += (corner(ea, 1) as real) + t * ((corner(eb, 1) - corner(ea, 1)) as real);
+                    pz += (corner(ea, 2) as real) + t * ((corner(eb, 2) - corner(ea, 2)) as real);
+                    hits += 1;
+                }
+                q += 1;
+            }
+            var gx real = ((c % EX) as real) + px / (hits as real);
+            var gy real = (((c / EX) % EY) as real) + py / (hits as real);
+            var gz real = ((c / (EX * EY)) as real) + pz / (hits as real);
+            VP.push(PR[8] + gx * PR[11]);
+            VP.push(PR[9] + gy * PR[11]);
+            VP.push(PR[10] + gz * PR[11]);
+            var load real = 0.0;
+            if (emax > 0.0) {
+                load = root_of(power_of(XP[c], PR[1]) * CE[c] / emax);
+            }
+            VV.push(load);
+            CV[c] = verts as i32;
+            verts += 1;
+        }
+        c += 1;
+    }
+    var nz int = 0;
+    while (nz < NZ) {
+        var ny int = 0;
+        while (ny < NY) {
+            var nx int = 0;
+            while (nx < NX) {
+                var ax int = 0;
+                while (ax < 3) {
+                    var q0 int = -1;
+                    var q1 int = -1;
+                    var q2 int = cell_at(nx, ny, nz);
+                    var q3 int = -1;
+                    var step int = 1;
+                    if (ax == 0) {
+                        q0 = cell_at(nx, ny - 1, nz - 1);
+                        q1 = cell_at(nx, ny, nz - 1);
+                        q3 = cell_at(nx, ny - 1, nz);
+                    }
+                    if (ax == 1) {
+                        q0 = cell_at(nx - 1, ny, nz - 1);
+                        q1 = cell_at(nx - 1, ny, nz);
+                        q3 = cell_at(nx, ny, nz - 1);
+                        step = NX;
+                    }
+                    if (ax == 2) {
+                        q0 = cell_at(nx - 1, ny - 1, nz);
+                        q1 = cell_at(nx, ny - 1, nz);
+                        q3 = cell_at(nx - 1, ny, nz);
+                        step = NX * NY;
+                    }
+                    if (q0 >= 0 && q1 >= 0 && q2 >= 0 && q3 >= 0) {
+                        var na int = (nz * NY + ny) * NX + nx;
+                        var ina bool = ND[na] > iso;
+                        var inb bool = ND[na + step] > iso;
+                        if (ina != inb) {
+                            if (ina) {
+                                TI.push(CV[q0]);
+                                TI.push(CV[q1]);
+                                TI.push(CV[q2]);
+                                TI.push(CV[q0]);
+                                TI.push(CV[q2]);
+                                TI.push(CV[q3]);
+                            } else {
+                                TI.push(CV[q0]);
+                                TI.push(CV[q2]);
+                                TI.push(CV[q1]);
+                                TI.push(CV[q0]);
+                                TI.push(CV[q3]);
+                                TI.push(CV[q2]);
+                            }
+                            tris += 2;
+                        }
+                    }
+                    ax += 1;
+                }
+                nx += 1;
+            }
+            ny += 1;
+        }
+        nz += 1;
+    }
+    NV = verts;
+    NT = tris;
+    var s int = 0;
+    while (s < passes as int) {
+        smooth();
+        s += 1;
+    }
+    tp_views();
+    var out i32 = NT as i32;
+    return out;
+}
+fn smooth() {
+    var step int = 0;
+    while (step < 2) {
+        var factor real = 0.5;
+        if (step == 1) {
+            factor = -0.53;
+        }
+        zf(SM, 3 * NV, 0.0);
+        zi(CN, NV, 0);
+        var t int = 0;
+        while (t < NT) {
+            var u int = 0;
+            while (u < 3) {
+                var from int = TI[3 * t + u] as int;
+                var w int = 0;
+                while (w < 3) {
+                    if (w != u) {
+                        var to int = TI[3 * t + w] as int;
+                        var d int = 0;
+                        while (d < 3) {
+                            SM[3 * to + d] = SM[3 * to + d] + VP[3 * from + d];
+                            d += 1;
+                        }
+                    }
+                    w += 1;
+                }
+                var cnt int = CN[from] as int;
+                var bumped i32 = (cnt + 2) as i32;
+                CN[from] = bumped;
+                u += 1;
+            }
+            t += 1;
+        }
+        var v int = 0;
+        while (v < NV) {
+            var n int = CN[v] as int;
+            if (n > 0) {
+                var c int = 0;
+                while (c < 3) {
+                    VP[3 * v + c] = VP[3 * v + c] + factor * (SM[3 * v + c] / (n as real) - VP[3 * v + c]);
+                    c += 1;
+                }
+            }
+            v += 1;
+        }
+        step += 1;
+    }
+}
+export fn tp_volume() real {
+    var sum real = 0.0;
+    var t int = 0;
+    while (t < NT) {
+        var ia int = TI[3 * t] as int;
+        var ib int = TI[3 * t + 1] as int;
+        var ic int = TI[3 * t + 2] as int;
+        var a int = 3 * ia;
+        var b int = 3 * ib;
+        var c int = 3 * ic;
+        var cx real = VP[b + 1] * VP[c + 2] - VP[b + 2] * VP[c + 1];
+        var cy real = VP[b + 2] * VP[c] - VP[b] * VP[c + 2];
+        var cz real = VP[b] * VP[c + 1] - VP[b + 1] * VP[c];
+        sum += VP[a] * cx + VP[a + 1] * cy + VP[a + 2] * cz;
+        t += 1;
+    }
+    return sum / 6.0;
+}
+fn main() {
+}
