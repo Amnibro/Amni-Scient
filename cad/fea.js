@@ -264,7 +264,7 @@ function voxelStress(P,u,mat,T,alpha,Tref){
 export async function runFEA(inp,prog){
   const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'||type==='spectrum'?15000:type==='thermal'||type==='tstress'||type==='species'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
   if(type==='species')return(await import('./species.js')).speciesRun(inp,P,prog,thermal);
-  if(type==='spectrum')return(await import('./spectrum.js')).spectrumRun(inp,P,prog,{modal,atVerts,dilate,fieldOut,gridOut});
+  if(type==='spectrum')return(await import('./spectrum.js')).spectrumRun(inp,P,prog,{modal,atVerts,dilate,fieldOut,gridOut});if(type==='drop')return(await import('./drop.js')).dropRun(inp,P,prog,{atVerts,dilate,fieldOut,gridOut});
   if(type==='topo')return topoVoxel(inp,P,prog);
   if(type==='current'||type==='estatic')return emVoxel(inp,P,prog);
   if(type==='buckle')return buckleVoxel(inp,P,prog);
