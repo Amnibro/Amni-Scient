@@ -37,12 +37,12 @@ export function connectBridge(API,{port=41777,span=5,code=null,onStatus=()=>{},r
     await settle();const R=API.renderer,cv=R.domElement,v=p.view&&p.view!=='current'?p.view:null,hid=()=>document.visibilityState==='hidden',lost=()=>{try{return R.getContext().isContextLost();}catch{return true;}},need=()=>!!S.mesh||(!!S.ws&&S.ws!=='part');
     const flat=()=>{const w=Math.min(72,cv.width),h=Math.min(72,cv.height),c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(cv,0,0,w,h);const d=g.getImageData(0,0,w,h).data;for(let i=4;i<d.length;i+=4)if(Math.abs(d[i]-d[0])+Math.abs(d[i+1]-d[1])+Math.abs(d[i+2]-d[2])+Math.abs(d[i+3]-d[3])>7)return false;return true;};
     const inView=()=>{if(!S.mesh||(S.ws&&S.ws!=='part'))return true;const b=S.mesh.props.bbox,c=API.camera,P=c.position.constructor;c.updateMatrixWorld();let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9,n=0;for(let q=0;q<8;q++){const t=new P(q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]).project(c);if(t.z<1&&t.z>-1){n++;x0=Math.min(x0,t.x);x1=Math.max(x1,t.x);y0=Math.min(y0,t.y);y1=Math.max(y1,t.y);}}return n>0&&x1>-1&&x0<1&&y1>-1&&y0<1&&(x1-x0>0.005||y1-y0>0.005);};
-    const draw=()=>{R.setRenderTarget(null);R.setScissorTest(false);const pr=R.getPixelRatio()||1;R.setViewport(0,0,cv.width/pr,cv.height/pr);R.render(API.scene,API.camera);};
+    const draw=()=>{R.setRenderTarget(null);R.setScissorTest(false);const pr=R.getPixelRatio()||1;R.setViewport(0,0,cv.width/pr,cv.height/pr);R.render(API.scene,API.camera);R.flush?.();};
     const why=()=>lost()?'lost':cv.width<2||cv.height<2?'size':!inView()?'view':need()&&flat()?'flat':'';
     const aim=()=>{API.controls&&API.controls.update();};
     v&&API.view(v,true);aim();draw();let bad=why();
     if(bad){
-      if(bad==='lost'){try{lc&&lc.restoreContext();}catch{}for(let i=0;i<8&&lost();i++)await sleep(250);}
+      if(bad==='lost'){try{(lc=lc||API.renderer.getContext().getExtension('WEBGL_lose_context'))&&lc.restoreContext();}catch{}for(let i=0;i<8&&lost();i++)await sleep(250);}
       API.view(v||'iso',true);aim();await sleep(50);draw();bad=why();
     }
     const stamp=(g,w,h)=>{const lg=S.flow&&S.flow.r&&(S.flow.r.legend);if(!lg)return;const x=16,y=Math.max(28,h-40),bw=Math.min(280,Math.max(80,w-32));g.fillStyle='rgba(8,9,11,.78)';g.fillRect(x-8,y-20,bw+16,48);const grd=g.createLinearGradient(x,0,x+bw,0);['#2b59c3','#2bb5c3','#3fd07a','#f2d22e','#f2832e','#e0322e'].forEach((c,i)=>grd.addColorStop(i/5,c));g.fillStyle=grd;g.fillRect(x,y,bw,12);g.fillStyle='#fff';g.font='12px sans-serif';g.textAlign='left';g.fillText(String(lg.t||'Flow'),x,y-6);g.fillText(String(lg.l0||''),x,y+26);g.textAlign='right';g.fillText(String(lg.l1||''),x+bw,y+26);g.textAlign='left';};
