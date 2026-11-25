@@ -207,7 +207,7 @@ async function modal(inp,P,prog){
     const ux=new Float32Array(n);for(let i=0;i<n;i++)ux[i]=x[i]/(um||1);for(let q=0;q<P.nn;q++)u[q]/=um||1;
     const rec={f:Math.sqrt(Math.max(lam,0))/(2*Math.PI),omega:Math.sqrt(Math.max(lam,0)),res:E.res[j],meff:gm.map(g=>g*g/(mt||1)),vDisp:atVerts(G,L,ux,3,pos,cnt),u:dilate(G,cnt,[u])[0],wireU:skinU(wire,ux)};if(inp.keepVec)rec.vec=x.slice();modes.push(rec);}
   const m0=modes[0],vMag=new Float32Array(pos.length/3);if(m0)for(let q=0;q<vMag.length;q++)vMag[q]=Math.hypot(m0.vDisp[3*q],m0.vDisp[3*q+1],m0.vDisp[3*q+2]);
-  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire};
+  return{type:'modal',modes,freqs:modes.map(m=>m.f),rigid:free?6:rigid,free,mass:mt*1000,vStress:vMag,vDisp:m0?m0.vDisp.slice():new Float32Array(pos.length),field:fieldOut(P,{vm:m0?m0.u.slice():new Float32Array(P.nn),u:m0?m0.u.slice():new Float32Array(P.nn)}),vmMax:1,vmP99:1,uMax:1,...gridOut(P),nDof:n,iters:E.iters,rel:maxOf(E.res.slice(0,nev)),levels:Ls.length,ms:Date.now()-t0,backend:gpu?'gpu':'cpu',gpuError,wire,...(inp.keepVec?{Mv,L,cnt}:{})};
 }
 const SIGMA=5.670374419e-8;
 async function thermal(inp,P,prog){
@@ -262,8 +262,9 @@ function voxelStress(P,u,mat,T,alpha,Tref){
   return{vm,p1,vmMax,vmAway,p1Max,trescaMax:trMax};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'||type==='species'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  const type=inp.type||'static';if(type==='acoustic'&&!inp.meshOnly)return(await import('./acoustic.js')).acousticRun(inp,prog);const P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'||type==='spectrum'?15000:type==='thermal'||type==='tstress'||type==='species'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
   if(type==='species')return(await import('./species.js')).speciesRun(inp,P,prog,thermal);
+  if(type==='spectrum')return(await import('./spectrum.js')).spectrumRun(inp,P,prog,{modal,atVerts,dilate,fieldOut,gridOut});
   if(type==='topo')return topoVoxel(inp,P,prog);
   if(type==='current'||type==='estatic')return emVoxel(inp,P,prog);
   if(type==='buckle')return buckleVoxel(inp,P,prog);

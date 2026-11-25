@@ -10,7 +10,7 @@ try{
   ok(/Diffusion/.test(T0)&&/Species A/.test(T0)&&/Diffusivity/.test(T0)&&/Concentration 1/.test(T0)&&/Mass transfer 1/.test(T0)&&/Run diffusion analysis/.test(T0),'the Diffusion study shows the species card, its faces and the run button',T0.slice(0,200));
   ok(!/Mesher/.test(T0),'the voxel-only study hides the mesher choice');
   const pk=await p.evaluate(()=>{const s=document.getElementById('sim-study');return{v:s.value,g:[...s.querySelectorAll('optgroup')].map(g=>g.label+':'+g.children.length),hint:document.getElementById('sim-hint').textContent,btns:document.querySelectorAll('#tab-sim .seg button').length};});
-  ok(pk.v==='species'&&pk.g.join()==='Structural:5,Dynamics:4,Heat and fields:5,Nonlinear:3,Design:3'&&/diffusion/i.test(pk.hint),'the study dropdown groups 20 studies into 5 categories and explains the pick',pk);
+  ok(pk.v==='species'&&pk.g.join()==='Structural:5,Dynamics:5,Heat and fields:5,Nonlinear:3,Design:3'&&/diffusion/i.test(pk.hint),'the study dropdown groups 21 studies into 5 categories and explains the pick',pk);
   await shot('study_list');
   const s1=await run(),a=s1.species&&s1.species[0],N=1e-4/(0.1/1e-9+1/1e-8);
   ok(s1.type==='species'&&Math.abs(a.fixed_mol_s[0]/N-1)<0.03&&Math.abs(a.c_min-0.5)<0.02,'the run matches diffusion and film resistances in series',a);
