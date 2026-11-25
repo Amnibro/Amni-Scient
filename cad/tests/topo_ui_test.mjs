@@ -1,0 +1,28 @@
+import {spawn} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createRequire} from 'node:module';import {asPro} from './pro_key.mjs';
+const root=path.resolve(new URL('../..',import.meta.url).pathname),P=createRequire(import.meta.url)(process.env.PUPPETEER||path.join(os.homedir(),'.npm/_npx/8003d8991b0d346b/node_modules/puppeteer-core')),port=process.env.PORT||'18957',ud=fs.mkdtempSync(path.join(os.tmpdir(),'topoui-')),shots=process.env.SHOTS||null,sleep=t=>new Promise(r=>setTimeout(r,t));
+const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});
+let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
+try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:900000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await asPro(p);await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+  const shot=async n=>shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.mesh,{timeout:90000});await sleep(1200);
+  const built=()=>p.waitForFunction(()=>{const S=window.amnicad.S;return S.mesh&&!S.building&&document.getElementById('busy').style.display!=='flex';},{timeout:90000}).then(()=>sleep(500));
+  await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'al6061',params:[],features:[{id:'a',type:'box',w:120,d:14,h:40,x:60}],sim:{type:'topo',res:9000,supports:[{faces:{side:'-X'},type:'fixed'}],loads:[{faces:{side:'+X'},F:[0,0,-1000]}],topo:{keep:0.35,iters:20}}},null,true));await built();
+  await p.evaluate(()=>window.amnicad.API.setTab('sim'));await sleep(800);
+  const ui=await p.evaluate(()=>{const el=document.getElementById('tab-sim'),bt=[...el.querySelectorAll('button')],tp=bt.find(x=>x.textContent.trim()==='Topology');return{has:!!tp,on:!!tp&&tp.classList.contains('on'),run:(document.getElementById('fea-run')||{}).textContent,txt:el.textContent};});
+  ok(ui.has&&ui.on,'Topology is a study in the Sim tab and is selected',ui);
+  ok(/Keep/.test(ui.txt)&&/Smallest member/.test(ui.txt)&&/Draw direction/.test(ui.txt)&&/Mirror across/.test(ui.txt),'setup shows keep, smallest member, draw direction and mirror');
+  ok(ui.run==='Run topology analysis','run button names the study',ui.run);
+  await shot('topo_setup');
+  await p.evaluate(()=>document.getElementById('fea-run').click());
+  await p.waitForFunction(()=>{const S=window.amnicad.S;return S.fea&&S.fea.r&&S.fea.r.type==='topo';},{timeout:600000,polling:500});await sleep(1500);
+  const res=await p.evaluate(()=>{const S=window.amnicad.S,el=document.getElementById('tab-sim');return{sum:S.lastFea,txt:el.textContent,lg:document.getElementById('lgt').textContent,skin:!!(S.fea.r.skin&&S.fea.r.skin.idx.length)};});
+  ok(res.sum&&res.sum.type==='topo'&&Math.abs(res.sum.keep_fraction-0.35)<0.03,'summary reports the kept fraction',res.sum);
+  ok(res.sum&&res.sum.mass_kg<res.sum.original_mass_kg&&Math.abs(res.sum.original_mass_kg-0.18144)<0.002,'original mass is the part (6061, 0.181 kg) and the shape is lighter',[res.sum&&res.sum.mass_kg,res.sum&&res.sum.original_mass_kg]);
+  ok(/Open in Form/.test(res.txt)&&/Save STL/.test(res.txt)&&/Compliance/.test(res.txt),'results offer Open in Form and Save STL');
+  ok(res.lg==='Load carried (relative)'&&res.skin,'viewport shows the optimized shape colored by load',res.lg);
+  await shot('topo_result');
+  const stl=await p.evaluate(async()=>{const m=await import('./exporters.js'),sk=window.amnicad.S.fea.r.skin,u=m.toSTL(sk,'optimized',{raw:true});return{n:new DataView(u.buffer).getUint32(80,true),bytes:u.length};});
+  ok(stl.n>100&&stl.bytes===84+stl.n*50,'Save STL writes the shape as binary STL',stl);
+  ok(!errs.length,'no page errors',errs);
+}catch(e){fail++;console.log('FAIL',e.message);}finally{try{b&&await b.close();}catch{}srv.kill();fs.rmSync(ud,{recursive:true,force:true});}
+console.log(fail?fail+' failed':'all passed');process.exitCode=fail?1:0;

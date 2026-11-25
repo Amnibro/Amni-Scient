@@ -65,9 +65,9 @@ export function voxelize(pos,idx,bb,h,triMask){
 }
 export function keHeat(){const g=1/Math.sqrt(3),K=new Float64Array(64);for(const xi of[-g,g])for(const et of[-g,g])for(const ze of[-g,g]){const D=NODES.map(([a,b,c])=>[a*(1+b*et)*(1+c*ze)/4,b*(1+a*xi)*(1+c*ze)/4,c*(1+a*xi)*(1+b*et)/4]);for(let a=0;a<8;a++)for(let b=0;b<8;b++)K[a*8+b]+=(D[a][0]*D[b][0]+D[a][1]*D[b][1]+D[a][2]*D[b][2])/8;}return K;}
 function densOf(G){const d=new Float32Array(G.nx*G.ny*G.nz);for(let e=0;e<d.length;e++)d[e]=G.solid[e]?Math.max(G.frac[e],0.12):0;return d;}
-const FG=helium('fea_grid'),LB=helium('lob');let NSW=1,RES_MAX=800000,CELL_MAX=Infinity;export function setSweeps(n){NSW=n;}export const setResMax=(n,cells=Infinity)=>{RES_MAX=n;CELL_MAX=cells;};
+const FG=helium('fea_grid'),TP=helium('topo'),EM=helium('em'),LB=helium('lob'),EPS0=8.8541878128e-15;let NSW=1,RES_MAX=800000,CELL_MAX=Infinity;export function setSweeps(n){NSW=n;}export const setResMax=(n,cells=Infinity)=>{RES_MAX=n;CELL_MAX=cells;};
 const lev=(H,l,nd)=>{const om=H.ex.fg_level(l),d=k=>H.ex.fg_dim(l,k),nx=d(0),ny=d(1),nz=d(2);return{nx,ny,nz,NX:nx+1,NY:ny+1,NZ:nz+1,nn:d(3),nd,E:H.get(20),sc:H.get(21),...(l?{KE:H.get(22)}:{}),fixed:H.get(23),diag:H.get(24),om};};
-async function setup(G,K,nd,fixed,dadd,mg,lazy){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;let n;try{x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.put(1,densOf(G));H.put(2,K);H.put(3,fixed);dadd&&H.put(4,dadd);n=x.fg_setup(mg===false?0:1,lazy?1:0);}catch(e){throw/address space|past its region/.test(e.message)&&!H.native?new Error('This model is too large for the in-browser solver ('+(G.nx*G.ny*G.nz).toLocaleString('en-US')+' grid cells). Lower the resolution, or run it with the Amni-CAD headless API, which solves natively without the 4 GB browser limit.'):e;}const Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));H.into(14,fixed);Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
+async function setup(G,K,nd,fixed,dadd,mg,lazy,dens){let P=null;const H=await FG({fg_prog:(i,r)=>P&&P(i,r)}),x=H.ex;let n;try{x.fg_sweeps(NSW);x.fg_grid(G.nx,G.ny,G.nz,nd,dadd?1:0);H.put(1,dens||densOf(G));H.put(2,K);H.put(3,fixed);dadd&&H.put(4,dadd);n=x.fg_setup(mg===false?0:1,lazy?1:0);}catch(e){throw/address space|past its region/.test(e.message)&&!H.native?new Error('This model is too large for the in-browser solver ('+(G.nx*G.ny*G.nz).toLocaleString('en-US')+' grid cells). Lower the resolution, or run it with the Amni-CAD headless API, which solves natively without the 4 GB browser limit.'):e;}const Ls=Array.from({length:n},(_,l)=>l?null:lev(H,0,nd));H.into(14,fixed);Object.assign(Ls[0],{fixed,dadd:dadd||null});return Object.assign(Ls,{he:H,prog:f=>{P=f;},all:()=>{for(let l=1;l<n;l++)Ls[l]=Ls[l]||lev(H,l,nd);return Ls;}});}
 const mv=(Ls,x,y,raw)=>{const H=Ls.he;H.put(12,x);H.ex.fg_matvec(raw?1:0);H.into(13,y);},vcycle=(Ls,r,z)=>{const H=Ls.he;H.put(10,r);H.ex.fg_vcycle();H.into(12,z);},om0=Ls=>{Ls[0].om=Ls.he.ex.fg_om0(Ls[0].om>0?Ls[0].om:0)||undefined;};
 function pcg(Ls,f,opt,prog){const H=Ls.he;H.put(10,f);Ls.prog(prog?(i,r)=>prog(i,r,opt.phase||'solve'):null);const iters=H.ex.fg_pcg(opt.tol||0,opt.maxIt||0);Ls.prog(null);return{u:H.get(11),iters,rel:H.ex.fg_rel()};}
 async function solve(Ls,K,f,opt={},prog){
@@ -78,7 +78,7 @@ async function solve(Ls,K,f,opt={},prog){
 }
 export async function solveGrid(G,mat,dof,force,opt={},prog){
   const K=keHex(mat.nu),Eh=mat.E*G.h;for(let i=0;i<576;i++)K[i]*=Eh;
-  const sv=opt.dadd?'cpu':opt.solver,Ls=await setup(G,K,3,dof,opt.dadd||null,opt.mg,sv!=='cpu'),L=Ls[0],u0=opt.u0,y=u0?new Float64Array(force.length):null;y&&mv(Ls,u0,y,true);const S=await solve(Ls,K,y?force.map((v,i)=>v-y[i]):force,{...opt,solver:sv},prog),u=S.u;if(u0)for(let i=0;i<u.length;i++)u[i]+=u0[i];
+  const sv=opt.dadd?'cpu':opt.solver,Ls=await setup(G,K,3,dof,opt.dadd||null,opt.mg,sv!=='cpu',opt.dens),L=Ls[0],u0=opt.u0,y=u0?new Float64Array(force.length):null;y&&mv(Ls,u0,y,true);const S=await solve(Ls,K,y?force.map((v,i)=>v-y[i]):force,{...opt,solver:sv},prog),u=S.u;if(u0)for(let i=0;i<u.length;i++)u[i]+=u0[i];
   const DB=bCenter(mat.nu),ne=L.sc.length,vm=new Float32Array(ne),sig=new Float32Array(ne*6),ue=new Float64Array(24),s=mat.E/G.h;
   for(let q=0;q<ne;q++){
     for(let a=0;a<8;a++){const nd=L.E[q*8+a]*3;ue[3*a]=u[nd];ue[3*a+1]=u[nd+1];ue[3*a+2]=u[nd+2];}
@@ -223,7 +223,7 @@ async function thermal(inp,P,prog){
     const cv=areas.conv.map((acc,i)=>{const hc=(conv[i].h||10)*1e-6;for(const[n,v]of acc){dadd[n]+=hc*v[0];f[n]+=hc*v[0]*(conv[i].Tinf??20);}return acc;});
     areas.rad.forEach((acc,i)=>{const eps=rad[i].eps!=null?+rad[i].eps:0.8,Ti=rad[i].Tinf??20;for(const[n,v]of acc){const Tn=Tprev[n]||Ti,hr=eps*SIGMA*(Tn*Tn+Ti*Ti)*(Tn+Ti)*1e-6;dadd[n]+=hr*v[0];f[n]+=hr*v[0]*Ti;}});
     const qin=areas.flux.map((acc,i)=>{let tot=0;for(const v of acc.values())tot+=v[0];let Q=0;for(const[n,v]of acc){const q=flux[i].Q!=null?flux[i].Q*v[0]/(tot||1):(flux[i].q||0)*v[0];f[n]+=q;Q+=q;}return Q;});
-    let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}
+    let qv=0;if(inp.Qvol){let vt=0;for(let n=0;n<nn;n++)vt+=P.vol[n];for(let n=0;n<nn;n++){const q=inp.Qvol*P.vol[n]/(vt||1);f[n]+=q;}qv=inp.Qvol;}if(inp.qNode){for(let n=0;n<nn;n++){f[n]+=inp.qNode[n];qv+=inp.qNode[n];}}
     if(useC)for(let n=0;n<nn;n++)if(C[n]&&!fixed[n]){const a=C[n]/dt;dadd[n]+=a;f[n]+=a*Tprev[n];}
     const Ls=await setup(G,K,1,fixed,dadd,inp.mg),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
     const S=await solve(Ls,K,b,{tol:inp.tol||1e-7,mg:inp.mg,solver:'cpu',phase:'thermal'},prog),Tn=new Float64Array(nn);for(let n=0;n<nn;n++)Tn[n]=S.u[n]+u0[n];
@@ -262,7 +262,9 @@ function voxelStress(P,u,mat,T,alpha,Tref){
   return{vm,p1,vmMax,vmAway,p1Max,trescaMax:trMax};
 }
 export async function runFEA(inp,prog){
-  const type=inp.type||'static',P=prep(inp,type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  const type=inp.type||'static',P=prep(inp,type==='topo'?25000:type==='current'||type==='estatic'?60000:type==='modal'?15000:type==='thermal'||type==='tstress'?60000:40000);if(inp.meshOnly){const G=P.G;return{type:'mesh',wire:voxSkin(G.nx,G.ny,G.nz,G.solid,P.xyz),nEl:P.nAct,h:P.h,...gridOut(P)};}
+  if(type==='topo')return topoVoxel(inp,P,prog);
+  if(type==='current'||type==='estatic')return emVoxel(inp,P,prog);
   if(type==='buckle')return buckleVoxel(inp,P,prog);
   if(type==='psd')return psdVoxel(inp,P,prog);
   if(type==='fatigue')return fatigueVoxel(inp,P,prog);
@@ -295,6 +297,40 @@ async function psdVoxel(inp,P,prog){
   const zeta=inp.zeta!=null?+inp.zeta:0.02,S0=inp.psd!=null?+inp.psd:1,rms=miles(f0,zeta,S0),peak=modalR.uMax||1,k=rms/peak;
   const scale=a=>a&&a.length?Float32Array.from(a,v=>v*k):a;
   return{...modalR,type:'psd',freq:f0,zeta,psd:S0,rms,uMax:rms,vmMax:rms,vmP99:rms,vDisp:scale(modalR.vDisp),vStress:scale(modalR.vStress),legendTitle:'RMS displacement (mm)',legendUnit:'len'};
+}
+const AXI={X:0,Y:1,Z:2};
+async function topoVoxel(inp,P,prog){
+  const mat=inp.mat,G=P.G,o=inp.topo||{},dof=supportMask(inp,P),{f,ap}=loadVec(inp,P,mat);if(!dof.some(Boolean))throw new Error('add at least one fixed face');if(!(inp.loads||[]).length&&!inp.accel&&!mat.g)throw new Error('add at least one load');
+  const T=await TP({}),x=T.ex,ne=x.tp_grid(G.nx,G.ny,G.nz),mk=new Int32Array(ne),nk=new Int32Array(P.nn),vf=Math.min(0.95,Math.max(0.05,o.keep!=null?+o.keep:0.35)),iters=Math.max(3,Math.min(o.iters||40,200)),rmin=Math.max(1.5,o.member?+o.member/P.h:2);
+  for(let e=0;e<ne;e++)mk[e]=G.solid[e]?1:0;for(let n=0;n<P.nn;n++)nk[n]=dof[3*n]||dof[3*n+1]||dof[3*n+2]||f[3*n]||f[3*n+1]||f[3*n+2]?1:0;
+  T.put(9,mk);T.put(10,nk);T.put(4,keHex(mat.nu));T.put(5,[vf,o.penal||3,rmin,o.move||0.2,o.emin||1e-3,mat.E*P.h,AXI[o.axis]??-1,AXI[o.sym]??-1,G.ox,G.oy,G.oz,P.h,o.sharp??8,0.5,o.step||Math.max(3,Math.round(iters/5)),0]);
+  const kept=x.tp_keep(Math.max(1,o.layers||2)),nd=x.tp_start();if(nd<8)throw new Error('nothing left to optimize: the supports and loads cover the whole part');
+  const hist=[],t0=Date.now();let u0=null,it=0,c0=0,ch=1;
+  for(;it<iters;it++){const S=await solveGrid(G,mat,dof,f,{tol:inp.tol||1e-3,mg:inp.mg,solver:inp.solver,gpuMin:inp.gpuMin,dens:Float32Array.from(T.v(12)),u0},null);T.put(3,S.u);const c=x.tp_sens();ch=x.tp_update();const st=T.get(6);c0||(c0=c);hist.push([+c.toFixed(4),+st[1].toFixed(4),+st[3].toFixed(4)]);prog&&prog(it+1,ch,'shape');u0=S.u;if(it>=Math.min(15,iters-1)&&ch<(o.tol||0.01)&&st[8]>=T.v(5)[12])break;}
+  x.tp_mesh(o.iso||0.5,o.smooth??7);const st=T.get(6),pos=Float32Array.from(T.v(7)),idx=Uint32Array.from(T.v(11)),vol=x.tp_volume(),rho=mat.rho||7850;
+  if(!idx.length)throw new Error('the optimized shape came out empty; keep more material');
+  return{type:'topo',skin:{pos,idx,vm:Float32Array.from(T.v(13))},vStress:new Float32Array(inp.pos.length/3),legendLo:0,legendHi:1,legendUnit:'raw',dens:Float32Array.from(T.v(2)),keep:vf,volFrac:+st[1].toFixed(4),gray:+st[3].toFixed(4),compliance:+(hist.at(-1)?.[0]??0).toFixed(4),compliance0:+c0.toFixed(4),iters:hist.length,converged:ch<(o.tol||0.01),change:+ch.toFixed(4),hist,volume:vol,volume0:inp.volume,mass:vol*1e-9*rho,mass0:(inp.volume||0)*1e-9*rho,nDesign:nd,nKept:kept,member:rmin*P.h,ms:Date.now()-t0,applied:ap,legendTitle:'Load carried (relative)',...gridOut(P)};
+}
+async function emVoxel(inp,P,prog){
+  const{G,pos}=P,cur=inp.type==='current',el=inp.elec||{},c=cur?(el.sigma||0)*1e-3:(el.er||1)*EPS0,nn=P.nn,K=keHeat(),volts=inp.volts||[],amps=cur?inp.amps||[]:[];
+  if(!(c>0))throw new Error('this material does not conduct electricity; pick a metal or set a conductivity');
+  if(!volts.length)throw new Error(cur?'add a voltage terminal (0 V for ground)':'add two electrodes');
+  if(cur?volts.length+amps.length<2:volts.length<2)throw new Error(cur?'add a second terminal: another voltage or a current input':'add a second electrode');
+  for(let i=0;i<64;i++)K[i]*=c*G.h;
+  const av=volts.map(b=>P.at(b.faces)),aa=amps.map(b=>P.at(b.faces)),fixed=new Uint8Array(nn),u0=new Float64Array(nn),f=new Float64Array(nn),tg=new Int16Array(nn).fill(-1),t0=Date.now();
+  const E=await EM({}),x=E.ex,ne=x.em_grid(G.nx,G.ny,G.nz),mk=new Int32Array(ne),EI=new Int32Array(nn).fill(-1),EN=new Float64Array(3*nn);for(let e=0;e<ne;e++)mk[e]=G.solid[e]?1:0;volts.forEach((b,bi)=>{for(const[n,v]of av[bi]){EI[n]=bi;EN[3*n]+=v[1];EN[3*n+1]+=v[2];EN[3*n+2]+=v[3];}});E.put(8,mk);E.put(9,Float64Array.from(G.frac));E.put(12,EI);E.put(10,EN);x.em_prep();const ei=E.get(12);for(let n=0;n<nn;n++)if(ei[n]>=0){fixed[n]=1;u0[n]=+volts[ei[n]].V||0;tg[n]=ei[n];}
+  aa.forEach((acc,i)=>{let tot=0;for(const v of acc.values())tot+=v[0];for(const[n,v]of acc)f[n]+=(+amps[i].I||0)*v[0]/(tot||1);});
+  const Ls=await setup(G,K,1,fixed,null,inp.mg,false,Float32Array.from(E.v(11))),L=Ls[0],y=new Float64Array(nn);mv(Ls,u0,y);const b=new Float64Array(nn);for(let n=0;n<nn;n++)b[n]=L.fixed[n]?0:f[n]-y[n];
+  const S=await solve(Ls,K,b,{tol:inp.tol||1e-9,mg:inp.mg,solver:'cpu',phase:cur?'current':'field'},prog),V=new Float64Array(nn);for(let n=0;n<nn;n++)V[n]=S.u[n]+u0[n];
+  mv(Ls,V,y,true);const It=volts.map(()=>0);for(let n=0;n<nn;n++)if(tg[n]>=0)It[tg[n]]+=y[n]-f[n];
+  const Va=aa.map(acc=>{let s=0,w=0;for(const[n,v]of acc){s+=V[n]*v[0];w+=v[0];}return w?s/w:0;}),terms=[...volts.map((t,i)=>({kind:'voltage',V:+t.V||0,I:It[i]})),...amps.map((t,i)=>({kind:'current',V:Va[i],I:+t.I||0}))];
+  E.put(5,[G.h,c,4096,0,0,0,0,0]);E.put(1,V);const sum=x.em_fields(),st=E.get(6);
+  const Vs=terms.map(t=>t.V),dV=Math.max(...Vs)-Math.min(...Vs),Iin=terms.reduce((a,t)=>a+Math.max(0,t.I),0),Pw=terms.reduce((a,t)=>a+t.V*t.I,0),sc=cur?1:1e-3,{c:cnt}=nodalField(G,L,null),NF=new Float32Array(nn),VN=new Float32Array(nn),nf=E.v(3);
+  for(let n=0;n<nn;n++){NF[n]=nf[n]*(cur?c:sc);VN[n]=V[n];}const vF=atVerts(G,L,NF,1,pos,cnt),vV=atVerts(G,L,VN,1,pos,cnt);dilate(G,cnt,[NF,VN]);
+  const hi=st[1]*(cur?c:sc)||st[0]*(cur?c:sc)||1,ds=el.ds,Ep=st[1]*sc,views={F:{v:vF,f:NF,lo:0,hi,title:cur?'Current density (A/mm²)':'Electric field (kV/mm)'},V:{v:vV,f:VN,lo:Math.min(...Vs),hi:Math.max(...Vs)>Math.min(...Vs)?Math.max(...Vs):Math.min(...Vs)+1,title:'Voltage (V)'}};
+  let th=null;if(cur&&((inp.conv||[]).length||(inp.temps||[]).length||(inp.rad||[]).length)){const q=E.v(4),k=sum>0?Pw/sum:0,qNode=new Float64Array(nn);for(let n=0;n<nn;n++)qNode[n]=q[n]*k;th=await thermal({...inp,type:'thermal',flux:[],Qvol:0,qNode},P,prog);views.T={v:th.vT,f:th.field.T,lo:th.Tmin,hi:th.Tmax>th.Tmin?th.Tmax:th.Tmin+1,title:'Temperature (°C)'};}
+  const out={type:inp.type,views,view:"F",vStress:vF,vDisp:new Float32Array(pos.length),legendTitle:views.F.title,legendLo:0,legendHi:hi,legendUnit:'raw',vmP99:hi,vmMax:st[0]*(cur?c:sc),uMax:0,terminals:terms,dV,field:fieldOut(P,{vm:NF,T:th?th.field.T:VN,u:VN}),elec:el,...gridOut(P),nDof:nn,iters:S.iters,rel:S.rel,levels:Ls.length,ms:Date.now()-t0,backend:S.backend};
+  return cur?{...out,I:Iin,R:Iin>0?dV/Iin:null,P:Pw,Jmax:out.vmMax,Jp99:hi,Jmean:st[4]*c,...(th?{Tmin:th.Tmin,Tmax:th.Tmax,vT:th.vT,Q:th.Q,heatBalance:th.balance}:{})}:{...out,Q:Iin,C:dV>0?Iin/dV:null,W:Pw/2,Emax:out.vmMax,Ep99:Ep,Emean:st[4]*sc,ds,sf:ds&&Ep>0?ds/Ep:null};
 }
 async function buckleVoxel(inp,P,prog){
   const mat=inp.mat,dof=supportMask(inp,P),{f,ap}=loadVec(inp,P,mat);if(!dof.some(Boolean))throw new Error('add at least one fixed face');
