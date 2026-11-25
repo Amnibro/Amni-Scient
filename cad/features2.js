@@ -5,6 +5,7 @@ import {sheetPart} from './sheet.js';
 import * as D from './datum.js';
 import {maxOf,minOf} from './minmax.js';
 import {FEDIT} from './faceedit.js';
+import {FSURF} from './surfacing.js';
 export function chamferSides(body,es,f){
   const a=+f.angle||0,d2=+f.d2||0;if(a<0||a>=90)throw new Error('chamfer angle must be above 0 and below 90 degrees');if(d2<0)throw new Error('second chamfer distance must be 0 or more');
   const hs=new Set(es.map(q=>q.e.hashCode)),adj=new Map();
@@ -78,4 +79,4 @@ function combine(f,body,K,doc,tools){
   return{shape:out.length===1?out[0]:R.makeCompound(out),warn};
 }
 const datum=(kind,fr)=>(f,body,K)=>({shape:body,dat:{kind,...fr(f,body,K)}});
-export const FEAT2={sketch:(f,b)=>({shape:b}),draft,rib,combine,sheet:sheetPart,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint),...FEDIT};
+export const FEAT2={sketch:(f,b)=>({shape:b}),draft,rib,combine,sheet:sheetPart,datum_plane:datum('plane',D.frameOfPlane),datum_axis:datum('axis',D.frameOfAxis),datum_point:datum('point',D.frameOfPoint),...FEDIT,...FSURF};

@@ -15,9 +15,10 @@ import {maxOf,minOf,pushAll} from './minmax.js';
 import {heliumSync} from './he/host.js';
 import {SHAPES} from './frame.js';
 import {featSec,ENDS} from './profiles.js';
+import {vfillet,isVar,betweenEdges} from './surfacing.js';
 export {evalExpr,resolveParams,HOLESTD_IN,THREADSTD,HOLESTD};
 const KN=(await heliumSync('kern'))({});KN.ex.kn_views();const FR=(await heliumSync('frame'))({});FR.ex.fr_init();
-const STRKEYS=new Set(['feature','src','sec','ends','release','twist','about','tsec','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
+const STRKEYS=new Set(['feature','vary','cont','src','sec','ends','release','twist','about','tsec','edge','corner','datum','mode','from','pa','pb','pull','neutral','nface','face','faces','edges','id','type','name','op','plane','dir','kind','axis','side','by','k','text','blob','note','normal','origin','of','material','std','fit','keep','hand','color','fmt','code','prof','shank','brg','spindle','head','threadId','tfamily','tclass']);
 let UNITS='mm',NOTES=[];
 const M=v=>UNITS==='in'?clean(v/25.4):v,fu=(v,u=UNITS)=>+(+v).toFixed(4)+(u==='°'?'°':' '+u),note=(L,pre='')=>{for(const q of L)NOTES.push({...q,field:pre+q.k,fix:(q.fix||[]).map(x=>fixPre(x,pre))});},flo3=v=>{const q=10**(Math.floor(Math.log10(v))-2);return+(Math.floor(v/q+1e-9)*q).toFixed(9);};
 const AXV=a=>Array.isArray(a)?nrm(a.map(Number)):AX[a||'Z']||AX.Z,FNAME={top:'+Z',bottom:'-Z',front:'-Y',back:'+Y',right:'+X',left:'-X'};
@@ -65,12 +66,13 @@ export function selectEdges(shape,sel){
   const sels=Array.isArray(sel)?sel:[sel],out=new Set();
   for(const s of sels){
     if(typeof s==='number'){E[s]&&out.add(s);continue;}
-    const by=s.by||(s.side?'side':s.pts?'pick':s.dir?'dir':s.type?'type':'all');
+    const by=s.by||(s.a&&s.b?'between':s.side?'side':s.pts?'pick':s.dir?'dir':s.type?'type':'all');
     let hit=[];
     if(by==='all')hit=E;
     else if(by==='dir'){const ax=nrm(Array.isArray(s.dir)?s.dir:AX[s.dir]);hit=E.filter(q=>q.type==='LINE'&&Math.abs(dot(nrm(q.t),ax))>0.999);}
     else if(by==='side'){const{i,ext,tol}=sideTest(s.side,shape),t2=Math.max(tol,1e-3);hit=E.filter(q=>Math.abs(q.a[i]-ext)<t2&&Math.abs(q.b[i]-ext)<t2&&Math.abs(q.m[i]-ext)<t2);}
     else if(by==='type')hit=E.filter(q=>q.type===String(s.type).toUpperCase());
+    else if(by==='between')hit=betweenEdges(shape,s,{selectFaces,edgeList});
     else if(by==='pick'){const tol=sizeOf(shape)*0.02+0.05;for(const p of s.pts||[]){let best=null,bd=1e9;for(const q of E){const d=pdist(p,q.e);if(d<bd){bd=d;best=q;}}if(best&&bd<tol)hit.push(best);}}
     else throw new Error('unknown edge selector '+by);
     if(s.side&&by!=='side'){const{i,ext,tol}=sideTest(s.side,shape);hit=hit.filter(q=>Math.abs(q.m[i]-ext)<Math.max(tol,1e-3));}
@@ -142,7 +144,7 @@ function drawShape2(s0,pre=''){
   if(k==='rect'){d=R.drawRoundedRectangle(pos(s.w,'width'),pos(s.h,'height'),s.r>0?Math.min(s.r,Math.min(s.w,s.h)/2-1e-6):0);}
   else if(k==='circle'){d=R.drawCircle(pos(s.r,'radius'));}
   else if(k==='poly'){d=R.drawPolysides(pos(s.r,'radius'),Math.max(3,Math.round(s.n??6)));}
-  else if(k==='slot'){const W=pos(s.h??s.d,'slot width');d=R.drawRoundedRectangle(Math.max(s.l??0,0)+W,W,W/2-1e-6);}
+  else if(k==='slot'){const b=pos(s.h??s.d,'slot width')/2,a=Math.max(s.l??0,0)/2;d=a>0?R.draw([-a,-b]).lineTo([a,-b]).threePointsArcTo([a,b],[a+b,0]).lineTo([-a,b]).threePointsArcTo([-a,-b],[-a-b,0]).close():R.drawCircle(b);}
   else if(k==='path'){d=pathPolys(s,UNITS).map(poly=>poly.map(r=>ringDraw(r.pts,r.bz)).reduce((a,h)=>a.cut(h))).reduce((a,b)=>a.fuse(b));}
   else if(k==='airfoil'){d=airDraw({...s,chord:pos(s.chord??M(40),'chord')});}
   else if(k==='text'){if(!R.getFont())throw new Error('the text font did not load, so text cannot be built; reload the page');d=R.drawText(String(s.text||'A'),{fontSize:pos(s.h??M(10),'text size')});}
@@ -434,7 +436,8 @@ export async function build(doc,opt={}){
         if(none)W('No edges picked yet, so nothing is '+(fil?'rounded':'beveled')+'. Click edges in the view.');
         const set=new Set(es.map(q=>q.e.hashCode)),r=fil?(f.r??M(1)):(f.d??M(1));if(!(r>0))throw new Error((fil?'radius':'distance')+' must be above 0');
         const cs=!fil&&(f.d2||f.angle)&&!none?chamferSides(body,es,f):null;
-        next=none?body:upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
+        const vf=fil&&!none&&isVar(f)?vfillet(body,es,f,KX):null;vf&&vf.warn&&W(vf.warn);
+        next=none?body:vf?vf.shape:upTo(x=>{const fn=cs?cs(x,r):e=>set.has(e.hashCode)?x:null;return fil?body.fillet(fn):body.chamfer(fn);},r,7,fil?'Fillet radius':'Chamfer distance',fil?'r':'d','the largest these edges allow').r;
       }
       else if(f.type==='edgeprofile'){
         if(!body)throw new Error('edgeprofile needs a body');

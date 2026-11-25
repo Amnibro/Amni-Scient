@@ -1,0 +1,471 @@
+=== 5f93d58dc4b1e364
+import math;
+=== -34328646fdd4fefb
+var NE int = 0;
+var NK int = 0;
+var NC int = 0;
+var NV int = 0;
+var CLO int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var EP f64[>..];
+var CP f64[>..];
+var LN f64[>..];
+var SV f64[>..];
+var CS f64[>..];
+var CD f64[>..];
+var ER f64[>..];
+var VS f64[>..];
+var AM f64[>..];
+var BV f64[>..];
+var XV f64[>..];
+var FL i32[>..];
+var US i32[>..];
+=== 1106c6b520ca80c8
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if (n < 1) {
+        return 1;
+    }
+    return n;
+}
+=== -7928d623a777629c
+export fn bl_views() i32 {
+    bl_view_f64(1, IN);
+    bl_view_f64(2, OUT);
+    bl_view_f64(3, EP);
+    bl_view_f64(4, CP);
+    bl_view_f64(5, CS);
+    bl_view_f64(6, CD);
+    bl_view_f64(7, ER);
+    bl_view_f64(8, VS);
+    bl_view_i32(20, FL);
+    bl_view_i32(21, US);
+    return 0;
+}
+=== 3758414dbc08ab17
+export fn bl_init() i32 {
+    zf(IN, 16, 0.0);
+    zf(OUT, 16, 0.0);
+    bl_views();
+    return 0;
+}
+=== -6b191bb8a04d336a
+export fn bl_size(ne i32, nk i32, nc i32) i32 {
+    let edges = ne as int;
+    var samples int = nk as int;
+    let controls = nc as int;
+    if (samples < 2) {
+        samples = 2;
+    }
+    NE = edges;
+    NK = samples;
+    NC = controls;
+    zf(EP, at1(3 * edges * samples), 0.0);
+    zf(CP, at1(4 * controls), 0.0);
+    zf(LN, at1(edges), 0.0);
+    zf(SV, at1(edges + 1), 0.0);
+    zf(CS, at1(controls), 0.0);
+    zf(CD, at1(controls), 0.0);
+    zf(ER, at1(2 * edges), 0.0);
+    zf(VS, at1(2 * (edges + 1)), 0.0);
+    zf(AM, at1((edges + 1) * (edges + 1)), 0.0);
+    zf(BV, at1(edges + 1), 0.0);
+    zf(XV, at1(edges + 1), 0.0);
+    zi(FL, at1(edges), 0);
+    zi(US, at1(controls), 1);
+    bl_views();
+    return 0;
+}
+=== 4c3fa100b742aece
+fn epx(j int, m int, c int) real {
+    return EP[3 * (j * NK + m) + c];
+}
+fn root(x real) real {
+    if (x != x) {
+        return x;
+    }
+    if (x <= 0.0) {
+        return 0.0;
+    }
+    if (x > 1.7976931348623157e308) {
+        return x;
+    }
+    var m real = x;
+    var scale real = 1.0;
+    while (m >= 4.0) {
+        m *= 0.25;
+        scale *= 2.0;
+    }
+    while (m < 1.0) {
+        m *= 4.0;
+        scale *= 0.5;
+    }
+    var y real = 0.5 * (1.0 + m);
+    var step int = 0;
+    while (step < 6) {
+        y = 0.5 * (y + m / y);
+        step += 1;
+    }
+    return y * scale;
+}
+fn mag(x real) real {
+    if (x < 0.0) {
+        return 0.0 - x;
+    }
+    return x;
+}
+fn dst(ax real, ay real, az real, bx real, by real, bz real) real {
+    let dx = bx - ax;
+    let dy = by - ay;
+    let dz = bz - az;
+    return root(dx * dx + dy * dy + dz * dz);
+}
+=== -2afff20450bd176c
+export fn bl_prep() i32 {
+=== 2d4c1d9ec2dbd44f
+    var j int = 0;
+    while (j < NE) {
+        var total real = 0.0;
+        var m int = 0;
+        while (m < NK - 1) {
+            total += dst(epx(j, m, 0), epx(j, m, 1), epx(j, m, 2), epx(j, m + 1, 0), epx(j, m + 1, 1), epx(j, m + 1, 2));
+            m += 1;
+        }
+        LN[j] = total;
+        j += 1;
+    }
+    var px real = IN[1];
+    var py real = IN[2];
+    var pz real = IN[3];
+    j = 0;
+    while (j < NE) {
+        let last = NK - 1;
+        let d0 = dst(epx(j, 0, 0), epx(j, 0, 1), epx(j, 0, 2), px, py, pz);
+        let d1 = dst(epx(j, last, 0), epx(j, last, 1), epx(j, last, 2), px, py, pz);
+        var next int = last;
+        if (d1 < d0) {
+            FL[j] = 1;
+            next = 0;
+        } else {
+            FL[j] = 0;
+        }
+        px = epx(j, next, 0);
+        py = epx(j, next, 1);
+        pz = epx(j, next, 2);
+        j += 1;
+    }
+    SV[0] = 0.0;
+    j = 0;
+    while (j < NE) {
+        SV[j + 1] = SV[j] + LN[j];
+        j += 1;
+    }
+    if (IN[4] > 0.5) {
+        CLO = 1;
+    } else {
+        CLO = 0;
+    }
+    if (CLO == 1) {
+        NV = NE;
+    } else {
+        NV = NE + 1;
+    }
+    let mode = IN[0] as int;
+    var c int = 0;
+    while (c < NC) {
+        if (mode == 1) {
+            var frac real = CP[4 * c];
+            if (frac < 0.0) {
+                frac = 0.0;
+            }
+            if (frac > 1.0) {
+                frac = 1.0;
+            }
+            CS[c] = frac * SV[NE];
+            CD[c] = 0.0;
+        } else {
+            let qx = CP[4 * c];
+            let qy = CP[4 * c + 1];
+            let qz = CP[4 * c + 2];
+            var found bool = false;
+            var best real = 0.0;
+            var best_s real = 0.0;
+            var e int = 0;
+            while (e < NE) {
+                var a real = 0.0;
+                var m int = 0;
+                while (m < NK - 1) {
+                    let ax = epx(e, m, 0);
+                    let ay = epx(e, m, 1);
+                    let az = epx(e, m, 2);
+                    let ux = epx(e, m + 1, 0) - ax;
+                    let uy = epx(e, m + 1, 1) - ay;
+                    let uz = epx(e, m + 1, 2) - az;
+                    let len2 = ux * ux + uy * uy + uz * uz;
+                    var w real = 0.0;
+                    if (len2 > 1e-30) {
+                        w = ((qx - ax) * ux + (qy - ay) * uy + (qz - az) * uz) / len2;
+                        if (w < 0.0) {
+                            w = 0.0;
+                        }
+                        if (w > 1.0) {
+                            w = 1.0;
+                        }
+                    }
+                    let d = dst(qx, qy, qz, ax + w * ux, ay + w * uy, az + w * uz);
+                    let seg = root(len2);
+                    let b = a + w * seg;
+                    if (!found || d < best) {
+                        found = true;
+                        best = d;
+                        if (FL[e] == 0) {
+                            best_s = SV[e] + b;
+                        } else {
+                            best_s = SV[e] + LN[e] - b;
+                        }
+                    }
+                    a += seg;
+                    m += 1;
+                }
+                e += 1;
+            }
+            CS[c] = best_s;
+            CD[c] = best;
+        }
+        c += 1;
+    }
+    OUT[0] = SV[NE];
+    OUT[1] = CLO as real;
+    var far real = 0.0;
+    c = 0;
+    while (c < NC) {
+        if (CD[c] > far) {
+            far = CD[c];
+        }
+        c += 1;
+    }
+    OUT[5] = far;
+=== -5a884f0c8474012
+    return NV as i32;
+}
+=== -4858bf13a1126a54
+fn vs(j int) int {
+    return j;
+}
+fn ve(j int) int {
+    if (CLO == 1 && j == NE - 1) {
+        return 0;
+    }
+    return j + 1;
+}
+fn edge_at(s real) int {
+    var j int = 0;
+    while (j < NE) {
+        if (s <= SV[j + 1] + 1e-12 * (1.0 + SV[NE])) {
+            return j;
+        }
+        j += 1;
+    }
+    return NE - 1;
+}
+fn wat(j int, s real) real {
+    if (!(LN[j] > 1e-30)) {
+        return 0.0;
+    }
+    var w real = (s - SV[j]) / LN[j];
+    if (w < 0.0) {
+        w = 0.0;
+    }
+    if (w > 1.0) {
+        w = 1.0;
+    }
+    return w;
+}
+=== 52d7512603182b8b
+export fn bl_fit() i32 {
+    var i int = 0;
+    while (i < AM.len) {
+        AM[i] = 0.0;
+        i += 1;
+    }
+    i = 0;
+    while (i < BV.len) {
+        BV[i] = 0.0;
+        i += 1;
+    }
+    i = 0;
+    while (i < XV.len) {
+        XV[i] = 0.0;
+        i += 1;
+    }
+    var c int = 0;
+    while (c < NC) {
+        if (US[c] == 1 && NE > 0) {
+            var s real = CS[c];
+            if (CLO == 1 && SV[NE] > 0.0) {
+                while (s < 0.0) {
+                    s += SV[NE];
+                }
+                while (s > SV[NE]) {
+                    s -= SV[NE];
+                }
+            }
+            let j = edge_at(s);
+            let w = wat(j, s);
+            let a = vs(j);
+            let b = ve(j);
+            let r = CP[4 * c + 3];
+            AM[a * NV + a] += (1.0 - w) * (1.0 - w);
+            AM[a * NV + b] += (1.0 - w) * w;
+            AM[b * NV + a] += (1.0 - w) * w;
+            AM[b * NV + b] += w * w;
+            BV[a] += (1.0 - w) * r;
+            BV[b] += w * r;
+        }
+        c += 1;
+    }
+    var h real = 0.0;
+    var have bool = false;
+    var e int = 0;
+    while (e < NE) {
+        if (LN[e] > 1e-30 && (!have || LN[e] < h)) {
+            h = LN[e];
+            have = true;
+        }
+        e += 1;
+    }
+    if (!have) {
+        h = 1.0;
+    }
+    e = 0;
+    while (e < NE) {
+        if (LN[e] > 1e-30) {
+            let g = 1e-7 * h / LN[e];
+            let a = vs(e);
+            let b = ve(e);
+            AM[a * NV + a] += g;
+            AM[b * NV + b] += g;
+            AM[a * NV + b] -= g;
+            AM[b * NV + a] -= g;
+        }
+        e += 1;
+    }
+    var k int = 0;
+    while (k < NV) {
+        var p int = k;
+        var row int = k + 1;
+        while (row < NV) {
+            if (mag(AM[row * NV + k]) > mag(AM[p * NV + k])) {
+                p = row;
+            }
+            row += 1;
+        }
+        if (mag(AM[p * NV + k]) > 1e-300) {
+            if (p != k) {
+                var col int = 0;
+                while (col < NV) {
+                    let held = AM[k * NV + col];
+                    AM[k * NV + col] = AM[p * NV + col];
+                    AM[p * NV + col] = held;
+                    col += 1;
+                }
+                let held_b = BV[k];
+                BV[k] = BV[p];
+                BV[p] = held_b;
+            }
+            row = k + 1;
+            while (row < NV) {
+                let f = AM[row * NV + k] / AM[k * NV + k];
+                var col int = k;
+                while (col < NV) {
+                    AM[row * NV + col] -= f * AM[k * NV + col];
+                    col += 1;
+                }
+                BV[row] -= f * BV[k];
+                row += 1;
+            }
+        }
+        k += 1;
+    }
+    k = NV - 1;
+    while (k >= 0) {
+        if (mag(AM[k * NV + k]) > 1e-300) {
+            var sum real = BV[k];
+            var col int = k + 1;
+            while (col < NV) {
+                sum -= AM[k * NV + col] * XV[col];
+                col += 1;
+            }
+            XV[k] = sum / AM[k * NV + k];
+        } else {
+            XV[k] = 0.0;
+        }
+        k -= 1;
+    }
+=== 15041bbec9e57a09
+    var q int = 0;
+    while (q < NE) {
+        ER[2 * q] = XV[vs(q)];
+        ER[2 * q + 1] = XV[ve(q)];
+        q += 1;
+    }
+    var v int = 0;
+    while (v < NV) {
+        VS[2 * v] = SV[v];
+        VS[2 * v + 1] = XV[v];
+        v += 1;
+    }
+    var worst real = 0.0;
+    var u int = 0;
+    while (u < NC) {
+        if (US[u] == 1 && NE > 0) {
+            var s real = CS[u];
+            if (CLO == 1 && SV[NE] > 0.0) {
+                while (s < 0.0) {
+                    s += SV[NE];
+                }
+                while (s > SV[NE]) {
+                    s -= SV[NE];
+                }
+            }
+            let j = edge_at(s);
+            let w = wat(j, s);
+            let a = vs(j);
+            let b = ve(j);
+            let miss = mag(CP[4 * u + 3] - ((1.0 - w) * XV[a] + w * XV[b]));
+            if (miss > worst) {
+                worst = miss;
+            }
+        }
+        u += 1;
+    }
+    OUT[2] = worst;
+    var low real = 0.0;
+    var high real = 0.0;
+    v = 0;
+    while (v < NV) {
+        if (v == 0 || XV[v] < low) {
+            low = XV[v];
+        }
+        if (v == 0 || XV[v] > high) {
+            high = XV[v];
+        }
+        v += 1;
+    }
+    OUT[3] = low;
+    OUT[4] = high;
+    return 0;
+}
+=== 0ddb8a3b7d369d37
+fn main() {
+}

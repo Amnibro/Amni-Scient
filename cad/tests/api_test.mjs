@@ -33,6 +33,8 @@ const L0=100,bw=10,hh=10,Fz=100,doc={units:'mm',material:'steel1018',features:[{
 [s,j]=await go('/v1/build',{doc:{features:[{id:'a',type:'nope'}]}});ok(s===422||s===400,'a broken model reports why');
 const PL={id:'a',type:'box',w:100,d:60,h:10};[s,j]=await go('/v1/build',{doc:{units:'mm',features:[PL,{id:'b',type:'cylinder',r:8,h:10,op:'cut'},{id:'c',type:'face_delete',faces:{by:'pick',pts:[[8,0,5]]}}]}});ok(s===200&&Math.abs(j.volume_mm3-6e4)<1,'deleting a hole face fills the hole');
 [s,j]=await go('/v1/build',{doc:{units:'mm',features:[PL,{id:'c',type:'face_offset',d:5,faces:{side:'+Z'}}]}});ok(s===200&&Math.abs(j.volume_mm3-9e4)<1,'offsetting the top face thickens the plate');
+[s,j]=await go('/v1/build',{doc:{units:'mm',features:[{id:'a',type:'box',w:100,d:10,h:10},{id:'b',type:'fillet',vary:'ends',r:1,r2:4,edges:{by:'pick',pts:[[0,-5,10]]}}]}});ok(s===200&&Math.abs(j.volume_mm3-(1e4-(1-Math.PI/4)*700))<5,'a variable fillet from 1 to 4 builds');
+[s,j]=await go('/v1/build',{doc:{units:'mm',features:[PL,{id:'c',type:'thicken',t:2,faces:{side:'+Z'}},{id:'d',type:'wrap',shapes:[{k:'rect',w:10,h:5}],depth:2,faces:{side:'+Z'}}]}});ok(s===200&&Math.abs(j.volume_mm3-72100)<1,'thicken then wrap on the new top face');
 let hd;[s,j,hd]=await go('/v1/export',{doc,format:'step'});ok(s===200&&/^ISO-10303-21/.test(j.toString('utf8',0,20))&&/part\.step/.test(hd.get('content-disposition')),'STEP export downloads');const step=j;
 [s,j]=await go('/v1/build?faces=1',step,{...H,'content-type':'model/step'},true);ok(s===200&&Math.abs(j.volume_mm3-1e4)<5&&j.faces.length===6,'a posted STEP file builds');
 [s,j]=await go('/v1/export?json=1',{doc,format:'stl'});ok(s===200&&j.base64.length>100,'export as JSON carries base64');
