@@ -1,0 +1,30 @@
+use std
+into holetab.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its `main()` does nothing. JavaScript drives it through its exported functions (every name starting with ht_ is exported). It builds a drawing hole table: it gives each hole a tag (a group letter and a number), orders the table rows, and places each tag's text box next to its hole on the sheet where it overlaps the least with holes, other tags and existing drawing marks. Its only import line is `import math;`, ending with a semicolon. Every int used in real math is converted with `as real`, and a real used as an int with `as int`, since Helium has no real or int conversion calls.
+
+```amni
+extern fn ht_view_f64(id i32, xs real[:]) = "ht_view_f64";
+extern fn ht_view_i32(id i32, xs i32[:]) = "ht_view_i32";
+```
+
+Module state. Ints, all starting at 0: `NH` (holes), `NO` (obstacle boxes). Growable f64 arrays: `IN` (16 inputs), `OUT` (16 outputs), `HP` (8 per hole: the group size used to order the letters, the hole's x and y measured from the table origin, its center x and y on the sheet, its radius on the sheet, its group id, and its tag width on the sheet), `OB` (4 per obstacle: the box's smallest x, smallest y, largest x and largest y on the sheet) and `TP` (4 per hole: the placed tag box's smallest x, smallest y, largest x and largest y). Growable i32 arrays: `LT` (NH letter indexes), `NB` (NH numbers, starting at 1 in each group), `RW` (NH table rows: RW[r] is the hole shown on row r), `GO` (NH scratch) and `HO` (NH scratch).
+
+Sizing helpers. `zf(xs, n, x)` takes an f64 growable array by reference: xs is emptied, then gets `reserve`(n), then is resized to n entries equal to x. `zi(xs, n, x)` does the same for an i32 growable array, resizing to n entries equal to x as i32. On the web an array that holds entries cannot grow past the room it first reserved, so every array is emptied before it is sized again. `at1(n)` returns n, or 1 when n is below 1.
+
+The exported function `ht_views()`, declared with the export keyword with an i32 result, registers the arrays with `ht_view_f64`: 1 IN, 2 OUT, 3 HP, 4 OB, 5 TP; and with `ht_view_i32`: 20 LT, 21 NB, 22 RW. It returns 0.
+
+The exported function `ht_init()`, declared with the export keyword with an i32 result, sizes IN to 16 zeros and OUT to 16 zeros with `zf`, calls `ht_views()` and returns 0.
+
+The exported function `ht_size(nh, no)`, declared with the export keyword with two i32 parameters (each converted with `as int` at the top) and an i32 result, sets NH to nh and NO to no, then sizes, each size raised to at least 1 with `at1`: with `zf` HP to 8 nh, OB to 4 no and TP to 4 nh, all zeros; with `zi` LT, NB, RW, GO and HO to nh, all zeros. It calls `ht_views()` and returns 0.
+
+Ordering helpers. `gless(a, b)` is true when hole a's group comes before hole b's group: a larger group size HP[8 a] first; when the sizes are equal (their difference is not above 1e-9), the smaller group id HP[8 a plus 6] first. `hless(a, b)` is true when hole a comes before hole b inside the same group, in reading order: with tolerance t equal to IN[0], a comes first when its y HP[8 a plus 2] is above b's y plus t; when b's y is above a's y plus t, b comes first; otherwise the smaller x HP[8 a plus 1] comes first, and when the x values are within t of each other the smaller hole index comes first.
+
+The exported function `ht_order()`, declared with the export keyword with an i32 result, tags the holes. It fills RW with the hole indexes 0 to NH minus 1 and sorts RW with an insertion sort where hole a goes before hole b when `gless`(a, b), or when neither `gless`(a, b) nor `gless`(b, a) and `hless`(a, b). Then it walks the rows r in order with a letter counter starting at 0 and a number starting at 0: when r is above 0 and the group id of hole RW[r] differs from the group id of hole RW[r minus 1], the letter counter goes up by 1 and the number goes back to 0; the number goes up by 1, LT[RW[r]] becomes the letter counter and NB[RW[r]] the number. OUT[0] becomes the letter counter plus 1 (the number of letters) as real, or 0.0 when NH is 0. It returns NH as i32.
+
+Overlap helper. `ovl(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1)` returns the overlap area of two boxes: the overlap width (the smaller of ax1 and bx1 less the larger of ax0 and bx0) times the overlap height (the smaller of ay1 and by1 less the larger of ay0 and by0), or 0.0 when either is not above 0.0.
+
+The exported function `ht_place()`, declared with the export keyword with an i32 result, places the tag boxes once JavaScript has set each tag's width in HP[8 i plus 7]. Inputs: IN[1] the tag height th and IN[2] the gap g between a hole and its tag. The holes are placed in table row order (hole RW[r] for r from 0 to NH minus 1). For hole i with center (cx, cy), radius rr and tag width w, it tries 8 directions k from 0 to 7 with these unit vectors (ux, uy), in order: (0.7071, 0.7071), (-0.7071, 0.7071), (0.7071, -0.7071), (-0.7071, -0.7071), (1.0, 0.0), (0.0, 1.0), (-1.0, 0.0), (0.0, -1.0). The anchor point is the center plus (ux, uy) times (rr plus g). The box's smallest x is the anchor x when ux is above 0.1, the anchor x less w when ux is below -0.1, and the anchor x less w over 2.0 otherwise; its smallest y is the anchor y when uy is above 0.1, the anchor y less th when uy is below -0.1, and the anchor y less th over 2.0 otherwise; its largest x and y add w and th. Its cost is k times 0.01 times th squared, plus the overlap (with `ovl`) of the box with the square around every hole j (center less 0.75 times its radius to center plus 0.75 times its radius, j including i; that square stands for the round hole), plus the overlap with every obstacle box in OB, plus 4.0 times the overlap with the boxes of every hole already placed earlier in row order (TP). The box with the lowest cost is kept in TP[4 i] to TP[4 i plus 3], the first one winning ties. OUT[1] becomes the sum of the kept costs. It returns 0.
+
+The `main()` function does nothing.
