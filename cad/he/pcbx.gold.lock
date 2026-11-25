@@ -1,0 +1,2575 @@
+=== 3107236cbbdc5d79
+
+=== -290cc7f73d468612
+import math;
+var XD real[>..];
+var FI real[>..];
+var SY real[>..];
+var LW real[>..];
+var XS byte[>..];
+var OUT byte[>..];
+var TB byte[>..];
+var SA int[>..];
+var SB int[>..];
+var CN int[>..];
+var SUB int[>..];
+var MK int[>..];
+var RW int[>..];
+var FC int[>..];
+var FV int[>..];
+var FT int[>..];
+var FZ int[>..];
+var FM int[>..];
+var FS int[>..];
+var FH int[>..];
+var FHV int[>..];
+var NN int = 0;
+var NQ int = 0;
+var NK int = 0;
+var NF int = 0;
+var NP int = 0;
+var NT int = 0;
+var NV int = 0;
+var NZ int = 0;
+var NB int = 0;
+var NL int = 0;
+var XQ int = 0;
+var XK int = 0;
+var XF int = 0;
+var XP int = 0;
+var XT int = 0;
+var XV int = 0;
+var XZ int = 0;
+var XB int = 0;
+var NFT int = 0;
+var BX0 real = 0.0;
+var BY0 real = 0.0;
+var BX1 real = 0.0;
+var BY1 real = 0.0;
+=== 1edb0d022767c02d
+
+=== -1497fef3fd8f6a20
+fn zf(xs real[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n + 1);
+    xs.resize(n, 0.0);
+}
+fn zi(xs int[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n + 1);
+    xs.resize(n, x);
+}
+fn zb(xs byte[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n + 1);
+    xs.resize(n, 0);
+}
+fn rb(xs byte[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n);
+}
+=== -35529a84735f8026
+export fn px_views() i32 {
+    px_view_f64(1, XD);
+    px_view_f64(2, FI);
+    px_view_u8(3, XS);
+    px_view_u8(4, OUT);
+    return 0;
+}
+export fn px_setup(nd i32, ns i32) i32 {
+    zf(XD, nd);
+    zb(XS, ns);
+    zf(FI, 1);
+    zb(OUT, 1);
+    px_views();
+    return 0;
+}
+=== -36fba329f0986dde
+fn prepare() {
+    NL = XD[4] as int;
+    if NL < 1 {
+        NL = 1;
+    }
+    if NL > 8 {
+        NL = 8;
+    }
+    NN = XD[13] as int;
+    NQ = XD[14] as int;
+    NK = XD[15] as int;
+    NF = XD[16] as int;
+    NP = XD[17] as int;
+    NT = XD[18] as int;
+    NV = XD[19] as int;
+    NZ = XD[20] as int;
+    NB = XD[21] as int;
+    XQ = 32;
+    XK = XQ + 8 * NQ;
+    XF = XK + 4 * NK;
+    XP = XF + 8 * NF;
+    XT = XP + 10 * NP;
+    XV = XT + 7 * NT;
+    XZ = XV + 3 * NV;
+    XB = XZ + 6 * NZ;
+    var feeds int = 0;
+    for i in 0..XS.len {
+        if XS[i] == '\n' {
+            feeds += 1;
+        }
+    }
+    SA.clear();
+    SA.reserve(feeds + 2);
+    SB.clear();
+    SB.reserve(feeds + 2);
+    var start int = 0;
+    for i in 0..XS.len {
+        if XS[i] == '\n' {
+            SA.push(start);
+            SB.push(i);
+            start = i + 1;
+        }
+    }
+    SA.push(start);
+    SB.push(XS.len);
+    zi(CN, NQ, 0);
+    var top int = 0;
+    var bot int = 0;
+    for q in 0..NQ {
+        if side_of(q) == 1 {
+            CN[q] = bot;
+            bot += 1;
+        } else {
+            CN[q] = top;
+            top += 1;
+        }
+    }
+    zi(SUB, NP, 0);
+    var seen int[>..];
+    zi(seen, NN + 1, 0);
+    for p in 0..NP {
+        var n int = pd(p, 5) as int;
+        SUB[p] = seen[n];
+        seen[n] += 1;
+    }
+    zi(MK, NQ, 0);
+    SY.clear();
+    SY.reserve(3 * (NP + NF + NT + NV + 16));
+    LW.clear();
+    LW.reserve(NT + NB + 16);
+    var r int = 65536 + 320 * (NP * (NL + 4) + NV * (NL + 2) + 2 * NZ + NT + 5 * NB + 2 * NF + 2 * NQ + NN) + 4 * XS.len;
+    rb(OUT, r);
+    rb(TB, r);
+}
+=== 19d75af6977f05e6
+fn str(k int) const byte[:] {
+    var a int = SA[k];
+    var b int = SB[k];
+    return XS[a..b];
+}
+fn net_name(n int) const byte[:] {
+    return str(2 + n);
+}
+fn ref_of(q int) const byte[:] {
+    return str(2 + NN + q);
+}
+fn val_of(q int) const byte[:] {
+    return str(2 + NN + NQ + q);
+}
+fn pkg_name(k int) const byte[:] {
+    return str(2 + NN + 2 * NQ + k);
+}
+fn pt(q int, i int) real {
+    return XD[XQ + 8 * q + i];
+}
+fn pk(k int, i int) real {
+    return XD[XK + 4 * k + i];
+}
+fn fp(f int, i int) real {
+    return XD[XF + 8 * f + i];
+}
+fn pd(p int, i int) real {
+    return XD[XP + 10 * p + i];
+}
+fn tk(t int, i int) real {
+    return XD[XT + 7 * t + i];
+}
+fn vi(v int, i int) real {
+    return XD[XV + 3 * v + i];
+}
+fn zr(z int, i int) real {
+    return XD[XZ + 6 * z + i];
+}
+fn bd(b int, i int) real {
+    return XD[XB + 7 * b + i];
+}
+fn slay(s int) int {
+    if s == 0 {
+        return 0;
+    }
+    if s == NL - 1 && NL > 1 {
+        return 1;
+    }
+    return s + 1;
+}
+fn spos(l int) int {
+    if l == 0 {
+        return 0;
+    }
+    if l == 1 {
+        return NL - 1;
+    }
+    return l - 1;
+}
+fn onl(p int, l int) bool {
+    if pd(p, 7) > 0.0 {
+        return true;
+    }
+    var m int = pd(p, 6) as int;
+    return ((m >> l) & 1) != 0;
+}
+fn cut(l int) real {
+    if l < 2 {
+        return XD[6];
+    }
+    return XD[7];
+}
+fn side_of(q int) int {
+    if pt(q, 3) > 0.5 {
+        return 1;
+    }
+    return 0;
+}
+fn rot_of(q int) real {
+    var a real = pt(q, 2);
+    while a < 0.0 {
+        a += 360.0;
+    }
+    while a >= 360.0 {
+        a -= 360.0;
+    }
+    return a;
+}
+fn pnet(p int) int {
+    return pd(p, 5) as int;
+}
+fn ppart(p int) int {
+    return pd(p, 8) as int;
+}
+=== 6f604ebc4e80b81c
+fn put(o byte[>..]&, s const byte[:]) {
+    for i in 0..s.len {
+        o.push(s[i]);
+    }
+}
+fn lf(o byte[>..]&) {
+    o.push('\n');
+}
+fn line(o byte[>..]&, s const byte[:]) {
+    put(o, s);
+    lf(o);
+}
+fn inum(o byte[>..]&, n int) {
+    var v int = n;
+    if v < 0 {
+        o.push('-');
+        v = -v;
+    }
+    var d int = 1;
+    while v / d >= 10 {
+        d *= 10;
+    }
+    while d > 0 {
+        var digit int = 48 + (v / d) % 10;
+        o.push(digit as byte);
+        d /= 10;
+    }
+}
+fn num(o byte[>..]&, v real) {
+    var neg bool = v < 0.0;
+    var a real = v;
+    if neg {
+        a = -v;
+    }
+    if a > 9.0e14 {
+        a = 9.0e14;
+    }
+    var r int = (a * 10000.0 + 0.5) as int;
+    if r == 0 {
+        o.push('0');
+        return;
+    }
+    if neg {
+        o.push('-');
+    }
+    inum(o, r / 10000);
+    var frac int = r % 10000;
+    if frac == 0 {
+        return;
+    }
+    o.push('.');
+    var d int = 1000;
+    while frac > 0 {
+        var digit int = 48 + frac / d;
+        o.push(digit as byte);
+        frac = frac % d;
+        d /= 10;
+    }
+}
+fn esc(o byte[>..]&, s const byte[:]) {
+    for i in 0..s.len {
+        var c byte = s[i];
+        if c == '&' {
+            put(o, "&amp;");
+        } else if c == '<' {
+            put(o, "&lt;");
+        } else if c == '>' {
+            put(o, "&gt;");
+        } else if c == '"' {
+            put(o, "&quot;");
+        } else if c == '\'' {
+            put(o, "&apos;");
+        } else {
+            o.push(c);
+        }
+    }
+}
+fn tok(o byte[>..]&, s const byte[:]) {
+    if s.len == 0 {
+        o.push('_');
+        return;
+    }
+    for i in 0..s.len {
+        var c byte = s[i];
+        if c == ' ' || c == ';' || c == '\'' || c < 33 {
+            o.push('_');
+        } else {
+            o.push(c);
+        }
+    }
+}
+fn qtok(o byte[>..]&, s const byte[:]) {
+    for i in 0..s.len {
+        var c byte = s[i];
+        if c == '\'' || c < 32 {
+            o.push('_');
+        } else {
+            o.push(c);
+        }
+    }
+}
+fn xy(o byte[>..]&, a const byte[:], b const byte[:], x real, y real) {
+    put(o, " ");
+    put(o, a);
+    put(o, "=\"");
+    num(o, x);
+    put(o, "\" ");
+    put(o, b);
+    put(o, "=\"");
+    num(o, y);
+    put(o, "\"");
+}
+fn lname(o byte[>..]&, l int, lower bool) {
+    if l == 0 {
+        if lower {
+            put(o, "top");
+        } else {
+            put(o, "TOP");
+        }
+    } else if l == 1 {
+        if lower {
+            put(o, "bottom");
+        } else {
+            put(o, "BOTTOM");
+        }
+    } else {
+        if lower {
+            put(o, "in");
+        } else {
+            put(o, "IN");
+        }
+        inum(o, l - 1);
+    }
+}
+fn bname(o byte[>..]&) {
+    if str(0).len == 0 {
+        put(o, "board");
+    } else {
+        esc(o, str(0));
+    }
+}
+fn plyr(o byte[>..]&, q int) {
+    if side_of(q) == 1 && NL > 1 {
+        put(o, "BOTTOM");
+    } else {
+        put(o, "TOP");
+    }
+}
+fn oem(o byte[>..]&, q int) {
+    esc(o, pkg_name(pt(q, 4) as int));
+    put(o, "_");
+    esc(o, val_of(q));
+}
+fn pinref(o byte[>..]&, p int) {
+    put(o, "<PinRef componentRef=\"");
+    esc(o, ref_of(ppart(p)));
+    put(o, "\" pin=\"");
+    inum(o, pd(p, 9) as int);
+    line(o, "\"/>");
+}
+fn nset(o byte[>..]&, n int, extra const byte[:]) {
+    put(o, "<Set");
+    if n > 0 {
+        put(o, " net=\"");
+        esc(o, net_name(n));
+        put(o, "\"");
+    }
+    put(o, extra);
+    line(o, ">");
+}
+=== 08562c56bb01e173
+fn near(a real, b real) bool {
+    return a - b <= 1e-9 && b - a <= 1e-9;
+}
+fn sym(k int, w real, h real) int {
+    var n int = SY.len / 3;
+    for i in 0..n {
+        var kind int = SY[3 * i] as int;
+        if kind == k && near(SY[3 * i + 1], w) && near(SY[3 * i + 2], h) {
+            return i;
+        }
+    }
+    SY.push(k as real);
+    SY.push(w);
+    SY.push(h);
+    return n;
+}
+fn shsym(shape real, w real, h real, e real) int {
+    if shape < 0.5 {
+        return sym(1, w + 2.0 * e, h + 2.0 * e);
+    }
+    if near(w, h) {
+        return sym(0, w + 2.0 * e, w + 2.0 * e);
+    }
+    return sym(2, w + 2.0 * e, h + 2.0 * e);
+}
+fn padsym(p int, e real) int {
+    return shsym(pd(p, 4), pd(p, 2), pd(p, 3), e);
+}
+fn lwi(w real) int {
+    for i in 0..LW.len {
+        if near(LW[i], w) {
+            return i;
+        }
+    }
+    LW.push(w);
+    return LW.len - 1;
+}
+fn odbsym(o byte[>..]&, i int) {
+    var k int = SY[3 * i] as int;
+    var w real = SY[3 * i + 1] * 1000.0;
+    var h real = SY[3 * i + 2] * 1000.0;
+    if k == 0 {
+        put(o, "r");
+        num(o, w);
+        return;
+    }
+    if k == 1 {
+        put(o, "rect");
+    } else {
+        put(o, "oval");
+    }
+    num(o, w);
+    put(o, "x");
+    num(o, h);
+}
+=== -6952914ac2144cca
+fn poly_pt(o byte[>..]&, tag const byte[:], x real, y real) {
+    put(o, tag);
+    xy(o, "x", "y", x, y);
+    line(o, "/>");
+}
+fn poly(o byte[>..]&, x0 real, y0 real, x1 real, y1 real) {
+    poly_pt(o, "<PolyBegin", x0, y0);
+    poly_pt(o, "<PolyStepSegment", x0, y1);
+    poly_pt(o, "<PolyStepSegment", x1, y1);
+    poly_pt(o, "<PolyStepSegment", x1, y0);
+    poly_pt(o, "<PolyStepSegment", x0, y0);
+}
+fn nsp(o byte[>..]&, v real) {
+    put(o, " ");
+    num(o, v);
+}
+fn isp(o byte[>..]&, n int) {
+    put(o, " ");
+    inum(o, n);
+}
+fn surf_pt(o byte[>..]&, tag const byte[:], x real, y real) {
+    put(o, tag);
+    nsp(o, x);
+    nsp(o, y);
+}
+fn surf(o byte[>..]&, x0 real, y0 real, x1 real, y1 real) {
+    line(o, "S P 0");
+    surf_pt(o, "OB", x0, y0);
+    line(o, " I");
+    surf_pt(o, "OS", x0, y1);
+    lf(o);
+    surf_pt(o, "OS", x1, y1);
+    lf(o);
+    surf_pt(o, "OS", x1, y0);
+    lf(o);
+    surf_pt(o, "OS", x0, y0);
+    lf(o);
+    line(o, "OE");
+    line(o, "SE");
+}
+=== -6ef0e2df2a5604e4
+fn boxgrow(x0 real, y0 real, x1 real, y1 real) {
+    if x0 < BX0 {
+        BX0 = x0;
+    }
+    if y0 < BY0 {
+        BY0 = y0;
+    }
+    if x1 > BX1 {
+        BX1 = x1;
+    }
+    if y1 > BY1 {
+        BY1 = y1;
+    }
+}
+fn pkbox(k int) {
+    if pk(k, 2) > 0.0 {
+        BX0 = -pk(k, 2) / 2.0;
+        BY0 = -pk(k, 3) / 2.0;
+        BX1 = pk(k, 2) / 2.0;
+        BY1 = pk(k, 3) / 2.0;
+    } else {
+        BX0 = 1e30;
+        BY0 = 1e30;
+        BX1 = -1e30;
+        BY1 = -1e30;
+    }
+    var first int = pk(k, 0) as int;
+    var cnt int = pk(k, 1) as int;
+    for i in 0..cnt {
+        var f int = first + i;
+        boxgrow(fp(f, 0) - fp(f, 2) / 2.0, fp(f, 1) - fp(f, 3) / 2.0, fp(f, 0) + fp(f, 2) / 2.0, fp(f, 1) + fp(f, 3) / 2.0);
+    }
+    if BX0 > BX1 {
+        BX0 = -0.5;
+        BY0 = -0.5;
+        BX1 = 0.5;
+        BY1 = 0.5;
+    }
+}
+fn root(x real) real {
+    if x <= 0.0 {
+        return 0.0;
+    }
+    var g real = x;
+    if g < 1.0 {
+        g = 1.0;
+    }
+    for i in 0..200 {
+        var n real = 0.5 * (g + x / g);
+        if n >= g {
+            return g;
+        }
+        g = n;
+    }
+    return g;
+}
+fn pitch(k int) real {
+    var first int = pk(k, 0) as int;
+    var n int = pk(k, 1) as int;
+    if n < 2 {
+        return 0.0;
+    }
+    var best real = 1e300;
+    for i in 0..n {
+        for j in i + 1..n {
+            var dx real = fp(first + i, 0) - fp(first + j, 0);
+            var dy real = fp(first + i, 1) - fp(first + j, 1);
+            var d real = dx * dx + dy * dy;
+            if d < best {
+                best = d;
+            }
+        }
+    }
+    return root(best);
+}
+=== -df51e7f2766b889
+fn ly_open(o byte[>..]&, mode int) {
+    if mode == 0 {
+        put(o, "<LayerRef name=\"");
+    } else {
+        put(o, "<Layer name=\"");
+    }
+}
+fn ly_close(o byte[>..]&, mode int, func const byte[:], side const byte[:]) {
+    put(o, "\"");
+    if mode == 1 {
+        put(o, " layerFunction=\"");
+        put(o, func);
+        put(o, "\" side=\"");
+        put(o, side);
+        put(o, "\" polarity=\"POSITIVE\"");
+    }
+    line(o, "/>");
+}
+fn ly_one(o byte[>..]&, mode int, name const byte[:], func const byte[:], side const byte[:]) {
+    ly_open(o, mode);
+    put(o, name);
+    ly_close(o, mode, func, side);
+}
+fn ipc_layers(o byte[>..]&, mode int) {
+    ly_one(o, mode, "SILK_TOP", "SILKSCREEN", "TOP");
+    ly_one(o, mode, "PASTE_TOP", "SOLDERPASTE", "TOP");
+    ly_one(o, mode, "MASK_TOP", "SOLDERMASK", "TOP");
+    for s in 0..NL {
+        var l int = slay(s);
+        ly_open(o, mode);
+        lname(o, l, false);
+        put(o, "\"");
+        if mode == 1 {
+            put(o, " layerFunction=\"");
+            if XD[22 + l] > 0.5 {
+                put(o, "PLANE");
+            } else {
+                put(o, "CONDUCTOR");
+            }
+            put(o, "\" side=\"");
+            if s == 0 {
+                put(o, "TOP");
+            } else if s == NL - 1 && NL > 1 {
+                put(o, "BOTTOM");
+            } else {
+                put(o, "INTERNAL");
+            }
+            put(o, "\" polarity=\"POSITIVE\"");
+        }
+        line(o, "/>");
+        if s < NL - 1 {
+            ly_open(o, mode);
+            put(o, "DIEL_");
+            inum(o, s + 1);
+            ly_close(o, mode, "DIELCORE", "INTERNAL");
+        }
+    }
+    if NL > 1 {
+        ly_one(o, mode, "MASK_BOTTOM", "SOLDERMASK", "BOTTOM");
+        ly_one(o, mode, "PASTE_BOTTOM", "SOLDERPASTE", "BOTTOM");
+    }
+    ly_one(o, mode, "SILK_BOTTOM", "SILKSCREEN", "BOTTOM");
+    ly_one(o, mode, "OUTLINE", "BOARD_OUTLINE", "ALL");
+    if mode == 1 {
+        line(o, "<Layer name=\"DRILL\" layerFunction=\"DRILL\" side=\"ALL\" polarity=\"POSITIVE\">");
+        put(o, "<Span fromLayer=\"TOP\" toLayer=\"");
+        if NL > 1 {
+            put(o, "BOTTOM");
+        } else {
+            put(o, "TOP");
+        }
+        line(o, "\"/>");
+        line(o, "</Layer>");
+    } else {
+        ly_one(o, mode, "DRILL", "DRILL", "ALL");
+    }
+}
+=== -94245a2e459e6e7
+fn ipc_head(o byte[>..]&) {
+    line(o, "<LogisticHeader>");
+    line(o, "<Role id=\"Owner\" roleFunction=\"SENDER\"/>");
+    line(o, "<Enterprise id=\"Amni-Scient\" code=\"NONE\"/>");
+    line(o, "<Person name=\"Amni-CAD\" enterpriseRef=\"Amni-Scient\" roleRef=\"Owner\"/>");
+    line(o, "</LogisticHeader>");
+    put(o, "<HistoryRecord number=\"1\" origination=\"");
+    esc(o, str(1));
+    put(o, "\" software=\"Amni-CAD\" lastChange=\"");
+    esc(o, str(1));
+    line(o, "\">");
+    line(o, "<FileRevision fileRevisionId=\"1\" comment=\"NONE\" label=\"NONE\">");
+    line(o, "<SoftwarePackage name=\"Amni-CAD\" revision=\"1\" vendor=\"Amni-Scient\">");
+    line(o, "<Certification certificationStatus=\"SELFTEST\"/>");
+    line(o, "</SoftwarePackage>");
+    line(o, "</FileRevision>");
+    line(o, "</HistoryRecord>");
+}
+=== -7430ea7411637e89
+fn same(a const byte[:], b const byte[:]) bool {
+    if a.len != b.len {
+        return false;
+    }
+    for i in 0..a.len {
+        if a[i] != b[i] {
+            return false;
+        }
+    }
+    return true;
+}
+fn alike(q int, r int) bool {
+    var kr int = pt(r, 4) as int;
+    var kq int = pt(q, 4) as int;
+    return kr == kq && same(val_of(r), val_of(q));
+}
+fn ipc_bom(o byte[>..]&) {
+    put(o, "<Bom name=\"");
+    bname(o);
+    line(o, "_bom\">");
+    put(o, "<BomHeader assembly=\"");
+    bname(o);
+    line(o, "\" revision=\"1\">");
+    put(o, "<StepRef name=\"");
+    bname(o);
+    line(o, "\"/>");
+    line(o, "</BomHeader>");
+    for i in 0..NQ {
+        MK[i] = 0;
+    }
+    for q in 0..NQ {
+        if MK[q] == 0 {
+            MK[q] = 1;
+            var g int = 1;
+            for r in q + 1..NQ {
+                if MK[r] == 0 && alike(q, r) {
+                    MK[r] = 1;
+                    g += 1;
+                }
+            }
+            put(o, "<BomItem OEMDesignNumberRef=\"");
+            oem(o, q);
+            put(o, "\" quantity=\"");
+            inum(o, g);
+            put(o, "\" pinCount=\"");
+            inum(o, pt(q, 6) as int);
+            line(o, "\" category=\"ELECTRICAL\">");
+            for r in q..NQ {
+                if r == q || alike(q, r) {
+                    put(o, "<RefDes name=\"");
+                    esc(o, ref_of(r));
+                    put(o, "\" packageRef=\"");
+                    esc(o, pkg_name(pt(r, 4) as int));
+                    put(o, "\" populate=\"true\" layerRef=\"");
+                    plyr(o, r);
+                    line(o, "\"/>");
+                }
+            }
+            line(o, "<Characteristics category=\"ELECTRICAL\">");
+            put(o, "<Textual definitionSource=\"Amni-CAD\" textualCharacteristicName=\"Value\" textualCharacteristicValue=\"");
+            esc(o, val_of(q));
+            line(o, "\"/>");
+            line(o, "</Characteristics>");
+            line(o, "</BomItem>");
+        }
+    }
+    line(o, "</Bom>");
+}
+=== -79baf5faeab65a44
+fn stack_layer(o byte[>..]&, thick real, seq int) {
+    put(o, "\" thickness=\"");
+    num(o, thick);
+    put(o, "\" tolPlus=\"0\" tolMinus=\"0\" sequence=\"");
+    inum(o, seq);
+    line(o, "\"/>");
+}
+fn ipc_stack(o byte[>..]&) {
+    put(o, "<Stackup name=\"STACKUP\" overallThickness=\"");
+    num(o, XD[5]);
+    line(o, "\" tolPlus=\"0\" tolMinus=\"0\" whereMeasured=\"METAL\">");
+    put(o, "<StackupGroup name=\"GROUP\" thickness=\"");
+    num(o, XD[5]);
+    line(o, "\" tolPlus=\"0\" tolMinus=\"0\">");
+    var total real = 0.0;
+    for s in 0..NL {
+        total += cut(slay(s));
+    }
+    var gaps int = NL - 1;
+    if gaps < 1 {
+        gaps = 1;
+    }
+    var d real = (XD[5] - total) / (gaps as real);
+    if d < 0.01 {
+        d = 0.01;
+    }
+    var q int = 1;
+    for s in 0..NL {
+        put(o, "<StackupLayer layerOrGroupRef=\"");
+        lname(o, slay(s), false);
+        stack_layer(o, cut(slay(s)), q);
+        q += 1;
+        if s < NL - 1 {
+            put(o, "<StackupLayer layerOrGroupRef=\"DIEL_");
+            inum(o, s + 1);
+            stack_layer(o, d, q);
+            q += 1;
+        }
+    }
+    line(o, "</StackupGroup>");
+    line(o, "</Stackup>");
+}
+=== -71527395e1cc14c2
+fn line_ref(o byte[>..]&, w real) {
+    put(o, "<LineDescRef id=\"LINE_");
+    inum(o, lwi(w));
+    line(o, "\"/>");
+}
+fn prim_ref(o byte[>..]&, i int) {
+    put(o, "<StandardPrimitiveRef id=\"PRIM_");
+    inum(o, i);
+    line(o, "\"/>");
+}
+fn location(o byte[>..]&, x real, y real) {
+    put(o, "<Location");
+    xy(o, "x", "y", x, y);
+    line(o, "/>");
+}
+fn ipc_packages(o byte[>..]&) {
+    for k in 0..NK {
+        var first int = pk(k, 0) as int;
+        put(o, "<Package name=\"");
+        esc(o, pkg_name(k));
+        put(o, "\" type=\"OTHER\" pinOne=\"");
+        inum(o, fp(first, 6) as int);
+        line(o, "\">");
+        line(o, "<Outline>");
+        line(o, "<Polygon>");
+        pkbox(k);
+        poly(o, BX0, BY0, BX1, BY1);
+        line(o, "</Polygon>");
+        line_ref(o, XD[11]);
+        line(o, "</Outline>");
+        var cnt int = pk(k, 1) as int;
+        for i in 0..cnt {
+            var f int = first + i;
+            put(o, "<Pin number=\"");
+            inum(o, fp(f, 6) as int);
+            put(o, "\" type=\"");
+            if fp(f, 5) > 0.0 {
+                put(o, "THRU");
+            } else {
+                put(o, "SURFACE");
+            }
+            line(o, "\" electricalType=\"ELECTRICAL\">");
+            location(o, fp(f, 0), fp(f, 1));
+            prim_ref(o, shsym(fp(f, 4), fp(f, 2), fp(f, 3), 0.0));
+            line(o, "</Pin>");
+        }
+        line(o, "</Package>");
+    }
+}
+=== -423caee42b6ca188
+fn ipc_components(o byte[>..]&) {
+    for q in 0..NQ {
+        put(o, "<Component refDes=\"");
+        esc(o, ref_of(q));
+        put(o, "\" packageRef=\"");
+        esc(o, pkg_name(pt(q, 4) as int));
+        put(o, "\" part=\"");
+        oem(o, q);
+        put(o, "\" layerRef=\"");
+        plyr(o, q);
+        put(o, "\" mountType=\"");
+        var thru bool = false;
+        var first int = pt(q, 5) as int;
+        var cnt int = pt(q, 6) as int;
+        for i in 0..cnt {
+            if pd(first + i, 7) > 0.0 {
+                thru = true;
+            }
+        }
+        if thru {
+            put(o, "THMT");
+        } else {
+            put(o, "SMT");
+        }
+        line(o, "\">");
+        if rot_of(q) > 1e-9 || side_of(q) == 1 {
+            put(o, "<Xform rotation=\"");
+            num(o, rot_of(q));
+            put(o, "\"");
+            if side_of(q) == 1 {
+                put(o, " mirror=\"true\"");
+            }
+            line(o, "/>");
+        }
+        location(o, pt(q, 0), pt(q, 1));
+        line(o, "</Component>");
+    }
+}
+=== 2a6c5e5dc61234bf
+fn ipc_nets(o byte[>..]&) {
+    for n in 1..NN {
+        var open bool = false;
+        for p in 0..NP {
+            if pnet(p) == n {
+                if !open {
+                    put(o, "<LogicalNet name=\"");
+                    esc(o, net_name(n));
+                    line(o, "\">");
+                    open = true;
+                }
+                pinref(o, p);
+            }
+        }
+        if open {
+            line(o, "</LogicalNet>");
+        }
+    }
+}
+=== -13d5b3cbbe3bb497
+fn pad_item(o byte[>..]&, x real, y real, i int) {
+    line(o, "<Pad>");
+    location(o, x, y);
+    prim_ref(o, i);
+}
+fn ipc_copper(o byte[>..]&, s int) {
+    var l int = slay(s);
+    var has bool = NV != 0;
+    for t in 0..NT {
+        if (tk(t, 5) as int) == l {
+            has = true;
+        }
+    }
+    for z in 0..NZ {
+        if (zr(z, 5) as int) == l {
+            has = true;
+        }
+    }
+    for p in 0..NP {
+        if onl(p, l) {
+            has = true;
+        }
+    }
+    if !has {
+        return;
+    }
+    put(o, "<LayerFeature layerRef=\"");
+    lname(o, l, false);
+    line(o, "\">");
+    for n in 0..NN {
+        var open bool = false;
+        for t in 0..NT {
+            if (tk(t, 5) as int) == l && (tk(t, 6) as int) == n {
+                if !open {
+                    nset(o, n, "");
+                    line(o, "<Features>");
+                    line(o, "<UserSpecial>");
+                    open = true;
+                }
+                put(o, "<Line");
+                xy(o, "startX", "startY", tk(t, 0), tk(t, 1));
+                xy(o, "endX", "endY", tk(t, 2), tk(t, 3));
+                line(o, ">");
+                line_ref(o, tk(t, 4));
+                line(o, "</Line>");
+            }
+        }
+        if open {
+            line(o, "</UserSpecial>");
+            line(o, "</Features>");
+            line(o, "</Set>");
+        }
+        open = false;
+        for v in 0..NV {
+            if (vi(v, 2) as int) == n {
+                if !open {
+                    nset(o, n, " padUsage=\"VIA\"");
+                    open = true;
+                }
+                pad_item(o, vi(v, 0), vi(v, 1), sym(0, XD[8], XD[8]));
+                line(o, "</Pad>");
+            }
+        }
+        if open {
+            line(o, "</Set>");
+        }
+        open = false;
+        for p in 0..NP {
+            if onl(p, l) && pnet(p) == n {
+                if !open {
+                    nset(o, n, "");
+                    open = true;
+                }
+                pad_item(o, pd(p, 0), pd(p, 1), padsym(p, 0.0));
+                pinref(o, p);
+                line(o, "</Pad>");
+            }
+        }
+        if open {
+            line(o, "</Set>");
+        }
+        open = false;
+        for z in 0..NZ {
+            if (zr(z, 5) as int) == l && (zr(z, 4) as int) == n {
+                if !open {
+                    nset(o, n, "");
+                    line(o, "<Features>");
+                    line(o, "<UserSpecial>");
+                    open = true;
+                }
+                line(o, "<Contour>");
+                line(o, "<Polygon>");
+                poly(o, zr(z, 0), zr(z, 1), zr(z, 2), zr(z, 3));
+                line(o, "</Polygon>");
+                line(o, "</Contour>");
+            }
+        }
+        if open {
+            line(o, "</UserSpecial>");
+            line(o, "</Features>");
+            line(o, "</Set>");
+        }
+    }
+    line(o, "</LayerFeature>");
+}
+=== 1e491a04433ab3ed
+fn feature_open(o byte[>..]&, name const byte[:]) {
+    put(o, "<LayerFeature layerRef=\"");
+    put(o, name);
+    line(o, "\">");
+}
+fn ipc_pads(o byte[>..]&, name const byte[:], b int, paste bool) {
+    var open bool = false;
+    for p in 0..NP {
+        var m int = pd(p, 6) as int;
+        if (m & b) != 0 && (!paste || pd(p, 7) == 0.0) {
+            if !open {
+                feature_open(o, name);
+                line(o, "<Set>");
+                open = true;
+            }
+            var e real = XD[10];
+            if paste {
+                e = 0.0;
+            }
+            pad_item(o, pd(p, 0), pd(p, 1), padsym(p, e));
+            pinref(o, p);
+            line(o, "</Pad>");
+        }
+    }
+    if open {
+        line(o, "</Set>");
+        line(o, "</LayerFeature>");
+    }
+}
+fn ipc_silk(o byte[>..]&, name const byte[:], side int) {
+    var open bool = false;
+    for b in 0..NB {
+        var bs int = bd(b, 5) as int;
+        if bs == side {
+            if !open {
+                feature_open(o, name);
+                line(o, "<Set>");
+                line(o, "<Features>");
+                line(o, "<UserSpecial>");
+                open = true;
+            }
+            line(o, "<Polyline>");
+            poly(o, bd(b, 0), bd(b, 1), bd(b, 2), bd(b, 3));
+            line_ref(o, XD[11]);
+            line(o, "</Polyline>");
+        }
+    }
+    if open {
+        line(o, "</UserSpecial>");
+        line(o, "</Features>");
+        line(o, "</Set>");
+        line(o, "</LayerFeature>");
+    }
+}
+fn hole(o byte[>..]&, h int, d real, status const byte[:], x real, y real) {
+    put(o, "<Hole name=\"H");
+    inum(o, h);
+    put(o, "\" diameter=\"");
+    num(o, d);
+    put(o, "\" platingStatus=\"");
+    put(o, status);
+    put(o, "\" plusTol=\"0\" minusTol=\"0\"");
+    xy(o, "x", "y", x, y);
+    line(o, "/>");
+}
+fn ipc_others(o byte[>..]&) {
+    ipc_pads(o, "MASK_TOP", 1, false);
+    if NL > 1 {
+        ipc_pads(o, "MASK_BOTTOM", 2, false);
+    }
+    ipc_pads(o, "PASTE_TOP", 1, true);
+    if NL > 1 {
+        ipc_pads(o, "PASTE_BOTTOM", 2, true);
+    }
+    ipc_silk(o, "SILK_TOP", 0);
+    ipc_silk(o, "SILK_BOTTOM", 1);
+    feature_open(o, "OUTLINE");
+    line(o, "<Set>");
+    line(o, "<Features>");
+    line(o, "<UserSpecial>");
+    line(o, "<Polyline>");
+    poly(o, XD[0], XD[1], XD[2], XD[3]);
+    line_ref(o, XD[12]);
+    line(o, "</Polyline>");
+    line(o, "</UserSpecial>");
+    line(o, "</Features>");
+    line(o, "</Set>");
+    line(o, "</LayerFeature>");
+    var h int = 1;
+    var drill bool = false;
+    for n in 0..NN {
+        var has bool = false;
+        for p in 0..NP {
+            if pnet(p) == n && pd(p, 7) > 0.0 {
+                has = true;
+            }
+        }
+        for v in 0..NV {
+            var vn int = vi(v, 2) as int;
+            if vn == n {
+                has = true;
+            }
+        }
+        if has {
+            if !drill {
+                feature_open(o, "DRILL");
+                drill = true;
+            }
+            nset(o, n, "");
+            for p in 0..NP {
+                if pnet(p) == n && pd(p, 7) > 0.0 {
+                    hole(o, h, pd(p, 7), "PLATED", pd(p, 0), pd(p, 1));
+                    h += 1;
+                }
+            }
+            for v in 0..NV {
+                var vn int = vi(v, 2) as int;
+                if vn == n {
+                    hole(o, h, XD[9], "VIA", vi(v, 0), vi(v, 1));
+                    h += 1;
+                }
+            }
+            line(o, "</Set>");
+        }
+    }
+    if drill {
+        line(o, "</LayerFeature>");
+    }
+}
+=== -7b1be5e8d421225a
+export fn px_ipc() i32 {
+    prepare();
+    ipc_head(TB);
+    ipc_bom(TB);
+    put(TB, "<Ecad name=\"");
+    bname(TB);
+    line(TB, "\">");
+    line(TB, "<CadHeader units=\"MILLIMETER\"/>");
+    line(TB, "<CadData>");
+    ipc_layers(TB, 1);
+    ipc_stack(TB);
+    put(TB, "<Step name=\"");
+    bname(TB);
+    line(TB, "\" type=\"BOARD\">");
+    line(TB, "<Datum x=\"0\" y=\"0\"/>");
+    line(TB, "<Profile>");
+    line(TB, "<Polygon>");
+    poly(TB, XD[0], XD[1], XD[2], XD[3]);
+    line(TB, "</Polygon>");
+    line(TB, "</Profile>");
+    ipc_packages(TB);
+    ipc_components(TB);
+    ipc_nets(TB);
+    for s in 0..NL {
+        ipc_copper(TB, s);
+    }
+    ipc_others(TB);
+    line(TB, "</Step>");
+    line(TB, "</CadData>");
+    line(TB, "</Ecad>");
+    OUT.clear();
+    line(OUT, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    line(OUT, "<IPC-2581 revision=\"C\" xmlns=\"http://webstds.ipc.org/2581\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+    line(OUT, "<Content roleRef=\"Owner\">");
+    line(OUT, "<FunctionMode mode=\"ASSEMBLY\"/>");
+    put(OUT, "<StepRef name=\"");
+    bname(OUT);
+    line(OUT, "\"/>");
+    ipc_layers(OUT, 0);
+    put(OUT, "<BomRef name=\"");
+    bname(OUT);
+    line(OUT, "_bom\"/>");
+    line(OUT, "<DictionaryLineDesc units=\"MILLIMETER\">");
+    for i in 0..LW.len {
+        put(OUT, "<EntryLineDesc id=\"LINE_");
+        inum(OUT, i);
+        line(OUT, "\">");
+        put(OUT, "<LineDesc lineEnd=\"ROUND\" lineWidth=\"");
+        num(OUT, LW[i]);
+        line(OUT, "\"/>");
+        line(OUT, "</EntryLineDesc>");
+    }
+    line(OUT, "</DictionaryLineDesc>");
+    line(OUT, "<DictionaryStandard units=\"MILLIMETER\">");
+    var nsy int = SY.len / 3;
+    for i in 0..nsy {
+        put(OUT, "<EntryStandard id=\"PRIM_");
+        inum(OUT, i);
+        line(OUT, "\">");
+        var k int = SY[3 * i] as int;
+        if k == 0 {
+            put(OUT, "<Circle diameter=\"");
+            num(OUT, SY[3 * i + 1]);
+        } else {
+            if k == 1 {
+                put(OUT, "<RectCenter width=\"");
+            } else {
+                put(OUT, "<Oval width=\"");
+            }
+            num(OUT, SY[3 * i + 1]);
+            put(OUT, "\" height=\"");
+            num(OUT, SY[3 * i + 2]);
+        }
+        line(OUT, "\"/>");
+        line(OUT, "</EntryStandard>");
+    }
+    line(OUT, "</DictionaryStandard>");
+    line(OUT, "</Content>");
+    for i in 0..TB.len {
+        OUT.push(TB[i]);
+    }
+    line(OUT, "</IPC-2581>");
+    px_views();
+    return OUT.len as i32;
+}
+=== 184b30ed6fa19388
+fn job(o byte[>..]&) {
+    var s const byte[:] = str(0);
+    if s.len == 0 {
+        put(o, "board");
+        return;
+    }
+    for i in 0..s.len {
+        var c byte = s[i];
+        if c >= 'A' && c <= 'Z' {
+            c = (c + 32) as byte;
+        }
+        if (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_' || c == '-' {
+            o.push(c);
+        } else {
+            o.push('_');
+        }
+    }
+}
+fn fstart() {
+    FI.push(OUT.len as real);
+    job(OUT);
+    put(OUT, "/");
+}
+fn fdata() {
+    var at int = FI[FI.len - 1] as int;
+    FI.push((OUT.len - at) as real);
+    FI.push(OUT.len as real);
+}
+fn fend() {
+    var at int = FI[FI.len - 1] as int;
+    FI.push((OUT.len - at) as real);
+}
+fn odb_date(o byte[>..]&) {
+    var s const byte[:] = str(1);
+    if s.len < 19 {
+        put(o, "20260101.000000");
+        return;
+    }
+    put(o, s[0..4]);
+    put(o, s[5..7]);
+    put(o, s[8..10]);
+    put(o, ".");
+    put(o, s[11..13]);
+    put(o, s[14..16]);
+    put(o, s[17..19]);
+}
+=== -231edb80f3994f80
+fn rows() {
+    RW.clear();
+    RW.reserve(NL + 16);
+    RW.push(1);
+    RW.push(2);
+    RW.push(3);
+    RW.push(4);
+    for s in 0..NL {
+        RW.push(10 + slay(s));
+    }
+    if NL > 1 {
+        RW.push(5);
+        RW.push(6);
+    }
+    RW.push(7);
+    RW.push(8);
+    RW.push(9);
+}
+fn rowname(o byte[>..]&, c int) {
+    if c >= 10 {
+        lname(o, c - 10, true);
+    } else if c == 1 {
+        put(o, "comp_+_top");
+    } else if c == 2 {
+        put(o, "sst");
+    } else if c == 3 {
+        put(o, "spt");
+    } else if c == 4 {
+        put(o, "smt");
+    } else if c == 5 {
+        put(o, "smb");
+    } else if c == 6 {
+        put(o, "spb");
+    } else if c == 7 {
+        put(o, "ssb");
+    } else if c == 8 {
+        put(o, "comp_+_bot");
+    } else if c == 9 {
+        put(o, "drill");
+    }
+}
+fn rowtype(o byte[>..]&, c int) {
+    if c >= 10 {
+        if XD[22 + c - 10] > 0.5 {
+            put(o, "POWER_GROUND");
+        } else {
+            put(o, "SIGNAL");
+        }
+    } else if c == 1 || c == 8 {
+        put(o, "COMPONENT");
+    } else if c == 2 || c == 7 {
+        put(o, "SILK_SCREEN");
+    } else if c == 3 || c == 6 {
+        put(o, "SOLDER_PASTE");
+    } else if c == 4 || c == 5 {
+        put(o, "SOLDER_MASK");
+    } else if c == 9 {
+        put(o, "DRILL");
+    }
+}
+fn lyr(c int) int {
+    if c >= 10 {
+        return spos(c - 10);
+    }
+    if c == 4 {
+        return NL;
+    }
+    if c == 3 {
+        return NL + 1;
+    }
+    if c == 5 {
+        return NL + 2;
+    }
+    if c == 6 {
+        return NL + 3;
+    }
+    if NL > 1 {
+        return NL + 4;
+    }
+    return NL + 2;
+}
+=== -55e81cbad1f38a96
+fn odb_matrix(o byte[>..]&) {
+    line(o, "STEP {");
+    line(o, "   COL=1");
+    line(o, "   NAME=pcb");
+    line(o, "}");
+    lf(o);
+    for i in 0..RW.len {
+        var c int = RW[i];
+        line(o, "LAYER {");
+        put(o, "   ROW=");
+        inum(o, i + 1);
+        lf(o);
+        line(o, "   CONTEXT=BOARD");
+        put(o, "   TYPE=");
+        rowtype(o, c);
+        lf(o);
+        put(o, "   NAME=");
+        rowname(o, c);
+        lf(o);
+        line(o, "   POLARITY=POSITIVE");
+        put(o, "   START_NAME=");
+        if c == 9 {
+            put(o, "top");
+        }
+        lf(o);
+        put(o, "   END_NAME=");
+        if c == 9 {
+            if NL == 1 {
+                put(o, "top");
+            } else {
+                put(o, "bottom");
+            }
+        }
+        lf(o);
+        line(o, "   OLD_NAME=");
+        line(o, "}");
+        lf(o);
+    }
+}
+=== 3bf6a5c63df9412f
+fn odb_info(o byte[>..]&) {
+    put(o, "JOB_NAME=");
+    job(o);
+    lf(o);
+    line(o, "UNITS=MM");
+    line(o, "ODB_VERSION_MAJOR=8");
+    line(o, "ODB_VERSION_MINOR=1");
+    line(o, "ODB_SOURCE=Amni-CAD");
+    put(o, "CREATION_DATE=");
+    odb_date(o);
+    lf(o);
+    put(o, "SAVE_DATE=");
+    odb_date(o);
+    lf(o);
+    line(o, "SAVE_APP=Amni-CAD");
+    line(o, "SAVE_USER=amni-cad");
+    line(o, "MAX_UID=0");
+}
+fn odb_stephdr(o byte[>..]&) {
+    line(o, "UNITS=MM");
+    line(o, "X_DATUM=0");
+    line(o, "Y_DATUM=0");
+    line(o, "X_ORIGIN=0");
+    line(o, "Y_ORIGIN=0");
+    line(o, "TOP_ACTIVE=0");
+    line(o, "BOTTOM_ACTIVE=0");
+    line(o, "RIGHT_ACTIVE=0");
+    line(o, "LEFT_ACTIVE=0");
+    line(o, "AFFECTING_BOM=");
+    line(o, "AFFECTING_BOM_CHANGED=0");
+}
+fn odb_font(o byte[>..]&) {
+    line(o, "XSIZE 0.302000");
+    line(o, "YSIZE 0.302000");
+    line(o, "OFFSET 0.000000");
+}
+fn odb_profile(o byte[>..]&) {
+    line(o, "UNITS=MM");
+    line(o, "#");
+    line(o, "#Num Features");
+    line(o, "#");
+    line(o, "F 1");
+    line(o, "#");
+    line(o, "#Layer features");
+    line(o, "#");
+    surf(o, XD[0], XD[1], XD[2], XD[3]);
+}
+=== 222215dcab8c6910
+fn feat_take() int {
+    var n int = NFT;
+    NFT += 1;
+    return n;
+}
+fn feat_pad(x real, y real, i int) {
+    put(TB, "P");
+    nsp(TB, x);
+    nsp(TB, y);
+    isp(TB, i);
+    put(TB, " P 0 0");
+}
+fn feat_line(x0 real, y0 real, x1 real, y1 real, i int) {
+    put(TB, "L");
+    nsp(TB, x0);
+    nsp(TB, y0);
+    nsp(TB, x1);
+    nsp(TB, y1);
+    isp(TB, i);
+    line(TB, " P 0");
+}
+fn odb_feats(c int) {
+    TB.clear();
+    SY.clear();
+    NFT = 0;
+    if c >= 10 {
+        var l int = c - 10;
+        var s int = spos(l);
+        for t in 0..NT {
+            if (tk(t, 5) as int) == l {
+                var w real = tk(t, 4);
+                feat_line(tk(t, 0), tk(t, 1), tk(t, 2), tk(t, 3), sym(0, w, w));
+                FT[t] = feat_take();
+            }
+        }
+        for p in 0..NP {
+            if onl(p, l) {
+                feat_pad(pd(p, 0), pd(p, 1), padsym(p, 0.0));
+                put(TB, ";0=0");
+                if pd(p, 7) == 0.0 {
+                    put(TB, ",1");
+                }
+                lf(TB);
+                FC[p * NL + s] = feat_take();
+            }
+        }
+        for v in 0..NV {
+            feat_pad(vi(v, 0), vi(v, 1), sym(0, XD[8], XD[8]));
+            line(TB, ";0=1");
+            FV[v * NL + s] = feat_take();
+        }
+        for z in 0..NZ {
+            if (zr(z, 5) as int) == l {
+                surf(TB, zr(z, 0), zr(z, 1), zr(z, 2), zr(z, 3));
+                FZ[z] = feat_take();
+            }
+        }
+    } else if c == 4 || c == 5 {
+        var b int = 1;
+        if c == 5 {
+            b = 2;
+        }
+        for p in 0..NP {
+            if ((pd(p, 6) as int) & b) != 0 {
+                feat_pad(pd(p, 0), pd(p, 1), padsym(p, XD[10]));
+                lf(TB);
+                FM[2 * p + b - 1] = feat_take();
+            }
+        }
+    } else if c == 3 || c == 6 {
+        var b int = 1;
+        if c == 6 {
+            b = 2;
+        }
+        for p in 0..NP {
+            if ((pd(p, 6) as int) & b) != 0 && pd(p, 7) == 0.0 {
+                feat_pad(pd(p, 0), pd(p, 1), padsym(p, 0.0));
+                lf(TB);
+                FS[2 * p + b - 1] = feat_take();
+            }
+        }
+    } else if c == 2 || c == 7 {
+        var side int = 0;
+        if c == 7 {
+            side = 1;
+        }
+        for b in 0..NB {
+            if (bd(b, 5) as int) == side {
+                var i int = sym(0, XD[11], XD[11]);
+                feat_line(bd(b, 0), bd(b, 1), bd(b, 0), bd(b, 3), i);
+                feat_take();
+                feat_line(bd(b, 0), bd(b, 3), bd(b, 2), bd(b, 3), i);
+                feat_take();
+                feat_line(bd(b, 2), bd(b, 3), bd(b, 2), bd(b, 1), i);
+                feat_take();
+                feat_line(bd(b, 2), bd(b, 1), bd(b, 0), bd(b, 1), i);
+                feat_take();
+            }
+        }
+    } else if c == 9 {
+        for p in 0..NP {
+            if pd(p, 7) > 0.0 {
+                feat_pad(pd(p, 0), pd(p, 1), sym(0, pd(p, 7), pd(p, 7)));
+                line(TB, ";2=0");
+                FH[p] = feat_take();
+            }
+        }
+        for v in 0..NV {
+            feat_pad(vi(v, 0), vi(v, 1), sym(0, XD[9], XD[9]));
+            line(TB, ";2=2");
+            FHV[v] = feat_take();
+        }
+    }
+    line(OUT, "UNITS=MM");
+    line(OUT, "#");
+    line(OUT, "#Num Features");
+    line(OUT, "#");
+    put(OUT, "F ");
+    inum(OUT, NFT);
+    lf(OUT);
+    line(OUT, "#");
+    line(OUT, "#Feature symbol names");
+    line(OUT, "#");
+    for i in 0..SY.len / 3 {
+        put(OUT, "$");
+        inum(OUT, i);
+        put(OUT, " ");
+        odbsym(OUT, i);
+        lf(OUT);
+    }
+    line(OUT, "#");
+    line(OUT, "#Feature attribute names");
+    line(OUT, "#");
+    line(OUT, "@0 .pad_usage");
+    line(OUT, "@1 .smd");
+    line(OUT, "@2 .drill");
+    line(OUT, "#");
+    line(OUT, "#Layer features");
+    line(OUT, "#");
+    for i in 0..TB.len {
+        OUT.push(TB[i]);
+    }
+}
+=== -27ebc7814543fa80
+fn odb_comps(o byte[>..]&, side int) {
+    line(o, "UNITS=MM");
+    line(o, "#");
+    for q in 0..NQ {
+        if side_of(q) == side {
+            var r real = 360.0 - rot_of(q);
+            while r < 0.0 {
+                r += 360.0;
+            }
+            while r >= 360.0 {
+                r -= 360.0;
+            }
+            put(o, "# CMP ");
+            inum(o, CN[q]);
+            lf(o);
+            put(o, "CMP");
+            isp(o, pt(q, 4) as int);
+            nsp(o, pt(q, 0));
+            nsp(o, pt(q, 1));
+            nsp(o, r);
+            if side == 1 {
+                put(o, " M ");
+            } else {
+                put(o, " N ");
+            }
+            tok(o, ref_of(q));
+            put(o, " ");
+            tok(o, pkg_name(pt(q, 4) as int));
+            if val_of(q).len > 0 {
+                put(o, "_");
+                tok(o, val_of(q));
+            }
+            lf(o);
+            put(o, "PRP VALUE '");
+            qtok(o, val_of(q));
+            line(o, "'");
+            var first int = pt(q, 5) as int;
+            for i in 0..(pt(q, 6) as int) {
+                var p int = first + i;
+                put(o, "TOP");
+                isp(o, i);
+                nsp(o, pd(p, 0));
+                nsp(o, pd(p, 1));
+                nsp(o, r);
+                if side == 1 {
+                    put(o, " M");
+                } else {
+                    put(o, " N");
+                }
+                isp(o, pnet(p));
+                isp(o, SUB[p]);
+                isp(o, pd(p, 9) as int);
+                lf(o);
+            }
+            line(o, "#");
+        }
+    }
+}
+=== -641462175afd7648
+fn fid(o byte[>..]&, kind const byte[:], l int, f int) {
+    put(o, "FID ");
+    put(o, kind);
+    isp(o, l);
+    isp(o, f);
+    lf(o);
+}
+fn fid_if(o byte[>..]&, kind const byte[:], l int, f int) {
+    if f >= 0 {
+        fid(o, kind, l, f);
+    }
+}
+fn rect_rec(o byte[>..]&, x real, y real, w real, h real) {
+    put(o, "RC");
+    nsp(o, x);
+    nsp(o, y);
+    nsp(o, w);
+    nsp(o, h);
+    lf(o);
+}
+fn odb_eda(o byte[>..]&) {
+    line(o, "HDR Amni-CAD");
+    line(o, "UNITS=MM");
+    put(o, "LYR");
+    for s in 0..NL {
+        put(o, " ");
+        lname(o, slay(s), true);
+    }
+    put(o, " smt spt");
+    if NL > 1 {
+        put(o, " smb spb");
+    }
+    line(o, " drill");
+    line(o, "#");
+    for n in 0..NN {
+        put(o, "#NET ");
+        inum(o, n);
+        lf(o);
+        put(o, "NET ");
+        if n == 0 {
+            put(o, "$NONE$");
+        } else {
+            tok(o, net_name(n));
+        }
+        lf(o);
+        for p in 0..NP {
+            if pnet(p) == n {
+                var q int = ppart(p);
+                put(o, "SNT TOP ");
+                if side_of(q) == 1 {
+                    put(o, "B");
+                } else {
+                    put(o, "T");
+                }
+                isp(o, CN[q]);
+                isp(o, p - (pt(q, 5) as int));
+                lf(o);
+                for s in 0..NL {
+                    fid_if(o, "C", s, FC[p * NL + s]);
+                }
+                fid_if(o, "C", lyr(4), FM[2 * p]);
+                fid_if(o, "C", lyr(5), FM[2 * p + 1]);
+                fid_if(o, "C", lyr(3), FS[2 * p]);
+                fid_if(o, "C", lyr(6), FS[2 * p + 1]);
+                fid_if(o, "H", lyr(9), FH[p]);
+            }
+        }
+        for t in 0..NT {
+            if (tk(t, 6) as int) == n {
+                line(o, "SNT TRC");
+                fid(o, "C", spos(tk(t, 5) as int), FT[t]);
+            }
+        }
+        for v in 0..NV {
+            if (vi(v, 2) as int) == n {
+                line(o, "SNT VIA");
+                for s in 0..NL {
+                    fid_if(o, "C", s, FV[v * NL + s]);
+                }
+                fid(o, "H", lyr(9), FHV[v]);
+            }
+        }
+        var plane bool = false;
+        for z in 0..NZ {
+            if (zr(z, 4) as int) == n {
+                if !plane {
+                    line(o, "SNT PLN S E 0");
+                    plane = true;
+                }
+                fid(o, "C", spos(zr(z, 5) as int), FZ[z]);
+            }
+        }
+    }
+    for k in 0..NK {
+        put(o, "# PKG ");
+        inum(o, k);
+        lf(o);
+        put(o, "PKG ");
+        tok(o, pkg_name(k));
+        nsp(o, pitch(k));
+        pkbox(k);
+        nsp(o, BX0);
+        nsp(o, BY0);
+        nsp(o, BX1);
+        nsp(o, BY1);
+        line(o, ";");
+        rect_rec(o, BX0, BY0, BX1 - BX0, BY1 - BY0);
+        var first int = pk(k, 0) as int;
+        for i in 0..(pk(k, 1) as int) {
+            var f int = first + i;
+            var thru bool = fp(f, 5) > 0.0;
+            put(o, "PIN");
+            isp(o, fp(f, 6) as int);
+            if thru {
+                put(o, " T");
+            } else {
+                put(o, " S");
+            }
+            nsp(o, fp(f, 0));
+            nsp(o, fp(f, 1));
+            nsp(o, fp(f, 5));
+            if thru {
+                line(o, " E T");
+            } else {
+                line(o, " E S");
+            }
+            if fp(f, 4) >= 0.5 && near(fp(f, 2), fp(f, 3)) {
+                put(o, "CR");
+                nsp(o, fp(f, 0));
+                nsp(o, fp(f, 1));
+                nsp(o, fp(f, 2) / 2.0);
+                lf(o);
+            } else {
+                rect_rec(o, fp(f, 0) - fp(f, 2) / 2.0, fp(f, 1) - fp(f, 3) / 2.0, fp(f, 2), fp(f, 3));
+            }
+        }
+        line(o, "#");
+    }
+}
+=== 316423ce754d07f7
+fn file_begin(path const byte[:]) {
+    fstart();
+    put(OUT, path);
+    fdata();
+}
+fn layer_path(c int, leaf const byte[:]) {
+    fstart();
+    put(OUT, "steps/pcb/layers/");
+    rowname(OUT, c);
+    put(OUT, leaf);
+    fdata();
+}
+export fn px_odb() i32 {
+    prepare();
+    rows();
+    FI.clear();
+    FI.reserve(4 * (RW.len + 12));
+    zi(FC, NP * NL, -1);
+    zi(FV, NV * NL, -1);
+    zi(FT, NT, -1);
+    zi(FZ, NZ, -1);
+    zi(FM, 2 * NP, -1);
+    zi(FS, 2 * NP, -1);
+    zi(FH, NP, -1);
+    zi(FHV, NV, -1);
+    OUT.clear();
+    file_begin("matrix/matrix");
+    odb_matrix(OUT);
+    fend();
+    file_begin("misc/info");
+    odb_info(OUT);
+    fend();
+    file_begin("fonts/standard");
+    odb_font(OUT);
+    fend();
+    file_begin("steps/pcb/stephdr");
+    odb_stephdr(OUT);
+    fend();
+    file_begin("steps/pcb/profile");
+    odb_profile(OUT);
+    fend();
+    for i in 0..RW.len {
+        var c int = RW[i];
+        layer_path(c, "/features");
+        odb_feats(c);
+        fend();
+        if c == 1 || c == 8 {
+            layer_path(c, "/components");
+            var side int = 0;
+            if c == 8 {
+                side = 1;
+            }
+            odb_comps(OUT, side);
+            fend();
+        }
+    }
+    file_begin("steps/pcb/eda/data");
+    odb_eda(OUT);
+    fend();
+    px_views();
+    return (FI.len / 4) as i32;
+}
+=== -39f9c21581edbdb1
+var EN int = 0;
+var PDS int = 0;
+var LP int[>..];
+var BL int[>..];
+var FL int[>..];
+var SL int[>..];
+var IA int[>..];
+var IR int[>..];
+var IP int[>..];
+var IQ int[>..];
+var KR int[>..];
+var KP int[>..];
+var HX real[>..];
+var HY real[>..];
+var HR real[>..];
+=== 283c229ca0aa6c39
+fn ent(o byte[>..]&) int {
+    EN += 1;
+    put(o, "#");
+    inum(o, EN);
+    put(o, "=");
+    return EN;
+}
+fn eref(o byte[>..]&, n int) {
+    put(o, "#");
+    inum(o, n);
+}
+fn fin(o byte[>..]&) {
+    line(o, ";");
+}
+fn rnum(o byte[>..]&, v real) {
+    var at int = o.len;
+    num(o, v);
+    var dot bool = false;
+    for i in at..o.len {
+        if o[i] == '.' {
+            dot = true;
+        }
+    }
+    if !dot {
+        o.push('.');
+    }
+}
+fn sesc(o byte[>..]&, s const byte[:]) {
+    for i in 0..s.len {
+        var c byte = s[i];
+        if c == '\'' {
+            put(o, "''");
+        } else if c == '\\' {
+            o.push('\\');
+            o.push('\\');
+        } else if c < 32 || c > 126 {
+            o.push('_');
+        } else {
+            o.push(c);
+        }
+    }
+}
+fn trip(o byte[>..]&, x real, y real, z real) {
+    put(o, "(");
+    rnum(o, x);
+    put(o, ",");
+    rnum(o, y);
+    put(o, ",");
+    rnum(o, z);
+    put(o, ")");
+}
+fn refs(o byte[>..]&, xs int[>..]&) {
+    for i in 0..xs.len {
+        if i > 0 {
+            put(o, ",");
+        }
+        eref(o, xs[i]);
+    }
+}
+=== -723873f2ab47d5b4
+fn spt(o byte[>..]&, x real, y real, z real) int {
+    var n int = ent(o);
+    put(o, "CARTESIAN_POINT('',");
+    trip(o, x, y, z);
+    put(o, ")");
+    fin(o);
+    return n;
+}
+fn sdir(o byte[>..]&, x real, y real, z real) int {
+    var n int = ent(o);
+    put(o, "DIRECTION('',");
+    trip(o, x, y, z);
+    put(o, ")");
+    fin(o);
+    return n;
+}
+fn sax(o byte[>..]&, x real, y real, z real, ax real, ay real, az real, rx real, ry real, rz real) int {
+    var p int = spt(o, x, y, z);
+    var a int = sdir(o, ax, ay, az);
+    var r int = sdir(o, rx, ry, rz);
+    var n int = ent(o);
+    put(o, "AXIS2_PLACEMENT_3D('',");
+    eref(o, p);
+    put(o, ",");
+    eref(o, a);
+    put(o, ",");
+    eref(o, r);
+    put(o, ")");
+    fin(o);
+    return n;
+}
+fn svx(o byte[>..]&, x real, y real, z real) int {
+    var p int = spt(o, x, y, z);
+    var n int = ent(o);
+    put(o, "VERTEX_POINT('',");
+    eref(o, p);
+    put(o, ")");
+    fin(o);
+    return n;
+}
+fn splane(o byte[>..]&, x real, y real, z real, ax real, ay real, az real, rx real, ry real, rz real) int {
+    var p int = sax(o, x, y, z, ax, ay, az, rx, ry, rz);
+    var n int = ent(o);
+    put(o, "PLANE('',");
+    eref(o, p);
+    put(o, ")");
+    fin(o);
+    return n;
+}
+=== -77b8d5863a09e819
+fn sedge(o byte[>..]&, a int, b int, g int) int {
+    var n int = ent(o);
+    put(o, "EDGE_CURVE('',");
+    eref(o, a);
+    put(o, ",");
+    eref(o, b);
+    put(o, ",");
+    eref(o, g);
+    put(o, ",.T.)");
+    fin(o);
+    return n;
+}
+fn sline(o byte[>..]&, a int, b int, x0 real, y0 real, z0 real, x1 real, y1 real, z1 real) int {
+    var p int = spt(o, x0, y0, z0);
+    var dx real = x1 - x0;
+    var dy real = y1 - y0;
+    var dz real = z1 - z0;
+    var dist real = root(dx * dx + dy * dy + dz * dz);
+    var div real = dist;
+    if div <= 0.0 {
+        div = 1.0;
+    }
+    var d int = sdir(o, dx / div, dy / div, dz / div);
+    var v int = ent(o);
+    put(o, "VECTOR('',");
+    eref(o, d);
+    put(o, ",");
+    rnum(o, dist);
+    put(o, ")");
+    fin(o);
+    var l int = ent(o);
+    put(o, "LINE('',");
+    eref(o, p);
+    put(o, ",");
+    eref(o, v);
+    put(o, ")");
+    fin(o);
+    return sedge(o, a, b, l);
+}
+fn scirc(o byte[>..]&, v int, cx real, cy real, z real, r real) int {
+    var c int = sax(o, cx, cy, z, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+    var k int = ent(o);
+    put(o, "CIRCLE('',");
+    eref(o, c);
+    put(o, ",");
+    rnum(o, r);
+    put(o, ")");
+    fin(o);
+    return sedge(o, v, v, k);
+}
+fn soe(o byte[>..]&, e int, fwd bool) int {
+    var n int = ent(o);
+    put(o, "ORIENTED_EDGE('',*,*,");
+    eref(o, e);
+    if fwd {
+        put(o, ",.T.)");
+    } else {
+        put(o, ",.F.)");
+    }
+    fin(o);
+    LP.push(n);
+    return n;
+}
+=== 5ed1942d860784c1
+fn sbound(o byte[>..]&, outer bool) int {
+    var l int = ent(o);
+    put(o, "EDGE_LOOP('',(");
+    refs(o, LP);
+    put(o, "))");
+    fin(o);
+    LP.clear();
+    var n int = ent(o);
+    if outer {
+        put(o, "FACE_OUTER_BOUND('',");
+    } else {
+        put(o, "FACE_BOUND('',");
+    }
+    eref(o, l);
+    put(o, ",.T.)");
+    fin(o);
+    BL.push(n);
+    return n;
+}
+fn sface(o byte[>..]&, s int, sm bool) int {
+    var n int = ent(o);
+    put(o, "ADVANCED_FACE('',(");
+    refs(o, BL);
+    put(o, "),");
+    eref(o, s);
+    if sm {
+        put(o, ",.T.)");
+    } else {
+        put(o, ",.F.)");
+    }
+    fin(o);
+    BL.clear();
+    FL.push(n);
+    return n;
+}
+=== 76b469c7bec157d8
+fn prism(o byte[>..]&, x0 real, y0 real, x1 real, y1 real, z0 real, z1 real, drill bool) int {
+    var qx real[>..];
+    var qy real[>..];
+    zf(qx, 4);
+    zf(qy, 4);
+    qx[0] = x0;
+    qy[0] = y0;
+    qx[1] = x1;
+    qy[1] = y0;
+    qx[2] = x1;
+    qy[2] = y1;
+    qx[3] = x0;
+    qy[3] = y1;
+    var bv int[>..];
+    var tv int[>..];
+    var eb int[>..];
+    var et int[>..];
+    var ev int[>..];
+    zi(bv, 4, 0);
+    zi(tv, 4, 0);
+    zi(eb, 4, 0);
+    zi(et, 4, 0);
+    zi(ev, 4, 0);
+    for i in 0..4 {
+        bv[i] = svx(o, qx[i], qy[i], z0);
+        tv[i] = svx(o, qx[i], qy[i], z1);
+    }
+    for i in 0..4 {
+        var j int = (i + 1) % 4;
+        eb[i] = sline(o, bv[i], bv[j], qx[i], qy[i], z0, qx[j], qy[j], z0);
+        et[i] = sline(o, tv[i], tv[j], qx[i], qy[i], z1, qx[j], qy[j], z1);
+        ev[i] = sline(o, bv[i], tv[i], qx[i], qy[i], z0, qx[i], qy[i], z1);
+    }
+    var nh int = 0;
+    if drill {
+        nh = HX.len;
+    }
+    var vb int[>..];
+    var vt int[>..];
+    var cb int[>..];
+    var ct int[>..];
+    var es int[>..];
+    zi(vb, nh, 0);
+    zi(vt, nh, 0);
+    zi(cb, nh, 0);
+    zi(ct, nh, 0);
+    zi(es, nh, 0);
+    for h in 0..nh {
+        var x real = HX[h];
+        var y real = HY[h];
+        var r real = HR[h];
+        vb[h] = svx(o, x + r, y, z0);
+        vt[h] = svx(o, x + r, y, z1);
+        cb[h] = scirc(o, vb[h], x, y, z0, r);
+        ct[h] = scirc(o, vt[h], x, y, z1, r);
+        es[h] = sline(o, vb[h], vt[h], x + r, y, z0, x + r, y, z1);
+    }
+    for i in 0..4 {
+        soe(o, et[i], true);
+    }
+    sbound(o, true);
+    for h in 0..nh {
+        soe(o, ct[h], false);
+        sbound(o, false);
+    }
+    var top int = splane(o, x0, y0, z1, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+    sface(o, top, true);
+    for i in 0..4 {
+        soe(o, eb[3 - i], false);
+    }
+    sbound(o, true);
+    for h in 0..nh {
+        soe(o, cb[h], true);
+        sbound(o, false);
+    }
+    var bottom int = splane(o, x0, y0, z0, 0.0, 0.0, -1.0, 1.0, 0.0, 0.0);
+    sface(o, bottom, true);
+    for i in 0..4 {
+        var j int = (i + 1) % 4;
+        var ux real = qx[j] - qx[i];
+        var uy real = qy[j] - qy[i];
+        var dist real = root(ux * ux + uy * uy);
+        if dist <= 0.0 {
+            dist = 1.0;
+        }
+        var dx real = ux / dist;
+        var dy real = uy / dist;
+        soe(o, eb[i], true);
+        soe(o, ev[j], true);
+        soe(o, et[i], false);
+        soe(o, ev[i], false);
+        sbound(o, true);
+        var wall int = splane(o, qx[i], qy[i], z0, dy, 0.0 - dx, 0.0, dx, dy, 0.0);
+        sface(o, wall, true);
+    }
+    for h in 0..nh {
+        soe(o, cb[h], false);
+        soe(o, es[h], true);
+        soe(o, ct[h], true);
+        soe(o, es[h], false);
+        sbound(o, true);
+        var a int = sax(o, HX[h], HY[h], z0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+        var c int = ent(o);
+        put(o, "CYLINDRICAL_SURFACE('',");
+        eref(o, a);
+        put(o, ",");
+        rnum(o, HR[h]);
+        put(o, ")");
+        fin(o);
+        sface(o, c, false);
+    }
+    var s int = ent(o);
+    put(o, "CLOSED_SHELL('',(");
+    refs(o, FL);
+    put(o, "))");
+    fin(o);
+    FL.clear();
+    var m int = ent(o);
+    put(o, "MANIFOLD_SOLID_BREP('',");
+    eref(o, s);
+    put(o, ")");
+    fin(o);
+    return m;
+}
+=== 0e6f49f0f0ea788b
+fn offer_hole(x real, y real, r real) {
+    if !(r > 0.01) {
+        return;
+    }
+    if !(x - r > XD[0] + 0.05 && x + r < XD[2] - 0.05 && y - r > XD[1] + 0.05 && y + r < XD[3] - 0.05) {
+        return;
+    }
+    for h in 0..HX.len {
+        var dx real = x - HX[h];
+        var dy real = y - HY[h];
+        var gap real = r + HR[h] + 0.05;
+        if !(dx * dx + dy * dy > gap * gap) {
+            return;
+        }
+    }
+    HX.push(x);
+    HY.push(y);
+    HR.push(r);
+}
+fn holes() {
+    HX.clear();
+    HX.reserve(NP + NV + 1);
+    HY.clear();
+    HY.reserve(NP + NV + 1);
+    HR.clear();
+    HR.reserve(NP + NV + 1);
+    for p in 0..NP {
+        if pd(p, 7) > 0.0 {
+            offer_hole(pd(p, 0), pd(p, 1), pd(p, 7) / 2.0);
+        }
+    }
+    for v in 0..NV {
+        offer_hole(vi(v, 0), vi(v, 1), XD[9] / 2.0);
+    }
+}
+=== 65d1993fce288e53
+fn ent_ref(o byte[>..]&, head const byte[:], r int, tail const byte[:]) int {
+    var n int = ent(o);
+    put(o, head);
+    eref(o, r);
+    put(o, tail);
+    fin(o);
+    return n;
+}
+fn paint(o byte[>..]&, solid int, r real, g real, b real) {
+    var c int = ent(o);
+    put(o, "COLOUR_RGB('',");
+    rnum(o, r);
+    put(o, ",");
+    rnum(o, g);
+    put(o, ",");
+    rnum(o, b);
+    put(o, ")");
+    fin(o);
+    var f int = ent_ref(o, "FILL_AREA_STYLE_COLOUR('',", c, ")");
+    var a int = ent_ref(o, "FILL_AREA_STYLE('',(", f, "))");
+    var s int = ent_ref(o, "SURFACE_STYLE_FILL_AREA(", a, ")");
+    var d int = ent_ref(o, "SURFACE_SIDE_STYLE('',(", s, "))");
+    var u int = ent_ref(o, "SURFACE_STYLE_USAGE(.BOTH.,", d, ")");
+    var q int = ent_ref(o, "PRESENTATION_STYLE_ASSIGNMENT((", u, "))");
+    var y int = ent(o);
+    put(o, "STYLED_ITEM('color',(");
+    eref(o, q);
+    put(o, "),");
+    eref(o, solid);
+    put(o, ")");
+    fin(o);
+    SL.push(y);
+}
+=== 103248849b2a1081
+fn sname(o byte[>..]&) {
+    if str(0).len == 0 {
+        put(o, "board");
+    } else {
+        sesc(o, str(0));
+    }
+}
+fn prod_name(o byte[>..]&, kind int, k int) {
+    if kind == 0 {
+        sname(o);
+    } else if kind == 1 {
+        put(o, "PCB");
+    } else {
+        sesc(o, pkg_name(k));
+    }
+}
+fn prod(o byte[>..]&, kind int, k int) int {
+    var c int = ent(o);
+    put(o, "PRODUCT_CONTEXT('',#1,'mechanical')");
+    fin(o);
+    var p int = ent(o);
+    put(o, "PRODUCT('");
+    prod_name(o, kind, k);
+    put(o, "','");
+    prod_name(o, kind, k);
+    put(o, "','',(");
+    eref(o, c);
+    put(o, "))");
+    fin(o);
+    var f int = ent_ref(o, "PRODUCT_DEFINITION_FORMATION('','',", p, ")");
+    var x int = ent(o);
+    put(o, "PRODUCT_DEFINITION_CONTEXT('part definition',#1,'design')");
+    fin(o);
+    var d int = ent(o);
+    put(o, "PRODUCT_DEFINITION('design','',");
+    eref(o, f);
+    put(o, ",");
+    eref(o, x);
+    put(o, ")");
+    fin(o);
+    ent_ref(o, "PRODUCT_RELATED_PRODUCT_CATEGORY('part',$,(", p, "))");
+    PDS = ent_ref(o, "PRODUCT_DEFINITION_SHAPE('','',", d, ")");
+    return d;
+}
+fn solid_part(o byte[>..]&, kind int, k int, solid int) int {
+    var a int = sax(o, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+    var r int = ent(o);
+    put(o, "ADVANCED_BREP_SHAPE_REPRESENTATION('");
+    prod_name(o, kind, k);
+    put(o, "',(");
+    eref(o, a);
+    put(o, ",");
+    eref(o, solid);
+    put(o, "),#7)");
+    fin(o);
+    var n int = ent(o);
+    put(o, "SHAPE_DEFINITION_REPRESENTATION(");
+    eref(o, PDS);
+    put(o, ",");
+    eref(o, r);
+    put(o, ")");
+    fin(o);
+    return r;
+}
+=== 3c7ac69477dbd682
+fn step_head(o byte[>..]&) {
+    line(o, "ISO-10303-21;");
+    line(o, "HEADER;");
+    line(o, "FILE_DESCRIPTION(('Amni-CAD printed circuit board'),'2;1');");
+    put(o, "FILE_NAME('");
+    sname(o);
+    put(o, ".step','");
+    put(o, str(1));
+    line(o, "',(''),(''),'Amni-CAD','Amni-CAD','');");
+    line(o, "FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));");
+    line(o, "ENDSEC;");
+    line(o, "DATA;");
+    line(o, "#1=APPLICATION_CONTEXT('core data for automotive mechanical design processes');");
+    line(o, "#2=APPLICATION_PROTOCOL_DEFINITION('international standard','automotive_design',2000,#1);");
+    line(o, "#3=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.));");
+    line(o, "#4=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.));");
+    line(o, "#5=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT());");
+    line(o, "#6=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.E-07),#3,'distance_accuracy_value','confusion accuracy');");
+    line(o, "#7=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#6))GLOBAL_UNIT_ASSIGNED_CONTEXT((#3,#4,#5))REPRESENTATION_CONTEXT('Context #1','3D Context with UNIT and UNCERTAINTY'));");
+    EN = 7;
+}
+=== -3b8d5222a4fb03a7
+fn deg_cos(deg real) real {
+    var a real = deg;
+    while a < 0.0 {
+        a += 360.0;
+    }
+    while a >= 360.0 {
+        a -= 360.0;
+    }
+    var quad int = ((a + 45.0) / 90.0) as int;
+    var t real = (a - (quad as real) * 90.0) * 3.141592653589793 / 180.0;
+    var c real = 1.0;
+    var s real = t;
+    var tc real = 1.0;
+    var ts real = t;
+    for i in 1..10 {
+        var m real = 2.0 * (i as real);
+        tc = 0.0 - tc * t * t / ((m - 1.0) * m);
+        ts = 0.0 - ts * t * t / (m * (m + 1.0));
+        c += tc;
+        s += ts;
+    }
+    var w int = quad % 4;
+    if w == 1 {
+        return 0.0 - s;
+    }
+    if w == 2 {
+        return 0.0 - c;
+    }
+    if w == 3 {
+        return s;
+    }
+    return c;
+}
+fn step_parts(o byte[>..]&) {
+    var bdef int = prod(o, 1, 0);
+    var bsol int = prism(o, XD[0], XD[1], XD[2], XD[3], 0.0, XD[5], true);
+    var brep int = solid_part(o, 1, 0, bsol);
+    paint(o, bsol, 0.08, 0.37, 0.18);
+    IR.push(brep);
+    IP.push(bdef);
+    IQ.push(-1);
+    var home int = sax(o, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+    IA.push(home);
+    for q in 0..NQ {
+        var k int = pt(q, 4) as int;
+        var e real = pt(q, 7);
+        if pk(k, 2) > 0.0 && pk(k, 3) > 0.0 && e > 0.0 {
+            if KR[k] == 0 {
+                var first int = pk(k, 0) as int;
+                var cnt int = pk(k, 1) as int;
+                var cx real = 0.0;
+                var cy real = 0.0;
+                if cnt > 0 {
+                    var lx real = fp(first, 0);
+                    var hx real = fp(first, 0);
+                    var ly real = fp(first, 1);
+                    var hy real = fp(first, 1);
+                    for i in 1..cnt {
+                        var x real = fp(first + i, 0);
+                        var y real = fp(first + i, 1);
+                        if x < lx {
+                            lx = x;
+                        }
+                        if x > hx {
+                            hx = x;
+                        }
+                        if y < ly {
+                            ly = y;
+                        }
+                        if y > hy {
+                            hy = y;
+                        }
+                    }
+                    cx = (lx + hx) / 2.0;
+                    cy = (ly + hy) / 2.0;
+                }
+                var d int = prod(o, 2, k);
+                var s int = prism(o, cx - pk(k, 2) / 2.0, cy - pk(k, 3) / 2.0, cx + pk(k, 2) / 2.0, cy + pk(k, 3) / 2.0, 0.0, e, false);
+                KR[k] = solid_part(o, 2, k, s);
+                KP[k] = d;
+                paint(o, s, 0.16, 0.16, 0.17);
+            }
+            var c real = deg_cos(pt(q, 2));
+            var n real = deg_cos(pt(q, 2) - 90.0);
+            if near(c, 0.0) {
+                c = 0.0;
+            }
+            if near(n, 0.0) {
+                n = 0.0;
+            }
+            IR.push(KR[k]);
+            IP.push(KP[k]);
+            IQ.push(q);
+            var at int = 0;
+            if pt(q, 3) == 0.0 {
+                at = sax(o, pt(q, 0), pt(q, 1), XD[5], 0.0, 0.0, 1.0, c, n, 0.0);
+            } else {
+                at = sax(o, pt(q, 0), pt(q, 1), 0.0, 0.0, 0.0, -1.0, 0.0 - c, 0.0 - n, 0.0);
+            }
+            IA.push(at);
+        }
+    }
+}
+=== -4a6bb802259e1789
+fn inst_name(o byte[>..]&, q int) {
+    if q == -1 {
+        put(o, "PCB");
+    } else {
+        sesc(o, ref_of(q));
+    }
+}
+fn step_asm(o byte[>..]&) {
+    var d int = prod(o, 0, 0);
+    var a int = sax(o, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+    var t int = ent(o);
+    put(o, "SHAPE_REPRESENTATION('");
+    sname(o);
+    put(o, "',(");
+    eref(o, a);
+    put(o, ",");
+    refs(o, IA);
+    put(o, "),#7)");
+    fin(o);
+    var sd int = ent(o);
+    put(o, "SHAPE_DEFINITION_REPRESENTATION(");
+    eref(o, PDS);
+    put(o, ",");
+    eref(o, t);
+    put(o, ")");
+    fin(o);
+    for i in 0..IA.len {
+        var n int = ent(o);
+        put(o, "NEXT_ASSEMBLY_USAGE_OCCURRENCE('");
+        inst_name(o, IQ[i]);
+        put(o, "','");
+        inst_name(o, IQ[i]);
+        put(o, "','',");
+        eref(o, d);
+        put(o, ",");
+        eref(o, IP[i]);
+        put(o, ",$)");
+        fin(o);
+        var p int = ent_ref(o, "PRODUCT_DEFINITION_SHAPE('Placement','Placement of an item',", n, ")");
+        var x int = ent(o);
+        put(o, "ITEM_DEFINED_TRANSFORMATION('','',");
+        eref(o, a);
+        put(o, ",");
+        eref(o, IA[i]);
+        put(o, ")");
+        fin(o);
+        var r int = ent(o);
+        put(o, "(REPRESENTATION_RELATIONSHIP('','',");
+        eref(o, IR[i]);
+        put(o, ",");
+        eref(o, t);
+        put(o, ")REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION(");
+        eref(o, x);
+        put(o, ")SHAPE_REPRESENTATION_RELATIONSHIP())");
+        fin(o);
+        var cd int = ent(o);
+        put(o, "CONTEXT_DEPENDENT_SHAPE_REPRESENTATION(");
+        eref(o, r);
+        put(o, ",");
+        eref(o, p);
+        put(o, ")");
+        fin(o);
+    }
+    var m int = ent(o);
+    put(o, "MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',(");
+    refs(o, SL);
+    put(o, "),#7)");
+    fin(o);
+}
+=== 0f07996c5011f48b
+fn rb_int(xs int[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n);
+}
+export fn px_step() i32 {
+    prepare();
+    holes();
+    rb(OUT, 65536 + 4096 * (NP + NV) + 12000 * (NK + 1) + 2000 * (NQ + 1) + 16 * XS.len);
+    rb_int(LP, 16);
+    rb_int(BL, HX.len + 8);
+    rb_int(FL, HX.len + 16);
+    rb_int(SL, NK + 8);
+    rb_int(IA, NQ + 8);
+    rb_int(IR, NQ + 8);
+    rb_int(IP, NQ + 8);
+    rb_int(IQ, NQ + 8);
+    zi(KR, NK, 0);
+    zi(KP, NK, 0);
+    step_head(OUT);
+    step_parts(OUT);
+    step_asm(OUT);
+    line(OUT, "ENDSEC;");
+    line(OUT, "END-ISO-10303-21;");
+    px_views();
+    return OUT.len as i32;
+}
+=== 058925cdb7b44661
+fn main() {
+}
