@@ -1,0 +1,1439 @@
+import math;
+extern fn ac_view_f64(id i32, xs real[:]) = "ac_view_f64";
+extern fn ac_view_i32(id i32, xs i32[:]) = "ac_view_i32";
+var NC int = 0;
+var NL int = 0;
+var KA real = 0.0;
+var KB real = 0.0;
+var KC real = 0.0;
+var QA real = 0.0;
+var QB real = 0.0;
+var QC real = 0.0;
+var BT real = 0.0;
+var LD f64[>..];
+var MD f64[>..];
+var BD f64[>..];
+var LW f64[>..];
+var MW f64[>..];
+var E f64[>..];
+var R f64[>..];
+var T f64[>..];
+var LS f64[>..];
+var WB f64[>..];
+var DR f64[>..];
+var SR f64[>..];
+var PW f64[>..];
+var X f64[>..];
+var BB f64[>..];
+var RS f64[>..];
+var RH f64[>..];
+var PD f64[>..];
+var VV f64[>..];
+var YY f64[>..];
+var SS f64[>..];
+var ZZ f64[>..];
+var TT f64[>..];
+var VAL f64[>..];
+var LV f64[>..];
+var WV f64[>..];
+var MV f64[>..];
+var MS f64[>..];
+var TA f64[>..];
+var TV f64[>..];
+var TW f64[>..];
+var DA f64[>..];
+var DB f64[>..];
+var OUT f64[>..];
+var PR f64[>..];
+var ST f64[>..];
+var SP f64[>..];
+var SW f64[>..];
+var SC f64[>..];
+var FR f64[>..];
+var GV f64[>..];
+var GF f64[>..];
+var GM i32[>..];
+var FL i32[>..];
+var CI i32[>..];
+var GK i32[>..];
+var STK i32[>..];
+var CS i32[>..];
+var CP i32[>..];
+var NB i32[>..];
+var IJ i32[>..];
+var CO i32[>..];
+var PT i32[>..];
+var LC i32[>..];
+var LO i32[>..];
+var GD i32[>..];
+var MP i32[>..];
+var NM i32[>..];
+var SI i32[>..];
+var OD i32[>..];
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn zr(xs f64[>..]&, n int, cap int, x real) {
+    xs.clear();
+    xs.reserve(cap);
+    xs.resize(n, x);
+}
+fn zri(xs i32[>..]&, n int, cap int, x int) {
+    xs.clear();
+    xs.reserve(cap);
+    xs.resize(n, x as i32);
+}
+export fn ac_views() i32 {
+    ac_view_f64(1, WB);
+    ac_view_f64(2, DR);
+    ac_view_f64(3, SR);
+    ac_view_f64(4, PW);
+    ac_view_f64(5, PR);
+    ac_view_f64(6, ST);
+    ac_view_f64(7, X);
+    ac_view_f64(8, OUT);
+    ac_view_f64(9, VAL);
+    ac_view_f64(10, MS);
+    ac_view_f64(11, SP);
+    ac_view_f64(12, SW);
+    ac_view_i32(13, NB);
+    ac_view_i32(14, IJ);
+    ac_view_i32(15, PT);
+    ac_view_i32(16, SI);
+    ac_view_f64(17, FR);
+    ac_view_f64(18, GV);
+    ac_view_f64(19, GF);
+    ac_view_i32(20, GM);
+    ac_view_i32(21, GK);
+    return 0;
+}
+export fn ac_setup(n i32, gx i32, gy i32, gz i32) i32 {
+    let count = n as int;
+    NC = count;
+    NL = 1;
+    zri(NB, 6 * count, 12 * count, -1);
+    zri(IJ, 3 * count, 6 * count, 0);
+    zri(CO, count, 2 * count, -1);
+    zi(PT, count, -1);
+    zf(WB, count, 0.0);
+    zf(DR, count, 0.0);
+    zf(SR, count, 0.0);
+    zf(PW, count, 0.0);
+    zr(LD, count, 2 * count, 0.0);
+    zr(MD, count, 2 * count, 0.0);
+    zr(BD, count, 2 * count, 0.0);
+    zf(VAL, count, 0.0);
+    zr(LW, 6 * count, 12 * count, 0.0);
+    zr(MW, 6 * count, 12 * count, 0.0);
+    zr(E, 2 * count, 4 * count, 0.0);
+    zr(R, 2 * count, 4 * count, 0.0);
+    zr(T, 2 * count, 4 * count, 0.0);
+    zf(X, 2 * count, 0.0);
+    zf(BB, 2 * count, 0.0);
+    zf(RS, 2 * count, 0.0);
+    zf(RH, 2 * count, 0.0);
+    zf(PD, 2 * count, 0.0);
+    zf(VV, 2 * count, 0.0);
+    zf(YY, 2 * count, 0.0);
+    zf(SS, 2 * count, 0.0);
+    zf(ZZ, 2 * count, 0.0);
+    zf(TT, 2 * count, 0.0);
+    zri(LC, 1, 14, count);
+    zri(LO, 1, 14, 0);
+    zri(GD, 3, 42, 0);
+    GD[0] = gx;
+    GD[1] = gy;
+    GD[2] = gz;
+    zr(LS, 1, 14, 1.0);
+    zf(OUT, 1, 0.0);
+    MS.clear();
+    SP.clear();
+    SW.clear();
+    SC.clear();
+    SI.clear();
+    zf(ST, 10, 0.0);
+    zf(PR, 8, 0.0);
+    PR[1] = 1e-6;
+    PR[2] = 2000.0;
+    PR[3] = 0.7;
+    PR[4] = 2.0;
+    PR[5] = 0.5;
+    PR[6] = 0.0714285714285714;
+    PR[7] = 64.0;
+    ac_views();
+    return n;
+}
+export fn ac_shape(n i32, gx i32, gy i32, gz i32) i32 {
+    let count = n as int;
+    NC = count;
+    zi(NB, 6 * count, -1);
+    zi(IJ, 3 * count, 0);
+    zf(VAL, count, 0.0);
+    zi(GD, 3, 0);
+    GD[0] = gx;
+    GD[1] = gy;
+    GD[2] = gz;
+    ac_views();
+    return n;
+}
+export fn ac_grid(gx i32, gy i32, gz i32, ng i32) i32 {
+    let nt = (gx as int) * (gy as int) * (gz as int);
+    let groups = ng as int;
+    zf(FR, nt, 0.0);
+    zi(GM, nt, -1);
+    zi(GK, groups, 0);
+    zf(GV, groups, 0.0);
+    zf(GF, groups, 0.0);
+    ac_views();
+    return nt as i32;
+}
+fn grid_nb(c int, d int, nx int, ny int, nz int) int {
+    let i = c % nx;
+    let j = (c / nx) % ny;
+    let k = c / (nx * ny);
+    if d == 0 {
+        if i > 0 {
+            return c - 1;
+        }
+    } else if d == 1 {
+        if i < nx - 1 {
+            return c + 1;
+        }
+    } else if d == 2 {
+        if j > 0 {
+            return c - nx;
+        }
+    } else if d == 3 {
+        if j < ny - 1 {
+            return c + nx;
+        }
+    } else if d == 4 {
+        if k > 0 {
+            return c - nx * ny;
+        }
+    } else {
+        if k < nz - 1 {
+            return c + nx * ny;
+        }
+    }
+    return -1;
+}
+export fn ac_cells(gx i32, gy i32, gz i32, region i32, ng i32) i32 {
+    let nx = gx as int;
+    let ny = gy as int;
+    let nz = gz as int;
+    let nt = nx * ny * nz;
+    STK.clear();
+    STK.reserve(nt);
+    CS.clear();
+    CS.reserve(nt);
+    CP.clear();
+    CP.reserve(nt);
+    zi(FL, nt, 0);
+    var c int = 0;
+    while c < nt {
+        if FR[c] >= 0.5 {
+            FL[c] = 1 as i32;
+        }
+        c += 1;
+    }
+    if (region as int) == 1 {
+        STK.clear();
+        c = 0;
+        while c < nt {
+            let i = c % nx;
+            let j = (c / nx) % ny;
+            let k = c / (nx * ny);
+            if i == 0 || i == nx - 1 || j == 0 || j == ny - 1 || k == 0 || k == nz - 1 {
+                if (FL[c] as int) == 0 && (GM[c] as int) < 0 {
+                    FL[c] = 2 as i32;
+                    STK.push(c as i32);
+                }
+            }
+            c += 1;
+        }
+        while STK.len > 0 {
+            let q = STK.pop() as int;
+            var d int = 0;
+            while d < 6 {
+                let r = grid_nb(q, d, nx, ny, nz);
+                if r >= 0 {
+                    if (FL[r] as int) == 0 && (GM[r] as int) < 0 {
+                        FL[r] = 2 as i32;
+                        STK.push(r as i32);
+                    }
+                }
+                d += 1;
+            }
+        }
+        c = 0;
+        while c < nt {
+            if (FL[c] as int) == 0 && (GM[c] as int) < 0 {
+                FL[c] = 3 as i32;
+            }
+            c += 1;
+        }
+    } else if (region as int) == 0 {
+        c = 0;
+        while c < nt {
+            if (FL[c] as int) == 1 {
+                FL[c] = 3 as i32;
+            }
+            c += 1;
+        }
+    }
+    zi(CI, nt, -1);
+    c = 0;
+    while c < nt {
+        if (FL[c] as int) == 3 && (CI[c] as int) < 0 {
+            let p = CS.len as int;
+            CS.push(0 as i32);
+            CP.push(0 as i32);
+            CI[c] = p as i32;
+            STK.clear();
+            STK.push(c as i32);
+            while STK.len > 0 {
+                let q = STK.pop() as int;
+                CS[p] = ((CS[p] as int) + 1) as i32;
+                var d int = 0;
+                while d < 6 {
+                    let r = grid_nb(q, d, nx, ny, nz);
+                    if r >= 0 {
+                        if (FL[r] as int) == 3 {
+                            if (CI[r] as int) < 0 {
+                                CI[r] = p as i32;
+                                STK.push(r as i32);
+                            }
+                        } else {
+                            let g = GM[r] as int;
+                            if g >= 0 {
+                                if (GK[g] as int) <= 2 {
+                                    CP[p] = 1 as i32;
+                                }
+                            }
+                        }
+                    }
+                    d += 1;
+                }
+            }
+        }
+        c += 1;
+    }
+    var has_port bool = false;
+    var best int = 0;
+    var p int = 0;
+    while p < CS.len {
+        if (CP[p] as int) == 1 {
+            has_port = true;
+        }
+        if (CS[p] as int) > (CS[best] as int) {
+            best = p;
+        }
+        p += 1;
+    }
+    var dropped int = 0;
+    c = 0;
+    while c < nt {
+        if (FL[c] as int) == 3 {
+            let piece = CI[c] as int;
+            var keep bool = piece == best;
+            if has_port {
+                keep = (CP[piece] as int) == 1;
+            }
+            if !keep {
+                FL[c] = 4 as i32;
+                dropped += 1;
+            }
+        }
+        c += 1;
+    }
+    var n int = 0;
+    c = 0;
+    while c < nt {
+        if (FL[c] as int) == 3 {
+            CI[c] = n as i32;
+            n += 1;
+        } else {
+            CI[c] = -1 as i32;
+        }
+        c += 1;
+    }
+    ac_setup(n as i32, gx, gy, gz);
+    zf(GF, ng as int, 0.0);
+    c = 0;
+    while c < nt {
+        if (FL[c] as int) == 3 {
+            let m = CI[c] as int;
+            IJ[3 * m] = (c % nx) as i32;
+            IJ[3 * m + 1] = ((c / nx) % ny) as i32;
+            IJ[3 * m + 2] = (c / (nx * ny)) as i32;
+            var d int = 0;
+            while d < 6 {
+                let r = grid_nb(c, d, nx, ny, nz);
+                var fluid bool = false;
+                if r >= 0 {
+                    fluid = (FL[r] as int) == 3;
+                }
+                if fluid {
+                    NB[6 * m + d] = CI[r];
+                } else {
+                    var g int = -1;
+                    if r >= 0 {
+                        g = GM[r] as int;
+                    }
+                    if g >= 0 {
+                        GF[g] = GF[g] + 1.0;
+                        let kind = GK[g] as int;
+                        if kind == 0 {
+                            WB[m] = WB[m] + 1.0;
+                            SR[m] = SR[m] + GV[g];
+                        } else if kind == 1 {
+                            WB[m] = WB[m] + 1.0;
+                        } else if kind == 2 {
+                            DR[m] = DR[m] + 1.0;
+                        } else if kind == 3 {
+                            WB[m] = WB[m] + GV[g];
+                        }
+                        if kind >= 0 && kind <= 2 {
+                            if (PT[m] as int) < 0 {
+                                PT[m] = g as i32;
+                            }
+                            if (PT[m] as int) == g {
+                                PW[m] = PW[m] + 1.0;
+                            }
+                        }
+                    }
+                }
+                d += 1;
+            }
+        }
+        c += 1;
+    }
+    ST[8] = dropped as real;
+    ST[9] = (CS.len as int) as real;
+    ac_views();
+    return n as i32;
+}
+export fn ac_build() i32 {
+    let gamma = PR[6];
+    var c int = 0;
+    while c < NC {
+        var nf int = 0;
+        var d int = 0;
+        while d < 6 {
+            if (NB[6 * c + d] as int) >= 0 {
+                nf += 1;
+            }
+            d += 1;
+        }
+        LD[c] = (nf as real) + 2.0 * DR[c];
+        MD[c] = 1.0 - 6.0 * gamma + gamma * ((6 - nf) as real);
+        BD[c] = WB[c];
+        d = 0;
+        while d < 6 {
+            if (NB[6 * c + d] as int) >= 0 {
+                LW[6 * c + d] = 1.0;
+                MW[6 * c + d] = gamma;
+            } else {
+                LW[6 * c + d] = 0.0;
+                MW[6 * c + d] = 0.0;
+            }
+            d += 1;
+        }
+        c += 1;
+    }
+    while NL < 14 {
+        let l = NL - 1;
+        let nl = LC[l] as int;
+        let o = LO[l] as int;
+        if (nl as real) <= PR[7] {
+            break;
+        }
+        if o + 2 * nl > 2 * NC {
+            break;
+        }
+        let cx = ((GD[3 * l] as int) + 1) / 2;
+        let cy = ((GD[3 * l + 1] as int) + 1) / 2;
+        let cz = ((GD[3 * l + 2] as int) + 1) / 2;
+        zi(MP, cx * cy * cz, -1);
+        let oc = o + nl;
+        var cnt int = 0;
+        c = 0;
+        while c < nl {
+            let g = o + c;
+            let i = IJ[3 * g] as int;
+            let j = IJ[3 * g + 1] as int;
+            let k = IJ[3 * g + 2] as int;
+            let q = ((k / 2) * cy + j / 2) * cx + i / 2;
+            if (MP[q] as int) < 0 {
+                MP[q] = cnt as i32;
+                IJ.push((i / 2) as i32);
+                IJ.push((j / 2) as i32);
+                IJ.push((k / 2) as i32);
+                var a int = 0;
+                while a < 6 {
+                    NB.push(-1 as i32);
+                    a += 1;
+                }
+                LD.push(0.0);
+                MD.push(0.0);
+                BD.push(0.0);
+                a = 0;
+                while a < 6 {
+                    LW.push(0.0);
+                    MW.push(0.0);
+                    a += 1;
+                }
+                CO.push(-1 as i32);
+                a = 0;
+                while a < 2 {
+                    E.push(0.0);
+                    R.push(0.0);
+                    T.push(0.0);
+                    a += 1;
+                }
+                cnt += 1;
+            }
+            CO[g] = MP[q];
+            c += 1;
+        }
+        c = 0;
+        while c < nl {
+            let g = o + c;
+            let cc = CO[g] as int;
+            let G = oc + cc;
+            LD[G] = LD[G] + LD[g];
+            MD[G] = MD[G] + MD[g];
+            BD[G] = BD[G] + BD[g];
+            var d int = 0;
+            while d < 6 {
+                let nb = NB[6 * g + d] as int;
+                if nb >= 0 {
+                    let nn = CO[o + nb] as int;
+                    if nn == cc {
+                        LD[G] = LD[G] - LW[6 * g + d];
+                        MD[G] = MD[G] + MW[6 * g + d];
+                    } else {
+                        LW[6 * G + d] = LW[6 * G + d] + LW[6 * g + d];
+                        MW[6 * G + d] = MW[6 * G + d] + MW[6 * g + d];
+                        NB[6 * G + d] = nn as i32;
+                    }
+                }
+                d += 1;
+            }
+            c += 1;
+        }
+        LC.push(cnt as i32);
+        LO.push(oc as i32);
+        GD.push(cx as i32);
+        GD.push(cy as i32);
+        GD.push(cz as i32);
+        let half = LS[l] * 0.5;
+        LS.push(half);
+        NL += 1;
+        if cnt == nl {
+            break;
+        }
+    }
+    ST[3] = NL as real;
+    ST[4] = (LC[NL - 1] as int) as real;
+    ac_views();
+    return NL as i32;
+}
+fn cop(l i32, ar real, ai real, bi real, xs f64[>..]&, xo i32, ys f64[>..]&, yo i32) int {
+    let li = l as int;
+    let s = LS[li];
+    let base = LO[li] as int;
+    let count = LC[li] as int;
+    let xb = xo as int;
+    let yb = yo as int;
+    var c int = 0;
+    while c < count {
+        let g = base + c;
+        let dr = s * LD[g] + ar * MD[g];
+        let di = ai * MD[g] + bi * BD[g];
+        let xr = xs[2 * (xb + c)];
+        let xi = xs[2 * (xb + c) + 1];
+        var sr real = dr * xr - di * xi;
+        var si real = dr * xi + di * xr;
+        var d int = 0;
+        while d < 6 {
+            let nb = NB[6 * g + d] as int;
+            if nb >= 0 {
+                let cr = -s * LW[6 * g + d] + ar * MW[6 * g + d];
+                let ci = ai * MW[6 * g + d];
+                let pr = xs[2 * (xb + nb)];
+                let pi = xs[2 * (xb + nb) + 1];
+                sr += cr * pr - ci * pi;
+                si += cr * pi + ci * pr;
+            }
+            d += 1;
+        }
+        ys[2 * (yb + c)] = sr;
+        ys[2 * (yb + c) + 1] = si;
+        c += 1;
+    }
+    return 0;
+}
+fn jac(l i32) int {
+    let li = l as int;
+    cop(l, QA, QB, QC, E, LO[li], T, LO[li]);
+    let s = LS[li];
+    let base = LO[li] as int;
+    let count = LC[li] as int;
+    let damp = PR[3];
+    var c int = 0;
+    while c < count {
+        let g = base + c;
+        let dr = s * LD[g] + QA * MD[g];
+        let di = QB * MD[g] + QC * BD[g];
+        let rr = R[2 * g] - T[2 * g];
+        let ri = R[2 * g + 1] - T[2 * g + 1];
+        let den = dr * dr + di * di;
+        E[2 * g] = E[2 * g] + damp * ((rr * dr + ri * di) / den);
+        E[2 * g + 1] = E[2 * g + 1] + damp * ((ri * dr - rr * di) / den);
+        c += 1;
+    }
+    return 0;
+}
+fn dense(l i32) int {
+    let li = l as int;
+    let m = LC[li] as int;
+    let o = LO[li] as int;
+    zf(DA, 2 * m * m, 0.0);
+    zf(DB, 2 * m, 0.0);
+    zi(OD, m, 0);
+    let s = LS[li];
+    var r int = 0;
+    while r < m {
+        let g = o + r;
+        DA[2 * (r * m + r)] = s * LD[g] + QA * MD[g];
+        DA[2 * (r * m + r) + 1] = QB * MD[g] + QC * BD[g];
+        var d int = 0;
+        while d < 6 {
+            let nb = NB[6 * g + d] as int;
+            if nb >= 0 {
+                let at = 2 * (r * m + nb);
+                DA[at] = DA[at] + (-s * LW[6 * g + d] + QA * MW[6 * g + d]);
+                DA[at + 1] = DA[at + 1] + QB * MW[6 * g + d];
+            }
+            d += 1;
+        }
+        DB[2 * r] = R[2 * g];
+        DB[2 * r + 1] = R[2 * g + 1];
+        r += 1;
+    }
+    var q int = 0;
+    while q < m {
+        var p int = q;
+        var best real = -1.0;
+        r = q;
+        while r < m {
+            let at = 2 * (r * m + q);
+            let mag = DA[at] * DA[at] + DA[at + 1] * DA[at + 1];
+            if mag > best {
+                best = mag;
+                p = r;
+            }
+            r += 1;
+        }
+        if p != q {
+            var k int = 0;
+            while k < 2 * m {
+                let tmp = DA[2 * q * m + k];
+                DA[2 * q * m + k] = DA[2 * p * m + k];
+                DA[2 * p * m + k] = tmp;
+                k += 1;
+            }
+            let br = DB[2 * q];
+            let bim = DB[2 * q + 1];
+            DB[2 * q] = DB[2 * p];
+            DB[2 * q + 1] = DB[2 * p + 1];
+            DB[2 * p] = br;
+            DB[2 * p + 1] = bim;
+        }
+        let pr = DA[2 * (q * m + q)];
+        let pi = DA[2 * (q * m + q) + 1];
+        let den = pr * pr + pi * pi;
+        if sqrt(den) > 1e-300 {
+            r = q + 1;
+            while r < m {
+                let ar = DA[2 * (r * m + q)];
+                let ai = DA[2 * (r * m + q) + 1];
+                let fr = (ar * pr + ai * pi) / den;
+                let fi = (ai * pr - ar * pi) / den;
+                if fr != 0.0 || fi != 0.0 {
+                    var k int = q;
+                    while k < m {
+                        let ur = DA[2 * (q * m + k)];
+                        let ui = DA[2 * (q * m + k) + 1];
+                        let at = 2 * (r * m + k);
+                        DA[at] = DA[at] - (fr * ur - fi * ui);
+                        DA[at + 1] = DA[at + 1] - (fr * ui + fi * ur);
+                        k += 1;
+                    }
+                    let vr = DB[2 * q];
+                    let vi = DB[2 * q + 1];
+                    DB[2 * r] = DB[2 * r] - (fr * vr - fi * vi);
+                    DB[2 * r + 1] = DB[2 * r + 1] - (fr * vi + fi * vr);
+                }
+                r += 1;
+            }
+        }
+        q += 1;
+    }
+    r = m - 1;
+    while r >= 0 {
+        var sr real = DB[2 * r];
+        var si real = DB[2 * r + 1];
+        var k int = r + 1;
+        while k < m {
+            let ar = DA[2 * (r * m + k)];
+            let ai = DA[2 * (r * m + k) + 1];
+            let vr = E[2 * (o + k)];
+            let vi = E[2 * (o + k) + 1];
+            sr -= ar * vr - ai * vi;
+            si -= ar * vi + ai * vr;
+            k += 1;
+        }
+        let pr = DA[2 * (r * m + r)];
+        let pi = DA[2 * (r * m + r) + 1];
+        let den = pr * pr + pi * pi;
+        if sqrt(den) > 1e-300 {
+            E[2 * (o + r)] = (sr * pr + si * pi) / den;
+            E[2 * (o + r) + 1] = (si * pr - sr * pi) / den;
+        } else {
+            E[2 * (o + r)] = 0.0;
+            E[2 * (o + r) + 1] = 0.0;
+        }
+        r -= 1;
+    }
+    return 0;
+}
+fn vcy(l i32) int {
+    let li = l as int;
+    let base = LO[li] as int;
+    let count = LC[li] as int;
+    var c int = 2 * base;
+    while c < 2 * (base + count) {
+        E[c] = 0.0;
+        c += 1;
+    }
+    if li == NL - 1 {
+        if count <= 400 {
+            dense(l);
+        } else {
+            var it int = 0;
+            while it < 30 {
+                jac(l);
+                it += 1;
+            }
+        }
+    } else {
+        let ns = PR[4] as int;
+        var it int = 0;
+        while it < ns {
+            jac(l);
+            it += 1;
+        }
+        cop(l, QA, QB, QC, E, LO[li], T, LO[li]);
+        let nbase = LO[li + 1] as int;
+        let ncount = LC[li + 1] as int;
+        c = 2 * nbase;
+        while c < 2 * (nbase + ncount) {
+            R[c] = 0.0;
+            c += 1;
+        }
+        c = 0;
+        while c < count {
+            let g = base + c;
+            let cg = nbase + (CO[g] as int);
+            R[2 * cg] = R[2 * cg] + (R[2 * g] - T[2 * g]);
+            R[2 * cg + 1] = R[2 * cg + 1] + (R[2 * g + 1] - T[2 * g + 1]);
+            c += 1;
+        }
+        vcy((li + 1) as i32);
+        c = 0;
+        while c < count {
+            let g = base + c;
+            let cg = nbase + (CO[g] as int);
+            E[2 * g] = E[2 * g] + E[2 * cg];
+            E[2 * g + 1] = E[2 * g + 1] + E[2 * cg + 1];
+            c += 1;
+        }
+        it = 0;
+        while it < ns {
+            jac(l);
+            it += 1;
+        }
+    }
+    return 0;
+}
+fn prec(rs f64[>..]&, zs f64[>..]&) int {
+    var c int = 0;
+    while c < 2 * NC {
+        R[c] = rs[c];
+        c += 1;
+    }
+    vcy(0);
+    c = 0;
+    while c < 2 * NC {
+        zs[c] = E[c];
+        c += 1;
+    }
+    return 0;
+}
+fn amul(xs f64[>..]&, ys f64[>..]&) int {
+    return cop(0, KA, KB, KC, xs, 0, ys, 0);
+}
+fn cdr(xs f64[>..]&, ys f64[>..]&) real {
+    var sum real = 0.0;
+    var c int = 0;
+    while c < NC {
+        sum += xs[2 * c] * ys[2 * c] + xs[2 * c + 1] * ys[2 * c + 1];
+        c += 1;
+    }
+    return sum;
+}
+fn cdi(xs f64[>..]&, ys f64[>..]&) real {
+    var sum real = 0.0;
+    var c int = 0;
+    while c < NC {
+        sum += xs[2 * c] * ys[2 * c + 1] - xs[2 * c + 1] * ys[2 * c];
+        c += 1;
+    }
+    return sum;
+}
+fn bicg() int {
+    let tol = PR[1];
+    let itmax = PR[2] as int;
+    let bn = sqrt(cdr(BB, BB));
+    var c int = 0;
+    if bn == 0.0 {
+        while c < 2 * NC {
+            X[c] = 0.0;
+            c += 1;
+        }
+        ST[0] = 0.0;
+        ST[1] = 0.0;
+        ST[2] = 0.0;
+        return 0;
+    }
+    amul(X, TT);
+    while c < 2 * NC {
+        RS[c] = BB[c] - TT[c];
+        RH[c] = RS[c];
+        VV[c] = 0.0;
+        PD[c] = 0.0;
+        c += 1;
+    }
+    var rho_r real = 1.0;
+    var rho_i real = 0.0;
+    var al_r real = 1.0;
+    var al_i real = 0.0;
+    var om_r real = 1.0;
+    var om_i real = 0.0;
+    var it int = 1;
+    while it <= itmax {
+        let rn_r = cdr(RH, RS);
+        let rn_i = cdi(RH, RS);
+        if sqrt(rn_r * rn_r + rn_i * rn_i) == 0.0 {
+            break;
+        }
+        let d1 = rho_r * rho_r + rho_i * rho_i;
+        let q1r = (rn_r * rho_r + rn_i * rho_i) / d1;
+        let q1i = (rn_i * rho_r - rn_r * rho_i) / d1;
+        let d2 = om_r * om_r + om_i * om_i;
+        let q2r = (al_r * om_r + al_i * om_i) / d2;
+        let q2i = (al_i * om_r - al_r * om_i) / d2;
+        let be_r = q1r * q2r - q1i * q2i;
+        let be_i = q1r * q2i + q1i * q2r;
+        c = 0;
+        while c < NC {
+            let ur = PD[2 * c] - (om_r * VV[2 * c] - om_i * VV[2 * c + 1]);
+            let ui = PD[2 * c + 1] - (om_r * VV[2 * c + 1] + om_i * VV[2 * c]);
+            PD[2 * c] = RS[2 * c] + (be_r * ur - be_i * ui);
+            PD[2 * c + 1] = RS[2 * c + 1] + (be_r * ui + be_i * ur);
+            c += 1;
+        }
+        prec(PD, YY);
+        amul(YY, VV);
+        let hv_r = cdr(RH, VV);
+        let hv_i = cdi(RH, VV);
+        let d3 = hv_r * hv_r + hv_i * hv_i;
+        al_r = (rn_r * hv_r + rn_i * hv_i) / d3;
+        al_i = (rn_i * hv_r - rn_r * hv_i) / d3;
+        c = 0;
+        while c < NC {
+            SS[2 * c] = RS[2 * c] - (al_r * VV[2 * c] - al_i * VV[2 * c + 1]);
+            SS[2 * c + 1] = RS[2 * c + 1] - (al_r * VV[2 * c + 1] + al_i * VV[2 * c]);
+            c += 1;
+        }
+        let sn = sqrt(cdr(SS, SS));
+        if sn <= tol * bn {
+            c = 0;
+            while c < NC {
+                X[2 * c] = X[2 * c] + (al_r * YY[2 * c] - al_i * YY[2 * c + 1]);
+                X[2 * c + 1] = X[2 * c + 1] + (al_r * YY[2 * c + 1] + al_i * YY[2 * c]);
+                c += 1;
+            }
+            ST[0] = it as real;
+            ST[1] = sn / bn;
+            ST[2] = 0.0;
+            return it;
+        }
+        prec(SS, ZZ);
+        amul(ZZ, TT);
+        let tt = cdr(TT, TT);
+        om_r = cdr(TT, SS) / tt;
+        om_i = cdi(TT, SS) / tt;
+        c = 0;
+        while c < NC {
+            X[2 * c] = X[2 * c] + (al_r * YY[2 * c] - al_i * YY[2 * c + 1]) + (om_r * ZZ[2 * c] - om_i * ZZ[2 * c + 1]);
+            X[2 * c + 1] = X[2 * c + 1] + (al_r * YY[2 * c + 1] + al_i * YY[2 * c]) + (om_r * ZZ[2 * c + 1] + om_i * ZZ[2 * c]);
+            RS[2 * c] = SS[2 * c] - (om_r * TT[2 * c] - om_i * TT[2 * c + 1]);
+            RS[2 * c + 1] = SS[2 * c + 1] - (om_r * TT[2 * c + 1] + om_i * TT[2 * c]);
+            c += 1;
+        }
+        rho_r = rn_r;
+        rho_i = rn_i;
+        let rn = sqrt(cdr(RS, RS));
+        ST[0] = it as real;
+        ST[1] = rn / bn;
+        if rn <= tol * bn {
+            ST[2] = 0.0;
+            return it;
+        }
+        it += 1;
+    }
+    ST[2] = 1.0;
+    return ST[0] as int;
+}
+export fn ac_solve(kap real) i32 {
+    PR[0] = kap;
+    KA = -(kap * kap);
+    KB = 0.0;
+    KC = kap;
+    QA = -(kap * kap);
+    QB = PR[5] * kap * kap;
+    QC = kap;
+    var c int = 0;
+    while c < NC {
+        BB[2 * c] = 0.0;
+        BB[2 * c + 1] = 2.0 * kap * SR[c];
+        c += 1;
+    }
+    return bicg() as i32;
+}
+export fn ac_zero() i32 {
+    var c int = 0;
+    while c < 2 * NC {
+        X[c] = 0.0;
+        c += 1;
+    }
+    return 0;
+}
+export fn ac_ports(np i32) i32 {
+    let count = np as int;
+    zf(OUT, 5 * count, 0.0);
+    var c int = 0;
+    while c < NC {
+        let k = PT[c] as int;
+        if k >= 0 && k < count {
+            let w = PW[c];
+            let pr = X[2 * c];
+            let pi = X[2 * c + 1];
+            let a2 = pr * pr + pi * pi;
+            OUT[5 * k] = OUT[5 * k] + w;
+            OUT[5 * k + 1] = OUT[5 * k + 1] + w * a2;
+            OUT[5 * k + 2] = OUT[5 * k + 2] + w * pr;
+            OUT[5 * k + 3] = OUT[5 * k + 3] + w * pi;
+            let a = sqrt(a2);
+            if a > OUT[5 * k + 4] {
+                OUT[5 * k + 4] = a;
+            }
+        }
+        c += 1;
+    }
+    ac_views();
+    return np;
+}
+export fn ac_field(kind i32) i32 {
+    let kd = kind as int;
+    var c int = 0;
+    while c < NC {
+        let a = sqrt(X[2 * c] * X[2 * c] + X[2 * c + 1] * X[2 * c + 1]);
+        if kd == 0 {
+            var top real = a;
+            if top < 1e-12 {
+                top = 1e-12;
+            }
+            VAL[c] = 20.0 * log10(top / 2.8284271247461903e-5);
+        } else if kd == 1 {
+            VAL[c] = a;
+        } else if kd == 2 {
+            VAL[c] = X[2 * c];
+        } else if kd >= 10 {
+            VAL[c] = fabs(MS[(kd - 10) * NC + c]);
+        }
+        c += 1;
+    }
+    if kd >= 10 {
+        var peak real = 0.0;
+        c = 0;
+        while c < NC {
+            if VAL[c] > peak {
+                peak = VAL[c];
+            }
+            c += 1;
+        }
+        if peak > 0.0 {
+            c = 0;
+            while c < NC {
+                VAL[c] = VAL[c] / peak;
+                c += 1;
+            }
+        }
+    }
+    var hi real = 0.0;
+    var lo real = 0.0;
+    if NC > 0 {
+        hi = VAL[0];
+        lo = VAL[0];
+    }
+    c = 1;
+    while c < NC {
+        if VAL[c] > hi {
+            hi = VAL[c];
+        }
+        if VAL[c] < lo {
+            lo = VAL[c];
+        }
+        c += 1;
+    }
+    ST[5] = hi;
+    ST[6] = lo;
+    return NC as i32;
+}
+fn mmul(xs f64[>..]&, xo i32, ys f64[>..]&, yo i32) int {
+    let xb = xo as int;
+    let yb = yo as int;
+    var c int = 0;
+    while c < NC {
+        var sum real = MD[c] * xs[xb + c];
+        var d int = 0;
+        while d < 6 {
+            let nb = NB[6 * c + d] as int;
+            if nb >= 0 {
+                sum += MW[6 * c + d] * xs[xb + nb];
+            }
+            d += 1;
+        }
+        ys[yb + c] = sum;
+        c += 1;
+    }
+    return 0;
+}
+fn jeig(k i32) int {
+    let n = k as int;
+    zf(TV, n * n, 0.0);
+    var i int = 0;
+    while i < n {
+        TV[i * n + i] = 1.0;
+        i += 1;
+    }
+    var nf real = 0.0;
+    i = 0;
+    while i < n * n {
+        nf += TA[i] * TA[i];
+        i += 1;
+    }
+    var sweep int = 0;
+    while sweep < 100 {
+        var off real = 0.0;
+        var p int = 0;
+        while p < n {
+            var q int = p + 1;
+            while q < n {
+                off += TA[p * n + q] * TA[p * n + q];
+                q += 1;
+            }
+            p += 1;
+        }
+        if off <= 1e-30 * nf {
+            break;
+        }
+        p = 0;
+        while p < n {
+            var q int = p + 1;
+            while q < n {
+                let apq = TA[p * n + q];
+                if apq != 0.0 {
+                    let th = (TA[q * n + q] - TA[p * n + p]) / (2.0 * apq);
+                    var sign real = -1.0;
+                    if th >= 0.0 {
+                        sign = 1.0;
+                    }
+                    let t = sign / (fabs(th) + sqrt(th * th + 1.0));
+                    let cs = 1.0 / sqrt(t * t + 1.0);
+                    let sn = t * cs;
+                    var r int = 0;
+                    while r < n {
+                        let x = TA[r * n + p];
+                        let y = TA[r * n + q];
+                        TA[r * n + p] = cs * x - sn * y;
+                        TA[r * n + q] = sn * x + cs * y;
+                        r += 1;
+                    }
+                    r = 0;
+                    while r < n {
+                        let x = TA[p * n + r];
+                        let y = TA[q * n + r];
+                        TA[p * n + r] = cs * x - sn * y;
+                        TA[q * n + r] = sn * x + cs * y;
+                        r += 1;
+                    }
+                    r = 0;
+                    while r < n {
+                        let x = TV[r * n + p];
+                        let y = TV[r * n + q];
+                        TV[r * n + p] = cs * x - sn * y;
+                        TV[r * n + q] = sn * x + cs * y;
+                        r += 1;
+                    }
+                }
+                q += 1;
+            }
+            p += 1;
+        }
+        sweep += 1;
+    }
+    zf(TW, n, 0.0);
+    i = 0;
+    while i < n {
+        TW[i] = TA[i * n + i];
+        i += 1;
+    }
+    return 0;
+}
+export fn ac_modes(nev i32, m i32, tau real) i32 {
+    let n = NC;
+    let mm = m as int;
+    KA = tau;
+    QA = tau;
+    KB = 0.0;
+    KC = 0.0;
+    QB = 0.0;
+    QC = 0.0;
+    zf(LV, (mm + 1) * n, 0.0);
+    zf(WV, n, 0.0);
+    zf(MV, n, 0.0);
+    zf(TA, mm * mm, 0.0);
+    var c int = 0;
+    while c < n {
+        LV[c] = 1.0 + 0.5 * sin(1.7 * (c as real) + 0.3);
+        c += 1;
+    }
+    mmul(LV, 0, MV, 0);
+    var norm real = 0.0;
+    c = 0;
+    while c < n {
+        norm += LV[c] * MV[c];
+        c += 1;
+    }
+    norm = sqrt(norm);
+    c = 0;
+    while c < n {
+        LV[c] = LV[c] / norm;
+        c += 1;
+    }
+    var steps int = 0;
+    var j int = 0;
+    while j < mm {
+        mmul(LV, (j * n) as i32, MV, 0);
+        c = 0;
+        while c < n {
+            BB[2 * c] = MV[c];
+            BB[2 * c + 1] = 0.0;
+            c += 1;
+        }
+        c = 0;
+        while c < 2 * n {
+            X[c] = 0.0;
+            c += 1;
+        }
+        bicg();
+        c = 0;
+        while c < n {
+            WV[c] = X[2 * c];
+            c += 1;
+        }
+        mmul(WV, 0, MV, 0);
+        var alpha real = 0.0;
+        c = 0;
+        while c < n {
+            alpha += LV[j * n + c] * MV[c];
+            c += 1;
+        }
+        TA[j * mm + j] = alpha;
+        c = 0;
+        while c < n {
+            WV[c] = WV[c] - alpha * LV[j * n + c];
+            c += 1;
+        }
+        if j > 0 {
+            let prev = TA[(j - 1) * mm + j];
+            c = 0;
+            while c < n {
+                WV[c] = WV[c] - prev * LV[(j - 1) * n + c];
+                c += 1;
+            }
+        }
+        var pass int = 0;
+        while pass < 2 {
+            mmul(WV, 0, MV, 0);
+            var i int = 0;
+            while i <= j {
+                var ci real = 0.0;
+                c = 0;
+                while c < n {
+                    ci += LV[i * n + c] * MV[c];
+                    c += 1;
+                }
+                c = 0;
+                while c < n {
+                    WV[c] = WV[c] - ci * LV[i * n + c];
+                    c += 1;
+                }
+                i += 1;
+            }
+            pass += 1;
+        }
+        mmul(WV, 0, MV, 0);
+        var sum real = 0.0;
+        c = 0;
+        while c < n {
+            sum += WV[c] * MV[c];
+            c += 1;
+        }
+        if sum < 0.0 {
+            sum = 0.0;
+        }
+        let beta = sqrt(sum);
+        BT = beta;
+        steps = j + 1;
+        if beta <= 1e-12 * fabs(alpha) + 1e-300 || j == mm - 1 {
+            break;
+        }
+        TA[j * mm + j + 1] = beta;
+        TA[(j + 1) * mm + j] = beta;
+        c = 0;
+        while c < n {
+            LV[(j + 1) * n + c] = WV[c] / beta;
+            c += 1;
+        }
+        j += 1;
+    }
+    let k = steps;
+    zf(DA, k * k, 0.0);
+    var a int = 0;
+    while a < k {
+        var b int = 0;
+        while b < k {
+            DA[a * k + b] = TA[a * mm + b];
+            b += 1;
+        }
+        a += 1;
+    }
+    zf(TA, k * k, 0.0);
+    a = 0;
+    while a < k * k {
+        TA[a] = DA[a];
+        a += 1;
+    }
+    jeig(k as i32);
+    zi(OD, k, 0);
+    a = 0;
+    while a < k {
+        var b int = a;
+        while b > 0 {
+            if TW[OD[b - 1] as int] >= TW[a] {
+                break;
+            }
+            OD[b] = OD[b - 1];
+            b -= 1;
+        }
+        OD[b] = a as i32;
+        a += 1;
+    }
+    var nm int = nev as int;
+    if k < nm {
+        nm = k;
+    }
+    zf(OUT, 2 * nm, 0.0);
+    zf(MS, nm * n, 0.0);
+    var q int = 0;
+    while q < nm {
+        let e = OD[q] as int;
+        let th = TW[e];
+        if th > 0.0 {
+            OUT[2 * q] = 1.0 / th - tau;
+        } else {
+            OUT[2 * q] = 1e30;
+        }
+        var den real = fabs(th);
+        if den < 1e-300 {
+            den = 1e-300;
+        }
+        OUT[2 * q + 1] = fabs(BT * TV[(k - 1) * k + e]) / den;
+        c = 0;
+        while c < n {
+            var sum real = 0.0;
+            var i int = 0;
+            while i < k {
+                sum += TV[i * k + e] * LV[i * n + c];
+                i += 1;
+            }
+            MS[q * n + c] = sum;
+            c += 1;
+        }
+        q += 1;
+    }
+    ST[7] = steps as real;
+    ac_views();
+    return nm as i32;
+}
+fn skin_shown(c int, axis int, cut int, side int) bool {
+    if cut < 0 {
+        return true;
+    }
+    let at = IJ[3 * c + axis] as int;
+    if side == 0 {
+        return at <= cut;
+    }
+    return at >= cut;
+}
+fn skin_vert(x int, y int, z int, gx int, gy int) int {
+    let key = (z * (gy + 1) + y) * (gx + 1) + x;
+    return key;
+}
+export fn ac_skin(axis i32, cut i32, side i32) i32 {
+    let gx = GD[0] as int;
+    let gy = GD[1] as int;
+    let gz = GD[2] as int;
+    let ax_cut = axis as int;
+    let at_cut = cut as int;
+    let which = side as int;
+    let nk = (gx + 1) * (gy + 1) * (gz + 1);
+    zi(NM, nk, -1);
+    var nf int = 0;
+    var nv int = 0;
+    var t int = 0;
+    var pass int = 0;
+    while pass < 2 {
+        if pass == 1 {
+            zf(SP, 3 * nv, 0.0);
+            zf(SW, nv, 0.0);
+            zf(SC, nv, 0.0);
+            zi(SI, 6 * nf, 0);
+            var key int = 0;
+            while key < nk {
+                let q = NM[key] as int;
+                if q >= 0 {
+                    SP[3 * q] = (key % (gx + 1)) as real;
+                    SP[3 * q + 1] = ((key / (gx + 1)) % (gy + 1)) as real;
+                    SP[3 * q + 2] = (key / ((gx + 1) * (gy + 1))) as real;
+                }
+                key += 1;
+            }
+        }
+        var c int = 0;
+        while c < NC {
+            if skin_shown(c, ax_cut, at_cut, which) {
+                var d int = 0;
+                while d < 6 {
+                    let nb = NB[6 * c + d] as int;
+                    var draw bool = nb < 0;
+                    if !draw {
+                        draw = !skin_shown(nb, ax_cut, at_cut, which);
+                    }
+                    if draw {
+                        let ax = d / 2;
+                        let up = d % 2;
+                        let u = (ax + 1) % 3;
+                        let v = (ax + 2) % 3;
+                        var corner int[4];
+                        var h int = 0;
+                        while h < 4 {
+                            var node int[3];
+                            node[0] = IJ[3 * c] as int;
+                            node[1] = IJ[3 * c + 1] as int;
+                            node[2] = IJ[3 * c + 2] as int;
+                            node[ax] = node[ax] + up;
+                            if h == 1 || h == 2 {
+                                node[u] = node[u] + 1;
+                            }
+                            if h >= 2 {
+                                node[v] = node[v] + 1;
+                            }
+                            let key = skin_vert(node[0], node[1], node[2], gx, gy);
+                            if pass == 0 {
+                                if (NM[key] as int) < 0 {
+                                    NM[key] = nv as i32;
+                                    nv += 1;
+                                }
+                            } else {
+                                let id = NM[key] as int;
+                                corner[h] = id;
+                                SW[id] = SW[id] + VAL[c];
+                                SC[id] = SC[id] + 1.0;
+                            }
+                            h += 1;
+                        }
+                        if pass == 0 {
+                            nf += 1;
+                        } else {
+                            if up == 1 {
+                                SI[6 * t] = corner[0] as i32;
+                                SI[6 * t + 1] = corner[1] as i32;
+                                SI[6 * t + 2] = corner[2] as i32;
+                                SI[6 * t + 3] = corner[0] as i32;
+                                SI[6 * t + 4] = corner[2] as i32;
+                                SI[6 * t + 5] = corner[3] as i32;
+                            } else {
+                                SI[6 * t] = corner[0] as i32;
+                                SI[6 * t + 1] = corner[2] as i32;
+                                SI[6 * t + 2] = corner[1] as i32;
+                                SI[6 * t + 3] = corner[0] as i32;
+                                SI[6 * t + 4] = corner[3] as i32;
+                                SI[6 * t + 5] = corner[2] as i32;
+                            }
+                            t += 1;
+                        }
+                    }
+                    d += 1;
+                }
+            }
+            c += 1;
+        }
+        pass += 1;
+    }
+    var i int = 0;
+    while i < SW.len {
+        if SC[i] > 0.0 {
+            SW[i] = SW[i] / SC[i];
+        }
+        i += 1;
+    }
+    ac_views();
+    return (SI.len / 3) as i32;
+}
+fn main() {
+}
