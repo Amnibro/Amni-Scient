@@ -184,8 +184,20 @@ export function analyzePrint(comp, meshVolMm3, placed, db) {
   };
 }
 
+const buyable = c => c.sourcing && ['buyable', 'included'].includes(c.sourcing.status) && c.sourcing.price && typeof c.sourcing.price.q1 === 'number', propFits = (f, p) => !f.specs.prop_in || (p.specs.class_in >= f.specs.prop_in[0] && p.specs.class_in <= f.specs.prop_in[1]);
+export function partsSearch(assembly, rawDb) {
+  const before = resolve(assembly, rawDb), m = assembly.mission || {}, C = rawDb.components, want = m.twr_min || 2, budget = m.budget_usd || Infinity, all = role => Object.values(C).filter(c => c.function.role === role && buyable(c)), roleOf = id => C[id] && C[id].function.role;
+  const swap = (combo, f, b) => { const a = structuredClone(assembly); a.mission = { ...m, prop_in: C[combo.prop].specs.class_in, cells: combo.cells }; a.placements.forEach(p => { const r = roleOf(p.component); p.component = r === 'frame' ? f.id : r === 'motor' ? combo.motor : r === 'prop' ? combo.prop : r === 'battery' ? b.id : p.component; }); return a; };
+  let best = null, tried = 0, kept = 0;
+  Object.values(rawDb.combos || {}).filter(c => (c.points || []).length > 1 && C[c.motor] && C[c.prop] && buyable(C[c.motor]) && buyable(C[c.prop])).forEach(combo => all('frame').filter(f => propFits(f, C[combo.prop])).forEach(f => all('battery').filter(b => b.specs.cells_s === combo.cells).forEach(b => { tried++; const a = swap(combo, f, b); let r = null; try { r = resolve(a, rawDb); } catch { return; } const ok = !r.errors && r.twr != null && r.twr + 1e-6 >= want && r.minutes != null && r.cost_usd <= budget; ok && kept++; ok && (!best || r.minutes > best.r.minutes + 1e-9 || (Math.abs(r.minutes - best.r.minutes) < 1e-9 && r.cost_usd < best.r.cost_usd)) && (best = { a, r, combo, f, b }); })));
+  const aft = best ? best.r : before;
+  return { assembly: best ? best.a : assembly, result: aft, summary: { mode: 'flight-parts', tried, kept, before_minutes: before.minutes, after_minutes: aft.minutes, before_twr: before.twr, after_twr: aft.twr, before_cost_usd: before.cost_usd, after_cost_usd: aft.cost_usd, before_mass_g: before.mass_g, after_mass_g: aft.mass_g, picks: best ? { frame: best.f.name, motor: C[best.combo.motor].name, prop: C[best.combo.prop].name, battery: best.b.name } : null, note: best ? '' : 'None of the ' + tried + ' buyable frame, motor, prop and pack sets with a real thrust table meets thrust-to-weight ' + want + (budget < Infinity ? ' and the $' + budget + ' budget' : '') + ' without errors. Add a thrust table under combos/ to widen the search.' } };
+}
 export function optimizeBuild(assembly, rawDb, opts = {}) {
   const mode = opts.mode || 'weight-print';
+  if (mode === 'flight-parts') return partsSearch(assembly, rawDb);
+  const pf = rawDb.components['print-x-226'], pr = assembly.placements.map(p => rawDb.components[p.component]).find(c => c && c.function.role === 'prop');
+  if (mode !== 'budget-weight' && pf && pr && !propFits(pf, pr)) return { assembly, result: resolve(assembly, rawDb), summary: { mode, note: 'The printed frame takes props up to ' + pf.specs.prop_in[1] + ' in. This build flies ' + pr.specs.class_in + ' in props, so its frame stays. Longest Flight searches parts for this size.' } };
   const matId = opts.material && PRINT_MATERIALS[opts.material] ? opts.material : 'petg';
   const mat = PRINT_MATERIALS[matId];
   const minSf = opts.min_sf ?? 2.2;

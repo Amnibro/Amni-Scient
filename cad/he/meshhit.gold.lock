@@ -1,0 +1,364 @@
+=== 6f268891e27df783
+import math;
+=== 5c77d041ef5abd61
+var TA real[>..];
+var TB real[>..];
+var RS real[>..];
+var GS i32[>..];
+var GL i32[>..];
+var SB i32[>..];
+var GX real = 0.0;
+var GY real = 0.0;
+var GZ real = 0.0;
+var GH real = 0.0;
+var NX int = 0;
+var NY int = 0;
+var NZ int = 0;
+=== -1babd49f7787e505
+
+=== -6f25b7987253b1e1
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, 0);
+}
+=== -60bb55961a5704ea
+export fn mh_views() i32 {
+	mh_view_f64(1, TA[..]);
+	mh_view_f64(2, TB[..]);
+	mh_view_f64(3, RS[..]);
+	return 0;
+}
+=== 52eb9b6c64a2da28
+export fn mh_setup(na i32, nb i32) i32 {
+	zf(TA, 9 * na, 0.0);
+	zf(TB, 9 * nb, 0.0);
+	zf(RS, 4, 0.0);
+	mh_views();
+	return 0;
+}
+=== -322eb409d2d61a09
+fn dot3(ax real, ay real, az real, bx real, by real, bz real) real {
+	return ax * bx + ay * by + az * bz;
+}
+fn clamp01(t real) real {
+	return clamp(t, 0.0, 1.0);
+}
+=== -6cdd64a2670b01b2
+fn len3(x real, y real, z real) real {
+	return sqrt(dot3(x, y, z, x, y, z));
+}
+fn ptri(px real, py real, pz real, t real[:], k int) real {
+	let o = 9 * k;
+	let ax = t[o];
+	let ay = t[o + 1];
+	let az = t[o + 2];
+	let bx = t[o + 3];
+	let by = t[o + 4];
+	let bz = t[o + 5];
+	let cx = t[o + 6];
+	let cy = t[o + 7];
+	let cz = t[o + 8];
+	let abx = bx - ax;
+	let aby = by - ay;
+	let abz = bz - az;
+	let acx = cx - ax;
+	let acy = cy - ay;
+	let acz = cz - az;
+	let apx = px - ax;
+	let apy = py - ay;
+	let apz = pz - az;
+	let d1 = dot3(abx, aby, abz, apx, apy, apz);
+	let d2 = dot3(acx, acy, acz, apx, apy, apz);
+	if d1 <= 0.0 && d2 <= 0.0 { return len3(apx, apy, apz); }
+	let bpx = px - bx;
+	let bpy = py - by;
+	let bpz = pz - bz;
+	let d3 = dot3(abx, aby, abz, bpx, bpy, bpz);
+	let d4 = dot3(acx, acy, acz, bpx, bpy, bpz);
+	if d3 >= 0.0 && d4 <= d3 { return len3(bpx, bpy, bpz); }
+	let vc = d1 * d4 - d3 * d2;
+	if vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0 {
+		let den1 = d1 - d3;
+		if den1 == 0.0 { return len3(apx, apy, apz); }
+		let s1 = d1 / den1;
+		return len3(px - (ax + abx * s1), py - (ay + aby * s1), pz - (az + abz * s1));
+	}
+	let cpx = px - cx;
+	let cpy = py - cy;
+	let cpz = pz - cz;
+	let d5 = dot3(abx, aby, abz, cpx, cpy, cpz);
+	let d6 = dot3(acx, acy, acz, cpx, cpy, cpz);
+	if d6 >= 0.0 && d5 <= d6 { return len3(cpx, cpy, cpz); }
+	let vb = d5 * d2 - d1 * d6;
+	if vb <= 0.0 && d2 >= 0.0 && d6 <= 0.0 {
+		let den2 = d2 - d6;
+		if den2 == 0.0 { return len3(apx, apy, apz); }
+		let s2 = d2 / den2;
+		return len3(px - (ax + acx * s2), py - (ay + acy * s2), pz - (az + acz * s2));
+	}
+	let va = d3 * d6 - d5 * d4;
+	if va <= 0.0 && d4 - d3 >= 0.0 && d5 - d6 >= 0.0 {
+		let den3 = (d4 - d3) + (d5 - d6);
+		if den3 == 0.0 { return len3(bpx, bpy, bpz); }
+		let s3 = (d4 - d3) / den3;
+		return len3(px - (bx + (cx - bx) * s3), py - (by + (cy - by) * s3), pz - (bz + (cz - bz) * s3));
+	}
+	let sum_v = va + vb + vc;
+	if sum_v == 0.0 { return len3(apx, apy, apz); }
+	let den = 1.0 / sum_v;
+	let v = vb * den;
+	let w = vc * den;
+	return len3(px - (ax + abx * v + acx * w), py - (ay + aby * v + acy * w), pz - (az + abz * v + acz * w));
+}
+=== 53809a4b1cab3f97
+fn sseg(px real, py real, pz real, qx real, qy real, qz real, rx real, ry real, rz real, sx real, sy real, sz real) real {
+	let d1x = qx - px;
+	let d1y = qy - py;
+	let d1z = qz - pz;
+	let d2x = sx - rx;
+	let d2y = sy - ry;
+	let d2z = sz - rz;
+	let ex = px - rx;
+	let ey = py - ry;
+	let ez = pz - rz;
+	let a = dot3(d1x, d1y, d1z, d1x, d1y, d1z);
+	let ee = dot3(d2x, d2y, d2z, d2x, d2y, d2z);
+	let f = dot3(d2x, d2y, d2z, ex, ey, ez);
+	if a < 1e-18 && ee < 1e-18 { return len3(ex, ey, ez); }
+	var sp = 0.0;
+	var tq = 0.0;
+	if a < 1e-18 {
+		tq = clamp01(f / ee);
+	} else {
+		let c = dot3(d1x, d1y, d1z, ex, ey, ez);
+		if ee < 1e-18 {
+			sp = clamp01(-c / a);
+		} else {
+			let b = dot3(d1x, d1y, d1z, d2x, d2y, d2z);
+			let den = a * ee - b * b;
+			sp = if den != 0.0 { clamp01((b * f - c * ee) / den) } else { 0.0 };
+			tq = (b * sp + f) / ee;
+			if tq < 0.0 {
+				tq = 0.0;
+				sp = clamp01(-c / a);
+			} else if tq > 1.0 {
+				tq = 1.0;
+				sp = clamp01((b - c) / a);
+			}
+		}
+	}
+	return len3((px + d1x * sp) - (rx + d2x * tq), (py + d1y * sp) - (ry + d2y * tq), (pz + d1z * sp) - (rz + d2z * tq));
+}
+=== 412b02fd99714740
+fn segx(px real, py real, pz real, qx real, qy real, qz real, t real[:], k int, ray i32) i32 {
+	let o = 9 * k;
+	let ax = t[o];
+	let ay = t[o + 1];
+	let az = t[o + 2];
+	let dx = qx - px;
+	let dy = qy - py;
+	let dz = qz - pz;
+	let e1x = t[o + 3] - ax;
+	let e1y = t[o + 4] - ay;
+	let e1z = t[o + 5] - az;
+	let e2x = t[o + 6] - ax;
+	let e2y = t[o + 7] - ay;
+	let e2z = t[o + 8] - az;
+	let hx = dy * e2z - dz * e2y;
+	let hy = dz * e2x - dx * e2z;
+	let hz = dx * e2y - dy * e2x;
+	let det = dot3(e1x, e1y, e1z, hx, hy, hz);
+	if abs(det) < 1e-14 { return 0; }
+	let f = 1.0 / det;
+	let sx = px - ax;
+	let sy = py - ay;
+	let sz = pz - az;
+	let u = f * dot3(sx, sy, sz, hx, hy, hz);
+	if u < 0.0 || u > 1.0 { return 0; }
+	let qvx = sy * e1z - sz * e1y;
+	let qvy = sz * e1x - sx * e1z;
+	let qvz = sx * e1y - sy * e1x;
+	let v = f * dot3(dx, dy, dz, qvx, qvy, qvz);
+	if v < 0.0 || u + v > 1.0 { return 0; }
+	let tt = f * dot3(e2x, e2y, e2z, qvx, qvy, qvz);
+	if ray == 1 { return if tt > 1e-9 { 1 } else { 0 }; }
+	return if tt >= 0.0 && tt <= 1.0 { 1 } else { 0 };
+}
+=== 0fc207ef0aef94ee
+fn tdist(k int, j int) real {
+	let a = 9 * k;
+	let b = 9 * j;
+	for i in 3 {
+		let p = a + 3 * i;
+		let q = a + 3 * ((i + 1) % 3);
+		if segx(TA[p], TA[p + 1], TA[p + 2], TA[q], TA[q + 1], TA[q + 2], TB[..], j, 0) == 1 { return 0.0; }
+		let r = b + 3 * i;
+		let s = b + 3 * ((i + 1) % 3);
+		if segx(TB[r], TB[r + 1], TB[r + 2], TB[s], TB[s + 1], TB[s + 2], TA[..], k, 0) == 1 { return 0.0; }
+	}
+	var best = 1e30;
+	for i in 3 {
+		let p = a + 3 * i;
+		let q = a + 3 * ((i + 1) % 3);
+		for m in 3 {
+			let r = b + 3 * m;
+			let s = b + 3 * ((m + 1) % 3);
+			best = min(best, sseg(TA[p], TA[p + 1], TA[p + 2], TA[q], TA[q + 1], TA[q + 2], TB[r], TB[r + 1], TB[r + 2], TB[s], TB[s + 1], TB[s + 2]));
+		}
+	}
+	for i in 3 {
+		let p = a + 3 * i;
+		best = min(best, ptri(TA[p], TA[p + 1], TA[p + 2], TB[..], j));
+		let r = b + 3 * i;
+		best = min(best, ptri(TB[r], TB[r + 1], TB[r + 2], TA[..], k));
+	}
+	return best;
+}
+=== -c1364e850a8ce05
+fn inside(px real, py real, pz real, t real[:], n int) i32 {
+	let qx = px + 0.57735;
+	let qy = py + 0.57741;
+	let qz = pz + 0.57729;
+	var hits = 0;
+	for k in n {
+		if segx(px, py, pz, qx, qy, qz, t, k, 1) == 1 { hits += 1; }
+	}
+	return if hits % 2 == 1 { 1 } else { 0 };
+}
+=== -59e99c5774b65b09
+fn cell(v real, o real) i32 {
+	return max(floor((v - o) / GH), 0.0) as i32;
+}
+=== -17f92fdb2f6b6dad
+struct Box { lo real[3], hi real[3] }
+struct Cover { x0 int, x1 int, y0 int, y1 int, z0 int, z1 int }
+fn box_of(t real[:], first int, corners int, grow real) Box {
+	var b = Box { lo: [1e30, 1e30, 1e30], hi: [-1e30, -1e30, -1e30] };
+	for i in corners {
+		for d in 3 {
+			let v = t[first + 3 * i + d];
+			b.lo[d] = min(b.lo[d], v);
+			b.hi[d] = max(b.hi[d], v);
+		}
+	}
+	for d in 3 {
+		b.lo[d] -= grow;
+		b.hi[d] += grow;
+	}
+	return b;
+}
+fn misses(a Box, b Box) bool {
+	for d in 3 {
+		if a.lo[d] > b.hi[d] || b.lo[d] > a.hi[d] { return true; }
+	}
+	return false;
+}
+fn cover_of(b Box) Cover {
+	let x0 = cell(b.lo[0], GX) as int;
+	let x1 = min(cell(b.hi[0], GX) as int, NX - 1);
+	let y0 = cell(b.lo[1], GY) as int;
+	let y1 = min(cell(b.hi[1], GY) as int, NY - 1);
+	let z0 = cell(b.lo[2], GZ) as int;
+	let z1 = min(cell(b.hi[2], GZ) as int, NZ - 1);
+	return Cover { x0: x0, x1: x1, y0: y0, y1: y1, z0: z0, z1: z1 };
+}
+export fn mh_near(na i32, nb i32, margin real) i32 {
+	RS[0] = 1e30;
+	RS[1] = 0.0;
+	RS[2] = 0.0;
+	if na == 0 || nb == 0 { return 1; }
+	let count_a = na as int;
+	let count_b = nb as int;
+	let box_b = box_of(TB[..], 0, 3 * count_b, margin);
+	let box_a = box_of(TA[..], 0, 3 * count_a, margin);
+	if misses(box_a, box_b) { return 0; }
+	GX = box_b.lo[0];
+	GY = box_b.lo[1];
+	GZ = box_b.lo[2];
+	var total_side = 0.0;
+	for j in count_b {
+		let own = box_of(TB[..], 9 * j, 3, 0.0);
+		total_side += max(max(own.hi[0] - own.lo[0], own.hi[1] - own.lo[1]), own.hi[2] - own.lo[2]);
+	}
+	GH = max(2.0 * margin, 1.5 * (total_side / (count_b as real)));
+	loop {
+		NX = 1 + (floor((box_b.hi[0] - box_b.lo[0]) / GH) as int);
+		NY = 1 + (floor((box_b.hi[1] - box_b.lo[1]) / GH) as int);
+		NZ = 1 + (floor((box_b.hi[2] - box_b.lo[2]) / GH) as int);
+		if (NX as real) * (NY as real) * (NZ as real) <= 2000000.0 { break; }
+		GH = GH * 2.0;
+	}
+	let cells = NX * NY * NZ;
+	zi(GS, cells + 1);
+	for j in count_b {
+		let cv = cover_of(box_of(TB[..], 9 * j, 3, margin));
+		for iz in cv.z0..cv.z1 + 1 {
+			for iy in cv.y0..cv.y1 + 1 {
+				for ix in cv.x0..cv.x1 + 1 {
+					GS[ix + NX * (iy + NY * iz) + 1] += 1;
+				}
+			}
+		}
+	}
+	for c in cells { GS[c + 1] += GS[c]; }
+	zi(GL, GS[cells] as int);
+	var cursor i32[>..] = [];
+	cursor.append(GS[..]);
+	for j in count_b {
+		let cv = cover_of(box_of(TB[..], 9 * j, 3, margin));
+		for iz in cv.z0..cv.z1 + 1 {
+			for iy in cv.y0..cv.y1 + 1 {
+				for ix in cv.x0..cv.x1 + 1 {
+					let c = ix + NX * (iy + NY * iz);
+					GL[cursor[c] as int] = j as i32;
+					cursor[c] += 1;
+				}
+			}
+		}
+	}
+	zi(SB, count_b);
+	for k in count_a {
+		let ka = box_of(TA[..], 9 * k, 3, margin);
+		if misses(ka, box_b) { continue; }
+		let cv = cover_of(ka);
+		for iz in cv.z0..cv.z1 + 1 {
+			for iy in cv.y0..cv.y1 + 1 {
+				for ix in cv.x0..cv.x1 + 1 {
+					let c = ix + NX * (iy + NY * iz);
+					for at in (GS[c] as int)..(GS[c + 1] as int) {
+						let j = GL[at] as int;
+						if SB[j] == k + 1 { continue; }
+						SB[j] = (k + 1) as i32;
+						if misses(ka, box_of(TB[..], 9 * j, 3, margin)) { continue; }
+						RS[1] += 1.0;
+						let d = tdist(k, j);
+						RS[0] = min(RS[0], d);
+						if d < margin {
+							RS[2] = 1.0;
+							return 1;
+						}
+					}
+				}
+			}
+		}
+	}
+	if inside(TB[0], TB[1], TB[2], TA[..], count_a) == 1 {
+		RS[2] = 2.0;
+		return 1;
+	}
+	if inside(TA[0], TA[1], TA[2], TB[..], count_b) == 1 {
+		RS[2] = 3.0;
+		return 1;
+	}
+	return 0;
+}
+=== 4e7b6d7966d0e159
+fn main() int {
+	return 0;
+}

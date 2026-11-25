@@ -171,9 +171,7 @@ function motorMesh(g) {
     // Top bell crown bevel with open stator cooling vents
     frustum(r * 0.98, r * 0.46, h * 0.88, h, 20, darkAlu),
     cyl(r * 0.34, h * 0.85, h, 14, crimson),
-    // Steel prop shaft + M5 locknut collar
-    cyl(sd / 2, h, h + sh, 14, steel),
-    frustum(sd * 0.92, sd * 0.72, h, h + Math.min(sh * 0.55, 2.8), 6, crimson)
+    cyl(sd / 2, h, h + sh, 14, steel)
   ];
   // Vertical knurled bell ribs
   for (let i = 0; i < 6; i++) {
@@ -189,7 +187,7 @@ function propMesh(g) {
   const R = d / 2, rHub = hubD / 2;
   const pcSmoke = [0.78, 0.81, 0.84], pcHub = [0.62, 0.66, 0.70];
   const parts = [
-    tubeY(2.5, rHub, 0, hubH, 18, pcHub)
+    tubeY(2.65, rHub, 0, hubH, 18, pcHub), tubeY(2.65, rHub * 0.62, hubH, hubH + 2.4, 6, [0.78, 0.28, 0.24])
   ];
   const stations = [
     { f: 0.08, chord: 0.075 * d, pitchDeg: 31, sweep: 0.000 * d, thick: 2.3, yMid: hubH * 0.52 },
@@ -449,24 +447,25 @@ export function frameMesh(comp) {
 
     // Circular motor mount pad reaching port height yPort
     parts.push(transform(tubeY(3.4, padR, yBot, yPort, 16, bodyCol), { origin: [x, 0, z], q: IDQ }));
-    parts.push(transform(tubeY(padR * 0.84, padR * 1.04, yPort, yPort + 1.2, 16, accentCol), { origin: [x, 0, z], q: IDQ }));
+    parts.push(transform(tubeY(padR * 0.84, padR * 1.04, yPort - 1.2, yPort - 0.05, 16, accentCol), { origin: [x, 0, z], q: IDQ }));
   });
 
+  const bay = g.stack_bay_mm || [47, 46];
   if (!isMaker) {
-    const standH = 30.5;
-    [[-13, -23], [13, -23], [-17, 0], [17, 0], [-13, 23], [13, 23]].forEach(([sx, sz]) => {
+    const standH = 30.5, pz = bay[1] / 2 + 3;
+    [[-13, -pz], [13, -pz], [-13, pz], [13, pz]].forEach(([sx, sz]) => {
       parts.push(transform(cyl(2.4, pt, standH, 10, accentCol), { origin: [sx, 0, sz], q: IDQ }));
     });
     parts.push(octPlate(34, 2.0, 64, 0.18, standH, darkCol));
-    parts.push(boxAt(2.0, 22, 14, -10.5, 14.5, -28, darkCol));
-    parts.push(boxAt(2.0, 22, 14, 10.5, 14.5, -28, darkCol));
+    parts.push(boxAt(2.0, 22, 14, -10.5, 14.5, -bay[1] / 2 - 8, darkCol));
+    parts.push(boxAt(2.0, 22, 14, 10.5, 14.5, -bay[1] / 2 - 8, darkCol));
   } else {
     const deckY = 30.5;
-    const pScale = 1 - pocket * 0.45;
-    [[-16, -15], [16, -15], [-16, 15], [16, 15]].forEach(([sx, sz]) => {
+    const pScale = 1 - pocket * 0.45, pz = bay[1] / 2 + 3.2 * pScale + 0.6;
+    [[-16, -pz], [16, -pz], [-16, pz], [16, pz]].forEach(([sx, sz]) => {
       parts.push(transform(frustum(3.2 * pScale, 2.2 * pScale, pt, deckY, 10, accentCol), { origin: [sx, 0, sz], q: IDQ }));
     });
-    parts.push(octPlate(30 * pScale, 1.8, 52 * pScale, 0.18, deckY, accentCol));
+    parts.push(octPlate(30 * pScale, 1.8, Math.max(52 * pScale, 2 * pz + 8), 0.18, deckY, accentCol));
     parts.push(boxAt(2.0 * pScale, 16, 11, -10.7, 10.5, -28, accentCol));
     parts.push(boxAt(2.0 * pScale, 16, 11, 10.7, 10.5, -28, accentCol));
   }
