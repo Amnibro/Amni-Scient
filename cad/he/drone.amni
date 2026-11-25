@@ -1,0 +1,845 @@
+import math;
+extern fn dr_view_f64(id i32, xs real[:]) = "dr_view_f64";
+var NA int = 0;
+var NI int = 0;
+var NC int = 0;
+var ON int = 0;
+var OD int = 0;
+var OS int = 0;
+var OK int = 0;
+var OB int = 0;
+var OI int = 0;
+var OH int = 0;
+var OV real = 0.0;
+var GP real = 0.0;
+var OF real = 0.0;
+var FD real = 0.0;
+var FL real = 0.0;
+var FT real = 0.0;
+var DP real[>..];
+var AR real[>..];
+var BP real[>..];
+var IT real[>..];
+var CK real[>..];
+var PF real[>..];
+var HO real[>..];
+var MV real[>..];
+var AE real[>..];
+var TR real[>..];
+var OX real[>..];
+var OC real[>..];
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+fn rs(xs real[>..]&, n int) {
+	xs.clear();
+	xs.reserve(n);
+}
+export fn dr_views() i32 {
+	dr_view_f64(1, DP[..]);
+	dr_view_f64(2, AR[..]);
+	dr_view_f64(3, BP[..]);
+	dr_view_f64(4, IT[..]);
+	dr_view_f64(5, CK[..]);
+	dr_view_f64(6, PF[..]);
+	dr_view_f64(7, HO[..]);
+	dr_view_f64(8, AE[..]);
+	dr_view_f64(9, TR[..]);
+	dr_view_f64(10, OX[..]);
+	dr_view_f64(11, OC[..]);
+	0
+}
+export fn dr_setup() i32 {
+	zf(DP, 64, 0.0);
+	zf(BP, 12, 0.0);
+	zf(PF, 16, 0.0);
+	zf(MV, 64, 0.0);
+	zf(AE, 192, 0.0);
+	zf(TR, 320, 0.0);
+	zf(OX, 80, 0.0);
+	zf(OC, 16, 0.0);
+	rs(AR, 12 * 12);
+	rs(IT, 16 * 96);
+	rs(CK, 8 * 1024);
+	rs(HO, 3 * 160);
+	dr_views();
+	0
+}
+fn dv(i int, d real) real {
+	if DP[i] > 0.0 { DP[i] } else { d }
+}
+fn ig(i int, f int) real {
+	IT[16 * i + f]
+}
+fn isx(i int, f int, v real) {
+	IT[16 * i + f] = v;
+}
+fn half_ext(i int, a int) real {
+	if ig(i, 1) == 0.0 { ig(i, 5 + a) * 0.5 } else { ig(i, 5) }
+}
+fn lo(i int, a int) real {
+	if a == 2 { ig(i, 4) } else { ig(i, 2 + a) - half_ext(i, a) }
+}
+fn hi(i int, a int) real {
+	if a == 2 { ig(i, 4) + ig(i, 7) } else { ig(i, 2 + a) + half_ext(i, a) }
+}
+fn lens(d real, r1 real, r2 real) real {
+	if r1 <= 0.0 || r2 <= 0.0 || d >= r1 + r2 { return 0.0; }
+	if d <= abs(r1 - r2) {
+		let s = min(r1, r2);
+		return PI * s * s;
+	}
+	let c1 = clamp((d * d + r1 * r1 - r2 * r2) / (2.0 * d * r1), -1.0, 1.0);
+	let c2 = clamp((d * d + r2 * r2 - r1 * r1) / (2.0 * d * r2), -1.0, 1.0);
+	let a1 = atan2(sqrt(max(1.0 - c1 * c1, 0.0)), c1);
+	let a2 = atan2(sqrt(max(1.0 - c2 * c2, 0.0)), c2);
+	let k = (r1 + r2 - d) * (d + r1 - r2) * (d - r1 + r2) * (d + r1 + r2);
+	r1 * r1 * a1 + r2 * r2 * a2 - 0.5 * sqrt(max(k, 0.0))
+}
+fn cbox(cx real, cy real, r real, x0 real, y0 real, x1 real, y1 real) real {
+	if r <= 0.0 { return 0.0; }
+	let a = max(cx - r, x0);
+	let b = min(cx + r, x1);
+	if b <= a { return 0.0; }
+	let step = (b - a) / 128.0;
+	var sum = 0.0;
+	for k in 128 {
+		let x = a + ((k as real) + 0.5) * step;
+		let h = sqrt(max(r * r - (x - cx) * (x - cx), 0.0));
+		let low = max(cy - h, y0);
+		let high = min(cy + h, y1);
+		if high > low { sum += (high - low) * step; }
+	}
+	sum
+}
+fn dist2(ax real, ay real, bx real, by real) real {
+	sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by))
+}
+fn prect(px real, py real, x0 real, y0 real, x1 real, y1 real) real {
+	let dx = max(max(x0 - px, px - x1), 0.0);
+	let dy = max(max(y0 - py, py - y1), 0.0);
+	sqrt(dx * dx + dy * dy)
+}
+fn frect(px real, py real, x0 real, y0 real, x1 real, y1 real) real {
+	let dx = max(abs(px - x0), abs(px - x1));
+	let dy = max(abs(py - y0), abs(py - y1));
+	sqrt(dx * dx + dy * dy)
+}
+fn dshare(cx real, cy real, r real, j int) real {
+	if ig(j, 1) == 0.0 {
+		cbox(cx, cy, r, lo(j, 0), lo(j, 1), hi(j, 0), hi(j, 1))
+	} else {
+		lens(dist2(cx, cy, ig(j, 2), ig(j, 3)), r, ig(j, 5))
+	}
+}
+fn ring_area(i int, j int) real {
+	let v = dshare(ig(i, 2), ig(i, 3), ig(i, 5), j) - dshare(ig(i, 2), ig(i, 3), ig(i, 6), j)
+	;
+	if ig(j, 1) != 2.0 { return v; }
+	let d = dist2(ig(i, 2), ig(i, 3), ig(j, 2), ig(j, 3));
+	v - lens(d, ig(i, 5), ig(j, 6)) + lens(d, ig(i, 6), ig(j, 6))
+}
+fn area2(i int, j int) real {
+	let si = ig(i, 1) as int;
+	let sj = ig(j, 1) as int;
+	var v = 0.0;
+	if si == 2 {
+		v = ring_area(i, j);
+	} else if sj == 2 {
+		v = ring_area(j, i);
+	} else if si == 0 && sj == 0 {
+		let w = max(min(hi(i, 0), hi(j, 0)) - max(lo(i, 0), lo(j, 0)), 0.0);
+		let d = max(min(hi(i, 1), hi(j, 1)) - max(lo(i, 1), lo(j, 1)), 0.0);
+		v = w * d;
+	} else if si == 0 {
+		v = dshare(ig(j, 2), ig(j, 3), ig(j, 5), i);
+	} else {
+		v = dshare(ig(i, 2), ig(i, 3), ig(i, 5), j);
+	}
+	max(v, 0.0)
+}
+fn dgap(cx real, cy real, r real, j int) real {
+	if ig(j, 1) == 0.0 {
+		max(prect(cx, cy, lo(j, 0), lo(j, 1), hi(j, 0), hi(j, 1)) - r, 0.0)
+	} else {
+		max(dist2(cx, cy, ig(j, 2), ig(j, 3)) - r - ig(j, 5), 0.0)
+	}
+}
+fn ring_gap(i int, j int) real {
+	let cx = ig(i, 2);
+	let cy = ig(i, 3);
+	let outer = dgap(cx, cy, ig(i, 5), j);
+	let reach = if ig(j, 1) == 0.0 {
+		frect(cx, cy, lo(j, 0), lo(j, 1), hi(j, 0), hi(j, 1))
+	} else {
+		dist2(cx, cy, ig(j, 2), ig(j, 3)) + ig(j, 5)
+	};
+	let v = max(max(outer, ig(i, 6) - reach), 0.0);
+	if ig(j, 1) != 2.0 { return v; }
+	max(v, ig(j, 6) - (dist2(cx, cy, ig(j, 2), ig(j, 3)) + ig(i, 5)))
+}
+fn gap2(i int, j int) real {
+	let si = ig(i, 1) as int;
+	let sj = ig(j, 1) as int;
+	if si == 2 { return ring_gap(i, j); }
+	if sj == 2 { return ring_gap(j, i); }
+	if si == 0 && sj == 0 {
+		let dx = max(max(lo(i, 0) - hi(j, 0), lo(j, 0) - hi(i, 0)), 0.0);
+		let dy = max(max(lo(i, 1) - hi(j, 1), lo(j, 1) - hi(i, 1)), 0.0);
+		return sqrt(dx * dx + dy * dy);
+	}
+	if si == 0 { return dgap(ig(j, 2), ig(j, 3), ig(j, 5), i); }
+	dgap(ig(i, 2), ig(i, 3), ig(i, 5), j)
+}
+fn pair(i int, j int) {
+	let zo = min(hi(i, 2), hi(j, 2)) - max(lo(i, 2), lo(j, 2));
+	OV = if zo > 0.0 { area2(i, j) * zo } else { 0.0 };
+	let zs = max(0.0, -zo);
+	let g = gap2(i, j);
+	GP = sqrt(g * g + zs * zs);
+}
+fn need(i int, j int) real {
+	let ki = ig(i, 0) as int;
+	let kj = ig(j, 0) as int;
+	let par_i = ig(i, 9) as int;
+	let par_j = ig(j, 9) as int;
+	let mi = ig(i, 10) as int;
+	let mj = ig(j, 10) as int;
+	if par_i == j || par_j == i { return 0.0; }
+	if ki >= 1 && ki <= 3 && kj >= 1 && kj <= 3 { return 0.0; }
+	if ki == 6 && kj == 6 { return 0.0; }
+	let fi = ki >= 12 && ki <= 15;
+	let fj = kj >= 12 && kj <= 15;
+	if (fi && fj) || (fi && kj == 4) || (fj && ki == 4) { return 0.0; }
+	if (ki == 5 && (fj || ((kj == 6 || kj == 4) && mi == mj))) || (kj == 5 && (fi || ((ki == 6 || ki == 4) && mi == mj))) { return dv(50, 0.75); }
+	if ki == 5 && kj == 5 { return dv(2, 7.0); }
+	if ki == 5 || kj == 5 { return dv(3, 5.0); }
+	if mi >= 0 && mi == mj { return 0.0; }
+	dv(49, 1.0)
+}
+fn both_saucer(i int, j int) bool {
+	let ki = ig(i, 0) as int;
+	let kj = ig(j, 0) as int;
+	ki >= 12 && ki <= 15 && kj >= 12 && kj <= 15
+}
+export fn dr_check() i32 {
+	CK.clear();
+	for i in NI {
+		for j in i + 1..NI {
+			if both_saucer(i, j) { continue; }
+			pair(i, j);
+			let n = need(i, j);
+			var kind = 0;
+			if OV > 0.001 {
+				kind = 1;
+			} else if GP < n - 0.000001 {
+				kind = 2;
+			}
+			if kind > 0 {
+				CK.push(i as real);
+				CK.push(j as real);
+				CK.push(kind as real);
+				CK.push(OV);
+				CK.push(GP);
+				CK.push(n);
+				CK.push(0.0);
+				CK.push(0.0);
+			}
+		}
+	}
+	NC = CK.len / 8;
+	dr_views();
+	NC as i32
+}
+fn add(kind int, shape int, x real, y real, z real, sx real, sy real, h real, mass real, parent int, motor int, axis int, sg int, group int) int {
+	let at = IT.len;
+	IT.push(kind as real);
+	IT.push(shape as real);
+	IT.push(x);
+	IT.push(y);
+	IT.push(z);
+	IT.push(sx);
+	IT.push(sy);
+	IT.push(h);
+	IT.push(mass);
+	IT.push(parent as real);
+	IT.push(motor as real);
+	IT.push(axis as real);
+	IT.push(sg as real);
+	IT.push(group as real);
+	IT.push(NI as real);
+	IT.push(0.0);
+	if axis > 0 && NI < 64 { IT[at + axis + 1] += MV[NI]; }
+	NI++;
+	NI - 1
+}
+fn body() {
+	let board = dv(27, 36.0);
+	let cam = dv(13, 19.0);
+	let stacked = (DP[0] as int) == 5 || (DP[0] as int) == 6;
+	var hw = max(max(board / 2.0 + 3.0, cam / 2.0 + 3.0), dv(18, 12.0) / 2.0 + 6.5 + dv(49, 1.0));
+	if !stacked { hw = max(hw, dv(15, 25.0) / 2.0 + 6.5 + dv(49, 1.0)); }
+	BP[0] = -hw;
+	BP[2] = hw;
+	BP[3] = board / 2.0 + 2.0 + cam;
+	let tail = if stacked { dv(19, 18.0) } else { max(dv(16, 30.0), dv(19, 18.0)) };
+	BP[1] = -(board / 2.0 + 2.0 + tail);
+	BP[4] = 4.0;
+	BP[6] = dv(4, 5.0);
+	BP[7] = dv(23, 2.0);
+	BP[5] = max(max(dv(44, 20.0), dv(14, 12.0) + 2.0 * dv(49, 1.0)), cam + 2.0 * dv(49, 1.0));
+	if stacked { BP[5] = max(BP[5], dv(14, 12.0) + dv(17, 8.0) + 3.0 * dv(49, 1.0)); }
+	if (DP[0] as int) == 6 {
+		BP[1] = BP[1] * 0.8;
+		BP[3] = BP[3] * 0.8;
+		let thw = max(BP[2] * 0.8, dv(18, 12.0) / 2.0 + 6.5 + dv(49, 1.0));
+		BP[0] = -thw;
+		BP[2] = thw;
+		BP[4] = 3.0;
+	}
+}
+fn ang(k int) real {
+	let ty = DP[0] as int;
+	if ty == 1 || ty == 7 {
+		let s = dv(43, if ty == 1 { 38.0 } else { 32.0 });
+		return match k {
+			0 => 90.0 - s,
+			1 => 90.0 + s,
+			2 => 270.0 - s,
+			_ => 270.0 + s,
+		};
+	}
+	if ty == 2 {
+		let a real[4] = [28.0, 152.0, 232.0, 308.0];
+		return a[k];
+	}
+	if ty == 3 {
+		let b real[4] = [38.0, 142.0, 218.0, 322.0];
+		return b[k];
+	}
+	if ty == 4 { return 30.0 + 60.0 * (k as real); }
+	if ty == 8 { return 90.0; }
+	45.0 + 90.0 * (k as real)
+}
+fn frame(m real) {
+	let ty = DP[0] as int;
+	NA = if ty == 8 { 1 } else if ty == 4 { 6 } else { 4 };
+	BP[10] = m;
+	AR.clear();
+	AR.resize(12 * NA, 0.0);
+	let R = dv(1, 127.0) / 2.0;
+	let wm = if ty == 6 { 5.0 } else { dv(9, 11.0) };
+	for k in NA {
+		let a = ang(k) * PI / 180.0;
+		let c = cos(a);
+		let s = sin(a);
+		let mx = if ty == 8 { 0.0 } else { m * c };
+		let my = if ty == 8 { 0.0 } else { m * s };
+		let at = 12 * k;
+		var best = 1e30;
+		let rays real[4] = [BP[0] / c, BP[2] / c, BP[1] / s, BP[3] / s];
+		for v in rays {
+			if v > 0.0 && v < best { best = v; }
+		}
+		var rx = c * best;
+		var ry = s * best;
+		if ty == 3 {
+			rx = if mx > 0.0 { BP[2] } else { BP[0] };
+			ry = my;
+		}
+		AR[at] = mx;
+		AR[at + 1] = my;
+		AR[at + 2] = a;
+		AR[at + 3] = rx;
+		AR[at + 4] = ry;
+		AR[at + 5] = 1.6 * wm;
+		AR[at + 6] = wm;
+		AR[at + 7] = max(dist2(rx, ry, mx, my), 0.0);
+		if ty == 5 {
+			let inner = R + dv(50, 0.75);
+			AR[at + 8] = inner;
+			AR[at + 9] = inner + dv(21, 2.2);
+		} else if ty == 8 {
+			AR[at + 8] = BP[9];
+			AR[at + 9] = R;
+		}
+		AR[at + 10] = if k % 2 == 0 { 1.0 } else { -1.0 };
+	}
+	if ty == 3 {
+		var top = AR[1];
+		for k in NA { top = max(top, AR[12 * k + 1]); }
+		let edge = top + wm;
+		BP[3] = max(BP[3], edge);
+		BP[1] = min(BP[1], -edge);
+	}
+}
+fn hole(x real, y real, d real) {
+	HO.push(x);
+	HO.push(y);
+	HO.push(d);
+}
+fn holes() {
+	HO.clear();
+	let fs = dv(5, 30.5);
+	let fh = fs / 2.0;
+	let fd = if fs >= 25.0 { 3.2 } else { 2.2 };
+	let signs real[2] = [-1.0, 1.0];
+	for sx in signs {
+		for sy in signs { hole(sx * fh, sy * fh, fd); }
+	}
+	let xs real[2] = [BP[0] + 4.0, BP[2] - 4.0];
+	let ys real[2] = [BP[1] + 4.0, BP[3] - 4.0];
+	for x in xs {
+		for y in ys { hole(x, y, 3.2); }
+	}
+	if (DP[0] as int) != 8 {
+		let sp = dv(6, 16.0);
+		let half = sp / 2.0;
+		let sd = if sp >= 16.0 { 3.2 } else { 2.2 };
+		for k in NA {
+			let mx = AR[12 * k];
+			let my = AR[12 * k + 1];
+			let a = AR[12 * k + 2];
+			hole(mx, my, 5.5);
+			for q in 4 {
+				let th = a + PI / 4.0 + (q as real) * PI / 2.0;
+				hole(mx + half * cos(th), my + half * sin(th), sd);
+			}
+		}
+	}
+}
+fn place() {
+	IT.clear();
+	NI = 0;
+	BP[8] = BP[6] + dv(8, 19.0) + dv(25, 2.0);
+	if (DP[0] as int) != 8 {
+		place_frame();
+	} else {
+		place_saucer();
+	}
+}
+fn place_frame() {
+	let ty = DP[0] as int;
+	let t = BP[6];
+	let H = BP[5];
+	let tp = BP[7];
+	let R = dv(1, 127.0) / 2.0;
+	let mh = dv(8, 19.0);
+	let seat = dv(25, 2.0);
+	let hub = dv(26, 7.0);
+	let rho = dv(35, 1.6) / 1000.0;
+	let pz = BP[8];
+	let x0 = BP[0];
+	let y0 = BP[1];
+	let x1 = BP[2];
+	let y1 = BP[3];
+	let w = x1 - x0;
+	let d = y1 - y0;
+	let cx = (x0 + x1) / 2.0;
+	let cy = (y0 + y1) / 2.0;
+	let area = w * d;
+	var arms = 0.0;
+	for k in NA {
+		let root_w = AR[12 * k + 5];
+		let tip_w = AR[12 * k + 6];
+		let pad_radius = max(tip_w / 2.0, dv(6, 16.0) / 2.0 + 3.2);
+		arms += AR[12 * k + 7] * (root_w + tip_w) / 2.0 + PI * pad_radius * pad_radius;
+	}
+	add(1, 0, cx, cy, 0.0, w, d, t, rho * t * (area + arms), -1, -1, 0, 1, 0);
+	add(2, 0, cx, cy, t + H, w, d, tp, rho * tp * area, -1, -1, 0, 1, 0);
+	let xs real[2] = [x0 + 4.0, x1 - 4.0];
+	let ys real[2] = [y0 + 4.0, y1 - 4.0];
+	for x in xs {
+		for y in ys { add(3, 1, x, y, t, 2.5, 0.0, H, 1.2, 0, -1, 0, 1, 0); }
+	}
+	let board = dv(27, 36.0);
+	let fc = add(7, 0, 0.0, 0.0, t, board, board, dv(14, 12.0), dv(31, 20.0), 0, -1, 0, 1, 2);
+	let cam = dv(13, 19.0);
+	add(8, 0, 0.0, y1 + 2.0 - 0.95 * cam / 2.0, t + (H - cam) / 2.0, cam, 0.95 * cam, cam, dv(34, 8.0), 0, -1, 2, 1, 2);
+	let tl = dv(16, 30.0);
+	let stacked = ty == 5 || ty == 6;
+	let ty9 = if stacked { 0.0 } else { y0 + 1.0 + tl / 2.0 };
+	let tz9 = if stacked { t + dv(14, 12.0) + dv(49, 1.0) } else { t };
+	let tparent = if stacked { fc } else { 0 };
+	let taxis = if stacked { 0 } else { 2 };
+	add(9, 0, 0.0, ty9, tz9, dv(15, 25.0), tl, dv(17, 8.0), dv(32, 20.0), tparent, -1, taxis, -1, 2);
+	let rl = dv(19, 18.0);
+	let rh = dv(20, 4.0);
+	add(10, 0, 0.0, y0 + 1.0 + rl / 2.0, t + H - rh, dv(18, 12.0), rl, rh, dv(33, 2.0), 1, -1, 2, -1, 2);
+	let bh = dv(12, 37.0);
+	let under = DP[46] == 1.0;
+	let bz = if under { -bh } else { t + H + tp };
+	let batt_parent = if under { 0 } else { 1 };
+	add(11, 0, 0.0, 0.0, bz, dv(11, 35.0), dv(10, 75.0), bh, dv(30, 180.0), batt_parent, -1, 2, -1, 3);
+	for k in NA {
+		let mx = AR[12 * k];
+		let my = AR[12 * k + 1];
+		let motor = add(4, 1, mx, my, t, dv(7, 28.0) / 2.0, 0.0, mh, dv(28, 32.0), 0, k, 0, 1, 1);
+		add(5, 1, mx, my, pz, R, 0.0, hub, dv(29, 4.5), motor, k, 0, 1, 1);
+		if ty == 5 {
+			let ri = AR[12 * k + 8];
+			let ro = AR[12 * k + 9];
+			let dh = max(dv(22, 0.0), mh + seat + hub + 3.0);
+			add(6, 2, mx, my, t, ro, ri, dh, 1.2 / 1000.0 * PI * (ro * ro - ri * ri) * dh, 0, k, 0, 1, 0);
+		}
+	}
+}
+fn place_saucer() {
+	let R = dv(1, 127.0) / 2.0;
+	let w = dv(21, 2.2);
+	let tg = dv(50, 0.75);
+	let rm = dv(8, 12.0);
+	let Hr = dv(22, 82.0);
+	let rc = dv(48, 0.445 * R);
+	let rw = BP[11];
+	let rf = BP[9];
+	let hub = dv(26, 7.0);
+	let rho = dv(35, 1.6) / 1000.0;
+	let wall = rw + w;
+	let rim = R + tg + rm;
+	let outer = rim + w;
+	let skin = PI * (outer * outer - rc * rc);
+	add(12, 2, 0.0, 0.0, 0.0, wall, rw, Hr, rho * PI * (wall * wall - rw * rw) * Hr, -1, -1, 0, 1, 0);
+	let shell = add(14, 2, 0.0, 0.0, 0.0, outer, rim, Hr, rho * PI * (outer * outer - rim * rim) * Hr, -1, -1, 0, 1, 0);
+	let X = dv(52, 0.0);
+	if X > 0.0 {
+		let nose = outer + X;
+		add(14, 2, 0.0, 0.0, dv(53, 0.5) * Hr - w, nose, outer, 2.0 * w, rho * PI * (nose * nose - outer * outer) * 2.0 * w, -1, -1, 0, 1, 0);
+	}
+	let bottom = add(15, 2, 0.0, 0.0, 0.0, outer, rc, w, rho * skin * w, -1, -1, 0, 1, 0);
+	add(15, 2, 0.0, 0.0, Hr - w, outer, rc, w, rho * skin * w, -1, -1, 0, 1, 0);
+	let mz = Hr / 2.0 - 12.0;
+	let mount = add(13, 1, 0.0, 0.0, mz, 22.0, 0.0, 4.0, rho * PI * 22.0 * 22.0 * 4.0, -1, -1, 0, 1, 0);
+	let motor = add(4, 2, 0.0, 0.0, 0.45 * Hr, rim, R + tg, 0.3 * Hr, dv(28, 750.0), shell, 0, 0, 1, 1);
+	add(5, 2, 0.0, 0.0, 0.6 * Hr - hub / 2.0, R, rf, hub, dv(29, 260.0), motor, 0, 0, 1, 1);
+	let board = dv(27, 36.0);
+	let fh = dv(14, 12.0);
+	let sz = mz + 4.0;
+	let stack = add(7, 0, 0.0, 0.0, sz, board, board, fh, dv(31, 20.0), mount, -1, 0, 1, 2);
+	let th = dv(17, 8.0);
+	let tx = add(9, 0, 0.0, 0.0, sz + fh, dv(15, 25.0), dv(16, 30.0), th, dv(32, 20.0), stack, -1, 0, 1, 2);
+	add(10, 0, 0.0, 0.0, sz + fh + th, dv(18, 12.0), dv(19, 18.0), dv(20, 4.0), dv(33, 2.0), tx, -1, 0, 1, 2);
+	let cam = dv(13, 19.0);
+	add(8, 0, 0.0, 0.0, mz - cam, cam, cam, cam, dv(34, 8.0), mount, -1, 0, 1, 2);
+	let c = (dv(37, 4.0) * dv(45, 2.0)) as int;
+	let ring = rw - 10.75 - dv(49, 1.0);
+	for k in c {
+		let a = ((k as real) + 0.5) * 2.0 * PI / (c as real);
+		add(11, 1, ring * cos(a), ring * sin(a), w + 0.5, 10.75, 0.0, 70.7, dv(30, 560.0) / (c as real), bottom, -1, 0, 1, 3);
+	}
+}
+fn clear() i32 {
+	var moves i32 = 0;
+	for round in 48 {
+		moves = 0;
+		for i in NI {
+			for j in i + 1..NI {
+				let ki = ig(i, 0) as int;
+				let kj = ig(j, 0) as int;
+				if ki == 4 || ki == 5 || ki == 6 || kj == 4 || kj == 5 || kj == 6 || both_saucer(i, j) { continue; }
+				pair(i, j);
+				let n = need(i, j);
+				if OV > 0.001 || GP < n - 0.000001 {
+					let ai = ig(i, 11) as int;
+					let aj = ig(j, 11) as int;
+					if aj > 0 || ai > 0 {
+						let mover = if aj > 0 { j } else { i };
+						let other = if aj > 0 { i } else { j };
+						let a = (ig(mover, 11) as int) - 1;
+						let dir = ig(mover, 12);
+						let raw = if dir == 1.0 { hi(other, a) + n - lo(mover, a) } else { hi(mover, a) - lo(other, a) + n };
+						let shift = max(raw, 0.25);
+						isx(mover, 2 + a, ig(mover, 2 + a) + shift * dir);
+						let slot = ig(mover, 14) as int;
+						if slot < 64 { MV[slot] += shift * dir; }
+						moves++;
+					}
+				}
+			}
+		}
+		if moves == 0 { break; }
+	}
+	moves
+}
+fn refit() {
+	if (DP[0] as int) != 8 {
+		for i in NI {
+			let parent = ig(i, 9) as int;
+			if (ig(i, 13) as int) == 2 && (parent == 0 || parent == 1) {
+				BP[0] = min(BP[0], lo(i, 0) - 2.0);
+				BP[1] = min(BP[1], lo(i, 1) - 2.0);
+				BP[2] = max(BP[2], hi(i, 0) + 2.0);
+				let front = if (ig(i, 0) as int) == 8 { hi(i, 1) - 2.0 } else { hi(i, 1) + 2.0 };
+				BP[3] = max(BP[3], front);
+			}
+		}
+	} else {
+		let R = dv(1, 127.0) / 2.0;
+		BP[9] = max(max(BP[9], dv(47, 0.615 * R)), BP[11] + dv(21, 2.2) + dv(50, 0.75));
+	}
+}
+fn pbad() i32 {
+	var bad i32 = 0;
+	for i in NI {
+		for j in i + 1..NI {
+			let ki = ig(i, 0) as int;
+			let kj = ig(j, 0) as int;
+			if (ki == 4 || ki == 5 || ki == 6 || kj == 4 || kj == 5 || kj == 6) && !both_saucer(i, j) {
+				pair(i, j);
+				if OV > 0.001 || GP < need(i, j) - 0.000001 { bad++; }
+			}
+		}
+	}
+	bad
+}
+fn try(m real) i32 {
+	frame(m);
+	holes();
+	place();
+	clear();
+	pbad()
+}
+export fn dr_solve() i32 {
+	for i in MV.len { MV[i] = 0.0; }
+	let D = dv(1, 127.0);
+	let R = D / 2.0;
+	let ty = DP[0] as int;
+	body();
+	if ty == 8 {
+		BP[11] = dv(48, 0.445 * R) + dv(21, 2.2) + 21.5 + 2.0 * dv(49, 1.0);
+		BP[9] = max(dv(47, 0.615 * R), BP[11] + dv(21, 2.2) + dv(50, 0.75));
+	}
+	for pass in 3 {
+		frame(1.2 * R + 30.0);
+		holes();
+		place();
+		clear();
+		refit();
+	}
+	for i in MV.len { MV[i] = 0.0; }
+	var m = 0.0;
+	for round in 2 {
+		if DP[51] > 0.0 {
+			m = DP[51] / 2.0;
+		} else if ty != 8 {
+			var low = R * 0.6;
+			var high = R * 4.0;
+			if try(low) == 0 {
+				m = low;
+			} else {
+				for step in 36 {
+					let mid = (low + high) / 2.0;
+					if try(mid) == 0 {
+						high = mid;
+					} else {
+						low = mid;
+					}
+				}
+				m = high;
+			}
+		}
+		try(m);
+		if round == 0 { refit(); }
+	}
+	dr_perf();
+	dr_check()
+}
+export fn dr_perf() i32 {
+	let ty = DP[0] as int;
+	let n = NA as real;
+	let D = dv(1, 127.0) / 1000.0;
+	let rho = 1.225;
+	let V = dv(37, 4.0) * 3.7;
+	let eta = 0.78;
+	let ct = dv(39, 0.11);
+	let cp = dv(40, 0.055);
+	let kv = dv(36, 1900.0);
+	let gain = if ty == 5 { 1.15 } else if ty == 8 { 1.25 } else { 1.0 };
+	let inner_ratio = BP[9] / (dv(1, 127.0) / 2.0);
+	let af = if ty == 8 { 1.0 - inner_ratio * inner_ratio } else { 1.0 };
+	var frame_mass = 0.0;
+	var total = 0.0;
+	for i in NI {
+		if (ig(i, 13) as int) == 0 { frame_mass += ig(i, 8); }
+		total += ig(i, 8);
+	}
+	let auw = total + dv(42, 25.0);
+	let d4 = D * D * D * D;
+	let d5 = d4 * D;
+	var full = kv * V * 0.75 / 60.0;
+	if af * cp * rho * full * full * full * d5 / (V * eta) > dv(41, 45.0) {
+		full = pow(dv(41, 45.0) * V * eta / (af * cp * rho * d5), 1.0 / 3.0);
+	}
+	let full_power = af * cp * rho * full * full * full * d5;
+	let thrust = gain * af * ct * rho * full * full * d4 * 1000.0 / 9.81;
+	let hover_force = auw / 1000.0 * 9.81 / n;
+	let hs = sqrt(hover_force / (gain * af * ct * rho * d4));
+	let hover_power = n * af * cp * rho * hs * hs * hs * d5 / eta;
+	let hover_amps = hover_power / V;
+	let minutes = 0.8 * dv(38, 1500.0) / 1000.0 / hover_amps * 60.0;
+	var x0 = 1e30;
+	var y0 = 1e30;
+	var z0 = 1e30;
+	var x1 = -1e30;
+	var y1 = -1e30;
+	var z1 = -1e30;
+	for i in NI {
+		x0 = min(x0, lo(i, 0));
+		y0 = min(y0, lo(i, 1));
+		z0 = min(z0, lo(i, 2));
+		x1 = max(x1, hi(i, 0));
+		y1 = max(y1, hi(i, 1));
+		z1 = max(z1, hi(i, 2));
+	}
+	let radius_cm = dv(1, 127.0) / 10.0 / 2.0;
+	PF[0] = auw;
+	PF[1] = frame_mass;
+	PF[2] = n * thrust;
+	PF[3] = n * thrust / auw;
+	PF[4] = hs / full;
+	PF[5] = hover_amps;
+	PF[6] = hover_power;
+	PF[7] = minutes;
+	PF[8] = n * (full_power / (V * eta));
+	PF[9] = if ty == 8 { 2.0 * (dv(1, 127.0) / 2.0 + dv(50, 0.75) + dv(8, 12.0) + dv(21, 2.2)) } else { 2.0 * BP[10] };
+	PF[10] = x1 - x0;
+	PF[11] = y1 - y0;
+	PF[12] = z1 - z0;
+	PF[13] = NC as real;
+	PF[14] = auw / (n * PI * af * radius_cm * radius_cm);
+	dr_views();
+	0
+}
+fn lerp3(ne int, th real, c int) real {
+	if th <= AE[0] { return AE[c]; }
+	for i in 1..ne {
+		let b = AE[3 * i];
+		if th <= b {
+			let a = AE[3 * i - 3];
+			let low = AE[3 * i - 3 + c];
+			return low + (AE[3 * i + c] - low) * ((th - a) / (b - a));
+		}
+	}
+	AE[3 * (ne - 1) + c]
+}
+fn trim1(ne int, w real, u real) real {
+	let q = 0.5 * 1.204 * u * u;
+	let top = AE[3 * (ne - 1)];
+	var th = 0.0;
+	while th <= top {
+		if tan(th * PI / 180.0) * (w - q * lerp3(ne, th, 2)) >= q * lerp3(ne, th, 1) { return th; }
+		th += 0.05;
+	}
+	-1.0
+}
+fn tforce(ne int, w real, u real, th real) {
+	let q = 0.5 * 1.204 * u * u;
+	FD = q * lerp3(ne, th, 1);
+	FL = q * lerp3(ne, th, 2);
+	FT = sqrt(FD * FD + (w - FL) * (w - FL));
+}
+export fn dr_trim(ne i32, w real, tmax real) i32 {
+	var best = 0.0;
+	var run = true;
+	for k in 40 {
+		let u = (k + 1) as real;
+		let th = trim1(ne, w, u);
+		tforce(ne, w, u, if th >= 0.0 { th } else { AE[3 * ((ne as int) - 1)] });
+		let ok = th >= 0.0 && FT <= tmax;
+		let at = 8 * k;
+		TR[at] = u;
+		TR[at + 1] = th;
+		TR[at + 2] = FT;
+		TR[at + 3] = FT / w;
+		TR[at + 4] = FD;
+		TR[at + 5] = FL;
+		TR[at + 6] = FD * u;
+		TR[at + 7] = if ok { 1.0 } else { 0.0 };
+		if !ok { run = false; }
+		if run { best = u; }
+	}
+	PF[15] = best;
+	40
+}
+export fn dr_ascore(ne i32, w real, tmax real, w0 real, u real) real {
+	let th = trim1(ne, w, u);
+	if th < 0.0 {
+		tforce(ne, w, u, AE[3 * ((ne as int) - 1)]);
+		return 10.0 + FD / w0;
+	}
+	tforce(ne, w, u, th);
+	let score = pow(FT / w0, 1.5);
+	if FT > tmax { score + 10.0 } else { score }
+}
+fn ofail() {
+	if OS == 1 {
+		OS = -1;
+	} else {
+		OS = 1;
+		OD++;
+		if OD >= ON {
+			OD = 0;
+			if OI == 0 {
+				for i in ON { OX[5 * i + 3] = OX[5 * i + 3] * 0.5; }
+			}
+			OI = 0;
+		}
+	}
+}
+fn odone() i32 {
+	if OK >= OB { return 1; }
+	for i in ON {
+		if !(OX[5 * i + 3] < OX[5 * i + 4]) { return 0; }
+	}
+	1
+}
+export fn dr_opt_init(n i32, budget i32) i32 {
+	ON = n;
+	OB = budget;
+	OD = 0;
+	OS = 1;
+	OK = 0;
+	OI = 0;
+	OH = 0;
+	OF = 1e30;
+	0
+}
+export fn dr_opt_ask() i32 {
+	for i in ON { OC[i] = OX[5 * i]; }
+	if OH == 0 { return 1; }
+	for attempt in 4 * ON {
+		if odone() == 1 { return 0; }
+		let at = 5 * OD;
+		let cur = OX[at];
+		let v = clamp(cur + (OS as real) * OX[at + 3], OX[at + 1], OX[at + 2]);
+		if abs(v - cur) > 1e-9 {
+			OC[OD] = v;
+			return 1;
+		}
+		ofail();
+	}
+	0
+}
+export fn dr_opt_tell(f real) i32 {
+	OK++;
+	if OH == 0 {
+		OH = 1;
+		OF = f;
+		return 0;
+	}
+	if f < OF - 1e-9 {
+		OF = f;
+		for i in ON { OX[5 * i] = OC[i]; }
+		OI = 1;
+		return 1;
+	}
+	ofail();
+	0
+}
+export fn dr_opt_best() real {
+	OF
+}
+fn main() {
+}

@@ -149,6 +149,8 @@ function paintMetrics() {
 function optSummaryBanner() {
   const s = state.optSummary;
   if (!s) return '';
+  const f1 = v => v == null ? '—' : v.toFixed(1), P = s.picks || {};
+  if (s.mode === 'flight-parts' || s.note) return `<div class="card opt">${s.note ? `<p class="hint">${esc(s.note)}</p>` : ''}${s.picks ? `<div class="kv"><i>Flight Time</i><b>${f1(s.before_minutes)} → ${f1(s.after_minutes)} min</b></div><div class="kv"><i>Thrust / Weight</i><b>${f1(s.before_twr)} → ${f1(s.after_twr)}</b></div><div class="kv"><i>Cost</i><b>$${f1(s.before_cost_usd)} → $${f1(s.after_cost_usd)}</b></div><div class="kv"><i>Mass</i><b>${f1(s.before_mass_g)} g → ${f1(s.after_mass_g)} g</b></div>${['frame', 'motor', 'prop', 'battery'].map(k => `<div class="kv"><i>${k[0].toUpperCase() + k.slice(1)}</i><b>${esc(P[k])}</b></div>`).join('')}<div class="kv"><i>Searched</i><b>${s.kept} of ${s.tried} sets pass</b></div>` : ''}</div>`;
   const sign = s.saved_g >= 0 ? '−' + s.saved_g.toFixed(1) + ' g' : '+' + Math.abs(s.saved_g).toFixed(1) + ' g';
   return `<div class="card opt">
     <div class="kv"><i>Optimized (${esc(s.material)})</i><b><span class="badge good">${sign} (${s.saved_pct}%)</span></b></div>
@@ -167,7 +169,7 @@ function missionPanel() {
   return `<h2>Mission</h2><p class="lede">${esc(state.assembly.name)}. Conceive picks the cheapest part that mates. Optimize compacts wheelbase, tapers arms, carves truss cutouts, and slices infill for minimum weight.</p>
 <div class="card">
   <h3>Auto-Optimize Weight &amp; 3D Print</h3>
-  <div class="field"><label>Goal</label><select id="opt-mode"><option value="weight-print" ${state.optMode === 'weight-print' ? 'selected' : ''}>Min Weight + 3D Print</option><option value="stiffness" ${state.optMode === 'stiffness' ? 'selected' : ''}>Max Arm Stiffness / Hz</option><option value="budget-weight" ${state.optMode === 'budget-weight' ? 'selected' : ''}>Budget Parts + Print</option></select></div>
+  <div class="field"><label>Goal</label><select id="opt-mode"><option value="weight-print" ${state.optMode === 'weight-print' ? 'selected' : ''}>Min Weight + 3D Print</option><option value="stiffness" ${state.optMode === 'stiffness' ? 'selected' : ''}>Max Arm Stiffness / Hz</option><option value="flight-parts" ${state.optMode === 'flight-parts' ? 'selected' : ''}>Longest Flight (buyable parts)</option><option value="budget-weight" ${state.optMode === 'budget-weight' ? 'selected' : ''}>Budget Parts + Print</option></select></div>
   <div class="field"><label>Filament</label><select id="opt-mat">${matOpts}</select></div>
   <button id="run-optimize" class="btn primary block" type="button">Auto-Optimize Weight &amp; Print</button>
 </div>
@@ -198,7 +200,7 @@ function printPanel() {
 
   return `<h2>Print &amp; Weight</h2><p class="lede">Parametric 3D-printable frame &amp; structural weight optimizer. Tunes wheelbase, arm taper, truss pockets, and slicer shell/infill under motor peak load.</p>
 <div class="card">
-  <div class="field"><label>Mode</label><select id="opt-mode"><option value="weight-print" ${state.optMode === 'weight-print' ? 'selected' : ''}>Min Weight + 3D Print</option><option value="stiffness" ${state.optMode === 'stiffness' ? 'selected' : ''}>Max Arm Stiffness / Hz</option><option value="budget-weight" ${state.optMode === 'budget-weight' ? 'selected' : ''}>Budget Parts + Print</option></select></div>
+  <div class="field"><label>Mode</label><select id="opt-mode"><option value="weight-print" ${state.optMode === 'weight-print' ? 'selected' : ''}>Min Weight + 3D Print</option><option value="stiffness" ${state.optMode === 'stiffness' ? 'selected' : ''}>Max Arm Stiffness / Hz</option><option value="flight-parts" ${state.optMode === 'flight-parts' ? 'selected' : ''}>Longest Flight (buyable parts)</option><option value="budget-weight" ${state.optMode === 'budget-weight' ? 'selected' : ''}>Budget Parts + Print</option></select></div>
   <div class="field"><label>Material</label><select id="print-mat">${matOpts}</select></div>
   <button id="run-optimize" class="btn primary block" type="button">Auto-Optimize Weight &amp; Print</button>
 </div>
@@ -477,3 +479,12 @@ const boot = async () => {
   go();
 };
 boot();
+$('#to-cad').addEventListener('click', () => {
+  const pl = state.assembly.placements, sp = id => (state.db.components[id] || {}).specs || {}, all = pl.map(p => ({ id: p.component, s: sp(p.component) })), pick = f => (all.find(x => f(x.s)) || { s: {} }).s;
+  const pr = pick(s => s.diameter_mm), mo = pick(s => s.kv), ba = pick(s => s.cells_s), fr = (pl.find(p => p.id === 'frame') || {}).component || '', fw = sp(fr).wheelbase_mm;
+  const type = /saucer/.test(fr) ? 'saucer' : /duct|whoop|cine/.test(fr) ? 'whoop' : /deadcat/.test(fr) ? 'deadcat' : /hex/.test(fr) ? 'hex' : /stretch/.test(fr) ? 'stretch' : /(^|-)h-/.test(fr) ? 'h' : pr.diameter_mm >= 170 ? 'lr' : pr.diameter_mm && pr.diameter_mm < 80 ? 'toothpick' : 'x';
+  const o = { type, prop: pr.diameter_mm, pitch: pr.pitch_in && pr.pitch_in * 25.4, blades: pr.blades, kv: mo.kv, cells: ba.cells_s, mah: ba.capacity_ah && ba.capacity_ah * 1000, m_motor: mo.mass_g, m_prop: pr.mass_g, m_bat: ba.mass_g, wheelbase: type === 'saucer' ? undefined : fw };
+  Object.keys(o).forEach(k => (o[k] == null || o[k] === '' || Number.isNaN(o[k])) && delete o[k]);
+  localStorage.setItem('amni-drone-handoff', JSON.stringify({ o, name: state.assembly.name, at: Date.now() }));
+  window.open(new URL('/cad/#drone', location.href).href, '_blank', 'noopener');
+});

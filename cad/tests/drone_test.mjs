@@ -1,0 +1,10 @@
+import opencascade from '../vendor/replicad_single.js';import * as K from '../kernel.js';import * as AK from '../asm_kernel.js';import * as ASM from '../assembly.js';import * as D from '../drone.js';
+const oc=await opencascade({locateFile:()=>new URL('../vendor/replicad_single.wasm',import.meta.url).pathname,print:()=>{},printErr:()=>{}});await K.init(oc);
+let bad=0,n=0;const chk=(nm,c,x)=>{n++;console.log((c?'OK  ':'BAD ')+nm+(x!==undefined?' · '+x:''));if(!c)bad++;},ctx={K,blobs:{}},only=process.argv[2],deep=!process.argv.includes('--fast');
+for(const t of D.TYPES.filter(t=>!only||t===only)){const d={units:'mm',params:[],features:[]},r=D.solve({type:t}),s=D.toAsm(d,r,{theme:'race'}),errs=[],vols=[];
+for(const pid of Object.keys(d.asm.parts)){const doc=ASM.partDoc(d,pid),sig=ASM.sigOf(d,pid),q=await AK.part(ctx,{key:sig,doc,sig}),v=q.mesh?q.mesh.props.volume:0;vols.push(doc.name+' '+v.toFixed(0));(q.errors.length||!(v>0))&&errs.push(doc.name+': '+JSON.stringify(q.errors).slice(0,300)+' vol '+v);}
+chk(t+' builds every part',!errs.length,s.parts+' parts, '+s.comps+' comps'+(errs.length?'\n    '+errs.join('\n    '):''));
+process.argv.includes('-v')&&console.log('    '+vols.join(' | '));
+if(deep){const inst=d.asm.comps.map(c=>({id:c.id,key:ASM.sigOf(d,ASM.pk(c)),p:c.p,q:c.q,k:ASM.kOf(d,ASM.pk(c)),name:c.name})),ir=await AK.interfere(ctx,{inst,mesh:false,min:0.5}),nm=id=>d.asm.comps.find(c=>c.id===id).name;
+chk(t+' has no part clashes',!ir.hits.length,ir.pairs+' pairs checked'+(ir.hits.length?'\n    '+ir.hits.map(h=>nm(h.a)+' x '+nm(h.b)+' '+(h.vol??h.err)).join('\n    '):''));}}
+console.log(bad?bad+' of '+n+' failed':'all '+n+' passed');process.exit(bad?1:0);

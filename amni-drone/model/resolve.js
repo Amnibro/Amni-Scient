@@ -1,4 +1,4 @@
-import { add, mul, quatAlign, quatFromAxis, quatMul, rad, rotVec, sub, len, IDQ } from './math.js';
+import { add, mul, dot, cross, quatAlign, quatFromAxis, quatMul, rad, rotVec, sub, len, IDQ } from './math.js';
 import { expandLayout, share } from './expand.js';
 import { frameMesh, merge, partMesh, stlBinary, transform, volume } from './solid.js';
 import { wiresOf } from './wire.js';
@@ -15,6 +15,10 @@ const rangeOf = c => Array.isArray(c.specs.cells) ? c.specs.cells : c.specs.cell
 const inside = (n, r) => !!r && n >= r[0] && n <= r[1];
 const aabb = mesh => { let a = [1e9, 1e9, 1e9, -1e9, -1e9, -1e9]; for (let i = 0; i < mesh.positions.length; i += 3) for (let k = 0; k < 3; k++) { a[k] = Math.min(a[k], mesh.positions[i + k]); a[k + 3] = Math.max(a[k + 3], mesh.positions[i + k]); } return a; };
 const hit = (a, b, e) => a[0] < b[3] - e && b[0] < a[3] - e && a[1] < b[4] - e && b[1] < a[4] - e && a[2] < b[5] - e && b[2] < a[5] - e;
+const triList = m => m.tl || (m.tl = Array.from({ length: m.indices.length / 3 }, (_, k) => { const t = [0, 1, 2].map(j => m.indices[3 * k + j] * 3).map(i => [m.positions[i], m.positions[i + 1], m.positions[i + 2]]); return { t, lo: [0, 1, 2].map(a => Math.min(t[0][a], t[1][a], t[2][a])), hi: [0, 1, 2].map(a => Math.max(t[0][a], t[1][a], t[2][a])) }; }));
+const segHit = (p, d, [a, b, c]) => { const e1 = sub(b, a), e2 = sub(c, a), h = cross(d, e2), det = dot(e1, h); if (Math.abs(det) < 1e-12) return -1; const s = sub(p, a), u = dot(s, h) / det, q = cross(s, e1), v = dot(d, q) / det, t = dot(e2, q) / det; return u > 1e-7 && v > 1e-7 && u + v < 1 - 1e-7 && t > 1e-7 && t < 1 - 1e-7 ? t : -1; };
+const clash = (c, pa, H) => { const o = [0, 1, 2].map(k => [Math.max(c.aabb[k], pa.aabb[k]) - 0.4, Math.min(c.aabb[k + 3], pa.aabb[k + 3]) + 0.4]), inn = x => [0, 1, 2].every(k => x.hi[k] >= o[k][0] && x.lo[k] <= o[k][1]), A = triList(c.mesh).filter(inn), B = triList(pa.mesh).filter(inn); let n = 0; for (const a of A) for (let j = 0; j < 3; j++) { const p = a.t[j], d = sub(a.t[(j + 1) % 3], p), lo = [0, 1, 2].map(k => Math.min(p[k], p[k] + d[k])), hi = [0, 1, 2].map(k => Math.max(p[k], p[k] + d[k])); for (const b of B) { if (b.hi[0] < lo[0] || b.lo[0] > hi[0] || b.hi[1] < lo[1] || b.lo[1] > hi[1] || b.hi[2] < lo[2] || b.lo[2] > hi[2]) continue; const t = segHit(p, d, b.t), x = t < 0 ? null : add(p, mul(d, t)); x && H.every(h => Math.hypot(...cross(sub(x, h.o), h.d)) > 4) && n++; } } return n; };
+const holesOf = (c, db) => { const m = (c.comp.layout.mounts || []).find(x => x.id === c.pose.mount), I = m && (db.interfaces || {})[m.interface]; return I && I.holes ? I.holes.map(h => ({ o: add(c.pose.origin, rotVec(c.pose.q, add(m.at_mm || [0, 0, 0], [h.at_mm[0], 0, h.at_mm[1]]))), d: rotVec(c.pose.q, [0, 1, 0]) })) : []; };
 export function resolve(assembly, raw) {
   const db = prepare(raw), checks = [], placements = (assembly.placements || []).map(p => ({ ...p }));
   const byId = new Map(placements.map(p => [p.id, p])), pose = new Map();
@@ -61,6 +65,7 @@ export function resolve(assembly, raw) {
     if (!a.aabb || !b.aabb || a.pose.parent === b.id || b.pose.parent === a.id || ['frame', 'cable', 'prop'].includes(a.comp.function.role) || ['frame', 'cable', 'prop'].includes(b.comp.function.role)) continue;
     hit(a.aabb, b.aabb, 0.4) && checks.push({ sev: 'error', id: 'hit-' + a.id + '-' + b.id, text: a.id + ' and ' + b.id + ' occupy the same space. Move a port or a mount.' });
   }
+  for (const c of placed) { const pa = c.pose && placed.find(p => p.id === c.pose.parent); if (!pa || !c.mesh || !pa.mesh || !hit(c.aabb, pa.aabb, 0.4) || ['cable', 'prop'].includes(c.comp.function.role)) continue; const k = clash(c, pa, holesOf(c, db)); k && checks.push({ sev: 'error', id: 'sunk-' + c.id + '-' + pa.id, text: c.id + ' cuts into ' + pa.id + ' where it mounts (' + k + ' crossing edge' + (k === 1 ? '' : 's') + '). Move its port or mount.' }); }
   const mass = placed.reduce((s, p) => s + (p.mass || 0), 0) || 1, cg = placed.reduce((s, p) => add(s, mul(p.cg || [0, 0, 0], p.mass || 0)), [0, 0, 0]).map(v => v / mass);
   const bat = placed.find(p => p.comp.function.role === 'battery' && p.pose);
   bat && (bat.pack_a = bat.comp.specs.continuous_c * bat.comp.specs.capacity_ah);
@@ -91,7 +96,7 @@ export function resolve(assembly, raw) {
   else {
     const top = combo.points.slice().sort((a, b) => b.throttle - a.throttle)[0];
     top.thrust_g && (twr = motors.length * top.thrust_g / mass);
-    const hoverT = mass / motors.length, pts = combo.points.filter(p => p.thrust_g && p.current_a).sort((a, b) => a.thrust_g - b.thrust_g);
+    const hoverT = mass / motors.length, pts = combo.points.filter(p => p.thrust_g != null && p.current_a != null).sort((a, b) => a.thrust_g - b.thrust_g);
     const lo = pts.filter(p => p.thrust_g <= hoverT).pop(), hi = pts.find(p => p.thrust_g >= hoverT);
     if (lo && hi && hi.thrust_g !== lo.thrust_g) { const t = (hoverT - lo.thrust_g) / (hi.thrust_g - lo.thrust_g), amps = lo.current_a + t * (hi.current_a - lo.current_a); minutes = bat.comp.specs.capacity_ah * 60 * (flight.usable || 0.8) / (motors.length * amps); }
   }
