@@ -30,6 +30,7 @@ var ZS real[>..];
 var GA real[>..];
 var GO real[>..];
 var SP real[>..];
+var NL real[>..];
 var DS real[>..];
 var KY real[>..];
 var NS i32[>..];
@@ -87,6 +88,7 @@ export fn ec_views() {
 	ec_view_f64(14, GA);
 	ec_view_f64(15, GO);
 	ec_view_f64(16, CI);
+	ec_view_f64(18, NL);
 	ec_view_i32(17, NS);
 }
 export fn ec_setup(np i32, nt i32, nv i32, nb i32, nn i32) {
@@ -476,7 +478,7 @@ export fn ec_drc() i32 {
 					let my = (icy(i) + icy(j)) / 2.0;
 					if g <= 1e-9 {
 						viol(2, mx, my, i, j, g, ni, nj);
-					} else if g < c - 1e-6 {
+					} else if g < c - 1e-3 {
 						viol(1, mx, my, i, j, g, ni, nj);
 					}
 				}
@@ -1286,7 +1288,7 @@ fn segok(ax real, ay real, bx real, by real, w real, layer i32, net i32) int {
 	for q in NI {
 		if CI[12 * q + 8] != 4.0 && ilay(q, l) == 1 {
 			let nq = CI[12 * q + 2] as int;
-			if (nq != k || nq == 0) && cgap(ax, ay, bx, by, w / 2.0, q) < PR[0] - 1e-6 {
+			if (nq != k || nq == 0) && cgap(ax, ay, bx, by, w / 2.0, q) < PR[0] - 1e-3 {
 				return 0;
 			}
 		}
@@ -1389,19 +1391,24 @@ export fn ec_hroute(net i32, layer i32, sx real, sy real, ex real, ey real, w re
 	let k = net as int;
 	let l = layer as int;
 	let md = mode as int;
+	var ax = sx;
+	var ay = sy;
+	var bx = ex;
+	var by = ey;
 	RT.clear();
 	zf(RI, 8, 0.0);
-	var tx = ex;
-	var ty = ey;
-	for q in NI {
-		let src = CI[12 * q + 8];
-		if (src == 1.0 || src == 3.0) && (CI[12 * q + 2] as int) == k && k > 0 && ilay(q, l) == 1 && pdist(tx, ty, q) <= 0.0 {
-			tx = (bx0(q) + bx1(q)) / 2.0;
-			ty = (by0(q) + by1(q)) / 2.0;
-			RI[6] = q + 1;
-			break;
+	if (md & 4) == 0 && k > 0 {
+		for q in NI {
+			let src = CI[12 * q + 8];
+			if (src == 1.0 || src == 3.0) && (CI[12 * q + 2] as int) == k && ilay(q, l) == 1 && pdist(bx, by, q) <= 0.0 {
+				bx = icx(q);
+				by = icy(q);
+				RI[6] = q + 1;
+				break;
+			}
 		}
 	}
+	let g = PR[4];
 	var t = -1;
 	if (md & 2) != 0 {
 		PR[1] = w;
@@ -1412,17 +1419,15 @@ export fn ec_hroute(net i32, layer i32, sx real, sy real, ex real, ey real, w re
 		ri(PL, GX * GY * GL);
 		HV.clear();
 		SG += 1;
-		let g = PR[4];
-		let per = GX * GY;
-		let si = clamp(ifl((sx - PR[5]) / g), 0, GX - 1);
-		let sj = clamp(ifl((sy - PR[6]) / g), 0, GY - 1);
-		let ei = clamp(ifl((tx - PR[5]) / g), 0, GX - 1);
-		let ej = clamp(ifl((ty - PR[6]) / g), 0, GY - 1);
-		let nstart = l * per + sj * GX + si;
-		let nend = l * per + ej * GX + ei;
-		touch(nend);
-		TG[nend] = SG as i32;
-		PN.push(nstart as i32);
+		let si = clamp(ifl((ax - PR[5]) / g), 0, GX - 1);
+		let sj = clamp(ifl((ay - PR[6]) / g), 0, GY - 1);
+		let ti = clamp(ifl((bx - PR[5]) / g), 0, GX - 1);
+		let tj = clamp(ifl((by - PR[6]) / g), 0, GY - 1);
+		let sn = l * GX * GY + sj * GX + si;
+		let tn = l * GX * GY + tj * GX + ti;
+		touch(tn);
+		TG[tn] = SG as i32;
+		PN.push(sn as i32);
 		NOV = 1;
 		t = search(k);
 		NOV = 0;
@@ -1430,52 +1435,384 @@ export fn ec_hroute(net i32, layer i32, sx real, sy real, ex real, ey real, w re
 	if t != -1 {
 		emit(t, k);
 		RI[0] = 1.0;
-		if RT.len > 0 {
-			RT[0] = sx;
-			RT[1] = sy;
-			let last = RT.len - 8;
-			RT[last + 2] = tx;
-			RT[last + 3] = ty;
-		} else {
-			addrow(sx, sy, tx, ty, w, layer, net);
+		let rows = RT.len / 8;
+		if rows > 0 {
+			RT[0] = ax;
+			RT[1] = ay;
+			RT[8 * (rows - 1) + 2] = bx;
+			RT[8 * (rows - 1) + 3] = by;
+		}
+		if RT.len == 0 {
+			addrow(ax, ay, bx, by, w, layer, net);
 		}
 		smooth(w, layer, net);
 	} else {
 		if (md & 2) != 0 {
 			RI[1] = 1.0;
 		}
-		addpair(sx, sy, tx, ty, (md & 1) as i32, w, layer, net);
+		addpair(ax, ay, bx, by, (md & 1) as i32, w, layer, net);
 	}
-	let n = RT.len / 8;
+	var bad = 0;
 	var total = 0.0;
+	let n = RT.len / 8;
 	for r in n {
 		let o = 8 * r;
 		RT[o + 4] = w;
-		let bad = 1 - segok(RT[o], RT[o + 1], RT[o + 2], RT[o + 3], w, layer, net);
-		RT[o + 7] = bad;
-		if bad == 1 {
-			RI[5] += 1.0;
+		let flag = 1 - segok(RT[o], RT[o + 1], RT[o + 2], RT[o + 3], w, layer, net);
+		RT[o + 7] = flag;
+		if flag == 1 {
+			bad += 1;
 		}
 		let dx = RT[o + 2] - RT[o];
 		let dy = RT[o + 3] - RT[o + 1];
 		total += sqrt(dx * dx + dy * dy);
 	}
+	RI[5] = bad;
 	RI[4] = total;
-	let rad = PR[2] / 2.0;
+	var vbad = egap(bx, by) < PR[9] + PR[2] / 2.0 - 1e-6;
 	for q in NI {
 		if CI[12 * q + 8] != 4.0 {
 			let nq = CI[12 * q + 2] as int;
-			if (nq != k || nq == 0) && cgap(tx, ty, tx, ty, rad, q) < PR[0] - 1e-6 {
-				RI[7] = 1.0;
-				break;
+			if (nq != k || nq == 0) && cgap(bx, by, bx, by, PR[2] / 2.0, q) < PR[0] - 1e-6 {
+				vbad = true;
 			}
 		}
 	}
-	if egap(tx, ty) < PR[9] + rad - 1e-6 {
+	if vbad {
 		RI[7] = 1.0;
 	}
 	ec_views();
 	(RT.len / 8) as i32
+}
+fn dpnx(k int) real {
+	let dx = SP[2 * k + 2] - SP[2 * k];
+	let dy = SP[2 * k + 3] - SP[2 * k + 1];
+	let ln = sqrt(dx * dx + dy * dy);
+	if ln > 0.0 {
+		return -dy / ln;
+	}
+	return 0.0;
+}
+fn dpny(k int) real {
+	let dx = SP[2 * k + 2] - SP[2 * k];
+	let dy = SP[2 * k + 3] - SP[2 * k + 1];
+	let ln = sqrt(dx * dx + dy * dy);
+	if ln > 0.0 {
+		return dx / ln;
+	}
+	return 0.0;
+}
+fn dpox(k int, m int, h real) real {
+	if k == 0 {
+		return SP[0] + h * dpnx(0);
+	}
+	if k == m - 1 {
+		return SP[2 * k] + h * dpnx(m - 2);
+	}
+	let den = 1.0 + dpnx(k - 1) * dpnx(k) + dpny(k - 1) * dpny(k);
+	SP[2 * k] + h * ((dpnx(k - 1) + dpnx(k)) / den)
+}
+fn dpoy(k int, m int, h real) real {
+	if k == 0 {
+		return SP[1] + h * dpny(0);
+	}
+	if k == m - 1 {
+		return SP[2 * k + 1] + h * dpny(m - 2);
+	}
+	let den = 1.0 + dpnx(k - 1) * dpnx(k) + dpny(k - 1) * dpny(k);
+	SP[2 * k + 1] + h * ((dpny(k - 1) + dpny(k)) / den)
+}
+fn dpline(m int, h real, sx real, sy real, ex real, ey real, w real, layer i32, net i32, md int) {
+	addpair(sx, sy, dpox(0, m, h), dpoy(0, m, h), 0, w, layer, net);
+	for k in m - 1 {
+		addrow(dpox(k, m, h), dpoy(k, m, h), dpox(k + 1, m, h), dpoy(k + 1, m, h), w, layer, net);
+	}
+	if (md & 8) != 0 {
+		addpair(dpox(m - 1, m, h), dpoy(m - 1, m, h), ex, ey, 0, w, layer, net);
+	}
+}
+fn dpflip(ax real, ay real, bx real, by real, tx real, ty real) real {
+	let dot = -(by - ay) * (tx - (ax + bx) / 2.0) + (bx - ax) * (ty - (ay + by) / 2.0);
+	if dot < 0.0 {
+		return -1.0;
+	}
+	return 1.0;
+}
+fn dpfx(ax real, ay real, bx real, by real, tx real, ty real) real {
+	let ux = bx - ax;
+	let uy = by - ay;
+	let ln = sqrt(ux * ux + uy * uy);
+	if ln > 0.0 {
+		return dpflip(ax, ay, bx, by, tx, ty) * (-uy / ln);
+	}
+	return 0.0;
+}
+fn dpfy(ax real, ay real, bx real, by real, tx real, ty real) real {
+	let ux = bx - ax;
+	let uy = by - ay;
+	let ln = sqrt(ux * ux + uy * uy);
+	if ln > 0.0 {
+		return dpflip(ax, ay, bx, by, tx, ty) * (ux / ln);
+	}
+	return 0.0;
+}
+fn dpreach(ax real, ay real, bx real, by real, fx real, fy real, w real, l int, kp int, kn int) real {
+	let mx = (ax + bx) / 2.0;
+	let my = (ay + by) / 2.0;
+	var found = false;
+	var best = 0.0;
+	for q in NI {
+		let o = 12 * q;
+		let nq = CI[o + 2] as int;
+		if CI[o + 8] == 1.0 && ilay(q, l) == 1 && (nq == kp || nq == kn) {
+			let r = CI[o + 7];
+			let x0 = min(CI[o + 3], CI[o + 5]) - r;
+			let y0 = min(CI[o + 4], CI[o + 6]) - r;
+			let x1 = max(CI[o + 3], CI[o + 5]) + r;
+			let y1 = max(CI[o + 4], CI[o + 6]) + r;
+			if (ax >= x0 && ax <= x1 && ay >= y0 && ay <= y1) || (bx >= x0 && bx <= x1 && by >= y0 && by <= y1) {
+				let a = max(fx * (x0 - mx), fx * (x1 - mx));
+				let b = max(fy * (y0 - my), fy * (y1 - my));
+				if !found || a + b > best {
+					best = a + b;
+					found = true;
+				}
+			}
+		}
+	}
+	if found {
+		return best + PR[0] + w;
+	}
+	return 0.0;
+}
+export fn ec_dpair(netp i32, netn i32, layer i32, ax real, ay real, bx real, by real, cx real, cy real, dx real, dy real, w real, gap real, mode i32) i32 {
+	let kp = netp as int;
+	let kn = netn as int;
+	let md = mode as int;
+	ri(PJ, NI);
+	for q in NI {
+		if (CI[12 * q + 2] as int) == kn {
+			PJ.push(q as i32);
+		}
+	}
+	let np = PJ.len;
+	for x in np {
+		CI[12 * (PJ[x] as int) + 2] = kp;
+	}
+	let mx = (ax + bx) / 2.0;
+	let my = (ay + by) / 2.0;
+	let ex = (cx + dx) / 2.0;
+	let ey = (cy + dy) / 2.0;
+	let f0x = dpfx(ax, ay, bx, by, ex, ey);
+	let f0y = dpfy(ax, ay, bx, by, ex, ey);
+	let r0 = dpreach(ax, ay, bx, by, f0x, f0y, w, layer as int, kp, kn);
+	let s2x = mx + f0x * r0;
+	let s2y = my + f0y * r0;
+	var e2x = ex;
+	var e2y = ey;
+	if (md & 8) != 0 {
+		let f1x = dpfx(cx, cy, dx, dy, s2x, s2y);
+		let f1y = dpfy(cx, cy, dx, dy, s2x, s2y);
+		let r1 = dpreach(cx, cy, dx, dy, f1x, f1y, w, layer as int, kp, kn);
+		e2x = ex + f1x * r1;
+		e2y = ey + f1y * r1;
+	}
+	ec_hroute(netp, layer, s2x, s2y, e2x, e2y, 2.0 * w + gap, (md | 4) as i32);
+	for x in np {
+		CI[12 * (PJ[x] as int) + 2] = kn;
+	}
+	let n = RT.len / 8;
+	rs(SP, 2 * (n + 3));
+	if n == 0 {
+		RI[2] = 0.0;
+		RI[3] = 0.0;
+		RI[5] = 0.0;
+		ec_views();
+		return 0 as i32;
+	}
+	SP.push(mx);
+	SP.push(my);
+	if sqrt((s2x - mx) * (s2x - mx) + (s2y - my) * (s2y - my)) > 1e-9 {
+		SP.push(s2x);
+		SP.push(s2y);
+	}
+	for r in n {
+		SP.push(RT[8 * r + 2]);
+		SP.push(RT[8 * r + 3]);
+	}
+	if (md & 8) != 0 && sqrt((ex - e2x) * (ex - e2x) + (ey - e2y) * (ey - e2y)) > 1e-9 {
+		SP.push(ex);
+		SP.push(ey);
+	}
+	let m = SP.len / 2;
+	RT.clear();
+	let o = (w + gap) / 2.0;
+	var s = -1.0;
+	if dpnx(0) * (ax - SP[0]) + dpny(0) * (ay - SP[1]) >= 0.0 {
+		s = 1.0;
+	}
+	dpline(m, s * o, ax, ay, cx, cy, w, layer, netp, md);
+	dpline(m, -s * o, bx, by, dx, dy, w, layer, netn, md);
+	var bad = 0;
+	var lp = 0.0;
+	var ln = 0.0;
+	let rows = RT.len / 8;
+	for r in rows {
+		let q = 8 * r;
+		let rn = RT[q + 6] as int;
+		let flag = 1 - segok(RT[q], RT[q + 1], RT[q + 2], RT[q + 3], w, layer, rn as i32);
+		RT[q + 7] = flag;
+		if flag == 1 {
+			bad += 1;
+		}
+		let ux = RT[q + 2] - RT[q];
+		let uy = RT[q + 3] - RT[q + 1];
+		let d = sqrt(ux * ux + uy * uy);
+		if rn == kp {
+			lp += d;
+		} else {
+			ln += d;
+		}
+	}
+	RI[5] = bad;
+	RI[2] = lp;
+	RI[3] = ln;
+	ec_views();
+	(RT.len / 8) as i32
+}
+fn tklen(t int) real {
+	let o = 8 * t;
+	let dx = TK[o + 2] - TK[o];
+	let dy = TK[o + 3] - TK[o + 1];
+	sqrt(dx * dx + dy * dy)
+}
+fn mpt(x real, y real) {
+	SP.push(x);
+	SP.push(y);
+}
+export fn ec_tune(net i32, target real, amp real, pitch real) i32 {
+	let k = net as int;
+	RT.clear();
+	zf(RI, 8, 0.0);
+	var sum = 0.0;
+	for t in NT {
+		if (TK[8 * t + 6] as int) == k {
+			sum += tklen(t);
+		}
+	}
+	RI[0] = sum;
+	var r = target - sum;
+	ri(PJ, NT);
+	for t in NT {
+		if (TK[8 * t + 6] as int) == k {
+			PJ.push(t as i32);
+		}
+	}
+	let count = PJ.len;
+	for step in count {
+		var at = -1;
+		var best = -1.0;
+		for x in count {
+			let c = PJ[x] as int;
+			if c >= 0 && tklen(c) > best {
+				best = tklen(c);
+				at = x;
+			}
+		}
+		if at < 0 {
+			break;
+		}
+		let t = PJ[at] as int;
+		PJ[at] = -1;
+		let o = 8 * t;
+		let ax = TK[o];
+		let ay = TK[o + 1];
+		let bx = TK[o + 2];
+		let by = TK[o + 3];
+		let w = TK[o + 4];
+		let l = TK[o + 5] as int;
+		let ln = tklen(t);
+		var ux = 0.0;
+		var uy = 0.0;
+		if ln > 0.0 {
+			ux = (bx - ax) / ln;
+			uy = (by - ay) / ln;
+		}
+		let mg = w + PR[0];
+		var n = 0;
+		if r > 1e-3 && pitch > 0.0 && amp > 0.0 {
+			n = max(min(ifl((ln - 2.0 * mg) / pitch), icl(r / (2.0 * amp))), 0);
+		}
+		var done = false;
+		if n >= 1 {
+			let h = min(amp, r / (2.0 * n));
+			let x0 = mg + (ln - 2.0 * mg - n * pitch) / 2.0;
+			for side in 2 {
+				var q = 1.0;
+				if side == 1 {
+					q = -1.0;
+				}
+				let nx = q * -uy;
+				let ny = q * ux;
+				rs(SP, 2 * (4 * n + 3));
+				mpt(ax, ay);
+				for i in n {
+					let px = ax + (x0 + i * pitch) * ux;
+					let py = ay + (x0 + i * pitch) * uy;
+					mpt(px, py);
+					mpt(px + h * nx, py + h * ny);
+					mpt(px + (pitch / 2.0) * ux + h * nx, py + (pitch / 2.0) * uy + h * ny);
+					mpt(px + (pitch / 2.0) * ux, py + (pitch / 2.0) * uy);
+				}
+				mpt(ax + (x0 + n * pitch) * ux, ay + (x0 + n * pitch) * uy);
+				mpt(bx, by);
+				let m = SP.len / 2;
+				var ok = true;
+				for i in m - 1 {
+					if segok(SP[2 * i], SP[2 * i + 1], SP[2 * i + 2], SP[2 * i + 3], w, l as i32, net) == 0 {
+						ok = false;
+						break;
+					}
+				}
+				if ok {
+					for i in m - 1 {
+						addrow(SP[2 * i], SP[2 * i + 1], SP[2 * i + 2], SP[2 * i + 3], w, l as i32, net);
+					}
+					r -= 2.0 * n * h;
+					done = true;
+					break;
+				}
+			}
+		}
+		if !done {
+			addrow(ax, ay, bx, by, w, l as i32, net);
+		}
+	}
+	var total = 0.0;
+	let rows = RT.len / 8;
+	for i in rows {
+		let q = 8 * i;
+		let dx = RT[q + 2] - RT[q];
+		let dy = RT[q + 3] - RT[q + 1];
+		total += sqrt(dx * dx + dy * dy);
+	}
+	RI[1] = total;
+	RI[2] = max(0.0, r);
+	ec_views();
+	(RT.len / 8) as i32
+}
+export fn ec_lens() i32 {
+	zf(NL, 2 * NN, 0.0);
+	for t in NT {
+		let k = TK[8 * t + 6] as int;
+		NL[2 * k] += tklen(t);
+	}
+	for v in NV {
+		let k = VI[4 * v + 2] as int;
+		NL[2 * k + 1] += 1.0;
+	}
+	ec_views();
+	NN as i32
 }
 export fn ec_pick(x real, y real, maskp i32, tol real) i32 {
 	let mask = maskp as int;
