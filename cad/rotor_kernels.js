@@ -8,6 +8,10 @@ export const rg_step = {wg: 64, uniform: [["NX","u32"],["NY","u32"],["NZ","u32"]
 @group(0) @binding(6) var<storage, read> b_frc: array<f32>;
 @group(0) @binding(7) var<storage, read> b_wv: array<f32>;
 @group(0) @binding(8) var<storage, read_write> b_avg: array<f32>;
+fn h_lab__sol( l_c: u32) -> u32 {
+    return ((b_sol[(l_c / 4u)] >> (8u * (l_c % 4u))) & 255u);
+    return 0u;
+}
 fn h_feq( l_ex: i32,  l_ey: i32,  l_ez: i32,  l_w: f32,  l_r: f32,  l_ux: f32,  l_uy: f32,  l_uz: f32) -> f32 {
     let l_eu: f32 = (((f32(l_ex) * l_ux) + (f32(l_ey) * l_uy)) + (f32(l_ez) * l_uz));
     return ((l_w * l_r) * (((1.0f + (3.0f * l_eu)) + ((4.5f * l_eu) * l_eu)) - (1.5f * (((l_ux * l_ux) + (l_uy * l_uy)) + (l_uz * l_uz)))));
@@ -19,8 +23,7 @@ fn h_feq( l_ex: i32,  l_ey: i32,  l_ez: i32,  l_w: f32,  l_r: f32,  l_ux: f32,  
     if ((l_n >= l_cells)) {
         return;
     }
-    let l_ln: u32 = ((b_sol[(l_n / 4u)] >> (8u * (l_n % 4u))) & 255u);
-    if ((l_ln != 0u)) {
+    if ((h_lab__sol(l_n) != 0u)) {
         return;
     }
     let l_wx: i32 = i32(u.p_NX);
@@ -73,8 +76,7 @@ fn h_feq( l_ex: i32,  l_ey: i32,  l_ez: i32,  l_w: f32,  l_r: f32,  l_ux: f32,  
             l_f[l_i] = h_feq(l_ex, l_ey, l_ez, b_fq[l_i], 1.0f, l_bx, l_by, l_bz);
         } else {
             let l_s: u32 = u32((l_sx + (l_wx * (l_sy + (l_wy * l_sz)))));
-            let l_ls: u32 = ((b_sol[(l_s / 4u)] >> (8u * (l_s % 4u))) & 255u);
-            if ((l_ls == 0u)) {
+            if ((h_lab__sol(l_s) == 0u)) {
                 l_f[l_i] = b_fa[((l_i * l_cells) + l_s)];
             } else {
                 let l_o: u32 = u32(b_tb[(57u + l_i)]);
@@ -164,14 +166,17 @@ export const rg_wall = {wg: 64, uniform: [["NX","u32"],["NY","u32"],["NZ","u32"]
 @group(0) @binding(4) var<storage, read> b_fa: array<f32>;
 @group(0) @binding(5) var<storage, read> b_wv: array<f32>;
 @group(0) @binding(6) var<storage, read_write> b_wf: array<f32>;
+fn h_lab__sol( l_c: u32) -> u32 {
+    return ((b_sol[(l_c / 4u)] >> (8u * (l_c % 4u))) & 255u);
+    return 0u;
+}
 @compute @workgroup_size(64) fn main(@builtin(global_invocation_id) gw_g: vec3u, @builtin(num_workgroups) gw_n: vec3u) {
     let l_n: u32 = (gw_g.x + gw_g.y * gw_n.x * 64u);
     let l_cells: u32 = ((u.p_NX * u.p_NY) * u.p_NZ);
     if ((l_n >= l_cells)) {
         return;
     }
-    let l_ln: u32 = ((b_sol[(l_n / 4u)] >> (8u * (l_n % 4u))) & 255u);
-    if ((l_ln == 0u)) {
+    if ((h_lab__sol(l_n) == 0u)) {
         return;
     }
     let l_wx: i32 = i32(u.p_NX);
@@ -195,8 +200,7 @@ export const rg_wall = {wg: 64, uniform: [["NX","u32"],["NY","u32"],["NZ","u32"]
             continue;
         }
         let l_c: u32 = u32((l_px + (l_wx * (l_py + (l_wy * l_pz)))));
-        let l_lc: u32 = ((b_sol[(l_c / 4u)] >> (8u * (l_c % 4u))) & 255u);
-        if ((l_lc != 0u)) {
+        if ((h_lab__sol(l_c) != 0u)) {
             continue;
         }
         let l_o: u32 = u32(b_tb[(57u + l_i)]);
