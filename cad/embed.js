@@ -19,42 +19,67 @@ function modelOf(API){
   const kind=bends?'bent sheet':(tIn>0&&ord[0]/tIn>8?'flat sheet':'solid');
   return{ok:true,name:doc.name||'Part',units:u,sizeText:UN.bboxDual(p.bbox,doc),volText:UN.dual('vol',volMM3),massText:UN.massDual(massKg),massKg,matId:doc.material||'al6061',matName:mat.n,volCm3:volMM3/1000,areaIn2,tIn,bends,kind,bbox:{min:p.bbox.min,max:p.bbox.max},volume:p.volume,material:doc.material||'al6061'};
 }
-function applyBrand(p,tier){
-  const c=p.colors||{};
-  if(c.acc){document.documentElement.style.setProperty('--acc',c.acc);document.documentElement.style.setProperty('--brand',c.acc);}
-  if(c.accInk)document.documentElement.style.setProperty('--acc-ink',c.accInk);
-  document.documentElement.classList.add('embed');
-  if(!document.querySelector('meta[name="robots"]')){const m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.append(m);}
-  const host=document.querySelector('header');
-  if(host&&!host.querySelector('#embed-chip')){const s=document.createElement('span');s.id='embed-chip';s.className='pol-chip';s.textContent=p.name+' · '+tier;host.append(s);}
+function loadCss(){if(document.getElementById('embed-css'))return;const l=document.createElement('link');l.id='embed-css';l.rel='stylesheet';l.href=new URL('./embed.css',import.meta.url).href;document.head.append(l);}
+function themeSheet(p){
+  const t={...(p.colors||{}),...(p.theme||{})},soft=t.acc?t.acc+'22':'rgba(0,0,0,.08)';
+  const css='html.embed,html.embed[data-theme="light"],html.embed[data-theme="dark"]{--scheme:'+(t.scheme||'light')+';--bg:'+t.bg+';--bg2:'+t.bg2+';--panel:'+t.panel+';--panel2:'+t.panel2+';--line:'+t.line+';--line2:'+t.line2+';--ink:'+t.ink+';--ink2:'+t.ink2+';--mut:'+t.mut+';--acc:'+t.acc+';--acc-ink:'+(t.accInk||'#fff')+';--brand:'+t.acc+';--acc-soft:'+soft+';--r:'+(t.r||'8px')+';--rk:'+(t.rk??0.7)+';--font:'+t.font+';--icon:'+(t.icon||t.ink2)+';--grid:'+t.grid+';--ok:'+(t.ok||'#0F7A43')+';--warm:'+t.acc+';--brand:'+t.acc+';--vp:linear-gradient(180deg,'+t.vp0+','+t.vp1+')}';
+  let s=document.getElementById('embed-theme');if(!s){s=document.createElement('style');s.id='embed-theme';document.head.append(s);}s.textContent=css;
+}
+function wordmark(p){
+  const host=document.querySelector('header');if(!host)return;
+  const old=document.querySelector('header .brand');
+  if(old){const a=document.createElement('span');a.className='embed-mark';a.textContent=p.name;old.replaceWith(a);}
+  else if(!host.querySelector('.embed-mark')){const a=document.createElement('span');a.className='embed-mark';a.textContent=p.name;host.prepend(a);}
+}
+function dropPro(){document.documentElement.classList.remove('pro','pro-workshop','pro-blueprint','ui-amni');document.body.classList.remove('pro','pro-workshop','pro-blueprint','pm-on','sheet-on');}
+function trimPalette(allow){
+  const keep=allow&&allow.length?new Set(allow):null,go=()=>{
+    if(keep)for(const b of document.querySelectorAll('#palette [data-ft]'))b.hidden=!keep.has(b.dataset.ft);
+    for(const g of document.querySelectorAll('#palette .palg')){const pal=g.nextElementSibling,btns=pal?pal.querySelectorAll('[data-ft],button'):[],vis=[...btns].some(b=>!b.hidden&&getComputedStyle(b).display!=='none');g.hidden=!vis;if(pal&&pal!==g){const isGroup=pal.classList.contains('pal')||pal.matches&&!pal.classList.contains('palg');if(isGroup)pal.hidden=!vis;}}
+  };
+  const el=document.getElementById('palette');if(el)new MutationObserver(go).observe(el,{childList:true,subtree:true});go();
+}
+function applyLook(API,t){
+  if(!API||!API.look||!t)return;
+  const prev=API.look.get&&API.look.get();
+  const stored=API.store?{look:API.store.get('amnicad.look',null),theme:API.store.get('amnicad.theme',null)}:null;
+  API.look.apply({theme:t.scheme||'light',acc:t.acc,ff:t.ff||'inter',dens:t.dens||'compact',rk:t.rk,bgm:'grad',bgl:[t.vp0,t.vp1],bgd:[t.vp0,t.vp1],gc:t.grid,ga:t.gridA,sc:t.acc,env:t.env||'neutral'});
+  if(API.store&&stored){API.store.set('amnicad.look',stored.look);API.store.set('amnicad.theme',stored.theme);}
+  if(typeof API.themeColors==='function')API.themeColors();
+  const root=document.documentElement;if(t.acc){root.style.setProperty('--warm',t.acc);root.style.setProperty('--brand',t.acc);}
+  if(typeof API.resizeView==='function')API.resizeView();
+  if(typeof API.redraw==='function')API.redraw();
+  return prev;
 }
 function deny(msg,origin){
   const o=document.createElement('div');
   o.id='embed-denied';
-  o.style.cssText='position:fixed;inset:0;z-index:9999;background:#0b0d10;color:#edeff2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;font:16px/1.45 ui-sans-serif,system-ui,sans-serif;text-align:center;gap:12px';
+  o.style.cssText='position:fixed;inset:0;z-index:9999;background:#f4f6f8;color:#121417;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;font:16px/1.45 ui-sans-serif,system-ui,sans-serif;text-align:center;gap:12px';
   const h=document.createElement('h1');h.style.cssText='font-size:22px;margin:0';h.textContent='Amni-CAD could not be embedded';
-  const p=document.createElement('p');p.style.cssText='margin:0;max-width:36em;color:#c9ced6';p.textContent=msg;
+  const p=document.createElement('p');p.style.cssText='margin:0;max-width:36em;color:#5c6570';p.textContent=msg;
   o.append(h,p);document.body.append(o);
   post(origin,'denied',{reason:msg});
 }
-function take(tier,used,kind,ok=true){
-  const d=decide({tier,used:used[kind]||0,ok});
-  if(d.count){used[kind]=(used[kind]||0)+1;}
-  return d;
-}
+function take(tier,used,kind,ok=true){const d=decide({tier,used:used[kind]||0,ok});if(d.count){used[kind]=(used[kind]||0)+1;}return d;}
 async function boot(){
+  loadCss();
+  document.documentElement.classList.add('embed');
+  if(!document.querySelector('meta[name="robots"]')){const m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.append(m);}
   const slug=q('partner'),key=q('key'),want=q('tier');
   const parentOrigin=(()=>{try{return document.referrer?new URL(document.referrer).origin:'';}catch{return'';}})();
   if(key){const u=new URL(location.href);u.searchParams.delete('key');history.replaceState(null,'',u.pathname+u.search+u.hash);}
   let session;
   try{session=await admit({tok:key,slug,origin:parentOrigin,all:await loadPartners(),want});}
   catch(e){deny(e.message||'License check failed',parentOrigin);return;}
-  const {partner:p,tier,origins}=session;
-  applyBrand(p,tier);
+  const {partner:p,tier,origins}=session,theme=p.theme||p.colors||{};
+  document.documentElement.dataset.partner=p.slug;
+  document.documentElement.dataset.theme=theme.scheme||'light';
+  themeSheet(p);dropPro();wordmark(p);
   const used=loadUsed(p.slug),allowed=new Set(origins.map(x=>x.replace(/\/$/,'')));
   const okOrigin=o=>allowed.has(String(o||'').replace(/\/$/,''));
   const cap=capOf(tier);
   const API=await waitAPI();
+  dropPro();wordmark(p);themeSheet(p);applyLook(API,theme);trimPalette(p.features);
   const sendModel=()=>post(parentOrigin,'model',modelOf(API));
   API.onBuilt(sendModel);
   if(typeof API.onChange==='function')API.onChange(()=>{});
@@ -63,7 +88,7 @@ async function boot(){
     const m=ev.data;if(!m||typeof m.amnicad!=='string')return;
     const t=m.amnicad;
     if(t==='getModel'){sendModel();return;}
-    if(t==='theme'&&m.colors){applyBrand({...p,colors:m.colors},tier);return;}
+    if(t==='theme'&&m.colors){themeSheet({...p,theme:{...theme,...m.colors}});applyLook(API,{...theme,...m.colors});return;}
     if(t==='setConfig'&&m.material&&API.commit){API.commit(d=>{d.material=m.material;});return;}
     if(t==='export'){
       const d=take(tier,used,'export',true);saveUsed(p.slug,used);
@@ -81,4 +106,5 @@ async function boot(){
   });
   post(parentOrigin,'ready',{partner:p.slug,name:p.name,tier,quote:p.quote,processes:p.processes,materials:p.materials,colors:p.colors,meter:{used,cap,unlimited:cap<0}});
   sendModel();
+  requestAnimationFrame(()=>{if(typeof API.resizeView==='function')API.resizeView();if(typeof API.redraw==='function')API.redraw();});
 }
