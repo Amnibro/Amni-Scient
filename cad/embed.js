@@ -46,7 +46,7 @@ function applyLook(API,t){
   API.look.apply({theme:t.scheme||'light',acc:t.acc,ff:t.ff||'inter',dens:t.dens||'compact',rk:t.rk,bgm:'grad',bgl:[t.vp0,t.vp1],bgd:[t.vp0,t.vp1],gc:t.grid,ga:t.gridA,sc:t.acc,env:t.env||'neutral'});
   if(API.store&&stored){API.store.set('amnicad.look',stored.look);API.store.set('amnicad.theme',stored.theme);}
   if(typeof API.themeColors==='function')API.themeColors();
-  const root=document.documentElement;if(t.acc){root.style.setProperty('--warm',t.acc);root.style.setProperty('--brand',t.acc);}
+  const root=document.documentElement;if(t.acc){root.style.setProperty('--warm',t.acc);root.style.setProperty('--brand',t.acc);}if(t.font)root.style.setProperty('--font',t.font);
   if(typeof API.resizeView==='function')API.resizeView();
   if(typeof API.redraw==='function')API.redraw();
   return prev;
@@ -80,6 +80,10 @@ async function boot(){
   const cap=capOf(tier);
   const API=await waitAPI();
   dropPro();wordmark(p);themeSheet(p);applyLook(API,theme);trimPalette(p.features);
+  const lockFont=()=>{if(theme.font)document.documentElement.style.setProperty('--font',theme.font);};
+  lockFont();
+  if(typeof API.themeColors==='function'){const tc=API.themeColors.bind(API);API.themeColors=(...a)=>{const r=tc(...a);lockFont();return r;};}
+  setTimeout(lockFont,0);setTimeout(lockFont,300);
   const sendModel=()=>post(parentOrigin,'model',modelOf(API));
   API.onBuilt(sendModel);
   if(typeof API.onChange==='function')API.onChange(()=>{});
