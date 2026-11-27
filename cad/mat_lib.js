@@ -133,6 +133,7 @@ const R=[
 ['pcpai','Polyamide-imide (Torlon 4203)',4500,.39,1420,152,152,200,.26,1000,31,'pc',{q:0,look:L('#c9a14a',.4,0,'plastic')}],
 ['pcvespel','Polyimide (Vespel SP-1)',2480,.41,1430,86,86,400,.35,1130,54,'pc',{q:0,look:L('#6b4b2f',.45,0,'plastic')}]]],
 ['3D printing',[
+['lwpla','LW-PLA foamed (printed, about 0.7 g/cc)',1400,.36,700,20,20,45,.08,1800,68,'pla',{q:0,look:L('#e9e7e1',.6,0,'plastic')}],
 ['asa','ASA (printed)',2000,.35,1070,40,40,25,.17,1300,90,'abs',{q:['asa','asa'],look:L('#e9e7e1',.6,0,'plastic')}],
 ['resin','Standard SLA resin (post-cured)',2800,.38,1180,65,65,150,.2,1300,80,'pla',{q:['resin','resin'],brittle:1,look:L('#bfc3c7',.35,0,'plastic')}]]],
 ['Composites',[
