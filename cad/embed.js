@@ -68,7 +68,7 @@ async function boot(){
   document.documentElement.classList.add('embed');
   if(!document.querySelector('meta[name="robots"]')){const m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.append(m);}
   const slug=q('partner'),key=tok(),want=q('tier');
-  const parentOrigin=(()=>{try{return document.referrer?new URL(document.referrer).origin:'';}catch{return'';}})();
+  const parentOrigin=(()=>{try{if(parent.location&&parent.location.origin)return parent.location.origin;}catch{}try{if(location.ancestorOrigins&&location.ancestorOrigins[0])return location.ancestorOrigins[0];}catch{}try{return document.referrer?new URL(document.referrer).origin:'';}catch{return'';}})();
   if(key){const u=new URL(location.href);u.searchParams.delete('key');history.replaceState(null,'',u.pathname+u.search+u.hash);}
   let session;
   try{session=await admit({tok:key,slug,origin:parentOrigin,all:await loadPartners(),want});}
