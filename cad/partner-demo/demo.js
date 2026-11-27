@@ -14,7 +14,7 @@ async function loadTokens(){const baked=document.documentElement.dataset.key;if(
 function embedUrl(){const u=new URL('/cad/embed',CAD);u.searchParams.set('partner',P);u.searchParams.set('tier',T);if(TOKENS[P])u.searchParams.set('key',TOKENS[P]);if(/127\.0\.0\.1|localhost/.test(u.hostname))u.searchParams.set('three','1');return u.href;}
 function post(msg,tf){try{UI&&UI.iframe&&UI.iframe.contentWindow.postMessage(msg,CAD,tf||[]);}catch{}}
 function waitCad(type,ms){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for '+type)),ms||180000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!==type)return;removeEventListener('message',on);clearTimeout(t);res(m);};addEventListener('message',on);});}
-function waitAnalyze(){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for analyze')),420000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!=='analyze')return;if(m.ok){hushDfm();S.analyze=m;S.opt=null;if(!m.pending)S.selSug=null;S.dfmFocus=null;paint();}if(!m.pending){removeEventListener('message',on);clearTimeout(t);res(m);}};addEventListener('message',on);});}
+function whenCad(){return new Promise((res,rej)=>{if(READY&&CLEARED)return res();const t=setTimeout(()=>rej(new Error('Timed out waiting for CAD')),180000);const on=ev=>{if(ev.origin!==CAD)return;if(!(READY&&CLEARED))return;removeEventListener('message',on);clearTimeout(t);res();};addEventListener('message',on);if(READY&&CLEARED){removeEventListener('message',on);clearTimeout(t);res();}});}function waitAnalyze(){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for analyze')),420000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!=='analyze')return;if(m.ok){hushDfm();S.analyze=m;S.opt=null;if(!m.pending)S.selSug=null;S.dfmFocus=null;paint();}if(!m.pending){removeEventListener('message',on);clearTimeout(t);res(m);}};addEventListener('message',on);});}
 function hookCad(){
   if(HOOKED)return;HOOKED=true;
   addEventListener('message',ev=>{
@@ -116,6 +116,7 @@ function takeFiles(files){
 async function importFile(file){
   S.busy='Opening '+file.name;S.err='';paint();
   try{
+    await whenCad();
     const buf=await file.arrayBuffer();
     const m=await (post({amnicad:'import',name:file.name,mime:file.type,buf},[buf]),waitCad('import',180000));
     if(!m.ok)throw new Error(m.reason||'Import failed');
@@ -131,6 +132,7 @@ async function makePart(text,image,sample){
   if(!q&&!image){S.err='Describe the part, or drop a photo.';paint();return;}
   S.busy=image&&!q?'Reading the image':'Building the part';S.err='';paint();
   try{
+    await whenCad();
     let images;
     if(image){const buf=await image.arrayBuffer();images=[{name:image.name,mime:image.type,buf}];}
     const tf=images&&images[0]?[images[0].buf]:[];
@@ -271,7 +273,7 @@ function paint(){
   document.body.classList.toggle('busy',!!S.busy);
   document.body.classList.toggle('dfm-open',!!S.dfmOpen);
   const sc=UI.rail&&UI.rail.querySelector('.rail-scroll'),y=sc?sc.scrollTop:0;
-  if(UI.start&&!(MODEL&&MODEL.ok))UI.start.replaceWith(UI.start=startView());
+  if(UI.start)UI.start.replaceWith(UI.start=startView());
   if(UI.rail)UI.rail.replaceChildren(...railView());
   const sc2=UI.rail&&UI.rail.querySelector('.rail-scroll');
   if(sc2){sc2.scrollTop=y;if(S.dfmOpen){const b=sc2.querySelector('.dfm-btn');if(b)b.scrollIntoView({block:'end',inline:'nearest'});}}
