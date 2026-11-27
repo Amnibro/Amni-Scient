@@ -1,0 +1,182 @@
+=== -2f15ba89db67a912
+import math;
+=== 4d74104fdac3f7c0
+fn lab(sol const u32[:], c u32) u32 {
+	(sol[c / 4] >> (8 * (c % 4))) & 255
+}
+=== 19a38d668ee4efcc
+fn feq(ex i32, ey i32, ez i32, w f32, r f32, ux f32, uy f32, uz f32) f32 {
+	let eu f32 = (ex as f32) * ux + (ey as f32) * uy + (ez as f32) * uz;
+	w * r * (1.0 + 3.0 * eu + 4.5 * eu * eu - 1.5 * (ux * ux + uy * uy + uz * uz))
+}
+=== 773c5535b512d1b8
+gpu fn rg_step(n u32, NX u32, NY u32, NZ u32, OX u32, acc u32, tau f32, cs f32, sol const u32[:], tb const i32[:], fq const f32[:], fa const f32[:], fb f32[:], frc const f32[:], wv const f32[:], avg f32[:]) {
+	let cells u32 = NX * NY * NZ;
+	if n >= cells { return; }
+	if lab(sol, n) != 0 { return; }
+	let wx = NX as i32;
+	let wy = NY as i32;
+	let wz = NZ as i32;
+	let x = (n % NX) as i32;
+	let y = ((n / NX) % NY) as i32;
+	let z = (n / (NX * NY)) as i32;
+	var f f32[19] = [0.0; 19];
+	var nw = false;
+	var bx f32 = 0.0;
+	var by f32 = 0.0;
+	var bz f32 = 0.0;
+	if z == 0 {
+		var br f32 = 0.0;
+		for j in 19 as u32 {
+			let fj = fa[j * cells + n];
+			br += fj;
+			bx += fj * (tb[j] as f32);
+			by += fj * (tb[19 + j] as f32);
+			bz += fj * (tb[38 + j] as f32);
+		}
+		bx = bx / br;
+		by = by / br;
+		bz = bz / br;
+		let bl f32 = sqrt(bx * bx + by * by + bz * bz);
+		if bl > 0.3 {
+			let bk f32 = 0.3 / bl;
+			bx = bx * bk;
+			by = by * bk;
+			bz = bz * bk;
+		}
+	}
+	for i in 19 as u32 {
+		let ex = tb[i];
+		let ey = tb[19 + i];
+		let ez = tb[38 + i];
+		let sx = x - ex;
+		let sy = y - ey;
+		let sz = z - ez;
+		if sx < 0 || sy < 0 || sy >= wy || sz >= wz {
+			f[i] = fq[19 + i];
+		} else if sx >= wx {
+			if OX == 1 {
+				f[i] = fa[i * cells + n];
+			} else {
+				f[i] = fq[19 + i];
+			}
+		} else if sz < 0 {
+			f[i] = feq(ex, ey, ez, fq[i], 1.0, bx, by, bz);
+		} else {
+			let s = (sx + wx * (sy + wy * sz)) as u32;
+			if lab(sol, s) == 0 {
+				f[i] = fa[i * cells + s];
+			} else {
+				let o = tb[57 + i] as u32;
+				let fo = fa[o * cells + n];
+				f[i] = fo + 6.0 * fq[i] * ((ex as f32) * wv[3 * s] + (ey as f32) * wv[3 * s + 1] + (ez as f32) * wv[3 * s + 2]);
+				nw = true;
+			}
+		}
+	}
+	var r f32 = 0.0;
+	var mx f32 = 0.0;
+	var my f32 = 0.0;
+	var mz f32 = 0.0;
+	for i in 19 as u32 {
+		r += f[i];
+		mx += f[i] * (tb[i] as f32);
+		my += f[i] * (tb[19 + i] as f32);
+		mz += f[i] * (tb[38 + i] as f32);
+	}
+	let Fx = frc[3 * n];
+	let Fy = frc[3 * n + 1];
+	let Fz = frc[3 * n + 2];
+	var ux f32 = (mx + 0.5 * Fx) / r;
+	var uy f32 = (my + 0.5 * Fy) / r;
+	var uz f32 = (mz + 0.5 * Fz) / r;
+	let speed f32 = sqrt(ux * ux + uy * uy + uz * uz);
+	if speed > 0.3 {
+		let k f32 = 0.3 / speed;
+		ux = ux * k;
+		uy = uy * k;
+		uz = uz * k;
+	}
+	var qxx f32 = 0.0;
+	var qyy f32 = 0.0;
+	var qzz f32 = 0.0;
+	var qxy f32 = 0.0;
+	var qxz f32 = 0.0;
+	var qyz f32 = 0.0;
+	for i in 19 as u32 {
+		let ex = tb[i];
+		let ey = tb[19 + i];
+		let ez = tb[38 + i];
+		let d = f[i] - feq(ex, ey, ez, fq[i], r, ux, uy, uz);
+		let cx = ex as f32;
+		let cy = ey as f32;
+		let cz = ez as f32;
+		qxx += d * cx * cx;
+		qyy += d * cy * cy;
+		qzz += d * cz * cz;
+		qxy += d * cx * cy;
+		qxz += d * cx * cz;
+		qyz += d * cy * cz;
+	}
+	let qm f32 = sqrt(qxx * qxx + qyy * qyy + qzz * qzz + 2.0 * (qxy * qxy + qxz * qxz + qyz * qyz));
+	var w2 f32 = 1.0;
+	if nw { w2 = 0.5; }
+	let te f32 = 0.5 * (tau + sqrt(tau * tau + 18.0 * 1.4142135 * cs * cs * w2 * qm / r));
+	let vx f32 = ux + 0.5 * Fx / r;
+	let vy f32 = uy + 0.5 * Fy / r;
+	let vz f32 = uz + 0.5 * Fz / r;
+	let om f32 = 1.0 - 1.0 / te;
+	let t3 f32 = 1.0 / 3.0;
+	for i in 19 as u32 {
+		let ex = tb[i];
+		let ey = tb[19 + i];
+		let ez = tb[38 + i];
+		let cx = ex as f32;
+		let cy = ey as f32;
+		let cz = ez as f32;
+		fb[i * cells + n] = feq(ex, ey, ez, fq[i], r, vx, vy, vz) + om * fq[i] * 4.5 * ((cx * cx - t3) * qxx + (cy * cy - t3) * qyy + (cz * cz - t3) * qzz + 2.0 * (cx * cy * qxy + cx * cz * qxz + cy * cz * qyz));
+	}
+	if acc == 1 {
+		avg[4 * n] += r;
+		avg[4 * n + 1] += ux;
+		avg[4 * n + 2] += uy;
+		avg[4 * n + 3] += uz;
+	}
+}
+=== -4c04758317f79cd9
+gpu fn rg_wall(n u32, NX u32, NY u32, NZ u32, sol const u32[:], tb const i32[:], fq const f32[:], fa const f32[:], wv const f32[:], wf f32[:]) {
+	let cells u32 = NX * NY * NZ;
+	if n >= cells { return; }
+	if lab(sol, n) == 0 { return; }
+	let wx = NX as i32;
+	let wy = NY as i32;
+	let wz = NZ as i32;
+	let x = (n % NX) as i32;
+	let y = ((n / NX) % NY) as i32;
+	let z = (n / (NX * NY)) as i32;
+	var gx f32 = 0.0;
+	var gy f32 = 0.0;
+	var gz f32 = 0.0;
+	for k in 18 as u32 {
+		let i = k + 1;
+		let ex = tb[i];
+		let ey = tb[19 + i];
+		let ez = tb[38 + i];
+		let px = x + ex;
+		let py = y + ey;
+		let pz = z + ez;
+		if px < 0 || px >= wx || py < 0 || py >= wy || pz < 0 || pz >= wz { continue; }
+		let c = (px + wx * (py + wy * pz)) as u32;
+		if lab(sol, c) != 0 { continue; }
+		let o = tb[57 + i] as u32;
+		let fo = fa[o * cells + c];
+		let fw = fo + 6.0 * fq[i] * ((ex as f32) * wv[3 * n] + (ey as f32) * wv[3 * n + 1] + (ez as f32) * wv[3 * n + 2]);
+		let p = fo + fw - 2.0 * fq[i];
+		gx += p * (tb[o] as f32);
+		gy += p * (tb[19 + o] as f32);
+		gz += p * (tb[38 + o] as f32);
+	}
+	wf[3 * n] += gx;
+	wf[3 * n + 1] += gy;
+	wf[3 * n + 2] += gz;
+}
