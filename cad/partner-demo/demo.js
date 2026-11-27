@@ -161,14 +161,14 @@ async function applyFix(sug){
     else if(r.after){MODEL={ok:true,...MODEL,massKg:r.after.massKg,volCm3:r.after.volCm3,areaIn2:r.after.areaIn2,tIn:r.after.tIn,bends:r.after.bends,massText:r.after.massKg!=null?(r.after.massKg*1000).toFixed(1)+' g':MODEL.massText,volText:MODEL.volText};}
     const applied={before:r.before,after:r.after,feaBefore:S.analyze&&S.analyze.fea,feaAfter:r.fea,title:sug&&sug.title};
     S.canUndo=true;
-    if(CAN_FEA)await runAnalyze({skipFea:true});
+    if(CAN_FEA)await runAnalyze();
     if(S.analyze)S.analyze.applied=applied;else S.analyze={ok:true,suggestions:[],applied};
   }catch(e){S.err=e.message||'Apply failed';}
   finally{S.busy='';paint();}
 }
 function selectSug(id,html){hushDfm();S.selSug=id;post({amnicad:'ghost',op:'select',id,html});paint();}
 async function keepAsIs(){hushDfm();S.busy='';await (post({amnicad:'acceptAsIs'}),waitCad('acceptAsIs',20000));if(S.analyze)S.analyze.suggestions=[];S.selSug=null;paint();}
-async function undoFix(){hushDfm();S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze({skipFea:true});}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
+async function undoFix(){hushDfm();S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze();}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
 
 function toggleEdit(on){
   S.editing=on!==undefined?on:!S.editing;
@@ -197,7 +197,8 @@ function hushDfm(){if(!S.dfmOpen)return;S.dfmOpen=false;S.dfmFocus=null;post({am
 function closeDfm(){hushDfm();paint();}
 function openDfm(){const dfm=(S.analyze&&S.analyze.dfm)||[];if(!dfm.length)return;S.dfmOpen=true;if(S.dfmFocus==null)S.dfmFocus=0;post({amnicad:'dfm',op:'open',items:dfm,i:S.dfmFocus});paint();}
 function focusDfm(i,hov){S.dfmFocus=i;post({amnicad:'dfm',op:hov?'hover':'focus',i});if(!hov)paint();}
-function dfmShort(d){const c=d.code;if(c==='reach'||c===1||c==='deep'||c===6||c==='radius'||c===4)return(d.v!=null?d.v.toFixed(1)+'×':'')+(d.from?' from '+d.from:'');if(c==='flange'||c===8)return d.v!=null?'flat '+Number(d.v).toFixed(2):'';return '';}
+function mmTxt(mm){if(mm==null||!isFinite(+mm))return'';const v=+mm;return(v>=10?v.toFixed(1):v.toFixed(2))+' mm';}
+function dfmShort(d){const c=d.code,v=d.v,lim=d.lim,from=d.from;if(c==='reach'||c===1)return(v!=null?v.toFixed(1)+'× the cutter':'Deep pocket')+(from?' from '+from:'');if(c==='radius'||c===4)return v!=null?('Corner radius, '+v.toFixed(1)+'× the cutter'):'Tight corner radius';if(c==='deep'||c===6)return v!=null?('Hole '+v.toFixed(1)+'× its diameter'):'Deep hole';if(c==='flange'||c===8)return v!=null?('Only '+mmTxt(v)+' of flat past the bend'+(lim!=null?'; need at least '+mmTxt(lim):'')+'.'):'';if(c==='corner'||c===3)return'The inside corner is sharp.';return'';}
 function dfmWindow(){
   const dfm=(S.analyze&&S.analyze.dfm)||[],worst=dfm.some(d=>d.sev==='error')?'error':'warn';
   return h('div',{class:'dfm-win',role:'dialog','aria-label':'DFM report'},
