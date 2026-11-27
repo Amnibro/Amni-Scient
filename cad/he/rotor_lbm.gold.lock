@@ -263,7 +263,7 @@ export fn rl_clear() i32 {
 	PS[3] = 0.0;
 	return 0;
 }
-=== -14314988b0df6359
+=== -62f748d91707c4a2
 fn fan_cell(c int, x int, y int, z int, cx real, cy real, z0 real, z1 real, r0 real, r1 real) real, bool {
 	if SOL[c] != 0 { return 0.0, false; }
 	let zc = z + 0.5;
@@ -273,11 +273,13 @@ fn fan_cell(c int, x int, y int, z int, cx real, cy real, z0 real, z1 real, r0 r
 	let d = sqrt(dx * dx + dy * dy);
 	return d, d >= r0 && d <= r1;
 }
-export fn rl_fan(cx real, cy real, z0 real, z1 real, r0 real, r1 real, fz real, q real) i32 {
+export fn rl_fan(cx real, cy real, z0 real, z1 real, r0 real, r1 real, fz real, q real, add i32) i32 {
 	let nx int = NX;
 	let ny int = NY;
 	let nz int = NZ;
-	for i in FRC.len { FRC[i] = 0.0; }
+	if add == 0 {
+		for i in FRC.len { FRC[i] = 0.0; }
+	}
 	var n int = 0;
 	var sd = 0.0;
 	for z in nz {
@@ -299,18 +301,24 @@ export fn rl_fan(cx real, cy real, z0 real, z1 real, r0 real, r1 real, fz real, 
 				let c = x + nx * (y + ny * z);
 				let d, inside = fan_cell(c, x, y, z, cx, cy, z0, z1, r0, r1);
 				if inside {
-					FRC[3 * c] = (-t * (y + 0.5 - cy) / d) as! f32;
-					FRC[3 * c + 1] = (t * (x + 0.5 - cx) / d) as! f32;
-					FRC[3 * c + 2] = (fz / n) as! f32;
+					FRC[3 * c] = (FRC[3 * c] as real + (-t * (y + 0.5 - cy) / d)) as! f32;
+					FRC[3 * c + 1] = (FRC[3 * c + 1] as real + (t * (x + 0.5 - cx) / d)) as! f32;
+					FRC[3 * c + 2] = (FRC[3 * c + 2] as real + (fz / n)) as! f32;
 				}
 			}
 		}
 	}
-	PS[0] = n;
-	PS[2] = 0.0;
-	PS[4] = 0.0;
-	PS[5] = fz;
-	PS[6] = q;
+	if add == 0 {
+		PS[0] = n;
+		PS[2] = 0.0;
+		PS[4] = 0.0;
+		PS[5] = fz;
+		PS[6] = q;
+	} else {
+		PS[0] += n;
+		PS[5] += fz;
+		PS[6] += q;
+	}
 	return n as i32;
 }
 === 65e215fb39b6c7d0
@@ -335,8 +343,14 @@ export fn rl_spin(label i32, cx real, cy real, w real) i32 {
 	}
 	return count;
 }
-=== 339bc47c32c6108d
-fn lbm_run(fa f32[:], fb f32[:], tau real, cs real, acc i32) {
+=== 42a206f2c7405251
+fn lbm_inflow(i int, sx int, sy int, nx int, ny int, win real) real {
+	let ax = if sx < 0 { win } else if sx >= nx { -win } else { 0.0 };
+	let ay = if sx < 0 || sx >= nx { 0.0 } else if sy < 0 { win } else if sy >= ny { -win } else { 0.0 };
+	let az = if sx < 0 || sx >= nx || sy < 0 || sy >= ny { 0.0 } else { -win };
+	feq(i, 1.0, ax, ay, az)
+}
+fn lbm_run(fa f32[:], fb f32[:], tau real, cs real, win real, acc i32) {
 	let nx int = NX;
 	let ny int = NY;
 	let nz int = NZ;
@@ -363,6 +377,11 @@ fn lbm_run(fa f32[:], fb f32[:], tau real, cs real, acc i32) {
 					bx /= br;
 					by /= br;
 					bz /= br;
+					if OX != 1 {
+						bx = 0.0;
+						by = 0.0;
+						bz = min(bz, 0.0);
+					}
 					let bl = sqrt(bx * bx + by * by + bz * bz);
 					if bl > 0.3 {
 						let bk = 0.3 / bl;
@@ -376,12 +395,16 @@ fn lbm_run(fa f32[:], fb f32[:], tau real, cs real, acc i32) {
 					let sy = y - EY[i];
 					let sz = z - EZ[i];
 					if sx < 0 || sy < 0 || sy >= ny || sz >= nz {
-						f[i] = FIN[i];
+						if OX == 1 {
+							f[i] = FIN[i];
+						} else {
+							f[i] = lbm_inflow(i, sx, sy, nx, ny, win);
+						}
 					} else if sx >= nx {
 						if OX == 1 {
 							f[i] = fa[i * n + c];
 						} else {
-							f[i] = FIN[i];
+							f[i] = lbm_inflow(i, sx, sy, nx, ny, win);
 						}
 					} else if sz < 0 {
 						f[i] = feq(i, 1.0, bx, by, bz);
@@ -482,12 +505,12 @@ fn lbm_run(fa f32[:], fb f32[:], tau real, cs real, acc i32) {
 		}
 	}
 }
-export fn rl_step(tau real, cs real, acc i32) i32 {
+export fn rl_step(tau real, cs real, win real, acc i32) i32 {
 	PS[7] = 0.0;
 	if CUR == 0 {
-		lbm_run(FA[..], FB[..], tau, cs, acc);
+		lbm_run(FA[..], FB[..], tau, cs, win, acc);
 	} else {
-		lbm_run(FB[..], FA[..], tau, cs, acc);
+		lbm_run(FB[..], FA[..], tau, cs, win, acc);
 	}
 	CUR = 1 - CUR;
 	if acc != 0 { PS[3] += 1.0; }

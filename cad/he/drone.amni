@@ -28,6 +28,7 @@ var AE real[>..];
 var TR real[>..];
 var OX real[>..];
 var OC real[>..];
+var OM real[>..];
 fn zf(xs real[>..]&, n int, x real) {
 	xs.clear();
 	xs.reserve(n);
@@ -60,6 +61,7 @@ export fn dr_setup() i32 {
 	zf(TR, 320, 0.0);
 	zf(OX, 80, 0.0);
 	zf(OC, 16, 0.0);
+	zf(OM, 576, 0.0);
 	rs(AR, 12 * 12);
 	rs(IT, 16 * 96);
 	rs(CK, 8 * 1024);
@@ -546,7 +548,10 @@ fn place_ring() {
 	let rso = rin + w;
 	let rt = rin + 9.0 + w + dv(52, 14.0);
 	let zn = dv(53, 0.5) * Hr;
-	let zt = Hr - 7.0 - hub;
+	let Li = dv(57, 7.0);
+	let li = dv(58, 0.0);
+	let rg = if li > 0.0 { rw + w - li } else { rw };
+	let zt = Hr - max(Li, li) - hub;
 	let zb = zt - dv(2, 4.0) - hub;
 	let hv = max(1.0, zb - 2.0);
 	let cr = dv(13, 28.0) / 2.0;
@@ -559,8 +564,8 @@ fn place_ring() {
 	var c = (dv(37, 4.0) * dv(45, 1.0)) as int;
 	if c < 1 { c = 1; }
 	let wall = rw + w;
-	add(12, 2, 0.0, 0.0, 0.0, wall, rw, Hr, rho * PI * (wall * wall - rw * rw) * Hr, -1, -1, 0, 1, 0);
-	let profile = Hr - 12.0 + 6.0 * PI + 2.0 + 1.07 * (sqrt(A * A + (Hr - zn) * (Hr - zn)) + sqrt(A * A + zn * zn));
+	add(12, 2, 0.0, 0.0, 0.0, wall, rw, Hr, rho * PI * (wall * wall - rw * rw) * (Hr - li) + rho * w * PI * PI * li * (wall - 0.36 * li), -1, -1, 0, 1, 0);
+	let profile = Hr - Li - 5.0 + PI / 2.0 * (Li + 5.0) + 2.0 + 1.07 * (sqrt(A * A + (Hr - zn) * (Hr - zn)) + sqrt(A * A + zn * zn));
 	let ch = add(14, 2, 0.0, 0.0, 0.0, rso, rin, Hr, rho * w * 2.0 * PI * ((rin + rt) / 2.0) * profile, -1, -1, 0, 1, 0);
 	add(14, 2, 0.0, 0.0, zn - w, rt, rt - 3.0, 2.0 * w, 0.0, -1, -1, 0, 1, 0);
 	for k in 2 {
@@ -569,7 +574,7 @@ fn place_ring() {
 		add(5, 2, 0.0, 0.0, z, R, rf, hub, dv(29, 25.0), stator, k, 0, 1, 1);
 	}
 	add(15, 2, 0.0, 0.0, 0.0, rin - 0.4, rw + w + 0.4, hv, rho * 24.0 * 0.082 * (hv - 0.8) * (hv - 0.8) * (rin - rw - w - 0.8), -1, -1, 0, 1, 0);
-	add(15, 2, 0.0, 0.0, Hr, rin + 9.0, rw - 0.5, 1.2, rho * (4.0 * PI * (rw + rin + 8.5) + 36.0 * (rin + 7.0 - rw)), -1, -1, 0, 1, 0);
+	add(15, 2, 0.0, 0.0, Hr, rin + 9.0, rg - 0.5, 1.2, rho * (4.0 * PI * (rg + rin + 8.5) + 36.0 * (rin + 7.0 - rg)), -1, -1, 0, 1, 0);
 	let bore = cr + 0.5;
 	let hb = add(13, 2, 0.0, 0.0, za, ro, bore, aw, rho * PI * (ro * ro - bore * bore) * aw, -1, -1, 0, 1, 0);
 	let ux real[4] = [1.0, 0.0, -1.0, 0.0];
@@ -726,7 +731,7 @@ export fn dr_perf() i32 {
 	let ct = dv(39, 0.11);
 	let cp = dv(40, 0.055);
 	let kv = dv(36, 1900.0);
-	let gain = if ty == 5 { 1.15 } else if ty == 8 || ty == 9 { 1.25 } else { 1.0 };
+	let gain = dv(56, if ty == 5 { 1.15 } else if ty == 8 { 1.25 } else if ty == 9 { 1.03 } else { 1.0 });
 	let inner_ratio = BP[9] / (dv(1, 127.0) / 2.0);
 	let af = if ty == 8 || ty == 9 { 1.0 - inner_ratio * inner_ratio } else { 1.0 };
 	var frame_mass = 0.0;
@@ -845,6 +850,13 @@ export fn dr_ascore(ne i32, w real, tmax real, w0 real, u real) real {
 	let score = pow(FT / w0, 1.5);
 	if FT > tmax { score + 10.0 } else { score }
 }
+export fn dr_hscore(p real, p0 real, auw real, limit real) real {
+	if limit <= 0.0 || auw <= limit {
+		p / p0
+	} else {
+		10.0 + (auw - limit) / limit + p / p0
+	}
+}
 fn ofail() {
 	if OS == 1 {
 		OS = -1;
@@ -867,6 +879,17 @@ fn odone() i32 {
 	}
 	1
 }
+fn oseen() i32 {
+	let rows = if OK < 64 { OK } else { 64 };
+	for r in rows {
+		var same = true;
+		for i in ON {
+			if !(abs(OM[9 * r + i] - OC[i]) <= 1e-9) { same = false; }
+		}
+		if same { return 1; }
+	}
+	0
+}
 export fn dr_opt_init(n i32, budget i32) i32 {
 	ON = n;
 	OB = budget;
@@ -881,20 +904,25 @@ export fn dr_opt_init(n i32, budget i32) i32 {
 export fn dr_opt_ask() i32 {
 	for i in ON { OC[i] = OX[5 * i]; }
 	if OH == 0 { return 1; }
-	for attempt in 4 * ON {
+	for attempt in 8 * ON {
 		if odone() == 1 { return 0; }
 		let at = 5 * OD;
 		let cur = OX[at];
 		let v = clamp(cur + (OS as real) * OX[at + 3], OX[at + 1], OX[at + 2]);
-		if abs(v - cur) > 1e-9 {
-			OC[OD] = v;
+		OC[OD] = v;
+		if abs(v - cur) > 1e-9 && oseen() == 0 {
 			return 1;
 		}
+		OC[OD] = cur;
 		ofail();
 	}
 	0
 }
 export fn dr_opt_tell(f real) i32 {
+	if OK < 64 {
+		for i in 8 { OM[9 * OK + i] = OC[i]; }
+		OM[9 * OK + 8] = f;
+	}
 	OK++;
 	if OH == 0 {
 		OH = 1;

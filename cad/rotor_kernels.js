@@ -1,4 +1,4 @@
-export const rg_step = {wg: 64, uniform: [["NX","u32"],["NY","u32"],["NZ","u32"],["OX","u32"],["acc","u32"],["tau","f32"],["cs","f32"]], buffers: [["sol","u32","read"],["tb","i32","read"],["fq","f32","read"],["fa","f32","read"],["fb","f32","read_write"],["frc","f32","read"],["wv","f32","read"],["avg","f32","read_write"]], wgsl: `struct U { p_NX: u32,p_NY: u32,p_NZ: u32,p_OX: u32,p_acc: u32,p_tau: f32,p_cs: f32 };
+export const rg_step = {wg: 64, uniform: [["NX","u32"],["NY","u32"],["NZ","u32"],["OX","u32"],["acc","u32"],["tau","f32"],["cs","f32"],["win","f32"]], buffers: [["sol","u32","read"],["tb","i32","read"],["fq","f32","read"],["fa","f32","read"],["fb","f32","read_write"],["frc","f32","read"],["wv","f32","read"],["avg","f32","read_write"]], wgsl: `struct U { p_NX: u32,p_NY: u32,p_NZ: u32,p_OX: u32,p_acc: u32,p_tau: f32,p_cs: f32,p_win: f32 };
 @group(0) @binding(0) var<uniform> u: U;
 @group(0) @binding(1) var<storage, read> b_sol: array<u32>;
 @group(0) @binding(2) var<storage, read> b_tb: array<i32>;
@@ -49,6 +49,13 @@ fn h_feq( l_ex: i32,  l_ey: i32,  l_ez: i32,  l_w: f32,  l_r: f32,  l_ux: f32,  
         l_bx = (l_bx / l_br);
         l_by = (l_by / l_br);
         l_bz = (l_bz / l_br);
+        if ((u.p_OX != 1u)) {
+            l_bx = 0.0f;
+            l_by = 0.0f;
+            if ((l_bz > 0.0f)) {
+                l_bz = 0.0f;
+            }
+        }
         let l_bl: f32 = sqrt((((l_bx * l_bx) + (l_by * l_by)) + (l_bz * l_bz)));
         if ((l_bl > 0.3f)) {
             let l_bk: f32 = (0.3f / l_bl);
@@ -64,13 +71,31 @@ fn h_feq( l_ex: i32,  l_ey: i32,  l_ez: i32,  l_w: f32,  l_r: f32,  l_ux: f32,  
         let l_sx: i32 = (l_x - l_ex);
         let l_sy: i32 = (l_y - l_ey);
         let l_sz: i32 = (l_z - l_ez);
+        var l_ax: f32 = 0.0f;
+        var l_ay: f32 = 0.0f;
+        var l_az: f32 = 0.0f;
+        if ((l_sx < 0i)) {
+            l_ax = u.p_win;
+        } else if ((l_sx >= l_wx)) {
+            l_ax = (-u.p_win);
+        } else if ((l_sy < 0i)) {
+            l_ay = u.p_win;
+        } else if ((l_sy >= l_wy)) {
+            l_ay = (-u.p_win);
+        } else {
+            l_az = (-u.p_win);
+        }
         if (((((l_sx < 0i) || (l_sy < 0i)) || (l_sy >= l_wy)) || (l_sz >= l_wz))) {
-            l_f[l_i] = b_fq[(19u + l_i)];
+            if ((u.p_OX == 1u)) {
+                l_f[l_i] = b_fq[(19u + l_i)];
+            } else {
+                l_f[l_i] = h_feq(l_ex, l_ey, l_ez, b_fq[l_i], 1.0f, l_ax, l_ay, l_az);
+            }
         } else if ((l_sx >= l_wx)) {
             if ((u.p_OX == 1u)) {
                 l_f[l_i] = b_fa[((l_i * l_cells) + l_n)];
             } else {
-                l_f[l_i] = b_fq[(19u + l_i)];
+                l_f[l_i] = h_feq(l_ex, l_ey, l_ez, b_fq[l_i], 1.0f, l_ax, l_ay, l_az);
             }
         } else if ((l_sz < 0i)) {
             l_f[l_i] = h_feq(l_ex, l_ey, l_ez, b_fq[l_i], 1.0f, l_bx, l_by, l_bz);

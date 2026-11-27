@@ -6,7 +6,7 @@ fn feq(ex i32, ey i32, ez i32, w f32, r f32, ux f32, uy f32, uz f32) f32 {
 	let eu f32 = (ex as f32) * ux + (ey as f32) * uy + (ez as f32) * uz;
 	w * r * (1.0 + 3.0 * eu + 4.5 * eu * eu - 1.5 * (ux * ux + uy * uy + uz * uz))
 }
-gpu fn rg_step(n u32, NX u32, NY u32, NZ u32, OX u32, acc u32, tau f32, cs f32, sol const u32[:], tb const i32[:], fq const f32[:], fa const f32[:], fb f32[:], frc const f32[:], wv const f32[:], avg f32[:]) {
+gpu fn rg_step(n u32, NX u32, NY u32, NZ u32, OX u32, acc u32, tau f32, cs f32, win f32, sol const u32[:], tb const i32[:], fq const f32[:], fa const f32[:], fb f32[:], frc const f32[:], wv const f32[:], avg f32[:]) {
 	let cells u32 = NX * NY * NZ;
 	if n >= cells { return; }
 	if lab(sol, n) != 0 { return; }
@@ -33,6 +33,11 @@ gpu fn rg_step(n u32, NX u32, NY u32, NZ u32, OX u32, acc u32, tau f32, cs f32, 
 		bx = bx / br;
 		by = by / br;
 		bz = bz / br;
+		if OX != 1 {
+			bx = 0.0;
+			by = 0.0;
+			if bz > 0.0 { bz = 0.0; }
+		}
 		let bl f32 = sqrt(bx * bx + by * by + bz * bz);
 		if bl > 0.3 {
 			let bk f32 = 0.3 / bl;
@@ -48,13 +53,31 @@ gpu fn rg_step(n u32, NX u32, NY u32, NZ u32, OX u32, acc u32, tau f32, cs f32, 
 		let sx = x - ex;
 		let sy = y - ey;
 		let sz = z - ez;
+		var ax f32 = 0.0;
+		var ay f32 = 0.0;
+		var az f32 = 0.0;
+		if sx < 0 {
+			ax = win;
+		} else if sx >= wx {
+			ax = -win;
+		} else if sy < 0 {
+			ay = win;
+		} else if sy >= wy {
+			ay = -win;
+		} else {
+			az = -win;
+		}
 		if sx < 0 || sy < 0 || sy >= wy || sz >= wz {
-			f[i] = fq[19 + i];
+			if OX == 1 {
+				f[i] = fq[19 + i];
+			} else {
+				f[i] = feq(ex, ey, ez, fq[i], 1.0, ax, ay, az);
+			}
 		} else if sx >= wx {
 			if OX == 1 {
 				f[i] = fa[i * cells + n];
 			} else {
-				f[i] = fq[19 + i];
+				f[i] = feq(ex, ey, ez, fq[i], 1.0, ax, ay, az);
 			}
 		} else if sz < 0 {
 			f[i] = feq(ex, ey, ez, fq[i], 1.0, bx, by, bz);
