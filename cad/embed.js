@@ -1,5 +1,6 @@
 import {loadPartners,admit} from './partner.js';
 import {capOf,decide} from './embed_meter.js';
+import * as Flow from './embed-flow.js';
 const EMBED=/\/embed(?:\.html)?\/?$/.test(location.pathname);
 if(EMBED)boot();
 function q(k){return new URLSearchParams(location.search).get(k)||'';}
@@ -103,11 +104,20 @@ async function boot(){
       }catch(e){post(ev.origin,'export',{ok:false,reason:e.message||'Export failed',meter:d});}
       return;
     }
+    if(t==='chrome'){Flow.setLite(API,m.lite!==false);post(ev.origin,'chrome',{ok:true,lite:document.documentElement.classList.contains('embed-lite')});return;}
+    if(t==='clear'){const r=await Flow.clearPart(API);post(ev.origin,'clear',{...r,part:modelOf(API)});return;}
+    if(t==='view'&&typeof API.view==='function'){API.view(m.v||'iso');if(typeof API.redraw==='function')API.redraw();return;}
+    if(t==='import'){try{const r=await Flow.importBuf(API,{name:m.name,buf:m.buf,mime:m.mime});if(typeof API.view==='function')API.view('iso');post(ev.origin,'import',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'import',{ok:false,reason:e.message||'Import failed'});}return;}
+    if(t==='make'){try{let r=await Flow.makeFromPrompt(API,m.text);if(!r.ok&&(m.text||(m.images&&m.images.length))){const ai=await Flow.tryAssistant(API,m.text,m.images);r=ai.ok?ai:r;if(!ai.ok&&r.reason==='no-match')r={ok:false,reason:ai.reason==='no-ai'?'no-ai':'no-match'};}if(typeof API.view==='function')API.view('iso');post(ev.origin,'make',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'make',{ok:false,reason:e.message||'Make failed'});}return;}
+    if(t==='analyze'){try{const r=await Flow.analyze(API);post(ev.origin,'analyze',r);}catch(e){post(ev.origin,'analyze',{ok:false,reason:e.message||'Analyze failed'});}return;}
+    if(t==='apply'){try{const r=await Flow.applyFix(API,m.fix);if(typeof API.view==='function')API.view('iso');post(ev.origin,'apply',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'apply',{ok:false,reason:e.message||'Apply failed'});}return;}
+    if(t==='optimize'){try{const r=await Flow.runOpt(API,!!m.apply);if(typeof API.view==='function')API.view('iso');post(ev.origin,'optimize',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'optimize',{ok:false,reason:e.message||'Optimize failed'});}return;}
     if(t==='quote'||t==='checkout'){
       const d=take(tier,used,t,true);saveUsed(p.slug,used);
       post(ev.origin,t,{ok:d.allow,reason:d.allow?'ok':d.reason,part:modelOf(API),quote:m.quote||null,order:m.order||null,meter:{kind:t,used:used[t],cap,unlimited:cap<0,...d}});
     }
   });
+  Flow.setLite(API,true);
   post(parentOrigin,'ready',{partner:p.slug,name:p.name,tier,quote:p.quote,processes:p.processes,materials:p.materials,colors:p.colors,meter:{used,cap,unlimited:cap<0}});
   sendModel();
   requestAnimationFrame(()=>{if(typeof API.resizeView==='function')API.resizeView();if(typeof API.redraw==='function')API.redraw();});
