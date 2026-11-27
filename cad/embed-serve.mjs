@@ -41,6 +41,10 @@ const server=createServer(async(req,res)=>{
   try{
     const u=new URL(req.url||'/',`http://${req.headers.host||HOST+':'+PORT}`);
     if(req.method!=='GET'&&req.method!=='HEAD')return send(res,405,{'Content-Type':'text/plain'},'Method not allowed');
+    if(u.pathname==='/offline-packs/apps.txt'){
+      try{const file=await resolve(u),buf=await readFile(file);return send(res,200,{'Content-Type':'text/plain; charset=utf-8',...frameHeaders(u)},req.method==='HEAD'?undefined:buf);}
+      catch{return send(res,200,{'Content-Type':'text/plain; charset=utf-8',...frameHeaders(u)},req.method==='HEAD'?undefined:'');}
+    }
     const file=await resolve(u);
     const buf=await readFile(file);
     const type=MIME[extname(file).toLowerCase()]||'application/octet-stream';
