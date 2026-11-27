@@ -16,7 +16,7 @@ export const clean=o=>{o=o&&typeof o==='object'?o:{};const r={},set=(k,v)=>{v!==
   set('bgm',pick(o.bgm,['solid','grad']));set('bgd',pair(o.bgd));set('bgl',pair(o.bgl));set('auto',flag(o.auto,0));set('gs',flag(o.gs,0));set('gc',hx(o.gc));set('ga',num(o.ga,0,1));set('gm',num(o.gm,0,1e6)>0?num(o.gm,0,1e6):undefined);set('mo',flag(o.mo,1));set('mc',hx(o.mc));set('ec',hx(o.ec));set('ev',flag(o.ev,0));set('sc',hx(o.sc));
   set('dens',pick(o.dens,['compact','spacious']));set('fs',num(o.fs,80,140));set('rk',num(o.rk,0,2));set('ps',flag(o.ps,'left'));set('tp',flag(o.tp,'right'));set('sb',flag(o.sb,0));set('rp',flag(o.rp,'left'));set('hid',ids(o.hid));set('fav',ids(o.fav));set('ord',ids(o.ord));
   set('env',pick(o.env,['neutral','warm','cool','dark']));set('et',num(o.et,.5,4));set('se',flag(o.se,1));set('sh',flag(o.sh,0));set('hc',hx(o.hc));set('pc',hx(o.pc));set('kf',hx(o.kf));set('kd',hx(o.kd));set('ko',hx(o.ko));set('dz',num(o.dz,9,22));set('tr',pick(o.tr,['cube','off']));set('tpos',pick(o.tpos,['br','tl','tr']));set('pj',flag(o.pj,'ortho'));
-  set('mm',pick(o.mm,['amni','classic','rightorbit','trackpad']));set('zc',flag(o.zc,0));set('wi',flag(o.wi,1));
+  set('mm',pick(o.mm,['amni','classic','leftorbit','rightorbit','trackpad']));set('zc',flag(o.zc,0));set('wi',flag(o.wi,1));
   o.kb&&typeof o.kb==='object'&&(()=>{const k={};for(const[a,c]of Object.entries(o.kb))/^[\w.-]{1,40}$/.test(a)&&typeof c==='string'&&/^[\w+ \-.,;=\/\[\]\\`']{1,28}$/.test(c)&&(k[a]=c);Object.keys(k).length&&(r.kb=k);})();
   return r;};
 export const bgOf=(L,dark)=>{const p=(dark?L.bgd:L.bgl)||(L.auto!==0&&(dark?L.bgl:L.bgd)&&(dark?L.bgl:L.bgd).map(c=>flip(c,dark)));return!L.bgm||!p?null:L.bgm==='solid'?p[0]:`linear-gradient(180deg,${p[0]},${p[1]})`;};

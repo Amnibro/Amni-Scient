@@ -73,7 +73,7 @@ function tile(API,v,g,x,y,w,h,o){
     for(let n=0;n<4;n++){cam.position.copy(c).addScaledVector(d,k);cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld(true);let m=0;for(let q=0;q<8;q++){const p=new T.Vector3(q&1?b.max[0]:b.min[0],q&2?b.max[1]:b.min[1],q&4?b.max[2]:b.min[2]).project(cam);m=Math.max(m,Math.abs(p.x),Math.abs(p.y));}k*=Math.max(0.2,m/(v==='iso'?0.8:0.84));}
   }else{const hw=E[ax[0]]/2,hh=E[ax[1]]/2,q=Math.max(hh*1.12,hw*1.12/asp,r*0.02);cam=new T.OrthographicCamera(-q*asp,q*asp,q,-q,-r*40,r*40);cam.position.copy(c).addScaledVector(d,r*8);}
   cam.up.set(0,Math.abs(d.z)>0.99?1:0,Math.abs(d.z)>0.99?0:1);cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld();
-  R.setScissorTest(false);R.setViewport(0,0,cv.width/R.getPixelRatio(),cv.height/R.getPixelRatio());R.render(API.scene,cam);
+  R.setScissorTest(false);{const z=R.getSize(new API.THREE.Vector2());R.setViewport(0,0,z.x,z.y);}R.render(API.scene,cam);R.flush?.();
   const k=Math.min(w/cv.width,h/cv.height),dw=cv.width*k,dh=cv.height*k;g.drawImage(cv,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
   g.strokeStyle='#9aa5b4';g.lineWidth=1;g.strokeRect(x+0.5,y+0.5,w-1,h-1);
   const ex={iso:'',face:'',hand:'',top:[0,1],front:[0,2],right:[1,2]}[v],cap=HTILES.find(t=>t[0]===v)[1]+(ex?'   '+ex.map(i=>'xyz'[i]+' '+r2(b.max[i]-b.min[i])).join(' × ')+' '+o.units:'');

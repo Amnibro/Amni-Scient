@@ -1,0 +1,8 @@
+use std
+into grow_web.amni
+
+The Amni-CAD side of the Helium `grow` library, built for the web; imports os, grow.grow and grow.forms. `grow::make(kind, seed, size) bool`, `grow::KINDS`, `grow::glb`, `grow::vcount` and `grow::tcount` already exist and must not be defined here.
+
+`main()` prints "grow: ready" and returns, so the page can call the export below as often as it likes.
+
+`grow_make(k, s, size)` is exported to the page (marked `export`), takes k and s as i32 and size as a real and returns an i32: builds kind number k of `grow::KINDS` with seed s and size in meters, writes it with `grow::glb` to "/m/grow.glb" and returns the triangle count, or -1 when k is outside the list or the file cannot be written.

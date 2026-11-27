@@ -4,7 +4,7 @@ const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:ro
 let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+x+')':''));};
 try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await asPro(p);await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   const shot=async n=>shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));
-  const load=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.ui,{timeout:60000});await sleep(2500);};
+  const load=async()=>{await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.ui,{timeout:60000});await sleep(2500);};
   const fresh=async()=>{await load();await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.ui,{timeout:60000});await sleep(2500);};
   const reload=async()=>{await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.ui,{timeout:60000});await sleep(2500);};
   const st=()=>p.evaluate(()=>window.amnicad.API.look.state());

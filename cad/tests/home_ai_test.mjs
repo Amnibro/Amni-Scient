@@ -15,7 +15,7 @@ try{
   const p=await b.newPage();await asPro(p);const errs=[];p.on('pageerror',e=>errs.push(String(e.message)));await p.setViewport({width:1440,height:900});await p.evaluateOnNewDocument(STUB,HOST,LOGIN);
   const ev=(f,...a)=>p.evaluate(f,...a),txt=s=>ev(s=>{const e=document.querySelector(s);return e?e.textContent:null;},s),until=async(f,a,ms=15000)=>{const t=Date.now();while(Date.now()-t<ms){if(await p.evaluate(f,a))return true;await sleep(120);}return false;};
   await p.goto(`http://127.0.0.1:${port}/404.html`);await ev((h)=>{localStorage.clear();localStorage.setItem('amnicad.ai',JSON.stringify({kind:'local',model:'',base:h+'/v1',lmodel:'',remember:true,cm:{},chosen:true}));},HOST);
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.assistant,{timeout:150000,polling:150});await sleep(1200);
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.assistant,{timeout:150000,polling:150});await sleep(1200);
   await ev(()=>document.activeElement&&document.activeElement.blur());await p.keyboard.down('Control');await p.keyboard.press('KeyK');await p.keyboard.up('Control');await sleep(600);
   ok(await until(()=>/Sign in to your AI server/.test((document.querySelector('#tab-ai .as-err')||{}).textContent||''),null,20000),'a server behind a sign-in page asks you to sign in instead of blaming a key',await txt('#tab-ai .as-err'));
   ok(await ev(()=>/cad-ai\.example\.test needs you to sign in/.test(document.querySelector('#tab-ai .as-err').textContent)),'the message names the server');

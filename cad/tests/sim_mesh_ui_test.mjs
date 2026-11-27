@@ -4,14 +4,14 @@ const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:ro
 let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
 try{b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:600000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await asPro(p);await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   const shot=async n=>shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.mesh,{timeout:90000});await sleep(1200);
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.API&&window.amnicad.API.mesh,{timeout:90000});await sleep(1200);
   const built=()=>p.waitForFunction(()=>{const S=window.amnicad.S;return S.mesh&&!S.building&&document.getElementById('busy').style.display!=='flex';},{timeout:90000}).then(()=>sleep(500));
   await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'al6061',params:[],features:[{id:'a',type:'box',w:100,d:10,h:10,x:50},{id:'e',type:'extrude',plane:'face',face:{side:'-X'},shapes:[{k:'rect',w:4,h:4}],depth:3,op:'add'}]},null,true));await built();
   const cam0=await p.evaluate(()=>{const c=window.amnicad.API.camera,t=window.amnicad.API.controls.target;return c.position.clone().sub(t).normalize().toArray();});
   await p.evaluate(()=>window.amnicad.API.openSketch('e'));await p.waitForFunction(()=>!!window.amnicad.S.sketcher,{timeout:20000});await sleep(700);
   const cam1=await p.evaluate(()=>{const c=window.amnicad.API.camera,t=window.amnicad.API.controls.target;return c.position.clone().sub(t).normalize().toArray();});
   ok(Math.hypot(...cam0.map((v,i)=>v-cam1[i]))<1e-3,'opening a sketch on a side face leaves the 3D view where it was',{cam0,cam1});
-  await p.keyboard.press('Escape');await sleep(400);await p.evaluate(()=>{const S=window.amnicad.S;S.sketcher&&document.querySelectorAll('#skx button').forEach(b=>/^(Cancel|Close|Done)$/.test(b.textContent.trim())&&b.click());});await sleep(600);
+  await p.keyboard.press('Escape');await sleep(400);await p.evaluate(()=>{const S=window.amnicad.S;S.sketcher&&document.querySelectorAll('#skx button,.skt button').forEach(b=>/^(Cancel|Close|Done)$/.test(b.textContent.trim())&&b.click());});await sleep(600);
   await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'al6061',params:[],features:[{id:'a',type:'box',w:100,d:10,h:10,x:50}]},null,true));await built();
   await p.evaluate(()=>window.amnicad.applyActions([{sim:{type:'static',supports:[{faces:{side:'-X'},type:'fixed'},{faces:{side:'-Z'},type:'stop',gap:0.05}],loads:[{faces:{side:'+X'},F:[0,0,-100]}],mesh:'voxel',res:8000}}]));await built();
   await p.evaluate(()=>window.amnicad.setTab('sim'));await sleep(700);

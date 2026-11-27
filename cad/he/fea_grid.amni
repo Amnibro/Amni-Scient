@@ -1,15 +1,29 @@
 import math;
+import os;
+import binary;
 var PI32 i32[>..];
 var PF64 real[>..];
 var PF32 f32[>..];
 var PU8 u8[>..];
 fn main() {
 }
-extern fn fg_view_f64(id i32, xs real[:]) = "fg_view_f64";
-extern fn fg_view_f32(id i32, xs f32[:]) = "fg_view_f32";
-extern fn fg_view_i32(id i32, xs i32[:]) = "fg_view_i32";
-extern fn fg_view_u8(id i32, xs u8[:]) = "fg_view_u8";
-extern fn fg_prog(it i32, rel real) = "fg_prog";
+extern "amnihost?" {
+	fn fg_view_f64(id i32, xs real[:]);
+	fn fg_view_f32(id i32, xs f32[:]);
+	fn fg_view_i32(id i32, xs i32[:]);
+	fn fg_view_u8(id i32, xs u8[:]);
+	fn fg_prog(it i32, rel real);
+}
+var PIPE bool = false;
+fn pipe_prog(it int, rel real) {
+	var x real[2] = [it as real, rel];
+	var buf byte[>..] = [];
+	buf.push(112);
+	for i in 7 { buf.push(0); }
+	buf.append(bytes_of(x));
+	write_stdout(buf);
+	flush_stdout();
+}
 struct Lev {
 	nx int, ny int, nz int, NX int, NY int, NZ int, nn int, ne int,
 	om real,
@@ -616,7 +630,60 @@ recursive fn vcycle(l int, b real[:], x real[:]) {
 	for i in n { x[i] += t2[i]; }
 	smooth(l, b, x, NSW);
 }
+fn size_pools(mg int) {
+	let nd = ND;
+	let m = nd * 8;
+	let mm = m * m;
+	var ne0 = 0;
+	for i in DENS.len { if DENS[i] > 0.0 { ne0++; } }
+	var lx int[7] = [0; 7];
+	var ly int[7] = [0; 7];
+	var lz int[7] = [0; 7];
+	var le int[7] = [0; 7];
+	var nl = 1;
+	lx[0] = GX;
+	ly[0] = GY;
+	lz[0] = GZ;
+	le[0] = ne0;
+	while mg != 0 && nl < 7 {
+		let k = nl - 1;
+		if le[k] < 400 || min(min(lx[k], ly[k]), lz[k]) < 2 { break; }
+		let a = (lx[k] + 1) / 2;
+		let b = (ly[k] + 1) / 2;
+		let c = (lz[k] + 1) / 2;
+		let eb = min(a * b * c, le[k]);
+		lx[nl] = a;
+		ly[nl] = b;
+		lz[nl] = c;
+		le[nl] = eb;
+		nl++;
+	}
+	var ni = 0;
+	var nf = 0;
+	var n32 = 0;
+	var n8 = 0;
+	for l in nl {
+		let nn = (lx[l] + 1) * (ly[l] + 1) * (lz[l] + 1);
+		var mc = 0;
+		if l < nl - 1 { mc = (lx[l] + 1) + (ly[l] + 1) + (lz[l] + 1); }
+		ni += 8 * le[l] + 2 * mc;
+		nf += le[l] + mc + 5 * nn * nd;
+		if DADD0.len > 0 { nf += nn * nd; }
+		if l > 0 { n32 += mm * le[l]; }
+		n8 += nn * nd;
+	}
+	PI32.clear();
+	PI32.reserve(ni);
+	PF64.clear();
+	PF64.reserve(nf);
+	PF32.clear();
+	PF32.reserve(n32);
+	PU8.clear();
+	PU8.reserve(n8);
+}
 export fn fg_setup(mg i32, lazy i32) i32 {
+	let mgi int = mg;
+	size_pools(mgi);
 	let nd = ND;
 	let m = nd * 8;
 	let mm = m * m;
@@ -626,30 +693,26 @@ export fn fg_setup(mg i32, lazy i32) i32 {
 		for j in m { KT[j * m + r] = KK[r * m + j]; }
 	}
 	var l0 = make_level(GX, GY, GZ, DENS);
-	l0.hasKE = false;
-	l0.hasDadd = DADD0.len > 0;
-	if l0.hasDadd {
+	for i in l0.nn * nd { PU8[l0.oFix + i] = FIX0[i]; }
+	if DADD0.len > 0 {
+		l0.hasDadd = true;
 		l0.oDadd = PF64.len;
 		for i in DADD0.len { PF64.push(DADD0[i]); }
 	}
 	LS.push(l0);
-	let f0 = lFix(0);
-	for i in f0.len { f0[i] = FIX0[i]; }
 	MC.clear();
 	MC.resize(8 * mm, 0.0);
 	for c in 8 {
 		let w = child_w(c & 1, (c >> 1) & 1, (c >> 2) & 1);
 		galerkin(KK, w, MC[c * mm..(c + 1) * mm], 1.0);
 	}
-	while LS.len < 7 && mg != 0 {
-		let last = LS.len - 1;
-		let lv = LS[last];
-		if lv.ne < 400 || min(lv.nx, min(lv.ny, lv.nz)) < 2 { break; }
-		coarsen(last);
+	while LS.len < 7 && mgi != 0 {
+		let k = LS.len - 1;
+		if LS[k].ne < 400 || min(min(LS[k].nx, LS[k].ny), LS[k].nz) < 2 { break; }
+		coarsen(k);
 	}
-	let nl = LS.len;
-	for l in nl - 1 { build_maps(l); }
-	for l in nl {
+	for l in LS.len - 1 { build_maps(l); }
+	for l in LS.len {
 		let n = LS[l].nn * nd;
 		LS[l].oDiag = PF64.len;
 		PF64.resize(PF64.len + n, 0.0);
@@ -663,13 +726,11 @@ export fn fg_setup(mg i32, lazy i32) i32 {
 		PF64.resize(PF64.len + n, 0.0);
 	}
 	if LS[0].hasDadd {
-		for l in 1..nl {
-			transfer(l - 1, lDadd(l - 1), lDadd(l), false);
-		}
+		for l in 1..LS.len { transfer(l - 1, lDadd(l - 1), lDadd(l), false); }
 	}
-	for l in nl { diag_of(l); }
-	if nl > 1 && mg != 0 {
-		for l in nl {
+	for l in LS.len { diag_of(l); }
+	if LS.len > 1 && mgi != 0 {
+		for l in LS.len {
 			if l == 0 && lazy != 0 { continue; }
 			let o = om_of(l);
 			LS[l].om = o;
@@ -685,7 +746,7 @@ export fn fg_setup(mg i32, lazy i32) i32 {
 	VY.clear();
 	VY.resize(n0, 0.0);
 	fg_views();
-	nl as i32
+	LS.len as i32
 }
 export fn fg_views() {
 	fg_view_f64(10, VB);
@@ -764,6 +825,7 @@ export fn fg_pcg(tol real, max_it i32) i32 {
 	PC_U.clear();
 	PC_U.resize(n, 0.0);
 	PC_R.clear();
+	PC_R.reserve(n);
 	for i in n { PC_R.push(VB[i]); }
 	PC_Z.clear();
 	PC_Z.resize(n, 0.0);
@@ -800,7 +862,10 @@ export fn fg_pcg(tol real, max_it i32) i32 {
 			rr += PC_R[i] * PC_R[i];
 		}
 		rel = sqrt(rr) / f0;
-		if iter % 5 == 0 { fg_prog(iter as i32, rel); }
+		if iter % 5 == 0 {
+			fg_prog(iter as i32, rel);
+			if PIPE { pipe_prog(iter, rel); }
+		}
 		if rel < tl { break; }
 		pcg_pre(PC_R, PC_Z);
 		var rz2 = 0.0;

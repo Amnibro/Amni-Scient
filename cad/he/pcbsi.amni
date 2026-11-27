@@ -1,0 +1,1808 @@
+import math;
+var QP int = 0;
+var QT int = 0;
+var QV int = 0;
+var QZ int = 0;
+var QL int = 0;
+var QN int = 0;
+var QE int = 0;
+var QX int = 0;
+var QY int = 0;
+var QW int = 0;
+var QK int = 0;
+var IRG f64[>..];
+var IRP f64[>..];
+var IRO f64[>..];
+var IRV f64[>..];
+var IRK f64[>..];
+var IEG f64[>..];
+var IAG f64[>..];
+var IU f64[>..];
+var IB f64[>..];
+var IDG f64[>..];
+var IMD f64[>..];
+var IRR f64[>..];
+var IZZ f64[>..];
+var IPP f64[>..];
+var IQQ f64[>..];
+var IPX f64[>..];
+var IPY f64[>..];
+var IKG f64[>..];
+var IEA i32[>..];
+var IEB i32[>..];
+var IOF i32[>..];
+var IAD i32[>..];
+var IFL i32[>..];
+var IMP i32[>..];
+var IPL i32[>..];
+var IPN i32[>..];
+var IPD i32[>..];
+var IVD i32[>..];
+var IKA i32[>..];
+var IKB i32[>..];
+var IBF i32[>..];
+fn gp(k int) int {
+    return 6 * k;
+}
+fn gt(k int) int {
+    return 6 * QP + 6 * k;
+}
+fn gv(k int) int {
+    return 6 * QP + 6 * QT + 2 * k;
+}
+fn gz(k int) int {
+    return 6 * QP + 6 * QT + 2 * QV + 5 * k;
+}
+fn gl(k int) int {
+    return 6 * QP + 6 * QT + 2 * QV + 5 * QZ + 2 * k;
+}
+fn nlay() int {
+    var n int = IRP[4] as int;
+    if (n < 1) {
+        n = 1;
+    }
+    if (n > 8) {
+        n = 8;
+    }
+    return n;
+}
+fn cut(l int) real {
+    if (l < 2) {
+        return IRP[6];
+    }
+    return IRP[7];
+}
+fn sh(l int) real {
+    return cut(l) / IRP[8];
+}
+fn slay(k int) int {
+    if (k == 0) {
+        return 0;
+    }
+    if (k == nlay() - 1 && nlay() > 1) {
+        return 1;
+    }
+    return k + 1;
+}
+fn lowbit(m int) int {
+    var l int = 0;
+    while (l < 8) {
+        if (((m >> l) & 1) != 0) {
+            return l;
+        }
+        l += 1;
+    }
+    return 0;
+}
+fn inode(x real, y real, l int, kind int) int {
+    IRV.push(x);
+    IRV.push(y);
+    IRV.push(l as real);
+    IRV.push(kind as real);
+    IRV.push(0.0);
+    IRV.push(0.0);
+    IRV.push(0.0);
+    IRV.push(0.0);
+    QN += 1;
+    return QN - 1;
+}
+fn iedge(a int, b int, g real) {
+    if (a != b && a >= 0 && b >= 0 && g > 0.0) {
+        IEA.push(a as i32);
+        IEB.push(b as i32);
+        IEG.push(g);
+        QE += 1;
+    }
+}
+fn clo(a real, o real, n int) int {
+    var i int = ceil((a - o) / IRP[12] - 0.5) as int;
+    if (i < 0) {
+        i = 0;
+    }
+    return i;
+}
+fn chi(b real, o real, n int) int {
+    var i int = floor((b - o) / IRP[12] - 0.5) as int;
+    if (i > n - 1) {
+        i = n - 1;
+    }
+    return i;
+}
+fn cidx(l int, i int, j int) int {
+    return (l * QY + j) * QX + i;
+}
+fn icell(x real, y real, l int) int {
+    if (x < IRP[0] || y < IRP[1]) {
+        return -1;
+    }
+    let i int = floor((x - IRP[0]) / IRP[12]) as int;
+    let j int = floor((y - IRP[1]) / IRP[12]) as int;
+    if (i >= QX || j >= QY) {
+        return -1;
+    }
+    return IMP[cidx(l, i, j)] as int;
+}
+fn segt(px real, py real, ax real, ay real, bx real, by real) real {
+    let dx real = bx - ax;
+    let dy real = by - ay;
+    let sq real = dx * dx + dy * dy;
+    if (sq < 1e-18) {
+        return 0.0;
+    }
+    var t real = ((px - ax) * dx + (py - ay) * dy) / sq;
+    if (t < 0.0) {
+        t = 0.0;
+    }
+    if (t > 1.0) {
+        t = 1.0;
+    }
+    return t;
+}
+fn segd(px real, py real, ax real, ay real, bx real, by real) real {
+    let t real = segt(px, py, ax, ay, bx, by);
+    let ex real = px - (ax + (bx - ax) * t);
+    let ey real = py - (ay + (by - ay) * t);
+    return sqrt(ex * ex + ey * ey);
+}
+fn irpoints() int {
+    rs(IPX, 2 * QT + 1);
+    rs(IPY, 2 * QT + 1);
+    ri(IPL, 2 * QT + 1);
+    QW = 0;
+    var k int = 0;
+    while (k < QT) {
+        let o int = gt(k);
+        let l int = IRG[o + 5] as int;
+        var e int = 0;
+        while (e < 2) {
+            let x real = IRG[o + 2 * e];
+            let y real = IRG[o + 2 * e + 1];
+            var found bool = false;
+            var q int = 0;
+            while (q < QW) {
+                if ((IPL[q] as int) == l && magnitude(IPX[q] - x) <= 1e-6 && magnitude(IPY[q] - y) <= 1e-6) {
+                    found = true;
+                    break;
+                }
+                q += 1;
+            }
+            if (!found) {
+                IPX.push(x);
+                IPY.push(y);
+                IPL.push(l as i32);
+                QW += 1;
+            }
+            e += 1;
+        }
+        k += 1;
+    }
+    var total int = 0;
+    k = 0;
+    while (k < QT) {
+        let o int = gt(k);
+        let l int = IRG[o + 5] as int;
+        var count int = 0;
+        var q int = 0;
+        while (q < QW) {
+            if ((IPL[q] as int) == l && segd(IPX[q], IPY[q], IRG[o], IRG[o + 1], IRG[o + 2], IRG[o + 3]) <= IRG[o + 4] / 2.0 + 1e-6) {
+                count += 1;
+            }
+            q += 1;
+        }
+        if (count > 1) {
+            total += count - 1;
+        }
+        k += 1;
+    }
+    return total;
+}
+fn padcells() int {
+    var total int = 0;
+    var p int = 0;
+    while (p < QP) {
+        let o int = gp(p);
+        let x real = IRG[o];
+        let y real = IRG[o + 1];
+        let w real = IRG[o + 2];
+        let h real = IRG[o + 3];
+        let m int = IRG[o + 4] as int;
+        var l int = 0;
+        while (l < nlay()) {
+            if (((m >> l) & 1) != 0) {
+                var cx int = chi(x + w / 2.0, IRP[0], QX) - clo(x - w / 2.0, IRP[0], QX) + 1;
+                if (cx < 0) {
+                    cx = 0;
+                }
+                var cy int = chi(y + h / 2.0, IRP[1], QY) - clo(y - h / 2.0, IRP[1], QY) + 1;
+                if (cy < 0) {
+                    cy = 0;
+                }
+                total += 1 + cx * cy;
+            }
+            l += 1;
+        }
+        p += 1;
+    }
+    return total;
+}
+fn irraster() {
+    var k int = 0;
+    while (k < QZ) {
+        let o int = gz(k);
+        let l int = IRG[o + 4] as int;
+        if (l < nlay()) {
+            var i int = clo(IRG[o], IRP[0], QX);
+            let iend int = chi(IRG[o + 2], IRP[0], QX);
+            while (i <= iend) {
+                var j int = clo(IRG[o + 1], IRP[1], QY);
+                let jend int = chi(IRG[o + 3], IRP[1], QY);
+                while (j <= jend) {
+                    let c int = cidx(l, i, j);
+                    if (IMP[c] == -1) {
+                        IMP[c] = inode(IRP[0] + ((i as real) + 0.5) * IRP[12], IRP[1] + ((j as real) + 0.5) * IRP[12], l, 0) as i32;
+                    }
+                    j += 1;
+                }
+                i += 1;
+            }
+        }
+        k += 1;
+    }
+    var l int = 0;
+    while (l < nlay()) {
+        var j int = 0;
+        while (j < QY) {
+            var i int = 0;
+            while (i < QX) {
+                let a int = IMP[cidx(l, i, j)] as int;
+                if (a >= 0) {
+                    if (i + 1 < QX) {
+                        iedge(a, IMP[cidx(l, i + 1, j)] as int, sh(l));
+                    }
+                    if (j + 1 < QY) {
+                        iedge(a, IMP[cidx(l, i, j + 1)] as int, sh(l));
+                    }
+                }
+                i += 1;
+            }
+            j += 1;
+        }
+        l += 1;
+    }
+}
+fn irpads() {
+    var pm int = QP;
+    if (pm < 1) {
+        pm = 1;
+    }
+    zi(IPD, pm, -1);
+    var p int = 0;
+    while (p < QP) {
+        let o int = gp(p);
+        let x real = IRG[o];
+        let y real = IRG[o + 1];
+        let w real = IRG[o + 2];
+        let h real = IRG[o + 3];
+        let m int = IRG[o + 4] as int;
+        let n int = inode(x, y, lowbit(m), 2);
+        IPD[p] = n as i32;
+        var l int = 0;
+        while (l < nlay()) {
+            if (((m >> l) & 1) != 0) {
+                var found bool = false;
+                var i int = clo(x - w / 2.0, IRP[0], QX);
+                let iend int = chi(x + w / 2.0, IRP[0], QX);
+                while (i <= iend) {
+                    var j int = clo(y - h / 2.0, IRP[1], QY);
+                    let jend int = chi(y + h / 2.0, IRP[1], QY);
+                    while (j <= jend) {
+                        let b int = IMP[cidx(l, i, j)] as int;
+                        if (b >= 0) {
+                            iedge(n, b, 4.0 * sh(l));
+                            found = true;
+                        }
+                        j += 1;
+                    }
+                    i += 1;
+                }
+                if (!found) {
+                    iedge(n, icell(x, y, l), 4.0 * sh(l));
+                }
+            }
+            l += 1;
+        }
+        p += 1;
+    }
+    var vm int = QV;
+    if (vm < 1) {
+        vm = 1;
+    }
+    zi(IVD, vm, 0);
+    let nl int = nlay();
+    var gbar real = 0.0;
+    if (nl > 1) {
+        gbar = 3.141592653589793 * (IRP[9] + IRP[10]) * IRP[10] / (IRP[8] * IRP[5] / ((nl - 1) as real));
+    }
+    var v int = 0;
+    while (v < QV) {
+        let o int = gv(v);
+        let x real = IRG[o];
+        let y real = IRG[o + 1];
+        IVD[v] = QN as i32;
+        var l int = 0;
+        while (l < nl) {
+            inode(x, y, l, 3);
+            l += 1;
+        }
+        let base int = IVD[v] as int;
+        var k int = 0;
+        while (k < nl - 1) {
+            iedge(base + slay(k), base + slay(k + 1), gbar);
+            k += 1;
+        }
+        l = 0;
+        while (l < nl) {
+            iedge(base + l, icell(x, y, l), 4.0 * sh(l));
+            l += 1;
+        }
+        v += 1;
+    }
+}
+fn irtracks() {
+    var wm int = QW;
+    if (wm < 1) {
+        wm = 1;
+    }
+    zi(IPN, wm, -1);
+    var q int = 0;
+    while (q < QW) {
+        let x real = IPX[q];
+        let y real = IPY[q];
+        let l int = IPL[q] as int;
+        var node int = -1;
+        var found bool = false;
+        var p int = 0;
+        while (p < QP) {
+            let o int = gp(p);
+            if ((((IRG[o + 4] as int) >> l) & 1) != 0 && magnitude(IRG[o] - x) <= 1e-6 && magnitude(IRG[o + 1] - y) <= 1e-6) {
+                node = IPD[p] as int;
+                found = true;
+                break;
+            }
+            p += 1;
+        }
+        if (!found) {
+            var v int = 0;
+            while (v < QV) {
+                let o int = gv(v);
+                if (magnitude(IRG[o] - x) <= 1e-6 && magnitude(IRG[o + 1] - y) <= 1e-6) {
+                    node = (IVD[v] as int) + l;
+                    found = true;
+                    break;
+                }
+                v += 1;
+            }
+        }
+        if (!found) {
+            node = inode(x, y, l, 1);
+            p = 0;
+            while (p < QP) {
+                let o int = gp(p);
+                if ((((IRG[o + 4] as int) >> l) & 1) != 0 && magnitude(x - IRG[o]) <= IRG[o + 2] / 2.0 && magnitude(y - IRG[o + 1]) <= IRG[o + 3] / 2.0) {
+                    iedge(node, IPD[p] as int, 100.0 * sh(l));
+                    break;
+                }
+                p += 1;
+            }
+            var v int = 0;
+            while (v < QV) {
+                let o int = gv(v);
+                let dx real = IRG[o] - x;
+                let dy real = IRG[o + 1] - y;
+                if (sqrt(dx * dx + dy * dy) <= IRP[11] / 2.0) {
+                    iedge(node, (IVD[v] as int) + l, 100.0 * sh(l));
+                    break;
+                }
+                v += 1;
+            }
+            iedge(node, icell(x, y, l), sh(l));
+        }
+        IPN[q] = node as i32;
+        q += 1;
+    }
+    var tq i32[>..];
+    var tt f64[>..];
+    tq.reserve(QW + 1);
+    tt.reserve(QW + 1);
+    var k int = 0;
+    while (k < QT) {
+        let o int = gt(k);
+        let ax real = IRG[o];
+        let ay real = IRG[o + 1];
+        let bx real = IRG[o + 2];
+        let by real = IRG[o + 3];
+        let w real = IRG[o + 4];
+        let l int = IRG[o + 5] as int;
+        let ln real = sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+        if (ln >= 1e-9) {
+            tq.clear();
+            tt.clear();
+            q = 0;
+            while (q < QW) {
+                if ((IPL[q] as int) == l && segd(IPX[q], IPY[q], ax, ay, bx, by) <= w / 2.0 + 1e-6) {
+                    tq.push(q as i32);
+                    tt.push(segt(IPX[q], IPY[q], ax, ay, bx, by));
+                }
+                q += 1;
+            }
+            var i int = 1;
+            while (i < tt.len) {
+                let tv real = tt[i];
+                let iv int = tq[i] as int;
+                var j int = i - 1;
+                while (j >= 0) {
+                    if (tt[j] <= tv) {
+                        break;
+                    }
+                    tt[j + 1] = tt[j];
+                    tq[j + 1] = tq[j];
+                    j -= 1;
+                }
+                tt[j + 1] = tv;
+                tq[j + 1] = iv as i32;
+                i += 1;
+            }
+            i = 0;
+            while (i < tt.len - 1) {
+                let q1 int = tq[i] as int;
+                let q2 int = tq[i + 1] as int;
+                let d real = larger((tt[i + 1] - tt[i]) * ln, 1e-6);
+                let g real = w * cut(l) / (IRP[8] * d);
+                if (IPN[q1] != IPN[q2]) {
+                    iedge(IPN[q1] as int, IPN[q2] as int, g);
+                    IRK.push(IPX[q1]);
+                    IRK.push(IPY[q1]);
+                    IRK.push(IPX[q2]);
+                    IRK.push(IPY[q2]);
+                    IRK.push(l as real);
+                    IRK.push(0.0);
+                    IRK.push(0.0);
+                    IRK.push(w);
+                    IKA.push(IPN[q1]);
+                    IKB.push(IPN[q2]);
+                    IKG.push(g);
+                    QK += 1;
+                }
+                i += 1;
+            }
+        }
+        k += 1;
+    }
+}
+fn iax(xs f64[>..]&, ys f64[>..]&) {
+    var i int = 0;
+    while (i < QN) {
+        var sum real = 0.0;
+        if (IFL[i] == 0) {
+            var s int = IOF[i] as int;
+            let send int = IOF[i + 1] as int;
+            while (s < send) {
+                let j int = IAD[s] as int;
+                if (IFL[j] == 0) {
+                    sum += IAG[s] * (xs[i] - xs[j]);
+                } else {
+                    sum += IAG[s] * xs[i];
+                }
+                s += 1;
+            }
+        }
+        ys[i] = sum;
+        i += 1;
+    }
+}
+fn idot(xs f64[>..]&, ys f64[>..]&) real {
+    var sum real = 0.0;
+    var i int = 0;
+    while (i < QN) {
+        if (IFL[i] == 0) {
+            sum += xs[i] * ys[i];
+        }
+        i += 1;
+    }
+    return sum;
+}
+fn ifact() {
+    var i int = 0;
+    while (i < QN) {
+        if (IFL[i] == 0) {
+            var md real = IDG[i];
+            var s int = IOF[i] as int;
+            let send int = IOF[i + 1] as int;
+            while (s < send) {
+                let k int = IAD[s] as int;
+                if (k < i && IFL[k] == 0) {
+                    let g real = IAG[s];
+                    var sk real = 0.0;
+                    var t int = IOF[k] as int;
+                    let tend int = IOF[k + 1] as int;
+                    while (t < tend) {
+                        let j int = IAD[t] as int;
+                        if (j > k && j != i && IFL[j] == 0) {
+                            sk += IAG[t];
+                        }
+                        t += 1;
+                    }
+                    md -= g / IMD[k] * (g + 0.97 * sk);
+                }
+                s += 1;
+            }
+            IMD[i] = larger(md, 0.25 * IDG[i]);
+        } else {
+            IMD[i] = 1.0;
+        }
+        i += 1;
+    }
+}
+fn iprec() {
+    var i int = 0;
+    while (i < QN) {
+        if (IFL[i] != 0) {
+            IZZ[i] = 0.0;
+        } else {
+            var sum real = IRR[i];
+            var s int = IOF[i] as int;
+            let send int = IOF[i + 1] as int;
+            while (s < send) {
+                let k int = IAD[s] as int;
+                if (k < i && IFL[k] == 0) {
+                    sum += IAG[s] * IZZ[k];
+                }
+                s += 1;
+            }
+            IZZ[i] = sum / IMD[i];
+        }
+        i += 1;
+    }
+    i = QN - 1;
+    while (i >= 0) {
+        if (IFL[i] == 0) {
+            var sum real = 0.0;
+            var s int = IOF[i] as int;
+            let send int = IOF[i + 1] as int;
+            while (s < send) {
+                let k int = IAD[s] as int;
+                if (k > i && IFL[k] == 0) {
+                    sum += IAG[s] * IZZ[k];
+                }
+                s += 1;
+            }
+            IZZ[i] = IZZ[i] + sum / IMD[i];
+        }
+        i -= 1;
+    }
+}
+fn irsolve() int {
+    zi(IOF, QN + 1, 0);
+    var e int = 0;
+    while (e < QE) {
+        let a int = IEA[e] as int;
+        let b int = IEB[e] as int;
+        IOF[a + 1] = IOF[a + 1] + 1;
+        IOF[b + 1] = IOF[b + 1] + 1;
+        e += 1;
+    }
+    var i int = 1;
+    while (i <= QN) {
+        IOF[i] = IOF[i] + IOF[i - 1];
+        i += 1;
+    }
+    var am int = 2 * QE;
+    if (am < 1) {
+        am = 1;
+    }
+    zi(IAD, am, 0);
+    zf(IAG, am, 0.0);
+    var nxt i32[>..];
+    nxt.reserve(IOF.len);
+    i = 0;
+    while (i < IOF.len) {
+        nxt.push(IOF[i]);
+        i += 1;
+    }
+    e = 0;
+    while (e < QE) {
+        let a int = IEA[e] as int;
+        let b int = IEB[e] as int;
+        let g real = IEG[e];
+        let sa int = nxt[a] as int;
+        IAD[sa] = b as i32;
+        IAG[sa] = g;
+        nxt[a] = (sa + 1) as i32;
+        let sb int = nxt[b] as int;
+        IAD[sb] = a as i32;
+        IAG[sb] = g;
+        nxt[b] = (sb + 1) as i32;
+        e += 1;
+    }
+    var m int = QN;
+    if (m < 1) {
+        m = 1;
+    }
+    zi(IFL, m, 2);
+    let p int = IRP[13] as int;
+    var src int = -1;
+    if (p >= 0 && p < QP) {
+        src = IPD[p] as int;
+    }
+    if (src >= 0) {
+        ri(IBF, QN + 1);
+        IBF.push(src as i32);
+        IFL[src] = 0;
+        var head int = 0;
+        while (head < IBF.len) {
+            let n int = IBF[head] as int;
+            var s int = IOF[n] as int;
+            let send int = IOF[n + 1] as int;
+            while (s < send) {
+                let j int = IAD[s] as int;
+                if (IFL[j] == 2) {
+                    IFL[j] = 0;
+                    IBF.push(j as i32);
+                }
+                s += 1;
+            }
+            head += 1;
+        }
+        IFL[src] = 1;
+    }
+    zf(IU, m, 0.0);
+    zf(IB, m, 0.0);
+    zf(IDG, m, 0.0);
+    zf(IMD, m, 0.0);
+    zf(IRR, m, 0.0);
+    zf(IZZ, m, 0.0);
+    zf(IPP, m, 0.0);
+    zf(IQQ, m, 0.0);
+    var k int = 0;
+    while (k < QL) {
+        let pl int = IRG[gl(k)] as int;
+        let amps real = IRG[gl(k) + 1];
+        if (pl >= 0 && pl < QP) {
+            let n int = IPD[pl] as int;
+            if (IFL[n] == 0) {
+                IB[n] = IB[n] + amps;
+            }
+        }
+        k += 1;
+    }
+    i = 0;
+    while (i < QN) {
+        var sum real = 0.0;
+        var s int = IOF[i] as int;
+        let send int = IOF[i + 1] as int;
+        while (s < send) {
+            sum += IAG[s];
+            s += 1;
+        }
+        IDG[i] = larger(sum, 1e-30);
+        i += 1;
+    }
+    ifact();
+    let bn real = sqrt(idot(IB, IB));
+    if (bn == 0.0) {
+        IRO[3] = 0.0;
+        return 0;
+    }
+    i = 0;
+    while (i < m) {
+        IRR[i] = IB[i];
+        i += 1;
+    }
+    iprec();
+    i = 0;
+    while (i < m) {
+        IPP[i] = IZZ[i];
+        i += 1;
+    }
+    var rz real = idot(IRR, IZZ);
+    var most int = IRP[15] as int;
+    if (most < 1) {
+        most = 1;
+    }
+    var rn real = 0.0;
+    var it int = 1;
+    while (it <= most) {
+        iax(IPP, IQQ);
+        let al real = rz / idot(IPP, IQQ);
+        i = 0;
+        while (i < QN) {
+            if (IFL[i] == 0) {
+                IU[i] = IU[i] + al * IPP[i];
+                IRR[i] = IRR[i] - al * IQQ[i];
+            }
+            i += 1;
+        }
+        rn = sqrt(idot(IRR, IRR));
+        if (rn <= 1e-10 * bn) {
+            IRO[3] = rn / bn;
+            return it;
+        }
+        iprec();
+        let r2 real = idot(IRR, IZZ);
+        let be real = r2 / rz;
+        rz = r2;
+        i = 0;
+        while (i < QN) {
+            if (IFL[i] == 0) {
+                IPP[i] = IZZ[i] + be * IPP[i];
+            }
+            i += 1;
+        }
+        it += 1;
+    }
+    IRO[3] = rn / bn;
+    return most;
+}
+fn vat(n int) real {
+    if (IFL[n] == 0) {
+        return IRP[14] - IU[n];
+    }
+    if (IFL[n] == 1) {
+        return IRP[14];
+    }
+    return 0.0;
+}
+fn inbr(l int, i int, j int) int {
+    let a int = IMP[cidx(l, i, j)] as int;
+    if (a >= 0) {
+        if (IFL[a] == 2) {
+            return -1;
+        }
+    }
+    return a;
+}
+fn igrad(a int, b int, n int) real {
+    if (a >= 0 && b >= 0) {
+        return (vat(b) - vat(a)) / (2.0 * IRP[12]);
+    }
+    if (b >= 0) {
+        return (vat(b) - vat(n)) / IRP[12];
+    }
+    if (a >= 0) {
+        return (vat(n) - vat(a)) / IRP[12];
+    }
+    return 0.0;
+}
+fn irpost(it int) {
+    var n int = 0;
+    while (n < QN) {
+        IRV[8 * n + 4] = vat(n);
+        if (IFL[n] <= 1) {
+            IRV[8 * n + 6] = 1.0;
+        } else {
+            IRV[8 * n + 6] = 0.0;
+        }
+        n += 1;
+    }
+    n = 0;
+    while (n < QN) {
+        if (IRV[8 * n + 3] == 0.0 && IFL[n] <= 1) {
+            let l int = IRV[8 * n + 2] as int;
+            let i int = floor((IRV[8 * n] - IRP[0]) / IRP[12]) as int;
+            let j int = floor((IRV[8 * n + 1] - IRP[1]) / IRP[12]) as int;
+            var a int = -1;
+            var b int = -1;
+            if (i > 0) {
+                a = inbr(l, i - 1, j);
+            }
+            if (i + 1 < QX) {
+                b = inbr(l, i + 1, j);
+            }
+            let gx real = igrad(a, b, n);
+            var c int = -1;
+            var d int = -1;
+            if (j > 0) {
+                c = inbr(l, i, j - 1);
+            }
+            if (j + 1 < QY) {
+                d = inbr(l, i, j + 1);
+            }
+            let gy real = igrad(c, d, n);
+            IRV[8 * n + 5] = sqrt(gx * gx + gy * gy) / IRP[8];
+        }
+        n += 1;
+    }
+    var k int = 0;
+    while (k < QK) {
+        let a int = IKA[k] as int;
+        let b int = IKB[k] as int;
+        var amps real = 0.0;
+        if (IFL[a] <= 1 && IFL[b] <= 1) {
+            amps = IKG[k] * (vat(a) - vat(b));
+        }
+        IRK[8 * k + 5] = amps;
+        IRK[8 * k + 6] = magnitude(amps) / (IRK[8 * k + 7] * cut(IRK[8 * k + 4] as int));
+        k += 1;
+    }
+    IRO[0] = QN as real;
+    IRO[1] = QE as real;
+    IRO[2] = it as real;
+    var low real = IRP[14];
+    var seen bool = false;
+    n = 0;
+    while (n < QN) {
+        if (IFL[n] <= 1) {
+            let u real = vat(n);
+            if (!seen || u < low) {
+                low = u;
+                seen = true;
+            }
+        }
+        n += 1;
+    }
+    IRO[4] = low;
+    var best real = 0.0;
+    var atx real = 0.0;
+    var aty real = 0.0;
+    n = 0;
+    while (n < QN) {
+        if (IRV[8 * n + 3] == 0.0 && IRV[8 * n + 5] > best) {
+            best = IRV[8 * n + 5];
+            atx = IRV[8 * n];
+            aty = IRV[8 * n + 1];
+        }
+        n += 1;
+    }
+    k = 0;
+    while (k < QK) {
+        if (IRK[8 * k + 6] > best) {
+            best = IRK[8 * k + 6];
+            atx = (IRK[8 * k] + IRK[8 * k + 2]) / 2.0;
+            aty = (IRK[8 * k + 1] + IRK[8 * k + 3]) / 2.0;
+        }
+        k += 1;
+    }
+    IRO[5] = best;
+    IRO[6] = atx;
+    IRO[7] = aty;
+    var lost real = 0.0;
+    var e int = 0;
+    while (e < QE) {
+        let a int = IEA[e] as int;
+        let b int = IEB[e] as int;
+        if (IFL[a] <= 1 && IFL[b] <= 1) {
+            let dv real = vat(a) - vat(b);
+            lost += IEG[e] * (dv * dv);
+        }
+        e += 1;
+    }
+    IRO[8] = lost;
+    var fed real = 0.0;
+    n = 0;
+    while (n < QN) {
+        if (IFL[n] == 1) {
+            var s int = IOF[n] as int;
+            let send int = IOF[n + 1] as int;
+            while (s < send) {
+                fed += IAG[s] * (IRP[14] - vat(IAD[s] as int));
+                s += 1;
+            }
+        }
+        n += 1;
+    }
+    IRO[9] = fed;
+    var total real = 0.0;
+    var open int = 0;
+    k = 0;
+    while (k < QL) {
+        let p int = IRG[gl(k)] as int;
+        total += IRG[gl(k) + 1];
+        var volts real = 0.0;
+        var linked bool = false;
+        if (p >= 0 && p < QP) {
+            let m int = IPD[p] as int;
+            if (IFL[m] == 0) {
+                linked = true;
+                volts = vat(m);
+            }
+        }
+        if (!linked) {
+            open += 1;
+        }
+        IRO[16 + k] = volts;
+        k += 1;
+    }
+    IRO[10] = total;
+    IRO[11] = open as real;
+    IRO[12] = QX as real;
+    IRO[13] = QY as real;
+    IRO[14] = IRP[12];
+}
+export fn ps_irsetup(np i32, nt i32, nv i32, nz i32, nl i32) i32 {
+    QP = np as int;
+    QT = nt as int;
+    QV = nv as int;
+    QZ = nz as int;
+    QL = nl as int;
+    var m int = 6 * QP + 6 * QT + 2 * QV + 5 * QZ + 2 * QL;
+    if (m < 1) {
+        m = 1;
+    }
+    zf(IRG, m, 0.0);
+    zf(IRP, 16, 0.0);
+    zf(IRO, 16 + QL, 0.0);
+    ps_views();
+    return 0;
+}
+export fn ps_irdrop() i32 {
+    QN = 0;
+    QE = 0;
+    QK = 0;
+    IRP[12] = larger(IRP[12], 0.01);
+    QX = ceil((IRP[2] - IRP[0]) / IRP[12]) as int;
+    if (QX < 1) {
+        QX = 1;
+    }
+    QY = ceil((IRP[3] - IRP[1]) / IRP[12]) as int;
+    if (QY < 1) {
+        QY = 1;
+    }
+    let nl int = nlay();
+    zi(IMP, nl * QX * QY, -1);
+    let c int = irpoints();
+    let pc int = padcells();
+    let nb int = nl * QX * QY + QP + nl * QV + QW + 1;
+    let eb int = 2 * nl * QX * QY + pc + 2 * nl * QV + 3 * QW + c + 1;
+    rs(IRV, 8 * nb);
+    ri(IEA, eb);
+    ri(IEB, eb);
+    rs(IEG, eb);
+    rs(IRK, 8 * (c + 1));
+    ri(IKA, c + 1);
+    ri(IKB, c + 1);
+    rs(IKG, c + 1);
+    irraster();
+    irpads();
+    irtracks();
+    irpost(irsolve());
+    ps_views();
+    return QN as i32;
+}
+extern fn ps_view_f64(id i32, xs real[:]) = "ps_view_f64";
+extern fn ps_view_i32(id i32, xs i32[:]) = "ps_view_i32";
+var GR real = 1.3;
+var NX int = 0;
+var NY int = 0;
+var NR int = 0;
+var NT int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var XS f64[>..];
+var YS f64[>..];
+var EP f64[>..];
+var CR f64[>..];
+var PHI f64[>..];
+var AXC f64[>..];
+var AYC f64[>..];
+var DG f64[>..];
+var RR f64[>..];
+var ZZ f64[>..];
+var PP f64[>..];
+var QQ f64[>..];
+var MD f64[>..];
+var CP f64[>..];
+var TW f64[>..];
+var TL f64[>..];
+var TU f64[>..];
+var KN i32[>..];
+var TF i32[>..];
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn rs(xs f64[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n);
+}
+fn ri(xs i32[>..]&, n int) {
+    xs.clear();
+    xs.reserve(n);
+}
+export fn ps_views() i32 {
+    ps_view_f64(1, IN);
+    ps_view_f64(2, OUT);
+    ps_view_f64(3, XS);
+    ps_view_f64(4, YS);
+    ps_view_f64(5, PHI);
+    ps_view_f64(6, EP);
+    ps_view_f64(7, TW);
+    ps_view_f64(8, TL);
+    ps_view_f64(9, TU);
+    ps_view_f64(12, IRG);
+    ps_view_f64(13, IRP);
+    ps_view_f64(14, IRO);
+    ps_view_f64(15, IRV);
+    ps_view_f64(16, IRK);
+    ps_view_i32(10, KN);
+    ps_view_i32(11, TF);
+    return 0;
+}
+export fn ps_init() i32 {
+    zf(IN, 48, 0.0);
+    zf(OUT, 48, 0.0);
+    zf(XS, 1, 0.0);
+    zf(YS, 1, 0.0);
+    zf(PHI, 1, 0.0);
+    zf(EP, 1, 0.0);
+    zf(CR, 40, 0.0);
+    zf(CP, 8, 0.0);
+    zf(TW, 1, 0.0);
+    zf(TL, 1, 0.0);
+    zf(TU, 1, 0.0);
+    zi(KN, 1, 0);
+    zi(TF, 1, 0);
+    zf(IRG, 1, 0.0);
+    zf(IRO, 1, 0.0);
+    zf(IRV, 1, 0.0);
+    zf(IRK, 1, 0.0);
+    zf(IRP, 16, 0.0);
+    ps_views();
+    return 0;
+}
+export fn ps_tracks(n i32) i32 {
+    NT = n as int;
+    var m int = NT;
+    if (m < 1) {
+        m = 1;
+    }
+    zf(TW, m, 0.0);
+    zf(TL, m, 0.0);
+    zf(TU, m, 0.0);
+    zi(TF, m, 0);
+    ps_views();
+    return n;
+}
+export fn ps_check() i32 {
+    var bad int = 0;
+    var k int = 0;
+    while (k < NT) {
+        if (TL[k] > 0.0 && TW[k] < TL[k] * 0.999) {
+            TF[k] = 1;
+        } else if (TU[k] > 0.0 && TW[k] > TU[k] * 1.001) {
+            TF[k] = 2;
+        } else {
+            TF[k] = 0;
+        }
+        if (TF[k] != 0) {
+            bad += 1;
+        }
+        k += 1;
+    }
+    return bad as i32;
+}
+fn smaller(a real, b real) real {
+    if (b < a) {
+        return b;
+    }
+    return a;
+}
+fn larger(a real, b real) real {
+    if (b > a) {
+        return b;
+    }
+    return a;
+}
+fn magnitude(a real) real {
+    if (a < 0.0) {
+        return -a;
+    }
+    return a;
+}
+fn seg(a real, b real, d0 real, dm real, o f64[>..]&) int {
+    let half real = (b - a) / 2.0;
+    var hs f64[>..];
+    hs.reserve(4001);
+    var d real = smaller(d0, half);
+    var s real = 0.0;
+    while (s + d <= half && hs.len < 4000) {
+        hs.push(d);
+        s += d;
+        d = smaller(d * GR, dm);
+    }
+    let r real = half - s;
+    if (hs.len == 0) {
+        hs.push(half);
+    } else if (r > 0.5 * hs[hs.len - 1]) {
+        hs.push(r);
+    } else {
+        hs[hs.len - 1] = hs[hs.len - 1] + r;
+    }
+    var x real = a;
+    var i int = 0;
+    while (i < hs.len) {
+        x += hs[i];
+        o.push(x);
+        i += 1;
+    }
+    i = hs.len - 1;
+    while (i >= 0) {
+        x += hs[i];
+        o.push(x);
+        i -= 1;
+    }
+    o[o.len - 1] = b;
+    return 0;
+}
+fn sortu(xs f64[>..]&, n i32) int {
+    let m int = n as int;
+    var i int = 1;
+    while (i < m) {
+        let v real = xs[i];
+        var j int = i - 1;
+        while (j >= 0) {
+            if (xs[j] <= v) {
+                break;
+            }
+            xs[j + 1] = xs[j];
+            j -= 1;
+        }
+        xs[j + 1] = v;
+        i += 1;
+    }
+    if (m <= 0) {
+        return 0;
+    }
+    var kept int = 1;
+    i = 1;
+    while (i < m) {
+        let prev real = xs[kept - 1];
+        if (magnitude(xs[i] - prev) > 1e-9 * (1.0 + magnitude(prev))) {
+            xs[kept] = xs[i];
+            kept += 1;
+        }
+        i += 1;
+    }
+    return kept;
+}
+fn rect(x0 real, x1 real, y0 real, y1 real, id real) int {
+    CR[5 * NR] = x0;
+    CR[5 * NR + 1] = x1;
+    CR[5 * NR + 2] = y0;
+    CR[5 * NR + 3] = y1;
+    CR[5 * NR + 4] = id;
+    NR += 1;
+    return 0;
+}
+fn ps_grid() int {
+    let kind int = IN[0] as int;
+    let pair bool = IN[1] > 0.5;
+    let w real = IN[2];
+    let s real = IN[3];
+    let t real = IN[4];
+    let h1 real = IN[5];
+    let h2 real = IN[6];
+    let er1 real = IN[7];
+    let er2 real = IN[8];
+    var mk real = 0.0;
+    if (kind != 1 && IN[9] > 0.0) {
+        mk = IN[9];
+    }
+    let erm real = IN[10];
+    let g real = IN[11];
+    let q real = larger(IN[12], 0.25);
+    var span real = w;
+    if (pair) {
+        span = 2.0 * w + s;
+    }
+    let xa real = -span / 2.0;
+    let yt real = h1 + t;
+    var hh real = h1;
+    if (kind == 1) {
+        hh = h1 + t + h2;
+    }
+    let ext real = 12.0 * larger(hh, w);
+    var cgap real = 0.0;
+    if (kind == 2) {
+        cgap = g;
+    }
+    let xw real = span / 2.0 + cgap + ext;
+    var ytop real = yt + mk + ext;
+    if (kind == 1) {
+        ytop = h1 + t + h2;
+    }
+    var d0x real = smaller(w / 8.0, t / 2.0);
+    if (pair) {
+        d0x = smaller(d0x, s / 8.0);
+    }
+    if (kind == 2) {
+        d0x = smaller(d0x, g / 8.0);
+    }
+    d0x = smaller(d0x, h1 / 8.0) / q;
+    var d0y real = smaller(t / 4.0, h1 / 8.0);
+    if (mk > 0.0) {
+        d0y = smaller(d0y, mk / 3.0);
+    }
+    if (kind == 1) {
+        d0y = smaller(d0y, h2 / 8.0);
+    }
+    d0y = d0y / q;
+    let dm real = larger(hh, w) / (2.0 * q);
+    var bx f64[>..];
+    var by f64[>..];
+    zf(bx, 16, 0.0);
+    zf(by, 16, 0.0);
+    var nbx int = 0;
+    var nby int = 0;
+    bx[nbx] = -xw;
+    nbx += 1;
+    bx[nbx] = xw;
+    nbx += 1;
+    bx[nbx] = xa;
+    nbx += 1;
+    bx[nbx] = xa + w;
+    nbx += 1;
+    if (pair) {
+        bx[nbx] = xa + w + s;
+        nbx += 1;
+        bx[nbx] = xa + 2.0 * w + s;
+        nbx += 1;
+    }
+    if (kind == 2) {
+        bx[nbx] = -span / 2.0 - g;
+        nbx += 1;
+        bx[nbx] = span / 2.0 + g;
+        nbx += 1;
+    }
+    by[nby] = 0.0;
+    nby += 1;
+    by[nby] = h1;
+    nby += 1;
+    by[nby] = yt;
+    nby += 1;
+    by[nby] = ytop;
+    nby += 1;
+    if (mk > 0.0) {
+        by[nby] = yt + mk;
+        nby += 1;
+    }
+    nbx = sortu(bx, nbx as i32);
+    nby = sortu(by, nby as i32);
+    XS.clear();
+    XS.reserve(16384);
+    XS.push(bx[0]);
+    var k int = 0;
+    while (k < nbx - 1) {
+        seg(bx[k], bx[k + 1], d0x, dm, XS);
+        k += 1;
+    }
+    YS.clear();
+    YS.reserve(16384);
+    YS.push(by[0]);
+    k = 0;
+    while (k < nby - 1) {
+        seg(by[k], by[k + 1], d0y, dm, YS);
+        k += 1;
+    }
+    NX = XS.len;
+    NY = YS.len;
+    let nn int = NX * NY;
+    NR = 0;
+    rect(xa, xa + w, h1, yt, 1.0);
+    if (pair) {
+        rect(xa + w + s, xa + 2.0 * w + s, h1, yt, 2.0);
+    }
+    if (kind == 2) {
+        rect(-xw, -span / 2.0 - g, h1, yt, 3.0);
+        rect(span / 2.0 + g, xw, h1, yt, 3.0);
+    }
+    zi(KN, nn, 0);
+    zf(PHI, nn, 0.0);
+    zf(AXC, nn, 0.0);
+    zf(AYC, nn, 0.0);
+    zf(DG, nn, 0.0);
+    zf(RR, nn, 0.0);
+    zf(ZZ, nn, 0.0);
+    zf(PP, nn, 0.0);
+    zf(QQ, nn, 0.0);
+    zf(EP, (NX - 1) * (NY - 1), 0.0);
+    let tol real = 1e-9 * (1.0 + xw + ytop);
+    var j int = 0;
+    while (j < NY) {
+        var i int = 0;
+        while (i < NX) {
+            let n int = j * NX + i;
+            if (i == 0 || i == NX - 1 || j == 0 || j == NY - 1) {
+                KN[n] = 3;
+            } else {
+                KN[n] = 0;
+                var r int = 0;
+                while (r < NR) {
+                    if (CR[5 * r] - tol <= XS[i] && XS[i] <= CR[5 * r + 1] + tol && CR[5 * r + 2] - tol <= YS[j] && YS[j] <= CR[5 * r + 3] + tol) {
+                        KN[n] = (CR[5 * r + 4] as int) as i32;
+                        break;
+                    }
+                    r += 1;
+                }
+            }
+            i += 1;
+        }
+        j += 1;
+    }
+    j = 0;
+    while (j < NY - 1) {
+        let yc real = (YS[j] + YS[j + 1]) / 2.0;
+        var eps real = 1.0;
+        if (kind == 1) {
+            if (yc < h1) {
+                eps = er1;
+            } else {
+                eps = er2;
+            }
+        } else {
+            if (yc < h1) {
+                eps = er1;
+            } else if (mk > 0.0 && yc < yt + mk) {
+                eps = erm;
+            }
+        }
+        var i int = 0;
+        while (i < NX - 1) {
+            EP[j * (NX - 1) + i] = eps;
+            i += 1;
+        }
+        j += 1;
+    }
+    ps_views();
+    return nn;
+}
+fn cell_eps(i int, j int, air i32) real {
+    if (air != 0) {
+        return 1.0;
+    }
+    return EP[j * (NX - 1) + i];
+}
+fn coef(air i32) int {
+    var j int = 0;
+    while (j < NY) {
+        var i int = 0;
+        while (i < NX) {
+            let n int = j * NX + i;
+            var ax real = 0.0;
+            if (i != NX - 1) {
+                var sx real = 0.0;
+                if (j > 0) {
+                    sx += cell_eps(i, j - 1, air) * (YS[j] - YS[j - 1]) / 2.0;
+                }
+                if (j < NY - 1) {
+                    sx += cell_eps(i, j, air) * (YS[j + 1] - YS[j]) / 2.0;
+                }
+                ax = sx / (XS[i + 1] - XS[i]);
+            }
+            AXC[n] = ax;
+            var ay real = 0.0;
+            if (j != NY - 1) {
+                var sy real = 0.0;
+                if (i > 0) {
+                    sy += cell_eps(i - 1, j, air) * (XS[i] - XS[i - 1]) / 2.0;
+                }
+                if (i < NX - 1) {
+                    sy += cell_eps(i, j, air) * (XS[i + 1] - XS[i]) / 2.0;
+                }
+                ay = sy / (YS[j + 1] - YS[j]);
+            }
+            AYC[n] = ay;
+            i += 1;
+        }
+        j += 1;
+    }
+    let nn int = NX * NY;
+    var n int = 0;
+    while (n < nn) {
+        var d real = AXC[n] + AYC[n];
+        if (n % NX > 0) {
+            d += AXC[n - 1];
+        }
+        if (n >= NX) {
+            d += AYC[n - NX];
+        }
+        DG[n] = d;
+        n += 1;
+    }
+    return 0;
+}
+fn flux(xs f64[>..]&, n i32) real {
+    let m int = n as int;
+    return AXC[m] * (xs[m + 1] - xs[m]) + AXC[m - 1] * (xs[m - 1] - xs[m]) + AYC[m] * (xs[m + NX] - xs[m]) + AYC[m - NX] * (xs[m - NX] - xs[m]);
+}
+fn mic() int {
+    let nn int = NX * NY;
+    zf(MD, nn, 1.0);
+    var n int = 0;
+    while (n < nn) {
+        if (KN[n] == 0) {
+            var e real = DG[n];
+            let l int = n - 1;
+            if (KN[l] == 0) {
+                let b real = AXC[l];
+                var c real = 0.0;
+                if (KN[l + NX] == 0) {
+                    c = AYC[l];
+                }
+                e -= (b * b + 0.99 * b * c) / MD[l];
+            }
+            let m int = n - NX;
+            if (KN[m] == 0) {
+                let c real = AYC[m];
+                var b real = 0.0;
+                if (KN[m + 1] == 0) {
+                    b = AXC[m];
+                }
+                e -= (c * c + 0.99 * c * b) / MD[m];
+            }
+            if (e < 0.01 * DG[n]) {
+                e = DG[n];
+            }
+            MD[n] = e;
+        }
+        n += 1;
+    }
+    return 0;
+}
+fn prec() int {
+    let nn int = NX * NY;
+    var n int = 0;
+    while (n < nn) {
+        if (KN[n] == 0) {
+            ZZ[n] = (RR[n] + AXC[n - 1] * ZZ[n - 1] + AYC[n - NX] * ZZ[n - NX]) / MD[n];
+        } else {
+            ZZ[n] = 0.0;
+        }
+        n += 1;
+    }
+    n = nn - 1;
+    while (n >= 0) {
+        if (KN[n] == 0) {
+            ZZ[n] = ZZ[n] + (AXC[n] * ZZ[n + 1] + AYC[n] * ZZ[n + NX]) / MD[n];
+        }
+        n -= 1;
+    }
+    return 0;
+}
+fn cg(va real, vb real) int {
+    let nn int = NX * NY;
+    var n int = 0;
+    while (n < nn) {
+        if (KN[n] == 1) {
+            PHI[n] = va;
+        } else if (KN[n] == 2) {
+            PHI[n] = vb;
+        } else if (KN[n] == 3) {
+            PHI[n] = 0.0;
+        }
+        n += 1;
+    }
+    mic();
+    var tol real = 1e-8;
+    if (IN[13] > 0.0) {
+        tol = IN[13];
+    }
+    var bsum real = 0.0;
+    n = 0;
+    while (n < nn) {
+        if (KN[n] == 0) {
+            var f real = 0.0;
+            if (KN[n + 1] != 0) {
+                f += AXC[n] * PHI[n + 1];
+            }
+            if (KN[n - 1] != 0) {
+                f += AXC[n - 1] * PHI[n - 1];
+            }
+            if (KN[n + NX] != 0) {
+                f += AYC[n] * PHI[n + NX];
+            }
+            if (KN[n - NX] != 0) {
+                f += AYC[n - NX] * PHI[n - NX];
+            }
+            bsum += f * f;
+        }
+        n += 1;
+    }
+    let bn real = sqrt(bsum);
+    if (bn == 0.0) {
+        return 0;
+    }
+    n = 0;
+    while (n < nn) {
+        if (KN[n] == 0) {
+            RR[n] = flux(PHI, n as i32);
+        } else {
+            RR[n] = 0.0;
+        }
+        n += 1;
+    }
+    prec();
+    var rz real = 0.0;
+    n = 0;
+    while (n < nn) {
+        PP[n] = ZZ[n];
+        rz += RR[n] * ZZ[n];
+        n += 1;
+    }
+    var iter int = 1;
+    while (iter <= 30000) {
+        var pq real = 0.0;
+        n = 0;
+        while (n < nn) {
+            if (KN[n] == 0) {
+                QQ[n] = -flux(PP, n as i32);
+            } else {
+                QQ[n] = 0.0;
+            }
+            pq += PP[n] * QQ[n];
+            n += 1;
+        }
+        if (pq <= 0.0) {
+            return iter;
+        }
+        let al real = rz / pq;
+        var rr real = 0.0;
+        n = 0;
+        while (n < nn) {
+            if (KN[n] == 0) {
+                PHI[n] = PHI[n] + al * PP[n];
+                RR[n] = RR[n] - al * QQ[n];
+            }
+            rr += RR[n] * RR[n];
+            n += 1;
+        }
+        if (sqrt(rr) <= tol * bn) {
+            return iter;
+        }
+        prec();
+        var rzn real = 0.0;
+        n = 0;
+        while (n < nn) {
+            rzn += RR[n] * ZZ[n];
+            n += 1;
+        }
+        let be real = rzn / rz;
+        rz = rzn;
+        n = 0;
+        while (n < nn) {
+            if (KN[n] == 0) {
+                PP[n] = ZZ[n] + be * PP[n];
+            }
+            n += 1;
+        }
+        iter += 1;
+    }
+    return 30000;
+}
+fn energy() real {
+    let nn int = NX * NY;
+    var sum real = 0.0;
+    var n int = 0;
+    while (n < nn) {
+        if (n % NX < NX - 1) {
+            let dx real = PHI[n + 1] - PHI[n];
+            sum += AXC[n] * (dx * dx);
+        }
+        if (n < (NY - 1) * NX) {
+            let dy real = PHI[n + NX] - PHI[n];
+            sum += AYC[n] * (dy * dy);
+        }
+        n += 1;
+    }
+    return sum;
+}
+fn solve1(gr real) int {
+    GR = gr;
+    ps_grid();
+    let e0 real = 8.8541878128e-12;
+    var total int = 0;
+    if (IN[1] <= 0.5) {
+        coef(1);
+        total += cg(1.0, 0.0);
+        CP[1] = e0 * energy();
+        coef(0);
+        total += cg(1.0, 0.0);
+        CP[0] = e0 * energy();
+    } else {
+        coef(1);
+        total += cg(1.0, 1.0);
+        CP[3] = e0 * energy() / 2.0;
+        coef(0);
+        total += cg(1.0, 1.0);
+        CP[2] = e0 * energy() / 2.0;
+        var n int = 0;
+        while (n < NX * NY) {
+            PHI[n] = 0.0;
+            n += 1;
+        }
+        coef(1);
+        total += cg(1.0, -1.0);
+        CP[5] = e0 * energy() / 2.0;
+        coef(0);
+        total += cg(1.0, -1.0);
+        CP[4] = e0 * energy() / 2.0;
+    }
+    return total;
+}
+export fn ps_solve() i32 {
+    let q real = larger(IN[12], 0.25);
+    var its int = solve1(1.0 + 0.3 / q);
+    var c1 f64[>..];
+    zf(c1, 6, 0.0);
+    var k int = 0;
+    while (k < 6) {
+        c1[k] = CP[k];
+        k += 1;
+    }
+    its += solve1(1.0 + 0.15 / q);
+    k = 0;
+    while (k < 6) {
+        CP[k] = 2.0 * CP[k] - c1[k];
+        k += 1;
+    }
+    let c real = 299792458.0;
+    if (IN[1] <= 0.5) {
+        let cc real = CP[0];
+        let ca real = CP[1];
+        OUT[0] = 1.0 / (c * sqrt(cc * ca));
+        OUT[1] = cc / ca;
+        OUT[2] = cc * 1e12;
+        OUT[3] = 1e9 / (c * c * ca);
+        OUT[4] = sqrt(cc / ca) / c * 1e9;
+        k = 5;
+        while (k <= 11) {
+            OUT[k] = 0.0;
+            k += 1;
+        }
+    } else {
+        let ce real = CP[2];
+        let cea real = CP[3];
+        let co real = CP[4];
+        let coa real = CP[5];
+        let zo real = 1.0 / (c * sqrt(co * coa));
+        let ze real = 1.0 / (c * sqrt(ce * cea));
+        OUT[5] = zo;
+        OUT[6] = ze;
+        OUT[7] = 2.0 * zo;
+        OUT[8] = ze / 2.0;
+        OUT[9] = co / coa;
+        OUT[10] = ce / cea;
+        OUT[11] = (ze - zo) / (ze + zo);
+        OUT[0] = sqrt(zo * ze);
+        OUT[1] = (OUT[9] + OUT[10]) / 2.0;
+        OUT[2] = co * 1e12;
+        OUT[3] = 1e9 / (c * c * coa);
+        OUT[4] = sqrt(co / coa) / c * 1e9;
+    }
+    OUT[12] = NX as real;
+    OUT[13] = NY as real;
+    OUT[14] = its as real;
+    return its as i32;
+}
+export fn ps_fit(target real, which i32) i32 {
+    var idx int = 0;
+    if (which == 1) {
+        idx = 7;
+    }
+    var w0 real = IN[2];
+    ps_solve();
+    var z0 real = OUT[idx];
+    var z real = z0;
+    var solves int = 1;
+    if (magnitude(z0 / target - 1.0) >= 0.001) {
+        var w1 real = w0 * pow(z0 / target, 1.0 / 0.7);
+        w1 = smaller(larger(w1, w0 / 8.0), w0 * 8.0);
+        var k int = 0;
+        while (k < 12) {
+            IN[2] = w1;
+            ps_solve();
+            let z1 real = OUT[idx];
+            z = z1;
+            solves += 1;
+            if (magnitude(z1 / target - 1.0) < 0.001) {
+                break;
+            }
+            var sl real = -0.7;
+            if (w1 != w0) {
+                sl = (log(z1) - log(z0)) / (log(w1) - log(w0));
+                if (sl > -0.001) {
+                    sl = -0.7;
+                }
+            }
+            var w2 real = exp(log(w1) + (log(target) - log(z1)) / sl);
+            w2 = smaller(larger(w2, w1 / 8.0), w1 * 8.0);
+            w0 = w1;
+            z0 = z1;
+            w1 = w2;
+            k += 1;
+        }
+    }
+    OUT[15] = IN[2];
+    OUT[16] = solves as real;
+    OUT[17] = z;
+    return solves as i32;
+}
+export fn ps_trace() i32 {
+    let w real = IN[16];
+    let t real = IN[17];
+    let dt real = larger(IN[18], 0.1);
+    var k real = 0.048;
+    if (IN[19] > 0.5) {
+        k = 0.024;
+    }
+    let tlen real = IN[20];
+    let cur real = IN[21];
+    let ta real = IN[22];
+    let a real = w * t / 0.00064516;
+    OUT[16] = k * pow(dt, 0.44) * pow(a, 0.725);
+    OUT[17] = pow(cur / (k * pow(dt, 0.44)), 1.0 / 0.725) * 0.00064516 / t;
+    var rise real = 0.0;
+    if (a > 0.0) {
+        rise = pow(cur / (k * pow(a, 0.725)), 1.0 / 0.44);
+    }
+    OUT[18] = rise;
+    OUT[19] = 1.724e-8 * (1.0 + 0.00393 * (ta + OUT[18] - 20.0)) * tlen / (w * t) * 1000.0;
+    OUT[20] = cur * OUT[19];
+    OUT[21] = cur * cur * OUT[19];
+    OUT[22] = w * t;
+    return 0;
+}
+export fn ps_via() i32 {
+    let d real = IN[24];
+    let p real = IN[25];
+    let h real = IN[26];
+    let pd real = IN[27];
+    let ad real = IN[28];
+    let er real = IN[29];
+    let cur real = IN[30];
+    let dt real = larger(IN[31], 0.1);
+    let a real = 3.141592653589793 * p * (d + p);
+    let am real = a / 0.00064516;
+    OUT[24] = 1.724e-8 * h / a * 1000.0;
+    OUT[25] = 0.048 * pow(dt, 0.44) * pow(am, 0.725);
+    OUT[26] = pow(cur / (0.048 * pow(am, 0.725)), 1.0 / 0.44);
+    OUT[27] = 0.2 * h * (log(4.0 * h / d) + 1.0);
+    var cap real = 0.0;
+    if (ad > pd) {
+        cap = 1.41 * er * h / 25.4 * pd / (ad - pd);
+    }
+    OUT[28] = cap;
+    var zv real = 0.0;
+    if (OUT[28] > 0.0) {
+        zv = sqrt(OUT[27] / OUT[28]) * 31.6227766;
+    }
+    OUT[29] = zv;
+    return 0;
+}
+fn main() {
+}

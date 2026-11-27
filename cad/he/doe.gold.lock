@@ -1,0 +1,492 @@
+=== -682fbd3d0aed4da1
+import math;
+=== 6fde53e9c7e1b76e
+var NP int = 0;
+var NK int = 0;
+var SEED int = 7;
+var IN f64[>..];
+var OUT f64[>..];
+var X f64[>..];
+var Y f64[>..];
+var B f64[>..];
+var PRED f64[>..];
+var EFF f64[>..];
+var XO f64[>..];
+var A f64[>..];
+var R f64[>..];
+var F f64[>..];
+var T f64[>..];
+=== -3da8cb5c96d0d071
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+=== -768913db99af24b7
+fn rnd() real {
+    SEED = (SEED * 1103515245 + 12345) % 2147483648;
+    if SEED < 0 {
+        SEED += 2147483648;
+    }
+    return SEED as real / 2147483648.0;
+}
+=== -3b64876f3c76495c
+export fn doe_views() i32 {
+    doe_view_f64(1, IN);
+    doe_view_f64(2, OUT);
+    doe_view_f64(3, X);
+    doe_view_f64(4, Y);
+    doe_view_f64(5, B);
+    doe_view_f64(7, PRED);
+    doe_view_f64(8, EFF);
+    doe_view_f64(9, XO);
+    return 0;
+}
+=== -fb57cfc8e3f5b47
+export fn doe_init() i32 {
+    zf(IN, 16, 0.0);
+    zf(OUT, 64, 0.0);
+    doe_views();
+    return 0;
+}
+=== 69d1418bf6fd1ddf
+export fn doe_size(np_in i32, nk_in i32) i32 {
+    var np int = np_in as int;
+    var nk int = nk_in as int;
+    NP = np;
+    NK = nk;
+    var p int = 1 + 2 * nk + nk * (nk - 1) / 2;
+    var cells int = np * nk;
+    if cells < 1 {
+        cells = 1;
+    }
+    var rows int = np;
+    if rows < 1 {
+        rows = 1;
+    }
+    var cols int = nk;
+    if cols < 1 {
+        cols = 1;
+    }
+    zf(X, cells, 0.0);
+    zf(T, cells, 0.0);
+    zf(Y, rows, 0.0);
+    zf(PRED, rows, 0.0);
+    zf(EFF, cols, 0.0);
+    zf(XO, cols, 0.0);
+    zf(B, p, 0.0);
+    zf(R, p, 0.0);
+    zf(F, p, 0.0);
+    zf(A, p * p, 0.0);
+    doe_views();
+    return 0;
+}
+=== 65e2f741cbb664b9
+export fn doe_lhs(n_in i32, k_in i32, seed_in i32, tries_in i32) i32 {
+    var n int = n_in as int;
+    var k int = k_in as int;
+    var seed int = seed_in as int;
+    var tries int = tries_in as int;
+    doe_size(n as i32, k as i32);
+    SEED = seed;
+    var best real = -1.0;
+    var count int = tries;
+    if count < 1 {
+        count = 1;
+    }
+    var t int = 0;
+    while t < count {
+        var j int = 0;
+        while j < k {
+            var i int = 0;
+            while i < n {
+                T[i * k + j] = i as real;
+                i += 1;
+            }
+            i = n - 1;
+            while i >= 1 {
+                var r int = (rnd() * ((i + 1) as real)) as int;
+                if r > i {
+                    r = i;
+                }
+                var tmp real = T[i * k + j];
+                T[i * k + j] = T[r * k + j];
+                T[r * k + j] = tmp;
+                i -= 1;
+            }
+            i = 0;
+            while i < n {
+                T[i * k + j] = ((T[i * k + j] + rnd()) / (n as real)) * 2.0 - 1.0;
+                i += 1;
+            }
+            j += 1;
+        }
+        var dmin real = 1e300;
+        var a int = 0;
+        while a < n {
+            var b int = a + 1;
+            while b < n {
+                var d2 real = 0.0;
+                var m int = 0;
+                while m < k {
+                    var dv real = T[a * k + m] - T[b * k + m];
+                    d2 += dv * dv;
+                    m += 1;
+                }
+                if d2 < dmin {
+                    dmin = d2;
+                }
+                b += 1;
+            }
+            a += 1;
+        }
+        if dmin > best {
+            best = dmin;
+            var c int = 0;
+            while c < n * k {
+                X[c] = T[c];
+                c += 1;
+            }
+        }
+        t += 1;
+    }
+    OUT[0] = best;
+    return n as i32;
+}
+=== -10d54d67a8c8b1c4
+export fn doe_ff(levels_in i32, k_in i32) i32 {
+    var levels int = levels_in as int;
+    var k int = k_in as int;
+    var n int = 1;
+    var e int = 0;
+    while e < k {
+        n *= levels;
+        e += 1;
+    }
+    doe_size(n as i32, k as i32);
+    var i int = 0;
+    while i < n {
+        var c int = i;
+        var j int = 0;
+        while j < k {
+            var d int = c % levels;
+            X[i * k + j] = -1.0 + 2.0 * (d as real) / ((levels - 1) as real);
+            c = c / levels;
+            j += 1;
+        }
+        i += 1;
+    }
+    return n as i32;
+}
+=== 0f8169975db758e4
+export fn doe_ccd(k_in i32) i32 {
+    var k int = k_in as int;
+    var corners int = 1;
+    var e int = 0;
+    while e < k {
+        corners *= 2;
+        e += 1;
+    }
+    var n int = corners + 2 * k + 1;
+    doe_size(n as i32, k as i32);
+    var i int = 0;
+    while i < corners {
+        var bits int = i;
+        var j int = 0;
+        while j < k {
+            if bits % 2 == 1 {
+                X[i * k + j] = 1.0;
+            } else {
+                X[i * k + j] = -1.0;
+            }
+            bits = bits / 2;
+            j += 1;
+        }
+        i += 1;
+    }
+    var a int = 0;
+    while a < 2 * k {
+        var row int = corners + a;
+        var m int = 0;
+        while m < k {
+            X[row * k + m] = 0.0;
+            m += 1;
+        }
+        if a % 2 == 0 {
+            X[row * k + a / 2] = -1.0;
+        } else {
+            X[row * k + a / 2] = 1.0;
+        }
+        a += 1;
+    }
+    var z int = 0;
+    while z < k {
+        X[(n - 1) * k + z] = 0.0;
+        z += 1;
+    }
+    return n as i32;
+}
+=== 202aecc6b0f7ea60
+fn terms(xs const f64[:], off int, k int, mode int) int {
+    F[0] = 1.0;
+    var count int = 1;
+    if mode >= 1 {
+        var i int = 0;
+        while i < k {
+            F[count] = xs[off + i];
+            count += 1;
+            i += 1;
+        }
+    }
+    if mode == 3 {
+        var q int = 0;
+        while q < k {
+            F[count] = xs[off + q] * xs[off + q];
+            count += 1;
+            q += 1;
+        }
+    }
+    if mode >= 2 {
+        var a int = 0;
+        while a < k {
+            var b int = a + 1;
+            while b < k {
+                F[count] = xs[off + a] * xs[off + b];
+                count += 1;
+                b += 1;
+            }
+            a += 1;
+        }
+    }
+    return count;
+}
+=== 7b20fdd9437c5df7
+fn pv(xs const f64[:], off int, k int, mode int, p int) real {
+    terms(xs, off, k, mode);
+    var sum real = 0.0;
+    var t int = 0;
+    while t < p {
+        sum += B[t] * F[t];
+        t += 1;
+    }
+    return sum;
+}
+=== -50db7a7c5020ec88
+fn nterm(k int, mode int) int {
+    var count int = 1;
+    if mode >= 1 {
+        count += k;
+    }
+    if mode == 3 {
+        count += k;
+    }
+    if mode >= 2 {
+        count += k * (k - 1) / 2;
+    }
+    return count;
+}
+=== -5dbbf5b8680959e2
+fn fit_sqrt(x real) real {
+    if x <= 0.0 {
+        return 0.0;
+    }
+    if x > 1.7e308 {
+        return x;
+    }
+    var v real = x;
+    var scale real = 1.0;
+    while v >= 4.0 {
+        v = v * 0.25;
+        scale = scale * 2.0;
+    }
+    while v < 0.25 {
+        v = v * 4.0;
+        scale = scale * 0.5;
+    }
+    var guess real = 0.5 * (1.0 + v);
+    var step int = 0;
+    while step < 8 {
+        guess = 0.5 * (guess + v / guess);
+        step += 1;
+    }
+    return guess * scale;
+}
+export fn doe_fit(n_in i32, k_in i32, want_in i32) i32 {
+    var n int = n_in as int;
+    var k int = k_in as int;
+    var want int = want_in as int;
+    var mode int = want;
+    while mode > 0 {
+        if nterm(k, mode) <= n {
+            break;
+        }
+        mode -= 1;
+    }
+    var p int = nterm(k, mode);
+    var c int = 0;
+    while c < p * p {
+        A[c] = 0.0;
+        c += 1;
+    }
+    c = 0;
+    while c < p {
+        R[c] = 0.0;
+        c += 1;
+    }
+    var i int = 0;
+    while i < n {
+        terms(X, i * k, k, mode);
+        var a int = 0;
+        while a < p {
+            var b int = 0;
+            while b < p {
+                A[a * p + b] += F[a] * F[b];
+                b += 1;
+            }
+            R[a] += F[a] * Y[i];
+            a += 1;
+        }
+        i += 1;
+    }
+    var d int = 0;
+    while d < p {
+        A[d * p + d] += 1e-9 * (1.0 + A[d * p + d]);
+        d += 1;
+    }
+    var j int = 0;
+    while j < p {
+        var dg real = A[j * p + j];
+        var m int = 0;
+        while m < j {
+            dg -= A[j * p + m] * A[j * p + m];
+            m += 1;
+        }
+        if dg < 1e-300 {
+            dg = 1e-300;
+        }
+        A[j * p + j] = fit_sqrt(dg);
+        var row int = j + 1;
+        while row < p {
+            var v real = A[row * p + j];
+            var q int = 0;
+            while q < j {
+                v -= A[row * p + q] * A[j * p + q];
+                q += 1;
+            }
+            A[row * p + j] = v / A[j * p + j];
+            row += 1;
+        }
+        j += 1;
+    }
+    var f int = 0;
+    while f < p {
+        var fv real = R[f];
+        var fm int = 0;
+        while fm < f {
+            fv -= A[f * p + fm] * B[fm];
+            fm += 1;
+        }
+        B[f] = fv / A[f * p + f];
+        f += 1;
+    }
+    var g int = p - 1;
+    while g >= 0 {
+        var gv real = B[g];
+        var gm int = g + 1;
+        while gm < p {
+            gv -= A[gm * p + g] * B[gm];
+            gm += 1;
+        }
+        B[g] = gv / A[g * p + g];
+        g -= 1;
+    }
+    var total real = 0.0;
+    var u int = 0;
+    while u < n {
+        PRED[u] = pv(X, u * k, k, mode, p);
+        total += Y[u];
+        u += 1;
+    }
+    var ym real = total / (n as real);
+    var sse real = 0.0;
+    var sst real = 0.0;
+    var w int = 0;
+    while w < n {
+        var res real = Y[w] - PRED[w];
+        var dev real = Y[w] - ym;
+        sse += res * res;
+        sst += dev * dev;
+        w += 1;
+    }
+    OUT[0] = p as real;
+    if sst > 1e-300 * (1.0 + ym * ym) {
+        OUT[1] = 1.0 - sse / sst;
+    } else {
+        OUT[1] = 1.0;
+    }
+    OUT[2] = fit_sqrt(sse / (n as real));
+    OUT[3] = mode as real;
+    var h int = 0;
+    while h < k {
+        if mode >= 1 {
+            EFF[h] = 2.0 * B[1 + h];
+        } else {
+            EFF[h] = 0.0;
+        }
+        h += 1;
+    }
+    return p as i32;
+}
+=== -394949d6c2b11325
+export fn doe_best(n_in i32, k_in i32, mode_in i32, sense_in i32) i32 {
+    var n int = n_in as int;
+    var k int = k_in as int;
+    var mode int = mode_in as int;
+    var sense int = sense_in as int;
+    var p int = nterm(k, mode);
+    var s real = -1.0;
+    if sense > 0 {
+        s = 1.0;
+    }
+    var bi int = 0;
+    var i int = 1;
+    while i < n {
+        if s * Y[i] > s * Y[bi] {
+            bi = i;
+        }
+        i += 1;
+    }
+    var c int = 0;
+    while c < k {
+        XO[c] = X[bi * k + c];
+        c += 1;
+    }
+    var sweep int = 0;
+    while sweep < 7 {
+        var j int = 0;
+        while j < k {
+            var bx real = -1.0;
+            XO[j] = bx;
+            var bv real = s * pv(XO, 0, k, mode, p);
+            var m int = 1;
+            while m <= 40 {
+                var x real = -1.0 + 0.05 * (m as real);
+                XO[j] = x;
+                var v real = s * pv(XO, 0, k, mode, p);
+                if v > bv {
+                    bv = v;
+                    bx = x;
+                }
+                m += 1;
+            }
+            XO[j] = bx;
+            j += 1;
+        }
+        sweep += 1;
+    }
+    OUT[4] = pv(XO, 0, k, mode, p);
+    return 0;
+}
+=== 058925cdb7b44661
+fn main() {
+}

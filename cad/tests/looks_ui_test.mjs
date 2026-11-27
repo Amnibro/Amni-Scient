@@ -3,11 +3,11 @@ const root=path.resolve(new URL('../..',import.meta.url).pathname),P=createRequi
 const srv=spawn('python3',['-m','http.server',port,'--bind','127.0.0.1'],{cwd:root,stdio:'ignore'});
 let fail=0,b;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' ('+(typeof x==='string'?x:JSON.stringify(x))+')':''));};
 try{
-  for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${port}/cad/`)).ok)break;}catch{}await sleep(250);}
+  for(let i=0;i<40;i++){try{if((await fetch(`http://127.0.0.1:${port}/cad/#demo`)).ok)break;}catch{}await sleep(250);}
   b=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const p=await b.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   const shot=async n=>{shots&&(fs.mkdirSync(shots,{recursive:true}),await p.screenshot({path:path.join(shots,n+'.png')}));};
   const built=async()=>{await p.evaluate(()=>window.amnicad.API.waitBuild());await sleep(400);};
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.evaluate(()=>localStorage.clear());await p.reload();await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel,{timeout:90000});
   await p.evaluate(()=>window.amnicad.applyActions([{new:true,units:'in'},{material:'al6061'},{add:{type:'box',name:'Plate',w:4,d:2,h:0.75}},{add:{type:'cylinder',name:'Boss',r:0.6,h:1,x:1,y:0,z:0.75}},{add:{type:'hole',name:'Holes',plane:'XY',offset:1.75,d:0.25,thru:true,pts:[[-1.4,0]]}}]));await built();
   ok(await p.evaluate(()=>!!document.querySelector('#tools [data-tab="looks"]')),'Looks button is in the tools bar');
   await p.evaluate(()=>window.amnicad.setTab('looks'));await p.waitForSelector('#tab-looks .lk-sw');

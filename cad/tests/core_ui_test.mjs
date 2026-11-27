@@ -11,7 +11,7 @@ try{
   const r2=T(await call('apply_actions',{actions:[{set:{id:'f2',d:9}},{set:{id:'f4',h:7}}]}));await wb();st=T(await call('get_state'));
   ok(st.features.find(f=>f.id==='f2').d===6,'frozen feature edit is refused');ok(st.features.find(f=>f.id==='f4').h===7,'feature after the bar can still be edited');ok((r2.warnings||[]).some(w=>/freeze/i.test(w)),'refusal is explained in warnings',r2.warnings);
   const r3=T(await call('apply_actions',{actions:[{delete:'f1'}]}));st=T(await call('get_state'));ok(st.features.some(f=>f.id==='f1'),'frozen feature cannot be deleted');
-  const tr=await ev(()=>({frz:[...document.querySelectorAll('#tree .feat.frz')].length,bar:!!document.querySelector('#tree .frzbar'),barAt:[...document.querySelectorAll('#tree > *')].findIndex(e=>e.classList.contains('frzbar'))}));ok(tr.frz===2&&tr.bar&&tr.barAt===2,'tree shows 2 frozen rows and the bar after them',tr);
+  const tab=t=>ev(t=>{const b=[...document.querySelectorAll('#tree .tseg button')].find(b=>b.textContent===t);b&&b.click();},t);await tab('History');await sleep(200);const tr=await ev(()=>({frz:[...document.querySelectorAll('#tree .feat.frz')].length,bar:!!document.querySelector('#tree .frzbar'),barAt:[...document.querySelectorAll('#tree > :not(.tseg)')].findIndex(e=>e.classList.contains('frzbar'))}));ok(tr.frz===2&&tr.bar&&tr.barAt===2,'tree shows 2 frozen rows and the bar after them',tr);
   await ev(()=>window.amnicad.API.commit(d=>{d.features[0].w=99;}));st=T(await call('get_state'));ok(st.features[0].w===80,'commit() refuses changes to frozen features');
   await ev(()=>{window.amnicad.API.active='f1';});await sleep(200);const ed=await ev(()=>({note:!!document.querySelector('#tab-edit .frznote'),inert:!!document.querySelector('#tab-edit .frzbody')&&document.querySelector('#tab-edit .frzbody').inert}));ok(ed.note&&ed.inert,'inspector of a frozen feature is read-only with an Unfreeze button',ed);
   await ev(()=>{[...document.querySelectorAll('#tab-edit .frznote button')][0].click();});await sleep(200);st=T(await call('get_state'));ok(st.freeze===undefined&&!st.features.length===false,'Unfreeze from the inspector lowers the bar to before that feature',st.freeze);
@@ -40,7 +40,7 @@ try{
   ok(await ev(()=>!!window.amnicad.S.sketcher),'rib opens the sketcher for its line');
   const seeded=await ev(()=>window.amnicad.S.sketcher.sketch.ents.filter(e=>!e.ref).length);ok(seeded<=1,'rib opens with at most one suggested line',seeded);
   const sc=q=>ev(q=>window.amnicad.S.sketcher.screen(q),q),clk=async q=>{const[x,y]=await sc(q);await page.mouse.move(x+3,y+3);await sleep(40);await page.mouse.move(x,y);await sleep(40);await page.mouse.down();await sleep(30);await page.mouse.up();await sleep(150);};
-  await ev(()=>document.querySelector('#skx button.t[data-t=line]').click());await clk([-15,25]);await clk([5,5]);await page.keyboard.press('Escape');await sleep(100);
+  await ev(()=>document.querySelector('.skt button.t[data-t=line]').click());await clk([-15,25]);await clk([5,5]);await page.keyboard.press('Escape');await sleep(100);
   const nent=await ev(()=>window.amnicad.S.sketcher.sketch.ents.filter(e=>!e.ref).length);ok(nent===1,'one line drawn in the sketcher',nent);
   await ev(()=>window.amnicad.S.sketcher.finish());await sleep(300);await wb();
   d=await ev(()=>{const f=window.amnicad.API.doc.features.find(x=>x.type==='rib');return{pts:f.pts,sk:!!f.sketch,shapes:f.shapes,t:f.t};});ok(d.pts&&d.pts.length===2&&d.sk&&!d.shapes,'sketched rib stores its line as pts with the constrained sketch',d);
@@ -101,7 +101,7 @@ try{
   const r5=await act([{new:true,units:'mm'},{add:{type:'box',w:20,d:20,h:10}},{add:{type:'box',w:10,d:10,h:10,x:30}}]);
   ok((r5.warnings||[]).some(w=>/separate body/.test(w)),'apply_actions reports the disjoint add as a warning',r5.warnings);
   st=T(await call('get_state'));ok(st.bodies&&st.bodies.length===2&&st.solids===2&&st.bodies[0].volume>0,'get_state lists the bodies',st.bodies&&st.bodies.map(b=>b.volume));
-  const bl=await ev(()=>[...document.querySelectorAll('#tree .palg,#tree .feat.mi,#tree .btn')].map(e=>e.textContent));ok(bl.some(t=>/Bodies \(2\)/.test(t))&&bl.filter(t=>/^▣?\s*Body \d/.test(t)||/Body \d/.test(t)).length>=2&&bl.some(t=>/Combine bodies/.test(t)),'the tree lists both bodies and offers Combine bodies',bl);
+  await tab('Bodies');await sleep(200);const bl=await ev(()=>[...document.querySelectorAll('#tree .bod .nm,#tree .btn')].map(e=>e.textContent));ok(bl.filter(t=>/^▣?\s*Body \d/.test(t)||/Body \d/.test(t)).length>=2&&bl.some(t=>/Combine bodies/.test(t)),'the tree lists both bodies and offers Combine bodies',bl);
   const iw=await ev(()=>document.querySelector('#tree .feat[data-ft=box] .ty')&&1);const warnTxt=await ev(()=>{const A=window.amnicad.API;A.active=A.doc.features[1].id;return null;});await sleep(300);
   ok(await ev(()=>/separate body/.test(document.querySelector('#tab-edit').innerText)),'the inspector of the disjoint feature shows the separate body warning');
   await ev(()=>{window.amnicad.API.active=null;[...document.querySelectorAll('#tree .btn')].find(b=>/Combine bodies/.test(b.textContent)).click();});await sleep(700);

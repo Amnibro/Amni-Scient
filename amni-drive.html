@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#FBFAF8">
+<title>Amni-Drive &mdash; Open Android Auto Replacement &amp; Car Dashboard | AMNI-SCIENT</title>
+<meta name="description" content="Amni-Drive replaces Android Auto on your factory car screen over USB — zero ADB, no account, resizable cockpit layouts, live embedded Amni-Map, built-in OTA auto-updater, and packaged Amni Apps.">
+<meta name="keywords" content="amni-drive,android auto replacement,open android auto,car dashboard android,amni-map,custom car launcher,car ui,ota updates">
+<meta property="og:title" content="Amni-Drive &mdash; Open Android Auto Replacement &amp; Car Dashboard">
+<meta property="og:description" content="Replace Android Auto on factory car displays over USB. Resizable tiles, live embedded Amni-Map, media &amp; web apps, packaged Amni Apps suite, and built-in OTA auto-updates.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amni-scient.com/amni-drive">
+<meta property="og:image" content="https://amni-scient.com/assets/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amni-Drive &mdash; Open Android Auto Replacement &amp; Car Dashboard">
+<meta name="twitter:description" content="Replace Android Auto on factory car displays over USB. Resizable tiles, live embedded Amni-Map, packaged Amni Apps, and built-in OTA auto-updates.">
+<meta name="twitter:image" content="https://amni-scient.com/assets/og-home.jpg">
+<link rel="canonical" href="https://amni-scient.com/amni-drive">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Amni-Drive","url":"https://amni-scient.com/amni-drive","description":"Open USB Android Auto replacement and customizable car dashboard with live embedded Amni-Map, resizable tiles, built-in OTA auto-updater, and packaged Amni Apps.","applicationCategory":"UtilitiesApplication","operatingSystem":"Android","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"AMNI-SCIENT","legalName":"Amniscient, LLC","url":"https://amni-scient.com"}}</script>
+<link rel="stylesheet" href="css/style.css?v=b268">
+<link rel="stylesheet" href="css/shots.css?v=2">
+<style>
+.drv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.4rem}
+.drv-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.2rem;display:flex;flex-direction:column;gap:.55rem}
+.drv-card h3{margin:0;font-size:.98rem;letter-spacing:.04em;color:var(--text)}
+.drv-card p{margin:0;font-size:.86rem;line-height:1.55;color:var(--dim)}
+.drv-badge{display:inline-block;align-self:flex-start;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .55rem;border-radius:99px;border:1px solid var(--accent);color:var(--accent);font-weight:700}
+.drv-suite{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;margin-top:1.4rem}
+.drv-app{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.drv-app.featured{border-color:var(--accent)}
+.drv-app h3{margin:0 0 .25rem;font-size:.96rem;color:var(--text)}
+.drv-app p{margin:0;font-size:.83rem;line-height:1.5;color:var(--dim)}
+.drv-app .drv-meta{font-size:.72rem;color:var(--dim);margin-top:.35rem;font-family:var(--font-mono,monospace)}
+.drv-steps{counter-reset:st;list-style:none;padding:0;margin:1.4rem 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.drv-steps li{counter-increment:st;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;position:relative}
+.drv-steps li::before{content:"0" counter(st);display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:.35rem}
+.drv-steps h4{margin:0 0 .35rem;font-size:.94rem;color:var(--text)}
+.drv-steps p{margin:0;font-size:.84rem;line-height:1.55;color:var(--dim)}
+@media(max-width:860px){.drv-grid,.drv-suite,.drv-steps{grid-template-columns:1fr}.drv-app{flex-direction:column;align-items:flex-start}}
+</style>
+<script>
+(function(){var h=document.documentElement,s=localStorage.getItem('amni-theme')||'light';h.dataset.theme=s;function u(){var b=document.getElementById('theme-toggle');if(b)b.textContent=h.dataset.theme==='dark'?'LIGHT':'DARK';var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',h.dataset.theme==='dark'?'#0A0B0E':'#FBFAF8');}window.addEventListener('DOMContentLoaded',u);window.toggleTheme=function(){var n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;localStorage.setItem('amni-theme',n);u();};})();
+</script>
+</head>
+<body class="pp theme-ai">
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<nav>
+<a href="/" class="logo">AMNI<span>-SCIENT</span></a>
+<div class="links" id="nav-links">
+<a href="/">HOME</a>
+<a href="/amni-calc.html">CALCULATORS</a>
+<a href="/amni-learn.html">LEARN</a>
+<a href="/blog/">BLOG</a>
+<a href="/research.html">RESEARCH</a>
+<div class="nav-dd nav-dd--active">
+<button class="nav-dd-trigger">PROJECTS</button>
+<div class="nav-dd-menu nav-dd-menu--groups">
+<div class="nav-dd-group"><span class="nav-dd-head">BUILD &amp; LEARN</span>
+<a href="/amni-cad.html">AMNI-CAD</a>
+<a href="/construct/">CONSTRUCT</a>
+<a href="/stitch/">AMNI-STITCH</a>
+<a href="/amni-phone.html">AMNI-PHONE</a>
+<a href="/amni-drone.html">AMNI-DRONE</a>
+<a href="/amni-learn.html">AMNI-LEARN</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">AI &amp; DESKTOP</span>
+<a href="/braid">BRAID</a>
+<a href="/amni-os.html">AMNI-OS</a>
+<a href="/amni-tesseract.html">AMNI-TESSERACT</a>
+<a href="/amnitex.html">AMNITEX</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">CHAT</span>
+<a href="/amni-haven.html">AMNI-HAVEN</a>
+<a href="/amni-chat.html">AMNI-CHAT</a>
+<a href="/symphony.html">SYMPHONY</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">PHONE APPS</span>
+<a href="/amni-type.html">AMNI-TYPE</a>
+<a href="/amni-price.html">AMNI-PRICE</a>
+<a href="/amni-crypt.html">AMNI-CRYPT</a>
+<a href="/amni-browse.html">AMNI-BROWSE</a>
+<a href="/amni-hedgedoc.html">HEDGEDOC</a>
+<a href="/amni-drive.html" class="active">AMNI-DRIVE</a>
+<a href="/beta.html#app-map">AMNI-MAP</a>
+</div>
+<div class="nav-dd-group"><span class="nav-dd-head">GAMES</span>
+<a href="/pom-pom-grove.html">POM-POM GROVE</a>
+<a href="/waystone.html">WAYSTONE</a>
+</div>
+<details class="nav-dd-more"><summary>MORE PROJECTS</summary>
+<div class="nav-dd-more-list">
+<a href="/amni-ai.html">AMNI-AI</a>
+<a href="/amni-companion.html">AMNI-COMPANION</a>
+<a href="/amni-llm.html">AMNI-LLM</a>
+<a href="/amni-code.html">AMNI-CODE</a>
+<a href="/gold.html">GOLD</a><a href="/helium-graphics.html">HELIUM GRAPHICS</a>
+<a href="/amni-core.html">AMNI-CORE</a>
+<a href="/amni-mail.html">AMNI-MAIL</a>
+<a href="/amni-space.html">AMNI-SPACE</a>
+<a href="/amni-connect.html">AMNI-CONNECT</a>
+<a href="/grok-remote.html">GROK-REMOTE</a>
+<a href="/amni-chat-relay.html">CHAT RELAY</a>
+<a href="/amni-calc.html">AMNI-CALC</a>
+<a href="/amni-explore.html">AMNI-EXPLORE</a>
+<a href="/amni-weather.html">AMNI-WEATHER</a>
+<a href="/game/">AMNI-GAME</a>
+<a href="/amni-life.html">AMNI-LIFE</a>
+<a href="/amni-prayer.html">AMNI-PRAYER</a>
+</div>
+</details>
+</div>
+</div>
+<a href="/beta.html">BETA</a>
+<a href="/about.html">ABOUT</a>
+<a href="/faq.html">FAQ</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer">SUPPORT</a>
+</div>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+<div class="hamburger" id="hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">
+<span></span><span></span><span></span>
+</div>
+</nav>
+<div class="product-hero">
+<div class="shield-icon float">
+<svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="56" r="38" stroke="#00d48a" stroke-width="2.5" fill="rgba(0,212,138,0.06)"/>
+<circle cx="50" cy="56" r="24" stroke="#00d48a" stroke-width="1.3" stroke-dasharray="6 4" opacity="0.75"/>
+<path d="M50 31 L62 67 L50 59 L38 67 Z" stroke="#00d48a" stroke-width="2" fill="rgba(0,212,138,0.2)"/>
+<circle cx="50" cy="56" r="3.5" fill="#00d48a"/>
+<path d="M22 95 H78" stroke="#00d48a" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+</svg>
+</div>
+<h1>AMNI-DRIVE</h1>
+<p class="desc">OPEN ANDROID AUTO REPLACEMENT &bull; RESIZABLE CAR COCKPIT &bull; LIVE AMNI-MAP &bull; BUILT-IN OTA UPDATES</p>
+<div class="dl" style="margin-top:2rem">
+<a href="/downloads/amni-drive.apk" class="btn btn-primary" download="AmniDrive.apk">DOWNLOAD AMNI-DRIVE APK</a>
+<a href="/downloads/amni-drive-suite.zip" class="btn btn-outline" download="AmniDrive-Suite.zip">CAR SUITE PACK (ZIP)</a>
+<a href="#apps" class="btn btn-outline">PACKAGED AMNI APPS</a>
+<a href="#ota" class="btn btn-outline">OTA AUTO-UPDATER</a>
+</div>
+<nav class="jump" aria-label="On this page"><a href="#cockpit">Cockpit</a><a href="#apps">Amni Apps Pack</a><a href="#ota">OTA Updates</a><a href="#setup">Zero-ADB Setup</a><a href="#get">Get It</a></nav>
+</div>
+
+<section id="cockpit">
+<h2>YOUR CAR SCREEN, YOUR RULES</h2>
+<p class="lede">Plug your Android phone into a factory Android Auto USB port and project the full Amni-Drive cockpit directly onto your car display &mdash; no root, no ADB, no Google Play lock-in, and no tracking.</p>
+<div class="drv-grid">
+<div class="drv-card">
+<span class="drv-badge">USB &amp; Wireless AA</span>
+<h3>Works Across Factory Cars</h3>
+<p>Speaks the full Android Auto protocol over <strong>USB (AOA)</strong> and <strong>Wireless AA (BT RFCOMM + Wi-Fi TCP :5277)</strong> with hardware H.264, multi-frame RX reassembly, Sensor &amp; Bluetooth channel handshakes, optional AAP PCM car-speaker audio, touch, steering keys, rotary knobs, and portrait/ultrawide displays.</p>
+</div>
+<div class="drv-card">
+<span class="drv-badge">Bespoke Geometry</span>
+<h3>Circular, Hex &amp; Resizable Cockpits</h3>
+<p>Switch between bespoke geometric cockpits &mdash; <strong>Twin Chrono</strong> dual gauges, <strong>Solar Orbit</strong>, <strong>Center Orb</strong>, <strong>Horizon Dials</strong>, <strong>Hex Cockpit</strong> chamfered pods, <strong>Capsule Deck</strong>, <strong>Asym Triptych</strong>, plus classic resizable split/tri layouts &amp; Orbital/Honeycomb app launchers.</p>
+</div>
+<div class="drv-card">
+<span class="drv-badge">Media &amp; Widgets</span>
+<h3>Drag-Edit Widgets &amp; Media Box</h3>
+<p>Long-press any widget card to drag-reorder or swipe-remove (Weather, Trip/Speed, Clock, Compass, Quick Media, Quick Apps, Gate, Vehicle). Run YouTube, Spotify, Netflix, Amni-Weather &amp; more directly in the car display with synced phone sign-ins and a built-in car keyboard.</p>
+</div>
+</div>
+</section>
+
+<section id="apps">
+<h2>PACKAGED AMNI APPS FOR YOUR CAR</h2>
+<p class="lede"><strong>Amni-Map is prebuilt directly inside the Amni-Drive APK</strong> for 1-tap offline setup, or grab the <strong>Car Suite Pack ZIP</strong> (Amni-Drive + Amni-Map + Amni-Browse) and keep every companion Amni-Scient app updated via <strong>Settings &rarr; OTA &amp; Amni Apps</strong>.</p>
+<div class="drv-suite">
+<div class="drv-app featured">
+<div>
+<span class="drv-badge">Prebuilt Inside Drive</span>
+<h3>Amni-Map (Car Edition)</h3>
+<p>Pre-packaged inside Amni-Drive and renders live inside circular, hex, capsule, and rectangular map pods via <code>DashInput</code> &mdash; 3D buildings/trees/bridges, 3D vehicle puck, live traffic, offline maps, and voice IPC.</p>
+<div class="drv-meta">v<span data-live="/map/android-latest.json|versionName">2.14.0</span> &bull; <span data-live="/map/android-latest.json|size|mb">40.8 MB</span> &bull; com.amniscient.map</div>
+</div>
+<a href="/downloads/amni-map.apk" class="btn btn-primary" download="AmniMap.apk">APK</a>
+</div>
+<div class="drv-app">
+<div>
+<h3>Amni-Browse</h3>
+<p>1 MB privacy-first browser with pop-up flood shield, dialog trap blocker, and zero telemetry.</p>
+<div class="drv-meta">v<span data-live="/browse/android-latest.json|versionName">0.17.2</span> &bull; <span data-live="/browse/android-latest.json|size|mb">1 MB</span> &bull; com.amniscient.browse</div>
+</div>
+<a href="/downloads/amni-browse.apk" class="btn btn-outline" download="AmniBrowse.apk">APK</a>
+</div>
+<div class="drv-app">
+<div>
+<h3>Amni-Haven</h3>
+<p>Self-hosted private chat, encrypted direct messages, voice/video calls, and live message banners in the car.</p>
+<div class="drv-meta">v<span data-live="/haven/android-latest.json|versionName|ver">8.9.1</span> &bull; com.havenapp.mobile</div>
+</div>
+<a href="/downloads/Haven-latest.apk" class="btn btn-outline" download="AmniHaven.apk">APK</a>
+</div>
+<div class="drv-app">
+<div>
+<h3>Amni-Chat</h3>
+<p>End-to-end encrypted messenger &amp; calls with offline Bluetooth mesh on Android.</p>
+<div class="drv-meta">v1.1.1 &bull; com.amniscient.chat</div>
+</div>
+<a href="/downloads/amni-chat-beta.apk" class="btn btn-outline" download="AmniChat.apk">APK</a>
+</div>
+<div class="drv-app">
+<div>
+<h3>Amni-Type</h3>
+<p>On-device private swipe keyboard &mdash; dictionary and predictions never leave your phone.</p>
+<div class="drv-meta">v<span data-live="/type/version.json|versionName">0.16.3</span> &bull; com.amniscient.type</div>
+</div>
+<a href="/downloads/amni-type.apk" class="btn btn-outline" download="AmniType.apk">APK</a>
+</div>
+<div class="drv-app">
+<div>
+<h3>Amni-Price &amp; HedgeDoc</h3>
+<p>Compare shelf tags &amp; receipts on-device with Amni-Price, or take Markdown notes on your own server with HedgeDoc.</p>
+<div class="drv-meta">Signed direct APKs &bull; Android 8.0+</div>
+</div>
+<div style="display:flex;gap:.45rem;flex-wrap:wrap">
+<a href="/downloads/amni-price.apk" class="btn btn-outline" download="AmniPrice.apk">PRICE</a>
+<a href="https://github.com/Amnibro/hedgedoc-android/releases/latest/download/hedgedoc-android-signed.apk" class="btn btn-outline">HEDGEDOC</a>
+</div>
+</div>
+</div>
+</section>
+
+<section id="ota">
+<h2>BUILT-IN OTA AUTO-UPDATER</h2>
+<p class="lede">Install once and stay current automatically &mdash; no Play Store required.</p>
+<div class="drv-grid">
+<div class="drv-card">
+<span class="drv-badge">Instant Alerts</span>
+<h3>Live In-App &amp; Feed Updates</h3>
+<p>Amni-Drive checks <a href="/drive/android-latest.json"><code>/drive/android-latest.json</code></a> and <a href="/drive/apps-catalog.json"><code>/drive/apps-catalog.json</code></a> on launch and in the background, surfacing a one-tap <strong>UPDATE NOW</strong> pill banner &amp; notification whenever a new release is live.</p>
+</div>
+<div class="drv-card">
+<span class="drv-badge">SHA-256 Verified</span>
+<h3>Signed &amp; Integrity Checked</h3>
+<p>Every OTA download streams directly from <code>amni-scient.com</code>, checks its full SHA-256 hash before ever touching the installer, and is signed with our dedicated release key so upgrades keep all your layouts, themes, and sign-ins intact.</p>
+</div>
+<div class="drv-card">
+<span class="drv-badge">Suite-Wide</span>
+<h3>Updates Companion Apps Too</h3>
+<p>Open <strong>Settings &rarr; OTA &amp; Amni Apps</strong> inside Amni-Drive to install the built-in Amni-Map APK offline or update Amni-Browse, Amni-Haven, Amni-Chat, Amni-Type, Amni-Price, and HedgeDoc over the air.</p>
+</div>
+</div>
+</section>
+
+<section id="setup">
+<h2>ZERO-ADB SETUP</h2>
+<p class="lede">Up and running in your car in under two minutes using only your phone.</p>
+<ol class="drv-steps">
+<li><h4>Install Amni-Drive (Amni-Map Included!)</h4><p>Download and install <strong>Amni-Drive</strong> &mdash; <strong>Amni-Map is prebuilt right inside the APK</strong>, so one tap on the welcome wizard or in-app banner installs live 3D maps immediately (even offline).</p></li>
+<li><h4>Let Amni-Drive Claim USB</h4><p>Open <strong>Settings &rarr; ADVANCED &rarr; AMNI WIRE</strong> and tap <strong>Open Android Auto App Info</strong> &rarr; Disable (or Clear defaults) so stock Android Auto doesn&rsquo;t steal the cable first. Grant <em>Display over other apps</em> if prompted.</p></li>
+<li><h4>Optional: Sync Web Sign-Ins Once</h4><p>Under <strong>AMNI WIRE &rarr; Car Web Sign-Ins</strong>, sign in once to YouTube, Spotify Web, or Netflix on your phone &mdash; cookies stay on-device and sync automatically to your car&rsquo;s Media tile.</p></li>
+<li><h4>Plug In &amp; Drive</h4><p>Plug into your car&rsquo;s Android Auto USB port and tap <strong>Always open Amni-Drive</strong>. Drag dividers to resize tiles, tap <strong>&#10530;</strong> for full screen, and pick Left Rail or Bottom-Center Dock anytime.</p></li>
+</ol>
+</section>
+
+<section id="get">
+<h2>GET IT</h2>
+<p class="lede">Free, signed Android 8.0+ release builds with built-in OTA auto-updates and Obtainium support.</p>
+<div class="dl">
+<a href="/downloads/amni-drive.apk" class="btn btn-primary" download="AmniDrive.apk">DOWNLOAD AMNI-DRIVE APK</a>
+<a href="/downloads/amni-drive-suite.zip" class="btn btn-outline" download="AmniDrive-Suite.zip">CAR SUITE PACK (ZIP)</a>
+<a href="/downloads/amni-map.apk" class="btn btn-outline" download="AmniMap.apk">AMNI-MAP CAR APK</a>
+<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fadd%2Fhttps%3A%2F%2Famni-scient.com%2Fdownloads%2Famni-drive.apk" target="_blank" rel="noopener" class="btn btn-outline">ADD TO OBTAINIUM</a>
+<a href="https://github.com/Amnibro/Amni-Drive" target="_blank" rel="noopener" class="btn btn-outline">GITHUB</a>
+<a href="/privacy-drive.html" class="btn btn-outline">PRIVACY</a>
+</div>
+<p class="note">Amni-Drive v<span data-live="/drive/android-latest.json|versionName">1.14.0</span> (build <span data-live="/drive/android-latest.json|versionCode">92</span>) &bull; <span data-live="/drive/android-latest.json|size|mb">76.1 MB</span> (includes prebuilt Amni-Map v2.14.0) &bull; Android 8.0+ &bull; SHA-256: <code data-live="/drive/android-latest.json|sha256">e533eb369721a3d7d2792cc2ec27b7ece78b1f9df085a8b4e3722eaad3468720</code></p>
+<p class="note">OTA feeds: <a href="/drive/android-latest.json">Amni-Drive JSON</a> &bull; <a href="/drive/apps-catalog.json">Amni Apps Catalog JSON</a> &bull; <a href="/map/android-latest.json">Amni-Map JSON</a> &bull; <a href="/downloads/metadata.json">All Downloads Metadata</a></p>
+</section>
+
+<aside class="support-cta" aria-label="Support"><a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="support-link"><span class="support-ico">&#9749;</span><span>Enjoying this? <strong>Support on Ko-fi</strong></span></a></aside>
+<footer>
+<div class="footer-links">
+<a href="about.html">ABOUT</a>
+<a href="faq.html">FAQ</a>
+<a href="privacy-drive.html">PRIVACY</a>
+<a href="terms.html">TERMS</a>
+<a href="/contact.html">CONTACT</a>
+<a href="/offline.html">OFFLINE</a>
+<a href="https://ko-fi.com/amnibro" target="_blank" rel="noopener noreferrer" class="kofi-link">&#9749; SUPPORT</a>
+</div>
+<p>&copy; 2025-2026 Amniscient, LLC. All rights reserved.</p>
+</footer>
+<script src="/js/live-facts.js" defer></script>
+<script type="module" src="/offline-app/start.js"></script>
+</body>
+</html>

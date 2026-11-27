@@ -1,0 +1,13 @@
+export const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+export const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+export const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+export const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+export const len = a => Math.hypot(a[0], a[1], a[2]);
+export const norm = a => { const l = len(a) || 1; return mul(a, 1 / l); };
+export const IDQ = [0, 0, 0, 1];
+export const quatMul = (a, b) => { const [ax, ay, az, aw] = a, [bx, by, bz, bw] = b; return [aw * bx + ax * bw + ay * bz - az * by, aw * by - ax * bz + ay * bw + az * bx, aw * bz + ax * by - ay * bx + az * bw, aw * bw - ax * bx - ay * by - az * bz]; };
+export const quatFromAxis = (axis, ang) => { const n = norm(axis), s = Math.sin(ang / 2); return [n[0] * s, n[1] * s, n[2] * s, Math.cos(ang / 2)]; };
+export const quatAlign = (from, to) => { const u = norm(from), v = norm(to), d = Math.max(-1, Math.min(1, dot(u, v))), c = cross(u, v); return d > 0.999999 ? IDQ.slice() : d < -0.999999 ? quatFromAxis(Math.abs(u[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0], Math.PI) : (() => { const s = Math.sqrt((1 + d) * 2), inv = 1 / s; return [c[0] * inv, c[1] * inv, c[2] * inv, s / 2]; })(); };
+export const rotVec = (q, v) => { const [x, y, z, w] = q, t = cross([x, y, z], v); return add(v, add(mul(t, 2 * w), cross([x, y, z], mul(t, 2)))); };
+export const rad = d => (d || 0) * Math.PI / 180;

@@ -69,7 +69,31 @@ aside{background:var(--panel);overflow-y:auto;overscroll-behavior:contain;scroll
 .feat .ic{width:22px;height:22px;border-radius:calc(6px*var(--rk,1));display:grid;place-items:center;background:var(--panel2);color:var(--acc);font-size:12px;flex-shrink:0}
 .feat .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .feat .ty{color:var(--mut);font-size:11px}
+.feat:hover .ty,.feat.on .ty{display:none}
+.feat .nm{min-width:3.5em}
 .feat .dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0}
+.bod{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:calc(8px*var(--rk,1));cursor:pointer;border:1px solid transparent;user-select:none;font-weight:650;margin-top:3px}
+.bod:hover{background:var(--panel2)}
+.bod.on{background:var(--acc-soft);border-color:color-mix(in srgb,var(--acc) 40%,transparent)}
+.bod .tw{width:17px;height:17px;display:grid;place-items:center;color:var(--mut);font-size:11px;border-radius:calc(4px*var(--rk,1));flex-shrink:0}
+.bod .tw:hover{color:var(--ink);background:var(--line)}
+.bod .ic{width:22px;height:22px;border-radius:calc(7px*var(--rk,1));display:grid;place-items:center;background:var(--panel2);color:var(--acc);font-size:12px;flex-shrink:0}
+.bod .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bod .ty{color:var(--mut);font-size:11px;font-weight:400}
+.bod .dot{width:7px;height:7px;border-radius:50%;background:var(--err);flex-shrink:0}
+.bod .acts{display:none;gap:2px}
+.bod:hover .acts,.bod.on .acts{display:flex}
+.bod .acts button{width:20px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
+.bod .acts button:hover{color:var(--ink);background:var(--line)}
+.feat .ed{width:22px;height:22px;border-radius:calc(5px*var(--rk,1));color:var(--acc);font-size:13px;flex-shrink:0;display:grid;place-items:center}
+.feat .ed:hover{background:var(--line)}
+.feat.kid{margin-left:17px;border-left:1px solid var(--line);border-radius:0 calc(8px*var(--rk,1)) calc(8px*var(--rk,1)) 0}
+.feat.kid2{margin-left:34px}
+.tseg{display:flex;gap:2px;padding:2px;margin:0 0 7px;background:var(--panel2);border-radius:calc(8px*var(--rk,1))}
+.tseg button{flex:1;padding:4px 7px;border-radius:calc(7px*var(--rk,1));font-size:12px;color:var(--mut)}
+.tseg button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+#selband{position:fixed;z-index:40;pointer-events:none;border:1px solid var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+#selband.cross{border-style:dashed;border-color:#3fb950;background:color-mix(in srgb,#3fb950 14%,transparent)}
 .feat.sup .nm{text-decoration:line-through;color:var(--mut)}
 .feat.rolled{opacity:.42}
 #tab-ai.as-br .refgo{display:none}#tab-ai:not(.as-br) .brnote{display:none}
@@ -95,6 +119,7 @@ dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
 .rollbar .btn{height:16px;padding:0 6px;font-size:11px}
 .feat .acts{display:none;gap:2px}
 .feat:hover .acts,.feat.on .acts{display:flex}
+.feat:not(.on) .acts button:not(:nth-last-child(-n+2)){display:none}
 .feat .acts button{width:20px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
 .feat .acts button:hover{color:var(--ink);background:var(--line)}
 .empty{color:var(--mut);font-size:12.5px;padding:10px 4px}
@@ -259,7 +284,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <header>
 <a class="brand" href="/" title="Amni-Scient home"><svg viewBox="0 0 64 64"><path class="mk" d="M32 8 54 20.5v23L32 56 10 43.5v-23z" fill="none" stroke="var(--acc)" stroke-width="4.5" stroke-linejoin="round"/><path class="mk2" d="M10 20.5 32 33l22-12.5M32 33v23" fill="none" stroke="var(--acc)" stroke-width="3.2" stroke-linejoin="round" opacity=".55"/></svg><span>Amni<b>CAD</b></span></a>
 <input id="docname" aria-label="Document name" value="Untitled part" spellcheck="false">
-<div class="seg ws" id="ws" role="tablist" aria-label="Workspace"><button data-ws="part" class="on" title="Parametric part modeling">Part</button><button data-ws="form" title="Organic sculpting and animation">Form</button><button data-ws="human" title="Character creator: body, face, hair, clothes and rigged export">Character</button><button data-ws="asm" title="Assemblies: components, mates, explode and interference">Assembly</button><button data-ws="tool" title="Tooling: molds, die-casting dies and casting patterns">Tooling</button><button data-ws="ecad" title="Electronics (beta): circuit boards, autorouting, design-rule check and Gerbers">Electronics</button></div><div class="seg ws" id="tools" role="group" aria-label="Tools"><button data-tab="ai" title="AI assistant">AI</button><button data-tab="sim" title="Stress, vibration and heat">FEA</button><button data-tab="flow" title="Flow simulation">CFD</button><button data-tab="mold" title="Injection molding">Mold</button><button data-tab="draw" title="Drawings">Drawing</button><button data-tab="looks" title="Colors, materials and textures: drag onto faces, then photo render">Looks</button><button data-tab="vault" title="Vault">Vault</button></div>
+<div class="seg ws" id="ws" role="tablist" aria-label="Workspace"><button data-ws="part" class="on" title="Parametric part modeling">Part</button><button data-ws="form" title="Organic sculpting and animation">Form</button><button data-ws="human" title="Character creator: body, face, hair, clothes and rigged export">Character</button><button data-ws="asm" title="Assemblies: components, mates, explode and interference">Assembly</button><button data-ws="tool" title="Tooling: molds, die-casting dies and casting patterns">Tooling</button><button data-ws="ecad" title="Electronics (beta): circuit boards, autorouting, design-rule check and Gerbers">Electronics</button><button data-ws="drone" title="Drone (beta): quad, hex, whoop and saucer drones solved for fit and flight time, then built as real CAD parts">Drone</button></div><div class="seg ws" id="tools" role="group" aria-label="Tools"><button data-tab="ai" title="AI assistant">AI</button><button data-tab="sim" title="Stress, vibration and heat">FEA</button><button data-tab="flow" title="Flow simulation">CFD</button><button data-tab="mold" title="Injection molding">Mold</button><button data-tab="draw" title="Drawings">Drawing</button><button data-tab="looks" title="Colors, materials and textures: drag onto faces, then photo render">Looks</button><button data-tab="vault" title="Vault">Vault</button></div>
 <div class="tb">
 <div class="menu" id="m-file"><button title="File"><span>▤</span><span class="lbl">File</span></button><div class="pop">
 <button data-act="new">New part<small>Start from scratch or a template</small></button>
@@ -294,7 +319,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 </header>
 <main>
 <aside id="left" aria-label="Design">
-<div class="sec"><h3>Parameters <button id="p-add">+ Add</button></h3><div id="params"></div></div>
+<div class="sec"><h3>Parameters <button id="p-add">+ Add</button></h3><div id="params"></div><div id="cfgs"></div></div>
 <div class="sec"><h3>Features <span class="mut" id="fcount"></span></h3><div id="tree"></div></div>
 <div class="sec"><h3>Add feature</h3><div id="palette"></div></div>
 </aside>
@@ -311,7 +336,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <div class="chip" id="selinfo"></div>
 <div class="chip" id="legend"><div id="lgt" style="font-weight:600"></div><div class="bar"></div><div class="lab"><span id="lg0"></span><span id="lg1"></span></div></div>
 <div class="chip" id="mprops"></div>
-<div class="chip" id="hint"><h2>Design something real</h2><p>Sketch, pick a template, or describe it.</p><div class="row"><button class="btn pri" id="hint-new">Start from scratch</button><button class="btn" data-act="new">Templates</button><button class="btn" id="hint-ai">Ask the AI</button><button class="btn" id="hint-guide">Guided design</button></div></div>
+<div class="chip" id="hint"><h2>Design something real</h2><p>Start a blank part, pick a template, or describe it to the AI.</p><div class="row"><button class="btn pri" id="hint-new">Blank part</button><button class="btn" data-act="new">Templates</button><button class="btn" id="hint-ai">Ask the AI</button><button class="btn" id="hint-guide">Guided design</button></div></div>
 </div>
 <aside id="right" aria-label="Properties">
 <nav class="rtabs"><button data-tab="edit" class="on">Edit</button><button data-tab="dies">Dies</button><button data-tab="make">Make</button><button data-tab="cutters">Cutters</button><button data-tab="check">Review</button></nav>

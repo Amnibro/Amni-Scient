@@ -1,0 +1,476 @@
+import math;
+extern fn fe_view_f64(id i32, xs real[:]) = "fe_view_f64";
+extern fn fe_view_i32(id i32, xs i32[:]) = "fe_view_i32";
+var NF int = 0;
+var NB int = 0;
+var NK int = 0;
+var NS int = 0;
+var NC int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var SD f64[>..];
+var OR f64[>..];
+var BD f64[>..];
+var SP f64[>..];
+var BV f64[>..];
+var CI i32[>..];
+var OS i32[>..];
+var FL i32[>..];
+var HT i32[>..];
+var HP i32[>..];
+var TF i32[>..];
+var CL i32[>..];
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if n < 1 {
+        return 1;
+    }
+    return n;
+}
+export fn fe_views() i32 {
+    fe_view_f64(1, IN);
+    fe_view_f64(2, OUT);
+    fe_view_f64(3, SD);
+    fe_view_f64(4, OR);
+    fe_view_f64(5, BD);
+    fe_view_f64(6, SP);
+    fe_view_i32(20, CI);
+    fe_view_i32(21, OS);
+    fe_view_i32(22, FL);
+    return 0;
+}
+export fn fe_init() i32 {
+    zf(IN, 64, 0.0);
+    zf(OUT, 64, 0.0);
+    fe_views();
+    return 0;
+}
+export fn fe_size(nf i32, nb i32) i32 {
+    let faces = nf as int;
+    let nbrs = nb as int;
+    NF = faces;
+    NB = nbrs;
+    NK = 2 * faces + nbrs;
+    zf(SD, at1(16 * NK), 0.0);
+    zf(OR, at1(6 * (faces + nbrs)), 0.0);
+    zf(BD, at1(4 * NK), 0.0);
+    fe_views();
+    return 0;
+}
+export fn fe_cells(ns i32, nc i32) i32 {
+    let samples = ns as int;
+    let cells = nc as int;
+    NS = samples;
+    NC = cells;
+    zf(SP, at1(7 * samples), 0.0);
+    zf(BV, at1(cells * NF), 0.0);
+    zi(CI, at1(cells), 0);
+    zi(OS, at1(samples * NK), 0);
+    zi(FL, at1(cells), 0);
+    zi(HT, at1(cells * NF), 0);
+    zi(HP, at1(cells * NF), 0);
+    zi(TF, at1(cells), 0);
+    zi(CL, at1(cells), 0);
+    fe_views();
+    return 0;
+}
+fn axial(k int, px real, py real, pz real) real {
+    let b = 16 * k;
+    return (px - SD[b + 1]) * SD[b + 4] + (py - SD[b + 2]) * SD[b + 5] + (pz - SD[b + 3]) * SD[b + 6];
+}
+fn radial(k int, px real, py real, pz real) real {
+    let b = 16 * k;
+    let zc = axial(k, px, py, pz);
+    let wx = px - SD[b + 1] - zc * SD[b + 4];
+    let wy = py - SD[b + 2] - zc * SD[b + 5];
+    let wz = pz - SD[b + 3] - zc * SD[b + 6];
+    return sqrt(wx * wx + wy * wy + wz * wz);
+}
+fn raw(k int, px real, py real, pz real) real {
+    let b = 16 * k;
+    let kind = SD[b] as int;
+    let r1 = SD[b + 13];
+    let r2 = SD[b + 14];
+    let zc = axial(k, px, py, pz);
+    let rr = radial(k, px, py, pz);
+    if kind == 1 {
+        return zc;
+    }
+    if kind == 2 {
+        return rr - r1;
+    }
+    if kind == 3 {
+        return (rr - (r1 + zc * tan(r2))) * cos(r2);
+    }
+    if kind == 4 {
+        let vx = px - SD[b + 1];
+        let vy = py - SD[b + 2];
+        let vz = pz - SD[b + 3];
+        return sqrt(vx * vx + vy * vy + vz * vz) - r1;
+    }
+    let q = rr - r1;
+    return sqrt(q * q + zc * zc) - r2;
+}
+fn sd(k int, px real, py real, pz real) real {
+    return SD[16 * k + 15] * raw(k, px, py, pz);
+}
+fn gdot(k int, px real, py real, pz real, nx real, ny real, nz real) real {
+    let b = 16 * k;
+    let kind = SD[b] as int;
+    let zx = SD[b + 4];
+    let zy = SD[b + 5];
+    let zz = SD[b + 6];
+    if kind == 1 {
+        return zx * nx + zy * ny + zz * nz;
+    }
+    let vx = px - SD[b + 1];
+    let vy = py - SD[b + 2];
+    let vz = pz - SD[b + 3];
+    if kind == 4 {
+        return vx * nx + vy * ny + vz * nz;
+    }
+    let zc = axial(k, px, py, pz);
+    let rr = radial(k, px, py, pz);
+    var inv real = 0.0;
+    if rr > 1e-12 {
+        inv = 1.0 / rr;
+    }
+    let ux = (vx - zc * zx) * inv;
+    let uy = (vy - zc * zy) * inv;
+    let uz = (vz - zc * zz) * inv;
+    if kind == 2 {
+        return ux * nx + uy * ny + uz * nz;
+    }
+    if kind == 3 {
+        let tn = tan(SD[b + 14]);
+        return (ux - tn * zx) * nx + (uy - tn * zy) * ny + (uz - tn * zz) * nz;
+    }
+    let r1 = SD[b + 13];
+    return (vx - r1 * ux) * nx + (vy - r1 * uy) * ny + (vz - r1 * uz) * nz;
+}
+fn rotv(ax real, ay real, az real, wx real, wy real, wz real, t real, c int) real {
+    let co = cos(t);
+    let si = sin(t);
+    let along = (wx * ax + wy * ay + wz * az) * (1.0 - co);
+    if c == 0 {
+        return ax * co + (wy * az - wz * ay) * si + wx * along;
+    }
+    if c == 1 {
+        return ay * co + (wz * ax - wx * az) * si + wy * along;
+    }
+    return az * co + (wx * ay - wy * ax) * si + wz * along;
+}
+fn bounds(k int, g real) {
+    let lx = IN[13] - g;
+    let ly = IN[14] - g;
+    let lz = IN[15] - g;
+    let hx = IN[16] + g;
+    let hy = IN[17] + g;
+    let hz = IN[18] + g;
+    let margin = 0.05 * sqrt((hx - lx) * (hx - lx) + (hy - ly) * (hy - ly) + (hz - lz) * (hz - lz)) + 1e-7;
+    let b = 16 * k;
+    var umin real = 1e300;
+    var umax real = -1e300;
+    var vmin real = 1e300;
+    var vmax real = -1e300;
+    var zmin real = 1e300;
+    var zmax real = -1e300;
+    for i in 0..8 {
+        var cx real = lx;
+        var cy real = ly;
+        var cz real = lz;
+        if i % 2 == 1 {
+            cx = hx;
+        }
+        if (i / 2) % 2 == 1 {
+            cy = hy;
+        }
+        if i / 4 == 1 {
+            cz = hz;
+        }
+        let vx = cx - SD[b + 1];
+        let vy = cy - SD[b + 2];
+        let vz = cz - SD[b + 3];
+        let u = vx * SD[b + 7] + vy * SD[b + 8] + vz * SD[b + 9];
+        let v = vx * SD[b + 10] + vy * SD[b + 11] + vz * SD[b + 12];
+        let z = vx * SD[b + 4] + vy * SD[b + 5] + vz * SD[b + 6];
+        if u < umin {
+            umin = u;
+        }
+        if u > umax {
+            umax = u;
+        }
+        if v < vmin {
+            vmin = v;
+        }
+        if v > vmax {
+            vmax = v;
+        }
+        if z < zmin {
+            zmin = z;
+        }
+        if z > zmax {
+            zmax = z;
+        }
+    }
+    let kind = SD[b] as int;
+    let pi = 3.141592653589793;
+    let o = 4 * k;
+    if kind == 1 {
+        BD[o] = umin - margin;
+        BD[o + 1] = umax + margin;
+        BD[o + 2] = vmin - margin;
+        BD[o + 3] = vmax + margin;
+        return;
+    }
+    BD[o] = 0.0;
+    BD[o + 1] = 2.0 * pi;
+    if kind == 2 {
+        BD[o + 2] = zmin - margin;
+        BD[o + 3] = zmax + margin;
+        return;
+    }
+    if kind == 3 {
+        let r1 = SD[b + 13];
+        let r2 = SD[b + 14];
+        var lo real = (zmin - margin) / cos(r2);
+        var hi real = (zmax + margin) / cos(r2);
+        let sn = sin(r2);
+        if fabs(sn) > 1e-9 {
+            let va = -r1 / sn;
+            if va < 0.0 {
+                if va > lo {
+                    lo = va;
+                }
+            } else {
+                if va < hi {
+                    hi = va;
+                }
+            }
+        }
+        BD[o + 2] = lo;
+        BD[o + 3] = hi;
+        return;
+    }
+    if kind == 4 {
+        BD[o + 2] = -pi / 2.0;
+        BD[o + 3] = pi / 2.0;
+        return;
+    }
+    BD[o + 2] = 0.0;
+    BD[o + 3] = 2.0 * pi;
+}
+export fn fe_prep() i32 {
+    let mode = IN[0] as int;
+    for j in 0..NF {
+        let a = 6 * j;
+        if gdot(j, OR[a], OR[a + 1], OR[a + 2], OR[a + 3], OR[a + 4], OR[a + 5]) >= 0.0 {
+            SD[16 * j + 15] = 1.0;
+        } else {
+            SD[16 * j + 15] = -1.0;
+        }
+    }
+    for m in 0..NB {
+        let a = 6 * (NF + m);
+        let k = 2 * NF + m;
+        if gdot(k, OR[a], OR[a + 1], OR[a + 2], OR[a + 3], OR[a + 4], OR[a + 5]) >= 0.0 {
+            SD[16 * k + 15] = 1.0;
+        } else {
+            SD[16 * k + 15] = -1.0;
+        }
+    }
+    for j in 0..NF {
+        let b = 16 * (NF + j);
+        for q in 0..16 {
+            SD[b + q] = SD[16 * j + q];
+        }
+        if mode == 1 {
+            let d = IN[1];
+            let s = SD[b + 15];
+            let kind = SD[b] as int;
+            if kind == 1 {
+                for c in 0..3 {
+                    SD[b + 1 + c] = SD[b + 1 + c] + d * s * SD[b + 4 + c];
+                }
+            }
+            if kind == 2 || kind == 4 {
+                SD[b + 13] = SD[b + 13] + d * s;
+                if !(SD[b + 13] > 1e-9) {
+                    return (0 - (j + 1)) as i32;
+                }
+            }
+            if kind == 3 {
+                SD[b + 13] = SD[b + 13] + d * s / cos(SD[b + 14]);
+            }
+            if kind == 5 {
+                SD[b + 14] = SD[b + 14] + d * s;
+                if !(SD[b + 14] > 1e-9) {
+                    return (0 - (j + 1)) as i32;
+                }
+            }
+        }
+        if mode == 2 {
+            var wx real = IN[8];
+            var wy real = IN[9];
+            var wz real = IN[10];
+            let al = sqrt(wx * wx + wy * wy + wz * wz);
+            var t real = 0.0;
+            if al > 1e-12 && IN[11] != 0.0 {
+                wx = wx / al;
+                wy = wy / al;
+                wz = wz / al;
+                t = IN[11] * 3.141592653589793 / 180.0;
+            }
+            if t != 0.0 {
+                let ox = SD[b + 1] - IN[5];
+                let oy = SD[b + 2] - IN[6];
+                let oz = SD[b + 3] - IN[7];
+                for c in 0..3 {
+                    SD[b + 1 + c] = rotv(ox, oy, oz, wx, wy, wz, t, c) + IN[5 + c];
+                }
+                for e in 0..3 {
+                    let at = b + 4 + 3 * e;
+                    let ax = SD[at];
+                    let ay = SD[at + 1];
+                    let az = SD[at + 2];
+                    for c in 0..3 {
+                        SD[at + c] = rotv(ax, ay, az, wx, wy, wz, t, c);
+                    }
+                }
+            }
+            for c in 0..3 {
+                SD[b + 1 + c] = SD[b + 1 + c] + IN[2 + c];
+            }
+        }
+    }
+    var g real = 0.0;
+    if mode == 1 {
+        g = fabs(IN[1]);
+    }
+    for j in 0..NF {
+        bounds(j, g);
+    }
+    for j in 0..NF {
+        bounds(NF + j, 0.0);
+    }
+    for m in 0..NB {
+        bounds(2 * NF + m, 0.0);
+    }
+    return 0;
+}
+export fn fe_onsurf() i32 {
+    let mode = IN[0] as int;
+    var count int = 0;
+    for i in 0..NS {
+        let px = SP[7 * i + 1];
+        let py = SP[7 * i + 2];
+        let pz = SP[7 * i + 3];
+        for k in 0..NK {
+            OS[i * NK + k] = 0;
+            let fresh = k >= NF && k < 2 * NF;
+            if !fresh || mode == 1 || mode == 2 {
+                if fabs(sd(k, px, py, pz)) < IN[12] {
+                    OS[i * NK + k] = 1;
+                    count = count + 1;
+                }
+            }
+        }
+    }
+    return count as i32;
+}
+export fn fe_decide() i32 {
+    let mode = IN[0] as int;
+    for c in 0..NC {
+        TF[c] = 0;
+        CL[c] = 1;
+        for j in 0..NF {
+            HT[c * NF + j] = 0;
+            HP[c * NF + j] = 0;
+            BV[c * NF + j] = 0.0;
+        }
+    }
+    for i in 0..NS {
+        let c = SP[7 * i] as int;
+        let px = SP[7 * i + 1];
+        let py = SP[7 * i + 2];
+        let pz = SP[7 * i + 3];
+        var on bool = false;
+        for j in 0..NF {
+            if OS[i * NK + j] == 1 {
+                TF[c] = 1;
+                HT[c * NF + j] = 1;
+                on = true;
+            }
+        }
+        for j in 0..NF {
+            if OS[i * NK + NF + j] == 1 {
+                HP[c * NF + j] = 1;
+            }
+        }
+        for m in 0..NB {
+            if OS[i * NK + 2 * NF + m] == 1 {
+                on = true;
+            }
+        }
+        if !on {
+            CL[c] = 0;
+        }
+        if mode == 1 || mode == 2 {
+            for j in 0..NF {
+                let v = sd(NF + j, px, py, pz);
+                if fabs(v) > fabs(BV[c * NF + j]) {
+                    BV[c * NF + j] = v;
+                }
+            }
+        }
+    }
+    OUT[0] = 0.0;
+    OUT[1] = 0.0;
+    for c in 0..NC {
+        FL[c] = 0;
+        if mode == 0 {
+            if TF[c] == 1 && CL[c] == 1 {
+                FL[c] = 1;
+            }
+        }
+        if mode == 1 || mode == 2 {
+            var found bool = false;
+            var nw i32 = 1;
+            for j in 0..NF {
+                var flag bool = false;
+                if TF[c] == 1 {
+                    flag = HT[c * NF + j] != 0;
+                } else {
+                    flag = HP[c * NF + j] != 0;
+                }
+                if flag {
+                    found = true;
+                    if !(BV[c * NF + j] < 0.0) {
+                        nw = 0;
+                    }
+                }
+            }
+            if found && nw != CI[c] {
+                FL[c] = 1;
+            }
+        }
+        if FL[c] == 1 && CI[c] == 0 {
+            OUT[0] = OUT[0] + 1.0;
+        }
+        if FL[c] == 1 && CI[c] == 1 {
+            OUT[1] = OUT[1] + 1.0;
+        }
+    }
+    return ((OUT[0] + OUT[1]) as int) as i32;
+}
+fn main() {
+}

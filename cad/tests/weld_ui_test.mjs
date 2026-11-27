@@ -1,0 +1,33 @@
+import {startE2E} from './e2e_lib.mjs';
+const E=await startE2E({web:+process.env.E2E_WEB||18897,mcp:+process.env.E2E_MCP||18898,width:1440,height:900}),p=E.page,sleep=E.sleep,shots=process.env.SHOTS||null;
+let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' · '+String(typeof x==='string'?x:JSON.stringify(x)).slice(0,240):''));};
+const doc=()=>p.evaluate(()=>JSON.parse(JSON.stringify(window.amnicad.API.doc))),built=()=>p.evaluate(()=>window.amnicad.API.waitBuild()).then(()=>sleep(600)),shot=async n=>shots&&await p.screenshot({path:shots+'/'+n+'.png'});
+const txt=s=>p.evaluate(s=>(document.querySelector(s)||{}).textContent||'',s),pick=(s,v)=>p.evaluate((s,v)=>{const e=document.querySelector(s);if(!e)return false;e.value=v;e.dispatchEvent(new Event('change',{bubbles:true}));return true;},s,v),rows=()=>p.evaluate(()=>[...document.querySelectorAll('#wl-cut tr[data-item]')].map(r=>[...r.cells].map(c=>c.textContent)));
+const open=async()=>{await p.evaluate(()=>document.querySelector('.feat[data-ft=frame]').click());await p.waitForSelector('#wl-fam',{timeout:30000});await sleep(300);},fr=()=>doc().then(D=>D.features.find(f=>f.type==='frame'));
+try{
+  await E.connect();await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'steel1018',params:[],features:[{id:'f1',type:'frame',pts:[[0,0,0],[0,0,500],[700,0,500],[700,0,0]],members:[[1,2],[2,3],[3,4]],sec:'rtube',b:40,h:40,t:3},{id:'s1',type:'sketch',plane:'XZ',shapes:[{k:'rect',x:350,y:250,w:700,h:500}]}]}));await built();await open();
+  const s0=await p.evaluate(()=>({fam:document.getElementById('wl-fam').value,size:!!document.getElementById('wl-size'),groups:[...document.querySelectorAll('#wl-fam optgroup')].map(g=>g.label+':'+g.children.length)}));
+  ok(s0.fam===''&&!s0.size&&s0.groups.join()==='AISC (US, inches):10,EN (Europe, millimeters):12','a custom frame shows the family picker on Custom, grouped by standard',s0);
+  let R=await rows();ok(R.length===2&&R[0][1]==='2'&&/520 mm/.test(R[0][3])&&/0° \/ 45°/.test(R[0][4])&&/740 mm/.test(R[1][3])&&/45° \/ 45°/.test(R[1][4]),'the cut list shows 2 × 520 mm and 1 × 740 mm with their miter angles',R);
+  ok(/3 pieces/.test(await txt('#wl-sum'))&&/13\.1 lb|5\.94 kg/.test(await txt('#wl-sum')),'the total weight matches the solid',await txt('#wl-sum'));await shot('weld_custom');
+  const shs=await p.evaluate(()=>[...document.querySelectorAll('#wl-fam option')].find(o=>/SHS/.test(o.textContent)).value);await pick('#wl-fam',shs);await built();await open();
+  ok((await fr()).std==='SHS 70x70x4'&&!!(await p.$('#wl-size')),'choosing a family picks a middle size and shows the size list',(await fr()).std);
+  await pick('#wl-size','SHS 40x40x3');await built();await open();let F=await fr();const info=await txt('#wl-info');
+  ok(F.std==='SHS 40x40x3'&&/kg\/m/.test(info)&&/lb\/ft/.test(info)&&/Steel 1018/.test(info),'choosing a size stores it and shows weight per length',info);
+  ok(!(await p.evaluate(()=>[...document.querySelectorAll('#tab-edit .fld label, .fld label')].some(l=>/^Width/.test(l.textContent)&&l.offsetParent))),'catalog sizes hide the custom size fields');
+  R=await rows();ok(R.length===2&&/SHS 40x40x3/.test(R[0][2]),'the cut list names the catalog size',R[0]);
+  const ends=await p.evaluate(()=>{const s=[...document.querySelectorAll('select')].find(s=>[...s.options].some(o=>/Mitered corners/.test(o.textContent)));s.id='wl-ends-test';return[...s.options].map(o=>o.textContent);});
+  ok(ends.join('|')==='Mitered corners|Butt joints (first member runs through)|Overlap at joints (no trims)','corner styles are spelled out',ends);await pick('#wl-ends-test','butt');await built();await open();
+  R=await rows();ok((await fr()).ends==='butt'&&R.length===3&&R.map(r=>r[3]).join()==='520 mm,700 mm,480 mm','butt joints give three square pieces',R.map(r=>r[3]));
+  await pick('#wl-stock','2000');await sleep(500);const bars=await txt('[data-bars]');ok(/1 bar of 2,000 mm/.test(bars)&&/291 mm offcut/.test(bars),'stock length plans the bars with a 3 mm kerf',bars);
+  ok(await p.evaluate(()=>JSON.parse(localStorage.getItem('amnicad.cut')||'{}').stock===2000),'stock length is remembered');
+  ok(await p.evaluate(()=>{const b=document.getElementById('wl-csv');b&&b.click();return!!b;}),'Copy CSV is offered');
+  ok(/Members from/.test(await txt('#wl-panel'))&&!!(await p.$('#wl-sk')),'a layout sketch can feed members');await p.evaluate(()=>document.getElementById('wl-sk-add').click());await built();F=await fr();
+  ok(F.members.length===4&&JSON.stringify(F.members[3])==='[1,4]'&&F.pts.length===4,'adding members from the sketch closes the frame without duplicate joints',F.members);await open();
+  R=await rows();ok(R.reduce((a,r)=>a+ +r[1],0)===4,'the cut list now has four pieces',R);await shot('weld_panel');
+  await p.evaluate(()=>window.amnicad.loadDoc({units:'in',material:'steel1018',params:[],features:[{id:'f1',type:'frame',pts:[[0,0,0],[0,0,20],[30,0,20],[30,0,0]],members:[[1,2],[2,3],[3,4]],std:'L2x2x1/4'}]}));await built();await open();
+  R=await rows();ok(R.length===3&&R[0][5]===R[2][5]&&/\d in$/.test(R[0][3])&&/\d in$/.test(R[1][3])&&/L2x2x1\/4/.test(R[0][2]),'inch documents list lengths in inches; the two angle legs face opposite ways, so their long points differ but they weigh the same',R);
+  ok((await p.evaluate(()=>window.amnicad.S.mesh&&window.amnicad.S.mesh.props.nSolids))===1,'a mitered angle frame builds as one solid');await shot('weld_inch');
+  ok(!E.errs.length,'no page errors',E.errs.slice(0,3));
+}catch(e){fail++;console.log('FAIL exception '+(e.stack||e.message));}
+await E.close();console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);

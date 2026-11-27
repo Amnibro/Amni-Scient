@@ -5,7 +5,7 @@ const BRACKET={name:'Shelf bracket',units:'in',params:[],material:'al6061',featu
 try{await sleep(700);SH&&fs.mkdirSync(SH,{recursive:true});br=await P.launch({executablePath:'/usr/bin/google-chrome-stable',headless:'new',userDataDir:ud,protocolTimeout:300000,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   const p=await br.newPage();await p.setViewport({width:1440,height:900});const errs=[];p.on('pageerror',e=>errs.push(e.message));const shot=async n=>{SH&&await p.screenshot({path:path.join(SH,n+'.png')});};
   const st=()=>p.evaluate(()=>window.amnicad.API.guide.state()),ring=()=>p.evaluate(()=>{const r=document.querySelector('#gd-ring'),s=document.querySelector('#gd-say');if(!r)return null;const b=r.getBoundingClientRect(),c=document.elementsFromPoint(b.left+b.width/2,b.top+b.height/2).find(e=>e.id!=='gd-ring'&&e.id!=='gd-say');return{say:s&&s.textContent,hit:c&&(c.closest('button,[title]')||c).textContent.trim().slice(0,40),title:c&&(c.closest('[title]')||{}).title||''};});
-  await p.goto(`http://127.0.0.1:${port}/cad/`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.guide,{timeout:150000});
+  await p.goto(`http://127.0.0.1:${port}/cad/#demo`);await p.waitForFunction(()=>window.amnicad&&window.amnicad.S.kernel&&window.amnicad.API.guide,{timeout:150000});
   ok(await p.evaluate(()=>{const b=document.querySelector('header #b-guide');return!!b&&b.offsetParent!==null&&/Guided design/.test(b.textContent)&&b.getAttribute('aria-pressed')!=='true';}),'Guided design has its own header button');
   ok(await p.evaluate(()=>!!document.querySelector('#hint-guide')),'the empty-part card offers Guided design');
   await p.evaluate(async()=>{const A=window.amnicad.API;A.loadDoc({name:'Untitled part',units:'in',material:'al6061',params:[],features:[]},null);await A.waitBuild();});await sleep(900);await p.click('#hint-guide');await sleep(600);
@@ -17,7 +17,7 @@ try{await sleep(700);SH&&fs.mkdirSync(SH,{recursive:true});br=await P.launch({ex
   ok(await p.evaluate(()=>window.amnicad.API.doc.guide&&/40 lb shelf/.test(window.amnicad.API.doc.guide.brief)),'the description is saved with the design file');
   await p.click('#gd-next');await sleep(500);
   s=await st();ok(s.step==='shape','Next moves to Shape it',s.step);
-  await p.click('#gd-show');await sleep(700);let r=await ring();ok(r&&/Start from scratch/.test(r.hit),'Show me rings the Start from scratch button on an empty part',r);await shot('g02-show-me-shape');
+  await p.click('#gd-show');await sleep(700);let r=await ring();ok(r&&/Blank part/.test(r.hit),'Show me rings the Blank part button on an empty part',r);await shot('g02-show-me-shape');
   await p.keyboard.press('Escape');await sleep(200);ok(!await ring(),'Escape clears the pointer');
   await p.evaluate(async d=>{const A=window.amnicad.API,g=A.doc.guide;A.loadDoc({...d,guide:g},null);await A.waitBuild();},BRACKET);await sleep(1500);
   s=await st();ok(s.steps[1].ok&&s.step==='mat','with a part built, Shape is done and Material is next',s.steps[1].st);

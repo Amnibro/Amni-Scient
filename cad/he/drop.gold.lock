@@ -1,0 +1,465 @@
+=== -310837d07241ea1f
+import math;
+=== 1451f188a14a0ea8
+var NN int = 0;
+var GX int = 0;
+var GY int = 0;
+var GZ int = 0;
+var NH int = 0;
+var STEP int = 0;
+var NREC int = 0;
+var STRIDE int = 0;
+var DONE int = 0;
+var T real = 0.0;
+var DT real = 0.0;
+var PF real = 0.0;
+var MT real = 0.0;
+var E0 real = 0.0;
+var QUIET real = 0.0;
+var TOUCH real = 0.0;
+var IN f64[>..];
+var OUT f64[>..];
+var KE f64[>..];
+var DB f64[>..];
+var M f64[>..];
+var X f64[>..];
+var U f64[>..];
+var V f64[>..];
+var F f64[>..];
+var RS f64[>..];
+var VE f64[>..];
+var VN f64[>..];
+var CN f64[>..];
+var UD f64[>..];
+var UP f64[>..];
+var HI f64[>..];
+var UE f64[>..];
+var FE f64[>..];
+var SOL i32[>..];
+=== 1106c6b520ca80c8
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if n < 1 {
+        return 1;
+    }
+    return n;
+}
+=== -22ef954fea910f2b
+export fn dr_views() i32 {
+    dr_view_f64(1, IN);
+    dr_view_f64(2, OUT);
+    dr_view_f64(3, KE);
+    dr_view_f64(4, DB);
+    dr_view_f64(5, M);
+    dr_view_f64(6, X);
+    dr_view_f64(7, U);
+    dr_view_f64(8, V);
+    dr_view_f64(9, VE);
+    dr_view_f64(10, VN);
+    dr_view_f64(11, UD);
+    dr_view_f64(12, HI);
+    dr_view_f64(13, UP);
+    dr_view_i32(20, SOL);
+    return 0;
+}
+=== -6b0df8778a58390b
+export fn dr_init() i32 {
+    zf(IN, 64, 0.0);
+    zf(OUT, 64, 0.0);
+    dr_views();
+    return 0;
+}
+=== 72edb3387a1266be
+export fn dr_size(nn i32, gx i32, gy i32, gz i32, nh i32) i32 {
+    NN = nn as int;
+    GX = gx as int;
+    GY = gy as int;
+    GZ = gz as int;
+    NH = nh as int;
+    zf(KE, at1(576), 0.0);
+    zf(DB, at1(144), 0.0);
+    zf(M, at1(NN), 0.0);
+    zf(X, at1(3 * NN), 0.0);
+    zf(U, at1(3 * NN), 0.0);
+    zf(V, at1(3 * NN), 0.0);
+    zf(F, at1(3 * NN), 0.0);
+    zf(RS, at1(3 * NN), 0.0);
+    zf(UP, at1(3 * NN), 0.0);
+    zf(VE, at1(GX * GY * GZ), 0.0);
+    zf(VN, at1(NN), 0.0);
+    zf(CN, at1(NN), 0.0);
+    zf(UD, at1(NN), 0.0);
+    zf(HI, at1(7 * NH), 0.0);
+    zf(UE, at1(24), 0.0);
+    zf(FE, at1(24), 0.0);
+    zi(SOL, at1(GX * GY * GZ), 0);
+    dr_views();
+    return 0;
+}
+=== 50df76c71bb1e74a
+fn enode(i int, j int, k int, a int) int {
+    var nx int = GX + 1;
+    var ny int = GY + 1;
+    var p int = i;
+    var q int = j;
+    var r int = k;
+    if a == 1 || a == 2 || a == 5 || a == 6 {
+        p += 1;
+    }
+    if a == 2 || a == 3 || a == 6 || a == 7 {
+        q += 1;
+    }
+    if a >= 4 {
+        r += 1;
+    }
+    return (r * ny + q) * nx + p;
+}
+=== 4f268d364f10167b
+fn forces() real {
+    for n in 0..at1(3 * NN) {
+        F[n] = 0.0;
+    }
+    var energy real = 0.0;
+    for k in 0..GZ {
+        for j in 0..GY {
+            for i in 0..GX {
+                var e int = (k * GY + j) * GX + i;
+                if SOL[e] != 0 {
+                    for a in 0..8 {
+                        var node int = enode(i, j, k, a);
+                        for c in 0..3 {
+                            UE[3 * a + c] = U[3 * node + c];
+                        }
+                    }
+                    for r in 0..24 {
+                        var sum real = 0.0;
+                        for c in 0..24 {
+                            sum += KE[24 * r + c] * UE[c];
+                        }
+                        FE[r] = sum;
+                    }
+                    for a in 0..8 {
+                        var node int = enode(i, j, k, a);
+                        for c in 0..3 {
+                            F[3 * node + c] -= FE[3 * a + c];
+                        }
+                    }
+                    var s real[6];
+                    for r in 0..6 {
+                        var sum real = 0.0;
+                        for c in 0..24 {
+                            sum += DB[24 * r + c] * UE[c];
+                        }
+                        s[r] = sum;
+                    }
+                    var d0 real = s[0] - s[1];
+                    var d1 real = s[1] - s[2];
+                    var d2 real = s[2] - s[0];
+                    var v real = sqrt(0.5 * (d0 * d0 + d1 * d1 + d2 * d2) + 3.0 * (s[3] * s[3] + s[4] * s[4] + s[5] * s[5]));
+                    if v > VE[e] {
+                        VE[e] = v;
+                    }
+                    var w real = 0.0;
+                    for c in 0..24 {
+                        w += UE[c] * FE[c];
+                    }
+                    energy += 0.5 * w;
+                }
+            }
+        }
+    }
+    return energy;
+}
+=== 658e46195224095c
+export fn dr_start() i32 {
+    var dir real[3];
+    dir[0] = IN[0];
+    dir[1] = IN[1];
+    dir[2] = IN[2];
+    var speed real = IN[3];
+    var kp real = IN[5];
+    var courant real = IN[6];
+    if !(courant > 0.0) {
+        courant = 0.9;
+    }
+    T = 0.0;
+    STEP = 0;
+    NREC = 0;
+    DONE = 0;
+    QUIET = 0.0;
+    TOUCH = 0.0;
+    STRIDE = at1(IN[9] as int);
+    for n in 0..at1(3 * NN) {
+        U[n] = 0.0;
+        RS[n] = 0.0;
+        UP[n] = 0.0;
+    }
+    for n in 0..at1(GX * GY * GZ) {
+        VE[n] = 0.0;
+    }
+    for n in 0..at1(NN) {
+        VN[n] = 0.0;
+        UD[n] = 0.0;
+    }
+    for n in 0..at1(7 * NH) {
+        HI[n] = 0.0;
+    }
+    MT = 0.0;
+    for n in 0..NN {
+        MT += M[n];
+    }
+    for n in 0..NN {
+        for c in 0..3 {
+            if M[n] > 0.0 {
+                V[3 * n + c] = speed * dir[c];
+            } else {
+                V[3 * n + c] = 0.0;
+            }
+        }
+    }
+    var far real = 0.0;
+    var have bool = false;
+    for n in 0..NN {
+        if M[n] > 0.0 {
+            var p real = dir[0] * X[3 * n] + dir[1] * X[3 * n + 1] + dir[2] * X[3 * n + 2];
+            if !have || p > far {
+                far = p;
+                have = true;
+            }
+        }
+    }
+    PF = far;
+    for k in 0..GZ {
+        for j in 0..GY {
+            for i in 0..GX {
+                if SOL[(k * GY + j) * GX + i] != 0 {
+                    for a in 0..8 {
+                        var node int = enode(i, j, k, a);
+                        for c in 0..3 {
+                            var sum real = 0.0;
+                            for c2 in 0..24 {
+                                sum += fabs(KE[24 * (3 * a + c) + c2]);
+                            }
+                            RS[3 * node + c] += sum;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    var w2 real = 0.0;
+    var found bool = false;
+    for n in 0..NN {
+        if M[n] > 0.0 {
+            for c in 0..3 {
+                var q real = (RS[3 * n + c] + kp) / M[n];
+                if !found || q > w2 {
+                    w2 = q;
+                    found = true;
+                }
+            }
+        }
+    }
+    if !found {
+        w2 = 1.0;
+    }
+    DT = courant * 2.0 / sqrt(w2);
+    E0 = 0.5 * MT * speed * speed;
+    OUT[0] = DT;
+    return 0;
+}
+=== -5c0a20b35d8a55e
+export fn dr_step(nmax i32) i32 {
+    var limit int = nmax as int;
+    if DONE == 1 {
+        return DONE as i32;
+    }
+    var dir real[3];
+    dir[0] = IN[0];
+    dir[1] = IN[1];
+    dir[2] = IN[2];
+    var dx real = dir[0];
+    var dy real = dir[1];
+    var dz real = dir[2];
+    var kp real = IN[5];
+    var grav real = IN[4];
+    var s int = 0;
+    while s < limit && DONE == 0 {
+        s += 1;
+=== -48be722dec2b6f35
+        var se real = forces();
+        var fc real = 0.0;
+        var pen real = 0.0;
+        var ce real = 0.0;
+        for n in 0..NN {
+            if M[n] > 0.0 {
+                var p real = dx * (X[3 * n] + U[3 * n]) + dy * (X[3 * n + 1] + U[3 * n + 1]) + dz * (X[3 * n + 2] + U[3 * n + 2]) - PF;
+                if p > 0.0 {
+                    var f real = kp * p;
+                    F[3 * n] -= f * dx;
+                    F[3 * n + 1] -= f * dy;
+                    F[3 * n + 2] -= f * dz;
+                    fc += f;
+                    ce += 0.5 * kp * p * p;
+                    if p > pen {
+                        pen = p;
+                    }
+                }
+            }
+        }
+        var ksum real = 0.0;
+        for n in 0..NN {
+            if M[n] > 0.0 {
+                for c in 0..3 {
+                    F[3 * n + c] += M[n] * grav * dir[c];
+                    var acc real = F[3 * n + c] / M[n];
+                    V[3 * n + c] += acc * DT;
+                    U[3 * n + c] += V[3 * n + c] * DT;
+                    ksum += M[n] * V[3 * n + c] * V[3 * n + c];
+                }
+            }
+        }
+        var ke real = 0.5 * ksum;
+        var vc real = 0.0;
+        var ux real = 0.0;
+        var uy real = 0.0;
+        var uz real = 0.0;
+        for n in 0..NN {
+            vc += M[n] * (dx * V[3 * n] + dy * V[3 * n + 1] + dz * V[3 * n + 2]);
+            ux += M[n] * U[3 * n];
+            uy += M[n] * U[3 * n + 1];
+            uz += M[n] * U[3 * n + 2];
+        }
+        if MT > 0.0 {
+            vc /= MT;
+            ux /= MT;
+            uy /= MT;
+            uz /= MT;
+        } else {
+            vc = 0.0;
+            ux = 0.0;
+            uy = 0.0;
+            uz = 0.0;
+        }
+        for n in 0..NN {
+            if M[n] > 0.0 {
+                var ax real = U[3 * n] - ux;
+                var ay real = U[3 * n + 1] - uy;
+                var az real = U[3 * n + 2] - uz;
+                var len real = sqrt(ax * ax + ay * ay + az * az);
+                if len > UD[n] {
+                    UD[n] = len;
+                }
+            }
+        }
+        T += DT;
+        STEP += 1;
+        OUT[2] = T;
+        OUT[1] = STEP as real;
+        if fc > OUT[3] {
+            OUT[3] = fc;
+            OUT[4] = T;
+            for n in 0..NN {
+                UP[3 * n] = U[3 * n] - ux;
+                UP[3 * n + 1] = U[3 * n + 1] - uy;
+                UP[3 * n + 2] = U[3 * n + 2] - uz;
+            }
+        }
+        if fc > 0.0 {
+            if TOUCH == 0.0 {
+                OUT[5] = T;
+            }
+            TOUCH = 1.0;
+            OUT[6] = T;
+            QUIET = 0.0;
+        } else if TOUCH == 1.0 {
+            QUIET += DT;
+        }
+        if pen > OUT[14] {
+            OUT[14] = pen;
+        }
+        OUT[7] = vc;
+        var err real = 0.0;
+        if E0 > 0.0 {
+            err = fabs(ke + se + ce - E0 - MT * grav * (dx * ux + dy * uy + dz * uz)) / E0;
+        }
+        if err > OUT[12] {
+            OUT[12] = err;
+        }
+        if STEP % STRIDE == 0 && NREC < NH {
+            var at int = 7 * NREC;
+            HI[at] = T;
+            HI[at + 1] = fc;
+            HI[at + 2] = vc;
+            HI[at + 3] = ke;
+            HI[at + 4] = se;
+            HI[at + 5] = ce;
+            HI[at + 6] = pen;
+            NREC += 1;
+        }
+        OUT[15] = NREC as real;
+        if T >= IN[7] || (TOUCH == 1.0 && QUIET >= IN[8]) {
+            DONE = 1;
+        }
+    }
+    return DONE as i32;
+}
+=== 1b3cfbf611f833db
+export fn dr_finish() i32 {
+    for n in 0..at1(NN) {
+        VN[n] = 0.0;
+        CN[n] = 0.0;
+    }
+    for k in 0..GZ {
+        for j in 0..GY {
+            for i in 0..GX {
+                var e int = (k * GY + j) * GX + i;
+                if SOL[e] != 0 {
+                    for a in 0..8 {
+                        var node int = enode(i, j, k, a);
+                        VN[node] += VE[e];
+                        CN[node] += 1.0;
+                    }
+                }
+            }
+        }
+    }
+    for n in 0..NN {
+        if CN[n] > 0.0 {
+            VN[n] /= CN[n];
+        }
+    }
+    var top_e real = 0.0;
+    for e in 0..at1(GX * GY * GZ) {
+        if VE[e] > top_e {
+            top_e = VE[e];
+        }
+    }
+    var top_n real = 0.0;
+    var top_d real = 0.0;
+    for n in 0..NN {
+        if VN[n] > top_n {
+            top_n = VN[n];
+        }
+        if UD[n] > top_d {
+            top_d = UD[n];
+        }
+    }
+    OUT[8] = top_e;
+    OUT[9] = top_n;
+    OUT[10] = top_d;
+    OUT[11] = MT;
+    return 0;
+}
+=== 0ddb8a3b7d369d37
+fn main() {
+}

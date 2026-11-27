@@ -1,0 +1,34 @@
+import {startE2E} from './e2e_lib.mjs';
+const E=await startE2E({web:+process.env.E2E_WEB||18887,mcp:+process.env.E2E_MCP||18888,width:1440,height:900}),p=E.page,sleep=E.sleep,shots=process.env.SHOTS||null;
+let fail=0;const ok=(c,m,x)=>{c||fail++;console.log((c?'PASS ':'FAIL ')+m+(x!==undefined?' · '+String(typeof x==='string'?x:JSON.stringify(x)).slice(0,240):''));};
+const doc=()=>p.evaluate(()=>JSON.parse(JSON.stringify(window.amnicad.API.doc))),built=()=>p.evaluate(()=>window.amnicad.API.waitBuild()).then(()=>sleep(500)),shot=async n=>shots&&await p.screenshot({path:shots+'/'+n+'.png'});
+const click=s=>p.evaluate(s=>{const x=document.querySelector(s);x&&x.click();return!!x;},s),txt=s=>p.evaluate(s=>(document.querySelector(s)||{}).textContent||'',s),pv=D=>Object.fromEntries(D.params.map(q=>[q.name,q.expr]));
+try{
+  await E.connect();await p.evaluate(()=>window.amnicad.loadDoc({units:'mm',material:'al6061',params:[{name:'w',expr:'20'},{name:'t',expr:'6'}],features:[{id:'b',type:'box',w:120,d:'w',h:'t'},{id:'c',type:'cylinder',r:3,h:20,x:100}]}));await built();
+  await p.evaluate(()=>window.amnicad.API.optimize({}));await sleep(600);ok(await click('#opt [data-mode=doe]'),'the Optimize panel has a Design study tab');await sleep(500);
+  const s0=await p.evaluate(()=>({count:document.getElementById('doe-count').textContent,mass:document.querySelector('#opt [data-metric=mass]').checked,start:!document.getElementById('doe-start').disabled,design:document.getElementById('doe-design').selectedOptions[0].textContent}));
+  ok(/^9 runs/.test(s0.count)&&s0.mass&&s0.start&&/Central composite/.test(s0.design),'two sizes plan a 9-run central composite measuring mass',s0);
+  await click('#opt [data-metric=volume]');await sleep(300);await p.evaluate(()=>{const s=document.getElementById('doe-design');s.value='factorial';s.dispatchEvent(new Event('change'));});await sleep(300);
+  ok(/^9 runs/.test(await txt('#doe-count'))&&!!(await p.$('#doe-levels')),'a full factorial shows its levels');await p.evaluate(()=>{const i=document.getElementById('doe-levels');i.value='2';i.dispatchEvent(new Event('change'));});await sleep(300);ok(/^4 runs/.test(await txt('#doe-count')),'two levels make 4 runs');
+  await p.evaluate(()=>{const s=document.getElementById('doe-design');s.value='';s.dispatchEvent(new Event('change'));});await sleep(300);await shot('doe_setup');
+  await click('#doe-start');await p.waitForSelector('#doe-sum',{timeout:300000});await sleep(500);
+  const r=await p.evaluate(()=>({sum:document.getElementById('doe-sum').textContent,cards:[...document.querySelectorAll('#opt [data-fit]')].map(c=>c.dataset.fit),bars:document.querySelectorAll('#opt [data-fit=mass] .bar').length,text:document.querySelector('#opt [data-fit=mass]').textContent}));
+  ok(/9 of 9 runs/.test(r.sum)&&r.cards.join()==='mass,volume'&&r.bars===2&&/R² 1\.000/.test(r.text)&&/fits well/.test(r.text),'results show a card per metric with effect bars and the fit',r);
+  ok(JSON.stringify(pv(await doc()))==='{"w":"20","t":"6"}','the study puts the part back as it was');await shot('doe_result');
+  await click('#opt [data-apply="mass:lowest"]');await built();ok(JSON.stringify(pv(await doc()))==='{"w":"10","t":"3"}','Apply sets the lightest predicted sizes',pv(await doc()));
+  await click('#doe-new');await sleep(300);ok(!!(await p.$('#doe-start')),'New study returns to the setup');await p.evaluate(()=>document.querySelector('#opt .x').click());await sleep(300);
+  ok(await click('#cfg-save'),'Parameters has a Save configuration button');await sleep(500);let D=await doc();ok(D.configs.list.length===1&&D.configs.on==='Config 1'&&D.configs.list[0].values.w===10,'saving makes Config 1 from the current sizes',D.configs);
+  await p.evaluate(()=>window.amnicad.API.commit(d=>{d.params[0].expr='25';}));await built();ok(/\(changed\)/.test(await txt('#cfg-pick'))&&!!(await p.$('#cfg-update')),'editing a size marks the configuration as changed');
+  await click('#cfg-save');await sleep(500);await p.evaluate(()=>{const s=document.getElementById('cfg-pick');s.value='Config 1';s.dispatchEvent(new Event('change'));});await built();D=await doc();
+  ok(D.configs.list.length===2&&D.configs.on==='Config 1'&&D.params[0].expr==='10','picking Config 1 rebuilds its sizes',[D.configs.on,pv(D)]);
+  await click('#cfg-table');await sleep(500);ok((await p.$$('#cfgt tr')).length===3,'the design table lists both configurations');
+  await p.evaluate(()=>{const i=document.querySelector('#cfgt input[aria-label="t in Config 2"]');i.value='5';i.dispatchEvent(new Event('change'));});await sleep(400);D=await doc();ok(D.configs.list[1].values.t===5,'editing a table cell changes that configuration',D.configs.list[1]);
+  await click('#cfgt-cols');await sleep(300);await p.evaluate(()=>{const c=document.querySelector('#cfgt [data-col="!c"]');c.checked=true;c.dispatchEvent(new Event('change'));});await sleep(400);D=await doc();ok(D.configs.cols.includes('!c')&&D.configs.list.every(c=>c.values['!c']===false),'adding a suppress column fills every row with the current state',D.configs);
+  await click('#cfgt-paste');await sleep(300);await p.evaluate(()=>{const t=document.getElementById('cfgt-text');t.value='Configuration\tw\tt\t!c\nTiny\t8\t2\tyes\nMid\t20\t6\t\nHuge\t40\t9\t';});await click('#cfgt-apply');await sleep(500);D=await doc();
+  ok(D.configs.list.map(c=>c.name).join()==='Tiny,Mid,Huge'&&D.configs.list[0].values['!c']===true,'pasting from a spreadsheet replaces the table',D.configs.list);await shot('design_table');
+  await p.evaluate(()=>{const s=document.getElementById('cfg-pick');s.value='Tiny';s.dispatchEvent(new Event('change'));});await built();D=await doc();ok(D.features[1].suppressed&&D.params[1].expr==='2','Tiny suppresses the pin and thins the plate');
+  await p.evaluate(()=>window.amnicad.applyActions([{config:'Huge'}]));await built();D=await doc();ok(D.configs.on==='Huge'&&D.params[0].expr==='40'&&!D.features[1].suppressed,'the AI config action switches configurations');
+  await p.evaluate(()=>window.amnicad.API.optimize({run:'doe',start:true,metrics:['volume'],variables:['w'],design:'factorial',levels:3}).catch(()=>{}));await p.waitForSelector('#doe-sum',{timeout:300000});ok(/3 of 3 runs/.test(await txt('#doe-sum'))&&!!(await p.$('#opt [data-fit=volume]')),'a DOE started by the assistant fills the panel',await txt('#doe-sum'));
+  ok(!E.errs.length,'no page errors',E.errs.slice(0,3));
+}catch(e){fail++;console.log('FAIL exception '+(e.stack||e.message));}
+await E.close();console.log(fail?fail+' FAILED':'ALL PASS');process.exit(fail?1:0);

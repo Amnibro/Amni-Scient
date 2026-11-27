@@ -27,7 +27,7 @@ const audit=()=>p.evaluate(()=>{
   return bad;
 });
 const go=async(w,h,fs)=>{await p.setViewport({width:w,height:h,isMobile:w<700,hasTouch:w<700,deviceScaleFactor:1});
-  await p.goto('http://127.0.0.1:'+port+'/cad/',{waitUntil:'domcontentloaded',timeout:60000});
+  await p.goto('http://127.0.0.1:'+port+'/cad/#demo',{waitUntil:'domcontentloaded',timeout:60000});
   await p.waitForFunction(()=>document.getElementById('nav-now')&&document.body.classList.contains('pro'),{timeout:30000});
   await p.evaluate(fs=>{const L=window.amnicad&&window.amnicad.API&&window.amnicad.API.look;if(L)L.apply({...L.get(),fs:Math.round(fs*100)});else document.documentElement.style.setProperty('--fs',String(fs));},fs);
   await p.waitForFunction(fs=>Math.abs(parseFloat(getComputedStyle(document.querySelector('header')).zoom)-(fs>1?fs:1))<0.05,{},fs);
@@ -42,7 +42,7 @@ try{
   const k1=await p.evaluate(()=>({open:document.getElementById('nav-menu').classList.contains('open'),focus:document.activeElement.textContent.trim(),exp:document.getElementById('nav-now').getAttribute('aria-expanded')}));
   ok(k1.open&&k1.exp==='true'&&(k1.focus==='Part'||k1.focus==='Form'),'keyboard opens the menu and moves through it',JSON.stringify(k1));
   const menu=await p.evaluate(()=>{const bs=[...document.querySelectorAll('#ws button')];return{texts:bs.map(b=>b.textContent.trim()),clip:bs.filter(b=>{const r=b.getBoundingClientRect();return r.width>1&&(b.scrollWidth>b.clientWidth+2||r.right>innerWidth+2);}).map(b=>b.textContent.trim())};});
-  ok(menu.texts.join(',')==='Part,Form,Assembly,Tooling,Electronics'&&!menu.clip.length,'the workspace menu lists Part, Form, Assembly, Tooling and Electronics and does not clip',menu.texts.join(','));
+  ok(menu.texts.join(',')==='Part,Form,Assembly,Tooling,Electronics,Drone'&&!menu.clip.length,'the workspace menu lists Part, Form, Assembly, Tooling, Electronics and Drone and does not clip',menu.texts.join(','));
   if(shots)await p.screenshot({path:path.join(shots,'after_d1440_menu.png')});
   await p.keyboard.press('Escape');
   ok(await p.evaluate(()=>!document.getElementById('nav-menu').classList.contains('open')&&document.activeElement.id==='nav-now'),'Escape closes the menu and returns focus');
@@ -58,7 +58,7 @@ try{
   await p.click('#sheet-x');await sleep(200);
   ok(await p.evaluate(()=>!document.body.classList.contains('sheet-on')&&getComputedStyle(document.getElementById('right')).display==='none'&&document.getElementById('nav-label').textContent==='Part'),'Close returns to the model with no right dock');
   await p.waitForFunction(()=>document.querySelector('#tree .feat'),{timeout:30000});
-  await p.click('#tree .feat');await sleep(300);
+  const fv=await p.evaluate(()=>{const r=[...document.querySelectorAll('#tree .feat')].map(e=>e.getBoundingClientRect()).find(r=>r.width>0&&r.height>0);return[r.left+r.width/2,r.top+r.height/2];});await p.mouse.click(...fv);await sleep(300);
   ok(await p.evaluate(()=>{const L=document.getElementById('left').getBoundingClientRect(),R=document.getElementById('right').getBoundingClientRect(),V=document.getElementById('vp').getBoundingClientRect();return document.body.classList.contains('sheet-on')&&getComputedStyle(document.getElementById('tree')).display!=='none'&&Math.abs(R.left-L.right)<8&&V.width>180&&document.getElementById('work-title').textContent==='Properties';}),'editing opens beside the tree and the model stays visible');
   if(shots)await p.screenshot({path:path.join(shots,'after_d1440_edit.png')});
   await p.click('#sheet-x');await sleep(200);

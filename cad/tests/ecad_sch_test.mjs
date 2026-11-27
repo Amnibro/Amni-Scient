@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import * as E from '../ecad.js';
+import * as S from '../ecad_sch.js';
+let n=0;const ok=(c,m)=>{assert.ok(c,m);n++;},near=(a,b,m,t=1e-6)=>ok(Math.abs(a-b)<=t,m+': '+a+' vs '+b),codes=N=>N.erc.map(e=>e[0]).sort((a,b)=>a-b).join(','),lib=id=>S.LIB.find(e=>e.id===id),t0=Date.now();
+const set=nets=>new Set(nets.map(x=>[...x.pins].sort().join(' ')));
+const r=S.symbol(S.SK.R);ok(r.pins.length===2,'resistor has 2 pins');near(r.pins[0].x,-5.08,'resistor pin 1 x');near(r.pins[1].x,5.08,'resistor pin 2 x');ok(r.pins[0].dx===-1&&r.pins[1].dx===1,'pins point away from the body');ok(r.prims.length>=8,'resistor draws a zigzag');
+const ic=S.symbol(S.SK.IC,8,4,6);ok(ic.pins.length===8,'8-pin box');near(ic.pins[0].x,-(6*2.54/2+2.54),'box left pin x');near(ic.pins[4].x,6*2.54/2+2.54,'box right pin x');near(ic.pins[0].y,ic.pins[4].y,'rows line up');ok(ic.pins.every(p=>Math.abs(p.y/2.54-Math.round(p.y/2.54))<1e-9&&Math.abs(p.x/2.54-Math.round(p.x/2.54))<1e-9),'box pins sit on the 2.54 mm grid');
+for(const k of Object.values(S.SK)){const s=S.symbol(k,k===S.SK.IC||k===S.SK.CONN?5:k===S.SK.CONN2?6:0,k===S.SK.IC?3:0,4);ok(s.pins.every(p=>Math.abs(p.x/2.54-Math.round(p.x/2.54))<1e-9&&Math.abs(p.y/2.54-Math.round(p.y/2.54))<1e-9),'symbol kind '+k+' pins on grid');ok(s.box[2]>s.box[0]&&s.box[3]>s.box[1],'symbol kind '+k+' has a box');}
+for(const e of S.LIB){const p=S.partOf(e),sy=S.symOf(p),want=e.pads?e.pads.length:E.foot(e.pkg).length;ok(e.sym==='MH'?sy.pins.length===0:sy.pins.length===want,e.id+' symbol has a pin for every pad: '+sy.pins.length+' vs '+want);}
+const R1=S.partOf(lib('R0603-10k'),0,0),R2=S.partOf(lib('R0603-1k'),20.32,0);R1.ref='R1';R2.ref='R2';
+const sch={...S.newSch(),parts:[R1,R2],wires:[[5.08,0,15.24,0,0]],labels:[{x:-5.08,y:0,sheet:0,kind:2,name:'VCC'},{x:25.4,y:0,sheet:0,kind:2,name:'GND'}]};
+let N=S.netlist(sch);ok(N.nets.length===3,'three nets');ok(set(N.nets).has('R1.2 R2.1'),'the wire joins R1.2 and R2.1');ok(N.nets.find(x=>x.name==='VCC').pins.join()==='R1.1','power label names the net');ok(N.nets.some(x=>x.name==='Net-(R1-2)'),'an unlabeled net gets an automatic name');ok(codes(N)==='','a clean divider passes the checks: '+codes(N));
+N=S.netlist({...sch,labels:[sch.labels[0]]});ok(codes(N)==='1','a loose pin is reported: '+codes(N));ok(S.ercText(sch,N,N.erc[0])==='Unconnected pin: R2 pin 2','the message names the pin');
+N=S.netlist({...sch,nc:[[25.4,0,0]],labels:[sch.labels[0]]});ok(codes(N)==='','a no-connect flag silences a loose pin');
+N=S.netlist({...sch,nc:[[5.08,0,0]]});ok(codes(N)==='2','a no-connect flag on a wired pin is an error: '+codes(N));
+N=S.netlist({...sch,wires:[[5.08,0,10.16,0,0]]});ok(codes(N).split(',').includes('6'),'a dangling wire end is reported');
+const T={...S.newSch(),parts:[R1,{...R2,x:20.32,y:-10.16,ref:'R2'},{...S.partOf(lib('R0603-1k'),20.32,10.16),ref:'R3'}],wires:[[5.08,0,15.24,0,0],[10.16,0,10.16,-10.16,0],[10.16,-10.16,15.24,-10.16,0],[10.16,0,10.16,10.16,0],[10.16,10.16,15.24,10.16,0]],labels:sch.labels.slice(0,1)};
+N=S.netlist(T);ok(N.junc.length===1&&near(N.junc[0][0],10.16,'junction x')===undefined,'a T joint gets one junction dot');ok(set(N.nets).has('R1.2 R2.1 R3.1'),'the T joint joins three pins');
+N=S.netlist({...T,wires:[[5.08,0,15.24,0,0],[10.16,-5.08,10.16,5.08,0]]});ok(!set(N.nets).has('R1.2 R2.1 R3.1')&&N.junc.length===0,'crossing wires without an end there do not connect');
+const Rr={...R1,rot:1,ref:'R9'};N=S.netlist({...S.newSch(),parts:[Rr]});near(N.pins[0].x,0,'rotated pin 1 x');near(N.pins[0].y,-5.08,'rotated pin 1 y');near(N.pins[0].dy,-1,'rotated pin 1 points down');
+N=S.netlist({...S.newSch(),parts:[{...R1,mir:1}]});near(N.pins[0].x,5.08,'mirrored pin 1 x');
+const ms={...S.newSch(),sheets:[{name:'A'},{name:'B'}],parts:[R1,{...R2,sheet:1,x:0}],labels:[{x:5.08,y:0,sheet:0,kind:1,name:'SDA'},{x:-5.08,y:0,sheet:1,kind:1,name:'SDA'},{x:-5.08,y:0,sheet:0,kind:0,name:'X'},{x:5.08,y:0,sheet:1,kind:0,name:'X'}]};
+N=S.netlist(ms);ok(set(N.nets).has('R1.2 R2.1'),'global labels join across sheets');ok(!set(N.nets).has('R1.1 R2.2'),'local labels stay on their sheet');ok(N.nets.some(x=>x.name==='X')&&N.nets.some(x=>x.name==='X_2'),'same local name on two sheets becomes two nets');
+const U1=S.partOf(lib('LM358DR2G'),0,0),U2=S.partOf(lib('LM358DR2G'),40.64,0);U1.ref='U1';U2.ref='U2';const o1=S.netlist({...S.newSch(),parts:[U1]}).pins.find(p=>p.name==='OUTA'),o2=S.netlist({...S.newSch(),parts:[U2]}).pins.find(p=>p.name==='OUTA');
+N=S.netlist({...S.newSch(),parts:[U1,U2],wires:[[o1.x,o1.y,o2.x,o2.y,0]]});ok(N.erc.some(e=>e[0]===3),'two op-amp outputs on one net are an error');
+const reg=S.partOf(lib('AMS1117-3.3'),0,0);reg.ref='U1';const rp=S.netlist({...S.newSch(),parts:[reg]}).pins,pp=nm=>rp.find(p=>p.name===nm);
+N=S.netlist({...S.newSch(),parts:[reg],labels:[{x:pp('VIN').x,y:pp('VIN').y,sheet:0,kind:0,name:'VIN'}]});ok(N.erc.some(e=>e[0]===4),'regulator input with no source is an error');
+N=S.netlist({...S.newSch(),parts:[reg],labels:[{x:pp('VIN').x,y:pp('VIN').y,sheet:0,kind:2,name:'5V'},{x:pp('GND').x,y:pp('GND').y,sheet:0,kind:2,name:'GND'},{x:rp[2].x,y:rp[2].y,sheet:0,kind:2,name:'3V3'}],nc:[[rp[3].x,rp[3].y,0]]});ok(!N.erc.some(e=>e[0]===4||e[0]===3),'power labels feed the regulator and its two VOUT pins do not conflict: '+codes(N));
+const A=[{...R1,ref:'R?',x:20,y:0},{...R1,ref:'R?',x:0,y:0},{...R1,ref:'R5',x:40,y:0},{...R1,ref:'C?',x:0,y:-30}];
+let a=S.annotate({parts:A},0);ok(a.refs.join()==='R1,R2,R5,C1'||a.refs.join()==='R2,R1,R5,C1','keep mode numbers new parts left to right: '+a.refs);ok(a.refs[1]==='R1','the leftmost new resistor becomes R1');ok(a.refs[2]==='R5','an existing number is kept');
+a=S.annotate({parts:A},1);ok(a.refs.join()==='R2,R1,R3,C1','reset mode renumbers by position: '+a.refs);
+a=S.annotate({parts:[{...R1,ref:'R1'},{...R1,ref:'R1',x:30}]},0);ok(a.refs.join()==='R1,R2','a duplicate gets a fresh number');
+N=S.netlist({...S.newSch(),parts:[{...R1,ref:'R1'},{...R2,ref:'R1'}]});ok(N.erc.some(e=>e[0]===10),'duplicate references are reported');
+N=S.netlist({...S.newSch(),parts:[{...R1,ref:'R?'}]});ok(N.erc.some(e=>e[0]===11),'unnumbered parts are reported');
+let h=S.hit(sch,0,0.3,0,0.5);ok(h&&h.t==='part'&&h.i===0,'clicking a resistor body picks the part');h=S.hit(sch,10,0.2,0,0.5);ok(h&&h.t==='wire'&&h.i===0,'clicking a wire picks the wire');h=S.hit(sch,-5.08,0.1,0,0.5);ok(h&&h.t==='label','clicking a label picks the label');ok(S.hit(sch,0,40,0,0.5)===null,'empty space picks nothing');
+const d=S.drag(sch,1,0,5.08);near(d.y,5.08,'dragged part moves');near(d.wires[0][3],5.08,'the attached wire end follows');near(d.wires[0][1],0,'the far wire end stays');near(d.labels[1].y,5.08,'the label on the pin follows');ok(d.moved===1,'one wire end moved');
+const hs=S.hallSch(),HN=S.netlist(hs),hb=E.hallBoard();ok(HN.erc.filter(e=>S.ERCK[e[0]][0]===2).length===0,'the hall schematic has no electrical errors: '+codes(HN));
+const want=set(hb.nets),got=set(HN.nets.filter(x=>x.pins.length>1));ok([...want].every(k=>got.has(k))&&got.size===want.size,'the schematic made from the hall board has the same nets');
+const tp=S.toPcb(hs,hb);ok(tp.add===0&&tp.rm===0,'syncing back adds and removes nothing');ok([...set(tp.pcb.nets)].join('|')===[...want].join('|')||set(tp.pcb.nets).size===want.size&&[...want].every(k=>set(tp.pcb.nets).has(k)),'synced nets match');ok(tp.pcb.nets.map(x=>x.name).sort().join()===hb.nets.map(x=>x.name).sort().join(),'net names survive');
+const ns={...hs,parts:[...hs.parts,{...S.partOf(lib('LED0603-red'),0,-80),ref:'D1'}]},t2=S.toPcb(ns,hb);ok(t2.add===1&&t2.pcb.parts.some(p=>p.ref==='D1'&&p.lcsc==='C2286'&&p.y<hb.board.y0),'a new schematic part lands below the board with its LCSC number');
+const t3=S.toPcb({...hs,parts:hs.parts.filter(p=>p.ref!=='R3')},hb);ok(t3.rm===1&&!t3.pcb.parts.some(p=>p.ref==='R3'),'a deleted part leaves the board');
+const rt=E.autoroute(hb),hb2={...hb,tracks:rt.tracks,vias:rt.vias},ren={...hs,labels:hs.labels.map(l=>l.name==='HA'?{...l,name:'HALL_A'}:l)},t4=S.toPcb(ren,hb2);ok(t4.pcb.nets.some(x=>x.name==='HALL_A')&&!t4.pcb.tracks.some(t=>t[6]==='HA')&&t4.pcb.tracks.some(t=>t[6]==='HALL_A'),'renaming a net carries the routed tracks along');ok(E.analyze(t4.pcb).viol.length===0,'the renamed board still passes its checks');
+const big={...S.newSch(),parts:[],wires:[]};for(let i=0;i<400;i++){const p={...R1,ref:'R'+(i+1),x:(i%20)*20.32,y:-Math.floor(i/20)*10.16};big.parts.push(p);i%20&&big.wires.push([p.x-5.08-10.16,p.y,p.x-5.08,p.y,0]);}
+const tb=Date.now();N=S.netlist(big);ok(N.nets.length===420,'400 resistors in 20 chains give 420 nets, got '+N.nets.length);ok(Date.now()-tb<3000,'a 400-part sheet nets in under 3 s: '+(Date.now()-tb)+' ms');
+console.log('ecad_sch_test: '+n+' checks passed in '+(Date.now()-t0)+' ms');

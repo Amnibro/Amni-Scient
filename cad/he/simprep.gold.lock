@@ -1,0 +1,864 @@
+=== 7fb3a9c9330fa8cc
+import math;
+=== -4c1eb0363677e87
+var NV int = 0;
+var NC int = 0;
+var NT int = 0;
+var CAP int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var MP f64[>..];
+var MN f64[>..];
+var ML f64[>..];
+var VP f64[>..];
+var HV f64[>..];
+var BX f64[>..];
+var FN f64[>..];
+var CI i32[>..];
+var TR i32[>..];
+var TA i32[>..];
+var MK i32[>..];
+var HE i32[>..];
+var OT i32[>..];
+var OV i32[>..];
+=== 1106c6b520ca80c8
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if n < 1 {
+        return 1;
+    }
+    return n;
+}
+=== 513b72787395e8dc
+export fn sr_views() i32 {
+    sr_view_f64(1, IN);
+    sr_view_f64(2, OUT);
+    sr_view_f64(3, VP);
+    sr_view_f64(4, HV);
+    sr_view_f64(5, BX);
+    sr_view_f64(6, MP);
+    sr_view_f64(7, MN);
+    sr_view_f64(8, ML);
+    sr_view_i32(20, OT);
+    return 0;
+}
+=== 0291c49389bca02f
+export fn sr_init() i32 {
+    zf(IN, 16, 0.0);
+    zf(OUT, 16, 0.0);
+    zf(BX, 15, 0.0);
+    zf(MP, 1, 0.0);
+    zf(MN, 1, 0.0);
+    zf(ML, 1, 0.0);
+    sr_views();
+    return 0;
+}
+=== 6a7bb94ac341b8bb
+export fn sr_size(nv_in i32) i32 {
+    var nv int = nv_in as int;
+    NV = nv;
+    zf(VP, at1(3 * nv), 0.0);
+    zi(MK, at1(nv), 0);
+    sr_views();
+    return 0;
+}
+=== 07ddeb9b8c533e4a
+fn vx(i int) real {
+    return VP[3 * i];
+}
+fn vy(i int) real {
+    return VP[3 * i + 1];
+}
+fn vz(i int) real {
+    return VP[3 * i + 2];
+}
+fn hx(c int) real {
+    return HV[3 * c];
+}
+fn hy(c int) real {
+    return HV[3 * c + 1];
+}
+fn hz(c int) real {
+    return HV[3 * c + 2];
+}
+=== 1cead3a6d08ca4a0
+import math;
+fn setface(t int, a int, b int, c int) {
+    TR[3 * t] = a as i32;
+    TR[3 * t + 1] = b as i32;
+    TR[3 * t + 2] = c as i32;
+    TA[t] = 1 as i32;
+    var ux real = hx(b) - hx(a);
+    var uy real = hy(b) - hy(a);
+    var uz real = hz(b) - hz(a);
+    var wx real = hx(c) - hx(a);
+    var wy real = hy(c) - hy(a);
+    var wz real = hz(c) - hz(a);
+    var nx real = uy * wz - uz * wy;
+    var ny real = uz * wx - ux * wz;
+    var nz real = ux * wy - uy * wx;
+    var len real = sqrt(nx * nx + ny * ny + nz * nz);
+    if len > 1e-300 {
+        nx = nx / len;
+        ny = ny / len;
+        nz = nz / len;
+    }
+    FN[4 * t] = nx;
+    FN[4 * t + 1] = ny;
+    FN[4 * t + 2] = nz;
+    FN[4 * t + 3] = nx * hx(a) + ny * hy(a) + nz * hz(a);
+}
+fn fdist(t int, x real, y real, z real) real {
+    return FN[4 * t] * x + FN[4 * t + 1] * y + FN[4 * t + 2] * z - FN[4 * t + 3];
+}
+=== -5bd51526a1a4e157
+fn orient(t int, cx real, cy real, cz real) {
+    if fdist(t, cx, cy, cz) > 0.0 {
+        var a int = TR[3 * t] as int;
+        var b int = TR[3 * t + 1] as int;
+        var c int = TR[3 * t + 2] as int;
+        setface(t, a, c, b);
+    }
+}
+=== 23248695efea9f25
+export fn sr_hull() i32 {
+    var nd real = IN[0];
+    if !(nd > 3.0) {
+        nd = 400.0;
+    }
+    var tol real = IN[1];
+    if !(tol > 0.0) {
+        tol = 1e-9;
+    }
+=== -6551d22693da5d99
+    if NV == 0 {
+        OUT[0] = 0.0;
+        OUT[1] = 0.0;
+        OUT[2] = 1.0;
+        return 1;
+    }
+    var i int = 0;
+    while i < NV {
+        MK[i] = 0 as i32;
+        i += 1;
+    }
+    var ixl int = 0;
+    var ixh int = 0;
+    var iyl int = 0;
+    var iyh int = 0;
+    var izl int = 0;
+    var izh int = 0;
+    i = 1;
+    while i < NV {
+        if vx(i) < vx(ixl) {
+            ixl = i;
+        }
+        if vx(i) > vx(ixh) {
+            ixh = i;
+        }
+        if vy(i) < vy(iyl) {
+            iyl = i;
+        }
+        if vy(i) > vy(iyh) {
+            iyh = i;
+        }
+        if vz(i) < vz(izl) {
+            izl = i;
+        }
+        if vz(i) > vz(izh) {
+            izh = i;
+        }
+        i += 1;
+    }
+    var size real = vx(ixh) - vx(ixl);
+    if vy(iyh) - vy(iyl) > size {
+        size = vy(iyh) - vy(iyl);
+    }
+    if vz(izh) - vz(izl) > size {
+        size = vz(izh) - vz(izl);
+    }
+    if size < 1e-30 {
+        size = 1e-30;
+    }
+    var eps real = tol * size;
+    var d int = 0;
+    while (d as real) < nd {
+        var y real = 1.0 - 2.0 * ((d as real) + 0.5) / nd;
+        var rr real = 1.0 - y * y;
+        if rr < 0.0 {
+            rr = 0.0;
+        }
+        var r real = sqrt(rr);
+        var ang real = (d as real) * 3.141592653589793 * (3.0 - sqrt(5.0));
+        var dx real = cos(ang) * r;
+        var dz real = sin(ang) * r;
+        var best int = 0;
+        var bv real = vx(0) * dx + vy(0) * y + vz(0) * dz;
+        i = 1;
+        while i < NV {
+            var v real = vx(i) * dx + vy(i) * y + vz(i) * dz;
+            if v > bv {
+                bv = v;
+                best = i;
+            }
+            i += 1;
+        }
+        MK[best] = 1 as i32;
+        d += 1;
+    }
+    MK[ixl] = 1 as i32;
+    MK[ixh] = 1 as i32;
+    MK[iyl] = 1 as i32;
+    MK[iyh] = 1 as i32;
+    MK[izl] = 1 as i32;
+    MK[izh] = 1 as i32;
+    NC = 0;
+    i = 0;
+    while i < NV {
+        if (MK[i] as int) == 1 {
+            NC += 1;
+        }
+        i += 1;
+    }
+    zi(CI, at1(NC), 0);
+    zf(HV, 3 * at1(NC), 0.0);
+    zi(OV, at1(NC), -1);
+    var k int = 0;
+    i = 0;
+    while i < NV {
+        if (MK[i] as int) == 1 {
+            CI[k] = i as i32;
+            HV[3 * k] = vx(i);
+            HV[3 * k + 1] = vy(i);
+            HV[3 * k + 2] = vz(i);
+            k += 1;
+        }
+        i += 1;
+    }
+    CAP = 2 * NC + 8;
+    zf(FN, 4 * CAP, 0.0);
+    zi(TR, 3 * CAP, 0);
+    zi(TA, CAP, 0);
+    zi(HE, 6 * CAP, 0);
+    NT = 0;
+    var p0 int = 0;
+    var p1 int = 0;
+    var d01 real = 0.0;
+    var c int = 0;
+    while c < NC {
+        var ax real = hx(c) - hx(p0);
+        var ay real = hy(c) - hy(p0);
+        var az real = hz(c) - hz(p0);
+        var dist real = sqrt(ax * ax + ay * ay + az * az);
+        if dist > d01 {
+            d01 = dist;
+            p1 = c;
+        }
+        c += 1;
+    }
+    var ex real = hx(p1) - hx(p0);
+    var ey real = hy(p1) - hy(p0);
+    var ez real = hz(p1) - hz(p0);
+    var elen real = d01;
+    if !(elen > 1e-300) {
+        elen = 1e-300;
+    }
+    var p2 int = 0;
+    var dline real = 0.0;
+    c = 0;
+    while c < NC {
+        var ax real = hx(c) - hx(p0);
+        var ay real = hy(c) - hy(p0);
+        var az real = hz(c) - hz(p0);
+        var kx real = ey * az - ez * ay;
+        var ky real = ez * ax - ex * az;
+        var kz real = ex * ay - ey * ax;
+        var dist real = sqrt(kx * kx + ky * ky + kz * kz) / elen;
+        if dist > dline {
+            dline = dist;
+            p2 = c;
+        }
+        c += 1;
+    }
+    var fx real = hx(p2) - hx(p0);
+    var fy real = hy(p2) - hy(p0);
+    var fz real = hz(p2) - hz(p0);
+    var nx real = ey * fz - ez * fy;
+    var ny real = ez * fx - ex * fz;
+    var nz real = ex * fy - ey * fx;
+    var nlen real = sqrt(nx * nx + ny * ny + nz * nz);
+    if nlen > 1e-300 {
+        nx = nx / nlen;
+        ny = ny / nlen;
+        nz = nz / nlen;
+    }
+    var p3 int = 0;
+    var dplane real = 0.0;
+    c = 0;
+    while c < NC {
+        var dist real = fabs(nx * (hx(c) - hx(p0)) + ny * (hy(c) - hy(p0)) + nz * (hz(c) - hz(p0)));
+        if dist > dplane {
+            dplane = dist;
+            p3 = c;
+        }
+        c += 1;
+    }
+    var flag int = 0;
+    if !(d01 > eps) {
+        flag = 1;
+    } else if !(dline > eps) {
+        flag = 2;
+    } else if !(dplane > eps) {
+        flag = 3;
+    }
+    if flag != 0 {
+        OUT[0] = NC as real;
+        OUT[1] = 0.0;
+        OUT[2] = flag as real;
+        return flag as i32;
+    }
+    var cx real = (hx(p0) + hx(p1) + hx(p2) + hx(p3)) / 4.0;
+    var cy real = (hy(p0) + hy(p1) + hy(p2) + hy(p3)) / 4.0;
+    var cz real = (hz(p0) + hz(p1) + hz(p2) + hz(p3)) / 4.0;
+    setface(0, p0, p1, p2);
+    setface(1, p0, p1, p3);
+    setface(2, p0, p2, p3);
+    setface(3, p1, p2, p3);
+    orient(0, cx, cy, cz);
+    orient(1, cx, cy, cz);
+    orient(2, cx, cy, cz);
+    orient(3, cx, cy, cz);
+    NT = 4;
+    var q int = 0;
+    var full bool = false;
+    while q < NC && !full {
+        if q != p0 && q != p1 && q != p2 && q != p3 {
+            var qx real = hx(q);
+            var qy real = hy(q);
+            var qz real = hz(q);
+            var outside bool = false;
+            var t int = 0;
+            while t < NT {
+                if (TA[t] as int) == 1 && fdist(t, qx, qy, qz) > eps {
+                    outside = true;
+                    break;
+                }
+                t += 1;
+            }
+            if outside {
+                var nh int = 0;
+                t = 0;
+                while t < NT {
+                    if (TA[t] as int) == 1 && fdist(t, qx, qy, qz) > eps {
+                        var e int = 0;
+                        while e < 3 {
+                            var u int = TR[3 * t + e] as int;
+                            var w int = TR[3 * t + (e + 1) % 3] as int;
+                            var s int = 0;
+                            var other int = -1;
+                            while s < NT && other < 0 {
+                                if (TA[s] as int) == 1 {
+                                    var g int = 0;
+                                    while g < 3 {
+                                        if (TR[3 * s + g] as int) == w && (TR[3 * s + (g + 1) % 3] as int) == u {
+                                            other = s;
+                                        }
+                                        g += 1;
+                                    }
+                                }
+                                s += 1;
+                            }
+                            if other >= 0 {
+                                if !(fdist(other, qx, qy, qz) > eps) {
+                                    HE[2 * nh] = u as i32;
+                                    HE[2 * nh + 1] = w as i32;
+                                    nh += 1;
+                                }
+                            }
+                            e += 1;
+                        }
+                    }
+                    t += 1;
+                }
+                t = 0;
+                while t < NT {
+                    if (TA[t] as int) == 1 && fdist(t, qx, qy, qz) > eps {
+                        TA[t] = 0 as i32;
+                    }
+                    t += 1;
+                }
+                var h int = 0;
+                while h < nh {
+                    var slot int = 0;
+                    while slot < NT {
+                        if (TA[slot] as int) == 0 {
+                            break;
+                        }
+                        slot += 1;
+                    }
+                    if slot == NT {
+                        if NT + 1 >= CAP {
+                            OUT[3] = 1.0;
+                            full = true;
+                            break;
+                        }
+                        NT += 1;
+                    }
+                    setface(slot, HE[2 * h] as int, HE[2 * h + 1] as int, q);
+                    orient(slot, cx, cy, cz);
+                    h += 1;
+                }
+            }
+        }
+        q += 1;
+    }
+    var NT2 int = 0;
+    var s2 int = 0;
+    while s2 < NT {
+        if (TA[s2] as int) == 1 {
+            NT2 += 1;
+            var j int = 0;
+            while j < 3 {
+                OV[TR[3 * s2 + j] as int] = 0 as i32;
+                j += 1;
+            }
+        }
+        s2 += 1;
+    }
+    var nout int = 0;
+    c = 0;
+    while c < NC {
+        if (OV[c] as int) >= 0 {
+            OV[c] = nout as i32;
+            HV[3 * nout] = hx(c);
+            HV[3 * nout + 1] = hy(c);
+            HV[3 * nout + 2] = hz(c);
+            nout += 1;
+        }
+        c += 1;
+    }
+    zi(OT, at1(3 * NT2), 0);
+    var at int = 0;
+    s2 = 0;
+    while s2 < NT {
+        if (TA[s2] as int) == 1 {
+            var j int = 0;
+            while j < 3 {
+                OT[at] = OV[TR[3 * s2 + j] as int];
+                at += 1;
+                j += 1;
+            }
+        }
+        s2 += 1;
+    }
+    OUT[0] = nout as real;
+    OUT[1] = NT2 as real;
+    OUT[2] = 0.0;
+=== 0c544702f580d0c9
+    sr_views();
+    return 0;
+}
+=== -234598fc3b344d9a
+fn jacobi(a00 real, a01 real, a02 real, a11 real, a12 real, a22 real) int {
+    var a real[9];
+    var v real[9];
+    a[0] = a00;
+    a[1] = a01;
+    a[2] = a02;
+    a[3] = a01;
+    a[4] = a11;
+    a[5] = a12;
+    a[6] = a02;
+    a[7] = a12;
+    a[8] = a22;
+    var i int = 0;
+    while i < 9 {
+        v[i] = 0.0;
+        i += 1;
+    }
+    v[0] = 1.0;
+    v[4] = 1.0;
+    v[8] = 1.0;
+    var sweep int = 0;
+    while sweep < 50 {
+        var off real = a[1] * a[1] + a[2] * a[2] + a[5] * a[5];
+        var diag real = a[0] * a[0] + a[4] * a[4] + a[8] * a[8];
+        if off < 1e-30 * (1.0 + diag) {
+            break;
+        }
+        var pair int = 0;
+        while pair < 3 {
+            var p int = 0;
+            var q int = 1;
+            if pair == 1 {
+                q = 2;
+            }
+            if pair == 2 {
+                p = 1;
+                q = 2;
+            }
+            var apq real = a[3 * p + q];
+            if apq != 0.0 {
+                var theta real = (a[3 * q + q] - a[3 * p + p]) / (2.0 * apq);
+                var t real = 1.0 / (fabs(theta) + sqrt(theta * theta + 1.0));
+                if theta < 0.0 {
+                    t = -t;
+                }
+                var c real = 1.0 / sqrt(t * t + 1.0);
+                var s real = t * c;
+                var k int = 0;
+                while k < 3 {
+                    var akp real = a[3 * k + p];
+                    var akq real = a[3 * k + q];
+                    a[3 * k + p] = c * akp - s * akq;
+                    a[3 * k + q] = s * akp + c * akq;
+                    k += 1;
+                }
+                k = 0;
+                while k < 3 {
+                    var apk real = a[3 * p + k];
+                    var aqk real = a[3 * q + k];
+                    a[3 * p + k] = c * apk - s * aqk;
+                    a[3 * q + k] = s * apk + c * aqk;
+                    k += 1;
+                }
+                k = 0;
+                while k < 3 {
+                    var vkp real = v[3 * k + p];
+                    var vkq real = v[3 * k + q];
+                    v[3 * k + p] = c * vkp - s * vkq;
+                    v[3 * k + q] = s * vkp + c * vkq;
+                    k += 1;
+                }
+            }
+            pair += 1;
+        }
+        sweep += 1;
+    }
+    var col int = 0;
+    while col < 3 {
+        var row int = 0;
+        while row < 3 {
+            BX[3 + 3 * col + row] = v[3 * row + col];
+            row += 1;
+        }
+        col += 1;
+    }
+    return 0;
+}
+=== -15527e32f724ebf2
+fn box_coord(hull bool, i int, k int) real {
+    if hull {
+        return HV[3 * i + k];
+    }
+    return VP[3 * i + k];
+}
+export fn sr_box() i32 {
+    var m int = OUT[0] as int;
+    var hull bool = true;
+    if m == 0 {
+        hull = false;
+        m = NV;
+    }
+    var i int = 0;
+    if m == 0 {
+        while i < 15 {
+            BX[i] = 0.0;
+            i += 1;
+        }
+        return 1;
+    }
+    var mx real = 0.0;
+    var my real = 0.0;
+    var mz real = 0.0;
+    while i < m {
+        mx += box_coord(hull, i, 0);
+        my += box_coord(hull, i, 1);
+        mz += box_coord(hull, i, 2);
+        i += 1;
+    }
+    mx = mx / (m as real);
+    my = my / (m as real);
+    mz = mz / (m as real);
+    var c00 real = 0.0;
+    var c01 real = 0.0;
+    var c02 real = 0.0;
+    var c11 real = 0.0;
+    var c12 real = 0.0;
+    var c22 real = 0.0;
+    i = 0;
+    while i < m {
+        var x real = box_coord(hull, i, 0) - mx;
+        var y real = box_coord(hull, i, 1) - my;
+        var z real = box_coord(hull, i, 2) - mz;
+        c00 += x * x;
+        c01 += x * y;
+        c02 += x * z;
+        c11 += y * y;
+        c12 += y * z;
+        c22 += z * z;
+        i += 1;
+    }
+    var n real = m as real;
+    jacobi(c00 / n, c01 / n, c02 / n, c11 / n, c12 / n, c22 / n);
+    var lo real[3];
+    var hi real[3];
+    var alo real[3];
+    var ahi real[3];
+    var k int = 0;
+    while k < 3 {
+        i = 0;
+        while i < m {
+            var pr real = box_coord(hull, i, 0) * BX[3 + 3 * k] + box_coord(hull, i, 1) * BX[4 + 3 * k] + box_coord(hull, i, 2) * BX[5 + 3 * k];
+            var w real = box_coord(hull, i, k);
+            if i == 0 {
+                lo[k] = pr;
+                hi[k] = pr;
+                alo[k] = w;
+                ahi[k] = w;
+            }
+            if pr < lo[k] {
+                lo[k] = pr;
+            }
+            if pr > hi[k] {
+                hi[k] = pr;
+            }
+            if w < alo[k] {
+                alo[k] = w;
+            }
+            if w > ahi[k] {
+                ahi[k] = w;
+            }
+            i += 1;
+        }
+        k += 1;
+    }
+    var vol real = (hi[0] - lo[0]) * (hi[1] - lo[1]) * (hi[2] - lo[2]);
+    var avol real = (ahi[0] - alo[0]) * (ahi[1] - alo[1]) * (ahi[2] - alo[2]);
+    if avol <= vol * (1.0 + 1e-9) {
+        k = 0;
+        while k < 3 {
+            var r int = 0;
+            while r < 3 {
+                if r == k {
+                    BX[3 + 3 * k + r] = 1.0;
+                } else {
+                    BX[3 + 3 * k + r] = 0.0;
+                }
+                r += 1;
+            }
+            lo[k] = alo[k];
+            hi[k] = ahi[k];
+            k += 1;
+        }
+    }
+    k = 0;
+    while k < 3 {
+        BX[12 + k] = (hi[k] - lo[k]) * 0.5;
+        k += 1;
+    }
+    var j int = 0;
+    while j < 3 {
+        var sum real = 0.0;
+        k = 0;
+        while k < 3 {
+            sum += BX[3 + 3 * k + j] * ((lo[k] + hi[k]) * 0.5);
+            k += 1;
+        }
+        BX[j] = sum;
+        j += 1;
+    }
+    OUT[4] = (hi[0] - lo[0]) * (hi[1] - lo[1]) * (hi[2] - lo[2]);
+    return 0;
+}
+=== 01ea239ad96d9641
+fn tri(k int, ax real, ay real, az real, bx real, by real, bz real, cx real, cy real, cz real) {
+    var at int = 9 * k;
+    MP[at] = ax;
+    MP[at + 1] = ay;
+    MP[at + 2] = az;
+    MP[at + 3] = bx;
+    MP[at + 4] = by;
+    MP[at + 5] = bz;
+    MP[at + 6] = cx;
+    MP[at + 7] = cy;
+    MP[at + 8] = cz;
+    var ux real = bx - ax;
+    var uy real = by - ay;
+    var uz real = bz - az;
+    var wx real = cx - ax;
+    var wy real = cy - ay;
+    var wz real = cz - az;
+    var nx real = uy * wz - uz * wy;
+    var ny real = uz * wx - ux * wz;
+    var nz real = ux * wy - uy * wx;
+    var len real = sqrt(nx * nx + ny * ny + nz * nz);
+    if len > 1e-300 {
+        nx = nx / len;
+        ny = ny / len;
+        nz = nz / len;
+    }
+    var j int = 0;
+    while j < 3 {
+        MN[at + 3 * j] = nx;
+        MN[at + 3 * j + 1] = ny;
+        MN[at + 3 * j + 2] = nz;
+        j += 1;
+    }
+}
+fn seg(k int, ax real, ay real, az real, bx real, by real, bz real) {
+    ML[6 * k] = ax;
+    ML[6 * k + 1] = ay;
+    ML[6 * k + 2] = az;
+    ML[6 * k + 3] = bx;
+    ML[6 * k + 4] = by;
+    ML[6 * k + 5] = bz;
+}
+=== 2c16597f1c2082c9
+export fn sr_mesh(kind_in i32, cosang real) i32 {
+    var kind int = kind_in as int;
+    var nt int = 0;
+    var nl int = 0;
+=== -5af236dedc0046a8
+    if kind == 1 {
+        nt = OUT[1] as int;
+        zf(MP, at1(9 * nt), 0.0);
+        zf(MN, at1(9 * nt), 0.0);
+        var k int = 0;
+        while k < nt {
+            var a int = OT[3 * k] as int;
+            var b int = OT[3 * k + 1] as int;
+            var c int = OT[3 * k + 2] as int;
+            tri(k, hx(a), hy(a), hz(a), hx(b), hy(b), hz(b), hx(c), hy(c), hz(c));
+            k += 1;
+        }
+        zf(ML, at1(6 * 3 * nt), 0.0);
+        var i int = 0;
+        while i < nt {
+            var e int = 0;
+            while e < 3 {
+                var u int = OT[3 * i + e] as int;
+                var w int = OT[3 * i + (e + 1) % 3] as int;
+                var j int = 0;
+                var other int = -1;
+                while j < nt && other < 0 {
+                    if j != i {
+                        var g int = 0;
+                        while g < 3 {
+                            if (OT[3 * j + g] as int) == w && (OT[3 * j + (g + 1) % 3] as int) == u {
+                                other = j;
+                            }
+                            g += 1;
+                        }
+                    }
+                    j += 1;
+                }
+                if other >= 0 && i < other {
+                    var dot real = MN[9 * i] * MN[9 * other] + MN[9 * i + 1] * MN[9 * other + 1] + MN[9 * i + 2] * MN[9 * other + 2];
+                    if dot < cosang {
+                        seg(nl, hx(u), hy(u), hz(u), hx(w), hy(w), hz(w));
+                        nl += 1;
+                    }
+                }
+                e += 1;
+            }
+            i += 1;
+        }
+    }
+=== 3dc1ce363de0a1d4
+    if kind == 2 {
+        var cor real[24];
+        var b int = 0;
+        while b < 8 {
+            var s0 real = 1.0;
+            if b % 2 == 0 {
+                s0 = -1.0;
+            }
+            var s1 real = 1.0;
+            if (b / 2) % 2 == 0 {
+                s1 = -1.0;
+            }
+            var s2 real = 1.0;
+            if b / 4 == 0 {
+                s2 = -1.0;
+            }
+            var j int = 0;
+            while j < 3 {
+                cor[3 * b + j] = BX[j] + s0 * BX[12] * BX[3 + j] + s1 * BX[13] * BX[6 + j] + s2 * BX[14] * BX[9 + j];
+                j += 1;
+            }
+            b += 1;
+        }
+        zf(MP, 9 * 12, 0.0);
+        zf(MN, 9 * 12, 0.0);
+        zf(ML, 6 * 12, 0.0);
+        var faces int[12];
+        faces[0] = 21;
+        faces[1] = 123;
+        faces[2] = 456;
+        faces[3] = 576;
+        faces[4] = 14;
+        faces[5] = 154;
+        faces[6] = 263;
+        faces[7] = 367;
+        faces[8] = 42;
+        faces[9] = 246;
+        faces[10] = 135;
+        faces[11] = 375;
+        var k int = 0;
+        while k < 12 {
+            var p int = faces[k] / 100;
+            var q int = (faces[k] / 10) % 10;
+            var r int = faces[k] % 10;
+            tri(k, cor[3 * p], cor[3 * p + 1], cor[3 * p + 2], cor[3 * q], cor[3 * q + 1], cor[3 * q + 2], cor[3 * r], cor[3 * r + 1], cor[3 * r + 2]);
+            var toward real = MN[9 * k] * (cor[3 * p] - BX[0]) + MN[9 * k + 1] * (cor[3 * p + 1] - BX[1]) + MN[9 * k + 2] * (cor[3 * p + 2] - BX[2]);
+            if toward < 0.0 {
+                tri(k, cor[3 * p], cor[3 * p + 1], cor[3 * p + 2], cor[3 * r], cor[3 * r + 1], cor[3 * r + 2], cor[3 * q], cor[3 * q + 1], cor[3 * q + 2]);
+            }
+            k += 1;
+        }
+        var edges int[12];
+        edges[0] = 1;
+        edges[1] = 23;
+        edges[2] = 45;
+        edges[3] = 67;
+        edges[4] = 2;
+        edges[5] = 13;
+        edges[6] = 46;
+        edges[7] = 57;
+        edges[8] = 4;
+        edges[9] = 15;
+        edges[10] = 26;
+        edges[11] = 37;
+        k = 0;
+        while k < 12 {
+            var u int = edges[k] / 10;
+            var w int = edges[k] % 10;
+            seg(k, cor[3 * u], cor[3 * u + 1], cor[3 * u + 2], cor[3 * w], cor[3 * w + 1], cor[3 * w + 2]);
+            k += 1;
+        }
+        nt = 12;
+        nl = 12;
+        if BX[12] == 0.0 && BX[13] == 0.0 && BX[14] == 0.0 {
+            nt = 0;
+            nl = 0;
+        }
+    }
+=== 6cdde7c9ac7130aa
+    OUT[5] = nt as real;
+    OUT[7] = nl as real;
+    sr_views();
+    return nt as i32;
+}
+=== 0ddb8a3b7d369d37
+fn main() {
+}

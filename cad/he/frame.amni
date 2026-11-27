@@ -1,0 +1,2273 @@
+import math;
+extern fn fr_view_f64(id i32, xs real[:]) = "fr_view_f64";
+extern fn fr_view_i32(id i32, xs i32[:]) = "fr_view_i32";
+var NJ int = 0;
+var NMB int = 0;
+var NSC int = 0;
+var NS int = 0;
+var NT int = 0;
+var NE int = 0;
+var NQ int = 0;
+var NV int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var XJ f64[>..];
+var MW f64[>..];
+var SC f64[>..];
+var SP f64[>..];
+var SX f64[>..];
+var FJ f64[>..];
+var UJ f64[>..];
+var RJ f64[>..];
+var ST f64[>..];
+var SD f64[>..];
+var SB f64[>..];
+var MS f64[>..];
+var XN f64[>..];
+var LAM f64[>..];
+var PE f64[>..];
+var KV f64[>..];
+var KS f64[>..];
+var GV f64[>..];
+var FV f64[>..];
+var UV f64[>..];
+var XV f64[>..];
+var YV f64[>..];
+var ZV f64[>..];
+var WV f64[>..];
+var KE f64[>..];
+var GE f64[>..];
+var TE f64[>..];
+var FE f64[>..];
+var FG f64[>..];
+var DE f64[>..];
+var QE f64[>..];
+var CV f64[>..];
+var CE f64[>..];
+var PC f64[>..];
+var CG f64[>..];
+var CS f64[>..];
+var BR f64[>..];
+var MJ f64[>..];
+var MB i32[>..];
+var SU i32[>..];
+var EN i32[>..];
+var RL i32[>..];
+var POS i32[>..];
+var DEG i32[>..];
+var SEEN i32[>..];
+var ORD i32[>..];
+var CUR i32[>..];
+var AS i32[>..];
+var AJ i32[>..];
+var TOP i32[>..];
+var CP i32[>..];
+var RC i32[>..];
+var EC i32[>..];
+var GI i32[>..];
+var PK i32[>..];
+var MM i32[>..];
+fn zf(xs f64[>..]&, n int, x real) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at_least1(n int) int {
+    if (n == 0) {
+        return 1;
+    }
+    return n;
+}
+export fn fr_views() i32 {
+    fr_view_f64(1, IN);
+    fr_view_f64(2, OUT);
+    fr_view_f64(3, XJ);
+    fr_view_f64(4, MW);
+    fr_view_f64(5, SC);
+    fr_view_f64(7, SP);
+    fr_view_f64(8, FJ);
+    fr_view_f64(9, UJ);
+    fr_view_f64(10, RJ);
+    fr_view_f64(11, ST);
+    fr_view_f64(12, SD);
+    fr_view_f64(13, SB);
+    fr_view_f64(14, MS);
+    fr_view_f64(15, SX);
+    fr_view_f64(16, CE);
+    fr_view_f64(17, CG);
+    fr_view_f64(18, CS);
+    fr_view_f64(19, LAM);
+    fr_view_f64(23, PC);
+    fr_view_f64(24, MJ);
+    fr_view_i32(20, MB);
+    fr_view_i32(21, SU);
+    fr_view_i32(22, GI);
+    fr_view_i32(25, MM);
+    return 0;
+}
+export fn fr_init() i32 {
+    zf(IN, 64, 0.0);
+    zf(OUT, 64, 0.0);
+    zf(XJ, 1, 0.0);
+    zf(MW, 1, 0.0);
+    zf(SC, 1, 0.0);
+    zf(SP, 1, 0.0);
+    zf(FJ, 1, 0.0);
+    zf(UJ, 1, 0.0);
+    zf(RJ, 1, 0.0);
+    zf(ST, 1, 0.0);
+    zf(SD, 1, 0.0);
+    zf(SB, 1, 0.0);
+    zf(MS, 1, 0.0);
+    zf(XN, 1, 0.0);
+    zf(LAM, 1, 0.0);
+    zf(PE, 1, 0.0);
+    zf(KV, 1, 0.0);
+    zf(KS, 1, 0.0);
+    zf(GV, 1, 0.0);
+    zf(FV, 1, 0.0);
+    zf(UV, 1, 0.0);
+    zf(XV, 1, 0.0);
+    zf(YV, 1, 0.0);
+    zf(ZV, 1, 0.0);
+    zf(WV, 1, 0.0);
+    zf(KE, 1, 0.0);
+    zf(GE, 1, 0.0);
+    zf(TE, 1, 0.0);
+    zf(FE, 1, 0.0);
+    zf(FG, 1, 0.0);
+    zf(DE, 1, 0.0);
+    zf(QE, 1, 0.0);
+    zf(CV, 1, 0.0);
+    zi(MB, 1, 0);
+    zi(SU, 1, 0);
+    zi(EN, 1, 0);
+    zi(RL, 1, 0);
+    zi(POS, 1, 0);
+    zi(DEG, 1, 0);
+    zi(SEEN, 1, 0);
+    zi(ORD, 1, 0);
+    zi(CUR, 1, 0);
+    zi(AS, 1, 0);
+    zi(AJ, 1, 0);
+    zi(TOP, 1, 0);
+    zi(CP, 1, 0);
+    fr_views();
+    return 0;
+}
+export fn fr_size(nj i32, nm i32, ns i32, nseg i32) i32 {
+    NJ = nj as int;
+    NMB = nm as int;
+    NSC = ns as int;
+    NS = nseg as int;
+    if (NS < 1) {
+        NS = 1;
+    }
+    var k int = NMB * (NS + 1);
+    zf(XJ, at_least1(3 * NJ), 0.0);
+    zf(FJ, at_least1(6 * NJ), 0.0);
+    zf(UJ, at_least1(6 * NJ), 0.0);
+    zf(RJ, at_least1(6 * NJ), 0.0);
+    zf(MW, at_least1(4 * NMB), 0.0);
+    zf(CE, at_least1(24 * NMB), 0.0);
+    zf(SC, at_least1(8 * NSC), 0.0);
+    zf(SP, at_least1(8 * NSC), 0.0);
+    zf(SX, at_least1(8 * NSC), 0.0);
+    zf(ST, at_least1(8 * k), 0.0);
+    zf(SD, at_least1(3 * k), 0.0);
+    zf(SB, at_least1(3 * k), 0.0);
+    zf(MS, at_least1(8 * NMB), 0.0);
+    zi(MB, at_least1(4 * NMB), 0);
+    zi(SU, at_least1(6 * NJ), 0);
+    fr_views();
+    return 0;
+}
+fn pi_r() real {
+    return 3.141592653589793;
+}
+fn rmax(a real, b real) real {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+fn rmin(a real, b real) real {
+    if (a < b) {
+        return a;
+    }
+    return b;
+}
+fn rabs(a real) real {
+    if (a < 0.0) {
+        return -a;
+    }
+    return a;
+}
+fn sqrt_r(x real) real {
+    if (x != x) {
+        return x;
+    }
+    if (x <= 0.0) {
+        return 0.0;
+    }
+    if (x > 1.0e308) {
+        return x;
+    }
+    var v real = x;
+    var f real = 1.0;
+    while (v > 4.0) {
+        v = v / 4.0;
+        f = f * 2.0;
+    }
+    while (v < 0.25) {
+        v = v * 4.0;
+        f = f / 2.0;
+    }
+    var y real = 1.0;
+    var i int = 0;
+    while (i < 10) {
+        y = 0.5 * (y + v / y);
+        i += 1;
+    }
+    return y * f;
+}
+fn sin_k(r real) real {
+    var term real = r;
+    var sum real = r;
+    var n int = 1;
+    while (n <= 12) {
+        term = term * (-(r * r)) / (((2 * n) as real) * ((2 * n + 1) as real));
+        sum += term;
+        n += 1;
+    }
+    return sum;
+}
+fn cos_k(r real) real {
+    var term real = 1.0;
+    var sum real = 1.0;
+    var n int = 1;
+    while (n <= 12) {
+        term = term * (-(r * r)) / (((2 * n - 1) as real) * ((2 * n) as real));
+        sum += term;
+        n += 1;
+    }
+    return sum;
+}
+fn quad_r(x real) int {
+    var t real = x * 0.6366197723675814;
+    if (t >= 0.0) {
+        return (t + 0.5) as int;
+    }
+    return (t - 0.5) as int;
+}
+fn sin_r(x real) real {
+    var k int = quad_r(x);
+    var r real = x - (k as real) * 1.5707963267948966 - (k as real) * 6.123233995736766e-17;
+    var qd int = ((k % 4) + 4) % 4;
+    if (qd == 0) {
+        return sin_k(r);
+    }
+    if (qd == 1) {
+        return cos_k(r);
+    }
+    if (qd == 2) {
+        return -sin_k(r);
+    }
+    return -cos_k(r);
+}
+fn cos_r(x real) real {
+    var k int = quad_r(x);
+    var r real = x - (k as real) * 1.5707963267948966 - (k as real) * 6.123233995736766e-17;
+    var qd int = ((k % 4) + 4) % 4;
+    if (qd == 0) {
+        return cos_k(r);
+    }
+    if (qd == 1) {
+        return -sin_k(r);
+    }
+    if (qd == 2) {
+        return -cos_k(r);
+    }
+    return sin_k(r);
+}
+fn log_r(x real) real {
+    var z real = 0.0;
+    if (x != x) {
+        return x;
+    }
+    if (x < 0.0) {
+        return z / z;
+    }
+    if (x == 0.0) {
+        return -1.0 / z;
+    }
+    if (x > 1.0e308) {
+        return x;
+    }
+    var v real = x;
+    var e int = 0;
+    while (v >= 2.0) {
+        v = v / 2.0;
+        e += 1;
+    }
+    while (v < 1.0) {
+        v = v * 2.0;
+        e -= 1;
+    }
+    if (v > 1.4142135623730951) {
+        v = v / 2.0;
+        e += 1;
+    }
+    var s real = (v - 1.0) / (v + 1.0);
+    var s2 real = s * s;
+    var p real = s;
+    var sum real = 0.0;
+    var n int = 0;
+    while (n < 24) {
+        sum += p / ((2 * n + 1) as real);
+        p = p * s2;
+        n += 1;
+    }
+    return 2.0 * sum + (e as real) * 0.6931471805599453;
+}
+fn atan_r(x real) real {
+    if (x != x) {
+        return x;
+    }
+    var v real = rabs(x);
+    var flip bool = false;
+    if (v > 1.0) {
+        v = 1.0 / v;
+        flip = true;
+    }
+    v = v / (1.0 + sqrt_r(1.0 + v * v));
+    v = v / (1.0 + sqrt_r(1.0 + v * v));
+    var v2 real = v * v;
+    var p real = v;
+    var sum real = 0.0;
+    var n int = 0;
+    while (n < 16) {
+        sum += p / ((2 * n + 1) as real);
+        p = -p * v2;
+        n += 1;
+    }
+    var res real = 4.0 * sum;
+    if (flip) {
+        res = 1.5707963267948966 - res;
+    }
+    if (x < 0.0) {
+        return -res;
+    }
+    return res;
+}
+fn atan2_r(y real, x real) real {
+    if (x > 0.0) {
+        return atan_r(y / x);
+    }
+    if (x < 0.0) {
+        if (y >= 0.0) {
+            return atan_r(y / x) + pi_r();
+        }
+        return atan_r(y / x) - pi_r();
+    }
+    if (y > 0.0) {
+        return 1.5707963267948966;
+    }
+    if (y < 0.0) {
+        return -1.5707963267948966;
+    }
+    return 0.0;
+}
+fn sec_props(s i32) int {
+    var o int = 8 * (s as int);
+    var k int = SC[o] as int;
+    var b real = SC[o + 1];
+    var h real = SC[o + 2];
+    var t real = SC[o + 3];
+    var tf real = SC[o + 4];
+    var tw real = SC[o + 5];
+    var pi real = pi_r();
+    var A real = 0.0;
+    var Iy real = 0.0;
+    var Iz real = 0.0;
+    var J real = 0.0;
+    var cy real = 0.0;
+    var cz real = 0.0;
+    var Zt real = 0.0;
+    var rnd real = 0.0;
+    var ymin real = 0.0;
+    var ymax real = 0.0;
+    var zmin real = 0.0;
+    var zmax real = 0.0;
+    var ang real = 0.0;
+    var ody real = 0.0;
+    var odz real = 0.0;
+    var per real = 0.0;
+    if (k == 0) {
+        A = b * h;
+        Iy = b * (h * h * h) / 12.0;
+        Iz = h * (b * b * b) / 12.0;
+        var ra real = rmax(b, h) / 2.0;
+        var rc real = rmin(b, h) / 2.0;
+        J = ra * (rc * rc * rc) * (16.0 / 3.0 - 3.36 * rc / ra * (1.0 - (rc * rc * rc * rc) / (12.0 * (ra * ra * ra * ra))));
+        cy = b / 2.0;
+        cz = h / 2.0;
+        Zt = 8.0 * (ra * ra) * (rc * rc) / (3.0 * ra + 1.8 * rc);
+        rnd = 0.0;
+        ymin = -b / 2.0;
+        ymax = b / 2.0;
+        zmin = -h / 2.0;
+        zmax = h / 2.0;
+        per = 2.0 * (b + h);
+    } else if (k == 1) {
+        var r real = b / 2.0;
+        A = pi * (r * r);
+        Iy = pi * (r * r * r * r) / 4.0;
+        Iz = Iy;
+        J = pi * (r * r * r * r) / 2.0;
+        cy = r;
+        cz = r;
+        Zt = J / r;
+        rnd = 1.0;
+        ymin = -b / 2.0;
+        ymax = b / 2.0;
+        zmin = -b / 2.0;
+        zmax = b / 2.0;
+        per = pi * b;
+    } else if (k == 2) {
+        var ro real = b / 2.0;
+        var ri real = rmax(ro - t, 0.0);
+        A = pi * (ro * ro - ri * ri);
+        Iy = pi * (ro * ro * ro * ro - ri * ri * ri * ri) / 4.0;
+        Iz = Iy;
+        J = 2.0 * Iy;
+        cy = ro;
+        cz = ro;
+        Zt = J / ro;
+        rnd = 1.0;
+        ymin = -b / 2.0;
+        ymax = b / 2.0;
+        zmin = -b / 2.0;
+        zmax = b / 2.0;
+        per = pi * b;
+    } else if (k == 3) {
+        var bi real = rmax(b - 2.0 * t, 0.0);
+        var hi real = rmax(h - 2.0 * t, 0.0);
+        A = b * h - bi * hi;
+        Iy = (b * (h * h * h) - bi * (hi * hi * hi)) / 12.0;
+        Iz = (h * (b * b * b) - hi * (bi * bi * bi)) / 12.0;
+        J = 2.0 * t * ((b - t) * (b - t)) * ((h - t) * (h - t)) / (b + h - 2.0 * t);
+        cy = b / 2.0;
+        cz = h / 2.0;
+        Zt = 2.0 * t * (b - t) * (h - t);
+        rnd = 0.0;
+        ymin = -b / 2.0;
+        ymax = b / 2.0;
+        zmin = -h / 2.0;
+        zmax = h / 2.0;
+        per = 2.0 * (b + h);
+    } else if (k == 4) {
+        var hw real = h - 2.0 * tf;
+        A = 2.0 * b * tf + hw * tw;
+        Iy = (b * (h * h * h) - (b - tw) * (hw * hw * hw)) / 12.0;
+        Iz = (2.0 * tf * (b * b * b) + hw * (tw * tw * tw)) / 12.0;
+        J = (2.0 * b * (tf * tf * tf) + hw * (tw * tw * tw)) / 3.0;
+        cy = b / 2.0;
+        cz = h / 2.0;
+        Zt = J / rmax(tf, tw);
+        rnd = 0.0;
+        ymin = -b / 2.0;
+        ymax = b / 2.0;
+        zmin = -h / 2.0;
+        zmax = h / 2.0;
+        per = 2.0 * h + 4.0 * b - 2.0 * tw;
+    } else if (k == 5) {
+        var hc real = h - 2.0 * tf;
+        A = 2.0 * b * tf + hc * tw;
+        var ey real = (b * b * tf + hc * (tw * tw) / 2.0) / A;
+        Iy = (b * (h * h * h) - (b - tw) * (hc * hc * hc)) / 12.0;
+        Iz = 2.0 * (tf * (b * b * b) / 12.0 + b * tf * ((b / 2.0 - ey) * (b / 2.0 - ey))) + hc * (tw * tw * tw) / 12.0 + hc * tw * ((tw / 2.0 - ey) * (tw / 2.0 - ey));
+        J = (2.0 * b * (tf * tf * tf) + hc * (tw * tw * tw)) / 3.0;
+        cy = rmax(ey, b - ey);
+        cz = h / 2.0;
+        Zt = J / rmax(tf, tw);
+        rnd = 0.0;
+        ymin = -ey;
+        ymax = b - ey;
+        zmin = -h / 2.0;
+        zmax = h / 2.0;
+        ody = -ey;
+        odz = -h / 2.0;
+        per = 2.0 * h + 4.0 * b - 2.0 * tw;
+    } else if (k == 8) {
+        A = t * (b + h - t);
+        var p real = (h - t) * t;
+        var mz real = (h + t) / 2.0;
+        var yc real = (b * t * b / 2.0 + p * t / 2.0) / A;
+        var zc real = (b * t * t / 2.0 + p * mz) / A;
+        var I0 real = b * (t * t * t) / 12.0 + b * t * ((t / 2.0 - zc) * (t / 2.0 - zc)) + t * ((h - t) * (h - t) * (h - t)) / 12.0 + p * ((mz - zc) * (mz - zc));
+        var K0 real = t * (b * b * b) / 12.0 + b * t * ((b / 2.0 - yc) * (b / 2.0 - yc)) + (h - t) * (t * t * t) / 12.0 + p * ((t / 2.0 - yc) * (t / 2.0 - yc));
+        var P0 real = b * t * (b / 2.0 - yc) * (t / 2.0 - zc) + p * (t / 2.0 - yc) * (mz - zc);
+        var al real = atan2_r(-2.0 * P0, I0 - K0) / 2.0;
+        var c real = cos_r(al);
+        var sn real = sin_r(al);
+        Iy = c * c * I0 + sn * sn * K0 - 2.0 * sn * c * P0;
+        Iz = sn * sn * I0 + c * c * K0 + 2.0 * sn * c * P0;
+        J = (b + h - t) * (t * t * t) / 3.0;
+        var rm real = sqrt_r(yc * yc + zc * zc);
+        rm = rmax(rm, sqrt_r((b - yc) * (b - yc) + zc * zc));
+        rm = rmax(rm, sqrt_r((b - yc) * (b - yc) + (t - zc) * (t - zc)));
+        rm = rmax(rm, sqrt_r((t - yc) * (t - yc) + (h - zc) * (h - zc)));
+        rm = rmax(rm, sqrt_r(yc * yc + (h - zc) * (h - zc)));
+        cy = rm;
+        cz = rm;
+        Zt = J / t;
+        rnd = 0.0;
+        ymin = -yc;
+        ymax = b - yc;
+        zmin = -zc;
+        zmax = h - zc;
+        ang = al * 180.0 / pi;
+        ody = -yc;
+        odz = -zc;
+        per = 2.0 * (b + h);
+    } else {
+        return 0;
+    }
+    SP[o] = A;
+    SP[o + 1] = Iy;
+    SP[o + 2] = Iz;
+    SP[o + 3] = J;
+    SP[o + 4] = cy;
+    SP[o + 5] = cz;
+    SP[o + 6] = Zt;
+    SP[o + 7] = rnd;
+    SX[o] = ymin;
+    SX[o + 1] = ymax;
+    SX[o + 2] = zmin;
+    SX[o + 3] = zmax;
+    SX[o + 4] = ang;
+    SX[o + 5] = ody;
+    SX[o + 6] = odz;
+    SX[o + 7] = per;
+    return 0;
+}
+export fn fr_sections() i32 {
+    var s int = 0;
+    while (s < NSC) {
+        sec_props(s as i32);
+        s += 1;
+    }
+    return 0;
+}
+fn axes(m i32) real {
+    var mm int = m as int;
+    var i int = MB[4 * mm] as int;
+    var j int = MB[4 * mm + 1] as int;
+    var dx real = XJ[3 * j] - XJ[3 * i];
+    var dy real = XJ[3 * j + 1] - XJ[3 * i + 1];
+    var dz real = XJ[3 * j + 2] - XJ[3 * i + 2];
+    var L real = sqrt_r(dx * dx + dy * dy + dz * dz);
+    var o int = 9 * mm;
+    if (L == 0.0) {
+        var c int = 0;
+        while (c < 9) {
+            LAM[o + c] = 0.0;
+            c += 1;
+        }
+        LAM[o] = 1.0;
+        LAM[o + 4] = 1.0;
+        LAM[o + 8] = 1.0;
+        return 0.0;
+    }
+    var exx real = dx / L;
+    var exy real = dy / L;
+    var exz real = dz / L;
+    var rx real = 0.0;
+    var ry real = 0.0;
+    var rz real = 1.0;
+    if (rabs(exz) > 0.999) {
+        rx = 1.0;
+        rz = 0.0;
+    }
+    var rd real = rx * exx + ry * exy + rz * exz;
+    var ax real = rx - rd * exx;
+    var ay real = ry - rd * exy;
+    var az real = rz - rd * exz;
+    var al real = sqrt_r(ax * ax + ay * ay + az * az);
+    ax = ax / al;
+    ay = ay / al;
+    az = az / al;
+    var bx real = ay * exz - az * exy;
+    var by real = az * exx - ax * exz;
+    var bz real = ax * exy - ay * exx;
+    var bt real = MW[4 * mm] * pi_r() / 180.0;
+    var cb real = cos_r(bt);
+    var sb real = sin_r(bt);
+    LAM[o] = exx;
+    LAM[o + 1] = exy;
+    LAM[o + 2] = exz;
+    LAM[o + 3] = cb * bx + sb * ax;
+    LAM[o + 4] = cb * by + sb * ay;
+    LAM[o + 5] = cb * bz + sb * az;
+    LAM[o + 6] = cb * ax - sb * bx;
+    LAM[o + 7] = cb * ay - sb * by;
+    LAM[o + 8] = cb * az - sb * bz;
+    return L;
+}
+fn node_of(m i32, s i32) int {
+    var mm int = m as int;
+    var ss int = s as int;
+    if (ss == 0) {
+        return MB[4 * mm] as int;
+    }
+    if (ss == NS) {
+        return MB[4 * mm + 1] as int;
+    }
+    return NJ + mm * (NS - 1) + ss - 1;
+}
+fn build() int {
+    NT = NJ + NMB * (NS - 1);
+    NE = NMB * NS;
+    zf(XN, at_least1(3 * NT), 0.0);
+    zf(LAM, at_least1(9 * NMB), 0.0);
+    zi(EN, at_least1(3 * NE), 0);
+    zi(RL, at_least1(NE), 0);
+    zf(PE, at_least1(NE), 0.0);
+    var q int = 0;
+    while (q < 3 * NJ) {
+        XN[q] = XJ[q];
+        q += 1;
+    }
+    var m int = 0;
+    while (m < NMB) {
+        MS[8 * m] = axes(m as i32);
+        var i int = MB[4 * m] as int;
+        var j int = MB[4 * m + 1] as int;
+        var rb int = MB[4 * m + 3] as int;
+        var k int = 1;
+        while (k < NS) {
+            var nd int = NJ + m * (NS - 1) + k - 1;
+            var c int = 0;
+            while (c < 3) {
+                XN[3 * nd + c] = XJ[3 * i + c] + (XJ[3 * j + c] - XJ[3 * i + c]) * (k as real) / (NS as real);
+                c += 1;
+            }
+            k += 1;
+        }
+        var s int = 0;
+        while (s < NS) {
+            var e int = m * NS + s;
+            EN[3 * e] = node_of(m as i32, s as i32) as i32;
+            EN[3 * e + 1] = node_of(m as i32, (s + 1) as i32) as i32;
+            EN[3 * e + 2] = m as i32;
+            var fl int = 0;
+            if (s == 0 && (rb & 1) != 0) {
+                fl += 1;
+            }
+            if (s == NS - 1 && (rb & 2) != 0) {
+                fl += 2;
+            }
+            if (s == NS - 1 && rb == 3) {
+                fl += 4;
+            }
+            RL[e] = fl as i32;
+            s += 1;
+        }
+        m += 1;
+    }
+    return 0;
+}
+fn bfs(s i32, c0 i32) int {
+    var start int = s as int;
+    var first int = c0 as int;
+    ORD[first] = s;
+    SEEN[start] = 1 as i32;
+    var hd int = first;
+    var tl int = first + 1;
+    while (hd < tl) {
+        var n int = ORD[hd] as int;
+        hd += 1;
+        var t0 int = tl;
+        var p int = AS[n] as int;
+        var pend int = AS[n + 1] as int;
+        while (p < pend) {
+            var q int = AJ[p] as int;
+            if ((SEEN[q] as int) == 0) {
+                SEEN[q] = 1 as i32;
+                ORD[tl] = q as i32;
+                tl += 1;
+            }
+            p += 1;
+        }
+        var i int = t0 + 1;
+        while (i < tl) {
+            var v int = ORD[i] as int;
+            var key int = DEG[v] as int;
+            var j int = i - 1;
+            while (j >= t0 && (DEG[ORD[j] as int] as int) > key) {
+                ORD[j + 1] = ORD[j];
+                j -= 1;
+            }
+            ORD[j + 1] = v as i32;
+            i += 1;
+        }
+    }
+    return tl;
+}
+fn order() int {
+    zi(DEG, at_least1(NT), 0);
+    zi(SEEN, at_least1(NT), 0);
+    zi(ORD, at_least1(NT), 0);
+    zi(POS, at_least1(NT), 0);
+    zi(CUR, at_least1(NT), 0);
+    zi(AS, NT + 1, 0);
+    zi(AJ, at_least1(2 * NE), 0);
+    var e int = 0;
+    while (e < NE) {
+        var a int = EN[3 * e] as int;
+        var b int = EN[3 * e + 1] as int;
+        if (a != b) {
+            DEG[a] = ((DEG[a] as int) + 1) as i32;
+            DEG[b] = ((DEG[b] as int) + 1) as i32;
+        }
+        e += 1;
+    }
+    var n int = 0;
+    while (n < NT) {
+        AS[n + 1] = ((AS[n] as int) + (DEG[n] as int)) as i32;
+        CUR[n] = AS[n];
+        n += 1;
+    }
+    var f int = 0;
+    while (f < NE) {
+        var fa int = EN[3 * f] as int;
+        var fb int = EN[3 * f + 1] as int;
+        if (fa != fb) {
+            AJ[CUR[fa] as int] = fb as i32;
+            CUR[fa] = ((CUR[fa] as int) + 1) as i32;
+            AJ[CUR[fb] as int] = fa as i32;
+            CUR[fb] = ((CUR[fb] as int) + 1) as i32;
+        }
+        f += 1;
+    }
+    var cnt int = 0;
+    while (cnt < NT) {
+        var st int = -1;
+        var u int = 0;
+        while (u < NT) {
+            if ((SEEN[u] as int) == 0) {
+                if (st < 0) {
+                    st = u;
+                } else if ((DEG[u] as int) < (DEG[st] as int)) {
+                    st = u;
+                }
+            }
+            u += 1;
+        }
+        var e1 int = bfs(st as i32, cnt as i32);
+        var la int = ORD[e1 - 1] as int;
+        var k int = cnt;
+        while (k < e1) {
+            SEEN[ORD[k] as int] = 0 as i32;
+            k += 1;
+        }
+        cnt = bfs(la as i32, cnt as i32);
+    }
+    var w int = 0;
+    while (w < NT) {
+        POS[ORD[w] as int] = (NT - 1 - w) as i32;
+        w += 1;
+    }
+    return 0;
+}
+fn profile() int {
+    NQ = 6 * NT;
+    zi(TOP, at_least1(NQ), 0);
+    zi(CP, NQ + 1, 0);
+    var q int = 0;
+    while (q < NQ) {
+        TOP[q] = q as i32;
+        q += 1;
+    }
+    var e int = 0;
+    while (e < NE) {
+        var a int = EN[3 * e] as int;
+        var b int = EN[3 * e + 1] as int;
+        var pa int = POS[a] as int;
+        var pb int = POS[b] as int;
+        var lo int = 6 * pa;
+        if (pb < pa) {
+            lo = 6 * pb;
+        }
+        var k int = 0;
+        while (k < 6) {
+            if (lo < (TOP[6 * pa + k] as int)) {
+                TOP[6 * pa + k] = lo as i32;
+            }
+            if (lo < (TOP[6 * pb + k] as int)) {
+                TOP[6 * pb + k] = lo as i32;
+            }
+            k += 1;
+        }
+        e += 1;
+    }
+    var r int = 0;
+    while (r < NQ) {
+        CP[r + 1] = ((CP[r] as int) + r - (TOP[r] as int) + 1) as i32;
+        r += 1;
+    }
+    NV = CP[NQ] as int;
+    zf(KV, at_least1(NV), 0.0);
+    zf(KS, at_least1(NV), 0.0);
+    zf(GV, at_least1(NV), 0.0);
+    zf(FV, at_least1(NQ), 0.0);
+    zf(UV, at_least1(NQ), 0.0);
+    zf(XV, at_least1(NQ), 0.0);
+    zf(YV, at_least1(NQ), 0.0);
+    zf(ZV, at_least1(NQ), 0.0);
+    zf(WV, at_least1(NQ), 0.0);
+    return 0;
+}
+fn bend_add(r int, c int, k real, g real) {
+    KE[r * 12 + c] += k;
+    GE[r * 12 + c] += g;
+}
+fn bend(a i32, b i32, c i32, d i32, sg real, ei real, l real, p real) int {
+    var ia int = a as int;
+    var ib int = b as int;
+    var ic int = c as int;
+    var id int = d as int;
+    var k1 real = ei * 12.0 / (l * l * l);
+    var k2 real = ei * 6.0 * sg / (l * l);
+    var k3 real = ei * 4.0 / l;
+    var k4 real = ei * 2.0 / l;
+    var g1 real = p * 6.0 / (5.0 * l);
+    var g2 real = p * sg / 10.0;
+    var g3 real = p * 2.0 * l / 15.0;
+    var g4 real = p * l / 30.0;
+    bend_add(ia, ia, k1, g1);
+    bend_add(ia, ib, k2, g2);
+    bend_add(ia, ic, -k1, -g1);
+    bend_add(ia, id, k2, g2);
+    bend_add(ib, ia, k2, g2);
+    bend_add(ib, ib, k3, g3);
+    bend_add(ib, ic, -k2, -g2);
+    bend_add(ib, id, k4, -g4);
+    bend_add(ic, ia, -k1, -g1);
+    bend_add(ic, ib, -k2, -g2);
+    bend_add(ic, ic, k1, g1);
+    bend_add(ic, id, -k2, -g2);
+    bend_add(id, ia, k2, g2);
+    bend_add(id, ib, k4, -g4);
+    bend_add(id, ic, -k2, -g2);
+    bend_add(id, id, k3, g3);
+    return 0;
+}
+fn condense(r i32) int {
+    var rr int = r as int;
+    var kr real = KE[rr * 12 + rr];
+    if (kr <= 0.0) {
+        return 0;
+    }
+    if (CV.len != 12) {
+        zf(CV, 12, 0.0);
+    }
+    var a int = 0;
+    while (a < 12) {
+        CV[a] = -KE[rr * 12 + a] / kr;
+        a += 1;
+    }
+    var i int = 0;
+    while (i < 12) {
+        var j int = 0;
+        while (j < 12) {
+            if (i != rr && j != rr) {
+                GE[i * 12 + j] += CV[i] * GE[rr * 12 + j] + GE[i * 12 + rr] * CV[j] + CV[i] * CV[j] * GE[rr * 12 + rr];
+                KE[i * 12 + j] -= KE[i * 12 + rr] * KE[rr * 12 + j] / kr;
+            }
+            j += 1;
+        }
+        i += 1;
+    }
+    var f int = 0;
+    while (f < 12) {
+        if (f != rr) {
+            FE[f] += CV[f] * FE[rr];
+        }
+        f += 1;
+    }
+    var z int = 0;
+    while (z < 12) {
+        KE[rr * 12 + z] = 0.0;
+        KE[z * 12 + rr] = 0.0;
+        GE[rr * 12 + z] = 0.0;
+        GE[z * 12 + rr] = 0.0;
+        z += 1;
+    }
+    FE[rr] = 0.0;
+    return 0;
+}
+fn local(e i32) int {
+    var ee int = e as int;
+    zf(KE, 144, 0.0);
+    zf(GE, 144, 0.0);
+    if (FE.len != 12) {
+        zf(FE, 12, 0.0);
+    }
+    if (FG.len != 12) {
+        zf(FG, 12, 0.0);
+    }
+    if (DE.len != 12) {
+        zf(DE, 12, 0.0);
+    }
+    if (QE.len != 12) {
+        zf(QE, 12, 0.0);
+    }
+    var m int = EN[3 * ee + 2] as int;
+    var s int = MB[4 * m + 2] as int;
+    var A real = SP[8 * s];
+    var Iy real = SP[8 * s + 1];
+    var Iz real = SP[8 * s + 2];
+    var J real = SP[8 * s + 3];
+    var l real = MS[8 * m] / (NS as real);
+    var E real = IN[3];
+    var G real = E / (2.0 * (1.0 + IN[4]));
+    var p real = PE[ee];
+    var ea real = E * A / l;
+    KE[0] = ea;
+    KE[6 * 12 + 6] = ea;
+    KE[6] = -ea;
+    KE[6 * 12] = -ea;
+    var gj real = G * J / l;
+    KE[3 * 12 + 3] = gj;
+    KE[9 * 12 + 9] = gj;
+    KE[3 * 12 + 9] = -gj;
+    KE[9 * 12 + 3] = -gj;
+    if (A > 0.0) {
+        var gt real = p * (Iy + Iz) / (A * l);
+        GE[3 * 12 + 3] = gt;
+        GE[9 * 12 + 9] = gt;
+        GE[3 * 12 + 9] = -gt;
+        GE[9 * 12 + 3] = -gt;
+    }
+    bend(1 as i32, 5 as i32, 7 as i32, 11 as i32, 1.0, E * Iz, l, p);
+    bend(2 as i32, 4 as i32, 8 as i32, 10 as i32, -1.0, E * Iy, l, p);
+    var gx real = MW[4 * m + 1] + IN[5] * 0.000000001 * A * IN[6];
+    var gy real = MW[4 * m + 2] + IN[5] * 0.000000001 * A * IN[7];
+    var gz real = MW[4 * m + 3] + IN[5] * 0.000000001 * A * IN[8];
+    var wx real = LAM[9 * m] * gx + LAM[9 * m + 1] * gy + LAM[9 * m + 2] * gz;
+    var wy real = LAM[9 * m + 3] * gx + LAM[9 * m + 4] * gy + LAM[9 * m + 5] * gz;
+    var wz real = LAM[9 * m + 6] * gx + LAM[9 * m + 7] * gy + LAM[9 * m + 8] * gz;
+    FE[0] = wx * l / 2.0;
+    FE[1] = wy * l / 2.0;
+    FE[2] = wz * l / 2.0;
+    FE[3] = 0.0;
+    FE[4] = -wz * (l * l) / 12.0;
+    FE[5] = wy * (l * l) / 12.0;
+    FE[6] = wx * l / 2.0;
+    FE[7] = wy * l / 2.0;
+    FE[8] = wz * l / 2.0;
+    FE[9] = 0.0;
+    FE[10] = wz * (l * l) / 12.0;
+    FE[11] = -wy * (l * l) / 12.0;
+    var rb int = RL[ee] as int;
+    if ((rb & 1) != 0) {
+        condense(4 as i32);
+        condense(5 as i32);
+    }
+    if ((rb & 2) != 0) {
+        condense(10 as i32);
+        condense(11 as i32);
+    }
+    if ((rb & 4) != 0) {
+        condense(9 as i32);
+    }
+    return 0;
+}
+fn rot_one(xs f64[>..]&, m int) {
+    var bi int = 0;
+    while (bi < 4) {
+        var bj int = 0;
+        while (bj < 4) {
+            var p int = 0;
+            while (p < 3) {
+                var q int = 0;
+                while (q < 3) {
+                    var sum real = 0.0;
+                    var a int = 0;
+                    while (a < 3) {
+                        var b int = 0;
+                        while (b < 3) {
+                            sum += LAM[9 * m + 3 * a + p] * xs[(3 * bi + a) * 12 + 3 * bj + b] * LAM[9 * m + 3 * b + q];
+                            b += 1;
+                        }
+                        a += 1;
+                    }
+                    TE[(3 * bi + p) * 12 + 3 * bj + q] = sum;
+                    q += 1;
+                }
+                p += 1;
+            }
+            bj += 1;
+        }
+        bi += 1;
+    }
+    var i int = 0;
+    while (i < 144) {
+        xs[i] = TE[i];
+        i += 1;
+    }
+}
+fn rot(m i32) int {
+    if (TE.len != 144) {
+        zf(TE, 144, 0.0);
+    }
+    rot_one(KE, m as int);
+    rot_one(GE, m as int);
+    return 0;
+}
+fn eqn(e i32, k i32) int {
+    var ee int = e as int;
+    var kk int = k as int;
+    var nd int = EN[3 * ee + 1] as int;
+    if (kk < 6) {
+        nd = EN[3 * ee] as int;
+    }
+    return 6 * (POS[nd] as int) + kk % 6;
+}
+fn assemble() int {
+    var z int = 0;
+    while (z < KV.len) {
+        KV[z] = 0.0;
+        z += 1;
+    }
+    var y int = 0;
+    while (y < GV.len) {
+        GV[y] = 0.0;
+        y += 1;
+    }
+    var x int = 0;
+    while (x < FV.len) {
+        FV[x] = 0.0;
+        x += 1;
+    }
+    var e int = 0;
+    while (e < NE) {
+        var m int = EN[3 * e + 2] as int;
+        local(e as i32);
+        var h int = 0;
+        while (h < 2) {
+            var t int = 0;
+            while (t < 2) {
+                var c int = 0;
+                while (c < 3) {
+                    var sum real = 0.0;
+                    var a int = 0;
+                    while (a < 3) {
+                        sum += LAM[9 * m + 3 * a + c] * FE[6 * h + 3 * t + a];
+                        a += 1;
+                    }
+                    FG[6 * h + 3 * t + c] = sum;
+                    c += 1;
+                }
+                t += 1;
+            }
+            h += 1;
+        }
+        var k int = 0;
+        while (k < 12) {
+            FV[eqn(e as i32, k as i32)] += FG[k];
+            k += 1;
+        }
+        rot(m as i32);
+        var i int = 0;
+        while (i < 12) {
+            var j int = 0;
+            while (j < 12) {
+                var r int = eqn(e as i32, i as i32);
+                var cc int = eqn(e as i32, j as i32);
+                if (r <= cc) {
+                    var at int = (CP[cc] as int) + r - (TOP[cc] as int);
+                    KV[at] += KE[i * 12 + j];
+                    GV[at] -= GE[i * 12 + j];
+                }
+                j += 1;
+            }
+            i += 1;
+        }
+        e += 1;
+    }
+    var jn int = 0;
+    while (jn < NJ) {
+        var d int = 0;
+        while (d < 6) {
+            FV[6 * (POS[jn] as int) + d] += FJ[6 * jn + d];
+            d += 1;
+        }
+        jn += 1;
+    }
+    return 0;
+}
+fn hold(q i32, mx real) int {
+    var qq int = q as int;
+    var tq int = TOP[qq] as int;
+    var pq int = CP[qq] as int;
+    var r int = tq;
+    while (r < qq) {
+        KV[pq + r - tq] = 0.0;
+        GV[pq + r - tq] = 0.0;
+        r += 1;
+    }
+    var c int = qq + 1;
+    while (c < NQ) {
+        var tc int = TOP[c] as int;
+        if (tc <= qq) {
+            var at int = (CP[c] as int) + qq - tc;
+            KV[at] = 0.0;
+            GV[at] = 0.0;
+        }
+        c += 1;
+    }
+    KV[pq + qq - tq] = mx;
+    GV[pq + qq - tq] = 0.0;
+    FV[qq] = 0.0;
+    return 0;
+}
+fn fix() int {
+    var mx real = 0.000000000000000000000000000001;
+    var q int = 0;
+    while (q < NQ) {
+        mx = rmax(mx, KV[(CP[q] as int) + q - (TOP[q] as int)]);
+        q += 1;
+    }
+    var j int = 0;
+    while (j < NJ) {
+        var k int = 0;
+        while (k < 6) {
+            if ((SU[6 * j + k] as int) == 1) {
+                hold((6 * (POS[j] as int) + k) as i32, mx);
+            }
+            k += 1;
+        }
+        j += 1;
+    }
+    var cnt int = 0;
+    zi(RC, at_least1(NJ), 0);
+    zi(EC, at_least1(NJ), 0);
+    var m int = 0;
+    while (m < NMB) {
+        var a int = MB[4 * m] as int;
+        var b int = MB[4 * m + 1] as int;
+        var rb int = MB[4 * m + 3] as int;
+        EC[a] = ((EC[a] as int) + 1) as i32;
+        EC[b] = ((EC[b] as int) + 1) as i32;
+        if ((rb & 1) == 0) {
+            RC[a] = ((RC[a] as int) + 1) as i32;
+        }
+        if ((rb & 2) == 0) {
+            RC[b] = ((RC[b] as int) + 1) as i32;
+        }
+        m += 1;
+    }
+    var p int = 0;
+    while (p < NJ) {
+        if ((EC[p] as int) > 0 && (RC[p] as int) == 0) {
+            var d int = 3;
+            while (d < 6) {
+                if ((SU[6 * p + d] as int) == 0) {
+                    hold((6 * (POS[p] as int) + d) as i32, mx);
+                    cnt += 1;
+                }
+                d += 1;
+            }
+        }
+        p += 1;
+    }
+    var n int = 0;
+    while (n < NT) {
+        var h int = 3;
+        while (h < 6) {
+            var e int = 6 * (POS[n] as int) + h;
+            var loose bool = true;
+            if (n < NJ) {
+                loose = (SU[6 * n + h] as int) == 0;
+            }
+            var at int = (CP[e] as int) + e - (TOP[e] as int);
+            if (loose && KV[at] <= mx * 0.000000001) {
+                KV[at] = mx;
+                cnt += 1;
+            }
+            h += 1;
+        }
+        n += 1;
+    }
+    return cnt;
+}
+fn factor() int {
+    var j int = 0;
+    while (j < NQ) {
+        var tj int = TOP[j] as int;
+        var pj int = CP[j] as int;
+        var i int = tj + 1;
+        while (i < j) {
+            var ti int = TOP[i] as int;
+            var start_i int = CP[i] as int;
+            var k0 int = ti;
+            if (tj > k0) {
+                k0 = tj;
+            }
+            var count int = i - k0;
+            var base_a int = start_i + k0 - ti;
+            var base_b int = pj + k0 - tj;
+            var s real = 0.0;
+            var k int = 0;
+            while (k < count) {
+                s += KV[base_a + k] * KV[base_b + k];
+                k += 1;
+            }
+            KV[pj + i - tj] -= s;
+            i += 1;
+        }
+        var ds real = 0.0;
+        var r int = tj;
+        while (r < j) {
+            var g real = KV[pj + r - tj];
+            var lv real = g / KV[(CP[r] as int) + r - (TOP[r] as int)];
+            ds += g * lv;
+            KV[pj + r - tj] = lv;
+            r += 1;
+        }
+        var av real = KV[pj + j - tj];
+        var dv real = av - ds;
+        if (av <= 0.0 || dv <= 0.0000000001 * av) {
+            return j + 1;
+        }
+        KV[pj + j - tj] = dv;
+        j += 1;
+    }
+    return 0;
+}
+fn sky_into(src const real[:], dst real[:]) int {
+    var c int = 0;
+    while (c < NQ) {
+        dst[c] = src[c];
+        c += 1;
+    }
+    var j int = 0;
+    while (j < NQ) {
+        var tj int = TOP[j] as int;
+        var pj int = CP[j] as int;
+        var m int = j - tj;
+        var s real = 0.0;
+        var k int = 0;
+        while (k < m) {
+            s += KV[pj + k] * dst[tj + k];
+            k += 1;
+        }
+        dst[j] -= s;
+        j += 1;
+    }
+    var d int = 0;
+    while (d < NQ) {
+        dst[d] = dst[d] / KV[(CP[d] as int) + d - (TOP[d] as int)];
+        d += 1;
+    }
+    var b int = NQ - 1;
+    while (b >= 0) {
+        var bt int = TOP[b] as int;
+        var bp int = CP[b] as int;
+        var bm int = b - bt;
+        var xj real = dst[b];
+        var i int = 0;
+        while (i < bm) {
+            dst[bt + i] -= KV[bp + i] * xj;
+            i += 1;
+        }
+        b -= 1;
+    }
+    return 0;
+}
+fn mv(g i32, src const real[:], dst real[:]) int {
+    var z int = 0;
+    while (z < NQ) {
+        dst[z] = 0.0;
+        z += 1;
+    }
+    var use_g bool = (g as int) == 1;
+    var j int = 0;
+    while (j < NQ) {
+        var tj int = TOP[j] as int;
+        var pj int = CP[j] as int;
+        var i int = tj;
+        while (i <= j) {
+            var v real = 0.0;
+            if (use_g) {
+                v = GV[pj + i - tj];
+            } else {
+                v = KS[pj + i - tj];
+            }
+            dst[i] += v * src[j];
+            if (i != j) {
+                dst[j] += v * src[i];
+            }
+            i += 1;
+        }
+        j += 1;
+    }
+    return 0;
+}
+fn stress(k i32, s i32) int {
+    var o int = 8 * (k as int);
+    var q int = 8 * (s as int);
+    var N real = ST[o];
+    var T real = ST[o + 3];
+    var My real = ST[o + 4];
+    var Mz real = ST[o + 5];
+    var A real = SP[q];
+    var Iy real = SP[q + 1];
+    var Iz real = SP[q + 2];
+    var cy real = SP[q + 4];
+    var cz real = SP[q + 5];
+    var Zt real = SP[q + 6];
+    var rnd real = SP[q + 7];
+    var sg real = 0.0;
+    if (A != 0.0) {
+        sg = rabs(N / A);
+    }
+    if (rnd > 0.5) {
+        if (Iy != 0.0) {
+            sg += sqrt_r(My * My + Mz * Mz) * cz / Iy;
+        }
+    } else {
+        if (Iy != 0.0) {
+            sg += rabs(My * cz / Iy);
+        }
+        if (Iz != 0.0) {
+            sg += rabs(Mz * cy / Iz);
+        }
+    }
+    var tau real = 0.0;
+    if (Zt > 0.0) {
+        tau = rabs(T / Zt);
+    }
+    ST[o + 6] = sg;
+    ST[o + 7] = sqrt_r(sg * sg + 3.0 * (tau * tau));
+    return 0;
+}
+fn forces() int {
+    var z int = 0;
+    while (z < RJ.len) {
+        RJ[z] = 0.0;
+        z += 1;
+    }
+    var y int = 0;
+    while (y < ST.len) {
+        ST[y] = 0.0;
+        y += 1;
+    }
+    var x int = 0;
+    while (x < SD.len) {
+        SD[x] = 0.0;
+        x += 1;
+    }
+    var e int = 0;
+    while (e < NE) {
+        var m int = EN[3 * e + 2] as int;
+        var na int = EN[3 * e] as int;
+        var nb int = EN[3 * e + 1] as int;
+        var s int = MB[4 * m + 2] as int;
+        local(e as i32);
+        var h int = 0;
+        while (h < 2) {
+            var nd int = nb;
+            if (h == 0) {
+                nd = na;
+            }
+            var t int = 0;
+            while (t < 2) {
+                var a int = 0;
+                while (a < 3) {
+                    var sum real = 0.0;
+                    var c int = 0;
+                    while (c < 3) {
+                        sum += LAM[9 * m + 3 * a + c] * UV[6 * (POS[nd] as int) + 3 * t + c];
+                        c += 1;
+                    }
+                    DE[6 * h + 3 * t + a] = sum;
+                    a += 1;
+                }
+                t += 1;
+            }
+            h += 1;
+        }
+        var i int = 0;
+        while (i < 12) {
+            var acc real = 0.0;
+            var j int = 0;
+            while (j < 12) {
+                acc += KE[i * 12 + j] * DE[j];
+                j += 1;
+            }
+            QE[i] = acc - FE[i];
+            i += 1;
+        }
+        PE[e] = (QE[6] - QE[0]) / 2.0;
+        var gh int = 0;
+        while (gh < 2) {
+            var gt int = 0;
+            while (gt < 2) {
+                var gc int = 0;
+                while (gc < 3) {
+                    var gs real = 0.0;
+                    var ga int = 0;
+                    while (ga < 3) {
+                        gs += LAM[9 * m + 3 * ga + gc] * QE[6 * gh + 3 * gt + ga];
+                        ga += 1;
+                    }
+                    FG[6 * gh + 3 * gt + gc] = gs;
+                    gc += 1;
+                }
+                gt += 1;
+            }
+            gh += 1;
+        }
+        var r int = 0;
+        while (r < 6) {
+            if (na < NJ) {
+                RJ[6 * na + r] += FG[r];
+            }
+            if (nb < NJ) {
+                RJ[6 * nb + r] += FG[6 + r];
+            }
+            r += 1;
+        }
+        var sl int = e - m * NS;
+        var k0 int = m * (NS + 1) + sl;
+        var u int = 0;
+        while (u < 6) {
+            ST[8 * k0 + u] = -QE[u];
+            u += 1;
+        }
+        var v int = 0;
+        while (v < 3) {
+            SD[3 * k0 + v] = UV[6 * (POS[na] as int) + v];
+            v += 1;
+        }
+        stress(k0 as i32, s as i32);
+        if (sl == NS - 1) {
+            var k1 int = k0 + 1;
+            var u1 int = 0;
+            while (u1 < 6) {
+                ST[8 * k1 + u1] = QE[6 + u1];
+                u1 += 1;
+            }
+            var v1 int = 0;
+            while (v1 < 3) {
+                SD[3 * k1 + v1] = UV[6 * (POS[nb] as int) + v1];
+                v1 += 1;
+            }
+            stress(k1 as i32, s as i32);
+        }
+        e += 1;
+    }
+    var jn int = 0;
+    while (jn < NJ) {
+        var d int = 0;
+        while (d < 6) {
+            if ((SU[6 * jn + d] as int) == 1) {
+                RJ[6 * jn + d] = RJ[6 * jn + d] - FJ[6 * jn + d];
+            } else {
+                RJ[6 * jn + d] = 0.0;
+            }
+            UJ[6 * jn + d] = UV[6 * (POS[jn] as int) + d];
+            d += 1;
+        }
+        jn += 1;
+    }
+    return 0;
+}
+fn summary() int {
+    var m int = 0;
+    while (m < NMB) {
+        var base int = m * (NS + 1);
+        var lo real = ST[8 * base];
+        var hi real = ST[8 * base];
+        var vm real = 0.0;
+        var tm real = 0.0;
+        var bm real = 0.0;
+        var sm real = ST[8 * base + 6];
+        var em real = ST[8 * base + 7];
+        var k int = base;
+        while (k <= base + NS) {
+            lo = rmin(lo, ST[8 * k]);
+            hi = rmax(hi, ST[8 * k]);
+            vm = rmax(vm, sqrt_r(ST[8 * k + 1] * ST[8 * k + 1] + ST[8 * k + 2] * ST[8 * k + 2]));
+            tm = rmax(tm, rabs(ST[8 * k + 3]));
+            bm = rmax(bm, sqrt_r(ST[8 * k + 4] * ST[8 * k + 4] + ST[8 * k + 5] * ST[8 * k + 5]));
+            sm = rmax(sm, ST[8 * k + 6]);
+            em = rmax(em, ST[8 * k + 7]);
+            k += 1;
+        }
+        MS[8 * m + 1] = lo;
+        MS[8 * m + 2] = hi;
+        MS[8 * m + 3] = vm;
+        MS[8 * m + 4] = tm;
+        MS[8 * m + 5] = bm;
+        MS[8 * m + 6] = sm;
+        MS[8 * m + 7] = em;
+        m += 1;
+    }
+    var best real = 0.0;
+    var who int = 0;
+    var s int = 0;
+    while (s < NMB * (NS + 1)) {
+        var len real = sqrt_r(SD[3 * s] * SD[3 * s] + SD[3 * s + 1] * SD[3 * s + 1] + SD[3 * s + 2] * SD[3 * s + 2]);
+        if (len > best) {
+            best = len;
+            who = s / (NS + 1);
+        }
+        s += 1;
+    }
+    OUT[1] = best;
+    OUT[2] = who as real;
+    var top_s real = 0.0;
+    var top_m int = 0;
+    var mass real = 0.0;
+    var a int = 0;
+    while (a < NMB) {
+        if (MS[8 * a + 7] > top_s) {
+            top_s = MS[8 * a + 7];
+            top_m = a;
+        }
+        mass += IN[5] * 0.000000001 * SP[8 * (MB[4 * a + 2] as int)] * MS[8 * a];
+        a += 1;
+    }
+    OUT[3] = top_s;
+    OUT[4] = top_m as real;
+    OUT[9] = mass;
+    var fx real = 0.0;
+    var fy real = 0.0;
+    var fz real = 0.0;
+    var j int = 0;
+    while (j < NJ) {
+        fx += RJ[6 * j];
+        fy += RJ[6 * j + 1];
+        fz += RJ[6 * j + 2];
+        j += 1;
+    }
+    OUT[10] = fx;
+    OUT[11] = fy;
+    OUT[12] = fz;
+    if (IN[10] > 0.0 && OUT[3] > 0.0) {
+        OUT[14] = IN[10] / OUT[3];
+    } else {
+        OUT[14] = 0.0;
+    }
+    return 0;
+}
+fn buckle() int {
+    assemble();
+    fix();
+    var c int = 0;
+    while (c < KV.len) {
+        KS[c] = KV[c];
+        c += 1;
+    }
+    if (factor() > 0) {
+        OUT[5] = 0.0;
+        return 0;
+    }
+    var mi int = 2000;
+    if (IN[12] > 0.0) {
+        mi = IN[12] as int;
+    }
+    var sh real = 0.0;
+    var mu real = 0.0;
+    var tot int = 0;
+    var pass int = 0;
+    var again bool = true;
+    while (again) {
+        var q int = 0;
+        while (q < NQ) {
+            XV[q] = sin_r(0.7 * (q as real) + 1.3) + 0.5 * cos_r(0.37 * (q as real));
+            q += 1;
+        }
+        var j int = 0;
+        while (j < NJ) {
+            var k int = 0;
+            while (k < 6) {
+                if ((SU[6 * j + k] as int) == 1) {
+                    XV[6 * (POS[j] as int) + k] = 0.0;
+                }
+                k += 1;
+            }
+            j += 1;
+        }
+        var pv real = 0.0;
+        var it int = 0;
+        while (it < mi) {
+            mv(1 as i32, XV, ZV);
+            mv(0 as i32, XV, WV);
+            var num real = 0.0;
+            var den real = 0.0;
+            var a int = 0;
+            while (a < NQ) {
+                num += XV[a] * ZV[a];
+                den += XV[a] * WV[a];
+                a += 1;
+            }
+            mu = 0.0;
+            if (den > 0.0) {
+                mu = num / den;
+            }
+            sky_into(ZV, YV);
+            var mx real = 0.0;
+            var b int = 0;
+            while (b < NQ) {
+                YV[b] += sh * XV[b];
+                mx = rmax(mx, rabs(YV[b]));
+                b += 1;
+            }
+            if (mx == 0.0) {
+                break;
+            }
+            var d int = 0;
+            while (d < NQ) {
+                XV[d] = YV[d] / mx;
+                d += 1;
+            }
+            tot += 1;
+            if (tot >= 7 && rabs(mu - pv) <= 0.0000000001 * rabs(mu)) {
+                break;
+            }
+            pv = mu;
+            it += 1;
+        }
+        pass += 1;
+        if (mu < 0.0 && pass == 1) {
+            sh = -mu;
+        } else {
+            again = false;
+        }
+    }
+    if (mu > 0.000000000000001) {
+        OUT[5] = 1.0 / mu;
+    } else {
+        OUT[5] = 0.0;
+    }
+    var m int = 0;
+    while (m < NMB) {
+        var s0 int = 0;
+        while (s0 <= NS) {
+            var n int = node_of(m as i32, s0 as i32);
+            var e int = 0;
+            while (e < 3) {
+                SB[3 * (m * (NS + 1) + s0) + e] = XV[6 * (POS[n] as int) + e];
+                e += 1;
+            }
+            s0 += 1;
+        }
+        m += 1;
+    }
+    var big real = 0.0;
+    var t int = 0;
+    while (t < NMB * (NS + 1)) {
+        big = rmax(big, sqrt_r(SB[3 * t] * SB[3 * t] + SB[3 * t + 1] * SB[3 * t + 1] + SB[3 * t + 2] * SB[3 * t + 2]));
+        t += 1;
+    }
+    if (big > 0.0) {
+        var u int = 0;
+        while (u < SB.len) {
+            SB[u] = SB[u] / big;
+            u += 1;
+        }
+    }
+    return tot;
+}
+export fn fr_solve() i32 {
+    build();
+    order();
+    profile();
+    assemble();
+    OUT[13] = fix() as real;
+    var c int = 0;
+    while (c < KV.len) {
+        KS[c] = KV[c];
+        c += 1;
+    }
+    var f int = factor();
+    if (f > 0) {
+        OUT[0] = 2.0;
+        OUT[15] = (ORD[NT - 1 - (f - 1) / 6] as int) as real;
+        OUT[16] = ((f - 1) % 6) as real;
+        return 2;
+    }
+    sky_into(FV, UV);
+    forces();
+    summary();
+    OUT[7] = NQ as real;
+    OUT[8] = NV as real;
+    OUT[5] = 0.0;
+    OUT[6] = 0.0;
+    if (IN[11] > 0.5) {
+        OUT[6] = buckle() as real;
+    }
+    OUT[0] = 0.0;
+    return 0;
+}
+export fn fr_bolt() i32 {
+    var pi real = pi_r();
+    var d real = IN[20];
+    var pt real = IN[21];
+    var rp real = IN[22];
+    var rm real = IN[23];
+    var mg real = IN[24];
+    var mk real = IN[25];
+    var dw real = 1.45 * d;
+    if (IN[26] > 0.0) {
+        dw = IN[26];
+    }
+    var dh real = 1.1 * d;
+    if (IN[27] > 0.0) {
+        dh = IN[27];
+    }
+    var lk real = IN[28];
+    var es real = 205000.0;
+    if (IN[29] > 0.0) {
+        es = IN[29];
+    }
+    var ep real = es;
+    if (IN[30] > 0.0) {
+        ep = IN[30];
+    }
+    var ma real = IN[31];
+    var nu real = 0.9;
+    if (IN[32] > 0.0) {
+        nu = IN[32];
+    }
+    var aa real = 1.5;
+    if (IN[33] > 0.0) {
+        aa = IN[33];
+    }
+    var fa real = IN[34];
+    var fq real = IN[35];
+    var mt real = 0.15;
+    if (IN[36] > 0.0) {
+        mt = IN[36];
+    }
+    var qf real = 1.0;
+    if (IN[37] > 0.0) {
+        qf = IN[37];
+    }
+    var fz real = 9.0 + 2.0 * qf;
+    if (IN[38] > 0.0) {
+        fz = IN[38];
+    }
+    var n real = 0.5;
+    if (IN[39] > 0.0) {
+        n = IN[39];
+    }
+    var da real = 3.0 * dw;
+    if (IN[40] > 0.0) {
+        da = IN[40];
+    }
+    var pg real = IN[41];
+    var le real = IN[42];
+    var rmi real = IN[43];
+    var ls real = rmin(rmax(IN[44], 0.0), lk);
+    var d2 real = d - 0.649519 * pt;
+    var d3 real = d - 1.226869 * pt;
+    var d0 real = (d2 + d3) / 2.0;
+    var ast real = pi * (d0 * d0) / 4.0;
+    var an real = pi * (d * d) / 4.0;
+    var a3 real = pi * (d3 * d3) / 4.0;
+    var kk real = 1.5 * d2 / d0 * (pt / (pi * d2) + 1.155 * mg);
+    var fm0 real = ast * nu * rp / sqrt_r(1.0 + 3.0 * (kk * kk));
+    var kt real = 0.16 * pt + 0.58 * d2 * mg + mk * (dw + dh) / 4.0;
+    var ma0 real = fm0 * kt;
+    var fmx real = fm0;
+    if (ma > 0.0) {
+        fmx = ma / kt;
+    }
+    var fmn real = fmx / aa;
+    var ds real = (0.5 * d + ls + 0.4 * d) / (es * an) + (lk - ls + 0.5 * d) / (es * a3);
+    var tp real = 0.362 + 0.032 * log_r(rmax(lk / dw, 0.002) / 2.0) + 0.153 * log_r(da / dw);
+    var dg real = dw + lk * tp;
+    var dp real = 0.0;
+    if (da >= dg) {
+        dp = 2.0 * log_r(((dw + dh) * (dw + lk * tp - dh)) / ((dw - dh) * (dw + lk * tp + dh))) / (ep * pi * dh * tp);
+    } else {
+        dp = (2.0 / (dh * tp) * log_r(((dw + dh) * (da - dh)) / ((dw - dh) * (da + dh))) + 4.0 / (da * da - dh * dh) * (lk - (da - dw) / tp)) / (ep * pi);
+    }
+    var ph real = n * dp / (ds + dp);
+    var fsa real = ph * fa;
+    var fpa real = fa - fsa;
+    var fzl real = fz * 0.001 / (ds + dp);
+    var fkr real = fmn - fzl - fpa;
+    var fsm real = fmx + fsa;
+    var sz real = fsm / ast;
+    var mgt real = fmx * d2 / 2.0 * (pt / (pi * d2) + 1.155 * mg);
+    var tau real = mgt / (pi * (d0 * d0 * d0) / 16.0);
+    var sred real = sqrt_r(sz * sz + 3.0 * ((0.5 * tau) * (0.5 * tau)));
+    var sa real = fsa / (2.0 * ast);
+    var sasv real = 0.85 * (150.0 / d + 45.0);
+    var ap real = pi * (dw * dw - dh * dh) / 4.0;
+    var pr real = fsm / ap;
+    var fke real = 0.0;
+    if (fq > 0.0) {
+        fke = fq / (qf * mt);
+    }
+    var lrq real = 0.0;
+    if (rmi > 0.0) {
+        lrq = rm * ast / (0.6 * rmi * 0.75 * pi * d);
+    }
+    var safe_a real = 0.0;
+    if (sa != 0.0) {
+        safe_a = sasv / sa;
+    }
+    var safe_p real = 0.0;
+    if (pg != 0.0) {
+        safe_p = pg / pr;
+    }
+    var safe_q real = 0.0;
+    if (fq != 0.0) {
+        safe_q = fkr * qf * mt / fq;
+    }
+    var safe_l real = 0.0;
+    if (lrq != 0.0 && le != 0.0) {
+        safe_l = le / lrq;
+    }
+    var open_flag real = 0.0;
+    if (fkr <= 0.0) {
+        open_flag = 1.0;
+    }
+    OUT[20] = d2;
+    OUT[21] = d3;
+    OUT[22] = ast;
+    OUT[23] = fm0;
+    OUT[24] = ma0;
+    OUT[25] = fmx;
+    OUT[26] = fmn;
+    OUT[27] = ds;
+    OUT[28] = dp;
+    OUT[29] = ph;
+    OUT[30] = fsa;
+    OUT[31] = fpa;
+    OUT[32] = fzl;
+    OUT[33] = fkr;
+    OUT[34] = fsm;
+    OUT[35] = sred;
+    OUT[36] = rp / sred;
+    OUT[37] = sa;
+    OUT[38] = sasv;
+    OUT[39] = safe_a;
+    OUT[40] = pr;
+    OUT[41] = safe_p;
+    OUT[42] = fke;
+    OUT[43] = safe_q;
+    OUT[44] = lrq;
+    OUT[45] = safe_l;
+    OUT[46] = tau;
+    OUT[47] = tp;
+    OUT[48] = dg;
+    OUT[49] = kt;
+    OUT[50] = open_flag;
+    return 0;
+}
+fn sup(m i32, s i32, vx real, vy real, vz real) real {
+    var mm int = m as int;
+    var o int = 8 * (s as int);
+    var py real = vx * LAM[9 * mm + 3] + vy * LAM[9 * mm + 4] + vz * LAM[9 * mm + 5];
+    var pz real = vx * LAM[9 * mm + 6] + vy * LAM[9 * mm + 7] + vz * LAM[9 * mm + 8];
+    if (SP[o + 7] > 0.5) {
+        return SX[o + 1] * sqrt_r(py * py + pz * pz);
+    }
+    var y0 real = SX[o];
+    var y1 real = SX[o + 1];
+    var z0 real = SX[o + 2];
+    var z1 real = SX[o + 3];
+    var ty real = y1 - y0;
+    var tz real = z1 - z0;
+    if ((SC[o] as int) == 8) {
+        ty = SC[o + 3];
+        tz = SC[o + 3];
+    }
+    var best real = py * y0 + pz * z0;
+    best = rmax(best, py * y1 + pz * z0);
+    best = rmax(best, py * y1 + pz * (z0 + tz));
+    best = rmax(best, py * (y0 + ty) + pz * z1);
+    best = rmax(best, py * y0 + pz * z1);
+    return best;
+}
+fn acos_deg(x real) real {
+    var c real = rmax(-1.0, rmin(1.0, x));
+    return atan2_r(sqrt_r((1.0 - c) * (1.0 + c)), c) * 180.0 / pi_r();
+}
+fn out_dir(code int, c int) real {
+    var v real = LAM[9 * (code / 2) + c];
+    if (code % 2 == 1) {
+        return -v;
+    }
+    return v;
+}
+fn cut_end(code int, reach real, nx real, ny real, nz real, px real, py real, pz real, cs real, kind real) {
+    var q int = 12 * code;
+    CE[q] = reach;
+    CE[q + 1] = 1.0;
+    CE[q + 2] = nx;
+    CE[q + 3] = ny;
+    CE[q + 4] = nz;
+    CE[q + 5] = px;
+    CE[q + 6] = py;
+    CE[q + 7] = pz;
+    CE[q + 8] = acos_deg(cs);
+    CE[q + 9] = kind;
+}
+fn centroid_ext(code int) real {
+    var q int = 12 * code;
+    if (CE[q + 1] < 0.5) {
+        return CE[q];
+    }
+    var jt int = MB[4 * (code / 2) + code % 2] as int;
+    var nx real = CE[q + 2];
+    var ny real = CE[q + 3];
+    var nz real = CE[q + 4];
+    var dn real = nx * out_dir(code, 0) + ny * out_dir(code, 1) + nz * out_dir(code, 2);
+    if (rabs(dn) < 0.000000001) {
+        return CE[q];
+    }
+    return (nx * (XJ[3 * jt] - CE[q + 5]) + ny * (XJ[3 * jt + 1] - CE[q + 6]) + nz * (XJ[3 * jt + 2] - CE[q + 7])) / dn;
+}
+export fn fr_trim() i32 {
+    if (LAM.len < 9 * NMB) {
+        zf(LAM, 9 * NMB, 0.0);
+        fr_views();
+    }
+    var z int = 0;
+    while (z < CE.len) {
+        CE[z] = 0.0;
+        z += 1;
+    }
+    var m int = 0;
+    while (m < NMB) {
+        CE[24 * m + 10] = axes(m as i32);
+        m += 1;
+    }
+    var ends int[>..];
+    ends.reserve(at_least1(2 * NMB));
+    var jn int = 0;
+    while (jn < NJ) {
+        ends.clear();
+        var k int = 0;
+        while (k < NMB) {
+            var e int = 0;
+            while (e < 2) {
+                if ((MB[4 * k + e] as int) == jn && CE[24 * k + 10] > 0.0) {
+                    ends.push(2 * k + e);
+                }
+                e += 1;
+            }
+            k += 1;
+        }
+        var n int = ends.len;
+        if (n >= 2 && IN[40] >= 0.5) {
+            var jx real = XJ[3 * jn];
+            var jy real = XJ[3 * jn + 1];
+            var jz real = XJ[3 * jn + 2];
+            var first int = ends[0];
+            var ax real = out_dir(first, 0);
+            var ay real = out_dir(first, 1);
+            var az real = out_dir(first, 2);
+            var ma int = first / 2;
+            var sa int = MB[4 * ma + 2] as int;
+            var done bool = false;
+            if (n == 2 && IN[40] <= 1.5) {
+                var second int = ends[1];
+                var bx real = out_dir(second, 0);
+                var by real = out_dir(second, 1);
+                var bz real = out_dir(second, 2);
+                var ca real = ax * bx + ay * by + az * bz;
+                if (ca < -0.9999) {
+                    CE[12 * first + 9] = 4.0;
+                    CE[12 * second + 9] = 4.0;
+                    done = true;
+                } else if (acos_deg(ca) >= IN[41]) {
+                    var vx real = ax - bx;
+                    var vy real = ay - by;
+                    var vz real = az - bz;
+                    var vl real = sqrt_r(vx * vx + vy * vy + vz * vz);
+                    vx = vx / vl;
+                    vy = vy / vl;
+                    vz = vz / vl;
+                    var mb2 int = second / 2;
+                    var sb2 int = MB[4 * mb2 + 2] as int;
+                    var da real = ax * vx + ay * vy + az * vz;
+                    cut_end(first, sup(ma as i32, sa as i32, vx, vy, vz) / da, vx, vy, vz, jx, jy, jz, da, 1.0);
+                    var db real = -(bx * vx + by * vy + bz * vz);
+                    cut_end(second, sup(mb2 as i32, sb2 as i32, -vx, -vy, -vz) / db, -vx, -vy, -vz, jx, jy, jz, db, 1.0);
+                    done = true;
+                }
+            }
+            if (!done) {
+                var partner int = -1;
+                var i int = 1;
+                while (i < n) {
+                    var o int = ends[i];
+                    if (out_dir(o, 0) * ax + out_dir(o, 1) * ay + out_dir(o, 2) * az < -0.9999) {
+                        partner = i;
+                        break;
+                    }
+                    i += 1;
+                }
+                if (partner >= 0) {
+                    CE[12 * first + 9] = 4.0;
+                    CE[12 * ends[partner] + 9] = 4.0;
+                }
+                var trimmed int = 0;
+                var need real = 0.0;
+                var h int = 1;
+                while (h < n) {
+                    if (h != partner) {
+                        var code int = ends[h];
+                        var mb int = code / 2;
+                        var sb int = MB[4 * mb + 2] as int;
+                        var cx real = out_dir(code, 0);
+                        var cy real = out_dir(code, 1);
+                        var cz real = out_dir(code, 2);
+                        var cb0 real = cx * ax + cy * ay + cz * az;
+                        var px real = cx - cb0 * ax;
+                        var py real = cy - cb0 * ay;
+                        var pz real = cz - cb0 * az;
+                        var lp real = sqrt_r(px * px + py * py + pz * pz);
+                        if (lp < 0.000000001) {
+                            CE[12 * code + 9] = 4.0;
+                        } else {
+                            var nx real = px / lp;
+                            var ny real = py / lp;
+                            var nz real = pz / lp;
+                            var dt real = sup(ma as i32, sa as i32, nx, ny, nz);
+                            var cb real = cx * nx + cy * ny + cz * nz;
+                            var reach real = (sup(mb as i32, sb as i32, nx, ny, nz) - dt) / cb;
+                            cut_end(code, reach, nx, ny, nz, jx + dt * nx, jy + dt * ny, jz + dt * nz, cb, 3.0);
+                            var wx real = nx * cb0 / cb - ax;
+                            var wy real = ny * cb0 / cb - ay;
+                            var wz real = nz * cb0 / cb - az;
+                            need = rmax(need, -dt * cb0 / cb + sup(mb as i32, sb as i32, wx, wy, wz));
+                            trimmed += 1;
+                        }
+                    }
+                    h += 1;
+                }
+                if (partner < 0 && trimmed > 0) {
+                    CE[12 * first + 9] = 2.0;
+                    CE[12 * first] = need;
+                }
+            }
+        }
+        jn += 1;
+    }
+    var t int = 0;
+    while (t < NMB) {
+        CE[24 * t + 22] = CE[24 * t + 10] + CE[24 * t] + CE[24 * t + 12];
+        CE[24 * t + 11] = CE[24 * t + 10] + centroid_ext(2 * t) + centroid_ext(2 * t + 1);
+        t += 1;
+    }
+    return 0;
+}
+export fn fr_pieces(np i32) i32 {
+    var n int = np as int;
+    zf(PC, at_least1(5 * n), 0.0);
+    zi(GI, at_least1(n), 0);
+    zi(PK, at_least1(n), 0);
+    zf(BR, at_least1(n), 0.0);
+    zf(CG, at_least1(8 * n), 0.0);
+    zf(CS, at_least1(8 * NSC), 0.0);
+    fr_views();
+    return 0;
+}
+export fn fr_cuts(np i32) i32 {
+    var n int = np as int;
+    var items int = 0;
+    var p int = 0;
+    while (p < n) {
+        var s int = PC[5 * p] as int;
+        var ln real = PC[5 * p + 1];
+        var lo real = rmin(PC[5 * p + 2], PC[5 * p + 3]);
+        var hi real = rmax(PC[5 * p + 2], PC[5 * p + 3]);
+        var vl real = ln;
+        if (PC[5 * p + 4] > 0.0) {
+            vl = PC[5 * p + 4];
+        }
+        var g int = 0;
+        while (g < items) {
+            if ((CG[8 * g] as int) == s && rabs(CG[8 * g + 1] - ln) <= 0.01 + 0.0000001 * ln && rabs(CG[8 * g + 2] - lo) <= 0.05 && rabs(CG[8 * g + 3] - hi) <= 0.05) {
+                break;
+            }
+            g += 1;
+        }
+        if (g == items) {
+            CG[8 * g] = s as real;
+            CG[8 * g + 1] = ln;
+            CG[8 * g + 2] = lo;
+            CG[8 * g + 3] = hi;
+            CG[8 * g + 4] = 0.0;
+            items += 1;
+        }
+        GI[p] = g as i32;
+        CG[8 * g + 4] += 1.0;
+        CG[8 * g + 5] = SP[8 * s] * vl * IN[42];
+        CG[8 * g + 6] = CG[8 * g + 5] * CG[8 * g + 4];
+        CG[8 * g + 7] = SX[8 * s + 7] * vl * CG[8 * g + 4];
+        p += 1;
+    }
+    var sec int = 0;
+    while (sec < NSC) {
+        var c int = 0;
+        while (c < 8) {
+            CS[8 * sec + c] = 0.0;
+            c += 1;
+        }
+        var count int = 0;
+        var q int = 0;
+        while (q < n) {
+            if ((PC[5 * q] as int) == sec) {
+                var length real = PC[5 * q + 1];
+                var solid real = length;
+                if (PC[5 * q + 4] > 0.0) {
+                    solid = PC[5 * q + 4];
+                }
+                CS[8 * sec] += length;
+                CS[8 * sec + 1] += 1.0;
+                CS[8 * sec + 3] += SP[8 * sec] * solid * IN[42];
+                if (IN[43] > 0.0) {
+                    if (length > IN[43]) {
+                        CS[8 * sec + 5] += 1.0;
+                    } else {
+                        var j int = count - 1;
+                        while (j >= 0 && PC[5 * (PK[j] as int) + 1] < length) {
+                            PK[j + 1] = PK[j];
+                            j -= 1;
+                        }
+                        PK[j + 1] = q as i32;
+                        count += 1;
+                    }
+                }
+            }
+            q += 1;
+        }
+        if (IN[43] > 0.0) {
+            var bars int = 0;
+            var i int = 0;
+            while (i < count) {
+                var piece real = PC[5 * (PK[i] as int) + 1];
+                var b int = 0;
+                while (b < bars) {
+                    if (BR[b] >= piece) {
+                        break;
+                    }
+                    b += 1;
+                }
+                if (b == bars) {
+                    BR[b] = rmax(IN[43] - piece - IN[44], 0.0);
+                    bars += 1;
+                } else {
+                    BR[b] = rmax(BR[b] - (piece + IN[44]), 0.0);
+                }
+                i += 1;
+            }
+            CS[8 * sec + 2] = bars as real;
+            var r int = 0;
+            while (r < bars) {
+                CS[8 * sec + 4] += BR[r];
+                r += 1;
+            }
+        }
+        sec += 1;
+    }
+    return items as i32;
+}
+export fn fr_merge(nx i32, ns i32) i32 {
+    var base int = nx as int;
+    var segs int = ns as int;
+    zf(MJ, at_least1(3 * (base + 2 * segs)), 0.0);
+    zi(MM, at_least1(2 * segs), 0);
+    fr_views();
+    var c int = 0;
+    while (c < 3 * base) {
+        MJ[c] = XJ[c];
+        c += 1;
+    }
+    var nj int = base;
+    var xx real = IN[48];
+    var xy real = IN[49];
+    var xz real = IN[50];
+    var yx real = IN[52] * xz - IN[53] * xy;
+    var yy real = IN[53] * xx - IN[51] * xz;
+    var yz real = IN[51] * xy - IN[52] * xx;
+    var tol real = IN[54];
+    var kept int = 0;
+    var k int = 0;
+    while (k < segs) {
+        var ja int = 0;
+        var jb int = 0;
+        var h int = 0;
+        while (h < 2) {
+            var u real = PC[4 * k + 2 * h];
+            var v real = PC[4 * k + 2 * h + 1];
+            var px real = IN[45] + u * xx + v * yx;
+            var py real = IN[46] + u * xy + v * yy;
+            var pz real = IN[47] + u * xz + v * yz;
+            var j int = 0;
+            while (j < nj) {
+                var dx real = MJ[3 * j] - px;
+                var dy real = MJ[3 * j + 1] - py;
+                var dz real = MJ[3 * j + 2] - pz;
+                if (sqrt_r(dx * dx + dy * dy + dz * dz) <= tol) {
+                    break;
+                }
+                j += 1;
+            }
+            if (j == nj) {
+                MJ[3 * nj] = px;
+                MJ[3 * nj + 1] = py;
+                MJ[3 * nj + 2] = pz;
+                nj += 1;
+            }
+            if (h == 0) {
+                ja = j;
+            } else {
+                jb = j;
+            }
+            h += 1;
+        }
+        if (ja != jb) {
+            var dup bool = false;
+            var i int = 0;
+            while (i < k) {
+                var a int = MM[2 * i] as int;
+                var b int = MM[2 * i + 1] as int;
+                if ((a == ja + 1 && b == jb + 1) || (a == jb + 1 && b == ja + 1)) {
+                    dup = true;
+                    break;
+                }
+                i += 1;
+            }
+            if (!dup) {
+                MM[2 * k] = (ja + 1) as i32;
+                MM[2 * k + 1] = (jb + 1) as i32;
+                kept += 1;
+            }
+        }
+        k += 1;
+    }
+    OUT[50] = nj as real;
+    return kept as i32;
+}
+fn main() {
+}

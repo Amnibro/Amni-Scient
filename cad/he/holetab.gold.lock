@@ -1,0 +1,242 @@
+=== -73b222956cfe7921
+import math;
+=== 4f528f672eece351
+var NH int = 0;
+var NO int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var HP f64[>..];
+var OB f64[>..];
+var TP f64[>..];
+var LT i32[>..];
+var NB i32[>..];
+var RW i32[>..];
+var GO i32[>..];
+var HO i32[>..];
+=== 1106c6b520ca80c8
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if n < 1 {
+        return 1;
+    }
+    return n;
+}
+=== -214a8abdec13d62e
+export fn ht_views() i32 {
+    ht_view_f64(1 as i32, IN);
+    ht_view_f64(2 as i32, OUT);
+    ht_view_f64(3 as i32, HP);
+    ht_view_f64(4 as i32, OB);
+    ht_view_f64(5 as i32, TP);
+    ht_view_i32(20 as i32, LT);
+    ht_view_i32(21 as i32, NB);
+    ht_view_i32(22 as i32, RW);
+    return 0 as i32;
+}
+=== -134f32d2b3b04d35
+export fn ht_init() i32 {
+    zf(IN, 16, 0.0);
+    zf(OUT, 16, 0.0);
+    ht_views();
+    return 0 as i32;
+}
+=== 2e696de0086a1abb
+export fn ht_size(nh i32, no i32) i32 {
+    let n = nh as int;
+    let m = no as int;
+    NH = n;
+    NO = m;
+    zf(HP, at1(8 * n), 0.0);
+    zf(OB, at1(4 * m), 0.0);
+    zf(TP, at1(4 * n), 0.0);
+    zi(LT, at1(n), 0);
+    zi(NB, at1(n), 0);
+    zi(RW, at1(n), 0);
+    zi(GO, at1(n), 0);
+    zi(HO, at1(n), 0);
+    ht_views();
+    return 0 as i32;
+}
+=== 043bcf8d5e2c11bb
+fn gless(a int, b int) bool {
+    let sa = HP[8 * a];
+    let sb = HP[8 * b];
+    var d = sa - sb;
+    if d < 0.0 {
+        d = 0.0 - d;
+    }
+    if d > 1e-9 {
+        return sa > sb;
+    }
+    return HP[8 * a + 6] < HP[8 * b + 6];
+}
+fn hless(a int, b int) bool {
+    let t = IN[0];
+    let ay = HP[8 * a + 2];
+    let by = HP[8 * b + 2];
+    if ay > by + t {
+        return true;
+    }
+    if by > ay + t {
+        return false;
+    }
+    let ax = HP[8 * a + 1];
+    let bx = HP[8 * b + 1];
+    var d = ax - bx;
+    if d < 0.0 {
+        d = 0.0 - d;
+    }
+    if d <= t {
+        return a < b;
+    }
+    return ax < bx;
+}
+=== -55ba17336fd3304f
+export fn ht_order() i32 {
+    for i in 0..NH {
+        RW[i] = i as i32;
+    }
+    for i in 1..NH {
+        let a = RW[i] as int;
+        var j = i - 1;
+        while j >= 0 {
+            let b = RW[j] as int;
+            var before = gless(a, b);
+            if !before && !gless(b, a) {
+                before = hless(a, b);
+            }
+            if !before {
+                break;
+            }
+            RW[j + 1] = b as i32;
+            j = j - 1;
+        }
+        RW[j + 1] = a as i32;
+    }
+    var letter = 0;
+    var num = 0;
+    for r in 0..NH {
+        let h = RW[r] as int;
+        if r > 0 {
+            let p = RW[r - 1] as int;
+            if HP[8 * h + 6] != HP[8 * p + 6] {
+                letter = letter + 1;
+                num = 0;
+            }
+        }
+        num = num + 1;
+        LT[h] = letter as i32;
+        NB[h] = num as i32;
+    }
+    if NH == 0 {
+        OUT[0] = 0.0;
+    } else {
+        OUT[0] = (letter + 1) as real;
+    }
+    return NH as i32;
+}
+=== 01c407cba364160c
+fn ovl(ax0 real, ay0 real, ax1 real, ay1 real, bx0 real, by0 real, bx1 real, by1 real) real {
+    var hx = ax1;
+    if bx1 < hx {
+        hx = bx1;
+    }
+    var lx = ax0;
+    if bx0 > lx {
+        lx = bx0;
+    }
+    var hy = ay1;
+    if by1 < hy {
+        hy = by1;
+    }
+    var ly = ay0;
+    if by0 > ly {
+        ly = by0;
+    }
+    let w = hx - lx;
+    let h = hy - ly;
+    if !(w > 0.0) || !(h > 0.0) {
+        return 0.0;
+    }
+    return w * h;
+}
+=== -5a4ca32825b2fe33
+export fn ht_place() i32 {
+    var dx real[8] = [0.7071, -0.7071, 0.7071, -0.7071, 1.0, 0.0, -1.0, 0.0];
+    var dy real[8] = [0.7071, 0.7071, -0.7071, -0.7071, 0.0, 1.0, 0.0, -1.0];
+    let th = IN[1];
+    let g = IN[2];
+    var total = 0.0;
+    for r in 0..NH {
+        let i = RW[r] as int;
+        let cx = HP[8 * i + 3];
+        let cy = HP[8 * i + 4];
+        let rr = HP[8 * i + 5];
+        let w = HP[8 * i + 7];
+        var best = 0.0;
+        var bx0 = 0.0;
+        var by0 = 0.0;
+        var bx1 = 0.0;
+        var by1 = 0.0;
+        for k in 0..8 {
+            let ux = dx[k];
+            let uy = dy[k];
+            let px = cx + ux * (rr + g);
+            let py = cy + uy * (rr + g);
+            var x0 = px - w / 2.0;
+            if ux > 0.1 {
+                x0 = px;
+            } else if ux < -0.1 {
+                x0 = px - w;
+            }
+            var y0 = py - th / 2.0;
+            if uy > 0.1 {
+                y0 = py;
+            } else if uy < -0.1 {
+                y0 = py - th;
+            }
+            let x1 = x0 + w;
+            let y1 = y0 + th;
+            var cost = (k as real) * 0.01 * th * th;
+            for j in 0..NH {
+                let hx = HP[8 * j + 3];
+                let hy = HP[8 * j + 4];
+                let hr = 0.75 * HP[8 * j + 5];
+                cost = cost + ovl(x0, y0, x1, y1, hx - hr, hy - hr, hx + hr, hy + hr);
+            }
+            for o in 0..NO {
+                cost = cost + ovl(x0, y0, x1, y1, OB[4 * o], OB[4 * o + 1], OB[4 * o + 2], OB[4 * o + 3]);
+            }
+            for q in 0..r {
+                let p = RW[q] as int;
+                cost = cost + 4.0 * ovl(x0, y0, x1, y1, TP[4 * p], TP[4 * p + 1], TP[4 * p + 2], TP[4 * p + 3]);
+            }
+            if k == 0 || cost < best {
+                best = cost;
+                bx0 = x0;
+                by0 = y0;
+                bx1 = x1;
+                by1 = y1;
+            }
+        }
+        TP[4 * i] = bx0;
+        TP[4 * i + 1] = by0;
+        TP[4 * i + 2] = bx1;
+        TP[4 * i + 3] = by1;
+        total = total + best;
+    }
+    OUT[1] = total;
+    return 0 as i32;
+}
+=== 0ddb8a3b7d369d37
+fn main() {
+}

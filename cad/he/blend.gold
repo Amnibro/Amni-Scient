@@ -1,0 +1,40 @@
+use std
+into blend.amni
+dialect js
+
+This file is a library built for the web as a wasm module; its `main()` does nothing. JavaScript drives it through its exported functions (every name starting with bl_ is exported). It works out a variable-radius fillet along one chain of tangent edges (an OpenCascade fillet contour): it orders the edges along the chain, measures arc length, finds where each radius control point sits along the chain, and fits a radius at every chain vertex so that a radius changing linearly along each edge passes through the control radii as closely as it can (exactly when the controls sit at vertices). Its only import line is `import math;`, ending with a semicolon. Every int used in real math is converted with `as real`, and a real used as an int with `as int`, since Helium has no real or int conversion calls.
+
+```amni
+extern fn bl_view_f64(id i32, xs real[:]) = "bl_view_f64";
+extern fn bl_view_i32(id i32, xs i32[:]) = "bl_view_i32";
+```
+
+Module state. Ints, all starting at 0: `NE` (edges in the chain), `NK` (samples per edge, at least 2), `NC` (control points), `NV` (chain vertices) and `CLO` (1 when the chain is closed). Growable f64 arrays: `IN` (16 inputs), `OUT` (16 outputs), `EP` (3 NK per edge: points sampled along edge j from its first parameter to its last, edge j's sample m at 3 times (j times NK plus m)), `CP` (4 per control point: x, y, z and the radius r; when the mode is 1 the first value is instead a fraction from 0.0 to 1.0 along the chain), `LN` (NE edge lengths), `SV` (NE plus 1 chain arc lengths at the vertices), `CS` (NC arc lengths of the control points), `CD` (NC distances from each control point to the chain), `ER` (2 per edge: the radius at the edge's start and end along the chain), `VS` (2 per vertex: its arc length and its radius), `AM` (NV times NV matrix, row by row), `BV` (NV) and `XV` (NV). Growable i32 arrays: `FL` (NE flags, 1 when edge j runs against the chain direction) and `US` (NC flags, 1 when control point c is used by the fit).
+
+Sizing helpers. `zf(xs, n, x)` takes an f64 growable array by reference: xs is emptied, then gets `reserve`(n), then is resized to n entries equal to x. `zi(xs, n, x)` does the same for an i32 growable array, resizing to n entries equal to x as i32. On the web an array that holds entries cannot grow past the room it first reserved, so every array is emptied before it is sized again. `at1(n)` returns n, or 1 when n is below 1.
+
+The exported function `bl_views()`, declared with the export keyword with an i32 result, registers the arrays with `bl_view_f64`: 1 IN, 2 OUT, 3 EP, 4 CP, 5 CS, 6 CD, 7 ER, 8 VS; and with `bl_view_i32`: 20 FL, 21 US. It returns 0.
+
+The exported function `bl_init()`, declared with the export keyword with an i32 result, sizes IN to 16 zeros and OUT to 16 zeros with `zf`, calls `bl_views()` and returns 0.
+
+The exported function `bl_size(ne, nk, nc)`, declared with the export keyword with three i32 parameters (each converted with `as int` at the top) and an i32 result, sets NE to ne, NK to nk raised to at least 2 and NC to nc, then sizes with `zf` to zeros, each size raised to at least 1 with `at1`: EP to 3 times ne times NK, CP to 4 nc, LN to ne, SV to ne plus 1, CS and CD to nc, ER to 2 ne, VS to 2 times (ne plus 1), AM to (ne plus 1) squared, BV and XV to ne plus 1; and with `zi` FL to ne and US to nc, both filled with 1 for US and 0 for FL. It calls `bl_views()` and returns 0.
+
+Point helpers. `epx(j, m, c)` returns EP[3 times (j times NK plus m) plus c]. `dst(ax, ay, az, bx, by, bz)` returns the distance between two points.
+
+The exported function `bl_prep()`, declared with the export keyword with an i32 result, orders the chain and places the control points. Inputs: IN[0] the mode (0 points, 1 fractions), IN[1], IN[2] and IN[3] the chain's first vertex, and IN[4] 1.0 when the chain is closed.
+
+1. Lengths: LN[j] is the sum of the distances between consecutive samples of edge j.
+2. Direction: with the previous end p starting at the chain's first vertex, for each edge j in order, d0 is the distance from its first sample to p and d1 the distance from its last sample to p; FL[j] is 1 when d1 is below d0 and 0 otherwise; p becomes the edge's first sample when FL[j] is 1 and its last sample otherwise.
+3. Arc length: SV[0] is 0.0 and SV[j plus 1] is SV[j] plus LN[j]. CLO is 1 when IN[4] is above 0.5, and 0 otherwise. NV is NE when CLO is 1, and NE plus 1 otherwise.
+4. Controls: for each control c below NC, in mode 1 CS[c] is the fraction CP[4 c] clamped to 0.0 to 1.0 times SV[NE] and CD[c] is 0.0. In mode 0, the point q is CP[4 c] to CP[4 c plus 2]; over every edge j and every segment m below NK minus 1 from sample m to sample m plus 1, with a the run so far along the edge from its first sample to sample m, the point is projected onto the segment (the fraction w of the segment clamped to 0.0 to 1.0, 0.0 when the segment's length squared is not above 1e-30), giving the distance from q to the projected point and the run b equal to a plus w times the segment length; the nearest projection over all segments wins (the first one on ties), and CS[c] becomes SV[j] plus b when FL[j] is 0, or SV[j] plus LN[j] minus b when FL[j] is 1, and CD[c] the nearest distance.
+5. OUT[0] becomes SV[NE], OUT[1] becomes CLO as real and OUT[5] the largest CD over the controls.
+
+Returns NV as i32.
+
+Vertex helpers. `vs(j)` returns j, the chain vertex at the start of edge j. `ve(j)` returns 0 when CLO is 1 and j is NE minus 1, and j plus 1 otherwise. `edge_at(s)` returns the edge j whose arc length range holds s: the first j below NE with s at most SV[j plus 1] plus 1e-12 times (1.0 plus SV[NE]), and NE minus 1 when there is none. `wat(j, s)` returns (s minus SV[j]) over LN[j] clamped to 0.0 to 1.0, or 0.0 when LN[j] is not above 1e-30.
+
+The exported function `bl_fit()`, declared with the export keyword with an i32 result, fits the vertex radii from the control points whose US flag is 1, once `bl_prep` has run. It fills AM, BV and XV with 0.0. For each used control c, with s equal to CS[c] (in a closed chain s is first wrapped into 0.0 to SV[NE] by subtracting or adding SV[NE]), j equal to edge_at(s), w equal to wat(j, s), a equal to vs(j), b equal to ve(j) and r equal to CP[4 c plus 3]: AM[a][a] goes up by (1.0 minus w) squared, AM[a][b] and AM[b][a] each by (1.0 minus w) times w, AM[b][b] by w squared, BV[a] by (1.0 minus w) times r and BV[b] by w times r (where AM[i][k] means AM[i times NV plus k]). Then, with the shortest edge length h (the smallest LN above 1e-30, or 1.0 when there is none) and g equal to 1e-7 times h over LN[j] for each edge j with LN[j] above 1e-30, the smoothing term adds g to AM[a][a] and AM[b][b] and subtracts g from AM[a][b] and AM[b][a], with a equal to vs(j) and b equal to ve(j). It solves AM times XV equals BV by Gaussian elimination with partial pivoting over the first NV rows (a pivot whose absolute value is not above 1e-300 is skipped and that unknown is left at 0.0).
+
+Afterward: ER[2 j] is XV[vs(j)] and ER[2 j plus 1] is XV[ve(j)] for each edge j; VS[2 v] is SV[v] and VS[2 v plus 1] is XV[v] for each vertex v below NV. OUT[2] is the largest absolute difference, over the used controls, between the control radius and (1.0 minus w) times XV[a] plus w times XV[b] at that control (with s, j, w, a and b as above); OUT[3] is the smallest XV over the vertices and OUT[4] the largest. Returns 0.
+
+The `main()` function does nothing.

@@ -1,0 +1,312 @@
+import math;
+extern fn mc_view_f64(id i32, xs real[:]) = "mc_view_f64";
+var T real[>..];
+var R real[>..];
+var Q real[>..];
+fn zf(xs real[>..]&, n int, x real) {
+	xs.clear();
+	xs.reserve(n);
+	xs.resize(n, x);
+}
+export fn mc_views() i32 {
+	mc_view_f64(1, T[..]);
+	mc_view_f64(2, R[..]);
+	mc_view_f64(3, Q[..]);
+	0
+}
+export fn mc_setup(n i32) i32 {
+	let nt int = n;
+	zf(T, 9 * nt, 0.0);
+	zf(R, 64, 0.0);
+	zf(Q, 1, 0.0);
+	mc_views();
+	0
+}
+fn jacobi(c real[>..]&) int {
+	for i in 3 {
+		for j in 3 {
+			c[9 + 3 * i + j] = if i == j { 1.0 } else { 0.0 };
+		}
+	}
+	for sweep in 50 {
+		let off = c[1] * c[1] + c[2] * c[2] + c[5] * c[5];
+		let diag = c[0] * c[0] + c[4] * c[4] + c[8] * c[8];
+		if off <= 1e-24 * (1.0 + diag) { break; }
+		for k in 3 {
+			let p = if k == 2 { 1 } else { 0 };
+			let q = if k == 0 { 1 } else { 2 };
+			let apq = c[3 * p + q];
+			if apq != 0.0 {
+				let theta = (c[4 * q] - c[4 * p]) / (2.0 * apq);
+				let sg = if theta < 0.0 { -1.0 } else { 1.0 };
+				let t = sg / (abs(theta) + sqrt(theta * theta + 1.0));
+				let cs = 1.0 / sqrt(t * t + 1.0);
+				let sn = t * cs;
+				for i in 3 {
+					let aip = c[3 * i + p];
+					let aiq = c[3 * i + q];
+					c[3 * i + p] = cs * aip - sn * aiq;
+					c[3 * i + q] = sn * aip + cs * aiq;
+				}
+				for j in 3 {
+					let bpj = c[3 * p + j];
+					let bqj = c[3 * q + j];
+					c[3 * p + j] = cs * bpj - sn * bqj;
+					c[3 * q + j] = sn * bpj + cs * bqj;
+				}
+				for i in 3 {
+					let vip = c[9 + 3 * i + p];
+					let viq = c[9 + 3 * i + q];
+					c[9 + 3 * i + p] = cs * vip - sn * viq;
+					c[9 + 3 * i + q] = sn * vip + cs * viq;
+				}
+			}
+		}
+	}
+	0
+}
+export fn mc_stats(n i32) i32 {
+	let nt int = n;
+	var area = 0.0;
+	var vol = 0.0;
+	var cen real[3] = [0.0; 3];
+	var mom real[9] = [0.0; 9];
+	var lo real[3] = [1e300; 3];
+	var hi real[3] = [-1e300; 3];
+	for t in nt {
+		var a real[3] = [0.0; 3];
+		var b real[3] = [0.0; 3];
+		var cc real[3] = [0.0; 3];
+		var s real[3] = [0.0; 3];
+		for j in 3 {
+			a[j] = T[9 * t + j];
+			b[j] = T[9 * t + 3 + j];
+			cc[j] = T[9 * t + 6 + j];
+			s[j] = a[j] + b[j] + cc[j];
+			lo[j] = min(lo[j], min(a[j], min(b[j], cc[j])));
+			hi[j] = max(hi[j], max(a[j], max(b[j], cc[j])));
+		}
+		let ux = b[0] - a[0];
+		let uy = b[1] - a[1];
+		let uz = b[2] - a[2];
+		let vx = cc[0] - a[0];
+		let vy = cc[1] - a[1];
+		let vz = cc[2] - a[2];
+		let nx = uy * vz - uz * vy;
+		let ny = uz * vx - ux * vz;
+		let nz = ux * vy - uy * vx;
+		let ta = 0.5 * sqrt(nx * nx + ny * ny + nz * nz);
+		area += ta;
+		vol += (a[0] * nx + a[1] * ny + a[2] * nz) / 6.0;
+		for i in 3 {
+			cen[i] += ta * (s[i] / 3.0);
+			for j in 3 {
+				mom[3 * i + j] += ta / 12.0 * (a[i] * a[j] + b[i] * b[j] + cc[i] * cc[j] + s[i] * s[j]);
+			}
+		}
+	}
+	R[0] = area;
+	if area == 0.0 { return 0; }
+	var m real[3] = [0.0; 3];
+	for i in 3 {
+		m[i] = cen[i] / area;
+		R[2 + i] = m[i];
+	}
+	var c real[>..] = [];
+	zf(c, 18, 0.0);
+	for i in 3 {
+		for j in 3 {
+			c[3 * i + j] = mom[3 * i + j] / area - m[i] * m[j];
+		}
+	}
+	jacobi(c);
+	var order int[3] = [0, 1, 2];
+	for pass in 2 {
+		for k in 2 {
+			if c[4 * order[k + 1]] > c[4 * order[k]] {
+				let tmp = order[k];
+				order[k] = order[k + 1];
+				order[k + 1] = tmp;
+			}
+		}
+	}
+	var ax real[9] = [0.0; 9];
+	for q in 3 {
+		let col = order[q];
+		let x = c[9 + col];
+		let y = c[12 + col];
+		let z = c[15 + col];
+		let len = sqrt(x * x + y * y + z * z);
+		ax[3 * q] = x / len;
+		ax[3 * q + 1] = y / len;
+		ax[3 * q + 2] = z / len;
+	}
+	for i in 9 { R[8 + i] = ax[i]; }
+	var pmin real[3] = [1e300; 3];
+	var pmax real[3] = [-1e300; 3];
+	var boxy = 0.0;
+	var flat = 0.0;
+	var soft = 0.0;
+	for t in nt {
+		for k in 3 {
+			let at = 9 * t + 3 * k;
+			for q in 3 {
+				let d = T[at] * ax[3 * q] + T[at + 1] * ax[3 * q + 1] + T[at + 2] * ax[3 * q + 2];
+				pmin[q] = min(pmin[q], d);
+				pmax[q] = max(pmax[q], d);
+			}
+		}
+		let o = 9 * t;
+		let ux = T[o + 3] - T[o];
+		let uy = T[o + 4] - T[o + 1];
+		let uz = T[o + 5] - T[o + 2];
+		let vx = T[o + 6] - T[o];
+		let vy = T[o + 7] - T[o + 1];
+		let vz = T[o + 8] - T[o + 2];
+		let nx = uy * vz - uz * vy;
+		let ny = uz * vx - ux * vz;
+		let nz = ux * vy - uy * vx;
+		let len = sqrt(nx * nx + ny * ny + nz * nz);
+		let ta = 0.5 * len;
+		if ta > 0.0 {
+			var d real[3] = [0.0; 3];
+			for q in 3 {
+				d[q] = abs((nx / len) * ax[3 * q] + (ny / len) * ax[3 * q + 1] + (nz / len) * ax[3 * q + 2]);
+			}
+			let big = max(d[0], max(d[1], d[2]));
+			if big >= 0.98480775 { boxy += ta; }
+			if d[2] >= 0.98480775 { flat += ta; }
+			if big <= 0.90630779 { soft += ta; }
+		}
+	}
+	R[1] = abs(vol);
+	for q in 3 {
+		R[5 + q] = pmax[q] - pmin[q];
+		R[21 + q] = hi[q] - lo[q];
+	}
+	R[17] = boxy / area;
+	R[18] = flat / area;
+	R[19] = 36.0 * PI * R[1] * R[1] / (R[0] * R[0] * R[0]);
+	R[20] = soft / area;
+	0
+}
+export fn mc_proj(n i32, dx real, dy real, dz real, res i32) i32 {
+	let nt int = n;
+	let cells int = res;
+	let dl = sqrt(dx * dx + dy * dy + dz * dz);
+	let ex = dx / dl;
+	let ey = dy / dl;
+	let ez = dz / dl;
+	let steep = abs(ez) > 0.9;
+	let upx = if steep { 1.0 } else { 0.0 };
+	let upy = 0.0;
+	let upz = if steep { 0.0 } else { 1.0 };
+	var ux = upy * ez - upz * ey;
+	var uy = upz * ex - upx * ez;
+	var uz = upx * ey - upy * ex;
+	let ul = sqrt(ux * ux + uy * uy + uz * uz);
+	ux = ux / ul;
+	uy = uy / ul;
+	uz = uz / ul;
+	let vx = ey * uz - ez * uy;
+	let vy = ez * ux - ex * uz;
+	let vz = ex * uy - ey * ux;
+	var P real[>..] = [];
+	var lu = 1e300;
+	var lv = 1e300;
+	var hu = -1e300;
+	var hv = -1e300;
+	for k in 3 * nt {
+		let x = T[3 * k];
+		let y = T[3 * k + 1];
+		let z = T[3 * k + 2];
+		let pu = x * ux + y * uy + z * uz;
+		let pv = x * vx + y * vy + z * vz;
+		P.push(pu);
+		P.push(pv);
+		lu = min(lu, pu);
+		hu = max(hu, pu);
+		lv = min(lv, pv);
+		hv = max(hv, pv);
+	}
+	if nt == 0 {
+		lu = 0.0;
+		hu = 0.0;
+		lv = 0.0;
+		hv = 0.0;
+	}
+	let eu = hu - lu;
+	let ev = hv - lv;
+	var h = max(eu, ev) / (cells as real);
+	if h == 0.0 { h = 1e-9; }
+	let gu = lu - h;
+	let gv = lv - h;
+	let nu = 3 + (floor(eu / h) as int);
+	let nv = 3 + (floor(ev / h) as int);
+	zf(Q, nu * nv, 0.0);
+	for t in nt {
+		let ax = P[6 * t];
+		let ay = P[6 * t + 1];
+		let bx = P[6 * t + 2];
+		let by = P[6 * t + 3];
+		let cx = P[6 * t + 4];
+		let cy = P[6 * t + 5];
+		let w = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+		if abs(w) < 1e-12 { continue; }
+		let sg = if w > 0.0 { 1.0 } else { -1.0 };
+		let i0 = max(floor((min(ax, min(bx, cx)) - gu) / h) as int, 0);
+		let i1 = min(floor((max(ax, max(bx, cx)) - gu) / h) as int, nu - 1);
+		let j0 = max(floor((min(ay, min(by, cy)) - gv) / h) as int, 0);
+		let j1 = min(floor((max(ay, max(by, cy)) - gv) / h) as int, nv - 1);
+		for j in j0..j1 + 1 {
+			let py = gv + ((j as real) + 0.5) * h;
+			for i in i0..i1 + 1 {
+				let px = gu + ((i as real) + 0.5) * h;
+				let e0 = ((bx - ax) * (py - ay) - (by - ay) * (px - ax)) * sg;
+				let e1 = ((cx - bx) * (py - by) - (cy - by) * (px - bx)) * sg;
+				let e2 = ((ax - cx) * (py - cy) - (ay - cy) * (px - cx)) * sg;
+				if e0 >= 0.0 && e1 >= 0.0 && e2 >= 0.0 { Q[i + nu * j] = 1.0; }
+			}
+		}
+	}
+	var covered = 0;
+	var outline = 0.0;
+	for j in nv {
+		for i in nu {
+			let at = i + nu * j;
+			if Q[at] == 1.0 {
+				covered++;
+			}
+		}
+	}
+	for j in nv - 1 {
+		for i in nu - 1 {
+			let at = i + nu * j;
+			let c00 = Q[at] == 1.0;
+			let c10 = Q[at + 1] == 1.0;
+			let c01 = Q[at + nu] == 1.0;
+			let c11 = Q[at + nu + 1] == 1.0;
+			var count = 0;
+			if c00 { count++; }
+			if c10 { count++; }
+			if c01 { count++; }
+			if c11 { count++; }
+			if count == 1 || count == 3 {
+				outline += h * 0.70710678;
+			} else if count == 2 {
+				outline += if c00 == c11 { h * 1.41421356 } else { h };
+			}
+		}
+	}
+	R[30] = (covered as real) * h * h;
+	R[31] = outline;
+	R[32] = if R[31] == 0.0 { 0.0 } else { 4.0 * PI * R[30] / (R[31] * R[31]) };
+	R[33] = covered as real;
+	R[34] = eu;
+	R[35] = ev;
+	mc_views();
+	covered as i32
+}
+fn main() int {
+	0
+}

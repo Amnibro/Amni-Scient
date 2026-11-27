@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amni-Drive Privacy Policy</title>
+<link rel="canonical" href="https://amni-scient.com/privacy-drive">
+<style>
+:root{--bg:#ffffff;--fg:#1b1f27;--muted:#5b6575;--line:#e3e7ee;--accent:#0a7d55}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0d12;--fg:#e8edf4;--muted:#9aa6b6;--line:#243044;--accent:#3ddc97}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.9rem;margin:0 0 4px}
+h2{font-size:1.2rem;margin:32px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+p,li{color:var(--fg)}
+.muted{color:var(--muted)}
+.tw{overflow-x:auto;max-width:100%}td{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+<h1>Amni-Drive Privacy Policy</h1>
+<p class="muted">App: Amni-Drive for Android (package <code>com.amni.drive</code>). Effective: November 26, 2026. Publisher: Amniscient, LLC. Contact: <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a>.</p>
+<p>Amni-Drive is a car dashboard and USB Android Auto replacement. It has no accounts, no ads, no analytics, no telemetry, and no tracking or advertising SDKs. Everything you configure &mdash; themes, cockpit layouts, widget preferences, and web sign-in cookies &mdash; stays on your device.</p>
+
+<h2>What leaves your phone, and why</h2>
+<div class="tw"><table>
+<tr><th>What</th><th>Sent to</th><th>Why</th><th>Kept by Amni-Scient</th></tr>
+<tr><td>Version check requests</td><td><code>amni-scient.com/drive/android-latest.json</code> and <code>/drive/apps-catalog.json</code></td><td>Check for signed OTA updates and companion Amni app versions</td><td>Nothing &mdash; static JSON files on Cloudflare Pages. You can turn off automatic checks in Settings &rarr; OTA &amp; Amni Apps.</td></tr>
+<tr><td>APK downloads (only when you tap Install/Update)</td><td><code>amni-scient.com/downloads/</code> (redirects to GitHub Releases)</td><td>Download signed Amni-Drive or companion Amni app APKs, verified by SHA-256 on your phone</td><td>Nothing</td></tr>
+<tr><td>Coordinates for built-in map, routing &amp; weather (if used)</td><td>OpenFreeMap / Carto / Esri (map tiles), public OSRM / Nominatim (routing &amp; search), Open-Meteo (local weather)</td><td>Display built-in map, directions, and temperature widget</td><td>Nothing. If you embed Amni-Map, see the <a href="/privacy-map">Amni-Map Privacy Policy</a>.</td></tr>
+<tr><td>Websites you open in the Media box or Car Web Sign-Ins</td><td>Only the websites you choose to open (e.g., YouTube, Spotify, Netflix)</td><td>Load your chosen media/web apps inside the car display</td><td>Nothing. Cookies are stored locally in Android WebView on your phone.</td></tr>
+<tr><td>USB / local Wi-Fi projection stream</td><td>Only your car&rsquo;s head unit over USB (or local Wi-Fi when using Amni Link)</td><td>Render the car dashboard and receive touch/key input</td><td>Never leaves your vehicle</td></tr>
+</table></div>
+
+<h2>Permissions</h2>
+<ul>
+<li><strong>Location</strong>: speedometer, compass, weather widget, and built-in map navigation.</li>
+<li><strong>USB Accessory</strong>: connect directly to your car&rsquo;s factory Android Auto USB port.</li>
+<li><strong>Install packages (<code>REQUEST_INSTALL_PACKAGES</code>)</strong>: install SHA-256-verified OTA updates and companion Amni apps when you tap Install/Update.</li>
+<li><strong>Notification listener (optional)</strong>: display Now Playing media controls and incoming message banners on the dash.</li>
+<li><strong>Display over other apps (optional)</strong>: open the dashboard automatically when connecting while your phone screen is locked.</li>
+<li><strong>Microphone (optional)</strong>: voice destination search when you tap the mic button.</li>
+</ul>
+
+<h2>Your choices &amp; removal</h2>
+<p>Uninstalling Amni-Drive removes all stored preferences, cached tiles, and WebView cookies from your device. Questions? Email <a href="mailto:privacy@amni-scient.com">privacy@amni-scient.com</a>.</p>
+</main>
+</body>
+</html>

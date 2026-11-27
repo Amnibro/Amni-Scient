@@ -1,0 +1,570 @@
+=== 0b83ba0f797bcfd9
+export fn vs_bodies(n i32) i32 {
+	let cnt int = n;
+	var cur = -1;
+	var prev = 0;
+	var started = 0;
+	for i in cnt {
+		if KD[i] == 0 {
+			BO[i] = -1;
+		} else if KD[i] == 1 && OP[i] != 1 && OP[i] != 2 {
+			if cur < 0 || OP[i] == 3 || NS[i] < 0 || NS[i] > prev {
+				BO[i] = i as i32;
+				cur = i;
+				started += 1;
+			} else {
+				BO[i] = cur as i32;
+			}
+		} else {
+			if cur >= 0 {
+				BO[i] = cur as i32;
+			} else {
+				BO[i] = -2;
+			}
+		}
+		if NS[i] >= 0 { prev = NS[i]; }
+	}
+	return started as i32;
+}
+=== -2159252d327b6614
+import math;
+fn qc(v int, cell real, k int) int {
+	round(P[3 * v + k] / cell) as int
+}
+fn uf_find(f int) int {
+	var x = f;
+	while UF[x] != x {
+		UF[x] = UF[UF[x]];
+		x = UF[x];
+	}
+	x
+}
+export fn vs_comps() i32 {
+	var minx = 1e300;
+	var miny = 1e300;
+	var minz = 1e300;
+	var maxx = -1e300;
+	var maxy = -1e300;
+	var maxz = -1e300;
+	for v in NV {
+		minx = min(minx, P[3 * v]);
+		maxx = max(maxx, P[3 * v]);
+		miny = min(miny, P[3 * v + 1]);
+		maxy = max(maxy, P[3 * v + 1]);
+		minz = min(minz, P[3 * v + 2]);
+		maxz = max(maxz, P[3 * v + 2]);
+	}
+	let ddx = maxx - minx;
+	let ddy = maxy - miny;
+	let ddz = maxz - minz;
+	let cell = sqrt(ddx * ddx + ddy * ddy + ddz * ddz) * 1e-7 + 1e-12;
+	var S = 1;
+	while S < 2 * NV + 2 { S *= 2; }
+	zi(HK, S);
+	for i in S { HK[i] = -1; }
+	zi(REP, NV);
+	zi(OWN, NV);
+	for i in NV { OWN[i] = -1; }
+	zi(UF, NF);
+	for f in NF { UF[f] = f as i32; }
+	for v in NV {
+		let qx = qc(v, cell, 0);
+		let qy = qc(v, cell, 1);
+		let qz = qc(v, cell, 2);
+		var slot = abs((qx * 73856093) ^ (qy * 19349663) ^ (qz * 83492791)) % S;
+		var done = false;
+		while !done {
+			if HK[slot] == -1 {
+				HK[slot] = v as i32;
+				REP[v] = v as i32;
+				done = true;
+			} else {
+				let u int = HK[slot];
+				if qc(u, cell, 0) == qx && qc(u, cell, 1) == qy && qc(u, cell, 2) == qz {
+					REP[v] = u as i32;
+					done = true;
+				} else {
+					slot = (slot + 1) % S;
+				}
+			}
+		}
+	}
+	var grp i32[>..];
+	zi(grp, NF);
+	for g in NG {
+		let s int = GR[3 * g];
+		let c int = GR[3 * g + 1];
+		let f int = GR[3 * g + 2];
+		if f < 0 || f >= NF { continue; }
+		grp[f] = 1;
+		for k in s..s + c {
+			let r int = REP[T[k]];
+			if OWN[r] == -1 {
+				OWN[r] = f as i32;
+			} else {
+				let ra = uf_find(f);
+				let rb = uf_find(OWN[r]);
+				if ra != rb {
+					let lo = min(ra, rb);
+					let hi = max(ra, rb);
+					UF[hi] = lo as i32;
+				}
+			}
+		}
+	}
+	var num i32[>..];
+	zi(num, NF);
+	for i in NF { num[i] = -1; }
+	for i in NF { FC[i] = -1; }
+	var count = 0;
+	for f in NF {
+		if grp[f] == 1 {
+			let r = uf_find(f);
+			if num[r] < 0 {
+				num[r] = count as i32;
+				count += 1;
+			}
+			FC[f] = num[r];
+		}
+	}
+	return count as i32;
+}
+=== 7f01a1a7381314db
+import math;
+export fn vs_cube(x real, y real, z real) i32 {
+	if OUT.len < 3 {
+		zf(OUT, 3);
+		vs_views();
+	}
+	let c real[3] = [x, y, z];
+	var d real[3] = [0.0; 3];
+	for i in 3 {
+		if abs(c[i]) > 0.55 {
+			if c[i] < 0.0 {
+				d[i] = -1.0;
+			} else {
+				d[i] = 1.0;
+			}
+		}
+	}
+	if d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0 {
+		var best = 0;
+		for i in 1..3 {
+			if abs(c[i]) > abs(c[best]) { best = i; }
+		}
+		if c[best] < 0.0 {
+			d[best] = -1.0;
+		} else {
+			d[best] = 1.0;
+		}
+	}
+	OUT[0] = d[0];
+	OUT[1] = d[1];
+	OUT[2] = d[2];
+	var count = 0;
+	for i in 3 {
+		if d[i] != 0.0 { count += 1; }
+	}
+	return count as i32;
+}
+export fn vs_bulge(ax real, ay real, bx real, by real, s real, n i32) i32 {
+	let cnt int = n;
+	let dx = bx - ax;
+	let dy = by - ay;
+	let L = sqrt(dx * dx + dy * dy);
+	let h = abs(s);
+	if h <= 1e-12 * (1.0 + L) || L <= 1e-12 || cnt < 1 {
+		if OUT.len < 4 {
+			zf(OUT, 4);
+			vs_views();
+		}
+		OUT[0] = ax;
+		OUT[1] = ay;
+		OUT[2] = bx;
+		OUT[3] = by;
+		return 2;
+	}
+	let g = if s < 0.0 { 1.0 } else { -1.0 };
+	let r = (L * L / 4.0 + h * h) / (2.0 * h);
+	let qx = (by - ay) / L;
+	let qy = (ax - bx) / L;
+	let cx = (ax + bx) * 0.5 + g * (h - r) * qx;
+	let cy = (ay + by) * 0.5 + g * (h - r) * qy;
+	let t0 = atan2(ay - cy, ax - cx);
+	let w = g * 4.0 * atan2(2.0 * h, L);
+	if OUT.len < 2 * (cnt + 1) {
+		zf(OUT, 2 * (cnt + 1));
+		vs_views();
+	}
+	for i in cnt + 1 {
+		let t = t0 + w * i / cnt;
+		OUT[2 * i] = cx + r * cos(t);
+		OUT[2 * i + 1] = cy + r * sin(t);
+	}
+	return (cnt + 1) as i32;
+}
+=== 5497d1c37f3633c5
+fn main() {
+}
+=== -6e60716811fc0ee0
+var NV int = 0;
+var NI int = 0;
+var NG int = 0;
+var NF int = 0;
+var NP int = 0;
+var NK int = 0;
+var SW real = 0.0;
+var SH real = 0.0;
+var UX real = 0.0;
+var UY real = 0.0;
+var UZ real = 0.0;
+var P real[>..];
+var M real[>..];
+var MI real[>..];
+var PL real[>..];
+var IN real[>..];
+var OUT real[>..];
+var FP real[>..];
+var RC real[>..];
+var SX real[>..];
+var T i32[>..];
+var GR i32[>..];
+var FS i32[>..];
+var KD i32[>..];
+var DL i32[>..];
+var CS i32[>..];
+var OP i32[>..];
+var NS i32[>..];
+var BO i32[>..];
+var FC i32[>..];
+var HK i32[>..];
+var REP i32[>..];
+var OWN i32[>..];
+var UF i32[>..];
+=== 7b3276236042b2a4
+export fn vs_views() {
+	vs_view_f64(1, P[..]);
+	vs_view_f64(2, M[..]);
+	vs_view_f64(3, MI[..]);
+	vs_view_f64(4, PL[..]);
+	vs_view_f64(5, IN[..]);
+	vs_view_f64(6, OUT[..]);
+	vs_view_f64(7, FP[..]);
+	vs_view_f64(8, RC[..]);
+	vs_view_i32(9, T[..]);
+	vs_view_i32(10, GR[..]);
+	vs_view_i32(11, FS[..]);
+	vs_view_i32(12, KD[..]);
+	vs_view_i32(13, DL[..]);
+	vs_view_i32(14, CS[..]);
+	vs_view_i32(15, OP[..]);
+	vs_view_i32(16, NS[..]);
+	vs_view_i32(17, BO[..]);
+	vs_view_i32(18, FC[..]);
+}
+=== -4f52359521a2b0ca
+fn zf(xs real[>..]&, n int) {
+	xs.clear();
+	xs.resize(n, 0.0);
+}
+fn zi(xs i32[>..]&, n int) {
+	xs.clear();
+	xs.resize(n, 0 as i32);
+}
+=== -1515f58107abcd2a
+export fn vs_setup(nv i32, ni i32, ng i32, nf i32) i32 {
+	NV = nv;
+	NI = ni;
+	NG = ng;
+	NF = nf;
+	zf(P, 3 * NV);
+	zf(SX, 3 * NV);
+	zf(FP, 3 * NF);
+	zi(T, NI);
+	zi(GR, 3 * NG);
+	zi(FS, NF);
+	zi(FC, NF);
+	if M.len != 16 { zf(M, 16); }
+	if MI.len != 16 { zf(MI, 16); }
+	if PL.len != 9 { zf(PL, 9); }
+	if RC.len != 4 { zf(RC, 4); }
+	vs_views();
+	return 0;
+}
+=== -753d88f849a29e5c
+export fn vs_points(np i32) i32 {
+	NP = np;
+	zf(IN, 2 * NP);
+	zf(OUT, max(3 * NP, 3));
+	if M.len != 16 { zf(M, 16); }
+	if MI.len != 16 { zf(MI, 16); }
+	if PL.len != 9 { zf(PL, 9); }
+	if RC.len != 4 { zf(RC, 4); }
+	vs_views();
+	return 0;
+}
+=== -6dba9c22a41a64e7
+export fn vs_feats(n i32) i32 {
+	NK = n;
+	zi(KD, NK);
+	zi(DL, NK);
+	zi(CS, NK);
+	zi(OP, NK);
+	zi(NS, NK);
+	zi(BO, NK);
+	vs_views();
+	return 0;
+}
+=== -74b99754797b474e
+export fn vs_screen(w real, h real) i32 {
+	SW = w;
+	SH = h;
+	return 0;
+}
+=== -1c08330cbf5380df
+fn clipw(x real, y real, z real) real {
+	M[3] * x + M[7] * y + M[11] * z + M[15]
+}
+=== -4ce7777939d5db32
+fn toscreen(x real, y real, z real, o int) {
+	let w = clipw(x, y, z);
+	if w <= 1e-9 {
+		OUT[o] = 0.0;
+		OUT[o + 1] = 0.0;
+		OUT[o + 2] = 0.0;
+		return;
+	}
+	let cx = M[0] * x + M[4] * y + M[8] * z + M[12];
+	let cy = M[1] * x + M[5] * y + M[9] * z + M[13];
+	OUT[o] = (cx / w + 1.0) * 0.5 * SW;
+	OUT[o + 1] = (1.0 - cy / w) * 0.5 * SH;
+	OUT[o + 2] = 1.0;
+}
+=== -1d57edd7184e0190
+export fn vs_proj(n i32) i32 {
+	let cnt int = n;
+	for i in cnt {
+		let u = IN[2 * i];
+		let v = IN[2 * i + 1];
+		let x = PL[0] + u * PL[3] + v * PL[6];
+		let y = PL[1] + u * PL[4] + v * PL[7];
+		let z = PL[2] + u * PL[5] + v * PL[8];
+		toscreen(x, y, z, 3 * i);
+	}
+	return 0;
+}
+=== -5c52315f46a04faf
+fn unm(nx real, ny real, nz real) {
+	let x = MI[0] * nx + MI[4] * ny + MI[8] * nz + MI[12];
+	let y = MI[1] * nx + MI[5] * ny + MI[9] * nz + MI[13];
+	let z = MI[2] * nx + MI[6] * ny + MI[10] * nz + MI[14];
+	var w = MI[3] * nx + MI[7] * ny + MI[11] * nz + MI[15];
+	if abs(w) < 1e-12 { w = 1e-12; }
+	UX = x / w;
+	UY = y / w;
+	UZ = z / w;
+}
+=== 3cfed07c5d3f9668
+export fn vs_unproj(x real, y real) i32 {
+	let nx = x / SW * 2.0 - 1.0;
+	let ny = 1.0 - y / SH * 2.0;
+	unm(nx, ny, -1.0);
+	let ax = UX;
+	let ay = UY;
+	let az = UZ;
+	unm(nx, ny, 1.0);
+	let bx = UX;
+	let by = UY;
+	let bz = UZ;
+	let ux = PL[3];
+	let uy = PL[4];
+	let uz = PL[5];
+	let vx = PL[6];
+	let vy = PL[7];
+	let vz = PL[8];
+	let nrx = uy * vz - uz * vy;
+	let nry = uz * vx - ux * vz;
+	let nrz = ux * vy - uy * vx;
+	let dx = bx - ax;
+	let dy = by - ay;
+	let dz = bz - az;
+	let den = nrx * dx + nry * dy + nrz * dz;
+	let num = nrx * (PL[0] - ax) + nry * (PL[1] - ay) + nrz * (PL[2] - az);
+	if abs(den) < 1e-12 {
+		OUT[0] = 0.0;
+		OUT[1] = 0.0;
+		OUT[2] = 0.0;
+		return 0;
+	}
+	let t = num / den;
+	if t < 0.0 {
+		OUT[0] = 0.0;
+		OUT[1] = 0.0;
+		OUT[2] = 0.0;
+		return 0;
+	}
+	let qx = ax + t * dx - PL[0];
+	let qy = ay + t * dy - PL[1];
+	let qz = az + t * dz - PL[2];
+	OUT[0] = qx * ux + qy * uy + qz * uz;
+	OUT[1] = qx * vx + qy * vy + qz * vz;
+	OUT[2] = 1.0;
+	return 1;
+}
+=== -1bd23bc4e2a39b39
+export fn vs_scale(u real, v real) real {
+	if IN.len < 6 || OUT.len < 9 {
+		zf(IN, 6);
+		zf(OUT, 9);
+		vs_views();
+	}
+	let s = max(1e-6, 1e-3 * (1.0 + abs(u) + abs(v)));
+	IN[0] = u;
+	IN[1] = v;
+	IN[2] = u + s;
+	IN[3] = v;
+	IN[4] = u;
+	IN[5] = v + s;
+	vs_proj(3);
+	if OUT[2] == 0.0 || OUT[5] == 0.0 || OUT[8] == 0.0 { return 0.0; }
+	let d1 = sqrt((OUT[3] - OUT[0]) * (OUT[3] - OUT[0]) + (OUT[4] - OUT[1]) * (OUT[4] - OUT[1]));
+	let d2 = sqrt((OUT[6] - OUT[0]) * (OUT[6] - OUT[0]) + (OUT[7] - OUT[1]) * (OUT[7] - OUT[1]));
+	return (d1 + d2) * 0.5 / s;
+}
+=== -9534dbfc2ee3bfc
+fn inr(x real, y real) bool {
+	x >= RC[0] && x <= RC[2] && y >= RC[1] && y <= RC[3]
+}
+=== 43042fc64c584aa3
+fn sat(o int) bool {
+	let a int = T[o];
+	let b int = T[o + 1];
+	let c int = T[o + 2];
+	if SX[3 * a + 2] == 0.0 || SX[3 * b + 2] == 0.0 || SX[3 * c + 2] == 0.0 { return false; }
+	let xs real[3] = [SX[3 * a], SX[3 * b], SX[3 * c]];
+	let ys real[3] = [SX[3 * a + 1], SX[3 * b + 1], SX[3 * c + 1]];
+	if max(xs[0], max(xs[1], xs[2])) < RC[0] { return false; }
+	if min(xs[0], min(xs[1], xs[2])) > RC[2] { return false; }
+	if max(ys[0], max(ys[1], ys[2])) < RC[1] { return false; }
+	if min(ys[0], min(ys[1], ys[2])) > RC[3] { return false; }
+	let bxs real[4] = [RC[0], RC[2], RC[2], RC[0]];
+	let bys real[4] = [RC[1], RC[1], RC[3], RC[3]];
+	for e in 3 {
+		let q = (e + 1) % 3;
+		let ex = xs[q] - xs[e];
+		let ey = ys[q] - ys[e];
+		let nx = -ey;
+		let ny = ex;
+		var tmin = 1e300;
+		var tmax = -1e300;
+		for i in 3 {
+			let d = xs[i] * nx + ys[i] * ny;
+			tmin = min(tmin, d);
+			tmax = max(tmax, d);
+		}
+		var bmin = 1e300;
+		var bmax = -1e300;
+		for i in 4 {
+			let d = bxs[i] * nx + bys[i] * ny;
+			bmin = min(bmin, d);
+			bmax = max(bmax, d);
+		}
+		if tmax < bmin || bmax < tmin { return false; }
+	}
+	true
+}
+=== -467c57aa2499209e
+export fn vs_box(x0 real, y0 real, x1 real, y1 real, mode i32) i32 {
+	RC[0] = min(x0, x1);
+	RC[1] = min(y0, y1);
+	RC[2] = max(x0, x1);
+	RC[3] = max(y0, y1);
+	if OUT.len < 3 {
+		zf(OUT, 3);
+		vs_views();
+	}
+	for k in NV {
+		toscreen(P[3 * k], P[3 * k + 1], P[3 * k + 2], 0);
+		SX[3 * k] = OUT[0];
+		SX[3 * k + 1] = OUT[1];
+		SX[3 * k + 2] = OUT[2];
+	}
+	for i in NF {
+		FS[i] = 0;
+		FP[3 * i] = 0.0;
+		FP[3 * i + 1] = 0.0;
+		FP[3 * i + 2] = 0.0;
+	}
+	var seen i32[>..];
+	var ing i32[>..];
+	var ok i32[>..];
+	zi(seen, NF);
+	zi(ing, NF);
+	zi(ok, NF);
+	let window = mode == 1;
+	if window {
+		for i in NF { ok[i] = 1; }
+	}
+	for g in NG {
+		let s int = GR[3 * g];
+		let c int = GR[3 * g + 1];
+		let f int = GR[3 * g + 2];
+		if f < 0 || f >= NF { continue; }
+		ing[f] = 1;
+		let nt = c / 3;
+		if seen[f] == 0 && nt >= 1 {
+			seen[f] = 1;
+			let a int = T[s];
+			let b int = T[s + 1];
+			let d int = T[s + 2];
+			FP[3 * f] = (P[3 * a] + P[3 * b] + P[3 * d]) / 3.0;
+			FP[3 * f + 1] = (P[3 * a + 1] + P[3 * b + 1] + P[3 * d + 1]) / 3.0;
+			FP[3 * f + 2] = (P[3 * a + 2] + P[3 * b + 2] + P[3 * d + 2]) / 3.0;
+		}
+		if window {
+			for t in nt {
+				for j in 3 {
+					let v int = T[s + 3 * t + j];
+					if SX[3 * v + 2] == 0.0 || !inr(SX[3 * v], SX[3 * v + 1]) { ok[f] = 0; }
+				}
+			}
+		} else {
+			for t in nt {
+				if sat(s + 3 * t) {
+					FS[f] = 1;
+					break;
+				}
+			}
+		}
+	}
+	if window {
+		for f in NF {
+			if ing[f] == 1 && ok[f] == 1 { FS[f] = 1; }
+		}
+	}
+	var count = 0;
+	for f in NF {
+		if FS[f] == 1 { count += 1; }
+	}
+	return count as i32;
+}
+=== 286515b6721df605
+export fn vs_cascade(n i32) i32 {
+	let cnt int = n;
+	var made = 0;
+	var total = 0;
+	for i in cnt {
+		CS[i] = 0;
+		if DL[i] != 0 { continue; }
+		if KD[i] == 1 {
+			made += 1;
+		} else if KD[i] == 2 && made == 0 {
+			CS[i] = 1;
+			total += 1;
+		}
+	}
+	return total as i32;
+}
+=== 058925cdb7b44661
+fn main() {
+}

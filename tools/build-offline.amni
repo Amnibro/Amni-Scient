@@ -65,7 +65,7 @@ fn resolve(u const byte[:]) int {
 fn skip(f const byte[:]) bool {
 	if starts_with(f, "offline-packs/") || ends_with(f, ".amni") || ends_with(f, ".test.js") || ends_with(f, ".test.mjs") || ends_with(f, "sketch.demo.html") || ends_with(f, ".tar.gz") { return true; }
 	if starts_with(f, "tests/") || starts_with(f, "test/") || starts_with(f, "backups/") || starts_with(f, "backup/") || starts_with(f, "node_modules/") || starts_with(f, "src/") { return true; }
-	if contains(f, "/tests/") || contains(f, "/test/") || contains(f, "/backups/") || contains(f, "/backup/") || contains(f, "/node_modules/") || contains(f, "/src/") { return true; }
+	if contains(f, "/tests/") || contains(f, "/test/") || contains(f, "/backups/") || contains(f, "/backup/") || contains(f, "/node_modules/") || contains(f, "/src/") || contains(f, "/he/native/") { return true; }
 	let x = ext(f);
 	x == "md" || x == "map" || x == "py" || x == "ps1" || x == "bat" || x == "cmd" || x == "sh" || x == "exe" || x == "zip" || x == "apk" || x == "dmg" || x == "msi" || x == "deb" || x == "diff" || x == "toml" || x == "gitignore"
 }
@@ -223,6 +223,7 @@ fn main() {
 	app("prayer", "Amni-Prayer", "Prayers and readings.", "/prayer/", "prayer", "", "/prayer/");
 	app("life", "Amni-Life", "Life planner. Runs on this device.", "/amni-life/", "amni-life", "", "/amni-life/");
 	app("phone", "Amni-Phone", "Phone studio.", "/amni-phone/", "amni-phone", "", "/amni-phone/");
+	app("drone", "Amni-Drone", "Drone studio.", "/amni-drone/", "amni-drone", "", "/amni-drone/");
 	app("llm", "Amni-LLM", "Run AI models in the browser. Models you install are kept on this device separately.", "/lib/amni-llm/", "lib/amni-llm", "", "/lib/amni-llm/");
 	app("golf", "Mini golf", "Solo play works offline; playing with others needs a connection.", "/golf/", "golf", "", "/golf/");
 	app("yacht", "Helium Yacht", "Helium graphics demo.", "/helium-yacht/", "helium-yacht", "", "/helium-yacht/");

@@ -1,0 +1,442 @@
+import math;
+extern fn sp_view_f64(id i32, xs real[:]) = "sp_view_f64";
+extern fn sp_view_i32(id i32, xs i32[:]) = "sp_view_i32";
+var NM int = 0;
+var NN int = 0;
+var NP int = 0;
+var GX int = 0;
+var GY int = 0;
+var GZ int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var OM f64[>..];
+var PH f64[>..];
+var MV f64[>..];
+var SF f64[>..];
+var SA f64[>..];
+var MT f64[>..];
+var DB f64[>..];
+var U f64[>..];
+var UN f64[>..];
+var VM f64[>..];
+var CN f64[>..];
+var RH f64[>..];
+var CF f64[>..];
+var Q f64[>..];
+var UE f64[>..];
+var CV f64[>..];
+var SOL i32[>..];
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+fn zi(xs i32[>..]&, n int, x int) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x as i32);
+}
+fn at1(n int) int {
+    if (n < 1) {
+        return 1;
+    }
+    return n;
+}
+export fn sp_views() i32 {
+    sp_view_f64(1, IN);
+    sp_view_f64(2, OUT);
+    sp_view_f64(3, OM);
+    sp_view_f64(4, PH);
+    sp_view_f64(5, MV);
+    sp_view_f64(6, SF);
+    sp_view_f64(7, SA);
+    sp_view_f64(8, MT);
+    sp_view_f64(9, DB);
+    sp_view_f64(10, U);
+    sp_view_f64(11, UN);
+    sp_view_f64(12, VM);
+    sp_view_f64(13, RH);
+    sp_view_f64(14, CV);
+    sp_view_i32(20, SOL);
+    return 0;
+}
+export fn sp_init() i32 {
+    zf(IN, 64, 0.0);
+    zf(OUT, 64, 0.0);
+    sp_views();
+    return 0;
+}
+export fn sp_size(nm i32, nn i32, np i32, gx i32, gy i32, gz i32) i32 {
+    NM = nm as int;
+    NN = nn as int;
+    NP = np as int;
+    GX = gx as int;
+    GY = gy as int;
+    GZ = gz as int;
+    zf(OM, at1(NM), 0.0);
+    zf(PH, at1(NM * 3 * NN), 0.0);
+    zf(MV, at1(3 * NN), 0.0);
+    zf(SF, at1(NP), 0.0);
+    zf(SA, at1(NP), 0.0);
+    zf(MT, at1(8 * NM), 0.0);
+    zf(DB, 144, 0.0);
+    zf(U, at1(3 * NN), 0.0);
+    zf(UN, at1(NN), 0.0);
+    zf(VM, at1(NN), 0.0);
+    zf(CN, at1(NN), 0.0);
+    zf(RH, at1(NM * NM), 0.0);
+    zf(CF, at1(NM), 0.0);
+    zf(Q, at1(6 * NM), 0.0);
+    zf(UE, 24, 0.0);
+    zf(CV, 2, 0.0);
+    zi(SOL, at1(GX * GY * GZ), 0);
+    sp_views();
+    return 0;
+}
+fn sa(f real) real {
+    let kind = IN[0] as int;
+    if (kind == 2) {
+        return IN[4];
+    }
+    if (kind == 1) {
+        let sds = IN[1];
+        let sd1 = IN[2];
+        let tl = IN[3];
+        var per real = 1e9;
+        if (f > 1e-9) {
+            per = 1.0 / f;
+        }
+        var t0 real = 0.0;
+        var ts real = 0.0;
+        if (sds > 0.0) {
+            t0 = 0.2 * sd1 / sds;
+            ts = sd1 / sds;
+        } else {
+            return 0.0;
+        }
+        if (per < t0) {
+            return sds * (0.4 + 0.6 * per / t0);
+        }
+        if (per <= ts) {
+            return sds;
+        }
+        if (per <= tl) {
+            return sd1 / per;
+        }
+        return sd1 * tl / (per * per);
+    }
+    if (NP < 1) {
+        return 0.0;
+    }
+    if (f <= SF[0]) {
+        return SA[0];
+    }
+    if (f >= SF[NP - 1]) {
+        return SA[NP - 1];
+    }
+    var i int = 0;
+    var k int = 0;
+    while (k < NP - 1) {
+        if (SF[k] <= f) {
+            i = k;
+        }
+        k += 1;
+    }
+    let lo = SF[i];
+    let hi = SF[i + 1];
+    var t real = 0.0;
+    if (f > 0.0 && lo > 0.0 && hi > 0.0 && hi != lo) {
+        t = log(f / lo) / log(hi / lo);
+    } else if (hi != lo) {
+        t = (f - lo) / (hi - lo);
+    }
+    let a0 = SA[i];
+    let a1 = SA[i + 1];
+    if (a0 > 0.0 && a1 > 0.0) {
+        return exp(log(a0) + t * (log(a1) - log(a0)));
+    }
+    return a0 + t * (a1 - a0);
+}
+export fn sp_curve(n i32) i32 {
+    let count = n as int;
+    var size int = 2 * count;
+    if (size < 2) {
+        size = 2;
+    }
+    zf(CV, size, 0.0);
+    sp_views();
+    var f0 real = IN[10];
+    if (f0 < 1e-3) {
+        f0 = 1e-3;
+    }
+    var f1 real = IN[11];
+    if (f1 < f0 * 1.001) {
+        f1 = f0 * 1.001;
+    }
+    var i int = 0;
+    while (i < count) {
+        var f real = f0;
+        if (count != 1) {
+            f = f0 * pow(f1 / f0, (i as real) / ((count - 1) as real));
+        }
+        CV[2 * i] = f;
+        CV[2 * i + 1] = sa(f);
+        i += 1;
+    }
+    return count as i32;
+}
+fn rho(wi real, wj real, z real) real {
+    if (!(wi > 0.0) || !(wj > 0.0)) {
+        if (wi == wj) {
+            return 1.0;
+        }
+        return 0.0;
+    }
+    let r = wj / wi;
+    let num = 8.0 * z * z * (1.0 + r) * pow(r, 1.5);
+    let q = 1.0 - r * r;
+    let den = q * q + 4.0 * z * z * r * (1.0 + r) * (1.0 + r);
+    return num / den;
+}
+fn comb(a f64[>..]&, m int) real {
+    var sum real = 0.0;
+    var i int = 0;
+    while (i < m) {
+        var j int = 0;
+        while (j < m) {
+            sum += RH[i * NM + j] * a[i] * a[j];
+            j += 1;
+        }
+        i += 1;
+    }
+    if (!(sum > 0.0)) {
+        return 0.0;
+    }
+    return sqrt(sum);
+}
+export fn sp_run() i32 {
+    let d = IN[5] as int;
+    var z real = IN[6];
+    if (z < 1e-4) {
+        z = 1e-4;
+    }
+    let method = IN[7];
+    let grav = IN[8];
+    var scale real = IN[9];
+    if (!(scale > 0.0)) {
+        scale = 1.0;
+    }
+    var mf real = 0.0;
+    var mn int = 0;
+    while (mn < NN) {
+        mf += MV[3 * mn + d];
+        mn += 1;
+    }
+    var cum real = 0.0;
+    var md int = 0;
+    while (md < NM) {
+        let b = md * 3 * NN;
+        var s real = 0.0;
+        var k int = 0;
+        while (k < 3 * NN) {
+            s += MV[k] * PH[b + k] * PH[b + k];
+            k += 1;
+        }
+        var sc real = 0.0;
+        if (s > 0.0) {
+            sc = 1.0 / sqrt(s);
+        }
+        var part real = 0.0;
+        var n int = 0;
+        while (n < NN) {
+            part += MV[3 * n + d] * PH[b + 3 * n + d];
+            n += 1;
+        }
+        let gam = sc * part;
+        let w = OM[md];
+        let f = w / 6.283185307179586;
+        let a = sa(f);
+        let acc = a * grav * scale;
+        var dj real = 0.0;
+        var force real = 0.0;
+        var ratio real = 0.0;
+        if (mf > 0.0) {
+            ratio = gam * gam / mf;
+        }
+        if (w > 1e-9) {
+            dj = gam * acc / (w * w);
+            force = gam * gam * acc;
+            cum += ratio;
+        }
+        CF[md] = dj * sc;
+        MT[8 * md] = f;
+        MT[8 * md + 1] = gam;
+        MT[8 * md + 2] = ratio;
+        MT[8 * md + 3] = cum;
+        MT[8 * md + 4] = a;
+        MT[8 * md + 5] = dj;
+        MT[8 * md + 6] = force;
+        MT[8 * md + 7] = sc;
+        md += 1;
+    }
+    OUT[5] = mf;
+    OUT[3] = cum;
+    var ci int = 0;
+    while (ci < NM) {
+        var cj int = 0;
+        while (cj < NM) {
+            if (method < 0.5) {
+                if (ci == cj) {
+                    RH[ci * NM + cj] = 1.0;
+                } else {
+                    RH[ci * NM + cj] = 0.0;
+                }
+            } else {
+                RH[ci * NM + cj] = rho(OM[ci], OM[cj], z);
+            }
+            cj += 1;
+        }
+        ci += 1;
+    }
+    var fj int = 0;
+    while (fj < NM) {
+        Q[fj] = MT[8 * fj + 6];
+        fj += 1;
+    }
+    OUT[2] = comb(Q, NM);
+    var dk int = 0;
+    while (dk < 3 * NN) {
+        var j int = 0;
+        while (j < NM) {
+            Q[j] = CF[j] * PH[j * 3 * NN + dk];
+            j += 1;
+        }
+        U[dk] = comb(Q, NM);
+        dk += 1;
+    }
+    var umax real = 0.0;
+    var un int = 0;
+    while (un < NN) {
+        let ux = U[3 * un];
+        let uy = U[3 * un + 1];
+        let uz = U[3 * un + 2];
+        UN[un] = sqrt(ux * ux + uy * uy + uz * uz);
+        if (UN[un] > umax) {
+            umax = UN[un];
+        }
+        un += 1;
+    }
+    OUT[0] = umax;
+    var zn int = 0;
+    while (zn < NN) {
+        VM[zn] = 0.0;
+        CN[zn] = 0.0;
+        zn += 1;
+    }
+    OUT[4] = 0.0;
+    let NX = GX + 1;
+    let NY = GY + 1;
+    var ek int = 0;
+    while (ek < GZ) {
+        var ej int = 0;
+        while (ej < GY) {
+            var ei int = 0;
+            while (ei < GX) {
+                if (SOL[(ek * GY + ej) * GX + ei] != 0) {
+                    var nd int[8];
+                    nd[0] = (ek * NY + ej) * NX + ei;
+                    nd[1] = (ek * NY + ej) * NX + ei + 1;
+                    nd[2] = (ek * NY + ej + 1) * NX + ei + 1;
+                    nd[3] = (ek * NY + ej + 1) * NX + ei;
+                    nd[4] = ((ek + 1) * NY + ej) * NX + ei;
+                    nd[5] = ((ek + 1) * NY + ej) * NX + ei + 1;
+                    nd[6] = ((ek + 1) * NY + ej + 1) * NX + ei + 1;
+                    nd[7] = ((ek + 1) * NY + ej + 1) * NX + ei;
+                    var m int = 0;
+                    while (m < NM) {
+                        var a int = 0;
+                        while (a < 8) {
+                            var c int = 0;
+                            while (c < 3) {
+                                UE[3 * a + c] = CF[m] * PH[m * 3 * NN + 3 * nd[a] + c];
+                                c += 1;
+                            }
+                            a += 1;
+                        }
+                        var r int = 0;
+                        while (r < 6) {
+                            var acc real = 0.0;
+                            var c int = 0;
+                            while (c < 24) {
+                                acc += DB[24 * r + c] * UE[c];
+                                c += 1;
+                            }
+                            Q[6 * m + r] = acc;
+                            r += 1;
+                        }
+                        m += 1;
+                    }
+                    var s real[6];
+                    var sr int = 0;
+                    while (sr < 6) {
+                        var sum real = 0.0;
+                        var i int = 0;
+                        while (i < NM) {
+                            var j int = 0;
+                            while (j < NM) {
+                                sum += RH[i * NM + j] * Q[6 * i + sr] * Q[6 * j + sr];
+                                j += 1;
+                            }
+                            i += 1;
+                        }
+                        if (sum > 0.0) {
+                            s[sr] = sqrt(sum);
+                        } else {
+                            s[sr] = 0.0;
+                        }
+                        sr += 1;
+                    }
+                    let d01 = s[0] - s[1];
+                    let d12 = s[1] - s[2];
+                    let d20 = s[2] - s[0];
+                    let v = sqrt(0.5 * (d01 * d01 + d12 * d12 + d20 * d20) + 3.0 * (s[3] * s[3] + s[4] * s[4] + s[5] * s[5]));
+                    if (v > OUT[4]) {
+                        OUT[4] = v;
+                    }
+                    var q int = 0;
+                    while (q < 8) {
+                        VM[nd[q]] += v;
+                        CN[nd[q]] += 1.0;
+                        q += 1;
+                    }
+                }
+                ei += 1;
+            }
+            ej += 1;
+        }
+        ek += 1;
+    }
+    var vmax real = 0.0;
+    var vn int = 0;
+    while (vn < NN) {
+        if (CN[vn] > 0.0) {
+            VM[vn] = VM[vn] / CN[vn];
+        }
+        if (VM[vn] > vmax) {
+            vmax = VM[vn];
+        }
+        vn += 1;
+    }
+    OUT[1] = vmax;
+    var live int = 0;
+    var lj int = 0;
+    while (lj < NM) {
+        if (OM[lj] > 1e-9) {
+            live += 1;
+        }
+        lj += 1;
+    }
+    return live as i32;
+}
+fn main() {
+}

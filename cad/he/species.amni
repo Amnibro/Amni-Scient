@@ -1,0 +1,97 @@
+import math;
+extern fn sp_view_f64(id i32, xs real[:]) = "sp_view_f64";
+var NN int = 0;
+var IN f64[>..];
+var OUT f64[>..];
+var V f64[>..];
+var C f64[>..];
+var PC f64[>..];
+var DA f64[>..];
+var QF f64[>..];
+fn zf(xs f64[>..]&, n int, x f64) {
+    xs.clear();
+    xs.reserve(n);
+    xs.resize(n, x);
+}
+export fn sp_views() i32 {
+    sp_view_f64(1, IN);
+    sp_view_f64(2, OUT);
+    sp_view_f64(3, V);
+    sp_view_f64(4, C);
+    sp_view_f64(5, PC);
+    sp_view_f64(7, DA);
+    sp_view_f64(8, QF);
+    return 0;
+}
+export fn sp_init() i32 {
+    zf(IN, 16, 0.0);
+    zf(OUT, 16, 0.0);
+    sp_views();
+    return 0;
+}
+export fn sp_size(nn i32) i32 {
+    NN = nn as int;
+    zf(V, NN, 0.0);
+    zf(C, NN, 0.0);
+    zf(PC, NN, 0.0);
+    zf(DA, NN, 0.0);
+    zf(QF, NN, 0.0);
+    sp_views();
+    return 0;
+}
+export fn sp_terms() i32 {
+    var k real = IN[0];
+    var r real = IN[1];
+    var kp real = IN[2];
+    var total real = 0.0;
+    var n int = 0;
+    while n < NN {
+        var v real = V[n];
+        DA[n] = k * v;
+        QF[n] = (r + kp * PC[n]) * v;
+        total += QF[n];
+        n += 1;
+    }
+    OUT[0] = total;
+    return 0;
+}
+export fn sp_stats() i32 {
+    var lo real = 1e300;
+    var hi real = -1e300;
+    var amount real = 0.0;
+    var vol real = 0.0;
+    var decay real = 0.0;
+    var n int = 0;
+    while n < NN {
+        if V[n] > 0.0 {
+            var c real = C[n];
+            if c < lo {
+                lo = c;
+            }
+            if c > hi {
+                hi = c;
+            }
+            amount += c * V[n];
+            vol += V[n];
+            decay += IN[0] * c * V[n];
+        }
+        n += 1;
+    }
+    if vol == 0.0 {
+        lo = 0.0;
+        hi = 0.0;
+    }
+    var mean real = 0.0;
+    if vol > 0.0 {
+        mean = amount / vol;
+    }
+    OUT[1] = lo;
+    OUT[2] = hi;
+    OUT[3] = amount * 1e-9;
+    OUT[4] = mean;
+    OUT[5] = vol;
+    OUT[7] = decay * 1e-9;
+    return 0;
+}
+fn main() {
+}
