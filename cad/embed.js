@@ -4,6 +4,7 @@ import * as Flow from './embed-flow.js';
 const EMBED=/\/embed(?:\.html)?\/?$/.test(location.pathname);
 if(EMBED)boot();
 function q(k){return new URLSearchParams(location.search).get(k)||'';}
+function tok(){const fromQ=q('key');try{if(fromQ){sessionStorage.setItem('amni-embed-tok',fromQ);return fromQ;}return sessionStorage.getItem('amni-embed-tok')||'';}catch{return fromQ||'';}}
 function post(origin,type,data,tf){if(!origin||origin==='null')return;parent.postMessage({amnicad:type,...data},origin,tf||[]);}
 function waitAPI(){return new Promise(res=>{const t=setInterval(()=>{if(window.amnicad&&window.amnicad.API){clearInterval(t);res(window.amnicad.API);}},50);});}
 function dayKey(slug){return'amni-embed-meter:'+slug+':'+new Date().toISOString().slice(0,10);}
@@ -66,7 +67,7 @@ async function boot(){
   loadCss();
   document.documentElement.classList.add('embed');
   if(!document.querySelector('meta[name="robots"]')){const m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.append(m);}
-  const slug=q('partner'),key=q('key'),want=q('tier');
+  const slug=q('partner'),key=tok(),want=q('tier');
   const parentOrigin=(()=>{try{return document.referrer?new URL(document.referrer).origin:'';}catch{return'';}})();
   if(key){const u=new URL(location.href);u.searchParams.delete('key');history.replaceState(null,'',u.pathname+u.search+u.hash);}
   let session;

@@ -11,7 +11,7 @@ let MODEL=null,METER=null,TOKENS={},UI=null,READY=false,HOOKED=false,CLEARED=fal
 const CAN_AI=T!=='basic',CAN_FEA=T!=='basic',CAN_OPT=T==='enterprise';
 function money(n){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n)}
 async function loadTokens(){const baked=document.documentElement.dataset.key;if(baked){TOKENS={[P]:baked};return;}const r=await fetch('/embed-tokens.json',{cache:'no-store'});if(!r.ok)throw new Error('Demo license tokens are missing');TOKENS=await r.json();}
-function embedUrl(){const u=new URL('/cad/embed',CAD);u.searchParams.set('partner',P);u.searchParams.set('tier',T);if(TOKENS[P])u.searchParams.set('key',TOKENS[P]);return u.href;}
+function embedUrl(){const u=new URL('/cad/embed',CAD);u.searchParams.set('partner',P);u.searchParams.set('tier',T);if(TOKENS[P])u.searchParams.set('key',TOKENS[P]);if(/127\.0\.0\.1|localhost/.test(u.hostname))u.searchParams.set('three','1');return u.href;}
 function post(msg,tf){try{UI&&UI.iframe&&UI.iframe.contentWindow.postMessage(msg,CAD,tf||[]);}catch{}}
 function waitCad(type,ms){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for '+type)),ms||180000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!==type)return;removeEventListener('message',on);clearTimeout(t);res(m);};addEventListener('message',on);});}
 function hookCad(){
@@ -197,11 +197,12 @@ function hushDfm(){if(!S.dfmOpen)return;S.dfmOpen=false;S.dfmFocus=null;post({am
 function closeDfm(){hushDfm();paint();}
 function openDfm(){const dfm=(S.analyze&&S.analyze.dfm)||[];if(!dfm.length)return;S.dfmOpen=true;if(S.dfmFocus==null)S.dfmFocus=0;post({amnicad:'dfm',op:'open',items:dfm,i:S.dfmFocus});paint();}
 function focusDfm(i,hov){S.dfmFocus=i;post({amnicad:'dfm',op:hov?'hover':'focus',i});if(!hov)paint();}
+function dfmShort(d){const c=d.code;if(c==='reach'||c===1||c==='deep'||c===6||c==='radius'||c===4)return(d.v!=null?d.v.toFixed(1)+'×':'')+(d.from?' from '+d.from:'');if(c==='flange'||c===8)return d.v!=null?'flat '+Number(d.v).toFixed(2):'';return '';}
 function dfmWindow(){
   const dfm=(S.analyze&&S.analyze.dfm)||[],worst=dfm.some(d=>d.sev==='error')?'error':'warn';
   return h('div',{class:'dfm-win',role:'dialog','aria-label':'DFM report'},
     h('header',null,h('b',null,'DFM report'),h('span',{class:'n '+worst},String(dfm.length)),h('button',{class:'x',type:'button','aria-label':'Close',onclick:closeDfm},'×')),
-    h('ul',null,...dfm.map((d,i)=>h('li',{class:(d.sev||'warn')+(i===S.dfmFocus?' on':''),onmouseenter:()=>focusDfm(i,true),onclick:()=>focusDfm(i,false)},h('span',{class:'dot '+(d.sev||'warn')}),h('div',null,h('b',null,dfmTitle(d)),h('span',null,d.msg||d.code||'')))))
+    h('ul',null,...dfm.map((d,i)=>h('li',{class:(d.sev||'warn')+(i===S.dfmFocus?' on':''),onmouseenter:()=>focusDfm(i,true),onclick:()=>focusDfm(i,false)},h('span',{class:'dot '+(d.sev||'warn')}),h('div',null,h('b',null,dfmTitle(d)),h('span',null,dfmShort(d))))))
   );
 }
 function railView(){
@@ -250,6 +251,7 @@ function railView(){
     (T!=='basic'&&Q.rows.length)?h('table',null,...Q.rows.map(([k,v])=>h('tr',null,h('td',null,k),h('td',{class:'n'},typeof v==='number'?money(v):v)))):null
   ];
   const foot=[
+    S.dfmOpen?dfmWindow():null,
     h('div',{class:'price',id:'q-price'},h('span',{class:'u'},money(Q.unit)),h('span',{class:'t'},'each · '+money(Q.total)+' for '+Q.q)),
     h('div',{class:'lead'},'Ships in '+Q.lead+' business day'+(Q.lead===1?'':'s')),
     h('button',{class:'btn pri',onclick:addCart,disabled:!!S.busy},T==='basic'?'Order on '+C.short:'Add to '+C.short+' cart'),
@@ -264,11 +266,13 @@ function paint(){
   document.body.classList.toggle('editing',S.editing);
   document.body.classList.toggle('busy',!!S.busy);
   document.body.classList.toggle('dfm-open',!!S.dfmOpen);
+  const sc=UI.rail&&UI.rail.querySelector('.rail-scroll'),y=sc?sc.scrollTop:0;
   if(UI.start&&!(MODEL&&MODEL.ok))UI.start.replaceWith(UI.start=startView());
   if(UI.rail)UI.rail.replaceChildren(...railView());
+  const sc2=UI.rail&&UI.rail.querySelector('.rail-scroll');
+  if(sc2){sc2.scrollTop=y;if(S.dfmOpen){const b=sc2.querySelector('.dfm-btn');if(b)b.scrollIntoView({block:'end',inline:'nearest'});}}
   if(UI.edit)UI.edit.hidden=!(MODEL&&MODEL.ok);
   if(UI.status)UI.status.textContent=S.busy?S.busy+'…':'';
-  if(UI.preview){const cur=UI.preview.querySelector('.dfm-win');if(S.dfmOpen){const n=dfmWindow();if(cur)cur.replaceWith(n);else UI.preview.append(n);}else if(cur)cur.remove();}
 }
 function render(){
   const {C}=catalog();const tier=TIERS[T]||TIERS.basic;
