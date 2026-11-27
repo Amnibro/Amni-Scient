@@ -5,7 +5,7 @@ const PARTNERS={
   hubs:{theme:'hubs',name:'Protolabs Network',short:'Hubs',nav:['CNC machining','3D printing','Sheet metal','Injection molding','Instant quote'],processes:{basic:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal']],pro:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal']],enterprise:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal'],['mold','Injection molding']]},materials:{cnc:[['al6061','6061-T6 aluminum'],['ss304','304 stainless'],['abs','ABS']],print:[['pa12','Nylon PA12 (MJF/SLS)'],['resin','Tough resin (SLA)'],['pla','PLA (FDM)']],sheet:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless']],mold:[['abs','ABS'],['pcabs','PC+ABS'],['pp','Polypropylene']]},checkout:'cart.html'},
   sendcutsend:{theme:'scs',name:'SendCutSend',short:'SendCutSend',nav:['Laser cutting','Bending','CNC','Materials','Instant pricing'],processes:{basic:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing']],pro:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing'],['bend','Laser + bending']],enterprise:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing'],['bend','Laser + bending']]},materials:{laser:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless'],['acrylic','Acrylic']],waterjet:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['cf','Carbon fiber'],['cu','Copper']],route:[['delrin','Delrin'],['acrylic','Acrylic'],['al6061','6061-T6 aluminum'],['al5052','5052-H32 aluminum']],bend:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless']]},checkout:'cart.html'}
 };
-const S={process:'',material:'',qty:1,finish:'as-machined',expedite:'standard',use:'',email:'',prompt:'',busy:'',err:'',editing:false,recs:[],analyze:null,opt:null,infer:null,selSug:null,hovSug:null,canUndo:false};
+const S={process:'',material:'',qty:1,finish:'as-machined',expedite:'standard',use:'',email:'',prompt:'',busy:'',err:'',editing:false,recs:[],analyze:null,opt:null,infer:null,selSug:null,hovSug:null,canUndo:false,dfmOpen:false,dfmFocus:null};
 const CAD=document.documentElement.dataset.cad||(location.port==='8777'?'http://127.0.0.1:8778':location.origin);
 let MODEL=null,METER=null,TOKENS={},UI=null,READY=false,HOOKED=false,CLEARED=false;
 const CAN_AI=T!=='basic',CAN_FEA=T!=='basic',CAN_OPT=T==='enterprise';
@@ -147,13 +147,13 @@ async function runAnalyze(opt){
   S.busy='Analyzing';S.selSug=null;S.hovSug=null;paint();
   try{
     const r=await (post({amnicad:'analyze',process:S.process,skipFea:!!(opt&&opt.skipFea)}),waitCad('analyze',420000));
-    S.analyze=r;S.opt=null;S.selSug=(r&&r.suggestions&&r.suggestions[0]&&r.suggestions[0].id)||null;
+    hushDfm();S.analyze=r;S.opt=null;S.selSug=null;S.dfmFocus=null;
   }catch(e){S.analyze={ok:false,reason:e.message||'Analyze failed'};}
   finally{S.busy='';paint();}
 }
 async function applyFix(sug){
   const fix=sug&&sug.apply||sug;if(!fix)return;
-  S.busy='Applying';S.err='';paint();
+  hushDfm();S.busy='Applying';S.err='';paint();
   try{
     const r=await (post({amnicad:'apply',fix,id:sug&&sug.id,animate:true,process:S.process}),waitCad('apply',420000));
     if(!r.ok)throw new Error(r.reason||'Could not apply');
@@ -166,9 +166,9 @@ async function applyFix(sug){
   }catch(e){S.err=e.message||'Apply failed';}
   finally{S.busy='';paint();}
 }
-function selectSug(id,html){S.selSug=id;post({amnicad:'ghost',op:'select',id,html});paint();}
-async function keepAsIs(){S.busy='';await (post({amnicad:'acceptAsIs'}),waitCad('acceptAsIs',20000));if(S.analyze)S.analyze.suggestions=[];S.selSug=null;paint();}
-async function undoFix(){S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze({skipFea:true});}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
+function selectSug(id,html){hushDfm();S.selSug=id;post({amnicad:'ghost',op:'select',id,html});paint();}
+async function keepAsIs(){hushDfm();S.busy='';await (post({amnicad:'acceptAsIs'}),waitCad('acceptAsIs',20000));if(S.analyze)S.analyze.suggestions=[];S.selSug=null;paint();}
+async function undoFix(){hushDfm();S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze({skipFea:true});}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
 
 function toggleEdit(on){
   S.editing=on!==undefined?on:!S.editing;
@@ -191,6 +191,19 @@ function startView(){
 function massLine(o){if(!o)return'';if(o.massKg!=null)return (o.massKg*1000).toFixed(1)+' g';if(o.mass!=null)return String(o.mass);return'';}
 function feaLine(f){if(!f||f.safety_factor==null)return'';return 'SF '+f.safety_factor+(f.peak_vonMises_MPa!=null?' · peak '+f.peak_vonMises_MPa+' MPa':'')+(f.max_disp_mm!=null?' · defl '+f.max_disp_mm+' mm':'');}
 function appliedLine(a){const b=[massLine(a.before),feaLine(a.feaBefore)].filter(Boolean).join(' · '),c=[massLine(a.after),feaLine(a.feaAfter)].filter(Boolean).join(' · ');if(!b&&!c)return'';return 'Before '+b+' → after '+c+(a.drop?' ('+a.drop+'% lighter)':'');}
+const DFM_TIT={reach:'Deep pocket',narrow:'Narrow gap',corner:'Sharp inside corner',radius:'Tight corner radius',thin:'Thin wall',deep:'Deep hole',bend_radius:'Bend radius',flange:'Short flange',hole_bend:'Hole near bend',sheet_hole:'Small hole'};
+function dfmTitle(d){return DFM_TIT[d&&d.code]||(d&&d.msg)||'Note';}
+function hushDfm(){if(!S.dfmOpen)return;S.dfmOpen=false;S.dfmFocus=null;post({amnicad:'dfm',op:'close'});}
+function closeDfm(){hushDfm();paint();}
+function openDfm(){const dfm=(S.analyze&&S.analyze.dfm)||[];if(!dfm.length)return;S.dfmOpen=true;if(S.dfmFocus==null)S.dfmFocus=0;post({amnicad:'dfm',op:'open',items:dfm,i:S.dfmFocus});paint();}
+function focusDfm(i,hov){S.dfmFocus=i;post({amnicad:'dfm',op:hov?'hover':'focus',i});if(!hov)paint();}
+function dfmWindow(){
+  const dfm=(S.analyze&&S.analyze.dfm)||[],worst=dfm.some(d=>d.sev==='error')?'error':'warn';
+  return h('div',{class:'dfm-win',role:'dialog','aria-label':'DFM report'},
+    h('header',null,h('b',null,'DFM report'),h('span',{class:'n '+worst},String(dfm.length)),h('button',{class:'x',type:'button','aria-label':'Close',onclick:closeDfm},'×')),
+    h('ul',null,...dfm.map((d,i)=>h('li',{class:(d.sev||'warn')+(i===S.dfmFocus?' on':''),onmouseenter:()=>focusDfm(i,true),onclick:()=>focusDfm(i,false)},h('span',{class:'dot '+(d.sev||'warn')}),h('div',null,h('b',null,dfmTitle(d)),h('span',null,d.msg||d.code||'')))))
+  );
+}
 function railView(){
   const {C,procs}=catalog();const Q=quote();const has=MODEL&&MODEL.ok;
   if(!has){
@@ -220,10 +233,12 @@ function railView(){
     !S.use&&S.infer?h('p',{class:'note'},S.infer.via==='email'?'From '+S.infer.domain+': '+S.infer.text:'Assumed from the geometry: '+S.infer.text):null,
     CAN_FEA?h('h2',null,'Analyze'):null,
     CAN_FEA&&S.busy==='Analyzing'?h('p',{class:'note'},'Running stress checks and design changes…'):null,
-    CAN_FEA&&((S.analyze&&S.analyze.dfm)||[]).length?h('ul',{class:'dfm'},...S.analyze.dfm.map(d=>h('li',{class:d.sev||'warn'},d.msg||d.code||'Manufacturing warning'))):null,
+    CAN_FEA&&S.analyze&&S.analyze.ok&&S.analyze.fea?h('p',{class:'fea-line'},feaLine(S.analyze.fea)):null,
+    CAN_FEA&&S.analyze&&S.analyze.ok&&S.analyze.fea?h('div',{class:'fea-scale'},h('span',null,'von Mises'),h('div',{class:'bar'}),h('span',{class:'lo'},'0'),h('span',{class:'hi'},'high')):null,
     CAN_FEA&&applied?h('p',{class:'after'},appliedLine(applied)):null,
     CAN_FEA&&sug.length?h('div',{class:'sug'},...sug.map(s=>h('button',{class:'sug-card'+(s.tint?' '+s.tint:'')+(s.id===S.selSug?' on':'')+(s.id===S.hovSug?' hov':''),type:'button',onclick:()=>selectSug(s.id,s.html)},h('b',null,s.title||s.label),h('span',{class:'why'},s.label),h('span',{class:'delta'},deltaLine(s)),s.apply?h('span',{class:'btn sm',onclick:e=>{e.stopPropagation();applyFix(s);}},'Accept'):null))):null,
     CAN_FEA&&S.analyze&&S.analyze.ok?h('div',{class:'sug-acts'},h('button',{class:'btn',type:'button',onclick:keepAsIs},'Accept as is'),S.canUndo?h('button',{class:'btn',type:'button',onclick:undoFix},'Undo'):null):null,
+    CAN_FEA&&((S.analyze&&S.analyze.dfm)||[]).length?h('button',{class:'btn dfm-btn'+(S.dfmOpen?' on':''),type:'button',onclick:()=>S.dfmOpen?closeDfm():openDfm()},h('span',{class:'dot '+(((S.analyze.dfm||[]).some(d=>d.sev==='error')?'error':'warn'))}),'DFM report ('+S.analyze.dfm.length+')'):null,
     CAN_FEA&&S.analyze&&!S.analyze.ok?h('p',{class:'err'},S.analyze.reason||'Analysis could not run.'):null,
     CAN_FEA&&S.analyze&&S.analyze.ok&&!sug.length?h('p',{class:'note'},'No further design changes to show. Accept as is keeps this part.'):null,
     h('h2',null,'Materials'),
@@ -248,10 +263,12 @@ function paint(){
   document.body.classList.toggle('has-part',!!(MODEL&&MODEL.ok));
   document.body.classList.toggle('editing',S.editing);
   document.body.classList.toggle('busy',!!S.busy);
+  document.body.classList.toggle('dfm-open',!!S.dfmOpen);
   if(UI.start&&!(MODEL&&MODEL.ok))UI.start.replaceWith(UI.start=startView());
   if(UI.rail)UI.rail.replaceChildren(...railView());
   if(UI.edit)UI.edit.hidden=!(MODEL&&MODEL.ok);
   if(UI.status)UI.status.textContent=S.busy?S.busy+'…':'';
+  if(UI.preview){const cur=UI.preview.querySelector('.dfm-win');if(S.dfmOpen){const n=dfmWindow();if(cur)cur.replaceWith(n);else UI.preview.append(n);}else if(cur)cur.remove();}
 }
 function render(){
   const {C}=catalog();const tier=TIERS[T]||TIERS.basic;
@@ -268,10 +285,10 @@ function render(){
   const start=startView();
   const edit=h('button',{class:'btn edit',hidden:true,onclick:()=>toggleEdit(true)},'Edit');
   const status=h('p',{class:'status'});
-  const stage=h('div',{class:'stage'},start,h('div',{class:'preview'},iframe,edit,status));
+  const preview=h('div',{class:'preview'},iframe,edit,status);const stage=h('div',{class:'stage'},start,preview);
   const rail=h('aside',{class:'rail'},...railView());
   const drawer=h('div',{class:'drawer',onclick:e=>{if(e.target===e.currentTarget)toggleEdit(false);}},h('div',{class:'drawer-bar'},h('b',null,'Edit'),h('button',{class:'btn',onclick:()=>toggleEdit(false)},'Close')));
-  UI={rail,stage,iframe,start,edit,status,file,drawer};
+  UI={rail,stage,preview,iframe,start,edit,status,file,drawer};
   iframe.addEventListener('load',()=>{hookCad();});
   document.body.replaceChildren(header,h('main',null,stage,rail),drawer,file);
   paint();
