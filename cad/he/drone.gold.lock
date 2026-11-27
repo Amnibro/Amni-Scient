@@ -39,7 +39,7 @@ var OC real[>..];
 
 === 371b934ff3ee8e42
 
-=== 1e9663d57e612978
+=== 0334edca4239b92c
 
 === -215d214ecdfc0f99
 fn zf(xs real[>..]&, n int, x real) {
@@ -66,11 +66,11 @@ export fn dr_views() i32 {
 	dr_view_f64(11, OC[..]);
 	0
 }
-=== -34e98f377b2c3a7d
+=== -4ca78c8ddb4e69e0
 export fn dr_setup() i32 {
 	zf(DP, 64, 0.0);
 	zf(BP, 12, 0.0);
-	zf(PF, 16, 0.0);
+	zf(PF, 24, 0.0);
 	zf(MV, 64, 0.0);
 	zf(AE, 192, 0.0);
 	zf(TR, 320, 0.0);
@@ -567,7 +567,7 @@ fn place_saucer() {
 		add(11, 1, ring * cos(a), ring * sin(a), w + 0.5, 10.75, 0.0, 70.7, dv(30, 560.0) / (c as real), bottom, -1, 0, 1, 3);
 	}
 }
-=== 4cc1bb2de1d886fd
+=== 1fea7015ce33b93f
 fn place_ring() {
 	let R = dv(1, 254.0) / 2.0;
 	let w = dv(21, 0.8);
@@ -613,21 +613,24 @@ fn place_ring() {
 	let a0 = NI;
 	let mid = (ro + rw) / 2.0;
 	let span = rw - ro;
-	for k in 4 {
-		let sx = if k % 2 == 0 { span } else { aw };
-		let sy = if k % 2 == 0 { aw } else { span };
-		add(13, 0, ux[k] * mid, uy[k] * mid, za, sx, sy, w, rho * w * PI * (aw - w) * (rw - ro), -1, -1, 0, 1, 0);
+	let na = if c == 2 { 2 } else { 4 };
+	for k in na {
+		let q = if na == 2 { 2 * k } else { k };
+		let sx = if q % 2 == 0 { span } else { aw };
+		let sy = if q % 2 == 0 { aw } else { span };
+		add(13, 0, ux[q] * mid, uy[q] * mid, za, sx, sy, w, rho * w * PI * (aw - w) * (rw - ro), -1, -1, 0, 1, 0);
 	}
 	add(8, 1, 0.0, 0.0, -4.0, cr, 0.0, Hr + 8.0, dv(34, 30.0), hb, -1, 0, 1, 2);
 	let inner = rso + rm + 1.5;
 	add(7, 2, 0.0, 0.0, zn - 0.8, inner + dv(27, 10.0), inner, dv(14, 4.0), dv(31, 15.0) + dv(32, 5.0) + dv(33, 1.5), ch, -1, 0, 1, 2);
 	let out = ro + 1.5 + cl / 2.0;
 	for i in c {
-		let k = i % 4;
-		let j = i / 4;
-		let sx = if k % 2 == 0 { cl } else { cw };
-		let sy = if k % 2 == 0 { cw } else { cl };
-		add(11, 0, ux[k] * out, uy[k] * out, za + w + 0.5 + (j as real) * (cw + 1.0), sx, sy, cw, dv(30, 188.0) / (c as real), a0 + k, -1, 0, 1, 3);
+		let k = i % na;
+		let j = i / na;
+		let q = if na == 2 { 2 * k } else { k };
+		let sx = if q % 2 == 0 { cl } else { cw };
+		let sy = if q % 2 == 0 { cw } else { cl };
+		add(11, 0, ux[q] * out, uy[q] * out, za + w + 0.5 + (j as real) * (cw + 1.0), sx, sy, cw, dv(30, 188.0) / (c as real), a0 + k, -1, 0, 1, 3);
 	}
 }
 === -24a625dc9a2b40e6
@@ -754,7 +757,7 @@ export fn dr_solve() i32 {
 	dr_perf();
 	dr_check()
 }
-=== 304205d285f59948
+=== -6d498f0ca36b763a
 export fn dr_perf() i32 {
 	let ty = DP[0] as int;
 	let n = NA as real;
@@ -818,6 +821,8 @@ export fn dr_perf() i32 {
 	PF[12] = z1 - z0;
 	PF[13] = NC as real;
 	PF[14] = auw / (n * PI * af * radius_cm * radius_cm);
+	let limit = dv(55, 0.0);
+	PF[16] = if limit > 0.0 { limit - auw } else { 0.0 };
 	dr_views();
 	0
 }
