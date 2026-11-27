@@ -4,6 +4,7 @@ import * as Flow from './embed-flow.js';
 const EMBED=/\/embed(?:\.html)?\/?$/.test(location.pathname);
 if(EMBED)boot();
 function q(k){return new URLSearchParams(location.search).get(k)||'';}
+function tok(){const fromQ=q('key');try{if(fromQ){sessionStorage.setItem('amni-embed-tok',fromQ);return fromQ;}return sessionStorage.getItem('amni-embed-tok')||'';}catch{return fromQ||'';}}
 function post(origin,type,data,tf){if(!origin||origin==='null')return;parent.postMessage({amnicad:type,...data},origin,tf||[]);}
 function waitAPI(){return new Promise(res=>{const t=setInterval(()=>{if(window.amnicad&&window.amnicad.API){clearInterval(t);res(window.amnicad.API);}},50);});}
 function dayKey(slug){return'amni-embed-meter:'+slug+':'+new Date().toISOString().slice(0,10);}
@@ -66,7 +67,7 @@ async function boot(){
   loadCss();
   document.documentElement.classList.add('embed');
   if(!document.querySelector('meta[name="robots"]')){const m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.append(m);}
-  const slug=q('partner'),key=q('key'),want=q('tier');
+  const slug=q('partner'),key=tok(),want=q('tier');
   const parentOrigin=(()=>{try{return document.referrer?new URL(document.referrer).origin:'';}catch{return'';}})();
   if(key){const u=new URL(location.href);u.searchParams.delete('key');history.replaceState(null,'',u.pathname+u.search+u.hash);}
   let session;
@@ -85,7 +86,7 @@ async function boot(){
   lockFont();
   if(typeof API.themeColors==='function'){const tc=API.themeColors.bind(API);API.themeColors=(...a)=>{const r=tc(...a);lockFont();return r;};}
   setTimeout(lockFont,0);setTimeout(lockFont,300);
-  const sendModel=()=>post(parentOrigin,'model',modelOf(API));
+  const sendModel=()=>{if(Flow.muted&&Flow.muted())return;post(parentOrigin,'model',modelOf(API));};
   API.onBuilt(sendModel);
   if(typeof API.onChange==='function')API.onChange(()=>{});
   addEventListener('message',async ev=>{
@@ -110,14 +111,19 @@ async function boot(){
     if(t==='import'){try{const r=await Flow.importBuf(API,{name:m.name,buf:m.buf,mime:m.mime});if(typeof API.view==='function')API.view('iso');post(ev.origin,'import',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'import',{ok:false,reason:e.message||'Import failed'});}return;}
     if(t==='make'){try{let r=await Flow.makeFromPrompt(API,m.text);if(!r.ok&&(m.text||(m.images&&m.images.length))){const ai=await Flow.tryAssistant(API,m.text,m.images);r=ai.ok?ai:r;if(!ai.ok&&r.reason==='no-match')r={ok:false,reason:ai.reason==='no-ai'?'no-ai':'no-match'};}if(typeof API.view==='function')API.view('iso');post(ev.origin,'make',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'make',{ok:false,reason:e.message||'Make failed'});}return;}
     if(t==='analyze'){try{const r=await Flow.analyze(API,{process:m.process,skipFea:!!m.skipFea});post(ev.origin,'analyze',r);}catch(e){post(ev.origin,'analyze',{ok:false,reason:e.message||'Analyze failed'});}return;}
-    if(t==='apply'){try{const r=await Flow.applyFix(API,m.fix);if(typeof API.view==='function')API.view('iso');post(ev.origin,'apply',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'apply',{ok:false,reason:e.message||'Apply failed'});}return;}
+    if(t==='apply'){try{const r=await Flow.applyFix(API,m.fix,{animate:m.animate!==false,id:m.id,process:m.process});if(typeof API.view==='function')API.view('iso');post(ev.origin,'apply',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'apply',{ok:false,reason:e.message||'Apply failed'});}return;}
     if(t==='optimize'){try{const r=await Flow.runOpt(API,!!m.apply);if(typeof API.view==='function')API.view('iso');post(ev.origin,'optimize',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'optimize',{ok:false,reason:e.message||'Optimize failed'});}return;}
+    if(t==='ghost'){try{const {select,hover} = await import('./embed-ghosts.js');if(m.op==='select')select(API,m.id,m.html);else hover(API,m.id);post(ev.origin,'ghost',{ok:true,id:m.id,op:m.op});}catch(e){post(ev.origin,'ghost',{ok:false,reason:e.message||'Ghost failed'});}return;}
+    if(t==='dfm'){try{const D=await import('./embed-dfm.js');const Gh=await import('./embed-ghosts.js');if(m.op==='open'){Gh.setVisible(false);D.show(API,m.items||[]);D.focus(API,m.i||0);}else if(m.op==='close'){D.clear();Gh.setVisible(true);}else if(m.op==='hover')D.hover(API,m.i);else D.focus(API,m.i);post(ev.origin,'dfm',{ok:true,op:m.op,i:m.i});}catch(err){post(ev.origin,'dfm',{ok:false,reason:err.message||'DFM failed'});}return;}
+    if(t==='acceptAsIs'){try{const r=await Flow.acceptAsIs(API);post(ev.origin,'acceptAsIs',r);}catch(e){post(ev.origin,'acceptAsIs',{ok:false,reason:e.message||'Dismiss failed'});}return;}
+    if(t==='undo'){try{const r=await Flow.undoFix(API);if(typeof API.view==='function')API.view('iso');post(ev.origin,'undo',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'undo',{ok:false,reason:e.message||'Undo failed'});}return;}
     if(t==='quote'||t==='checkout'){
       const d=take(tier,used,t,true);saveUsed(p.slug,used);
       post(ev.origin,t,{ok:d.allow,reason:d.allow?'ok':d.reason,part:modelOf(API),quote:m.quote||null,order:m.order||null,meter:{kind:t,used:used[t],cap,unlimited:cap<0,...d}});
     }
   });
   Flow.setLite(API,true);
+  import('./embed-ghosts.js').then(G=>{G.bind(API,ev=>post(parentOrigin,'ghostEvent',ev));});
   post(parentOrigin,'ready',{partner:p.slug,name:p.name,tier,quote:p.quote,processes:p.processes,materials:p.materials,colors:p.colors,meter:{used,cap,unlimited:cap<0}});
   sendModel();
   requestAnimationFrame(()=>{if(typeof API.resizeView==='function')API.resizeView();if(typeof API.redraw==='function')API.redraw();});
