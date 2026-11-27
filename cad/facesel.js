@@ -4,7 +4,8 @@ export function nearestFace(m,p){const pos=m.pos,idx=m.idx;let best=-1,bd=1e18;f
 export function faceIds(m,sel){if(!m)return[];const F=m.faces,list=Array.isArray(sel)?sel:[sel],out=new Set(),b=m.props.bbox,size=Math.hypot(b.max[0]-b.min[0],b.max[1]-b.min[1],b.max[2]-b.min[2]);
   for(const s of list){if(s==null)continue;if(typeof s==='number'){out.add(s);continue;}
     if(s.by==='pick'||s.pts){for(const p of s.pts||[]){let best=-1,bd=1e18;F.forEach((q,i)=>{const d=Math.hypot(q.c[0]-p[0],q.c[1]-p[1],q.c[2]-p[2]);if(d<bd){bd=d;best=i;}});const tri=nearestFace(m,p);if(tri>=0)out.add(tri);else if(best>=0)out.add(best);}}
+    else if(s.by==='at'||s.at&&!s.pts&&!s.side){const at=s.at,n=s.normal,ax=n&&(Array.isArray(n)?n:AXS[n]),l=ax?(Math.hypot(...ax)||1):1;let best=-1,bd=1e18;F.forEach((q,i)=>{if(ax&&q.n&&(q.n[0]*ax[0]+q.n[1]*ax[1]+q.n[2]*ax[2])/l<0.9)return;const d=Math.hypot(q.c[0]-at[0],q.c[1]-at[1],q.c[2]-at[2]);if(d<bd){bd=d;best=i;}});if(best>=0)out.add(best);}
     else if(s.side){const ax=AXS[s.side.length===1?'+'+s.side:s.side],i=ax.findIndex(v=>v),ext=ax[i]>0?b.max[i]:b.min[i];F.forEach((q,j)=>{if(q.n&&q.n[i]*ax[i]>0.999&&Math.abs(q.c[i]-ext)<size*1e-3+1e-3)out.add(j);});}
-    else if(s.normal){const ax=AXS[s.normal];F.forEach((q,j)=>{if(q.n&&q.n[0]*ax[0]+q.n[1]*ax[1]+q.n[2]*ax[2]>0.999)out.add(j);});}
+    else if(s.normal){const ax=Array.isArray(s.normal)?s.normal:AXS[s.normal];if(ax){const l=Math.hypot(...ax)||1;F.forEach((q,j)=>{if(q.n&&(q.n[0]*ax[0]+q.n[1]*ax[1]+q.n[2]*ax[2])/l>0.999)out.add(j);});}}
     else if(s.type){const t=String(s.type).toUpperCase().replace('CYLINDER','CYLINDRE');F.forEach((q,j)=>{if(q.type===t)out.add(j);});}}
   return[...out];}

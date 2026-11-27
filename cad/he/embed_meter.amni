@@ -1,0 +1,19 @@
+fn pack(allow i32, count i32, unlim i32, reason i32, left i32) i32 {
+	var n = left;
+	if n < 0 { n = 0; }
+	return allow + count * 2 + unlim * 4 + reason * 8 + n * 256;
+}
+export fn meter_cap(tier i32) i32 {
+	if tier >= 3 { return -1; }
+	if tier >= 2 { return 147; }
+	return 47;
+}
+export fn meter_decide(tier i32, used i32, ok i32) i32 {
+	var cap = meter_cap(tier);
+	if cap < 0 { return pack(1, 1, 1, 2, 0); }
+	var left = cap - used;
+	if left < 0 { left = 0; }
+	if ok == 0 { return pack(1, 0, 0, 5, left); }
+	if used >= cap { return pack(0, 0, 0, 4, 0); }
+	return pack(1, 1, 0, 0, left - 1);
+}
