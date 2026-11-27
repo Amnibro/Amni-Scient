@@ -120,7 +120,7 @@ dialog.wide{max-width:min(1100px,calc(100vw - 32px))}
 .feat .acts{display:none;gap:2px}
 .feat:hover .acts,.feat.on .acts{display:flex}
 .feat:not(.on) .acts button:not(:nth-last-child(-n+2)){display:none}
-.feat .acts button{width:20px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
+.feat:hover,.feat.on{gap:5px}.feat .acts button{width:17px;height:20px;border-radius:calc(5px*var(--rk,1));color:var(--mut);font-size:12px}
 .feat .acts button:hover{color:var(--ink);background:var(--line)}
 .empty{color:var(--mut);font-size:12.5px;padding:10px 4px}
 .pal{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px}
@@ -278,6 +278,8 @@ body.showL #left,body.showR #right{transform:none}
 @media (max-width:560px){.tb .opt{display:none}.pill{max-width:120px}header{gap:6px;padding:6px 8px;overflow:visible}header>*{min-width:0}.brand span{display:none}.tb>button,.menu>button{padding:0 8px}.pill{flex-shrink:1;max-width:none}#ui-menu,#b-theme{display:none}#b-pro{flex-shrink:0;max-width:none;padding:4px 9px}header .tb,header .brand{flex-shrink:0}#kstat{flex-shrink:1;min-width:24px}}
 header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 .look-compact .sec{padding:7px 10px 8px}.look-compact .sec h3{margin-bottom:5px}.look-compact .feat{padding:3px 6px}.look-compact .prow{margin:1px 0}.look-compact .fld{margin:4px 0}.look-compact #ribbon .rb{min-height:0}.look-compact .tb>button,.look-compact .menu>button{height:28px}
+#m-add .pop{width:min(540px,calc(100vw - 24px));max-height:calc(100vh - 110px);overflow:auto}#m-add .sec{border:0;padding:2px 4px}#m-add .sec:has(#palette) h3{display:none}#faddm h3{white-space:nowrap}#faddm .fadd,#faddm .fprims{grid-template-columns:repeat(5,1fr)}#faddm .fadd button,#faddm .fprims button{display:flex;flex-direction:column;align-items:center;text-align:center;width:auto}#faddm .row button{width:auto;display:inline-flex}#m-add .pal{grid-template-columns:repeat(3,1fr)!important}#m-add .addq{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:2px 4px 4px;border-bottom:1px solid var(--line)}#faddm,body.form-mode #m-add .sec:has(#palette),body.form-mode #m-add .addq,body.form-mode #m-add #side-cmd{display:none}body.form-mode #faddm{display:block}
+#nextx{position:absolute;z-index:8;box-shadow:var(--shadow);white-space:nowrap}#nextx[hidden]{display:none}#ribbon .cmd.nextup{background:var(--acc-soft);box-shadow:inset 0 0 0 2px var(--acc)}@media (max-width:980px){#m-add{display:none}}@media (max-width:1400px){#docname{width:150px}}
 </style>
 </head>
 <body>
@@ -286,6 +288,7 @@ header,#left,#right,#ribbon,#pbar{zoom:var(--fs,1)}
 <input id="docname" aria-label="Document name" value="Untitled part" spellcheck="false">
 <div class="seg ws" id="ws" role="tablist" aria-label="Workspace"><button data-ws="part" class="on" title="Parametric part modeling">Part</button><button data-ws="form" title="Organic sculpting and animation">Form</button><button data-ws="human" title="Character creator: body, face, hair, clothes and rigged export">Character</button><button data-ws="asm" title="Assemblies: components, mates, explode and interference">Assembly</button><button data-ws="tool" title="Tooling: molds, die-casting dies and casting patterns">Tooling</button><button data-ws="ecad" title="Electronics (beta): circuit boards, autorouting, design-rule check and Gerbers">Electronics</button><button data-ws="drone" title="Drone (beta): quad, hex, whoop, saucer and twin-ring drones solved for fit and flight time, then built as real CAD parts">Drone</button></div><div class="seg ws" id="tools" role="group" aria-label="Tools"><button data-tab="ai" title="AI assistant">AI</button><button data-tab="sim" title="Stress, vibration and heat">FEA</button><button data-tab="flow" title="Flow simulation">CFD</button><button data-tab="mold" title="Injection molding">Mold</button><button data-tab="draw" title="Drawings">Drawing</button><button data-tab="looks" title="Colors, materials and textures: drag onto faces, then photo render">Looks</button><button data-tab="vault" title="Vault">Vault</button></div>
 <div class="tb">
+<div class="menu" id="m-add"><button title="Add a shape, feature, sketch or template"><span>＋</span><span class="lbl">Add</span></button><div class="pop"><div class="addq"><button data-act="new">New part or template<small>Start over from scratch or a template</small></button><button id="add-form">Organic form<small>Sculpt and animate in the Form workspace</small></button></div><div id="faddm"></div></div></div>
 <div class="menu" id="m-file"><button title="File"><span>▤</span><span class="lbl">File</span></button><div class="pop">
 <button data-act="new">New part<small>Start from scratch or a template</small></button>
 <button data-act="open">Open…<small>.amnicad design file</small></button>
