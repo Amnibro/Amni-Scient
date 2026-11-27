@@ -5,7 +5,7 @@ const {page,call,T,errs,sleep}=E,ev=(f,...a)=>page.evaluate(f,...a),wb=async()=>
 const sks=q=>ev(q=>window.amnicad.S.sketcher.screen(q),q),clk=async(q,o={})=>{const[x,y]=await sks(q);await page.mouse.move(x+3,y+3);await sleep(30);await page.mouse.move(x,y);await sleep(30);o.shift&&await page.keyboard.down('Shift');await page.mouse.down();await sleep(30);await page.mouse.up();o.shift&&await page.keyboard.up('Shift');await sleep(120);};
 const tool=async t=>{await ev(t=>document.querySelector('.skt button.t[data-t='+t+']').click(),t);await sleep(60);},skin=async v=>{await page.waitForSelector('#skx .skin',{timeout:4000});await ev(v=>{document.querySelector('#skx .skin').value=v;},v);await page.keyboard.press('Enter');await sleep(200);};
 const S=()=>ev(()=>{const k=window.amnicad.S.sketcher.sketch;return{ents:k.ents.map(e=>({k:e.k,cons:!!e.cons,ref:!!e.ref})),n:k.ents.filter(e=>!e.ref).length,lines:k.ents.filter(e=>e.k==='line'&&!e.ref).length,arcs:k.ents.filter(e=>e.k==='arc'&&!e.ref).length,circles:k.ents.filter(e=>e.k==='circle'&&!e.ref).length,cons:k.cons.map(c=>c.k),pts:k.pts};});
-const open=async()=>{await ev(()=>{const s=window.amnicad.S.sketcher;s&&s.close();window.amnicad.API.commit(d=>{d.features=d.features.filter(x=>x.type!=='extrude');});});await wb();await ev(()=>{window.amnicad.API.addFeature('extrude',{plane:'XY',offset:0,_smart:1,_mode:'sketch'});});await sleep(1500);await ev(()=>{window.amnicad.S.sketcher.setTool('line');});};
+const open=async()=>{await ev(()=>{const s=window.amnicad.S.sketcher;s&&s.close();window.amnicad.API.commit(d=>{d.features=d.features.filter(x=>x.type!=='extrude');});});await wb();await ev(()=>{window.amnicad.API.addFeature('extrude',{plane:'XY',offset:0,_smart:1,_mode:'sketch'});});await sleep(1500);await ev(()=>{window.amnicad.S.sketcher.setTool('line');const p=document.querySelector('.skp');p&&(p.style.display='none');});};
 try{
   await call('apply_actions',{actions:[{new:true,units:'mm'}]});await wb();
   await open();
@@ -32,6 +32,11 @@ try{
   await ev(()=>window.amnicad.S.sketcher.finish());await sleep(400);await wb();
   const vol=await ev(()=>window.amnicad.S.mesh&&window.amnicad.S.mesh.props.volume);
   const f=await ev(()=>window.amnicad.API.doc.features.find(x=>x.type==='extrude'));ok(f&&f.shapes&&f.shapes.length===1,'slot sketch closes into a profile',f&&f.shapes&&f.shapes.length);ok(vol>0&&Math.abs(vol-(40*10+Math.PI*25)*f.depth)<40,'slot extrudes to the right volume',[vol,f.depth]);
+  await open();await ev(()=>window.amnicad.S.sketcher.setTool('circle'));await clk([-15,0]);await clk([-10,0]);await clk([15,0]);await clk([20,0]);await tool('select');
+  const drag=async(a,b)=>{const[x0,y0]=await sks(a),[x1,y1]=await sks(b);await page.mouse.move(x0,y0);await page.mouse.down();for(let i=1;i<=7;i++){await page.mouse.move(x0+(x1-x0)*i/7,y0+(y1-y0)*i/7);await sleep(20);}const bd=await ev(()=>{const b=document.getElementById('selband');return b&&{cross:b.classList.contains('cross')};});await page.mouse.up();await sleep(150);return{bd,sel:await ev(()=>{const s=window.amnicad.S.sketcher,k=s.sketch;return[...s.sel].map(h=>{const e=k.ents[+h.slice(1)];return e.k+(k.pts[e.p[0]][0]<0?'L':'R');}).sort();}),band:await ev(()=>!!document.getElementById('selband'))};};
+  let bx=await drag([-25,-8],[-2,8]);ok(bx.bd&&!bx.bd.cross&&!bx.band,'dragging left to right shows a solid window box that goes away on release',bx);ok(JSON.stringify(bx.sel)==='["circleL"]','the window box takes only the circle fully inside it',bx.sel);
+  bx=await drag([11,8],[-11,-8]);ok(bx.bd&&bx.bd.cross,'dragging right to left shows a dashed crossing box',bx.bd);ok(JSON.stringify(bx.sel)==='["circleL","circleR"]','the crossing box takes both circles it touches',bx.sel);
+  bx=await drag([-11,-8],[11,8]);ok(bx.sel.length===0,'a window box that holds nothing whole selects nothing',bx.sel);
   await open();
   await tool('rect');await clk([-20,-10]);await clk([20,10]);await tool('select');
   await page.keyboard.press('g');await sleep(80);ok(await ev(()=>window.amnicad.S.sketcher.tool)==='fillet','G key activates the fillet');
