@@ -14,6 +14,7 @@ async function loadTokens(){const baked=document.documentElement.dataset.key;if(
 function embedUrl(){const u=new URL('/cad/embed',CAD);u.searchParams.set('partner',P);u.searchParams.set('tier',T);if(TOKENS[P])u.searchParams.set('key',TOKENS[P]);if(/127\.0\.0\.1|localhost/.test(u.hostname))u.searchParams.set('three','1');return u.href;}
 function post(msg,tf){try{UI&&UI.iframe&&UI.iframe.contentWindow.postMessage(msg,CAD,tf||[]);}catch{}}
 function waitCad(type,ms){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for '+type)),ms||180000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!==type)return;removeEventListener('message',on);clearTimeout(t);res(m);};addEventListener('message',on);});}
+function waitAnalyze(){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('Timed out waiting for analyze')),420000);const on=ev=>{if(ev.origin!==CAD)return;const m=ev.data;if(!m||m.amnicad!=='analyze')return;if(m.ok){hushDfm();S.analyze=m;S.opt=null;if(!m.pending)S.selSug=null;S.dfmFocus=null;paint();}if(!m.pending){removeEventListener('message',on);clearTimeout(t);res(m);}};addEventListener('message',on);});}
 function hookCad(){
   if(HOOKED)return;HOOKED=true;
   addEventListener('message',ev=>{
@@ -146,8 +147,8 @@ async function runAnalyze(opt){
   if(!CAN_FEA||!MODEL||!MODEL.ok)return;
   S.busy='Analyzing';S.selSug=null;S.hovSug=null;paint();
   try{
-    const r=await (post({amnicad:'analyze',process:S.process,skipFea:!!(opt&&opt.skipFea)}),waitCad('analyze',420000));
-    hushDfm();S.analyze=r;S.opt=null;S.selSug=null;S.dfmFocus=null;
+    const r=await (post({amnicad:'analyze',process:S.process,skipFea:!!(opt&&opt.skipFea),hideGhosts:!!(opt&&opt.hideGhosts)}),waitAnalyze());
+    if(!r.ok)S.analyze={ok:false,reason:r.reason||'Analyze failed'};
   }catch(e){S.analyze={ok:false,reason:e.message||'Analyze failed'};}
   finally{S.busy='';paint();}
 }
@@ -161,14 +162,16 @@ async function applyFix(sug){
     else if(r.after){MODEL={ok:true,...MODEL,massKg:r.after.massKg,volCm3:r.after.volCm3,areaIn2:r.after.areaIn2,tIn:r.after.tIn,bends:r.after.bends,massText:r.after.massKg!=null?(r.after.massKg*1000).toFixed(1)+' g':MODEL.massText,volText:MODEL.volText};}
     const applied={before:r.before,after:r.after,feaBefore:S.analyze&&S.analyze.fea,feaAfter:r.fea,title:sug&&sug.title};
     S.canUndo=true;
-    if(CAN_FEA)await runAnalyze();
+    if(CAN_FEA)await runAnalyze({hideGhosts:true});
     if(S.analyze)S.analyze.applied=applied;else S.analyze={ok:true,suggestions:[],applied};
   }catch(e){S.err=e.message||'Apply failed';}
   finally{S.busy='';paint();}
 }
-function selectSug(id,html){hushDfm();S.selSug=id;post({amnicad:'ghost',op:'select',id,html});paint();}
+function hoverSug(id){if(S.hovSug===id)return;S.hovSug=id;post({amnicad:'ghost',op:'hover',id});paint();}
+function leaveSug(id){if(S.hovSug!==id)return;S.hovSug=null;post({amnicad:'ghost',op:'hover',id:null});paint();}
+function selectSug(id,html){hushDfm();S.selSug=id;S.hovSug=null;post({amnicad:'ghost',op:'select',id,html});paint();}
 async function keepAsIs(){hushDfm();S.busy='';await (post({amnicad:'acceptAsIs'}),waitCad('acceptAsIs',20000));if(S.analyze)S.analyze.suggestions=[];S.selSug=null;paint();}
-async function undoFix(){hushDfm();S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze();}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
+async function undoFix(){hushDfm();S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze({hideGhosts:true});}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
 
 function toggleEdit(on){
   S.editing=on!==undefined?on:!S.editing;
@@ -238,7 +241,7 @@ function railView(){
     CAN_FEA&&S.analyze&&S.analyze.ok&&S.analyze.fea?h('p',{class:'fea-line'},feaLine(S.analyze.fea)):null,
     CAN_FEA&&S.analyze&&S.analyze.ok&&S.analyze.fea?h('div',{class:'fea-scale'},h('span',null,'von Mises'),h('div',{class:'bar'}),h('span',{class:'lo'},'0'),h('span',{class:'hi'},'high')):null,
     CAN_FEA&&applied?h('p',{class:'after'},appliedLine(applied)):null,
-    CAN_FEA&&sug.length?h('div',{class:'sug'},...sug.map(s=>h('button',{class:'sug-card'+(s.tint?' '+s.tint:'')+(s.id===S.selSug?' on':'')+(s.id===S.hovSug?' hov':''),type:'button',onclick:()=>selectSug(s.id,s.html)},h('b',null,s.title||s.label),h('span',{class:'why'},s.label),h('span',{class:'delta'},deltaLine(s)),s.apply?h('span',{class:'btn sm',onclick:e=>{e.stopPropagation();applyFix(s);}},'Accept'):null))):null,
+    CAN_FEA&&sug.length?h('div',{class:'sug'},...sug.map(s=>h('div',{class:'sug-card'+(s.tint?' '+s.tint:'')+(s.id===S.selSug?' on':'')+(s.id===S.hovSug?' hov':''),role:'group',tabindex:'0',onclick:()=>selectSug(s.id,s.html),onmouseenter:()=>hoverSug(s.id),onmouseleave:()=>leaveSug(s.id),onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectSug(s.id,s.html);}}},h('b',null,s.title||s.label),h('span',{class:'why'},s.label),h('span',{class:'delta'},deltaLine(s)),s.apply?h('button',{class:'btn sm',type:'button',onclick:e=>{e.stopPropagation();applyFix(s);}},'Accept'):null))):null,
     CAN_FEA&&S.analyze&&S.analyze.ok?h('div',{class:'sug-acts'},h('button',{class:'btn',type:'button',onclick:keepAsIs},'Accept as is'),S.canUndo?h('button',{class:'btn',type:'button',onclick:undoFix},'Undo'):null):null,
     CAN_FEA&&((S.analyze&&S.analyze.dfm)||[]).length?h('button',{class:'btn dfm-btn'+(S.dfmOpen?' on':''),type:'button',onclick:()=>S.dfmOpen?closeDfm():openDfm()},h('span',{class:'dot '+(((S.analyze.dfm||[]).some(d=>d.sev==='error')?'error':'warn'))}),'DFM report ('+S.analyze.dfm.length+')'):null,
     CAN_FEA&&S.analyze&&!S.analyze.ok?h('p',{class:'err'},S.analyze.reason||'Analysis could not run.'):null,
