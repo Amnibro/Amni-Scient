@@ -610,8 +610,8 @@ async function runFea(){const sim=simOf(JSON.parse(JSON.stringify(S.doc))),ty=si
     PRO.spend(API,'fea');S.lastFea=feaSummary(rr,ty,mat,S.doc);colorFea();deformFea();rr.warn&&toast(rr.warn,7000);}
   catch(e){toast('Analysis failed: '+e.message,5000);if(msg)msg.textContent=e.message;}finally{renderSim();}}
 function toMM(m){return toMMx(m,UN.mmPer(S.doc));}
-const RAMP=[[0,[43,89,195]],[0.2,[43,181,195]],[0.4,[63,208,122]],[0.6,[242,210,46]],[0.8,[242,131,46]],[1,[224,50,46]]];
-function ramp(t){t=Math.min(1,Math.max(0,t));for(let i=1;i<RAMP.length;i++)if(t<=RAMP[i][0]){const[a,ca]=RAMP[i-1],[b,cb]=RAMP[i],k=(t-a)/(b-a);return ca.map((v,j)=>Math.pow((v+(cb[j]-v)*k)/255,2.2));}return RAMP[5][1].map(v=>Math.pow(v/255,2.2));}
+const RAMP=[[0,[43,89,195]],[0.2,[43,181,195]],[0.4,[63,208,122]],[0.6,[242,210,46]],[0.8,[242,131,46]],[1,[224,50,46]]],RAMP_SOFT=[[0,[148,162,174]],[0.5,[196,186,160]],[1,[176,122,98]]];
+function ramp(t){t=Math.min(1,Math.max(0,t));const R=document.documentElement.classList.contains('embed')?RAMP_SOFT:RAMP;for(let i=1;i<R.length;i++)if(t<=R[i][0]){const[a,ca]=R[i-1],[b,cb]=R[i],k=(t-a)/(b-a);return ca.map((v,j)=>Math.pow((v+(cb[j]-v)*k)/255,2.2));}return R[R.length-1][1].map(v=>Math.pow(v/255,2.2));}
 const PULL={'+X':[1,0,0],'-X':[-1,0,0],'+Y':[0,1,0],'-Y':[0,-1,0],'+Z':[0,0,1],'-Z':[0,0,-1]},SURFUI={mode:'off',kind:'mag',contrast:1,pull:'+Z',req:1,count:14},ZV=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Matrix4()],DCOL={positive:'rgb(63,208,122)',requires:'rgb(242,210,46)',negative:'rgb(224,50,46)',straddle:'linear-gradient(90deg,rgb(63,208,122),rgb(242,210,46),rgb(224,50,46))'};let matZeb=null;
 scene.onBeforeRender=(r,sc,c)=>S.surf&&S.surf.zeb&&S.surf.zeb(c);
 const zebMat=()=>matZeb||(matZeb=new THREE.MeshBasicMaterial({map:(()=>{const c=document.createElement('canvas');c.width=64;c.height=1;const x=c.getContext('2d');x.fillStyle='#151515';x.fillRect(0,0,64,1);x.fillStyle='#f4f4f4';x.fillRect(0,0,32,1);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;return t;})(),clippingPlanes:clip,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));

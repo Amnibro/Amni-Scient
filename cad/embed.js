@@ -106,6 +106,7 @@ async function boot(){
       return;
     }
     if(t==='chrome'){Flow.setLite(API,m.lite!==false);post(ev.origin,'chrome',{ok:true,lite:document.documentElement.classList.contains('embed-lite')});return;}
+    if(t==='fea'){Flow.showRes(API,!!m.show);post(ev.origin,'fea',{ok:true,show:!(API.S&&API.S.resHide)});return;}
     if(t==='clear'){const r=await Flow.clearPart(API);post(ev.origin,'clear',{...r,part:modelOf(API)});return;}
     if(t==='view'&&typeof API.view==='function'){API.view(m.v||'iso');if(typeof API.redraw==='function')API.redraw();return;}
     if(t==='import'){try{const r=await Flow.importBuf(API,{name:m.name,buf:m.buf,mime:m.mime});if(typeof API.view==='function')API.view('iso');post(ev.origin,'import',{...r,part:modelOf(API)});}catch(e){post(ev.origin,'import',{ok:false,reason:e.message||'Import failed'});}return;}
