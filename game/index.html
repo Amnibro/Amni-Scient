@@ -8,7 +8,9 @@
 <style>
 html, body { margin: 0; height: 100%; background: #000; overflow: hidden; touch-action: none; }
 canvas { display: block; width: 100vw; height: 100vh; }
-#ld { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #e8f1ff; font: 600 18px system-ui, sans-serif; background: #000; }
+#ld { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; padding: 0 28px; text-align: center; line-height: 1.4; color: #e8f1ff; font: 600 18px system-ui, sans-serif; background: #000; }
+#ld small { max-width: 560px; font-weight: 400; font-size: 15px; color: #b8c7dc; }
+#ld b { color: #fff; user-select: all; }
 </style>
 </head>
 <body>
@@ -17,7 +19,9 @@ canvas { display: block; width: 100vw; height: 100vh; }
 <script type="module">
 import { start } from './helium.js';
 const ld = document.getElementById('ld'), cv = document.querySelector('canvas'), q = new URLSearchParams(location.search);
-if (!navigator.gpu || !WebAssembly.Suspending) { ld.textContent = 'Amni needs a browser with WebGPU and JSPI (Chrome or Edge 137+).'; throw new Error('no WebGPU/JSPI'); }
+const hp = { powerPreference: 'high-performance' }, nogpu = why => { ld.innerHTML = 'Amni can\'t start in this browser.<small>' + why + ' It runs in Chrome or Edge 137 or newer on Windows, Mac, Android and Linux. On Linux, Chrome often has WebGPU off: open <b>chrome://flags/#enable-unsafe-webgpu</b>, set it to Enabled, then relaunch Chrome.</small>'; throw new Error(why); };
+if (!WebAssembly.Suspending) nogpu('This browser is missing a WebAssembly feature Amni needs (JSPI).');
+if (!(navigator.gpu && (await navigator.gpu.requestAdapter(hp).catch(() => null) || await navigator.gpu.requestAdapter({ ...hp, featureLevel: 'compatibility' }).catch(() => null)))) nogpu('WebGPU is turned off or not available here.');
 const fit = () => { const k = Math.min(devicePixelRatio || 1, 2); cv.width = Math.round(innerWidth * k); cv.height = Math.round(innerHeight * k); };
 fit(); addEventListener('resize', fit);
 // The game reads its art with blocking file calls, so files it asks for that are not loaded yet
@@ -38,7 +42,7 @@ const files = new Files(), list = (await (await fetch('critical.txt', { cache: '
 let n = 0;
 await Promise.all(list.map(async f => { const r = await fetch('assets/' + f); if (r.ok) files.set('../assets/' + f, new Uint8Array(await r.arrayBuffer())); ld.textContent = `Loading Amni… ${Math.round(100 * ++n / list.length)}%`; }));
 ld.remove();
-window.amni = await start({ wasm: 'app.wasm', files, canvas: cv, args: ['game', q.get('mode') || 'play', q.get('level') || 'hub'] });
+window.amni = await start({ wasm: 'app.wasm', files, canvas: cv, args: ['game', q.get('mode') || 'play', q.get('level') || 'hub'] }).catch(x => { document.body.append(ld); nogpu('The game stopped while starting (' + (x?.message || x) + ').'); });
 </script>
 </body>
 </html>
