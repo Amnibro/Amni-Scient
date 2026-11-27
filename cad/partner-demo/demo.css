@@ -54,9 +54,21 @@ body.has-part .start{display:none}
 .mat b{display:block;font-size:13px}
 .mat span{display:block;color:var(--mut);font-size:12px;margin-top:2px;font-weight:400}
 .mat.on{border-color:var(--acc);box-shadow:inset 3px 0 0 var(--acc)}
+.dfm{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0 0 8px;padding:0}
+.dfm li{font-size:12px;line-height:1.35;padding:7px 10px;border-radius:var(--r);border:1px solid color-mix(in srgb,#c47b12 35%,var(--line));background:color-mix(in srgb,#c47b12 10%,var(--panel));color:var(--ink)}
+.dfm li.error{border-color:color-mix(in srgb,#d94a3a 40%,var(--line));background:color-mix(in srgb,#d94a3a 10%,var(--panel))}
 .sug{list-style:none;display:flex;flex-direction:column;gap:8px}
-.sug li{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
-.sug .btn.sm{width:auto;min-height:30px;padding:4px 10px;flex-shrink:0}
+.sug-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:var(--r);cursor:pointer;font:inherit;color:var(--ink);box-shadow:none}
+.sug-card b{font-size:13px;font-weight:750}
+.sug-card .why{font-size:12px;color:var(--mut);line-height:1.35;text-wrap:pretty}
+.sug-card .delta{font-size:11.5px;font-weight:650;color:var(--ink);line-height:1.35}
+.sug-card .btn.sm{margin-top:4px;align-self:flex-end;width:auto;min-height:30px;padding:4px 12px}
+.sug-card.on{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 28%,transparent)}
+.sug-card.hov:not(.on){border-color:color-mix(in srgb,var(--acc) 55%,var(--line))}
+.sug-card.add{border-left:3px solid #2bb56a}
+.sug-card.sub{border-left:3px solid #d94a3a}
+.sug-acts{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px}
+.sug-acts .btn{width:auto;min-height:34px;padding:6px 12px}
 .price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .price .u{font-size:32px;font-weight:750;letter-spacing:-.04em}
 .rail-foot .price .u{font-size:26px}
@@ -87,3 +99,4 @@ html[data-theme=scs] .mark{letter-spacing:.02em;text-transform:uppercase;font-si
 @media (max-width:980px){main{grid-template-columns:1fr}.stage{min-height:280px}header{height:auto;min-height:52px;padding:10px 16px;flex-wrap:wrap;gap:10px}nav{display:none}.tag{margin-left:0;order:3}}
 @media (max-width:700px){main{align-content:start;grid-template-rows:auto 1fr}.rail{border-left:0;border-top:1px solid var(--line)}.fld{grid-template-columns:1fr}.price .u{font-size:24px}.rail-foot .price .u{font-size:22px}.start{padding:16px 16px 8px}.drop{min-height:120px}.stage{min-height:0}body.has-part .stage{flex:0 0 200px;min-height:200px;max-height:200px}body:not(.has-part) .stage,body:not(.has-part) .start{flex:0 0 auto;justify-content:flex-start}.rail-scroll{padding:10px 16px 12px;gap:6px}.how li{font-size:12px}.samples .btn{min-height:30px;padding:5px 9px}}
 @media (max-height:850px){.rail-scroll{gap:8px;padding:10px 16px 8px}.part{padding:8px 12px}.price .u{font-size:28px}}
+@media (max-width:700px){.sug-card{padding:8px 10px}.sug-acts .btn{min-height:36px;padding:7px 12px}}

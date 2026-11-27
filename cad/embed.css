@@ -41,4 +41,8 @@ html.embed.embed-lite header,html.embed.embed-lite #left,html.embed.embed-lite #
 html.embed.embed-lite main{display:block!important;grid-template-columns:1fr!important;--lwc:0px;--rwc:0px;position:absolute;inset:0}
 html.embed.embed-lite #vp{position:absolute;inset:0;width:100%;height:100%}
 html.embed.embed-lite #busy{z-index:3}
-html.embed.embed-lite #legend{left:auto;bottom:auto;right:12px;top:12px;width:160px}
+html.embed.embed-lite #legend{left:auto;top:auto;right:12px;bottom:16px;width:160px;z-index:8}
+@media (max-width:700px){html.embed.embed-lite #legend{width:110px;left:56px;right:auto;top:auto;bottom:6px;font-size:10px}}
+#ghost-tip{position:absolute;z-index:9;transform:translate(-50%,-110%);background:color-mix(in srgb,var(--panel,#fff) 92%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line,#e1e5eb);border-radius:calc(8px*var(--rk,1));box-shadow:0 8px 24px rgba(0,0,0,.14);padding:8px 10px;min-width:140px;max-width:220px;pointer-events:none;color:var(--ink,#121417);font:650 12px/1.35 var(--font,system-ui)}
+#ghost-tip b{display:block;font-size:12.5px;margin-bottom:2px}
+#ghost-tip span{display:block;color:var(--mut,#5c6570);font-weight:500;font-size:11px}

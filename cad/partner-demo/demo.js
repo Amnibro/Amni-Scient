@@ -5,7 +5,7 @@ const PARTNERS={
   hubs:{theme:'hubs',name:'Protolabs Network',short:'Hubs',nav:['CNC machining','3D printing','Sheet metal','Injection molding','Instant quote'],processes:{basic:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal']],pro:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal']],enterprise:[['cnc','CNC machining'],['print','3D printing'],['sheet','Sheet metal'],['mold','Injection molding']]},materials:{cnc:[['al6061','6061-T6 aluminum'],['ss304','304 stainless'],['abs','ABS']],print:[['pa12','Nylon PA12 (MJF/SLS)'],['resin','Tough resin (SLA)'],['pla','PLA (FDM)']],sheet:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless']],mold:[['abs','ABS'],['pcabs','PC+ABS'],['pp','Polypropylene']]},checkout:'cart.html'},
   sendcutsend:{theme:'scs',name:'SendCutSend',short:'SendCutSend',nav:['Laser cutting','Bending','CNC','Materials','Instant pricing'],processes:{basic:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing']],pro:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing'],['bend','Laser + bending']],enterprise:[['laser','Laser cutting'],['waterjet','Waterjet'],['route','CNC routing'],['bend','Laser + bending']]},materials:{laser:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless'],['acrylic','Acrylic']],waterjet:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['cf','Carbon fiber'],['cu','Copper']],route:[['delrin','Delrin'],['acrylic','Acrylic'],['al6061','6061-T6 aluminum'],['al5052','5052-H32 aluminum']],bend:[['al5052','5052-H32 aluminum'],['al6061','6061-T6 aluminum'],['ss304','304 stainless']]},checkout:'cart.html'}
 };
-const S={process:'',material:'',qty:1,finish:'as-machined',expedite:'standard',use:'',email:'',prompt:'',busy:'',err:'',editing:false,recs:[],analyze:null,opt:null,infer:null};
+const S={process:'',material:'',qty:1,finish:'as-machined',expedite:'standard',use:'',email:'',prompt:'',busy:'',err:'',editing:false,recs:[],analyze:null,opt:null,infer:null,selSug:null,hovSug:null,canUndo:false};
 const CAD=document.documentElement.dataset.cad||(location.port==='8777'?'http://127.0.0.1:8778':location.origin);
 let MODEL=null,METER=null,TOKENS={},UI=null,READY=false,HOOKED=false,CLEARED=false;
 const CAN_AI=T!=='basic',CAN_FEA=T!=='basic',CAN_OPT=T==='enterprise';
@@ -24,6 +24,7 @@ function hookCad(){
     if(m.amnicad==='clear'){CLEARED=true;if(!(MODEL&&MODEL.ok)){MODEL=null;paint();}return;}
     if(m.amnicad==='model'&&m.ok){if(!CLEARED)return;MODEL={ok:true,...m};pickProcess();paint();return;}
     if(m.amnicad==='denied'){MODEL={ok:false,error:m.reason};S.err=m.reason;paint();}
+    if(m.amnicad==='ghostEvent'){if(m.type==='hover'&&S.hovSug!==m.id){S.hovSug=m.id;paint();}if(m.type==='select'&&m.id){S.selSug=m.id;paint();}}
   });
 }
 function pickProcess(force){
@@ -139,32 +140,36 @@ async function makePart(text,image,sample){
   }catch(e){S.err=e.message||'Make failed';}
   finally{S.busy='';paint();}
 }
+function quoteWith(part){const prev=MODEL;MODEL={ok:true,...MODEL,...part};const q=quote();MODEL=prev;return q;}
+function deltaLine(s){const b=s.before||{},a=s.after||{};const bits=[];if(b.massKg!=null&&a.massKg!=null)bits.push((b.massKg*1000).toFixed(1)+' g → '+(a.massKg*1000).toFixed(1)+' g');if(b.sf!=null&&a.sf!=null)bits.push('SF '+b.sf.toFixed(1)+' → '+a.sf.toFixed(1));if(b.vm!=null&&a.vm!=null)bits.push(b.vm.toFixed(1)+' → '+a.vm.toFixed(1)+' MPa');if(b.defl!=null&&a.defl!=null)bits.push(b.defl.toFixed(3)+' → '+a.defl.toFixed(3)+' mm');try{const qb=quoteWith({volCm3:b.volCm3,areaIn2:b.areaIn2,tIn:b.tIn,bends:b.bends}),qa=quoteWith({volCm3:a.volCm3,areaIn2:a.areaIn2,tIn:a.tIn,bends:a.bends});if(qb&&qa&&qb.unit!==qa.unit)bits.push(money(qb.unit)+' → '+money(qa.unit));}catch{}return bits.join(' · ');}
 async function runAnalyze(opt){
   if(!CAN_FEA||!MODEL||!MODEL.ok)return;
-  S.busy='Analyzing';paint();
+  S.busy='Analyzing';S.selSug=null;S.hovSug=null;paint();
   try{
-    const r=await (post({amnicad:'analyze',process:S.process,skipFea:!!(opt&&opt.skipFea)}),waitCad('analyze',180000));
-    S.analyze=r;S.opt=null;
-    if(CAN_OPT&&r&&r.canOptimize){const o=await (post({amnicad:'optimize',apply:false}),waitCad('optimize',180000));S.opt=o;if(o&&o.suggestion)S.analyze.suggestions=[...(S.analyze.suggestions||[]),o.suggestion];}
+    const r=await (post({amnicad:'analyze',process:S.process,skipFea:!!(opt&&opt.skipFea)}),waitCad('analyze',420000));
+    S.analyze=r;S.opt=null;S.selSug=(r&&r.suggestions&&r.suggestions[0]&&r.suggestions[0].id)||null;
   }catch(e){S.analyze={ok:false,reason:e.message||'Analyze failed'};}
   finally{S.busy='';paint();}
 }
-async function applyFix(fix){
-  if(!fix)return;
-  const feaBefore=S.analyze&&S.analyze.fea,massBefore=S.analyze&&S.analyze.applied;
+async function applyFix(sug){
+  const fix=sug&&sug.apply||sug;if(!fix)return;
   S.busy='Applying';S.err='';paint();
   try{
-    const type=fix.kind==='optimize'?'optimize':'apply';
-    const r=await (post(fix.kind==='optimize'?{amnicad:'optimize',apply:true}:{amnicad:'apply',fix}),waitCad(type,180000));
+    const r=await (post({amnicad:'apply',fix,id:sug&&sug.id,animate:true,process:S.process}),waitCad('apply',420000));
     if(!r.ok)throw new Error(r.reason||'Could not apply');
     if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}
-    const applied={before:r.before,after:r.after,drop:r.drop,feaBefore};
-    if(CAN_FEA)await runAnalyze();
-    if(S.analyze){S.analyze.applied={...applied,feaAfter:S.analyze.fea};}
-    else S.analyze={ok:true,suggestions:[],applied};
+    else if(r.after){MODEL={ok:true,...MODEL,massKg:r.after.massKg,volCm3:r.after.volCm3,areaIn2:r.after.areaIn2,tIn:r.after.tIn,bends:r.after.bends,massText:r.after.massKg!=null?(r.after.massKg*1000).toFixed(1)+' g':MODEL.massText,volText:MODEL.volText};}
+    const applied={before:r.before,after:r.after,feaBefore:S.analyze&&S.analyze.fea,feaAfter:r.fea,title:sug&&sug.title};
+    S.canUndo=true;
+    if(CAN_FEA)await runAnalyze({skipFea:true});
+    if(S.analyze)S.analyze.applied=applied;else S.analyze={ok:true,suggestions:[],applied};
   }catch(e){S.err=e.message||'Apply failed';}
   finally{S.busy='';paint();}
 }
+function selectSug(id,html){S.selSug=id;post({amnicad:'ghost',op:'select',id,html});paint();}
+async function keepAsIs(){S.busy='';await (post({amnicad:'acceptAsIs'}),waitCad('acceptAsIs',20000));if(S.analyze)S.analyze.suggestions=[];S.selSug=null;paint();}
+async function undoFix(){S.busy='Undoing';S.err='';paint();try{const r=await (post({amnicad:'undo'}),waitCad('undo',420000));if(!r.ok)throw new Error(r.reason||'Nothing to undo');if(r.part&&r.part.ok){MODEL={ok:true,...r.part};S.process='';pickProcess();}S.canUndo=!!r.remaining;if(CAN_FEA)await runAnalyze({skipFea:true});}catch(e){S.err=e.message||'Undo failed';}finally{S.busy='';paint();}}
+
 function toggleEdit(on){
   S.editing=on!==undefined?on:!S.editing;
   post({amnicad:'chrome',lite:!S.editing});
@@ -214,11 +219,13 @@ function railView(){
     h('input',{class:'inp',type:'text',placeholder:"What's it for?",value:S.use,'aria-label':'Application',oninput:e=>{S.use=e.target.value;S.infer=inferUse();S.recs=recsFor(S.infer.text,S.process);if(S.recs[0]&&!S.use)S.material=S.recs[0].id;paint();}}),
     !S.use&&S.infer?h('p',{class:'note'},S.infer.via==='email'?'From '+S.infer.domain+': '+S.infer.text:'Assumed from the geometry: '+S.infer.text):null,
     CAN_FEA?h('h2',null,'Analyze'):null,
-    CAN_FEA&&S.busy==='Analyzing'?h('p',{class:'note'},'Running FEA and manufacturing checks…'):null,
+    CAN_FEA&&S.busy==='Analyzing'?h('p',{class:'note'},'Running stress checks and design changes…'):null,
+    CAN_FEA&&((S.analyze&&S.analyze.dfm)||[]).length?h('ul',{class:'dfm'},...S.analyze.dfm.map(d=>h('li',{class:d.sev||'warn'},d.msg||d.code||'Manufacturing warning'))):null,
     CAN_FEA&&applied?h('p',{class:'after'},appliedLine(applied)):null,
-    CAN_FEA?h('ul',{class:'sug'},...sug.map(s=>h('li',null,h('span',null,s.label),s.apply?h('button',{class:'btn sm',onclick:()=>applyFix(s.apply)},'Apply'):null))):null,
+    CAN_FEA&&sug.length?h('div',{class:'sug'},...sug.map(s=>h('button',{class:'sug-card'+(s.tint?' '+s.tint:'')+(s.id===S.selSug?' on':'')+(s.id===S.hovSug?' hov':''),type:'button',onclick:()=>selectSug(s.id,s.html)},h('b',null,s.title||s.label),h('span',{class:'why'},s.label),h('span',{class:'delta'},deltaLine(s)),s.apply?h('span',{class:'btn sm',onclick:e=>{e.stopPropagation();applyFix(s);}},'Accept'):null))):null,
+    CAN_FEA&&S.analyze&&S.analyze.ok?h('div',{class:'sug-acts'},h('button',{class:'btn',type:'button',onclick:keepAsIs},'Accept as is'),S.canUndo?h('button',{class:'btn',type:'button',onclick:undoFix},'Undo'):null):null,
     CAN_FEA&&S.analyze&&!S.analyze.ok?h('p',{class:'err'},S.analyze.reason||'Analysis could not run.'):null,
-    CAN_FEA&&S.analyze&&S.analyze.ok&&!sug.length?h('p',{class:'note'},'No issues found on this study.'):null,
+    CAN_FEA&&S.analyze&&S.analyze.ok&&!sug.length?h('p',{class:'note'},'No further design changes to show. Accept as is keeps this part.'):null,
     h('h2',null,'Materials'),
     h('div',{class:'mats'},...S.recs.map(r=>h('button',{class:'mat'+(r.id===S.material?' on':''),onclick:()=>{S.material=r.id;post({amnicad:'setConfig',material:r.id});paint();}},h('b',null,r.name),h('span',null,r.reason)))),
     h('div',{class:'chips'},...procs.map(([id,n])=>h('button',{class:id===S.process?'on':'',onclick:()=>{S.process=id;S.procLock=true;S.recs=recsFor((S.infer||inferUse()).text,id);if(S.recs[0])S.material=S.recs[0].id;if(CAN_FEA&&MODEL&&MODEL.ok)runAnalyze({skipFea:true});else paint();}},n))),
