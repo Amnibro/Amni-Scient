@@ -29,7 +29,7 @@ function frameHeaders(u){
   return h;
 }
 async function resolve(u){
-  if(embedPath(u.pathname))return join(ROOT,'cad','index.html');
+  if(embedPath(u.pathname))return join(ROOT,'cad','embed.html');
   let rel=decodeURIComponent(u.pathname).replace(/^\/+/,'');
   if(!rel||rel.endsWith('/'))rel+='index.html';
   const full=normalize(join(ROOT,rel));
